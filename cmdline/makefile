@@ -64,3 +64,10 @@ include $(COPY_H)
 #TO=$(BIN)
 #TARGET=program
 #include $(COPY_H)
+
+# The apt-changelog program
+SOURCE=apt-changelog
+TO=$(BIN)
+TARGET=program
+include $(COPY_H)
+

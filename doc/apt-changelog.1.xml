@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent">
+%aptverbatiment;
+
+]>
+
+<refentry>
+
+<refentryinfo>
+
+   <author>
+    <firstname>Martin</firstname>
+    <surname>Pitt</surname>
+    <contrib></contrib>
+   </author>
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>09 November 2010</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt-changelog</refentrytitle>
+   <manvolnum>1</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt-changelog</refname>
+    <refpurpose>APT package changelog retriever</refpurpose>
+ </refnamediv>
+
+ <!-- Arguments -->
+ <refsynopsisdiv>
+   <cmdsynopsis>
+      <command>apt-changelog</command>
+      <arg choice="plain"><replaceable>packagename</replaceable></arg>
+      <group>
+        <arg choice="plain"><replaceable>version</replaceable></arg>
+        <arg choice="plain">candidate</arg>
+      </group>
+   </cmdsynopsis>
+ </refsynopsisdiv>
+
+ <refsect1><title>Description</title>
+   <para>
+   <command>apt-changelog</command> downloads a package changelog from
+   <ulink>http://changelogs.ubuntu.com</ulink> and displays it through
+   <command>sensible-pager</command>.
+   </para>
+
+   <para>
+   By default it displays the changelog for the version that is installed.
+   However, you can specify a different version as the second argument; if you 
+   specify <constant>candidate</constant>, it will fetch the changelog for the
+   latest available version of that package, i. e. the version which you would
+   get with <command>apt-get install <parameter>packagename</parameter></command>.
+   </para>
+</refsect1>
+
+<refsect1><title>See Also</title>
+<para>
+&apt-get;
+</para>
+</refsect1>
+
+ &manbugs;
+
+</refentry>
+

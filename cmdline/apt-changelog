@@ -1,0 +1,59 @@
+#!/bin/sh
+# Fetch Package changelog for given source or binary package. Send it through
+# a pager if stdout is a terminal.
+# (C) 2010 Canonical Ltd
+# Author: Martin Pitt <martin.pitt@ubuntu.com>
+
+set -e
+
+# evaluate and check CLI argumens
+pkg="$1"
+
+if [ -z "$1" -o -n "$3" ]; then
+    echo "Usage: $0 <package_name> [ <version> | candidate ]" >&2
+    exit 1
+fi
+
+version="$2"
+
+# do we want the log for the currently installed version?
+if [ -z "$version" ]; then
+    if ! dpkgs=`dpkg -s $pkg 2>/dev/null`; then
+	echo "ERROR: Package $pkg is not installed; try 'candidate' version for uninstalled packages" >&2
+	exit 1
+    fi
+    version=`echo "$dpkgs" | grep ^Version`
+fi
+
+# turn binary package names into source
+if src=`apt-cache show $pkg 2>/dev/null| grep ^Source:`; then
+    pkg=${src#Source: }
+fi
+
+# get version and directory
+if ! showsrc=`apt-cache showsrc $pkg 2>/dev/null` || [ -z "$showsrc" ] ; then
+    echo "ERROR: Source or binary package $pkg does not exist" >&2
+    exit 1
+fi
+
+if [ "$version" = "candidate" ]; then
+    version=`echo "$showsrc"| grep -m 1 ^Version:`
+fi
+
+# strip off tag name and epoch
+version=${version#Version: }
+version=${version#*:}
+
+dir=`echo "$showsrc"| grep ^Directory:`
+dir=${dir#Directory: }
+
+# fetch it
+OUT=`mktemp -t "${pkg}.changes.XXXXXX"`
+trap "rm $OUT" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+if ! wget -q -O- http://changelogs.ubuntu.com/changelogs/$dir/${pkg}_${version}/changelog > "$OUT"
+then
+    echo "ERROR: changelog for this version is not (yet) available; try https://launchpad.net/ubuntu/+source/$pkg/+changelog" >&2
+    exit 1
+fi
+sensible-pager "$OUT"
+
