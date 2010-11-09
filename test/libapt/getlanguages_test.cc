@@ -89,6 +89,24 @@ int main(int argc,char *argv[])
 	env[0] = "C";
 	vec = APT::Configuration::getLanguages(false, false, env);
 	equals(vec.size(), 0);
+
+	_config->Set("Acquire::Languages", "environment");
+	env[0] = "C";
+	vec = APT::Configuration::getLanguages(false, false, env);
+	equals(vec.size(), 1);
+	equals(vec[0], "en");
+
+	_config->Set("Acquire::Languages", "de");
+	env[0] = "C";
+	vec = APT::Configuration::getLanguages(false, false, env);
+	equals(vec.size(), 1);
+	equals(vec[0], "de");
+
+	_config->Set("Acquire::Languages", "fr");
+	env[0] = "ast_DE.UTF-8";
+	vec = APT::Configuration::getLanguages(false, false, env);
+	equals(vec.size(), 1);
+	equals(vec[0], "fr");
 	_config->Set("Acquire::Languages", "");
 
 	_config->Set("Acquire::Languages::1", "environment");

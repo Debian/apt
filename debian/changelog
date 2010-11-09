@@ -7,12 +7,12 @@ apt (0.8.9) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/aptconfiguration.cc:
-    - respect the none-force even in LANG=C (Closes: #602573)
+    - evaluate Acquire::Languages= before LANG= (Closes: #602573)
   * apt-pkg/orderlist.cc:
     - try fixing before removing even if the fix is hidden in
       a provides, hidden in the #590438 testcase
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 06 Nov 2010 12:50:20 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 09 Nov 2010 14:16:41 +0100
 
 apt (0.8.8) unstable; urgency=low
 
