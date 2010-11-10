@@ -14,8 +14,11 @@ apt (0.8.9) UNRELEASED; urgency=low
   * apt-pkg/algorithms.cc:
     - if the package was explicitly marked as ToRemove don't
       consider it as a candidate for FixByInstall
+  * apt-pkg/depcache.cc:
+    - don't install previously not installed providers in a try
+      to statisfy a "Breaks: provides" dependency by upgrade
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 10 Nov 2010 12:23:29 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 10 Nov 2010 13:22:39 +0100
 
 apt (0.8.8) unstable; urgency=low
 
