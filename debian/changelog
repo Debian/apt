@@ -1,10 +1,24 @@
 apt (0.8.9) UNRELEASED; urgency=low
 
+  [ Christian Perrier ]
   * Fix "typos" in French manpages translations. Thanks to
     Cyril Brulebois for bashing me.
   * Drop useless untranslatable sections from apt.8
 
- -- Christian Perrier <bubulle@debian.org>  Sat, 30 Oct 2010 09:51:18 +0200
+  [ David Kalnischkies ]
+  * apt-pkg/aptconfiguration.cc:
+    - evaluate Acquire::Languages= before LANG= (Closes: #602573)
+  * apt-pkg/orderlist.cc:
+    - try fixing before removing even if the fix is hidden in
+      a provides, hidden in the #590438 testcase
+  * apt-pkg/algorithms.cc:
+    - if the package was explicitly marked as ToRemove don't
+      consider it as a candidate for FixByInstall
+  * apt-pkg/depcache.cc:
+    - don't install previously not installed providers in a try
+      to statisfy a "Breaks: provides" dependency by upgrade
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 10 Nov 2010 13:22:39 +0100
 
 apt (0.8.8) unstable; urgency=low
 

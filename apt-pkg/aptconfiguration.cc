@@ -166,17 +166,6 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	string const envShort = envLong.substr(0,lenShort);
 	bool envLongIncluded = true;
 
-	// first cornercase: LANG=C, so we use only "en" Translation
-	if (envLong == "C") {
-		codes.push_back("en");
-		allCodes = codes;
-		allCodes.insert(allCodes.end(), builtin.begin(), builtin.end());
-		if (All == true)
-			return allCodes;
-		else
-			return codes;
-	}
-
 	// to save the servers from unneeded queries, we only try also long codes
 	// for languages it is realistic to have a long code translation file…
 	// TODO: Improve translation acquire system to drop them dynamic
@@ -217,37 +206,41 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// It is very likely we will need to environment codes later,
 	// so let us generate them now from LC_MESSAGES and LANGUAGE
 	std::vector<string> environment;
-	// take care of LC_MESSAGES
-	if (envLongIncluded == false)
-		environment.push_back(envLong);
-	environment.push_back(envShort);
-	// take care of LANGUAGE
-	const char *language_env = getenv("LANGUAGE") == 0 ? "" : getenv("LANGUAGE");
-	string envLang = Locale == 0 ? language_env : *(Locale+1);
-	if (envLang.empty() == false) {
-		std::vector<string> env = VectorizeString(envLang,':');
-		short addedLangs = 0; // add a maximum of 3 fallbacks from the environment
-		for (std::vector<string>::const_iterator e = env.begin();
-		     e != env.end() && addedLangs < 3; ++e) {
-			if (unlikely(e->empty() == true) || *e == "en")
-				continue;
-			if (*e == envLong || *e == envShort)
-				continue;
-			if (std::find(environment.begin(), environment.end(), *e) != environment.end())
-				continue;
-			if (e->find('_') != string::npos) {
-				// Drop LongCodes here - ShortCodes are also included
-				string const shorty = e->substr(0, e->find('_'));
-				char const **n = needLong;
-				for (; *n != NULL; ++n)
-					if (shorty == *n)
-						break;
-				if (*n == NULL)
+	if (envShort != "C") {
+		// take care of LC_MESSAGES
+		if (envLongIncluded == false)
+			environment.push_back(envLong);
+		environment.push_back(envShort);
+		// take care of LANGUAGE
+		const char *language_env = getenv("LANGUAGE") == 0 ? "" : getenv("LANGUAGE");
+		string envLang = Locale == 0 ? language_env : *(Locale+1);
+		if (envLang.empty() == false) {
+			std::vector<string> env = VectorizeString(envLang,':');
+			short addedLangs = 0; // add a maximum of 3 fallbacks from the environment
+			for (std::vector<string>::const_iterator e = env.begin();
+			     e != env.end() && addedLangs < 3; ++e) {
+				if (unlikely(e->empty() == true) || *e == "en")
 					continue;
+				if (*e == envLong || *e == envShort)
+					continue;
+				if (std::find(environment.begin(), environment.end(), *e) != environment.end())
+					continue;
+				if (e->find('_') != string::npos) {
+					// Drop LongCodes here - ShortCodes are also included
+					string const shorty = e->substr(0, e->find('_'));
+					char const **n = needLong;
+					for (; *n != NULL; ++n)
+						if (shorty == *n)
+							break;
+					if (*n == NULL)
+						continue;
+				}
+				++addedLangs;
+				environment.push_back(*e);
 			}
-			++addedLangs;
-			environment.push_back(*e);
 		}
+	} else {
+		environment.push_back("en");
 	}
 
 	// Support settings like Acquire::Translation=none on the command line to
@@ -263,6 +256,16 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		     b != builtin.end(); ++b)
 			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
 				allCodes.push_back(*b);
+		if (All == true)
+			return allCodes;
+		else
+			return codes;
+	}
+
+	// cornercase: LANG=C, so we use only "en" Translation
+	if (envShort == "C") {
+		allCodes = codes = environment;
+		allCodes.insert(allCodes.end(), builtin.begin(), builtin.end());
 		if (All == true)
 			return allCodes;
 		else
