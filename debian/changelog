@@ -11,8 +11,11 @@ apt (0.8.9) UNRELEASED; urgency=low
   * apt-pkg/orderlist.cc:
     - try fixing before removing even if the fix is hidden in
       a provides, hidden in the #590438 testcase
+  * apt-pkg/algorithms.cc:
+    - if the package was explicitly marked as ToRemove don't
+      consider it as a candidate for FixByInstall
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 09 Nov 2010 14:16:41 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 10 Nov 2010 12:23:29 +0100
 
 apt (0.8.8) unstable; urgency=low
 
