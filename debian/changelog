@@ -17,8 +17,13 @@ apt (0.8.9) UNRELEASED; urgency=low
   * apt-pkg/depcache.cc:
     - don't install previously not installed providers in a try
       to statisfy a "Breaks: provides" dependency by upgrade
+  * cmdline/acqprogress.cc:
+    - don't ask the user for media change if quiet >= 2, stdout is not
+      a tty and assume-yes, force-yes or trivial-only option is set to
+      avoid cpu eating endless loops in unattended runs like apt.cron
+      (Closes: #602354, LP: #665580)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 10 Nov 2010 13:22:39 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 11 Nov 2010 18:32:21 +0100
 
 apt (0.8.8) unstable; urgency=low
 
