@@ -26,7 +26,7 @@ if [ -z "$version" ]; then
 fi
 
 # turn binary package names into source
-if src=`apt-cache show $pkg 2>/dev/null| grep ^Source:`; then
+if src=`apt-cache show $pkg 2>/dev/null| grep -m 1 ^Source:`; then
     pkg=${src#Source: }
 fi
 
