@@ -2751,6 +2751,7 @@ bool DoDownload(CommandLine &CmdL)
    if (verset.empty() == true)
       return false;
 
+   bool result = true;
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
    for (APT::VersionSet::const_iterator Ver = verset.begin(); 
@@ -2770,12 +2771,20 @@ bool DoDownload(CommandLine &CmdL)
          return _error->Error("FindIndex failed");
       string uri = index->ArchiveURI(rec.FileName());
       strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
-      // down
-      new pkgAcqFile(&Fetcher, uri, "", 0, descr, Pkg.Name(), ".");
-      int res = Fetcher.Run();
+      // get the most appropriate hash
+      HashString hash;
+      if (rec.SHA256Hash() != "")
+         hash = HashString("sha256", rec.SHA256Hash());
+      else if (rec.SHA1Hash() != "")
+         hash = HashString("sha1", rec.SHA1Hash());
+      else if (rec.MD5Hash() != "")
+         hash = HashString("md5", rec.MD5Hash());
+      // get the file
+      new pkgAcqFile(&Fetcher, uri, hash.toStr(), 0, descr, Pkg.Name(), ".");
+      result &= (Fetcher.Run() == pkgAcquire::Continue);
    }
 
-   return true;
+   return result;
 }
 									/*}}}*/
 // DoMoo - Never Ask, Never Tell					/*{{{*/
