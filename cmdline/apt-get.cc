@@ -2733,6 +2733,51 @@ bool DoBuildDep(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DoDownload - download a binary					/*{{{*/
+// ---------------------------------------------------------------------
+bool DoDownload(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.ReadOnlyOpen() == false)
+      return false;
+   
+   APT::CacheSetHelper helper(c0out);
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   pkgAcquire Fetcher;
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   Fetcher.Setup(&Stat);
+
+   if (verset.empty() == true)
+      return false;
+
+   pkgRecords Recs(Cache);
+   pkgSourceList *SrcList = Cache.GetSourceList();
+   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+        Ver != verset.end(); 
+        ++Ver) 
+   {
+      string descr;
+      // get the right version
+      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+      pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
+      pkgCache::VerFileIterator Vf = Ver.FileList();
+      if (Vf.end() == true)
+         return _error->Error("Can not find VerFile");
+      pkgCache::PkgFileIterator F = Vf.File();
+      pkgIndexFile *index;
+      if(SrcList->FindIndex(F, index) == false)
+         return _error->Error("FindIndex failed");
+      string uri = index->ArchiveURI(rec.FileName());
+      strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
+      // down
+      new pkgAcqFile(&Fetcher, uri, "", 0, descr, Pkg.Name(), ".");
+      int res = Fetcher.Run();
+   }
+
+   return true;
+}
+									/*}}}*/
 // DoMoo - Never Ask, Never Tell					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -2923,6 +2968,7 @@ int main(int argc,const char *argv[])					/*{{{*/
                                    {"autoclean",&DoAutoClean},
                                    {"check",&DoCheck},
 				   {"source",&DoSource},
+                                   {"download",&DoDownload},
 				   {"moo",&DoMoo},
 				   {"help",&ShowHelp},
                                    {0,0}};
