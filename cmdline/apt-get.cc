@@ -2773,9 +2773,6 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
                           "http://packages.debian.org/");
    // ... but not the format string to avoid all possible attacks
    strprintf(path, "/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
-
    // get it
    new pkgAcqFile(&Fetcher, server+path, "", 0, descr, srcpkg, "ignored", targetfile);
    int res = Fetcher.Run();
@@ -2817,6 +2814,8 @@ bool DoChangelog(CommandLine &CmdL)
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
    pkgAcquire Fetcher;
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   Fetcher.Setup(&Stat);
 
    if (verset.empty() == true)
       return false;
