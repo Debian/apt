@@ -2773,11 +2773,18 @@ string DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::Ve
    Fetcher.Setup(&Stat);
 
    // temp file
-   string targetfile = tmpnam(strdup("apt-changelog-XXXXXX"));
-   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignore", targetfile);
+   char *tmpdir = mkdtemp(strdup("apt-changelog-XXXXXX"));
+   if (tmpdir == NULL) {
+      _error->Errno("mkdtemp", "mkdtemp failed");
+      return "";
+   }
+   string targetfile = string(tmpdir) + "changelog";
 
    // get it
+   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, tmpdir);
    int res = Fetcher.Run();
+   free(tmpdir);
+
    if (FileExists(targetfile))
       return targetfile;
 
@@ -2826,9 +2833,12 @@ bool DoChangelog(CommandLine &CmdL)
       if (changelogfile.size() > 0)
       {
          DisplayFileInPager(changelogfile);
+         // cleanup
          unlink(changelogfile.c_str());
+         rmdir(flNotFile(changelogfile).c_str());
       }
    }
+   return true;
 }
 									/*}}}*/
 // DoMoo - Never Ask, Never Tell					/*{{{*/
