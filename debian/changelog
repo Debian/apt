@@ -8,6 +8,10 @@ apt (0.8.8ubuntu3) UNRELEASED; urgency=low
   * Add debian/apt.conf.changelog: Configuration for apt-changelog with the
     server for Ubuntu (changelogs.ubuntu.com). Install it in debian/rules.
   * doc/apt-changelog.1.xml: Document the new option.
+  * test/integration/test-compressed-indexes, test/test-indexes.sh:
+    - Explicitly disable compressed indexes at the start. This ensures that we
+      will actually test uncompressed indexes regardless of the internal
+      default value of Acquire::GzipIndexes.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Nov 2010 16:53:31 +0100
 
