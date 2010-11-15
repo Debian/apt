@@ -2780,7 +2780,7 @@ bool DoDownload(CommandLine &CmdL)
       else if (rec.MD5Hash() != "")
          hash = HashString("md5", rec.MD5Hash());
       // get the file
-      new pkgAcqFile(&Fetcher, uri, hash.toStr(), 0, descr, Pkg.Name(), ".");
+      new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
       result &= (Fetcher.Run() == pkgAcquire::Continue);
    }
 
