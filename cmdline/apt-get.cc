@@ -2733,6 +2733,104 @@ bool DoBuildDep(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// DownloadChangelog - Download the changelog 			        /*{{{*/
+// ---------------------------------------------------------------------
+string DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerIterator V)
+{
+   string uri;
+   string srcpkg;
+   string prefix;
+   string descr;
+   string src_section;
+   string verstr;
+
+   // data structures we need
+   pkgRecords Recs(CacheFile);
+   pkgCache::PkgIterator Pkg = V.ParentPkg();
+   pkgRecords::Parser &rec=Recs.Lookup(V.FileList());
+
+   // build uri
+   srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+   strprintf(descr, _("Changelog for %s"), srcpkg.c_str());
+   // FIXME: we actually need the source section here
+   src_section= Pkg.Section();
+   if(src_section.find('/')!=src_section.npos)
+      src_section=string(src_section, 0, src_section.find('/'));
+   else
+      src_section="main";
+
+   prefix+=srcpkg[0];
+   if(srcpkg.size()>3 && srcpkg[0]=='l' && srcpkg[1]=='i' && srcpkg[2]=='b')
+      prefix=std::string("lib")+srcpkg[3];
+
+   verstr = V.VerStr();
+   if(verstr.find(':')!=verstr.npos)
+      verstr=string(verstr, verstr.find(':')+1);
+
+   strprintf(uri, "http://packages.debian.org/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
+
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   Fetcher.Setup(&Stat);
+
+   // temp file
+   string targetfile = tmpnam(strdup("apt-changelog-XXXXXX"));
+   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignore", targetfile);
+
+   // get it
+   int res = Fetcher.Run();
+   if (FileExists(targetfile))
+      return targetfile;
+
+   // error
+   return "";
+}
+									/*}}}*/
+// DisplayFileInPager - Display File with pager        			/*{{{*/
+void DisplayFileInPager(string filename)
+{
+   pid_t Process = ExecFork();
+   if (Process == 0)
+   {
+      const char *Args[3];
+      Args[0] = "/usr/bin/sensible-pager";
+      Args[1] = filename.c_str();
+      Args[2] = 0;
+      execvp(Args[0],(char **)Args);
+      exit(100);
+   }
+         
+   // Wait for the subprocess
+   ExecWait(Process, "sensible-pager", false);
+}
+									/*}}}*/
+// DoChangelog - Get changelog from the command line			/*{{{*/
+// ---------------------------------------------------------------------
+bool DoChangelog(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.ReadOnlyOpen() == false)
+      return false;
+   
+   APT::CacheSetHelper helper(c0out);
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   pkgAcquire Fetcher;
+
+   if (verset.empty() == true)
+      return false;
+   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+        Ver != verset.end(); 
+        ++Ver) 
+   {
+      string changelogfile = DownloadChangelog(Cache, Fetcher, Ver);
+      if (changelogfile.size() > 0)
+      {
+         DisplayFileInPager(changelogfile);
+         unlink(changelogfile.c_str());
+      }
+   }
+}
+									/*}}}*/
 // DoMoo - Never Ask, Never Tell					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -2923,6 +3021,7 @@ int main(int argc,const char *argv[])					/*{{{*/
                                    {"autoclean",&DoAutoClean},
                                    {"check",&DoCheck},
 				   {"source",&DoSource},
+                                   {"changelog",&DoChangelog},
 				   {"moo",&DoMoo},
 				   {"help",&ShowHelp},
                                    {0,0}};
