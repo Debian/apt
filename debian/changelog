@@ -15,6 +15,8 @@ apt (0.8.8ubuntu3) UNRELEASED; urgency=low
   * apt-pkg/acquire-item.cc: Set Acquire::GzipIndexes to "true" by default, to
     store compressed indexes. This feature is now mature enough for general
     consumption. Update doc/apt.conf.5.xml accordingly.
+  * apt-pkg/aptconfiguration.cc: Have Acquire::CompressionTypes::Order default
+    to preferring "gz", so that compressed indexes will actually work.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Nov 2010 16:53:31 +0100
 

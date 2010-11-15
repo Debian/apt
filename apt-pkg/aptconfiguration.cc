@@ -69,6 +69,10 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		types.push_back(*o);
 	}
 
+	// default to preferring gzip, so that compressed indexes work
+	if (order.empty())
+		types.push_back("gz");
+
 	// move again over the option tree to add all missing compression types
 	::Configuration::Item const *Types = _config->Tree("Acquire::CompressionTypes");
 	if (Types != 0)
