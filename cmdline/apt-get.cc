@@ -2819,7 +2819,7 @@ bool DoChangelog(CommandLine &CmdL)
 
    if (verset.empty() == true)
       return false;
-   char *tmpdir = mkdtemp(strdup("apt-changelog-XXXXXX"));
+   char *tmpdir = mkdtemp(strdup("/tmp/apt-changelog-XXXXXX"));
    if (tmpdir == NULL) {
       return _error->Errno("mkdtemp", "mkdtemp failed");
    }
