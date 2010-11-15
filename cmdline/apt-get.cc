@@ -2737,12 +2737,13 @@ bool DoBuildDep(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerIterator V, string targetfile)
 {
-   string uri;
    string srcpkg;
    string prefix;
    string descr;
    string src_section;
    string verstr;
+   string server;
+   string path;
 
    // data structures we need
    pkgRecords Recs(CacheFile);
@@ -2767,15 +2768,16 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
    if(verstr.find(':')!=verstr.npos)
       verstr=string(verstr, verstr.find(':')+1);
 
-   string fmt = _config->Find("Apt::Changelogs::Server",
-                             "http://packages.debian.org/changelogs/pool/%s/%s/%s/%s_%s/changelog");
-   strprintf(uri, fmt.c_str(), src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
-
+   // make the server configurable
+   server = _config->Find("Apt::Changelogs::Server",
+                          "http://packages.debian.org/");
+   // ... but not the format string to avoid all possible attacks
+   strprintf(path, "/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
 
    // get it
-   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignored", targetfile);
+   new pkgAcqFile(&Fetcher, server+path, "", 0, descr, srcpkg, "ignored", targetfile);
    int res = Fetcher.Run();
 
    if (FileExists(targetfile))
