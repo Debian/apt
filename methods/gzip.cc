@@ -49,7 +49,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    FileFd From(Path,FileFd::ReadOnlyGzip);
 
    // FIXME add an error message saying that empty files can't be valid archives
-   if(From.Size() == 0)
+   if(From.FileSize() == 0)
       return false;
 
    FileFd To(Itm->DestFile,FileFd::WriteAtomic);   

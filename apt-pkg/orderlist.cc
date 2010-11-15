@@ -967,13 +967,33 @@ bool pkgOrderList::DepRemove(DepIterator D)
 	       // start again in the or group and find something which will serve as replacement
 	       for (; F.end() == false && F != S; ++F)
 	       {
-		  if (F.TargetPkg() == D.TargetPkg() ||
-		      IsFlag(F.TargetPkg(), InList) == false ||
-		      VisitNode(F.TargetPkg()) == false)
-		     continue;
-		  Flag(F.TargetPkg(), Immediate);
-		  tryFixDeps = false;
-		  break;
+		  if (IsFlag(F.TargetPkg(), InList) == true &&
+		      IsFlag(F.TargetPkg(), AddPending) == false &&
+		      Cache[F.TargetPkg()].InstallVer != 0 &&
+		      VisitNode(F.TargetPkg()) == true)
+		  {
+		     Flag(F.TargetPkg(), Immediate);
+		     tryFixDeps = false;
+		     break;
+		  }
+		  else if (F.TargetPkg()->ProvidesList != 0)
+		  {
+		     pkgCache::PrvIterator Prv = F.TargetPkg().ProvidesList();
+		     for (; Prv.end() == false; ++Prv)
+		     {
+			if (IsFlag(Prv.OwnerPkg(), InList) == true &&
+			    IsFlag(Prv.OwnerPkg(), AddPending) == false &&
+			    Cache[Prv.OwnerPkg()].InstallVer != 0 &&
+			    VisitNode(Prv.OwnerPkg()) == true)
+			{
+			   Flag(Prv.OwnerPkg(), Immediate);
+			   tryFixDeps = false;
+			   break;
+			}
+		     }
+		     if (Prv.end() == false)
+			break;
+		  }
 	       }
 	       if (tryFixDeps == false)
 		  break;

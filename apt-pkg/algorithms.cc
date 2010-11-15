@@ -1062,6 +1062,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 			else if (TryFixByInstall == true &&
 				 Start.TargetPkg()->CurrentVer == 0 &&
 				 Cache[Start.TargetPkg()].Delete() == false &&
+				 (Flags[Start.TargetPkg()->ID] & ToRemove) != ToRemove &&
 				 Cache.GetCandidateVer(Start.TargetPkg()).end() == false)
 			{
 			   /* Before removing or keeping the package with the broken dependency

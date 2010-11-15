@@ -481,6 +481,7 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
  */
 static string CompleteArch(std::string& arch) {
     if (arch == "armel")              return "linux-arm";
+    if (arch == "armhf")              return "linux-arm";
     if (arch == "lpia")               return "linux-i386";
     if (arch == "powerpcspe")         return "linux-powerpc";
     if (arch == "uclibc-linux-armel") return "linux-arm";
