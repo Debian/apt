@@ -2735,7 +2735,7 @@ bool DoBuildDep(CommandLine &CmdL)
 									/*}}}*/
 // DownloadChangelog - Download the changelog 			        /*{{{*/
 // ---------------------------------------------------------------------
-string DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerIterator V)
+bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerIterator V, string targetfile)
 {
    string uri;
    string srcpkg;
@@ -2767,29 +2767,22 @@ string DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::Ve
    if(verstr.find(':')!=verstr.npos)
       verstr=string(verstr, verstr.find(':')+1);
 
-   strprintf(uri, "http://packages.debian.org/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
+   string fmt = _config->Find("Apt::Changelogs::Server",
+                             "http://packages.debian.org/changelogs/pool/%s/%s/%s/%s_%s/changelog");
+   strprintf(uri, fmt.c_str(), src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
 
-   // temp file
-   char *tmpdir = mkdtemp(strdup("apt-changelog-XXXXXX"));
-   if (tmpdir == NULL) {
-      _error->Errno("mkdtemp", "mkdtemp failed");
-      return "";
-   }
-   string targetfile = string(tmpdir) + "changelog";
-
    // get it
-   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, tmpdir);
+   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignored", targetfile);
    int res = Fetcher.Run();
-   free(tmpdir);
 
    if (FileExists(targetfile))
-      return targetfile;
+      return true;
 
    // error
-   return "";
+   return _error->Error("changelog download failed");
 }
 									/*}}}*/
 // DisplayFileInPager - Display File with pager        			/*{{{*/
@@ -2825,19 +2818,24 @@ bool DoChangelog(CommandLine &CmdL)
 
    if (verset.empty() == true)
       return false;
+   char *tmpdir = mkdtemp(strdup("apt-changelog-XXXXXX"));
+   if (tmpdir == NULL) {
+      return _error->Errno("mkdtemp", "mkdtemp failed");
+   }
+   
    for (APT::VersionSet::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
    {
-      string changelogfile = DownloadChangelog(Cache, Fetcher, Ver);
-      if (changelogfile.size() > 0)
-      {
+      string changelogfile = string(tmpdir) + "changelog";
+      if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile))
          DisplayFileInPager(changelogfile);
-         // cleanup
-         unlink(changelogfile.c_str());
-         rmdir(flNotFile(changelogfile).c_str());
-      }
+      // cleanup temp file
+      unlink(changelogfile.c_str());
    }
+   // clenaup tmp dir
+   rmdir(tmpdir);
+   free(tmpdir);
    return true;
 }
 									/*}}}*/
