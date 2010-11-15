@@ -47,10 +47,18 @@ version=${version#*:}
 dir=`echo "$showsrc"| grep ^Directory:`
 dir=${dir#Directory: }
 
+# get configuration
+eval `apt-config shell SERVER Apt::Changelog::Server`
+
+if [ -z "$SERVER" ]; then
+    echo "ERROR: You need to set Apt::Changelog::Server configuration option" >&2
+    exit 1
+fi
+
 # fetch it
 OUT=`mktemp -t "${pkg}.changes.XXXXXX"`
 trap "rm $OUT" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-if ! wget -q -O- http://changelogs.ubuntu.com/changelogs/$dir/${pkg}_${version}/changelog > "$OUT"
+if ! wget -q -O- ${SERVER}/$dir/${pkg}_${version}/changelog > "$OUT"
 then
     echo "ERROR: changelog for this version is not (yet) available; try https://launchpad.net/ubuntu/+source/$pkg/+changelog" >&2
     exit 1

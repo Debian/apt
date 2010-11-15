@@ -2,6 +2,12 @@ apt (0.8.8ubuntu3) UNRELEASED; urgency=low
 
   * cmdline/apt-changelog: Filter out multiple results for a source package,
     just take the latest one.
+  * cmdline/apt-changelog: Read server name from configuration
+    APT::Changelog::Server instead of hardcoding it. This allows local users
+    to point to a local changelog mirror, or make this script work for Debian.
+  * Add debian/apt.conf.changelog: Configuration for apt-changelog with the
+    server for Ubuntu (changelogs.ubuntu.com). Install it in debian/rules.
+  * doc/apt-changelog.1.xml: Document the new option.
 
  -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 12 Nov 2010 16:53:31 +0100
 
