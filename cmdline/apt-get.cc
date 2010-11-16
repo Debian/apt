@@ -2733,6 +2733,37 @@ bool DoBuildDep(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// GuessThirdPartyChangelogUri - return url 			        /*{{{*/
+// ---------------------------------------------------------------------
+bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
+                                 pkgCache::PkgIterator Pkg,
+                                 pkgCache::VerIterator Ver,
+                                 string &out_uri)
+{
+   pkgRecords Recs(Cache);
+   pkgSourceList *SrcList = Cache.GetSourceList();
+
+   // get the binary deb server path
+   pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
+   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+   // FIXME: deal with cases like gcc-defaults (srcver != binver)
+   string srcver = StripEpoch(Ver.VerStr());
+
+   pkgCache::VerFileIterator Vf = Ver.FileList();
+   if (Vf.end() == true)
+      return false;
+   pkgCache::PkgFileIterator F = Vf.File();
+   pkgIndexFile *index;
+   if(SrcList->FindIndex(F, index) == false)
+      return false;
+   // get archive uri for the binary deb
+   string deb_uri = index->ArchiveURI(rec.FileName());
+
+   // now strip away the filename and add srcpkg_srcver.changelog
+   out_uri = flNotFile(deb_uri);
+   out_uri += srcpkg + "_" + srcver + ".changelog";
+   return true;
+}
 // DownloadChangelog - Download the changelog 			        /*{{{*/
 // ---------------------------------------------------------------------
 bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerIterator V, string targetfile)
@@ -2775,7 +2806,18 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
    strprintf(path, "/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
    // get it
    new pkgAcqFile(&Fetcher, server+path, "", 0, descr, srcpkg, "ignored", targetfile);
+   // try downloading it, if that fails, they third-party-changelogs location
+   // FIXME: res is "Continue" even if I get a 404?!?
    int res = Fetcher.Run();
+   if (!FileExists(targetfile))
+   {
+      string third_party_uri;
+      if (GuessThirdPartyChangelogUri(CacheFile, Pkg, V, third_party_uri))
+      {
+         new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, srcpkg, "ignored", targetfile);
+         res = Fetcher.Run();
+      }
+   }
 
    if (FileExists(targetfile))
       return true;
