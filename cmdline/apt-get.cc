@@ -2783,7 +2783,6 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
 
    // build uri
    srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   strprintf(descr, _("Changelog for %s"), srcpkg.c_str());
    // FIXME: we actually need the source section here
    src_section= Pkg.Section();
    if(src_section.find('/')!=src_section.npos)
@@ -2804,8 +2803,11 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
                           "http://packages.debian.org/");
    // ... but not the format string to avoid all possible attacks
    strprintf(path, "/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
-   // get it
-   new pkgAcqFile(&Fetcher, server+path, "", 0, descr, srcpkg, "ignored", targetfile);
+   // queue it
+   string changelog_uri = server+path;
+   strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), changelog_uri.c_str());
+   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignored", targetfile);
+
    // try downloading it, if that fails, they third-party-changelogs location
    // FIXME: res is "Continue" even if I get a 404?!?
    int res = Fetcher.Run();
@@ -2814,6 +2816,7 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
       string third_party_uri;
       if (GuessThirdPartyChangelogUri(CacheFile, Pkg, V, third_party_uri))
       {
+         strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), third_party_uri.c_str());
          new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, srcpkg, "ignored", targetfile);
          res = Fetcher.Run();
       }
