@@ -2751,10 +2751,12 @@ string GetChangelogPath(CacheFile &Cache,
    pkgRecords Recs(Cache);
    pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
    string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   // FIXME: deal with cases like gcc-defaults (srcver != binver)
-   string srcver = StripEpoch(Ver.VerStr());
+   string ver = Ver.VerStr();
+   // if there is a source version it always wins
+   if (rec.SourceVer() != "")
+      ver = rec.SourceVer();
    path = flNotFile(rec.FileName());
-   path += srcpkg + "_" + srcver;
+   path += srcpkg + "_" + StripEpoch(ver);
    return path;
 }
 									/*}}}*/
