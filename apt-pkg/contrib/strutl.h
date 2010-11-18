@@ -61,6 +61,7 @@ void strprintf(string &out,const char *format,...) __like_printf(2);
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...) __like_printf(3);
 bool CheckDomainList(const string &Host, const string &List);
 int tolower_ascii(int const c) __attrib_const __hot;
+string StripEpoch(const string &VerStr);
 
 #define APT_MKSTRCMP(name,func) \
 inline int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));}; \

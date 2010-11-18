@@ -1174,6 +1174,15 @@ char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
    return Buffer + Did;
 }
 									/*}}}*/
+// StripEpoch - Remove the version "epoch" from a version string	/*{{{*/
+// ---------------------------------------------------------------------
+string StripEpoch(const string &VerStr)
+{
+   size_t i = VerStr.find(":");
+   if (i == string::npos)
+      return VerStr;
+   return VerStr.substr(i+1);
+}
 
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
