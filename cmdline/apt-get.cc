@@ -2805,10 +2805,12 @@ string GetChangelogPath(CacheFile &Cache,
    pkgRecords Recs(Cache);
    pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
    string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   // FIXME: deal with cases like gcc-defaults (srcver != binver)
-   string srcver = StripEpoch(Ver.VerStr());
+   string ver = Ver.VerStr();
+   // if there is a source version it always wins
+   if (rec.SourceVer() != "")
+      ver = rec.SourceVer();
    path = flNotFile(rec.FileName());
-   path += srcpkg + "_" + srcver;
+   path += srcpkg + "_" + StripEpoch(ver);
    return path;
 }
 									/*}}}*/
@@ -2854,7 +2856,6 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
  * GuessThirdPartyChangelogUri for details how)
  */
 {
-   string srcpkg;
    string path;
    string descr;
    string server;
@@ -2868,9 +2869,9 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
                           "http://packages.debian.org/changelogs");
    path = GetChangelogPath(CacheFile, Pkg, Ver);
    strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
-   strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), changelog_uri.c_str());
+   strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
    // queue it
-   new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, srcpkg, "ignored", targetfile);
+   new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
 
    // try downloading it, if that fails, they third-party-changelogs location
    // FIXME: res is "Continue" even if I get a 404?!?
@@ -2880,8 +2881,8 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
       string third_party_uri;
       if (GuessThirdPartyChangelogUri(CacheFile, Pkg, Ver, third_party_uri))
       {
-         strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), third_party_uri.c_str());
-         new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, srcpkg, "ignored", targetfile);
+         strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), third_party_uri.c_str());
+         new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
          res = Fetcher.Run();
       }
    }
