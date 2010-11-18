@@ -2771,7 +2771,6 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
    string srcpkg;
    string prefix;
    string descr;
-   string src_section;
    string verstr;
    string server;
    string path;
@@ -2781,28 +2780,16 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
    pkgCache::PkgIterator Pkg = V.ParentPkg();
    pkgRecords::Parser &rec=Recs.Lookup(V.FileList());
 
-   // build uri
+   // we need the the source pkg, the source version and the pool prefix
    srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   // FIXME: we actually need the source section here
-   src_section= Pkg.Section();
-   if(src_section.find('/')!=src_section.npos)
-      src_section=string(src_section, 0, src_section.find('/'));
-   else
-      src_section="main";
-
-   prefix+=srcpkg[0];
-   if(srcpkg.size()>3 && srcpkg[0]=='l' && srcpkg[1]=='i' && srcpkg[2]=='b')
-      prefix=std::string("lib")+srcpkg[3];
-
-   verstr = V.VerStr();
-   if(verstr.find(':')!=verstr.npos)
-      verstr=string(verstr, verstr.find(':')+1);
+   verstr = StripEpoch(V.VerStr());
+   prefix = flNotFile(rec.FileName());
 
    // make the server configurable
    server = _config->Find("Apt::Changelogs::Server",
                           "http://packages.debian.org/");
    // ... but not the format string to avoid all possible attacks
-   strprintf(path, "/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
+   strprintf(path, "/changelogs/%s/%s_%s/changelog", prefix.c_str(), srcpkg.c_str(), verstr.c_str());
    // queue it
    string changelog_uri = server+path;
    strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), changelog_uri.c_str());
