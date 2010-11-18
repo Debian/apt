@@ -2787,80 +2787,90 @@ bool DoBuildDep(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// GetChangelogPath - return a path pointing to a changelog file or dir /*{{{*/
+// ---------------------------------------------------------------------
+/* This returns a "path" string for the changelog url construction.
+ * Please note that its not complete, it either needs a "/changelog"
+ * appended (for the packages.debian.org/changelogs site) or a
+ * ".changelog" (for third party sites that store the changelog in the
+ * pool/ next to the deb itself)
+ * Example return: "pool/main/a/apt/apt_0.8.8ubuntu3" 
+ */
+string GetChangelogPath(CacheFile &Cache, 
+                        pkgCache::PkgIterator Pkg,
+                        pkgCache::VerIterator Ver)
+{
+   string path;
+
+   pkgRecords Recs(Cache);
+   pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
+   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+   // FIXME: deal with cases like gcc-defaults (srcver != binver)
+   string srcver = StripEpoch(Ver.VerStr());
+   path = flNotFile(rec.FileName());
+   path += srcpkg + "_" + srcver;
+   return path;
+}
+									/*}}}*/
 // GuessThirdPartyChangelogUri - return url 			        /*{{{*/
 // ---------------------------------------------------------------------
+/* Contruct a changelog file path for third party sites that do not use
+ * packages.debian.org/changelogs
+ * This simply uses the ArchiveURI() of the source pkg and looks for
+ * a .changelog file there, Example for "mediabuntu":
+ * apt-get changelog mplayer-doc:
+ *  http://packages.medibuntu.org/pool/non-free/m/mplayer/mplayer_1.0~rc4~try1.dsfg1-1ubuntu1+medibuntu1.changelog
+ */
 bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
                                  pkgCache::PkgIterator Pkg,
                                  pkgCache::VerIterator Ver,
                                  string &out_uri)
 {
-   pkgRecords Recs(Cache);
-   pkgSourceList *SrcList = Cache.GetSourceList();
-
    // get the binary deb server path
-   pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
-   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   // FIXME: deal with cases like gcc-defaults (srcver != binver)
-   string srcver = StripEpoch(Ver.VerStr());
-
    pkgCache::VerFileIterator Vf = Ver.FileList();
    if (Vf.end() == true)
       return false;
    pkgCache::PkgFileIterator F = Vf.File();
    pkgIndexFile *index;
+   pkgSourceList *SrcList = Cache.GetSourceList();
    if(SrcList->FindIndex(F, index) == false)
       return false;
+
    // get archive uri for the binary deb
-   string deb_uri = index->ArchiveURI(rec.FileName());
+   string path_without_dot_changelog = GetChangelogPath(Cache, Pkg, Ver);
+   out_uri = index->ArchiveURI(path_without_dot_changelog + ".changelog");
 
    // now strip away the filename and add srcpkg_srcver.changelog
-   out_uri = flNotFile(deb_uri);
-   out_uri += srcpkg + "_" + srcver + ".changelog";
    return true;
 }
 // DownloadChangelog - Download the changelog 			        /*{{{*/
 // ---------------------------------------------------------------------
-bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerIterator V, string targetfile)
+bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
+                       pkgCache::VerIterator Ver, string targetfile)
+/* Download a changelog file for the given package version to
+ * targetfile. This will first try the server from Apt::Changelogs::Server
+ * (http://packages.debian.org/changelogs by default) and if that gives
+ * a 404 tries to get it from the archive directly (see 
+ * GuessThirdPartyChangelogUri for details how)
+ */
 {
    string srcpkg;
-   string prefix;
-   string descr;
-   string src_section;
-   string verstr;
-   string server;
    string path;
+   string descr;
+   string server;
+   string changelog_uri;
 
    // data structures we need
-   pkgRecords Recs(CacheFile);
-   pkgCache::PkgIterator Pkg = V.ParentPkg();
-   pkgRecords::Parser &rec=Recs.Lookup(V.FileList());
+   pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 
-   // build uri
-   srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   // FIXME: we actually need the source section here
-   src_section= Pkg.Section();
-   if(src_section.find('/')!=src_section.npos)
-      src_section=string(src_section, 0, src_section.find('/'));
-   else
-      src_section="main";
-
-   prefix+=srcpkg[0];
-   if(srcpkg.size()>3 && srcpkg[0]=='l' && srcpkg[1]=='i' && srcpkg[2]=='b')
-      prefix=std::string("lib")+srcpkg[3];
-
-   verstr = V.VerStr();
-   if(verstr.find(':')!=verstr.npos)
-      verstr=string(verstr, verstr.find(':')+1);
-
-   // make the server configurable
+   // make the server root configurable
    server = _config->Find("Apt::Changelogs::Server",
-                          "http://packages.debian.org/");
-   // ... but not the format string to avoid all possible attacks
-   strprintf(path, "/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
-   // queue it
-   string changelog_uri = server+path;
+                          "http://packages.debian.org/changelogs");
+   path = GetChangelogPath(CacheFile, Pkg, Ver);
+   strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
    strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), changelog_uri.c_str());
-   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignored", targetfile);
+   // queue it
+   new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, srcpkg, "ignored", targetfile);
 
    // try downloading it, if that fails, they third-party-changelogs location
    // FIXME: res is "Continue" even if I get a 404?!?
@@ -2868,7 +2878,7 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
    if (!FileExists(targetfile))
    {
       string third_party_uri;
-      if (GuessThirdPartyChangelogUri(CacheFile, Pkg, V, third_party_uri))
+      if (GuessThirdPartyChangelogUri(CacheFile, Pkg, Ver, third_party_uri))
       {
          strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), third_party_uri.c_str());
          new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, srcpkg, "ignored", targetfile);

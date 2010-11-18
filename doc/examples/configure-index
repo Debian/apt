@@ -116,9 +116,10 @@ APT
 
   Changelogs
   {
-    // server the provides the changelogs, the code will automatically
-    // append  "/changelogs/pool/%s/%s/%s/%s_%s/changelog" to the uri
-    Server "http://packages.debian.org/";
+    // server the provides the changelogs, the code will assume
+    // the changlogs are in the pool/ under a srcpkg_ver directory 
+    // with the name "changelog"
+    Server "http://packages.debian.org/changelogs";
   }:
 
   // control parameters for cron jobs by /etc/cron.daily/apt
