@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.8.0\n"
+"Project-Id-Version: apt 0.8.8\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-28 17:23+0200\n"
-"PO-Revision-Date: 2010-09-08 22:37+0200\n"
+"PO-Revision-Date: 2010-11-15 21:42+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
 "Language: \n"
@@ -730,11 +730,11 @@ msgstr "Die folgenden Pakete werden aktualisiert (Upgrade):"
 #: cmdline/apt-get.cc:488
 msgid "The following packages will be DOWNGRADED:"
 msgstr ""
-"Die folgenden Pakete werden DEAKTUALISIERT (ältere Version wird installiert):"
+"Die folgenden Pakete werden durch eine ÄLTERE VERSION ERSETZT (Downgrade):"
 
 #: cmdline/apt-get.cc:508
 msgid "The following held packages will be changed:"
-msgstr "Die folgenden gehaltenen Pakete werden verändert:"
+msgstr "Die folgenden zurückgehaltenen Pakete werden verändert:"
 
 #: cmdline/apt-get.cc:561
 #, c-format
@@ -762,7 +762,7 @@ msgstr "%lu erneut installiert, "
 #: cmdline/apt-get.cc:609
 #, c-format
 msgid "%lu downgraded, "
-msgstr "%lu deaktualisiert, "
+msgstr "%lu durch eine ältere Version ersetzt, "
 
 #: cmdline/apt-get.cc:611
 #, c-format
@@ -814,8 +814,8 @@ msgid ""
 "is only available from another source\n"
 msgstr ""
 "Paket %s ist nicht verfügbar, wird aber von einem anderen Paket\n"
-"referenziert. Das kann heißen, dass das Paket fehlt, dass es veraltet\n"
-"ist oder nur aus einer anderen Quelle verfügbar ist.\n"
+"referenziert. Das kann heißen, dass das Paket fehlt, dass es abgelöst\n"
+"wurde oder nur aus einer anderen Quelle verfügbar ist.\n"
 
 #: cmdline/apt-get.cc:701
 msgid "However the following packages replace it:"
@@ -1799,7 +1799,7 @@ msgstr "Interner Fehler beim Hinzufügen einer Umleitung"
 
 #: apt-inst/deb/dpkgdb.cc:379
 msgid "The pkg cache must be initialized first"
-msgstr "Der Paket-Cache muss erst initialisiert werden"
+msgstr "Der Paketzwischenspeicher muss zuerst initialisiert werden"
 
 #: apt-inst/deb/dpkgdb.cc:439
 #, c-format
@@ -2530,15 +2530,16 @@ msgstr "Problem beim Synchronisieren der Datei"
 
 #: apt-pkg/pkgcache.cc:145
 msgid "Empty package cache"
-msgstr "Leerer Paket-Cache"
+msgstr "Leerer Paketzwischenspeicher"
 
 #: apt-pkg/pkgcache.cc:151
 msgid "The package cache file is corrupted"
-msgstr "Die Paket-Cache-Datei ist beschädigt"
+msgstr "Die Paketzwischenspeicher-Datei ist beschädigt"
 
 #: apt-pkg/pkgcache.cc:156
 msgid "The package cache file is an incompatible version"
-msgstr "Die Paket-Cache-Datei liegt in einer inkompatiblen Version vor"
+msgstr ""
+"Die Paketzwischenspeicher-Datei liegt in einer inkompatiblen Version vor"
 
 #: apt-pkg/pkgcache.cc:161
 #, c-format
@@ -2547,7 +2548,7 @@ msgstr "Das Versionssystem »%s« wird durch dieses APT nicht unterstützt"
 
 #: apt-pkg/pkgcache.cc:166
 msgid "The package cache was built for a different architecture"
-msgstr "Der Paket-Cache wurde für eine andere Architektur aufgebaut"
+msgstr "Der Paketzwischenspeicher wurde für eine andere Architektur aufgebaut"
 
 #: apt-pkg/pkgcache.cc:293
 msgid "Depends"
@@ -2575,11 +2576,11 @@ msgstr "Ersetzt"
 
 #: apt-pkg/pkgcache.cc:295
 msgid "Obsoletes"
-msgstr "Veraltet"
+msgstr "Löst ab"
 
 #: apt-pkg/pkgcache.cc:295
 msgid "Breaks"
-msgstr "Stört"
+msgstr "Beschädigt"
 
 #: apt-pkg/pkgcache.cc:295
 msgid "Enhances"
@@ -2767,12 +2768,13 @@ msgid ""
 "held packages."
 msgstr ""
 "Fehler: Unterbrechungen durch pkgProblemResolver::Resolve hervorgerufen; "
-"dies könnte durch gehaltene Pakete verursacht worden sein."
+"dies könnte durch zurückgehaltene Pakete verursacht worden sein."
 
 #: apt-pkg/algorithms.cc:1212
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
-"Probleme können nicht korrigiert werden, Sie haben gehaltene defekte Pakete."
+"Probleme können nicht korrigiert werden, Sie haben zurückgehaltene defekte "
+"Pakete."
 
 #: apt-pkg/algorithms.cc:1488 apt-pkg/algorithms.cc:1490
 msgid ""
@@ -2877,7 +2879,7 @@ msgstr "Keine Priorität (oder Null) für Pin angegeben"
 
 #: apt-pkg/pkgcachegen.cc:80
 msgid "Cache has an incompatible versioning system"
-msgstr "Cache hat ein inkompatibles Versionssystem"
+msgstr "Zwischenspeicher hat ein inkompatibles Versionssystem"
 
 #: apt-pkg/pkgcachegen.cc:198
 #, c-format

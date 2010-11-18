@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+setupaptarchive
+
+# the new xserver-xorg-core breaks xserver-xorg-video-6
+# which both -intel (installed) and -vesa (not installed)
+# provided in their old version.
+# The test ensures that only -intel will be upgraded
+# (together with -core of course) and -vesa not touched.
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  xserver-xorg-video-intel
+The following packages will be upgraded:
+  xserver-xorg-core xserver-xorg-video-intel
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/2992 kB of archives.
+After this operation, 24.6 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget install xserver-xorg-core --trivial-only
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  xserver-xorg-core xserver-xorg-video-intel
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/2992 kB of archives.
+After this operation, 24.6 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget upgrade --trivial-only
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  xserver-xorg-core xserver-xorg-video-intel
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/2992 kB of archives.
+After this operation, 24.6 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only

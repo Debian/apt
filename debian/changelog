@@ -1,3 +1,34 @@
+apt (0.8.9) UNRELEASED; urgency=low
+
+  [ Christian Perrier ]
+  * Fix "typos" in French manpages translations. Thanks to
+    Cyril Brulebois for bashing me.
+  * Drop useless untranslatable sections from apt.8
+
+  [ Programs translations ]
+  * Slovenian update by Andrej Žnidaršič and Rosetta Slovenian team
+  ! German update by Holger Wansing. Closes: #603619
+
+  [ David Kalnischkies ]
+  * apt-pkg/aptconfiguration.cc:
+    - evaluate Acquire::Languages= before LANG= (Closes: #602573)
+  * apt-pkg/orderlist.cc:
+    - try fixing before removing even if the fix is hidden in
+      a provides, hidden in the #590438 testcase
+  * apt-pkg/algorithms.cc:
+    - if the package was explicitly marked as ToRemove don't
+      consider it as a candidate for FixByInstall
+  * apt-pkg/depcache.cc:
+    - don't install previously not installed providers in a try
+      to statisfy a "Breaks: provides" dependency by upgrade
+  * cmdline/acqprogress.cc:
+    - don't ask the user for media change if quiet >= 2, stdout is not
+      a tty and assume-yes, force-yes or trivial-only option is set to
+      avoid cpu eating endless loops in unattended runs like apt.cron
+      (Closes: #602354, LP: #665580)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 18 Nov 2010 09:25:04 +0100
+
 apt (0.8.8ubuntu3) natty; urgency=low
 
   * cmdline/apt-changelog: Filter out multiple results for a source package,

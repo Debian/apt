@@ -1448,8 +1448,11 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    VerIterator Ver(*this,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();
 
-	    
-	       
+	    /* The List includes all packages providing this dependency,
+	       even providers which are not installed, so skip them. */
+	    if (PkgState[Pkg->ID].InstallVer == 0)
+	       continue;
+
 	    if (PkgState[Pkg->ID].CandidateVer != *I &&
 	        Start->Type == Dep::DpkgBreaks)
 	       MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);
