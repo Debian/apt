@@ -1,4 +1,4 @@
-apt (0.8.9) UNRELEASED; urgency=low
+apt (0.8.9) unstable; urgency=low
 
   [ Christian Perrier ]
   * Fix "typos" in French manpages translations. Thanks to
@@ -7,6 +7,7 @@ apt (0.8.9) UNRELEASED; urgency=low
 
   [ Programs translations ]
   * Slovenian update by Andrej Žnidaršič and Rosetta Slovenian team
+  ! German update by Holger Wansing. Closes: #603619
 
   [ David Kalnischkies ]
   * apt-pkg/aptconfiguration.cc:
@@ -20,8 +21,13 @@ apt (0.8.9) UNRELEASED; urgency=low
   * apt-pkg/depcache.cc:
     - don't install previously not installed providers in a try
       to statisfy a "Breaks: provides" dependency by upgrade
+  * cmdline/acqprogress.cc:
+    - don't ask the user for media change if quiet >= 2, stdout is not
+      a tty and assume-yes, force-yes or trivial-only option is set to
+      avoid cpu eating endless loops in unattended runs like apt.cron
+      (Closes: #602354, LP: #665580)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 10 Nov 2010 13:22:39 +0100
+ -- Michael Vogt <mvo@debian.org>  Thu, 18 Nov 2010 09:25:04 +0100
 
 apt (0.8.8) unstable; urgency=low
 

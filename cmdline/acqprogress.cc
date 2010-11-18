@@ -11,6 +11,7 @@
 #include "acqprogress.h"
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
@@ -19,6 +20,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <iostream>
+#include <unistd.h>
 									/*}}}*/
 
 using namespace std;
@@ -266,6 +268,16 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 /* Prompt for a media swap */
 bool AcqTextStatus::MediaChange(string Media,string Drive)
 {
+   // If we do not output on a terminal and one of the options to avoid user
+   // interaction is given, we assume that no user is present who could react
+   // on your media change request
+   if (isatty(STDOUT_FILENO) != 1 && Quiet >= 2 &&
+       (_config->FindB("APT::Get::Assume-Yes",false) == true ||
+	_config->FindB("APT::Get::Force-Yes",false) == true ||
+	_config->FindB("APT::Get::Trivial-Only",false) == true))
+
+      return false;
+
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
    ioprintf(cout,_("Media change: please insert the disc labeled\n"
