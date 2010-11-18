@@ -2891,7 +2891,10 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
       return true;
 
    // error
-   return _error->Error("changelog download failed");
+   pkgRecords Recs(CacheFile);
+   pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
+   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+   return _error->Error("changelog for this version is not (yet) available; try https://launchpad.net/ubuntu/+source/%s/+changelog", srcpkg.c_str());
 }
 									/*}}}*/
 // DisplayFileInPager - Display File with pager        			/*{{{*/
