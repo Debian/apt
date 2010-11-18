@@ -2165,6 +2165,60 @@ bool DoAutoClean(CommandLine &CmdL)
       Cleaner.Go(_config->FindDir("Dir::Cache::archives") + "partial/",*Cache);
 }
 									/*}}}*/
+// DoDownload - download a binary					/*{{{*/
+// ---------------------------------------------------------------------
+bool DoDownload(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.ReadOnlyOpen() == false)
+      return false;
+   
+   APT::CacheSetHelper helper(c0out);
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   pkgAcquire Fetcher;
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   Fetcher.Setup(&Stat);
+
+   if (verset.empty() == true)
+      return false;
+
+   bool result = true;
+   pkgRecords Recs(Cache);
+   pkgSourceList *SrcList = Cache.GetSourceList();
+   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+        Ver != verset.end(); 
+        ++Ver) 
+   {
+      string descr;
+      // get the right version
+      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+      pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
+      pkgCache::VerFileIterator Vf = Ver.FileList();
+      if (Vf.end() == true)
+         return _error->Error("Can not find VerFile");
+      pkgCache::PkgFileIterator F = Vf.File();
+      pkgIndexFile *index;
+      if(SrcList->FindIndex(F, index) == false)
+         return _error->Error("FindIndex failed");
+      string uri = index->ArchiveURI(rec.FileName());
+      strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
+      // get the most appropriate hash
+      HashString hash;
+      if (rec.SHA256Hash() != "")
+         hash = HashString("sha256", rec.SHA256Hash());
+      else if (rec.SHA1Hash() != "")
+         hash = HashString("sha1", rec.SHA1Hash());
+      else if (rec.MD5Hash() != "")
+         hash = HashString("md5", rec.MD5Hash());
+      // get the file
+      new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
+      result &= (Fetcher.Run() == pkgAcquire::Continue);
+   }
+
+   return result;
+}
+									/*}}}*/
 // DoCheck - Perform the check operation				/*{{{*/
 // ---------------------------------------------------------------------
 /* Opening automatically checks the system, this command is mostly used
@@ -2731,60 +2785,6 @@ bool DoBuildDep(CommandLine &CmdL)
    if (InstallPackages(Cache, false, true) == false)
       return _error->Error(_("Failed to process build dependencies"));
    return true;
-}
-									/*}}}*/
-// DoDownload - download a binary					/*{{{*/
-// ---------------------------------------------------------------------
-bool DoDownload(CommandLine &CmdL)
-{
-   CacheFile Cache;
-   if (Cache.ReadOnlyOpen() == false)
-      return false;
-   
-   APT::CacheSetHelper helper(c0out);
-   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
-   pkgAcquire Fetcher;
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
-
-   if (verset.empty() == true)
-      return false;
-
-   bool result = true;
-   pkgRecords Recs(Cache);
-   pkgSourceList *SrcList = Cache.GetSourceList();
-   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
-        Ver != verset.end(); 
-        ++Ver) 
-   {
-      string descr;
-      // get the right version
-      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-      pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
-      pkgCache::VerFileIterator Vf = Ver.FileList();
-      if (Vf.end() == true)
-         return _error->Error("Can not find VerFile");
-      pkgCache::PkgFileIterator F = Vf.File();
-      pkgIndexFile *index;
-      if(SrcList->FindIndex(F, index) == false)
-         return _error->Error("FindIndex failed");
-      string uri = index->ArchiveURI(rec.FileName());
-      strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
-      // get the most appropriate hash
-      HashString hash;
-      if (rec.SHA256Hash() != "")
-         hash = HashString("sha256", rec.SHA256Hash());
-      else if (rec.SHA1Hash() != "")
-         hash = HashString("sha1", rec.SHA1Hash());
-      else if (rec.MD5Hash() != "")
-         hash = HashString("md5", rec.MD5Hash());
-      // get the file
-      new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
-      result &= (Fetcher.Run() == pkgAcquire::Continue);
-   }
-
-   return result;
 }
 									/*}}}*/
 // DoMoo - Never Ask, Never Tell					/*{{{*/
