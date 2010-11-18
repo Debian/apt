@@ -2787,6 +2787,158 @@ bool DoBuildDep(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// GuessThirdPartyChangelogUri - return url 			        /*{{{*/
+// ---------------------------------------------------------------------
+bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
+                                 pkgCache::PkgIterator Pkg,
+                                 pkgCache::VerIterator Ver,
+                                 string &out_uri)
+{
+   pkgRecords Recs(Cache);
+   pkgSourceList *SrcList = Cache.GetSourceList();
+
+   // get the binary deb server path
+   pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
+   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+   // FIXME: deal with cases like gcc-defaults (srcver != binver)
+   string srcver = StripEpoch(Ver.VerStr());
+
+   pkgCache::VerFileIterator Vf = Ver.FileList();
+   if (Vf.end() == true)
+      return false;
+   pkgCache::PkgFileIterator F = Vf.File();
+   pkgIndexFile *index;
+   if(SrcList->FindIndex(F, index) == false)
+      return false;
+   // get archive uri for the binary deb
+   string deb_uri = index->ArchiveURI(rec.FileName());
+
+   // now strip away the filename and add srcpkg_srcver.changelog
+   out_uri = flNotFile(deb_uri);
+   out_uri += srcpkg + "_" + srcver + ".changelog";
+   return true;
+}
+// DownloadChangelog - Download the changelog 			        /*{{{*/
+// ---------------------------------------------------------------------
+bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerIterator V, string targetfile)
+{
+   string srcpkg;
+   string prefix;
+   string descr;
+   string src_section;
+   string verstr;
+   string server;
+   string path;
+
+   // data structures we need
+   pkgRecords Recs(CacheFile);
+   pkgCache::PkgIterator Pkg = V.ParentPkg();
+   pkgRecords::Parser &rec=Recs.Lookup(V.FileList());
+
+   // build uri
+   srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+   // FIXME: we actually need the source section here
+   src_section= Pkg.Section();
+   if(src_section.find('/')!=src_section.npos)
+      src_section=string(src_section, 0, src_section.find('/'));
+   else
+      src_section="main";
+
+   prefix+=srcpkg[0];
+   if(srcpkg.size()>3 && srcpkg[0]=='l' && srcpkg[1]=='i' && srcpkg[2]=='b')
+      prefix=std::string("lib")+srcpkg[3];
+
+   verstr = V.VerStr();
+   if(verstr.find(':')!=verstr.npos)
+      verstr=string(verstr, verstr.find(':')+1);
+
+   // make the server configurable
+   server = _config->Find("Apt::Changelogs::Server",
+                          "http://packages.debian.org/");
+   // ... but not the format string to avoid all possible attacks
+   strprintf(path, "/changelogs/pool/%s/%s/%s/%s_%s/changelog", src_section.c_str(), prefix.c_str(), srcpkg.c_str(), srcpkg.c_str(), verstr.c_str());
+   // queue it
+   string changelog_uri = server+path;
+   strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), changelog_uri.c_str());
+   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignored", targetfile);
+
+   // try downloading it, if that fails, they third-party-changelogs location
+   // FIXME: res is "Continue" even if I get a 404?!?
+   int res = Fetcher.Run();
+   if (!FileExists(targetfile))
+   {
+      string third_party_uri;
+      if (GuessThirdPartyChangelogUri(CacheFile, Pkg, V, third_party_uri))
+      {
+         strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), third_party_uri.c_str());
+         new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, srcpkg, "ignored", targetfile);
+         res = Fetcher.Run();
+      }
+   }
+
+   if (FileExists(targetfile))
+      return true;
+
+   // error
+   return _error->Error("changelog download failed");
+}
+									/*}}}*/
+// DisplayFileInPager - Display File with pager        			/*{{{*/
+void DisplayFileInPager(string filename)
+{
+   pid_t Process = ExecFork();
+   if (Process == 0)
+   {
+      const char *Args[3];
+      Args[0] = "/usr/bin/sensible-pager";
+      Args[1] = filename.c_str();
+      Args[2] = 0;
+      execvp(Args[0],(char **)Args);
+      exit(100);
+   }
+         
+   // Wait for the subprocess
+   ExecWait(Process, "sensible-pager", false);
+}
+									/*}}}*/
+// DoChangelog - Get changelog from the command line			/*{{{*/
+// ---------------------------------------------------------------------
+bool DoChangelog(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.ReadOnlyOpen() == false)
+      return false;
+   
+   APT::CacheSetHelper helper(c0out);
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   pkgAcquire Fetcher;
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   Fetcher.Setup(&Stat);
+
+   if (verset.empty() == true)
+      return false;
+   char *tmpdir = mkdtemp(strdup("/tmp/apt-changelog-XXXXXX"));
+   if (tmpdir == NULL) {
+      return _error->Errno("mkdtemp", "mkdtemp failed");
+   }
+   
+   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+        Ver != verset.end(); 
+        ++Ver) 
+   {
+      string changelogfile = string(tmpdir) + "changelog";
+      if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile))
+         DisplayFileInPager(changelogfile);
+      // cleanup temp file
+      unlink(changelogfile.c_str());
+   }
+   // clenaup tmp dir
+   rmdir(tmpdir);
+   free(tmpdir);
+   return true;
+}
+									/*}}}*/
 // DoMoo - Never Ask, Never Tell					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -2978,6 +3130,7 @@ int main(int argc,const char *argv[])					/*{{{*/
                                    {"check",&DoCheck},
 				   {"source",&DoSource},
                                    {"download",&DoDownload},
+                                   {"changelog",&DoChangelog},
 				   {"moo",&DoMoo},
 				   {"help",&ShowHelp},
                                    {0,0}};
