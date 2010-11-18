@@ -2751,7 +2751,6 @@ bool DoDownload(CommandLine &CmdL)
    if (verset.empty() == true)
       return false;
 
-   bool result = true;
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
    for (APT::VersionSet::const_iterator Ver = verset.begin(); 
@@ -2781,8 +2780,8 @@ bool DoDownload(CommandLine &CmdL)
          hash = HashString("md5", rec.MD5Hash());
       // get the file
       new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
-      result &= (Fetcher.Run() == pkgAcquire::Continue);
    }
+   bool result = (Fetcher.Run() == pkgAcquire::Continue);
 
    return result;
 }
