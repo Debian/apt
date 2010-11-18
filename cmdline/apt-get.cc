@@ -3041,6 +3041,8 @@ bool ShowHelp(CommandLine &CmdL)
       "   check - Verify that there are no broken dependencies\n"
       "   markauto - Mark the given packages as automatically installed\n"
       "   unmarkauto - Mark the given packages as manually installed\n"
+      "   changelog - Download and display the changelog for the given package\n"
+      "   download - Download the binary package into the current directory\n"
       "\n"
       "Options:\n"
       "  -h  This help text.\n"
