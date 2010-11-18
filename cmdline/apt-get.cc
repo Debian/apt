@@ -2806,7 +2806,7 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, pkgCache::VerI
    // queue it
    string changelog_uri = server+path;
    strprintf(descr, _("Changelog for %s (%s)"), srcpkg.c_str(), changelog_uri.c_str());
-   new pkgAcqFile(&Fetcher, uri, "", 0, descr, srcpkg, "ignored", targetfile);
+   new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, srcpkg, "ignored", targetfile);
 
    // try downloading it, if that fails, they third-party-changelogs location
    // FIXME: res is "Continue" even if I get a 404?!?
