@@ -1349,9 +1349,10 @@ bool HttpMethod::AutoDetectProxy()
    pid_t Process = ExecFork();
    if (Process == 0)
    {
+      close(Pipes[0]);
       dup2(Pipes[1],STDOUT_FILENO);
       SetCloseExec(STDOUT_FILENO,false);
-      
+
       const char *Args[2];
       Args[0] = AutoDetectProxyCmd.c_str();
       Args[1] = 0;
@@ -1361,10 +1362,18 @@ bool HttpMethod::AutoDetectProxy()
    }
    char buf[512];
    int InFd = Pipes[0];
-   if (read(InFd, buf, sizeof(buf)) < 0)
+   close(Pipes[1]);
+   int res = read(InFd, buf, sizeof(buf));
+   ExecWait(Process, "ProxyAutoDetect", true);
+
+   if (res < 0)
       return _error->Errno("read", "Failed to read");
-   ExecWait(Process, "ProxyAutoDetect");
-   
+   if (res == 0)
+      return _error->Warning("ProxyAutoDetect returned no data");
+
+   // add trailing \0
+   buf[res] = 0;
+
    if (Debug)
       clog << "auto detect command returned: '" << buf << "'" << endl;
 
