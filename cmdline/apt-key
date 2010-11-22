@@ -71,7 +71,7 @@ net_update() {
     if [ -e $keyring ]; then
 	old_mtime=$(stat -c %Y $keyring)
     fi
-    (cd  /var/lib/apt/keyrings; wget -q -N $ARCHIVE_KEYRING_URI)
+    (cd  /var/lib/apt/keyrings; wget --timeout=90 -q -N $ARCHIVE_KEYRING_URI)
     if [ ! -e $keyring ]; then
 	return
     fi
