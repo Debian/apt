@@ -1,7 +1,15 @@
 apt (0.8.9ubuntu4) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * cmdline/apt-key:
     - set timeout of wget for net-update to 90 seconds (thanks to \sh)
+
+  [ Martin Pitt ]
+  * Revert r1819 and r1820 to disable compressed indexes by default again.
+    Testing has brought up a few places where this seriously degrades
+    performance, mostly in applications which iterate through all available
+    package records, like update-apt-xapian-index or synaptic. See
+    https://bugs.launchpad.net/ubuntu/+bugs?field.tag=apt-compressed-indexes
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 22 Nov 2010 18:15:09 +0100
 

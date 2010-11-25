@@ -672,7 +672,7 @@ string pkgAcqIndex::Custom600Headers()
 {
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
-   if (_config->FindB("Acquire::GzipIndexes",true))
+   if (_config->FindB("Acquire::GzipIndexes",false))
       Final += ".gz";
    
    struct stat Buf;
@@ -795,7 +795,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true) {
-       if (_config->FindB("Acquire::GzipIndexes",true) && compExt == "gz")
+       if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
 	  // Update DestFile for .gz suffix so that the clean operation keeps it
 	  DestFile += ".gz";
       return;
@@ -809,7 +809,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    string decompProg;
 
    // If we enable compressed indexes and already have gzip, keep it
-   if (_config->FindB("Acquire::GzipIndexes",true) && compExt == "gz" && !Local) {
+   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) {
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI) + ".gz";
       Rename(DestFile,FinalFile);
