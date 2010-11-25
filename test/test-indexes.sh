@@ -144,6 +144,7 @@ echo '--- apt-cache show works without indexes'
 ! LC_MESSAGES=C $APT_CACHE show bash 2>&1| grep -q 'E: No packages found'
 
 echo "===== uncompressed indexes ====="
+echo 'Acquire::GzipIndexes "false";' > etc/apt/apt.conf.d/02compress-indexes
 check_update
 check_indexes
 check_cache
