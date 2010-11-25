@@ -69,6 +69,7 @@ testrun() {
 	rm -rf testpkg-1.0
 }
 
+echo 'Acquire::GzipIndexes "false";' > rootdir/etc/apt/apt.conf.d/02compressindex
 msgmsg "File: Test with uncompressed indexes"
 testrun
 
