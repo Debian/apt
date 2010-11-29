@@ -6,7 +6,13 @@ apt (0.8.10) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- Michael Vogt <mvo@debian.org>  Thu, 25 Nov 2010 16:08:01 +0100
+  [ David Kalnischkies ]
+  * apt-pkg/algorithms.cc:
+    - mark all installed packages first without auto installation in
+      a dist-upgrade to prefer upgrading packages instead of installing
+      new packages in versioned or-groups (Closes: #605394)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 29 Nov 2010 21:41:56 +0100
 
 apt (0.8.9) unstable; urgency=low
 
