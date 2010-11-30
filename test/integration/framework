@@ -78,6 +78,15 @@ aptkey() { runapt apt-key $*; }
 dpkg() {
 	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
 }
+aptitude() {
+	if [ -f ./aptconfig.conf ]; then
+		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+	elif [ -f ../aptconfig.conf ]; then
+		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which aptitude) $*
+	else
+		LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+	fi
+}
 
 setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
