@@ -1,4 +1,7 @@
-apt (0.8.10) UNRELEASED; urgency=low
+apt (0.8.10) unstable; urgency=low
+
+  [ Programs translations ]
+  * Czech by Miroslav Kure. Closes: #605107
 
   [ Martin Pitt ]
   * test/integration/test-compressed-indexes, test/test-indexes.sh:
@@ -6,7 +9,13 @@ apt (0.8.10) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- Michael Vogt <mvo@debian.org>  Thu, 25 Nov 2010 16:08:01 +0100
+  [ David Kalnischkies ]
+  * apt-pkg/algorithms.cc:
+    - mark all installed packages first without auto installation in
+      a dist-upgrade to prefer upgrading packages instead of installing
+      new packages in versioned or-groups (Closes: #605394)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 30 Nov 2010 10:42:17 +0100
 
 apt (0.8.9) unstable; urgency=low
 
@@ -18,7 +27,6 @@ apt (0.8.9) unstable; urgency=low
   [ Programs translations ]
   * Slovenian update by Andrej Žnidaršič and Rosetta Slovenian team
   * German update by Holger Wansing. Closes: #603619
-  * Czech by Miroslav Kure. Closes: #605107
 
   [ David Kalnischkies ]
   * apt-pkg/aptconfiguration.cc:

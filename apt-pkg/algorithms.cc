@@ -374,6 +374,13 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
 {
    pkgDepCache::ActionGroup group(Cache);
 
+   /* Upgrade all installed packages first without autoinst to help the resolver
+      in versioned or-groups to upgrade the old solver instead of installing
+      a new one (if the old solver is not the first one [anymore]) */
+   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+      if (I->CurrentVer != 0)
+	 Cache.MarkInstall(I, false, 0, false);
+
    /* Auto upgrade all installed packages, this provides the basis 
       for the installation */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)

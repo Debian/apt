@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+setupaptarchive
+
+testequal "Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  php5 php5-cgi
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/5715 kB of archives.
+After this operation, 0 B of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget dist-upgrade --trivial-only
+
+msgtest "Solution process doesn't involve" 'apache2-mpm-prefork'
+
+if aptget dist-upgrade --trivial-only -o Debug::pkgProblemResolver=1 -o Debug::pkgDepCache::Marker=1 2>&1 | grep apache2-mpm-prefork > /dev/null; then
+	msgfail
+else
+	msgpass
+fi
