@@ -367,7 +367,12 @@ generatereleasefiles() {
 	msgninfo "\tGenerate Release files… "
 	if [ -e aptarchive/dists ]; then
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
-			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Codename="$(echo "$dir" | cut -d'/' -f 4)" | sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
+			local CODENAME="$(echo "$dir" | cut -d'/' -f 4)"
+			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Codename="${CODENAME}" | sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
+			if [ "$CODENAME" = "experimental" ]; then
+				sed -i '/^Date: / a\
+NotAutomatic: yes' $dir/Release
+			fi
 		done
 	else
 		aptftparchive -qq release ./aptarchive | sed -e '/0 Release$/ d' > aptarchive/Release # remove the self reference
