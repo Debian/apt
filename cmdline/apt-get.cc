@@ -538,7 +538,9 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
         //VersionsList += string(Cache[I].CurVersion) + "\n"; ???
 	 }
       }
-      
+      else
+	 continue;
+
       if (I->CurrentVer == 0)
 	 continue;
 
