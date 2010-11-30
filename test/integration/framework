@@ -445,7 +445,7 @@ signreleasefiles() {
 changetowebserver() {
 	if which weborf > /dev/null; then
 		weborf -xb aptarchive/ 2>&1 > /dev/null &
-		CURRENTTRAP="kill $(ps | grep weborf | sed -e 's#^[ ]*##' | cut -d' ' -f 1); $CURRENTTRAP"
+		CURRENTTRAP="kill $!; $CURRENTTRAP"
 		trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 		local APTARCHIVE="file://$(readlink -f ./aptarchive)"
 		for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
