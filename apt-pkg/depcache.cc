@@ -1510,10 +1510,14 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
 /* */
 void pkgDepCache::SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo)
 {
-   ActionGroup group(*this);
 
    pkgCache::PkgIterator Pkg = TargetVer.ParentPkg();
    StateCache &P = PkgState[Pkg->ID];
+
+   if (P.CandidateVer == TargetVer)
+      return;
+
+   ActionGroup group(*this);
 
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
@@ -1549,7 +1553,10 @@ void pkgDepCache::SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo)
       }
    }
 }
-
+									/*}}}*/
+// DepCache::MarkAuto - set the Auto flag for a package			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 void pkgDepCache::MarkAuto(const PkgIterator &Pkg, bool Auto)
 {
   StateCache &state = PkgState[Pkg->ID];
