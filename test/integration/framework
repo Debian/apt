@@ -119,6 +119,12 @@ setupenvironment() {
 	else
 		touch aptarchive/Packages
 	fi
+	local SOURCESSFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Sources-/' -e 's/^skip-/Sources-/')
+	if [ -f "${TESTDIR}/${SOURCESSFILE}" ]; then
+		cp "${TESTDIR}/${SOURCESSFILE}" aptarchive/Sources
+	else
+		touch aptarchive/Sources
+	fi
 	cp $(find $TESTDIR -name '*.pub' -o -name '*.sec') keys/
 	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
