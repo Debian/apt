@@ -2,17 +2,6 @@
 # Made with the aid of dh_make, by Craig Small
 # Sample debian/rules that uses debhelper. GNU copyright 1997 by Joey Hess.
 # Some lines taken from debmake, by Christoph Lameter.
-# $Id: rules,v 1.68 2004/05/30 18:21:43 mdz Exp $
-
-# LD_LIBRARY_PATH=pwd/debian/apt/usr/lib dh_shlibdeps -papt
-# dpkg: /home/jgg/work/apt2/debian/apt/usr/lib/libapt-pkg.so.2.9 not found.
-
-# For the deb builder, you can run 'debian/rules cvs-build', which does all
-# steps nescessary to produce a proper source tarball with the CVS/ removed.
-# It builds in debian/cvs-build/apt-<VER>/, and places files in
-# debian/cvs-build/.  Optionally, you can run 'debian/rules cvs-mkul' to
-# create ../upload-<VER>, with all the files needed to be uploaded placed
-# in it.
 
 export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
@@ -139,7 +128,7 @@ binary-indep: apt-doc libapt-pkg-doc
 libapt-pkg-doc: build-doc debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
-	dh_clean -p$@ -k
+	dh_prep -p$@
 	dh_installdirs -p$@
 #
 # libapt-pkg-doc install
@@ -165,7 +154,7 @@ libapt-pkg-doc: build-doc debian/shlibs.local
 apt-doc: build-doc
 	dh_testdir -p$@
 	dh_testroot -p$@
-	dh_clean -p$@ -k
+	dh_prep -p$@
 #
 # apt-doc install
 #
@@ -191,7 +180,7 @@ apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secur
 apt: build build-doc debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
-	dh_clean -p$@ -k
+	dh_prep -p$@
 	dh_installdirs -p$@
 #
 # apt install
@@ -247,7 +236,7 @@ apt: build build-doc debian/shlibs.local
 libapt-pkg-dev: build debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
-	dh_clean -p$@ -k
+	dh_prep -p$@
 	dh_installdirs -p$@
 #
 # libapt-pkg-dev install
@@ -272,7 +261,7 @@ apt-utils_MANPAGES = apt-sortpkgs apt-ftparchive apt-extracttemplates
 apt-utils: build debian/shlibs.local
 	dh_testdir -p$@
 	dh_testroot -p$@
-	dh_clean -p$@ -k
+	dh_prep -p$@
 	dh_installdirs -p$@
 
 	# install the shared libs
@@ -300,7 +289,7 @@ apt-utils: build debian/shlibs.local
 apt-transport-https: build debian/shlibs.local libapt-pkg-dev
 	dh_testdir -p$@
 	dh_testroot -p$@
-	dh_clean -p$@ -k
+	dh_prep -p$@
 	dh_installdirs -p$@
 
 	# install the method
