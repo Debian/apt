@@ -1077,8 +1077,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    {
       // force a hashsum for compatibility reasons
       _config->CndSet("Acquire::ForceHash", "md5sum");
-      if (Fetcher.Setup(&Stat, "") == false)
-	 return false;
    }
    else if (Fetcher.Setup(&Stat, _config->FindDir("Dir::Cache::Archives")) == false)
       return false;
