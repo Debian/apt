@@ -195,10 +195,14 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       // Decode all of the fields
       pkgDirStream::Item Itm;
       if (StrToNum(Tar->Mode,Itm.Mode,sizeof(Tar->Mode),8) == false ||
-	  StrToNum(Tar->UserID,Itm.UID,sizeof(Tar->UserID),8) == false ||
-	  StrToNum(Tar->GroupID,Itm.GID,sizeof(Tar->GroupID),8) == false ||
-	  StrToNum(Tar->Size,Itm.Size,sizeof(Tar->Size),8) == false ||
-	  StrToNum(Tar->MTime,Itm.MTime,sizeof(Tar->MTime),8) == false ||
+          (Base256ToNum(Tar->UserID,Itm.UID,8) == false &&
+	     StrToNum(Tar->UserID,Itm.UID,sizeof(Tar->UserID),8) == false) ||
+          (Base256ToNum(Tar->GroupID,Itm.GID,8) == false &&
+	     StrToNum(Tar->GroupID,Itm.GID,sizeof(Tar->GroupID),8) == false) ||
+          (Base256ToNum(Tar->Size,Itm.Size,12) == false &&
+	     StrToNum(Tar->Size,Itm.Size,sizeof(Tar->Size),8) == false) ||
+          (Base256ToNum(Tar->MTime,Itm.MTime,12) == false &&
+	     StrToNum(Tar->MTime,Itm.MTime,sizeof(Tar->MTime),8) == false) ||
 	  StrToNum(Tar->Major,Itm.Major,sizeof(Tar->Major),8) == false ||
 	  StrToNum(Tar->Minor,Itm.Minor,sizeof(Tar->Minor),8) == false)
 	 return _error->Error(_("Corrupted archive"));
