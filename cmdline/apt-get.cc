@@ -833,6 +833,10 @@ struct TryToInstall {
 
    bool propergateReleaseCandiateSwitching(std::list<std::pair<pkgCache::VerIterator, std::string> > start, std::ostream &out)
    {
+      for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
+		s != start.end(); ++s)
+	 Cache->GetDepCache()->SetCandidateVersion(s->first);
+
       bool Success = true;
       std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > Changed;
       for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
