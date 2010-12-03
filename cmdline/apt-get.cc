@@ -628,6 +628,8 @@ class CacheSetHelperAPTGet : public APT::CacheSetHelper {
 	APT::PackageSet virtualPkgs;
 
 public:
+	std::list<std::pair<pkgCache::VerIterator, std::string> > selectedByRelease;
+
 	CacheSetHelperAPTGet(std::ostream &out) : APT::CacheSetHelper(true), out(out) {
 		explicitlyNamed = true;
 	}
@@ -646,9 +648,9 @@ public:
 	}
 	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
 				 string const &ver, bool const &verIsRel) {
-		if (ver != Ver.VerStr())
-			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
-				 Ver.VerStr(), Ver.RelStr().c_str(), Pkg.FullName(true).c_str());
+		if (ver == Ver.VerStr())
+			return;
+		selectedByRelease.push_back(make_pair(Ver, ver));
 	}
 
 	bool showVirtualPackageErrors(pkgCacheFile &Cache) {
@@ -827,6 +829,33 @@ struct TryToInstall {
 	 Cache->GetDepCache()->MarkAuto(Pkg,false);
 	 AutoMarkChanged++;
       }
+   }
+
+   bool propergateReleaseCandiateSwitching(std::list<std::pair<pkgCache::VerIterator, std::string> > start, std::ostream &out)
+   {
+      bool Success = true;
+      std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > Changed;
+      for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
+		s != start.end(); ++s)
+      {
+	 Changed.push_back(std::make_pair(s->first, pkgCache::VerIterator(*Cache)));
+	 // We continue here even if it failed to enhance the ShowBroken output
+	 Success &= Cache->GetDepCache()->SetCandidateRelease(s->first, s->second, Changed);
+      }
+      for (std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> >::const_iterator c = Changed.begin();
+	   c != Changed.end(); ++c)
+      {
+	 if (c->second.end() == true)
+	    ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
+		     c->first.VerStr(), c->first.RelStr().c_str(), c->first.ParentPkg().FullName(true).c_str());
+	 else if (c->first.ParentPkg()->Group != c->second.ParentPkg()->Group)
+	 {
+	    pkgCache::VerIterator V = (*Cache)[c->first.ParentPkg()].CandidateVerIter(*Cache);
+	    ioprintf(out, _("Selected version '%s' (%s) for '%s' because of '%s'\n"), V.VerStr(),
+		     V.RelStr().c_str(), V.ParentPkg().FullName(true).c_str(), c->second.ParentPkg().FullName(true).c_str());
+	 }
+      }
+      return Success;
    }
 
    void doAutoInstall() {
@@ -1779,6 +1808,7 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 if (order[i] == MOD_INSTALL) {
 	    InstallAction = std::for_each(verset[MOD_INSTALL].begin(), verset[MOD_INSTALL].end(), InstallAction);
+	    InstallAction.propergateReleaseCandiateSwitching(helper.selectedByRelease, c0out);
 	    InstallAction.doAutoInstall();
 	 }
 	 else if (order[i] == MOD_REMOVE)

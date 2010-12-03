@@ -10,6 +10,7 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/version.h>
+#include <apt-pkg/versionmatch.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/algorithms.h>
@@ -1552,6 +1553,166 @@ void pkgDepCache::SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo)
 	 break;
       }
    }
+}
+									/*}}}*/
+// DepCache::SetCandidateRelease - Change the candidate version		/*{{{*/
+// ---------------------------------------------------------------------
+/* changes the candidate of a package and walks over all its dependencies
+   to check if it needs to change the candidate of the dependency, too,
+   to reach a installable versionstate */
+bool pkgDepCache::SetCandidateRelease(pkgCache::VerIterator TargetVer,
+					std::string const &TargetRel)
+{
+   std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > Changed;
+   return SetCandidateRelease(TargetVer, TargetRel, Changed);
+}
+bool pkgDepCache::SetCandidateRelease(pkgCache::VerIterator TargetVer,
+					std::string const &TargetRel,
+					std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > &Changed)
+{
+   SetCandidateVersion(TargetVer);
+
+   if (TargetRel == "installed" || TargetRel == "candidate") // both doesn't make sense in this context
+      return true;
+
+   pkgVersionMatch Match(TargetRel, pkgVersionMatch::Release);
+   // save the position of the last element we will not undo - if we have to
+   std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> >::iterator newChanged = --(Changed.end());
+
+   for (pkgCache::DepIterator D = TargetVer.DependsList(); D.end() == false; ++D)
+   {
+      if (D->Type != pkgCache::Dep::PreDepends && D->Type != pkgCache::Dep::Depends &&
+	  ((D->Type != pkgCache::Dep::Recommends && D->Type != pkgCache::Dep::Suggests) ||
+	   IsImportantDep(D) == false))
+	 continue;
+
+      // walk over an or-group and check if we need to do anything
+      // for simpilicity no or-group is handled as a or-group including one dependency
+      pkgCache::DepIterator Start = D;
+      bool itsFine = false;
+      for (bool stillOr = true; stillOr == true; ++Start)
+      {
+	 stillOr = (Start->CompareOp & Dep::Or) == Dep::Or;
+	 pkgCache::PkgIterator const P = Start.TargetPkg();
+	 // virtual packages can't be a solution
+	 if (P.end() == true || (P->ProvidesList == 0 && P->VersionList == 0))
+	    continue;
+	 pkgCache::VerIterator const Cand = PkgState[P->ID].CandidateVerIter(*this);
+	 // no versioned dependency - but is it installable?
+	 if (Start.TargetVer() == 0 || Start.TargetVer()[0] == '\0')
+	 {
+	    // Check if one of the providers is installable
+	    if (P->ProvidesList != 0)
+	    {
+	       pkgCache::PrvIterator Prv = P.ProvidesList();
+	       for (; Prv.end() == false; ++Prv)
+	       {
+		  pkgCache::VerIterator const C = PkgState[Prv.OwnerPkg()->ID].CandidateVerIter(*this);
+		  if (C.end() == true || C != Prv.OwnerVer() ||
+		      (VersionState(C.DependsList(), DepInstall, DepCandMin, DepCandPolicy) & DepCandMin) != DepCandMin)
+		     continue;
+		  break;
+	       }
+	       if (Prv.end() == true)
+		  continue;
+	    }
+	    // no providers, so check if we have an installable candidate version
+	    else if (Cand.end() == true ||
+		(VersionState(Cand.DependsList(), DepInstall, DepCandMin, DepCandPolicy) & DepCandMin) != DepCandMin)
+	       continue;
+	    itsFine = true;
+	    break;
+	 }
+	 if (Cand.end() == true)
+	    continue;
+	 // check if the current candidate is enough for the versioned dependency - and installable?
+	 if (VS().CheckDep(P.CandVersion(), Start->CompareOp, Start.TargetVer()) == true &&
+	     (VersionState(Cand.DependsList(), DepInstall, DepCandMin, DepCandPolicy) & DepCandMin) == DepCandMin)
+	 {
+	    itsFine = true;
+	    break;
+	 }
+      }
+
+      if (itsFine == true) {
+	 // something in the or-group was fine, skip all other members
+	 for (; (D->CompareOp & Dep::Or) == Dep::Or; ++D);
+	 continue;
+      }
+
+      // walk again over the or-group and check each if a candidate switch would help
+      itsFine = false;
+      for (bool stillOr = true; stillOr == true; ++D)
+      {
+	 stillOr = (D->CompareOp & Dep::Or) == Dep::Or;
+	 // changing candidate will not help if the dependency is not versioned
+	 if (D.TargetVer() == 0 || D.TargetVer()[0] == '\0')
+	 {
+	    if (stillOr == true)
+	       continue;
+	    break;
+	 }
+
+	 pkgCache::VerIterator V;
+	 if (TargetRel == "newest")
+	    V = D.TargetPkg().VersionList();
+	 else
+	    V = Match.Find(D.TargetPkg());
+
+	 // check if the version from this release could satisfy the dependency
+	 if (V.end() == true || VS().CheckDep(V.VerStr(), D->CompareOp, D.TargetVer()) == false)
+	 {
+	    if (stillOr == true)
+	       continue;
+	    break;
+	 }
+
+	 pkgCache::VerIterator oldCand = PkgState[D.TargetPkg()->ID].CandidateVerIter(*this);
+	 if (V == oldCand)
+	 {
+	    // Do we already touched this Version? If so, their versioned dependencies are okay, no need to check again
+	    for (std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> >::const_iterator c = Changed.begin();
+		 c != Changed.end(); ++c)
+	    {
+	       if (c->first->ParentPkg != V->ParentPkg)
+		  continue;
+	       itsFine = true;
+	       break;
+	    }
+	 }
+
+	 if (itsFine == false)
+	 {
+	    // change the candidate
+	    Changed.push_back(make_pair(oldCand, TargetVer));
+	    if (SetCandidateRelease(V, TargetRel, Changed) == false)
+	    {
+	       if (stillOr == false)
+		  break;
+	       // undo the candidate changing
+	       SetCandidateVersion(oldCand);
+	       Changed.pop_back();
+	       continue;
+	    }
+	    itsFine = true;
+	 }
+
+	 // something in the or-group was fine, skip all other members
+	 for (; (D->CompareOp & Dep::Or) == Dep::Or; ++D);
+	 break;
+      }
+
+      if (itsFine == false && (D->Type == pkgCache::Dep::PreDepends || D->Type == pkgCache::Dep::Depends))
+      {
+	 // undo all changes which aren't lead to a solution
+	 for (std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> >::const_iterator c = ++newChanged;
+	      c != Changed.end(); ++c)
+	    SetCandidateVersion(c->first);
+	 Changed.erase(newChanged, Changed.end());
+	 return false;
+      }
+   }
+   return true;
 }
 									/*}}}*/
 // DepCache::MarkAuto - set the Auto flag for a package			/*{{{*/

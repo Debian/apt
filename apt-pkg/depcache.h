@@ -396,6 +396,25 @@ class pkgDepCache : protected pkgCache::Namespace
 
    void SetReInstall(PkgIterator const &Pkg,bool To);
    void SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo = true);
+   bool SetCandidateRelease(pkgCache::VerIterator TargetVer,
+				std::string const &TargetRel);
+   /** Set the candidate version for dependencies too if needed.
+    *
+    *  Sets not only the candidate version as SetCandidateVersion does,
+    *  but walks also down the dependency tree and checks if it is required
+    *  to set the candidate of the dependency to a version from the given
+    *  release, too.
+    *
+    *  \param TargetVer new candidate version of the package
+    *  \param TargetRel try to switch to this release if needed
+    *  \param[out] Changed a list of pairs consisting of the \b old
+    *              version of the changed package and the version which
+    *              required the switch of this dependency
+    *  \return \b true if the switch was successful, \b false otherwise
+    */
+   bool SetCandidateRelease(pkgCache::VerIterator TargetVer,
+			    std::string const &TargetRel,
+			    std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > &Changed);
 
    /** Set the "is automatically installed" flag of Pkg. */
    void MarkAuto(const PkgIterator &Pkg, bool Auto);
