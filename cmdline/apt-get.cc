@@ -1873,16 +1873,15 @@ bool DoInstall(CommandLine &CmdL)
 	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
 	 if ((*Cache)[I].Install() == false)
 	    continue;
+	 pkgCache::VerIterator Cand = Cache[I].CandidateVerIter(Cache);
+	 if (Cand.Pseudo() == true)
+	    continue;
 
-	 const char **J;
-	 for (J = CmdL.FileList + 1; *J != 0; J++)
-	    if (strcmp(*J,I.Name()) == 0)
-		break;
-	 
-	 if (*J == 0) {
-	    List += I.FullName(true) + " ";
-	    VersionsList += string(Cache[I].CandVersion) + "\n";
-	 }
+	 if (verset[MOD_INSTALL].find(Cand) != verset[MOD_INSTALL].end())
+	    continue;
+
+	 List += I.FullName(true) + " ";
+	 VersionsList += string(Cache[I].CandVersion) + "\n";
       }
       
       ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);
