@@ -1647,9 +1647,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 
    bool purgePkgs = _config->FindB("APT::Get::Purge", false);
    bool smallList = (hideAutoRemove == false &&
-		strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0) ||
-	// we don't want to autoremove and we don't want to see it, so don't generate lists
-	(doAutoRemove == false && hideAutoRemove == true);
+		strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
 
    string autoremovelist, autoremoveversions;
    unsigned long autoRemoveCount = 0;
@@ -1677,7 +1675,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
 	       Cache->MarkDelete(Pkg, false);
 	    // only show stuff in the list that is not yet marked for removal
-	    else if(Cache[Pkg].Delete() == false) 
+	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false) 
 	    {
 	       ++autoRemoveCount;
 	       // we don't need to fill the strings if we don't need them
