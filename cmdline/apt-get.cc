@@ -1608,10 +1608,6 @@ bool DoAutomaticRemove(CacheFile &Cache)
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
 
-   // we don't want to autoremove and we don't want to see it, so why calculating?
-   if (doAutoRemove == false && hideAutoRemove == true)
-      return true;
-
    if (doAutoRemove == true &&
 	_config->FindB("APT::Get::Remove",true) == false)
    {
@@ -1622,7 +1618,9 @@ bool DoAutomaticRemove(CacheFile &Cache)
 
    bool purgePkgs = _config->FindB("APT::Get::Purge", false);
    bool smallList = (hideAutoRemove == false &&
-	strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
+		strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0) ||
+	// we don't want to autoremove and we don't want to see it, so don't generate lists
+	(doAutoRemove == false && hideAutoRemove == true);
 
    string autoremovelist, autoremoveversions;
    unsigned long autoRemoveCount = 0;
@@ -1645,8 +1643,12 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
 	 else
 	 {
+	    // if the package is a new install and already garbage we don't need to
+	    // install it in the first place, so nuke it instead of show it
+	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
+	       Cache->MarkDelete(Pkg, false);
 	    // only show stuff in the list that is not yet marked for removal
-	    if(Cache[Pkg].Delete() == false) 
+	    else if(Cache[Pkg].Delete() == false) 
 	    {
 	       ++autoRemoveCount;
 	       // we don't need to fill the strings if we don't need them
@@ -1659,6 +1661,20 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
       }
    }
+
+   // Now see if we had destroyed anything (if we had done anything)
+   if (Cache->BrokenCount() != 0)
+   {
+      c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
+	         "shouldn't happen. Please file a bug report against apt.") << endl;
+      c1out << endl;
+      c1out << _("The following information may help to resolve the situation:") << endl;
+      c1out << endl;
+      ShowBroken(c1out,Cache,false);
+
+      return _error->Error(_("Internal Error, AutoRemover broke stuff"));
+   }
+
    // if we don't remove them, we should show them!
    if (doAutoRemove == false && (autoremovelist.empty() == false || autoRemoveCount != 0))
    {
@@ -1670,18 +1686,6 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
-   }
-   // Now see if we had destroyed anything (if we had done anything)
-   else if (Cache->BrokenCount() != 0)
-   {
-      c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
-	         "shouldn't happen. Please file a bug report against apt.") << endl;
-      c1out << endl;
-      c1out << _("The following information may help to resolve the situation:") << endl;
-      c1out << endl;
-      ShowBroken(c1out,Cache,false);
-
-      return _error->Error(_("Internal Error, AutoRemover broke stuff"));
    }
    return true;
 }
