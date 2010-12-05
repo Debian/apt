@@ -26,13 +26,17 @@ if [ -z "$LISTOFPKGS" ]; then
 	aptget install $* -t $CODENAME -so Dir::state::status=$WORKDIR/status -o Dir::Cache::archives=$WORKDIR -o pkgCacheGen::Essential=none -o APT::Immediate-Configure=0
 	exit 1
 fi
-aptcache show $LISTOFPKGS --no-all-versions 2> /dev/null > $TMPGEN
+aptcache show $LISTOFPKGS --no-all-versions 2> $WORKDIR/error.lst > $TMPGEN
 sed -i $TMPGEN \
 	-e '/^ / d' \
 	-e '/^SHA1: / d' -e '/^SHA256: / d' \
 	-e '/^Homepage: / d' -e '/^Tag: / d' \
 	-e '/^Xul-Appid: / d' \
 	-e '/^Status: / d'
+
+if [ "$CODENAME" = "experimental" ]; then
+	aptcache show $(cat $WORKDIR/error.lst | cut -d"'" -f 4 | sed -e 's#$#/sid#') --no-all-versions 2> /dev/null >> $TMPGEN
+fi
 
 if echo "$GENERATE" | grep '^status-' > /dev/null; then
 	sed -i $TMPGEN -e '/^Package: / a\
