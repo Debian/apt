@@ -1523,7 +1523,7 @@ void pkgDepCache::SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo)
    RemoveSizes(Pkg);
    RemoveStates(Pkg);
 
-   if (P.CandidateVer == P.InstallVer)
+   if (P.CandidateVer == P.InstallVer && P.Install() == true)
       P.InstallVer = (Version *)TargetVer;
    P.CandidateVer = (Version *)TargetVer;
    P.Update(Pkg,*this);
@@ -1570,6 +1570,7 @@ bool pkgDepCache::SetCandidateRelease(pkgCache::VerIterator TargetVer,
 					std::string const &TargetRel,
 					std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > &Changed)
 {
+   ActionGroup group(*this);
    SetCandidateVersion(TargetVer);
 
    if (TargetRel == "installed" || TargetRel == "candidate") // both doesn't make sense in this context
