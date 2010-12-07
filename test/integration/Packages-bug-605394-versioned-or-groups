@@ -1,0 +1,71 @@
+Package: apache2-mpm-prefork
+Priority: optional
+Section: httpd
+Installed-Size: 68
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: i386
+Source: apache2
+Version: 2.2.16-4
+Provides: apache2-mpm
+Conflicts: apache2-mpm
+Filename: pool/main/a/apache2/apache2-mpm-prefork_2.2.16-4_i386.deb
+Size: 2276
+MD5Sum: c0db3e637052e59dbdb2fa08f4cdcea4
+Description: Apache HTTP Server - traditional non-threaded model
+Task: web-server
+
+Package: apache2-mpm-worker
+Priority: optional
+Section: httpd
+Installed-Size: 68
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: i386
+Source: apache2
+Version: 2.2.16-4
+Provides: apache2-mpm
+Conflicts: apache2-mpm
+Filename: pool/main/a/apache2/apache2-mpm-worker_2.2.16-4_i386.deb
+Size: 2220
+MD5Sum: 71bccda875aa0afac700410b951370ba
+Description: Apache HTTP Server - high speed threaded model
+
+Package: libapache2-mod-php5
+Priority: optional
+Section: httpd
+Installed-Size: 7588
+Maintainer: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Architecture: i386
+Source: php5
+Version: 5.3.3-4
+Depends: apache2-mpm-prefork (>> 2.0.52)
+Filename: pool/main/p/php5/libapache2-mod-php5_5.3.3-4_i386.deb
+Size: 2886980
+MD5Sum: b41ec4b98aa08966288570e07cd864ab
+Description: server-side, HTML-embedded scripting language (Apache 2 module)
+Task: web-server
+
+Package: php5-cgi
+Priority: optional
+Section: php
+Installed-Size: 14672
+Maintainer: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Architecture: i386
+Source: php5
+Version: 5.3.3-4
+Filename: pool/main/p/php5/php5-cgi_5.3.3-4_i386.deb
+Size: 5713726
+MD5Sum: 9e579982032c7bb98508e16e314f45e9
+Description: server-side, HTML-embedded scripting language (CGI binary)
+
+Package: php5
+Priority: optional
+Section: php
+Installed-Size: 20
+Maintainer: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Architecture: all
+Version: 5.3.3-4
+Depends: libapache2-mod-php5 (>= 5.3.3-4) | php5-cgi (>= 5.3.3-4)
+Filename: pool/main/p/php5/php5_5.3.3-4_all.deb
+Size: 1050
+MD5Sum: cbedd95ed5b868ba1ffd10747abc0ee3
+Description: server-side, HTML-embedded scripting language (metapackage)

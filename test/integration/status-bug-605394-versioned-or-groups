@@ -1,0 +1,34 @@
+Package: apache2-mpm-worker
+Status: install ok installed
+Priority: optional
+Section: httpd
+Installed-Size: 68
+Maintainer: Debian Apache Maintainers <debian-apache@lists.debian.org>
+Architecture: i386
+Source: apache2
+Version: 2.2.16-4
+Provides: apache2-mpm
+Conflicts: apache2-mpm
+Description: Apache HTTP Server - high speed threaded model
+
+Package: php5-cgi
+Status: install ok installed
+Priority: optional
+Section: php
+Installed-Size: 14672
+Maintainer: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Architecture: i386
+Source: php5
+Version: 5.3.3-3
+Description: server-side, HTML-embedded scripting language (CGI binary)
+
+Package: php5
+Status: install ok installed
+Priority: optional
+Section: php
+Installed-Size: 20
+Maintainer: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Architecture: all
+Version: 5.3.3-3
+Depends: libapache2-mod-php5 (>= 5.3.3-3) | libapache2-mod-php5filter (>= 5.3.3-3) | php5-cgi (>= 5.3.3-3)
+Description: server-side, HTML-embedded scripting language (metapackage)
