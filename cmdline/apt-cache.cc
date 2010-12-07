@@ -588,7 +588,7 @@ bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
    CacheSetHelperVirtuals helper(false);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
    if (verset.empty() == true && helper.virtualPkgs.empty() == true)
-      return false;
+      return _error->Error(_("No packages found"));
    std::vector<bool> Shown(Cache->Head().PackageCount);
 
    bool const Recurse = _config->FindB("APT::Cache::RecurseDepends", false);
