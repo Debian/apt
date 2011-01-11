@@ -1292,7 +1292,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    }
 
    // do not report out-of-memory failures 
-   if(strstr(errormsg, strerror(ENOMEM)) != NULL) {
+   if(strstr(errormsg, strerror(ENOMEM)) != NULL ||
+      strstr(errormsg, "Cannot allocate memory") != NULL) {
       std::clog << _("No apport report written because the error message indicates a out of memory error") << std::endl;
       return;
    }
