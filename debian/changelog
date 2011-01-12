@@ -24,8 +24,11 @@ apt (0.8.11+wheezy) unstable; urgency=low
     - include stddefs.h to fix compile error (undefined NULL) with gcc-4.6
   * methods/https.cc:
     - fix CURLOPT_SSL_VERIFYHOST by really passing 2 to it if enabled
+  * deb/dpkgpm.cc:
+    - fix popen/fclose mismatch reported by cppcheck. Thanks to Petter
+      Reinholdtsen for report and patch! (Closes: #607803)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 12 Jan 2011 23:46:08 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 12 Jan 2011 23:53:32 +0100
 
 apt (0.8.10) unstable; urgency=low
 
