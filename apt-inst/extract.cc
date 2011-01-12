@@ -372,7 +372,6 @@ bool pkgExtract::HandleOverwrites(pkgFLCache::NodeIterator Nde,
    pkgFLCache::NodeIterator TmpNde = Nde;
    unsigned long DiverOwner = 0;
    unsigned long FileGroup = Nde->File;
-   const char *FirstOwner = 0;
    for (; Nde.end() == false && FileGroup == Nde->File; Nde++)
    {
       if ((Nde->Flags & pkgFLCache::Node::Diversion) != 0)
@@ -392,8 +391,7 @@ bool pkgExtract::HandleOverwrites(pkgFLCache::NodeIterator Nde,
          if something has already been diverted by this diversion */
       if (FPkg.Offset() == DiverOwner)
 	 continue;
-      FirstOwner = FPkg.Name();
-      
+
       // Now see if this package matches one in a replace depends
       pkgCache::DepIterator Dep = Ver.DependsList();
       bool Ok = false;
