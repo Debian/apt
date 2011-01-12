@@ -20,8 +20,10 @@ apt (0.8.11+wheezy) unstable; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - add a RealFileExists method and check that your configuration files
       are real files to avoid endless loops if not (Closes: #604401)
+  * apt-pkg/contrib/weakptr.h:
+    - include stddefs.h to fix compile error (undefined NULL) with gcc-4.6
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 12 Jan 2011 16:53:41 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 12 Jan 2011 17:14:14 +0100
 
 apt (0.8.10) unstable; urgency=low
 
