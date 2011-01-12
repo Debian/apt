@@ -167,7 +167,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
 {
    FileFd state_file;
    string const state = _config->FindFile("Dir::State::extended_states");
-   if(FileExists(state)) {
+   if(RealFileExists(state)) {
       state_file.Open(state, FileFd::ReadOnly);
       int const file_size = state_file.Size();
       if(Prog != NULL)
@@ -226,7 +226,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
    string const state = _config->FindFile("Dir::State::extended_states");
 
    // if it does not exist, create a empty one
-   if(!FileExists(state)) 
+   if(!RealFileExists(state)) 
    {
       StateFile.Open(state, FileFd::WriteAtomic);
       StateFile.Close();

@@ -328,7 +328,7 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    if (File.empty() == true)
       File = _config->FindFile("Dir::Etc::Preferences");
 
-   if (FileExists(File) == false)
+   if (RealFileExists(File) == false)
       return true;
    
    FileFd Fd(File,FileFd::ReadOnly);

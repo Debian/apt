@@ -191,13 +191,24 @@ int GetLock(string File,bool Errors)
 									/*}}}*/
 // FileExists - Check if a file exists					/*{{{*/
 // ---------------------------------------------------------------------
-/* */
+/* Beware: Directories are also files! */
 bool FileExists(string File)
 {
    struct stat Buf;
    if (stat(File.c_str(),&Buf) != 0)
       return false;
    return true;
+}
+									/*}}}*/
+// RealFileExists - Check if a file exists and if it is really a file	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool RealFileExists(string File)
+{
+   struct stat Buf;
+   if (stat(File.c_str(),&Buf) != 0)
+      return false;
+   return ((Buf.st_mode & S_IFREG) != 0);
 }
 									/*}}}*/
 // DirectoryExists - Check if a directory exists and is really one	/*{{{*/
@@ -304,6 +315,13 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
    }
 
    std::vector<string> List;
+
+   if (DirectoryExists(Dir.c_str()) == false)
+   {
+      _error->Error(_("List of files can't be created as '%s' is not a directory"), Dir.c_str());
+      return List;
+   }
+
    Configuration::MatchAgainstConfig SilentIgnore("Dir::Ignore-Files-Silently");
    DIR *D = opendir(Dir.c_str());
    if (D == 0) 
