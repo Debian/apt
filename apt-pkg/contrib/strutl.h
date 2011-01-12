@@ -52,6 +52,7 @@ string LookupTag(const string &Message,const char *Tag,const char *Default = 0);
 int StringToBool(const string &Text,int Default = -1);
 bool ReadMessages(int Fd, vector<string> &List);
 bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0);
+bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len);
 bool Hex2Num(const string &Str,unsigned char *Num,unsigned int Length);
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
