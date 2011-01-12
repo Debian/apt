@@ -143,13 +143,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, peer_verify);
 
    // ... and hostname against cert CN or subjectAltName
-   int default_verify = 2;
    bool verify = _config->FindB("Acquire::https::Verify-Host",true);
    knob = "Acquire::https::"+remotehost+"::Verify-Host";
    verify = _config->FindB(knob.c_str(),verify);
-   if (!verify)
-      default_verify = 0;
-   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, verify);
+   int const default_verify = (verify == true) ? 2 : 0;
+   curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, default_verify);
 
    // Also enforce issuer of server certificate using its cert
    string issuercert = _config->Find("Acquire::https::IssuerCert","");
