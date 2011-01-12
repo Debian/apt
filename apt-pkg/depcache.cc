@@ -1330,8 +1330,6 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	   for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
 	     {
 	       //FIXME: deal better with or-groups(?)
-	       DepIterator LocalStart = D;
-
 	       if(IsImportantDep(D) && !D.IsCritical() &&
 		  Start.TargetPkg() == D.TargetPkg())
 		 {
@@ -1921,10 +1919,11 @@ void pkgDepCache::MarkPackage(const pkgCache::PkgIterator &pkg,
       return;
 
    VerIterator const currver = pkg.CurrentVer();
-   VerIterator const candver = state.CandidateVerIter(*this);
    VerIterator const instver = state.InstVerIter(*this);
 
 #if 0
+   VerIterator const candver = state.CandidateVerIter(*this);
+
    // If a package was garbage-collected but is now being marked, we
    // should re-select it 
    // For cases when a pkg is set to upgrade and this trigger the
