@@ -45,6 +45,8 @@ using namespace std;
    file matches the V0 policy engine. */
 pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
 {
+   if (Owner == 0 || &(Owner->Head()) == 0)
+      return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
    Pins = new Pin[Owner->Head().PackageCount];
 
