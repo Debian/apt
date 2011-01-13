@@ -336,6 +336,20 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       if (Ent->d_name[0] == '.')
 	 continue;
 
+      // Make sure it is a file and not something else
+      string const File = flCombine(Dir,Ent->d_name);
+#ifdef _DIRENT_HAVE_D_TYPE
+      if (Ent->d_type != DT_REG)
+#endif
+      {
+	 if (RealFileExists(File.c_str()) == false)
+	 {
+	    if (SilentIgnore.Match(Ent->d_name) == false)
+	       _error->Notice(_("Ignoring '%s' in directory '%s' as it is not a regular file"), Ent->d_name, Dir.c_str());
+	    continue;
+	 }
+      }
+
       // check for accepted extension:
       // no extension given -> periods are bad as hell!
       // extensions given -> "" extension allows no extension
@@ -349,7 +363,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 	       if (Debug == true)
 		  std::clog << "Bad file: " << Ent->d_name << " → no extension" << std::endl;
 	       if (SilentIgnore.Match(Ent->d_name) == false)
-		  _error->Notice("Ignoring file '%s' in directory '%s' as it has no filename extension", Ent->d_name, Dir.c_str());
+		  _error->Notice(_("Ignoring file '%s' in directory '%s' as it has no filename extension"), Ent->d_name, Dir.c_str());
 	       continue;
 	    }
 	 }
@@ -358,7 +372,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 	    if (Debug == true)
 	       std::clog << "Bad file: " << Ent->d_name << " → bad extension »" << flExtension(Ent->d_name) << "«" << std::endl;
 	    if (SilentIgnore.Match(Ent->d_name) == false)
-	       _error->Notice("Ignoring file '%s' in directory '%s' as it has an invalid filename extension", Ent->d_name, Dir.c_str());
+	       _error->Notice(_("Ignoring file '%s' in directory '%s' as it has an invalid filename extension"), Ent->d_name, Dir.c_str());
 	    continue;
 	 }
       }
@@ -388,16 +402,6 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       {
 	 if (Debug == true)
 	    std::clog << "Bad file: " << Ent->d_name << " → Period as last character" << std::endl;
-	 continue;
-      }
-
-      // Make sure it is a file and not something else
-      string const File = flCombine(Dir,Ent->d_name);
-      struct stat St;
-      if (stat(File.c_str(),&St) != 0 || S_ISREG(St.st_mode) == 0)
-      {
-	 if (Debug == true)
-	    std::clog << "Bad file: " << Ent->d_name << " → stat says not a good file" << std::endl;
 	 continue;
       }
 

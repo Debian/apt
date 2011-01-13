@@ -20,6 +20,7 @@ apt (0.8.11+wheezy) unstable; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - add a RealFileExists method and check that your configuration files
       are real files to avoid endless loops if not (Closes: #604401)
+    - ignore non-regular files in GetListOfFilesInDir (Closes: #594694)
   * apt-pkg/contrib/weakptr.h:
     - include stddefs.h to fix compile error (undefined NULL) with gcc-4.6
   * methods/https.cc:
@@ -35,7 +36,7 @@ apt (0.8.11+wheezy) unstable; urgency=low
   * apt-pkg/cacheiterator.h:
     - do not segfault if cache is not build (Closes: #254770)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 13 Jan 2011 17:10:36 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 13 Jan 2011 23:19:03 +0100
 
 apt (0.8.10) unstable; urgency=low
 
