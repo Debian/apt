@@ -147,7 +147,7 @@ libapt-pkg-doc: build-doc debian/shlibs.local
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -229,7 +229,7 @@ apt: build build-doc debian/shlibs.local
 	dh_makeshlibs -p$@ --major=$(LIBAPTPKG_MAJOR) --version-info='$(LIBAPTPKG_PROVIDE)'
 	dh_installdeb -p$@
 	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt
-	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -253,7 +253,7 @@ libapt-pkg-dev: build debian/shlibs.local
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -u -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE) -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
+	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE) -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -282,7 +282,7 @@ apt-utils: build debian/shlibs.local
 	dh_makeshlibs -p$@ --major=$(LIBAPTINST_MAJOR) --version-info='$(LIBAPTINST_PROVIDE)'
 	dh_installdeb -p$@
 	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib -- -Ldebian/shlibs.local.apt-utils
-	dh_gencontrol -p$@ -u -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
+	dh_gencontrol -p$@ -- -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
