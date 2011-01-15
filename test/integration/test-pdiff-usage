@@ -44,6 +44,7 @@ sed -i aptarchive/Release \
  -e "/^SHA256:/ a\
  \ $(sha256sum $PATCHINDEX | cut -d' ' -f 1) $(stat -c%s $PATCHINDEX) Packages.diff/Index"
 signreleasefiles
+rm -f aptarchive/Packages aptarchive/Packages.gz aptarchive/Packages.bz2 aptarchive/Packages.lzma
 aptget update -qq
 
 testnopackage oldstuff

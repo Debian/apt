@@ -449,7 +449,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
 	 StateFetchDiff,
 	 
 	 /** \brief The diff is currently being uncompressed. */
-	 StateUnzipDiff,
+	 StateUnzipDiff, // FIXME: No longer used
 
 	 /** \brief The diff is currently being applied. */
 	 StateApplyDiff

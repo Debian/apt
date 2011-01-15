@@ -49,8 +49,12 @@ apt (0.8.11+wheezy) unstable; urgency=low
     - remove as it is not needed for a working 'bzr bd'
   * debian/{apt,apt-utils}.symbols:
     - ship experimental unmangled c++ symbol files
+  * methods/rred.cc:
+    - operate optional on gzip compressed pdiffs
+  * apt-pkg/acquire-item.cc:
+    - don't uncompress downloaded pdiff files before feeding it to rred
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 15 Jan 2011 02:42:18 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 15 Jan 2011 20:24:03 +0100
 
 apt (0.8.10) unstable; urgency=low
 

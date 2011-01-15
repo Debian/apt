@@ -72,6 +72,7 @@ class FileFd
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) {iFd = fd;};
+   inline gzFile gzFd() {return gz;};
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
    inline void EraseOnFailure() {Flags |= DelOnFail;};

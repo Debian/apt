@@ -570,24 +570,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*
    FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
 
    // sucess in downloading a diff, enter ApplyDiff state
-   if(State == StateFetchDiff) 
-   {
-
-      if(Debug)
-	 std::clog << "Sending to gzip method: " << FinalFile << std::endl;
-
-      string FileName = LookupTag(Message,"Filename");
-      State = StateUnzipDiff;
-      Local = true;
-      Desc.URI = "gzip:" + FileName;
-      DestFile += ".decomp";
-      QueueURI(Desc);
-      Mode = "gzip";
-      return;
-   } 
-
-   // sucess in downloading a diff, enter ApplyDiff state
-   if(State == StateUnzipDiff) 
+   if(State == StateFetchDiff)
    {
 
       // rred excepts the patch as $FinalFile.ed
