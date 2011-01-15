@@ -18,6 +18,7 @@ apt (0.8.11+wheezy) unstable; urgency=low
   * debian/control:
     - add Vcs-Browser now that loggerhead works again (Closes: #511168)
     - depend on debhelper 7 to raise compat level
+    - depend on dpkg-dev (>= 1.15.8) to have c++ symbol mangling
   * apt-pkg/contrib/fileutl.cc:
     - add a RealFileExists method and check that your configuration files
       are real files to avoid endless loops if not (Closes: #604401)
@@ -42,10 +43,14 @@ apt (0.8.11+wheezy) unstable; urgency=low
     - remove obsolete references to non-us (Closes: #594495)
   * debian/rules:
     - use -- instead of deprecated -u for dh_gencontrol
+    - remove shlibs.local creation and usage
+    - show differences in the symbol files, but never fail
   * pre-build.sh:
     - remove as it is not needed for a working 'bzr bd'
+  * debian/{apt,apt-utils}.symbols:
+    - ship experimental unmangled c++ symbol files
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 14 Jan 2011 14:40:35 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 15 Jan 2011 02:42:18 +0100
 
 apt (0.8.10) unstable; urgency=low
 
