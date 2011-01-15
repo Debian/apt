@@ -188,7 +188,6 @@ apt: build build-doc
 	cp $(BLD)/scripts/dselect/* debian/$@/usr/lib/dpkg/methods/apt/
 	cp -r $(BLD)/locale debian/$@/usr/share/
 
-	cp debian/bugscript debian/$@/usr/share/bug/apt/script
 	cp debian/apt.logrotate debian/$@/etc/logrotate.d/apt
 
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
@@ -202,6 +201,7 @@ apt: build build-doc
 	#mv debian/$@/usr/bin/apt-report-mirror-failure \
 	#   debian/$@/usr/lib/apt/apt-report-mirror-failure \
 
+	dh_bugfiles -p$@
 	dh_lintian -p$@
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
 	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
