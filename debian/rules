@@ -172,30 +172,20 @@ apt: build build-doc
 #
 # apt install
 #
-	cp $(BLD)/bin/apt-* debian/$@/usr/bin/
-
-	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS))
-
-	# install the shared libs
-	find $(BLD)/bin/ -type f -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
-	find $(BLD)/bin/ -type l -name "libapt-pkg*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
-
-	cp $(BLD)/bin/methods/* debian/$@/usr/lib/apt/methods/
-	# https has its own package
-	rm debian/$@/usr/lib/apt/methods/https
-
-	cp $(BLD)/scripts/dselect/* debian/$@/usr/lib/dpkg/methods/apt/
-	cp -r $(BLD)/locale debian/$@/usr/share/
-
-	cp debian/apt.logrotate debian/$@/etc/logrotate.d/apt
-
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
 
 	# make rosetta happy and remove pot files in po/ (but leave stuff
 	# in po/domains/* untouched) and cp *.po into each domain dir
 	rm -f build/po/*.pot
 	rm -f po/*.pot
+
+	dh_install -p$@ --sourcedir=$(BLD)
+
+	# Remove the bits that are in apt-utils
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS))
+
+	# https has its own package
+	rm debian/$@/usr/lib/apt/methods/https
 
 	# move the mirror failure script in place
 	#mv debian/$@/usr/bin/apt-report-mirror-failure \
@@ -208,6 +198,7 @@ apt: build build-doc
 	dh_installcron -p$@
 	dh_installdocs -p$@
 	dh_installchangelogs -p$@
+	dh_installlogrotate -p$@
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
@@ -226,13 +217,8 @@ libapt-pkg-dev: build
 #
 # libapt-pkg-dev install
 #
-	cp -a $(BLD)/bin/libapt-pkg*.so debian/libapt-pkg-dev/usr/lib/
-	cp -a $(BLD)/bin/libapt-inst*.so debian/libapt-pkg-dev/usr/lib/
-#	ln -s libapt-pkg.so.$(LIBAPTPKG_MAJOR) debian/libapt-pkg-dev/usr/lib/libapt-pkg.so
-	cp $(BLD)/include/apt-pkg/*.h debian/libapt-pkg-dev/usr/include/apt-pkg/
-
+	dh_install -p$@ --sourcedir=$(BLD)
 	dh_installdocs -p$@
-
 	dh_installchangelogs -p$@
 	dh_strip -p$@
 	dh_compress -p$@
@@ -249,11 +235,9 @@ apt-utils: build
 	dh_prep -p$@
 	dh_installdirs -p$@
 
-	# install the shared libs
-	find $(BLD)/bin/ -type f -name "libapt-inst*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
-	find $(BLD)/bin/ -type l -name "libapt-inst*.so.*" -exec cp -a "{}" debian/$@/usr/lib/ \;
-
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
+
+	dh_install -p$@ --sourcedir=$(BLD)
 	dh_installdocs -p$@
 	dh_installexamples -p$@
 
@@ -277,10 +261,7 @@ apt-transport-https: build libapt-pkg-dev
 	dh_prep -p$@
 	dh_installdirs -p$@
 
-	# install the method
-	mkdir --parents debian/$@/usr/lib/apt/methods
-	cp $(BLD)/bin/methods/https debian/$@/usr/lib/apt/methods
-
+	dh_install -p$@ --sourcedir=$(BLD)
 	dh_installdocs -p$@ debian/apt-transport-https.README
 	dh_installexamples -p$@
 

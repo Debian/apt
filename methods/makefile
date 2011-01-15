@@ -67,7 +67,7 @@ include $(PROGRAM_H)
 
 # The rred method
 PROGRAM=rred
-SLIBS = -lapt-pkg $(SOCKETLIBS) $(INTLLIBS)
+SLIBS = -lapt-pkg -lz $(SOCKETLIBS) $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = rred.cc
 include $(PROGRAM_H)
