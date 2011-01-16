@@ -2,7 +2,19 @@
 set -e
 
 DIR=$(readlink -f $(dirname $0))
+if [ "$1" = "-q" ]; then
+	export MSGLEVEL=2
+elif [ "$1" = "-v" ]; then
+	export MSGLEVEL=5
+fi
 for testcase in $(run-parts --list $DIR | grep '/test-'); do
-	echo "\033[1;32mRun Testcase \033[1;35m$(basename ${testcase})\033[0m"
+	if [ "$1" = "-q" ]; then
+		echo -n "\033[1;32mRun Testcase \033[1;35m$(basename ${testcase})\033[0m"
+	else
+		echo "\033[1;32mRun Testcase \033[1;35m$(basename ${testcase})\033[0m"
+	fi
 	${testcase}
+	if [ "$1" = "-q" ]; then
+		echo
+	fi
 done

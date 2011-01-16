@@ -39,6 +39,10 @@ fi
 if [ $MSGLEVEL -le 2 ]; then
 	msgmsg() { true; }
 	msgnmsg() { true; }
+	msgtest() { true; }
+	msgpass() { echo -n " ${CPASS}P${CNORMAL}" >&2; }
+	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
+	msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
 fi
 if [ $MSGLEVEL -le 3 ]; then
 	msginfo() { true; }
