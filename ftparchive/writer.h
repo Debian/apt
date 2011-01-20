@@ -69,6 +69,8 @@ class FTWScanner
    bool LoadFileList(string const &BaseDir,string const &File);
    void ClearPatterns() { Patterns.clear(); };
    void AddPattern(string const &Pattern) { Patterns.push_back(Pattern); };
+   void AddPattern(char const *Pattern) { Patterns.push_back(Pattern); };
+   void AddPatterns(std::vector<std::string> const &patterns) { Patterns.insert(Patterns.end(), patterns.begin(), patterns.end()); };
    bool SetExts(string const &Vals);
       
    FTWScanner(string const &Arch = string());

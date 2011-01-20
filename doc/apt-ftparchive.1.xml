@@ -113,10 +113,13 @@
      <varlistentry><term>release</term>
      <listitem><para>
      The <literal>release</literal> command generates a Release file from a
-     directory tree. It recursively searches the given directory for
-     Packages, Packages.gz, Packages.bz2, Sources, Sources.gz,
-     Sources.bz2, Release and md5sum.txt files.  It then writes to
-     stdout a Release file containing an MD5 digest and SHA1 digest
+     directory tree. It recursively searches the given directory for uncompressed
+     <filename>Packages</filename> and <filename>Sources</filename> files and the ones
+     compressed with <command>gzip</command>, <command>bzip2</command> or <command>lzma</command>
+     as well as <filename>Release</filename> and <filename>md5sum.txt</filename> files by default
+     (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). Additional filename patterns
+     can be added by listing them in <literal>APT::FTPArchive::Release::Patterns</literal>.
+     It then writes to stdout a Release file containing a MD5, SHA1 and SHA256 digest
      for each file.</para>
      <para>
      Values for the additional metadata fields in the Release file are
