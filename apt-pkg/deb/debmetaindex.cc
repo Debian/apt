@@ -182,21 +182,15 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			 (*Target)->ShortDesc, HashString());
       }
-      // this is normally created in pkgAcqMetaSig, but if we run
-      // in --print-uris mode, we add it here
-      new pkgAcqMetaIndex(Owner, MetaIndexURI("Release"),
-		     MetaIndexInfo("Release"), "Release",
-		     MetaIndexURI("Release.gpg"), 
-		     ComputeIndexTargets(),
-		     new indexRecords (Dist));
-
    }
 
-   new pkgAcqMetaSig(Owner, MetaIndexURI("Release.gpg"),
-		     MetaIndexInfo("Release.gpg"), "Release.gpg",
-		     MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
-		     ComputeIndexTargets(),
-		     new indexRecords (Dist));
+	new pkgAcqMetaClearSig(Owner, MetaIndexURI("InRelease"),
+		MetaIndexInfo("InRelease"), "InRelease",
+		MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
+		MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
+		ComputeIndexTargets(),
+		new indexRecords (Dist));
+
 
 	// Queue the translations
 	std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
@@ -224,16 +218,20 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 
 bool debReleaseIndex::IsTrusted() const
 {
-   string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
-      URItoFileName(MetaIndexURI("Release")) + ".gpg";
-   
    if(_config->FindB("APT::Authentication::TrustCDROM", false))
       if(URI.substr(0,strlen("cdrom:")) == "cdrom:")
 	 return true;
-   
+
+   string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
+      URItoFileName(MetaIndexURI("Release")) + ".gpg";
+
    if (FileExists(VerifiedSigFile))
       return true;
-   return false;
+
+   VerifiedSigFile = _config->FindDir("Dir::State::lists") +
+      URItoFileName(MetaIndexURI("InRelease"));
+
+   return FileExists(VerifiedSigFile);
 }
 
 vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles() {

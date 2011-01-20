@@ -1077,6 +1077,8 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*
    {
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
+      if (SigFile == DestFile)
+	 SigFile = FinalFile;
       Rename(DestFile,FinalFile);
       chmod(FinalFile.c_str(),0644);
       DestFile = FinalFile;
@@ -1110,6 +1112,8 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
    {
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
+      if (SigFile == DestFile)
+	 SigFile = FinalFile;
       DestFile = FinalFile;
    }
    Complete = true;
@@ -1140,6 +1144,10 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 
    // Download further indexes with verification
    QueueIndexes(true);
+
+   // is it a clearsigned MetaIndex file?
+   if (DestFile == SigFile)
+      return;
 
    // Done, move signature file into position
    string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
@@ -1300,13 +1308,20 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    if (AuthPass == true)
    {
       // gpgv method failed, if we have a good signature 
-      string LastGoodSigFile = _config->FindDir("Dir::State::lists") +
-	 "partial/" + URItoFileName(RealURI) + ".gpg.reverify";
+      string LastGoodSigFile = _config->FindDir("Dir::State::lists");
+      if (DestFile == SigFile)
+	 LastGoodSigFile.append(URItoFileName(RealURI));
+      else
+	 LastGoodSigFile.append("partial/").append(URItoFileName(RealURI)).append(".gpg.reverify");
+
       if(FileExists(LastGoodSigFile))
       {
-	 string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
-	    URItoFileName(RealURI) + ".gpg";
-	 Rename(LastGoodSigFile,VerifiedSigFile);
+	 if (DestFile != SigFile)
+	 {
+	    string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
+					URItoFileName(RealURI) + ".gpg";
+	    Rename(LastGoodSigFile,VerifiedSigFile);
+	 }
 	 Status = StatTransientNetworkError;
 	 _error->Warning(_("A error occurred during the signature "
 			   "verification. The repository is not updated "
@@ -1328,6 +1343,35 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    // No Release file was present, or verification failed, so fall
    // back to queueing Packages files without verification
    QueueIndexes(false);
+}
+									/*}}}*/
+pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
+		string const &URI, string const &URIDesc, string const &ShortDesc,
+		string const &MetaIndexURI, string const &MetaIndexURIDesc, string const &MetaIndexShortDesc,
+		string const &MetaSigURI, string const &MetaSigURIDesc, string const &MetaSigShortDesc,
+		const vector<struct IndexTarget*>* IndexTargets,
+		indexRecords* MetaIndexParser) :
+	pkgAcqMetaIndex(Owner, URI, URIDesc, ShortDesc, "", IndexTargets, MetaIndexParser),
+	MetaIndexURI(MetaIndexURI), MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
+	MetaSigURI(MetaSigURI), MetaSigURIDesc(MetaSigURIDesc), MetaSigShortDesc(MetaSigShortDesc)
+{
+   SigFile = DestFile;
+}
+									/*}}}*/
+void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
+{
+   if (AuthPass == false)
+   {
+      new pkgAcqMetaSig(Owner,
+			MetaSigURI, MetaSigURIDesc, MetaSigShortDesc,
+			MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
+			IndexTargets, MetaIndexParser);
+      if (Cnf->LocalOnly == true ||
+	  StringToBool(LookupTag(Message, "Transient-Failure"), false) == false)
+	 Dequeue();
+   }
+   else
+      pkgAcqMetaIndex::Failed(Message, Cnf);
 }
 									/*}}}*/
 // AcqArchive::AcqArchive - Constructor					/*{{{*/

@@ -772,6 +772,39 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
 		   indexRecords* MetaIndexParser);
 };
 									/*}}}*/
+/** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
+class pkgAcqMetaClearSig : public pkgAcqMetaIndex
+{
+   /** \brief The URI of the meta-index file for the detached signature */
+   string MetaIndexURI;
+
+   /** \brief A "URI-style" description of the meta-index file */
+   string MetaIndexURIDesc;
+
+   /** \brief A brief description of the meta-index file */
+   string MetaIndexShortDesc;
+
+   /** \brief The URI of the detached meta-signature file if the clearsigned one failed. */
+   string MetaSigURI;
+
+   /** \brief A "URI-style" description of the meta-signature file */
+   string MetaSigURIDesc;
+
+   /** \brief A brief description of the meta-signature file */
+   string MetaSigShortDesc;
+
+public:
+   void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+
+   /** \brief Create a new pkgAcqMetaClearSig. */
+   pkgAcqMetaClearSig(pkgAcquire *Owner,
+		string const &URI, string const &URIDesc, string const &ShortDesc,
+		string const &MetaIndexURI, string const &MetaIndexURIDesc, string const &MetaIndexShortDesc,
+		string const &MetaSigURI, string const &MetaSigURIDesc, string const &MetaSigShortDesc,
+		const vector<struct IndexTarget*>* IndexTargets,
+		indexRecords* MetaIndexParser);
+};
+									/*}}}*/
 /** \brief An item that is responsible for fetching a package file.	{{{
  *
  *  If the package file already exists in the cache, nothing will be

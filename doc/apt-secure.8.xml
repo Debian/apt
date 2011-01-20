@@ -148,8 +148,8 @@
    (you should make sure you are using a trusted communication channel
    when retrieving it), add it with <command>apt-key</command> and
    then run <command>apt-get update</command> so that apt can download
-   and verify the <filename>Release.gpg</filename> files from the archives you
-   have configured.
+   and verify the <filename>InRelease</filename> or <filename>Release.gpg</filename>
+   files from the archives you have configured.
    </para>
 </refsect1>
 
@@ -166,6 +166,7 @@
        (provided in apt-utils).</para></listitem>
    
       <listitem><para><emphasis>Sign it</emphasis>. You can do this by running
+      <command>gpg --clearsign -o InRelease Release</command> and
       <command>gpg -abs -o Release.gpg Release</command>.</para></listitem>
 
       <listitem><para><emphasis>Publish the key fingerprint</emphasis>,

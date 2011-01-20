@@ -53,11 +53,14 @@ apt (0.8.11+wheezy) unstable; urgency=low
     - operate optional on gzip compressed pdiffs
   * apt-pkg/acquire-item.cc:
     - don't uncompress downloaded pdiff files before feeding it to rred
+    - try downloading clearsigned InRelease before trying Release.gpg
   * cmdline/apt-key:
     - don't set trustdb-name as non-root so 'list' and 'finger'
       can be used without being root (Closes: #393005, #592107)
+  * apt-pkg/deb/deblistparser.cc:
+    - rewrite LoadReleaseInfo to cope with clearsigned Releasefiles
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 16 Jan 2011 17:23:28 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 20 Jan 2011 14:52:32 +0100
 
 apt (0.8.10) unstable; urgency=low
 

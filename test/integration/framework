@@ -383,6 +383,7 @@ buildaptarchivefromfiles() {
 
 generatereleasefiles() {
 	msgninfo "\tGenerate Release files… "
+	local DATE="${1:-now}"
 	if [ -e aptarchive/dists ]; then
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
 			local CODENAME="$(echo "$dir" | cut -d'/' -f 4)"
@@ -394,6 +395,11 @@ NotAutomatic: yes' $dir/Release
 		done
 	else
 		aptftparchive -qq release ./aptarchive | sed -e '/0 Release$/ d' > aptarchive/Release # remove the self reference
+	fi
+	if [ "$DATE" != "now" ]; then
+		for release in $(find ./aptarchive -name 'Release'); do
+			touch -d "$1" $release
+		done
 	fi
 	msgdone "info"
 }
@@ -455,6 +461,7 @@ signreleasefiles() {
 	done
 	for RELEASE in $(find aptarchive/ -name Release); do
 		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" -abs -o ${RELEASE}.gpg ${RELEASE}
+		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" --clearsign -o "$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')" $RELEASE
 	done
 	msgdone "info"
 }
