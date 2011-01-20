@@ -92,6 +92,11 @@ aptitude() {
 	fi
 }
 
+addtrap() {
+	CURRENTTRAP="$CURRENTTRAP $1"
+	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+}
+
 setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
 	local TESTDIR=$(readlink -f $(dirname $0))
@@ -99,8 +104,7 @@ setupenvironment() {
 	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
 	local OLDWORKINGDIRECTORY=$(pwd)
-	CURRENTTRAP="cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY"
-	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY;"
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive keys
 	cd rootdir
@@ -469,8 +473,7 @@ signreleasefiles() {
 changetowebserver() {
 	if which weborf > /dev/null; then
 		weborf -xb aptarchive/ 2>&1 > /dev/null &
-		CURRENTTRAP="kill $!; $CURRENTTRAP"
-		trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+		addtrap "kill $!;"
 		local APTARCHIVE="file://$(readlink -f ./aptarchive)"
 		for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
 			sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
@@ -504,17 +507,18 @@ testfileequal() {
 
 testequal() {
 	local COMPAREFILE=$(mktemp)
+	addtrap "rm $COMPAREFILE;"
 	echo "$1" > $COMPAREFILE
 	shift
 	msgtest "Test for equality of" "$*"
 	$* 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
-	rm $COMPAREFILE
 }
 
 testequalor2() {
 	local COMPAREFILE1=$(mktemp)
 	local COMPAREFILE2=$(mktemp)
 	local COMPAREAGAINST=$(mktemp)
+	addtrap "rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST;"
 	echo "$1" > $COMPAREFILE1
 	echo "$2" > $COMPAREFILE2
 	shift 2
@@ -525,7 +529,6 @@ testequalor2() {
 		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(checkdiff $COMPAREFILE1 $COMPAREAGAINST)" \
 		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(checkdiff $COMPAREFILE2 $COMPAREAGAINST)" &&
 		  msgfail )
-	rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST
 }
 
 testshowvirtual() {
@@ -542,11 +545,11 @@ N: Can't select versions from package '$1' as it purely virtual"
 	VIRTUAL="${VIRTUAL}
 N: No packages found"
 	local COMPAREFILE=$(mktemp)
+	addtrap "rm $COMPAREFILE;"
 	local ARCH=$(dpkg-architecture -qDEB_HOST_ARCH_CPU)
 	eval `apt-config shell ARCH APT::Architecture`
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
-	rm $COMPAREFILE
 }
 
 testnopackage() {
