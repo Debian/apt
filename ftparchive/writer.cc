@@ -918,6 +918,7 @@ ReleaseWriter::ReleaseWriter(string const &DB)
       AddPattern("Sources.bz2");
       AddPattern("Sources.lzma");
       AddPattern("Release");
+      AddPattern("Index");
       AddPattern("md5sum.txt");
    }
    AddPatterns(_config->FindVector("APT::FTPArchive::Release::Patterns"));
