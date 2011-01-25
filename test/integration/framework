@@ -221,7 +221,7 @@ buildsimplenativepackage() {
 	fi
 	local BUILDDIR=incoming/${NAME}-${VERSION}
 
-	msgninfo "Build package ${NAME} in ${VERSIOM} for ${RELEASE} in ${DISTSECTION}… "
+	msgninfo "Build package ${NAME} in ${VERSION} for ${RELEASE} in ${DISTSECTION}… "
 	mkdir -p $BUILDDIR/debian/source
 	echo "* most suckless software product ever" > ${BUILDDIR}/FEATURES
 	echo "#!/bin/sh
@@ -319,6 +319,8 @@ Default {
 	Packages::Compress ". gzip bzip2 lzma";
 	Sources::Compress ". gzip bzip2 lzma";
 	Contents::Compress ". gzip bzip2 lzma";
+	Translation::Compress ". gzip bzip2 lzma";
+	LongDescription "false";
 };
 TreeDefault {
 	Directory "pool/";
@@ -433,6 +435,9 @@ generatereleasefiles() {
 	msgninfo "\tGenerate Release files… "
 	local DATE="${1:-now}"
 	if [ -e aptarchive/dists ]; then
+		for dir in $(find ./aptarchive/dists -mindepth 3 -maxdepth 3 -type d -name 'i18n'); do
+			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Patterns::='Translation-*' > $dir/Index
+		done
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
 			local CODENAME="$(echo "$dir" | cut -d'/' -f 4)"
 			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Suite="${CODENAME}" -o APT::FTPArchive::Release::Codename="${CODENAME}" | sed -e '/0 Release$/ d' > $dir/Release # remove the self reference

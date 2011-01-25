@@ -5,7 +5,7 @@ DIR=$(readlink -f $(dirname $0))
 if [ "$1" = "-q" ]; then
 	export MSGLEVEL=2
 elif [ "$1" = "-v" ]; then
-	export MSGLEVEL=5
+	export MSGLEVEL=4
 fi
 for testcase in $(run-parts --list $DIR | grep '/test-'); do
 	if [ "$1" = "-q" ]; then
