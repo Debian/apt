@@ -832,7 +832,7 @@ bool Generate(CommandLine &CmdL)
    }
 
    // close the Translation master files
-   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
+   for (vector<PackageMap>::reverse_iterator I = PkgList.rbegin(); I != PkgList.rend(); I++)
       if (I->TransWriter != NULL && I->TransWriter->DecreaseRefCounter() == 0)
 	 delete I->TransWriter;
 
