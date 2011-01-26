@@ -622,29 +622,61 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 HashString ExpectedHash, string comprExt)
    : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash)
 {
+   if(comprExt.empty() == true)
+   {
+      // autoselect the compression method
+      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+      for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+	 comprExt.append(*t).append(" ");
+      if (comprExt.empty() == false)
+	 comprExt.erase(comprExt.end()-1);
+   }
+   CompressionExtension = comprExt;
+
+   Init(URI, URIDesc, ShortDesc);
+}
+pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
+			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser)
+   : Item(Owner), RealURI(Target->URI), ExpectedHash(ExpectedHash)
+{
+   // autoselect the compression method
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   CompressionExtension = "";
+   if (ExpectedHash.empty() == false)
+   {
+      for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+	 if (*t == "uncompressed" || MetaIndexParser->Exists(string(Target->MetaKey).append(".").append(*t)) == true)
+	    CompressionExtension.append(*t).append(" ");
+   }
+   else
+   {
+      for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+	 CompressionExtension.append(*t).append(" ");
+   }
+   if (CompressionExtension.empty() == false)
+      CompressionExtension.erase(CompressionExtension.end()-1);
+
+   Init(Target->URI, Target->Description, Target->ShortDesc);
+}
+									/*}}}*/
+// AcqIndex::Init - defered Constructor					/*{{{*/
+void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &ShortDesc) {
    Decompression = false;
    Erase = false;
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
-   if(comprExt.empty()) 
-   {
-      // autoselect the compression method
-      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-      if (types.empty() == true)
-	 comprExt = "plain";
-      else
-	 comprExt = "." + types[0];
-   }
-   CompressionExtension = ((comprExt == "plain" || comprExt == ".") ? "" : comprExt);
-
-   Desc.URI = URI + CompressionExtension;
+   std::string const comprExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
+   if (comprExt == "uncompressed")
+      Desc.URI = URI;
+   else
+      Desc.URI = URI + '.' + comprExt;
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
-      
+
    QueueURI(Desc);
 }
 									/*}}}*/
@@ -666,37 +698,18 @@ string pkgAcqIndex::Custom600Headers()
 									/*}}}*/
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 {
-   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-
-   for (std::vector<std::string>::const_iterator t = types.begin();
-	t != types.end(); t++)
+   size_t const nextExt = CompressionExtension.find(' ');
+   if (nextExt != std::string::npos)
    {
-      // jump over all already tried compression types
-      const unsigned int nameLen = Desc.URI.size() - (*t).size();
-      if(Desc.URI.substr(nameLen) != *t)
-	 continue;
-
-      // we want to try it with the next extension (and make sure to 
-      // not skip over the end)
-      t++;
-      if (t == types.end())
-	 break;
-
-      // queue new download
-      Desc.URI = Desc.URI.substr(0, nameLen) + *t;
-      new pkgAcqIndex(Owner, RealURI, Desc.Description, Desc.ShortDesc,
-      ExpectedHash, string(".").append(*t));
-      
-      Status = StatDone;
-      Complete = false;
-      Dequeue();
+      CompressionExtension = CompressionExtension.substr(nextExt+1);
+      Init(RealURI, Desc.Description, Desc.ShortDesc);
       return;
    }
 
    // on decompression failure, remove bad versions in partial/
-   if(Decompression && Erase) {
+   if (Decompression && Erase) {
       string s = _config->FindDir("Dir::State::lists") + "partial/";
-      s += URItoFileName(RealURI);
+      s.append(URItoFileName(RealURI));
       unlink(s.c_str());
    }
 
@@ -773,8 +786,8 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       Status = StatError;
       ErrorText = "Method gave a blank filename";
    }
-   
-   string compExt = flExtension(flNotDir(URI(Desc.URI).Path));
+
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
 
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true) {
@@ -807,12 +820,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
    // get the binary name for your used compression type
    decompProg = _config->Find(string("Acquire::CompressionTypes::").append(compExt),"");
    if(decompProg.empty() == false);
-   // flExtensions returns the full name if no extension is found
-   // this is why we have this complicated compare operation here
-   // FIMXE: add a new flJustExtension() that return "" if no
-   //        extension is found and use that above so that it can
-   //        be tested against ""
-   else if(compExt == flNotDir(URI(Desc.URI).Path))
+   else if(compExt == "uncompressed")
       decompProg = "copy";
    else {
       _error->Error("Unsupported extension: %s", compExt.c_str());
@@ -853,6 +861,15 @@ string pkgAcqIndexTrans::Custom600Headers()
 /* */
 void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+   size_t const nextExt = CompressionExtension.find(' ');
+   if (nextExt != std::string::npos)
+   {
+      CompressionExtension = CompressionExtension.substr(nextExt+1);
+      Init(RealURI, Desc.Description, Desc.ShortDesc);
+      Status = StatIdle;
+      return;
+   }
+
    if (Cnf->LocalOnly == true || 
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
    {      
@@ -862,7 +879,7 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       Dequeue();
       return;
    }
-   
+
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
@@ -1197,8 +1214,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 			     (*Target)->ShortDesc, ExpectedIndexHash);
       else
-	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
-			    (*Target)->ShortDesc, ExpectedIndexHash);
+	 new pkgAcqIndex(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
    }
 }
 									/*}}}*/

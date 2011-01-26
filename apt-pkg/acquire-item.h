@@ -528,8 +528,8 @@ class pkgAcqIndex : public pkgAcquire::Item
    /** \brief The expected hashsum of the decompressed index file. */
    HashString ExpectedHash;
 
-   /** \brief The compression-related file extension that is being
-    *  added to the downloaded file (e.g., ".gz" or ".bz2").
+   /** \brief The compression-related file extensions that are being
+    *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
     */
    string CompressionExtension;
 
@@ -540,7 +540,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
-   virtual string DescURI() {return RealURI + CompressionExtension;};
+   virtual string DescURI() {return Desc.URI;};
    virtual string HashSum() {return ExpectedHash.toStr(); };
 
    /** \brief Create a pkgAcqIndex.
@@ -565,6 +565,9 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
 	       string ShortDesc, HashString ExpectedHash, 
 	       string compressExt="");
+   pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
+			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
+   void Init(string const &URI, string const &URIDesc, string const &ShortDesc);
 };
 									/*}}}*/
 /** \brief An acquire item that is responsible for fetching a		{{{

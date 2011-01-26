@@ -56,6 +56,7 @@ setupcompressor() {
 	lzma) COMPRESS="lzma";;
 	esac
 	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
+Dir::Bin::uncompressed \"/does/not/exist\";
 Dir::Bin::gzip \"/does/not/exist\";
 Dir::Bin::bzip2 \"/does/not/exist\";
 Dir::Bin::lzma \"/does/not/exist\";" > rootdir/etc/apt/apt.conf.d/00compressor
@@ -93,8 +94,8 @@ Reading package lists..." "empty archive Packages.$COMPRESS over file"
 	testaptgetupdate "Ign file:$(readlink -f aptarchive)/  Translation-en
 Get:1 file:  InRelease []
 Err file:  Packages
-  Undetermined Error
-W: Failed to fetch file:$(readlink -f aptarchive/Packages.$COMPRESS)  Undetermined Error
+  Empty files can't be valid archives
+W: Failed to fetch ${COMPRESSOR}:$(readlink -f aptarchive/Packages.$COMPRESS)  Empty files can't be valid archives
 
 E: Some index files failed to download, they have been ignored, or old ones used instead." "empty file Packages.$COMPRESS over file"
 }
@@ -127,8 +128,8 @@ Reading package lists..." "empty archive Packages.$COMPRESS over http"
 Ign http://localhost/  Translation-en
 Get:2 http://localhost  Packages
 Err http://localhost  Packages
-  Undetermined Error
-W: Failed to fetch http://localhost:8080/Packages.$COMPRESS  Undetermined Error
+  Empty files can't be valid archives
+W: Failed to fetch ${COMPRESSOR}:$(readlink -f rootdir/var/lib/apt/lists/partial/localhost:8080_Packages)  Empty files can't be valid archives
 
 E: Some index files failed to download, they have been ignored, or old ones used instead." "empty file Packages.$COMPRESS over http"
 }

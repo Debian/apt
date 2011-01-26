@@ -90,6 +90,14 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		types.push_back(Types->Tag);
 	}
 
+	// add the special "uncompressed" type
+	if (std::find(types.begin(), types.end(), "uncompressed") == types.end())
+	{
+		string const uncompr = _config->FindFile("Dir::Bin::uncompressed", "");
+		if (uncompr.empty() == true || FileExists(uncompr) == true)
+			types.push_back("uncompressed");
+	}
+
 	return types;
 }
 									/*}}}*/

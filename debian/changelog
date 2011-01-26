@@ -54,6 +54,8 @@ apt (0.8.11+wheezy) unstable; urgency=low
   * apt-pkg/acquire-item.cc:
     - don't uncompress downloaded pdiff files before feeding it to rred
     - try downloading clearsigned InRelease before trying Release.gpg
+    - change the internal handling of Extensions in pkgAcqIndex
+    - add a special uncompressed compression type to prefer those files
   * cmdline/apt-key:
     - don't set trustdb-name as non-root so 'list' and 'finger'
       can be used without being root (Closes: #393005, #592107)
@@ -62,8 +64,10 @@ apt (0.8.11+wheezy) unstable; urgency=low
   * ftparchive/writer.cc:
     - add config option to search for more patterns in release command
     - include Index files by default in the Release file
+  * methods/{gzip,bzip}.cc:
+    - print a good error message if FileSize() is zero
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 24 Jan 2011 15:36:50 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 26 Jan 2011 16:06:10 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 
