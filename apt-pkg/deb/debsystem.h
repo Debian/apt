@@ -12,16 +12,15 @@
 
 #include <apt-pkg/pkgsystem.h>
 
+class debSystemPrivate;
+
 class debStatusIndex;
 class debSystem : public pkgSystem
 {
-   // For locking support
-   int LockFD;
-   unsigned LockCount;
+   // private d-pointer
+   debSystemPrivate *d;
    bool CheckUpdates();
-   
-   debStatusIndex *StatusFile;
-   
+
    public:
 
    virtual bool Lock();
