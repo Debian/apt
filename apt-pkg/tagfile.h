@@ -31,9 +31,11 @@ class pkgTagSection
    unsigned int Indexes[256];
    unsigned int AlphaIndexes[0x100];
    unsigned int TagCount;
+   // for later
    int *reserved1;
    int *reserved2;
    int *reserved3;
+   int *reserved4;
 
    /* This very simple hash function for the last 8 letters gives
       very good performance on the debian package files */
@@ -91,7 +93,7 @@ class pkgTagFile
    public:
 
    bool Step(pkgTagSection &Section);
-   inline unsigned long Offset();
+   unsigned long Offset();
    bool Jump(pkgTagSection &Tag,unsigned long Offset);
 
    pkgTagFile(FileFd *F,unsigned long Size = 32*1024);
