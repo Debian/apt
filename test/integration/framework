@@ -219,7 +219,7 @@ buildsimplenativepackage() {
 	else
 		DISTSECTION="$(echo "$SECTION" | cut -d'/' -f 1)"
 	fi
-	local BUILDDIR=incoming/${NAME}-${VERSION}
+	local BUILDDIR=${TMPWORKINGDIRECTORY}/incoming/${NAME}-${VERSION}
 
 	msgninfo "Build package ${NAME} in ${VERSION} for ${RELEASE} in ${DISTSECTION}… "
 	mkdir -p $BUILDDIR/debian/source
@@ -259,12 +259,12 @@ Architecture: $ARCH" > ${BUILDDIR}/debian/control
 	(cd ${BUILDDIR}; dpkg-gencontrol)
 	(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 
-	dpkg-deb --build ${BUILDDIR}/debian/tmp incoming > /dev/null
-	echo "pool/${NAME}_${VERSION}_${ARCH}.deb" >> incoming/${RELEASE}.${DISTSECTION}.pkglist
+	dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. > /dev/null
+	echo "pool/${NAME}_${VERSION}_${ARCH}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	for SRC in $SRCS; do
-		echo "pool/${SRC}" >> incoming/${RELEASE}.${DISTSECTION}.srclist
+		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 	done
-	rm -rf "incoming/${NAME}-${VERSION}"
+	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
 
