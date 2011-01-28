@@ -31,11 +31,8 @@ class pkgTagSection
    unsigned int Indexes[256];
    unsigned int AlphaIndexes[0x100];
    unsigned int TagCount;
-   // for later
-   int *reserved1;
-   int *reserved2;
-   int *reserved3;
-   int *reserved4;
+   // dpointer placeholder (for later in case we need it)
+   void *d;
 
    /* This very simple hash function for the last 8 letters gives
       very good performance on the debian package files */
@@ -80,6 +77,7 @@ class pkgTagSection
    };
    
    pkgTagSection() : Section(0), Stop(0) {};
+   virtual ~pkgTagSection() {};
 };
 
 class pkgTagFilePrivate;
@@ -97,7 +95,7 @@ class pkgTagFile
    bool Jump(pkgTagSection &Tag,unsigned long Offset);
 
    pkgTagFile(FileFd *F,unsigned long Size = 32*1024);
-   ~pkgTagFile();
+   virtual ~pkgTagFile();
 };
 
 /* This is the list of things to rewrite. The rewriter

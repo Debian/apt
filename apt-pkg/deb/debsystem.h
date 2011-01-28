@@ -34,7 +34,7 @@ class debSystem : public pkgSystem
 			  pkgIndexFile *&Found) const;
 
    debSystem();
-   ~debSystem();
+   virtual ~debSystem();
 };
 
 extern debSystem debSys;
