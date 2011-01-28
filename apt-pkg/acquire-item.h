@@ -287,6 +287,50 @@ struct DiffInfo {
    unsigned long size;
 };
 									/*}}}*/
+/** \brief An item that is responsible for fetching a SubIndex		{{{
+ *
+ *  The MetaIndex file includes only records for important indexes
+ *  and records for these SubIndex files so these can carry records
+ *  for addition files like PDiffs and Translations
+ */
+class pkgAcqSubIndex : public pkgAcquire::Item
+{
+ protected:
+   /** \brief If \b true, debugging information will be written to std::clog. */
+   bool Debug;
+
+   /** \brief The item that is currently being downloaded. */
+   pkgAcquire::ItemDesc Desc;
+
+   /** \brief The Hash that this file should have after download
+    */
+   HashString ExpectedHash;
+
+ public:
+   // Specialized action members
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual string DescURI() {return Desc.URI;};
+   virtual string Custom600Headers();
+   virtual bool ParseIndex(string const &IndexFile);
+
+   /** \brief Create a new pkgAcqDiffIndex.
+    *
+    *  \param Owner The Acquire object that owns this item.
+    *
+    *  \param URI The URI of the list file to download.
+    *
+    *  \param URIDesc A long description of the list file to download.
+    *
+    *  \param ShortDesc A short description of the list file to download.
+    *
+    *  \param ExpectedHash The list file's MD5 signature.
+    */
+   pkgAcqSubIndex(pkgAcquire *Owner, string const &URI,string const &URIDesc,
+		   string const &ShortDesc, HashString const &ExpectedHash);
+};
+									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
  *  package list diffs and starting the package list's download.
  *
@@ -597,6 +641,8 @@ class pkgAcqIndexTrans : public pkgAcqIndex
     */
    pkgAcqIndexTrans(pkgAcquire *Owner,string URI,string URIDesc,
 		    string ShortDesc);
+   pkgAcqIndexTrans(pkgAcquire *Owner, struct IndexTarget const * const Target,
+		    HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
@@ -615,8 +661,18 @@ struct IndexTarget
     *  looked up within the meta signature file.
     */
    string MetaKey;
+
+   //FIXME: We should use virtual methods here instead…
+   bool IsOptional() const;
+   bool IsSubIndex() const;
 };
 									/*}}}*/
+/** \brief Information about an optional index file. */			/*{{{*/
+struct OptionalIndexTarget : public IndexTarget
+{
+};
+									/*}}}*/
+
 /** \brief An acquire item that downloads the detached signature	{{{
  *  of a meta-index (Release) file, then queues up the release
  *  file itself.

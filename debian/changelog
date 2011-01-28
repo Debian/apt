@@ -56,6 +56,7 @@ apt (0.8.11+wheezy) unstable; urgency=low
     - try downloading clearsigned InRelease before trying Release.gpg
     - change the internal handling of Extensions in pkgAcqIndex
     - add a special uncompressed compression type to prefer those files
+    - download and use i18n/Index to choose which Translations to download
   * cmdline/apt-key:
     - don't set trustdb-name as non-root so 'list' and 'finger'
       can be used without being root (Closes: #393005, #592107)
@@ -66,8 +67,10 @@ apt (0.8.11+wheezy) unstable; urgency=low
     - include Index files by default in the Release file
   * methods/{gzip,bzip}.cc:
     - print a good error message if FileSize() is zero
+  * apt-pkg/aptconfiguration.cc:
+    - remove the inbuilt Translation files whitelist
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 26 Jan 2011 16:06:10 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Jan 2011 12:22:25 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 

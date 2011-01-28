@@ -37,6 +37,8 @@ class debReleaseIndex : public metaIndex {
    string IndexURISuffix(const char *Type, string const &Section, string const &Arch="native") const;
    string SourceIndexURI(const char *Type, const string &Section) const;
    string SourceIndexURISuffix(const char *Type, const string &Section) const;
+   string TranslationIndexURI(const char *Type, const string &Section) const;
+   string TranslationIndexURISuffix(const char *Type, const string &Section) const;
    virtual vector <pkgIndexFile *> *GetIndexFiles();
 
    virtual bool IsTrusted() const;

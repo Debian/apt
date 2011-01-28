@@ -184,6 +184,153 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
    }
 }
 									/*}}}*/
+// AcqSubIndex::AcqSubIndex - Constructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* Get the DiffIndex file first and see if there are patches availabe 
+ * If so, create a pkgAcqIndexDiffs fetcher that will get and apply the
+ * patches. If anything goes wrong in that process, it will fall back to
+ * the original packages file
+ */
+pkgAcqSubIndex::pkgAcqSubIndex(pkgAcquire *Owner, string const &URI,
+				 string const &URIDesc, string const &ShortDesc,
+				 HashString const &ExpectedHash)
+   : Item(Owner), ExpectedHash(ExpectedHash)
+{
+   Debug = _config->FindB("Debug::pkgAcquire::SubIndex",false);
+
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(URI);
+
+   Desc.URI = URI;
+   Desc.Description = URIDesc;
+   Desc.Owner = this;
+   Desc.ShortDesc = ShortDesc;
+
+   QueueURI(Desc);
+
+   if(Debug)
+      std::clog << "pkgAcqSubIndex: " << Desc.URI << std::endl;
+}
+									/*}}}*/
+// AcqSubIndex::Custom600Headers - Insert custom request headers	/*{{{*/
+// ---------------------------------------------------------------------
+/* The only header we use is the last-modified header. */
+string pkgAcqSubIndex::Custom600Headers()
+{
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(Desc.URI);
+
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) != 0)
+      return "\nIndex-File: true";
+   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+}
+									/*}}}*/
+void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+{
+   if(Debug)
+      std::clog << "pkgAcqSubIndex failed: " << Desc.URI << std::endl;
+
+   Complete = false;
+   Status = StatDone;
+   Dequeue();
+
+   // No good Index is provided, so try guessing
+   std::vector<std::string> langs = APT::Configuration::getLanguages(true);
+   for (std::vector<std::string>::const_iterator l = langs.begin();
+	l != langs.end(); ++l)
+   {
+      if (*l == "none") continue;
+      string const file = "Translation-" + *l;
+      new pkgAcqIndexTrans(Owner, Desc.URI.substr(0, Desc.URI.rfind('/')+1).append(file),
+		Desc.Description.erase(Desc.Description.rfind(' ')+1).append(file),
+		file);
+   }
+}
+									/*}}}*/
+void pkgAcqSubIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{{*/
+			   pkgAcquire::MethodConfig *Cnf)
+{
+   if(Debug)
+      std::clog << "pkgAcqSubIndex::Done(): " << Desc.URI << std::endl;
+
+   string FileName = LookupTag(Message,"Filename");
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "Method gave a blank filename";
+      return;
+   }
+
+   if (FileName != DestFile)
+   {
+      Local = true;
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
+      return;
+   }
+
+   Item::Done(Message,Size,Md5Hash,Cnf);
+
+   string FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(Desc.URI);
+
+   // sucess in downloading the index
+   // rename the index
+   if(Debug)
+      std::clog << "Renaming: " << DestFile << " -> " << FinalFile << std::endl;
+   Rename(DestFile,FinalFile);
+   chmod(FinalFile.c_str(),0644);
+   DestFile = FinalFile;
+
+   if(ParseIndex(DestFile) == false)
+      return Failed("", NULL);
+
+   Complete = true;
+   Status = StatDone;
+   Dequeue();
+   return;
+}
+									/*}}}*/
+bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
+{
+   indexRecords SubIndexParser;
+   if (FileExists(IndexFile) == false || SubIndexParser.Load(IndexFile) == false)
+      return false;
+
+   std::vector<std::string> lang = APT::Configuration::getLanguages(true);
+   for (std::vector<std::string>::const_iterator l = lang.begin();
+	l != lang.end(); ++l)
+   {
+      if (*l == "none")
+	 continue;
+
+      string file = "Translation-" + *l;
+      indexRecords::checkSum const *Record = SubIndexParser.Lookup(file);
+      HashString expected;
+      if (Record == NULL)
+      {
+	 // FIXME: the Index file provided by debian currently only includes bz2 records
+	 Record = SubIndexParser.Lookup(file + ".bz2");
+	 if (Record == NULL)
+	    continue;
+      }
+      else
+      {
+	 expected = Record->Hash;
+	 if (expected.empty() == true)
+	    continue;
+      }
+
+      IndexTarget target;
+      target.Description = Desc.Description.erase(Desc.Description.rfind(' ')+1).append(file);
+      target.MetaKey = file;
+      target.ShortDesc = file;
+      target.URI = Desc.URI.substr(0, Desc.URI.rfind('/')+1).append(file);
+      new pkgAcqIndexTrans(Owner, &target, expected, &SubIndexParser);
+   }
+   return true;
+}
+									/*}}}*/
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Get the DiffIndex file first and see if there are patches availabe 
@@ -842,6 +989,11 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
   : pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, HashString(), "")
 {
 }
+pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const *Target,
+			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser)
+  : pkgAcqIndex(Owner, Target, ExpectedHash, MetaIndexParser)
+{
+}
 									/*}}}*/
 // AcqIndexTrans::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
@@ -1182,27 +1334,41 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
       HashString ExpectedIndexHash;
       if (verify)
       {
-         const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
-         if (!Record)
-         {
-            Status = StatAuthError;
-            ErrorText = "Unable to find expected entry  "
-               + (*Target)->MetaKey + " in Meta-index file (malformed Release file?)";
-            return;
-         }
-         ExpectedIndexHash = Record->Hash;
-         if (_config->FindB("Debug::pkgAcquire::Auth", false))
-         {
-            std::cerr << "Queueing: " << (*Target)->URI << std::endl;
-            std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
-         }
-         if (ExpectedIndexHash.empty())
-         {
-            Status = StatAuthError;
-            ErrorText = "Unable to find hash sum for "
-               + (*Target)->MetaKey + " in Meta-index file";
-            return;
-         }
+	 const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+	 if (Record == NULL)
+	 {
+	    if ((*Target)->IsOptional() == false)
+	    {
+	       Status = StatAuthError;
+	       strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
+	       return;
+	    }
+	 }
+	 else
+	 {
+	    ExpectedIndexHash = Record->Hash;
+	    if (_config->FindB("Debug::pkgAcquire::Auth", false))
+	    {
+	       std::cerr << "Queueing: " << (*Target)->URI << std::endl;
+	       std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
+	    }
+	    if (ExpectedIndexHash.empty() == true && (*Target)->IsOptional() == false)
+	    {
+	       Status = StatAuthError;
+	       strprintf(ErrorText, _("Unable to find hash sum for '%s' in Release file"), (*Target)->MetaKey.c_str());
+	       return;
+	    }
+	 }
+      }
+
+      if ((*Target)->IsOptional() == true)
+      {
+	 if ((*Target)->IsSubIndex() == true)
+	    new pkgAcqSubIndex(Owner, (*Target)->URI, (*Target)->Description,
+				(*Target)->ShortDesc, ExpectedIndexHash);
+	 else
+	    new pkgAcqIndexTrans(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
+	 continue;
       }
 
       /* Queue Packages file (either diff or full packages files, depending
@@ -1836,3 +2002,13 @@ string pkgAcqFile::Custom600Headers()
    return "";
 }
 									/*}}}*/
+bool IndexTarget::IsOptional() const {
+   if (strncmp(ShortDesc.c_str(), "Translation", 11) != 0)
+      return false;
+   return true;
+}
+bool IndexTarget::IsSubIndex() const {
+   if (ShortDesc != "TranslationIndex")
+      return false;
+   return true;
+}
