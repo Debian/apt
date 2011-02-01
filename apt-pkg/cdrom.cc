@@ -568,7 +568,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    stringstream msg;
 
    // Startup
-   string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   string CDROM = _config->FindDir("Acquire::cdrom::mount");
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
    
