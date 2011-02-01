@@ -52,7 +52,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::State::lists","lists/");
    Cnf.Set("Dir::State::cdroms","cdroms.list");
    Cnf.Set("Dir::State::mirrors","mirrors/");
-   
+
    // Cache
    Cnf.Set("Dir::Cache","var/cache/apt/");
    Cnf.Set("Dir::Cache::archives","archives/");
@@ -87,6 +87,9 @@ bool pkgInitConfig(Configuration &Cnf)
 
    // Translation
    Cnf.Set("APT::Acquire::Translation", "environment");
+
+   // Default cdrom mount point
+   Cnf.Set("Acquire::cdrom::mount", "/media/cdrom/");
 
    bool Res = true;
    
