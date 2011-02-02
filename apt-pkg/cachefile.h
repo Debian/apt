@@ -25,6 +25,9 @@
 
 class pkgCacheFile
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    protected:
    
    MMap *Map;
