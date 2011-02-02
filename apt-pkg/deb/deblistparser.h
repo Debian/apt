@@ -27,6 +27,8 @@ class debListParser : public pkgCacheGenerator::ListParser
    };
    
    private:
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
    
    pkgTagFile Tags;
    pkgTagSection Section;
@@ -73,6 +75,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
    debListParser(FileFd *File, string const &Arch = "");
+   virtual ~debListParser() {};
 };
 
 #endif

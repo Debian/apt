@@ -95,7 +95,7 @@ class pkgSrcRecords
    Parser *Find(const char *Package,bool const &SrcOnly = false);
    
    pkgSrcRecords(pkgSourceList &List);
-   ~pkgSrcRecords();
+   virtual ~pkgSrcRecords();
 };
 
 #endif
