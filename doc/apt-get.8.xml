@@ -278,6 +278,12 @@
      for broken dependencies.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term>download</term>
+       <listitem><para><literal>download</literal> will download the given
+           binary package into the current directoy.
+       </para></listitem>
+     </varlistentry>
+
      <varlistentry><term>clean</term>
      <listitem><para><literal>clean</literal> clears out the local repository of retrieved package 
      files. It removes everything but the lock file from 
@@ -302,6 +308,23 @@
      <listitem><para><literal>autoremove</literal> is used to remove packages that were automatically
      installed to satisfy dependencies for some package and that are no more needed.</para></listitem>
      </varlistentry>
+
+     <varlistentry><term>changelog</term>
+       <listitem><para><literal>changelog</literal> downloads a package changelog and displays
+           it through <command>sensible-pager</command>. The server name and base
+           directory is defined in the <literal>APT::Changelogs::Server</literal>
+           variable (e. g. <ulink>http://packages.debian.org/changelogs</ulink> for
+           Debian or <ulink>http://changelogs.ubuntu.com/changelogs</ulink> for
+           Ubuntu).
+           By default it displays the changelog for the version that is
+           installed.  However, you can specify the same options as for
+           the <option>install</option> command.
+         </para>
+       </listitem>
+     </varlistentry>
+
+
+
    </variablelist>
  </refsect1>
  

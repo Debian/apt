@@ -1230,7 +1230,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
 
 	 if(dpkg_error.size() > 0)
-	    _error->Error(dpkg_error.c_str());
+	    _error->Error("%s", dpkg_error.c_str());
 
 	 if(stopOnError) 
 	 {

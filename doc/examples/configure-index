@@ -114,54 +114,62 @@ APT
   // does a ExecFork)
   Keep-Fds {};
 
+  Changelogs
+  {
+    // server the provides the changelogs, the code will assume
+    // the changlogs are in the pool/ under a srcpkg_ver directory 
+    // with the name "changelog"
+    Server "http://packages.debian.org/changelogs";
+  }:
+
   // control parameters for cron jobs by /etc/cron.daily/apt
   Periodic
   {
-  BackupArchiveInterval "0";
-  // - Backup after n-days if archive contents changed.(0=disable)
+    BackupArchiveInterval "0";
+    // - Backup after n-days if archive contents changed.(0=disable)
 
-  BackupLevel "3";
-  // - Backup level.(0=disable), 1 is invalid.
+    BackupLevel "3";
+    // - Backup level.(0=disable), 1 is invalid.
 
-  // APT::Archives::MaxAge "0"; (old, deprecated)
-  MaxAge "0"; // (new)
-  // - Set maximum allowed age of a cache package file. If a cache 
-  //   package file is older it is deleted (0=disable)
+    // APT::Archives::MaxAge "0"; (old, deprecated)
+    MaxAge "0"; // (new)
+    // - Set maximum allowed age of a cache package file. If a cache 
+    //   package file is older it is deleted (0=disable)
 
-  // APT::Archives::MinAge "2"; (old, deprecated)
-  MinAge "2"; // (new)
-  // - Set minimum age of a package file. If a file is younger it
-  //   will not be deleted (0=disable). Usefull to prevent races 
-  //   and to keep backups of the packages for emergency.
+    // APT::Archives::MinAge "2"; (old, deprecated)
+    MinAge "2"; // (new)
+    // - Set minimum age of a package file. If a file is younger it
+    //   will not be deleted (0=disable). Usefull to prevent races 
+    //   and to keep backups of the packages for emergency.
 
-  // APT::Archives::MaxSize "0"; (old, deprecated)
-  MaxSize "0"; // (new)
-  // - Set maximum size of the cache in MB (0=disable). If the cache
-  //   is bigger, cached package files are deleted until the size
-  //   requirement is met (the biggest packages will be deleted 
-  //   first).
+    // APT::Archives::MaxSize "0"; (old, deprecated)
+    MaxSize "0"; // (new)
+    // - Set maximum size of the cache in MB (0=disable). If the cache
+    //   is bigger, cached package files are deleted until the size
+    //   requirement is met (the biggest packages will be deleted 
+    //   first).
 
-  Update-Package-Lists "0";
-  // - Do "apt-get update" automatically every n-days (0=disable)
-  //   
-  Download-Upgradeable-Packages "0";
-  // - Do "apt-get upgrade --download-only" every n-days (0=disable)
-  //
-  Unattended-Upgrade "0";
-  // - Run the "unattended-upgrade" security upgrade script 
-  //   every n-days (0=disabled)
-  //   Requires the package "unattended-upgrades" and will write
-  //   a log in /var/log/unattended-upgrades
-  //
-  AutocleanInterval "0";
-  // - Do "apt-get autoclean" every n-days (0=disable)
+    Update-Package-Lists "0";
+    // - Do "apt-get update" automatically every n-days (0=disable)
+    //   
+    Download-Upgradeable-Packages "0";
+    // - Do "apt-get upgrade --download-only" every n-days (0=disable)
+    //
+    Unattended-Upgrade "0";
+    // - Run the "unattended-upgrade" security upgrade script 
+    //   every n-days (0=disabled)
+    //   Requires the package "unattended-upgrades" and will write
+    //   a log in /var/log/unattended-upgrades
+    //
+    AutocleanInterval "0";
+    // - Do "apt-get autoclean" every n-days (0=disable)
 
-  Verbose "0";
-  // - Send report mail to root
-  //   0:  no report             (or null string)
-  //   1:  progress report       (actually any string)
-  //   2:  + command outputs     (remove -qq, remove 2>/dev/null, add -d)
-  //   3:  + trace on            
+    Verbose "0";
+    // - Send report mail to root
+    //   0:  no report             (or null string)
+    //   1:  progress report       (actually any string)
+    //   2:  + command outputs     (remove -qq, remove 2>/dev/null, add -d)
+    //   3:  + trace on            
   };
 };
 

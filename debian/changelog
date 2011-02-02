@@ -1,10 +1,20 @@
-apt (0.8.10.4) UNRELEASED; urgency=low
+apt (0.8.11) unstable; urgency=low
 
+  [ Michael Vogt ]
+  * methods/http.cc:
+    - do not hang if Acquire::http::ProxyAutoDetect can not be
+      executed or returns no data (LP: #654393)
   * debian/apt.conf.autoremove:
     - never autoremove the GNU/Hurd kernel (closes: #588423), thanks
       to Guillem Jover
   * apt-pkg/cdrom.cc, apt-pkg/init.cc, methods/cdrom.cc:
     - use /media/cdrom as default mountoint (closes: #611569)
+
+  [ Martin Pitt ]
+  * test/integration/test-compressed-indexes, test/test-indexes.sh:
+    - Explicitly disable compressed indexes at the start. This ensures that we
+      will actually test uncompressed indexes regardless of the internal
+      default value of Acquire::GzipIndexes.
 
  -- Michael Vogt <mvo@debian.org>  Tue, 01 Feb 2011 09:38:48 +0100
 
