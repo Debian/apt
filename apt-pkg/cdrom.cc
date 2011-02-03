@@ -198,7 +198,7 @@ int pkgCdrom::Score(string Path)
    // a symlink gets a big penalty
    struct stat Buf;
    string statPath = flNotFile(Path);
-   string cdromPath = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   string cdromPath = _config->FindDir("Acquire::cdrom::mount");
    while(statPath != cdromPath && statPath != "./") {
       statPath.resize(statPath.size()-1);  // remove the trailing '/'
       if (lstat(statPath.c_str(),&Buf) == 0) {
@@ -509,7 +509,7 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
    stringstream msg;
 
    // Startup
-   string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   string CDROM = _config->FindDir("Acquire::cdrom::mount");
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
 
@@ -568,7 +568,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    stringstream msg;
 
    // Startup
-   string CDROM = _config->FindDir("Acquire::cdrom::mount","/cdrom/");
+   string CDROM = _config->FindDir("Acquire::cdrom::mount");
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
    
