@@ -20,7 +20,7 @@ Auto-Installed: 1
 '
 aptget remove debhelper -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled 'debhelper'
-testdpkginstalled 'po-debconf unrelated'
+testdpkginstalled 'po-debconf' 'unrelated'
 
 echo 'APT::NeverAutoRemove { "^debc.*nf$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
 testequal 'Reading package lists...
