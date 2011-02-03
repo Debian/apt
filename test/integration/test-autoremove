@@ -19,7 +19,7 @@ Architecture: i386
 Auto-Installed: 1
 '
 aptget remove debhelper -y -qq 2>&1 > /dev/null
-testdpkgnoninstalled 'debhelper'
+testdpkgnotinstalled 'debhelper'
 testdpkginstalled 'po-debconf unrelated'
 
 echo 'APT::NeverAutoRemove { "^debc.*nf$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
@@ -42,7 +42,7 @@ testdpkginstalled "po-debconf"
 
 rm rootdir/etc/apt/apt.conf.d/00autoremove
 aptget autoremove -y -qq 2>&1 > /dev/null
-testdpkgnoninstalled 'po-debconf'
+testdpkgnotinstalled 'po-debconf'
 
 testfileequal 'rootdir/var/lib/apt/extended_states' ''
 
