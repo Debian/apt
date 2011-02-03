@@ -118,82 +118,10 @@ fastest source listed first. The format of each line is:
 <p>
 The first item, <var>type</var>, indicates the format for the remainder 
 of the line. It is designed to indicate the structure of the distribution
-the line is talking about. Currently the only defined value is <em>deb</em>
-which indicates a standard debian archive with a dists dir.
-
-<sect1>The deb Type
-   <p>
-   The <em>deb</em> type is to be a typical two level debian distributions,
-   dist/<var>distribution</var>/<var>component</var>. Typically distribution
-   is one of stable, unstable or testing while component is one of main, 
-   contrib, non-free or non-us. The format for the deb line is as follows:
-
-   <p>
-   deb <var>uri</var> <var>distribution</var> <var>component</var> 
-   [<var>component</var> ...]
-
-   <p>
-   <var>uri</var> for the <em>deb</em> type must specify the base of the 
-   debian distribution. APT will automatically generate the proper longer 
-   URIs to get the information it needs. <var>distribution</var> can specify
-   an exact path, in this case the components must be omitted and
-   <var>distribution</var> must end in a slash.
-   
-   <p>
-   Since only one distribution can be specified per deb line it may be
-   necessary to list a number of deb lines for the same URI. APT will
-   sort the URI list after it has generated a complete set to allow 
-   connection reuse. It is important to order things in the sourcelist
-   from most preferred to least preferred (fastest to slowest).
-</sect1>
-
-<sect1>URI specification
-<p> 
-URIs in the source list support a large number of access schemes which
-are listed in the sources.list manpage and can be further extended by
-transport binaries placed in /usr/lib/apt/methods. The most important
-builtin schemes are:
-
-<taglist>
-<tag>cdrom<item>
-   The cdrom scheme is special in that If Modified Since queries are never
-   performed and that APT knows how to match a cdrom to the name it
-   was given when first inserted. APT also knows all of the possible 
-   mount points the cdrom drives and that the user should be prompted
-   to insert a CD if it cannot be found. The path is relative to an 
-   arbitrary mount point (of APT's choosing) and must not start with a 
-   slash. The first pathname component is the given name and is purely
-   descriptive and of the users choice. However, if a file in the root of 
-   the cdrom is called '.disk/info' its contents will be used instead of 
-   prompting. The name serves as a tag for the cdrom and should be unique.
-   <example>
-   cdrom:Debian 1.3/debian
-   </example>
-
-<tag>http<item>
-   This scheme specifies a HTTP server for the debian archive. HTTP is preferred
-   over FTP because If Modified Since queries against the Package file are
-   possible as well as deep pipelining and resume capabilities.
-   <example>
-   http://www.debian.org/archive
-   </example>
-
-<tag>ftp<item>
-   This scheme specifies a FTP connection to the server. FTP is limited because
-   there is no support for IMS and is hard to proxy over firewalls.
-   <example>
-   ftp://ftp.debian.org/debian
-   </example>
-
-<tag>file<item>
-   The file scheme allows an arbitrary directory in the file system to be 
-   considered as a debian archive. This is useful for NFS mounts and 
-   local mirrors/archives.
-   <example>
-   file:/var/debian
-   </example>
-</taglist>
-</sect1>
+the line is talking about. Currently the only defined values are <em>deb</em>
+and <em>deb-src</em> which indicate a standard debian (source) archive with a
+dists directory. More about these types and the URI specification can be found
+in the sources.list manpage.
 
 <sect1>Hashing the URI
 <p>

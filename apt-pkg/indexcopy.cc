@@ -722,7 +722,8 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    Args.push_back(FileGPG.c_str());
-   Args.push_back(File.c_str());
+   if (FileGPG != File)
+      Args.push_back(File.c_str());
    Args.push_back(NULL);
 
    if (Debug == true)

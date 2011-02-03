@@ -96,7 +96,7 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 
 	protected:
 	inline Group* OwnerPointer() const {
-		return Owner->GrpP;
+		return (Owner != 0) ? Owner->GrpP : 0;
 	};
 
 	public:
@@ -137,7 +137,7 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 
 	protected:
 	inline Package* OwnerPointer() const {
-		return Owner->PkgP;
+		return (Owner != 0) ? Owner->PkgP : 0;
 	};
 
 	public:
@@ -184,7 +184,7 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	protected:
 	inline Version* OwnerPointer() const {
-		return Owner->VerP;
+		return (Owner != 0) ? Owner->VerP : 0;
 	};
 
 	public:
@@ -241,7 +241,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 class pkgCache::DescIterator : public Iterator<Description, DescIterator> {
 	protected:
 	inline Description* OwnerPointer() const {
-		return Owner->DescP;
+		return (Owner != 0) ? Owner->DescP : 0;
 	};
 
 	public:
@@ -270,7 +270,7 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 
 	protected:
 	inline Dependency* OwnerPointer() const {
-		return Owner->DepP;
+		return (Owner != 0) ? Owner->DepP : 0;
 	};
 
 	public:
@@ -315,7 +315,7 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 
 	protected:
 	inline Provides* OwnerPointer() const {
-		return Owner->ProvideP;
+		return (Owner != 0) ? Owner->ProvideP : 0;
 	};
 
 	public:
@@ -349,7 +349,7 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> {
 	protected:
 	inline PackageFile* OwnerPointer() const {
-		return Owner->PkgFileP;
+		return (Owner != 0) ? Owner->PkgFileP : 0;
 	};
 
 	public:
@@ -382,7 +382,7 @@ class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> 
 class pkgCache::VerFileIterator : public pkgCache::Iterator<VerFile, VerFileIterator> {
 	protected:
 	inline VerFile* OwnerPointer() const {
-		return Owner->VerFileP;
+		return (Owner != 0) ? Owner->VerFileP : 0;
 	};
 
 	public:
@@ -401,7 +401,7 @@ class pkgCache::VerFileIterator : public pkgCache::Iterator<VerFile, VerFileIter
 class pkgCache::DescFileIterator : public Iterator<DescFile, DescFileIterator> {
 	protected:
 	inline DescFile* OwnerPointer() const {
-		return Owner->DescFileP;
+		return (Owner != 0) ? Owner->DescFileP : 0;
 	};
 
 	public:

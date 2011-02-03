@@ -306,7 +306,7 @@ PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string c
    Output = stdout;
    SetExts(".deb .udeb");
    DeLinkLimit = 0;
-   
+
    // Process the command line options
    DoMD5 = _config->FindB("APT::FTPArchive::MD5",true);
    DoSHA1 = _config->FindB("APT::FTPArchive::SHA1",true);
@@ -907,16 +907,21 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
 /* */
 ReleaseWriter::ReleaseWriter(string const &DB)
 {
-   AddPattern("Packages");
-   AddPattern("Packages.gz");
-   AddPattern("Packages.bz2");
-   AddPattern("Packages.lzma");
-   AddPattern("Sources");
-   AddPattern("Sources.gz");
-   AddPattern("Sources.bz2");
-   AddPattern("Sources.lzma");
-   AddPattern("Release");
-   AddPattern("md5sum.txt");
+   if (_config->FindB("APT::FTPArchive::Release::Default-Patterns", true) == true)
+   {
+      AddPattern("Packages");
+      AddPattern("Packages.gz");
+      AddPattern("Packages.bz2");
+      AddPattern("Packages.lzma");
+      AddPattern("Sources");
+      AddPattern("Sources.gz");
+      AddPattern("Sources.bz2");
+      AddPattern("Sources.lzma");
+      AddPattern("Release");
+      AddPattern("Index");
+      AddPattern("md5sum.txt");
+   }
+   AddPatterns(_config->FindVector("APT::FTPArchive::Release::Patterns"));
 
    Output = stdout;
    time_t const now = time(NULL);

@@ -45,6 +45,8 @@ using namespace std;
    file matches the V0 policy engine. */
 pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
 {
+   if (Owner == 0 || &(Owner->Head()) == 0)
+      return;
    PFPriority = new signed short[Owner->Head().PackageFileCount];
    Pins = new Pin[Owner->Head().PackageCount];
 
@@ -328,7 +330,7 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    if (File.empty() == true)
       File = _config->FindFile("Dir::Etc::Preferences");
 
-   if (FileExists(File) == false)
+   if (RealFileExists(File) == false)
       return true;
    
    FileFd Fd(File,FileFd::ReadOnly);

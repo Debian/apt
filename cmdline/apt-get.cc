@@ -538,7 +538,9 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
         //VersionsList += string(Cache[I].CurVersion) + "\n"; ???
 	 }
       }
-      
+      else
+	 continue;
+
       if (I->CurrentVer == 0)
 	 continue;
 
@@ -626,6 +628,8 @@ class CacheSetHelperAPTGet : public APT::CacheSetHelper {
 	APT::PackageSet virtualPkgs;
 
 public:
+	std::list<std::pair<pkgCache::VerIterator, std::string> > selectedByRelease;
+
 	CacheSetHelperAPTGet(std::ostream &out) : APT::CacheSetHelper(true), out(out) {
 		explicitlyNamed = true;
 	}
@@ -644,9 +648,9 @@ public:
 	}
 	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
 				 string const &ver, bool const &verIsRel) {
-		if (ver != Ver.VerStr())
-			ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
-				 Ver.VerStr(), Ver.RelStr().c_str(), Pkg.FullName(true).c_str());
+		if (ver == Ver.VerStr())
+			return;
+		selectedByRelease.push_back(make_pair(Ver, ver));
 	}
 
 	bool showVirtualPackageErrors(pkgCacheFile &Cache) {
@@ -825,6 +829,37 @@ struct TryToInstall {
 	 Cache->GetDepCache()->MarkAuto(Pkg,false);
 	 AutoMarkChanged++;
       }
+   }
+
+   bool propergateReleaseCandiateSwitching(std::list<std::pair<pkgCache::VerIterator, std::string> > start, std::ostream &out)
+   {
+      for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
+		s != start.end(); ++s)
+	 Cache->GetDepCache()->SetCandidateVersion(s->first);
+
+      bool Success = true;
+      std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > Changed;
+      for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
+		s != start.end(); ++s)
+      {
+	 Changed.push_back(std::make_pair(s->first, pkgCache::VerIterator(*Cache)));
+	 // We continue here even if it failed to enhance the ShowBroken output
+	 Success &= Cache->GetDepCache()->SetCandidateRelease(s->first, s->second, Changed);
+      }
+      for (std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> >::const_iterator c = Changed.begin();
+	   c != Changed.end(); ++c)
+      {
+	 if (c->second.end() == true)
+	    ioprintf(out, _("Selected version '%s' (%s) for '%s'\n"),
+		     c->first.VerStr(), c->first.RelStr().c_str(), c->first.ParentPkg().FullName(true).c_str());
+	 else if (c->first.ParentPkg()->Group != c->second.ParentPkg()->Group)
+	 {
+	    pkgCache::VerIterator V = (*Cache)[c->first.ParentPkg()].CandidateVerIter(*Cache);
+	    ioprintf(out, _("Selected version '%s' (%s) for '%s' because of '%s'\n"), V.VerStr(),
+		     V.RelStr().c_str(), V.ParentPkg().FullName(true).c_str(), c->second.ParentPkg().FullName(true).c_str());
+	 }
+      }
+      return Success;
    }
 
    void doAutoInstall() {
@@ -1077,8 +1112,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    {
       // force a hashsum for compatibility reasons
       _config->CndSet("Acquire::ForceHash", "md5sum");
-      if (Fetcher.Setup(&Stat, "") == false)
-	 return false;
    }
    else if (Fetcher.Setup(&Stat, _config->FindDir("Dir::Cache::Archives")) == false)
       return false;
@@ -1608,10 +1641,6 @@ bool DoAutomaticRemove(CacheFile &Cache)
    if(Debug)
       std::cout << "DoAutomaticRemove()" << std::endl;
 
-   // we don't want to autoremove and we don't want to see it, so why calculating?
-   if (doAutoRemove == false && hideAutoRemove == true)
-      return true;
-
    if (doAutoRemove == true &&
 	_config->FindB("APT::Get::Remove",true) == false)
    {
@@ -1622,7 +1651,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 
    bool purgePkgs = _config->FindB("APT::Get::Purge", false);
    bool smallList = (hideAutoRemove == false &&
-	strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
+		strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
 
    string autoremovelist, autoremoveversions;
    unsigned long autoRemoveCount = 0;
@@ -1645,8 +1674,12 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
 	 else
 	 {
+	    // if the package is a new install and already garbage we don't need to
+	    // install it in the first place, so nuke it instead of show it
+	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
+	       Cache->MarkDelete(Pkg, false);
 	    // only show stuff in the list that is not yet marked for removal
-	    if(Cache[Pkg].Delete() == false) 
+	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false) 
 	    {
 	       ++autoRemoveCount;
 	       // we don't need to fill the strings if we don't need them
@@ -1659,6 +1692,20 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
       }
    }
+
+   // Now see if we had destroyed anything (if we had done anything)
+   if (Cache->BrokenCount() != 0)
+   {
+      c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
+	         "shouldn't happen. Please file a bug report against apt.") << endl;
+      c1out << endl;
+      c1out << _("The following information may help to resolve the situation:") << endl;
+      c1out << endl;
+      ShowBroken(c1out,Cache,false);
+
+      return _error->Error(_("Internal Error, AutoRemover broke stuff"));
+   }
+
    // if we don't remove them, we should show them!
    if (doAutoRemove == false && (autoremovelist.empty() == false || autoRemoveCount != 0))
    {
@@ -1670,18 +1717,6 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
       c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
-   }
-   // Now see if we had destroyed anything (if we had done anything)
-   else if (Cache->BrokenCount() != 0)
-   {
-      c1out << _("Hmm, seems like the AutoRemover destroyed something which really\n"
-	         "shouldn't happen. Please file a bug report against apt.") << endl;
-      c1out << endl;
-      c1out << _("The following information may help to resolve the situation:") << endl;
-      c1out << endl;
-      ShowBroken(c1out,Cache,false);
-
-      return _error->Error(_("Internal Error, AutoRemover broke stuff"));
    }
    return true;
 }
@@ -1775,6 +1810,7 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 if (order[i] == MOD_INSTALL) {
 	    InstallAction = std::for_each(verset[MOD_INSTALL].begin(), verset[MOD_INSTALL].end(), InstallAction);
+	    InstallAction.propergateReleaseCandiateSwitching(helper.selectedByRelease, c0out);
 	    InstallAction.doAutoInstall();
 	 }
 	 else if (order[i] == MOD_REMOVE)
@@ -1839,16 +1875,15 @@ bool DoInstall(CommandLine &CmdL)
 	 pkgCache::PkgIterator I(Cache,Cache.List[J]);
 	 if ((*Cache)[I].Install() == false)
 	    continue;
+	 pkgCache::VerIterator Cand = Cache[I].CandidateVerIter(Cache);
+	 if (Cand.Pseudo() == true)
+	    continue;
 
-	 const char **J;
-	 for (J = CmdL.FileList + 1; *J != 0; J++)
-	    if (strcmp(*J,I.Name()) == 0)
-		break;
-	 
-	 if (*J == 0) {
-	    List += I.FullName(true) + " ";
-	    VersionsList += string(Cache[I].CandVersion) + "\n";
-	 }
+	 if (verset[MOD_INSTALL].find(Cand) != verset[MOD_INSTALL].end())
+	    continue;
+
+	 List += I.FullName(true) + " ";
+	 VersionsList += string(Cache[I].CandVersion) + "\n";
       }
       
       ShowList(c1out,_("The following extra packages will be installed:"),List,VersionsList);

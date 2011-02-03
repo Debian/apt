@@ -1,6 +1,11 @@
 #!/bin/sh
 set +e # its okay to fail in these script, most of the time the apt* stuff will generate errors
 
+if [ -z "$1" -o -z "$2" ]; then
+	echo "Usage: $0 file codename pkg…"
+	exit 1
+fi
+
 local TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 BUILDDIRECTORY="${TESTDIR}/../../build/bin"
@@ -16,13 +21,22 @@ TMPGEN=$WORKDIR/Packages
 export LANG=C
 
 LISTOFPKGS=$(aptget install $* -t $CODENAME -so Dir::state::status=$WORKDIR/status -o Dir::Cache::archives=$WORKDIR -o pkgCacheGen::Essential=none -o APT::Immediate-Configure=0 2> /dev/null | awk '/^Inst/ {print $2}' | sed -e "s#\$#/$CODENAME#")
-aptcache show $LISTOFPKGS --no-all-versions 2> /dev/null > $TMPGEN
+if [ -z "$LISTOFPKGS" ]; then
+	echo "List of packages is empty: run apt-get install command again for you now"
+	aptget install $* -t $CODENAME -so Dir::state::status=$WORKDIR/status -o Dir::Cache::archives=$WORKDIR -o pkgCacheGen::Essential=none -o APT::Immediate-Configure=0
+	exit 1
+fi
+aptcache show $LISTOFPKGS --no-all-versions 2> $WORKDIR/error.lst > $TMPGEN
 sed -i $TMPGEN \
 	-e '/^ / d' \
 	-e '/^SHA1: / d' -e '/^SHA256: / d' \
 	-e '/^Homepage: / d' -e '/^Tag: / d' \
 	-e '/^Xul-Appid: / d' \
 	-e '/^Status: / d'
+
+if [ "$CODENAME" = "experimental" ]; then
+	aptcache show $(cat $WORKDIR/error.lst | cut -d"'" -f 4 | sed -e 's#$#/sid#') --no-all-versions 2> /dev/null >> $TMPGEN
+fi
 
 if echo "$GENERATE" | grep '^status-' > /dev/null; then
 	sed -i $TMPGEN -e '/^Package: / a\

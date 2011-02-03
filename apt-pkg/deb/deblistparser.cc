@@ -783,45 +783,89 @@ bool debListParser::Step()
 bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 				    FileFd &File, string component)
 {
-   pkgTagFile Tags(&File, File.Size() + 256); // XXX
-   pkgTagSection Section;
-   if (Tags.Step(Section) == false)
-      return false;
-
-   // FIXME: Do we need it now for multi-arch?
-   // mvo: I don't think we need to fill that in (it's unused since apt-0.6)
-//    FileI->Architecture = WriteUniqString(Arch);
-   
    // apt-secure does no longer download individual (per-section) Release
    // file. to provide Component pinning we use the section name now
    FileI->Component = WriteUniqString(component);
 
-   const char *Start;
-   const char *Stop;
-   if (Section.Find("Suite",Start,Stop) == true)
-      FileI->Archive = WriteUniqString(Start,Stop - Start);
-   if (Section.Find("Component",Start,Stop) == true)
-      FileI->Component = WriteUniqString(Start,Stop - Start);
-   if (Section.Find("Version",Start,Stop) == true)
-      FileI->Version = WriteUniqString(Start,Stop - Start);
-   if (Section.Find("Origin",Start,Stop) == true)
-      FileI->Origin = WriteUniqString(Start,Stop - Start);
-   if (Section.Find("Codename",Start,Stop) == true)
-      FileI->Codename = WriteUniqString(Start,Stop - Start);
-   if (Section.Find("Label",Start,Stop) == true)
-      FileI->Label = WriteUniqString(Start,Stop - Start);
-   if (Section.Find("Architecture",Start,Stop) == true)
-      FileI->Architecture = WriteUniqString(Start,Stop - Start);
-   
-   if (Section.FindFlag("NotAutomatic",FileI->Flags,
-			pkgCache::Flag::NotAutomatic) == false)
-      _error->Warning("Bad NotAutomatic flag");
-   if (Section.FindFlag("ButAutomaticUpgrades",FileI->Flags,
-			pkgCache::Flag::ButAutomaticUpgrades) == false)
-      _error->Warning("Bad ButAutomaticUpgrades flag");
-   // overrule the NotAutomatic setting if needed as they are both present for compatibility
-   else if ((FileI->Flags & pkgCache::Flag::ButAutomaticUpgrades) == pkgCache::Flag::ButAutomaticUpgrades)
-      FileI->Flags &= ~pkgCache::Flag::NotAutomatic;
+   FILE* release = fdopen(dup(File.Fd()), "r");
+   if (release == NULL)
+      return false;
+
+   char buffer[101];
+   bool gpgClose = false;
+   while (fgets(buffer, sizeof(buffer), release) != NULL)
+   {
+      size_t len = 0;
+
+      // Skip empty lines
+      for (; buffer[len] == '\r' && buffer[len] == '\n'; ++len);
+      if (buffer[len] == '\0')
+	 continue;
+
+      // only evalute the first GPG section
+      if (strncmp("-----", buffer, 5) == 0)
+      {
+	 if (gpgClose == true)
+	    break;
+	 gpgClose = true;
+	 continue;
+      }
+
+      // seperate the tag from the data
+      for (; buffer[len] != ':' && buffer[len] != '\0'; ++len);
+      if (buffer[len] == '\0')
+	 continue;
+      char* dataStart = buffer + len;
+      for (++dataStart; *dataStart == ' '; ++dataStart);
+      char* dataEnd = dataStart;
+      for (++dataEnd; *dataEnd != '\0'; ++dataEnd);
+
+      // which datastorage need to be updated
+      map_ptrloc* writeTo = NULL;
+      if (buffer[0] == ' ')
+	 ;
+      #define APT_PARSER_WRITETO(X, Y) else if (strncmp(Y, buffer, len) == 0) writeTo = &X;
+      APT_PARSER_WRITETO(FileI->Archive, "Suite")
+      APT_PARSER_WRITETO(FileI->Component, "Component")
+      APT_PARSER_WRITETO(FileI->Version, "Version")
+      APT_PARSER_WRITETO(FileI->Origin, "Origin")
+      APT_PARSER_WRITETO(FileI->Codename, "Codename")
+      APT_PARSER_WRITETO(FileI->Label, "Label")
+      #undef APT_PARSER_WRITETO
+      #define APT_PARSER_FLAGIT(X) else if (strncmp(#X, buffer, len) == 0) \
+	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, dataEnd-1);
+      APT_PARSER_FLAGIT(NotAutomatic)
+      APT_PARSER_FLAGIT(ButAutomaticUpgrades)
+      #undef APT_PARSER_FLAGIT
+
+      // load all data from the line and save it
+      string data;
+      if (writeTo != NULL)
+	 data.append(dataStart, dataEnd);
+      if (sizeof(buffer) - 1 == (dataEnd - buffer))
+      {
+	 while (fgets(buffer, sizeof(buffer), release) != NULL)
+	 {
+	    if (writeTo != NULL)
+	       data.append(buffer);
+	    if (strlen(buffer) != sizeof(buffer) - 1)
+	       break;
+	 }
+      }
+      if (writeTo != NULL)
+      {
+	 // remove spaces and stuff from the end of the data line
+	 for (std::string::reverse_iterator s = data.rbegin();
+	      s != data.rend(); ++s)
+	 {
+	    if (*s != '\r' && *s != '\n' && *s != ' ')
+	       break;
+	    *s = '\0';
+	 }
+	 *writeTo = WriteUniqString(data);
+      }
+   }
+   fclose(release);
 
    return !_error->PendingError();
 }
