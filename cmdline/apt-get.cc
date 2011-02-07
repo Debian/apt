@@ -895,7 +895,11 @@ struct TryToRemove {
 
       if ((Pkg->CurrentVer == 0 && PurgePkgs == false) ||
 	  (PurgePkgs == true && Pkg->CurrentState == pkgCache::State::NotInstalled))
+      {
 	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+	 // MarkInstall refuses to install packages on hold
+	 Pkg->SelectedState = pkgCache::State::Hold;
+      }
       else
 	 Cache->GetDepCache()->MarkDelete(Pkg, PurgePkgs);
    }
@@ -1790,14 +1794,7 @@ bool DoInstall(CommandLine &CmdL)
       return false;
    }
 
-   unsigned short order[] = { 0, 0, 0 };
-   if (fallback == MOD_INSTALL) {
-      order[0] = MOD_INSTALL;
-      order[1] = MOD_REMOVE;
-   } else {
-      order[0] = MOD_REMOVE;
-      order[1] = MOD_INSTALL;
-   }
+   unsigned short const order[] = { MOD_REMOVE, MOD_INSTALL, 0 };
 
   TryToInstall InstallAction(Cache, Fix, BrokenFix);
   TryToRemove RemoveAction(Cache, Fix);

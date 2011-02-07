@@ -17,6 +17,8 @@ apt (0.8.11) UNRELEASED; urgency=low
       so installing packages from experimental or backports is easier
     - really do not show packages in the extra section if they were
       requested on the commandline, e.g. with a modifier (Closes: #184730)
+    - always do removes first and set not installed remove packages
+      on hold to prevent temporary installation later (Closes: #549968)
   * debian/control:
     - add Vcs-Browser now that loggerhead works again (Closes: #511168)
     - depend on debhelper 7 to raise compat level
@@ -99,7 +101,7 @@ apt (0.8.11) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 11:42:41 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 13:06:50 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 

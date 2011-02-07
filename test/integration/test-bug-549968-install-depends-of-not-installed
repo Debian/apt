@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'libc6' 'all' '1.0'
+insertpackage 'unstable' 'coolstuff' 'all' '1.0' 'Recommends: extracoolstuff'
+insertpackage 'unstable' 'extracoolstuff' 'all' '1.0' 'Depends: libc6'
+
+setupaptarchive
+
+# We check the Markers here as the autoremove nuker will also
+# prevent it, but to late - its better to fail earlier
+testequal 'Reading package lists...
+Building dependency tree...
+  MarkInstall coolstuff [ i386 ] < none -> 1.0 > ( other ) FU=1
+    Hold prevents MarkInstall of extracoolstuff [ i386 ] < none -> 1.0 > ( other ) FU=0
+Package extracoolstuff is not installed, so not removed
+The following NEW packages will be installed:
+  coolstuff
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst coolstuff (1.0 unstable [all])
+Conf coolstuff (1.0 unstable [all])' aptget install coolstuff extracoolstuff- -o Debug::pkgDepCache::Marker=1 -s
