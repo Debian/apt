@@ -267,7 +267,7 @@ Package: $NAME" > ${BUILDDIR}/debian/control
 	(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$ARCH)
 	(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 
-	dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. > /dev/null
+	dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. 2> /dev/null > /dev/null
 	echo "pool/${NAME}_${VERSION}_${ARCH}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	for SRC in $SRCS; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
