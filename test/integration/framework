@@ -272,6 +272,9 @@ Package: $NAME" > ${BUILDDIR}/debian/control
 	for SRC in $SRCS; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 	done
+	mkdir -p ${BUILDDIR}/../${NAME}_${VERSION}
+	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}/
+	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}.changelog
 	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
