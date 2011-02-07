@@ -2208,12 +2208,14 @@ bool DoDownload(CommandLine &CmdL)
    APT::CacheSetHelper helper(c0out);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
-   pkgAcquire Fetcher;
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
 
    if (verset.empty() == true)
       return false;
+
+   pkgAcquire Fetcher;
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+      Fetcher.Setup(&Stat);
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
@@ -2245,9 +2247,18 @@ bool DoDownload(CommandLine &CmdL)
       // get the file
       new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
    }
-   bool result = (Fetcher.Run() == pkgAcquire::Continue);
 
-   return result;
+   // Just print out the uris and exit if the --print-uris flag was used
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+   {
+      pkgAcquire::UriIterator I = Fetcher.UriBegin();
+      for (; I != Fetcher.UriEnd(); I++)
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
+      return true;
+   }
+
+   return (Fetcher.Run() == pkgAcquire::Continue);
 }
 									/*}}}*/
 // DoCheck - Perform the check operation				/*{{{*/
