@@ -84,6 +84,8 @@ apt (0.8.11) UNRELEASED; urgency=low
   * apt-pkg/pkgcachegen.cc:
     - in multiarch, let :all packages conflict with :any packages
       with a different version to be sure
+  * apt-pkg/contrib/error.cc:
+    - remove 400 char size limit of error messages (LP: #365611)
 
   [ Michael Vogt ]
   * methods/http.cc:
@@ -101,7 +103,7 @@ apt (0.8.11) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 13:06:50 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 21:42:06 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 
