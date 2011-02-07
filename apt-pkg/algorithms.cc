@@ -162,7 +162,28 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
       }
    }
 
-//   Sim.MarkInstall(Pkg,false);
+   if (Sim[Pkg].InstBroken() == true)
+   {
+      /* We don't call Configure for Pseudo packages and if the 'all' is already installed
+         the simulation will think the pseudo package is not installed, so if something is
+         broken we walk over the dependencies and search for not installed pseudo packages */
+      for (pkgCache::DepIterator D = Sim[Pkg].InstVerIter(Sim).DependsList(); D.end() == false; D++)
+      {
+	 if (Sim.IsImportantDep(D) == false || 
+	     (Sim[D] & pkgDepCache::DepInstall) != 0)
+	    continue;
+	 pkgCache::PkgIterator T = D.TargetPkg();
+	 if (T.end() == true || T->CurrentVer != 0 || Flags[T->ID] != 0)
+	    continue;
+	 pkgCache::PkgIterator A = T.Group().FindPkg("all");
+	 if (A.end() == true || A->VersionList == 0 || A->CurrentVer == 0 ||
+	     Cache.VS().CheckDep(A.CurVersion(), pkgCache::Dep::Equals, T.CandVersion()) == false)
+	    continue;
+	 Sim.MarkInstall(T, false);
+	 Flags[T->ID] = 2;
+      }
+   }
+
    if (Sim[Pkg].InstBroken() == true)
    {
       cout << "Conf " << Pkg.FullName(false) << " broken" << endl;

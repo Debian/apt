@@ -75,6 +75,9 @@ apt (0.8.11) UNRELEASED; urgency=low
   * doc/apt-cache.8.xml:
     - describe reality as apt-cache just queries and doesn't manipulate
       the caches. Thanks to Enrico Zini for spotting it! (Closes: #612009)
+  * apt-pkg/algorithms.cc:
+    - mark pseudo packages of installed all packages as configured
+      in the simulation as we don't call configure for these packages
 
   [ Michael Vogt ]
   * methods/http.cc:
@@ -92,7 +95,7 @@ apt (0.8.11) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 04 Feb 2011 22:52:25 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 11:21:12 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 
