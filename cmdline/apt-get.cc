@@ -2961,6 +2961,8 @@ bool DoChangelog(CommandLine &CmdL)
    APT::CacheSetHelper helper(c0out);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   if (verset.empty() == true)
+      return false;
    pkgAcquire Fetcher;
 
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
@@ -2971,26 +2973,41 @@ bool DoChangelog(CommandLine &CmdL)
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
 
-   if (verset.empty() == true)
-      return false;
-   char *tmpdir = mkdtemp(strdup("/tmp/apt-changelog-XXXXXX"));
-   if (tmpdir == NULL) {
-      return _error->Errno("mkdtemp", "mkdtemp failed");
+   bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
+
+   char tmpname[100];
+   char* tmpdir = NULL;
+   if (downOnly == false)
+   {
+      const char* const tmpDir = getenv("TMPDIR");
+      if (tmpDir != NULL && *tmpDir != '\0')
+	 snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", tmpDir);
+      else
+	 strncpy(tmpname, "/tmp/apt-changelog-XXXXXX", sizeof(tmpname));
+      tmpdir = mkdtemp(tmpname);
+      if (tmpdir == NULL)
+	 return _error->Errno("mkdtemp", "mkdtemp failed");
    }
-   
+
    for (APT::VersionSet::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
    {
-      string changelogfile = string(tmpdir) + "changelog";
-      if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile))
+      string changelogfile;
+      if (downOnly == false)
+	 changelogfile.append(tmpname).append("changelog");
+      else
+	 changelogfile.append(Ver.ParentPkg().Name()).append(".changelog");
+      if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile) && downOnly == false)
+      {
          DisplayFileInPager(changelogfile);
-      // cleanup temp file
-      unlink(changelogfile.c_str());
+         // cleanup temp file
+         unlink(changelogfile.c_str());
+      }
    }
    // clenaup tmp dir
-   rmdir(tmpdir);
-   free(tmpdir);
+   if (tmpdir != NULL)
+      rmdir(tmpdir);
    return true;
 }
 									/*}}}*/
