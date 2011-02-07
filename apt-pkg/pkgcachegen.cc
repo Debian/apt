@@ -638,21 +638,19 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 	 Dynamic<pkgCache::PkgIterator> DynP(P);
 	 for (; P.end() != true; P = G.NextPkg(P))
 	 {
-	    if (strcmp(P.Arch(),"all") == 0)
-	       continue;
 	    pkgCache::PkgIterator allPkg;
 	    Dynamic<pkgCache::PkgIterator> DynallPkg(allPkg);
 	    pkgCache::VerIterator V = P.VersionList();
 	    Dynamic<pkgCache::VerIterator> DynV(V);
 	    for (; V.end() != true; V++)
 	    {
-	       string const Arch = V.Arch(true);
+	       char const * const Arch = P.Arch();
 	       map_ptrloc *OldDepLast = NULL;
 	       /* MultiArch handling introduces a lot of implicit Dependencies:
 		- MultiArch: same → Co-Installable if they have the same version
 		- Architecture: all → Need to be Co-Installable for internal reasons
 		- All others conflict with all other group members */
-	       bool const coInstall = (V->MultiArch == pkgCache::Version::All ||
+	       bool const coInstall = ((V->MultiArch == pkgCache::Version::All && strcmp(Arch, "all") != 0) ||
 					V->MultiArch == pkgCache::Version::Same);
 	       if (V->MultiArch == pkgCache::Version::All && allPkg.end() == true)
 		  allPkg = G.FindPkg("all");
@@ -686,9 +684,15 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 		     }
 		  } else {
 			// Conflicts: ${self}:other
-			NewDepends(D, V, "",
-				   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
-				   OldDepLast);
+			if (strcmp(Arch, "all") == 0) {
+				NewDepends(D, V, V.VerStr(),
+					   pkgCache::Dep::NotEquals, pkgCache::Dep::Conflicts,
+					   OldDepLast);
+			} else {
+				NewDepends(D, V, "",
+					   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+					   OldDepLast);
+			}
 		  }
 	       }
 	    }
