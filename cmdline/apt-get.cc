@@ -2876,6 +2876,7 @@ bool GuessThirdPartyChangelogUri(CacheFile &Cache,
    // now strip away the filename and add srcpkg_srcver.changelog
    return true;
 }
+									/*}}}*/
 // DownloadChangelog - Download the changelog 			        /*{{{*/
 // ---------------------------------------------------------------------
 bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
@@ -2900,13 +2901,19 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
                           "http://packages.debian.org/changelogs");
    path = GetChangelogPath(CacheFile, Pkg, Ver);
    strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
+   if (_config->FindB("APT::Get::Print-URIs", false) == true)
+   {
+      std::cout << '\'' << changelog_uri << '\'' << std::endl;
+      return true;
+   }
+
    strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
    // queue it
    new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
 
-   // try downloading it, if that fails, they third-party-changelogs location
-   // FIXME: res is "Continue" even if I get a 404?!?
-   int res = Fetcher.Run();
+   // try downloading it, if that fails, try third-party-changelogs location
+   // FIXME: Fetcher.Run() is "Continue" even if I get a 404?!?
+   Fetcher.Run();
    if (!FileExists(targetfile))
    {
       string third_party_uri;
@@ -2914,7 +2921,7 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
       {
          strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), third_party_uri.c_str());
          new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
-         res = Fetcher.Run();
+         Fetcher.Run();
       }
    }
 
@@ -2955,6 +2962,12 @@ bool DoChangelog(CommandLine &CmdL)
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
    pkgAcquire Fetcher;
+
+   if (_config->FindB("APT::Get::Print-URIs", false) == true)
+      for (APT::VersionSet::const_iterator Ver = verset.begin();
+	   Ver != verset.end(); ++Ver)
+	 return DownloadChangelog(Cache, Fetcher, Ver, "");
+
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
 

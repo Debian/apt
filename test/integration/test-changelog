@@ -15,6 +15,8 @@ aptget update -qq
 
 echo 'Apt::Changelogs::Server "http://localhost:8080/";' >> ./aptconfig.conf
 
+testequal "'http://localhost:8080//pool/apt_1.0/changelog'" aptget changelog apt --print-uris
+
 aptget changelog apt -qq > apt.changelog
 testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0/changelog)"
 rm aptarchive/pool/apt_1.0/changelog
