@@ -52,8 +52,10 @@
       <listitem><para>all files in <literal>Dir::Etc::Parts</literal> in
 	 alphanumeric ascending order which have no or "<literal>conf</literal>"
 	 as filename extension and which only contain alphanumeric,
-	 hyphen (-), underscore (_) and period (.) characters -
-	 otherwise they will be silently ignored.</para></listitem>
+	 hyphen (-), underscore (_) and period (.) characters.
+	 Otherwise APT will print a notice that it has ignored a file if the file
+	 doesn't match a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
+	 configuration list - in this case it will be silently ignored.</para></listitem>
       <listitem><para>the main configuration file specified by
 	 <literal>Dir::Etc::main</literal></para></listitem>
       <listitem><para>the command line options are applied to override the
@@ -442,12 +444,11 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      the bzip2 method (the inbuilt) setting is <literallayout>Dir::Bin::bzip2 "/bin/bzip2";</literallayout>
      Note also that list entries specified on the command line will be added at the end of the list
      specified in the configuration files, but before the default entries. To prefer a type in this case
-     over the ones specified in in the configuration files you can set the option direct - not in list style.
+     over the ones specified in the configuration files you can set the option direct - not in list style.
      This will not override the defined list, it will only prefix the list with this type.</para>
-     <para>While it is possible to add an empty compression type to the order list, but APT in its current
-     version doesn't understand it correctly and will display many warnings about not downloaded files -
-     these warnings are most of the time false negatives. Future versions will maybe include a way to
-     really prefer uncompressed files to support the usage of local mirrors.</para></listitem>
+     <para>The special type <literal>uncompressed</literal> can be used to give uncompressed files a
+     preference, but note that most archives doesn't provide uncompressed files so this is mostly only
+     useable for local mirrors.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>GzipIndexes</term>
@@ -618,7 +619,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
    <refsect2><title>dpkg trigger usage (and related options)</title>
      <para>APT can call dpkg in a way so it can make aggressive use of triggers over
-     multiply calls of dpkg. Without further options dpkg will use triggers only in between his
+     multiple calls of dpkg. Without further options dpkg will use triggers only in between his
      own run. Activating these options can therefore decrease the time needed to perform the
      install / upgrade. Note that it is intended to activate these options per default in the
      future, but as it changes the way APT calling dpkg drastically it needs a lot more testing.

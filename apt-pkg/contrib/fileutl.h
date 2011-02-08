@@ -72,6 +72,7 @@ class FileFd
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) {iFd = fd;};
+   inline gzFile gzFd() {return gz;};
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
    inline void EraseOnFailure() {Flags |= DelOnFail;};
@@ -93,6 +94,7 @@ bool RunScripts(const char *Cnf);
 bool CopyFile(FileFd &From,FileFd &To);
 int GetLock(string File,bool Errors = true);
 bool FileExists(string File);
+bool RealFileExists(string File);
 bool DirectoryExists(string const &Path) __attrib_const;
 bool CreateDirectory(string const &Parent, string const &Path);
 

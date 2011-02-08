@@ -399,9 +399,13 @@ bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
    const char *Stop;
    if (Find(Tag,Start,Stop) == false)
       return true;
-   
-   switch (StringToBool(string(Start,Stop)))
-   {     
+   return FindFlag(Flags, Flag, Start, Stop);
+}
+bool const pkgTagSection::FindFlag(unsigned long &Flags, unsigned long Flag,
+					char const* Start, char const* Stop)
+{
+   switch (StringToBool(string(Start, Stop)))
+   {
       case 0:
       Flags &= ~Flag;
       return true;

@@ -119,6 +119,29 @@ string debReleaseIndex::SourceIndexURI(const char *Type, const string &Section) 
       return URI + "dists/" + Dist + "/" + SourceIndexURISuffix(Type, Section);
 }
 
+string debReleaseIndex::TranslationIndexURISuffix(const char *Type, const string &Section) const
+{
+   string Res ="";
+   if (Dist[Dist.size() - 1] != '/')
+      Res += Section + "/i18n/";
+   return Res + Type;
+}
+
+string debReleaseIndex::TranslationIndexURI(const char *Type, const string &Section) const
+{
+   string Res;
+   if (Dist[Dist.size() - 1] == '/')
+   {
+      if (Dist != "/")
+         Res = URI + Dist;
+      else 
+         Res = URI;
+      return Res + Type;
+   }
+   else
+      return URI + "dists/" + Dist + "/" + TranslationIndexURISuffix(Type, Section);
+}
+
 debReleaseIndex::debReleaseIndex(string const &URI, string const &Dist) {
 	this->URI = URI;
 	this->Dist = Dist;
@@ -155,6 +178,7 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 	if (IndexTargets->empty() == false && ArchEntries.size() == 1)
 		return IndexTargets;
 
+	std::set<std::string> sections;
 	for (map<string, vector<debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
 	     a != ArchEntries.end(); ++a) {
 		if (a->first == "source")
@@ -166,6 +190,37 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 			Target->MetaKey = IndexURISuffix(Target->ShortDesc.c_str(), (*I)->Section, a->first);
 			Target->URI = IndexURI(Target->ShortDesc.c_str(), (*I)->Section, a->first);
 			Target->Description = Info (Target->ShortDesc.c_str(), (*I)->Section, a->first);
+			IndexTargets->push_back (Target);
+			sections.insert((*I)->Section);
+		}
+	}
+
+	// get the Translations:
+	// - if its a dists-style repository get the i18n/Index first
+	// - if its flat try to acquire files by guessing
+	if (Dist[Dist.size() - 1] == '/') {
+		std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
+		for (std::set<std::string>::const_iterator s = sections.begin();
+		     s != sections.end(); ++s) {
+			for (std::vector<std::string>::const_iterator l = lang.begin();
+			     l != lang.end(); l++) {
+				if (*l == "none") continue;
+				IndexTarget * Target = new OptionalIndexTarget();
+				Target->ShortDesc = "Translation-" + *l;
+				Target->MetaKey = TranslationIndexURISuffix(l->c_str(), *s);
+				Target->URI = TranslationIndexURI(l->c_str(), *s);
+				Target->Description = Info (Target->ShortDesc.c_str(), *s);
+				IndexTargets->push_back(Target);
+			}
+		}
+	} else {
+		for (std::set<std::string>::const_iterator s = sections.begin();
+		     s != sections.end(); ++s) {
+			IndexTarget * Target = new OptionalIndexTarget();
+			Target->ShortDesc = "TranslationIndex";
+			Target->MetaKey = TranslationIndexURISuffix("Index", *s);
+			Target->URI = TranslationIndexURI("Index", *s);
+			Target->Description = Info (Target->ShortDesc.c_str(), *s);
 			IndexTargets->push_back (Target);
 		}
 	}
@@ -182,58 +237,34 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			 (*Target)->ShortDesc, HashString());
       }
-      // this is normally created in pkgAcqMetaSig, but if we run
-      // in --print-uris mode, we add it here
-      new pkgAcqMetaIndex(Owner, MetaIndexURI("Release"),
-		     MetaIndexInfo("Release"), "Release",
-		     MetaIndexURI("Release.gpg"), 
-		     ComputeIndexTargets(),
-		     new indexRecords (Dist));
-
    }
 
-   new pkgAcqMetaSig(Owner, MetaIndexURI("Release.gpg"),
-		     MetaIndexInfo("Release.gpg"), "Release.gpg",
-		     MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
-		     ComputeIndexTargets(),
-		     new indexRecords (Dist));
-
-	// Queue the translations
-	std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
-	map<string, set<string> > sections;
-	for (map<string, vector<debSectionEntry const*> >::const_iterator a = ArchEntries.begin();
-	     a != ArchEntries.end(); ++a) {
-		if (a->first == "source")
-			continue;
-		for (vector<debSectionEntry const*>::const_iterator I = a->second.begin();
-		     I != a->second.end(); I++)
-			sections[(*I)->Section].insert(lang.begin(), lang.end());
-	}
-
-	for (map<string, set<string> >::const_iterator s = sections.begin();
-	     s != sections.end(); ++s)
-		for (set<string>::const_iterator l = s->second.begin();
-		     l != s->second.end(); l++) {
-			if (*l == "none") continue;
-			debTranslationsIndex i = debTranslationsIndex(URI,Dist,s->first,(*l).c_str());
-			i.GetIndexes(Owner);
-		}
+	new pkgAcqMetaClearSig(Owner, MetaIndexURI("InRelease"),
+		MetaIndexInfo("InRelease"), "InRelease",
+		MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
+		MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
+		ComputeIndexTargets(),
+		new indexRecords (Dist));
 
 	return true;
 }
 
 bool debReleaseIndex::IsTrusted() const
 {
-   string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
-      URItoFileName(MetaIndexURI("Release")) + ".gpg";
-   
    if(_config->FindB("APT::Authentication::TrustCDROM", false))
       if(URI.substr(0,strlen("cdrom:")) == "cdrom:")
 	 return true;
-   
+
+   string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
+      URItoFileName(MetaIndexURI("Release")) + ".gpg";
+
    if (FileExists(VerifiedSigFile))
       return true;
-   return false;
+
+   VerifiedSigFile = _config->FindDir("Dir::State::lists") +
+      URItoFileName(MetaIndexURI("InRelease"));
+
+   return FileExists(VerifiedSigFile);
 }
 
 vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles() {

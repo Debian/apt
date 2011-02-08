@@ -52,7 +52,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::State::lists","lists/");
    Cnf.Set("Dir::State::cdroms","cdroms.list");
    Cnf.Set("Dir::State::mirrors","mirrors/");
-   
+
    // Cache
    Cnf.Set("Dir::Cache","var/cache/apt/");
    Cnf.Set("Dir::Cache::archives","archives/");
@@ -91,16 +91,19 @@ bool pkgInitConfig(Configuration &Cnf)
    // Translation
    Cnf.Set("APT::Acquire::Translation", "environment");
 
+   // Default cdrom mount point
+   Cnf.Set("Acquire::cdrom::mount", "/media/cdrom/");
+
    bool Res = true;
    
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
    if (Cfg != 0)
    {
-      if (FileExists(Cfg) == true)
+      if (RealFileExists(Cfg) == true)
 	 Res &= ReadConfigFile(Cnf,Cfg);
       else
-	 _error->WarningE("FileExists",_("Unable to read %s"),Cfg);
+	 _error->WarningE("RealFileExists",_("Unable to read %s"),Cfg);
    }
 
    // Read the configuration parts dir
@@ -112,7 +115,7 @@ bool pkgInitConfig(Configuration &Cnf)
 
    // Read the main config file
    string FName = Cnf.FindFile("Dir::Etc::main");
-   if (FileExists(FName) == true)
+   if (RealFileExists(FName) == true)
       Res &= ReadConfigFile(Cnf,FName);
 
    if (Res == false)

@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+msgtest 'Test apt-ftparchive with encoded tar header package'
+cp $TESTDIR/deb-bug-330162-encoded-tar-header.deb aptarchive/
+test -z "$(aptftparchive packages aptarchive/ 2>&1 | grep 'E:')" && msgpass || msgfail

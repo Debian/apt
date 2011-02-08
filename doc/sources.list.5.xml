@@ -57,17 +57,19 @@
    File names need to end with
    <filename>.list</filename> and may only contain letters (a-z and A-Z),
    digits (0-9), underscore (_), hyphen (-) and period (.) characters.
-   Otherwise they will be silently ignored.</para>
+   Otherwise APT will print a notice that it has ignored a file if the file
+   doesn't match a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
+   configuration list - in this case it will be silently ignored.</para>
  </refsect1>
 
  <refsect1><title>The deb and deb-src types</title>
    <para>The <literal>deb</literal> type describes a typical two-level Debian
    archive, <filename>distribution/component</filename>. Typically,
-   <literal>distribution</literal> is generally one of
-   <literal>stable</literal> <literal>unstable</literal> or 
-   <literal>testing</literal> while component is one of <literal>main</literal> 
-   <literal>contrib</literal> <literal>non-free</literal> or
-   <literal>non-us</literal>. The 
+   <literal>distribution</literal> is generally an archivename like
+   <literal>stable</literal> or <literal>testing</literal> or a codename like
+   <literal>&stable-codename;</literal> or <literal>&testing-codename;</literal>
+   while component is one of <literal>main</literal> <literal>contrib</literal> or
+   <literal>non-free</literal>. The
    <literal>deb-src</literal> type describes a debian distribution's source
    code in the same form as the <literal>deb</literal> type.
    A <literal>deb-src</literal> line is required to fetch source indexes.</para>
@@ -218,18 +220,14 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
    a single FTP session will be used for both resource lines.</para>
    <literallayout>deb ftp://ftp.debian.org/debian unstable contrib</literallayout>
 
-   <para>Uses HTTP to access the archive at nonus.debian.org, under the
-    debian-non-US directory.</para>
-   <literallayout>deb http://nonus.debian.org/debian-non-US stable/non-US main contrib non-free</literallayout>
-
-   <para>Uses HTTP to access the archive at nonus.debian.org, under the
-   debian-non-US directory, and uses only files found under
-   <filename>unstable/binary-i386</filename> on i386 machines, 
-   <filename>unstable/binary-m68k</filename> on m68k, and so
-   forth for other supported architectures. [Note this example only 
-   illustrates how to use the substitution variable; non-us is no longer 
-   structured like this] 
-   <literallayout>deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/</literallayout>
+   <para>Uses HTTP to access the archive at ftp.tlh.debian.org, under the
+   universe directory, and uses only files found under
+   <filename>unstable/binary-i386</filename> on i386 machines,
+   <filename>unstable/binary-amd64</filename> on amd64, and so
+   forth for other supported architectures. [Note this example only
+   illustrates how to use the substitution variable; official debian
+   archives are not structured like this]
+   <literallayout>deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/</literallayout>
    </para>
  </refsect1>
  

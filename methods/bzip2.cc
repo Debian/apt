@@ -56,9 +56,8 @@ bool Bzip2Method::Fetch(FetchItem *Itm)
    // Open the source and destination files
    FileFd From(Path,FileFd::ReadOnly);
 
-   // FIXME add an error message saying that empty files can't be valid archives
    if(From.FileSize() == 0)
-      return false;
+      return _error->Error(_("Empty files can't be valid archives"));
 
    int GzOut[2];   
    if (pipe(GzOut) < 0)

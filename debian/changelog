@@ -1,3 +1,146 @@
+apt (0.8.11) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - add SetCandidateRelease() to set a candidate version and
+      the candidates of dependencies if needed to a specified
+      release (Closes: #572709)
+    - allow conflicts in the same group again (Closes: #612099)
+  * cmdline/apt-get.cc:
+    - if --print-uris is used don't setup downloader as we don't need
+      progress, lock nor the directories it would create otherwise
+    - show dependencies of essential packages which are going to remove
+      only if they cause the remove of this essential (Closes: #601961)
+    - keep not installed garbage packages uninstalled instead of showing
+      in the autoremove section and installing those (Closes: #604222)
+    - change pkg/release behavior to use the new SetCandidateRelease
+      so installing packages from experimental or backports is easier
+    - really do not show packages in the extra section if they were
+      requested on the commandline, e.g. with a modifier (Closes: #184730)
+    - always do removes first and set not installed remove packages
+      on hold to prevent temporary installation later (Closes: #549968)
+  * debian/control:
+    - add Vcs-Browser now that loggerhead works again (Closes: #511168)
+    - depend on debhelper 7 to raise compat level
+    - depend on dpkg-dev (>= 1.15.8) to have c++ symbol mangling
+  * apt-pkg/contrib/fileutl.cc:
+    - add a RealFileExists method and check that your configuration files
+      are real files to avoid endless loops if not (Closes: #604401)
+    - ignore non-regular files in GetListOfFilesInDir (Closes: #594694)
+  * apt-pkg/contrib/weakptr.h:
+    - include stddefs.h to fix compile error (undefined NULL) with gcc-4.6
+  * methods/https.cc:
+    - fix CURLOPT_SSL_VERIFYHOST by really passing 2 to it if enabled
+  * deb/dpkgpm.cc:
+    - fix popen/fclose mismatch reported by cppcheck. Thanks to Petter
+      Reinholdtsen for report and patch! (Closes: #607803)
+  * doc/apt.conf.5.xml:
+    - fix multipl{y,e} spelling error reported by Jakub Wilk (Closes: #607636)
+  * apt-inst/contrib/extracttar.cc:
+    - let apt-utils work with encoded tar headers if uid/gid are large.
+      Thanks to Nobuhiro Hayashi for the patch! (Closes: #330162)
+  * apt-pkg/cacheiterator.h:
+    - do not segfault if cache is not build (Closes: #254770)
+  * doc/apt-get.8.xml:
+    - remove duplicated mentioning of --install-recommends
+  * doc/sources.list.5.xml:
+    - remove obsolete references to non-us (Closes: #594495)
+    - a notice is printed for ignored files (Closes: #597615)
+  * debian/rules:
+    - use -- instead of deprecated -u for dh_gencontrol
+    - remove shlibs.local creation and usage
+    - show differences in the symbol files, but never fail
+  * pre-build.sh:
+    - remove as it is not needed for a working 'bzr bd'
+  * debian/{apt,apt-utils}.symbols:
+    - ship experimental unmangled c++ symbol files
+  * methods/rred.cc:
+    - operate optional on gzip compressed pdiffs
+  * apt-pkg/acquire-item.cc:
+    - don't uncompress downloaded pdiff files before feeding it to rred
+    - try downloading clearsigned InRelease before trying Release.gpg
+    - change the internal handling of Extensions in pkgAcqIndex
+    - add a special uncompressed compression type to prefer those files
+    - download and use i18n/Index to choose which Translations to download
+  * cmdline/apt-key:
+    - don't set trustdb-name as non-root so 'list' and 'finger'
+      can be used without being root (Closes: #393005, #592107)
+  * apt-pkg/deb/deblistparser.cc:
+    - rewrite LoadReleaseInfo to cope with clearsigned Releasefiles
+  * ftparchive/writer.cc:
+    - add config option to search for more patterns in release command
+    - include Index files by default in the Release file
+  * methods/{gzip,bzip}.cc:
+    - print a good error message if FileSize() is zero
+  * apt-pkg/aptconfiguration.cc:
+    - remove the inbuilt Translation files whitelist
+  * cmdline/apt-cache.cc:
+    - remove not implemented 'apt-cache add' command
+  * doc/apt-cache.8.xml:
+    - describe reality as apt-cache just queries and doesn't manipulate
+      the caches. Thanks to Enrico Zini for spotting it! (Closes: #612009)
+  * apt-pkg/algorithms.cc:
+    - mark pseudo packages of installed all packages as configured
+      in the simulation as we don't call configure for these packages
+  * apt-pkg/pkgcachegen.cc:
+    - in multiarch, let :all packages conflict with :any packages
+      with a different version to be sure
+  * apt-pkg/contrib/error.cc:
+    - remove 400 char size limit of error messages (LP: #365611)
+
+  [ Michael Vogt ]
+  * methods/http.cc:
+    - do not hang if Acquire::http::ProxyAutoDetect can not be
+      executed or returns no data (LP: #654393)
+  * debian/apt.conf.autoremove:
+    - never autoremove the GNU/Hurd kernel (closes: #588423), thanks
+      to Guillem Jover
+  * apt-pkg/cdrom.cc, apt-pkg/init.cc, methods/cdrom.cc:
+    - use /media/cdrom as default mountoint (closes: #611569)
+
+  [ Martin Pitt ]
+  * test/integration/test-compressed-indexes, test/test-indexes.sh:
+    - Explicitly disable compressed indexes at the start. This ensures that we
+      will actually test uncompressed indexes regardless of the internal
+      default value of Acquire::GzipIndexes.
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 22:14:09 +0100
+
+apt (0.8.10.3) unstable; urgency=low
+
+  [ Programs translations ]
+  * po/es.po: Updated, plus fixes encoding issues and fixes two fuzzy
+    strings, thanks to Javier Fernandez-Sanguino (closes: #610692)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 25 Jan 2011 11:51:42 +0100
+
+apt (0.8.10.2) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * ftparchive/apt-ftparchive.cc:
+    - fix endless loop for multiple TranslationsWriters
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 25 Jan 2011 10:26:15 +0100
+
+apt (0.8.10.1) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Fix encoding for Slovenian translation. PO file switched
+    to UTF-8. Closes: #609957
+
+  [ Julian Andres Klode ]
+  * cmdline/apt-cache.cc: Create an error for apt-cache depends
+    if packages could not found (LP: #647045)
+
+  [ Programs translations ]
+  * Spanish update by Javier Fernández-Sanguino Peña. Closes: #607145 
+
+  [ Manpages translations ]
+  * Correct a typo and an error in French manpages translation.
+    Closes: # 607170
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 17 Jan 2011 13:41:04 +0100
+
 apt (0.8.10ubuntu2) UNRELEASED; urgency=low
 
   * apt-pkg/deb/dpkgpm.cc:

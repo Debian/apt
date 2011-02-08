@@ -16,11 +16,11 @@ local GOODPOLICY="$(aptcache policy testpkg)"
 local GOODSHOWSRC="$(aptcache showsrc testpkg)
 "
 
-test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Architecture: i386' | wc -l) -eq 3
+test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Architecture: i386' | wc -l) -eq 3 || msgdie 'show is broken'
 testequal "$GOODSHOW" aptcache show testpkg
-test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4
+test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4 || msgdie 'policy is broken'
 testequal "$GOODPOLICY" aptcache policy testpkg
-test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Files:' -e '^Checksums-Sha256:' | wc -l) -eq 4
+test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Files:' -e '^Checksums-Sha256:' | wc -l) -eq 4 || msgdie 'showsrc is broken'
 testequal "$GOODSHOWSRC" aptcache showsrc testpkg
 
 

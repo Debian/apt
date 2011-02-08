@@ -322,7 +322,6 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 return _error->Errno("fdopen","Faild to open new FD");
       
       // Feed it the filenames.
-      bool Die = false;
       if (Version <= 1)
       {
 	 for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
@@ -339,14 +338,11 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	       into the pipe. */
 	    fprintf(F,"%s\n",I->File.c_str());
 	    if (ferror(F) != 0)
-	    {
-	       Die = true;
 	       break;
-	    }
 	 }
       }
       else
-	 Die = !SendV2Pkgs(F);
+	 SendV2Pkgs(F);
 
       fclose(F);
       
@@ -1230,7 +1226,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
 
 	 if(dpkg_error.size() > 0)
-	    _error->Error(dpkg_error.c_str());
+	    _error->Error("%s", dpkg_error.c_str());
 
 	 if(stopOnError) 
 	 {
@@ -1427,7 +1423,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       {
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
-	 fclose(log);
+	 pclose(log);
       }
    }
 
@@ -1443,7 +1439,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       {
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
-	 fclose(log);
+	 pclose(log);
       }
    }
 

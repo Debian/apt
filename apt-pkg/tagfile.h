@@ -60,6 +60,8 @@ class pkgTagSection
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
+   bool static const FindFlag(unsigned long &Flags, unsigned long Flag,
+				const char* Start, const char* Stop);
    bool Scan(const char *Start,unsigned long MaxLength);
    inline unsigned long size() const {return Stop - Section;};
    void Trim();

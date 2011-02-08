@@ -135,7 +135,7 @@ bool OpProgress::CheckChange(float Interval)
 OpTextProgress::OpTextProgress(Configuration &Config) : 
                                NoUpdate(false), NoDisplay(false), LastLen(0) 
 {
-   if (Config.FindI("quiet",0) >= 1)
+   if (Config.FindI("quiet",0) >= 1 || Config.FindB("quiet::NoUpdate", false) == true)
       NoUpdate = true;
    if (Config.FindI("quiet",0) >= 2)
       NoDisplay = true;
