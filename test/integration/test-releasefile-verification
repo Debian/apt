@@ -1,0 +1,160 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildaptarchive
+setupflataptarchive
+changetowebserver
+
+prepare() {
+	local DATE="${2:-now}"
+	if [ "$DATE" = 'now' -a "$1" = "${PKGFILE}-new" ]; then
+		DATE='now + 6 days'
+	fi
+	for release in $(find rootdir/var/lib/apt/lists 2> /dev/null); do
+		touch -d 'now - 6 hours' $release
+	done
+	rm -rf rootdir/var/cache/apt/archives
+	rm -f rootdir/var/cache/apt/*.bin
+	cp $1 aptarchive/Packages
+	find aptarchive -name 'Release' -delete
+	cat aptarchive/Packages | gzip > aptarchive/Packages.gz
+	cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
+	cat aptarchive/Packages | lzma > aptarchive/Packages.lzma
+	generatereleasefiles "$DATE"
+}
+
+installaptold() {
+	testequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+The following NEW packages will be installed:
+  apt
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 5370 kB of additional disk space will be used.
+Get:1 http://localhost/  apt 0.7.25.3
+Download complete and in download only mode' aptget install apt -dy
+}
+
+installaptnew() {
+	testequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+The following NEW packages will be installed:
+  apt
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 5808 kB of additional disk space will be used.
+Get:1 http://localhost/  apt 0.8.0~pre1
+Download complete and in download only mode' aptget install apt -dy
+}
+
+failaptold() {
+	testequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+The following NEW packages will be installed:
+  apt
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 5370 kB of additional disk space will be used.
+WARNING: The following packages cannot be authenticated!
+  apt
+E: There are problems and -y was used without --force-yes' aptget install apt -dy
+}
+
+failaptnew() {
+	testequal 'Reading package lists...
+Building dependency tree...
+Suggested packages:
+  aptitude synaptic wajig dpkg-dev apt-doc bzip2 lzma python-apt
+The following NEW packages will be installed:
+  apt
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 5808 kB of additional disk space will be used.
+WARNING: The following packages cannot be authenticated!
+  apt
+E: There are problems and -y was used without --force-yes' aptget install apt -dy
+}
+
+# fake our downloadable file
+touch aptarchive/apt.deb
+
+PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
+
+runtest() {
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Cold archive signed by' 'Joe Sixpack'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	installaptold
+
+	prepare ${PKGFILE}-new
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Good warm archive signed by' 'Joe Sixpack'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt
+	installaptnew
+
+
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Marvin Paranoid'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Cold archive signed by' 'Marvin Paranoid'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgpass || msgfail
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	failaptold
+
+	prepare ${PKGFILE}-new
+	# weborf doesn't support If-Range
+	for release in $(find rootdir/var/lib/apt/lists/partial/ -name '*Release'); do
+		rm $release
+		touch $release
+	done
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Bad warm archive signed by' 'Joe Sixpack'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt
+	installaptnew
+
+
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Cold archive signed by' 'Joe Sixpack'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	installaptold
+
+	prepare ${PKGFILE}-new
+	signreleasefiles 'Marvin Paranoid'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Good warm archive signed by' 'Marvin Paranoid'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgpass || msgfail
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	installaptold
+}
+
+DELETEFILE="InRelease"
+runtest
+DELETEFILE="Release.gpg"
+runtest

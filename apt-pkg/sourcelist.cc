@@ -197,7 +197,7 @@ bool pkgSourceList::ReadMainList()
    string Main = _config->FindFile("Dir::Etc::sourcelist");
    string Parts = _config->FindDir("Dir::Etc::sourceparts");
    
-   if (FileExists(Main) == true)
+   if (RealFileExists(Main) == true)
       Res &= ReadAppend(Main);
    else if (DirectoryExists(Parts) == false)
       // Only warn if there are no sources.list.d.
@@ -205,9 +205,9 @@ bool pkgSourceList::ReadMainList()
 
    if (DirectoryExists(Parts) == true)
       Res &= ReadSourceDir(Parts);
-   else if (FileExists(Main) == false)
+   else if (RealFileExists(Main) == false)
       // Only warn if there is no sources.list file.
-      _error->WarningE("FileExists", _("Unable to read %s"), Main.c_str());
+      _error->WarningE("RealFileExists", _("Unable to read %s"), Main.c_str());
 
    return Res;
 }

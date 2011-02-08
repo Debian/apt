@@ -26,16 +26,18 @@ int main(int argc,char *argv[])
 	env[1] = "";
 
 	std::vector<std::string> vec = APT::Configuration::getLanguages(false, false, env);
-	equals(vec.size(), 2);
-	equals(vec[0], "de");
-	equals(vec[1], "en");
+	equals(vec.size(), 3);
+	equals(vec[0], "de_DE");
+	equals(vec[1], "de");
+	equals(vec[2], "en");
 
 	// Special: Check if the cache is actually in use
 		env[0] = "en_GB.UTF-8";
 		vec = APT::Configuration::getLanguages(false, true, env);
-		equals(vec.size(), 2);
-		equals(vec[0], "de");
-		equals(vec[1], "en");
+		equals(vec.size(), 3);
+		equals(vec[0], "de_DE");
+		equals(vec[1], "de");
+		equals(vec[2], "en");
 
 	env[0] = "en_GB.UTF-8";
 	vec = APT::Configuration::getLanguages(false, false, env);
@@ -52,19 +54,21 @@ int main(int argc,char *argv[])
 
 	env[0] = "tr_DE@euro";
 	vec = APT::Configuration::getLanguages(false, false, env);
-	equals(vec.size(), 2);
-	equals(vec[0], "tr");
-	equals(vec[1], "en");
+	equals(vec.size(), 3);
+	equals(vec[0], "tr_DE");
+	equals(vec[1], "tr");
+	equals(vec[2], "en");
 
 	env[0] = "de_NO";
-	env[1] = "se_NO:en_GB:nb_NO:nb:no_NO:no:nn_NO:nn:da:sv:en";
+	env[1] = "de_NO:en_GB:nb_NO:nb:no_NO:no:nn_NO:nn:da:sv:en";
 	vec = APT::Configuration::getLanguages(false, false, env);
-	equals(vec.size(), 5);
-	equals(vec[0], "de");
-	equals(vec[1], "en_GB");
-	equals(vec[2], "nb");
-	equals(vec[3], "no");
-	equals(vec[4], "en");
+	equals(vec.size(), 6);
+	equals(vec[0], "de_NO");
+	equals(vec[1], "de");
+	equals(vec[2], "en_GB");
+	equals(vec[3], "nb_NO");
+	equals(vec[4], "nb");
+	equals(vec[5], "en");
 
 	env[0] = "pt_PR.UTF-8";
 	env[1] = "";
@@ -76,9 +80,10 @@ int main(int argc,char *argv[])
 
 	env[0] = "ast_DE.UTF-8";
 	vec = APT::Configuration::getLanguages(false, false, env); // bogus, but syntactical correct
-	equals(vec.size(), 2);
-	equals(vec[0], "ast");
-	equals(vec[1], "en");
+	equals(vec.size(), 3);
+	equals(vec[0], "ast_DE");
+	equals(vec[1], "ast");
+	equals(vec[2], "en");
 
 	env[0] = "C";
 	vec = APT::Configuration::getLanguages(false, false, env);
@@ -113,25 +118,28 @@ int main(int argc,char *argv[])
 	_config->Set("Acquire::Languages::2", "en");
 	env[0] = "de_DE.UTF-8";
 	vec = APT::Configuration::getLanguages(false, false, env);
-	equals(vec.size(), 2);
-	equals(vec[0], "de");
-	equals(vec[1], "en");
+	equals(vec.size(), 3);
+	equals(vec[0], "de_DE");
+	equals(vec[1], "de");
+	equals(vec[2], "en");
 
 	_config->Set("Acquire::Languages::3", "de");
 	env[0] = "de_DE.UTF-8";
 	vec = APT::Configuration::getLanguages(false, false, env);
-	equals(vec.size(), 2);
-	equals(vec[0], "de");
-	equals(vec[1], "en");
+	equals(vec.size(), 3);
+	equals(vec[0], "de_DE");
+	equals(vec[1], "de");
+	equals(vec[2], "en");
 
 	_config->Set("Dir::State::lists", argv[1]);
 	vec = APT::Configuration::getLanguages(true, false, env);
-	equals(vec.size(), 5);
-	equals(vec[0], "de");
-	equals(vec[1], "en");
-	equals(vec[2], "none");
-	equals(vec[3], "pt");
-	equals(vec[4], "tr");
+	equals(vec.size(), 6);
+	equals(vec[0], "de_DE");
+	equals(vec[1], "de");
+	equals(vec[2], "en");
+	equals(vec[3], "none");
+	equals(vec[4], "pt");
+	equals(vec[5], "tr");
 
 	_config->Set("Dir::State::lists", "/non-existing-dir");
 	_config->Set("Acquire::Languages::1", "none");
@@ -140,6 +148,7 @@ int main(int argc,char *argv[])
 	equals(vec.size(), 0);
 	env[0] = "de_DE.UTF-8";
 	vec = APT::Configuration::getLanguages(true, false, env);
+	equals(vec.size(), 2);
 	equals(vec[0], "en");
 	equals(vec[1], "de");
 

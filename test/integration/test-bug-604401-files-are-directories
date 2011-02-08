@@ -1,0 +1,66 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+setupaptarchive
+
+test ! -e rootdir/etc/apt/apt.conf || mv rootdir/etc/apt/apt.conf rootdir/etc/apt/apt.conf.d/000move-away-apt.conf
+
+msgtest "Directory instead of a file as apt.conf ignored"
+mkdir -p rootdir/etc/apt/apt.conf
+aptconfig dump > /dev/null && msgpass || msgfail
+rmdir rootdir/etc/apt/apt.conf
+
+msgtest "Good link instead of a file as apt.conf ignored"
+echo 'Test::APT::Link "good";' > rootdir/etc/apt/good-link.conf
+ln -s rootdir/etc/apt/good-link.conf rootdir/etc/apt/apt.conf
+test -n "$(aptconfig shell TestLink 'Test::APT::Link')" && msgfail || msgpass
+rm rootdir/etc/apt/apt.conf
+
+msgtest "Broken link instead of a file as apt.conf ignored"
+ln -s /tmp/doesnt-exist rootdir/etc/apt/apt.conf
+aptconfig dump > /dev/null && msgpass || msgfail
+rm rootdir/etc/apt/apt.conf
+
+
+test ! -e rootdir/etc/apt/sources.list || mv rootdir/etc/apt/sources.list rootdir/etc/apt/sources.list.d/000move-away-sources.list
+
+msgtest "Directory instead of a file as sources.list ignored"
+mkdir -p rootdir/etc/apt/sources.list
+aptget update --print-uris 2> /dev/null && msgpass || msgfail
+rmdir rootdir/etc/apt/sources.list
+
+msgtest "Good link instead of a file as sources.list ignored"
+echo 'deb file:///tmp/debian sid main' > rootdir/etc/apt/good-link.list
+ln -s rootdir/etc/apt/good-link.list rootdir/etc/apt/sources.list
+test -n "$(aptget update --print-uris)" && msgfail || msgpass
+rm rootdir/etc/apt/sources.list
+
+msgtest "Broken link instead of a file as sources.list ignored"
+ln -s /tmp/doesnt-exist rootdir/etc/apt/sources.list
+test -n "$(aptget update --print-uris)" && msgfail || msgpass
+rm rootdir/etc/apt/sources.list
+
+
+test ! -e rootdir/etc/apt/preferences || mv rootdir/etc/apt/preferences rootdir/etc/apt/preferences.d/000move-away-preferences
+
+msgtest "Directory instead of a file as preferences ignored"
+mkdir -p rootdir/etc/apt/preferences
+aptcache policy > /dev/null 2> /dev/null && msgpass || msgfail
+rmdir rootdir/etc/apt/preferences
+
+msgtest "Good link instead of a file as preferences ignored"
+echo 'Package: apt
+Pin: release a=now
+Pin-Value: 1000' > rootdir/etc/apt/good-link.pref
+ln -s rootdir/etc/apt/good-link.pref rootdir/etc/apt/preferences
+test -n "$(aptcache policy | grep 1000)" && msgfail || msgpass
+rm rootdir/etc/apt/preferences
+
+msgtest "Broken link instead of a file as preferences ignored"
+ln -s /tmp/doesnt-exist rootdir/etc/apt/preferences
+aptcache policy > /dev/null 2> /dev/null && msgpass || msgfail
+rm rootdir/etc/apt/preferences

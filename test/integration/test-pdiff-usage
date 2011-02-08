@@ -23,7 +23,6 @@ cat aptarchive/Packages | gzip > aptarchive/Packages.gz
 cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
 cat aptarchive/Packages | lzma > aptarchive/Packages.lzma
 rm -rf aptarchive/Packages.diff
-aptftparchive release aptarchive/ > aptarchive/Release
 mkdir -p aptarchive/Packages.diff
 PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
 diff -e ${PKGFILE} ${PKGFILE}-new > ${PATCHFILE} || true
@@ -36,14 +35,9 @@ SHA1-History:
 SHA1-Patches:
  7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
  $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
-sed -i aptarchive/Release \
- -e "/^MD5Sum:/ a\
- \ $(md5sum $PATCHINDEX | cut -d' ' -f 1) $(stat -c%s $PATCHINDEX) Packages.diff/Index" \
- -e "/^SHA1:/ a\
- \ $(sha1sum $PATCHINDEX | cut -d' ' -f 1) $(stat -c%s $PATCHINDEX) Packages.diff/Index" \
- -e "/^SHA256:/ a\
- \ $(sha256sum $PATCHINDEX | cut -d' ' -f 1) $(stat -c%s $PATCHINDEX) Packages.diff/Index"
+generatereleasefiles
 signreleasefiles
+find aptarchive -name 'Packages*' -type f -delete
 aptget update -qq
 
 testnopackage oldstuff

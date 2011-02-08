@@ -324,8 +324,14 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
       return _error->Error("Problem with MergeList %s",PackageFile.c_str());
 
    // Check the release file
-   string ReleaseFile = debReleaseIndex(URI,Dist).MetaIndexFile("Release");
+   string ReleaseFile = debReleaseIndex(URI,Dist).MetaIndexFile("InRelease");
+   bool releaseExists = false;
    if (FileExists(ReleaseFile) == true)
+      releaseExists = true;
+   else
+      ReleaseFile = debReleaseIndex(URI,Dist).MetaIndexFile("Release");
+
+   if (releaseExists == true || FileExists(ReleaseFile) == true)
    {
       FileFd Rel(ReleaseFile,FileFd::ReadOnly);
       if (_error->PendingError() == true)

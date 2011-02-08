@@ -1,0 +1,57 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+setupaptarchive
+
+CURRENTTRAP="chmod a+x rootdir/var/lib/dpkg; $CURRENTTRAP"
+trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+chmod a-x rootdir/var/lib/dpkg
+
+testsegfault() {
+	rm -f rootdir/var/cache/apt/*.bin
+	msgtest "No segfault in" "$*"
+	local TEST="$($* 2>&1 | grep -v 'E:')"
+	if [ -z "$TEST" ]; then
+		msgpass
+	else
+		echo
+		echo $TEST
+		msgfail
+	fi
+}
+
+echo 'quiet 2;' > rootdir/etc/apt/apt.conf.d/00be-quiet
+
+testsegfault aptcache gencaches
+testsegfault aptcache showpkg
+testsegfault aptcache showsrc
+testsegfault aptcache stats
+testsegfault aptcache dump
+testsegfault aptcache dumpavail
+testsegfault aptcache unmet
+testsegfault aptcache search
+testsegfault aptcache show apt
+testsegfault aptcache depends apt
+testsegfault aptcache rdepends apt
+testsegfault aptcache pkgnames apt
+testsegfault aptcache dotty apt
+testsegfault aptcache xvcg apt
+testsegfault aptcache policy apt
+
+testsegfault aptget update
+testsegfault aptget upgrade
+testsegfault aptget dselect-upgrade
+testsegfault aptget dist-upgrade
+testsegfault aptget install apt
+testsegfault aptget remove apt
+testsegfault aptget purge apt
+testsegfault aptget source apt
+testsegfault aptget build-dep apt
+testsegfault aptget check
+testsegfault aptget clean
+testsegfault aptget autoclean
+testsegfault aptget autoremove
