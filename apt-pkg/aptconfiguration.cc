@@ -90,6 +90,14 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		types.push_back(Types->Tag);
 	}
 
+	// add the special "uncompressed" type
+	if (std::find(types.begin(), types.end(), "uncompressed") == types.end())
+	{
+		string const uncompr = _config->FindFile("Dir::Bin::uncompressed", "");
+		if (uncompr.empty() == true || FileExists(uncompr) == true)
+			types.push_back("uncompressed");
+	}
+
 	return types;
 }
 									/*}}}*/
@@ -155,33 +163,6 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	}
 	closedir(D);
 
-	// get the environment language codes: LC_MESSAGES (and later LANGUAGE)
-	// we extract both, a long and a short code and then we will
-	// check if we actually need both (rare) or if the short is enough
-	string const envMsg = string(Locale == 0 ? std::setlocale(LC_MESSAGES, NULL) : *Locale);
-	size_t const lenShort = (envMsg.find('_') != string::npos) ? envMsg.find('_') : 2;
-	size_t const lenLong = (envMsg.find_first_of(".@") != string::npos) ? envMsg.find_first_of(".@") : (lenShort + 3);
-
-	string envLong = envMsg.substr(0,lenLong);
-	string const envShort = envLong.substr(0,lenShort);
-	bool envLongIncluded = true;
-
-	// to save the servers from unneeded queries, we only try also long codes
-	// for languages it is realistic to have a long code translation file…
-	// TODO: Improve translation acquire system to drop them dynamic
-	char const *needLong[] = { "cs", "en", "pt", "sv", "zh", NULL };
-	if (envLong != envShort) {
-		for (char const **l = needLong; *l != NULL; l++)
-			if (envShort.compare(*l) == 0) {
-				envLongIncluded = false;
-				break;
-			}
-	}
-
-	// we don't add the long code, but we allow the user to do so
-	if (envLongIncluded == true)
-		envLong.clear();
-
 	// FIXME: Remove support for the old APT::Acquire::Translation
 	// it was undocumented and so it should be not very widthly used
 	string const oldAcquire = _config->Find("APT::Acquire::Translation","");
@@ -203,12 +184,22 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			return codes;
 	}
 
-	// It is very likely we will need to environment codes later,
+	// get the environment language codes: LC_MESSAGES (and later LANGUAGE)
+	// we extract both, a long and a short code and then we will
+	// check if we actually need both (rare) or if the short is enough
+	string const envMsg = string(Locale == 0 ? std::setlocale(LC_MESSAGES, NULL) : *Locale);
+	size_t const lenShort = (envMsg.find('_') != string::npos) ? envMsg.find('_') : 2;
+	size_t const lenLong = (envMsg.find_first_of(".@") != string::npos) ? envMsg.find_first_of(".@") : (lenShort + 3);
+
+	string const envLong = envMsg.substr(0,lenLong);
+	string const envShort = envLong.substr(0,lenShort);
+
+	// It is very likely we will need the environment codes later,
 	// so let us generate them now from LC_MESSAGES and LANGUAGE
 	std::vector<string> environment;
 	if (envShort != "C") {
 		// take care of LC_MESSAGES
-		if (envLongIncluded == false)
+		if (envLong != envShort)
 			environment.push_back(envLong);
 		environment.push_back(envShort);
 		// take care of LANGUAGE
@@ -225,16 +216,6 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 					continue;
 				if (std::find(environment.begin(), environment.end(), *e) != environment.end())
 					continue;
-				if (e->find('_') != string::npos) {
-					// Drop LongCodes here - ShortCodes are also included
-					string const shorty = e->substr(0, e->find('_'));
-					char const **n = needLong;
-					for (; *n != NULL; ++n)
-						if (shorty == *n)
-							break;
-					if (*n == NULL)
-						continue;
-				}
 				++addedLangs;
 				environment.push_back(*e);
 			}

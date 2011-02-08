@@ -55,14 +55,17 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    }
 
    pkgTagSection Section;
-   if (TagFile.Step(Section) == false)
-   {
-      strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
-      return false;
-   }
-
    const char *Start, *End;
-   Section.Get (Start, End, 0);
+   // Skip over sections beginning with ----- as this is an idicator for clearsigns
+   do {
+      if (TagFile.Step(Section) == false)
+      {
+	 strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
+	 return false;
+      }
+
+      Section.Get (Start, End, 0);
+   } while (End - Start > 5 && strncmp(Start, "-----", 5) == 0);
 
    Suite = Section.FindS("Suite");
    Dist = Section.FindS("Codename");

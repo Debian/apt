@@ -1,0 +1,419 @@
+#!/bin/sh
+set -e
+
+local TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'libc6' 'i386' '2.11.2-7+sid'
+insertpackage 'unstable' 'phonon-backend-xine' 'i386' '4:4.6.0really4.4.2-1+sid' 'Provides: phonon-backend'
+insertpackage 'unstable' 'phonon-backend-xine2' 'i386' '4:4.6.0really4.4.2-1+sid'
+insertpackage 'unstable' 'phonon-backend-xine3' 'i386' '4:4.6.0really4.4.2-1+sid'
+insertpackage 'unstable' 'phonon-backend-xine4' 'i386' '4:4.6.0really4.4.2-1+sid'
+insertpackage 'unstable' 'phonon-backend-null' 'i386' '4:4.20.0+sid' 'Provides: phonon-backend'
+insertpackage 'unstable' 'intermediatepkg' 'all' '1.0'
+
+insertpackage 'unstable' 'amarok-common' 'all' '2.3.1-1+sid'
+insertpackage 'unstable' 'amarok-utils' 'i386' '2.3.1-1+sid'
+insertpackage 'unstable' 'libmtp8' 'i386' '0.3.1+sid'
+insertpackage 'unstable' 'amarok' 'i386' '2.3.1-1+sid' 'Depends: amarok-common (= 2.3.1-1+sid), amarok-utils (= 2.3.1-1+sid), phonon-backend-xine | phonon-backend, libmtp8 (>= 0.3.1), libc6'
+
+insertpackage 'experimental' 'amarok-common' 'all' '2.3.2-2+exp'
+insertpackage 'experimental' 'amarok-utils' 'i386' '2.3.2-2+exp'
+insertpackage 'experimental' 'libmtp8' 'i386'  '0.3.3+exp'
+insertpackage 'experimental' 'phonon-backend-xine' 'i386' '5:4.6.0+exp' 'Provides: phonon-backend'
+insertpackage 'experimental' 'phonon-backend-xine2' 'i386' '5:4.6.0+exp' 'Depends: uninstallablepkg
+Provides: phonon-backend-broken'
+insertpackage 'experimental' 'phonon-backend-xine3' 'i386' '5:4.6.0+exp' 'Depends: intermediatepkg (>= 1.5)'
+insertpackage 'experimental' 'phonon-backend-xine4' 'i386' '5:4.6.0+exp' 'Depends: intermediateuninstallablepkg (= 2.0)
+Provides: phonon-backend-broken'
+insertpackage 'experimental' 'intermediatepkg' 'all' '2.0' 'Depends: libc6'
+insertpackage 'experimental' 'intermediateuninstallablepkg' 'all' '2.0' 'Depends: uninstallablepkg'
+insertpackage 'experimental' 'phonon-backend-null' 'i386' '5:4.20.0+exp' 'Provides: phonon-backend'
+insertpackage 'experimental' 'amarok' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), amarok-utils (= 2.3.2-2+exp), phonon-backend-xine | phonon-backend, libmtp8 (>= 0.3.1), libc6'
+
+insertpackage 'experimental2' 'phonon-backend-xine' 'i386' '5:4.00.0+exp' 'Provides: phonon-backend'
+insertpackage 'experimental2' 'amarok-less' 'i386' '2.3.2-2+exp' 'Depends: amarok-common, phonon-backend-xine (>= 5:4.00.0+exp), libmtp8, libc6, amarok-utils'
+insertpackage 'experimental' 'amarok-higher' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-xine (>= 5:4.6.0+exp), libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+
+insertpackage 'experimental' 'amarok-null' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-xine (= 1:1.0-1) | phonon-backend, libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+insertpackage 'experimental' 'amarok-null2' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-null (= 1:1.0-1) | phonon-backend, libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+insertpackage 'experimental' 'amarok-xine' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-xine (= 5:4.6.0+exp) | phonon-backend-null (= 5:4.20.0+exp), libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+insertpackage 'experimental' 'amarok-xine2' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-xine2 (= 5:4.6.0+exp) | phonon-backend-null (= 5:4.20.0+exp), libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+insertpackage 'experimental' 'amarok-xine3' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-xine3 (= 5:4.6.0+exp) | phonon-backend-null (= 5:4.20.0+exp), libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+insertpackage 'experimental' 'amarok-xine4' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-xine4 (= 5:4.6.0+exp) | phonon-backend-null (= 5:4.20.0+exp), libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+insertpackage 'experimental' 'amarok-broken' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp), phonon-backend-broken | phonon-backend-null (= 5:4.20.0+exp), libmtp8 (>= 0.3.1), libc6, amarok-utils (= 2.3.2-2+exp)'
+
+insertpackage 'experimental' 'amarok-recommends' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp)
+Recommends: amarok-utils (= 2.3.2-2+exp), phonon-backend-xine | phonon-backend, libmtp8 (>= 0.3.1), libc6'
+insertpackage 'experimental' 'amarok-recommends2' 'i386' '2.3.2-2+exp' 'Depends: amarok-common (= 2.3.2-2+exp)
+Recommends: amarok-utils (= 2.30.2-2+exp), phonon-backend-xine | phonon-backend, libmtp8 (>= 0.3.1), libc6'
+
+insertpackage 'experimental' 'uninstallablepkg' 'all' '1.0' 'Depends: libmtp8 (>= 10:0.20.1), amarok-utils (= 2.3.2-2+exp)'
+
+setupaptarchive
+
+testequal "Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+   amarok-common (2.3.1-1+sid)
+   amarok-utils (2.3.1-1+sid)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+The following NEW packages will be installed:
+   amarok (2.3.1-1+sid)
+   amarok-common (2.3.1-1+sid)
+   amarok-utils (2.3.1-1+sid)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok --trivial-only -V -q=0
+
+testequal "Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.3+exp)
+   phonon-backend-xine (4.6.0+exp)
+The following NEW packages will be installed:
+   amarok (2.3.2-2+exp)
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.3+exp)
+   phonon-backend-xine (4.6.0+exp)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok -t experimental --trivial-only -V -q=0
+
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+The following NEW packages will be installed:
+   amarok (2.3.2-2+exp)
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok/experimental --trivial-only -V -q=0
+
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-null'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-null'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-null'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+sid)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-null (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+sid)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-null/experimental --trivial-only -V -q=0
+
+# do not select the same version multiple times
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-null'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+The following NEW packages will be installed:
+   amarok (2.3.2-2+exp)
+   amarok-common (2.3.2-2+exp)
+   amarok-null (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+0 upgraded, 7 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 301 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok/experimental amarok-null/experimental --trivial-only -V -q=0
+
+# … but thighten the version if needed
+# in theory, the second line is wrong, but printing the right version is too much of a hassle
+# (we have to check if later in the Changed list is another change and if so use this version
+#  instead of the current candidate) - and it wouldn't be (really) useful anyway…
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental2 [i386]) for 'amarok-less'
+Selected version '5:4.6.0+exp' (experimental [i386]) for 'phonon-backend-xine' because of 'amarok-less'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-higher'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-higher'
+Selected version '5:4.6.0+exp' (experimental [i386]) for 'phonon-backend-xine' because of 'amarok-higher'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-higher'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0+exp)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-higher (2.3.2-2+exp)
+   amarok-less (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0+exp)
+0 upgraded, 7 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 301 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-less/experimental2 amarok-higher/experimental --trivial-only -V -q=0
+
+# phonon-backend-null can't be used directly, but as it provides it is still fine…
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-null2'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-null2'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-null2'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+sid)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-null2 (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+sid)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-null2/experimental --trivial-only -V -q=0
+
+# if an or-group satisfier is already found, do not set others
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-xine'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-xine'
+Selected version '5:4.6.0+exp' (experimental [i386]) for 'phonon-backend-xine' because of 'amarok-xine'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-xine'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0+exp)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   amarok-xine (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0+exp)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-xine/experimental --trivial-only -V -q=0
+
+# … but proceed testing if the first doesn't work out
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-xine2'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-xine2'
+Selected version '5:4.20.0+exp' (experimental [i386]) for 'phonon-backend-null' because of 'amarok-xine2'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-xine2'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+exp)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   amarok-xine2 (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+exp)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-xine2/experimental --trivial-only -V -q=0
+
+# sometimes, the second level need to be corrected, too
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-xine3'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-xine3'
+Selected version '5:4.6.0+exp' (experimental [i386]) for 'phonon-backend-xine3' because of 'amarok-xine3'
+Selected version '2.0' (experimental [all]) for 'intermediatepkg' because of 'phonon-backend-xine3'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-xine3'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   intermediatepkg (2.0)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine3 (4.6.0+exp)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   amarok-xine3 (2.3.2-2+exp)
+   intermediatepkg (2.0)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine3 (4.6.0+exp)
+0 upgraded, 7 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 301 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-xine3/experimental --trivial-only -V -q=0
+
+# … but proceed testing if the first doesn't work out even in second deep
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-xine4'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-xine4'
+Selected version '5:4.20.0+exp' (experimental [i386]) for 'phonon-backend-null' because of 'amarok-xine4'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-xine4'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+exp)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   amarok-xine4 (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+exp)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-xine4/experimental --trivial-only -V -q=0
+
+# providers can be broken, too
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-broken'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-broken'
+Selected version '5:4.20.0+exp' (experimental [i386]) for 'phonon-backend-null' because of 'amarok-broken'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-broken'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+exp)
+The following NEW packages will be installed:
+   amarok-broken (2.3.2-2+exp)
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-null (4.20.0+exp)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-broken/experimental --trivial-only -V -q=0
+
+# switch the candidate for recommends too if they should be installed
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-recommends'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-recommends'
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-utils' because of 'amarok-recommends'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-recommends (2.3.2-2+exp)
+   amarok-utils (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 258 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-recommends/experimental --trivial-only -V -q=0 -o APT::Install-Recommends=1
+
+# … or not if not
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-recommends'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-recommends'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+Recommended packages:
+   amarok-utils (2.3.1-1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+   phonon-backend ()
+   libmtp8 (0.3.1+sid)
+   libc6 (2.11.2-7+sid)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-recommends (2.3.2-2+exp)
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 86.0 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-recommends/experimental --trivial-only -V -q=0 -o APT::Install-Recommends=0
+
+# but broken recommends are not the end of the world
+# FIXME: the version output for recommend packages is a bit strange… but what would be better?
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.3.2-2+exp' (experimental [i386]) for 'amarok-recommends2'
+Selected version '2.3.2-2+exp' (experimental [all]) for 'amarok-common' because of 'amarok-recommends2'
+The following extra packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+Recommended packages:
+   amarok-utils (2.3.1-1+sid)
+The following NEW packages will be installed:
+   amarok-common (2.3.2-2+exp)
+   amarok-recommends2 (2.3.2-2+exp)
+   libc6 (2.11.2-7+sid)
+   libmtp8 (0.3.1+sid)
+   phonon-backend-xine (4.6.0really4.4.2-1+sid)
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 215 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation." aptget install amarok-recommends2/experimental --trivial-only -V -q=0 -o APT::Install-Recommends=1
+
+# if one depends doesn't work, we don't need to look deeper…
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '1.0' (experimental [all]) for 'uninstallablepkg'
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ uninstallablepkg : Depends: libmtp8 (>= 10:0.20.1) but it is not going to be installed
+                    Depends: amarok-utils (= 2.3.2-2+exp) but 2.3.1-1+sid is to be installed
+E: Broken packages" aptget install uninstallablepkg/experimental --trivial-only -V -q=0

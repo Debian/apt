@@ -1,4 +1,75 @@
-apt (0.8.11) unstable; urgency=low
+apt (0.8.11) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - add SetCandidateRelease() to set a candidate version and
+      the candidates of dependencies if needed to a specified
+      release (Closes: #572709)
+  * cmdline/apt-get.cc:
+    - if --print-uris is used don't setup downloader as we don't need
+      progress, lock nor the directories it would create otherwise
+    - show dependencies of essential packages which are going to remove
+      only if they cause the remove of this essential (Closes: #601961)
+    - keep not installed garbage packages uninstalled instead of showing
+      in the autoremove section and installing those (Closes: #604222)
+    - change pkg/release behavior to use the new SetCandidateRelease
+      so installing packages from experimental or backports is easier
+    - really do not show packages in the extra section if they were
+      requested on the commandline, e.g. with a modifier (Closes: #184730)
+  * debian/control:
+    - add Vcs-Browser now that loggerhead works again (Closes: #511168)
+    - depend on debhelper 7 to raise compat level
+    - depend on dpkg-dev (>= 1.15.8) to have c++ symbol mangling
+  * apt-pkg/contrib/fileutl.cc:
+    - add a RealFileExists method and check that your configuration files
+      are real files to avoid endless loops if not (Closes: #604401)
+    - ignore non-regular files in GetListOfFilesInDir (Closes: #594694)
+  * apt-pkg/contrib/weakptr.h:
+    - include stddefs.h to fix compile error (undefined NULL) with gcc-4.6
+  * methods/https.cc:
+    - fix CURLOPT_SSL_VERIFYHOST by really passing 2 to it if enabled
+  * deb/dpkgpm.cc:
+    - fix popen/fclose mismatch reported by cppcheck. Thanks to Petter
+      Reinholdtsen for report and patch! (Closes: #607803)
+  * doc/apt.conf.5.xml:
+    - fix multipl{y,e} spelling error reported by Jakub Wilk (Closes: #607636)
+  * apt-inst/contrib/extracttar.cc:
+    - let apt-utils work with encoded tar headers if uid/gid are large.
+      Thanks to Nobuhiro Hayashi for the patch! (Closes: #330162)
+  * apt-pkg/cacheiterator.h:
+    - do not segfault if cache is not build (Closes: #254770)
+  * doc/apt-get.8.xml:
+    - remove duplicated mentioning of --install-recommends
+  * doc/sources.list.5.xml:
+    - remove obsolete references to non-us (Closes: #594495)
+  * debian/rules:
+    - use -- instead of deprecated -u for dh_gencontrol
+    - remove shlibs.local creation and usage
+    - show differences in the symbol files, but never fail
+  * pre-build.sh:
+    - remove as it is not needed for a working 'bzr bd'
+  * debian/{apt,apt-utils}.symbols:
+    - ship experimental unmangled c++ symbol files
+  * methods/rred.cc:
+    - operate optional on gzip compressed pdiffs
+  * apt-pkg/acquire-item.cc:
+    - don't uncompress downloaded pdiff files before feeding it to rred
+    - try downloading clearsigned InRelease before trying Release.gpg
+    - change the internal handling of Extensions in pkgAcqIndex
+    - add a special uncompressed compression type to prefer those files
+    - download and use i18n/Index to choose which Translations to download
+  * cmdline/apt-key:
+    - don't set trustdb-name as non-root so 'list' and 'finger'
+      can be used without being root (Closes: #393005, #592107)
+  * apt-pkg/deb/deblistparser.cc:
+    - rewrite LoadReleaseInfo to cope with clearsigned Releasefiles
+  * ftparchive/writer.cc:
+    - add config option to search for more patterns in release command
+    - include Index files by default in the Release file
+  * methods/{gzip,bzip}.cc:
+    - print a good error message if FileSize() is zero
+  * apt-pkg/aptconfiguration.cc:
+    - remove the inbuilt Translation files whitelist
 
   [ Michael Vogt ]
   * methods/http.cc:
@@ -16,7 +87,7 @@ apt (0.8.11) unstable; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- Michael Vogt <mvo@debian.org>  Tue, 01 Feb 2011 09:38:48 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Jan 2011 12:22:25 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 

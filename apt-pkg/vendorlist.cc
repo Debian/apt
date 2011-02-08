@@ -21,11 +21,11 @@ bool pkgVendorList::ReadMainList()
    Configuration Cnf;
 
    string CnfFile = _config->FindDir("Dir::Etc::vendorparts");
-   if (FileExists(CnfFile) == true)
+   if (DirectoryExists(CnfFile) == true)
       if (ReadConfigDir(Cnf,CnfFile,true) == false)
 	 return false;
    CnfFile = _config->FindFile("Dir::Etc::vendorlist");
-   if (FileExists(CnfFile) == true)
+   if (RealFileExists(CnfFile) == true)
       if (ReadConfigFile(Cnf,CnfFile,true) == false)
 	 return false;
 

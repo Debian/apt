@@ -57,6 +57,7 @@ Description-${LOCALE}: Mächtige Oberfläche für dpkg
 testrun() {
 	echo "Acquire::Languages { \"${LOCALE}\"; \"en\"; };" > rootdir/etc/apt/apt.conf.d/00languages
 	export LC_ALL=""
+	rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/
 	setupaptarchive
 	testequal "$LOCALESTANZA" aptcache show apt -o Test=File-${LOCALE}
 	testequal "$NOLONGSTANZA" aptcache show apt -o Acquire::Languages="ww" -o Test=File-${LOCALE}

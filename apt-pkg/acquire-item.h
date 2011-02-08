@@ -287,6 +287,50 @@ struct DiffInfo {
    unsigned long size;
 };
 									/*}}}*/
+/** \brief An item that is responsible for fetching a SubIndex		{{{
+ *
+ *  The MetaIndex file includes only records for important indexes
+ *  and records for these SubIndex files so these can carry records
+ *  for addition files like PDiffs and Translations
+ */
+class pkgAcqSubIndex : public pkgAcquire::Item
+{
+ protected:
+   /** \brief If \b true, debugging information will be written to std::clog. */
+   bool Debug;
+
+   /** \brief The item that is currently being downloaded. */
+   pkgAcquire::ItemDesc Desc;
+
+   /** \brief The Hash that this file should have after download
+    */
+   HashString ExpectedHash;
+
+ public:
+   // Specialized action members
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual string DescURI() {return Desc.URI;};
+   virtual string Custom600Headers();
+   virtual bool ParseIndex(string const &IndexFile);
+
+   /** \brief Create a new pkgAcqSubIndex.
+    *
+    *  \param Owner The Acquire object that owns this item.
+    *
+    *  \param URI The URI of the list file to download.
+    *
+    *  \param URIDesc A long description of the list file to download.
+    *
+    *  \param ShortDesc A short description of the list file to download.
+    *
+    *  \param ExpectedHash The list file's MD5 signature.
+    */
+   pkgAcqSubIndex(pkgAcquire *Owner, string const &URI,string const &URIDesc,
+		   string const &ShortDesc, HashString const &ExpectedHash);
+};
+									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
  *  package list diffs and starting the package list's download.
  *
@@ -449,7 +493,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
 	 StateFetchDiff,
 	 
 	 /** \brief The diff is currently being uncompressed. */
-	 StateUnzipDiff,
+	 StateUnzipDiff, // FIXME: No longer used
 
 	 /** \brief The diff is currently being applied. */
 	 StateApplyDiff
@@ -528,8 +572,8 @@ class pkgAcqIndex : public pkgAcquire::Item
    /** \brief The expected hashsum of the decompressed index file. */
    HashString ExpectedHash;
 
-   /** \brief The compression-related file extension that is being
-    *  added to the downloaded file (e.g., ".gz" or ".bz2").
+   /** \brief The compression-related file extensions that are being
+    *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
     */
    string CompressionExtension;
 
@@ -540,7 +584,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    virtual void Done(string Message,unsigned long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
-   virtual string DescURI() {return RealURI + CompressionExtension;};
+   virtual string DescURI() {return Desc.URI;};
    virtual string HashSum() {return ExpectedHash.toStr(); };
 
    /** \brief Create a pkgAcqIndex.
@@ -565,6 +609,9 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcqIndex(pkgAcquire *Owner,string URI,string URIDesc,
 	       string ShortDesc, HashString ExpectedHash, 
 	       string compressExt="");
+   pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
+			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
+   void Init(string const &URI, string const &URIDesc, string const &ShortDesc);
 };
 									/*}}}*/
 /** \brief An acquire item that is responsible for fetching a		{{{
@@ -594,6 +641,8 @@ class pkgAcqIndexTrans : public pkgAcqIndex
     */
    pkgAcqIndexTrans(pkgAcquire *Owner,string URI,string URIDesc,
 		    string ShortDesc);
+   pkgAcqIndexTrans(pkgAcquire *Owner, struct IndexTarget const * const Target,
+		    HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
@@ -612,8 +661,18 @@ struct IndexTarget
     *  looked up within the meta signature file.
     */
    string MetaKey;
+
+   //FIXME: We should use virtual methods here instead…
+   bool IsOptional() const;
+   bool IsSubIndex() const;
 };
 									/*}}}*/
+/** \brief Information about an optional index file. */			/*{{{*/
+struct OptionalIndexTarget : public IndexTarget
+{
+};
+									/*}}}*/
+
 /** \brief An acquire item that downloads the detached signature	{{{
  *  of a meta-index (Release) file, then queues up the release
  *  file itself.
@@ -770,6 +829,39 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
 		   string SigFile,
 		   const vector<struct IndexTarget*>* IndexTargets,
 		   indexRecords* MetaIndexParser);
+};
+									/*}}}*/
+/** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
+class pkgAcqMetaClearSig : public pkgAcqMetaIndex
+{
+   /** \brief The URI of the meta-index file for the detached signature */
+   string MetaIndexURI;
+
+   /** \brief A "URI-style" description of the meta-index file */
+   string MetaIndexURIDesc;
+
+   /** \brief A brief description of the meta-index file */
+   string MetaIndexShortDesc;
+
+   /** \brief The URI of the detached meta-signature file if the clearsigned one failed. */
+   string MetaSigURI;
+
+   /** \brief A "URI-style" description of the meta-signature file */
+   string MetaSigURIDesc;
+
+   /** \brief A brief description of the meta-signature file */
+   string MetaSigShortDesc;
+
+public:
+   void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+
+   /** \brief Create a new pkgAcqMetaClearSig. */
+   pkgAcqMetaClearSig(pkgAcquire *Owner,
+		string const &URI, string const &URIDesc, string const &ShortDesc,
+		string const &MetaIndexURI, string const &MetaIndexURIDesc, string const &MetaIndexShortDesc,
+		string const &MetaSigURI, string const &MetaSigURIDesc, string const &MetaSigShortDesc,
+		const vector<struct IndexTarget*>* IndexTargets,
+		indexRecords* MetaIndexParser);
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching a package file.	{{{

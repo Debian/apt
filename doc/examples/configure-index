@@ -17,6 +17,7 @@
 */
 
 quiet "0";
+quiet::NoUpdate "true"; // never update progress information - included in -q=1
 
 // Options for APT in general
 APT 
@@ -288,7 +289,7 @@ Acquire
     lzma "lzma";
     gz "gzip";
 
-    Order { "gz"; "lzma"; "bz2"; };
+    Order { "uncompressed"; "gz"; "lzma"; "bz2"; };
   };
 
   Languages

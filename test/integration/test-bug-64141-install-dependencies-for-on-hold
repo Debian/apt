@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  oldcrap
+The following NEW packages will be installed:
+  libdb4.8
+The following packages will be upgraded:
+  apt libc6
+2 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Need to get 0 B/6724 kB of archives.
+After this operation, 1523 kB of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only
+
+echo 'apt hold' | dpkg --set-selections
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  apt
+The following packages will be upgraded:
+  libc6
+1 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.
+Need to get 0 B/3881 kB of archives.
+After this operation, 0 B of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only -o Test='hold-back-apt'
