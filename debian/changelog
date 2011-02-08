@@ -1,3 +1,13 @@
+apt (0.8.11.1) unstable; urgency=low
+
+  [ Stefan Lippers-Hollmann ]
+  * cmdline/apt-key:
+    - fix root test which prevented setting of trustdb-name
+      which lets gpg fail if it adds/remove keys from trusted.gpg
+      as it tries to open the (maybe) not existent /root/.gnupg
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 08 Feb 2011 22:22:33 +0100
+
 apt (0.8.11) unstable; urgency=low
 
   [ David Kalnischkies ]
