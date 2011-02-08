@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+buildsimplenativepackage 'apt' 'all' '2.0' 'unstable'
+
+setupaptarchive
+
+testdownload() {
+	msgtest 'Test download of package file' $1
+	if [ -z "$3" ]; then
+		aptget download ${2}
+	else
+		aptget download ${2}/${3}
+	fi
+	test -f $1 && msgpass || msgfail
+}
+
+testdownload apt_1.0_all.deb apt stable
+testdownload apt_2.0_all.deb apt
+
+DEBFILE="$(readlink -f aptarchive)/pool/apt_2.0_all.deb"
+testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) sha256:$(sha256sum $DEBFILE | cut -d' ' -f 1)" aptget download apt --print-uris

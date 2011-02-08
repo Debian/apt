@@ -895,7 +895,11 @@ struct TryToRemove {
 
       if ((Pkg->CurrentVer == 0 && PurgePkgs == false) ||
 	  (PurgePkgs == true && Pkg->CurrentState == pkgCache::State::NotInstalled))
+      {
 	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+	 // MarkInstall refuses to install packages on hold
+	 Pkg->SelectedState = pkgCache::State::Hold;
+      }
       else
 	 Cache->GetDepCache()->MarkDelete(Pkg, PurgePkgs);
    }
@@ -1790,14 +1794,7 @@ bool DoInstall(CommandLine &CmdL)
       return false;
    }
 
-   unsigned short order[] = { 0, 0, 0 };
-   if (fallback == MOD_INSTALL) {
-      order[0] = MOD_INSTALL;
-      order[1] = MOD_REMOVE;
-   } else {
-      order[0] = MOD_REMOVE;
-      order[1] = MOD_INSTALL;
-   }
+   unsigned short const order[] = { MOD_REMOVE, MOD_INSTALL, 0 };
 
   TryToInstall InstallAction(Cache, Fix, BrokenFix);
   TryToRemove RemoveAction(Cache, Fix);
@@ -2211,12 +2208,14 @@ bool DoDownload(CommandLine &CmdL)
    APT::CacheSetHelper helper(c0out);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
-   pkgAcquire Fetcher;
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
 
    if (verset.empty() == true)
       return false;
+
+   pkgAcquire Fetcher;
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+      Fetcher.Setup(&Stat);
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
@@ -2248,9 +2247,18 @@ bool DoDownload(CommandLine &CmdL)
       // get the file
       new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
    }
-   bool result = (Fetcher.Run() == pkgAcquire::Continue);
 
-   return result;
+   // Just print out the uris and exit if the --print-uris flag was used
+   if (_config->FindB("APT::Get::Print-URIs") == true)
+   {
+      pkgAcquire::UriIterator I = Fetcher.UriBegin();
+      for (; I != Fetcher.UriEnd(); I++)
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
+      return true;
+   }
+
+   return (Fetcher.Run() == pkgAcquire::Continue);
 }
 									/*}}}*/
 // DoCheck - Perform the check operation				/*{{{*/
@@ -2879,6 +2887,7 @@ bool GuessThirdPartyChangelogUri(CacheFile &Cache,
    // now strip away the filename and add srcpkg_srcver.changelog
    return true;
 }
+									/*}}}*/
 // DownloadChangelog - Download the changelog 			        /*{{{*/
 // ---------------------------------------------------------------------
 bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
@@ -2903,13 +2912,19 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
                           "http://packages.debian.org/changelogs");
    path = GetChangelogPath(CacheFile, Pkg, Ver);
    strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
+   if (_config->FindB("APT::Get::Print-URIs", false) == true)
+   {
+      std::cout << '\'' << changelog_uri << '\'' << std::endl;
+      return true;
+   }
+
    strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
    // queue it
    new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
 
-   // try downloading it, if that fails, they third-party-changelogs location
-   // FIXME: res is "Continue" even if I get a 404?!?
-   int res = Fetcher.Run();
+   // try downloading it, if that fails, try third-party-changelogs location
+   // FIXME: Fetcher.Run() is "Continue" even if I get a 404?!?
+   Fetcher.Run();
    if (!FileExists(targetfile))
    {
       string third_party_uri;
@@ -2917,7 +2932,7 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
       {
          strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), third_party_uri.c_str());
          new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
-         res = Fetcher.Run();
+         Fetcher.Run();
       }
    }
 
@@ -2957,30 +2972,53 @@ bool DoChangelog(CommandLine &CmdL)
    APT::CacheSetHelper helper(c0out);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   if (verset.empty() == true)
+      return false;
    pkgAcquire Fetcher;
+
+   if (_config->FindB("APT::Get::Print-URIs", false) == true)
+      for (APT::VersionSet::const_iterator Ver = verset.begin();
+	   Ver != verset.end(); ++Ver)
+	 return DownloadChangelog(Cache, Fetcher, Ver, "");
+
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
 
-   if (verset.empty() == true)
-      return false;
-   char *tmpdir = mkdtemp(strdup("/tmp/apt-changelog-XXXXXX"));
-   if (tmpdir == NULL) {
-      return _error->Errno("mkdtemp", "mkdtemp failed");
+   bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
+
+   char tmpname[100];
+   char* tmpdir = NULL;
+   if (downOnly == false)
+   {
+      const char* const tmpDir = getenv("TMPDIR");
+      if (tmpDir != NULL && *tmpDir != '\0')
+	 snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", tmpDir);
+      else
+	 strncpy(tmpname, "/tmp/apt-changelog-XXXXXX", sizeof(tmpname));
+      tmpdir = mkdtemp(tmpname);
+      if (tmpdir == NULL)
+	 return _error->Errno("mkdtemp", "mkdtemp failed");
    }
-   
+
    for (APT::VersionSet::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
    {
-      string changelogfile = string(tmpdir) + "changelog";
-      if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile))
+      string changelogfile;
+      if (downOnly == false)
+	 changelogfile.append(tmpname).append("changelog");
+      else
+	 changelogfile.append(Ver.ParentPkg().Name()).append(".changelog");
+      if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile) && downOnly == false)
+      {
          DisplayFileInPager(changelogfile);
-      // cleanup temp file
-      unlink(changelogfile.c_str());
+         // cleanup temp file
+         unlink(changelogfile.c_str());
+      }
    }
    // clenaup tmp dir
-   rmdir(tmpdir);
-   free(tmpdir);
+   if (tmpdir != NULL)
+      rmdir(tmpdir);
    return true;
 }
 									/*}}}*/

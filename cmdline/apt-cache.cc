@@ -1118,58 +1118,6 @@ bool Dotty(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// DoAdd - Perform an adding operation					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool DoAdd(CommandLine &CmdL)
-{
-   return _error->Error("Unimplemented");
-#if 0   
-   // Make sure there is at least one argument
-   if (CmdL.FileSize() <= 1)
-      return _error->Error("You must give at least one file name");
-   
-   // Open the cache
-   FileFd CacheF(_config->FindFile("Dir::Cache::pkgcache"),FileFd::WriteAny);
-   if (_error->PendingError() == true)
-      return false;
-   
-   DynamicMMap Map(CacheF,MMap::Public);
-   if (_error->PendingError() == true)
-      return false;
-
-   OpTextProgress Progress(*_config);
-   pkgCacheGenerator Gen(Map,Progress);
-   if (_error->PendingError() == true)
-      return false;
-
-   unsigned long Length = CmdL.FileSize() - 1;
-   for (const char **I = CmdL.FileList + 1; *I != 0; I++)
-   {
-      Progress.OverallProgress(I - CmdL.FileList,Length,1,"Generating cache");
-      Progress.SubProgress(Length);
-
-      // Do the merge
-      FileFd TagF(*I,FileFd::ReadOnly);
-      debListParser Parser(TagF);
-      if (_error->PendingError() == true)
-	 return _error->Error("Problem opening %s",*I);
-      
-      if (Gen.SelectFile(*I,"") == false)
-	 return _error->Error("Problem with SelectFile");
-	 
-      if (Gen.MergeList(Parser) == false)
-	 return _error->Error("Problem with MergeList");
-   }
-
-   Progress.Done();
-   GCache = &Gen.GetCache();
-   Stats(CmdL);
-   
-   return true;
-#endif   
-}
-									/*}}}*/
 // DisplayRecord - Displays the complete record for the package		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the package record from the proper package index file. 
@@ -1743,15 +1691,13 @@ bool ShowHelp(CommandLine &Cmd)
 
    cout << 
     _("Usage: apt-cache [options] command\n"
-      "       apt-cache [options] add file1 [file2 ...]\n"
       "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
       "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
       "\n"
-      "apt-cache is a low-level tool used to manipulate APT's binary\n"
-      "cache files, and query information from them\n"
+      "apt-cache is a low-level tool used to query information\n"
+      "from APT's binary cache files\n"
       "\n"
       "Commands:\n"
-      "   add - Add a package file to the source cache\n"
       "   gencaches - Build both the package and source cache\n"
       "   showpkg - Show some general information for a single package\n"
       "   showsrc - Show source records\n"
@@ -1811,7 +1757,6 @@ int main(int argc,const char *argv[])					/*{{{*/
       {0,"enhances","APT::Cache::ShowEnhances",0},
       {0,0,0,0}};
    CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
-                                    {"add",&DoAdd},
                                     {"gencaches",&GenCaches},
                                     {"showsrc",&ShowSrcPackage},
                                     {0,0}};

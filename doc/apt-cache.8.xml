@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>04 February 2011</date>
  </refentryinfo>
  
  <refmeta>
@@ -30,7 +30,7 @@
  <!-- Man page title -->
  <refnamediv>
     <refname>apt-cache</refname>
-    <refpurpose>APT package handling utility -- cache manipulator</refpurpose>
+    <refpurpose>query the APT cache</refpurpose>
  </refnamediv>
 
  <!-- Arguments -->
@@ -41,7 +41,6 @@
       <arg><option>-o=<replaceable>config string</replaceable></option></arg>
       <arg><option>-c=<replaceable>file</replaceable></option></arg>
       <group choice="req">
-         <arg>add <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg></arg>
          <arg>gencaches</arg>
          <arg>showpkg <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
          <arg>showsrc <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
@@ -72,11 +71,6 @@
    commands below must be present.</para>
 
    <variablelist>
-     <varlistentry><term>add <replaceable>file(s)</replaceable></term>
-     <listitem><para><literal>add</literal> adds the named package index files to the package cache.
-     This is for debugging only.</para></listitem>
-     </varlistentry>
-     
      <varlistentry><term>gencaches</term>
      <listitem><para><literal>gencaches</literal> performs the same operation as 
      <command>apt-get check</command>. It builds the source and package caches from 

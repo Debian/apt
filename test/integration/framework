@@ -137,7 +137,6 @@ setupenvironment() {
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${BUILDDIRECTORY}/methods\";" >> aptconfig.conf
 	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
-	echo "Dir::Bin::methods \"${BUILDDIRECTORY}/methods\";" >> aptconfig.conf
 	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
@@ -268,11 +267,14 @@ Package: $NAME" > ${BUILDDIR}/debian/control
 	(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$ARCH)
 	(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 
-	dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. > /dev/null
+	dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. 2> /dev/null > /dev/null
 	echo "pool/${NAME}_${VERSION}_${ARCH}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	for SRC in $SRCS; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 	done
+	mkdir -p ${BUILDDIR}/../${NAME}_${VERSION}
+	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}/
+	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}.changelog
 	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
@@ -624,8 +626,8 @@ testnopackage() {
 
 testdpkginstalled() {
 	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^i]' | wc -l)"
-	if [ "$PKGS" != 0 ]; then
+	local PKGS="$(dpkg -l $* | grep '^i' | wc -l)"
+	if [ "$PKGS" != $# ]; then
 		echo $PKGS
 		dpkg -l $* | grep '^[a-z]'
 		msgfail
@@ -634,9 +636,9 @@ testdpkginstalled() {
 	msgpass
 }
 
-testdpkgnoninstalled() {
-	msgtest "Test for correctly non-installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^u]' | wc -l)"
+testdpkgnotinstalled() {
+	msgtest "Test for correctly not-installed package(s) with" "dpkg -l $*"
+	local PKGS="$(dpkg -l $* 2> /dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != 0 ]; then
 		echo
 		dpkg -l $* | grep '^[a-z]'

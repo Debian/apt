@@ -52,8 +52,10 @@
       <listitem><para>all files in <literal>Dir::Etc::Parts</literal> in
 	 alphanumeric ascending order which have no or "<literal>conf</literal>"
 	 as filename extension and which only contain alphanumeric,
-	 hyphen (-), underscore (_) and period (.) characters -
-	 otherwise they will be silently ignored.</para></listitem>
+	 hyphen (-), underscore (_) and period (.) characters.
+	 Otherwise APT will print a notice that it has ignored a file if the file
+	 doesn't match a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
+	 configuration list - in this case it will be silently ignored.</para></listitem>
       <listitem><para>the main configuration file specified by
 	 <literal>Dir::Etc::main</literal></para></listitem>
       <listitem><para>the command line options are applied to override the

@@ -18,6 +18,7 @@
 #include <iostream>
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include <string>
@@ -103,10 +104,21 @@ bool GlobalError::InsertErrno(MsgType const &type, const char *Function,
 // GlobalError::InsertErrno - formats an error message with the errno	/*{{{*/
 bool GlobalError::InsertErrno(MsgType type, const char* Function,
 			      const char* Description, va_list &args) {
-	char S[400];
-	snprintf(S, sizeof(S), "%s - %s (%i: %s)", Description,
-		 Function, errno, strerror(errno));
-	return Insert(type, S, args);
+	int const errsv = errno;
+	char* S = (char*) malloc(400);
+	size_t const Ssize = snprintf(S, 400, "%s - %s (%i: %s)", Description,
+				      Function, errsv, strerror(errsv)) + 1;
+
+	if (Ssize > 400) {
+		free(S);
+		S = (char*) malloc(Ssize);
+		snprintf(S, Ssize, "%s - %s (%i: %s)", Description,
+			 Function, errsv, strerror(errsv));
+	}
+
+	bool const geins = Insert(type, S, args);
+	free(S);
+	return geins;
 }
 									/*}}}*/
 // GlobalError::Fatal - Add a fatal error to the list			/*{{{*/
@@ -157,8 +169,14 @@ bool GlobalError::Insert(MsgType const &type, const char *Description,...)
 // GlobalError::Insert - Insert a new item at the end			/*{{{*/
 bool GlobalError::Insert(MsgType type, const char* Description,
 			 va_list &args) {
-	char S[400];
-	vsnprintf(S,sizeof(S),Description,args);
+	char* S = (char*) malloc(400);
+	size_t const Ssize = vsnprintf(S, 400, Description, args) + 1;
+
+	if (Ssize > 400) {
+		free(S);
+		S = (char*) malloc(Ssize);
+		vsnprintf(S, Ssize, Description, args);
+	}
 
 	Item const m(S, type);
 	Messages.push_back(m);
@@ -169,6 +187,7 @@ bool GlobalError::Insert(MsgType type, const char* Description,
 	if (type == FATAL || type == DEBUG)
 		std::clog << m << std::endl;
 
+	free(S);
 	return false;
 }
 									/*}}}*/

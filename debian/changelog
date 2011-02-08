@@ -5,6 +5,7 @@ apt (0.8.11) UNRELEASED; urgency=low
     - add SetCandidateRelease() to set a candidate version and
       the candidates of dependencies if needed to a specified
       release (Closes: #572709)
+    - allow conflicts in the same group again (Closes: #612099)
   * cmdline/apt-get.cc:
     - if --print-uris is used don't setup downloader as we don't need
       progress, lock nor the directories it would create otherwise
@@ -16,6 +17,8 @@ apt (0.8.11) UNRELEASED; urgency=low
       so installing packages from experimental or backports is easier
     - really do not show packages in the extra section if they were
       requested on the commandline, e.g. with a modifier (Closes: #184730)
+    - always do removes first and set not installed remove packages
+      on hold to prevent temporary installation later (Closes: #549968)
   * debian/control:
     - add Vcs-Browser now that loggerhead works again (Closes: #511168)
     - depend on debhelper 7 to raise compat level
@@ -42,6 +45,7 @@ apt (0.8.11) UNRELEASED; urgency=low
     - remove duplicated mentioning of --install-recommends
   * doc/sources.list.5.xml:
     - remove obsolete references to non-us (Closes: #594495)
+    - a notice is printed for ignored files (Closes: #597615)
   * debian/rules:
     - use -- instead of deprecated -u for dh_gencontrol
     - remove shlibs.local creation and usage
@@ -70,6 +74,19 @@ apt (0.8.11) UNRELEASED; urgency=low
     - print a good error message if FileSize() is zero
   * apt-pkg/aptconfiguration.cc:
     - remove the inbuilt Translation files whitelist
+  * cmdline/apt-cache.cc:
+    - remove not implemented 'apt-cache add' command
+  * doc/apt-cache.8.xml:
+    - describe reality as apt-cache just queries and doesn't manipulate
+      the caches. Thanks to Enrico Zini for spotting it! (Closes: #612009)
+  * apt-pkg/algorithms.cc:
+    - mark pseudo packages of installed all packages as configured
+      in the simulation as we don't call configure for these packages
+  * apt-pkg/pkgcachegen.cc:
+    - in multiarch, let :all packages conflict with :any packages
+      with a different version to be sure
+  * apt-pkg/contrib/error.cc:
+    - remove 400 char size limit of error messages (LP: #365611)
 
   [ Michael Vogt ]
   * methods/http.cc:
@@ -87,7 +104,7 @@ apt (0.8.11) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Jan 2011 12:22:25 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 22:14:09 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 
