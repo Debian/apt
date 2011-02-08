@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-all\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-28 17:23+0200\n"
+"POT-Creation-Date: 2011-01-12 17:42+0100\n"
 "PO-Revision-Date: 2006-07-29 15:57+0300\n"
 "Last-Translator: Artem Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -152,7 +152,7 @@ msgstr "  Таблиця версій:"
 
 #: cmdline/apt-cache.cc:1738 cmdline/apt-cdrom.cc:197 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:589
-#: cmdline/apt-get.cc:2758 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2793 cmdline/apt-sortpkgs.cc:144
 #, fuzzy, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s для %s %s скомпільовано %s %s\n"
@@ -729,12 +729,12 @@ msgstr "Пакунки, будуть замінені на більш СТАРІ
 msgid "The following held packages will be changed:"
 msgstr "Пакунки, які повинні були б залишитися без змін, але будуть замінені:"
 
-#: cmdline/apt-get.cc:561
+#: cmdline/apt-get.cc:563
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (внаслідок %s) "
 
-#: cmdline/apt-get.cc:569
+#: cmdline/apt-get.cc:571
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -742,65 +742,60 @@ msgstr ""
 "УВАГА: Ці істотно важливі пакунки будуть вилучені.\n"
 "НЕ РОБІТЬ цього, якщо ви НЕ уявляєте собі всі можливі наслідки!"
 
-#: cmdline/apt-get.cc:603
+#: cmdline/apt-get.cc:605
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "оновлено %lu, встановлено %lu нових пакунків, "
 
-#: cmdline/apt-get.cc:607
+#: cmdline/apt-get.cc:609
 #, c-format
 msgid "%lu reinstalled, "
 msgstr " %lu перевстановлено, "
 
-#: cmdline/apt-get.cc:609
+#: cmdline/apt-get.cc:611
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu пакунків замінено на старі версії, "
 
-#: cmdline/apt-get.cc:611
+#: cmdline/apt-get.cc:613
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "для видалення відмічено %lu пакунків, і %lu пакунків не оновлено.\n"
 
-#: cmdline/apt-get.cc:615
+#: cmdline/apt-get.cc:617
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "не встановлено до кінця чи видалено %lu пакунків.\n"
 
-#: cmdline/apt-get.cc:635
+#: cmdline/apt-get.cc:639
 #, fuzzy, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
 msgstr "Помітьте, регулярний вираз %2$s призводить до вибору %1$s\n"
 
-#: cmdline/apt-get.cc:641
+#: cmdline/apt-get.cc:645
 #, fuzzy, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
 msgstr "Помітьте, регулярний вираз %2$s призводить до вибору %1$s\n"
 
-#: cmdline/apt-get.cc:648
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Обрана версія %s (%s) для %s\n"
-
-#: cmdline/apt-get.cc:658
+#: cmdline/apt-get.cc:662
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Пакунок %s - віртуальний, його функції надаються пакунками:\n"
 
-#: cmdline/apt-get.cc:669
+#: cmdline/apt-get.cc:673
 msgid " [Installed]"
 msgstr " [Встановлено]"
 
-#: cmdline/apt-get.cc:678
+#: cmdline/apt-get.cc:682
 #, fuzzy
 msgid " [Not candidate version]"
 msgstr "Версії кандидатів"
 
-#: cmdline/apt-get.cc:680
+#: cmdline/apt-get.cc:684
 msgid "You should explicitly select one to install."
 msgstr "Ви повинні явно вказати, який саме ви хочете встановити."
 
-#: cmdline/apt-get.cc:683
+#: cmdline/apt-get.cc:687
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -812,178 +807,188 @@ msgstr ""
 "Це може означати, що пакунок відсутній, застарів, або доступний з джерел, не "
 "згаданих в sources.list\n"
 
-#: cmdline/apt-get.cc:701
+#: cmdline/apt-get.cc:705
 msgid "However the following packages replace it:"
 msgstr "Однак наступні пакунки можуть його замінити:"
 
-#: cmdline/apt-get.cc:713
+#: cmdline/apt-get.cc:717
 #, fuzzy, c-format
 msgid "Package '%s' has no installation candidate"
 msgstr "Для пакунка %s не знайдені кандидати на встановлення"
 
-#: cmdline/apt-get.cc:724
+#: cmdline/apt-get.cc:728
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:755
+#: cmdline/apt-get.cc:759
 #, fuzzy, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Помітьте, замість %2$s вибирається %1$s\n"
 
-#: cmdline/apt-get.cc:785
+#: cmdline/apt-get.cc:789
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "Пропускається %s - пакунок вже встановлений, і опція upgrade не "
 "встановлена.\n"
 
-#: cmdline/apt-get.cc:789
+#: cmdline/apt-get.cc:793
 #, fuzzy, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "Пропускається %s - пакунок вже встановлений, і опція upgrade не "
 "встановлена.\n"
 
-#: cmdline/apt-get.cc:799
+#: cmdline/apt-get.cc:803
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Перевстановлення %s неможливе, бо він не може бути завантаженим.\n"
 
-#: cmdline/apt-get.cc:804
+#: cmdline/apt-get.cc:808
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "Вже встановлена найновіша версія %s.\n"
 
-#: cmdline/apt-get.cc:823 cmdline/apt-get.cc:1992
+#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:2027
 #, fuzzy, c-format
 msgid "%s set to manually installed.\n"
 msgstr "але %s буде встановлений"
 
-#: cmdline/apt-get.cc:863
+#: cmdline/apt-get.cc:853
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "Обрана версія %s (%s) для %s\n"
+
+#: cmdline/apt-get.cc:858
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "Обрана версія %s (%s) для %s\n"
+
+#: cmdline/apt-get.cc:898
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
 msgstr "Пакунок %s не встановлений, тому не може бути видалений\n"
 
-#: cmdline/apt-get.cc:938
+#: cmdline/apt-get.cc:973
 msgid "Correcting dependencies..."
 msgstr "Виправлення залежностей..."
 
-#: cmdline/apt-get.cc:941
+#: cmdline/apt-get.cc:976
 msgid " failed."
 msgstr " невдача."
 
-#: cmdline/apt-get.cc:944
+#: cmdline/apt-get.cc:979
 msgid "Unable to correct dependencies"
 msgstr "Неможливо скоригувати залежності"
 
-#: cmdline/apt-get.cc:947
+#: cmdline/apt-get.cc:982
 msgid "Unable to minimize the upgrade set"
 msgstr "Неможливо мінімізувати набір оновлень"
 
-#: cmdline/apt-get.cc:949
+#: cmdline/apt-get.cc:984
 msgid " Done"
 msgstr " Виконано"
 
-#: cmdline/apt-get.cc:953
+#: cmdline/apt-get.cc:988
 msgid "You might want to run 'apt-get -f install' to correct these."
 msgstr ""
 "Можливо, для виправлення цих помилок ви захочете скористатися 'apt-get -f "
 "install'."
 
-#: cmdline/apt-get.cc:956
+#: cmdline/apt-get.cc:991
 msgid "Unmet dependencies. Try using -f."
 msgstr "Незадоволені залежності. Спробуйте використати -f."
 
-#: cmdline/apt-get.cc:981
+#: cmdline/apt-get.cc:1016
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "УВАГА: Наступні пакунки неможливо автентифікувати!"
 
-#: cmdline/apt-get.cc:985
+#: cmdline/apt-get.cc:1020
 msgid "Authentication warning overridden.\n"
 msgstr "Автентифікаційне попередження не прийнято до уваги.\n"
 
-#: cmdline/apt-get.cc:992
+#: cmdline/apt-get.cc:1027
 msgid "Install these packages without verification [y/N]? "
 msgstr "Встановити ці пакунки без перевірки [т/Н]? "
 
-#: cmdline/apt-get.cc:994
+#: cmdline/apt-get.cc:1029
 msgid "Some packages could not be authenticated"
 msgstr "Деякі пакунки неможливо автентифікувати"
 
-#: cmdline/apt-get.cc:1003 cmdline/apt-get.cc:1166
+#: cmdline/apt-get.cc:1038 cmdline/apt-get.cc:1199
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Існують проблеми, а опція -y використана без --force-yes"
 
-#: cmdline/apt-get.cc:1044
+#: cmdline/apt-get.cc:1079
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 "Внутрішня помилка, InstallPackages була викликана з непрацездатними "
 "пакунками!"
 
-#: cmdline/apt-get.cc:1053
+#: cmdline/apt-get.cc:1088
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Пакунки необхідно видалити, але видалення заборонене."
 
-#: cmdline/apt-get.cc:1064
+#: cmdline/apt-get.cc:1099
 msgid "Internal error, Ordering didn't finish"
 msgstr "Внутрішня помилка, Ordering не завершилася"
 
-#: cmdline/apt-get.cc:1104
+#: cmdline/apt-get.cc:1137
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr "Дивно.. Розбіжність розмірів, напишіть на apt@packages.debian.org"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1111
+#: cmdline/apt-get.cc:1144
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Необхідно завантажити %sB/%sB архівів.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1116
+#: cmdline/apt-get.cc:1149
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Необхідно завантажити %sB архівів.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1123
+#: cmdline/apt-get.cc:1156
 #, fuzzy, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Після розпакування об'єм зайнятого дискового простору зросте на %sB.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1128
+#: cmdline/apt-get.cc:1161
 #, fuzzy, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr ""
 "Після розпакування об'єм зайнятого дискового простору зменшиться на %sB.\n"
 
-#: cmdline/apt-get.cc:1143 cmdline/apt-get.cc:1146 cmdline/apt-get.cc:2332
-#: cmdline/apt-get.cc:2335
+#: cmdline/apt-get.cc:1176 cmdline/apt-get.cc:1179 cmdline/apt-get.cc:2367
+#: cmdline/apt-get.cc:2370
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Не вдалося визначити кількість вільного місця в %s"
 
-#: cmdline/apt-get.cc:1156
+#: cmdline/apt-get.cc:1189
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Недостатньо вільного місця в %s."
 
-#: cmdline/apt-get.cc:1172 cmdline/apt-get.cc:1192
+#: cmdline/apt-get.cc:1205 cmdline/apt-get.cc:1225
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr ""
 "Запитане виконання тільки тривіальних операцій, але це не тривіальна "
 "операція."
 
-#: cmdline/apt-get.cc:1174
+#: cmdline/apt-get.cc:1207
 msgid "Yes, do as I say!"
 msgstr "Так, робити, як я скажу!"
 
-#: cmdline/apt-get.cc:1176
+#: cmdline/apt-get.cc:1209
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -994,28 +999,28 @@ msgstr ""
 "Щоб продовжити, введіть фразу: '%s'\n"
 " ?] "
 
-#: cmdline/apt-get.cc:1182 cmdline/apt-get.cc:1201
+#: cmdline/apt-get.cc:1215 cmdline/apt-get.cc:1234
 msgid "Abort."
 msgstr "Перервано."
 
-#: cmdline/apt-get.cc:1197
+#: cmdline/apt-get.cc:1230
 msgid "Do you want to continue [Y/n]? "
 msgstr "Бажаєте продовжити [Т/н]? "
 
-#: cmdline/apt-get.cc:1269 cmdline/apt-get.cc:2392 apt-pkg/algorithms.cc:1462
+#: cmdline/apt-get.cc:1302 cmdline/apt-get.cc:2427 apt-pkg/algorithms.cc:1470
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Не вдалося завантажити %s  %s\n"
 
-#: cmdline/apt-get.cc:1287
+#: cmdline/apt-get.cc:1320
 msgid "Some files failed to download"
 msgstr "Деякі файли не вдалося завантажити"
 
-#: cmdline/apt-get.cc:1288 cmdline/apt-get.cc:2401
+#: cmdline/apt-get.cc:1321 cmdline/apt-get.cc:2436
 msgid "Download complete and in download only mode"
 msgstr "Вказано режим \"тільки завантаження\", і завантаження завершено"
 
-#: cmdline/apt-get.cc:1294
+#: cmdline/apt-get.cc:1327
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -1023,19 +1028,19 @@ msgstr ""
 "Неможливо завантажити деякі архіви, імовірно треба виконати apt-get update "
 "або спробувати повторити запуск з ключем --fix-missing?"
 
-#: cmdline/apt-get.cc:1298
+#: cmdline/apt-get.cc:1331
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing і зміна носія в даний момент не підтримується"
 
-#: cmdline/apt-get.cc:1303
+#: cmdline/apt-get.cc:1336
 msgid "Unable to correct missing packages."
 msgstr "Неможливо виправити втрачені пакунки."
 
-#: cmdline/apt-get.cc:1304
+#: cmdline/apt-get.cc:1337
 msgid "Aborting install."
 msgstr "Переривається встановлення."
 
-#: cmdline/apt-get.cc:1332
+#: cmdline/apt-get.cc:1365
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1045,57 +1050,35 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: cmdline/apt-get.cc:1336
+#: cmdline/apt-get.cc:1369
 msgid "Note: This is done automatic and on purpose by dpkg."
 msgstr ""
 
-#: cmdline/apt-get.cc:1466
+#: cmdline/apt-get.cc:1499
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1498
+#: cmdline/apt-get.cc:1531
 #, fuzzy, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "Не вдалося прочитати атрибути переліку вихідних текстів%s"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1536
+#: cmdline/apt-get.cc:1569
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1552
+#: cmdline/apt-get.cc:1585
 msgid "The update command takes no arguments"
 msgstr "Команді update не потрібні аргументи"
 
-#: cmdline/apt-get.cc:1618
+#: cmdline/apt-get.cc:1647
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: cmdline/apt-get.cc:1666
-#, fuzzy
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
-msgstr[1] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
-
-#: cmdline/apt-get.cc:1670
-#, fuzzy, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
-msgstr[1] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
-
-#: cmdline/apt-get.cc:1672
-msgid "Use 'apt-get autoremove' to remove them."
-msgstr "Використовуйте 'apt-get autoremove' щоб видалити їх."
-
-#: cmdline/apt-get.cc:1677
+#: cmdline/apt-get.cc:1699
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1113,26 +1096,48 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1680 cmdline/apt-get.cc:1822
+#: cmdline/apt-get.cc:1702 cmdline/apt-get.cc:1858
 msgid "The following information may help to resolve the situation:"
 msgstr "Наступна інформація можливо допоможе Вам:"
 
-#: cmdline/apt-get.cc:1684
+#: cmdline/apt-get.cc:1706
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Внутрішня помилка, вирішувач проблем все поламав"
 
-#: cmdline/apt-get.cc:1703
+#: cmdline/apt-get.cc:1713
+#, fuzzy
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
+msgstr[1] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
+
+#: cmdline/apt-get.cc:1717
+#, fuzzy, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
+msgstr[1] "НОВІ пакунки були встановлені автоматично і більше не потрібні:"
+
+#: cmdline/apt-get.cc:1719
+msgid "Use 'apt-get autoremove' to remove them."
+msgstr "Використовуйте 'apt-get autoremove' щоб видалити їх."
+
+#: cmdline/apt-get.cc:1738
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Внутрішня помилка, AllUpgrade все поламав"
 
-#: cmdline/apt-get.cc:1792
+#: cmdline/apt-get.cc:1828
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr ""
 "Можливо, для виправлення цих помилок Ви захочете скористатися 'apt-get -f "
 "install':"
 
-#: cmdline/apt-get.cc:1795
+#: cmdline/apt-get.cc:1831
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1140,7 +1145,7 @@ msgstr ""
 "Незадоволені залежності. Спробуйте виконати 'apt-get -f install', не "
 "вказуючи імені пакунка (або знайдіть інше рішення)."
 
-#: cmdline/apt-get.cc:1807
+#: cmdline/apt-get.cc:1843
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1151,71 +1156,71 @@ msgstr ""
 "або ж використаєте нестабільний дистрибутив, і запитані Вами пакунки\n"
 "ще не створені або були вилучені з Incoming."
 
-#: cmdline/apt-get.cc:1825
+#: cmdline/apt-get.cc:1861
 msgid "Broken packages"
 msgstr "Зламані пакунки"
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1889
 msgid "The following extra packages will be installed:"
 msgstr "Будуть встановлені наступні додаткові пакунки:"
 
-#: cmdline/apt-get.cc:1944
+#: cmdline/apt-get.cc:1979
 msgid "Suggested packages:"
 msgstr "Пропоновані пакунки:"
 
-#: cmdline/apt-get.cc:1945
+#: cmdline/apt-get.cc:1980
 msgid "Recommended packages:"
 msgstr "Рекомендовані пакунки:"
 
-#: cmdline/apt-get.cc:1987
+#: cmdline/apt-get.cc:2022
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Не можу знайти пакунок %s"
 
-#: cmdline/apt-get.cc:1994
+#: cmdline/apt-get.cc:2029
 #, fuzzy, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "але %s буде встановлений"
 
-#: cmdline/apt-get.cc:2015
+#: cmdline/apt-get.cc:2050
 msgid "Calculating upgrade... "
 msgstr "Обчислення оновлень... "
 
-#: cmdline/apt-get.cc:2018 methods/ftp.cc:707 methods/connect.cc:111
+#: cmdline/apt-get.cc:2053 methods/ftp.cc:707 methods/connect.cc:111
 msgid "Failed"
 msgstr "Невдача"
 
-#: cmdline/apt-get.cc:2023
+#: cmdline/apt-get.cc:2058
 msgid "Done"
 msgstr "Виконано"
 
-#: cmdline/apt-get.cc:2090 cmdline/apt-get.cc:2098
+#: cmdline/apt-get.cc:2125 cmdline/apt-get.cc:2133
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Внутрішня помилка, вирішувач проблем все поламав"
 
-#: cmdline/apt-get.cc:2122 cmdline/apt-get.cc:2155
+#: cmdline/apt-get.cc:2157 cmdline/apt-get.cc:2190
 msgid "Unable to lock the download directory"
 msgstr "Неможливо заблокувати теку для завантаження"
 
-#: cmdline/apt-get.cc:2198
+#: cmdline/apt-get.cc:2233
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Вкажіть як мінімум один пакунок, для якого необхідно завантажити вихідні "
 "тексти"
 
-#: cmdline/apt-get.cc:2238 cmdline/apt-get.cc:2519
+#: cmdline/apt-get.cc:2273 cmdline/apt-get.cc:2554
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Неможливо знайти пакунок з вихідними текстами для %s"
 
-#: cmdline/apt-get.cc:2254
+#: cmdline/apt-get.cc:2289
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2259
+#: cmdline/apt-get.cc:2294
 #, c-format
 msgid ""
 "Please use:\n"
@@ -1223,82 +1228,82 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2310
+#: cmdline/apt-get.cc:2345
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Пропускаємо вже завантажений файл '%s'\n"
 
-#: cmdline/apt-get.cc:2345
+#: cmdline/apt-get.cc:2380
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Недостатньо місця в %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2353
+#: cmdline/apt-get.cc:2388
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Необхідно завантажити %sB/%sB з архівів вихідних текстів.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2358
+#: cmdline/apt-get.cc:2393
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Потрібно завантажити %sB архівів з вихідними текстами.\n"
 
-#: cmdline/apt-get.cc:2364
+#: cmdline/apt-get.cc:2399
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Завантаження вихідних текстів %s\n"
 
-#: cmdline/apt-get.cc:2397
+#: cmdline/apt-get.cc:2432
 msgid "Failed to fetch some archives."
 msgstr "Деякі архіви не вдалося завантажити."
 
-#: cmdline/apt-get.cc:2427
+#: cmdline/apt-get.cc:2462
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 "Розпакування вихідних текстів пропущено, тому що в %s вже перебувають "
 "розпаковані вихідні тексти\n"
 
-#: cmdline/apt-get.cc:2439
+#: cmdline/apt-get.cc:2474
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Команда розпакування '%s' завершилася невдало.\n"
 
-#: cmdline/apt-get.cc:2440
+#: cmdline/apt-get.cc:2475
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Перевірте, чи встановлений пакунок 'dpkg-dev'.\n"
 
-#: cmdline/apt-get.cc:2457
+#: cmdline/apt-get.cc:2492
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Команда побудови '%s' закінчилася невдало.\n"
 
-#: cmdline/apt-get.cc:2477
+#: cmdline/apt-get.cc:2512
 msgid "Child process failed"
 msgstr "Породжений процес завершився невдало"
 
-#: cmdline/apt-get.cc:2493
+#: cmdline/apt-get.cc:2528
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Для перевірки залежностей для побудови необхідно вказати як мінімум один "
 "пакунок"
 
-#: cmdline/apt-get.cc:2524
+#: cmdline/apt-get.cc:2559
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Неможливо одержати інформацію про залежності для побудови %s"
 
-#: cmdline/apt-get.cc:2544
+#: cmdline/apt-get.cc:2579
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s не має залежностей для побудови.\n"
 
-#: cmdline/apt-get.cc:2595
+#: cmdline/apt-get.cc:2630
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1306,7 +1311,7 @@ msgid ""
 msgstr ""
 "Залежність типу %s для %s не може бути задоволена, бо пакунок %s не знайдено"
 
-#: cmdline/apt-get.cc:2648
+#: cmdline/apt-get.cc:2683
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
@@ -1315,32 +1320,32 @@ msgstr ""
 "Залежність типу %s для %s не може бути задоволена, бо ні одна з версій "
 "пакунка %s не задовольняє умови"
 
-#: cmdline/apt-get.cc:2684
+#: cmdline/apt-get.cc:2719
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Не вдалося задовольнити залежність типу %s для пакунка %s: Встановлений "
 "пакунок %s новіше, аніж треба"
 
-#: cmdline/apt-get.cc:2711
+#: cmdline/apt-get.cc:2746
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Неможливо задовольнити залежність типу %s для пакунка %s: %s"
 
-#: cmdline/apt-get.cc:2727
+#: cmdline/apt-get.cc:2762
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Залежності для побудови %s не можуть бути задоволені."
 
-#: cmdline/apt-get.cc:2732
+#: cmdline/apt-get.cc:2767
 msgid "Failed to process build dependencies"
 msgstr "Обробка залежностей для побудови закінчилася невдало"
 
-#: cmdline/apt-get.cc:2763
+#: cmdline/apt-get.cc:2798
 msgid "Supported modules:"
 msgstr "Підтримувані модулі:"
 
-#: cmdline/apt-get.cc:2804
+#: cmdline/apt-get.cc:2839
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1429,7 +1434,7 @@ msgstr ""
 "містять більше інформації.\n"
 "                       This APT has Super Cow Powers.\n"
 
-#: cmdline/apt-get.cc:2960
+#: cmdline/apt-get.cc:2995
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1437,33 +1442,33 @@ msgid ""
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
 
-#: cmdline/acqprogress.cc:55
+#: cmdline/acqprogress.cc:57
 msgid "Hit "
 msgstr "В кеші "
 
-#: cmdline/acqprogress.cc:79
+#: cmdline/acqprogress.cc:81
 msgid "Get:"
 msgstr "Отр:"
 
-#: cmdline/acqprogress.cc:110
+#: cmdline/acqprogress.cc:112
 msgid "Ign "
 msgstr "Ігн "
 
-#: cmdline/acqprogress.cc:114
+#: cmdline/acqprogress.cc:116
 msgid "Err "
 msgstr "Пом "
 
-#: cmdline/acqprogress.cc:135
+#: cmdline/acqprogress.cc:137
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "Отримано %sB за %sB (%sB/s)\n"
 
-#: cmdline/acqprogress.cc:225
+#: cmdline/acqprogress.cc:227
 #, c-format
 msgid " [Working]"
 msgstr " [Йде робота]"
 
-#: cmdline/acqprogress.cc:271
+#: cmdline/acqprogress.cc:283
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -1681,7 +1686,7 @@ msgstr "Файл %s/%s перезаписує інший з пакету %s"
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc:464 apt-pkg/contrib/cdromutl.cc:179
-#: apt-pkg/contrib/fileutl.cc:311 apt-pkg/sourcelist.cc:204
+#: apt-pkg/contrib/fileutl.cc:329 apt-pkg/sourcelist.cc:204
 #: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:450 apt-pkg/init.cc:100
 #: apt-pkg/init.cc:108 apt-pkg/clean.cc:33 apt-pkg/policy.cc:307
 #: methods/mirror.cc:87
@@ -1930,7 +1935,7 @@ msgstr "Час з'єднання вичерпався"
 msgid "Server closed the connection"
 msgstr "Сервер закрив з'єднання"
 
-#: methods/ftp.cc:344 apt-pkg/contrib/fileutl.cc:784 methods/rsh.cc:190
+#: methods/ftp.cc:344 apt-pkg/contrib/fileutl.cc:802 methods/rsh.cc:190
 msgid "Read error"
 msgstr "Помилка читання"
 
@@ -1942,7 +1947,7 @@ msgstr "Відповідь переповнила буфер."
 msgid "Protocol corruption"
 msgstr "Спотворений протокол"
 
-#: methods/ftp.cc:452 apt-pkg/contrib/fileutl.cc:826 methods/rsh.cc:232
+#: methods/ftp.cc:452 apt-pkg/contrib/fileutl.cc:844 methods/rsh.cc:232
 msgid "Write error"
 msgstr "Помилка запису"
 
@@ -2427,73 +2432,78 @@ msgstr ""
 msgid "Could not get lock %s"
 msgstr "Не можливо отримати lock %s"
 
-#: apt-pkg/contrib/fileutl.cc:643
+#: apt-pkg/contrib/fileutl.cc:321
+#, c-format
+msgid "List of files can't be created as '%s' is not a directory"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:661
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Очікується на %s але його тут немає"
 
-#: apt-pkg/contrib/fileutl.cc:655
+#: apt-pkg/contrib/fileutl.cc:673
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Підпроцес %s отримав segmentation fault."
 
-#: apt-pkg/contrib/fileutl.cc:657
+#: apt-pkg/contrib/fileutl.cc:675
 #, fuzzy, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "Підпроцес %s отримав segmentation fault."
 
-#: apt-pkg/contrib/fileutl.cc:661
+#: apt-pkg/contrib/fileutl.cc:679
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Підпроцес %s повернув код помилки (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:663
+#: apt-pkg/contrib/fileutl.cc:681
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Підпроцес %s раптово завершився"
 
-#: apt-pkg/contrib/fileutl.cc:728
+#: apt-pkg/contrib/fileutl.cc:746
 #, c-format
 msgid "Could not open file %s"
 msgstr "Не можливо відкрити файл %s"
 
-#: apt-pkg/contrib/fileutl.cc:745
+#: apt-pkg/contrib/fileutl.cc:763
 #, fuzzy, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Неможливо відкрити канал (pipe) для %s"
 
-#: apt-pkg/contrib/fileutl.cc:805
+#: apt-pkg/contrib/fileutl.cc:823
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr ""
 "помилка при читанні. мали прочитати ще %lu байт, але нічого більше нема"
 
-#: apt-pkg/contrib/fileutl.cc:838
+#: apt-pkg/contrib/fileutl.cc:856
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "помилка при записі, мали прочитати ще %lu байт, але не змогли"
 
-#: apt-pkg/contrib/fileutl.cc:937
+#: apt-pkg/contrib/fileutl.cc:985
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Проблема з закриттям файла"
 
-#: apt-pkg/contrib/fileutl.cc:940
+#: apt-pkg/contrib/fileutl.cc:988
 #, fuzzy, c-format
 msgid "Problem closing the file %s"
 msgstr "Проблема з закриттям файла"
 
-#: apt-pkg/contrib/fileutl.cc:945
+#: apt-pkg/contrib/fileutl.cc:993
 #, fuzzy, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Проблема з синхронізацією файла"
 
-#: apt-pkg/contrib/fileutl.cc:956
+#: apt-pkg/contrib/fileutl.cc:1004
 #, fuzzy, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Проблема з роз'єднанням файла"
 
-#: apt-pkg/contrib/fileutl.cc:969
+#: apt-pkg/contrib/fileutl.cc:1017
 msgid "Problem syncing the file"
 msgstr "Проблема з синхронізацією файла"
 
@@ -2574,34 +2584,34 @@ msgstr "Необов'язкові (Optional)"
 msgid "extra"
 msgstr "Додаткові (Extra)"
 
-#: apt-pkg/depcache.cc:124 apt-pkg/depcache.cc:153
+#: apt-pkg/depcache.cc:125 apt-pkg/depcache.cc:154
 msgid "Building dependency tree"
 msgstr "Побудова дерева залежностей"
 
-#: apt-pkg/depcache.cc:125
+#: apt-pkg/depcache.cc:126
 msgid "Candidate versions"
 msgstr "Версії кандидатів"
 
-#: apt-pkg/depcache.cc:154
+#: apt-pkg/depcache.cc:155
 msgid "Dependency generation"
 msgstr "Ґенерація залежностей"
 
-#: apt-pkg/depcache.cc:174 apt-pkg/depcache.cc:207 apt-pkg/depcache.cc:211
+#: apt-pkg/depcache.cc:175 apt-pkg/depcache.cc:208 apt-pkg/depcache.cc:212
 #, fuzzy
 msgid "Reading state information"
 msgstr "Об'єднання інформації про доступні пакунки"
 
-#: apt-pkg/depcache.cc:236
+#: apt-pkg/depcache.cc:237
 #, fuzzy, c-format
 msgid "Failed to open StateFile %s"
 msgstr "Не вдалося відкрити %s"
 
-#: apt-pkg/depcache.cc:242
+#: apt-pkg/depcache.cc:243
 #, fuzzy, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr "Не вдалося записати файл %s"
 
-#: apt-pkg/depcache.cc:921
+#: apt-pkg/depcache.cc:922
 #, c-format
 msgid "Internal error, group '%s' has no installable pseudo package"
 msgstr ""
@@ -2727,7 +2737,7 @@ msgstr ""
 "Пакунок %s повинен бути перевстановленим, але я не можу знайти архіву для "
 "нього."
 
-#: apt-pkg/algorithms.cc:1210
+#: apt-pkg/algorithms.cc:1218
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2735,11 +2745,11 @@ msgstr ""
 "Помилка, pkgProblemResolver::Resolve згенерував зупинку, це може бути "
 "пов'язано з зафіксованими пакунками."
 
-#: apt-pkg/algorithms.cc:1212
+#: apt-pkg/algorithms.cc:1220
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Неможливо усунути проблеми, Ви маєте поламані зафіксовані пакунки."
 
-#: apt-pkg/algorithms.cc:1488 apt-pkg/algorithms.cc:1490
+#: apt-pkg/algorithms.cc:1496 apt-pkg/algorithms.cc:1498
 msgid ""
 "Some index files failed to download, they have been ignored, or old ones "
 "used instead."
@@ -3204,12 +3214,12 @@ msgstr ""
 msgid "Installing %s"
 msgstr "Встановлено %s"
 
-#: apt-pkg/deb/dpkgpm.cc:53 apt-pkg/deb/dpkgpm.cc:822
+#: apt-pkg/deb/dpkgpm.cc:53 apt-pkg/deb/dpkgpm.cc:823
 #, c-format
 msgid "Configuring %s"
 msgstr "Конфігурація %s"
 
-#: apt-pkg/deb/dpkgpm.cc:54 apt-pkg/deb/dpkgpm.cc:829
+#: apt-pkg/deb/dpkgpm.cc:54 apt-pkg/deb/dpkgpm.cc:830
 #, c-format
 msgid "Removing %s"
 msgstr "Видаляється %s"
@@ -3235,88 +3245,88 @@ msgstr ""
 msgid "Directory '%s' missing"
 msgstr "Lists тека %spartial відсутня."
 
-#: apt-pkg/deb/dpkgpm.cc:661 apt-pkg/deb/dpkgpm.cc:674
+#: apt-pkg/deb/dpkgpm.cc:661 apt-pkg/deb/dpkgpm.cc:675
 #, fuzzy, c-format
 msgid "Could not open file '%s'"
 msgstr "Не можливо відкрити файл %s"
 
-#: apt-pkg/deb/dpkgpm.cc:815
+#: apt-pkg/deb/dpkgpm.cc:816
 #, c-format
 msgid "Preparing %s"
 msgstr "Підготовка %s"
 
-#: apt-pkg/deb/dpkgpm.cc:816
+#: apt-pkg/deb/dpkgpm.cc:817
 #, c-format
 msgid "Unpacking %s"
 msgstr "Розпакування %s"
 
-#: apt-pkg/deb/dpkgpm.cc:821
+#: apt-pkg/deb/dpkgpm.cc:822
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Підготовка до конфігурації %s"
 
-#: apt-pkg/deb/dpkgpm.cc:823
+#: apt-pkg/deb/dpkgpm.cc:824
 #, c-format
 msgid "Installed %s"
 msgstr "Встановлено %s"
 
-#: apt-pkg/deb/dpkgpm.cc:828
+#: apt-pkg/deb/dpkgpm.cc:829
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Підготовка до видалення %s"
 
-#: apt-pkg/deb/dpkgpm.cc:830
+#: apt-pkg/deb/dpkgpm.cc:831
 #, c-format
 msgid "Removed %s"
 msgstr "Видалено %s"
 
-#: apt-pkg/deb/dpkgpm.cc:835
+#: apt-pkg/deb/dpkgpm.cc:836
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Підготовка до повного видалення %s"
 
-#: apt-pkg/deb/dpkgpm.cc:836
+#: apt-pkg/deb/dpkgpm.cc:837
 #, c-format
 msgid "Completely removed %s"
 msgstr "Повністю видалено %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1042
+#: apt-pkg/deb/dpkgpm.cc:1043
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 "Неможливо записати в лог, проблема з openpty() (не змонтовано /dev/pts?)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1073
+#: apt-pkg/deb/dpkgpm.cc:1074
 msgid "Running dpkg"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1276
+#: apt-pkg/deb/dpkgpm.cc:1277
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1281
+#: apt-pkg/deb/dpkgpm.cc:1282
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1283
+#: apt-pkg/deb/dpkgpm.cc:1284
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1289
+#: apt-pkg/deb/dpkgpm.cc:1290
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1295
+#: apt-pkg/deb/dpkgpm.cc:1296
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1302
+#: apt-pkg/deb/dpkgpm.cc:1303
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
