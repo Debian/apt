@@ -590,12 +590,12 @@ testequalor2() {
 }
 
 testshowvirtual() {
-	local VIRTUAL="N: Can't select versions from package '$1' as it purely virtual"
+	local VIRTUAL="N: Can't select versions from package '$1' as it is purely virtual"
 	local PACKAGE="$1"
 	shift
 	while [ -n "$1" ]; do
 		VIRTUAL="${VIRTUAL}
-N: Can't select versions from package '$1' as it purely virtual"
+N: Can't select versions from package '$1' as it is purely virtual"
 		PACKAGE="${PACKAGE} $1"
 		shift
 	done

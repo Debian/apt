@@ -464,7 +464,7 @@ PackageSet CacheSetHelper::canNotFindPackage(pkgCacheFile &Cache, std::string co
 VersionSet CacheSetHelper::canNotFindAllVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg) {
 	if (ShowError == true)
-		_error->Insert(ErrorType, _("Can't select versions from package '%s' as it purely virtual"), Pkg.FullName(true).c_str());
+		_error->Insert(ErrorType, _("Can't select versions from package '%s' as it is purely virtual"), Pkg.FullName(true).c_str());
 	return VersionSet();
 }
 									/*}}}*/
