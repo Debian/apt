@@ -1493,9 +1493,9 @@ bool ListUpdate(pkgAcquireStatus &Stat,
    }
    
    if (TransientNetworkFailure == true)
-      _error->Warning(_("Some index files failed to download, they have been ignored, or old ones used instead."));
+      _error->Warning(_("Some index files failed to download. They have been ignored, or old ones used instead."));
    else if (Failed == true)
-      return _error->Error(_("Some index files failed to download, they have been ignored, or old ones used instead."));
+      return _error->Error(_("Some index files failed to download. They have been ignored, or old ones used instead."));
 
 
    // Run the success scripts if all was fine
