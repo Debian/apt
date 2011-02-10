@@ -17,59 +17,41 @@ setupaptarchive
 # dpkg freaks out if the last package is removed so keep one around
 aptget install peace-dpkg -y -qq 2>&1 > /dev/null
 testdpkginstalled peace-dpkg
-testfileequal 'rootdir/var/lib/apt/extended_states' ''
+testmarkedauto
 
 aptget install a -y -qq 2>&1 > /dev/null
 testdpkginstalled a b
 testdpkgnotinstalled c
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: b
-Architecture: i386
-Auto-Installed: 1
-'
+testmarkedauto 'b'
 
 aptget remove a -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled a c
 testdpkginstalled b
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: b
-Architecture: i386
-Auto-Installed: 1
-'
+testmarkedauto 'b'
 
 aptget install c -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled a
 testdpkginstalled b c
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: b
-Architecture: i386
-Auto-Installed: 1
-'
+testmarkedauto 'b'
 
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 b is already the newest version.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install b --only-upgrade
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: b
-Architecture: i386
-Auto-Installed: 1
-'
+testmarkedauto 'b'
 
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 b is already the newest version.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install b -d
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: b
-Architecture: i386
-Auto-Installed: 1
-'
+testmarkedauto 'b'
 
 aptget install b --reinstall -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled a
 testdpkginstalled b c
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: b
-Architecture: i386
-Auto-Installed: 1
-'
+testmarkedauto 'b'
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -77,29 +59,26 @@ Reading state information...
 b is already the newest version.
 b set to manually installed.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install b
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: b
-Architecture: i386
-Auto-Installed: 0
-'
+testmarkedauto
 
 aptget remove b -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled a b c
-testfileequal 'rootdir/var/lib/apt/extended_states' ''
+testmarkedauto
 
 aptget install a b -y -qq 2>&1 > /dev/null
 testdpkginstalled a b
 testdpkgnotinstalled c
-testfileequal 'rootdir/var/lib/apt/extended_states' ''
+testmarkedauto
 
 aptget purge a b -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled a b c
-testfileequal 'rootdir/var/lib/apt/extended_states' ''
+testmarkedauto
 
 aptget install b c -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled a
 testdpkginstalled b c
-testfileequal 'rootdir/var/lib/apt/extended_states' ''
+testmarkedauto
 
 aptget install a -y -qq 2>&1 > /dev/null
 testdpkginstalled a b c
-testfileequal 'rootdir/var/lib/apt/extended_states' ''
+testmarkedauto

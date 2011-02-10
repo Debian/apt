@@ -79,6 +79,7 @@ aptcache() { runapt apt-cache $*; }
 aptget() { runapt apt-get $*; }
 aptftparchive() { runapt apt-ftparchive $*; }
 aptkey() { runapt apt-key $*; }
+aptmark() { runapt apt-mark $*; }
 dpkg() {
 	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
 }
@@ -646,4 +647,17 @@ testdpkgnotinstalled() {
 		return 1
 	fi
 	msgpass
+}
+
+testmarkedauto() {
+	local COMPAREFILE=$(mktemp)
+	addtrap "rm $COMPAREFILE;"
+	if [ -n "$1" ]; then
+		msgtest 'Test for correctly marked as auto-installed' "$*"
+		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
+	else
+		msgtest 'Test for correctly marked as auto-installed' 'no package'
+		echo > $COMPAREFILE
+	fi
+	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }

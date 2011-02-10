@@ -7,9 +7,9 @@ setupenvironment
 configarchitecture "i386"
 setupaptarchive
 
-echo 'Package: libvtk5.4
-Auto-Installed: 1
-Architecture: i386' > rootdir/var/lib/apt/extended_states
+touch rootdir/var/lib/apt/extended_states
+aptmark markauto 'libvtk5.4'
+testmarkedauto 'libvtk5.4'
 
 testequal "Reading package lists...
 Building dependency tree...
