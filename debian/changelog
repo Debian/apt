@@ -3,8 +3,12 @@ apt (0.8.12) unstable; urgency=low
   [ David Kalnischkies ]
   * cmdline/apt-get.cc:
     - add --install-suggests option (Closes: #473089)
+  * apt-pkg/depcache.cc:
+    - mark a package which was requested to be installed on commandline
+      always as manual regardless if it is already marked or not as the
+      marker could be lost later by the removal of rdepends (Closes: #612557)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Feb 2011 22:56:27 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 Feb 2011 17:44:49 +0100
 
 apt (0.8.11.1) unstable; urgency=low
 
