@@ -1,4 +1,29 @@
-apt (0.8.11) UNRELEASED; urgency=low
+apt (0.8.12) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * merged lp:~evfool/apt/fix641673:
+    - String-fix in the source and the translations for the grammatical 
+      mistake reported in bug LP: #641673, thanks to Robert Roth
+  * merged lp:~evfool/apt/fix418552:
+    - Grammar fix for bug LP: #418552, thanks to Robert Roth
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Feb 2011 17:51:16 +0100
+
+apt (0.8.11.1) unstable; urgency=low
+
+  [ Stefan Lippers-Hollmann ]
+  * cmdline/apt-key:
+    - fix root test which prevented setting of trustdb-name
+      which lets gpg fail if it adds/remove keys from trusted.gpg
+      as it tries to open the (maybe) not existent /root/.gnupg
+
+  [ David Kalnischkies ]
+  * debian/apt.symbols:
+    - add more arch dependent symbols
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 09 Feb 2011 17:49:59 +0100
+
+apt (0.8.11) unstable; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/depcache.cc:
@@ -97,6 +122,9 @@ apt (0.8.11) UNRELEASED; urgency=low
       to Guillem Jover
   * apt-pkg/cdrom.cc, apt-pkg/init.cc, methods/cdrom.cc:
     - use /media/cdrom as default mountoint (closes: #611569)
+  * cmdline/apt-get.cc:
+    - add apt-get changelog (closes: #526990)
+    - add apt-get download (closes: #82738)
 
   [ Martin Pitt ]
   * test/integration/test-compressed-indexes, test/test-indexes.sh:
@@ -104,7 +132,7 @@ apt (0.8.11) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Feb 2011 22:14:09 +0100
+ -- Michael Vogt <mvo@debian.org>  Tue, 08 Feb 2011 12:58:12 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 
