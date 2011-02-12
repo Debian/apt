@@ -9,8 +9,10 @@ apt (0.8.12) unstable; urgency=low
       marker could be lost later by the removal of rdepends (Closes: #612557)
   * methods/rred.cc:
     - read patch into MMap only if we work on uncompressed patches
+  * apt-pkg/contrib/mmap.cc:
+    - do not try to free the mapping if its is unset
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 12 Feb 2011 13:43:11 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 12 Feb 2011 19:39:25 +0100
 
 apt (0.8.11.1) unstable; urgency=low
 
