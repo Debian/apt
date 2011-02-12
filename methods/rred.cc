@@ -252,13 +252,15 @@ struct EdCommand {								/*{{{*/
 RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 					FileFd &out_file, Hashes *hash) const {
 #ifdef _POSIX_MAPPED_FILES
-	MMap ed_cmds(Patch, MMap::ReadOnly);
+	MMap ed_cmds(MMap::ReadOnly);
 	if (Patch.gzFd() != NULL) {
 		unsigned long mapSize = Patch.Size();
 		DynamicMMap dyn(0, mapSize, 0);
 		gzread(Patch.gzFd(), dyn.Data(), mapSize);
 		ed_cmds = dyn;
-	}
+	} else
+		ed_cmds = MMap(Patch, MMap::ReadOnly);
+
 	MMap in_file(From, MMap::ReadOnly);
 
 	if (ed_cmds.Size() == 0 || in_file.Size() == 0)
