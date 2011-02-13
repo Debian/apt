@@ -255,9 +255,14 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 	MMap ed_cmds(MMap::ReadOnly);
 	if (Patch.gzFd() != NULL) {
 		unsigned long mapSize = Patch.Size();
-		DynamicMMap dyn(0, mapSize, 0);
-		gzread(Patch.gzFd(), dyn.Data(), mapSize);
-		ed_cmds = dyn;
+		DynamicMMap* dyn = new DynamicMMap(0, mapSize, 0);
+		if (dyn->Data() == 0) {
+			delete dyn;
+			return MMAP_FAILED;
+		}
+		dyn->AddSize(mapSize);
+		gzread(Patch.gzFd(), dyn->Data(), mapSize);
+		ed_cmds = *dyn;
 	} else
 		ed_cmds = MMap(Patch, MMap::ReadOnly);
 
