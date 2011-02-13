@@ -1,4 +1,4 @@
-apt (0.8.12) unstable; urgency=low
+apt (0.8.11.2) unstable; urgency=low
 
   [ David Kalnischkies ]
   * cmdline/apt-get.cc:
@@ -12,8 +12,11 @@ apt (0.8.12) unstable; urgency=low
     - update size of dynamic MMap as we write in from the outside
   * apt-pkg/contrib/mmap.cc:
     - do not try to free the mapping if its is unset
+  * apt-pkg/contrib/fileutl.cc:
+    - reorder the loaded filesize bytes for big endian (Closes: #612986)
+      Thanks to Jörg Sommer for the detailed analyse!
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 13 Feb 2011 11:36:11 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 13 Feb 2011 12:15:59 +0100
 
 apt (0.8.11.1) unstable; urgency=low
 
