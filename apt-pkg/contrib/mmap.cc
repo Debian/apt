@@ -266,6 +266,8 @@ DynamicMMap::~DynamicMMap()
 {
    if (Fd == 0)
    {
+      if (Base == 0)
+	 return;
 #ifdef _POSIX_MAPPED_FILES
       munmap(Base, WorkSpace);
 #else

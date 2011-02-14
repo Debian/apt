@@ -9,6 +9,26 @@ apt (0.8.12) UNRELEASED; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Thu, 10 Feb 2011 17:51:16 +0100
 
+apt (0.8.11.2) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - add --install-suggests option (Closes: #473089)
+  * apt-pkg/depcache.cc:
+    - mark a package which was requested to be installed on commandline
+      always as manual regardless if it is already marked or not as the
+      marker could be lost later by the removal of rdepends (Closes: #612557)
+  * methods/rred.cc:
+    - read patch into MMap only if we work on uncompressed patches
+    - update size of dynamic MMap as we write in from the outside
+  * apt-pkg/contrib/mmap.cc:
+    - do not try to free the mapping if its is unset
+  * apt-pkg/contrib/fileutl.cc:
+    - reorder the loaded filesize bytes for big endian (Closes: #612986)
+      Thanks to Jörg Sommer for the detailed analyse!
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 13 Feb 2011 12:15:59 +0100
+
 apt (0.8.11.1) unstable; urgency=low
 
   [ Stefan Lippers-Hollmann ]
