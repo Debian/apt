@@ -3198,6 +3198,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {0,"auto-remove","APT::Get::AutomaticRemove",0},
       {0,"allow-unauthenticated","APT::Get::AllowUnauthenticated",0},
       {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
+      {0,"install-suggests","APT::Install-Suggests",CommandLine::Boolean},
       {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},

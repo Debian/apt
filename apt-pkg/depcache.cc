@@ -1261,9 +1261,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
    if(FromUser)
      {
-       // Set it to manual if it's a new install or cancelling the
-       // removal of a garbage package.
-       if(P.Status == 2 || (!Pkg.CurrentVer().end() && !P.Marked))
+       // Set it to manual if it's a new install or already installed
+       if(P.Status == 2 || Pkg->CurrentVer != 0)
 	 P.Flags &= ~Flag::Auto;
      }
    else

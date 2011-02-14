@@ -31,7 +31,7 @@ setupaptarchive
 
 aptget install old-pkg=1.0 --trivial-only -qq 2>&1 > /dev/null
 
-testfileequal "rootdir/var/lib/apt/extended_states" "" # old-pkg is manual installed
+testmarkedauto # old-pkg is manual installed
 
 local CMD="aptget dist-upgrade -y -q=0"
 msgtest "Test for equality of" "$CMD"
@@ -51,4 +51,4 @@ Install: new-pkg:i386 (2.0, automatic)
 Upgrade: old-pkg:i386 (1.0, 2.0)
 Disappeared: old-pkg (1.0)"
 
-testfileequal "rootdir/var/lib/apt/extended_states" "" # new-pkg should have get the manual flag from old-pkg
+testmarkedauto  # new-pkg should have get the manual flag from old-pkg
