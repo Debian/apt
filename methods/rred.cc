@@ -256,7 +256,7 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 	if (Patch.gzFd() != NULL) {
 		unsigned long mapSize = Patch.Size();
 		DynamicMMap* dyn = new DynamicMMap(0, mapSize, 0);
-		if (dyn->Data() == 0) {
+		if (dyn->validData() == false) {
 			delete dyn;
 			return MMAP_FAILED;
 		}

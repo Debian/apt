@@ -62,6 +62,7 @@ class MMap
    inline void *Data() {return Base;}; 
    inline unsigned long Size() {return iSize;};
    inline void AddSize(unsigned long const size) {iSize += size;};
+   inline bool validData() const { return Base != (void *)-1 && Base != 0; };
    
    // File manipulators
    bool Sync();
