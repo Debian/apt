@@ -42,6 +42,10 @@
 #include <errno.h>
 #include <set>
 #include <algorithm>
+
+#ifndef WORDS_BIGENDIAN
+#include <inttypes.h>
+#endif
 									/*}}}*/
 
 using namespace std;
@@ -967,8 +971,10 @@ unsigned long FileFd::Size()
 	   return _error->Errno("read","Unable to read original size of gzipped file");
 
 #ifdef WORDS_BIGENDIAN
-       unsigned char const * const p = (unsigned char *) &size;
-       size = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
+       uint32_t tmp_size = size;
+       uint8_t const * const p = (uint8_t const * const) &tmp_size;
+       tmp_size = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
+       size = tmp_size;
 #endif
 
        if (lseek(iFd, orig_pos, SEEK_SET) < 0)
