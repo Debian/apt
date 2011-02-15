@@ -1,0 +1,37 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'libreoffice' 'all' '1:3.3.1~rc1-2' 'Depends: libreoffice-core'
+insertpackage 'unstable' 'libreoffice-core' 'all' '1:3.3.1~rc1-2' 'Conflicts: openoffice.org-core'
+insertpackage 'unstable' 'libreoffice-officebean' 'all' '1:3.3.1~rc1-2' 'Depends: libreoffice-core'
+insertpackage 'unstable' 'openoffice.org-officebean' 'all' '1:3.3.0-5' 'Depends: libreoffice-officebean'
+
+
+setupaptarchive
+
+touch rootdir/var/lib/apt/extended_states
+aptmark markauto openoffice.org-officebean
+testmarkedauto openoffice.org-officebean
+
+testequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages were automatically installed and are no longer required:
+  openoffice.org-officebean libreoffice-officebean
+Use 'apt-get autoremove' to remove them.
+The following extra packages will be installed:
+  libreoffice-core libreoffice-officebean openoffice.org-officebean
+The following packages will be REMOVED:
+  openoffice.org-core
+The following NEW packages will be installed:
+  libreoffice libreoffice-core libreoffice-officebean
+The following packages will be upgraded:
+  openoffice.org-officebean
+1 upgraded, 3 newly installed, 1 to remove and 0 not upgraded.
+After this operation, 126 MB disk space will be freed.
+E: Trivial Only specified but this is not a trivial operation." aptget install libreoffice --trivial-only

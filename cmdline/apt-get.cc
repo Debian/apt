@@ -1659,6 +1659,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 
    string autoremovelist, autoremoveversions;
    unsigned long autoRemoveCount = 0;
+   APT::PackageSet tooMuch;
    // look over the cache to see what can be removed
    for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
    {
@@ -1681,7 +1682,10 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    // if the package is a new install and already garbage we don't need to
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
+	    {
 	       Cache->MarkDelete(Pkg, false);
+	       tooMuch.insert(Pkg);
+	    }
 	    // only show stuff in the list that is not yet marked for removal
 	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false) 
 	    {
@@ -1695,6 +1699,45 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    }
 	 }
       }
+   }
+
+   // we could have removed a new dependency of a garbage package,
+   // so check if a reverse depends is broken and if so install it again.
+   if (tooMuch.empty() == false && Cache->BrokenCount() != 0)
+   {
+      bool Changed;
+      do {
+	 Changed = false;
+	 for (APT::PackageSet::const_iterator P = tooMuch.begin();
+	      P != tooMuch.end() && Changed == false; ++P)
+	 {
+	    for (pkgCache::DepIterator R = P.RevDependsList();
+		 R.end() == false; ++R)
+	    {
+	       if (R->Type != pkgCache::Dep::Depends &&
+		   R->Type != pkgCache::Dep::PreDepends)
+		  continue;
+	       pkgCache::PkgIterator N = R.ParentPkg();
+	       if (N.end() == true || N->CurrentVer == 0)
+		  continue;
+	       if (Debug == true)
+		  std::clog << "Save " << P << " as another installed garbage package depends on it" << std::endl;
+	       Cache->MarkInstall(P, false);
+	       if(hideAutoRemove == false)
+	       {
+		  ++autoRemoveCount;
+		  if (smallList == false)
+		  {
+		     autoremovelist += P.FullName(true) + " ";
+		     autoremoveversions += string(Cache[P].CandVersion) + "\n";
+		  }
+	       }
+	       tooMuch.erase(P);
+	       Changed = true;
+	       break;
+	    }
+	 }
+      } while (Changed == true);
    }
 
    // Now see if we had destroyed anything (if we had done anything)
