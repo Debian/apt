@@ -1,3 +1,14 @@
+apt (0.8.11.3) unstable; urgency=low
+
+  * apt-pkg/contrib/fileutl.cc:
+    - really detect bigendian machines by including config.h,
+      so we can really (Closes: #612986)
+  * apt-pkg/contrib/mmap.cc:
+    - Base has as 'valid' failure states 0 and -1 so add a simple
+      validData method to check for failure states
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 14 Feb 2011 16:58:03 +0100
+
 apt (0.8.11.2) unstable; urgency=low
 
   [ Michael Vogt ]

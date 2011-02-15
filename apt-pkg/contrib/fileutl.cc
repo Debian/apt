@@ -43,7 +43,8 @@
 #include <set>
 #include <algorithm>
 
-#ifndef WORDS_BIGENDIAN
+#include <config.h>
+#ifdef WORDS_BIGENDIAN
 #include <inttypes.h>
 #endif
 									/*}}}*/
