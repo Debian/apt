@@ -3,8 +3,14 @@ apt (0.8.11.4) UNRELEASED; urgency=low
   [ David Kalnischkies ]
   * apt-pkg/contrib/error.cc:
     - ensure that va_list is not invalid in second try
+  * cmdline/apt-get.cc:
+    - don't remove new dependencies of garbage packages (Closes: #613420)
+  
+  [ Michael Vogt ]
+  * test/integration/*
+    - fix dashish in the integration tests
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 15 Feb 2011 13:09:57 +0100
+ -- Michael Vogt <mvo@debian.org>  Wed, 16 Feb 2011 14:36:03 +0100
 
 apt (0.8.11.3) unstable; urgency=low
 
