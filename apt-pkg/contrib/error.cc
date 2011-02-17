@@ -58,124 +58,109 @@
 // GlobalError::GlobalError - Constructor				/*{{{*/
 GlobalError::GlobalError() : PendingFlag(false) {}
 									/*}}}*/
-// GlobalError::FatalE - Get part of the error string from errno	/*{{{*/
-bool GlobalError::FatalE(const char *Function,const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return InsertErrno(FATAL, Function, Description, args);
+// GlobalError::FatalE, Errno, WarningE, NoticeE and DebugE - Add to the list/*{{{*/
+#define GEMessage(NAME, TYPE) \
+bool GlobalError::NAME (const char *Function, const char *Description,...) { \
+	va_list args; \
+	size_t msgSize = 400; \
+	int const errsv = errno; \
+	while (true) { \
+		va_start(args,Description); \
+		if (InsertErrno(TYPE, Function, Description, args, errsv, msgSize) == false) \
+			break; \
+		va_end(args); \
+	} \
+	return false; \
 }
-									/*}}}*/
-// GlobalError::Errno - Get part of the error string from errno		/*{{{*/
-bool GlobalError::Errno(const char *Function,const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return InsertErrno(ERROR, Function, Description, args);
-}
-									/*}}}*/
-// GlobalError::WarningE - Get part of the warning string from errno	/*{{{*/
-bool GlobalError::WarningE(const char *Function,const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return InsertErrno(WARNING, Function, Description, args);
-}
-									/*}}}*/
-// GlobalError::NoticeE - Get part of the notice string from errno	/*{{{*/
-bool GlobalError::NoticeE(const char *Function,const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return InsertErrno(NOTICE, Function, Description, args);
-}
-									/*}}}*/
-// GlobalError::DebugE - Get part of the debug string from errno	/*{{{*/
-bool GlobalError::DebugE(const char *Function,const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return InsertErrno(DEBUG, Function, Description, args);
-}
+GEMessage(FatalE, FATAL)
+GEMessage(Errno, ERROR)
+GEMessage(WarningE, WARNING)
+GEMessage(NoticeE, NOTICE)
+GEMessage(DebugE, DEBUG)
+#undef GEMessage
 									/*}}}*/
 // GlobalError::InsertErrno - Get part of the errortype string from errno/*{{{*/
 bool GlobalError::InsertErrno(MsgType const &type, const char *Function,
 				const char *Description,...) {
 	va_list args;
-	va_start(args,Description);
-	return InsertErrno(type, Function, Description, args);
+	size_t msgSize = 400;
+	int const errsv = errno;
+	while (true) {
+		va_start(args,Description);
+		if (InsertErrno(type, Function, Description, args, errsv, msgSize) == false)
+			break;
+		va_end(args);
+	}
+	return false;
 }
 									/*}}}*/
 // GlobalError::InsertErrno - formats an error message with the errno	/*{{{*/
 bool GlobalError::InsertErrno(MsgType type, const char* Function,
-			      const char* Description, va_list &args) {
-	int const errsv = errno;
-	char* S = (char*) malloc(400);
-	size_t const Ssize = snprintf(S, 400, "%s - %s (%i: %s)", Description,
-				      Function, errsv, strerror(errsv)) + 1;
-
-	if (Ssize > 400) {
-		free(S);
-		S = (char*) malloc(Ssize);
-		snprintf(S, Ssize, "%s - %s (%i: %s)", Description,
-			 Function, errsv, strerror(errsv));
+			      const char* Description, va_list &args,
+			      int const errsv, size_t &msgSize) {
+	char* S = (char*) malloc(msgSize);
+	int const n = snprintf(S, msgSize, "%s - %s (%i: %s)", Description,
+			       Function, errsv, strerror(errsv));
+	if (n > -1 && ((unsigned int) n) < msgSize);
+	else {
+		if (n > -1)
+			msgSize = n + 1;
+		else
+			msgSize *= 2;
+		return true;
 	}
 
-	bool const geins = Insert(type, S, args);
+	bool const geins = Insert(type, S, args, msgSize);
 	free(S);
 	return geins;
 }
 									/*}}}*/
-// GlobalError::Fatal - Add a fatal error to the list			/*{{{*/
-bool GlobalError::Fatal(const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return Insert(FATAL, Description, args);
+// GlobalError::Fatal, Error, Warning, Notice and Debug - Add to the list/*{{{*/
+#define GEMessage(NAME, TYPE) \
+bool GlobalError::NAME (const char *Description,...) { \
+	va_list args; \
+	size_t msgSize = 400; \
+	while (true) { \
+		va_start(args,Description); \
+		if (Insert(TYPE, Description, args, msgSize) == false) \
+			break; \
+		va_end(args); \
+	} \
+	return false; \
 }
-									/*}}}*/
-// GlobalError::Error - Add an error to the list			/*{{{*/
-bool GlobalError::Error(const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return Insert(ERROR, Description, args);
-}
-									/*}}}*/
-// GlobalError::Warning - Add a warning to the list			/*{{{*/
-bool GlobalError::Warning(const char *Description,...) {
-	va_list args;
-	va_start(args,Description);
-	return Insert(WARNING, Description, args);
-}
-									/*}}}*/
-// GlobalError::Notice - Add a notice to the list			/*{{{*/
-bool GlobalError::Notice(const char *Description,...)
-{
-	va_list args;
-	va_start(args,Description);
-	return Insert(NOTICE, Description, args);
-}
-									/*}}}*/
-// GlobalError::Debug - Add a debug to the list				/*{{{*/
-bool GlobalError::Debug(const char *Description,...)
-{
-	va_list args;
-	va_start(args,Description);
-	return Insert(DEBUG, Description, args);
-}
+GEMessage(Fatal, FATAL)
+GEMessage(Error, ERROR)
+GEMessage(Warning, WARNING)
+GEMessage(Notice, NOTICE)
+GEMessage(Debug, DEBUG)
+#undef GEMessage
 									/*}}}*/
 // GlobalError::Insert - Add a errotype message to the list		/*{{{*/
 bool GlobalError::Insert(MsgType const &type, const char *Description,...)
 {
 	va_list args;
-	va_start(args,Description);
-	return Insert(type, Description, args);
+	size_t msgSize = 400;
+	while (true) {
+		va_start(args,Description);
+		if (Insert(type, Description, args, msgSize) == false)
+			break;
+		va_end(args);
+	}
+	return false;
 }
 									/*}}}*/
 // GlobalError::Insert - Insert a new item at the end			/*{{{*/
 bool GlobalError::Insert(MsgType type, const char* Description,
-			 va_list &args) {
-	char* S = (char*) malloc(400);
-	size_t const Ssize = vsnprintf(S, 400, Description, args) + 1;
-
-	if (Ssize > 400) {
-		free(S);
-		S = (char*) malloc(Ssize);
-		vsnprintf(S, Ssize, Description, args);
+			 va_list &args, size_t &msgSize) {
+	char* S = (char*) malloc(msgSize);
+	int const n = vsnprintf(S, msgSize, Description, args);
+	if (n > -1 && ((unsigned int) n) < msgSize);
+	else {
+		if (n > -1)
+			msgSize = n + 1;
+		else
+			msgSize *= 2;
+		return true;
 	}
 
 	Item const m(S, type);

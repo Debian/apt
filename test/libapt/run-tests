@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-local DIR=$(readlink -f $(dirname $0))
+DIR=$(readlink -f $(dirname $0))
 echo "Compiling the tests …"
 test -d "$DIR/../../build/obj/test/libapt/" || mkdir -p "$DIR/../../build/obj/test/libapt/"
 (cd $DIR && make)
