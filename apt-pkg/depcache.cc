@@ -1257,8 +1257,10 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
    if(FromUser)
      {
-       // Set it to manual if it's a new install or already installed
-       if(P.Status == 2 || Pkg->CurrentVer != 0)
+       // Set it to manual if it's a new install or already installed,
+       // but only if its not marked by the autoremover (aptitude depend on this behavior)
+       // or if we do automatic installation (aptitude never does it)
+       if(P.Status == 2 || (Pkg->CurrentVer != 0 && (AutoInst == true || P.Marked == false)))
 	 P.Flags &= ~Flag::Auto;
      }
    else

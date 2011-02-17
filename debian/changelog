@@ -1,11 +1,21 @@
 apt (0.8.11.5) UNRELEASED; urgency=low
 
+  [ Christian Perrier ]
   * Add missing dot in French translation of manpages. Merci, Olivier
     Humbert.
   * French translation update
   * French manpages translation update
 
- -- Christian Perrier <bubulle@debian.org>  Tue, 15 Feb 2011 18:26:08 +0100
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - party revert fix in 0.8.11.2 which marked all packages as manual
+      installed if the FromUser bit is set in the MarkInstall call.
+      The default for this bit is true and aptitude depends on the old
+      behavior so the package is only marked as manual if its not marked
+      ("old" behavior) or if automatic installation is enabled - which
+      aptitude disables always (see also #613775)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 17 Feb 2011 15:16:31 +0100
 
 apt (0.8.11.4) unstable; urgency=low
 
