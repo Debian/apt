@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2011-02-14 13:42+0100\n"
-"PO-Revision-Date: 2011-02-16 19:38+0100\n"
+"PO-Revision-Date: 2011-02-17 07:50+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: \n"
@@ -5402,7 +5402,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><orderedlist><listitem><para>
 #: apt.conf.5.xml:52
-#, fuzzy
 #| msgid ""
 #| "all files in <literal>Dir::Etc::Parts</literal> in alphanumeric ascending "
 #| "order which have no or \"<literal>conf</literal>\" as filename extension "
@@ -5420,7 +5419,8 @@ msgstr ""
 "alphanumérique ascendant qui ont soit l'extension \"<literal>conf</literal>"
 "\", soit aucune extension et qui ne contiennent que des caractères "
 "alphanumériques, des tirets (-), des caractères de soulignement (_) et des "
-"points (.), les autres fichiers étant ignorés."
+"points (.), les autres fichiers étant ignorés. Dans le cas contraire, APT affichera un avertissement indiquant qu'il a ignoré un fichier si celui-ci ne correspond par à un motif défini dans <literal>"
+"Dir::Ignore-Files-Silently</literal> (les fichiers correspondant à cette variable de configuration étant, eux, ignorés silencieusemennt)."
 
 #. type: Content of: <refentry><refsect1><orderedlist><listitem><para>
 #: apt.conf.5.xml:59
@@ -6444,7 +6444,6 @@ msgstr "Dir::Bin::bzip2 \"/bin/bzip2\";"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:442
-#, fuzzy
 #| msgid ""
 #| "Note that at run time the <literal>Dir::Bin::<replaceable>Methodname</"
 #| "replaceable></literal> will be checked: If this setting exists the method "
@@ -6487,6 +6486,8 @@ msgid ""
 "uncompressed files a preference, but note that most archives doesn't provide "
 "uncompressed files so this is mostly only useable for local mirrors."
 msgstr ""
+"Le type spécial <literal>uncompressed</literal> peut servir à donner la préférence aux fichiers non compressés. Veuillez noter que la plupart des archives ne fournissent pas de fichiers non compressés, donc ce "
+"réglage est surtout destiné aux miroirs locaux."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: apt.conf.5.xml:454
@@ -6925,7 +6926,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt.conf.5.xml:621
-#, fuzzy
 #| msgid ""
 #| "APT can call dpkg in a way so it can make aggressive use of triggers over "
 #| "multiply calls of dpkg. Without further options dpkg will use triggers "
@@ -7774,7 +7774,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml:70
-#, fuzzy
 #| msgid ""
 #| "Note that the files in the <filename>/etc/apt/preferences.d</filename> "
 #| "directory are parsed in alphanumeric ascending order and need to obey the "
@@ -7796,8 +7795,8 @@ msgstr ""
 "d</filename> sont analysés par ordre alphanumérique ascendant, doivent avoir "
 "l'extension \"<literal>pref</literal>\" ou aucune extension et ne peuvent "
 "continir que des caractères alphanumériques, des tirets (-), des caractères "
-"de soulignement (_) et des points (.). Dans le cas contraire, ils seront "
-"ignorés sans avertissement."
+"de soulignement (_) et des points (.). Dans le cas contraire, APT affichera un avertissement indiquant qu'il a ignoré un fichier si celui-ci ne correspond par à un motif défini dans <literal>"
+"Dir::Ignore-Files-Silently</literal> (les fichiers correspondant à cette variable de configuration étant, eux, ignorés silencieusemennt)."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml:79
@@ -8893,7 +8892,7 @@ msgstr ""
 "\n"
 "Explanation: Debian unstable porte toujours le nom sid\n"
 "Package: *\n"
-"Pin: release a=sid\n"
+"Pin: release n=sid\n"
 "Pin-Priority: 800\n"
 "\n"
 "Package: *\n"
@@ -9024,7 +9023,6 @@ msgstr "sources.list.d"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:54
-#, fuzzy
 #| msgid ""
 #| "The <filename>/etc/apt/sources.list.d</filename> directory provides a way "
 #| "to add sources.list entries in separate files.  The format is the same as "
@@ -9048,7 +9046,8 @@ msgstr ""
 "fichier <filename>sources.list</filename>. Les noms de fichiers doivent se "
 "terminer par <filename>.list</filename> et ne peuvent contenir que des "
 "lettres (a-z et A-Z), des chiffres (0-9), des caractères de soulignement "
-"(_), des tirets et des points. Dans le cas contraire, ils seront ignorés."
+"(_), des tirets et des points. Dans le cas contraire, APT affichera un avertissement indiquant qu'il a ignoré un fichier si celui-ci ne correspond par à un motif défini dans <literal>Dir::Ignore-Files-Silently<"
+"/literal> (les fichiers correspondant à cette variable de configuration étant, eux, ignorés silencieusemennt)."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml:65
@@ -9057,7 +9056,6 @@ msgstr "Les types deb et deb-src."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:66
-#, fuzzy
 #| msgid ""
 #| "The <literal>deb</literal> type describes a typical two-level Debian "
 #| "archive, <filename>distribution/component</filename>. Typically, "
@@ -9082,10 +9080,10 @@ msgid ""
 msgstr ""
 "Le type <literal>deb</literal> décrit une archive Debian classique à deux "
 "niveaux, <filename>distribution/composant</filename>. <literal>distribution</"
-"literal> peut prendre l'une des valeurs suivantes : <literal>stable</"
-"literal>, <literal>unstable</literal>, ou <literal>testing</literal>, et "
-"composant : <literal>main</literal>, <literal>contrib</literal>, "
-"<literal>non-free</literal>, ou <literal>non-us</literal>.  Le type "
+"literal> peut prendre l'une des valeurs suivantes : un nom d'archive tel que <literal>stable</"
+"literal> ou <literal>testing</literal> ou bien un nom de code comme <literal>&stable-codename;</literal> ou <literal>&testing-codename;</ literal>, alors que "
+"composant prend les valeurs : <literal>main</literal>, <literal>contrib</literal> ou "
+"<literal>non-free</literal>.  Le type "
 "<literal>deb-src</literal> décrit une archive de distribution de code source "
 "pour une distribution Debian dans le même format que le type <literal>deb</"
 "literal>. Une ligne <literal>deb-src</literal> est nécessaire pour récupérer "
@@ -9437,14 +9435,13 @@ msgstr "deb ftp://ftp.debian.org/debian unstable contrib"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml:230
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/"
 msgid "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
-msgstr "deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/"
+msgstr "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:223
-#, fuzzy
 #| msgid ""
 #| "Uses HTTP to access the archive at nonus.debian.org, under the debian-non-"
 #| "US directory, and uses only files found under <filename>unstable/binary-"
@@ -9462,13 +9459,13 @@ msgid ""
 "archives are not structured like this] <placeholder type=\"literallayout\" "
 "id=\"0\"/>"
 msgstr ""
-"Utiliser HTTP pour accéder à l'archive située à nonus.debian.org, dans le "
-"répertoire debian-non-US, et n'utiliser que les fichiers trouvés dans "
+"Utiliser HTTP pour accéder à l'archive située à ftp.tlh.debian.org, dans le "
+"répertoire universe, et n'utiliser que les fichiers trouvés dans "
 "<filename>unstable/binary-i386</filename> pour les machines i386, dans "
-"<filename>unstable/binary-m68k</filename> pour les machines m68k et ainsi de "
+"<filename>unstable/binary-amd64</filename> pour les machines amd64 et ainsi de "
 "suite pour les autres architectures reconnues. [Notez que cet exemple montre "
-"seulement la manière d'utiliser la variable à substituer, non-us n'étant "
-"plus structuré de cette manière.] <placeholder type=\"literallayout\" id="
+"seulement la manière d'utiliser la variable à substituer, les archives Debian n'étant "
+"plas structurées de cette manière.] <placeholder type=\"literallayout\" id="
 "\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
