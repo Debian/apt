@@ -144,7 +144,8 @@ bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
 	 }
 	 F.Type = string(F.Path,Tmp+1,Pos-Tmp);
 	 
-	 if (F.Type == "gz" || F.Type == "bz2" || F.Type == "lzma" || F.Type == "tar")
+	 if (F.Type == "gz" || F.Type == "bz2" || F.Type == "lzma" ||
+	     F.Type == "xz" || F.Type == "tar")
 	 {
 	    Pos = Tmp-1;
 	    continue;
