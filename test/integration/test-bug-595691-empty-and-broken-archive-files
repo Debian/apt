@@ -54,12 +54,14 @@ setupcompressor() {
 	gzip) COMPRESS="gz";;
 	bzip2) COMPRESS="bz2";;
 	lzma) COMPRESS="lzma";;
+	xz) COMPRESS="xz";;
 	esac
 	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
 Dir::Bin::uncompressed \"/does/not/exist\";
 Dir::Bin::gzip \"/does/not/exist\";
 Dir::Bin::bzip2 \"/does/not/exist\";
-Dir::Bin::lzma \"/does/not/exist\";" > rootdir/etc/apt/apt.conf.d/00compressor
+Dir::Bin::lzma \"/does/not/exist\";
+Dir::Bin::xz \"/does/not/exist\";" > rootdir/etc/apt/apt.conf.d/00compressor
 	if [ -e "/bin/${COMPRESSOR}" ]; then
 		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
 	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
@@ -134,9 +136,9 @@ W: Failed to fetch ${COMPRESSOR}:$(readlink -f rootdir/var/lib/apt/lists/partial
 E: Some index files failed to download. They have been ignored, or old ones used instead." "empty file Packages.$COMPRESS over http"
 }
 
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma'; do testoverfile $COMPRESSOR; done
+for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testoverfile $COMPRESSOR; done
 
 # do the same again with http instead of file
 changetowebserver
 
-for COMPRESSOR in 'gzip' 'bzip2' 'lzma'; do testoverhttp $COMPRESSOR; done
+for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testoverhttp $COMPRESSOR; done
