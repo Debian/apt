@@ -42,6 +42,11 @@
 #include <errno.h>
 #include <set>
 #include <algorithm>
+
+#include <config.h>
+#ifdef WORDS_BIGENDIAN
+#include <inttypes.h>
+#endif
 									/*}}}*/
 
 using namespace std;
@@ -940,9 +945,16 @@ unsigned long FileFd::Size()
        off_t orig_pos = lseek(iFd, 0, SEEK_CUR);
        if (lseek(iFd, -4, SEEK_END) < 0)
 	   return _error->Errno("lseek","Unable to seek to end of gzipped file");
+       size = 0L;
        if (read(iFd, &size, 4) != 4)
 	   return _error->Errno("read","Unable to read original size of gzipped file");
-       size &= 0xFFFFFFFF;
+
+#ifdef WORDS_BIGENDIAN
+       uint32_t tmp_size = size;
+       uint8_t const * const p = (uint8_t const * const) &tmp_size;
+       tmp_size = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
+       size = tmp_size;
+#endif
 
        if (lseek(iFd, orig_pos, SEEK_SET) < 0)
 	   return _error->Errno("lseek","Unable to seek in gzipped file");
