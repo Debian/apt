@@ -930,10 +930,12 @@ ReleaseWriter::ReleaseWriter(string const &DB)
       AddPattern("Packages.gz");
       AddPattern("Packages.bz2");
       AddPattern("Packages.lzma");
+      AddPattern("Packages.xz");
       AddPattern("Sources");
       AddPattern("Sources.gz");
       AddPattern("Sources.bz2");
       AddPattern("Sources.lzma");
+      AddPattern("Sources.xz");
       AddPattern("Release");
       AddPattern("Index");
       AddPattern("md5sum.txt");

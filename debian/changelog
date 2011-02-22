@@ -6,11 +6,15 @@ apt (0.8.11.6) UNRELEASED; urgency=low
   * Complete French manpage translation
 
   [ David Kalnischkies ]
+  * ftparchive/multicompress.cc, apt-inst/deb/debfile.cc:
+    - support xz compressor to create xz-compressed Indexes and be able
+      to open data.tar.xz files
   * ftparchive/writer.cc:
     - ensure that Date and Valid-Until time strings are not localised
     - add options to disable specific checksums for Indexes
+    - include xz-compressed Packages and Sources files in Release file
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 22 Feb 2011 14:48:21 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 22 Feb 2011 14:59:51 +0100
 
 apt (0.8.11.5) unstable; urgency=low
 

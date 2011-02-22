@@ -318,8 +318,12 @@ bool ContentsExtract::Read(debDebFile &Deb)
       Compressor = "lzma";
    }
    if (Member == 0) {
+      Member = Deb.GotoMember("data.tar.xz");
+      Compressor = "xz";
+   }
+   if (Member == 0) {
       _error->Error(_("Internal error, could not locate member %s"),
-		    "data.tar.{gz,bz2,lzma}");
+		    "data.tar.{gz,bz2,lzma,xz}");
       return false;
    }
       
