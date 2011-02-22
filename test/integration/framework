@@ -251,9 +251,9 @@ createaptftparchiveconfig() {
 	echo -n '";
 };
 Default {
-	Packages::Compress ". gzip bzip2 lzma";
-	Sources::Compress ". gzip bzip2 lzma";
-	Contents::Compress ". gzip bzip2 lzma";
+	Packages::Compress ". gzip bzip2 lzma xz";
+	Sources::Compress ". gzip bzip2 lzma xz";
+	Contents::Compress ". gzip bzip2 lzma xz";
 };
 TreeDefault {
 	Directory "pool/";
@@ -332,6 +332,7 @@ buildaptarchivefromfiles() {
 		cat Packages | gzip > Packages.gz
 		cat Packages | bzip2 > Packages.bz2
 		cat Packages | lzma > Packages.lzma
+		cat Packages | xz > Packages.xz
 		msgdone "info"
 	fi
 	if [ -f Sources ]; then
@@ -339,6 +340,7 @@ buildaptarchivefromfiles() {
 		cat Sources | gzip > Sources.gz
 		cat Sources | bzip2 > Sources.bz2
 		cat Sources | lzma > Sources.lzma
+		cat Sources | xz > Sources.xz
 		msgdone "info"
 	fi
 	msgninfo "\tRelease file… "
