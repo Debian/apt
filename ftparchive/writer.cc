@@ -925,6 +925,9 @@ ReleaseWriter::ReleaseWriter(string const &DB)
 
    Output = stdout;
    time_t const now = time(NULL);
+
+   setlocale(LC_TIME, "C");
+
    char datestr[128];
    if (strftime(datestr, sizeof(datestr), "%a, %d %b %Y %H:%M:%S UTC",
                 gmtime(&now)) == 0)
@@ -940,6 +943,8 @@ ReleaseWriter::ReleaseWriter(string const &DB)
    {
       validstr[0] = '\0';
    }
+
+   setlocale(LC_TIME, "");
 
    map<string,string> Fields;
    Fields["Origin"] = "";
