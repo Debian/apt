@@ -38,11 +38,13 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 
 	// setup the defaults for the compressiontypes => method mapping
 	_config->CndSet("Acquire::CompressionTypes::bz2","bzip2");
+	_config->CndSet("Acquire::CompressionTypes::xz","xz");
 	_config->CndSet("Acquire::CompressionTypes::lzma","lzma");
 	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
 
 	// Set default application paths to check for optional compression types
 	_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
+	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
 
 	// accept non-list order as override setting for config settings on commandline

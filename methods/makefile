@@ -94,8 +94,8 @@ SOURCE = bzip2.cc
 include $(PROGRAM_H)
 
 # SSH and lzma method symlink
-binary: $(BIN)/ssh $(BIN)/lzma
-veryclean: clean-$(BIN)/ssh clean-$(BIN)/lzma
+binary: $(BIN)/ssh $(BIN)/lzma $(BIN)/xz
+veryclean: clean-$(BIN)/ssh clean-$(BIN)/lzma clean-$(BIN)/xz
 
 $(BIN)/ssh:
 	echo "Installing ssh method link"
@@ -108,3 +108,9 @@ $(BIN)/lzma:
 	ln -fs bzip2 $(BIN)/lzma
 clean-$(BIN)/lzma:
 	-rm $(BIN)/lzma
+
+$(BIN)/xz:
+	echo "Installing xz method link"
+	ln -fs bzip2 $(BIN)/xz
+clean-$(BIN)/xz:
+	-rm $(BIN)/xz
