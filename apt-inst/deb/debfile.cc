@@ -143,7 +143,7 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
       Compressor = "xz";
    }
    if (Member == 0)
-      return _error->Error(_("Internal error, could not locate member"));   
+      return _error->Error(_("Internal error, could not locate member %s"), "data.tar.{gz,bz2,lzma,xz}");
    if (File.Seek(Member->Start) == false)
       return false;
       
