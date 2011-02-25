@@ -16,8 +16,7 @@
 
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
-#include <apt-pkg/sha256.h>
-#include <apt-pkg/sha512.h>
+#include <apt-pkg/sha2.h>
 
 #include <algorithm>
 #include <vector>
