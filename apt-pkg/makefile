@@ -28,7 +28,7 @@ SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
 HEADERS = mmap.h error.h configuration.h fileutl.h  cmndline.h netrc.h\
 	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha2.h \
 	  sha2_internal.h \
-          hashes.h \
+          hashes.h hashsum_template.h\
 	  macros.h weakptr.h
 
 # Source code for the core main library
