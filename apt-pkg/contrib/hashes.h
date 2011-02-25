@@ -17,6 +17,7 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha256.h>
+#include <apt-pkg/sha512.h>
 
 #include <algorithm>
 #include <vector>
@@ -60,10 +61,11 @@ class Hashes
    MD5Summation MD5;
    SHA1Summation SHA1;
    SHA256Summation SHA256;
+   SHA512Summation SHA512;
    
    inline bool Add(const unsigned char *Data,unsigned long Size)
    {
-      return MD5.Add(Data,Size) && SHA1.Add(Data,Size) && SHA256.Add(Data,Size);
+      return MD5.Add(Data,Size) && SHA1.Add(Data,Size) && SHA256.Add(Data,Size) && SHA512.Add(Data,Size);
    };
    inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
    bool AddFD(int Fd,unsigned long Size);

@@ -187,6 +187,8 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       End += snprintf(End,sizeof(S)-50 - (End - S),"SHA1-Hash: %s\n",Res.SHA1Sum.c_str());
    if (Res.SHA256Sum.empty() == false)
       End += snprintf(End,sizeof(S)-50 - (End - S),"SHA256-Hash: %s\n",Res.SHA256Sum.c_str());
+   if (Res.SHA512Sum.empty() == false)
+      End += snprintf(End,sizeof(S)-50 - (End - S),"SHA512-Hash: %s\n",Res.SHA512Sum.c_str());
    if (UsedMirror.empty() == false)
       End += snprintf(End,sizeof(S)-50 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
    if (Res.GPGVOutput.size() > 0)
@@ -224,7 +226,10 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       if (Alt->SHA256Sum.empty() == false)
 	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-SHA256-Hash: %s\n",
 			 Alt->SHA256Sum.c_str());
-      
+      if (Alt->SHA512Sum.empty() == false)
+	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-SHA512-Hash: %s\n",
+			 Alt->SHA512Sum.c_str());
+     
       if (Alt->IMSHit == true)
 	 strcat(End,"Alt-IMS-Hit: true\n");
    }
@@ -500,5 +505,6 @@ void pkgAcqMethod::FetchResult::TakeHashes(Hashes &Hash)
    MD5Sum = Hash.MD5.Result();
    SHA1Sum = Hash.SHA1.Result();
    SHA256Sum = Hash.SHA256.Result();
+   SHA512Sum = Hash.SHA512.Result();
 }
 									/*}}}*/
