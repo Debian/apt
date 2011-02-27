@@ -9,18 +9,20 @@ apt (0.8.11.6) UNRELEASED; urgency=low
   * ftparchive/multicompress.cc, apt-inst/deb/debfile.cc:
     - support xz compressor to create xz-compressed Indexes and be able
       to open data.tar.xz files
+    - load the supported compressors from configuration
   * ftparchive/writer.cc:
     - ensure that Date and Valid-Until time strings are not localised
     - add options to disable specific checksums for Indexes
     - include xz-compressed Packages and Sources files in Release file
   * apt-pkg/aptconfiguration.cc:
     - support download of xz-compressed indexes files
+    - support adding new compressors by configuration
   * apt-pkg/deb/debsrcrecords.cc:
     - support xz-compressed source v3 debian.tar files
   * ftparchive/contents.cc:
     - remove ExtractArchive codecopy from apt-inst/deb/debfile.cc
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 23 Feb 2011 09:00:51 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 27 Feb 2011 23:00:07 +0100
 
 apt (0.8.11.5) unstable; urgency=low
 
