@@ -20,6 +20,7 @@
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/deblistparser.h>
+#include <apt-pkg/aptconfiguration.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -127,26 +128,35 @@ bool debDebFile::ExtractControl(pkgDataBase &DB)
 /* Simple wrapper around tar.. */
 bool debDebFile::ExtractArchive(pkgDirStream &Stream)
 {
-   // Get the archive member and positition the file 
-   const ARArchive::Member *Member = AR.FindMember("data.tar.gz");
-   const char *Compressor = "gzip";
-   if (Member == 0) {
-      Member = AR.FindMember("data.tar.bz2");
-      Compressor = "bzip2";
+   // Get the archive member
+   const ARArchive::Member *Member = NULL;
+   std::string Compressor;
+
+   std::string const data = "data.tar";
+   std::vector<APT::Configuration::Compressor> compressor = APT::Configuration::getCompressors();
+   for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	c != compressor.end(); ++c)
+   {
+      Member = AR.FindMember(std::string(data).append(c->Extension).c_str());
+      if (Member == NULL)
+	 continue;
+      Compressor = c->Binary;
+      break;
    }
-   if (Member == 0) {
-      Member = AR.FindMember("data.tar.lzma");
-      Compressor = "lzma";
+
+   if (Member == NULL)
+   {
+      std::string ext = "data.tar.{";
+      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	   c != compressor.end(); ++c)
+	 ext.append(c->Extension.substr(1));
+      ext.append("}");
+      return _error->Error(_("Internal error, could not locate member %s"), ext.c_str());
    }
-   if (Member == 0) {
-      Member = AR.FindMember("data.tar.xz");
-      Compressor = "xz";
-   }
-   if (Member == 0)
-      return _error->Error(_("Internal error, could not locate member %s"), "data.tar.{gz,bz2,lzma,xz}");
+
    if (File.Seek(Member->Start) == false)
       return false;
-      
+
    // Prepare Tar
    ExtractTar Tar(File,Member->Size,Compressor);
    if (_error->PendingError() == true)
