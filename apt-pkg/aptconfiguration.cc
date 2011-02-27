@@ -388,6 +388,19 @@ const Configuration::getCompressors(bool const Cached) {
 	return compressors;
 }
 									/*}}}*/
+// getCompressorExtensions - supported data.tar extensions		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::vector<std::string> const Configuration::getCompressorExtensions() {
+	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();
+	std::vector<std::string> ext;
+	for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
+	     c != compressors.end(); ++c)
+		if (c->Extension.empty() == false && c->Extension != ".")
+			ext.push_back(c->Extension);
+	return ext;
+}
+									/*}}}*/
 // Compressor constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */

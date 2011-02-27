@@ -105,6 +105,9 @@ public:									/*{{{*/
 	 *  \return a vector of Compressors
 	 */
 	std::vector<Compressor> static const getCompressors(bool const Cached = true);
+
+	/** \brief Return a vector of extensions supported for data.tar's */
+	std::vector<std::string> static const getCompressorExtensions();
 									/*}}}*/
 	private:							/*{{{*/
 	void static setDefaultConfigurationForCompressors();
