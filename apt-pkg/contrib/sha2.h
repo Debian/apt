@@ -31,40 +31,83 @@ class SHA256Summation;
 typedef HashSumValue<512> SHA512SumValue;
 typedef HashSumValue<256> SHA256SumValue;
 
-class SHA256Summation
+class SHA2SummationBase
+{
+ protected:
+   bool Done;
+ public:
+   virtual bool Add(const unsigned char *inbuf,unsigned long inlen) = 0;
+   virtual bool AddFD(int Fd,unsigned long Size);
+
+   inline bool Add(const char *Data) 
+   {
+      return Add((unsigned char *)Data,strlen(Data));
+   };
+   inline bool Add(const unsigned char *Beg,const unsigned char *End) 
+   {
+      return Add(Beg,End-Beg);
+   };
+   void Result();
+};
+
+class SHA256Summation : public SHA2SummationBase
 {
    SHA256_CTX ctx;
    unsigned char Sum[32];
-   bool Done;
 
    public:
-
-   bool Add(const unsigned char *inbuf,unsigned long inlen);
-   inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
-   bool AddFD(int Fd,unsigned long Size);
-   inline bool Add(const unsigned char *Beg,const unsigned char *End) 
-                  {return Add(Beg,End-Beg);};
-   SHA256SumValue Result();
-   
-   SHA256Summation();
+   virtual bool Add(const unsigned char *inbuf, unsigned long len)
+   {
+      if (Done) 
+         return false;
+      SHA256_Update(&ctx, inbuf, len);
+      return true;
+   };
+   SHA256SumValue Result()
+   {
+      if (!Done) {
+         SHA256_Final(Sum, &ctx);
+         Done = true;
+      }
+      SHA256SumValue res;
+      res.Set(Sum);
+      return res;
+   };
+   SHA256Summation() 
+   {
+      SHA256_Init(&ctx);
+      Done = false;
+   };
 };
 
-class SHA512Summation
+class SHA512Summation : public SHA2SummationBase
 {
    SHA512_CTX ctx;
    unsigned char Sum[64];
-   bool Done;
 
    public:
-
-   bool Add(const unsigned char *inbuf,unsigned long inlen);
-   inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
-   bool AddFD(int Fd,unsigned long Size);
-   inline bool Add(const unsigned char *Beg,const unsigned char *End) 
-                  {return Add(Beg,End-Beg);};
-   SHA512SumValue Result();
-   
-   SHA512Summation();
+   virtual bool Add(const unsigned char *inbuf, unsigned long len)
+   {
+      if (Done) 
+         return false;
+      SHA512_Update(&ctx, inbuf, len);
+      return true;
+   };
+   SHA512SumValue Result()
+   {
+      if (!Done) {
+         SHA512_Final(Sum, &ctx);
+         Done = true;
+      }
+      SHA512SumValue res;
+      res.Set(Sum);
+      return res;
+   };
+   SHA512Summation()
+   {
+      SHA512_Init(&ctx);
+      Done = false;
+   };
 };
 
 
