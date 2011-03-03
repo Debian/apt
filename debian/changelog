@@ -1,3 +1,14 @@
+apt (0.8.11.5ubuntu2) natty; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/deb/debindexfile.cc:
+    - ignore missing deb-src files in /var/lib/apt/lists, thanks
+      to Thorsten Spindler (LP: #85590)
+  * apt-pkg/contrib/fileutl.cc, apt-pkg/deb/dpkgpm.cc:
+    - honor Dpkg::Chroot-Directory in the RunScripts*() methods
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 03 Mar 2011 17:39:30 +0100
+
 apt (0.8.11.5ubuntu1) natty; urgency=low
 
   * Merged from debian/sid
