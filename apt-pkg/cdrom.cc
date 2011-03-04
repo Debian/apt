@@ -854,6 +854,7 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    libudev_handle = h;
    udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
    udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
+   udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_sysattr");
    udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
    udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
    udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
