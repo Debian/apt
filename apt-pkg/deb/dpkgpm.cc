@@ -881,7 +881,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // Generate the argument list
       const char *Args[MaxArgs + 50];
-      
+      // keep track of allocated strings for multiarch package names
+      char *Packages[MaxArgs + 50];
+      unsigned int pkgcount = 0;
+
       // Now check if we are within the MaxArgs limit
       //
       // this code below is problematic, because it may happen that
@@ -989,13 +992,22 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }      
       else
       {
+	 string const nativeArch = _config->Find("APT::Architecture");
 	 for (;I != J && Size < MaxArgBytes; I++)
 	 {
 	    if((*I).Pkg.end() == true)
 	       continue;
 	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
-	    Args[n++] = I->Pkg.Name();
+	    if (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all"))
+	       Args[n++] = I->Pkg.Name();
+	    else
+	    {
+	       string const PkgDesc = I->Pkg.Name() + string(":") + string(I->Pkg.Arch());
+	       Packages[pkgcount] = new char[PkgDesc.size()+1];
+	       strncpy(Packages[pkgcount++],PkgDesc.c_str(),PkgDesc.size()+1);
+	       Args[n++] = Packages[pkgcount-1];
+	    }
 	    Size += strlen(Args[n-1]);
 	 }	 
       }      
@@ -1144,6 +1156,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // setups fds
       sigemptyset(&sigmask);
       sigprocmask(SIG_BLOCK,&sigmask,&original_sigmask);
+
+      /* clean up the temporary allocation for multiarch package names in
+         the parent, so we don't leak memory when we return. */
+      for (unsigned int i = 0; i < pkgcount; i++)
+	 delete [] Packages[i];
 
       // the result of the waitpid call
       int res;

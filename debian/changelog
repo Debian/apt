@@ -28,7 +28,12 @@ apt (0.8.11.6) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - reinstall dependencies of reinstalled "garbage" (Closes: #617257)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Mar 2011 22:43:15 +0100
+  [ Steve Langasek ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - make sure that for multiarch packages, we are passing the full
+      qualified package name to dpkg for removals. (Closes: #614298)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 Mar 2011 22:46:24 +0100
 
 apt (0.8.11.5) unstable; urgency=low
 
