@@ -1718,7 +1718,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		   R->Type != pkgCache::Dep::PreDepends)
 		  continue;
 	       pkgCache::PkgIterator N = R.ParentPkg();
-	       if (N.end() == true || N->CurrentVer == 0)
+	       if (N.end() == true || (N->CurrentVer == 0 && (*Cache)[N].Install() == false))
 		  continue;
 	       if (Debug == true)
 		  std::clog << "Save " << P << " as another installed garbage package depends on it" << std::endl;
