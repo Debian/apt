@@ -1003,10 +1003,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       Args[n++] = I->Pkg.Name();
 	    else
 	    {
-	       string const PkgDesc = I->Pkg.Name() + string(":") + string(I->Pkg.Arch());
-	       Packages[pkgcount] = new char[PkgDesc.size()+1];
-	       strncpy(Packages[pkgcount++],PkgDesc.c_str(),PkgDesc.size()+1);
-	       Args[n++] = Packages[pkgcount-1];
+	       Packages[pkgcount] = strdup(I->Pkg.FullName(false).c_str());
+	       Args[n++] = Packages[pkgcount++];
 	    }
 	    Size += strlen(Args[n-1]);
 	 }	 
@@ -1160,7 +1158,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       /* clean up the temporary allocation for multiarch package names in
          the parent, so we don't leak memory when we return. */
       for (unsigned int i = 0; i < pkgcount; i++)
-	 delete [] Packages[i];
+	 free(Packages[i]);
 
       // the result of the waitpid call
       int res;
