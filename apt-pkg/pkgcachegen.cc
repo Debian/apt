@@ -178,23 +178,17 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (PackageName.empty() == true)
 	 return false;
 
-      /* As we handle Arch all packages as architecture bounded
-         we add all information to every (simulated) arch package */
-      std::vector<string> genArch;
-      if (List.ArchitectureAll() == true) {
-	 genArch = APT::Configuration::getArchitectures();
-	 if (genArch.size() != 1)
-	    genArch.push_back("all");
-      } else
-	 genArch.push_back(List.Architecture());
-
-      for (std::vector<string>::const_iterator arch = genArch.begin();
-	   arch != genArch.end(); ++arch)
-      {
+      /* Treat Arch all packages as the same as the native arch. */
+      string Arch;
+      if (List.ArchitectureAll() == true)
+	 Arch = _config->Find("APT::Architecture");
+      else
+	 Arch = List.Architecture();
+ 
       // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
       Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
-      if (NewPackage(Pkg, PackageName, *arch) == false)
+      if (NewPackage(Pkg, PackageName, Arch) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewPackage)"),PackageName.c_str());
       Counter++;
       if (Counter % 100 == 0 && Progress != 0)
@@ -351,7 +345,6 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
       if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),PackageName.c_str());
-      }
    }
 
    FoundFileDeps |= List.HasFileDeps();
@@ -650,10 +643,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 		- MultiArch: same → Co-Installable if they have the same version
 		- Architecture: all → Need to be Co-Installable for internal reasons
 		- All others conflict with all other group members */
-	       bool const coInstall = ((V->MultiArch == pkgCache::Version::All && strcmp(Arch, "all") != 0) ||
-					V->MultiArch == pkgCache::Version::Same);
-	       if (V->MultiArch == pkgCache::Version::All && allPkg.end() == true)
-		  allPkg = G.FindPkg("all");
+	       bool const coInstall = (V->MultiArch == pkgCache::Version::Same);
 	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
 	       {
 		  if (*A == Arch)
@@ -675,24 +665,11 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 		     NewDepends(D, V, V.VerStr(),
 				pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
 				OldDepLast);
-		     if (V->MultiArch == pkgCache::Version::All)
-		     {
-			// Depend on ${self}:all which does depend on nothing
-			NewDepends(allPkg, V, V.VerStr(),
-				   pkgCache::Dep::Equals, pkgCache::Dep::Depends,
-				   OldDepLast);
-		     }
 		  } else {
 			// Conflicts: ${self}:other
-			if (strcmp(Arch, "all") == 0) {
-				NewDepends(D, V, V.VerStr(),
-					   pkgCache::Dep::NotEquals, pkgCache::Dep::Conflicts,
-					   OldDepLast);
-			} else {
-				NewDepends(D, V, "",
-					   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
-					   OldDepLast);
-			}
+			NewDepends(D, V, "",
+				   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+				   OldDepLast);
 		  }
 	       }
 	    }
@@ -810,7 +787,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
    pkgCache &Cache = Owner->Cache;
 
    // We do not add self referencing provides
-   if (Ver.ParentPkg().Name() == PkgName && PkgArch == Ver.Arch(true))
+   if (Ver.ParentPkg().Name() == PkgName && PkgArch == Ver.Arch())
       return true;
    
    // Get a structure

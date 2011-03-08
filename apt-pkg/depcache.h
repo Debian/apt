@@ -395,6 +395,7 @@ class pkgDepCache : protected pkgCache::Namespace
 		    bool ForceImportantDeps = false);
 
    void SetReInstall(PkgIterator const &Pkg,bool To);
+   // FIXME: Remove the unused boolean parameter on abi break
    void SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo = true);
    bool SetCandidateRelease(pkgCache::VerIterator TargetVer,
 				std::string const &TargetRel);
@@ -481,9 +482,10 @@ class pkgDepCache : protected pkgCache::Namespace
 
    private:
    // Helper for Update(OpProgress) to remove pseudoinstalled arch all packages
-   bool RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck);
-   bool ReInstallPseudoForGroup(unsigned long const &Grp, std::set<unsigned long> &recheck);
-   bool ReInstallPseudoForGroup(pkgCache::PkgIterator const &P, std::set<unsigned long> &recheck);
+   // FIXME: they are private so shouldn't affect abi, but just in case…
+   __deprecated bool RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck) { return true; };
+   __deprecated bool ReInstallPseudoForGroup(unsigned long const &Grp, std::set<unsigned long> &recheck) { return true; };
+   __deprecated bool ReInstallPseudoForGroup(pkgCache::PkgIterator const &P, std::set<unsigned long> &recheck) { return true; };
 };
 
 #endif

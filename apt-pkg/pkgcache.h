@@ -505,8 +505,8 @@ struct pkgCache::Version
        Foreign means that this version can fulfill dependencies even
        if it is built for another architecture as the requester.
        Same indicates that builds for different architectures can
-       be co-installed on the system and All is the marker for a
-       version with the Architecture: all. */
+       be co-installed on the system */
+   // FIXME: remove All on abi break
    enum {None, All, Foreign, Same, Allowed} MultiArch;
 
    /** \brief references all the PackageFile's that this version came from
