@@ -83,7 +83,6 @@ class pkgUdevCdromDevices						/*{{{*/
    void *libudev_handle;
    struct udev* (*udev_new)(void);
    int (*udev_enumerate_add_match_property)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
-   int (*udev_enumerate_add_match_sysattr)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
    int (*udev_enumerate_scan_devices)(struct udev_enumerate *udev_enumerate);
    struct udev_list_entry* (*udev_enumerate_get_list_entry)(struct udev_enumerate *udev_enumerate);
    struct udev_device* (*udev_device_new_from_syspath)(struct udev *udev, const char *syspath);
@@ -93,6 +92,7 @@ class pkgUdevCdromDevices						/*{{{*/
    struct udev_enumerate *(*udev_enumerate_new) (struct udev *udev);
    struct udev_list_entry *(*udev_list_entry_get_next)(struct udev_list_entry *list_entry);
    const char* (*udev_device_get_property_value)(struct udev_device *udev_device, const char *key);
+   int (*udev_enumerate_add_match_sysattr)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
    // end libudev dlopen
    
  public:
