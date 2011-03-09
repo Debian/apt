@@ -19,5 +19,6 @@ bool MountCdrom(string Path, string DeviceName="");
 bool UnmountCdrom(string Path);
 bool IdentCdrom(string CD,string &Res,unsigned int Version = 2);
 bool IsMounted(string &Path);
+string FindMountPointForDevice(const char *device);
 
 #endif
