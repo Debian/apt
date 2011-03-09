@@ -237,7 +237,7 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 									/*}}}*/
 
 // FindMountPointForDevice - Find mountpoint for the given device      /*{{{*/
-char* FindMountPointForDevice(const char *devnode)
+string FindMountPointForDevice(const char *devnode)
 {
    char buf[255];
    char *out[10];
@@ -254,14 +254,14 @@ char* FindMountPointForDevice(const char *devnode)
          while ( fgets(buf, sizeof(buf), f) != NULL) {
             if (strncmp(buf, devnode, strlen(devnode)) == 0) {
                if(TokSplitString(' ', buf, out, 10))
-                  return strdup(out[1]);
+                  return string(out[1]);
             }
          }
          fclose(f);
       }
    }
    
-   return NULL;
+   return string();
 }
 
 
