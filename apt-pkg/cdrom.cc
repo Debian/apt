@@ -868,8 +868,19 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    return true;
 }
 									/*}}}*/
+
+                                                                        /*{{{*/
+// compatiblity only with the old API/ABI, can be removed on the next
+// ABI break
 vector<CdromDevice>
-pkgUdevCdromDevices::Scan()                                             /*{{{*/
+pkgUdevCdromDevices::Scan()
+{ 
+   return ScanForRemovable(true); 
+};
+									/*}}}*/
+                                                                        /*{{{*/
+vector<CdromDevice>
+pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
 {
    vector<CdromDevice> cdrom_devices;
    struct udev_enumerate *enumerate;
@@ -881,9 +892,10 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
 
    udev_ctx = udev_new();
    enumerate = udev_enumerate_new (udev_ctx);
-   udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
-   //FIXME: just use removalble here to include usb etc
-   //udev_enumerate_add_match_sysattr(enumerate, "removable", "1");
+   if (CdromOnly)
+      udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
+   else
+      udev_enumerate_add_match_sysattr(enumerate, "removable", "1");
 
    udev_enumerate_scan_devices (enumerate);
    devices = udev_enumerate_get_list_entry (enumerate);
@@ -898,9 +910,6 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
       const char* mountpath = udev_device_get_property_value(udevice, "FSTAB_DIR");
       if (mountpath == NULL)
          mountpath = FindMountPointForDevice(devnode);
-
-      if (_config->FindB("Debug::Acquire::cdrom", false))
-         cerr << "found " << devnode << " mounted on " << mountpath << endl;
 
       // fill in the struct
       cdrom.DeviceName = string(devnode);
