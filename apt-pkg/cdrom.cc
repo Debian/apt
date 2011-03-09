@@ -895,8 +895,13 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
       if (udevice == NULL)
 	 continue;
       const char* devnode = udev_device_get_devnode(udevice);
-      const char* mountpath = udev_device_get_property_value(udevice, "FSTAB_DIR");
-      if (mountpath == NULL)
+
+      // try fstab_dir first
+      string mountpath;
+      const char* mp = udev_device_get_property_value(udevice, "FSTAB_DIR");
+      if (mp)
+         mountpath = string(mp);
+      else
          mountpath = FindMountPointForDevice(devnode);
 
       if (_config->FindB("Debug::Acquire::cdrom", false))
@@ -904,7 +909,7 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
 
       // fill in the struct
       cdrom.DeviceName = string(devnode);
-      if (mountpath) {
+      if (mountpath != "") {
 	 cdrom.MountPath = mountpath;
 	 string s = string(mountpath);
 	 cdrom.Mounted = IsMounted(s);
