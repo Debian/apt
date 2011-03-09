@@ -854,6 +854,7 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    libudev_handle = h;
    udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
    udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
+   udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_sysattr");
    udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
    udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
    udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
@@ -881,6 +882,8 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
    udev_ctx = udev_new();
    enumerate = udev_enumerate_new (udev_ctx);
    udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
+   //FIXME: just use removalble here to include usb etc
+   //udev_enumerate_add_match_sysattr(enumerate, "removable", "1");
 
    udev_enumerate_scan_devices (enumerate);
    devices = udev_enumerate_get_list_entry (enumerate);
@@ -893,6 +896,11 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
 	 continue;
       const char* devnode = udev_device_get_devnode(udevice);
       const char* mountpath = udev_device_get_property_value(udevice, "FSTAB_DIR");
+      if (mountpath == NULL)
+         mountpath = FindMountPointForDevice(devnode);
+
+      if (_config->FindB("Debug::Acquire::cdrom", false))
+         cerr << "found " << devnode << " mounted on " << mountpath << endl;
 
       // fill in the struct
       cdrom.DeviceName = string(devnode);
