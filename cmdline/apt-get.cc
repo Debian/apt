@@ -382,8 +382,6 @@ void ShowNew(ostream &out,CacheFile &Cache)
    {
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].NewInstall() == true) {
-	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
-	    continue;
          List += I.FullName(true) + " ";
          VersionsList += string(Cache[I].CandVersion) + "\n";
       }
@@ -406,8 +404,6 @@ void ShowDel(ostream &out,CacheFile &Cache)
       pkgCache::PkgIterator I(Cache,Cache.List[J]);
       if (Cache[I].Delete() == true)
       {
-	 if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
-	    continue;
 	 if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
 	    List += I.FullName(true) + "* ";
 	 else
@@ -456,8 +452,6 @@ void ShowUpgraded(ostream &out,CacheFile &Cache)
       // Not interesting
       if (Cache[I].Upgrade() == false || Cache[I].NewInstall() == true)
 	 continue;
-      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
-	 continue;
 
       List += I.FullName(true) + " ";
       VersionsList += string(Cache[I].CurVersion) + " => " + Cache[I].CandVersion + "\n";
@@ -478,8 +472,6 @@ bool ShowDowngraded(ostream &out,CacheFile &Cache)
       
       // Not interesting
       if (Cache[I].Downgrade() == false || Cache[I].NewInstall() == true)
-	 continue;
-      if (Cache[I].CandidateVerIter(Cache).Pseudo() == true)
 	 continue;
 
       List += I.FullName(true) + " ";
@@ -584,9 +576,6 @@ void Stats(ostream &out,pkgDepCache &Dep)
    unsigned long ReInstall = 0;
    for (pkgCache::PkgIterator I = Dep.PkgBegin(); I.end() == false; I++)
    {
-      if (pkgCache::VerIterator(Dep, Dep[I].CandidateVer).Pseudo() == true)
-	 continue;
-
       if (Dep[I].NewInstall() == true)
 	 Install++;
       else
@@ -1718,7 +1707,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		   R->Type != pkgCache::Dep::PreDepends)
 		  continue;
 	       pkgCache::PkgIterator N = R.ParentPkg();
-	       if (N.end() == true || N->CurrentVer == 0)
+	       if (N.end() == true || (N->CurrentVer == 0 && (*Cache)[N].Install() == false))
 		  continue;
 	       if (Debug == true)
 		  std::clog << "Save " << P << " as another installed garbage package depends on it" << std::endl;
@@ -1916,8 +1905,6 @@ bool DoInstall(CommandLine &CmdL)
 	 if ((*Cache)[I].Install() == false)
 	    continue;
 	 pkgCache::VerIterator Cand = Cache[I].CandidateVerIter(Cache);
-	 if (Cand.Pseudo() == true)
-	    continue;
 
 	 if (verset[MOD_INSTALL].find(Cand) != verset[MOD_INSTALL].end())
 	    continue;

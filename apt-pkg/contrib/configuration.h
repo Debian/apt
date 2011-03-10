@@ -72,8 +72,8 @@ class Configuration
    string Find(string const &Name, string const &Default) const {return Find(Name.c_str(),Default.c_str());};
    string FindFile(const char *Name,const char *Default = 0) const;
    string FindDir(const char *Name,const char *Default = 0) const;
-   std::vector<string> FindVector(string const &Name) const;
    std::vector<string> FindVector(const char *Name) const;
+   std::vector<string> FindVector(string const &Name) const { return FindVector(Name.c_str()); };
    int FindI(const char *Name,int const &Default = 0) const;
    int FindI(string const &Name,int const &Default = 0) const {return FindI(Name.c_str(),Default);};
    bool FindB(const char *Name,bool const &Default = false) const;

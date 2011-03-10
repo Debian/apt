@@ -328,10 +328,10 @@ createaptftparchiveconfig() {
 	echo -n '";
 };
 Default {
-	Packages::Compress ". gzip bzip2 lzma";
-	Sources::Compress ". gzip bzip2 lzma";
-	Contents::Compress ". gzip bzip2 lzma";
-	Translation::Compress ". gzip bzip2 lzma";
+	Packages::Compress ". gzip bzip2 lzma xz";
+	Sources::Compress ". gzip bzip2 lzma xz";
+	Contents::Compress ". gzip bzip2 lzma xz";
+	Translation::Compress ". gzip bzip2 lzma xz";
 	LongDescription "false";
 };
 TreeDefault {
@@ -438,6 +438,7 @@ buildaptarchivefromfiles() {
 		cat ${line} | gzip > ${line}.gz
 		cat ${line} | bzip2 > ${line}.bz2
 		cat ${line} | lzma > ${line}.lzma
+		cat ${line} | xz > ${line}.xz
 		msgdone "info"
 	done
 	generatereleasefiles

@@ -1,3 +1,56 @@
+apt (0.8.12) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/deb/debindexfile.cc:
+    - ignore missing deb-src files in /var/lib/apt/lists, thanks
+      to Thorsten Spindler (LP: #85590)
+  * apt-pkg/contrib/fileutl.cc, apt-pkg/deb/dpkgpm.cc:
+    - honor Dpkg::Chroot-Directory in the RunScripts*() methods
+  * apt-pkg/contrib/cdromutl.{cc,h}, apt-pkg/cdrom.{cc,h}:
+    - deal with missing FSTAB_DIR when using libudev to discover cdrom
+    - add experimental APT::cdrom::CdromOnly option (on by default). 
+      When this is set to false apt-cdrom will handle any removable
+      deivce (like a usb-stick) as a "cdrom/dvd" source
+
+  [ Christian Perrier ]
+  * Fix error in French translation of manpages (apt_preferences(5)).
+    Merci, Rémi Vanicat. Closes: #613689
+  * Complete French manpage translation
+  * Italian translation update (Milo Casagrande). Closes: #614395
+
+  [ David Kalnischkies ]
+  * ftparchive/multicompress.cc, apt-inst/deb/debfile.cc:
+    - support xz compressor to create xz-compressed Indexes and be able
+      to open data.tar.xz files
+    - load the supported compressors from configuration
+  * ftparchive/writer.cc:
+    - ensure that Date and Valid-Until time strings are not localised
+    - add options to disable specific checksums for Indexes
+    - include xz-compressed Packages and Sources files in Release file
+  * apt-pkg/aptconfiguration.cc:
+    - support download of xz-compressed indexes files
+    - support adding new compressors by configuration
+  * apt-pkg/deb/debsrcrecords.cc:
+    - support xz-compressed source v3 debian.tar files
+    - support every compression we have a compressor configured
+  * ftparchive/contents.cc:
+    - remove ExtractArchive codecopy from apt-inst/deb/debfile.cc
+  * apt-inst/deb/debfile.cc:
+    - support data.tar's compressed with any configured compressor
+  * cmdline/apt-get.cc:
+    - reinstall dependencies of reinstalled "garbage" (Closes: #617257)
+
+  [ Steve Langasek ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - make sure that for multiarch packages, we are passing the full
+      qualified package name to dpkg for removals. (Closes: #614298)
+  * Remove the "pseudopackage" handling of Architecture: all packages for
+    Multi-Arch; instead, Arch: all packages only satisfy dependencies for
+    the native arch, except where the Arch: all package is declared
+    Multi-Arch: foreign.  (Closes: #613584)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 08 Mar 2011 19:20:56 +0100
+
 apt (0.8.11.5ubuntu3) UNRELEASED; urgency=low
 
   * cherry pick cdrom mount fixes from lp:~mvo/apt/mvo

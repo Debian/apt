@@ -737,22 +737,8 @@ bool pkgCache::VerIterator::Automatic() const
    return false;
 }
 									/*}}}*/
-// VerIterator::Pseudo - Check if this version is a pseudo one		/*{{{*/
-// ---------------------------------------------------------------------
-/* Sometimes you have the need to express dependencies with versions
-   which doesn't really exist or exist multiply times for "different"
-   packages. We need these versions for dependency resolution but they
-   are a problem everytime we need to download/install something. */
-bool pkgCache::VerIterator::Pseudo() const
-{
-   if (S->MultiArch == pkgCache::Version::All &&
-	   strcmp(Arch(true),"all") != 0)
-   {
-	   GrpIterator const Grp = ParentPkg().Group();
-	   return (Grp->LastPackage != Grp->FirstPackage);
-   }
-   return false;
-}
+// VerIterator::Pseudo - deprecated no-op method			/*{{{*/
+bool pkgCache::VerIterator::Pseudo() const { return false; }
 									/*}}}*/
 // VerIterator::NewestFile - Return the newest file version relation	/*{{{*/
 // ---------------------------------------------------------------------

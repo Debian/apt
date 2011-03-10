@@ -30,12 +30,6 @@
 
 using namespace std;
 
-const MultiCompress::CompType MultiCompress::Compressors[] =
-      {{".","",0,0,0,1},
-       {"gzip",".gz","gzip","-9n","-d",2},
-       {"bzip2",".bz2","bzip2","-9","-d",3},
-       {"lzma",".lzma","lzma","-9","-d",4},
-       {}};
 
 // MultiCompress::MultiCompress - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -48,7 +42,7 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
    Outputter = -1;
    Input = 0;
    UpdateMTime = 0;
-   
+
    /* Parse the compression string, a space separated lists of compresison
       types */
    string::const_iterator I = Compress.begin();
@@ -61,13 +55,14 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
       for (; I != Compress.end() && !isspace(*I); I++);
 
       // Find the matching compressor
-      const CompType *Comp = Compressors;
-      for (; Comp->Name != 0; Comp++)
-	 if (stringcmp(Start,I,Comp->Name) == 0)
+      std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();
+      std::vector<APT::Configuration::Compressor>::const_iterator Comp = Compressors.begin();
+      for (; Comp != Compressors.end(); ++Comp)
+	 if (stringcmp(Start,I,Comp->Name.c_str()) == 0)
 	    break;
 
       // Hmm.. unknown.
-      if (Comp->Name == 0)
+      if (Comp == Compressors.end())
       {
 	 _error->Warning(_("Unknown compression algorithm '%s'"),string(Start,I).c_str());
 	 continue;
@@ -77,7 +72,7 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
       Files *NewOut = new Files;
       NewOut->Next = Outputs;
       Outputs = NewOut;
-      NewOut->CompressProg = Comp;
+      NewOut->CompressProg = *Comp;
       NewOut->Output = Output+Comp->Extension;
       
       struct stat St;
@@ -141,13 +136,14 @@ bool MultiCompress::GetStat(string const &Output,string const &Compress,struct s
       for (; I != Compress.end() && !isspace(*I); I++);
 
       // Find the matching compressor
-      const CompType *Comp = Compressors;
-      for (; Comp->Name != 0; Comp++)
-	 if (stringcmp(Start,I,Comp->Name) == 0)
+      std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();
+      std::vector<APT::Configuration::Compressor>::const_iterator Comp = Compressors.begin();
+      for (; Comp != Compressors.end(); ++Comp)
+	 if (stringcmp(Start,I,Comp->Name.c_str()) == 0)
 	    break;
 
       // Hmm.. unknown.
-      if (Comp->Name == 0)
+      if (Comp == Compressors.end())
 	 continue;
 
       string Name = Output+Comp->Extension;
@@ -268,13 +264,13 @@ bool MultiCompress::Finalize(unsigned long &OutSize)
 /* This opens the compressor, either in compress mode or decompress 
    mode. FileFd is always the compressor input/output file, 
    OutFd is the created pipe, Input for Compress, Output for Decompress. */
-bool MultiCompress::OpenCompress(const CompType *Prog,pid_t &Pid,int const &FileFd,
-				 int &OutFd,bool const &Comp)
+bool MultiCompress::OpenCompress(APT::Configuration::Compressor const &Prog,
+				 pid_t &Pid,int const &FileFd,int &OutFd,bool const &Comp)
 {
    Pid = -1;
    
    // No compression
-   if (Prog->Binary == 0)
+   if (Prog.Binary.empty() == true)
    {
       OutFd = dup(FileFd);
       return true;
@@ -309,15 +305,17 @@ bool MultiCompress::OpenCompress(const CompType *Prog,pid_t &Pid,int const &File
       
       SetCloseExec(STDOUT_FILENO,false);
       SetCloseExec(STDIN_FILENO,false);
-      
-      const char *Args[3];
-      Args[0] = Prog->Binary;
-      if (Comp == true)
-	 Args[1] = Prog->CompArgs;
-      else
-	 Args[1] = Prog->UnCompArgs;
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);
+
+      std::vector<char const*> Args;
+      Args.push_back(Prog.Binary.c_str());
+      std::vector<std::string> const * const addArgs =
+		(Comp == true) ? &(Prog.CompressArgs) : &(Prog.UncompressArgs);
+      for (std::vector<std::string>::const_iterator a = addArgs->begin();
+	   a != addArgs->end(); ++a)
+	 Args.push_back(a->c_str());
+      Args.push_back(NULL);
+
+      execvp(Args[0],(char **)&Args[0]);
       cerr << _("Failed to exec compressor ") << Args[0] << endl;
       _exit(100);
    };      
@@ -335,7 +333,7 @@ bool MultiCompress::OpenOld(int &Fd,pid_t &Proc)
 {
    Files *Best = Outputs;
    for (Files *I = Outputs; I != 0; I = I->Next)
-      if (Best->CompressProg->Cost > I->CompressProg->Cost)
+      if (Best->CompressProg.Cost > I->CompressProg.Cost)
 	 Best = I;
 
    // Open the file
@@ -414,7 +412,7 @@ bool MultiCompress::Child(int const &FD)
    for (Files *I = Outputs; I != 0; I = I->Next)
    {
       if (I->CompressProc != -1)
-	 ExecWait(I->CompressProc,I->CompressProg->Binary,false);
+	 ExecWait(I->CompressProc, I->CompressProg.Binary.c_str(), false);
    }
    
    if (_error->PendingError() == true)

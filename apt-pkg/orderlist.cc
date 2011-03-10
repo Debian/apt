@@ -128,10 +128,6 @@ bool pkgOrderList::IsMissing(PkgIterator Pkg)
    if (FileList[Pkg->ID].empty() == false)
       return false;
 
-   // Missing Pseudo packages are missing if the real package is missing
-   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == true)
-      return IsMissing(Pkg.Group().FindPkg("all"));
-
    return true;
 }
 									/*}}}*/

@@ -68,7 +68,7 @@ class pkgCdrom								/*{{{*/
 									/*}}}*/
 
 
-// class that uses libudev to find cdrom devices dynamically
+// class that uses libudev to find cdrom/removable devices dynamically
 struct CdromDevice							/*{{{*/
 {
    string DeviceName;
@@ -101,7 +101,12 @@ class pkgUdevCdromDevices						/*{{{*/
 
    // try to open 
    bool Dlopen();
+
+   // this is the new interface
+   vector<CdromDevice> ScanForRemovable(bool CdromOnly);
+   // FIXME: compat with the old interface/API/ABI only
    vector<CdromDevice> Scan();
+
 };
 									/*}}}*/
 
