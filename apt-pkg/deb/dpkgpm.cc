@@ -308,6 +308,15 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 SetCloseExec(STDIN_FILENO,false);      
 	 SetCloseExec(STDERR_FILENO,false);
 
+	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
+	 {
+	    std::cerr << "Chrooting into " 
+		      << _config->FindDir("DPkg::Chroot-Directory") 
+		      << std::endl;
+	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
+	       _exit(100);
+	 }
+
 	 const char *Args[4];
 	 Args[0] = "/bin/sh";
 	 Args[1] = "-c";

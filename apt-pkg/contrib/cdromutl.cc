@@ -15,6 +15,7 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/strutl.h>
 
 #include <apti18n.h>
     
@@ -234,3 +235,33 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    return true;   
 }
 									/*}}}*/
+
+// FindMountPointForDevice - Find mountpoint for the given device      /*{{{*/
+string FindMountPointForDevice(const char *devnode)
+{
+   char buf[255];
+   char *out[10];
+   int i=0;
+
+   // this is the order that mount uses as well
+   const char *mount[] = { "/etc/mtab", 
+                           "/proc/mount", 
+                           NULL };
+
+   for (i=0; mount[i] != NULL; i++) {
+      if (FileExists(mount[i])) {
+         FILE *f=fopen(mount[i], "r");
+         while ( fgets(buf, sizeof(buf), f) != NULL) {
+            if (strncmp(buf, devnode, strlen(devnode)) == 0) {
+               if(TokSplitString(' ', buf, out, 10))
+                  return string(out[1]);
+            }
+         }
+         fclose(f);
+      }
+   }
+   
+   return string();
+}
+
+

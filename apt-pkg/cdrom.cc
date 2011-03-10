@@ -854,6 +854,7 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    libudev_handle = h;
    udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
    udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
+   udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_sysattr");
    udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
    udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
    udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
@@ -867,8 +868,20 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    return true;
 }
 									/*}}}*/
+
+                                                                        /*{{{*/
+// compatiblity only with the old API/ABI, can be removed on the next
+// ABI break
 vector<CdromDevice>
-pkgUdevCdromDevices::Scan()                                             /*{{{*/
+pkgUdevCdromDevices::Scan()
+{ 
+   bool CdromOnly = _config->FindB("APT::cdrom::CdromOnly", true);
+   return ScanForRemovable(CdromOnly); 
+};
+									/*}}}*/
+                                                                        /*{{{*/
+vector<CdromDevice>
+pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
 {
    vector<CdromDevice> cdrom_devices;
    struct udev_enumerate *enumerate;
@@ -880,7 +893,10 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
 
    udev_ctx = udev_new();
    enumerate = udev_enumerate_new (udev_ctx);
-   udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
+   if (CdromOnly)
+      udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
+   else
+      udev_enumerate_add_match_sysattr(enumerate, "removable", "1");
 
    udev_enumerate_scan_devices (enumerate);
    devices = udev_enumerate_get_list_entry (enumerate);
@@ -892,11 +908,18 @@ pkgUdevCdromDevices::Scan()                                             /*{{{*/
       if (udevice == NULL)
 	 continue;
       const char* devnode = udev_device_get_devnode(udevice);
-      const char* mountpath = udev_device_get_property_value(udevice, "FSTAB_DIR");
+
+      // try fstab_dir first
+      string mountpath;
+      const char* mp = udev_device_get_property_value(udevice, "FSTAB_DIR");
+      if (mp)
+         mountpath = string(mp);
+      else
+         mountpath = FindMountPointForDevice(devnode);
 
       // fill in the struct
       cdrom.DeviceName = string(devnode);
-      if (mountpath) {
+      if (mountpath != "") {
 	 cdrom.MountPath = mountpath;
 	 string s = string(mountpath);
 	 cdrom.Mounted = IsMounted(s);
