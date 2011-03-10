@@ -526,11 +526,14 @@ for i in Sections do
    &apt-cmdblurb;
    
    <variablelist>
-     <varlistentry><term><option>--md5</option></term>
+     <varlistentry><term><option>--md5</option>, <option>--sha1</option>, <option>--sha256</option></term>
      <listitem><para>
-     Generate MD5 sums. This defaults to on, when turned off the generated 
-     index files will not have MD5Sum fields where possible.
-     Configuration Item: <literal>APT::FTPArchive::MD5</literal></para></listitem>
+     Generate the given checksum. These options default to on, when turned off the generated
+     index files will not have the checksum fields where possible.
+     Configuration Items: <literal>APT::FTPArchive::<replaceable>Checksum</replaceable></literal> and
+     <literal>APT::FTPArchive::<replaceable>Index</replaceable>::<replaceable>Checksum</replaceable></literal> where
+     <literal>Index</literal> can be <literal>Packages</literal>, <literal>Sources</literal> or <literal>Release</literal> and
+     <literal>Checksum</literal> can be <literal>MD5</literal>, <literal>SHA1</literal> or <literal>SHA256</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>-d</option></term><term><option>--db</option></term>

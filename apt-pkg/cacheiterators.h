@@ -206,13 +206,9 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;};
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;};
 	inline const char *Arch() const {
-		if(S->MultiArch == pkgCache::Version::All)
-			return "all";
 		return S->ParentPkg == 0?0:Owner->StrP + ParentPkg()->Arch;
 	};
-	inline const char *Arch(bool const pseudo) const {
-		if(pseudo == false)
-			return Arch();
+	__deprecated inline const char *Arch(bool const pseudo) const {
 		return S->ParentPkg == 0?0:Owner->StrP + ParentPkg()->Arch;
 	};
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);};
@@ -227,7 +223,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	string RelStr() const;
 
 	bool Automatic() const;
-	bool Pseudo() const;
+	__deprecated bool Pseudo() const;
 	VerFileIterator NewestFile() const;
 
 	inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Iterator<Version, VerIterator>(Owner, Trg) {

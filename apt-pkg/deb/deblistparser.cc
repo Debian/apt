@@ -67,23 +67,12 @@ string debListParser::Package() {
 									/*}}}*/
 // ListParser::Architecture - Return the package arch			/*{{{*/
 // ---------------------------------------------------------------------
-/* This will return the Architecture of the package this section describes
-   Note that architecture "all" packages will get the architecture of the
-   Packages file parsed here. */
+/* This will return the Architecture of the package this section describes */
 string debListParser::Architecture() {
-   string const Result = Section.FindS("Architecture");
-   if (Result.empty() == true || Result == "all")
-   {
-      if (Arch.empty() == true)
-	 /* FIXME: this is a problem for installed arch all
-	    packages as we don't know from which arch this
-	    package was installed - and therefore which
-	    dependency this package resolves. */
-	 return _config->Find("APT::Architecture");
-      else
-	 return Arch;
-   }
-   return Result;
+   std::string const Arch = Section.FindS("Architecture");
+   if (Arch.empty() == true)
+      return _config->Find("APT::Architecture");
+   return Arch;
 }
 									/*}}}*/
 // ListParser::ArchitectureAll						/*{{{*/
@@ -112,27 +101,30 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    Ver->Section = UniqFindTagWrite("Section");
 
    // Parse multi-arch
-   if (Section.FindS("Architecture") == "all")
-      /* Arch all packages can't have a Multi-Arch field,
-         but we need a special treatment for them nonetheless */
-      Ver->MultiArch = pkgCache::Version::All;
-   else
-   {
-      string const MultiArch = Section.FindS("Multi-Arch");
-      if (MultiArch.empty() == true)
-	 Ver->MultiArch = pkgCache::Version::None;
-      else if (MultiArch == "same")
-	 Ver->MultiArch = pkgCache::Version::Same;
-      else if (MultiArch == "foreign")
-	 Ver->MultiArch = pkgCache::Version::Foreign;
-      else if (MultiArch == "allowed")
-	 Ver->MultiArch = pkgCache::Version::Allowed;
-      else
+   string const MultiArch = Section.FindS("Multi-Arch");
+   if (MultiArch.empty() == true)
+      Ver->MultiArch = pkgCache::Version::None;
+   else if (MultiArch == "same") {
+      // Parse multi-arch
+      if (Section.FindS("Architecture") == "all")
       {
-	 _error->Warning("Unknown Multi-Arch type »%s« for package »%s«",
-			MultiArch.c_str(), Section.FindS("Package").c_str());
+	 /* Arch all packages can't be Multi-Arch: same */
+	 _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
+			Section.FindS("Package").c_str());
 	 Ver->MultiArch = pkgCache::Version::None;
       }
+      else
+	 Ver->MultiArch = pkgCache::Version::Same;
+   }
+   else if (MultiArch == "foreign")
+      Ver->MultiArch = pkgCache::Version::Foreign;
+   else if (MultiArch == "allowed")
+      Ver->MultiArch = pkgCache::Version::Allowed;
+   else
+   {
+      _error->Warning("Unknown Multi-Arch type '%s' for package '%s'",
+			MultiArch.c_str(), Section.FindS("Package").c_str());
+      Ver->MultiArch = pkgCache::Version::None;
    }
 
    // Archive Size
@@ -148,24 +140,6 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    {      
       if (GrabWord(string(Start,Stop-Start),PrioList,Ver->Priority) == false)
 	 Ver->Priority = pkgCache::State::Extra;
-   }
-
-   if (Ver->MultiArch == pkgCache::Version::All)
-   {
-      /* We maintain a "pseudo" arch=all package for architecture all versions
-	 on which these versions can depend on. This pseudo package is many used
-	 for downloading/installing: The other pseudo-packages will degenerate
-	 to a NOP in the download/install step - this package will ensure that
-	 it is downloaded only one time and installed only one time -- even if
-	 the architecture bound versions coming in and out on regular basis. */
-      if (strcmp(Ver.Arch(true),"all") == 0)
-	 return true;
-      else if (MultiArchEnabled == true)
-      {
-	 // our pseudo packages have no size to not confuse the fetcher
-	 Ver->Size = 0;
-	 Ver->InstalledSize = 0;
-      }
    }
 
    if (ParseDepends(Ver,"Depends",pkgCache::Dep::Depends) == false)
@@ -644,7 +618,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       return true;
 
    string Package;
-   string const pkgArch = Ver.Arch(true);
+   string const pkgArch = Ver.Arch();
    string Version;
    unsigned int Op;
 
@@ -683,7 +657,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
    {
       string Package;
       string Version;
-      string const Arch = Ver.Arch(true);
+      string const Arch = Ver.Arch();
       unsigned int Op;
 
       while (1)
@@ -768,7 +742,7 @@ bool debListParser::Step()
 	 if (Architecture == Arch)
 	    return true;
 
-	 if (Architecture == "all")
+	 if (Architecture == "all" && Arch == _config->Find("APT::Architecture"))
 	    return true;
       }
 

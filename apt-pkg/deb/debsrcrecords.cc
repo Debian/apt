@@ -14,6 +14,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 
 using std::max;
 									/*}}}*/
@@ -111,7 +112,9 @@ bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
    string Base = Sect.FindS("Directory");
    if (Base.empty() == false && Base[Base.length()-1] != '/')
       Base += '/';
-   
+
+   std::vector<std::string> const compExts = APT::Configuration::getCompressorExtensions();
+
    // Iterate over the entire list grabbing each triplet
    const char *C = Files.c_str();
    while (*C != 0)
@@ -144,7 +147,8 @@ bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
 	 }
 	 F.Type = string(F.Path,Tmp+1,Pos-Tmp);
 	 
-	 if (F.Type == "gz" || F.Type == "bz2" || F.Type == "lzma" || F.Type == "tar")
+	 if (std::find(compExts.begin(), compExts.end(), std::string(".").append(F.Type)) != compExts.end() ||
+	     F.Type == "tar")
 	 {
 	    Pos = Tmp-1;
 	    continue;

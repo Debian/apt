@@ -1,0 +1,60 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'unrelated' 'all' '1:3.3.0-2'
+insertpackage 'unstable' 'python-uno' 'all' '1:3.3.0-2' 'Depends: libreoffice-common'
+insertpackage 'unstable' 'libreoffice-common' 'all' '1:3.3.0-2' 'Conflicts: openoffice.org-common'
+
+setupaptarchive
+
+touch rootdir/var/lib/apt/extended_states
+aptmark markauto python-uno ure uno-libs3 openoffice.org-common openoffice.org-style-galaxy
+#aptmark unmarkauto openoffice.org-emailmerge
+testmarkedauto python-uno ure uno-libs3 openoffice.org-common openoffice.org-style-galaxy
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following extra packages will be installed:
+  libreoffice-common
+The following packages will be REMOVED:
+  openoffice.org-common openoffice.org-emailmerge
+The following NEW packages will be installed:
+  libreoffice-common
+The following packages will be upgraded:
+  python-uno
+1 upgraded, 1 newly installed, 2 to remove and 0 not upgraded.
+After this operation, 53.2 MB disk space will be freed.
+E: Trivial Only specified but this is not a trivial operation.' aptget --trivial-only install python-uno
+
+aptmark markauto openoffice.org-emailmerge
+testmarkedauto python-uno ure uno-libs3 openoffice.org-common openoffice.org-style-galaxy openoffice.org-emailmerge
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following extra packages will be installed:
+  libreoffice-common
+The following packages will be REMOVED:
+  openoffice.org-common openoffice.org-emailmerge
+The following NEW packages will be installed:
+  libreoffice-common
+The following packages will be upgraded:
+  python-uno
+1 upgraded, 1 newly installed, 2 to remove and 0 not upgraded.
+After this operation, 53.2 MB disk space will be freed.
+E: Trivial Only specified but this is not a trivial operation.' aptget --trivial-only install python-uno
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  openoffice.org-common openoffice.org-emailmerge python-uno
+0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
+After this operation, 53.3 MB disk space will be freed.
+E: Trivial Only specified but this is not a trivial operation.' aptget autoremove --trivial-only

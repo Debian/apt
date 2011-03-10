@@ -7,7 +7,7 @@ unset GREP_OPTIONS
 # implodes if there isn't one available
 GPG_CMD='gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring /etc/apt/secring.gpg'
 
-if ! id -u > /dev/null; then
+if [ "$(id -u)" -eq 0 ]; then
 	GPG_CMD="$GPG_CMD --trustdb-name /etc/apt/trustdb.gpg"
 fi
 

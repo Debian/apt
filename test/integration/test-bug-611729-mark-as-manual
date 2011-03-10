@@ -1,0 +1,84 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage "peace-dpkg" "all" "1.0" "stable"
+
+buildsimplenativepackage "a" "all" "1.0" "stable" "Depends: b"
+buildsimplenativepackage "b" "all" "1.0" "stable"
+buildsimplenativepackage "c" "all" "1.0" "stable" "Depends: b"
+
+setupaptarchive
+
+# dpkg freaks out if the last package is removed so keep one around
+aptget install peace-dpkg -y -qq 2>&1 > /dev/null
+testdpkginstalled peace-dpkg
+testmarkedauto
+
+aptget install a -y -qq 2>&1 > /dev/null
+testdpkginstalled a b
+testdpkgnotinstalled c
+testmarkedauto 'b'
+
+aptget remove a -y -qq 2>&1 > /dev/null
+testdpkgnotinstalled a c
+testdpkginstalled b
+testmarkedauto 'b'
+
+aptget install c -y -qq 2>&1 > /dev/null
+testdpkgnotinstalled a
+testdpkginstalled b c
+testmarkedauto 'b'
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+b is already the newest version.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install b --only-upgrade
+testmarkedauto 'b'
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+b is already the newest version.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install b -d
+testmarkedauto 'b'
+
+aptget install b --reinstall -y -qq 2>&1 > /dev/null
+testdpkgnotinstalled a
+testdpkginstalled b c
+testmarkedauto 'b'
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+b is already the newest version.
+b set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install b
+testmarkedauto
+
+aptget remove b -y -qq 2>&1 > /dev/null
+testdpkgnotinstalled a b c
+testmarkedauto
+
+aptget install a b -y -qq 2>&1 > /dev/null
+testdpkginstalled a b
+testdpkgnotinstalled c
+testmarkedauto
+
+aptget purge a b -y -qq 2>&1 > /dev/null
+testdpkgnotinstalled a b c
+testmarkedauto
+
+aptget install b c -y -qq 2>&1 > /dev/null
+testdpkgnotinstalled a
+testdpkginstalled b c
+testmarkedauto
+
+aptget install a -y -qq 2>&1 > /dev/null
+testdpkginstalled a b c
+testmarkedauto

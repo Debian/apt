@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+
+setupaptarchive
+changetowebserver
+aptget update -qq
+
+echo 'Apt::Changelogs::Server "http://localhost:8080/";' >> ./aptconfig.conf
+
+testequal "'http://localhost:8080//pool/apt_1.0/changelog'" aptget changelog apt --print-uris
+
+aptget changelog apt -qq > apt.changelog
+testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0/changelog)"
+rm apt.changelog
+
+aptget changelog apt -d -qq
+testfileequal 'apt.changelog' "$(cat  aptarchive/pool/apt_1.0/changelog)"
+rm apt.changelog aptarchive/pool/apt_1.0/changelog
+
+aptget changelog apt -qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/' > apt.changelog
+testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"
+rm apt.changelog
+
+aptget changelog apt -d -qq
+testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"
+rm apt.changelog aptarchive/pool/apt_1.0.changelog
+
+testequal 'E: changelog download failed' aptget changelog apt -qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'

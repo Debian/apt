@@ -90,21 +90,6 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
    Describe(Pkg,cout,true,true);
    Sim.MarkInstall(Pkg,false);
 
-   if (strcmp(Pkg.Arch(),"all") == 0)
-   {
-      pkgCache::GrpIterator G = Pkg.Group();
-      pkgCache::GrpIterator iG = iPkg.Group();
-      for (pkgCache::PkgIterator P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
-      {
-	 if (strcmp(P.Arch(), "all") == 0)
-	    continue;
-	 if (iG.FindPkg(P.Arch())->CurrentVer == 0)
-	    continue;
-	 Flags[P->ID] = 1;
-	 Sim.MarkInstall(P, false);
-      }
-   }
-
    // Look for broken conflicts+predepends.
    for (PkgIterator I = Sim.PkgBegin(); I.end() == false; I++)
    {
@@ -150,19 +135,6 @@ bool pkgSimulate::Configure(PkgIterator iPkg)
    
    Flags[Pkg->ID] = 2;
 
-   if (strcmp(Pkg.Arch(),"all") == 0)
-   {
-      pkgCache::GrpIterator G = Pkg.Group();
-      for (pkgCache::PkgIterator P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
-      {
-	 if (strcmp(P.Arch(), "all") == 0)
-	    continue;
-	 if (Flags[P->ID] == 1)
-	    Flags[P->ID] = 2;
-      }
-   }
-
-//   Sim.MarkInstall(Pkg,false);
    if (Sim[Pkg].InstBroken() == true)
    {
       cout << "Conf " << Pkg.FullName(false) << " broken" << endl;
@@ -213,21 +185,6 @@ bool pkgSimulate::Remove(PkgIterator iPkg,bool Purge)
 
    Flags[Pkg->ID] = 3;
    Sim.MarkDelete(Pkg);
-
-   if (strcmp(Pkg.Arch(),"all") == 0)
-   {
-      pkgCache::GrpIterator G = Pkg.Group();
-      pkgCache::GrpIterator iG = iPkg.Group();
-      for (pkgCache::PkgIterator P = G.FindPkg("any"); P.end() != true; P = G.NextPkg(P))
-      {
-	 if (strcmp(P.Arch(), "all") == 0)
-	    continue;
-	 if (iG.FindPkg(P.Arch())->CurrentVer == 0)
-	    continue;
-	 Flags[P->ID] = 3;
-	 Sim.MarkDelete(P);
-      }
-   }
 
    if (Purge == true)
       cout << "Purg ";

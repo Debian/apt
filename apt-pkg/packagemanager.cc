@@ -81,9 +81,6 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
       if (List->IsNow(Pkg) == false)
 	 continue;
 
-      if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == true)
-	 continue;
-
       new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
 			FileNames[Pkg->ID]);
    }
@@ -281,9 +278,7 @@ bool pkgPackageManager::ConfigureAll()
    {
       PkgIterator Pkg(Cache,*I);
 
-      if (ConfigurePkgs == true &&
-	  pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false &&
-	  Configure(Pkg) == false)
+      if (ConfigurePkgs == true && Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -318,9 +313,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (ConfigurePkgs == true &&
-	  pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false &&
-	  Configure(Pkg) == false)
+      if (ConfigurePkgs == true && Configure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -473,10 +466,7 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 
    List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
 
-   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false)
-      return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
-   else
-      return SmartRemove(Pkg.Group().FindPkg("all"));
+   return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
    return true;
 }
 									/*}}}*/
@@ -592,22 +582,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 	P.end() == false; P++)
       CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
 
-   if (pkgCache::VerIterator(Cache, Cache[Pkg].CandidateVer).Pseudo() == false)
-   {
-      if(Install(Pkg,FileNames[Pkg->ID]) == false)
-         return false;
-   } else {
-      // Pseudo packages will not be unpacked - instead we will do this
-      // for the "real" package, but only once and if it is already
-      // configured we don't need to unpack it again…
-      PkgIterator const P = Pkg.Group().FindPkg("all");
-      if (List->IsFlag(P,pkgOrderList::UnPacked) != true &&
-	  List->IsFlag(P,pkgOrderList::Configured) != true &&
-	  P.State() != pkgCache::PkgIterator::NeedsNothing) {
-	 if (SmartUnPack(P) == false)
-	    return false;
-      }
-   }
+   if(Install(Pkg,FileNames[Pkg->ID]) == false)
+      return false;
+
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
    
    // Perform immedate configuration of the package.

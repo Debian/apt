@@ -14,13 +14,10 @@ setupaptarchive
 aptget install unrelated debhelper -qq 2>&1 > /dev/null
 testdpkginstalled 'unrelated' 'debhelper' 'po-debconf'
 
-testfileequal 'rootdir/var/lib/apt/extended_states' 'Package: po-debconf
-Architecture: i386
-Auto-Installed: 1
-'
+testmarkedauto 'po-debconf'
 aptget remove debhelper -y -qq 2>&1 > /dev/null
-testdpkgnoninstalled 'debhelper'
-testdpkginstalled 'po-debconf unrelated'
+testdpkgnotinstalled 'debhelper'
+testdpkginstalled 'po-debconf' 'unrelated'
 
 echo 'APT::NeverAutoRemove { "^debc.*nf$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
 testequal 'Reading package lists...
@@ -42,9 +39,8 @@ testdpkginstalled "po-debconf"
 
 rm rootdir/etc/apt/apt.conf.d/00autoremove
 aptget autoremove -y -qq 2>&1 > /dev/null
-testdpkgnoninstalled 'po-debconf'
-
-testfileequal 'rootdir/var/lib/apt/extended_states' ''
+testdpkgnotinstalled 'po-debconf'
+testmarkedauto
 
 sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d'
 testfileequal 'rootdir/var/log/apt/history.log' '

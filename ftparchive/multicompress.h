@@ -20,28 +20,18 @@
 
 #include <string>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <stdio.h>
 #include <sys/types.h>
     
 class MultiCompress
 {
-   // Enumeration of all supported compressors
-   struct CompType
-   {
-      const char *Name;
-      const char *Extension;
-      const char *Binary;
-      const char *CompArgs;
-      const char *UnCompArgs;
-      unsigned char Cost;
-   };
-
    // An output file
    struct Files
    {
       string Output;
-      const CompType *CompressProg;
-      Files *Next;      
+      APT::Configuration::Compressor CompressProg;
+      Files *Next;
       FileFd TmpFile;
       pid_t CompressProc;
       time_t OldMTime;
@@ -51,10 +41,9 @@ class MultiCompress
    Files *Outputs;
    pid_t Outputter;
    mode_t Permissions;
-   static const CompType Compressors[];
 
-   bool OpenCompress(const CompType *Prog,pid_t &Pid,int const &FileFd,
-		     int &OutFd,bool const &Comp);
+   bool OpenCompress(APT::Configuration::Compressor const &Prog,
+		     pid_t &Pid,int const &FileFd, int &OutFd,bool const &Comp);
    bool Child(int const &Fd);
    bool Start();
    bool Die();

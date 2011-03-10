@@ -60,6 +60,9 @@ class FTWScanner
    }
    
    public:
+   bool DoMD5;
+   bool DoSHA1;
+   bool DoSHA256;
 
    unsigned long DeLinkLimit;
    string InternalPrefix;
@@ -103,9 +106,6 @@ class PackagesWriter : public FTWScanner
    public:
 
    // Some flags
-   bool DoMD5;
-   bool DoSHA1;
-   bool DoSHA256;
    bool DoAlwaysStat;
    bool NoOverride;
    bool DoContents;

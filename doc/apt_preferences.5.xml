@@ -71,8 +71,10 @@ You have been warned.</para>
 directory are parsed in alphanumeric ascending order and need to obey the
 following naming convention: The files have no or "<literal>pref</literal>"
 as filename extension and which only contain alphanumeric,  hyphen (-),
-underscore (_) and period (.) characters - otherwise they will be silently
-ignored.</para>
+underscore (_) and period (.) characters.
+Otherwise APT will print a notice that it has ignored a file if the file
+doesn't match a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
+configuration list - in this case it will be silently ignored.</para>
 
 <refsect2><title>APT's Default Priority Assignments</title>
 

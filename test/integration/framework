@@ -79,6 +79,7 @@ aptcache() { runapt apt-cache $*; }
 aptget() { runapt apt-get $*; }
 aptftparchive() { runapt apt-ftparchive $*; }
 aptkey() { runapt apt-key $*; }
+aptmark() { runapt apt-mark $*; }
 dpkg() {
 	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
 }
@@ -137,7 +138,6 @@ setupenvironment() {
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${BUILDDIRECTORY}/methods\";" >> aptconfig.conf
 	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
-	echo "Dir::Bin::methods \"${BUILDDIRECTORY}/methods\";" >> aptconfig.conf
 	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
@@ -268,11 +268,14 @@ Package: $NAME" > ${BUILDDIR}/debian/control
 	(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$ARCH)
 	(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 
-	dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. > /dev/null
+	dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. 2> /dev/null > /dev/null
 	echo "pool/${NAME}_${VERSION}_${ARCH}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	for SRC in $SRCS; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 	done
+	mkdir -p ${BUILDDIR}/../${NAME}_${VERSION}
+	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}/
+	cp ${BUILDDIR}/debian/changelog ${BUILDDIR}/../${NAME}_${VERSION}.changelog
 	rm -rf "${BUILDDIR}"
 	msgdone "info"
 }
@@ -325,10 +328,10 @@ createaptftparchiveconfig() {
 	echo -n '";
 };
 Default {
-	Packages::Compress ". gzip bzip2 lzma";
-	Sources::Compress ". gzip bzip2 lzma";
-	Contents::Compress ". gzip bzip2 lzma";
-	Translation::Compress ". gzip bzip2 lzma";
+	Packages::Compress ". gzip bzip2 lzma xz";
+	Sources::Compress ". gzip bzip2 lzma xz";
+	Contents::Compress ". gzip bzip2 lzma xz";
+	Translation::Compress ". gzip bzip2 lzma xz";
 	LongDescription "false";
 };
 TreeDefault {
@@ -435,6 +438,7 @@ buildaptarchivefromfiles() {
 		cat ${line} | gzip > ${line}.gz
 		cat ${line} | bzip2 > ${line}.bz2
 		cat ${line} | lzma > ${line}.lzma
+		cat ${line} | xz > ${line}.xz
 		msgdone "info"
 	done
 	generatereleasefiles
@@ -624,8 +628,8 @@ testnopackage() {
 
 testdpkginstalled() {
 	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^i]' | wc -l)"
-	if [ "$PKGS" != 0 ]; then
+	local PKGS="$(dpkg -l $* | grep '^i' | wc -l)"
+	if [ "$PKGS" != $# ]; then
 		echo $PKGS
 		dpkg -l $* | grep '^[a-z]'
 		msgfail
@@ -634,9 +638,9 @@ testdpkginstalled() {
 	msgpass
 }
 
-testdpkgnoninstalled() {
-	msgtest "Test for correctly non-installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* | grep '^[a-z]' | grep '^[^u]' | wc -l)"
+testdpkgnotinstalled() {
+	msgtest "Test for correctly not-installed package(s) with" "dpkg -l $*"
+	local PKGS="$(dpkg -l $* 2> /dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != 0 ]; then
 		echo
 		dpkg -l $* | grep '^[a-z]'
@@ -644,4 +648,17 @@ testdpkgnoninstalled() {
 		return 1
 	fi
 	msgpass
+}
+
+testmarkedauto() {
+	local COMPAREFILE=$(mktemp)
+	addtrap "rm $COMPAREFILE;"
+	if [ -n "$1" ]; then
+		msgtest 'Test for correctly marked as auto-installed' "$*"
+		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
+	else
+		msgtest 'Test for correctly marked as auto-installed' 'no package'
+		echo > $COMPAREFILE
+	fi
+	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }

@@ -92,7 +92,9 @@ class pkgUdevCdromDevices						/*{{{*/
    struct udev_enumerate *(*udev_enumerate_new) (struct udev *udev);
    struct udev_list_entry *(*udev_list_entry_get_next)(struct udev_list_entry *list_entry);
    const char* (*udev_device_get_property_value)(struct udev_device *udev_device, const char *key);
+#if 0 // FIXME: uncomment on next ABI break
    int (*udev_enumerate_add_match_sysattr)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
+#endif 
    // end libudev dlopen
    
  public:

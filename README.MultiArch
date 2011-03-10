@@ -47,67 +47,17 @@ and also to MultiArch as a Group consists of possible many packages which
 all have the same name and are therefore out of interest for pkgnames.
 
 
-Caused by the paragraph "Dependencies involving Architecture: all packages"
-in the MultiArch spec we have a second major conceptional change
-which could even break existing applications, but we hope for the best…
-An Architecture: all package is internally split into pseudo packages
-for all MultiArch Architectures and additional a package with the
-architecture "all" with no dependencies which is a dependency of all
-these architecture depending packages. While the architecture depending
-packages are mainly used for dependency resolution (a package of arch A which
-depends on an arch all package assumes that the dependencies of this package
-are also from arch A. Packages also sometimes change from any to all or v.v.)
-the arch "all" package is used for scheduling download/installation of the
-underlying "real" package. Note that the architecture depending packages can
-be detected with Pseudo() while the "all" package reports exactly this arch
-as package architecture and as pseudo architecture of the versions of this pkg.
-Beware: All versions of a "real" architecture all package will be report "all"
-as their architecture if asked with Arch() regardless if they are the "all" or
-the architecture depending packages. If you want to know the architecture this
-pseudo package was created for call Arch(true). Also, while the spec say that
-arch:all packages are not allowed to have a MultiArch flag APT assigns a
-special value to them: MultiArch: all.
-
-
-As you might guess this arch:all handling has a few problems (but we think so
-far that the problems are minor compared to the problems we would have with
-other implementations.)
-APT doesn't know which pseudo packages of such an arch all package are
-"installed" (to satisfy dependencies), so APT will generate a Cache in which
-all these pseudo packages are installed (e.g. apt-cache policy will display
-them all as installed). Later in the DepCache step it will "remove"
-all pseudo packages whose dependencies are not satisfied.
-The expense is that if the package state is broken APT could come to the
-conclusion to "remove" too many pseudo packages, but in a stable environment
-APT should never end up in a broken system state…
-
-
 Given all these internal changes it is quite interesting that the actual
 implementation of MultiArch is trivial: Some implicit dependencies and a few
 more provides are all changes needed to get it working. Especially noteworthy
 is that it wasn't needed to change the resolver in any way and other parts only
-need to be told about ignoring pseudo packages or using GrpIterator instead of
-PkgIterator, so chances are good that libapt-applications will proceed to work
-without or at least only require minor changes, but your mileage may vary…
+need to be told about using GrpIterator instead of PkgIterator, so chances are
+good that libapt-applications will proceed to work without or at least only
+require minor changes, but your mileage may vary…
 
 
 Known Issues and/or noteworthy stuff:
 * The implementation is mostly untested, so it is very likely that APT will
   eat your kids if you aren't as lucky as the author of these patches.
-* the (install)size of a pseudo package is always NULL - if you want to know
-  the (install)size you need to get the info from the arch "all" package.
-* It is maybe confusing, but the arch "all" package does have the same versions
-  and in general roughly the same information with one subtil difference:
-  It doesn't have any dependency, regardless of the type. The pseudo packages
-  depend on this package.
-* apt-cache policy foobar on installed architecture all package foobar will
-  report all architecture depending packages as installed. Displaying here the
-  correct information would require to build the complete DepCache…
-* [BUG] An installed package which changes the architecture from any to all
-  (and v.v.) shows up in the NEW packages section instead of UPGRADE.
-* [TODO] Investigate the DepCache pseudo-package killer heuristic:
-  e.g. add more safety guards…
-* [FIXME] a few corner cases/missing features marked as FIXME in the code
-
 
 [0] https://wiki.ubuntu.com/MultiarchSpec

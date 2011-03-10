@@ -106,7 +106,7 @@ bool MMap::Map(FileFd &Fd)
 /* */
 bool MMap::Close(bool DoSync)
 {
-   if ((Flags & UnMapped) == UnMapped || Base == 0 || iSize == 0)
+   if ((Flags & UnMapped) == UnMapped || validData() == false || iSize == 0)
       return true;
    
    if (DoSync == true)
@@ -266,6 +266,8 @@ DynamicMMap::~DynamicMMap()
 {
    if (Fd == 0)
    {
+      if (validData() == false)
+	 return;
 #ifdef _POSIX_MAPPED_FILES
       munmap(Base, WorkSpace);
 #else

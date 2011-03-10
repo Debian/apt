@@ -1,11 +1,6 @@
-apt (0.8.12) UNRELEASED; urgency=low
+apt (0.8.12) unstable; urgency=low
 
   [ Michael Vogt ]
-  * merged lp:~evfool/apt/fix641673:
-    - String-fix in the source and the translations for the grammatical 
-      mistake reported in bug LP: #641673, thanks to Robert Roth
-  * merged lp:~evfool/apt/fix418552:
-    - Grammar fix for bug LP: #418552, thanks to Robert Roth
   * apt-pkg/deb/debindexfile.cc:
     - ignore missing deb-src files in /var/lib/apt/lists, thanks
       to Thorsten Spindler (LP: #85590)
@@ -17,15 +12,138 @@ apt (0.8.12) UNRELEASED; urgency=low
       When this is set to false apt-cdrom will handle any removable
       deivce (like a usb-stick) as a "cdrom/dvd" source
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Feb 2011 17:37:56 +0100
+  [ Christian Perrier ]
+  * Fix error in French translation of manpages (apt_preferences(5)).
+    Merci, Rémi Vanicat. Closes: #613689
+  * Complete French manpage translation
+  * Italian translation update (Milo Casagrande). Closes: #614395
 
-apt (0.8.11) UNRELEASED; urgency=low
+  [ David Kalnischkies ]
+  * ftparchive/multicompress.cc, apt-inst/deb/debfile.cc:
+    - support xz compressor to create xz-compressed Indexes and be able
+      to open data.tar.xz files
+    - load the supported compressors from configuration
+  * ftparchive/writer.cc:
+    - ensure that Date and Valid-Until time strings are not localised
+    - add options to disable specific checksums for Indexes
+    - include xz-compressed Packages and Sources files in Release file
+  * apt-pkg/aptconfiguration.cc:
+    - support download of xz-compressed indexes files
+    - support adding new compressors by configuration
+  * apt-pkg/deb/debsrcrecords.cc:
+    - support xz-compressed source v3 debian.tar files
+    - support every compression we have a compressor configured
+  * ftparchive/contents.cc:
+    - remove ExtractArchive codecopy from apt-inst/deb/debfile.cc
+  * apt-inst/deb/debfile.cc:
+    - support data.tar's compressed with any configured compressor
+  * cmdline/apt-get.cc:
+    - reinstall dependencies of reinstalled "garbage" (Closes: #617257)
+
+  [ Steve Langasek ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - make sure that for multiarch packages, we are passing the full
+      qualified package name to dpkg for removals. (Closes: #614298)
+  * Remove the "pseudopackage" handling of Architecture: all packages for
+    Multi-Arch; instead, Arch: all packages only satisfy dependencies for
+    the native arch, except where the Arch: all package is declared
+    Multi-Arch: foreign.  (Closes: #613584)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Mar 2011 14:46:48 +0100
+
+apt (0.8.11.5) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Add missing dot in French translation of manpages. Merci, Olivier
+    Humbert.
+  * French translation update
+  * French manpages translation update
+
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - party revert fix in 0.8.11.2 which marked all packages as manual
+      installed if the FromUser bit is set in the MarkInstall call.
+      The default for this bit is true and aptitude depends on the old
+      behavior so the package is only marked as manual if its not marked
+      ("old" behavior) or if automatic installation is enabled - which
+      aptitude disables always (see also #613775)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 17 Feb 2011 15:16:31 +0100
+
+apt (0.8.11.4) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/error.cc:
+    - ensure that va_list is not invalid in second try
+  * cmdline/apt-get.cc:
+    - don't remove new dependencies of garbage packages (Closes: #613420)
+  
+  [ Michael Vogt ]
+  * test/integration/*
+    - fix dashish in the integration tests
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 16 Feb 2011 14:36:03 +0100
+
+apt (0.8.11.3) unstable; urgency=low
+
+  * apt-pkg/contrib/fileutl.cc:
+    - really detect bigendian machines by including config.h,
+      so we can really (Closes: #612986)
+  * apt-pkg/contrib/mmap.cc:
+    - Base has as 'valid' failure states 0 and -1 so add a simple
+      validData method to check for failure states
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 14 Feb 2011 16:58:03 +0100
+
+apt (0.8.11.2) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * merged lp:~evfool/apt/fix641673:
+    - String-fix in the source and the translations for the grammatical 
+      mistake reported in bug LP: #641673, thanks to Robert Roth
+  * merged lp:~evfool/apt/fix418552:
+    - Grammar fix for bug LP: #418552, thanks to Robert Roth
+  
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - add --install-suggests option (Closes: #473089)
+  * apt-pkg/depcache.cc:
+    - mark a package which was requested to be installed on commandline
+      always as manual regardless if it is already marked or not as the
+      marker could be lost later by the removal of rdepends (Closes: #612557)
+  * methods/rred.cc:
+    - read patch into MMap only if we work on uncompressed patches
+    - update size of dynamic MMap as we write in from the outside
+  * apt-pkg/contrib/mmap.cc:
+    - do not try to free the mapping if its is unset
+  * apt-pkg/contrib/fileutl.cc:
+    - reorder the loaded filesize bytes for big endian (Closes: #612986)
+      Thanks to Jörg Sommer for the detailed analyse!
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 14 Feb 2011 12:07:18 +0100
+
+apt (0.8.11.1) unstable; urgency=low
+
+  [ Stefan Lippers-Hollmann ]
+  * cmdline/apt-key:
+    - fix root test which prevented setting of trustdb-name
+      which lets gpg fail if it adds/remove keys from trusted.gpg
+      as it tries to open the (maybe) not existent /root/.gnupg
+
+  [ David Kalnischkies ]
+  * debian/apt.symbols:
+    - add more arch dependent symbols
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 09 Feb 2011 17:49:59 +0100
+
+apt (0.8.11) unstable; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/depcache.cc:
     - add SetCandidateRelease() to set a candidate version and
       the candidates of dependencies if needed to a specified
       release (Closes: #572709)
+    - allow conflicts in the same group again (Closes: #612099)
   * cmdline/apt-get.cc:
     - if --print-uris is used don't setup downloader as we don't need
       progress, lock nor the directories it would create otherwise
@@ -37,6 +155,8 @@ apt (0.8.11) UNRELEASED; urgency=low
       so installing packages from experimental or backports is easier
     - really do not show packages in the extra section if they were
       requested on the commandline, e.g. with a modifier (Closes: #184730)
+    - always do removes first and set not installed remove packages
+      on hold to prevent temporary installation later (Closes: #549968)
   * debian/control:
     - add Vcs-Browser now that loggerhead works again (Closes: #511168)
     - depend on debhelper 7 to raise compat level
@@ -63,6 +183,7 @@ apt (0.8.11) UNRELEASED; urgency=low
     - remove duplicated mentioning of --install-recommends
   * doc/sources.list.5.xml:
     - remove obsolete references to non-us (Closes: #594495)
+    - a notice is printed for ignored files (Closes: #597615)
   * debian/rules:
     - use -- instead of deprecated -u for dh_gencontrol
     - remove shlibs.local creation and usage
@@ -91,6 +212,19 @@ apt (0.8.11) UNRELEASED; urgency=low
     - print a good error message if FileSize() is zero
   * apt-pkg/aptconfiguration.cc:
     - remove the inbuilt Translation files whitelist
+  * cmdline/apt-cache.cc:
+    - remove not implemented 'apt-cache add' command
+  * doc/apt-cache.8.xml:
+    - describe reality as apt-cache just queries and doesn't manipulate
+      the caches. Thanks to Enrico Zini for spotting it! (Closes: #612009)
+  * apt-pkg/algorithms.cc:
+    - mark pseudo packages of installed all packages as configured
+      in the simulation as we don't call configure for these packages
+  * apt-pkg/pkgcachegen.cc:
+    - in multiarch, let :all packages conflict with :any packages
+      with a different version to be sure
+  * apt-pkg/contrib/error.cc:
+    - remove 400 char size limit of error messages (LP: #365611)
 
   [ Michael Vogt ]
   * methods/http.cc:
@@ -101,6 +235,9 @@ apt (0.8.11) UNRELEASED; urgency=low
       to Guillem Jover
   * apt-pkg/cdrom.cc, apt-pkg/init.cc, methods/cdrom.cc:
     - use /media/cdrom as default mountoint (closes: #611569)
+  * cmdline/apt-get.cc:
+    - add apt-get changelog (closes: #526990)
+    - add apt-get download (closes: #82738)
 
   [ Martin Pitt ]
   * test/integration/test-compressed-indexes, test/test-indexes.sh:
@@ -108,7 +245,7 @@ apt (0.8.11) UNRELEASED; urgency=low
       will actually test uncompressed indexes regardless of the internal
       default value of Acquire::GzipIndexes.
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 28 Jan 2011 12:22:25 +0100
+ -- Michael Vogt <mvo@debian.org>  Tue, 08 Feb 2011 12:58:12 +0100
 
 apt (0.8.10.3) unstable; urgency=low
 

@@ -257,7 +257,7 @@ public:									/*{{{*/
 		inline const char *VerStr() const { return (**this).VerStr(); };
 		inline const char *Section() const { return (**this).Section(); };
 		inline const char *Arch() const { return (**this).Arch(); };
-		inline const char *Arch(bool const pseudo) const { return (**this).Arch(pseudo); };
+		__deprecated inline const char *Arch(bool const pseudo) const { return (**this).Arch(); };
 		inline pkgCache::PkgIterator ParentPkg() const { return (**this).ParentPkg(); };
 		inline pkgCache::DescIterator DescriptionList() const { return (**this).DescriptionList(); };
 		inline pkgCache::DescIterator TranslatedDescription() const { return (**this).TranslatedDescription(); };
@@ -268,7 +268,7 @@ public:									/*{{{*/
 		inline const char *PriorityType() const { return (**this).PriorityType(); };
 		inline string RelStr() const { return (**this).RelStr(); };
 		inline bool Automatic() const { return (**this).Automatic(); };
-		inline bool Pseudo() const { return (**this).Pseudo(); };
+		__deprecated inline bool Pseudo() const { return false; };
 		inline pkgCache::VerFileIterator NewestFile() const { return (**this).NewestFile(); };
 	};
 									/*}}}*/
