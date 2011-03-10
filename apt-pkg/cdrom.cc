@@ -875,7 +875,8 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
 vector<CdromDevice>
 pkgUdevCdromDevices::Scan()
 { 
-   return ScanForRemovable(true); 
+   bool CdromOnly = _config->FindB("APT::cdrom::CdromOnly", true);
+   return ScanForRemovable(CdromOnly); 
 };
 									/*}}}*/
                                                                         /*{{{*/

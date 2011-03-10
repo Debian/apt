@@ -11,6 +11,11 @@ apt (0.8.12) UNRELEASED; urgency=low
       to Thorsten Spindler (LP: #85590)
   * apt-pkg/contrib/fileutl.cc, apt-pkg/deb/dpkgpm.cc:
     - honor Dpkg::Chroot-Directory in the RunScripts*() methods
+  * apt-pkg/contrib/cdromutl.{cc,h}, apt-pkg/cdrom.{cc,h}:
+    - deal with missing FSTAB_DIR when using libudev to discover cdrom
+    - add experimental APT::cdrom::CdromOnly option (on by default). 
+      When this is set to false apt-cdrom will handle any removable
+      deivce (like a usb-stick) as a "cdrom/dvd" source
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Feb 2011 17:37:56 +0100
 

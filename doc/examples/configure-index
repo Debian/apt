@@ -265,7 +265,10 @@ Acquire
   cdrom
   {
     // do auto detection of the cdrom mountpoint
-    AutoDetect "true";
+    AutoDetect "true";   
+    // when auto-detecting, only look for cdrom/dvd. when this is false
+    // it will support any removable device as a "cdrom" source
+    CdromOnly "true";
     
     // cdrom mountpoint (needs to be defined in fstab if AutoDetect is not used)
     mount "/cdrom";
