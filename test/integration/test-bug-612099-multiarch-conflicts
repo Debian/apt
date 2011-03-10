@@ -59,29 +59,27 @@ Inst foobar:amd64 (1.0 stable [amd64])
 Conf libc6:amd64 (1.0 stable [amd64])
 Conf foobar:amd64 (1.0 stable [amd64])' aptget install foobar:amd64 -st stable
 
-# FIXME: libc6:i386 is installed, we are switching to libc6:all
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
-The following extra packages will be installed:
-  libc6
 The following NEW packages will be installed:
-  foobar libc6
-0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
-Inst libc6 (2.0 testing, testing [all])
+  foobar
+The following packages will be upgraded:
+  libc6
+1 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 [1.0] (2.0 testing [i386])
 Inst foobar (1.0 stable [i386])
-Conf libc6 (2.0 testing, testing [all])
+Conf libc6 (2.0 testing [i386])
 Conf foobar (1.0 stable [i386])' aptget install foobar/stable libc6 -st testing
 
-# FIXME: libc6:i386 is installed, we are switching to libc6:all
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
-The following NEW packages will be installed:
+The following packages will be upgraded:
   libc6
-0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst libc6 (2.0 testing, testing [all])
-Conf libc6 (2.0 testing, testing [all])' aptget upgrade -t testing -s
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 [1.0] (2.0 testing [i386])
+Conf libc6 (2.0 testing [i386])' aptget upgrade -t testing -s
 aptget upgrade -y -qq 2>&1 > /dev/null
 testdpkginstalled libc6
 
@@ -91,31 +89,34 @@ Reading state information...
 The following NEW packages will be installed:
   foobar
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst foobar (1.0 stable [i386]) []
+Inst foobar (1.0 stable [i386])
 Conf foobar (1.0 stable [i386])' aptget install foobar/stable -st testing
 
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
+The following extra packages will be installed:
+  libc6:amd64
+The following packages will be REMOVED:
+  libc6
 The following NEW packages will be installed:
-  foobar:amd64
-0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+  foobar:amd64 libc6:amd64
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv libc6 [2.0]
+Inst libc6:amd64 (1.0 stable [amd64])
 Inst foobar:amd64 (1.0 stable [amd64])
+Conf libc6:amd64 (1.0 stable [amd64])
 Conf foobar:amd64 (1.0 stable [amd64])' aptget install foobar:amd64/stable -st testing
 
 
-# FIXME: the display is a strange (its a downgrade), but the handling itself correct
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 Selected version '1.0' (stable [i386]) for 'libc6'
-The following packages will be REMOVED:
+The following packages will be DOWNGRADED:
   libc6
-The following NEW packages will be installed:
-  libc6
-0 upgraded, 1 newly installed, 2 to remove and 0 not upgraded.
-Remv libc6 [2.0]
-Inst libc6 (1.0 stable [i386])
+0 upgraded, 0 newly installed, 1 downgraded, 0 to remove and 0 not upgraded.
+Inst libc6 [2.0] (1.0 stable [i386])
 Conf libc6 (1.0 stable [i386])" aptget install libc6/stable -s -q=0
 
 
@@ -164,30 +165,25 @@ Conf libc6-same:amd64 (1.0 stable [amd64])' aptget install libc6-same:amd64 -s -
 
 # FIXME: We should test installing libc6-same:amd64 here, but dpkg doesn't allow it currently
 
-# FIXME: upgrade any to all as above
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
-The following NEW packages will be installed:
+The following packages will be upgraded:
   libc6-same
-0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst libc6-same (2.0 testing, testing [all])
-Conf libc6-same (2.0 testing, testing [all])' aptget upgrade -t testing -s
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6-same [1.0] (2.0 testing [i386])
+Conf libc6-same (2.0 testing [i386])' aptget upgrade -t testing -s
 aptget upgrade -y -qq 2>&1 > /dev/null
 testdpkginstalled libc6-same
 
-# FIXME: the display is a strange (its a downgrade), but the handling itself correct
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 Selected version '1.0' (stable [i386]) for 'libc6-same'
-The following packages will be REMOVED:
+The following packages will be DOWNGRADED:
   libc6-same
-The following NEW packages will be installed:
-  libc6-same
-0 upgraded, 1 newly installed, 2 to remove and 0 not upgraded.
-Remv libc6-same [2.0]
-Inst libc6-same (1.0 stable [i386])
+0 upgraded, 0 newly installed, 1 downgraded, 0 to remove and 0 not upgraded.
+Inst libc6-same [2.0] (1.0 stable [i386])
 Conf libc6-same (1.0 stable [i386])" aptget install libc6-same/stable -s -q=0
 
 testequal 'Reading package lists...
@@ -196,14 +192,21 @@ Reading state information...
 The following NEW packages will be installed:
   foobar-same
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst foobar-same (1.0 stable [i386]) []
+Inst foobar-same (1.0 stable [i386])
 Conf foobar-same (1.0 stable [i386])' aptget install foobar-same/stable -st testing
 
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
+The following extra packages will be installed:
+  libc6-same:amd64
+The following packages will be REMOVED:
+  libc6-same
 The following NEW packages will be installed:
-  foobar-same:amd64
-0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+  foobar-same:amd64 libc6-same:amd64
+0 upgraded, 2 newly installed, 1 to remove and 0 not upgraded.
+Remv libc6-same [2.0]
+Inst libc6-same:amd64 (1.0 stable [amd64])
 Inst foobar-same:amd64 (1.0 stable [amd64])
+Conf libc6-same:amd64 (1.0 stable [amd64])
 Conf foobar-same:amd64 (1.0 stable [amd64])' aptget install foobar-same:amd64/stable -st testing

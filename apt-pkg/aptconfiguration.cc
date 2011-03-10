@@ -38,12 +38,11 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 
 	// setup the defaults for the compressiontypes => method mapping
 	_config->CndSet("Acquire::CompressionTypes::bz2","bzip2");
+	_config->CndSet("Acquire::CompressionTypes::xz","xz");
 	_config->CndSet("Acquire::CompressionTypes::lzma","lzma");
 	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
 
-	// Set default application paths to check for optional compression types
-	_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
-	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
+	setDefaultConfigurationForCompressors();
 
 	// accept non-list order as override setting for config settings on commandline
 	std::string const overrideOrder = _config->Find("Acquire::CompressionTypes::Order","");
@@ -342,6 +341,88 @@ bool const Configuration::checkArchitecture(std::string const &Arch) {
 		return true;
 	std::vector<std::string> const archs = getArchitectures(true);
 	return (std::find(archs.begin(), archs.end(), Arch) != archs.end());
+}
+									/*}}}*/
+// setDefaultConfigurationForCompressors				/*{{{*/
+void Configuration::setDefaultConfigurationForCompressors() {
+	// Set default application paths to check for optional compression types
+	_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
+	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
+	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
+}
+									/*}}}*/
+// getCompressors - Return Vector of usbale compressors			/*{{{*/
+// ---------------------------------------------------------------------
+/* return a vector of compressors used by apt-ftparchive in the
+   multicompress functionality or to detect data.tar files */
+std::vector<APT::Configuration::Compressor>
+const Configuration::getCompressors(bool const Cached) {
+	static std::vector<APT::Configuration::Compressor> compressors;
+	if (compressors.empty() == false) {
+		if (Cached == true)
+			return compressors;
+		else
+			compressors.clear();
+	}
+
+	setDefaultConfigurationForCompressors();
+
+	compressors.push_back(Compressor(".", "", "", "", "", 1));
+	if (_config->Exists("Dir::Bin::gzip") == false || FileExists(_config->FindFile("Dir::Bin::gzip")) == true)
+		compressors.push_back(Compressor("gzip",".gz","gzip","-9n","-d",2));
+	if (_config->Exists("Dir::Bin::bzip2") == false || FileExists(_config->FindFile("Dir::Bin::bzip2")) == true)
+		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-9","-d",3));
+	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
+		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",4));
+	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)
+		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",5));
+
+	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
+	for (std::vector<std::string>::const_iterator c = comp.begin();
+	     c != comp.end(); ++c) {
+		if (*c == "." || *c == "gzip" || *c == "bzip2" || *c == "lzma" || *c == "xz")
+			continue;
+		compressors.push_back(Compressor(c->c_str(), std::string(".").append(*c).c_str(), c->c_str(), "-9", "-d", 100));
+	}
+
+	return compressors;
+}
+									/*}}}*/
+// getCompressorExtensions - supported data.tar extensions		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::vector<std::string> const Configuration::getCompressorExtensions() {
+	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();
+	std::vector<std::string> ext;
+	for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
+	     c != compressors.end(); ++c)
+		if (c->Extension.empty() == false && c->Extension != ".")
+			ext.push_back(c->Extension);
+	return ext;
+}
+									/*}}}*/
+// Compressor constructor						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+Configuration::Compressor::Compressor(char const *name, char const *extension,
+				      char const *binary,
+				      char const *compressArg, char const *uncompressArg,
+				      unsigned short const cost) {
+	std::string const config = string("APT:Compressor::").append(name).append("::");
+	Name = _config->Find(std::string(config).append("Name"), name);
+	Extension = _config->Find(std::string(config).append("Extension"), extension);
+	Binary = _config->Find(std::string(config).append("Binary"), binary);
+	Cost = _config->FindI(std::string(config).append("Cost"), cost);
+	std::string const compConf = std::string(config).append("CompressArg");
+	if (_config->Exists(compConf) == true)
+		CompressArgs = _config->FindVector(compConf);
+	else if (compressArg != NULL)
+		CompressArgs.push_back(compressArg);
+	std::string const uncompConf = std::string(config).append("UncompressArg");
+	if (_config->Exists(uncompConf) == true)
+		UncompressArgs = _config->FindVector(uncompConf);
+	else if (uncompressArg != NULL)
+		UncompressArgs.push_back(uncompressArg);
 }
 									/*}}}*/
 }

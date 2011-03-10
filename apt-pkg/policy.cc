@@ -152,13 +152,6 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
    {
       /* Lets see if this version is the installed version */
       bool instVer = (Pkg.CurrentVer() == Ver);
-      if (Ver.Pseudo() == true && instVer == false)
-      {
-	 pkgCache::PkgIterator const allPkg = Ver.ParentPkg().Group().FindPkg("all");
-	 if (allPkg->CurrentVer != 0 && allPkg.CurrentVer()->Hash == Ver->Hash &&
-	     strcmp(allPkg.CurVersion(), Ver.VerStr()) == 0)
-	    instVer = true;
-      }
 
       for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; VF++)
       {

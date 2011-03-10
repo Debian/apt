@@ -1519,7 +1519,6 @@ bool Policy(CommandLine &CmdL)
       return true;
    }
 
-   string const myArch = _config->Find("APT::Architecture");
    char const * const msgInstalled = _("  Installed: ");
    char const * const msgCandidate = _("  Candidate: ");
    short const InstalledLessCandidate =
@@ -1532,14 +1531,8 @@ bool Policy(CommandLine &CmdL)
    // Print out detailed information for each package
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
    APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
-   for (APT::PackageSet::const_iterator I = pkgset.begin(); I != pkgset.end(); ++I)
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
-      pkgCache::PkgIterator Pkg = I.Group().FindPkg("any");
-
-      for (; Pkg.end() != true; Pkg = I.Group().NextPkg(Pkg)) {
-      if (strcmp(Pkg.Arch(),"all") == 0)
-	 continue;
-
       cout << Pkg.FullName(true) << ":" << endl;
 
       // Installed version
@@ -1587,7 +1580,6 @@ bool Policy(CommandLine &CmdL)
 	    printf("       %4i %s\n",Plcy->GetPriority(VF.File()),
 		   Indx->Describe(true).c_str());
 	 }
-      }
       }
    }
    

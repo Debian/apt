@@ -82,6 +82,35 @@ public:									/*{{{*/
 	 */
 	bool static const checkArchitecture(std::string const &Arch);
 
+	/** \brief Representation of supported compressors */
+	struct Compressor {
+		std::string Name;
+		std::string Extension;
+		std::string Binary;
+		std::vector<std::string> CompressArgs;
+		std::vector<std::string> UncompressArgs;
+		unsigned short Cost;
+
+		Compressor(char const *name, char const *extension, char const *binary,
+			   char const *compressArg, char const *uncompressArg,
+			   unsigned short const cost);
+		Compressor() {};
+	};
+
+	/** \brief Return a vector of Compressors supported for data.tar's
+	 *
+	 *  \param Cached saves the result so we need to calculated it only once
+	 *                this parameter should ony be used for testing purposes.
+	 *
+	 *  \return a vector of Compressors
+	 */
+	std::vector<Compressor> static const getCompressors(bool const Cached = true);
+
+	/** \brief Return a vector of extensions supported for data.tar's */
+	std::vector<std::string> static const getCompressorExtensions();
+									/*}}}*/
+	private:							/*{{{*/
+	void static setDefaultConfigurationForCompressors();
 									/*}}}*/
 };
 									/*}}}*/
