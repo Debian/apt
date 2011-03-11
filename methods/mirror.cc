@@ -125,13 +125,14 @@ bool MirrorMethod::Clean(string Dir)
 
 bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
 {
-   if(Debug)
-      clog << "MirrorMethod::DownloadMirrorFile(): " << endl;
-
    // not that great to use pkgAcquire here, but we do not have 
    // any other way right now
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
+
+   if(Debug)
+      clog << "MirrorMethod::DownloadMirrorFile(): '" << fetch << "'"
+           << " to " << MirrorFile << endl;
 
    pkgAcquire Fetcher;
    new pkgAcqFile(&Fetcher, fetch, "", 0, "", "", "", MirrorFile);
@@ -139,6 +140,10 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    if(res)
       DownloadedMirrorFile = true;
    Fetcher.Shutdown();
+
+   if(Debug)
+      clog << "MirrorMethod::DownloadMirrorFile() success: " << res << endl;
+   
    return res;
 }
 
@@ -176,7 +181,7 @@ bool MirrorMethod::TryNextMirror()
 	 continue;
 
       vector<string>::const_iterator nextmirror = mirror + 1;
-      if (nextmirror != AllMirrors.end())
+      if (nextmirror == AllMirrors.end())
 	 break;
       Queue->Uri.replace(0, mirror->length(), *nextmirror);
       if (Debug)

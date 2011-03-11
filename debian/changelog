@@ -1,9 +1,16 @@
-apt (0.8.12ubuntu1) UNRELEASED; urgency=low
+apt (0.8.12ubuntu2) unstable; urgency=low
 
+  [ Thorsten Spindler ]
+  * methods/rsh.cc
+    - fix rsh/ssh option parsing (LP: #678080), thanks to
+      Ville Mattila 
+  
   [ Michael Vogt ]
   * apt-pkg/acquire-item.cc:
     - mark pkgAcqIndexTrans as Index-File to avoid asking the
       user to insert the CD on each apt-get update
+  * methods/mirror.cc:
+    - improve debug output and fix bug in TryNextMirror
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Mar 2011 15:56:54 +0100
 
