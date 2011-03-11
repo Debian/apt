@@ -110,6 +110,8 @@ bool RSHConn::Connect(string Host, string User)
       // Probably should do
       // dup2(open("/dev/null",O_RDONLY),STDERR_FILENO);
 
+      Args[i++] = Prog;
+
       // Insert user-supplied command line options
       Configuration::Item const *Opts = RshOptions;
       if (Opts != 0)
@@ -123,7 +125,6 @@ bool RSHConn::Connect(string Host, string User)
          }
       }
 
-      Args[i++] = Prog;
       if (User.empty() == false) {
          Args[i++] = "-l";
 	 Args[i++] = User.c_str();
