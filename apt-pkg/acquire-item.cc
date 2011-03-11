@@ -1002,8 +1002,8 @@ string pkgAcqIndexTrans::Custom600Headers()
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
-      return "\nFail-Ignore: true";
-   return "\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+      return "\nFail-Ignore: true\nIndex-File: true";
+   return "\nFail-Ignore: true\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
 // AcqIndexTrans::Failed - Silence failure messages for missing files	/*{{{*/
