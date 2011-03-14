@@ -220,8 +220,8 @@ string pkgAcqSubIndex::Custom600Headers()
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
-      return "\nIndex-File: true";
-   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+      return "\nIndex-File: true\nFail-Ignore: true\n";
+   return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
 void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
@@ -835,10 +835,16 @@ string pkgAcqIndex::Custom600Headers()
    if (_config->FindB("Acquire::GzipIndexes",false))
       Final += ".gz";
    
+   string msg = "\nIndex-File: true";
+   // FIXME: this really should use "IndexTarget::IsOptional()" but that
+   //        seems to be difficult without breaking ABI
+   if (ShortDesc().find("Translation") != 0)
+      msg += "\nFail-Ignore: true";
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
-      return "\nIndex-File: true";
-   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+      msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+
+   return msg;
 }
 									/*}}}*/
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
