@@ -157,7 +157,7 @@ bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
 
    // read 
    ifstream in(mirror_file.c_str());
-   while ( ! in.eof() ) {
+   while ( !in.eof() ) {
       getline(in, line);
       content.push_back(line);
    }
@@ -402,6 +402,8 @@ void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
 int main()
 {
    setlocale(LC_ALL, "");
+
+   srand ( time(NULL) );
 
    MirrorMethod Mth;
 
