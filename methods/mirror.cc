@@ -17,6 +17,7 @@
 #include <apt-pkg/sourcelist.h>
 
 #include <fstream>
+#include <algorithm>
 #include <iostream>
 #include <stdarg.h>
 #include <sys/stat.h>
@@ -145,6 +146,34 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
       clog << "MirrorMethod::DownloadMirrorFile() success: " << res << endl;
    
    return res;
+}
+
+// Randomizes the lines in the mirror file, this is used so that
+// we spread the load on the mirrors evenly
+bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
+{
+   vector<string> content;
+   string line;
+
+   // read 
+   ifstream in(mirror_file.c_str());
+   while ( ! in.eof() ) {
+      getline(in, line);
+      content.push_back(line);
+   }
+   
+   // randomize
+   random_shuffle(content.begin(), content.end());
+
+   // write
+   ofstream out(mirror_file.c_str());
+   while ( !content.empty()) {
+      line = content.back();
+      content.pop_back();
+      out << line << "\n";
+   }
+
+   return true;
 }
 
 /* convert a the Queue->Uri back to the mirror base uri and look
@@ -313,6 +342,7 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
    {
       Clean(_config->FindDir("Dir::State::mirrors"));
       DownloadMirrorFile(Itm->Uri);
+      RandomizeMirrorFile(MirrorFile);
    }
 
    if(AllMirrors.empty()) {
