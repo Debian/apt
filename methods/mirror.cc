@@ -16,12 +16,15 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/sourcelist.h>
 
-#include <fstream>
+
 #include <algorithm>
+#include <fstream>
 #include <iostream>
+
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
 #include <dirent.h>
 
 using namespace std;
@@ -162,7 +165,17 @@ bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
       content.push_back(line);
    }
    
-   // randomize
+   // we want the file to be random for each different machine, but also
+   // "stable" on the same machine. this is to avoid running into out-of-sync
+   // issues (i.e. Release/Release.gpg different on each mirror)
+   struct utsname buf;
+   int seed=1, i;
+   if(uname(&buf) == 0) {
+      for(i=0,seed=1; buf.nodename[i] != 0; i++) {
+         seed = seed * 31 + buf.nodename[i];
+      }
+   }
+   srand( seed );
    random_shuffle(content.begin(), content.end());
 
    // write
@@ -402,8 +415,6 @@ void MirrorMethod::URIDone(FetchResult &Res,FetchResult *Alt)
 int main()
 {
    setlocale(LC_ALL, "");
-
-   srand ( time(NULL) );
 
    MirrorMethod Mth;
 
