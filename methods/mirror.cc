@@ -186,6 +186,10 @@ bool MirrorMethod::TryNextMirror()
       Queue->Uri.replace(0, mirror->length(), *nextmirror);
       if (Debug)
 	 clog << "TryNextMirror: " << Queue->Uri << endl;
+
+      // inform parent
+      UsedMirror = *nextmirror;
+      Log("Switching mirror");
       return true;
    }
 
