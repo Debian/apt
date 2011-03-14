@@ -1538,6 +1538,21 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
    SigFile = DestFile;
 }
 									/*}}}*/
+// pkgAcqMetaClearSig::Custom600Headers - Insert custom request headers	/*{{{*/
+// ---------------------------------------------------------------------
+// FIXME: this can go away once the InRelease file is used widely
+string pkgAcqMetaClearSig::Custom600Headers()
+{
+   string Final = _config->FindDir("Dir::State::lists");
+   Final += URItoFileName(RealURI);
+
+   struct stat Buf;
+   if (stat(Final.c_str(),&Buf) != 0)
+      return "\nIndex-File: true\nFail-Ignore: true\n";
+
+   return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+}
+									/*}}}*/
 void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
 {
    if (AuthPass == false)
