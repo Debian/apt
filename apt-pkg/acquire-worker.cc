@@ -199,6 +199,17 @@ bool pkgAcquire::Worker::RunMessages()
       pkgAcquire::Queue::QItem *Itm = 0;
       if (URI.empty() == false)
 	 Itm = OwnerQ->FindItem(URI,this);
+
+      // update used mirror
+      string UsedMirror = LookupTag(Message,"UsedMirror", "");
+      if (!UsedMirror.empty() && 
+          Itm && 
+          Itm->Description.find(" ") != string::npos) 
+      {
+         Itm->Description.replace(0, Itm->Description.find(" "), UsedMirror);
+         // FIXME: will we need this as well?
+         //Itm->ShortDesc = UsedMirror;
+      }
       
       // Determine the message number and dispatch
       switch (Number)

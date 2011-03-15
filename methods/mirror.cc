@@ -16,11 +16,15 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/sourcelist.h>
 
+
+#include <algorithm>
 #include <fstream>
 #include <iostream>
+
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/utsname.h>
 #include <dirent.h>
 
 using namespace std;
@@ -147,6 +151,44 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    return res;
 }
 
+// Randomizes the lines in the mirror file, this is used so that
+// we spread the load on the mirrors evenly
+bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
+{
+   vector<string> content;
+   string line;
+
+   // read 
+   ifstream in(mirror_file.c_str());
+   while ( !in.eof() ) {
+      getline(in, line);
+      content.push_back(line);
+   }
+   
+   // we want the file to be random for each different machine, but also
+   // "stable" on the same machine. this is to avoid running into out-of-sync
+   // issues (i.e. Release/Release.gpg different on each mirror)
+   struct utsname buf;
+   int seed=1, i;
+   if(uname(&buf) == 0) {
+      for(i=0,seed=1; buf.nodename[i] != 0; i++) {
+         seed = seed * 31 + buf.nodename[i];
+      }
+   }
+   srand( seed );
+   random_shuffle(content.begin(), content.end());
+
+   // write
+   ofstream out(mirror_file.c_str());
+   while ( !content.empty()) {
+      line = content.back();
+      content.pop_back();
+      out << line << "\n";
+   }
+
+   return true;
+}
+
 /* convert a the Queue->Uri back to the mirror base uri and look
  * at all mirrors we have for this, this is needed as queue->uri
  * may point to different mirrors (if TryNextMirror() was run)
@@ -186,6 +228,10 @@ bool MirrorMethod::TryNextMirror()
       Queue->Uri.replace(0, mirror->length(), *nextmirror);
       if (Debug)
 	 clog << "TryNextMirror: " << Queue->Uri << endl;
+
+      // inform parent
+      UsedMirror = *nextmirror;
+      Log("Switching mirror");
       return true;
    }
 
@@ -309,6 +355,7 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
    {
       Clean(_config->FindDir("Dir::State::mirrors"));
       DownloadMirrorFile(Itm->Uri);
+      RandomizeMirrorFile(MirrorFile);
    }
 
    if(AllMirrors.empty()) {

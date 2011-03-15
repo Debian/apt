@@ -854,6 +854,7 @@ class pkgAcqMetaClearSig : public pkgAcqMetaIndex
 
 public:
    void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual string Custom600Headers();
 
    /** \brief Create a new pkgAcqMetaClearSig. */
    pkgAcqMetaClearSig(pkgAcquire *Owner,
