@@ -150,7 +150,7 @@ void pkgAcqMethod::URIStart(FetchResult &Res)
       End += snprintf(End,sizeof(S)-4 - (End - S),"Resume-Point: %lu\n",
 		      Res.ResumePoint);
    if (UsedMirror.empty() == false)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
+      End += snprintf(End,sizeof(S)-4 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
       
    strcat(End,"\n");
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
