@@ -149,6 +149,8 @@ void pkgAcqMethod::URIStart(FetchResult &Res)
    if (Res.ResumePoint != 0)
       End += snprintf(End,sizeof(S)-4 - (End - S),"Resume-Point: %lu\n",
 		      Res.ResumePoint);
+   if (UsedMirror.empty() == false)
+      End += snprintf(End,sizeof(S)-4 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
       
    strcat(End,"\n");
    if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
@@ -418,9 +420,11 @@ void pkgAcqMethod::Log(const char *Format,...)
 
    // sprintf the description
    char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S)-4,"101 Log\nURI: %s\n"
-			       "Message: ",CurrentURI.c_str());
-
+   unsigned int Len = snprintf(S,sizeof(S)-4,"101 Log\n"
+                               "URI: %s\n"
+                               "UsedMirror: %s\n"
+			       "Message: ", UsedMirror.c_str(),
+                               CurrentURI.c_str());
    vsnprintf(S+Len,sizeof(S)-4-Len,Format,args);
    strcat(S,"\n\n");
    
@@ -442,8 +446,11 @@ void pkgAcqMethod::Status(const char *Format,...)
 
    // sprintf the description
    char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S)-4,"102 Status\nURI: %s\n"
-			       "Message: ",CurrentURI.c_str());
+   unsigned int Len = snprintf(S,sizeof(S)-4,"102 Status\n"
+                               "URI: %s\n"
+                               "UsedMirror: %s\n"
+			       "Message: ",UsedMirror.c_str(),
+                               CurrentURI.c_str());
 
    vsnprintf(S+Len,sizeof(S)-4-Len,Format,args);
    strcat(S,"\n\n");

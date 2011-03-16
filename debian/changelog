@@ -1,4 +1,11 @@
-apt (0.8.13) UNRELEASED; urgency=low
+apt (0.8.13ubuntu1) UNRELEASED; urgency=low
+
+  * merged from debian/sid, this adds important fixes in the
+    apt mirror method
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 16 Mar 2011 08:23:19 +0100
+
+apt (0.8.13) unstable; urgency=low
 
   [ Thorsten Spindler ]
   * methods/rsh.cc
@@ -11,8 +18,13 @@ apt (0.8.13) UNRELEASED; urgency=low
       user to insert the CD on each apt-get update
   * po/sl.po:
     - updated, thanks to Andrej Znidarsic
+  * mirror method:
+    - when downloading data, show the mirror being used
+    - randomize mirror list after download in a host specific way
+      to ensure that the load is evenly spreaded accross the mirrors
+    - fix some missing "Fail-Ignore"
 
- -- Michael Vogt <mvo@debian.org>  Mon, 14 Mar 2011 13:17:08 +0100
+ -- Michael Vogt <mvo@debian.org>  Wed, 16 Mar 2011 08:04:42 +0100
 
 apt (0.8.12ubuntu2) unstable; urgency=low
 

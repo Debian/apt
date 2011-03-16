@@ -34,6 +34,7 @@ class MirrorMethod : public HttpMethod
 
  protected:
    bool DownloadMirrorFile(string uri);
+   bool RandomizeMirrorFile(string file);
    string GetMirrorFileName(string uri);
    bool InitMirrors();
    bool TryNextMirror();
