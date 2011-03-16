@@ -1,7 +1,12 @@
-#include <apt-pkg/vendorlist.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apti18n.h>
+
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
+#include <apt-pkg/vendorlist.h>
 
 pkgVendorList::~pkgVendorList()
 {
@@ -143,3 +148,7 @@ const Vendor* pkgVendorList::FindVendor(const std::vector<string> GPGVOutput)	/*
    return NULL;
 }
 									/*}}}*/
+
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic warning "-Wdeprecated-declarations"
+#endif
