@@ -1002,6 +1002,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       else
       {
 	 string const nativeArch = _config->Find("APT::Architecture");
+	 unsigned long const oldSize = I->Op == Item::Configure ? Size : 0;
 	 for (;I != J && Size < MaxArgBytes; I++)
 	 {
 	    if((*I).Pkg.end() == true)
@@ -1016,8 +1017,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       Args[n++] = Packages[pkgcount++];
 	    }
 	    Size += strlen(Args[n-1]);
-	 }	 
-      }      
+	 }
+	 // skip configure action if all sheduled packages disappeared
+	 if (oldSize == Size)
+	    continue;
+      }
       Args[n] = 0;
       J = I;
       
