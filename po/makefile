@@ -55,7 +55,11 @@ $(PACKAGE)-all.pot: $(POTFILES)
 $(LANG_POFILES) : $(PO_DOMAINS)/%.po : $(PACKAGE)-all.pot
 	printf "%s " "Generating $@"
 	echo $@ : $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot > $(PO)/$(call GETDOMAIN,$*)_$(notdir $@).d
-	$(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
+	# thanks powerpc for segfaulting in msgmerge in the first run
+	# (but not the second) - the part "||.." should get removed
+	#  once powerpc is a bit more stable
+	$(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@ || \
+	   $(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
 
 $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	printf "%s: " "Generating $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo"
