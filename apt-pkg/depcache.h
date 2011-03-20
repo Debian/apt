@@ -486,6 +486,10 @@ class pkgDepCache : protected pkgCache::Namespace
    __deprecated bool RemovePseudoInstalledPkg(PkgIterator &Pkg, std::set<unsigned long> &recheck) { return true; };
    __deprecated bool ReInstallPseudoForGroup(unsigned long const &Grp, std::set<unsigned long> &recheck) { return true; };
    __deprecated bool ReInstallPseudoForGroup(pkgCache::PkgIterator const &P, std::set<unsigned long> &recheck) { return true; };
+
+
+   bool IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
+			unsigned long const Depth, bool const FromUser);
 };
 
 #endif
