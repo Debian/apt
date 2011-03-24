@@ -256,6 +256,13 @@ bool MirrorMethod::InitMirrors()
       return _error->Error(_("No mirror file '%s' found "), MirrorFile.c_str());
    }
 
+   if (access(MirrorFile.c_str(), R_OK) != 0)
+   {
+      // FIXME: fallback to a default mirror here instead 
+      //        and provide a config option to define that default
+      return _error->Error(_("Can not read mirror file '%s'"), MirrorFile.c_str());
+   }  
+
    // FIXME: make the mirror selection more clever, do not 
    //        just use the first one!
    // BUT: we can not make this random, the mirror has to be
