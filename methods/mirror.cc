@@ -141,8 +141,10 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    pkgAcquire Fetcher;
    new pkgAcqFile(&Fetcher, fetch, "", 0, "", "", "", MirrorFile);
    bool res = (Fetcher.Run() == pkgAcquire::Continue);
-   if(res)
+   if(res) {
       DownloadedMirrorFile = true;
+      chmod(MirrorFile.c_str(), 0644);
+   }
    Fetcher.Shutdown();
 
    if(Debug)
