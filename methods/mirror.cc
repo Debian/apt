@@ -141,8 +141,10 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    pkgAcquire Fetcher;
    new pkgAcqFile(&Fetcher, fetch, "", 0, "", "", "", MirrorFile);
    bool res = (Fetcher.Run() == pkgAcquire::Continue);
-   if(res)
+   if(res) {
       DownloadedMirrorFile = true;
+      chmod(MirrorFile.c_str(), 0644);
+   }
    Fetcher.Shutdown();
 
    if(Debug)
@@ -157,6 +159,9 @@ bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
 {
    vector<string> content;
    string line;
+
+   if (!FileExists(mirror_file))
+      return false;
 
    // read 
    ifstream in(mirror_file.c_str());
@@ -354,8 +359,8 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
    if(Itm->IndexFile && !DownloadedMirrorFile)
    {
       Clean(_config->FindDir("Dir::State::mirrors"));
-      DownloadMirrorFile(Itm->Uri);
-      RandomizeMirrorFile(MirrorFile);
+      if (DownloadMirrorFile(Itm->Uri))
+         RandomizeMirrorFile(MirrorFile);
    }
 
    if(AllMirrors.empty()) {
