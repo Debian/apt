@@ -321,7 +321,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	/* Most of the time the package for our native architecture is
 	   the one we add at first to the cache, but this would be the
 	   last one we check, so we do it now. */
-	if (Arch == "native" || Arch == myArch) {
+	if (Arch == "native" || Arch == myArch || Arch == "all") {
 		Arch = myArch;
 		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
 		if (stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
