@@ -1252,11 +1252,6 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
    
    AddStates(Pkg);
    AddSizes(Pkg);
-
-   if (unlikely(Pkg.CurrentVer().end() == true))
-      return;
-
-   SetReInstall(Pkg.Group().FindPkg("all"), To);
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/
