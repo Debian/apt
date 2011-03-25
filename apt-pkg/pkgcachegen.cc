@@ -638,7 +638,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 		- MultiArch: same → Co-Installable if they have the same version
 		- Architecture: all → Need to be Co-Installable for internal reasons
 		- All others conflict with all other group members */
-	       bool const coInstall = (V->MultiArch == pkgCache::Version::Same);
+	       bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
 	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
 	       {
 		  if (*A == Arch)

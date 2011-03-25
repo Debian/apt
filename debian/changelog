@@ -18,8 +18,11 @@ apt (0.8.13.1) UNRELEASED; urgency=low
   * apt-pkg/pkgcachegen.cc:
     - make "all"->"native" an implementation detail of NewPackage
       rather than rewrite it in higher methods
+  * apt-pkg/cacheiterator.h:
+    - return "all" instead of native architecture without breaking the abi
+      (too much) by extending enum instead of using bitflags (LP: #733741)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 25 Mar 2011 20:15:18 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 25 Mar 2011 22:07:59 +0100
 
 apt (0.8.13) unstable; urgency=low
 

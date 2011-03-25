@@ -106,7 +106,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       Ver->MultiArch = pkgCache::Version::None;
    else if (MultiArch == "same") {
       // Parse multi-arch
-      if (Section.FindS("Architecture") == "all")
+      if (ArchitectureAll() == true)
       {
 	 /* Arch all packages can't be Multi-Arch: same */
 	 _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
@@ -126,6 +126,14 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 			MultiArch.c_str(), Section.FindS("Package").c_str());
       Ver->MultiArch = pkgCache::Version::None;
    }
+
+   if (ArchitectureAll() == true)
+      switch (Ver->MultiArch)
+      {
+	 case pkgCache::Version::Foreign: Ver->MultiArch = pkgCache::Version::AllForeign; break;
+	 case pkgCache::Version::Allowed: Ver->MultiArch = pkgCache::Version::AllAllowed; break;
+	 default: Ver->MultiArch = pkgCache::Version::All;
+      }
 
    // Archive Size
    Ver->Size = Section.FindULL("Size");
@@ -677,13 +685,13 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       }
    }
 
-   if (Ver->MultiArch == pkgCache::Version::Allowed)
+   if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
    {
       string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
       NewProvides(Ver, Package, "any", Ver.VerStr());
    }
 
-   if (Ver->MultiArch != pkgCache::Version::Foreign)
+   if (Ver->MultiArch != pkgCache::Version::Foreign && Ver->MultiArch != pkgCache::Version::AllForeign)
       return true;
 
    if (MultiArchEnabled == false)

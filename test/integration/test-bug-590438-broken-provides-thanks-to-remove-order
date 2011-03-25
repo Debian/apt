@@ -62,13 +62,13 @@ predependsgawk2() {
 	echo "$pkgbasefile
 Pre-Depends: $1
 " >> rootdir/var/lib/dpkg/status
-	testequalor2 "Inst coolstuff (1-1 localhost [i386])
-Conf coolstuff (1-1 localhost [i386])
+	testequalor2 "Inst coolstuff (1-1 localhost [all])
+Conf coolstuff (1-1 localhost [all])
 Inst gawk2 (1:3.1.7.dfsg-5 localhost [i386])
 Conf gawk2 (1:3.1.7.dfsg-5 localhost [i386])
-Remv mawk [1.3.3-15]" "Inst coolstuff (1-1 localhost [i386])
+Remv mawk [1.3.3-15]" "Inst coolstuff (1-1 localhost [all])
 Inst gawk2 (1:3.1.7.dfsg-5 localhost [i386])
-Conf coolstuff (1-1 localhost [i386])
+Conf coolstuff (1-1 localhost [all])
 Conf gawk2 (1:3.1.7.dfsg-5 localhost [i386])
 Remv mawk [1.3.3-15]" aptget install gawk2 mawk- -sqq -o PreDepends=$(echo "$1" | sed 's/ //g')
 }
