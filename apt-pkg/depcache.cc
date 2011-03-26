@@ -964,11 +964,26 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
    if (unlikely(Pkg.end() == true || Pkg->VersionList == 0))
       return false;
 
+   // the user is always right
+   if (FromUser == true)
+      return true;
+
+   StateCache &P = PkgState[Pkg->ID];
+
+   // if previous state was set by user only user can reset it
+   if ((P.iFlags & Protected) == Protected)
+   {
+      if (unlikely(DebugMarker == true) && P.Mode != mode)
+	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
+		   << " of " << Pkg << " as its mode (" << PrintMode(P.Mode)
+		   << ") is protected" << std::endl;
+      return false;
+   }
    // enforce dpkg holds
-   if (FromUser == false && mode != ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
+   else if (mode != ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
 	    _config->FindB("APT::Ignore-Hold",false) == false)
    {
-      if (unlikely(DebugMarker == true) && PkgState[Pkg->ID].Mode != mode)
+      if (unlikely(DebugMarker == true) && P.Mode != mode)
 	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
 		   << " of " << Pkg << std::endl;
       return false;

@@ -15,6 +15,7 @@ apt (0.8.13.1) UNRELEASED; urgency=low
       as suggested by Charles Plessy (Closes: #619083)
   * apt-pkg/depcache.cc:
     - remove pseudo handling leftover from SetReInstall
+    - do not change protected packages in autoinstall (Closes: #618848)
   * apt-pkg/pkgcachegen.cc:
     - make "all"->"native" an implementation detail of NewPackage
       rather than rewrite it in higher methods
@@ -25,7 +26,7 @@ apt (0.8.13.1) UNRELEASED; urgency=low
     - use dpkg --print-foreign-architectures to get multiarch configuration
       if non is specified with APT::Architectures (Closes: #612958)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Mar 2011 01:28:38 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Mar 2011 12:26:32 +0100
 
 apt (0.8.13) unstable; urgency=low
 

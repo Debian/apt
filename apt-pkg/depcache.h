@@ -119,7 +119,7 @@ class pkgDepCache : protected pkgCache::Namespace
                        DepCandPolicy = (1 << 4), DepCandMin = (1 << 5)};
    
    // These flags are used in StateCache::iFlags
-   enum InternalFlags {AutoKept = (1 << 0), Purge = (1 << 1), ReInstall = (1 << 2)};
+   enum InternalFlags {AutoKept = (1 << 0), Purge = (1 << 1), ReInstall = (1 << 2), Protected = (1 << 3)};
       
    enum VersionTypes {NowVersion, InstallVersion, CandidateVersion};
    enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2};
@@ -393,6 +393,7 @@ class pkgDepCache : protected pkgCache::Namespace
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
 		    bool ForceImportantDeps = false);
+   void MarkProtected(PkgIterator const &Pkg) { PkgState[Pkg->ID].iFlags |= Protected; };
 
    void SetReInstall(PkgIterator const &Pkg,bool To);
    // FIXME: Remove the unused boolean parameter on abi break
