@@ -3278,7 +3278,10 @@ int main(int argc,const char *argv[])					/*{{{*/
    }
 
    // simulate user-friendly if apt-get has no root privileges
-   if (getuid() != 0 && _config->FindB("APT::Get::Simulate") == true)
+   if (getuid() != 0 && _config->FindB("APT::Get::Simulate") == true &&
+	(CmdL.FileSize() == 0 ||
+	 (strcmp(CmdL.FileList[0], "source") != 0 && strcmp(CmdL.FileList[0], "download") != 0 &&
+	  strcmp(CmdL.FileList[0], "changelog") != 0)))
    {
       if (_config->FindB("APT::Get::Show-User-Simulation-Note",true) == true)
 	 cout << _("NOTE: This is only a simulation!\n"
