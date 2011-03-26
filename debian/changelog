@@ -21,8 +21,11 @@ apt (0.8.13.1) UNRELEASED; urgency=low
   * apt-pkg/cacheiterator.h:
     - return "all" instead of native architecture without breaking the abi
       (too much) by extending enum instead of using bitflags (LP: #733741)
+  * apt-pkg/aptconfiguration.cc:
+    - use dpkg --print-foreign-architectures to get multiarch configuration
+      if non is specified with APT::Architectures (Closes: #612958)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 25 Mar 2011 22:07:59 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 26 Mar 2011 01:28:38 +0100
 
 apt (0.8.13) unstable; urgency=low
 
