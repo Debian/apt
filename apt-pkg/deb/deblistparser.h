@@ -40,6 +40,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);
    bool ParseProvides(pkgCache::VerIterator &Ver);
+   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package, string const &Version);
    static bool GrabWord(string Word,WordList *List,unsigned char &Out);
    
    public:
