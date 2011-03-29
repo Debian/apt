@@ -1798,7 +1798,7 @@ bool DoInstall(CommandLine &CmdL)
       BrokenFix = true;
 
    pkgProblemResolver* Fix = NULL;
-   if (_config->FindB("APT::Get::AutoSolving", true) == true)
+   if (_config->FindB("APT::Get::CallResolver", true) == true)
       Fix = new pkgProblemResolver(Cache);
 
    static const unsigned short MOD_REMOVE = 1;
@@ -1852,7 +1852,7 @@ bool DoInstall(CommandLine &CmdL)
 	    RemoveAction = std::for_each(verset[MOD_REMOVE].begin(), verset[MOD_REMOVE].end(), RemoveAction);
       }
 
-      if (Fix != NULL)
+      if (Fix != NULL && _config->FindB("APT::Get::AutoSolving", true) == true)
       {
          for (unsigned short i = 0; order[i] != 0; ++i)
          {
