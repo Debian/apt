@@ -22,8 +22,9 @@
 
 class debStatusIndex : public pkgIndexFile
 {
+   protected:
    string File;
-   
+
    public:
 
    virtual const Type *GetType() const;
@@ -36,6 +37,7 @@ class debStatusIndex : public pkgIndexFile
    virtual bool HasPackages() const {return true;};
    virtual unsigned long Size() const;
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
+   bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog, unsigned long const Flag) const;
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    debStatusIndex(string File);

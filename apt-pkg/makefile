@@ -3,7 +3,7 @@ BASE=..
 SUBDIR=apt-pkg
 
 # Header location
-SUBDIRS = deb contrib
+SUBDIRS = deb edsp contrib
 HEADER_TARGETDIRS = apt-pkg
 
 # Bring in the default rules
@@ -52,6 +52,11 @@ SOURCE+= deb/deblistparser.cc deb/debrecords.cc deb/dpkgpm.cc \
 	 deb/debindexfile.cc deb/debindexfile.cc deb/debmetaindex.cc
 HEADERS+= debversion.h debsrcrecords.h dpkgpm.h debrecords.h \
 	  deblistparser.h debsystem.h debindexfile.h debmetaindex.h
+
+# Source code for the APT resolver interface specific components
+SOURCE+= edsp/edsplistparser.cc edsp/edspindexfile.cc edsp/edspsystem.cc \
+	 edsp/edspwriter.cc
+HEADERS+= edsplistparser.h edspindexfile.h edspsystem.h edspwriter.h
 
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 

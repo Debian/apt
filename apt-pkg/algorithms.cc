@@ -20,12 +20,15 @@
 #include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/acquire-item.h>
-    
+#include <apt-pkg/edspwriter.h>
+
 #include <apti18n.h>
 #include <sys/types.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
+
+#include <stdio.h>
 									/*}}}*/
 using namespace std;
 
@@ -731,7 +734,25 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    return true;
 }
 									/*}}}*/
-// ProblemResolver::Resolve - Run the resolution pass			/*{{{*/
+// ProblemResolver::Resolve - calls a resolver to fix the situation	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgProblemResolver::Resolve(bool BrokenFix)
+{
+   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   if (solver != "internal")
+   {
+      FILE* output = fopen("/tmp/universe.log", "w");
+      edspWriter::WriteUniverse(Cache, output);
+      fclose(output);
+      output = fopen("/tmp/request.log", "w");
+      edspWriter::WriteRequest(Cache, output);
+      fclose(output);
+   }
+   return ResolveInternal(BrokenFix);
+}
+									/*}}}*/
+// ProblemResolver::ResolveInternal - Run the resolution pass		/*{{{*/
 // ---------------------------------------------------------------------
 /* This routines works by calculating a score for each package. The score
    is derived by considering the package's priority and all reverse 
@@ -745,11 +766,9 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
  
    The BrokenFix flag enables a mode where the algorithm tries to 
    upgrade packages to advoid problems. */
-bool pkgProblemResolver::Resolve(bool BrokenFix)
+bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 {
    pkgDepCache::ActionGroup group(Cache);
-
-   unsigned long Size = Cache.Head().PackageCount;
 
    // Record which packages are marked for install
    bool Again = false;
@@ -780,7 +799,9 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
       clog << "Starting" << endl;
    
    MakeScores();
-   
+
+   unsigned long const Size = Cache.Head().PackageCount;
+
    /* We have to order the packages so that the broken fixing pass 
       operates from highest score to lowest. This prevents problems when
       high score packages cause the removal of lower score packages that
