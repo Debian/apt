@@ -1,6 +1,6 @@
 ** TENTATIVE PROPOSAL, VERY VERY VERY DRAFT **
 
-# APT External Dependency Solver Protocol (EDSP) - version 0.1
+# APT External Dependency Solver Protocol (EDSP) - version 0.2
 
 This document describes the communication protocol between APT and
 external dependency solvers. The protocol is called APT EDSP, for "APT
@@ -13,12 +13,17 @@ External Dependency Solver Protocol".
 - APT is equipped with its own **internal solver** for dependencies,
   which is identified by the string `internal`.
 - **External solver**: an *external* software component able to resolve
-  dependencies on behalf of APT. Each external solver is identified by
-  an unique string (other than `internal`) called the solver **name**.
-
+  dependencies on behalf of APT.
+  
 At each interaction with APT, a single solver is in use.  When there is
 a total of 2 or more solvers, internals or externals, the user can
 choose which one to use.
+
+Each solver is identified by an unique string, the **solver
+name**. Solver names must be formed using only alphanumeric ASCII
+characters, dashes, and underscores; solver names must start with a
+lowercase ASCII letter. The special name `internal` denotes APT's
+internal solver, is reserved, and cannot be used by external solvers.
 
 
 ## Installation
@@ -32,8 +37,8 @@ Each file under `/usr/lib/apt/solvers` corresponding to an external
 solver must be executable.
 
 No non-solver files must be installed under `/usr/lib/apt/solvers`, so
-that an index of available external solvers can be obtained by simply
-looking at the content of that directory.
+that an index of available external solvers can be obtained by listing
+the content of that directory.
 
 
 ## Configuration
@@ -49,9 +54,10 @@ configuration documentation for more, and more up to date, information.
   respected (as the internal solver does) or can be slightly deviated
   from. Defaults to `yes`.
 
-- **APT::Solver::Preferences**: solver-specific user preferences used
-  during dependency solving. Check your solver documentation for what is
-  supported here. Default to empty.
+- **APT::Solver::NAME::Preferences** (where NAME is a solver name):
+  solver-specific user preference string used during dependency solving,
+  when the solver NAME is in use. Check solver-specific documentation
+  for what is supported here. Defaults to the empty string.
 
 
 ## Protocol
@@ -74,13 +80,15 @@ via the file descriptors: **stdin** (standard input) and **stdout**
 therefore use stderr to dump debugging information that could be
 inspected separately.
 
-After invocation, the protocol passes through 3 separate phases:
+After invocation, the protocol passes through a sequence of phases:
 
-1. APT send to the solver a dependency solving **scenario**
-2. The solver solves dependencies. No communication with APT happens
-   during this phase.
-3. The solver sends back to APT an **answer**, i.e. either a *solution*
+1. APT invokes the external solver
+2. APT send to the solver a dependency solving **scenario**
+3. The solver solves dependencies. During this phase the solver may
+   send, repeatedly, **progress** information to APT.
+4. The solver sends back to APT an **answer**, i.e. either a *solution*
    or an *error* report.
+5. The external solver exits
 
 
 ### Scenario
@@ -104,7 +112,7 @@ and followed by a mixture of action and preference fields.
 
 The value of the **Request:** field is a string describing the EDSP
 protocol which will be used to communicate. At present, the string must
-be `EDSP 0.1`.
+be `EDSP 0.2`.
 
 a unique request identifier, such as an
 UUID. Request fields are mainly used to identify the beginning of a
@@ -154,32 +162,42 @@ A package universe is a list of Deb 822 stanzas, one per package, called
 **package stanzas**. Each package stanzas starts with a Package
 field. The following fields are supported in package stanzas:
 
-- All fields supported by Debian Packages file (see one of the
-  `/var/lib/apt/lists/*Packages` file for an example), *with the
-  exception of the Description field* that is not allowed.
+- All fields contained in the dpkg database, with the exception of
+  fields marked as "internal" (see the manpage `dpkg-query (1)`). Among
+  those fields, the following are mandatory for all package stanzas:
+  Package, Version, Architecture.
   
-  Among those fields, the following are mandatory: Package, Version,
-  Architecture.
+  It is recommended not to pass the Description field to external
+  solvers or, alternatively, to trim it to the short description only.
 
-- **Installed:** (optional, default value `no`). Allowed values: `yes`,
+- **Installed:** (optional, defaults to `no`). Allowed values: `yes`,
   `no`. When set to `yes`, the corresponding package is currently
   installed.
+  
+  Note: the Status field present in the dpkg database must not be passed
+  to the external solver, as it's an internal dpkg field. Installed and
+  other fields permit to encode the most relevant aspects of Status in
+  communications with solvers.
 
-  ##TODO## changed with respect to current prototype, which uses Status
+- **Hold:** (optional, defaults to `no`). Allowed values: `yes`,
+  `no`. When set to `yes`, the corresponding package is marked as "on
+  hold" by dpkg.
 
 - **APT-ID:** (mandatory). Unique package identifier, according to APT.
 
-- **APT-Pin:** (mandatory). Must be a non-negative integer. Package pin
-  value, according to current APT policy.
+- **APT-Pin:** (mandatory). Must be an integer. Package pin value,
+  according to APT policy.
 
-- **APT-Candidate:** (optional, default value `no`). Allowed values:
-  `yes`, `no`. When set to `yes`, the corresponding package is granted
-  to have the highest pinning value among all the packages having the
-  same name.
-  
-  ##TODO## what about multi-arch? is the pin value granted to be the
-  higest also across different architectures?
-  
+- **APT-Candidate:** (optional, defaults to `no`). Allowed values:
+  `yes`, `no`. When set to `yes`, the corresponding package is the APT
+  candidate for installation among all available packages with the same
+  name.
+
+- **APT-Automatic:** (optional, defaults to `no`). Allowed values:
+  `yes`, `no`. When set to `yes`, the corresponding package is marked by
+  APT as automatic installed. Note that automatic installed packages
+  should be removed by the solver only when the Autoremove action is
+  requested (see Request section).
 
 ### Answer
 
@@ -189,7 +207,7 @@ An answer from the external solver to APT is either a *solution* or an
 The following invariant on **exit codes** must hold true. When the
 external solver is *able to find a solution*, it will write the solution
 to standard output and then exit with an exit code of 0. When the
-external solver is *unable to find a solution* (and aware of that), it
+external solver is *unable to find a solution* (and s aware of that), it
 will write an error to standard output and then exit with an exit code
 of 0. An exit code other than 0 will be interpreted as a solver crash
 with no meaningful error about dependency resolution to convey to the
@@ -198,21 +216,29 @@ user.
 
 #### Solution
 
-A solution is a single Deb 822 stanza, starting with the field
-Solution. The following fields are supported in solution stanzas:
+A solution is a list of Deb 822 stanzas. Each of them is either an
+install stanza, telling APT to install a specific package, or a remove
+stanza, telling APT to remove one.
 
-- **Solution:** (mandatory). The value of this field is ignored,
-  although it should be a unique solution identifier, such as a UUID.
+An **install stanza** starts with an Install field and supports the
+following fields:
 
-- **Install:** (optional, defaults to the empty string). A space
-  separated list of strings of the form `PACKAGE=VERSION` where
-  `PACKAGE` is a package name and `VERSION` is an available version of
-  that package. The list denotes a set of packages that must be
-  installed to satisfy user request.
+- **Install:** (mandatory). The value is a package identifier,
+  referencing one of the package stanzas of the package universe via its
+  APT-ID field.
 
-- **Remove:** (optional, defaults to the empty string). Same as Install,
-  but denoting a set of packages that must be removed to satisfy user
-  request.
+- All fields supported by package stanzas.
+
+**Remove stanzas** are similar to install stanzas, but have **Remove**
+fields instead of Install fields.
+
+In terms of expressivity, install and remove stanzas can carry one
+single field each, as APT-IDs are enough to pinpoint packages to be
+installed/removed. Nonetheless, for protocol readability, it is
+recommended that solvers either add unconditionally the fields Package,
+Version, and Architecture to all install/remove stanzas or,
+alternatively, that they support a `--verbose` command line flag that
+explicitly enables the output of those fields in solutions.
 
 
 #### Error
@@ -225,11 +251,40 @@ following fields are supported in error stanzas:
 
 - **Message:** (mandatory). The value of this field is a text string,
   meant to be read by humans, that explains the cause of the solver
-  error.
+  error. Message fields might be multi-line, like the Description field
+  in the dpkg database. The first line conveys a short message, which
+  can be explained in more details using subsequent lines.
 
-  ##TODO## can we support line continuations throughout this format? If
-  yes, they might come handy both for error stanzas and for solution
-  stanzas (which might have very long install/remove lines)
+
+### Progress
+
+During dependency solving, an external solver may send progress
+information to APT using **progress stanzas**. A progress stanza starts
+with the Progress field and might contain the following fields:
+
+- **Progress:** (mandatory). The value of this field is a date and time
+  timestamp, in RFC 2822 format. The timestamp provides a time
+  annotation for the progress report.
+
+- **Percentage:** (optional). An integer from 0 to 100, representing the
+  completion of the dependency solving process, as declared by the
+  solver.
+
+- **Message:** (optional). A textual message, meant to be read by the
+  APT user, telling what is going on within the dependency solving
+  (e.g. the current phase of dependency solving, as declared by the
+  solver).
+
+
+# Future extensions
+
+Potential future extensions to this protocol, listed in no specific
+order, include:
+
+- fixed error types to identify common failures across solvers and
+  enable APT to translate error messages
+- structured error data to explain failures in terms of packages and
+  dependencies
 
 
 ** TENTATIVE PROPOSAL, VERY VERY VERY DRAFT **
