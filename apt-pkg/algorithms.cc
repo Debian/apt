@@ -748,6 +748,12 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
       output = fopen("/tmp/request.log", "w");
       edspWriter::WriteRequest(Cache, output);
       fclose(output);
+      if (ResolveInternal(BrokenFix) == false)
+	 return false;
+      output = fopen("/tmp/solution.log", "w");
+      edspWriter::WriteSolution(Cache, output);
+      fclose(output);
+      return true;
    }
    return ResolveInternal(BrokenFix);
 }

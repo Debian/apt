@@ -128,3 +128,23 @@ bool edspWriter::WriteRequest(pkgDepCache &Cache, FILE* output)
    return true;
 }
 									/*}}}*/
+// edspWriter::WriteSolution - to the given file descriptor		/*{{{*/
+bool edspWriter::WriteSolution(pkgDepCache &Cache, FILE* output)
+{
+   bool const Debug = _config->FindB("Debug::EDSPWriter::WriteSolution", false);
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      if (Cache[Pkg].Delete() == true)
+	 fprintf(output, "Remove: %d\n", Cache.GetCandidateVer(Pkg)->ID);
+      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
+	 fprintf(output, "Install: %d\n", Cache.GetCandidateVer(Pkg)->ID);
+      else
+	 continue;
+      if (Debug == true)
+	 fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Cache.GetCandidateVer(Pkg).VerStr());
+      fprintf(output, "\n");
+   }
+
+   return true;
+}
+									/*}}}*/
