@@ -63,40 +63,18 @@ unsigned short edspListParser::VersionHash()
 bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 				pkgCache::VerIterator &Ver)
 {
-   const char *Start;
-   const char *Stop;
-   if (Section.Find("Status",Start,Stop) == false)
-      return true;
-
-   // UsePackage() is responsible for setting the flag in the default case
-   bool const static essential = _config->Find("pkgCacheGen::Essential", "") == "installed";
-   if (essential == true &&
-       Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
+   if (Section.FindFlag("Hold",Pkg->Flags,pkgCache::State::Installed) == false)
       return false;
 
-   // Isolate the first word
-   const char *I = Start;
-   for(; I < Stop && *I != ' '; I++);
-
-   // Process the flag field
-   WordList StatusList[] = {{"installed",pkgCache::State::Installed},
-                            {}};
-   if (GrabWord(string(Start,I-Start),StatusList,Pkg->CurrentState) == false)
-      return _error->Error("Malformed Status line");
-
-   /* A Status line marks the package as indicating the current
-      version as well. Only if it is actually installed.. Otherwise
-      the interesting dpkg handling of the status file creates bogus 
-      entries. */
-   if (!(Pkg->CurrentState == pkgCache::State::NotInstalled ||
-	 Pkg->CurrentState == pkgCache::State::ConfigFiles))
+   unsigned long state = 0;
+   if (Section.FindFlag("Installed",state,pkgCache::State::Installed) == false)
+      return false;
+   if (state != 0)
    {
-      if (Ver.end() == true)
-	 _error->Warning("Encountered status field in a non-version description");
-      else
-	 Pkg->CurrentVer = Ver.Index();
+      Pkg->CurrentState = pkgCache::State::Installed;
+      Pkg->CurrentVer = Ver.Index();
    }
-   
+
    return true;
 }
 									/*}}}*/
