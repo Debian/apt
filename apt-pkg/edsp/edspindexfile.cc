@@ -1,7 +1,7 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   The universe file is designed to work as an intermediate file between
+   The scenario file is designed to work as an intermediate file between
    APT and the resolver. Its on propose very similar to a dpkg status file
    ##################################################################### */
 									/*}}}*/
@@ -51,7 +51,7 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
       return _error->Errno("fstat","Failed to stat");
    CFile->Size = St.st_size;
    CFile->mtime = St.st_mtime;
-   CFile->Archive = Gen.WriteUniqString("universe");
+   CFile->Archive = Gen.WriteUniqString("edsp::scenario");
 
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeList %s",File.c_str());
@@ -67,7 +67,7 @@ class edspIFType: public pkgIndexFile::Type
       // we don't have a record parser for this type as the file is not presistent
       return NULL;
    };
-   edspIFType() {Label = "APT universe file";};
+   edspIFType() {Label = "EDSP scenario file";};
 };
 static edspIFType _apt_Universe;
 

@@ -12,7 +12,7 @@
 class edspWriter								/*{{{*/
 {
 public:
-	bool static WriteUniverse(pkgDepCache &Cache, FILE* output);
+	bool static WriteScenario(pkgDepCache &Cache, FILE* output);
 	bool static WriteRequest(pkgDepCache &Cache, FILE* output);
 	bool static WriteSolution(pkgDepCache &Cache, FILE* output);
 };

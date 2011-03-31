@@ -18,7 +18,7 @@
 									/*}}}*/
 
 // edspWriter::WriteUniverse - to the given file descriptor		/*{{{*/
-bool edspWriter::WriteUniverse(pkgDepCache &Cache, FILE* output)
+bool edspWriter::WriteScenario(pkgDepCache &Cache, FILE* output)
 {
    // we could use pkgCache::DepType and ::Priority, but these would be lokalized strings…
    const char * const PrioMap[] = {0, "important", "required", "standard",

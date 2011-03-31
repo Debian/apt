@@ -2,7 +2,7 @@
 // Description								/*{{{*/
 /* ######################################################################
 
-   This system provides the abstraction to use the universe file as the
+   This system provides the abstraction to use the scenario file as the
    only source of package information to be able to feed the created file
    back to APT for its own consumption (eat your own dogfood).
 
@@ -86,9 +86,9 @@ bool edspSystem::ArchiveSupported(const char *Type)
 // System::Score - Determine if we should use the edsp system		/*{{{*/
 signed edspSystem::Score(Configuration const &Cnf)
 {
-   if (Cnf.Find("Dir::State::universe", "") == "stdin")
+   if (Cnf.Find("Dir::State::edsp::scenario", "") == "stdin")
       return 1000;
-   if (FileExists(Cnf.FindFile("Dir::State::universe","")) == true)
+   if (FileExists(Cnf.FindFile("Dir::State::edsp::scenario","")) == true)
       return 1000;
    return -1000;
 }
@@ -98,10 +98,10 @@ bool edspSystem::AddStatusFiles(vector<pkgIndexFile *> &List)
 {
    if (StatusFile == 0)
    {
-      if (_config->Find("Dir::State::universe", "") == "stdin")
+      if (_config->Find("Dir::State::edsp::scenario", "") == "stdin")
 	 StatusFile = new edspIndex("stdin");
       else
-	 StatusFile = new edspIndex(_config->FindFile("Dir::State::universe"));
+	 StatusFile = new edspIndex(_config->FindFile("Dir::State::edsp::scenario"));
    }
    List.push_back(StatusFile);
    return true;

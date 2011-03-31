@@ -742,8 +742,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    std::string const solver = _config->Find("APT::Solver::Name", "internal");
    if (solver != "internal")
    {
-      FILE* output = fopen("/tmp/universe.log", "w");
-      edspWriter::WriteUniverse(Cache, output);
+      FILE* output = fopen("/tmp/scenario.log", "w");
+      edspWriter::WriteScenario(Cache, output);
       fclose(output);
       output = fopen("/tmp/request.log", "w");
       edspWriter::WriteRequest(Cache, output);

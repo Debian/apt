@@ -1,7 +1,7 @@
 // -*- mode: cpp; mode: fold -*-
 // Description								/*{{{*/
 /* ######################################################################
-   The universe file is designed to work as an intermediate file between
+   The scenario file is designed to work as an intermediate file between
    APT and the resolver. Its on propose very similar to a dpkg status file
    ##################################################################### */
 									/*}}}*/
