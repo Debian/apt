@@ -28,7 +28,11 @@ edspIndex::edspIndex(string File) : debStatusIndex(File)
 // StatusIndex::Merge - Load the index file into a cache		/*{{{*/
 bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
-   FileFd Pkg(File,FileFd::ReadOnlyGzip);
+   FileFd Pkg;
+   if (File != "stdin")
+      Pkg.Open(File, FileFd::ReadOnly);
+   else
+      Pkg.OpenDescriptor(STDIN_FILENO, FileFd::ReadOnly);
    if (_error->PendingError() == true)
       return false;
    edspListParser Parser(&Pkg);
