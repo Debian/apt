@@ -86,9 +86,9 @@ bool edspSystem::ArchiveSupported(const char *Type)
 // System::Score - Determine if we should use the edsp system		/*{{{*/
 signed edspSystem::Score(Configuration const &Cnf)
 {
-   if (Cnf.Find("Dir::State::edsp::scenario", "") == "stdin")
+   if (Cnf.Find("edsp::scenario", "") == "stdin")
       return 1000;
-   if (FileExists(Cnf.FindFile("Dir::State::edsp::scenario","")) == true)
+   if (FileExists(Cnf.FindFile("edsp::scenario","")) == true)
       return 1000;
    return -1000;
 }
@@ -98,10 +98,10 @@ bool edspSystem::AddStatusFiles(vector<pkgIndexFile *> &List)
 {
    if (StatusFile == 0)
    {
-      if (_config->Find("Dir::State::edsp::scenario", "") == "stdin")
+      if (_config->Find("edsp::scenario", "") == "stdin")
 	 StatusFile = new edspIndex("stdin");
       else
-	 StatusFile = new edspIndex(_config->FindFile("Dir::State::edsp::scenario"));
+	 StatusFile = new edspIndex(_config->FindFile("edsp::scenario"));
    }
    List.push_back(StatusFile);
    return true;
