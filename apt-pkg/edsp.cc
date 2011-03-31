@@ -102,28 +102,38 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output)
 }
 									/*}}}*/
 // EDSP::WriteRequest - to the given file descriptor			/*{{{*/
-bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output)
+bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
+			bool const DistUpgrade, bool const AutoRemove)
 {
-   string del, inst, upgrade;
+   string del, inst;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
    {
       string* req;
       if (Cache[Pkg].Delete() == true)
 	 req = &del;
-      else if (Cache[Pkg].NewInstall() == true)
+      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
 	 req = &inst;
-      else if (Cache[Pkg].Upgrade() == true)
-	 req = &upgrade;
       else
 	 continue;
       req->append(", ").append(Pkg.FullName());
    }
+   fprintf(output, "Request: EDSP 0.2\n");
    if (del.empty() == false)
       fprintf(output, "Remove: %s\n", del.c_str()+2);
    if (inst.empty() == false)
       fprintf(output, "Install: %s\n", inst.c_str()+2);
-   if (upgrade.empty() == false)
-      fprintf(output, "Upgrade: %s\n", upgrade.c_str()+2);
+   if (Upgrade == true)
+      fprintf(output, "Upgrade: yes\n");
+   if (DistUpgrade == true)
+      fprintf(output, "Dist-Upgrade: yes\n");
+   if (AutoRemove == true)
+      fprintf(output, "Autoremove: yes\n");
+   if (_config->FindB("APT::Solver::Strict-Pinning", true) == false)
+      fprintf(output, "Strict-Pinning: no\n");
+   string solverpref("APT::Solver::");
+   solverpref.append(_config->Find("APT::Solver::Name", "internal")).append("::Preferences");
+   if (_config->Exists(solverpref) == false)
+      fprintf(output, "Preferences: %s\n", _config->Find(solverpref,"").c_str());
 
    return true;
 }

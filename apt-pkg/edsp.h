@@ -14,7 +14,10 @@
 class EDSP								/*{{{*/
 {
 public:
-	bool static WriteRequest(pkgDepCache &Cache, FILE* output);
+	bool static WriteRequest(pkgDepCache &Cache, FILE* output,
+				 bool const Upgrade = false,
+				 bool const DistUpgrade = false,
+				 bool const AutoRemove = false);
 	bool static WriteScenario(pkgDepCache &Cache, FILE* output);
 	bool static ReadResponse(FILE* input, pkgDepCache &Cache);
 
