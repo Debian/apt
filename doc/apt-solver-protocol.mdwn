@@ -1,6 +1,6 @@
 ** TENTATIVE PROPOSAL, VERY VERY VERY DRAFT **
 
-# APT External Dependency Solver Protocol (EDSP) - version 0.2
+# APT External Dependency Solver Protocol (EDSP) - version 0.3
 
 This document describes the communication protocol between APT and
 external dependency solvers. The protocol is called APT EDSP, for "APT
@@ -112,7 +112,7 @@ and followed by a mixture of action and preference fields.
 
 The value of the **Request:** field is a string describing the EDSP
 protocol which will be used to communicate. At present, the string must
-be `EDSP 0.2`.
+be `EDSP 0.3`.
 
 a unique request identifier, such as an
 UUID. Request fields are mainly used to identify the beginning of a
@@ -216,9 +216,11 @@ user.
 
 #### Solution
 
-A solution is a list of Deb 822 stanzas. Each of them is either an
-install stanza, telling APT to install a specific package, or a remove
-stanza, telling APT to remove one.
+A solution is a list of Deb 822 stanzas. Each of them could be an
+install stanza (telling APT to install a specific package), a remove
+stanza (telling APT to remove one), or an autoremove stanza (telling APT
+about the *future* possibility of removing a package using the
+Autoremove action).
 
 An **install stanza** starts with an Install field and supports the
 following fields:
@@ -231,6 +233,14 @@ following fields:
 
 **Remove stanzas** are similar to install stanzas, but have **Remove**
 fields instead of Install fields.
+
+**Autoremove stanzas** are similar to install stanzas, but have
+**Autoremove** fields instead of Install fields. Autoremove stanzas
+should be output so that APT can inform the user of which packages they
+can now autoremove, as a consequence of the executed action. However,
+this protocol makes no assumption on the fact that a subsequent
+invocation of an Autoremove action will actually remove the very same
+packages indicated by Autoremove stanzas in the former solution.
 
 In terms of expressivity, install and remove stanzas can carry one
 single field each, as APT-IDs are enough to pinpoint packages to be
