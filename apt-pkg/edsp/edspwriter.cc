@@ -17,7 +17,7 @@
 #include <stdio.h>
 									/*}}}*/
 
-// edspWriter::WriteUniverse - to the given file descriptor		/*{{{*/
+// edspWriter::WriteScenario - to the given file descriptor		/*{{{*/
 bool edspWriter::WriteScenario(pkgDepCache &Cache, FILE* output)
 {
    // we could use pkgCache::DepType and ::Priority, but these would be lokalized strings…
@@ -128,6 +128,15 @@ bool edspWriter::WriteRequest(pkgDepCache &Cache, FILE* output)
    return true;
 }
 									/*}}}*/
+bool edspWriter::ReadResponse(FILE* input, pkgDepCache &Cache) { return false; }
+
+bool edspWriter::ReadRequest(FILE* input, std::list<std::string> &install,
+			std::list<std::string> &remove)
+{ return false; }
+bool edspWriter::ApplyRequest(std::list<std::string> const &install,
+			 std::list<std::string> const &remove,
+			 pkgDepCache &Cache)
+{ return false; }
 // edspWriter::WriteSolution - to the given file descriptor		/*{{{*/
 bool edspWriter::WriteSolution(pkgDepCache &Cache, FILE* output)
 {
@@ -148,3 +157,4 @@ bool edspWriter::WriteSolution(pkgDepCache &Cache, FILE* output)
    return true;
 }
 									/*}}}*/
+bool edspWriter::WriteError(std::string const &message, FILE* output) { return false; }
