@@ -4,14 +4,14 @@
    Set of methods to help writing and reading everything needed for EDSP
    ##################################################################### */
 									/*}}}*/
-#ifndef PKGLIB_EDSPWRITER_H
-#define PKGLIB_EDSPWRITER_H
+#ifndef PKGLIB_EDSP_H
+#define PKGLIB_EDSP_H
 
 #include <apt-pkg/depcache.h>
 
 #include <string>
 
-class edspWriter								/*{{{*/
+class EDSP								/*{{{*/
 {
 public:
 	bool static WriteRequest(pkgDepCache &Cache, FILE* output);

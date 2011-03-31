@@ -20,7 +20,7 @@
 #include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/acquire-item.h>
-#include <apt-pkg/edspwriter.h>
+#include <apt-pkg/edsp.h>
 
 #include <apti18n.h>
 #include <sys/types.h>
@@ -743,15 +743,15 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    if (solver != "internal")
    {
       FILE* output = fopen("/tmp/scenario.log", "w");
-      edspWriter::WriteScenario(Cache, output);
+      EDSP::WriteScenario(Cache, output);
       fclose(output);
       output = fopen("/tmp/request.log", "w");
-      edspWriter::WriteRequest(Cache, output);
+      EDSP::WriteRequest(Cache, output);
       fclose(output);
       if (ResolveInternal(BrokenFix) == false)
 	 return false;
       output = fopen("/tmp/solution.log", "w");
-      edspWriter::WriteSolution(Cache, output);
+      EDSP::WriteSolution(Cache, output);
       fclose(output);
       return true;
    }

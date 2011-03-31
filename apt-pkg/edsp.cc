@@ -5,7 +5,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apt-pkg/edspwriter.h>
+#include <apt-pkg/edsp.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/version.h>
@@ -17,8 +17,8 @@
 #include <stdio.h>
 									/*}}}*/
 
-// edspWriter::WriteScenario - to the given file descriptor		/*{{{*/
-bool edspWriter::WriteScenario(pkgDepCache &Cache, FILE* output)
+// EDSP::WriteScenario - to the given file descriptor			/*{{{*/
+bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output)
 {
    // we could use pkgCache::DepType and ::Priority, but these would be lokalized strings…
    const char * const PrioMap[] = {0, "important", "required", "standard",
@@ -101,8 +101,8 @@ bool edspWriter::WriteScenario(pkgDepCache &Cache, FILE* output)
    return true;
 }
 									/*}}}*/
-// edspWriter::WriteRequest - to the given file descriptor		/*{{{*/
-bool edspWriter::WriteRequest(pkgDepCache &Cache, FILE* output)
+// EDSP::WriteRequest - to the given file descriptor			/*{{{*/
+bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output)
 {
    string del, inst, upgrade;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
@@ -128,17 +128,17 @@ bool edspWriter::WriteRequest(pkgDepCache &Cache, FILE* output)
    return true;
 }
 									/*}}}*/
-bool edspWriter::ReadResponse(FILE* input, pkgDepCache &Cache) { return false; }
+bool EDSP::ReadResponse(FILE* input, pkgDepCache &Cache) { return false; }
 
-bool edspWriter::ReadRequest(FILE* input, std::list<std::string> &install,
+bool EDSP::ReadRequest(FILE* input, std::list<std::string> &install,
 			std::list<std::string> &remove)
 { return false; }
-bool edspWriter::ApplyRequest(std::list<std::string> const &install,
+bool EDSP::ApplyRequest(std::list<std::string> const &install,
 			 std::list<std::string> const &remove,
 			 pkgDepCache &Cache)
 { return false; }
-// edspWriter::WriteSolution - to the given file descriptor		/*{{{*/
-bool edspWriter::WriteSolution(pkgDepCache &Cache, FILE* output)
+// EDSP::WriteSolution - to the given file descriptor			/*{{{*/
+bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
 {
    bool const Debug = _config->FindB("Debug::EDSPWriter::WriteSolution", false);
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
@@ -157,4 +157,4 @@ bool edspWriter::WriteSolution(pkgDepCache &Cache, FILE* output)
    return true;
 }
 									/*}}}*/
-bool edspWriter::WriteError(std::string const &message, FILE* output) { return false; }
+bool EDSP::WriteError(std::string const &message, FILE* output) { return false; }

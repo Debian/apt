@@ -35,7 +35,7 @@ SOURCE+= pkgcache.cc version.cc depcache.cc \
 	 srcrecords.cc cachefile.cc versionmatch.cc policy.cc \
 	 pkgsystem.cc indexfile.cc pkgcachegen.cc acquire-item.cc \
 	 indexrecords.cc vendor.cc vendorlist.cc cdrom.cc indexcopy.cc \
-	 aptconfiguration.cc cachefilter.cc cacheset.cc
+	 aptconfiguration.cc cachefilter.cc cacheset.cc edsp.cc
 HEADERS+= algorithms.h depcache.h pkgcachegen.h cacheiterators.h \
 	  orderlist.h sourcelist.h packagemanager.h tagfile.h \
 	  init.h pkgcache.h version.h progress.h pkgrecords.h \
@@ -43,7 +43,7 @@ HEADERS+= algorithms.h depcache.h pkgcachegen.h cacheiterators.h \
 	  clean.h srcrecords.h cachefile.h versionmatch.h policy.h \
 	  pkgsystem.h indexfile.h metaindex.h indexrecords.h vendor.h \
 	  vendorlist.h cdrom.h indexcopy.h aptconfiguration.h \
-	  cachefilter.h cacheset.h
+	  cachefilter.h cacheset.h edsp.h
 
 # Source code for the debian specific components
 # In theory the deb headers do not need to be exported..
@@ -54,9 +54,8 @@ HEADERS+= debversion.h debsrcrecords.h dpkgpm.h debrecords.h \
 	  deblistparser.h debsystem.h debindexfile.h debmetaindex.h
 
 # Source code for the APT resolver interface specific components
-SOURCE+= edsp/edsplistparser.cc edsp/edspindexfile.cc edsp/edspsystem.cc \
-	 edsp/edspwriter.cc
-HEADERS+= edsplistparser.h edspindexfile.h edspsystem.h edspwriter.h
+SOURCE+= edsp/edsplistparser.cc edsp/edspindexfile.cc edsp/edspsystem.cc
+HEADERS+= edsplistparser.h edspindexfile.h edspsystem.h
 
 HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 
