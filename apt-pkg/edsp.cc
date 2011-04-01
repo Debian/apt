@@ -166,10 +166,31 @@ bool EDSP::ReadLine(int const input, std::string &line) {
 	return false;
 }
 									/*}}}*/
+// EDSP::StringToBool - convert yes/no to bool				/*{{{*/
+// ---------------------------------------------------------------------
+/* we are not as lazy as we are in the global StringToBool as we really
+   only accept yes/no here - but we will ignore leading spaces */
+bool EDSP::StringToBool(char const *answer, bool const defValue) {
+   for (; isspace(*answer) != 0; ++answer);
+   if (strncasecmp(answer, "yes", 3) == 0)
+      return true;
+   else if (strncasecmp(answer, "no", 2) == 0)
+      return false;
+   else
+      _error->Warning("Value '%s' is not a boolean 'yes' or 'no'!", answer);
+   return defValue;
+}
+									/*}}}*/
 // EDSP::ReadRequest - first stanza from the given file descriptor	/*{{{*/
 bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
-			std::list<std::string> &remove)
+			std::list<std::string> &remove, bool &upgrade,
+			bool &distUpgrade, bool &autoRemove)
 {
+   install.clear();
+   remove.clear();
+   upgrade = false;
+   distUpgrade = false;
+   autoRemove = false;
    std::string line;
    while (ReadLine(input, line) == true)
    {
@@ -177,7 +198,7 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
       if (line.empty() == true)
 	 continue;
       // The first Tag must be a request, so search for it
-      if (line.compare(0,8, "Request:") != 0)
+      if (line.compare(0, 8, "Request:") != 0)
 	 continue;
 
       while (ReadLine(input, line) == true)
@@ -187,16 +208,25 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	    return true;
 
 	 std::list<std::string> *request = NULL;
-	 if (line.compare(0,8, "Install:") == 0)
+	 if (line.compare(0, 8, "Install:") == 0)
 	 {
-	    line.erase(0,8);
+	    line.erase(0, 8);
 	    request = &install;
 	 }
-	 if (line.compare(0,7, "Remove:") == 0)
+	 else if (line.compare(0, 7, "Remove:") == 0)
 	 {
-	    line.erase(0,7);
+	    line.erase(0, 7);
 	    request = &remove;
 	 }
+	 else if (line.compare(0, 8, "Upgrade:") == 0)
+	    upgrade = EDSP::StringToBool(line.c_str() + 9, false);
+	 else if (line.compare(0, 13, "Dist-Upgrade:") == 0)
+	    distUpgrade = EDSP::StringToBool(line.c_str() + 14, false);
+	 else if (line.compare(0, 11, "Autoremove:") == 0)
+	    autoRemove = EDSP::StringToBool(line.c_str() + 12, false);
+	 else
+	    _error->Warning("Unknown line in EDSP Request stanza: %s", line.c_str());
+
 	 if (request == NULL)
 	    continue;
 	 size_t end = line.length();
@@ -204,7 +234,7 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	    size_t begin = line.rfind(' ');
 	    if (begin == std::string::npos)
 	    {
-	       request->push_back(line.substr(0,end));
+	       request->push_back(line.substr(0, end));
 	       break;
 	    }
 	    else if (begin < end)

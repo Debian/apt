@@ -14,18 +14,20 @@
 class EDSP								/*{{{*/
 {
 	bool static ReadLine(int const input, std::string &line);
+	bool static StringToBool(char const *answer, bool const defValue);
 
 public:
 	bool static WriteRequest(pkgDepCache &Cache, FILE* output,
-				 bool const Upgrade = false,
-				 bool const DistUpgrade = false,
-				 bool const AutoRemove = false);
+				 bool const upgrade = false,
+				 bool const distUpgrade = false,
+				 bool const autoRemove = false);
 	bool static WriteScenario(pkgDepCache &Cache, FILE* output);
 	bool static ReadResponse(FILE* input, pkgDepCache &Cache);
 
 	// ReadScenario is provided by the listparser infrastructure
 	bool static ReadRequest(int const input, std::list<std::string> &install,
-				std::list<std::string> &remove);
+			std::list<std::string> &remove, bool &upgrade,
+			bool &distUpgrade, bool &autoRemove);
 	bool static ApplyRequest(std::list<std::string> const &install,
 				 std::list<std::string> const &remove,
 				 pkgDepCache &Cache);
