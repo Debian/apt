@@ -115,13 +115,13 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
 	 req = &inst;
       else
 	 continue;
-      req->append(", ").append(Pkg.FullName());
+      req->append(" ").append(Pkg.FullName());
    }
    fprintf(output, "Request: EDSP 0.2\n");
    if (del.empty() == false)
-      fprintf(output, "Remove: %s\n", del.c_str()+2);
+      fprintf(output, "Remove: %s\n", del.c_str()+1);
    if (inst.empty() == false)
-      fprintf(output, "Install: %s\n", inst.c_str()+2);
+      fprintf(output, "Install: %s\n", inst.c_str()+1);
    if (Upgrade == true)
       fprintf(output, "Upgrade: yes\n");
    if (DistUpgrade == true)
@@ -132,25 +132,110 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
       fprintf(output, "Strict-Pinning: no\n");
    string solverpref("APT::Solver::");
    solverpref.append(_config->Find("APT::Solver::Name", "internal")).append("::Preferences");
-   if (_config->Exists(solverpref) == false)
+   if (_config->Exists(solverpref) == true)
       fprintf(output, "Preferences: %s\n", _config->Find(solverpref,"").c_str());
+   fprintf(output, "\n");
 
    return true;
 }
 									/*}}}*/
 bool EDSP::ReadResponse(FILE* input, pkgDepCache &Cache) { return false; }
 
-bool EDSP::ReadRequest(FILE* input, std::list<std::string> &install,
+// EDSP::ReadLine - first line from the given file descriptor		/*{{{*/
+// ---------------------------------------------------------------------
+/* Little helper method to read a complete line into a string. Similar to
+   fgets but we need to use the low-level read() here as otherwise the
+   listparser will be confused later on as mixing of fgets and read isn't
+   a supported action according to the manpages and result are undefined */
+bool EDSP::ReadLine(int const input, std::string &line) {
+	char one;
+	ssize_t data = 0;
+	line.erase();
+	line.reserve(100);
+	while ((data = read(input, &one, sizeof(one))) != -1) {
+		if (data != 1)
+			continue;
+		if (one == '\n')
+			return true;
+		if (one == '\r')
+			continue;
+		if (line.empty() == true && isblank(one) != 0)
+			continue;
+		line += one;
+	}
+	return false;
+}
+									/*}}}*/
+// EDSP::ReadRequest - first stanza from the given file descriptor	/*{{{*/
+bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 			std::list<std::string> &remove)
-{ return false; }
+{
+   std::string line;
+   while (ReadLine(input, line) == true)
+   {
+      // Skip empty lines before request
+      if (line.empty() == true)
+	 continue;
+      // The first Tag must be a request, so search for it
+      if (line.compare(0,8, "Request:") != 0)
+	 continue;
+
+      while (ReadLine(input, line) == true)
+      {
+	 // empty lines are the end of the request
+	 if (line.empty() == true)
+	    return true;
+
+	 std::list<std::string> *request = NULL;
+	 if (line.compare(0,8, "Install:") == 0)
+	 {
+	    line.erase(0,8);
+	    request = &install;
+	 }
+	 if (line.compare(0,7, "Remove:") == 0)
+	 {
+	    line.erase(0,7);
+	    request = &remove;
+	 }
+	 if (request == NULL)
+	    continue;
+	 size_t end = line.length();
+	 do {
+	    size_t begin = line.rfind(' ');
+	    if (begin == std::string::npos)
+	    {
+	       request->push_back(line.substr(0,end));
+	       break;
+	    }
+	    else if (begin < end)
+	       request->push_back(line.substr(begin + 1, end));
+	    line.erase(begin);
+	    end = line.find_last_not_of(' ');
+	 } while (end != std::string::npos);
+      }
+   }
+   return false;
+}
+									/*}}}*/
+// EDSP::ApplyRequest - first stanza from the given file descriptor	/*{{{*/
 bool EDSP::ApplyRequest(std::list<std::string> const &install,
 			 std::list<std::string> const &remove,
 			 pkgDepCache &Cache)
-{ return false; }
+{
+	for (std::list<std::string>::const_iterator i = install.begin();
+	     i != install.end(); ++i)
+		Cache.MarkInstall(Cache.FindPkg(*i), false);
+
+	for (std::list<std::string>::const_iterator i = remove.begin();
+	     i != remove.end(); ++i)
+		Cache.MarkDelete(Cache.FindPkg(*i));
+	return true;
+}
+									/*}}}*/
 // EDSP::WriteSolution - to the given file descriptor			/*{{{*/
 bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
 {
-   bool const Debug = _config->FindB("Debug::EDSPWriter::WriteSolution", false);
+   bool const Debug = _config->FindB("Debug::EDSP::WriteSolution", false);
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
    {
       if (Cache[Pkg].Delete() == true)

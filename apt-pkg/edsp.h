@@ -13,6 +13,8 @@
 
 class EDSP								/*{{{*/
 {
+	bool static ReadLine(int const input, std::string &line);
+
 public:
 	bool static WriteRequest(pkgDepCache &Cache, FILE* output,
 				 bool const Upgrade = false,
@@ -22,7 +24,7 @@ public:
 	bool static ReadResponse(FILE* input, pkgDepCache &Cache);
 
 	// ReadScenario is provided by the listparser infrastructure
-	bool static ReadRequest(FILE* input, std::list<std::string> &install,
+	bool static ReadRequest(int const input, std::list<std::string> &install,
 				std::list<std::string> &remove);
 	bool static ApplyRequest(std::list<std::string> const &install,
 				 std::list<std::string> const &remove,

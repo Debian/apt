@@ -743,10 +743,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    if (solver != "internal")
    {
       FILE* output = fopen("/tmp/scenario.log", "w");
-      EDSP::WriteScenario(Cache, output);
-      fclose(output);
-      output = fopen("/tmp/request.log", "w");
       EDSP::WriteRequest(Cache, output);
+      EDSP::WriteScenario(Cache, output);
       fclose(output);
       if (ResolveInternal(BrokenFix) == false)
 	 return false;
