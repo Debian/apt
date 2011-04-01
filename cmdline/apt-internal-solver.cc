@@ -1,0 +1,129 @@
+// -*- mode: cpp; mode: fold -*-
+// Description								/*{{{*/
+/* #####################################################################
+
+   cover around the internal solver to be able to run it like an external
+
+   ##################################################################### */
+									/*}}}*/
+// Include Files							/*{{{*/
+#include <apt-pkg/error.h>
+#include <apt-pkg/cmndline.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/cachefile.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/edsp.h>
+#include <apt-pkg/algorithms.h>
+#include <apt-pkg/fileutl.h>
+
+#include <config.h>
+#include <apti18n.h>
+
+#include <unistd.h>
+#include <cstdio>
+									/*}}}*/
+
+// ShowHelp - Show a help screen					/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool ShowHelp(CommandLine &CmdL) {
+	ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+		 COMMON_ARCH,__DATE__,__TIME__);
+
+	std::cout <<
+		_("Usage: apt-internal-resolver\n"
+		"\n"
+		"apt-internal-resolver is an interface to use the current internal\n"
+		"like an external resolver for the APT family for debugging or alike\n"
+		"\n"
+		"Options:\n"
+		"  -h  This help text.\n"
+		"  -q  Loggable output - no progress indicator\n"
+		"  -c=? Read this configuration file\n"
+		"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+		"apt.conf(5) manual pages for more information and options.\n"
+		"                       This APT has Super Cow Powers.\n");
+	return true;
+}
+									/*}}}*/
+int main(int argc,const char *argv[])					/*{{{*/
+{
+	CommandLine::Args Args[] = {
+		{'h',"help","help",0},
+		{'v',"version","version",0},
+		{'q',"quiet","quiet",CommandLine::IntLevel},
+		{'q',"silent","quiet",CommandLine::IntLevel},
+		{0,0,0,0}};
+
+	CommandLine CmdL(Args,_config);
+	if (pkgInitConfig(*_config) == false ||
+	    CmdL.Parse(argc,argv) == false) {
+		_error->DumpErrors();
+		return 2;
+	}
+
+	// See if the help should be shown
+	if (_config->FindB("help") == true ||
+	    _config->FindB("version") == true) {
+		ShowHelp(CmdL);
+		return 1;
+	}
+
+	// Deal with stdout not being a tty
+	if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
+		_config->Set("quiet","1");
+
+	if (_config->FindI("quiet", 0) < 1)
+		_config->Set("Debug::EDSP::WriteSolution", true);
+
+	_config->Set("APT::Solver::Name", "internal");
+	_config->Set("edsp::scenario", "stdin");
+	int input = STDIN_FILENO;
+	FILE* output = stdout;
+	SetNonBlock(input, false);
+
+	if (pkgInitSystem(*_config,_system) == false) {
+		std::cerr << "System could not be initialized!" << std::endl;
+		return 1;
+	}
+
+	if (WaitFd(input, false, 5) == false)
+		std::cerr << "WAIT timed out in the resolver" << std::endl;
+
+	std::list<std::string> install, remove;
+	bool upgrade, distUpgrade, autoRemove;
+	if (EDSP::ReadRequest(input, install, remove, upgrade, distUpgrade, autoRemove) == false) {
+		std::cerr << "Parsing the request failed!" << std::endl;
+		return 2;
+	}
+
+	pkgCacheFile CacheFile;
+	CacheFile.Open(NULL, false);
+
+	if (EDSP::ApplyRequest(install, remove, CacheFile) == false) {
+		std::cerr << "Failed to apply request to depcache!" << std::endl;
+		return 3;
+	}
+	for (std::list<std::string>::const_iterator i = install.begin();
+	     i != install.end(); ++i)
+		CacheFile->MarkInstall(CacheFile->FindPkg(*i), true);
+
+	pkgProblemResolver Fix(CacheFile);
+	if (Fix.Resolve() == false) {
+		EDSP::WriteError("An error occured", output);
+		return 0;
+	}
+
+	if (EDSP::WriteSolution(CacheFile, output) == false) {
+		std::cerr << "Failed to output the solution!" << std::endl;
+		return 4;
+	}
+
+	bool const Errors = _error->PendingError();
+	if (_config->FindI("quiet",0) > 0)
+		_error->DumpErrors();
+	else
+		_error->DumpErrors(GlobalError::DEBUG);
+	return Errors == true ? 100 : 0;
+}
+									/*}}}*/
