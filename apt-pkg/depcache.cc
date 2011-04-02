@@ -1056,7 +1056,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    Update(Pkg);
    AddSizes(Pkg);
 
-   if (AutoInst == false)
+   if (AutoInst == false || _config->Find("APT::Solver::Name", "internal") != "internal")
       return;
 
    if (DebugMarker == true)
