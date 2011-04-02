@@ -1887,7 +1887,7 @@ bool DoInstall(CommandLine &CmdL)
 	 // Call the scored problem resolver
 	 Fix->InstallProtect();
 	 if (Fix->Resolve(true) == false)
-	    _error->Discard();
+	    ; //FIXME: is there a valid reason for?  _error->Discard();
 	 delete Fix;
       }
 
