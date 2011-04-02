@@ -22,7 +22,7 @@ public:
 				 bool const distUpgrade = false,
 				 bool const autoRemove = false);
 	bool static WriteScenario(pkgDepCache &Cache, FILE* output);
-	bool static ReadResponse(FILE* input, pkgDepCache &Cache);
+	bool static ReadResponse(int const input, pkgDepCache &Cache);
 
 	// ReadScenario is provided by the listparser infrastructure
 	bool static ReadRequest(int const input, std::list<std::string> &install,

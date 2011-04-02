@@ -10,6 +10,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/policy.h>
+#include <apt-pkg/tagfile.h>
 
 #include <apti18n.h>
 #include <limits>
@@ -139,14 +140,37 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
    return true;
 }
 									/*}}}*/
-bool EDSP::ReadResponse(FILE* input, pkgDepCache &Cache) { return false; }
+// EDSP::ReadResponse - from the given file descriptor			/*{{{*/
+bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
+	FileFd in;
+	in.OpenDescriptor(input, FileFd::ReadOnly);
+	pkgTagFile response(&in);
+	pkgTagSection section;
+	while (response.Step(section) == true) {
+		std::string type;
+		if (section.Exists("Install") == true)
+			type = "Install";
+		else if (section.Exists("Remove") == true)
+			type = "Remove";
+		//FIXME: handle progress
+		else
+			continue;
 
+		int const id = section.FindI(type.c_str(), -1);
+		if (id == -1)
+			return _error->Error("Unable to parse %s request!", type.c_str());
+
+		//FIXME: find version by id and mark it correctly
+	}
+	return true;
+}
+									/*}}}*/
 // EDSP::ReadLine - first line from the given file descriptor		/*{{{*/
 // ---------------------------------------------------------------------
 /* Little helper method to read a complete line into a string. Similar to
    fgets but we need to use the low-level read() here as otherwise the
    listparser will be confused later on as mixing of fgets and read isn't
-   a supported action according to the manpages and result are undefined */
+   a supported action according to the manpages and results are undefined */
 bool EDSP::ReadLine(int const input, std::string &line) {
 	char one;
 	ssize_t data = 0;

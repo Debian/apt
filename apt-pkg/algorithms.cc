@@ -740,18 +740,46 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 bool pkgProblemResolver::Resolve(bool BrokenFix)
 {
    std::string const solver = _config->Find("APT::Solver::Name", "internal");
+
    if (solver != "internal")
    {
-      FILE* output = fopen("/tmp/scenario.log", "w");
+//       std::string const file = _config->FindDir("Dir::Bin::Solvers") + solver;
+      std::string const file = solver;
+      if (RealFileExists(file.c_str()) == false)
+	 return _error->Error("Can't call external solver '%s' as it is not available: %s", solver.c_str(), file.c_str());
+      int external[4] = {-1, -1, -1, -1};
+      if (pipe(external) != 0 || pipe(external + 2) != 0)
+	 return _error->Errno("Resolve", "Can't create needed IPC pipes for EDSP");
+      for (int i = 0; i < 4; ++i)
+	 SetCloseExec(external[i], true);
+
+      pid_t Solver = ExecFork();
+      if (Solver == 0)
+      {
+	 dup2(external[0], STDIN_FILENO);
+	 dup2(external[3], STDOUT_FILENO);
+	 const char* calling[2] = { file.c_str(), 0 };
+	 execv(calling[0], (char**) calling);
+	 std::cerr << "Failed to execute solver '" << solver << "'!" << std::endl;
+	 _exit(100);
+      }
+      close(external[0]);
+      close(external[3]);
+
+      if (WaitFd(external[1], true, 5) == false)
+         return _error->Errno("Resolve", "Waiting on availability of solver stdin timed out");
+
+      FILE* output = fdopen(external[1], "w");
+      if (output == NULL)
+         return _error->Errno("Resolve", "fdopen on solver stdin failed");
       EDSP::WriteRequest(Cache, output);
       EDSP::WriteScenario(Cache, output);
       fclose(output);
-      if (ResolveInternal(BrokenFix) == false)
-	 return false;
-      output = fopen("/tmp/solution.log", "w");
-      EDSP::WriteSolution(Cache, output);
-      fclose(output);
-      return true;
+
+      if (EDSP::ReadResponse(external[2], Cache) == false)
+	 return _error->Error("Reading solver response failed");
+
+      return ExecWait(Solver, solver.c_str(), false);
    }
    return ResolveInternal(BrokenFix);
 }
