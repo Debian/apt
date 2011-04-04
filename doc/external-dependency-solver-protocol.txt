@@ -1,4 +1,4 @@
-# APT External Dependency Solver Protocol (EDSP) - version 0.3
+# APT External Dependency Solver Protocol (EDSP) - version 0.4
 
 This document describes the communication protocol between APT and
 external dependency solvers. The protocol is called APT EDSP, for "APT
@@ -26,10 +26,12 @@ internal solver, is reserved, and cannot be used by external solvers.
 
 ## Installation
 
-Each external solver is installed as a file under
-`/usr/lib/apt/solvers`. The naming scheme is
-`/usr/lib/apt/solvers/NAME`, where `NAME` is the name of the external
-solver.
+Each external solver is installed as a file under Dir::Bin::Solvers (see
+below), which defaults to `/usr/lib/apt/solvers`. We will assume in the
+remainder of this section that such a default value is in effect.
+
+The naming scheme is `/usr/lib/apt/solvers/NAME`, where `NAME` is the
+name of the external solver.
 
 Each file under `/usr/lib/apt/solvers` corresponding to an external
 solver must be executable.
@@ -57,6 +59,8 @@ configuration documentation for more, and more up to date, information.
   when the solver NAME is in use. Check solver-specific documentation
   for what is supported here. Defaults to the empty string.
 
+- **Dir::Bin::Solvers**: absolute path of the directory where to look for
+  external solvers. Defaults to `/usr/lib/apt/solvers`.
 
 ## Protocol
 
@@ -110,7 +114,7 @@ and followed by a mixture of action and preference fields.
 
 The value of the **Request:** field is a string describing the EDSP
 protocol which will be used to communicate. At present, the string must
-be `EDSP 0.3`.
+be `EDSP 0.4`.
 
 a unique request identifier, such as an
 UUID. Request fields are mainly used to identify the beginning of a
