@@ -17,12 +17,13 @@
 #include <vector>
 #include <apt-pkg/vendor.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
 
 using std::string;
 using std::vector;
 
 
-class pkgVendorList
+class __deprecated pkgVendorList
 {
    protected:
    vector<Vendor const *> VendorList;

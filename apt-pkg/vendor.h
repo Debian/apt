@@ -4,11 +4,12 @@
 #include <vector>
 #include <map>
 
+#include <apt-pkg/macros.h>
 
 using std::string;
 
 // A class representing a particular software provider. 
-class Vendor
+class __deprecated Vendor
 {
    public:
    struct Fingerprint

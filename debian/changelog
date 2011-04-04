@@ -1,3 +1,39 @@
+apt (0.8.13.1) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - skip --configure if all packages disappeared
+  * apt-pkg/vendor.cc, apt-pkg/vendorlist.cc:
+    - mark them as deprecated as they are unused
+  * apt-pkg/deb/deblistparser.h:
+    - enable StripMultiArch by default for ParseDepends
+  * debian/apt.conf.autoremove:
+    - adapt to new gnumach kernel package naming (Closes: #619337)
+  * doc/apt_preferences.5.xml:
+    - correct typo spotted by Charles Plessy (Closes: #619088)
+    - document ButAutomaticUpgrades together with NotAutomatic
+      as suggested by Charles Plessy (Closes: #619083)
+  * apt-pkg/depcache.cc:
+    - remove pseudo handling leftover from SetReInstall
+    - do not change protected packages in autoinstall (Closes: #618848)
+  * apt-pkg/pkgcachegen.cc:
+    - make "all"->"native" an implementation detail of NewPackage
+      rather than rewrite it in higher methods
+  * apt-pkg/cacheiterator.h:
+    - return "all" instead of native architecture without breaking the abi
+      (too much) by extending enum instead of using bitflags (LP: #733741)
+  * apt-pkg/aptconfiguration.cc:
+    - use dpkg --print-foreign-architectures to get multiarch configuration
+      if non is specified with APT::Architectures (Closes: #612958)
+  * cmdline/apt-get.cc:
+    - do not show simulation notice for non-root commands (Closes: #619072)
+    - be able to disable resolver with APT::Get::CallResolver and disable
+      auto installation with APT::Get::AutoSolving
+  * apt-pkg/deb/deblistparser.cc:
+    - create foo:any provides for all architectures for an allowed package
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 29 Mar 2011 13:12:45 +0200
+
 apt (0.8.13.1) unstable; urgency=low
 
   * apt-pkg/acquire-item.cc: Use stat buffer if stat was

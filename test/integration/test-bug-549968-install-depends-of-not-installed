@@ -17,10 +17,10 @@ setupaptarchive
 testequal 'Reading package lists...
 Building dependency tree...
   MarkInstall coolstuff [ i386 ] < none -> 1.0 > ( other ) FU=1
-    Hold prevents MarkInstall of extracoolstuff [ i386 ] < none -> 1.0 > ( other ) FU=0
+    Ignore MarkInstall of extracoolstuff [ i386 ] < none -> 1.0 > ( other ) as its mode (Keep) is protected
 Package extracoolstuff is not installed, so not removed
 The following NEW packages will be installed:
   coolstuff
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst coolstuff (1.0 unstable [i386])
-Conf coolstuff (1.0 unstable [i386])' aptget install coolstuff extracoolstuff- -o Debug::pkgDepCache::Marker=1 -s
+Inst coolstuff (1.0 unstable [all])
+Conf coolstuff (1.0 unstable [all])' aptget install coolstuff extracoolstuff- -o Debug::pkgDepCache::Marker=1 -s
