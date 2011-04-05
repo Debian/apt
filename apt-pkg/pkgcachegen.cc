@@ -178,12 +178,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (PackageName.empty() == true)
 	 return false;
 
-      /* Treat Arch all packages as the same as the native arch. */
-      string Arch;
-      if (List.ArchitectureAll() == true)
-	 Arch = _config->Find("APT::Architecture");
-      else
-	 Arch = List.Architecture();
+      string const Arch = List.Architecture();
  
       // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
@@ -484,7 +479,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    // Set the name, arch and the ID
    Pkg->Name = Grp->Name;
    Pkg->Group = Grp.Index();
-   map_ptrloc const idxArch = WriteUniqString(Arch.c_str());
+   map_ptrloc const idxArch = WriteUniqString((Arch == "all") ? _config->Find("APT::Architecture") : Arch.c_str());
    if (unlikely(idxArch == 0))
       return false;
    Pkg->Arch = idxArch;
@@ -643,7 +638,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 		- MultiArch: same → Co-Installable if they have the same version
 		- Architecture: all → Need to be Co-Installable for internal reasons
 		- All others conflict with all other group members */
-	       bool const coInstall = (V->MultiArch == pkgCache::Version::Same);
+	       bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
 	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
 	       {
 		  if (*A == Arch)
@@ -787,7 +782,8 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
    pkgCache &Cache = Owner->Cache;
 
    // We do not add self referencing provides
-   if (Ver.ParentPkg().Name() == PkgName && PkgArch == Ver.Arch())
+   if (Ver.ParentPkg().Name() == PkgName && (PkgArch == Ver.ParentPkg().Arch() ||
+	(PkgArch == "all" && _config->Find("APT::Architecture") == Ver.ParentPkg().Arch())))
       return true;
    
    // Get a structure

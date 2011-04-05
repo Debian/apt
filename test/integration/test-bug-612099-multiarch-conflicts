@@ -67,9 +67,9 @@ The following NEW packages will be installed:
 The following packages will be upgraded:
   libc6
 1 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
-Inst libc6 [1.0] (2.0 testing [i386])
+Inst libc6 [1.0] (2.0 testing [all])
 Inst foobar (1.0 stable [i386])
-Conf libc6 (2.0 testing [i386])
+Conf libc6 (2.0 testing [all])
 Conf foobar (1.0 stable [i386])' aptget install foobar/stable libc6 -st testing
 
 testequal 'Reading package lists...
@@ -78,8 +78,8 @@ Reading state information...
 The following packages will be upgraded:
   libc6
 1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
-Inst libc6 [1.0] (2.0 testing [i386])
-Conf libc6 (2.0 testing [i386])' aptget upgrade -t testing -s
+Inst libc6 [1.0] (2.0 testing [all])
+Conf libc6 (2.0 testing [all])' aptget upgrade -t testing -s
 aptget upgrade -y -qq 2>&1 > /dev/null
 testdpkginstalled libc6
 
@@ -171,8 +171,8 @@ Reading state information...
 The following packages will be upgraded:
   libc6-same
 1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
-Inst libc6-same [1.0] (2.0 testing [i386])
-Conf libc6-same (2.0 testing [i386])' aptget upgrade -t testing -s
+Inst libc6-same [1.0] (2.0 testing [all])
+Conf libc6-same (2.0 testing [all])' aptget upgrade -t testing -s
 aptget upgrade -y -qq 2>&1 > /dev/null
 testdpkginstalled libc6-same
 

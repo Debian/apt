@@ -506,8 +506,8 @@ struct pkgCache::Version
        if it is built for another architecture as the requester.
        Same indicates that builds for different architectures can
        be co-installed on the system */
-   // FIXME: remove All on abi break
-   enum {None, All, Foreign, Same, Allowed} MultiArch;
+   /* FIXME: A bitflag would be better with the next abibreak… */
+   enum {None, All, Foreign, Same, Allowed, AllForeign, AllAllowed} MultiArch;
 
    /** \brief references all the PackageFile's that this version came from
 
