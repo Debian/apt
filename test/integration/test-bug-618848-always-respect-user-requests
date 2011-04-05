@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertinstalledpackage 'libdb4.8' 'all' '1.0'
+insertinstalledpackage 'exim4' 'all' '1.0' 'Depends: exim4-daemon-light | exim4-daemon-heavy'
+insertinstalledpackage 'exim4-daemon-light' 'all' '1.0' 'Depends: libdb4.8'
+insertpackage 'unstable' 'exim4-daemon-heavy' 'all' '1.0' 'Depends: libdb4.8'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+  MarkDelete libdb4.8 [ i386 ] < 1.0 > ( other ) FU=1
+  MarkDelete exim4-daemon-light [ i386 ] < 1.0 > ( other ) FU=1
+    MarkInstall exim4-daemon-heavy [ i386 ] < none -> 1.0 > ( other ) FU=0
+      Ignore MarkInstall of libdb4.8 [ i386 ] < 1.0 > ( other ) as its mode (Delete) is protected
+    MarkDelete exim4-daemon-heavy [ i386 ] < none -> 1.0 > ( other ) FU=0
+  MarkDelete exim4 [ i386 ] < 1.0 > ( other ) FU=1
+The following packages will be REMOVED:
+  exim4 exim4-daemon-light libdb4.8
+  MarkDelete exim4 [ i386 ] < 1.0 > ( other ) FU=1
+0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
+Remv exim4 [1.0]
+  MarkDelete exim4-daemon-light [ i386 ] < 1.0 > ( other ) FU=1
+Remv exim4-daemon-light [1.0]
+  MarkDelete libdb4.8 [ i386 ] < 1.0 > ( other ) FU=1
+Remv libdb4.8 [1.0]' aptget remove libdb4.8 -s -o Debug::pkgDepCache::Marker=1

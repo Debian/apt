@@ -17,6 +17,7 @@
 
 #include <sys/types.h>
 #include <dirent.h>
+#include <stdio.h>
 
 #include <algorithm>
 #include <string>
@@ -314,10 +315,40 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 	if (likely(Cached == true) && archs.empty() == false)
 		return archs;
 
-	archs = _config->FindVector("APT::Architectures");
 	string const arch = _config->Find("APT::Architecture");
+	archs = _config->FindVector("APT::Architectures");
+
 	if (unlikely(arch.empty() == true))
 		return archs;
+
+	// FIXME: It is a bit unclean to have debian specific code here…
+	if (archs.empty() == true) {
+		archs.push_back(arch);
+		string dpkgcall = _config->Find("Dir::Bin::dpkg", "dpkg");
+		std::vector<string> const dpkgoptions = _config->FindVector("DPkg::options");
+		for (std::vector<string>::const_iterator o = dpkgoptions.begin();
+		     o != dpkgoptions.end(); ++o)
+			dpkgcall.append(" ").append(*o);
+		dpkgcall.append(" --print-foreign-architectures 2> /dev/null");
+		FILE *dpkg = popen(dpkgcall.c_str(), "r");
+		char buf[1024];
+		if(dpkg != NULL) {
+			if (fgets(buf, sizeof(buf), dpkg) != NULL) {
+				char* arch = strtok(buf, " ");
+				while (arch != NULL) {
+					for (; isspace(*arch) != 0; ++arch);
+					if (arch != '\0') {
+						char const* archend = arch;
+						for (; isspace(*archend) == 0 && *archend != '\0'; ++archend);
+						archs.push_back(string(arch, (archend - arch)));
+					}
+					arch = strtok(NULL, " ");
+				}
+			}
+			pclose(dpkg);
+		}
+		return archs;
+	}
 
 	if (archs.empty() == true ||
 	    std::find(archs.begin(), archs.end(), arch) == archs.end())

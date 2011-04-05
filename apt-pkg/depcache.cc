@@ -819,8 +819,7 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
 void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
                            unsigned long Depth)
 {
-   // Simplifies other routines.
-   if (Pkg.end() == true)
+   if (IsModeChangeOk(ModeKeep, Pkg, Depth, FromUser) == false)
       return;
 
    /* Reject an attempt to keep a non-source broken installed package, those
@@ -828,25 +827,22 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
    if (Pkg.State() == PkgIterator::NeedsUnpack && 
        Pkg.CurrentVer().Downloadable() == false)
       return;
-   
-   /** \todo Can this be moved later in the method? */
-   ActionGroup group(*this);
 
    /* We changed the soft state all the time so the UI is a bit nicer
       to use */
    StateCache &P = PkgState[Pkg->ID];
-   if (Soft == true)
-      P.iFlags |= AutoKept;
-   else
-      P.iFlags &= ~AutoKept;
-   
+
    // Check that it is not already kept
    if (P.Mode == ModeKeep)
       return;
 
-   // We dont even try to keep virtual packages..
-   if (Pkg->VersionList == 0)
-      return;
+   if (Soft == true)
+      P.iFlags |= AutoKept;
+   else
+      P.iFlags &= ~AutoKept;
+
+   ActionGroup group(*this);
+
 #if 0 // reseting the autoflag here means we lose the 
       // auto-mark information if a user selects a package for removal
       // but changes  his mind then and sets it for keep again
@@ -883,29 +879,25 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
 void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
                              unsigned long Depth, bool FromUser)
 {
-   // Simplifies other routines.
-   if (Pkg.end() == true)
+   if (IsModeChangeOk(ModeDelete, Pkg, Depth, FromUser) == false)
       return;
 
-   ActionGroup group(*this);
+   StateCache &P = PkgState[Pkg->ID];
 
    // Check that it is not already marked for delete
-   StateCache &P = PkgState[Pkg->ID];
-   P.iFlags &= ~(AutoKept | Purge);
-   if (rPurge == true)
-      P.iFlags |= Purge;
-   
    if ((P.Mode == ModeDelete || P.InstallVer == 0) && 
        (Pkg.Purge() == true || rPurge == false))
       return;
-   
-   // We dont even try to delete virtual packages..
-   if (Pkg->VersionList == 0)
-      return;
 
-   // check if we are allowed to install the package
+   // check if we are allowed to remove the package
    if (IsDeleteOk(Pkg,rPurge,Depth,FromUser) == false)
       return;
+
+   P.iFlags &= ~(AutoKept | Purge);
+   if (rPurge == true)
+      P.iFlags |= Purge;
+
+   ActionGroup group(*this);
 
    if (DebugMarker == true)
       std::clog << OutputInDepth(Depth) << (rPurge ? "MarkPurge " : "MarkDelete ") << Pkg << " FU=" << FromUser << std::endl;
@@ -927,22 +919,12 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
 									/*}}}*/
 // DepCache::IsDeleteOk - check if it is ok to remove this package	/*{{{*/
 // ---------------------------------------------------------------------
-/* The default implementation just honors dpkg hold
-   But an application using this library can override this method
-   to control the MarkDelete behaviour */
+/* The default implementation tries to prevent deletion of install requests.
+   dpkg holds are enforced by the private IsModeChangeOk */
 bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
 			      unsigned long Depth, bool FromUser)
 {
-   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold && _config->FindB("APT::Ignore-Hold",false) == false)
-   {
-      if (DebugMarker == true)
-	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkDelete of " << Pkg << " FU=" << FromUser << std::endl;
-      return false;
-   }
-   // if the removal is not explictely requested by the user, protect
-   // explicit new-install package from accidental removal by the 
-   // problemresolver
-   else if (FromUser == false && Pkg->CurrentVer == 0)
+   if (FromUser == false && Pkg->CurrentVer == 0)
    {
       StateCache &P = PkgState[Pkg->ID];
       // Status == 2 means this applies for new installs only
@@ -956,6 +938,61 @@ bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
    return true;
 }
 									/*}}}*/
+// DepCache::IsModeChangeOk - check if it is ok to change the mode	/*{{{*/
+// ---------------------------------------------------------------------
+/* this is used by all Mark methods on the very first line to check sanity
+   and prevents mode changes for packages on hold for example.
+   If you want to check Mode specific stuff you can use the virtual public
+   Is<Mode>Ok methods instead */
+char const* PrintMode(char const mode)
+{
+	 switch (mode)
+	 {
+	 case pkgDepCache::ModeInstall: return "Install";
+	 case pkgDepCache::ModeKeep: return "Keep";
+	 case pkgDepCache::ModeDelete: return "Delete";
+	 default: return "UNKNOWN";
+	 }
+}
+bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
+				 unsigned long const Depth, bool const FromUser)
+{
+   // we are not trying to hard…
+   if (unlikely(Depth > 100))
+      return false;
+
+   // general sanity
+   if (unlikely(Pkg.end() == true || Pkg->VersionList == 0))
+      return false;
+
+   // the user is always right
+   if (FromUser == true)
+      return true;
+
+   StateCache &P = PkgState[Pkg->ID];
+
+   // if previous state was set by user only user can reset it
+   if ((P.iFlags & Protected) == Protected)
+   {
+      if (unlikely(DebugMarker == true) && P.Mode != mode)
+	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
+		   << " of " << Pkg << " as its mode (" << PrintMode(P.Mode)
+		   << ") is protected" << std::endl;
+      return false;
+   }
+   // enforce dpkg holds
+   else if (mode != ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
+	    _config->FindB("APT::Ignore-Hold",false) == false)
+   {
+      if (unlikely(DebugMarker == true) && P.Mode != mode)
+	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
+		   << " of " << Pkg << std::endl;
+      return false;
+   }
+
+   return true;
+}
+									/*}}}*/
 // DepCache::MarkInstall - Put the package in the install state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -963,19 +1000,17 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 			      unsigned long Depth, bool FromUser,
 			      bool ForceImportantDeps)
 {
-   if (Depth > 100)
+   if (IsModeChangeOk(ModeInstall, Pkg, Depth, FromUser) == false)
       return;
-   
-   // Simplifies other routines.
-   if (Pkg.end() == true)
+
+   StateCache &P = PkgState[Pkg->ID];
+
+   // See if there is even any possible instalation candidate
+   if (P.CandidateVer == 0)
       return;
-   
-   ActionGroup group(*this);
 
    /* Check that it is not already marked for install and that it can be 
       installed */
-   StateCache &P = PkgState[Pkg->ID];
-   P.iFlags &= ~AutoKept;
    if ((P.InstPolicyBroken() == false && P.InstBroken() == false) && 
        (P.Mode == ModeInstall ||
 	P.CandidateVer == (Version *)Pkg.CurrentVer()))
@@ -985,16 +1020,12 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       return;
    }
 
-   // See if there is even any possible instalation candidate
-   if (P.CandidateVer == 0)
-      return;
-   // We dont even try to install virtual packages..
-   if (Pkg->VersionList == 0)
-      return;
-
    // check if we are allowed to install the package
    if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
       return;
+
+   ActionGroup group(*this);
+   P.iFlags &= ~AutoKept;
 
    /* Target the candidate version and remove the autoflag. We reset the
       autoflag below if this was called recursively. Otherwise the user
@@ -1208,18 +1239,11 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 									/*}}}*/
 // DepCache::IsInstallOk - check if it is ok to install this package	/*{{{*/
 // ---------------------------------------------------------------------
-/* The default implementation just honors dpkg hold
-   But an application using this library can override this method
-   to control the MarkInstall behaviour */
+/* The default implementation does nothing.
+   dpkg holds are enforced by the private IsModeChangeOk */
 bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
 			      unsigned long Depth, bool FromUser)
 {
-   if (FromUser == false && Pkg->SelectedState == pkgCache::State::Hold && _config->FindB("APT::Ignore-Hold",false) == false)
-   {
-      if (DebugMarker == true)
-	 std::clog << OutputInDepth(Depth) << "Hold prevents MarkInstall of " << Pkg << " FU=" << FromUser << std::endl;
-      return false;
-   }
    return true;
 }
 									/*}}}*/
@@ -1244,11 +1268,6 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
    
    AddStates(Pkg);
    AddSizes(Pkg);
-
-   if (unlikely(Pkg.CurrentVer().end() == true))
-      return;
-
-   SetReInstall(Pkg.Group().FindPkg("all"), To);
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/

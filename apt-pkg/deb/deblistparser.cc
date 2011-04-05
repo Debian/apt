@@ -106,7 +106,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       Ver->MultiArch = pkgCache::Version::None;
    else if (MultiArch == "same") {
       // Parse multi-arch
-      if (Section.FindS("Architecture") == "all")
+      if (ArchitectureAll() == true)
       {
 	 /* Arch all packages can't be Multi-Arch: same */
 	 _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
@@ -126,6 +126,14 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 			MultiArch.c_str(), Section.FindS("Package").c_str());
       Ver->MultiArch = pkgCache::Version::None;
    }
+
+   if (ArchitectureAll() == true)
+      switch (Ver->MultiArch)
+      {
+	 case pkgCache::Version::Foreign: Ver->MultiArch = pkgCache::Version::AllForeign; break;
+	 case pkgCache::Version::Allowed: Ver->MultiArch = pkgCache::Version::AllAllowed; break;
+	 default: Ver->MultiArch = pkgCache::Version::All;
+      }
 
    // Archive Size
    Ver->Size = Section.FindULL("Size");
@@ -624,7 +632,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 
    while (1)
    {
-      Start = ParseDepends(Start,Stop,Package,Version,Op);
+      Start = ParseDepends(Start,Stop,Package,Version,Op,false,!MultiArchEnabled);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
 
@@ -677,27 +685,28 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       }
    }
 
-   if (Ver->MultiArch == pkgCache::Version::Allowed)
-   {
-      string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
-      NewProvides(Ver, Package, "any", Ver.VerStr());
-   }
-
-   if (Ver->MultiArch != pkgCache::Version::Foreign)
-      return true;
-
    if (MultiArchEnabled == false)
       return true;
+   else if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
+   {
+      string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
+      return NewProvidesAllArch(Ver, Package, Ver.VerStr());
+   }
+   else if (Ver->MultiArch == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::AllForeign)
+      return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr());
 
-   string const Package = Ver.ParentPkg().Name();
-   string const Version = Ver.VerStr();
+   return true;
+}
+									/*}}}*/
+// ListParser::NewProvides - add provides for all architectures		/*{{{*/
+bool debListParser::NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package,
+				string const &Version) {
    for (std::vector<string>::const_iterator a = Architectures.begin();
 	a != Architectures.end(); ++a)
    {
       if (NewProvides(Ver, Package, *a, Version) == false)
 	 return false;
    }
-
    return true;
 }
 									/*}}}*/

@@ -105,12 +105,16 @@ algorithm to set the priorities of the versions of a package.  Assign:
 <varlistentry>
 <term>priority 1</term>
 <listitem><simpara>to the versions coming from archives which in their <filename>Release</filename>
-files are marked as "NotAutomatic: yes" like the debian experimental archive.</simpara></listitem>
+files are marked as "NotAutomatic: yes" but <emphasis>not</emphasis> as "ButAutomaticUpgrades: yes"
+like the debian <literal>experimental</literal> archive.</simpara></listitem>
 </varlistentry>
 
 <varlistentry>
 <term>priority 100</term>
-<listitem><simpara>to the version that is already installed (if any).</simpara></listitem>
+<listitem><simpara>to the version that is already installed (if any) and to the versions coming
+from archives which in their <filename>Release</filename> files are marked as "NotAutomatic: yes" and
+"ButAutomaticUpgrades: yes" like the debian backports archive since <literal>squeeze-backports</literal>.
+</simpara></listitem>
 </varlistentry>
 
 <varlistentry>
@@ -127,9 +131,10 @@ files are marked as "NotAutomatic: yes" like the debian experimental archive.</s
 
 <para>If the target release has not been specified then APT simply assigns
 priority 100 to all installed package versions and priority 500 to all
-uninstalled package versions, expect versions coming from archives which
+uninstalled package versions, except versions coming from archives which
 in their <filename>Release</filename> files are marked as "NotAutomatic: yes" -
-these versions get the priority 1.</para>
+these versions get the priority 1 or priority 100 if it is additionally marked
+as "ButAutomaticUpgrades: yes".</para>
 
 <para>APT then applies the following rules, listed in order of precedence,
 to determine which version of a package to install.

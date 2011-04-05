@@ -317,21 +317,21 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	if (unlikely(IsGood() == false || S->FirstPackage == 0))
 		return PkgIterator(*Owner, 0);
 
+	/* If we accept any package we simply return the "first"
+	   package in this group (the last one added). */
+	if (Arch == "any")
+		return PkgIterator(*Owner, Owner->PkgP + S->FirstPackage);
+
 	static string const myArch = _config->Find("APT::Architecture");
 	/* Most of the time the package for our native architecture is
 	   the one we add at first to the cache, but this would be the
 	   last one we check, so we do it now. */
-	if (Arch == "native" || Arch == myArch) {
+	if (Arch == "native" || Arch == myArch || Arch == "all") {
 		Arch = myArch;
 		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
 		if (stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 	}
-
-	/* If we accept any package we simply return the "first"
-	   package in this group (the last one added). */
-	if (Arch == "any")
-		return PkgIterator(*Owner, Owner->PkgP + S->FirstPackage);
 
 	/* Iterate over the list to find the matching arch
 	   unfortunately this list includes "package noise"

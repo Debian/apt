@@ -1,0 +1,59 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+setupaptarchive
+
+insertinstalledpackage 'libapt' 'i386' '1.0'
+insertinstalledpackage 'libapt' 'amd64' '1.0'
+insertinstalledpackage 'libapt' 'armel' '1.0'
+
+testpass() {
+	rm rootdir/var/cache/apt/*.bin
+	msgtest 'Test architecture handling' "$1 with $2"
+	aptcache show libapt:$2 2> /dev/null > /dev/null && msgpass || msgfail
+}
+
+testfail() {
+	rm rootdir/var/cache/apt/*.bin
+	msgtest 'Test architecture handling' "$1 with $2"
+	aptcache show libapt:$2 2> /dev/null > /dev/null && msgfail || msgpass
+}
+
+testpass 'no config' 'i386'
+testfail 'no config' 'amd64'
+testfail 'no config' 'armel'
+
+CONFFILE=rootdir/etc/apt/apt.conf.d/99multiarch
+echo '#clear APT::Architectures;' >> $CONFFILE
+echo 'APT::Architectures:: "i386";' >> $CONFFILE
+echo 'APT::Architectures:: "amd64";' >> $CONFFILE
+
+testpass 'apt config' 'i386'
+testpass 'apt config' 'amd64'
+testfail 'apt config' 'armel'
+
+echo 'APT::Architectures:: "armel";' >> $CONFFILE
+
+testpass 'apt config' 'armel'
+
+rm $CONFFILE
+
+echo '#clear APT::Architectures;' >> $CONFFILE
+echo 'Dir::Bin::dpkg "./dpkg-printer";' >> $CONFFILE
+
+echo '#! /bin/sh
+echo "amd64"' > ./dpkg-printer
+chmod +x ./dpkg-printer
+
+testpass 'dpkg config' 'i386'
+testpass 'dpkg config' 'amd64'
+testfail 'dpkg config' 'armel'
+
+echo '#! /bin/sh
+echo "amd64 armel"' > ./dpkg-printer
+
+testpass 'dpkg config' 'armel'

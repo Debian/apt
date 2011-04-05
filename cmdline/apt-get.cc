@@ -764,7 +764,7 @@ struct TryToInstall {
    unsigned long AutoMarkChanged;
    APT::PackageSet doAutoInstallLater;
 
-   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver &PM, bool const &FixBroken) : Cache(&Cache), Fix(&PM),
+   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver *PM, bool const &FixBroken) : Cache(&Cache), Fix(PM),
 			FixBroken(FixBroken), AutoMarkChanged(0) {};
 
    void operator() (pkgCache::VerIterator const &Ver) {
@@ -782,8 +782,10 @@ struct TryToInstall {
 	 ioprintf(c1out,_("Skipping %s, it is not installed and only upgrades are requested.\n"),
 		  Pkg.FullName(true).c_str());
       else {
-	 Fix->Clear(Pkg);
-	 Fix->Protect(Pkg);
+	 if (Fix != NULL) {
+	    Fix->Clear(Pkg);
+	    Fix->Protect(Pkg);
+	 }
 	 Cache->GetDepCache()->MarkInstall(Pkg,false);
 
 	 if (State.Install() == false) {
@@ -871,16 +873,19 @@ struct TryToRemove {
    bool PurgePkgs;
    unsigned long AutoMarkChanged;
 
-   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver &PM) : Cache(&Cache), Fix(&PM),
+   TryToRemove(pkgCacheFile &Cache, pkgProblemResolver *PM) : Cache(&Cache), Fix(PM),
 				PurgePkgs(_config->FindB("APT::Get::Purge", false)) {};
 
    void operator() (pkgCache::VerIterator const &Ver)
    {
       pkgCache::PkgIterator Pkg = Ver.ParentPkg();
 
-      Fix->Clear(Pkg);
-      Fix->Protect(Pkg);
-      Fix->Remove(Pkg);
+      if (Fix != NULL)
+      {
+	 Fix->Clear(Pkg);
+	 Fix->Protect(Pkg);
+	 Fix->Remove(Pkg);
+      }
 
       if ((Pkg->CurrentVer == 0 && PurgePkgs == false) ||
 	  (PurgePkgs == true && Pkg->CurrentState == pkgCache::State::NotInstalled))
@@ -1385,10 +1390,10 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 
    if (Remove == true)
    {
-      TryToRemove RemoveAction(Cache, Fix);
+      TryToRemove RemoveAction(Cache, &Fix);
       RemoveAction(Pkg.VersionList());
    } else if (Cache[Pkg].CandidateVer != 0) {
-      TryToInstall InstallAction(Cache, Fix, BrokenFix);
+      TryToInstall InstallAction(Cache, &Fix, BrokenFix);
       InstallAction(Cache[Pkg].CandidateVerIter(Cache));
       InstallAction.doAutoInstall();
    } else
@@ -1791,8 +1796,10 @@ bool DoInstall(CommandLine &CmdL)
    bool BrokenFix = false;
    if (Cache->BrokenCount() != 0)
       BrokenFix = true;
-   
-   pkgProblemResolver Fix(Cache);
+
+   pkgProblemResolver* Fix = NULL;
+   if (_config->FindB("APT::Get::CallResolver", true) == true)
+      Fix = new pkgProblemResolver(Cache);
 
    static const unsigned short MOD_REMOVE = 1;
    static const unsigned short MOD_INSTALL = 2;
@@ -1823,6 +1830,8 @@ bool DoInstall(CommandLine &CmdL)
    if (_error->PendingError() == true)
    {
       helper.showVirtualPackageErrors(Cache);
+      if (Fix != NULL)
+	 delete Fix;
       return false;
    }
 
@@ -1837,17 +1846,29 @@ bool DoInstall(CommandLine &CmdL)
 
       for (unsigned short i = 0; order[i] != 0; ++i)
       {
-	 if (order[i] == MOD_INSTALL) {
+	 if (order[i] == MOD_INSTALL)
 	    InstallAction = std::for_each(verset[MOD_INSTALL].begin(), verset[MOD_INSTALL].end(), InstallAction);
-	    InstallAction.propergateReleaseCandiateSwitching(helper.selectedByRelease, c0out);
-	    InstallAction.doAutoInstall();
-	 }
 	 else if (order[i] == MOD_REMOVE)
 	    RemoveAction = std::for_each(verset[MOD_REMOVE].begin(), verset[MOD_REMOVE].end(), RemoveAction);
       }
 
+      if (Fix != NULL && _config->FindB("APT::Get::AutoSolving", true) == true)
+      {
+         for (unsigned short i = 0; order[i] != 0; ++i)
+         {
+	    if (order[i] != MOD_INSTALL)
+	       continue;
+	    InstallAction.propergateReleaseCandiateSwitching(helper.selectedByRelease, c0out);
+	    InstallAction.doAutoInstall();
+	 }
+      }
+
       if (_error->PendingError() == true)
+      {
+	 if (Fix != NULL)
+	    delete Fix;
 	 return false;
+      }
 
       /* If we are in the Broken fixing mode we do not attempt to fix the
 	 problems. This is if the user invoked install without -f and gave
@@ -1856,14 +1877,19 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 c1out << _("You might want to run 'apt-get -f install' to correct these:") << endl;
 	 ShowBroken(c1out,Cache,false);
-
+	 if (Fix != NULL)
+	    delete Fix;
 	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
       }
-   
-      // Call the scored problem resolver
-      Fix.InstallProtect();
-      if (Fix.Resolve(true) == false)
-	 _error->Discard();
+
+      if (Fix != NULL)
+      {
+	 // Call the scored problem resolver
+	 Fix->InstallProtect();
+	 if (Fix->Resolve(true) == false)
+	    _error->Discard();
+	 delete Fix;
+      }
 
       // Now we check the state of the packages,
       if (Cache->BrokenCount() != 0)
@@ -3281,7 +3307,10 @@ int main(int argc,const char *argv[])					/*{{{*/
    }
 
    // simulate user-friendly if apt-get has no root privileges
-   if (getuid() != 0 && _config->FindB("APT::Get::Simulate") == true)
+   if (getuid() != 0 && _config->FindB("APT::Get::Simulate") == true &&
+	(CmdL.FileSize() == 0 ||
+	 (strcmp(CmdL.FileList[0], "source") != 0 && strcmp(CmdL.FileList[0], "download") != 0 &&
+	  strcmp(CmdL.FileList[0], "changelog") != 0)))
    {
       if (_config->FindB("APT::Get::Show-User-Simulation-Note",true) == true)
 	 cout << _("NOTE: This is only a simulation!\n"

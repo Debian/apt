@@ -17,7 +17,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/vendorlist.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
@@ -1390,29 +1389,6 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 									/*}}}*/
 bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 {
-//    // Maybe this should be made available from above so we don't have
-//    // to read and parse it every time?
-//    pkgVendorList List;
-//    List.ReadMainList();
-
-//    const Vendor* Vndr = NULL;
-//    for (std::vector<string>::const_iterator I = GPGVOutput.begin(); I != GPGVOutput.end(); I++)
-//    {
-//       string::size_type pos = (*I).find("VALIDSIG ");
-//       if (_config->FindB("Debug::Vendor", false))
-//          std::cerr << "Looking for VALIDSIG in \"" << (*I) << "\": pos " << pos 
-//                    << std::endl;
-//       if (pos != std::string::npos)
-//       {
-//          string Fingerprint = (*I).substr(pos+sizeof("VALIDSIG"));
-//          if (_config->FindB("Debug::Vendor", false))
-//             std::cerr << "Looking for \"" << Fingerprint << "\" in vendor..." <<
-//                std::endl;
-//          Vndr = List.FindVendor(Fingerprint) != "";
-//          if (Vndr != NULL);
-//          break;
-//       }
-//    }
    string::size_type pos;
 
    // check for missing sigs (that where not fatal because otherwise we had

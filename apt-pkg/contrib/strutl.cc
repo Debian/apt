@@ -692,14 +692,16 @@ int StringToBool(const string &Text,int Default)
    year 2000 complient and timezone neutral */
 string TimeRFC1123(time_t Date)
 {
-   struct tm Conv = *gmtime(&Date);
-   char Buf[300];
+   struct tm Conv;
+   if (gmtime_r(&Date, &Conv) == NULL)
+      return "";
 
+   char Buf[300];
    const char *Day[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
    const char *Month[] = {"Jan","Feb","Mar","Apr","May","Jun","Jul",
                           "Aug","Sep","Oct","Nov","Dec"};
 
-   sprintf(Buf,"%s, %02i %s %i %02i:%02i:%02i GMT",Day[Conv.tm_wday],
+   snprintf(Buf, sizeof(Buf), "%s, %02i %s %i %02i:%02i:%02i GMT",Day[Conv.tm_wday],
 	   Conv.tm_mday,Month[Conv.tm_mon],Conv.tm_year+1900,Conv.tm_hour,
 	   Conv.tm_min,Conv.tm_sec);
    return Buf;

@@ -40,6 +40,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);
    bool ParseProvides(pkgCache::VerIterator &Ver);
+   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package, string const &Version);
    static bool GrabWord(string Word,WordList *List,unsigned char &Out);
    
    public:
@@ -69,7 +70,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    static const char *ParseDepends(const char *Start,const char *Stop,
 			    string &Package,string &Ver,unsigned int &Op,
 			    bool const &ParseArchFlags = false,
-			    bool const &StripMultiArch = false);
+			    bool const &StripMultiArch = true);
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
    debListParser(FileFd *File, string const &Arch = "");
