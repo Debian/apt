@@ -217,6 +217,9 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 	if (found == string::npos)
 		return FindPkg(Name, "native");
 	string const Arch = Name.substr(found+1);
+	/* Beware: This is specialcased to handle pkg:any in dependencies as
+	   these are linked to virtual pkg:any named packages with all archs.
+	   If you want any arch from a given pkg, use FindPkg(pkg,arch) */
 	if (Arch == "any")
 		return FindPkg(Name, "any");
 	return FindPkg(Name.substr(0, found), Arch);
