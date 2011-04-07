@@ -9,6 +9,9 @@ apt (0.8.13.3) unstable; urgency=low
     - do not crash if the mirror file fails to download
   * apt-pkg/aptconfiguration.cc:
     - fix comparing for a empty string
+  * debian/apt.cron.daily:
+    - run unattended-upgrades even if there was a error during
+      the apt-get update (LP: #676295)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Mar 2011 15:56:54 +0100
 
