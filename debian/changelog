@@ -4,6 +4,11 @@ apt (0.8.13.2ubuntu2) UNRELEASED; urgency=low
   * debian/apt.cron.daily:
     - run unattended-upgrades even if there was a error during
       the apt-get update (LP: #676295)
+  
+  [ David Kalnischkies  ]
+  * apt-pkg/pkgcache.cc:
+    - use the native Architecture stored in the cache header instead of
+      loading it from configuration as suggested by Julian Andres Klode
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Mar 2011 15:56:54 +0100
 

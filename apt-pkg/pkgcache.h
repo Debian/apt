@@ -215,6 +215,7 @@ class pkgCache								/*{{{*/
 private:
    bool MultiArchEnabled;
    PkgIterator SingleArchFindPkg(const string &Name);
+   inline char const * const NativeArch() const;
 };
 									/*}}}*/
 // Header structure							/*{{{*/
@@ -649,6 +650,11 @@ struct pkgCache::StringItem
    map_ptrloc NextItem;      // StringItem
 };
 									/*}}}*/
+
+
+inline char const * const pkgCache::NativeArch() const
+	{ return StrP + HeaderP->Architecture; };
+
 #include <apt-pkg/cacheiterators.h>
 
 inline pkgCache::GrpIterator pkgCache::GrpBegin() 

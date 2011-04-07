@@ -479,7 +479,8 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    // Set the name, arch and the ID
    Pkg->Name = Grp->Name;
    Pkg->Group = Grp.Index();
-   map_ptrloc const idxArch = WriteUniqString((Arch == "all") ? _config->Find("APT::Architecture") : Arch.c_str());
+   // all is mapped to the native architecture
+   map_ptrloc const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : WriteUniqString(Arch.c_str());
    if (unlikely(idxArch == 0))
       return false;
    Pkg->Arch = idxArch;
@@ -783,7 +784,7 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
 
    // We do not add self referencing provides
    if (Ver.ParentPkg().Name() == PkgName && (PkgArch == Ver.ParentPkg().Arch() ||
-	(PkgArch == "all" && _config->Find("APT::Architecture") == Ver.ParentPkg().Arch())))
+	(PkgArch == "all" && strcmp((Cache.StrP + Cache.HeaderP->Architecture), Ver.ParentPkg().Arch()) == 0)))
       return true;
    
    // Get a structure
