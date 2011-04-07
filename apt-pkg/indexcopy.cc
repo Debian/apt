@@ -75,7 +75,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       
       // Open the package file
       FileFd Pkg;
-      if (FileExists(*I + GetFileName()) == true)
+      if (RealFileExists(*I + GetFileName()) == true)
       {
 	 Pkg.Open(*I + GetFileName(),FileFd::ReadOnly);
 	 FileSize = Pkg.Size();
@@ -532,7 +532,7 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
    // we skip non-existing files in the verifcation to support a cdrom
    // with no Packages file (just a Package.gz), see LP: #255545
    // (non-existing files are not considered a error)
-   if(!FileExists(prefix+file))
+   if(!RealFileExists(prefix+file))
    {
       _error->Warning(_("Skipping nonexistent file %s"), string(prefix+file).c_str());
       return true;
@@ -601,7 +601,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       string const release = *I+"Release";
 
       // a Release.gpg without a Release should never happen
-      if(FileExists(release) == false)
+      if(RealFileExists(release) == false)
       {
 	 delete MetaIndex;
 	 continue;
@@ -681,7 +681,7 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
    std::vector<string> keyrings;
    if (DirectoryExists(trustedPath))
      keyrings = GetListOfFilesInDir(trustedPath, "gpg", false, true);
-   if (FileExists(trustedFile) == true)
+   if (RealFileExists(trustedFile) == true)
      keyrings.push_back(trustedFile);
 
    std::vector<const char *> Args;
@@ -788,7 +788,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       
       // Open the package file
       FileFd Pkg;
-      if (FileExists(*I) == true)
+      if (RealFileExists(*I) == true)
       {
 	 Pkg.Open(*I,FileFd::ReadOnly);
 	 FileSize = Pkg.Size();

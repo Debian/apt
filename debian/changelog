@@ -5,6 +5,11 @@ apt (0.8.13.2ubuntu2) UNRELEASED; urgency=low
     - run unattended-upgrades even if there was a error during
       the apt-get update (LP: #676295)
   
+  [ Julian Andres Klode ]
+  * apt-pkg/indexcopy.cc:
+    - Use RealFileExists() instead of FileExists(), allows amongst other
+      things a directory named Sources to exist on a CD-ROM (LP: #750694).
+  
   [ David Kalnischkies  ]
   * apt-pkg/pkgcache.cc:
     - use the native Architecture stored in the cache header instead of
