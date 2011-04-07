@@ -478,7 +478,7 @@ fi
 
 # auto upgrade all upgradeable packages
 UPGRADE_STAMP=/var/lib/apt/periodic/upgrade-stamp
-if [ $UPDATED -eq 1 ] && which unattended-upgrade >/dev/null && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
+if which unattended-upgrade >/dev/null && check_stamp $UPGRADE_STAMP $UnattendedUpgradeInterval; then
     if unattended-upgrade $XUUPOPT; then
 	update_stamp $UPGRADE_STAMP
 	debug_echo "unattended-upgrade (success)"
