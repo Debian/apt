@@ -1,10 +1,20 @@
 apt (0.8.13.3) UNRELEASED; urgency=low
 
+  [ Julian Andres Klode ]
   * apt-pkg/indexcopy.cc:
     - Use RealFileExists() instead of FileExists(), allows amongst other
       things a directory named Sources to exist on a CD-ROM (LP: #750694).
   * apt-pkg/acquire-item.cc:
     - Use Release files even if they cannot be verified (LP: #704595)
+  
+  [ Michael Vogt ]
+  * mirror method:
+    - do not crash if the mirror file fails to download
+  * apt-pkg/aptconfiguration.cc:
+    - fix comparing for a empty string
+  * debian/apt.cron.daily:
+    - run unattended-upgrades even if there was a error during
+      the apt-get update (LP: #676295)
 
  -- Julian Andres Klode <jak@debian.org>  Thu, 07 Apr 2011 11:48:46 +0200
 

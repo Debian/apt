@@ -337,7 +337,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 				char* arch = strtok(buf, " ");
 				while (arch != NULL) {
 					for (; isspace(*arch) != 0; ++arch);
-					if (arch != '\0') {
+					if (arch[0] != '\0') {
 						char const* archend = arch;
 						for (; isspace(*archend) == 0 && *archend != '\0'; ++archend);
 						archs.push_back(string(arch, (archend - arch)));
