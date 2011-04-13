@@ -2638,6 +2638,9 @@ bool DoSource(CommandLine &CmdL)
 bool DoBuildDep(CommandLine &CmdL)
 {
    CacheFile Cache;
+
+   _config->Set("APT::Install-Recommends", false);
+   
    if (Cache.Open(true) == false)
       return false;
 
