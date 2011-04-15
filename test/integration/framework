@@ -145,6 +145,7 @@ setupenvironment() {
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	export LC_ALL=C
+	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	msgdone "info"
 }
 
