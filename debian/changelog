@@ -1,4 +1,4 @@
-apt (0.8.13.3) UNRELEASED; urgency=low
+apt (0.8.14) UNRELEASED; urgency=low
 
   [ Julian Andres Klode ]
   * apt-pkg/indexcopy.cc:
@@ -10,6 +10,9 @@ apt (0.8.13.3) UNRELEASED; urgency=low
     - Do not install recommends for build-dep (Closes: #454479) (LP: #245273)
   * apt-pkg/deb/deblistparser.cc:
     - Handle no space before "[" in build-dependencies (LP: #72344)
+  * apt-pkg/policy.cc:
+    - Allow pinning by glob() expressions, and regular expressions
+      surrounded by slashes (the "/" character).
   
   [ Michael Vogt ]
   * mirror method:
