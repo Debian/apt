@@ -71,9 +71,12 @@ bool Go(int argc,char *argv[])
 	       Itm.Type = pkgDirStream::Item::Directory;
 
 	    int Fd;
-	    if (Extract.DoItem(Itm,Fd) == false)
+	    if (Extract.DoItem(Itm,Fd) == false) {
+	       fclose(F);
 	       return false;
-	 }	 
+	    }
+	 }
+	 fclose(F);
       }
       else
 	 if (Deb.ExtractArchive(Extract) == false)

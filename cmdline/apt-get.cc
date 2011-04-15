@@ -2386,8 +2386,10 @@ bool DoSource(CommandLine &CmdL)
       string Src;
       pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
       
-      if (Last == 0)
+      if (Last == 0) {
+	 delete[] Dsc;
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
+      }
       
       string srec = Last->AsStr();
       string::size_type pos = srec.find("\nVcs-");
@@ -2418,8 +2420,10 @@ bool DoSource(CommandLine &CmdL)
 
       // Back track
       vector<pkgSrcRecords::File> Lst;
-      if (Last->Files(Lst) == false)
+      if (Last->Files(Lst) == false) {
+	 delete[] Dsc;
 	 return false;
+      }
 
       // Load them into the fetcher
       for (vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
@@ -2480,6 +2484,7 @@ bool DoSource(CommandLine &CmdL)
    struct statvfs Buf;
    string OutputDir = ".";
    if (statvfs(OutputDir.c_str(),&Buf) != 0) {
+      delete[] Dsc;
       if (errno == EOVERFLOW)
 	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
 				OutputDir.c_str());
@@ -2493,10 +2498,12 @@ bool DoSource(CommandLine &CmdL)
 #if HAVE_STRUCT_STATFS_F_TYPE
            || unsigned(Stat.f_type) != RAMFS_MAGIC
 #endif
-           ) 
+           )  {
+	 delete[] Dsc;
           return _error->Error(_("You don't have enough free space in %s"),
               OutputDir.c_str());
-      }
+       }
+     }
    
    // Number of bytes
    if (DebBytes != FetchBytes)
@@ -2531,7 +2538,10 @@ bool DoSource(CommandLine &CmdL)
    
    // Run it
    if (Fetcher.Run() == pkgAcquire::Failed)
+   {
+      delete[] Dsc;
       return false;
+   }
 
    // Print error messages
    bool Failed = false;
@@ -2546,8 +2556,11 @@ bool DoSource(CommandLine &CmdL)
       Failed = true;
    }
    if (Failed == true)
+   {
+      delete[] Dsc;
       return _error->Error(_("Failed to fetch some archives."));
-   
+   }
+
    if (_config->FindB("APT::Get::Download-only",false) == true)
    {
       c1out << _("Download complete and in download only mode") << endl;

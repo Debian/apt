@@ -107,6 +107,7 @@ bool GlobalError::InsertErrno(MsgType type, const char* Function,
 			msgSize = n + 1;
 		else
 			msgSize *= 2;
+		free(S);
 		return true;
 	}
 
@@ -160,6 +161,7 @@ bool GlobalError::Insert(MsgType type, const char* Description,
 			msgSize = n + 1;
 		else
 			msgSize *= 2;
+ 		free(S);
 		return true;
 	}
 

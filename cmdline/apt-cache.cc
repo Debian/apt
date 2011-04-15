@@ -1115,6 +1115,9 @@ bool Dotty(CommandLine &CmdL)
    }
    
    printf("}\n");
+   delete[] Show;
+   delete[] Flags;
+   delete[] ShapeMap;
    return true;
 }
 									/*}}}*/
