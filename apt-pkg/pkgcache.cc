@@ -217,6 +217,9 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 	if (found == string::npos)
 		return FindPkg(Name, "native");
 	string const Arch = Name.substr(found+1);
+	/* Beware: This is specialcased to handle pkg:any in dependencies as
+	   these are linked to virtual pkg:any named packages with all archs.
+	   If you want any arch from a given pkg, use FindPkg(pkg,arch) */
 	if (Arch == "any")
 		return FindPkg(Name, "any");
 	return FindPkg(Name.substr(0, found), Arch);
@@ -228,7 +231,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
 	if (MultiArchCache() == false) {
 		if (Arch == "native" || Arch == "all" || Arch == "any" ||
-		    Arch == _config->Find("APT::Architecture"))
+		    Arch == NativeArch())
 			return SingleArchFindPkg(Name);
 		else
 			return PkgIterator(*this,0);
@@ -322,15 +325,15 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	if (Arch == "any")
 		return PkgIterator(*Owner, Owner->PkgP + S->FirstPackage);
 
-	static string const myArch = _config->Find("APT::Architecture");
+	char const* const myArch = Owner->NativeArch();
 	/* Most of the time the package for our native architecture is
 	   the one we add at first to the cache, but this would be the
 	   last one we check, so we do it now. */
 	if (Arch == "native" || Arch == myArch || Arch == "all") {
-		Arch = myArch;
 		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
-		if (stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+		if (strcasecmp(myArch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
+		Arch = myArch;
 	}
 
 	/* Iterate over the list to find the matching arch
@@ -503,7 +506,8 @@ std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
 {
    string fullname = Name();
    if (Pretty == false ||
-       (strcmp(Arch(), "all") != 0 && _config->Find("APT::Architecture") != Arch()))
+       (strcmp(Arch(), "all") != 0 &&
+	strcmp(Owner->NativeArch(), Arch()) != 0))
       return fullname.append(":").append(Arch());
    return fullname;
 }
