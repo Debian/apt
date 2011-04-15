@@ -549,8 +549,8 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
    // Not installed
    if (Pkg->CurrentVer == 0)
    {
-      if (State.Mode == ModeDelete && 
-	  (State.iFlags | Purge) == Purge && Pkg.Purge() == false)
+      if (State.Mode == ModeDelete &&
+	  (State.iFlags & Purge) == Purge && Pkg.Purge() == false)
 	 iDelCount += Add;
       
       if (State.Mode == ModeInstall)
