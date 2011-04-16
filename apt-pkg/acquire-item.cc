@@ -1504,7 +1504,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 
    /* Always move the meta index, even if gpgv failed. This ensures
     * that PackageFile objects are correctly filled in */
-   {
+   if (FileExists(DestFile)) {
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
       /* InRelease files become Release files, otherwise
