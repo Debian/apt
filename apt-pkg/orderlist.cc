@@ -490,7 +490,7 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
    bool Res = true;
    for (PrvIterator P = Ver.ProvidesList(); P.end() == false; P++)
       Res &= (this->*F)(P.ParentPkg().RevDependsList());
-   return true;
+   return Res;
 }
 									/*}}}*/
 // OrderList::VisitProvides - Visit all of the providing packages	/*{{{*/
