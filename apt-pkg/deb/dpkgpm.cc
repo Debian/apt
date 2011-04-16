@@ -391,8 +391,9 @@ void pkgDPkgPM::DoTerminalPty(int master)
    {
       // this happens when the child is about to exit, we
       // give it time to actually exit, otherwise we run
-      // into a race
-      usleep(500000);
+      // into a race so we sleep for half a second.
+      struct timespec sleepfor = { 0, 500000000 };
+      nanosleep(&sleepfor, NULL);
       return;
    }  
    if(len <= 0) 
