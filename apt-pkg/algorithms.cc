@@ -647,12 +647,10 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
       // Compute a single dependency element (glob or)
       pkgCache::DepIterator Start = D;
       pkgCache::DepIterator End = D;
-      unsigned char State = 0;
       for (bool LastOR = true; D.end() == false && LastOR == true;)
       {
-	 State |= Cache[D];
 	 LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
-	 D++;
+	 ++D;
 	 if (LastOR == true)
 	    End = D;
       }
