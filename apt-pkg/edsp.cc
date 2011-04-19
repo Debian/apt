@@ -39,7 +39,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output)
 	    fprintf(output, "Installed: yes\n");
 	 if (Pkg->SelectedState == pkgCache::State::Hold)
 	    fprintf(output, "Hold: yes\n");
-	 fprintf(output, "APT-ID: %u\n", Ver->ID);
+	 fprintf(output, "APT-ID: %lu\n", Ver.Index());
 	 fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
 	 if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
 	    fprintf(output, "Essential: yes\n");
@@ -156,11 +156,18 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 		else
 			continue;
 
-		int const id = section.FindI(type.c_str(), -1);
-		if (id == -1)
-			return _error->Error("Unable to parse %s request!", type.c_str());
+		size_t const index = section.FindULL(type.c_str(), 0);
+		if (index == 0) {
+			_error->Warning("Unable to parse %s request with id value '%s'!", type.c_str(), section.FindS(type.c_str()).c_str());
+			continue;
+		}
 
-		//FIXME: find version by id and mark it correctly
+		pkgCache::VerIterator Ver(Cache.GetCache(), Cache.GetCache().VerP + index);
+		Cache.SetCandidateVersion(Ver);
+		if (type == "Install")
+			Cache.MarkInstall(Ver.ParentPkg(), false, false);
+		else if (type == "Remove")
+			Cache.MarkDelete(Ver.ParentPkg(), false);
 	}
 	return true;
 }
