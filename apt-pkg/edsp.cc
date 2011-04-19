@@ -39,7 +39,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output)
 	    fprintf(output, "Installed: yes\n");
 	 if (Pkg->SelectedState == pkgCache::State::Hold)
 	    fprintf(output, "Hold: yes\n");
-	 fprintf(output, "APT-ID: %lu\n", Ver.Index());
+	 fprintf(output, "APT-ID: %d\n", Ver->ID);
 	 fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
 	 if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
 	    fprintf(output, "Essential: yes\n");
@@ -146,6 +146,17 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 	in.OpenDescriptor(input, FileFd::ReadOnly);
 	pkgTagFile response(&in);
 	pkgTagSection section;
+
+	/* We build an map id to mmap offset here
+	   In theory we could use the offset as ID, but then VersionCount
+	   couldn't be used to create other versionmappings anymore and it
+	   would be too easy for a (buggy) solver to segfault APT… */
+	unsigned long long const VersionCount = Cache.Head().VersionCount;
+	unsigned long VerIdx[VersionCount];
+	for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; ++P)
+		for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
+			VerIdx[V->ID] = V.Index();
+
 	while (response.Step(section) == true) {
 		std::string type;
 		if (section.Exists("Install") == true)
@@ -156,13 +167,16 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 		else
 			continue;
 
-		size_t const index = section.FindULL(type.c_str(), 0);
-		if (index == 0) {
+		size_t const id = section.FindULL(type.c_str(), VersionCount);
+		if (id == VersionCount) {
 			_error->Warning("Unable to parse %s request with id value '%s'!", type.c_str(), section.FindS(type.c_str()).c_str());
+			continue;
+		} else if (id > Cache.Head().VersionCount) {
+			_error->Warning("ID value '%s' in %s request stanza is to high to refer to a known version!", section.FindS(type.c_str()).c_str(), type.c_str());
 			continue;
 		}
 
-		pkgCache::VerIterator Ver(Cache.GetCache(), Cache.GetCache().VerP + index);
+		pkgCache::VerIterator Ver(Cache.GetCache(), Cache.GetCache().VerP + VerIdx[id]);
 		Cache.SetCandidateVersion(Ver);
 		if (type == "Install")
 			Cache.MarkInstall(Ver.ParentPkg(), false, false);
