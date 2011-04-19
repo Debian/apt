@@ -104,11 +104,28 @@ int main(int argc,const char *argv[])					/*{{{*/
 		std::cerr << "Failed to apply request to depcache!" << std::endl;
 		return 3;
 	}
+
+	pkgProblemResolver Fix(CacheFile);
+	for (std::list<std::string>::const_iterator i = remove.begin();
+	     i != remove.end(); ++i) {
+		pkgCache::PkgIterator P = CacheFile->FindPkg(*i);
+		Fix.Clear(P);
+		Fix.Protect(P);
+		Fix.Remove(P);
+	}
+
+	for (std::list<std::string>::const_iterator i = install.begin();
+	     i != install.end(); ++i) {
+		pkgCache::PkgIterator P = CacheFile->FindPkg(*i);
+		Fix.Clear(P);
+		Fix.Protect(P);
+	}
+
 	for (std::list<std::string>::const_iterator i = install.begin();
 	     i != install.end(); ++i)
 		CacheFile->MarkInstall(CacheFile->FindPkg(*i), true);
 
-	pkgProblemResolver Fix(CacheFile);
+
 	if (Fix.Resolve() == false) {
 		EDSP::WriteError("An error occured", output);
 		return 0;
