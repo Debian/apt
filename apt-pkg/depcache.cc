@@ -70,7 +70,7 @@ void pkgDepCache::ActionGroup::release()
 	    cache.MarkAndSweep();
 	}
 
-      released = false;
+      released = true;
     }
 }
 
