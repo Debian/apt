@@ -1334,9 +1334,8 @@ bool Search(CommandLine &CmdL)
        return _error->Error("Write to stdout failed");
    return true;
 }
-
-
-/* show automatically installed packages (sorted) */
+									/*}}}*/
+/* ShowAuto - show automatically installed packages (sorted)		{{{*/
 bool ShowAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
@@ -1357,6 +1356,7 @@ bool ShowAuto(CommandLine &CmdL)
     for (vector<string>::iterator I = packages.begin(); I != packages.end(); I++)
             cout << *I << "\n";
 
+   _error->Notice(_("This command is deprecated. Please use 'apt-mark showauto' instead."));
    return true;
 }
 									/*}}}*/
@@ -1702,7 +1702,6 @@ bool ShowHelp(CommandLine &Cmd)
       "   unmet - Show unmet dependencies\n"
       "   search - Search the package list for a regex pattern\n"
       "   show - Show a readable record for the package\n"
-      "   showauto - Display a list of automatically installed packages\n"
       "   depends - Show raw dependency information for a package\n"
       "   rdepends - Show reverse dependency information for a package\n"
       "   pkgnames - List the names of all packages in the system\n"

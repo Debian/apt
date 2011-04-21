@@ -2050,8 +2050,8 @@ bool DoInstall(CommandLine &CmdL)
 
    return InstallPackages(Cache,false);   
 }
-
-/* mark packages as automatically/manually installed. */
+									/*}}}*/
+/* mark packages as automatically/manually installed.			{{{*/
 bool DoMarkAuto(CommandLine &CmdL)
 {
    bool Action = true;
@@ -2086,6 +2086,9 @@ bool DoMarkAuto(CommandLine &CmdL)
          AutoMarkChanged++;
       }
    }
+
+   _error->Notice(_("This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' instead."));
+
    if (AutoMarkChanged && ! _config->FindB("APT::Get::Simulate",false))
       return Cache->writeStateFile(NULL);
    return false;
@@ -3184,8 +3187,6 @@ bool ShowHelp(CommandLine &CmdL)
       "   clean - Erase downloaded archive files\n"
       "   autoclean - Erase old downloaded archive files\n"
       "   check - Verify that there are no broken dependencies\n"
-      "   markauto - Mark the given packages as automatically installed\n"
-      "   unmarkauto - Mark the given packages as manually installed\n"
       "   changelog - Download and display the changelog for the given package\n"
       "   download - Download the binary package into the current directory\n"
       "\n"
