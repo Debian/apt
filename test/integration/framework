@@ -695,7 +695,7 @@ testmarkedauto() {
 		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
 	else
 		msgtest 'Test for correctly marked as auto-installed' 'no package'
-		echo > $COMPAREFILE
+		echo -n > $COMPAREFILE
 	fi
 	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
