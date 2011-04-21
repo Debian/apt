@@ -1324,18 +1324,24 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 
    // do not report dpkg I/O errors, this is a format string, so we compare
    // the prefix and the suffix of the error with the dpkg error message
-   const char *short_read_error = dgettext("dpkg", "short read in buffer_copy %s");
-   vector<string> list = VectorizeString(short_read_error, '%');
-   if (list.size() > 1) 
+   vector<string> io_errors;
+   io_errors.push_back(string("failed to read on buffer copy for %s"));
+   io_errors.push_back(string("failed in write on buffer copy for %s"));
+   io_errors.push_back(string("short read on buffer copy for %s"));
+
+   for (vector<string>::iterator I = io_errors.begin(); I != io_errors.end(); I++)
    {
-      // we need to split %s, VectorizeString only allows char so we need
-      // to kill the "s" manually
-      if (list[1].size() > 1) {
-         list[1].erase(0, 1);
-         if(strstr(errormsg, list[0].c_str()) && 
-            strstr(errormsg, list[1].c_str())) {
-            std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
-            return;
+      vector<string> list = VectorizeString(dgettext("dpkg", (*I).c_str()), '%');
+      if (list.size() > 1) {
+         // we need to split %s, VectorizeString only allows char so we need
+         // to kill the "s" manually
+         if (list[1].size() > 1) {
+            list[1].erase(0, 1);
+            if(strstr(errormsg, list[0].c_str()) && 
+               strstr(errormsg, list[1].c_str())) {
+               std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
+               return;
+            }
          }
       }
    }
