@@ -53,6 +53,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 		{'v',"version","version",0},
 		{'q',"quiet","quiet",CommandLine::IntLevel},
 		{'q',"silent","quiet",CommandLine::IntLevel},
+		{'c',"config-file",0,CommandLine::ConfigFile},
+		{'o',"option",0,CommandLine::ArbItem},
 		{0,0,0,0}};
 
 	CommandLine CmdL(Args,_config);
@@ -67,6 +69,25 @@ int main(int argc,const char *argv[])					/*{{{*/
 	    _config->FindB("version") == true) {
 		ShowHelp(CmdL);
 		return 1;
+	}
+
+	if (CmdL.FileList[0] != 0 && strcmp(CmdL.FileList[0], "scenario") == 0)
+	{
+		if (pkgInitSystem(*_config,_system) == false) {
+			std::cerr << "System could not be initialized!" << std::endl;
+			return 1;
+		}
+		pkgCacheFile CacheFile;
+		CacheFile.Open(NULL, false);
+		APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+		FILE* output = stdout;
+		if (pkgset.empty() == true)
+			EDSP::WriteScenario(CacheFile, output);
+		else
+			EDSP::WriteLimitedScenario(CacheFile, output, pkgset);
+		fclose(output);
+		_error->DumpErrors(std::cerr);
+		return 0;
 	}
 
 	// Deal with stdout not being a tty
@@ -138,9 +159,9 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	bool const Errors = _error->PendingError();
 	if (_config->FindI("quiet",0) > 0)
-		_error->DumpErrors();
+		_error->DumpErrors(std::cerr);
 	else
-		_error->DumpErrors(GlobalError::DEBUG);
+		_error->DumpErrors(std::cerr, GlobalError::DEBUG);
 	return Errors == true ? 100 : 0;
 }
 									/*}}}*/
