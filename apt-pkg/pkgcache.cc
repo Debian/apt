@@ -211,11 +211,14 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
-	if (MultiArchCache() == false)
-		return SingleArchFindPkg(Name);
 	size_t const found = Name.find(':');
 	if (found == string::npos)
-		return FindPkg(Name, "native");
+	{
+		if (MultiArchCache() == false)
+			return SingleArchFindPkg(Name);
+		else
+			return FindPkg(Name, "native");
+	}
 	string const Arch = Name.substr(found+1);
 	/* Beware: This is specialcased to handle pkg:any in dependencies as
 	   these are linked to virtual pkg:any named packages with all archs.
