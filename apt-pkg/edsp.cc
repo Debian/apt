@@ -18,88 +18,167 @@
 #include <stdio.h>
 									/*}}}*/
 
+// we could use pkgCache::DepType and ::Priority, but these would be localized strings…
+const char * const EDSP::PrioMap[] = {0, "important", "required", "standard",
+				      "optional", "extra"};
+const char * const EDSP::DepMap[] = {"", "Depends", "PreDepends", "Suggests",
+				     "Recommends" , "Conflicts", "Replaces",
+				     "Obsoletes", "Breaks", "Enhances"};
+
 // EDSP::WriteScenario - to the given file descriptor			/*{{{*/
 bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output)
 {
-   // we could use pkgCache::DepType and ::Priority, but these would be lokalized strings…
-   const char * const PrioMap[] = {0, "important", "required", "standard",
-				   "optional", "extra"};
-   const char * const DepMap[] = {"", "Depends", "PreDepends", "Suggests",
-				  "Recommends" , "Conflicts", "Replaces",
-				  "Obsoletes", "Breaks", "Enhances"};
-
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-   {
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       {
-	 fprintf(output, "Package: %s\n", Pkg.Name());
-	 fprintf(output, "Architecture: %s\n", Ver.Arch());
-	 fprintf(output, "Version: %s\n", Ver.VerStr());
-	 if (Pkg.CurrentVer() == Ver)
-	    fprintf(output, "Installed: yes\n");
-	 if (Pkg->SelectedState == pkgCache::State::Hold)
-	    fprintf(output, "Hold: yes\n");
-	 fprintf(output, "APT-ID: %d\n", Ver->ID);
-	 fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
-	 if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-	    fprintf(output, "Essential: yes\n");
-	 fprintf(output, "Section: %s\n", Ver.Section());
-	 if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
-	    fprintf(output, "Multi-Arch: allowed\n");
-	 else if (Ver->MultiArch == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::AllForeign)
-	    fprintf(output, "Multi-Arch: foreign\n");
-	 else if (Ver->MultiArch == pkgCache::Version::Same)
-	    fprintf(output, "Multi-Arch: same\n");
-	 signed short Pin = std::numeric_limits<signed short>::min();
-	 for (pkgCache::VerFileIterator File = Ver.FileList(); File.end() == false; ++File) {
-	    signed short const p = Cache.GetPolicy().GetPriority(File.File());
-	    if (Pin < p)
-	       Pin = p;
-	 }
-	 fprintf(output, "APT-Pin: %d\n", Pin);
-	 if (Cache.GetCandidateVer(Pkg) == Ver)
-	    fprintf(output, "APT-Candidate: yes\n");
-	 if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
-	    fprintf(output, "APT-Automatic: yes\n");
-	 std::string dependencies[pkgCache::Dep::Enhances + 1];
-	 bool orGroup = false;
-	 for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
-	 {
-	    // Ignore implicit dependencies for multiarch here
-	    if (strcmp(Pkg.Arch(), Dep.TargetPkg().Arch()) != 0)
-	       continue;
-	    if (orGroup == false)
-	       dependencies[Dep->Type].append(", ");
-	    dependencies[Dep->Type].append(Dep.TargetPkg().Name());
-	    if (Dep->Version != 0)
-	       dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
-	    if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
-	    {
-	       dependencies[Dep->Type].append(" | ");
-	       orGroup = true;
-	    }
-	    else
-	       orGroup = false;
-	 }
-	 for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
-	    if (dependencies[i].empty() == false)
-	       fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str()+2);
-	 string provides;
-	 for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
-	 {
-	    // Ignore implicit provides for multiarch here
-	    if (strcmp(Pkg.Arch(), Prv.ParentPkg().Arch()) != 0 || strcmp(Pkg.Name(),Prv.Name()) == 0)
-	       continue;
-	    provides.append(", ").append(Prv.Name());
-	 }
-	 if (provides.empty() == false)
-	    fprintf(output, "Provides: %s\n", provides.c_str()+2);
-
-
+	 WriteScenarioVersion(Cache, output, Pkg, Ver);
+	 WriteScenarioDependency(Cache, output, Pkg, Ver);
 	 fprintf(output, "\n");
       }
-   }
    return true;
+}
+									/*}}}*/
+// EDSP::WriteLimitedScenario - to the given file descriptor		/*{{{*/
+bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
+				APT::PackageSet const &pkgset)
+{
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
+      {
+	 WriteScenarioVersion(Cache, output, Pkg, Ver);
+	 WriteScenarioLimitedDependency(Cache, output, Pkg, Ver, pkgset);
+	 fprintf(output, "\n");
+      }
+   return true;
+}
+									/*}}}*/
+// EDSP::WriteScenarioVersion						/*{{{*/
+void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgIterator const &Pkg,
+				pkgCache::VerIterator const &Ver)
+{
+   fprintf(output, "Package: %s\n", Pkg.Name());
+   fprintf(output, "Architecture: %s\n", Ver.Arch());
+   fprintf(output, "Version: %s\n", Ver.VerStr());
+   if (Pkg.CurrentVer() == Ver)
+      fprintf(output, "Installed: yes\n");
+   if (Pkg->SelectedState == pkgCache::State::Hold)
+      fprintf(output, "Hold: yes\n");
+   fprintf(output, "APT-ID: %d\n", Ver->ID);
+   fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
+   if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      fprintf(output, "Essential: yes\n");
+   fprintf(output, "Section: %s\n", Ver.Section());
+   if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
+      fprintf(output, "Multi-Arch: allowed\n");
+   else if (Ver->MultiArch == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::AllForeign)
+      fprintf(output, "Multi-Arch: foreign\n");
+   else if (Ver->MultiArch == pkgCache::Version::Same)
+      fprintf(output, "Multi-Arch: same\n");
+   signed short Pin = std::numeric_limits<signed short>::min();
+   for (pkgCache::VerFileIterator File = Ver.FileList(); File.end() == false; ++File) {
+      signed short const p = Cache.GetPolicy().GetPriority(File.File());
+      if (Pin < p)
+	 Pin = p;
+   }
+   fprintf(output, "APT-Pin: %d\n", Pin);
+   if (Cache.GetCandidateVer(Pkg) == Ver)
+      fprintf(output, "APT-Candidate: yes\n");
+   if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+      fprintf(output, "APT-Automatic: yes\n");
+}
+									/*}}}*/
+// EDSP::WriteScenarioDependency					/*{{{*/
+void EDSP::WriteScenarioDependency(pkgDepCache &Cache, FILE* output, pkgCache::PkgIterator const &Pkg,
+				pkgCache::VerIterator const &Ver)
+{
+   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   bool orGroup = false;
+   for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
+   {
+      // Ignore implicit dependencies for multiarch here
+      if (strcmp(Pkg.Arch(), Dep.TargetPkg().Arch()) != 0)
+	 continue;
+      if (orGroup == false)
+	 dependencies[Dep->Type].append(", ");
+      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
+      if (Dep->Version != 0)
+	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
+      if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+      {
+	 dependencies[Dep->Type].append(" | ");
+	 orGroup = true;
+      }
+      else
+	 orGroup = false;
+   }
+   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+      if (dependencies[i].empty() == false)
+	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str()+2);
+   string provides;
+   for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
+   {
+      // Ignore implicit provides for multiarch here
+      if (strcmp(Pkg.Arch(), Prv.ParentPkg().Arch()) != 0 || strcmp(Pkg.Name(),Prv.Name()) == 0)
+	 continue;
+      provides.append(", ").append(Prv.Name());
+   }
+   if (provides.empty() == false)
+      fprintf(output, "Provides: %s\n", provides.c_str()+2);
+}
+									/*}}}*/
+// EDSP::WriteScenarioLimitedDependency					/*{{{*/
+void EDSP::WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
+					  pkgCache::PkgIterator const &Pkg,
+					  pkgCache::VerIterator const &Ver,
+					  APT::PackageSet const &pkgset)
+{
+   std::string dependencies[pkgCache::Dep::Enhances + 1];
+   bool orGroup = false;
+   for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
+   {
+      // Ignore implicit dependencies for multiarch here
+      if (strcmp(Pkg.Arch(), Dep.TargetPkg().Arch()) != 0)
+	 continue;
+      if (orGroup == false)
+      {
+	 if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
+	    continue;
+	 dependencies[Dep->Type].append(", ");
+      }
+      else if (pkgset.find(Dep.TargetPkg()) == pkgset.end())
+      {
+	 if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+	    continue;
+	 dependencies[Dep->Type].erase(dependencies[Dep->Type].end()-3, dependencies[Dep->Type].end());
+	 orGroup = false;
+	 continue;
+      }
+      dependencies[Dep->Type].append(Dep.TargetPkg().Name());
+      if (Dep->Version != 0)
+	 dependencies[Dep->Type].append(" (").append(pkgCache::CompTypeDeb(Dep->CompareOp)).append(" ").append(Dep.TargetVer()).append(")");
+      if ((Dep->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)
+      {
+	 dependencies[Dep->Type].append(" | ");
+	 orGroup = true;
+      }
+      else
+	 orGroup = false;
+   }
+   for (int i = 1; i < pkgCache::Dep::Enhances + 1; ++i)
+      if (dependencies[i].empty() == false)
+	 fprintf(output, "%s: %s\n", DepMap[i], dependencies[i].c_str()+2);
+   string provides;
+   for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
+   {
+      // Ignore implicit provides for multiarch here
+      if (strcmp(Pkg.Arch(), Prv.ParentPkg().Arch()) != 0 || strcmp(Pkg.Name(),Prv.Name()) == 0)
+	 continue;
+      if (pkgset.find(Prv.ParentPkg()) == pkgset.end())
+	 continue;
+      provides.append(", ").append(Prv.Name());
+   }
+   if (provides.empty() == false)
+      fprintf(output, "Provides: %s\n", provides.c_str()+2);
 }
 									/*}}}*/
 // EDSP::WriteRequest - to the given file descriptor			/*{{{*/
@@ -298,12 +377,22 @@ bool EDSP::ApplyRequest(std::list<std::string> const &install,
 			 pkgDepCache &Cache)
 {
 	for (std::list<std::string>::const_iterator i = install.begin();
-	     i != install.end(); ++i)
-		Cache.MarkInstall(Cache.FindPkg(*i), false);
+	     i != install.end(); ++i) {
+		pkgCache::PkgIterator P = Cache.FindPkg(*i);
+		if (P.end() == true)
+			_error->Warning("Package %s is not known, so can't be installed", i->c_str());
+		else
+			Cache.MarkInstall(P, false);
+	}
 
 	for (std::list<std::string>::const_iterator i = remove.begin();
-	     i != remove.end(); ++i)
-		Cache.MarkDelete(Cache.FindPkg(*i));
+	     i != remove.end(); ++i) {
+		pkgCache::PkgIterator P = Cache.FindPkg(*i);
+		if (P.end() == true)
+			_error->Warning("Package %s is not known, so can't be installed", i->c_str());
+		else
+			Cache.MarkDelete(P);
+	}
 	return true;
 }
 									/*}}}*/
@@ -314,13 +403,19 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
    {
       if (Cache[Pkg].Delete() == true)
-	 fprintf(output, "Remove: %d\n", Cache.GetCandidateVer(Pkg)->ID);
+      {
+	 fprintf(output, "Remove: %d\n", Pkg.CurrentVer()->ID);
+	 if (Debug == true)
+	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
+      }
       else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
+      {
 	 fprintf(output, "Install: %d\n", Cache.GetCandidateVer(Pkg)->ID);
+	 if (Debug == true)
+	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Cache.GetCandidateVer(Pkg).VerStr());
+      }
       else
 	 continue;
-      if (Debug == true)
-	 fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Cache.GetCandidateVer(Pkg).VerStr());
       fprintf(output, "\n");
    }
 
