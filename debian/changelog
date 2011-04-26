@@ -34,8 +34,11 @@ apt (0.8.14.2) UNRELEASED; urgency=low
   * doc/po/de.po:
     - undo the translation of the command 'dump' in manpage of apt-config
       as report by Burghard Grossmann on debian-l10n-german, thanks!
+  * apt-pkg/deb/debmetaindex.cc:
+    - do not download TranslationIndex if no Translation-* will be
+      downloaded later on anyway (Closes: #624218)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 26 Apr 2011 17:35:24 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 26 Apr 2011 19:12:41 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 
