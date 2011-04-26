@@ -147,6 +147,115 @@ bool ShowAuto(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+/* DoHold - mark packages as hold by dpkg				{{{*/
+bool DoHold(CommandLine &CmdL)
+{
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
+   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   if (pkgset.empty() == true)
+      return _error->Error(_("No packages found"));
+
+   bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
+
+   for (APT::PackageSet::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   {
+      if ((Pkg->SelectedState == pkgCache::State::Hold) == MarkHold)
+      {
+	 if (MarkHold == true)
+	    ioprintf(c1out,_("%s was already set on hold.\n"), Pkg.FullName(true).c_str());
+	 else
+	    ioprintf(c1out,_("%s was already not hold.\n"), Pkg.FullName(true).c_str());
+	 pkgset.erase(Pkg);
+	 continue;
+      }
+   }
+
+   if (pkgset.empty() == true)
+      return true;
+
+   if (_config->FindB("APT::Mark::Simulate", false) == true)
+   {
+      for (APT::PackageSet::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+      {
+	 if (MarkHold == false)
+	    ioprintf(c1out,_("%s set on hold.\n"), Pkg.FullName(true).c_str());
+	 else
+	    ioprintf(c1out,_("Canceled hold on %s.\n"), Pkg.FullName(true).c_str());
+      }
+      return true;
+   }
+
+   string dpkgcall = _config->Find("Dir::Bin::dpkg", "dpkg");
+   std::vector<string> const dpkgoptions = _config->FindVector("DPkg::options");
+   for (std::vector<string>::const_iterator o = dpkgoptions.begin();
+	o != dpkgoptions.end(); ++o)
+      dpkgcall.append(" ").append(*o);
+   dpkgcall.append(" --set-selections");
+   FILE *dpkg = popen(dpkgcall.c_str(), "w");
+   if (dpkg == NULL)
+      return _error->Errno("DoHold", "fdopen on dpkg stdin failed");
+
+   for (APT::PackageSet::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   {
+      if (MarkHold == true)
+      {
+	 fprintf(dpkg, "%s hold\n", Pkg.FullName(true).c_str());
+	 ioprintf(c1out,_("%s set on hold.\n"), Pkg.FullName(true).c_str());
+      }
+      else
+      {
+	 fprintf(dpkg, "%s install\n", Pkg.FullName(true).c_str());
+	 ioprintf(c1out,_("Canceled hold on %s.\n"), Pkg.FullName(true).c_str());
+      }
+   }
+
+   int const status = pclose(dpkg);
+   if (status == -1)
+      return _error->Errno("DoHold", "dpkg execution failed in the end");
+   if (WIFEXITED(status) == false || WEXITSTATUS(status) != 0)
+      return _error->Error(_("Executing dpkg failed. Are you root?"));
+   return true;
+}
+									/*}}}*/
+/* ShowHold - show packages set on hold in dpkg status			{{{*/
+bool ShowHold(CommandLine &CmdL)
+{
+   pkgCacheFile CacheFile;
+   pkgCache *Cache = CacheFile.GetPkgCache();
+   if (unlikely(Cache == NULL))
+      return false;
+
+   std::vector<string> packages;
+
+   if (CmdL.FileList[1] == 0)
+   {
+      packages.reserve(50); // how many holds are realistic? I hope just a few…
+      for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
+	 if (P->SelectedState == pkgCache::State::Hold)
+	    packages.push_back(P.FullName(true));
+   }
+   else
+   {
+      APT::CacheSetHelper helper(false); // do not show errors
+      APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+      packages.reserve(pkgset.size());
+      for (APT::PackageSet::const_iterator P = pkgset.begin(); P != pkgset.end(); ++P)
+	 if (P->SelectedState == pkgCache::State::Hold)
+	    packages.push_back(P.FullName(true));
+   }
+
+   std::sort(packages.begin(), packages.end());
+
+   for (vector<string>::const_iterator I = packages.begin(); I != packages.end(); ++I)
+      std::cout << *I << std::endl;
+
+   return true;
+}
+									/*}}}*/
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -198,8 +307,15 @@ int main(int argc,const char *argv[])					/*{{{*/
    CommandLine::Dispatch Cmds[] = {{"help",&ShowHelp},
 				   {"auto",&DoAuto},
 				   {"manual",&DoAuto},
+				   {"hold",&DoHold},
+				   {"unhold",&DoHold},
 				   {"showauto",&ShowAuto},
 				   {"showmanual",&ShowAuto},
+				   {"showhold",&ShowHold},
+				   // be nice and forgive the typo
+				   {"showholds",&ShowHold},
+				   // be nice and forgive it as it is technical right
+				   {"install",&DoHold},
 				   // obsolete commands for compatibility
 				   {"markauto", &DoMarkAuto},
 				   {"unmarkauto", &DoMarkAuto},
