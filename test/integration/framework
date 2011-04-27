@@ -573,13 +573,22 @@ changetowebserver() {
 	if which weborf > /dev/null; then
 		weborf -xb aptarchive/ 2>&1 > /dev/null &
 		addtrap "kill $!;"
-		local APTARCHIVE="file://$(readlink -f ./aptarchive)"
-		for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
-			sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
-		done
-		return 0
+	elif which lighttpd > /dev/null; then
+		echo "server.document-root = \"$(readlink -f ./aptarchive)\"
+server.port = 8080
+server.stat-cache-engine = \"disable\"" > lighttpd.conf
+		lighttpd -t -f lighttpd.conf >/dev/null || msgdie 'Can not change to webserver: our lighttpd config is invalid'
+		lighttpd -D -f lighttpd.conf 2>/dev/null >/dev/null &
+		addtrap "kill $!;"
+	else
+		msgdie 'You have to install weborf or lighttpd first'
+		return 1
 	fi
-	return 1
+	local APTARCHIVE="file://$(readlink -f ./aptarchive)"
+	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
+		sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
+	done
+	return 0
 }
 
 checkdiff() {
