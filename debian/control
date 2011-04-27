@@ -13,7 +13,8 @@ Vcs-Browser: http://bzr.debian.org/loggerhead/apt/debian-sid/
 
 Package: apt
 Architecture: any
-Depends: ${shlibs:Depends}, debian-archive-keyring, ${misc:Depends}, gnupg
+Pre-Depends: ${shlibs:Depends}
+Depends: debian-archive-keyring, ${misc:Depends}, gnupg
 Replaces: manpages-pl (<< 20060617-3~)
 Provides: ${libapt-pkg:provides}
 Conflicts: python-apt (<< 0.7.93.2~)
