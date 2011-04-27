@@ -778,9 +778,10 @@ bool HttpMethod::Go(bool ToFile,ServerState *Srv)
    
    if (Srv->In.WriteSpace() == true && ToFile == true && FileFD != -1)
       FD_SET(FileFD,&wfds);
-   
+
    // Add stdin
-   FD_SET(STDIN_FILENO,&rfds);
+   if (_config->FindB("Acquire::http::DependOnSTDIN", true) == true)
+      FD_SET(STDIN_FILENO,&rfds);
 	  
    // Figure out the max fd
    int MaxFd = FileFD;
@@ -1113,7 +1114,13 @@ int HttpMethod::Loop()
          do a WaitFd above.. Otherwise the FD is closed. */
       int Result = Run(true);
       if (Result != -1 && (Result != 0 || Queue == 0))
-	 return 100;
+      {
+	 if(FailReason.empty() == false ||
+	    _config->FindB("Acquire::http::DependOnSTDIN", true) == true)
+	    return 100;
+	 else
+	    return 0;
+      }
 
       if (Queue == 0)
 	 continue;
