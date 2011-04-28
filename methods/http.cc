@@ -948,7 +948,23 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
            && Srv->Result != 304    // Not Modified
            && Srv->Result != 306))  // (Not part of HTTP/1.1, reserved)
    {
-      if (!Srv->Location.empty())
+      if (Srv->Location.empty() == true);
+      else if (Srv->Location[0] == '/' && Queue->Uri.empty() == false)
+      {
+	 URI Uri = Queue->Uri;
+	 if (Uri.Host.empty() == false)
+	 {
+	    if (Uri.Port != 0)
+	       strprintf(NextURI, "http://%s:%u", Uri.Host.c_str(), Uri.Port);
+	    else
+	       NextURI = "http://" + Uri.Host;
+	 }
+	 else
+	    NextURI.clear();
+	 NextURI.append(Srv->Location);
+	 return TRY_AGAIN_OR_REDIRECT;
+      }
+      else
       {
          NextURI = Srv->Location;
          return TRY_AGAIN_OR_REDIRECT;
