@@ -743,10 +743,18 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 
    if (solver != "internal")
    {
-//       std::string const file = _config->FindDir("Dir::Bin::Solvers") + solver;
-      std::string const file = solver;
-      if (RealFileExists(file.c_str()) == false)
-	 return _error->Error("Can't call external solver '%s' as it is not available: %s", solver.c_str(), file.c_str());
+      std::vector<std::string> const solverDirs = _config->FindVector("Dir::Bin::Solvers");
+      std::string file;
+      for (std::vector<std::string>::const_iterator dir = solverDirs.begin();
+	   dir != solverDirs.end(); ++dir) {
+	 file = flCombine(*dir, solver);
+	 if (RealFileExists(file.c_str()) == true)
+	    break;
+	 file.clear();
+      }
+
+      if (file.empty() == true)
+	 return _error->Error("Can't call external solver '%s' as it is not in a configured directory!", solver.c_str());
       int external[4] = {-1, -1, -1, -1};
       if (pipe(external) != 0 || pipe(external + 2) != 0)
 	 return _error->Errno("Resolve", "Can't create needed IPC pipes for EDSP");

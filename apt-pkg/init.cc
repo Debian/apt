@@ -72,7 +72,9 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::preferencesparts","preferences.d");
    Cnf.Set("Dir::Etc::trusted", "trusted.gpg");
    Cnf.Set("Dir::Etc::trustedparts","trusted.gpg.d");
+
    Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
+   Cnf.Set("Dir::Bin::solvers::","/usr/lib/apt/solvers");
    Cnf.Set("Dir::Media::MountPath","/media/apt");
 
    // State   
