@@ -49,6 +49,7 @@ public:
 				 std::list<std::string> const &remove,
 				 pkgDepCache &Cache);
 	bool static WriteSolution(pkgDepCache &Cache, FILE* output);
+	bool static WriteProgress(unsigned short const percent, const char* const message, FILE* output);
 	bool static WriteError(std::string const &message, FILE* output);
 
 };

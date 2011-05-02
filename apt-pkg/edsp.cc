@@ -242,8 +242,16 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 			type = "Install";
 		else if (section.Exists("Remove") == true)
 			type = "Remove";
-		//FIXME: handle progress
-		else
+		else if (section.Exists("Progress") == true) {
+			ioprintf(std::clog, "[ %3d%% ] ", section.FindI("Percentage", 0));
+			std::clog << section.FindS("Progress") << " - ";
+			string const msg = section.FindS("Message");
+			if (msg.empty() == true)
+				std::clog << "Solver is still working on the solution" << std::endl;
+			else
+				std::clog << msg << std::endl;
+			continue;
+		} else
 			continue;
 
 		size_t const id = section.FindULL(type.c_str(), VersionCount);
@@ -420,6 +428,15 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
    }
 
    return true;
+}
+									/*}}}*/
+// EDSP::WriteProgess - pulse to the given file descriptor		/*{{{*/
+bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FILE* output) {
+	fprintf(output, "Progress: %s\n", TimeRFC1123(time(NULL)).c_str());
+	fprintf(output, "Percentage: %d\n", percent);
+	fprintf(output, "Message: %s\n\n", message);
+	fflush(output);
+	return true;
 }
 									/*}}}*/
 bool EDSP::WriteError(std::string const &message, FILE* output) { return false; }

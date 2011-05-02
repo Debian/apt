@@ -103,10 +103,14 @@ int main(int argc,const char *argv[])					/*{{{*/
 	FILE* output = stdout;
 	SetNonBlock(input, false);
 
+	EDSP::WriteProgress(0, "Start up solver…", output);
+
 	if (pkgInitSystem(*_config,_system) == false) {
 		std::cerr << "System could not be initialized!" << std::endl;
 		return 1;
 	}
+
+	EDSP::WriteProgress(1, "Read request…", output);
 
 	if (WaitFd(input, false, 5) == false)
 		std::cerr << "WAIT timed out in the resolver" << std::endl;
@@ -118,8 +122,12 @@ int main(int argc,const char *argv[])					/*{{{*/
 		return 2;
 	}
 
+	EDSP::WriteProgress(5, "Read scenario…", output);
+
 	pkgCacheFile CacheFile;
 	CacheFile.Open(NULL, false);
+
+	EDSP::WriteProgress(50, "Apply request on scenario…", output);
 
 	if (EDSP::ApplyRequest(install, remove, CacheFile) == false) {
 		std::cerr << "Failed to apply request to depcache!" << std::endl;
@@ -146,16 +154,21 @@ int main(int argc,const char *argv[])					/*{{{*/
 	     i != install.end(); ++i)
 		CacheFile->MarkInstall(CacheFile->FindPkg(*i), true);
 
+	EDSP::WriteProgress(60, "Call problemresolver on current scenario…", output);
 
 	if (Fix.Resolve() == false) {
 		EDSP::WriteError("An error occured", output);
 		return 0;
 	}
 
+	EDSP::WriteProgress(95, "Write solution…", output);
+
 	if (EDSP::WriteSolution(CacheFile, output) == false) {
 		std::cerr << "Failed to output the solution!" << std::endl;
 		return 4;
 	}
+
+	EDSP::WriteProgress(100, "Done", output);
 
 	bool const Errors = _error->PendingError();
 	if (_config->FindI("quiet",0) > 0)
