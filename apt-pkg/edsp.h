@@ -52,6 +52,7 @@ public:
 	bool static WriteProgress(unsigned short const percent, const char* const message, FILE* output);
 	bool static WriteError(std::string const &message, FILE* output);
 
+	bool static ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
 };
 									/*}}}*/
 #endif
