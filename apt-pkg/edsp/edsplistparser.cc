@@ -63,10 +63,13 @@ unsigned short edspListParser::VersionHash()
 bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 				pkgCache::VerIterator &Ver)
 {
-   if (Section.FindFlag("Hold",Pkg->Flags,pkgCache::State::Installed) == false)
-      return false;
-
    unsigned long state = 0;
+   if (Section.FindFlag("Hold",state,pkgCache::State::Hold) == false)
+      return false;
+   if (state != 0)
+      Pkg->SelectedState = pkgCache::State::Hold;
+
+   state = 0;
    if (Section.FindFlag("Installed",state,pkgCache::State::Installed) == false)
       return false;
    if (state != 0)
