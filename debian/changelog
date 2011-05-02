@@ -1,3 +1,64 @@
+apt (0.8.14.1ubuntu1) oneiric; urgency=low
+
+  [ Michael Vogt ]
+  * merged from the debian-sid bzr branch
+  
+  [ Julian Andres Klode ]
+  * apt-pkg/depcache.cc:
+    - Really release action groups only once (Closes: #622744)
+    - Make purge work again for config-files (LP: #244598) (Closes: #150831)
+  * debian/apt.cron.daily:
+    - Check power after wait, patch by manuel-soto (LP: #705269)
+  * debian/control:
+    - Move ${shlibs:Depends} to Pre-Depends, as we do not want APT
+      unpacked if a library is too old and thus break upgrades
+  * doc/apt-key.8.xml:
+    - Document apt-key net-update (LP: #192810)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Apr 2011 17:55:20 +0200
+
+apt (0.8.14.1) unstable; urgency=low
+
+  * apt-pkg/acquire-item.cc:
+    - Only try to rename existing Release files (Closes: #622912)
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 16 Apr 2011 14:36:10 +0200
+
+apt (0.8.14) unstable; urgency=low
+
+  [ Julian Andres Klode ]
+  * apt-pkg/indexcopy.cc:
+    - Use RealFileExists() instead of FileExists(), allows amongst other
+      things a directory named Sources to exist on a CD-ROM (LP: #750694).
+  * apt-pkg/acquire-item.cc:
+    - Use Release files even if they cannot be verified (LP: #704595)
+  * cmdline/apt-get.cc:
+    - Do not install recommends for build-dep (Closes: #454479) (LP: #245273)
+  * apt-pkg/deb/deblistparser.cc:
+    - Handle no space before "[" in build-dependencies (LP: #72344)
+  * apt-pkg/policy.cc:
+    - Allow pinning by glob() expressions, and regular expressions
+      surrounded by slashes (the "/" character) (LP: #399474)
+      (Closes: #121132)
+  * debian/control:
+    - Set Standards-Version to 3.9.2
+  
+  [ Michael Vogt ]
+  * mirror method:
+    - do not crash if the mirror file fails to download
+  * apt-pkg/aptconfiguration.cc:
+    - fix comparing for a empty string
+  * debian/apt.cron.daily:
+    - run unattended-upgrades even if there was a error during
+      the apt-get update (LP: #676295)
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcache.cc:
+    - use the native Architecture stored in the cache header instead of
+      loading it from configuration as suggested by Julian Andres Klode
+
+ -- Julian Andres Klode <jak@debian.org>  Fri, 15 Apr 2011 14:28:15 +0200
+
 apt (0.8.13.2ubuntu3) natty-proposed; urgency=low
 
   * apt-pkg/deb/dpkgpm.cc:

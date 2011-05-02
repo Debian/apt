@@ -259,6 +259,49 @@ Pin-Priority: 500
 
 </refsect2>
 
+<refsect2><title>Regular expressions and glob() syntax</title>
+<para>
+APT also supports pinning by glob() expressions and regular
+expressions surrounded by /. For example, the following
+example assigns the priority 500 to all packages from
+experimental where the name starts with gnome (as a glob()-like
+expression or contains the word kde (as a POSIX extended regular
+expression surrounded by slashes).
+</para>
+
+<programlisting>
+Package: gnome* /kde/
+Pin: release n=experimental
+Pin-Priority: 500
+</programlisting>
+
+<para>
+The rule for those expressions is that they can occur anywhere
+where a string can occur. Those, the following pin assigns the
+priority 990 to all packages from a release starting with karmic.
+</para>
+
+<programlisting>
+Package: *
+Pin: release n=karmic*
+Pin-Priority: 990
+</programlisting>
+
+If a regular expression occurs in a <literal>Package</literal> field,
+the behavior is the same as if this regular expression were replaced
+with a list of all package names it matches. It is undecided whether
+this will change in the future, thus you should always list wild-card
+pins first, so later specific pins override it.
+
+The pattern "<literal>*</literal>" in a Package field is not considered
+a glob() expression in itself.
+
+</refsect2>
+
+
+
+
+
 <refsect2>
 <title>How APT Interprets Priorities</title>
 

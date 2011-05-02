@@ -6,7 +6,7 @@ XSBC-Original-Maintainer: APT Development Team <deity@lists.debian.org>
 Uploaders: Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>,
  Christian Perrier <bubulle@debian.org>, Daniel Burrows <dburrows@debian.org>,
  Julian Andres Klode <jak@debian.org>
-Standards-Version: 3.9.0
+Standards-Version: 3.9.2
 Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 7.2.3~), libdb-dev, gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.0), zlib1g-dev | libz-dev, debiandoc-sgml, xsltproc, docbook-xsl, docbook-xml, po4a (>= 0.34-2), autotools-dev, autoconf, automake, doxygen
 Build-Conflicts: autoconf2.13, automake1.4
 Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
@@ -14,10 +14,10 @@ Vcs-Browser: http://bzr.debian.org/loggerhead/apt/debian-sid/
 
 Package: apt
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnupg
 Replaces: manpages-pl (<< 20060617-3~)
 Provides: ${libapt-pkg:provides}
-Recommends: ubuntu-keyring, gpg
+Recommends: ubuntu-keyring
 Conflicts: python-apt (<< 0.7.93.2~)
 Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, bzip2, lzma, python-apt
 Description: Advanced front-end for dpkg

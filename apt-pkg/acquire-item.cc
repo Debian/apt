@@ -1502,6 +1502,26 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       ReportMirrorFailure("GPGFailure");
    }
 
+   /* Always move the meta index, even if gpgv failed. This ensures
+    * that PackageFile objects are correctly filled in */
+   if (FileExists(DestFile)) {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      /* InRelease files become Release files, otherwise
+       * they would be considered as trusted later on */
+      if (SigFile == DestFile) {
+	 RealURI = RealURI.replace(RealURI.rfind("InRelease"), 9,
+	                               "Release");
+	 FinalFile = FinalFile.replace(FinalFile.rfind("InRelease"), 9,
+	                               "Release");
+	 SigFile = FinalFile;
+      }
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+
+      DestFile = FinalFile;
+   }
+
    // No Release file was present, or verification failed, so fall
    // back to queueing Packages files without verification
    QueueIndexes(false);
