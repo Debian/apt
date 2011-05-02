@@ -221,11 +221,6 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
 									/*}}}*/
 // EDSP::ReadResponse - from the given file descriptor			/*{{{*/
 bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
-	FileFd in;
-	in.OpenDescriptor(input, FileFd::ReadOnly);
-	pkgTagFile response(&in);
-	pkgTagSection section;
-
 	/* We build an map id to mmap offset here
 	   In theory we could use the offset as ID, but then VersionCount
 	   couldn't be used to create other versionmappings anymore and it
@@ -235,6 +230,11 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 	for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; ++P)
 		for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
 			VerIdx[V->ID] = V.Index();
+
+	FileFd in;
+	in.OpenDescriptor(input, FileFd::ReadOnly);
+	pkgTagFile response(&in);
+	pkgTagSection section;
 
 	while (response.Step(section) == true) {
 		std::string type;
