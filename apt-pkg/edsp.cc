@@ -227,9 +227,12 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 	   would be too easy for a (buggy) solver to segfault APT… */
 	unsigned long long const VersionCount = Cache.Head().VersionCount;
 	unsigned long VerIdx[VersionCount];
-	for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; ++P)
+	for (pkgCache::PkgIterator P = Cache.PkgBegin(); P.end() == false; ++P) {
 		for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
 			VerIdx[V->ID] = V.Index();
+		Cache[P].Marked = true;
+		Cache[P].Garbage = false;
+	}
 
 	FileFd in;
 	in.OpenDescriptor(input, FileFd::ReadOnly);
@@ -252,7 +255,9 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 			else
 				std::clog << msg << std::endl;
 			continue;
-		} else
+		} else if (section.Exists("Autoremove") == true)
+			type = "Autoremove";
+		else
 			continue;
 
 		size_t const id = section.FindULL(type.c_str(), VersionCount);
@@ -270,6 +275,10 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 			Cache.MarkInstall(Ver.ParentPkg(), false, false);
 		else if (type == "Remove")
 			Cache.MarkDelete(Ver.ParentPkg(), false);
+		else if (type == "Autoremove") {
+			Cache[Ver.ParentPkg()].Marked = false;
+			Cache[Ver.ParentPkg()].Garbage = true;
+		}
 	}
 	return true;
 }
@@ -422,6 +431,13 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
 	 fprintf(output, "Install: %d\n", Cache.GetCandidateVer(Pkg)->ID);
 	 if (Debug == true)
 	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Cache.GetCandidateVer(Pkg).VerStr());
+      }
+      else if (Cache[Pkg].Garbage == true)
+      {
+	 fprintf(output, "Autoremove: %d\n", Pkg.CurrentVer()->ID);
+	 if (Debug == true)
+	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
+	    fprintf(stderr, "Autoremove: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
       }
       else
 	 continue;

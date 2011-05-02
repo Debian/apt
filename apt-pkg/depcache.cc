@@ -1609,6 +1609,9 @@ bool pkgDepCache::MarkFollowsSuggests()
 // pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
 bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 {
+   if (_config->Find("APT::Solver::Name", "internal") != "internal")
+      return true;
+
    bool follow_recommends;
    bool follow_suggests;
    bool debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);

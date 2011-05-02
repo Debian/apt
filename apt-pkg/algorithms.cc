@@ -756,6 +756,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 
       if (EDSP::ReadResponse(solver_out, Cache) == false)
 	 return _error->Error("Reading solver response failed");
+
+      return true;
    }
    return ResolveInternal(BrokenFix);
 }
