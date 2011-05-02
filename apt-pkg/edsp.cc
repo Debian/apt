@@ -233,7 +233,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 
 	FileFd in;
 	in.OpenDescriptor(input, FileFd::ReadOnly);
-	pkgTagFile response(&in);
+	pkgTagFile response(&in, 100);
 	pkgTagSection section;
 
 	while (response.Step(section) == true) {
@@ -243,6 +243,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 		else if (section.Exists("Remove") == true)
 			type = "Remove";
 		else if (section.Exists("Progress") == true) {
+			std::clog << TimeRFC1123(time(NULL)) << " ";
 			ioprintf(std::clog, "[ %3d%% ] ", section.FindI("Percentage", 0));
 			std::clog << section.FindS("Progress") << " - ";
 			string const msg = section.FindS("Message");
