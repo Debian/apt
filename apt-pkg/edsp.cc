@@ -21,7 +21,7 @@
 // we could use pkgCache::DepType and ::Priority, but these would be localized strings…
 const char * const EDSP::PrioMap[] = {0, "important", "required", "standard",
 				      "optional", "extra"};
-const char * const EDSP::DepMap[] = {"", "Depends", "PreDepends", "Suggests",
+const char * const EDSP::DepMap[] = {"", "Depends", "Pre-Depends", "Suggests",
 				     "Recommends" , "Conflicts", "Replaces",
 				     "Obsoletes", "Breaks", "Enhances"};
 
