@@ -332,6 +332,10 @@ bool pkgFixBroken(pkgDepCache &Cache)
  */
 bool pkgDistUpgrade(pkgDepCache &Cache)
 {
+   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   if (solver != "internal")
+      return EDSP::ResolveExternal(solver.c_str(), Cache, false, true, false);
+
    pkgDepCache::ActionGroup group(Cache);
 
    /* Upgrade all installed packages first without autoinst to help the resolver
@@ -384,6 +388,10 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    to install packages not marked for install */
 bool pkgAllUpgrade(pkgDepCache &Cache)
 {
+   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   if (solver != "internal")
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false);
+
    pkgDepCache::ActionGroup group(Cache);
 
    pkgProblemResolver Fix(&Cache);
@@ -740,25 +748,8 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 bool pkgProblemResolver::Resolve(bool BrokenFix)
 {
    std::string const solver = _config->Find("APT::Solver::Name", "internal");
-
    if (solver != "internal")
-   {
-      int solver_in, solver_out;
-      if (EDSP::ExecuteSolver(solver.c_str(), &solver_in, &solver_out) == false)
-	 return false;
-
-      FILE* output = fdopen(solver_in, "w");
-      if (output == NULL)
-         return _error->Errno("Resolve", "fdopen on solver stdin failed");
-      EDSP::WriteRequest(Cache, output);
-      EDSP::WriteScenario(Cache, output);
-      fclose(output);
-
-      if (EDSP::ReadResponse(solver_out, Cache) == false)
-	 return _error->Error("Reading solver response failed");
-
-      return true;
-   }
+      return EDSP::ResolveExternal(solver.c_str(), Cache, false, false, false);
    return ResolveInternal(BrokenFix);
 }
 									/*}}}*/
@@ -1230,6 +1221,19 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    in that it does not install or remove any packages. It is assumed that the
    system was non-broken previously. */
 bool pkgProblemResolver::ResolveByKeep()
+{
+   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   if (solver != "internal")
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false);
+   return ResolveByKeepInternal();
+}
+									/*}}}*/
+// ProblemResolver::ResolveByKeepInternal - Resolve problems using keep	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is the work horse of the soft upgrade routine. It is very gental
+   in that it does not install or remove any packages. It is assumed that the
+   system was non-broken previously. */
+bool pkgProblemResolver::ResolveByKeepInternal()
 {
    pkgDepCache::ActionGroup group(Cache);
 

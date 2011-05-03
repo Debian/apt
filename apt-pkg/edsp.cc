@@ -197,7 +197,7 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
 	 continue;
       req->append(" ").append(Pkg.FullName());
    }
-   fprintf(output, "Request: EDSP 0.2\n");
+   fprintf(output, "Request: EDSP 0.4\n");
    if (del.empty() == false)
       fprintf(output, "Remove: %s\n", del.c_str()+1);
    if (inst.empty() == false)
@@ -460,42 +460,62 @@ bool EDSP::WriteError(std::string const &message, FILE* output) { return false; 
 
 // EDSP::ExecuteSolver - fork requested solver and setup ipc pipes	{{{*/
 bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_out) {
-      std::vector<std::string> const solverDirs = _config->FindVector("Dir::Bin::Solvers");
-      std::string file;
-      for (std::vector<std::string>::const_iterator dir = solverDirs.begin();
-	   dir != solverDirs.end(); ++dir) {
-	 file = flCombine(*dir, solver);
-	 if (RealFileExists(file.c_str()) == true)
-	    break;
-	 file.clear();
-      }
+	std::vector<std::string> const solverDirs = _config->FindVector("Dir::Bin::Solvers");
+	std::string file;
+	for (std::vector<std::string>::const_iterator dir = solverDirs.begin();
+	     dir != solverDirs.end(); ++dir) {
+		file = flCombine(*dir, solver);
+		if (RealFileExists(file.c_str()) == true)
+			break;
+		file.clear();
+	}
 
-      if (file.empty() == true)
-	 return _error->Error("Can't call external solver '%s' as it is not in a configured directory!", solver);
-      int external[4] = {-1, -1, -1, -1};
-      if (pipe(external) != 0 || pipe(external + 2) != 0)
-	 return _error->Errno("Resolve", "Can't create needed IPC pipes for EDSP");
-      for (int i = 0; i < 4; ++i)
-	 SetCloseExec(external[i], true);
+	if (file.empty() == true)
+		return _error->Error("Can't call external solver '%s' as it is not in a configured directory!", solver);
+	int external[4] = {-1, -1, -1, -1};
+	if (pipe(external) != 0 || pipe(external + 2) != 0)
+		return _error->Errno("Resolve", "Can't create needed IPC pipes for EDSP");
+	for (int i = 0; i < 4; ++i)
+		SetCloseExec(external[i], true);
 
-      pid_t Solver = ExecFork();
-      if (Solver == 0)
-      {
-	 dup2(external[0], STDIN_FILENO);
-	 dup2(external[3], STDOUT_FILENO);
-	 const char* calling[2] = { file.c_str(), 0 };
-	 execv(calling[0], (char**) calling);
-	 std::cerr << "Failed to execute solver '" << solver << "'!" << std::endl;
-	 _exit(100);
-      }
-      close(external[0]);
-      close(external[3]);
+	pid_t Solver = ExecFork();
+	if (Solver == 0) {
+		dup2(external[0], STDIN_FILENO);
+		dup2(external[3], STDOUT_FILENO);
+		const char* calling[2] = { file.c_str(), 0 };
+		execv(calling[0], (char**) calling);
+		std::cerr << "Failed to execute solver '" << solver << "'!" << std::endl;
+		_exit(100);
+	}
+	close(external[0]);
+	close(external[3]);
 
-      if (WaitFd(external[1], true, 5) == false)
-         return _error->Errno("Resolve", "Timed out while Waiting on availability of solver stdin");
+	if (WaitFd(external[1], true, 5) == false)
+		return _error->Errno("Resolve", "Timed out while Waiting on availability of solver stdin");
 
-      *solver_in = external[1];
-      *solver_out = external[2];
-      return true;
+	*solver_in = external[1];
+	*solver_out = external[2];
+	return true;
+}
+									/*}}}*/
+// EDSP::ResolveExternal - resolve problems by asking external for help	{{{*/
+bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
+			 bool const upgrade, bool const distUpgrade,
+			 bool const autoRemove) {
+	int solver_in, solver_out;
+	if (EDSP::ExecuteSolver(solver, &solver_in, &solver_out) == false)
+		return false;
+
+	FILE* output = fdopen(solver_in, "w");
+	if (output == NULL)
+		return _error->Errno("Resolve", "fdopen on solver stdin failed");
+	EDSP::WriteRequest(Cache, output, upgrade, distUpgrade, autoRemove);
+	EDSP::WriteScenario(Cache, output);
+	fclose(output);
+
+	if (EDSP::ReadResponse(solver_out, Cache) == false)
+		return _error->Error("Reading solver response failed");
+
+	return true;
 }
 									/*}}}*/

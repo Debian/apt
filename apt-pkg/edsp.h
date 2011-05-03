@@ -53,6 +53,9 @@ public:
 	bool static WriteError(std::string const &message, FILE* output);
 
 	bool static ExecuteSolver(const char* const solver, int *solver_in, int *solver_out);
+	bool static ResolveExternal(const char* const solver, pkgDepCache &Cache,
+				    bool const upgrade, bool const distUpgrade,
+				    bool const autoRemove);
 };
 									/*}}}*/
 #endif
