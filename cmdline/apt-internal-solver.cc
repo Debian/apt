@@ -156,7 +156,17 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(60, "Call problemresolver on current scenario…", output);
 
-	if (Fix.Resolve() == false) {
+	if (upgrade == true) {
+		if (pkgAllUpgrade(CacheFile) == false) {
+			EDSP::WriteError("An upgrade error occured", output);
+			return 0;
+		}
+	} else if (distUpgrade == true) {
+		if (pkgDistUpgrade(CacheFile) == false) {
+			EDSP::WriteError("An dist-upgrade error occured", output);
+			return 0;
+		}
+	} else if (Fix.Resolve() == false) {
 		EDSP::WriteError("An error occured", output);
 		return 0;
 	}
