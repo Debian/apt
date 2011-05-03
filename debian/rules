@@ -182,7 +182,7 @@ apt: build build-doc
 	dh_install -p$@ --sourcedir=$(BLD)
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS))
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver)
 
 	# https has its own package
 	rm debian/$@/usr/lib/apt/methods/https
