@@ -61,7 +61,8 @@ void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgI
    fprintf(output, "Version: %s\n", Ver.VerStr());
    if (Pkg.CurrentVer() == Ver)
       fprintf(output, "Installed: yes\n");
-   if (Pkg->SelectedState == pkgCache::State::Hold)
+   if (Pkg->SelectedState == pkgCache::State::Hold ||
+       (Cache[Pkg].Keep() == true && Cache[Pkg].Protect() == true))
       fprintf(output, "Hold: yes\n");
    fprintf(output, "APT-ID: %d\n", Ver->ID);
    fprintf(output, "Priority: %s\n", PrioMap[Ver->Priority]);
