@@ -450,10 +450,10 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
 									/*}}}*/
 // EDSP::WriteProgess - pulse to the given file descriptor		/*{{{*/
 bool EDSP::WriteProgress(unsigned short const percent, const char* const message, FILE* output) {
-// 	fprintf(output, "Progress: %s\n", TimeRFC1123(time(NULL)).c_str());
-// 	fprintf(output, "Percentage: %d\n", percent);
-// 	fprintf(output, "Message: %s\n\n", message);
-// 	fflush(output);
+	fprintf(output, "Progress: %s\n", TimeRFC1123(time(NULL)).c_str());
+	fprintf(output, "Percentage: %d\n", percent);
+	fprintf(output, "Message: %s\n\n", message);
+	fflush(output);
 	return true;
 }
 									/*}}}*/
