@@ -256,6 +256,11 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 			else
 				std::clog << msg << std::endl;
 			continue;
+		} else if (section.Exists("Error") == true) {
+			std::cerr << "The solver encountered an error of type: " << section.FindS("Error") << std::endl;
+			std::cerr << "The following information might help you to understand what is wrong:" << std::endl;
+			std::cerr << SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n") << std::endl << std::endl;
+			break;
 		} else if (section.Exists("Autoremove") == true)
 			type = "Autoremove";
 		else
@@ -457,8 +462,13 @@ bool EDSP::WriteProgress(unsigned short const percent, const char* const message
 	return true;
 }
 									/*}}}*/
-bool EDSP::WriteError(std::string const &message, FILE* output) { return false; }
-
+// EDSP::WriteError - format an error message to be send to file descriptor /*{{{*/
+bool EDSP::WriteError(char const * const uuid, std::string const &message, FILE* output) {
+	fprintf(output, "Error: %s\n", uuid);
+	fprintf(output, "Message: %s\n\n", SubstVar(SubstVar(message, "\n\n", "\n.\n"), "\n", "\n ").c_str());
+	return true;
+}
+									/*}}}*/
 // EDSP::ExecuteSolver - fork requested solver and setup ipc pipes	{{{*/
 bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_out) {
 	std::vector<std::string> const solverDirs = _config->FindVector("Dir::Bin::Solvers");

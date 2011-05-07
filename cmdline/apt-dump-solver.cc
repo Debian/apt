@@ -46,5 +46,5 @@ int main(int argc,const char *argv[])					/*{{{*/
 	fclose(output);
 	fclose(input);
 
-	EDSP::WriteError("I am too dumb, i can just dump!", stdout);
+	EDSP::WriteError("ERR_JUST_DUMPING", "I am too dumb, i can just dump!\nPlease use one of my friends instead!", stdout);
 }

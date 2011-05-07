@@ -171,8 +171,13 @@ public:
 	 *
 	 *  The first line of the message should be a short description
 	 *  of the error so it can be used for dialog titles or alike
+	 *
+	 *  \param uuid of this error message
+	 *  \param message is free form text to discribe the error
+	 *  \param output the front-end listens for error messages
 	 */
-	bool static WriteError(std::string const &message, FILE* output);
+	bool static WriteError(char const * const uuid, std::string const &message, FILE* output);
+
 
 	/** \brief executes the given solver and returns the pipe ends
 	 *
