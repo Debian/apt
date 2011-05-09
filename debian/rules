@@ -236,8 +236,10 @@ apt-utils: build
 	dh_installdirs -p$@
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
+	cp $(BLD)/bin/apt-dump-solver debian/$@/usr/lib/apt/solvers/dump
 
 	dh_install -p$@ --sourcedir=$(BLD)
+	dh_link -p$@
 	dh_installdocs -p$@
 	dh_installexamples -p$@
 
