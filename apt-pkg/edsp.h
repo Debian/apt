@@ -11,6 +11,7 @@
 
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/progress.h>
 
 #include <string>
 
@@ -46,13 +47,15 @@ public:
 	 *  \param upgrade is true if it is an request like apt-get upgrade
 	 *  \param distUpgrade is true if it is a request like apt-get dist-upgrade
 	 *  \param autoRemove is true if removal of unneeded packages should be performed
+	 *  \param Progress is an instance to report progress to
 	 *
 	 *  \return true if request was composed successfully, otherwise false
 	 */
 	bool static WriteRequest(pkgDepCache &Cache, FILE* output,
 				 bool const upgrade = false,
 				 bool const distUpgrade = false,
-				 bool const autoRemove = false);
+				 bool const autoRemove = false,
+				OpProgress *Progress = NULL);
 
 	/** \brief creates the scenario representing the package universe
 	 *
@@ -67,10 +70,11 @@ public:
 	 *
 	 *  \param Cache is the known package universe
 	 *  \param output is written to this "file"
+	 *  \param Progress is an instance to report progress to
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
-	bool static WriteScenario(pkgDepCache &Cache, FILE* output);
+	bool static WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress = NULL);
 
 	/** \brief creates a limited scenario representing the package universe
 	 *
@@ -83,11 +87,13 @@ public:
 	 *  \param Cache is the known package universe
 	 *  \param output is written to this "file"
 	 *  \param pkgset is a set of packages the universe should be limited to
+	 *  \param Progress is an instance to report progress to
 	 *
 	 *  \return true if universe was composed successfully, otherwise false
 	 */
 	bool static WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
-					 APT::PackageSet const &pkgset);
+					 APT::PackageSet const &pkgset,
+					 OpProgress *Progress = NULL);
 
 	/** \brief waits and acts on the information returned from the solver
 	 *
@@ -98,10 +104,11 @@ public:
 	 *
 	 *  \param input file descriptor with the response from the solver
 	 *  \param Cache the solution should be applied on if any
+	 *  \param Progress is an instance to report progress to
 	 *
 	 *  \return true if a solution is found and applied correctly, otherwise false
 	 */
-	bool static ReadResponse(int const input, pkgDepCache &Cache);
+	bool static ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress = NULL);
 
 	/** \brief search and read the request stanza for action later
 	 *
@@ -202,13 +209,14 @@ public:
 	 *  \param upgrade is true if it is a request like apt-get upgrade
 	 *  \param distUpgrade is true if it is a request like apt-get dist-upgrade
 	 *  \param autoRemove is true if unneeded packages should be removed
+	 *  \param Progress is an instance to report progress to
 	 *
 	 *  \return true if the solver has successfully solved the problem,
 	 *  otherwise false
 	 */
 	bool static ResolveExternal(const char* const solver, pkgDepCache &Cache,
 				    bool const upgrade, bool const distUpgrade,
-				    bool const autoRemove);
+				    bool const autoRemove, OpProgress *Progress = NULL);
 };
 									/*}}}*/
 #endif

@@ -26,29 +26,42 @@ const char * const EDSP::DepMap[] = {"", "Depends", "Pre-Depends", "Suggests",
 				     "Obsoletes", "Breaks", "Enhances"};
 
 // EDSP::WriteScenario - to the given file descriptor			/*{{{*/
-bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output)
+bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
 {
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
+   unsigned long p = 0;
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
-      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
+      for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver, ++p)
       {
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
 	 WriteScenarioDependency(Cache, output, Pkg, Ver);
 	 fprintf(output, "\n");
+	 if (Progress != NULL && p % 100 == 0)
+	    Progress->Progress(p);
       }
    return true;
 }
 									/*}}}*/
 // EDSP::WriteLimitedScenario - to the given file descriptor		/*{{{*/
 bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
-				APT::PackageSet const &pkgset)
+				APT::PackageSet const &pkgset,
+				OpProgress *Progress)
 {
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
+   unsigned long p  = 0;
+   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg, ++p)
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       {
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
 	 WriteScenarioLimitedDependency(Cache, output, Pkg, Ver, pkgset);
 	 fprintf(output, "\n");
+	 if (Progress != NULL && p % 100 == 0)
+	    Progress->Progress(p);
       }
+   if (Progress != NULL)
+      Progress->Done();
    return true;
 }
 									/*}}}*/
@@ -184,11 +197,17 @@ void EDSP::WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
 									/*}}}*/
 // EDSP::WriteRequest - to the given file descriptor			/*{{{*/
 bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
-			bool const DistUpgrade, bool const AutoRemove)
+			bool const DistUpgrade, bool const AutoRemove,
+			OpProgress *Progress)
 {
+   if (Progress != NULL)
+      Progress->SubProgress(Cache.Head().PackageCount, _("Send request to solver"));
+   unsigned long p = 0;
    string del, inst;
-   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg, ++p)
    {
+      if (Progress != NULL && p % 100 == 0)
+         Progress->Progress(p);
       string* req;
       if (Cache[Pkg].Delete() == true)
 	 req = &del;
@@ -221,7 +240,7 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
 }
 									/*}}}*/
 // EDSP::ReadResponse - from the given file descriptor			/*{{{*/
-bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
+bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progress) {
 	/* We build an map id to mmap offset here
 	   In theory we could use the offset as ID, but then VersionCount
 	   couldn't be used to create other versionmappings anymore and it
@@ -247,14 +266,14 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache) {
 		else if (section.Exists("Remove") == true)
 			type = "Remove";
 		else if (section.Exists("Progress") == true) {
-			std::clog << TimeRFC1123(time(NULL)) << " ";
-			ioprintf(std::clog, "[ %3d%% ] ", section.FindI("Percentage", 0));
-			std::clog << section.FindS("Progress") << " - ";
-			string const msg = section.FindS("Message");
-			if (msg.empty() == true)
-				std::clog << "Solver is still working on the solution" << std::endl;
-			else
-				std::clog << msg << std::endl;
+			if (Progress != NULL) {
+				string const msg = section.FindS("Message");
+				if (msg.empty() == true)
+					Progress->SubProgress(100, _("Prepare for receiving solution"));
+				else
+					Progress->SubProgress(100, msg);
+				Progress->Progress(section.FindI("Percentage", 0));
+			}
 			continue;
 		} else if (section.Exists("Error") == true) {
 			std::cerr << "The solver encountered an error of type: " << section.FindS("Error") << std::endl;
@@ -512,7 +531,7 @@ bool EDSP::ExecuteSolver(const char* const solver, int *solver_in, int *solver_o
 // EDSP::ResolveExternal - resolve problems by asking external for help	{{{*/
 bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 			 bool const upgrade, bool const distUpgrade,
-			 bool const autoRemove) {
+			 bool const autoRemove, OpProgress *Progress) {
 	int solver_in, solver_out;
 	if (EDSP::ExecuteSolver(solver, &solver_in, &solver_out) == false)
 		return false;
@@ -520,11 +539,18 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 	FILE* output = fdopen(solver_in, "w");
 	if (output == NULL)
 		return _error->Errno("Resolve", "fdopen on solver stdin failed");
-	EDSP::WriteRequest(Cache, output, upgrade, distUpgrade, autoRemove);
-	EDSP::WriteScenario(Cache, output);
+
+	if (Progress != NULL)
+		Progress->OverallProgress(0, 100, 5, _("Execute external solver"));
+	EDSP::WriteRequest(Cache, output, upgrade, distUpgrade, autoRemove, Progress);
+	if (Progress != NULL)
+		Progress->OverallProgress(5, 100, 20, _("Execute external solver"));
+	EDSP::WriteScenario(Cache, output, Progress);
 	fclose(output);
 
-	if (EDSP::ReadResponse(solver_out, Cache) == false)
+	if (Progress != NULL)
+		Progress->OverallProgress(25, 100, 75, _("Execute external solver"));
+	if (EDSP::ReadResponse(solver_out, Cache, Progress) == false)
 		return _error->Error("Reading solver response failed");
 
 	return true;

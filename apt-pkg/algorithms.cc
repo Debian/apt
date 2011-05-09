@@ -333,8 +333,10 @@ bool pkgFixBroken(pkgDepCache &Cache)
 bool pkgDistUpgrade(pkgDepCache &Cache)
 {
    std::string const solver = _config->Find("APT::Solver::Name", "internal");
-   if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, false, true, false);
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, false, true, false, &Prog);
+   }
 
    pkgDepCache::ActionGroup group(Cache);
 
@@ -389,8 +391,10 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
 bool pkgAllUpgrade(pkgDepCache &Cache)
 {
    std::string const solver = _config->Find("APT::Solver::Name", "internal");
-   if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false);
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);
+   }
 
    pkgDepCache::ActionGroup group(Cache);
 
@@ -748,8 +752,10 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 bool pkgProblemResolver::Resolve(bool BrokenFix)
 {
    std::string const solver = _config->Find("APT::Solver::Name", "internal");
-   if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, false, false, false);
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, false, false, false, &Prog);
+   }
    return ResolveInternal(BrokenFix);
 }
 									/*}}}*/
@@ -1223,8 +1229,10 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 bool pkgProblemResolver::ResolveByKeep()
 {
    std::string const solver = _config->Find("APT::Solver::Name", "internal");
-   if (solver != "internal")
-      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false);
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);
+   }
    return ResolveByKeepInternal();
 }
 									/*}}}*/
