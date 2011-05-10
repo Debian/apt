@@ -274,10 +274,18 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			}
 			continue;
 		} else if (section.Exists("Error") == true) {
+			std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
+			if (msg.empty() == true) {
+				msg = _("External solver failed without a proper error message");
+				_error->Error(msg.c_str());
+			} else
+				_error->Error("External solver failed with: %s", msg.substr(0,msg.find('\n')).c_str());
+			if (Progress != NULL)
+				Progress->Done();
 			std::cerr << "The solver encountered an error of type: " << section.FindS("Error") << std::endl;
 			std::cerr << "The following information might help you to understand what is wrong:" << std::endl;
-			std::cerr << SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n") << std::endl << std::endl;
-			break;
+			std::cerr << msg << std::endl << std::endl;
+			return false;
 		} else if (section.Exists("Autoremove") == true)
 			type = "Autoremove";
 		else
@@ -549,7 +557,7 @@ bool EDSP::ResolveExternal(const char* const solver, pkgDepCache &Cache,
 	if (Progress != NULL)
 		Progress->OverallProgress(25, 100, 75, _("Execute external solver"));
 	if (EDSP::ReadResponse(solver_out, Cache, Progress) == false)
-		return _error->Error("Reading solver response failed");
+		return false;
 
 	return true;
 }
