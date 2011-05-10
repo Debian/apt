@@ -23,7 +23,6 @@
 #include <apt-pkg/hashes.h>
 
 #include <iostream>
-#include <stdarg.h>
 #include <stdio.h>
 #include <sys/signal.h>
 									/*}}}*/
@@ -375,23 +374,34 @@ int pkgAcqMethod::Run(bool Single)
    return 0;
 }
 									/*}}}*/
+// AcqMethod::PrintStatus - privately really send a log/status message	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqMethod::PrintStatus(char const * const header, const char* Format,
+			       va_list &args) const
+{
+   string CurrentURI = "<UNKNOWN>";
+   if (Queue != 0)
+      CurrentURI = Queue->Uri;
+   if (UsedMirror.empty() == true)
+      fprintf(stdout, "%s\nURI: %s\nMessage: ",
+	      header, CurrentURI.c_str());
+   else
+      fprintf(stdout, "%s\nURI: %s\nUsedMirror: %s\nMessage: ",
+	      header, CurrentURI.c_str(), UsedMirror.c_str());
+   vfprintf(stdout,Format,args);
+   std::cout << "\n\n" << std::flush;
+}
+									/*}}}*/
 // AcqMethod::Log - Send a log message					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcqMethod::Log(const char *Format,...)
 {
-   string CurrentURI = "<UNKNOWN>";
-   if (Queue != 0)
-      CurrentURI = Queue->Uri;
-   fprintf(stdout, "101 Log\nURI: %s\nUsedMirror: %s\nMessage: ",
-	   UsedMirror.c_str(), CurrentURI.c_str());
-
    va_list args;
    va_start(args,Format);
-   vfprintf(stdout,Format,args);
+   PrintStatus("101 Log", Format, args);
    va_end(args);
-
-   std::cout << "\n\n" << std::flush;
 }
 									/*}}}*/
 // AcqMethod::Status - Send a status message				/*{{{*/
@@ -399,18 +409,10 @@ void pkgAcqMethod::Log(const char *Format,...)
 /* */
 void pkgAcqMethod::Status(const char *Format,...)
 {
-   string CurrentURI = "<UNKNOWN>";
-   if (Queue != 0)
-      CurrentURI = Queue->Uri;
-   fprintf(stdout, "102 Status\nURI: %s\nUsedMirror: %s\nMessage: ",
-	   UsedMirror.c_str(), CurrentURI.c_str());
-
    va_list args;
    va_start(args,Format);
-   vfprintf(stdout,Format,args);
+   PrintStatus("102 Status", Format, args);
    va_end(args);
-
-   std::cout << "\n\n" << std::flush;
 }
 									/*}}}*/
 // AcqMethod::Redirect - Send a redirect message                       /*{{{*/

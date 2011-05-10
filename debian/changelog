@@ -13,6 +13,7 @@ apt (0.8.14.2) UNRELEASED; urgency=low
   * apt-pkg/acquire-method.cc:
     - write directly to stdout instead of creating the message in
       memory first before writing to avoid hitting limits
+    - fix order of CurrentURI and UsedMirror in Status() and Log()
   * apt-pkg/orderlist.cc:
     - let VisitRProvides report if the calls were successful
   * apt-pkg/deb/dpkgpm.cc:
@@ -53,7 +54,7 @@ apt (0.8.14.2) UNRELEASED; urgency=low
     - dequote URL taken from Location in redirects as we will otherwise
       quote an already quoted string in the request later (Closes: #602412)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 10 May 2011 15:49:19 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 10 May 2011 18:51:15 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 

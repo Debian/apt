@@ -23,6 +23,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
+#include <stdarg.h>
 
 class Hashes;
 class pkgAcqMethod
@@ -77,6 +78,8 @@ class pkgAcqMethod
 
    bool MediaFail(string Required,string Drive);
    virtual void Exit() {};
+
+   void PrintStatus(char const * const header, const char* Format, va_list &args) const;
 
    public:
    enum CnfFlags {SingleInstance = (1<<0),
