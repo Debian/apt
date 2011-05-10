@@ -65,27 +65,18 @@ void OpProgress::OverallProgress(unsigned long Current, unsigned long Total,
 // OpProgress::SubProgress - Set the sub progress state			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void OpProgress::SubProgress(unsigned long SubTotal,const string &Op)
+void OpProgress::SubProgress(unsigned long SubTotal,const string &Op,
+			     float const Percent)
 {
    this->SubTotal = SubTotal;
-   SubOp = Op;
-   if (Total == 0)
-      Percent = 0;
+   if (Op.empty() == false)
+      SubOp = Op;
+   if (Total == 0 || Percent == 0)
+      this->Percent = 0;
+   else if (Percent != -1)
+      this->Percent = this->Current += (Size*Percent)/SubTotal;
    else
-      Percent = Current*100.0/Total;
-   Update();
-}
-									/*}}}*/
-// OpProgress::SubProgress - Set the sub progress state			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void OpProgress::SubProgress(unsigned long SubTotal)
-{
-   this->SubTotal = SubTotal;
-   if (Total == 0)
-      Percent = 0;
-   else
-      Percent = Current*100.0/Total;
+      this->Percent = Current*100.0/Total;
    Update();
 }
 									/*}}}*/

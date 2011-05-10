@@ -267,12 +267,10 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			type = "Remove";
 		else if (section.Exists("Progress") == true) {
 			if (Progress != NULL) {
-				string const msg = section.FindS("Message");
+				string msg = section.FindS("Message");
 				if (msg.empty() == true)
-					Progress->SubProgress(100, _("Prepare for receiving solution"));
-				else
-					Progress->SubProgress(100, msg);
-				Progress->Progress(section.FindI("Percentage", 0));
+					msg = _("Prepare for receiving solution");
+				Progress->SubProgress(100, msg, section.FindI("Percentage", 0));
 			}
 			continue;
 		} else if (section.Exists("Error") == true) {
