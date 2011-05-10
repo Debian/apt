@@ -50,8 +50,10 @@ apt (0.8.14.2) UNRELEASED; urgency=low
       use the method as a simple standalone downloader
     - Location header in redirects should be absolute URI, but some
       servers just send an absolute path so still deal with it properly
+    - dequote URL taken from Location in redirects as we will otherwise
+      quote an already quoted string in the request later (Closes: #602412)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 27 Apr 2011 17:37:58 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 10 May 2011 15:49:19 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 

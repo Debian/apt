@@ -961,12 +961,12 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
 	 }
 	 else
 	    NextURI.clear();
-	 NextURI.append(Srv->Location);
+	 NextURI.append(DeQuoteString(Srv->Location));
 	 return TRY_AGAIN_OR_REDIRECT;
       }
       else
       {
-         NextURI = Srv->Location;
+         NextURI = DeQuoteString(Srv->Location);
          return TRY_AGAIN_OR_REDIRECT;
       }
       /* else pass through for error message */
