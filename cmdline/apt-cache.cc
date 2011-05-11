@@ -121,9 +121,7 @@ bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
 		  continue;
 
 	    // Skip conflicts and replaces
-	    if (End->Type == pkgCache::Dep::DpkgBreaks ||
-		End->Type == pkgCache::Dep::Replaces ||
-		End->Type == pkgCache::Dep::Conflicts)
+	    if (End.IsNegative() == true)
 	       continue;
 
 	    // Verify the or group
@@ -848,10 +846,7 @@ bool XVcg(CommandLine &CmdL)
 	       {
 		  /* If a conflicts does not meet anything in the database
 		     then show the relation but do not recurse */
-		  if (Hit == false && 
-		      (D->Type == pkgCache::Dep::Conflicts ||
-		       D->Type == pkgCache::Dep::DpkgBreaks ||
-		       D->Type == pkgCache::Dep::Obsoletes))
+		  if (Hit == false && D.IsNegative() == true)
 		  {
 		     if (Show[D.TargetPkg()->ID] == None && 
 			 Show[D.TargetPkg()->ID] != ToShow)
@@ -1060,9 +1055,7 @@ bool Dotty(CommandLine &CmdL)
 	       {
 		  /* If a conflicts does not meet anything in the database
 		     then show the relation but do not recurse */
-		  if (Hit == false && 
-		      (D->Type == pkgCache::Dep::Conflicts ||
-		       D->Type == pkgCache::Dep::Obsoletes))
+		  if (Hit == false && D.IsNegative() == true)
 		  {
 		     if (Show[D.TargetPkg()->ID] == None && 
 			 Show[D.TargetPkg()->ID] != ToShow)
@@ -1082,6 +1075,7 @@ bool Dotty(CommandLine &CmdL)
 	       {
 		  case pkgCache::Dep::Conflicts:
 		  case pkgCache::Dep::Obsoletes:
+		  case pkgCache::Dep::DpkgBreaks:
 		  printf("[color=springgreen];\n");
 		  break;
 		  

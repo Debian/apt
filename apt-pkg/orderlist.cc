@@ -507,15 +507,11 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
       if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
 	 continue;
       
-      if (D->Type != pkgCache::Dep::Conflicts &&
-	  D->Type != pkgCache::Dep::DpkgBreaks &&
-	  D->Type != pkgCache::Dep::Obsoletes &&
+      if (D.IsNegative() == false &&
 	  Cache[Pkg].InstallVer != *I)
 	 continue;
       
-      if ((D->Type == pkgCache::Dep::Conflicts ||
-	   D->Type == pkgCache::Dep::DpkgBreaks ||
-	   D->Type == pkgCache::Dep::Obsoletes) &&
+      if (D.IsNegative() == true &&
 	  (Version *)Pkg.CurrentVer() != *I)
 	 continue;
       
@@ -647,9 +643,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
       {
 	 /* Forward critical dependencies MUST be correct before the 
 	    package can be unpacked. */
-	 if (D->Type != pkgCache::Dep::Conflicts &&
-	     D->Type != pkgCache::Dep::DpkgBreaks &&
-	     D->Type != pkgCache::Dep::Obsoletes &&
+	 if (D.IsNegative() == false &&
 	     D->Type != pkgCache::Dep::PreDepends)
 	    continue;
 	 	 	 	 
@@ -1077,9 +1071,7 @@ bool pkgOrderList::CheckDep(DepIterator D)
       
       /* Conflicts requires that all versions are not present, depends
          just needs one */
-      if (D->Type != pkgCache::Dep::Conflicts && 
-	  D->Type != pkgCache::Dep::DpkgBreaks && 
-	  D->Type != pkgCache::Dep::Obsoletes)
+      if (D.IsNegative() == false)
       {
 	 /* Try to find something that does not have the after flag set
 	    if at all possible */

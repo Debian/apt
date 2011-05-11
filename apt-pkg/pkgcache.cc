@@ -521,9 +521,7 @@ std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
    conflicts (including dpkg's Breaks fields). */
 bool pkgCache::DepIterator::IsCritical() const
 {
-   if (S->Type == pkgCache::Dep::Conflicts ||
-       S->Type == pkgCache::Dep::DpkgBreaks ||
-       S->Type == pkgCache::Dep::Obsoletes ||
+   if (IsNegative() == true ||
        S->Type == pkgCache::Dep::Depends ||
        S->Type == pkgCache::Dep::PreDepends)
       return true;
@@ -618,9 +616,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
 
-	 if ((S->Type == pkgCache::Dep::Conflicts ||
-	      S->Type == pkgCache::Dep::DpkgBreaks ||
-	      S->Type == pkgCache::Dep::Obsoletes) &&
+	 if (IsNegative() == true &&
 	     ParentPkg() == I.ParentPkg())
 	    continue;
 	 
@@ -635,9 +631,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
 	 
-	 if ((S->Type == pkgCache::Dep::Conflicts ||
-	      S->Type == pkgCache::Dep::DpkgBreaks ||
-	      S->Type == pkgCache::Dep::Obsoletes) &&
+	 if (IsNegative() == true &&
 	     ParentPkg() == I.OwnerPkg())
 	    continue;
 	 

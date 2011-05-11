@@ -101,9 +101,7 @@ bool pkgSimulate::Install(PkgIterator iPkg,string /*File*/)
 	 DepIterator Start;
 	 DepIterator End;
 	 D.GlobOr(Start,End);
-	 if (Start->Type == pkgCache::Dep::Conflicts ||
-	     Start->Type == pkgCache::Dep::DpkgBreaks ||
-	     Start->Type == pkgCache::Dep::Obsoletes ||
+	 if (Start.IsNegative() == true ||
 	     End->Type == pkgCache::Dep::PreDepends)
          {
 	    if ((Sim[End] & pkgDepCache::DepGInstall) == 0)
@@ -695,9 +693,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 	    {
 	       /* We let the algorithm deal with conflicts on its next iteration,
 		it is much smarter than us */
-	       if (Start->Type == pkgCache::Dep::Conflicts || 
-		   Start->Type == pkgCache::Dep::DpkgBreaks || 
-		   Start->Type == pkgCache::Dep::Obsoletes)
+	       if (Start.IsNegative() == true)
 		   break;
 	       
 	       if (Debug == true)
@@ -926,9 +922,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       if a package has a dep on another package that cant be found */
 	    SPtrArray<pkgCache::Version *> VList = Start.AllTargets();
 	    if (*VList == 0 && (Flags[I->ID] & Protected) != Protected &&
-		Start->Type != pkgCache::Dep::Conflicts &&
-		Start->Type != pkgCache::Dep::DpkgBreaks &&
-		Start->Type != pkgCache::Dep::Obsoletes &&
+		Start.IsNegative() == false &&
 		Cache[I].NowBroken() == false)
 	    {	       
 	       if (InOr == true)
@@ -953,10 +947,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
                   at is not the currently selected version of the 
                   package, which means it is not necessary to 
                   remove/keep */
-               if (Cache[Pkg].InstallVer != Ver &&
-                   (Start->Type == pkgCache::Dep::Conflicts ||
-                    Start->Type == pkgCache::Dep::DpkgBreaks ||
-                    Start->Type == pkgCache::Dep::Obsoletes)) 
+               if (Cache[Pkg].InstallVer != Ver && Start.IsNegative() == true)
                {
                   if (Debug) 
                      clog << "  Conflicts//Breaks against version " 
@@ -974,9 +965,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	          fiddle with the VList package */
 	       if (Scores[I->ID] <= Scores[Pkg->ID] ||
 		   ((Cache[Start] & pkgDepCache::DepNow) == 0 &&
-		    End->Type != pkgCache::Dep::Conflicts &&
-		    End->Type != pkgCache::Dep::DpkgBreaks &&
-		    End->Type != pkgCache::Dep::Obsoletes))
+		    End.IsNegative() == false))
 	       {
 		  // Try a little harder to fix protected packages..
 		  if ((Flags[I->ID] & Protected) == Protected)
@@ -1083,10 +1072,8 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	    }
 
 	    // Hm, nothing can possibly satisify this dep. Nuke it.
-	    if (VList[0] == 0 && 
-		Start->Type != pkgCache::Dep::Conflicts &&
-		Start->Type != pkgCache::Dep::DpkgBreaks &&
-		Start->Type != pkgCache::Dep::Obsoletes &&
+	    if (VList[0] == 0 &&
+		Start.IsNegative() == false &&
 		(Flags[I->ID] & Protected) != Protected)
 	    {
 	       bool Installed = Cache[I].Install();
@@ -1132,9 +1119,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 	       Change = true;
 	       if ((Cache[J->Dep] & pkgDepCache::DepGNow) == 0)
 	       {
-		  if (J->Dep->Type == pkgCache::Dep::Conflicts || 
-		      J->Dep->Type == pkgCache::Dep::DpkgBreaks ||
-		      J->Dep->Type == pkgCache::Dep::Obsoletes)
+		  if (J->Dep.IsNegative() == true)
 		  {
 		     if (Debug == true)
 			clog << "  Fixing " << I.FullName(false) << " via remove of " << J->Pkg.FullName(false) << endl;
