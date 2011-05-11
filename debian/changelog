@@ -10,6 +10,7 @@ apt (0.8.14.2) UNRELEASED; urgency=low
   * apt-pkg/depcache.cc:
     - really include 'rc' packages in the delete count by fixing a
       typo which exists since 1999 in the source… (LP: #761175)
+    - if critical or-group can't be satisfied, exit directly.
   * apt-pkg/acquire-method.cc:
     - write directly to stdout instead of creating the message in
       memory first before writing to avoid hitting limits
@@ -54,7 +55,7 @@ apt (0.8.14.2) UNRELEASED; urgency=low
     - dequote URL taken from Location in redirects as we will otherwise
       quote an already quoted string in the request later (Closes: #602412)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 10 May 2011 18:51:15 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 11 May 2011 13:58:40 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 

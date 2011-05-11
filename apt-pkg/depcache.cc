@@ -1145,8 +1145,18 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       
       /* If we are in an or group locate the first or that can 
          succeed. We have already cached this.. */
-      for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; Ors--)
-	 Start++;
+      for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; --Ors)
+	 ++Start;
+      if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer && Start.IsNegative() == false)
+      {
+	 if(DebugAutoInstall == true)
+	    std::clog << OutputInDepth(Depth) << Start << " can't be satisfied!" << std::endl;
+	 if (Start.IsCritical() == false)
+	    continue;
+	 // if the dependency was critical, we can't install it, so remove it again
+	 MarkDelete(Pkg,false,Depth + 1, false);
+	 return;
+      }
 
       /* This bit is for processing the possibilty of an install/upgrade
          fixing the problem */

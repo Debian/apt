@@ -530,6 +530,17 @@ bool pkgCache::DepIterator::IsCritical() const
    return false;
 }
 									/*}}}*/
+// DepIterator::IsNegative - Returns true if the dep is a negative one	/*{{{*/
+// ---------------------------------------------------------------------
+/* Some dependencies are positive like Depends and Recommends, others
+   are negative like Conflicts which can and should be handled differently */
+bool pkgCache::DepIterator::IsNegative() const
+{
+   return S->Type == Dep::DpkgBreaks ||
+	  S->Type == Dep::Conflicts ||
+	  S->Type == Dep::Obsoletes;
+}
+									/*}}}*/
 // DepIterator::SmartTargetPkg - Resolve dep target pointers w/provides	/*{{{*/
 // ---------------------------------------------------------------------
 /* This intellegently looks at dep target packages and tries to figure
