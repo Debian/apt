@@ -1101,53 +1101,50 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
        * package should follow that Recommends rather than causing the
        * dependency to be removed. (bug #470115)
        */
-      bool isNewImportantDep = false;
-      bool isPreviouslySatisfiedImportantDep = false;
-      if(!ForceImportantDeps && !Start.IsCritical())
+      if (Pkg->CurrentVer != 0 && ForceImportantDeps == false && Start.IsCritical() == false)
       {
-	 bool found=false;
-	 VerIterator instVer = Pkg.CurrentVer();
-	 if(!instVer.end())
+	 bool isNewImportantDep = true;
+	 bool isPreviouslySatisfiedImportantDep = false;
+	 for (DepIterator D = Pkg.CurrentVer().DependsList(); D.end() != true; ++D)
 	 {
-	   for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
-	     {
-	       //FIXME: deal better with or-groups(?)
-	       if(IsImportantDep(D) && !D.IsCritical() &&
-		  Start.TargetPkg() == D.TargetPkg())
-		 {
-		   if(!isPreviouslySatisfiedImportantDep)
-		     {
-		       DepIterator D2 = D;
-		       while((D2->CompareOp & Dep::Or) != 0)
-			 ++D2;
+	    //FIXME: Should we handle or-group better here?
+	    // We do not check if the package we look for is part of the same or-group
+	    // we might find while searching, but could that really be a problem?
+	    if (D.IsCritical() == true || IsImportantDep(D) == false ||
+		Start.TargetPkg() != D.TargetPkg())
+	       continue;
 
-		       isPreviouslySatisfiedImportantDep =
-			 (((*this)[D2] & DepGNow) != 0);
-		     }
+	    isNewImportantDep = false;
 
-		   found=true;
-		 }
-	     }
-	    // this is a new dep if it was not found to be already
-	    // a important dep of the installed pacakge
-	    isNewImportantDep = !found;
+	    while ((D->CompareOp & Dep::Or) != 0)
+	       ++D;
+
+	    isPreviouslySatisfiedImportantDep = (((*this)[D] & DepGNow) != 0);
+	    if (isPreviouslySatisfiedImportantDep == true)
+	       break;
+	 }
+
+	 if(isNewImportantDep == true)
+	 {
+	    if (DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "new important dependency: "
+			 << Start.TargetPkg().FullName() << std::endl;
+	 }
+	 else if(isPreviouslySatisfiedImportantDep == true)
+	 {
+	    if (DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "previously satisfied important dependency on "
+			 << Start.TargetPkg().FullName() << std::endl;
+	 }
+	 else
+	 {
+	    if (DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "ignore old unsatisfied important dependency on "
+			 << Start.TargetPkg().FullName() << std::endl;
+	    continue;
 	 }
       }
-      if(isNewImportantDep)
-	 if(DebugAutoInstall == true)
-	    std::clog << OutputInDepth(Depth) << "new important dependency: "
-		      << Start.TargetPkg().Name() << std::endl;
-      if(isPreviouslySatisfiedImportantDep)
-	if(DebugAutoInstall == true)
-	  std::clog << OutputInDepth(Depth) << "previously satisfied important dependency on "
-		    << Start.TargetPkg().Name() << std::endl;
 
-      // skip important deps if the package is already installed
-      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false 
-	  && !isNewImportantDep && !isPreviouslySatisfiedImportantDep
-	  && !ForceImportantDeps)
-	 continue;
-      
       /* This bit is for processing the possibilty of an install/upgrade
          fixing the problem */
       SPtrArray<Version *> List = Start.AllTargets();
