@@ -23,9 +23,7 @@
 #include <apt-pkg/hashes.h>
 
 #include <iostream>
-#include <stdarg.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <sys/signal.h>
 									/*}}}*/
 
@@ -36,32 +34,28 @@ using namespace std;
 /* This constructs the initialization text */
 pkgAcqMethod::pkgAcqMethod(const char *Ver,unsigned long Flags)
 {
-   char S[300] = "";
-   char *End = S;
-   strcat(End,"100 Capabilities\n");
-   sprintf(End+strlen(End),"Version: %s\n",Ver);
+   std::cout << "100 Capabilities\n"
+	     << "Version: " << Ver << "\n";
 
    if ((Flags & SingleInstance) == SingleInstance)
-      strcat(End,"Single-Instance: true\n");
-   
+      std::cout << "Single-Instance: true\n";
+
    if ((Flags & Pipeline) == Pipeline)
-      strcat(End,"Pipeline: true\n");
-   
+      std::cout << "Pipeline: true\n";
+
    if ((Flags & SendConfig) == SendConfig)
-      strcat(End,"Send-Config: true\n");
+      std::cout << "Send-Config: true\n";
 
    if ((Flags & LocalOnly) == LocalOnly)
-      strcat(End,"Local-Only: true\n");
+      std::cout <<"Local-Only: true\n";
 
    if ((Flags & NeedsCleanup) == NeedsCleanup)
-      strcat(End,"Needs-Cleanup: true\n");
+      std::cout << "Needs-Cleanup: true\n";
 
    if ((Flags & Removable) == Removable)
-      strcat(End,"Removable: true\n");
-   strcat(End,"\n");
+      std::cout << "Removable: true\n";
 
-   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
-      exit(100);
+   std::cout << "\n" << std::flush;
 
    SetNonBlock(STDIN_FILENO,true);
 
@@ -94,13 +88,11 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
       if (*I == '\n') 
 	 *I = ' ';
    }
-   
-   char S[1024];
-   char *End = S;
+
    if (Queue != 0)
    {
-      End += snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: %s\n"
-		      "Message: %s %s\n",Queue->Uri.c_str(), Err.c_str(), IP.c_str());
+      std::cout << "400 URI Failure\nURI: " << Queue->Uri << "\n"
+		<< "Message: " << Err << " " << IP << "\n";
       // Dequeue
       FetchItem *Tmp = Queue;
       Queue = Queue->Next;
@@ -109,22 +101,17 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
 	 QueueBack = Queue;
    }
    else
-   {
-      End += snprintf(S,sizeof(S)-50,"400 URI Failure\nURI: <UNKNOWN>\n"
-		      "Message: %s\n",Err.c_str());
-   }
+      std::cout << "400 URI Failure\nURI: <UNKNOWN>\nMessage: " << Err << "\n";
+
    if(FailReason.empty() == false)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"FailReason: %s\n",FailReason.c_str());
+      std::cout << "FailReason: " << FailReason << "\n";
    if (UsedMirror.empty() == false)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
-   // Set the transient flag 
+      std::cout << "UsedMirror: " << UsedMirror << "\n";
+   // Set the transient flag
    if (Transient == true)
-      strcat(S,"Transient-Failure: true\n\n");
-   else
-      strcat(S,"\n");
-   
-   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
-      exit(100);
+      std::cout << "Transient-Failure: true\n";
+
+   std::cout << "\n" << std::flush;
 }
 									/*}}}*/
 // AcqMethod::URIStart - Indicate a download is starting		/*{{{*/
@@ -134,27 +121,22 @@ void pkgAcqMethod::URIStart(FetchResult &Res)
 {
    if (Queue == 0)
       abort();
-   
-   char S[1024] = "";
-   char *End = S;
-   
-   End += snprintf(S,sizeof(S),"200 URI Start\nURI: %s\n",Queue->Uri.c_str());
+
+   std::cout << "200 URI Start\n"
+	     << "URI: " << Queue->Uri << "\n";
    if (Res.Size != 0)
-      End += snprintf(End,sizeof(S)-4 - (End - S),"Size: %lu\n",Res.Size);
-   
+      std::cout << "Size: " << Res.Size << "\n";
+
    if (Res.LastModified != 0)
-      End += snprintf(End,sizeof(S)-4 - (End - S),"Last-Modified: %s\n",
-		      TimeRFC1123(Res.LastModified).c_str());
-   
+      std::cout << "Last-Modified: " << TimeRFC1123(Res.LastModified) << "\n";
+
    if (Res.ResumePoint != 0)
-      End += snprintf(End,sizeof(S)-4 - (End - S),"Resume-Point: %lu\n",
-		      Res.ResumePoint);
+      std::cout << "Resume-Point: " << Res.ResumePoint << "\n";
+
    if (UsedMirror.empty() == false)
-      End += snprintf(End,sizeof(S)-4 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
-      
-   strcat(End,"\n");
-   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
-      exit(100);
+      std::cout << "UsedMirror: " << UsedMirror << "\n";
+
+   std::cout << "\n" << std::flush;
 }
 									/*}}}*/
 // AcqMethod::URIDone - A URI is finished				/*{{{*/
@@ -164,76 +146,65 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 {
    if (Queue == 0)
       abort();
-   
-   char S[1024] = "";
-   char *End = S;
-   
-   End += snprintf(S,sizeof(S),"201 URI Done\nURI: %s\n",Queue->Uri.c_str());
+
+   std::cout << "201 URI Done\n"
+	     << "URI: " << Queue->Uri << "\n";
 
    if (Res.Filename.empty() == false)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"Filename: %s\n",Res.Filename.c_str());
-   
+      std::cout << "Filename: " << Res.Filename << "\n";
+
    if (Res.Size != 0)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"Size: %lu\n",Res.Size);
-   
+      std::cout << "Size: " << Res.Size << "\n";
+
    if (Res.LastModified != 0)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"Last-Modified: %s\n",
-		      TimeRFC1123(Res.LastModified).c_str());
+      std::cout << "Last-Modified: " << TimeRFC1123(Res.LastModified) << "\n";
 
    if (Res.MD5Sum.empty() == false)
-   {
-      End += snprintf(End,sizeof(S)-50 - (End - S),"MD5-Hash: %s\n",Res.MD5Sum.c_str());
-      End += snprintf(End,sizeof(S)-50 - (End - S),"MD5Sum-Hash: %s\n",Res.MD5Sum.c_str());
-   }
+      std::cout << "MD5-Hash: " << Res.MD5Sum << "\n"
+		<< "MD5Sum-Hash: " << Res.MD5Sum << "\n";
    if (Res.SHA1Sum.empty() == false)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"SHA1-Hash: %s\n",Res.SHA1Sum.c_str());
+      std::cout << "SHA1-Hash: " << Res.SHA1Sum << "\n";
    if (Res.SHA256Sum.empty() == false)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"SHA256-Hash: %s\n",Res.SHA256Sum.c_str());
+      std::cout << "SHA256-Hash: " << Res.SHA256Sum << "\n";
    if (UsedMirror.empty() == false)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"UsedMirror: %s\n",UsedMirror.c_str());
-   if (Res.GPGVOutput.size() > 0)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"GPGVOutput:\n");     
-   for (vector<string>::iterator I = Res.GPGVOutput.begin();
-      I != Res.GPGVOutput.end(); I++)
-      End += snprintf(End,sizeof(S)-50 - (End - S), " %s\n", (*I).c_str());
+      std::cout << "UsedMirror: " << UsedMirror << "\n";
+   if (Res.GPGVOutput.empty() == false)
+   {
+      std::cout << "GPGVOutput:\n";
+      for (vector<string>::const_iterator I = Res.GPGVOutput.begin();
+	   I != Res.GPGVOutput.end(); ++I)
+	 std::cout << " " << *I << "\n";
+   }
 
    if (Res.ResumePoint != 0)
-      End += snprintf(End,sizeof(S)-50 - (End - S),"Resume-Point: %lu\n",
-		      Res.ResumePoint);
+      std::cout << "Resume-Point: " << Res.ResumePoint << "\n";
 
    if (Res.IMSHit == true)
-      strcat(End,"IMS-Hit: true\n");
-   End = S + strlen(S);
-   
+      std::cout << "IMS-Hit: true\n";
+
    if (Alt != 0)
    {
       if (Alt->Filename.empty() == false)
-	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-Filename: %s\n",Alt->Filename.c_str());
-      
+	 std::cout << "Alt-Filename: " << Alt->Filename << "\n";
+
       if (Alt->Size != 0)
-	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-Size: %lu\n",Alt->Size);
-      
+	 std::cout << "Alt-Size: " << Alt->Size << "\n";
+
       if (Alt->LastModified != 0)
-	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-Last-Modified: %s\n",
-			 TimeRFC1123(Alt->LastModified).c_str());
-      
+	 std::cout << "Alt-Last-Modified: " << TimeRFC1123(Alt->LastModified) << "\n";
+
       if (Alt->MD5Sum.empty() == false)
-	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-MD5-Hash: %s\n",
-			 Alt->MD5Sum.c_str());
+	 std::cout << "Alt-MD5-Hash: " << Alt->MD5Sum << "\n";
       if (Alt->SHA1Sum.empty() == false)
-	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-SHA1-Hash: %s\n",
-			 Alt->SHA1Sum.c_str());
+	 std::cout << "Alt-SHA1-Hash: " << Alt->SHA1Sum << "\n";
       if (Alt->SHA256Sum.empty() == false)
-	 End += snprintf(End,sizeof(S)-50 - (End - S),"Alt-SHA256-Hash: %s\n",
-			 Alt->SHA256Sum.c_str());
-      
+	 std::cout << "Alt-SHA256-Hash: " << Alt->SHA256Sum << "\n";
+
       if (Alt->IMSHit == true)
-	 strcat(End,"Alt-IMS-Hit: true\n");
+	 std::cout << "Alt-IMS-Hit: true\n";
    }
-   
-   strcat(End,"\n");
-   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
-      exit(100);
+
+   std::cout << "\n" << std::flush;
 
    // Dequeue
    FetchItem *Tmp = Queue;
@@ -249,13 +220,10 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    to be ackd */
 bool pkgAcqMethod::MediaFail(string Required,string Drive)
 {
-   char S[1024];
-   snprintf(S,sizeof(S),"403 Media Failure\nMedia: %s\nDrive: %s\n\n",
+   fprintf(stdout, "403 Media Failure\nMedia: %s\nDrive: %s\n",
 	    Required.c_str(),Drive.c_str());
+   std::cout << "\n" << std::flush;
 
-   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
-      exit(100);
-   
    vector<string> MyMessages;
    
    /* Here we read messages until we find a 603, each non 603 message is
@@ -406,30 +374,34 @@ int pkgAcqMethod::Run(bool Single)
    return 0;
 }
 									/*}}}*/
+// AcqMethod::PrintStatus - privately really send a log/status message	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqMethod::PrintStatus(char const * const header, const char* Format,
+			       va_list &args) const
+{
+   string CurrentURI = "<UNKNOWN>";
+   if (Queue != 0)
+      CurrentURI = Queue->Uri;
+   if (UsedMirror.empty() == true)
+      fprintf(stdout, "%s\nURI: %s\nMessage: ",
+	      header, CurrentURI.c_str());
+   else
+      fprintf(stdout, "%s\nURI: %s\nUsedMirror: %s\nMessage: ",
+	      header, CurrentURI.c_str(), UsedMirror.c_str());
+   vfprintf(stdout,Format,args);
+   std::cout << "\n\n" << std::flush;
+}
+									/*}}}*/
 // AcqMethod::Log - Send a log message					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcqMethod::Log(const char *Format,...)
 {
-   string CurrentURI = "<UNKNOWN>";
-   if (Queue != 0)
-      CurrentURI = Queue->Uri;
-   
    va_list args;
    va_start(args,Format);
-
-   // sprintf the description
-   char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S)-4,"101 Log\n"
-                               "URI: %s\n"
-                               "UsedMirror: %s\n"
-			       "Message: ", UsedMirror.c_str(),
-                               CurrentURI.c_str());
-   vsnprintf(S+Len,sizeof(S)-4-Len,Format,args);
-   strcat(S,"\n\n");
-   
-   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
-      exit(100);
+   PrintStatus("101 Log", Format, args);
+   va_end(args);
 }
 									/*}}}*/
 // AcqMethod::Status - Send a status message				/*{{{*/
@@ -437,26 +409,10 @@ void pkgAcqMethod::Log(const char *Format,...)
 /* */
 void pkgAcqMethod::Status(const char *Format,...)
 {
-   string CurrentURI = "<UNKNOWN>";
-   if (Queue != 0)
-      CurrentURI = Queue->Uri;
-   
    va_list args;
    va_start(args,Format);
-
-   // sprintf the description
-   char S[1024];
-   unsigned int Len = snprintf(S,sizeof(S)-4,"102 Status\n"
-                               "URI: %s\n"
-                               "UsedMirror: %s\n"
-			       "Message: ",UsedMirror.c_str(),
-                               CurrentURI.c_str());
-
-   vsnprintf(S+Len,sizeof(S)-4-Len,Format,args);
-   strcat(S,"\n\n");
-   
-   if (write(STDOUT_FILENO,S,strlen(S)) != (signed)strlen(S))
-      exit(100);
+   PrintStatus("102 Status", Format, args);
+   va_end(args);
 }
 									/*}}}*/
 // AcqMethod::Redirect - Send a redirect message                       /*{{{*/
@@ -465,16 +421,13 @@ void pkgAcqMethod::Status(const char *Format,...)
    to keep the pipeline synchronized. */
 void pkgAcqMethod::Redirect(const string &NewURI)
 {
-   string CurrentURI = "<UNKNOWN>";
+   std::cout << "103 Redirect\nURI: ";
    if (Queue != 0)
-      CurrentURI = Queue->Uri;
- 
-   char S[1024];
-   snprintf(S, sizeof(S)-50, "103 Redirect\nURI: %s\nNew-URI: %s\n\n",
-         CurrentURI.c_str(), NewURI.c_str());
-
-   if (write(STDOUT_FILENO,S,strlen(S)) != (ssize_t)strlen(S))
-      exit(100);
+      std::cout << Queue->Uri << "\n";
+   else
+      std::cout << "<UNKNOWN>\n";
+   std::cout << "New-URI: " << NewURI << "\n"
+	     << "\n" << std::flush;
 
    // Change the URI for the request.
    Queue->Uri = NewURI;

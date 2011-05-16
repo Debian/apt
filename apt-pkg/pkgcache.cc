@@ -211,11 +211,14 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
-	if (MultiArchCache() == false)
-		return SingleArchFindPkg(Name);
 	size_t const found = Name.find(':');
 	if (found == string::npos)
-		return FindPkg(Name, "native");
+	{
+		if (MultiArchCache() == false)
+			return SingleArchFindPkg(Name);
+		else
+			return FindPkg(Name, "native");
+	}
 	string const Arch = Name.substr(found+1);
 	/* Beware: This is specialcased to handle pkg:any in dependencies as
 	   these are linked to virtual pkg:any named packages with all archs.
@@ -518,13 +521,22 @@ std::string pkgCache::PkgIterator::FullName(bool const &Pretty) const
    conflicts (including dpkg's Breaks fields). */
 bool pkgCache::DepIterator::IsCritical() const
 {
-   if (S->Type == pkgCache::Dep::Conflicts ||
-       S->Type == pkgCache::Dep::DpkgBreaks ||
-       S->Type == pkgCache::Dep::Obsoletes ||
+   if (IsNegative() == true ||
        S->Type == pkgCache::Dep::Depends ||
        S->Type == pkgCache::Dep::PreDepends)
       return true;
    return false;
+}
+									/*}}}*/
+// DepIterator::IsNegative - Returns true if the dep is a negative one	/*{{{*/
+// ---------------------------------------------------------------------
+/* Some dependencies are positive like Depends and Recommends, others
+   are negative like Conflicts which can and should be handled differently */
+bool pkgCache::DepIterator::IsNegative() const
+{
+   return S->Type == Dep::DpkgBreaks ||
+	  S->Type == Dep::Conflicts ||
+	  S->Type == Dep::Obsoletes;
 }
 									/*}}}*/
 // DepIterator::SmartTargetPkg - Resolve dep target pointers w/provides	/*{{{*/
@@ -604,9 +616,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
 
-	 if ((S->Type == pkgCache::Dep::Conflicts ||
-	      S->Type == pkgCache::Dep::DpkgBreaks ||
-	      S->Type == pkgCache::Dep::Obsoletes) &&
+	 if (IsNegative() == true &&
 	     ParentPkg() == I.ParentPkg())
 	    continue;
 	 
@@ -621,9 +631,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
 	 
-	 if ((S->Type == pkgCache::Dep::Conflicts ||
-	      S->Type == pkgCache::Dep::DpkgBreaks ||
-	      S->Type == pkgCache::Dep::Obsoletes) &&
+	 if (IsNegative() == true &&
 	     ParentPkg() == I.OwnerPkg())
 	    continue;
 	 
