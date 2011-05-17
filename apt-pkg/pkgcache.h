@@ -500,15 +500,18 @@ struct pkgCache::Version
    map_ptrloc VerStr;            // StringItem
    /** \brief section this version is filled in */
    map_ptrloc Section;           // StringItem
+
+   /** \brief Multi-Arch capabilities of a package version */
+   enum VerMultiArch { None = 0, /*!< is the default and doesn't trigger special behaviour */
+		       All = (1<<0), /*!< will cause that Ver.Arch() will report "all" */
+		       Foreign = (1<<1), /*!< can satisfy dependencies in another architecture */
+		       Same = (1<<2), /*!< can be co-installed with itself from other architectures */
+		       Allowed = (1<<3) /*!< other packages are allowed to depend on thispkg:any */ };
    /** \brief stores the MultiArch capabilities of this version
 
-       None is the default and doesn't trigger special behaviour,
-       Foreign means that this version can fulfill dependencies even
-       if it is built for another architecture as the requester.
-       Same indicates that builds for different architectures can
-       be co-installed on the system */
-   /* FIXME: A bitflag would be better with the next abibreak… */
-   enum {None, All, Foreign, Same, Allowed, AllForeign, AllAllowed} MultiArch;
+       Flags used are defined in pkgCache::Version::VerMultiArch
+   */
+   unsigned char MultiArch;
 
    /** \brief references all the PackageFile's that this version came from
 

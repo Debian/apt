@@ -206,9 +206,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;};
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;};
 	inline const char *Arch() const {
-		if (S->MultiArch == pkgCache::Version::All ||
-		    S->MultiArch == pkgCache::Version::AllForeign ||
-		    S->MultiArch == pkgCache::Version::AllAllowed)
+		if (S->MultiArch == pkgCache::Version::All)
 			return "all";
 		return S->ParentPkg == 0?0:Owner->StrP + ParentPkg()->Arch;
 	};

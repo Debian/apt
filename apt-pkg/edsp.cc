@@ -82,11 +82,11 @@ void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgI
    if ((Pkg->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
       fprintf(output, "Essential: yes\n");
    fprintf(output, "Section: %s\n", Ver.Section());
-   if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
+   if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
       fprintf(output, "Multi-Arch: allowed\n");
-   else if (Ver->MultiArch == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::AllForeign)
+   else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
       fprintf(output, "Multi-Arch: foreign\n");
-   else if (Ver->MultiArch == pkgCache::Version::Same)
+   else if ((Ver->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
       fprintf(output, "Multi-Arch: same\n");
    signed short Pin = std::numeric_limits<signed short>::min();
    for (pkgCache::VerFileIterator File = Ver.FileList(); File.end() == false; ++File) {
