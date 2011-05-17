@@ -755,17 +755,17 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
 // DepCache::MarkKeep - Put the package in the keep state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
+bool pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
                            unsigned long Depth)
 {
    if (IsModeChangeOk(ModeKeep, Pkg, Depth, FromUser) == false)
-      return;
+      return false;
 
    /* Reject an attempt to keep a non-source broken installed package, those
       must be upgraded */
    if (Pkg.State() == PkgIterator::NeedsUnpack && 
        Pkg.CurrentVer().Downloadable() == false)
-      return;
+      return false;
 
    /* We changed the soft state all the time so the UI is a bit nicer
       to use */
@@ -773,7 +773,7 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
 
    // Check that it is not already kept
    if (P.Mode == ModeKeep)
-      return;
+      return true;
 
    if (Soft == true)
       P.iFlags |= AutoKept;
@@ -806,31 +806,31 @@ void pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
       P.InstallVer = Pkg.CurrentVer();
 
    AddStates(Pkg);
-
    Update(Pkg);
-
    AddSizes(Pkg);
+
+   return true;
 }
 									/*}}}*/
 // DepCache::MarkDelete - Put the package in the delete state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
+bool pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
                              unsigned long Depth, bool FromUser)
 {
    if (IsModeChangeOk(ModeDelete, Pkg, Depth, FromUser) == false)
-      return;
+      return false;
 
    StateCache &P = PkgState[Pkg->ID];
 
    // Check that it is not already marked for delete
    if ((P.Mode == ModeDelete || P.InstallVer == 0) && 
        (Pkg.Purge() == true || rPurge == false))
-      return;
+      return true;
 
    // check if we are allowed to remove the package
    if (IsDeleteOk(Pkg,rPurge,Depth,FromUser) == false)
-      return;
+      return false;
 
    P.iFlags &= ~(AutoKept | Purge);
    if (rPurge == true)
@@ -854,6 +854,7 @@ void pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
    Update(Pkg);
    AddSizes(Pkg);
 
+   return true;
 }
 									/*}}}*/
 // DepCache::IsDeleteOk - check if it is ok to remove this package	/*{{{*/
@@ -934,18 +935,18 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 // DepCache::MarkInstall - Put the package in the install state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
+bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 			      unsigned long Depth, bool FromUser,
 			      bool ForceImportantDeps)
 {
    if (IsModeChangeOk(ModeInstall, Pkg, Depth, FromUser) == false)
-      return;
+      return false;
 
    StateCache &P = PkgState[Pkg->ID];
 
    // See if there is even any possible instalation candidate
    if (P.CandidateVer == 0)
-      return;
+      return false;
 
    /* Check that it is not already marked for install and that it can be 
       installed */
@@ -954,13 +955,13 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	P.CandidateVer == (Version *)Pkg.CurrentVer()))
    {
       if (P.CandidateVer == (Version *)Pkg.CurrentVer() && P.InstallVer == 0)
-	 MarkKeep(Pkg, false, FromUser, Depth+1);
-      return;
+	 return MarkKeep(Pkg, false, FromUser, Depth+1);
+      return true;
    }
 
    // check if we are allowed to install the package
    if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
-      return;
+      return false;
 
    ActionGroup group(*this);
    P.iFlags &= ~AutoKept;
@@ -996,7 +997,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    AddSizes(Pkg);
 
    if (AutoInst == false || _config->Find("APT::Solver", "internal") != "internal")
-      return;
+      return true;
 
    if (DebugMarker == true)
       std::clog << OutputInDepth(Depth) << "MarkInstall " << Pkg << " FU=" << FromUser << std::endl;
@@ -1040,7 +1041,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    continue;
 	 // if the dependency was critical, we can't install it, so remove it again
 	 MarkDelete(Pkg,false,Depth + 1, false);
-	 return;
+	 return false;
       }
 
       /* Check if any ImportantDep() (but not Critical) were added
@@ -1179,6 +1180,8 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 continue;
       }      
    }
+
+   return true;
 }
 									/*}}}*/
 // DepCache::IsInstallOk - check if it is ok to install this package	/*{{{*/

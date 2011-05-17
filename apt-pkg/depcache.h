@@ -388,11 +388,11 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \name State Manipulators
     */
    // @{
-   void MarkKeep(PkgIterator const &Pkg, bool Soft = false,
+   bool MarkKeep(PkgIterator const &Pkg, bool Soft = false,
 		 bool FromUser = true, unsigned long Depth = 0);
-   void MarkDelete(PkgIterator const &Pkg, bool Purge = false,
+   bool MarkDelete(PkgIterator const &Pkg, bool Purge = false,
                    unsigned long Depth = 0, bool FromUser = true);
-   void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
+   bool MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
 		    bool ForceImportantDeps = false);
    void MarkProtected(PkgIterator const &Pkg) { PkgState[Pkg->ID].iFlags |= Protected; };
