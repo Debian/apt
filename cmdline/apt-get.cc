@@ -1886,8 +1886,7 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 // Call the scored problem resolver
 	 Fix->InstallProtect();
-	 if (Fix->Resolve(true) == false)
-	    ; //FIXME: is there a valid reason for?  _error->Discard();
+	 Fix->Resolve(true);
 	 delete Fix;
       }
 
@@ -1913,8 +1912,11 @@ bool DoInstall(CommandLine &CmdL)
 	 c1out << _("The following information may help to resolve the situation:") << endl;
 	 c1out << endl;
 	 ShowBroken(c1out,Cache,false);
-	 return _error->Error(_("Broken packages"));
-      }   
+	 if (_error->PendingError() == true)
+	    return false;
+	 else
+	    return _error->Error(_("Broken packages"));
+      }
    }
    if (!DoAutomaticRemove(Cache)) 
       return false;
