@@ -330,7 +330,7 @@ bool pkgFixBroken(pkgDepCache &Cache)
  */
 bool pkgDistUpgrade(pkgDepCache &Cache)
 {
-   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal") {
       OpTextProgress Prog(*_config);
       return EDSP::ResolveExternal(solver.c_str(), Cache, false, true, false, &Prog);
@@ -388,7 +388,7 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    to install packages not marked for install */
 bool pkgAllUpgrade(pkgDepCache &Cache)
 {
-   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal") {
       OpTextProgress Prog(*_config);
       return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);
@@ -745,7 +745,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 /* */
 bool pkgProblemResolver::Resolve(bool BrokenFix)
 {
-   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal") {
       OpTextProgress Prog(*_config);
       return EDSP::ResolveExternal(solver.c_str(), Cache, false, false, false, &Prog);
@@ -1211,7 +1211,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    system was non-broken previously. */
 bool pkgProblemResolver::ResolveByKeep()
 {
-   std::string const solver = _config->Find("APT::Solver::Name", "internal");
+   std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal") {
       OpTextProgress Prog(*_config);
       return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);

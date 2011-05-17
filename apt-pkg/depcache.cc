@@ -1046,7 +1046,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    Update(Pkg);
    AddSizes(Pkg);
 
-   if (AutoInst == false || _config->Find("APT::Solver::Name", "internal") != "internal")
+   if (AutoInst == false || _config->Find("APT::Solver", "internal") != "internal")
       return;
 
    if (DebugMarker == true)
@@ -1605,7 +1605,7 @@ bool pkgDepCache::MarkFollowsSuggests()
 // pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
 bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 {
-   if (_config->Find("APT::Solver::Name", "internal") != "internal")
+   if (_config->Find("APT::Solver", "internal") != "internal")
       return true;
 
    bool follow_recommends;

@@ -231,7 +231,7 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
    if (_config->FindB("APT::Solver::Strict-Pinning", true) == false)
       fprintf(output, "Strict-Pinning: no\n");
    string solverpref("APT::Solver::");
-   solverpref.append(_config->Find("APT::Solver::Name", "internal")).append("::Preferences");
+   solverpref.append(_config->Find("APT::Solver", "internal")).append("::Preferences");
    if (_config->Exists(solverpref) == true)
       fprintf(output, "Preferences: %s\n", _config->Find(solverpref,"").c_str());
    fprintf(output, "\n");
