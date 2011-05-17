@@ -1046,7 +1046,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
    Update(Pkg);
    AddSizes(Pkg);
 
-   if (AutoInst == false)
+   if (AutoInst == false || _config->Find("APT::Solver::Name", "internal") != "internal")
       return;
 
    if (DebugMarker == true)
@@ -1574,6 +1574,12 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
    return false;
 }
 									/*}}}*/
+// Policy::GetPriority - Get the priority of the package pin		/*{{{*/
+signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &Pkg)
+{ return 0; };
+signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &File)
+{ return 0; };
+									/*}}}*/
 pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
 {
   DefaultRootSetFunc *f = new DefaultRootSetFunc;
@@ -1599,6 +1605,9 @@ bool pkgDepCache::MarkFollowsSuggests()
 // pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/
 bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 {
+   if (_config->Find("APT::Solver::Name", "internal") != "internal")
+      return true;
+
    bool follow_recommends;
    bool follow_suggests;
    bool debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);

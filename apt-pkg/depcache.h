@@ -232,6 +232,7 @@ class pkgDepCache : protected pkgCache::Namespace
       inline bool NewInstall() const {return Status == 2 && Mode == ModeInstall;};
       inline bool Delete() const {return Mode == ModeDelete;};
       inline bool Keep() const {return Mode == ModeKeep;};
+      inline bool Protect() const {return (iFlags & Protected) == Protected;};
       inline bool Upgrade() const {return Status > 0 && Mode == ModeInstall;};
       inline bool Upgradable() const {return Status >= 1;};
       inline bool Downgrade() const {return Status < 0 && Mode == ModeInstall;};
@@ -258,7 +259,9 @@ class pkgDepCache : protected pkgCache::Namespace
       
       virtual VerIterator GetCandidateVer(PkgIterator const &Pkg);
       virtual bool IsImportantDep(DepIterator const &Dep);
-      
+      virtual signed short GetPriority(PkgIterator const &Pkg);
+      virtual signed short GetPriority(PkgFileIterator const &File);
+
       virtual ~Policy() {};
    };
 

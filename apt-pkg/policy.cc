@@ -282,6 +282,10 @@ signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
    
    return 0;
 }
+signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
+{
+   return PFPriority[File->ID];
+}
 									/*}}}*/
 // PreferenceSection class - Overriding the default TrimRecord method	/*{{{*/
 // ---------------------------------------------------------------------

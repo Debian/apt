@@ -105,6 +105,9 @@ class pkgProblemResolver						/*{{{*/
 
    void MakeScores();
    bool DoUpgrade(pkgCache::PkgIterator Pkg);
+
+   bool ResolveInternal(bool const BrokenFix = false);
+   bool ResolveByKeepInternal();
    
    public:
    
