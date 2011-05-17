@@ -749,9 +749,6 @@ bool pkgCache::VerIterator::Automatic() const
    return false;
 }
 									/*}}}*/
-// VerIterator::Pseudo - deprecated no-op method			/*{{{*/
-bool pkgCache::VerIterator::Pseudo() const { return false; }
-									/*}}}*/
 // VerIterator::NewestFile - Return the newest file version relation	/*{{{*/
 // ---------------------------------------------------------------------
 /* This looks at the version numbers associated with all of the sources

@@ -406,58 +406,6 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
 									/*}}}*/
 // DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
 // ---------------------------------------------------------------------
-/* Call with Mult = -1 to preform the inverse opration
-   The Mult increases the complexity of the calulations here and is unused -
-   or do we really have a usecase for removing the size of a package two
-   times? So let us replace it with a simple bool and be done with it… */
-__deprecated void pkgDepCache::AddSizes(const PkgIterator &Pkg,signed long Mult)
-{
-   StateCache &P = PkgState[Pkg->ID];
-   
-   if (Pkg->VersionList == 0)
-      return;
-   
-   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure && 
-       P.Keep() == true)
-      return;
-   
-   // Compute the size data
-   if (P.NewInstall() == true)
-   {
-      iUsrSize += (signed long long)(Mult*P.InstVerIter(*this)->InstalledSize);
-      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
-      return;
-   }
-   
-   // Upgrading
-   if (Pkg->CurrentVer != 0 && 
-       (P.InstallVer != (Version *)Pkg.CurrentVer() || 
-	(P.iFlags & ReInstall) == ReInstall) && P.InstallVer != 0)
-   {
-      iUsrSize += (signed long long)(Mult*((signed long long)P.InstVerIter(*this)->InstalledSize - 
-			(signed long long)Pkg.CurrentVer()->InstalledSize));
-      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
-      return;
-   }
-   
-   // Reinstall
-   if (Pkg.State() == pkgCache::PkgIterator::NeedsUnpack &&
-       P.Delete() == false)
-   {
-      iDownloadSize += (signed long long)(Mult*P.InstVerIter(*this)->Size);
-      return;
-   }
-   
-   // Removing
-   if (Pkg->CurrentVer != 0 && P.InstallVer == 0)
-   {
-      iUsrSize -= (signed long long)(Mult*Pkg.CurrentVer()->InstalledSize);
-      return;
-   }   
-}
-									/*}}}*/
-// DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
-// ---------------------------------------------------------------------
 /* Call with Inverse = true to preform the inverse opration */
 void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const &Inverse)
 {
@@ -1268,7 +1216,7 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgDepCache::SetCandidateVersion(VerIterator TargetVer, bool const &Pseudo)
+void pkgDepCache::SetCandidateVersion(VerIterator TargetVer)
 {
    pkgCache::PkgIterator Pkg = TargetVer.ParentPkg();
    StateCache &P = PkgState[Pkg->ID];
