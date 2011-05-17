@@ -1172,16 +1172,17 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       continue;
 
 	    if (PkgState[Pkg->ID].CandidateVer != *I &&
-	        Start->Type == Dep::DpkgBreaks)
-	       MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps);
-	    else
-	       MarkDelete(Pkg,false,Depth + 1, false);
+		Start->Type == Dep::DpkgBreaks &&
+		MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps) == true)
+	       continue;
+	    else if (MarkDelete(Pkg,false,Depth + 1, false) == false)
+	       break;
 	 }
 	 continue;
       }      
    }
 
-   return true;
+   return Dep.end() == true;
 }
 									/*}}}*/
 // DepCache::IsInstallOk - check if it is ok to install this package	/*{{{*/
