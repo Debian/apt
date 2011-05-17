@@ -407,7 +407,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
 // DepCache::AddSizes - Add the packages sizes to the counters		/*{{{*/
 // ---------------------------------------------------------------------
 /* Call with Inverse = true to preform the inverse opration */
-void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const &Inverse)
+void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const Inverse)
 {
    StateCache &P = PkgState[Pkg->ID];
    
@@ -478,8 +478,9 @@ void pkgDepCache::AddSizes(const PkgIterator &Pkg, bool const &Inverse)
    calld Remove/Add itself. Remember, dependencies can be circular so
    while processing a dep for Pkg it is possible that Add/Remove
    will be called on Pkg */
-void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
+void pkgDepCache::AddStates(const PkgIterator &Pkg, bool const Invert)
 {
+   signed char const Add = (Invert == false) ? 1 : -1;
    StateCache &State = PkgState[Pkg->ID];
    
    // The Package is broken (either minimal dep or policy dep)

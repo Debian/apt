@@ -316,10 +316,10 @@ class pkgDepCache : protected pkgCache::Namespace
    void Update(PkgIterator const &P);
    
    // Count manipulators
-   void AddSizes(const PkgIterator &Pkg, bool const &Invert = false);
+   void AddSizes(const PkgIterator &Pkg, bool const Invert = false);
    inline void RemoveSizes(const PkgIterator &Pkg) {AddSizes(Pkg, true);};
-   void AddStates(const PkgIterator &Pkg,int Add = 1);
-   inline void RemoveStates(const PkgIterator &Pkg) {AddStates(Pkg,-1);};
+   void AddStates(const PkgIterator &Pkg, bool const Invert = false);
+   inline void RemoveStates(const PkgIterator &Pkg) {AddStates(Pkg,true);};
    
    public:
 

@@ -10,12 +10,15 @@ apt (0.8.15) UNRELEASED; urgency=low
   * apt-pkg/pkgcache.h:
     - clean up mess with the "all" handling in MultiArch to
       fix LP: #733741 cleanly for everyone now
+  * apt-pkg/depcache.cc:
+    - use a boolean instead of an int for Add/Remove in AddStates
+      similar to how it works with AddSizes
 
   [ Stefano Zacchiroli ]
   * doc/external-dependency-solver-protocol.txt:
     - describe EDSP and the configuration interface around it
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 17 May 2011 17:44:16 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 17 May 2011 17:51:10 +0200
 
 apt (0.8.14.2) UNRELEASED; urgency=low
 
