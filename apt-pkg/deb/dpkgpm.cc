@@ -14,8 +14,8 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
-#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/cachefile.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -1268,6 +1268,23 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
+
+   if (_config->FindB("Debug::pkgDPkgPM",false) == false)
+   {
+      std::string const oldpkgcache = _config->FindFile("Dir::cache::pkgcache");
+      if (oldpkgcache.empty() == false && RealFileExists(oldpkgcache) == true &&
+	  unlink(oldpkgcache.c_str()) == 0)
+      {
+	 std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+	 if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)
+	 {
+	    _error->PushToStack();
+	    pkgCacheFile CacheFile;
+	    CacheFile.BuildCaches(NULL, true);
+	    _error->RevertToStack();
+	 }
+      }
+   }
 
    Cache.writeStateFile(NULL);
    return true;
