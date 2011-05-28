@@ -224,7 +224,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		environment.push_back("en");
 	}
 
-	// Support settings like Acquire::Translation=none on the command line to
+	// Support settings like Acquire::Languages=none on the command line to
 	// override the configuration settings vector of languages.
 	string const forceLang = _config->Find("Acquire::Languages","");
 	if (forceLang.empty() == false) {
