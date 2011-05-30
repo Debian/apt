@@ -271,7 +271,7 @@ void pkgAcqSubIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{
 
    string FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(Desc.URI);
 
-   /* Downloaded invalid transindex => Error (LP: #346386) (Closes: #195301) */
+   /* Downloaded invalid transindex => Error (LP: #346386) (Closes: #627642) */
    indexRecords SubIndexParser;
    if (FileExists(DestFile) == true && !SubIndexParser.Load(DestFile)) {
       Status = StatError;
@@ -904,7 +904,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
       }
 
       /* Verify the index file for correctness (all indexes must
-       * have a Package field) (LP: #346386) (Closes: #195301) */
+       * have a Package field) (LP: #346386) (Closes: #627642) */
       {
 	 FileFd fd(DestFile, FileFd::ReadOnly);
 	 pkgTagSection sec;
@@ -1360,7 +1360,7 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 {
 #if 0
-   /* Reject invalid, existing Release files (LP: #346386) (Closes: #195301)
+   /* Reject invalid, existing Release files (LP: #346386) (Closes: #627642)
     * FIXME: Disabled; it breaks unsigned repositories without hashes */
    if (!verify && FileExists(DestFile) && !MetaIndexParser->Load(DestFile))
    {
@@ -1533,7 +1533,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	 RunScripts("APT::Update::Auth-Failure");
 	 return;
       } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
-	 /* Invalid signature file, reject (LP: #346386) (Closes: #195301) */
+	 /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
 	 _error->Error(_("GPG error: %s: %s"),
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());
