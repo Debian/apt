@@ -487,7 +487,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    // Parse off the package name
    const char *I = Start;
    for (;I != Stop && isspace(*I) == 0 && *I != '(' && *I != ')' &&
-	*I != ',' && *I != '|'; I++);
+	*I != ',' && *I != '|' && *I != '[' && *I != ']'; I++);
    
    // Malformed, no '('
    if (I != Stop && *I == ')')

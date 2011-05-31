@@ -54,10 +54,11 @@ TARGET=program
 include $(COPY_H)
 
 # The apt-mark program
-SOURCE=apt-mark
-TO=$(BIN)
-TARGET=program
-include $(COPY_H)
+PROGRAM=apt-mark
+SLIBS = -lapt-pkg $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile
+SOURCE = apt-mark.cc
+include $(PROGRAM_H)
 
 # The apt-report-mirror-failure program
 #SOURCE=apt-report-mirror-failure

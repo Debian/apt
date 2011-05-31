@@ -271,6 +271,14 @@ void pkgAcqSubIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{
 
    string FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(Desc.URI);
 
+   /* Downloaded invalid transindex => Error (LP: #346386) (Closes: #627642) */
+   indexRecords SubIndexParser;
+   if (FileExists(DestFile) == true && !SubIndexParser.Load(DestFile)) {
+      Status = StatError;
+      ErrorText = SubIndexParser.ErrorText;
+      return;
+   }
+
    // sucess in downloading the index
    // rename the index
    if(Debug)
@@ -894,6 +902,27 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 	 ReportMirrorFailure("HashChecksumFailure");
          return;
       }
+
+      /* Verify the index file for correctness (all indexes must
+       * have a Package field) (LP: #346386) (Closes: #627642) */
+      {
+	 FileFd fd(DestFile, FileFd::ReadOnly);
+	 pkgTagSection sec;
+	 pkgTagFile tag(&fd);
+
+	 if (_error->PendingError() || !tag.Step(sec)) {
+	    Status = StatError;
+	    _error->DumpErrors();
+	    Rename(DestFile,DestFile + ".FAILED");
+	    return;
+	 } else if (!sec.Exists("Package")) {
+	    Status = StatError;
+	    ErrorText = ("Encountered a section with no Package: header");
+	    Rename(DestFile,DestFile + ".FAILED");
+	    return;
+	 }
+      }
+       
       // Done, move it into position
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
@@ -1330,6 +1359,16 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 									/*}}}*/
 void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 {
+#if 0
+   /* Reject invalid, existing Release files (LP: #346386) (Closes: #627642)
+    * FIXME: Disabled; it breaks unsigned repositories without hashes */
+   if (!verify && FileExists(DestFile) && !MetaIndexParser->Load(DestFile))
+   {
+      Status = StatError;
+      ErrorText = MetaIndexParser->ErrorText;
+      return;
+   }
+#endif
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         Target++)
@@ -1493,6 +1532,12 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 			 LookupTag(Message,"Message").c_str());
 	 RunScripts("APT::Update::Auth-Failure");
 	 return;
+      } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
+	 /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
+	 _error->Error(_("GPG error: %s: %s"),
+			 Desc.Description.c_str(),
+			 LookupTag(Message,"Message").c_str());
+	 return;
       } else {
 	 _error->Warning(_("GPG error: %s: %s"),
 			 Desc.Description.c_str(),
@@ -1500,6 +1545,26 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       }
       // gpgv method failed 
       ReportMirrorFailure("GPGFailure");
+   }
+
+   /* Always move the meta index, even if gpgv failed. This ensures
+    * that PackageFile objects are correctly filled in */
+   if (FileExists(DestFile)) {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      /* InRelease files become Release files, otherwise
+       * they would be considered as trusted later on */
+      if (SigFile == DestFile) {
+	 RealURI = RealURI.replace(RealURI.rfind("InRelease"), 9,
+	                               "Release");
+	 FinalFile = FinalFile.replace(FinalFile.rfind("InRelease"), 9,
+	                               "Release");
+	 SigFile = FinalFile;
+      }
+      Rename(DestFile,FinalFile);
+      chmod(FinalFile.c_str(),0644);
+
+      DestFile = FinalFile;
    }
 
    // No Release file was present, or verification failed, so fall
@@ -1625,7 +1690,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error(_("I wasn't able to locate file for the %s package. "
+      _error->Error(_("I wasn't able to locate a file for the %s package. "
 		    "This might mean you need to manually fix this package."),
 		    Version.ParentPkg().Name());
 }

@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>9 August 2009</date>
+   <date>21 April 2011</date>
  </refentryinfo>
  
  <refmeta>
@@ -42,12 +42,13 @@
 	<group choice="plain">
 		<arg choice="plain">
 			<group choice="req">
-				<arg choice="plain">markauto</arg>
-				<arg choice="plain">unmarkauto</arg>
+				<arg choice="plain">auto</arg>
+				<arg choice="plain">manual</arg>
+				<arg choice="plain">showauto</arg>
+				<arg choice="plain">showmanual</arg>
 			</group>
 			<arg choice="plain" rep="repeat"><replaceable>package</replaceable></arg>
 		</arg>
-		<arg choice="plain">showauto</arg>
 	</group>
    </cmdsynopsis>
  </refsynopsisdiv>
@@ -65,27 +66,60 @@
      <command>apt-get</command> or <command>aptitude</command>.
    </para>
      <variablelist>
-       <varlistentry><term>markauto</term>
-	 <listitem><para><literal>markauto</literal> is used to mark a
+       <varlistentry><term>auto</term>
+	 <listitem><para><literal>auto</literal> is used to mark a
      package as being automatically installed, which will cause the
      package to be removed when no more manually installed packages
      depend on this package.
        </para></listitem>
        </varlistentry>
 
-       <varlistentry><term>unmarkauto</term>
-	 <listitem><para><literal>unmarkauto</literal> is used to mark a
+       <varlistentry><term>manual</term>
+	 <listitem><para><literal>manual</literal> is used to mark a
      package as being manually installed, which will prevent the
      package from being automatically removed if no other packages
      depend on it.
        </para></listitem>
        </varlistentry>
 
+       <varlistentry><term>hold</term>
+	 <listitem><para><literal>hold</literal> is used to mark a
+       package as hold back, which will prevent the package from being
+       automatically installed, upgraded or removed.
+       The command is only a wrapper around <command>dpkg --set-selections</command>
+       and the state is therefore maintained by &dpkg; and not effected
+       by the <option>--filename</option> option.
+       </para></listitem>
+       </varlistentry>
+
+       <varlistentry><term>unhold</term>
+	 <listitem><para><literal>unhold</literal> is used to cancel a
+       previously set hold on a package to allow all actions again.
+       </para></listitem>
+       </varlistentry>
+
        <varlistentry><term>showauto</term>
 	 <listitem><para><literal>showauto</literal> is used to print a
      list of automatically installed packages with each package on a new line.
+     All automatically installed packages will be listed if no package is given.
+     If packages are given only those which are automatically installed will be shown.
        </para></listitem>
        </varlistentry>
+
+       <varlistentry><term>showmanual</term>
+	 <listitem><para><literal>showmanual</literal> can be used in
+     the same way as <literal>showauto</literal> except that it will print
+     a list of manually installed packages instead.
+       </para></listitem>
+       </varlistentry>
+
+       <varlistentry><term>showhold</term>
+	 <listitem><para><literal>showhold</literal> is used to print a list
+     of packages on hold in the same way as for the other show commands.
+       </para></listitem>
+       </varlistentry>
+
+
      </variablelist>
  </refsect1>
  
@@ -102,23 +136,8 @@
      is <filename>extended_status</filename> in the directory defined
      by the Configuration Item: <literal>Dir::State</literal>.</para></listitem>
      </varlistentry>
-   
-     <varlistentry><term><option>-h</option></term>
-     <term><option>--help</option></term>
-     <listitem><para>Show a short usage summary.
-     </para>
-     </listitem>
-     </varlistentry>
-     
-     <varlistentry>
-      <term><option>-v</option></term>
-      <term><option>--version</option></term>
-      <listitem><para>Show the program version.
-     </para>
-     </listitem>
-     </varlistentry>
 
-     
+     &apt-commonoptions;
    </variablelist>
  </refsect1>
 
