@@ -910,17 +910,20 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 	 pkgTagSection sec;
 	 pkgTagFile tag(&fd);
 
-	 if (_error->PendingError() || !tag.Step(sec)) {
-	    Status = StatError;
-	    _error->DumpErrors();
-	    Rename(DestFile,DestFile + ".FAILED");
-	    return;
-	 } else if (!sec.Exists("Package")) {
-	    Status = StatError;
-	    ErrorText = ("Encountered a section with no Package: header");
-	    Rename(DestFile,DestFile + ".FAILED");
-	    return;
-	 }
+         // Only test for correctness if the file is not empty (empty is ok)
+         if (fd.Size() > 0) {
+            if (_error->PendingError() || !tag.Step(sec)) {
+               Status = StatError;
+               _error->DumpErrors();
+               Rename(DestFile,DestFile + ".FAILED");
+               return;
+            } else if (!sec.Exists("Package")) {
+               Status = StatError;
+               ErrorText = ("Encountered a section with no Package: header");
+               Rename(DestFile,DestFile + ".FAILED");
+               return;
+            }
+         }
       }
        
       // Done, move it into position
