@@ -1,10 +1,12 @@
 // Includes									/*{{{*/
+#include <apt-pkg/acquire-item.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/init.h>
 
 #include <sys/stat.h>
 #include <sys/uio.h>
@@ -16,7 +18,8 @@
 #include <apti18n.h>
 
 /*}}}*/
-/** \brief DebdeltaMethod - TODO: say something about debdelta here!
+/** \brief DebdeltaMethod - This method is used to patch a new deb from
+ *  an input deb and a debdelta file.
  * */
 class DebdeltaMethod : public pkgAcqMethod {
    bool Debug;  
@@ -31,15 +34,21 @@ public:
 
 bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
 {
-   std::cerr << "Starting DebdeltaMethod::Fetch()." << std::endl;
-   Debug = false;//_config->FindB("Debug::pkgAcquire::RRed", false);
-   string oldDebFile = Itm->DestFile;
-   string debDeltaFile = Itm->Uri;
+   Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
+   string OldDebFile = Itm->DestFile;
+   string DebDeltaFile = Itm->Uri;
    
-   if (debDeltaFile.empty())
+   if (!FileExists(OldDebFile))
+      OldDebFile = "/";
+   
+   if (!FileExists(DebDeltaFile))
       return _error->Error("Could not find a debdelta file.");
-   Itm->DestFile = GetNewPackageName(debDeltaFile);
 
+   string NewDeb = GetNewPackageName(DebDeltaFile);
+   Itm->DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + NewDeb;
+   if (FileExists(Itm->DestFile))
+      return _error->Error("New .deb already exists.");
+   
    pid_t Process = ExecFork();      
    if (Process == 0)
    {
@@ -48,11 +57,8 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
       if (!FileExists(Args[0]))
 	 return _error->Error("Could not find debpatch.");
       Args[1] = "-A";
-      Args[2] = debDeltaFile.c_str();
-      if (oldDebFile.empty())
-         Args[3] = "/";
-      else
-         Args[3] = oldDebFile.c_str();
+      Args[2] = DebDeltaFile.c_str();
+      Args[3] = OldDebFile.c_str();
       Args[4] = Itm->DestFile.c_str();
       if (Debug == true)
       {
@@ -62,7 +68,18 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
       }
       execv(Args[0], (char **)Args);
    }
-   return ExecWait(Process, "debpatch");
+   if (ExecWait(Process, "debpatch"))
+   {
+      if (!FileExists(Itm->DestFile))
+	 return _error->Error("Failed to patch %s", Itm->DestFile.c_str());
+      // move the .deb to Dir::Cache::Archives
+      OldDebFile = _config->FindDir("Dir::Cache::Archives") + NewDeb;
+      Rename(Itm->DestFile, OldDebFile);
+      Itm->DestFile = OldDebFile;
+      return true;
+   }
+   Itm->DestFile = OldDebFile;
+   return false;
 }
 
 /**
@@ -71,19 +88,18 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
  * @param debdeltaName the name of the debdelta file.
  * @return path/P_N_A.deb
  */
-string DebdeltaMethod::GetNewPackageName(string debdeltaName)
+string DebdeltaMethod::GetNewPackageName(string DebdeltaName)
 {
-   int slashpos = debdeltaName.rfind("/", debdeltaName.length() - 1);
-   string path = debdeltaName.substr(0, slashpos + 1);
-   debdeltaName = debdeltaName.substr(slashpos + 1, debdeltaName.length() - 1);
-   int newBegin = debdeltaName.find("_", 0);
-   string pckgName = debdeltaName.substr(0, newBegin); 
-   newBegin = debdeltaName.find("_", newBegin + 1);
-   int newEnd = debdeltaName.find("_", newBegin + 1);
-   string newVersion = debdeltaName.substr(newBegin + 1, newEnd - newBegin - 1);
-   string arch = debdeltaName.substr(newEnd + 1, debdeltaName.find(".", newEnd + 1) - newEnd - 1);
-   string debname = pckgName + "_" + newVersion + "_" + arch + ".deb";
-   return path+debname;
+   int Slashpos = DebdeltaName.rfind("/", DebdeltaName.length() - 1);
+   string Path = DebdeltaName.substr(0, Slashpos + 1);
+   DebdeltaName = DebdeltaName.substr(Slashpos + 1, DebdeltaName.length() - 1);
+   int NewBegin = DebdeltaName.find("_", 0);
+   string PkgName = DebdeltaName.substr(0, NewBegin); 
+   NewBegin = DebdeltaName.find("_", NewBegin + 1);
+   int NewEnd = DebdeltaName.find("_", NewBegin + 1);
+   string NewVersion = DebdeltaName.substr(NewBegin + 1, NewEnd - NewBegin - 1);
+   string Arch = DebdeltaName.substr(NewEnd + 1, DebdeltaName.find(".", NewEnd + 1) - NewEnd - 1);
+   return PkgName + "_" + NewVersion + "_" + Arch + ".deb";
 }
 
 /*}}}*/
@@ -99,14 +115,26 @@ public:
     */
    bool Run(char const *debFile, char const *debdeltaFile)
    {
-      //_config->CndSet("Debug::pkgAcquire::RRed", "true");
+      if (pkgInitConfig(*_config) == false ||
+          pkgInitSystem(*_config,_system) == false)
+      {
+	 std::cerr << "E: Could not initialize the system/configuration." << std::endl;
+	 _error->DumpErrors();
+	 return 100;
+      }
+      _config->CndSet("Debug::pkgAcquire::Debdetla", "true");
       FetchItem *test = new FetchItem;
       test->DestFile = debFile;
       test->Uri = debdeltaFile;
       test->FailIgnore = false;
       test->IndexFile = false;
       test->Next = 0;
-      return Fetch(test);
+      if (Fetch(test))
+      {
+	 std::cout << "Result-Deb: " << test->DestFile << std::endl;
+	 return true;
+      }
+      return false;   
    }
 };
 
@@ -120,8 +148,6 @@ public:
  */
 int main(int argc, char *argv[])
 {
-   // /home/ishan/devel/apt/testrepo/testitems/cpp-4.6_4.6.0-2_amd64.deb
-   // /home/ishan/devel/apt/testrepo/testitems/cpp-4.6_4.6.0-2_4.6.0-7_amd64.debdelta
    if (argc <= 1)
    {
       DebdeltaMethod Mth;

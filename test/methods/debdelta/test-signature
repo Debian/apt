@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+deb=$1
+
+verify_deb() {
+    [ "$deb" = "" ] && return
+    md5sum_1=$(apt-cache show `dpkg -I "$deb" | sed -n "s/Package: //p"` | sed -n "s/MD5sum: //p")
+    md5sum_2=$(md5sum "$deb" | gawk '{print $1}')
+    for s1 in $md5sum_1; do
+        for s2 in $md5sum_2; do
+            #echo "$s1 $s2"
+            if [ $s1 = $s2 ]; then
+                echo "[OK] $deb"
+                exit 0
+            fi
+        done
+    done
+    echo "[NOT OK] $deb"
+    exit 1;
+}
+
+usage() {
+    echo "Usage: test-signature <deb-file> <debdelta-file>"
+}
+
+make_deb() {
+    if [ "$2" = "" ]; then
+        usage
+        exit 1
+    fi
+    result_deb=$(LD_LIBRARY_PATH=../../../bin ../../../bin/methods/debdelta $1 $2 | sed -n "s/Result-Deb: //p")
+    deb=$result_deb
+    verify_deb
+}
+
+testmethod() {
+    path="/var/cache/apt/archives/"
+    for d in $(dir $path); do
+        deb=$path$d
+        [ -d $deb ] && continue
+        runtest
+    done
+}
+
+#testmethod
+make_deb $1 $2
