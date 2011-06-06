@@ -16,6 +16,10 @@ apt (0.8.14.2) UNRELEASED; urgency=low
   * Galician translation update (Miguel Anxo Bouzada). Closes: #626505
 
   [ David Kalnischkies ]
+  * apt-pkg/indexcopy.cc:
+    - Verify that the first line of an InRelease file is a PGP header
+      for a signed message. Otherwise a man-in-the-middle can prefix
+      a valid InRelease file with his own data! (CVE-2011-1829)
   * fix a bunch of cppcheck warnings/errors based on a patch by
     Niels Thykier, thanks! (Closes: #622805)
   * apt-pkg/depcache.cc:
@@ -78,7 +82,7 @@ apt (0.8.14.2) UNRELEASED; urgency=low
     - show Acquire::Languages and APT::Architectures settings
       in 'dump' (Closes: 626739)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 May 2011 10:54:23 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 06 Jun 2011 21:24:28 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 

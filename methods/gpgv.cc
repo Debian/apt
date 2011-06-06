@@ -65,13 +65,16 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return string("Couldn't spawn new process") + strerror(errno);
    else if (pid == 0)
    {
-      if (SigVerify::RunGPGV(outfile, file, 3, fd) == false)
+      _error->PushToStack();
+      bool const success = SigVerify::RunGPGV(outfile, file, 3, fd);
+      if (success == false)
       {
-	 // TRANSLATOR: %s is the trusted keyring parts directory
-	 ioprintf(ret, _("No keyring installed in %s."),
-		  _config->FindDir("Dir::Etc::TrustedParts").c_str());
-	 return ret.str();
+	 string errmsg;
+	 _error->PopMessage(errmsg);
+	 _error->RevertToStack();
+	 return errmsg;
       }
+      _error->RevertToStack();
       exit(111);
    }
    close(fd[1]);
