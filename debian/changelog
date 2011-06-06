@@ -1,3 +1,13 @@
+apt (0.8.14.1ubuntu6) UNRELEASEDoneiric; urgency=low
+
+  * apt-pkg/deb/dpkgpm.cc:
+    - prevent reporting of package installation failures due to inaccessible
+      local files (LP: #791102, #790040)
+    - include /var/log/apt/history.log in apport-package reports so we know
+      the context for the package management request
+
+ -- Brian Murray <brian@ubuntu.com>  Wed, 01 Jun 2011 12:32:31 -0700
+
 apt (0.8.14.1ubuntu5) oneiric; urgency=low
 
   * apt-pkg/acquire-item.cc:

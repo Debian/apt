@@ -1322,6 +1322,13 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       return;
    }
 
+   // do not report bugs regarding inaccessible local files
+   if(strstr(errormsg, strerror(ENOENT)) != NULL ||
+      strstr(errormsg, "Cannot access archive") != NULL) {
+      std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
+      return;
+   }
+
    // do not report dpkg I/O errors, this is a format string, so we compare
    // the prefix and the suffix of the error with the dpkg error message
    vector<string> io_errors;
@@ -1431,6 +1438,23 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 
       fprintf(report, "DpkgTerminalLog:\n");
       log = fopen(logfile_name.c_str(),"r");
+      if(log != NULL)
+      {
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+	 fclose(log);
+      }
+   }
+
+   // attach history log it if we have it
+   string histfile_name = _config->FindFile("Dir::Log::History");
+   if (!histfile_name.empty())
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "DpkgHistoryLog:\n");
+      log = fopen(histfile_name.c_str(),"r");
       if(log != NULL)
       {
 	 while( fgets(buf, sizeof(buf), log) != NULL)
