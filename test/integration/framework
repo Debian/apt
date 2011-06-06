@@ -708,3 +708,9 @@ testmarkedauto() {
 	fi
 	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
+
+pause() {
+	echo "STOPPED execution. Press enter to continue"
+	local IGNORE
+	read IGNORE
+}
