@@ -134,6 +134,10 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
+   // append the dist as a query string
+   if (Dist != "")
+      fetch += "?dist=" + Dist;
+
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile(): '" << fetch << "'"
            << " to " << MirrorFile << endl;
@@ -339,6 +343,7 @@ string MirrorMethod::GetMirrorFileName(string mirror_uri_str)
 	 if(Debug)
 	    std::cerr << "found BaseURI: " << uristr << std::endl;
 	 BaseUri = uristr.substr(0,uristr.size()-1);
+         Dist = (*I)->GetDist();
       }
    }
    // get new file
