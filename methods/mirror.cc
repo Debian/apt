@@ -274,8 +274,18 @@ bool MirrorMethod::InitMirrors()
    while (!in.eof()) 
    {
       getline(in, s);
-      if (s.size() > 0)
-	 AllMirrors.push_back(s);
+
+      // ignore lines that start with #
+      if (s.find("#") == 0)
+         continue;
+      // ignore empty lines
+      if (s.size() == 0)
+         continue;
+      // ignore non http lines
+      if (s.find("http://") != 0)
+         continue;
+
+      AllMirrors.push_back(s);
    }
    Mirror = AllMirrors[0];
    UsedMirror = Mirror;
