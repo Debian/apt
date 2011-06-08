@@ -70,10 +70,13 @@ class CacheDB
    bool GetMD5(bool const &GenOnly);
    bool GetSHA1(bool const &GenOnly);
    bool GetSHA256(bool const &GenOnly);
+   bool GetSHA512(bool const &GenOnly);
    
    // Stat info stored in the DB, Fixed types since it is written to disk.
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2),
-   	FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5)};
+                  FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5), 
+                  FlSHA512=(1<<6)};
+
    struct StatStore
    {
       uint32_t Flags;
@@ -82,6 +85,7 @@ class CacheDB
       uint8_t  MD5[16];
       uint8_t  SHA1[20];
       uint8_t  SHA256[32];
+      uint8_t  SHA512[64];
    } CurStat;
    struct StatStore OldStat;
    
@@ -98,6 +102,7 @@ class CacheDB
    string MD5Res;
    string SHA1Res;
    string SHA256Res;
+   string SHA512Res;
    
    // Runtime statistics
    struct Stats
@@ -106,14 +111,21 @@ class CacheDB
       double MD5Bytes;
       double SHA1Bytes;
       double SHA256Bytes;
+      double SHA512Bytes;
       unsigned long Packages;
       unsigned long Misses;  
       unsigned long DeLinkBytes;
       
       inline void Add(const Stats &S) {
-	 Bytes += S.Bytes; MD5Bytes += S.MD5Bytes; SHA1Bytes += S.SHA1Bytes; 
+	 Bytes += S.Bytes; 
+         MD5Bytes += S.MD5Bytes; 
+         SHA1Bytes += S.SHA1Bytes; 
 	 SHA256Bytes += S.SHA256Bytes;
-	 Packages += S.Packages; Misses += S.Misses; DeLinkBytes += S.DeLinkBytes;};
+	 SHA512Bytes += S.SHA512Bytes;
+	 Packages += S.Packages;
+         Misses += S.Misses; 
+         DeLinkBytes += S.DeLinkBytes;
+      };
       Stats() : Bytes(0), MD5Bytes(0), SHA1Bytes(0), SHA256Bytes(0), Packages(0), Misses(0), DeLinkBytes(0) {};
    } Stats;
    
@@ -125,7 +137,7 @@ class CacheDB
    
    bool SetFile(string const &FileName,struct stat St,FileFd *Fd);
    bool GetFileInfo(string const &FileName, bool const &DoControl, bool const &DoContents, bool const &GenContentsOnly,
-		    bool const &DoMD5, bool const &DoSHA1, bool const &DoSHA256, bool const &checkMtime = false);
+		    bool const &DoMD5, bool const &DoSHA1, bool const &DoSHA256, bool const &DoSHA512, bool const &checkMtime = false);
    bool Finish();   
    
    bool Clean();

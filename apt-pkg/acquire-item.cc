@@ -1682,6 +1682,8 @@ bool pkgAcqArchive::QueueNext()
       string PkgFile = Parse.FileName();
       if (ForceHash.empty() == false)
       {
+	 if(stringcasecmp(ForceHash, "sha512") == 0)
+	    ExpectedHash = HashString("SHA512", Parse.SHA512Hash());
 	 if(stringcasecmp(ForceHash, "sha256") == 0)
 	    ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
 	 else if (stringcasecmp(ForceHash, "sha1") == 0)
@@ -1692,7 +1694,9 @@ bool pkgAcqArchive::QueueNext()
       else
       {
 	 string Hash;
-	 if ((Hash = Parse.SHA256Hash()).empty() == false)
+	 if ((Hash = Parse.SHA512Hash()).empty() == false)
+	    ExpectedHash = HashString("SHA512", Hash);
+	 else if ((Hash = Parse.SHA256Hash()).empty() == false)
 	    ExpectedHash = HashString("SHA256", Hash);
 	 else if ((Hash = Parse.SHA1Hash()).empty() == false)
 	    ExpectedHash = HashString("SHA1", Hash);

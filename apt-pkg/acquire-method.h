@@ -46,6 +46,7 @@ class pkgAcqMethod
       string MD5Sum;
       string SHA1Sum;
       string SHA256Sum;
+      string SHA512Sum;
       vector<string> GPGVOutput;
       time_t LastModified;
       bool IMSHit;

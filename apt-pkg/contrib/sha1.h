@@ -21,28 +21,11 @@
 using std::string;
 using std::min;
 
+#include "hashsum_template.h"
+
 class SHA1Summation;
 
-class SHA1SumValue
-{
-   friend class SHA1Summation;
-   unsigned char Sum[20];
-   
-   public:
-
-   // Accessors
-   bool operator ==(const SHA1SumValue &rhs) const; 
-   string Value() const;
-   inline void Value(unsigned char S[20])
-         {for (int I = 0; I != sizeof(Sum); I++) S[I] = Sum[I];};
-   inline operator string() const {return Value();};
-   bool Set(string Str);
-   inline void Set(unsigned char S[20]) 
-         {for (int I = 0; I != sizeof(Sum); I++) Sum[I] = S[I];};
-
-   SHA1SumValue(string Str);
-   SHA1SumValue();
-};
+typedef  HashSumValue<160> SHA1SumValue;
 
 class SHA1Summation
 {

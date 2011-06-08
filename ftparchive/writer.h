@@ -195,6 +195,7 @@ protected:
       string MD5;
       string SHA1;
       string SHA256;
+      string SHA512;
       // Limited by FileFd::Size()
       unsigned long size;
       ~CheckSum() {};

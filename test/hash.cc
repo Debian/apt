@@ -1,6 +1,6 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
-#include <apt-pkg/sha256.h>
+#include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 #include <iostream>
 
@@ -10,9 +10,17 @@ template <class T> void Test(const char *In,const char *Out)
 {
    T Sum;
    Sum.Add(In);
-   cout << Sum.Result().Value() << endl;
-   if (stringcasecmp(Sum.Result().Value(),Out) != 0)
+
+   cout << "expected: '" << Out << "'" << endl;
+   cout << "got     : '" << Sum.Result().Value() << "'" << endl;
+   cout << "got     : '" << Sum.Result().Value() << "'" << endl;
+   cout << "got     : '" << Sum.Result().Value() << "'" << endl;
+   if (stringcasecmp(Sum.Result().Value(), Out) != 0) {
+      cout << "FAIL" << endl << endl;
       abort();
+   } else {
+      cout << "PASS" << endl << endl;
+   }
 }
 
 template <class T> void TestMill(const char *Out)
@@ -34,9 +42,8 @@ template <class T> void TestMill(const char *Out)
 	 Count = 0;
       }
    }
-   
-   cout << Sum.Result().Value() << endl;
-   if (stringcasecmp(Sum.Result().Value(),Out) != 0)
+
+   if (stringcasecmp(Sum.Result().Value(), Out) != 0)
       abort();
 }
 
@@ -62,8 +69,13 @@ int main()
    // SHA-256, From FIPS 180-2
    Test<SHA256Summation>("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", 
 			 "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1");
-   
 
+   // SHA-512, From 
+   Test<SHA512Summation>(
+      "abc", 
+      "ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a"
+      "2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f");
+   
    return 0; 
 }
 
