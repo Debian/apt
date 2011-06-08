@@ -202,7 +202,7 @@ apt: build build-doc
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/libapt-inst2.1/usr/lib:$(CURDIR)/debian/libapt-pkg4.10/usr/lib
+	dh_shlibdeps -p$@
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
@@ -248,7 +248,7 @@ apt-utils: build
 	dh_fixperms -p$@
 	dh_makeshlibs -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/libapt-inst2.1/usr/lib:$(CURDIR)/debian/libapt-pkg4.10/usr/lib
+	dh_shlibdeps -p$@
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
@@ -284,7 +284,7 @@ libapt-inst1.2: build
 	dh_fixperms -p$@
 	dh_installdeb -p$@
 	dh_makeshlibs -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/libapt-pkg4.10/usr/lib
+	dh_shlibdeps -p$@ 
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
@@ -307,7 +307,7 @@ apt-transport-https: build libapt-pkg-dev
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
+	dh_shlibdeps -p$@ 
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
