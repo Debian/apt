@@ -28,14 +28,14 @@ Description: Advanced front-end for dpkg
 
 Package: libapt-pkg4.10
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt (<< 0.8.15)
 Description: Library for apt
  This package contains the library used by apt.
 
 Package: libapt-inst1.2
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt-utils (<< 0.8.15)
 Description: Install library for apt
  This package contains the inst library used by apt.
@@ -52,7 +52,7 @@ Description: Documentation for APT
 Package: libapt-pkg-dev
 Architecture: any
 Priority: optional
-Depends: libapt-pkg4.10, libapt-inst1.2, ${misc:Depends}, zlib1g-dev | zlib-dev
+Depends: libapt-pkg4.10 (= ${binary:Version}), libapt-inst1.2 (= ${binary:Version}), ${misc:Depends}, zlib1g-dev | zlib-dev
 Section: libdevel
 Description: Development files for APT's libapt-pkg and libapt-inst
  This package contains the header files and libraries for

@@ -260,12 +260,13 @@ libapt-pkg4.10: build
 	dh_installdirs -p$@
 
 	dh_install -p$@ --sourcedir=$(BLD)
+	dh_installdocs -p$@
 	dh_installchangelogs -p$@
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-	dh_installdeb -p$@
 	dh_makeshlibs -p$@
+	dh_installdeb -p$@
 	dh_shlibdeps -p$@ 
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
@@ -278,12 +279,13 @@ libapt-inst1.2: build
 	dh_installdirs -p$@
 
 	dh_install -p$@ --sourcedir=$(BLD)
+	dh_installdocs -p$@
 	dh_installchangelogs -p$@
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-	dh_installdeb -p$@
 	dh_makeshlibs -p$@
+	dh_installdeb -p$@
 	dh_shlibdeps -p$@ 
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
