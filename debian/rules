@@ -201,7 +201,6 @@ apt: build build-doc
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-	dh_makeshlibs -p$@
 	dh_installdeb -p$@
 	dh_shlibdeps -p$@ -l$(CURDIR)/debian/libapt-inst2.1/usr/lib:$(CURDIR)/debian/libapt-pkg4.10/usr/lib
 	dh_gencontrol -p$@
@@ -266,6 +265,7 @@ libapt-pkg4.10: build
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
+	dh_makeshlibs -p$@
 	dh_shlibdeps -p$@ 
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
@@ -283,6 +283,7 @@ libapt-inst1.2: build
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
+	dh_makeshlibs -p$@
 	dh_shlibdeps -p$@ -l$(CURDIR)/debian/libapt-pkg4.10/usr/lib
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
