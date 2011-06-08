@@ -15,6 +15,9 @@
 class edspIndex;
 class edspSystem : public pkgSystem
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    edspIndex *StatusFile;
 
    public:
