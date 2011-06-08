@@ -16,7 +16,6 @@ Architecture: any
 Pre-Depends: ${shlibs:Depends}
 Depends: debian-archive-keyring, ${misc:Depends}, gnupg
 Replaces: manpages-pl (<< 20060617-3~)
-Provides: ${libapt-pkg:provides}
 Conflicts: python-apt (<< 0.7.93.2~)
 Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, bzip2, lzma, python-apt
 Description: Advanced front-end for dpkg
@@ -26,6 +25,20 @@ Description: Advanced front-end for dpkg
  .
  APT features complete installation ordering, multiple source capability
  and several other unique features, see the Users Guide in apt-doc.
+
+Package: libapt-pkg4.10
+Architecture: any
+Depends: ${shlibs:Depends}
+Replaces: apt (<< 0.8.15)
+Description: Library for apt
+ This package contains the library used by apt.
+
+Package: libapt-inst1.2
+Architecture: any
+Depends: ${shlibs:Depends}
+Replaces: apt-utils (<< 0.8.15)
+Description: Install library for apt
+ This package contains the inst library used by apt.
 
 Package: apt-doc
 Architecture: all
