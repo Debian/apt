@@ -79,6 +79,8 @@ class pkgSrcRecords
    };
    
    private:
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
    
    // The list of files and the current parser pointer
    vector<Parser*> Files;
@@ -93,7 +95,7 @@ class pkgSrcRecords
    Parser *Find(const char *Package,bool const &SrcOnly = false);
    
    pkgSrcRecords(pkgSourceList &List);
-   ~pkgSrcRecords();
+   virtual ~pkgSrcRecords();
 };
 
 #endif

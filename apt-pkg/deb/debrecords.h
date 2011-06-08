@@ -20,6 +20,9 @@
 
 class debRecordParser : public pkgRecords::Parser
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    FileFd File;
    pkgTagFile Tags;
    pkgTagSection Section;
@@ -50,6 +53,7 @@ class debRecordParser : public pkgRecords::Parser
    virtual void GetRec(const char *&Start,const char *&Stop);
    
    debRecordParser(string FileName,pkgCache &Cache);
+   virtual ~debRecordParser() {};
 };
 
 #endif

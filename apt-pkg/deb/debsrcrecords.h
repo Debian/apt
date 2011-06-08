@@ -18,6 +18,9 @@
 
 class debSrcRecordParser : public pkgSrcRecords::Parser
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    FileFd Fd;
    pkgTagFile Tags;
    pkgTagSection Sect;
@@ -50,7 +53,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    debSrcRecordParser(string const &File,pkgIndexFile const *Index) 
       : Parser(Index), Fd(File,FileFd::ReadOnlyGzip), Tags(&Fd,102400), 
         Buffer(0), BufSize(0) {}
-   ~debSrcRecordParser();
+   virtual ~debSrcRecordParser();
 };
 
 #endif

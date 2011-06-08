@@ -1,7 +1,7 @@
 apt (0.8.15) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
-  * Implement EDSP in libapt-pkg so that all front-ends which
+  * [ABI-Break] Implement EDSP in libapt-pkg so that all front-ends which
     use the internal resolver can now be used also with external
     ones as the usage is hidden in between the old API
   * provide two edsp solvers in apt-utils:
@@ -25,7 +25,9 @@ apt (0.8.15) UNRELEASED; urgency=low
     - describe EDSP and the configuration interface around it
   
   [ Michael Vogt ]
-  * merge lp:~mvo/apt/sha512-template to add support for sha512
+  * [ABI-Break] merge lp:~mvo/apt/sha512-template to add support for sha512
+  * [ABI-Break] merge lp:~mvo/apt/dpointer to support easier extending
+    without breaking the ABI
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 17 May 2011 18:43:21 +0200
 
