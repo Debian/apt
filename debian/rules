@@ -70,6 +70,10 @@ APT_UTILS=ftparchive sortpkgs extracttemplates
 # Find the libapt-pkg major version for use in other control files
 include buildlib/libversion.mak
 
+# Determine which library package names to use
+LIBAPT_PKG=libapt-pkg$(LIBAPTPKG_MAJOR)
+LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
+
 # do not fail as we are just experimenting with symbol files for now
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
@@ -161,7 +165,7 @@ apt-doc: build-doc
 
 # Build architecture-dependent files here.
 
-binary-arch: libapt-pkg4.10 libapt-inst1.2 apt libapt-pkg-dev apt-utils apt-transport-https
+binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
 apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
 apt: build build-doc
 	dh_testdir -p$@
@@ -253,7 +257,7 @@ apt-utils: build
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-libapt-pkg4.10: build
+$(LIBAPT_PKG): build
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -272,7 +276,7 @@ libapt-pkg4.10: build
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-libapt-inst1.2: build
+$(LIBAPT_INST): build
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
