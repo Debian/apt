@@ -468,9 +468,6 @@ string debTranslationsIndex::Info(const char *Type) const
 									/*}}}*/
 bool debTranslationsIndex::HasPackages() const				/*{{{*/
 {
-   if(!TranslationsAvailable())
-      return false;
-   
    return FileExists(IndexFile(Language));
 }
 									/*}}}*/
@@ -510,7 +507,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    // Check the translation file, if in use
    string TranslationFile = IndexFile(Language);
-   if (TranslationsAvailable() && FileExists(TranslationFile))
+   if (FileExists(TranslationFile))
    {
      FileFd Trans(TranslationFile,FileFd::ReadOnlyGzip);
      debListParser TransParser(&Trans);
