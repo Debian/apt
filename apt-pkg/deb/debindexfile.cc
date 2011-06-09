@@ -423,12 +423,10 @@ string debTranslationsIndex::IndexURI(const char *Type) const
 /* */
 bool debTranslationsIndex::GetIndexes(pkgAcquire *Owner) const
 {
-   if (TranslationsAvailable()) {
-     string const TranslationFile = string("Translation-").append(Language);
-     new pkgAcqIndexTrans(Owner, IndexURI(Language),
-			  Info(TranslationFile.c_str()),
-			  TranslationFile);
-   }
+   string const TranslationFile = string("Translation-").append(Language);
+   new pkgAcqIndexTrans(Owner, IndexURI(Language),
+                        Info(TranslationFile.c_str()),
+                        TranslationFile);
 
    return true;
 }
