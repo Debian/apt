@@ -230,7 +230,7 @@ libapt-pkg-dev: build
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@
+	dh_gencontrol -p$@ -Vlibapt-pkg-name=$(LIBAPT_PKG) -Vlibapt-inst-name=$(LIBAPT_INST)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
