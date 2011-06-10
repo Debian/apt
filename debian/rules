@@ -97,6 +97,10 @@ build/configure-stamp: configure
 build/build-stamp: build/configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE) binary
+	# compat symlink for the locale split
+	mkdir -p build/usr/share 
+	cd build/usr/share && ln -f -s ../../locale .
+	# done here
 	touch $@
 
 build/build-doc-stamp: build/configure-stamp
@@ -226,7 +230,7 @@ libapt-pkg-dev: build
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@
+	dh_gencontrol -p$@ -- -Vlibapt-pkg-name=$(LIBAPT_PKG) -Vlibapt-inst-name=$(LIBAPT_INST)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
