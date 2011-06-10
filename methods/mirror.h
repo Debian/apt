@@ -29,6 +29,7 @@ class MirrorMethod : public HttpMethod
    vector<string> AllMirrors; // all available mirrors
    string MirrorFile; // the file that contains the list of mirrors
    bool DownloadedMirrorFile; // already downloaded this session
+   string Dist;       // the target distrubtion (e.g. sid, oneiric)
 
    bool Debug;
 
