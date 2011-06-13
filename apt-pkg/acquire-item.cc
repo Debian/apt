@@ -271,14 +271,6 @@ void pkgAcqSubIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{
 
    string FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(Desc.URI);
 
-   /* Downloaded invalid transindex => Error (LP: #346386) (Closes: #627642) */
-   indexRecords SubIndexParser;
-   if (FileExists(DestFile) == true && !SubIndexParser.Load(DestFile)) {
-      Status = StatError;
-      ErrorText = SubIndexParser.ErrorText;
-      return;
-   }
-
    // sucess in downloading the index
    // rename the index
    if(Debug)
@@ -462,7 +454,6 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	       found=true;
 	    else if (found == false)
 	       continue;
-
 	    if(Debug)
 	       std::clog << "Need to get diff: " << d.file << std::endl;
 	    available_patches.push_back(d);
@@ -587,7 +578,6 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), 
      available_patches(diffs), ServerSha1(ServerSha1)
 {
-   
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
@@ -704,7 +694,6 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 
    if(Debug)
       std::clog << "pkgAcqIndexDiffs::QueueNextDiff(): " << Desc.URI << std::endl;
-   
    QueueURI(Desc);
 
    return true;
@@ -720,14 +709,13 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*
 
    string FinalFile;
    FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
-
+   
    // sucess in downloading a diff, enter ApplyDiff state
    if(State == StateFetchDiff)
    {
-
       // rred excepts the patch as $FinalFile.ed
       Rename(DestFile,FinalFile+".ed");
-
+      std::clog << "    Sending to rred method FinalFile: " << FinalFile << std::endl;
       if(Debug)
 	 std::clog << "Sending to rred method: " << FinalFile << std::endl;
 
@@ -738,7 +726,6 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*
       Mode = "rred";
       return;
    } 
-
 
    // success in download/apply a diff, queue next (if needed)
    if(State == StateApplyDiff)
@@ -902,30 +889,6 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 	 ReportMirrorFailure("HashChecksumFailure");
          return;
       }
-
-      /* Verify the index file for correctness (all indexes must
-       * have a Package field) (LP: #346386) (Closes: #627642) */
-      {
-	 FileFd fd(DestFile, FileFd::ReadOnly);
-	 pkgTagSection sec;
-	 pkgTagFile tag(&fd);
-
-         // Only test for correctness if the file is not empty (empty is ok)
-         if (fd.Size() > 0) {
-            if (_error->PendingError() || !tag.Step(sec)) {
-               Status = StatError;
-               _error->DumpErrors();
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            } else if (!sec.Exists("Package")) {
-               Status = StatError;
-               ErrorText = ("Encountered a section with no Package: header");
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            }
-         }
-      }
-       
       // Done, move it into position
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
@@ -1362,16 +1325,6 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 									/*}}}*/
 void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 {
-#if 0
-   /* Reject invalid, existing Release files (LP: #346386) (Closes: #627642)
-    * FIXME: Disabled; it breaks unsigned repositories without hashes */
-   if (!verify && FileExists(DestFile) && !MetaIndexParser->Load(DestFile))
-   {
-      Status = StatError;
-      ErrorText = MetaIndexParser->ErrorText;
-      return;
-   }
-#endif
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         Target++)
@@ -1534,12 +1487,6 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());
 	 RunScripts("APT::Update::Auth-Failure");
-	 return;
-      } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
-	 /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
-	 _error->Error(_("GPG error: %s: %s"),
-			 Desc.Description.c_str(),
-			 LookupTag(Message,"Message").c_str());
 	 return;
       } else {
 	 _error->Warning(_("GPG error: %s: %s"),
@@ -2065,6 +2012,272 @@ string pkgAcqFile::Custom600Headers()
    return "";
 }
 									/*}}}*/
+
+pkgAcqDebdelta::pkgAcqDebdelta(pkgAcquire *Owner,pkgSourceList *Sources,
+			       pkgRecords *Recs,pkgCache::VerIterator const &Version,
+			       string &StoreFilename) :
+   Item(Owner), Version(Version), Sources(Sources), Recs(Recs), 
+   StoreFilename(StoreFilename), Vf(Version.FileList()), 
+   Trusted(false)
+{
+   DebdeltaName = string(Version.ParentPkg().Name()) + "_"
+      + string(Version.ParentPkg().CurVersion()) + "_"
+      + string(Version.ParentPkg().CandVersion()) + "_"
+      + string(Version.Arch()) + ".debdelta";
+   Retries = _config->FindI("Acquire::Retries",0);
+    
+   if (Version.Arch() == 0)
+   {
+      _error->Error(_("I wasn't able to locate a file for the %s package. "
+		      "This might mean you need to manually fix this package. "
+		      "(due to missing arch)"),
+		    Version.ParentPkg().Name());
+      return;
+   }
+   
+   /* We need to find a filename to determine the extension. We make the
+      assumption here that all the available sources for this version share
+      the same extension.. */
+   // Skip not source sources, they do not have file fields.
+   for (; Vf.end() == false; Vf++)
+   {
+      if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
+	 continue;
+      break;
+   }
+   
+   // Does not really matter here.. we are going to fail out below
+   if (Vf.end() != true)
+   {     
+      // If this fails to get a file name we will bomb out below.
+      pkgRecords::Parser &Parse = Recs->Lookup(Vf);
+      if (_error->PendingError() == true)
+	 return;
+            
+      DebdeltaName = StoreFilename = QuoteString(DebdeltaName, ":");
+      DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + flNotDir(StoreFilename);
+   }
+
+   // check if we have one trusted source for the package. if so, switch
+   // to "TrustedOnly" mode
+   for (pkgCache::VerFileIterator i = Version.FileList(); i.end() == false; i++)
+   {
+      pkgIndexFile *Index;
+      if (Sources->FindIndex(i.File(),Index) == false)
+         continue;
+      if (_config->FindB("Debug::pkgAcquire::Auth", false))
+      {
+         std::cerr << "Checking index: " << Index->Describe()
+                   << "(Trusted=" << Index->IsTrusted() << ")\n";
+      }
+      if (Index->IsTrusted()) {
+         Trusted = true;
+	 break;
+      }
+   }
+
+   // "allow-unauthenticated" restores apts old fetching behaviour
+   // that means that e.g. unauthenticated file:// uris are higher
+   // priority than authenticated http:// uris
+   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+      Trusted = false;
+   std::cerr << "\n[Debdelta] pkgAcqDebdelta::pkgAcqDebdelta()" << std::endl;
+   std::cerr << "    DebdeltaName : " << DebdeltaName << std::endl;
+   std::cerr << "    StoreFilename: " << StoreFilename << std::endl;
+   std::cerr << "    DestFile     : " << DestFile << std::endl;
+   DebdeltaStatus = Fetching;
+   // Select a source
+   if (QueueNext() == false && _error->PendingError() == false)
+      _error->Error(_("I wasn't able to locate a file for the %s package. "
+		    "This might mean you need to manually fix this package."),
+		    Version.ParentPkg().Name());
+}
+
+bool pkgAcqDebdelta::QueueNext()
+{
+   string const ForceHash = _config->Find("Acquire::ForceHash");
+   
+   for (; Vf.end() == false; Vf++)
+   {
+      // Ignore not source sources
+      if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
+	 continue;
+
+      // Try to cross match against the source list
+      pkgIndexFile *Index;
+      if (Sources->FindIndex(Vf.File(),Index) == false)
+	 continue;
+
+      // only try to get a trusted package from another source if that source
+      // is also trusted
+      if(Trusted && !Index->IsTrusted()) 
+	 continue;
+      
+      // Grab the text package record
+      pkgRecords::Parser &Parse = Recs->Lookup(Vf);
+      if (_error->PendingError() == true)
+	 return false;
+      
+      string PkgFile = Parse.FileName();
+      //std::cerr << "    PkgFile:" << PkgFile << std::endl;
+      if (ForceHash.empty() == false)
+      {
+	 if(stringcasecmp(ForceHash, "sha256") == 0)
+	    ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
+	 else if (stringcasecmp(ForceHash, "sha1") == 0)
+	    ExpectedHash = HashString("SHA1", Parse.SHA1Hash());
+	 else
+	    ExpectedHash = HashString("MD5Sum", Parse.MD5Hash());
+      }
+      else
+      {
+	 string Hash;
+	 if ((Hash = Parse.SHA256Hash()).empty() == false)
+	    ExpectedHash = HashString("SHA256", Hash);
+	 else if ((Hash = Parse.SHA1Hash()).empty() == false)
+	    ExpectedHash = HashString("SHA1", Hash);
+	 else
+	    ExpectedHash = HashString("MD5Sum", Parse.MD5Hash());
+      }
+      if (PkgFile.empty() == true)
+	 return _error->Error(_("The package index files are corrupted. No Filename: "
+				"field for package %s."),
+			      Version.ParentPkg().Name());
+      // See if we already have the deb
+      FileSize = Version->Size;
+      string FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(PkgFile);
+      struct stat Buf;
+      if (stat(FinalFile.c_str(),&Buf) == 0)
+      {
+         std::cerr << "[Debdelta] File already exists. " << FinalFile << std::endl;
+	 // TODO: check if this ok. Make sure the size matches
+	 if ((unsigned)Buf.st_size == Version->Size)
+	 {
+	    Complete = true;
+	    Local = true;
+	    Status = StatDone;
+            DebdeltaStatus = Completed;
+	    StoreFilename = DestFile = FinalFile;
+	    return true;
+	 }
+	 /* Hmm, we have a file and its size does not match, this means it is
+	    an old style mismatched arch */
+	 unlink(FinalFile.c_str());
+      }
+
+      // Create the item
+      Local = false;
+      // See if we already have the debdelta in the partial dir.
+      if (FileExists(DestFile))
+      {
+	 // TODO: verify the sum/size of it.
+	 std::cerr << "[Debdelta] File already exists. " << DestFile << std::endl;
+	 Desc.URI = "debdelta:" + DestFile;
+	 Mode = "debdelta";
+	 DebdeltaStatus = Patching;
+	 Local = true;
+      }
+      else
+      {
+	 Desc.URI = flNotFile(Index->ArchiveURI(PkgFile)) + DebdeltaName;
+      }
+      Desc.Description = "[Debdelta] " + Index->ArchiveInfo(Version);
+      Desc.Owner = this;
+      Desc.ShortDesc = "[Debdelta] " + string(Version.ParentPkg().Name());
+      std::cerr << "[Debdelta] pkgAcqDebdelta::QueueNext()" << std::endl;
+      std::cerr << "    DestFile     : " << DestFile << std::endl;
+      std::cerr << "    Desc.URI     : " << Desc.URI << std::endl;
+      std::cerr << "    StoreFileName: " << StoreFilename << std::endl;
+      Vf++;
+      QueueURI(Desc);
+      return true;
+   }
+   return false;
+}
+
+void pkgAcqDebdelta::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+{
+   std::cerr << "\n[Debdelta] Failed to download " << Desc.URI << std::endl;
+   std::cerr << "[Debdelta] Message:\n" << Message << std::endl;
+   // TODO: find out what went wrong and display to the user
+   new pkgAcqArchive(Owner, Sources, Recs, Version, StoreFilename);
+   Complete = false;
+   Status = StatError;
+   DebdeltaStatus = FetchingFailure;
+   Item::Failed(Message, Cnf);
+   Dequeue();
+}
+
+void pkgAcqDebdelta::Done(string Message,unsigned long Size,string Hash,
+		     pkgAcquire::MethodConfig *Cnf)
+{
+   // TODO: there must be two stages within this method.
+   //       one for downloading debdelta. another for verifying the resulting .deb
+   std::cerr << "[Debdelta] pkgAcqDebdelta::Done() state: " << DebdeltaStatus << std::endl;
+   // Grab the output filename
+   string FileName = LookupTag(Message,"Filename");
+   std::cerr << "    StoreFileName: " << StoreFilename 
+             << "\n    DestFile     : " << DestFile
+             << "\n    Desc.URI     : " << Desc.URI
+             << "\n    FileName     : " << FileName << std::endl;
+   if (DebdeltaStatus == Patching)
+   {
+      std::cerr << "[Debdelta] Patching Done. Verifying "<< FileName << "..." << std::endl;
+      if (ExpectedHash.toStr() != Hash)
+      {
+	 Status = StatError;
+	 ErrorText = _("[Debdelta] Hash Sum mismatch");
+	 if(FileExists(DestFile))
+	    if (!Local)
+	       Rename(DestFile, DestFile + ".FAILED");
+	 //return; // TODO: UNCOMMENT
+      }
+      // Check the size
+      if (Size != Version->Size)
+      {
+	 Status = StatError;
+	 ErrorText = _("[Debdelta] Size mismatch");
+	 //return; // TODO: UNCOMMEnT
+      }
+      DebdeltaStatus = Completed;
+      Complete = true;
+      Status = StatDone;
+      StoreFilename = FileName;
+      Item::Done(Message,Size,Hash,Cnf);
+      return;
+   }
+   // TODO: Check the sum/size
+   //std::cerr << "[Debdelta] Verifying " << DestFile << std::endl;
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "[Debdelta] Method gave a blank filename";
+      return;
+   }
+   if (FileName != DestFile) // this is set in the file/http methods
+   {
+      // file => FileName != DestFile (i.e. FileName is the local file)
+      // http => FileName == DestFile (i.e. FileName is some local place. may be within "partial" dir)
+      Local = true;
+   }
+   DebdeltaStatus = Patching;
+   Rename(DestFile, FileName);
+   DestFile = StoreFilename = FileName;
+   chmod(DestFile.c_str(), 0644);
+   Desc.URI = "debdelta:" + StoreFilename;
+   Mode = "debdelta";
+   QueueURI(Desc);
+}
+   
+void pkgAcqDebdelta::Finished()
+{
+   std::cerr << "[Debdelta] pkgAcqDebdelta::Finished() state: " << DebdeltaStatus << std::endl;
+   if (Status == pkgAcquire::Item::StatDone &&
+       Complete == true)
+      return;
+   StoreFilename = string();
+}
+
 bool IndexTarget::IsOptional() const {
    if (strncmp(ShortDesc.c_str(), "Translation", 11) != 0)
       return false;

@@ -148,7 +148,8 @@ bool CopyFile(FileFd &From,FileFd &To)
 
    return true;   
 }
-									/*}}}*/
+
+/*}}}*/
 // GetLock - Gets a lock file						/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create an empty file of the given name and lock it. Once this
@@ -275,7 +276,22 @@ bool CreateDirectory(string const &Parent, string const &Path)
    }
    return true;
 }
-									/*}}}*/
+
+// Rename - Rename a file				/*{{{*/
+// ---------------------------------------------------------------------
+/* This helper function is used by alot of item methods as thier final
+   step */
+bool Rename(string From, string To)
+{
+   if (rename(From.c_str(),To.c_str()) != 0)
+   {
+      return _error->Error("Rename failed. %s (%s -> %s).",strerror(errno),
+	      From.c_str(),To.c_str());
+   }  
+   return true;
+}
+
+/*}}}*/
 // CreateAPTDirectoryIfNeeded - ensure that the given directory exists		/*{{{*/
 // ---------------------------------------------------------------------
 /* a small wrapper around CreateDirectory to check if it exists and to
@@ -571,6 +587,7 @@ void SetNonBlock(int Fd,bool Block)
    in seconds. */
 bool WaitFd(int Fd,bool write,unsigned long timeout)
 {
+   //std::cerr << "WaitFd()" << std::endl;
    fd_set Set;
    struct timeval tv;
    FD_ZERO(&Set);
@@ -601,7 +618,7 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
       if (Res <= 0)
 	 return false;
    }
-   
+   //std::cerr << "    waited for FD " << Fd << std::endl;
    return true;
 }
 									/*}}}*/

@@ -18,8 +18,7 @@
 #include <apti18n.h>
 
 /*}}}*/
-/** \brief DebdeltaMethod - This method is used to patch a new deb from
- *  an input deb and a debdelta file.
+/** \brief DebdeltaMethod - TODO: say something about debdelta here!
  * */
 class DebdeltaMethod : public pkgAcqMethod {
    bool Debug;  
@@ -34,20 +33,25 @@ public:
 
 bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
 {
+   /// Testing only...
+   FetchResult ResTest;
+   ResTest.Filename = "/home/ishan/devel/apt/testrepo/binary/gcc-4.6-base_4.6.0-7_amd64.deb";
+   URIDone(ResTest);
+   return true; 
+   ///
    Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
+   URI U(Itm->Uri);
    string OldDebFile = Itm->DestFile;
-   string DebDeltaFile = Itm->Uri;
-   
-   if (!FileExists(OldDebFile))
+   string DebDeltaFile = U.Path;
+   FetchResult Res;
+   if (flExtension(OldDebFile) != ".deb" || !FileExists(OldDebFile))
       OldDebFile = "/";
-   
    if (!FileExists(DebDeltaFile))
-      return _error->Error("Could not find a debdelta file.");
-
+      return _error->Error("[Debdelta] Could not find a debdelta file.");
    string NewDeb = GetNewPackageName(DebDeltaFile);
    Itm->DestFile = _config->FindDir("Dir::Cache::Archives") + "partial/" + NewDeb;
    if (FileExists(Itm->DestFile))
-      return _error->Error("New .deb already exists.");
+      return _error->Error("[Debdelta] New .deb already exists.");
    
    pid_t Process = ExecFork();      
    if (Process == 0)
@@ -55,30 +59,34 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
       const char* Args[6] = {0};
       Args[0] = "/usr/bin/debpatch";
       if (!FileExists(Args[0]))
-	 return _error->Error("Could not find debpatch.");
+	 return _error->Error("[Debdelta] Could not find debpatch.");
       Args[1] = "-A";
       Args[2] = DebDeltaFile.c_str();
       Args[3] = OldDebFile.c_str();
       Args[4] = Itm->DestFile.c_str();
       if (Debug == true)
       {
-	 std::cerr << "Debdelta command:" << std::endl;
-	 std::cerr << Args[0] << " " << Args[1] << " " << Args[2] << " " << Args[3] << " "
-                   << Args[4] << std::endl;
+	 std::cerr << "[Debdelta] Command:" << std::endl;
+	 std::cerr << Args[0] << " " << Args[1] << " " << Args[2] << " "
+		   << Args[3] << " " << Args[4] << std::endl;
       }
+      std::cerr << "[Debdelta] Patching " << NewDeb << "..." << std::endl;
       execv(Args[0], (char **)Args);
    }
    if (ExecWait(Process, "debpatch"))
    {
       if (!FileExists(Itm->DestFile))
-	 return _error->Error("Failed to patch %s", Itm->DestFile.c_str());
+	 return _error->Error("[Debdelta] Failed to patch %s", Itm->DestFile.c_str());
       // move the .deb to Dir::Cache::Archives
       OldDebFile = _config->FindDir("Dir::Cache::Archives") + NewDeb;
       Rename(Itm->DestFile, OldDebFile);
       Itm->DestFile = OldDebFile;
+      Res.Filename = Itm->DestFile;
+      URIDone(Res);
       return true;
    }
    Itm->DestFile = OldDebFile;
+   
    return false;
 }
 
@@ -118,7 +126,7 @@ public:
       if (pkgInitConfig(*_config) == false ||
           pkgInitSystem(*_config,_system) == false)
       {
-	 std::cerr << "E: Could not initialize the system/configuration." << std::endl;
+	 std::cerr << "[Debdelta] E: Could not initialize the system/configuration." << std::endl;
 	 _error->DumpErrors();
 	 return 100;
       }

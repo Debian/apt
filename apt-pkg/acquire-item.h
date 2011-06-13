@@ -1018,6 +1018,110 @@ class pkgAcqFile : public pkgAcquire::Item
 	      bool IsIndexFile=false);
 };
 									/*}}}*/
+
+/** \brief An item that is responsible for fetching a debdelta file.	{{{
+ *
+ *  If the package file already exists in the cache, nothing will be
+ *  done
+ */
+class pkgAcqDebdelta : public pkgAcquire::Item
+{
+   protected:
+   string DebdeltaName;
+   /** \brief The package version being fetched. */
+   pkgCache::VerIterator Version;
+
+   /** \brief The fetch command that is currently being processed. */
+   pkgAcquire::ItemDesc Desc;
+
+   /** \brief The list of sources from which to pick archives to
+    *  download this package from.
+    */
+   pkgSourceList *Sources;
+
+   /** \brief A package records object, used to look up the file
+    *  corresponding to each version of the package.
+    */
+   pkgRecords *Recs;
+
+   /** \brief The hashsum of this package. */
+   HashString ExpectedHash;
+
+   /** \brief A location in which the actual filename of the package
+    *  should be stored.
+    */
+   string &StoreFilename;
+
+   /** \brief The next file for this version to try to download. */
+   pkgCache::VerFileIterator Vf;
+
+   /** \brief How many (more) times to try to find a new source from
+    *  which to download this package version if it fails.
+    *
+    *  Set from Acquire::Retries.
+    */
+   unsigned int Retries;
+
+   /** \brief \b true if this version file is being downloaded from a
+    *  trusted source.
+    */
+   bool Trusted; 
+
+   /** \brief Queue up the next available file for this version. */
+   bool QueueNext();
+   
+   public:
+   
+   virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(string Message,unsigned long Size,string Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual string DescURI() {return Desc.URI;};
+   virtual string ShortDesc() {return Desc.ShortDesc;};
+   virtual void Finished();
+   virtual string HashSum() {return ExpectedHash.toStr(); };
+   virtual bool IsTrusted() {return Trusted;};
+   
+   /** \brief Create a new pkgAcqArchive.
+    *
+    *  \param Owner The pkgAcquire object with which this item is
+    *  associated.
+    *
+    *  \param Sources The sources from which to download version
+    *  files.
+    *
+    *  \param Recs A package records object, used to look up the file
+    *  corresponding to each version of the package.
+    *
+    *  \param Version The package version to download.
+    *
+    *  \param StoreFilename A location in which the actual filename of
+    *  the package should be stored.  It will be set to a guessed
+    *  basename in the constructor, and filled in with a fully
+    *  qualified filename once the download finishes.
+    */
+   pkgAcqDebdelta(pkgAcquire *Owner,pkgSourceList *Sources,
+		 pkgRecords *Recs,pkgCache::VerIterator const &Version,
+		 string &StoreFilename);
+   enum DebdeltaState
+   {
+      Fetching,
+      Patching,
+      Completed,
+      FetchingFailure
+   } DebdeltaStatus;
+};
+									/*}}}*/
+
+/** \brief Retrieve an arbitrary file to the current directory.		{{{
+ *
+ *  The file is retrieved even if it is accessed via a URL type that
+ *  normally is a NOP, such as "file".  If the download fails, the
+ *  partial file is renamed to get a ".FAILED" extension.
+ */
+class pkgAcqDebdeltaIndex : public pkgAcquire::Item
+{};
+									/*}}}*/
+
 /** @} */
 
 #endif

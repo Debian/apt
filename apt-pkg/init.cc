@@ -32,6 +32,7 @@ const char *pkgLibVersion = Stringfy(APT_PKG_MAJOR) "."
    is prepended, this allows a fair degree of flexability. */
 bool pkgInitConfig(Configuration &Cnf)
 {
+    std::cerr << "pkgInitConfig()" << std::endl;
    // General APT things
    Cnf.Set("APT::Architecture", COMMON_ARCH);
    Cnf.Set("APT::Build-Essential::", "build-essential");
@@ -72,7 +73,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Etc::preferencesparts","preferences.d");
    Cnf.Set("Dir::Etc::trusted", "trusted.gpg");
    Cnf.Set("Dir::Etc::trustedparts","trusted.gpg.d");
-   Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods");
+   Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods"); // /home/ishan/devel/apt/my/experiments/debian-sid/bin/methods
    Cnf.Set("Dir::Media::MountPath","/media/apt");
 
    // State   
@@ -139,6 +140,7 @@ bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys)
 {
    Sys = 0;
    string Label = Cnf.Find("Apt::System","");
+   std::cerr << "pkgInitSystem() " << Label.c_str() << std::endl; 
    if (Label.empty() == false)
    {
       Sys = pkgSystem::GetSystem(Label.c_str());

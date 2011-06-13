@@ -97,6 +97,7 @@ bool FileExists(string File);
 bool RealFileExists(string File);
 bool DirectoryExists(string const &Path) __attrib_const;
 bool CreateDirectory(string const &Parent, string const &Path);
+bool Rename(string From, string To);
 
 /** \brief Ensure the existence of the given Path
  *

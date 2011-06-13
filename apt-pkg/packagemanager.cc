@@ -80,8 +80,10 @@ bool pkgPackageManager::GetArchives(pkgAcquire *Owner,pkgSourceList *Sources,
       // Skip already processed packages
       if (List->IsNow(Pkg) == false)
 	 continue;
-
-      new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
+      
+      //new pkgAcqArchive(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
+      //		FileNames[Pkg->ID]);
+      new pkgAcqDebdelta(Owner,Sources,Recs,Cache[Pkg].InstVerIter(Cache),
 			FileNames[Pkg->ID]);
    }
 

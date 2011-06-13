@@ -208,6 +208,7 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
    for (; I != 0 && I->Name != Name; I = I->Next);
    if (I == 0)
    {
+      //std::cerr << "    Creating a new queue for the name: " << Name << std::endl;
       I = new Queue(Name,this);
       I->Next = Queues;
       Queues = I;
@@ -228,9 +229,10 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
    // Some trace stuff
    if (Debug == true)
    {
-      clog << "Fetching " << Item.URI << endl;
-      clog << " to " << Item.Owner->DestFile << endl;
-      clog << " Queue is: " << Name << endl;
+      clog << "pkgAcquire::Enqueue()" << endl;
+      clog << "    Fetching " << Item.URI << endl;
+      clog << "    to " << Item.Owner->DestFile << endl;
+      clog << "    Queue is: " << Name << endl;
    }
 }
 									/*}}}*/
@@ -280,6 +282,7 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
 pkgAcquire::MethodConfig *pkgAcquire::GetConfig(string Access)
 {
    // Search for an existing config
+   //std::cerr << "pkgAcquire::GetConfig()" << std::endl;
    MethodConfig *Conf;
    for (Conf = Configs; Conf != 0; Conf = Conf->Next)
       if (Conf->Access == Access)
@@ -292,6 +295,7 @@ pkgAcquire::MethodConfig *pkgAcquire::GetConfig(string Access)
    Configs = Conf;
 
    // Create the worker to fetch the configuration
+   //std::cerr <<"    creating a new worker to fetch the configuration" << std::endl;
    Worker Work(Conf);
    if (Work.Start() == false)
       return 0;
@@ -349,9 +353,11 @@ void pkgAcquire::RunFds(fd_set *RSet,fd_set *WSet)
 pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
 {
    Running = true;
-   
+   //std::cerr << "pkgAcquire::Run(): Running." << std::endl;
+   //std::cerr << "    starting up the queues." << std::endl;
    for (Queue *I = Queues; I != 0; I = I->Next)
       I->Startup();
+   //std::cerr << "\npkgAcquire::Run(): started queues.\n" << std::endl;
    
    if (Log != 0)
       Log->Start();
@@ -640,7 +646,6 @@ bool pkgAcquire::Queue::Startup()
       pkgAcquire::MethodConfig *Cnf = Owner->GetConfig(U.Access);
       if (Cnf == 0)
 	 return false;
-      
       Workers = new Worker(this,Cnf,Owner->Log);
       Owner->Add(Workers);
       if (Workers->Start() == false)
@@ -721,6 +726,7 @@ bool pkgAcquire::Queue::ItemDone(QItem *Itm)
    is enabled then it keeps the pipe full. */
 bool pkgAcquire::Queue::Cycle()
 {
+   //std::cerr << "pkgAcquire::Queue::Cycle():" << std::endl;
    if (Items == 0 || Workers == 0)
       return true;
 
@@ -738,7 +744,7 @@ bool pkgAcquire::Queue::Cycle()
       // Nothing to do, queue is idle.
       if (I == 0)
 	 return true;
-      
+      //std::cerr << "   Found an Item to queue. " << I->ShortDesc << " " << I->URI << std::endl;
       I->Worker = Workers;
       I->Owner->Status = pkgAcquire::Item::StatFetching;
       PipeDepth++;
@@ -876,6 +882,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 /* We just reset the counters */
 void pkgAcquireStatus::Start()
 {
+   //std::cerr << "pkgAcquireStatus::Start():" << std::endl;
    gettimeofday(&Time,0);
    gettimeofday(&StartTime,0);
    LastBytes = 0;
