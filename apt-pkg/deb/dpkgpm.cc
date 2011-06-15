@@ -1317,14 +1317,14 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 
    // do not report out-of-memory failures 
    if(strstr(errormsg, strerror(ENOMEM)) != NULL ||
-      strstr(errormsg, "Cannot allocate memory") != NULL) {
+      strstr(errormsg, "failed to allocate memory") != NULL) {
       std::clog << _("No apport report written because the error message indicates a out of memory error") << std::endl;
       return;
    }
 
    // do not report bugs regarding inaccessible local files
    if(strstr(errormsg, strerror(ENOENT)) != NULL ||
-      strstr(errormsg, "Cannot access archive") != NULL) {
+      strstr(errormsg, "cannot access archive") != NULL) {
       std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
       return;
    }
