@@ -5,7 +5,7 @@ deb=$1
 
 verify_deb() {
     [ "$deb" = "" ] && return
-    md5sum_1=$(apt-cache show `dpkg -I "$deb" | sed -n "s/Package: //p"` | sed -n "s/MD5sum: //p")
+    md5sum_1=$(LD_LIBRARY_PATH=../../../bin ../../../bin/apt-cache show `dpkg -I "$deb" | sed -n "s/Package: //p"` | sed -n "s/MD5sum: //p")
     md5sum_2=$(md5sum "$deb" | gawk '{print $1}')
     for s1 in $md5sum_1; do
         for s2 in $md5sum_2; do
@@ -29,7 +29,7 @@ make_deb() {
         usage
         exit 1
     fi
-    result_deb=$(LD_LIBRARY_PATH=../../../bin ../../../bin/methods/debdelta $1 $2 | sed -n "s/Result-Deb: //p")
+    result_deb=$(LD_LIBRARY_PATH=../../../bin ../../../bin/methods/debdelta $1 $2 | sed -n "s/Filename: //p")
     deb=$result_deb
     verify_deb
 }
