@@ -17,29 +17,48 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, debian-archive-keyring, gnupg
 Replaces: manpages-pl (<< 20060617-3~)
 Conflicts: python-apt (<< 0.7.93.2~)
 Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, bzip2, lzma, python-apt
-Description: Advanced front-end for dpkg
- This is Debian's next generation front-end for the dpkg package manager.
- It provides the apt-get utility and APT dselect method that provides a 
- simpler, safer way to install and upgrade packages.
+Description: Debian's advanced package tool
+ APT provides mechanisms for package management tasks like searching,
+ querying and managing deb packages from one or more package
+ repoistories.
  .
- APT features complete installation ordering, multiple source capability
- and several other unique features, see the Users Guide in apt-doc.
+ It supports:
+ * searching for package information;
+ * resolving package install requests, finding the appropriate
+   version in the archives;
+ * fetching packages along with all their required dependencies;
+ * authenticating the sources and validating the retrieved data;
+ * installing and removing packages on a working system.
+ .
+ It also provides various terminal-based tools on its own:
+ * apt-get for managing packages and retrieval of information
+ * apt-cache for querying available information
+ * apt-cdrom to use removable media as a source for packages
+ * apt-config as an interface to the configuration settings
+ * apt-key as an interface to manage authentication keys
+ .
+ APT is also highly configurable and can be extended to support
+ additional protocols.
 
 Package: libapt-pkg4.10
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt (<< 0.8.15)
 Breaks:  apt (<< 0.8.15~exp3)
-Description: Library for apt
- This package contains the library used by apt.
+Description: Package search and manipulation library for apt
+ This package contains the libapt_pkg library that is used by apt.
+ I exposes functionality for use by higher-level interfaces like
+ aptitude, synaptic, python-apt and others.
 
 Package: libapt-inst1.2
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt-utils (<< 0.8.15), apt (<< 0.8.15)
 Breaks:  apt (<< 0.8.15~exp3), apt-utils (<< 0.8.15~exp3)
-Description: Install library for apt
- This package contains the inst library used by apt.
+Description: Deb package format query and manipulation library for apt
+ This package contains the libapt_inst library used by apt-utils to
+ query deb packages for information. Its used by apt-ftparchive,
+ python-apt and others.
 
 Package: apt-doc
 Architecture: all
@@ -47,8 +66,9 @@ Priority: optional
 Depends: ${misc:Depends}
 Section: doc
 Description: Documentation for APT
- This package contains the user guide and offline guide, for APT, an
- Advanced Package Tool.
+ This package contains the user guide and offline guide, for the
+ advanced package tool APT. Both a html and a text version are
+ included.
 
 Package: libapt-pkg-dev
 Architecture: any
