@@ -178,6 +178,8 @@ debPackagesIndex::debPackagesIndex(string const &URI, string const &Dist, string
 {
 	if (Architecture == "native")
 		Architecture = _config->Find("APT::Architecture");
+        _config->Set("Aquire::Debdelta::Replace-Rule::URI-Space::"+URI,
+                _config->Find("Aquire::Debdelta::Replace-Rule::Replace-URI"));
 }
 									/*}}}*/
 // PackagesIndex::ArchiveInfo - Short version of the archive url	/*{{{*/

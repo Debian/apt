@@ -22,7 +22,6 @@
  * */
 class DebdeltaMethod : public pkgAcqMethod {
    bool Debug;
-   string NewPackageName;
    string DebdeltaFile;
    string FromFile;
    string ToFile;
@@ -77,8 +76,8 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
    }
    if (ExecWait(Process, "debpatch"))
    {
-      if (!FileExists(Itm->DestFile))
-	 return _error->Error("[Debdelta] Failed to patch %s", Itm->DestFile.c_str());
+      if (!FileExists(ToFile))
+	 return _error->Error("[Debdelta] Failed to patch %s", ToFile.c_str());
       // move the .deb to Dir::Cache::Archives
       string FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(ToFile);
       Rename(ToFile, FinalFile);
@@ -97,8 +96,7 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
 
 void DebdeltaMethod::MakeToFile()
 {
-   int Slashpos = DebdeltaFile.rfind("/", DebdeltaFile.length() - 1);
-   string DebdeltaName = DebdeltaFile.substr(Slashpos + 1, DebdeltaFile.length() - 1);
+   string DebdeltaName = flNotDir(DebdeltaFile);
    int NewBegin = DebdeltaName.find("_", 0);
    string PkgName = DebdeltaName.substr(0, NewBegin); 
    NewBegin = DebdeltaName.find("_", NewBegin + 1);
@@ -130,14 +128,14 @@ public:
 	 return 100;
       }
       _config->CndSet("Debug::pkgAcquire::Debdetla", "true");
-      FetchItem *test = new FetchItem;
-      test->DestFile = FromFile;
-      test->Uri = "debdelta://" + string(DebdeltaFile);
-      test->FailIgnore = false;
-      test->IndexFile = false;
-      test->Next = 0;
+      FetchItem *Test = new FetchItem;
+      Test->DestFile = FromFile;
+      Test->Uri = "debdelta://" + string(DebdeltaFile);
+      Test->FailIgnore = false;
+      Test->IndexFile = false;
+      Test->Next = 0;
      
-      return Fetch(test);  
+      return Fetch(Test);  
    }
 };
 

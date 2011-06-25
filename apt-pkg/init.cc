@@ -40,6 +40,8 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("APT::Install-Suggests", false);
    Cnf.Set("Dir","/");
    
+   // Debdelta replacement rule
+   Cnf.Set("Aquire::Debdelta::Replace-Rule::Replace-URI", "http://debdeltas.debian.net/debian-deltas/");
    // State   
    Cnf.Set("Dir::State","var/lib/apt/");
    

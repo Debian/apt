@@ -1067,6 +1067,10 @@ class pkgAcqDebdelta : public pkgAcquire::Item
     */
    bool Trusted; 
 
+   /**
+    * \brief used to debug the class
+    */
+   bool Debug;
    /** \brief Queue up the next available file for this version. */
    bool QueueNext();
    
@@ -1080,7 +1084,7 @@ class pkgAcqDebdelta : public pkgAcquire::Item
    virtual void Finished();
    virtual string HashSum() {return ExpectedHash.toStr(); };
    virtual bool IsTrusted() {return Trusted;};
-   
+   virtual bool ReplaceURI();
    /** \brief Create a new pkgAcqArchive.
     *
     *  \param Owner The pkgAcquire object with which this item is

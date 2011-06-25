@@ -105,18 +105,13 @@ pkgAcquire::Worker::~Worker()
 bool pkgAcquire::Worker::Start()
 {
    // Get the method path
-   std::cerr << "\n  ---------------------------------------------------->>>" << std::endl; 
-   std::cerr << "  pkgAcquire::Worker::Start() starting the worker process" << std::endl;
    string Method = _config->FindDir("Dir::Bin::Methods") + Access;
-   std::cerr << "    Method: " << Method << std::endl;
-   std::cerr << "    Access: " << Access << std::endl;
    if (FileExists(Method) == false)
       return _error->Error(_("The method driver %s could not be found."),Method.c_str());
 
    if (Debug == true)
       clog << "Starting method '" << Method << '\'' << endl;
-   std::cerr << "    Starting method '" << Method << '\'' << std::endl;
-   std::cerr << "    creating the pipes." << std::endl;
+
    // Create the pipes
    int Pipes[4] = {-1,-1,-1,-1};
    if (pipe(Pipes) != 0 || pipe(Pipes+2) != 0)
@@ -128,7 +123,6 @@ bool pkgAcquire::Worker::Start()
    }
    for (int I = 0; I != 4; I++)
       SetCloseExec(Pipes[I],true);
-   std::cerr << "    Forking off the sub process. Pipes[0]: " << Pipes[0] << std::endl;
    // Fork off the process
    Process = ExecFork();
    if (Process == 0)
@@ -143,7 +137,6 @@ bool pkgAcquire::Worker::Start()
       const char *Args[2];
       Args[0] = Method.c_str();
       Args[1] = 0;
-      std::cerr << Args[0] << std::endl;
       execv(Args[0],(char **)Args);
       cerr << "Failed to exec method " << Args[0] << endl;
       _exit(100);
@@ -167,7 +160,7 @@ bool pkgAcquire::Worker::Start()
    RunMessages();
    if (OwnerQ != 0)
       SendConfiguration();
-   std::cerr << "<<<----------------------------------------------------\n" << std::endl;
+
    return true;
 }
 									/*}}}*/
@@ -176,7 +169,6 @@ bool pkgAcquire::Worker::Start()
 /* */
 bool pkgAcquire::Worker::ReadMessages()
 {
-   std::cerr << "pkgAcquire::Worker::ReadMessages() <- [Worker::MessageQueue]" << std::endl;
    if (::ReadMessages(InFd,MessageQueue) == false)
       return MethodFailure();
    //std::cerr << "    MessageQueue {" << MessageQueue[0] << "}" << std::endl;
@@ -189,7 +181,6 @@ bool pkgAcquire::Worker::ReadMessages()
    the parsers in order. */
 bool pkgAcquire::Worker::RunMessages()
 {
-   std::cerr << "pkgAcquire::Worker::RunMessages() of [Worker::MessageQueue]" << std::endl;
    while (MessageQueue.empty() == false)
    {
       string Message = MessageQueue.front();
@@ -221,34 +212,29 @@ bool pkgAcquire::Worker::RunMessages()
       }
       
       // Determine the message number and dispatch
-      std::cerr << "    Message Number: " << Number << std::endl;
       switch (Number)
       {
 	 // 100 Capabilities
 	 case 100:
-         std::cerr <<"    100 Capabilities" << std::endl;
-	 if (Capabilities(Message) == false)
+       	 if (Capabilities(Message) == false)
 	    return _error->Error("Unable to process Capabilities message from %s",Access.c_str());
 	 break;
 	 
 	 // 101 Log
 	 case 101:
-         std::cerr <<"    101 Log" << std::endl;
-	 if (Debug == true)
+       	 if (Debug == true)
 	    clog << " <- (log) " << LookupTag(Message,"Message") << endl;
 	 break;
 	 
 	 // 102 Status
 	 case 102:
-         std::cerr <<"    102 Status" << std::endl;
-	 Status = LookupTag(Message,"Message");
+     	 Status = LookupTag(Message,"Message");
 	 break;
 	    
          // 103 Redirect
          case 103:
          {
-            std::cerr <<"    103 Redirect" << std::endl;
-            if (Itm == 0)
+	    if (Itm == 0)
             {
                _error->Error("Method gave invalid 103 Redirect message");
                break;
@@ -262,7 +248,6 @@ bool pkgAcquire::Worker::RunMessages()
 	 // 200 URI Start
 	 case 200:
 	 {
-            std::cerr <<"    201 URI Start" << std::endl;
 	    if (Itm == 0)
 	    {
 	       _error->Error("Method gave invalid 200 URI Start message");
@@ -288,7 +273,6 @@ bool pkgAcquire::Worker::RunMessages()
 	 // 201 URI Done
 	 case 201:
 	 {
-            std::cerr <<"    201 URI Done" << std::endl;
 	    if (Itm == 0)
 	    {
 	       _error->Error("Method gave invalid 201 URI Done message");
