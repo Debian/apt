@@ -379,14 +379,12 @@ bool pkgPackageManager::VerifyConfigure(PkgIterator Pkg, pkgOrderList &OList)
 	    VerIterator DepInstallVer(Cache,Cache[DepPkg].InstallVer);
 	    
 	    if (DepPkg.CurrentVer() == DepVer && !List->IsFlag(DepPkg,pkgOrderList::UnPacked)) {
-	       clog << "Version " << DepPkg.CurrentVer() << " is installed on the system, satifying this dependancy" << endl;
 	       error=false;
 	       break;
 	    }
 	    
 	    if (Cache[DepPkg].InstallVer == DepVer && 
 	       (List->IsFlag(DepPkg,pkgOrderList::Configured) || OList.IsFlag(DepPkg,pkgOrderList::InList))) {
-	       clog << "Version " << DepInstallVer.VerStr() << " is going to be installed on the system, satifying this dependancy" << endl;
 	       error=false;
 	       break;
 	    }
