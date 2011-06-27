@@ -278,7 +278,7 @@ bool pkgPackageManager::ConfigureAll()
    {
       PkgIterator Pkg(Cache,*I);
 
-      if (ConfigurePkgs == true && VerifyConfigure(Pkg) == false)
+      if (ConfigurePkgs == true && VerifyConfigure(Pkg,OList) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -313,7 +313,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (ConfigurePkgs == true && VerifyConfigure(Pkg) == false)
+      if (ConfigurePkgs == true && VerifyConfigure(Pkg,OList) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
