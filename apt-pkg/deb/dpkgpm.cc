@@ -1442,6 +1442,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       {
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
+         fprintf(report, " \n");
 	 fclose(log);
       }
    }
