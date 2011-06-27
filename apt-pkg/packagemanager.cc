@@ -278,7 +278,7 @@ bool pkgPackageManager::ConfigureAll()
    {
       PkgIterator Pkg(Cache,*I);
 
-      if (ConfigurePkgs == true && Configure(Pkg) == false)
+      if (ConfigurePkgs == true && VerifyConfigure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -313,7 +313,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (ConfigurePkgs == true && Configure(Pkg) == false)
+      if (ConfigurePkgs == true && VerifyConfigure(Pkg) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -336,6 +336,93 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),1);
 
    return true;
+}
+
+// PM::VerifyConfigure - Check configuration of dependancies     /*{{{*/
+// ---------------------------------------------------------------------
+/* This routine checks that all a packages dependancies have been 
+   configured, before it is going to be configured. If this gives a warning 
+   on a virtual package, it means that the package thats providing it is not
+   configured*/
+bool pkgPackageManager::VerifyConfigure(PkgIterator Pkg, pkgOrderList &OList)
+{
+   // If this is true at the end, then the package should not be configured
+   bool error=true;
+   // This holds the the OR status of the previous dependancy  
+   bool previousOr=false;
+
+   // First iterate through the dependancies of Pkg
+   for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); D.end() == false; D++)
+   {
+      
+      /* If the dependancy is of type Depends or PreDepends, we need to check it, but only if it is going to be 
+         configured at some point */
+      if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends) {
+         
+         /* If the previous package and this package are OR dependancies, and the previous package satisfied the dependancy
+            then skip this dependancy as it is not relevent, this will repeat for the next package if the situation is the 
+            same */
+         if (previousOr && !error) { // As error has not been reset, this refers to the previous dependancy 
+            previousOr = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+            continue;
+         }
+        
+         // Reset error
+         error = true;
+
+         // Check thorugh all possible versions of this dependancy (D)
+         SPtrArray<Version *> VList = D.AllTargets();
+	 for (Version **I = VList; *I != 0; I++)
+	 {
+	    VerIterator DepVer(Cache,*I);
+	    PkgIterator DepPkg = DepVer.ParentPkg();
+	    VerIterator DepInstallVer(Cache,Cache[DepPkg].InstallVer);
+	    
+	    if (DepPkg.CurrentVer() == DepVer && !List->IsFlag(DepPkg,pkgOrderList::UnPacked)) {
+	       clog << "Version " << DepPkg.CurrentVer() << " is installed on the system, satifying this dependancy" << endl;
+	       error=false;
+	       break;
+	    }
+	    
+	    if (Cache[DepPkg].InstallVer == DepVer && 
+	       (List->IsFlag(DepPkg,pkgOrderList::Configured) || OList.IsFlag(DepPkg,pkgOrderList::InList))) {
+	       clog << "Version " << DepInstallVer.VerStr() << " is going to be installed on the system, satifying this dependancy" << endl;
+	       error=false;
+	       break;
+	    }
+	 }
+
+         /* Only worry here if this package is a OR with the next, as even though this package does not satisfy the OR
+            the next one might */
+         if (error && !((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)) {
+             _error->Error("Package %s should not be configured because package %s is not configured",Pkg.Name(),D.TargetPkg().Name());
+             return false; 
+         /* If the previous package is a OR but not this package, but there is still an error then fail as it will not
+            be satisfied */    
+         } else if (error && previousOr && !((D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or)) {
+             _error->Error("Package %s should not be configured because package %s (or any alternatives) are not configured",Pkg.Name(),D.TargetPkg().Name());
+             return false; 
+         }
+         
+         previousOr = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+      } else {
+         previousOr=false;
+      }
+   }
+   return true;
+}
+
+// PM::VerifyAndConfigure - Check configuration of dependancies     /*{{{*/
+// ---------------------------------------------------------------------
+/* This routine verifies if a package can be configured and if so 
+   configures it  */
+bool pkgPackageManager::VerifyAndConfigure(PkgIterator Pkg, pkgOrderList &OList)
+{
+   if (VerifyConfigure(Pkg, OList))
+      return Configure(Pkg);
+   else
+      return false;
+   
 }
 									/*}}}*/
 // PM::DepAdd - Add all dependents to the oder list			/*{{{*/

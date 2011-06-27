@@ -73,7 +73,9 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool SmartUnPack(PkgIterator Pkg);
    bool SmartUnPack(PkgIterator Pkg, bool const Immediate);
    bool SmartRemove(PkgIterator Pkg);
-   bool EarlyRemove(PkgIterator Pkg);   
+   bool EarlyRemove(PkgIterator Pkg);  
+   bool VerifyAndConfigure(PkgIterator Pkg, pkgOrderList &OList);
+   bool VerifyConfigure(PkgIterator Pkg, pkgOrderList &OList); 
    
    // The Actual installation implementation
    virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
