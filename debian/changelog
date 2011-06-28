@@ -75,6 +75,9 @@ apt (0.8.15) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - ensure for Multi-Arch:same packages that they are unpacked in
       lock step even in immediate configuration (Closes: #618288)
+  * apt-pkg/orderlist.cc:
+    - ensure that an old version of a package with a provides can
+      never satisfy a dependency of a newer version of this package
 
  -- Michael Vogt <mvo@debian.org>  Mon, 16 May 2011 14:57:52 +0200
 
