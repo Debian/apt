@@ -35,6 +35,8 @@ apt (0.8.14.2) UNRELEASED; urgency=low
     - let VisitRProvides report if the calls were successful
   * apt-pkg/deb/dpkgpm.cc:
     - replace obsolete usleep with nanosleep
+    - remove invalid pkgcache.bin and rebuild it if possible
+    - log reinstall commands in history.log
   * debian/apt{,-utils}.symbols:
     - update both experimental symbol-files to reflect 0.8.14 state
   * debian/rules:
@@ -75,11 +77,16 @@ apt (0.8.14.2) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - ensure for Multi-Arch:same packages that they are unpacked in
       lock step even in immediate configuration (Closes: #618288)
+  * apt-pkg/init.cc:
+    - don't set deprecated APT::Acquire::Translation, thanks Jörg Sommer!
+  * cmdline/apt-config.cc:
+    - show Acquire::Languages and APT::Architectures settings
+      in 'dump' (Closes: 626739)
   * apt-pkg/orderlist.cc:
     - ensure that an old version of a package with a provides can
       never satisfy a dependency of a newer version of this package
 
- -- Michael Vogt <mvo@debian.org>  Mon, 16 May 2011 14:57:52 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 May 2011 10:54:23 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 
