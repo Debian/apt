@@ -86,6 +86,22 @@ apt (0.8.14.2) UNRELEASED; urgency=low
     - ensure that an old version of a package with a provides can
       never satisfy a dependency of a newer version of this package
 
+  [ Michael Vogt ]
+  * methods/mirror.cc:
+    - ignore lines starting with "#" in the mirror file
+    - ignore non http urls in the mirrors
+    - append the dist (e.g. sid, wheezy) as a query string when
+      asking for a suitable mirror 
+  * apt-pkg/deb/deblistparser.cc:
+    - include all known languages when building the apt cache
+      (LP: #794907)
+  * apt-pkg/deb/debindexfile.cc:
+    - remove some no longer valid checks for "TranslationsAvailable()"
+
+  [ Kenneth Solbø Andersen ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - set permissions of term.log to root.adm and 644 (LP: #404724)
+
  -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 28 May 2011 10:54:23 +0200
 
 apt (0.8.14.1) unstable; urgency=low
