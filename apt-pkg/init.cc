@@ -85,9 +85,6 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.bak$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
 
-   // Translation
-   Cnf.Set("APT::Acquire::Translation", "environment");
-
    // Default cdrom mount point
    Cnf.Set("Acquire::cdrom::mount", "/media/cdrom/");
 

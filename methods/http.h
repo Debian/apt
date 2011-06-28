@@ -182,7 +182,7 @@ class HttpMethod : public pkgAcqMethod
    string AutoDetectProxyCmd;
 
    public:
-   friend class ServerState;
+   friend struct ServerState;
 
    FileFd *File;
    ServerState *Server;
