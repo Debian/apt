@@ -1,5 +1,32 @@
 apt (0.8.15) UNRELEASED; urgency=low
 
+  [ Christian Perrier ]
+  * Catalan translation update (Jordi Mallach). Closes: #630657
+
+  [ Michael Vogt ]
+  * debian/control:
+    - modernize package description (closes: #624618)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 28 Jun 2011 10:38:02 +0100
+
+apt (0.8.15~exp3) experimental; urgency=low
+
+  * debian/control:
+    - add Breaks: 0.8.15~exp3) for libapt-pkg4.10 and 
+     libapt-inst1.2 (thanks to Jonathan Nieder, closes: #630214)
+    - use depends for the ${shlibs:Depends} to make the breaks work
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 17 Jun 2011 21:51:41 +0200
+
+apt (0.8.15~exp2) experimental; urgency=low
+
+  * debian/control:
+    - fix incorrect Replaces (closes: #630204) for libapt-inst1.2
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 15 Jun 2011 16:51:14 +0200
+
+apt (0.8.15~exp1) experimental; urgency=low
+
   [ Julian Andres Klode ]
   * apt-pkg/depcache.cc:
     - Really release action groups only once (Closes: #622744)
@@ -18,7 +45,6 @@ apt (0.8.15) UNRELEASED; urgency=low
   * Galician translation update (Miguel Anxo Bouzada). Closes: #626505
   * Italian translation update (Milo Casagrande). Closes: #627834
   * German documentation translation update (Chris Leick). Closes: #629949
-  * Catalan translation update (Jordi Mallach). Closes: #630657
 
   [ David Kalnischkies ]
   * fix a bunch of cppcheck warnings/errors based on a patch by
@@ -76,7 +102,16 @@ apt (0.8.15) UNRELEASED; urgency=low
     - ensure for Multi-Arch:same packages that they are unpacked in
       lock step even in immediate configuration (Closes: #618288)
 
- -- Michael Vogt <mvo@debian.org>  Mon, 16 May 2011 14:57:52 +0200
+  [ Michael Vogt ]
+  * methods/mirror.cc:
+    - ignore lines starting with "#" in the mirror file
+    - ignore non http urls in the mirrors
+    - append the dist (e.g. sid, wheezy) as a query string when
+      asking for a suitable mirror 
+  * debian/control:
+    - add libapt-pkg4.10 and libapt-inst1.2 library packages
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 10 Jun 2011 15:32:07 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 
