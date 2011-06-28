@@ -17,48 +17,51 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, debian-archive-keyring, gnupg
 Replaces: manpages-pl (<< 20060617-3~)
 Conflicts: python-apt (<< 0.7.93.2~)
 Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, bzip2, lzma, python-apt
-Description: Debian's advanced package tool
- APT provides mechanisms for package management tasks like searching,
- querying and managing deb packages from one or more package
- repoistories.
+Description: APT's commandline package manager
+ This package provides commandline tools for searching and
+ managing as well as querying information about packages
+ as a low-level access to all features of the libapt-pkg library.
  .
- It supports:
- * searching for package information;
- * resolving package install requests, finding the appropriate
-   version in the archives;
- * fetching packages along with all their required dependencies;
- * authenticating the sources and validating the retrieved data;
- * installing and removing packages on a working system.
- .
- It also provides various terminal-based tools on its own:
- * apt-get for managing packages and retrieval of information
- * apt-cache for querying available information
+ These include:
+ * apt-get for retrieval of packages and information about them
+   from authenticated sources and for installation, upgrade and
+   removal of packages together with their dependencies
+ * apt-cache for querying available information about installed
+   as well as installable packages
  * apt-cdrom to use removable media as a source for packages
  * apt-config as an interface to the configuration settings
  * apt-key as an interface to manage authentication keys
- .
- APT is also highly configurable and can be extended to support
- additional protocols.
 
 Package: libapt-pkg4.10
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt (<< 0.8.15)
 Breaks:  apt (<< 0.8.15~exp3)
-Description: Package search and manipulation library for apt
- This package contains the libapt_pkg library that is used by apt.
- I exposes functionality for use by higher-level interfaces like
- aptitude, synaptic, python-apt and others.
+Description: APT's package managment runtime library
+ This library provides the common functionality for searching and
+ managing packages as well as information about packages.
+ Higher-level package managers can depend upon this library.
+ .
+ This includes:
+ * retrieval of information about packages from multiple sources
+ * retrieval of packages and all dependent packages
+   needed to satisfy a request either through an internal
+   solver or by interfacing with an external one
+ * authenticating the sources and validating the retrieved data
+ * installation and removal of packages in the system
+ * providing different transports to retrieve data over cdrom, ftp,
+   http, rsh as well as an interface to add more transports like
+   https (apt-transport-https) and debtorrent (apt-transport-debtorrent).
 
 Package: libapt-inst1.2
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt-utils (<< 0.8.15), apt (<< 0.8.15)
 Breaks:  apt (<< 0.8.15~exp3), apt-utils (<< 0.8.15~exp3)
-Description: Deb package format query and manipulation library for apt
- This package contains the libapt_inst library used by apt-utils to
- query deb packages for information. Its used by apt-ftparchive,
- python-apt and others.
+Description: APT's deb package format runtime library
+ This library provides methods to query and extract information 
+ from deb packages. This includes the control data and the package
+ file content.
 
 Package: apt-doc
 Architecture: all
@@ -66,9 +69,8 @@ Priority: optional
 Depends: ${misc:Depends}
 Section: doc
 Description: Documentation for APT
- This package contains the user guide and offline guide, for the
- advanced package tool APT. Both a html and a text version are
- included.
+ This package contains the user guide and offline guide for various
+ APT tools which are provided in a html and a text-only version.
 
 Package: libapt-pkg-dev
 Architecture: any
@@ -96,17 +98,24 @@ Package: apt-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: APT utility programs
- This package contains some APT utility programs such as apt-ftparchive,
- apt-sortpkgs and apt-extracttemplates.
+ This package contains some less used commandline utilities related
+ to package managment with APT.
  .
- apt-extracttemplates is used by debconf to prompt for configuration 
- questions before installation. apt-ftparchive is used to create Package
- and other index files. apt-sortpkgs is a Package/Source file normalizer.
+ * apt-extracttemplates is used by debconf to prompt for configuration
+   questions before installation.
+ * apt-ftparchive is used to create Packages and other index files
+   needed to publish an archive of debian packages
+ * apt-sortpkgs is a Packages/Sources file normalizer.
 
 Package: apt-transport-https
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Priority: optional
-Description: APT https transport
- This package contains a APT https transport. It makes it possible to
- use 'deb https://foo distro main' lines in the sources.list.
+Description: https download transport for APT
+ This package enables the usage of 'deb https://foo distro main' lines
+ in the /etc/apt/sources.list so that all package managers using the
+ libapt-pkg library can access metadata and packages available in sources
+ accessable over https (Hypertext Transfer Protocol Secure).
+ .
+ This transports supports server as well as client authenification
+ with certificates.
