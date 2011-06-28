@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'libsame' 'i386,amd64' '1' 'Multi-Arch: same' 'required'
+insertinstalledpackage 'apt' 'i386' '1' 'Depends: libsame (= 1)
+Essential: yes' 'required'
+insertinstalledpackage 'apt2' 'amd64' '1' 'Depends: libsame (= 1)
+Essential: yes' 'required'
+buildsimplenativepackage 'libsame' 'i386,amd64' '2' 'unstable' 'Multi-Arch: same' '' 'required'
+buildsimplenativepackage 'apt' 'i386' '2' 'unstable' 'Depends: libsame (= 2)' '' 'required'
+buildsimplenativepackage 'apt2' 'amd64' '2' 'unstable' 'Depends: libsame (= 2)' '' 'required'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  apt:i386 apt2 libsame libsame:i386
+4 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame [1] (2 unstable [amd64]) [libsame:amd64 on libsame:i386] [libsame:i386 on libsame:amd64] [libsame:i386 apt2:amd64 ]
+Inst libsame:i386 [1] (2 unstable [i386]) [apt2:amd64 apt:i386 ]
+Conf libsame:i386 (2 unstable [i386]) [apt2:amd64 apt:i386 ]
+Conf libsame (2 unstable [amd64]) [apt2:amd64 apt:i386 ]
+Inst apt2 [1] (2 unstable [amd64]) [apt:i386 ]
+Conf apt2 (2 unstable [amd64]) [apt:i386 ]
+Inst apt:i386 [1] (2 unstable [i386])
+Conf apt:i386 (2 unstable [i386])' aptget dist-upgrade -s

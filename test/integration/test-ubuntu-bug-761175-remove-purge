@@ -1,0 +1,38 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+setupsimplenativepackage 'compiz-core' 'i386' '1.0' 'unstable'
+BUILDDIR='incoming/compiz-core-1.0'
+mkdir -p ${BUILDDIR}/debian/compiz-core/etc
+echo 'foo=bar;' > ${BUILDDIR}/compiz.conf
+echo 'compiz.conf	/etc/compiz.conf' >> ${BUILDDIR}/debian/install
+buildpackage "$BUILDDIR" 'unstable' 'main'
+rm -rf "$BUILDDIR"
+
+setupaptarchive
+
+
+testdpkgnotinstalled compiz-core
+msgtest 'Install package' 'compiz-core'
+aptget install compiz-core -qq 2>&1 >/dev/null && msgpass || msgfail
+testdpkginstalled compiz-core
+
+msgtest 'Remove package' 'compiz-core'
+aptget remove compiz-core -y -qq 2>&1 >/dev/null && msgpass || msgfail
+testdpkgnotinstalled compiz-core
+
+msgtest 'Check that conffiles are still around for' 'compiz-core'
+dpkg -l compiz-core | grep '^rc' 2>&1 >/dev/null && msgpass || msgfail
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  compiz-core*
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Purg compiz-core' aptget purge compiz-core -s

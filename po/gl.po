@@ -4,13 +4,15 @@
 #
 # Jacobo Tarrío <jtarrio@debian.org>, 2005, 2007, 2008.
 # mvillarino <mvillarino@users.sourceforge.net>, 2008.
+# Miguel Anxo Bouzada <mbouzada@gmail.com>, 2011.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_gl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-15 06:09+0100\n"
-"PO-Revision-Date: 2008-12-17 22:44+0100\n"
-"Last-Translator: mvillarino <mvillarino@users.sourceforge.net>\n"
+"POT-Creation-Date: 2011-01-12 17:42+0100\n"
+"PO-Revision-Date: 2011-05-12 15:28+0100\n"
+"Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: galician <proxecto@trasno.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -18,6 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-Language: Galician\n"
 
 #: cmdline/apt-cache.cc:156
 #, c-format
@@ -29,9 +32,8 @@ msgid "Total package names: "
 msgstr "Número total de nomes de paquetes : "
 
 #: cmdline/apt-cache.cc:286
-#, fuzzy
 msgid "Total package structures: "
-msgstr "Número total de nomes de paquetes : "
+msgstr "Estruturas de paquetes totais: "
 
 #: cmdline/apt-cache.cc:326
 msgid "  Normal packages: "
@@ -75,7 +77,7 @@ msgstr "Número total de relacións descrición/ficheiro: "
 
 #: cmdline/apt-cache.cc:343
 msgid "Total Provides mappings: "
-msgstr "Número total de mapas de Provides: "
+msgstr "Número total de asignacións provistas: "
 
 #: cmdline/apt-cache.cc:355
 msgid "Total globbed strings: "
@@ -93,84 +95,120 @@ msgstr "Espazo de reserva total: "
 msgid "Total space accounted for: "
 msgstr "Espazo total contabilizado: "
 
-#: cmdline/apt-cache.cc:513 cmdline/apt-cache.cc:1142
+#: cmdline/apt-cache.cc:513 cmdline/apt-cache.cc:1194
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "O ficheiro de paquete %s está sen sincronizar."
 
-#: cmdline/apt-cache.cc:591 cmdline/apt-cache.cc:1377
-#: cmdline/apt-cache.cc:1379 cmdline/apt-cache.cc:1456
+#: cmdline/apt-cache.cc:1273
+msgid "You must give at least one search pattern"
+msgstr "Debe fornecer cando menos un patrón de busca"
+
+#: cmdline/apt-cache.cc:1429 cmdline/apt-cache.cc:1431
+#: cmdline/apt-cache.cc:1508
 msgid "No packages found"
 msgstr "Non se atopou ningún paquete"
 
-#: cmdline/apt-cache.cc:1221
-#, fuzzy
-msgid "You must give at least one search pattern"
-msgstr "Debe fornecer exactamente un patrón"
-
-#: cmdline/apt-cache.cc:1451 apt-pkg/cacheset.cc:440
+#: cmdline/apt-cache.cc:1503 apt-pkg/cacheset.cc:440
 #, c-format
 msgid "Unable to locate package %s"
-msgstr "Non se puido atopar o paquete %s"
+msgstr "Non foi posíbel atopar o paquete %s"
 
-#: cmdline/apt-cache.cc:1481
+#: cmdline/apt-cache.cc:1533
 msgid "Package files:"
 msgstr "Ficheiros de paquetes:"
 
-#: cmdline/apt-cache.cc:1488 cmdline/apt-cache.cc:1586
+#: cmdline/apt-cache.cc:1540 cmdline/apt-cache.cc:1638
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr ""
 "A caché está sen sincronizar, non se pode facer referencia a un ficheiro de "
 "paquetes"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1502
+#: cmdline/apt-cache.cc:1554
 msgid "Pinned packages:"
 msgstr "Paquetes inmobilizados:"
 
-#: cmdline/apt-cache.cc:1514 cmdline/apt-cache.cc:1566
+#: cmdline/apt-cache.cc:1566 cmdline/apt-cache.cc:1618
 msgid "(not found)"
 msgstr "(non se atopou)"
 
-#: cmdline/apt-cache.cc:1523
+#: cmdline/apt-cache.cc:1575
 msgid "  Installed: "
 msgstr "  Instalado: "
 
-#: cmdline/apt-cache.cc:1524
+#: cmdline/apt-cache.cc:1576
 msgid "  Candidate: "
 msgstr "  Candidato: "
 
-#: cmdline/apt-cache.cc:1548 cmdline/apt-cache.cc:1556
+#: cmdline/apt-cache.cc:1600 cmdline/apt-cache.cc:1608
 msgid "(none)"
 msgstr "(ningún)"
 
-#: cmdline/apt-cache.cc:1563
+#: cmdline/apt-cache.cc:1615
 msgid "  Package pin: "
 msgstr "  Inmobilizado: "
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1572
+#: cmdline/apt-cache.cc:1624
 msgid "  Version table:"
 msgstr "  Táboa de versións:"
 
-#: cmdline/apt-cache.cc:1686 cmdline/apt-cdrom.cc:197 cmdline/apt-config.cc:70
+#: cmdline/apt-cache.cc:1738 cmdline/apt-cdrom.cc:197 cmdline/apt-config.cc:70
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:589
-#: cmdline/apt-get.cc:3047 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:2793 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr "%s %s para %s compilado o %s %s\n"
+msgstr "%s %s para %s compilado en %s %s\n"
 
-#: cmdline/apt-cache.cc:1693
+#: cmdline/apt-cache.cc:1745
 #, fuzzy
+#| msgid ""
+#| "Usage: apt-cache [options] command\n"
+#| "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
+#| "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
+#| "\n"
+#| "apt-cache is a low-level tool used to query information\n"
+#| "from APT's binary cache files\n"
+#| "\n"
+#| "Commands:\n"
+#| "   gencaches - Build both the package and source cache\n"
+#| "   showpkg - Show some general information for a single package\n"
+#| "   showsrc - Show source records\n"
+#| "   stats - Show some basic statistics\n"
+#| "   dump - Show the entire file in a terse form\n"
+#| "   dumpavail - Print an available file to stdout\n"
+#| "   unmet - Show unmet dependencies\n"
+#| "   search - Search the package list for a regex pattern\n"
+#| "   show - Show a readable record for the package\n"
+#| "   showauto - Display a list of automatically installed packages\n"
+#| "   depends - Show raw dependency information for a package\n"
+#| "   rdepends - Show reverse dependency information for a package\n"
+#| "   pkgnames - List the names of all packages in the system\n"
+#| "   dotty - Generate package graphs for GraphViz\n"
+#| "   xvcg - Generate package graphs for xvcg\n"
+#| "   policy - Show policy settings\n"
+#| "\n"
+#| "Options:\n"
+#| "  -h   This help text.\n"
+#| "  -p=? The package cache.\n"
+#| "  -s=? The source cache.\n"
+#| "  -q   Disable progress indicator.\n"
+#| "  -i   Show only important deps for the unmet command.\n"
+#| "  -c=? Read this configuration file\n"
+#| "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#| "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgid ""
 "Usage: apt-cache [options] command\n"
+"       apt-cache [options] add file1 [file2 ...]\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
 "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
 "\n"
-"apt-cache is a low-level tool used to query information\n"
-"from APT's binary cache files\n"
+"apt-cache is a low-level tool used to manipulate APT's binary\n"
+"cache files, and query information from them\n"
 "\n"
 "Commands:\n"
+"   add - Add a package file to the source cache\n"
 "   gencaches - Build both the package and source cache\n"
 "   showpkg - Show some general information for a single package\n"
 "   showsrc - Show source records\n"
@@ -198,61 +236,59 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Emprego: apt-cache [opcións] orde\n"
-"         apt-cache [opcións] add fich1 [fich2 ...]\n"
-"         apt-cache [opcións] showpkg paq1 [paq2 ...]\n"
-"         apt-cache [opcións] showsrc paq1 [paq2 ...]\n"
+"Uso: apt-cache [opcións] orde\n"
+"       apt-cache [opcións] showpkg paquete1 [paquete2 ...]\n"
+"       apt-cache [opcións] showsrc paquete1 [paquete2 ...]\n"
 "\n"
-"apt-cache é unha ferramenta de baixo nivel que se emprega para manipular\n"
-"os ficheiros binarios de caché de APT e obter información deles\n"
+"apt-cache é unha ferramenta de baixo nivel usada para consultar\n"
+"informacións dos ficheiros binarios da cache do APT\n"
 "\n"
 "Ordes:\n"
-"   add - Engade un ficheiro de paquetes á caché de fontes\n"
-"   gencaches - Reconstrúe as cachés de paquetes e fontes\n"
-"   showpkg - Amosa información xeral dun paquete\n"
-"   showsrc - Amosa os rexistros de fontes\n"
-"   stats - Amosa algunhas estatísticas básicas\n"
-"   dump - Amosa todo o ficheiro nun formato abreviado\n"
-"   dumpavail - Saca un ficheiro de dispoñibles pola saída estándar\n"
-"   unmet - Amosa as dependencias sen cumprir\n"
-"   search - Busca unha expresión regular na lista de paquetes\n"
-"   show - Amosa un rexistro lexible para o paquete\n"
-"   depends - Amosa a información bruta de dependencias dun paquete\n"
-"   rdepends - Amosa información de dependencias inversas dun paquete\n"
-"   pkgnames - Amosa os nomes de tódolos paquetes\n"
-"   dotty - Xera gráficas de paquetes para GraphViz\n"
-"   xvcg - Xera gráficas de paquetes para xvcg\n"
-"   policy - Amosa a configuración de normativa\n"
+"   gencaches - Constrúe as caches de paquete e fonte\n"
+"   showpkg - Mostra algunhas informacións xerais dun único paquete\n"
+"   showsrc - Mostra rexistros da fonte\n"
+"   stats - Mostra algunhas estatísticas básicas\n"
+"   dump - Mostra o ficheiro enteiro nun formato concreto\n"
+"   dumpavail - Imprime un ficheiro dispoñíbel para stdout\n"
+"   unmet - Mostra dependencias non atopadas\n"
+"   search - Busca na lista de paquetes por unha expresión regular\n"
+"   show - Mostra un rexistro lexíbel para o paquete\n"
+"   showauto - Mostra unha lista dos paquetes instalados automaticamente\n"
+"   depends - Mostra informacións brutas de dependencia para un paquete\n"
+"   rdepends - Mostra informacións de dependencia inversa para un paquete\n"
+"   pkgnames - Lista os nomes de todos os paquetes no sistema\n"
+"   dotty - Xera gráficos de paquete para o GraphViz\n"
+"   xvcg - Xera gráficos de paquete para o xvcg\n"
+"   policy - Mostra configuracións da política\n"
 "\n"
-"Opcións:\n"
+"Options:\n"
 "  -h   Este texto de axuda.\n"
-"  -p=? A caché de paquetes.\n"
-"  -s=? A caché de fontes.\n"
+"  -p=? A cache do paquete.\n"
+"  -s=? A cache da fonte.\n"
 "  -q   Desactiva o indicador de progreso.\n"
-"  -i   Amosa só as dependencias importantes na orde unmet.\n"
-"  -c=? Le este ficheiro de configuración.\n"
-"  -o=? Establece unha opción de configuración, por exemplo: -o dir::cache=/"
+"  -i   Mostra soamente dependencias importantes para a orde unmet.\n"
+"  -c=? Ler este ficheiro de configuración\n"
+"  -o=? Define unha opción arbitraria de configuración, ex. -o dir::cache=/"
 "tmp\n"
-"Vexa as páxinas de manual de apt-cache(8) e apt.conf(5) para máis "
+"Vexa a páxina de manual apt-cache(8) e apt.conf(5) para obter mais "
 "información.\n"
 
 #: cmdline/apt-cdrom.cc:77
-#, fuzzy
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "Forneza un nome para este disco, coma \"Debian 2.1r1 Disco 1\""
+msgstr "Forneza un nome para este disco, como «Debian 5.0.3 Disco 1»"
 
 #: cmdline/apt-cdrom.cc:92
 msgid "Please insert a Disc in the drive and press enter"
-msgstr "Introduza un disco na unidade e prema Intro"
+msgstr "Insira un disco na unidade e prema Intro"
 
 #: cmdline/apt-cdrom.cc:127
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to mount '%s' to '%s'"
-msgstr "Non se puido cambiar o nome de %s a %s"
+msgstr "Produciuse un fallo ao montar «%s» en «%s»"
 
 #: cmdline/apt-cdrom.cc:162
 msgid "Repeat this process for the rest of the CDs in your set."
-msgstr "Repita este proceso para o resto de CDs do seu conxunto."
+msgstr "Repita este proceso para o resto de CD do seu conxunto."
 
 #: cmdline/apt-config.cc:41
 msgid "Arguments not in pairs"
@@ -273,7 +309,7 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Emprego: apt-config [opcións] orde\n"
+"Uso: apt-config [opcións] orde\n"
 "\n"
 "apt-config é unha ferramenta simple para ler a configuración de APT\n"
 "\n"
@@ -284,7 +320,7 @@ msgstr ""
 "Opcións:\n"
 "  -h   Este texto de axuda.\n"
 "  -c=? Le este ficheiro de configuración\n"
-"  -o=? Establece unha opción de configuración, por exemplo: -o dir::cache=/"
+"  -o=? Estabelece unha opción de configuración, por exemplo: -o dir::cache=/"
 "tmp\n"
 
 #: cmdline/apt-extracttemplates.cc:98
@@ -305,26 +341,26 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Emprego: apt-extracttemplates fich1 [fich2 ...]\n"
+"Uso: apt-extracttemplates fich1 [fich2 ...]\n"
 "\n"
 "apt-extracttemplates é unha ferramenta para extraer información\n"
 "de configuración e patróns dos paquetes debian\n"
 "\n"
 "Opcións:\n"
 "  -h   Este texto de axuda\n"
-"  -t   Establece o directorio temporal\n"
+"  -t   Estabelece o directorio temporal\n"
 "  -c=? Le este ficheiro de configuración\n"
-"  -o=? Establece unha opción de configuración, por exemplo: -o dir::cache=/"
+"  -o=? Estabelece unha opción de configuración, por exemplo: -o dir::cache=/"
 "tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:1175
+#: cmdline/apt-extracttemplates.cc:267 apt-pkg/pkgcachegen.cc:1171
 #, c-format
 msgid "Unable to write to %s"
-msgstr "Non se puido escribir en %s"
+msgstr "Non é posíbel escribir en %s"
 
 #: cmdline/apt-extracttemplates.cc:309
 msgid "Cannot get debconf version. Is debconf installed?"
-msgstr "Non se puido obter a versión de debconf. ¿Debconf está instalado?"
+msgstr "Non é posíbel obter a versión de debconf. Debconf está instalado?"
 
 #: ftparchive/apt-ftparchive.cc:170 ftparchive/apt-ftparchive.cc:347
 msgid "Package extension list is too long"
@@ -335,7 +371,7 @@ msgstr "A lista de extensións de paquetes é longa de máis"
 #: ftparchive/apt-ftparchive.cc:276 ftparchive/apt-ftparchive.cc:298
 #, c-format
 msgid "Error processing directory %s"
-msgstr "Erro ao procesar o directorio %s"
+msgstr "Produciuse un erro ao procesar o directorio %s"
 
 #: ftparchive/apt-ftparchive.cc:260
 msgid "Source extension list is too long"
@@ -343,12 +379,12 @@ msgstr "A lista de extensións de fontes é longa de máis"
 
 #: ftparchive/apt-ftparchive.cc:377
 msgid "Error writing header to contents file"
-msgstr "Erro ao gravar a cabeceira no ficheiro de contido"
+msgstr "Produciuse un erro ao gravar a cabeceira no ficheiro de contido"
 
 #: ftparchive/apt-ftparchive.cc:407
 #, c-format
 msgid "Error processing contents %s"
-msgstr "Erro ao procesar o contido %s"
+msgstr "Produciuse un erro ao procesar o contido %s"
 
 #: ftparchive/apt-ftparchive.cc:595
 msgid ""
@@ -399,81 +435,77 @@ msgstr ""
 "       generate config [grupos]\n"
 "       clean config\n"
 "\n"
-"apt-ftparchive xera ficheiros de índices para arquivos de Debian. Soporta\n"
+"apt-ftparchive xera ficheiros de índices para arquivos de Debian. Admite\n"
 "varios estilos de xeración, de totalmente automática a substitutos "
 "funcionais\n"
 "de dpkg-scanpackages e dpkg-scansources\n"
 "\n"
 "apt-ftparchive xera ficheiros Packages dunha árbore de .debs. O ficheiro\n"
-"Packages ten o contido de tódolos campos de control de cada paquete, así\n"
-"coma a suma MD5 e o tamaño do ficheiro. Sopórtase un ficheiro de \"overrides"
-"\"\n"
+"Packages ten o contido de todos os campos de control de cada paquete, así\n"
+"coma a suma MD5 e o tamaño do ficheiro. Admitese un ficheiro de «overrides»\n"
 "para forzar o valor dos campos Priority e Section.\n"
 "\n"
 "De xeito semellante, apt-ftparchive xera ficheiros Sources dunha árbore de\n"
 ".dscs. Pódese empregar a opción --source-override para especificar un "
 "ficheiro\n"
-"de \"overrides\" para fontes.\n"
+"de «overrides» para fontes.\n"
 "\n"
-"As ordes \"packages\" e \"sources\" deberían se executar na raíz da árbore.\n"
-"\"Rutabinaria\" debería apuntar á base da busca recursiva e o ficheiro\n"
-"\"fichoverride\" debería conter os modificadores de \"override\". "
-"\"Prefixoruta\"\n"
+"As ordes «packages» e «sources» deberían executarse na raíz da árbore.\n"
+"«Rutabinaria» debería apuntar á base da busca recursiva e o ficheiro\n"
+"«fichoverride» debería conter os modificadores de «override». «Prefixoruta»\n"
 "engádese aos campos de nomes de ficheiros se está presente. Un exemplo\n"
 "de emprego do arquivo de Debian:\n"
-"   apt-ftparchive packages dists/potato/main/binary-i386/ > \\\n"
+"   apt-ftparchive packages dists/potato/main/binary-i386/ > \n"
 "               dists/potato/main/binary-i386/Packages\n"
 "\n"
 "Opcións:\n"
 "  -h    Este texto de axuda\n"
 "  --md5 Controla a xeración de MD5\n"
-"  -s=?  Ficheiro de \"override\" de fontes\n"
+"  -s=?  Ficheiro de «override» de fontes\n"
 "  -q    Non produce ningunha saída por pantalla\n"
 "  -d=?  Escolle a base de datos de caché opcional\n"
 "  --no-delink Activa o modo de depuración de desligado\n"
 "  --contents  Controla a xeración do ficheiro de contido\n"
 "  -c=?  Le este ficheiro de configuración\n"
-"  -o=?  Establece unha opción de configuración"
+"  -o=?  Estabelece unha opción de configuración"
 
 #: ftparchive/apt-ftparchive.cc:801
 msgid "No selections matched"
-msgstr "Ningunha selección encaixou"
+msgstr "Non coincide ningunha selección"
 
 #: ftparchive/apt-ftparchive.cc:879
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
-msgstr "Fallan ficheiros no grupo de ficheiros de paquetes \"%s\""
+msgstr "Faltan ficheiros no grupo de ficheiros de paquetes «%s»"
 
 #: ftparchive/cachedb.cc:43
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
-msgstr ""
-"A base de datos estaba corrompida, cambiouse o nome do ficheiro a %s.old"
+msgstr "A base de datos estaba danada, cambiouse o nome do ficheiro a %s.old"
 
 #: ftparchive/cachedb.cc:61
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
-msgstr "A base de datos é antiga, trátase de actualizar %s"
+msgstr "A base de datos é antiga, tentando anovar %s"
 
 #: ftparchive/cachedb.cc:72
-#, fuzzy
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
 msgstr ""
-"O formato da base de datos non é válido. Se actualizou desde unha versión "
-"antiga de apt, elimine e volva crear a base de datos."
+"O formato da base de datos non é correcto. Se a anovou desde unha versión "
+"antiga de apt, retirea e volva a crear a base de datos"
 
 #: ftparchive/cachedb.cc:77
 #, c-format
 msgid "Unable to open DB file %s: %s"
-msgstr "Non se puido abrir o ficheiro de base de datos %s: %s"
+msgstr "Non é posíbel abrir o ficheiro de base de datos %s: %s"
 
 #: ftparchive/cachedb.cc:123 apt-inst/extract.cc:178 apt-inst/extract.cc:190
 #: apt-inst/extract.cc:207 apt-inst/deb/dpkgdb.cc:117
 #, c-format
 msgid "Failed to stat %s"
-msgstr "Non se atopou %s"
+msgstr "Non foi posíbel determinar o estado %s"
 
 #: ftparchive/cachedb.cc:242
 msgid "Archive has no control record"
@@ -481,17 +513,17 @@ msgstr "O arquivo non ten un rexistro de control"
 
 #: ftparchive/cachedb.cc:448
 msgid "Unable to get a cursor"
-msgstr "Non se puido obter un cursor"
+msgstr "Non é posíbel obter un cursor"
 
 #: ftparchive/writer.cc:73
 #, c-format
 msgid "W: Unable to read directory %s\n"
-msgstr "A: Non se puido ler o directorio %s\n"
+msgstr "A: non é posíbel ler o directorio %s\n"
 
 #: ftparchive/writer.cc:78
 #, c-format
 msgid "W: Unable to stat %s\n"
-msgstr "A: Non se atopou %s\n"
+msgstr "A: non é posíbel atopar %s\n"
 
 #: ftparchive/writer.cc:134
 msgid "E: "
@@ -503,21 +535,21 @@ msgstr "A: "
 
 #: ftparchive/writer.cc:143
 msgid "E: Errors apply to file "
-msgstr "E: Os erros aplícanse ao ficheiro "
+msgstr "E: os erros aplícanse ao ficheiro "
 
 #: ftparchive/writer.cc:161 ftparchive/writer.cc:193
 #, c-format
 msgid "Failed to resolve %s"
-msgstr "Non se puido resolver %s"
+msgstr "Non foi posíbel solucionar %s"
 
 #: ftparchive/writer.cc:174
 msgid "Tree walking failed"
-msgstr "O percorrido da árbore fallou"
+msgstr "Fallou o percorrido da árbore"
 
 #: ftparchive/writer.cc:201
 #, c-format
 msgid "Failed to open %s"
-msgstr "Non se puido abrir %s"
+msgstr "Non foi posíbel abrir %s"
 
 #: ftparchive/writer.cc:260
 #, c-format
@@ -527,22 +559,22 @@ msgstr " DesLig %s [%s]\n"
 #: ftparchive/writer.cc:268
 #, c-format
 msgid "Failed to readlink %s"
-msgstr "Non se puido ler a ligazón %s"
+msgstr "Non foi posíbel ler a ligazón %s"
 
 #: ftparchive/writer.cc:272
 #, c-format
 msgid "Failed to unlink %s"
-msgstr "Non se puido borrar %s"
+msgstr "Non foi posíbel desligar %s"
 
 #: ftparchive/writer.cc:279
 #, c-format
 msgid "*** Failed to link %s to %s"
-msgstr "*** Non se puido ligar %s con %s"
+msgstr "*** Non foi posíbel ligar %s con %s"
 
 #: ftparchive/writer.cc:289
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
-msgstr " Alcanzouse o límite de desligado de %sB.\n"
+msgstr " Acadouse o límite de desligado de %sB.\n"
 
 #: ftparchive/writer.cc:393
 msgid "Archive had no package field"
@@ -551,7 +583,7 @@ msgstr "O arquivo non tiña un campo Package"
 #: ftparchive/writer.cc:401 ftparchive/writer.cc:688
 #, c-format
 msgid "  %s has no override entry\n"
-msgstr "  %s non ten unha entrada de \"override\"\n"
+msgstr "  %s non ten unha entrada de «override»\n"
 
 #: ftparchive/writer.cc:464 ftparchive/writer.cc:793
 #, c-format
@@ -561,68 +593,68 @@ msgstr "  O mantedor de %s é %s, non %s\n"
 #: ftparchive/writer.cc:698
 #, c-format
 msgid "  %s has no source override entry\n"
-msgstr "  %s non ten unha entrada de \"override\" de código fonte\n"
+msgstr "  %s non ten unha entrada de «override» de código fonte\n"
 
 #: ftparchive/writer.cc:702
 #, c-format
 msgid "  %s has no binary override entry either\n"
-msgstr "  %s tampouco ten unha entrada de \"override\" de binarios\n"
+msgstr "  %s tampouco ten unha entrada de «override» de binarios\n"
 
 #: ftparchive/contents.cc:321
 #, c-format
 msgid "Internal error, could not locate member %s"
-msgstr "Erro interno, non se puido atopar o membro %s"
+msgstr "Produciuse un erro interno, non foi posíbel atopar o membro %s"
 
 #: ftparchive/contents.cc:358 ftparchive/contents.cc:389
 msgid "realloc - Failed to allocate memory"
-msgstr "realloc - Non se puido reservar memoria"
+msgstr "realloc - Non foi posíbel reservar memoria"
 
 #: ftparchive/override.cc:34 ftparchive/override.cc:142
 #, c-format
 msgid "Unable to open %s"
-msgstr "Non se puido abrir %s"
+msgstr "Non é posíbel puido abrir %s"
 
 #: ftparchive/override.cc:60 ftparchive/override.cc:166
 #, c-format
 msgid "Malformed override %s line %lu #1"
-msgstr "\"Override\" %s liña %lu mal formado (1)"
+msgstr "«Override» %s liña %lu incorrecta (1)"
 
 #: ftparchive/override.cc:74 ftparchive/override.cc:178
 #, c-format
 msgid "Malformed override %s line %lu #2"
-msgstr "\"Override\" %s liña %lu mal formado (2)"
+msgstr "«Override» %s liña %lu incorrecta (2)"
 
 #: ftparchive/override.cc:88 ftparchive/override.cc:191
 #, c-format
 msgid "Malformed override %s line %lu #3"
-msgstr "\"Override\" %s liña %lu mal formado (3)"
+msgstr "«Override» %s liña %lu incorrecta (3)"
 
 #: ftparchive/override.cc:127 ftparchive/override.cc:201
 #, c-format
 msgid "Failed to read the override file %s"
-msgstr "Non se puido ler o ficheiro de \"overrides\" %s"
+msgstr "Non foi posíbel ler o ficheiro de «override» %s"
 
 #: ftparchive/multicompress.cc:72
 #, c-format
 msgid "Unknown compression algorithm '%s'"
-msgstr "Algoritmo de compresión \"%s\" descoñecido"
+msgstr "Algoritmo de compresión «%s» descoñecido"
 
 #: ftparchive/multicompress.cc:102
 #, c-format
 msgid "Compressed output %s needs a compression set"
-msgstr "A saída comprimida %s precisa dun xogo de compresión"
+msgstr "A saída comprimida %s precisa dun conxunto de compresión"
 
 #: ftparchive/multicompress.cc:169 methods/rsh.cc:91
 msgid "Failed to create IPC pipe to subprocess"
-msgstr "Non se puido crear a canle IPC ao subproceso"
+msgstr "Non foi posíbel crear a canle IPC ao subproceso"
 
 #: ftparchive/multicompress.cc:195
 msgid "Failed to create FILE*"
-msgstr "Non se puido crear o FILE*"
+msgstr "Non foi posíbel crear o FILE*"
 
 #: ftparchive/multicompress.cc:198
 msgid "Failed to fork"
-msgstr "Non se puido chamar a fork"
+msgstr "Non foi posíbel facer a bifurcación"
 
 #: ftparchive/multicompress.cc:212
 msgid "Compress child"
@@ -631,15 +663,15 @@ msgstr "Fillo de compresión"
 #: ftparchive/multicompress.cc:235
 #, c-format
 msgid "Internal error, failed to create %s"
-msgstr "Erro interno, non se puido crear %s"
+msgstr "Produciuse un erro interno, non foi posíbel crear %s"
 
 #: ftparchive/multicompress.cc:286
 msgid "Failed to create subprocess IPC"
-msgstr "Non se puido crear o IPC do subproceso"
+msgstr "Non foi posíbel crear o IPC do subproceso"
 
 #: ftparchive/multicompress.cc:321
 msgid "Failed to exec compressor "
-msgstr "Non se puido executar o compresor "
+msgstr "Non foi posíbel executar o compresor "
 
 #: ftparchive/multicompress.cc:360
 msgid "decompressor"
@@ -647,21 +679,21 @@ msgstr "descompresor"
 
 #: ftparchive/multicompress.cc:403
 msgid "IO to subprocess/file failed"
-msgstr "A E/S ao subproceso/ficheiro fallou"
+msgstr "Produciuse un fallo na E/S do subproceso/ficheiro"
 
 #: ftparchive/multicompress.cc:455
 msgid "Failed to read while computing MD5"
-msgstr "Non se puido ler ao calcular o MD5"
+msgstr "Non foi posíbel ler ao calcular o MD5"
 
 #: ftparchive/multicompress.cc:472
 #, c-format
 msgid "Problem unlinking %s"
-msgstr "Problema ao borrar %s"
+msgstr "Xurdiu un problema ao desligar %s"
 
 #: ftparchive/multicompress.cc:487 apt-inst/extract.cc:185
 #, c-format
 msgid "Failed to rename %s to %s"
-msgstr "Non se puido cambiar o nome de %s a %s"
+msgstr "Non foi posíbel cambiar o nome de %s a %s"
 
 #: cmdline/apt-get.cc:135
 msgid "Y"
@@ -670,7 +702,7 @@ msgstr "S"
 #: cmdline/apt-get.cc:157 apt-pkg/cachefilter.cc:29
 #, c-format
 msgid "Regex compilation error - %s"
-msgstr "Erro na compilación da expresión regular - %s"
+msgstr "Produciuse un erro na compilación da expresión regular - %s"
 
 #: cmdline/apt-get.cc:252
 msgid "The following packages have unmet dependencies:"
@@ -679,28 +711,28 @@ msgstr "Os seguintes paquetes teñen dependencias sen cumprir:"
 #: cmdline/apt-get.cc:342
 #, c-format
 msgid "but %s is installed"
-msgstr "pero %s está instalado"
+msgstr "mais %s está instalado"
 
 #: cmdline/apt-get.cc:344
 #, c-format
 msgid "but %s is to be installed"
-msgstr "pero hase instalar %s"
+msgstr "mais vaise instalar %s"
 
 #: cmdline/apt-get.cc:351
 msgid "but it is not installable"
-msgstr "pero non é instalable"
+msgstr "mais non é instalábel"
 
 #: cmdline/apt-get.cc:353
 msgid "but it is a virtual package"
-msgstr "pero é un paquete virtual"
+msgstr "mais é un paquete virtual"
 
 #: cmdline/apt-get.cc:356
 msgid "but it is not installed"
-msgstr "pero non está instalado"
+msgstr "mais non está instalado"
 
 #: cmdline/apt-get.cc:356
 msgid "but it is not going to be installed"
-msgstr "pero non se ha instalar"
+msgstr "mais non se vai a instalar"
 
 #: cmdline/apt-get.cc:361
 msgid " or"
@@ -712,41 +744,41 @@ msgstr "Os seguintes paquetes NOVOS hanse instalar:"
 
 #: cmdline/apt-get.cc:420
 msgid "The following packages will be REMOVED:"
-msgstr "Os seguintes paquetes hanse ELIMINAR:"
+msgstr "Vanse RETIRAR os paquetes seguintes:"
 
 #: cmdline/apt-get.cc:442
 msgid "The following packages have been kept back:"
-msgstr "Os seguintes paquetes consérvanse:"
+msgstr "Consérvanse os seguintes paquetes:"
 
 #: cmdline/apt-get.cc:465
 msgid "The following packages will be upgraded:"
-msgstr "Os seguintes paquetes hanse actualizar:"
+msgstr "Vanse anovar os paquetes seguintes:"
 
 #: cmdline/apt-get.cc:488
 msgid "The following packages will be DOWNGRADED:"
-msgstr "Os seguintes paquetes hanse DESACTUALIZAR:"
+msgstr "Vanse REVERTER os seguintes paquetes :"
 
 #: cmdline/apt-get.cc:508
 msgid "The following held packages will be changed:"
-msgstr "Os seguintes paquetes retidos hanse modificar:"
+msgstr "Vanse modificar os paquetes retidos seguintes:"
 
 #: cmdline/apt-get.cc:563
 #, c-format
 msgid "%s (due to %s) "
-msgstr "%s (debido a %s) "
+msgstr "%s (por mor de %s) "
 
 #: cmdline/apt-get.cc:571
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
 msgstr ""
-"AVISO: Hanse eliminar os seguintes paquetes esenciais.\n"
-"¡Isto NON se debe facer a menos que saiba exactamente o que está a facer!"
+"AVISO: Retiraranse os seguintes paquetes esenciais.\n"
+"Isto NON se debe facer a menos que saiba exactamente o que está a facer!"
 
 #: cmdline/apt-get.cc:605
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu actualizados, %lu instalados, "
+msgstr "%lu anovados, %lu instalados, "
 
 #: cmdline/apt-get.cc:609
 #, c-format
@@ -756,27 +788,27 @@ msgstr "%lu reinstalados, "
 #: cmdline/apt-get.cc:611
 #, c-format
 msgid "%lu downgraded, "
-msgstr "%lu desactualizados, "
+msgstr "%lu revertidos, "
 
 #: cmdline/apt-get.cc:613
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu hanse eliminar e %lu sen actualizar.\n"
+msgstr "Vanse retirar %lu e deixar %lu sen anovar.\n"
 
 #: cmdline/apt-get.cc:617
 #, c-format
 msgid "%lu not fully installed or removed.\n"
-msgstr "%lu non instalados ou eliminados de todo.\n"
+msgstr "%lu non instalados ou retirados de todo.\n"
 
 #: cmdline/apt-get.cc:639
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "Nota, escóllese %s para a expresión regular \"%s\"\n"
+msgstr "Nota, seleccione «%s» para a tarefa «%s»\n"
 
 #: cmdline/apt-get.cc:645
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "Nota, escóllese %s para a expresión regular \"%s\"\n"
+msgstr "Nota, seleccione «%s» para a expresión regular «%s»\n"
 
 #: cmdline/apt-get.cc:662
 #, c-format
@@ -788,9 +820,8 @@ msgid " [Installed]"
 msgstr " [Instalado]"
 
 #: cmdline/apt-get.cc:682
-#, fuzzy
 msgid " [Not candidate version]"
-msgstr "Versións candidatas"
+msgstr " [Non hai unha versión candidata]"
 
 #: cmdline/apt-get.cc:684
 msgid "You should explicitly select one to install."
@@ -803,182 +834,185 @@ msgid ""
 "This may mean that the package is missing, has been obsoleted, or\n"
 "is only available from another source\n"
 msgstr ""
-"O paquete %s non está dispoñible, pero outro paquete fai referencia a el.\n"
-"Isto pode significar que o paquete falla, está obsoleto ou só está\n"
-"dispoñible noutra fonte.\n"
+"O paquete %s non está dispoñíbel, mais outro paquete fai referencia a el.\n"
+"Isto pode significar que falta o paquete, está obsoleto ou só está\n"
+"dispoñíbel noutra fonte.\n"
 
 #: cmdline/apt-get.cc:705
 msgid "However the following packages replace it:"
-msgstr "Nembargantes, os seguintes paquetes substitúeno:"
+msgstr "Porén, os seguintes paquetes substitúeno:"
 
 #: cmdline/apt-get.cc:717
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr "O paquete %s non ten un candidato para a instalación"
+msgstr "O paquete «%s» non ten unha instalación candidata"
 
 #: cmdline/apt-get.cc:728
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
-msgstr ""
+msgstr "Non se poden retirar os paquetes virtuais como «%s»\n"
 
 #: cmdline/apt-get.cc:759
-#, fuzzy, c-format
+#, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "Nota, escóllese %s no canto de %s\n"
+msgstr "Nota, seleccione «%s» no canto de «%s»\n"
 
 #: cmdline/apt-get.cc:789
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "Omítese %s, xa está instalado e non se especificou a actualización.\n"
+msgstr "Omítese %s, xa está instalado e non se especificou a anovación.\n"
 
 #: cmdline/apt-get.cc:793
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr "Omítese %s, xa está instalado e non se especificou a actualización.\n"
+msgstr "Omitindo %s, non está instalado e só se solicitaron as anovacións.\n"
 
 #: cmdline/apt-get.cc:803
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "A reinstalación de %s non é posible, non se pode descargar.\n"
+msgstr "A reinstalación de %s non é posíbel, non se pode descargar.\n"
 
 #: cmdline/apt-get.cc:808
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s xa é a versión máis recente.\n"
 
-#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:2024
+#: cmdline/apt-get.cc:827 cmdline/apt-get.cc:2027
 #, c-format
 msgid "%s set to manually installed.\n"
-msgstr "%s cambiouse a instalado manualmente.\n"
+msgstr "%s cambiado a instalado manualmente.\n"
 
 #: cmdline/apt-get.cc:853
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "Escolleuse a versión %s (%s) de %s\n"
+msgstr "Versión seleccionada «%s» (%s) para «%s»\n"
 
 #: cmdline/apt-get.cc:858
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "Escolleuse a versión %s (%s) de %s\n"
+msgstr "Versión seleccionada «%s» (%s) para «%s» xa que «%s»\n"
 
-#: cmdline/apt-get.cc:899
+#: cmdline/apt-get.cc:898
 #, c-format
 msgid "Package %s is not installed, so not removed\n"
-msgstr "O paquete %s non está instalado, así que non se eliminou\n"
+msgstr "O paquete %s non está instalado, así que non foi retirado\n"
 
-#: cmdline/apt-get.cc:977
+#: cmdline/apt-get.cc:973
 msgid "Correcting dependencies..."
-msgstr "A corrixir as dependencias..."
+msgstr "Corrixindo as dependencias..."
 
-#: cmdline/apt-get.cc:980
+#: cmdline/apt-get.cc:976
 msgid " failed."
 msgstr " fallou."
 
-#: cmdline/apt-get.cc:983
+#: cmdline/apt-get.cc:979
 msgid "Unable to correct dependencies"
-msgstr "Non se puido corrixir as dependencias."
+msgstr "Non foi posíbel corrixir as dependencias."
 
-#: cmdline/apt-get.cc:986
+#: cmdline/apt-get.cc:982
 msgid "Unable to minimize the upgrade set"
-msgstr "Non se puido minimizar o xogo de actualizacións"
+msgstr "Non foi posíbel minimizar o conxunto de anovacións"
+
+#: cmdline/apt-get.cc:984
+msgid " Done"
+msgstr " Feito"
 
 #: cmdline/apt-get.cc:988
-msgid " Done"
-msgstr " Rematado"
-
-#: cmdline/apt-get.cc:992
 msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Pode querer executar \"apt-get -f install\" para corrixilos."
+msgstr "Pode querer executar «apt-get -f install» para corrixilos."
 
-#: cmdline/apt-get.cc:995
+#: cmdline/apt-get.cc:991
 msgid "Unmet dependencies. Try using -f."
 msgstr "Dependencias incumpridas. Probe a empregar -f."
 
-#: cmdline/apt-get.cc:1020
+#: cmdline/apt-get.cc:1016
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "AVISO: ¡Non se poden autenticar os seguintes paquetes!"
+msgstr "AVISO: Non se poden autenticar os seguintes paquetes!"
 
-#: cmdline/apt-get.cc:1024
+#: cmdline/apt-get.cc:1020
 msgid "Authentication warning overridden.\n"
 msgstr "Ignórase o aviso de autenticación.\n"
 
-#: cmdline/apt-get.cc:1031
+#: cmdline/apt-get.cc:1027
 msgid "Install these packages without verification [y/N]? "
-msgstr "¿Instalar estes paquetes sen verificación [s/N]? "
+msgstr "Instalar estes paquetes sen verificación [s/N]? "
 
-#: cmdline/apt-get.cc:1033
+#: cmdline/apt-get.cc:1029
 msgid "Some packages could not be authenticated"
-msgstr "Non se puido autenticar algúns paquetes"
+msgstr "Non foi posíbel autenticar algúns paquetes"
 
-#: cmdline/apt-get.cc:1042 cmdline/apt-get.cc:1203
+#: cmdline/apt-get.cc:1038 cmdline/apt-get.cc:1199
 msgid "There are problems and -y was used without --force-yes"
-msgstr "Houbo problemas e empregouse -y sen --force-yes"
+msgstr "Xurdiron problemas e empregouse -y sen --force-yes"
 
-#: cmdline/apt-get.cc:1083
+#: cmdline/apt-get.cc:1079
 msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "Erro interno, chamouse a InstallPackages con paquetes rotos."
+msgstr ""
+"Produciuse un erro interno, chamouse a InstallPackages con paquetes "
+"estragados."
 
-#: cmdline/apt-get.cc:1092
+#: cmdline/apt-get.cc:1088
 msgid "Packages need to be removed but remove is disabled."
-msgstr "Hai que eliminar paquetes pero a eliminación está desactivada."
+msgstr "Hai que retirar paquetes mais o retirado está desactivado."
 
-#: cmdline/apt-get.cc:1103
+#: cmdline/apt-get.cc:1099
 msgid "Internal error, Ordering didn't finish"
-msgstr "Erro interno, a ordeación non rematou"
+msgstr "Produciuse un erro interno; non rematou a ordenación"
 
-#: cmdline/apt-get.cc:1141
+#: cmdline/apt-get.cc:1137
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
-"Que raro... Os tamaños non coinciden, envíe email a apt@packages.debian.org"
+"Que estraño... Os tamaños non coinciden; envíe un correo-e a apt@packages."
+"debian.org"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1148
+#: cmdline/apt-get.cc:1144
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Hai que recibir %sB/%sB de arquivos.\n"
+msgstr "Ten que recibir %sB/%sB de arquivos.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1153
+#: cmdline/apt-get.cc:1149
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Hai que recibir %sB de arquivos.\n"
+msgstr "Ten que recibir %sB de arquivos.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1160
+#: cmdline/apt-get.cc:1156
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Despois desta operación hanse ocupar %sB de disco adicionais.\n"
+msgstr "Despois desta operación ocuparanse %sB de disco adicionais.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1165
+#: cmdline/apt-get.cc:1161
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "Despois desta operación hanse liberar %sB de disco.\n"
+msgstr "Despois desta operación liberaranse %sB de espazo de disco.\n"
 
-#: cmdline/apt-get.cc:1180 cmdline/apt-get.cc:1183 cmdline/apt-get.cc:2428
-#: cmdline/apt-get.cc:2431
+#: cmdline/apt-get.cc:1176 cmdline/apt-get.cc:1179 cmdline/apt-get.cc:2367
+#: cmdline/apt-get.cc:2370
 #, c-format
 msgid "Couldn't determine free space in %s"
-msgstr "Non se puido determinar o espazo libre en %s"
+msgstr "Non foi posíbel determinar o espazo libre en %s"
 
-#: cmdline/apt-get.cc:1193
+#: cmdline/apt-get.cc:1189
 #, c-format
 msgid "You don't have enough free space in %s."
-msgstr "Non hai espazo libre de abondo en %s."
+msgstr "Non hai espazo libre abondo en %s."
 
-#: cmdline/apt-get.cc:1209 cmdline/apt-get.cc:1229
+#: cmdline/apt-get.cc:1205 cmdline/apt-get.cc:1225
 msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "Especificouse \"Só Triviais\" pero esta non é unha operación trivial."
+msgstr "Especificouse «Só triviais» mais esta non é unha operación trivial."
 
-#: cmdline/apt-get.cc:1211
+#: cmdline/apt-get.cc:1207
 msgid "Yes, do as I say!"
-msgstr "¡Si, fai o que digo!"
+msgstr "Si, fai o que digo!"
 
-#: cmdline/apt-get.cc:1213
+#: cmdline/apt-get.cc:1209
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -986,53 +1020,52 @@ msgid ""
 " ?] "
 msgstr ""
 "Está a piques de facer algo perigoso.\n"
-"Para continuar escriba a frase \"%s\"\n"
+"Para continuar escriba a frase «%s»\n"
 " ?] "
 
-#: cmdline/apt-get.cc:1219 cmdline/apt-get.cc:1238
+#: cmdline/apt-get.cc:1215 cmdline/apt-get.cc:1234
 msgid "Abort."
-msgstr "Abortar."
+msgstr "Interromper."
 
-#: cmdline/apt-get.cc:1234
+#: cmdline/apt-get.cc:1230
 msgid "Do you want to continue [Y/n]? "
-msgstr "¿Quere continuar [S/n]? "
+msgstr "Quere continuar [S/n]? "
 
-#: cmdline/apt-get.cc:1306 cmdline/apt-get.cc:2488 apt-pkg/algorithms.cc:1491
+#: cmdline/apt-get.cc:1302 cmdline/apt-get.cc:2427 apt-pkg/algorithms.cc:1470
 #, c-format
 msgid "Failed to fetch %s  %s\n"
-msgstr "Non se puido obter %s  %s\n"
+msgstr "Non foi posíbel obter %s  %s\n"
 
-#: cmdline/apt-get.cc:1324
+#: cmdline/apt-get.cc:1320
 msgid "Some files failed to download"
-msgstr "Non se puido descargar algúns ficheiros"
+msgstr "Non foi posíbel descargar algúns ficheiros"
 
-#: cmdline/apt-get.cc:1325 cmdline/apt-get.cc:2497
+#: cmdline/apt-get.cc:1321 cmdline/apt-get.cc:2436
 msgid "Download complete and in download only mode"
 msgstr "Completouse a descarga no modo de só descargas"
 
-#: cmdline/apt-get.cc:1331
+#: cmdline/apt-get.cc:1327
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"Non se puido obter algúns arquivos; probe con apt-get update ou --fix-"
+"Non foi posíbel obter algúns arquivos; probe con apt-get update ou --fix-"
 "missing."
 
-#: cmdline/apt-get.cc:1335
+#: cmdline/apt-get.cc:1331
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr ""
-"O emprego conxunto de --fix-missing e intercambio de discos non está "
-"soportado"
+"O emprego conxunto de --fix-missing e intercambio de discos non está admitido"
 
-#: cmdline/apt-get.cc:1340
+#: cmdline/apt-get.cc:1336
 msgid "Unable to correct missing packages."
-msgstr "Non se puido corrixir os paquetes non dispoñibles."
+msgstr "Non é posíbel corrixir os paquetes non dispoñíbeis."
 
-#: cmdline/apt-get.cc:1341
+#: cmdline/apt-get.cc:1337
 msgid "Aborting install."
-msgstr "A abortar a instalación."
+msgstr "Interrompendo a instalación."
 
-#: cmdline/apt-get.cc:1369
+#: cmdline/apt-get.cc:1365
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1040,45 +1073,49 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
+"O seguinte paquete desapareceu do seu sistema e todos os \n"
+"ficheiros serán sobrescritos por outros paquetes:"
 msgstr[1] ""
+"Os seguintes paquetes desapareceron do seu sistema e todos os \n"
+"ficheiros serán sobrescritos por outros paquetes:"
 
-#: cmdline/apt-get.cc:1373
+#: cmdline/apt-get.cc:1369
 msgid "Note: This is done automatic and on purpose by dpkg."
-msgstr ""
+msgstr "Nota: Isto será feito automaticamente por dpkg."
 
-#: cmdline/apt-get.cc:1503
+#: cmdline/apt-get.cc:1499
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
-msgstr ""
+msgstr "Ignorase a versión de destino «%s» non dispoñíbel do paquete «%s»"
 
-#: cmdline/apt-get.cc:1535
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:1531
+#, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Non se atopou a lista de paquetes fonte %s"
+msgstr "Tome «%s» como paquete fonte no canto de «%s»\n"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1573
+#: cmdline/apt-get.cc:1569
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
-msgstr ""
+msgstr "Ignorar a versión non dispoñíbel «%s» do paquete «%s»"
 
-#: cmdline/apt-get.cc:1589
+#: cmdline/apt-get.cc:1585
 msgid "The update command takes no arguments"
-msgstr "A orde \"update\" non toma argumentos"
+msgstr "A orde «update» non toma argumentos"
 
-#: cmdline/apt-get.cc:1651
+#: cmdline/apt-get.cc:1647
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
-"Non se supón que se deban eliminar cousas; non se pode iniciar o "
-"autoeliminador"
+"Non se agarda que eliminemos cousas, non se pode iniciar o Retirado "
+"automático"
 
-#: cmdline/apt-get.cc:1703
+#: cmdline/apt-get.cc:1699
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
-"Hum, semella que o autoeliminadir destruiu algo, o que non debería\n"
-"ter ocorrido. Envíe un informe de erro sobre apt."
+"Vaia, semella que o Retirado automático destruíu algo que realmente\n"
+"non debería ter feito. Informe deste erro de apt."
 
 #.
 #. if (Packages == 1)
@@ -1090,266 +1127,307 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1706 cmdline/apt-get.cc:1855
+#: cmdline/apt-get.cc:1702 cmdline/apt-get.cc:1858
 msgid "The following information may help to resolve the situation:"
-msgstr "A seguinte información pode axudar a resolver a situación:"
+msgstr "A seguinte información pode axudar a solucionar a situación:"
 
-#: cmdline/apt-get.cc:1710
+#: cmdline/apt-get.cc:1706
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Erro interno, o autoeliminador rompeu cousas"
+msgstr "Produciuse un erro interno, o Retirado automático estragou cousas"
 
-#: cmdline/apt-get.cc:1717
-#, fuzzy
+#: cmdline/apt-get.cc:1713
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr[0] ""
-"Os seguintes paquetes instaláronse automaticamente e xa non son necesarios:"
+"O seguinte paquete foi instalado automaticamente e xa non é necesario:"
 msgstr[1] ""
-"Os seguintes paquetes instaláronse automaticamente e xa non son necesarios:"
+"Os seguintes paquetes foron instalados automaticamente e xa non son "
+"necesarios:"
 
-#: cmdline/apt-get.cc:1721
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:1717
+#, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] ""
-"Os seguintes paquetes instaláronse automaticamente e xa non son necesarios:"
+msgstr[0] "%lu paquete foi instalado automaticamente e xa non é necesario.\n"
 msgstr[1] ""
-"Os seguintes paquetes instaláronse automaticamente e xa non son necesarios:"
+"%lu paquetes foron instalados automaticamente e xa non son necesarios.\n"
 
-#: cmdline/apt-get.cc:1723
+#: cmdline/apt-get.cc:1719
 msgid "Use 'apt-get autoremove' to remove them."
-msgstr "Empregue \"apt-get autoremove\" para eliminalos."
+msgstr "Empregue «apt-get autoremove» para eliminalos."
 
-#: cmdline/apt-get.cc:1742
+#: cmdline/apt-get.cc:1738
 msgid "Internal error, AllUpgrade broke stuff"
-msgstr "Erro interno, AllUpgrade rompeu cousas"
-
-#: cmdline/apt-get.cc:1825
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Pode querer executar \"apt-get -f install\" corrixir isto:"
+msgstr "Produciuse un erro interno, AllUpgrade estragou cousas"
 
 #: cmdline/apt-get.cc:1828
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr "Pode querer executar «apt-get -f install» para corrixir isto:"
+
+#: cmdline/apt-get.cc:1831
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Dependencias incumpridas. Probe \"apt-get -f install\" sen paquetes (ou "
+"Dependencias incumpridas. Probe «apt-get -f install» sen paquetes (ou "
 "especifique unha solución)."
 
-#: cmdline/apt-get.cc:1840
+#: cmdline/apt-get.cc:1843
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
 "distribution that some required packages have not yet been created\n"
 "or been moved out of Incoming."
 msgstr ""
-"Non se puido instalar algúns paquetes. Isto pode significar que solicitou\n"
-"unha situación imposible ou, se emprega a distribución inestable, que\n"
-"algúns paquetes solicitados aínda non se crearon ou moveron de Incoming."
+"Non foi posíbel instalar algúns paquetes. Isto pode significar que "
+"solicitou\n"
+"unha situación imposíbel ou, se emprega a distribución inestábel, que\n"
+"algúns paquetes solicitados aínda non se creasen ou que se movesen da "
+"entrada."
 
-#: cmdline/apt-get.cc:1858
+#: cmdline/apt-get.cc:1861
 msgid "Broken packages"
-msgstr "Paquetes rotos"
+msgstr "Paquetes estragados"
 
-#: cmdline/apt-get.cc:1886
+#: cmdline/apt-get.cc:1889
 msgid "The following extra packages will be installed:"
-msgstr "Hanse instalar os seguintes paquetes extra:"
+msgstr "Instalaranse os seguintes paquetes extra:"
 
-#: cmdline/apt-get.cc:1976
+#: cmdline/apt-get.cc:1979
 msgid "Suggested packages:"
-msgstr "Paquetes suxiridos:"
+msgstr "Paquetes suxeridos:"
 
-#: cmdline/apt-get.cc:1977
+#: cmdline/apt-get.cc:1980
 msgid "Recommended packages:"
 msgstr "Paquetes recomendados:"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2022
 #, c-format
 msgid "Couldn't find package %s"
-msgstr "Non se puido atopar o paquete %s"
+msgstr "Non foi posíbel atopar o paquete %s"
 
-#: cmdline/apt-get.cc:2026
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2029
+#, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "%s cambiouse a instalado manualmente.\n"
+msgstr "%s está estabelecido para a súa instalación automática.\n"
 
-#: cmdline/apt-get.cc:2047
+#: cmdline/apt-get.cc:2050
 msgid "Calculating upgrade... "
-msgstr "A calcular a actualización... "
+msgstr "Calculando a anovación... "
 
-#: cmdline/apt-get.cc:2050 methods/ftp.cc:707 methods/connect.cc:111
+#: cmdline/apt-get.cc:2053 methods/ftp.cc:707 methods/connect.cc:111
 msgid "Failed"
 msgstr "Fallou"
 
-#: cmdline/apt-get.cc:2055
+#: cmdline/apt-get.cc:2058
 msgid "Done"
-msgstr "Rematado"
+msgstr "Feito"
 
-#: cmdline/apt-get.cc:2122 cmdline/apt-get.cc:2130
+#: cmdline/apt-get.cc:2125 cmdline/apt-get.cc:2133
 msgid "Internal error, problem resolver broke stuff"
-msgstr "Erro interno, o resolvedor interno rompeu cousas"
+msgstr "Produciuse un erro interno, o solucionador interno estragou cousas"
 
-#: cmdline/apt-get.cc:2154 cmdline/apt-get.cc:2187
+#: cmdline/apt-get.cc:2157 cmdline/apt-get.cc:2190
 msgid "Unable to lock the download directory"
-msgstr "Non se puido bloquear o directorio de descargas"
+msgstr "Non é posíbel bloquear o directorio de descargas"
 
-#: cmdline/apt-get.cc:2238
-#, c-format
-msgid "Downloading %s %s"
-msgstr ""
-
-#: cmdline/apt-get.cc:2294
+#: cmdline/apt-get.cc:2233
 msgid "Must specify at least one package to fetch source for"
-msgstr ""
-"Ten que especificar alomenos un paquete para lle descargar o código fonte"
+msgstr "Ten que especificar polo menos un paquete para obter o código fonte"
 
-#: cmdline/apt-get.cc:2334 cmdline/apt-get.cc:2615
+#: cmdline/apt-get.cc:2273 cmdline/apt-get.cc:2554
 #, c-format
 msgid "Unable to find a source package for %s"
-msgstr "Non se puido atopar un paquete fonte para %s"
+msgstr "Non sé posíbel atopar un paquete fonte para %s"
 
-#: cmdline/apt-get.cc:2350
+#: cmdline/apt-get.cc:2289
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
+"AVISO: o paquete «%s» mantense no sistema de control de versións «%s» en:\n"
+"%s\n"
 
-#: cmdline/apt-get.cc:2355
+#: cmdline/apt-get.cc:2294
 #, c-format
 msgid ""
 "Please use:\n"
 "bzr get %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
+"Empregue:\n"
+"bzr get %s\n"
+"para obter as últimas actualizacións (posibelmente non publicadas) do "
+"paquete.\n"
 
-#: cmdline/apt-get.cc:2406
+#: cmdline/apt-get.cc:2345
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
-msgstr "Omítese o ficheiro xa descargado \"%s\"\n"
+msgstr "Omítese o ficheiro xa descargado «%s»\n"
 
-#: cmdline/apt-get.cc:2441
+#: cmdline/apt-get.cc:2380
 #, c-format
 msgid "You don't have enough free space in %s"
-msgstr "Non hai espazo libre de abondo en %s"
+msgstr "Non hai espazo libre abondo en %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2449
+#: cmdline/apt-get.cc:2388
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Hai que recibir %sB/%sB de arquivos de fonte.\n"
+msgstr "Ten que recibir %sB/%sB de arquivos de fonte.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2454
+#: cmdline/apt-get.cc:2393
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Hai que recibir %sB de arquivos de fonte.\n"
+msgstr "Ten que recibir %sB de arquivos de fonte.\n"
 
-#: cmdline/apt-get.cc:2460
+#: cmdline/apt-get.cc:2399
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Obter fonte %s\n"
 
-#: cmdline/apt-get.cc:2493
+#: cmdline/apt-get.cc:2432
 msgid "Failed to fetch some archives."
-msgstr "Non se puido recibir algúns arquivos."
+msgstr "Non se puideron obter algúns arquivos."
 
-#: cmdline/apt-get.cc:2523
+#: cmdline/apt-get.cc:2462
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "Omítese o desempaquetamento do código fonte xa desempaquetado en %s\n"
+msgstr "Omítese o desempaquetado do código fonte xa desempaquetado en %s\n"
 
-#: cmdline/apt-get.cc:2535
+#: cmdline/apt-get.cc:2474
 #, c-format
 msgid "Unpack command '%s' failed.\n"
-msgstr "Fallou a orde de desempaquetamento \"%s\".\n"
+msgstr "Fallou a orde de desempaquetado «%s».\n"
 
-#: cmdline/apt-get.cc:2536
+#: cmdline/apt-get.cc:2475
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Comprobe que o paquete \"dpkg-dev\" estea instalado.\n"
+msgstr "Comprobe que o paquete «dpkg-dev» estea instalado.\n"
 
-#: cmdline/apt-get.cc:2553
+#: cmdline/apt-get.cc:2492
 #, c-format
 msgid "Build command '%s' failed.\n"
-msgstr "Fallou a codificación de %s.\n"
+msgstr "Fallou a orde de construción de «%s».\n"
 
-#: cmdline/apt-get.cc:2573
+#: cmdline/apt-get.cc:2512
 msgid "Child process failed"
 msgstr "O proceso fillo fallou"
 
-#: cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2528
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
-"Ten que especificar alomenos un paquete para lle comprobar as dependencias "
+"Ten que especificar polo menos un paquete para comprobarlle as dependencias "
 "de compilación"
 
-#: cmdline/apt-get.cc:2620
+#: cmdline/apt-get.cc:2559
 #, c-format
 msgid "Unable to get build-dependency information for %s"
-msgstr "Non se puido obter a información de dependencias de compilación de %s"
+msgstr "Non é posíbel obter a información de dependencias de compilación de %s"
 
-#: cmdline/apt-get.cc:2640
+#: cmdline/apt-get.cc:2579
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s non ten dependencias de compilación.\n"
 
-#: cmdline/apt-get.cc:2691
+#: cmdline/apt-get.cc:2630
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
-"A dependencia \"%s\" de %s non se pode satisfacer porque non se pode atopar "
-"o paquete %s"
+"A dependencia «%s» de %s non se pode satisfacer porque non se pode atopar o "
+"paquete %s"
 
-#: cmdline/apt-get.cc:2744
+#: cmdline/apt-get.cc:2683
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because no available versions of "
 "package %s can satisfy version requirements"
 msgstr ""
-"A dependencia \"%s\" de %s non se pode satisfacer porque ningunha versión "
-"dispoñible do paquete %s satisfai os requirimentos de versión"
+"A dependencia «%s» de %s non se pode satisfacer porque ningunha versión "
+"dispoñíbel do paquete %s satisfai os requirimentos de versión"
 
-#: cmdline/apt-get.cc:2780
+#: cmdline/apt-get.cc:2719
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
-"Non se puido satisfacer a dependencia \"%s\" de %s: O paquete instalado %s é "
-"novo de máis"
+"Non foi posíbel satisfacer a dependencia «%s» de %s: O paquete instalado %s "
+"é novo de máis"
 
-#: cmdline/apt-get.cc:2807
+#: cmdline/apt-get.cc:2746
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "Non se puido satisfacer a dependencia \"%s\" de %s: %s"
+msgstr "Non foi posíbel satisfacer a dependencia «%s» de %s: %s"
 
-#: cmdline/apt-get.cc:2823
+#: cmdline/apt-get.cc:2762
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
-msgstr "Non se puideron satisfacer as dependencias de compilación de %s."
+msgstr "Non se puideron satisfacer as dependencias de construción de %s."
 
-#: cmdline/apt-get.cc:2828
+#: cmdline/apt-get.cc:2767
 msgid "Failed to process build dependencies"
-msgstr "Non se puido procesar as dependencias de compilación"
+msgstr "Non se puideron procesar as dependencias de construción"
 
-#: cmdline/apt-get.cc:2921 cmdline/apt-get.cc:2933
-#, fuzzy, c-format
-msgid "Changelog for %s (%s)"
-msgstr "A conectar a %s (%s)"
-
-#: cmdline/apt-get.cc:3052
+#: cmdline/apt-get.cc:2798
 msgid "Supported modules:"
-msgstr "Módulos soportados:"
+msgstr "Módulos admitidos:"
 
-#: cmdline/apt-get.cc:3093
+#: cmdline/apt-get.cc:2839
 #, fuzzy
+#| msgid ""
+#| "Usage: apt-get [options] command\n"
+#| "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+#| "       apt-get [options] source pkg1 [pkg2 ...]\n"
+#| "\n"
+#| "apt-get is a simple command line interface for downloading and\n"
+#| "installing packages. The most frequently used commands are update\n"
+#| "and install.\n"
+#| "\n"
+#| "Commands:\n"
+#| "   update - Retrieve new lists of packages\n"
+#| "   upgrade - Perform an upgrade\n"
+#| "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
+#| "   remove - Remove packages\n"
+#| "   autoremove - Remove automatically all unused packages\n"
+#| "   purge - Remove packages and config files\n"
+#| "   source - Download source archives\n"
+#| "   build-dep - Configure build-dependencies for source packages\n"
+#| "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
+#| "   dselect-upgrade - Follow dselect selections\n"
+#| "   clean - Erase downloaded archive files\n"
+#| "   autoclean - Erase old downloaded archive files\n"
+#| "   check - Verify that there are no broken dependencies\n"
+#| "   markauto - Mark the given packages as automatically installed\n"
+#| "   unmarkauto - Mark the given packages as manually installed\n"
+#| "   changelog - Download and display the changelog for the given package\n"
+#| "   download - Download the binary package into the current directory\n"
+#| "\n"
+#| "Options:\n"
+#| "  -h  This help text.\n"
+#| "  -q  Loggable output - no progress indicator\n"
+#| "  -qq No output except for errors\n"
+#| "  -d  Download only - do NOT install or unpack archives\n"
+#| "  -s  No-act. Perform ordering simulation\n"
+#| "  -y  Assume Yes to all queries and do not prompt\n"
+#| "  -f  Attempt to correct a system with broken dependencies in place\n"
+#| "  -m  Attempt to continue if archives are unlocatable\n"
+#| "  -u  Show a list of upgraded packages as well\n"
+#| "  -b  Build the source package after fetching it\n"
+#| "  -V  Show verbose version numbers\n"
+#| "  -c=? Read this configuration file\n"
+#| "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#| "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
+#| "pages for more information and options.\n"
+#| "                       This APT has Super Cow Powers.\n"
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1375,8 +1453,6 @@ msgid ""
 "   check - Verify that there are no broken dependencies\n"
 "   markauto - Mark the given packages as automatically installed\n"
 "   unmarkauto - Mark the given packages as manually installed\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
 "\n"
 "Options:\n"
 "  -h  This help text.\n"
@@ -1396,57 +1472,65 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Emprego: apt-get [opcións] orde\n"
-"         apt-get [opcións] install|remove paq1 [paq2 ...]\n"
-"         apt-get [opcións] source paq1 [paq2 ...]\n"
+"Uso: apt-get [opcións] orde\n"
+"       apt-get [opcións] install|remove paquete1 [paquete2 ...]\n"
+"       apt-get [opcións] source paquete1 [paquete2 ...]\n"
 "\n"
-"apt-get é unha simple interface de liña de ordes para descargar e instalar\n"
-"paquetes. As ordes empregadas máis habitualmente son \"update\" e \"install"
-"\".\n"
+"apt-get é unha sinxela interface de liña de ordes para a descarga e\n"
+"instalación de paquetes. As ordes empregadas con máis frecuencia\n"
+"son actualizadas e instaladas. \n"
 "\n"
 "Ordes:\n"
-"   update - Descarga novas listas de paquetes\n"
-"   upgrade - Realiza unha actualización\n"
-"   install - Instala novos paquetes (o paquete chámase libc6, non libc6."
-"deb)\n"
-"   remove - Elimina paquetes\n"
-"   autoremove - Elimina automaticamente os paquetes non usados\n"
-"   purge - Elimina e purga paquetes\n"
-"   source - Descarga arquivos de código fonte\n"
-"   build-dep - Configura as dependencias de compilación dos paquetes fonte\n"
-"   dist-upgrade - Actualiza a distribución, consulte apt-get(8)\n"
+"   update - Recupera unha nova lista de paquetes\n"
+"   upgrade - Executa unha actualización\n"
+"   install - Instala novos paquetes (o paquete é libc6 non libc6.deb)\n"
+"   remove - Retira paquetes\n"
+"   autoremove - Retira automaticamente todos os paquetes sen uso\n"
+"   purge - Retira paquetes e ficheiros de configuración\n"
+"   source - Descarga os arquivos de fontes\n"
+"   build-dep - Configura as dependencias para paquetes de fontes\n"
+"   dist-upgrade - Actualiza a distribución, vexa apt-get(8)\n"
 "   dselect-upgrade - Segue as seleccións de dselect\n"
-"   clean - Borra os arquivos descargados\n"
-"   autoclean - Borra os arquivos descargados antigos\n"
-"   check - Comproba que non haxa dependencias rotas\n"
+"   clean - Borra os arquivos de ficheiros\n"
+"   autoclean - Borra os arquivos de ficheiros antigos\n"
+"   check - Comproba que non haxa dependencias sen cumprir\n"
+"   markauto - Marca os paquetes como instalados automaticamente\n"
+"   unmarkauto - Marca os paquetes como instalados manualmente\n"
+"   changelog - Descarga e mostra o rexistro de cambios para o paquete "
+"proposto\n"
+"   download - Descarga o paquete binario no directorio actual\n"
 "\n"
-"Opcións:\n"
-"  -h  Este texto de axuda.\n"
-"  -q  Saída que se pode rexistrar - sen indicador de progreso\n"
-"  -qq Sen saída agás polos erros\n"
-"  -d  Só descarga - NON instala nin desempaqueta os arquivos\n"
-"  -s  Non actuar. Realiza unha simulación de ordeamento\n"
-"  -y  Supón unha resposta afirmativa a tódalas preguntas sen amosalas\n"
-"  -f  Tenta corrixir un sistema con dependencias rotas\n"
-"  -m  Tenta continuar se non se poden localizar os arquivos\n"
-"  -u  Tamén amosa unha lista de paquetes actualizados\n"
-"  -b  Compila o paquete fonte despois de o descargar\n"
-"  -V  Amosa números de versión detallados\n"
-"  -c=? Le este ficheiro de configuración\n"
-"  -o=? Establece unha opción de configuración, por exemplo: -o dir::cache=/"
+"Opçións:\n"
+"  -h  Este texto de axuda\n"
+"  -q  Saída rexistrábel - sen indicador de progreso\n"
+"  -qq Sen saída, agás para os erros \n"
+"  -d  Só descarga - NON instala ou desempaqueta os arquivos\n"
+"  -s  Sen acción. Fai unha simulación\n"
+"  -y  Asume Si para todas as preguntas e non as presenta\n"
+"  -f  Tenta corrixir un sistema con dependencias non cumpridas\n"
+"  -m  Tenta continuar se os arquivos non son localizados\n"
+"  -u  Mostra tamén unha lista de paquetes actualizados\n"
+"  -b  Constrúe o paquete fonte despois de descargalo\n"
+"  -V  Mostra os números detallados da versión\n"
+"  -c=? Ler este ficheiro de configuración\n"
+"  -o=? Define unha opción arbitraria de configuración, p.ex. -o dir::cache=/"
 "tmp\n"
-"Consulte as páxinas de manual apt-get(8), sources.list(5) e apt.conf(5) "
-"para\n"
-"máis información e opcións.\n"
-"                  Este APT ten Poderes de Supervaca.\n"
+"Vexa as páxinas do manual sobre apt-get(8), sources.list(5) e apt.conf(5) \n"
+"para obter mais información e opcións\n"
+"                       Este APT ten poderes da Super Vaca.\n"
 
-#: cmdline/apt-get.cc:3254
+#: cmdline/apt-get.cc:2995
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
 "      Keep also in mind that locking is deactivated,\n"
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
+"NOTA: Isto é só unha simulación!\n"
+"      apt-get precisa de privilexios de administrador para executarse "
+"realmente.\n"
+"      Lembre tamén que o bloqueo está desactivado,\n"
+"      polo que non debe depender da relevancia da situación actual real."
 
 #: cmdline/acqprogress.cc:57
 msgid "Hit "
@@ -1467,12 +1551,12 @@ msgstr "Err "
 #: cmdline/acqprogress.cc:137
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Recibíronse %sB en %s (%sB/s)\n"
+msgstr "Obtivéronse %sB en %s (%sB/s)\n"
 
 #: cmdline/acqprogress.cc:227
 #, c-format
 msgid " [Working]"
-msgstr " [A traballar]"
+msgstr " [Traballando]"
 
 #: cmdline/acqprogress.cc:283
 #, c-format
@@ -1482,12 +1566,12 @@ msgid ""
 "in the drive '%s' and press enter\n"
 msgstr ""
 "Cambio de soporte: introduza o disco etiquetado\n"
-" \"%s\"\n"
-"na unidade \"%s\" e prema Intro\n"
+" «%s»\n"
+"na unidade «%s» e prema Intro\n"
 
 #: cmdline/apt-sortpkgs.cc:86
 msgid "Unknown package record!"
-msgstr "¡Rexistro de paquete descoñecido!"
+msgstr "Rexistro de paquete descoñecido!"
 
 #: cmdline/apt-sortpkgs.cc:150
 msgid ""
@@ -1504,19 +1588,19 @@ msgid ""
 msgstr ""
 "Emprego: apt-sortpkgs [opcións] fich1 [fich2 ...]\n"
 "\n"
-"apt-sortpkgs é unha ferramenta simple para ordear ficheiros de paquetes.\n"
+"apt-sortpkgs é unha ferramenta simple para ordenar ficheiros de paquetes.\n"
 "A opción -s emprégase para indicar o tipo de ficheiro que é.\n"
 "\n"
 "Opcións:\n"
 "  -h   Este texto de axuda\n"
-"  -s   Emprega ordeamento por ficheiros fonte\n"
+"  -s   Emprega ordenamento por ficheiros fonte\n"
 "  -c=? Le este ficheiro de configuración\n"
-"  -o=? Establece unha opción de configuración; por exemplo, -o dir::cache=/"
+"  -o=? Estabelece unha opción de configuración; por exemplo, -o dir::cache=/"
 "tmp\n"
 
 #: dselect/install:32
 msgid "Bad default setting!"
-msgstr "¡Configuración por defecto incorrecta!"
+msgstr "Configuración predeterminada incorrecta!"
 
 #: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:94
 #: dselect/install:105 dselect/update:45
@@ -1525,69 +1609,69 @@ msgstr "Prema Intro para continuar."
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr "¿Quere borrar os ficheiros .deb descargados anteriormente?"
+msgstr "Quere borrar os ficheiros .deb descargados anteriormente?"
 
 #: dselect/install:101
-#, fuzzy
 msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "Houbo algúns erros ao desempaquetar. Vanse configurar os paquetes"
+msgstr ""
+"Ocorreron algúns erros ao desempaquetar,  Os paquetes que se instalaron"
 
 #: dselect/install:102
-#, fuzzy
 msgid "will be configured. This may result in duplicate errors"
-msgstr "que se instalaron. Isto pode producir erros duplicados ou erros"
+msgstr "serán configurados, Isto pode dar erros de duplicación"
 
 #: dselect/install:103
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "causados por dependencias incumpridas. Isto é normal, só os erros"
+msgstr ""
+"ou erros causados por dependencias incumpridas. Isto é normal, só os erros"
 
 #: dselect/install:104
 msgid ""
 "above this message are important. Please fix them and run [I]nstall again"
 msgstr ""
-"que hai enriba desta mensaxe son importantes. Arránxeos e volva instalar."
+"que hai enriba desta mensaxe son importantes. Arránxeos e volva a instalar."
 
 #: dselect/update:30
 msgid "Merging available information"
-msgstr "A mesturar a información sobre paquetes dispoñibles"
+msgstr "Mesturando a información sobre paquetes dispoñíbeis"
 
 #: apt-inst/contrib/extracttar.cc:114
 msgid "Failed to create pipes"
-msgstr "Non se puido crear as canles"
+msgstr "Non foi posíbel crear as canles"
 
 #: apt-inst/contrib/extracttar.cc:141
 msgid "Failed to exec gzip "
-msgstr "Non se puido executar gzip"
+msgstr "Non foi posíbel executar gzip "
 
-#: apt-inst/contrib/extracttar.cc:178 apt-inst/contrib/extracttar.cc:208
+#: apt-inst/contrib/extracttar.cc:178 apt-inst/contrib/extracttar.cc:204
 msgid "Corrupted archive"
-msgstr "Arquivo corrompido"
+msgstr "Arquivo danado"
 
 #: apt-inst/contrib/extracttar.cc:193
 msgid "Tar checksum failed, archive corrupted"
-msgstr "A suma de comprobación do arquivo tar non coincide, está corrompido"
+msgstr "A suma de comprobación do arquivo tar non coincide, está danado"
 
-#: apt-inst/contrib/extracttar.cc:300
+#: apt-inst/contrib/extracttar.cc:296
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Tipo de cabeceira TAR %u descoñecido, membro %s"
 
 #: apt-inst/contrib/arfile.cc:70
 msgid "Invalid archive signature"
-msgstr "Sinatura de arquivo non válida"
+msgstr "Sinatura de arquivo incorrecta"
 
 #: apt-inst/contrib/arfile.cc:78
 msgid "Error reading archive member header"
-msgstr "Erro ao ler a cabeceira do membro do arquivo"
+msgstr "Produciuse un erro ao ler a cabeceira do membro do arquivo"
 
 #: apt-inst/contrib/arfile.cc:90
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid archive member header %s"
-msgstr "Cabeceira do membro do arquivo non válida"
+msgstr "Cabeceira do membro do arquivo incorrecta %s"
 
 #: apt-inst/contrib/arfile.cc:102
 msgid "Invalid archive member header"
-msgstr "Cabeceira do membro do arquivo non válida"
+msgstr "Cabeceira do membro do arquivo incorrecta"
 
 #: apt-inst/contrib/arfile.cc:128
 msgid "Archive is too short"
@@ -1595,7 +1679,7 @@ msgstr "O arquivo é curto de máis"
 
 #: apt-inst/contrib/arfile.cc:132
 msgid "Failed to read the archive headers"
-msgstr "Non se puido ler as cabeceiras dos arquivos"
+msgstr "Non foi posíbel ler as cabeceiras dos arquivos"
 
 #: apt-inst/filelist.cc:380
 msgid "DropNode called on still linked node"
@@ -1603,15 +1687,15 @@ msgstr "Chamouse a DropNode nun nodo aínda ligado"
 
 #: apt-inst/filelist.cc:412
 msgid "Failed to locate the hash element!"
-msgstr "Non se puido atopar o elemento hash"
+msgstr "Non foi posíbel atopar o elemento hash"
 
 #: apt-inst/filelist.cc:459
 msgid "Failed to allocate diversion"
-msgstr "Non se puido reservar un desvío"
+msgstr "Non foi posíbel reservar un desvío"
 
 #: apt-inst/filelist.cc:464
 msgid "Internal error in AddDiversion"
-msgstr "Erro interno en AddDiversion"
+msgstr "Produciuse un erro interno en AddDiversion"
 
 #: apt-inst/filelist.cc:477
 #, c-format
@@ -1631,12 +1715,12 @@ msgstr "Ficheiro de configuración %s/%s duplicado"
 #: apt-inst/dirstream.cc:41 apt-inst/dirstream.cc:46 apt-inst/dirstream.cc:49
 #, c-format
 msgid "Failed to write file %s"
-msgstr "Non se puido gravar o ficheiro %s"
+msgstr "Non foi posíbel escribir no ficheiro «%s»"
 
 #: apt-inst/dirstream.cc:92 apt-inst/dirstream.cc:100
 #, c-format
 msgid "Failed to close file %s"
-msgstr "Non se puido pechar o ficheiro %s"
+msgstr "Non foi posíbel pechar o ficheiro %s"
 
 #: apt-inst/extract.cc:93 apt-inst/extract.cc:164
 #, c-format
@@ -1646,7 +1730,7 @@ msgstr "A ruta %s é longa de máis"
 #: apt-inst/extract.cc:124
 #, c-format
 msgid "Unpacking %s more than once"
-msgstr "A desempaquetar %s máis dunha vez"
+msgstr "Desempaquetando %s máis dunha vez"
 
 #: apt-inst/extract.cc:134
 #, c-format
@@ -1656,7 +1740,7 @@ msgstr "O directorio %s está desviado"
 #: apt-inst/extract.cc:144
 #, c-format
 msgid "The package is trying to write to the diversion target %s/%s"
-msgstr "O paquete tenta gravar no destino do desvío %s/%s"
+msgstr "O paquete tenta escribir no destino do desvío %s/%s"
 
 #: apt-inst/extract.cc:154 apt-inst/extract.cc:297
 msgid "The diversion path is too long"
@@ -1669,77 +1753,77 @@ msgstr "O directorio %s estase a substituír por algo que non é un directorio"
 
 #: apt-inst/extract.cc:280
 msgid "Failed to locate node in its hash bucket"
-msgstr "Non se puido atopar o nodo no seu caldeiro hash"
+msgstr "Non foi posíbel atopar o nodo no seu contedor hash"
 
 #: apt-inst/extract.cc:284
 msgid "The path is too long"
 msgstr "A ruta é longa de máis"
 
-#: apt-inst/extract.cc:412
+#: apt-inst/extract.cc:414
 #, c-format
 msgid "Overwrite package match with no version for %s"
 msgstr "Coincidencia na sobrescritura sen versión para %s"
 
-#: apt-inst/extract.cc:429
+#: apt-inst/extract.cc:431
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "O ficheiro %s/%s sobrescribe o do paquete %s"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: apt-inst/extract.cc:462 apt-pkg/contrib/cdromutl.cc:179
-#: apt-pkg/contrib/fileutl.cc:334 apt-pkg/sourcelist.cc:204
-#: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:450 apt-pkg/init.cc:103
-#: apt-pkg/init.cc:111 apt-pkg/clean.cc:33 apt-pkg/policy.cc:309
+#: apt-inst/extract.cc:464 apt-pkg/contrib/cdromutl.cc:179
+#: apt-pkg/contrib/fileutl.cc:329 apt-pkg/sourcelist.cc:204
+#: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:450 apt-pkg/init.cc:100
+#: apt-pkg/init.cc:108 apt-pkg/clean.cc:33 apt-pkg/policy.cc:307
 #: methods/mirror.cc:87
 #, c-format
 msgid "Unable to read %s"
-msgstr "Non se pode ler %s"
+msgstr "Non é posíbel ler %s"
 
-#: apt-inst/extract.cc:489
+#: apt-inst/extract.cc:491
 #, c-format
 msgid "Unable to stat %s"
-msgstr "Non se atopou %s"
+msgstr "Non é posíbel determinar o estado %s"
 
 #: apt-inst/deb/dpkgdb.cc:51 apt-inst/deb/dpkgdb.cc:57
 #, c-format
 msgid "Failed to remove %s"
-msgstr "Non se puido eliminar %s"
+msgstr "Non foi posíbel retirar %s"
 
 #: apt-inst/deb/dpkgdb.cc:106 apt-inst/deb/dpkgdb.cc:108
 #, c-format
 msgid "Unable to create %s"
-msgstr "Non se pode crear %s"
+msgstr "Non é posíbel crear %s"
 
 #: apt-inst/deb/dpkgdb.cc:114
 #, c-format
 msgid "Failed to stat %sinfo"
-msgstr "Non se atopou %sinfo"
+msgstr "Non foi posíbel atopar %sinfo"
 
 #: apt-inst/deb/dpkgdb.cc:119
 msgid "The info and temp directories need to be on the same filesystem"
 msgstr ""
 "Os directorios info e temp teñen que estar no mesmo sistema de ficheiros"
 
-#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:1074
-#: apt-pkg/pkgcachegen.cc:1178 apt-pkg/pkgcachegen.cc:1184
-#: apt-pkg/pkgcachegen.cc:1330
+#: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:1070
+#: apt-pkg/pkgcachegen.cc:1174 apt-pkg/pkgcachegen.cc:1180
+#: apt-pkg/pkgcachegen.cc:1326
 msgid "Reading package lists"
-msgstr "A ler as listas de paquetes"
+msgstr "Lendo as listas de paquetes"
 
 #: apt-inst/deb/dpkgdb.cc:176
 #, c-format
 msgid "Failed to change to the admin dir %sinfo"
-msgstr "Non se puido cambiar ao directorio de administración %sinfo"
+msgstr "Non foi posíbel cambiar ao directorio de administración %sinfo"
 
 #: apt-inst/deb/dpkgdb.cc:197 apt-inst/deb/dpkgdb.cc:351
 #: apt-inst/deb/dpkgdb.cc:444
 msgid "Internal error getting a package name"
-msgstr "Erro interno ao obter un nome de paquete"
+msgstr "Produciuse un erro interno ao obter un nome de paquete"
 
 #: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:382
 msgid "Reading file listing"
-msgstr "A ler a lista de ficheiros"
+msgstr "Lendo a lista de ficheiros"
 
 #: apt-inst/deb/dpkgdb.cc:212
 #, c-format
@@ -1748,45 +1832,45 @@ msgid ""
 "then make it empty and immediately re-install the same version of the "
 "package!"
 msgstr ""
-"Non se puido abrir o ficheiro de listas \"%sinfo/%s\". Se non pode "
+"Non foi posíbel abrir o ficheiro de listas «%sinfo/%s». Se non pode "
 "recuperalo, baléireo e reinstale a mesma versión do paquete."
 
 #: apt-inst/deb/dpkgdb.cc:225 apt-inst/deb/dpkgdb.cc:238
 #, c-format
 msgid "Failed reading the list file %sinfo/%s"
-msgstr "Non se puido ler o ficheiro de listas %sinfo/%s"
+msgstr "Non foi posíbel ler o ficheiro de listas %sinfo/%s"
 
 #: apt-inst/deb/dpkgdb.cc:262
 msgid "Internal error getting a node"
-msgstr "Erro interno ao obter un nodo"
+msgstr "Produciuse un erro interno ao obter un nodo"
 
 #: apt-inst/deb/dpkgdb.cc:305
 #, c-format
 msgid "Failed to open the diversions file %sdiversions"
-msgstr "Non se puido abrir o ficheiro de desvíos %sdiversions"
+msgstr "Non foi posíbel abrir o ficheiro de desvíos %sdiversions"
 
 #: apt-inst/deb/dpkgdb.cc:320
 msgid "The diversion file is corrupted"
-msgstr "O ficheiro de desvíos está corrompido"
+msgstr "O ficheiro de desvíos está danado"
 
 #: apt-inst/deb/dpkgdb.cc:327 apt-inst/deb/dpkgdb.cc:332
 #: apt-inst/deb/dpkgdb.cc:337
 #, c-format
 msgid "Invalid line in the diversion file: %s"
-msgstr "Liña non válida no ficheiro de desvíos: %s"
+msgstr "Liña incorrecta no ficheiro de desvíos: %s"
 
 #: apt-inst/deb/dpkgdb.cc:358
 msgid "Internal error adding a diversion"
-msgstr "Erro interno ao engadir un desvío"
+msgstr "Produciuse un erro interno ao engadir un desvío"
 
 #: apt-inst/deb/dpkgdb.cc:379
 msgid "The pkg cache must be initialized first"
-msgstr "Ten que se inicializar a caché de paquetes primeiro"
+msgstr "Antes ten que inicializarse a caché de paquetes"
 
 #: apt-inst/deb/dpkgdb.cc:439
 #, c-format
 msgid "Failed to find a Package: header, offset %lu"
-msgstr "Non se puido atopar unha cabeceira Package:, desprazamento %lu"
+msgstr "Non foi posíbel atopar unha cabeceira Package:, desprazamento %lu"
 
 #: apt-inst/deb/dpkgdb.cc:461
 #, c-format
@@ -1796,73 +1880,71 @@ msgstr "Sección ConfFile incorrecta no ficheiro de estado. Desprazamento %lu"
 #: apt-inst/deb/dpkgdb.cc:466
 #, c-format
 msgid "Error parsing MD5. Offset %lu"
-msgstr "Erro ao analizar o MD5. Desprazamento %lu"
+msgstr "Produciuse un erro ao analizar o MD5. Desprazamento %lu"
 
 #: apt-inst/deb/debfile.cc:38 apt-inst/deb/debfile.cc:43
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
-msgstr "Este non é un arquivo DEB válido, falla o membro \"%s\""
+msgstr "Este non é un arquivo DEB correcto, falta o membro «%s»"
 
 #: apt-inst/deb/debfile.cc:50
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr ""
-"Este non é un arquivo DEB válido, non ten un membro \"%s\", \"%s\" ou \"%s\""
+"Este non é un arquivo DEB correcto, non ten un membro «%s», «%s» ou «%s»"
 
 #: apt-inst/deb/debfile.cc:110
 #, c-format
 msgid "Couldn't change to %s"
-msgstr "Non se puido cambiar a %s"
+msgstr "Non foi posíbel cambiar a %s"
 
 #: apt-inst/deb/debfile.cc:140
+#, fuzzy
+#| msgid "Internal error, could not locate member %s"
 msgid "Internal error, could not locate member"
-msgstr "Erro interno, non se puido atopar un membro"
+msgstr "Produciuse un erro interno, non foi posíbel atopar o membro %s"
 
 #: apt-inst/deb/debfile.cc:173
 msgid "Failed to locate a valid control file"
-msgstr "Non se puido atopar un ficheiro de control válido"
+msgstr "Non foi posíbel atopar un ficheiro de control correcto"
 
 #: apt-inst/deb/debfile.cc:258
 msgid "Unparsable control file"
-msgstr "Ficheiro de control non analizable"
+msgstr "Ficheiro de control non analizábel"
 
-#: methods/bzip2.cc:60 methods/gzip.cc:52
-msgid "Empty files can't be valid archives"
-msgstr ""
-
-#: methods/bzip2.cc:64
+#: methods/bzip2.cc:65
 #, c-format
 msgid "Couldn't open pipe for %s"
-msgstr "Non se puido abrir unha canle para %s"
+msgstr "Non foi posíbel abrir unha canle para %s"
 
-#: methods/bzip2.cc:108
+#: methods/bzip2.cc:109
 #, c-format
 msgid "Read error from %s process"
 msgstr "Erro de lectura do proceso %s"
 
-#: methods/bzip2.cc:140 methods/bzip2.cc:149 methods/copy.cc:43
-#: methods/gzip.cc:92 methods/gzip.cc:101 methods/rred.cc:524
-#: methods/rred.cc:533
+#: methods/bzip2.cc:141 methods/bzip2.cc:150 methods/copy.cc:43
+#: methods/gzip.cc:93 methods/gzip.cc:102 methods/rred.cc:486
+#: methods/rred.cc:495
 msgid "Failed to stat"
-msgstr "Non se atopou"
+msgstr "Non foi posíbel determinar o estado"
 
-#: methods/bzip2.cc:146 methods/copy.cc:80 methods/gzip.cc:98
-#: methods/rred.cc:530
+#: methods/bzip2.cc:147 methods/copy.cc:80 methods/gzip.cc:99
+#: methods/rred.cc:492
 msgid "Failed to set modification time"
-msgstr "Non se puido estabrecer a hora de modificación"
+msgstr "Non foi posíbel estabelecer a hora de modificación"
 
 #: methods/cdrom.cc:199
 #, c-format
 msgid "Unable to read the cdrom database %s"
-msgstr "Non se puido ler a base de datos de CD-ROMs %s"
+msgstr "Non é posíbel ler a base de datos do CD-ROM %s"
 
 #: methods/cdrom.cc:208
 msgid ""
 "Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
 "cannot be used to add new CD-ROMs"
 msgstr ""
-"Empregue apt-cdrom para que APT poida recoñecer este CD-ROM. Non se pode "
-"empregar apt-get update para engadir CD-ROMs"
+"Empregue apt-cdrom para que APT poida recoñecer este CD-ROM. Non foi posíbel "
+"empregar apt-get update para engadir un CD-ROM"
 
 #: methods/cdrom.cc:218
 msgid "Wrong CD-ROM"
@@ -1871,7 +1953,7 @@ msgstr "CD-ROM incorrecto"
 #: methods/cdrom.cc:245
 #, c-format
 msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "Non se puido desmontar o CD-ROM de %s, pode estarse empregando aínda."
+msgstr "Non é posíbel desmontar o CD-ROM de %s, pode estarse empregando aínda."
 
 #: methods/cdrom.cc:250
 msgid "Disk not found."
@@ -1883,20 +1965,20 @@ msgstr "Non se atopou o ficheiro"
 
 #: methods/file.cc:44
 msgid "Invalid URI, local URIS must not start with //"
-msgstr "URI non válido, os URIs locais non deben comezar por //"
+msgstr "URI incorrecto, os URI locais non deben comezar por //"
 
 #. Login must be before getpeername otherwise dante won't work.
 #: methods/ftp.cc:168
 msgid "Logging in"
-msgstr "A se identificar"
+msgstr "Identificándose"
 
 #: methods/ftp.cc:174
 msgid "Unable to determine the peer name"
-msgstr "Non se puido determinar o nome do outro extremo"
+msgstr "Non é posíbel determinar o nome do outro extremo"
 
 #: methods/ftp.cc:179
 msgid "Unable to determine the local name"
-msgstr "Non se puido determinar o nome local"
+msgstr "Non é posíbel determinar o nome local"
 
 #: methods/ftp.cc:210 methods/ftp.cc:238
 #, c-format
@@ -1906,12 +1988,12 @@ msgstr "O servidor rexeitou a conexión e dixo: %s"
 #: methods/ftp.cc:216
 #, c-format
 msgid "USER failed, server said: %s"
-msgstr "A orde USER fallou, o servidor dixo: %s"
+msgstr "Fallou a orde USER, o servidor dixo: %s"
 
 #: methods/ftp.cc:223
 #, c-format
 msgid "PASS failed, server said: %s"
-msgstr "A orde PASS fallou, o servidor dixo: %s"
+msgstr "Fallou a orde PASS, o servidor dixo: %s"
 
 #: methods/ftp.cc:243
 msgid ""
@@ -1924,69 +2006,69 @@ msgstr ""
 #: methods/ftp.cc:271
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
-msgstr "A orde do script de conexión \"%s\" fallou, o servidor dixo: %s"
+msgstr "Fallou a orde do script de acceso «%s», o servidor dixo: %s"
 
 #: methods/ftp.cc:297
 #, c-format
 msgid "TYPE failed, server said: %s"
-msgstr "A orde TYPE fallou, o servidor dixo: %s"
+msgstr "Fallou a orde TYPE, o servidor dixo: %s"
 
 #: methods/ftp.cc:335 methods/ftp.cc:446 methods/rsh.cc:183 methods/rsh.cc:226
 msgid "Connection timeout"
-msgstr "Tempo esgotado para a conexión"
+msgstr "Esgotouse o tempo para a conexión"
 
 #: methods/ftp.cc:341
 msgid "Server closed the connection"
 msgstr "O servidor pechou a conexión"
 
-#: methods/ftp.cc:344 apt-pkg/contrib/fileutl.cc:811 methods/rsh.cc:190
+#: methods/ftp.cc:344 apt-pkg/contrib/fileutl.cc:802 methods/rsh.cc:190
 msgid "Read error"
-msgstr "Erro de lectura"
+msgstr "Produciuse un erro de lectura"
 
 #: methods/ftp.cc:351 methods/rsh.cc:197
 msgid "A response overflowed the buffer."
-msgstr "Unha resposta desbordou o buffer."
+msgstr "Unha resposta desbordou o búfer."
 
 #: methods/ftp.cc:368 methods/ftp.cc:380
 msgid "Protocol corruption"
-msgstr "Corrupción do protocolo"
+msgstr "Dano no protocolo"
 
-#: methods/ftp.cc:452 apt-pkg/contrib/fileutl.cc:853 methods/rsh.cc:232
+#: methods/ftp.cc:452 apt-pkg/contrib/fileutl.cc:844 methods/rsh.cc:232
 msgid "Write error"
-msgstr "Erro de escritura"
+msgstr "Produciuse un erro de escritura"
 
 #: methods/ftp.cc:692 methods/ftp.cc:698 methods/ftp.cc:734
 msgid "Could not create a socket"
-msgstr "Non se puido crear un socket"
+msgstr "Non é posíbel crear un socket"
 
 #: methods/ftp.cc:703
 msgid "Could not connect data socket, connection timed out"
 msgstr ""
-"Non se puido conectar o socket de datos, o tempo esgotouse para a conexión"
+"Non é posíbel conectar o socket de datos, o tempo esgotouse para a conexión"
 
 #: methods/ftp.cc:709
 msgid "Could not connect passive socket."
-msgstr "Non se puido conectar o socket pasivo."
+msgstr "Non é posíbel conectar o socket pasivo."
 
 #: methods/ftp.cc:727
 msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo non puido obter un socket para escoitar"
+msgstr "getaddrinfo non puido obter un socket no que atender"
 
 #: methods/ftp.cc:741
 msgid "Could not bind a socket"
-msgstr "Non se puido ligar un socket"
+msgstr "Non é posíbel ligar un socket"
 
 #: methods/ftp.cc:745
 msgid "Could not listen on the socket"
-msgstr "Non se puido escoitar no socket"
+msgstr "Non é posíbel escoitar no socket"
 
 #: methods/ftp.cc:752
 msgid "Could not determine the socket's name"
-msgstr "Non se puido determinar o nome do socket"
+msgstr "Non é posíbel determinar o nome do socket"
 
 #: methods/ftp.cc:784
 msgid "Unable to send PORT command"
-msgstr "Non se puido enviar a orde PORT"
+msgstr "Non é posíbel enviar a orde PORT"
 
 #: methods/ftp.cc:794
 #, c-format
@@ -1996,7 +2078,7 @@ msgstr "Familia de enderezos %u (AF_*) descoñecida"
 #: methods/ftp.cc:803
 #, c-format
 msgid "EPRT failed, server said: %s"
-msgstr "A orde EPRT fallou, o servidor dixo: %s"
+msgstr "Produciuse un fallou na orde EPRT, o servidor dixo: %s"
 
 #: methods/ftp.cc:823
 msgid "Data socket connect timed out"
@@ -2004,16 +2086,16 @@ msgstr "A conexión do socket de datos esgotou o tempo"
 
 #: methods/ftp.cc:830
 msgid "Unable to accept connection"
-msgstr "Non se pode aceptar a conexión"
+msgstr "Non é posíbel aceptar a conexión"
 
 #: methods/ftp.cc:869 methods/http.cc:1006 methods/rsh.cc:302
 msgid "Problem hashing file"
-msgstr "Problema ao calcular o hash do ficheiro"
+msgstr "Xurdiu un problema ao calcular o hash do ficheiro"
 
 #: methods/ftp.cc:882
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
-msgstr "Non se pode obter o ficheiro, o servidor dixo \"%s\""
+msgstr "Non é posíbel obter o ficheiro, o servidor dixo «%s»"
 
 #: methods/ftp.cc:897 methods/rsh.cc:321
 msgid "Data socket timed out"
@@ -2022,7 +2104,7 @@ msgstr "O socket de datos esgotou o tempo"
 #: methods/ftp.cc:927
 #, c-format
 msgid "Data transfer failed, server said '%s'"
-msgstr "A transferencia de datos fallou, o servidor dixo \"%s\""
+msgstr "Produciuse un fallou na transferencia de datos, o servidor dixo «%s»"
 
 #. Get the files information
 #: methods/ftp.cc:1004
@@ -2031,12 +2113,12 @@ msgstr "Petición"
 
 #: methods/ftp.cc:1116
 msgid "Unable to invoke "
-msgstr "Non se puido chamar a "
+msgstr "Non é posíbel chamar a "
 
 #: methods/connect.cc:71
 #, c-format
 msgid "Connecting to %s (%s)"
-msgstr "A conectar a %s (%s)"
+msgstr "Conectando a %s (%s)"
 
 #: methods/connect.cc:82
 #, c-format
@@ -2046,98 +2128,97 @@ msgstr "[IP: %s %s]"
 #: methods/connect.cc:89
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "Non se puido crear un socket para %s (f=%u t=%u p=%u)"
+msgstr "Non foi posíbel crear un socket para %s (f=%u t=%u p=%u)"
 
 #: methods/connect.cc:95
 #, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "Non se pode iniciar a conexión a %s:%s (%s)."
+msgstr "Non é posíbel iniciar a conexión a %s:%s (%s)."
 
 #: methods/connect.cc:103
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "Non se puido conectar a %s:%s (%s), a conexión esgotou o tempo"
+msgstr "Non foi posíbel conectar a %s:%s (%s), a conexión esgotou o tempo"
 
 #: methods/connect.cc:121
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
-msgstr "Non se puido conectar a %s:%s (%s)."
+msgstr "Non foi posíbel conectar a %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
 #: methods/connect.cc:149 methods/rsh.cc:424
 #, c-format
 msgid "Connecting to %s"
-msgstr "A conectar a %s"
+msgstr "Conectando a %s"
 
 #: methods/connect.cc:168 methods/connect.cc:187
 #, c-format
 msgid "Could not resolve '%s'"
-msgstr "Non se puido resolver \"%s\""
+msgstr "Non foi posíbel atopar «%s»"
 
 #: methods/connect.cc:193
 #, c-format
 msgid "Temporary failure resolving '%s'"
-msgstr "Fallo temporal ao resolver \"%s\""
+msgstr "Produciuse un fallo temporal ao buscar «%s»"
 
 #: methods/connect.cc:196
-#, fuzzy, c-format
+#, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "Algo estraño ocorreu ao resolver \"%s:%s\" (%i)"
+msgstr "Aconteceu algo malo, buscando «%s:%s» (%i - %s)"
 
 #: methods/connect.cc:243
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to connect to %s:%s:"
-msgstr "Non se pode conectar a %s %s:"
+msgstr "Non é posíbel conectar %s:%s:"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
 #: methods/gpgv.cc:71
-#, fuzzy, c-format
+#, c-format
 msgid "No keyring installed in %s."
-msgstr "A abortar a instalación."
+msgstr "Non ha ningún chaveiro instalado en %s."
 
 #: methods/gpgv.cc:163
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
-"Erro interno: Sinatura correcta, pero non se puido determinar a pegada "
+"Erro interno: Sinatura correcta, pero non foi posíbel determinar a pegada "
 "dixital da chave"
 
 #: methods/gpgv.cc:168
 msgid "At least one invalid signature was encountered."
-msgstr "Atopouse alomenos unha sinatura non válida."
+msgstr "Atopouse polo menos unha sinatura incorrecta."
 
 #: methods/gpgv.cc:172
-#, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
-"Non se puido executar \"%s\" para verificar a sinatura (¿está gpgv "
-"instalado?)"
+"Non é posíbel executar «gpgv» para verificar a sinatura (Está instalado "
+"gpgv?)"
 
 #: methods/gpgv.cc:177
 msgid "Unknown error executing gpgv"
-msgstr "Erro descoñecido ao executar gpgv"
+msgstr "Produciuse un erro descoñecido ao executar gpgv"
 
 #: methods/gpgv.cc:211 methods/gpgv.cc:218
 msgid "The following signatures were invalid:\n"
-msgstr "As seguintes sinaturas non eran válidas:\n"
+msgstr "As seguintes sinaturas non eran correctas:\n"
 
 #: methods/gpgv.cc:225
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
 msgstr ""
-"Non se puido verificar as seguintes sinaturas porque a chave pública non "
-"está dispoñible:\n"
+"Non se puideron verificar as seguintes sinaturas porque a chave pública non "
+"está dispoñíbel:\n"
 
 #: methods/http.cc:385
 msgid "Waiting for headers"
-msgstr "A agardar polas cabeceiras"
+msgstr "Agardando polas cabeceiras"
 
 #: methods/http.cc:531
 #, c-format
 msgid "Got a single header line over %u chars"
-msgstr "Recibiuse unha soa liña de cabeceira en %u caracteres"
+msgstr "Obtivose unha soa liña de cabeceira en %u caracteres"
 
 #: methods/http.cc:539
 msgid "Bad header line"
@@ -2145,23 +2226,24 @@ msgstr "Liña de cabeceira incorrecta"
 
 #: methods/http.cc:564 methods/http.cc:571
 msgid "The HTTP server sent an invalid reply header"
-msgstr "O servidor HTTP enviou unha cabeceira de resposta non válida"
+msgstr "O servidor HTTP enviou unha cabeceira de resposta incorrecta"
 
 #: methods/http.cc:600
 msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "O servidor HTTP enviou unha cabeceira Content-Length non válida"
+msgstr ""
+"O servidor HTTP enviou unha cabeceira cunha lonxitude de contido incorrecta"
 
 #: methods/http.cc:615
 msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "O servidor HTTP enviou unha cabeceira Content-Range non válida"
+msgstr "O servidor HTTP enviou unha cabeceira cun rango de contido incorrecto"
 
 #: methods/http.cc:617
 msgid "This HTTP server has broken range support"
-msgstr "Este servidor HTTP ten un soporte de rangos roto"
+msgstr "Este servidor HTTP ten a compatibilidade de rangos estragada"
 
 #: methods/http.cc:641
 msgid "Unknown date format"
-msgstr "Formato de data descoñecido"
+msgstr "Formato de datos descoñecido"
 
 #: methods/http.cc:799
 msgid "Select failed"
@@ -2173,27 +2255,28 @@ msgstr "A conexión esgotou o tempo"
 
 #: methods/http.cc:827
 msgid "Error writing to output file"
-msgstr "Erro ao escribir no ficheiro de saída"
+msgstr "Produciuse un erro ao escribir no ficheiro de saída"
 
 #: methods/http.cc:858
 msgid "Error writing to file"
-msgstr "Erro ao escribir nun ficheiro"
+msgstr "Produciuse un erro ao escribir nun ficheiro"
 
 #: methods/http.cc:886
 msgid "Error writing to the file"
-msgstr "Erro ao escribir no ficheiro"
+msgstr "Produciuse un erro ao escribir no ficheiro"
 
 #: methods/http.cc:900
 msgid "Error reading from server. Remote end closed connection"
-msgstr "Erro ao ler do servidor. O extremo remoto pechou a conexión"
+msgstr ""
+"Produciuse un erro ao ler do servidor. O extremo remoto pechou a conexión"
 
 #: methods/http.cc:902
 msgid "Error reading from server"
-msgstr "Erro ao ler do servidor"
+msgstr "Produciuse un erro ao ler do servidor"
 
-#: methods/http.cc:991 apt-pkg/contrib/mmap.cc:283
+#: methods/http.cc:991 apt-pkg/contrib/mmap.cc:281
 msgid "Failed to truncate file"
-msgstr "Non se puido truncar o ficheiro"
+msgstr "Non foi posíbel truncar o ficheiro"
 
 #: methods/http.cc:1160
 msgid "Bad header data"
@@ -2201,80 +2284,84 @@ msgstr "Datos da cabeceira incorrectos"
 
 #: methods/http.cc:1177 methods/http.cc:1232
 msgid "Connection failed"
-msgstr "A conexión fallou"
+msgstr "Produciuse un fallo na conexión"
 
 #: methods/http.cc:1324
 msgid "Internal error"
-msgstr "Erro interno"
+msgstr "Produciuse un erro interno"
 
 #: apt-pkg/contrib/mmap.cc:77
 msgid "Can't mmap an empty file"
-msgstr "Non se pode facer mmap sobre un ficheiro baleiro"
+msgstr "Non é posíbel facer mmap sobre un ficheiro baleiro"
 
 #: apt-pkg/contrib/mmap.cc:89
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't duplicate file descriptor %i"
-msgstr "Non se puido abrir unha canle para %s"
+msgstr "Non foi posíbel duplicar o descritor de ficheiro %i"
 
 #: apt-pkg/contrib/mmap.cc:97 apt-pkg/contrib/mmap.cc:250
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
-msgstr "Non se puido facer mmap de %lu bytes"
+msgstr "Non foi posíbel facer mmap de %lu bytes"
 
 #: apt-pkg/contrib/mmap.cc:124
-#, fuzzy
 msgid "Unable to close mmap"
-msgstr "Non se puido abrir %s"
+msgstr "Non é posíbel pechar mmap"
 
 #: apt-pkg/contrib/mmap.cc:152 apt-pkg/contrib/mmap.cc:180
-#, fuzzy
 msgid "Unable to synchronize mmap"
-msgstr "Non se puido chamar a "
+msgstr "Non é posíbel sincronizar mmap"
 
-#: apt-pkg/contrib/mmap.cc:302
+#: apt-pkg/contrib/mmap.cc:300
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
+"Dynamic MMap executouse fora do lugar. Incremente o tamaño de APT::Cache-"
+"Limit. O valor actual é : %lu. (man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:401
+#: apt-pkg/contrib/mmap.cc:399
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
+"Non é posíbel aumentar o tamaño de MMap xa que o límite de %lu bytes xa foi "
+"acadado."
 
-#: apt-pkg/contrib/mmap.cc:404
+#: apt-pkg/contrib/mmap.cc:402
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
+"Non é posíbel aumentar o tamaño de MMap xa que o crecemento automático foi "
+"desactivado polo usuario."
 
 #. d means days, h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:371
 #, c-format
 msgid "%lid %lih %limin %lis"
-msgstr ""
+msgstr "%lid %lih %limin %lis"
 
 #. h means hours, min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lih %limin %lis"
-msgstr ""
+msgstr "%lih %limin %lis"
 
 #. min means minutes, s means seconds
 #: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%limin %lis"
-msgstr ""
+msgstr "%limin %lis"
 
 #. s means seconds
 #: apt-pkg/contrib/strutl.cc:390
 #, c-format
 msgid "%lis"
-msgstr ""
+msgstr "%lis"
 
-#: apt-pkg/contrib/strutl.cc:1136
+#: apt-pkg/contrib/strutl.cc:1119
 #, c-format
 msgid "Selection %s not found"
 msgstr "Non se atopou a selección %s"
@@ -2282,72 +2369,76 @@ msgstr "Non se atopou a selección %s"
 #: apt-pkg/contrib/configuration.cc:452
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
-msgstr "Abreviatura de tipo \"%c\" descoñecida"
+msgstr "Abreviatura de tipo «%c» descoñecida"
 
 #: apt-pkg/contrib/configuration.cc:510
 #, c-format
 msgid "Opening configuration file %s"
-msgstr "A abrir o ficheiro de configuración %s"
+msgstr "Abrindo o ficheiro de configuración %s"
 
 #: apt-pkg/contrib/configuration.cc:678
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "Erro de sintaxe %s:%u: O bloque comeza sen un nome."
+msgstr "Produciuse un erro de sintaxe %s:%u: O bloque comeza sen un nome."
 
 #: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
-msgstr "Erro de sintaxe %s:%u: Etiqueta mal formada"
+msgstr "Produciuse un erro de sintaxe %s:%u: Etiqueta mal formada"
 
 #: apt-pkg/contrib/configuration.cc:714
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "Erro de sintaxe %s:%u: Lixo extra despois do valor"
+msgstr "Produciuse un erro de sintaxe %s:%u: Lixo extra despois do valor"
 
 #: apt-pkg/contrib/configuration.cc:754
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "Erro de sintaxe %s:%u: Só se poden facer directivas no nivel superior"
+msgstr ""
+"Produciuse un erro de sintaxe %s:%u: Só se poden facer directivas no nivel "
+"superior"
 
 #: apt-pkg/contrib/configuration.cc:761
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "Erro de sintaxe %s:%u: Includes aniñados de máis"
+msgstr "Produciuse un erro de sintaxe %s:%u: Includes aniñados de máis"
 
 #: apt-pkg/contrib/configuration.cc:765 apt-pkg/contrib/configuration.cc:770
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
-msgstr "Erro de sintaxe %s:%u: Incluído de aquí"
+msgstr "Produciuse un erro de sintaxe %s:%u: Incluído de aquí"
 
 #: apt-pkg/contrib/configuration.cc:774
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "Erro de sintaxe %s:%u: Non se soporta a directiva \"%s\""
+msgstr "Produciuse un erro de sintaxe %s:%u: Non se admite a directiva «%s»"
 
 #: apt-pkg/contrib/configuration.cc:777
-#, fuzzy, c-format
+#, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr "Erro de sintaxe %s:%u: Só se poden facer directivas no nivel superior"
+msgstr ""
+"Produciuse un erro de sintaxe %s:%u: a directiva «clear» require unha árbore "
+"de opción como argumento"
 
 #: apt-pkg/contrib/configuration.cc:827
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "Erro de sintaxe %s:%u: Lixo extra á fin da liña"
+msgstr "Produciuse un erro de sintaxe %s:%u: Lixo extra á fin da liña"
 
 #: apt-pkg/contrib/progress.cc:153
 #, c-format
 msgid "%c%s... Error!"
-msgstr "%c%s... ¡Erro!"
+msgstr "%c%s... Erro!"
 
 #: apt-pkg/contrib/progress.cc:155
 #, c-format
 msgid "%c%s... Done"
-msgstr "%c%s... Rematado"
+msgstr "%c%s... Feito"
 
 #: apt-pkg/contrib/cmndline.cc:77
 #, c-format
 msgid "Command line option '%c' [from %s] is not known."
-msgstr "Non se coñece a opción de liña de ordes \"%c\" [de %s]."
+msgstr "Non se coñece a opción de liña de ordes «%c» [de %s]."
 
 #: apt-pkg/contrib/cmndline.cc:103 apt-pkg/contrib/cmndline.cc:111
 #: apt-pkg/contrib/cmndline.cc:119
@@ -2374,148 +2465,132 @@ msgstr ""
 #: apt-pkg/contrib/cmndline.cc:236
 #, c-format
 msgid "Option %s requires an integer argument, not '%s'"
-msgstr "A opción %s precisa dun argumento enteiro, non \"%s\""
+msgstr "A opción %s precisa dun argumento enteiro, non «%s»"
 
 #: apt-pkg/contrib/cmndline.cc:267
 #, c-format
 msgid "Option '%s' is too long"
-msgstr "A opción \"%s\" é longa de máis"
+msgstr "A opción «%s» é longa de máis"
 
 #: apt-pkg/contrib/cmndline.cc:300
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "O senso %s non se entende, probe \"true\" ou \"false\"."
+msgstr "O senso %s non se entende, probe «true» ou «false»."
 
 #: apt-pkg/contrib/cmndline.cc:350
 #, c-format
 msgid "Invalid operation %s"
-msgstr "Operación %s non válida"
+msgstr "Operación incorrecta: %s"
 
 #: apt-pkg/contrib/cdromutl.cc:52
 #, c-format
 msgid "Unable to stat the mount point %s"
-msgstr "Non se pode analizar o punto de montaxe %s"
+msgstr "Non é posíbel analizar o punto de montaxe %s"
 
 #: apt-pkg/contrib/cdromutl.cc:175 apt-pkg/contrib/cdromutl.cc:209
 #: apt-pkg/acquire.cc:456 apt-pkg/acquire.cc:481 apt-pkg/clean.cc:39
 #: methods/mirror.cc:93
 #, c-format
 msgid "Unable to change to %s"
-msgstr "Non se pode cambiar a %s"
+msgstr "Non é posíbel cambiar a %s"
 
 #: apt-pkg/contrib/cdromutl.cc:217
 msgid "Failed to stat the cdrom"
-msgstr "Non se puido analizar o CD-ROM"
+msgstr "Non foi posíbel analizar o CD-ROM"
 
-#: apt-pkg/contrib/fileutl.cc:159
+#: apt-pkg/contrib/fileutl.cc:154
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "Non se empregan bloqueos para o ficheiro de bloqueo de só lectura %s"
 
-#: apt-pkg/contrib/fileutl.cc:164
+#: apt-pkg/contrib/fileutl.cc:159
 #, c-format
 msgid "Could not open lock file %s"
-msgstr "Non se puido abrir o ficheiro de bloqueo %s"
+msgstr "Non foi posíbel abrir o ficheiro de bloqueo %s"
 
-#: apt-pkg/contrib/fileutl.cc:182
+#: apt-pkg/contrib/fileutl.cc:177
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Non se empregan bloqueos para o ficheiro de bloqueo montado por NFS %s"
 
-#: apt-pkg/contrib/fileutl.cc:186
+#: apt-pkg/contrib/fileutl.cc:181
 #, c-format
 msgid "Could not get lock %s"
-msgstr "Non se puido obter o bloqueo %s"
+msgstr "Non foi posíbel obter o bloqueo %s"
 
-#: apt-pkg/contrib/fileutl.cc:326
+#: apt-pkg/contrib/fileutl.cc:321
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
+msgstr "A lista de ficheiros non pode ser creada como «%s» non é un directorio"
 
-#: apt-pkg/contrib/fileutl.cc:353
-#, c-format
-msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:371
-#, c-format
-msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:380
-#, c-format
-msgid ""
-"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:670
+#: apt-pkg/contrib/fileutl.cc:661
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Agardouse por %s pero non estaba alí"
 
-#: apt-pkg/contrib/fileutl.cc:682
+#: apt-pkg/contrib/fileutl.cc:673
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "O subproceso %s recibiu un fallo de segmento."
 
-#: apt-pkg/contrib/fileutl.cc:684
-#, fuzzy, c-format
+#: apt-pkg/contrib/fileutl.cc:675
+#, c-format
 msgid "Sub-process %s received signal %u."
-msgstr "O subproceso %s recibiu un fallo de segmento."
+msgstr "O subproceso %s recibiu o sinal %u."
 
-#: apt-pkg/contrib/fileutl.cc:688
+#: apt-pkg/contrib/fileutl.cc:679
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "O subproceso %s devolveu un código de erro (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:690
+#: apt-pkg/contrib/fileutl.cc:681
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "O subproceso %s saíu de xeito inesperado"
 
-#: apt-pkg/contrib/fileutl.cc:755
+#: apt-pkg/contrib/fileutl.cc:746
 #, c-format
 msgid "Could not open file %s"
-msgstr "Non se puido abrir o ficheiro %s"
+msgstr "Non foi posíbel abrir o ficheiro %s"
 
-#: apt-pkg/contrib/fileutl.cc:772
-#, fuzzy, c-format
+#: apt-pkg/contrib/fileutl.cc:763
+#, c-format
 msgid "Could not open file descriptor %d"
-msgstr "Non se puido abrir unha canle para %s"
+msgstr "Non foi posíbel abrir o descritor de ficheiro %d"
 
-#: apt-pkg/contrib/fileutl.cc:832
+#: apt-pkg/contrib/fileutl.cc:823
 #, c-format
 msgid "read, still have %lu to read but none left"
 msgstr "lectura, aínda hai %lu para ler pero non queda ningún"
 
-#: apt-pkg/contrib/fileutl.cc:865
+#: apt-pkg/contrib/fileutl.cc:856
 #, c-format
 msgid "write, still have %lu to write but couldn't"
 msgstr "escritura, aínda hai %lu para escribir pero non se puido"
 
-#: apt-pkg/contrib/fileutl.cc:1001
-#, fuzzy, c-format
+#: apt-pkg/contrib/fileutl.cc:985
+#, c-format
 msgid "Problem closing the gzip file %s"
-msgstr "Problema ao pechar o ficheiro"
+msgstr "Produciuse un problema ao pechar o arquivo gzip %s"
+
+#: apt-pkg/contrib/fileutl.cc:988
+#, c-format
+msgid "Problem closing the file %s"
+msgstr "Produciuse un problema ao pechar o ficheiro %s"
+
+#: apt-pkg/contrib/fileutl.cc:993
+#, c-format
+msgid "Problem renaming the file %s to %s"
+msgstr "Produciuse un problema ao renomear o ficheiro %s a %s"
 
 #: apt-pkg/contrib/fileutl.cc:1004
-#, fuzzy, c-format
-msgid "Problem closing the file %s"
-msgstr "Problema ao pechar o ficheiro"
-
-#: apt-pkg/contrib/fileutl.cc:1009
-#, fuzzy, c-format
-msgid "Problem renaming the file %s to %s"
-msgstr "Problema ao sincronizar o ficheiro"
-
-#: apt-pkg/contrib/fileutl.cc:1020
-#, fuzzy, c-format
+#, c-format
 msgid "Problem unlinking the file %s"
-msgstr "Problema ao borrar o ficheiro"
+msgstr "Produciuse un problema ao desligar o ficheiro %s"
 
-#: apt-pkg/contrib/fileutl.cc:1033
+#: apt-pkg/contrib/fileutl.cc:1017
 msgid "Problem syncing the file"
-msgstr "Problema ao sincronizar o ficheiro"
+msgstr "Produciuse un problema ao sincronizar o ficheiro"
 
 #: apt-pkg/pkgcache.cc:145
 msgid "Empty package cache"
@@ -2523,20 +2598,20 @@ msgstr "Caché de paquetes baleira"
 
 #: apt-pkg/pkgcache.cc:151
 msgid "The package cache file is corrupted"
-msgstr "O ficheiro de caché de paquetes está corrompido"
+msgstr "O ficheiro de caché de paquetes está danado"
 
 #: apt-pkg/pkgcache.cc:156
 msgid "The package cache file is an incompatible version"
-msgstr "O ficheiro de caché de paquetes é unha versión incompatible"
+msgstr "O ficheiro de caché de paquetes é unha versión incompatíbel"
 
 #: apt-pkg/pkgcache.cc:161
 #, c-format
 msgid "This APT does not support the versioning system '%s'"
-msgstr "Este APT non soporta o sistema de versionamento \"%s\""
+msgstr "Este APT non admite o sistema de versionado «%s»"
 
 #: apt-pkg/pkgcache.cc:166
 msgid "The package cache was built for a different architecture"
-msgstr "A caché de paquetes construiuse para unha arquitectura diferente"
+msgstr "A caché de paquetes construíuse para unha arquitectura diferente"
 
 #: apt-pkg/pkgcache.cc:293
 msgid "Depends"
@@ -2556,7 +2631,7 @@ msgstr "Recomenda"
 
 #: apt-pkg/pkgcache.cc:294
 msgid "Conflicts"
-msgstr "Conflicto con"
+msgstr "Conflitos"
 
 #: apt-pkg/pkgcache.cc:294
 msgid "Replaces"
@@ -2568,11 +2643,11 @@ msgstr "Fai obsoleto a"
 
 #: apt-pkg/pkgcache.cc:295
 msgid "Breaks"
-msgstr "Rompe"
+msgstr "Estraga"
 
 #: apt-pkg/pkgcache.cc:295
 msgid "Enhances"
-msgstr ""
+msgstr "Mellora"
 
 #: apt-pkg/pkgcache.cc:306
 msgid "important"
@@ -2596,7 +2671,7 @@ msgstr "extra"
 
 #: apt-pkg/depcache.cc:125 apt-pkg/depcache.cc:154
 msgid "Building dependency tree"
-msgstr "A construír a árbore de dependencias"
+msgstr "Construindo a árbore de dependencias"
 
 #: apt-pkg/depcache.cc:126
 msgid "Candidate versions"
@@ -2608,17 +2683,17 @@ msgstr "Xeración de dependencias"
 
 #: apt-pkg/depcache.cc:175 apt-pkg/depcache.cc:208 apt-pkg/depcache.cc:212
 msgid "Reading state information"
-msgstr "A ler a información do estado"
+msgstr "Lendo a información do estado"
 
 #: apt-pkg/depcache.cc:237
 #, c-format
 msgid "Failed to open StateFile %s"
-msgstr "Non se puido abrir o ficheiro de estado %s"
+msgstr "Non foi posíbel abrir o ficheiro de estado %s"
 
 #: apt-pkg/depcache.cc:243
 #, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr "Non se puido gravar o ficheiro de estado temporal %s"
+msgstr "Non foi posíbel gravar o ficheiro de estado temporal %s"
 
 #: apt-pkg/depcache.cc:922
 #, c-format
@@ -2628,82 +2703,86 @@ msgstr ""
 #: apt-pkg/tagfile.cc:102
 #, c-format
 msgid "Unable to parse package file %s (1)"
-msgstr "Non se pode analizar o ficheiro de paquetes %s (1)"
+msgstr "Non é posíbel analizar o ficheiro de paquetes %s (1)"
 
 #: apt-pkg/tagfile.cc:189
 #, c-format
 msgid "Unable to parse package file %s (2)"
-msgstr "Non se pode analizar o ficheiro de paquetes %s (2)"
+msgstr "Non é posíbel analizar o ficheiro de paquetes %s (2)"
 
 #: apt-pkg/sourcelist.cc:92
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Liña %lu mal formada na lista de fontes %s (análise de dist)"
+msgstr ""
+"Liña %lu mal construída na lista de fontes %s ([opción] non analizábel)"
 
 #: apt-pkg/sourcelist.cc:95
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Liña %lu mal formada na lista de fontes %s (dist)"
+msgstr ""
+"Liña %lu mal construída na lista de fontes %s ([opción] demasiado curta)"
 
 #: apt-pkg/sourcelist.cc:106
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Liña %lu mal formada na lista de fontes %s (análise de dist)"
+msgstr ""
+"Liña %lu mal construída na lista de fontes %s ([%s] non é unha asignación)"
 
 #: apt-pkg/sourcelist.cc:112
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Liña %lu mal formada na lista de fontes %s (análise de dist)"
+msgstr "Liña %lu mal construída na lista de fontes %s ([%s] non ten chave)"
 
 #: apt-pkg/sourcelist.cc:115
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Liña %lu mal formada na lista de fontes %s (análise de dist)"
+msgstr ""
+"Liña %lu mal construída na lista de fontes %s ([%s] a chave %s non ten valor)"
 
 #: apt-pkg/sourcelist.cc:128
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Liña %lu mal formada na lista de fontes %s (URI)"
+msgstr "Liña %lu mal construída na lista de orixes %s (URI)"
 
 #: apt-pkg/sourcelist.cc:130
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Liña %lu mal formada na lista de fontes %s (dist)"
+msgstr "Liña %lu mal construída na lista de orixes %s (dist)"
 
 #: apt-pkg/sourcelist.cc:133
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Liña %lu mal formada na lista de fontes %s (análise de URI)"
+msgstr "Liña %lu mal construída na lista de orixes %s (análise de URI)"
 
 #: apt-pkg/sourcelist.cc:139
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Liña %lu mal formada na lista de fontes %s (dist absoluta)"
+msgstr "Liña %lu mal construída na lista de orixes %s (dist absoluta)"
 
 #: apt-pkg/sourcelist.cc:146
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Liña %lu mal formada na lista de fontes %s (análise de dist)"
+msgstr "Liña %lu mal construída na lista de orixes %s (análise de dist)"
 
 #: apt-pkg/sourcelist.cc:244
 #, c-format
 msgid "Opening %s"
-msgstr "A abrir %s"
+msgstr "Abrindo %s"
 
 #: apt-pkg/sourcelist.cc:261 apt-pkg/cdrom.cc:438
 #, c-format
 msgid "Line %u too long in source list %s."
-msgstr "Liña %u longa de máis na lista de fontes %s."
+msgstr "Liña %u longa de máis na lista de orixes %s."
 
 #: apt-pkg/sourcelist.cc:281
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
-msgstr "Liña %u mal formada na lista de fontes %s (tipo)"
+msgstr "Liña %u mal construída na lista de orixes %s (tipo)"
 
 #: apt-pkg/sourcelist.cc:285
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "O tipo \"%s\" non se coñece na liña %u da lista de fontes %s"
+msgstr "O tipo «%s» non se coñece na liña %u da lista de orixes %s"
 
 #: apt-pkg/packagemanager.cc:331 apt-pkg/packagemanager.cc:616
 #, c-format
@@ -2711,6 +2790,8 @@ msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
+"Non foi posíbel facer a configuración inmediata en «%s». Vexa man 5 apt.conf "
+"baixo APT::Immediate-Configure para obter máis detalles. (%d)"
 
 #: apt-pkg/packagemanager.cc:452
 #, c-format
@@ -2719,8 +2800,8 @@ msgid ""
 "package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
 "you really want to do it, activate the APT::Force-LoopBreak option."
 msgstr ""
-"Esta instalación ha requirir que se elimine temporalmente o paquete esencial "
-"%s debido a un bucle de Conflictos e Pre-dependencias. Isto adoita ser malo, "
+"Esta instalación requirirá que se retire temporalmente o paquete esencial %s "
+"por mor dun bucle de Conflitos e Pre-dependencias. Isto adoita ser malo, "
 "pero se o quere facer, active a opción APT::Force-LoopBreak."
 
 #: apt-pkg/packagemanager.cc:495
@@ -2729,71 +2810,78 @@ msgid ""
 "Could not perform immediate configuration on already unpacked '%s'. Please "
 "see man 5 apt.conf under APT::Immediate-Configure for details."
 msgstr ""
+"Non foi posíbel realizar a configuración inmediata no paquete, aínda sen "
+"desempaquetar, «%s». Vexa man 5 apt.conf baixo APT::Immediate-Configure para "
+"obter máis detalles."
 
 #: apt-pkg/pkgrecords.cc:32
 #, c-format
 msgid "Index file type '%s' is not supported"
-msgstr "O tipo de ficheiros de índices \"%s\" non está soportado"
+msgstr "O tipo de ficheiros de índices «%s» non está admitido"
 
-#: apt-pkg/algorithms.cc:313
+#: apt-pkg/algorithms.cc:292
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
-"O paquete %s ten que se reinstalar, pero non se pode atopar o seu arquivo."
+"O paquete %s ten que ser reinstalado, mais non é posíbel atopar o seu "
+"arquivo."
 
-#: apt-pkg/algorithms.cc:1239
+#: apt-pkg/algorithms.cc:1218
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
 msgstr ""
-"Erro, pkgProblemResolver::Resolve xerou interrupcións, pode estar causado "
-"por paquetes retidos."
+"Erro, pkgProblemResolver::Resolve xerou interrupcións, isto pode estar "
+"causado por paquetes retidos."
 
-#: apt-pkg/algorithms.cc:1241
+#: apt-pkg/algorithms.cc:1220
 msgid "Unable to correct problems, you have held broken packages."
-msgstr "Non se poden resolver os problemas, ten retidos paquetes rotos."
+msgstr "Non é posíbel solucionar os problemas, ten retidos paquetes rotos."
 
-#: apt-pkg/algorithms.cc:1517 apt-pkg/algorithms.cc:1519
+#: apt-pkg/algorithms.cc:1496 apt-pkg/algorithms.cc:1498
 #, fuzzy
+#| msgid ""
+#| "Some index files failed to download. They have been ignored, or old ones "
+#| "used instead."
 msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
+"Some index files failed to download, they have been ignored, or old ones "
 "used instead."
 msgstr ""
-"Non se puido descargar algúns ficheiros de índices; ignoráronse ou "
-"empregáronse uns vellos no seu lugar."
+"Algúns ficheiros de índice fallaron durante a descarga. Ignoráronse, ou "
+"foron utilizados algúns antigos no seu lugar"
 
 #: apt-pkg/acquire.cc:79
-#, fuzzy, c-format
+#, c-format
 msgid "List directory %spartial is missing."
-msgstr "O directorio de listas %spartial falla."
+msgstr "Non se atopa a lista de directorios %sparcial."
 
 #: apt-pkg/acquire.cc:83
-#, fuzzy, c-format
+#, c-format
 msgid "Archives directory %spartial is missing."
-msgstr "O directorio de arquivos %spartial falla."
+msgstr "Non se atopa a lista de arquivos %sparcial."
 
 #: apt-pkg/acquire.cc:91
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock directory %s"
-msgstr "Non se puido bloquear o directorio de listas"
+msgstr "Non é posíbel bloquear o directorio %s"
 
 #. only show the ETA if it makes sense
 #. two days
 #: apt-pkg/acquire.cc:857
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "A obter o ficheiro %li de %li (fallan %s)"
+msgstr "Obtendo o ficheiro %li de %li (restan %s)"
 
 #: apt-pkg/acquire.cc:859
 #, c-format
 msgid "Retrieving file %li of %li"
-msgstr "A obter o ficheiro %li de %li"
+msgstr "Obtendo o ficheiro %li de %li"
 
 #: apt-pkg/acquire-worker.cc:110
 #, c-format
 msgid "The method driver %s could not be found."
-msgstr "Non se puido atopar o controlador de métodos %s."
+msgstr "Non foi posíbel atopar o controlador de métodos %s."
 
 #: apt-pkg/acquire-worker.cc:159
 #, c-format
@@ -2803,255 +2891,248 @@ msgstr "O método %s non se iniciou correctamente"
 #: apt-pkg/acquire-worker.cc:413
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr "Introduza o disco etiquetado: \"%s\" na unidade \"%s\" e prema Intro."
+msgstr "Insira o disco etiquetado: «%s» na unidade «%s» e prema Intro."
 
-#: apt-pkg/init.cc:146
+#: apt-pkg/init.cc:143
 #, c-format
 msgid "Packaging system '%s' is not supported"
-msgstr "O sistema de empaquetamento \"%s\" non está soportado"
+msgstr "O sistema de empaquetado «%s» non está admitido"
 
-#: apt-pkg/init.cc:162
+#: apt-pkg/init.cc:159
 msgid "Unable to determine a suitable packaging system type"
-msgstr "Non se puido determinar un tipo de sistema de empaquetamento axeitado"
+msgstr "Non é posíbel determinar un tipo de sistema de empaquetado axeitado"
 
 #: apt-pkg/clean.cc:56
 #, c-format
 msgid "Unable to stat %s."
-msgstr "Non se pode analizar %s."
+msgstr "Non é posíbel analizar %s."
 
 #: apt-pkg/srcrecords.cc:44
 msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Debe introducir algúns URIs fonte no seu ficheiro sources.list"
+msgstr "Debe introducir algúns URI «orixe» no seu ficheiro sources.list"
 
 #: apt-pkg/cachefile.cc:84
 msgid "The package lists or status file could not be parsed or opened."
 msgstr ""
-"Non se puido analizar ou abrir as listas de paquetes ou ficheiro de estado."
+"Non foi posíbel analizar ou abrir as listas de paquetes ou ficheiro de "
+"estado."
 
 #: apt-pkg/cachefile.cc:88
 msgid "You may want to run apt-get update to correct these problems"
-msgstr "Pode querer executar apt-get update para corrixir estes problemas"
+msgstr "Pode querer executar «apt-get update» para corrixir estes problemas"
 
 #: apt-pkg/cachefile.cc:106
 msgid "The list of sources could not be read."
-msgstr "Non se puido ler a lista de orixes."
+msgstr "Non foi posíbel ler a lista de orixes."
 
-#: apt-pkg/policy.cc:346
-#, fuzzy, c-format
+#: apt-pkg/policy.cc:344
+#, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr ""
-"Rexistro non válido no ficheiro de preferencias, non hai unha cabeceira "
-"Package"
+"Rexistro incorrecto no ficheiro de preferencias %s; falta a cabeceira Package"
 
-#: apt-pkg/policy.cc:368
+#: apt-pkg/policy.cc:366
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "Non se entendeu o tipo de inmobilización %s"
 
-#: apt-pkg/policy.cc:376
+#: apt-pkg/policy.cc:374
 msgid "No priority (or zero) specified for pin"
 msgstr ""
 "Non se indicou unha prioridade (ou indicouse cero) para a inmobilización"
 
 #: apt-pkg/pkgcachegen.cc:80
 msgid "Cache has an incompatible versioning system"
-msgstr "A caché ten un sistema de versionamento incompatible"
+msgstr "A caché ten un sistema de versionado incompatíbel"
 
 #: apt-pkg/pkgcachegen.cc:198
 #, c-format
 msgid "Error occurred while processing %s (NewPackage)"
-msgstr "Ocorreu un erro ao procesar %s (NewPackage)"
+msgstr "Produciuse un erro ao procesar %s (NewPackage)"
 
 #: apt-pkg/pkgcachegen.cc:215
 #, c-format
 msgid "Error occurred while processing %s (UsePackage1)"
-msgstr "Ocorreu un erro ao procesar %s (UsePackage1)"
+msgstr "Produciuse un erro ao procesar %s (UsePackage1)"
 
 #: apt-pkg/pkgcachegen.cc:253
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc1)"
-msgstr "Ocorreu un erro ao procesar %s (NewFileDesc1)"
+msgstr "Produciuse un erro ao procesar %s (NewFileDesc1)"
 
 #: apt-pkg/pkgcachegen.cc:285
 #, c-format
 msgid "Error occurred while processing %s (UsePackage2)"
-msgstr "Ocorreu un erro ao procesar %s (UsePackage2)"
+msgstr "Produciuse un erro ao procesar %s (UsePackage2)"
 
 #: apt-pkg/pkgcachegen.cc:289
 #, c-format
 msgid "Error occurred while processing %s (NewFileVer1)"
-msgstr "Ocorreu un erro ao procesar %s (NewFileVer1)"
+msgstr "Produciuse un erro ao procesar %s (NewFileVer1)"
 
 #: apt-pkg/pkgcachegen.cc:306 apt-pkg/pkgcachegen.cc:316
 #: apt-pkg/pkgcachegen.cc:324
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (NewVersion%d)"
-msgstr "Ocorreu un erro ao procesar %s (NewVersion1)"
+msgstr "Produciuse un erro ao procesar %s (NewVersion%d)"
 
 #: apt-pkg/pkgcachegen.cc:320
 #, c-format
 msgid "Error occurred while processing %s (UsePackage3)"
-msgstr "Ocorreu un erro ao procesar %s (UsePackage3)"
+msgstr "Produciuse un erro ao procesar %s (UsePackage3)"
 
 #: apt-pkg/pkgcachegen.cc:353
 #, c-format
 msgid "Error occurred while processing %s (NewFileDesc2)"
-msgstr "Ocorreu un erro ao procesar %s (NewFileDesc2)"
+msgstr "Produciuse un erro ao procesar %s (NewFileDesc2)"
 
 #: apt-pkg/pkgcachegen.cc:360
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "Guau, superou o número de nomes de paquetes que este APT pode manexar."
+msgstr ""
+"Vaites!, superou o número de nomes de paquetes que este APT pode manexar."
 
 #: apt-pkg/pkgcachegen.cc:363
 msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "Guau, superou o número de versións que este APT pode manexar."
+msgstr "Vaites!, superou o número de versións que este APT pode manexar."
 
 #: apt-pkg/pkgcachegen.cc:366
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Guau, superou o número de descricións que este APT pode manexar."
+msgstr "Vaites!, superou o número de descricións que este APT pode manexar."
 
 #: apt-pkg/pkgcachegen.cc:369
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "Guau, superou o número de dependencias que este APT pode manexar."
+msgstr "Vaites!, superou o número de dependencias que este APT pode manexar."
 
 #: apt-pkg/pkgcachegen.cc:398
 #, c-format
 msgid "Error occurred while processing %s (FindPkg)"
-msgstr "Ocorreu un erro ao procesar %s (FindPkg)"
+msgstr "Produciuse un erro ao procesar %s (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:412
 #, c-format
 msgid "Error occurred while processing %s (CollectFileProvides)"
-msgstr "Ocorreu un erro ao procesar %s (CollectFileProvides)"
+msgstr "Produciuse un erro ao procesar %s (CollectFileProvides)"
 
 #: apt-pkg/pkgcachegen.cc:418
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
-msgstr "Non se atopou o paquete %s %s ao procesar as dependencias de ficheiros"
+msgstr ""
+"Non foi posíbel atopar o paquete %s %s ao procesar as dependencias de "
+"ficheiros"
 
-#: apt-pkg/pkgcachegen.cc:986
+#: apt-pkg/pkgcachegen.cc:982
 #, c-format
 msgid "Couldn't stat source package list %s"
-msgstr "Non se atopou a lista de paquetes fonte %s"
+msgstr "Non foi posíbel atopar a lista de paquetes fonte %s"
 
-#: apt-pkg/pkgcachegen.cc:1091
+#: apt-pkg/pkgcachegen.cc:1087
 msgid "Collecting File Provides"
-msgstr "A recoller as provisións de ficheiros"
+msgstr "Recollendo as provisións de ficheiros"
 
-#: apt-pkg/pkgcachegen.cc:1269 apt-pkg/pkgcachegen.cc:1276
+#: apt-pkg/pkgcachegen.cc:1265 apt-pkg/pkgcachegen.cc:1272
 msgid "IO Error saving source cache"
-msgstr "Erro de E/S ao gravar a caché de fontes"
+msgstr "Produciuse un erro de E/S ao gravar a caché de fontes"
 
 #: apt-pkg/acquire-item.cc:136
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
-msgstr "fallou o cambio de nome, %s (%s -> %s)."
+msgstr "non foi posíbel cambiar o nome, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:629
+#: apt-pkg/acquire-item.cc:484
 msgid "MD5Sum mismatch"
-msgstr "Os MD5Sum non coinciden"
+msgstr "A MD5Sum non coincide"
 
-#: apt-pkg/acquire-item.cc:887 apt-pkg/acquire-item.cc:1781
-#: apt-pkg/acquire-item.cc:1924
+#: apt-pkg/acquire-item.cc:746 apt-pkg/acquire-item.cc:1574
+#: apt-pkg/acquire-item.cc:1717
 msgid "Hash Sum mismatch"
-msgstr "Os \"hashes\" non coinciden"
+msgstr "A sumas «hash» non coinciden"
 
-#: apt-pkg/acquire-item.cc:1341
-#, c-format
-msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc:1356
-#, fuzzy, c-format
-msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "Non se pode analizar o ficheiro de paquetes %s (1)"
-
-#: apt-pkg/acquire-item.cc:1415
+#: apt-pkg/acquire-item.cc:1244
 msgid "There is no public key available for the following key IDs:\n"
-msgstr ""
-"Non hai unha clave pública dispoñible para os seguintes IDs de clave:\n"
+msgstr "Non hai unha chave pública dispoñíbel para os seguintes ID de chave:\n"
 
 #. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 #. the time since then the file is invalid - formated in the same way as in
 #. the download progress display (e.g. 7d 3h 42min 1s)
-#: apt-pkg/acquire-item.cc:1452
+#: apt-pkg/acquire-item.cc:1281
 #, c-format
 msgid "Release file expired, ignoring %s (invalid since %s)"
-msgstr ""
+msgstr "Caducou o ficheiro de publicación, ignorando %s (non válido desde %s)"
 
-#: apt-pkg/acquire-item.cc:1473
+#: apt-pkg/acquire-item.cc:1302
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr ""
+msgstr "Conflito na distribución: %s (agardábase %s mais obtívose %s)"
 
-#: apt-pkg/acquire-item.cc:1506
+#: apt-pkg/acquire-item.cc:1328
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s\n"
 msgstr ""
+"Produciuse un erro durante a verificación da sinatura. O repositorio non foi "
+"actualizado, empregaranse os ficheiros de índice anteriores. Erro de GPG: "
+"%s: %s\n"
 
-#: apt-pkg/acquire-item.cc:1515
+#: apt-pkg/acquire-item.cc:1337
 #, c-format
 msgid "GPG error: %s: %s"
-msgstr ""
+msgstr "Produciuse un erro de GPG: %s %s"
 
-#: apt-pkg/acquire-item.cc:1572
+#: apt-pkg/acquire-item.cc:1365
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
-"Non se puido atopar un ficheiro para o paquete %s. Isto pode significar que "
-"ten que arranxar este paquete a man. (Falla a arquitectura)"
+"Non é posíbel atopar un ficheiro para o paquete %s. Isto pode significar que "
+"ten que arranxar este paquete a man. (Falta a arquitectura)"
 
-#: apt-pkg/acquire-item.cc:1631
+#: apt-pkg/acquire-item.cc:1424
 #, c-format
 msgid ""
-"I wasn't able to locate file for the %s package. This might mean you need to "
-"manually fix this package."
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package."
 msgstr ""
-"Non se puido atopar un ficheiro para o paquete %s. Isto pode significar que "
+"Non é posíbel atopar un ficheiro para o paquete %s. Isto pode significar que "
 "ten que arranxar este paquete a man."
 
-#: apt-pkg/acquire-item.cc:1686
+#: apt-pkg/acquire-item.cc:1479
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
-"Os ficheiros de índices de paquetes están corrompidos. Non hai un campo "
+"Os ficheiros de índices de paquetes están danados. Non hai un campo "
 "Filename: para o paquete %s."
 
-#: apt-pkg/acquire-item.cc:1773
+#: apt-pkg/acquire-item.cc:1566
 msgid "Size mismatch"
 msgstr "Os tamaños non coinciden"
 
 #: apt-pkg/indexrecords.cc:53
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to parse Release file %s"
-msgstr "Non se pode analizar o ficheiro de paquetes %s (1)"
+msgstr "Non se puido analizar o ficheiro de publicación %s"
 
-#: apt-pkg/indexrecords.cc:63
-#, fuzzy, c-format
+#: apt-pkg/indexrecords.cc:60
+#, c-format
 msgid "No sections in Release file %s"
-msgstr "Nota, escóllese %s no canto de %s\n"
+msgstr "Non hai seccións no ficheiro de publicación %s"
 
-#: apt-pkg/indexrecords.cc:97
+#: apt-pkg/indexrecords.cc:94
 #, c-format
 msgid "No Hash entry in Release file %s"
-msgstr ""
+msgstr "Non hai entrada de Hash no ficheiro de publicación %s"
 
-#: apt-pkg/indexrecords.cc:110
-#, fuzzy, c-format
+#: apt-pkg/indexrecords.cc:107
+#, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "Liña non válida no ficheiro de desvíos: %s"
+msgstr "A entrada «Valid-Until» no ficheiro de publicación %s non é válida"
 
-#: apt-pkg/indexrecords.cc:125
-#, fuzzy, c-format
+#: apt-pkg/indexrecords.cc:122
+#, c-format
 msgid "Invalid 'Date' entry in Release file %s"
-msgstr "Non se pode analizar o ficheiro de paquetes %s (1)"
+msgstr "A entrada «Date» no ficheiro de publicación %s non é válida"
 
 #: apt-pkg/vendorlist.cc:66
 #, c-format
@@ -3064,43 +3145,43 @@ msgid ""
 "Using CD-ROM mount point %s\n"
 "Mounting CD-ROM\n"
 msgstr ""
-"A empregar o punto de montaxe de CD-ROMs %s\n"
-"A montar o CD-ROM\n"
+"Empregando o punto de montaxe de CD-ROMs %s\n"
+"Montando o CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:527 apt-pkg/cdrom.cc:615
 msgid "Identifying.. "
-msgstr "A identificar.. "
+msgstr "Identificando... "
 
 #: apt-pkg/cdrom.cc:552
 #, c-format
 msgid "Stored label: %s\n"
-msgstr "Etiqueta armacenada: %s \n"
+msgstr "Etiqueta almacenada: %s\n"
 
 #: apt-pkg/cdrom.cc:559 apt-pkg/cdrom.cc:827
 msgid "Unmounting CD-ROM...\n"
-msgstr "A desmontar o CD-ROM...\n"
+msgstr "Desmontando o CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:578
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
-msgstr "A empregar o punto de montaxe de CD-ROMs %s\n"
+msgstr "Empregando o punto de montaxe de CD-ROM %s\n"
 
 #: apt-pkg/cdrom.cc:596
 msgid "Unmounting CD-ROM\n"
-msgstr "A desmontar o CD-ROM\n"
+msgstr "Desmontando o CD-ROM\n"
 
 #: apt-pkg/cdrom.cc:600
 msgid "Waiting for disc...\n"
-msgstr "A agardar polo disco...\n"
+msgstr "Agardando polo disco...\n"
 
 #. Mount the new CDROM
 #: apt-pkg/cdrom.cc:608
 msgid "Mounting CD-ROM...\n"
-msgstr "A montar o CD-ROM...\n"
+msgstr "Montando o CD-ROM...\n"
 
 #: apt-pkg/cdrom.cc:626
 msgid "Scanning disc for index files..\n"
-msgstr "A buscar os ficheiros de índices no disco..\n"
+msgstr "Buscando os ficheiros de índices no disco..\n"
 
 #: apt-pkg/cdrom.cc:666
 #, c-format
@@ -3108,7 +3189,7 @@ msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
 "%zu signatures\n"
 msgstr ""
-"Atopáronse %zu índices de paquetes, %zu índices de fontes, %zu índices de "
+"Atopáronse %zu índices de paquetes, %zu índices de orixes, %zu índices de "
 "traducións e %zu sinaturas\n"
 
 #: apt-pkg/cdrom.cc:677
@@ -3116,15 +3197,17 @@ msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
 msgstr ""
+"Non é posíbel localizar ningún ficheiro de paquetes. É posíbel que non sexa "
+"un disco de Debian ou que a arquitectura sexa incorrecta."
 
 #: apt-pkg/cdrom.cc:703
 #, c-format
 msgid "Found label '%s'\n"
-msgstr "Atopouse a etiqueta \"%s\"\n"
+msgstr "Atopouse a etiqueta «%s»\n"
 
 #: apt-pkg/cdrom.cc:732
 msgid "That is not a valid name, try again.\n"
-msgstr "Ese non é un nome válido, volva tentalo.\n"
+msgstr "Ese non é un nome correcto, volva tentalo.\n"
 
 #: apt-pkg/cdrom.cc:748
 #, c-format
@@ -3133,81 +3216,83 @@ msgid ""
 "'%s'\n"
 msgstr ""
 "Este disco chámase: \n"
-"\"%s\"\n"
+"«%s»\n"
 
 #: apt-pkg/cdrom.cc:752
 msgid "Copying package lists..."
-msgstr "A copiar as listas de paquetes..."
+msgstr "Copiando as listas de paquetes..."
 
 #: apt-pkg/cdrom.cc:778
 msgid "Writing new source list\n"
-msgstr "A gravar a nova lista de fontes\n"
+msgstr "Escribindo a nova lista de orixes\n"
 
 #: apt-pkg/cdrom.cc:787
 msgid "Source list entries for this disc are:\n"
-msgstr "As entradas da lista de fontes deste disco son:\n"
+msgstr "As entradas da lista de orixes deste disco son:\n"
 
-#: apt-pkg/indexcopy.cc:270 apt-pkg/indexcopy.cc:909
+#: apt-pkg/indexcopy.cc:270 apt-pkg/indexcopy.cc:908
 #, c-format
 msgid "Wrote %i records.\n"
-msgstr "Graváronse %i rexistros.\n"
+msgstr "Escribíronse %i rexistros.\n"
 
-#: apt-pkg/indexcopy.cc:272 apt-pkg/indexcopy.cc:911
+#: apt-pkg/indexcopy.cc:272 apt-pkg/indexcopy.cc:910
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
-msgstr "Graváronse %i rexistros con %i ficheiros que fallan.\n"
+msgstr "Escribíronse %i rexistros con %i ficheiros que faltan.\n"
 
-#: apt-pkg/indexcopy.cc:275 apt-pkg/indexcopy.cc:914
+#: apt-pkg/indexcopy.cc:275 apt-pkg/indexcopy.cc:913
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
-msgstr "Graváronse %i rexistros con %i ficheiros que non coinciden\n"
+msgstr "Escribíronse %i rexistros con %i ficheiros que non coinciden\n"
 
-#: apt-pkg/indexcopy.cc:278 apt-pkg/indexcopy.cc:917
+#: apt-pkg/indexcopy.cc:278 apt-pkg/indexcopy.cc:916
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
-"Graváronse %i rexistros con %i ficheiros que fallan e %i ficheiros que non "
+"Escribíronse %i rexistros con %i ficheiros que faltan e %i ficheiros que non "
 "coinciden\n"
 
 #: apt-pkg/indexcopy.cc:537
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping nonexistent file %s"
-msgstr "A abrir o ficheiro de configuración %s"
+msgstr "Omitindo o ficheiro inexistente %s"
 
 #: apt-pkg/indexcopy.cc:543
 #, c-format
 msgid "Can't find authentication record for: %s"
-msgstr ""
+msgstr "Non é posíbel atopar un rexistro de autenticación para: %s"
 
 #: apt-pkg/indexcopy.cc:549
-#, fuzzy, c-format
+#, c-format
 msgid "Hash mismatch for: %s"
-msgstr "Os \"hashes\" non coinciden"
+msgstr "Valor de hash non coincidente para: %s"
 
 #: apt-pkg/cacheset.cc:337
 #, c-format
 msgid "Release '%s' for '%s' was not found"
-msgstr "Non se atopou a versión \"%s\" de \"%s\""
+msgstr "Non se atopou a publicación «%s» de «%s»"
 
 #: apt-pkg/cacheset.cc:340
 #, c-format
 msgid "Version '%s' for '%s' was not found"
-msgstr "Non se atopou a versión \"%s\" de \"%s\""
+msgstr "Non se atopou a versión «%s» de «%s»"
 
 #: apt-pkg/cacheset.cc:447
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find task '%s'"
-msgstr "Non se puido atopar a tarefa %s"
+msgstr "Non foi posíbel atopar a tarefa «%s»"
 
 #: apt-pkg/cacheset.cc:454
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr "Non se puido atopar o paquete %s"
+msgstr "Non foi posíbel atopar ningún paquete pola expresión de rexistro «%s»"
 
 #: apt-pkg/cacheset.cc:467
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
+"Non é posíbel seleccionar distintas versións do paquete «%s» xa que é "
+"puramente virtual"
 
 #: apt-pkg/cacheset.cc:475 apt-pkg/cacheset.cc:483
 #, c-format
@@ -3215,144 +3300,162 @@ msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
+"Non é posíbel seleccionar nin a versión instalada nin a candidata do paquete "
+"«%s» xa que non ten ningunha delas"
 
 #: apt-pkg/cacheset.cc:491
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
+"Non é posíbel seleccionar a versión máis recente do paquete «%s» xa que é "
+"puramente virtual"
 
 #: apt-pkg/cacheset.cc:499
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
+"Non é posíbel seleccionar a versión candidata do paquete %s xa que non ten "
+"candidata"
 
 #: apt-pkg/cacheset.cc:507
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
+"Non é posíbel seleccionar a versión instalada do paquete %s xa que non está "
+"instalado"
 
 #: apt-pkg/deb/dpkgpm.cc:52
 #, c-format
 msgid "Installing %s"
-msgstr "A instalar %s"
+msgstr "Instalando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:53 apt-pkg/deb/dpkgpm.cc:819
+#: apt-pkg/deb/dpkgpm.cc:53 apt-pkg/deb/dpkgpm.cc:823
 #, c-format
 msgid "Configuring %s"
-msgstr "A configurar %s"
+msgstr "Configurando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:54 apt-pkg/deb/dpkgpm.cc:826
+#: apt-pkg/deb/dpkgpm.cc:54 apt-pkg/deb/dpkgpm.cc:830
 #, c-format
 msgid "Removing %s"
-msgstr "A eliminar %s"
+msgstr "Retirando %s"
 
 #: apt-pkg/deb/dpkgpm.cc:55
-#, fuzzy, c-format
+#, c-format
 msgid "Completely removing %s"
-msgstr "Eliminouse %s completamente"
+msgstr "%s completamente retirado"
 
 #: apt-pkg/deb/dpkgpm.cc:56
 #, c-format
 msgid "Noting disappearance of %s"
-msgstr ""
+msgstr "Tomando nota da desaparición de %s"
 
 #: apt-pkg/deb/dpkgpm.cc:57
 #, c-format
 msgid "Running post-installation trigger %s"
-msgstr "A executar o disparador de post-instalación %s"
+msgstr "Executando o disparador de post-instalación %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:642
+#: apt-pkg/deb/dpkgpm.cc:646
 #, c-format
 msgid "Directory '%s' missing"
-msgstr "O directorio \"%s\" falla"
+msgstr "Falta o directorio «%s»"
 
-#: apt-pkg/deb/dpkgpm.cc:657 apt-pkg/deb/dpkgpm.cc:671
-#, fuzzy, c-format
+#: apt-pkg/deb/dpkgpm.cc:661 apt-pkg/deb/dpkgpm.cc:675
+#, c-format
 msgid "Could not open file '%s'"
-msgstr "Non se puido abrir o ficheiro %s"
+msgstr "Non foi posíbel abrir o ficheiro «%s»"
 
-#: apt-pkg/deb/dpkgpm.cc:812
+#: apt-pkg/deb/dpkgpm.cc:816
 #, c-format
 msgid "Preparing %s"
-msgstr "A preparar %s"
+msgstr "Preparando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:813
+#: apt-pkg/deb/dpkgpm.cc:817
 #, c-format
 msgid "Unpacking %s"
-msgstr "A desempaquetar %s"
+msgstr "Desempaquetando %s"
 
-#: apt-pkg/deb/dpkgpm.cc:818
+#: apt-pkg/deb/dpkgpm.cc:822
 #, c-format
 msgid "Preparing to configure %s"
-msgstr "A se preparar para configurar %s"
+msgstr "Preparandose para configurar %s"
 
-#: apt-pkg/deb/dpkgpm.cc:820
+#: apt-pkg/deb/dpkgpm.cc:824
 #, c-format
 msgid "Installed %s"
 msgstr "Instalouse %s"
 
-#: apt-pkg/deb/dpkgpm.cc:825
+#: apt-pkg/deb/dpkgpm.cc:829
 #, c-format
 msgid "Preparing for removal of %s"
-msgstr "A se preparar para a eliminación de %s"
+msgstr "Preparándose para o retirado de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:827
+#: apt-pkg/deb/dpkgpm.cc:831
 #, c-format
 msgid "Removed %s"
-msgstr "Eliminouse %s"
+msgstr "Retirouse %s"
 
-#: apt-pkg/deb/dpkgpm.cc:832
+#: apt-pkg/deb/dpkgpm.cc:836
 #, c-format
 msgid "Preparing to completely remove %s"
-msgstr "A se preparar para eliminar %s completamente"
+msgstr "Preparándose para retirar %s completamente"
 
-#: apt-pkg/deb/dpkgpm.cc:833
+#: apt-pkg/deb/dpkgpm.cc:837
 #, c-format
 msgid "Completely removed %s"
-msgstr "Eliminouse %s completamente"
+msgstr "Retirouse %s completamente"
 
-#: apt-pkg/deb/dpkgpm.cc:1039
+#: apt-pkg/deb/dpkgpm.cc:1043
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
-"Non se puido escribir no rexistro, a chamada a openpty() fallou (¿/dev/pts "
+"Non foi posíbel escribir no rexistro, a chamada a openpty() fallou (/dev/pts "
 "non estaba montado?)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1070
+#: apt-pkg/deb/dpkgpm.cc:1074
 msgid "Running dpkg"
-msgstr ""
+msgstr "Executando dpkg"
 
-#: apt-pkg/deb/dpkgpm.cc:1273
+#: apt-pkg/deb/dpkgpm.cc:1277
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
+"Non se escribiu ningún informe de Apport porque xa se acadou o nivel "
+"MaxReports"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1278
+#: apt-pkg/deb/dpkgpm.cc:1282
 msgid "dependency problems - leaving unconfigured"
-msgstr ""
+msgstr "problemas de dependencias - déixase sen configurar"
 
-#: apt-pkg/deb/dpkgpm.cc:1280
+#: apt-pkg/deb/dpkgpm.cc:1284
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
+"Non se escribiu ningún informe de Apport porque a mensaxe de erro indica que "
+"é un error provinte dun fallo anterior."
 
-#: apt-pkg/deb/dpkgpm.cc:1286
+#: apt-pkg/deb/dpkgpm.cc:1290
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
+"Non se escribiu ningún informe de Apport porque a mensaxe de erro indica un "
+"erro de disco cheo."
 
-#: apt-pkg/deb/dpkgpm.cc:1292
+#: apt-pkg/deb/dpkgpm.cc:1296
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
+"Non se escribiu un informe de contribución porque a mensaxe de erro indica "
+"un erro de falta de memoria"
 
-#: apt-pkg/deb/dpkgpm.cc:1299
+#: apt-pkg/deb/dpkgpm.cc:1303
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
+"Non se escribiu ningún informe de Apport porque a mensaxe de erro indica un "
+"erro de E/S en dpkg"
 
 #: apt-pkg/deb/debsystem.cc:69
 #, c-format
@@ -3360,11 +3463,15 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
+"Non é posíbel bloquear o directorio de administración (%s). Esta usandoo "
+"algún outro proceso?"
 
 #: apt-pkg/deb/debsystem.cc:72
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Non se puido bloquear o directorio de listas"
+msgstr ""
+"Non é posíbel bloquear o directorio de administración (%s). É o "
+"administrador?"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -3373,65 +3480,87 @@ msgstr "Non se puido bloquear o directorio de listas"
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
+"dpkg interrompeuse, debe executar manualmente «%s» para corrixir o problema. "
 
 #: apt-pkg/deb/debsystem.cc:106
 msgid "Not locked"
-msgstr ""
+msgstr "Non está bloqueado"
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:200
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr ""
+msgstr "Non se atopou ningún ficheiro de replica «%s» "
 
 #: methods/mirror.cc:343
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
+msgstr "[Replica: %s]"
 
-#: methods/rred.cc:503
+#: methods/rred.cc:465
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
 "to be corrupt."
 msgstr ""
+"Non foi posíbel actualizar %s con mmap e co ficheiro usado na operación - a "
+"actualización semella estar danada."
 
-#: methods/rred.cc:508
+#: methods/rred.cc:470
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
 "to be corrupt."
 msgstr ""
+"Non foi posíbel actualizar %s con mmap e (mais non hai un fallo específico "
+"de mmap) - a actualización semella estar danada."
 
 #: methods/rsh.cc:329
 msgid "Connection closed prematurely"
 msgstr "A conexión pechouse prematuramente"
 
-#~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
+#~ msgid "Downloading %s %s"
+#~ msgstr "Descargando %s %s"
+
+#~ msgid "Changelog for %s (%s)"
+#~ msgstr "Rexistro de cambios de %s (%s)"
+
+#~ msgid "Empty files can't be valid archives"
+#~ msgstr "Os ficheiros baleiros non poden ser arquivadores válidos"
+
+#~ msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
+#~ msgstr "Ignorando «%s» no directorio «%s» xa que non é un ficheiro regular"
+
+#~ msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 #~ msgstr ""
-#~ "E: A lista de argumentos de Acquire:gpgv::Options é longa de máis. Sáese."
+#~ "Ignorando o ficheiro «%s» no directorio «%s» xa que non ten extensión de "
+#~ "nome"
 
-#~ msgid "Error occurred while processing %s (NewVersion2)"
-#~ msgstr "Ocorreu un erro ao procesar %s (NewVersion2)"
+#~ msgid ""
+#~ "Ignoring file '%s' in directory '%s' as it has an invalid filename "
+#~ "extension"
+#~ msgstr ""
+#~ "Ignorando o ficheiro «%s» no directorio «%s» xa que ten  unha extensión "
+#~ "de nome incorrecta"
 
-#~ msgid "Malformed line %u in source list %s (vendor id)"
-#~ msgstr "Liña %u mal formada na lista de fontes %s (id de provedor)"
+#~ msgid ""
+#~ "Unable to find expected entry '%s' in Release file (Wrong sources.list "
+#~ "entry or malformed file)"
+#~ msgstr ""
+#~ "Non é posíbel atopar a entrada agardada «%s» no ficheiro de publicación "
+#~ "(entrada sources.list incorrecta ou ficheiro con formato incorrecto)"
 
-#~ msgid "Couldn't access keyring: '%s'"
-#~ msgstr "Non se puido acceder ao chaveiro: \"%s\""
+#~ msgid "Unable to find hash sum for '%s' in Release file"
+#~ msgstr ""
+#~ "Non é posíbel ler a suma de comprobación para «%s» no ficheiro de "
+#~ "publicación"
 
-#~ msgid "Could not patch file"
-#~ msgstr "Non se puido parchear o ficheiro"
+#~ msgid "Can not read mirror file '%s'"
+#~ msgstr "Non é posíbel ler o ficheiro de replica «%s»"
 
 #~ msgid "       %4i %s\n"
-#~ msgstr "       %4i %s\n"
+#~ msgstr "\n"
 
 #~ msgid "%4i %s\n"
-#~ msgstr "%4i %s\n"
-
-#~ msgid "Processing triggers for %s"
-#~ msgstr "A procesar os disparadores de %s"
-
-#~ msgid "Dynamic MMap ran out of room"
-#~ msgstr "O MMap Dinámico esgotou o espazo"
+#~ msgstr "\n"

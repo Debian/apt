@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+if ! which lighttpd > /dev/null; then
+	msgdie 'You need lighttpd for this testcase, sorry…'
+	exit 1
+fi
+
+buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+
+setupaptarchive
+
+echo "server.modules = ( \"mod_redirect\" )
+server.document-root = \"$(readlink -f ./aptarchive)\"
+server.port = 8080
+server.stat-cache-engine = \"disable\"
+url.redirect = ( \"^/pool/(.*)$\" => \"/newpool/\$1\" )" > lighttpd.conf
+
+mv aptarchive/pool aptarchive/newpool
+lighttpd -t -f lighttpd.conf >/dev/null || msgdie 'Can not change to webserver: our lighttpd config is invalid'
+lighttpd -D -f lighttpd.conf 2>/dev/null >/dev/null &
+addtrap "kill $!;"
+
+local APTARCHIVE="file://$(readlink -f ./aptarchive)"
+for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
+	sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
+done
+
+aptget update -qq || msgdie 'apt-get update failed'
+aptget install unrelated --download-only -qq || msgdie 'downloading package failed'
+

@@ -1,0 +1,108 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'cool' 'all' '1.0-1'
+insertpackage 'unstable' 'stuff' 'all' '1.0-1'
+insertpackage 'unstable' 'coolstuff' 'all' '1.0-1' 'Depends: cool | stuff'
+insertpackage 'unstable' 'coolstuff2' 'all' '1.0-1' 'Depends: cool2 | stuff'
+insertpackage 'unstable' 'coolstuff-broken' 'all' '1.0-1' 'Depends: cool2 | stuff2'
+insertpackage 'unstable' 'coolstuff-brokenrec' 'all' '1.0-1' 'Recommends: cool2 | stuff2'
+insertpackage 'unstable' 'coolstuff-conflict' 'all' '1.0-1' 'Depends: cool | stuff
+Conflicts: cool'
+insertpackage 'unstable' 'coolstuff-provided' 'all' '1.0-1' 'Depends: cool2 | stuff-abi'
+insertpackage 'unstable' 'extrastuff' 'all' '1.0-1' 'Provides: stuff-abi'
+
+insertpackage 'unstable' 'coolstuff-provided-broken' 'all' '1.0-1' 'Depends: cool2 | stuff-abi-2'
+insertpackage 'unstable' 'extrastuff' 'all' '1.0-1' 'Depends: stuff2
+Provides: stuff-abi-2'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  cool
+The following NEW packages will be installed:
+  cool coolstuff
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst cool (1.0-1 unstable [all])
+Inst coolstuff (1.0-1 unstable [all])
+Conf cool (1.0-1 unstable [all])
+Conf coolstuff (1.0-1 unstable [all])' aptget install coolstuff -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  stuff
+The following NEW packages will be installed:
+  coolstuff2 stuff
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst stuff (1.0-1 unstable [all])
+Inst coolstuff2 (1.0-1 unstable [all])
+Conf stuff (1.0-1 unstable [all])
+Conf coolstuff2 (1.0-1 unstable [all])' aptget install coolstuff2 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ coolstuff-broken : Depends: cool2 but it is not installable or
+                             stuff2 but it is not installable
+E: Broken packages' aptget install coolstuff-broken -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Recommended packages:
+  cool2 stuff2
+The following NEW packages will be installed:
+  coolstuff-brokenrec
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst coolstuff-brokenrec (1.0-1 unstable [all])
+Conf coolstuff-brokenrec (1.0-1 unstable [all])' aptget install coolstuff-brokenrec -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  stuff
+The following NEW packages will be installed:
+  coolstuff-conflict stuff
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst stuff (1.0-1 unstable [all])
+Inst coolstuff-conflict (1.0-1 unstable [all])
+Conf stuff (1.0-1 unstable [all])
+Conf coolstuff-conflict (1.0-1 unstable [all])' aptget install coolstuff-conflict -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  extrastuff
+The following NEW packages will be installed:
+  coolstuff-provided extrastuff
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst extrastuff (1.0-1 unstable [all])
+Inst coolstuff-provided (1.0-1 unstable [all])
+Conf extrastuff (1.0-1 unstable [all])
+Conf coolstuff-provided (1.0-1 unstable [all])' aptget install coolstuff-provided -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ coolstuff-provided-broken : Depends: cool2 but it is not installable or
+                                      stuff-abi-2
+E: Broken packages' aptget install coolstuff-provided-broken -s

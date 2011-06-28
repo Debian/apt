@@ -220,21 +220,18 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
    // Allow pinning by wildcards
    // TODO: Maybe we should always prefer specific pins over non-
    // specific ones.
-   if (Name.find("*") != string::npos || Name.find("[") != string::npos
-       || Name.find("?") != string::npos || Name[0] == '/') {
-	  pkgVersionMatch match(Data, Type);
-	  for (pkgCache::PkgIterator P = Cache->PkgBegin();
-	       P != Cache->PkgEnd(); P++) {
-		  if (match.ExpressionMatches(Name, P.Name())) {
-			CreatePin(Type, P.Name(), Data, Priority);
-		  }  
-      }
+   if (Name[0] == '/' || Name.find_first_of("*[?") != string::npos)
+   {
+      pkgVersionMatch match(Data, Type);
+      for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
+	 if (match.ExpressionMatches(Name, G.Name()))
+	    CreatePin(Type, G.Name(), Data, Priority);
       return;
    }
 
    // Get a spot to put the pin
    pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
-   for (pkgCache::PkgIterator Pkg = Grp.FindPkg("any");
+   for (pkgCache::PkgIterator Pkg = Grp.PackageList();
 	Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
    {
       Pin *P = 0;

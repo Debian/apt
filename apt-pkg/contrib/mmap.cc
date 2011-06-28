@@ -237,11 +237,19 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long const &WorkSpace,
 	if ((this->Flags & Fallback) != Fallback) {
 		// Set the permissions.
 		int Prot = PROT_READ;
+#ifdef MAP_ANONYMOUS
 		int Map = MAP_PRIVATE | MAP_ANONYMOUS;
+#else
+		int Map = MAP_PRIVATE | MAP_ANON;
+#endif
 		if ((this->Flags & ReadOnly) != ReadOnly)
 			Prot |= PROT_WRITE;
 		if ((this->Flags & Public) == Public)
+#ifdef MAP_ANONYMOUS
 			Map = MAP_SHARED | MAP_ANONYMOUS;
+#else
+			Map = MAP_SHARED | MAP_ANON;
+#endif
 
 		// use anonymous mmap() to get the memory
 		Base = (unsigned char*) mmap(0, WorkSpace, Prot, Map, -1, 0);

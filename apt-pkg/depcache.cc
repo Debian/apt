@@ -339,8 +339,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    /* Check simple depends. A depends -should- never self match but 
       we allow it anyhow because dpkg does. Technically it is a packaging
       bug. Conflicts may never self match */
-   if (Dep.TargetPkg() != Dep.ParentPkg() ||
-       (Dep->Type != Dep::Conflicts && Dep->Type != Dep::DpkgBreaks && Dep->Type != Dep::Obsoletes))
+   if (Dep.TargetPkg() != Dep.ParentPkg() || Dep.IsNegative() == false)
    {
       PkgIterator Pkg = Dep.TargetPkg();
       // Check the base package
@@ -370,8 +369,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    {
       /* Provides may never be applied against the same package (or group)
          if it is a conflicts. See the comment above. */
-      if (P.OwnerPkg()->Group == Pkg->Group &&
-	  (Dep->Type == Dep::Conflicts || Dep->Type == Dep::DpkgBreaks))
+      if (P.OwnerPkg()->Group == Pkg->Group && Dep.IsNegative() == true)
 	 continue;
       
       // Check if the provides is a hit
@@ -549,7 +547,7 @@ void pkgDepCache::AddStates(const PkgIterator &Pkg,int Add)
    // Not installed
    if (Pkg->CurrentVer == 0)
    {
-      if (State.Mode == ModeDelete && 
+      if (State.Mode == ModeDelete &&
 	  (State.iFlags & Purge) == Purge && Pkg.Purge() == false)
 	 iDelCount += Add;
       
@@ -594,9 +592,7 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
 
       /* Invert for Conflicts. We have to do this twice to get the
          right sense for a conflicts group */
-      if (D->Type == Dep::Conflicts ||
-	  D->Type == Dep::DpkgBreaks ||
-	  D->Type == Dep::Obsoletes)
+      if (D.IsNegative() == true)
 	 State = ~State;
       
       // Add to the group if we are within an or..
@@ -607,9 +603,7 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
 	 Group = 0;
       
       // Invert for Conflicts
-      if (D->Type == Dep::Conflicts ||
-	  D->Type == Dep::DpkgBreaks ||
-	  D->Type == Dep::Obsoletes)
+      if (D.IsNegative() == true)
 	 State = ~State;
    }	 
 }
@@ -742,9 +736,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 	       Group = 0;
 
 	    // Invert for Conflicts
-	    if (D->Type == Dep::Conflicts ||
-		D->Type == Dep::DpkgBreaks ||
-		D->Type == Dep::Obsoletes)
+	    if (D.IsNegative() == true)
 	       State = ~State;
 	 }
       }
@@ -774,9 +766,7 @@ void pkgDepCache::Update(DepIterator D)
       State = DependencyState(D);
     
       // Invert for Conflicts
-      if (D->Type == Dep::Conflicts ||
-	  D->Type == Dep::DpkgBreaks ||
-	  D->Type == Dep::Obsoletes)
+      if (D.IsNegative() == true)
 	 State = ~State;
 
       RemoveStates(D.ParentPkg());
@@ -1089,7 +1079,22 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       */
       if (IsImportantDep(Start) == false)
 	 continue;
-      
+
+      /* If we are in an or group locate the first or that can 
+         succeed. We have already cached this.. */
+      for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; --Ors)
+	 ++Start;
+      if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer && Start.IsNegative() == false)
+      {
+	 if(DebugAutoInstall == true)
+	    std::clog << OutputInDepth(Depth) << Start << " can't be satisfied!" << std::endl;
+	 if (Start.IsCritical() == false)
+	    continue;
+	 // if the dependency was critical, we can't install it, so remove it again
+	 MarkDelete(Pkg,false,Depth + 1, false);
+	 return;
+      }
+
       /* Check if any ImportantDep() (but not Critical) were added
        * since we installed the package.  Also check for deps that
        * were satisfied in the past: for instance, if a version
@@ -1097,57 +1102,49 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
        * package should follow that Recommends rather than causing the
        * dependency to be removed. (bug #470115)
        */
-      bool isNewImportantDep = false;
-      bool isPreviouslySatisfiedImportantDep = false;
-      if(!ForceImportantDeps && !Start.IsCritical())
+      if (Pkg->CurrentVer != 0 && ForceImportantDeps == false && Start.IsCritical() == false)
       {
-	 bool found=false;
-	 VerIterator instVer = Pkg.CurrentVer();
-	 if(!instVer.end())
+	 bool isNewImportantDep = true;
+	 bool isPreviouslySatisfiedImportantDep = false;
+	 for (DepIterator D = Pkg.CurrentVer().DependsList(); D.end() != true; ++D)
 	 {
-	   for (DepIterator D = instVer.DependsList(); D.end() != true; D++)
-	     {
-	       //FIXME: deal better with or-groups(?)
-	       if(IsImportantDep(D) && !D.IsCritical() &&
-		  Start.TargetPkg() == D.TargetPkg())
-		 {
-		   if(!isPreviouslySatisfiedImportantDep)
-		     {
-		       DepIterator D2 = D;
-		       while((D2->CompareOp & Dep::Or) != 0)
-			 ++D2;
+	    //FIXME: Should we handle or-group better here?
+	    // We do not check if the package we look for is part of the same or-group
+	    // we might find while searching, but could that really be a problem?
+	    if (D.IsCritical() == true || IsImportantDep(D) == false ||
+		Start.TargetPkg() != D.TargetPkg())
+	       continue;
 
-		       isPreviouslySatisfiedImportantDep =
-			 (((*this)[D2] & DepGNow) != 0);
-		     }
+	    isNewImportantDep = false;
 
-		   found=true;
-		 }
-	     }
-	    // this is a new dep if it was not found to be already
-	    // a important dep of the installed pacakge
-	    isNewImportantDep = !found;
+	    while ((D->CompareOp & Dep::Or) != 0)
+	       ++D;
+
+	    isPreviouslySatisfiedImportantDep = (((*this)[D] & DepGNow) != 0);
+	    if (isPreviouslySatisfiedImportantDep == true)
+	       break;
+	 }
+
+	 if(isNewImportantDep == true)
+	 {
+	    if (DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "new important dependency: "
+			 << Start.TargetPkg().FullName() << std::endl;
+	 }
+	 else if(isPreviouslySatisfiedImportantDep == true)
+	 {
+	    if (DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "previously satisfied important dependency on "
+			 << Start.TargetPkg().FullName() << std::endl;
+	 }
+	 else
+	 {
+	    if (DebugAutoInstall == true)
+	       std::clog << OutputInDepth(Depth) << "ignore old unsatisfied important dependency on "
+			 << Start.TargetPkg().FullName() << std::endl;
+	    continue;
 	 }
       }
-      if(isNewImportantDep)
-	 if(DebugAutoInstall == true)
-	    std::clog << OutputInDepth(Depth) << "new important dependency: "
-		      << Start.TargetPkg().Name() << std::endl;
-      if(isPreviouslySatisfiedImportantDep)
-	if(DebugAutoInstall == true)
-	  std::clog << OutputInDepth(Depth) << "previously satisfied important dependency on "
-		    << Start.TargetPkg().Name() << std::endl;
-
-      // skip important deps if the package is already installed
-      if (Pkg->CurrentVer != 0 && Start.IsCritical() == false 
-	  && !isNewImportantDep && !isPreviouslySatisfiedImportantDep
-	  && !ForceImportantDeps)
-	 continue;
-      
-      /* If we are in an or group locate the first or that can 
-         succeed. We have already cached this.. */
-      for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; Ors--)
-	 Start++;
 
       /* This bit is for processing the possibilty of an install/upgrade
          fixing the problem */
@@ -1213,8 +1210,7 @@ void pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       /* For conflicts we just de-install the package and mark as auto,
          Conflicts may not have or groups.  For dpkg's Breaks we try to
          upgrade the package. */
-      if (Start->Type == Dep::Conflicts || Start->Type == Dep::Obsoletes ||
-	  Start->Type == Dep::DpkgBreaks)
+      if (Start.IsNegative() == true)
       {
 	 for (Version **I = List; *I != 0; I++)
 	 {

@@ -195,11 +195,14 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 		}
 	}
 
+	std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
+	if (lang.empty() == true)
+		return IndexTargets;
+
 	// get the Translations:
 	// - if its a dists-style repository get the i18n/Index first
 	// - if its flat try to acquire files by guessing
 	if (Dist[Dist.size() - 1] == '/') {
-		std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
 		for (std::set<std::string>::const_iterator s = sections.begin();
 		     s != sections.end(); ++s) {
 			for (std::vector<std::string>::const_iterator l = lang.begin();

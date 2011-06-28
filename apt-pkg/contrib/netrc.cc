@@ -160,10 +160,10 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
     {
       char login[64] = "";
       char password[64] = "";
-      char *netrcfile = strdupa (NetRCFile.c_str ());
+      char *netrcfile = strdup(NetRCFile.c_str());
 
       // first check for a generic host based netrc entry
-      char *host = strdupa (Uri.Host.c_str ());
+      char *host = strdup(Uri.Host.c_str());
       if (host && parsenetrc (host, login, password, netrcfile) == 0)
       {
 	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
@@ -173,13 +173,16 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
 		      << std::endl;
         Uri.User = string (login);
         Uri.Password = string (password);
+	free(netrcfile);
+	free(host);
 	return;
       }
+      free(host);
 
       // if host did not work, try Host+Path next, this will trigger
       // a lookup uri.startswith(host) in the netrc file parser (because
       // of the "/"
-      char *hostpath = strdupa (string(Uri.Host+Uri.Path).c_str ());
+      char *hostpath = strdup(string(Uri.Host+Uri.Path).c_str());
       if (hostpath && parsenetrc (hostpath, login, password, netrcfile) == 0)
       {
 	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
@@ -189,8 +192,9 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
 		      << std::endl;
 	 Uri.User = string (login);
 	 Uri.Password = string (password);
-	 return;
       }
+      free(netrcfile);
+      free(hostpath);
     }
   }
 }

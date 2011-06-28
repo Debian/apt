@@ -2050,8 +2050,8 @@ bool DoInstall(CommandLine &CmdL)
 
    return InstallPackages(Cache,false);   
 }
-
-/* mark packages as automatically/manually installed. */
+									/*}}}*/
+/* mark packages as automatically/manually installed.			{{{*/
 bool DoMarkAuto(CommandLine &CmdL)
 {
    bool Action = true;
@@ -2086,6 +2086,9 @@ bool DoMarkAuto(CommandLine &CmdL)
          AutoMarkChanged++;
       }
    }
+
+   _error->Notice(_("This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' instead."));
+
    if (AutoMarkChanged && ! _config->FindB("APT::Get::Simulate",false))
       return Cache->writeStateFile(NULL);
    return false;
@@ -2386,8 +2389,10 @@ bool DoSource(CommandLine &CmdL)
       string Src;
       pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
       
-      if (Last == 0)
+      if (Last == 0) {
+	 delete[] Dsc;
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
+      }
       
       string srec = Last->AsStr();
       string::size_type pos = srec.find("\nVcs-");
@@ -2418,8 +2423,10 @@ bool DoSource(CommandLine &CmdL)
 
       // Back track
       vector<pkgSrcRecords::File> Lst;
-      if (Last->Files(Lst) == false)
+      if (Last->Files(Lst) == false) {
+	 delete[] Dsc;
 	 return false;
+      }
 
       // Load them into the fetcher
       for (vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
@@ -2480,6 +2487,7 @@ bool DoSource(CommandLine &CmdL)
    struct statvfs Buf;
    string OutputDir = ".";
    if (statvfs(OutputDir.c_str(),&Buf) != 0) {
+      delete[] Dsc;
       if (errno == EOVERFLOW)
 	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
 				OutputDir.c_str());
@@ -2493,10 +2501,12 @@ bool DoSource(CommandLine &CmdL)
 #if HAVE_STRUCT_STATFS_F_TYPE
            || unsigned(Stat.f_type) != RAMFS_MAGIC
 #endif
-           ) 
+           )  {
+	 delete[] Dsc;
           return _error->Error(_("You don't have enough free space in %s"),
               OutputDir.c_str());
-      }
+       }
+     }
    
    // Number of bytes
    if (DebBytes != FetchBytes)
@@ -2531,7 +2541,10 @@ bool DoSource(CommandLine &CmdL)
    
    // Run it
    if (Fetcher.Run() == pkgAcquire::Failed)
+   {
+      delete[] Dsc;
       return false;
+   }
 
    // Print error messages
    bool Failed = false;
@@ -2546,8 +2559,11 @@ bool DoSource(CommandLine &CmdL)
       Failed = true;
    }
    if (Failed == true)
+   {
+      delete[] Dsc;
       return _error->Error(_("Failed to fetch some archives."));
-   
+   }
+
    if (_config->FindB("APT::Get::Download-only",false) == true)
    {
       c1out << _("Download complete and in download only mode") << endl;
@@ -3174,8 +3190,6 @@ bool ShowHelp(CommandLine &CmdL)
       "   clean - Erase downloaded archive files\n"
       "   autoclean - Erase old downloaded archive files\n"
       "   check - Verify that there are no broken dependencies\n"
-      "   markauto - Mark the given packages as automatically installed\n"
-      "   unmarkauto - Mark the given packages as manually installed\n"
       "   changelog - Download and display the changelog for the given package\n"
       "   download - Download the binary package into the current directory\n"
       "\n"

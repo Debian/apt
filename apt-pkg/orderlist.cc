@@ -490,7 +490,7 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
    bool Res = true;
    for (PrvIterator P = Ver.ProvidesList(); P.end() == false; P++)
       Res &= (this->*F)(P.ParentPkg().RevDependsList());
-   return true;
+   return Res;
 }
 									/*}}}*/
 // OrderList::VisitProvides - Visit all of the providing packages	/*{{{*/
@@ -507,15 +507,11 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
       if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
 	 continue;
       
-      if (D->Type != pkgCache::Dep::Conflicts &&
-	  D->Type != pkgCache::Dep::DpkgBreaks &&
-	  D->Type != pkgCache::Dep::Obsoletes &&
+      if (D.IsNegative() == false &&
 	  Cache[Pkg].InstallVer != *I)
 	 continue;
       
-      if ((D->Type == pkgCache::Dep::Conflicts ||
-	   D->Type == pkgCache::Dep::DpkgBreaks ||
-	   D->Type == pkgCache::Dep::Obsoletes) &&
+      if (D.IsNegative() == true &&
 	  (Version *)Pkg.CurrentVer() != *I)
 	 continue;
       
@@ -647,9 +643,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
       {
 	 /* Forward critical dependencies MUST be correct before the 
 	    package can be unpacked. */
-	 if (D->Type != pkgCache::Dep::Conflicts &&
-	     D->Type != pkgCache::Dep::DpkgBreaks &&
-	     D->Type != pkgCache::Dep::Obsoletes &&
+	 if (D.IsNegative() == false &&
 	     D->Type != pkgCache::Dep::PreDepends)
 	    continue;
 	 	 	 	 
@@ -1077,10 +1071,14 @@ bool pkgOrderList::CheckDep(DepIterator D)
       
       /* Conflicts requires that all versions are not present, depends
          just needs one */
-      if (D->Type != pkgCache::Dep::Conflicts && 
-	  D->Type != pkgCache::Dep::DpkgBreaks && 
-	  D->Type != pkgCache::Dep::Obsoletes)
+      if (D.IsNegative() == false)
       {
+	 // ignore provides by older versions of this package
+	 if (((D.Reverse() == false && Pkg == D.ParentPkg()) ||
+	      (D.Reverse() == true && Pkg == D.TargetPkg())) &&
+	     Cache[Pkg].InstallVer != *I)
+	    continue;
+
 	 /* Try to find something that does not have the after flag set
 	    if at all possible */
 	 if (IsFlag(Pkg,After) == true)

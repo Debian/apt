@@ -1693,7 +1693,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error(_("I wasn't able to locate file for the %s package. "
+      _error->Error(_("I wasn't able to locate a file for the %s package. "
 		    "This might mean you need to manually fix this package."),
 		    Version.ParentPkg().Name());
 }

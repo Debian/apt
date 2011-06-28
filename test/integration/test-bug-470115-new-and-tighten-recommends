@@ -1,0 +1,172 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertinstalledpackage 'cool' 'all' '1'
+insertinstalledpackage 'stuff' 'all' '1'
+insertinstalledpackage 'coolstuff' 'all' '1'
+
+insertpackage 'unstable' 'cool' 'all' '2'
+insertpackage 'unstable' 'stuff' 'all' '2'
+insertpackage 'unstable' 'coolstuff' 'all' '2'
+insertpackage 'unstable' 'super' 'all' '2'
+
+insertinstalledpackage 'tighten-cool' 'all' '1' 'Recommends: cool (>= 1)'
+insertpackage 'unstable' 'tighten-cool' 'all' '2' 'Recommends: cool (>= 2)'
+
+insertinstalledpackage 'tighten-coolorstuff' 'all' '1' 'Recommends: cool (>= 1) | stuff (>= 1)'
+insertpackage 'unstable' 'tighten-coolorstuff' 'all' '2' 'Recommends: stuff (>= 2) | cool (>= 2)'
+
+insertinstalledpackage 'tighten-coolorstuff2' 'all' '1' 'Recommends: cool (>= 1) | stuff (>= 1)'
+insertpackage 'unstable' 'tighten-coolorstuff2' 'all' '2' 'Recommends: stuff2 (>= 2) | cool (>= 2)'
+
+insertinstalledpackage 'newrec-cool' 'all' '1'
+insertpackage 'unstable' 'newrec-cool' 'all' '2' 'Recommends: cool (>= 2)'
+
+insertinstalledpackage 'newrec-super' 'all' '1'
+insertpackage 'unstable' 'newrec-super' 'all' '2' 'Recommends: super'
+
+insertinstalledpackage 'newrec-coolorstuff' 'all' '1'
+insertpackage 'unstable' 'newrec-coolorstuff' 'all' '2' 'Recommends: cool (>= 2) | stuff (>= 2)'
+
+insertinstalledpackage 'cool-gone' 'all' '1' 'Recommends: cool (>= 1) | stuff (>= 2)'
+insertpackage 'unstable' 'cool-gone' 'all' '2' 'Recommends: stuff (>= 2)'
+
+insertinstalledpackage 'super-overtake' 'all' '1' 'Recommends: cool | super, stuff | super'
+insertpackage 'unstable' 'super-overtake' 'all' '2' 'Recommends: stuff (>= 3) | super, super | cool (>= 2)'
+
+insertinstalledpackage 'upgrade-over-new' 'all' '1' 'Recommends: cool'
+insertpackage 'unstable' 'upgrade-over-new' 'all' '2' 'Recommends: cool (>= 2) | super'
+
+insertinstalledpackage 'now-satisfiable' 'all' '1' 'Recommends: cool (>= 3)'
+insertpackage 'unstable' 'now-satisfiable' 'all' '2' 'Recommends: cool (>= 2)'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  cool
+The following packages will be upgraded:
+  cool tighten-cool
+2 upgraded, 0 newly installed, 0 to remove and 11 not upgraded.
+Inst cool [1] (2 unstable [all])
+Inst tighten-cool [1] (2 unstable [all])
+Conf cool (2 unstable [all])
+Conf tighten-cool (2 unstable [all])' aptget install tighten-cool -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  stuff
+The following packages will be upgraded:
+  stuff tighten-coolorstuff
+2 upgraded, 0 newly installed, 0 to remove and 11 not upgraded.
+Inst stuff [1] (2 unstable [all])
+Inst tighten-coolorstuff [1] (2 unstable [all])
+Conf stuff (2 unstable [all])
+Conf tighten-coolorstuff (2 unstable [all])' aptget install tighten-coolorstuff -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  cool
+The following packages will be upgraded:
+  cool tighten-coolorstuff2
+2 upgraded, 0 newly installed, 0 to remove and 11 not upgraded.
+Inst cool [1] (2 unstable [all])
+Inst tighten-coolorstuff2 [1] (2 unstable [all])
+Conf cool (2 unstable [all])
+Conf tighten-coolorstuff2 (2 unstable [all])' aptget install tighten-coolorstuff2 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  cool
+The following packages will be upgraded:
+  cool newrec-cool
+2 upgraded, 0 newly installed, 0 to remove and 11 not upgraded.
+Inst cool [1] (2 unstable [all])
+Inst newrec-cool [1] (2 unstable [all])
+Conf cool (2 unstable [all])
+Conf newrec-cool (2 unstable [all])' aptget install newrec-cool -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  super
+The following NEW packages will be installed:
+  super
+The following packages will be upgraded:
+  newrec-super
+1 upgraded, 1 newly installed, 0 to remove and 12 not upgraded.
+Inst newrec-super [1] (2 unstable [all])
+Inst super (2 unstable [all])
+Conf newrec-super (2 unstable [all])
+Conf super (2 unstable [all])' aptget install newrec-super -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  cool
+The following packages will be upgraded:
+  cool newrec-coolorstuff
+2 upgraded, 0 newly installed, 0 to remove and 11 not upgraded.
+Inst cool [1] (2 unstable [all])
+Inst newrec-coolorstuff [1] (2 unstable [all])
+Conf cool (2 unstable [all])
+Conf newrec-coolorstuff (2 unstable [all])' aptget install newrec-coolorstuff -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  stuff
+The following packages will be upgraded:
+  cool-gone stuff
+2 upgraded, 0 newly installed, 0 to remove and 11 not upgraded.
+Inst cool-gone [1] (2 unstable [all])
+Inst stuff [1] (2 unstable [all])
+Conf cool-gone (2 unstable [all])
+Conf stuff (2 unstable [all])' aptget install cool-gone -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  super
+The following NEW packages will be installed:
+  super
+The following packages will be upgraded:
+  super-overtake
+1 upgraded, 1 newly installed, 0 to remove and 12 not upgraded.
+Inst super (2 unstable [all])
+Inst super-overtake [1] (2 unstable [all])
+Conf super (2 unstable [all])
+Conf super-overtake (2 unstable [all])' aptget install super-overtake -s
+
+# if super would be in front, we would get a new here as it is new and
+# the first option in an or-group should be the preferred one…
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  cool
+The following packages will be upgraded:
+  cool upgrade-over-new
+2 upgraded, 0 newly installed, 0 to remove and 11 not upgraded.
+Inst cool [1] (2 unstable [all])
+Inst upgrade-over-new [1] (2 unstable [all])
+Conf cool (2 unstable [all])
+Conf upgrade-over-new (2 unstable [all])' aptget install upgrade-over-new -s
+
+# the recommends wasn't used before so while we could do it now,
+# the user doesn't seem to need it so avoid upgrading it
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  now-satisfiable
+1 upgraded, 0 newly installed, 0 to remove and 12 not upgraded.
+Inst now-satisfiable [1] (2 unstable [all])
+Conf now-satisfiable (2 unstable [all])' aptget install now-satisfiable -s

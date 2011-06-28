@@ -319,6 +319,17 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
    }
 
+   if (Cache[Pkg].InstVerIter(Cache)->MultiArch == pkgCache::Version::Same)
+      for (PkgIterator P = Pkg.Group().PackageList();
+	   P.end() == false; P = Pkg.Group().NextPkg(P))
+      {
+	 if (Pkg == P || List->IsFlag(P,pkgOrderList::Configured) == true ||
+	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
+	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
+	    continue;
+	 SmartConfigure(P);
+      }
+
    // Sanity Check
    if (List->IsFlag(Pkg,pkgOrderList::Configured) == false)
       return _error->Error(_("Could not perform immediate configuration on '%s'. "
@@ -475,21 +486,28 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 /* This performs the task of handling pre-depends. */
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 {
+   return SmartUnPack(Pkg, true);
+}
+bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
+{
    // Check if it is already unpacked
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
        Cache[Pkg].Keep() == true)
    {
       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
-      if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
+      if (Immediate == true &&
+	  List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)
 	    return _error->Error(_("Could not perform immediate configuration on already unpacked '%s'. "
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
       return true;
    }
 
+   VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
+
    /* See if this packages install version has any predependencies
       that are not met by 'now' packages. */
-   for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); 
+   for (DepIterator D = instVer.DependsList();
 	D.end() == false; )
    {
       // Compute a single dependency element (glob or)
@@ -575,20 +593,32 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 
    // Check for reverse conflicts.
    if (CheckRConflicts(Pkg,Pkg.RevDependsList(),
-		   Cache[Pkg].InstVerIter(Cache).VerStr()) == false)
+		   instVer.VerStr()) == false)
       return false;
    
-   for (PrvIterator P = Cache[Pkg].InstVerIter(Cache).ProvidesList(); 
+   for (PrvIterator P = instVer.ProvidesList();
 	P.end() == false; P++)
       CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
+
+   List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
+
+   if (instVer->MultiArch == pkgCache::Version::Same)
+      for (PkgIterator P = Pkg.Group().PackageList();
+	   P.end() == false; P = Pkg.Group().NextPkg(P))
+      {
+	 if (Pkg == P || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
+	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
+	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
+	    continue;
+	 SmartUnPack(P, false);
+      }
 
    if(Install(Pkg,FileNames[Pkg->ID]) == false)
       return false;
 
-   List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
-   
    // Perform immedate configuration of the package.
-   if (List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
+   if (Immediate == true &&
+       List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
       if (SmartConfigure(Pkg) == false)
 	 return _error->Error(_("Could not perform immediate configuration on '%s'. "
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),2);

@@ -336,7 +336,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       }
       
       // And finish up
-      if (Itm.Size >= 0 && BadRecord == false)
+      if (BadRecord == false)
 	 if (Stream.FinishedFile(Itm,Fd) == false)
 	    return false;
       

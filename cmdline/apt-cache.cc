@@ -121,9 +121,7 @@ bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
 		  continue;
 
 	    // Skip conflicts and replaces
-	    if (End->Type == pkgCache::Dep::DpkgBreaks ||
-		End->Type == pkgCache::Dep::Replaces ||
-		End->Type == pkgCache::Dep::Conflicts)
+	    if (End.IsNegative() == true)
 	       continue;
 
 	    // Verify the or group
@@ -848,10 +846,7 @@ bool XVcg(CommandLine &CmdL)
 	       {
 		  /* If a conflicts does not meet anything in the database
 		     then show the relation but do not recurse */
-		  if (Hit == false && 
-		      (D->Type == pkgCache::Dep::Conflicts ||
-		       D->Type == pkgCache::Dep::DpkgBreaks ||
-		       D->Type == pkgCache::Dep::Obsoletes))
+		  if (Hit == false && D.IsNegative() == true)
 		  {
 		     if (Show[D.TargetPkg()->ID] == None && 
 			 Show[D.TargetPkg()->ID] != ToShow)
@@ -1060,9 +1055,7 @@ bool Dotty(CommandLine &CmdL)
 	       {
 		  /* If a conflicts does not meet anything in the database
 		     then show the relation but do not recurse */
-		  if (Hit == false && 
-		      (D->Type == pkgCache::Dep::Conflicts ||
-		       D->Type == pkgCache::Dep::Obsoletes))
+		  if (Hit == false && D.IsNegative() == true)
 		  {
 		     if (Show[D.TargetPkg()->ID] == None && 
 			 Show[D.TargetPkg()->ID] != ToShow)
@@ -1082,6 +1075,7 @@ bool Dotty(CommandLine &CmdL)
 	       {
 		  case pkgCache::Dep::Conflicts:
 		  case pkgCache::Dep::Obsoletes:
+		  case pkgCache::Dep::DpkgBreaks:
 		  printf("[color=springgreen];\n");
 		  break;
 		  
@@ -1115,6 +1109,9 @@ bool Dotty(CommandLine &CmdL)
    }
    
    printf("}\n");
+   delete[] Show;
+   delete[] Flags;
+   delete[] ShapeMap;
    return true;
 }
 									/*}}}*/
@@ -1331,9 +1328,8 @@ bool Search(CommandLine &CmdL)
        return _error->Error("Write to stdout failed");
    return true;
 }
-
-
-/* show automatically installed packages (sorted) */
+									/*}}}*/
+/* ShowAuto - show automatically installed packages (sorted)		{{{*/
 bool ShowAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
@@ -1354,6 +1350,7 @@ bool ShowAuto(CommandLine &CmdL)
     for (vector<string>::iterator I = packages.begin(); I != packages.end(); I++)
             cout << *I << "\n";
 
+   _error->Notice(_("This command is deprecated. Please use 'apt-mark showauto' instead."));
    return true;
 }
 									/*}}}*/
@@ -1699,7 +1696,6 @@ bool ShowHelp(CommandLine &Cmd)
       "   unmet - Show unmet dependencies\n"
       "   search - Search the package list for a regex pattern\n"
       "   show - Show a readable record for the package\n"
-      "   showauto - Display a list of automatically installed packages\n"
       "   depends - Show raw dependency information for a package\n"
       "   rdepends - Show reverse dependency information for a package\n"
       "   pkgnames - List the names of all packages in the system\n"

@@ -20,7 +20,6 @@
 #include <apti18n.h>
     
 #include <sys/wait.h>
-#include <sys/errno.h>
 #include <sys/statvfs.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -206,8 +205,11 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
       Hash.Add(Dir->d_name);
    };
    
-   if (chdir(StartDir.c_str()) != 0)
-      return _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
+   if (chdir(StartDir.c_str()) != 0) {
+      _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
+      closedir(D);
+      return false;
+   }
    closedir(D);
    
    // Some stats from the fsys
@@ -236,7 +238,7 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
 }
 									/*}}}*/
 
-// FindMountPointForDevice - Find mountpoint for the given device      /*{{{*/
+// FindMountPointForDevice - Find mountpoint for the given device	/*{{{*/
 string FindMountPointForDevice(const char *devnode)
 {
    char buf[255];
@@ -254,7 +256,10 @@ string FindMountPointForDevice(const char *devnode)
          while ( fgets(buf, sizeof(buf), f) != NULL) {
             if (strncmp(buf, devnode, strlen(devnode)) == 0) {
                if(TokSplitString(' ', buf, out, 10))
+               {
+                  fclose(f);
                   return string(out[1]);
+               }
             }
          }
          fclose(f);
@@ -263,5 +268,4 @@ string FindMountPointForDevice(const char *devnode)
    
    return string();
 }
-
-
+									/*}}}*/

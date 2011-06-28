@@ -287,6 +287,7 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->ParentVer].ParentPkg);};
 	inline bool Reverse() const {return Type == DepRev;};
 	bool IsCritical() const;
+	bool IsNegative() const;
 	void GlobOr(DepIterator &Start,DepIterator &End);
 	Version **AllTargets() const;
 	bool SmartTargetPkg(PkgIterator &Result) const;
