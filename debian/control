@@ -6,7 +6,10 @@ Uploaders: Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>,
  Christian Perrier <bubulle@debian.org>, Daniel Burrows <dburrows@debian.org>,
  Julian Andres Klode <jak@debian.org>
 Standards-Version: 3.9.2
-Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 7.2.3~), libdb-dev, gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.0), zlib1g-dev | libz-dev, debiandoc-sgml, xsltproc, docbook-xsl, docbook-xml, po4a (>= 0.34-2), autotools-dev, autoconf, automake, doxygen
+Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 7.2.3~), libdb-dev,
+ gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.0), 
+ zlib1g-dev | libz-dev, debiandoc-sgml, xsltproc, docbook-xsl, docbook-xml, 
+ po4a (>= 0.34-2), autotools-dev, autoconf, automake, doxygen
 Build-Conflicts: autoconf2.13, automake1.4
 Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
 Vcs-Browser: http://bzr.debian.org/loggerhead/apt/debian-sid/
@@ -36,7 +39,7 @@ Package: libapt-pkg4.10
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt (<< 0.8.15)
-Breaks:  apt (<< 0.8.15~exp3)
+Breaks:  apt (<< 0.8.15)
 Description: APT's package managment runtime library
  This library provides the common functionality for searching and
  managing packages as well as information about packages.
@@ -57,7 +60,7 @@ Package: libapt-inst1.2
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: apt-utils (<< 0.8.15), apt (<< 0.8.15)
-Breaks:  apt (<< 0.8.15~exp3), apt-utils (<< 0.8.15~exp3)
+Breaks:  apt (<< 0.8.15), apt-utils (<< 0.8.15)
 Description: APT's deb package format runtime library
  This library provides methods to query and extract information 
  from deb packages. This includes the control data and the package
