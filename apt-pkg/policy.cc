@@ -210,7 +210,7 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 {
    if (Name.empty() == true)
    {
-      Pin *P = &*Defaults.insert(Defaults.end(),PkgPin());
+      Pin *P = &*Defaults.insert(Defaults.end(),Pin());
       P->Type = Type;
       P->Priority = Priority;
       P->Data = Data;
