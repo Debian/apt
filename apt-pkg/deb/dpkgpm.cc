@@ -14,8 +14,8 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
-#include <apti18n.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/cachefile.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -689,31 +689,42 @@ bool pkgDPkgPM::OpenLog()
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
       chmod(history_name.c_str(), 0644);
       fprintf(history_out, "\nStart-Date: %s\n", timestr);
-      string remove, purge, install, upgrade, downgrade;
+      string remove, purge, install, reinstall, upgrade, downgrade;
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
-	 if (Cache[I].NewInstall())
-	 {
-	    install += I.FullName(false) + string(" (") + Cache[I].CandVersion;
-	    if (Cache[I].Flags & pkgCache::Flag::Auto)
-	       install+= ", automatic";
-	    install += string("), ");
+	 enum { CANDIDATE, CANDIDATE_AUTO, CURRENT_CANDIDATE, CURRENT } infostring;
+	 string *line = NULL;
+	 #define HISTORYINFO(X, Y) { line = &X; infostring = Y; }
+	 if (Cache[I].NewInstall() == true)
+	    HISTORYINFO(install, CANDIDATE_AUTO)
+	 else if (Cache[I].ReInstall() == true)
+	    HISTORYINFO(reinstall, CANDIDATE)
+	 else if (Cache[I].Upgrade() == true)
+	    HISTORYINFO(upgrade, CURRENT_CANDIDATE)
+	 else if (Cache[I].Downgrade() == true)
+	    HISTORYINFO(downgrade, CURRENT_CANDIDATE)
+	 else if (Cache[I].Delete() == true)
+	    HISTORYINFO((Cache[I].Purge() ? purge : remove), CURRENT)
+	 else
+	    continue;
+	 #undef HISTORYINFO
+	 line->append(I.FullName(false)).append(" (");
+	 switch (infostring) {
+	 case CANDIDATE: line->append(Cache[I].CandVersion); break;
+	 case CANDIDATE_AUTO:
+	    line->append(Cache[I].CandVersion);
+	    if ((Cache[I].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
+	       line->append(", automatic");
+	    break;
+	 case CURRENT_CANDIDATE: line->append(Cache[I].CurVersion).append(", ").append(Cache[I].CandVersion); break;
+	 case CURRENT: line->append(Cache[I].CurVersion); break;
 	 }
-	 else if (Cache[I].Upgrade())
-	    upgrade += I.FullName(false) + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
-	 else if (Cache[I].Downgrade())
-	    downgrade += I.FullName(false) + string(" (") + Cache[I].CurVersion + string(", ") + Cache[I].CandVersion + string("), ");
-	 else if (Cache[I].Delete())
-	 {
-	    if ((Cache[I].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge)
-	       purge += I.FullName(false) + string(" (") + Cache[I].CurVersion + string("), ");	    
-	    else
-	       remove += I.FullName(false) + string(" (") + Cache[I].CurVersion + string("), ");	    
-	 }
+	 line->append("), ");
       }
       if (_config->Exists("Commandline::AsString") == true)
 	 WriteHistoryTag("Commandline", _config->Find("Commandline::AsString"));
       WriteHistoryTag("Install", install);
+      WriteHistoryTag("Reinstall", reinstall);
       WriteHistoryTag("Upgrade", upgrade);
       WriteHistoryTag("Downgrade",downgrade);
       WriteHistoryTag("Remove",remove);
@@ -1276,6 +1287,23 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
+
+   if (_config->FindB("Debug::pkgDPkgPM",false) == false)
+   {
+      std::string const oldpkgcache = _config->FindFile("Dir::cache::pkgcache");
+      if (oldpkgcache.empty() == false && RealFileExists(oldpkgcache) == true &&
+	  unlink(oldpkgcache.c_str()) == 0)
+      {
+	 std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+	 if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)
+	 {
+	    _error->PushToStack();
+	    pkgCacheFile CacheFile;
+	    CacheFile.BuildCaches(NULL, true);
+	    _error->RevertToStack();
+	 }
+      }
+   }
 
    Cache.writeStateFile(NULL);
    return true;

@@ -1,4 +1,4 @@
-apt (0.8.15) UNRELEASED; urgency=low
+apt (0.8.15) unstable; urgency=low
 
   [ Julian Andres Klode ]
   * apt-pkg/depcache.cc:
@@ -17,6 +17,8 @@ apt (0.8.15) UNRELEASED; urgency=low
   [ Christian Perrier ]
   * Galician translation update (Miguel Anxo Bouzada). Closes: #626505
   * Italian translation update (Milo Casagrande). Closes: #627834
+  * German documentation translation update (Chris Leick). Closes: #629949
+  * Catalan translation update (Jordi Mallach). Closes: #630657
 
   [ David Kalnischkies ]
   * fix a bunch of cppcheck warnings/errors based on a patch by
@@ -33,6 +35,8 @@ apt (0.8.15) UNRELEASED; urgency=low
     - let VisitRProvides report if the calls were successful
   * apt-pkg/deb/dpkgpm.cc:
     - replace obsolete usleep with nanosleep
+    - remove invalid pkgcache.bin and rebuild it if possible
+    - log reinstall commands in history.log
   * debian/apt{,-utils}.symbols:
     - update both experimental symbol-files to reflect 0.8.14 state
   * debian/rules:
@@ -73,7 +77,15 @@ apt (0.8.15) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - ensure for Multi-Arch:same packages that they are unpacked in
       lock step even in immediate configuration (Closes: #618288)
-  
+  * apt-pkg/init.cc:
+    - don't set deprecated APT::Acquire::Translation, thanks Jörg Sommer!
+  * cmdline/apt-config.cc:
+    - show Acquire::Languages and APT::Architectures settings
+      in 'dump' (Closes: 626739)
+  * apt-pkg/orderlist.cc:
+    - ensure that an old version of a package with a provides can
+      never satisfy a dependency of a newer version of this package
+
   [ Michael Vogt ]
   * methods/mirror.cc:
     - ignore lines starting with "#" in the mirror file
@@ -89,8 +101,11 @@ apt (0.8.15) UNRELEASED; urgency=low
   [ Kenneth Solbø Andersen ]
   * apt-pkg/deb/dpkgpm.cc:
     - set permissions of term.log to root.adm and 644 (LP: #404724)
+  
+  [ Chris Leick ]
+  * various typo and syntax corrections in doc/*.xml
 
- -- Michael Vogt <mvo@debian.org>  Mon, 16 May 2011 14:57:52 +0200
+ -- Michael Vogt <mvo@debian.org>  Tue, 28 Jun 2011 18:00:48 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 
