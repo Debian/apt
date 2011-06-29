@@ -37,9 +37,9 @@ using namespace std;
 // Acquire::pkgAcquire - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* We grab some runtime state from the configuration space */
-pkgAcquire::pkgAcquire() : Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch(0),
+pkgAcquire::pkgAcquire() : LockFD(-1), Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
-			   Running(false), LockFD(-1)
+			   Running(false)
 {
    string const Mode = _config->Find("Acquire::Queue-Mode","host");
    if (strcasecmp(Mode.c_str(),"host") == 0)
@@ -47,10 +47,10 @@ pkgAcquire::pkgAcquire() : Queues(0), Workers(0), Configs(0), Log(NULL), ToFetch
    if (strcasecmp(Mode.c_str(),"access") == 0)
       QueueMode = QueueAccess;
 }
-pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : Queues(0), Workers(0),
+pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) :  LockFD(-1), Queues(0), Workers(0),
 			   Configs(0), Log(Progress), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
-			   Running(false), LockFD(-1)
+			   Running(false)
 {
    string const Mode = _config->Find("Acquire::Queue-Mode","host");
    if (strcasecmp(Mode.c_str(),"host") == 0)
