@@ -12,7 +12,13 @@ setupaptarchive
 
 testcandidate() {
 	msgtest "Test that the Candidate for $1 is" $2
-	test "$(aptcache policy $1 | grep '^  Candidate:')" = "  Candidate: $2" && msgpass || msgfail
+	if [ "$(aptcache policy $1 | grep '^  Candidate:')" = "  Candidate: $2" ]; then
+		msgpass
+	else
+		echo
+		aptcache policy $1
+		msgfail
+	fi
 }
 
 testcandidate apt '0.8.15'
@@ -33,6 +39,13 @@ Building dependency tree...
 
 echo '
 Package: doesntexist
+Pin: release a=unstable
+Pin-Priority: 1000' >> rootdir/etc/apt/preferences
+
+testcandidate apt '(none)'
+
+echo '
+Package: apt
 Pin: release a=unstable
 Pin-Priority: 1000' >> rootdir/etc/apt/preferences
 

@@ -229,28 +229,25 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       return;
    }
 
-   // Get a spot to put the pin
+   // find the package group this pin applies to
    pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
    if (Grp.end() == true)
+   {
+      Pin *P = &*Unmatched.insert(Unmatched.end(),PkgPin(Name));
+      P->Type = Type;
+      P->Priority = Priority;
+      P->Data = Data;
       return;
+   }
 
    for (pkgCache::PkgIterator Pkg = Grp.PackageList();
 	Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
    {
-      Pin *P = 0;
-      if (Pkg.end() == false)
-	 P = Pins + Pkg->ID;
-      else
-      {
-	 // Check the unmatched table
-	 for (vector<PkgPin>::iterator I = Unmatched.begin();
-	      I != Unmatched.end() && P == 0; I++)
-	    if (I->Pkg == Name)
-	       P = &*I;
-
-	 if (P == 0)
-	    P = &*Unmatched.insert(Unmatched.end(),PkgPin());
-      }
+      Pin *P = Pins + Pkg->ID;
+      // the first specific stanza for a package is the ruler,
+      // all others need to be ignored
+      if (P->Type != pkgVersionMatch::None)
+	 P = &*Unmatched.insert(Unmatched.end(),PkgPin(Pkg.FullName()));
       P->Type = Type;
       P->Priority = Priority;
       P->Data = Data;
