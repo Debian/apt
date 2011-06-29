@@ -23,7 +23,7 @@
 
 const char* HashString::_SupportedHashes[] = 
 {
-   "SHA256", "SHA1", "MD5Sum", NULL
+   "SHA512", "SHA256", "SHA1", "MD5Sum", NULL
 };
 
 HashString::HashString()
@@ -57,6 +57,7 @@ bool HashString::VerifyFile(string filename) const			/*{{{*/
    MD5Summation MD5;
    SHA1Summation SHA1;
    SHA256Summation SHA256;
+   SHA256Summation SHA512;
    string fileHash;
 
    FileFd Fd(filename, FileFd::ReadOnly);
@@ -74,6 +75,11 @@ bool HashString::VerifyFile(string filename) const			/*{{{*/
    {
       SHA256.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)SHA256.Result();
+   }
+   else if (Type == "SHA512") 
+   {
+      SHA512.AddFD(Fd.Fd(), Fd.Size());
+      fileHash = (string)SHA512.Result();
    }
    Fd.Close();
 
@@ -119,6 +125,7 @@ bool Hashes::AddFD(int Fd,unsigned long Size)
       MD5.Add(Buf,Res);
       SHA1.Add(Buf,Res);
       SHA256.Add(Buf,Res);
+      SHA512.Add(Buf,Res);
    }
    return true;
 }

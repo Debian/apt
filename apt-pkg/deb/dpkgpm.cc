@@ -46,6 +46,21 @@
 
 using namespace std;
 
+class pkgDPkgPMPrivate 
+{
+public:
+   pkgDPkgPMPrivate() : dpkgbuf_pos(0), term_out(NULL), history_out(NULL)
+   {
+   }
+   bool stdin_is_dev_null;
+   // the buffer we use for the dpkg status-fd reading
+   char dpkgbuf[1024];
+   int dpkgbuf_pos;
+   FILE *term_out;
+   FILE *history_out;
+   string dpkg_error;
+};
+
 namespace
 {
   // Maps the dpkg "processing" info to human readable names.  Entry 0
@@ -110,9 +125,9 @@ ionice(int PID)
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0),
-     term_out(NULL), history_out(NULL), PackagesDone(0), PackagesTotal(0)
+   : pkgPackageManager(Cache), PackagesDone(0), PackagesTotal(0)
 {
+   d = new pkgDPkgPMPrivate();
 }
 									/*}}}*/
 // DPkgPM::pkgDPkgPM - Destructor					/*{{{*/
@@ -120,6 +135,7 @@ pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache)
 /* */
 pkgDPkgPM::~pkgDPkgPM()
 {
+   delete d;
 }
 									/*}}}*/
 // DPkgPM::Install - Install a package					/*{{{*/
@@ -376,7 +392,7 @@ void pkgDPkgPM::DoStdin(int master)
    if (len)
       write(master, input_buf, len);
    else
-      stdin_is_dev_null = true;
+      d->stdin_is_dev_null = true;
 }
 									/*}}}*/
 // DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
@@ -401,8 +417,8 @@ void pkgDPkgPM::DoTerminalPty(int master)
    if(len <= 0) 
       return;
    write(1, term_buf, len);
-   if(term_out)
-      fwrite(term_buf, len, sizeof(char), term_out);
+   if(d->term_out)
+      fwrite(term_buf, len, sizeof(char), d->term_out);
 }
 									/*}}}*/
 // DPkgPM::ProcessDpkgStatusBuf                                        	/*{{{*/
@@ -606,14 +622,14 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    char *p, *q;
    int len;
 
-   len=read(statusfd, &dpkgbuf[dpkgbuf_pos], sizeof(dpkgbuf)-dpkgbuf_pos);
-   dpkgbuf_pos += len;
+   len=read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos], sizeof(d->dpkgbuf)-d->dpkgbuf_pos);
+   d->dpkgbuf_pos += len;
    if(len <= 0)
       return;
 
    // process line by line if we have a buffer
-   p = q = dpkgbuf;
-   while((q=(char*)memchr(p, '\n', dpkgbuf+dpkgbuf_pos-p)) != NULL)
+   p = q = d->dpkgbuf;
+   while((q=(char*)memchr(p, '\n', d->dpkgbuf+d->dpkgbuf_pos-p)) != NULL)
    {
       *q = 0;
       ProcessDpkgStatusLine(OutStatusFd, p);
@@ -621,8 +637,8 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    }
 
    // now move the unprocessed bits (after the final \n that is now a 0x0) 
-   // to the start and update dpkgbuf_pos
-   p = (char*)memrchr(dpkgbuf, 0, dpkgbuf_pos);
+   // to the start and update d->dpkgbuf_pos
+   p = (char*)memrchr(d->dpkgbuf, 0, d->dpkgbuf_pos);
    if(p == NULL)
       return;
 
@@ -630,8 +646,8 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    p++;
 
    // move the unprocessed tail to the start and update pos
-   memmove(dpkgbuf, p, p-dpkgbuf);
-   dpkgbuf_pos = dpkgbuf+dpkgbuf_pos-p;
+   memmove(d->dpkgbuf, p, p-d->dpkgbuf);
+   d->dpkgbuf_pos = d->dpkgbuf+d->dpkgbuf_pos-p;
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
@@ -643,7 +659,7 @@ void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
    // poor mans rstrip(", ")
    if (value[length-2] == ',' && value[length-1] == ' ')
       value.erase(length - 2, 2);
-   fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
+   fprintf(d->history_out, "%s: %s\n", tag.c_str(), value.c_str());
 }									/*}}}*/
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
@@ -664,11 +680,11 @@ bool pkgDPkgPM::OpenLog()
 				   _config->Find("Dir::Log::Terminal"));
    if (!logfile_name.empty())
    {
-      term_out = fopen(logfile_name.c_str(),"a");
-      if (term_out == NULL)
+      d->term_out = fopen(logfile_name.c_str(),"a");
+      if (d->term_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), logfile_name.c_str());
-      setvbuf(term_out, NULL, _IONBF, 0);
-      SetCloseExec(fileno(term_out), true);
+      setvbuf(d->term_out, NULL, _IONBF, 0);
+      SetCloseExec(fileno(d->term_out), true);
       struct passwd *pw;
       struct group *gr;
       pw = getpwnam("root");
@@ -676,7 +692,7 @@ bool pkgDPkgPM::OpenLog()
       if (pw != NULL && gr != NULL)
 	  chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid);
       chmod(logfile_name.c_str(), 0644);
-      fprintf(term_out, "\nLog started: %s\n", timestr);
+      fprintf(d->term_out, "\nLog started: %s\n", timestr);
    }
 
    // write your history
@@ -684,11 +700,11 @@ bool pkgDPkgPM::OpenLog()
 				   _config->Find("Dir::Log::History"));
    if (!history_name.empty())
    {
-      history_out = fopen(history_name.c_str(),"a");
-      if (history_out == NULL)
+      d->history_out = fopen(history_name.c_str(),"a");
+      if (d->history_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
       chmod(history_name.c_str(), 0644);
-      fprintf(history_out, "\nStart-Date: %s\n", timestr);
+      fprintf(d->history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, reinstall, upgrade, downgrade;
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
       {
@@ -729,7 +745,7 @@ bool pkgDPkgPM::OpenLog()
       WriteHistoryTag("Downgrade",downgrade);
       WriteHistoryTag("Remove",remove);
       WriteHistoryTag("Purge",purge);
-      fflush(history_out);
+      fflush(d->history_out);
    }
    
    return true;
@@ -743,16 +759,16 @@ bool pkgDPkgPM::CloseLog()
    struct tm *tmp = localtime(&t);
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
 
-   if(term_out)
+   if(d->term_out)
    {
-      fprintf(term_out, "Log ended: ");
-      fprintf(term_out, "%s", timestr);
-      fprintf(term_out, "\n");
-      fclose(term_out);
+      fprintf(d->term_out, "Log ended: ");
+      fprintf(d->term_out, "%s", timestr);
+      fprintf(d->term_out, "\n");
+      fclose(d->term_out);
    }
-   term_out = NULL;
+   d->term_out = NULL;
 
-   if(history_out)
+   if(d->history_out)
    {
       if (disappearedPkgs.empty() == false)
       {
@@ -769,12 +785,12 @@ bool pkgDPkgPM::CloseLog()
 	 }
 	 WriteHistoryTag("Disappeared", disappear);
       }
-      if (dpkg_error.empty() == false)
-	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
-      fprintf(history_out, "End-Date: %s\n", timestr);
-      fclose(history_out);
+      if (d->dpkg_error.empty() == false)
+	 fprintf(d->history_out, "Error: %s\n", d->dpkg_error.c_str());
+      fprintf(d->history_out, "End-Date: %s\n", timestr);
+      fclose(d->history_out);
    }
-   history_out = NULL;
+   d->history_out = NULL;
 
    return true;
 }
@@ -882,7 +898,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }
    }
 
-   stdin_is_dev_null = false;
+   d->stdin_is_dev_null = false;
 
    // create log
    OpenLog();
@@ -1082,8 +1098,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    const char *s = _("Can not write log, openpty() "
 	                      "failed (/dev/pts not mounted?)\n");
 	    fprintf(stderr, "%s",s);
-            if(term_out)
-              fprintf(term_out, "%s",s);
+            if(d->term_out)
+              fprintf(d->term_out, "%s",s);
 	    master = slave = -1;
 	 }  else {
 	    struct termios rtt;
@@ -1213,7 +1229,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 if (master >= 0 && !stdin_is_dev_null)
+	 if (master >= 0 && !d->stdin_is_dev_null)
 	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
@@ -1267,14 +1283,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    RunScripts("DPkg::Post-Invoke");
 
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
-	    strprintf(dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
+	    strprintf(d->dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
 	 else if (WIFEXITED(Status) != 0)
-	    strprintf(dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	    strprintf(d->dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
 	 else 
-	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
+	    strprintf(d->dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
 
-	 if(dpkg_error.size() > 0)
-	    _error->Error("%s", dpkg_error.c_str());
+	 if(d->dpkg_error.size() > 0)
+	    _error->Error("%s", d->dpkg_error.c_str());
 
 	 if(stopOnError) 
 	 {
@@ -1438,8 +1454,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    fprintf(report, "ErrorMessage:\n %s\n", errormsg);
 
    // ensure that the log is flushed
-   if(term_out)
-      fflush(term_out);
+   if(d->term_out)
+      fflush(d->term_out);
 
    // attach terminal log it if we have it
    string logfile_name = _config->FindFile("Dir::Log::Terminal");

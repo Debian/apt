@@ -28,12 +28,13 @@ class pkgRecords							/*{{{*/
    class Parser;
    
    private:
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
    
    pkgCache &Cache;
    std::vector<Parser *>Files;
 
-   public:
-
+    public:
    // Lookup function
    Parser &Lookup(pkgCache::VerFileIterator const &Ver);
    Parser &Lookup(pkgCache::DescFileIterator const &Desc);
@@ -58,6 +59,7 @@ class pkgRecords::Parser						/*{{{*/
    virtual string MD5Hash() {return string();};
    virtual string SHA1Hash() {return string();};
    virtual string SHA256Hash() {return string();};
+   virtual string SHA512Hash() {return string();};
    virtual string SourcePkg() {return string();};
    virtual string SourceVer() {return string();};
 

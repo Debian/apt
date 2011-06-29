@@ -32,28 +32,11 @@
 using std::string;
 using std::min;
 
+#include "hashsum_template.h"
+
 class MD5Summation;
 
-class MD5SumValue
-{
-   friend class MD5Summation;
-   unsigned char Sum[4*4];
-   
-   public:
-
-   // Accessors
-   bool operator ==(const MD5SumValue &rhs) const; 
-   string Value() const;
-   inline void Value(unsigned char S[16]) 
-         {for (int I = 0; I != sizeof(Sum); I++) S[I] = Sum[I];};
-   inline operator string() const {return Value();};
-   bool Set(string Str);
-   inline void Set(unsigned char S[16]) 
-         {for (int I = 0; I != sizeof(Sum); I++) Sum[I] = S[I];};
-
-   MD5SumValue(string Str);
-   MD5SumValue();
-};
+typedef HashSumValue<128> MD5SumValue;
 
 class MD5Summation
 {

@@ -65,3 +65,17 @@ include $(PROGRAM_H)
 #TO=$(BIN)
 #TARGET=program
 #include $(COPY_H)
+
+# The internal solver acting as an external
+PROGRAM=apt-internal-solver
+SLIBS = -lapt-pkg $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile
+SOURCE = apt-internal-solver.cc
+include $(PROGRAM_H)
+
+# The internal solver acting as an external
+PROGRAM=apt-dump-solver
+SLIBS = -lapt-pkg $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile
+SOURCE = apt-dump-solver.cc
+include $(PROGRAM_H)

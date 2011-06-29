@@ -22,8 +22,8 @@
 // Non-ABI-Breaks should only increase RELEASE number.
 // See also buildlib/libversion.mak
 #define APT_PKG_MAJOR 4
-#define APT_PKG_MINOR 10
-#define APT_PKG_RELEASE 1
+#define APT_PKG_MINOR 11
+#define APT_PKG_RELEASE 0
     
 extern const char *pkgVersion;
 extern const char *pkgLibVersion;

@@ -44,6 +44,9 @@
  */
 class pkgAcquire::Worker : public WeakPointable
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+  
    friend class pkgAcquire;
    
    protected:
@@ -314,7 +317,7 @@ class pkgAcquire::Worker : public WeakPointable
     *  Closes the file descriptors; if MethodConfig::NeedsCleanup is
     *  \b false, also rudely interrupts the worker with a SIGINT.
     */
-   ~Worker();
+   virtual ~Worker();
 };
 
 /** @} */

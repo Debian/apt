@@ -62,7 +62,7 @@ configure.in:
 endif
 
 # APT Programs in apt-utils
-APT_UTILS=ftparchive sortpkgs extracttemplates
+APT_UTILS=ftparchive sortpkgs extracttemplates internal-solver
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -189,7 +189,7 @@ apt: build build-doc
 	dh_install -p$@ --sourcedir=$(BLD)
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS))
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver)
 
 	# https has its own package
 	rm debian/$@/usr/lib/apt/methods/https
@@ -242,8 +242,10 @@ apt-utils: build
 	dh_installdirs -p$@
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
+	cp $(BLD)/bin/apt-dump-solver debian/$@/usr/lib/apt/solvers/dump
 
 	dh_install -p$@ --sourcedir=$(BLD)
+	dh_link -p$@
 	dh_installdocs -p$@
 	dh_installexamples -p$@
 

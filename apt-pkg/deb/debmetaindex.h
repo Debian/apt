@@ -19,12 +19,14 @@ class debReleaseIndex : public metaIndex {
    };
 
    private:
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
    std::map<string, vector<debSectionEntry const*> > ArchEntries;
 
    public:
 
    debReleaseIndex(string const &URI, string const &Dist);
-   ~debReleaseIndex();
+   virtual ~debReleaseIndex();
 
    virtual string ArchiveURI(string const &File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;

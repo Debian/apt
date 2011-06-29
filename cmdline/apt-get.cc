@@ -1886,8 +1886,7 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 // Call the scored problem resolver
 	 Fix->InstallProtect();
-	 if (Fix->Resolve(true) == false)
-	    _error->Discard();
+	 Fix->Resolve(true);
 	 delete Fix;
       }
 
@@ -1913,8 +1912,11 @@ bool DoInstall(CommandLine &CmdL)
 	 c1out << _("The following information may help to resolve the situation:") << endl;
 	 c1out << endl;
 	 ShowBroken(c1out,Cache,false);
-	 return _error->Error(_("Broken packages"));
-      }   
+	 if (_error->PendingError() == true)
+	    return false;
+	 else
+	    return _error->Error(_("Broken packages"));
+      }
    }
    if (!DoAutomaticRemove(Cache)) 
       return false;
@@ -2297,6 +2299,8 @@ bool DoDownload(CommandLine &CmdL)
       strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
       // get the most appropriate hash
       HashString hash;
+      if (rec.SHA512Hash() != "")
+         hash = HashString("sha512", rec.SHA512Hash());
       if (rec.SHA256Hash() != "")
          hash = HashString("sha256", rec.SHA256Hash());
       else if (rec.SHA1Hash() != "")
@@ -3270,6 +3274,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
       {0,"install-suggests","APT::Install-Suggests",CommandLine::Boolean},
       {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
+      {0,"solver","APT::Solver",CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};
