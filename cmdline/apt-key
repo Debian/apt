@@ -59,13 +59,13 @@ add_keys_with_verify_against_master_keyring() {
 # (otherwise it does not make sense from a security POV)
 net_update() {
     if [ -z "$ARCHIVE_KEYRING_URI" ]; then
-	echo "ERROR: no location for the archive-keyring given"
+	echo >&2 "ERROR: Your distribution is not supported in net-update as no uri for the archive-keyring is set"
 	exit 1
     fi
     # in theory we would need to depend on wget for this, but this feature
     # isn't useable in debian anyway as we have no keyring uri nor a master key
     if ! which wget >/dev/null 2>&1; then
-	echo "ERROR: an installed wget is required for a network-based update"
+	echo >&2 "ERROR: an installed wget is required for a network-based update"
 	exit 1
     fi
     if [ ! -d /var/lib/apt/keyrings ]; then
