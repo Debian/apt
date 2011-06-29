@@ -20,6 +20,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/aptconfiguration.h>
 
 #include <config.h>
 #include <apti18n.h>
@@ -27,6 +29,7 @@
 #include <locale.h>
 #include <iostream>
 #include <string>
+#include <vector>
 									/*}}}*/
 using namespace std;
 
@@ -118,6 +121,16 @@ int main(int argc,const char *argv[])					/*{{{*/
    if (_config->FindB("help") == true ||
        CmdL.FileSize() == 0)
       return ShowHelp();
+
+   std::vector<std::string> const langs = APT::Configuration::getLanguages(true);
+   _config->Clear("Acquire::Languages");
+   for (std::vector<std::string>::const_iterator l = langs.begin(); l != langs.end(); ++l)
+      _config->Set("Acquire::Languages::", *l);
+
+   std::vector<std::string> const archs = APT::Configuration::getArchitectures();
+   _config->Clear("APT::Architectures");
+   for (std::vector<std::string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
+      _config->Set("APT::Architectures::", *a);
 
    // Match the operation
    CmdL.DispatchArg(Cmds);

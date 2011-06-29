@@ -165,61 +165,6 @@ static void MD5Transform(uint32_t buf[4], uint32_t const in[16])
    buf[3] += d;
 }
 									/*}}}*/
-// MD5SumValue::MD5SumValue - Constructs the summation from a string	/*{{{*/
-// ---------------------------------------------------------------------
-/* The string form of a MD5 is a 32 character hex number */
-MD5SumValue::MD5SumValue(string Str)
-{
-   memset(Sum,0,sizeof(Sum));
-   Set(Str);
-}
-									/*}}}*/
-// MD5SumValue::MD5SumValue - Default constructor			/*{{{*/
-// ---------------------------------------------------------------------
-/* Sets the value to 0 */
-MD5SumValue::MD5SumValue()
-{
-   memset(Sum,0,sizeof(Sum));
-}
-									/*}}}*/
-// MD5SumValue::Set - Set the sum from a string				/*{{{*/
-// ---------------------------------------------------------------------
-/* Converts the hex string into a set of chars */
-bool MD5SumValue::Set(string Str)
-{
-   return Hex2Num(Str,Sum,sizeof(Sum));
-}
-									/*}}}*/
-// MD5SumValue::Value - Convert the number into a string		/*{{{*/
-// ---------------------------------------------------------------------
-/* Converts the set of chars into a hex string in lower case */
-string MD5SumValue::Value() const
-{
-   char Conv[16] = {'0','1','2','3','4','5','6','7','8','9','a','b',
-                    'c','d','e','f'};
-   char Result[33];
-   Result[32] = 0;
-   
-   // Convert each char into two letters
-   int J = 0;
-   int I = 0;
-   for (; I != 32; J++, I += 2)
-   {
-      Result[I] = Conv[Sum[J] >> 4];
-      Result[I + 1] = Conv[Sum[J] & 0xF];
-   } 
-
-   return string(Result);
-}
-									/*}}}*/
-// MD5SumValue::operator == - Comparitor				/*{{{*/
-// ---------------------------------------------------------------------
-/* Call memcmp on the buffer */
-bool MD5SumValue::operator ==(const MD5SumValue &rhs) const
-{
-   return memcmp(Sum,rhs.Sum,sizeof(Sum)) == 0;
-}
-									/*}}}*/
 // MD5Summation::MD5Summation - Initialize the summer			/*{{{*/
 // ---------------------------------------------------------------------
 /* This assigns the deep magic initial values */
@@ -353,7 +298,7 @@ MD5SumValue MD5Summation::Result()
    }
    
    MD5SumValue V;
-   memcpy(V.Sum,buf,16);
+   V.Set((char *)buf);
    return V;
 }
 									/*}}}*/

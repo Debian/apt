@@ -13,6 +13,9 @@
 
 class edspIndex : public debStatusIndex
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    public:
 
    virtual const Type *GetType() const;

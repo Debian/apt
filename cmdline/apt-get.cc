@@ -2299,6 +2299,8 @@ bool DoDownload(CommandLine &CmdL)
       strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
       // get the most appropriate hash
       HashString hash;
+      if (rec.SHA512Hash() != "")
+         hash = HashString("sha512", rec.SHA512Hash());
       if (rec.SHA256Hash() != "")
          hash = HashString("sha256", rec.SHA256Hash());
       else if (rec.SHA1Hash() != "")

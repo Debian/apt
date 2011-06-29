@@ -78,6 +78,9 @@ private:
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    pkgDepCache &Cache;
    typedef pkgCache::PkgIterator PkgIterator;
    typedef pkgCache::VerIterator VerIterator;

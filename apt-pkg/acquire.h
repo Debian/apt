@@ -91,6 +91,12 @@ class pkgAcquireStatus;
  */
 class pkgAcquire
 {   
+   private:
+   /** \brief FD of the Lock file we acquire in Setup (if any) */
+   int LockFD;
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    public:
    
    class Item;
@@ -359,9 +365,6 @@ class pkgAcquire
     */
    virtual ~pkgAcquire();
 
-   private:
-   /** \brief FD of the Lock file we acquire in Setup (if any) */
-   int LockFD;
 };
 
 /** \brief Represents a single download source from which an item
@@ -390,6 +393,9 @@ class pkgAcquire::Queue
    friend class pkgAcquire;
    friend class pkgAcquire::UriIterator;
    friend class pkgAcquire::Worker;
+
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
 
    /** \brief The next queue in the pkgAcquire object's list of queues. */
    Queue *Next;
@@ -540,12 +546,15 @@ class pkgAcquire::Queue
    /** Shut down all the worker processes associated with this queue
     *  and empty the queue.
     */
-   ~Queue();
+   virtual ~Queue();
 };
 									/*}}}*/
 /** \brief Iterates over all the URIs being fetched by a pkgAcquire object.	{{{*/
 class pkgAcquire::UriIterator
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    /** The next queue to iterate over. */
    pkgAcquire::Queue *CurQ;
    /** The item that we currently point at. */
@@ -581,11 +590,15 @@ class pkgAcquire::UriIterator
 	 CurQ = CurQ->Next;
       }
    }   
+   virtual ~UriIterator() {};
 };
 									/*}}}*/
 /** \brief Information about the properties of a single acquire method.	{{{*/
 struct pkgAcquire::MethodConfig
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+   
    /** \brief The next link on the acquire method list.
     *
     *  \todo Why not an STL container?
@@ -634,6 +647,9 @@ struct pkgAcquire::MethodConfig
     *  appropriate.
     */
    MethodConfig();
+
+   /* \brief Destructor, empty currently */
+   virtual ~MethodConfig() {};
 };
 									/*}}}*/
 /** \brief A monitor object for downloads controlled by the pkgAcquire class.	{{{
@@ -644,6 +660,9 @@ struct pkgAcquire::MethodConfig
  */
 class pkgAcquireStatus
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    protected:
    
    /** \brief The last time at which this monitor object was updated. */

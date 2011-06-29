@@ -231,6 +231,7 @@ class pkgDepCache : protected pkgCache::Namespace
       // Various test members for the current status of the package
       inline bool NewInstall() const {return Status == 2 && Mode == ModeInstall;};
       inline bool Delete() const {return Mode == ModeDelete;};
+      inline bool Purge() const {return Delete() == true && (iFlags & pkgDepCache::Purge) == pkgDepCache::Purge; };
       inline bool Keep() const {return Mode == ModeKeep;};
       inline bool Protect() const {return (iFlags & Protected) == Protected;};
       inline bool Upgrade() const {return Status > 0 && Mode == ModeInstall;};
@@ -242,6 +243,7 @@ class pkgDepCache : protected pkgCache::Namespace
       inline bool InstBroken() const {return (DepState & DepInstMin) != DepInstMin;};
       inline bool InstPolicyBroken() const {return (DepState & DepInstPolicy) != DepInstPolicy;};
       inline bool Install() const {return Mode == ModeInstall;};
+      inline bool ReInstall() const {return Delete() == false && (iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall;};
       inline VerIterator InstVerIter(pkgCache &Cache)
                 {return VerIterator(Cache,InstallVer);};
       inline VerIterator CandidateVerIter(pkgCache &Cache)
