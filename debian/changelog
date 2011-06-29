@@ -1,9 +1,11 @@
-apt (0.8.14.2) UNRELEASED; urgency=low
+apt (0.8.15) unstable; urgency=low
 
   [ Julian Andres Klode ]
   * apt-pkg/depcache.cc:
     - Really release action groups only once (Closes: #622744)
     - Make purge work again for config-files (LP: #244598) (Closes: #150831)
+  * apt-pkg/acquire-item.cc:
+    - Reject files known to be invalid (LP: #346386) (Closes: #627642)
   * debian/apt.cron.daily:
     - Check power after wait, patch by manuel-soto (LP: #705269)
   * debian/control:
@@ -14,12 +16,11 @@ apt (0.8.14.2) UNRELEASED; urgency=low
 
   [ Christian Perrier ]
   * Galician translation update (Miguel Anxo Bouzada). Closes: #626505
+  * Italian translation update (Milo Casagrande). Closes: #627834
+  * German documentation translation update (Chris Leick). Closes: #629949
+  * Catalan translation update (Jordi Mallach). Closes: #630657
 
   [ David Kalnischkies ]
-  * apt-pkg/indexcopy.cc:
-    - Verify that the first line of an InRelease file is a PGP header
-      for a signed message. Otherwise a man-in-the-middle can prefix
-      a valid InRelease file with his own data! (CVE-2011-1829)
   * fix a bunch of cppcheck warnings/errors based on a patch by
     Niels Thykier, thanks! (Closes: #622805)
   * apt-pkg/depcache.cc:
@@ -38,6 +39,8 @@ apt (0.8.14.2) UNRELEASED; urgency=low
     - log reinstall commands in history.log
   * debian/apt{,-utils}.symbols:
     - update both experimental symbol-files to reflect 0.8.14 state
+  * debian/rules:
+    - remove unused embedded jquery by doxygen from libapt-pkg-doc
   * cmdline/apt-mark.cc:
     - reimplement apt-mark in c++
     - provide a 'showmanual' command (Closes: #582791)
@@ -79,8 +82,30 @@ apt (0.8.14.2) UNRELEASED; urgency=low
   * cmdline/apt-config.cc:
     - show Acquire::Languages and APT::Architectures settings
       in 'dump' (Closes: 626739)
+  * apt-pkg/orderlist.cc:
+    - ensure that an old version of a package with a provides can
+      never satisfy a dependency of a newer version of this package
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 06 Jun 2011 21:33:01 +0200
+  [ Michael Vogt ]
+  * methods/mirror.cc:
+    - ignore lines starting with "#" in the mirror file
+    - ignore non http urls in the mirrors
+    - append the dist (e.g. sid, wheezy) as a query string when
+      asking for a suitable mirror 
+  * apt-pkg/deb/deblistparser.cc:
+    - include all known languages when building the apt cache
+      (LP: #794907)
+  * apt-pkg/deb/debindexfile.cc:
+    - remove some no longer valid checks for "TranslationsAvailable()"
+
+  [ Kenneth Solbø Andersen ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - set permissions of term.log to root.adm and 644 (LP: #404724)
+  
+  [ Chris Leick ]
+  * various typo and syntax corrections in doc/*.xml
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 28 Jun 2011 18:00:48 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 

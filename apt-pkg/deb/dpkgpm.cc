@@ -32,6 +32,8 @@
 #include <algorithm>
 #include <sstream>
 #include <map>
+#include <pwd.h>
+#include <grp.h>
 
 #include <termios.h>
 #include <unistd.h>
@@ -667,7 +669,13 @@ bool pkgDPkgPM::OpenLog()
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), logfile_name.c_str());
       setvbuf(term_out, NULL, _IONBF, 0);
       SetCloseExec(fileno(term_out), true);
-      chmod(logfile_name.c_str(), 0600);
+      struct passwd *pw;
+      struct group *gr;
+      pw = getpwnam("root");
+      gr = getgrnam("adm");
+      if (pw != NULL && gr != NULL)
+	  chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid);
+      chmod(logfile_name.c_str(), 0644);
       fprintf(term_out, "\nLog started: %s\n", timestr);
    }
 

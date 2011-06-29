@@ -134,6 +134,10 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
+   // append the dist as a query string
+   if (Dist != "")
+      fetch += "?dist=" + Dist;
+
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile(): '" << fetch << "'"
            << " to " << MirrorFile << endl;
@@ -274,8 +278,18 @@ bool MirrorMethod::InitMirrors()
    while (!in.eof()) 
    {
       getline(in, s);
-      if (s.size() > 0)
-	 AllMirrors.push_back(s);
+
+      // ignore lines that start with #
+      if (s.find("#") == 0)
+         continue;
+      // ignore empty lines
+      if (s.size() == 0)
+         continue;
+      // ignore non http lines
+      if (s.find("http://") != 0)
+         continue;
+
+      AllMirrors.push_back(s);
    }
    Mirror = AllMirrors[0];
    UsedMirror = Mirror;
@@ -329,6 +343,7 @@ string MirrorMethod::GetMirrorFileName(string mirror_uri_str)
 	 if(Debug)
 	    std::cerr << "found BaseURI: " << uristr << std::endl;
 	 BaseUri = uristr.substr(0,uristr.size()-1);
+         Dist = (*I)->GetDist();
       }
    }
    // get new file

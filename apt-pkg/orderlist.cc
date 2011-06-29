@@ -1073,6 +1073,12 @@ bool pkgOrderList::CheckDep(DepIterator D)
          just needs one */
       if (D.IsNegative() == false)
       {
+	 // ignore provides by older versions of this package
+	 if (((D.Reverse() == false && Pkg == D.ParentPkg()) ||
+	      (D.Reverse() == true && Pkg == D.TargetPkg())) &&
+	     Cache[Pkg].InstallVer != *I)
+	    continue;
+
 	 /* Try to find something that does not have the after flag set
 	    if at all possible */
 	 if (IsFlag(Pkg,After) == true)
