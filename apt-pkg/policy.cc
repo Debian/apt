@@ -216,7 +216,14 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       P->Data = Data;
       return;
    }
-   
+
+   size_t found = Name.rfind(':');
+   string Arch;
+   if (found != string::npos) {
+      Arch = Name.substr(found+1);
+      Name.erase(found);
+   }
+
    // Allow pinning by wildcards
    // TODO: Maybe we should always prefer specific pins over non-
    // specific ones.
@@ -225,23 +232,38 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       pkgVersionMatch match(Data, Type);
       for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
 	 if (match.ExpressionMatches(Name, G.Name()))
-	    CreatePin(Type, G.Name(), Data, Priority);
+	 {
+	    if (Arch.empty() == false)
+	       CreatePin(Type, string(G.Name()).append(":").append(Arch), Data, Priority);
+	    else
+	       CreatePin(Type, G.Name(), Data, Priority);
+	 }
       return;
    }
 
-   // find the package group this pin applies to
-   pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
-   if (Grp.end() == true)
+   // find the package (group) this pin applies to
+   pkgCache::GrpIterator Grp;
+   pkgCache::PkgIterator Pkg;
+   if (Arch.empty() == false)
+      Pkg = Cache->FindPkg(Name, Arch);
+   else {
+      Grp = Cache->FindGrp(Name);
+      if (Grp.end() == false)
+	 Pkg = Grp.PackageList();
+   }
+
+   if (Pkg.end() == true)
    {
-      Pin *P = &*Unmatched.insert(Unmatched.end(),PkgPin(Name));
+      PkgPin *P = &*Unmatched.insert(Unmatched.end(),PkgPin(Name));
+      if (Arch.empty() == false)
+	 P->Pkg.append(":").append(Arch);
       P->Type = Type;
       P->Priority = Priority;
       P->Data = Data;
       return;
    }
 
-   for (pkgCache::PkgIterator Pkg = Grp.PackageList();
-	Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
+   for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
    {
       Pin *P = Pins + Pkg->ID;
       // the first specific stanza for a package is the ruler,
@@ -251,6 +273,8 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       P->Type = Type;
       P->Priority = Priority;
       P->Data = Data;
+      if (Grp.end() == true)
+	 break;
    }
 }
 									/*}}}*/
