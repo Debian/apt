@@ -128,9 +128,10 @@
      <listitem>
      <para>
 
-       Update the local keyring with the keyring of Debian archive
-       keys and removes from the keyring the archive keys which are no
-       longer valid.
+       Update the local keyring with the archive keyring and remove from
+       the local keyring the archive keys which are no longer valid.
+       The archive keyring is shipped in the <literal>archive-keyring</literal> package of your
+       distribution, e.g. the <literal>debian-archive-keyring</literal> package in Debian.
 
      </para>
 
@@ -141,12 +142,14 @@
      <listitem>
      <para>
 
-       Update the local keyring with the keys of a key server
-       and removes from the keyring the archive keys which are no
-       longer valid. This requires an installed wget and an APT
-       build configured to have a server to fetch from. APT in
-       Debian does not support this command, but Ubuntu's APT
-       does.
+       Work similar to the <command>update</command> command above, but get the
+       archive keyring from an URI instead and validate it against a master key.
+
+       This requires an installed &wget; and an APT build configured to have
+       a server to fetch from and a master keyring to validate.
+
+       APT in Debian does not support this command and relies on
+       <command>update</command> instead, but Ubuntu's APT does.
 
      </para>
 
