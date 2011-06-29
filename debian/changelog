@@ -11,8 +11,11 @@ apt (0.8.15.1) unstable; urgency=low
     - forgot 'mips' in the list for all architecture dependent symbols
     - comment out gcc-4.5 specific symbols as gcc-4.6 is now default
     - the symbol for PrintStatus() is architecture dependent
+  * apt-pkg/policy.cc:
+    - do not segfault in pinning if a package with this name doesn't exist.
+      Thanks to Ferdinand Thommes for the report!
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 29 Jun 2011 18:46:06 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 29 Jun 2011 22:05:50 +0200
 
 apt (0.8.15) unstable; urgency=low
 

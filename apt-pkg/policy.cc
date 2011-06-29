@@ -231,6 +231,9 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 
    // Get a spot to put the pin
    pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
+   if (Grp.end() == true)
+      return;
+
    for (pkgCache::PkgIterator Pkg = Grp.PackageList();
 	Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
    {
