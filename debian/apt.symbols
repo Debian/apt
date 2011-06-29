@@ -1240,6 +1240,13 @@ libapt-pkg.so.4.10 libapt-pkg4.10
  (c++|regex|optional=std)"^std::vector<DiffInfo, .+@Base$" 0.8.0
  (c++|regex|optional=std)"^std::vector<.+ >::(vector|push_back|erase|_[^ ]+)\(.+\)( const|)@Base$" 0.8.0
 # (c++|optional=strange)"pkgCache::VerIterator::VerIterator(pkgCache&, pkgCache::Version*)@Base" 0.8.0
+### architecture specific: va_list
+ (arch=armel armhf|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, std::__va_list&) const@Base" 0.8.15~exp1 1
+ (arch=i386 hurd-i386 kfreebsd-i386|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@Base" 0.8.15~exp1 1
+ (arch=hppa ia64 mips mipsel sparc sparc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, void*&) const@Base" 0.8.15~exp1 1
+ (arch=amd64 kfreebsd-amd64 powerpc powerpcspe s390|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag (&) [1]) const@Base" 0.8.15~exp1 1
+ (arch=sh4|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __builtin_va_list&) const@Base" 0.8.15~exp1 1
+ (arch=alpha|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag&) const@Base" 0.8.15~exp1 1
 ### architecture specific: va_list & size_t
  (arch=i386 hurd-i386 kfreebsd-i386|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@Base" 0.8.11.4 1
  (arch=armel armhf|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@Base" 0.8.11.4 1
