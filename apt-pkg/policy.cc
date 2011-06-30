@@ -210,13 +210,20 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
 {
    if (Name.empty() == true)
    {
-      Pin *P = &*Defaults.insert(Defaults.end(),PkgPin());
+      Pin *P = &*Defaults.insert(Defaults.end(),Pin());
       P->Type = Type;
       P->Priority = Priority;
       P->Data = Data;
       return;
    }
-   
+
+   size_t found = Name.rfind(':');
+   string Arch;
+   if (found != string::npos) {
+      Arch = Name.substr(found+1);
+      Name.erase(found);
+   }
+
    // Allow pinning by wildcards
    // TODO: Maybe we should always prefer specific pins over non-
    // specific ones.
@@ -225,32 +232,49 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       pkgVersionMatch match(Data, Type);
       for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() != true; ++G)
 	 if (match.ExpressionMatches(Name, G.Name()))
-	    CreatePin(Type, G.Name(), Data, Priority);
+	 {
+	    if (Arch.empty() == false)
+	       CreatePin(Type, string(G.Name()).append(":").append(Arch), Data, Priority);
+	    else
+	       CreatePin(Type, G.Name(), Data, Priority);
+	 }
       return;
    }
 
-   // Get a spot to put the pin
-   pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
-   for (pkgCache::PkgIterator Pkg = Grp.PackageList();
-	Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
-   {
-      Pin *P = 0;
-      if (Pkg.end() == false)
-	 P = Pins + Pkg->ID;
-      else
-      {
-	 // Check the unmatched table
-	 for (vector<PkgPin>::iterator I = Unmatched.begin();
-	      I != Unmatched.end() && P == 0; I++)
-	    if (I->Pkg == Name)
-	       P = &*I;
+   // find the package (group) this pin applies to
+   pkgCache::GrpIterator Grp;
+   pkgCache::PkgIterator Pkg;
+   if (Arch.empty() == false)
+      Pkg = Cache->FindPkg(Name, Arch);
+   else {
+      Grp = Cache->FindGrp(Name);
+      if (Grp.end() == false)
+	 Pkg = Grp.PackageList();
+   }
 
-	 if (P == 0)
-	    P = &*Unmatched.insert(Unmatched.end(),PkgPin());
-      }
+   if (Pkg.end() == true)
+   {
+      PkgPin *P = &*Unmatched.insert(Unmatched.end(),PkgPin(Name));
+      if (Arch.empty() == false)
+	 P->Pkg.append(":").append(Arch);
       P->Type = Type;
       P->Priority = Priority;
       P->Data = Data;
+      return;
+   }
+
+   for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
+   {
+      Pin *P = Pins + Pkg->ID;
+      // the first specific stanza for a package is the ruler,
+      // all others need to be ignored
+      if (P->Type != pkgVersionMatch::None)
+	 P = &*Unmatched.insert(Unmatched.end(),PkgPin(Pkg.FullName()));
+      P->Type = Type;
+      P->Priority = Priority;
+      P->Data = Data;
+      if (Grp.end() == true)
+	 break;
    }
 }
 									/*}}}*/

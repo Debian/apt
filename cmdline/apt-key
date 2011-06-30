@@ -21,6 +21,13 @@ REMOVED_KEYS=/usr/share/keyrings/ubuntu-archive-removed-keys.gpg
 ARCHIVE_KEYRING_URI=http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg
 
 
+requires_root() {
+	if [ "$(id -u)" -ne 0 ]; then
+		echo >&1 "ERROR: This command can only be used by root."
+		exit 1
+	fi
+}
+
 add_keys_with_verify_against_master_keyring() {
     ADD_KEYRING=$1
     MASTER=$2
@@ -59,13 +66,14 @@ add_keys_with_verify_against_master_keyring() {
 # (otherwise it does not make sense from a security POV)
 net_update() {
     if [ -z "$ARCHIVE_KEYRING_URI" ]; then
-	echo "ERROR: no location for the archive-keyring given"
+	echo >&2 "ERROR: Your distribution is not supported in net-update as no uri for the archive-keyring is set"
 	exit 1
     fi
+    requires_root
     # in theory we would need to depend on wget for this, but this feature
     # isn't useable in debian anyway as we have no keyring uri nor a master key
     if ! which wget >/dev/null 2>&1; then
-	echo "ERROR: an installed wget is required for a network-based update"
+	echo >&2 "ERROR: an installed wget is required for a network-based update"
 	exit 1
     fi
     if [ ! -d /var/lib/apt/keyrings ]; then
@@ -93,6 +101,7 @@ update() {
 	echo >&2 "Is the ubuntu-keyring package installed?"
 	exit 1
     fi
+    requires_root
 
     # add new keys from the package;
 
@@ -184,10 +193,12 @@ fi
 
 case "$command" in
     add)
+        requires_root
         $GPG --quiet --batch --import "$1"
         echo "OK"
         ;;
     del|rm|remove)
+        requires_root
         $GPG --quiet --batch --delete-key --yes "$1"
         echo "OK"
         ;;
