@@ -101,6 +101,7 @@ $(BUILD)/doc/Doxyfile: Doxyfile.in
 
 $(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
 	rm -fr $(BUILD)/doc/doxygen
+	mkdir $(BUILD)/doc/doxygen  # some versions seem to not create this directory #628799
 	$(DOXYGEN) $(BUILD)/doc/Doxyfile
 	touch $(BUILD)/doc/doxygen-stamp
 
