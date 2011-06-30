@@ -1230,37 +1230,45 @@ libapt-pkg.so.4.10 libapt-pkg4.10
 # (c++|regex|optional=std)"^std::vector<.+ >::(vector|push_back|erase|_[^ ]+)\(.+\)( const|)@Base$" 0.8.0
 # (c++|regex|optional=std)"^pkgCache::(Dep|Pkg|Ver|Grp|Prv|Desc|PkgFile)Iterator\*\* std::_.+@Base$" 0.8.0
 ### gcc-4.5 specific
- (c++|regex|optional=std)"^char\* std::[^ ]+<.+ >::_.+@Base$" 0.8.0
- (c++|optional=inline)"FileFd::FileFd(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, FileFd::OpenMode, unsigned long)@Base" 0.8.0
- (c++|regex|optional=template)"^SPtrArray<[^ ]+>::~SPtrArray\(\)@Base$" 0.8.0
- (c++|optional=template)"SPtrArray<unsigned char>::~SPtrArray()@Base" 0.8.0
+# (c++|regex|optional=std)"^char\* std::[^ ]+<.+ >::_.+@Base$" 0.8.0
+# (c++|optional=inline)"FileFd::FileFd(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, FileFd::OpenMode, unsigned long)@Base" 0.8.0
+# (c++|regex|optional=template)"^SPtrArray<[^ ]+>::~SPtrArray\(\)@Base$" 0.8.0
+# (c++|optional=template)"SPtrArray<unsigned char>::~SPtrArray()@Base" 0.8.0
 ### gcc-4.6 specific
  (c++|optional=template)"SPtrArray<pkgCache::Version*>::~SPtrArray()@Base" 0.8.0
  (c++|regex|optional=std)"^std::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string<char( const|)\*>\(.+\)@Base$" 0.8.0
  (c++|regex|optional=std)"^std::vector<DiffInfo, .+@Base$" 0.8.0
  (c++|regex|optional=std)"^std::vector<.+ >::(vector|push_back|erase|_[^ ]+)\(.+\)( const|)@Base$" 0.8.0
- (c++|optional=strange)"pkgCache::VerIterator::VerIterator(pkgCache&, pkgCache::Version*)@Base" 0.8.0
+# (c++|optional=strange)"pkgCache::VerIterator::VerIterator(pkgCache&, pkgCache::Version*)@Base" 0.8.0
+### architecture specific: va_list
+ (arch=armel armhf|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, std::__va_list&) const@Base" 0.8.15~exp1 1
+ (arch=i386 hurd-i386 kfreebsd-i386|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@Base" 0.8.15~exp1 1
+ (arch=hppa ia64 mips mipsel sparc sparc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, void*&) const@Base" 0.8.15~exp1 1
+ (arch=amd64 kfreebsd-amd64 powerpc powerpcspe s390|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag (&) [1]) const@Base" 0.8.15~exp1 1
+ (arch=sh4|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __builtin_va_list&) const@Base" 0.8.15~exp1 1
+ (arch=alpha|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag&) const@Base" 0.8.15~exp1 1
 ### architecture specific: va_list & size_t
  (arch=i386 hurd-i386 kfreebsd-i386|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@Base" 0.8.11.4 1
  (arch=armel armhf|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@Base" 0.8.11.4 1
  (arch=alpha|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag&, unsigned long&)@Base" 0.8.11.4 1
  (arch=powerpc powerpcspe|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned int&)@Base" 0.8.11.4 1
  (arch=amd64 kfreebsd-amd64 s390|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@Base" 0.8.11.4 1
- (arch=hppa mipsel sparc|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned int&)@Base" 0.8.11.4 1
+ (arch=hppa mips mipsel sparc|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned int&)@Base" 0.8.11.4 1
  (arch=ia64 sparc64|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@Base" 0.8.11.4 1
  (arch=sh4|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __builtin_va_list&, unsigned int&)@Base" 0.8.11.4 1
+
  (arch=i386 hurd-i386 kfreebsd-i386|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned int&)@Base" 0.8.11.4 1
  (arch=armel armhf|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned int&)@Base" 0.8.11.4 1
  (arch=alpha|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag&, int, unsigned long&)@Base" 0.8.11.4 1
  (arch=powerpc powerpcspe|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned int&)@Base" 0.8.11.4 1
  (arch=amd64 kfreebsd-amd64 s390|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@Base" 0.8.11.4 1
- (arch=hppa mipsel sparc|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned int&)@Base" 0.8.11.4 1
+ (arch=hppa mips mipsel sparc|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned int&)@Base" 0.8.11.4 1
  (arch=ia64 sparc64|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@Base" 0.8.11.4 1
  (arch=sh4|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __builtin_va_list&, int, unsigned int&)@Base" 0.8.11.4 1
 ### architecture specific: size_t
- (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mipsel powerpc powerpcspe sh4 sparc|c++)"_strtabexpand(char*, unsigned int)@Base" 0.8.0
+ (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mips mipsel powerpc powerpcspe sh4 sparc|c++)"_strtabexpand(char*, unsigned int)@Base" 0.8.0
  (arch=alpha amd64 ia64 kfreebsd-amd64 s390 sparc64|c++)"_strtabexpand(char*, unsigned long)@Base" 0.8.0
- (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mipsel powerpc powerpcspe sh4 sparc|c++)"indexRecords::parseSumData(char const*&, char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned int&)@Base" 0.8.0
+ (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mips mipsel powerpc powerpcspe sh4 sparc|c++)"indexRecords::parseSumData(char const*&, char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned int&)@Base" 0.8.0
  (arch=alpha amd64 ia64 kfreebsd-amd64 s390 sparc64|c++)"indexRecords::parseSumData(char const*&, char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned long&)@Base" 0.8.0
 ### try to ignore std:: template instances
  (c++|regex|optional=std)"^(void |)std::[^ ]+<.+ >::(_|~).+\(.*\)@Base$" 0.8.0
@@ -1319,5 +1327,4 @@ libapt-pkg.so.4.10 libapt-pkg4.10
  (c++|optional=private)"PrintMode(char)@Base" 0.8.13.2 1
  (c++)"pkgDepCache::IsModeChangeOk(pkgDepCache::ModeList, pkgCache::PkgIterator const&, unsigned long, bool)@Base" 0.8.13.2 1
  (c++)"pkgPackageManager::SmartUnPack(pkgCache::PkgIterator, bool)@Base" 0.8.15~exp1 1
- (c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@Base" 0.8.15~exp1 1
  (c++)"pkgCache::DepIterator::IsNegative() const@Base" 0.8.15~exp1 1
