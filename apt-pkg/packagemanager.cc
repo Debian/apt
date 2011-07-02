@@ -575,6 +575,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 }
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 {
+   if (Debug == true)
+      clog << "SmartUnPack " << Pkg.Name() << endl;
+
    // Check if it is already unpacked
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
        Cache[Pkg].Keep() == true)
@@ -671,6 +674,20 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    {
 	       if (EarlyRemove(Pkg) == false)
 		  return _error->Error("Internal Error, Could not early remove %s",Pkg.Name());
+	    }
+	 }
+      }
+      
+      // Check for breaks
+      if (End->Type == pkgCache::Dep::DpkgBreaks) {
+         SPtrArray<Version *> VList = End.AllTargets();
+	 for (Version **I = VList; *I != 0; I++)
+	 {
+	    VerIterator Ver(Cache,*I);
+	    PkgIterator Pkg = Ver.ParentPkg();
+	    // Found a break, so unpack the package
+	    if (List->IsNow(Pkg)) {
+	      SmartUnPack(Pkg, false);
 	    }
 	 }
       }
