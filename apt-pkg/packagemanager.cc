@@ -346,6 +346,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    configured*/
 bool pkgPackageManager::VerifyConfigure(PkgIterator Pkg, pkgOrderList &OList)
 {
+   if (Debug == true)
+      clog << "VerifyConfigure " << Pkg.Name() << endl;
+
    // If this is true at the end, then the package should not be configured
    bool error=true;
    // This holds the the OR status of the previous dependancy  
