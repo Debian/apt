@@ -479,6 +479,8 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	       continue;
 	    }
 	    
+	    std::clog << OutputInDepth(Depth) << Pkg.Name() << " NeedsNothing " << (Pkg.State() == PkgIterator::NeedsNothing) << " Unpacked " << List->IsFlag(Pkg,pkgOrderList::UnPacked) << std::endl;
+	    
 	    // Not the install version 
 	    if (Cache[Pkg].InstallVer != *I || 
 		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
