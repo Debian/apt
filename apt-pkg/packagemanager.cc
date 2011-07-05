@@ -278,7 +278,7 @@ bool pkgPackageManager::ConfigureAll()
    {
       PkgIterator Pkg(Cache,*I);
 
-      if (ConfigurePkgs == true && VerifyConfigure(Pkg,OList) == false)
+      if (ConfigurePkgs == true && VerifyAndConfigure(Pkg,OList) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -313,7 +313,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    {
       PkgIterator Pkg(Cache,*I);
       
-      if (ConfigurePkgs == true && VerifyConfigure(Pkg,OList) == false)
+      if (ConfigurePkgs == true && VerifyAndConfigure(Pkg,OList) == false)
 	 return false;
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
@@ -346,9 +346,6 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
    configured*/
 bool pkgPackageManager::VerifyConfigure(PkgIterator Pkg, pkgOrderList &OList)
 {
-   if (Debug == true)
-      clog << "VerifyConfigure " << Pkg.Name() << endl;
-
    // If this is true at the end, then the package should not be configured
    bool error=true;
    // This holds the the OR status of the previous dependancy  
@@ -419,7 +416,7 @@ bool pkgPackageManager::VerifyConfigure(PkgIterator Pkg, pkgOrderList &OList)
    configures it  */
 bool pkgPackageManager::VerifyAndConfigure(PkgIterator Pkg, pkgOrderList &OList)
 {
-   if (VerifyConfigure(Pkg, OList))
+   if (VerifyConfigure(Pkg, OList)) 
       return Configure(Pkg);
    else
       return false;
@@ -472,14 +469,12 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	    PkgIterator Pkg = Ver.ParentPkg();
 
 	    // See if the current version is ok
-	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true && 
+	    if (Pkg.CurrentVer() == Ver && List->IsFlag(Pkg,pkgOrderList::Configured) == true && 
 		Pkg.State() == PkgIterator::NeedsNothing)
 	    {
 	       Bad = false;
 	       continue;
 	    }
-	    
-	    std::clog << OutputInDepth(Depth) << Pkg.Name() << " NeedsNothing " << (Pkg.State() == PkgIterator::NeedsNothing) << " Unpacked " << List->IsFlag(Pkg,pkgOrderList::UnPacked) << std::endl;
 	    
 	    // Not the install version 
 	    if (Cache[Pkg].InstallVer != *I || 
