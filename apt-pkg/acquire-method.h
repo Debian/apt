@@ -51,8 +51,8 @@ class pkgAcqMethod
       time_t LastModified;
       bool IMSHit;
       string Filename;
-      unsigned long Size;
-      unsigned long ResumePoint;
+      unsigned long long Size;
+      unsigned long long ResumePoint;
       
       void TakeHashes(Hashes &Hash);
       FetchResult();

@@ -4,8 +4,11 @@ apt (0.8.16~exp3) experimental; urgency=low
   * apt-pkg/pkgcache.h:
     - readd All{Foreign,Allowed} as suggested by Julian to
       remain strictly API compatible
+  * apt-pkg/acquire*.{cc,h}:
+    - try even harder to support really big files in the fetcher by
+      converting (hopefully) everything to 'long long' (Closes: #632271)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 29 Jun 2011 19:38:44 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 05 Jul 2011 15:56:42 +0200
 
 apt (0.8.16~exp2) experimental; urgency=low
 

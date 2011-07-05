@@ -912,7 +912,7 @@ void pkgAcquireStatus::Stop()
 // AcquireStatus::Fetched - Called when a byte set has been fetched	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is used to get accurate final transfer rate reporting. */
-void pkgAcquireStatus::Fetched(unsigned long Size,unsigned long Resume)
+void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume)
 {   
    FetchedBytes += Size - Resume;
 }

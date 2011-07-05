@@ -148,12 +148,7 @@ class pkgAcquire
    /** \brief The progress indicator for this download. */
    pkgAcquireStatus *Log;
 
-   /** \brief The total size of the files which are to be fetched.
-    *
-    *  This is not necessarily the total number of bytes to download
-    *  when, e.g., download resumption and list updates via patches
-    *  are taken into account.
-    */
+   /** \brief The number of files which are to be fetched. */
    unsigned long ToFetch;
 
    // Configurable parameters for the scheduler
@@ -484,7 +479,7 @@ class pkgAcquire::Queue
     *
     *  \todo Unimplemented.  Implement it or remove?
     */
-   bool ItemStart(QItem *Itm,unsigned long Size);
+   bool ItemStart(QItem *Itm,unsigned long long Size);
 
    /** \brief Remove the given item from this queue and set its state
     *  to pkgAcquire::Item::StatDone.
@@ -734,7 +729,7 @@ class pkgAcquireStatus
     *
     *  \param ResumePoint How much of the file was already fetched.
     */
-   virtual void Fetched(unsigned long Size,unsigned long ResumePoint);
+   virtual void Fetched(unsigned long long Size,unsigned long long ResumePoint);
    
    /** \brief Invoked when the user should be prompted to change the
     *         inserted removable media.
