@@ -475,17 +475,11 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	       Bad = false;
 	       continue;
 	    }
-	    
-	    // Check if this package is being re-installed 
-	    if ((Cache[Pkg].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall && Cache[Pkg].InstallVer != *I && 
-	        List->IsNow(Pkg) == true && Pkg.State() == PkgIterator::NeedsNothing) {
-	       Bad = false;
-	       continue;
-	    }
-	    
+
 	    // Not the install version 
 	    if (Cache[Pkg].InstallVer != *I || 
-		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
+		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing && 
+		(Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	       continue;
 	    
 	    if (List->IsFlag(Pkg,pkgOrderList::UnPacked) == true)
