@@ -685,11 +685,15 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	 for (Version **I = VList; *I != 0; I++)
 	 {
 	    VerIterator Ver(Cache,*I);
-	    PkgIterator Pkg = Ver.ParentPkg();
+	    PkgIterator BrokenPkg = Ver.ParentPkg();
 	    // Check if it needs to be unpacked
-	    if (List->IsFlag(Pkg,pkgOrderList::InList) && Cache[Pkg].Delete() == false) {
+	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
+	        !List->IsFlag(BrokenPkg,pkgOrderList::UnPacked)) {
+	      /* FIXME Setting the flag here prevents breakage loops, that can occur if BrokenPkg (or one of the 
+	         packages it breaks) breaks Pkg */ 
+	      List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 	      // Found a break, so unpack the package
-	      SmartUnPack(Pkg, false);
+	      SmartUnPack(BrokenPkg, false);
 	    }
 	 }
       }
