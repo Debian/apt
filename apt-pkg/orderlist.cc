@@ -1078,7 +1078,7 @@ bool pkgOrderList::CheckDep(DepIterator D)
 	      (D.Reverse() == true && Pkg == D.TargetPkg())) &&
 	     Cache[Pkg].InstallVer != *I)
 	    continue;
-      
+
 	 /* Try to find something that does not have the after flag set
 	    if at all possible */
 	 if (IsFlag(Pkg,After) == true)

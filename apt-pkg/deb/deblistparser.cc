@@ -201,7 +201,7 @@ string debListParser::DescriptionLanguage()
    if (Section.FindS("Description").empty() == false)
       return "";
 
-   std::vector<string> const lang = APT::Configuration::getLanguages();
+   std::vector<string> const lang = APT::Configuration::getLanguages(true);
    for (std::vector<string>::const_iterator l = lang.begin();
 	l != lang.end(); l++)
       if (Section.FindS(string("Description-").append(*l).c_str()).empty() == false)
@@ -284,18 +284,18 @@ unsigned short debListParser::VersionHash()
       /* Strip out any spaces from the text, this undoes dpkgs reformatting
          of certain fields. dpkg also has the rather interesting notion of
          reformatting depends operators < -> <= */
-      char *I = S;
+      char *J = S;
       for (; Start != End; Start++)
       {
 	 if (isspace(*Start) == 0)
-	    *I++ = tolower_ascii(*Start);
+	    *J++ = tolower_ascii(*Start);
 	 if (*Start == '<' && Start[1] != '<' && Start[1] != '=')
-	    *I++ = '=';
+	    *J++ = '=';
 	 if (*Start == '>' && Start[1] != '>' && Start[1] != '=')
-	    *I++ = '=';
+	    *J++ = '=';
       }
 
-      Result = AddCRC16(Result,S,I - S);
+      Result = AddCRC16(Result,S,J - S);
    }
    
    return Result;

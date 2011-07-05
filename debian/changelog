@@ -1,4 +1,27 @@
-apt (0.8.15) UNRELEASED; urgency=low
+apt (0.8.15.1) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * doc/makefile:
+    - create doxygen directory to avoid depending on magic (Closes: #628799)
+  * cmdline/apt-key:
+    - explicitly state that net-update is not supported if no url is set
+    - require to be root for add, rm, update and net-update
+    - clarify update vs. net-update in different distros (Closes: #632043)
+  * debian/apt.symbols:
+    - forgot 'mips' in the list for all architecture dependent symbols
+    - comment out gcc-4.5 specific symbols as gcc-4.6 is now default
+    - the symbol for PrintStatus() is architecture dependent
+  * apt-pkg/policy.cc:
+    - do not segfault in pinning if a package with this name doesn't exist.
+      Thanks to Ferdinand Thommes for the report!
+    - Defaults is a vector of Pin not of PkgPin
+    - ensure that only the first specific stanza for a package is used
+    - save all stanzas which had no effect in Unmatched
+    - allow package:architecure in Package:
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 30 Jun 2011 10:05:36 +0200
+
+apt (0.8.15) unstable; urgency=low
 
   [ Julian Andres Klode ]
   * apt-pkg/depcache.cc:
@@ -35,6 +58,8 @@ apt (0.8.15) UNRELEASED; urgency=low
     - let VisitRProvides report if the calls were successful
   * apt-pkg/deb/dpkgpm.cc:
     - replace obsolete usleep with nanosleep
+    - remove invalid pkgcache.bin and rebuild it if possible
+    - log reinstall commands in history.log
   * debian/apt{,-utils}.symbols:
     - update both experimental symbol-files to reflect 0.8.14 state
   * debian/rules:
@@ -75,8 +100,35 @@ apt (0.8.15) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - ensure for Multi-Arch:same packages that they are unpacked in
       lock step even in immediate configuration (Closes: #618288)
+  * apt-pkg/init.cc:
+    - don't set deprecated APT::Acquire::Translation, thanks Jörg Sommer!
+  * cmdline/apt-config.cc:
+    - show Acquire::Languages and APT::Architectures settings
+      in 'dump' (Closes: 626739)
+  * apt-pkg/orderlist.cc:
+    - ensure that an old version of a package with a provides can
+      never satisfy a dependency of a newer version of this package
 
- -- Michael Vogt <mvo@debian.org>  Mon, 16 May 2011 14:57:52 +0200
+  [ Michael Vogt ]
+  * methods/mirror.cc:
+    - ignore lines starting with "#" in the mirror file
+    - ignore non http urls in the mirrors
+    - append the dist (e.g. sid, wheezy) as a query string when
+      asking for a suitable mirror 
+  * apt-pkg/deb/deblistparser.cc:
+    - include all known languages when building the apt cache
+      (LP: #794907)
+  * apt-pkg/deb/debindexfile.cc:
+    - remove some no longer valid checks for "TranslationsAvailable()"
+
+  [ Kenneth Solbø Andersen ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - set permissions of term.log to root.adm and 644 (LP: #404724)
+  
+  [ Chris Leick ]
+  * various typo and syntax corrections in doc/*.xml
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 28 Jun 2011 18:00:48 +0200
 
 apt (0.8.14.1) unstable; urgency=low
 

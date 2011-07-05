@@ -69,8 +69,8 @@ You have been warned.</para>
 
 <para>Note that the files in the <filename>/etc/apt/preferences.d</filename>
 directory are parsed in alphanumeric ascending order and need to obey the
-following naming convention: The files have no or "<literal>pref</literal>"
-as filename extension and which only contain alphanumeric,  hyphen (-),
+following naming convention: The files have either no or "<literal>pref</literal>"
+as filename extension and only contain alphanumeric, hyphen (-),
 underscore (_) and period (.) characters.
 Otherwise APT will print a notice that it has ignored a file if the file
 doesn't match a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
@@ -265,7 +265,7 @@ APT also supports pinning by glob() expressions and regular
 expressions surrounded by /. For example, the following
 example assigns the priority 500 to all packages from
 experimental where the name starts with gnome (as a glob()-like
-expression or contains the word kde (as a POSIX extended regular
+expression) or contains the word kde (as a POSIX extended regular
 expression surrounded by slashes).
 </para>
 
@@ -277,7 +277,7 @@ Pin-Priority: 500
 
 <para>
 The rule for those expressions is that they can occur anywhere
-where a string can occur. Those, the following pin assigns the
+where a string can occur. Thus, the following pin assigns the
 priority 990 to all packages from a release starting with karmic.
 </para>
 

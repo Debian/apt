@@ -48,10 +48,16 @@ b is already the newest version.
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget install b -d
 testmarkedauto 'b'
 
+rm rootdir/var/log/apt/history.log
+
 aptget install b --reinstall -y -qq 2>&1 > /dev/null
 testdpkgnotinstalled a
 testdpkginstalled b c
 testmarkedauto 'b'
+
+sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d'
+testfileequal 'rootdir/var/log/apt/history.log' '
+Reinstall: b:i386 (1.0)'
 
 testequal 'Reading package lists...
 Building dependency tree...
