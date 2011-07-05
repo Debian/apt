@@ -469,7 +469,7 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	    PkgIterator Pkg = Ver.ParentPkg();
 
 	    // See if the current version is ok
-	    if (Pkg.CurrentVer() == Ver && List->IsFlag(Pkg,pkgOrderList::Configured) == true && 
+	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true && 
 		Pkg.State() == PkgIterator::NeedsNothing)
 	    {
 	       Bad = false;
@@ -685,8 +685,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	 {
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();
-	    // Found a break, so unpack the package
-	    if (List->IsNow(Pkg)) {
+	    // Check if it needs to be unpacked
+	    if (List->IsFlag(Pkg,pkgOrderList::InList) && Cache[Pkg].Delete() == false) {
+	      // Found a break, so unpack the package
 	      SmartUnPack(Pkg, false);
 	    }
 	 }
