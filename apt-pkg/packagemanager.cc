@@ -167,6 +167,10 @@ bool pkgPackageManager::CreateOrderList()
    List = new pkgOrderList(&Cache);
    
    static bool const NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",true);
+   
+   if (Debug && ImmConfigureAll) 
+      clog << "CreateOrderList(): Adding Immediate flag for all packages because of APT::Immediate-Configure-All" << endl;
    
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
@@ -176,19 +180,23 @@ bool pkgPackageManager::CreateOrderList()
 	 continue;
       
       // Mark the package and its dependends for immediate configuration
-      if (((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
+      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
 	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&
-	  NoImmConfigure == false)
+	  NoImmConfigure == false) || ImmConfigureAll)
       {
-	 if(Debug)
+	 if(Debug && !ImmConfigureAll)
 	    clog << "CreateOrderList(): Adding Immediate flag for " << I.Name() << endl;
 	 List->Flag(I,pkgOrderList::Immediate);
-
-	 // Look for other install packages to make immediate configurea
-	 ImmediateAdd(I, true);
 	 
-	 // And again with the current version.
-	 ImmediateAdd(I, false);
+	 if (!ImmConfigureAll) {
+	    continue;
+
+	    // Look for other install packages to make immediate configurea
+	    ImmediateAdd(I, true);
+	 
+	    // And again with the current version.
+	    ImmediateAdd(I, false);
+	 }
       }
       
       // Not interesting
@@ -467,7 +475,33 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	 {
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();
-
+	    VerIterator InstallVer(Cache,Cache[Pkg].InstallVer);
+	    
+	    if (Debug) {
+	       if (Ver==0) {
+	          cout << OutputInDepth(Depth) << "Checking if the dependancy on " << Ver << " of " << Pkg.Name() << " is  satisfied" << endl;
+	       } else {
+	          cout << OutputInDepth(Depth) << "Checking if the dependancy on " << Ver.VerStr() << " of " << Pkg.Name() << " is  satisfied" << endl;
+               }
+            }
+            if (Debug) {
+               if (Pkg.CurrentVer()==0) {
+                  cout << OutputInDepth(Depth) << "  CurrentVer " << Pkg.CurrentVer() << " IsNow " << List->IsNow(Pkg) << " NeedsNothing " << (Pkg.State() == PkgIterator::NeedsNothing) << endl;
+               } else { 
+                  cout << OutputInDepth(Depth) << "  CurrentVer " << Pkg.CurrentVer().VerStr() << " IsNow " << List->IsNow(Pkg) << " NeedsNothing " << (Pkg.State() == PkgIterator::NeedsNothing) << endl;
+               }
+            }
+            
+            if (Debug) {
+               if (InstallVer==0) {
+                  cout << OutputInDepth(Depth )<< "  InstallVer " << InstallVer << endl;
+               } else { 
+                  cout << OutputInDepth(Depth )<< "  InstallVer " << InstallVer.VerStr() << endl; 
+               }
+            }   
+            if (Debug) 
+               cout << OutputInDepth(Depth) << "  Keep " << Cache[Pkg].Keep() << " Unpacked " << List->IsFlag(Pkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(Pkg,pkgOrderList::Configured) << endl;
+               
 	    // See if the current version is ok
 	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true && 
 		Pkg.State() == PkgIterator::NeedsNothing)
@@ -475,6 +509,8 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	       Bad = false;
 	       continue;
 	    }
+	    
+	    // Keep() , if upgradable, is the package left at the install version
 
 	    // Not the install version 
 	    if (Cache[Pkg].InstallVer != *I || 
@@ -591,7 +627,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
       return true;
    }
-
+   
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
 
    /* See if this packages install version has any predependencies
@@ -655,7 +691,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 				    End.TargetPkg().Name(),Pkg.Name());
 	    Start++;
 	 }
-	 else
+	 else 
 	    break;
       }
       
@@ -693,9 +729,55 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	         packages it breaks) breaks Pkg */ 
 	      List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 	      // Found a break, so unpack the package
+	      if (Debug) 
+	         cout << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
 	      SmartUnPack(BrokenPkg, false);
 	    }
 	 }
+      }
+      
+      // Check for dependanices that have not been unpacked, probably due to loops.
+      bool Bad = true; 
+      while (End->Type == pkgCache::Dep::Depends) {
+         PkgIterator DepPkg;
+         SPtrArray<Version *> VList = Start.AllTargets();
+         
+	 for (Version **I = VList; *I != 0; I++) {
+	    VerIterator Ver(Cache,*I);
+	    DepPkg = Ver.ParentPkg();
+	    
+	    if (!Bad) continue;
+
+	    if (Debug) 
+	       cout << "  Checking dep on " << DepPkg.Name() << endl;
+	    // Check if it satisfies this dependancy
+	    if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true && 
+		DepPkg.State() == PkgIterator::NeedsNothing)
+	    {
+	       Bad = false;
+	       continue;
+	    }
+	    
+	    if (Cache[DepPkg].InstallVer == *I && !List->IsNow(DepPkg)) {
+	       Bad = false;
+	       continue;
+	    }
+	 }
+	 
+	 if (Start==End) {
+	    if (Bad) {
+	       // FIXME Setting the flag here prevents a loop forming 
+	       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
+	       // Found a break, so unpack the package
+	       if (Debug) 
+	          cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
+	       //SmartUnPack(DepPkg, false);
+	    }
+	    break;
+	       
+	 } else {
+            Start++;
+         }
       }
    }
 
@@ -728,7 +810,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
    if (Immediate == true &&
        List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
       if (SmartConfigure(Pkg) == false)
-	 return _error->Error(_("Could not perform immediate configuration on '%s'. "
+	 //return 
+	 _error->Error(_("Could not perform immediate configuration on '%s'. "
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),2);
    
    return true;
