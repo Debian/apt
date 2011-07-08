@@ -176,10 +176,14 @@ debPackagesIndex::debPackagesIndex(string const &URI, string const &Dist, string
 					bool const &Trusted, string const &Arch) :
                   pkgIndexFile(Trusted), URI(URI), Dist(Dist), Section(Section), Architecture(Arch)
 {
-	if (Architecture == "native")
-		Architecture = _config->Find("APT::Architecture");
-        _config->Set("Aquire::Debdelta::Replace-Rule::URI-Space::"+URI,
-                _config->Find("Aquire::Debdelta::Replace-Rule::Replace-URI"));
+   if (Architecture == "native")
+      Architecture = _config->Find("APT::Architecture");
+   string ReplacementItem = "Aquire::Debdelta::Replace-Rule::" + URI;//::URI::URI(URI);
+   string ReplacementDefault = _config->Find("Aquire::Debdelta::Replace-Rule::Default");
+   _config->Set(ReplacementItem, _config->Find(ReplacementItem, ReplacementDefault));
+        
+   //std::cerr << "==== Replacement rule: " << ReplacementItem
+   //          << " => "<< ReplacementDefault << std::endl;
 }
 									/*}}}*/
 // PackagesIndex::ArchiveInfo - Short version of the archive url	/*{{{*/

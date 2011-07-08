@@ -425,8 +425,27 @@ class debSLTypeDebSrc : public debSLTypeDebian
    {
       Name = "deb-src";
       Label = "Standard Debian source tree";
-   }   
+   }
+};
+
+class debSLTypeDebdelta : public debSLTypeDebian
+{
+public:
+
+   bool CreateItem(vector<metaIndex *> &List, string const &URI,
+		   string const &Dist, string const &Section,
+		   std::map<string, string> const &Options) const
+   {
+      return CreateItemInternal(List, URI, Dist, Section, false, Options);
+   }
+   
+   debSLTypeDebdelta()
+   {
+      Name = "debdelta";
+      Label = "Standard Debdelta tree";
+   }
 };
 
 debSLTypeDeb _apt_DebType;
 debSLTypeDebSrc _apt_DebSrcType;
+debSLTypeDebdelta _apt_DebdeltaType;
