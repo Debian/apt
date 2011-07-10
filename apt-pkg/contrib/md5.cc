@@ -298,7 +298,7 @@ MD5SumValue MD5Summation::Result()
    }
    
    MD5SumValue V;
-   V.Set((char *)buf);
+   V.Set((unsigned char *)buf);
    return V;
 }
 									/*}}}*/

@@ -55,6 +55,7 @@ class pkgPolicy : public pkgDepCache::Policy
    struct PkgPin : Pin
    {
       string Pkg;
+      PkgPin(string const &Pkg) : Pin(), Pkg(Pkg) {};
    };
    
    Pin *Pins;

@@ -229,7 +229,7 @@ SHA1SumValue SHA1Summation::Result()
 
    // Transfer over the result
    SHA1SumValue Value;
-   char res[20];
+   unsigned char res[20];
    for (unsigned i = 0; i < 20; i++)
    {
       res[i] = (unsigned char)
