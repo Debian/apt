@@ -107,7 +107,8 @@ string HashString::toStr() const
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Hashes::AddFD(int Fd,unsigned long Size)
+bool Hashes::AddFD(int const Fd,unsigned long Size, bool const addMD5,
+		   bool const addSHA1, bool const addSHA256, bool const addSHA512)
 {
    unsigned char Buf[64*64];
    int Res = 0;
@@ -118,14 +119,18 @@ bool Hashes::AddFD(int Fd,unsigned long Size)
       if (!ToEOF) n = min(Size,(unsigned long)n);
       Res = read(Fd,Buf,n);
       if (Res < 0 || (!ToEOF && (unsigned) Res != n)) // error, or short read
-         return false;
+	 return false;
       if (ToEOF && Res == 0) // EOF
-         break;
+	 break;
       Size -= Res;
-      MD5.Add(Buf,Res);
-      SHA1.Add(Buf,Res);
-      SHA256.Add(Buf,Res);
-      SHA512.Add(Buf,Res);
+      if (addMD5 == true)
+	 MD5.Add(Buf,Res);
+      if (addSHA1 == true)
+	 SHA1.Add(Buf,Res);
+      if (addSHA256 == true)
+	 SHA256.Add(Buf,Res);
+      if (addSHA512 == true)
+	 SHA512.Add(Buf,Res);
    }
    return true;
 }

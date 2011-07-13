@@ -101,7 +101,7 @@ class SummationImplementation
    inline bool Add(const char *Beg, const char *End)
    { return Add((const unsigned char *)Beg, End - Beg); };
 
-   bool AddFD(int Fd, unsigned long Size);
+   bool AddFD(int Fd, unsigned long Size = 0);
 };
 
 #endif
