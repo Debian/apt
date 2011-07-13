@@ -46,3 +46,9 @@ PROGRAM = GlobalError${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = globalerror_test.cc
 include $(PROGRAM_H)
+
+# test the different Hashsum classes
+PROGRAM = HashSums${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = hashsums_test.cc
+include $(PROGRAM_H)
