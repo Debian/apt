@@ -20,7 +20,7 @@ APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 # Source code for the contributed non-core things
 SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
          contrib/configuration.cc contrib/progress.cc contrib/cmndline.cc \
-	 contrib/md5.cc contrib/sha1.cc contrib/sha2.cc  \
+	 contrib/hashsum.cc contrib/md5.cc contrib/sha1.cc \
 	 contrib/sha2_internal.cc\
          contrib/hashes.cc \
 	 contrib/cdromutl.cc contrib/crc-16.cc contrib/netrc.cc \

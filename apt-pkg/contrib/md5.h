@@ -34,26 +34,22 @@ using std::min;
 
 #include "hashsum_template.h"
 
-class MD5Summation;
-
 typedef HashSumValue<128> MD5SumValue;
 
-class MD5Summation
+class MD5Summation : public SummationImplementation
 {
    uint32_t Buf[4];
    unsigned char Bytes[2*4];
    unsigned char In[16*4];
    bool Done;
-   
+
    public:
 
-   bool Add(const unsigned char *Data,unsigned long Size);
-   inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
-   bool AddFD(int Fd,unsigned long Size);
-   inline bool Add(const unsigned char *Beg,const unsigned char *End) 
-                  {return Add(Beg,End-Beg);};
+   bool Add(const unsigned char *inbuf, unsigned long inlen);
+   using SummationImplementation::Add;
+
    MD5SumValue Result();
-   
+
    MD5Summation();
 };
 

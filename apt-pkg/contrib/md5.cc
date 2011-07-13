@@ -231,29 +231,6 @@ bool MD5Summation::Add(const unsigned char *data,unsigned long len)
    return true;   
 }
 									/*}}}*/
-// MD5Summation::AddFD - Add the contents of a FD to the hash		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool MD5Summation::AddFD(int Fd,unsigned long Size)
-{
-   unsigned char Buf[64*64];
-   int Res = 0;
-   int ToEOF = (Size == 0);
-   while (Size != 0 || ToEOF)
-   {
-      unsigned n = sizeof(Buf);
-      if (!ToEOF) n = min(Size,(unsigned long)n);
-      Res = read(Fd,Buf,n);
-      if (Res < 0 || (!ToEOF && (unsigned) Res != n)) // error, or short read
-         return false;
-      if (ToEOF && Res == 0) // EOF
-         break;
-      Size -= Res;
-      Add(Buf,Res);
-   }
-   return true;
-}
-									/*}}}*/
 // MD5Summation::Result - Returns the value of the sum			/*{{{*/
 // ---------------------------------------------------------------------
 /* Because this must add in the last bytes of the series it prevents anyone
