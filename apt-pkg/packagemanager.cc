@@ -476,32 +476,32 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();
 	    VerIterator InstallVer(Cache,Cache[Pkg].InstallVer);
+	    VerIterator CandVer(Cache,Cache[Pkg].CandidateVer);
 	    
-	    if (Debug) {
+	    if (Debug && false) {
 	       if (Ver==0) {
-	          cout << OutputInDepth(Depth) << "Checking if the dependancy on " << Ver << " of " << Pkg.Name() << " is  satisfied" << endl;
+	          cout << OutputInDepth(Depth) << "Checking if " << Ver << " of " << Pkg.Name() << " satisfies this dependancy" << endl;
 	       } else {
-	          cout << OutputInDepth(Depth) << "Checking if the dependancy on " << Ver.VerStr() << " of " << Pkg.Name() << " is  satisfied" << endl;
+	          cout << OutputInDepth(Depth) << "Checking if " << Ver.VerStr() << " of " << Pkg.Name() << " satisfies this dependancy" << endl;
                }
-            }
-            if (Debug) {
+
                if (Pkg.CurrentVer()==0) {
                   cout << OutputInDepth(Depth) << "  CurrentVer " << Pkg.CurrentVer() << " IsNow " << List->IsNow(Pkg) << " NeedsNothing " << (Pkg.State() == PkgIterator::NeedsNothing) << endl;
                } else { 
                   cout << OutputInDepth(Depth) << "  CurrentVer " << Pkg.CurrentVer().VerStr() << " IsNow " << List->IsNow(Pkg) << " NeedsNothing " << (Pkg.State() == PkgIterator::NeedsNothing) << endl;
                }
-            }
-            
-            if (Debug) {
+
                if (InstallVer==0) {
                   cout << OutputInDepth(Depth )<< "  InstallVer " << InstallVer << endl;
                } else { 
                   cout << OutputInDepth(Depth )<< "  InstallVer " << InstallVer.VerStr() << endl; 
                }
-            }   
-            if (Debug) 
+                              if (CandVer != 0)
+                  cout << "    CandVer " << CandVer.VerStr() << endl; 
+
                cout << OutputInDepth(Depth) << "  Keep " << Cache[Pkg].Keep() << " Unpacked " << List->IsFlag(Pkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(Pkg,pkgOrderList::Configured) << endl;
                
+            }
 	    // See if the current version is ok
 	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true && 
 		Pkg.State() == PkgIterator::NeedsNothing)
@@ -510,10 +510,8 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	       continue;
 	    }
 	    
-	    // Keep() , if upgradable, is the package left at the install version
-
 	    // Not the install version 
-	    if (Cache[Pkg].InstallVer != *I || 
+	    if ((Cache[Pkg].InstallVer != *I && Cache[Pkg].CandidateVer != *I) || 
 		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing && 
 		(Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	       continue;
@@ -642,7 +640,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
       
       while (End->Type == pkgCache::Dep::PreDepends)
       {
-	 if (Debug == true)
+	 if (Debug)
 	    clog << "PreDepends order for " << Pkg.Name() << std::endl;
 
 	 // Look for possible ok targets.
@@ -658,7 +656,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 		Pkg.State() == PkgIterator::NeedsNothing)
 	    {
 	       Bad = false;
-	       if (Debug == true)
+	       if (Debug)
 		  clog << "Found ok package " << Pkg.Name() << endl;
 	       continue;
 	    }
@@ -675,7 +673,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
 	       continue;
 
-	    if (Debug == true)
+	    if (Debug)
 	       clog << "Trying to SmartConfigure " << Pkg.Name() << endl;
 	    Bad = !SmartConfigure(Pkg);
 	 }
@@ -704,13 +702,48 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	 for (Version **I = VList; *I != 0; I++)
 	 {
 	    VerIterator Ver(Cache,*I);
-	    PkgIterator Pkg = Ver.ParentPkg();
+	    PkgIterator ConflictPkg = Ver.ParentPkg();
+	    VerIterator InstallVer(Cache,Cache[ConflictPkg].InstallVer);
+	    
+	   if (Debug) 
+	         cout << Pkg.Name() << " conflicts with " << ConflictPkg.Name() << endl;
+	         
+	   if (Debug && false) {
+	       if (Ver==0) {
+	          cout << "  Checking if " << Ver << " of " << ConflictPkg.Name() << " satisfies this dependancy" << endl;
+	       } else {
+	          cout << "  Checking if " << Ver.VerStr() << " of " << ConflictPkg.Name() << " satisfies this dependancy" << endl;
+               }
+            
+               if (ConflictPkg.CurrentVer()==0) {
+                  cout << "    CurrentVer " << ConflictPkg.CurrentVer() << " IsNow " << List->IsNow(ConflictPkg) << " NeedsNothing " << (ConflictPkg.State() == PkgIterator::NeedsNothing) << endl;
+               } else { 
+                  cout << "    CurrentVer " << ConflictPkg.CurrentVer().VerStr() << " IsNow " << List->IsNow(ConflictPkg) << " NeedsNothing " << (ConflictPkg.State() == PkgIterator::NeedsNothing) << endl;
+               }
+            
+               if (InstallVer==0) {
+                  cout << "    InstallVer " << InstallVer << endl;
+               } else { 
+                  cout << "    InstallVer " << InstallVer.VerStr() << endl; 
+               }
+
+               cout << "    Keep " << Cache[ConflictPkg].Keep() << " Unpacked " << List->IsFlag(ConflictPkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(ConflictPkg,pkgOrderList::Configured) << endl;
+               cout << "    Delete " << Cache[ConflictPkg].Delete() << endl;
+            }
 	    
 	    // See if the current version is conflicting
-	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true)
+	    if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
 	    {
-	       if (EarlyRemove(Pkg) == false)
-		  return _error->Error("Internal Error, Could not early remove %s",Pkg.Name());
+               if (Cache[ConflictPkg].Keep() == 0 && Cache[ConflictPkg].InstallVer != 0) {
+                   cout << "Unpacking " << ConflictPkg.Name() << " to prevent conflict" << endl;
+                  /* FIXME Setting the flag here prevents breakage loops, that can occur if BrokenPkg (or one of the 
+	         packages it breaks) breaks Pkg */ 
+	          List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
+	          SmartUnPack(ConflictPkg,false);
+               } else {
+                   if (EarlyRemove(ConflictPkg) == false)
+                      return _error->Error("Internal Error, Could not early remove %s",ConflictPkg.Name());
+               }
 	    }
 	 }
       }
@@ -733,13 +766,73 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	         cout << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
 	      SmartUnPack(BrokenPkg, false);
 	    }
+	    // Check if a package needs to be removed
+	    if (Cache[BrokenPkg].Delete() == true) {
+	      if (Debug) 
+	         cout << "  Removing " << BrokenPkg.Name() << " to avoid break" << endl;
+	      SmartRemove(BrokenPkg);
+	    }
 	 }
       }
+   }
+   
+   // FIXME: Crude but effective fix, allows the SmartUnPack method to be used for packages that new to the system
+   if (instVer != 0) {
+     //cout << "Check for reverse conflicts on " << Pkg.Name() << " " << instVer.VerStr() << endl;
+   
+     // Check for reverse conflicts.
+     if (CheckRConflicts(Pkg,Pkg.RevDependsList(),
+		   instVer.VerStr()) == false)
+        return false;
+   
+     for (PrvIterator P = instVer.ProvidesList();
+	  P.end() == false; P++)
+        CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
+
+     List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
+
+     if (instVer->MultiArch == pkgCache::Version::Same)
+        for (PkgIterator P = Pkg.Group().PackageList();
+  	     P.end() == false; P = Pkg.Group().NextPkg(P))
+        {
+	   if (Pkg == P || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
+	       Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
+	        (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
+	      continue;
+	   SmartUnPack(P, false);
+        }
       
+   } else {
+       VerIterator InstallVer(Cache,Cache[Pkg].InstallVer);
+       //cout << "Check for reverse conflicts on " << Pkg.Name() << " " << InstallVer.VerStr() << endl;
+   
+       // Check for reverse conflicts.
+       if (CheckRConflicts(Pkg,Pkg.RevDependsList(),
+		   InstallVer.VerStr()) == false)
+        return false;
+        
+      List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
+   }
+
+   if(Install(Pkg,FileNames[Pkg->ID]) == false)
+      return false;
+
+   /* Because of the ordered list, most dependancies should be unpacked, 
+      however if there is a loop this is not the case, so check for dependancies before configuring.
+      This is done after the package installation as it makes it easier to deal with conflicts problems */
+   for (DepIterator D = instVer.DependsList();
+	D.end() == false; )
+   {
+      // Compute a single dependency element (glob or)
+      pkgCache::DepIterator Start;
+      pkgCache::DepIterator End;
+      D.GlobOr(Start,End);
+
       // Check for dependanices that have not been unpacked, probably due to loops.
       bool Bad = true; 
       while (End->Type == pkgCache::Dep::Depends) {
          PkgIterator DepPkg;
+         VerIterator InstallVer;
          SPtrArray<Version *> VList = Start.AllTargets();
          
 	 for (Version **I = VList; *I != 0; I++) {
@@ -747,9 +840,35 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    DepPkg = Ver.ParentPkg();
 	    
 	    if (!Bad) continue;
+	       
+	    InstallVer = VerIterator(Cache,Cache[DepPkg].InstallVer);
+	    VerIterator CandVer(Cache,Cache[DepPkg].CandidateVer);
+	    
+	    if (Debug && false) {
+	       if (Ver==0) {
+	          cout << "  Checking if " << Ver << " of " << DepPkg.Name() << " satisfies this dependancy" << endl;
+	       } else {
+	          cout << "  Checking if " << Ver.VerStr() << " of " << DepPkg.Name() << " satisfies this dependancy" << endl;
+               }
+            
+               if (DepPkg.CurrentVer()==0) {
+                  cout << "    CurrentVer " << DepPkg.CurrentVer() << " IsNow " << List->IsNow(DepPkg) << " NeedsNothing " << (DepPkg.State() == PkgIterator::NeedsNothing) << endl;
+               } else { 
+                  cout << "    CurrentVer " << DepPkg.CurrentVer().VerStr() << " IsNow " << List->IsNow(DepPkg) << " NeedsNothing " << (DepPkg.State() == PkgIterator::NeedsNothing) << endl;
+               }
+            
+               if (InstallVer==0) {
+                  cout << "    InstallVer " << InstallVer << endl;
+               } else { 
+                  cout << "    InstallVer " << InstallVer.VerStr() << endl; 
+               }
+               if (CandVer != 0)
+                  cout << "    CandVer " << CandVer.VerStr() << endl; 
 
-	    if (Debug) 
-	       cout << "  Checking dep on " << DepPkg.Name() << endl;
+               cout << "    Keep " << Cache[DepPkg].Keep() << " Unpacked " << List->IsFlag(DepPkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(DepPkg,pkgOrderList::Configured) << endl;
+               
+            }
+ 
 	    // Check if it satisfies this dependancy
 	    if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true && 
 		DepPkg.State() == PkgIterator::NeedsNothing)
@@ -762,16 +881,23 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	       Bad = false;
 	       continue;
 	    }
+
+	 }
+	 
+	 if (InstallVer != 0 && Bad) {
+	    Bad = false;
+	    // FIXME Setting the flag here prevents a loop forming 
+	    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
+	    // Found a break, so unpack the package
+	    if (Debug) 
+	       cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
+	    SmartUnPack(DepPkg, false);
 	 }
 	 
 	 if (Start==End) {
 	    if (Bad) {
-	       // FIXME Setting the flag here prevents a loop forming 
-	       List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
-	       // Found a break, so unpack the package
-	       if (Debug) 
-	          cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
-	       //SmartUnPack(DepPkg, false);
+               //return 
+               _error->Error("Could not satisfy dependancies for %s",Pkg.Name());
 	    }
 	    break;
 	       
@@ -780,31 +906,6 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
          }
       }
    }
-
-   // Check for reverse conflicts.
-   if (CheckRConflicts(Pkg,Pkg.RevDependsList(),
-		   instVer.VerStr()) == false)
-      return false;
-   
-   for (PrvIterator P = instVer.ProvidesList();
-	P.end() == false; P++)
-      CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
-
-   List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
-
-   if (instVer->MultiArch == pkgCache::Version::Same)
-      for (PkgIterator P = Pkg.Group().PackageList();
-	   P.end() == false; P = Pkg.Group().NextPkg(P))
-      {
-	 if (Pkg == P || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
-	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
-	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
-	    continue;
-	 SmartUnPack(P, false);
-      }
-
-   if(Install(Pkg,FileNames[Pkg->ID]) == false)
-      return false;
 
    // Perform immedate configuration of the package.
    if (Immediate == true &&
@@ -900,7 +1001,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 		       PkgIterator(Cache,*I).Name());
 	 return Failed;
       }
-   }   
+   }
 	 
    return Completed;
 }
