@@ -26,7 +26,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
-#include <string.h>
 #include <stdio.h>
 #include <string.h>
 #include <algorithm>
@@ -1362,6 +1361,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // do not report bugs regarding inaccessible local files
    if(strstr(errormsg, strerror(ENOENT)) != NULL ||
       strstr(errormsg, "cannot access archive") != NULL) {
+      std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
+      return;
+   }
+
+   // do not report errors encountered when decompressing packages
+   if(strstr(errormsg, "--fsys-tarfile returned error exit status 2") != NULL) {
       std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
       return;
    }
