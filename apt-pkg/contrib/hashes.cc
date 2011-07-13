@@ -53,31 +53,30 @@ HashString::HashString(string StringedHash)				/*{{{*/
 									/*}}}*/
 bool HashString::VerifyFile(string filename) const			/*{{{*/
 {
-   FileFd fd;
-   MD5Summation MD5;
-   SHA1Summation SHA1;
-   SHA256Summation SHA256;
-   SHA256Summation SHA512;
    string fileHash;
 
    FileFd Fd(filename, FileFd::ReadOnly);
-   if(Type == "MD5Sum") 
+   if(Type == "MD5Sum")
    {
+      MD5Summation MD5;
       MD5.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)MD5.Result();
-   } 
+   }
    else if (Type == "SHA1")
    {
+      SHA1Summation SHA1;
       SHA1.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)SHA1.Result();
-   } 
-   else if (Type == "SHA256") 
+   }
+   else if (Type == "SHA256")
    {
+      SHA256Summation SHA256;
       SHA256.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)SHA256.Result();
    }
-   else if (Type == "SHA512") 
+   else if (Type == "SHA512")
    {
+      SHA512Summation SHA512;
       SHA512.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)SHA512.Result();
    }
