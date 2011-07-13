@@ -91,25 +91,50 @@ int main(int argc, char** argv)
       std::cerr << "Can't open file for 1. testing: " << argv[1] << std::endl;
       return 1;
    }
+   {
    Hashes hashes;
    hashes.AddFD(fileno(fd));
    equals(argv[2], hashes.MD5.Result().Value());
    equals(argv[3], hashes.SHA1.Result().Value());
    equals(argv[4], hashes.SHA256.Result().Value());
    equals(argv[5], hashes.SHA512.Result().Value());
-
+   }
    fseek(fd, 0L, SEEK_END);
    unsigned long sz = ftell(fd);
    fseek(fd, 0L, SEEK_SET);
-
-   Hashes hashes2;
-   hashes2.AddFD(fileno(fd), sz);
+   {
+   Hashes hashes;
+   hashes.AddFD(fileno(fd), sz);
+   equals(argv[2], hashes.MD5.Result().Value());
+   equals(argv[3], hashes.SHA1.Result().Value());
+   equals(argv[4], hashes.SHA256.Result().Value());
+   equals(argv[5], hashes.SHA512.Result().Value());
+   }
+   fseek(fd, 0L, SEEK_SET);
+   {
+   MD5Summation md5;
+   md5.AddFD(fileno(fd));
+   equals(argv[2], md5.Result().Value());
+   }
+   fseek(fd, 0L, SEEK_SET);
+   {
+   SHA1Summation sha1;
+   sha1.AddFD(fileno(fd));
+   equals(argv[3], sha1.Result().Value());
+   }
+   fseek(fd, 0L, SEEK_SET);
+   {
+   SHA256Summation sha2;
+   sha2.AddFD(fileno(fd));
+   equals(argv[4], sha2.Result().Value());
+   }
+   fseek(fd, 0L, SEEK_SET);
+   {
+   SHA512Summation sha2;
+   sha2.AddFD(fileno(fd));
+   equals(argv[5], sha2.Result().Value());
+   }
    fclose(fd);
-   equals(argv[2], hashes2.MD5.Result().Value());
-   equals(argv[3], hashes2.SHA1.Result().Value());
-   equals(argv[4], hashes2.SHA256.Result().Value());
-   equals(argv[5], hashes2.SHA512.Result().Value());
-
    return 0;
 }
 
