@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertinstalledpackage 'openjdk-6-jre' 'i386' '6b16-1.8-0ubuntu1' 
+insertpackage 'unstable' 'openjdk-6-jre' 'i386' '6b20-1.9.8-0ubuntu1~10.04.1' 'Conflicts: openjdk-6-jre-headless (<< 6b17~pre3-1), openjdk-6-jre-lib (<< 6b17~pre3-1)'
+insertinstalledpackage 'openjdk-6-jre-lib' 'i386' '6b16-1.8-0ubuntu1' 
+insertpackage 'unstable' 'openjdk-6-jre-lib' 'i386' '6b20-1.9.8-0ubuntu1~10.04.1' 'Conflicts:  openjdk-6-jre (<< 6b17~pre3-1), openjdk-6-jre-headless (<< 6b17~pre3-1)'
+insertinstalledpackage 'openjdk-6-jre-headless' 'i386' '6b16-1.8-0ubuntu1' 
+insertpackage 'unstable' 'openjdk-6-jre-headless' 'i386' '6b20-1.9.8-0ubuntu1~10.04.1' 'Conflicts:  openjdk-6-jre (<< 6b17~pre3-1), openjdk-6-jre-lib (<< 6b17~pre3-1)'
+
+setupaptarchive
+
+aptget dist-upgrade -s -o Debug::pkgPackageManager=true -o Debug::pkgDpkgPM=true -o APT::Immediate-Configure-All=true
