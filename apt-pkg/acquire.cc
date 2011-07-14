@@ -799,7 +799,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    }
    
    // Compute the current completion
-   unsigned long ResumeSize = 0;
+   unsigned long long ResumeSize = 0;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
 	I = Owner->WorkerStep(I))
       if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
@@ -838,7 +838,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       else
 	 CurrentCPS = ((CurrentBytes - ResumeSize) - LastBytes)/Delta;
       LastBytes = CurrentBytes - ResumeSize;
-      ElapsedTime = (unsigned long)Delta;
+      ElapsedTime = (unsigned long long)Delta;
       Time = NewTime;
    }
 
@@ -849,8 +849,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
       char msg[200];
       long i = CurrentItems < TotalItems ? CurrentItems + 1 : CurrentItems;
-      unsigned long ETA =
-	 (unsigned long)((TotalBytes - CurrentBytes) / CurrentCPS);
+      unsigned long long const ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
 
       // only show the ETA if it makes sense
       if (ETA > 0 && ETA < 172800 /* two days */ )
@@ -906,7 +905,7 @@ void pkgAcquireStatus::Stop()
    else
       CurrentCPS = FetchedBytes/Delta;
    LastBytes = CurrentBytes;
-   ElapsedTime = (unsigned int)Delta;
+   ElapsedTime = (unsigned long long)Delta;
 }
 									/*}}}*/
 // AcquireStatus::Fetched - Called when a byte set has been fetched	/*{{{*/

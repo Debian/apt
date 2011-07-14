@@ -650,8 +650,6 @@ struct pkgAcquire::MethodConfig
 /** \brief A monitor object for downloads controlled by the pkgAcquire class.	{{{
  *
  *  \todo Why protected members?
- *
- *  \todo Should the double members be uint64_t?
  */
 class pkgAcquireStatus
 {
@@ -669,34 +667,34 @@ class pkgAcquireStatus
    /** \brief The number of bytes fetched as of the previous call to
     *  pkgAcquireStatus::Pulse, including local items.
     */
-   double LastBytes;
+   unsigned long long LastBytes;
 
    /** \brief The current rate of download as of the most recent call
     *  to pkgAcquireStatus::Pulse, in bytes per second.
     */
-   double CurrentCPS;
+   unsigned long long CurrentCPS;
 
    /** \brief The number of bytes fetched as of the most recent call
     *  to pkgAcquireStatus::Pulse, including local items.
     */
-   double CurrentBytes;
+   unsigned long long CurrentBytes;
 
    /** \brief The total number of bytes that need to be fetched.
     *
     *  \warning This member is inaccurate, as new items might be
     *  enqueued while the download is in progress!
     */
-   double TotalBytes;
+   unsigned long long TotalBytes;
 
    /** \brief The total number of bytes accounted for by items that
     *  were successfully fetched.
     */
-   double FetchedBytes;
+   unsigned long long FetchedBytes;
 
    /** \brief The amount of time that has elapsed since the download
     *   started.
     */
-   unsigned long ElapsedTime;
+   unsigned long long ElapsedTime;
 
    /** \brief The total number of items that need to be fetched.
     *
