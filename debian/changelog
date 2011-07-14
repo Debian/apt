@@ -1,4 +1,11 @@
-apt (0.8.15.2) unstable; urgency=low
+apt (0.8.15.3) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/acquire-item.cc:
+    - improve error message for a expired Release file
+  * apt-pkg/algorithms.cc:
+    - Hold back packages that would enter "policy-broken" state on upgrade
+      when doing a "apt-get upgrade"
 
   [ David Kalnischkies ]
   * apt-pkg/pkgcachegen.cc:
@@ -13,7 +20,14 @@ apt (0.8.15.2) unstable; urgency=low
   * apt-pkg/init.cc:
     - use CndSet in pkgInitConfig (Closes: #629617)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 06 Jul 2011 13:29:52 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 14 Jul 2011 21:26:09 +0200
+
+apt (0.8.15.2) unstable; urgency=high
+
+  * fix from David Kalnischkies for the InRelease gpg verification 
+    code (LP: #784473)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
 
 apt (0.8.15.1) unstable; urgency=low
 

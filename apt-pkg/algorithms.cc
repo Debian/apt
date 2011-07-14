@@ -1176,6 +1176,31 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    return true;
 }
 									/*}}}*/
+
+// ProblemResolver::BreaksInstOrPolicy - Check if the given pkg is broken/*{{{*/
+// ---------------------------------------------------------------------
+/* This checks if the given package is broken either by a hard dependency
+   (InstBroken()) or by introducing a new policy breakage e.g. new
+   unsatisfied recommends for a package that was in "policy-good" state
+
+   Note that this is not perfect as it will ignore further breakage
+   for already broken policy (recommends)
+*/
+bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
+{
+   
+   // a broken install is always a problem
+   if (Cache[I].InstBroken() == true)
+      return true;
+
+   // a newly broken policy (recommends/suggests) is a problem
+   if (Cache[I].NowPolicyBroken() == false &&
+       Cache[I].InstPolicyBroken() == true)
+      return true;
+       
+   return false;
+}
+
 // ProblemResolver::ResolveByKeep - Resolve problems using keep		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the work horse of the soft upgrade routine. It is very gental 
@@ -1220,8 +1245,11 @@ bool pkgProblemResolver::ResolveByKeep()
    {
       pkgCache::PkgIterator I(Cache,*K);
 
-      if (Cache[I].InstallVer == 0 || Cache[I].InstBroken() == false)
+      if (Cache[I].InstallVer == 0)
 	 continue;
+
+      if (InstOrNewPolicyBroken(I) == false)
+         continue;
 
       /* Keep the package. If this works then great, otherwise we have
        	 to be significantly more agressive and manipulate its dependencies */
@@ -1230,7 +1258,7 @@ bool pkgProblemResolver::ResolveByKeep()
 	 if (Debug == true)
 	    clog << "Keeping package " << I.FullName(false) << endl;
 	 Cache.MarkKeep(I, false, false);
-	 if (Cache[I].InstBroken() == false)
+	 if (InstOrNewPolicyBroken(I) == false)
 	 {
 	    K = PList - 1;
 	    continue;
@@ -1280,11 +1308,11 @@ bool pkgProblemResolver::ResolveByKeep()
 		  Cache.MarkKeep(Pkg, false, false);
 	       }
 	       
-	       if (Cache[I].InstBroken() == false)
+	       if (InstOrNewPolicyBroken(I) == false)
 		  break;
 	    }
 	    
-	    if (Cache[I].InstBroken() == false)
+	    if (InstOrNewPolicyBroken(I) == false)
 	       break;
 
 	    if (Start == End)
@@ -1292,11 +1320,11 @@ bool pkgProblemResolver::ResolveByKeep()
 	    Start++;
 	 }
 	      
-	 if (Cache[I].InstBroken() == false)
+	 if (InstOrNewPolicyBroken(I) == false)
 	    break;
       }
 
-      if (Cache[I].InstBroken() == true)
+      if (InstOrNewPolicyBroken(I) == true)
 	 continue;
       
       // Restart again.

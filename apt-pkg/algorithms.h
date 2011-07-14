@@ -106,6 +106,9 @@ class pkgProblemResolver						/*{{{*/
    void MakeScores();
    bool DoUpgrade(pkgCache::PkgIterator Pkg);
    
+   protected:
+   bool InstOrNewPolicyBroken(pkgCache::PkgIterator Pkg);
+
    public:
    
    inline void Protect(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= Protected; Cache.MarkProtected(Pkg);};
