@@ -1,3 +1,33 @@
+apt (0.8.15.2) unstable; urgency=high
+
+  * fix from David Kalnischkies for the InRelease gpg verification 
+    code (LP: #784473)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
+
+apt (0.8.15.1) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * doc/makefile:
+    - create doxygen directory to avoid depending on magic (Closes: #628799)
+  * cmdline/apt-key:
+    - explicitly state that net-update is not supported if no url is set
+    - require to be root for add, rm, update and net-update
+    - clarify update vs. net-update in different distros (Closes: #632043)
+  * debian/apt.symbols:
+    - forgot 'mips' in the list for all architecture dependent symbols
+    - comment out gcc-4.5 specific symbols as gcc-4.6 is now default
+    - the symbol for PrintStatus() is architecture dependent
+  * apt-pkg/policy.cc:
+    - do not segfault in pinning if a package with this name doesn't exist.
+      Thanks to Ferdinand Thommes for the report!
+    - Defaults is a vector of Pin not of PkgPin
+    - ensure that only the first specific stanza for a package is used
+    - save all stanzas which had no effect in Unmatched
+    - allow package:architecure in Package:
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 30 Jun 2011 10:05:36 +0200
+
 apt (0.8.15) unstable; urgency=low
 
   [ Julian Andres Klode ]

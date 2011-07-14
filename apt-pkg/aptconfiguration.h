@@ -36,7 +36,7 @@ public:									/*{{{*/
 	 *  \param Cached saves the result so we need to calculated it only once
 	 *                this parameter should ony be used for testing purposes.
 	 *
-	 *  \return a vector of (all) Language Codes in the prefered usage order
+	 *  \return a vector of the compression types in the prefered usage order
 	 */
 	std::vector<std::string> static const getCompressionTypes(bool const &Cached = true);
 
