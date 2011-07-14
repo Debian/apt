@@ -11,13 +11,16 @@ apt (0.8.16~exp3) UNRELEASEDexperimental; urgency=low
     - generate all checksums in one run over the file for Release
   * cmdline/apt-get.cc:
     - add an --assume-no option for testing to say 'no' to everything
+  * apt-pkg/deb/debmetaindex.cc:
+    - add trusted=yes option to mark unsigned (local) repository as trusted
+      based on a patch from Ansgar Burchardt, thanks a lot! (Closes: #596498)
 
   [ Michael Vogt ]
   * merge fixes from the debian/unstable upload
   * merge lp:~mvo/apt/sha512-template to get fixes for the 
     sha1/md5 verifiation (closes: #632520)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 14 Jul 2011 12:01:53 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 14 Jul 2011 20:56:45 +0200
 
 apt (0.8.16~exp2) experimental; urgency=low
 
