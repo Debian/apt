@@ -284,8 +284,10 @@ bool pkgPackageManager::ConfigureAll()
    {
       PkgIterator Pkg(Cache,*I);
 
-      if (ConfigurePkgs == true && VerifyAndConfigure(Pkg,OList) == false)
+      if (ConfigurePkgs == true && VerifyAndConfigure(Pkg,OList) == false) {
+         _error->Error("Internal error, packages left unconfigured. %s",Pkg.Name());
 	 return false;
+      }
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
    }
@@ -337,8 +339,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
       }
 
    // Sanity Check
-   if (List->IsFlag(Pkg,pkgOrderList::Configured) == false)
-      return _error->Error(_("Could not perform immediate configuration on '%s'. "
+   if (List->IsFlag(Pkg,pkgOrderList::Configured) == false && Debug)
+      _error->Error(_("Could not perform immediate configuration on '%s'. "
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),1);
 
    return true;
@@ -494,8 +496,8 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
                } else { 
                   cout << OutputInDepth(Depth )<< "  InstallVer " << InstallVer.VerStr() << endl; 
                }
-                              if (CandVer != 0)
-                  cout << "    CandVer " << CandVer.VerStr() << endl; 
+               if (CandVer != 0)
+                  cout << OutputInDepth(Depth ) << "  CandVer " << CandVer.VerStr() << endl; 
 
                cout << OutputInDepth(Depth) << "  Keep " << Cache[Pkg].Keep() << " Unpacked " << List->IsFlag(Pkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(Pkg,pkgOrderList::Configured) << endl;
                
@@ -619,7 +621,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
       if (Immediate == true &&
 	  List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
 	 if (SmartConfigure(Pkg) == false)
-	    return _error->Error(_("Could not perform immediate configuration on already unpacked '%s'. "
+	    _error->Warning(_("Could not perform immediate configuration on already unpacked '%s'. "
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
       return true;
    }
@@ -847,6 +849,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
    /* Because of the ordered list, most dependancies should be unpacked, 
       however if there is a loop this is not the case, so check for dependancies before configuring.
       This is done after the package installation as it makes it easier to deal with conflicts problems */
+   bool Bad = true;
    for (DepIterator D = instVer.DependsList();
 	D.end() == false; )
    {
@@ -854,9 +857,11 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
       pkgCache::DepIterator Start;
       pkgCache::DepIterator End;
       D.GlobOr(Start,End);
+      
+      if (End->Type == pkgCache::Dep::Depends) 
+          Bad = true;
 
       // Check for dependanices that have not been unpacked, probably due to loops.
-      bool Bad = true; 
       while (End->Type == pkgCache::Dep::Depends) {
          PkgIterator DepPkg;
          VerIterator InstallVer;
@@ -922,9 +927,10 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	 }
 	 
 	 if (Start==End) {
-	    if (Bad) {
-               //return 
-               _error->Error("Could not satisfy dependancies for %s",Pkg.Name());
+	    if (Bad && Debug) {
+	       if (!List->IsFlag(DepPkg,pkgOrderList::Loop)) {
+                  _error->Warning("Could not satisfy dependancies for %s",Pkg.Name());
+               } 
 	    }
 	    break;
 	       
@@ -933,13 +939,12 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
          }
       }
    }
-  
+   
    // Perform immedate configuration of the package.
    if (Immediate == true &&
-       List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
+       List->IsFlag(Pkg,pkgOrderList::Immediate) == true && !Bad)
       if (SmartConfigure(Pkg) == false)
-	 //return 
-	 _error->Error(_("Could not perform immediate configuration on '%s'. "
+	 _error->Warning(_("Could not perform immediate configuration on '%s'. "
 			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),2);
    
    return true;
@@ -977,9 +982,16 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       
       if (List->IsNow(Pkg) == false)
       {
-	 if (Debug == true)
-	    clog << "Skipping already done " << Pkg.Name() << endl;
+         if (!List->IsFlag(Pkg,pkgOrderList::Configured)) {
+            if (SmartConfigure(Pkg) == false && Debug)
+               _error->Warning("Internal Error, Could not configure %s",Pkg.Name());
+            // FIXME: The above warning message might need changing
+         } else {   
+	    if (Debug == true)
+	       clog << "Skipping already done " << Pkg.Name() << endl;
+	 }
 	 continue;
+	 
       }
       
       if (List->IsMissing(Pkg) == true)
