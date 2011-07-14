@@ -1473,8 +1473,10 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 	 // TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 	 // the time since then the file is invalid - formated in the same way as in
 	 // the download progress display (e.g. 7d 3h 42min 1s)
-	 return _error->Error(_("Release file expired, ignoring %s (invalid since %s)"),
-	                      RealURI.c_str(), TimeToStr(invalid_since).c_str());
+	 return _error->Error(
+            _("Release file for %s is expired (invalid since %s). "
+              "Updates for this repository will not be applied."),
+            RealURI.c_str(), TimeToStr(invalid_since).c_str());
    }
 
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
