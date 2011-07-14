@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertinstalledpackage 'foo' 'i386' '1.0'
+insertpackage 'unstable' 'foo' 'i386' '2.0' 'Recommends: bar'
+
+setupaptarchive
+
+UPGRADE_KEEP="Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  foo
+0 upgraded, 0 newly installed, 0 to remove and 1 not upgraded."
+testequal "$UPGRADE_KEEP" aptget upgrade -s
+
