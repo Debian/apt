@@ -1021,8 +1021,8 @@ bool pkgOrderList::AddLoop(DepIterator D)
    Loops[LoopCount++] = D;
    
    // Mark the packages as being part of a loop.
-   Flag(D.TargetPkg(),Loop);
-   Flag(D.ParentPkg(),Loop);
+   //Flag(D.TargetPkg(),Loop);
+   //Flag(D.ParentPkg(),Loop);
    return true;
 }
 									/*}}}*/

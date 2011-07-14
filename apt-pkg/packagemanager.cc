@@ -167,7 +167,7 @@ bool pkgPackageManager::CreateOrderList()
    List = new pkgOrderList(&Cache);
    
    static bool const NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
-   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",true);
+   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
    
    if (Debug && ImmConfigureAll) 
       clog << "CreateOrderList(): Adding Immediate flag for all packages because of APT::Immediate-Configure-All" << endl;
@@ -189,11 +189,9 @@ bool pkgPackageManager::CreateOrderList()
 	 List->Flag(I,pkgOrderList::Immediate);
 	 
 	 if (!ImmConfigureAll) {
-	    continue;
-
 	    // Look for other install packages to make immediate configurea
 	    ImmediateAdd(I, true);
-	 
+	  
 	    // And again with the current version.
 	    ImmediateAdd(I, false);
 	 }
@@ -705,8 +703,11 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    PkgIterator ConflictPkg = Ver.ParentPkg();
 	    VerIterator InstallVer(Cache,Cache[ConflictPkg].InstallVer);
 	    
-	   if (Debug) 
-	         cout << Pkg.Name() << " conflicts with " << ConflictPkg.Name() << endl;
+	    // See if the current version is conflicting
+	    if (ConflictPkg.CurrentVer() == Ver && !List->IsFlag(ConflictPkg,pkgOrderList::UnPacked))
+	    {
+	    	if (Debug && false) 
+	         cout << " " << Pkg.Name() << " conflicts with " << ConflictPkg.Name() << endl;
 	         
 	   if (Debug && false) {
 	       if (Ver==0) {
@@ -727,23 +728,26 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
                   cout << "    InstallVer " << InstallVer.VerStr() << endl; 
                }
 
-               cout << "    Keep " << Cache[ConflictPkg].Keep() << " Unpacked " << List->IsFlag(ConflictPkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(ConflictPkg,pkgOrderList::Configured) << endl;
+               cout << "    Keep " << Cache[ConflictPkg].Keep() << " Unpacked " << List->IsFlag(ConflictPkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(ConflictPkg,pkgOrderList::Configured) << " Removed " << List->IsFlag(ConflictPkg,pkgOrderList::Removed) << " Loop " << List->IsFlag(ConflictPkg,pkgOrderList::Loop) << endl;
                cout << "    Delete " << Cache[ConflictPkg].Delete() << endl;
             }
 	    
-	    // See if the current version is conflicting
-	    if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
-	    {
-               if (Cache[ConflictPkg].Keep() == 0 && Cache[ConflictPkg].InstallVer != 0) {
-                   cout << "Unpacking " << ConflictPkg.Name() << " to prevent conflict" << endl;
-                  /* FIXME Setting the flag here prevents breakage loops, that can occur if BrokenPkg (or one of the 
-	         packages it breaks) breaks Pkg */ 
-	          List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
-	          SmartUnPack(ConflictPkg,false);
-               } else {
-                   if (EarlyRemove(ConflictPkg) == false)
-                      return _error->Error("Internal Error, Could not early remove %s",ConflictPkg.Name());
-               }
+	       if (!List->IsFlag(ConflictPkg,pkgOrderList::Loop)) {
+	          if (Cache[ConflictPkg].Keep() == 0 && Cache[ConflictPkg].InstallVer != 0) {
+                      cout << "Unpacking " << ConflictPkg.Name() << " to prevent conflict" << endl;
+	              List->Flag(Pkg,pkgOrderList::Loop);
+	              SmartUnPack(ConflictPkg,false);
+                  } else {
+                      if (EarlyRemove(ConflictPkg) == false)
+                         return _error->Error("Internal Error, Could not early remove %s",ConflictPkg.Name());
+                  }
+	       } else {
+	          if (!List->IsFlag(ConflictPkg,pkgOrderList::Removed)) {
+                      cout << "Because of conficts knot, removing " << ConflictPkg.Name() << " to conflict violation" << endl;
+	              if (EarlyRemove(ConflictPkg) == false)
+                          return _error->Error("Internal Error, Could not early remove %s",ConflictPkg.Name());
+	          }
+	       }
 	    }
 	 }
       }
@@ -755,19 +759,42 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	 {
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator BrokenPkg = Ver.ParentPkg();
+	    VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
+	    
+	    cout << "  " << Pkg.Name() << " breaks " << BrokenPkg.Name() << endl;
+	    if (Debug && false) {
+	       if (Ver==0) {
+	          cout << "  Checking if " << Ver << " of " << BrokenPkg.Name() << " satisfies this dependancy" << endl;
+	       } else {
+	          cout << "  Checking if " << Ver.VerStr() << " of " << BrokenPkg.Name() << " satisfies this dependancy" << endl;
+               }
+            
+               if (BrokenPkg.CurrentVer()==0) {
+                  cout << "    CurrentVer " << BrokenPkg.CurrentVer() << " IsNow " << List->IsNow(BrokenPkg) << " NeedsNothing " << (BrokenPkg.State() == PkgIterator::NeedsNothing) << endl;
+               } else { 
+                  cout << "    CurrentVer " << BrokenPkg.CurrentVer().VerStr() << " IsNow " << List->IsNow(BrokenPkg) << " NeedsNothing " << (BrokenPkg.State() == PkgIterator::NeedsNothing) << endl;
+               }
+            
+               if (InstallVer==0) {
+                  cout << "    InstallVer " << InstallVer << endl;
+               } else { 
+                  cout << "    InstallVer " << InstallVer.VerStr() << endl; 
+               }
+
+               cout << "    Keep " << Cache[BrokenPkg].Keep() << " Unpacked " << List->IsFlag(BrokenPkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(BrokenPkg,pkgOrderList::Configured) << " Removed " << List->IsFlag(BrokenPkg,pkgOrderList::Removed) << " Loop " << List->IsFlag(BrokenPkg,pkgOrderList::Loop) << " InList " << List->IsFlag(BrokenPkg,pkgOrderList::InList) << endl;
+               cout << "    Delete " << Cache[BrokenPkg].Delete() << endl;
+            }
 	    // Check if it needs to be unpacked
 	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
-	        !List->IsFlag(BrokenPkg,pkgOrderList::UnPacked)) {
-	      /* FIXME Setting the flag here prevents breakage loops, that can occur if BrokenPkg (or one of the 
-	         packages it breaks) breaks Pkg */ 
-	      List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
+	        !List->IsFlag(BrokenPkg,pkgOrderList::Loop) && List->IsNow(BrokenPkg)) {
+              List->Flag(Pkg,pkgOrderList::Loop);
 	      // Found a break, so unpack the package
 	      if (Debug) 
 	         cout << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
 	      SmartUnPack(BrokenPkg, false);
 	    }
 	    // Check if a package needs to be removed
-	    if (Cache[BrokenPkg].Delete() == true) {
+	    if (Cache[BrokenPkg].Delete() == true && !List->IsFlag(BrokenPkg,pkgOrderList::Configured)) {
 	      if (Debug) 
 	         cout << "  Removing " << BrokenPkg.Name() << " to avoid break" << endl;
 	      SmartRemove(BrokenPkg);
@@ -881,17 +908,17 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	       Bad = false;
 	       continue;
 	    }
-
 	 }
 	 
 	 if (InstallVer != 0 && Bad) {
 	    Bad = false;
-	    // FIXME Setting the flag here prevents a loop forming 
-	    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 	    // Found a break, so unpack the package
-	    if (Debug) 
-	       cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
-	    SmartUnPack(DepPkg, false);
+	    List->Flag(Pkg,pkgOrderList::Loop);
+	    if (!List->IsFlag(DepPkg,pkgOrderList::Loop)) {
+	       if (Debug) 
+	          cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
+	       SmartUnPack(DepPkg, false);
+	    }
 	 }
 	 
 	 if (Start==End) {
@@ -906,7 +933,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
          }
       }
    }
-
+  
    // Perform immedate configuration of the package.
    if (Immediate == true &&
        List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
@@ -947,7 +974,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
-
+      
       if (List->IsNow(Pkg) == false)
       {
 	 if (Debug == true)
