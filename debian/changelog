@@ -1,12 +1,28 @@
 apt (0.8.15.3) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * apt-pkg/acquire-item.cc:
     - improve error message for a expired Release file
   * apt-pkg/algorithms.cc:
     - Hold back packages that would enter "policy-broken" state on upgrade
       when doing a "apt-get upgrade"
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 14 Jul 2011 11:22:54 +0200
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcachegen.cc:
+    - fallback to memory if file is not writeable even if access()
+      told us the opposite before (e.g. in fakeroot 1.16) (Closes: #630591)
+  * doc/sources.list.5.xml:
+    - document available [options] for sources.list entries (Closes: 632441)
+  * doc/apt.conf.5.xml:
+    - document APT::Architectures list (Closes: #612102)
+  * cmdline/apt-get.cc:
+    - restore all important dependencies for garbage packages (LP: #806274)
+  * apt-pkg/init.cc:
+    - use CndSet in pkgInitConfig (Closes: #629617)
+  * apt-pkg/depcache.cc:
+    - change default of APT::AutoRemove::SuggestsImportant to true
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 15 Jul 2011 09:29:37 +0200
 
 apt (0.8.15.2) unstable; urgency=high
 

@@ -1697,7 +1697,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 
    // we could have removed a new dependency of a garbage package,
    // so check if a reverse depends is broken and if so install it again.
-   if (tooMuch.empty() == false && Cache->BrokenCount() != 0)
+   if (tooMuch.empty() == false && (Cache->BrokenCount() != 0 || Cache->PolicyBrokenCount() != 0))
    {
       bool Changed;
       do {
@@ -1708,8 +1708,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    for (pkgCache::DepIterator R = P.RevDependsList();
 		 R.end() == false; ++R)
 	    {
-	       if (R->Type != pkgCache::Dep::Depends &&
-		   R->Type != pkgCache::Dep::PreDepends)
+	       if (R.IsNegative() == true ||
+		   Cache->IsImportantDep(R) == false)
 		  continue;
 	       pkgCache::PkgIterator N = R.ParentPkg();
 	       if (N.end() == true || (N->CurrentVer == 0 && (*Cache)[N].Install() == false))
