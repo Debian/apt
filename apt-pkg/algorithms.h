@@ -112,6 +112,9 @@ class pkgProblemResolver						/*{{{*/
    bool ResolveInternal(bool const BrokenFix = false);
    bool ResolveByKeepInternal();
    
+   protected:
+   bool InstOrNewPolicyBroken(pkgCache::PkgIterator Pkg);
+
    public:
    
    inline void Protect(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= Protected; Cache.MarkProtected(Pkg);};

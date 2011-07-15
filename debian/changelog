@@ -62,7 +62,14 @@ apt (0.8.16~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
 
-apt (0.8.15.2) unstable; urgency=low
+apt (0.8.15.3) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/acquire-item.cc:
+    - improve error message for a expired Release file
+  * apt-pkg/algorithms.cc:
+    - Hold back packages that would enter "policy-broken" state on upgrade
+      when doing a "apt-get upgrade"
 
   [ David Kalnischkies ]
   * apt-pkg/pkgcachegen.cc:
@@ -70,8 +77,23 @@ apt (0.8.15.2) unstable; urgency=low
       told us the opposite before (e.g. in fakeroot 1.16) (Closes: #630591)
   * doc/sources.list.5.xml:
     - document available [options] for sources.list entries (Closes: 632441)
+  * doc/apt.conf.5.xml:
+    - document APT::Architectures list (Closes: #612102)
+  * cmdline/apt-get.cc:
+    - restore all important dependencies for garbage packages (LP: #806274)
+  * apt-pkg/init.cc:
+    - use CndSet in pkgInitConfig (Closes: #629617)
+  * apt-pkg/depcache.cc:
+    - change default of APT::AutoRemove::SuggestsImportant to true
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 05 Jul 2011 15:12:21 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 15 Jul 2011 09:29:37 +0200
+
+apt (0.8.15.2) unstable; urgency=high
+
+  * fix from David Kalnischkies for the InRelease gpg verification 
+    code (LP: #784473)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
 
 apt (0.8.15.1) unstable; urgency=low
 

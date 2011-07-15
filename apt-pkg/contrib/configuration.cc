@@ -318,6 +318,19 @@ void Configuration::CndSet(const char *Name,const string &Value)
       Itm->Value = Value;
 }
 									/*}}}*/
+// Configuration::Set - Set an integer value				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void Configuration::CndSet(const char *Name,int const Value)
+{
+   Item *Itm = Lookup(Name,true);
+   if (Itm == 0 || Itm->Value.empty() == false)
+      return;
+   char S[300];
+   snprintf(S,sizeof(S),"%i",Value);
+   Itm->Value = S;
+}
+									/*}}}*/
 // Configuration::Set - Set a value					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -332,7 +345,7 @@ void Configuration::Set(const char *Name,const string &Value)
 // Configuration::Set - Set an integer value				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Set(const char *Name,int const &Value)
+void Configuration::Set(const char *Name,int const Value)
 {
    Item *Itm = Lookup(Name,true);
    if (Itm == 0)

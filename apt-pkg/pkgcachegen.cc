@@ -1169,16 +1169,32 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    SPtr<DynamicMMap> Map;
    if (Writeable == true && CacheFile.empty() == false)
    {
+      _error->PushToStack();
       unlink(CacheFile.c_str());
       CacheF = new FileFd(CacheFile,FileFd::WriteAtomic);
       fchmod(CacheF->Fd(),0644);
       Map = CreateDynamicMMap(CacheF, MMap::Public);
       if (_error->PendingError() == true)
-	 return false;
-      if (Debug == true)
+      {
+	 delete CacheF.UnGuard();
+	 delete Map.UnGuard();
+	 if (Debug == true)
+	    std::clog << "Open filebased MMap FAILED" << std::endl;
+	 Writeable = false;
+	 if (AllowMem == false)
+	 {
+	    _error->MergeWithStack();
+	    return false;
+	 }
+	 _error->RevertToStack();
+      }
+      else if (Debug == true)
+      {
+	 _error->MergeWithStack();
 	 std::clog << "Open filebased MMap" << std::endl;
+      }
    }
-   else
+   if (Writeable == false || CacheFile.empty() == true)
    {
       // Just build it in memory..
       Map = CreateDynamicMMap(NULL);
