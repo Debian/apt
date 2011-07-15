@@ -82,8 +82,9 @@ class Configuration
 	      
    inline void Set(const string &Name,const string &Value) {Set(Name.c_str(),Value);};
    void CndSet(const char *Name,const string &Value);
+   void CndSet(const char *Name,const int Value);
    void Set(const char *Name,const string &Value);
-   void Set(const char *Name,const int &Value);
+   void Set(const char *Name,const int Value);
    
    inline bool Exists(const string &Name) const {return Exists(Name.c_str());};
    bool Exists(const char *Name) const;

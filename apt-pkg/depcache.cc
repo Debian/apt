@@ -1594,7 +1594,7 @@ bool pkgDepCache::MarkFollowsRecommends()
 
 bool pkgDepCache::MarkFollowsSuggests()
 {
-  return _config->FindB("APT::AutoRemove::SuggestsImportant", false);
+  return _config->FindB("APT::AutoRemove::SuggestsImportant", true);
 }
 
 // pkgDepCache::MarkRequired - the main mark algorithm			/*{{{*/

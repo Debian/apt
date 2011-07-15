@@ -123,9 +123,6 @@ libapt-pkg-doc: build-doc
 #
 # libapt-pkg-doc install
 #
-	# remove doxygen's embedded jquery as we don't use it anyway (#622147)
-	rm -f $(BLD)/doc/doxygen/html/jquery.js
-
 	dh_installdocs -p$@ $(BLD)/docs/design* \
 			    $(BLD)/docs/dpkg-tech* \
 			    $(BLD)/docs/files* \
