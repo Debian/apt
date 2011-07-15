@@ -67,7 +67,10 @@ class Hashes
       return MD5.Add(Data,Size) && SHA1.Add(Data,Size) && SHA256.Add(Data,Size) && SHA512.Add(Data,Size);
    };
    inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
-   bool AddFD(int Fd,unsigned long Size);
+   inline bool AddFD(int const Fd,unsigned long Size = 0)
+   { return AddFD(Fd, Size, true, true, true, true); };
+   bool AddFD(int const Fd, unsigned long Size, bool const addMD5,
+	      bool const addSHA1, bool const addSHA256, bool const addSHA512);
    inline bool Add(const unsigned char *Beg,const unsigned char *End) 
                   {return Add(Beg,End-Beg);};
 };

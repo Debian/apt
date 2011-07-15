@@ -200,7 +200,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
             
       // Add the current progress
       if (Mode == Long)
-	 snprintf(S,End-S," %lu",I->CurrentSize);
+	 snprintf(S,End-S," %llu",I->CurrentSize);
       else
       {
 	 if (Mode == Medium || I->TotalSize == 0)

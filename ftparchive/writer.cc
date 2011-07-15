@@ -19,8 +19,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/md5.h>
-#include <apt-pkg/sha1.h>
-#include <apt-pkg/sha2.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/deblistparser.h>
 
 #include <sys/types.h>
@@ -1040,35 +1039,18 @@ bool ReleaseWriter::DoPackage(string FileName)
 
    CheckSums[NewFileName].size = fd.Size();
 
+   Hashes hs;
+   hs.AddFD(fd.Fd(), 0, DoMD5, DoSHA1, DoSHA256, DoSHA512);
    if (DoMD5 == true)
-   {
-      MD5Summation MD5;
-      MD5.AddFD(fd.Fd(), fd.Size());
-      CheckSums[NewFileName].MD5 = MD5.Result();
-      fd.Seek(0);
-   }
+      CheckSums[NewFileName].MD5 = hs.MD5.Result();
    if (DoSHA1 == true)
-   {
-      SHA1Summation SHA1;
-      SHA1.AddFD(fd.Fd(), fd.Size());
-      CheckSums[NewFileName].SHA1 = SHA1.Result();
-      fd.Seek(0);
-   }
+      CheckSums[NewFileName].SHA1 = hs.SHA1.Result();
    if (DoSHA256 == true)
-   {
-      SHA256Summation SHA256;
-      SHA256.AddFD(fd.Fd(), fd.Size());
-      CheckSums[NewFileName].SHA256 = SHA256.Result();
-   }
-
+      CheckSums[NewFileName].SHA256 = hs.SHA256.Result();
    if (DoSHA512 == true)
-   {
-      SHA512Summation SHA512;
-      SHA512.AddFD(fd.Fd(), fd.Size());
-      CheckSums[NewFileName].SHA512 = SHA512.Result();
-   }
+      CheckSums[NewFileName].SHA512 = hs.SHA512.Result();
    fd.Close();
-   
+
    return true;
 }
 

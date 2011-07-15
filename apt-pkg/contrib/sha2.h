@@ -22,31 +22,16 @@
 #include "sha2_internal.h"
 #include "hashsum_template.h"
 
-using std::string;
-using std::min;
-
-class SHA512Summation;
-class SHA256Summation;
-
 typedef HashSumValue<512> SHA512SumValue;
 typedef HashSumValue<256> SHA256SumValue;
 
-class SHA2SummationBase
+class SHA2SummationBase : public SummationImplementation
 {
  protected:
    bool Done;
  public:
-   virtual bool Add(const unsigned char *inbuf,unsigned long inlen) = 0;
-   virtual bool AddFD(int Fd,unsigned long Size);
+   bool Add(const unsigned char *inbuf, unsigned long len) = 0;
 
-   inline bool Add(const char *Data) 
-   {
-      return Add((unsigned char *)Data,strlen(Data));
-   };
-   inline bool Add(const unsigned char *Beg,const unsigned char *End) 
-   {
-      return Add(Beg,End-Beg);
-   };
    void Result();
 };
 
@@ -56,13 +41,15 @@ class SHA256Summation : public SHA2SummationBase
    unsigned char Sum[32];
 
    public:
-   virtual bool Add(const unsigned char *inbuf, unsigned long len)
+   bool Add(const unsigned char *inbuf, unsigned long len)
    {
       if (Done) 
          return false;
       SHA256_Update(&ctx, inbuf, len);
       return true;
    };
+   using SummationImplementation::Add;
+
    SHA256SumValue Result()
    {
       if (!Done) {
@@ -86,13 +73,15 @@ class SHA512Summation : public SHA2SummationBase
    unsigned char Sum[64];
 
    public:
-   virtual bool Add(const unsigned char *inbuf, unsigned long len)
+   bool Add(const unsigned char *inbuf, unsigned long len)
    {
       if (Done) 
          return false;
       SHA512_Update(&ctx, inbuf, len);
       return true;
    };
+   using SummationImplementation::Add;
+
    SHA512SumValue Result()
    {
       if (!Done) {

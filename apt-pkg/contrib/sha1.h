@@ -23,11 +23,9 @@ using std::min;
 
 #include "hashsum_template.h"
 
-class SHA1Summation;
-
 typedef  HashSumValue<160> SHA1SumValue;
 
-class SHA1Summation
+class SHA1Summation : public SummationImplementation
 {
    /* assumes 64-bit alignment just in case */
    unsigned char Buffer[64] __attribute__((aligned(8)));
@@ -36,12 +34,9 @@ class SHA1Summation
    bool Done;
    
    public:
+   bool Add(const unsigned char *inbuf, unsigned long inlen);
+   using SummationImplementation::Add;
 
-   bool Add(const unsigned char *inbuf,unsigned long inlen);
-   inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
-   bool AddFD(int Fd,unsigned long Size);
-   inline bool Add(const unsigned char *Beg,const unsigned char *End) 
-                  {return Add(Beg,End-Beg);};
    SHA1SumValue Result();
    
    SHA1Summation();

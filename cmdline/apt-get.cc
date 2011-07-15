@@ -135,6 +135,11 @@ bool YnPrompt(bool Default=true)
       c1out << _("Y") << endl;
       return true;
    }
+   else if (_config->FindB("APT::Get::Assume-No",false) == true)
+   {
+      c1out << _("N") << endl;
+      return false;
+   }
 
    char response[1024] = "";
    cin.getline(response, sizeof(response));
@@ -3245,7 +3250,8 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'s',"dry-run","APT::Get::Simulate",0},
       {'s',"no-act","APT::Get::Simulate",0},
       {'y',"yes","APT::Get::Assume-Yes",0},
-      {'y',"assume-yes","APT::Get::Assume-Yes",0},      
+      {'y',"assume-yes","APT::Get::Assume-Yes",0},
+      {0,"assume-no","APT::Get::Assume-No",0},
       {'f',"fix-broken","APT::Get::Fix-Broken",0},
       {'u',"show-upgraded","APT::Get::Show-Upgraded",0},
       {'m',"ignore-missing","APT::Get::Fix-Missing",0},

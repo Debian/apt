@@ -247,17 +247,17 @@ class pkgAcquire::Worker : public WeakPointable
    /** \brief How many bytes of the file have been downloaded.  Zero
     *  if the current progress of the file cannot be determined.
     */
-   unsigned long CurrentSize;
+   unsigned long long CurrentSize;
 
    /** \brief The total number of bytes to be downloaded.  Zero if the
     *  total size of the final is unknown.
     */
-   unsigned long TotalSize;
+   unsigned long long TotalSize;
 
    /** \brief How much of the file was already downloaded prior to
     *  starting this worker.
     */
-   unsigned long ResumePoint;
+   unsigned long long ResumePoint;
    
    /** \brief Tell the subprocess to download the given item.
     *

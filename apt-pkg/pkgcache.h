@@ -506,7 +506,9 @@ struct pkgCache::Version
 		       All = (1<<0), /*!< will cause that Ver.Arch() will report "all" */
 		       Foreign = (1<<1), /*!< can satisfy dependencies in another architecture */
 		       Same = (1<<2), /*!< can be co-installed with itself from other architectures */
-		       Allowed = (1<<3) /*!< other packages are allowed to depend on thispkg:any */ };
+		       Allowed = (1<<3), /*!< other packages are allowed to depend on thispkg:any */
+		       AllForeign = All | Foreign,
+		       AllAllowed = All | Allowed };
    /** \brief stores the MultiArch capabilities of this version
 
        Flags used are defined in pkgCache::Version::VerMultiArch

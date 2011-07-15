@@ -1,10 +1,26 @@
 apt (0.8.16~exp3) UNRELEASEDexperimental; urgency=low
 
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcache.h:
+    - readd All{Foreign,Allowed} as suggested by Julian to
+      remain strictly API compatible
+  * apt-pkg/acquire*.{cc,h}:
+    - try even harder to support really big files in the fetcher by
+      converting (hopefully) everything to 'long long' (Closes: #632271)
+  * ftparchive/writer.cc:
+    - generate all checksums in one run over the file for Release
+  * cmdline/apt-get.cc:
+    - add an --assume-no option for testing to say 'no' to everything
+  * apt-pkg/deb/debmetaindex.cc:
+    - add trusted=yes option to mark unsigned (local) repository as trusted
+      based on a patch from Ansgar Burchardt, thanks a lot! (Closes: #596498)
+
+  [ Michael Vogt ]
   * merge fixes from the debian/unstable upload
   * merge lp:~mvo/apt/sha512-template to get fixes for the 
     sha1/md5 verifiation (closes: #632520)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 30 Jun 2011 09:19:27 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 14 Jul 2011 20:56:45 +0200
 
 apt (0.8.16~exp2) experimental; urgency=low
 
@@ -45,6 +61,17 @@ apt (0.8.16~exp1) experimental; urgency=low
   * merged with the debian/unstable upload
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
+
+apt (0.8.15.2) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcachegen.cc:
+    - fallback to memory if file is not writeable even if access()
+      told us the opposite before (e.g. in fakeroot 1.16) (Closes: #630591)
+  * doc/sources.list.5.xml:
+    - document available [options] for sources.list entries (Closes: 632441)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 05 Jul 2011 15:12:21 +0200
 
 apt (0.8.15.1) unstable; urgency=low
 
