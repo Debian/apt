@@ -57,7 +57,7 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
    pid_t Process = ExecFork();      
    if (Process == 0)
    {
-      const char* Args[6] = {0};
+      const char* Args[8] = {0};
       Args[0] = "/usr/bin/debpatch";
       if (!FileExists(Args[0]))
 	 return _error->Error("[Debdelta] Could not find debpatch.");
@@ -65,16 +65,18 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
       Args[2] = DebdeltaFile.c_str();
       Args[3] = FromFile.c_str();
       Args[4] = ToFile.c_str();
+      Args[5] = "1>&2";
+      Args[6] = "2>/dev/null";
       if (Debug == true)
       {
 	 std::cerr << "[Debdelta] Command:" << std::endl;
 	 std::cerr << Args[0] << " " << Args[1] << " " << Args[2] << " " << Args[3] << " "
                    << Args[4] << std::endl;
       }
-      std::cerr << "[Debdelta] Patching " << ToFile << "..." << std::endl;
+      std::cerr << "[Debdelta] Patching " << ToFile << "...\r";
       execv(Args[0], (char **)Args);
    }
-   if (ExecWait(Process, "debpatch"))
+   if (ExecWait(Process, "debpatch", false))
    {
       if (!FileExists(ToFile))
 	 return _error->Error("[Debdelta] Failed to patch %s", ToFile.c_str());

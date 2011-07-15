@@ -2291,18 +2291,20 @@ void pkgAcqDebdelta::Finished()
 
 bool pkgAcqDebdelta::ReplaceURI()
 {
-   const Configuration::Item* item =_config->Tree("Aquire::Debdelta::Replace-Rule");
-   for (item = item->Child; item != 0; item = item->Next) {
+   const Configuration::Item* item = _config->Tree("Aquire::Debdelta::Replace-Rule");
+   for (item = item->Child; item != 0; item = item->Next)
+   {
       size_t pos = 0;
       // see if the Des.URI is available in the URI-Space
       if ((pos = Desc.URI.find(item->Tag, pos)) != std::string::npos)
       {
-	 Desc.URI.replace(pos, item->Tag.length(), item->Value);
-	 if (Debug) {
-	    std::cerr << "[Debdelta] Replaced " << item->Tag << " => " << item->Value << std::endl;
-	    std::cerr << "           New URI: " << Desc.URI << std::endl;
-	 }
-	 return true;
+         Desc.URI.replace(pos, item->Tag.length(), item->Value);
+         if (Debug)
+         {
+            std::cerr << "[Debdelta] Replaced " << item->Tag << " => " << item->Value << std::endl;
+            std::cerr << "           New URI: " << Desc.URI << std::endl;
+         }
+         return true;
       }
    }
    return _error->Error("[Debdelta] Could not find a replacement URI.");

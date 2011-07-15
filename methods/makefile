@@ -72,6 +72,13 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = rred.cc
 include $(PROGRAM_H)
 
+# The debdelta method
+PROGRAM=debdelta
+SLIBS = -lapt-pkg -lz $(SOCKETLIBS) $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile
+SOURCE = debdelta.cc
+include $(PROGRAM_H)
+
 # The rsh method
 PROGRAM=rsh
 SLIBS = -lapt-pkg $(INTLLIBS)
