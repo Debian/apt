@@ -48,6 +48,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    pkgDepCache &Cache;
    pkgOrderList *List;
    bool Debug;
+   bool NoImmConfigure;
    bool ImmConfigureAll;
 
    /** \brief saves packages dpkg let disappear

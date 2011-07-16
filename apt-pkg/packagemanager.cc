@@ -166,7 +166,7 @@ bool pkgPackageManager::CreateOrderList()
    delete List;
    List = new pkgOrderList(&Cache);
    
-   static bool const NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+   NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
    ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
    
    if (Debug && ImmConfigureAll) 
@@ -982,11 +982,11 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       
       if (List->IsNow(Pkg) == false)
       {
-         if (!List->IsFlag(Pkg,pkgOrderList::Configured)) {
+         if (!List->IsFlag(Pkg,pkgOrderList::Configured) && !NoImmConfigure) {
             if (SmartConfigure(Pkg) == false && Debug)
                _error->Warning("Internal Error, Could not configure %s",Pkg.Name());
             // FIXME: The above warning message might need changing
-         } else {   
+         } else {
 	    if (Debug == true)
 	       clog << "Skipping already done " << Pkg.Name() << endl;
 	 }
