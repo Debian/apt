@@ -271,6 +271,14 @@ void pkgAcqSubIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{
 
    string FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(Desc.URI);
 
+   /* Downloaded invalid transindex => Error (LP: #346386) (Closes: #627642) */
+   indexRecords SubIndexParser;
+   if (FileExists(DestFile) == true && !SubIndexParser.Load(DestFile)) {
+      Status = StatError;
+      ErrorText = SubIndexParser.ErrorText;
+      return;
+   }
+
    // sucess in downloading the index
    // rename the index
    if(Debug)
@@ -579,6 +587,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), 
      available_patches(diffs), ServerSha1(ServerSha1)
 {
+   
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
@@ -715,6 +724,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*
    // sucess in downloading a diff, enter ApplyDiff state
    if(State == StateFetchDiff)
    {
+
       // rred excepts the patch as $FinalFile.ed
       Rename(DestFile,FinalFile+".ed");
       std::clog << "    Sending to rred method FinalFile: " << FinalFile << std::endl;
@@ -728,6 +738,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*
       Mode = "rred";
       return;
    } 
+
 
    // success in download/apply a diff, queue next (if needed)
    if(State == StateApplyDiff)
@@ -891,6 +902,30 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 	 ReportMirrorFailure("HashChecksumFailure");
          return;
       }
+
+      /* Verify the index file for correctness (all indexes must
+       * have a Package field) (LP: #346386) (Closes: #627642) */
+      {
+	 FileFd fd(DestFile, FileFd::ReadOnly);
+	 pkgTagSection sec;
+	 pkgTagFile tag(&fd);
+
+         // Only test for correctness if the file is not empty (empty is ok)
+         if (fd.Size() > 0) {
+            if (_error->PendingError() || !tag.Step(sec)) {
+               Status = StatError;
+               _error->DumpErrors();
+               Rename(DestFile,DestFile + ".FAILED");
+               return;
+            } else if (!sec.Exists("Package")) {
+               Status = StatError;
+               ErrorText = ("Encountered a section with no Package: header");
+               Rename(DestFile,DestFile + ".FAILED");
+               return;
+            }
+         }
+      }
+       
       // Done, move it into position
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
@@ -1327,6 +1362,16 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 									/*}}}*/
 void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 {
+#if 0
+   /* Reject invalid, existing Release files (LP: #346386) (Closes: #627642)
+    * FIXME: Disabled; it breaks unsigned repositories without hashes */
+   if (!verify && FileExists(DestFile) && !MetaIndexParser->Load(DestFile))
+   {
+      Status = StatError;
+      ErrorText = MetaIndexParser->ErrorText;
+      return;
+   }
+#endif
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         Target++)
@@ -1428,8 +1473,10 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 	 // TRANSLATOR: The first %s is the URL of the bad Release file, the second is
 	 // the time since then the file is invalid - formated in the same way as in
 	 // the download progress display (e.g. 7d 3h 42min 1s)
-	 return _error->Error(_("Release file expired, ignoring %s (invalid since %s)"),
-	                      RealURI.c_str(), TimeToStr(invalid_since).c_str());
+	 return _error->Error(
+            _("Release file for %s is expired (invalid since %s). "
+              "Updates for this repository will not be applied."),
+            RealURI.c_str(), TimeToStr(invalid_since).c_str());
    }
 
    if (_config->FindB("Debug::pkgAcquire::Auth", false)) 
@@ -1489,6 +1536,12 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());
 	 RunScripts("APT::Update::Auth-Failure");
+	 return;
+      } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
+	 /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
+	 _error->Error(_("GPG error: %s: %s"),
+			 Desc.Description.c_str(),
+			 LookupTag(Message,"Message").c_str());
 	 return;
       } else {
 	 _error->Warning(_("GPG error: %s: %s"),

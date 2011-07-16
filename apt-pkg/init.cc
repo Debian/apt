@@ -33,66 +33,67 @@ const char *pkgLibVersion = Stringfy(APT_PKG_MAJOR) "."
 bool pkgInitConfig(Configuration &Cnf)
 {
    // General APT things
-   Cnf.Set("APT::Architecture", COMMON_ARCH);
-   Cnf.Set("APT::Build-Essential::", "build-essential");
-   Cnf.Set("APT::Install-Recommends", true);
-   Cnf.Set("APT::Install-Suggests", false);
-   Cnf.Set("Dir","/");
+   Cnf.CndSet("APT::Architecture", COMMON_ARCH);
+   if (Cnf.Exists("APT::Build-Essential") == false)
+      Cnf.Set("APT::Build-Essential::", "build-essential");
+   Cnf.CndSet("APT::Install-Recommends", true);
+   Cnf.CndSet("APT::Install-Suggests", false);
+   Cnf.CndSet("Dir","/");
    
    // Debdelta replacement rule
    Cnf.Set("Aquire::Debdelta::Replace-Rule::Default", "http://debdeltas.debian.net/debian-deltas/");// http://www.bononia.it/debian-deltas/
    Cnf.Set("Aquire::Debdelta::Replace-Rule::http://security.debian.org/", "http://debdeltas.debian.net/debian-security-deltas/"); // http://security.ubuntu.com/ubuntu/  => http://www.bononia.it/debian-security-deltas/ 
    // State   
-   Cnf.Set("Dir::State","var/lib/apt/");
+   Cnf.CndSet("Dir::State","var/lib/apt/");
    
    /* Just in case something goes horribly wrong, we can fall back to the
       old /var/state paths.. */
    struct stat St;   
    if (stat("/var/lib/apt/.",&St) != 0 &&
        stat("/var/state/apt/.",&St) == 0)
-      Cnf.Set("Dir::State","var/state/apt/");
+      Cnf.CndSet("Dir::State","var/state/apt/");
        
-   Cnf.Set("Dir::State::lists","lists/");
-   Cnf.Set("Dir::State::cdroms","cdroms.list");
-   Cnf.Set("Dir::State::mirrors","mirrors/");
+   Cnf.CndSet("Dir::State::lists","lists/");
+   Cnf.CndSet("Dir::State::cdroms","cdroms.list");
+   Cnf.CndSet("Dir::State::mirrors","mirrors/");
 
    // Cache
-   Cnf.Set("Dir::Cache","var/cache/apt/");
-   Cnf.Set("Dir::Cache::archives","archives/");
-   Cnf.Set("Dir::Cache::srcpkgcache","srcpkgcache.bin");
-   Cnf.Set("Dir::Cache::pkgcache","pkgcache.bin");
+   Cnf.CndSet("Dir::Cache","var/cache/apt/");
+   Cnf.CndSet("Dir::Cache::archives","archives/");
+   Cnf.CndSet("Dir::Cache::srcpkgcache","srcpkgcache.bin");
+   Cnf.CndSet("Dir::Cache::pkgcache","pkgcache.bin");
    
    // Configuration
-   Cnf.Set("Dir::Etc","etc/apt/");
-   Cnf.Set("Dir::Etc::sourcelist","sources.list");
-   Cnf.Set("Dir::Etc::sourceparts","sources.list.d");
-   Cnf.Set("Dir::Etc::vendorlist","vendors.list");
-   Cnf.Set("Dir::Etc::vendorparts","vendors.list.d");
-   Cnf.Set("Dir::Etc::main","apt.conf");
-   Cnf.Set("Dir::Etc::netrc", "auth.conf");
-   Cnf.Set("Dir::Etc::parts","apt.conf.d");
-   Cnf.Set("Dir::Etc::preferences","preferences");
-   Cnf.Set("Dir::Etc::preferencesparts","preferences.d");
-   Cnf.Set("Dir::Etc::trusted", "trusted.gpg");
-   Cnf.Set("Dir::Etc::trustedparts","trusted.gpg.d");
-   Cnf.Set("Dir::Bin::methods","/usr/lib/apt/methods"); // /home/ishan/devel/apt/my/experiments/debian-sid/bin/methods
-   Cnf.Set("Dir::Media::MountPath","/media/apt");
+   Cnf.CndSet("Dir::Etc","etc/apt/");
+   Cnf.CndSet("Dir::Etc::sourcelist","sources.list");
+   Cnf.CndSet("Dir::Etc::sourceparts","sources.list.d");
+   Cnf.CndSet("Dir::Etc::vendorlist","vendors.list");
+   Cnf.CndSet("Dir::Etc::vendorparts","vendors.list.d");
+   Cnf.CndSet("Dir::Etc::main","apt.conf");
+   Cnf.CndSet("Dir::Etc::netrc", "auth.conf");
+   Cnf.CndSet("Dir::Etc::parts","apt.conf.d");
+   Cnf.CndSet("Dir::Etc::preferences","preferences");
+   Cnf.CndSet("Dir::Etc::preferencesparts","preferences.d");
+   Cnf.CndSet("Dir::Etc::trusted", "trusted.gpg");
+   Cnf.CndSet("Dir::Etc::trustedparts","trusted.gpg.d");
+   Cnf.CndSet("Dir::Bin::methods","/usr/lib/apt/methods");
+   Cnf.CndSet("Dir::Media::MountPath","/media/apt");
 
    // State   
-   Cnf.Set("Dir::Log","var/log/apt");
-   Cnf.Set("Dir::Log::Terminal","term.log");
-   Cnf.Set("Dir::Log::History","history.log");
+   Cnf.CndSet("Dir::Log","var/log/apt");
+   Cnf.CndSet("Dir::Log::Terminal","term.log");
+   Cnf.CndSet("Dir::Log::History","history.log");
 
-   Cnf.Set("Dir::Ignore-Files-Silently::", "~$");
-   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.disabled$");
-   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.bak$");
-   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
-
-   // Translation
-   Cnf.Set("APT::Acquire::Translation", "environment");
+   if (Cnf.Exists("Dir::Ignore-Files-Silently") == false)
+   {
+      Cnf.Set("Dir::Ignore-Files-Silently::", "~$");
+      Cnf.Set("Dir::Ignore-Files-Silently::", "\\.disabled$");
+      Cnf.Set("Dir::Ignore-Files-Silently::", "\\.bak$");
+      Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
+   }
 
    // Default cdrom mount point
-   Cnf.Set("Acquire::cdrom::mount", "/media/cdrom/");
+   Cnf.CndSet("Acquire::cdrom::mount", "/media/cdrom/");
 
    bool Res = true;
    

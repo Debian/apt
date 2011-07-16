@@ -323,12 +323,13 @@ int pkgAcqMethod::Run(bool Single)
       if (Single == true && Messages.empty() == true)
 	 return -1;
       
-      string m = Messages.front();
+      string Message = Messages.front();
       Messages.erase(Messages.begin());
+      
       // Fetch the message number
       char *End;
-      int Number = strtol(m.c_str(),&End,10);
-      if (End == m.c_str())
+      int Number = strtol(Message.c_str(),&End,10);
+      if (End == Message.c_str())
       {	 
 	 cerr << "Malformed message!" << endl;
 	 return 100;
@@ -337,19 +338,20 @@ int pkgAcqMethod::Run(bool Single)
       switch (Number)
       {	 
 	 case 601:
-	    if (Configuration(m) == false)
-	       return 100;
+	 if (Configuration(Message) == false)
+	    return 100;
 	 break;
 	 
 	 case 600:
 	 {
 	    FetchItem *Tmp = new FetchItem;
-	    Tmp->Uri = LookupTag(m,"URI");
-	    Tmp->DestFile = LookupTag(m,"FileName");
-	    if (RFC1123StrToTime(LookupTag(m,"Last-Modified").c_str(),Tmp->LastModified) == false)
+	    
+	    Tmp->Uri = LookupTag(Message,"URI");
+	    Tmp->DestFile = LookupTag(Message,"FileName");
+	    if (RFC1123StrToTime(LookupTag(Message,"Last-Modified").c_str(),Tmp->LastModified) == false)
 	       Tmp->LastModified = 0;
-	    Tmp->IndexFile = StringToBool(LookupTag(m,"Index-File"),false);
-	    Tmp->FailIgnore = StringToBool(LookupTag(m,"Fail-Ignore"),false);
+	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
+	    Tmp->FailIgnore = StringToBool(LookupTag(Message,"Fail-Ignore"),false);
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list

@@ -664,6 +664,21 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
 			int const &statusfd, int fd[2])
 {
+   if (File == FileGPG)
+   {
+      #define SIGMSG "-----BEGIN PGP SIGNED MESSAGE-----\n"
+      char buffer[sizeof(SIGMSG)];
+      FILE* gpg = fopen(File.c_str(), "r");
+      if (gpg == NULL)
+	 return _error->Errno("RunGPGV", _("Could not open file %s"), File.c_str());
+      char const * const test = fgets(buffer, sizeof(buffer), gpg);
+      fclose(gpg);
+      if (test == NULL || strcmp(buffer, SIGMSG) != 0)
+	 return _error->Error(_("File %s doesn't start with a clearsigned message"), File.c_str());
+      #undef SIGMSG
+   }
+
+
    string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
    // FIXME: remove support for deprecated APT::GPGV setting
    string const trustedFile = _config->Find("APT::GPGV::TrustedKeyring", _config->FindFile("Dir::Etc::Trusted"));
@@ -688,7 +703,11 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
    Args.reserve(30);
 
    if (keyrings.empty() == true)
-      return false;
+   {
+      // TRANSLATOR: %s is the trusted keyring parts directory
+      return _error->Error(_("No keyring installed in %s."),
+			   _config->FindDir("Dir::Etc::TrustedParts").c_str());
+   }
 
    Args.push_back(gpgvpath.c_str());
    Args.push_back("--ignore-time-conflict");

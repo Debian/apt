@@ -82,6 +82,7 @@ class Configuration
 	      
    inline void Set(const string &Name,const string &Value) {Set(Name.c_str(),Value);};
    void CndSet(const char *Name,const string &Value);
+   void CndSet(const char *Name,const int Value);
    void Set(const char *Name,const string &Value);
    void Set(const char *Name,const int &Value);
    

@@ -50,7 +50,7 @@
       <listitem><para>the file specified by the <envar>APT_CONFIG</envar>
 	 environment variable (if any)</para></listitem>
       <listitem><para>all files in <literal>Dir::Etc::Parts</literal> in
-	 alphanumeric ascending order which have no or "<literal>conf</literal>"
+	 alphanumeric ascending order which have either no or "<literal>conf</literal>"
 	 as filename extension and which only contain alphanumeric,
 	 hyphen (-), underscore (_) and period (.) characters.
 	 Otherwise APT will print a notice that it has ignored a file if the file
@@ -153,7 +153,15 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      parsing package lists. The internal default is the architecture apt was 
      compiled for.</para></listitem>
      </varlistentry>
-     
+
+     <varlistentry><term>Architectures</term>
+     <listitem><para>All Architectures the system supports. Processors implementing the <literal>amd64</literal>
+     are e.g. also able to execute binaries compiled for <literal>i386</literal>; This list is use when fetching files and
+     parsing package lists. The internal default is always the native architecture (<literal>APT::Architecture</literal>)
+     and all foreign architectures it can retrieve by calling <command>dpkg --print-foreign-architectures</command>.
+     </para></listitem>
+     </varlistentry>
+
      <varlistentry><term>Default-Release</term>
      <listitem><para>Default release to install packages from if more than one
      version available. Contains release name, codename or release version. Examples: 'stable', 'testing',
@@ -441,13 +449,13 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      It is not needed to add <literal>bz2</literal> explicit to the list as it will be added automatic.</para>
      <para>Note that at run time the <literal>Dir::Bin::<replaceable>Methodname</replaceable></literal> will
      be checked: If this setting exists the method will only be used if this file exists, e.g. for
-     the bzip2 method (the inbuilt) setting is <literallayout>Dir::Bin::bzip2 "/bin/bzip2";</literallayout>
+     the bzip2 method (the inbuilt) setting is: <literallayout>Dir::Bin::bzip2 "/bin/bzip2";</literallayout>
      Note also that list entries specified on the command line will be added at the end of the list
      specified in the configuration files, but before the default entries. To prefer a type in this case
      over the ones specified in the configuration files you can set the option direct - not in list style.
      This will not override the defined list, it will only prefix the list with this type.</para>
      <para>The special type <literal>uncompressed</literal> can be used to give uncompressed files a
-     preference, but note that most archives doesn't provide uncompressed files so this is mostly only
+     preference, but note that most archives don't provide uncompressed files so this is mostly only
      useable for local mirrors.</para></listitem>
      </varlistentry>
 

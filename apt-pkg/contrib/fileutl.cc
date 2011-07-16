@@ -148,8 +148,7 @@ bool CopyFile(FileFd &From,FileFd &To)
 
    return true;   
 }
-
-/*}}}*/
+									/*}}}*/
 // GetLock - Gets a lock file						/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create an empty file of the given name and lock it. Once this
@@ -617,6 +616,7 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
       if (Res <= 0)
 	 return false;
    }
+   
    return true;
 }
 									/*}}}*/
