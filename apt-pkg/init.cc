@@ -32,7 +32,6 @@ const char *pkgLibVersion = Stringfy(APT_PKG_MAJOR) "."
    is prepended, this allows a fair degree of flexability. */
 bool pkgInitConfig(Configuration &Cnf)
 {
-    std::cerr << "pkgInitConfig()" << std::endl;
    // General APT things
    Cnf.Set("APT::Architecture", COMMON_ARCH);
    Cnf.Set("APT::Build-Essential::", "build-essential");
@@ -143,7 +142,6 @@ bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys)
 {
    Sys = 0;
    string Label = Cnf.Find("Apt::System","");
-   std::cerr << "pkgInitSystem() " << Label.c_str() << std::endl; 
    if (Label.empty() == false)
    {
       Sys = pkgSystem::GetSystem(Label.c_str());

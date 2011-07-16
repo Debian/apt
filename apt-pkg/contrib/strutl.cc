@@ -442,7 +442,6 @@ std::string OutputInDepth(const unsigned long Depth, const char* Separator)
 string URItoFileName(const string &URI)
 {
    // Nuke 'sensitive' items
-   //std::cerr << "\n>>>>URItoFileName():\n    URI: " << URI << std::endl; 
    ::URI U(URI);
    U.User.clear();
    U.Password.clear();
@@ -451,7 +450,6 @@ string URItoFileName(const string &URI)
    // "\x00-\x20{}|\\\\^\\[\\]<>\"\x7F-\xFF";
    string NewURI = QuoteString(U,"\\|{}[]<>\"^~_=!@#$%^&*");
    replace(NewURI.begin(),NewURI.end(),'/','_');
-   //std::cerr << "    NewUri: " << NewURI << std::endl;
    return NewURI;
 }
 									/*}}}*/
@@ -725,7 +723,6 @@ string TimeRFC1123(time_t Date)
  */
 bool ReadMessages(int Fd, vector<string> &List)
 {
-   //std::cerr << "ReadMessages() Reading from Fd " << Fd << std::endl;
    char Buffer[64000];
    char *End = Buffer;
    // Represents any left-over from the previous iteration of the
@@ -768,7 +765,6 @@ bool ReadMessages(int Fd, vector<string> &List)
 	 I = Buffer;
 	 
 	 List.push_back(PartialMessage);
-         //std::cerr << "    pushed back message:" << PartialMessage << std::endl;
 	 PartialMessage.clear();
       }
       if (End != Buffer)
@@ -794,7 +790,7 @@ bool ReadMessages(int Fd, vector<string> &List)
 	  //  -- dburrows 2008-04-02
 	  return true;
 	}
-      //std::cerr << "    calling WaidFd again." << std::endl;
+
       if (WaitFd(Fd) == false)
 	 return false;
    }   

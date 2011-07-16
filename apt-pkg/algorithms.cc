@@ -391,7 +391,7 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
    {
       if (Cache[I].Install() == true)
 	 Fix.Protect(I);
-      
+	  
       if (_config->FindB("APT::Ignore-Hold",false) == false)
 	 if (I->SelectedState == pkgCache::State::Hold)
 	    continue;
@@ -1372,25 +1372,19 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 		pkgSourceList &List, 
 		int PulseInterval)
 {
-   //std::cerr << "ListUpdate(): Starting." << std::endl;
    pkgAcquire::RunResult res;
    pkgAcquire Fetcher;
-   //std::cerr << "ListUpdate(): Setting up the fetcher..." << std::endl;
    if (Fetcher.Setup(&Stat, _config->FindDir("Dir::State::Lists")) == false)
       return false;
 
    // Populate it with the source selection
-   //std::cerr << "ListUpdate(): Populating the fetcher with the indexes." << std::endl;
    if (List.GetIndexes(&Fetcher) == false)
 	 return false;
 
    // Run scripts
-   //std::cerr << "\nListUpdate(): Running the Pre-Invoke scripts..." << std::endl;
    RunScripts("APT::Update::Pre-Invoke");
    
    // check arguments
-   //std::cerr << "ListUpdate(): PulseInterval: " << PulseInterval << std::endl;
-   //std::cerr << "ListUpdate(): Running the Fetcher.\n" << std::endl;
    if(PulseInterval>0)
       res = Fetcher.Run(PulseInterval);
    else
@@ -1398,14 +1392,12 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
    if (res == pkgAcquire::Failed)
       return false;
-   //std::cerr << "ListUpdate(): Res of the Fetcher is ok." << std::endl;
+
    bool Failed = false;
    bool TransientNetworkFailure = false;
-   //std::cerr << "ListUpdate(): Iterating through the Items that Fetcher fetched. Is this a failed set of items?" << std::endl;
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); 
 	I != Fetcher.ItemsEnd(); I++)
    {
-      //std::cerr << "    (*I)->DescURI() " << (*I)->DescURI() << std::endl;
       if ((*I)->Status == pkgAcquire::Item::StatDone)
 	 continue;
 

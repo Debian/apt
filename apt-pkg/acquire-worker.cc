@@ -123,6 +123,7 @@ bool pkgAcquire::Worker::Start()
    }
    for (int I = 0; I != 4; I++)
       SetCloseExec(Pipes[I],true);
+   
    // Fork off the process
    Process = ExecFork();
    if (Process == 0)
@@ -160,7 +161,7 @@ bool pkgAcquire::Worker::Start()
    RunMessages();
    if (OwnerQ != 0)
       SendConfiguration();
-
+   
    return true;
 }
 									/*}}}*/
@@ -171,7 +172,6 @@ bool pkgAcquire::Worker::ReadMessages()
 {
    if (::ReadMessages(InFd,MessageQueue) == false)
       return MethodFailure();
-   //std::cerr << "    MessageQueue {" << MessageQueue[0] << "}" << std::endl;
    return true;
 }
 									/*}}}*/
@@ -216,25 +216,25 @@ bool pkgAcquire::Worker::RunMessages()
       {
 	 // 100 Capabilities
 	 case 100:
-       	 if (Capabilities(Message) == false)
+	 if (Capabilities(Message) == false)
 	    return _error->Error("Unable to process Capabilities message from %s",Access.c_str());
 	 break;
 	 
 	 // 101 Log
 	 case 101:
-       	 if (Debug == true)
+	 if (Debug == true)
 	    clog << " <- (log) " << LookupTag(Message,"Message") << endl;
 	 break;
 	 
 	 // 102 Status
 	 case 102:
-     	 Status = LookupTag(Message,"Message");
+	 Status = LookupTag(Message,"Message");
 	 break;
 	    
          // 103 Redirect
          case 103:
          {
-	    if (Itm == 0)
+            if (Itm == 0)
             {
                _error->Error("Method gave invalid 103 Redirect message");
                break;
@@ -395,7 +395,7 @@ bool pkgAcquire::Worker::Capabilities(string Message)
    Config->LocalOnly = StringToBool(LookupTag(Message,"Local-Only"),false);
    Config->NeedsCleanup = StringToBool(LookupTag(Message,"Needs-Cleanup"),false);
    Config->Removable = StringToBool(LookupTag(Message,"Removable"),false);
-   //std::cerr << "----Capabilities()" << std::endl;
+
    // Some debug text
    if (Debug == true)
    {
@@ -408,7 +408,7 @@ bool pkgAcquire::Worker::Capabilities(string Message)
 	      " NeedsCleanup: " << Config->NeedsCleanup << 
 	      " Removable: " << Config->Removable << endl;
    }
-   //std::cerr << "----Capabilities()" << std::endl;
+   
    return true;
 }
 									/*}}}*/
@@ -461,8 +461,6 @@ bool pkgAcquire::Worker::MediaChange(string Message)
 /* */
 bool pkgAcquire::Worker::SendConfiguration()
 {
-   std::cerr << "pkgAcquire::Worker::SendConfiguration() -> [Worker::OutQueue]" << std::endl;
-   std::cerr << "    Sending 601 Configuration message to the method." << std::endl;
    if (Config->SendConfig == false)
       return true;
 
@@ -501,7 +499,7 @@ bool pkgAcquire::Worker::SendConfiguration()
       clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
    OutQueue += Message;
    OutReady = true; 
-   //std::cerr << "    OutQueue {" << Message.length() <<"}"<< std::endl;
+   
    return true;
 }
 									/*}}}*/
@@ -524,7 +522,7 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
       clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
    OutQueue += Message;
    OutReady = true;
-
+   
    return true;
 }
 									/*}}}*/
@@ -533,12 +531,10 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 /* */
 bool pkgAcquire::Worker::OutFdReady()
 {
-   //std::cerr << "pkgAcquire::Worker::OutFdReady()." << std::endl;
    int Res;
    do
    {
       Res = write(OutFd,OutQueue.c_str(),OutQueue.length());
-      //std::cerr << "    writing the OutQueue to the OutFd " << OutFd << std::endl;
    }
    while (Res < 0 && errno == EINTR);
    

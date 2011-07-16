@@ -23,7 +23,7 @@
 #include <apt-pkg/fileutl.h>
     
 #include <apti18n.h>
-using namespace std;									/*}}}*/
+									/*}}}*/
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -68,29 +68,29 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
        if (_system->Lock() == false)
 	  return false;
    
-    if (_config->FindB("Debug::NoLocking",false) == true)
-       WithLock = false;
+   if (_config->FindB("Debug::NoLocking",false) == true)
+      WithLock = false;
       
-    if (_error->PendingError() == true)
-       return false;
+   if (_error->PendingError() == true)
+      return false;
 
-    BuildSourceList(Progress);
+   BuildSourceList(Progress);
 
-    // Read the caches
-    bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map,!WithLock);
-    if (Progress != NULL)
-       Progress->Done();
-    if (Res == false)
-       return _error->Error(_("The package lists or status file could not be parsed or opened."));
+   // Read the caches
+   bool Res = pkgCacheGenerator::MakeStatusCache(*SrcList,Progress,&Map,!WithLock);
+   if (Progress != NULL)
+      Progress->Done();
+   if (Res == false)
+      return _error->Error(_("The package lists or status file could not be parsed or opened."));
 
-    /* This sux, remove it someday */
-    if (ErrorWasEmpty == true && _error->empty() == false)
-       _error->Warning(_("You may want to run apt-get update to correct these problems"));
+   /* This sux, remove it someday */
+   if (ErrorWasEmpty == true && _error->empty() == false)
+      _error->Warning(_("You may want to run apt-get update to correct these problems"));
 
-    Cache = new pkgCache(Map);
-    if (_error->PendingError() == true)
-       return false;
-    return true;
+   Cache = new pkgCache(Map);
+   if (_error->PendingError() == true)
+      return false;
+   return true;
 }
 									/*}}}*/
 // CacheFile::BuildSourceList - Open and build all relevant sources.list/*{{{*/
@@ -98,13 +98,9 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 /* */
 bool pkgCacheFile::BuildSourceList(OpProgress *Progress)
 {
-   //std::cerr << "BuildSourceList(): Starting..." << std::endl;
-   if (SrcList != NULL) {
-      //std::cerr << "    SrcList is not null. Returning." << std::endl;
+   if (SrcList != NULL)
       return true;
-   }
 
-   //std::cerr << "    making a new SrcList." << std::endl;
    SrcList = new pkgSourceList();
    if (SrcList->ReadMainList() == false)
       return _error->Error(_("The list of sources could not be read."));

@@ -183,12 +183,10 @@ pkgSourceList::~pkgSourceList()
 /* */
 bool pkgSourceList::ReadMainList()
 {
-   //std::cerr << "ReadMainList(): Starting." << std::endl;
    // CNC:2003-03-03 - Multiple sources list support.
    bool Res = true;
 #if 0
    Res = ReadVendors();
-   std::cerr << "    ReadVendors " << Res << std::endl;
    if (Res == false)
       return false;
 #endif
@@ -198,8 +196,7 @@ bool pkgSourceList::ReadMainList()
    //                  entries in sources.list.d.
    string Main = _config->FindFile("Dir::Etc::sourcelist");
    string Parts = _config->FindDir("Dir::Etc::sourceparts");
-   //std::cerr << "    Main: " << Main << std::endl;
-   //std::cerr << "    Parts: " << Parts << std::endl;
+   
    if (RealFileExists(Main) == true)
       Res &= ReadAppend(Main);
    else if (DirectoryExists(Parts) == false)
@@ -221,7 +218,6 @@ bool pkgSourceList::ReadMainList()
 /* */
 void pkgSourceList::Reset()
 {
-   std::cerr << "Reset(): Clear the sourcelist contents." << std::endl;
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
       delete *I;
    SrcList.erase(SrcList.begin(),SrcList.end());
@@ -242,7 +238,6 @@ bool pkgSourceList::Read(string File)
 /* */
 bool pkgSourceList::ReadAppend(string File)
 {
-   std::cerr << "ReadAppend(): File " << File << std::endl;
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
    if (!F != 0)
@@ -260,7 +255,6 @@ bool pkgSourceList::ReadAppend(string File)
    while (F.eof() == false)
    {
       F.getline(Buffer,sizeof(Buffer));
-      //std::cerr << "    Buffer " << Buffer << std::endl;
       CurLine++;
       _strtabexpand(Buffer,sizeof(Buffer));
       if (F.fail() && !F.eof())
@@ -324,7 +318,6 @@ bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
 /* */
 bool pkgSourceList::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 {
-   //std::cerr << "GetIndexes(): Loading the index files into the downloader." << std::endl;
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
       if ((*I)->GetIndexes(Owner,GetAll) == false)
 	 return false;

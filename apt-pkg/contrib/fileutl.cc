@@ -587,7 +587,6 @@ void SetNonBlock(int Fd,bool Block)
    in seconds. */
 bool WaitFd(int Fd,bool write,unsigned long timeout)
 {
-   //std::cerr << "WaitFd()" << std::endl;
    fd_set Set;
    struct timeval tv;
    FD_ZERO(&Set);
@@ -618,7 +617,6 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
       if (Res <= 0)
 	 return false;
    }
-   //std::cerr << "    waited for FD " << Fd << std::endl;
    return true;
 }
 									/*}}}*/
