@@ -10,12 +10,18 @@
 
 #include <sys/stat.h>
 #include <sys/uio.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <utime.h>
 #include <stdio.h>
 #include <errno.h>
 #include <zlib.h>
 #include <apti18n.h>
+#include <stdlib.h>
+
+#include <iostream>
+#include <fstream>
+using namespace std;
 
 /*}}}*/
 /** \brief DebdeltaMethod - TODO: say something about debdelta here!
@@ -25,6 +31,7 @@ class DebdeltaMethod : public pkgAcqMethod {
    string DebdeltaFile;
    string FromFile;
    string ToFile;
+   string DebpatchOutput;
 protected:
    // the main(i.e. most important) method of the debdelta method.
    virtual bool Fetch(FetchItem *Itm);
@@ -41,7 +48,7 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
    //URIDone(ResTest);
    //return true; 
    ///
-   Debug = _config->FindB("Debug::pkgAcquire::Debdelta", false);
+   Debug = true; //_config->FindB("Debug::pkgAcquire::Debdelta", false);
    FromFile = Itm->DestFile;
    URI U(Itm->Uri);
    DebdeltaFile = U.Path;
@@ -49,15 +56,32 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
    if (flExtension(FromFile) != "deb" || !FileExists(FromFile))
       FromFile = "/";
    if (!FileExists(DebdeltaFile))
-      return _error->Error("[Debdelta] Could not find a debdelta file.");
+      return _error->Error("\n[Debdelta] Could not find a debdelta file.");
    MakeToFile();
    if (FileExists(ToFile))
-      return _error->Error("[Debdelta] New .deb already exists.");
+      return _error->Error("\n[Debdelta] New .deb already exists.");
+
+   if (Debug == true)
+   {
+      std::cerr << "\n[Debdelta] FromFile: " << FromFile
+	        << "\n           ToFile: " << ToFile
+	        << "\n           DebdelatFile: " << DebdeltaFile << std::endl;
+   }
    
-   pid_t Process = ExecFork();      
+   int Fd[2];
+   if (pipe(Fd) != 0)
+      return _error->Error("[Debdelta] Could not create the pipe.");
+   pid_t Process = fork();
    if (Process == 0)
    {
-      const char* Args[8] = {0};
+      // redirect debpatch's stdout,stderr to the pipe 
+      close(Fd[0]);
+      close(1);
+      dup(Fd[1]);
+      close(2);
+      dup(Fd[1]);
+      // make the debpatch command and run it.
+      const char* Args[6] = {0};
       Args[0] = "/usr/bin/debpatch";
       if (!FileExists(Args[0]))
 	 return _error->Error("[Debdelta] Could not find debpatch.");
@@ -65,21 +89,37 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
       Args[2] = DebdeltaFile.c_str();
       Args[3] = FromFile.c_str();
       Args[4] = ToFile.c_str();
-      Args[5] = "1>&2";
-      Args[6] = "2>/dev/null";
       if (Debug == true)
       {
-	 std::cerr << "[Debdelta] Command:" << std::endl;
+	 std::cerr << "\n[Debdelta] Command:" << std::endl;
 	 std::cerr << Args[0] << " " << Args[1] << " " << Args[2] << " " << Args[3] << " "
                    << Args[4] << std::endl;
       }
-      std::cerr << "[Debdelta] Patching " << ToFile << "...\r";
+      std::cerr << "\n\n[Debdelta] Patching " << ToFile << "..." << std::endl;
       execv(Args[0], (char **)Args);
+      close(Fd[1]);
    }
-   if (ExecWait(Process, "debpatch", false))
+   else if (Process != -1)
    {
+      int status;
+      int options = 0;
+      if (Process !=  waitpid(Process, &status, options))
+	 return _error->Error("[Debdelta] debpatch did not return normally.");
+      
+      // read the stderr,stdout outputs of debpatch
+      size_t LineSize = 1024;
+      char *Line = (char *)malloc(LineSize + 1);
+      close(Fd[1]);
+      //close(0);
+      //dup(Fd[0]);
+      FILE *fp = fdopen(Fd[0], "r");
+      DebpatchOutput = "";
+      while (getline(&Line, &LineSize, fp) != EOF)
+	 DebpatchOutput += string(Line);
+      fclose(fp);
+	 
       if (!FileExists(ToFile))
-	 return _error->Error("[Debdelta] Failed to patch %s", ToFile.c_str());
+	 return _error->Error("\n[Debdelta] Failed to patch %s", ToFile.c_str());
       // move the .deb to Dir::Cache::Archives
       string FinalFile = _config->FindDir("Dir::Cache::Archives") + flNotDir(ToFile);
       Rename(ToFile, FinalFile);
@@ -90,9 +130,12 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
 	 URIDone(Res);
       else
 	 std::cout << "Filename: " << Res.Filename << std::endl;
-      return true;
    }
-   return false;
+   else
+   {
+      return _error->Error("[Debdelta] forking failed.");
+   }
+   return true;
 }
 
 

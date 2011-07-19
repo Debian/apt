@@ -3226,7 +3226,6 @@ void SigWinch(int)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-    std::cout << "Starting apt-get" << std::endl;
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
       {'v',"version","version",0},

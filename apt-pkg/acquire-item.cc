@@ -2136,7 +2136,8 @@ pkgAcqDebdelta::pkgAcqDebdelta(pkgAcquire *Owner,pkgSourceList *Sources,
    // priority than authenticated http:// uris
    if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
       Trusted = false;
-   if (Debug) {
+   if (Debug)
+   {
       std::cerr << "\n[Debdelta] pkgAcqDebdelta::pkgAcqDebdelta()" << std::endl;
       std::cerr << "    DebdeltaName : " << DebdeltaName << std::endl;
       std::cerr << "    StoreFilename: " << StoreFilename << std::endl;
@@ -2243,7 +2244,8 @@ bool pkgAcqDebdelta::QueueNext()
       Desc.Description = "[Debdelta] " + Index->ArchiveInfo(Version);
       Desc.Owner = this;
       Desc.ShortDesc = "[Debdelta] " + string(Version.ParentPkg().Name());
-      if (Debug) {
+      if (Debug)
+      {
 	 std::cerr << "[Debdelta] pkgAcqDebdelta::QueueNext()" << std::endl;
 	 std::cerr << "    DestFile     : " << DestFile << std::endl;
 	 std::cerr << "    Desc.URI     : " << Desc.URI << std::endl;
@@ -2258,17 +2260,23 @@ bool pkgAcqDebdelta::QueueNext()
 
 void pkgAcqDebdelta::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   if (Debug) {
-      std::cerr << "\n[Debdelta] Failed to download " << Desc.URI << std::endl;
-      std::cerr << "[Debdelta] Message:\n" << Message << std::endl;
+   if (Debug)
+   {
+      std::cerr << "\n[Debdelta] Failed to fetch/patch " << DestFile
+		<< " state: " << DebdeltaStatus << std::endl;
+      std::cerr << "[Debdelta] Message:\n=====================\n" << Message
+		<< "\n=====================" << std::endl;
    }
    // TODO: find out what went wrong and display to the user
-   new pkgAcqArchive(Owner, Sources, Recs, Version, StoreFilename);
-   Complete = false;
-   Status = StatError;
+   std::cerr << "\n[Debdelta] Queuing the regular deb for downloading..." << std::endl;
+  
+   Complete = true; //false;
+   Status =  pkgAcquire::Item::StatDone; //StatError;
    DebdeltaStatus = FetchingFailure;
-   Item::Failed(Message, Cnf);
+   //Item::Failed(Message, Cnf);
    Dequeue();
+
+   new pkgAcqArchive(Owner, Sources, Recs, Version, StoreFilename);
 }
 
 void pkgAcqDebdelta::Done(string Message,unsigned long Size,string Hash,
@@ -2276,10 +2284,11 @@ void pkgAcqDebdelta::Done(string Message,unsigned long Size,string Hash,
 {
    // TODO: there must be two stages within this method.
    //       one for downloading debdelta. another for verifying the resulting .deb
-   if (Debug) std::cerr << "[Debdelta] pkgAcqDebdelta::Done() state: " << DebdeltaStatus << std::endl;
+   if (Debug) std::cerr << "\n\n[Debdelta] pkgAcqDebdelta::Done() state: " << DebdeltaStatus << std::endl;
    // Grab the output filename
    string FileName = LookupTag(Message,"Filename");
-   if (Debug) {
+   if (Debug)
+   {
       std::cerr << "    StoreFileName: " << StoreFilename 
 		<< "\n    DestFile     : " << DestFile
 		<< "\n    Desc.URI     : " << Desc.URI
@@ -2288,22 +2297,28 @@ void pkgAcqDebdelta::Done(string Message,unsigned long Size,string Hash,
    if (DebdeltaStatus == Patching)
    {
       if (Debug) std::cerr << "[Debdelta] Patching Done. Verifying "<< FileName << "..." << std::endl;
+      // check the hash. TODO: Is this handled by debpatch internally?
+      /*
       if (ExpectedHash.toStr() != Hash)
       {
 	 Status = StatError;
 	 ErrorText = _("[Debdelta] Hash Sum mismatch");
-	 if(FileExists(DestFile))
-	    if (!Local)
-	       Rename(DestFile, DestFile + ".FAILED");
-	 //return; // TODO: UNCOMMENT
+	 // if(FileExists(DestFile))
+	 //   if (!Local)
+	 //      Rename(DestFile, DestFile + ".FAILED");
+	 std::cerr << "[Debdelta] Hash Sum mismatch" << std::endl;
+	 std::cerr << "     expected: " << ExpectedHash.toStr() << std::endl;
+	 std::cerr << "     hash    : " << Hash << std::endl;
+	 // return; // TODO: UNCOMMENT
       }
       // Check the size
       if (Size != Version->Size)
       {
 	 Status = StatError;
 	 ErrorText = _("[Debdelta] Size mismatch");
+	 std::cerr << "[Debdelta] Size mismatch" << std::endl;
 	 //return; // TODO: UNCOMMEnT
-      }
+      } */
       DebdeltaStatus = Completed;
       Complete = true;
       Status = StatDone;

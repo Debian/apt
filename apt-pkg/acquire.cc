@@ -228,10 +228,9 @@ void pkgAcquire::Enqueue(ItemDesc &Item)
    // Some trace stuff
    if (Debug == true)
    {
-      clog << "pkgAcquire::Enqueue()" << endl;
-      clog << "    Fetching " << Item.URI << endl;
-      clog << "    to " << Item.Owner->DestFile << endl;
-      clog << "    Queue is: " << Name << endl;
+      clog << "Fetching " << Item.URI << endl;
+      clog << " to " << Item.Owner->DestFile << endl;
+      clog << " Queue is: " << Name << endl;
    }
 }
 									/*}}}*/
