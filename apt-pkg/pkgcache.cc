@@ -84,6 +84,8 @@ pkgCache::Header::Header()
    memset(PkgHashTable,0,sizeof(PkgHashTable));
    memset(GrpHashTable,0,sizeof(GrpHashTable));
    memset(Pools,0,sizeof(Pools));
+
+   CacheFileSize = 0;
 }
 									/*}}}*/
 // Cache::Header::CheckSizes - Check if the two headers have same *sz	/*{{{*/

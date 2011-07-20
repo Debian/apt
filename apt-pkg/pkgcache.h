@@ -314,6 +314,9 @@ struct pkgCache::Header
    map_ptrloc PkgHashTable[2*1048];
    map_ptrloc GrpHashTable[2*1048];
 
+   /** \brief Size of the complete cache file */
+   unsigned long  CacheFileSize;
+
    bool CheckSizes(Header &Against) const;
    Header();
 };
