@@ -157,6 +157,9 @@ bool pkgCache::ReMap(bool const &Errorchecks)
        HeaderP->CheckSizes(DefHeader) == false)
       return _error->Error(_("The package cache file is an incompatible version"));
 
+   if (Map.Size() < HeaderP->CacheFileSize)
+      return _error->Error(_("The package cache file is corrupted, it is too small"));
+
    // Locate our VS..
    if (HeaderP->VerSysName == 0 ||
        (VS = pkgVersioningSystem::GetVS(StrP + HeaderP->VerSysName)) == 0)
