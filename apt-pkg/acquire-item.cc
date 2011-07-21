@@ -2080,7 +2080,7 @@ pkgAcqDebdelta::pkgAcqDebdelta(pkgAcquire *Owner,pkgSourceList *Sources,
       + string(Version.ParentPkg().CandVersion()) + "_"
       + string(Version.Arch()) + ".debdelta";
    Retries = _config->FindI("Acquire::Retries",0);
-   Debug = true;
+   Debug = false;
    if (Version.Arch() == 0)
    {
       _error->Error(_("I wasn't able to locate a file for the %s package. "
@@ -2385,6 +2385,7 @@ bool IndexTarget::IsOptional() const {
       return false;
    return true;
 }
+
 bool IndexTarget::IsSubIndex() const {
    if (ShortDesc != "TranslationIndex")
       return false;

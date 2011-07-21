@@ -48,7 +48,7 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
    //URIDone(ResTest);
    //return true; 
    ///
-   Debug = true; //_config->FindB("Debug::pkgAcquire::Debdelta", false);
+   Debug = _config->FindB("Debug::pkgAcquire::Debdelta", false);
    FromFile = Itm->DestFile;
    URI U(Itm->Uri);
    DebdeltaFile = U.Path;
@@ -71,7 +71,11 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
    int Fd[2];
    if (pipe(Fd) != 0)
       return _error->Error("[Debdelta] Could not create the pipe.");
-   pid_t Process = fork();
+   _config->Set("APT::Keep-Fds", Fd[0]);
+   _config->Set("APT::Keep-Fds", Fd[1]);
+   pid_t Process = ExecFork();
+   _config->Clear("APT::Keep-Fds", Fd[0]);
+   _config->Clear("APT::Keep-Fds", Fd[1]);
    if (Process == 0)
    {
       // redirect debpatch's stdout,stderr to the pipe 
@@ -81,14 +85,15 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
       close(2);
       dup(Fd[1]);
       // make the debpatch command and run it.
+      int n = 0;
       const char* Args[6] = {0};
-      Args[0] = "/usr/bin/debpatch";
+      Args[n++] = "/usr/bin/debpatch";
       if (!FileExists(Args[0]))
 	 return _error->Error("[Debdelta] Could not find debpatch.");
-      Args[1] = "-A";
-      Args[2] = DebdeltaFile.c_str();
-      Args[3] = FromFile.c_str();
-      Args[4] = ToFile.c_str();
+      Args[n++] = "-A";
+      Args[n++] = DebdeltaFile.c_str();
+      Args[n++] = FromFile.c_str();
+      Args[n++] = ToFile.c_str();
       if (Debug == true)
       {
 	 std::cerr << "\n[Debdelta] Command:" << std::endl;
@@ -97,27 +102,20 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
       }
       std::cerr << "\n\n[Debdelta] Patching " << ToFile << "..." << std::endl;
       execv(Args[0], (char **)Args);
-      close(Fd[1]);
+      return _error->Error("[Debdelta] Could not execv debpatch.");
    }
-   else if (Process != -1)
+   if (ExecWait(Process, "debpatch", false))
    {
-      int status;
-      int options = 0;
-      if (Process !=  waitpid(Process, &status, options))
-	 return _error->Error("[Debdelta] debpatch did not return normally.");
-      
       // read the stderr,stdout outputs of debpatch
       size_t LineSize = 1024;
       char *Line = (char *)malloc(LineSize + 1);
       close(Fd[1]);
-      //close(0);
-      //dup(Fd[0]);
       FILE *fp = fdopen(Fd[0], "r");
       DebpatchOutput = "";
       while (getline(&Line, &LineSize, fp) != EOF)
 	 DebpatchOutput += string(Line);
       fclose(fp);
-	 
+   	  
       if (!FileExists(ToFile))
 	 return _error->Error("\n[Debdelta] Failed to patch %s", ToFile.c_str());
       // move the .deb to Dir::Cache::Archives
@@ -130,12 +128,9 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
 	 URIDone(Res);
       else
 	 std::cout << "Filename: " << Res.Filename << std::endl;
+      return true;
    }
-   else
-   {
-      return _error->Error("[Debdelta] forking failed.");
-   }
-   return true;
+   return false;
 }
 
 
