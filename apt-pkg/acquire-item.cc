@@ -2241,9 +2241,9 @@ bool pkgAcqDebdelta::QueueNext()
 	 Desc.URI = flNotFile(Index->ArchiveURI(PkgFile)) + DebdeltaName;
 	 ReplaceURI();
       }
-      Desc.Description = "[Debdelta] " + Index->ArchiveInfo(Version);
+      Desc.Description = Desc.URI; // "[Debdelta] " + Index->ArchiveInfo(Version);
       Desc.Owner = this;
-      Desc.ShortDesc = "[Debdelta] " + string(Version.ParentPkg().Name());
+      Desc.ShortDesc = DebdeltaName; // "[Debdelta] " + string(Version.ParentPkg().Name());
       if (Debug)
       {
 	 std::cerr << "[Debdelta] pkgAcqDebdelta::QueueNext()" << std::endl;
@@ -2260,22 +2260,26 @@ bool pkgAcqDebdelta::QueueNext()
 
 void pkgAcqDebdelta::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
+   string FileStatus = "";
+   if (DebdeltaStatus == Fetching)
+      FileStatus = "fetch " + Desc.URI;
+   else if (DebdeltaStatus == Patching)
+      FileStatus = "patch " + DestFile;
+   std::cerr << "\n[Debdelta] Failed to " << FileStatus << "." << std::endl;
    if (Debug)
    {
-      std::cerr << "\n[Debdelta] Failed to fetch/patch " << DestFile
-		<< " state: " << DebdeltaStatus << std::endl;
       std::cerr << "[Debdelta] Message:\n=====================\n" << Message
 		<< "\n=====================" << std::endl;
    }
-   // TODO: find out what went wrong and display to the user
    std::cerr << "\n[Debdelta] Queuing the regular deb for downloading..." << std::endl;
-  
-   Complete = true; //false;
-   Status =  pkgAcquire::Item::StatDone; //StatError;
+   // download the regular deb if debdelta failed to download or the patching failed.
+   Complete = true;                      // false;
+   Status =  pkgAcquire::Item::StatDone; // StatError;
    DebdeltaStatus = FetchingFailure;
    //Item::Failed(Message, Cnf);
    Dequeue();
-
+   if (DebdeltaStatus == Patching) // then remove the debdelta file
+      unlink(DestFile.c_str());
    new pkgAcqArchive(Owner, Sources, Recs, Version, StoreFilename);
 }
 
@@ -2297,7 +2301,7 @@ void pkgAcqDebdelta::Done(string Message,unsigned long Size,string Hash,
    if (DebdeltaStatus == Patching)
    {
       if (Debug) std::cerr << "[Debdelta] Patching Done. Verifying "<< FileName << "..." << std::endl;
-      // check the hash. TODO: Is this handled by debpatch internally?
+      // check the hash/size of the patched deb. TODO: Is this handled by debpatch internally?
       /*
       if (ExpectedHash.toStr() != Hash)
       {
@@ -2324,9 +2328,10 @@ void pkgAcqDebdelta::Done(string Message,unsigned long Size,string Hash,
       Status = StatDone;
       StoreFilename = FileName;
       Item::Done(Message,Size,Hash,Cnf);
+      unlink(DestFile.c_str());
       return;
    }
-   // TODO: Check the sum/size
+   // TODO: Check the hash/size of the downloaded debdelta.
    //std::cerr << "[Debdelta] Verifying " << DestFile << std::endl;
    if (FileName.empty() == true)
    {

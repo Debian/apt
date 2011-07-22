@@ -332,7 +332,6 @@ bool pkgAcquire::Worker::RunMessages()
 	 // 400 URI Failure
 	 case 400:
 	 {
-        std::cerr <<"    400 URI Failure" << std::endl;
 	    if (Itm == 0)
 	    {
 	       _error->Error("Method gave invalid 400 URI Failure message");
@@ -365,13 +364,11 @@ bool pkgAcquire::Worker::RunMessages()
 	 
 	 // 401 General Failure
 	 case 401:
-     std::cerr <<"    401 General Failure" << std::endl;
 	 _error->Error("Method %s General failure: %s",Access.c_str(),LookupTag(Message,"Message").c_str());
 	 break;
 	 
 	 // 403 Media Change
 	 case 403:
-     std::cerr <<"    403 Media Change" << std::endl;
 	 MediaChange(Message); 
 	 break;
       }      
