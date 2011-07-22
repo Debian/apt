@@ -2273,7 +2273,7 @@ bool DoDownload(CommandLine &CmdL)
 
    pkgAcquire Fetcher;
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   if (_config->FindB("APT::Get::Print-URIs") == true)
+   if (_config->FindB("APT::Get::Print-URIs") == false)
       Fetcher.Setup(&Stat);
 
    pkgRecords Recs(Cache);
