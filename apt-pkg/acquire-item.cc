@@ -2264,14 +2264,16 @@ void pkgAcqDebdelta::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    if (DebdeltaStatus == Fetching)
       FileStatus = "fetch " + Desc.URI;
    else if (DebdeltaStatus == Patching)
+   {
       FileStatus = "patch " + DestFile;
-   std::cerr << "\n[Debdelta] Failed to " << FileStatus << "." << std::endl;
+      std::cerr << "Failed to " << FileStatus << "." << std::endl;
+   }
    if (Debug)
    {
       std::cerr << "[Debdelta] Message:\n=====================\n" << Message
 		<< "\n=====================" << std::endl;
    }
-   std::cerr << "\n[Debdelta] Queuing the regular deb for downloading..." << std::endl;
+   //std::cerr << "Queuing the regular deb for downloading..." << std::endl;
    // download the regular deb if debdelta failed to download or the patching failed.
    Complete = true;                      // false;
    Status =  pkgAcquire::Item::StatDone; // StatError;
