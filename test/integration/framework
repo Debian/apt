@@ -481,6 +481,10 @@ buildaptarchivefromfiles() {
 	generatereleasefiles
 }
 
+# can be overridden by testcases for their pleasure
+getcodenamefromsuite() { echo -n "$1"; }
+getreleaseversionfromsuite() { true; }
+
 generatereleasefiles() {
 	msgninfo "\tGenerate Release files… "
 	local DATE="${1:-now}"
@@ -489,9 +493,22 @@ generatereleasefiles() {
 			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Patterns::='Translation-*' > $dir/Index
 		done
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
-			local CODENAME="$(echo "$dir" | cut -d'/' -f 4)"
-			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Suite="${CODENAME}" -o APT::FTPArchive::Release::Codename="${CODENAME}" | sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
-			if [ "$CODENAME" = "experimental" -o "$CODENAME" = "experimental2" ]; then
+			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
+			local CODENAME="$(getcodenamefromsuite $SUITE)"
+			local VERSION="$(getreleaseversionfromsuite $SUITE)"
+			if [ -z "$VERSION" ]; then
+				aptftparchive -qq release $dir \
+					-o APT::FTPArchive::Release::Suite="${SUITE}" \
+					-o APT::FTPArchive::Release::Codename="${CODENAME}" \
+						| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
+			else
+				aptftparchive -qq release $dir \
+					-o APT::FTPArchive::Release::Suite="${SUITE}" \
+					-o APT::FTPArchive::Release::Codename="${CODENAME}" \
+					-o APT::FTPArchive::Release::Version="${VERSION}" \
+						| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
+			fi
+			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
 				sed -i '/^Date: / a\
 NotAutomatic: yes' $dir/Release
 			fi

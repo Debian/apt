@@ -2366,8 +2366,7 @@ bool DoSource(CommandLine &CmdL)
    // Create the download object
    AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
    pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat) == false)
-      return false;
+   Fetcher.SetLog(&Stat);
 
    DscFile *Dsc = new DscFile[CmdL.FileSize()];
    

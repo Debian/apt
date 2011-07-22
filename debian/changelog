@@ -19,12 +19,21 @@ apt (0.8.15.3) UNRELEASED; urgency=low
     - document APT::Architectures list (Closes: #612102)
   * cmdline/apt-get.cc:
     - restore all important dependencies for garbage packages (LP: #806274)
+    - do not require unused partial dirs in 'source' (Closes: #633510)
   * apt-pkg/init.cc:
     - use CndSet in pkgInitConfig (Closes: #629617)
   * apt-pkg/depcache.cc:
     - change default of APT::AutoRemove::SuggestsImportant to true
+  * cmdline/apt-key:
+    - use a tmpfile instead of /etc/apt/secring.gpg (Closes: #632596)
+  * debian/apt.postinst:
+    - remove /etc/apt/secring.gpg if it is an empty file
+  * doc/apt-cache.8.xml:
+    - apply madison typofix from John Feuerstein, thanks! (Closes: #633455)
+  * apt-pkg/policy.cc:
+    - emit an error on unknown APT::Default-Release value (Closes: #407511)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 15 Jul 2011 09:29:37 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 16 Jul 2011 16:43:37 +0200
 
 apt (0.8.15.2) unstable; urgency=high
 
