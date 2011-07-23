@@ -7,7 +7,7 @@ unset GREP_OPTIONS
 # implodes if there isn't one available
 SECRETKEYRING="$(mktemp)"
 trap "rm -f '${SECRETKEYRING}'" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring '${SECRETKEYRING}'"
+GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring ${SECRETKEYRING}"
 
 if [ "$(id -u)" -eq 0 ]; then
 	# we could use a tmpfile here too, but creation of this tends to be time-consuming
