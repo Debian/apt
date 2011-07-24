@@ -2801,6 +2801,33 @@ bool DoBuildDep(CommandLine &CmdL)
 					Last->BuildDepType((*D).Type), Src.c_str(), Pkg.FullName(true).c_str());
 	    }
 
+	    // Only consider virtual packages if there is no versioned dependency
+	    if ((*D).Version.empty() == true)
+	    {
+	       /*
+		* If this is a virtual package, we need to check the list of
+		* packages that provide it and see if any of those are
+		* installed
+		*/
+	       pkgCache::PrvIterator Prv = Pkg.ProvidesList();
+	       for (; Prv.end() != true; Prv++)
+	       {
+		  if (_config->FindB("Debug::BuildDeps",false) == true)
+		     cout << "  Checking provider " << Prv.OwnerPkg().FullName() << endl;
+
+		  if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
+		     break;
+	       }
+
+	       if (Prv.end() == false)
+	       {
+		  if (_config->FindB("Debug::BuildDeps",false) == true)
+		     cout << "  Is provided by installed package " << Prv.OwnerPkg().FullName() << endl;
+		  skipAlternatives = hasAlternatives;
+		  continue;
+	       }
+	    }
+
             if ((*D).Version[0] != '\0') {
                  // Versioned dependency
 
@@ -2826,32 +2853,6 @@ bool DoBuildDep(CommandLine &CmdL)
                                            (*D).Package.c_str());
 		   }
 		 }
-            }
-            else
-            {
-	       /*
-		* If this is a virtual package, we need to check the list of
-		* packages that provide it and see if any of those are
-		* installed
-		*/
-	       pkgCache::PrvIterator Prv = Pkg.ProvidesList();
-	       for (; Prv.end() != true; Prv++)
-	       {
-		  if (_config->FindB("Debug::BuildDeps",false) == true)
-		     cout << "  Checking provider " << Prv.OwnerPkg().FullName() << endl;
-
-		  if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
-		     break;
-	       }
-
-               // Only consider virtual packages if there is no versioned dependency
-               if (Prv.end() == false)
-               {
-                  if (_config->FindB("Debug::BuildDeps",false) == true)
-                     cout << "  Is provided by installed package " << Prv.OwnerPkg().FullName() << endl;
-                  skipAlternatives = hasAlternatives;
-                  continue;
-               }
             }
 
             if (_config->FindB("Debug::BuildDeps",false) == true)
