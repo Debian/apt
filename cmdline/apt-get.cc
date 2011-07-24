@@ -2780,6 +2780,26 @@ bool DoBuildDep(CommandLine &CmdL)
                                     (*D).Package.c_str());
             }
 
+	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
+	    if (IV.end() == false)
+	    {
+	       if (_config->FindB("Debug::BuildDeps",false) == true)
+		  cout << "  Is installed\n";
+
+	       if (D->Version.empty() == true ||
+		   Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+	       {
+		  skipAlternatives = hasAlternatives;
+		  continue;
+	       }
+
+	       if (_config->FindB("Debug::BuildDeps",false) == true)
+		  cout << "    ...but the installed version doesn't meet the version requirement\n";
+
+	       if (((*D).Op & pkgCache::Dep::LessEq) == pkgCache::Dep::LessEq)
+		  return _error->Error(_("Failed to satisfy %s dependency for %s: Installed package %s is too new"),
+					Last->BuildDepType((*D).Type), Src.c_str(), Pkg.FullName(true).c_str());
+	    }
 
             if ((*D).Version[0] != '\0') {
                  // Versioned dependency
@@ -2833,31 +2853,6 @@ bool DoBuildDep(CommandLine &CmdL)
                   continue;
                }
             }
-
-	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
-            if (IV.end() == false)
-            {
-               if (_config->FindB("Debug::BuildDeps",false) == true)
-                  cout << "  Is installed\n";
-
-               if (Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
-               {
-                  skipAlternatives = hasAlternatives;
-                  continue;
-               }
-
-               if (_config->FindB("Debug::BuildDeps",false) == true)
-                  cout << "    ...but the installed version doesn't meet the version requirement\n";
-
-               if (((*D).Op & pkgCache::Dep::LessEq) == pkgCache::Dep::LessEq)
-               {
-                  return _error->Error(_("Failed to satisfy %s dependency for %s: Installed package %s is too new"),
-                                       Last->BuildDepType((*D).Type),
-                                       Src.c_str(),
-                                       Pkg.FullName(true).c_str());
-               }
-            }
-
 
             if (_config->FindB("Debug::BuildDeps",false) == true)
                cout << "  Trying to install " << (*D).Package << endl;
