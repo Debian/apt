@@ -1388,6 +1388,14 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 	 return AllowFail;
    }
 
+   if (_config->FindB("Debug::BuildDeps",false) == true)
+   {
+      if (Remove == true)
+	 cout << "  Trying to remove " << Pkg << endl;
+      else
+	 cout << "  Trying to install " << Pkg << endl;
+   }
+
    if (Remove == true)
    {
       TryToRemove RemoveAction(Cache, &Fix);
@@ -2848,9 +2856,6 @@ bool DoBuildDep(CommandLine &CmdL)
 					  D->Package.c_str());
 	       }
 	    }
-
-            if (_config->FindB("Debug::BuildDeps",false) == true)
-               cout << "  Trying to install " << (*D).Package << endl;
 
             if (TryToInstallBuildDep(Pkg,Cache,Fix,false,false) == true)
             {
