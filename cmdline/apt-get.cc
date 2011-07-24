@@ -2733,20 +2733,22 @@ bool DoBuildDep(CommandLine &CmdL)
          if ((*D).Type == pkgSrcRecords::Parser::BuildConflict ||
 	     (*D).Type == pkgSrcRecords::Parser::BuildConflictIndep)
          {
-            pkgCache::PkgIterator Pkg = Cache->FindPkg((*D).Package);
+            pkgCache::GrpIterator Grp = Cache->FindGrp((*D).Package);
             // Build-conflicts on unknown packages are silently ignored
-            if (Pkg.end() == true)
+            if (Grp.end() == true)
                continue;
 
-            pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
-
-            /* 
-             * Remove if we have an installed version that satisfies the 
-             * version criteria
-             */
-            if (IV.end() == false && 
-                Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
-               TryToInstallBuildDep(Pkg,Cache,Fix,true,false);
+	    for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
+	    {
+	       pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
+	       /*
+		* Remove if we have an installed version that satisfies the
+		* version criteria
+		*/
+	       if (IV.end() == false &&
+		   Cache->VS().CheckDep(IV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
+		  TryToInstallBuildDep(Pkg,Cache,Fix,true,false);
+	    }
          }
 	 else // BuildDep || BuildDepIndep
          {
