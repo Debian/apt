@@ -2827,33 +2827,27 @@ bool DoBuildDep(CommandLine &CmdL)
 		  continue;
 	       }
 	    }
-
-            if ((*D).Version[0] != '\0') {
-                 // Versioned dependency
-
-                 pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
-
-                 for (; CV.end() != true; CV++)
-                 {
-                      if (Cache->VS().CheckDep(CV.VerStr(),(*D).Op,(*D).Version.c_str()) == true)
-                           break;
-                 }
-                 if (CV.end() == true)
-		 {
-		   if (hasAlternatives)
-		   {
-		      continue;
-		   }
-		   else
-		   {
-                      return _error->Error(_("%s dependency for %s cannot be satisfied "
-                                             "because no available versions of package %s "
-                                             "can satisfy version requirements"),
-                                           Last->BuildDepType((*D).Type),Src.c_str(),
-                                           (*D).Package.c_str());
-		   }
-		 }
-            }
+	    else // versioned dependency
+	    {
+	       pkgCache::VerIterator CV = (*Cache)[Pkg].CandidateVerIter(*Cache);
+	       if (CV.end() == true ||
+		   Cache->VS().CheckDep(CV.VerStr(),(*D).Op,(*D).Version.c_str()) == false)
+	       {
+		  if (hasAlternatives)
+		     continue;
+		  else if (CV.end() == false)
+		     return _error->Error(_("%s dependency for %s cannot be satisfied "
+					    "because candidate version of package %s "
+					    "can't satisfy version requirements"),
+					  Last->BuildDepType(D->Type), Src.c_str(),
+					  D->Package.c_str());
+		  else
+		     return _error->Error(_("%s dependency for %s cannot be satisfied "
+					    "because package %s has no candidate version"),
+					  Last->BuildDepType(D->Type), Src.c_str(),
+					  D->Package.c_str());
+	       }
+	    }
 
             if (_config->FindB("Debug::BuildDeps",false) == true)
                cout << "  Trying to install " << (*D).Package << endl;
