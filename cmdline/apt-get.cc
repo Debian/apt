@@ -2725,6 +2725,16 @@ bool DoBuildDep(CommandLine &CmdL)
 
          if (skipAlternatives == true)
          {
+            /*
+             * if there are alternatives, we've already picked one, so skip
+             * the rest
+             *
+             * TODO: this means that if there's a build-dep on A|B and B is
+             * installed, we'll still try to install A; more importantly,
+             * if A is currently broken, we cannot go back and try B. To fix 
+             * this would require we do a Resolve cycle for each package we 
+             * add to the install list. Ugh
+             */
             if (!hasAlternatives)
                skipAlternatives = false; // end of or group
             continue;
@@ -2752,10 +2762,10 @@ bool DoBuildDep(CommandLine &CmdL)
          }
 	 else // BuildDep || BuildDepIndep
          {
-	    pkgCache::PkgIterator Pkg = Cache->FindPkg((*D).Package);
             if (_config->FindB("Debug::BuildDeps",false) == true)
                  cout << "Looking for " << (*D).Package << "...\n";
 
+	    pkgCache::PkgIterator Pkg = Cache->FindPkg((*D).Package);
 	    if (Pkg.end() == true)
             {
                if (_config->FindB("Debug::BuildDeps",false) == true)
@@ -2770,34 +2780,6 @@ bool DoBuildDep(CommandLine &CmdL)
                                     (*D).Package.c_str());
             }
 
-            /*
-             * if there are alternatives, we've already picked one, so skip
-             * the rest
-             *
-             * TODO: this means that if there's a build-dep on A|B and B is
-             * installed, we'll still try to install A; more importantly,
-             * if A is currently broken, we cannot go back and try B. To fix 
-             * this would require we do a Resolve cycle for each package we 
-             * add to the install list. Ugh
-             */
-                       
-	    /* 
-	     * If this is a virtual package, we need to check the list of
-	     * packages that provide it and see if any of those are
-	     * installed
-	     */
-            pkgCache::PrvIterator Prv = Pkg.ProvidesList();
-            for (; Prv.end() != true; Prv++)
-	    {
-               if (_config->FindB("Debug::BuildDeps",false) == true)
-                    cout << "  Checking provider " << Prv.OwnerPkg().FullName() << endl;
-
-	       if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
-	          break;
-            }
-            
-            // Get installed version and version we are going to install
-	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
 
             if ((*D).Version[0] != '\0') {
                  // Versioned dependency
@@ -2827,6 +2809,21 @@ bool DoBuildDep(CommandLine &CmdL)
             }
             else
             {
+	       /*
+		* If this is a virtual package, we need to check the list of
+		* packages that provide it and see if any of those are
+		* installed
+		*/
+	       pkgCache::PrvIterator Prv = Pkg.ProvidesList();
+	       for (; Prv.end() != true; Prv++)
+	       {
+		  if (_config->FindB("Debug::BuildDeps",false) == true)
+		     cout << "  Checking provider " << Prv.OwnerPkg().FullName() << endl;
+
+		  if ((*Cache)[Prv.OwnerPkg()].InstVerIter(*Cache).end() == false)
+		     break;
+	       }
+
                // Only consider virtual packages if there is no versioned dependency
                if (Prv.end() == false)
                {
@@ -2837,6 +2834,7 @@ bool DoBuildDep(CommandLine &CmdL)
                }
             }
 
+	    pkgCache::VerIterator IV = (*Cache)[Pkg].InstVerIter(*Cache);
             if (IV.end() == false)
             {
                if (_config->FindB("Debug::BuildDeps",false) == true)
