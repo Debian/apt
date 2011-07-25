@@ -1,0 +1,183 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'armel'
+
+insertinstalledpackage 'build-essential' 'all' '11.5'
+
+insertpackage 'unstable' 'doxygen' 'amd64,armel' '1.0'
+insertpackage 'unstable' 'libc6' 'amd64,armel' '1.0' 'Multi-Arch: same'
+insertpackage 'unstable' 'libc6-dev' 'amd64,armel' '1.0' 'Depends: libc6
+Multi-Arch: same'
+insertpackage 'unstable' 'cool' 'amd64,armel' '1.0' 'Multi-Arch: allowed'
+insertpackage 'unstable' 'amdboot' 'amd64' '1.0'
+insertpackage 'unstable' 'foreigner' 'amd64,armel' '1.0' 'Multi-Arch: foreign'
+
+insertsource 'unstable' 'apt' 'any' '0.8.15' 'Build-Depends: doxygen, libc6-dev, libc6-dev:native, cool:any, amdboot:amd64, foreigner'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  amdboot cool doxygen foreigner libc6 libc6-dev
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+Inst amdboot (1.0 unstable [amd64])
+Inst cool (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [amd64])
+Inst foreigner (1.0 unstable [amd64])
+Inst libc6 (1.0 unstable [amd64])
+Inst libc6-dev (1.0 unstable [amd64])
+Conf amdboot (1.0 unstable [amd64])
+Conf cool (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [amd64])
+Conf foreigner (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf libc6-dev (1.0 unstable [amd64])' aptget build-dep apt -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  amdboot cool doxygen foreigner libc6 libc6:armel libc6-dev libc6-dev:armel
+0 upgraded, 8 newly installed, 0 to remove and 0 not upgraded.
+Inst amdboot (1.0 unstable [amd64])
+Inst cool (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [amd64])
+Inst foreigner (1.0 unstable [amd64])
+Inst libc6:armel (1.0 unstable [armel])
+Inst libc6 (1.0 unstable [amd64])
+Inst libc6-dev:armel (1.0 unstable [armel])
+Inst libc6-dev (1.0 unstable [amd64])
+Conf amdboot (1.0 unstable [amd64])
+Conf cool (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [amd64])
+Conf foreigner (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf libc6:armel (1.0 unstable [armel])
+Conf libc6-dev (1.0 unstable [amd64])
+Conf libc6-dev:armel (1.0 unstable [armel])' aptget build-dep apt -s -a armel
+
+configarchitecture 'armel' 'amd64'
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  amdboot:amd64 cool doxygen foreigner libc6 libc6-dev
+0 upgraded, 6 newly installed, 0 to remove and 0 not upgraded.
+Inst amdboot:amd64 (1.0 unstable [amd64])
+Inst cool (1.0 unstable [armel])
+Inst doxygen (1.0 unstable [armel])
+Inst foreigner (1.0 unstable [armel])
+Inst libc6 (1.0 unstable [armel])
+Inst libc6-dev (1.0 unstable [armel])
+Conf amdboot:amd64 (1.0 unstable [amd64])
+Conf cool (1.0 unstable [armel])
+Conf doxygen (1.0 unstable [armel])
+Conf foreigner (1.0 unstable [armel])
+Conf libc6 (1.0 unstable [armel])
+Conf libc6-dev (1.0 unstable [armel])' aptget build-dep apt -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  amdboot:amd64 cool doxygen foreigner libc6:amd64 libc6 libc6-dev:amd64
+  libc6-dev
+0 upgraded, 8 newly installed, 0 to remove and 0 not upgraded.
+Inst amdboot:amd64 (1.0 unstable [amd64])
+Inst cool (1.0 unstable [armel])
+Inst doxygen (1.0 unstable [armel])
+Inst foreigner (1.0 unstable [armel])
+Inst libc6 (1.0 unstable [armel])
+Inst libc6:amd64 (1.0 unstable [amd64])
+Inst libc6-dev (1.0 unstable [armel])
+Inst libc6-dev:amd64 (1.0 unstable [amd64])
+Conf amdboot:amd64 (1.0 unstable [amd64])
+Conf cool (1.0 unstable [armel])
+Conf doxygen (1.0 unstable [armel])
+Conf foreigner (1.0 unstable [armel])
+Conf libc6:amd64 (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [armel])
+Conf libc6-dev:amd64 (1.0 unstable [amd64])
+Conf libc6-dev (1.0 unstable [armel])' aptget build-dep apt -s -a amd64
+
+configarchitecture 'amd64' 'armel'
+
+insertinstalledpackage 'cool' 'amd64' '0.5'
+insertinstalledpackage 'foreigner' 'armel' '0.5'
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  amdboot doxygen libc6 libc6-dev
+0 upgraded, 4 newly installed, 0 to remove and 2 not upgraded.
+Inst amdboot (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [amd64])
+Inst libc6 (1.0 unstable [amd64])
+Inst libc6-dev (1.0 unstable [amd64])
+Conf amdboot (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf libc6-dev (1.0 unstable [amd64])' aptget build-dep apt -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  amdboot doxygen libc6 libc6:armel libc6-dev libc6-dev:armel
+0 upgraded, 6 newly installed, 0 to remove and 2 not upgraded.
+Inst amdboot (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [amd64])
+Inst libc6:armel (1.0 unstable [armel])
+Inst libc6 (1.0 unstable [amd64])
+Inst libc6-dev:armel (1.0 unstable [armel])
+Inst libc6-dev (1.0 unstable [amd64])
+Conf amdboot (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf libc6:armel (1.0 unstable [armel])
+Conf libc6-dev (1.0 unstable [amd64])
+Conf libc6-dev:armel (1.0 unstable [armel])' aptget build-dep apt -s -a armel
+
+configarchitecture 'armel' 'amd64'
+
+# cool 0.5 is not M-A: allowed, so amd64 is not acceptable
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  cool:amd64
+The following NEW packages will be installed:
+  amdboot:amd64 cool doxygen libc6 libc6-dev
+0 upgraded, 5 newly installed, 1 to remove and 1 not upgraded.
+Remv cool:amd64 [0.5]
+Inst amdboot:amd64 (1.0 unstable [amd64])
+Inst cool (1.0 unstable [armel])
+Inst doxygen (1.0 unstable [armel])
+Inst libc6 (1.0 unstable [armel])
+Inst libc6-dev (1.0 unstable [armel])
+Conf amdboot:amd64 (1.0 unstable [amd64])
+Conf cool (1.0 unstable [armel])
+Conf doxygen (1.0 unstable [armel])
+Conf libc6 (1.0 unstable [armel])
+Conf libc6-dev (1.0 unstable [armel])' aptget build-dep apt -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  amdboot:amd64 doxygen libc6:amd64 libc6 libc6-dev:amd64 libc6-dev
+0 upgraded, 6 newly installed, 0 to remove and 2 not upgraded.
+Inst amdboot:amd64 (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [armel])
+Inst libc6 (1.0 unstable [armel])
+Inst libc6:amd64 (1.0 unstable [amd64])
+Inst libc6-dev (1.0 unstable [armel])
+Inst libc6-dev:amd64 (1.0 unstable [amd64])
+Conf amdboot:amd64 (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [armel])
+Conf libc6:amd64 (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [armel])
+Conf libc6-dev:amd64 (1.0 unstable [amd64])
+Conf libc6-dev (1.0 unstable [armel])' aptget build-dep apt -s -a amd64
+
+

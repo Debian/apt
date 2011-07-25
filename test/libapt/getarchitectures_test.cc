@@ -39,6 +39,12 @@ int main(int argc,char *argv[])
 	_config->Set("APT::Architecture", "armel");
 	vec = APT::Configuration::getArchitectures(false);
 	equals(vec.size(), 2);
+	equals(vec[0], "armel");
+	equals(vec[1], "i386");
+
+	_config->Set("APT::Architectures::2", "armel");
+	vec = APT::Configuration::getArchitectures(false);
+	equals(vec.size(), 2);
 	equals(vec[0], "i386");
 	equals(vec[1], "armel");
 

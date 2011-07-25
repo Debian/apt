@@ -1,4 +1,4 @@
-apt (0.8.15.3) UNRELEASED; urgency=low
+apt (0.8.15.3) unstable; urgency=low
 
   [ Michael Vogt ]
   * apt-pkg/acquire-item.cc:
@@ -20,6 +20,8 @@ apt (0.8.15.3) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - restore all important dependencies for garbage packages (LP: #806274)
     - do not require unused partial dirs in 'source' (Closes: #633510)
+    - buildconflicts effect all architectures
+    - implement MultiarchCross for build-dep and source (Closes: #632221)
   * apt-pkg/init.cc:
     - use CndSet in pkgInitConfig (Closes: #629617)
   * apt-pkg/depcache.cc:
@@ -32,8 +34,15 @@ apt (0.8.15.3) UNRELEASED; urgency=low
     - apply madison typofix from John Feuerstein, thanks! (Closes: #633455)
   * apt-pkg/policy.cc:
     - emit an error on unknown APT::Default-Release value (Closes: #407511)
+  * apt-pkg/aptconfiguration.cc:
+    - ensure that native architecture is if not specified otherwise the
+      first architecture in the Architectures vector
+  * apt-pkg/deb/deblistparser.cc:
+    - Strip only :any and :native if MultiArch should be stripped as it is
+      save to ignore them in non-MultiArch contexts but if the dependency
+      is a specific architecture (and not the native) do not strip
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 16 Jul 2011 16:43:37 +0200
+ -- Michael Vogt <mvo@debian.org>  Mon, 25 Jul 2011 15:04:43 +0200
 
 apt (0.8.15.2) unstable; urgency=high
 
