@@ -19,6 +19,7 @@ apt (0.8.15.3) UNRELEASED; urgency=low
     - restore all important dependencies for garbage packages (LP: #806274)
     - do not require unused partial dirs in 'source' (Closes: #633510)
     - buildconflicts effect all architectures
+    - implement MultiarchCross for build-dep and source (Closes: #632221)
   * apt-pkg/init.cc:
     - use CndSet in pkgInitConfig (Closes: #629617)
   * apt-pkg/depcache.cc:
@@ -39,7 +40,7 @@ apt (0.8.15.3) UNRELEASED; urgency=low
       save to ignore them in non-MultiArch contexts but if the dependency
       is a specific architecture (and not the native) do not strip
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 25 Jul 2011 12:46:19 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 25 Jul 2011 14:40:00 +0200
 
 apt (0.8.15.2) unstable; urgency=high
 

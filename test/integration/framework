@@ -151,6 +151,7 @@ setupenvironment() {
 
 configarchitecture() {
 	local CONFFILE=rootdir/etc/apt/apt.conf.d/01multiarch.conf
+	rm -f $CONFFILE
 	echo "APT::Architecture \"$1\";" > $CONFFILE
 	shift
 	while [ -n "$1" ]; do
@@ -427,6 +428,27 @@ Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb" >> $FILE
 " >> $FILE
 		done
 	done
+}
+
+insertsource() {
+	local RELEASE="$1"
+	local NAME="$2"
+	local ARCH="$3"
+	local VERSION="$4"
+	local DEPENDENCIES="$5"
+	local ARCHS=""
+	local SPATH="aptarchive/dists/${RELEASE}/main/source"
+	mkdir -p $SPATH
+	local FILE="${SPATH}/Sources"
+	echo "Package: $NAME
+Binary: $NAME
+Version: $VERSION
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: $ARCH" >> $FILE
+	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
+	echo "Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 ${NAME}_${VERSION}.tar.gz" >> $FILE
 }
 
 insertinstalledpackage() {
