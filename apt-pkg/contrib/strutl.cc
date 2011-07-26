@@ -1297,7 +1297,6 @@ string DeEscapeString(string &input)
             break;
          default:
             // FIXME: raise exception here?
-            std::cerr << "lala" << *it << endl;
             break;
       }
    }
