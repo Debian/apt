@@ -41,7 +41,7 @@ string DeQuoteString(const string &Str);
 string DeQuoteString(string::const_iterator const &begin, string::const_iterator const &end);
 
 // unescape (\0XX and \xXX) from a string
-string DeEscapeString(string &input);
+string DeEscapeString(const string &input);
 
 string SizeToStr(double Bytes);
 string TimeToStr(unsigned long Sec);
