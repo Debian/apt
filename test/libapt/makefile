@@ -46,3 +46,9 @@ PROGRAM = GlobalError${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = globalerror_test.cc
 include $(PROGRAM_H)
+
+# test the strutils stuff
+PROGRAM = StrUtil${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = strutil_test.cc
+include $(PROGRAM_H)

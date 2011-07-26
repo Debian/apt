@@ -1,11 +1,19 @@
-apt (0.8.15.4) unstable; urgency=low
+apt (0.8.15.4) UNRELEASEDunstable; urgency=low
 
   [ David Miller ]
   * apt-pkg/contrib/sha1.cc:
     - fix illegally casts of on-stack buffer to a type requiring more
       alignment than it has resulting in segfaults on sparc (Closes: #634696)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 26 Jul 2011 08:26:53 +0200
+  [ Michael Vogt ]
+  * apt-pkg/contrib/cdromutl.cc:
+    - fix escape problem when looking for the mounted devices
+  * apt-pkg/contrib/strutl.{h,cc}, test/libapt/strutil_test.cc:
+    - add new DeEscapeString() similar to DeQuoteString but
+      unescape character escapes like \0XX and \xXX (plus added
+      test)
+  
+ -- Michael Vogt <mvo@debian.org>  Tue, 26 Jul 2011 11:58:27 +0200
 
 apt (0.8.15.3) unstable; urgency=low
 
