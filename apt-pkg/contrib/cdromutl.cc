@@ -258,13 +258,9 @@ string FindMountPointForDevice(const char *devnode)
                if(TokSplitString(' ', buf, out, 10))
                {
                   fclose(f);
-                  // unescape \040 and return the path
-                  size_t pos;
+                  // unescape the \0XXX chars in the path
                   string mount_point = out[1];
-                  static const char *needle = "\\040";
-                  while ((pos = mount_point.find(needle)) != string::npos)
-                     mount_point.replace(pos, strlen(needle), " ");
-                  return mount_point;
+                  return DeEscapeString(mount_point);
                }
             }
          }

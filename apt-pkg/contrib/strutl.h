@@ -39,6 +39,10 @@ bool ParseCWord(const char *&String,string &Res);
 string QuoteString(const string &Str,const char *Bad);
 string DeQuoteString(const string &Str);
 string DeQuoteString(string::const_iterator const &begin, string::const_iterator const &end);
+
+// unescape (\0XXX and \xXX) from a string
+string DeEscapeString(string &input);
+
 string SizeToStr(double Bytes);
 string TimeToStr(unsigned long Sec);
 string Base64Encode(const string &Str);
