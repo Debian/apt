@@ -1240,7 +1240,68 @@ bool CheckDomainList(const string &Host,const string &List)
    return false;
 }
 									/*}}}*/
+// DeEscapeString - unescape (\0XX and \xXX) from a string      	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string DeEscapeString(const string &input)
+{
+   char tmp[3];
+   string::const_iterator it, escape_start;
+   string output, octal, hex;
+   for (it = input.begin(); it != input.end(); it++) 
+   {
+      // just copy non-escape chars
+      if (*it != '\\')
+      {
+         output += *it;
+         continue;
+      }
 
+      // deal with double escape
+      if (*it == '\\' && 
+          (it + 1 < input.end()) &&  it[1] == '\\')
+      {
+         // copy
+         output += *it;
+         // advance iterator one step further
+         it += 1;
+         continue;
+      }
+        
+      // ensure we have a char to read
+      if (it + 1 == input.end())
+         continue;
+
+      // read it
+      it++;
+      switch (*it)
+      {
+         case '0':
+            if (it + 2 <= input.end()) {
+               tmp[0] = it[1];
+               tmp[1] = it[2];
+               tmp[2] = 0;
+               output += (char)strtol(tmp, 0, 8);
+               it += 2;
+            }
+            break;
+         case 'x':
+            if (it + 2 <= input.end()) {
+               tmp[0] = it[1];
+               tmp[1] = it[2];
+               tmp[2] = 0;
+               output += (char)strtol(tmp, 0, 16);
+               it += 2;
+            }
+            break;
+         default:
+            // FIXME: raise exception here?
+            break;
+      }
+   }
+   return output;
+}
+									/*}}}*/
 // URI::CopyFrom - Copy from an object					/*{{{*/
 // ---------------------------------------------------------------------
 /* This parses the URI into all of its components */

@@ -1,3 +1,73 @@
+apt (0.8.15.4ubuntu1) UNRELASED; urgency=low
+
+  * merged from debian-sid
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 26 Jul 2011 12:24:59 +0200
+
+apt (0.8.15.4) UNRELEASEDunstable; urgency=low
+
+  [ David Miller ]
+  * apt-pkg/contrib/sha1.cc:
+    - fix illegally casts of on-stack buffer to a type requiring more
+      alignment than it has resulting in segfaults on sparc (Closes: #634696)
+
+  [ Michael Vogt ]
+  * apt-pkg/contrib/cdromutl.cc:
+    - fix escape problem when looking for the mounted devices
+  * apt-pkg/contrib/strutl.{h,cc}, test/libapt/strutil_test.cc:
+    - add new DeEscapeString() similar to DeQuoteString but
+      unescape character escapes like \0XX and \xXX (plus added
+      test)
+  * refresh po/*
+  
+ -- Michael Vogt <mvo@debian.org>  Tue, 26 Jul 2011 11:58:27 +0200
+
+apt (0.8.15.3) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/acquire-item.cc:
+    - improve error message for a expired Release file
+  * apt-pkg/algorithms.cc:
+    - Hold back packages that would enter "policy-broken" state on upgrade
+      when doing a "apt-get upgrade"
+  * cmdline/apt-get.cc:
+    - fix missing download progress in apt-get download
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcachegen.cc:
+    - fallback to memory if file is not writeable even if access()
+      told us the opposite before (e.g. in fakeroot 1.16) (Closes: #630591)
+  * doc/sources.list.5.xml:
+    - document available [options] for sources.list entries (Closes: 632441)
+  * doc/apt.conf.5.xml:
+    - document APT::Architectures list (Closes: #612102)
+  * cmdline/apt-get.cc:
+    - restore all important dependencies for garbage packages (LP: #806274)
+    - do not require unused partial dirs in 'source' (Closes: #633510)
+    - buildconflicts effect all architectures
+    - implement MultiarchCross for build-dep and source (Closes: #632221)
+  * apt-pkg/init.cc:
+    - use CndSet in pkgInitConfig (Closes: #629617)
+  * apt-pkg/depcache.cc:
+    - change default of APT::AutoRemove::SuggestsImportant to true
+  * cmdline/apt-key:
+    - use a tmpfile instead of /etc/apt/secring.gpg (Closes: #632596)
+  * debian/apt.postinst:
+    - remove /etc/apt/secring.gpg if it is an empty file
+  * doc/apt-cache.8.xml:
+    - apply madison typofix from John Feuerstein, thanks! (Closes: #633455)
+  * apt-pkg/policy.cc:
+    - emit an error on unknown APT::Default-Release value (Closes: #407511)
+  * apt-pkg/aptconfiguration.cc:
+    - ensure that native architecture is if not specified otherwise the
+      first architecture in the Architectures vector
+  * apt-pkg/deb/deblistparser.cc:
+    - Strip only :any and :native if MultiArch should be stripped as it is
+      save to ignore them in non-MultiArch contexts but if the dependency
+      is a specific architecture (and not the native) do not strip
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 25 Jul 2011 15:04:43 +0200
+
 apt (0.8.15.2ubuntu2) oneiric; urgency=low
 
   * cmdline/apt-get.cc:

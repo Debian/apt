@@ -54,6 +54,13 @@
 			<replaceable>target_release</replaceable>
 		</arg>
       </arg>
+      <arg>
+		<option>-a=</option>
+		<arg choice='plain'>
+			<replaceable>default_architecture</replaceable>
+		</arg>
+      </arg>
+
 
       <group choice="req">
          <arg choice='plain'>update</arg>
@@ -254,8 +261,10 @@
 
      <para>If the <option>--compile</option> option is specified
      then the package will be compiled to a binary .deb using
-     <command>dpkg-buildpackage</command>, if <option>--download-only</option>
-     is specified then the source package will not be unpacked.</para>
+     <command>dpkg-buildpackage</command> for the architecture as
+     defined by the <command>--host-architecture</command> option.
+     If <option>--download-only</option> is specified then the source package
+     will not be unpacked.</para>
 
      <para>A specific source version can be retrieved by postfixing the source name
      with an equals and then the version to fetch, similar to the mechanism
@@ -270,7 +279,9 @@
 
      <varlistentry><term>build-dep</term>
      <listitem><para><literal>build-dep</literal> causes apt-get to install/remove packages in an 
-     attempt to satisfy the build dependencies for a source package.</para></listitem>
+     attempt to satisfy the build dependencies for a source package. By default the dependencies are
+     satisfied to build the package nativly. If desired a host-architecture can be specified
+     with the <option>--host-architecture</option> option instead.</para></listitem>
      </varlistentry>
 
      <varlistentry><term>check</term>
@@ -431,6 +442,16 @@
      <varlistentry><term><option>-V</option></term><term><option>--verbose-versions</option></term>
      <listitem><para>Show full versions for upgraded and installed packages.
      Configuration Item: <literal>APT::Get::Show-Versions</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-a</option></term>
+                   <term><option>--host-architecture</option></term>
+     <listitem><para>This option controls the architecture packages are built for
+     by <command>apt-get source --compile</command> and how cross-builddependencies
+     are satisfied. By default is not set which means that the host architecture
+     is the same as the build architecture (which is defined by <literal>APT::Architecture</literal>)
+     Configuration Item: <literal>APT::Get::Host-Architecture</literal>
+     </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>-b</option></term><term><option>--compile</option></term>

@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'cool' 'all' '1.0-1'
+
+getcodenamefromsuite() {
+	if [ "$SUITE" = 'unstable' ]; then
+		echo -n 'sid'
+	else
+		echo -n "$SUITE"
+	fi
+}
+getreleaseversionfromsuite() {
+	if [ "$SUITE" = 'unstable' ]; then
+		echo -n '42.0'
+	else
+		echo -n '0.8.15'
+	fi
+}
+
+setupaptarchive
+
+passdist() {
+	msgtest "Test that target-release is accepted" $1
+	aptget dist-upgrade -t $1 -qq && msgpass || msgfail
+}
+
+faildist() {
+	msgtest "Test that target-release is refused" $1
+	aptget dist-upgrade -t $1 -qq 2> /dev/null && msgfail || msgpass
+}
+
+passdist unstable
+passdist sid
+faildist sidd
+faildist stable
+passdist 42.0
+passdist 42.*
+passdist 42*
+passdist 4*.0
+faildist 21.0
+faildist 21*

@@ -15,10 +15,12 @@ set -e
 
 case "$1" in
     configure)
-        if ! test -f /etc/apt/trusted.gpg; then
-                cp /usr/share/apt/ubuntu-archive.gpg /etc/apt/trusted.gpg
-        fi
-	apt-key update || true
+	SECRING='/etc/apt/secring.gpg'
+	# test if secring is an empty normal file
+	if test -f $SECRING -a ! -s $SECRING; then
+		rm -f $SECRING
+	fi
+	apt-key update
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
