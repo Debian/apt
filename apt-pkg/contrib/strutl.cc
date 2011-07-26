@@ -1242,10 +1242,10 @@ bool CheckDomainList(const string &Host,const string &List)
 									/*}}}*/
 // ProcessEscapeSequences        					/*{{{*/
 // ---------------------------------------------------------------------
-/*  */
+/* unescape (\0XX and \xXX) from a string */
 string DeEscapeString(string &input)
 {
-   char tmp[5];
+   char tmp[3];
    string::const_iterator it, escape_start;
    string output, octal, hex;
    for (it = input.begin(); it != input.end(); it++) 
@@ -1277,11 +1277,10 @@ string DeEscapeString(string &input)
       switch (*it)
       {
          case '0':
-            if (it + 3 <= input.end()) {
+            if (it + 2 <= input.end()) {
                tmp[0] = it[1];
                tmp[1] = it[2];
-               tmp[2] = it[3];
-               tmp[3] = 0;
+               tmp[2] = 0;
                output += (char)strtol(tmp, 0, 8);
                it += 2;
             }

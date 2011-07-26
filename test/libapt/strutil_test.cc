@@ -36,5 +36,11 @@ int main(int argc,char *argv[])
    output = DeEscapeString(input);
    equals(output, expected);
 
+   // the string that we actually need it for
+   input = "/media/Ubuntu\\04011.04\\040amd64";
+   expected = "/media/Ubuntu 11.04 amd64";
+   output = DeEscapeString(input);
+   equals(output, expected);
+
    return 0;
 }
