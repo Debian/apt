@@ -178,9 +178,9 @@ debPackagesIndex::debPackagesIndex(string const &URI, string const &Dist, string
 {
    if (Architecture == "native")
       Architecture = _config->Find("APT::Architecture");
-   string ReplacementItem = "Aquire::Debdelta::Replace-Rule::" + URI;//::URI::URI(URI);
-   string ReplacementDefault = _config->Find("Aquire::Debdelta::Replace-Rule::Default");
-   _config->Set(ReplacementItem, _config->Find(ReplacementItem, ReplacementDefault));
+   //string ReplacementItem = "Aquire::Debdelta::Replace-Rule::" + URI;//::URI::URI(URI);
+   //string ReplacementDefault = _config->Find("Aquire::Debdelta::Replace-Rule::Default");
+   //_config->Set(ReplacementItem, _config->Find(ReplacementItem, ReplacementDefault));
         
    //std::cerr << "==== Replacement rule: " << ReplacementItem
    //          << " => "<< ReplacementDefault << std::endl;

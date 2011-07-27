@@ -2125,7 +2125,8 @@ pkgAcqDebdelta::pkgAcqDebdelta(pkgAcquire *Owner,pkgSourceList *Sources,
          std::cerr << "Checking index: " << Index->Describe()
                    << "(Trusted=" << Index->IsTrusted() << ")\n";
       }
-      if (Index->IsTrusted()) {
+      if (Index->IsTrusted())
+      {
          Trusted = true;
 	 break;
       }
@@ -2143,11 +2144,25 @@ pkgAcqDebdelta::pkgAcqDebdelta(pkgAcquire *Owner,pkgSourceList *Sources,
       std::cerr << "    StoreFilename: " << StoreFilename << std::endl;
       std::cerr << "    DestFile     : " << DestFile << std::endl;
    }
-   DebdeltaStatus = Fetching;
-   if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error(_("I wasn't able to locate a file for the %s package. "
+   
+   if (QueueNext() == false)
+   {
+      if (DebdeltaStatus == Completed && DestFile == "")
+      {
+          new pkgAcqArchive(Owner, Sources, Recs, Version, StoreFilename);
+          Dequeue();
+          delete this;
+          return;
+      }
+      else if (_error->PendingError() == false)
+      {
+          _error->Error(_("I wasn't able to locate a file for the %s package. "
 		      "This might mean you need to manually fix this package."),
 		    Version.ParentPkg().Name());
+      }
+          
+   }
+   DebdeltaStatus = Fetching;
 }
 
 bool pkgAcqDebdelta::QueueNext()
@@ -2239,7 +2254,14 @@ bool pkgAcqDebdelta::QueueNext()
       else
       {
 	 Desc.URI = flNotFile(Index->ArchiveURI(PkgFile)) + DebdeltaName;
-	 ReplaceURI();
+	 if (ReplaceURI() == false)
+         { 
+             Complete = true;
+	     Status = StatDone;
+             DebdeltaStatus = Completed;
+	     StoreFilename = DestFile = "";
+             return false;
+         }
       }
       Desc.Description = Desc.URI; // "[Debdelta] " + Index->ArchiveInfo(Version);
       Desc.Owner = this;
@@ -2368,7 +2390,8 @@ void pkgAcqDebdelta::Finished()
 
 bool pkgAcqDebdelta::ReplaceURI()
 {
-   const Configuration::Item* item = _config->Tree("Aquire::Debdelta::Replace-Rule");
+	// if we cant find a replace URI, just queue the deb instead. remove setting the rep rules from other places.
+    const Configuration::Item* item = _config->Tree("Aquire::Debdelta::Replace-Rule");
    for (item = item->Child; item != 0; item = item->Next)
    {
       size_t pos = 0;
@@ -2384,7 +2407,11 @@ bool pkgAcqDebdelta::ReplaceURI()
          return true;
       }
    }
-   return _error->Error("[Debdelta] Could not find a replacement URI.");
+    // no replacement rule found for this URI. Therefore, queue a reagular deb for downloading.
+    if (Debug)
+        std::cerr << "[Debdelta] No replacement rule => " << Desc.URI << std::endl;
+    
+   return false;
 }
 
 bool IndexTarget::IsOptional() const {

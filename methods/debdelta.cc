@@ -100,7 +100,7 @@ bool DebdeltaMethod::Fetch(FetchItem *Itm)						/*{{{*/
 	 std::cerr << Args[0] << " " << Args[1] << " " << Args[2] << " " << Args[3] << " "
                    << Args[4] << std::endl;
       }
-      std::cerr << "\n\n[Debdelta] Patching " << ToFile << "..." << std::endl;
+      std::cerr << "[Debdelta] Patching " << ToFile << "..." << std::endl;
       execv(Args[0], (char **)Args);
       return _error->Error("[Debdelta] Could not execv debpatch.");
    }

@@ -1139,12 +1139,12 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (DebBytes != FetchBytes)
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-      ioprintf(c1out,_("Need to get %sB/%sB of archives.\n"),
+      ioprintf(c1out,_("Need to get at most %sB/%sB of archives.\n"),
 	       SizeToStr(FetchBytes).c_str(),SizeToStr(DebBytes).c_str());
    else if (DebBytes != 0)
       //TRANSLATOR: The required space between number and unit is already included
       // in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-      ioprintf(c1out,_("Need to get %sB of archives.\n"),
+      ioprintf(c1out,_("Need to get at most %sB of archives.\n"),
 	       SizeToStr(DebBytes).c_str());
 
    // Size delta
