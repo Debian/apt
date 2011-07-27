@@ -113,4 +113,6 @@ class pkgDPkgPM : public pkgPackageManager
    virtual ~pkgDPkgPM();
 };
 
+void SigINT(int sig);
+
 #endif

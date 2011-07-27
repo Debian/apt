@@ -16,6 +16,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/packagemanager.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -888,7 +889,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    OpenLog();
 
    // this loop is runs once per operation
-   for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
+   for (vector<Item>::const_iterator I = List.begin(); I != List.end() && !pkgPackageManager::SigINTStop;)
    {
       // Do all actions with the same Op in one run
       vector<Item>::const_iterator J = I;
@@ -920,7 +921,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // the argument list is split in a way that A depends on B
       // and they are in the same "--configure A B" run
       // - with the split they may now be configured in different
-      //   runs 
+      //   runs
       if (J - I > (signed)MaxArgs)
 	 J = I + MaxArgs;
       
@@ -1062,7 +1063,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 it to all processes in the group. Since dpkg ignores the signal 
 	 it doesn't die but we do! So we must also ignore it */
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
-      sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
+      sighandler_t old_SIGINT = signal(SIGINT,SigINT);
 
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
@@ -1207,6 +1208,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // Restore sig int/quit
 	    signal(SIGQUIT,old_SIGQUIT);
 	    signal(SIGINT,old_SIGINT);
+
 	    signal(SIGHUP,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
@@ -1247,6 +1249,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+      
       signal(SIGHUP,old_SIGHUP);
 
       if(master >= 0) 
@@ -1308,6 +1311,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    Cache.writeStateFile(NULL);
    return true;
 }
+
+void SigINT(int sig) {
+   cout << " -- SIGINT -- " << endl;
+   if (_config->FindB("APT::Immediate-Configure-All",false)) 
+      pkgPackageManager::SigINTStop = true;
+} 
 									/*}}}*/
 // pkgDpkgPM::Reset - Dump the contents of the command list		/*{{{*/
 // ---------------------------------------------------------------------

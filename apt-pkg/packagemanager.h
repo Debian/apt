@@ -42,6 +42,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    public:
    
    enum OrderResult {Completed,Failed,Incomplete};
+   static bool SigINTStop;
    
    protected:
    string *FileNames;
@@ -59,7 +60,6 @@ class pkgPackageManager : protected pkgCache::Namespace
    */
    std::set<std::string> disappearedPkgs;
 
-   bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
    void ImmediateAdd(PkgIterator P, bool UseInstallVer, unsigned const int &Depth = 0);
    virtual OrderResult OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
@@ -76,8 +76,6 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool SmartUnPack(PkgIterator Pkg, bool const Immediate);
    bool SmartRemove(PkgIterator Pkg);
    bool EarlyRemove(PkgIterator Pkg);  
-   bool VerifyAndConfigure(PkgIterator Pkg, pkgOrderList &OList);
-   bool VerifyConfigure(PkgIterator Pkg, pkgOrderList &OList); 
    
    // The Actual installation implementation
    virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
