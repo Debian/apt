@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'cool' 'amd64' '1.0'
+
+setupaptarchive 2> /dev/null
+
+echo 'NotAutomatic: yes' >> aptarchive/dists/unstable/Release
+
+signreleasefiles
+find aptarchive/dists -name 'InRelease' -delete
+
+rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt
+
+OUTPUT="$(aptget update 2>&1)"
+msgtest 'Check that parsing happens without warnings' 'with missing newline'
+if echo "${OUTPUT}" | grep '^W:' > /dev/null; then
+	msgfail
+	echo "${OUTPUT}"
+else
+	msgpass
+fi

@@ -805,6 +805,10 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       for (++dataStart; *dataStart == ' '; ++dataStart);
       char* dataEnd = dataStart;
       for (++dataEnd; *dataEnd != '\0'; ++dataEnd);
+      // The last char should be a newline, but we can never be sure: #633350
+      char* lineEnd = dataEnd;
+      for (--lineEnd; *lineEnd == '\r' || *lineEnd == '\n'; --lineEnd);
+      ++lineEnd;
 
       // which datastorage need to be updated
       map_ptrloc* writeTo = NULL;
@@ -819,7 +823,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       APT_PARSER_WRITETO(FileI->Label, "Label")
       #undef APT_PARSER_WRITETO
       #define APT_PARSER_FLAGIT(X) else if (strncmp(#X, buffer, len) == 0) \
-	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, dataEnd-1);
+	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, lineEnd);
       APT_PARSER_FLAGIT(NotAutomatic)
       APT_PARSER_FLAGIT(ButAutomaticUpgrades)
       #undef APT_PARSER_FLAGIT
