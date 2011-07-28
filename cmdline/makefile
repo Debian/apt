@@ -73,7 +73,7 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-internal-solver.cc
 include $(PROGRAM_H)
 
-# The internal solver acting as an external
+# This just dumps out the state
 PROGRAM=apt-dump-solver
 SLIBS = -lapt-pkg $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
