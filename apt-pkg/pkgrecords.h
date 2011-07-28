@@ -69,7 +69,10 @@ class pkgRecords::Parser						/*{{{*/
    virtual string LongDesc() {return string();};
    virtual string Name() {return string();};
    virtual string Homepage() {return string();}
-   
+
+   // An arbitrary custom field
+   virtual string RecordField(const char *fieldName) { return string();};
+
    // The record in binary form
    virtual void GetRec(const char *&Start,const char *&Stop) {Start = Stop = 0;};
    

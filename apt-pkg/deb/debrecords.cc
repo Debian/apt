@@ -101,6 +101,15 @@ string debRecordParser::Maintainer()
    return Section.FindS("Maintainer");
 }
 									/*}}}*/
+// RecordParser::RecordField - Return the value of an arbitrary field       /*{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::RecordField(const char *fieldName)
+{
+   return Section.FindS(fieldName);
+}
+
+                                                                        /*}}}*/
 // RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

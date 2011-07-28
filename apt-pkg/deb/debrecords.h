@@ -50,6 +50,9 @@ class debRecordParser : public pkgRecords::Parser
    virtual string Name();
    virtual string Homepage();
 
+   // An arbitrary custom field
+   virtual string RecordField(const char *fieldName);
+
    virtual void GetRec(const char *&Start,const char *&Stop);
    
    debRecordParser(string FileName,pkgCache &Cache);
