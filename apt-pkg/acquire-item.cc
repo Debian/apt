@@ -2071,13 +2071,3 @@ string pkgAcqFile::Custom600Headers()
    return "";
 }
 									/*}}}*/
-bool IndexTarget::IsOptional() const {
-   if (strncmp(ShortDesc.c_str(), "Translation", 11) != 0)
-      return false;
-   return true;
-}
-bool IndexTarget::IsSubIndex() const {
-   if (ShortDesc != "TranslationIndex")
-      return false;
-   return true;
-}

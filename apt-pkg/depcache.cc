@@ -1512,7 +1512,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
       return true;
    else if(Dep->Type == pkgCache::Dep::Recommends) 
    {
-      if ( _config->FindB("APT::Install-Recommends", false))
+      if (InstallRecommends)
 	 return true;
       // we suport a special mode to only install-recommends for certain
       // sections
@@ -1523,7 +1523,7 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
 	 return true;
    }
    else if(Dep->Type == pkgCache::Dep::Suggests)
-     return _config->FindB("APT::Install-Suggests", false);
+      return InstallSuggests;
 
    return false;
 }
