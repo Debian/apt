@@ -916,8 +916,11 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
 /* This just verifies that each file in the list of index files exists,
    has matching attributes with the cache and the cache does not have
    any extra files. */
-static bool CheckValidity(const string &CacheFile, FileIterator Start, 
-                          FileIterator End,MMap **OutMap = 0)
+static bool CheckValidity(const string &CacheFile, 
+                          pkgSourceList &List,
+                          FileIterator Start, 
+                          FileIterator End,
+                          MMap **OutMap = 0)
 {
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
    // No file, certainly invalid
@@ -925,6 +928,13 @@ static bool CheckValidity(const string &CacheFile, FileIterator Start,
    {
       if (Debug == true)
 	 std::clog << "CacheFile doesn't exist" << std::endl;
+      return false;
+   }
+
+   if (List.GetLastModifiedTime() < GetModificationTime(CacheFile))
+   {
+      if (Debug == true)
+	 std::clog << "sources.list is newer than the cache" << std::endl;
       return false;
    }
 
@@ -1153,7 +1163,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       Progress->OverallProgress(0,1,1,_("Reading package lists"));
 
    // Cache is OK, Fin.
-   if (CheckValidity(CacheFile,Files.begin(),Files.end(),OutMap) == true)
+   if (CheckValidity(CacheFile, List, Files.begin(),Files.end(),OutMap) == true)
    {
       if (Progress != NULL)
 	 Progress->OverallProgress(1,1,1,_("Reading package lists"));
@@ -1206,7 +1216,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    // Lets try the source cache.
    unsigned long CurrentSize = 0;
    unsigned long TotalSize = 0;
-   if (CheckValidity(SrcCacheFile,Files.begin(),
+   if (CheckValidity(SrcCacheFile, List, Files.begin(),
 		     Files.begin()+EndOfSource) == true)
    {
       if (Debug == true)
