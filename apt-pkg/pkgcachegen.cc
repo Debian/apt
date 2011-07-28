@@ -98,6 +98,7 @@ pkgCacheGenerator::~pkgCacheGenerator()
       return;
    
    Cache.HeaderP->Dirty = false;
+   Cache.HeaderP->CacheFileSize = Map.Size();
    Map.Sync(0,sizeof(pkgCache::Header));
 }
 									/*}}}*/
@@ -642,7 +643,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 	       bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
 	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
 	       {
-		  if (*A == Arch)
+		  if (Arch == 0 || *A == Arch)
 		     continue;
 		  /* We allow only one installed arch at the time
 		     per group, therefore each group member conflicts

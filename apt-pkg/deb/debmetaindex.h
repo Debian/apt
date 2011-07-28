@@ -19,12 +19,16 @@ class debReleaseIndex : public metaIndex {
    };
 
    private:
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
    std::map<string, vector<debSectionEntry const*> > ArchEntries;
+   enum { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
 
    public:
 
    debReleaseIndex(string const &URI, string const &Dist);
-   ~debReleaseIndex();
+   debReleaseIndex(string const &URI, string const &Dist, bool const Trusted);
+   virtual ~debReleaseIndex();
 
    virtual string ArchiveURI(string const &File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
@@ -41,6 +45,7 @@ class debReleaseIndex : public metaIndex {
    string TranslationIndexURISuffix(const char *Type, const string &Section) const;
    virtual vector <pkgIndexFile *> *GetIndexFiles();
 
+   void SetTrusted(bool const Trusted);
    virtual bool IsTrusted() const;
 
    void PushSectionEntry(vector<string> const &Archs, const debSectionEntry *Entry);

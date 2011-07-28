@@ -84,6 +84,8 @@ pkgCache::Header::Header()
    memset(PkgHashTable,0,sizeof(PkgHashTable));
    memset(GrpHashTable,0,sizeof(GrpHashTable));
    memset(Pools,0,sizeof(Pools));
+
+   CacheFileSize = 0;
 }
 									/*}}}*/
 // Cache::Header::CheckSizes - Check if the two headers have same *sz	/*{{{*/
@@ -154,6 +156,9 @@ bool pkgCache::ReMap(bool const &Errorchecks)
        HeaderP->MinorVersion != DefHeader.MinorVersion ||
        HeaderP->CheckSizes(DefHeader) == false)
       return _error->Error(_("The package cache file is an incompatible version"));
+
+   if (Map.Size() < HeaderP->CacheFileSize)
+      return _error->Error(_("The package cache file is corrupted, it is too small"));
 
    // Locate our VS..
    if (HeaderP->VerSysName == 0 ||
@@ -748,9 +753,6 @@ bool pkgCache::VerIterator::Automatic() const
 	 return true;
    return false;
 }
-									/*}}}*/
-// VerIterator::Pseudo - deprecated no-op method			/*{{{*/
-bool pkgCache::VerIterator::Pseudo() const { return false; }
 									/*}}}*/
 // VerIterator::NewestFile - Return the newest file version relation	/*{{{*/
 // ---------------------------------------------------------------------

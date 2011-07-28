@@ -39,6 +39,10 @@ class metaIndex
    virtual vector<pkgIndexFile *> *GetIndexFiles() = 0; 
    virtual bool IsTrusted() const = 0;
 
+   metaIndex(string const &URI, string const &Dist, char const * const Type) :
+		Indexes(NULL), Type(Type), URI(URI), Dist(Dist) {
+   }
+
    virtual ~metaIndex() {
       if (Indexes == 0)
 	 return;

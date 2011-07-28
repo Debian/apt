@@ -117,8 +117,13 @@
    <itemizedlist><listitem><para><literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
    can be used to specify for which architectures packages information should
    be downloaded. If this option is not set all architectures defined by the
-   <literal>APT::Architectures</literal> option will be downloaded.</para>
-   </listitem></itemizedlist></para>
+   <literal>APT::Architectures</literal> option will be downloaded.</para></listitem>
+   <listitem><para><literal>trusted=yes</literal> can be set to indicate that packages
+   from this source are always authenificated even if the <filename>Release</filename> file
+   is not signed or the signature can't be checked. This disables parts of &apt-secure;
+   and should therefore only be used in a local and trusted context. <literal>trusted=no</literal>
+   is the opposite which handles even correctly authenificated sources as not authenificated.</para></listitem>
+   </itemizedlist></para>
 
    <para>It is important to list sources in order of preference, with the most
    preferred source listed first. Typically this will result in sorting

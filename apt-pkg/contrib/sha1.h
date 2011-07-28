@@ -21,30 +21,11 @@
 using std::string;
 using std::min;
 
-class SHA1Summation;
+#include "hashsum_template.h"
 
-class SHA1SumValue
-{
-   friend class SHA1Summation;
-   unsigned char Sum[20];
-   
-   public:
+typedef  HashSumValue<160> SHA1SumValue;
 
-   // Accessors
-   bool operator ==(const SHA1SumValue &rhs) const; 
-   string Value() const;
-   inline void Value(unsigned char S[20])
-         {for (int I = 0; I != sizeof(Sum); I++) S[I] = Sum[I];};
-   inline operator string() const {return Value();};
-   bool Set(string Str);
-   inline void Set(unsigned char S[20]) 
-         {for (int I = 0; I != sizeof(Sum); I++) Sum[I] = S[I];};
-
-   SHA1SumValue(string Str);
-   SHA1SumValue();
-};
-
-class SHA1Summation
+class SHA1Summation : public SummationImplementation
 {
    /* assumes 64-bit alignment just in case */
    unsigned char Buffer[64] __attribute__((aligned(8)));
@@ -53,12 +34,9 @@ class SHA1Summation
    bool Done;
    
    public:
+   bool Add(const unsigned char *inbuf, unsigned long inlen);
+   using SummationImplementation::Add;
 
-   bool Add(const unsigned char *inbuf,unsigned long inlen);
-   inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
-   bool AddFD(int Fd,unsigned long Size);
-   inline bool Add(const unsigned char *Beg,const unsigned char *End) 
-                  {return Add(Beg,End-Beg);};
    SHA1SumValue Result();
    
    SHA1Summation();

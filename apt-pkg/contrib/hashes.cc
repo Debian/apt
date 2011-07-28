@@ -23,7 +23,7 @@
 
 const char* HashString::_SupportedHashes[] = 
 {
-   "SHA256", "SHA1", "MD5Sum", NULL
+   "SHA512", "SHA256", "SHA1", "MD5Sum", NULL
 };
 
 HashString::HashString()
@@ -53,27 +53,32 @@ HashString::HashString(string StringedHash)				/*{{{*/
 									/*}}}*/
 bool HashString::VerifyFile(string filename) const			/*{{{*/
 {
-   FileFd fd;
-   MD5Summation MD5;
-   SHA1Summation SHA1;
-   SHA256Summation SHA256;
    string fileHash;
 
    FileFd Fd(filename, FileFd::ReadOnly);
-   if(Type == "MD5Sum") 
+   if(Type == "MD5Sum")
    {
+      MD5Summation MD5;
       MD5.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)MD5.Result();
-   } 
+   }
    else if (Type == "SHA1")
    {
+      SHA1Summation SHA1;
       SHA1.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)SHA1.Result();
-   } 
-   else if (Type == "SHA256") 
+   }
+   else if (Type == "SHA256")
    {
+      SHA256Summation SHA256;
       SHA256.AddFD(Fd.Fd(), Fd.Size());
       fileHash = (string)SHA256.Result();
+   }
+   else if (Type == "SHA512")
+   {
+      SHA512Summation SHA512;
+      SHA512.AddFD(Fd.Fd(), Fd.Size());
+      fileHash = (string)SHA512.Result();
    }
    Fd.Close();
 
@@ -101,7 +106,8 @@ string HashString::toStr() const
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Hashes::AddFD(int Fd,unsigned long Size)
+bool Hashes::AddFD(int const Fd,unsigned long Size, bool const addMD5,
+		   bool const addSHA1, bool const addSHA256, bool const addSHA512)
 {
    unsigned char Buf[64*64];
    int Res = 0;
@@ -112,13 +118,18 @@ bool Hashes::AddFD(int Fd,unsigned long Size)
       if (!ToEOF) n = min(Size,(unsigned long)n);
       Res = read(Fd,Buf,n);
       if (Res < 0 || (!ToEOF && (unsigned) Res != n)) // error, or short read
-         return false;
+	 return false;
       if (ToEOF && Res == 0) // EOF
-         break;
+	 break;
       Size -= Res;
-      MD5.Add(Buf,Res);
-      SHA1.Add(Buf,Res);
-      SHA256.Add(Buf,Res);
+      if (addMD5 == true)
+	 MD5.Add(Buf,Res);
+      if (addSHA1 == true)
+	 SHA1.Add(Buf,Res);
+      if (addSHA256 == true)
+	 SHA256.Add(Buf,Res);
+      if (addSHA512 == true)
+	 SHA512.Add(Buf,Res);
    }
    return true;
 }

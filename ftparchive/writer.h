@@ -63,6 +63,7 @@ class FTWScanner
    bool DoMD5;
    bool DoSHA1;
    bool DoSHA256;
+   bool DoSHA512;
 
    unsigned long DeLinkLimit;
    string InternalPrefix;
@@ -195,6 +196,7 @@ protected:
       string MD5;
       string SHA1;
       string SHA256;
+      string SHA512;
       // Limited by FileFd::Size()
       unsigned long size;
       ~CheckSum() {};

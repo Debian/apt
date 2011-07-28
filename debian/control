@@ -7,7 +7,11 @@ Uploaders: Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>,
  Christian Perrier <bubulle@debian.org>, Daniel Burrows <dburrows@debian.org>,
  Julian Andres Klode <jak@debian.org>
 Standards-Version: 3.9.2
-Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 7.2.3~), libdb-dev, gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.0), zlib1g-dev | libz-dev, debiandoc-sgml, xsltproc, docbook-xsl, docbook-xml, po4a (>= 0.34-2), autotools-dev, autoconf, automake, doxygen, gcc-4.6 (>= 4.6.0-6ubuntu2)
+Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 7.2.3~), libdb-dev,
+ gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.0), 
+ zlib1g-dev | libz-dev, debiandoc-sgml, xsltproc, docbook-xsl, docbook-xml, 
+ po4a (>= 0.34-2), autotools-dev, autoconf, automake, doxygen,
+ gcc-4.6 (>= 4.6.0-6ubuntu2)
 Build-Conflicts: autoconf2.13, automake1.4
 Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
 Vcs-Browser: http://bzr.debian.org/loggerhead/apt/debian-sid/
@@ -16,17 +20,50 @@ Package: apt
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnupg
 Replaces: manpages-pl (<< 20060617-3~)
-Provides: ${libapt-pkg:provides}
 Recommends: ubuntu-keyring
 Conflicts: python-apt (<< 0.7.93.2~)
 Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, bzip2, lzma, python-apt
-Description: Advanced front-end for dpkg
- This is Debian's next generation front-end for the dpkg package manager.
- It provides the apt-get utility and APT dselect method that provides a 
- simpler, safer way to install and upgrade packages.
+Description: APT's commandline package manager
+ This package provides commandline tools for searching and
+ managing as well as querying information about packages
+ as a low-level access to all features of the libapt-pkg library.
  .
- APT features complete installation ordering, multiple source capability
- and several other unique features, see the Users Guide in apt-doc.
+ These include:
+  * apt-get for retrieval of packages and information about them
+    from authenticated sources and for installation, upgrade and
+    removal of packages together with their dependencies
+  * apt-cache for querying available information about installed
+    as well as installable packages
+  * apt-cdrom to use removable media as a source for packages
+  * apt-config as an interface to the configuration settings
+  * apt-key as an interface to manage authentication keys
+
+Package: libapt-pkg4.11
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: APT's package managment runtime library
+ This library provides the common functionality for searching and
+ managing packages as well as information about packages.
+ Higher-level package managers can depend upon this library.
+ .
+ This includes:
+  * retrieval of information about packages from multiple sources
+  * retrieval of packages and all dependent packages
+    needed to satisfy a request either through an internal
+    solver or by interfacing with an external one
+  * authenticating the sources and validating the retrieved data
+  * installation and removal of packages in the system
+  * providing different transports to retrieve data over cdrom, ftp,
+    http, rsh as well as an interface to add more transports like
+    https (apt-transport-https) and debtorrent (apt-transport-debtorrent).
+
+Package: libapt-inst1.3
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: APT's deb package format runtime library
+ This library provides methods to query and extract information 
+ from deb packages. This includes the control data and the package
+ file content.
 
 Package: apt-doc
 Architecture: all
@@ -34,13 +71,13 @@ Priority: optional
 Depends: ${misc:Depends}
 Section: doc
 Description: Documentation for APT
- This package contains the user guide and offline guide, for APT, an
- Advanced Package Tool.
+ This package contains the user guide and offline guide for various
+ APT tools which are provided in a html and a text-only version.
 
 Package: libapt-pkg-dev
 Architecture: any
 Priority: optional
-Depends: apt (= ${binary:Version}), apt-utils (= ${binary:Version}), ${libapt-pkg:provides}, ${libapt-inst:provides}, ${misc:Depends}, zlib1g-dev | zlib-dev
+Depends: ${libapt-pkg-name} (= ${binary:Version}), ${libapt-inst-name} (= ${binary:Version}), ${misc:Depends}, zlib1g-dev | zlib-dev
 Section: libdevel
 Description: Development files for APT's libapt-pkg and libapt-inst
  This package contains the header files and libraries for
@@ -62,19 +99,25 @@ Description: Documentation for APT development
 Package: apt-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Provides: ${libapt-inst:provides}
 Description: APT utility programs
- This package contains some APT utility programs such as apt-ftparchive,
- apt-sortpkgs and apt-extracttemplates.
+ This package contains some less used commandline utilities related
+ to package managment with APT.
  .
- apt-extracttemplates is used by debconf to prompt for configuration 
- questions before installation. apt-ftparchive is used to create Package
- and other index files. apt-sortpkgs is a Package/Source file normalizer.
+  * apt-extracttemplates is used by debconf to prompt for configuration
+    questions before installation.
+  * apt-ftparchive is used to create Packages and other index files
+    needed to publish an archive of debian packages
+  * apt-sortpkgs is a Packages/Sources file normalizer.
 
 Package: apt-transport-https
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Priority: optional
-Description: APT https transport
- This package contains a APT https transport. It makes it possible to
- use 'deb https://foo distro main' lines in the sources.list.
+Description: https download transport for APT
+ This package enables the usage of 'deb https://foo distro main' lines
+ in the /etc/apt/sources.list so that all package managers using the
+ libapt-pkg library can access metadata and packages available in sources
+ accessable over https (Hypertext Transfer Protocol Secure).
+ .
+ This transport supports server as well as client authenification
+ with certificates.
