@@ -10,6 +10,13 @@ apt (0.8.15.2) unstable; urgency=high
     - add new DeEscapeString() similar to DeQuoteString but
       unescape character escapes like \0XX and \xXX (plus added
       test)
+  * apt-pkg/contrib/fileutl.{cc,h}:
+    - add GetModificationTime() helper
+  * apt-pkg/pkgcachegen.cc:
+    - regenerate the cache if the sources.list changes to ensure
+      that changes in the ordering there will be honored by apt
+  * apt-pkg/sourcelist.{cc,h}:
+    - add pkgSourceList::GetLastModifiedTime() helper
 
  -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
 
