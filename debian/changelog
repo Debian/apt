@@ -20,6 +20,13 @@ apt (0.8.16~exp4) UNRELEASED; urgency=low
   * [ABI break] merge patch from Jonathan Thomas to speed up the
     depcache by caching the install-recommends and install-suggests
     values
+  * apt-pkg/contrib/fileutl.{cc,h}:
+    - add GetModificationTime() helper
+  * apt-pkg/pkgcachegen.cc:
+    - regenerate the cache if the sources.list changes to ensure
+      that changes in the ordering there will be honored by apt
+  * apt-pkg/sourcelist.{cc,h}:
+    - add pkgSourceList::GetLastModifiedTime() helper
 
  -- Julian Andres Klode <jak@debian.org>  Wed, 20 Jul 2011 16:23:55 +0200
 
