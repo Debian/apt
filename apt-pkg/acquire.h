@@ -349,6 +349,8 @@ class pkgAcquire
     */
    bool Setup(pkgAcquireStatus *Progress = NULL, string const &Lock = "");
 
+   void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
+
    /** \brief Construct a new pkgAcquire. */
    pkgAcquire(pkgAcquireStatus *Log) __deprecated;
    pkgAcquire();

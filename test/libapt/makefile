@@ -52,3 +52,9 @@ PROGRAM = HashSums${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = hashsums_test.cc
 include $(PROGRAM_H)
+
+# test the strutils stuff
+PROGRAM = StrUtil${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = strutil_test.cc
+include $(PROGRAM_H)

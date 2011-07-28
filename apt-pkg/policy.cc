@@ -56,8 +56,22 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
    // The config file has a master override.
    string DefRel = _config->Find("APT::Default-Release");
    if (DefRel.empty() == false)
-      CreatePin(pkgVersionMatch::Release,"",DefRel,990);
-      
+   {
+      bool found = false;
+      // FIXME: make ExpressionMatches static to use it here easily
+      pkgVersionMatch vm("", pkgVersionMatch::None);
+      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
+      {
+	 if ((F->Archive != 0 && vm.ExpressionMatches(DefRel, F.Archive()) == true) ||
+	     (F->Codename != 0 && vm.ExpressionMatches(DefRel, F.Codename()) == true) ||
+	     (F->Version != 0 && vm.ExpressionMatches(DefRel, F.Version()) == true))
+	    found = true;
+      }
+      if (found == false)
+	 _error->Error(_("The value '%s' is invalid for APT::Default-Release as such a release is not available in the sources"), DefRel.c_str());
+      else
+	 CreatePin(pkgVersionMatch::Release,"",DefRel,990);
+   }
    InitDefaults();
 }
 									/*}}}*/

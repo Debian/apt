@@ -345,7 +345,7 @@ void Configuration::Set(const char *Name,const string &Value)
 // Configuration::Set - Set an integer value				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void Configuration::Set(const char *Name,int const Value)
+void Configuration::Set(const char *Name,int const &Value)
 {
    Item *Itm = Lookup(Name,true);
    if (Itm == 0)

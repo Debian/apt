@@ -352,7 +352,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 
 	if (archs.empty() == true ||
 	    std::find(archs.begin(), archs.end(), arch) == archs.end())
-		archs.push_back(arch);
+		archs.insert(archs.begin(), arch);
 
 	// erase duplicates and empty strings
 	for (std::vector<string>::reverse_iterator a = archs.rbegin();
