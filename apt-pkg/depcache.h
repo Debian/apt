@@ -258,13 +258,21 @@ class pkgDepCache : protected pkgCache::Namespace
    class Policy
    {
       public:
-      
+      Policy() {
+         InstallRecommends = _config->FindB("APT::Install-Recommends", false);
+         InstallSuggests = _config->FindB("APT::Install-Suggests", false);
+      }
+
       virtual VerIterator GetCandidateVer(PkgIterator const &Pkg);
       virtual bool IsImportantDep(DepIterator const &Dep);
       virtual signed short GetPriority(PkgIterator const &Pkg);
       virtual signed short GetPriority(PkgFileIterator const &File);
 
       virtual ~Policy() {};
+
+      private:
+      bool InstallRecommends;
+      bool InstallSuggests;
    };
 
    private:
