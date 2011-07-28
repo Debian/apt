@@ -646,8 +646,9 @@ class pkgAcqIndexTrans : public pkgAcqIndex
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
-struct IndexTarget
+class IndexTarget
 {
+ public:
    /** \brief A URI from which the index file can be downloaded. */
    string URI;
 
@@ -662,14 +663,28 @@ struct IndexTarget
     */
    string MetaKey;
 
-   //FIXME: We should use virtual methods here instead…
-   bool IsOptional() const;
-   bool IsSubIndex() const;
+   virtual bool IsOptional() const {
+      return false;
+   }
+   virtual bool IsSubIndex() const {
+      return false;
+   }
 };
 									/*}}}*/
 /** \brief Information about an optional index file. */			/*{{{*/
-struct OptionalIndexTarget : public IndexTarget
+class OptionalIndexTarget : public IndexTarget
 {
+   virtual bool IsOptional() const {
+      return true;
+   }
+};
+									/*}}}*/
+/** \brief Information about an subindex index file. */			/*{{{*/
+class SubIndexTarget : public IndexTarget
+{
+   virtual bool IsSubIndex() const {
+      return true;
+   }
 };
 									/*}}}*/
 
