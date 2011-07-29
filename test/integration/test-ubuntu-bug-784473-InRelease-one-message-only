@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'apt' 'i386' '0.8.11'
+
+setupaptarchive
+
+rm -rf rootdir/var/lib/apt/lists
+
+find aptarchive/ -name 'Release.gpg' -delete
+find aptarchive/ -name 'InRelease' -exec cp {} {}.old \;
+
+for RELEASE in $(find aptarchive/ -name 'InRelease'); do
+	(echo 'Origin: Marvin
+Label: Marvin
+Suite: experimental
+Codename: experimental
+MD5Sum:
+ 65fd410587b6978de2277f2912523f09     9360 Packages
+ d27b294ed172a1fa9dd5a53949914c5d     4076 Packages.bz2
+ 2182897e0a2a0c09e760beaae117a015     2023 Packages.diff/Index
+ 1b895931853981ad8204d2439821b999     4144 Packages.gz'; echo; cat ${RELEASE}.old;) > ${RELEASE}
+done
+aptget update -qq > /dev/null 2> starts-with-unsigned.msg
+sed -i 's#File .*InRelease#File InRelease#' starts-with-unsigned.msg
+testfileequal starts-with-unsigned.msg "W: GPG error: file: unstable InRelease: File InRelease doesn't start with a clearsigned message"

@@ -78,7 +78,7 @@
    <para>The format for a <filename>sources.list</filename> entry using the
    <literal>deb</literal> and <literal>deb-src</literal> types is:</para>
 
-   <literallayout>deb uri distribution [component1] [component2] [...]</literallayout>
+   <literallayout>deb [ options ] uri distribution [component1] [component2] [...]</literallayout>
 
    <para>The URI for the <literal>deb</literal> type must specify the base of the
    Debian distribution, from which APT will find the information it needs. 
@@ -108,6 +108,17 @@
    useful for accessing busy FTP sites with limits on the number of 
    simultaneous anonymous users. APT also parallelizes connections to 
    different hosts to more effectively deal with sites with low bandwidth.</para>
+
+   <para><literal>options</literal> is always optional and needs to be surounded by
+   square brackets. It can consist of multiple settings in the form
+   <literal><replaceable>setting</replaceable>=<replaceable>value</replaceable></literal>.
+   Multiple settings are separated by spaces. The following settings are supported by APT,
+   note through that unsupported settings will be ignored silently:
+   <itemizedlist><listitem><para><literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
+   can be used to specify for which architectures packages information should
+   be downloaded. If this option is not set all architectures defined by the
+   <literal>APT::Architectures</literal> option will be downloaded.</para>
+   </listitem></itemizedlist></para>
 
    <para>It is important to list sources in order of preference, with the most
    preferred source listed first. Typically this will result in sorting
@@ -205,6 +216,11 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
 
    <para>Source line for the above</para>
    <literallayout>deb-src file:/home/jason/debian unstable main contrib non-free</literallayout>
+
+   <para>The first line gets package information for the architectures in <literal>APT::Architectures</literal>
+   while the second always retrieves <literal>amd64</literal> and <literal>armel</literal>.</para>
+   <literallayout>deb http://ftp.debian.org/debian &stable-codename; main
+deb [ arch=amd64,armel ] http://ftp.debian.org/debian &stable-codename; main</literallayout>
 
    <para>Uses HTTP to access the archive at archive.debian.org, and uses only
    the hamm/main area.</para>

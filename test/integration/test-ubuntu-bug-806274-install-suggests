@@ -1,0 +1,81 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'apt' 'i386' '0.8.15' 'Depends: foo
+Recommends: bar
+Suggests: baz'
+insertpackage 'unstable' 'foo' 'i386' '1.0'
+insertpackage 'unstable' 'bar' 'i386' '1.0'
+insertpackage 'unstable' 'baz' 'i386' '1.0'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  bar foo
+Suggested packages:
+  baz
+The following NEW packages will be installed:
+  apt bar foo
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [i386])
+Conf foo (1.0 unstable [i386])
+Inst apt (0.8.15 unstable [i386])
+Conf apt (0.8.15 unstable [i386])
+Inst bar (1.0 unstable [i386])
+Conf bar (1.0 unstable [i386])' aptget install apt -s --install-recommends --no-install-suggests
+
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  bar baz foo
+The following NEW packages will be installed:
+  apt bar baz foo
+0 upgraded, 4 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [i386])
+Conf foo (1.0 unstable [i386])
+Inst apt (0.8.15 unstable [i386])
+Conf apt (0.8.15 unstable [i386])
+Inst bar (1.0 unstable [i386])
+Inst baz (1.0 unstable [i386])
+Conf bar (1.0 unstable [i386])
+Conf baz (1.0 unstable [i386])' aptget install apt -s --install-recommends --install-suggests
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+Suggested packages:
+  baz
+Recommended packages:
+  bar
+The following NEW packages will be installed:
+  apt foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [i386])
+Conf foo (1.0 unstable [i386])
+Inst apt (0.8.15 unstable [i386])
+Conf apt (0.8.15 unstable [i386])' aptget install apt -s --no-install-recommends --no-install-suggests
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  baz foo
+Recommended packages:
+  bar
+The following NEW packages will be installed:
+  apt baz foo
+0 upgraded, 3 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [i386])
+Conf foo (1.0 unstable [i386])
+Inst apt (0.8.15 unstable [i386])
+Conf apt (0.8.15 unstable [i386])
+Inst baz (1.0 unstable [i386])
+Conf baz (1.0 unstable [i386])' aptget install apt -s --no-install-recommends --install-suggests

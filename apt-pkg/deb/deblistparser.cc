@@ -461,7 +461,7 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
  *
  * The complete architecture, consisting of <kernel>-<cpu>.
  */
-static string CompleteArch(std::string& arch) {
+static string CompleteArch(std::string const &arch) {
     if (arch == "armel")              return "linux-arm";
     if (arch == "armhf")              return "linux-arm";
     if (arch == "lpia")               return "linux-i386";
@@ -500,9 +500,13 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
    Package.assign(Start,I - Start);
 
    // We don't want to confuse library users which can't handle MultiArch
+   string const arch = _config->Find("APT::Architecture");
    if (StripMultiArch == true) {
       size_t const found = Package.rfind(':');
-      if (found != string::npos)
+      if (found != string::npos &&
+	  (strcmp(Package.c_str() + found, ":any") == 0 ||
+	   strcmp(Package.c_str() + found, ":native") == 0 ||
+	   strcmp(Package.c_str() + found + 1, arch.c_str()) == 0))
 	 Package = Package.substr(0,found);
    }
 
@@ -543,7 +547,6 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (ParseArchFlags == true)
    {
-      string arch = _config->Find("APT::Architecture");
       string completeArch = CompleteArch(arch);
 
       // Parse an architecture
@@ -781,7 +784,9 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       size_t len = 0;
 
       // Skip empty lines
-      for (; buffer[len] == '\r' && buffer[len] == '\n'; ++len);
+      for (; buffer[len] == '\r' && buffer[len] == '\n'; ++len)
+         /* nothing */
+         ;
       if (buffer[len] == '\0')
 	 continue;
 
@@ -795,13 +800,25 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       }
 
       // seperate the tag from the data
-      for (; buffer[len] != ':' && buffer[len] != '\0'; ++len);
+      for (; buffer[len] != ':' && buffer[len] != '\0'; ++len)
+         /* nothing */
+         ;
       if (buffer[len] == '\0')
 	 continue;
       char* dataStart = buffer + len;
-      for (++dataStart; *dataStart == ' '; ++dataStart);
+      for (++dataStart; *dataStart == ' '; ++dataStart)
+         /* nothing */
+         ;
       char* dataEnd = dataStart;
-      for (++dataEnd; *dataEnd != '\0'; ++dataEnd);
+      for (++dataEnd; *dataEnd != '\0'; ++dataEnd)
+         /* nothing */
+         ;
+      // The last char should be a newline, but we can never be sure: #633350
+      char* lineEnd = dataEnd;
+      for (--lineEnd; *lineEnd == '\r' || *lineEnd == '\n'; --lineEnd)
+         /* nothing */
+         ;
+      ++lineEnd;
 
       // which datastorage need to be updated
       map_ptrloc* writeTo = NULL;
@@ -816,7 +833,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       APT_PARSER_WRITETO(FileI->Label, "Label")
       #undef APT_PARSER_WRITETO
       #define APT_PARSER_FLAGIT(X) else if (strncmp(#X, buffer, len) == 0) \
-	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, dataEnd-1);
+	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, lineEnd);
       APT_PARSER_FLAGIT(NotAutomatic)
       APT_PARSER_FLAGIT(ButAutomaticUpgrades)
       #undef APT_PARSER_FLAGIT
