@@ -35,11 +35,6 @@
 #ifndef __SHA2_H__
 #define __SHA2_H__
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 /*
  * Import u_intXX_t size_t type definitions from system headers.  You
  * may need to change this, or define these things yourself in this
@@ -188,10 +183,6 @@ char* SHA512_End();
 char* SHA512_Data();
 
 #endif /* NOPROTO */
-
-#ifdef	__cplusplus
-}
-#endif /* __cplusplus */
 
 #endif /* __SHA2_H__ */
 
