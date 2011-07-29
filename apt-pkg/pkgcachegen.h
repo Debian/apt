@@ -75,7 +75,7 @@ class pkgCacheGenerator							/*{{{*/
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   string const &Version, unsigned int const &Op,
-		   unsigned int const &Type, map_ptrloc *OldDepLast);
+		   unsigned int const &Type, map_ptrloc* &OldDepLast);
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const string &VerStr,unsigned long Next);
    map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
 

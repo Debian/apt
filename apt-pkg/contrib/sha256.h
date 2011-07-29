@@ -3,6 +3,6 @@
 
 #include "sha2.h"
 
-#warn "This header is deprecated, please include sha2.h instead"
+#warning "This header is deprecated, please include sha2.h instead"
 
 #endif

@@ -26,7 +26,7 @@ SOURCE = contrib/mmap.cc contrib/error.cc contrib/strutl.cc \
 	 contrib/cdromutl.cc contrib/crc-16.cc contrib/netrc.cc \
 	 contrib/fileutl.cc 
 HEADERS = mmap.h error.h configuration.h fileutl.h  cmndline.h netrc.h\
-	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha2.h \
+	  md5.h crc-16.h cdromutl.h strutl.h sptr.h sha1.h sha2.h sha256.h\
 	  sha2_internal.h \
           hashes.h hashsum_template.h\
 	  macros.h weakptr.h
