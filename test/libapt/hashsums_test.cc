@@ -135,6 +135,21 @@ int main(int argc, char** argv)
    equals(argv[5], sha2.Result().Value());
    }
    fclose(fd);
+
+   // test HashString code
+   {
+   HashString sha2("SHA256", argv[4]);
+   equals(sha2.VerifyFile(argv[1]), true);
+   }
+   {
+   HashString sha2("SHA512", argv[5]);
+   equals(sha2.VerifyFile(argv[1]), true);
+   }
+   {
+   HashString sha2("SHA256:"+string(argv[4]));
+   equals(sha2.VerifyFile(argv[1]), true);
+   }
+
    return 0;
 }
 
