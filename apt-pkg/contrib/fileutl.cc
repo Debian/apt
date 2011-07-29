@@ -446,6 +446,17 @@ string SafeGetCWD()
    return S;
 }
 									/*}}}*/
+// GetModificationTime - Get the mtime of the given file or -1 on error /*{{{*/
+// ---------------------------------------------------------------------
+/* We return / on failure. */
+time_t GetModificationTime(string const &Path)
+{
+   struct stat St;
+   if (stat(Path.c_str(), &St) < 0)
+      return -1;
+   return  St.st_mtime;
+}
+									/*}}}*/
 // flNotDir - Strip the directory from the filename			/*{{{*/
 // ---------------------------------------------------------------------
 /* */

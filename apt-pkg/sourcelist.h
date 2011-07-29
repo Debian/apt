@@ -92,6 +92,9 @@ class pkgSourceList
 		  pkgIndexFile *&Found) const;
    bool GetIndexes(pkgAcquire *Owner, bool GetAll=false) const;
    
+   // query last-modified time
+   time_t GetLastModifiedTime();
+
    pkgSourceList();
    pkgSourceList(string File);
    ~pkgSourceList();      

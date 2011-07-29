@@ -341,4 +341,22 @@ bool pkgSourceList::ReadSourceDir(string Dir)
 
 }
 									/*}}}*/
+// GetLastModified()						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+time_t pkgSourceList::GetLastModifiedTime()
+{
+   // go over the parts
+   string Main = _config->FindFile("Dir::Etc::sourcelist");
+   string Parts = _config->FindDir("Dir::Etc::sourceparts");
+   vector<string> const List = GetListOfFilesInDir(Parts, "list", true);
+
+   // calculate the time
+   time_t mtime_sources = GetModificationTime(Main);
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+      mtime_sources = std::max(mtime_sources, GetModificationTime(*I));
+
+   return mtime_sources;
+}
+									/*}}}*/
 
