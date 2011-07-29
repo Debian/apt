@@ -17,6 +17,10 @@ apt (0.8.15.2) unstable; urgency=high
       that changes in the ordering there will be honored by apt
   * apt-pkg/sourcelist.{cc,h}:
     - add pkgSourceList::GetLastModifiedTime() helper
+  * apt-pkg/pkgcachegen.{cc,h}:
+    - use ref-to-ptr semantic in NewDepends() to ensure that the   
+      libapt does not segfault if the cache is remapped in between
+      (LP: #812862)
 
  -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
 
