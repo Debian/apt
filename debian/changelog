@@ -2,6 +2,10 @@ apt (0.8.16~exp5) UNRELEASED; urgency=low
 
   * apt-pkg/makefile:
     - install sha256.h compat header
+  * apt-pkg/pkgcachegen.{cc,h}:
+    - use ref-to-ptr semantic in NewDepends() to ensure that the   
+      libapt does not segfault if the cache is remapped in between
+      (LP: #812862)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Jul 2011 13:44:01 +0200
 

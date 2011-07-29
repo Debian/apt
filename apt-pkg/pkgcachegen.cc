@@ -106,6 +106,9 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
    if (oldMap == newMap)
       return;
 
+   if (_config->FindB("Debug::pkgCacheGen", false))
+      std::clog << "Remaping from " << oldMap << " to " << newMap << std::endl;
+
    Cache.ReMap(false);
 
    CurrentFile += (pkgCache::PackageFile*) newMap - (pkgCache::PackageFile*) oldMap;
@@ -685,7 +688,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 				   string const &Version,
 				   unsigned int const &Op,
 				   unsigned int const &Type,
-				   map_ptrloc *OldDepLast)
+				   map_ptrloc* &OldDepLast)
 {
    void const * const oldMap = Map.Data();
    // Get a structure
