@@ -889,7 +889,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    OpenLog();
 
    // this loop is runs once per operation
-   for (vector<Item>::const_iterator I = List.begin(); I != List.end() && !pkgPackageManager::SigINTStop;)
+   for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
    {
       // Do all actions with the same Op in one run
       vector<Item>::const_iterator J = I;
@@ -921,7 +921,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // the argument list is split in a way that A depends on B
       // and they are in the same "--configure A B" run
       // - with the split they may now be configured in different
-      //   runs
+      //   runs, using Immediate-Configure-All can help prevent this.
       if (J - I > (signed)MaxArgs)
 	 J = I + MaxArgs;
       
@@ -1064,6 +1064,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 it doesn't die but we do! So we must also ignore it */
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
       sighandler_t old_SIGINT = signal(SIGINT,SigINT);
+      
+      // Check here for any SIGINT
+      if (pkgPackageManager::SigINTStop) break;
 
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
@@ -1102,7 +1105,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
 	 }
       }
-
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
