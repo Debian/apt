@@ -637,7 +637,9 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 	    Dynamic<pkgCache::VerIterator> DynV(V);
 	    for (; V.end() != true; V++)
 	    {
-	       char const * const Arch = P.Arch();
+               // copy P.Arch() into a string here as a cache remap
+               // in NewDepends() later may alter the pointer location
+	       string Arch = P.Arch() == NULL ? "" : P.Arch();
 	       map_ptrloc *OldDepLast = NULL;
 	       /* MultiArch handling introduces a lot of implicit Dependencies:
 		- MultiArch: same → Co-Installable if they have the same version

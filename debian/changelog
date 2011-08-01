@@ -6,8 +6,9 @@ apt (0.8.16~exp5) UNRELEASED; urgency=low
     - use ref-to-ptr semantic in NewDepends() to ensure that the   
       libapt does not segfault if the cache is remapped in between
       (LP: #812862)
+    - fix crash when P.Arch() was used but the cache got remapped
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Jul 2011 13:44:01 +0200
+ -- Michael Vogt <mvo@debian.org>  Mon, 01 Aug 2011 15:31:55 +0200
 
 apt (0.8.16~exp4) experimental; urgency=low
 
@@ -105,13 +106,13 @@ apt (0.8.16~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
 
-apt (0.8.15.5) UNRELEASED; urgency=low
+apt (0.8.15.5) unstable; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/deb/deblistparser.cc:
     - do not assume that the last char on a line is a \n (Closes: #633350)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 27 Jul 2011 23:25:45 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 28 Jul 2011 16:49:15 +0200
 
 apt (0.8.15.4) unstable; urgency=low
 
