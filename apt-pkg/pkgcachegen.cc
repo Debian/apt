@@ -637,7 +637,9 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 	    Dynamic<pkgCache::VerIterator> DynV(V);
 	    for (; V.end() != true; V++)
 	    {
-	       char const * const Arch = P.Arch();
+               // copy P.Arch() into a string here as a cache remap
+               // in NewDepends() later may alter the pointer location
+	       string Arch = P.Arch() == NULL ? "" : P.Arch();
 	       map_ptrloc *OldDepLast = NULL;
 	       /* MultiArch handling introduces a lot of implicit Dependencies:
 		- MultiArch: same → Co-Installable if they have the same version
@@ -646,7 +648,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 	       bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
 	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
 	       {
-		  if (Arch == 0 || *A == Arch)
+		  if (*A == Arch)
 		     continue;
 		  /* We allow only one installed arch at the time
 		     per group, therefore each group member conflicts
