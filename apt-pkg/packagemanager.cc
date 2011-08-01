@@ -286,6 +286,10 @@ bool pkgPackageManager::ConfigureAll()
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); I++)
    {
       PkgIterator Pkg(Cache,*I);
+      
+      /* Check if the package has been configured, this can happen if SmartConfigure
+         calls its self */ 
+      if (List->IsFlag(Pkg,pkgOrderList::Configured)) continue;
 
       if (ConfigurePkgs == true && SmartConfigure(Pkg) == false) {
          _error->Error("Internal error, packages left unconfigured. %s",Pkg.Name());
@@ -414,6 +418,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 
    static std::string const conf = _config->Find("PackageManager::Configure","all");
    static bool const ConfigurePkgs = (conf == "all" || conf == "smart");
+
+   if (List->IsFlag(Pkg,pkgOrderList::Configured)) 
+      return _error->Error("Internal configure error on '%s'. ",Pkg.Name(),1);
 
    if (ConfigurePkgs == true && Configure(Pkg) == false)
       return false;
@@ -577,6 +584,11 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    if (Cache[Pkg].InstallVer != *I || 
 		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
 	       continue;
+	       
+	    if (List->IsFlag(Pkg,pkgOrderList::Configured)) {
+	       Bad = false;
+	       continue;
+	    }
 
 	    if (Debug)
 	       clog << "Trying to SmartConfigure " << Pkg.Name() << endl;

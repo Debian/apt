@@ -1066,7 +1066,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       sighandler_t old_SIGINT = signal(SIGINT,SigINT);
       
       // Check here for any SIGINT
-      if (pkgPackageManager::SigINTStop) break;
+      if (pkgPackageManager::SigINTStop && 
+         (I->Op == Item::Install || I->Op == Item::Remove || I->Op == Item::Purge)) break;
 
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
@@ -1315,7 +1316,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 }
 
 void SigINT(int sig) {
-   cout << " -- SIGINT -- " << endl;
    if (_config->FindB("APT::Immediate-Configure-All",false)) 
       pkgPackageManager::SigINTStop = true;
 } 
