@@ -784,7 +784,9 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       size_t len = 0;
 
       // Skip empty lines
-      for (; buffer[len] == '\r' && buffer[len] == '\n'; ++len);
+      for (; buffer[len] == '\r' && buffer[len] == '\n'; ++len)
+         /* nothing */
+         ;
       if (buffer[len] == '\0')
 	 continue;
 
@@ -798,13 +800,25 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       }
 
       // seperate the tag from the data
-      for (; buffer[len] != ':' && buffer[len] != '\0'; ++len);
+      for (; buffer[len] != ':' && buffer[len] != '\0'; ++len)
+         /* nothing */
+         ;
       if (buffer[len] == '\0')
 	 continue;
       char* dataStart = buffer + len;
-      for (++dataStart; *dataStart == ' '; ++dataStart);
+      for (++dataStart; *dataStart == ' '; ++dataStart)
+         /* nothing */
+         ;
       char* dataEnd = dataStart;
-      for (++dataEnd; *dataEnd != '\0'; ++dataEnd);
+      for (++dataEnd; *dataEnd != '\0'; ++dataEnd)
+         /* nothing */
+         ;
+      // The last char should be a newline, but we can never be sure: #633350
+      char* lineEnd = dataEnd;
+      for (--lineEnd; *lineEnd == '\r' || *lineEnd == '\n'; --lineEnd)
+         /* nothing */
+         ;
+      ++lineEnd;
 
       // which datastorage need to be updated
       map_ptrloc* writeTo = NULL;
@@ -819,7 +833,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       APT_PARSER_WRITETO(FileI->Label, "Label")
       #undef APT_PARSER_WRITETO
       #define APT_PARSER_FLAGIT(X) else if (strncmp(#X, buffer, len) == 0) \
-	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, dataEnd-1);
+	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, lineEnd);
       APT_PARSER_FLAGIT(NotAutomatic)
       APT_PARSER_FLAGIT(ButAutomaticUpgrades)
       #undef APT_PARSER_FLAGIT

@@ -1,3 +1,19 @@
+apt (0.8.15.5ubuntu1) oneiric; urgency=low
+
+  * apt-pkg/pkgcachegen.{cc,h}:
+    - fix crash when P.Arch() was used but the cache got remapped
+      (LP: #812862)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 01 Aug 2011 15:18:50 +0200
+
+apt (0.8.15.5) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/deb/deblistparser.cc:
+    - do not assume that the last char on a line is a \n (Closes: #633350)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 28 Jul 2011 16:49:15 +0200
+
 apt (0.8.15.4ubuntu2) oneiric; urgency=low
 
   * apt-pkg/contrib/fileutl.{cc,h}:
