@@ -954,6 +954,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       snprintf(status_fd_buf,sizeof(status_fd_buf),"%i", fd[1]);
       Args[n++] = status_fd_buf;
       Size += strlen(Args[n-1]);
+      
+      unsigned long const Op = I->Op;
 
       switch (I->Op)
       {
@@ -1066,9 +1068,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       sighandler_t old_SIGINT = signal(SIGINT,SigINT);
       
       // Check here for any SIGINT
-      if (pkgPackageManager::SigINTStop && 
-         (I->Op == Item::Install || I->Op == Item::Remove || I->Op == Item::Purge)) break;
-
+      if (pkgPackageManager::SigINTStop && (Op == Item::Remove || Op == Item::Purge || Op == Item::Install)) 
+         break;
+      
+      
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
 
@@ -1290,6 +1293,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }      
    }
    CloseLog();
+   
+   if (pkgPackageManager::SigINTStop)
+       _error->Warning(_("Operation was interrupted before it could finish"));
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
