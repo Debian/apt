@@ -70,6 +70,13 @@ runtest() {
         msgtest 'No Packages file in /var/lib/apt/lists'
         [ "$(ls rootdir/var/lib/apt/lists/*Package* 2>/dev/null)" = "" ] && msgpass || msgfail 
         
+        # now with the unsigned Release file
+        rm -rf rootdir/var/lib/apt/lists
+        rm aptarchive/InRelease aptarchive/Release.gpg
+        msgtest 'unsigned apt-get update gets the expected hashsum mismatch'
+	aptget update 2>&1 | grep "Hash Sum mismatch" > /dev/null && msgpass || msgfail
+
+
 }
 
 runtest

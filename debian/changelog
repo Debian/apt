@@ -13,6 +13,9 @@ apt (0.8.15.6) unstable; urgency=low
       (LP: #812862)
   * test/integration/test-hashsum-verification:
     - add regression test for hashsum verification
+  * apt-pkg/acquire-item.cc:
+    - if no Release.gpg file is found, still load the hashes for
+      verification (closes: #636314) and add test
 
  -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
 
