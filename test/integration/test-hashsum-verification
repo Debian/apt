@@ -1,0 +1,76 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildaptarchive
+setupflataptarchive
+changetowebserver
+
+prepare() {
+	local DATE="${2:-now}"
+	if [ "$DATE" = 'now' -a "$1" = "${PKGFILE}-new" ]; then
+		DATE='now + 6 days'
+	fi
+	for release in $(find rootdir/var/lib/apt/lists 2> /dev/null); do
+		touch -d 'now - 6 hours' $release
+	done
+	rm -rf rootdir/var/cache/apt/archives
+	rm -f rootdir/var/cache/apt/*.bin
+	cp $1 aptarchive/Packages
+	find aptarchive -name 'Release' -delete
+	cat aptarchive/Packages | gzip > aptarchive/Packages.gz
+	cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
+	cat aptarchive/Packages | lzma > aptarchive/Packages.lzma
+        # create Release file with incorret checksums
+	cat > aptarchive/Release <<EOF
+Date: Fri, 05 Aug 2011 09:22:08 UTC
+MD5Sum:
+ x15c483ac486f5dbe95095c7ec08626f              760 Packages
+ x0579797df4792164a17305fb0b317e9              546 Packages.bz2
+ xc532a82873d2206b4e4503e92d167bd              489 Packages.gz
+ x4d1d25661377dd4bb95a1736e2624d3              527 Packages.lzma
+ xf1cc221194edbaa943d2375d6f44a88              572 Packages.xz
+SHA1:
+ x0d3317839cf68cd40c28f0bddca8d2ce5a29cad              760 Packages
+ xffddf046ad8dfd8338a355d76fb08d143c8b636              546 Packages.bz2
+ xa27a3df51ca4474b880a6594c4811957079b613              489 Packages.gz
+ x9d7bba4e6fa927a34dcd797694c2893c21f1004              527 Packages.lzma
+ x7d988fe59cf67298828e5299a15d329c0f00f1b              572 Packages.xz
+SHA256:
+ x5a47d72f6b97bfa164b23326b6ad3cb019b5c6cc73769f8c0187616933d1b2b              760 Packages
+ x617252f5bfe3e9126352c7c2f8122d9c3b2c5e1a6c8a9616d62adc0ed164172              546 Packages.bz2
+ xc6abc6fe9a4fcf0758ec5366dfd19bcba90af026a7017c3f6198c59eccd8ef5              489 Packages.gz
+ xb306e66e5e6a7169c8d281a888539d1fdca9cecc99ae605717df579d5b9c166              527 Packages.lzma
+ x9585d0e66b74c9385727fbea11fea9ab33c716b18a32f3036f037a2b9b57120              572 Packages.xz
+EOF
+        cp aptarchive/Release aptarchive/InRelease
+}
+
+# fake our downloadable file
+touch aptarchive/apt.deb
+
+PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
+
+runtest() {
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack'
+	find aptarchive/ -name "$DELETEFILE" -delete
+
+        # test signed release file
+        msgtest 'apt-get update gets the expected hashsum mismatch'
+	aptget update 2>&1 | grep "Hash Sum mismatch" > /dev/null && msgpass || msgfail
+        msgtest 'No package from the source available'
+        [ "$(aptcache show apt 2>&1)" = "E: No packages found" ] && msgpass || msgfail
+        msgtest 'No Packages file in /var/lib/apt/lists'
+        [ "$(ls rootdir/var/lib/apt/lists/*Package* 2>/dev/null)" = "" ] && msgpass || msgfail 
+        
+}
+
+runtest
+
