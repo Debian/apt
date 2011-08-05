@@ -12,6 +12,11 @@ apt (0.8.15.5.6) UNRELEASED; urgency=low
       libapt does not segfault if the cache is remapped in between
       (LP: #812862)
     - fix crash when P.Arch() was used but the cache got remapped
+  * test/integration/test-hashsum-verification:
+    - add regression test for hashsum verification
+  * apt-pkg/acquire-item.cc:
+    - if no Release.gpg file is found, still load the hashes for
+      verification (closes: #636314) and add test
 
  -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
 
