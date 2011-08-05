@@ -559,6 +559,16 @@ class pkgAcqIndex : public pkgAcquire::Item
     */
    bool Erase;
 
+   /** \brief Verify for correctness by checking if a "Package"
+    *         tag is found in the index. This can be set to
+    *         false for optional index targets
+    *       
+    */
+   // FIXME: instead of a bool it should use a verify string that will
+   //        then be used in the pkgAcqIndex::Done method to ensure that
+   //        the downloaded file contains the expected tag
+   bool Verify;
+
    /** \brief The download request that is currently being
     *   processed.
     */

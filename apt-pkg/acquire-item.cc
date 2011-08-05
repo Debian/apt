@@ -808,6 +808,9 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    if (CompressionExtension.empty() == false)
       CompressionExtension.erase(CompressionExtension.end()-1);
 
+   if (Target->IsOptional())
+     Verify = false;
+
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
 									/*}}}*/
@@ -905,6 +908,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 
       /* Verify the index file for correctness (all indexes must
        * have a Package field) (LP: #346386) (Closes: #627642) */
+      if (Verify == true)
       {
 	 FileFd fd(DestFile, FileFd::ReadOnly);
 	 pkgTagSection sec;
