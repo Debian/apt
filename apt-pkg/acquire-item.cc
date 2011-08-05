@@ -808,8 +808,12 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    if (CompressionExtension.empty() == false)
       CompressionExtension.erase(CompressionExtension.end()-1);
 
+   // only verify non-optional targets, see acquire-item.h for a FIXME
+   // to make this more flexible
    if (Target->IsOptional())
      Verify = false;
+   else
+     Verify = true;
 
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
