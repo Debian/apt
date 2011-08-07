@@ -344,7 +344,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	    InstallVer = VerIterator(Cache,Cache[DepPkg].InstallVer);
 	    //VerIterator CandVer(Cache,Cache[DepPkg].CandidateVer);
 	    
-	    if (Debug && false) {
+	    if (Debug) {
 	       if (Ver==0) {
 	          cout << "  Checking if " << Ver << " of " << DepPkg.Name() << " satisfies this dependancy" << endl;
 	       } else {
@@ -365,13 +365,13 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
                //if (CandVer != 0)
                //   cout << "    CandVer " << CandVer.VerStr() << endl; 
 
-               cout << "    Keep " << Cache[DepPkg].Keep() << " Unpacked " << List->IsFlag(DepPkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(DepPkg,pkgOrderList::Configured) << endl;
+               cout << "    Keep " << Cache[DepPkg].Keep() << " Unpacked " << List->IsFlag(DepPkg,pkgOrderList::UnPacked) << " Configured " << List->IsFlag(DepPkg,pkgOrderList::Configured) << " Removed " << List->IsFlag(DepPkg,pkgOrderList::Removed) << endl;
                
             }
 
 	    // Check if it satisfies this dependancy
 	    if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true && 
-		DepPkg.State() == PkgIterator::NeedsNothing)
+		!List->IsFlag(DepPkg,pkgOrderList::Removed) && DepPkg.State() == PkgIterator::NeedsNothing)
 	    {
 	       Bad = false;
 	       continue;
@@ -623,7 +623,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    VerIterator InstallVer(Cache,Cache[ConflictPkg].InstallVer);
 	    
 	    // See if the current version is conflicting
-	    if (ConflictPkg.CurrentVer() == Ver && !List->IsFlag(ConflictPkg,pkgOrderList::UnPacked))
+	    if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
 	    {
 	    	if (Debug && false) 
 	         cout << " " << Pkg.Name() << " conflicts with " << ConflictPkg.Name() << endl;
@@ -653,7 +653,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    
 	       if (!List->IsFlag(ConflictPkg,pkgOrderList::Loop)) {
 	          if (Cache[ConflictPkg].Keep() == 0 && Cache[ConflictPkg].InstallVer != 0) {
-                      cout << "Unpacking " << ConflictPkg.Name() << " to prevent conflict" << endl;
+	              if (Debug)
+                        cout << "Unpacking " << ConflictPkg.Name() << " to prevent conflict" << endl;
 	              List->Flag(Pkg,pkgOrderList::Loop);
 	              SmartUnPack(ConflictPkg,false);
                   } else {
@@ -662,7 +663,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
                   }
 	       } else {
 	          if (!List->IsFlag(ConflictPkg,pkgOrderList::Removed)) {
-                      cout << "Because of conficts knot, removing " << ConflictPkg.Name() << " to conflict violation" << endl;
+	              if (Debug)
+                         cout << "Because of conficts knot, removing " << ConflictPkg.Name() << " to conflict violation" << endl;
 	              if (EarlyRemove(ConflictPkg) == false)
                           return _error->Error("Internal Error, Could not early remove %s",ConflictPkg.Name());
 	          }
