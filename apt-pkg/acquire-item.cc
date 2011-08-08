@@ -1397,6 +1397,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	    {
 	       std::cerr << "Queueing: " << (*Target)->URI << std::endl;
 	       std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
+	       std::cerr << "For: " << Record->MetaKeyFilename << std::endl;
 	    }
 	    if (ExpectedIndexHash.empty() == true && (*Target)->IsOptional() == false)
 	    {
