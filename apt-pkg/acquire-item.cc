@@ -1258,8 +1258,9 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,string Hash,	/
       if (SigFile == "")
       {
          // There was no signature file, so we are finished.  Download
-         // the indexes without verification.
-         QueueIndexes(false);
+         // the indexes and do only hashsum verification
+         MetaIndexParser->Load(DestFile);
+         QueueIndexes(true);
       }
       else
       {
@@ -1396,6 +1397,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	    {
 	       std::cerr << "Queueing: " << (*Target)->URI << std::endl;
 	       std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
+	       std::cerr << "For: " << Record->MetaKeyFilename << std::endl;
 	    }
 	    if (ExpectedIndexHash.empty() == true && (*Target)->IsOptional() == false)
 	    {

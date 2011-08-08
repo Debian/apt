@@ -936,7 +936,7 @@ static bool CheckValidity(const string &CacheFile,
       return false;
    }
 
-   if (List.GetLastModifiedTime() < GetModificationTime(CacheFile))
+   if (List.GetLastModifiedTime() > GetModificationTime(CacheFile))
    {
       if (Debug == true)
 	 std::clog << "sources.list is newer than the cache" << std::endl;
