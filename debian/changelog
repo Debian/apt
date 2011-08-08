@@ -1,4 +1,4 @@
-apt (0.8.15.6) unstable; urgency=low
+apt (0.8.15.5.6) UNRELEASED; urgency=low
 
   * apt-pkg/contrib/fileutl.{cc,h}:
     - add GetModificationTime() helper
@@ -11,6 +11,7 @@ apt (0.8.15.6) unstable; urgency=low
     - use ref-to-ptr semantic in NewDepends() to ensure that the   
       libapt does not segfault if the cache is remapped in between
       (LP: #812862)
+    - fix crash when P.Arch() was used but the cache got remapped
   * test/integration/test-hashsum-verification:
     - add regression test for hashsum verification
   * apt-pkg/acquire-item.cc:
