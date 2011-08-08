@@ -98,6 +98,7 @@ pkgCacheGenerator::~pkgCacheGenerator()
       return;
    
    Cache.HeaderP->Dirty = false;
+   Cache.HeaderP->CacheFileSize = Map.Size();
    Map.Sync(0,sizeof(pkgCache::Header));
 }
 									/*}}}*/

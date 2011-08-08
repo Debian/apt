@@ -287,9 +287,9 @@ bool pkgAcquire::Worker::RunMessages()
 	       Log->Pulse(Owner->GetOwner());
 	    
 	    OwnerQ->ItemDone(Itm);
-	    unsigned long const ServerSize = atol(LookupTag(Message,"Size","0").c_str());
+	    unsigned long long const ServerSize = atoll(LookupTag(Message,"Size","0").c_str());
 	    if (TotalSize != 0 && ServerSize != TotalSize)
-	       _error->Warning("Size of file %s is not what the server reported %s %lu",
+	       _error->Warning("Size of file %s is not what the server reported %s %llu",
 			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);
 
 	    // see if there is a hash to verify

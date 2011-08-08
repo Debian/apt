@@ -74,6 +74,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc::trusted", "trusted.gpg");
    Cnf.CndSet("Dir::Etc::trustedparts","trusted.gpg.d");
    Cnf.CndSet("Dir::Bin::methods","/usr/lib/apt/methods");
+   Cnf.CndSet("Dir::Bin::solvers::","/usr/lib/apt/solvers");
    Cnf.CndSet("Dir::Media::MountPath","/media/apt");
 
    // State   

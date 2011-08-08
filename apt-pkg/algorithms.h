@@ -78,6 +78,9 @@ private:
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    pkgDepCache &Cache;
    typedef pkgCache::PkgIterator PkgIterator;
    typedef pkgCache::VerIterator VerIterator;
@@ -105,6 +108,9 @@ class pkgProblemResolver						/*{{{*/
 
    void MakeScores();
    bool DoUpgrade(pkgCache::PkgIterator Pkg);
+
+   bool ResolveInternal(bool const BrokenFix = false);
+   bool ResolveByKeepInternal();
    
    protected:
    bool InstOrNewPolicyBroken(pkgCache::PkgIterator Pkg);

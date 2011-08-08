@@ -1,3 +1,117 @@
+apt (0.8.16~exp5ubuntu1) oneiric; urgency=low
+
+  * merged new version from debian/experimental, this includes
+    a ABI break and two new library packages
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 08 Aug 2011 14:30:07 +0200
+
+apt (0.8.16~exp5) UNRELEASED; urgency=low
+
+  * apt-pkg/makefile:
+    - install sha256.h compat header
+  * apt-pkg/pkgcachegen.{cc,h}:
+    - use ref-to-ptr semantic in NewDepends() to ensure that the   
+      libapt does not segfault if the cache is remapped in between
+      (LP: #812862)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Jul 2011 13:44:01 +0200
+
+apt (0.8.16~exp4) experimental; urgency=low
+
+  [ Julian Andres Klode ]
+  * apt-pkg/pkgcache.h:
+    - [ABI break] Add pkgCache::Header::CacheFileSize, storing the cache size
+  * apt-pkg/pkgcachegen.cc:
+    - Write the file size to the cache
+  * apt-pkg/pkgcache.cc:
+    - Check that cache is at least CacheFileSize bytes large (LP: #16467)
+  
+  [ Michael Vogt ]
+  * merged latest fixes from debian-sid
+  * apt-pkg/cdrom.{cc,h}:
+    - cleanup old ABI break avoidance hacks
+  * [ABI break] apt-pkg/acquire-item.{cc,h}:
+    - cleanup around OptionalIndexTarget and SubIndexTarget
+  * [ABI break] merged patch from Jonathan Thomas to have a new
+    RecordField() function in the pkgRecorder parser. Many thanks
+    Thomas
+  * [ABI break] merge patch from Jonathan Thomas to speed up the
+    depcache by caching the install-recommends and install-suggests
+    values
+  * apt-pkg/contrib/fileutl.{cc,h}:
+    - add GetModificationTime() helper
+  * apt-pkg/pkgcachegen.cc:
+    - regenerate the cache if the sources.list changes to ensure
+      that changes in the ordering there will be honored by apt
+  * apt-pkg/sourcelist.{cc,h}:
+    - add pkgSourceList::GetLastModifiedTime() helper
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 28 Jul 2011 16:57:08 +0200
+
+apt (0.8.16~exp3) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcache.h:
+    - readd All{Foreign,Allowed} as suggested by Julian to
+      remain strictly API compatible
+  * apt-pkg/acquire*.{cc,h}:
+    - try even harder to support really big files in the fetcher by
+      converting (hopefully) everything to 'long long' (Closes: #632271)
+  * ftparchive/writer.cc:
+    - generate all checksums in one run over the file for Release
+  * cmdline/apt-get.cc:
+    - add an --assume-no option for testing to say 'no' to everything
+  * apt-pkg/deb/debmetaindex.cc:
+    - add trusted=yes option to mark unsigned (local) repository as trusted
+      based on a patch from Ansgar Burchardt, thanks a lot! (Closes: #596498)
+
+  [ Michael Vogt ]
+  * merge fixes from the debian/unstable upload
+  * merge lp:~mvo/apt/sha512-template to get fixes for the 
+    sha1/md5 verifiation (closes: #632520)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 15 Jul 2011 09:56:17 +0200
+
+apt (0.8.16~exp2) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * [ABI-Break] Implement EDSP in libapt-pkg so that all front-ends which
+    use the internal resolver can now be used also with external
+    ones as the usage is hidden in between the old API
+  * provide two edsp solvers in apt-utils:
+    - 'dump' to quickly output a complete scenario and
+    - 'apt' to use the internal as an external resolver
+  * apt-pkg/pkgcache.h:
+    - clean up mess with the "all" handling in MultiArch to
+      fix LP: #733741 cleanly for everyone now
+  * apt-pkg/depcache.cc:
+    - use a boolean instead of an int for Add/Remove in AddStates
+      similar to how it works with AddSizes
+    - let the Mark methods return if their marking was successful
+    - if a Breaks can't be upgraded, remove it. If it or a Conflict
+      can't be removed the installation of the breaker fails.
+  * cmdline/apt-get.cc:
+    - do not discard the error messages from the resolver and instead
+      only show the general 'Broken packages' message if nothing else
+
+  [ Stefano Zacchiroli ]
+  * doc/external-dependency-solver-protocol.txt:
+    - describe EDSP and the configuration interface around it
+  
+  [ Michael Vogt ]
+  * [ABI-Break] merge lp:~mvo/apt/sha512-template to add support for sha512
+  * [ABI-Break] merge lp:~mvo/apt/dpointer to support easier extending
+    without breaking the ABI
+  * increase ABI version and update package names
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 13:57:28 +0200
+
+apt (0.8.16~exp1) experimental; urgency=low
+
+  * merged with the debian/unstable upload
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
+
 apt (0.8.15.5ubuntu1) oneiric; urgency=low
 
   * apt-pkg/pkgcachegen.{cc,h}:
@@ -300,6 +414,185 @@ apt (0.8.15) unstable; urgency=low
   * various typo and syntax corrections in doc/*.xml
 
  -- Michael Vogt <mvo@debian.org>  Tue, 28 Jun 2011 18:00:48 +0200
+
+apt (0.8.15~exp3) experimental; urgency=low
+
+  * debian/control:
+    - add Breaks: 0.8.15~exp3) for libapt-pkg4.10 and 
+     libapt-inst1.2 (thanks to Jonathan Nieder, closes: #630214)
+    - use depends for the ${shlibs:Depends} to make the breaks work
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 17 Jun 2011 21:51:41 +0200
+
+apt (0.8.15~exp2) experimental; urgency=low
+
+  * debian/control:
+    - fix incorrect Replaces (closes: #630204) for libapt-inst1.2
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 15 Jun 2011 16:51:14 +0200
+
+apt (0.8.15~exp1) experimental; urgency=low
+
+  [ Julian Andres Klode ]
+  * apt-pkg/depcache.cc:
+    - Really release action groups only once (Closes: #622744)
+    - Make purge work again for config-files (LP: #244598) (Closes: #150831)
+  * apt-pkg/acquire-item.cc:
+    - Reject files known to be invalid (LP: #346386) (Closes: #627642)
+  * debian/apt.cron.daily:
+    - Check power after wait, patch by manuel-soto (LP: #705269)
+  * debian/control:
+    - Move ${shlibs:Depends} to Pre-Depends, as we do not want APT
+      unpacked if a library is too old and thus break upgrades
+  * doc/apt-key.8.xml:
+    - Document apt-key net-update (LP: #192810)
+
+  [ Christian Perrier ]
+  * Galician translation update (Miguel Anxo Bouzada). Closes: #626505
+  * Italian translation update (Milo Casagrande). Closes: #627834
+  * German documentation translation update (Chris Leick). Closes: #629949
+
+  [ David Kalnischkies ]
+  * fix a bunch of cppcheck warnings/errors based on a patch by
+    Niels Thykier, thanks! (Closes: #622805)
+  * apt-pkg/depcache.cc:
+    - really include 'rc' packages in the delete count by fixing a
+      typo which exists since 1999 in the source… (LP: #761175)
+    - if critical or-group can't be satisfied, exit directly.
+  * apt-pkg/acquire-method.cc:
+    - write directly to stdout instead of creating the message in
+      memory first before writing to avoid hitting limits
+    - fix order of CurrentURI and UsedMirror in Status() and Log()
+  * apt-pkg/orderlist.cc:
+    - let VisitRProvides report if the calls were successful
+  * apt-pkg/deb/dpkgpm.cc:
+    - replace obsolete usleep with nanosleep
+  * debian/apt{,-utils}.symbols:
+    - update both experimental symbol-files to reflect 0.8.14 state
+  * debian/rules:
+    - remove unused embedded jquery by doxygen from libapt-pkg-doc
+  * cmdline/apt-mark.cc:
+    - reimplement apt-mark in c++
+    - provide a 'showmanual' command (Closes: #582791)
+    - provide a 'dpkg --set-selections' wrapper to set/release holds
+  * cmdline/apt-get.cc:
+    - deprecate mostly undocumented 'markauto' in favor of 'apt-mark'
+  * cmdline/apt-cache.cc:
+    - deprecate mostly undocumented 'showauto' in favor of 'apt-mark'
+  * apt-pkg/pkgcache.cc:
+    - really ignore :arch in FindPkg() in non-multiarch environment
+  * doc/po/de.po:
+    - undo the translation of the command 'dump' in manpage of apt-config
+      as report by Burghard Grossmann on debian-l10n-german, thanks!
+  * apt-pkg/deb/debmetaindex.cc:
+    - do not download TranslationIndex if no Translation-* will be
+      downloaded later on anyway (Closes: #624218)
+  * test/versions.lst:
+    - disable obscure version number tests with versions dpkg doesn't
+      allow any more as they don't start with a number
+  * apt-pkg/acquire-worker.cc:
+    - print filename in the unmatching size warning (Closes: #623137)
+  * apt-pkg/acquire-item.cc:
+    - apply fix for poorly worded 'locate file' error message from
+      Ben Finney, thanks! (Closes: #623171)
+  * methods/http.cc:
+    - add config option to ignore a closed stdin to be able to easily
+      use the method as a simple standalone downloader
+    - Location header in redirects should be absolute URI, but some
+      servers just send an absolute path so still deal with it properly
+    - dequote URL taken from Location in redirects as we will otherwise
+      quote an already quoted string in the request later (Closes: #602412)
+  * apt-pkg/contrib/netrc.cc:
+    - replace non-posix gnu-extension strdupa with strdup
+  * apt-pkg/packagemanager.cc:
+    - ensure for Multi-Arch:same packages that they are unpacked in
+      lock step even in immediate configuration (Closes: #618288)
+
+  [ Michael Vogt ]
+  * methods/mirror.cc:
+    - ignore lines starting with "#" in the mirror file
+    - ignore non http urls in the mirrors
+    - append the dist (e.g. sid, wheezy) as a query string when
+      asking for a suitable mirror 
+  * debian/control:
+    - add libapt-pkg4.10 and libapt-inst1.2 library packages
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 10 Jun 2011 15:32:07 +0200
+
+apt (0.8.14.2) UNRELEASED; urgency=low
+
+  [ Julian Andres Klode ]
+  * apt-pkg/depcache.cc:
+    - Really release action groups only once (Closes: #622744)
+    - Make purge work again for config-files (LP: #244598) (Closes: #150831)
+  * debian/apt.cron.daily:
+    - Check power after wait, patch by manuel-soto (LP: #705269)
+  * debian/control:
+    - Move ${shlibs:Depends} to Pre-Depends, as we do not want APT
+      unpacked if a library is too old and thus break upgrades
+  * doc/apt-key.8.xml:
+    - Document apt-key net-update (LP: #192810)
+
+  [ Christian Perrier ]
+  * Galician translation update (Miguel Anxo Bouzada). Closes: #626505
+
+  [ David Kalnischkies ]
+  * fix a bunch of cppcheck warnings/errors based on a patch by
+    Niels Thykier, thanks! (Closes: #622805)
+  * apt-pkg/depcache.cc:
+    - really include 'rc' packages in the delete count by fixing a
+      typo which exists since 1999 in the source… (LP: #761175)
+    - if critical or-group can't be satisfied, exit directly.
+  * apt-pkg/acquire-method.cc:
+    - write directly to stdout instead of creating the message in
+      memory first before writing to avoid hitting limits
+    - fix order of CurrentURI and UsedMirror in Status() and Log()
+  * apt-pkg/orderlist.cc:
+    - let VisitRProvides report if the calls were successful
+  * apt-pkg/deb/dpkgpm.cc:
+    - replace obsolete usleep with nanosleep
+  * debian/apt{,-utils}.symbols:
+    - update both experimental symbol-files to reflect 0.8.14 state
+  * debian/rules:
+    - remove unused embedded jquery by doxygen from libapt-pkg-doc
+  * cmdline/apt-mark.cc:
+    - reimplement apt-mark in c++
+    - provide a 'showmanual' command (Closes: #582791)
+    - provide a 'dpkg --set-selections' wrapper to set/release holds
+  * cmdline/apt-get.cc:
+    - deprecate mostly undocumented 'markauto' in favor of 'apt-mark'
+  * cmdline/apt-cache.cc:
+    - deprecate mostly undocumented 'showauto' in favor of 'apt-mark'
+  * apt-pkg/pkgcache.cc:
+    - really ignore :arch in FindPkg() in non-multiarch environment
+  * doc/po/de.po:
+    - undo the translation of the command 'dump' in manpage of apt-config
+      as report by Burghard Grossmann on debian-l10n-german, thanks!
+  * apt-pkg/deb/debmetaindex.cc:
+    - do not download TranslationIndex if no Translation-* will be
+      downloaded later on anyway (Closes: #624218)
+  * test/versions.lst:
+    - disable obscure version number tests with versions dpkg doesn't
+      allow any more as they don't start with a number
+  * apt-pkg/acquire-worker.cc:
+    - print filename in the unmatching size warning (Closes: #623137)
+  * apt-pkg/acquire-item.cc:
+    - apply fix for poorly worded 'locate file' error message from
+      Ben Finney, thanks! (Closes: #623171)
+  * methods/http.cc:
+    - add config option to ignore a closed stdin to be able to easily
+      use the method as a simple standalone downloader
+    - Location header in redirects should be absolute URI, but some
+      servers just send an absolute path so still deal with it properly
+    - dequote URL taken from Location in redirects as we will otherwise
+      quote an already quoted string in the request later (Closes: #602412)
+  * apt-pkg/contrib/netrc.cc:
+    - replace non-posix gnu-extension strdupa with strdup
+  * apt-pkg/packagemanager.cc:
+    - ensure for Multi-Arch:same packages that they are unpacked in
+      lock step even in immediate configuration (Closes: #618288)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 16 May 2011 14:57:52 +0200
 
 apt (0.8.14.1ubuntu8) UNRELEASED; urgency=low
 

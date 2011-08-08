@@ -346,10 +346,14 @@ bool pkgSourceList::ReadSourceDir(string Dir)
 /* */
 time_t pkgSourceList::GetLastModifiedTime()
 {
-   // go over the parts
+   vector<string> List;
+
    string Main = _config->FindFile("Dir::Etc::sourcelist");
    string Parts = _config->FindDir("Dir::Etc::sourceparts");
-   vector<string> const List = GetListOfFilesInDir(Parts, "list", true);
+
+   // go over the parts
+   if (DirectoryExists(Parts) == true)
+      List = GetListOfFilesInDir(Parts, "list", true);
 
    // calculate the time
    time_t mtime_sources = GetModificationTime(Main);

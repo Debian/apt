@@ -65,7 +65,7 @@ configure.in:
 endif
 
 # APT Programs in apt-utils
-APT_UTILS=ftparchive sortpkgs extracttemplates
+APT_UTILS=ftparchive sortpkgs extracttemplates internal-solver
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -73,9 +73,9 @@ APT_UTILS=ftparchive sortpkgs extracttemplates
 # Find the libapt-pkg major version for use in other control files
 include buildlib/libversion.mak
 
-# Determine which package we should provide in the control files
-LIBAPTPKG_PROVIDE=libapt-pkg$(LIBAPTPKG_MAJOR)
-LIBAPTINST_PROVIDE=libapt-inst$(LIBAPTINST_MAJOR)
+# Determine which library package names to use
+LIBAPT_PKG=libapt-pkg$(LIBAPTPKG_MAJOR)
+LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 
 # do not fail as we are just experimenting with symbol files for now
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
@@ -100,6 +100,10 @@ build/configure-stamp: configure
 build/build-stamp: build/configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE) binary
+	# compat symlink for the locale split
+	mkdir -p build/usr/share 
+	cd build/usr/share && ln -f -s ../../locale .
+	# done here
 	touch $@
 
 build/build-doc-stamp: build/configure-stamp
@@ -137,7 +141,7 @@ libapt-pkg-doc: build-doc
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -165,7 +169,7 @@ apt-doc: build-doc
 
 # Build architecture-dependent files here.
 
-binary-arch: apt libapt-pkg-dev apt-utils apt-transport-https
+binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
 apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
 apt: build build-doc
 	dh_testdir -p$@
@@ -187,7 +191,7 @@ apt: build build-doc
 	dh_install -p$@ --sourcedir=$(BLD)
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS))
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver)
 
 	# https has its own package
 	rm debian/$@/usr/lib/apt/methods/https
@@ -207,10 +211,9 @@ apt: build build-doc
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-	dh_makeshlibs -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
-	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_shlibdeps -p$@
+	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -229,7 +232,7 @@ libapt-pkg-dev: build
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE) -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
+	dh_gencontrol -p$@ -- -Vlibapt-pkg-name=$(LIBAPT_PKG) -Vlibapt-inst-name=$(LIBAPT_INST)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -241,8 +244,10 @@ apt-utils: build
 	dh_installdirs -p$@
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
+	cp $(BLD)/bin/apt-dump-solver debian/$@/usr/lib/apt/solvers/dump
 
 	dh_install -p$@ --sourcedir=$(BLD)
+	dh_link -p$@
 	dh_installdocs -p$@
 	dh_installexamples -p$@
 
@@ -255,8 +260,46 @@ apt-utils: build
 	dh_fixperms -p$@
 	dh_makeshlibs -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
-	dh_gencontrol -p$@ -- -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
+	dh_shlibdeps -p$@
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
+$(LIBAPT_PKG): build
+	dh_testdir -p$@
+	dh_testroot -p$@
+	dh_prep -p$@
+	dh_installdirs -p$@
+
+	dh_install -p$@ --sourcedir=$(BLD)
+	dh_installdocs -p$@
+	dh_installchangelogs -p$@
+	dh_strip -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_makeshlibs -p$@
+	dh_installdeb -p$@
+	dh_shlibdeps -p$@ 
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
+$(LIBAPT_INST): build
+	dh_testdir -p$@
+	dh_testroot -p$@
+	dh_prep -p$@
+	dh_installdirs -p$@
+
+	dh_install -p$@ --sourcedir=$(BLD)
+	dh_installdocs -p$@
+	dh_installchangelogs -p$@
+	dh_strip -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_makeshlibs -p$@
+	dh_installdeb -p$@
+	dh_shlibdeps -p$@ 
+	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -278,7 +321,7 @@ apt-transport-https: build libapt-pkg-dev
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
+	dh_shlibdeps -p$@ 
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@

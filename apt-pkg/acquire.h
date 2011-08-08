@@ -91,6 +91,12 @@ class pkgAcquireStatus;
  */
 class pkgAcquire
 {   
+   private:
+   /** \brief FD of the Lock file we acquire in Setup (if any) */
+   int LockFD;
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    public:
    
    class Item;
@@ -142,12 +148,7 @@ class pkgAcquire
    /** \brief The progress indicator for this download. */
    pkgAcquireStatus *Log;
 
-   /** \brief The total size of the files which are to be fetched.
-    *
-    *  This is not necessarily the total number of bytes to download
-    *  when, e.g., download resumption and list updates via patches
-    *  are taken into account.
-    */
+   /** \brief The number of files which are to be fetched. */
    unsigned long ToFetch;
 
    // Configurable parameters for the scheduler
@@ -361,9 +362,6 @@ class pkgAcquire
     */
    virtual ~pkgAcquire();
 
-   private:
-   /** \brief FD of the Lock file we acquire in Setup (if any) */
-   int LockFD;
 };
 
 /** \brief Represents a single download source from which an item
@@ -392,6 +390,9 @@ class pkgAcquire::Queue
    friend class pkgAcquire;
    friend class pkgAcquire::UriIterator;
    friend class pkgAcquire::Worker;
+
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
 
    /** \brief The next queue in the pkgAcquire object's list of queues. */
    Queue *Next;
@@ -480,7 +481,7 @@ class pkgAcquire::Queue
     *
     *  \todo Unimplemented.  Implement it or remove?
     */
-   bool ItemStart(QItem *Itm,unsigned long Size);
+   bool ItemStart(QItem *Itm,unsigned long long Size);
 
    /** \brief Remove the given item from this queue and set its state
     *  to pkgAcquire::Item::StatDone.
@@ -542,12 +543,15 @@ class pkgAcquire::Queue
    /** Shut down all the worker processes associated with this queue
     *  and empty the queue.
     */
-   ~Queue();
+   virtual ~Queue();
 };
 									/*}}}*/
 /** \brief Iterates over all the URIs being fetched by a pkgAcquire object.	{{{*/
 class pkgAcquire::UriIterator
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    /** The next queue to iterate over. */
    pkgAcquire::Queue *CurQ;
    /** The item that we currently point at. */
@@ -583,11 +587,15 @@ class pkgAcquire::UriIterator
 	 CurQ = CurQ->Next;
       }
    }   
+   virtual ~UriIterator() {};
 };
 									/*}}}*/
 /** \brief Information about the properties of a single acquire method.	{{{*/
 struct pkgAcquire::MethodConfig
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+   
    /** \brief The next link on the acquire method list.
     *
     *  \todo Why not an STL container?
@@ -636,16 +644,20 @@ struct pkgAcquire::MethodConfig
     *  appropriate.
     */
    MethodConfig();
+
+   /* \brief Destructor, empty currently */
+   virtual ~MethodConfig() {};
 };
 									/*}}}*/
 /** \brief A monitor object for downloads controlled by the pkgAcquire class.	{{{
  *
  *  \todo Why protected members?
- *
- *  \todo Should the double members be uint64_t?
  */
 class pkgAcquireStatus
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    protected:
    
    /** \brief The last time at which this monitor object was updated. */
@@ -657,34 +669,34 @@ class pkgAcquireStatus
    /** \brief The number of bytes fetched as of the previous call to
     *  pkgAcquireStatus::Pulse, including local items.
     */
-   double LastBytes;
+   unsigned long long LastBytes;
 
    /** \brief The current rate of download as of the most recent call
     *  to pkgAcquireStatus::Pulse, in bytes per second.
     */
-   double CurrentCPS;
+   unsigned long long CurrentCPS;
 
    /** \brief The number of bytes fetched as of the most recent call
     *  to pkgAcquireStatus::Pulse, including local items.
     */
-   double CurrentBytes;
+   unsigned long long CurrentBytes;
 
    /** \brief The total number of bytes that need to be fetched.
     *
     *  \warning This member is inaccurate, as new items might be
     *  enqueued while the download is in progress!
     */
-   double TotalBytes;
+   unsigned long long TotalBytes;
 
    /** \brief The total number of bytes accounted for by items that
     *  were successfully fetched.
     */
-   double FetchedBytes;
+   unsigned long long FetchedBytes;
 
    /** \brief The amount of time that has elapsed since the download
     *   started.
     */
-   unsigned long ElapsedTime;
+   unsigned long long ElapsedTime;
 
    /** \brief The total number of items that need to be fetched.
     *
@@ -717,7 +729,7 @@ class pkgAcquireStatus
     *
     *  \param ResumePoint How much of the file was already fetched.
     */
-   virtual void Fetched(unsigned long Size,unsigned long ResumePoint);
+   virtual void Fetched(unsigned long long Size,unsigned long long ResumePoint);
    
    /** \brief Invoked when the user should be prompted to change the
     *         inserted removable media.

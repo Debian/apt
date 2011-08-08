@@ -46,12 +46,13 @@ class pkgAcqMethod
       string MD5Sum;
       string SHA1Sum;
       string SHA256Sum;
+      string SHA512Sum;
       vector<string> GPGVOutput;
       time_t LastModified;
       bool IMSHit;
       string Filename;
-      unsigned long Size;
-      unsigned long ResumePoint;
+      unsigned long long Size;
+      unsigned long long ResumePoint;
       
       void TakeHashes(Hashes &Hash);
       FetchResult();
