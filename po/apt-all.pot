@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-07-26 12:05+0200\n"
+"POT-Creation-Date: 2011-06-29 12:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -154,7 +154,8 @@ msgstr ""
 
 #: cmdline/apt-cache.cc:1675 cmdline/apt-cdrom.cc:197 cmdline/apt-config.cc:73
 #: cmdline/apt-extracttemplates.cc:225 ftparchive/apt-ftparchive.cc:589
-#: cmdline/apt-get.cc:3220 cmdline/apt-mark.cc:264 cmdline/apt-sortpkgs.cc:144
+#: cmdline/apt-get.cc:3126 cmdline/apt-internal-solver.cc:30
+#: cmdline/apt-mark.cc:264 cmdline/apt-sortpkgs.cc:144
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr ""
@@ -363,95 +364,95 @@ msgstr ""
 msgid "Failed to stat %s"
 msgstr ""
 
-#: ftparchive/cachedb.cc:242
+#: ftparchive/cachedb.cc:245
 msgid "Archive has no control record"
 msgstr ""
 
-#: ftparchive/cachedb.cc:448
+#: ftparchive/cachedb.cc:482
 msgid "Unable to get a cursor"
 msgstr ""
 
-#: ftparchive/writer.cc:78
+#: ftparchive/writer.cc:79
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr ""
 
-#: ftparchive/writer.cc:83
+#: ftparchive/writer.cc:84
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr ""
 
-#: ftparchive/writer.cc:139
+#: ftparchive/writer.cc:140
 msgid "E: "
 msgstr ""
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:142
 msgid "W: "
 msgstr ""
 
-#: ftparchive/writer.cc:148
+#: ftparchive/writer.cc:149
 msgid "E: Errors apply to file "
 msgstr ""
 
-#: ftparchive/writer.cc:166 ftparchive/writer.cc:198
+#: ftparchive/writer.cc:167 ftparchive/writer.cc:199
 #, c-format
 msgid "Failed to resolve %s"
 msgstr ""
 
-#: ftparchive/writer.cc:179
+#: ftparchive/writer.cc:180
 msgid "Tree walking failed"
 msgstr ""
 
-#: ftparchive/writer.cc:206
+#: ftparchive/writer.cc:207
 #, c-format
 msgid "Failed to open %s"
 msgstr ""
 
-#: ftparchive/writer.cc:265
+#: ftparchive/writer.cc:266
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr ""
 
-#: ftparchive/writer.cc:273
+#: ftparchive/writer.cc:274
 #, c-format
 msgid "Failed to readlink %s"
 msgstr ""
 
-#: ftparchive/writer.cc:277
+#: ftparchive/writer.cc:278
 #, c-format
 msgid "Failed to unlink %s"
 msgstr ""
 
-#: ftparchive/writer.cc:284
+#: ftparchive/writer.cc:285
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr ""
 
-#: ftparchive/writer.cc:294
+#: ftparchive/writer.cc:295
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr ""
 
-#: ftparchive/writer.cc:398
+#: ftparchive/writer.cc:400
 msgid "Archive had no package field"
 msgstr ""
 
-#: ftparchive/writer.cc:406 ftparchive/writer.cc:703
+#: ftparchive/writer.cc:408 ftparchive/writer.cc:710
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr ""
 
-#: ftparchive/writer.cc:472 ftparchive/writer.cc:811
+#: ftparchive/writer.cc:476 ftparchive/writer.cc:826
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr ""
 
-#: ftparchive/writer.cc:713
+#: ftparchive/writer.cc:720
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr ""
 
-#: ftparchive/writer.cc:717
+#: ftparchive/writer.cc:724
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr ""
@@ -723,7 +724,7 @@ msgstr ""
 msgid "%s is already the newest version.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:818 cmdline/apt-get.cc:2088 cmdline/apt-mark.cc:59
+#: cmdline/apt-get.cc:818 cmdline/apt-get.cc:2082 cmdline/apt-mark.cc:59
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr ""
@@ -835,8 +836,8 @@ msgstr ""
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:1174 cmdline/apt-get.cc:1177 cmdline/apt-get.cc:2499
-#: cmdline/apt-get.cc:2502
+#: cmdline/apt-get.cc:1174 cmdline/apt-get.cc:1177 cmdline/apt-get.cc:2496
+#: cmdline/apt-get.cc:2499
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr ""
@@ -870,7 +871,7 @@ msgstr ""
 msgid "Do you want to continue [Y/n]? "
 msgstr ""
 
-#: cmdline/apt-get.cc:1300 cmdline/apt-get.cc:2564 apt-pkg/algorithms.cc:1438
+#: cmdline/apt-get.cc:1300 cmdline/apt-get.cc:2561 apt-pkg/algorithms.cc:1453
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr ""
@@ -879,7 +880,7 @@ msgstr ""
 msgid "Some files failed to download"
 msgstr ""
 
-#: cmdline/apt-get.cc:1319 cmdline/apt-get.cc:2576
+#: cmdline/apt-get.cc:1319 cmdline/apt-get.cc:2573
 msgid "Download complete and in download only mode"
 msgstr ""
 
@@ -915,31 +916,31 @@ msgstr[1] ""
 msgid "Note: This is done automatic and on purpose by dpkg."
 msgstr ""
 
-#: cmdline/apt-get.cc:1505
+#: cmdline/apt-get.cc:1497
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1537
+#: cmdline/apt-get.cc:1529
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr ""
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1575
+#: cmdline/apt-get.cc:1567
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1583
 msgid "The update command takes no arguments"
 msgstr ""
 
-#: cmdline/apt-get.cc:1653
+#: cmdline/apt-get.cc:1645
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: cmdline/apt-get.cc:1748
+#: cmdline/apt-get.cc:1740
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -955,15 +956,15 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1751 cmdline/apt-get.cc:1921
+#: cmdline/apt-get.cc:1743 cmdline/apt-get.cc:1912
 msgid "The following information may help to resolve the situation:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1755
+#: cmdline/apt-get.cc:1747
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:1762
+#: cmdline/apt-get.cc:1754
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -972,7 +973,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: cmdline/apt-get.cc:1766
+#: cmdline/apt-get.cc:1758
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -980,25 +981,25 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: cmdline/apt-get.cc:1768
+#: cmdline/apt-get.cc:1760
 msgid "Use 'apt-get autoremove' to remove them."
 msgstr ""
 
-#: cmdline/apt-get.cc:1787
+#: cmdline/apt-get.cc:1779
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:1886
+#: cmdline/apt-get.cc:1878
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr ""
 
-#: cmdline/apt-get.cc:1890
+#: cmdline/apt-get.cc:1882
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
 
-#: cmdline/apt-get.cc:1906
+#: cmdline/apt-get.cc:1897
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1006,80 +1007,80 @@ msgid ""
 "or been moved out of Incoming."
 msgstr ""
 
-#: cmdline/apt-get.cc:1924
+#: cmdline/apt-get.cc:1918
 msgid "Broken packages"
 msgstr ""
 
-#: cmdline/apt-get.cc:1950
+#: cmdline/apt-get.cc:1944
 msgid "The following extra packages will be installed:"
 msgstr ""
 
-#: cmdline/apt-get.cc:2040
+#: cmdline/apt-get.cc:2034
 msgid "Suggested packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:2041
+#: cmdline/apt-get.cc:2035
 msgid "Recommended packages:"
 msgstr ""
 
-#: cmdline/apt-get.cc:2083
+#: cmdline/apt-get.cc:2077
 #, c-format
 msgid "Couldn't find package %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2090 cmdline/apt-mark.cc:61
+#: cmdline/apt-get.cc:2084 cmdline/apt-mark.cc:61
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2098 cmdline/apt-mark.cc:105
+#: cmdline/apt-get.cc:2092 cmdline/apt-mark.cc:105
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
 
-#: cmdline/apt-get.cc:2114
+#: cmdline/apt-get.cc:2108
 msgid "Calculating upgrade... "
 msgstr ""
 
-#: cmdline/apt-get.cc:2117 methods/ftp.cc:707 methods/connect.cc:111
+#: cmdline/apt-get.cc:2111 methods/ftp.cc:707 methods/connect.cc:111
 msgid "Failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:2122
+#: cmdline/apt-get.cc:2116
 msgid "Done"
 msgstr ""
 
-#: cmdline/apt-get.cc:2189 cmdline/apt-get.cc:2197
+#: cmdline/apt-get.cc:2183 cmdline/apt-get.cc:2191
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 
-#: cmdline/apt-get.cc:2221 cmdline/apt-get.cc:2254
+#: cmdline/apt-get.cc:2215 cmdline/apt-get.cc:2248
 msgid "Unable to lock the download directory"
 msgstr ""
 
-#: cmdline/apt-get.cc:2305
+#: cmdline/apt-get.cc:2299
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2361
+#: cmdline/apt-get.cc:2357
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2401 cmdline/apt-get.cc:2713
+#: cmdline/apt-get.cc:2398 cmdline/apt-get.cc:2694
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2418
+#: cmdline/apt-get.cc:2415
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2423
+#: cmdline/apt-get.cc:2420
 #, c-format
 msgid ""
 "Please use:\n"
@@ -1087,141 +1088,120 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2476
+#: cmdline/apt-get.cc:2473
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2513
+#: cmdline/apt-get.cc:2510
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2522
+#: cmdline/apt-get.cc:2519
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2527
+#: cmdline/apt-get.cc:2524
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2533
+#: cmdline/apt-get.cc:2530
 #, c-format
 msgid "Fetch source %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2571
+#: cmdline/apt-get.cc:2568
 msgid "Failed to fetch some archives."
 msgstr ""
 
-#: cmdline/apt-get.cc:2602
+#: cmdline/apt-get.cc:2599
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2614
+#: cmdline/apt-get.cc:2611
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2615
+#: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2637
+#: cmdline/apt-get.cc:2629
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2657
+#: cmdline/apt-get.cc:2649
 msgid "Child process failed"
 msgstr ""
 
-#: cmdline/apt-get.cc:2676
+#: cmdline/apt-get.cc:2668
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 
-#: cmdline/apt-get.cc:2701
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: cmdline/apt-get.cc:2718
+#: cmdline/apt-get.cc:2699
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2738
+#: cmdline/apt-get.cc:2719
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2868
-#, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr ""
-
-#: cmdline/apt-get.cc:2889
+#: cmdline/apt-get.cc:2770
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr ""
 
-#: cmdline/apt-get.cc:2912
+#: cmdline/apt-get.cc:2823
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because no available versions of "
+"package %s can satisfy version requirements"
+msgstr ""
+
+#: cmdline/apt-get.cc:2859
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 
-#: cmdline/apt-get.cc:2951
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-
-#: cmdline/apt-get.cc:2957
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr ""
-
-#: cmdline/apt-get.cc:2980
+#: cmdline/apt-get.cc:2886
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2996
+#: cmdline/apt-get.cc:2902
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr ""
 
-#: cmdline/apt-get.cc:3001
+#: cmdline/apt-get.cc:2907
 msgid "Failed to process build dependencies"
 msgstr ""
 
-#: cmdline/apt-get.cc:3094 cmdline/apt-get.cc:3106
+#: cmdline/apt-get.cc:3000 cmdline/apt-get.cc:3012
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr ""
 
-#: cmdline/apt-get.cc:3225
+#: cmdline/apt-get.cc:3131
 msgid "Supported modules:"
 msgstr ""
 
-#: cmdline/apt-get.cc:3266
+#: cmdline/apt-get.cc:3172
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1267,7 +1247,7 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:3429
+#: cmdline/apt-get.cc:3335
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1307,6 +1287,22 @@ msgid ""
 "Media change: please insert the disc labeled\n"
 " '%s'\n"
 "in the drive '%s' and press enter\n"
+msgstr ""
+
+#: cmdline/apt-internal-solver.cc:34
+msgid ""
+"Usage: apt-internal-resolver\n"
+"\n"
+"apt-internal-resolver is an interface to use the current internal\n"
+"like an external resolver for the APT family for debugging or alike\n"
+"\n"
+"Options:\n"
+"  -h  This help text.\n"
+"  -q  Loggable output - no progress indicator\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"apt.conf(5) manual pages for more information and options.\n"
+"                       This APT has Super Cow Powers.\n"
 msgstr ""
 
 #: cmdline/apt-mark.cc:46
@@ -1560,8 +1556,8 @@ msgstr ""
 #. Only warn if there is no sources.list file.
 #: apt-inst/extract.cc:462 apt-pkg/contrib/cdromutl.cc:179
 #: apt-pkg/contrib/fileutl.cc:343 apt-pkg/sourcelist.cc:204
-#: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:450 apt-pkg/init.cc:104
-#: apt-pkg/init.cc:112 apt-pkg/clean.cc:33 apt-pkg/policy.cc:352
+#: apt-pkg/sourcelist.cc:210 apt-pkg/acquire.cc:450 apt-pkg/init.cc:102
+#: apt-pkg/init.cc:110 apt-pkg/clean.cc:33 apt-pkg/policy.cc:318
 #: methods/mirror.cc:91
 #, c-format
 msgid "Unable to read %s"
@@ -1593,7 +1589,7 @@ msgstr ""
 
 #: apt-inst/deb/dpkgdb.cc:135 apt-pkg/pkgcachegen.cc:1048
 #: apt-pkg/pkgcachegen.cc:1152 apt-pkg/pkgcachegen.cc:1158
-#: apt-pkg/pkgcachegen.cc:1320
+#: apt-pkg/pkgcachegen.cc:1304
 msgid "Reading package lists"
 msgstr ""
 
@@ -1954,28 +1950,34 @@ msgstr ""
 msgid "Unable to connect to %s:%s:"
 msgstr ""
 
-#: methods/gpgv.cc:166
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: methods/gpgv.cc:71
+#, c-format
+msgid "No keyring installed in %s."
+msgstr ""
+
+#: methods/gpgv.cc:163
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 
-#: methods/gpgv.cc:171
+#: methods/gpgv.cc:168
 msgid "At least one invalid signature was encountered."
 msgstr ""
 
-#: methods/gpgv.cc:175
+#: methods/gpgv.cc:172
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:177
 msgid "Unknown error executing gpgv"
 msgstr ""
 
-#: methods/gpgv.cc:214 methods/gpgv.cc:221
+#: methods/gpgv.cc:211 methods/gpgv.cc:218
 msgid "The following signatures were invalid:\n"
 msgstr ""
 
-#: methods/gpgv.cc:228
+#: methods/gpgv.cc:225
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -2128,67 +2130,67 @@ msgstr ""
 msgid "Selection %s not found"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:465
+#: apt-pkg/contrib/configuration.cc:452
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:523
+#: apt-pkg/contrib/configuration.cc:510
 #, c-format
 msgid "Opening configuration file %s"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:691
+#: apt-pkg/contrib/configuration.cc:678
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:710
+#: apt-pkg/contrib/configuration.cc:697
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:727
+#: apt-pkg/contrib/configuration.cc:714
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:767
+#: apt-pkg/contrib/configuration.cc:754
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:774
+#: apt-pkg/contrib/configuration.cc:761
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:778 apt-pkg/contrib/configuration.cc:783
+#: apt-pkg/contrib/configuration.cc:765 apt-pkg/contrib/configuration.cc:770
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:787
+#: apt-pkg/contrib/configuration.cc:774
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:790
+#: apt-pkg/contrib/configuration.cc:777
 #, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr ""
 
-#: apt-pkg/contrib/configuration.cc:840
+#: apt-pkg/contrib/configuration.cc:827
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr ""
 
-#: apt-pkg/contrib/progress.cc:153
+#: apt-pkg/contrib/progress.cc:144
 #, c-format
 msgid "%c%s... Error!"
 msgstr ""
 
-#: apt-pkg/contrib/progress.cc:155
+#: apt-pkg/contrib/progress.cc:146
 #, c-format
 msgid "%c%s... Done"
 msgstr ""
@@ -2321,7 +2323,7 @@ msgstr ""
 msgid "Sub-process %s exited unexpectedly"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:764 apt-pkg/indexcopy.cc:673
+#: apt-pkg/contrib/fileutl.cc:764
 #, c-format
 msgid "Could not open file %s"
 msgstr ""
@@ -2468,12 +2470,12 @@ msgstr ""
 msgid "Failed to write temporary StateFile %s"
 msgstr ""
 
-#: apt-pkg/tagfile.cc:102
+#: apt-pkg/tagfile.cc:123
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr ""
 
-#: apt-pkg/tagfile.cc:189
+#: apt-pkg/tagfile.cc:210
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr ""
@@ -2575,23 +2577,23 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/algorithms.cc:247
+#: apt-pkg/algorithms.cc:250
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 
-#: apt-pkg/algorithms.cc:1158
+#: apt-pkg/algorithms.cc:1186
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
 msgstr ""
 
-#: apt-pkg/algorithms.cc:1160
+#: apt-pkg/algorithms.cc:1188
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 
-#: apt-pkg/algorithms.cc:1464 apt-pkg/algorithms.cc:1466
+#: apt-pkg/algorithms.cc:1479 apt-pkg/algorithms.cc:1481
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
@@ -2639,12 +2641,12 @@ msgstr ""
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
 
-#: apt-pkg/init.cc:147
+#: apt-pkg/init.cc:145
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr ""
 
-#: apt-pkg/init.cc:163
+#: apt-pkg/init.cc:161
 msgid "Unable to determine a suitable packaging system type"
 msgstr ""
 
@@ -2669,24 +2671,17 @@ msgstr ""
 msgid "The list of sources could not be read."
 msgstr ""
 
-#: apt-pkg/policy.cc:71
-#, c-format
-msgid ""
-"The value '%s' is invalid for APT::Default-Release as such a release is not "
-"available in the sources"
-msgstr ""
-
-#: apt-pkg/policy.cc:389
+#: apt-pkg/policy.cc:355
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr ""
 
-#: apt-pkg/policy.cc:411
+#: apt-pkg/policy.cc:377
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr ""
 
-#: apt-pkg/policy.cc:419
+#: apt-pkg/policy.cc:385
 msgid "No priority (or zero) specified for pin"
 msgstr ""
 
@@ -2775,7 +2770,7 @@ msgstr ""
 msgid "Collecting File Provides"
 msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:1259 apt-pkg/pkgcachegen.cc:1266
+#: apt-pkg/pkgcachegen.cc:1243 apt-pkg/pkgcachegen.cc:1250
 msgid "IO Error saving source cache"
 msgstr ""
 
@@ -2788,8 +2783,8 @@ msgstr ""
 msgid "MD5Sum mismatch"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:900 apt-pkg/acquire-item.cc:1848
-#: apt-pkg/acquire-item.cc:1991
+#: apt-pkg/acquire-item.cc:900 apt-pkg/acquire-item.cc:1850
+#: apt-pkg/acquire-item.cc:1993
 msgid "Hash Sum mismatch"
 msgstr ""
 
@@ -2809,19 +2804,20 @@ msgstr ""
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1477
+#. TRANSLATOR: The first %s is the URL of the bad Release file, the second is
+#. the time since then the file is invalid - formated in the same way as in
+#. the download progress display (e.g. 7d 3h 42min 1s)
+#: apt-pkg/acquire-item.cc:1476
 #, c-format
-msgid ""
-"Release file for %s is expired (invalid since %s). Updates for this "
-"repository will not be applied."
+msgid "Release file expired, ignoring %s (invalid since %s)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1499
+#: apt-pkg/acquire-item.cc:1497
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1532
+#: apt-pkg/acquire-item.cc:1530
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -2829,32 +2825,32 @@ msgid ""
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1542 apt-pkg/acquire-item.cc:1547
+#: apt-pkg/acquire-item.cc:1540 apt-pkg/acquire-item.cc:1545
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1639
+#: apt-pkg/acquire-item.cc:1637
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package. (due to missing arch)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1698
+#: apt-pkg/acquire-item.cc:1696
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1753
+#: apt-pkg/acquire-item.cc:1755
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1840
+#: apt-pkg/acquire-item.cc:1842
 msgid "Size mismatch"
 msgstr ""
 
@@ -2970,22 +2966,22 @@ msgstr ""
 msgid "Source list entries for this disc are:\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:270 apt-pkg/indexcopy.cc:928
+#: apt-pkg/indexcopy.cc:270 apt-pkg/indexcopy.cc:909
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:272 apt-pkg/indexcopy.cc:930
+#: apt-pkg/indexcopy.cc:272 apt-pkg/indexcopy.cc:911
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:275 apt-pkg/indexcopy.cc:933
+#: apt-pkg/indexcopy.cc:275 apt-pkg/indexcopy.cc:914
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr ""
 
-#: apt-pkg/indexcopy.cc:278 apt-pkg/indexcopy.cc:936
+#: apt-pkg/indexcopy.cc:278 apt-pkg/indexcopy.cc:917
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
@@ -3003,17 +2999,6 @@ msgstr ""
 #: apt-pkg/indexcopy.cc:549
 #, c-format
 msgid "Hash mismatch for: %s"
-msgstr ""
-
-#: apt-pkg/indexcopy.cc:677
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:708
-#, c-format
-msgid "No keyring installed in %s."
 msgstr ""
 
 #: apt-pkg/cacheset.cc:337
@@ -3063,148 +3048,168 @@ msgstr ""
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:54
+#: apt-pkg/edsp.cc:32 apt-pkg/edsp.cc:52
+msgid "Send scenario to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:204
+msgid "Send request to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:272
+msgid "Prepare for receiving solution"
+msgstr ""
+
+#: apt-pkg/edsp.cc:279
+msgid "External solver failed without a proper error message"
+msgstr ""
+
+#: apt-pkg/edsp.cc:550 apt-pkg/edsp.cc:553 apt-pkg/edsp.cc:558
+msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:69
 #, c-format
 msgid "Installing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:55 apt-pkg/deb/dpkgpm.cc:848
+#: apt-pkg/deb/dpkgpm.cc:70 apt-pkg/deb/dpkgpm.cc:864
 #, c-format
 msgid "Configuring %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:56 apt-pkg/deb/dpkgpm.cc:855
+#: apt-pkg/deb/dpkgpm.cc:71 apt-pkg/deb/dpkgpm.cc:871
 #, c-format
 msgid "Removing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:57
+#: apt-pkg/deb/dpkgpm.cc:72
 #, c-format
 msgid "Completely removing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:58
+#: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:59
+#: apt-pkg/deb/dpkgpm.cc:74
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr ""
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:654
+#: apt-pkg/deb/dpkgpm.cc:670
 #, c-format
 msgid "Directory '%s' missing"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:669 apt-pkg/deb/dpkgpm.cc:689
+#: apt-pkg/deb/dpkgpm.cc:685 apt-pkg/deb/dpkgpm.cc:705
 #, c-format
 msgid "Could not open file '%s'"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:841
+#: apt-pkg/deb/dpkgpm.cc:857
 #, c-format
 msgid "Preparing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:842
+#: apt-pkg/deb/dpkgpm.cc:858
 #, c-format
 msgid "Unpacking %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:847
+#: apt-pkg/deb/dpkgpm.cc:863
 #, c-format
 msgid "Preparing to configure %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:849
+#: apt-pkg/deb/dpkgpm.cc:865
 #, c-format
 msgid "Installed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:854
+#: apt-pkg/deb/dpkgpm.cc:870
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:856
+#: apt-pkg/deb/dpkgpm.cc:872
 #, c-format
 msgid "Removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:861
+#: apt-pkg/deb/dpkgpm.cc:877
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:862
+#: apt-pkg/deb/dpkgpm.cc:878
 #, c-format
 msgid "Completely removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1082
+#: apt-pkg/deb/dpkgpm.cc:1098
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1113
+#: apt-pkg/deb/dpkgpm.cc:1129
 msgid "Running dpkg"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1338
+#: apt-pkg/deb/dpkgpm.cc:1354
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1343
+#: apt-pkg/deb/dpkgpm.cc:1359
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1345
+#: apt-pkg/deb/dpkgpm.cc:1361
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1351
+#: apt-pkg/deb/dpkgpm.cc:1367
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1357
+#: apt-pkg/deb/dpkgpm.cc:1373
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1364
+#: apt-pkg/deb/dpkgpm.cc:1380
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
 
-#: apt-pkg/deb/debsystem.cc:69
+#: apt-pkg/deb/debsystem.cc:79
 #, c-format
 msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
 
-#: apt-pkg/deb/debsystem.cc:72
+#: apt-pkg/deb/debsystem.cc:82
 #, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
 msgstr ""
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:88
+#: apt-pkg/deb/debsystem.cc:98
 #, c-format
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
 
-#: apt-pkg/deb/debsystem.cc:106
+#: apt-pkg/deb/debsystem.cc:116
 msgid "Not locked"
 msgstr ""
 

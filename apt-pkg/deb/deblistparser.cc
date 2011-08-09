@@ -128,12 +128,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    }
 
    if (ArchitectureAll() == true)
-      switch (Ver->MultiArch)
-      {
-	 case pkgCache::Version::Foreign: Ver->MultiArch = pkgCache::Version::AllForeign; break;
-	 case pkgCache::Version::Allowed: Ver->MultiArch = pkgCache::Version::AllAllowed; break;
-	 default: Ver->MultiArch = pkgCache::Version::All;
-      }
+      Ver->MultiArch |= pkgCache::Version::All;
 
    // Archive Size
    Ver->Size = Section.FindULL("Size");
@@ -690,12 +685,12 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 
    if (MultiArchEnabled == false)
       return true;
-   else if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
+   else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
    {
       string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
       return NewProvidesAllArch(Ver, Package, Ver.VerStr());
    }
-   else if (Ver->MultiArch == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::AllForeign)
+   else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
       return NewProvidesAllArch(Ver, Ver.ParentPkg().Name(), Ver.VerStr());
 
    return true;

@@ -194,7 +194,7 @@ class pkgAcquire::Item : public WeakPointable
     *
     *  \sa pkgAcqMethod
     */
-   virtual void Done(string Message,unsigned long Size,string Hash,
+   virtual void Done(string Message,unsigned long long Size,string Hash,
 		     pkgAcquire::MethodConfig *Cnf);
 
    /** \brief Invoked when the worker starts to fetch this object.
@@ -206,7 +206,7 @@ class pkgAcquire::Item : public WeakPointable
     *
     *  \sa pkgAcqMethod
     */
-   virtual void Start(string Message,unsigned long Size);
+   virtual void Start(string Message,unsigned long long Size);
 
    /** \brief Custom headers to be sent to the fetch process.
     *
@@ -309,7 +309,7 @@ class pkgAcqSubIndex : public pkgAcquire::Item
  public:
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return Desc.URI;};
    virtual string Custom600Headers();
@@ -372,7 +372,7 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
  public:
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return RealURI + "Index";};
    virtual string Custom600Headers();
@@ -508,7 +508,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     */
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
 
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return RealURI + "Index";};
 
@@ -559,6 +559,16 @@ class pkgAcqIndex : public pkgAcquire::Item
     */
    bool Erase;
 
+   /** \brief Verify for correctness by checking if a "Package"
+    *         tag is found in the index. This can be set to
+    *         false for optional index targets
+    *       
+    */
+   // FIXME: instead of a bool it should use a verify string that will
+   //        then be used in the pkgAcqIndex::Done method to ensure that
+   //        the downloaded file contains the expected tag
+   bool Verify;
+
    /** \brief The download request that is currently being
     *   processed.
     */
@@ -581,7 +591,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
    virtual string DescURI() {return Desc.URI;};
@@ -646,8 +656,9 @@ class pkgAcqIndexTrans : public pkgAcqIndex
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
-struct IndexTarget
+class IndexTarget
 {
+ public:
    /** \brief A URI from which the index file can be downloaded. */
    string URI;
 
@@ -662,14 +673,28 @@ struct IndexTarget
     */
    string MetaKey;
 
-   //FIXME: We should use virtual methods here instead…
-   bool IsOptional() const;
-   bool IsSubIndex() const;
+   virtual bool IsOptional() const {
+      return false;
+   }
+   virtual bool IsSubIndex() const {
+      return false;
+   }
 };
 									/*}}}*/
 /** \brief Information about an optional index file. */			/*{{{*/
-struct OptionalIndexTarget : public IndexTarget
+class OptionalIndexTarget : public IndexTarget
 {
+   virtual bool IsOptional() const {
+      return true;
+   }
+};
+									/*}}}*/
+/** \brief Information about an subindex index file. */			/*{{{*/
+class SubIndexTarget : public IndexTarget
+{
+   virtual bool IsSubIndex() const {
+      return true;
+   }
 };
 									/*}}}*/
 
@@ -723,7 +748,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Md5Hash,
+   virtual void Done(string Message,unsigned long long Size,string Md5Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
    virtual string DescURI() {return RealURI; };
@@ -818,7 +843,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size, string Hash,
+   virtual void Done(string Message,unsigned long long Size, string Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string Custom600Headers();
    virtual string DescURI() {return RealURI; };
@@ -918,7 +943,7 @@ class pkgAcqArchive : public pkgAcquire::Item
    public:
    
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string Hash,
+   virtual void Done(string Message,unsigned long long Size,string Hash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return Desc.URI;};
    virtual string ShortDesc() {return Desc.ShortDesc;};
@@ -975,7 +1000,7 @@ class pkgAcqFile : public pkgAcquire::Item
    
    // Specialized action members
    virtual void Failed(string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(string Message,unsigned long Size,string CalcHash,
+   virtual void Done(string Message,unsigned long long Size,string CalcHash,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual string DescURI() {return Desc.URI;};
    virtual string HashSum() {return ExpectedHash.toStr(); };
@@ -1012,7 +1037,7 @@ class pkgAcqFile : public pkgAcquire::Item
     * is the absolute name to which the file should be downloaded.
     */
 
-   pkgAcqFile(pkgAcquire *Owner, string URI, string Hash, unsigned long Size,
+   pkgAcqFile(pkgAcquire *Owner, string URI, string Hash, unsigned long long Size,
 	      string Desc, string ShortDesc,
 	      const string &DestDir="", const string &DestFilename="",
 	      bool IsIndexFile=false);

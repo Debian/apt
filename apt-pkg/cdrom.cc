@@ -874,9 +874,7 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    libudev_handle = h;
    udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
    udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
-#if 0 // FIXME: uncomment on next ABI break
    udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_sysattr");
-#endif
    udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
    udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
    udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
@@ -890,10 +888,8 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    return true;
 }
 									/*}}}*/
-
                                                                         /*{{{*/
-// compatiblity only with the old API/ABI, can be removed on the next
-// ABI break
+// convenience interface, this will just call ScanForRemovable
 vector<CdromDevice>
 pkgUdevCdromDevices::Scan()
 { 
@@ -918,10 +914,6 @@ pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
    if (CdromOnly)
       udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
    else {
-#if 1 // FIXME: remove the next two lines on the next ABI break
-      int (*udev_enumerate_add_match_sysattr)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
-      udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(libudev_handle, "udev_enumerate_add_match_sysattr");
-#endif
       udev_enumerate_add_match_sysattr(enumerate, "removable", "1");
    }
 

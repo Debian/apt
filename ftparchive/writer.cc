@@ -19,8 +19,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/md5.h>
-#include <apt-pkg/sha1.h>
-#include <apt-pkg/sha256.h>
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/deblistparser.h>
 
 #include <sys/types.h>
@@ -64,6 +63,7 @@ FTWScanner::FTWScanner(string const &Arch): Arch(Arch)
    DoMD5 = _config->FindB("APT::FTPArchive::MD5",true);
    DoSHA1 = _config->FindB("APT::FTPArchive::SHA1",true);
    DoSHA256 = _config->FindB("APT::FTPArchive::SHA256",true);
+   DoSHA512 = _config->FindB("APT::FTPArchive::SHA512",true);
 }
 									/*}}}*/
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
@@ -316,6 +316,7 @@ PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string c
    DoMD5 = _config->FindB("APT::FTPArchive::Packages::MD5",DoMD5);
    DoSHA1 = _config->FindB("APT::FTPArchive::Packages::SHA1",DoSHA1);
    DoSHA256 = _config->FindB("APT::FTPArchive::Packages::SHA256",DoSHA256);
+   DoSHA256 = _config->FindB("APT::FTPArchive::Packages::SHA512",true);
    DoAlwaysStat = _config->FindB("APT::FTPArchive::AlwaysStat", false);
    DoContents = _config->FindB("APT::FTPArchive::Contents",true);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
@@ -370,7 +371,7 @@ bool FTWScanner::SetExts(string const &Vals)
 bool PackagesWriter::DoPackage(string FileName)
 {      
    // Pull all the data we need form the DB
-   if (Db.GetFileInfo(FileName, true, DoContents, true, DoMD5, DoSHA1, DoSHA256, DoAlwaysStat)
+   if (Db.GetFileInfo(FileName, true, DoContents, true, DoMD5, DoSHA1, DoSHA256, DoSHA512, DoAlwaysStat)
 		  == false)
    {
       return false;
@@ -446,6 +447,8 @@ bool PackagesWriter::DoPackage(string FileName)
       SetTFRewriteData(Changes[End++], "SHA1", Db.SHA1Res.c_str());
    if (DoSHA256 == true)
       SetTFRewriteData(Changes[End++], "SHA256", Db.SHA256Res.c_str());
+   if (DoSHA512 == true)
+      SetTFRewriteData(Changes[End++], "SHA512", Db.SHA512Res.c_str());
    SetTFRewriteData(Changes[End++], "Filename", NewFileName.c_str());
    SetTFRewriteData(Changes[End++], "Priority", OverItem->Priority.c_str());
    SetTFRewriteData(Changes[End++], "Status", 0);
@@ -623,6 +626,7 @@ bool SourcesWriter::DoPackage(string FileName)
    MD5Summation MD5;
    SHA1Summation SHA1;
    SHA256Summation SHA256;
+   SHA256Summation SHA512;
 
    if (DoMD5 == true)
       MD5.Add((unsigned char *)Start,BlkEnd - Start);
@@ -630,6 +634,8 @@ bool SourcesWriter::DoPackage(string FileName)
       SHA1.Add((unsigned char *)Start,BlkEnd - Start);
    if (DoSHA256 == true)
       SHA256.Add((unsigned char *)Start,BlkEnd - Start);
+   if (DoSHA512 == true)
+      SHA512.Add((unsigned char *)Start,BlkEnd - Start);
 
    // Add an extra \n to the end, just in case
    *BlkEnd++ = '\n';
@@ -740,6 +746,12 @@ bool SourcesWriter::DoPackage(string FileName)
 		   << strippedName << "\n " << Tags.FindS("Checksums-Sha256");
    string const ChecksumsSha256 = ostreamSha256.str();
 
+   std::ostringstream ostreamSha512;
+   if (Tags.Exists("Checksums-Sha512"))
+      ostreamSha512 << "\n " << string(SHA512.Result()) << " " << St.st_size << " "
+		   << strippedName << "\n " << Tags.FindS("Checksums-Sha512");
+   string const ChecksumsSha512 = ostreamSha512.str();
+
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
    if (DirStrip.empty() == false &&
@@ -795,6 +807,8 @@ bool SourcesWriter::DoPackage(string FileName)
       SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1.c_str());
    if (ChecksumsSha256.empty() == false)
       SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256.c_str());
+   if (ChecksumsSha512.empty() == false)
+      SetTFRewriteData(Changes[End++],"Checksums-Sha512",ChecksumsSha512.c_str());
    if (Directory != "./")
       SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
    SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
@@ -1025,29 +1039,18 @@ bool ReleaseWriter::DoPackage(string FileName)
 
    CheckSums[NewFileName].size = fd.Size();
 
+   Hashes hs;
+   hs.AddFD(fd.Fd(), 0, DoMD5, DoSHA1, DoSHA256, DoSHA512);
    if (DoMD5 == true)
-   {
-      MD5Summation MD5;
-      MD5.AddFD(fd.Fd(), fd.Size());
-      CheckSums[NewFileName].MD5 = MD5.Result();
-      fd.Seek(0);
-   }
+      CheckSums[NewFileName].MD5 = hs.MD5.Result();
    if (DoSHA1 == true)
-   {
-      SHA1Summation SHA1;
-      SHA1.AddFD(fd.Fd(), fd.Size());
-      CheckSums[NewFileName].SHA1 = SHA1.Result();
-      fd.Seek(0);
-   }
+      CheckSums[NewFileName].SHA1 = hs.SHA1.Result();
    if (DoSHA256 == true)
-   {
-      SHA256Summation SHA256;
-      SHA256.AddFD(fd.Fd(), fd.Size());
-      CheckSums[NewFileName].SHA256 = SHA256.Result();
-   }
-
+      CheckSums[NewFileName].SHA256 = hs.SHA256.Result();
+   if (DoSHA512 == true)
+      CheckSums[NewFileName].SHA512 = hs.SHA512.Result();
    fd.Close();
-   
+
    return true;
 }
 
@@ -1092,4 +1095,16 @@ void ReleaseWriter::Finish()
 		 (*I).first.c_str());
       }
    }
+
+   fprintf(Output, "SHA512:\n");
+   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
+       I != CheckSums.end();
+       ++I)
+   {
+      fprintf(Output, " %s %32ld %s\n",
+              (*I).second.SHA512.c_str(),
+              (*I).second.size,
+              (*I).first.c_str());
+   }
+
 }

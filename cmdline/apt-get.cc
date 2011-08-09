@@ -135,6 +135,11 @@ bool YnPrompt(bool Default=true)
       c1out << _("Y") << endl;
       return true;
    }
+   else if (_config->FindB("APT::Get::Assume-No",false) == true)
+   {
+      c1out << _("N") << endl;
+      return false;
+   }
 
    char response[1024] = "";
    cin.getline(response, sizeof(response));
@@ -1894,8 +1899,7 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 // Call the scored problem resolver
 	 Fix->InstallProtect();
-	 if (Fix->Resolve(true) == false)
-	    _error->Discard();
+	 Fix->Resolve(true);
 	 delete Fix;
       }
 
@@ -1921,8 +1925,11 @@ bool DoInstall(CommandLine &CmdL)
 	 c1out << _("The following information may help to resolve the situation:") << endl;
 	 c1out << endl;
 	 ShowBroken(c1out,Cache,false);
-	 return _error->Error(_("Broken packages"));
-      }   
+	 if (_error->PendingError() == true)
+	    return false;
+	 else
+	    return _error->Error(_("Broken packages"));
+      }
    }
    if (!DoAutomaticRemove(Cache)) 
       return false;
@@ -2305,6 +2312,8 @@ bool DoDownload(CommandLine &CmdL)
       strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
       // get the most appropriate hash
       HashString hash;
+      if (rec.SHA512Hash() != "")
+         hash = HashString("sha512", rec.SHA512Hash());
       if (rec.SHA256Hash() != "")
          hash = HashString("sha256", rec.SHA256Hash());
       else if (rec.SHA1Hash() != "")
@@ -3339,7 +3348,8 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'s',"dry-run","APT::Get::Simulate",0},
       {'s',"no-act","APT::Get::Simulate",0},
       {'y',"yes","APT::Get::Assume-Yes",0},
-      {'y',"assume-yes","APT::Get::Assume-Yes",0},      
+      {'y',"assume-yes","APT::Get::Assume-Yes",0},
+      {0,"assume-no","APT::Get::Assume-No",0},
       {'f',"fix-broken","APT::Get::Fix-Broken",0},
       {'u',"show-upgraded","APT::Get::Show-Upgraded",0},
       {'m',"ignore-missing","APT::Get::Fix-Missing",0},
@@ -3369,6 +3379,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {0,"install-recommends","APT::Install-Recommends",CommandLine::Boolean},
       {0,"install-suggests","APT::Install-Suggests",CommandLine::Boolean},
       {0,"fix-policy","APT::Get::Fix-Policy-Broken",0},
+      {0,"solver","APT::Solver",CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}};

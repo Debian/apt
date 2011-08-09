@@ -70,14 +70,13 @@ class pkgPolicy : public pkgDepCache::Policy
    // Things for manipulating pins
    void CreatePin(pkgVersionMatch::MatchType Type,string Pkg,
 		  string Data,signed short Priority);
-   inline signed short GetPriority(pkgCache::PkgFileIterator const &File) 
-       {return PFPriority[File->ID];};
-   signed short GetPriority(pkgCache::PkgIterator const &Pkg);
    pkgCache::VerIterator GetMatch(pkgCache::PkgIterator const &Pkg);
 
    // Things for the cache interface.
    virtual pkgCache::VerIterator GetCandidateVer(pkgCache::PkgIterator const &Pkg);
-   virtual bool IsImportantDep(pkgCache::DepIterator const &Dep) {return pkgDepCache::Policy::IsImportantDep(Dep);};
+   virtual signed short GetPriority(pkgCache::PkgIterator const &Pkg);
+   virtual signed short GetPriority(pkgCache::PkgFileIterator const &File);
+
    bool InitDefaults();
    
    pkgPolicy(pkgCache *Owner);

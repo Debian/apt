@@ -24,6 +24,9 @@ class pkgCdromStatus;
 
 class IndexCopy								/*{{{*/
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    protected:
    
    pkgTagSection *Section;
@@ -55,7 +58,6 @@ class PackageCopy : public IndexCopy					/*{{{*/
    virtual const char *GetFileName() {return "Packages";};
    virtual const char *Type() {return "Package";};
    
-   public:
 };
 									/*}}}*/
 class SourceCopy : public IndexCopy					/*{{{*/
@@ -67,7 +69,6 @@ class SourceCopy : public IndexCopy					/*{{{*/
    virtual const char *GetFileName() {return "Sources";};
    virtual const char *Type() {return "Source";};
    
-   public:
 };
 									/*}}}*/
 class TranslationsCopy							/*{{{*/
@@ -82,6 +83,9 @@ class TranslationsCopy							/*{{{*/
 									/*}}}*/
 class SigVerify								/*{{{*/
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    bool Verify(string prefix,string file, indexRecords *records);
    bool CopyMetaIndex(string CDROM, string CDName, 
 		      string prefix, string file);

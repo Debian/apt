@@ -77,12 +77,20 @@ string debRecordParser::SHA1Hash()
    return Section.FindS("SHA1");
 }
 									/*}}}*/
-// RecordParser::SHA1Hash - Return the archive hash			/*{{{*/
+// RecordParser::SHA256Hash - Return the archive hash			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 string debRecordParser::SHA256Hash()
 {
    return Section.FindS("SHA256");
+}
+									/*}}}*/
+// RecordParser::SHA512Hash - Return the archive hash			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::SHA512Hash()
+{
+   return Section.FindS("SHA512");
 }
 									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/
@@ -93,6 +101,15 @@ string debRecordParser::Maintainer()
    return Section.FindS("Maintainer");
 }
 									/*}}}*/
+// RecordParser::RecordField - Return the value of an arbitrary field       /*{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::RecordField(const char *fieldName)
+{
+   return Section.FindS(fieldName);
+}
+
+                                                                        /*}}}*/
 // RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
