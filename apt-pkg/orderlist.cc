@@ -1023,6 +1023,8 @@ bool pkgOrderList::AddLoop(DepIterator D)
    // Mark the packages as being part of a loop.
    //Flag(D.TargetPkg(),Loop);
    //Flag(D.ParentPkg(),Loop);
+   /* This is currently disabled because the Loop flag is being used for
+      loop management in the package manager. Check the orderlist.h file for more info */
    return true;
 }
 									/*}}}*/
