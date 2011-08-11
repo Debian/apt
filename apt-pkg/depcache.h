@@ -390,7 +390,7 @@ class pkgDepCache : protected pkgCache::Namespace
    // @{
    void MarkKeep(PkgIterator const &Pkg, bool Soft = false,
 		 bool FromUser = true, unsigned long Depth = 0);
-   void MarkDelete(PkgIterator const &Pkg, bool Purge = false,
+   void MarkDelete(PkgIterator const &Pkg, bool MarkPurge = false,
                    unsigned long Depth = 0, bool FromUser = true);
    void MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
@@ -459,7 +459,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *  \param Depth     recursive deep of this Marker call
     *  \param FromUser  was the remove requested by the user?
     */
-   virtual bool IsDeleteOk(const PkgIterator &Pkg,bool Purge = false,
+   virtual bool IsDeleteOk(const PkgIterator &Pkg,bool MarkPurge = false,
 			    unsigned long Depth = 0, bool FromUser = true);
 
    // read persistent states
