@@ -491,7 +491,7 @@ bool PackagesWriter::DoPackage(string FileName)
    }
 
    for (map<string,string>::const_iterator I = OverItem->FieldOverride.begin(); 
-        I != OverItem->FieldOverride.end(); I++) 
+        I != OverItem->FieldOverride.end(); ++I)
       SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
 
    SetTFRewriteData(Changes[End++], 0, 0);
@@ -816,7 +816,7 @@ bool SourcesWriter::DoPackage(string FileName)
       SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
    
    for (map<string,string>::const_iterator I = SOverItem->FieldOverride.begin(); 
-        I != SOverItem->FieldOverride.end(); I++) 
+        I != SOverItem->FieldOverride.end(); ++I)
       SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
 
    SetTFRewriteData(Changes[End++], 0, 0);

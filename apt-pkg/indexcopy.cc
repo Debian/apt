@@ -43,7 +43,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 			     pkgCdromStatus *log)
 {
    OpProgress *Progress = NULL;
-   if (List.size() == 0)
+   if (List.empty() == true)
       return true;
    
    if(log) 
@@ -54,7 +54,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    
    // Prepare the progress indicator
    unsigned long TotalSize = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
       if (stat(string(*I + GetFileName()).c_str(),&Buf) != 0 &&
@@ -68,7 +68,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    unsigned int NotFound = 0;
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
       unsigned long FileSize = 0;
@@ -583,13 +583,13 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	/*{{{*/
 			      vector<string> PkgList,vector<string> SrcList)
 {
-   if (SigList.size() == 0)
+   if (SigList.empty() == true)
       return true;
 
    bool Debug = _config->FindB("Debug::aptcdrom",false);
 
    // Read all Release files
-   for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); I++)
+   for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); ++I)
    { 
       if(Debug)
 	 cout << "Signature verify for: " << *I << endl;
@@ -633,7 +633,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       // go over the Indexfiles and see if they verify
       // if so, remove them from our copy of the lists
       vector<string> keys = MetaIndex->MetaKeys();
-      for (vector<string>::iterator I = keys.begin(); I != keys.end(); I++)
+      for (vector<string>::iterator I = keys.begin(); I != keys.end(); ++I)
       { 
 	 if(!Verify(prefix,*I, MetaIndex)) {
 	    // something went wrong, don't copy the Release.gpg
@@ -776,7 +776,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 				vector<string> &List, pkgCdromStatus *log)
 {
    OpProgress *Progress = NULL;
-   if (List.size() == 0)
+   if (List.empty() == true)
       return true;
    
    if(log) 
@@ -786,7 +786,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    
    // Prepare the progress indicator
    unsigned long TotalSize = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
       if (stat(string(*I).c_str(),&Buf) != 0 &&
@@ -800,7 +800,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    unsigned int NotFound = 0;
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
       unsigned long FileSize = 0;

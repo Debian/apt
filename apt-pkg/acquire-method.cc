@@ -81,7 +81,7 @@ void pkgAcqMethod::Fail(bool Transient)
 void pkgAcqMethod::Fail(string Err,bool Transient)
 {
    // Strip out junk from the error messages
-   for (string::iterator I = Err.begin(); I != Err.end(); I++)
+   for (string::iterator I = Err.begin(); I != Err.end(); ++I)
    {
       if (*I == '\r') 
 	 *I = ' ';

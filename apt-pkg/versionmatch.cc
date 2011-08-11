@@ -60,7 +60,7 @@ pkgVersionMatch::pkgVersionMatch(string Data,MatchType Type) : Type(Type)
       
       // Are we a simple specification?
       string::const_iterator I = Data.begin();
-      for (; I != Data.end() && *I != '='; I++);
+      for (; I != Data.end() && *I != '='; ++I);
       if (I == Data.end())
       {
 	 // Temporary
@@ -152,7 +152,7 @@ bool pkgVersionMatch::MatchVer(const char *A,string B,bool Prefix)
 pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
 {
    pkgCache::VerIterator Ver = Pkg.VersionList();
-   for (; Ver.end() == false; Ver++)
+   for (; Ver.end() == false; ++Ver)
    {
       if (Type == Version)
       {
@@ -163,7 +163,7 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
 	 continue;
       }
       
-      for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; VF++)
+      for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
 	 if (FileMatch(VF.File()) == true)
 	    return Ver;
    }

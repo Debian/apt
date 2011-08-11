@@ -99,7 +99,7 @@ bool pkgPackageManager::FixMissing()
    List->SetFileList(FileNames);
 
    bool Bad = false;
-   for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+   for (PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
    {
       if (List->IsMissing(I) == false)
 	 continue;
@@ -140,7 +140,7 @@ void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer, unsigned
       D = I.CurrentVer().DependsList(); 
    }
 
-   for ( /* nothing */  ; D.end() == false; D++)
+   for ( /* nothing */  ; D.end() == false; ++D)
       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
       {
 	 if(!List->IsFlag(D.TargetPkg(), pkgOrderList::Immediate))
@@ -169,7 +169,7 @@ bool pkgPackageManager::CreateOrderList()
    static bool const NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
    
    // Generate the list of affected packages and sort it
-   for (PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+   for (PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
    {
       // Ignore no-version packages
       if (I->VersionList == 0)
@@ -229,7 +229,7 @@ bool pkgPackageManager::DepAlwaysTrue(DepIterator D)
 bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 					const char *Ver)
 {
-   for (;D.end() == false; D++)
+   for (;D.end() == false; ++D)
    {
       if (D->Type != pkgCache::Dep::Conflicts &&
 	  D->Type != pkgCache::Dep::Obsoletes)
@@ -364,13 +364,13 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
    {
       if (D->Type != pkgCache::Dep::Depends && D->Type != pkgCache::Dep::PreDepends)
       {
-	 D++;
+	 ++D;
 	 continue;
       }
       
       // Grok or groups
       Bad = true;
-      for (bool LastOR = true; D.end() == false && LastOR == true; D++)
+      for (bool LastOR = true; D.end() == false && LastOR == true; ++D)
       {
 	 LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
 	 
@@ -378,7 +378,7 @@ bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
 	    continue;
 
 	 SPtrArray<Version *> VList = D.AllTargets();
-	 for (Version **I = VList; *I != 0 && Bad == true; I++)
+	 for (Version **I = VList; *I != 0 && Bad == true; ++I)
 	 {
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator Pkg = Ver.ParentPkg();
@@ -444,7 +444,7 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
    if (Pkg->CurrentVer != 0)
    {
       for (DepIterator D = Pkg.RevDependsList(); D.end() == false &&
-	   IsEssential == false; D++)
+	   IsEssential == false; ++D)
 	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
 	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0)
 	       IsEssential = true;
@@ -564,7 +564,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	       return _error->Error("Couldn't configure pre-depend %s for %s, "
 				    "probably a dependency cycle.",
 				    End.TargetPkg().Name(),Pkg.Name());
-	    Start++;
+	    ++Start;
 	 }
 	 else
 	    break;
@@ -597,7 +597,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
       return false;
    
    for (PrvIterator P = instVer.ProvidesList();
-	P.end() == false; P++)
+	P.end() == false; ++P)
       CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
 
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
