@@ -421,12 +421,8 @@ void pkgAcqMethod::Status(const char *Format,...)
    to keep the pipeline synchronized. */
 void pkgAcqMethod::Redirect(const string &NewURI)
 {
-   std::cout << "103 Redirect\nURI: ";
-   if (Queue != 0)
-      std::cout << Queue->Uri << "\n";
-   else
-      std::cout << "<UNKNOWN>\n";
-   std::cout << "New-URI: " << NewURI << "\n"
+   std::cout << "103 Redirect\nURI: " << Queue->Uri << "\n"
+	     << "New-URI: " << NewURI << "\n"
 	     << "\n" << std::flush;
 
    // Change the URI for the request.
