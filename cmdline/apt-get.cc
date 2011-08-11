@@ -869,9 +869,7 @@ struct TryToInstall {
 struct TryToRemove {
    pkgCacheFile* Cache;
    pkgProblemResolver* Fix;
-   bool FixBroken;
    bool PurgePkgs;
-   unsigned long AutoMarkChanged;
 
    TryToRemove(pkgCacheFile &Cache, pkgProblemResolver *PM) : Cache(&Cache), Fix(PM),
 				PurgePkgs(_config->FindB("APT::Get::Purge", false)) {};
