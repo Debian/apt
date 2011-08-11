@@ -8,6 +8,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/acquire-item.h>
@@ -134,9 +135,24 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
+#if 0 // no need for this, the getArchitectures() will also include the main 
+      // arch
+   // append main architecture
+   fetch += "?arch=" + _config->Find("Apt::Architecture");
+#endif
+
+   // append all architectures
+   std::vector<std::string> vec = APT::Configuration::getArchitectures();
+   for (std::vector<std::string>::const_iterator I = vec.begin();
+        I != vec.end(); I++)
+      if (I == vec.begin())
+         fetch += "?arch" + (*I);
+      else
+         fetch += "&arch=" + (*I);
+
    // append the dist as a query string
    if (Dist != "")
-      fetch += "?dist=" + Dist;
+      fetch += "&dist=" + Dist;
 
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile(): '" << fetch << "'"
