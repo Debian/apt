@@ -106,7 +106,7 @@ bool DoIt(string InFile)
    
    // Emit
    unsigned char *Buffer = new unsigned char[Largest+1];
-   for (vector<PkgName>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<PkgName>::iterator I = List.begin(); I != List.end(); ++I)
    {
       // Read in the Record.
       if (Fd.Seek(I->Offset) == false || Fd.Read(Buffer,I->Length) == false)

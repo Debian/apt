@@ -885,7 +885,6 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       this->Section = &Section;
       string Prefix;
       unsigned long Hits = 0;
-      unsigned long Chop = 0;
       while (Parser.Step(Section) == true)
       {
 	 if(Progress)
@@ -903,7 +902,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       fclose(TargetFl);
 
       if (Debug == true)
-	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << Chop << endl;
+	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << endl;
 	 
       if (_config->FindB("APT::CDROM::NoAct",false) == false)
       {

@@ -145,13 +145,13 @@ bool pkgOrderList::DoRun()
    Depth = 0;
    WipeFlags(Added | AddPending | Loop | InList);
 
-   for (iterator I = List; I != End; I++)
+   for (iterator I = List; I != End; ++I)
       Flag(*I,InList);
 
    // Rebuild the main list into the temp list.
    iterator OldEnd = End;
    End = NList;
-   for (iterator I = List; I != OldEnd; I++)
+   for (iterator I = List; I != OldEnd; ++I)
       if (VisitNode(PkgIterator(Cache,*I)) == false)
       {
 	 End = OldEnd;
@@ -197,7 +197,7 @@ bool pkgOrderList::OrderCritical()
    {
       clog << "** Critical Unpack ordering done" << endl;
 
-      for (iterator I = List; I != End; I++)
+      for (iterator I = List; I != End; ++I)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsNow(P) == true)
@@ -222,7 +222,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
       WipeFlags(After);
 
       // Set the inlist flag
-      for (iterator I = List; I != End; I++)
+      for (iterator I = List; I != End; ++I)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsMissing(P) == true && IsNow(P) == true)
@@ -270,7 +270,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    {
       clog << "** Unpack ordering done" << endl;
 
-      for (iterator I = List; I != End; I++)
+      for (iterator I = List; I != End; ++I)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsNow(P) == true)
