@@ -69,7 +69,8 @@ time_t FtpMethod::FailTime = 0;
 // ---------------------------------------------------------------------
 /* */
 FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1), 
-                            DataListenFd(-1), ServerName(Srv)
+                            DataListenFd(-1), ServerName(Srv),
+			    ForceExtended(false), TryPassive(true)
 {
    Debug = _config->FindB("Debug::Acquire::Ftp",false);
    PasvAddr = 0;
