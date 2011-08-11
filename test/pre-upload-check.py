@@ -115,7 +115,7 @@ class testAuthentication(unittest.TestCase):
     """
     test if the authentication is working, the repository
     of the test-data can be found here:
-    bzr get http://people.ubuntu.com/~mvo/bzr/apt/apt-auth-test-suit/
+    bzr branch http://people.ubuntu.com/~mvo/bzr/apt/apt-auth-test-suit/
     """
     
     # some class wide data
