@@ -369,7 +369,9 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	          if (!List->IsFlag(DepPkg,pkgOrderList::Loop)) {
 	             List->Flag(Pkg,pkgOrderList::Loop);
 	             // If SmartConfigure was succesfull, Bad is false, so break
-	             if (!(Bad = !SmartConfigure(DepPkg))) break;
+	             Bad = !SmartConfigure(DepPkg);
+	             List->RmFlag(Pkg,pkgOrderList::Loop);
+	             if (!Bad) break;
 	          }
 	       } else if (List->IsFlag(DepPkg,pkgOrderList::Configured)) {
 	          Bad = false;
@@ -381,11 +383,12 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	 /* If the dependany is still not satisfied, try, if possible, unpacking a package to satisfy it */
 	 if (InstallVer != 0 && Bad) {
 	    Bad = false;
-	    List->Flag(Pkg,pkgOrderList::Loop);
 	    if (!List->IsFlag(DepPkg,pkgOrderList::Loop)) {
+	       List->Flag(Pkg,pkgOrderList::Loop);
 	       if (Debug) 
 	          cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
 	       SmartUnPack(DepPkg, true);
+	       //List->Flag(Pkg,~pkgOrderList::Loop);
 	    }
 	 }
 	 
@@ -616,15 +619,18 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    
 	    // See if the current version is conflicting
 	    if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
-	    {   
+	    { 
+	       cout << Pkg.Name() << " conflicts with " << ConflictPkg.Name() << endl;
 	       /* If a loop is not present or has not yet been detected, attempt to unpack packages 
 	          to resolve this conflict. If there is a loop present, remove packages to resolve this conflict */
 	       if (!List->IsFlag(ConflictPkg,pkgOrderList::Loop)) {
 	          if (Cache[ConflictPkg].Keep() == 0 && Cache[ConflictPkg].InstallVer != 0) {
 	              if (Debug)
                         cout << "Unpacking " << ConflictPkg.Name() << " to prevent conflict" << endl;
-	              List->Flag(Pkg,pkgOrderList::Loop);
+                      List->Flag(Pkg,pkgOrderList::Loop);
 	              SmartUnPack(ConflictPkg,false);
+	              // Remove loop to allow it to be used later if needed
+	              List->RmFlag(Pkg,pkgOrderList::Loop);
                   } else {
                       if (EarlyRemove(ConflictPkg) == false)
                          return _error->Error("Internal Error, Could not early remove %s",ConflictPkg.Name());
@@ -659,6 +665,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	         cout << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
 	         
 	      SmartUnPack(BrokenPkg, false);
+	      List->RmFlag(Pkg,pkgOrderList::Loop);
 	    }
 	    // Check if a package needs to be removed
 	    if (Cache[BrokenPkg].Delete() == true && !List->IsFlag(BrokenPkg,pkgOrderList::Configured)) {

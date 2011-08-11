@@ -94,6 +94,8 @@ class pkgOrderList : protected pkgCache::Namespace
    void Flag(PkgIterator Pkg,unsigned long State, unsigned long F) {Flags[Pkg->ID] = (Flags[Pkg->ID] & (~F)) | State;};
    inline void Flag(PkgIterator Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
    inline void Flag(Package *Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
+   // RmFlag removes a flag from a package 
+   inline void RmFlag(Package *Pkg,unsigned long F) {Flags[Pkg->ID] &= ~F;};
    // IsNow will return true if the Pkg has been not been either configured or unpacked
    inline bool IsNow(PkgIterator Pkg) {return (Flags[Pkg->ID] & (States & (~Removed))) == 0;};
    bool IsMissing(PkgIterator Pkg);
