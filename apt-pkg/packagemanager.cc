@@ -324,7 +324,10 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
       VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
       clog << "SmartConfigure " << Pkg.Name() << InstallVer.VerStr() << endl;
    }
-   
+
+   // If this is true, only check and correct and dependancies without the Loop flag
+   bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
+
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
       
    /* Because of the ordered list, most dependancies should be unpacked, 
@@ -365,16 +368,19 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	    // Check if the version that is going to be installed will satisfy the dependancy
 	    if (Cache[DepPkg].InstallVer == *I) {
 	       if (List->IsFlag(DepPkg,pkgOrderList::UnPacked)) {
+	          if (PkgLoop && List->IsFlag(DepPkg,pkgOrderList::Loop)) {
+	            // This dependancy has already been dealt with by another SmartConfigure on Pkg
+	            Bad = false;
+	            break;
+	          }
 	          /* Check for a loop to prevent one forming
 	             If A depends on B and B depends on A, SmartConfigure will
 	             just hop between them if this is not checked */
-	          if (!List->IsFlag(DepPkg,pkgOrderList::Loop)) {
-	             List->Flag(Pkg,pkgOrderList::Loop);
-	             // If SmartConfigure was succesfull, Bad is false, so break
-	             Bad = !SmartConfigure(DepPkg);
-	             List->RmFlag(Pkg,pkgOrderList::Loop);
-	             if (!Bad) break;
-	          }
+	          List->Flag(Pkg,pkgOrderList::Loop);
+	          // If SmartConfigure was succesfull, Bad is false, so break
+	          Bad = !SmartConfigure(DepPkg);
+	          List->RmFlag(Pkg,pkgOrderList::Loop);
+	          if (!Bad) break;
 	       } else if (List->IsFlag(DepPkg,pkgOrderList::Configured)) {
 	          Bad = false;
 	          break;
@@ -389,7 +395,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	       List->Flag(Pkg,pkgOrderList::Loop);
 	       if (Debug) 
 	          cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
-	       SmartUnPack(DepPkg, true);
+	       SmartUnPack(DepPkg, false);
 	       List->RmFlag(Pkg,pkgOrderList::Loop);
 	    }
 	 }
@@ -412,6 +418,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
          _error->Warning(_("Could not configure '%s'. "),Pkg.Name());
       return false;
    }
+   
+   if (PkgLoop) return true;
 
    static std::string const conf = _config->Find("PackageManager::Configure","all");
    static bool const ConfigurePkgs = (conf == "all" || conf == "smart");
