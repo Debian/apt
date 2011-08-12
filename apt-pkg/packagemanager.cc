@@ -320,9 +320,11 @@ bool pkgPackageManager::ConfigureAll()
    only shown when debuging*/
 bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 {
-   if (Debug)
-      clog << "SmartConfigure " << Pkg.Name() << endl;
-      
+   if (Debug) {
+      VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
+      clog << "SmartConfigure " << Pkg.Name() << InstallVer.VerStr() << endl;
+   }
+   
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
       
    /* Because of the ordered list, most dependancies should be unpacked, 
@@ -513,8 +515,14 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 }
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 {
-   if (Debug)
-      clog << "SmartUnPack " << Pkg.Name() << endl;
+   if (Debug) {
+      clog << "SmartUnPack " << Pkg.Name();
+      VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
+      if (Pkg.CurrentVer() == 0)
+        cout << "(install version " << InstallVer.VerStr() << ")" << endl;
+      else
+        cout << "(replace version " << Pkg.CurrentVer().VerStr() << " with " << InstallVer.VerStr() << ")" << endl;
+   }
 
    // Check if it is already unpacked
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
