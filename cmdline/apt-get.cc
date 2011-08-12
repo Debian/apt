@@ -363,7 +363,7 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 	    
 	    if (Start == End)
 	       break;
-	    Start++;
+	    ++Start;
 	 }	 
       }	    
    }   
@@ -537,7 +537,7 @@ bool ShowEssential(ostream &out,CacheFile &Cache)
 	 continue;
 
       // Print out any essential package depenendents that are to be removed
-      for (pkgCache::DepIterator D = I.CurrentVer().DependsList(); D.end() == false; D++)
+      for (pkgCache::DepIterator D = I.CurrentVer().DependsList(); D.end() == false; ++D)
       {
 	 // Skip everything but depends
 	 if (D->Type != pkgCache::Dep::PreDepends &&
@@ -574,7 +574,7 @@ void Stats(ostream &out,pkgDepCache &Dep)
    unsigned long Downgrade = 0;
    unsigned long Install = 0;
    unsigned long ReInstall = 0;
-   for (pkgCache::PkgIterator I = Dep.PkgBegin(); I.end() == false; I++)
+   for (pkgCache::PkgIterator I = Dep.PkgBegin(); I.end() == false; ++I)
    {
       if (Dep[I].NewInstall() == true)
 	 Install++;
@@ -666,7 +666,7 @@ public:
 				}
 				// if we found no candidate which provide this package, show non-candidates
 				if (provider == 0)
-					for (I = Pkg.ProvidesList(); I.end() == false; I++)
+					for (I = Pkg.ProvidesList(); I.end() == false; ++I)
 						out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
 						    << _(" [Not candidate version]") << endl;
 				else
@@ -682,7 +682,7 @@ public:
 				SPtrArray<bool> Seen = new bool[Cache.GetPkgCache()->Head().PackageCount];
 				memset(Seen,0,Cache.GetPkgCache()->Head().PackageCount*sizeof(*Seen));
 				for (pkgCache::DepIterator Dep = Pkg.RevDependsList();
-				     Dep.end() == false; Dep++) {
+				     Dep.end() == false; ++Dep) {
 					if (Dep->Type != pkgCache::Dep::Replaces)
 						continue;
 					if (Seen[Dep.ParentPkg()->ID] == true)
@@ -869,9 +869,7 @@ struct TryToInstall {
 struct TryToRemove {
    pkgCacheFile* Cache;
    pkgProblemResolver* Fix;
-   bool FixBroken;
    bool PurgePkgs;
-   unsigned long AutoMarkChanged;
 
    TryToRemove(pkgCacheFile &Cache, pkgProblemResolver *PM) : Cache(&Cache), Fix(PM),
 				PurgePkgs(_config->FindB("APT::Get::Purge", false)) {};
@@ -923,7 +921,7 @@ void CacheFile::Sort()
    List = new pkgCache::Package *[Cache->Head().PackageCount];
    memset(List,0,sizeof(*List)*Cache->Head().PackageCount);
    pkgCache::PkgIterator I = Cache->PkgBegin();
-   for (;I.end() != true; I++)
+   for (;I.end() != true; ++I)
       List[I->ID] = I;
 
    SortCache = *this;
@@ -955,7 +953,7 @@ bool CacheFile::CheckDeps(bool AllowBroken)
       if ((DCache->PolicyBrokenCount() > 0))
       {
 	 // upgrade all policy-broken packages with ForceImportantDeps=True
-	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); !I.end(); I++)
+	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); !I.end(); ++I)
 	    if ((*DCache)[I].NowPolicyBroken() == true) 
 	       DCache->MarkInstall(I,true,0, false, true);
       }
@@ -1046,7 +1044,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (_config->FindB("APT::Get::Purge",false) == true)
    {
       pkgCache::PkgIterator I = Cache->PkgBegin();
-      for (; I.end() == false; I++)
+      for (; I.end() == false; ++I)
       {
 	 if (I.Purge() == false && Cache[I].Mode == pkgDepCache::ModeDelete)
 	    Cache->MarkDelete(I,true);
@@ -1240,7 +1238,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
-      for (; I != Fetcher.UriEnd(); I++)
+      for (; I != Fetcher.UriEnd(); ++I)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
@@ -1264,7 +1262,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 {
 	    if ((*I)->Local == true)
 	    {
-	       I++;
+	       ++I;
 	       continue;
 	    }
 
@@ -1284,7 +1282,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
       
       // Print out errors
       bool Failed = false;
-      for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+      for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
       {
 	 if ((*I)->Status == pkgAcquire::Item::StatDone &&
 	     (*I)->Complete == true)
@@ -1444,7 +1442,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 // we have a default release, try to locate the pkg. we do it like
 	 // this because GetCandidateVer() will not "downgrade", that means
 	 // "apt-get source -t stable apt" won't work on a unstable system
-	 for (pkgCache::VerIterator Ver = Pkg.VersionList();; Ver++)
+	 for (pkgCache::VerIterator Ver = Pkg.VersionList();; ++Ver)
 	 {
 	    // try first only exact matches, later fuzzy matches
 	    if (Ver.end() == true)
@@ -1465,7 +1463,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	       continue;
 
 	    for (pkgCache::VerFileIterator VF = Ver.FileList();
-		 VF.end() == false; VF++) 
+		 VF.end() == false; ++VF)
 	    {
 	       /* If this is the status file, and the current version is not the
 		  version in the status file (ie it is not installed, or somesuch)
@@ -1617,7 +1615,7 @@ bool DoUpdate(CommandLine &CmdL)
 	 return false;
 
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
-      for (; I != Fetcher.UriEnd(); I++)
+      for (; I != Fetcher.UriEnd(); ++I)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
@@ -2000,7 +1998,7 @@ bool DoInstall(CommandLine &CmdL)
 	       if(Start.TargetPkg().ProvidesList() != 0)
 	       {
 		  pkgCache::PrvIterator I = Start.TargetPkg().ProvidesList();
-		  for (; I.end() == false; I++)
+		  for (; I.end() == false; ++I)
 		  {
 		     pkgCache::PkgIterator Pkg = I.OwnerPkg();
 		     if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer() && 
@@ -2023,7 +2021,7 @@ bool DoInstall(CommandLine &CmdL)
 
 	       if (Start >= End)
 		  break;
-	       Start++;
+	       ++Start;
 	    }
 	    
 	    if(foundInstalledInOrGroup == false)
@@ -2137,7 +2135,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 
    // Install everything with the install flag set
    pkgCache::PkgIterator I = Cache->PkgBegin();
-   for (;I.end() != true; I++)
+   for (;I.end() != true; ++I)
    {
       /* Install the package only if it is a new install, the autoupgrader
          will deal with the rest */
@@ -2147,7 +2145,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 
    /* Now install their deps too, if we do this above then order of
       the status file is significant for | groups */
-   for (I = Cache->PkgBegin();I.end() != true; I++)
+   for (I = Cache->PkgBegin();I.end() != true; ++I)
    {
       /* Install the package only if it is a new install, the autoupgrader
          will deal with the rest */
@@ -2156,7 +2154,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    }
    
    // Apply erasures now, they override everything else.
-   for (I = Cache->PkgBegin();I.end() != true; I++)
+   for (I = Cache->PkgBegin();I.end() != true; ++I)
    {
       // Remove packages 
       if (I->SelectedState == pkgCache::State::DeInstall ||
@@ -2173,7 +2171,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
       // Hold back held packages.
       if (_config->FindB("APT::Ignore-Hold",false) == false)
       {
-	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() == false; I++)
+	 for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() == false; ++I)
 	 {
 	    if (I->SelectedState == pkgCache::State::Hold)
 	    {
@@ -2319,7 +2317,7 @@ bool DoDownload(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
-      for (; I != Fetcher.UriEnd(); I++)
+      for (; I != Fetcher.UriEnd(); ++I)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
@@ -2437,7 +2435,7 @@ bool DoSource(CommandLine &CmdL)
 
       // Load them into the fetcher
       for (vector<pkgSrcRecords::File>::const_iterator I = Lst.begin();
-	   I != Lst.end(); I++)
+	   I != Lst.end(); ++I)
       {
 	 // Try to guess what sort of file it is we are getting.
 	 if (I->Type == "dsc")
@@ -2539,7 +2537,7 @@ bool DoSource(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
-      for (; I != Fetcher.UriEnd(); I++)
+      for (; I != Fetcher.UriEnd(); ++I)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       delete[] Dsc;
@@ -2555,7 +2553,7 @@ bool DoSource(CommandLine &CmdL)
 
    // Print error messages
    bool Failed = false;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); I++)
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
    {
       if ((*I)->Status == pkgAcquire::Item::StatDone &&
 	  (*I)->Complete == true)
@@ -2584,7 +2582,7 @@ bool DoSource(CommandLine &CmdL)
    if (Process == 0)
    {
       bool const fixBroken = _config->FindB("APT::Get::Fix-Broken", false);
-      for (unsigned I = 0; I != J; I++)
+      for (unsigned I = 0; I != J; ++I)
       {
 	 string Dir = Dsc[I].Package + '-' + Cache->VS().UpstreamVersion(Dsc[I].Version.c_str());
 	 
@@ -2733,7 +2731,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	 BuildDeps.push_back(rec);
       }
 
-      if (BuildDeps.size() == 0)
+      if (BuildDeps.empty() == true)
       {
 	 ioprintf(c1out,_("%s has no build depends.\n"),Src.c_str());
 	 continue;
@@ -2743,7 +2741,7 @@ bool DoBuildDep(CommandLine &CmdL)
       vector <pkgSrcRecords::Parser::BuildDepRec>::iterator D;
       pkgProblemResolver Fix(Cache);
       bool skipAlternatives = false; // skip remaining alternatives in an or group
-      for (D = BuildDeps.begin(); D != BuildDeps.end(); D++)
+      for (D = BuildDeps.begin(); D != BuildDeps.end(); ++D)
       {
          bool hasAlternatives = (((*D).Op & pkgCache::Dep::Or) == pkgCache::Dep::Or);
 
@@ -2922,7 +2920,7 @@ bool DoBuildDep(CommandLine &CmdL)
 		* installed
 		*/
 	       pkgCache::PrvIterator Prv = Pkg.ProvidesList();
-	       for (; Prv.end() != true; Prv++)
+	       for (; Prv.end() != true; ++Prv)
 	       {
 		  if (_config->FindB("Debug::BuildDeps",false) == true)
 		     cout << "  Checking provider " << Prv.OwnerPkg().FullName() << endl;

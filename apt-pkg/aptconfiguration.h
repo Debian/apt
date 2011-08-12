@@ -13,6 +13,7 @@
 // Include Files							/*{{{*/
 #include <string>
 #include <vector>
+#include <limits>
 									/*}}}*/
 namespace APT {
 class Configuration {							/*{{{*/
@@ -94,7 +95,7 @@ public:									/*{{{*/
 		Compressor(char const *name, char const *extension, char const *binary,
 			   char const *compressArg, char const *uncompressArg,
 			   unsigned short const cost);
-		Compressor() {};
+		Compressor() : Cost(std::numeric_limits<unsigned short>::max()) {};
 	};
 
 	/** \brief Return a vector of Compressors supported for data.tar's

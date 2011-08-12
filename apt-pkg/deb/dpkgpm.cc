@@ -213,7 +213,7 @@ bool pkgDPkgPM::SendV2Pkgs(FILE *F)
    fprintf(F,"\n");
  
    // Write out the package actions in order.
-   for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<Item>::iterator I = List.begin(); I != List.end(); ++I)
    {
       if(I->Pkg.end() == true)
 	 continue;
@@ -335,7 +335,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       // Feed it the filenames.
       if (Version <= 1)
       {
-	 for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
+	 for (vector<Item>::iterator I = List.begin(); I != List.end(); ++I)
 	 {
 	    // Only deal with packages to be installed from .deb
 	    if (I->Op != Item::Install)
@@ -690,7 +690,7 @@ bool pkgDPkgPM::OpenLog()
       chmod(history_name.c_str(), 0644);
       fprintf(history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, reinstall, upgrade, downgrade;
-      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; I++)
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       {
 	 enum { CANDIDATE, CANDIDATE_AUTO, CURRENT_CANDIDATE, CURRENT } infostring;
 	 string *line = NULL;
@@ -868,14 +868,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // that will be [installed|configured|removed|purged] and add
    // them to the PackageOps map (the dpkg states it goes through)
    // and the PackageOpsTranslations (human readable strings)
-   for (vector<Item>::const_iterator I = List.begin(); I != List.end();I++)
+   for (vector<Item>::const_iterator I = List.begin(); I != List.end(); ++I)
    {
       if((*I).Pkg.end() == true)
 	 continue;
 
       string const name = (*I).Pkg.Name();
       PackageOpsDone[name] = 0;
-      for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL;  i++) 
+      for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL; ++i)
       {
 	 PackageOps[name].push_back(DpkgStatesOpMap[(*I).Op][i]);
 	 PackagesTotal++;
@@ -893,7 +893,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Do all actions with the same Op in one run
       vector<Item>::const_iterator J = I;
       if (TriggersPending == true)
-	 for (; J != List.end(); J++)
+	 for (; J != List.end(); ++J)
 	 {
 	    if (J->Op == I->Op)
 	       continue;
@@ -905,7 +905,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    break;
 	 }
       else
-	 for (; J != List.end() && J->Op == I->Op; J++)
+	 for (; J != List.end() && J->Op == I->Op; ++J)
 	    /* nothing */;
 
       // Generate the argument list
@@ -1011,7 +1011,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Write in the file or package names
       if (I->Op == Item::Install)
       {
-	 for (;I != J && Size < MaxArgBytes; I++)
+	 for (;I != J && Size < MaxArgBytes; ++I)
 	 {
 	    if (I->File[0] != '/')
 	       return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
@@ -1023,7 +1023,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       {
 	 string const nativeArch = _config->Find("APT::Architecture");
 	 unsigned long const oldSize = I->Op == Item::Configure ? Size : 0;
-	 for (;I != J && Size < MaxArgBytes; I++)
+	 for (;I != J && Size < MaxArgBytes; ++I)
 	 {
 	    if((*I).Pkg.end() == true)
 	       continue;
@@ -1461,7 +1461,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // log the ordering 
    const char *ops_str[] = {"Install", "Configure","Remove","Purge"};
    fprintf(report, "AptOrdering:\n");
-   for (vector<Item>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<Item>::iterator I = List.begin(); I != List.end(); ++I)
       fprintf(report, " %s: %s\n", (*I).Pkg.Name(), ops_str[(*I).Op]);
 
    // attach dmesg log (to learn about segfaults)

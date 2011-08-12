@@ -145,13 +145,13 @@ bool pkgOrderList::DoRun()
    Depth = 0;
    WipeFlags(Added | AddPending | Loop | InList);
 
-   for (iterator I = List; I != End; I++)
+   for (iterator I = List; I != End; ++I)
       Flag(*I,InList);
 
    // Rebuild the main list into the temp list.
    iterator OldEnd = End;
    End = NList;
-   for (iterator I = List; I != OldEnd; I++)
+   for (iterator I = List; I != OldEnd; ++I)
       if (VisitNode(PkgIterator(Cache,*I)) == false)
       {
 	 End = OldEnd;
@@ -197,7 +197,7 @@ bool pkgOrderList::OrderCritical()
    {
       clog << "** Critical Unpack ordering done" << endl;
 
-      for (iterator I = List; I != End; I++)
+      for (iterator I = List; I != End; ++I)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsNow(P) == true)
@@ -222,7 +222,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
       WipeFlags(After);
 
       // Set the inlist flag
-      for (iterator I = List; I != End; I++)
+      for (iterator I = List; I != End; ++I)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsMissing(P) == true && IsNow(P) == true)
@@ -270,7 +270,7 @@ bool pkgOrderList::OrderUnpack(string *FileList)
    {
       clog << "** Unpack ordering done" << endl;
 
-      for (iterator I = List; I != End; I++)
+      for (iterator I = List; I != End; ++I)
       {
 	 PkgIterator P(Cache,*I);
 	 if (IsNow(P) == true)
@@ -323,7 +323,7 @@ int pkgOrderList::Score(PkgIterator Pkg)
       Score += ScoreImmediate;
 
    for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList();
-	D.end() == false; D++)
+	D.end() == false; ++D)
       if (D->Type == pkgCache::Dep::PreDepends)
       {
 	 Score += ScorePreDepends;
@@ -488,7 +488,7 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
       return true;
    
    bool Res = true;
-   for (PrvIterator P = Ver.ProvidesList(); P.end() == false; P++)
+   for (PrvIterator P = Ver.ProvidesList(); P.end() == false; ++P)
       Res &= (this->*F)(P.ParentPkg().RevDependsList());
    return Res;
 }
@@ -615,7 +615,7 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    Loops are preprocessed and logged. */
 bool pkgOrderList::DepUnPackCrit(DepIterator D)
 {
-   for (; D.end() == false; D++)
+   for (; D.end() == false; ++D)
    {
       if (D.Reverse() == true)
       {
@@ -693,7 +693,7 @@ bool pkgOrderList::DepUnPackPreD(DepIterator D)
    if (D.Reverse() == true)
       return DepUnPackCrit(D);
    
-   for (; D.end() == false; D++)
+   for (; D.end() == false; ++D)
    {
       if (D.IsCritical() == false)
 	 continue;
@@ -736,7 +736,7 @@ bool pkgOrderList::DepUnPackPre(DepIterator D)
    if (D.Reverse() == true)
       return true;
    
-   for (; D.end() == false; D++)
+   for (; D.end() == false; ++D)
    {
       /* Only consider the PreDepends or Depends. Depends are only
        	 considered at the lowest depth or in the case of immediate
@@ -791,7 +791,7 @@ bool pkgOrderList::DepUnPackPre(DepIterator D)
 bool pkgOrderList::DepUnPackDep(DepIterator D)
 {
    
-   for (; D.end() == false; D++)
+   for (; D.end() == false; ++D)
       if (D.IsCritical() == true)
       {
 	 if (D.Reverse() == true)
@@ -846,7 +846,7 @@ bool pkgOrderList::DepConfigure(DepIterator D)
    if (D.Reverse() == true)
       return true;
    
-   for (; D.end() == false; D++)
+   for (; D.end() == false; ++D)
       if (D->Type == pkgCache::Dep::Depends)
 	 if (VisitProvides(D,false) == false)
 	    return false;
@@ -868,7 +868,7 @@ bool pkgOrderList::DepRemove(DepIterator D)
 {
    if (D.Reverse() == false)
       return true;
-   for (; D.end() == false; D++)
+   for (; D.end() == false; ++D)
       if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
       {
 	 // Duplication elimination, consider the current version only
