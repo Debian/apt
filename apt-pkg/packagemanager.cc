@@ -388,7 +388,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	       if (Debug) 
 	          cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
 	       SmartUnPack(DepPkg, true);
-	       //List->Flag(Pkg,~pkgOrderList::Loop);
+	       List->RmFlag(Pkg,pkgOrderList::Loop);
 	    }
 	 }
 	 
