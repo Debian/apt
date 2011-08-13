@@ -322,7 +322,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 {
    if (Debug) {
       VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
-      clog << "SmartConfigure " << Pkg.Name() << InstallVer.VerStr() << endl;
+      clog << "SmartConfigure " << Pkg.Name() << " " << InstallVer.VerStr() << endl;
    }
 
    // If this is true, only check and correct and dependancies without the Loop flag
@@ -391,11 +391,11 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	 /* If the dependany is still not satisfied, try, if possible, unpacking a package to satisfy it */
 	 if (InstallVer != 0 && Bad) {
 	    Bad = false;
-	    if (!List->IsFlag(DepPkg,pkgOrderList::Loop)) {
+	    if (List->IsNow(DepPkg) && !List->IsFlag(DepPkg,pkgOrderList::Loop)) {
 	       List->Flag(Pkg,pkgOrderList::Loop);
 	       if (Debug) 
 	          cout << "  Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
-	       SmartUnPack(DepPkg, false);
+	       SmartUnPack(DepPkg, true);
 	       List->RmFlag(Pkg,pkgOrderList::Loop);
 	    }
 	 }
@@ -527,9 +527,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
       clog << "SmartUnPack " << Pkg.Name();
       VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
       if (Pkg.CurrentVer() == 0)
-        cout << "(install version " << InstallVer.VerStr() << ")" << endl;
+        cout << " (install version " << InstallVer.VerStr() << ")" << endl;
       else
-        cout << "(replace version " << Pkg.CurrentVer().VerStr() << " with " << InstallVer.VerStr() << ")" << endl;
+        cout << " (replace version " << Pkg.CurrentVer().VerStr() << " with " << InstallVer.VerStr() << ")" << endl;
    }
 
    // Check if it is already unpacked
