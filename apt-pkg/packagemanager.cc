@@ -536,14 +536,11 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
    if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
        Cache[Pkg].Keep() == true)
    {
-      List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
-      if (Immediate == true &&
-	  List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
-	 if (SmartConfigure(Pkg) == false)
-	    _error->Warning(_("Could not perform immediate configuration on already unpacked '%s'. "
-			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
-      return true;
+      cout << "SmartUnPack called on Package " << Pkg.Name() << " but its unpacked" << endl;
+      return false;
    }
+ 
+   bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
    
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
 
@@ -674,7 +671,11 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	    
 	    // Check if it needs to be unpacked
 	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
-	        !List->IsFlag(BrokenPkg,pkgOrderList::Loop) && List->IsNow(BrokenPkg)) {
+	        List->IsNow(BrokenPkg)) {
+	      if (PkgLoop && List->IsFlag(BrokenPkg,pkgOrderList::Loop)) {
+	        // This dependancy has already been dealt with by another SmartUnPack on Pkg
+	        break;
+	      }
               List->Flag(Pkg,pkgOrderList::Loop);
 	      // Found a break, so unpack the package
 	      if (Debug) 
@@ -701,6 +702,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
    for (PrvIterator P = instVer.ProvidesList();
 	  P.end() == false; P++)
         CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
+
+   if (PkgLoop) return true;
 
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 
