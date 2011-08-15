@@ -849,7 +849,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
       char msg[200];
       long i = CurrentItems < TotalItems ? CurrentItems + 1 : CurrentItems;
-      unsigned long long const ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
+      unsigned long long ETA = 0;
+      if(CurrentCPS > 0)
+         ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
 
       // only show the ETA if it makes sense
       if (ETA > 0 && ETA < 172800 /* two days */ )
