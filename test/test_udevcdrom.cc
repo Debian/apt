@@ -10,7 +10,7 @@ int main()
 
    vector<CdromDevice> l;
    l = c.Scan();
-   assert(l.size() > 0);
+   assert(l.empty() == false);
    for (i=0;i<l.size();i++)
       std::cerr << l[i].DeviceName << " " 
 		<< l[i].Mounted << " " 

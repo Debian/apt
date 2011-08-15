@@ -384,7 +384,7 @@ bool PackageMap::GenContents(Configuration &Setup,
       files associated with this contents file into one great big honking
       memory structure, then dump the sorted version */
    c0out << ' ' << this->Contents << ":" << flush;
-   for (vector<PackageMap>::iterator I = Begin; I != End; I++)
+   for (vector<PackageMap>::iterator I = Begin; I != End; ++I)
    {
       if (I->Contents != this->Contents)
 	 continue;
@@ -770,10 +770,10 @@ bool Generate(CommandLine &CmdL)
    // Generate packages
    if (CmdL.FileSize() <= 2)
    {
-      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
+      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
 	 if (I->GenPackages(Setup,Stats) == false)
 	    _error->DumpErrors();
-      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
+      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
 	 if (I->GenSources(Setup,SrcStats) == false)
 	    _error->DumpErrors();
    }
@@ -782,7 +782,7 @@ bool Generate(CommandLine &CmdL)
       // Make a choice list out of the package list..
       RxChoiceList *List = new RxChoiceList[2*PkgList.size()+1];
       RxChoiceList *End = List;
-      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
+      for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
       {
 	 End->UserData = &(*I);
 	 End->Str = I->BaseDir.c_str();
@@ -832,7 +832,7 @@ bool Generate(CommandLine &CmdL)
    }
 
    // close the Translation master files
-   for (vector<PackageMap>::reverse_iterator I = PkgList.rbegin(); I != PkgList.rend(); I++)
+   for (vector<PackageMap>::reverse_iterator I = PkgList.rbegin(); I != PkgList.rend(); ++I)
       if (I->TransWriter != NULL && I->TransWriter->DecreaseRefCounter() == 0)
 	 delete I->TransWriter;
 
@@ -843,7 +843,7 @@ bool Generate(CommandLine &CmdL)
 
    // Sort the contents file list by date
    string ArchiveDir = Setup.FindDir("Dir::ArchiveDir");
-   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
+   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
    {
       struct stat A;
       if (MultiCompress::GetStat(flCombine(ArchiveDir,I->Contents),
@@ -860,7 +860,7 @@ bool Generate(CommandLine &CmdL)
       hashes of the .debs this means they have not changed either so the 
       contents must be up to date. */
    unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",UINT_MAX)*1024;
-   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); I++)
+   for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
    {
       // This record is not relevent
       if (I->ContentsDone == true ||
@@ -936,7 +936,7 @@ bool Clean(CommandLine &CmdL)
 	 _error->DumpErrors();
       
       string CacheDB = I->BinCacheDB;
-      for (; I != PkgList.end() && I->BinCacheDB == CacheDB; I++);
+      for (; I != PkgList.end() && I->BinCacheDB == CacheDB; ++I);
    }
    
    return true;

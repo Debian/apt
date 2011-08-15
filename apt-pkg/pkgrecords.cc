@@ -24,7 +24,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
   Files(Cache.HeaderP->PackageFileCount)
 {
    for (pkgCache::PkgFileIterator I = Cache.FileBegin();
-        I.end() == false; I++)
+        I.end() == false; ++I)
    {
       const pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(I.IndexType());
       if (Type == 0)

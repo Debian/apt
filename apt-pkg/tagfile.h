@@ -78,7 +78,7 @@ class pkgTagSection
       Stop = this->Stop;
    };
    
-   pkgTagSection() : Section(0), Stop(0) {};
+   pkgTagSection() : Section(0), TagCount(0), Stop(0) {};
    virtual ~pkgTagSection() {};
 };
 

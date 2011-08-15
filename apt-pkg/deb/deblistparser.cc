@@ -198,7 +198,7 @@ string debListParser::DescriptionLanguage()
 
    std::vector<string> const lang = APT::Configuration::getLanguages(true);
    for (std::vector<string>::const_iterator l = lang.begin();
-	l != lang.end(); l++)
+	l != lang.end(); ++l)
       if (Section.FindS(string("Description-").append(*l).c_str()).empty() == false)
 	 return *l;
 

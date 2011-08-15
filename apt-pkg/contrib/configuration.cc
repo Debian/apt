@@ -672,9 +672,9 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	    // Put the last fragment into the buffer
 	    std::string::const_iterator NonWhitespaceStart = Start;
 	    std::string::const_iterator NonWhitespaceStop = I;
-	    for (; NonWhitespaceStart != I && isspace(*NonWhitespaceStart) != 0; NonWhitespaceStart++)
+	    for (; NonWhitespaceStart != I && isspace(*NonWhitespaceStart) != 0; ++NonWhitespaceStart)
 	      ;
-	    for (; NonWhitespaceStop != NonWhitespaceStart && isspace(NonWhitespaceStop[-1]) != 0; NonWhitespaceStop--)
+	    for (; NonWhitespaceStop != NonWhitespaceStart && isspace(NonWhitespaceStop[-1]) != 0; --NonWhitespaceStop)
 	      ;
 	    if (LineBuffer.empty() == false && NonWhitespaceStop - NonWhitespaceStart != 0)
 	       LineBuffer += ' ';
@@ -850,7 +850,7 @@ bool ReadConfigDir(Configuration &Conf,const string &Dir,
    vector<string> const List = GetListOfFilesInDir(Dir, "conf", true, true);
 
    // Read the files
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
       if (ReadConfigFile(Conf,*I,AsSectional,Depth) == false)
 	 return false;
    return true;

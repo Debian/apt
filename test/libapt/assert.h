@@ -53,3 +53,11 @@ void assertEqualsOr2(int const &expect1, int const &expect2, unsigned int const 
 	assertEqualsOr2<unsigned int const&, unsigned int const&>(expect1, expect2, get, line);
 }
 
+
+// simple helper to quickly output a vectors
+template < typename X >
+void dumpVector(X vec) {
+	for (typename X::const_iterator v = vec.begin();
+	     v != vec.end(); ++v)
+		std::cout << *v << std::endl;
+}

@@ -54,7 +54,8 @@ class CDROMMethod : public pkgAcqMethod
 CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
 					  SendConfig | NeedsCleanup |
 					  Removable), 
-                                          DatabaseLoaded(false), 
+                                          DatabaseLoaded(false),
+					  Debug(false),
                                           MountedByApt(false)
 {
    UdevCdroms.Dlopen();

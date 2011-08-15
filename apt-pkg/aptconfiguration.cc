@@ -53,7 +53,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	// load the order setting into our vector
 	std::vector<std::string> const order = _config->FindVector("Acquire::CompressionTypes::Order");
 	for (std::vector<std::string>::const_iterator o = order.begin();
-	     o != order.end(); o++) {
+	     o != order.end(); ++o) {
 		if ((*o).empty() == true)
 			continue;
 		// ignore types we have no method ready to use
@@ -274,7 +274,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// then needed and ensure the codes are not listed twice.
 	bool noneSeen = false;
 	for (std::vector<string>::const_iterator l = lang.begin();
-	     l != lang.end(); l++) {
+	     l != lang.end(); ++l) {
 		if (*l == "environment") {
 			for (std::vector<string>::const_iterator e = environment.begin();
 			     e != environment.end(); ++e) {

@@ -7,13 +7,6 @@
 
 #include <iostream>
 
-// simple helper to quickly output a vector of strings
-void dumpVector(std::vector<std::string> vec) {
-	for (std::vector<std::string>::const_iterator v = vec.begin();
-	     v != vec.end(); v++)
-		std::cout << *v << std::endl;
-}
-
 int main(int argc,char *argv[])
 {
 	if (argc != 2) {
