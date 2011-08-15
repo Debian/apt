@@ -70,10 +70,10 @@ class pkgPackageManager : protected pkgCache::Namespace
    
    // Install helpers
    bool ConfigureAll();
-   bool SmartConfigure(PkgIterator Pkg);
+   bool SmartConfigure(PkgIterator Pkg, int const Depth);
    //FIXME: merge on abi break
    bool SmartUnPack(PkgIterator Pkg);
-   bool SmartUnPack(PkgIterator Pkg, bool const Immediate);
+   bool SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth);
    bool SmartRemove(PkgIterator Pkg);
    bool EarlyRemove(PkgIterator Pkg);  
    
