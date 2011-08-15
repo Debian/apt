@@ -51,7 +51,7 @@ protected:
 	virtual bool Fetch(FetchItem *Itm);
 
 public:
-	RredMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
+	RredMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig), Debug(false) {};
 };
 										/*}}}*/
 /** \brief applyFile - in reverse order with a tail recursion			{{{
@@ -239,7 +239,9 @@ RredMethod::State RredMethod::patchFile(FileFd &Patch, FileFd &From,		/*{{{*/
    return result;
 }
 										/*}}}*/
-struct EdCommand {								/*{{{*/
+/* struct EdCommand								{{{*/
+#ifdef _POSIX_MAPPED_FILES
+struct EdCommand {
   size_t data_start;
   size_t data_end;
   size_t data_lines;
@@ -248,6 +250,7 @@ struct EdCommand {								/*{{{*/
   char type;
 };
 #define IOV_COUNT 1024 /* Don't really want IOV_MAX since it can be arbitrarily large */
+#endif
 										/*}}}*/
 RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 					FileFd &out_file, Hashes *hash) const {

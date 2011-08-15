@@ -24,11 +24,11 @@
 /* Open all the source index files */
 pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 {
-   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); I++)
+   for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); ++I)
    {
       vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
       for (vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
-	   J != Indexes->end(); J++)
+	   J != Indexes->end(); ++J)
       {
          Parser* P = (*J)->CreateSrcParser();
 	 if (_error->PendingError() == true)
@@ -66,7 +66,7 @@ bool pkgSrcRecords::Restart()
 {
    Current = Files.begin();
    for (vector<Parser*>::iterator I = Files.begin();
-        I != Files.end(); I++)
+        I != Files.end(); ++I)
       (*I)->Restart();
    
    return true;
@@ -89,7 +89,7 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool const &SrcOn
       {
 	 if (_error->PendingError() == true)
 	    return 0;
-	 Current++;
+	 ++Current;
 	 if (Current == Files.end())
 	    return 0;
       }
@@ -107,7 +107,7 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool const &SrcOn
       
       // Check for a binary hit
       const char **I = (*Current)->Binaries();
-      for (; I != 0 && *I != 0; I++)
+      for (; I != 0 && *I != 0; ++I)
 	 if (strcmp(Package,*I) == 0)
 	    return *Current;
    }

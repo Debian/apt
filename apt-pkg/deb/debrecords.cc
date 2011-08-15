@@ -135,7 +135,7 @@ string debRecordParser::LongDesc()
   {
      vector<string> const lang = APT::Configuration::getLanguages();
      for (vector<string>::const_iterator l = lang.begin();
-	  orig.empty() && l != lang.end(); l++)
+	  orig.empty() && l != lang.end(); ++l)
 	orig = Section.FindS(string("Description-").append(*l).c_str());
   }
 

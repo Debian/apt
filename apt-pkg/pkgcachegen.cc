@@ -221,7 +221,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 
 	    // don't add a new description if we have one for the given
 	    // md5 && language
-	    for ( ; Desc.end() == false; Desc++)
+	    for ( ; Desc.end() == false; ++Desc)
 	       if (MD5SumValue(Desc.md5()) == CurMd5 && 
 	           Desc.LanguageCode() == List.DescriptionLanguage())
 		  duplicate=true;
@@ -230,7 +230,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	    
  	    for (Desc = Ver.DescriptionList();
 		 Desc.end() == false;
-		 LastDesc = &Desc->NextDesc, Desc++)
+		 LastDesc = &Desc->NextDesc, ++Desc)
 	    {
  	       if (MD5SumValue(Desc.md5()) == CurMd5) 
                {
@@ -396,7 +396,7 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
       unsigned long Hash = List.VersionHash();
       pkgCache::VerIterator Ver = Pkg.VersionList();
       Dynamic<pkgCache::VerIterator> DynVer(Ver);
-      for (; Ver.end() == false; Ver++)
+      for (; Ver.end() == false; ++Ver)
       {
 	 if (Ver->Hash == Hash && Version.c_str() == Ver.VerStr())
 	 {
@@ -512,7 +512,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    
    // Link it to the end of the list
    map_ptrloc *Last = &Ver->FileList;
-   for (pkgCache::VerFileIterator V = Ver.FileList(); V.end() == false; V++)
+   for (pkgCache::VerFileIterator V = Ver.FileList(); V.end() == false; ++V)
       Last = &V->NextFile;
    VF->NextFile = *Last;
    *Last = VF.Index();
@@ -569,7 +569,7 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 
    // Link it to the end of the list
    map_ptrloc *Last = &Desc->FileList;
-   for (pkgCache::DescFileIterator D = Desc.FileList(); D.end() == false; D++)
+   for (pkgCache::DescFileIterator D = Desc.FileList(); D.end() == false; ++D)
       Last = &D->NextFile;
 
    DF->NextFile = *Last;
@@ -624,7 +624,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
       // Create Conflicts in between the group
       pkgCache::GrpIterator G = GetCache().GrpBegin();
       Dynamic<pkgCache::GrpIterator> DynG(G);
-      for (; G.end() != true; G++)
+      for (; G.end() != true; ++G)
       {
 	 string const PkgName = G.Name();
 	 pkgCache::PkgIterator P = G.PackageList();
@@ -635,7 +635,7 @@ bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
 	    Dynamic<pkgCache::PkgIterator> DynallPkg(allPkg);
 	    pkgCache::VerIterator V = P.VersionList();
 	    Dynamic<pkgCache::VerIterator> DynV(V);
-	    for (; V.end() != true; V++)
+	    for (; V.end() != true; ++V)
 	    {
                // copy P.Arch() into a string here as a cache remap
                // in NewDepends() later may alter the pointer location
@@ -729,7 +729,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
    if (OldDepLast == NULL)
    {
       OldDepLast = &Ver->DependsList;
-      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; ++D)
 	 OldDepLast = &D->NextDepends;
    } else if (oldMap != Map.Data())
       OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
@@ -959,7 +959,7 @@ static bool CheckValidity(const string &CacheFile,
       verify the IMS data and check that it is on the disk too.. */
    SPtrArray<bool> Visited = new bool[Cache.HeaderP->PackageFileCount];
    memset(Visited,0,sizeof(*Visited)*Cache.HeaderP->PackageFileCount);
-   for (; Start != End; Start++)
+   for (; Start != End; ++Start)
    {
       if (Debug == true)
 	 std::clog << "Checking PkgFile " << (*Start)->Describe() << ": ";
@@ -1026,7 +1026,7 @@ static bool CheckValidity(const string &CacheFile,
 static unsigned long ComputeSize(FileIterator Start,FileIterator End)
 {
    unsigned long TotalSize = 0;
-   for (; Start != End; Start++)
+   for (; Start != End; ++Start)
    {
       if ((*Start)->HasPackages() == false)
 	 continue;      
@@ -1044,7 +1044,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 		       FileIterator Start, FileIterator End)
 {
    FileIterator I;
-   for (I = Start; I != End; I++)
+   for (I = Start; I != End; ++I)
    {
       if ((*I)->HasPackages() == false)
 	 continue;
@@ -1074,7 +1074,7 @@ static bool BuildCache(pkgCacheGenerator &Gen,
 	 Progress->Done();
       TotalSize = ComputeSize(Start, End);
       CurrentSize = 0;
-      for (I = Start; I != End; I++)
+      for (I = Start; I != End; ++I)
       {
 	 unsigned long Size = (*I)->Size();
 	 if (Progress != NULL)
@@ -1121,12 +1121,12 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
    vector<pkgIndexFile *> Files;
    for (vector<metaIndex *>::const_iterator i = List.begin();
         i != List.end();
-        i++)
+        ++i)
    {
       vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
       for (vector<pkgIndexFile *>::const_iterator j = Indexes->begin();
 	   j != Indexes->end();
-	   j++)
+	   ++j)
          Files.push_back (*j);
    }
    

@@ -85,12 +85,12 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
       if (P.end() != true)
       {
 	 pkgCache::VerIterator V = P.VersionList();
-	 for (; V.end() == false; V++)
+	 for (; V.end() == false; ++V)
 	 {
 	    // See if we can fetch this version at all
 	    bool IsFetchable = false;
 	    for (pkgCache::VerFileIterator J = V.FileList(); 
-		 J.end() == false; J++)
+		 J.end() == false; ++J)
 	    {
 	       if (CleanInstalled == true &&
 		   (J.File()->Flags & pkgCache::Flag::NotSource) != 0)

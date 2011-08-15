@@ -1,7 +1,11 @@
 apt (0.8.16~exp5ubuntu6) UNRELEASED; urgency=low
 
+  [ Michael Vogt 
   * merged lp:~jr/ubuntu/oneiric/apt/bzr-get-rename, thanks to
     Jonathan Riddell
+  
+  [ David Kalnischkies ]
+  * lots of cppcheck fixes
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 11 Aug 2011 18:09:45 +0200
 
@@ -154,6 +158,32 @@ apt (0.8.16~exp1) experimental; urgency=low
   * merged with the debian/unstable upload
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
+
+apt (0.8.15.6) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/contrib/fileutl.{cc,h}:
+    - add GetModificationTime() helper
+  * apt-pkg/pkgcachegen.cc:
+    - regenerate the cache if the sources.list changes to ensure
+      that changes in the ordering there will be honored by apt
+  * apt-pkg/sourcelist.{cc,h}:
+    - add pkgSourceList::GetLastModifiedTime() helper
+  * apt-pkg/pkgcachegen.{cc,h}:
+    - use ref-to-ptr semantic in NewDepends() to ensure that the   
+      libapt does not segfault if the cache is remapped in between
+      (LP: #812862)
+    - fix crash when P.Arch() was used but the cache got remapped
+  * test/integration/test-hashsum-verification:
+    - add regression test for hashsum verification
+  * apt-pkg/acquire-item.cc:
+    - if no Release.gpg file is found, still load the hashes for
+      verification (closes: #636314) and add test
+  
+  [ David Kalnischkies ]
+  * lots of cppcheck fixes
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 15 Aug 2011 09:20:35 +0200
 
 apt (0.8.15.5ubuntu1) oneiric; urgency=low
 
