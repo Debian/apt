@@ -11,12 +11,6 @@ SLIBS =
 SOURCE = mthdcat.cc
 include $(PROGRAM_H)
 
-# Program for testing methods
-PROGRAM=uritest
-SLIBS = -lapt-pkg
-SOURCE = uri.cc
-include $(PROGRAM_H)
-
 # Scratch program to test incomplete code fragments in
 PROGRAM=scratch-test
 SLIBS = -lapt-inst -lapt-pkg
