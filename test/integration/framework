@@ -612,6 +612,11 @@ changetowebserver() {
 	if which weborf > /dev/null; then
 		weborf -xb aptarchive/ 2>&1 > /dev/null &
 		addtrap "kill $!;"
+	elif which gatling > /dev/null; then
+		cd aptarchive
+		gatling -p 8080 -F -S 2>&1 > /dev/null &
+		addtrap "kill $!;"
+		cd - > /dev/null
 	elif which lighttpd > /dev/null; then
 		echo "server.document-root = \"$(readlink -f ./aptarchive)\"
 server.port = 8080
