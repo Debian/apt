@@ -371,18 +371,27 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	    // Check if the version that is going to be installed will satisfy the dependancy
 	    if (Cache[DepPkg].InstallVer == *I) {
 	       if (List->IsFlag(DepPkg,pkgOrderList::UnPacked)) {
-	          if (PkgLoop && List->IsFlag(DepPkg,pkgOrderList::Loop)) {
+	          if (List->IsFlag(DepPkg,pkgOrderList::Loop) && PkgLoop) {
 	            // This dependancy has already been dealt with by another SmartConfigure on Pkg
 	            Bad = false;
 	            break;
+                  } else if (List->IsFlag(Pkg,pkgOrderList::Loop)) {
+	            /* Check for a loop to prevent one forming
+	               If A depends on B and B depends on A, SmartConfigure will
+	               just hop between them if this is not checked. Dont remove the 
+	               loop flag after finishing however as loop is already set.
+	               This means that there is another SmartConfigure call for this 
+	               package and it will remove the loop flag */
+	             Bad = !SmartConfigure(DepPkg, Depth + 1);
+	          } else {
+	            /* Check for a loop to prevent one forming
+	               If A depends on B and B depends on A, SmartConfigure will
+	               just hop between them if this is not checked */
+	            List->Flag(Pkg,pkgOrderList::Loop);
+	            Bad = !SmartConfigure(DepPkg, Depth + 1);
+	            List->RmFlag(Pkg,pkgOrderList::Loop);
 	          }
-	          /* Check for a loop to prevent one forming
-	             If A depends on B and B depends on A, SmartConfigure will
-	             just hop between them if this is not checked */
-	          List->Flag(Pkg,pkgOrderList::Loop);
 	          // If SmartConfigure was succesfull, Bad is false, so break
-	          Bad = !SmartConfigure(DepPkg, Depth + 1);
-	          List->RmFlag(Pkg,pkgOrderList::Loop);
 	          if (!Bad) break;
 	       } else if (List->IsFlag(DepPkg,pkgOrderList::Configured)) {
 	          Bad = false;
@@ -678,18 +687,28 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Check if it needs to be unpacked
 	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
 	        List->IsNow(BrokenPkg)) {
-	      if (PkgLoop && List->IsFlag(BrokenPkg,pkgOrderList::Loop)) {
+	      if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop) {
 	        // This dependancy has already been dealt with by another SmartUnPack on Pkg
 	        break;
-	      }
-              List->Flag(Pkg,pkgOrderList::Loop);
-	      // Found a break, so unpack the package
-	      if (Debug) 
-	         cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
+	      } else if (List->IsFlag(Pkg,pkgOrderList::Loop)) {
+	        /* Found a break, so unpack the package, but dont remove loop as already set.
+	           This means that there is another SmartUnPack call for this 
+	           package and it will remove the loop flag. */
+	        if (Debug) 
+	          cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
+	            
+	        SmartUnPack(BrokenPkg, false, Depth + 1);
+	      } else {
+                List->Flag(Pkg,pkgOrderList::Loop);
+	        // Found a break, so unpack the package
+	        if (Debug) 
+	          cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
 	         
-	      SmartUnPack(BrokenPkg, false, Depth + 1);
-	      List->RmFlag(Pkg,pkgOrderList::Loop);
+	        SmartUnPack(BrokenPkg, false, Depth + 1);
+	        List->RmFlag(Pkg,pkgOrderList::Loop);
+	      }
 	    }
+	    
 	    // Check if a package needs to be removed
 	    if (Cache[BrokenPkg].Delete() == true && !List->IsFlag(BrokenPkg,pkgOrderList::Configured)) {
 	      if (Debug) 
