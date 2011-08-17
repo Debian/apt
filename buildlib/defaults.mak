@@ -121,7 +121,7 @@ MKDIRS := $(BIN)
 all: dirs binary doc
 binary: library program
 maintainer-clean dist-clean distclean pristine sanity: veryclean
-headers library clean veryclean program:
+headers library clean veryclean program test:
 
 veryclean:
 	echo Very Clean done for $(SUBDIR)
