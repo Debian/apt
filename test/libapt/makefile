@@ -52,3 +52,15 @@ PROGRAM = StrUtil${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = strutil_test.cc
 include $(PROGRAM_H)
+
+# test the URI parsing stuff
+PROGRAM = URI${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = uri_test.cc
+include $(PROGRAM_H)
+
+# test the Configuration class
+PROGRAM = Configuration${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = configuration_test.cc
+include $(PROGRAM_H)
