@@ -6,16 +6,11 @@ ifndef NOISY
 .SILENT:
 endif
 
-.PHONY: headers library clean veryclean all binary program doc
-all clean veryclean binary program dirs:
+.PHONY: headers library clean veryclean all binary program doc test
+all clean veryclean binary program dirs test:
 	$(MAKE) -C libapt $@
 	$(MAKE) -C interactive-helper $@
 
 # Some very common aliases
 .PHONY: maintainer-clean dist-clean distclean pristine sanity
 maintainer-clean dist-clean distclean pristine sanity: veryclean
-
-
-.PHONY: test
-test:
-	./libapt/run-tests
