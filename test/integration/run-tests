@@ -17,6 +17,10 @@ elif [ -z "${MSGLEVEL}" ]; then
 	export MSGLEVEL=2
 fi
 
+if [ -z "$MSGLEVEL" ]; then
+	MSGLEVEL=5
+fi
+
 for testcase in $(run-parts --list $DIR | grep '/test-'); do
 	if [ "$MSGLEVEL" -le 2 ]; then
 		echo -n "${CTEST}Testcase ${CHIGH}$(basename ${testcase})${CRESET}: "
