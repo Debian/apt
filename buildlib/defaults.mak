@@ -118,7 +118,7 @@ MKDIRS := $(BIN)
 # list
 .PHONY: headers library clean veryclean all binary program doc dirs
 .PHONY: maintainer-clean dist-clean distclean pristine sanity
-all: binary doc
+all: dirs binary doc
 binary: library program
 maintainer-clean dist-clean distclean pristine sanity: veryclean
 headers library clean veryclean program:

@@ -3,7 +3,6 @@ set -e
 
 DIR=$(readlink -f $(dirname $0))
 echo "Compiling the tests …"
-test -d "$DIR/../../build/obj/test/libapt/" || mkdir -p "$DIR/../../build/obj/test/libapt/"
 (cd $DIR && make)
 echo "Running all testcases …"
 LDPATH="$DIR/../../build/bin"
