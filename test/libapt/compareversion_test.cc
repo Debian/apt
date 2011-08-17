@@ -113,7 +113,7 @@ bool RunTest(const char *File)
 int main(int argc, char *argv[])
 {
    if (argc <= 1)
-      RunTest("../versions.lst");
+      RunTest("versions.lst");
    else
       RunTest(argv[1]);
 
