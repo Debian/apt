@@ -7,14 +7,28 @@ echo "Compiling the tests …"
 echo "Running all testcases …"
 LDPATH="$DIR/../../build/bin"
 EXT="_libapt_test"
+
+# detect if output is on a terminal (colorful) or better not
+if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+	COLHIGH='\033[1;35m'
+	COLRESET='\033[0m'
+	TESTOKAY='\033[1;32mOKAY\033[0m'
+	TESTFAIL='\033[1;31mFAILED\033[0m'
+else
+	COLHIGH=''
+	COLRESET=''
+	TESTOKAY='OK'
+	TESTFAIL='###FAILED###'
+fi
+
 for testapp in $(ls ${LDPATH}/*$EXT)
 do
 	name=$(basename ${testapp})
+	NAME="${COLHIGH}${name}${COLRESET}"
 	tmppath=""
 
 	if [ $name = "GetListOfFilesInDir${EXT}" ]; then
 		# TODO: very-low: move env creation to the actual test-app
-		echo "Prepare Testarea for \033[1;35m$name\033[0m ..."
 		tmppath=$(mktemp -d)
 		touch "${tmppath}/anormalfile" \
 			"${tmppath}/01yet-anothernormalfile" \
@@ -46,7 +60,6 @@ do
 		ln -s "${tmppath}/anormalfile" "${tmppath}/linkedfile.list"
 		ln -s "${tmppath}/non-existing-file" "${tmppath}/brokenlink.list"
 	elif [ $name = "getLanguages${EXT}" ]; then
-		echo "Prepare Testarea for \033[1;35m$name\033[0m ..."
 		tmppath=$(mktemp -d)
 		touch "${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-tr" \
 			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-pt" \
@@ -56,11 +69,10 @@ do
 		tmppath="${DIR}/versions.lst"
 	fi
 
-	echo -n "Testing with \033[1;35m${name}\033[0m ... "
-	LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} && echo "\033[1;32mOKAY\033[0m" || echo "\033[1;31mFAILED\033[0m"
+	echo -n "Testing with ${NAME} "
+	LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} && echo "$TESTOKAY" || echo "$TESTFAIL"
 
 	if [ -n "$tmppath" -a -d "$tmppath" ]; then
-		echo "Cleanup Testarea after \033[1;35m$name\033[0m ..."
 		rm -rf "$tmppath"
 	fi
 
