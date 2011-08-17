@@ -97,7 +97,11 @@ build/configure-stamp: configure
 build/build-stamp: build/configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE) binary
+ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
 	$(MAKE) test
+else
+	@echo "Tests DISABLED"
+endif
 	touch $@
 
 build/build-doc-stamp: build/configure-stamp
