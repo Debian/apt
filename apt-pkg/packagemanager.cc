@@ -598,7 +598,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
    
    for (PrvIterator P = instVer.ProvidesList();
 	P.end() == false; ++P)
-      CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
+      if (Pkg->Group != P.OwnerPkg()->Group)
+	 CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
 
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 

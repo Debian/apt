@@ -6,6 +6,10 @@ apt (0.8.16~exp5ubuntu6) UNRELEASED; urgency=low
   
   [ David Kalnischkies ]
   * lots of cppcheck fixes
+  * apt-pkg/packagemanager.cc, apt-pkg/pkgcache.cc:
+    - ignore "self"-conflicts for all architectures of a package
+      instead of just for the architecture of the package locked at
+      in the ordering of installations too (Closes: #802901)
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 11 Aug 2011 18:09:45 +0200
 

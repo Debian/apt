@@ -11,12 +11,6 @@ SLIBS =
 SOURCE = mthdcat.cc
 include $(PROGRAM_H)
 
-# Program for testing methods
-PROGRAM=uritest
-SLIBS = -lapt-pkg
-SOURCE = uri.cc
-include $(PROGRAM_H)
-
 # Scratch program to test incomplete code fragments in
 PROGRAM=scratch-test
 SLIBS = -lapt-inst -lapt-pkg
@@ -29,18 +23,6 @@ PROGRAM=testextract
 SLIBS = -lapt-pkg -lapt-inst
 LIB_MAKES = apt-pkg/makefile apt-inst/makefile
 SOURCE = testextract.cc
-include $(PROGRAM_H)
-
-# Program for testing the config file parser
-PROGRAM=conftest_clear
-SLIBS = -lapt-pkg
-SOURCE = conf_clear.cc
-include $(PROGRAM_H)
-
-# Program for testing the config file parser
-PROGRAM=conftest
-SLIBS = -lapt-pkg
-SOURCE = conf.cc
 include $(PROGRAM_H)
 
 # Program for testing the tar/deb extractor
