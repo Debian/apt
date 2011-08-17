@@ -4,14 +4,13 @@
 
 int main()
 {
-   int i;
    pkgUdevCdromDevices c;
    assert(c.Dlopen());
 
    vector<CdromDevice> l;
    l = c.Scan();
    assert(l.empty() == false);
-   for (i=0;i<l.size();i++)
+   for (size_t i = 0; i < l.size(); ++i)
       std::cerr << l[i].DeviceName << " " 
 		<< l[i].Mounted << " " 
 		<< l[i].MountPath << std::endl;

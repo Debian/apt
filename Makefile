@@ -9,8 +9,8 @@ endif
 .PHONY: default
 default: startup all
 
-.PHONY: headers library clean veryclean all binary program doc
-all headers library clean veryclean binary program doc dirs:
+.PHONY: headers library clean veryclean all binary program doc test
+all headers library clean veryclean binary program doc dirs test:
 	$(MAKE) -C apt-pkg $@
 	$(MAKE) -C apt-inst $@
 	$(MAKE) -C methods $@
@@ -19,6 +19,7 @@ all headers library clean veryclean binary program doc dirs:
 	$(MAKE) -C dselect $@
 	$(MAKE) -C doc $@
 	$(MAKE) -C po $@
+	$(MAKE) -C test $@
 
 # Some very common aliases
 .PHONY: maintainer-clean dist-clean distclean pristine sanity 

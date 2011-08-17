@@ -1,16 +1,19 @@
 #!/bin/sh -- # no runable script, just for vi
 
 # we all like colorful messages
-CERROR="[1;31m" # red
-CWARNING="[1;33m" # yellow
-CMSG="[1;32m" # green
-CINFO="[1;96m" # light blue
-CDEBUG="[1;94m" # blue
-CNORMAL="[0;39m" # default system console color
-CDONE="[1;32m" # green
-CPASS="[1;32m" # green
-CFAIL="[1;31m" # red
-CCMD="[1;35m" # pink
+if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
+   expr match "$(readlink -f /proc/$$/fd/2)" '/dev/pts/[0-9]\+' > /dev/null; then
+	CERROR="[1;31m" # red
+	CWARNING="[1;33m" # yellow
+	CMSG="[1;32m" # green
+	CINFO="[1;96m" # light blue
+	CDEBUG="[1;94m" # blue
+	CNORMAL="[0;39m" # default system console color
+	CDONE="[1;32m" # green
+	CPASS="[1;32m" # green
+	CFAIL="[1;31m" # red
+	CCMD="[1;35m" # pink
+fi
 
 msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
 msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
@@ -42,7 +45,11 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgtest() { true; }
 	msgpass() { echo -n " ${CPASS}P${CNORMAL}" >&2; }
 	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
-	msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
+	if [ -n "$CFAIL" ]; then
+		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
+	else
+		msgfail() { echo -n " ###FAILED###" >&2; }
+	fi
 fi
 if [ $MSGLEVEL -le 3 ]; then
 	msginfo() { true; }
