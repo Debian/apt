@@ -11,8 +11,11 @@ apt (0.8.15.7) UNRELEASED; urgency=low
     - run the test/libapt testcases at package build-time
   * debian/apt.symbols:
     - add the newly added symbols since 0.8.15.3
+  * cmdline/apt-get.cc:
+    - remove the binary caches in 'apt-get clean' as it is the first
+      thing recommend by many supporters in case of APT segfaults
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 17 Aug 2011 15:09:16 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 18 Aug 2011 11:41:31 +0200
 
 apt (0.8.15.6) unstable; urgency=low
 
