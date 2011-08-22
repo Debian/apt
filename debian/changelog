@@ -14,8 +14,11 @@ apt (0.8.15.7) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - remove the binary caches in 'apt-get clean' as it is the first
       thing recommend by many supporters in case of APT segfaults
+  * apt-pkg/acquire-item.cc:
+    - if no Release.gpg file is found try to verify with hashes,
+      but do not fail if a hash can't be found
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 18 Aug 2011 11:41:31 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 22 Aug 2011 22:50:44 +0200
 
 apt (0.8.15.6) unstable; urgency=low
 
