@@ -1625,7 +1625,8 @@ bool DoUpdate(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Download",true) == true)
        ListUpdate(Stat, *List);
 
-   // Rebuild the cache.   
+   // Rebuild the cache.
+   pkgCacheFile::RemoveCaches();
    if (Cache.BuildCaches() == false)
       return false;
    
@@ -2227,10 +2228,7 @@ bool DoClean(CommandLine &CmdL)
    Fetcher.Clean(archivedir);
    Fetcher.Clean(archivedir + "partial/");
 
-   if (pkgcache.empty() == false && RealFileExists(pkgcache) == true)
-      unlink(pkgcache.c_str());
-   if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)
-      unlink(srcpkgcache.c_str());
+   pkgCacheFile::RemoveCaches();
 
    return true;
 }

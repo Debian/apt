@@ -51,17 +51,16 @@ testrun() {
 		aptget clean
 		msgtest "\tdeb file is gone"; ! test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb && msgpass || msgfail
 	fi
-	rm rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
-	testequal "$GOODSHOW" aptcache show testpkg
-	testequal "$GOODSHOW" aptcache show testpkg
-	rm rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
-	testequal "$GOODPOLICY" aptcache policy testpkg
-	testequal "$GOODPOLICY" aptcache policy testpkg
-	rm rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
-	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
-	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
 	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
-	rm -rf rootdir/var/cache/apt/archives
+	testequal "$GOODSHOW" aptcache show testpkg
+	testequal "$GOODSHOW" aptcache show testpkg
+	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
+	testequal "$GOODPOLICY" aptcache policy testpkg
+	testequal "$GOODPOLICY" aptcache policy testpkg
+	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
+	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
+	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
+	aptget clean
 	msgtest "Check if the source is aptgetable"
 	aptget source testpkg -qq 2> /dev/null > /dev/null && msgpass || msgfail
 	msgtest "\tdsc file is present"; test -f testpkg_1.0.dsc && msgpass || msgfail

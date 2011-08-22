@@ -11,7 +11,7 @@ touch aptarchive/Packages
 setupflataptarchive
 
 testaptgetupdate() {
-	rm -rf rootdir/var/lib/apt rootdir/var/cache/apt
+	rm -rf rootdir/var/lib/apt
 	aptget update 2>> testaptgetupdate.diff >> testaptgetupdate.diff || true
 	sed -i -e '/^Fetched / d' -e 's#\[[0-9]* [kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
 	GIVEN="$1"
