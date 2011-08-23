@@ -495,33 +495,69 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
 									/*}}}*/
 // OrderList::VisitProvides - Visit all of the providing packages	/*{{{*/
 // ---------------------------------------------------------------------
-/* This routine calls visit on all providing packages. */
+/* This routine calls visit on all providing packages.
+
+   If the dependency is negative it first visits packages which are
+   intended to be removed and after that all other packages.
+   It does so to avoid situations in which this package is used to
+   satisfy a (or-group/provides) dependency of another package which
+   could have been satisfied also by upgrading another package -
+   otherwise we have more broken packages dpkg needs to auto-
+   deconfigure and in very complicated situations it even decides
+   against it! */
 bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
-{   
+{
    SPtrArray<Version *> List = D.AllTargets();
-   for (Version **I = List; *I != 0; I++)
+   for (Version **I = List; *I != 0; ++I)
    {
       VerIterator Ver(Cache,*I);
       PkgIterator Pkg = Ver.ParentPkg();
 
+      if (D.IsNegative() == true && Cache[Pkg].Delete() == false)
+	 continue;
+
       if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
 	 continue;
-      
+
       if (D.IsNegative() == false &&
 	  Cache[Pkg].InstallVer != *I)
 	 continue;
-      
+
       if (D.IsNegative() == true &&
 	  (Version *)Pkg.CurrentVer() != *I)
 	 continue;
-      
+
       // Skip over missing files
       if (Critical == false && IsMissing(D.ParentPkg()) == true)
 	 continue;
 
-      if (VisitNode(Pkg, "Provides") == false)
+      if (VisitNode(Pkg, "Provides-1") == false)
 	 return false;
    }
+   if (D.IsNegative() == false)
+      return true;
+   for (Version **I = List; *I != 0; ++I)
+   {
+      VerIterator Ver(Cache,*I);
+      PkgIterator Pkg = Ver.ParentPkg();
+
+      if (Cache[Pkg].Delete() == true)
+	 continue;
+
+      if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
+	 continue;
+
+      if ((Version *)Pkg.CurrentVer() != *I)
+	 continue;
+
+      // Skip over missing files
+      if (Critical == false && IsMissing(D.ParentPkg()) == true)
+	 continue;
+
+      if (VisitNode(Pkg, "Provides-2") == false)
+	 return false;
+   }
+
    return true;
 }
 									/*}}}*/

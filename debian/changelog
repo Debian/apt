@@ -24,8 +24,12 @@ apt (0.8.15.7) UNRELEASED; urgency=low
   * cmdline/apt-key:
     - if command is 'add' do not error out if the specified
       keyring doesn't exist, it will be created by gpg
+  * apt-pkg/orderlist.cc:
+    - prefer visiting packages marked for deletion in VisitProvides
+      if we are operating on a negative dependency so that we can
+      deal early with the fallout of this remove
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 23 Aug 2011 11:19:47 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 24 Aug 2011 00:41:18 +0200
 
 apt (0.8.15.6) unstable; urgency=low
 
