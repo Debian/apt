@@ -267,14 +267,23 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 
      <varlistentry><term>Max-ValidTime</term>
 	 <listitem><para>Seconds the Release file should be considered valid after
-	 it was created. The default is "for ever" (0) if the Release file of the
-	 archive doesn't include a <literal>Valid-Until</literal> header.
-	 If it does then this date is the default. The date from the Release file or
-	 the date specified by the creation time of the Release file
-	 (<literal>Date</literal> header) plus the seconds specified with this
-	 options are used to check if the validation of a file has expired by using
-	 the earlier date of the two. Archive specific settings can be made by
-	 appending the label of the archive to the option name.
+	 it was created (indicated by the <literal>Date</literal> header).
+	 If the Release file itself includes a <literal>Valid-Until</literal> header
+	 the earlier date of the two is used as the expiration date.
+	 The default value is <literal>0</literal> which stands for "for ever".
+	 Archive specific settings can be made by appending the label of the archive
+	 to the option name.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term>Min-ValidTime</term>
+	 <listitem><para>Minimum of seconds the Release file should be considered
+	 valid after it was created (indicated by the <literal>Date</literal> header).
+	 Use this if you need to use a seldomly updated (local) mirror of a more
+	 regular updated archive with a <literal>Valid-Until</literal> header
+	 instead of competely disabling the expiration date checking.
+	 Archive specific settings can and should be used by appending the label of
+	 the archive to the option name.
 	 </para></listitem>
      </varlistentry>
 
