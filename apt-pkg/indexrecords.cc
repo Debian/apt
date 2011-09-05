@@ -113,7 +113,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    }
    // get the user settings for this archive and use what expires earlier
    int MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
-   if (Label.empty() == true)
+   if (Label.empty() == false)
       MaxAge = _config->FindI(string("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
 
    if(MaxAge == 0) // No user settings, use the one from the Release file
@@ -125,7 +125,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       strprintf(ErrorText, _("Invalid 'Date' entry in Release file %s"), Filename.c_str());
       return false;
    }
-   date += 24*60*60*MaxAge;
+   date += MaxAge;
 
    if (ValidUntil == 0 || ValidUntil > date)
       ValidUntil = date;
