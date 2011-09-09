@@ -10,10 +10,10 @@ configarchitecture "i386"
 buildsimplenativepackage "testpkg" "i386" "1.0"
 setupaptarchive
 
-local GOODSHOW="$(aptcache show testpkg)
+GOODSHOW="$(aptcache show testpkg)
 "
-local GOODPOLICY="$(aptcache policy testpkg)"
-local GOODSHOWSRC="$(aptcache showsrc testpkg)
+GOODPOLICY="$(aptcache policy testpkg)"
+GOODSHOWSRC="$(aptcache showsrc testpkg)
 "
 
 test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Architecture: i386' | wc -l) -eq 3 || msgdie 'show is broken'
@@ -99,7 +99,7 @@ testrun "compressed"
 rm rootdir/etc/apt/apt.conf.d/02compressindex
 changetowebserver
 aptget update -qq
-local GOODPOLICY="$(aptcache policy testpkg)"
+GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 http://' | wc -l) -eq 4
 testequal "$GOODPOLICY" aptcache policy testpkg
 

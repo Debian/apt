@@ -513,6 +513,7 @@ buildaptarchivefromfiles() {
 # can be overridden by testcases for their pleasure
 getcodenamefromsuite() { echo -n "$1"; }
 getreleaseversionfromsuite() { true; }
+getlabelfromsuite() { true; }
 
 generatereleasefiles() {
 	# $1 is the Date header and $2 is the ValidUntil header to be set
@@ -526,13 +527,17 @@ generatereleasefiles() {
 			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
+			local LABEL="$(getlabelfromsuite $SUITE)"
 			if [ -n "$VERSION" ]; then
-				VERSION="-o APT::FTPArchive::Release::Version='${VERSION}'"
+				VERSION="-o APT::FTPArchive::Release::Version=${VERSION}"
+			fi
+			if [ -n "$LABEL" ]; then
+				LABEL="-o APT::FTPArchive::Release::Label=${LABEL}"
 			fi
 			aptftparchive -qq release $dir \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
-				-o APT::FTPArchive::Release::Label="Testcases" \
+				${LABEL} \
 				${VERSION} \
 					| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
