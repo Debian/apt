@@ -25,7 +25,6 @@ MD5sum: 8489687ce10e656babd467c9ee389349
 Description-de: Verschiedene Dateien für das Basis-System von Debian"
 
 predependsgawk() {
-	rm rootdir/var/cache/apt/*.bin
 	cp $TESTDIR/$(echo "$(basename $0)" | sed 's/test-/status-/') rootdir/var/lib/dpkg/status
 	echo "$pkgbasefile
 Pre-Depends: $1
@@ -57,7 +56,6 @@ predependsgawk "awk | aawk"
 predependsgawk "awk"
 
 predependsgawk2() {
-	rm rootdir/var/cache/apt/*.bin
 	cp $TESTDIR/$(echo "$(basename $0)" | sed 's/test-/status-/') rootdir/var/lib/dpkg/status
 	echo "$pkgbasefile
 Pre-Depends: $1

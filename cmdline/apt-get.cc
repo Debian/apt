@@ -1625,7 +1625,8 @@ bool DoUpdate(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Download",true) == true)
        ListUpdate(Stat, *List);
 
-   // Rebuild the cache.   
+   // Rebuild the cache.
+   pkgCacheFile::RemoveCaches();
    if (Cache.BuildCaches() == false)
       return false;
    
@@ -2203,10 +2204,14 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 /* */
 bool DoClean(CommandLine &CmdL)
 {
+   std::string const archivedir = _config->FindDir("Dir::Cache::archives");
+   std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
+   std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+
    if (_config->FindB("APT::Get::Simulate") == true)
    {
-      cout << "Del " << _config->FindDir("Dir::Cache::archives") << "* " <<
-	 _config->FindDir("Dir::Cache::archives") << "partial/*" << endl;
+      cout << "Del " << archivedir << "* " << archivedir << "partial/*"<< endl
+	   << "Del " << pkgcache << " " << srcpkgcache << endl;
       return true;
    }
    
@@ -2214,14 +2219,17 @@ bool DoClean(CommandLine &CmdL)
    FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
-      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
+      Lock.Fd(GetLock(archivedir + "lock"));
       if (_error->PendingError() == true)
 	 return _error->Error(_("Unable to lock the download directory"));
    }
    
    pkgAcquire Fetcher;
-   Fetcher.Clean(_config->FindDir("Dir::Cache::archives"));
-   Fetcher.Clean(_config->FindDir("Dir::Cache::archives") + "partial/");
+   Fetcher.Clean(archivedir);
+   Fetcher.Clean(archivedir + "partial/");
+
+   pkgCacheFile::RemoveCaches();
+
    return true;
 }
 									/*}}}*/
