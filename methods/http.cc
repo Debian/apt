@@ -404,10 +404,10 @@ ServerState::RunHeadersResult ServerState::RunHeaders()
       if (Debug == true)
 	 clog << Data;
       
-      for (string::const_iterator I = Data.begin(); I < Data.end(); I++)
+      for (string::const_iterator I = Data.begin(); I < Data.end(); ++I)
       {
 	 string::const_iterator J = I;
-	 for (; J != Data.end() && *J != '\n' && *J != '\r';J++);
+	 for (; J != Data.end() && *J != '\n' && *J != '\r'; ++J);
 	 if (HeaderLine(string(I,J)) == false)
 	    return RUN_HEADERS_PARSE_ERROR;
 	 I = J;
@@ -1327,7 +1327,7 @@ int HttpMethod::Loop()
                StopRedirects = true;
             else
             {
-               for (StringVectorIterator I = R.begin(); I != R.end(); I++)
+               for (StringVectorIterator I = R.begin(); I != R.end(); ++I)
                   if (Queue->Uri == *I)
                   {
                      R[0] = "STOP";

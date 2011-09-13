@@ -7,13 +7,6 @@
 
 #include <iostream>
 
-// simple helper to quickly output a vector of strings
-void dumpVector(std::vector<std::string> vec) {
-	for (std::vector<std::string>::const_iterator v = vec.begin();
-	     v != vec.end(); v++)
-		std::cout << *v << std::endl;
-}
-
 int main(int argc,char *argv[])
 {
 	std::vector<std::string> vec;
@@ -37,6 +30,12 @@ int main(int argc,char *argv[])
 	equals(vec[0], "i386");
 
 	_config->Set("APT::Architecture", "armel");
+	vec = APT::Configuration::getArchitectures(false);
+	equals(vec.size(), 2);
+	equals(vec[0], "armel");
+	equals(vec[1], "i386");
+
+	_config->Set("APT::Architectures::2", "armel");
 	vec = APT::Configuration::getArchitectures(false);
 	equals(vec.size(), 2);
 	equals(vec[0], "i386");

@@ -50,11 +50,11 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
    string::const_iterator I = Compress.begin();
    for (; I != Compress.end();)
    {
-      for (; I != Compress.end() && isspace(*I); I++);
+      for (; I != Compress.end() && isspace(*I); ++I);
       
       // Grab a word
       string::const_iterator Start = I;
-      for (; I != Compress.end() && !isspace(*I); I++);
+      for (; I != Compress.end() && !isspace(*I); ++I);
 
       // Find the matching compressor
       std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();
@@ -131,11 +131,11 @@ bool MultiCompress::GetStat(string const &Output,string const &Compress,struct s
    bool DidStat = false;
    for (; I != Compress.end();)
    {
-      for (; I != Compress.end() && isspace(*I); I++);
+      for (; I != Compress.end() && isspace(*I); ++I);
       
       // Grab a word
       string::const_iterator Start = I;
-      for (; I != Compress.end() && !isspace(*I); I++);
+      for (; I != Compress.end() && !isspace(*I); ++I);
 
       // Find the matching compressor
       std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();

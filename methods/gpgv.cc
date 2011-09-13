@@ -215,21 +215,21 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
          {
             errmsg += _("The following signatures were invalid:\n");
             for (vector<string>::iterator I = BadSigners.begin();
-		 I != BadSigners.end(); I++)
+		 I != BadSigners.end(); ++I)
                errmsg += (*I + "\n");
          }
          if (!WorthlessSigners.empty())
          {
             errmsg += _("The following signatures were invalid:\n");
             for (vector<string>::iterator I = WorthlessSigners.begin();
-		 I != WorthlessSigners.end(); I++)
+		 I != WorthlessSigners.end(); ++I)
                errmsg += (*I + "\n");
          }
          if (!NoPubKeySigners.empty())
          {
              errmsg += _("The following signatures couldn't be verified because the public key is not available:\n");
             for (vector<string>::iterator I = NoPubKeySigners.begin();
-		 I != NoPubKeySigners.end(); I++)
+		 I != NoPubKeySigners.end(); ++I)
                errmsg += (*I + "\n");
          }
       }

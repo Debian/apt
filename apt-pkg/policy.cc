@@ -58,8 +58,22 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
    // The config file has a master override.
    string DefRel = _config->Find("APT::Default-Release");
    if (DefRel.empty() == false)
-      CreatePin(pkgVersionMatch::Release,"",DefRel,990);
-      
+   {
+      bool found = false;
+      // FIXME: make ExpressionMatches static to use it here easily
+      pkgVersionMatch vm("", pkgVersionMatch::None);
+      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
+      {
+	 if ((F->Archive != 0 && vm.ExpressionMatches(DefRel, F.Archive()) == true) ||
+	     (F->Codename != 0 && vm.ExpressionMatches(DefRel, F.Codename()) == true) ||
+	     (F->Version != 0 && vm.ExpressionMatches(DefRel, F.Version()) == true))
+	    found = true;
+      }
+      if (found == false)
+	 _error->Error(_("The value '%s' is invalid for APT::Default-Release as such a release is not available in the sources"), DefRel.c_str());
+      else
+	 CreatePin(pkgVersionMatch::Release,"",DefRel,990);
+   }
    InitDefaults();
 }
 									/*}}}*/
@@ -69,7 +83,7 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
 bool pkgPolicy::InitDefaults()
 {   
    // Initialize the priorities based on the status of the package file
-   for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); I++)
+   for (pkgCache::PkgFileIterator I = Cache->FileBegin(); I != Cache->FileEnd(); ++I)
    {
       PFPriority[I->ID] = 500;
       if ((I->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
@@ -86,10 +100,10 @@ bool pkgPolicy::InitDefaults()
    signed Cur = 989;
    StatusOverride = false;
    for (vector<Pin>::const_iterator I = Defaults.begin(); I != Defaults.end();
-	I++, Cur--)
+	++I, --Cur)
    {
       pkgVersionMatch Match(I->Data,I->Type);
-      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); F++)
+      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
       {
 	 if (Match.FileMatch(F) == true && Fixed[F->ID] == false)
 	 {
@@ -110,7 +124,7 @@ bool pkgPolicy::InitDefaults()
    }
 
    if (_config->FindB("Debug::pkgPolicy",false) == true)
-      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); F++)
+      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F != Cache->FileEnd(); ++F)
 	 std::clog << "Prio of " << F.FileName() << ' ' << PFPriority[F->ID] << std::endl; 
    
    return true;   
@@ -150,12 +164,12 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
       tracks the default when the default is taken away, and a permanent
       pin that stays at that setting.
     */
-   for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; Ver++)
+   for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
       /* Lets see if this version is the installed version */
       bool instVer = (Pkg.CurrentVer() == Ver);
 
-      for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; VF++)
+      for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
       {
 	 /* If this is the status file, and the current version is not the
 	    version in the status file (ie it is not installed, or somesuch)
@@ -348,7 +362,7 @@ bool ReadPinDir(pkgPolicy &Plcy,string Dir)
    vector<string> const List = GetListOfFilesInDir(Dir, "pref", true, true);
 
    // Read the files
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
       if (ReadPinFile(Plcy, *I) == false)
 	 return false;
    return true;

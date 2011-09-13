@@ -311,7 +311,7 @@ void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
    sort(List.begin(),List.end());
    
    // Collect similar entries
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       // Find a space..
       string::size_type Space = (*I).find(' ');
@@ -323,7 +323,7 @@ void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
 
       string Word1 = string(*I,Space,SSpace-Space);
       string Prefix = string(*I,0,Space);
-      for (vector<string>::iterator J = List.begin(); J != I; J++)
+      for (vector<string>::iterator J = List.begin(); J != I; ++J)
       {
 	 // Find a space..
 	 string::size_type Space2 = (*J).find(' ');
@@ -406,7 +406,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    that were the same. */
 bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
 {
-   if (List.size() == 0)
+   if (List.empty() == true)
       return true;
 
    string File = _config->FindFile("Dir::Etc::sourcelist");
@@ -456,7 +456,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
 
       if (First == true)
       {
-	 for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+	 for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
 	 {
 	    string::size_type Space = (*I).find(' ');
 	    if (Space == string::npos)
@@ -490,7 +490,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    // Just in case the file was empty
    if (First == true)
    {
-      for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+      for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
       {
 	 string::size_type Space = (*I).find(' ');
 	 if (Space == string::npos)
@@ -662,13 +662,13 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    if (_config->FindB("Debug::aptcdrom",false) == true)
    {
       cout << "I found (binary):" << endl;
-      for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+      for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
 	 cout << *I << endl;
       cout << "I found (source):" << endl;
-      for (vector<string>::iterator I = SourceList.begin(); I != SourceList.end(); I++)
+      for (vector<string>::iterator I = SourceList.begin(); I != SourceList.end(); ++I)
 	 cout << *I << endl;
       cout << "I found (Signatures):" << endl;
-      for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); I++)
+      for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); ++I)
 	 cout << *I << endl;
    }   
 
@@ -689,7 +689,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       log->Update(msg.str(), STEP_SCAN);
    }
 
-   if (List.size() == 0 && SourceList.size() == 0) 
+   if (List.empty() == true && SourceList.empty() == true) 
    {
       if (_config->FindB("APT::CDROM::NoMount",false) == false) 
 	 UnmountCdrom(CDROM);
@@ -713,7 +713,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 	 {
 	    // Escape special characters
 	    string::iterator J = Name.begin();
-	    for (; J != Name.end(); J++)
+	    for (; J != Name.end(); ++J)
 	       if (*J == '"' || *J == ']' || *J == '[')
 		  *J = '_';
 	    
@@ -758,7 +758,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 
    // Escape special characters
    string::iterator J = Name.begin();
-   for (; J != Name.end(); J++)
+   for (; J != Name.end(); ++J)
       if (*J == '"' || *J == ']' || *J == '[')
 	 *J = '_';
    
@@ -805,7 +805,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    if(log != NULL)
       log->Update(_("Source list entries for this disc are:\n"));
 
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
@@ -824,7 +824,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       }
    }
 
-   for (vector<string>::iterator I = SourceList.begin(); I != SourceList.end(); I++)
+   for (vector<string>::iterator I = SourceList.begin(); I != SourceList.end(); ++I)
    {
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
@@ -875,9 +875,7 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    libudev_handle = h;
    udev_new = (udev* (*)(void)) dlsym(h, "udev_new");
    udev_enumerate_add_match_property = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_property");
-#if 0 // FIXME: uncomment on next ABI break
    udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(h, "udev_enumerate_add_match_sysattr");
-#endif
    udev_enumerate_scan_devices = (int (*)(udev_enumerate*))dlsym(h, "udev_enumerate_scan_devices");
    udev_enumerate_get_list_entry = (udev_list_entry* (*)(udev_enumerate*))dlsym(h, "udev_enumerate_get_list_entry");
    udev_device_new_from_syspath = (udev_device* (*)(udev*, const char*))dlsym(h, "udev_device_new_from_syspath");
@@ -891,10 +889,8 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
    return true;
 }
 									/*}}}*/
-
                                                                         /*{{{*/
-// compatiblity only with the old API/ABI, can be removed on the next
-// ABI break
+// convenience interface, this will just call ScanForRemovable
 vector<CdromDevice>
 pkgUdevCdromDevices::Scan()
 { 
@@ -919,10 +915,6 @@ pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
    if (CdromOnly)
       udev_enumerate_add_match_property(enumerate, "ID_CDROM", "1");
    else {
-#if 1 // FIXME: remove the next two lines on the next ABI break
-      int (*udev_enumerate_add_match_sysattr)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
-      udev_enumerate_add_match_sysattr = (int (*)(udev_enumerate*, const char*, const char*))dlsym(libudev_handle, "udev_enumerate_add_match_sysattr");
-#endif
       udev_enumerate_add_match_sysattr(enumerate, "removable", "1");
    }
 

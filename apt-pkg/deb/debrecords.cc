@@ -103,6 +103,15 @@ string debRecordParser::Maintainer()
    return Section.FindS("Maintainer");
 }
 									/*}}}*/
+// RecordParser::RecordField - Return the value of an arbitrary field       /*{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::RecordField(const char *fieldName)
+{
+   return Section.FindS(fieldName);
+}
+
+                                                                        /*}}}*/
 // RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -128,7 +137,7 @@ string debRecordParser::LongDesc()
   {
      vector<string> const lang = APT::Configuration::getLanguages();
      for (vector<string>::const_iterator l = lang.begin();
-	  orig.empty() && l != lang.end(); l++)
+	  orig.empty() && l != lang.end(); ++l)
 	orig = Section.FindS(string("Description-").append(*l).c_str());
   }
 

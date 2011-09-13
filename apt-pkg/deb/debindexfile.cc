@@ -354,7 +354,7 @@ pkgCache::PkgFileIterator debPackagesIndex::FindInCache(pkgCache &Cache) const
 {
    string FileName = IndexFile("Packages");
    pkgCache::PkgFileIterator File = Cache.FileBegin();
-   for (; File.end() == false; File++)
+   for (; File.end() == false; ++File)
    {
        if (File.FileName() == NULL || FileName != File.FileName())
 	 continue;
@@ -542,7 +542,7 @@ pkgCache::PkgFileIterator debTranslationsIndex::FindInCache(pkgCache &Cache) con
    string FileName = IndexFile(Language);
    
    pkgCache::PkgFileIterator File = Cache.FileBegin();
-   for (; File.end() == false; File++)
+   for (; File.end() == false; ++File)
    {
       if (FileName != File.FileName())
 	 continue;
@@ -622,7 +622,7 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 pkgCache::PkgFileIterator debStatusIndex::FindInCache(pkgCache &Cache) const
 {
    pkgCache::PkgFileIterator File = Cache.FileBegin();
-   for (; File.end() == false; File++)
+   for (; File.end() == false; ++File)
    {
       if (this->File != File.FileName())
 	 continue;

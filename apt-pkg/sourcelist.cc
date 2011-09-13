@@ -175,7 +175,7 @@ pkgSourceList::pkgSourceList(string File)
 /* */
 pkgSourceList::~pkgSourceList()
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
 }
 									/*}}}*/
@@ -220,7 +220,7 @@ bool pkgSourceList::ReadMainList()
 /* */
 void pkgSourceList::Reset()
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
    SrcList.erase(SrcList.begin(),SrcList.end());
 }
@@ -298,11 +298,11 @@ bool pkgSourceList::ReadAppend(string File)
 bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
 			      pkgIndexFile *&Found) const
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
    {
       vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
       for (vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
-	   J != Indexes->end(); J++)
+	   J != Indexes->end(); ++J)
       {
          if ((*J)->FindInCache(*File.Cache()) == File)
          {
@@ -320,7 +320,7 @@ bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
 /* */
 bool pkgSourceList::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       if ((*I)->GetIndexes(Owner,GetAll) == false)
 	 return false;
    return true;
@@ -336,11 +336,33 @@ bool pkgSourceList::ReadSourceDir(string Dir)
    vector<string> const List = GetListOfFilesInDir(Dir, "list", true);
 
    // Read the files
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
       if (ReadAppend(*I) == false)
 	 return false;
    return true;
 
+}
+									/*}}}*/
+// GetLastModified()						/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+time_t pkgSourceList::GetLastModifiedTime()
+{
+   vector<string> List;
+
+   string Main = _config->FindFile("Dir::Etc::sourcelist");
+   string Parts = _config->FindDir("Dir::Etc::sourceparts");
+
+   // go over the parts
+   if (DirectoryExists(Parts) == true)
+      List = GetListOfFilesInDir(Parts, "list", true);
+
+   // calculate the time
+   time_t mtime_sources = GetModificationTime(Main);
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
+      mtime_sources = std::max(mtime_sources, GetModificationTime(*I));
+
+   return mtime_sources;
 }
 									/*}}}*/
 

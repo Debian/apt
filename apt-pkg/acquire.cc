@@ -118,7 +118,7 @@ pkgAcquire::~pkgAcquire()
 /* */
 void pkgAcquire::Shutdown()
 {
-   while (Items.size() != 0)
+   while (Items.empty() == false)
    {
       if (Items[0]->Status == Item::StatFetching)
          Items[0]->Status = Item::StatError;
@@ -157,7 +157,7 @@ void pkgAcquire::Remove(Item *Itm)
 	 I = Items.begin();
       }      
       else 
-	 I++;
+	 ++I;
    }
 }
 									/*}}}*/
@@ -413,7 +413,7 @@ pkgAcquire::RunResult pkgAcquire::Run(int PulseIntervall)
       I->Shutdown(false);
 
    // Shut down the items
-   for (ItemIterator I = Items.begin(); I != Items.end(); I++)
+   for (ItemIterator I = Items.begin(); I != Items.end(); ++I)
       (*I)->Finished(); 
    
    if (_error->PendingError())
@@ -469,7 +469,7 @@ bool pkgAcquire::Clean(string Dir)
       
       // Look in the get list
       ItemCIterator I = Items.begin();
-      for (; I != Items.end(); I++)
+      for (; I != Items.end(); ++I)
 	 if (flNotDir((*I)->DestFile) == Dir->d_name)
 	    break;
       
@@ -490,7 +490,7 @@ bool pkgAcquire::Clean(string Dir)
 unsigned long long pkgAcquire::TotalNeeded()
 {
    unsigned long long Total = 0;
-   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); I++)
+   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
       Total += (*I)->FileSize;
    return Total;
 }
@@ -501,7 +501,7 @@ unsigned long long pkgAcquire::TotalNeeded()
 unsigned long long pkgAcquire::FetchNeeded()
 {
    unsigned long long Total = 0;
-   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); I++)
+   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
       if ((*I)->Local == false)
 	 Total += (*I)->FileSize;
    return Total;
@@ -513,7 +513,7 @@ unsigned long long pkgAcquire::FetchNeeded()
 unsigned long long pkgAcquire::PartialPresent()
 {
   unsigned long long Total = 0;
-   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); I++)
+   for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
       if ((*I)->Local == false)
 	 Total += (*I)->PartialSize;
    return Total;
@@ -783,11 +783,11 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    unsigned int Unknown = 0;
    unsigned int Count = 0;
    for (pkgAcquire::ItemCIterator I = Owner->ItemsBegin(); I != Owner->ItemsEnd();
-	I++, Count++)
+	++I, ++Count)
    {
       TotalItems++;
       if ((*I)->Status == pkgAcquire::Item::StatDone)
-	 CurrentItems++;
+	 ++CurrentItems;
       
       // Totally ignore local items
       if ((*I)->Local == true)
@@ -797,7 +797,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       if ((*I)->Complete == true)
 	 CurrentBytes += (*I)->FileSize;
       if ((*I)->FileSize == 0 && (*I)->Complete == false)
-	 Unknown++;
+	 ++Unknown;
    }
    
    // Compute the current completion
@@ -851,7 +851,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
       char msg[200];
       long i = CurrentItems < TotalItems ? CurrentItems + 1 : CurrentItems;
-      unsigned long long const ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
+      unsigned long long ETA = 0;
+      if(CurrentCPS > 0)
+         ETA = (TotalBytes - CurrentBytes) / CurrentCPS;
 
       // only show the ETA if it makes sense
       if (ETA > 0 && ETA < 172800 /* two days */ )

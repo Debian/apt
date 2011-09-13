@@ -85,6 +85,8 @@ pkgCache::Header::Header()
    memset(PkgHashTable,0,sizeof(PkgHashTable));
    memset(GrpHashTable,0,sizeof(GrpHashTable));
    memset(Pools,0,sizeof(Pools));
+
+   CacheFileSize = 0;
 }
 									/*}}}*/
 // Cache::Header::CheckSizes - Check if the two headers have same *sz	/*{{{*/
@@ -156,6 +158,9 @@ bool pkgCache::ReMap(bool const &Errorchecks)
        HeaderP->CheckSizes(DefHeader) == false)
       return _error->Error(_("The package cache file is an incompatible version"));
 
+   if (Map.Size() < HeaderP->CacheFileSize)
+      return _error->Error(_("The package cache file is corrupted, it is too small"));
+
    // Locate our VS..
    if (HeaderP->VerSysName == 0 ||
        (VS = pkgVersioningSystem::GetVS(StrP + HeaderP->VerSysName)) == 0)
@@ -176,7 +181,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
 unsigned long pkgCache::sHash(const string &Str) const
 {
    unsigned long Hash = 0;
-   for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
+   for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
       Hash = 5*Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->PkgHashTable);
 }
@@ -184,7 +189,7 @@ unsigned long pkgCache::sHash(const string &Str) const
 unsigned long pkgCache::sHash(const char *Str) const
 {
    unsigned long Hash = 0;
-   for (const char *I = Str; *I != 0; I++)
+   for (const char *I = Str; *I != 0; ++I)
       Hash = 5*Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->PkgHashTable);
 }
@@ -570,7 +575,7 @@ bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result) const
       virtual package libc-dev which is provided by libc5-dev and libc6-dev
       we must ignore libc5-dev when considering the provides list. */ 
    PrvIterator PStart = Result.ProvidesList();
-   for (; PStart.end() != true && PStart.OwnerPkg() == ParentPkg(); PStart++);
+   for (; PStart.end() != true && PStart.OwnerPkg() == ParentPkg(); ++PStart);
 
    // Nothing but indirect self provides
    if (PStart.end() == true)
@@ -578,7 +583,7 @@ bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result) const
    
    // Check for single packages in the provides list
    PrvIterator P = PStart;
-   for (; P.end() != true; P++)
+   for (; P.end() != true; ++P)
    {
       // Skip over self provides
       if (P.OwnerPkg() == ParentPkg())
@@ -612,7 +617,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       PkgIterator DPkg = TargetPkg();
 
       // Walk along the actual package providing versions
-      for (VerIterator I = DPkg.VersionList(); I.end() == false; I++)
+      for (VerIterator I = DPkg.VersionList(); I.end() == false; ++I)
       {
 	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
@@ -627,7 +632,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       }
       
       // Follow all provides
-      for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; I++)
+      for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; ++I)
       {
 	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
@@ -718,7 +723,7 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
    /* Start at A and look for B. If B is found then A > B otherwise
       B was before A so A < B */
    VerIterator I = *this;
-   for (;I.end() == false; I++)
+   for (;I.end() == false; ++I)
       if (I == B)
 	 return 1;
    return -1;
@@ -730,7 +735,7 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
 bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
-   for (; Files.end() == false; Files++)
+   for (; Files.end() == false; ++Files)
       if ((Files.File()->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource)
 	 return true;
    return false;
@@ -743,7 +748,7 @@ bool pkgCache::VerIterator::Downloadable() const
 bool pkgCache::VerIterator::Automatic() const
 {
    VerFileIterator Files = FileList();
-   for (; Files.end() == false; Files++)
+   for (; Files.end() == false; ++Files)
       // Do not check ButAutomaticUpgrades here as it is kind of automatic…
       if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
 	 return true;
@@ -758,7 +763,7 @@ pkgCache::VerFileIterator pkgCache::VerIterator::NewestFile() const
 {
    VerFileIterator Files = FileList();
    VerFileIterator Highest = Files;
-   for (; Files.end() == false; Files++)
+   for (; Files.end() == false; ++Files)
    {
       if (Owner->VS->CmpReleaseVer(Files.File().Version(),Highest.File().Version()) > 0)
 	 Highest = Files;
@@ -775,7 +780,7 @@ string pkgCache::VerIterator::RelStr() const
 {
    bool First = true;
    string Res;
-   for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; I++)
+   for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; ++I)
    {
       // Do not print 'not source' entries'
       pkgCache::PkgFileIterator File = I.File();
@@ -784,7 +789,7 @@ string pkgCache::VerIterator::RelStr() const
 
       // See if we have already printed this out..
       bool Seen = false;
-      for (pkgCache::VerFileIterator J = this->FileList(); I != J; J++)
+      for (pkgCache::VerFileIterator J = this->FileList(); I != J; ++J)
       {
 	 pkgCache::PkgFileIterator File2 = J.File();
 	 if (File2->Label == 0 || File->Label == 0)
@@ -885,7 +890,7 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
 {
    std::vector<string> const lang = APT::Configuration::getLanguages();
    for (std::vector<string>::const_iterator l = lang.begin();
-	l != lang.end(); l++)
+	l != lang.end(); ++l)
    {
       pkgCache::DescIterator Desc = DescriptionList();
       for (; Desc.end() == false; ++Desc)

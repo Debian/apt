@@ -231,7 +231,7 @@ Override::Item* Override::GetItem(string const &Package, string const &Architect
 	 if (R->OldMaint != "") result->OldMaint = R->OldMaint;
 	 if (R->NewMaint != "") result->NewMaint = R->NewMaint;
 	 for (map<string,string>::const_iterator foI = R->FieldOverride.begin();
-	      foI != R->FieldOverride.end(); foI++)
+	      foI != R->FieldOverride.end(); ++foI)
          {
 	    result->FieldOverride[foI->first] = foI->second;
 	 }
@@ -268,7 +268,7 @@ string Override::Item::SwapMaint(string const &Orig,bool &Failed)
       string::const_iterator Start = End;      
       for (; End < OldMaint.end() &&
 	   (End + 3 >= OldMaint.end() || End[0] != ' ' || 
-	    End[1] != '/' || End[2] != '/'); End++);
+	    End[1] != '/' || End[2] != '/'); ++End);
       if (stringcasecmp(Start,End,Orig.begin(),Orig.end()) == 0)
 	 return NewMaint;
       
@@ -276,7 +276,7 @@ string Override::Item::SwapMaint(string const &Orig,bool &Failed)
 	 break;
 
       // Skip the divider and white space
-      for (; End < OldMaint.end() && (*End == '/' || *End == ' '); End++);
+      for (; End < OldMaint.end() && (*End == '/' || *End == ' '); ++End);
    }
 #else
    if (stringcasecmp(OldMaint.begin(),OldMaint.end(),Orig.begin(),Orig.end()) == 0)

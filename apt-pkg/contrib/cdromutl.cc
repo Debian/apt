@@ -260,7 +260,9 @@ string FindMountPointForDevice(const char *devnode)
                if(TokSplitString(' ', buf, out, 10))
                {
                   fclose(f);
-                  return string(out[1]);
+                  // unescape the \0XXX chars in the path
+                  string mount_point = out[1];
+                  return DeEscapeString(mount_point);
                }
             }
          }

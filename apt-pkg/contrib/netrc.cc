@@ -48,10 +48,7 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
   int specific_login = (login[0] != 0);
   char *home = NULL;
   bool netrc_alloc = false;
-  int state = NOTHING;
 
-  char state_login = 0;        /* Found a login keyword */
-  char state_password = 0;     /* Found a password keyword */
   int state_our_login = false;  /* With specific_login,
                                    found *our* login name */
 
@@ -81,6 +78,10 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
     char *tok_buf;
     bool done = false;
     char netrcbuffer[256];
+
+    int state = NOTHING;
+    char state_login = 0;        /* Found a login keyword */
+    char state_password = 0;     /* Found a password keyword */
 
     while (!done && fgets(netrcbuffer, sizeof (netrcbuffer), file)) {
       tok = strtok_r (netrcbuffer, " \t\n", &tok_buf);

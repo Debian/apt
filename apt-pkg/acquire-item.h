@@ -559,6 +559,16 @@ class pkgAcqIndex : public pkgAcquire::Item
     */
    bool Erase;
 
+   /** \brief Verify for correctness by checking if a "Package"
+    *         tag is found in the index. This can be set to
+    *         false for optional index targets
+    *       
+    */
+   // FIXME: instead of a bool it should use a verify string that will
+   //        then be used in the pkgAcqIndex::Done method to ensure that
+   //        the downloaded file contains the expected tag
+   bool Verify;
+
    /** \brief The download request that is currently being
     *   processed.
     */
@@ -646,8 +656,9 @@ class pkgAcqIndexTrans : public pkgAcqIndex
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
-struct IndexTarget
+class IndexTarget
 {
+ public:
    /** \brief A URI from which the index file can be downloaded. */
    string URI;
 
@@ -662,14 +673,28 @@ struct IndexTarget
     */
    string MetaKey;
 
-   //FIXME: We should use virtual methods here instead…
-   bool IsOptional() const;
-   bool IsSubIndex() const;
+   virtual bool IsOptional() const {
+      return false;
+   }
+   virtual bool IsSubIndex() const {
+      return false;
+   }
 };
 									/*}}}*/
 /** \brief Information about an optional index file. */			/*{{{*/
-struct OptionalIndexTarget : public IndexTarget
+class OptionalIndexTarget : public IndexTarget
 {
+   virtual bool IsOptional() const {
+      return true;
+   }
+};
+									/*}}}*/
+/** \brief Information about an subindex index file. */			/*{{{*/
+class SubIndexTarget : public IndexTarget
+{
+   virtual bool IsSubIndex() const {
+      return true;
+   }
 };
 									/*}}}*/
 

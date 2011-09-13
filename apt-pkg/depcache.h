@@ -258,13 +258,21 @@ class pkgDepCache : protected pkgCache::Namespace
    class Policy
    {
       public:
-      
+      Policy() {
+         InstallRecommends = _config->FindB("APT::Install-Recommends", false);
+         InstallSuggests = _config->FindB("APT::Install-Suggests", false);
+      }
+
       virtual VerIterator GetCandidateVer(PkgIterator const &Pkg);
       virtual bool IsImportantDep(DepIterator const &Dep);
       virtual signed short GetPriority(PkgIterator const &Pkg);
       virtual signed short GetPriority(PkgFileIterator const &File);
 
       virtual ~Policy() {};
+
+      private:
+      bool InstallRecommends;
+      bool InstallSuggests;
    };
 
    private:
@@ -392,7 +400,7 @@ class pkgDepCache : protected pkgCache::Namespace
    // @{
    bool MarkKeep(PkgIterator const &Pkg, bool Soft = false,
 		 bool FromUser = true, unsigned long Depth = 0);
-   bool MarkDelete(PkgIterator const &Pkg, bool Purge = false,
+   bool MarkDelete(PkgIterator const &Pkg, bool MarkPurge = false,
                    unsigned long Depth = 0, bool FromUser = true);
    bool MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
@@ -460,7 +468,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *  \param Depth     recursive deep of this Marker call
     *  \param FromUser  was the remove requested by the user?
     */
-   virtual bool IsDeleteOk(const PkgIterator &Pkg,bool Purge = false,
+   virtual bool IsDeleteOk(const PkgIterator &Pkg,bool MarkPurge = false,
 			    unsigned long Depth = 0, bool FromUser = true);
 
    // read persistent states

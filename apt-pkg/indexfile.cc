@@ -29,7 +29,8 @@ unsigned long pkgIndexFile::Type::GlobalListLen = 0;
 pkgIndexFile::Type::Type()
 {
    ItmList[GlobalListLen] = this;
-   GlobalListLen++;   
+   GlobalListLen++;
+   Label = NULL;
 }
 									/*}}}*/
 // Type::GetType - Locate the type by name				/*{{{*/

@@ -36,14 +36,14 @@ class CircleBuf
    static struct timeval BwReadTick;
    static const unsigned int BW_HZ;
 
-   unsigned long long LeftRead()
+   unsigned long long LeftRead() const
    {
       unsigned long long Sz = Size - (InP - OutP);
       if (Sz > Size - (InP%Size))
 	 Sz = Size - (InP%Size);
       return Sz;
    }
-   unsigned long long LeftWrite()
+   unsigned long long LeftWrite() const
    {
       unsigned long long Sz = InP - OutP;
       if (InP > MaxGet)
@@ -68,12 +68,12 @@ class CircleBuf
    
    // Control the write limit
    void Limit(long long Max) {if (Max == -1) MaxGet = 0-1; else MaxGet = OutP + Max;}   
-   bool IsLimit() {return MaxGet == OutP;};
-   void Print() {cout << MaxGet << ',' << OutP << endl;};
+   bool IsLimit() const {return MaxGet == OutP;};
+   void Print() const {cout << MaxGet << ',' << OutP << endl;};
 
    // Test for free space in the buffer
-   bool ReadSpace() {return Size - (InP - OutP) > 0;};
-   bool WriteSpace() {return InP - OutP > 0;};
+   bool ReadSpace() const {return Size - (InP - OutP) > 0;};
+   bool WriteSpace() const {return InP - OutP > 0;};
 
    // Dump everything
    void Reset();
@@ -113,7 +113,7 @@ struct ServerState
    URI ServerName;
   
    bool HeaderLine(string Line);
-   bool Comp(URI Other) {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
+   bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
                  Encoding = Closes; time(&Date); ServerFd = -1; 
                  Pipeline = true;};

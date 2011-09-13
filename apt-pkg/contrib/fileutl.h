@@ -112,6 +112,7 @@ bool FileExists(string File);
 bool RealFileExists(string File);
 bool DirectoryExists(string const &Path) __attrib_const;
 bool CreateDirectory(string const &Parent, string const &Path);
+time_t GetModificationTime(string const &Path);
 
 /** \brief Ensure the existence of the given Path
  *

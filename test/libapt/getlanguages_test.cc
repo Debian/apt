@@ -7,13 +7,6 @@
 
 #include <iostream>
 
-// simple helper to quickly output a vector of strings
-void dumpVector(std::vector<std::string> vec) {
-	for (std::vector<std::string>::const_iterator v = vec.begin();
-	     v != vec.end(); v++)
-		std::cout << *v << std::endl;
-}
-
 int main(int argc,char *argv[])
 {
 	if (argc != 2) {
@@ -138,8 +131,8 @@ int main(int argc,char *argv[])
 	equals(vec[1], "de");
 	equals(vec[2], "en");
 	equals(vec[3], "none");
-	equals(vec[4], "pt");
-	equals(vec[5], "tr");
+	equalsOr2(vec[4], "pt", "tr");
+	equalsOr2(vec[5], "tr", "pt");
 
 	_config->Set("Dir::State::lists", "/non-existing-dir");
 	_config->Set("Acquire::Languages::1", "none");
