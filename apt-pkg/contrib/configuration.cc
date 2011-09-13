@@ -870,10 +870,10 @@ Configuration::MatchAgainstConfig::MatchAgainstConfig(char const * Config)
       {
 	 regfree(p);
 	 delete p;
-	 clearPatterns();
-	 _error->Warning("Regex compilation error for '%s' in configuration option '%s'",
-				s->c_str(), Config);
-	 return;
+	 _error->Warning("Invalid regular expression '%s' in configuration "
+                         "option '%s' will be ignored.",
+                         s->c_str(), Config);
+	 continue;
       }
    }
    if (strings.size() == 0)
@@ -894,6 +894,7 @@ void Configuration::MatchAgainstConfig::clearPatterns()
       regfree(*p);
       delete *p;
    }
+   patterns.clear();
 }
 									/*}}}*/
 // MatchAgainstConfig::Match - returns true if a pattern matches	/*{{{*/
