@@ -10,6 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -25,12 +27,11 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
-#include <apti18n.h>
 #include <sstream>
 
 #include "config.h"
 #include "https.h"
-
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 

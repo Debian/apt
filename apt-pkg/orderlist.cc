@@ -63,6 +63,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>

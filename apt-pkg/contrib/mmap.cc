@@ -17,10 +17,10 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #define _BSD_SOURCE
+#include <config.h>
+
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
-
-#include <apti18n.h>
 
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -28,9 +28,10 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <errno.h>
-
 #include <cstring>
-   									/*}}}*/
+
+#include <apti18n.h>
+									/*}}}*/
 
 // MMap::MMap - Constructor						/*{{{*/
 // ---------------------------------------------------------------------

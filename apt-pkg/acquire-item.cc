@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
@@ -24,8 +26,6 @@
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
 
-#include <apti18n.h>
-    
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -33,6 +33,8 @@
 #include <sstream>
 #include <stdio.h>
 #include <ctime>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

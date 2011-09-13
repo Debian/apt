@@ -8,19 +8,21 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
-#include "acqprogress.h"
+#include<config.h>
+
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
-#include <apti18n.h>
-    
 #include <stdio.h>
 #include <signal.h>
 #include <iostream>
 #include <unistd.h>
+
+#include "acqprogress.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

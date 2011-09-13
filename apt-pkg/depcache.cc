@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
@@ -23,12 +25,12 @@
 #include <apt-pkg/tagfile.h>
 
 #include <iostream>
-#include <sstream>    
+#include <sstream>
 #include <set>
 
 #include <sys/stat.h>
 
-#include <apti18n.h>    
+#include <apti18n.h>
 									/*}}}*/
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
 static bool 

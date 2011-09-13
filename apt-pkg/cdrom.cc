@@ -1,5 +1,6 @@
 /*
  */
+#include<config.h>
 
 #include<apt-pkg/init.h>
 #include<apt-pkg/error.h>
@@ -10,8 +11,6 @@
 
 #include<sstream>
 #include<fstream>
-#include<config.h>
-#include<apti18n.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
@@ -21,6 +20,8 @@
 #include <dlfcn.h>
 
 #include "indexcopy.h"
+
+#include<apti18n.h>
 
 using namespace std;
 

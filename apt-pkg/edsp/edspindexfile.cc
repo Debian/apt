@@ -6,6 +6,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/edspindexfile.h>
 #include <apt-pkg/edsplistparser.h>
 #include <apt-pkg/sourcelist.h>

@@ -14,13 +14,16 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
 #include <stdlib.h>
-									/*}}}*/
+
 #include <apti18n.h>
+									/*}}}*/
 
 struct ARArchive::MemberHeader
 {

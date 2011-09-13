@@ -18,13 +18,13 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/configuration.h>
-
-#include <apti18n.h>
 
 #include <cstdlib>
 #include <cstring>
@@ -43,10 +43,11 @@
 #include <set>
 #include <algorithm>
 
-#include <config.h>
 #ifdef WORDS_BIGENDIAN
 #include <inttypes.h>
 #endif
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

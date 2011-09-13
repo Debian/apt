@@ -11,7 +11,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "rsh.h"
+#include <config.h>
+
 #include <apt-pkg/error.h>
 
 #include <sys/stat.h>
@@ -22,6 +23,8 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
+#include "rsh.h"
+
 #include <apti18n.h>
 									/*}}}*/
 

@@ -25,6 +25,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #define _LARGEFILE_SOURCE
 #define _LARGEFILE64_SOURCE
 
@@ -46,9 +48,6 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
 
-#include <config.h>
-#include <apti18n.h>
-
 #include "acqprogress.h"
 
 #include <set>
@@ -67,6 +66,8 @@
 #include <regex.h>
 #include <sys/wait.h>
 #include <sstream>
+
+#include <apti18n.h>
 
 #define statfs statfs64
 #define statvfs statvfs64

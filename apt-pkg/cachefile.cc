@@ -12,6 +12,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>
@@ -21,7 +23,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/fileutl.h>
-    
+
 #include <apti18n.h>
 									/*}}}*/
 // CacheFile::CacheFile - Constructor					/*{{{*/

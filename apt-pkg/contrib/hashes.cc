@@ -11,12 +11,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
 
-#include <unistd.h>    
+#include <unistd.h>
 #include <string>
 #include <iostream>
 									/*}}}*/

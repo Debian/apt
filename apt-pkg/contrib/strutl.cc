@@ -15,12 +15,12 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
-#include <apti18n.h>
-    
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -31,7 +31,7 @@
 #include <stdarg.h>
 #include <iconv.h>
 
-#include "config.h"
+#include <apti18n.h>
 
 using namespace std;
 									/*}}}*/

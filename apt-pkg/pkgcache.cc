@@ -20,6 +20,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/version.h>
@@ -29,13 +31,12 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/macros.h>
 
-#include <apti18n.h>
-    
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <ctype.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;

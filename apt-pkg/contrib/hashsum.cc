@@ -1,4 +1,5 @@
 // Cryptographic API Base
+#include <config.h>
 
 #include <unistd.h>
 #include "hashsum_template.h"

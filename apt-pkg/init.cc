@@ -8,14 +8,16 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
-#include <apti18n.h>
-#include <config.h>
 #include <cstdlib>
 #include <sys/stat.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 #define Stringfy_(x) # x

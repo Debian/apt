@@ -1,3 +1,5 @@
+#include<config.h>
+
 #include <iostream>
 #include <apt-pkg/error.h>
 #include <apt-pkg/vendor.h>

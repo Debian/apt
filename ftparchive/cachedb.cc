@@ -10,9 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "cachedb.h"
+#include <config.h>
 
-#include <apti18n.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
@@ -21,6 +20,9 @@
 #include <apt-pkg/configuration.h>
     
 #include <netinet/in.h>       // htonl, etc
+
+#include <apti18n.h>
+#include "cachedb.h"
 									/*}}}*/
 
 // CacheDB::ReadyDB - Ready the DB2					/*{{{*/

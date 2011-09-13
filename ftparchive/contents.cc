@@ -33,9 +33,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "contents.h"
+#include <config.h>
 
-#include <apti18n.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
@@ -43,6 +42,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+
+#include <apti18n.h>
+#include "contents.h"
 									/*}}}*/
 
 // GenContents::~GenContents - Free allocated memory			/*{{{*/

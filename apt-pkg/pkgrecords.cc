@@ -9,12 +9,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-    
-#include <apti18n.h>   
+
+#include <apti18n.h>
 									/*}}}*/
 
 // Records::pkgRecords - Constructor					/*{{{*/

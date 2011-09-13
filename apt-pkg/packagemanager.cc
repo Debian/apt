@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>
@@ -22,10 +24,10 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
-    
-#include <apti18n.h>    
+
+#include <apti18n.h>
 #include <iostream>
-#include <fcntl.h> 
+#include <fcntl.h>
 									/*}}}*/
 using namespace std;
 

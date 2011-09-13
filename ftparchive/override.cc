@@ -10,14 +10,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "override.h"
-    
+#include <config.h>
+
 #include <apti18n.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
-    
+
 #include "override.h"
 									/*}}}*/
 

@@ -9,6 +9,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/deblistparser.h>

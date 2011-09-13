@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/version.h>
 #include <apt-pkg/pkgcache.h>
 

@@ -1,4 +1,6 @@
 // Includes									/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>

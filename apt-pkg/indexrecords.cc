@@ -3,15 +3,17 @@
 // $Id: indexrecords.cc,v 1.1.2.4 2003/12/30 02:11:43 mdz Exp $
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-#include <apti18n.h>
 #include <sys/stat.h>
 #include <clocale>
 
+#include <apti18n.h>
 									/*}}}*/
 string indexRecords::GetDist() const
 {

@@ -12,6 +12,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
@@ -19,18 +21,18 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
-#include <apti18n.h>
-
 #include <iostream>
 #include <sstream>
 #include <fstream>
-    
+
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

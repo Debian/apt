@@ -9,6 +9,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
@@ -16,11 +18,11 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/versionmatch.h>
 
-#include <apti18n.h>
-
 #include <vector>
 
 #include <regex.h>
+
+#include <apti18n.h>
 									/*}}}*/
 namespace APT {
 // FromTask - Return all packages in the cache from a specific task	/*{{{*/

@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/cdrom.h>
 #include <apt-pkg/cdromutl.h>

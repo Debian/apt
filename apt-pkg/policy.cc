@@ -23,6 +23,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/policy.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
@@ -31,10 +33,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 
-#include <apti18n.h>
-
 #include <iostream>
 #include <sstream>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

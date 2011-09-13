@@ -12,6 +12,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -19,14 +21,13 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
 
-#include <config.h>
-#include <apti18n.h>
-    
 #include <vector>
 #include <algorithm>
 
 #include <locale.h>
 #include <unistd.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

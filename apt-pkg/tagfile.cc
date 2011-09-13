@@ -11,15 +11,17 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
-#include <apti18n.h>
-    
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;

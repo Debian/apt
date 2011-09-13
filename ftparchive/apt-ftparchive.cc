@@ -10,24 +10,25 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "apt-ftparchive.h"
-    
+#include <config.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/init.h>
-#include <config.h>
-#include <apti18n.h>
 #include <algorithm>
 
 #include <climits>
 #include <sys/time.h>
 #include <regex.h>
 
+#include "apt-ftparchive.h"
 #include "contents.h"
 #include "multicompress.h"
-#include "writer.h"    
+#include "writer.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;    

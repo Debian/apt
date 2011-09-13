@@ -1,4 +1,5 @@
 // ijones, walters
+#include <config.h>
 
 #include <apt-pkg/debmetaindex.h>
 #include <apt-pkg/debindexfile.h>

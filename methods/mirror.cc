@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/acquire-item.h>
@@ -33,7 +35,7 @@ using namespace std;
 
 #include "mirror.h"
 #include "http.h"
-#include "apti18n.h"
+#include <apti18n.h>
 									/*}}}*/
 
 /* Done:

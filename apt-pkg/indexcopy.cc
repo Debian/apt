@@ -10,7 +10,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "indexcopy.h"
+#include<config.h>
 
 #include <apt-pkg/error.h>
 #include <apt-pkg/progress.h>
@@ -21,7 +21,6 @@
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/cdrom.h>
-#include <apti18n.h>
 
 #include <iostream>
 #include <sstream>
@@ -30,6 +29,9 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <stdio.h>
+
+#include "indexcopy.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

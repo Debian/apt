@@ -8,17 +8,19 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/clean.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 
-#include <apti18n.h>    
-
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <apti18n.h>
 									/*}}}*/
 // ArchiveCleaner::Go - Perform smart cleanup of the archive		/*{{{*/
 // ---------------------------------------------------------------------

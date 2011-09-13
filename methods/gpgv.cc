@@ -1,9 +1,10 @@
+#include <config.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexcopy.h>
-#include <apti18n.h>
 
 #include <utime.h>
 #include <stdio.h>
@@ -12,8 +13,9 @@
 #include <sys/wait.h>
 #include <iostream>
 #include <sstream>
-
 #include <vector>
+
+#include <apti18n.h>
 
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"

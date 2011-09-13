@@ -11,7 +11,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "connect.h"
+#include <config.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 
@@ -29,6 +30,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+#include "connect.h"
 #include "rfc2553emu.h"
 #include <apti18n.h>
 									/*}}}*/

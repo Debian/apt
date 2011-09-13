@@ -15,6 +15,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
@@ -30,7 +32,6 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <iostream>
-#include <apti18n.h>
 
 // Internet stuff
 #include <netinet/in.h>
@@ -41,6 +42,7 @@
 #include "rfc2553emu.h"
 #include "connect.h"
 #include "ftp.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
