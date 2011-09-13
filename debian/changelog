@@ -5,6 +5,12 @@ apt (0.8.16~exp5ubuntu8) UNRELEASEDoneiric; urgency=low
     - fix double delete (LP: #848907)
     - ignore only the invalid regexp instead of all options
 
+  * cherry pick r2165 from lp:~donkult/apt/sid:
+    [ David Kalnischkies ]
+    * cmdline/apt-get.cc:
+      - output list of virtual package providers to c1out in -q=1
+        instead of /dev/null to unbreak sbuild (LP: #816155)
+
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 13 Sep 2011 16:22:20 +0200
 
 apt (0.8.16~exp5ubuntu7) oneiric; urgency=low
