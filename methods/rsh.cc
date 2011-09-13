@@ -251,7 +251,7 @@ bool RSHConn::WriteMsg(string &Text,bool Sync,const char *Fmt,...)
 // ---------------------------------------------------------------------
 /* Right now for successfull transfer the file size must be known in 
    advance. */
-bool RSHConn::Size(const char *Path,unsigned long &Size)
+bool RSHConn::Size(const char *Path,unsigned long long &Size)
 {
    // Query the size
    string Msg;
@@ -263,7 +263,7 @@ bool RSHConn::Size(const char *Path,unsigned long &Size)
    // FIXME: Sense if the bad reply is due to a File Not Found. 
    
    char *End;
-   Size = strtoul(Msg.c_str(),&End,10);
+   Size = strtoull(Msg.c_str(),&End,10);
    if (End == Msg.c_str())
       return _error->Error(_("File not found"));
    return true;
@@ -288,8 +288,8 @@ bool RSHConn::ModTime(const char *Path, time_t &Time)
 // RSHConn::Get - Get a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
-                  Hashes &Hash,bool &Missing, unsigned long Size)
+bool RSHConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
+                  Hashes &Hash,bool &Missing, unsigned long long Size)
 {
    Missing = false;
 
@@ -314,7 +314,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
       return false;
 
    // Copy loop
-   unsigned int MyLen = Resume;
+   unsigned long long MyLen = Resume;
    unsigned char Buffer[4096];
    while (MyLen < Size)
    {
@@ -428,7 +428,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    Status(_("Connecting to %s"), Get.Host.c_str());
 
    // Get the files information
-   unsigned long Size;
+   unsigned long long Size;
    if (Server->Size(File,Size) == false ||
        Server->ModTime(File,FailTime) == false)
    {
@@ -449,7 +449,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    // See if the file exists
    struct stat Buf;
    if (stat(Itm->DestFile.c_str(),&Buf) == 0) {
-      if (Size == (unsigned)Buf.st_size && FailTime == Buf.st_mtime) {
+      if (Size == (unsigned long long)Buf.st_size && FailTime == Buf.st_mtime) {
 	 Res.Size = Buf.st_size;
 	 Res.LastModified = Buf.st_mtime;
 	 Res.ResumePoint = Buf.st_size;
@@ -458,7 +458,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
       }
 
       // Resume?
-      if (FailTime == Buf.st_mtime && Size > (unsigned)Buf.st_size)
+      if (FailTime == Buf.st_mtime && Size > (unsigned long long)Buf.st_size)
 	 Res.ResumePoint = Buf.st_size;
    }
 

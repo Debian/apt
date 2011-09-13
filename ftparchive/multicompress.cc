@@ -215,7 +215,7 @@ bool MultiCompress::Die()
 // MultiCompress::Finalize - Finish up writing				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is only necessary for statistics reporting. */
-bool MultiCompress::Finalize(unsigned long &OutSize)
+bool MultiCompress::Finalize(unsigned long long &OutSize)
 {
    OutSize = 0;
    if (Input == 0 || Die() == false)
@@ -383,7 +383,7 @@ bool MultiCompress::Child(int const &FD)
       stash a hash of the data to use later. */
    SetNonBlock(FD,false);
    unsigned char Buffer[32*1024];
-   unsigned long FileSize = 0;
+   unsigned long long FileSize = 0;
    MD5Summation MD5;
    while (1)
    {
@@ -445,7 +445,7 @@ bool MultiCompress::Child(int const &FD)
             
       // Compute the hash
       MD5Summation OldMD5;
-      unsigned long NewFileSize = 0;
+      unsigned long long NewFileSize = 0;
       while (1)
       {
 	 int Res = read(CompFd,Buffer,sizeof(Buffer));

@@ -23,29 +23,29 @@ class HttpMethod;
 class CircleBuf
 {
    unsigned char *Buf;
-   unsigned long Size;
-   unsigned long InP;
-   unsigned long OutP;
+   unsigned long long Size;
+   unsigned long long InP;
+   unsigned long long OutP;
    string OutQueue;
-   unsigned long StrPos;
-   unsigned long MaxGet;
+   unsigned long long StrPos;
+   unsigned long long MaxGet;
    struct timeval Start;
    
-   static unsigned long BwReadLimit;
-   static unsigned long BwTickReadData;
+   static unsigned long long BwReadLimit;
+   static unsigned long long BwTickReadData;
    static struct timeval BwReadTick;
    static const unsigned int BW_HZ;
 
-   unsigned long LeftRead()
+   unsigned long long LeftRead()
    {
-      unsigned long Sz = Size - (InP - OutP);
+      unsigned long long Sz = Size - (InP - OutP);
       if (Sz > Size - (InP%Size))
 	 Sz = Size - (InP%Size);
       return Sz;
    }
-   unsigned long LeftWrite()
+   unsigned long long LeftWrite()
    {
-      unsigned long Sz = InP - OutP;
+      unsigned long long Sz = InP - OutP;
       if (InP > MaxGet)
 	 Sz = MaxGet - OutP;
       if (Sz > Size - (OutP%Size))
@@ -67,7 +67,7 @@ class CircleBuf
    bool WriteTillEl(string &Data,bool Single = false);
    
    // Control the write limit
-   void Limit(long Max) {if (Max == -1) MaxGet = 0-1; else MaxGet = OutP + Max;}   
+   void Limit(long long Max) {if (Max == -1) MaxGet = 0-1; else MaxGet = OutP + Max;}   
    bool IsLimit() {return MaxGet == OutP;};
    void Print() {cout << MaxGet << ',' << OutP << endl;};
 
@@ -79,7 +79,7 @@ class CircleBuf
    void Reset();
    void Stats();
 
-   CircleBuf(unsigned long Size);
+   CircleBuf(unsigned long long Size);
    ~CircleBuf() {delete [] Buf; delete Hash;};
 };
 
@@ -92,8 +92,8 @@ struct ServerState
    char Code[MAXLEN];
    
    // These are some statistics from the last parsed header lines
-   unsigned long Size;
-   signed long StartPos;
+   unsigned long long Size;
+   signed long long StartPos;
    time_t Date;
    bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;

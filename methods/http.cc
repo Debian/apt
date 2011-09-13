@@ -65,15 +65,15 @@ bool AllowRedirect = false;
 bool Debug = false;
 URI Proxy;
 
-unsigned long CircleBuf::BwReadLimit=0;
-unsigned long CircleBuf::BwTickReadData=0;
+unsigned long long CircleBuf::BwReadLimit=0;
+unsigned long long CircleBuf::BwTickReadData=0;
 struct timeval CircleBuf::BwReadTick={0,0};
 const unsigned int CircleBuf::BW_HZ=10;
  
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CircleBuf::CircleBuf(unsigned long Size) : Size(Size), Hash(0)
+CircleBuf::CircleBuf(unsigned long long Size) : Size(Size), Hash(0)
 {
    Buf = new unsigned char[Size];
    Reset();
@@ -89,7 +89,7 @@ void CircleBuf::Reset()
    InP = 0;
    OutP = 0;
    StrPos = 0;
-   MaxGet = (unsigned int)-1;
+   MaxGet = (unsigned long long)-1;
    OutQueue = string();
    if (Hash != 0)
    {
@@ -104,7 +104,7 @@ void CircleBuf::Reset()
    is non-blocking.. */
 bool CircleBuf::Read(int Fd)
 {
-   unsigned long BwReadMax;
+   unsigned long long BwReadMax;
 
    while (1)
    {
@@ -119,7 +119,7 @@ bool CircleBuf::Read(int Fd)
 	 struct timeval now;
 	 gettimeofday(&now,0);
 
-	 unsigned long d = (now.tv_sec-CircleBuf::BwReadTick.tv_sec)*1000000 +
+	 unsigned long long d = (now.tv_sec-CircleBuf::BwReadTick.tv_sec)*1000000 +
 	    now.tv_usec-CircleBuf::BwReadTick.tv_usec;
 	 if(d > 1000000/BW_HZ) {
 	    CircleBuf::BwReadTick = now;
@@ -133,7 +133,7 @@ bool CircleBuf::Read(int Fd)
       }
 
       // Write the buffer segment
-      int Res;
+      ssize_t Res;
       if(CircleBuf::BwReadLimit) {
 	 Res = read(Fd,Buf + (InP%Size), 
 		    BwReadMax > LeftRead() ? LeftRead() : BwReadMax);
@@ -182,7 +182,7 @@ void CircleBuf::FillOut()
 	 return;
       
       // Write the buffer segment
-      unsigned long Sz = LeftRead();
+      unsigned long long Sz = LeftRead();
       if (OutQueue.length() - StrPos < Sz)
 	 Sz = OutQueue.length() - StrPos;
       memcpy(Buf + (InP%Size),OutQueue.c_str() + StrPos,Sz);
@@ -216,7 +216,7 @@ bool CircleBuf::Write(int Fd)
 	 return true;
       
       // Write the buffer segment
-      int Res;
+      ssize_t Res;
       Res = write(Fd,Buf + (OutP%Size),LeftWrite());
 
       if (Res == 0)
@@ -242,7 +242,7 @@ bool CircleBuf::Write(int Fd)
 bool CircleBuf::WriteTillEl(string &Data,bool Single)
 {
    // We cheat and assume it is unneeded to have more than one buffer load
-   for (unsigned long I = OutP; I < InP; I++)
+   for (unsigned long long I = OutP; I < InP; I++)
    {      
       if (Buf[I%Size] != '\n')
 	 continue;
@@ -260,7 +260,7 @@ bool CircleBuf::WriteTillEl(string &Data,bool Single)
       Data = "";
       while (OutP < I)
       {
-	 unsigned long Sz = LeftWrite();
+	 unsigned long long Sz = LeftWrite();
 	 if (Sz == 0)
 	    return false;
 	 if (I - OutP < Sz)
@@ -455,7 +455,7 @@ bool ServerState::RunData()
 	    return false;
 	 	 
 	 // See if we are done
-	 unsigned long Len = strtol(Data.c_str(),0,16);
+	 unsigned long long Len = strtoull(Data.c_str(),0,16);
 	 if (Len == 0)
 	 {
 	    In.Limit(-1);
@@ -598,7 +598,7 @@ bool ServerState::HeaderLine(string Line)
       if (StartPos != 0)
 	 return true;
       
-      if (sscanf(Val.c_str(),"%lu",&Size) != 1)
+      if (sscanf(Val.c_str(),"%llu",&Size) != 1)
 	 return _error->Error(_("The HTTP server sent an invalid Content-Length header"));
       return true;
    }
@@ -613,9 +613,9 @@ bool ServerState::HeaderLine(string Line)
    {
       HaveContent = true;
       
-      if (sscanf(Val.c_str(),"bytes %lu-%*u/%lu",&StartPos,&Size) != 2)
+      if (sscanf(Val.c_str(),"bytes %llu-%*u/%llu",&StartPos,&Size) != 2)
 	 return _error->Error(_("The HTTP server sent an invalid Content-Range header"));
-      if ((unsigned)StartPos > Size)
+      if ((unsigned long long)StartPos > Size)
 	 return _error->Error(_("This HTTP server has broken range support"));
       return true;
    }
@@ -718,7 +718,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       // In this case we send an if-range query with a range header
-      sprintf(Buf,"Range: bytes=%li-\r\nIf-Range: %s\r\n",(long)SBuf.st_size - 1,
+      sprintf(Buf,"Range: bytes=%lli-\r\nIf-Range: %s\r\n",(long long)SBuf.st_size - 1,
 	      TimeRFC1123(SBuf.st_mtime).c_str());
       Req += Buf;
    }

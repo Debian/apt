@@ -52,7 +52,7 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
 {
    HttpsMethod *me = (HttpsMethod *)clientp;
    if(dltotal > 0 && me->Res.Size == 0) {
-      me->Res.Size = (unsigned long)dltotal;
+      me->Res.Size = (unsigned long long)dltotal;
       me->URIStart(me->Res);
    }
    return 0;

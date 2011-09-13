@@ -243,7 +243,7 @@ SHA1SumValue SHA1Summation::Result()
 // SHA1Summation::Add - Adds content of buffer into the checksum        /*{{{*/
 // ---------------------------------------------------------------------
 /* May not be called after Result() is called */
-bool SHA1Summation::Add(const unsigned char *data,unsigned long len)
+bool SHA1Summation::Add(const unsigned char *data,unsigned long long len)
 {
    if (Done)
       return false;

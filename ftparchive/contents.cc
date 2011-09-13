@@ -349,7 +349,7 @@ bool ContentsExtract::DoItem(Item &Itm,int &Fd)
 // ContentsExtract::TakeContents - Load the contents data		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ContentsExtract::TakeContents(const void *NewData,unsigned long Length)
+bool ContentsExtract::TakeContents(const void *NewData,unsigned long long Length)
 {
    if (Length == 0)
    {

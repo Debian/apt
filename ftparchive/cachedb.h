@@ -81,7 +81,7 @@ class CacheDB
    {
       uint32_t Flags;
       uint32_t mtime;          
-      uint32_t FileSize;
+      uint64_t FileSize;
       uint8_t  MD5[16];
       uint8_t  SHA1[20];
       uint8_t  SHA256[32];
@@ -114,7 +114,7 @@ class CacheDB
       double SHA512Bytes;
       unsigned long Packages;
       unsigned long Misses;  
-      unsigned long DeLinkBytes;
+      unsigned long long DeLinkBytes;
       
       inline void Add(const Stats &S) {
 	 Bytes += S.Bytes; 
@@ -133,7 +133,7 @@ class CacheDB
    inline bool DBFailed() {return Dbp != 0 && DBLoaded == false;};
    inline bool Loaded() {return DBLoaded == true;};
    
-   inline off_t GetFileSize(void) {return CurStat.FileSize;}
+   inline unsigned long long GetFileSize(void) {return CurStat.FileSize;}
    
    bool SetFile(string const &FileName,struct stat St,FileFd *Fd);
    bool GetFileInfo(string const &FileName, bool const &DoControl, bool const &DoContents, bool const &GenContentsOnly,

@@ -30,7 +30,7 @@ class SHA2SummationBase : public SummationImplementation
  protected:
    bool Done;
  public:
-   bool Add(const unsigned char *inbuf, unsigned long len) = 0;
+   bool Add(const unsigned char *inbuf, unsigned long long len) = 0;
 
    void Result();
 };
@@ -41,7 +41,7 @@ class SHA256Summation : public SHA2SummationBase
    unsigned char Sum[32];
 
    public:
-   bool Add(const unsigned char *inbuf, unsigned long len)
+   bool Add(const unsigned char *inbuf, unsigned long long len)
    {
       if (Done) 
          return false;
@@ -73,7 +73,7 @@ class SHA512Summation : public SHA2SummationBase
    unsigned char Sum[64];
 
    public:
-   bool Add(const unsigned char *inbuf, unsigned long len)
+   bool Add(const unsigned char *inbuf, unsigned long long len)
    {
       if (Done) 
          return false;

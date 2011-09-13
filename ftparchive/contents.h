@@ -71,15 +71,15 @@ class ContentsExtract : public pkgDirStream
 
    // The Data Block
    char *Data;
-   unsigned long MaxSize;
-   unsigned long CurSize;
+   unsigned long long MaxSize;
+   unsigned long long CurSize;
    void AddData(const char *Text);
    
    bool Read(debDebFile &Deb);
    
    virtual bool DoItem(Item &Itm,int &Fd);      
    void Reset() {CurSize = 0;};
-   bool TakeContents(const void *Data,unsigned long Length);
+   bool TakeContents(const void *Data,unsigned long long Length);
    void Add(GenContents &Contents,string const &Package);
    
    ContentsExtract() : Data(0), MaxSize(0), CurSize(0) {};

@@ -258,9 +258,9 @@ bool pkgAcquire::Worker::RunMessages()
 	    
 	    CurrentItem = Itm;
 	    CurrentSize = 0;
-	    TotalSize = atoi(LookupTag(Message,"Size","0").c_str());
-	    ResumePoint = atoi(LookupTag(Message,"Resume-Point","0").c_str());
-	    Itm->Owner->Start(Message,atoi(LookupTag(Message,"Size","0").c_str()));
+	    TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
+	    ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
+	    Itm->Owner->Start(Message,strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10));
 
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
@@ -289,7 +289,7 @@ bool pkgAcquire::Worker::RunMessages()
 	       Log->Pulse(Owner->GetOwner());
 	    
 	    OwnerQ->ItemDone(Itm);
-	    unsigned long long const ServerSize = atoll(LookupTag(Message,"Size","0").c_str());
+	    unsigned long long const ServerSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
 	    if (TotalSize != 0 && ServerSize != TotalSize)
 	       _error->Warning("Size of file %s is not what the server reported %s %llu",
 			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);

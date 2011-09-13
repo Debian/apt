@@ -95,7 +95,7 @@ bool MMap::Map(FileFd &Fd)
 	    return false;
       }
       else
-	 return _error->Errno("mmap",_("Couldn't make mmap of %lu bytes"),
+	 return _error->Errno("mmap",_("Couldn't make mmap of %llu bytes"),
 	                      iSize);
      }
 
@@ -166,7 +166,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       return true;
    
 #ifdef _POSIX_SYNCHRONIZED_IO
-   unsigned long PSize = sysconf(_SC_PAGESIZE);
+   unsigned long long PSize = sysconf(_SC_PAGESIZE);
    if ((Flags & ReadOnly) != ReadOnly)
    {
       if (SyncToFd != 0)
@@ -177,7 +177,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       }
       else
       {
-	 if (msync((char *)Base+(int)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
+	 if (msync((char *)Base+(unsigned long long)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
       }
    }
@@ -197,7 +197,7 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &Work
    if (_error->PendingError() == true)
       return;
    
-   unsigned long EndOfFile = Fd->Size();
+   unsigned long long EndOfFile = Fd->Size();
    if (EndOfFile > WorkSpace)
       WorkSpace = EndOfFile;
    else if(WorkSpace > 0)
@@ -285,7 +285,7 @@ DynamicMMap::~DynamicMMap()
       return;
    }
    
-   unsigned long EndOfFile = iSize;
+   unsigned long long EndOfFile = iSize;
    iSize = WorkSpace;
    Close(false);
    if(ftruncate(Fd->Fd(),EndOfFile) < 0)
@@ -295,9 +295,9 @@ DynamicMMap::~DynamicMMap()
 // DynamicMMap::RawAllocate - Allocate a raw chunk of unaligned space	/*{{{*/
 // ---------------------------------------------------------------------
 /* This allocates a block of memory aligned to the given size */
-unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
+unsigned long DynamicMMap::RawAllocate(unsigned long long Size,unsigned long Aln)
 {
-   unsigned long Result = iSize;
+   unsigned long long Result = iSize;
    if (Aln != 0)
       Result += Aln - (iSize%Aln);
 
@@ -412,7 +412,7 @@ bool DynamicMMap::Grow() {
 	if (GrowFactor <= 0)
 		return _error->Error(_("Unable to increase size of the MMap as automatic growing is disabled by user."));
 
-	unsigned long const newSize = WorkSpace + GrowFactor;
+	unsigned long long const newSize = WorkSpace + GrowFactor;
 
 	if(Fd != 0) {
 		Fd->Seek(newSize - 1);

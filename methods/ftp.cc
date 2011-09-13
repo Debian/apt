@@ -629,7 +629,7 @@ bool FTPConn::ExtGoPasv()
 // FTPConn::Size - Return the size of a file				/*{{{*/
 // ---------------------------------------------------------------------
 /* Grab the file size from the server, 0 means no size or empty file */
-bool FTPConn::Size(const char *Path,unsigned long &Size)
+bool FTPConn::Size(const char *Path,unsigned long long &Size)
 {
    // Query the size
    unsigned int Tag;
@@ -639,7 +639,7 @@ bool FTPConn::Size(const char *Path,unsigned long &Size)
       return false;
    
    char *End;
-   Size = strtol(Msg.c_str(),&End,10);
+   Size = strtoull(Msg.c_str(),&End,10);
    if (Tag >= 400 || End == Msg.c_str())
       Size = 0;
    return true;
@@ -841,7 +841,7 @@ bool FTPConn::Finalize()
 // ---------------------------------------------------------------------
 /* This opens a data connection, sends REST and RETR and then
    transfers the file over. */
-bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
+bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 		  Hashes &Hash,bool &Missing)
 {
    Missing = false;
@@ -1004,7 +1004,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    
    // Get the files information
    Status(_("Query"));
-   unsigned long Size;
+   unsigned long long Size;
    if (Server->Size(File,Size) == false ||
        Server->ModTime(File,FailTime) == false)
    {
@@ -1026,7 +1026,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    struct stat Buf;
    if (stat(Itm->DestFile.c_str(),&Buf) == 0)
    {
-      if (Size == (unsigned)Buf.st_size && FailTime == Buf.st_mtime)
+      if (Size == (unsigned long long)Buf.st_size && FailTime == Buf.st_mtime)
       {
 	 Res.Size = Buf.st_size;
 	 Res.LastModified = Buf.st_mtime;
@@ -1036,7 +1036,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       }
       
       // Resume?
-      if (FailTime == Buf.st_mtime && Size > (unsigned)Buf.st_size)
+      if (FailTime == Buf.st_mtime && Size > (unsigned long long)Buf.st_size)
 	 Res.ResumePoint = Buf.st_size;
    }
    

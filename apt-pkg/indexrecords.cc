@@ -80,7 +80,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
 
       string Name;
       string Hash;
-      size_t Size;
+      unsigned long long Size;
       while (Start < End)
       {
 	 if (!parseSumData(Start, End, Name, Hash, Size))
@@ -147,7 +147,7 @@ vector<string> indexRecords::MetaKeys()					/*{{{*/
 }
 									/*}}}*/
 bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
-				   string &Name, string &Hash, size_t &Size)
+				   string &Name, string &Hash, unsigned long long &Size)
 {
    Name = "";
    Hash = "";
@@ -184,7 +184,7 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    if (EntryEnd == End)
       return false;
    
-   Size = strtol (Start, NULL, 10);
+   Size = strtoull (Start, NULL, 10);
       
    /* Skip over intermediate blanks */
    Start = EntryEnd;

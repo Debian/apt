@@ -187,7 +187,7 @@ MD5Summation::MD5Summation()
 // MD5Summation::Add - 'Add' a data set to the hash			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool MD5Summation::Add(const unsigned char *data,unsigned long len)
+bool MD5Summation::Add(const unsigned char *data,unsigned long long len)
 {
    if (Done == true)
       return false;
