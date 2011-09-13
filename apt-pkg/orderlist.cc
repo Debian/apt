@@ -154,7 +154,7 @@ bool pkgOrderList::DoRun()
    iterator OldEnd = End;
    End = NList;
    for (iterator I = List; I != OldEnd; ++I)
-      if (VisitNode(PkgIterator(Cache,*I)) == false)
+      if (VisitNode(PkgIterator(Cache,*I), "DoRun") == false)
       {
 	 End = OldEnd;
 	 return false;
@@ -497,33 +497,69 @@ bool pkgOrderList::VisitRProvides(DepFunc F,VerIterator Ver)
 									/*}}}*/
 // OrderList::VisitProvides - Visit all of the providing packages	/*{{{*/
 // ---------------------------------------------------------------------
-/* This routine calls visit on all providing packages. */
+/* This routine calls visit on all providing packages.
+
+   If the dependency is negative it first visits packages which are
+   intended to be removed and after that all other packages.
+   It does so to avoid situations in which this package is used to
+   satisfy a (or-group/provides) dependency of another package which
+   could have been satisfied also by upgrading another package -
+   otherwise we have more broken packages dpkg needs to auto-
+   deconfigure and in very complicated situations it even decides
+   against it! */
 bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
-{   
+{
    SPtrArray<Version *> List = D.AllTargets();
-   for (Version **I = List; *I != 0; I++)
+   for (Version **I = List; *I != 0; ++I)
    {
       VerIterator Ver(Cache,*I);
       PkgIterator Pkg = Ver.ParentPkg();
 
+      if (D.IsNegative() == true && Cache[Pkg].Delete() == false)
+	 continue;
+
       if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
 	 continue;
-      
+
       if (D.IsNegative() == false &&
 	  Cache[Pkg].InstallVer != *I)
 	 continue;
-      
+
       if (D.IsNegative() == true &&
 	  (Version *)Pkg.CurrentVer() != *I)
 	 continue;
-      
+
       // Skip over missing files
       if (Critical == false && IsMissing(D.ParentPkg()) == true)
 	 continue;
 
-      if (VisitNode(Pkg) == false)
+      if (VisitNode(Pkg, "Provides-1") == false)
 	 return false;
    }
+   if (D.IsNegative() == false)
+      return true;
+   for (Version **I = List; *I != 0; ++I)
+   {
+      VerIterator Ver(Cache,*I);
+      PkgIterator Pkg = Ver.ParentPkg();
+
+      if (Cache[Pkg].Delete() == true)
+	 continue;
+
+      if (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing)
+	 continue;
+
+      if ((Version *)Pkg.CurrentVer() != *I)
+	 continue;
+
+      // Skip over missing files
+      if (Critical == false && IsMissing(D.ParentPkg()) == true)
+	 continue;
+
+      if (VisitNode(Pkg, "Provides-2") == false)
+	 return false;
+   }
+
    return true;
 }
 									/*}}}*/
@@ -532,7 +568,7 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 /* This is the core ordering routine. It calls the set dependency
    consideration functions which then potentialy call this again. Finite
    depth is achived through the colouring mechinism. */
-bool pkgOrderList::VisitNode(PkgIterator Pkg)
+bool pkgOrderList::VisitNode(PkgIterator Pkg, char const* from)
 {
    // Looping or irrelevent.
    // This should probably trancend not installed packages
@@ -543,7 +579,7 @@ bool pkgOrderList::VisitNode(PkgIterator Pkg)
    if (Debug == true)
    {
       for (int j = 0; j != Depth; j++) clog << ' ';
-      clog << "Visit " << Pkg.FullName() << endl;
+      clog << "Visit " << Pkg.FullName() << " from " << from << endl;
    }
    
    Depth++;
@@ -638,7 +674,7 @@ bool pkgOrderList::DepUnPackCrit(DepIterator D)
 	 if (CheckDep(D) == true)
 	    continue;
 
-	 if (VisitNode(D.ParentPkg()) == false)
+	 if (VisitNode(D.ParentPkg(), "UnPackCrit") == false)
 	    return false;
       }
       else
@@ -813,7 +849,7 @@ bool pkgOrderList::DepUnPackDep(DepIterator D)
 	    if (IsMissing(D.ParentPkg()) == true)
 	       continue;
 	    
-	    if (VisitNode(D.ParentPkg()) == false)
+	    if (VisitNode(D.ParentPkg(), "UnPackDep-Parent") == false)
 	       return false;
 	 }
 	 else
@@ -827,7 +863,7 @@ bool pkgOrderList::DepUnPackDep(DepIterator D)
 	       if (CheckDep(D) == true)
 		 continue;
 
-	       if (VisitNode(D.TargetPkg()) == false)
+	       if (VisitNode(D.TargetPkg(), "UnPackDep-Target") == false)
 		 return false;
 	    }
 	 }
@@ -926,7 +962,7 @@ bool pkgOrderList::DepRemove(DepIterator D)
 			if (IsFlag(P, InList) == true &&
 			    IsFlag(P, AddPending) == false &&
 			    Cache[P].InstallVer != 0 &&
-			    VisitNode(P) == true)
+			    VisitNode(P, "Remove-P") == true)
 			{
 			   Flag(P, Immediate);
 			   tryFixDeps = false;
@@ -962,7 +998,7 @@ bool pkgOrderList::DepRemove(DepIterator D)
 		  if (IsFlag(F.TargetPkg(), InList) == true &&
 		      IsFlag(F.TargetPkg(), AddPending) == false &&
 		      Cache[F.TargetPkg()].InstallVer != 0 &&
-		      VisitNode(F.TargetPkg()) == true)
+		      VisitNode(F.TargetPkg(), "Remove-Target") == true)
 		  {
 		     Flag(F.TargetPkg(), Immediate);
 		     tryFixDeps = false;
@@ -976,7 +1012,7 @@ bool pkgOrderList::DepRemove(DepIterator D)
 			if (IsFlag(Prv.OwnerPkg(), InList) == true &&
 			    IsFlag(Prv.OwnerPkg(), AddPending) == false &&
 			    Cache[Prv.OwnerPkg()].InstallVer != 0 &&
-			    VisitNode(Prv.OwnerPkg()) == true)
+			    VisitNode(Prv.OwnerPkg(), "Remove-Owner") == true)
 			{
 			   Flag(Prv.OwnerPkg(), Immediate);
 			   tryFixDeps = false;
@@ -996,7 +1032,7 @@ bool pkgOrderList::DepRemove(DepIterator D)
 	 if (IsMissing(D.ParentPkg()) == true)
 	    continue;
 	 
-	 if (VisitNode(D.ParentPkg()) == false)
+	 if (VisitNode(D.ParentPkg(), "Remove-Parent") == false)
 	    return false;
       }
    

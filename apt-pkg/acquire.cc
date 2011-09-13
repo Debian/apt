@@ -447,6 +447,10 @@ pkgAcquire::Worker *pkgAcquire::WorkerStep(Worker *I)
    if it is part of the download set. */
 bool pkgAcquire::Clean(string Dir)
 {
+   // non-existing directories are by definition clean…
+   if (DirectoryExists(Dir) == false)
+      return true;
+
    DIR *D = opendir(Dir.c_str());   
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());

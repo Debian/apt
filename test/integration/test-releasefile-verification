@@ -19,8 +19,7 @@ prepare() {
 	for release in $(find rootdir/var/lib/apt/lists 2> /dev/null); do
 		touch -d 'now - 6 hours' $release
 	done
-	rm -rf rootdir/var/cache/apt/archives
-	rm -f rootdir/var/cache/apt/*.bin
+	aptget clean
 	cp $1 aptarchive/Packages
 	find aptarchive -name 'Release' -delete
 	cat aptarchive/Packages | gzip > aptarchive/Packages.gz

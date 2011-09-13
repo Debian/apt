@@ -638,7 +638,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
 	    continue;
 	 
 	 if (IsNegative() == true &&
-	     ParentPkg() == I.OwnerPkg())
+	     ParentPkg()->Group == I.OwnerPkg()->Group)
 	    continue;
 	 
 	 Size++;

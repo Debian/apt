@@ -1268,9 +1268,9 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,string Hash,	/
       if (SigFile == "")
       {
          // There was no signature file, so we are finished.  Download
-         // the indexes and do only hashsum verification
+         // the indexes and do only hashsum verification if possible
          MetaIndexParser->Load(DestFile);
-         QueueIndexes(true);
+         QueueIndexes(false);
       }
       else
       {
@@ -1388,33 +1388,30 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
         ++Target)
    {
       HashString ExpectedIndexHash;
-      if (verify)
+      const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+      if (Record == NULL)
       {
-	 const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
-	 if (Record == NULL)
+	 if (verify == true && (*Target)->IsOptional() == false)
 	 {
-	    if ((*Target)->IsOptional() == false)
-	    {
-	       Status = StatAuthError;
-	       strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
-	       return;
-	    }
+	    Status = StatAuthError;
+	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
+	    return;
 	 }
-	 else
+      }
+      else
+      {
+	 ExpectedIndexHash = Record->Hash;
+	 if (_config->FindB("Debug::pkgAcquire::Auth", false))
 	 {
-	    ExpectedIndexHash = Record->Hash;
-	    if (_config->FindB("Debug::pkgAcquire::Auth", false))
-	    {
-	       std::cerr << "Queueing: " << (*Target)->URI << std::endl;
-	       std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
-	       std::cerr << "For: " << Record->MetaKeyFilename << std::endl;
-	    }
-	    if (ExpectedIndexHash.empty() == true && (*Target)->IsOptional() == false)
-	    {
-	       Status = StatAuthError;
-	       strprintf(ErrorText, _("Unable to find hash sum for '%s' in Release file"), (*Target)->MetaKey.c_str());
-	       return;
-	    }
+	    std::cerr << "Queueing: " << (*Target)->URI << std::endl;
+	    std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
+	    std::cerr << "For: " << Record->MetaKeyFilename << std::endl;
+	 }
+	 if (verify == true && ExpectedIndexHash.empty() == true && (*Target)->IsOptional() == false)
+	 {
+	    Status = StatAuthError;
+	    strprintf(ErrorText, _("Unable to find hash sum for '%s' in Release file"), (*Target)->MetaKey.c_str());
+	    return;
 	 }
       }
 

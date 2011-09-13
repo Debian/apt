@@ -1,0 +1,31 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'libsame' 'i386' '1'
+insertinstalledpackage 'apt' 'i386' '1' 'Depends: libsame (= 1)'
+
+insertpackage 'unstable' 'libsame' 'i386,amd64' '2' 'Multi-Arch: same'
+insertpackage 'unstable' 'apt' 'i386' '2' 'Depends: libsame (= 2)'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  apt:i386 libsame:i386
+The following NEW packages will be installed:
+  libsame
+The following packages will be upgraded:
+  apt:i386 libsame:i386
+2 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame:i386 [1] (2 unstable [i386]) [apt:i386 ]
+Inst libsame (2 unstable [amd64]) [apt:i386 ]
+Conf libsame:i386 (2 unstable [i386]) [apt:i386 ]
+Conf libsame (2 unstable [amd64]) [apt:i386 ]
+Inst apt:i386 [1] (2 unstable [i386])
+Conf apt:i386 (2 unstable [i386])' aptget install libsame:amd64 -s

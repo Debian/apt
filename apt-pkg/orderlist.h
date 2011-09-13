@@ -18,6 +18,7 @@
 
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/macros.h>
 
 class pkgDepCache;
 class pkgOrderList : protected pkgCache::Namespace
@@ -45,7 +46,8 @@ class pkgOrderList : protected pkgCache::Namespace
    bool Debug;
    
    // Main visit function
-   bool VisitNode(PkgIterator Pkg);
+   __deprecated bool VisitNode(PkgIterator Pkg) { return VisitNode(Pkg, "UNKNOWN"); };
+   bool VisitNode(PkgIterator Pkg, char const* from);
    bool VisitDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRProvides(DepFunc F,VerIterator Ver);

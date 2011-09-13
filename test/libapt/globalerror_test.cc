@@ -101,7 +101,7 @@ int main(int argc,char *argv[])
 	longText.clear();
 	for (size_t i = 0; i < 50; ++i)
 		longText.append("РезийбёбAZ");
-	equals(_error->Warning(longText.c_str()), false);
+	equals(_error->Warning("%s", longText.c_str()), false);
 	equals(_error->PopMessage(text), false);
 	equals(text, longText);
 
