@@ -15,6 +15,9 @@ apt (0.8.16~exp5) experimental; urgency=low
   * methods/mirror.cc:
     - include the architecture(s) in the query string as well so 
       that the server can make better decisions
+  * apt-pkg/contrib/configuration.cc:
+    - fix double delete (LP: #848907)
+    - ignore only the invalid regexp instead of all options
 
  -- Michael Vogt <mvo@debian.org>  Fri, 05 Aug 2011 10:57:08 +0200
 
