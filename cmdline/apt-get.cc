@@ -657,22 +657,22 @@ public:
 					pkgCache::PkgIterator Pkg = I.OwnerPkg();
 
 					if (Cache[Pkg].CandidateVerIter(Cache) == I.OwnerVer()) {
-						out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
+						c1out << "  " << Pkg.FullName(true) << " " << I.OwnerVer().VerStr();
 						if (Cache[Pkg].Install() == true && Cache[Pkg].NewInstall() == false)
-							out << _(" [Installed]");
-						out << endl;
+							c1out << _(" [Installed]");
+						c1out << endl;
 						++provider;
 					}
 				}
 				// if we found no candidate which provide this package, show non-candidates
 				if (provider == 0)
 					for (I = Pkg.ProvidesList(); I.end() == false; ++I)
-						out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
+						c1out << "  " << I.OwnerPkg().FullName(true) << " " << I.OwnerVer().VerStr()
 						    << _(" [Not candidate version]") << endl;
 				else
 					out << _("You should explicitly select one to install.") << endl;
 			} else {
-				ioprintf(out,
+				ioprintf(c1out,
 					_("Package %s is not available, but is referred to by another package.\n"
 					  "This may mean that the package is missing, has been obsoleted, or\n"
 					  "is only available from another source\n"),Pkg.FullName(true).c_str());
@@ -691,9 +691,9 @@ public:
 					List += Dep.ParentPkg().FullName(true) + " ";
 					//VersionsList += string(Dep.ParentPkg().CurVersion) + "\n"; ???
 				}
-				ShowList(out,_("However the following packages replace it:"),List,VersionsList);
+				ShowList(c1out,_("However the following packages replace it:"),List,VersionsList);
 			}
-			out << std::endl;
+			c1out << std::endl;
 		}
 		return false;
 	}
