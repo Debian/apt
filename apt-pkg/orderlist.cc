@@ -1059,8 +1059,10 @@ bool pkgOrderList::AddLoop(DepIterator D)
    Loops[LoopCount++] = D;
    
    // Mark the packages as being part of a loop.
-   Flag(D.TargetPkg(),Loop);
-   Flag(D.ParentPkg(),Loop);
+   //Flag(D.TargetPkg(),Loop);
+   //Flag(D.ParentPkg(),Loop);
+   /* This is currently disabled because the Loop flag is being used for
+      loop management in the package manager. Check the orderlist.h file for more info */
    return true;
 }
 									/*}}}*/
@@ -1111,7 +1113,7 @@ bool pkgOrderList::CheckDep(DepIterator D)
          just needs one */
       if (D.IsNegative() == false)
       {
-	 // ignore provides by older versions of this package
+      	 // ignore provides by older versions of this package
 	 if (((D.Reverse() == false && Pkg == D.ParentPkg()) ||
 	      (D.Reverse() == true && Pkg == D.TargetPkg())) &&
 	     Cache[Pkg].InstallVer != *I)
