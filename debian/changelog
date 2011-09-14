@@ -4,6 +4,11 @@ apt (0.8.15.8) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - output list of virtual package providers to c1out in -q=1
       instead of /dev/null to unbreak sbuild (LP: #816155)
+  
+  [ Michael Vogt ]
+  * apt-pkg/contrib/configuration.cc:
+    - fix double delete (LP: #848907)
+    - ignore only the invalid regexp instead of all options
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 13 Sep 2011 17:39:10 +0200
 
