@@ -9,6 +9,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
@@ -62,7 +64,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    while (1) 
    {
       unsigned char Buffer[4*1024];
-      unsigned long Count;
+      unsigned long long Count = 0;
       
       if (!From.Read(Buffer,sizeof(Buffer),&Count))
       {

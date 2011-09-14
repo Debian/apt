@@ -48,7 +48,7 @@ class FTWScanner
    static int ScannerFile(const char *File, bool const &ReadLink);
 
    bool Delink(string &FileName,const char *OriginalPath,
-	       unsigned long &Bytes,off_t const &FileSize);
+	       unsigned long long &Bytes,unsigned long long const &FileSize);
 
    inline void NewLine(unsigned const &Priority)
    {
@@ -159,7 +159,7 @@ class SourcesWriter : public FTWScanner
    Override BOver;
    Override SOver;
    char *Buffer;
-   unsigned long BufSize;
+   unsigned long long BufSize;
    
    public:
 
@@ -198,7 +198,7 @@ protected:
       string SHA256;
       string SHA512;
       // Limited by FileFd::Size()
-      unsigned long size;
+      unsigned long long size;
       ~CheckSum() {};
    };
    map<string,struct CheckSum> CheckSums;

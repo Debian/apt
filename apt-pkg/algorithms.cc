@@ -14,6 +14,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -22,13 +24,13 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/edsp.h>
 
-#include <apti18n.h>
 #include <sys/types.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
-
 #include <stdio.h>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 

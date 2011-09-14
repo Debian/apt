@@ -13,8 +13,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/error.h>
-#include <cassert>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
@@ -31,17 +32,16 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
 
-#include <config.h>
-#include <apti18n.h>
-
+#include <cassert>
 #include <locale.h>
 #include <iostream>
 #include <unistd.h>
 #include <errno.h>
 #include <regex.h>
 #include <stdio.h>
-
 #include <iomanip>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

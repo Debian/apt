@@ -49,21 +49,36 @@ class FileFd
    enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp,ReadOnlyGzip,
                   WriteAtomic};
    
-   inline bool Read(void *To,unsigned long Size,bool AllowEof)
+   inline bool Read(void *To,unsigned long long Size,bool AllowEof)
    {
-      unsigned long Jnk;
+      unsigned long long Jnk;
       if (AllowEof)
 	 return Read(To,Size,&Jnk);
       return Read(To,Size);
    }   
-   bool Read(void *To,unsigned long Size,unsigned long *Actual = 0);
-   bool Write(const void *From,unsigned long Size);
-   bool Seek(unsigned long To);
-   bool Skip(unsigned long To);
-   bool Truncate(unsigned long To);
-   unsigned long Tell();
-   unsigned long Size();
-   unsigned long FileSize();
+   bool Read(void *To,unsigned long long Size,unsigned long long *Actual = 0);
+   bool Write(const void *From,unsigned long long Size);
+   bool Seek(unsigned long long To);
+   bool Skip(unsigned long long To);
+   bool Truncate(unsigned long long To);
+   unsigned long long Tell();
+   unsigned long long Size();
+   unsigned long long FileSize();
+
+   /* You want to use 'unsigned long long' if you are talking about a file
+      to be able to support large files (>2 or >4 GB) properly.
+      This shouldn't happen all to often for the indexes, but deb's might be…
+      And as the auto-conversation converts a 'unsigned long *' to a 'bool'
+      instead of 'unsigned long long *' we need to provide this explicitely -
+      otherwise applications magically start to fail… */
+   __deprecated bool Read(void *To,unsigned long long Size,unsigned long *Actual)
+   {
+	unsigned long long R;
+	bool const T = Read(To, Size, &R);
+	*Actual = R;
+	return T;
+   }
+
    bool Open(string FileName,OpenMode Mode,unsigned long Perms = 0666);
    bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false);
    bool Close();

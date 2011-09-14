@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
@@ -21,8 +23,6 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 
-#include <apti18n.h>
-
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -30,6 +30,8 @@
 #include <dirent.h>
 #include <sys/time.h>
 #include <errno.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -445,6 +447,10 @@ pkgAcquire::Worker *pkgAcquire::WorkerStep(Worker *I)
    if it is part of the download set. */
 bool pkgAcquire::Clean(string Dir)
 {
+   // non-existing directories are by definition clean…
+   if (DirectoryExists(Dir) == false)
+      return true;
+
    DIR *D = opendir(Dir.c_str());   
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());

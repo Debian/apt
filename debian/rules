@@ -100,7 +100,12 @@ build/build-stamp: build/configure-stamp
 	# compat symlink for the locale split
 	mkdir -p build/usr/share 
 	cd build/usr/share && ln -f -s ../../locale .
-	# done here
+	# compile and run tests
+ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
+	$(MAKE) test
+else
+	@echo "Tests DISABLED"
+endif
 	touch $@
 
 build/build-doc-stamp: build/configure-stamp

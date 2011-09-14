@@ -19,7 +19,6 @@
 
 
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/fileutl.h>
 #include <vector>
 
 class pkgRecords							/*{{{*/

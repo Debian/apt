@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/dpkgdb.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>

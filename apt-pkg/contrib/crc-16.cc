@@ -15,6 +15,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/crc-16.h>
 									/*}}}*/
 
@@ -63,7 +65,7 @@ static unsigned short const crc16_table[256] =
 /* Recompute the FCS with one more character appended. */
 #define CalcFCS(fcs, c) (((fcs) >> 8) ^ crc16_table[((fcs) ^ (c)) & 0xff])
 unsigned short AddCRC16(unsigned short fcs, void const *Buf,
-			unsigned long len) 
+			unsigned long long len)
 {
    unsigned char const *buf = (unsigned char const *)Buf;
    while (len--)

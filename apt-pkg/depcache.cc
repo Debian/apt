@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
@@ -23,12 +25,12 @@
 #include <apt-pkg/tagfile.h>
 
 #include <iostream>
-#include <sstream>    
+#include <sstream>
 #include <set>
 
 #include <sys/stat.h>
 
-#include <apti18n.h>    
+#include <apti18n.h>
 									/*}}}*/
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
 static bool 
@@ -169,14 +171,14 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
    string const state = _config->FindFile("Dir::State::extended_states");
    if(RealFileExists(state)) {
       state_file.Open(state, FileFd::ReadOnly);
-      int const file_size = state_file.Size();
+      off_t const file_size = state_file.Size();
       if(Prog != NULL)
 	 Prog->OverallProgress(0, file_size, 1, 
 			       _("Reading state information"));
 
       pkgTagFile tagfile(&state_file);
       pkgTagSection section;
-      int amt = 0;
+      off_t amt = 0;
       bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
       while(tagfile.Step(section)) {
 	 string const pkgname = section.FindS("Package");

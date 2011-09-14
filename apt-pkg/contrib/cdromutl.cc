@@ -10,6 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
@@ -17,8 +19,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
-#include <apti18n.h>
-    
 #include <sys/wait.h>
 #include <sys/statvfs.h>
 #include <dirent.h>
@@ -26,6 +26,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 // IsMounted - Returns true if the mount point is mounted		/*{{{*/

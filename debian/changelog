@@ -1,3 +1,12 @@
+apt (0.8.16~exp6) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * Support large files in the complete toolset. Indexes of this
+    size are pretty unlikely for now, but we need it for deb
+    packages which could become bigger than 4GB now (LP: #815895)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 13 Sep 2011 17:51:49 +0200
+
 apt (0.8.16~exp5) experimental; urgency=low
 
   * merged the latest debian-sid fixes
@@ -114,6 +123,48 @@ apt (0.8.16~exp1) experimental; urgency=low
   * merged with the debian/unstable upload
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
+
+apt (0.8.15.7) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc, apt-pkg/pkgcache.cc:
+    - ignore "self"-conflicts for all architectures of a package
+      instead of just for the architecture of the package look at
+      in the ordering of installations, too (LP: #802901)
+    - M-A:same lockstep unpack should operate on installed
+      packages first (LP: #835625)
+  * test/*
+    - reorganize the various testcases and helper we have and
+      integrate them better into the buildsystem
+    - run the test/libapt testcases at package build-time
+  * debian/apt.symbols:
+    - add the newly added symbols since 0.8.15.3
+  * cmdline/apt-get.cc:
+    - remove the binary caches in 'apt-get clean' as it is the first
+      thing recommend by many supporters in case of APT segfaults
+    - remove the caches in 'apt-get update', too, as they will be
+      invalid in most cases anyway
+  * apt-pkg/acquire-item.cc:
+    - if no Release.gpg file is found try to verify with hashes,
+      but do not fail if a hash can't be found
+  * apt-pkg/acquire.cc:
+    - non-existing directories are by definition clean
+  * cmdline/apt-key:
+    - if command is 'add' do not error out if the specified
+      keyring doesn't exist, it will be created by gpg
+  * apt-pkg/orderlist.cc:
+    - prefer visiting packages marked for deletion in VisitProvides
+      if we are operating on a negative dependency so that we can
+      deal early with the fallout of this remove
+  * apt-pkg/indexrecords.cc:
+    - fix Acquire::Max-ValidTime option by interpreting it really
+      as seconds as specified in the manpage and not as days
+    - add an Acquire::Min-ValidTime option (Closes: #640122)
+  * doc/apt.conf.5.xml:
+    - reword Acquire::Max-ValidTime documentation to make clear
+      that it doesn't provide the new Min-ValidTime functionality
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 12 Sep 2011 16:38:46 +0200
 
 apt (0.8.15.6) unstable; urgency=low
 

@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/init.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/pkgcache.h>
@@ -28,7 +30,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
-	
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -36,7 +38,6 @@
 #include <fstream>
 
 #include <locale.h>
-#include <config.h>
 #include <apti18n.h>
 #include "apt-extracttemplates.h"
 									/*}}}*/

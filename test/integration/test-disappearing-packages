@@ -12,13 +12,13 @@ buildsimplenativepackage "unrelated" "all" "0.5" "unstable"
 setupsimplenativepackage "new-pkg" "i386" "2.0" "unstable" "Provides: old-pkg
 Replaces: old-pkg
 Conflicts: old-pkg (<< 2.0)"
-local BUILDDIR="incoming/new-pkg-2.0"
+BUILDDIR="incoming/new-pkg-2.0"
 echo "/usr/share/doc/new-pkg /usr/share/doc/old-pkg" > ${BUILDDIR}/debian/new-pkg.links
 buildpackage "$BUILDDIR" "unstable" "main"
 rm -rf "$BUILDDIR"
 
 setupsimplenativepackage "old-pkg" "all" "2.0" "unstable" "Depends: new-pkg"
-local BUILDDIR="incoming/old-pkg-2.0"
+BUILDDIR="incoming/old-pkg-2.0"
 echo "/usr/share/doc/new-pkg /usr/share/doc/old-pkg" > ${BUILDDIR}/debian/old-pkg.links
 echo "
 override_dh_link:
@@ -33,9 +33,9 @@ aptget install old-pkg=1.0 --trivial-only -qq 2>&1 > /dev/null
 
 testmarkedauto # old-pkg is manual installed
 
-local CMD="aptget dist-upgrade -y -q=0"
+CMD="aptget dist-upgrade -y -q=0"
 msgtest "Test for equality of" "$CMD"
-local COMPAREFILE=$(mktemp)
+COMPAREFILE=$(mktemp)
 echo "The following package disappeared from your system as
 all files have been overwritten by other packages:
   old-pkg

@@ -11,8 +11,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apt-pkg/versionmatch.h>
+#include<config.h>
 
+#include <apt-pkg/versionmatch.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
@@ -21,7 +22,6 @@
 #include <fnmatch.h>
 #include <sys/types.h>
 #include <regex.h>
-
 									/*}}}*/
 
 // VersionMatch::pkgVersionMatch - Constructor				/*{{{*/

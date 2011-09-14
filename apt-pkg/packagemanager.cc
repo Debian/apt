@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>
@@ -22,10 +24,10 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
-    
-#include <apti18n.h>    
+
+#include <apti18n.h>
 #include <iostream>
-#include <fcntl.h> 
+#include <fcntl.h>
 									/*}}}*/
 using namespace std;
 
@@ -598,22 +600,44 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
    
    for (PrvIterator P = instVer.ProvidesList();
 	P.end() == false; ++P)
-      CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
+      if (Pkg->Group != P.OwnerPkg()->Group)
+	 CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
 
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 
-   if ((instVer->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+   if (Immediate == true && instVer->MultiArch == pkgCache::Version::Same)
+   {
+      /* Do lockstep M-A:same unpacking in two phases:
+	 First unpack all installed architectures, then the not installed.
+	 This way we avoid that M-A: enabled packages are installed before
+	 their older non-M-A enabled packages are replaced by newer versions */
+      bool const installed = Pkg->CurrentVer != 0;
+      if (installed == true && Install(Pkg,FileNames[Pkg->ID]) == false)
+	 return false;
       for (PkgIterator P = Pkg.Group().PackageList();
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
       {
-	 if (Pkg == P || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
+	 if (P->CurrentVer == 0 || P == Pkg || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
-	 SmartUnPack(P, false);
+	 if (SmartUnPack(P, false) == false)
+	    return false;
       }
-
-   if(Install(Pkg,FileNames[Pkg->ID]) == false)
+      if (installed == false && Install(Pkg,FileNames[Pkg->ID]) == false)
+	 return false;
+      for (PkgIterator P = Pkg.Group().PackageList();
+	   P.end() == false; P = Pkg.Group().NextPkg(P))
+      {
+	 if (P->CurrentVer != 0 || P == Pkg || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
+	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
+	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
+	    continue;
+	 if (SmartUnPack(P, false) == false)
+	    return false;
+      }
+   }
+   else if (Install(Pkg,FileNames[Pkg->ID]) == false)
       return false;
 
    // Perform immedate configuration of the package.

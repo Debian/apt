@@ -15,12 +15,12 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
-#include <apti18n.h>
-    
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -31,7 +31,7 @@
 #include <stdarg.h>
 #include <iconv.h>
 
-#include "config.h"
+#include <apti18n.h>
 
 using namespace std;
 									/*}}}*/
@@ -970,6 +970,34 @@ bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base)
    return true;
 }
 									/*}}}*/
+// StrToNum - Convert a fixed length string to a number			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used in decoding the crazy fixed length string headers in 
+   tar and ar files. */
+bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base)
+{
+   char S[30];
+   if (Len >= sizeof(S))
+      return false;
+   memcpy(S,Str,Len);
+   S[Len] = 0;
+   
+   // All spaces is a zero
+   Res = 0;
+   unsigned I;
+   for (I = 0; S[I] == ' '; I++);
+   if (S[I] == 0)
+      return true;
+   
+   char *End;
+   Res = strtoull(S,&End,Base);
+   if (End == S)
+      return false;
+   
+   return true;
+}
+									/*}}}*/
+
 // Base256ToNum - Convert a fixed length binary to a number             /*{{{*/
 // ---------------------------------------------------------------------
 /* This is used in decoding the 256bit encoded fixed length fields in

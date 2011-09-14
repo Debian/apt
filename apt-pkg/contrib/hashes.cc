@@ -11,12 +11,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
 
-#include <unistd.h>    
+#include <unistd.h>
 #include <string>
 #include <iostream>
 									/*}}}*/
@@ -106,18 +108,18 @@ string HashString::toStr() const
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Hashes::AddFD(int const Fd,unsigned long Size, bool const addMD5,
+bool Hashes::AddFD(int const Fd,unsigned long long Size, bool const addMD5,
 		   bool const addSHA1, bool const addSHA256, bool const addSHA512)
 {
    unsigned char Buf[64*64];
-   int Res = 0;
+   ssize_t Res = 0;
    int ToEOF = (Size == 0);
    while (Size != 0 || ToEOF)
    {
-      unsigned n = sizeof(Buf);
-      if (!ToEOF) n = min(Size,(unsigned long)n);
+      unsigned long long n = sizeof(Buf);
+      if (!ToEOF) n = min(Size, n);
       Res = read(Fd,Buf,n);
-      if (Res < 0 || (!ToEOF && (unsigned) Res != n)) // error, or short read
+      if (Res < 0 || (!ToEOF && Res != (ssize_t) n)) // error, or short read
 	 return false;
       if (ToEOF && Res == 0) // EOF
 	 break;

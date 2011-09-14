@@ -1,0 +1,95 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'wheezy' 'apt' 'all' '0.8.15'
+
+getlabelfromsuite() {
+	echo -n 'Testcases'
+}
+
+
+setupaptarchive
+
+setupreleasefile() {
+	rm -rf rootdir/var/lib/apt/lists
+	aptget clean
+	generatereleasefiles "$1" "$2"
+	signreleasefiles
+}
+
+aptgetupdate() {
+	if aptget update $* 2>&1 | grep -q 'is expired'; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+setupreleasefile
+msgtest 'Release file is accepted as it has' 'no Until'
+aptgetupdate && msgpass || msgfail
+
+setupreleasefile
+msgtest 'Release file is accepted as it has' 'no Until and good Max-Valid'
+aptgetupdate -o Acquire::Max-ValidTime=3600 && msgpass || msgfail
+
+setupreleasefile 'now - 2 days'
+msgtest 'Release file is rejected as it has' 'no Until, but bad Max-Valid'
+aptgetupdate -o Acquire::Max-ValidTime=3600 && msgfail || msgpass
+
+setupreleasefile 'now - 3 days' 'now + 1 day'
+msgtest 'Release file is accepted as it has' 'good Until'
+aptgetupdate && msgpass || msgfail
+
+setupreleasefile 'now - 7 days' 'now - 4 days'
+msgtest 'Release file is rejected as it has' 'bad Until'
+aptgetupdate && msgfail || msgpass
+
+setupreleasefile 'now - 7 days' 'now - 4 days'
+msgtest 'Release file is rejected as it has' 'bad Until (ignore good Max-Valid)'
+aptgetupdate -o Acquire::Max-ValidTime=1209600 && msgfail || msgpass
+
+setupreleasefile 'now - 7 days' 'now - 4 days'
+msgtest 'Release file is rejected as it has' 'bad Max-Valid (bad Until)'
+aptgetupdate -o Acquire::Max-ValidTime=86400 && msgfail || msgpass
+
+setupreleasefile 'now - 7 days' 'now + 4 days'
+msgtest 'Release file is rejected as it has' 'bad Max-Valid (good Until)'
+aptgetupdate -o Acquire::Max-ValidTime=86400 && msgfail || msgpass
+
+setupreleasefile 'now - 7 days' 'now + 4 days'
+msgtest 'Release file is accepted as it has' 'good labeled Max-Valid'
+aptgetupdate -o Acquire::Max-ValidTime=86400 -o Acquire::Max-ValidTime::Testcases=1209600 && msgpass || msgfail
+
+setupreleasefile 'now - 7 days' 'now + 4 days'
+msgtest 'Release file is rejected as it has' 'bad labeled Max-Valid'
+aptgetupdate -o Acquire::Max-ValidTime=1209600 -o Acquire::Max-ValidTime::Testcases=86400 && msgfail || msgpass
+
+setupreleasefile 'now - 7 days' 'now + 1 days'
+msgtest 'Release file is accepted as it has' 'good Until (good Min-Valid, no Max-Valid)'
+aptgetupdate -o Acquire::Min-ValidTime=1209600 && msgpass || msgfail
+
+setupreleasefile 'now - 7 days' 'now - 4 days'
+msgtest 'Release file is accepted as it has' 'good Min-Valid (bad Until, no Max-Valid)'
+aptgetupdate -o Acquire::Min-ValidTime=1209600 && msgpass || msgfail
+
+setupreleasefile 'now - 7 days' 'now - 2 days'
+msgtest 'Release file is accepted as it has' 'good Min-Valid (bad Until, good Max-Valid) <'
+aptgetupdate -o Acquire::Min-ValidTime=1209600 -o Acquire::Max-ValidTime=2419200 && msgpass || msgfail
+
+setupreleasefile 'now - 7 days' 'now - 2 days'
+msgtest 'Release file is rejected as it has' 'bad Max-Valid (bad Until, good Min-Valid) >'
+aptgetupdate -o Acquire::Max-ValidTime=12096 -o Acquire::Min-ValidTime=2419200 && msgfail || msgpass
+
+setupreleasefile 'now - 7 days' 'now - 2 days'
+msgtest 'Release file is rejected as it has' 'bad Max-Valid (bad Until, bad Min-Valid) <'
+aptgetupdate -o Acquire::Min-ValidTime=12096 -o Acquire::Max-ValidTime=241920 && msgfail || msgpass
+
+setupreleasefile 'now - 7 days' 'now - 2 days'
+msgtest 'Release file is rejected as it has' 'bad Max-Valid (bad Until, bad Min-Valid) >'
+aptgetupdate -o Acquire::Max-ValidTime=12096 -o Acquire::Min-ValidTime=241920 && msgfail || msgpass

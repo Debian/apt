@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/debrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>

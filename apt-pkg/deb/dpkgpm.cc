@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -40,7 +42,6 @@
 #include <sys/ioctl.h>
 #include <pty.h>
 
-#include <config.h>
 #include <apti18n.h>
 									/*}}}*/
 

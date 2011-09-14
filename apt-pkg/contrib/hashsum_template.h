@@ -87,8 +87,8 @@ class HashSumValue
 class SummationImplementation
 {
    public:
-   virtual bool Add(const unsigned char *inbuf, unsigned long inlen) = 0;
-   inline bool Add(const char *inbuf, unsigned long const inlen)
+   virtual bool Add(const unsigned char *inbuf, unsigned long long inlen) = 0;
+   inline bool Add(const char *inbuf, unsigned long long const inlen)
    { return Add((unsigned char *)inbuf, inlen); };
 
    inline bool Add(const unsigned char *Data)
@@ -101,7 +101,7 @@ class SummationImplementation
    inline bool Add(const char *Beg, const char *End)
    { return Add((const unsigned char *)Beg, End - Beg); };
 
-   bool AddFD(int Fd, unsigned long Size = 0);
+   bool AddFD(int Fd, unsigned long long Size = 0);
 };
 
 #endif

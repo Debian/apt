@@ -17,7 +17,7 @@
 class indexRecords
 {
    bool parseSumData(const char *&Start, const char *End, string &Name,
-		     string &Hash, size_t &Size);
+		     string &Hash, unsigned long long &Size);
    public:
    struct checkSum;
    string ErrorText;
@@ -53,7 +53,7 @@ struct indexRecords::checkSum
 {
    string MetaKeyFilename;
    HashString Hash;
-   size_t Size;      
+   unsigned long long Size;
 };
 
 #endif

@@ -53,9 +53,9 @@ class FTPConn
    bool ExtGoPasv();
    
    // Query
-   bool Size(const char *Path,unsigned long &Size);
+   bool Size(const char *Path,unsigned long long &Size);
    bool ModTime(const char *Path, time_t &Time);
-   bool Get(const char *Path,FileFd &To,unsigned long Resume,
+   bool Get(const char *Path,FileFd &To,unsigned long long Resume,
 	    Hashes &MD5,bool &Missing);
    
    FTPConn(URI Srv);

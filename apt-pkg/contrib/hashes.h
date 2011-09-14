@@ -62,14 +62,14 @@ class Hashes
    SHA256Summation SHA256;
    SHA512Summation SHA512;
    
-   inline bool Add(const unsigned char *Data,unsigned long Size)
+   inline bool Add(const unsigned char *Data,unsigned long long Size)
    {
       return MD5.Add(Data,Size) && SHA1.Add(Data,Size) && SHA256.Add(Data,Size) && SHA512.Add(Data,Size);
    };
    inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
-   inline bool AddFD(int const Fd,unsigned long Size = 0)
+   inline bool AddFD(int const Fd,unsigned long long Size = 0)
    { return AddFD(Fd, Size, true, true, true, true); };
-   bool AddFD(int const Fd, unsigned long Size, bool const addMD5,
+   bool AddFD(int const Fd, unsigned long long Size, bool const addMD5,
 	      bool const addSHA1, bool const addSHA256, bool const addSHA512);
    inline bool Add(const unsigned char *Beg,const unsigned char *End) 
                   {return Add(Beg,End-Beg);};

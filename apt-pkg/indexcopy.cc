@@ -10,7 +10,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "indexcopy.h"
+#include<config.h>
 
 #include <apt-pkg/error.h>
 #include <apt-pkg/progress.h>
@@ -21,7 +21,6 @@
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/cdrom.h>
-#include <apti18n.h>
 
 #include <iostream>
 #include <sstream>
@@ -30,6 +29,10 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "indexcopy.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -53,7 +56,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    bool Debug = _config->FindB("Debug::aptcdrom",false);
    
    // Prepare the progress indicator
-   unsigned long TotalSize = 0;
+   off_t TotalSize = 0;
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
@@ -64,14 +67,14 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       TotalSize += Buf.st_size;
    }	
 
-   unsigned long CurrentSize = 0;
+   off_t CurrentSize = 0;
    unsigned int NotFound = 0;
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      unsigned long FileSize = 0;
+      off_t FileSize = 0;
       
       // Open the package file
       FileFd Pkg;
@@ -164,7 +167,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	 if(Progress)
 	    Progress->Progress(Parser.Offset());
 	 string File;
-	 unsigned long Size;
+	 unsigned long long Size;
 	 if (GetFile(File,Size) == false)
 	 {
 	    fclose(TargetFl);
@@ -219,7 +222,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	    }	    
 	    			    	    
 	    // Size match
-	    if ((unsigned)Buf.st_size != Size)
+	    if ((unsigned long long)Buf.st_size != Size)
 	    {
 	       if (Debug == true)
 		  clog << "Wrong Size: " << File << endl;
@@ -453,7 +456,7 @@ bool IndexCopy::GrabFirst(string Path,string &To,unsigned int Depth)
 // PackageCopy::GetFile - Get the file information from the section	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool PackageCopy::GetFile(string &File,unsigned long &Size)
+bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 {
    File = Section->FindS("Filename");
    Size = Section->FindI("Size");
@@ -479,7 +482,7 @@ bool PackageCopy::RewriteEntry(FILE *Target,string File)
 // SourceCopy::GetFile - Get the file information from the section	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool SourceCopy::GetFile(string &File,unsigned long &Size)
+bool SourceCopy::GetFile(string &File,unsigned long long &Size)
 {
    string Files = Section->FindS("Files");
    if (Files.empty() == true)
@@ -502,7 +505,7 @@ bool SourceCopy::GetFile(string &File,unsigned long &Size)
       return _error->Error("Error parsing file record");
    
    // Parse the size and append the directory
-   Size = atoi(sSize.c_str());
+   Size = strtoull(sSize.c_str(), NULL, 10);
    File = Base + File;
    return true;
 }
@@ -785,7 +788,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    bool Debug = _config->FindB("Debug::aptcdrom",false);
    
    // Prepare the progress indicator
-   unsigned long TotalSize = 0;
+   off_t TotalSize = 0;
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
@@ -796,14 +799,14 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       TotalSize += Buf.st_size;
    }	
 
-   unsigned long CurrentSize = 0;
+   off_t CurrentSize = 0;
    unsigned int NotFound = 0;
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      unsigned long FileSize = 0;
+      off_t FileSize = 0;
       
       // Open the package file
       FileFd Pkg;

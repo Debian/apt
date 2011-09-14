@@ -12,7 +12,6 @@ trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 chmod a-x rootdir/var/lib/dpkg
 
 testsegfault() {
-	rm -f rootdir/var/cache/apt/*.bin
 	msgtest "No segfault in" "$*"
 	local TEST="$($* 2>&1 | grep -v 'E:')"
 	if [ -z "$TEST" ]; then

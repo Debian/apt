@@ -14,12 +14,14 @@
 
    ##################################################################### */
 									/*}}}*/
-#include "rfc2553emu.h"
+#include <config.h>
+
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <string.h>
 #include <stdio.h>
+#include "rfc2553emu.h"
 
 #ifndef HAVE_GETADDRINFO
 // getaddrinfo - Resolve a hostname					/*{{{*/

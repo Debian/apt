@@ -11,6 +11,7 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #define APT_COMPATIBILITY 986
+#include <config.h>
 
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/error.h>
@@ -23,17 +24,15 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/macros.h>
-
 #include <apt-pkg/tagfile.h>
 
-#include <apti18n.h>
-
 #include <vector>
-
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
+
+#include <apti18n.h>
 									/*}}}*/
 typedef vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;

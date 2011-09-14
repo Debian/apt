@@ -1,16 +1,19 @@
 #!/bin/sh -- # no runable script, just for vi
 
 # we all like colorful messages
-CERROR="[1;31m" # red
-CWARNING="[1;33m" # yellow
-CMSG="[1;32m" # green
-CINFO="[1;96m" # light blue
-CDEBUG="[1;94m" # blue
-CNORMAL="[0;39m" # default system console color
-CDONE="[1;32m" # green
-CPASS="[1;32m" # green
-CFAIL="[1;31m" # red
-CCMD="[1;35m" # pink
+if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
+   expr match "$(readlink -f /proc/$$/fd/2)" '/dev/pts/[0-9]\+' > /dev/null; then
+	CERROR="[1;31m" # red
+	CWARNING="[1;33m" # yellow
+	CMSG="[1;32m" # green
+	CINFO="[1;96m" # light blue
+	CDEBUG="[1;94m" # blue
+	CNORMAL="[0;39m" # default system console color
+	CDONE="[1;32m" # green
+	CPASS="[1;32m" # green
+	CFAIL="[1;31m" # red
+	CCMD="[1;35m" # pink
+fi
 
 msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
 msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
@@ -42,7 +45,11 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgtest() { true; }
 	msgpass() { echo -n " ${CPASS}P${CNORMAL}" >&2; }
 	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
-	msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
+	if [ -n "$CFAIL" ]; then
+		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
+	else
+		msgfail() { echo -n " ###FAILED###" >&2; }
+	fi
 fi
 if [ $MSGLEVEL -le 3 ]; then
 	msginfo() { true; }
@@ -506,10 +513,12 @@ buildaptarchivefromfiles() {
 # can be overridden by testcases for their pleasure
 getcodenamefromsuite() { echo -n "$1"; }
 getreleaseversionfromsuite() { true; }
+getlabelfromsuite() { true; }
 
 generatereleasefiles() {
+	# $1 is the Date header and $2 is the ValidUntil header to be set
+	# both should be given in notation date/touch can understand
 	msgninfo "\tGenerate Release files… "
-	local DATE="${1:-now}"
 	if [ -e aptarchive/dists ]; then
 		for dir in $(find ./aptarchive/dists -mindepth 3 -maxdepth 3 -type d -name 'i18n'); do
 			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Patterns::='Translation-*' > $dir/Index
@@ -518,27 +527,35 @@ generatereleasefiles() {
 			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
-			if [ -z "$VERSION" ]; then
-				aptftparchive -qq release $dir \
-					-o APT::FTPArchive::Release::Suite="${SUITE}" \
-					-o APT::FTPArchive::Release::Codename="${CODENAME}" \
-						| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
-			else
-				aptftparchive -qq release $dir \
-					-o APT::FTPArchive::Release::Suite="${SUITE}" \
-					-o APT::FTPArchive::Release::Codename="${CODENAME}" \
-					-o APT::FTPArchive::Release::Version="${VERSION}" \
-						| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
+			local LABEL="$(getlabelfromsuite $SUITE)"
+			if [ -n "$VERSION" ]; then
+				VERSION="-o APT::FTPArchive::Release::Version=${VERSION}"
 			fi
+			if [ -n "$LABEL" ]; then
+				LABEL="-o APT::FTPArchive::Release::Label=${LABEL}"
+			fi
+			aptftparchive -qq release $dir \
+				-o APT::FTPArchive::Release::Suite="${SUITE}" \
+				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
+				${LABEL} \
+				${VERSION} \
+					| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
 				sed -i '/^Date: / a\
 NotAutomatic: yes' $dir/Release
+			fi
+			if [ -n "$1" -a "$1" != "now" ]; then
+				sed -i "s/^Date: .*$/Date: $(date -d "$1" '+%a, %d %b %Y %H:%M:%S %Z')/" $dir/Release
+			fi
+			if [ -n "$2" ]; then
+				sed -i "/^Date: / a\
+Valid-Until: $(date -d "$2" '+%a, %d %b %Y %H:%M:%S %Z')" $dir/Release
 			fi
 		done
 	else
 		aptftparchive -qq release ./aptarchive | sed -e '/0 Release$/ d' > aptarchive/Release # remove the self reference
 	fi
-	if [ "$DATE" != "now" ]; then
+	if [ -n "$1" -a "$1" != "now" ]; then
 		for release in $(find ./aptarchive -name 'Release'); do
 			touch -d "$1" $release
 		done
@@ -612,6 +629,11 @@ changetowebserver() {
 	if which weborf > /dev/null; then
 		weborf -xb aptarchive/ 2>&1 > /dev/null &
 		addtrap "kill $!;"
+	elif which gatling > /dev/null; then
+		cd aptarchive
+		gatling -p 8080 -F -S 2>&1 > /dev/null &
+		addtrap "kill $!;"
+		cd - > /dev/null
 	elif which lighttpd > /dev/null; then
 		echo "server.document-root = \"$(readlink -f ./aptarchive)\"
 server.port = 8080

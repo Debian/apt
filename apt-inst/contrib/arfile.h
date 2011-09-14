@@ -54,7 +54,7 @@ struct ARArchive::Member
    unsigned long UID;
    unsigned long GID;
    unsigned long Mode;
-   unsigned long Size;
+   unsigned long long Size;
    
    // Location of the data.
    unsigned long Start;
