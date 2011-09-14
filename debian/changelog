@@ -1,5 +1,11 @@
 apt (0.8.16~exp6) experimental; urgency=low
 
+  [ Christopher Baines ]
+  * enable APT in unpack/configure ordering to handle loops as well
+    as tight dependencies between immediate packages better
+    enabling also the possibility to mark all packages as immediate
+    (at least Closes: #353290, #540227, #559733, #621836, #639290)
+
   [ David Kalnischkies ]
   * [abi-break] Support large files in the complete toolset. Indexes of this
     size are pretty unlikely for now, but we need it for deb

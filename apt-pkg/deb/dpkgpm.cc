@@ -18,6 +18,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/packagemanager.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -937,7 +938,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // the argument list is split in a way that A depends on B
       // and they are in the same "--configure A B" run
       // - with the split they may now be configured in different
-      //   runs 
+      //   runs, using Immediate-Configure-All can help prevent this.
       if (J - I > (signed)MaxArgs)
 	 J = I + MaxArgs;
       
@@ -970,6 +971,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       snprintf(status_fd_buf,sizeof(status_fd_buf),"%i", fd[1]);
       Args[n++] = status_fd_buf;
       Size += strlen(Args[n-1]);
+      
+      unsigned long const Op = I->Op;
 
       switch (I->Op)
       {
@@ -1079,8 +1082,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 it to all processes in the group. Since dpkg ignores the signal 
 	 it doesn't die but we do! So we must also ignore it */
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
-      sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
-
+      sighandler_t old_SIGINT = signal(SIGINT,SigINT);
+      
+      // Check here for any SIGINT
+      if (pkgPackageManager::SigINTStop && (Op == Item::Remove || Op == Item::Purge || Op == Item::Install)) 
+         break;
+      
+      
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
 
@@ -1118,7 +1126,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
 	 }
       }
-
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
@@ -1224,6 +1231,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // Restore sig int/quit
 	    signal(SIGQUIT,old_SIGQUIT);
 	    signal(SIGINT,old_SIGINT);
+
 	    signal(SIGHUP,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
@@ -1264,6 +1272,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+      
       signal(SIGHUP,old_SIGHUP);
 
       if(master >= 0) 
@@ -1301,6 +1310,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }      
    }
    CloseLog();
+   
+   if (pkgPackageManager::SigINTStop)
+       _error->Warning(_("Operation was interrupted before it could finish"));
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
@@ -1325,6 +1337,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    Cache.writeStateFile(NULL);
    return true;
 }
+
+void SigINT(int sig) {
+   if (_config->FindB("APT::Immediate-Configure-All",false)) 
+      pkgPackageManager::SigINTStop = true;
+} 
 									/*}}}*/
 // pkgDpkgPM::Reset - Dump the contents of the command list		/*{{{*/
 // ---------------------------------------------------------------------
