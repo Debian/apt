@@ -687,6 +687,14 @@ class SubIndexTarget : public IndexTarget
    }
 };
 									/*}}}*/
+/** \brief Information about an subindex index file. */			/*{{{*/
+class OptionalSubIndexTarget : public OptionalIndexTarget
+{
+   virtual bool IsSubIndex() const {
+      return true;
+   }
+};
+									/*}}}*/
 
 /** \brief An acquire item that downloads the detached signature	{{{
  *  of a meta-index (Release) file, then queues up the release
