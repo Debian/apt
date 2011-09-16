@@ -8,6 +8,13 @@ apt (0.8.16~exp5ubuntu9) UNRELEASEDoneiric; urgency=low
   * apt-pkg/acquire-item.cc:
     - if no Release.gpg file is found try to verify with hashes,
       but do not fail if a hash can't be found
+  * apt-pkg/indexrecords.cc:
+    - fix Acquire::Max-ValidTime option by interpreting it really
+      as seconds as specified in the manpage and not as days
+    - add an Acquire::Min-ValidTime option (Closes: #640122)
+  * doc/apt.conf.5.xml:
+    - reword Acquire::Max-ValidTime documentation to make clear
+      that it doesn't provide the new Min-ValidTime functionality
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 16 Sep 2011 09:16:32 +0200
 
