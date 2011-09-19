@@ -1209,7 +1209,6 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    return true;
 }
 									/*}}}*/
-
 // ProblemResolver::BreaksInstOrPolicy - Check if the given pkg is broken/*{{{*/
 // ---------------------------------------------------------------------
 /* This checks if the given package is broken either by a hard dependency
@@ -1233,7 +1232,7 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
        
    return false;
 }
-
+									/*}}}*/
 // ProblemResolver::ResolveByKeep - Resolve problems using keep		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the work horse of the soft upgrade routine. It is very gental 
@@ -1439,7 +1438,7 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    qsort(List,Count,sizeof(*List),PrioComp);
 }
 									/*}}}*/
-// CacheFile::ListUpdate - update the cache files                    	/*{{{*/
+// ListUpdate - update the cache files					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple wrapper to update the cache. it will fetch stuff
  * from the network (or any other sources defined in sources.list)
