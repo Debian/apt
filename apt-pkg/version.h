@@ -54,8 +54,4 @@ class pkgVersioningSystem
    virtual ~pkgVersioningSystem() {};
 };
 
-#ifdef APT_COMPATIBILITY
-#include <apt-pkg/debversion.h>
-#endif
-
 #endif

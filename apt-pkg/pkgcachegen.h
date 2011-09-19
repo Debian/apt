@@ -164,18 +164,4 @@ bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
 bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap);
 
-
-#ifdef APT_COMPATIBILITY
-#if APT_COMPATIBILITY != 986
-#warning "Using APT_COMPATIBILITY"
-#endif
-MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
-{
-   MMap *Map = 0;
-   if (pkgCacheGenerator::MakeStatusCache(List,&Progress,&Map,true) == false)
-      return 0;
-   return Map;
-}
-#endif
-
 #endif

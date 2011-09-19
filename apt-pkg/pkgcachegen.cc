@@ -10,7 +10,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#define APT_COMPATIBILITY 986
 #include <config.h>
 
 #include <apt-pkg/pkgcachegen.h>
