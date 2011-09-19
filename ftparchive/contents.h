@@ -80,7 +80,7 @@ class ContentsExtract : public pkgDirStream
    virtual bool DoItem(Item &Itm,int &Fd);      
    void Reset() {CurSize = 0;};
    bool TakeContents(const void *Data,unsigned long long Length);
-   void Add(GenContents &Contents,string const &Package);
+   void Add(GenContents &Contents,std::string const &Package);
    
    ContentsExtract() : Data(0), MaxSize(0), CurSize(0) {};
    virtual ~ContentsExtract() {delete [] Data;};

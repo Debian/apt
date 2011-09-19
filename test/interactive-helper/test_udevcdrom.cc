@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include <vector>
+
 int main()
 {
    pkgUdevCdromDevices c;
    assert(c.Dlopen());
 
-   vector<CdromDevice> l;
+   std::vector<CdromDevice> l;
    l = c.Scan();
    assert(l.empty() == false);
    for (size_t i = 0; i < l.size(); ++i)

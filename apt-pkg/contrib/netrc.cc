@@ -24,6 +24,7 @@
 
 #include "netrc.h"
 
+using std::string;
 
 /* Get user and password from .netrc when given a machine name */
 

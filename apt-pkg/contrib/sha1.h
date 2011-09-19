@@ -18,9 +18,6 @@
 #include <cstring>
 #include <algorithm>
 
-using std::string;
-using std::min;
-
 #include "hashsum_template.h"
 
 typedef  HashSumValue<160> SHA1SumValue;

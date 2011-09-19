@@ -27,8 +27,6 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/pkgrecords.h>
-    
-using std::string;
 
 class pkgAcquire;
 class pkgCacheGenerator;
@@ -59,13 +57,13 @@ class pkgIndexFile
    virtual const Type *GetType() const = 0;
    
    // Return descriptive strings of various sorts
-   virtual string ArchiveInfo(pkgCache::VerIterator Ver) const;
-   virtual string SourceInfo(pkgSrcRecords::Parser const &Record,
+   virtual std::string ArchiveInfo(pkgCache::VerIterator Ver) const;
+   virtual std::string SourceInfo(pkgSrcRecords::Parser const &Record,
 			     pkgSrcRecords::File const &File) const;
-   virtual string Describe(bool Short = false) const = 0;   
+   virtual std::string Describe(bool Short = false) const = 0;   
 
    // Interface for acquire
-   virtual string ArchiveURI(string /*File*/) const {return string();};
+   virtual std::string ArchiveURI(std::string /*File*/) const {return std::string();};
 
    // Interface for the record parsers
    virtual pkgSrcRecords::Parser *CreateSrcParser() const {return 0;};
@@ -84,7 +82,7 @@ class pkgIndexFile
 
    static bool TranslationsAvailable();
    static bool CheckLanguageCode(const char *Lang);
-   static string LanguageCode();
+   static std::string LanguageCode();
 
    bool IsTrusted() const { return Trusted; };
    

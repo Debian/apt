@@ -37,7 +37,7 @@ class CopyMethod : public pkgAcqMethod
 bool CopyMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
-   string File = Get.Path;
+   std::string File = Get.Path;
 
    // Stat the file and send a start message
    struct stat Buf;

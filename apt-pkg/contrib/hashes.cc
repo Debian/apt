@@ -32,20 +32,20 @@ HashString::HashString()
 {
 }
 
-HashString::HashString(string Type, string Hash) : Type(Type), Hash(Hash)
+HashString::HashString(std::string Type, std::string Hash) : Type(Type), Hash(Hash)
 {
 }
 
-HashString::HashString(string StringedHash)				/*{{{*/
+HashString::HashString(std::string StringedHash)			/*{{{*/
 {
    // legacy: md5sum without "MD5Sum:" prefix
-   if (StringedHash.find(":") == string::npos && StringedHash.size() == 32)
+   if (StringedHash.find(":") == std::string::npos && StringedHash.size() == 32)
    {
       Type = "MD5Sum";
       Hash = StringedHash;
       return;
    }
-   string::size_type pos = StringedHash.find(":");
+   std::string::size_type pos = StringedHash.find(":");
    Type = StringedHash.substr(0,pos);
    Hash = StringedHash.substr(pos+1, StringedHash.size() - pos);
 
@@ -53,34 +53,34 @@ HashString::HashString(string StringedHash)				/*{{{*/
       std::clog << "HashString(string): " << Type << " : " << Hash << std::endl;
 }
 									/*}}}*/
-bool HashString::VerifyFile(string filename) const			/*{{{*/
+bool HashString::VerifyFile(std::string filename) const			/*{{{*/
 {
-   string fileHash;
+   std::string fileHash;
 
    FileFd Fd(filename, FileFd::ReadOnly);
    if(Type == "MD5Sum")
    {
       MD5Summation MD5;
       MD5.AddFD(Fd.Fd(), Fd.Size());
-      fileHash = (string)MD5.Result();
+      fileHash = (std::string)MD5.Result();
    }
    else if (Type == "SHA1")
    {
       SHA1Summation SHA1;
       SHA1.AddFD(Fd.Fd(), Fd.Size());
-      fileHash = (string)SHA1.Result();
+      fileHash = (std::string)SHA1.Result();
    }
    else if (Type == "SHA256")
    {
       SHA256Summation SHA256;
       SHA256.AddFD(Fd.Fd(), Fd.Size());
-      fileHash = (string)SHA256.Result();
+      fileHash = (std::string)SHA256.Result();
    }
    else if (Type == "SHA512")
    {
       SHA512Summation SHA512;
       SHA512.AddFD(Fd.Fd(), Fd.Size());
-      fileHash = (string)SHA512.Result();
+      fileHash = (std::string)SHA512.Result();
    }
    Fd.Close();
 
@@ -100,9 +100,9 @@ bool HashString::empty() const
    return (Type.empty() || Hash.empty());
 }
 
-string HashString::toStr() const
+std::string HashString::toStr() const
 {
-   return Type+string(":")+Hash;
+   return Type + std::string(":") + Hash;
 }
 
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
@@ -117,7 +117,7 @@ bool Hashes::AddFD(int const Fd,unsigned long long Size, bool const addMD5,
    while (Size != 0 || ToEOF)
    {
       unsigned long long n = sizeof(Buf);
-      if (!ToEOF) n = min(Size, n);
+      if (!ToEOF) n = std::min(Size, n);
       Res = read(Fd,Buf,n);
       if (Res < 0 || (!ToEOF && Res != (ssize_t) n)) // error, or short read
 	 return false;

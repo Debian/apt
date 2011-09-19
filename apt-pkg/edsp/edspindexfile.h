@@ -22,7 +22,7 @@ class edspIndex : public debStatusIndex
 
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
-   edspIndex(string File);
+   edspIndex(std::string File);
 };
 
 #endif

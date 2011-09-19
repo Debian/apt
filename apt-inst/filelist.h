@@ -48,7 +48,7 @@ class pkgFLCache
    class DiverIterator;
    
    protected:
-   string CacheFile;
+   std::string CacheFile;
    DynamicMMap &Map;
    map_ptrloc LastTreeLookup;
    unsigned long LastLookupSize;

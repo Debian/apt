@@ -30,8 +30,6 @@
 #include <apt-pkg/depcache.h>
 #include <set>
 
-using std::string;
-
 class pkgAcquire;
 class pkgDepCache;
 class pkgSourceList;
@@ -45,7 +43,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    static bool SigINTStop;
    
    protected:
-   string *FileNames;
+   std::string *FileNames;
    pkgDepCache &Cache;
    pkgOrderList *List;
    bool Debug;
@@ -78,7 +76,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool EarlyRemove(PkgIterator Pkg);  
    
    // The Actual installation implementation
-   virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
+   virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
    virtual bool Go(int statusFd=-1) {return true;};

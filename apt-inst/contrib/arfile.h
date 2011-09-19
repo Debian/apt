@@ -49,7 +49,7 @@ class ARArchive
 struct ARArchive::Member
 {
    // Fields from the header
-   string Name;
+   std::string Name;
    unsigned long MTime;
    unsigned long UID;
    unsigned long GID;

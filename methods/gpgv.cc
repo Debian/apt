@@ -17,6 +17,9 @@
 
 #include <apti18n.h>
 
+using std::string;
+using std::vector;
+
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
 #define GNUPGNOPUBKEY "[GNUPG:] NO_PUBKEY"

@@ -32,6 +32,9 @@
 
 #include <apti18n.h>
 									/*}}}*/
+
+using std::string;
+
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
 static bool 
 ConfigValueInSubTree(const char* SubTree, const char *needle)

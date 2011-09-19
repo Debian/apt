@@ -19,8 +19,6 @@
 
 #include <algorithm>
 
-using std::min;
-
 class ExtractTar
 {
    protected:
@@ -38,7 +36,7 @@ class ExtractTar
    int GZPid;
    FileFd InFd;
    bool Eof;
-   string DecompressProg;
+   std::string DecompressProg;
    
    // Fork and reap gzip
    bool StartGzip();
@@ -48,7 +46,7 @@ class ExtractTar
 
    bool Go(pkgDirStream &Stream);
    
-   ExtractTar(FileFd &Fd,unsigned long Max,string DecompressionProgram);
+   ExtractTar(FileFd &Fd,unsigned long Max,std::string DecompressionProgram);
    virtual ~ExtractTar();
 };
 

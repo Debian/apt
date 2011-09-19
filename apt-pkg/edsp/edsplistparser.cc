@@ -20,7 +20,7 @@
 									/*}}}*/
 
 // ListParser::edspListParser - Constructor				/*{{{*/
-edspListParser::edspListParser(FileFd *File, string const &Arch) : debListParser(File, Arch)
+edspListParser::edspListParser(FileFd *File, std::string const &Arch) : debListParser(File, Arch)
 {}
 									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
@@ -33,11 +33,11 @@ bool edspListParser::NewVersion(pkgCache::VerIterator &Ver)
 // ListParser::Description - Return the description string		/*{{{*/
 // ---------------------------------------------------------------------
 /* Sorry, no description for the resolvers… */
-string edspListParser::Description()
+std::string edspListParser::Description()
 {
    return "";
 }
-string edspListParser::DescriptionLanguage()
+std::string edspListParser::DescriptionLanguage()
 {
    return "";
 }
@@ -85,7 +85,7 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 									/*}}}*/
 // ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
 bool edspListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
-				    FileFd &File, string component)
+				    FileFd &File, std::string component)
 {
    return true;
 }

@@ -37,8 +37,6 @@
 
 #include <iostream>
 
-using std::ostream;
-
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
    protected:
@@ -63,13 +61,13 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    pkgDepCache::ActionGroup group;
    
    // The Actuall installation implementation
-   virtual bool Install(PkgIterator Pkg,string File);
+   virtual bool Install(PkgIterator Pkg,std::string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge);
 
 private:
    void ShortBreaks();
-   void Describe(PkgIterator iPkg,ostream &out,bool Current,bool Candidate);
+   void Describe(PkgIterator iPkg,std::ostream &out,bool Current,bool Candidate);
    
    public:
 

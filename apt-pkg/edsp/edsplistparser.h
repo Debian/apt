@@ -20,15 +20,15 @@ class edspListParser : public debListParser
 {
    public:
    virtual bool NewVersion(pkgCache::VerIterator &Ver);
-   virtual string Description();
-   virtual string DescriptionLanguage();
+   virtual std::string Description();
+   virtual std::string DescriptionLanguage();
    virtual MD5SumValue Description_md5();
    virtual unsigned short VersionHash();
 
    bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
-			string section);
+			std::string section);
 
-   edspListParser(FileFd *File, string const &Arch = "");
+   edspListParser(FileFd *File, std::string const &Arch = "");
 
    protected:
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);

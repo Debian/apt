@@ -59,10 +59,10 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if ((*o).empty() == true)
 			continue;
 		// ignore types we have no method ready to use
-		if (_config->Exists(string("Acquire::CompressionTypes::").append(*o)) == false)
+		if (_config->Exists(std::string("Acquire::CompressionTypes::").append(*o)) == false)
 			continue;
 		// ignore types we have no app ready to use
-		string const appsetting = string("Dir::Bin::").append(*o);
+		std::string const appsetting = std::string("Dir::Bin::").append(*o);
 		if (_config->Exists(appsetting) == true) {
 			std::string const app = _config->FindFile(appsetting.c_str(), "");
 			if (app.empty() == false && FileExists(app) == false)
@@ -83,7 +83,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if (std::find(types.begin(),types.end(),Types->Tag) != types.end())
 			continue;
 		// ignore types we have no app ready to use
-		string const appsetting = string("Dir::Bin::").append(Types->Value);
+		std::string const appsetting = std::string("Dir::Bin::").append(Types->Value);
 		if (appsetting.empty() == false && _config->Exists(appsetting) == true) {
 			std::string const app = _config->FindFile(appsetting.c_str(), "");
 			if (app.empty() == false && FileExists(app) == false)
@@ -95,7 +95,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	// add the special "uncompressed" type
 	if (std::find(types.begin(), types.end(), "uncompressed") == types.end())
 	{
-		string const uncompr = _config->FindFile("Dir::Bin::uncompressed", "");
+		std::string const uncompr = _config->FindFile("Dir::Bin::uncompressed", "");
 		if (uncompr.empty() == true || FileExists(uncompr) == true)
 			types.push_back("uncompressed");
 	}
@@ -441,7 +441,7 @@ Configuration::Compressor::Compressor(char const *name, char const *extension,
 				      char const *binary,
 				      char const *compressArg, char const *uncompressArg,
 				      unsigned short const cost) {
-	std::string const config = string("APT:Compressor::").append(name).append("::");
+	std::string const config = std::string("APT:Compressor::").append(name).append("::");
 	Name = _config->Find(std::string(config).append("Name"), name);
 	Extension = _config->Find(std::string(config).append("Extension"), extension);
 	Binary = _config->Find(std::string(config).append("Binary"), binary);

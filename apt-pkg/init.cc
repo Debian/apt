@@ -108,14 +108,14 @@ bool pkgInitConfig(Configuration &Cnf)
    }
 
    // Read the configuration parts dir
-   string Parts = Cnf.FindDir("Dir::Etc::parts");
+   std::string Parts = Cnf.FindDir("Dir::Etc::parts");
    if (DirectoryExists(Parts) == true)
       Res &= ReadConfigDir(Cnf,Parts);
    else
       _error->WarningE("DirectoryExists",_("Unable to read %s"),Parts.c_str());
 
    // Read the main config file
-   string FName = Cnf.FindFile("Dir::Etc::main");
+   std::string FName = Cnf.FindFile("Dir::Etc::main");
    if (RealFileExists(FName) == true)
       Res &= ReadConfigFile(Cnf,FName);
 
@@ -142,7 +142,7 @@ bool pkgInitConfig(Configuration &Cnf)
 bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys)
 {
    Sys = 0;
-   string Label = Cnf.Find("Apt::System","");
+   std::string Label = Cnf.Find("Apt::System","");
    if (Label.empty() == false)
    {
       Sys = pkgSystem::GetSystem(Label.c_str());

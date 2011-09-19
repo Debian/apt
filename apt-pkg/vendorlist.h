@@ -19,22 +19,18 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
 
-using std::string;
-using std::vector;
-
-
 class __deprecated pkgVendorList
 {
    protected:
-   vector<Vendor const *> VendorList;
+   std::vector<Vendor const *> VendorList;
 
    bool CreateList(Configuration& Cnf);
-   const Vendor* LookupFingerprint(string Fingerprint);
+   const Vendor* LookupFingerprint(std::string Fingerprint);
 
    public:
-   typedef vector<Vendor const *>::const_iterator const_iterator;
+   typedef std::vector<Vendor const *>::const_iterator const_iterator;
    bool ReadMainList();
-   bool Read(string File);
+   bool Read(std::string File);
 
    // List accessors
    inline const_iterator begin() const {return VendorList.begin();};
@@ -42,7 +38,7 @@ class __deprecated pkgVendorList
    inline unsigned int size() const {return VendorList.size();};
    inline bool empty() const {return VendorList.empty();};
 
-   const Vendor* FindVendor(const vector<string> GPGVOutput);
+   const Vendor* FindVendor(const std::vector<std::string> GPGVOutput);
 
    ~pkgVendorList();
 };

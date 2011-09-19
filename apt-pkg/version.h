@@ -24,8 +24,6 @@
 #include <apt-pkg/strutl.h>    
 #include <string>
 
-using std::string;
-
 class pkgVersioningSystem
 {
    public:
@@ -43,7 +41,7 @@ class pkgVersioningSystem
    virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) = 0;
    virtual int DoCmpReleaseVer(const char *A,const char *Aend,
 			       const char *B,const char *Bend) = 0;
-   virtual string UpstreamVersion(const char *A) = 0;
+   virtual std::string UpstreamVersion(const char *A) = 0;
    
    // See if the given VS is compatible with this one.. 
    virtual bool TestCompatibility(pkgVersioningSystem const &Against) 

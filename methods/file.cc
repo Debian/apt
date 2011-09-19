@@ -40,7 +40,7 @@ class FileMethod : public pkgAcqMethod
 bool FileMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
-   string File = Get.Path;
+   std::string File = Get.Path;
    FetchResult Res;
    if (Get.Host.empty() == false)
       return _error->Error(_("Invalid URI, local URIS must not start with //"));
@@ -58,10 +58,10 @@ bool FileMethod::Fetch(FetchItem *Itm)
    }
    
    // See if we can compute a file without a .gz exentsion
-   string::size_type Pos = File.rfind(".gz");
+   std::string::size_type Pos = File.rfind(".gz");
    if (Pos + 3 == File.length())
    {
-      File = string(File,0,Pos);
+      File = std::string(File,0,Pos);
       if (stat(File.c_str(),&Buf) == 0)
       {
 	 FetchResult AltRes;

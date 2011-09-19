@@ -17,7 +17,7 @@
 // ---------------------------------------------------------------------
 /* This re-initializes the meta temporary directory if it hasn't yet 
    been inited for this cycle. The flag is the emptyness of MetaDir */
-bool pkgDataBase::GetMetaTmp(string &Dir)
+bool pkgDataBase::GetMetaTmp(std::string &Dir)
 {
    if (MetaDir.empty() == true)
       if (InitMetaTmp(MetaDir) == false)

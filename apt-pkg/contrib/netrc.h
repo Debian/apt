@@ -25,5 +25,5 @@
 // If login[0] != 0, search for password within machine and login.
 int parsenetrc (char *host, char *login, char *password, char *filename);
 
-void maybe_add_auth (URI &Uri, string NetRCFile);
+void maybe_add_auth (URI &Uri, std::string NetRCFile);
 #endif

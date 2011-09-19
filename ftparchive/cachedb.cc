@@ -28,7 +28,7 @@
 // CacheDB::ReadyDB - Ready the DB2					/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens the DB2 file for caching package information */
-bool CacheDB::ReadyDB(string const &DB)
+bool CacheDB::ReadyDB(std::string const &DB)
 {
    int err;
 
@@ -48,7 +48,7 @@ bool CacheDB::ReadyDB(string const &DB)
    
    DBLoaded = false;
    Dbp = 0;
-   DBFile = string();
+   DBFile = std::string();
    
    if (DB.empty())
       return true;
@@ -162,7 +162,7 @@ bool CacheDB::GetCurStat()
 									/*}}}*/
 // CacheDB::GetFileInfo - Get all the info about the file		/*{{{*/
 // ---------------------------------------------------------------------
-bool CacheDB::GetFileInfo(string const &FileName, bool const &DoControl, bool const &DoContents,
+bool CacheDB::GetFileInfo(std::string const &FileName, bool const &DoControl, bool const &DoContents,
 				bool const &GenContentsOnly, bool const &DoMD5, bool const &DoSHA1,
 				bool const &DoSHA256, 	bool const &DoSHA512, 
                           bool const &checkMtime)
@@ -298,12 +298,12 @@ bool CacheDB::LoadContents(bool const &GenOnly)
 }
 									/*}}}*/
 
-static string bytes2hex(uint8_t *bytes, size_t length) {
+static std::string bytes2hex(uint8_t *bytes, size_t length) {
    char space[65];
    if (length * 2 > sizeof(space) - 1) length = (sizeof(space) - 1) / 2;
    for (size_t i = 0; i < length; i++)
       snprintf(&space[i*2], 3, "%02x", bytes[i]);
-   return string(space);
+   return std::string(space);
 }
 
 static inline unsigned char xdig2num(char const &dig) {
@@ -496,7 +496,7 @@ bool CacheDB::Clean()
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cl") == 0 ||
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cn") == 0)
 	 {
-            if (FileExists(string((const char *)Key.data,Colon)) == true)
+            if (FileExists(std::string((const char *)Key.data,Colon)) == true)
 		continue;	     
 	 }
       }

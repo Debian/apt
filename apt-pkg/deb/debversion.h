@@ -32,7 +32,7 @@ class debVersioningSystem : public pkgVersioningSystem
    {
       return DoCmpVersion(A,Aend,B,Bend);
    }   
-   virtual string UpstreamVersion(const char *A);
+   virtual std::string UpstreamVersion(const char *A);
 
    debVersioningSystem();
 };
@@ -53,7 +53,7 @@ inline int pkgVersionCompare(const char *A, const char *AEnd,
 {
    return debVS.DoCmpVersion(A,AEnd,B,BEnd);
 }
-inline int pkgVersionCompare(string A,string B)
+inline int pkgVersionCompare(std::string A,std::string B)
 {
    return debVS.CmpVersion(A,B);
 }
@@ -61,7 +61,7 @@ inline bool pkgCheckDep(const char *DepVer,const char *PkgVer,int Op)
 {
    return debVS.CheckDep(PkgVer,Op,DepVer);
 }
-inline string pkgBaseVersion(const char *Ver)
+inline std::string pkgBaseVersion(const char *Ver)
 {
    return debVS.UpstreamVersion(Ver);
 }

@@ -25,6 +25,8 @@
 #include <ctype.h>
 									/*}}}*/
 
+using std::string;
+
 static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Important},
                        {"required",pkgCache::State::Required},
                        {"standard",pkgCache::State::Standard},

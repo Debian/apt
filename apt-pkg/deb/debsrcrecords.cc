@@ -21,6 +21,8 @@
 using std::max;
 									/*}}}*/
 
+using std::string;
+
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
 // ---------------------------------------------------------------------
 /* This member parses the binaries field into a pair of class arrays and
@@ -57,7 +59,7 @@ const char **debSrcRecordParser::Binaries()
    package/version records representing the build dependency. The returned 
    array need not be freed and will be reused by the next call to this 
    function */
-bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps,
+bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDepRec> &BuildDeps,
 					bool const &ArchOnly, bool const &StripMultiArch)
 {
    unsigned int I;
@@ -102,7 +104,7 @@ bool debSrcRecordParser::BuildDepends(vector<pkgSrcRecords::Parser::BuildDepRec>
 // ---------------------------------------------------------------------
 /* This parses the list of files and returns it, each file is required to have
    a complete source package */
-bool debSrcRecordParser::Files(vector<pkgSrcRecords::File> &List)
+bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 {
    List.erase(List.begin(),List.end());
    

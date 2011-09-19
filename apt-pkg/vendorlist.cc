@@ -10,6 +10,9 @@
 
 #include <apt-pkg/vendorlist.h>
 
+using std::string;
+using std::vector;
+
 pkgVendorList::~pkgVendorList()
 {
    for (vector<const Vendor *>::const_iterator I = VendorList.begin(); 

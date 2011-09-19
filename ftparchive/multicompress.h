@@ -29,7 +29,7 @@ class MultiCompress
    // An output file
    struct Files
    {
-      string Output;
+      std::string Output;
       APT::Configuration::Compressor CompressProg;
       Files *Next;
       FileFd TmpFile;
@@ -57,9 +57,9 @@ class MultiCompress
    bool Finalize(unsigned long long &OutSize);
    bool OpenOld(int &Fd,pid_t &Proc);
    bool CloseOld(int Fd,pid_t Proc);
-   static bool GetStat(string const &Output,string const &Compress,struct stat &St);
+   static bool GetStat(std::string const &Output,std::string const &Compress,struct stat &St);
    
-   MultiCompress(string const &Output,string const &Compress,
+   MultiCompress(std::string const &Output,std::string const &Compress,
 		 mode_t const &Permissions, bool const &Write = true);
    ~MultiCompress();
 };
