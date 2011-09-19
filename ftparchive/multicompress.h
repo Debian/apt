@@ -16,11 +16,10 @@
 #ifndef MULTICOMPRESS_H
 #define MULTICOMPRESS_H
 
-
-
-#include <string>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/aptconfiguration.h>
+
+#include <string>
 #include <stdio.h>
 #include <sys/types.h>
     

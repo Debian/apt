@@ -15,6 +15,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/fileutl.h>
 
 #include <dirent.h>
 #include <sys/stat.h>

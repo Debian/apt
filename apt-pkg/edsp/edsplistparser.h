@@ -12,9 +12,8 @@
 #define PKGLIB_EDSPLISTPARSER_H
 
 #include <apt-pkg/deblistparser.h>
-#include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/tagfile.h>
+
+class FileFd;
 
 class edspListParser : public debListParser
 {

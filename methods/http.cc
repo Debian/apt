@@ -29,6 +29,7 @@
 
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
@@ -288,6 +289,11 @@ void CircleBuf::Stats()
    clog << "Got " << InP << " in " << Diff << " at " << InP/Diff << endl;*/
 }
 									/*}}}*/
+CircleBuf::~CircleBuf()
+{
+   delete [] Buf;
+   delete Hash;
+}
 
 // ServerState::ServerState - Constructor				/*{{{*/
 // ---------------------------------------------------------------------

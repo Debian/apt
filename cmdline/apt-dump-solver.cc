@@ -12,6 +12,7 @@
 #include <config.h>
 
 #include <cstdio>
+#include <iostream>
 									/*}}}*/
 
 // ShowHelp - Show a help screen					/*{{{*/

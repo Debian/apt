@@ -14,7 +14,9 @@
 #include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>

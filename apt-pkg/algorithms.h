@@ -33,9 +33,10 @@
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/acquire.h>
 
 #include <iostream>
+
+class pkgAcquireStatus;
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {

@@ -14,10 +14,12 @@
 #ifndef NETRC_H
 #define NETRC_H
 
-#include <apt-pkg/strutl.h>
+#include <string>
 
 #define DOT_CHAR "."
 #define DIR_CHAR "/"
+
+class URI;
 
 // Assume: password[0]=0, host[0] != 0.
 // If login[0] = 0, search for login and password within a machine section

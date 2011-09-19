@@ -4,10 +4,7 @@
 
 #include <string>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
-#include <apt-pkg/vendor.h>
 
 class pkgAcquire;
 class pkgCacheGenerator;

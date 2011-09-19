@@ -20,9 +20,11 @@
 #ifndef PKGLIB_TAGFILE_H
 #define PKGLIB_TAGFILE_H
 
-
-#include <apt-pkg/fileutl.h>
 #include <stdio.h>
+
+#include <string>
+
+class FileFd;
 
 class pkgTagSection
 {

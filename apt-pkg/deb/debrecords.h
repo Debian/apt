@@ -15,8 +15,8 @@
 #define PKGLIB_DEBRECORDS_H
 
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/fileutl.h>
 
 class debRecordParser : public pkgRecords::Parser
 {

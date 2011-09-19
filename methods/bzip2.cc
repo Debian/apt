@@ -20,6 +20,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

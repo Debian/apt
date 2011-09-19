@@ -13,16 +13,16 @@
 #define CACHEDB_H
 
 
+#include <apt-pkg/debfile.h>
 
 #include <db.h>
-#include <string>
-#include <apt-pkg/debfile.h>
 #include <inttypes.h>
 #include <sys/stat.h>
 #include <errno.h>
-    
+#include <string>
+
 #include "contents.h"
-    
+
 class CacheDB
 {
    protected:

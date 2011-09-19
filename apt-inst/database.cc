@@ -11,6 +11,8 @@
 #include<config.h>
 
 #include <apt-pkg/database.h>
+#include <apt-pkg/filelist.h>
+#include <apt-pkg/pkgcachegen.h>
 									/*}}}*/
 
 // DataBase::GetMetaTmp - Get the temp dir				/*{{{*/
@@ -26,3 +28,8 @@ bool pkgDataBase::GetMetaTmp(std::string &Dir)
    return true;
 }
 									/*}}}*/
+pkgDataBase::~pkgDataBase()
+{
+   delete Cache;
+   delete FList;
+}

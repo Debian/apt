@@ -5,6 +5,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexcopy.h>
+#include <apt-pkg/configuration.h>
 
 #include <utime.h>
 #include <stdio.h>

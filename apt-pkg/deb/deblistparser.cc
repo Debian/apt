@@ -17,6 +17,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/macros.h>

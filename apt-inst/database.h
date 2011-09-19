@@ -21,8 +21,12 @@
 #ifndef PKGLIB_DATABASE_H
 #define PKGLIB_DATABASE_H
 
-#include <apt-pkg/filelist.h>
 #include <apt-pkg/pkgcachegen.h>
+
+#include <string>
+
+class pkgFLCache;
+class OpProgress;
 
 class pkgDataBase
 {
@@ -46,7 +50,7 @@ class pkgDataBase
    virtual bool LoadChanges() = 0;
 
    pkgDataBase() : Cache(0), FList(0) {};
-   virtual ~pkgDataBase() {delete Cache; delete FList;};
+   virtual ~pkgDataBase();
 };
 
 #endif

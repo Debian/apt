@@ -27,7 +27,8 @@
 
 
 #include <string>
-#include <apt-pkg/fileutl.h>
+
+class FileFd;
 
 /* This should be a 32 bit type, larger tyes use too much ram and smaller
    types are too small. Where ever possible 'unsigned long' should be used

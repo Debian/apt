@@ -21,6 +21,7 @@
 
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 
 #include <sys/mman.h>
 #include <sys/stat.h>

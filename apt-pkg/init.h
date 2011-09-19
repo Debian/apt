@@ -13,8 +13,8 @@
 #ifndef PKGLIB_INIT_H
 #define PKGLIB_INIT_H
 
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/pkgsystem.h>
+class pkgSystem;
+class Configuration;
 
 // These lines are extracted by the makefiles and the buildsystem
 // Increasing MAJOR or MINOR results in the need of recompiling all

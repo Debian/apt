@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include <vector>
+#include <iostream>
 
 int main()
 {

@@ -25,9 +25,12 @@
 
 
 #include <apt-pkg/arfile.h>
-#include <apt-pkg/database.h>
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/pkgcache.h>
+
+class FileFd;
+class pkgDataBase;
 
 class debDebFile
 {

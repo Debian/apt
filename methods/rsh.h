@@ -12,9 +12,9 @@
 
 #include <string>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/hashes.h>
-#include <apt-pkg/acquire-method.h>
-#include <apt-pkg/fileutl.h>
+
+class Hashes;
+class FileFd;
 
 class RSHConn
 {
@@ -49,6 +49,8 @@ class RSHConn
    RSHConn(URI Srv);
    ~RSHConn();
 };
+
+#include <apt-pkg/acquire-method.h>
 
 class RSHMethod : public pkgAcqMethod
 {

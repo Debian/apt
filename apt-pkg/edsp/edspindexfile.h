@@ -8,7 +8,6 @@
 #ifndef PKGLIB_EDSPINDEXFILE_H
 #define PKGLIB_EDSPINDEXFILE_H
 
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/debindexfile.h>
 
 class edspIndex : public debStatusIndex

@@ -15,9 +15,10 @@
 #define PKGLIB_EXTRACTTAR_H
 
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/dirstream.h>
 
-#include <algorithm>
+#include <string>
+
+class pkgDirStream;
 
 class ExtractTar
 {

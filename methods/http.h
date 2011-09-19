@@ -13,12 +13,15 @@
 
 #define MAXLEN 360
 
-#include <apt-pkg/hashes.h>
+#include <apt-pkg/strutl.h>
+
+#include <string>
 
 using std::cout;
 using std::endl;
 
 class HttpMethod;
+class Hashes;
 
 class CircleBuf
 {
@@ -80,7 +83,7 @@ class CircleBuf
    void Stats();
 
    CircleBuf(unsigned long long Size);
-   ~CircleBuf() {delete [] Buf; delete Hash;};
+   ~CircleBuf();
 };
 
 struct ServerState

@@ -28,9 +28,10 @@
 #ifndef PKGLIB_FILELIST_H
 #define PKGLIB_FILELIST_H
 
+#include <apt-pkg/mmap.h>
 
 #include <cstring>
-#include <apt-pkg/mmap.h>
+#include <string>
 
 class pkgFLCache
 {

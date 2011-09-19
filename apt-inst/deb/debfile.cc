@@ -18,6 +18,7 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
+#include <apt-pkg/database.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>

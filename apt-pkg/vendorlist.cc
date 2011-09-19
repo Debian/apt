@@ -2,12 +2,14 @@
 
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
 #include <apti18n.h>
 
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+#include <apt-pkg/vendor.h>
 #include <apt-pkg/vendorlist.h>
 
 using std::string;

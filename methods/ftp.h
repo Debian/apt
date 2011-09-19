@@ -10,6 +10,10 @@
 #ifndef APT_FTP_H
 #define APT_FTP_H
 
+#include <apt-pkg/strutl.h>
+
+#include <string>
+
 class FTPConn
 {
    char Buffer[1024*10];

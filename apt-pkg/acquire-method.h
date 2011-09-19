@@ -20,10 +20,10 @@
 #ifndef PKGLIB_ACQUIRE_METHOD_H
 #define PKGLIB_ACQUIRE_METHOD_H
 
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/strutl.h>
-
 #include <stdarg.h>
+
+#include <string>
+#include <vector>
 
 class Hashes;
 class pkgAcqMethod

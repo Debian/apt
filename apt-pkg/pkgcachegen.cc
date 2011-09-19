@@ -25,6 +25,8 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/fileutl.h>
 
 #include <vector>
 #include <sys/stat.h>

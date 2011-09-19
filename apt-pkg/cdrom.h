@@ -1,10 +1,11 @@
 #ifndef PKGLIB_CDROM_H
 #define PKGLIB_CDROM_H
 
-#include<apt-pkg/init.h>
 #include<string>
 #include<vector>
 
+class Configuration;
+class OpProgress;
 
 class pkgCdromStatus							/*{{{*/
 {

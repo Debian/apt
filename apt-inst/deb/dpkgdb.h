@@ -22,6 +22,11 @@
 
 #include <apt-pkg/database.h>
 
+#include <string>
+
+class DynamicMMap;
+class OpProgress;
+
 class debDpkgDB : public pkgDataBase
 {
    protected:

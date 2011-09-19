@@ -11,7 +11,8 @@
 #define CONNECT_H
 
 #include <string>
-#include <apt-pkg/acquire-method.h>
+
+class pkgAcqMethod;
 
 bool Connect(std::string To,int Port,const char *Service,int DefPort,
 	     int &Fd,unsigned long TimeOut,pkgAcqMethod *Owner);

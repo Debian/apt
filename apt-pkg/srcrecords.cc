@@ -17,6 +17,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/metaindex.h>
 
 #include <apti18n.h>
 									/*}}}*/

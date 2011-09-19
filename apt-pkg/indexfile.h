@@ -27,10 +27,12 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/macros.h>
 
 class pkgAcquire;
 class pkgCacheGenerator;
 class OpProgress;
+
 class pkgIndexFile
 {
    protected:

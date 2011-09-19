@@ -12,7 +12,6 @@
 #define PKGLIB_DEBLISTPARSER_H
 
 #include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
 
 class debListParser : public pkgCacheGenerator::ListParser

@@ -23,6 +23,9 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/edsp.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/progress.h>
 
 #include <sys/types.h>
 #include <cstdlib>

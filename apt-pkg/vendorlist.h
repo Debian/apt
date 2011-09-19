@@ -15,9 +15,10 @@
 
 #include <string>
 #include <vector>
-#include <apt-pkg/vendor.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
+
+class Vendor;
+class Configuration;
 
 class __deprecated pkgVendorList
 {

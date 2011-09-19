@@ -13,6 +13,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <algorithm>
 

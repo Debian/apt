@@ -36,6 +36,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/clean.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/version.h>
@@ -44,6 +45,10 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/indexfile.h>
 
 #include "acqprogress.h"
 

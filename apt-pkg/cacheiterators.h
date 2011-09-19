@@ -32,6 +32,7 @@
 #include<iterator>
 
 #include<string.h>
+
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
    need to have for doing some walk-over-the-cache magic */

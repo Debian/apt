@@ -12,8 +12,9 @@
     
 #include <stdlib.h>
 #include <stdio.h>
-#include <apt-pkg/debfile.h>
 #include <apt-pkg/dirstream.h>
+
+class debDebFile;
 
 class GenContents
 {

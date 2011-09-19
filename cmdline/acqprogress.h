@@ -12,6 +12,8 @@
 
 #include <apt-pkg/acquire.h>
 
+#include <string>
+
 class AcqTextStatus : public pkgAcquireStatus
 {
    unsigned int &ScreenWidth;
@@ -21,7 +23,7 @@ class AcqTextStatus : public pkgAcquireStatus
    
    public:
    
-   virtual bool MediaChange(string Media,string Drive);
+   virtual bool MediaChange(std::string Media,std::string Drive);
    virtual void IMSHit(pkgAcquire::ItemDesc &Itm);
    virtual void Fetch(pkgAcquire::ItemDesc &Itm);
    virtual void Done(pkgAcquire::ItemDesc &Itm);

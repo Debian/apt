@@ -18,6 +18,7 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
+#include <apt-pkg/dirstream.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>

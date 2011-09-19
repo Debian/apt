@@ -20,7 +20,7 @@ using std::cout;
 using std::endl;
 
 class HttpsMethod;
-
+class FileFd;
 
 class HttpsMethod : public pkgAcqMethod
 {
@@ -45,6 +45,7 @@ class HttpsMethod : public pkgAcqMethod
    };
 };
 
+#include <apt-pkg/strutl.h>
 URI Proxy;
 
 #endif

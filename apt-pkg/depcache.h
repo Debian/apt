@@ -40,12 +40,13 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/error.h>
 
 #include <vector>
 #include <memory>
 #include <set>
+#include <list>
+
+class OpProgress;
 
 class pkgDepCache : protected pkgCache::Namespace
 {

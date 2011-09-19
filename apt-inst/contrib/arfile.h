@@ -17,7 +17,8 @@
 
 
 #include <string>
-#include <apt-pkg/fileutl.h>
+
+class FileFd;
 
 class ARArchive
 {

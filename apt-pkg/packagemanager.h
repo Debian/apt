@@ -23,11 +23,10 @@
 #ifndef PKGLIB_PACKAGEMANAGER_H
 #define PKGLIB_PACKAGEMANAGER_H
 
+#include <apt-pkg/pkgcache.h>
 
 #include <string>
 #include <iostream>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/depcache.h>
 #include <set>
 
 class pkgAcquire;

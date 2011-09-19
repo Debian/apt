@@ -15,6 +15,8 @@
 
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/acquire-method.h>
 
 #include <stdio.h>
 #include <errno.h>

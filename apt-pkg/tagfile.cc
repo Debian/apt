@@ -16,6 +16,7 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <string>
 #include <stdio.h>
