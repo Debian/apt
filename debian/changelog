@@ -8,8 +8,11 @@ apt (0.8.16~exp7) experimental; urgency=low
     - use std::vector instead of fixed size arrays to store args and
       multiarch-packagename strings
     - load the dpkg base arguments only one time and reuse them later
+  * cmdline/apt-get.cc:
+    - follow Provides in the evaluation of saving candidates, too, for
+      statisfying garbage package dependencies (Closes: #640590)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 20 Sep 2011 11:50:31 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 20 Sep 2011 13:25:31 +0200
 
 apt (0.8.16~exp6) experimental; urgency=low
 
