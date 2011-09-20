@@ -905,6 +905,28 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // create log
    OpenLog();
 
+   // Generate the base argument list for dpkg
+   std::vector<const char *> Args;
+   unsigned long StartSize = 0;
+   string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   Args.push_back(Tmp.c_str());
+   StartSize += Tmp.length();
+
+   // Stick in any custom dpkg options
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+	 StartSize += Opts->Value.length();
+      }
+   }
+   size_t const BaseArgs = Args.size();
+
    // this loop is runs once per operation
    for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
    {
@@ -926,10 +948,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 for (; J != List.end() && J->Op == I->Op; ++J)
 	    /* nothing */;
 
-      // Generate the argument list
-      std::vector<const char *> Args;
       // keep track of allocated strings for multiarch package names
       std::vector<char *> Packages;
+
+      // start with the baseset of arguments
+      unsigned long Size = StartSize;
+      Args.erase(Args.begin() + BaseArgs, Args.end());
 
       // Now check if we are within the MaxArgs limit
       //
@@ -948,24 +972,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 Args.reserve((J - I) + 10);
       }
 
-      unsigned long Size = 0;
-      string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-      Args.push_back(Tmp.c_str());
-      Size += Tmp.length();
-      
-      // Stick in any custom dpkg options
-      Configuration::Item const *Opts = _config->Tree("DPkg::Options");
-      if (Opts != 0)
-      {
-	 Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-	 {
-	    if (Opts->Value.empty() == true)
-	       continue;
-	    Args.push_back(Opts->Value.c_str());
-	    Size += Opts->Value.length();
-	 }	 
-      }
       
       int fd[2];
       pipe(fd);
@@ -1042,7 +1048,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       continue;
 	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
-	    if (false && (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all")))
+	    if (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all"))
 	    {
 	       char const * const name = I->Pkg.Name();
 	       ADDARG(name);
@@ -1067,7 +1073,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 for (std::vector<const char *>::const_iterator a = Args.begin();
 	      a != Args.end(); ++a)
 	    clog << *a << ' ';
-	 clog << "size=" << Size << endl;
+	 clog << endl;
 	 continue;
       }
       Args.push_back(NULL);
