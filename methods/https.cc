@@ -270,14 +270,17 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    long curl_servdate;
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &curl_servdate);
 
+   File->Close();
+
    // cleanup
    if(success != 0) 
    {
       _error->Error("%s", curl_errorstr);
+      // unlink, no need keep 401/404 page content in partial/
+      unlink(File->Name().c_str());
       Fail();
       return true;
    }
-   File->Close();
 
    // Timestamp
    struct utimbuf UBuf;
