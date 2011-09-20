@@ -1035,7 +1035,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		     if (BrokenFix == false || DoUpgrade(I) == false)
 		     {
 			// Consider other options
-			if (InOr == false)
+			if (InOr == false || Cache[I].Garbage == true)
 			{
 			   if (Debug == true)
 			      clog << "  Removing " << I.FullName(false) << " rather than change " << Start.TargetPkg().FullName(false) << endl;
