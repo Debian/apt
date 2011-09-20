@@ -1,9 +1,18 @@
-apt (0.8.15.9) unstable; urgency=low
+apt (0.8.15.9) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
   * doc/apt-get.8.xml:
     - change wording of autoremove description as suggested
       by Robert Simmons, thanks! (Closes: #641490)
+  * apt-pkg/deb/dpkgpm.cc:
+    - use std::vector instead of fixed size arrays to store args and
+      multiarch-packagename strings
+    - load the dpkg base arguments only one time and reuse them later
+  * cmdline/apt-get.cc:
+    - follow Provides in the evaluation of saving candidates, too, for
+      statisfying garbage package dependencies (Closes: #640590)
+  * apt-pkg/algorithms.cc:
+    - if a package is garbage, don't try to save it with FixByInstall
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 14 Sep 2011 21:01:56 +0200
 
