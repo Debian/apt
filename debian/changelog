@@ -4,8 +4,11 @@ apt (0.8.16~exp7) experimental; urgency=low
   * do not pollute namespace in the headers with using (Closes: #500198)
   * use forward declaration in headers if possible instead of includes
   * remove old APT_COMPATIBILITY ifdef's
+  * apt-pkg/deb/dpkgpm.cc:
+    - use std::vector instead of fixed size arrays to store args and
+      multiarch-packagename strings
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 19 Sep 2011 19:24:20 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 20 Sep 2011 11:32:36 +0200
 
 apt (0.8.16~exp6) experimental; urgency=low
 
