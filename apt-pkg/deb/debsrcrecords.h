@@ -24,10 +24,9 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    FileFd Fd;
    pkgTagFile Tags;
    pkgTagSection Sect;
-   char *StaticBinList[400];
+   std::vector<const char*> StaticBinList;
    unsigned long iOffset;
    char *Buffer;
-   unsigned int BufSize;
    
    public:
 
@@ -52,7 +51,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
 
    debSrcRecordParser(std::string const &File,pkgIndexFile const *Index) 
       : Parser(Index), Fd(File,FileFd::ReadOnlyGzip), Tags(&Fd,102400), 
-        Buffer(0), BufSize(0) {}
+        Buffer(NULL) {}
    virtual ~debSrcRecordParser();
 };
 

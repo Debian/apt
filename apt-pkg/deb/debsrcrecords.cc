@@ -32,25 +32,32 @@ using std::string;
    used during scanning to find the right package */
 const char **debSrcRecordParser::Binaries()
 {
-   // This should use Start/Stop too, it is supposed to be efficient after all.
-   string Bins = Sect.FindS("Binary");
-   if (Bins.empty() == true || Bins.length() >= 102400)
-      return 0;
-   
-   if (Bins.length() >= BufSize)
-   {
-      delete [] Buffer;
-      // allocate new size based on buffer (but never smaller than 4000)
-      BufSize = max((unsigned int)4000, max((unsigned int)Bins.length()+1,2*BufSize));
-      Buffer = new char[BufSize];
-   }
+   const char *Start, *End;
+   if (Sect.Find("Binary", Start, End) == false)
+      return NULL;
+   for (; isspace(*Start) != 0; ++Start);
+   if (Start >= End)
+      return NULL;
 
-   strcpy(Buffer,Bins.c_str());
-   if (TokSplitString(',',Buffer,StaticBinList,
-		      sizeof(StaticBinList)/sizeof(StaticBinList[0])) == false)
-      return 0;
+   StaticBinList.clear();
+   free(Buffer);
+   Buffer = strndup(Start, End - Start);
 
-   return (const char **)StaticBinList;
+   char* bin = Buffer;
+   do {
+      char* binStartNext = strchrnul(bin, ',');
+      char* binEnd = binStartNext - 1;
+      for (; isspace(*binEnd) != 0; --binEnd)
+	 binEnd = '\0';
+      StaticBinList.push_back(bin);
+      if (*binStartNext != ',')
+	 break;
+      *binStartNext = '\0';
+      for (bin = binStartNext + 1; isspace(*bin) != 0; ++bin);
+   } while (*bin != '\0');
+   StaticBinList.push_back(NULL);
+
+   return (const char **) &StaticBinList[0];
 }
 									/*}}}*/
 // SrcRecordParser::BuildDepends - Return the Build-Depends information	/*{{{*/
