@@ -525,9 +525,9 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       // Skip whitespace
       for (;I != Stop && isspace(*I) != 0; I++);
       Start = I;
-      for (;I != Stop && *I != ')'; I++);
-      if (I == Stop || Start == I)
-	 return 0;     
+      I = (const char*) memchr(I, ')', Stop - I);
+      if (I == NULL || Start == I)
+	 return 0;
       
       // Skip trailing whitespace
       const char *End = I;
@@ -800,21 +800,16 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       }
 
       // seperate the tag from the data
-      for (; buffer[len] != ':' && buffer[len] != '\0'; ++len)
-         /* nothing */
-         ;
-      if (buffer[len] == '\0')
+      const char* dataStart = strchr(buffer + len, ':');
+      if (dataStart == NULL)
 	 continue;
-      char* dataStart = buffer + len;
+      len = dataStart - buffer;
       for (++dataStart; *dataStart == ' '; ++dataStart)
          /* nothing */
          ;
-      char* dataEnd = dataStart;
-      for (++dataEnd; *dataEnd != '\0'; ++dataEnd)
-         /* nothing */
-         ;
+      const char* dataEnd = (const char*)rawmemchr(dataStart, '\0');
       // The last char should be a newline, but we can never be sure: #633350
-      char* lineEnd = dataEnd;
+      const char* lineEnd = dataEnd;
       for (--lineEnd; *lineEnd == '\r' || *lineEnd == '\n'; --lineEnd)
          /* nothing */
          ;
