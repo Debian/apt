@@ -1,3 +1,17 @@
+apt (0.8.16~exp5ubuntu11) UNRELEASED; urgency=low
+
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
+  
+  [ Marc Deslauriers ]
+  * SECURITY UPDATE: Disable apt-key net-update for now, as validation
+    code is insecure.
+    - cmdline/apt-key: exit immediately out of net_update().
+    - CVE number pending
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 22 Sep 2011 17:28:49 +0200
+
 apt (0.8.16~exp5ubuntu10) oneiric; urgency=low
 
   * methods/https.cc:
@@ -120,10 +134,6 @@ apt (0.8.16~exp5) UNRELEASED; urgency=low
       libapt does not segfault if the cache is remapped in between
       (LP: #812862)
   
-  [ Colin Watson ]
-  * ftparchive/cachedb.cc:
-    - fix buffersize in bytes2hex
-
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Jul 2011 13:44:01 +0200
 
 apt (0.8.16~exp4) experimental; urgency=low
