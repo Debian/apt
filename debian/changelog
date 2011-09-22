@@ -112,12 +112,17 @@ apt (0.8.16~exp5ubuntu1) oneiric; urgency=low
 
 apt (0.8.16~exp5) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * apt-pkg/makefile:
     - install sha256.h compat header
   * apt-pkg/pkgcachegen.{cc,h}:
     - use ref-to-ptr semantic in NewDepends() to ensure that the   
       libapt does not segfault if the cache is remapped in between
       (LP: #812862)
+  
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Jul 2011 13:44:01 +0200
 

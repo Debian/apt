@@ -297,7 +297,7 @@ bool CacheDB::LoadContents(bool const &GenOnly)
 									/*}}}*/
 
 static string bytes2hex(uint8_t *bytes, size_t length) {
-   char space[65];
+   char space[129];
    if (length * 2 > sizeof(space) - 1) length = (sizeof(space) - 1) / 2;
    for (size_t i = 0; i < length; i++)
       snprintf(&space[i*2], 3, "%02x", bytes[i]);
