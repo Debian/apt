@@ -297,11 +297,15 @@ bool CacheDB::LoadContents(bool const &GenOnly)
 									/*}}}*/
 
 static string bytes2hex(uint8_t *bytes, size_t length) {
-   char space[129];
-   if (length * 2 > sizeof(space) - 1) length = (sizeof(space) - 1) / 2;
-   for (size_t i = 0; i < length; i++)
-      snprintf(&space[i*2], 3, "%02x", bytes[i]);
-   return string(space);
+   char buf[3];
+   string space;
+
+   space.reserve(length*2 + 1);
+   for (size_t i = 0; i < length; i++) {
+      snprintf(buf, sizeof(buf), "%02x", bytes[i]);
+      space.append(buf);
+   }
+   return space;
 }
 
 static inline unsigned char xdig2num(char const &dig) {
