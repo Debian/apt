@@ -28,6 +28,11 @@ apt (0.8.16~exp5) experimental; urgency=low
   * ftparchive/cachedb.cc:
     - fix buffersize in bytes2hex
 
+  [ David Kalnischkies ]  
+  * apt-pkg/deb/deblistparser.cc:
+    - fix crash when the dynamic mmap needs to be grown in
+      LoadReleaseInfo (LP: #854090)
+
  -- Michael Vogt <mvo@debian.org>  Fri, 05 Aug 2011 10:57:08 +0200
 
 apt (0.8.16~exp4) experimental; urgency=low
