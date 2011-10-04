@@ -40,6 +40,15 @@ else
     msgpass
 fi
 
+# ensure the keyring is still empty
+gpg_out=$($GPG --list-keys)
+msgtest "Test if keyring is empty"
+if [ -n "" ]; then
+    msgfail
+else
+    msgpass
+fi
+
 # test good keyring and ensure we get no errors
 ADD_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
 if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
@@ -48,3 +57,12 @@ else
     msgfail
 fi
 
+testequal './etc/apt/trusted.gpg
+---------------------
+pub   1024D/437D05B5 2004-09-12
+uid                  Ubuntu Archive Automatic Signing Key <ftpmaster@ubuntu.com>
+sub   2048g/79164387 2004-09-12
+
+pub   1024D/FBB75451 2004-12-30
+uid                  Ubuntu CD Image Automatic Signing Key <cdimage@ubuntu.com>
+' $GPG --list-keys
