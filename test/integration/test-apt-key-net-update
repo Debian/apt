@@ -18,9 +18,12 @@ eval "$func"
 
 mkdir -p ./etc/apt
 TRUSTEDFILE=./etc/apt/trusted.gpg
+mkdir -p ./var/lib/apt/keyrings
+TMP_KEYRING=./var/lib/apt/keyrings/maybe-import-keyring.gpg
 GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
 GPG="$GPG_CMD --keyring $TRUSTEDFILE"
 MASTER_KEYRING=/usr/share/keyrings/ubuntu-master-keyring.gpg
+
 
 msgtest "add_keys_with_verify_against_master_keyring"
 if [ ! -e $MASTER_KEYRING ]; then
