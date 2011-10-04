@@ -64,7 +64,7 @@ add_keys_with_verify_against_master_keyring() {
     for add_key in $add_keys; do
 	ADDED=0
 	for master_key in $master_keys; do
-	    if $GPG_CMD --keyring $ADD_KEYRING --list-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
+	    if $GPG_CMD --keyring $ADD_KEYRING --verify-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
 		$GPG_CMD --quiet --batch --keyring $ADD_KEYRING --export $add_key | $GPG --import
 		ADDED=1
 	    fi
