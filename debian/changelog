@@ -1,3 +1,25 @@
+apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/contrib/configuration.cc:
+    - fix double delete (LP: #848907)
+    - ignore only the invalid regexp instead of all options
+  * apt-pkg/acquire-item.h, apt-pkg/deb/debmetaindex.cc:
+    - fix fetching language information by adding OptionalSubIndexTarget
+  * methods/https.cc:
+    - cleanup broken downloads properly
+  
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
+
+  [ David Kalnischkies ]  
+  * apt-pkg/deb/deblistparser.cc:
+    - fix crash when the dynamic mmap needs to be grown in
+      LoadReleaseInfo (LP: #854090)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 05 Oct 2011 18:14:11 +0200
+
 apt (0.8.16~exp6) experimental; urgency=low
 
   [ Christopher Baines ]
