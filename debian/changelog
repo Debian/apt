@@ -18,6 +18,10 @@ apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
   * apt-pkg/deb/deblistparser.cc:
     - fix crash when the dynamic mmap needs to be grown in
       LoadReleaseInfo (LP: #854090)
+  * apt-pkg/deb/debmetaindex.cc:
+    - none is a separator, not a language: no need for Index (Closes: #624218)
+  * apt-pkg/aptconfiguration.cc:
+    - do not builtin languages only if none is forced (Closes: #643787)
 
   [ Michael Vogt ]
   * apt-pkg/contrib/configuration.cc:
@@ -32,8 +36,7 @@ apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
   * ftparchive/cachedb.cc:
     - fix buffersize in bytes2hex
 
-
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 05 Oct 2011 18:40:57 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 05 Oct 2011 22:40:25 +0200
 
 apt (0.8.16~exp6) experimental; urgency=low
 
