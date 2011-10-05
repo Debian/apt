@@ -54,6 +54,21 @@ void assertEqualsOr2(int const &expect1, int const &expect2, unsigned int const 
 }
 
 
+#define equalsOr3(w,x,y,z) assertEqualsOr3(x, y, z, w, __LINE__)
+
+template < typename X, typename Y >
+void OutputAssertEqualOr3(X expect1, X expect2, X expect3, char const* compare, Y get, unsigned long const &line) {
+	std::cerr << "Test FAILED: »" << expect1 << "« or »" << expect2 << "« or »" << expect3 << "« " << compare << " »" << get << "« at line " << line << std::endl;
+}
+
+template < typename X, typename Y >
+void assertEqualsOr3(X expect1, X expect2, X expect3, Y get, unsigned long const &line) {
+	if (expect1 == get || expect2 == get || expect3 == get)
+		return;
+	OutputAssertEqualOr3(expect1, expect2, expect3, "==", get, line);
+}
+
+
 // simple helper to quickly output a vectors
 template < typename X >
 void dumpVector(X vec) {

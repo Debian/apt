@@ -17,6 +17,10 @@ apt (0.8.15.9) UNRELEASED; urgency=low
     - silently ignore *.orig and *.save files by default
   * apt-pkg/policy.cc:
     - accept generic release pin expressions again in -t (Closes: #644166)
+  * apt-pkg/deb/debmetaindex.cc:
+    - none is a separator, not a language: no need for Index (Closes: #624218)
+  * apt-pkg/aptconfiguration.cc:
+    - do not builtin languages only if none is forced (Closes: #643787)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 03 Oct 2011 23:35:40 +0200
 
