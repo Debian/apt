@@ -51,7 +51,6 @@ add_keys_with_verify_against_master_keyring() {
     add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
     master_keys=`$GPG_CMD --keyring $MASTER --with-colons --list-keys | grep ^pub | cut -d: -f5`
     
-    ADDED=0
     for add_key in $add_keys; do
 
         # ensure there are no colisions LP: #857472
@@ -64,9 +63,10 @@ add_keys_with_verify_against_master_keyring() {
 
         # export the add keyring one-by-one
         rm -f $TMP_KEYRING
-        $GPG_CMD --keyring $ADD_KEYRING --export $add_key | $GPG_CMD --keyring $TMP_KEYRING --import --trust-model direct
+        $GPG_CMD --keyring $ADD_KEYRING --export $add_key --output $TMP_KEYRING
 
         # check if signed with the master key and only add in this case
+        ADDED=0
 	for master_key in $master_keys; do
 	    if $GPG_CMD --keyring $TMP_KEYRING --check-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
 		$GPG --import $TMP_KEYRING
