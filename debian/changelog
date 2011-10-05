@@ -1,6 +1,7 @@
 apt (0.8.15.9) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
+  * Symbol file update
   * doc/apt-get.8.xml:
     - change wording of autoremove description as suggested
       by Robert Simmons, thanks! (Closes: #641490)
@@ -22,7 +23,19 @@ apt (0.8.15.9) UNRELEASED; urgency=low
   * apt-pkg/aptconfiguration.cc:
     - do not builtin languages only if none is forced (Closes: #643787)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 03 Oct 2011 23:35:40 +0200
+  [ Christian Perrier ]
+  * Fix spelling error (sensée) in French translation. Thanks
+    to Corentin Le Gall for spotting it.
+
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
+
+  [ Michael Vogt ]
+  * ftparchive/cachedb.cc:
+    - make buffer fully dynamic (thanks to Colin Watson)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 05 Oct 2011 23:03:16 +0200
 
 apt (0.8.15.8) unstable; urgency=low
 
