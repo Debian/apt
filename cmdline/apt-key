@@ -63,7 +63,7 @@ add_keys_with_verify_against_master_keyring() {
 
         # export the add keyring one-by-one
         rm -f $TMP_KEYRING
-        $GPG_CMD --keyring $ADD_KEYRING --export $add_key | $GPG_CMD --keyring $TMP_KEYRING --import --trust-model direct
+        $GPG_CMD --keyring $ADD_KEYRING --export $add_key --output $TMP_KEYRING
 
         # check if signed with the master key and only add in this case
         ADDED=0
