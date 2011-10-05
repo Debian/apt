@@ -821,16 +821,16 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       ++lineEnd;
 
       // which datastorage need to be updated
-      map_ptrloc* writeTo = NULL;
+      enum { Suite, Component, Version, Origin, Codename, Label, None } writeTo = None;
       if (buffer[0] == ' ')
 	 ;
-      #define APT_PARSER_WRITETO(X, Y) else if (strncmp(Y, buffer, len) == 0) writeTo = &X;
-      APT_PARSER_WRITETO(FileI->Archive, "Suite")
-      APT_PARSER_WRITETO(FileI->Component, "Component")
-      APT_PARSER_WRITETO(FileI->Version, "Version")
-      APT_PARSER_WRITETO(FileI->Origin, "Origin")
-      APT_PARSER_WRITETO(FileI->Codename, "Codename")
-      APT_PARSER_WRITETO(FileI->Label, "Label")
+      #define APT_PARSER_WRITETO(X) else if (strncmp(#X, buffer, len) == 0) writeTo = X;
+      APT_PARSER_WRITETO(Suite)
+      APT_PARSER_WRITETO(Component)
+      APT_PARSER_WRITETO(Version)
+      APT_PARSER_WRITETO(Origin)
+      APT_PARSER_WRITETO(Codename)
+      APT_PARSER_WRITETO(Label)
       #undef APT_PARSER_WRITETO
       #define APT_PARSER_FLAGIT(X) else if (strncmp(#X, buffer, len) == 0) \
 	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, lineEnd);
@@ -840,19 +840,19 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 
       // load all data from the line and save it
       string data;
-      if (writeTo != NULL)
+      if (writeTo != None)
 	 data.append(dataStart, dataEnd);
       if (sizeof(buffer) - 1 == (dataEnd - buffer))
       {
 	 while (fgets(buffer, sizeof(buffer), release) != NULL)
 	 {
-	    if (writeTo != NULL)
+	    if (writeTo != None)
 	       data.append(buffer);
 	    if (strlen(buffer) != sizeof(buffer) - 1)
 	       break;
 	 }
       }
-      if (writeTo != NULL)
+      if (writeTo != None)
       {
 	 // remove spaces and stuff from the end of the data line
 	 for (std::string::reverse_iterator s = data.rbegin();
@@ -862,7 +862,15 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 	       break;
 	    *s = '\0';
 	 }
-	 *writeTo = WriteUniqString(data);
+	 switch (writeTo) {
+	 case Suite: FileI->Archive = WriteUniqString(data); break;
+	 case Component: FileI->Component = WriteUniqString(data); break;
+	 case Version: FileI->Version = WriteUniqString(data); break;
+	 case Origin: FileI->Origin = WriteUniqString(data); break;
+	 case Codename: FileI->Codename = WriteUniqString(data); break;
+	 case Label: FileI->Label = WriteUniqString(data); break;
+	 case None: break;
+	 }
       }
    }
    fclose(release);

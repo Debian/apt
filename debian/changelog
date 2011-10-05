@@ -1,4 +1,4 @@
-apt (0.8.16~exp7) experimental; urgency=low
+apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
 
   [ David Kalnischkies ]
   * do not pollute namespace in the headers with using (Closes: #500198)
@@ -15,8 +15,25 @@ apt (0.8.16~exp7) experimental; urgency=low
     - if a package is garbage, don't try to save it with FixByInstall
   * apt-pkg/deb/debsrcrecords.cc:
     - remove the limit of 400 Binaries for a source package (Closes: #622110)
+  * apt-pkg/deb/deblistparser.cc:
+    - fix crash when the dynamic mmap needs to be grown in
+      LoadReleaseInfo (LP: #854090)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 21 Sep 2011 19:29:55 +0200
+  [ Michael Vogt ]
+  * apt-pkg/contrib/configuration.cc:
+    - fix double delete (LP: #848907)
+    - ignore only the invalid regexp instead of all options
+  * apt-pkg/acquire-item.h, apt-pkg/deb/debmetaindex.cc:
+    - fix fetching language information by adding OptionalSubIndexTarget
+  * methods/https.cc:
+    - cleanup broken downloads properly
+
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
+
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 05 Oct 2011 18:40:57 +0200
 
 apt (0.8.16~exp6) experimental; urgency=low
 

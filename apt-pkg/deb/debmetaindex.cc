@@ -225,7 +225,7 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 	} else {
 		for (std::set<std::string>::const_iterator s = sections.begin();
 		     s != sections.end(); ++s) {
-			IndexTarget * Target = new OptionalIndexTarget();
+			IndexTarget * Target = new OptionalSubIndexTarget();
 			Target->ShortDesc = "TranslationIndex";
 			Target->MetaKey = TranslationIndexURISuffix("Index", *s);
 			Target->URI = TranslationIndexURI("Index", *s);
