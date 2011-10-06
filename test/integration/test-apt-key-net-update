@@ -1,0 +1,68 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# mock
+requires_root() {
+    return 0
+}
+
+# extract net_update() and import it
+func=$( sed -n -e '/^add_keys_with_verify_against_master_keyring/,/^}/p' ${BUILDDIRECTORY}/apt-key )
+eval "$func"
+
+mkdir -p ./etc/apt
+TRUSTEDFILE=./etc/apt/trusted.gpg
+mkdir -p ./var/lib/apt/keyrings
+TMP_KEYRING=./var/lib/apt/keyrings/maybe-import-keyring.gpg
+GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
+GPG="$GPG_CMD --keyring $TRUSTEDFILE"
+MASTER_KEYRING=/usr/share/keyrings/ubuntu-master-keyring.gpg
+
+
+msgtest "add_keys_with_verify_against_master_keyring"
+if [ ! -e $MASTER_KEYRING ]; then
+    echo -n "No $MASTER_KEYRING found"
+    msgskip 
+    exit 0
+fi
+
+# test bad keyring and ensure its not added (LP: #857472)
+ADD_KEYRING=./keys/exploid-keyring-with-dupe-keys.pub
+if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
+    msgfail
+else
+    msgpass
+fi
+
+# ensure the keyring is still empty
+gpg_out=$($GPG --list-keys)
+msgtest "Test if keyring is empty"
+if [ -n "" ]; then
+    msgfail
+else
+    msgpass
+fi
+
+# test good keyring and ensure we get no errors
+ADD_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
+if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
+    msgpass
+else
+    msgfail
+fi
+
+testequal './etc/apt/trusted.gpg
+---------------------
+pub   1024D/437D05B5 2004-09-12
+uid                  Ubuntu Archive Automatic Signing Key <ftpmaster@ubuntu.com>
+sub   2048g/79164387 2004-09-12
+
+pub   1024D/FBB75451 2004-12-30
+uid                  Ubuntu CD Image Automatic Signing Key <cdimage@ubuntu.com>
+' $GPG --list-keys

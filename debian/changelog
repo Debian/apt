@@ -1,10 +1,16 @@
-apt (0.8.16~exp5ubuntu13) UNRELEASED; urgency=low
+apt (0.8.16~exp5ubuntu13) UNRELEASEDoneiric; urgency=low
 
+  [ Adam Conrad ]
   * On armel, call update-apt-xapian-index with '-u' to keep the CPU
     and I/O usage low.  We would do this on all arches, but there's a
     regression risk here, but that's better than killing slow systems.
+  
+  [ Michael Vogt ]
+  * cmdline/apt-key:
+    - fix apt-key net-update, thanks to Marc Deslauriers and 
+      Adam Conrad for the code review (LP: #857472)
 
- -- Adam Conrad <adconrad@ubuntu.com>  Tue, 04 Oct 2011 01:24:01 -0600
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 06 Oct 2011 16:13:00 +0200
 
 apt (0.8.16~exp5ubuntu12) oneiric; urgency=low
 
