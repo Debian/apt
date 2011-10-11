@@ -4,9 +4,7 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture "i386" "amd64"
-
-buildsimplenativepackage 'peace-dpkg' 'all' '1.0' 'stable'
+configarchitecture 'i386' 'amd64'
 
 buildsimplenativepackage 'libc6' 'i386' '1.0' 'stable'
 buildsimplenativepackage 'libc6' 'amd64' '1.0' 'stable'
@@ -16,9 +14,6 @@ buildsimplenativepackage 'foobar' 'i386' '1.0' 'stable' 'Depends: libc6'
 buildsimplenativepackage 'foobar' 'amd64' '1.0' 'stable' 'Depends: libc6'
 
 setupaptarchive
-
-aptget install peace-dpkg:i386 -y -qq 2>&1 > /dev/null
-testdpkginstalled peace-dpkg
 
 aptget install libc6:i386 -t stable -y -qq 2>&1 > /dev/null
 testdpkginstalled libc6
