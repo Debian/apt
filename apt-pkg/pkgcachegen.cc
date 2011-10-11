@@ -182,82 +182,149 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       if (PackageName.empty() == true)
 	 return false;
 
-      string const Arch = List.Architecture();
- 
+      Counter++;
+      if (Counter % 100 == 0 && Progress != 0)
+	 Progress->Progress(List.Offset());
+
+      string Arch = List.Architecture();
+      string const Version = List.Version();
+      if (Version.empty() == true && Arch.empty() == true)
+      {
+	 if (MergeListGroup(List, PackageName) == false)
+	    return false;
+      }
+
+      if (Arch.empty() == true)
+	 Arch = _config->Find("APT::Architecture");
+
       // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
       Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
       if (NewPackage(Pkg, PackageName, Arch) == false)
 	 return _error->Error(_("Error occurred while processing %s (NewPackage)"),PackageName.c_str());
-      Counter++;
-      if (Counter % 100 == 0 && Progress != 0)
-	 Progress->Progress(List.Offset());
 
-      /* Get a pointer to the version structure. We know the list is sorted
-         so we use that fact in the search. Insertion of new versions is
-	 done with correct sorting */
-      string Version = List.Version();
+
       if (Version.empty() == true)
       {
-	 // we first process the package, then the descriptions
-	 // (this has the bonus that we get MMap error when we run out
-	 //  of MMap space)
-	 pkgCache::VerIterator Ver(Cache);
-	 Dynamic<pkgCache::VerIterator> DynVer(Ver);
-	 if (List.UsePackage(Pkg, Ver) == false)
-	    return _error->Error(_("Error occurred while processing %s (UsePackage1)"),
-				 PackageName.c_str());
-
- 	 // Find the right version to write the description
- 	 MD5SumValue CurMd5 = List.Description_md5();
- 	 Ver = Pkg.VersionList();
-
-	 for (; Ver.end() == false; ++Ver)
- 	 {
- 	    pkgCache::DescIterator Desc = Ver.DescriptionList();
-	    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
- 	    map_ptrloc *LastDesc = &Ver->DescriptionList;
-	    bool duplicate=false;
-
-	    // don't add a new description if we have one for the given
-	    // md5 && language
-	    for ( ; Desc.end() == false; ++Desc)
-	       if (MD5SumValue(Desc.md5()) == CurMd5 && 
-	           Desc.LanguageCode() == List.DescriptionLanguage())
-		  duplicate=true;
-	    if(duplicate)
-	       continue;
-	    
- 	    for (Desc = Ver.DescriptionList();
-		 Desc.end() == false;
-		 LastDesc = &Desc->NextDesc, ++Desc)
-	    {
- 	       if (MD5SumValue(Desc.md5()) == CurMd5) 
-               {
- 		  // Add new description
-		  void const * const oldMap = Map.Data();
-		  map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
-		  if (oldMap != Map.Data())
-		     LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
-		  *LastDesc = descindex;
- 		  Desc->ParentPkg = Pkg.Index();
-		  
-		  if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
- 		     return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"),PackageName.c_str());
- 		  break;
- 	       }
-	    }
- 	 }
-
-	 continue;
+	 if (MergeListPackage(List, Pkg) == false)
+	    return false;
+      }
+      else
+      {
+	 if (MergeListVersion(List, Pkg, Version, OutVer) == false)
+	    return false;
       }
 
-      pkgCache::VerIterator Ver = Pkg.VersionList();
-      Dynamic<pkgCache::VerIterator> DynVer(Ver);
-      map_ptrloc *LastVer = &Pkg->VersionList;
-      void const * oldMap = Map.Data();
+      if (OutVer != 0)
+      {
+	 FoundFileDeps |= List.HasFileDeps();
+	 return true;
+      }
+   }
+
+   if (Cache.HeaderP->PackageCount >= (1ULL<<sizeof(Cache.PkgP->ID)*8)-1)
+      return _error->Error(_("Wow, you exceeded the number of package "
+			     "names this APT is capable of."));
+   if (Cache.HeaderP->VersionCount >= (1ULL<<(sizeof(Cache.VerP->ID)*8))-1)
+      return _error->Error(_("Wow, you exceeded the number of versions "
+			     "this APT is capable of."));
+   if (Cache.HeaderP->DescriptionCount >= (1ULL<<(sizeof(Cache.DescP->ID)*8))-1)
+      return _error->Error(_("Wow, you exceeded the number of descriptions "
+			     "this APT is capable of."));
+   if (Cache.HeaderP->DependsCount >= (1ULL<<(sizeof(Cache.DepP->ID)*8))-1ULL)
+      return _error->Error(_("Wow, you exceeded the number of dependencies "
+			     "this APT is capable of."));
+
+   FoundFileDeps |= List.HasFileDeps();
+   return true;
+}
+// CacheGenerator::MergeListGroup					/*{{{*/
+bool pkgCacheGenerator::MergeListGroup(ListParser &List, std::string const &GrpName)
+{
+   pkgCache::GrpIterator Grp = Cache.FindGrp(GrpName);
+   if (Grp.end() == true)
+      return _error->Error("Information merge for non-existent group %s requested", GrpName.c_str());
+   Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
+
+   pkgCache::PkgIterator Pkg;
+   Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
+   for (Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg))
+      if (MergeListPackage(List, Pkg) == false)
+	 return false;
+
+   return true;
+}
+									/*}}}*/
+// CacheGenerator::MergeListPackage					/*{{{*/
+bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg)
+{
+   // we first process the package, then the descriptions
+   // (for deb this package processing is in fact a no-op)
+   pkgCache::VerIterator Ver(Cache);
+   Dynamic<pkgCache::VerIterator> DynVer(Ver);
+   if (List.UsePackage(Pkg, Ver) == false)
+      return _error->Error(_("Error occurred while processing %s (UsePackage1)"),
+			   Pkg.Name());
+
+   // Find the right version to write the description
+   MD5SumValue CurMd5 = List.Description_md5();
+
+   for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
+   {
+      pkgCache::DescIterator Desc = Ver.DescriptionList();
+      Dynamic<pkgCache::DescIterator> DynDesc(Desc);
+      map_ptrloc *LastDesc = &Ver->DescriptionList;
+
+
+      // don't add a new description if we have one for the given
+      // md5 && language
+      bool duplicate = false;
+      for ( ; Desc.end() == false; ++Desc)
+	 if (MD5SumValue(Desc.md5()) == CurMd5 &&
+	     Desc.LanguageCode() == List.DescriptionLanguage())
+	       duplicate=true;
+      if (duplicate == true)
+	 continue;
+
+      for (Desc = Ver.DescriptionList();
+	   Desc.end() == false;
+	    LastDesc = &Desc->NextDesc, ++Desc)
+      {
+	 if (MD5SumValue(Desc.md5()) != CurMd5)
+	    continue;
+
+	 // Add new description
+	 void const * const oldMap = Map.Data();
+	 map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
+	 if (oldMap != Map.Data())
+	    LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+	 *LastDesc = descindex;
+	 Desc->ParentPkg = Pkg.Index();
+
+	 if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
+	    return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"), Pkg.Name());
+	 break;
+       }
+   }
+
+   return true;
+}
+									/*}}}*/
+// CacheGenerator::MergeListVersion					/*{{{*/
+bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
+					 std::string const &Version, pkgCache::VerIterator* &OutVer)
+{
+   pkgCache::VerIterator Ver = Pkg.VersionList();
+   Dynamic<pkgCache::VerIterator> DynVer(Ver);
+   map_ptrloc *LastVer = &Pkg->VersionList;
+   void const * oldMap = Map.Data();
+
+   unsigned long const Hash = List.VersionHash();
+   if (Ver.end() == false)
+   {
+      /* We know the list is sorted so we use that fact in the search.
+         Insertion of new versions is done with correct sorting */
       int Res = 1;
-      unsigned long const Hash = List.VersionHash();
       for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
       {
 	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
@@ -276,92 +343,77 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
 	    return _error->Error(_("Error occurred while processing %s (UsePackage2)"),
-				 PackageName.c_str());
+				 Pkg.Name());
 
 	 if (NewFileVer(Ver,List) == false)
 	    return _error->Error(_("Error occurred while processing %s (NewFileVer1)"),
-				 PackageName.c_str());
-	 
+				 Pkg.Name());
+
 	 // Read only a single record and return
 	 if (OutVer != 0)
 	 {
 	    *OutVer = Ver;
-	    FoundFileDeps |= List.HasFileDeps();
 	    return true;
 	 }
-	 
-	 continue;
-      }
 
-      // Add a new version
-      map_ptrloc const verindex = NewVersion(Ver,Version,*LastVer);
-      if (verindex == 0 && _error->PendingError())
-	 return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
-			      PackageName.c_str(), 1);
-
-      if (oldMap != Map.Data())
-	 LastVer += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
-      *LastVer = verindex;
-      Ver->ParentPkg = Pkg.Index();
-      Ver->Hash = Hash;
-
-      if (List.NewVersion(Ver) == false)
-	 return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
-			      PackageName.c_str(), 2);
-
-      if (List.UsePackage(Pkg,Ver) == false)
-	 return _error->Error(_("Error occurred while processing %s (UsePackage3)"),
-			      PackageName.c_str());
-      
-      if (NewFileVer(Ver,List) == false)
-	 return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
-			      PackageName.c_str(), 3);
-
-      // Read only a single record and return
-      if (OutVer != 0)
-      {
-	 *OutVer = Ver;
-	 FoundFileDeps |= List.HasFileDeps();
 	 return true;
-      }      
-
-      /* Record the Description data. Description data always exist in
-	 Packages and Translation-* files. */
-      pkgCache::DescIterator Desc = Ver.DescriptionList();
-      Dynamic<pkgCache::DescIterator> DynDesc(Desc);
-      map_ptrloc *LastDesc = &Ver->DescriptionList;
-
-      // Skip to the end of description set
-      for (; Desc.end() == false; LastDesc = &Desc->NextDesc, Desc++);
-
-      // Add new description
-      oldMap = Map.Data();
-      map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
-      if (oldMap != Map.Data())
-	 LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
-      *LastDesc = descindex;
-      Desc->ParentPkg = Pkg.Index();
-
-      if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
-	 return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),PackageName.c_str());
+      }
    }
 
-   FoundFileDeps |= List.HasFileDeps();
+   // Add a new version
+   map_ptrloc const verindex = NewVersion(Ver,Version,*LastVer);
+   if (verindex == 0 && _error->PendingError())
+      return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
+			   Pkg.Name(), 1);
 
-   if (Cache.HeaderP->PackageCount >= (1ULL<<sizeof(Cache.PkgP->ID)*8)-1)
-      return _error->Error(_("Wow, you exceeded the number of package "
-			     "names this APT is capable of."));
-   if (Cache.HeaderP->VersionCount >= (1ULL<<(sizeof(Cache.VerP->ID)*8))-1)
-      return _error->Error(_("Wow, you exceeded the number of versions "
-			     "this APT is capable of."));
-   if (Cache.HeaderP->DescriptionCount >= (1ULL<<(sizeof(Cache.DescP->ID)*8))-1)
-      return _error->Error(_("Wow, you exceeded the number of descriptions "
-			     "this APT is capable of."));
-   if (Cache.HeaderP->DependsCount >= (1ULL<<(sizeof(Cache.DepP->ID)*8))-1ULL)
-      return _error->Error(_("Wow, you exceeded the number of dependencies "
-			     "this APT is capable of."));
+   if (oldMap != Map.Data())
+	 LastVer += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+   *LastVer = verindex;
+   Ver->ParentPkg = Pkg.Index();
+   Ver->Hash = Hash;
+
+   if (List.NewVersion(Ver) == false)
+      return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
+			   Pkg.Name(), 2);
+
+   if (List.UsePackage(Pkg,Ver) == false)
+      return _error->Error(_("Error occurred while processing %s (UsePackage3)"),
+			   Pkg.Name());
+
+   if (NewFileVer(Ver,List) == false)
+      return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
+			   Pkg.Name(), 3);
+
+   // Read only a single record and return
+   if (OutVer != 0)
+   {
+      *OutVer = Ver;
+      return true;
+   }
+
+   /* Record the Description data. Description data always exist in
+      Packages and Translation-* files. */
+   pkgCache::DescIterator Desc = Ver.DescriptionList();
+   Dynamic<pkgCache::DescIterator> DynDesc(Desc);
+   map_ptrloc *LastDesc = &Ver->DescriptionList;
+
+   // Skip to the end of description set
+   for (; Desc.end() == false; LastDesc = &Desc->NextDesc, ++Desc);
+
+   // Add new description
+   oldMap = Map.Data();
+   map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
+   if (oldMap != Map.Data())
+       LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+   *LastDesc = descindex;
+   Desc->ParentPkg = Pkg.Index();
+
+   if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
+      return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),Pkg.Name());
+
    return true;
 }
+									/*}}}*/
 									/*}}}*/
 // CacheGenerator::MergeFileProvides - Merge file provides   		/*{{{*/
 // ---------------------------------------------------------------------

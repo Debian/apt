@@ -26,7 +26,11 @@ class HashSumValue
    bool operator ==(const HashSumValue &rhs) const
    {
       return memcmp(Sum,rhs.Sum,sizeof(Sum)) == 0;
-   }; 
+   };
+   bool operator !=(const HashSumValue &rhs) const
+   {
+      return memcmp(Sum,rhs.Sum,sizeof(Sum)) != 0;
+   };
 
    std::string Value() const
    {

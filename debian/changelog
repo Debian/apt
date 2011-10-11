@@ -22,6 +22,8 @@ apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
     - none is a separator, not a language: no need for Index (Closes: #624218)
   * apt-pkg/aptconfiguration.cc:
     - do not builtin languages only if none is forced (Closes: #643787)
+  * apt-pkg/pkgcachegen.cc:
+    - refactor MergeList by creating -Group, -Package and -Version specialist
 
   [ Michael Vogt ]
   * apt-pkg/contrib/configuration.cc:
@@ -36,7 +38,7 @@ apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
   * ftparchive/cachedb.cc:
     - fix buffersize in bytes2hex
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 05 Oct 2011 22:40:25 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 11 Oct 2011 18:32:13 +0200
 
 apt (0.8.16~exp6) experimental; urgency=low
 
