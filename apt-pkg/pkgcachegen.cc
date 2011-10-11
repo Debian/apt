@@ -38,6 +38,9 @@
 typedef vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
+bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+			    MD5SumValue const &CurMd5, std::string const &CurLang);
+
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* We set the dirty flag and make sure that is written to the disk */
@@ -242,8 +245,11 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 bool pkgCacheGenerator::MergeListGroup(ListParser &List, std::string const &GrpName)
 {
    pkgCache::GrpIterator Grp = Cache.FindGrp(GrpName);
+   // a group has no data on it's own, only packages have it but these
+   // stanzas like this come from Translation- files to add descriptions,
+   // but without a version we don't need a description for it…
    if (Grp.end() == true)
-      return _error->Error("Information merge for non-existent group %s requested", GrpName.c_str());
+      return true;
    Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
 
    pkgCache::PkgIterator Pkg;
@@ -268,6 +274,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
    // Find the right version to write the description
    MD5SumValue CurMd5 = List.Description_md5();
+   std::string CurLang = List.DescriptionLanguage();
 
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
@@ -275,15 +282,9 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
       Dynamic<pkgCache::DescIterator> DynDesc(Desc);
       map_ptrloc *LastDesc = &Ver->DescriptionList;
 
-
       // don't add a new description if we have one for the given
       // md5 && language
-      bool duplicate = false;
-      for ( ; Desc.end() == false; ++Desc)
-	 if (MD5SumValue(Desc.md5()) == CurMd5 &&
-	     Desc.LanguageCode() == List.DescriptionLanguage())
-	       duplicate=true;
-      if (duplicate == true)
+      if (IsDuplicateDescription(Desc, CurMd5, CurLang) == true)
 	 continue;
 
       for (Desc = Ver.DescriptionList();
@@ -295,7 +296,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
 	 // Add new description
 	 void const * const oldMap = Map.Data();
-	 map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), CurMd5, *LastDesc);
+	 map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
 	 if (oldMap != Map.Data())
 	    LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
 	 *LastDesc = descindex;
@@ -391,16 +392,34 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       return true;
    }
 
-   /* Record the Description data. Description data always exist in
-      Packages and Translation-* files. */
+   /* Record the Description (it is not translated) */
+   MD5SumValue CurMd5 = List.Description_md5();
+   if (CurMd5.Value().empty() == true)
+      return true;
+   std::string CurLang = List.DescriptionLanguage();
+
+   /* Before we add a new description we first search in the group for
+      a version with a description of the same MD5 - if so we reuse this
+      description group instead of creating our own for this version */
+   pkgCache::GrpIterator Grp = Pkg.Group();
+   for (pkgCache::PkgIterator P = Grp.PackageList();
+	P.end() == false; P = Grp.NextPkg(P))
+   {
+      for (pkgCache::VerIterator V = P.VersionList();
+	   V.end() == false; ++V)
+      {
+	 if (IsDuplicateDescription(V.DescriptionList(), CurMd5, "") == false)
+	    continue;
+	 Ver->DescriptionList = V->DescriptionList;
+	 return true;
+      }
+   }
+
+   // We haven't found reusable descriptions, so add the first description
    pkgCache::DescIterator Desc = Ver.DescriptionList();
    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
    map_ptrloc *LastDesc = &Ver->DescriptionList;
 
-   // Skip to the end of description set
-   for (; Desc.end() == false; LastDesc = &Desc->NextDesc, ++Desc);
-
-   // Add new description
    oldMap = Map.Data();
    map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
    if (oldMap != Map.Data())
@@ -1403,3 +1422,14 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
    return true;
 }
 									/*}}}*/
+// IsDuplicateDescription						/*{{{*/
+bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+			    MD5SumValue const &CurMd5, std::string const &CurLang)
+{
+   for ( ; Desc.end() == false; ++Desc)
+      if (MD5SumValue(Desc.md5()) == CurMd5 && Desc.LanguageCode() == CurLang)
+	 return true;
+   return false;
+}
+									/*}}}*/
+
