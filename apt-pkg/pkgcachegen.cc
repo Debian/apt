@@ -204,7 +204,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       pkgCache::PkgIterator Pkg;
       Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
       if (NewPackage(Pkg, PackageName, Arch) == false)
-	 return _error->Error(_("Error occurred while processing %s (NewPackage)"),PackageName.c_str());
+	 // TRANSLATOR: The first placeholder is a package name,
+	 // the other two should be copied verbatim as they include debug info
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			      PackageName.c_str(), "NewPackage", 1);
 
 
       if (Version.empty() == true)
@@ -269,8 +272,8 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
    pkgCache::VerIterator Ver(Cache);
    Dynamic<pkgCache::VerIterator> DynVer(Ver);
    if (List.UsePackage(Pkg, Ver) == false)
-      return _error->Error(_("Error occurred while processing %s (UsePackage1)"),
-			   Pkg.Name());
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "UsePackage", 1);
 
    // Find the right version to write the description
    MD5SumValue CurMd5 = List.Description_md5();
@@ -305,7 +308,8 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
       Desc->ParentPkg = Pkg.Index();
 
       if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
-	 return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"), Pkg.Name());
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			      Pkg.Name(), "NewFileDesc", 1);
 
       // we can stop here as all "same" versions will share the description
       break;
@@ -346,12 +350,12 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       if (Res == 0 && Ver.end() == false && Ver->Hash == Hash)
       {
 	 if (List.UsePackage(Pkg,Ver) == false)
-	    return _error->Error(_("Error occurred while processing %s (UsePackage2)"),
-				 Pkg.Name());
+	    return _error->Error(_("Error occurred while processing %s (%s%d)"),
+				 Pkg.Name(), "UsePackage", 2);
 
 	 if (NewFileVer(Ver,List) == false)
-	    return _error->Error(_("Error occurred while processing %s (NewFileVer1)"),
-				 Pkg.Name());
+	    return _error->Error(_("Error occurred while processing %s (%s%d)"),
+				 Pkg.Name(), "NewFileVer", 1);
 
 	 // Read only a single record and return
 	 if (OutVer != 0)
@@ -367,8 +371,8 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    // Add a new version
    map_ptrloc const verindex = NewVersion(Ver,Version,*LastVer);
    if (verindex == 0 && _error->PendingError())
-      return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
-			   Pkg.Name(), 1);
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "NewVersion", 1);
 
    if (oldMap != Map.Data())
 	 LastVer += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
@@ -376,17 +380,18 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    Ver->ParentPkg = Pkg.Index();
    Ver->Hash = Hash;
 
-   if (List.NewVersion(Ver) == false)
-      return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
-			   Pkg.Name(), 2);
+   if (unlikely(List.NewVersion(Ver) == false))
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "NewVersion", 2);
 
-   if (List.UsePackage(Pkg,Ver) == false)
-      return _error->Error(_("Error occurred while processing %s (UsePackage3)"),
-			   Pkg.Name());
+   if (unlikely(List.UsePackage(Pkg,Ver) == false))
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "UsePackage", 3);
 
-   if (NewFileVer(Ver,List) == false)
-      return _error->Error(_("Error occurred while processing %s (NewVersion%d)"),
-			   Pkg.Name(), 3);
+   if (unlikely(NewFileVer(Ver,List) == false))
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "NewFileVer", 2);
+
 
    // Read only a single record and return
    if (OutVer != 0)
@@ -431,7 +436,8 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    Desc->ParentPkg = Pkg.Index();
 
    if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
-      return _error->Error(_("Error occurred while processing %s (NewFileDesc2)"),Pkg.Name());
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "NewFileDesc", 2);
 
    return true;
 }
@@ -461,8 +467,8 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
       pkgCache::PkgIterator Pkg = Cache.FindPkg(PackageName);
       Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
       if (Pkg.end() == true)
-	 return _error->Error(_("Error occurred while processing %s (FindPkg)"),
-				PackageName.c_str());
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+				PackageName.c_str(), "FindPkg", 1);
       Counter++;
       if (Counter % 100 == 0 && Progress != 0)
 	 Progress->Progress(List.Offset());
@@ -475,7 +481,8 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
 	 if (Ver->Hash == Hash && Version.c_str() == Ver.VerStr())
 	 {
 	    if (List.CollectFileProvides(Cache,Ver) == false)
-	       return _error->Error(_("Error occurred while processing %s (CollectFileProvides)"),PackageName.c_str());
+	       return _error->Error(_("Error occurred while processing %s (%s%d)"),
+				    PackageName.c_str(), "CollectFileProvides", 1);
 	    break;
 	 }
       }
