@@ -28,6 +28,8 @@ apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
       This also means that descriptions are shared across archives now.
     - add implicit dependencies needed for Multi-Arch at the time a Version
       struct is created and not at the end of the cache generation
+  * apt-pkg/pkgcache.cc:
+    - always prefer "en" over "" for "en"-language regardless of cache-order
 
   [ Michael Vogt ]
   * apt-pkg/contrib/configuration.cc:
@@ -42,7 +44,7 @@ apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
   * ftparchive/cachedb.cc:
     - fix buffersize in bytes2hex
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 12 Oct 2011 20:02:25 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 12 Oct 2011 22:27:18 +0200
 
 apt (0.8.16~exp6) experimental; urgency=low
 
