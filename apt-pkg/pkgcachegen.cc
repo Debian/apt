@@ -279,33 +279,36 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
       pkgCache::DescIterator Desc = Ver.DescriptionList();
-      Dynamic<pkgCache::DescIterator> DynDesc(Desc);
-      map_ptrloc *LastDesc = &Ver->DescriptionList;
+
+      // a version can only have one md5 describing it
+      if (MD5SumValue(Desc.md5()) != CurMd5)
+	 continue;
 
       // don't add a new description if we have one for the given
       // md5 && language
       if (IsDuplicateDescription(Desc, CurMd5, CurLang) == true)
 	 continue;
 
-      for (Desc = Ver.DescriptionList();
-	   Desc.end() == false;
-	    LastDesc = &Desc->NextDesc, ++Desc)
-      {
-	 if (MD5SumValue(Desc.md5()) != CurMd5)
-	    continue;
+      Dynamic<pkgCache::DescIterator> DynDesc(Desc);
+      // we add at the end, so that the start is constant as we need
+      // that to be able to efficiently share these lists
+      map_ptrloc *LastDesc = &Ver->DescriptionList;
+      for (;Desc.end() == false && Desc->NextDesc != 0; ++Desc);
+      if (Desc.end() == false)
+	 LastDesc = &Desc->NextDesc;
 
-	 // Add new description
-	 void const * const oldMap = Map.Data();
-	 map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
-	 if (oldMap != Map.Data())
-	    LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
-	 *LastDesc = descindex;
-	 Desc->ParentPkg = Pkg.Index();
+      void const * const oldMap = Map.Data();
+      map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+      if (oldMap != Map.Data())
+	 LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+      *LastDesc = descindex;
+      Desc->ParentPkg = Pkg.Index();
 
-	 if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
-	    return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"), Pkg.Name());
-	 break;
-       }
+      if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
+	 return _error->Error(_("Error occurred while processing %s (NewFileDesc1)"), Pkg.Name());
+
+      // we can stop here as all "same" versions will share the description
+      break;
    }
 
    return true;
@@ -421,7 +424,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    map_ptrloc *LastDesc = &Ver->DescriptionList;
 
    oldMap = Map.Data();
-   map_ptrloc const descindex = NewDescription(Desc, List.DescriptionLanguage(), List.Description_md5(), *LastDesc);
+   map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
    if (oldMap != Map.Data())
        LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
    *LastDesc = descindex;
@@ -1426,8 +1429,11 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang)
 {
-   for ( ; Desc.end() == false; ++Desc)
-      if (MD5SumValue(Desc.md5()) == CurMd5 && Desc.LanguageCode() == CurLang)
+   // Descriptions in the same link-list have all the same md5
+   if (MD5SumValue(Desc.md5()) != CurMd5)
+      return false;
+   for (; Desc.end() == false; ++Desc)
+      if (Desc.LanguageCode() == CurLang)
 	 return true;
    return false;
 }
