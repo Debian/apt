@@ -22,6 +22,7 @@
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/macros.h>
 
 #include <vector>
 
@@ -94,7 +95,7 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-   bool FinishCache(OpProgress *Progress);
+   __deprecated bool FinishCache(OpProgress *Progress);
 
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
@@ -111,6 +112,10 @@ class pkgCacheGenerator							/*{{{*/
    bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
    bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
 			 std::string const &Version, pkgCache::VerIterator* &OutVer);
+
+   bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
+			   pkgCache::VerIterator &V);
+   bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
