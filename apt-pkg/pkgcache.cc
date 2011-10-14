@@ -893,11 +893,22 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    {
       pkgCache::DescIterator Desc = DescriptionList();
       for (; Desc.end() == false; ++Desc)
-	 if (*l == Desc.LanguageCode() ||
-	     (*l == "en" && strcmp(Desc.LanguageCode(),"") == 0))
+	 if (*l == Desc.LanguageCode())
 	    break;
       if (Desc.end() == true)
-	 continue;
+      {
+	 if (*l == "en")
+	 {
+	    Desc = DescriptionList();
+	    for (; Desc.end() == false; ++Desc)
+	       if (strcmp(Desc.LanguageCode(), "") == 0)
+		  break;
+	    if (Desc.end() == true)
+	       continue;
+	 }
+	 else
+	    continue;
+      }
       return Desc;
    }
    for (pkgCache::DescIterator Desc = DescriptionList();
