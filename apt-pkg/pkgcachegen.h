@@ -105,6 +105,12 @@ class pkgCacheGenerator							/*{{{*/
 
    pkgCacheGenerator(DynamicMMap *Map,OpProgress *Progress);
    ~pkgCacheGenerator();
+
+   private:
+   bool MergeListGroup(ListParser &List, std::string const &GrpName);
+   bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
+   bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
+			 std::string const &Version, pkgCache::VerIterator* &OutVer);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
