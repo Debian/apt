@@ -1,3 +1,16 @@
+apt (0.8.16~exp5ubuntu13.1) UNRELEASEDoneiric-proposed; urgency=low
+  
+  [ David Kalnischkies ]  
+  * apt-pkg/pkgcachegen.cc:
+    - refactor MergeList by creating -Group, -Package and -Version specialist
+    - share description list between "same" versions (LP: #868977)
+      This also means that descriptions are shared across archives now.
+  * apt-pkg/pkgcache.cc:
+    - always prefer "en" over "" for "en"-language regardless of cache-order
+      (LP: #868977)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 14 Oct 2011 14:51:06 +0200
+
 apt (0.8.16~exp5ubuntu13) oneiric; urgency=low
 
   [ Adam Conrad ]
