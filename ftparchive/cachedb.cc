@@ -18,6 +18,7 @@
 #include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
     
 #include <netinet/in.h>       // htonl, etc
 
@@ -28,7 +29,7 @@
 // CacheDB::ReadyDB - Ready the DB2					/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens the DB2 file for caching package information */
-bool CacheDB::ReadyDB(string const &DB)
+bool CacheDB::ReadyDB(std::string const &DB)
 {
    int err;
 
@@ -48,7 +49,7 @@ bool CacheDB::ReadyDB(string const &DB)
    
    DBLoaded = false;
    Dbp = 0;
-   DBFile = string();
+   DBFile = std::string();
    
    if (DB.empty())
       return true;
@@ -162,7 +163,7 @@ bool CacheDB::GetCurStat()
 									/*}}}*/
 // CacheDB::GetFileInfo - Get all the info about the file		/*{{{*/
 // ---------------------------------------------------------------------
-bool CacheDB::GetFileInfo(string const &FileName, bool const &DoControl, bool const &DoContents,
+bool CacheDB::GetFileInfo(std::string const &FileName, bool const &DoControl, bool const &DoContents,
 				bool const &GenContentsOnly, bool const &DoMD5, bool const &DoSHA1,
 				bool const &DoSHA256, 	bool const &DoSHA512, 
                           bool const &checkMtime)
@@ -298,9 +299,9 @@ bool CacheDB::LoadContents(bool const &GenOnly)
 }
 									/*}}}*/
 
-static string bytes2hex(uint8_t *bytes, size_t length) {
+static std::string bytes2hex(uint8_t *bytes, size_t length) {
    char buf[3];
-   string space;
+   std::string space;
 
    space.reserve(length*2 + 1);
    for (size_t i = 0; i < length; i++) {
@@ -500,7 +501,7 @@ bool CacheDB::Clean()
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cl") == 0 ||
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cn") == 0)
 	 {
-            if (FileExists(string((const char *)Key.data,Colon)) == true)
+            if (FileExists(std::string((const char *)Key.data,Colon)) == true)
 		continue;	     
 	 }
       }

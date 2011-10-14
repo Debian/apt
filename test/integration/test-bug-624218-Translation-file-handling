@@ -1,0 +1,87 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+buildsimplenativepackage 'coolstuff' 'all' '1.0' 'unstable'
+
+setupaptarchive
+
+changetowebserver
+
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'No download of non-existent locals' 'with Index'
+LC_ALL="" aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of existent locals' 'with Index'
+LC_ALL="" aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of en in LC_ALL=C' 'with Index'
+LC_ALL=C aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of en as forced language' 'with Index'
+aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of nothing else in forced language' 'with Index'
+aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download no Translation- if forced language is non-existent' 'with Index'
+aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of nothing if none is forced' 'with Index'
+aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+sed -i '/i18n\/Index$/ d' $(find aptarchive -name 'Release')
+signreleasefiles
+
+# we have to try as not every archive includes the i18n Index in the Release file - if it has one at all
+msgtest 'Download no Translation- if forced language is non-existent' 'with not-announced Index'
+aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+find aptarchive -name 'Index' -delete
+
+msgtest 'Download of en as forced language' 'without Index'
+aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of nothing else in forced language' 'without Index'
+aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of ast_DE as forced language' 'without Index'
+aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-ast_DE$' && msgpass || msgfail
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of nothing else in forced language' 'without Index'
+aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-[^a][^s]' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+msgtest 'Download of nothing if none is forced' 'without Index'
+aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists
+
+mkdir -p rootdir/var/lib/apt/lists
+touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translation-ast_DE
+
+msgtest 'Download of builtin files' 'without Index'
+aptget update | grep -q -e 'Translation-ast_DE' && msgpass || msgfail
+rm -rf rootdir/var/lib/apt/lists
+
+mkdir -p rootdir/var/lib/apt/lists
+touch rootdir/var/lib/apt/lists/localhost:8080_dists_unstable_main_i18n_Translation-ast_DE
+
+msgtest 'Download of nothing (even builtin) if none is forced' 'without Index'
+aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
+rm -rf rootdir/var/lib/apt/lists

@@ -13,6 +13,7 @@
 // Include files							/*{{{*/
 #include<config.h>
 
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>

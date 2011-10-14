@@ -29,9 +29,6 @@
 #include <algorithm>
 #include <stdint.h>
 
-using std::string;
-using std::min;
-
 #include "hashsum_template.h"
 
 typedef HashSumValue<128> MD5SumValue;

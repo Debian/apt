@@ -46,7 +46,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
 /* */
 pkgRecords::~pkgRecords()
 {
-   for ( vector<Parser*>::iterator it = Files.begin();
+   for ( std::vector<Parser*>::iterator it = Files.begin();
      it != Files.end();
      ++it)
    {

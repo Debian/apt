@@ -25,9 +25,12 @@
 
 
 #include <apt-pkg/arfile.h>
-#include <apt-pkg/database.h>
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/pkgcache.h>
+
+class FileFd;
+class pkgDataBase;
 
 class debDebFile
 {
@@ -68,7 +71,7 @@ class debDebFile::MemControlExtract : public pkgDirStream
    char *Control;
    pkgTagSection Section;
    unsigned long Length;
-   string Member;
+   std::string Member;
    
    // Members from DirStream
    virtual bool DoItem(Item &Itm,int &Fd);
@@ -81,7 +84,7 @@ class debDebFile::MemControlExtract : public pkgDirStream
    bool TakeControl(const void *Data,unsigned long Size);
       
    MemControlExtract() : IsControl(false), Control(0), Length(0), Member("control") {};
-   MemControlExtract(string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
+   MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
    ~MemControlExtract() {delete [] Control;};   
 };
 									/*}}}*/

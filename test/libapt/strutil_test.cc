@@ -4,7 +4,7 @@
 
 int main(int argc,char *argv[])
 {
-   string input, output, expected;
+   std::string input, output, expected;
 
    // no input
    input = "foobar";

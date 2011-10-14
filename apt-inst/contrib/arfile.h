@@ -17,7 +17,8 @@
 
 
 #include <string>
-#include <apt-pkg/fileutl.h>
+
+class FileFd;
 
 class ARArchive
 {
@@ -49,7 +50,7 @@ class ARArchive
 struct ARArchive::Member
 {
    // Fields from the header
-   string Name;
+   std::string Name;
    unsigned long MTime;
    unsigned long UID;
    unsigned long GID;

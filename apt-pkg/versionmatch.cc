@@ -24,6 +24,8 @@
 #include <regex.h>
 									/*}}}*/
 
+using std::string;
+
 // VersionMatch::pkgVersionMatch - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Break up the data string according to the selected type */

@@ -23,6 +23,8 @@
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/cdrom.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <locale.h>
 #include <iostream>

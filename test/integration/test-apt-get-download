@@ -13,13 +13,12 @@ buildsimplenativepackage 'apt' 'all' '2.0' 'unstable'
 setupaptarchive
 
 testdownload() {
-	msgtest 'Test download of package file' $1
-	if [ -z "$3" ]; then
-		aptget download ${2}
-	else
-		aptget download ${2}/${3}
+	local APT="$2"
+	if [ -n "$3" ]; then
+		APT="${APT}/${3}"
 	fi
-	test -f $1 && msgpass || msgfail
+	msgtest "Test download of package file $1 with" "$APT"
+	aptget -qq download ${APT} && test -f $1 && msgpass || msgfail
 }
 
 testdownload apt_1.0_all.deb apt stable

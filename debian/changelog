@@ -1,5 +1,36 @@
 apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
 
+  [ David Kalnischkies ]
+  * do not pollute namespace in the headers with using (Closes: #500198)
+  * use forward declaration in headers if possible instead of includes
+  * remove old APT_COMPATIBILITY ifdef's
+  * apt-pkg/deb/dpkgpm.cc:
+    - use std::vector instead of fixed size arrays to store args and
+      multiarch-packagename strings
+    - load the dpkg base arguments only one time and reuse them later
+  * cmdline/apt-get.cc:
+    - follow Provides in the evaluation of saving candidates, too, for
+      statisfying garbage package dependencies (Closes: #640590)
+  * apt-pkg/algorithms.cc:
+    - if a package is garbage, don't try to save it with FixByInstall
+  * apt-pkg/deb/debsrcrecords.cc:
+    - remove the limit of 400 Binaries for a source package (Closes: #622110)
+  * apt-pkg/deb/deblistparser.cc:
+    - fix crash when the dynamic mmap needs to be grown in
+      LoadReleaseInfo (LP: #854090)
+  * apt-pkg/deb/debmetaindex.cc:
+    - none is a separator, not a language: no need for Index (Closes: #624218)
+  * apt-pkg/aptconfiguration.cc:
+    - do not builtin languages only if none is forced (Closes: #643787)
+  * apt-pkg/pkgcachegen.cc:
+    - refactor MergeList by creating -Group, -Package and -Version specialist
+    - share description list between "same" versions (LP: #868977)
+      This also means that descriptions are shared across archives now.
+    - add implicit dependencies needed for Multi-Arch at the time a Version
+      struct is created and not at the end of the cache generation
+  * apt-pkg/pkgcache.cc:
+    - always prefer "en" over "" for "en"-language regardless of cache-order
+
   [ Michael Vogt ]
   * apt-pkg/contrib/configuration.cc:
     - fix double delete (LP: #848907)
@@ -8,17 +39,12 @@ apt (0.8.16~exp7) UNRELEASEDexperimental; urgency=low
     - fix fetching language information by adding OptionalSubIndexTarget
   * methods/https.cc:
     - cleanup broken downloads properly
-  
+
   [ Colin Watson ]
   * ftparchive/cachedb.cc:
     - fix buffersize in bytes2hex
 
-  [ David Kalnischkies ]  
-  * apt-pkg/deb/deblistparser.cc:
-    - fix crash when the dynamic mmap needs to be grown in
-      LoadReleaseInfo (LP: #854090)
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 05 Oct 2011 18:14:11 +0200
+ -- Michael Vogt <mvo@debian.org>  Fri, 14 Oct 2011 13:51:35 +0200
 
 apt (0.8.16~exp6) experimental; urgency=low
 

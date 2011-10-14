@@ -21,6 +21,8 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/filelist.h>
 
 #include <stdio.h>
 #include <errno.h>

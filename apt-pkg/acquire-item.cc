@@ -25,6 +25,8 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/metaindex.h>
 
 #include <sys/stat.h>
 #include <unistd.h>

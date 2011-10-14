@@ -18,7 +18,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/sourcelist.h>
-
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/metaindex.h>
 
 #include <algorithm>
 #include <fstream>

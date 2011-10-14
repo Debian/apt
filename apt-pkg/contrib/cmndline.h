@@ -44,9 +44,7 @@
 #ifndef PKGLIB_CMNDLINE_H
 #define PKGLIB_CMNDLINE_H
 
-
-
-#include <apt-pkg/configuration.h>
+class Configuration;
 
 class CommandLine
 {

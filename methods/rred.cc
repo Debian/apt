@@ -7,6 +7,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <sys/uio.h>
@@ -472,7 +473,7 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
 {
    Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
    URI Get = Itm->Uri;
-   string Path = Get.Host + Get.Path; // To account for relative paths
+   std::string Path = Get.Host + Get.Path; // To account for relative paths
 
    FetchResult Res;
    Res.Filename = Itm->DestFile;
@@ -525,7 +526,7 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
       and use the access time from the "old" file */
    struct stat BufBase, BufPatch;
    if (stat(Path.c_str(),&BufBase) != 0 ||
-       stat(string(Path+".ed").c_str(),&BufPatch) != 0)
+       stat(std::string(Path+".ed").c_str(),&BufPatch) != 0)
       return _error->Errno("stat",_("Failed to stat"));
 
    struct utimbuf TimeBuf;

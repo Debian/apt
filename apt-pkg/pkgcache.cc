@@ -490,7 +490,7 @@ pkgCache::PkgIterator::CurVersion() const
    if they provide no new information (e.g. there is no newer version than candidate)
    If no version and/or section can be found "none" is used. */
 std::ostream& 
-operator<<(ostream& out, pkgCache::PkgIterator Pkg) 
+operator<<(std::ostream& out, pkgCache::PkgIterator Pkg) 
 {
    if (Pkg.end() == true)
       return out << "invalid package";
@@ -685,7 +685,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
 // ostream operator to handle string representation of a dependecy	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::ostream& operator<<(ostream& out, pkgCache::DepIterator D)
+std::ostream& operator<<(std::ostream& out, pkgCache::DepIterator D)
 {
    if (D.end() == true)
       return out << "invalid dependency";
@@ -894,11 +894,22 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    {
       pkgCache::DescIterator Desc = DescriptionList();
       for (; Desc.end() == false; ++Desc)
-	 if (*l == Desc.LanguageCode() ||
-	     (*l == "en" && strcmp(Desc.LanguageCode(),"") == 0))
+	 if (*l == Desc.LanguageCode())
 	    break;
       if (Desc.end() == true)
-	 continue;
+      {
+	 if (*l == "en")
+	 {
+	    Desc = DescriptionList();
+	    for (; Desc.end() == false; ++Desc)
+	       if (strcmp(Desc.LanguageCode(), "") == 0)
+		  break;
+	    if (Desc.end() == true)
+	       continue;
+	 }
+	 else
+	    continue;
+      }
       return Desc;
    }
    for (pkgCache::DescIterator Desc = DescriptionList();

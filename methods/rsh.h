@@ -12,9 +12,9 @@
 
 #include <string>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/hashes.h>
-#include <apt-pkg/acquire-method.h>
-#include <apt-pkg/fileutl.h>
+
+class Hashes;
+class FileFd;
 
 class RSHConn
 {
@@ -25,15 +25,15 @@ class RSHConn
    URI ServerName;
 
    // Private helper functions
-   bool ReadLine(string &Text);
+   bool ReadLine(std::string &Text);
 
    public:
 
    pid_t Process;
 
    // Raw connection IO
-   bool WriteMsg(string &Text,bool Sync,const char *Fmt,...);
-   bool Connect(string Host, string User);
+   bool WriteMsg(std::string &Text,bool Sync,const char *Fmt,...);
+   bool Connect(std::string Host, std::string User);
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
 
    // Connection control
@@ -50,14 +50,16 @@ class RSHConn
    ~RSHConn();
 };
 
+#include <apt-pkg/acquire-method.h>
+
 class RSHMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
-   virtual bool Configuration(string Message);
+   virtual bool Configuration(std::string Message);
 
    RSHConn *Server;
 
-   static string FailFile;
+   static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
    static void SigTerm(int);

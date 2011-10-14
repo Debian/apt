@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <iostream>
 
-#define P(x)	string(argv[1]).append("/").append(x)
+#define P(x)	std::string(argv[1]).append("/").append(x)
 
 int main(int argc,char *argv[])
 {

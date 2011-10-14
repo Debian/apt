@@ -37,14 +37,16 @@
 #ifndef PKGLIB_PKGSYSTEM_H
 #define PKGLIB_PKGSYSTEM_H
 
+#include <apt-pkg/pkgcache.h>
 
-#include <apt-pkg/depcache.h>
 #include <vector>
-    
+
+class pkgDepCache;
 class pkgPackageManager;
 class pkgVersioningSystem;
 class Configuration;
 class pkgIndexFile;
+class PkgFileIterator;
 
 class pkgSystem
 {   

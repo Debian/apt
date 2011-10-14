@@ -30,6 +30,8 @@
 #include <apti18n.h>
 									/*}}}*/
 
+using std::string;
+
 // IsMounted - Returns true if the mount point is mounted		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple algorithm that should always work, we stat the mount point

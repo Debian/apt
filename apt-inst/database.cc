@@ -11,13 +11,15 @@
 #include<config.h>
 
 #include <apt-pkg/database.h>
+#include <apt-pkg/filelist.h>
+#include <apt-pkg/pkgcachegen.h>
 									/*}}}*/
 
 // DataBase::GetMetaTmp - Get the temp dir				/*{{{*/
 // ---------------------------------------------------------------------
 /* This re-initializes the meta temporary directory if it hasn't yet 
    been inited for this cycle. The flag is the emptyness of MetaDir */
-bool pkgDataBase::GetMetaTmp(string &Dir)
+bool pkgDataBase::GetMetaTmp(std::string &Dir)
 {
    if (MetaDir.empty() == true)
       if (InitMetaTmp(MetaDir) == false)
@@ -26,3 +28,8 @@ bool pkgDataBase::GetMetaTmp(string &Dir)
    return true;
 }
 									/*}}}*/
+pkgDataBase::~pkgDataBase()
+{
+   delete Cache;
+   delete FList;
+}

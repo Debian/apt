@@ -17,6 +17,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/macros.h>
@@ -24,6 +25,8 @@
 #include <fnmatch.h>
 #include <ctype.h>
 									/*}}}*/
+
+using std::string;
 
 static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Important},
                        {"required",pkgCache::State::Required},
@@ -71,10 +74,7 @@ string debListParser::Package() {
 // ---------------------------------------------------------------------
 /* This will return the Architecture of the package this section describes */
 string debListParser::Architecture() {
-   std::string const Arch = Section.FindS("Architecture");
-   if (Arch.empty() == true)
-      return _config->Find("APT::Architecture");
-   return Arch;
+   return Section.FindS("Architecture");
 }
 									/*}}}*/
 // ListParser::ArchitectureAll						/*{{{*/

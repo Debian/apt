@@ -10,7 +10,6 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#define APT_COMPATIBILITY 986
 #include <config.h>
 
 #include <apt-pkg/debversion.h>
@@ -263,7 +262,7 @@ bool debVersioningSystem::CheckDep(const char *PkgVer,
 // debVS::UpstreamVersion - Return the upstream version string		/*{{{*/
 // ---------------------------------------------------------------------
 /* This strips all the debian specific information from the version number */
-string debVersioningSystem::UpstreamVersion(const char *Ver)
+std::string debVersioningSystem::UpstreamVersion(const char *Ver)
 {
    // Strip off the bit before the first colon
    const char *I = Ver;
@@ -278,6 +277,6 @@ string debVersioningSystem::UpstreamVersion(const char *Ver)
       if (*I == '-')
 	 Last = I - Ver;
    
-   return string(Ver,Last);
+   return std::string(Ver,Last);
 }
 									/*}}}*/

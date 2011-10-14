@@ -27,6 +27,8 @@
 #include <apti18n.h>
 									/*}}}*/
 
+using std::string;
+
 debSystem debSys;
 
 class debSystemPrivate {
@@ -219,7 +221,7 @@ signed debSystem::Score(Configuration const &Cnf)
 // System::AddStatusFiles - Register the status files			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debSystem::AddStatusFiles(vector<pkgIndexFile *> &List)
+bool debSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)
 {
    if (d->StatusFile == 0)
       d->StatusFile = new debStatusIndex(_config->FindFile("Dir::State::status"));

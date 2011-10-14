@@ -18,6 +18,7 @@
 
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
 #include <stdlib.h>
@@ -115,7 +116,7 @@ bool ARArchive::LoadHeaders()
       {
 	 unsigned int I = sizeof(Head.Name) - 1;
 	 for (; Head.Name[I] == ' ' || Head.Name[I] == '/'; I--);
-	 Memb->Name = string(Head.Name,I+1);
+	 Memb->Name = std::string(Head.Name,I+1);
       }
 
       // Account for the AR header alignment 

@@ -439,7 +439,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
    static bool const ConfigurePkgs = (conf == "all" || conf == "smart");
 
    if (List->IsFlag(Pkg,pkgOrderList::Configured)) 
-      return _error->Error("Internal configure error on '%s'. ",Pkg.Name(),1);
+      return _error->Error("Internal configure error on '%s'.", Pkg.Name());
 
    if (ConfigurePkgs == true && Configure(Pkg) == false)
       return false;

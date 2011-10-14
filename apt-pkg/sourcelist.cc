@@ -15,6 +15,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexfile.h>
 
 #include <fstream>
 

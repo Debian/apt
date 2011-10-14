@@ -24,6 +24,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <locale.h>
 #include <iostream>

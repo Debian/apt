@@ -22,31 +22,28 @@
 #include <vector>
 #include <cstring>
 
-using std::min;
-using std::vector;
-
 // helper class that contains hash function name
 // and hash
 class HashString
 {
  protected:
-   string Type;
-   string Hash;
+   std::string Type;
+   std::string Hash;
    static const char * _SupportedHashes[10];
 
  public:
-   HashString(string Type, string Hash);
-   HashString(string StringedHashString);  // init from str as "type:hash"
+   HashString(std::string Type, std::string Hash);
+   HashString(std::string StringedHashString);  // init from str as "type:hash"
    HashString();
 
    // get hash type used
-   string HashType() { return Type; };
+   std::string HashType() { return Type; };
 
    // verify the given filename against the currently loaded hash
-   bool VerifyFile(string filename) const;
+   bool VerifyFile(std::string filename) const;
 
    // helper
-   string toStr() const;                    // convert to str as "type:hash"
+   std::string toStr() const;                    // convert to str as "type:hash"
    bool empty() const;
 
    // return the list of hashes we support

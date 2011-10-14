@@ -15,9 +15,6 @@
 #include <algorithm>
 #include <stdint.h>
 
-using std::string;
-using std::min;
-
 template<int N>
 class HashSumValue
 {
@@ -29,9 +26,13 @@ class HashSumValue
    bool operator ==(const HashSumValue &rhs) const
    {
       return memcmp(Sum,rhs.Sum,sizeof(Sum)) == 0;
-   }; 
+   };
+   bool operator !=(const HashSumValue &rhs) const
+   {
+      return memcmp(Sum,rhs.Sum,sizeof(Sum)) != 0;
+   };
 
-   string Value() const
+   std::string Value() const
    {
       char Conv[16] =
       { '0','1','2','3','4','5','6','7','8','9','a','b',
@@ -48,7 +49,7 @@ class HashSumValue
          Result[I] = Conv[Sum[J] >> 4];
          Result[I + 1] = Conv[Sum[J] & 0xF];
       }
-      return string(Result);
+      return std::string(Result);
    };
    
    inline void Value(unsigned char S[N/8])
@@ -57,12 +58,12 @@ class HashSumValue
          S[I] = Sum[I];
    };
 
-   inline operator string() const 
+   inline operator std::string() const 
    {
       return Value();
    };
 
-   bool Set(string Str) 
+   bool Set(std::string Str) 
    {
       return Hex2Num(Str,Sum,sizeof(Sum));
    };
@@ -73,7 +74,7 @@ class HashSumValue
          Sum[I] = S[I];
    };
 
-   HashSumValue(string Str) 
+   HashSumValue(std::string Str) 
    {
          memset(Sum,0,sizeof(Sum));
          Set(Str);

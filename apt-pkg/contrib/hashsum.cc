@@ -14,7 +14,7 @@ bool SummationImplementation::AddFD(int const Fd, unsigned long long Size) {
    while (Size != 0 || ToEOF)
    {
       unsigned long long n = sizeof(Buf);
-      if (!ToEOF) n = min(Size, n);
+      if (!ToEOF) n = std::min(Size, n);
       Res = read(Fd, Buf, n);
       if (Res < 0 || (!ToEOF && Res != (ssize_t) n)) // error, or short read
 	 return false;

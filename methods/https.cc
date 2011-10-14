@@ -17,6 +17,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>

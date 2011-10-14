@@ -10,11 +10,17 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
+
 #include <sys/stat.h>
 #include <clocale>
 
 #include <apti18n.h>
 									/*}}}*/
+
+using std::string;
+
 string indexRecords::GetDist() const
 {
    return this->Dist;
@@ -146,7 +152,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    return true;
 }
 									/*}}}*/
-vector<string> indexRecords::MetaKeys()					/*{{{*/
+std::vector<string> indexRecords::MetaKeys()				/*{{{*/
 {
    std::vector<std::string> keys;
    std::map<string,checkSum *>::iterator I = Entries.begin();

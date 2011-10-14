@@ -13,12 +13,15 @@
 
 #define MAXLEN 360
 
-#include <apt-pkg/hashes.h>
+#include <apt-pkg/strutl.h>
+
+#include <string>
 
 using std::cout;
 using std::endl;
 
 class HttpMethod;
+class Hashes;
 
 class CircleBuf
 {
@@ -26,7 +29,7 @@ class CircleBuf
    unsigned long long Size;
    unsigned long long InP;
    unsigned long long OutP;
-   string OutQueue;
+   std::string OutQueue;
    unsigned long long StrPos;
    unsigned long long MaxGet;
    struct timeval Start;
@@ -60,11 +63,11 @@ class CircleBuf
    
    // Read data in
    bool Read(int Fd);
-   bool Read(string Data);
+   bool Read(std::string Data);
    
    // Write data out
    bool Write(int Fd);
-   bool WriteTillEl(string &Data,bool Single = false);
+   bool WriteTillEl(std::string &Data,bool Single = false);
    
    // Control the write limit
    void Limit(long long Max) {if (Max == -1) MaxGet = 0-1; else MaxGet = OutP + Max;}   
@@ -80,7 +83,7 @@ class CircleBuf
    void Stats();
 
    CircleBuf(unsigned long long Size);
-   ~CircleBuf() {delete [] Buf; delete Hash;};
+   ~CircleBuf();
 };
 
 struct ServerState
@@ -99,7 +102,7 @@ struct ServerState
    enum {Chunked,Stream,Closes} Encoding;
    enum {Header, Data} State;
    bool Persistent;
-   string Location;
+   std::string Location;
    
    // This is a Persistent attribute of the server itself.
    bool Pipeline;
@@ -112,7 +115,7 @@ struct ServerState
    int ServerFd;
    URI ServerName;
   
-   bool HeaderLine(string Line);
+   bool HeaderLine(std::string Line);
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
                  Encoding = Closes; time(&Date); ServerFd = -1; 
@@ -167,10 +170,10 @@ class HttpMethod : public pkgAcqMethod
    /** \brief Try to AutoDetect the proxy */
    bool AutoDetectProxy();
 
-   virtual bool Configuration(string Message);
+   virtual bool Configuration(std::string Message);
    
    // In the event of a fatal signal this file will be closed and timestamped.
-   static string FailFile;
+   static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
    static void SigTerm(int);
@@ -178,8 +181,8 @@ class HttpMethod : public pkgAcqMethod
    protected:
    virtual bool Fetch(FetchItem *);
    
-   string NextURI;
-   string AutoDetectProxyCmd;
+   std::string NextURI;
+   std::string AutoDetectProxyCmd;
 
    public:
    friend struct ServerState;

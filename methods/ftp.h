@@ -10,6 +10,10 @@
 #ifndef APT_FTP_H
 #define APT_FTP_H
 
+#include <apt-pkg/strutl.h>
+
+#include <string>
+
 class FTPConn
 {
    char Buffer[1024*10];
@@ -33,7 +37,7 @@ class FTPConn
    socklen_t ServerAddrLen;
    
    // Private helper functions
-   bool ReadLine(string &Text);      
+   bool ReadLine(std::string &Text);
    bool Login();
    bool CreateDataFd();
    bool Finalize();
@@ -43,8 +47,8 @@ class FTPConn
    bool Comp(URI Other) {return Other.Host == ServerName.Host && Other.Port == ServerName.Port && Other.User == ServerName.User && Other.Password == ServerName.Password; };
    
    // Raw connection IO
-   bool ReadResp(unsigned int &Ret,string &Text);
-   bool WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...);
+   bool ReadResp(unsigned int &Ret,std::string &Text);
+   bool WriteMsg(unsigned int &Ret,std::string &Text,const char *Fmt,...);
    
    // Connection control
    bool Open(pkgAcqMethod *Owner);
@@ -65,11 +69,11 @@ class FTPConn
 class FtpMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
-   virtual bool Configuration(string Message);
+   virtual bool Configuration(std::string Message);
    
    FTPConn *Server;
    
-   static string FailFile;
+   static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
    static void SigTerm(int);

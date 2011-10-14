@@ -22,17 +22,22 @@
 
 #include <apt-pkg/database.h>
 
+#include <string>
+
+class DynamicMMap;
+class OpProgress;
+
 class debDpkgDB : public pkgDataBase
 {
    protected:
-   
-   string AdminDir;
+
+   std::string AdminDir;
    DynamicMMap *CacheMap;
    DynamicMMap *FileMap;
    unsigned long DiverInode;
    signed long DiverTime;
-   
-   virtual bool InitMetaTmp(string &Dir);
+
+   virtual bool InitMetaTmp(std::string &Dir);
    bool ReadFList(OpProgress &Progress);
    bool ReadDiversions();
    bool ReadConfFiles();

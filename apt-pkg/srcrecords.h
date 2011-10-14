@@ -15,10 +15,7 @@
 
 
 #include <string>
-#include <vector>    
-
-using std::string;
-using std::vector;
+#include <vector>
 
 class pkgSourceList;
 class pkgIndexFile;
@@ -29,10 +26,10 @@ class pkgSrcRecords
    // Describes a single file
    struct File
    {
-      string MD5Hash;
+      std::string MD5Hash;
       unsigned long Size;
-      string Path;
-      string Type;
+      std::string Path;
+      std::string Type;
    };
    
    // Abstract parser for each source record
@@ -49,8 +46,8 @@ class pkgSrcRecords
 
       struct BuildDepRec 
       {
-         string Package;
-	 string Version;
+	 std::string Package;
+	 std::string Version;
 	 unsigned int Op;
 	 unsigned char Type;
       };
@@ -61,18 +58,18 @@ class pkgSrcRecords
       virtual bool Step() = 0;
       virtual bool Jump(unsigned long const &Off) = 0;
       virtual unsigned long Offset() = 0;
-      virtual string AsStr() = 0;
+      virtual std::string AsStr() = 0;
       
-      virtual string Package() const = 0;
-      virtual string Version() const = 0;
-      virtual string Maintainer() const = 0;
-      virtual string Section() const = 0;
+      virtual std::string Package() const = 0;
+      virtual std::string Version() const = 0;
+      virtual std::string Maintainer() const = 0;
+      virtual std::string Section() const = 0;
       virtual const char **Binaries() = 0;   // Ownership does not transfer
 
-      virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) = 0;
+      virtual bool BuildDepends(std::vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) = 0;
       static const char *BuildDepType(unsigned char const &Type);
 
-      virtual bool Files(vector<pkgSrcRecords::File> &F) = 0;
+      virtual bool Files(std::vector<pkgSrcRecords::File> &F) = 0;
       
       Parser(const pkgIndexFile *Index) : iIndex(Index) {};
       virtual ~Parser() {};
@@ -83,8 +80,8 @@ class pkgSrcRecords
    void *d;
    
    // The list of files and the current parser pointer
-   vector<Parser*> Files;
-   vector<Parser *>::iterator Current;
+   std::vector<Parser*> Files;
+   std::vector<Parser *>::iterator Current;
    
    public:
 

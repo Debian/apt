@@ -22,7 +22,6 @@
 #include <set>
 
 #include "cachedb.h"
-#include "multicompress.h"
 #include "override.h"
 #include "apt-ftparchive.h"
 
@@ -31,7 +30,7 @@ using std::cout;
 using std::endl;
 using std::vector;
 using std::map;
-    
+
 class FTWScanner
 {
    protected:
@@ -80,6 +79,8 @@ class FTWScanner
    FTWScanner(string const &Arch = string());
    virtual ~FTWScanner() {};
 };
+
+class MultiCompress;
 
 class TranslationWriter
 {

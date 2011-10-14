@@ -72,10 +72,6 @@
 #include <vector>
 #include <string>
 
-using std::vector;
-using std::string;
-
-
 #include <sys/time.h>
 #include <unistd.h>
 
@@ -107,8 +103,8 @@ class pkgAcquire
    friend class Item;
    friend class Queue;
 
-   typedef vector<Item *>::iterator ItemIterator;
-   typedef vector<Item *>::const_iterator ItemCIterator;
+   typedef std::vector<Item *>::iterator ItemIterator;
+   typedef std::vector<Item *>::const_iterator ItemCIterator;
 
    protected:
    
@@ -117,7 +113,7 @@ class pkgAcquire
     *  This is built monotonically as items are created and only
     *  emptied when the download shuts down.
     */
-   vector<Item *> Items;
+   std::vector<Item *> Items;
    
    /** \brief The head of the list of active queues.
     *
@@ -202,7 +198,7 @@ class pkgAcquire
     *  \return the string-name of the queue in which a fetch request
     *  for the given URI should be placed.
     */
-   string QueueName(string URI,MethodConfig const *&Config);
+   std::string QueueName(std::string URI,MethodConfig const *&Config);
 
    /** \brief Build up the set of file descriptors upon which select() should
     *  block.
@@ -248,7 +244,7 @@ class pkgAcquire
     *
     *  \return the method whose name is Access, or \b NULL if no such method exists.
     */
-   MethodConfig *GetConfig(string Access);
+   MethodConfig *GetConfig(std::string Access);
 
    /** \brief Provides information on how a download terminated. */
    enum RunResult {
@@ -319,7 +315,7 @@ class pkgAcquire
     *
     *  \return \b true if the directory exists and is readable.
     */
-   bool Clean(string Dir);
+   bool Clean(std::string Dir);
 
    /** \return the total size in bytes of all the items included in
     *  this download.
@@ -347,7 +343,7 @@ class pkgAcquire
     *  only one Acquire class is in action at the time or an empty string
     *  if no lock file should be used.
     */
-   bool Setup(pkgAcquireStatus *Progress = NULL, string const &Lock = "");
+   bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
 
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
@@ -372,11 +368,11 @@ class pkgAcquire
 struct pkgAcquire::ItemDesc : public WeakPointable
 {
    /** \brief The URI from which to download this item. */
-   string URI;
+   std::string URI;
    /** brief A description of this item. */
-   string Description;
+   std::string Description;
    /** brief A shorter description of this item. */
-   string ShortDesc;
+   std::string ShortDesc;
    /** brief The underlying item which is to be downloaded. */
    Item *Owner;
 };
@@ -420,7 +416,7 @@ class pkgAcquire::Queue
    };
    
    /** \brief The name of this queue. */
-   string Name;
+   std::string Name;
 
    /** \brief The head of the list of items contained in this queue.
     *
@@ -475,7 +471,7 @@ class pkgAcquire::Queue
     *  \return the first item in the queue whose URI is #URI and that
     *  is being downloaded by #Owner.
     */
-   QItem *FindItem(string URI,pkgAcquire::Worker *Owner);
+   QItem *FindItem(std::string URI,pkgAcquire::Worker *Owner);
 
    /** Presumably this should start downloading an item?
     *
@@ -538,7 +534,7 @@ class pkgAcquire::Queue
     *  \param Name The name of the new queue.
     *  \param Owner The download process that owns the new queue.
     */
-   Queue(string Name,pkgAcquire *Owner);
+   Queue(std::string Name,pkgAcquire *Owner);
 
    /** Shut down all the worker processes associated with this queue
     *  and empty the queue.
@@ -603,10 +599,10 @@ struct pkgAcquire::MethodConfig
    MethodConfig *Next;
    
    /** \brief The name of this acquire method (e.g., http). */
-   string Access;
+   std::string Access;
 
    /** \brief The implementation version of this acquire method. */
-   string Version;
+   std::string Version;
 
    /** \brief If \b true, only one download queue should be created for this
     *  method.
@@ -748,7 +744,7 @@ class pkgAcquireStatus
     *  \todo This is a horrible blocking monster; it should be CPSed
     *  with prejudice.
     */
-   virtual bool MediaChange(string Media,string Drive) = 0;
+   virtual bool MediaChange(std::string Media,std::string Drive) = 0;
    
    /** \brief Invoked when an item is confirmed to be up-to-date.
 

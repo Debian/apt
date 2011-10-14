@@ -18,6 +18,7 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
+#include <apt-pkg/database.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
@@ -107,8 +108,8 @@ bool debDebFile::ExtractControl(pkgDataBase &DB)
       return false;
    
    // Get into the temporary directory
-   string Cwd = SafeGetCWD();
-   string Tmp;
+   std::string Cwd = SafeGetCWD();
+   std::string Tmp;
    if (DB.GetMetaTmp(Tmp) == false)
       return false;
    if (chdir(Tmp.c_str()) != 0)
@@ -174,7 +175,7 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
 pkgCache::VerIterator debDebFile::MergeControl(pkgDataBase &DB)
 {
    // Open the control file
-   string Tmp;
+   std::string Tmp;
    if (DB.GetMetaTmp(Tmp) == false)
       return pkgCache::VerIterator(DB.GetCache());
    FileFd Fd(Tmp + "control",FileFd::ReadOnly);

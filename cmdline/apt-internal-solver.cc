@@ -11,10 +11,12 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/edsp.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <config.h>
 #include <apti18n.h>

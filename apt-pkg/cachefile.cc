@@ -23,6 +23,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/progress.h>
 
 #include <apti18n.h>
 									/*}}}*/

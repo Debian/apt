@@ -6,6 +6,8 @@
 #include <apt-pkg/extract.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <stdio.h>
 #include <stdlib.h>

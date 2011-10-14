@@ -38,7 +38,7 @@ class pkgOrderList : protected pkgCache::Namespace
    Package **End;
    Package **List;
    Package **AfterEnd;
-   string *FileList;
+   std::string *FileList;
    DepIterator Loops[20];
    int LoopCount;
    int Depth;
@@ -102,7 +102,7 @@ class pkgOrderList : protected pkgCache::Namespace
    inline bool IsNow(PkgIterator Pkg) {return (Flags[Pkg->ID] & (States & (~Removed))) == 0;};
    bool IsMissing(PkgIterator Pkg);
    void WipeFlags(unsigned long F);
-   void SetFileList(string *FileList) {this->FileList = FileList;};
+   void SetFileList(std::string *FileList) {this->FileList = FileList;};
 
    // Accessors
    inline iterator begin() {return List;};
@@ -115,7 +115,7 @@ class pkgOrderList : protected pkgCache::Namespace
    
    // Ordering modes
    bool OrderCritical();
-   bool OrderUnpack(string *FileList = 0);
+   bool OrderUnpack(std::string *FileList = 0);
    bool OrderConfigure();
 
    int Score(PkgIterator Pkg);
