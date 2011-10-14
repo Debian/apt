@@ -9,6 +9,7 @@
 #include <apt-pkg/error.h>
 
 #include <set>
+#include <algorithm>
 
 using namespace std;
 
@@ -195,7 +196,11 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 		}
 	}
 
-	std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
+	std::vector<std::string> lang = APT::Configuration::getLanguages(true);
+	std::vector<std::string>::iterator lend = std::remove(lang.begin(), lang.end(), "none");
+	if (lend != lang.end())
+		lang.erase(lend);
+
 	if (lang.empty() == true)
 		return IndexTargets;
 
@@ -207,7 +212,6 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 		     s != sections.end(); ++s) {
 			for (std::vector<std::string>::const_iterator l = lang.begin();
 			     l != lang.end(); ++l) {
-				if (*l == "none") continue;
 				IndexTarget * Target = new OptionalIndexTarget();
 				Target->ShortDesc = "Translation-" + *l;
 				Target->MetaKey = TranslationIndexURISuffix(l->c_str(), *s);

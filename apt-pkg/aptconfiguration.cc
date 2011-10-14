@@ -140,7 +140,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
 			string const name = Ent->d_name;
 			size_t const foundDash = name.rfind("-");
-			size_t const foundUnderscore = name.rfind("_");
+			size_t const foundUnderscore = name.rfind("_", foundDash);
 			if (foundDash == string::npos || foundUnderscore == string::npos ||
 			    foundDash <= foundUnderscore ||
 			    name.substr(foundUnderscore+1, foundDash-(foundUnderscore+1)) != "Translation")
@@ -151,7 +151,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			// Skip unusual files, like backups or that alike
 			string::const_iterator s = c.begin();
 			for (;s != c.end(); ++s) {
-				if (isalpha(*s) == 0)
+				if (isalpha(*s) == 0 && *s != '_')
 					break;
 			}
 			if (s != c.end())
@@ -232,6 +232,8 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			codes = environment;
 		} else if (forceLang != "none")
 			codes.push_back(forceLang);
+		else //if (forceLang == "none")
+			builtin.clear();
 		allCodes = codes;
 		for (std::vector<string>::const_iterator b = builtin.begin();
 		     b != builtin.end(); ++b)

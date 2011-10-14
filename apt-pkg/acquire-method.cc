@@ -285,12 +285,12 @@ bool pkgAcqMethod::Configuration(string Message)
       I += Length + 1;
       
       for (; I < MsgEnd && *I == ' '; I++);
-      const char *Equals = I;
-      for (; Equals < MsgEnd && *Equals != '='; Equals++);
-      const char *End = Equals;
-      for (; End < MsgEnd && *End != '\n'; End++);
-      if (End == Equals)
+      const char *Equals = (const char*) memchr(I, '=', MsgEnd - I);
+      if (Equals == NULL)
 	 return false;
+      const char *End = (const char*) memchr(Equals, '\n', MsgEnd - Equals);
+      if (End == NULL)
+	 End = MsgEnd;
       
       Cnf.Set(DeQuoteString(string(I,Equals-I)),
 	      DeQuoteString(string(Equals+1,End-Equals-1)));
