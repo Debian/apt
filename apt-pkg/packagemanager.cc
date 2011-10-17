@@ -551,14 +551,6 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       cout << endl;
    }
 
-   // Check if it is already unpacked
-   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
-       Cache[Pkg].Keep() == true)
-   {
-      cout << OutputInDepth(Depth) << "SmartUnPack called on Package " << Pkg.Name() << " but its unpacked" << endl;
-      return false;
-   }
- 
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
 
    /* PreUnpack Checks: This loop checks and attempts to rectify and problems that would prevent the package being unpacked.
@@ -768,7 +760,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    return false;
       }
    }
-   else if (Install(Pkg,FileNames[Pkg->ID]) == false)
+   // packages which are already unpacked don't need to be unpacked again
+   else if (Pkg.State() != pkgCache::PkgIterator::NeedsConfigure && Install(Pkg,FileNames[Pkg->ID]) == false)
       return false;
 
    if (Immediate == true) {
