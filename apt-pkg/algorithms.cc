@@ -1188,16 +1188,23 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 */
 bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
 {
-   
    // a broken install is always a problem
    if (Cache[I].InstBroken() == true)
+   {
+      if (Debug == true)
+	 std::clog << "  Dependencies are not satisfied for " << I << std::endl;
       return true;
+   }
 
    // a newly broken policy (recommends/suggests) is a problem
    if (Cache[I].NowPolicyBroken() == false &&
        Cache[I].InstPolicyBroken() == true)
+   {
+      if (Debug == true)
+	 std::clog << "  Policy breaks with upgrade of " << I << std::endl;
       return true;
-       
+   }
+
    return false;
 }
 
