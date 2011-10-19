@@ -277,7 +277,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
 			if (msg.empty() == true) {
 				msg = _("External solver failed without a proper error message");
-				_error->Error(msg.c_str());
+				_error->Error("%s", msg.c_str());
 			} else
 				_error->Error("External solver failed with: %s", msg.substr(0,msg.find('\n')).c_str());
 			if (Progress != NULL)
