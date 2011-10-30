@@ -191,6 +191,69 @@ apt (0.8.16~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
 
+apt (1.8.15.9+nmu1) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * algorithms.cc:
+    - show a debug why a package was kept by ResolveByKeep()
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 17 Oct 2011 16:36:22 +0200
+
+apt (0.8.15.9) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * Symbol file update
+  * doc/apt-get.8.xml:
+    - change wording of autoremove description as suggested
+      by Robert Simmons, thanks! (Closes: #641490)
+  * apt-pkg/deb/dpkgpm.cc:
+    - use std::vector instead of fixed size arrays to store args and
+      multiarch-packagename strings
+    - load the dpkg base arguments only one time and reuse them later
+  * cmdline/apt-get.cc:
+    - follow Provides in the evaluation of saving candidates, too, for
+      statisfying garbage package dependencies (Closes: #640590)
+  * apt-pkg/algorithms.cc:
+    - if a package is garbage, don't try to save it with FixByInstall
+  * apt-pkg/init.cc:
+    - silently ignore *.orig and *.save files by default
+  * apt-pkg/policy.cc:
+    - accept generic release pin expressions again in -t (Closes: #644166)
+  * apt-pkg/deb/debmetaindex.cc:
+    - none is a separator, not a language: no need for Index (Closes: #624218)
+  * apt-pkg/aptconfiguration.cc:
+    - do not builtin languages only if none is forced (Closes: #643787)
+  * doc/apt.conf.5.xml:
+    - apply spelling fix by Kevin Lyda, thanks! (Closes: #644104)
+
+  [ Christian Perrier ]
+  * Fix spelling error (sensée) in French translation. Thanks
+    to Corentin Le Gall for spotting it.
+
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
+
+  [ Michael Vogt ]
+  * ftparchive/cachedb.cc:
+    - make buffer fully dynamic (thanks to Colin Watson)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 14 Oct 2011 12:00:09 +0200
+
+apt (0.8.15.8) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - output list of virtual package providers to c1out in -q=1
+      instead of /dev/null to unbreak sbuild (LP: #816155)
+
+  [ Michael Vogt ]
+  * apt-pkg/contrib/configuration.cc:
+    - fix double delete (LP: #848907)
+    - ignore only the invalid regexp instead of all options
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 14 Sep 2011 12:08:25 +0200
+
 apt (0.8.15.7) unstable; urgency=low
 
   [ David Kalnischkies ]
