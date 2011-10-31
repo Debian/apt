@@ -4,10 +4,11 @@ apt (0.8.16~exp8) experimental; urgency=low
   * apt-pkg/packagemanager.cc:
     - do not fail on unpacked packages in SmartUnPack, just don't
       shedule them for unpack, but do all checks and configure them
+    - do not enter an endless loop for (essential) pre-dependency loops
   * apt-pkg/contrib/sha2_internal.cc:
     - use a pointer-union to peace gcc strict-aliasing warning
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 30 Oct 2011 14:15:53 -0500
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 31 Oct 2011 14:34:48 -0500
 
 apt (0.8.16~exp7) experimental; urgency=low
 
