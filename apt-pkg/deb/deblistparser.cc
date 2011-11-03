@@ -675,6 +675,9 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	    return _error->Error("Problem parsing Provides line");
 	 if (Op != pkgCache::Dep::NoOp) {
 	    _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
+	    if (NewProvidesAllArch(Ver, Package, Version) == false)
+	       return false;
 	 } else {
 	    if (NewProvides(Ver, Package, Arch, Version) == false)
 	       return false;
