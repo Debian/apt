@@ -628,20 +628,18 @@ public:
 		explicitlyNamed = true;
 	}
 
-	virtual void showTaskSelection(APT::PackageSet const &pkgset, string const &pattern) {
-		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
-				 Pkg.FullName(true).c_str(), pattern.c_str());
+	virtual void showTaskSelection(pkgCache::PkgIterator const &Pkg, string const &pattern) {
+		ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
+				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
-	virtual void showRegExSelection(APT::PackageSet const &pkgset, string const &pattern) {
-		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
-				 Pkg.FullName(true).c_str(), pattern.c_str());
+	virtual void showRegExSelection(pkgCache::PkgIterator const &Pkg, string const &pattern) {
+		ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
+				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
 	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
-				 string const &ver, bool const &verIsRel) {
+				 string const &ver, bool const verIsRel) {
 		if (ver == Ver.VerStr())
 			return;
 		selectedByRelease.push_back(make_pair(Ver, ver));
@@ -707,7 +705,7 @@ public:
 		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::CANDIDATE);
 		if (verset.empty() == false)
 			return *(verset.begin());
-		if (ShowError == true) {
+		else if (ShowError == true) {
 			_error->Error(_("Package '%s' has no installation candidate"),Pkg.FullName(true).c_str());
 			virtualPkgs.insert(Pkg);
 		}
@@ -769,7 +767,7 @@ struct TryToInstall {
    unsigned long AutoMarkChanged;
    APT::PackageSet doAutoInstallLater;
 
-   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver *PM, bool const &FixBroken) : Cache(&Cache), Fix(PM),
+   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver *PM, bool const FixBroken) : Cache(&Cache), Fix(PM),
 			FixBroken(FixBroken), AutoMarkChanged(0) {};
 
    void operator() (pkgCache::VerIterator const &Ver) {

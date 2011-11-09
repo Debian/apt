@@ -65,12 +65,12 @@ public:
       return CacheSetHelper::canNotFindNewestVer(Cache, Pkg);
    }
 
-   virtual APT::VersionSet canNotFindAllVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+   virtual void canNotFindAllVer(APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
       virtualPkgs.insert(Pkg);
-      return CacheSetHelper::canNotFindAllVer(Cache, Pkg);
+      CacheSetHelper::canNotFindAllVer(vci, Cache, Pkg);
    }
 
-   CacheSetHelperVirtuals(bool const &ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
+   CacheSetHelperVirtuals(bool const ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
 };
 									/*}}}*/
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
@@ -108,7 +108,7 @@ void LocalitySort(pkgCache::DescFile **begin,
 // UnMet - Show unmet dependencies					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
+bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 {
 	 bool Header = false;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false;)

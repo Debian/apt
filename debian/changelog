@@ -9,8 +9,11 @@ apt (0.8.16~exp8) experimental; urgency=low
     - use a pointer-union to peace gcc strict-aliasing warning
   * apt-pkg/deb/deblistparser.cc:
     - M-A: foreign packages provide for other archs, too
+  * apt-pkg/cacheset.cc:
+    - make the cachesets real containers which can embedding any container
+      to be able to use the same interface regardless of set or list usage
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 03 Nov 2011 09:40:29 -0500
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Nov 2011 17:21:02 +0100
 
 apt (0.8.16~exp7) experimental; urgency=low
 
