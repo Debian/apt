@@ -1394,9 +1394,15 @@ msgstr "<option>--no-replaces</option>"
 msgid "<option>--no-enhances</option>"
 msgstr "<option>--no-enhances</option>"
 
-# FIXME s/twicked/tricked/
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:317
+#, fuzzy
+#| msgid ""
+#| "Per default the <literal>depends</literal> and <literal>rdepends</"
+#| "literal> print all dependencies. This can be twicked with these flags "
+#| "which will omit the specified dependency type.  Configuration Item: "
+#| "<literal>APT::Cache::Show<replaceable>DependencyType</replaceable></"
+#| "literal> e.g. <literal>APT::Cache::ShowRecommends</literal>."
 msgid ""
 "Per default the <literal>depends</literal> and <literal>rdepends</literal> "
 "print all dependencies. This can be twicked with these flags which will omit "
@@ -3133,9 +3139,20 @@ msgid ""
 msgstr ""
 "<option>--md5</option>, <option>--sha1</option>, <option>--sha256</option>"
 
-# FIXME <literal>Checksum</literal> im letzten Abschnitt <replaceable>?
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:531
+#, fuzzy
+#| msgid ""
+#| "Generate the given checksum. These options default to on, when turned off "
+#| "the generated index files will not have the checksum fields where "
+#| "possible.  Configuration Items: <literal>APT::FTPArchive::"
+#| "<replaceable>Checksum</replaceable></literal> and <literal>APT::"
+#| "FTPArchive::<replaceable>Index</replaceable>::<replaceable>Checksum</"
+#| "replaceable></literal> where <literal><replaceable>Index</replaceable></"
+#| "literal> can be <literal>Packages</literal>, <literal>Sources</literal> "
+#| "or <literal>Release</literal> and <literal><replaceable>Checksum</"
+#| "replaceable></literal> can be <literal>MD5</literal>, <literal>SHA1</"
+#| "literal> or <literal>SHA256</literal>."
 msgid ""
 "Generate the given checksum. These options default to on, when turned off "
 "the generated index files will not have the checksum fields where possible.  "
@@ -3152,9 +3169,10 @@ msgstr ""
 "Möglichkeit keine Prüfsummenfelder erhalten. Konfigurationselemente: "
 "<literal>APT::FTPArchive::<replaceable>Prüfsumme</replaceable></literal> und "
 "<literal>APT::FTPArchive::<replaceable>Index</replaceable>::"
-"<replaceable>Prüfsumme</replaceable></literal>, wobei <literal>Index</"
-"literal> <literal>Packages</literal>, <literal>Sources</literal> oder "
-"<literal>Release</literal> sein kann und <literal>Checksum</literal> "
+"<replaceable>Prüfsumme</replaceable></literal>, wobei "
+"<literal><replaceable>Index</replaceable></literal> <literal>Packages</"
+"literal>, <literal>Sources</literal> oder <literal>Release</literal> sein "
+"kann und <literal><replaceable>Prüfsumme</replaceable></literal> "
 "<literal>MD5</literal>, <literal>SHA1</literal> oder <literal>SHA256</"
 "literal> sein kann."
 
@@ -3379,6 +3397,35 @@ msgstr "APT-Werkzeug für den Umgang mit Paketen -- Befehlszeilenschnittstelle"
 
 #. type: Content of: <refentry><refsynopsisdiv><cmdsynopsis>
 #: apt-get.8.xml:39
+#, fuzzy
+#| msgid ""
+#| "<command>apt-get</command> <arg><option>-sqdyfmubV</option></arg> <arg> "
+#| "<option>-o= <replaceable>config_string</replaceable> </option> </arg> "
+#| "<arg> <option>-c= <replaceable>config_file</replaceable> </option> </arg> "
+#| "<arg> <option>-t=</option> <arg choice='plain'> "
+#| "<replaceable>target_release</replaceable> </arg> </arg> <group choice="
+#| "\"req\"> <arg choice='plain'>update</arg> <arg choice='plain'>upgrade</"
+#| "arg> <arg choice='plain'>dselect-upgrade</arg> <arg choice='plain'>dist-"
+#| "upgrade</arg> <arg choice='plain'>install <arg choice=\"plain\" rep="
+#| "\"repeat\"><replaceable>pkg</replaceable> <arg> <group choice='req'> <arg "
+#| "choice='plain'> =<replaceable>pkg_version_number</replaceable> </arg> "
+#| "<arg choice='plain'> /<replaceable>target_release</replaceable> </arg> </"
+#| "group> </arg> </arg> </arg> <arg choice='plain'>remove <arg choice=\"plain"
+#| "\" rep=\"repeat\"><replaceable>pkg</replaceable></arg></arg> <arg "
+#| "choice='plain'>purge <arg choice=\"plain\" rep=\"repeat"
+#| "\"><replaceable>pkg</replaceable></arg></arg> <arg choice='plain'>source "
+#| "<arg choice=\"plain\" rep=\"repeat\"><replaceable>pkg</replaceable> <arg> "
+#| "<group choice='req'> <arg choice='plain'> "
+#| "=<replaceable>pkg_version_number</replaceable> </arg> <arg "
+#| "choice='plain'> /<replaceable>target_release</replaceable> </arg> </"
+#| "group> </arg> </arg> </arg> <arg choice='plain'>build-dep <arg choice="
+#| "\"plain\" rep=\"repeat\"><replaceable>pkg</replaceable></arg></arg> <arg "
+#| "choice='plain'>check</arg> <arg choice='plain'>clean</arg> <arg "
+#| "choice='plain'>autoclean</arg> <arg choice='plain'>autoremove</arg> <arg "
+#| "choice='plain'> <group choice='req'> <arg choice='plain'>-v</arg> <arg "
+#| "choice='plain'>--version</arg> </group> </arg> <arg choice='plain'> "
+#| "<group choice='req'> <arg choice='plain'>-h</arg> <arg choice='plain'>--"
+#| "help</arg> </group> </arg> </group>"
 msgid ""
 "<command>apt-get</command> <arg><option>-sqdyfmubV</option></arg> <arg> "
 "<option>-o= <replaceable>config_string</replaceable> </option> </arg> <arg> "
@@ -3749,6 +3796,12 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:255
+#, fuzzy
+#| msgid ""
+#| "If the <option>--compile</option> option is specified then the package "
+#| "will be compiled to a binary .deb using <command>dpkg-buildpackage</"
+#| "command>, if <option>--download-only</option> is specified then the "
+#| "source package will not be unpacked."
 msgid ""
 "If the <option>--compile</option> option is specified then the package will "
 "be compiled to a binary .deb using <command>dpkg-buildpackage</command>, if "
@@ -3794,6 +3847,10 @@ msgstr "build-dep"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:272
+#, fuzzy
+#| msgid ""
+#| "<literal>build-dep</literal> causes apt-get to install/remove packages in "
+#| "an attempt to satisfy the build dependencies for a source package."
 msgid ""
 "<literal>build-dep</literal> causes apt-get to install/remove packages in an "
 "attempt to satisfy the build dependencies for a source package."
@@ -3821,9 +3878,12 @@ msgstr ""
 msgid "download"
 msgstr "download"
 
-# FIXME s/directoy/directory/
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:282
+#, fuzzy
+#| msgid ""
+#| "<literal>download</literal> will download the given binary package into "
+#| "the current directory."
 msgid ""
 "<literal>download</literal> will download the given binary package into the "
 "current directoy."
@@ -3882,6 +3942,11 @@ msgstr "autoremove"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:308
+#, fuzzy
+#| msgid ""
+#| "<literal>autoremove</literal> is used to remove packages that were "
+#| "automatically installed to satisfy dependencies for some package and that "
+#| "are no more needed."
 msgid ""
 "<literal>autoremove</literal> is used to remove packages that were "
 "automatically installed to satisfy dependencies for some package and that "
@@ -5514,9 +5579,17 @@ msgstr ""
 "die Datei, die durch die Umgebungsvariable <envar>APT_CONFIG</envar> "
 "angegeben wird (falls gesetzt)"
 
-# FIXME s/no or/no/
 #. type: Content of: <refentry><refsect1><orderedlist><listitem><para>
 #: apt.conf.5.xml:52
+#, fuzzy
+#| msgid ""
+#| "all files in <literal>Dir::Etc::Parts</literal> in alphanumeric ascending "
+#| "order which have no or \"<literal>conf</literal>\" as filename extension "
+#| "and which only contain alphanumeric, hyphen (-), underscore (_) and "
+#| "period (.) characters.  Otherwise APT will print a notice that it has "
+#| "ignored a file if the file doesn't match a pattern in the <literal>Dir::"
+#| "Ignore-Files-Silently</literal> configuration list - in this case it will "
+#| "be silently ignored."
 msgid ""
 "all files in <literal>Dir::Etc::Parts</literal> in alphanumeric ascending "
 "order which have no or \"<literal>conf</literal>\" as filename extension and "
@@ -6073,6 +6146,17 @@ msgstr "Max-ValidTime"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:261
+#, fuzzy
+#| msgid ""
+#| "Seconds the Release file should be considered valid after it was created. "
+#| "The default is \"for ever\" (0) if the Release file of the archive "
+#| "doesn't include a <literal>Valid-Until</literal> header.  If it does then "
+#| "this date is the default. The date from the Release file or the date "
+#| "specified by the creation time of the Release file (<literal>Date</"
+#| "literal> header) plus the seconds specified with this options are used to "
+#| "check if the validation of a file has expired by using the earlier date "
+#| "of the two. Archive specific settings can be made by appending the label "
+#| "of the archive to the option name."
 msgid ""
 "Seconds the Release file should be considered valid after it was created. "
 "The default is \"for ever\" (0) if the Release file of the archive doesn't "
@@ -6112,6 +6196,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:277
+#, fuzzy
+#| msgid ""
+#| "Two sub-options to limit the use of PDiffs are also available: With "
+#| "<literal>FileLimit</literal> can be specified how many PDiff files are "
+#| "downloaded at most to patch a file. <literal>SizeLimit</literal> on the "
+#| "other hand is the maximum percentage of the size of all patches compared "
+#| "to the size of the targeted file. If one of these limits is exceeded the "
+#| "complete file is downloaded instead of the patches."
 msgid ""
 "Two sub-options to limit the use of PDiffs are also available: With "
 "<literal>FileLimit</literal> can be specified how many PDiff files are "
@@ -6561,9 +6653,20 @@ msgstr ""
 msgid "Dir::Bin::bzip2 \"/bin/bzip2\";"
 msgstr "Dir::Bin::bzip2 \"/bin/bzip2\";"
 
-# FIXME s/> Note/>. Note/
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:442
+#, fuzzy
+#| msgid ""
+#| "Note that at run time the <literal>Dir::Bin::<replaceable>Methodname</"
+#| "replaceable></literal> will be checked: If this setting exists the method "
+#| "will only be used if this file exists, e.g. for the bzip2 method (the "
+#| "inbuilt) setting is <placeholder type=\"literallayout\" id=\"0\"/> Note "
+#| "also that list entries specified on the command line will be added at the "
+#| "end of the list specified in the configuration files, but before the "
+#| "default entries. To prefer a type in this case over the ones specified in "
+#| "the configuration files you can set the option direct - not in list "
+#| "style.  This will not override the defined list, it will only prefix the "
+#| "list with this type."
 msgid ""
 "Note that at run time the <literal>Dir::Bin::<replaceable>Methodname</"
 "replaceable></literal> will be checked: If this setting exists the method "
@@ -6588,9 +6691,14 @@ msgstr ""
 "nicht im Listenstil. Dies wird die definierte Liste nicht überschreiben, es "
 "wird diesen Typ nur vor die Liste setzen."
 
-# FIXME: s/doesn't provide/don't provide/
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:449
+#, fuzzy
+#| msgid ""
+#| "The special type <literal>uncompressed</literal> can be used to give "
+#| "uncompressed files a preference, but note that most archives don't "
+#| "provide uncompressed files so this is mostly only useable for local "
+#| "mirrors."
 msgid ""
 "The special type <literal>uncompressed</literal> can be used to give "
 "uncompressed files a preference, but note that most archives doesn't provide "
@@ -7878,6 +7986,16 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml:70
+#, fuzzy
+#| msgid ""
+#| "Note that the files in the <filename>/etc/apt/preferences.d</filename> "
+#| "directory are parsed in alphanumeric ascending order and need to obey the "
+#| "following naming convention: The files have no or \"<literal>pref</"
+#| "literal>\" as filename extension and which only contain alphanumeric, "
+#| "hyphen (-), underscore (_) and period (.) characters.  Otherwise APT will "
+#| "print a notice that it has ignored a file if the file doesn't match a "
+#| "pattern in the <literal>Dir::Ignore-Files-Silently</literal> "
+#| "configuration list - in this case it will be silently ignored."
 msgid ""
 "Note that the files in the <filename>/etc/apt/preferences.d</filename> "
 "directory are parsed in alphanumeric ascending order and need to obey the "
@@ -8351,9 +8469,15 @@ msgstr ""
 msgid "Regular expressions and glob() syntax"
 msgstr "Reguläre Ausdrücke und glob()-Syntax"
 
-# FIXME: s/expression or/expression) or/
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:264
+#, fuzzy
+#| msgid ""
+#| "APT also supports pinning by glob() expressions and regular expressions "
+#| "surrounded by /. For example, the following example assigns the priority "
+#| "500 to all packages from experimental where the name starts with gnome "
+#| "(as a glob()-like expression) or contains the word kde (as a POSIX "
+#| "extended regular expression surrounded by slashes)."
 msgid ""
 "APT also supports pinning by glob() expressions and regular expressions "
 "surrounded by /. For example, the following example assigns the priority 500 "
@@ -8380,9 +8504,13 @@ msgstr ""
 "Pin: release n=experimental\n"
 "Pin-Priority: 500\n"
 
-# FIXME: s/Those/Thus/
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:279
+#, fuzzy
+#| msgid ""
+#| "The rule for those expressions is that they can occur anywhere where a "
+#| "string can occur. Thus, the following pin assigns the priority 990 to all "
+#| "packages from a release starting with karmic."
 msgid ""
 "The rule for those expressions is that they can occur anywhere where a "
 "string can occur. Those, the following pin assigns the priority 990 to all "
@@ -9299,7 +9427,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:81
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "deb uri distribution [component1] [component2] [...]"
 msgid "deb uri distribution [component1] [component2] [...]"
 msgstr "deb URI Distribution [Komponente1] [Komponente2] [...]"
 
@@ -11220,6 +11349,60 @@ msgstr "  # apt-get -o dir::cache::archives=\"/Platte/\" dist-upgrade"
 #: offline.sgml:234
 msgid "Which will use the already fetched archives on the disc."
 msgstr "Es wird die bereits auf die Platte heruntergeladenen Archive benutzen."
+
+#, fuzzy
+#~| msgid "<option>--recurse</option>"
+#~ msgid "<option>--host-architecture</option>"
+#~ msgstr "<option>--recurse</option>"
+
+#, fuzzy
+#~| msgid "Max-ValidTime"
+#~ msgid "Min-ValidTime"
+#~ msgstr "Max-ValidTime"
+
+#, fuzzy
+#~| msgid ""
+#~| "Seconds the Release file should be considered valid after it was "
+#~| "created. The default is \"for ever\" (0) if the Release file of the "
+#~| "archive doesn't include a <literal>Valid-Until</literal> header.  If it "
+#~| "does then this date is the default. The date from the Release file or "
+#~| "the date specified by the creation time of the Release file "
+#~| "(<literal>Date</literal> header) plus the seconds specified with this "
+#~| "options are used to check if the validation of a file has expired by "
+#~| "using the earlier date of the two. Archive specific settings can be made "
+#~| "by appending the label of the archive to the option name."
+#~ msgid ""
+#~ "Minimum of seconds the Release file should be considered valid after it "
+#~ "was created (indicated by the <literal>Date</literal> header).  Use this "
+#~ "if you need to use a seldomly updated (local) mirror of a more regular "
+#~ "updated archive with a <literal>Valid-Until</literal> header instead of "
+#~ "competely disabling the expiration date checking.  Archive specific "
+#~ "settings can and should be used by appending the label of the archive to "
+#~ "the option name."
+#~ msgstr ""
+#~ "Sekunden, die die Release-Datei als gültig betrachtet werden sollte, "
+#~ "nachdem sie erzeugt wurde. Vorgabe ist »für immer« (0), falls die Release-"
+#~ "Datei des Archivs keine <literal>Valid-Until</literal>-Kopfzeile enthält. "
+#~ "Falls dies so ist, ist dieses Datum vorgegeben. Das Datum aus der Release-"
+#~ "Datei oder das Datum, das durch die Erstellungszeit der Release-Datei "
+#~ "angegeben wurde (<literal>Date</literal>-Kopfzeile) plus die mit diesen "
+#~ "Optionen angegebenen Sekunden werden benutzt, um zu prüfen, ob die "
+#~ "Bestätigung einer Datei abgelaufen ist indem das neuere Datum der beiden "
+#~ "benutzt wird. Archivspezifische Einstellungen können durch Anhängen des "
+#~ "Archivetiketts an die Option »name« vorgenommen werden."
+
+#, fuzzy
+#~| msgid ""
+#~| "deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
+#~| "deb http://security.debian.org/ &stable-codename;/updates main contrib non-free\n"
+#~| "   "
+#~ msgid ""
+#~ "deb http://ftp.debian.org/debian &stable-codename; main\n"
+#~ "deb [ arch=amd64,armel ] http://ftp.debian.org/debian &stable-codename; main"
+#~ msgstr ""
+#~ "deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
+#~ "deb http://security.debian.org/ &stable-codename;/updates main contrib non-free\n"
+#~ "   "
 
 #~ msgid "<option>--md5</option>"
 #~ msgstr "<option>--md5</option>"

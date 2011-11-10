@@ -4,21 +4,21 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'native'
 
-buildsimplenativepackage "old-pkg" "i386" "1.0" "stable"
+buildsimplenativepackage "old-pkg" "native" "1.0" "stable"
 buildsimplenativepackage "unrelated" "all" "0.5" "unstable"
 
-setupsimplenativepackage "new-pkg" "i386" "2.0" "unstable" "Provides: old-pkg
+setupsimplenativepackage "new-pkg" "native" "2.0" "unstable" "Provides: old-pkg
 Replaces: old-pkg
 Conflicts: old-pkg (<< 2.0)"
-local BUILDDIR="incoming/new-pkg-2.0"
+BUILDDIR="incoming/new-pkg-2.0"
 echo "/usr/share/doc/new-pkg /usr/share/doc/old-pkg" > ${BUILDDIR}/debian/new-pkg.links
 buildpackage "$BUILDDIR" "unstable" "main"
 rm -rf "$BUILDDIR"
 
 setupsimplenativepackage "old-pkg" "all" "2.0" "unstable" "Depends: new-pkg"
-local BUILDDIR="incoming/old-pkg-2.0"
+BUILDDIR="incoming/old-pkg-2.0"
 echo "/usr/share/doc/new-pkg /usr/share/doc/old-pkg" > ${BUILDDIR}/debian/old-pkg.links
 echo "
 override_dh_link:
@@ -33,9 +33,9 @@ aptget install old-pkg=1.0 --trivial-only -qq 2>&1 > /dev/null
 
 testmarkedauto # old-pkg is manual installed
 
-local CMD="aptget dist-upgrade -y -q=0"
+CMD="aptget dist-upgrade -y -q=0"
 msgtest "Test for equality of" "$CMD"
-local COMPAREFILE=$(mktemp)
+COMPAREFILE=$(mktemp)
 echo "The following package disappeared from your system as
 all files have been overwritten by other packages:
   old-pkg
@@ -43,12 +43,12 @@ Note: This is done automatic and on purpose by dpkg." > $COMPAREFILE
 $CMD 2>&1 | tail -n 4 | diff $COMPAREFILE - && msgpass || msgfail
 rm $COMPAREFILE
 
-sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d'
+sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d' -e "s#:$(getarchitecture 'native') #:native #"
 testfileequal "rootdir/var/log/apt/history.log" "
-Install: old-pkg:i386 (1.0)
+Install: old-pkg:native (1.0)
 
-Install: new-pkg:i386 (2.0, automatic)
-Upgrade: old-pkg:i386 (1.0, 2.0)
+Install: new-pkg:native (2.0, automatic)
+Upgrade: old-pkg:native (1.0, 2.0)
 Disappeared: old-pkg (1.0)"
 
 testmarkedauto  # new-pkg should have get the manual flag from old-pkg

@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/error.h>
 
 #include <iostream>
@@ -24,8 +26,7 @@
 #include <string>
 #include <cstring>
 
-#include "config.h"
-   									/*}}}*/
+									/*}}}*/
 
 // Global Error Object							/*{{{*/
 /* If the implementation supports posix threads then the accessor function
@@ -193,7 +194,7 @@ bool GlobalError::PopMessage(std::string &Text) {
 
 	// check if another error message is pending
 	for (std::list<Item>::const_iterator m = Messages.begin();
-	     m != Messages.end(); m++)
+	     m != Messages.end(); ++m)
 		if (m->Type == ERROR || m->Type == FATAL)
 			return Ret;
 
@@ -210,7 +211,7 @@ void GlobalError::DumpErrors(std::ostream &out, MsgType const &threshold,
 			Messages.insert(Messages.begin(), s->Messages.begin(), s->Messages.end());
 
 	for (std::list<Item>::const_iterator m = Messages.begin();
-	     m != Messages.end(); m++)
+	     m != Messages.end(); ++m)
 		if (m->Type >= threshold)
 			out << (*m) << std::endl;
 	Discard();
@@ -231,7 +232,7 @@ bool GlobalError::empty(MsgType const &trashhold) const {
 		return true;
 
 	for (std::list<Item>::const_iterator m = Messages.begin();
-	     m != Messages.end(); m++)
+	     m != Messages.end(); ++m)
 		if (m->Type >= trashhold)
 			return false;
 

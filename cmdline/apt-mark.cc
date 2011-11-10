@@ -5,17 +5,19 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
-
-#include <config.h>
-#include <apti18n.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <algorithm>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 

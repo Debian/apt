@@ -9,6 +9,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
@@ -39,7 +41,7 @@ class GzipMethod : public pkgAcqMethod
 bool GzipMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
-   string Path = Get.Host + Get.Path; // To account for relative paths
+   std::string Path = Get.Host + Get.Path; // To account for relative paths
    
    FetchResult Res;
    Res.Filename = Itm->DestFile;
@@ -62,7 +64,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    while (1) 
    {
       unsigned char Buffer[4*1024];
-      unsigned long Count;
+      unsigned long long Count = 0;
       
       if (!From.Read(Buffer,sizeof(Buffer),&Count))
       {

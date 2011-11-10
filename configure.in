@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.8.16~exp5")
+AC_DEFINE_UNQUOTED(VERSION,"0.8.16~exp6")
 PACKAGE="apt"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_SUBST(PACKAGE)
@@ -30,6 +30,10 @@ dnl Check our C compiler
 AC_CHECK_TOOL_PREFIX
 AC_PROG_CC
 AC_ISC_POSIX
+
+dnl check for large file support and enable it if possible
+dnl do this early as other stuff might depend on it
+AC_SYS_LARGEFILE
 
 dnl Check for other programs
 AC_PROG_CXX
@@ -151,7 +155,7 @@ if test "$cross_compiling" = "yes" -a "x$archline" = "x"; then
   AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
 fi
 AC_C_BIGENDIAN
-   
+
 dnl We do not need this if we have inttypes!
 HAVE_C9X=yes
 if test x"$apt_cv_c9x_ints" = x"no"; then

@@ -15,9 +15,6 @@
 #include <map>
 #include <stdio.h>
 
-using std::vector;
-using std::map;
-
 class pkgDPkgPMPrivate;
 
 class pkgDPkgPM : public pkgPackageManager
@@ -38,7 +35,7 @@ class pkgDPkgPM : public pkgPackageManager
       needs to declare a Replaces on the disappeared package.
       \param pkgname Name of the package that disappeared
    */
-   void handleDisappearAction(string const &pkgname);
+   void handleDisappearAction(std::string const &pkgname);
 
    protected:
    int pkgFailures;
@@ -53,11 +50,11 @@ class pkgDPkgPM : public pkgPackageManager
    // the dpkg states that the pkg will run through, the string is 
    // the package, the vector contains the dpkg states that the package
    // will go through
-   map<string,vector<struct DpkgState> > PackageOps;
+   std::map<std::string,std::vector<struct DpkgState> > PackageOps;
    // the dpkg states that are already done; the string is the package
    // the int is the state that is already done (e.g. a package that is
    // going to be install is already in state "half-installed")
-   map<string,unsigned int> PackageOpsDone;
+   std::map<std::string,unsigned int> PackageOpsDone;
 
    // progress reporting
    unsigned int PackagesDone;
@@ -66,19 +63,19 @@ class pkgDPkgPM : public pkgPackageManager
    struct Item
    {
       enum Ops {Install, Configure, Remove, Purge, ConfigurePending, TriggersPending} Op;
-      string File;
+      std::string File;
       PkgIterator Pkg;
-      Item(Ops Op,PkgIterator Pkg,string File = "") : Op(Op),
+      Item(Ops Op,PkgIterator Pkg,std::string File = "") : Op(Op),
             File(File), Pkg(Pkg) {};
       Item() {};
       
    };
-   vector<Item> List;
+   std::vector<Item> List;
 
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
    bool SendV2Pkgs(FILE *F);
-   void WriteHistoryTag(string const &tag, string value);
+   void WriteHistoryTag(std::string const &tag, std::string value);
 
    // apport integration
    void WriteApportReport(const char *pkgpath, const char *errormsg);
@@ -94,7 +91,7 @@ class pkgDPkgPM : public pkgPackageManager
    void ProcessDpkgStatusLine(int OutStatusFd, char *line);
 
    // The Actuall installation implementation
-   virtual bool Install(PkgIterator Pkg,string File);
+   virtual bool Install(PkgIterator Pkg,std::string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge = false);
    virtual bool Go(int StatusFd=-1);
@@ -105,5 +102,7 @@ class pkgDPkgPM : public pkgPackageManager
    pkgDPkgPM(pkgDepCache *Cache);
    virtual ~pkgDPkgPM();
 };
+
+void SigINT(int sig);
 
 #endif

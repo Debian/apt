@@ -8,19 +8,21 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
-#include "acqprogress.h"
+#include<config.h>
+
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
-#include <apti18n.h>
-    
 #include <stdio.h>
 #include <signal.h>
 #include <iostream>
 #include <unistd.h>
+
+#include "acqprogress.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -161,7 +163,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
       ScreenWidth = sizeof(Buffer)-1;
 
    // Put in the percent done
-   sprintf(S,"%ld%%",long(double((CurrentBytes + CurrentItems)*100.0)/double(TotalBytes+TotalItems)));
+   sprintf(S,"%.0f%%",((CurrentBytes + CurrentItems)*100.0)/(TotalBytes+TotalItems));
 
    bool Shown = false;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
@@ -212,11 +214,11 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
       if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
       {
 	 if (Mode == Short)
-	    snprintf(S,End-S," %lu%%",
-		     long(double(I->CurrentSize*100.0)/double(I->TotalSize)));
+	    snprintf(S,End-S," %.0f%%",
+		     (I->CurrentSize*100.0)/I->TotalSize);
 	 else
-	    snprintf(S,End-S,"/%sB %lu%%",SizeToStr(I->TotalSize).c_str(),
-		     long(double(I->CurrentSize*100.0)/double(I->TotalSize)));
+	    snprintf(S,End-S,"/%sB %.0f%%",SizeToStr(I->TotalSize).c_str(),
+		     (I->CurrentSize*100.0)/I->TotalSize);
       }      
       S += strlen(S);
       snprintf(S,End-S,"]");
@@ -236,7 +238,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
    if (CurrentCPS != 0)
    {      
       char Tmp[300];
-      unsigned long ETA = (unsigned long)((TotalBytes - CurrentBytes)/CurrentCPS);
+      unsigned long long ETA = (TotalBytes - CurrentBytes)/CurrentCPS;
       sprintf(Tmp," %sB/s %s",SizeToStr(CurrentCPS).c_str(),TimeToStr(ETA).c_str());
       unsigned int Len = strlen(Buffer);
       unsigned int LenT = strlen(Tmp);

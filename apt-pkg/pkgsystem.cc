@@ -10,6 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/policy.h>
 #include <cassert>

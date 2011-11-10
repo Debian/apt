@@ -1,10 +1,13 @@
 // Includes									/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <sys/uio.h>
@@ -51,7 +54,7 @@ protected:
 	virtual bool Fetch(FetchItem *Itm);
 
 public:
-	RredMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
+	RredMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig), Debug(false) {};
 };
 										/*}}}*/
 /** \brief applyFile - in reverse order with a tail recursion			{{{
@@ -239,7 +242,9 @@ RredMethod::State RredMethod::patchFile(FileFd &Patch, FileFd &From,		/*{{{*/
    return result;
 }
 										/*}}}*/
-struct EdCommand {								/*{{{*/
+/* struct EdCommand								{{{*/
+#ifdef _POSIX_MAPPED_FILES
+struct EdCommand {
   size_t data_start;
   size_t data_end;
   size_t data_lines;
@@ -248,13 +253,14 @@ struct EdCommand {								/*{{{*/
   char type;
 };
 #define IOV_COUNT 1024 /* Don't really want IOV_MAX since it can be arbitrarily large */
+#endif
 										/*}}}*/
 RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 					FileFd &out_file, Hashes *hash) const {
 #ifdef _POSIX_MAPPED_FILES
 	MMap ed_cmds(MMap::ReadOnly);
 	if (Patch.gzFd() != NULL) {
-		unsigned long mapSize = Patch.Size();
+		unsigned long long mapSize = Patch.Size();
 		DynamicMMap* dyn = new DynamicMMap(0, mapSize, 0);
 		if (dyn->validData() == false) {
 			delete dyn;
@@ -467,7 +473,7 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
 {
    Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
    URI Get = Itm->Uri;
-   string Path = Get.Host + Get.Path; // To account for relative paths
+   std::string Path = Get.Host + Get.Path; // To account for relative paths
 
    FetchResult Res;
    Res.Filename = Itm->DestFile;
@@ -520,7 +526,7 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
       and use the access time from the "old" file */
    struct stat BufBase, BufPatch;
    if (stat(Path.c_str(),&BufBase) != 0 ||
-       stat(string(Path+".ed").c_str(),&BufPatch) != 0)
+       stat(std::string(Path+".ed").c_str(),&BufPatch) != 0)
       return _error->Errno("stat",_("Failed to stat"));
 
    struct utimbuf TimeBuf;

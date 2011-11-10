@@ -18,13 +18,13 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/configuration.h>
-
-#include <apti18n.h>
 
 #include <cstdlib>
 #include <cstring>
@@ -43,10 +43,11 @@
 #include <set>
 #include <algorithm>
 
-#include <config.h>
 #ifdef WORDS_BIGENDIAN
 #include <inttypes.h>
 #endif
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -132,10 +133,10 @@ bool CopyFile(FileFd &From,FileFd &To)
    
    // Buffered copy between fds
    SPtrArray<unsigned char> Buf = new unsigned char[64000];
-   unsigned long Size = From.Size();
+   unsigned long long Size = From.Size();
    while (Size != 0)
    {
-      unsigned long ToRead = Size;
+      unsigned long long ToRead = Size;
       if (Size > 64000)
 	 ToRead = 64000;
       
@@ -810,7 +811,7 @@ FileFd::~FileFd()
 // ---------------------------------------------------------------------
 /* We are carefull to handle interruption by a signal while reading 
    gracefully. */
-bool FileFd::Read(void *To,unsigned long Size,unsigned long *Actual)
+bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
    int Res;
    errno = 0;
@@ -849,13 +850,13 @@ bool FileFd::Read(void *To,unsigned long Size,unsigned long *Actual)
    }
    
    Flags |= Fail;
-   return _error->Error(_("read, still have %lu to read but none left"),Size);
+   return _error->Error(_("read, still have %llu to read but none left"), Size);
 }
 									/*}}}*/
 // FileFd::Write - Write to the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileFd::Write(const void *From,unsigned long Size)
+bool FileFd::Write(const void *From,unsigned long long Size)
 {
    int Res;
    errno = 0;
@@ -882,13 +883,13 @@ bool FileFd::Write(const void *From,unsigned long Size)
       return true;
    
    Flags |= Fail;
-   return _error->Error(_("write, still have %lu to write but couldn't"),Size);
+   return _error->Error(_("write, still have %llu to write but couldn't"), Size);
 }
 									/*}}}*/
 // FileFd::Seek - Seek in the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileFd::Seek(unsigned long To)
+bool FileFd::Seek(unsigned long long To)
 {
    int res;
    if (gz)
@@ -898,7 +899,7 @@ bool FileFd::Seek(unsigned long To)
    if (res != (signed)To)
    {
       Flags |= Fail;
-      return _error->Error("Unable to seek to %lu",To);
+      return _error->Error("Unable to seek to %llu", To);
    }
    
    return true;
@@ -907,7 +908,7 @@ bool FileFd::Seek(unsigned long To)
 // FileFd::Skip - Seek in the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileFd::Skip(unsigned long Over)
+bool FileFd::Skip(unsigned long long Over)
 {
    int res;
    if (gz)
@@ -917,7 +918,7 @@ bool FileFd::Skip(unsigned long Over)
    if (res < 0)
    {
       Flags |= Fail;
-      return _error->Error("Unable to seek ahead %lu",Over);
+      return _error->Error("Unable to seek ahead %llu",Over);
    }
    
    return true;
@@ -926,7 +927,7 @@ bool FileFd::Skip(unsigned long Over)
 // FileFd::Truncate - Truncate the file 				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileFd::Truncate(unsigned long To)
+bool FileFd::Truncate(unsigned long long To)
 {
    if (gz)
    {
@@ -936,7 +937,7 @@ bool FileFd::Truncate(unsigned long To)
    if (ftruncate(iFd,To) != 0)
    {
       Flags |= Fail;
-      return _error->Error("Unable to truncate to %lu",To);
+      return _error->Error("Unable to truncate to %llu",To);
    }
    
    return true;
@@ -945,7 +946,7 @@ bool FileFd::Truncate(unsigned long To)
 // FileFd::Tell - Current seek position					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned long FileFd::Tell()
+unsigned long long FileFd::Tell()
 {
    off_t Res;
    if (gz)
@@ -960,7 +961,7 @@ unsigned long FileFd::Tell()
 // FileFd::FileSize - Return the size of the file			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned long FileFd::FileSize()
+unsigned long long FileFd::FileSize()
 {
    struct stat Buf;
 
@@ -972,9 +973,9 @@ unsigned long FileFd::FileSize()
 // FileFd::Size - Return the size of the content in the file		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned long FileFd::Size()
+unsigned long long FileFd::Size()
 {
-   unsigned long size = FileSize();
+   unsigned long long size = FileSize();
 
    // only check gzsize if we are actually a gzip file, just checking for
    // "gz" is not sufficient as uncompressed files will be opened with
@@ -984,6 +985,7 @@ unsigned long FileFd::Size()
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
 	* this ourselves; the original (uncompressed) file size is the last 32
 	* bits of the file */
+       // FIXME: Size for gz-files is limited by 32bit… no largefile support
        off_t orig_pos = lseek(iFd, 0, SEEK_CUR);
        if (lseek(iFd, -4, SEEK_END) < 0)
 	   return _error->Errno("lseek","Unable to seek to end of gzipped file");

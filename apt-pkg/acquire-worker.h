@@ -79,7 +79,7 @@ class pkgAcquire::Worker : public WeakPointable
     *
     *  \todo Doesn't this duplicate Config->Access?
     */
-   string Access;
+   std::string Access;
 
    /** \brief The PID of the subprocess. */
    pid_t Process;
@@ -118,13 +118,13 @@ class pkgAcquire::Worker : public WeakPointable
    /** \brief The raw text values of messages received from the
     *  worker, in sequence.
     */
-   vector<string> MessageQueue;
+   std::vector<std::string> MessageQueue;
 
    /** \brief Buffers pending writes to the subprocess.
     *
     *  \todo Wouldn't a std::dequeue be more appropriate?
     */
-   string OutQueue;
+   std::string OutQueue;
    
    /** \brief Common code for the constructor.
     *
@@ -183,7 +183,7 @@ class pkgAcquire::Worker : public WeakPointable
     *
     *  \return \b true.
     */
-   bool Capabilities(string Message);
+   bool Capabilities(std::string Message);
 
    /** \brief Send a 601 Configuration message (containing the APT
     *  configuration) to the subprocess.
@@ -214,7 +214,7 @@ class pkgAcquire::Worker : public WeakPointable
     *  603 Media Changed, with the Failed field set to \b true if the
     *  user cancelled the media change).
     */
-   bool MediaChange(string Message);
+   bool MediaChange(std::string Message);
    
    /** \brief Invoked when the worked process dies unexpectedly.
     *
@@ -242,7 +242,7 @@ class pkgAcquire::Worker : public WeakPointable
    /** \brief The most recent status string received from the
     *  subprocess.
     */
-   string Status;
+   std::string Status;
 
    /** \brief How many bytes of the file have been downloaded.  Zero
     *  if the current progress of the file cannot be determined.

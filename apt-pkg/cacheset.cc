@@ -9,18 +9,23 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/cachefile.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/versionmatch.h>
-
-#include <apti18n.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/policy.h>
 
 #include <vector>
 
 #include <regex.h>
+
+#include <apti18n.h>
 									/*}}}*/
 namespace APT {
 // FromTask - Return all packages in the cache from a specific task	/*{{{*/
@@ -296,7 +301,7 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 	std::string ver;
 	bool verIsRel = false;
 	size_t const vertag = pkg.find_last_of("/=");
-	if (vertag != string::npos) {
+	if (vertag != std::string::npos) {
 		ver = pkg.substr(vertag+1);
 		verIsRel = (pkg[vertag] == '/');
 		pkg.erase(vertag);
@@ -314,7 +319,7 @@ APT::VersionSet VersionSet::FromString(pkgCacheFile &Cache, std::string pkg,
 		errors = helper.showErrors(false);
 	for (PackageSet::const_iterator P = pkgset.begin();
 	     P != pkgset.end(); ++P) {
-		if (vertag == string::npos) {
+		if (vertag == std::string::npos) {
 			verset.insert(VersionSet::FromPackage(Cache, P, fallback, helper));
 			continue;
 		}

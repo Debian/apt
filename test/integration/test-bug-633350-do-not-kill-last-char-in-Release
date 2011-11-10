@@ -15,7 +15,7 @@ echo 'NotAutomatic: yes' >> aptarchive/dists/unstable/Release
 signreleasefiles
 find aptarchive/dists -name 'InRelease' -delete
 
-rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt
+rm -rf rootdir/var/lib/apt/lists
 
 OUTPUT="$(aptget update 2>&1)"
 msgtest 'Check that parsing happens without warnings' 'with missing newline'

@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
@@ -53,14 +55,14 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	// load the order setting into our vector
 	std::vector<std::string> const order = _config->FindVector("Acquire::CompressionTypes::Order");
 	for (std::vector<std::string>::const_iterator o = order.begin();
-	     o != order.end(); o++) {
+	     o != order.end(); ++o) {
 		if ((*o).empty() == true)
 			continue;
 		// ignore types we have no method ready to use
-		if (_config->Exists(string("Acquire::CompressionTypes::").append(*o)) == false)
+		if (_config->Exists(std::string("Acquire::CompressionTypes::").append(*o)) == false)
 			continue;
 		// ignore types we have no app ready to use
-		string const appsetting = string("Dir::Bin::").append(*o);
+		std::string const appsetting = std::string("Dir::Bin::").append(*o);
 		if (_config->Exists(appsetting) == true) {
 			std::string const app = _config->FindFile(appsetting.c_str(), "");
 			if (app.empty() == false && FileExists(app) == false)
@@ -81,7 +83,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if (std::find(types.begin(),types.end(),Types->Tag) != types.end())
 			continue;
 		// ignore types we have no app ready to use
-		string const appsetting = string("Dir::Bin::").append(Types->Value);
+		std::string const appsetting = std::string("Dir::Bin::").append(Types->Value);
 		if (appsetting.empty() == false && _config->Exists(appsetting) == true) {
 			std::string const app = _config->FindFile(appsetting.c_str(), "");
 			if (app.empty() == false && FileExists(app) == false)
@@ -93,7 +95,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	// add the special "uncompressed" type
 	if (std::find(types.begin(), types.end(), "uncompressed") == types.end())
 	{
-		string const uncompr = _config->FindFile("Dir::Bin::uncompressed", "");
+		std::string const uncompr = _config->FindFile("Dir::Bin::uncompressed", "");
 		if (uncompr.empty() == true || FileExists(uncompr) == true)
 			types.push_back("uncompressed");
 	}
@@ -140,7 +142,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
 			string const name = Ent->d_name;
 			size_t const foundDash = name.rfind("-");
-			size_t const foundUnderscore = name.rfind("_");
+			size_t const foundUnderscore = name.rfind("_", foundDash);
 			if (foundDash == string::npos || foundUnderscore == string::npos ||
 			    foundDash <= foundUnderscore ||
 			    name.substr(foundUnderscore+1, foundDash-(foundUnderscore+1)) != "Translation")
@@ -151,7 +153,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			// Skip unusual files, like backups or that alike
 			string::const_iterator s = c.begin();
 			for (;s != c.end(); ++s) {
-				if (isalpha(*s) == 0)
+				if (isalpha(*s) == 0 && *s != '_')
 					break;
 			}
 			if (s != c.end())
@@ -232,6 +234,8 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			codes = environment;
 		} else if (forceLang != "none")
 			codes.push_back(forceLang);
+		else //if (forceLang == "none")
+			builtin.clear();
 		allCodes = codes;
 		for (std::vector<string>::const_iterator b = builtin.begin();
 		     b != builtin.end(); ++b)
@@ -274,7 +278,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// then needed and ensure the codes are not listed twice.
 	bool noneSeen = false;
 	for (std::vector<string>::const_iterator l = lang.begin();
-	     l != lang.end(); l++) {
+	     l != lang.end(); ++l) {
 		if (*l == "environment") {
 			for (std::vector<string>::const_iterator e = environment.begin();
 			     e != environment.end(); ++e) {
@@ -439,7 +443,7 @@ Configuration::Compressor::Compressor(char const *name, char const *extension,
 				      char const *binary,
 				      char const *compressArg, char const *uncompressArg,
 				      unsigned short const cost) {
-	std::string const config = string("APT:Compressor::").append(name).append("::");
+	std::string const config = std::string("APT:Compressor::").append(name).append("::");
 	Name = _config->Find(std::string(config).append("Name"), name);
 	Extension = _config->Find(std::string(config).append("Extension"), extension);
 	Binary = _config->Find(std::string(config).append("Binary"), binary);

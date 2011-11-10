@@ -13,9 +13,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/error.h>
-#include <cassert>
-#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/init.h>
@@ -23,6 +23,7 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/version.h>
@@ -30,18 +31,21 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/metaindex.h>
 
-#include <config.h>
-#include <apti18n.h>
-
+#include <cassert>
 #include <locale.h>
 #include <iostream>
 #include <unistd.h>
 #include <errno.h>
 #include <regex.h>
 #include <stdio.h>
-
 #include <iomanip>
+#include <algorithm>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -141,7 +145,7 @@ bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
 	       
 	       if (Start == End)
 		  break;
-	       Start++;
+	       ++Start;
 	    }
 	    while (1);
 
@@ -169,7 +173,7 @@ bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
 	       if (Start == End)
 		  break;
 	       cout << " | ";
-	       Start++;
+	       ++Start;
 	    }
 	    while (1);
 	    
@@ -187,7 +191,7 @@ bool UnMet(CommandLine &CmdL)
 
    if (CmdL.FileSize() <= 1)
    {
-      for (pkgCache::PkgIterator P = CacheFile.GetPkgCache()->PkgBegin(); P.end() == false; P++)
+      for (pkgCache::PkgIterator P = CacheFile.GetPkgCache()->PkgBegin(); P.end() == false; ++P)
 	 for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
 	    if (ShowUnMet(V, Important) == false)
 	       return false;
@@ -217,13 +221,13 @@ bool DumpPackage(CommandLine &CmdL)
    {
       cout << "Package: " << Pkg.FullName(true) << endl;
       cout << "Versions: " << endl;
-      for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; Cur++)
+      for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; ++Cur)
       {
 	 cout << Cur.VerStr();
-	 for (pkgCache::VerFileIterator Vf = Cur.FileList(); Vf.end() == false; Vf++)
+	 for (pkgCache::VerFileIterator Vf = Cur.FileList(); Vf.end() == false; ++Vf)
 	    cout << " (" << Vf.File().FileName() << ")";
 	 cout << endl;
-	 for (pkgCache::DescIterator D = Cur.DescriptionList(); D.end() == false; D++)
+	 for (pkgCache::DescIterator D = Cur.DescriptionList(); D.end() == false; ++D)
 	 {
 	    cout << " Description Language: " << D.LanguageCode() << endl
 		 << "                 File: " << D.FileList().File().FileName() << endl
@@ -235,7 +239,7 @@ bool DumpPackage(CommandLine &CmdL)
       cout << endl;
       
       cout << "Reverse Depends: " << endl;
-      for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() != true; D++)
+      for (pkgCache::DepIterator D = Pkg.RevDependsList(); D.end() != true; ++D)
       {
 	 cout << "  " << D.ParentPkg().FullName(true) << ',' << D.TargetPkg().FullName(true);
 	 if (D->Version != 0)
@@ -245,24 +249,24 @@ bool DumpPackage(CommandLine &CmdL)
       }
       
       cout << "Dependencies: " << endl;
-      for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; Cur++)
+      for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; ++Cur)
       {
 	 cout << Cur.VerStr() << " - ";
-	 for (pkgCache::DepIterator Dep = Cur.DependsList(); Dep.end() != true; Dep++)
+	 for (pkgCache::DepIterator Dep = Cur.DependsList(); Dep.end() != true; ++Dep)
 	    cout << Dep.TargetPkg().FullName(true) << " (" << (int)Dep->CompareOp << " " << DeNull(Dep.TargetVer()) << ") ";
 	 cout << endl;
       }      
 
       cout << "Provides: " << endl;
-      for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; Cur++)
+      for (pkgCache::VerIterator Cur = Pkg.VersionList(); Cur.end() != true; ++Cur)
       {
 	 cout << Cur.VerStr() << " - ";
-	 for (pkgCache::PrvIterator Prv = Cur.ProvidesList(); Prv.end() != true; Prv++)
+	 for (pkgCache::PrvIterator Prv = Cur.ProvidesList(); Prv.end() != true; ++Prv)
 	    cout << Prv.ParentPkg().FullName(true) << " ";
 	 cout << endl;
       }
       cout << "Reverse Provides: " << endl;
-      for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; Prv++)
+      for (pkgCache::PrvIterator Prv = Pkg.ProvidesList(); Prv.end() != true; ++Prv)
 	 cout << Prv.OwnerPkg().FullName(true) << " " << Prv.OwnerVer().VerStr() << endl;
    }
 
@@ -290,7 +294,7 @@ bool Stats(CommandLine &Cmd)
    int DVirt = 0;
    int Missing = 0;
    pkgCache::PkgIterator I = Cache->PkgBegin();
-   for (;I.end() != true; I++)
+   for (;I.end() != true; ++I)
    {
       if (I->VersionList != 0 && I->ProvidesList == 0)
       {
@@ -353,11 +357,11 @@ bool Stats(CommandLine &Cmd)
    cout << _("Total globbed strings: ") << Count << " (" << SizeToStr(Size) << ')' << endl;
 
    unsigned long DepVerSize = 0;
-   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
    {
-      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
+      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
       {
-	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
+	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	 {
 	    if (D->Version != 0)
 	       DepVerSize += strlen(D.TargetVer()) + 1;
@@ -394,17 +398,17 @@ bool Dump(CommandLine &Cmd)
 
    cout << "Using Versioning System: " << Cache->VS->Label << endl;
    
-   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
    {
       cout << "Package: " << P.FullName(true) << endl;
-      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; V++)
+      for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
       {
 	 cout << " Version: " << V.VerStr() << endl;
 	 cout << "     File: " << V.FileList().File().FileName() << endl;
-	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; D++)
+	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	    cout << "  Depends: " << D.TargetPkg().FullName(true) << ' ' << 
 	                     DeNull(D.TargetVer()) << endl;
-	 for (pkgCache::DescIterator D = V.DescriptionList(); D.end() == false; D++)
+	 for (pkgCache::DescIterator D = V.DescriptionList(); D.end() == false; ++D)
 	 {
 	    cout << " Description Language: " << D.LanguageCode() << endl
 		 << "                 File: " << D.FileList().File().FileName() << endl
@@ -413,7 +417,7 @@ bool Dump(CommandLine &Cmd)
       }      
    }
 
-   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; F++)
+   for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; ++F)
    {
       cout << "File: " << F.FileName() << endl;
       cout << " Type: " << F.IndexType() << endl;
@@ -449,7 +453,7 @@ bool DumpAvail(CommandLine &Cmd)
    memset(VFList,0,sizeof(*VFList)*Count);
    
    // Map versions that we want to write out onto the VerList array.
-   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
    {    
       if (P->VersionList == 0)
 	 continue;
@@ -466,7 +470,7 @@ bool DumpAvail(CommandLine &Cmd)
       }
       
       pkgCache::VerFileIterator VF = V.FileList();
-      for (; VF.end() == false ; VF++)
+      for (; VF.end() == false ; ++VF)
 	 if ((VF.File()->Flags & pkgCache::Flag::NotSource) == 0)
 	    break;
       
@@ -480,9 +484,9 @@ bool DumpAvail(CommandLine &Cmd)
          handling works OK. */
       if (VF.end() == true)
       {
-	 for (pkgCache::VerIterator Cur = P.VersionList(); Cur.end() != true; Cur++)
+	 for (pkgCache::VerIterator Cur = P.VersionList(); Cur.end() != true; ++Cur)
 	 {
-	    for (VF = Cur.FileList(); VF.end() == false; VF++)
+	    for (VF = Cur.FileList(); VF.end() == false; ++VF)
 	    {	 
 	       if ((VF.File()->Flags & pkgCache::Flag::NotSource) == 0)
 	       {
@@ -615,7 +619,7 @@ bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	 if (RevDepends == true)
 	    cout << "Reverse Depends:" << endl;
 	 for (pkgCache::DepIterator D = RevDepends ? Pkg.RevDependsList() : Ver.DependsList();
-	      D.end() == false; D++)
+	      D.end() == false; ++D)
 	 {
 	    switch (D->Type) {
 	    case pkgCache::Dep::PreDepends: if (!ShowPreDepends) continue; break;
@@ -741,7 +745,7 @@ bool XVcg(CommandLine &CmdL)
    memset(Flags,0,sizeof(*Flags)*Cache->Head().PackageCount);
    
    // Map the shapes
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
    {   
       if (Pkg->VersionList == 0)
       {
@@ -788,7 +792,7 @@ bool XVcg(CommandLine &CmdL)
    while (Act == true)
    {
       Act = false;
-      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
       {
 	 // See we need to show this package
 	 if (Show[Pkg->ID] == None || Show[Pkg->ID] >= DoneNR)
@@ -814,14 +818,14 @@ bool XVcg(CommandLine &CmdL)
 	    continue;
 	 
 	 pkgCache::VerIterator Ver = Pkg.VersionList();
-	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; ++D)
 	 {
 	    // See if anything can meet this dep
 	    // Walk along the actual package providing versions
 	    bool Hit = false;
 	    pkgCache::PkgIterator DPkg = D.TargetPkg();
 	    for (pkgCache::VerIterator I = DPkg.VersionList();
-		      I.end() == false && Hit == false; I++)
+		      I.end() == false && Hit == false; ++I)
 	    {
 	       if (Cache->VS->CheckDep(I.VerStr(),D->CompareOp,D.TargetVer()) == true)
 		  Hit = true;
@@ -829,7 +833,7 @@ bool XVcg(CommandLine &CmdL)
 	    
 	    // Follow all provides
 	    for (pkgCache::PrvIterator I = DPkg.ProvidesList(); 
-		      I.end() == false && Hit == false; I++)
+		      I.end() == false && Hit == false; ++I)
 	    {
 	       if (Cache->VS->CheckDep(I.ProvideVersion(),D->CompareOp,D.TargetVer()) == false)
 		  Hit = true;
@@ -889,7 +893,7 @@ bool XVcg(CommandLine &CmdL)
    
    /* Draw the box colours after the fact since we can not tell what colour
       they should be until everything is finished drawing */
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
    {
       if (Show[Pkg->ID] < DoneNR)
 	 continue;
@@ -953,7 +957,7 @@ bool Dotty(CommandLine &CmdL)
    memset(Flags,0,sizeof(*Flags)*Cache->Head().PackageCount);
    
    // Map the shapes
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
    {   
       if (Pkg->VersionList == 0)
       {
@@ -1000,7 +1004,7 @@ bool Dotty(CommandLine &CmdL)
    while (Act == true)
    {
       Act = false;
-      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+      for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
       {
 	 // See we need to show this package
 	 if (Show[Pkg->ID] == None || Show[Pkg->ID] >= DoneNR)
@@ -1024,14 +1028,14 @@ bool Dotty(CommandLine &CmdL)
 	    continue;
 	 
 	 pkgCache::VerIterator Ver = Pkg.VersionList();
-	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; D++)
+	 for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; ++D)
 	 {
 	    // See if anything can meet this dep
 	    // Walk along the actual package providing versions
 	    bool Hit = false;
 	    pkgCache::PkgIterator DPkg = D.TargetPkg();
 	    for (pkgCache::VerIterator I = DPkg.VersionList();
-		      I.end() == false && Hit == false; I++)
+		      I.end() == false && Hit == false; ++I)
 	    {
 	       if (Cache->VS->CheckDep(I.VerStr(),D->CompareOp,D.TargetVer()) == true)
 		  Hit = true;
@@ -1039,7 +1043,7 @@ bool Dotty(CommandLine &CmdL)
 	    
 	    // Follow all provides
 	    for (pkgCache::PrvIterator I = DPkg.ProvidesList(); 
-		      I.end() == false && Hit == false; I++)
+		      I.end() == false && Hit == false; ++I)
 	    {
 	       if (Cache->VS->CheckDep(I.ProvideVersion(),D->CompareOp,D.TargetVer()) == false)
 		  Hit = true;
@@ -1094,7 +1098,7 @@ bool Dotty(CommandLine &CmdL)
    
    /* Draw the box colours after the fact since we can not tell what colour
       they should be until everything is finished drawing */
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; Pkg++)
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
    {
       if (Show[Pkg->ID] < DoneNR)
 	 continue;
@@ -1127,7 +1131,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 
    // Find an appropriate file
    pkgCache::VerFileIterator Vf = V.FileList();
-   for (; Vf.end() == false; Vf++)
+   for (; Vf.end() == false; ++Vf)
       if ((Vf.File()->Flags & pkgCache::Flag::NotSource) == 0)
 	 break;
    if (Vf.end() == true)
@@ -1272,7 +1276,7 @@ bool Search(CommandLine &CmdL)
 	 continue;
 
       // Include all the packages that provide matching names too
-      for (pkgCache::PrvIterator Prv = P.ProvidesList() ; Prv.end() == false; Prv++)
+      for (pkgCache::PrvIterator Prv = P.ProvidesList() ; Prv.end() == false; ++Prv)
       {
 	 pkgCache::VerIterator V = Plcy->GetCandidateVer(Prv.OwnerPkg());
 	 if (V.end() == true)
@@ -1341,13 +1345,13 @@ bool ShowAuto(CommandLine &CmdL)
    std::vector<string> packages;
    packages.reserve(Cache->HeaderP->PackageCount / 3);
    
-   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; P++)
+   for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
       if ((*DepCache)[P].Flags & pkgCache::Flag::Auto)
          packages.push_back(P.Name());
 
     std::sort(packages.begin(), packages.end());
     
-    for (vector<string>::iterator I = packages.begin(); I != packages.end(); I++)
+    for (vector<string>::iterator I = packages.begin(); I != packages.end(); ++I)
             cout << *I << "\n";
 
    _error->Notice(_("This command is deprecated. Please use 'apt-mark showauto' instead."));
@@ -1391,7 +1395,7 @@ bool ShowPkgNames(CommandLine &CmdL)
 
    if (CmdL.FileList[1] != 0)
    {
-      for (;I.end() != true; I++)
+      for (;I.end() != true; ++I)
       {
 	 if (All == false && I->FirstPackage == 0)
 	    continue;
@@ -1405,7 +1409,7 @@ bool ShowPkgNames(CommandLine &CmdL)
    }
    
    // Show all pkgs
-   for (;I.end() != true; I++)
+   for (;I.end() != true; ++I)
    {
       if (All == false && I->FirstPackage == 0)
 	 continue;
@@ -1476,7 +1480,7 @@ bool Policy(CommandLine &CmdL)
    if (CmdL.FileList[1] == 0)
    {
       cout << _("Package files:") << endl;   
-      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; F++)
+      for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; ++F)
       {
 	 // Locate the associated index files so we can derive a description
 	 pkgIndexFile *Indx;
@@ -1498,7 +1502,7 @@ bool Policy(CommandLine &CmdL)
       // Show any packages have explicit pins
       cout << _("Pinned packages:") << endl;
       pkgCache::PkgIterator I = Cache->PkgBegin();
-      for (;I.end() != true; I++)
+      for (;I.end() != true; ++I)
       {
 	 if (Plcy->GetPriority(I) == 0)
 	    continue;
@@ -1560,14 +1564,14 @@ bool Policy(CommandLine &CmdL)
       
       // Show the priority tables
       cout << _("  Version table:") << endl;
-      for (V = Pkg.VersionList(); V.end() == false; V++)
+      for (V = Pkg.VersionList(); V.end() == false; ++V)
       {
 	 if (Pkg.CurrentVer() == V)
 	    cout << " *** " << V.VerStr();
 	 else
 	    cout << "     " << V.VerStr();
 	 cout << " " << Plcy->GetPriority(Pkg) << endl;
-	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; VF++)
+	 for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
 	 {
 	    // Locate the associated index files so we can derive a description
 	    pkgIndexFile *Indx;
@@ -1607,9 +1611,9 @@ bool Madison(CommandLine &CmdL)
       APT::PackageSet pkgset = APT::PackageSet::FromString(CacheFile, *I, helper);
       for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       {
-         for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; V++)
+         for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; ++V)
          {
-            for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; VF++)
+            for (pkgCache::VerFileIterator VF = V.FileList(); VF.end() == false; ++VF)
             {
 // This might be nice, but wouldn't uniquely identify the source -mdz
 //                if (VF.File().Archive() != 0)
@@ -1619,11 +1623,11 @@ bool Madison(CommandLine &CmdL)
 //                }
 
                // Locate the associated index files so we can derive a description
-               for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); S++)
+               for (pkgSourceList::const_iterator S = SrcList->begin(); S != SrcList->end(); ++S)
                {
                     vector<pkgIndexFile *> *Indexes = (*S)->GetIndexFiles();
                     for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
-                         IF != Indexes->end(); IF++)
+                         IF != Indexes->end(); ++IF)
                     {
                          if ((*IF)->FindInCache(*(VF.File().Cache())) == VF.File())
                          {

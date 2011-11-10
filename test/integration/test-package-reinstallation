@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertinstalledpackage 'libc-bin' 'i386' '2.13-8' 'Replaces: libc6'
+insertpackage 'unstable' 'libc-bin' 'i386' '2.13-8' 'Replaces: libc6'
+insertinstalledpackage 'libc6' 'i386' '2.13-8' 'Depends: libc-bin (= 2.13-8)'
+insertpackage 'unstable' 'libc6' 'i386' '2.13-8' 'Depends: libc-bin (= 2.13-8)'
+insertinstalledpackage 'apt' 'i386' '0.8.15' 'Depends: libc6'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+0 upgraded, 0 newly installed, 2 reinstalled, 0 to remove and 0 not upgraded.
+Inst libc-bin [2.13-8] (2.13-8 unstable [i386])
+Conf libc-bin (2.13-8 unstable [i386])
+Inst libc6 [2.13-8] (2.13-8 unstable [i386])
+Conf libc6 (2.13-8 unstable [i386])' aptget install --reinstall libc6 libc-bin -s

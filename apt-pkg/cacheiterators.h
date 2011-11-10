@@ -32,6 +32,7 @@
 #include<iterator>
 
 #include<string.h>
+
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
    need to have for doing some walk-over-the-cache magic */
@@ -111,7 +112,7 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;};
 	inline PkgIterator PackageList() const;
-	PkgIterator FindPkg(string Arch = "any") const;
+	PkgIterator FindPkg(std::string Arch = "any") const;
 	/** \brief find the package with the "best" architecture
 
 	    The best architecture is either the "native" or the first
@@ -219,7 +220,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline VerFileIterator FileList() const;
 	bool Downloadable() const;
 	inline const char *PriorityType() const {return Owner->Priority(S->Priority);};
-	string RelStr() const;
+	std::string RelStr() const;
 
 	bool Automatic() const;
 	VerFileIterator NewestFile() const;
@@ -365,7 +366,7 @@ class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> 
 	inline const char *IndexType() const {return S->IndexType == 0?0:Owner->StrP + S->IndexType;};
 
 	bool IsOk();
-	string RelStr();
+	std::string RelStr();
 
 	// Constructors
 	inline PkgFileIterator() : Iterator<PackageFile, PkgFileIterator>() {};

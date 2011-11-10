@@ -10,7 +10,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "indexcopy.h"
+#include<config.h>
 
 #include <apt-pkg/error.h>
 #include <apt-pkg/progress.h>
@@ -21,7 +21,6 @@
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/cdrom.h>
-#include <apti18n.h>
 
 #include <iostream>
 #include <sstream>
@@ -30,6 +29,10 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "indexcopy.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -43,7 +46,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 			     pkgCdromStatus *log)
 {
    OpProgress *Progress = NULL;
-   if (List.size() == 0)
+   if (List.empty() == true)
       return true;
    
    if(log) 
@@ -53,8 +56,8 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    bool Debug = _config->FindB("Debug::aptcdrom",false);
    
    // Prepare the progress indicator
-   unsigned long TotalSize = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   off_t TotalSize = 0;
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
       if (stat(string(*I + GetFileName()).c_str(),&Buf) != 0 &&
@@ -64,14 +67,14 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       TotalSize += Buf.st_size;
    }	
 
-   unsigned long CurrentSize = 0;
+   off_t CurrentSize = 0;
    unsigned int NotFound = 0;
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      unsigned long FileSize = 0;
+      off_t FileSize = 0;
       
       // Open the package file
       FileFd Pkg;
@@ -164,7 +167,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	 if(Progress)
 	    Progress->Progress(Parser.Offset());
 	 string File;
-	 unsigned long Size;
+	 unsigned long long Size;
 	 if (GetFile(File,Size) == false)
 	 {
 	    fclose(TargetFl);
@@ -219,7 +222,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	    }	    
 	    			    	    
 	    // Size match
-	    if ((unsigned)Buf.st_size != Size)
+	    if ((unsigned long long)Buf.st_size != Size)
 	    {
 	       if (Debug == true)
 		  clog << "Wrong Size: " << File << endl;
@@ -453,7 +456,7 @@ bool IndexCopy::GrabFirst(string Path,string &To,unsigned int Depth)
 // PackageCopy::GetFile - Get the file information from the section	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool PackageCopy::GetFile(string &File,unsigned long &Size)
+bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 {
    File = Section->FindS("Filename");
    Size = Section->FindI("Size");
@@ -479,7 +482,7 @@ bool PackageCopy::RewriteEntry(FILE *Target,string File)
 // SourceCopy::GetFile - Get the file information from the section	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool SourceCopy::GetFile(string &File,unsigned long &Size)
+bool SourceCopy::GetFile(string &File,unsigned long long &Size)
 {
    string Files = Section->FindS("Files");
    if (Files.empty() == true)
@@ -502,7 +505,7 @@ bool SourceCopy::GetFile(string &File,unsigned long &Size)
       return _error->Error("Error parsing file record");
    
    // Parse the size and append the directory
-   Size = atoi(sSize.c_str());
+   Size = strtoull(sSize.c_str(), NULL, 10);
    File = Base + File;
    return true;
 }
@@ -583,13 +586,13 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	/*{{{*/
 			      vector<string> PkgList,vector<string> SrcList)
 {
-   if (SigList.size() == 0)
+   if (SigList.empty() == true)
       return true;
 
    bool Debug = _config->FindB("Debug::aptcdrom",false);
 
    // Read all Release files
-   for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); I++)
+   for (vector<string>::iterator I = SigList.begin(); I != SigList.end(); ++I)
    { 
       if(Debug)
 	 cout << "Signature verify for: " << *I << endl;
@@ -633,7 +636,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       // go over the Indexfiles and see if they verify
       // if so, remove them from our copy of the lists
       vector<string> keys = MetaIndex->MetaKeys();
-      for (vector<string>::iterator I = keys.begin(); I != keys.end(); I++)
+      for (vector<string>::iterator I = keys.begin(); I != keys.end(); ++I)
       { 
 	 if(!Verify(prefix,*I, MetaIndex)) {
 	    // something went wrong, don't copy the Release.gpg
@@ -776,7 +779,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 				vector<string> &List, pkgCdromStatus *log)
 {
    OpProgress *Progress = NULL;
-   if (List.size() == 0)
+   if (List.empty() == true)
       return true;
    
    if(log) 
@@ -785,8 +788,8 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    bool Debug = _config->FindB("Debug::aptcdrom",false);
    
    // Prepare the progress indicator
-   unsigned long TotalSize = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   off_t TotalSize = 0;
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
       if (stat(string(*I).c_str(),&Buf) != 0 &&
@@ -796,14 +799,14 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       TotalSize += Buf.st_size;
    }	
 
-   unsigned long CurrentSize = 0;
+   off_t CurrentSize = 0;
    unsigned int NotFound = 0;
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
-   for (vector<string>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      unsigned long FileSize = 0;
+      off_t FileSize = 0;
       
       // Open the package file
       FileFd Pkg;
@@ -885,7 +888,6 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       this->Section = &Section;
       string Prefix;
       unsigned long Hits = 0;
-      unsigned long Chop = 0;
       while (Parser.Step(Section) == true)
       {
 	 if(Progress)
@@ -903,7 +905,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       fclose(TargetFl);
 
       if (Debug == true)
-	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << Chop << endl;
+	 cout << " Processed by using Prefix '" << Prefix << "' and chop " << endl;
 	 
       if (_config->FindB("APT::CDROM::NoAct",false) == false)
       {

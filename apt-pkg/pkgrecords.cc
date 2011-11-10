@@ -9,12 +9,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-    
-#include <apti18n.h>   
+
+#include <apti18n.h>
 									/*}}}*/
 
 // Records::pkgRecords - Constructor					/*{{{*/
@@ -24,7 +26,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
   Files(Cache.HeaderP->PackageFileCount)
 {
    for (pkgCache::PkgFileIterator I = Cache.FileBegin();
-        I.end() == false; I++)
+        I.end() == false; ++I)
    {
       const pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(I.IndexType());
       if (Type == 0)
@@ -44,7 +46,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
 /* */
 pkgRecords::~pkgRecords()
 {
-   for ( vector<Parser*>::iterator it = Files.begin();
+   for ( std::vector<Parser*>::iterator it = Files.begin();
      it != Files.end();
      ++it)
    {

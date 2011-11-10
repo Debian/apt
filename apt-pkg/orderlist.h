@@ -18,6 +18,7 @@
 
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/macros.h>
 
 class pkgDepCache;
 class pkgOrderList : protected pkgCache::Namespace
@@ -37,7 +38,7 @@ class pkgOrderList : protected pkgCache::Namespace
    Package **End;
    Package **List;
    Package **AfterEnd;
-   string *FileList;
+   std::string *FileList;
    DepIterator Loops[20];
    int LoopCount;
    int Depth;
@@ -45,7 +46,8 @@ class pkgOrderList : protected pkgCache::Namespace
    bool Debug;
    
    // Main visit function
-   bool VisitNode(PkgIterator Pkg);
+   __deprecated bool VisitNode(PkgIterator Pkg) { return VisitNode(Pkg, "UNKNOWN"); };
+   bool VisitNode(PkgIterator Pkg, char const* from);
    bool VisitDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRProvides(DepFunc F,VerIterator Ver);
@@ -74,7 +76,12 @@ class pkgOrderList : protected pkgCache::Namespace
 
    typedef Package **iterator;
    
-   // State flags
+   /* State flags
+      The Loop flag can be set on a package that is currently being processed by either SmartConfigure or
+      SmartUnPack. This allows the package manager to tell when a loop has been formed as it will try to 
+      SmartUnPack or SmartConfigure a package with the Loop flag set. It will then either stop (as it knows
+      that the operation is unnecessary as its already in process), or in the case of the conflicts resolution
+      in SmartUnPack, use EarlyRemove to resolve the situation.  */
    enum Flags {Added = (1 << 0), AddPending = (1 << 1),
                Immediate = (1 << 2), Loop = (1 << 3),
                UnPacked = (1 << 4), Configured = (1 << 5),
@@ -89,10 +96,13 @@ class pkgOrderList : protected pkgCache::Namespace
    void Flag(PkgIterator Pkg,unsigned long State, unsigned long F) {Flags[Pkg->ID] = (Flags[Pkg->ID] & (~F)) | State;};
    inline void Flag(PkgIterator Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
    inline void Flag(Package *Pkg,unsigned long F) {Flags[Pkg->ID] |= F;};
+   // RmFlag removes a flag from a package 
+   inline void RmFlag(Package *Pkg,unsigned long F) {Flags[Pkg->ID] &= ~F;};
+   // IsNow will return true if the Pkg has been not been either configured or unpacked
    inline bool IsNow(PkgIterator Pkg) {return (Flags[Pkg->ID] & (States & (~Removed))) == 0;};
    bool IsMissing(PkgIterator Pkg);
    void WipeFlags(unsigned long F);
-   void SetFileList(string *FileList) {this->FileList = FileList;};
+   void SetFileList(std::string *FileList) {this->FileList = FileList;};
 
    // Accessors
    inline iterator begin() {return List;};
@@ -105,7 +115,7 @@ class pkgOrderList : protected pkgCache::Namespace
    
    // Ordering modes
    bool OrderCritical();
-   bool OrderUnpack(string *FileList = 0);
+   bool OrderUnpack(std::string *FileList = 0);
    bool OrderConfigure();
 
    int Score(PkgIterator Pkg);

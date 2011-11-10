@@ -18,9 +18,6 @@
 #include <cstring>
 #include <algorithm>
 
-using std::string;
-using std::min;
-
 #include "hashsum_template.h"
 
 typedef  HashSumValue<160> SHA1SumValue;
@@ -34,7 +31,7 @@ class SHA1Summation : public SummationImplementation
    bool Done;
    
    public:
-   bool Add(const unsigned char *inbuf, unsigned long inlen);
+   bool Add(const unsigned char *inbuf, unsigned long long inlen);
    using SummationImplementation::Add;
 
    SHA1SumValue Result();

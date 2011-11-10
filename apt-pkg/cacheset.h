@@ -16,9 +16,12 @@
 #include <set>
 #include <string>
 
-#include <apt-pkg/cachefile.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
 									/*}}}*/
+
+class pkgCacheFile;
+
 namespace APT {
 class PackageSet;
 class VersionSet;
@@ -37,10 +40,10 @@ public:									/*{{{*/
 			ShowError(ShowError), ErrorType(ErrorType) {};
 	virtual ~CacheSetHelper() {};
 
-	virtual void showTaskSelection(PackageSet const &pkgset, string const &pattern) {};
-	virtual void showRegExSelection(PackageSet const &pkgset, string const &pattern) {};
+	virtual void showTaskSelection(PackageSet const &pkgset, std::string const &pattern) {};
+	virtual void showRegExSelection(PackageSet const &pkgset, std::string const &pattern) {};
 	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
-				 string const &ver, bool const &verIsRel) {};
+				 std::string const &ver, bool const &verIsRel) {};
 
 	virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str);
 	virtual PackageSet canNotFindTask(pkgCacheFile &Cache, std::string pattern);
@@ -265,7 +268,7 @@ public:									/*{{{*/
 		inline pkgCache::VerFileIterator FileList() const { return (**this).FileList(); };
 		inline bool Downloadable() const { return (**this).Downloadable(); };
 		inline const char *PriorityType() const { return (**this).PriorityType(); };
-		inline string RelStr() const { return (**this).RelStr(); };
+		inline std::string RelStr() const { return (**this).RelStr(); };
 		inline bool Automatic() const { return (**this).Automatic(); };
 		inline pkgCache::VerFileIterator NewestFile() const { return (**this).NewestFile(); };
 	};

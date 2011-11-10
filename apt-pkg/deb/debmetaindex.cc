@@ -1,14 +1,19 @@
 // ijones, walters
+#include <config.h>
 
 #include <apt-pkg/debmetaindex.h>
 #include <apt-pkg/debindexfile.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/error.h>
 
 #include <set>
+#include <algorithm>
 
 using namespace std;
 
@@ -197,7 +202,11 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 		}
 	}
 
-	std::vector<std::string> const lang = APT::Configuration::getLanguages(true);
+	std::vector<std::string> lang = APT::Configuration::getLanguages(true);
+	std::vector<std::string>::iterator lend = std::remove(lang.begin(), lang.end(), "none");
+	if (lend != lang.end())
+		lang.erase(lend);
+
 	if (lang.empty() == true)
 		return IndexTargets;
 
@@ -208,8 +217,7 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 		for (std::set<std::string>::const_iterator s = sections.begin();
 		     s != sections.end(); ++s) {
 			for (std::vector<std::string>::const_iterator l = lang.begin();
-			     l != lang.end(); l++) {
-				if (*l == "none") continue;
+			     l != lang.end(); ++l) {
 				IndexTarget * Target = new OptionalIndexTarget();
 				Target->ShortDesc = "Translation-" + *l;
 				Target->MetaKey = TranslationIndexURISuffix(l->c_str(), *s);
@@ -238,7 +246,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
    // special case for --print-uris
    if (GetAll) {
       vector <struct IndexTarget *> *targets = ComputeIndexTargets();
-      for (vector <struct IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); Target++) {
+      for (vector <struct IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target) {
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			 (*Target)->ShortDesc, HashString());
       }
@@ -295,7 +303,7 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles() {
 	if (src != ArchEntries.end()) {
 		vector<debSectionEntry const*> const SectionEntries = src->second;
 		for (vector<debSectionEntry const*>::const_iterator I = SectionEntries.begin();
-		     I != SectionEntries.end(); I++)
+		     I != SectionEntries.end(); ++I)
 			Indexes->push_back(new debSourcesIndex (URI, Dist, (*I)->Section, IsTrusted()));
 	}
 
@@ -310,7 +318,7 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles() {
 		if (a->first == "source")
 			continue;
 		for (vector<debSectionEntry const*>::const_iterator I = a->second.begin();
-		     I != a->second.end(); I++) {
+		     I != a->second.end(); ++I) {
 			Indexes->push_back(new debPackagesIndex (URI, Dist, (*I)->Section, IsTrusted(), a->first));
 			sections[(*I)->Section].insert(lang.begin(), lang.end());
 		}
@@ -319,7 +327,7 @@ vector <pkgIndexFile *> *debReleaseIndex::GetIndexFiles() {
 	for (map<string, set<string> >::const_iterator s = sections.begin();
 	     s != sections.end(); ++s)
 		for (set<string>::const_iterator l = s->second.begin();
-		     l != s->second.end(); l++) {
+		     l != s->second.end(); ++l) {
 			if (*l == "none") continue;
 			Indexes->push_back(new debTranslationsIndex(URI,Dist,s->first,(*l).c_str()));
 		}
@@ -368,7 +376,7 @@ class debSLTypeDebian : public pkgSourceList::Type
       map<string, string>::const_iterator const trusted = Options.find("trusted");
 
       for (vector<metaIndex *>::const_iterator I = List.begin();
-	   I != List.end(); I++)
+	   I != List.end(); ++I)
       {
 	 // We only worry about debian entries here
 	 if (strcmp((*I)->GetType(), "deb") != 0)

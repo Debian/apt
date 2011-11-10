@@ -11,15 +11,18 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
-#include <apti18n.h>
-    
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;
@@ -27,7 +30,7 @@ using std::string;
 class pkgTagFilePrivate
 {
 public:
-   pkgTagFilePrivate(FileFd *pFd, unsigned long Size) : Fd(*pFd), Size(Size)
+   pkgTagFilePrivate(FileFd *pFd, unsigned long long Size) : Fd(*pFd), Size(Size)
    {
    }
    FileFd &Fd;
@@ -35,14 +38,14 @@ public:
    char *Start;
    char *End;
    bool Done;
-   unsigned long iOffset;
-   unsigned long Size;
+   unsigned long long iOffset;
+   unsigned long long Size;
 };
 
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size)
+pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
 {
    d = new pkgTagFilePrivate(pFd, Size);
 
@@ -84,7 +87,7 @@ unsigned long pkgTagFile::Offset()
 bool pkgTagFile::Resize()
 {
    char *tmp;
-   unsigned long EndSize = d->End - d->Start;
+   unsigned long long EndSize = d->End - d->Start;
 
    // fail is the buffer grows too big
    if(d->Size > 1024*1024+1)
@@ -136,8 +139,8 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
    then fills the rest from the file */
 bool pkgTagFile::Fill()
 {
-   unsigned long EndSize = d->End - d->Start;
-   unsigned long Actual = 0;
+   unsigned long long EndSize = d->End - d->Start;
+   unsigned long long Actual = 0;
    
    memmove(d->Buffer,d->Start,EndSize);
    d->Start = d->Buffer;
@@ -178,12 +181,12 @@ bool pkgTagFile::Fill()
 // ---------------------------------------------------------------------
 /* This jumps to a pre-recorded file location and reads the record
    that is there */
-bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
+bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 {
    // We are within a buffer space of the next hit..
    if (Offset >= d->iOffset && d->iOffset + (d->End - d->Start) > Offset)
    {
-      unsigned long Dist = Offset - d->iOffset;
+      unsigned long long Dist = Offset - d->iOffset;
       d->Start += Dist;
       d->iOffset += Dist;
       return Step(Tag);

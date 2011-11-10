@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
@@ -23,9 +25,9 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/metaindex.h>
 
-#include <apti18n.h>
-    
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -33,6 +35,8 @@
 #include <sstream>
 #include <stdio.h>
 #include <ctime>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -681,17 +685,17 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    // remove all patches until the next matching patch is found
    // this requires the Index file to be ordered
    for(vector<DiffInfo>::iterator I=available_patches.begin();
-       available_patches.size() > 0 && 
+       available_patches.empty() == false &&
 	  I != available_patches.end() &&
-	  (*I).sha1 != local_sha1; 
-       I++) 
+	  I->sha1 != local_sha1;
+       ++I)
    {
       available_patches.erase(I);
    }
 
    // error checking and falling back if no patch was found
-   if(available_patches.size() == 0) 
-   { 
+   if(available_patches.empty() == true)
+   {
       Failed("", NULL);
       return false;
    }
@@ -756,7 +760,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
       chmod(FinalFile.c_str(),0644);
 
       // see if there is more to download
-      if(available_patches.size() > 0) {
+      if(available_patches.empty() == false) {
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
 			      ExpectedHash, ServerSha1, available_patches);
 	 return Finish();
@@ -1266,9 +1270,9 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,string Hash,	/
       if (SigFile == "")
       {
          // There was no signature file, so we are finished.  Download
-         // the indexes and do only hashsum verification
+         // the indexes and do only hashsum verification if possible
          MetaIndexParser->Load(DestFile);
-         QueueIndexes(true);
+         QueueIndexes(false);
       }
       else
       {
@@ -1383,36 +1387,33 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 #endif
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
-        Target++)
+        ++Target)
    {
       HashString ExpectedIndexHash;
-      if (verify)
+      const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+      if (Record == NULL)
       {
-	 const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
-	 if (Record == NULL)
+	 if (verify == true && (*Target)->IsOptional() == false)
 	 {
-	    if ((*Target)->IsOptional() == false)
-	    {
-	       Status = StatAuthError;
-	       strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
-	       return;
-	    }
+	    Status = StatAuthError;
+	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
+	    return;
 	 }
-	 else
+      }
+      else
+      {
+	 ExpectedIndexHash = Record->Hash;
+	 if (_config->FindB("Debug::pkgAcquire::Auth", false))
 	 {
-	    ExpectedIndexHash = Record->Hash;
-	    if (_config->FindB("Debug::pkgAcquire::Auth", false))
-	    {
-	       std::cerr << "Queueing: " << (*Target)->URI << std::endl;
-	       std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
-	       std::cerr << "For: " << Record->MetaKeyFilename << std::endl;
-	    }
-	    if (ExpectedIndexHash.empty() == true && (*Target)->IsOptional() == false)
-	    {
-	       Status = StatAuthError;
-	       strprintf(ErrorText, _("Unable to find hash sum for '%s' in Release file"), (*Target)->MetaKey.c_str());
-	       return;
-	    }
+	    std::cerr << "Queueing: " << (*Target)->URI << std::endl;
+	    std::cerr << "Expected Hash: " << ExpectedIndexHash.toStr() << std::endl;
+	    std::cerr << "For: " << Record->MetaKeyFilename << std::endl;
+	 }
+	 if (verify == true && ExpectedIndexHash.empty() == true && (*Target)->IsOptional() == false)
+	 {
+	    Status = StatAuthError;
+	    strprintf(ErrorText, _("Unable to find hash sum for '%s' in Release file"), (*Target)->MetaKey.c_str());
+	    return;
 	 }
       }
 
@@ -1681,7 +1682,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 
    // check if we have one trusted source for the package. if so, switch
    // to "TrustedOnly" mode
-   for (pkgCache::VerFileIterator i = Version.FileList(); i.end() == false; i++)
+   for (pkgCache::VerFileIterator i = Version.FileList(); i.end() == false; ++i)
    {
       pkgIndexFile *Index;
       if (Sources->FindIndex(i.File(),Index) == false)
@@ -1718,7 +1719,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 bool pkgAcqArchive::QueueNext()
 {
    string const ForceHash = _config->Find("Acquire::ForceHash");
-   for (; Vf.end() == false; Vf++)
+   for (; Vf.end() == false; ++Vf)
    {
       // Ignore not source sources
       if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
@@ -1833,7 +1834,7 @@ bool pkgAcqArchive::QueueNext()
       Desc.ShortDesc = Version.ParentPkg().Name();
       QueueURI(Desc);
 
-      Vf++;
+      ++Vf;
       return true;
    }
    return false;
@@ -1907,7 +1908,7 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
    {
       // Vf = Version.FileList();
-      while (Vf.end() == false) Vf++;
+      while (Vf.end() == false) ++Vf;
       StoreFilename = string();
       Item::Failed(Message,Cnf);
       return;

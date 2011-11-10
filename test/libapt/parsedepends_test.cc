@@ -4,8 +4,8 @@
 #include "assert.h"
 
 int main(int argc,char *argv[]) {
-	string Package;
-	string Version;
+	std::string Package;
+	std::string Version;
 	unsigned int Op = 5;
 	unsigned int Null = 0;
 	bool StripMultiArch = true;

@@ -1,6 +1,87 @@
-apt (0.8.16~exp5) experimental; urgency=low
+apt (0.8.16~exp8) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc:
+    - do not fail on unpacked packages in SmartUnPack, just don't
+      shedule them for unpack, but do all checks and configure them
+    - do not enter an endless loop for (essential) pre-dependency loops
+  * apt-pkg/contrib/sha2_internal.cc:
+    - use a pointer-union to peace gcc strict-aliasing warning
+  * apt-pkg/deb/deblistparser.cc:
+    - M-A: foreign packages provide for other archs, too
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 03 Nov 2011 09:40:29 -0500
+
+apt (0.8.16~exp7) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * do not pollute namespace in the headers with using (Closes: #500198)
+  * use forward declaration in headers if possible instead of includes
+  * remove old APT_COMPATIBILITY ifdef's
+  * apt-pkg/deb/dpkgpm.cc:
+    - use std::vector instead of fixed size arrays to store args and
+      multiarch-packagename strings
+    - load the dpkg base arguments only one time and reuse them later
+  * cmdline/apt-get.cc:
+    - follow Provides in the evaluation of saving candidates, too, for
+      statisfying garbage package dependencies (Closes: #640590)
+  * apt-pkg/algorithms.cc:
+    - if a package is garbage, don't try to save it with FixByInstall
+  * apt-pkg/deb/debsrcrecords.cc:
+    - remove the limit of 400 Binaries for a source package (Closes: #622110)
+  * apt-pkg/deb/deblistparser.cc:
+    - fix crash when the dynamic mmap needs to be grown in
+      LoadReleaseInfo (LP: #854090)
+  * apt-pkg/deb/debmetaindex.cc:
+    - none is a separator, not a language: no need for Index (Closes: #624218)
+  * apt-pkg/aptconfiguration.cc:
+    - do not builtin languages only if none is forced (Closes: #643787)
+  * apt-pkg/pkgcachegen.cc:
+    - refactor MergeList by creating -Group, -Package and -Version specialist
+    - share description list between "same" versions (LP: #868977)
+      This also means that descriptions are shared across archives now.
+    - add implicit dependencies needed for Multi-Arch at the time a Version
+      struct is created and not at the end of the cache generation
+  * apt-pkg/pkgcache.cc:
+    - always prefer "en" over "" for "en"-language regardless of cache-order
 
   [ Michael Vogt ]
+  * apt-pkg/contrib/configuration.cc:
+    - fix double delete (LP: #848907)
+    - ignore only the invalid regexp instead of all options
+  * apt-pkg/acquire-item.h, apt-pkg/deb/debmetaindex.cc:
+    - fix fetching language information by adding OptionalSubIndexTarget
+  * methods/https.cc:
+    - cleanup broken downloads properly
+
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 14 Oct 2011 13:51:35 +0200
+
+apt (0.8.16~exp6) experimental; urgency=low
+
+  [ Christopher Baines ]
+  * enable APT in unpack/configure ordering to handle loops as well
+    as tight dependencies between immediate packages better
+    enabling also the possibility to mark all packages as immediate
+    (at least Closes: #353290, #540227, #559733, #621836, #639290)
+
+  [ David Kalnischkies ]
+  * [abi-break] Support large files in the complete toolset. Indexes of this
+    size are pretty unlikely for now, but we need it for deb
+    packages which could become bigger than 4GB now (LP: #815895)
+  * merged the debian-sid branch
+  
+  [ Michael Vogt ]
+  * bump ABI version
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 14 Sep 2011 21:06:51 +0200
+
+apt (0.8.16~exp5) experimental; urgency=low
+
+  * merged the latest debian-sid fixes
   * apt-pkg/makefile:
     - install sha256.h compat header
   * apt-pkg/pkgcachegen.{cc,h}:
@@ -16,24 +97,8 @@ apt (0.8.16~exp5) experimental; urgency=low
   * methods/mirror.cc:
     - include the architecture(s) in the query string as well so 
       that the server can make better decisions
-  * apt-pkg/contrib/configuration.cc:
-    - fix double delete (LP: #848907)
-    - ignore only the invalid regexp instead of all options
-  * apt-pkg/acquire-item.h, apt-pkg/deb/debmetaindex.cc:
-    - fix fetching language information by adding OptionalSubIndexTarget
-  * methods/https.cc:
-    - cleanup broken downloads properly
-  
-  [ Colin Watson ]
-  * ftparchive/cachedb.cc:
-    - fix buffersize in bytes2hex
 
-  [ David Kalnischkies ]  
-  * apt-pkg/deb/deblistparser.cc:
-    - fix crash when the dynamic mmap needs to be grown in
-      LoadReleaseInfo (LP: #854090)
-
- -- Michael Vogt <mvo@debian.org>  Fri, 05 Aug 2011 10:57:08 +0200
+ -- Michael Vogt <mvo@debian.org>  Mon, 15 Aug 2011 14:52:54 +0200
 
 apt (0.8.16~exp4) experimental; urgency=low
 
@@ -131,8 +196,114 @@ apt (0.8.16~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
 
-apt (0.8.15.5.6) UNRELEASED; urgency=low
+apt (1.8.15.9+nmu1) unstable; urgency=low
 
+  [ David Kalnischkies ]
+  * algorithms.cc:
+    - show a debug why a package was kept by ResolveByKeep()
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 17 Oct 2011 16:36:22 +0200
+
+apt (0.8.15.9) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * Symbol file update
+  * doc/apt-get.8.xml:
+    - change wording of autoremove description as suggested
+      by Robert Simmons, thanks! (Closes: #641490)
+  * apt-pkg/deb/dpkgpm.cc:
+    - use std::vector instead of fixed size arrays to store args and
+      multiarch-packagename strings
+    - load the dpkg base arguments only one time and reuse them later
+  * cmdline/apt-get.cc:
+    - follow Provides in the evaluation of saving candidates, too, for
+      statisfying garbage package dependencies (Closes: #640590)
+  * apt-pkg/algorithms.cc:
+    - if a package is garbage, don't try to save it with FixByInstall
+  * apt-pkg/init.cc:
+    - silently ignore *.orig and *.save files by default
+  * apt-pkg/policy.cc:
+    - accept generic release pin expressions again in -t (Closes: #644166)
+  * apt-pkg/deb/debmetaindex.cc:
+    - none is a separator, not a language: no need for Index (Closes: #624218)
+  * apt-pkg/aptconfiguration.cc:
+    - do not builtin languages only if none is forced (Closes: #643787)
+  * doc/apt.conf.5.xml:
+    - apply spelling fix by Kevin Lyda, thanks! (Closes: #644104)
+
+  [ Christian Perrier ]
+  * Fix spelling error (sensée) in French translation. Thanks
+    to Corentin Le Gall for spotting it.
+
+  [ Colin Watson ]
+  * ftparchive/cachedb.cc:
+    - fix buffersize in bytes2hex
+
+  [ Michael Vogt ]
+  * ftparchive/cachedb.cc:
+    - make buffer fully dynamic (thanks to Colin Watson)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 14 Oct 2011 12:00:09 +0200
+
+apt (0.8.15.8) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - output list of virtual package providers to c1out in -q=1
+      instead of /dev/null to unbreak sbuild (LP: #816155)
+
+  [ Michael Vogt ]
+  * apt-pkg/contrib/configuration.cc:
+    - fix double delete (LP: #848907)
+    - ignore only the invalid regexp instead of all options
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 14 Sep 2011 12:08:25 +0200
+
+apt (0.8.15.7) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc, apt-pkg/pkgcache.cc:
+    - ignore "self"-conflicts for all architectures of a package
+      instead of just for the architecture of the package look at
+      in the ordering of installations, too (LP: #802901)
+    - M-A:same lockstep unpack should operate on installed
+      packages first (LP: #835625)
+  * test/*
+    - reorganize the various testcases and helper we have and
+      integrate them better into the buildsystem
+    - run the test/libapt testcases at package build-time
+  * debian/apt.symbols:
+    - add the newly added symbols since 0.8.15.3
+  * cmdline/apt-get.cc:
+    - remove the binary caches in 'apt-get clean' as it is the first
+      thing recommend by many supporters in case of APT segfaults
+    - remove the caches in 'apt-get update', too, as they will be
+      invalid in most cases anyway
+  * apt-pkg/acquire-item.cc:
+    - if no Release.gpg file is found try to verify with hashes,
+      but do not fail if a hash can't be found
+  * apt-pkg/acquire.cc:
+    - non-existing directories are by definition clean
+  * cmdline/apt-key:
+    - if command is 'add' do not error out if the specified
+      keyring doesn't exist, it will be created by gpg
+  * apt-pkg/orderlist.cc:
+    - prefer visiting packages marked for deletion in VisitProvides
+      if we are operating on a negative dependency so that we can
+      deal early with the fallout of this remove
+  * apt-pkg/indexrecords.cc:
+    - fix Acquire::Max-ValidTime option by interpreting it really
+      as seconds as specified in the manpage and not as days
+    - add an Acquire::Min-ValidTime option (Closes: #640122)
+  * doc/apt.conf.5.xml:
+    - reword Acquire::Max-ValidTime documentation to make clear
+      that it doesn't provide the new Min-ValidTime functionality
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 12 Sep 2011 16:38:46 +0200
+
+apt (0.8.15.6) unstable; urgency=low
+
+  [ Michael Vogt ]
   * apt-pkg/contrib/fileutl.{cc,h}:
     - add GetModificationTime() helper
   * apt-pkg/pkgcachegen.cc:
@@ -150,8 +321,11 @@ apt (0.8.15.5.6) UNRELEASED; urgency=low
   * apt-pkg/acquire-item.cc:
     - if no Release.gpg file is found, still load the hashes for
       verification (closes: #636314) and add test
+  
+  [ David Kalnischkies ]
+  * lots of cppcheck fixes
 
- -- Michael Vogt <mvo@debian.org>  Tue, 12 Jul 2011 11:54:47 +0200
+ -- Michael Vogt <mvo@debian.org>  Mon, 15 Aug 2011 09:20:35 +0200
 
 apt (0.8.15.5) unstable; urgency=low
 

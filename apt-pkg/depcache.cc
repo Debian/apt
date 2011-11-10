@@ -8,28 +8,33 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/algorithms.h>
-
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/progress.h>
 
 #include <iostream>
-#include <sstream>    
+#include <sstream>
 #include <set>
 
 #include <sys/stat.h>
 
-#include <apti18n.h>    
+#include <apti18n.h>
 									/*}}}*/
+
+using std::string;
+
 // helper for Install-Recommends-Sections and Never-MarkAuto-Sections	/*{{{*/
 static bool 
 ConfigValueInSubTree(const char* SubTree, const char *needle)
@@ -129,7 +134,7 @@ bool pkgDepCache::Init(OpProgress *Prog)
    /* Set the current state of everything. In this state all of the
       packages are kept exactly as is. See AllUpgrade */
    int Done = 0;
-   for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
+   for (PkgIterator I = PkgBegin(); I.end() != true; ++I, ++Done)
    {
       if (Prog != 0 && Done%20 == 0)
 	 Prog->Progress(Done);
@@ -169,14 +174,14 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
    string const state = _config->FindFile("Dir::State::extended_states");
    if(RealFileExists(state)) {
       state_file.Open(state, FileFd::ReadOnly);
-      int const file_size = state_file.Size();
+      off_t const file_size = state_file.Size();
       if(Prog != NULL)
 	 Prog->OverallProgress(0, file_size, 1, 
 			       _("Reading state information"));
 
       pkgTagFile tagfile(&state_file);
       pkgTagSection section;
-      int amt = 0;
+      off_t amt = 0;
       bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
       while(tagfile.Step(section)) {
 	 string const pkgname = section.FindS("Package");
@@ -292,7 +297,7 @@ bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
    
    // then write the ones we have not seen yet
    std::ostringstream ostr;
-   for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end(); pkg++) {
+   for(pkgCache::PkgIterator pkg=Cache->PkgBegin(); !pkg.end(); ++pkg) {
       StateCache const &P = PkgState[pkg->ID];
       if(P.Flags & Flag::Auto) {
 	 if (pkgs_seen.find(pkg.FullName()) != pkgs_seen.end()) {
@@ -365,7 +370,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    // Check the providing packages
    PrvIterator P = Dep.TargetPkg().ProvidesList();
    PkgIterator Pkg = Dep.ParentPkg();
-   for (; P.end() != true; P++)
+   for (; P.end() != true; ++P)
    {
       /* Provides may never be applied against the same package (or group)
          if it is a conflicts. See the comment above. */
@@ -534,7 +539,7 @@ void pkgDepCache::BuildGroupOrs(VerIterator const &V)
 {
    unsigned char Group = 0;
    
-   for (DepIterator D = V.DependsList(); D.end() != true; D++)
+   for (DepIterator D = V.DependsList(); D.end() != true; ++D)
    {
       // Build the dependency state.
       unsigned char &State = DepState[D->ID];
@@ -574,7 +579,7 @@ unsigned char pkgDepCache::VersionState(DepIterator D,unsigned char Check,
       // Compute a single dependency element (glob or)
       DepIterator Start = D;
       unsigned char State = 0;
-      for (bool LastOR = true; D.end() == false && LastOR == true; D++)
+      for (bool LastOR = true; D.end() == false && LastOR == true; ++D)
       {
 	 State |= DepState[D->ID];
 	 LastOR = (D->CompareOp & Dep::Or) == Dep::Or;
@@ -664,15 +669,15 @@ void pkgDepCache::Update(OpProgress *Prog)
 
    // Perform the depends pass
    int Done = 0;
-   for (PkgIterator I = PkgBegin(); I.end() != true; I++,Done++)
+   for (PkgIterator I = PkgBegin(); I.end() != true; ++I, ++Done)
    {
       if (Prog != 0 && Done%20 == 0)
 	 Prog->Progress(Done);
-      for (VerIterator V = I.VersionList(); V.end() != true; V++)
+      for (VerIterator V = I.VersionList(); V.end() != true; ++V)
       {
 	 unsigned char Group = 0;
 
-	 for (DepIterator D = V.DependsList(); D.end() != true; D++)
+	 for (DepIterator D = V.DependsList(); D.end() != true; ++D)
 	 {
 	    // Build the dependency state.
 	    unsigned char &State = DepState[D->ID];
@@ -709,7 +714,7 @@ void pkgDepCache::Update(OpProgress *Prog)
 void pkgDepCache::Update(DepIterator D)
 {
    // Update the reverse deps
-   for (;D.end() != true; D++)
+   for (;D.end() != true; ++D)
    {      
       unsigned char &State = DepState[D->ID];
       State = DependencyState(D);
@@ -742,13 +747,13 @@ void pkgDepCache::Update(PkgIterator const &Pkg)
    // Update the provides map for the current ver
    if (Pkg->CurrentVer != 0)
       for (PrvIterator P = Pkg.CurrentVer().ProvidesList(); 
-	   P.end() != true; P++)
+	   P.end() != true; ++P)
 	 Update(P.ParentPkg().RevDependsList());
 
    // Update the provides map for the candidate ver
    if (PkgState[Pkg->ID].CandidateVer != 0)
       for (PrvIterator P = PkgState[Pkg->ID].CandidateVerIter(*this).ProvidesList();
-	   P.end() != true; P++)
+	   P.end() != true; ++P)
 	 Update(P.ParentPkg().RevDependsList());
 }
 									/*}}}*/
@@ -1009,7 +1014,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       DepIterator Start = Dep;
       bool Result = true;
       unsigned Ors = 0;
-      for (bool LastOR = true; Dep.end() == false && LastOR == true; Dep++,Ors++)
+      for (bool LastOR = true; Dep.end() == false && LastOR == true; ++Dep, ++Ors)
       {
 	 LastOR = (Dep->CompareOp & Dep::Or) == Dep::Or;
 
@@ -1475,12 +1480,12 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pk
       unless they are already installed */
    VerIterator Last(*(pkgCache *)this,0);
    
-   for (VerIterator I = Pkg.VersionList(); I.end() == false; I++)
+   for (VerIterator I = Pkg.VersionList(); I.end() == false; ++I)
    {
       if (Pkg.CurrentVer() == I)
 	 return I;
       
-      for (VerFileIterator J = I.FileList(); J.end() == false; J++)
+      for (VerFileIterator J = I.FileList(); J.end() == false; ++J)
       {
 	 if ((J.File()->Flags & Flag::NotSource) != 0)
 	    continue;

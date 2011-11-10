@@ -35,6 +35,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/md5.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/macros.h>
@@ -43,7 +45,6 @@
 #include <unistd.h>
 #include <netinet/in.h>                          // For htonl
 #include <inttypes.h>
-#include <config.h>
 									/*}}}*/
 
 // byteSwap - Swap bytes in a buffer					/*{{{*/
@@ -186,7 +187,7 @@ MD5Summation::MD5Summation()
 // MD5Summation::Add - 'Add' a data set to the hash			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool MD5Summation::Add(const unsigned char *data,unsigned long len)
+bool MD5Summation::Add(const unsigned char *data,unsigned long long len)
 {
    if (Done == true)
       return false;

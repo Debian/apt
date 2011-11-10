@@ -15,6 +15,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -81,7 +83,7 @@ void pkgAcqMethod::Fail(bool Transient)
 void pkgAcqMethod::Fail(string Err,bool Transient)
 {
    // Strip out junk from the error messages
-   for (string::iterator I = Err.begin(); I != Err.end(); I++)
+   for (string::iterator I = Err.begin(); I != Err.end(); ++I)
    {
       if (*I == '\r') 
 	 *I = ' ';
@@ -289,12 +291,12 @@ bool pkgAcqMethod::Configuration(string Message)
       I += Length + 1;
       
       for (; I < MsgEnd && *I == ' '; I++);
-      const char *Equals = I;
-      for (; Equals < MsgEnd && *Equals != '='; Equals++);
-      const char *End = Equals;
-      for (; End < MsgEnd && *End != '\n'; End++);
-      if (End == Equals)
+      const char *Equals = (const char*) memchr(I, '=', MsgEnd - I);
+      if (Equals == NULL)
 	 return false;
+      const char *End = (const char*) memchr(Equals, '\n', MsgEnd - Equals);
+      if (End == NULL)
+	 End = MsgEnd;
       
       Cnf.Set(DeQuoteString(string(I,Equals-I)),
 	      DeQuoteString(string(Equals+1,End-Equals-1)));
@@ -425,12 +427,8 @@ void pkgAcqMethod::Status(const char *Format,...)
    to keep the pipeline synchronized. */
 void pkgAcqMethod::Redirect(const string &NewURI)
 {
-   std::cout << "103 Redirect\nURI: ";
-   if (Queue != 0)
-      std::cout << Queue->Uri << "\n";
-   else
-      std::cout << "<UNKNOWN>\n";
-   std::cout << "New-URI: " << NewURI << "\n"
+   std::cout << "103 Redirect\nURI: " << Queue->Uri << "\n"
+	     << "New-URI: " << NewURI << "\n"
 	     << "\n" << std::flush;
 
    // Change the URI for the request.

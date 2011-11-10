@@ -1,3 +1,5 @@
+#include<config.h>
+
 #include <iostream>
 #include <apt-pkg/error.h>
 #include <apt-pkg/vendor.h>
@@ -20,16 +22,16 @@ Vendor::Vendor(std::string VendorID,
    delete FingerprintList;
 }
 
-const string Vendor::LookupFingerprint(string Print) const
+const std::string Vendor::LookupFingerprint(std::string Print) const
 {
-   std::map<string,string>::const_iterator Elt = Fingerprints.find(Print);
+   std::map<std::string,std::string>::const_iterator Elt = Fingerprints.find(Print);
    if (Elt == Fingerprints.end())
       return "";
    else
       return (*Elt).second;
 }
 
-bool Vendor::CheckDist(string Dist)
+bool Vendor::CheckDist(std::string Dist)
 {
    return true;
 }

@@ -1,9 +1,11 @@
+#include <config.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexcopy.h>
-#include <apti18n.h>
+#include <apt-pkg/configuration.h>
 
 #include <utime.h>
 #include <stdio.h>
@@ -12,8 +14,12 @@
 #include <sys/wait.h>
 #include <iostream>
 #include <sstream>
-
 #include <vector>
+
+#include <apti18n.h>
+
+using std::string;
+using std::vector;
 
 #define GNUPGPREFIX "[GNUPG:]"
 #define GNUPGBADSIG "[GNUPG:] BADSIG"
@@ -213,21 +219,21 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
          {
             errmsg += _("The following signatures were invalid:\n");
             for (vector<string>::iterator I = BadSigners.begin();
-		 I != BadSigners.end(); I++)
+		 I != BadSigners.end(); ++I)
                errmsg += (*I + "\n");
          }
          if (!WorthlessSigners.empty())
          {
             errmsg += _("The following signatures were invalid:\n");
             for (vector<string>::iterator I = WorthlessSigners.begin();
-		 I != WorthlessSigners.end(); I++)
+		 I != WorthlessSigners.end(); ++I)
                errmsg += (*I + "\n");
          }
          if (!NoPubKeySigners.empty())
          {
              errmsg += _("The following signatures couldn't be verified because the public key is not available:\n");
             for (vector<string>::iterator I = NoPubKeySigners.begin();
-		 I != NoPubKeySigners.end(); I++)
+		 I != NoPubKeySigners.end(); ++I)
                errmsg += (*I + "\n");
          }
       }

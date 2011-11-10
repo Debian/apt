@@ -4,7 +4,7 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386' 'amd64'
 
 # we need a valid locale here, otherwise the language configuration
 # will be overridden by LC_ALL=C
@@ -22,8 +22,22 @@ Size: 2140230
 MD5sum: 74769bfbcef9ebc4fa74f7a5271b9c08
 Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c"
 
+PACKAGESTANZA2='Package: apt
+Priority: important
+Section: admin
+Installed-Size: 5984
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: amd64
+Version: 0.8.7
+Filename: pool/main/a/apt/apt_0.8.7_amd64.deb
+Size: 2210342
+MD5sum: 4a869bfbdef9ebc9fa74f7a5271e8d1a
+Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c'
 
 echo "$PACKAGESTANZA
+Description: Advanced front-end for dpkg
+
+$PACKAGESTANZA2
 Description: Advanced front-end for dpkg" > aptarchive/Packages
 
 echo "Package: apt
@@ -53,13 +67,22 @@ Description-${LOCALE}: Mächtige Oberfläche für dpkg
  APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
  um Pakete zu installieren und Upgrades durchzuführen.
 "
+LOCALESTANZA2="$PACKAGESTANZA2
+Description-${LOCALE}: Mächtige Oberfläche für dpkg
+ Das Paket bietet dem Nutzer technisch führende Methoden für den Zugriff
+ auf den dpkg-Paketmanager. Es beinhaltet das apt-get-Werkzeug und die
+ APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
+ um Pakete zu installieren und Upgrades durchzuführen.
+"
 
 testrun() {
 	echo "Acquire::Languages { \"${LOCALE}\"; \"en\"; };" > rootdir/etc/apt/apt.conf.d/00languages
 	export LC_ALL=""
-	rm -rf rootdir/var/lib/apt/lists rootdir/var/cache/apt/
+	rm -rf rootdir/var/lib/apt/lists
 	setupaptarchive
 	testequal "$LOCALESTANZA" aptcache show apt -o Test=File-${LOCALE}
+	testequal "$LOCALESTANZA" aptcache show apt:i386 -o Test=File-${LOCALE}
+	testequal "$LOCALESTANZA2" aptcache show apt:amd64 -o Test=File-${LOCALE}
 	testequal "$NOLONGSTANZA" aptcache show apt -o Acquire::Languages="ww" -o Test=File-${LOCALE}
 	testequal "$LOCALESTANZA" aptcache show apt -o Acquire::Languages::="ww" -o Test=File-${LOCALE}
 	LC_ALL=C testequal "$ENGLISHSTANZA" aptcache show apt -o Test=File-${LOCALE}
@@ -73,6 +96,9 @@ testrun() {
 testrun
 
 echo "$PACKAGESTANZA
+Description: Advanced front-end for dpkg
+
+$PACKAGESTANZA2
 Description: Advanced front-end for dpkg" > aptarchive/Packages
 
 echo "Package: apt
@@ -83,6 +109,12 @@ Description-en: Advanced front-end for dpkg
  simpler, safer way to install and upgrade packages." | bzip2 > aptarchive/en.bz2
 
 ENGLISHSTANZA="$PACKAGESTANZA
+Description-en: Advanced front-end for dpkg
+ This is Debian's next generation front-end for the dpkg package manager.
+ It provides the apt-get utility and APT dselect method that provides a
+ simpler, safer way to install and upgrade packages.
+"
+ENGLISHSTANZA2="$PACKAGESTANZA2
 Description-en: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
  It provides the apt-get utility and APT dselect method that provides a

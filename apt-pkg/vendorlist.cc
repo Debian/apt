@@ -1,17 +1,24 @@
+#include<config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
 #include <apti18n.h>
 
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
+#include <apt-pkg/vendor.h>
 #include <apt-pkg/vendorlist.h>
+
+using std::string;
+using std::vector;
 
 pkgVendorList::~pkgVendorList()
 {
    for (vector<const Vendor *>::const_iterator I = VendorList.begin(); 
-        I != VendorList.end(); I++)
+        I != VendorList.end(); ++I)
       delete *I;
 }
 
@@ -49,7 +56,7 @@ bool pkgVendorList::Read(string File)					/*{{{*/
 bool pkgVendorList::CreateList(Configuration& Cnf)			/*{{{*/
 {
    for (vector<const Vendor *>::const_iterator I = VendorList.begin(); 
-	I != VendorList.end(); I++)
+	I != VendorList.end(); ++I)
       delete *I;
    VendorList.erase(VendorList.begin(),VendorList.end());
 
@@ -129,7 +136,7 @@ const Vendor* pkgVendorList::LookupFingerprint(string Fingerprint)	/*{{{*/
 									/*}}}*/
 const Vendor* pkgVendorList::FindVendor(const std::vector<string> GPGVOutput)	/*{{{*/
 {
-   for (std::vector<string>::const_iterator I = GPGVOutput.begin(); I != GPGVOutput.end(); I++)
+   for (std::vector<string>::const_iterator I = GPGVOutput.begin(); I != GPGVOutput.end(); ++I)
    {
       string::size_type pos = (*I).find("VALIDSIG ");
       if (_config->FindB("Debug::Vendor", false))

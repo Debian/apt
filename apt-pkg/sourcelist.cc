@@ -8,15 +8,19 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-
-#include <apti18n.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexfile.h>
 
 #include <fstream>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -173,7 +177,7 @@ pkgSourceList::pkgSourceList(string File)
 /* */
 pkgSourceList::~pkgSourceList()
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
 }
 									/*}}}*/
@@ -218,7 +222,7 @@ bool pkgSourceList::ReadMainList()
 /* */
 void pkgSourceList::Reset()
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
    SrcList.erase(SrcList.begin(),SrcList.end());
 }
@@ -266,7 +270,7 @@ bool pkgSourceList::ReadAppend(string File)
       // CNC:2003-02-20 - Do not break if '#' is inside [].
       for (I = Buffer; *I != 0 && *I != '#'; I++)
          if (*I == '[')
-	    for (I++; *I != 0 && *I != ']'; I++);
+	    I = strchr(I + 1, ']');
       *I = 0;
       
       const char *C = _strstrip(Buffer);
@@ -296,11 +300,11 @@ bool pkgSourceList::ReadAppend(string File)
 bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
 			      pkgIndexFile *&Found) const
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
    {
       vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
       for (vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
-	   J != Indexes->end(); J++)
+	   J != Indexes->end(); ++J)
       {
          if ((*J)->FindInCache(*File.Cache()) == File)
          {
@@ -318,7 +322,7 @@ bool pkgSourceList::FindIndex(pkgCache::PkgFileIterator File,
 /* */
 bool pkgSourceList::GetIndexes(pkgAcquire *Owner, bool GetAll) const
 {
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
+   for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       if ((*I)->GetIndexes(Owner,GetAll) == false)
 	 return false;
    return true;
@@ -334,7 +338,7 @@ bool pkgSourceList::ReadSourceDir(string Dir)
    vector<string> const List = GetListOfFilesInDir(Dir, "list", true);
 
    // Read the files
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
       if (ReadAppend(*I) == false)
 	 return false;
    return true;
@@ -357,7 +361,7 @@ time_t pkgSourceList::GetLastModifiedTime()
 
    // calculate the time
    time_t mtime_sources = GetModificationTime(Main);
-   for (vector<string>::const_iterator I = List.begin(); I != List.end(); I++)
+   for (vector<string>::const_iterator I = List.begin(); I != List.end(); ++I)
       mtime_sources = std::max(mtime_sources, GetModificationTime(*I));
 
    return mtime_sources;

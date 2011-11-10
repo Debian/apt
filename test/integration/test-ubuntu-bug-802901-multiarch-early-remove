@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'libgl1-mesa-glx' 'amd64' '2.0' 'Multi-Arch: same
+Provides: libgl1
+Conflicts: libgl1'
+insertpackage 'unstable' 'libgl1-mesa-glx' 'i386,amd64' '2.0' 'Multi-Arch: same
+Provides: libgl1
+Conflicts: libgl1'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libgl1-mesa-glx:i386
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libgl1-mesa-glx:i386 (2.0 unstable [i386])
+Conf libgl1-mesa-glx:i386 (2.0 unstable [i386])' aptget install libgl1-mesa-glx:i386 -s

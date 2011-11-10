@@ -12,21 +12,24 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/pkgsystem.h>
 
-#include <config.h>
-#include <apti18n.h>
-    
 #include <vector>
 #include <algorithm>
 
 #include <locale.h>
 #include <unistd.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -106,7 +109,7 @@ bool DoIt(string InFile)
    
    // Emit
    unsigned char *Buffer = new unsigned char[Largest+1];
-   for (vector<PkgName>::iterator I = List.begin(); I != List.end(); I++)
+   for (vector<PkgName>::iterator I = List.begin(); I != List.end(); ++I)
    {
       // Read in the Record.
       if (Fd.Seek(I->Offset) == false || Fd.Read(Buffer,I->Length) == false)

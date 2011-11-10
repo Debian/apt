@@ -13,16 +13,16 @@
 #define CACHEDB_H
 
 
+#include <apt-pkg/debfile.h>
 
 #include <db.h>
-#include <string>
-#include <apt-pkg/debfile.h>
 #include <inttypes.h>
 #include <sys/stat.h>
 #include <errno.h>
-    
+#include <string>
+
 #include "contents.h"
-    
+
 class CacheDB
 {
    protected:
@@ -34,7 +34,7 @@ class CacheDB
    DB *Dbp;
    bool DBLoaded;
    bool ReadOnly;
-   string DBFile;
+   std::string DBFile;
 
    // Generate a key for the DB of a given type
    inline void InitQuery(const char *Type)
@@ -81,7 +81,7 @@ class CacheDB
    {
       uint32_t Flags;
       uint32_t mtime;          
-      uint32_t FileSize;
+      uint64_t FileSize;
       uint8_t  MD5[16];
       uint8_t  SHA1[20];
       uint8_t  SHA256[32];
@@ -90,7 +90,7 @@ class CacheDB
    struct StatStore OldStat;
    
    // 'set' state
-   string FileName;
+   std::string FileName;
    FileFd *Fd;
    debDebFile *DebFile;
    
@@ -99,10 +99,10 @@ class CacheDB
    // Data collection helpers
    debDebFile::MemControlExtract Control;
    ContentsExtract Contents;
-   string MD5Res;
-   string SHA1Res;
-   string SHA256Res;
-   string SHA512Res;
+   std::string MD5Res;
+   std::string SHA1Res;
+   std::string SHA256Res;
+   std::string SHA512Res;
    
    // Runtime statistics
    struct Stats
@@ -114,7 +114,7 @@ class CacheDB
       double SHA512Bytes;
       unsigned long Packages;
       unsigned long Misses;  
-      unsigned long DeLinkBytes;
+      unsigned long long DeLinkBytes;
       
       inline void Add(const Stats &S) {
 	 Bytes += S.Bytes; 
@@ -129,21 +129,21 @@ class CacheDB
       Stats() : Bytes(0), MD5Bytes(0), SHA1Bytes(0), SHA256Bytes(0), Packages(0), Misses(0), DeLinkBytes(0) {};
    } Stats;
    
-   bool ReadyDB(string const &DB);
+   bool ReadyDB(std::string const &DB);
    inline bool DBFailed() {return Dbp != 0 && DBLoaded == false;};
    inline bool Loaded() {return DBLoaded == true;};
    
-   inline off_t GetFileSize(void) {return CurStat.FileSize;}
+   inline unsigned long long GetFileSize(void) {return CurStat.FileSize;}
    
-   bool SetFile(string const &FileName,struct stat St,FileFd *Fd);
-   bool GetFileInfo(string const &FileName, bool const &DoControl, bool const &DoContents, bool const &GenContentsOnly,
+   bool SetFile(std::string const &FileName,struct stat St,FileFd *Fd);
+   bool GetFileInfo(std::string const &FileName, bool const &DoControl, bool const &DoContents, bool const &GenContentsOnly,
 		    bool const &DoMD5, bool const &DoSHA1, bool const &DoSHA256, bool const &DoSHA512, bool const &checkMtime = false);
    bool Finish();   
    
    bool Clean();
    
-   CacheDB(string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {ReadyDB(DB);};
-   ~CacheDB() {ReadyDB(string()); delete DebFile;};
+   CacheDB(std::string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {ReadyDB(DB);};
+   ~CacheDB() {ReadyDB(std::string()); delete DebFile;};
 };
     
 #endif

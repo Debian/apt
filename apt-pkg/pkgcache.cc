@@ -20,6 +20,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/version.h>
@@ -29,13 +31,12 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/macros.h>
 
-#include <apti18n.h>
-    
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <ctype.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;
@@ -180,7 +181,7 @@ bool pkgCache::ReMap(bool const &Errorchecks)
 unsigned long pkgCache::sHash(const string &Str) const
 {
    unsigned long Hash = 0;
-   for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
+   for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
       Hash = 5*Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->PkgHashTable);
 }
@@ -188,7 +189,7 @@ unsigned long pkgCache::sHash(const string &Str) const
 unsigned long pkgCache::sHash(const char *Str) const
 {
    unsigned long Hash = 0;
-   for (const char *I = Str; *I != 0; I++)
+   for (const char *I = Str; *I != 0; ++I)
       Hash = 5*Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->PkgHashTable);
 }
@@ -489,7 +490,7 @@ pkgCache::PkgIterator::CurVersion() const
    if they provide no new information (e.g. there is no newer version than candidate)
    If no version and/or section can be found "none" is used. */
 std::ostream& 
-operator<<(ostream& out, pkgCache::PkgIterator Pkg) 
+operator<<(std::ostream& out, pkgCache::PkgIterator Pkg) 
 {
    if (Pkg.end() == true)
       return out << "invalid package";
@@ -574,7 +575,7 @@ bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result) const
       virtual package libc-dev which is provided by libc5-dev and libc6-dev
       we must ignore libc5-dev when considering the provides list. */ 
    PrvIterator PStart = Result.ProvidesList();
-   for (; PStart.end() != true && PStart.OwnerPkg() == ParentPkg(); PStart++);
+   for (; PStart.end() != true && PStart.OwnerPkg() == ParentPkg(); ++PStart);
 
    // Nothing but indirect self provides
    if (PStart.end() == true)
@@ -582,7 +583,7 @@ bool pkgCache::DepIterator::SmartTargetPkg(PkgIterator &Result) const
    
    // Check for single packages in the provides list
    PrvIterator P = PStart;
-   for (; P.end() != true; P++)
+   for (; P.end() != true; ++P)
    {
       // Skip over self provides
       if (P.OwnerPkg() == ParentPkg())
@@ -616,7 +617,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       PkgIterator DPkg = TargetPkg();
 
       // Walk along the actual package providing versions
-      for (VerIterator I = DPkg.VersionList(); I.end() == false; I++)
+      for (VerIterator I = DPkg.VersionList(); I.end() == false; ++I)
       {
 	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
@@ -631,13 +632,13 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       }
       
       // Follow all provides
-      for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; I++)
+      for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; ++I)
       {
 	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
 	 
 	 if (IsNegative() == true &&
-	     ParentPkg() == I.OwnerPkg())
+	     ParentPkg()->Group == I.OwnerPkg()->Group)
 	    continue;
 	 
 	 Size++;
@@ -684,7 +685,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
 // ostream operator to handle string representation of a dependecy	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::ostream& operator<<(ostream& out, pkgCache::DepIterator D)
+std::ostream& operator<<(std::ostream& out, pkgCache::DepIterator D)
 {
    if (D.end() == true)
       return out << "invalid dependency";
@@ -722,7 +723,7 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
    /* Start at A and look for B. If B is found then A > B otherwise
       B was before A so A < B */
    VerIterator I = *this;
-   for (;I.end() == false; I++)
+   for (;I.end() == false; ++I)
       if (I == B)
 	 return 1;
    return -1;
@@ -734,7 +735,7 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
 bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
-   for (; Files.end() == false; Files++)
+   for (; Files.end() == false; ++Files)
       if ((Files.File()->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource)
 	 return true;
    return false;
@@ -747,7 +748,7 @@ bool pkgCache::VerIterator::Downloadable() const
 bool pkgCache::VerIterator::Automatic() const
 {
    VerFileIterator Files = FileList();
-   for (; Files.end() == false; Files++)
+   for (; Files.end() == false; ++Files)
       // Do not check ButAutomaticUpgrades here as it is kind of automatic…
       if ((Files.File()->Flags & pkgCache::Flag::NotAutomatic) != pkgCache::Flag::NotAutomatic)
 	 return true;
@@ -762,7 +763,7 @@ pkgCache::VerFileIterator pkgCache::VerIterator::NewestFile() const
 {
    VerFileIterator Files = FileList();
    VerFileIterator Highest = Files;
-   for (; Files.end() == false; Files++)
+   for (; Files.end() == false; ++Files)
    {
       if (Owner->VS->CmpReleaseVer(Files.File().Version(),Highest.File().Version()) > 0)
 	 Highest = Files;
@@ -779,7 +780,7 @@ string pkgCache::VerIterator::RelStr() const
 {
    bool First = true;
    string Res;
-   for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; I++)
+   for (pkgCache::VerFileIterator I = this->FileList(); I.end() == false; ++I)
    {
       // Do not print 'not source' entries'
       pkgCache::PkgFileIterator File = I.File();
@@ -788,7 +789,7 @@ string pkgCache::VerIterator::RelStr() const
 
       // See if we have already printed this out..
       bool Seen = false;
-      for (pkgCache::VerFileIterator J = this->FileList(); I != J; J++)
+      for (pkgCache::VerFileIterator J = this->FileList(); I != J; ++J)
       {
 	 pkgCache::PkgFileIterator File2 = J.File();
 	 if (File2->Label == 0 || File->Label == 0)
@@ -889,15 +890,26 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
 {
    std::vector<string> const lang = APT::Configuration::getLanguages();
    for (std::vector<string>::const_iterator l = lang.begin();
-	l != lang.end(); l++)
+	l != lang.end(); ++l)
    {
       pkgCache::DescIterator Desc = DescriptionList();
       for (; Desc.end() == false; ++Desc)
-	 if (*l == Desc.LanguageCode() ||
-	     (*l == "en" && strcmp(Desc.LanguageCode(),"") == 0))
+	 if (*l == Desc.LanguageCode())
 	    break;
       if (Desc.end() == true)
-	 continue;
+      {
+	 if (*l == "en")
+	 {
+	    Desc = DescriptionList();
+	    for (; Desc.end() == false; ++Desc)
+	       if (strcmp(Desc.LanguageCode(), "") == 0)
+		  break;
+	    if (Desc.end() == true)
+	       continue;
+	 }
+	 else
+	    continue;
+      }
       return Desc;
    }
    for (pkgCache::DescIterator Desc = DescriptionList();

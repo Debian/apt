@@ -146,7 +146,7 @@ int main(int argc, char** argv)
    equals(sha2.VerifyFile(argv[1]), true);
    }
    {
-   HashString sha2("SHA256:"+string(argv[4]));
+   HashString sha2("SHA256:" + std::string(argv[4]));
    equals(sha2.VerifyFile(argv[1]), true);
    }
 

@@ -12,6 +12,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>
@@ -21,7 +23,8 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/fileutl.h>
-    
+#include <apt-pkg/progress.h>
+
 #include <apti18n.h>
 									/*}}}*/
 // CacheFile::CacheFile - Constructor					/*{{{*/
@@ -161,6 +164,20 @@ bool pkgCacheFile::Open(OpProgress *Progress, bool WithLock)
       return false;
    
    return true;
+}
+									/*}}}*/
+// CacheFile::RemoveCaches - remove all cache files from disk		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgCacheFile::RemoveCaches()
+{
+   std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
+   std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+
+   if (pkgcache.empty() == false && RealFileExists(pkgcache) == true)
+      unlink(pkgcache.c_str());
+   if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)
+      unlink(srcpkgcache.c_str());
 }
 									/*}}}*/
 // CacheFile::Close - close the cache files				/*{{{*/

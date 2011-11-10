@@ -13,39 +13,42 @@
 
 #define MAXLEN 360
 
-#include <apt-pkg/hashes.h>
+#include <apt-pkg/strutl.h>
+
+#include <string>
 
 using std::cout;
 using std::endl;
 
 class HttpMethod;
+class Hashes;
 
 class CircleBuf
 {
    unsigned char *Buf;
-   unsigned long Size;
-   unsigned long InP;
-   unsigned long OutP;
-   string OutQueue;
-   unsigned long StrPos;
-   unsigned long MaxGet;
+   unsigned long long Size;
+   unsigned long long InP;
+   unsigned long long OutP;
+   std::string OutQueue;
+   unsigned long long StrPos;
+   unsigned long long MaxGet;
    struct timeval Start;
    
-   static unsigned long BwReadLimit;
-   static unsigned long BwTickReadData;
+   static unsigned long long BwReadLimit;
+   static unsigned long long BwTickReadData;
    static struct timeval BwReadTick;
    static const unsigned int BW_HZ;
 
-   unsigned long LeftRead()
+   unsigned long long LeftRead() const
    {
-      unsigned long Sz = Size - (InP - OutP);
+      unsigned long long Sz = Size - (InP - OutP);
       if (Sz > Size - (InP%Size))
 	 Sz = Size - (InP%Size);
       return Sz;
    }
-   unsigned long LeftWrite()
+   unsigned long long LeftWrite() const
    {
-      unsigned long Sz = InP - OutP;
+      unsigned long long Sz = InP - OutP;
       if (InP > MaxGet)
 	 Sz = MaxGet - OutP;
       if (Sz > Size - (OutP%Size))
@@ -60,27 +63,27 @@ class CircleBuf
    
    // Read data in
    bool Read(int Fd);
-   bool Read(string Data);
+   bool Read(std::string Data);
    
    // Write data out
    bool Write(int Fd);
-   bool WriteTillEl(string &Data,bool Single = false);
+   bool WriteTillEl(std::string &Data,bool Single = false);
    
    // Control the write limit
-   void Limit(long Max) {if (Max == -1) MaxGet = 0-1; else MaxGet = OutP + Max;}   
-   bool IsLimit() {return MaxGet == OutP;};
-   void Print() {cout << MaxGet << ',' << OutP << endl;};
+   void Limit(long long Max) {if (Max == -1) MaxGet = 0-1; else MaxGet = OutP + Max;}   
+   bool IsLimit() const {return MaxGet == OutP;};
+   void Print() const {cout << MaxGet << ',' << OutP << endl;};
 
    // Test for free space in the buffer
-   bool ReadSpace() {return Size - (InP - OutP) > 0;};
-   bool WriteSpace() {return InP - OutP > 0;};
+   bool ReadSpace() const {return Size - (InP - OutP) > 0;};
+   bool WriteSpace() const {return InP - OutP > 0;};
 
    // Dump everything
    void Reset();
    void Stats();
 
-   CircleBuf(unsigned long Size);
-   ~CircleBuf() {delete [] Buf; delete Hash;};
+   CircleBuf(unsigned long long Size);
+   ~CircleBuf();
 };
 
 struct ServerState
@@ -92,14 +95,14 @@ struct ServerState
    char Code[MAXLEN];
    
    // These are some statistics from the last parsed header lines
-   unsigned long Size;
-   signed long StartPos;
+   unsigned long long Size;
+   signed long long StartPos;
    time_t Date;
    bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;
    enum {Header, Data} State;
    bool Persistent;
-   string Location;
+   std::string Location;
    
    // This is a Persistent attribute of the server itself.
    bool Pipeline;
@@ -112,8 +115,8 @@ struct ServerState
    int ServerFd;
    URI ServerName;
   
-   bool HeaderLine(string Line);
-   bool Comp(URI Other) {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
+   bool HeaderLine(std::string Line);
+   bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
                  Encoding = Closes; time(&Date); ServerFd = -1; 
                  Pipeline = true;};
@@ -167,10 +170,10 @@ class HttpMethod : public pkgAcqMethod
    /** \brief Try to AutoDetect the proxy */
    bool AutoDetectProxy();
 
-   virtual bool Configuration(string Message);
+   virtual bool Configuration(std::string Message);
    
    // In the event of a fatal signal this file will be closed and timestamped.
-   static string FailFile;
+   static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
    static void SigTerm(int);
@@ -178,8 +181,8 @@ class HttpMethod : public pkgAcqMethod
    protected:
    virtual bool Fetch(FetchItem *);
    
-   string NextURI;
-   string AutoDetectProxyCmd;
+   std::string NextURI;
+   std::string AutoDetectProxyCmd;
 
    public:
    friend struct ServerState;

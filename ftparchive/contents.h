@@ -12,8 +12,9 @@
     
 #include <stdlib.h>
 #include <stdio.h>
-#include <apt-pkg/debfile.h>
 #include <apt-pkg/dirstream.h>
+
+class debDebFile;
 
 class GenContents
 {
@@ -71,16 +72,16 @@ class ContentsExtract : public pkgDirStream
 
    // The Data Block
    char *Data;
-   unsigned long MaxSize;
-   unsigned long CurSize;
+   unsigned long long MaxSize;
+   unsigned long long CurSize;
    void AddData(const char *Text);
    
    bool Read(debDebFile &Deb);
    
    virtual bool DoItem(Item &Itm,int &Fd);      
    void Reset() {CurSize = 0;};
-   bool TakeContents(const void *Data,unsigned long Length);
-   void Add(GenContents &Contents,string const &Package);
+   bool TakeContents(const void *Data,unsigned long long Length);
+   void Add(GenContents &Contents,std::string const &Package);
    
    ContentsExtract() : Data(0), MaxSize(0), CurSize(0) {};
    virtual ~ContentsExtract() {delete [] Data;};

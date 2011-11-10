@@ -9,11 +9,16 @@
 #ifndef PKGLIB_EDSP_H
 #define PKGLIB_EDSP_H
 
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/cacheset.h>
-#include <apt-pkg/progress.h>
+#include <apt-pkg/pkgcache.h>
 
+#include <list>
 #include <string>
+
+namespace APT {
+	class PackageSet;
+};
+class pkgDepCache;
+class OpProgress;
 
 class EDSP								/*{{{*/
 {

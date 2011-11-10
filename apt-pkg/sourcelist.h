@@ -31,13 +31,15 @@
 #include <vector>
 #include <map>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/metaindex.h>
 
 using std::string;
 using std::vector;
     
 
-class pkgAquire;
+class pkgAcquire;
+class pkgIndexFile;
+class metaIndex;
+
 class pkgSourceList
 {
    public:

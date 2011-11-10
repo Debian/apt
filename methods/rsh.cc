@@ -11,8 +11,12 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "rsh.h"
+#include <config.h>
+
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -22,6 +26,8 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
+#include "rsh.h"
+
 #include <apti18n.h>
 									/*}}}*/
 
@@ -29,7 +35,7 @@ const char *Prog;
 unsigned long TimeOut = 120;
 Configuration::Item const *RshOptions = 0;
 time_t RSHMethod::FailTime = 0;
-string RSHMethod::FailFile;
+std::string RSHMethod::FailFile;
 int RSHMethod::FailFd = -1;
 
 // RSHConn::RSHConn - Constructor					/*{{{*/
@@ -82,7 +88,7 @@ bool RSHConn::Open()
 // RSHConn::Connect - Fire up rsh and connect				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RSHConn::Connect(string Host, string User)
+bool RSHConn::Connect(std::string Host, std::string User)
 {
    // Create the pipes
    int Pipes[4] = {-1,-1,-1,-1};
@@ -151,7 +157,7 @@ bool RSHConn::Connect(string Host, string User)
 // RSHConn::ReadLine - Very simple buffered read with timeout		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RSHConn::ReadLine(string &Text)
+bool RSHConn::ReadLine(std::string &Text)
 {
    if (Process == -1 || ReadFd == -1)
       return false;
@@ -171,7 +177,7 @@ bool RSHConn::ReadLine(string &Text)
             continue;
 
          I++;
-         Text = string(Buffer,I);
+         Text = std::string(Buffer,I);
          memmove(Buffer,Buffer+I,Len - I);
          Len -= I;
          return true;
@@ -202,7 +208,7 @@ bool RSHConn::ReadLine(string &Text)
 // ---------------------------------------------------------------------
 /* The remote sync flag appends a || echo which will insert blank line
    once the command completes. */
-bool RSHConn::WriteMsg(string &Text,bool Sync,const char *Fmt,...)
+bool RSHConn::WriteMsg(std::string &Text,bool Sync,const char *Fmt,...)
 {
    va_list args;
    va_start(args,Fmt);
@@ -248,10 +254,10 @@ bool RSHConn::WriteMsg(string &Text,bool Sync,const char *Fmt,...)
 // ---------------------------------------------------------------------
 /* Right now for successfull transfer the file size must be known in 
    advance. */
-bool RSHConn::Size(const char *Path,unsigned long &Size)
+bool RSHConn::Size(const char *Path,unsigned long long &Size)
 {
    // Query the size
-   string Msg;
+	std::string Msg;
    Size = 0;
 
    if (WriteMsg(Msg,true,"find %s -follow -printf '%%s\\n'",Path) == false)
@@ -260,7 +266,7 @@ bool RSHConn::Size(const char *Path,unsigned long &Size)
    // FIXME: Sense if the bad reply is due to a File Not Found. 
    
    char *End;
-   Size = strtoul(Msg.c_str(),&End,10);
+   Size = strtoull(Msg.c_str(),&End,10);
    if (End == Msg.c_str())
       return _error->Error(_("File not found"));
    return true;
@@ -273,7 +279,7 @@ bool RSHConn::ModTime(const char *Path, time_t &Time)
 {
    Time = time(&Time);
    // Query the mod time
-   string Msg;
+   std::string Msg;
 
    if (WriteMsg(Msg,true,"TZ=UTC find %s -follow -printf '%%TY%%Tm%%Td%%TH%%TM%%TS\\n'",Path) == false)
       return false;
@@ -285,8 +291,8 @@ bool RSHConn::ModTime(const char *Path, time_t &Time)
 // RSHConn::Get - Get a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
-                  Hashes &Hash,bool &Missing, unsigned long Size)
+bool RSHConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
+                  Hashes &Hash,bool &Missing, unsigned long long Size)
 {
    Missing = false;
 
@@ -306,12 +312,12 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    }
    
    // FIXME: Detect file-not openable type errors.
-   string Jnk;
+   std::string Jnk;
    if (WriteMsg(Jnk,false,"dd if=%s bs=2048 skip=%u", Path, Resume / 2048) == false)
       return false;
 
    // Copy loop
-   unsigned int MyLen = Resume;
+   unsigned long long MyLen = Resume;
    unsigned char Buffer[4096];
    while (MyLen < Size)
    {
@@ -363,7 +369,7 @@ RSHMethod::RSHMethod() : pkgAcqMethod("1.0",SendConfig)
 									/*}}}*/
 // RSHMethod::Configuration - Handle a configuration message		/*{{{*/
 // ---------------------------------------------------------------------
-bool RSHMethod::Configuration(string Message)
+bool RSHMethod::Configuration(std::string Message)
 {
    char ProgStr[100];
   
@@ -425,7 +431,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    Status(_("Connecting to %s"), Get.Host.c_str());
 
    // Get the files information
-   unsigned long Size;
+   unsigned long long Size;
    if (Server->Size(File,Size) == false ||
        Server->ModTime(File,FailTime) == false)
    {
@@ -446,7 +452,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
    // See if the file exists
    struct stat Buf;
    if (stat(Itm->DestFile.c_str(),&Buf) == 0) {
-      if (Size == (unsigned)Buf.st_size && FailTime == Buf.st_mtime) {
+      if (Size == (unsigned long long)Buf.st_size && FailTime == Buf.st_mtime) {
 	 Res.Size = Buf.st_size;
 	 Res.LastModified = Buf.st_mtime;
 	 Res.ResumePoint = Buf.st_size;
@@ -455,7 +461,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
       }
 
       // Resume?
-      if (FailTime == Buf.st_mtime && Size > (unsigned)Buf.st_size)
+      if (FailTime == Buf.st_mtime && Size > (unsigned long long)Buf.st_size)
 	 Res.ResumePoint = Buf.st_size;
    }
 

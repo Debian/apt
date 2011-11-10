@@ -14,18 +14,20 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "multicompress.h"
-    
-#include <apti18n.h>
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
-    
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <utime.h>
 #include <unistd.h>
-#include <iostream>    
+#include <iostream>
+
+#include "multicompress.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -48,11 +50,11 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
    string::const_iterator I = Compress.begin();
    for (; I != Compress.end();)
    {
-      for (; I != Compress.end() && isspace(*I); I++);
+      for (; I != Compress.end() && isspace(*I); ++I);
       
       // Grab a word
       string::const_iterator Start = I;
-      for (; I != Compress.end() && !isspace(*I); I++);
+      for (; I != Compress.end() && !isspace(*I); ++I);
 
       // Find the matching compressor
       std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();
@@ -129,11 +131,11 @@ bool MultiCompress::GetStat(string const &Output,string const &Compress,struct s
    bool DidStat = false;
    for (; I != Compress.end();)
    {
-      for (; I != Compress.end() && isspace(*I); I++);
+      for (; I != Compress.end() && isspace(*I); ++I);
       
       // Grab a word
       string::const_iterator Start = I;
-      for (; I != Compress.end() && !isspace(*I); I++);
+      for (; I != Compress.end() && !isspace(*I); ++I);
 
       // Find the matching compressor
       std::vector<APT::Configuration::Compressor> Compressors = APT::Configuration::getCompressors();
@@ -213,7 +215,7 @@ bool MultiCompress::Die()
 // MultiCompress::Finalize - Finish up writing				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is only necessary for statistics reporting. */
-bool MultiCompress::Finalize(unsigned long &OutSize)
+bool MultiCompress::Finalize(unsigned long long &OutSize)
 {
    OutSize = 0;
    if (Input == 0 || Die() == false)
@@ -381,7 +383,7 @@ bool MultiCompress::Child(int const &FD)
       stash a hash of the data to use later. */
    SetNonBlock(FD,false);
    unsigned char Buffer[32*1024];
-   unsigned long FileSize = 0;
+   unsigned long long FileSize = 0;
    MD5Summation MD5;
    while (1)
    {
@@ -443,7 +445,7 @@ bool MultiCompress::Child(int const &FD)
             
       // Compute the hash
       MD5Summation OldMD5;
-      unsigned long NewFileSize = 0;
+      unsigned long long NewFileSize = 0;
       while (1)
       {
 	 int Res = read(CompFd,Buffer,sizeof(Buffer));

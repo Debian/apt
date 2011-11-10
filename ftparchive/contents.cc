@@ -33,9 +33,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "contents.h"
+#include <config.h>
 
-#include <apti18n.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
@@ -43,6 +42,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+
+#include <apti18n.h>
+#include "contents.h"
 									/*}}}*/
 
 // GenContents::~GenContents - Free allocated memory			/*{{{*/
@@ -347,7 +349,7 @@ bool ContentsExtract::DoItem(Item &Itm,int &Fd)
 // ContentsExtract::TakeContents - Load the contents data		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ContentsExtract::TakeContents(const void *NewData,unsigned long Length)
+bool ContentsExtract::TakeContents(const void *NewData,unsigned long long Length)
 {
    if (Length == 0)
    {
@@ -378,7 +380,7 @@ bool ContentsExtract::TakeContents(const void *NewData,unsigned long Length)
 // ContentsExtract::Add - Read the contents data into the sorter	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void ContentsExtract::Add(GenContents &Contents,string const &Package)
+void ContentsExtract::Add(GenContents &Contents,std::string const &Package)
 {
    const char *Start = Data;
    char *Pkg = Contents.Mystrdup(Package.c_str());

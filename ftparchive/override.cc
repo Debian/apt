@@ -10,14 +10,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "override.h"
-    
+#include <config.h>
+
 #include <apti18n.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
-    
+
 #include "override.h"
 									/*}}}*/
 
@@ -34,7 +34,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
    
    char Line[500];
-   unsigned long Counter = 0;
+   unsigned long long Counter = 0;
    while (fgets(Line,sizeof(Line),F) != 0)
    {
       Counter++;
@@ -57,7 +57,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning(_("Malformed override %s line %lu #1"),File.c_str(),
+	 _error->Warning(_("Malformed override %s line %llu #1"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -71,7 +71,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
 	 for (; isspace(*End) == 0 && *End != 0; End++);
 	 if (*End == 0)
 	 {
-	    _error->Warning(_("Malformed override %s line %lu #2"),File.c_str(),
+	    _error->Warning(_("Malformed override %s line %llu #2"),File.c_str(),
 			    Counter);
 	    continue;
 	 }
@@ -85,7 +85,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning(_("Malformed override %s line %lu #3"),File.c_str(),
+	 _error->Warning(_("Malformed override %s line %llu #3"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -142,7 +142,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &Source)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
   
    char Line[500];
-   unsigned long Counter = 0;
+   unsigned long long Counter = 0;
    while (fgets(Line,sizeof(Line),F) != 0)
    {
       Counter++;
@@ -163,7 +163,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning(_("Malformed override %s line %lu #1"),File.c_str(),
+	 _error->Warning(_("Malformed override %s line %llu #1"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -175,7 +175,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &Source)
       for (; isspace(*End) == 0 && *End != 0; End++);
       if (*End == 0)
       {
-	 _error->Warning(_("Malformed override %s line %lu #2"),File.c_str(),
+	 _error->Warning(_("Malformed override %s line %llu #2"),File.c_str(),
 			 Counter);
 	 continue;
       }
@@ -188,7 +188,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &Source)
       for (; isspace(*(End-1)) && End > Value; End--);
       if (End == Value)
       {
-	 _error->Warning(_("Malformed override %s line %lu #3"),File.c_str(),
+	 _error->Warning(_("Malformed override %s line %llu #3"),File.c_str(),
 			 Counter);
 	 continue;
       }      
@@ -231,7 +231,7 @@ Override::Item* Override::GetItem(string const &Package, string const &Architect
 	 if (R->OldMaint != "") result->OldMaint = R->OldMaint;
 	 if (R->NewMaint != "") result->NewMaint = R->NewMaint;
 	 for (map<string,string>::const_iterator foI = R->FieldOverride.begin();
-	      foI != R->FieldOverride.end(); foI++)
+	      foI != R->FieldOverride.end(); ++foI)
          {
 	    result->FieldOverride[foI->first] = foI->second;
 	 }
@@ -268,7 +268,7 @@ string Override::Item::SwapMaint(string const &Orig,bool &Failed)
       string::const_iterator Start = End;      
       for (; End < OldMaint.end() &&
 	   (End + 3 >= OldMaint.end() || End[0] != ' ' || 
-	    End[1] != '/' || End[2] != '/'); End++);
+	    End[1] != '/' || End[2] != '/'); ++End);
       if (stringcasecmp(Start,End,Orig.begin(),Orig.end()) == 0)
 	 return NewMaint;
       
@@ -276,7 +276,7 @@ string Override::Item::SwapMaint(string const &Orig,bool &Failed)
 	 break;
 
       // Skip the divider and white space
-      for (; End < OldMaint.end() && (*End == '/' || *End == ' '); End++);
+      for (; End < OldMaint.end() && (*End == '/' || *End == ' '); ++End);
    }
 #else
    if (stringcasecmp(OldMaint.begin(),OldMaint.end(),Orig.begin(),Orig.end()) == 0)

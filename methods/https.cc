@@ -10,11 +10,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -25,12 +28,11 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
-#include <apti18n.h>
 #include <sstream>
 
 #include "config.h"
 #include "https.h"
-
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -51,7 +53,7 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
 {
    HttpsMethod *me = (HttpsMethod *)clientp;
    if(dltotal > 0 && me->Res.Size == 0) {
-      me->Res.Size = (unsigned long)dltotal;
+      me->Res.Size = (unsigned long long)dltotal;
       me->URIStart(me->Res);
    }
    return 0;

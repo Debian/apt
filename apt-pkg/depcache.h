@@ -40,12 +40,13 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/error.h>
 
 #include <vector>
 #include <memory>
 #include <set>
+#include <list>
+
+class OpProgress;
 
 class pkgDepCache : protected pkgCache::Namespace
 {
@@ -338,9 +339,9 @@ class pkgDepCache : protected pkgCache::Namespace
    inline Header &Head() {return *Cache->HeaderP;};
    inline GrpIterator GrpBegin() {return Cache->GrpBegin();};
    inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
-   inline GrpIterator FindGrp(string const &Name) {return Cache->FindGrp(Name);};
-   inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};
-   inline PkgIterator FindPkg(string const &Name, string const &Arch) {return Cache->FindPkg(Name, Arch);};
+   inline GrpIterator FindGrp(std::string const &Name) {return Cache->FindGrp(Name);};
+   inline PkgIterator FindPkg(std::string const &Name) {return Cache->FindPkg(Name);};
+   inline PkgIterator FindPkg(std::string const &Name, std::string const &Arch) {return Cache->FindPkg(Name, Arch);};
 
    inline pkgCache &GetCache() {return *Cache;};
    inline pkgVersioningSystem &VS() {return *Cache->VS;};
@@ -400,7 +401,7 @@ class pkgDepCache : protected pkgCache::Namespace
    // @{
    bool MarkKeep(PkgIterator const &Pkg, bool Soft = false,
 		 bool FromUser = true, unsigned long Depth = 0);
-   bool MarkDelete(PkgIterator const &Pkg, bool Purge = false,
+   bool MarkDelete(PkgIterator const &Pkg, bool MarkPurge = false,
                    unsigned long Depth = 0, bool FromUser = true);
    bool MarkInstall(PkgIterator const &Pkg,bool AutoInst = true,
 		    unsigned long Depth = 0, bool FromUser = true,
@@ -468,7 +469,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *  \param Depth     recursive deep of this Marker call
     *  \param FromUser  was the remove requested by the user?
     */
-   virtual bool IsDeleteOk(const PkgIterator &Pkg,bool Purge = false,
+   virtual bool IsDeleteOk(const PkgIterator &Pkg,bool MarkPurge = false,
 			    unsigned long Depth = 0, bool FromUser = true);
 
    // read persistent states

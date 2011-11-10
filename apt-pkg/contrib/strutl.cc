@@ -15,12 +15,12 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
-#include <apti18n.h>
-    
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -31,7 +31,7 @@
 #include <stdarg.h>
 #include <iconv.h>
 
-#include "config.h"
+#include <apti18n.h>
 
 using namespace std;
 									/*}}}*/
@@ -179,14 +179,14 @@ bool ParseQuoteWord(const char *&String,string &Res)
    {
       if (*C == '"')
       {
-	 for (C++; *C != 0 && *C != '"'; C++);
-	 if (*C == 0)
+	 C = strchr(C + 1, '"');
+	 if (C == NULL)
 	    return false;
       }
       if (*C == '[')
       {
-	 for (C++; *C != 0 && *C != ']'; C++);
-	 if (*C == 0)
+	 C = strchr(C + 1, ']');
+	 if (C == NULL)
 	    return false;
       }
    }
@@ -271,7 +271,7 @@ bool ParseCWord(const char *&String,string &Res)
 string QuoteString(const string &Str, const char *Bad)
 {
    string Res;
-   for (string::const_iterator I = Str.begin(); I != Str.end(); I++)
+   for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
    {
       if (strchr(Bad,*I) != 0 || isprint(*I) == 0 || 
 	  *I == 0x25 || // percent '%' char
@@ -298,7 +298,7 @@ string DeQuoteString(string::const_iterator const &begin,
 			string::const_iterator const &end)
 {
    string Res;
-   for (string::const_iterator I = begin; I != end; I++)
+   for (string::const_iterator I = begin; I != end; ++I)
    {
       if (*I == '%' && I + 2 < end &&
 	  isxdigit(I[1]) && isxdigit(I[2]))
@@ -632,7 +632,7 @@ string LookupTag(const string &Message,const char *Tag,const char *Default)
 {
    // Look for a matching tag.
    int Length = strlen(Tag);
-   for (string::const_iterator I = Message.begin(); I + Length < Message.end(); I++)
+   for (string::const_iterator I = Message.begin(); I + Length < Message.end(); ++I)
    {
       // Found the tag
       if (I[Length] == ':' && stringcasecmp(I,I+Length,Tag) == 0)
@@ -640,14 +640,14 @@ string LookupTag(const string &Message,const char *Tag,const char *Default)
 	 // Find the end of line and strip the leading/trailing spaces
 	 string::const_iterator J;
 	 I += Length + 1;
-	 for (; isspace(*I) != 0 && I < Message.end(); I++);
-	 for (J = I; *J != '\n' && J < Message.end(); J++);
-	 for (; J > I && isspace(J[-1]) != 0; J--);
+	 for (; isspace(*I) != 0 && I < Message.end(); ++I);
+	 for (J = I; *J != '\n' && J < Message.end(); ++J);
+	 for (; J > I && isspace(J[-1]) != 0; --J);
 	 
 	 return string(I,J);
       }
       
-      for (; *I != '\n' && I < Message.end(); I++);
+      for (; *I != '\n' && I < Message.end(); ++I);
    }   
    
    // Failed to find a match
@@ -904,11 +904,10 @@ bool StrToTime(const string &Val,time_t &Result)
 {
    struct tm Tm;
    char Month[10];
-   const char *I = Val.c_str();
-   
+
    // Skip the day of the week
-   for (;*I != 0  && *I != ' '; I++);
-   
+   const char *I = strchr(Val.c_str(), ' ');
+
    // Handle RFC 1123 time
    Month[0] = 0;
    if (sscanf(I," %d %3s %d %d:%d:%d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
@@ -970,6 +969,34 @@ bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base)
    return true;
 }
 									/*}}}*/
+// StrToNum - Convert a fixed length string to a number			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used in decoding the crazy fixed length string headers in 
+   tar and ar files. */
+bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base)
+{
+   char S[30];
+   if (Len >= sizeof(S))
+      return false;
+   memcpy(S,Str,Len);
+   S[Len] = 0;
+   
+   // All spaces is a zero
+   Res = 0;
+   unsigned I;
+   for (I = 0; S[I] == ' '; I++);
+   if (S[I] == 0)
+      return true;
+   
+   char *End;
+   Res = strtoull(S,&End,Base);
+   if (End == S)
+      return false;
+   
+   return true;
+}
+									/*}}}*/
+
 // Base256ToNum - Convert a fixed length binary to a number             /*{{{*/
 // ---------------------------------------------------------------------
 /* This is used in decoding the 256bit encoded fixed length fields in
@@ -1224,7 +1251,7 @@ int tolower_ascii(int const c)
 bool CheckDomainList(const string &Host,const string &List)
 {
    string::const_iterator Start = List.begin();
-   for (string::const_iterator Cur = List.begin(); Cur <= List.end(); Cur++)
+   for (string::const_iterator Cur = List.begin(); Cur <= List.end(); ++Cur)
    {
       if (Cur < List.end() && *Cur != ',')
 	 continue;
@@ -1248,7 +1275,7 @@ string DeEscapeString(const string &input)
    char tmp[3];
    string::const_iterator it, escape_start;
    string output, octal, hex;
-   for (it = input.begin(); it != input.end(); it++) 
+   for (it = input.begin(); it != input.end(); ++it)
    {
       // just copy non-escape chars
       if (*it != '\\')
@@ -1264,7 +1291,7 @@ string DeEscapeString(const string &input)
          // copy
          output += *it;
          // advance iterator one step further
-         it += 1;
+         ++it;
          continue;
       }
         
@@ -1273,7 +1300,7 @@ string DeEscapeString(const string &input)
          continue;
 
       // read it
-      it++;
+      ++it;
       switch (*it)
       {
          case '0':
@@ -1310,7 +1337,7 @@ void URI::CopyFrom(const string &U)
    string::const_iterator I = U.begin();
 
    // Locate the first colon, this separates the scheme
-   for (; I < U.end() && *I != ':' ; I++);
+   for (; I < U.end() && *I != ':' ; ++I);
    string::const_iterator FirstColon = I;
 
    /* Determine if this is a host type URI with a leading double //
@@ -1322,7 +1349,7 @@ void URI::CopyFrom(const string &U)
    /* Find the / indicating the end of the hostname, ignoring /'s in the
       square brackets */
    bool InBracket = false;
-   for (; SingleSlash < U.end() && (*SingleSlash != '/' || InBracket == true); SingleSlash++)
+   for (; SingleSlash < U.end() && (*SingleSlash != '/' || InBracket == true); ++SingleSlash)
    {
       if (*SingleSlash == '[')
 	 InBracket = true;
@@ -1355,11 +1382,11 @@ void URI::CopyFrom(const string &U)
    I = FirstColon + 1;
    if (I > SingleSlash)
       I = SingleSlash;
-   for (; I < SingleSlash && *I != ':'; I++);
+   for (; I < SingleSlash && *I != ':'; ++I);
    string::const_iterator SecondColon = I;
    
    // Search for the @ after the colon
-   for (; I < SingleSlash && *I != '@'; I++);
+   for (; I < SingleSlash && *I != '@'; ++I);
    string::const_iterator At = I;
    
    // Now write the host and user/pass

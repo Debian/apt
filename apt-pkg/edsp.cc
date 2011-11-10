@@ -5,18 +5,27 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/edsp.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/progress.h>
+
+#include <limits>
+#include <stdio.h>
+
+#include <string>
 
 #include <apti18n.h>
-#include <limits>
-
-#include <stdio.h>
 									/*}}}*/
+
+using std::string;
 
 // we could use pkgCache::DepType and ::Priority, but these would be localized strings…
 const char * const EDSP::PrioMap[] = {0, "important", "required", "standard",
@@ -277,7 +286,7 @@ bool EDSP::ReadResponse(int const input, pkgDepCache &Cache, OpProgress *Progres
 			std::string msg = SubstVar(SubstVar(section.FindS("Message"), "\n .\n", "\n\n"), "\n ", "\n");
 			if (msg.empty() == true) {
 				msg = _("External solver failed without a proper error message");
-				_error->Error(msg.c_str());
+				_error->Error("%s", msg.c_str());
 			} else
 				_error->Error("External solver failed with: %s", msg.substr(0,msg.find('\n')).c_str());
 			if (Progress != NULL)

@@ -8,17 +8,30 @@ if [ "$1" = "-q" ]; then
 elif [ "$1" = "-v" ]; then
 	export MSGLEVEL=4
 fi
+
+if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+	CTEST='\033[1;32m'
+	CHIGH='\033[1;35m'
+	CRESET='\033[0m'
+elif [ -z "${MSGLEVEL}" ]; then
+	export MSGLEVEL=2
+fi
+
+if [ -z "$MSGLEVEL" ]; then
+	MSGLEVEL=5
+fi
+
 for testcase in $(run-parts --list $DIR | grep '/test-'); do
-	if [ "$1" = "-q" ]; then
-		echo -n "\033[1;32mRun Testcase \033[1;35m$(basename ${testcase})\033[0m"
+	if [ "$MSGLEVEL" -le 2 ]; then
+		echo -n "${CTEST}Testcase ${CHIGH}$(basename ${testcase})${CRESET}: "
 	else
-		echo "\033[1;32mRun Testcase \033[1;35m$(basename ${testcase})\033[0m"
+		echo "${CTEST}Run Testcase ${CHIGH}$(basename ${testcase})${CRESET}"
 	fi
 	if ! ${testcase}; then
                  FAIL=$((FAIL+1))
                  echo "$(basename $testcase) ... FAIL"
         fi
-	if [ "$1" = "-q" ]; then
+	if [ "$MSGLEVEL" -le 2 ]; then
 		echo
 	fi
 done
