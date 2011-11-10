@@ -1,16 +1,19 @@
 #!/bin/sh -- # no runable script, just for vi
 
 # we all like colorful messages
-CERROR="[1;31m" # red
-CWARNING="[1;33m" # yellow
-CMSG="[1;32m" # green
-CINFO="[1;96m" # light blue
-CDEBUG="[1;94m" # blue
-CNORMAL="[0;39m" # default system console color
-CDONE="[1;32m" # green
-CPASS="[1;32m" # green
-CFAIL="[1;31m" # red
-CCMD="[1;35m" # pink
+if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
+   expr match "$(readlink -f /proc/$$/fd/2)" '/dev/pts/[0-9]\+' > /dev/null; then
+	CERROR="[1;31m" # red
+	CWARNING="[1;33m" # yellow
+	CMSG="[1;32m" # green
+	CINFO="[1;96m" # light blue
+	CDEBUG="[1;94m" # blue
+	CNORMAL="[0;39m" # default system console color
+	CDONE="[1;32m" # green
+	CPASS="[1;32m" # green
+	CFAIL="[1;31m" # red
+	CCMD="[1;35m" # pink
+fi
 
 msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
 msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
@@ -42,7 +45,11 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgtest() { true; }
 	msgpass() { echo -n " ${CPASS}P${CNORMAL}" >&2; }
 	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
-	msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
+	if [ -n "$CFAIL" ]; then
+		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
+	else
+		msgfail() { echo -n " ###FAILED###" >&2; }
+	fi
 fi
 if [ $MSGLEVEL -le 3 ]; then
 	msginfo() { true; }
@@ -142,6 +149,7 @@ setupenvironment() {
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
+	echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	export LC_ALL=C
@@ -149,13 +157,26 @@ setupenvironment() {
 	msgdone "info"
 }
 
+getarchitecture() {
+	if [ "$1" = "native" -o -z "$1" ]; then
+		eval `aptconfig shell ARCH APT::Architecture`
+		if [ -n "$ARCH" ]; then
+			echo $ARCH
+		else
+			dpkg-architecture -qDEB_BUILD_ARCH
+		fi
+	else
+		echo $1
+	fi
+}
+
 configarchitecture() {
 	local CONFFILE=rootdir/etc/apt/apt.conf.d/01multiarch.conf
 	rm -f $CONFFILE
-	echo "APT::Architecture \"$1\";" > $CONFFILE
+	echo "APT::Architecture \"$(getarchitecture $1)\";" > $CONFFILE
 	shift
 	while [ -n "$1" ]; do
-		echo "APT::Architectures:: \"$1\";" >> $CONFFILE
+		echo "APT::Architectures:: \"$(getarchitecture $1)\";" >> $CONFFILE
 		shift
 	done
 }
@@ -268,7 +289,7 @@ Package: $NAME" > ${BUILDDIR}/debian/control
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 	done
 
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g'); do
+	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		rm -rf ${BUILDDIR}/debian/tmp
 		mkdir -p ${BUILDDIR}/debian/tmp/DEBIAN ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME} ${BUILDDIR}/debian/tmp/usr/bin
 		cp ${BUILDDIR}/debian/copyright ${BUILDDIR}/debian/changelog ${BUILDDIR}/FEATURES ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}
@@ -291,6 +312,7 @@ buildpackage() {
 	local BUILDDIR=$1
 	local RELEASE=$2
 	local SECTION=$3
+	local ARCH=$(getarchitecture $4)
 	msgninfo "Build package $(echo "$BUILDDIR" | grep -o '[^/]*$') for ${RELEASE} in ${SECTION}… "
 	cd $BUILDDIR
 	if [ "$ARCH" = "all" ]; then
@@ -401,7 +423,7 @@ insertpackage() {
 	local DEPENDENCIES="$5"
 	local PRIORITY="${6:-optional}"
 	local ARCHS=""
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g'); do
+	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		if [ "$arch" = "all" ]; then
 			ARCHS="$(aptconfig dump | grep APT::Architecture | cut -d'"' -f 2 | sed '/^$/ d' | sort | uniq | tr '\n' ' ')"
 		else
@@ -458,7 +480,7 @@ insertinstalledpackage() {
 	local DEPENDENCIES="$4"
 	local PRIORITY="${5:-optional}"
 	local FILE="rootdir/var/lib/dpkg/status"
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g'); do
+	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		echo "Package: $NAME
 Status: install ok installed
 Priority: $PRIORITY
@@ -506,6 +528,7 @@ buildaptarchivefromfiles() {
 # can be overridden by testcases for their pleasure
 getcodenamefromsuite() { echo -n "$1"; }
 getreleaseversionfromsuite() { true; }
+getlabelfromsuite() { true; }
 
 generatereleasefiles() {
 	# $1 is the Date header and $2 is the ValidUntil header to be set
@@ -519,13 +542,17 @@ generatereleasefiles() {
 			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
 			local VERSION="$(getreleaseversionfromsuite $SUITE)"
+			local LABEL="$(getlabelfromsuite $SUITE)"
 			if [ -n "$VERSION" ]; then
-				VERSION="-o APT::FTPArchive::Release::Version='${VERSION}'"
+				VERSION="-o APT::FTPArchive::Release::Version=${VERSION}"
+			fi
+			if [ -n "$LABEL" ]; then
+				LABEL="-o APT::FTPArchive::Release::Label=${LABEL}"
 			fi
 			aptftparchive -qq release $dir \
 				-o APT::FTPArchive::Release::Suite="${SUITE}" \
 				-o APT::FTPArchive::Release::Codename="${CODENAME}" \
-				-o APT::FTPArchive::Release::Label="Testcases" \
+				${LABEL} \
 				${VERSION} \
 					| sed -e '/0 Release$/ d' > $dir/Release # remove the self reference
 			if [ "$SUITE" = "experimental" -o "$SUITE" = "experimental2" ]; then
@@ -703,8 +730,7 @@ N: Can't select versions from package '$1' as it is purely virtual"
 N: No packages found"
 	local COMPAREFILE=$(mktemp)
 	addtrap "rm $COMPAREFILE;"
-	local ARCH=$(dpkg-architecture -qDEB_HOST_ARCH_CPU)
-	eval `apt-config shell ARCH APT::Architecture`
+	local ARCH="$(getarchitecture 'native')"
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }

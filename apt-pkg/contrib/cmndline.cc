@@ -11,11 +11,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
+#include<config.h>
+
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
-#include <apti18n.h>    
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -87,9 +90,8 @@ bool CommandLine::Parse(int argc,const char **argv)
       Opt++;
 
       // Match up to a = against the list
-      const char *OptEnd = Opt;
       Args *A;
-      for (; *OptEnd != 0 && *OptEnd != '='; OptEnd++);
+      const char *OptEnd = strchrnul(Opt, '=');
       for (A = ArgList; A->end() == false && 
 	   stringcasecmp(Opt,OptEnd,A->LongOpt) != 0; A++);
       
@@ -97,9 +99,8 @@ bool CommandLine::Parse(int argc,const char **argv)
       bool PreceedMatch = false;
       if (A->end() == true)
       {
-	 for (; Opt != OptEnd && *Opt != '-'; Opt++);
-
-	 if (Opt == OptEnd)
+         Opt = (const char*) memchr(Opt, '-', OptEnd - Opt);
+	 if (Opt == NULL)
 	    return _error->Error(_("Command line option %s is not understood"),argv[I]);
 	 Opt++;
 	 
@@ -194,9 +195,8 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
       // Arbitrary item specification
       if ((A->Flags & ArbItem) == ArbItem)
       {
-	 const char *J;
-	 for (J = Argument; *J != 0 && *J != '='; J++);
-	 if (*J == 0)
+	 const char *J = strchr(Argument, '=');
+	 if (J == NULL)
 	    return _error->Error(_("Option %s: Configuration item specification must have an =<val>."),argv[I]);
 
 	 // = is trailing
@@ -212,8 +212,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	 return true;
       }
       
-      const char *I = A->ConfName;
-      for (; *I != 0 && *I != ' '; I++);
+      const char *I = strchrnul(A->ConfName, ' ');
       if (*I == ' ')
 	 Conf->Set(string(A->ConfName,0,I-A->ConfName),string(I+1) + Argument);
       else
@@ -269,10 +268,9 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
 	 // Skip the leading dash
 	 const char *J = argv[I];
 	 for (; *J != 0 && *J == '-'; J++);
-	 
-	 const char *JEnd = J;
-	 for (; *JEnd != 0 && *JEnd != '-'; JEnd++);
-	 if (*JEnd != 0)
+
+	 const char *JEnd = strchr(J, '-');
+	 if (JEnd != NULL)
 	 {
 	    strncpy(Buffer,J,JEnd - J);
 	    Buffer[JEnd - J] = 0;
@@ -373,9 +371,8 @@ void CommandLine::SaveInConfig(unsigned int const &argc, char const * const * co
 	 {
 	    // That is possibly an option: Quote it if it includes spaces,
 	    // the benefit is that this will eliminate also most false positives
-	    const char* c = &argv[i][j+1];
-	    for (; *c != '\0' && *c != ' '; ++c);
-	    if (*c == '\0') continue;
+	    const char* c = strchr(&argv[i][j+1], ' ');
+	    if (c == NULL) continue;
 	    cmdline[++length] = '"';
 	    closeQuote = true;
 	 }

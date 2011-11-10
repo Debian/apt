@@ -11,9 +11,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "writer.h"
-    
-#include <apti18n.h>
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -30,10 +29,13 @@
 #include <iostream>
 #include <sstream>
 #include <memory>
-    
+
+#include "writer.h"
 #include "cachedb.h"
 #include "apt-ftparchive.h"
 #include "multicompress.h"
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 FTWScanner *FTWScanner::Owner;
@@ -246,8 +248,8 @@ bool FTWScanner::LoadFileList(string const &Dir, string const &File)
 // ---------------------------------------------------------------------
 /* */
 bool FTWScanner::Delink(string &FileName,const char *OriginalPath,
-			unsigned long &DeLinkBytes,
-			off_t const &FileSize)
+			unsigned long long &DeLinkBytes,
+			unsigned long long const &FileSize)
 {
    // See if this isn't an internaly prefix'd file name.
    if (InternalPrefix.empty() == false &&
@@ -377,7 +379,7 @@ bool PackagesWriter::DoPackage(string FileName)
       return false;
    }
 
-   off_t FileSize = Db.GetFileSize();
+   unsigned long long FileSize = Db.GetFileSize();
    if (Delink(FileName,OriginalPath,Stats.DeLinkBytes,FileSize) == false)
       return false;
    
@@ -413,7 +415,7 @@ bool PackagesWriter::DoPackage(string FileName)
    }
 
    char Size[40];
-   sprintf(Size,"%lu", (unsigned long) FileSize);
+   sprintf(Size,"%llu", (unsigned long long) FileSize);
    
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -610,7 +612,7 @@ bool SourcesWriter::DoPackage(string FileName)
    if (St.st_size > 128*1024)
       return _error->Error("DSC file '%s' is too large!",FileName.c_str());
          
-   if (BufSize < (unsigned)St.st_size+1)
+   if (BufSize < (unsigned long long)St.st_size+1)
    {
       BufSize = St.st_size+1;
       Buffer = (char *)realloc(Buffer,St.st_size+1);
@@ -1065,7 +1067,7 @@ void ReleaseWriter::Finish()
       for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
 	  I != CheckSums.end(); ++I)
       {
-	 fprintf(Output, " %s %16ld %s\n",
+	 fprintf(Output, " %s %16llu %s\n",
 		 (*I).second.MD5.c_str(),
 		 (*I).second.size,
 		 (*I).first.c_str());
@@ -1077,7 +1079,7 @@ void ReleaseWriter::Finish()
       for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
 	  I != CheckSums.end(); ++I)
       {
-	 fprintf(Output, " %s %16ld %s\n",
+	 fprintf(Output, " %s %16llu %s\n",
 		 (*I).second.SHA1.c_str(),
 		 (*I).second.size,
 		 (*I).first.c_str());
@@ -1089,7 +1091,7 @@ void ReleaseWriter::Finish()
       for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
 	  I != CheckSums.end(); ++I)
       {
-	 fprintf(Output, " %s %16ld %s\n",
+	 fprintf(Output, " %s %16llu %s\n",
 		 (*I).second.SHA256.c_str(),
 		 (*I).second.size,
 		 (*I).first.c_str());
@@ -1101,7 +1103,7 @@ void ReleaseWriter::Finish()
        I != CheckSums.end();
        ++I)
    {
-      fprintf(Output, " %s %32ld %s\n",
+      fprintf(Output, " %s %16llu %s\n",
               (*I).second.SHA512.c_str(),
               (*I).second.size,
               (*I).first.c_str());

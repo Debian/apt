@@ -25,8 +25,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#define _LARGEFILE_SOURCE
-#define _LARGEFILE64_SOURCE
+#include <config.h>
 
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/error.h>
@@ -37,6 +36,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/clean.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/version.h>
@@ -45,9 +45,10 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/versionmatch.h>
-
-#include <config.h>
-#include <apti18n.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/indexfile.h>
 
 #include "acqprogress.h"
 
@@ -68,8 +69,7 @@
 #include <sys/wait.h>
 #include <sstream>
 
-#define statfs statfs64
-#define statvfs statvfs64
+#include <apti18n.h>
 									/*}}}*/
 
 #define RAMFS_MAGIC     0x858458f6
@@ -1630,7 +1630,8 @@ bool DoUpdate(CommandLine &CmdL)
    if (_config->FindB("APT::Get::Download",true) == true)
        ListUpdate(Stat, *List);
 
-   // Rebuild the cache.   
+   // Rebuild the cache.
+   pkgCacheFile::RemoveCaches();
    if (Cache.BuildCaches() == false)
       return false;
    
@@ -1688,8 +1689,9 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
 	    {
+	       if (Pkg.CandVersion() != 0)
+	          tooMuch.insert(Pkg);
 	       Cache->MarkDelete(Pkg, false);
-	       tooMuch.insert(Pkg);
 	    }
 	    // only show stuff in the list that is not yet marked for removal
 	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false) 
@@ -1713,33 +1715,41 @@ bool DoAutomaticRemove(CacheFile &Cache)
       bool Changed;
       do {
 	 Changed = false;
-	 for (APT::PackageSet::const_iterator P = tooMuch.begin();
-	      P != tooMuch.end() && Changed == false; ++P)
+	 for (APT::PackageSet::const_iterator Pkg = tooMuch.begin();
+	      Pkg != tooMuch.end() && Changed == false; ++Pkg)
 	 {
-	    for (pkgCache::DepIterator R = P.RevDependsList();
-		 R.end() == false; ++R)
-	    {
-	       if (R.IsNegative() == true ||
-		   Cache->IsImportantDep(R) == false)
-		  continue;
-	       pkgCache::PkgIterator N = R.ParentPkg();
-	       if (N.end() == true || (N->CurrentVer == 0 && (*Cache)[N].Install() == false))
-		  continue;
-	       if (Debug == true)
-		  std::clog << "Save " << P << " as another installed garbage package depends on it" << std::endl;
-	       Cache->MarkInstall(P, false);
-	       if(hideAutoRemove == false)
+	    APT::PackageSet too;
+	    too.insert(Pkg);
+	    for (pkgCache::PrvIterator Prv = Cache[Pkg].CandidateVerIter(Cache).ProvidesList();
+		 Prv.end() == false; ++Prv)
+	       too.insert(Prv.ParentPkg());
+	    for (APT::PackageSet::const_iterator P = too.begin();
+		 P != too.end() && Changed == false; ++P) {
+	       for (pkgCache::DepIterator R = P.RevDependsList();
+		    R.end() == false; ++R)
 	       {
-		  ++autoRemoveCount;
-		  if (smallList == false)
-		  {
-		     autoremovelist += P.FullName(true) + " ";
-		     autoremoveversions += string(Cache[P].CandVersion) + "\n";
-		  }
+		  if (R.IsNegative() == true ||
+		      Cache->IsImportantDep(R) == false)
+		     continue;
+		 pkgCache::PkgIterator N = R.ParentPkg();
+		 if (N.end() == true || (N->CurrentVer == 0 && (*Cache)[N].Install() == false))
+		    continue;
+		 if (Debug == true)
+		    std::clog << "Save " << Pkg << " as another installed garbage package depends on it" << std::endl;
+		 Cache->MarkInstall(Pkg, false);
+		 if (hideAutoRemove == false)
+		 {
+		    ++autoRemoveCount;
+		    if (smallList == false)
+		    {
+		       autoremovelist += Pkg.FullName(true) + " ";
+		       autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+		    }
+		 }
+		 tooMuch.erase(Pkg);
+		 Changed = true;
+		 break;
 	       }
-	       tooMuch.erase(P);
-	       Changed = true;
-	       break;
 	    }
 	 }
       } while (Changed == true);
@@ -2210,10 +2220,14 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 /* */
 bool DoClean(CommandLine &CmdL)
 {
+   std::string const archivedir = _config->FindDir("Dir::Cache::archives");
+   std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
+   std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+
    if (_config->FindB("APT::Get::Simulate") == true)
    {
-      cout << "Del " << _config->FindDir("Dir::Cache::archives") << "* " <<
-	 _config->FindDir("Dir::Cache::archives") << "partial/*" << endl;
+      cout << "Del " << archivedir << "* " << archivedir << "partial/*"<< endl
+	   << "Del " << pkgcache << " " << srcpkgcache << endl;
       return true;
    }
    
@@ -2221,14 +2235,17 @@ bool DoClean(CommandLine &CmdL)
    FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
-      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
+      Lock.Fd(GetLock(archivedir + "lock"));
       if (_error->PendingError() == true)
 	 return _error->Error(_("Unable to lock the download directory"));
    }
    
    pkgAcquire Fetcher;
-   Fetcher.Clean(_config->FindDir("Dir::Cache::archives"));
-   Fetcher.Clean(_config->FindDir("Dir::Cache::archives") + "partial/");
+   Fetcher.Clean(archivedir);
+   Fetcher.Clean(archivedir + "partial/");
+
+   pkgCacheFile::RemoveCaches();
+
    return true;
 }
 									/*}}}*/

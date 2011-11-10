@@ -15,8 +15,8 @@
 #define PKGLIB_DEBRECORDS_H
 
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/fileutl.h>
 
 class debRecordParser : public pkgRecords::Parser
 {
@@ -35,27 +35,27 @@ class debRecordParser : public pkgRecords::Parser
    public:
 
    // These refer to the archive file for the Version
-   virtual string FileName();
-   virtual string MD5Hash();
-   virtual string SHA1Hash();
-   virtual string SHA256Hash();
-   virtual string SHA512Hash();
-   virtual string SourcePkg();
-   virtual string SourceVer();
+   virtual std::string FileName();
+   virtual std::string MD5Hash();
+   virtual std::string SHA1Hash();
+   virtual std::string SHA256Hash();
+   virtual std::string SHA512Hash();
+   virtual std::string SourcePkg();
+   virtual std::string SourceVer();
    
    // These are some general stats about the package
-   virtual string Maintainer();
-   virtual string ShortDesc();
-   virtual string LongDesc();
-   virtual string Name();
-   virtual string Homepage();
+   virtual std::string Maintainer();
+   virtual std::string ShortDesc();
+   virtual std::string LongDesc();
+   virtual std::string Name();
+   virtual std::string Homepage();
 
    // An arbitrary custom field
-   virtual string RecordField(const char *fieldName);
+   virtual std::string RecordField(const char *fieldName);
 
    virtual void GetRec(const char *&Start,const char *&Stop);
    
-   debRecordParser(string FileName,pkgCache &Cache);
+   debRecordParser(std::string FileName,pkgCache &Cache);
    virtual ~debRecordParser() {};
 };
 

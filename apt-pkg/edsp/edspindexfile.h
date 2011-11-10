@@ -8,7 +8,6 @@
 #ifndef PKGLIB_EDSPINDEXFILE_H
 #define PKGLIB_EDSPINDEXFILE_H
 
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/debindexfile.h>
 
 class edspIndex : public debStatusIndex
@@ -22,7 +21,7 @@ class edspIndex : public debStatusIndex
 
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 
-   edspIndex(string File);
+   edspIndex(std::string File);
 };
 
 #endif

@@ -31,8 +31,6 @@
 /* Define this for python-apt */
 #define APT_HAS_GZIP 1
 
-using std::string;
-
 class FileFd
 {
    protected:
@@ -41,30 +39,45 @@ class FileFd
    enum LocalFlags {AutoClose = (1<<0),Fail = (1<<1),DelOnFail = (1<<2),
                     HitEof = (1<<3), Replace = (1<<4) };
    unsigned long Flags;
-   string FileName;
-   string TemporaryFileName;
+   std::string FileName;
+   std::string TemporaryFileName;
    gzFile gz;
 
    public:
    enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp,ReadOnlyGzip,
                   WriteAtomic};
    
-   inline bool Read(void *To,unsigned long Size,bool AllowEof)
+   inline bool Read(void *To,unsigned long long Size,bool AllowEof)
    {
-      unsigned long Jnk;
+      unsigned long long Jnk;
       if (AllowEof)
 	 return Read(To,Size,&Jnk);
       return Read(To,Size);
    }   
-   bool Read(void *To,unsigned long Size,unsigned long *Actual = 0);
-   bool Write(const void *From,unsigned long Size);
-   bool Seek(unsigned long To);
-   bool Skip(unsigned long To);
-   bool Truncate(unsigned long To);
-   unsigned long Tell();
-   unsigned long Size();
-   unsigned long FileSize();
-   bool Open(string FileName,OpenMode Mode,unsigned long Perms = 0666);
+   bool Read(void *To,unsigned long long Size,unsigned long long *Actual = 0);
+   bool Write(const void *From,unsigned long long Size);
+   bool Seek(unsigned long long To);
+   bool Skip(unsigned long long To);
+   bool Truncate(unsigned long long To);
+   unsigned long long Tell();
+   unsigned long long Size();
+   unsigned long long FileSize();
+
+   /* You want to use 'unsigned long long' if you are talking about a file
+      to be able to support large files (>2 or >4 GB) properly.
+      This shouldn't happen all to often for the indexes, but deb's might be…
+      And as the auto-conversation converts a 'unsigned long *' to a 'bool'
+      instead of 'unsigned long long *' we need to provide this explicitely -
+      otherwise applications magically start to fail… */
+   __deprecated bool Read(void *To,unsigned long long Size,unsigned long *Actual)
+   {
+	unsigned long long R;
+	bool const T = Read(To, Size, &R);
+	*Actual = R;
+	return T;
+   }
+
+   bool Open(std::string FileName,OpenMode Mode,unsigned long Perms = 0666);
    bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false);
    bool Close();
    bool Sync();
@@ -78,9 +91,9 @@ class FileFd
    inline void EraseOnFailure() {Flags |= DelOnFail;};
    inline void OpFail() {Flags |= Fail;};
    inline bool Eof() {return (Flags & HitEof) == HitEof;};
-   inline string &Name() {return FileName;};
+   inline std::string &Name() {return FileName;};
    
-   FileFd(string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), 
+   FileFd(std::string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), 
             Flags(0), gz(NULL)
    {
       Open(FileName,Mode,Perms);
@@ -92,12 +105,12 @@ class FileFd
 
 bool RunScripts(const char *Cnf);
 bool CopyFile(FileFd &From,FileFd &To);
-int GetLock(string File,bool Errors = true);
-bool FileExists(string File);
-bool RealFileExists(string File);
-bool DirectoryExists(string const &Path) __attrib_const;
-bool CreateDirectory(string const &Parent, string const &Path);
-time_t GetModificationTime(string const &Path);
+int GetLock(std::string File,bool Errors = true);
+bool FileExists(std::string File);
+bool RealFileExists(std::string File);
+bool DirectoryExists(std::string const &Path) __attrib_const;
+bool CreateDirectory(std::string const &Parent, std::string const &Path);
+time_t GetModificationTime(std::string const &Path);
 
 /** \brief Ensure the existence of the given Path
  *
@@ -105,13 +118,13 @@ time_t GetModificationTime(string const &Path);
  *  /apt/ will be removed before CreateDirectory call.
  *  \param Path which should exist after (successful) call
  */
-bool CreateAPTDirectoryIfNeeded(string const &Parent, string const &Path);
+bool CreateAPTDirectoryIfNeeded(std::string const &Parent, std::string const &Path);
 
-std::vector<string> GetListOfFilesInDir(string const &Dir, string const &Ext,
+std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::string const &Ext,
 					bool const &SortList, bool const &AllowNoExt=false);
-std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> const &Ext,
+std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::vector<std::string> const &Ext,
 					bool const &SortList);
-string SafeGetCWD();
+std::string SafeGetCWD();
 void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);
 bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
@@ -119,10 +132,10 @@ pid_t ExecFork();
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
 // File string manipulators
-string flNotDir(string File);
-string flNotFile(string File);
-string flNoLink(string File);
-string flExtension(string File);
-string flCombine(string Dir,string File);
+std::string flNotDir(std::string File);
+std::string flNotFile(std::string File);
+std::string flNoLink(std::string File);
+std::string flExtension(std::string File);
+std::string flCombine(std::string Dir,std::string File);
 
 #endif

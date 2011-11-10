@@ -11,10 +11,12 @@
 #define PKGLIB_DEBSYSTEM_H
 
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/pkgcache.h>
 
 class debSystemPrivate;
-
 class debStatusIndex;
+class pkgDepCache;
+
 class debSystem : public pkgSystem
 {
    // private d-pointer

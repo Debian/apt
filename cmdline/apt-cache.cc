@@ -13,9 +13,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/error.h>
-#include <cassert>
-#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/init.h>
@@ -23,6 +23,7 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/version.h>
@@ -30,18 +31,21 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/metaindex.h>
 
-#include <config.h>
-#include <apti18n.h>
-
+#include <cassert>
 #include <locale.h>
 #include <iostream>
 #include <unistd.h>
 #include <errno.h>
 #include <regex.h>
 #include <stdio.h>
-
 #include <iomanip>
+#include <algorithm>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

@@ -15,9 +15,6 @@
 #include <algorithm>
 #include <stdint.h>
 
-using std::string;
-using std::min;
-
 template<int N>
 class HashSumValue
 {
@@ -35,7 +32,7 @@ class HashSumValue
       return memcmp(Sum,rhs.Sum,sizeof(Sum)) != 0;
    };
 
-   string Value() const
+   std::string Value() const
    {
       char Conv[16] =
       { '0','1','2','3','4','5','6','7','8','9','a','b',
@@ -52,7 +49,7 @@ class HashSumValue
          Result[I] = Conv[Sum[J] >> 4];
          Result[I + 1] = Conv[Sum[J] & 0xF];
       }
-      return string(Result);
+      return std::string(Result);
    };
    
    inline void Value(unsigned char S[N/8])
@@ -61,12 +58,12 @@ class HashSumValue
          S[I] = Sum[I];
    };
 
-   inline operator string() const 
+   inline operator std::string() const 
    {
       return Value();
    };
 
-   bool Set(string Str) 
+   bool Set(std::string Str) 
    {
       return Hex2Num(Str,Sum,sizeof(Sum));
    };
@@ -77,7 +74,7 @@ class HashSumValue
          Sum[I] = S[I];
    };
 
-   HashSumValue(string Str) 
+   HashSumValue(std::string Str) 
    {
          memset(Sum,0,sizeof(Sum));
          Set(Str);
@@ -91,8 +88,8 @@ class HashSumValue
 class SummationImplementation
 {
    public:
-   virtual bool Add(const unsigned char *inbuf, unsigned long inlen) = 0;
-   inline bool Add(const char *inbuf, unsigned long const inlen)
+   virtual bool Add(const unsigned char *inbuf, unsigned long long inlen) = 0;
+   inline bool Add(const char *inbuf, unsigned long long const inlen)
    { return Add((unsigned char *)inbuf, inlen); };
 
    inline bool Add(const unsigned char *Data)
@@ -105,7 +102,7 @@ class SummationImplementation
    inline bool Add(const char *Beg, const char *End)
    { return Add((const unsigned char *)Beg, End - Beg); };
 
-   bool AddFD(int Fd, unsigned long Size = 0);
+   bool AddFD(int Fd, unsigned long long Size = 0);
 };
 
 #endif

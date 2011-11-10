@@ -38,8 +38,6 @@
 #include <apt-pkg/versionmatch.h>
 #include <vector>
 
-using std::vector;
-
 class pkgPolicy : public pkgDepCache::Policy
 {
    protected:
@@ -47,29 +45,29 @@ class pkgPolicy : public pkgDepCache::Policy
    struct Pin
    {
       pkgVersionMatch::MatchType Type;
-      string Data;
+      std::string Data;
       signed short Priority;
       Pin() : Type(pkgVersionMatch::None), Priority(0) {};
    };
 
    struct PkgPin : Pin
    {
-      string Pkg;
-      PkgPin(string const &Pkg) : Pin(), Pkg(Pkg) {};
+      std::string Pkg;
+      PkgPin(std::string const &Pkg) : Pin(), Pkg(Pkg) {};
    };
    
    Pin *Pins;
    signed short *PFPriority;
-   vector<Pin> Defaults;
-   vector<PkgPin> Unmatched;
+   std::vector<Pin> Defaults;
+   std::vector<PkgPin> Unmatched;
    pkgCache *Cache;
    bool StatusOverride;
    
    public:
 
    // Things for manipulating pins
-   void CreatePin(pkgVersionMatch::MatchType Type,string Pkg,
-		  string Data,signed short Priority);
+   void CreatePin(pkgVersionMatch::MatchType Type,std::string Pkg,
+		  std::string Data,signed short Priority);
    pkgCache::VerIterator GetMatch(pkgCache::PkgIterator const &Pkg);
 
    // Things for the cache interface.
@@ -83,7 +81,7 @@ class pkgPolicy : public pkgDepCache::Policy
    virtual ~pkgPolicy() {delete [] PFPriority; delete [] Pins;};
 };
 
-bool ReadPinFile(pkgPolicy &Plcy,string File = "");
-bool ReadPinDir(pkgPolicy &Plcy,string Dir = "");
+bool ReadPinFile(pkgPolicy &Plcy, std::string File = "");
+bool ReadPinDir(pkgPolicy &Plcy, std::string Dir = "");
 
 #endif

@@ -10,7 +10,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#define APT_COMPATIBILITY 986
+#include <config.h>
 
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/pkgcache.h>
@@ -127,14 +127,12 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
 int debVersioningSystem::DoCmpVersion(const char *A,const char *AEnd,
 				      const char *B,const char *BEnd)
 {
-   // Strip off the epoch and compare it 
-   const char *lhs = A;
-   const char *rhs = B;
-   for (;lhs != AEnd && *lhs != ':'; lhs++);
-   for (;rhs != BEnd && *rhs != ':'; rhs++);
-   if (lhs == AEnd)
+   // Strip off the epoch and compare it
+   const char *lhs = (const char*) memchr(A, ':', AEnd - A);
+   const char *rhs = (const char*) memchr(B, ':', BEnd - B);
+   if (lhs == NULL)
       lhs = A;
-   if (rhs == BEnd)
+   if (rhs == NULL)
       rhs = B;
    
    // Special case: a zero epoch is the same as no epoch,
@@ -169,15 +167,12 @@ int debVersioningSystem::DoCmpVersion(const char *A,const char *AEnd,
    if (rhs != B)
       rhs++;
    
-   // Find the last - 
-   const char *dlhs = AEnd-1;
-   const char *drhs = BEnd-1;
-   for (;dlhs > lhs && *dlhs != '-'; dlhs--);
-   for (;drhs > rhs && *drhs != '-'; drhs--);
-
-   if (dlhs == lhs)
+   // Find the last -
+   const char *dlhs = (const char*) memrchr(lhs, '-', AEnd - lhs);
+   const char *drhs = (const char*) memrchr(rhs, '-', BEnd - rhs);
+   if (dlhs == NULL)
       dlhs = AEnd;
-   if (drhs == rhs)
+   if (drhs == NULL)
       drhs = BEnd;
    
    // Compare the main version
@@ -262,7 +257,7 @@ bool debVersioningSystem::CheckDep(const char *PkgVer,
 // debVS::UpstreamVersion - Return the upstream version string		/*{{{*/
 // ---------------------------------------------------------------------
 /* This strips all the debian specific information from the version number */
-string debVersioningSystem::UpstreamVersion(const char *Ver)
+std::string debVersioningSystem::UpstreamVersion(const char *Ver)
 {
    // Strip off the bit before the first colon
    const char *I = Ver;
@@ -277,6 +272,6 @@ string debVersioningSystem::UpstreamVersion(const char *Ver)
       if (*I == '-')
 	 Last = I - Ver;
    
-   return string(Ver,Last);
+   return std::string(Ver,Last);
 }
 									/*}}}*/

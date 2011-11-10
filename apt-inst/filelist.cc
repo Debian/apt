@@ -32,6 +32,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>

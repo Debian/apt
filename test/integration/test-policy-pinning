@@ -25,30 +25,69 @@ testequalpolicy() {
 Pinned packages:" aptcache policy $*
 }
 
-aptget update -qq
+aptgetupdate() {
+	# just to be sure that no old files are used
+	rm -rf rootdir/var/lib/apt
+	if aptget update -qq 2>&1 | grep '^E: '; then
+		msgwarn 'apt-get update failed with an error'
+	fi
+}
+
+### not signed archive
+
+aptgetupdate
 testequalpolicy 100 500
 testequalpolicy 990 500 -t now
 
 sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
-rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
-aptget update -qq
+aptgetupdate
 
 testequalpolicy 100 1 -o Test=NotAutomatic
 testequalpolicy 990 1 -o Test=NotAutomatic -t now
 
 sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
-rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
-aptget update -qq
+aptgetupdate
 
 testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
 testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
 
 sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
-rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
-aptget update -qq
+aptgetupdate
 
 testequalpolicy 100 500 -o Test=Automatic
 testequalpolicy 990 500 -o Test=Automatic -t now
+
+sed -i aptarchive/Release -e '/NotAutomatic: / d' -e '/ButAutomaticUpgrades: / d'
+
+### signed but no key in trusted
+
+signreleasefiles 'Marvin Paranoid'
+aptgetupdate
+testequalpolicy 100 500
+testequalpolicy 990 500 -t now
+
+sed -i aptarchive/Release -e 1i"NotAutomatic: yes"
+signreleasefiles 'Marvin Paranoid'
+aptgetupdate
+
+testequalpolicy 100 1 -o Test=NotAutomatic
+testequalpolicy 990 1 -o Test=NotAutomatic -t now
+
+sed -i aptarchive/Release -e 1i"ButAutomaticUpgrades: yes"
+signreleasefiles 'Marvin Paranoid'
+aptgetupdate
+
+testequalpolicy 100 100 -o Test=ButAutomaticUpgrades
+testequalpolicy 990 100 -o Test=ButAutomaticUpgrades -t now
+
+sed -i aptarchive/Release -e 's#NotAutomatic: yes#NotAutomatic: no#' -e '/ButAutomaticUpgrades: / d'
+signreleasefiles 'Marvin Paranoid'
+aptgetupdate
+
+testequalpolicy 100 500 -o Test=Automatic
+testequalpolicy 990 500 -o Test=Automatic -t now
+
+### signed and valid key
 
 buildsimplenativepackage "coolstuff" "all" "1.0" "stable"
 buildsimplenativepackage "coolstuff" "all" "2.0~bpo1" "backports"
@@ -135,8 +174,7 @@ Pin-Priority: -1" > rootdir/etc/apt/preferences
 rm rootdir/etc/apt/preferences
 sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
 signreleasefiles
-rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
-aptget update -qq
+aptgetupdate
 
 testequalpolicycoolstuff "" "1.0" 1 500 0 "" -o Test=NotAutomatic
 testequalpolicycoolstuff "" "1.0" 1 990 0 "" -o Test=NotAutomatic -t stable
@@ -164,8 +202,7 @@ testequalpolicycoolstuff "" "1.0" 1 990 600 "2.0~bpo1" -o Test=NotAutomatic -t s
 rm rootdir/etc/apt/preferences
 sed -i aptarchive/dists/backports/Release -e 1i"ButAutomaticUpgrades: yes"
 signreleasefiles
-rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
-aptget update -qq
+aptgetupdate
 
 testequalpolicycoolstuff "" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
 testequalpolicycoolstuff "" "1.0" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
@@ -211,8 +248,7 @@ setupaptarchive
 
 sed -i aptarchive/dists/backports/Release -e 1i"NotAutomatic: yes"
 signreleasefiles
-rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
-aptget update -qq
+aptgetupdate
 
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 500 0 "" "2.0~bpo2" -o Test=NotAutomatic
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 1 990 0 "" "2.0~bpo2" -o Test=NotAutomatic -t stable
@@ -220,8 +256,7 @@ testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 990 500 0 "" "2.0~bpo2" -o Test=N
 
 sed -i aptarchive/dists/backports/Release -e 1i"ButAutomaticUpgrades: yes"
 signreleasefiles
-rm rootdir/var/cache/apt/srcpkgcache.bin rootdir/var/cache/apt/pkgcache.bin
-aptget update -qq
+aptgetupdate
 
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 500 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo2" 100 990 0 "" "2.0~bpo2" -o Test=ButAutomaticUpgrades -t stable

@@ -6,6 +6,10 @@ BASENAME=_libapt_test
 # Bring in the default rules
 include ../../buildlib/defaults.mak
 
+.PHONY: test
+test:
+	./run-tests
+
 # Program for testing getLanguageCode
 PROGRAM = getLanguages${BASENAME}
 SLIBS = -lapt-pkg

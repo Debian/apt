@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
@@ -23,9 +25,9 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/metaindex.h>
 
-#include <apti18n.h>
-    
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -33,6 +35,8 @@
 #include <sstream>
 #include <stdio.h>
 #include <ctime>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -808,6 +812,13 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    if (CompressionExtension.empty() == false)
       CompressionExtension.erase(CompressionExtension.end()-1);
 
+   // only verify non-optional targets, see acquire-item.h for a FIXME
+   // to make this more flexible
+   if (Target->IsOptional())
+     Verify = false;
+   else
+     Verify = true;
+
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
 									/*}}}*/
@@ -905,6 +916,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 
       /* Verify the index file for correctness (all indexes must
        * have a Package field) (LP: #346386) (Closes: #627642) */
+      if (Verify == true)
       {
 	 FileFd fd(DestFile, FileFd::ReadOnly);
 	 pkgTagSection sec;

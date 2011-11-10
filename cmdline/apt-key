@@ -168,7 +168,7 @@ if [ "$1" = "--keyring" ]; then
         #echo "keyfile given"
 	shift
 	TRUSTEDFILE="$1"
-	if [ -r "$TRUSTEDFILE" ]; then
+	if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ]; then
 		GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
 	else
 		echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"

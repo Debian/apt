@@ -25,26 +25,24 @@
 #include <string>
 #include <sys/time.h>
 
-using std::string;
-
 class Configuration;
 class OpProgress
 {
-   unsigned long Current;
-   unsigned long Total;
-   unsigned long Size;
-   unsigned long SubTotal;
+   unsigned long long Current;
+   unsigned long long Total;
+   unsigned long long Size;
+   unsigned long long SubTotal;
    float LastPercent;
    
    // Change reduction code
    struct timeval LastTime;
-   string LastOp;
-   string LastSubOp;
+   std::string LastOp;
+   std::string LastSubOp;
    
    protected:
    
-   string Op;
-   string SubOp;
+   std::string Op;
+   std::string SubOp;
    float Percent;
    
    bool MajorChange;
@@ -54,10 +52,10 @@ class OpProgress
    
    public:
    
-   void Progress(unsigned long Current);
-   void SubProgress(unsigned long SubTotal, const string &Op = "", float const Percent = -1);
-   void OverallProgress(unsigned long Current,unsigned long Total,
-			unsigned long Size,const string &Op);
+   void Progress(unsigned long long Current);
+   void SubProgress(unsigned long long SubTotal, const std::string &Op = "", float const Percent = -1);
+   void OverallProgress(unsigned long long Current,unsigned long long Total,
+			unsigned long long Size,const std::string &Op);
    virtual void Done() {};
    
    OpProgress();
@@ -67,8 +65,8 @@ class OpProgress
 class OpTextProgress : public OpProgress
 {
    protected:
-   
-   string OldOp;
+
+   std::string OldOp;
    bool NoUpdate;
    bool NoDisplay;
    unsigned long LastLen;

@@ -8,15 +8,19 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-
-#include <apti18n.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexfile.h>
 
 #include <fstream>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -266,7 +270,7 @@ bool pkgSourceList::ReadAppend(string File)
       // CNC:2003-02-20 - Do not break if '#' is inside [].
       for (I = Buffer; *I != 0 && *I != '#'; I++)
          if (*I == '[')
-	    for (I++; *I != 0 && *I != ']'; I++);
+	    I = strchr(I + 1, ']');
       *I = 0;
       
       const char *C = _strstrip(Buffer);

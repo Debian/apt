@@ -28,9 +28,10 @@
 #ifndef PKGLIB_FILELIST_H
 #define PKGLIB_FILELIST_H
 
+#include <apt-pkg/mmap.h>
 
 #include <cstring>
-#include <apt-pkg/mmap.h>
+#include <string>
 
 class pkgFLCache
 {
@@ -48,7 +49,7 @@ class pkgFLCache
    class DiverIterator;
    
    protected:
-   string CacheFile;
+   std::string CacheFile;
    DynamicMMap &Map;
    map_ptrloc LastTreeLookup;
    unsigned long LastLookupSize;

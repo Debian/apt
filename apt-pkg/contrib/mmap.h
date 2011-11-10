@@ -27,9 +27,8 @@
 
 
 #include <string>
-#include <apt-pkg/fileutl.h>
 
-using std::string;
+class FileFd;
 
 /* This should be a 32 bit type, larger tyes use too much ram and smaller
    types are too small. Where ever possible 'unsigned long' should be used
@@ -41,7 +40,7 @@ class MMap
    protected:
    
    unsigned long Flags;
-   unsigned long iSize;
+   unsigned long long iSize;
    void *Base;
 
    // In case mmap can not be used, we keep a dup of the file
@@ -60,8 +59,8 @@ class MMap
    // Simple accessors
    inline operator void *() {return Base;};
    inline void *Data() {return Base;}; 
-   inline unsigned long Size() {return iSize;};
-   inline void AddSize(unsigned long const size) {iSize += size;};
+   inline unsigned long long Size() {return iSize;};
+   inline void AddSize(unsigned long long const size) {iSize += size;};
    inline bool validData() const { return Base != (void *)-1 && Base != 0; };
    
    // File manipulators
@@ -99,10 +98,10 @@ class DynamicMMap : public MMap
    public:
 
    // Allocation
-   unsigned long RawAllocate(unsigned long Size,unsigned long Aln = 0);
+   unsigned long RawAllocate(unsigned long long Size,unsigned long Aln = 0);
    unsigned long Allocate(unsigned long ItemSize);
    unsigned long WriteString(const char *String,unsigned long Len = (unsigned long)-1);
-   inline unsigned long WriteString(const string &S) {return WriteString(S.c_str(),S.length());};
+   inline unsigned long WriteString(const std::string &S) {return WriteString(S.c_str(),S.length());};
    void UsePools(Pool &P,unsigned int Count) {Pools = &P; PoolCount = Count;};
    
    DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &WorkSpace = 2*1024*1024,

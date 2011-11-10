@@ -40,12 +40,13 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/error.h>
 
 #include <vector>
 #include <memory>
 #include <set>
+#include <list>
+
+class OpProgress;
 
 class pkgDepCache : protected pkgCache::Namespace
 {
@@ -338,9 +339,9 @@ class pkgDepCache : protected pkgCache::Namespace
    inline Header &Head() {return *Cache->HeaderP;};
    inline GrpIterator GrpBegin() {return Cache->GrpBegin();};
    inline PkgIterator PkgBegin() {return Cache->PkgBegin();};
-   inline GrpIterator FindGrp(string const &Name) {return Cache->FindGrp(Name);};
-   inline PkgIterator FindPkg(string const &Name) {return Cache->FindPkg(Name);};
-   inline PkgIterator FindPkg(string const &Name, string const &Arch) {return Cache->FindPkg(Name, Arch);};
+   inline GrpIterator FindGrp(std::string const &Name) {return Cache->FindGrp(Name);};
+   inline PkgIterator FindPkg(std::string const &Name) {return Cache->FindPkg(Name);};
+   inline PkgIterator FindPkg(std::string const &Name, std::string const &Arch) {return Cache->FindPkg(Name, Arch);};
 
    inline pkgCache &GetCache() {return *Cache;};
    inline pkgVersioningSystem &VS() {return *Cache->VS;};

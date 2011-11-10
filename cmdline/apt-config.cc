@@ -16,20 +16,22 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
-
-#include <config.h>
-#include <apti18n.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <locale.h>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 

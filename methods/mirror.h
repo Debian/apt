@@ -11,8 +11,9 @@
 #ifndef APT_MIRROR_H
 #define APT_MIRROR_H
 
-
 #include <iostream>
+#include <string>
+#include <vector>
 
 using std::cout;
 using std::cerr;
@@ -24,29 +25,29 @@ class MirrorMethod : public HttpMethod
 {
    FetchResult Res;
    // we simply transform between BaseUri and Mirror
-   string BaseUri;    // the original mirror://... url
-   string Mirror;     // the selected mirror uri (http://...)
-   vector<string> AllMirrors; // all available mirrors
-   string MirrorFile; // the file that contains the list of mirrors
+   std::string BaseUri;    // the original mirror://... url
+   std::string Mirror;     // the selected mirror uri (http://...)
+   std::vector<std::string> AllMirrors; // all available mirrors
+   std::string MirrorFile; // the file that contains the list of mirrors
    bool DownloadedMirrorFile; // already downloaded this session
-   string Dist;       // the target distrubtion (e.g. sid, oneiric)
+   std::string Dist;       // the target distrubtion (e.g. sid, oneiric)
 
    bool Debug;
 
  protected:
-   bool DownloadMirrorFile(string uri);
-   bool RandomizeMirrorFile(string file);
-   string GetMirrorFileName(string uri);
+   bool DownloadMirrorFile(std::string uri);
+   bool RandomizeMirrorFile(std::string file);
+   std::string GetMirrorFileName(std::string uri);
    bool InitMirrors();
    bool TryNextMirror();
    void CurrentQueueUriToMirror();
-   bool Clean(string dir);
+   bool Clean(std::string dir);
    
    // we need to overwrite those to transform the url back
-   virtual void Fail(string Why, bool Transient = false);
+   virtual void Fail(std::string Why, bool Transient = false);
    virtual void URIStart(FetchResult &Res);
    virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
-   virtual bool Configuration(string Message);
+   virtual bool Configuration(std::string Message);
 
  public:
    MirrorMethod();

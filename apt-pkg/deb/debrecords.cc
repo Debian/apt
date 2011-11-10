@@ -8,12 +8,18 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/debrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/fileutl.h>
+
 #include <langinfo.h>
 									/*}}}*/
+
+using std::string;
 
 // RecordParser::debRecordParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -133,8 +139,8 @@ string debRecordParser::LongDesc()
      orig = Section.FindS("Description").c_str();
   else
   {
-     vector<string> const lang = APT::Configuration::getLanguages();
-     for (vector<string>::const_iterator l = lang.begin();
+     std::vector<string> const lang = APT::Configuration::getLanguages();
+     for (std::vector<string>::const_iterator l = lang.begin();
 	  orig.empty() && l != lang.end(); ++l)
 	orig = Section.FindS(string("Description-").append(*l).c_str());
   }

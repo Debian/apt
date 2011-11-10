@@ -10,6 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/debsystem.h>
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/debindexfile.h>
@@ -17,12 +19,15 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apti18n.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
+
+#include <apti18n.h>
 									/*}}}*/
+
+using std::string;
 
 debSystem debSys;
 
@@ -216,7 +221,7 @@ signed debSystem::Score(Configuration const &Cnf)
 // System::AddStatusFiles - Register the status files			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debSystem::AddStatusFiles(vector<pkgIndexFile *> &List)
+bool debSystem::AddStatusFiles(std::vector<pkgIndexFile *> &List)
 {
    if (d->StatusFile == 0)
       d->StatusFile = new debStatusIndex(_config->FindFile("Dir::State::status"));

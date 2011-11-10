@@ -11,12 +11,15 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/strutl.h>
-    
-#include <apti18n.h>    
+#include <apt-pkg/metaindex.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 // SrcRecords::pkgSrcRecords - Constructor				/*{{{*/

@@ -63,6 +63,9 @@ void assertVersion(int const &CurLine, string const &A, string const &B, int con
 
 bool RunTest(const char *File)
 {
+   if (FileExists(File) == false)
+      return _error->Error("Versiontestfile %s doesn't exist!", File);
+
    ifstream F(File,ios::in);
    if (!F != 0)
       return false;
@@ -112,8 +115,8 @@ bool RunTest(const char *File)
 
 int main(int argc, char *argv[])
 {
-   if (argc <= 1)
-      RunTest("../versions.lst");
+   if (argc != 2)
+      return 1;
    else
       RunTest(argv[1]);
 

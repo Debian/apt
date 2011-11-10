@@ -20,10 +20,10 @@
 #ifndef PKGLIB_ACQUIRE_METHOD_H
 #define PKGLIB_ACQUIRE_METHOD_H
 
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/strutl.h>
-
 #include <stdarg.h>
+
+#include <string>
+#include <vector>
 
 class Hashes;
 class pkgAcqMethod
@@ -34,8 +34,8 @@ class pkgAcqMethod
    {
       FetchItem *Next;
 
-      string Uri;
-      string DestFile;
+      std::string Uri;
+      std::string DestFile;
       time_t LastModified;
       bool IndexFile;
       bool FailIgnore;
@@ -43,14 +43,14 @@ class pkgAcqMethod
    
    struct FetchResult
    {
-      string MD5Sum;
-      string SHA1Sum;
-      string SHA256Sum;
-      string SHA512Sum;
-      vector<string> GPGVOutput;
+      std::string MD5Sum;
+      std::string SHA1Sum;
+      std::string SHA256Sum;
+      std::string SHA512Sum;
+      std::vector<std::string> GPGVOutput;
       time_t LastModified;
       bool IMSHit;
-      string Filename;
+      std::string Filename;
       unsigned long long Size;
       unsigned long long ResumePoint;
       
@@ -59,25 +59,25 @@ class pkgAcqMethod
    };
 
    // State
-   vector<string> Messages;
+   std::vector<std::string> Messages;
    FetchItem *Queue;
    FetchItem *QueueBack;
-   string FailReason;
-   string UsedMirror;
-   string IP;
+   std::string FailReason;
+   std::string UsedMirror;
+   std::string IP;
    
    // Handlers for messages
-   virtual bool Configuration(string Message);
+   virtual bool Configuration(std::string Message);
    virtual bool Fetch(FetchItem * /*Item*/) {return true;};
    
    // Outgoing messages
    void Fail(bool Transient = false);
-   inline void Fail(const char *Why, bool Transient = false) {Fail(string(Why),Transient);};
-   virtual void Fail(string Why, bool Transient = false);
+   inline void Fail(const char *Why, bool Transient = false) {Fail(std::string(Why),Transient);};
+   virtual void Fail(std::string Why, bool Transient = false);
    virtual void URIStart(FetchResult &Res);
    virtual void URIDone(FetchResult &Res,FetchResult *Alt = 0);
 
-   bool MediaFail(string Required,string Drive);
+   bool MediaFail(std::string Required,std::string Drive);
    virtual void Exit() {};
 
    void PrintStatus(char const * const header, const char* Format, va_list &args) const;
@@ -91,11 +91,11 @@ class pkgAcqMethod
    void Log(const char *Format,...);
    void Status(const char *Format,...);
    
-   void Redirect(const string &NewURI);
+   void Redirect(const std::string &NewURI);
  
    int Run(bool Single = false);
-   inline void SetFailReason(string Msg) {FailReason = Msg;};
-   inline void SetIP(string aIP) {IP = aIP;};
+   inline void SetFailReason(std::string Msg) {FailReason = Msg;};
+   inline void SetIP(std::string aIP) {IP = aIP;};
    
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~pkgAcqMethod() {};

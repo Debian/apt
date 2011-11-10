@@ -22,6 +22,7 @@
 
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/macros.h>
 
 #include <vector>
 
@@ -63,29 +64,29 @@ class pkgCacheGenerator							/*{{{*/
    pkgCache Cache;
    OpProgress *Progress;
    
-   string PkgFileName;
+   std::string PkgFileName;
    pkgCache::PackageFile *CurrentFile;
 
    // Flag file dependencies
    bool FoundFileDeps;
    
-   bool NewGroup(pkgCache::GrpIterator &Grp,const string &Name);
-   bool NewPackage(pkgCache::PkgIterator &Pkg,const string &Name, const string &Arch);
+   bool NewGroup(pkgCache::GrpIterator &Grp,const std::string &Name);
+   bool NewPackage(pkgCache::PkgIterator &Pkg,const std::string &Name, const std::string &Arch);
    bool NewFileVer(pkgCache::VerIterator &Ver,ListParser &List);
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
-		   string const &Version, unsigned int const &Op,
+		   std::string const &Version, unsigned int const &Op,
 		   unsigned int const &Type, map_ptrloc* &OldDepLast);
-   unsigned long NewVersion(pkgCache::VerIterator &Ver,const string &VerStr,unsigned long Next);
-   map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
+   unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next);
+   map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
 
    public:
 
    unsigned long WriteUniqString(const char *S,unsigned int Size);
-   inline unsigned long WriteUniqString(const string &S) {return WriteUniqString(S.c_str(),S.length());};
+   inline unsigned long WriteUniqString(const std::string &S) {return WriteUniqString(S.c_str(),S.length());};
 
    void DropProgress() {Progress = 0;};
-   bool SelectFile(const string &File,const string &Site,pkgIndexFile const &Index,
+   bool SelectFile(const std::string &File,const std::string &Site,pkgIndexFile const &Index,
 		   unsigned long Flags = 0);
    bool MergeList(ListParser &List,pkgCache::VerIterator *Ver = 0);
    inline pkgCache &GetCache() {return Cache;};
@@ -94,7 +95,7 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-   bool FinishCache(OpProgress *Progress);
+   __deprecated bool FinishCache(OpProgress *Progress);
 
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
@@ -111,6 +112,10 @@ class pkgCacheGenerator							/*{{{*/
    bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
    bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
 			 std::string const &Version, pkgCache::VerIterator* &OutVer);
+
+   bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
+			   pkgCache::VerIterator &V);
+   bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
@@ -128,26 +133,26 @@ class pkgCacheGenerator::ListParser
       
    protected:
 
-   inline unsigned long WriteUniqString(string S) {return Owner->WriteUniqString(S);};
+   inline unsigned long WriteUniqString(std::string S) {return Owner->WriteUniqString(S);};
    inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
-   inline unsigned long WriteString(const string &S) {return Owner->WriteStringInMap(S);};
+   inline unsigned long WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
    inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
-   bool NewDepends(pkgCache::VerIterator &Ver,const string &Package, const string &Arch,
-		   const string &Version,unsigned int Op,
+   bool NewDepends(pkgCache::VerIterator &Ver,const std::string &Package, const std::string &Arch,
+		   const std::string &Version,unsigned int Op,
 		   unsigned int Type);
-   bool NewProvides(pkgCache::VerIterator &Ver,const string &PkgName,
-		    const string &PkgArch, const string &Version);
+   bool NewProvides(pkgCache::VerIterator &Ver,const std::string &PkgName,
+		    const std::string &PkgArch, const std::string &Version);
    
    public:
    
    // These all operate against the current section
-   virtual string Package() = 0;
-   virtual string Architecture() = 0;
+   virtual std::string Package() = 0;
+   virtual std::string Architecture() = 0;
    virtual bool ArchitectureAll() = 0;
-   virtual string Version() = 0;
+   virtual std::string Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
-   virtual string Description() = 0;
-   virtual string DescriptionLanguage() = 0;
+   virtual std::string Description() = 0;
+   virtual std::string DescriptionLanguage() = 0;
    virtual MD5SumValue Description_md5() = 0;
    virtual unsigned short VersionHash() = 0;
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
@@ -169,19 +174,5 @@ class pkgCacheGenerator::ListParser
 bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
 bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap);
-
-
-#ifdef APT_COMPATIBILITY
-#if APT_COMPATIBILITY != 986
-#warning "Using APT_COMPATIBILITY"
-#endif
-MMap *pkgMakeStatusCacheMem(pkgSourceList &List,OpProgress &Progress)
-{
-   MMap *Map = 0;
-   if (pkgCacheGenerator::MakeStatusCache(List,&Progress,&Map,true) == false)
-      return 0;
-   return Map;
-}
-#endif
 
 #endif

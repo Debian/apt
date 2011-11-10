@@ -14,6 +14,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -21,14 +23,17 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/edsp.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/progress.h>
 
-#include <apti18n.h>
 #include <sys/types.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
-
 #include <stdio.h>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -1030,7 +1035,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		     if (BrokenFix == false || DoUpgrade(I) == false)
 		     {
 			// Consider other options
-			if (InOr == false)
+			if (InOr == false || Cache[I].Garbage == true)
 			{
 			   if (Debug == true)
 			      clog << "  Removing " << I.FullName(false) << " rather than change " << Start.TargetPkg().FullName(false) << endl;
@@ -1204,7 +1209,6 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    return true;
 }
 									/*}}}*/
-
 // ProblemResolver::BreaksInstOrPolicy - Check if the given pkg is broken/*{{{*/
 // ---------------------------------------------------------------------
 /* This checks if the given package is broken either by a hard dependency
@@ -1216,19 +1220,26 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 */
 bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
 {
-   
    // a broken install is always a problem
    if (Cache[I].InstBroken() == true)
+   {
+      if (Debug == true)
+	 std::clog << "  Dependencies are not satisfied for " << I << std::endl;
       return true;
+   }
 
    // a newly broken policy (recommends/suggests) is a problem
    if (Cache[I].NowPolicyBroken() == false &&
        Cache[I].InstPolicyBroken() == true)
+   {
+      if (Debug == true)
+	 std::clog << "  Policy breaks with upgrade of " << I << std::endl;
       return true;
-       
+   }
+
    return false;
 }
-
+									/*}}}*/
 // ProblemResolver::ResolveByKeep - Resolve problems using keep		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the work horse of the soft upgrade routine. It is very gental 
@@ -1434,7 +1445,7 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    qsort(List,Count,sizeof(*List),PrioComp);
 }
 									/*}}}*/
-// CacheFile::ListUpdate - update the cache files                    	/*{{{*/
+// ListUpdate - update the cache files					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple wrapper to update the cache. it will fetch stuff
  * from the network (or any other sources defined in sources.list)

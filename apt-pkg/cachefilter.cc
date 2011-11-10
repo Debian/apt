@@ -4,6 +4,8 @@
     Collection of functor classes */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>

@@ -23,6 +23,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/policy.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
@@ -31,10 +33,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
 
-#include <apti18n.h>
-
 #include <iostream>
 #include <sstream>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -64,7 +66,8 @@ pkgPolicy::pkgPolicy(pkgCache *Owner) : Pins(0), PFPriority(0), Cache(Owner)
       {
 	 if ((F->Archive != 0 && vm.ExpressionMatches(DefRel, F.Archive()) == true) ||
 	     (F->Codename != 0 && vm.ExpressionMatches(DefRel, F.Codename()) == true) ||
-	     (F->Version != 0 && vm.ExpressionMatches(DefRel, F.Version()) == true))
+	     (F->Version != 0 && vm.ExpressionMatches(DefRel, F.Version()) == true) ||
+	     (DefRel.length() > 2 && DefRel[1] == '='))
 	    found = true;
       }
       if (found == false)

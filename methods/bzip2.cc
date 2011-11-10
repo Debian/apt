@@ -13,11 +13,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -45,9 +48,9 @@ class Bzip2Method : public pkgAcqMethod
 bool Bzip2Method::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
-   string Path = Get.Host + Get.Path; // To account for relative paths
+   std::string Path = Get.Host + Get.Path; // To account for relative paths
    
-   string GzPathOption = "Dir::bin::"+string(Prog);
+   std::string GzPathOption = "Dir::bin::" + std::string(Prog);
 
    FetchResult Res;
    Res.Filename = Itm->DestFile;
@@ -76,7 +79,7 @@ bool Bzip2Method::Fetch(FetchItem *Itm)
       SetCloseExec(STDOUT_FILENO,false);
       
       const char *Args[3];
-      string Tmp = _config->Find(GzPathOption,Prog);
+      std::string Tmp = _config->Find(GzPathOption,Prog);
       Args[0] = Tmp.c_str();
       Args[1] = "-d";
       Args[2] = 0;

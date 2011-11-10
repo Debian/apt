@@ -17,11 +17,12 @@
 #ifndef PKGLIB_CACHEFILE_H
 #define PKGLIB_CACHEFILE_H
 
-
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/acquire.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/macros.h>
+
+class pkgPolicy;
+class pkgSourceList;
+class OpProgress;
 
 class pkgCacheFile
 {
@@ -60,6 +61,7 @@ class pkgCacheFile
    bool Open(OpProgress *Progress = NULL, bool WithLock = true);
    inline bool ReadOnlyOpen(OpProgress *Progress = NULL) { return Open(Progress, false); };
    __deprecated bool Open(OpProgress &Progress,bool const &WithLock = true) { return Open(&Progress, WithLock); };
+   static void RemoveCaches();
    void Close();
 
    inline pkgCache* GetPkgCache() { BuildCaches(NULL, false); return Cache; };

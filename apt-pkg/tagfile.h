@@ -20,9 +20,11 @@
 #ifndef PKGLIB_TAGFILE_H
 #define PKGLIB_TAGFILE_H
 
-
-#include <apt-pkg/fileutl.h>
 #include <stdio.h>
+
+#include <string>
+
+class FileFd;
 
 class pkgTagSection
 {
@@ -54,7 +56,7 @@ class pkgTagSection
    
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
    bool Find(const char *Tag,unsigned &Pos) const;
-   string FindS(const char *Tag) const;
+   std::string FindS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const ;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char *Tag,unsigned long &Flags,
@@ -94,9 +96,9 @@ class pkgTagFile
 
    bool Step(pkgTagSection &Section);
    unsigned long Offset();
-   bool Jump(pkgTagSection &Tag,unsigned long Offset);
+   bool Jump(pkgTagSection &Tag,unsigned long long Offset);
 
-   pkgTagFile(FileFd *F,unsigned long Size = 32*1024);
+   pkgTagFile(FileFd *F,unsigned long long Size = 32*1024);
    virtual ~pkgTagFile();
 };
 

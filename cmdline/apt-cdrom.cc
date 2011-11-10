@@ -11,6 +11,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
@@ -21,10 +23,8 @@
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/cdrom.h>
-#include <config.h>
-#include <apti18n.h>
-    
-//#include "indexcopy.h"
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <locale.h>
 #include <iostream>
@@ -36,6 +36,8 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <stdio.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

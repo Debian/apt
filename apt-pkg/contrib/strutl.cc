@@ -15,12 +15,12 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
-#include <apti18n.h>
-    
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
@@ -31,7 +31,7 @@
 #include <stdarg.h>
 #include <iconv.h>
 
-#include "config.h"
+#include <apti18n.h>
 
 using namespace std;
 									/*}}}*/
@@ -179,14 +179,14 @@ bool ParseQuoteWord(const char *&String,string &Res)
    {
       if (*C == '"')
       {
-	 for (C++; *C != 0 && *C != '"'; C++);
-	 if (*C == 0)
+	 C = strchr(C + 1, '"');
+	 if (C == NULL)
 	    return false;
       }
       if (*C == '[')
       {
-	 for (C++; *C != 0 && *C != ']'; C++);
-	 if (*C == 0)
+	 C = strchr(C + 1, ']');
+	 if (C == NULL)
 	    return false;
       }
    }
@@ -904,11 +904,10 @@ bool StrToTime(const string &Val,time_t &Result)
 {
    struct tm Tm;
    char Month[10];
-   const char *I = Val.c_str();
-   
+
    // Skip the day of the week
-   for (;*I != 0  && *I != ' '; I++);
-   
+   const char *I = strchr(Val.c_str(), ' ');
+
    // Handle RFC 1123 time
    Month[0] = 0;
    if (sscanf(I," %d %3s %d %d:%d:%d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
@@ -970,6 +969,34 @@ bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base)
    return true;
 }
 									/*}}}*/
+// StrToNum - Convert a fixed length string to a number			/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used in decoding the crazy fixed length string headers in 
+   tar and ar files. */
+bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base)
+{
+   char S[30];
+   if (Len >= sizeof(S))
+      return false;
+   memcpy(S,Str,Len);
+   S[Len] = 0;
+   
+   // All spaces is a zero
+   Res = 0;
+   unsigned I;
+   for (I = 0; S[I] == ' '; I++);
+   if (S[I] == 0)
+      return true;
+   
+   char *End;
+   Res = strtoull(S,&End,Base);
+   if (End == S)
+      return false;
+   
+   return true;
+}
+									/*}}}*/
+
 // Base256ToNum - Convert a fixed length binary to a number             /*{{{*/
 // ---------------------------------------------------------------------
 /* This is used in decoding the 256bit encoded fixed length fields in

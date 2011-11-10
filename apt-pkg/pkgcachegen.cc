@@ -10,7 +10,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#define APT_COMPATIBILITY 986
+#include <config.h>
 
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/error.h>
@@ -23,17 +23,17 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/macros.h>
-
 #include <apt-pkg/tagfile.h>
-
-#include <apti18n.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/fileutl.h>
 
 #include <vector>
-
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
+
+#include <apti18n.h>
 									/*}}}*/
 typedef vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
@@ -392,6 +392,31 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			   Pkg.Name(), "NewFileVer", 2);
 
+   pkgCache::GrpIterator Grp = Pkg.Group();
+   Dynamic<pkgCache::GrpIterator> DynGrp(Grp);
+
+   /* If it is the first version of this package we need to add implicit
+      Multi-Arch dependencies to all other package versions in the group now -
+      otherwise we just add them for this new version */
+   if (Pkg.VersionList()->NextVer == 0)
+   {
+      pkgCache::PkgIterator P = Grp.PackageList();
+      Dynamic<pkgCache::PkgIterator> DynP(P);
+      for (; P.end() != true; P = Grp.NextPkg(P))
+      {
+	 if (P->ID == Pkg->ID)
+	    continue;
+	 pkgCache::VerIterator V = P.VersionList();
+	 Dynamic<pkgCache::VerIterator> DynV(V);
+	 for (; V.end() != true; ++V)
+	    if (unlikely(AddImplicitDepends(V, Pkg) == false))
+	       return _error->Error(_("Error occurred while processing %s (%s%d)"),
+				    Pkg.Name(), "AddImplicitDepends", 1);
+      }
+   }
+   if (unlikely(AddImplicitDepends(Grp, Pkg, Ver) == false))
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "AddImplicitDepends", 2);
 
    // Read only a single record and return
    if (OutVer != 0)
@@ -409,7 +434,6 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    /* Before we add a new description we first search in the group for
       a version with a description of the same MD5 - if so we reuse this
       description group instead of creating our own for this version */
-   pkgCache::GrpIterator Grp = Pkg.Group();
    for (pkgCache::PkgIterator P = Grp.PackageList();
 	P.end() == false; P = Grp.NextPkg(P))
    {
@@ -574,6 +598,75 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    return true;
 }
 									/*}}}*/
+// CacheGenerator::AddImplicitDepends					/*{{{*/
+bool pkgCacheGenerator::AddImplicitDepends(pkgCache::GrpIterator &G,
+					   pkgCache::PkgIterator &P,
+					   pkgCache::VerIterator &V)
+{
+   // copy P.Arch() into a string here as a cache remap
+   // in NewDepends() later may alter the pointer location
+   string Arch = P.Arch() == NULL ? "" : P.Arch();
+   map_ptrloc *OldDepLast = NULL;
+   /* MultiArch handling introduces a lot of implicit Dependencies:
+      - MultiArch: same → Co-Installable if they have the same version
+      - All others conflict with all other group members */
+   bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
+   pkgCache::PkgIterator D = G.PackageList();
+   Dynamic<pkgCache::PkgIterator> DynD(D);
+   for (; D.end() != true; D = G.NextPkg(D))
+   {
+      if (Arch == D.Arch() || D->VersionList == 0)
+	 continue;
+      /* We allow only one installed arch at the time
+	 per group, therefore each group member conflicts
+	 with all other group members */
+      if (coInstall == true)
+      {
+	 // Replaces: ${self}:other ( << ${binary:Version})
+	 NewDepends(D, V, V.VerStr(),
+		    pkgCache::Dep::Less, pkgCache::Dep::Replaces,
+		    OldDepLast);
+	 // Breaks: ${self}:other (!= ${binary:Version})
+	 NewDepends(D, V, V.VerStr(),
+		    pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
+		    OldDepLast);
+      } else {
+	 // Conflicts: ${self}:other
+	 NewDepends(D, V, "",
+		    pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+		    OldDepLast);
+      }
+   }
+   return true;
+}
+bool pkgCacheGenerator::AddImplicitDepends(pkgCache::VerIterator &V,
+					   pkgCache::PkgIterator &D)
+{
+   /* MultiArch handling introduces a lot of implicit Dependencies:
+      - MultiArch: same → Co-Installable if they have the same version
+      - All others conflict with all other group members */
+   map_ptrloc *OldDepLast = NULL;
+   bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
+   if (coInstall == true)
+   {
+      // Replaces: ${self}:other ( << ${binary:Version})
+      NewDepends(D, V, V.VerStr(),
+		 pkgCache::Dep::Less, pkgCache::Dep::Replaces,
+		 OldDepLast);
+      // Breaks: ${self}:other (!= ${binary:Version})
+      NewDepends(D, V, V.VerStr(),
+		 pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
+		 OldDepLast);
+   } else {
+      // Conflicts: ${self}:other
+      NewDepends(D, V, "",
+		 pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
+		 OldDepLast);
+   }
+   return true;
+}
+
+									/*}}}*/
 // CacheGenerator::NewFileVer - Create a new File<->Version association	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -690,76 +783,6 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    Desc->md5sum = idxmd5sum;
 
    return Description;
-}
-									/*}}}*/
-// CacheGenerator::FinishCache - do various finish operations		/*{{{*/
-// ---------------------------------------------------------------------
-/* This prepares the Cache for delivery */
-bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
-{
-   // FIXME: add progress reporting for this operation
-   // Do we have different architectures in your groups ?
-   vector<string> archs = APT::Configuration::getArchitectures();
-   if (archs.size() > 1)
-   {
-      // Create Conflicts in between the group
-      pkgCache::GrpIterator G = GetCache().GrpBegin();
-      Dynamic<pkgCache::GrpIterator> DynG(G);
-      for (; G.end() != true; ++G)
-      {
-	 string const PkgName = G.Name();
-	 pkgCache::PkgIterator P = G.PackageList();
-	 Dynamic<pkgCache::PkgIterator> DynP(P);
-	 for (; P.end() != true; P = G.NextPkg(P))
-	 {
-	    pkgCache::PkgIterator allPkg;
-	    Dynamic<pkgCache::PkgIterator> DynallPkg(allPkg);
-	    pkgCache::VerIterator V = P.VersionList();
-	    Dynamic<pkgCache::VerIterator> DynV(V);
-	    for (; V.end() != true; ++V)
-	    {
-               // copy P.Arch() into a string here as a cache remap
-               // in NewDepends() later may alter the pointer location
-	       string Arch = P.Arch() == NULL ? "" : P.Arch();
-	       map_ptrloc *OldDepLast = NULL;
-	       /* MultiArch handling introduces a lot of implicit Dependencies:
-		- MultiArch: same → Co-Installable if they have the same version
-		- Architecture: all → Need to be Co-Installable for internal reasons
-		- All others conflict with all other group members */
-	       bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
-	       for (vector<string>::const_iterator A = archs.begin(); A != archs.end(); ++A)
-	       {
-		  if (*A == Arch)
-		     continue;
-		  /* We allow only one installed arch at the time
-		     per group, therefore each group member conflicts
-		     with all other group members */
-		  pkgCache::PkgIterator D = G.FindPkg(*A);
-		  Dynamic<pkgCache::PkgIterator> DynD(D);
-		  if (D.end() == true)
-		     continue;
-		  if (coInstall == true)
-		  {
-		     // Replaces: ${self}:other ( << ${binary:Version})
-		     NewDepends(D, V, V.VerStr(),
-				pkgCache::Dep::Less, pkgCache::Dep::Replaces,
-				OldDepLast);
-		     // Breaks: ${self}:other (!= ${binary:Version})
-		     NewDepends(D, V, V.VerStr(),
-				pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
-				OldDepLast);
-		  } else {
-			// Conflicts: ${self}:other
-			NewDepends(D, V, "",
-				   pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
-				   OldDepLast);
-		  }
-	       }
-	    }
-	 }
-      }
-   }
-   return true;
 }
 									/*}}}*/
 // CacheGenerator::NewDepends - Create a dependency element		/*{{{*/
@@ -1324,9 +1347,6 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
 		     Files.begin()+EndOfSource,Files.end()) == false)
 	 return false;
-
-      // FIXME: move me to a better place
-      Gen.FinishCache(Progress);
    }
    else
    {
@@ -1369,9 +1389,6 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
       if (BuildCache(Gen,Progress,CurrentSize,TotalSize,
 		     Files.begin()+EndOfSource,Files.end()) == false)
 	 return false;
-
-      // FIXME: move me to a better place
-      Gen.FinishCache(Progress);
    }
    if (Debug == true)
       std::clog << "Caches are ready for shipping" << std::endl;
@@ -1422,9 +1439,6 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 		  Files.begin()+EndOfSource,Files.end()) == false)
       return false;
 
-   // FIXME: move me to a better place
-   Gen.FinishCache(Progress);
-
    if (_error->PendingError() == true)
       return false;
    *OutMap = Map.UnGuard();
@@ -1445,4 +1459,9 @@ bool IsDuplicateDescription(pkgCache::DescIterator Desc,
    return false;
 }
 									/*}}}*/
-
+// CacheGenerator::FinishCache						/*{{{*/
+bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
+{
+   return true;
+}
+									/*}}}*/

@@ -33,7 +33,7 @@ class pkgExtract : public pkgDirStream
    
    bool HandleOverwrites(pkgFLCache::NodeIterator Nde,
 			 bool DiverCheck = false);
-   bool CheckDirReplace(string Dir,unsigned int Depth = 0);
+   bool CheckDirReplace(std::string Dir,unsigned int Depth = 0);
    
    public:
    

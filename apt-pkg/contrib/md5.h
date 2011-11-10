@@ -29,9 +29,6 @@
 #include <algorithm>
 #include <stdint.h>
 
-using std::string;
-using std::min;
-
 #include "hashsum_template.h"
 
 typedef HashSumValue<128> MD5SumValue;
@@ -45,7 +42,7 @@ class MD5Summation : public SummationImplementation
 
    public:
 
-   bool Add(const unsigned char *inbuf, unsigned long inlen);
+   bool Add(const unsigned char *inbuf, unsigned long long inlen);
    using SummationImplementation::Add;
 
    MD5SumValue Result();

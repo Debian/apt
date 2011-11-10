@@ -14,10 +14,12 @@
 #ifndef NETRC_H
 #define NETRC_H
 
-#include <apt-pkg/strutl.h>
+#include <string>
 
 #define DOT_CHAR "."
 #define DIR_CHAR "/"
+
+class URI;
 
 // Assume: password[0]=0, host[0] != 0.
 // If login[0] = 0, search for login and password within a machine section
@@ -25,5 +27,5 @@
 // If login[0] != 0, search for password within machine and login.
 int parsenetrc (char *host, char *login, char *password, char *filename);
 
-void maybe_add_auth (URI &Uri, string NetRCFile);
+void maybe_add_auth (URI &Uri, std::string NetRCFile);
 #endif

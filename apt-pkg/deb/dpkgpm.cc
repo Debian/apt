@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -16,6 +18,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/packagemanager.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -39,7 +42,6 @@
 #include <sys/ioctl.h>
 #include <pty.h>
 
-#include <config.h>
 #include <apti18n.h>
 									/*}}}*/
 
@@ -902,6 +904,28 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // create log
    OpenLog();
 
+   // Generate the base argument list for dpkg
+   std::vector<const char *> Args;
+   unsigned long StartSize = 0;
+   string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   Args.push_back(Tmp.c_str());
+   StartSize += Tmp.length();
+
+   // Stick in any custom dpkg options
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+	 StartSize += Opts->Value.length();
+      }
+   }
+   size_t const BaseArgs = Args.size();
+
    // this loop is runs once per operation
    for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
    {
@@ -923,11 +947,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 for (; J != List.end() && J->Op == I->Op; ++J)
 	    /* nothing */;
 
-      // Generate the argument list
-      const char *Args[MaxArgs + 50];
       // keep track of allocated strings for multiarch package names
-      char *Packages[MaxArgs + 50];
-      unsigned int pkgcount = 0;
+      std::vector<char *> Packages;
+
+      // start with the baseset of arguments
+      unsigned long Size = StartSize;
+      Args.erase(Args.begin() + BaseArgs, Args.end());
 
       // Now check if we are within the MaxArgs limit
       //
@@ -935,93 +960,70 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // the argument list is split in a way that A depends on B
       // and they are in the same "--configure A B" run
       // - with the split they may now be configured in different
-      //   runs 
+      //   runs, using Immediate-Configure-All can help prevent this.
       if (J - I > (signed)MaxArgs)
-	 J = I + MaxArgs;
-      
-      unsigned int n = 0;
-      unsigned long Size = 0;
-      string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-      Args[n++] = Tmp.c_str();
-      Size += strlen(Args[n-1]);
-      
-      // Stick in any custom dpkg options
-      Configuration::Item const *Opts = _config->Tree("DPkg::Options");
-      if (Opts != 0)
       {
-	 Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-	 {
-	    if (Opts->Value.empty() == true)
-	       continue;
-	    Args[n++] = Opts->Value.c_str();
-	    Size += Opts->Value.length();
-	 }	 
+	 J = I + MaxArgs;
+	 Args.reserve(MaxArgs + 10);
       }
+      else
+      {
+	 Args.reserve((J - I) + 10);
+      }
+
       
-      char status_fd_buf[20];
       int fd[2];
       pipe(fd);
-      
-      Args[n++] = "--status-fd";
-      Size += strlen(Args[n-1]);
+
+#define ADDARG(X) Args.push_back(X); Size += strlen(X)
+#define ADDARGC(X) Args.push_back(X); Size += sizeof(X) - 1
+
+      ADDARGC("--status-fd");
+      char status_fd_buf[20];
       snprintf(status_fd_buf,sizeof(status_fd_buf),"%i", fd[1]);
-      Args[n++] = status_fd_buf;
-      Size += strlen(Args[n-1]);
+      ADDARG(status_fd_buf);
+      unsigned long const Op = I->Op;
 
       switch (I->Op)
       {
 	 case Item::Remove:
-	 Args[n++] = "--force-depends";
-	 Size += strlen(Args[n-1]);
-	 Args[n++] = "--force-remove-essential";
-	 Size += strlen(Args[n-1]);
-	 Args[n++] = "--remove";
-	 Size += strlen(Args[n-1]);
+	 ADDARGC("--force-depends");
+	 ADDARGC("--force-remove-essential");
+	 ADDARGC("--remove");
 	 break;
 	 
 	 case Item::Purge:
-	 Args[n++] = "--force-depends";
-	 Size += strlen(Args[n-1]);
-	 Args[n++] = "--force-remove-essential";
-	 Size += strlen(Args[n-1]);
-	 Args[n++] = "--purge";
-	 Size += strlen(Args[n-1]);
+	 ADDARGC("--force-depends");
+	 ADDARGC("--force-remove-essential");
+	 ADDARGC("--purge");
 	 break;
 	 
 	 case Item::Configure:
-	 Args[n++] = "--configure";
-	 Size += strlen(Args[n-1]);
+	 ADDARGC("--configure");
 	 break;
 
 	 case Item::ConfigurePending:
-	 Args[n++] = "--configure";
-	 Size += strlen(Args[n-1]);
-	 Args[n++] = "--pending";
-	 Size += strlen(Args[n-1]);
+	 ADDARGC("--configure");
+	 ADDARGC("--pending");
 	 break;
 
 	 case Item::TriggersPending:
-	 Args[n++] = "--triggers-only";
-	 Size += strlen(Args[n-1]);
-	 Args[n++] = "--pending";
-	 Size += strlen(Args[n-1]);
+	 ADDARGC("--triggers-only");
+	 ADDARGC("--pending");
 	 break;
 
 	 case Item::Install:
-	 Args[n++] = "--unpack";
-	 Size += strlen(Args[n-1]);
-	 Args[n++] = "--auto-deconfigure";
-	 Size += strlen(Args[n-1]);
+	 ADDARGC("--unpack");
+	 ADDARGC("--auto-deconfigure");
 	 break;
       }
 
       if (NoTriggers == true && I->Op != Item::TriggersPending &&
 	  I->Op != Item::ConfigurePending)
       {
-	 Args[n++] = "--no-triggers";
-	 Size += strlen(Args[n-1]);
+	 ADDARGC("--no-triggers");
       }
+#undef ADDARGC
 
       // Write in the file or package names
       if (I->Op == Item::Install)
@@ -1030,10 +1032,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 {
 	    if (I->File[0] != '/')
 	       return _error->Error("Internal Error, Pathname to install is not absolute '%s'",I->File.c_str());
-	    Args[n++] = I->File.c_str();
-	    Size += strlen(Args[n-1]);
+	    Args.push_back(I->File.c_str());
+	    Size += I->File.length();
 	 }
-      }      
+      }
       else
       {
 	 string const nativeArch = _config->Find("APT::Architecture");
@@ -1045,29 +1047,35 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
 	    if (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all"))
-	       Args[n++] = I->Pkg.Name();
+	    {
+	       char const * const name = I->Pkg.Name();
+	       ADDARG(name);
+	    }
 	    else
 	    {
-	       Packages[pkgcount] = strdup(I->Pkg.FullName(false).c_str());
-	       Args[n++] = Packages[pkgcount++];
+	       char * const fullname = strdup(I->Pkg.FullName(false).c_str());
+	       Packages.push_back(fullname);
+	       ADDARG(fullname);
 	    }
-	    Size += strlen(Args[n-1]);
 	 }
 	 // skip configure action if all sheduled packages disappeared
 	 if (oldSize == Size)
 	    continue;
       }
-      Args[n] = 0;
+#undef ADDARG
+
       J = I;
       
       if (_config->FindB("Debug::pkgDPkgPM",false) == true)
       {
-	 for (unsigned int k = 0; k != n; k++)
-	    clog << Args[k] << ' ';
+	 for (std::vector<const char *>::const_iterator a = Args.begin();
+	      a != Args.end(); ++a)
+	    clog << *a << ' ';
 	 clog << endl;
 	 continue;
       }
-      
+      Args.push_back(NULL);
+
       cout << flush;
       clog << flush;
       cerr << flush;
@@ -1077,8 +1085,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 it to all processes in the group. Since dpkg ignores the signal 
 	 it doesn't die but we do! So we must also ignore it */
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
-      sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
-
+      sighandler_t old_SIGINT = signal(SIGINT,SigINT);
+      
+      // Check here for any SIGINT
+      if (pkgPackageManager::SigINTStop && (Op == Item::Remove || Op == Item::Purge || Op == Item::Install)) 
+         break;
+      
+      
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
 
@@ -1116,7 +1129,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
 	 }
       }
-
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
@@ -1177,7 +1189,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
 	 putenv((char *)"DPKG_NO_TSTP=yes");
-	 execvp(Args[0],(char **)Args);
+	 execvp(Args[0], (char**) &Args[0]);
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
       }      
@@ -1203,10 +1215,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       sigemptyset(&sigmask);
       sigprocmask(SIG_BLOCK,&sigmask,&original_sigmask);
 
-      /* clean up the temporary allocation for multiarch package names in
-         the parent, so we don't leak memory when we return. */
-      for (unsigned int i = 0; i < pkgcount; i++)
-	 free(Packages[i]);
+      /* free vectors (and therefore memory) as we don't need the included data anymore */
+      for (std::vector<char *>::const_iterator p = Packages.begin();
+	   p != Packages.end(); ++p)
+	 free(*p);
+      Packages.clear();
 
       // the result of the waitpid call
       int res;
@@ -1222,6 +1235,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // Restore sig int/quit
 	    signal(SIGQUIT,old_SIGQUIT);
 	    signal(SIGINT,old_SIGINT);
+
 	    signal(SIGHUP,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
@@ -1262,6 +1276,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+      
       signal(SIGHUP,old_SIGHUP);
 
       if(master >= 0) 
@@ -1299,6 +1314,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }      
    }
    CloseLog();
+   
+   if (pkgPackageManager::SigINTStop)
+       _error->Warning(_("Operation was interrupted before it could finish"));
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
@@ -1323,6 +1341,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    Cache.writeStateFile(NULL);
    return true;
 }
+
+void SigINT(int sig) {
+   if (_config->FindB("APT::Immediate-Configure-All",false)) 
+      pkgPackageManager::SigINTStop = true;
+} 
 									/*}}}*/
 // pkgDpkgPM::Reset - Dump the contents of the command list		/*{{{*/
 // ---------------------------------------------------------------------

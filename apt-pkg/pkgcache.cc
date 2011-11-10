@@ -20,6 +20,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/version.h>
@@ -29,13 +31,12 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/macros.h>
 
-#include <apti18n.h>
-    
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <ctype.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;
@@ -489,7 +490,7 @@ pkgCache::PkgIterator::CurVersion() const
    if they provide no new information (e.g. there is no newer version than candidate)
    If no version and/or section can be found "none" is used. */
 std::ostream& 
-operator<<(ostream& out, pkgCache::PkgIterator Pkg) 
+operator<<(std::ostream& out, pkgCache::PkgIterator Pkg) 
 {
    if (Pkg.end() == true)
       return out << "invalid package";
@@ -684,7 +685,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
 // ostream operator to handle string representation of a dependecy	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::ostream& operator<<(ostream& out, pkgCache::DepIterator D)
+std::ostream& operator<<(std::ostream& out, pkgCache::DepIterator D)
 {
    if (D.end() == true)
       return out << "invalid dependency";

@@ -10,11 +10,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/macros.h>
@@ -22,6 +25,8 @@
 #include <fnmatch.h>
 #include <ctype.h>
 									/*}}}*/
+
+using std::string;
 
 static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Important},
                        {"required",pkgCache::State::Required},
@@ -517,9 +522,9 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       // Skip whitespace
       for (;I != Stop && isspace(*I) != 0; I++);
       Start = I;
-      for (;I != Stop && *I != ')'; I++);
-      if (I == Stop || Start == I)
-	 return 0;     
+      I = (const char*) memchr(I, ')', Stop - I);
+      if (I == NULL || Start == I)
+	 return 0;
       
       // Skip trailing whitespace
       const char *End = I;
@@ -670,6 +675,9 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	    return _error->Error("Problem parsing Provides line");
 	 if (Op != pkgCache::Dep::NoOp) {
 	    _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
+	    if (NewProvidesAllArch(Ver, Package, Version) == false)
+	       return false;
 	 } else {
 	    if (NewProvides(Ver, Package, Arch, Version) == false)
 	       return false;
@@ -792,21 +800,16 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       }
 
       // seperate the tag from the data
-      for (; buffer[len] != ':' && buffer[len] != '\0'; ++len)
-         /* nothing */
-         ;
-      if (buffer[len] == '\0')
+      const char* dataStart = strchr(buffer + len, ':');
+      if (dataStart == NULL)
 	 continue;
-      char* dataStart = buffer + len;
+      len = dataStart - buffer;
       for (++dataStart; *dataStart == ' '; ++dataStart)
          /* nothing */
          ;
-      char* dataEnd = dataStart;
-      for (++dataEnd; *dataEnd != '\0'; ++dataEnd)
-         /* nothing */
-         ;
+      const char* dataEnd = (const char*)rawmemchr(dataStart, '\0');
       // The last char should be a newline, but we can never be sure: #633350
-      char* lineEnd = dataEnd;
+      const char* lineEnd = dataEnd;
       for (--lineEnd; *lineEnd == '\r' || *lineEnd == '\n'; --lineEnd)
          /* nothing */
          ;

@@ -21,8 +21,12 @@
 #ifndef PKGLIB_DATABASE_H
 #define PKGLIB_DATABASE_H
 
-#include <apt-pkg/filelist.h>
 #include <apt-pkg/pkgcachegen.h>
+
+#include <string>
+
+class pkgFLCache;
+class OpProgress;
 
 class pkgDataBase
 {
@@ -30,8 +34,8 @@ class pkgDataBase
    
    pkgCacheGenerator *Cache;
    pkgFLCache *FList;
-   string MetaDir;
-   virtual bool InitMetaTmp(string &Dir) = 0;
+   std::string MetaDir;
+   virtual bool InitMetaTmp(std::string &Dir) = 0;
    
    public:
 
@@ -40,13 +44,13 @@ class pkgDataBase
    inline pkgFLCache &GetFLCache() {return *FList;};
    inline pkgCacheGenerator &GetGenerator() {return *Cache;};
    
-   bool GetMetaTmp(string &Dir);
+   bool GetMetaTmp(std::string &Dir);
    virtual bool ReadyFileList(OpProgress &Progress) = 0;
    virtual bool ReadyPkgCache(OpProgress &Progress) = 0;
    virtual bool LoadChanges() = 0;
 
    pkgDataBase() : Cache(0), FList(0) {};
-   virtual ~pkgDataBase() {delete Cache; delete FList;};
+   virtual ~pkgDataBase();
 };
 
 #endif

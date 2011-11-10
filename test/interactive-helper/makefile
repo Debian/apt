@@ -1,21 +1,14 @@
 # -*- make -*-
-BASE=..
-SUBDIR=test
+BASE=../..
+SUBDIR=test/interactive-helper
 
 # Bring in the default rules
-include ../buildlib/defaults.mak
+include ../../buildlib/defaults.mak
 
 # Program for testing methods
 PROGRAM=mthdcat
 SLIBS = 
 SOURCE = mthdcat.cc
-include $(PROGRAM_H)
-
-# Scratch program to test incomplete code fragments in
-PROGRAM=scratch-test
-SLIBS = -lapt-inst -lapt-pkg
-LIB_MAKES = apt-pkg/makefile apt-inst/makefile
-SOURCE = scratch.cc
 include $(PROGRAM_H)
 
 # Version compare tester
@@ -35,12 +28,6 @@ include $(PROGRAM_H)
 PROGRAM=extract-control
 SLIBS = -lapt-pkg -lapt-inst
 SOURCE = extract-control.cc
-include $(PROGRAM_H)
-
-# Program for testing hashes
-PROGRAM=hash
-SLIBS = -lapt-pkg 
-SOURCE = hash.cc
 include $(PROGRAM_H)
 
 # Program for testing udevcdrom
