@@ -179,14 +179,14 @@ bool ParseQuoteWord(const char *&String,string &Res)
    {
       if (*C == '"')
       {
-	 for (C++; *C != 0 && *C != '"'; C++);
-	 if (*C == 0)
+	 C = strchr(C + 1, '"');
+	 if (C == NULL)
 	    return false;
       }
       if (*C == '[')
       {
-	 for (C++; *C != 0 && *C != ']'; C++);
-	 if (*C == 0)
+	 C = strchr(C + 1, ']');
+	 if (C == NULL)
 	    return false;
       }
    }
@@ -904,11 +904,10 @@ bool StrToTime(const string &Val,time_t &Result)
 {
    struct tm Tm;
    char Month[10];
-   const char *I = Val.c_str();
-   
+
    // Skip the day of the week
-   for (;*I != 0  && *I != ' '; I++);
-   
+   const char *I = strchr(Val.c_str(), ' ');
+
    // Handle RFC 1123 time
    Month[0] = 0;
    if (sscanf(I," %d %3s %d %d:%d:%d GMT",&Tm.tm_mday,Month,&Tm.tm_year,

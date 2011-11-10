@@ -983,7 +983,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       char status_fd_buf[20];
       snprintf(status_fd_buf,sizeof(status_fd_buf),"%i", fd[1]);
       ADDARG(status_fd_buf);
-
       unsigned long const Op = I->Op;
 
       switch (I->Op)

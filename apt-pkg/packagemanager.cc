@@ -404,22 +404,27 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 
 	 /* If the dependany is still not satisfied, try, if possible, unpacking a package to satisfy it */
 	 if (InstallVer != 0 && Bad) {
-	    Bad = false;
-	    if (List->IsNow(DepPkg) && !List->IsFlag(DepPkg,pkgOrderList::Loop)) {
-	       List->Flag(Pkg,pkgOrderList::Loop);
-	       if (Debug) 
-	          cout << OutputInDepth(Depth) << "Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
-	       SmartUnPack(DepPkg, true, Depth + 1);
-	       List->RmFlag(Pkg,pkgOrderList::Loop);
+	    if (List->IsNow(DepPkg)) {
+	       Bad = false;
+	       if (List->IsFlag(Pkg,pkgOrderList::Loop))
+	       {
+		  if (Debug)
+		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure" << std::endl;
+	       }
+	       else
+	       {
+		  List->Flag(Pkg,pkgOrderList::Loop);
+		  if (Debug)
+		     cout << OutputInDepth(Depth) << "Unpacking " << DepPkg.Name() << " to avoid loop" << endl;
+		  SmartUnPack(DepPkg, true, Depth + 1);
+		  List->RmFlag(Pkg,pkgOrderList::Loop);
+	       }
 	    }
 	 }
 	 
 	 if (Start==End) {
-	    if (Bad && Debug) {
-	       if (!List->IsFlag(DepPkg,pkgOrderList::Loop)) {
-                  _error->Warning("Could not satisfy dependancies for %s",Pkg.Name());
-               } 
-	    }
+	    if (Bad && Debug && List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
+		  std::clog << OutputInDepth(Depth) << "Could not satisfy dependancies for " << Pkg.Name() << std::endl;
 	    break;
 	 } else {
             Start++;
