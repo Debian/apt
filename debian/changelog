@@ -12,8 +12,12 @@ apt (0.8.16~exp8) experimental; urgency=low
   * apt-pkg/cacheset.cc:
     - make the cachesets real containers which can embedding any container
       to be able to use the same interface regardless of set or list usage
+    - provide a {Package,Version}List similar to {Package,Version}Set
+  * cmdline/apt-{get,cache,mark}.cc:
+    - use Lists instead of Sets if input order should be preserved for
+      commands accepting lists of packages, e.g. policy (Closes: #625960)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 09 Nov 2011 17:21:02 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 Nov 2011 15:55:13 +0100
 
 apt (0.8.16~exp7) experimental; urgency=low
 

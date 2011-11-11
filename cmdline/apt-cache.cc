@@ -199,9 +199,9 @@ bool UnMet(CommandLine &CmdL)
    else
    {
       CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1,
-				APT::VersionSet::CANDIDATE, helper);
-      for (APT::VersionSet::iterator V = verset.begin(); V != verset.end(); ++V)
+      APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1,
+				APT::VersionList::CANDIDATE, helper);
+      for (APT::VersionList::iterator V = verset.begin(); V != verset.end(); ++V)
 	 if (ShowUnMet(V, Important) == false)
 	    return false;
    }
@@ -215,9 +215,9 @@ bool DumpPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
 
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       cout << "Package: " << Pkg.FullName(true) << endl;
       cout << "Versions: " << endl;
@@ -588,7 +588,7 @@ bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
       return false;
 
    CacheSetHelperVirtuals helper(false);
-   APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
    if (verset.empty() == true && helper.virtualPkgs.empty() == true)
       return _error->Error(_("No packages found"));
    std::vector<bool> Shown(Cache->Head().PackageCount);
@@ -1365,10 +1365,10 @@ bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionSet::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
-			APT::VersionSet::ALL : APT::VersionSet::CANDIDATE;
-   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
-   for (APT::VersionSet::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
+   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
+			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
+   APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
+   for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
 	 return false;
 
@@ -1531,8 +1531,8 @@ bool Policy(CommandLine &CmdL)
 
    // Print out detailed information for each package
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+   for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       cout << Pkg.FullName(true) << ":" << endl;
 
@@ -1608,8 +1608,8 @@ bool Madison(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       _error->PushToStack();
-      APT::PackageSet pkgset = APT::PackageSet::FromString(CacheFile, *I, helper);
-      for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+      APT::PackageList pkgset = APT::PackageList::FromString(CacheFile, *I, helper);
+      for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       {
          for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; ++V)
          {

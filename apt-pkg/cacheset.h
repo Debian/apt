@@ -14,6 +14,7 @@
 #include <list>
 #include <map>
 #include <set>
+#include <list>
 #include <string>
 #include <iterator>
 
@@ -159,8 +160,8 @@ template<class Container> class PackageContainer : public PackageContainerInterf
 	Container _cont;
 public:									/*{{{*/
 	/** \brief smell like a pkgCache::PkgIterator */
-	class const_iterator : public PackageContainerInterface::const_iterator,
-			       public std::iterator<std::forward_iterator_tag, typename Container::const_iterator> {/*{{{*/
+	class const_iterator : public PackageContainerInterface::const_iterator,/*{{{*/
+			       public std::iterator<std::forward_iterator_tag, typename Container::const_iterator> {
 		typename Container::const_iterator _iter;
 	public:
 		const_iterator(typename Container::const_iterator i) : _iter(i) {}
@@ -172,22 +173,37 @@ public:									/*{{{*/
 		inline bool operator==(const_iterator const &i) const { return _iter == i._iter; };
 		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, *i); }
 	};
-	// we are not going to allow modify our pkgiterators (it doesn't make sense)…
-	typedef APT::PackageContainer<Container>::const_iterator iterator;
+	class iterator : public PackageContainerInterface::const_iterator,
+			 public std::iterator<std::forward_iterator_tag, typename Container::iterator> {
+		typename Container::iterator _iter;
+	public:
+		iterator(typename Container::iterator i) : _iter(i) {}
+		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
+		inline pkgCache::PkgIterator operator*(void) const { return *_iter; };
+		operator typename Container::iterator(void) const { return _iter; }
+		operator typename PackageContainer<Container>::const_iterator() { return PackageContainer<Container>::const_iterator(_iter); }
+		inline void operator++(void) { ++_iter; };
+		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };
+		inline bool operator==(iterator const &i) const { return _iter == i._iter; };
+		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
+	};
 									/*}}}*/
 
 	bool insert(pkgCache::PkgIterator const &P) { if (P.end() == true) return false; _cont.insert(P); return true; };
 	template<class Cont> void insert(PackageContainer<Cont> const &pkgcont) { _cont.insert((typename Cont::const_iterator)pkgcont.begin(), (typename Cont::const_iterator)pkgcont.end()); };
 	void insert(const_iterator begin, const_iterator end) { _cont.insert(begin, end); };
+
 	bool empty() const { return _cont.empty(); };
 	void clear() { return _cont.clear(); };
-	void erase(iterator position) { _cont.erase((typename Container::const_iterator)position); };
+	void erase(iterator position) { _cont.erase((typename Container::iterator)position); };
 	size_t erase(const pkgCache::PkgIterator x) { return _cont.erase(x); };
 	void erase(iterator first, iterator last) { _cont.erase(first, last); };
 	size_t size() const { return _cont.size(); };
 
 	const_iterator begin() const { return const_iterator(_cont.begin()); };
 	const_iterator end() const { return const_iterator(_cont.end()); };
+	iterator begin() { return iterator(_cont.begin()); };
+	iterator end() { return iterator(_cont.end()); };
 	const_iterator find(pkgCache::PkgIterator const &P) const { return const_iterator(_cont.find(P)); };
 
 	void setConstructor(Constructor const &by) { ConstructedBy = by; };
@@ -318,7 +334,25 @@ private:								/*{{{*/
 	Constructor ConstructedBy;
 									/*}}}*/
 };									/*}}}*/
+
+template<> template<class Cont> void PackageContainer<std::list<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
+	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
+		_cont.push_back(*p);
+};
+// these two are 'inline' as otherwise the linker has problems with seeing these untemplated
+// specializations again and again - but we need to see them, so that library users can use them
+template<> inline bool PackageContainer<std::list<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
+	if (P.end() == true)
+		return false;
+	_cont.push_back(P);
+	return true;
+};
+template<> inline void PackageContainer<std::list<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator p = begin; p != end; ++p)
+		_cont.push_back(*p);
+};
 typedef PackageContainer<std::set<pkgCache::PkgIterator> > PackageSet;
+typedef PackageContainer<std::list<pkgCache::PkgIterator> > PackageList;
 
 class VersionContainerInterface {					/*{{{*/
 /** \class APT::VersionContainerInterface
@@ -406,6 +440,13 @@ public:
 					    std::list<Modifier> const &mods,
 					    CacheSetHelper &helper);
 
+
+	static bool FromDependency(VersionContainerInterface * const vci,
+				   pkgCacheFile &Cache,
+				   pkgCache::DepIterator const &D,
+				   Version const &selector,
+				   CacheSetHelper &helper);
+
 protected:								/*{{{*/
 
 	/** \brief returns the candidate version of the package
@@ -425,7 +466,7 @@ protected:								/*{{{*/
 };
 									/*}}}*/
 template<class Container> class VersionContainer : public VersionContainerInterface {/*{{{*/
-/** \class APT::PackageContainer
+/** \class APT::VersionContainer
 
     Simple wrapper around a container class like std::set to provide a similar
     interface to a set of versions as to the complete set of all versions in the
@@ -446,8 +487,20 @@ public:									/*{{{*/
 		inline bool operator==(const_iterator const &i) const { return _iter == i._iter; };
 		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, *i); }
 	};
-	// we are not going to allow modify our veriterators (it doesn't make sense)…
-	typedef APT::VersionContainer<Container>::const_iterator iterator;
+	class iterator : public VersionContainerInterface::const_iterator,
+			 public std::iterator<std::forward_iterator_tag, typename Container::iterator> {
+		typename Container::iterator _iter;
+	public:
+		iterator(typename Container::iterator i) : _iter(i) {}
+		pkgCache::VerIterator getVer(void) const { return *_iter; }
+		inline pkgCache::VerIterator operator*(void) const { return *_iter; };
+		operator typename Container::iterator(void) const { return _iter; }
+		operator typename VersionContainer<Container>::const_iterator() { return VersionContainer<Container>::const_iterator(_iter); }
+		inline void operator++(void) { ++_iter; };
+		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };
+		inline bool operator==(iterator const &i) const { return _iter == i._iter; };
+		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
+	};
 									/*}}}*/
 
 	bool insert(pkgCache::VerIterator const &V) { if (V.end() == true) return false; _cont.insert(V); return true; };
@@ -455,13 +508,15 @@ public:									/*{{{*/
 	void insert(const_iterator begin, const_iterator end) { _cont.insert(begin, end); };
 	bool empty() const { return _cont.empty(); };
 	void clear() { return _cont.clear(); };
-	void erase(iterator position) { _cont.erase((typename Container::const_iterator)position); };
-	size_t erase(const pkgCache::PkgIterator x) { return _cont.erase(x); };
+	void erase(iterator position) { _cont.erase((typename Container::iterator)position); };
+	size_t erase(const pkgCache::VerIterator x) { return _cont.erase(x); };
 	void erase(iterator first, iterator last) { _cont.erase(first, last); };
 	size_t size() const { return _cont.size(); };
 
 	const_iterator begin() const { return const_iterator(_cont.begin()); };
 	const_iterator end() const { return const_iterator(_cont.end()); };
+	iterator begin() { return iterator(_cont.begin()); };
+	iterator end() { return iterator(_cont.end()); };
 	const_iterator find(pkgCache::VerIterator const &V) const { return const_iterator(_cont.find(V)); };
 
 	/** \brief returns all versions specified on the commandline
@@ -520,7 +575,7 @@ public:									/*{{{*/
 		return FromPackage(Cache, P, fallback, helper);
 	}
 	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P) {
-		return FromPackage(Cache, P, CANDINST);
+		return FromPackage(Cache, P, CANDIDATE);
 	}
 
 	static std::map<unsigned short, VersionContainer> GroupedFromCommandLine(
@@ -547,8 +602,41 @@ public:									/*{{{*/
 		return GroupedFromCommandLine(Cache, cmdline,
 				mods, fallback, helper);
 	}
+
+	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
+					       Version const &selector, CacheSetHelper &helper) {
+		VersionContainer vercon;
+		VersionContainerInterface::FromDependency(&vercon, Cache, D, selector, helper);
+		return vercon;
+	}
+	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
+					       Version const &selector) {
+		CacheSetHelper helper;
+		return FromPackage(Cache, D, selector, helper);
+	}
+	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D) {
+		return FromPackage(Cache, D, CANDIDATE);
+	}
 									/*}}}*/
 };									/*}}}*/
+
+template<> template<class Cont> void VersionContainer<std::list<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
+	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
+		_cont.push_back(*v);
+};
+// these two are 'inline' as otherwise the linker has problems with seeing these untemplated
+// specializations again and again - but we need to see them, so that library users can use them
+template<> inline bool VersionContainer<std::list<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
+	if (V.end() == true)
+		return false;
+	_cont.push_back(V);
+	return true;
+};
+template<> inline void VersionContainer<std::list<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator v = begin; v != end; ++v)
+		_cont.push_back(*v);
+};
 typedef VersionContainer<std::set<pkgCache::VerIterator> > VersionSet;
+typedef VersionContainer<std::list<pkgCache::VerIterator> > VersionList;
 }
 #endif

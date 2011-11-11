@@ -2293,8 +2293,8 @@ bool DoDownload(CommandLine &CmdL)
       return false;
    
    APT::CacheSetHelper helper(c0out);
-   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
 
    if (verset.empty() == true)
       return false;
@@ -2306,7 +2306,7 @@ bool DoDownload(CommandLine &CmdL)
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
-   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+   for (APT::VersionList::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
    {
@@ -3165,14 +3165,14 @@ bool DoChangelog(CommandLine &CmdL)
       return false;
    
    APT::CacheSetHelper helper(c0out);
-   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
    if (verset.empty() == true)
       return false;
    pkgAcquire Fetcher;
 
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
-      for (APT::VersionSet::const_iterator Ver = verset.begin();
+      for (APT::VersionList::const_iterator Ver = verset.begin();
 	   Ver != verset.end(); ++Ver)
 	 return DownloadChangelog(Cache, Fetcher, Ver, "");
 
@@ -3195,7 +3195,7 @@ bool DoChangelog(CommandLine &CmdL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");
    }
 
-   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+   for (APT::VersionList::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
    {
