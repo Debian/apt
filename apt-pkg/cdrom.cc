@@ -78,27 +78,43 @@ bool pkgCdrom::FindPackages(string CD,
    {
       SigList.push_back(CD);
    }
+
    /* Aha! We found some package files. We assume that everything under 
       this dir is controlled by those package files so we don't look down
       anymore */
-   if (stat("Packages",&Buf) == 0 || stat("Packages.gz",&Buf) == 0 ||
-       stat("Packages.bz2",&Buf) == 0 || stat("Packages.xz",&Buf) == 0)
-   {
-      List.push_back(CD);
+    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+    types.push_back("");
+    for (std::vector<std::string>::const_iterator t = types.begin();
+         t != types.end(); ++t)
+    {
+       std::string filename = std::string("Packages");
+       if ((*t).size() > 0)
+          filename.append("."+*t);
+       if (stat(filename.c_str(), &Buf) == 0)
+       {
+          List.push_back(CD);
       
-      // Continue down if thorough is given
-      if (_config->FindB("APT::CDROM::Thorough",false) == false)
-	 return true;
-   }
-   if (stat("Sources.xz",&Buf) == 0 || stat("Sources.bz2",&Buf) == 0 ||
-       stat("Sources.gz",&Buf) == 0 || stat("Sources",&Buf) == 0)
-   {
-      SList.push_back(CD);
+          // Continue down if thorough is given
+          if (_config->FindB("APT::CDROM::Thorough",false) == false)
+             return true;
+          break;
+       }
+    }
+    for (std::vector<std::string>::const_iterator t = types.begin();
+         t != types.end(); ++t)
+    {
+       std::string filename = std::string("Sources");
+       if ((*t).size() > 0)
+          filename.append("."+*t);
+       {
+          SList.push_back(CD);
       
-      // Continue down if thorough is given
-      if (_config->FindB("APT::CDROM::Thorough",false) == false)
-	 return true;
-   }
+          // Continue down if thorough is given
+          if (_config->FindB("APT::CDROM::Thorough",false) == false)
+             return true;
+          break;
+       }
+    }
 
    // see if we find translatin indexes
    if (stat("i18n",&Buf) == 0)
@@ -111,12 +127,15 @@ bool pkgCdrom::FindPackages(string CD,
 	    if (_config->FindB("Debug::aptcdrom",false) == true)
 	       std::clog << "found translations: " << Dir->d_name << "\n";
 	    string file = Dir->d_name;
-	    if(file.substr(file.size()-3,file.size()) == ".gz" ||
-	       file.substr(file.size()-3,file.size()) == ".xz")
-	       file = file.substr(0,file.size()-3);
-	    if(file.substr(file.size()-4,file.size()) == ".bz2")
-	       file = file.substr(0,file.size()-4);
-	    TransList.push_back(CD+"i18n/"+ file);
+            for (std::vector<std::string>::const_iterator t = types.begin();
+                 t != types.end(); ++t)
+            {
+               std::string needle = "." + *t;
+               if(file.substr(file.size()-needle.size()) == needle)
+                  file = file.substr(0, file.size()-needle.size());
+               TransList.push_back(CD+"i18n/"+ file);
+               break;
+            }
 	 }
       }
       closedir(D);
@@ -262,13 +281,19 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
    for (unsigned int I = 0; I != List.size(); I++)
    {
       struct stat Buf;
-      if (stat((List[I] + Name).c_str(),&Buf) != 0 &&
-	  stat((List[I] + Name + ".gz").c_str(),&Buf) != 0 && 
-	  stat((List[I] + Name + ".bz2").c_str(),&Buf) != 0 && 
-	  stat((List[I] + Name + ".xz").c_str(),&Buf) != 0)
-	 _error->Errno("stat","Failed to stat %s%s",List[I].c_str(),
-		       Name);
-      Inodes[I] = Buf.st_ino;
+      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+      types.push_back("");
+      for (std::vector<std::string>::const_iterator t = types.begin();
+           t != types.end(); ++t)
+      {
+         std::string filename = List[I] + Name;
+         if ((*t).size() > 0)
+            filename.append("." + *t);
+         if (stat(filename.c_str(), &Buf) != 0)
+            _error->Errno("stat","Failed to stat %s%s",List[I].c_str(),
+                          Name);
+         Inodes[I] = Buf.st_ino;
+      }
    }
    
    if (_error->PendingError() == true) {
