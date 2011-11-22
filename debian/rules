@@ -8,6 +8,7 @@ export NOISY=1
 
 export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 # FOR AUTOCONF 2.52 AND NEWER ONLY
 ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
@@ -121,9 +122,31 @@ clean:
 
 	[ ! -f Makefile ] || $(MAKE) clean distclean
 	rm -rf build
+	rm -f debian/$(LIBAPT_PKG).install debian/$(LIBAPT_INST).install \
+	      debian/libapt-pkg-dev.install
 
-binary-indep: apt-doc libapt-pkg-doc
+debian/%.install: debian/%.install.in
+	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
+
+binary-indep: libapt-common apt-doc libapt-pkg-doc
 # Build architecture-independent files here.
+libapt-common: build
+	dh_testdir -p$@
+	dh_testroot -p$@
+	dh_prep -p$@
+	dh_installdirs -p$@
+
+	dh_install -p$@ --sourcedir=$(BLD)
+	dh_installdocs -p$@
+	dh_installchangelogs -p$@
+	dh_strip -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_installdeb -p$@
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
 libapt-pkg-doc: build-doc
 	dh_testdir -p$@
 	dh_testroot -p$@
@@ -222,7 +245,7 @@ apt: build build-doc
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-libapt-pkg-dev: build
+libapt-pkg-dev: build debian/libapt-pkg-dev.install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -270,7 +293,7 @@ apt-utils: build
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-$(LIBAPT_PKG): build
+$(LIBAPT_PKG): build debian/$(LIBAPT_PKG).install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -289,7 +312,7 @@ $(LIBAPT_PKG): build
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-$(LIBAPT_INST): build
+$(LIBAPT_INST): build debian/$(LIBAPT_INST).install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@

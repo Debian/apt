@@ -7,7 +7,7 @@ Uploaders: Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>,
  Christian Perrier <bubulle@debian.org>, Daniel Burrows <dburrows@debian.org>,
  Julian Andres Klode <jak@debian.org>
 Standards-Version: 3.9.2
-Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 7.2.3~), libdb-dev,
+Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 8.1.3~), libdb-dev,
  gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.0), 
  zlib1g-dev | libz-dev, debiandoc-sgml, xsltproc, docbook-xsl, docbook-xml, 
  po4a (>= 0.34-2), autotools-dev, autoconf, automake, doxygen,
@@ -37,9 +37,20 @@ Description: APT's commandline package manager
   * apt-config as an interface to the configuration settings
   * apt-key as an interface to manage authentication keys
 
+Package: libapt-common
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends}
+Breaks: libapt-pkg4.12 (<< 0.8.16~exp9), libapt-inst1.4 (<< 0.8.16~exp9)
+Replaces: libapt-pkg4.12 (<< 0.8.16~exp9), libapt-inst1.4 (<< 0.8.16~exp9)
+Description: Common files for APT libraries
+ This package includes translation files common to APT library packages.
+
 Package: libapt-pkg4.12
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libapt-common
 Description: APT's package managment runtime library
  This library provides the common functionality for searching and
  managing packages as well as information about packages.
@@ -58,7 +69,9 @@ Description: APT's package managment runtime library
 
 Package: libapt-inst1.4
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, libapt-common
 Description: APT's deb package format runtime library
  This library provides methods to query and extract information 
  from deb packages. This includes the control data and the package
@@ -75,7 +88,9 @@ Description: Documentation for APT
 
 Package: libapt-pkg-dev
 Architecture: any
+Multi-Arch: same
 Priority: optional
+Pre-Depends: ${misc:Pre-Depends}
 Depends: ${libapt-pkg-name} (= ${binary:Version}), ${libapt-inst-name} (= ${binary:Version}), ${misc:Depends}, zlib1g-dev | zlib-dev
 Section: libdevel
 Description: Development files for APT's libapt-pkg and libapt-inst
