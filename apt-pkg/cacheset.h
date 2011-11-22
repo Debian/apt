@@ -168,7 +168,8 @@ public:									/*{{{*/
 		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; };
 		operator typename Container::const_iterator(void) const { return _iter; }
-		inline void operator++(void) { ++_iter; };
+		inline const_iterator& operator++() { ++_iter; return *this; }
+		inline const_iterator operator++(int) { const_iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(const_iterator const &i) const { return _iter != i._iter; };
 		inline bool operator==(const_iterator const &i) const { return _iter == i._iter; };
 		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, *i); }
@@ -182,7 +183,8 @@ public:									/*{{{*/
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; };
 		operator typename Container::iterator(void) const { return _iter; }
 		operator typename PackageContainer<Container>::const_iterator() { return PackageContainer<Container>::const_iterator(_iter); }
-		inline void operator++(void) { ++_iter; };
+		inline iterator& operator++() { ++_iter; return *this; }
+		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };
 		inline bool operator==(iterator const &i) const { return _iter == i._iter; };
 		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
@@ -482,7 +484,8 @@ public:									/*{{{*/
 		pkgCache::VerIterator getVer(void) const { return *_iter; }
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; };
 		operator typename Container::const_iterator(void) const { return _iter; }
-		inline void operator++(void) { ++_iter; };
+		inline const_iterator& operator++() { ++_iter; return *this; }
+		inline const_iterator operator++(int) { const_iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(const_iterator const &i) const { return _iter != i._iter; };
 		inline bool operator==(const_iterator const &i) const { return _iter == i._iter; };
 		friend std::ostream& operator<<(std::ostream& out, const_iterator i) { return operator<<(out, *i); }
@@ -496,7 +499,8 @@ public:									/*{{{*/
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; };
 		operator typename Container::iterator(void) const { return _iter; }
 		operator typename VersionContainer<Container>::const_iterator() { return VersionContainer<Container>::const_iterator(_iter); }
-		inline void operator++(void) { ++_iter; };
+		inline iterator& operator++() { ++_iter; return *this; }
+		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };
 		inline bool operator==(iterator const &i) const { return _iter == i._iter; };
 		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
