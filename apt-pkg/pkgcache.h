@@ -198,6 +198,7 @@ class pkgCache								/*{{{*/
    inline PkgFileIterator FileEnd();
 
    inline bool MultiArchCache() const { return MultiArchEnabled; };
+   inline char const * const NativeArch() const;
 
    // Make me a function
    pkgVersioningSystem *VS;
@@ -213,7 +214,6 @@ class pkgCache								/*{{{*/
 private:
    bool MultiArchEnabled;
    PkgIterator SingleArchFindPkg(const std::string &Name);
-   inline char const * const NativeArch() const;
 };
 									/*}}}*/
 // Header structure							/*{{{*/
