@@ -23,7 +23,9 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/cacheset.h>
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <set>
@@ -940,6 +942,51 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
 // DepCache::MarkInstall - Put the package in the install state		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+struct CompareProviders {
+   pkgCache::PkgIterator const Pkg;
+   CompareProviders(pkgCache::DepIterator const &Dep) : Pkg(Dep.TargetPkg()) {};
+   //bool operator() (APT::VersionList::iterator const &AV, APT::VersionList::iterator const &BV)
+   bool operator() (pkgCache::VerIterator const &AV, pkgCache::VerIterator const &BV)
+   {
+      pkgCache::PkgIterator const A = AV.ParentPkg();
+      pkgCache::PkgIterator const B = BV.ParentPkg();
+      // Prefer packages in the same group as the target; e.g. foo:i386, foo:amd64
+      if (A->Group != B->Group)
+      {
+	 if (A->Group == Pkg->Group && B->Group != Pkg->Group)
+	    return false;
+	 else if (B->Group == Pkg->Group && A->Group != Pkg->Group)
+	    return true;
+      }
+      // we like essentials
+      if ((A->Flags & pkgCache::Flag::Essential) != (B->Flags & pkgCache::Flag::Essential))
+      {
+	 if ((A->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+	    return false;
+	 else if ((B->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+	    return true;
+      }
+      // higher priority seems like a good idea
+      if (AV->Priority != BV->Priority)
+	 return AV->Priority < BV->Priority;
+      // prefer native architecture
+      if (strcmp(A.Arch(), B.Arch()) != 0)
+      {
+	 if (strcmp(A.Arch(), A.Cache()->NativeArch()) == 0)
+	    return false;
+	 else if (strcmp(B.Arch(), B.Cache()->NativeArch()) == 0)
+	    return true;
+	 std::vector<std::string> archs = APT::Configuration::getArchitectures();
+	 for (std::vector<std::string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
+	    if (*a == A.Arch())
+	       return false;
+	    else if (*a == B.Arch())
+	       return true;
+      }
+      // unable to decide…
+      return A->ID < B->ID;
+   }
+};
 bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 			      unsigned long Depth, bool FromUser,
 			      bool ForceImportantDeps)
@@ -1102,41 +1149,28 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 
       /* This bit is for processing the possibilty of an install/upgrade
          fixing the problem */
-      SPtrArray<Version *> List = Start.AllTargets();
       if (Start->Type != Dep::DpkgBreaks &&
 	  (DepState[Start->ID] & DepCVer) == DepCVer)
       {
-	 // Right, find the best version to install..
-	 Version **Cur = List;
-	 PkgIterator P = Start.TargetPkg();
-	 PkgIterator InstPkg(*Cache,0);
-	 
-	 // See if there are direct matches (at the start of the list)
-	 for (; *Cur != 0 && (*Cur)->ParentPkg == P.Index(); Cur++)
+	 APT::VersionList verlist;
+	 pkgCache::VerIterator Cand = PkgState[Start.TargetPkg()->ID].CandidateVerIter(*this);
+	 if (Cand.end() == false && VS().CheckDep(Cand.VerStr(), Start->CompareOp, Start.TargetVer()) == true)
+	    verlist.insert(Cand);
+	 for (PrvIterator Prv = Start.TargetPkg().ProvidesList(); Prv.end() != true; ++Prv)
 	 {
-	    PkgIterator Pkg(*Cache,Cache->PkgP + (*Cur)->ParentPkg);
-	    if (PkgState[Pkg->ID].CandidateVer != *Cur)
+	    pkgCache::VerIterator V = Prv.OwnerVer();
+	    pkgCache::VerIterator Cand = PkgState[Prv.OwnerPkg()->ID].CandidateVerIter(*this);
+	    if (Cand.end() == true || V != Cand ||
+		VS().CheckDep(Cand.VerStr(), Start->CompareOp, Start.TargetVer()) == false)
 	       continue;
-	    InstPkg = Pkg;
-	    break;
+	    verlist.insert(Cand);
 	 }
+	 CompareProviders comp(Start);
+	 APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
 
-	 // Select the highest priority providing package
-	 if (InstPkg.end() == true)
+	 if (InstVer != verlist.end())
 	 {
-	    pkgPrioSortList(*Cache,Cur);
-	    for (; *Cur != 0; Cur++)
-	    {
-	       PkgIterator Pkg(*Cache,Cache->PkgP + (*Cur)->ParentPkg);
-	       if (PkgState[Pkg->ID].CandidateVer != *Cur)
-		  continue;
-	       InstPkg = Pkg;
-	       break;
-	    }
-	 }
-	 
-	 if (InstPkg.end() == false)
-	 {
+	    pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
 	    if(DebugAutoInstall == true)
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
 			 << " as " << Start.DepType() << " of " << Pkg.Name()
@@ -1154,7 +1188,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
  	       // mark automatic dependency
  	       MarkInstall(InstPkg,true,Depth + 1, false, ForceImportantDeps);
  	       // Set the autoflag, after MarkInstall because MarkInstall unsets it
- 	       if (P->CurrentVer == 0)
+ 	       if (InstPkg->CurrentVer == 0)
  		  PkgState[InstPkg->ID].Flags |= Flag::Auto;
  	    }
 	 }
@@ -1166,6 +1200,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
          upgrade the package. */
       if (Start.IsNegative() == true)
       {
+	 SPtrArray<Version *> List = Start.AllTargets();
 	 for (Version **I = List; *I != 0; I++)
 	 {
 	    VerIterator Ver(*this,*I);

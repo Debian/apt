@@ -628,20 +628,18 @@ public:
 		explicitlyNamed = true;
 	}
 
-	virtual void showTaskSelection(APT::PackageSet const &pkgset, string const &pattern) {
-		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
-				 Pkg.FullName(true).c_str(), pattern.c_str());
+	virtual void showTaskSelection(pkgCache::PkgIterator const &Pkg, string const &pattern) {
+		ioprintf(out, _("Note, selecting '%s' for task '%s'\n"),
+				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
-	virtual void showRegExSelection(APT::PackageSet const &pkgset, string const &pattern) {
-		for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
-			ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
-				 Pkg.FullName(true).c_str(), pattern.c_str());
+	virtual void showRegExSelection(pkgCache::PkgIterator const &Pkg, string const &pattern) {
+		ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
+				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
 	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
-				 string const &ver, bool const &verIsRel) {
+				 string const &ver, bool const verIsRel) {
 		if (ver == Ver.VerStr())
 			return;
 		selectedByRelease.push_back(make_pair(Ver, ver));
@@ -707,7 +705,7 @@ public:
 		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::CANDIDATE);
 		if (verset.empty() == false)
 			return *(verset.begin());
-		if (ShowError == true) {
+		else if (ShowError == true) {
 			_error->Error(_("Package '%s' has no installation candidate"),Pkg.FullName(true).c_str());
 			virtualPkgs.insert(Pkg);
 		}
@@ -744,6 +742,19 @@ public:
 				Prov = PPkg;
 				found_one = true;
 			} else if (PPkg != Prov) {
+				// same group, so it's a foreign package
+				if (PPkg->Group == Prov->Group) {
+					// do we already have the requested arch?
+					if (strcmp(Pkg.Arch(), Prov.Arch()) == 0 ||
+					    strcmp(Prov.Arch(), "all") == 0 ||
+					    unlikely(strcmp(PPkg.Arch(), Prov.Arch()) == 0)) // packages have only on candidate, but just to be sure
+						continue;
+					// see which architecture we prefer more and switch to it
+					std::vector<std::string> archs = APT::Configuration::getArchitectures();
+					if (std::find(archs.begin(), archs.end(), PPkg.Arch()) < std::find(archs.begin(), archs.end(), Prov.Arch()))
+						Prov = PPkg;
+					continue;
+				}
 				found_one = false; // we found at least two
 				break;
 			}
@@ -769,7 +780,7 @@ struct TryToInstall {
    unsigned long AutoMarkChanged;
    APT::PackageSet doAutoInstallLater;
 
-   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver *PM, bool const &FixBroken) : Cache(&Cache), Fix(PM),
+   TryToInstall(pkgCacheFile &Cache, pkgProblemResolver *PM, bool const FixBroken) : Cache(&Cache), Fix(PM),
 			FixBroken(FixBroken), AutoMarkChanged(0) {};
 
    void operator() (pkgCache::VerIterator const &Ver) {
@@ -2295,8 +2306,8 @@ bool DoDownload(CommandLine &CmdL)
       return false;
    
    APT::CacheSetHelper helper(c0out);
-   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
 
    if (verset.empty() == true)
       return false;
@@ -2308,7 +2319,7 @@ bool DoDownload(CommandLine &CmdL)
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
-   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+   for (APT::VersionList::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
    {
@@ -3167,14 +3178,14 @@ bool DoChangelog(CommandLine &CmdL)
       return false;
    
    APT::CacheSetHelper helper(c0out);
-   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
    if (verset.empty() == true)
       return false;
    pkgAcquire Fetcher;
 
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
-      for (APT::VersionSet::const_iterator Ver = verset.begin();
+      for (APT::VersionList::const_iterator Ver = verset.begin();
 	   Ver != verset.end(); ++Ver)
 	 return DownloadChangelog(Cache, Fetcher, Ver, "");
 
@@ -3197,7 +3208,7 @@ bool DoChangelog(CommandLine &CmdL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");
    }
 
-   for (APT::VersionSet::const_iterator Ver = verset.begin(); 
+   for (APT::VersionList::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
    {
