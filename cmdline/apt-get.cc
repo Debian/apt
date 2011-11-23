@@ -742,6 +742,19 @@ public:
 				Prov = PPkg;
 				found_one = true;
 			} else if (PPkg != Prov) {
+				// same group, so it's a foreign package
+				if (PPkg->Group == Prov->Group) {
+					// do we already have the requested arch?
+					if (strcmp(Pkg.Arch(), Prov.Arch()) == 0 ||
+					    strcmp(Prov.Arch(), "all") == 0 ||
+					    unlikely(strcmp(PPkg.Arch(), Prov.Arch()) == 0)) // packages have only on candidate, but just to be sure
+						continue;
+					// see which architecture we prefer more and switch to it
+					std::vector<std::string> archs = APT::Configuration::getArchitectures();
+					if (std::find(archs.begin(), archs.end(), PPkg.Arch()) < std::find(archs.begin(), archs.end(), Prov.Arch()))
+						Prov = PPkg;
+					continue;
+				}
 				found_one = false; // we found at least two
 				break;
 			}

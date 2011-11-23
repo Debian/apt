@@ -126,3 +126,25 @@ Inst bar:armel (1.0 unstable [armel])
 Inst cool-bar (1.0 unstable [amd64])
 Conf bar:armel (1.0 unstable [armel])
 Conf cool-bar (1.0 unstable [amd64])' aptget install cool-bar:amd64 bar:armel -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'bar' instead of 'bar-provider'
+The following NEW packages will be installed:
+  bar cool-bar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [amd64])
+Inst cool-bar (1.0 unstable [amd64])
+Conf bar (1.0 unstable [amd64])
+Conf cool-bar (1.0 unstable [amd64])" aptget install cool-bar bar-provider -s -q=0
+
+testequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'bar:i386' instead of 'bar-provider:i386'
+The following NEW packages will be installed:
+  bar:i386 cool-bar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar:i386 (1.0 unstable [i386])
+Inst cool-bar (1.0 unstable [amd64])
+Conf bar:i386 (1.0 unstable [i386])
+Conf cool-bar (1.0 unstable [amd64])" aptget install cool-bar bar-provider:i386 -s -q=0
