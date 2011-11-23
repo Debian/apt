@@ -13,6 +13,20 @@ apt (0.8.16~exp9) UNRELEASED; urgency=low
  
   [ Colin Watson ]
   * Convert libapt-pkg4.12 and libapt-inst1.4 to Multi-Arch: same.
+
+  [ David Kalnischkies ]
+  * apt-pkg/cacheset.cc:
+    - make the cachesets real containers which can embedding any container
+      to be able to use the same interface regardless of set or list usage
+    - provide a {Package,Version}List similar to {Package,Version}Set
+  * cmdline/apt-{get,cache,mark}.cc:
+    - use Lists instead of Sets if input order should be preserved for
+      commands accepting lists of packages, e.g. policy (Closes: #625960)
+  * apt-pkg/depcache.cc:
+    - prefer native providers over foreigns even if the chain is foreign
+  * cmdline/apt-get.cc:
+    - ignore foreign architectures if we check if a provides has only one
+      resolver as it's basically the same for the user, so no need to choose
   
  -- Julian Andres Klode <jak@debian.org>  Mon, 21 Nov 2011 18:46:36 +0100
 
@@ -27,20 +41,8 @@ apt (0.8.16~exp8) experimental; urgency=low
     - use a pointer-union to peace gcc strict-aliasing warning
   * apt-pkg/deb/deblistparser.cc:
     - M-A: foreign packages provide for other archs, too
-  * apt-pkg/cacheset.cc:
-    - make the cachesets real containers which can embedding any container
-      to be able to use the same interface regardless of set or list usage
-    - provide a {Package,Version}List similar to {Package,Version}Set
-  * cmdline/apt-{get,cache,mark}.cc:
-    - use Lists instead of Sets if input order should be preserved for
-      commands accepting lists of packages, e.g. policy (Closes: #625960)
-  * apt-pkg/depcache.cc:
-    - prefer native providers over foreigns even if the chain is foreign
-  * cmdline/apt-get.cc:
-    - ignore foreign architectures if we check if a provides has only one
-      resolver as it's basically the same for the user, so no need to choose
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 23 Nov 2011 09:52:20 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 03 Nov 2011 09:40:29 -0500
 
 apt (0.8.16~exp7) experimental; urgency=low
 
