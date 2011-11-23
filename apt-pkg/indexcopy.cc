@@ -16,6 +16,7 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/indexrecords.h>
@@ -37,80 +38,62 @@
 
 using namespace std;
 
-// DecompressFile - wrapper for decompressing gzip/bzip2/xz compressed files	/*{{{*/
+// DecompressFile - wrapper for decompressing compressed files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool DecompressFile(string Filename, int *fd, off_t *FileSize)
 {
-    string CompressProg;
-    string CompressProgFind;
-    FileFd From;
     struct stat Buf;
-    *fd = -1;        
+    *fd = -1;
 
-    if (stat((Filename + ".gz").c_str(), &Buf) == 0)
+    std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
+    std::vector<APT::Configuration::Compressor>::const_iterator UnCompress;
+    std::string file = std::string(Filename).append(UnCompress->Extension);
+    for (UnCompress = compressor.begin(); UnCompress != compressor.end(); ++UnCompress)
     {
-        CompressProg = "gzip";
-        CompressProgFind = "Dir::bin::gzip";
-        From.Open(Filename + ".gz",FileFd::ReadOnly);
+	if (stat(file.c_str(), &Buf) == 0)
+	    break;
     }
-    else if (stat((Filename + ".bz2").c_str(), &Buf) == 0)
-    {
-        CompressProg = "bzip2";
-        CompressProgFind = "Dir::bin::bzip2";
-        From.Open(Filename + ".bz2",FileFd::ReadOnly);
-    }
-    else if (stat((Filename + ".xz").c_str(), &Buf) == 0)
-    {
-        CompressProg = "xz";
-        CompressProgFind = "Dir::bin::xz";
-        From.Open(Filename + ".xz",FileFd::ReadOnly);
-    }
-    else
-    {
+
+    if (UnCompress == compressor.end())
         return _error->Errno("decompressor", "Unable to parse file");
-    }
 
-    if (_error->PendingError() == true)
-        return -1;
-	 
     *FileSize = Buf.st_size;
-            
-    // Get a temp file
-    FILE *tmp = tmpfile();
-    if (tmp == 0)
-        return _error->Errno("tmpfile","Unable to create a tmp file");
-    *fd = dup(fileno(tmp));
-    fclose(tmp);
-	 
-    // Fork decompressor
-    pid_t Process = fork();
-    if (Process < 0)
-        return _error->Errno("fork","Couldn't fork to run decompressor");
-	 
-    // The child
-    if (Process == 0)
-    {	    
-        dup2(From.Fd(),STDIN_FILENO);
-        dup2(*fd,STDOUT_FILENO);
-        SetCloseExec(STDIN_FILENO,false);
-        SetCloseExec(STDOUT_FILENO,false);
-	    
-        const char *Args[3];
-        string Tmp =  _config->Find(CompressProgFind, CompressProg);
-        Args[0] = Tmp.c_str();
-        Args[1] = "-d";
-        Args[2] = 0;
-        if(execvp(Args[0],(char **)Args))
-            return(_error->Errno("decompressor","decompress failed"));
-        /* Should never get here */
-        exit(100);
+
+    // Create a data pipe
+    int Pipe[2] = {-1,-1};
+    if (pipe(Pipe) != 0)
+        return _error->Errno("pipe",_("Failed to create subprocess IPC"));
+    for (int J = 0; J != 2; J++)
+        SetCloseExec(Pipe[J],true);
+
+    *fd = Pipe[1];
+
+    // The child..
+    pid_t Pid = ExecFork();
+    if (Pid == 0)
+    {
+	dup2(Pipe[1],STDOUT_FILENO);
+	SetCloseExec(STDOUT_FILENO, false);
+
+	std::vector<char const*> Args;
+	Args.push_back(UnCompress->Binary.c_str());
+	for (std::vector<std::string>::const_iterator a = UnCompress->UncompressArgs.begin();
+	     a != UnCompress->UncompressArgs.end(); ++a)
+	    Args.push_back(a->c_str());
+	Args.push_back("--stdout");
+	Args.push_back(file.c_str());
+	Args.push_back(NULL);
+
+	execvp(Args[0],(char **)&Args[0]);
+	cerr << _("Failed to exec compressor ") << Args[0] << endl;
+	_exit(100);
     }
 
     // Wait for decompress to finish
-    if (ExecWait(Process,CompressProg.c_str(),false) == false)
+    if (ExecWait(Pid, UnCompress->Binary.c_str(), false) == false)
         return false;
-    
+
     return true;
 }
 									/*}}}*/
@@ -132,17 +115,25 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    
    // Prepare the progress indicator
    off_t TotalSize = 0;
+   std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
-      if (stat(string(*I + GetFileName()).c_str(),&Buf) != 0 &&
-            stat(string(*I + GetFileName() + ".gz").c_str(),&Buf) != 0 &&
-            stat(string(*I + GetFileName() + ".xz").c_str(),&Buf) != 0 &&
-            stat(string(*I + GetFileName() + ".bz2").c_str(),&Buf) != 0)
-	 return _error->Errno("stat","Stat failed for %s",
-			      string(*I + GetFileName()).c_str());
+      bool found = false;
+      std::string file = std::string(*I).append(GetFileName());
+      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	   c != compressor.end(); ++c)
+      {
+	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	    continue;
+	 found = true;
+	 break;
+      }
+
+      if (found == false)
+	 return _error->Errno("stat", "Stat failed for %s", file.c_str());
       TotalSize += Buf.st_size;
-   }	
+   }
 
    off_t CurrentSize = 0;
    unsigned int NotFound = 0;
@@ -834,18 +825,25 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    
    // Prepare the progress indicator
    off_t TotalSize = 0;
+   std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
-      
-      if (stat(string(*I).c_str(),&Buf) != 0 &&
-          stat(string(*I + ".gz").c_str(),&Buf) != 0 &&
-          stat(string(*I + ".bz2").c_str(),&Buf) != 0 &&
-          stat(string(*I + ".xz").c_str(),&Buf) != 0)
-	 return _error->Errno("stat","Stat failed for %s",
-			      string(*I).c_str());
+      bool found = false;
+      std::string file = *I;
+      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	   c != compressor.end(); ++c)
+      {
+	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	    continue;
+	 found = true;
+	 break;
+      }
+
+      if (found == false)
+	 return _error->Errno("stat", "Stat failed for %s", file.c_str());
       TotalSize += Buf.st_size;
-   }	
+   }
 
    off_t CurrentSize = 0;
    unsigned int NotFound = 0;
