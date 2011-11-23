@@ -37,8 +37,83 @@
 
 using namespace std;
 
+// DecompressFile - wrapper for decompressing gzip/bzip2/xz compressed files	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool DecompressFile(string Filename, int *fd, off_t *FileSize)
+{
+    string CompressProg;
+    string CompressProgFind;
+    FileFd From;
+    struct stat Buf;
+    *fd = -1;        
 
+    if (stat((Filename + ".gz").c_str(), &Buf) == 0)
+    {
+        CompressProg = "gzip";
+        CompressProgFind = "Dir::bin::gzip";
+        From.Open(Filename + ".gz",FileFd::ReadOnly);
+    }
+    else if (stat((Filename + ".bz2").c_str(), &Buf) == 0)
+    {
+        CompressProg = "bzip2";
+        CompressProgFind = "Dir::bin::bzip2";
+        From.Open(Filename + ".bz2",FileFd::ReadOnly);
+    }
+    else if (stat((Filename + ".xz").c_str(), &Buf) == 0)
+    {
+        CompressProg = "xz";
+        CompressProgFind = "Dir::bin::xz";
+        From.Open(Filename + ".xz",FileFd::ReadOnly);
+    }
+    else
+    {
+        return _error->Errno("decompressor", "Unable to parse file");
+    }
 
+    if (_error->PendingError() == true)
+        return -1;
+	 
+    *FileSize = Buf.st_size;
+            
+    // Get a temp file
+    FILE *tmp = tmpfile();
+    if (tmp == 0)
+        return _error->Errno("tmpfile","Unable to create a tmp file");
+    *fd = dup(fileno(tmp));
+    fclose(tmp);
+	 
+    // Fork decompressor
+    pid_t Process = fork();
+    if (Process < 0)
+        return _error->Errno("fork","Couldn't fork to run decompressor");
+	 
+    // The child
+    if (Process == 0)
+    {	    
+        dup2(From.Fd(),STDIN_FILENO);
+        dup2(*fd,STDOUT_FILENO);
+        SetCloseExec(STDIN_FILENO,false);
+        SetCloseExec(STDOUT_FILENO,false);
+	    
+        const char *Args[3];
+        string Tmp =  _config->Find(CompressProgFind, CompressProg);
+        Args[0] = Tmp.c_str();
+        Args[1] = "-d";
+        Args[2] = 0;
+        if(execvp(Args[0],(char **)Args))
+            return(_error->Errno("decompressor","decompress failed"));
+        /* Should never get here */
+        exit(100);
+    }
+
+    // Wait for decompress to finish
+    if (ExecWait(Process,CompressProg.c_str(),false) == false)
+        return false;
+    
+    return true;
+}
+									/*}}}*/
 // IndexCopy::CopyPackages - Copy the package files from the CD		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -61,7 +136,9 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    {
       struct stat Buf;
       if (stat(string(*I + GetFileName()).c_str(),&Buf) != 0 &&
-	  stat(string(*I + GetFileName() + ".gz").c_str(),&Buf) != 0)
+            stat(string(*I + GetFileName() + ".gz").c_str(),&Buf) != 0 &&
+            stat(string(*I + GetFileName() + ".xz").c_str(),&Buf) != 0 &&
+            stat(string(*I + GetFileName() + ".bz2").c_str(),&Buf) != 0)
 	 return _error->Errno("stat","Stat failed for %s",
 			      string(*I + GetFileName()).c_str());
       TotalSize += Buf.st_size;
@@ -85,46 +162,14 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       }      
       else
       {
-	 FileFd From(*I + GetFileName() + ".gz",FileFd::ReadOnly);
-	 if (_error->PendingError() == true)
-	    return false;
-	 FileSize = From.Size();
-	 
-	 // Get a temp file
-	 FILE *tmp = tmpfile();
-	 if (tmp == 0)
-	    return _error->Errno("tmpfile","Unable to create a tmp file");
-	 Pkg.Fd(dup(fileno(tmp)));
-	 fclose(tmp);
-	 
-	 // Fork gzip
-	 pid_t Process = fork();
-	 if (Process < 0)
-	    return _error->Errno("fork","Couldn't fork gzip");
-	 
-	 // The child
-	 if (Process == 0)
-	 {	    
-	    dup2(From.Fd(),STDIN_FILENO);
-	    dup2(Pkg.Fd(),STDOUT_FILENO);
-	    SetCloseExec(STDIN_FILENO,false);
-	    SetCloseExec(STDOUT_FILENO,false);
-	    
-	    const char *Args[3];
-	    string Tmp =  _config->Find("Dir::bin::gzip","gzip");
-	    Args[0] = Tmp.c_str();
-	    Args[1] = "-d";
-	    Args[2] = 0;
-	    execvp(Args[0],(char **)Args);
-	    exit(100);
-	 }
-	 
-	 // Wait for gzip to finish
-	 if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
-	    return _error->Error("gzip failed, perhaps the disk is full.");
-	 
+            int fd;
+            if (!DecompressFile(string(*I + GetFileName()), &fd, &FileSize))
+                return _error->Errno("decompress","Decompress failed for %s",
+                                     string(*I + GetFileName()).c_str());                
+            Pkg.Fd(dup(fd));
 	 Pkg.Seek(0);
       }
+
       pkgTagFile Parser(&Pkg);
       if (_error->PendingError() == true)
 	 return false;
@@ -792,8 +837,11 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
+      
       if (stat(string(*I).c_str(),&Buf) != 0 &&
-	  stat(string(*I + ".gz").c_str(),&Buf) != 0)
+          stat(string(*I + ".gz").c_str(),&Buf) != 0 &&
+          stat(string(*I + ".bz2").c_str(),&Buf) != 0 &&
+          stat(string(*I + ".xz").c_str(),&Buf) != 0)
 	 return _error->Errno("stat","Stat failed for %s",
 			      string(*I).c_str());
       TotalSize += Buf.st_size;
@@ -817,44 +865,10 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       }      
       else
       {
-	 FileFd From(*I + ".gz",FileFd::ReadOnly);
-	 if (_error->PendingError() == true)
-	    return false;
-	 FileSize = From.Size();
-	 
-	 // Get a temp file
-	 FILE *tmp = tmpfile();
-	 if (tmp == 0)
-	    return _error->Errno("tmpfile","Unable to create a tmp file");
-	 Pkg.Fd(dup(fileno(tmp)));
-	 fclose(tmp);
-	 
-	 // Fork gzip
-	 pid_t Process = fork();
-	 if (Process < 0)
-	    return _error->Errno("fork","Couldn't fork gzip");
-	 
-	 // The child
-	 if (Process == 0)
-	 {	    
-	    dup2(From.Fd(),STDIN_FILENO);
-	    dup2(Pkg.Fd(),STDOUT_FILENO);
-	    SetCloseExec(STDIN_FILENO,false);
-	    SetCloseExec(STDOUT_FILENO,false);
-	    
-	    const char *Args[3];
-	    string Tmp =  _config->Find("Dir::bin::gzip","gzip");
-	    Args[0] = Tmp.c_str();
-	    Args[1] = "-d";
-	    Args[2] = 0;
-	    execvp(Args[0],(char **)Args);
-	    exit(100);
-	 }
-	 
-	 // Wait for gzip to finish
-	 if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
-	    return _error->Error("gzip failed, perhaps the disk is full.");
-	 
+           int fd;
+           if (!DecompressFile(*I, &fd, &FileSize))
+               return _error->Errno("decompress","Decompress failed for %s", (*I).c_str());
+           Pkg.Fd(dup(fd));
 	 Pkg.Seek(0);
       }
       pkgTagFile Parser(&Pkg);

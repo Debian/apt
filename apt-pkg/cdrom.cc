@@ -116,7 +116,7 @@ bool pkgCdrom::FindPackages(string CD,
        }
     }
 
-   // see if we find translatin indexes
+   // see if we find translation indices
    if (stat("i18n",&Buf) == 0)
    {
       D = opendir("i18n");
