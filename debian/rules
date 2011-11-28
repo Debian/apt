@@ -128,25 +128,8 @@ clean:
 debian/%.install: debian/%.install.in
 	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
 
-binary-indep: libapt-common apt-doc libapt-pkg-doc
+binary-indep: apt-doc libapt-pkg-doc
 # Build architecture-independent files here.
-libapt-common: build
-	dh_testdir -p$@
-	dh_testroot -p$@
-	dh_prep -p$@
-	dh_installdirs -p$@
-
-	dh_install -p$@ --sourcedir=$(BLD)
-	dh_installdocs -p$@
-	dh_installchangelogs -p$@
-	dh_strip -p$@
-	dh_compress -p$@
-	dh_fixperms -p$@
-	dh_installdeb -p$@
-	dh_gencontrol -p$@
-	dh_md5sums -p$@
-	dh_builddeb -p$@
-
 libapt-pkg-doc: build-doc
 	dh_testdir -p$@
 	dh_testroot -p$@
