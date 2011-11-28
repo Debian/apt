@@ -35,20 +35,11 @@ Description: APT's commandline package manager
   * apt-config as an interface to the configuration settings
   * apt-key as an interface to manage authentication keys
 
-Package: libapt-common
-Architecture: all
-Multi-Arch: foreign
-Depends: ${misc:Depends}
-Breaks: libapt-pkg4.12 (<< 0.8.16~exp9), libapt-inst1.4 (<< 0.8.16~exp9)
-Replaces: libapt-pkg4.12 (<< 0.8.16~exp9), libapt-inst1.4 (<< 0.8.16~exp9)
-Description: Common files for APT libraries
- This package includes translation files common to APT library packages.
-
 Package: libapt-pkg4.12
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends}, ${misc:Depends}, libapt-common
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: APT's package managment runtime library
  This library provides the common functionality for searching and
  managing packages as well as information about packages.
@@ -69,7 +60,7 @@ Package: libapt-inst1.4
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends}, ${misc:Depends}, libapt-common
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: APT's deb package format runtime library
  This library provides methods to query and extract information 
  from deb packages. This includes the control data and the package
