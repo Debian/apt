@@ -44,8 +44,24 @@ class FileFd
    gzFile gz;
 
    public:
-   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp,ReadOnlyGzip,
-                  WriteAtomic};
+   enum OpenMode {
+	ReadOnly = (1 << 0),
+	WriteOnly = (1 << 1),
+	ReadWrite = ReadOnly | WriteOnly,
+
+	Create = (1 << 2),
+	Exclusive = (1 << 3),
+	Atomic = Exclusive | (1 << 4),
+	Empty = (1 << 5),
+
+	WriteEmpty = ReadWrite | Create | Empty,
+	WriteExists = ReadWrite,
+	WriteAny = ReadWrite | Create,
+	WriteTemp = ReadWrite | Create | Exclusive,
+	ReadOnlyGzip,
+	WriteAtomic = ReadWrite | Create | Atomic
+   };
+   enum CompressMode { Auto, None, Gzip, Bzip2, Lzma, Xz };
    
    inline bool Read(void *To,unsigned long long Size,bool AllowEof)
    {
@@ -77,8 +93,14 @@ class FileFd
 	return T;
    }
 
-   bool Open(std::string FileName,OpenMode Mode,unsigned long Perms = 0666);
-   bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false);
+   bool Open(std::string FileName,OpenMode Mode,CompressMode Compress,unsigned long Perms = 0666);
+   inline bool Open(std::string const &FileName,OpenMode Mode,unsigned long Perms = 0666) {
+      return Open(FileName, Mode, None, Perms);
+   };
+   bool OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose=false);
+   inline bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false) {
+      return OpenDescriptor(Fd, Mode, None, AutoClose);
+   };
    bool Close();
    bool Sync();
    

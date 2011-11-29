@@ -718,69 +718,72 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */
-bool FileFd::Open(string FileName,OpenMode Mode, unsigned long Perms)
+bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned long Perms)
 {
+   if (Mode == ReadOnlyGzip)
+      return Open(FileName, ReadOnly, Gzip, Perms);
    Close();
    Flags = AutoClose;
-   switch (Mode)
+
+   int fileflags = 0;
+#define if_FLAGGED_SET(FLAG, MODE) if ((Mode & FLAG) == FLAG) fileflags |= MODE
+   if_FLAGGED_SET(ReadWrite, O_RDWR);
+   else if_FLAGGED_SET(ReadOnly, O_RDONLY);
+   else if_FLAGGED_SET(WriteOnly, O_WRONLY);
+   else return _error->Error("No openmode provided in FileFd::Open for %s", FileName.c_str());
+
+   if_FLAGGED_SET(Create, O_CREAT);
+   if_FLAGGED_SET(Exclusive, O_EXCL);
+   else if_FLAGGED_SET(Atomic, O_EXCL);
+   if_FLAGGED_SET(Empty, O_TRUNC);
+#undef if_FLAGGED_SET
+
+   if ((Mode & Atomic) == Atomic)
    {
-      case ReadOnly:
-      iFd = open(FileName.c_str(),O_RDONLY);
-      break;
-
-      case ReadOnlyGzip:
-      iFd = open(FileName.c_str(),O_RDONLY);
-      if (iFd > 0) {
-	 gz = gzdopen (iFd, "r");
-	 if (gz == NULL) {
-	     close (iFd);
-	     iFd = -1;
-	 }
-      }
-      break;
-      
-      case WriteAtomic:
-      {
-	 Flags |= Replace;
-	 char *name = strdup((FileName + ".XXXXXX").c_str());
-	 TemporaryFileName = string(mktemp(name));
-	 iFd = open(TemporaryFileName.c_str(),O_RDWR | O_CREAT | O_EXCL,Perms);
-	 free(name);
-	 break;
-      }
-
-      case WriteEmpty:
-      {
-      	 struct stat Buf;
-	 if (lstat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
-	    unlink(FileName.c_str());
-	 iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_TRUNC,Perms);
-	 break;
-      }
-      
-      case WriteExists:
-      iFd = open(FileName.c_str(),O_RDWR);
-      break;
-
-      case WriteAny:
-      iFd = open(FileName.c_str(),O_RDWR | O_CREAT,Perms);
-      break;      
-
-      case WriteTemp:
+      Flags |= Replace;
+      char *name = strdup((FileName + ".XXXXXX").c_str());
+      TemporaryFileName = string(mktemp(name));
+      free(name);
+   }
+   else if ((Mode & (Exclusive | Create)) == (Exclusive | Create))
+   {
+      // for atomic, this will be done by rename in Close()
       unlink(FileName.c_str());
-      iFd = open(FileName.c_str(),O_RDWR | O_CREAT | O_EXCL,Perms);
-      break;
-   }  
+   }
+   if ((Mode & Empty) == Empty)
+   {
+      struct stat Buf;
+      if (lstat(FileName.c_str(),&Buf) == 0 && S_ISLNK(Buf.st_mode))
+	 unlink(FileName.c_str());
+   }
 
-   if (iFd < 0)
+   if (TemporaryFileName.empty() == false)
+      iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
+   else
+      iFd = open(FileName.c_str(), fileflags, Perms);
+
+   if (iFd != -1 && Compress == Gzip)
+   {
+      gz = gzdopen (iFd, "r");
+      if (gz == NULL)
+      {
+	 close (iFd);
+	 iFd = -1;
+      }
+   }
+
+   if (iFd == -1)
       return _error->Errno("open",_("Could not open file %s"),FileName.c_str());
-   
+
    this->FileName = FileName;
    SetCloseExec(iFd,true);
    return true;
 }
-
-bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose)
+									/*}}}*/
+// FileFd::OpenDescriptor - Open a filedescriptor			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose)
 {
    Close();
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
@@ -1031,6 +1034,7 @@ bool FileFd::Close()
 	 Res &= _error->Errno("rename",_("Problem renaming the file %s to %s"), TemporaryFileName.c_str(), FileName.c_str());
 
       FileName = TemporaryFileName; // for the unlink() below.
+      TemporaryFileName.clear();
    }
 
    iFd = -1;
