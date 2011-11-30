@@ -102,7 +102,7 @@ aptitude() {
 
 addtrap() {
 	CURRENTTRAP="$CURRENTTRAP $1"
-	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	trap "$CURRENTTRAP exit;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 }
 
 setupenvironment() {
