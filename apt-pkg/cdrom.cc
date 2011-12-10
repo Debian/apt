@@ -58,15 +58,14 @@ bool pkgCdrom::FindPackages(string CD,
       return _error->Errno("chdir","Unable to change to %s",CD.c_str());
 
    // Look for a .disk subdirectory
-   struct stat Buf;
-   if (stat(".disk",&Buf) == 0)
+   if (DirectoryExists(".disk") == true)
    {
       if (InfoDir.empty() == true)
 	 InfoDir = CD + ".disk/";
    }
 
    // Don't look into directories that have been marked to ingore.
-   if (stat(".aptignr",&Buf) == 0)
+   if (RealFileExists(".aptignr") == true)
       return true;
 
 
@@ -74,7 +73,7 @@ bool pkgCdrom::FindPackages(string CD,
       under a Packages/Source file are in control of that file and stops 
       the scanning
    */
-   if (stat("Release.gpg",&Buf) == 0)
+   if (RealFileExists("Release.gpg") == true)
    {
       SigList.push_back(CD);
    }
@@ -86,7 +85,7 @@ bool pkgCdrom::FindPackages(string CD,
    for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	c != compressor.end(); ++c)
    {
-      if (stat(std::string("Packages").append(c->Extension).c_str(), &Buf) != 0)
+      if (RealFileExists(std::string("Packages").append(c->Extension).c_str()) == false)
 	 continue;
 
       if (_config->FindB("Debug::aptcdrom",false) == true)
@@ -101,7 +100,7 @@ bool pkgCdrom::FindPackages(string CD,
    for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	c != compressor.end(); ++c)
    {
-      if (stat(std::string("Sources").append(c->Extension).c_str(), &Buf) != 0)
+      if (RealFileExists(std::string("Sources").append(c->Extension).c_str()) == false)
 	 continue;
 
       if (_config->FindB("Debug::aptcdrom",false) == true)
