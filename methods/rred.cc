@@ -489,7 +489,7 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
    // Open the source and destination files (the d'tor of FileFd will do 
    // the cleanup/closing of the fds)
    FileFd From(Path,FileFd::ReadOnly);
-   FileFd Patch(Path+".ed",FileFd::ReadOnlyGzip);
+   FileFd Patch(Path+".ed",FileFd::ReadOnly, FileFd::Gzip);
    FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
    To.EraseOnFailure();
    if (_error->PendingError() == true)

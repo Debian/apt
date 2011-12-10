@@ -159,7 +159,7 @@ unsigned long debSourcesIndex::Size() const
    /* we need to ignore errors here; if the lists are absent, just return 0 */
    _error->PushToStack();
 
-   FileFd f = FileFd (IndexFile("Sources"), FileFd::ReadOnlyGzip);
+   FileFd f = FileFd (IndexFile("Sources"), FileFd::ReadOnly, FileFd::Extension);
    if (!f.Failed())
       size = f.Size();
 
@@ -288,7 +288,7 @@ unsigned long debPackagesIndex::Size() const
    /* we need to ignore errors here; if the lists are absent, just return 0 */
    _error->PushToStack();
 
-   FileFd f = FileFd (IndexFile("Packages"), FileFd::ReadOnlyGzip);
+   FileFd f = FileFd (IndexFile("Packages"), FileFd::ReadOnly, FileFd::Extension);
    if (!f.Failed())
       size = f.Size();
 
@@ -305,7 +305,7 @@ unsigned long debPackagesIndex::Size() const
 bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    string PackageFile = IndexFile("Packages");
-   FileFd Pkg(PackageFile,FileFd::ReadOnlyGzip);
+   FileFd Pkg(PackageFile,FileFd::ReadOnly, FileFd::Extension);
    debListParser Parser(&Pkg, Architecture);
 
    if (_error->PendingError() == true)
@@ -319,6 +319,7 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    // Store the IMS information
    pkgCache::PkgFileIterator File = Gen.GetCurFile();
    pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(File);
+   // FIXME: Get this info from FileFd instead
    struct stat St;
    if (fstat(Pkg.Fd(),&St) != 0)
       return _error->Errno("fstat","Failed to stat");
@@ -489,7 +490,7 @@ unsigned long debTranslationsIndex::Size() const
    /* we need to ignore errors here; if the lists are absent, just return 0 */
    _error->PushToStack();
 
-   FileFd f = FileFd (IndexFile(Language), FileFd::ReadOnlyGzip);
+   FileFd f = FileFd (IndexFile(Language), FileFd::ReadOnly, FileFd::Extension);
    if (!f.Failed())
       size = f.Size();
 
@@ -509,7 +510,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    string TranslationFile = IndexFile(Language);
    if (FileExists(TranslationFile))
    {
-     FileFd Trans(TranslationFile,FileFd::ReadOnlyGzip);
+     FileFd Trans(TranslationFile,FileFd::ReadOnly, FileFd::Extension);
      debListParser TransParser(&Trans);
      if (_error->PendingError() == true)
        return false;
@@ -590,7 +591,7 @@ unsigned long debStatusIndex::Size() const
 /* */
 bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
-   FileFd Pkg(File,FileFd::ReadOnlyGzip);
+   FileFd Pkg(File,FileFd::ReadOnly, FileFd::Extension);
    if (_error->PendingError() == true)
       return false;
    debListParser Parser(&Pkg);

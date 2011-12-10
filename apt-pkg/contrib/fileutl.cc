@@ -24,6 +24,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 
 #include <cstdlib>
@@ -725,6 +726,11 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
    Close();
    Flags = AutoClose;
 
+   if (Compress == Auto && (Mode & WriteOnly) == WriteOnly)
+      return _error->Error("Autodetection on %s only works in ReadOnly openmode!", FileName.c_str());
+   if ((Mode & WriteOnly) != WriteOnly && (Mode & (Atomic | Create | Empty | Exclusive)) != 0)
+      return _error->Error("ReadOnly mode for %s doesn't accept additional flags!", FileName.c_str());
+
    int fileflags = 0;
 #define if_FLAGGED_SET(FLAG, MODE) if ((Mode & FLAG) == FLAG) fileflags |= MODE
    if_FLAGGED_SET(ReadWrite, O_RDWR);
@@ -737,6 +743,70 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
    else if_FLAGGED_SET(Atomic, O_EXCL);
    if_FLAGGED_SET(Empty, O_TRUNC);
 #undef if_FLAGGED_SET
+
+   // FIXME: Denote inbuilt compressors somehow - as we don't need to have the binaries for them
+   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
+   std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
+   if (Compress == Auto)
+   {
+      Compress = None;
+      for (; compressor != compressors.end(); ++compressor)
+      {
+	 std::string file = std::string(FileName).append(compressor->Extension);
+	 if (FileExists(file) == false)
+	    continue;
+	 FileName = file;
+	 if (compressor->Binary == ".")
+	    Compress = None;
+	 else
+	    Compress = Extension;
+	 break;
+      }
+   }
+   else if (Compress == Extension)
+   {
+      Compress = None;
+      std::string ext = flExtension(FileName);
+      if (ext != FileName)
+      {
+	 ext = "." + ext;
+	 for (; compressor != compressors.end(); ++compressor)
+	    if (ext == compressor->Extension)
+	       break;
+      }
+   }
+   else if (Compress != None)
+   {
+      std::string name;
+      switch (Compress)
+      {
+      case Gzip: name = "gzip"; break;
+      case Bzip2: name = "bzip2"; break;
+      case Lzma: name = "lzma"; break;
+      case Xz: name = "xz"; break;
+      default: return _error->Error("Can't find a match for specified compressor mode for file %s", FileName.c_str());
+      }
+      for (; compressor != compressors.end(); ++compressor)
+	 if (compressor->Name == name)
+	    break;
+      if (compressor == compressors.end() && name != "gzip")
+	 return _error->Error("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
+   }
+
+   // if we have them, use inbuilt compressors instead of forking
+   if (compressor != compressors.end())
+   {
+      if (compressor->Name == "gzip")
+      {
+	 Compress = Gzip;
+	 compressor = compressors.end();
+      }
+      else if (compressor->Name == "." || Compress == None)
+      {
+	 Compress = None;
+	 compressor = compressors.end();
+      }
+   }
 
    if ((Mode & Atomic) == Atomic)
    {
@@ -757,18 +827,27 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
 	 unlink(FileName.c_str());
    }
 
-   if (TemporaryFileName.empty() == false)
-      iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
-   else
-      iFd = open(FileName.c_str(), fileflags, Perms);
-
-   if (iFd != -1 && Compress == Gzip)
+   if (compressor != compressors.end())
    {
-      gz = gzdopen (iFd, "r");
-      if (gz == NULL)
+      if ((Mode & ReadWrite) == ReadWrite)
+	 _error->Error("External compressors like %s do not support readwrite mode for file %s", compressor->Name.c_str(), FileName.c_str());
+
+      _error->Error("Forking external compressor %s is not implemented for %s", compressor->Name.c_str(), FileName.c_str());
+   }
+   else
+   {
+      if (TemporaryFileName.empty() == false)
+	 iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
+      else
+	 iFd = open(FileName.c_str(), fileflags, Perms);
+
+      if (iFd != -1)
       {
-	 close (iFd);
-	 iFd = -1;
+	 if (OpenInternDescriptor(Mode, Compress) == false)
+	 {
+	    close (iFd);
+	    iFd = -1;
+	 }
       }
    }
 
@@ -788,16 +867,32 @@ bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool A
    Close();
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
    iFd = Fd;
-   if (Mode == ReadOnlyGzip) {
-      gz = gzdopen (iFd, "r");
-      if (gz == NULL) {
-	 if (AutoClose)
-	    close (iFd);
-	 return _error->Errno("gzdopen",_("Could not open file descriptor %d"),
-			      Fd);
-      }
+   if (OpenInternDescriptor(Mode, Compress) == false)
+   {
+      if (AutoClose)
+	 close (iFd);
+      return _error->Errno("gzdopen",_("Could not open file descriptor %d"), Fd);
    }
    this->FileName = "";
+   return true;
+}
+bool FileFd::OpenInternDescriptor(OpenMode Mode, CompressMode Compress)
+{
+   if (Compress == None)
+      return true;
+   else if (Compress == Gzip)
+   {
+      if ((Mode & ReadWrite) == ReadWrite)
+	 gz = gzdopen(iFd, "r+");
+      else if ((Mode & WriteOnly) == WriteOnly)
+	 gz = gzdopen(iFd, "w");
+      else
+	 gz = gzdopen (iFd, "r");
+      if (gz == NULL)
+	 return false;
+   }
+   else
+      return false;
    return true;
 }
 									/*}}}*/

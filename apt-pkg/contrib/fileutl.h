@@ -61,7 +61,7 @@ class FileFd
 	ReadOnlyGzip,
 	WriteAtomic = ReadWrite | Create | Atomic
    };
-   enum CompressMode { Auto, None, Gzip, Bzip2, Lzma, Xz };
+   enum CompressMode { Auto = 'A', None = 'N', Extension = 'E', Gzip = 'G', Bzip2 = 'B', Lzma = 'L', Xz = 'X' };
    
    inline bool Read(void *To,unsigned long long Size,bool AllowEof)
    {
@@ -94,7 +94,7 @@ class FileFd
    }
 
    bool Open(std::string FileName,OpenMode Mode,CompressMode Compress,unsigned long Perms = 0666);
-   inline bool Open(std::string const &FileName,OpenMode Mode,unsigned long Perms = 0666) {
+   inline bool Open(std::string const &FileName,OpenMode Mode, unsigned long Perms = 0666) {
       return Open(FileName, Mode, None, Perms);
    };
    bool OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose=false);
@@ -118,11 +118,19 @@ class FileFd
    FileFd(std::string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), 
             Flags(0), gz(NULL)
    {
-      Open(FileName,Mode,Perms);
+      Open(FileName,Mode, None, Perms);
+   };
+   FileFd(std::string FileName,OpenMode Mode, CompressMode Compress, unsigned long Perms = 0666) :
+	    iFd(-1), Flags(0), gz(NULL)
+   {
+      Open(FileName,Mode, Compress, Perms);
    };
    FileFd(int Fd = -1) : iFd(Fd), Flags(AutoClose), gz(NULL) {};
    FileFd(int Fd,bool) : iFd(Fd), Flags(0), gz(NULL) {};
    virtual ~FileFd();
+
+   private:
+   bool OpenInternDescriptor(OpenMode Mode, CompressMode Compress);
 };
 
 bool RunScripts(const char *Cnf);
