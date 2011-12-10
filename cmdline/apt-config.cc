@@ -134,6 +134,22 @@ int main(int argc,const char *argv[])					/*{{{*/
    for (std::vector<std::string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
       _config->Set("APT::Architectures::", *a);
 
+   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
+   _config->Clear("APT::Compressor");
+   string conf = "APT::Compressor::";
+   for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin(); c != compressors.end(); ++c)
+   {
+      string comp = conf + c->Name + "::";
+      _config->Set(comp + "Name", c->Name);
+      _config->Set(comp + "Extension", c->Extension);
+      _config->Set(comp + "Binary", c->Binary);
+      _config->Set(std::string(comp + "Cost").c_str(), c->Cost);
+      for (std::vector<std::string>::const_iterator a = c->CompressArgs.begin(); a != c->CompressArgs.end(); ++a)
+	 _config->Set(comp + "CompressArg::", *a);
+      for (std::vector<std::string>::const_iterator a = c->UncompressArgs.begin(); a != c->UncompressArgs.end(); ++a)
+	 _config->Set(comp + "UncompressArg::", *a);
+   }
+
    // Match the operation
    CmdL.DispatchArg(Cmds);
    
