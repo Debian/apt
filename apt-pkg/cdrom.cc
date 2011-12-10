@@ -136,6 +136,7 @@ bool pkgCdrom::FindPackages(string CD,
 	    {
 	       if (_config->FindB("Debug::aptcdrom",false) == true)
 		  std::clog << "Found translation " << Dir->d_name << " in " << CD << "i18n/" << std::endl;
+	       file.erase(file.size() - fileext.size());
 	       TransList.push_back(CD + "i18n/" + file);
 	       break;
 	    }
