@@ -1106,6 +1106,20 @@ unsigned long long FileFd::Size()
    return size;
 }
 									/*}}}*/
+// FileFd::ModificationTime - Return the time of last touch		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+time_t FileFd::ModificationTime()
+{
+   struct stat Buf;
+   if (fstat(iFd,&Buf) != 0)
+   {
+      _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
+      return 0;
+   }
+   return Buf.st_mtime;
+}
+									/*}}}*/
 // FileFd::Close - Close the file if the close flag is set		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

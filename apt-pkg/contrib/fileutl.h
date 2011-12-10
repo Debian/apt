@@ -78,6 +78,7 @@ class FileFd
    unsigned long long Tell();
    unsigned long long Size();
    unsigned long long FileSize();
+   time_t ModificationTime();
 
    /* You want to use 'unsigned long long' if you are talking about a file
       to be able to support large files (>2 or >4 GB) properly.

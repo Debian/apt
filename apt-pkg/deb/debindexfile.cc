@@ -319,12 +319,8 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    // Store the IMS information
    pkgCache::PkgFileIterator File = Gen.GetCurFile();
    pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(File);
-   // FIXME: Get this info from FileFd instead
-   struct stat St;
-   if (fstat(Pkg.Fd(),&St) != 0)
-      return _error->Errno("fstat","Failed to stat");
-   File->Size = St.st_size;
-   File->mtime = St.st_mtime;
+   File->Size = Pkg.FileSize();
+   File->mtime = Pkg.ModificationTime();
    
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeList %s",PackageFile.c_str());
@@ -522,11 +518,8 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
      // Store the IMS information
      pkgCache::PkgFileIterator TransFile = Gen.GetCurFile();
-     struct stat TransSt;
-     if (fstat(Trans.Fd(),&TransSt) != 0)
-       return _error->Errno("fstat","Failed to stat");
-     TransFile->Size = TransSt.st_size;
-     TransFile->mtime = TransSt.st_mtime;
+     TransFile->Size = Trans.FileSize();
+     TransFile->mtime = Trans.ModificationTime();
    
      if (Gen.MergeList(TransParser) == false)
        return _error->Error("Problem with MergeList %s",TranslationFile.c_str());
@@ -608,8 +601,8 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    struct stat St;
    if (fstat(Pkg.Fd(),&St) != 0)
       return _error->Errno("fstat","Failed to stat");
-   CFile->Size = St.st_size;
-   CFile->mtime = St.st_mtime;
+   CFile->Size = Pkg.FileSize();
+   CFile->mtime = Pkg.ModificationTime();
    CFile->Archive = Gen.WriteUniqString("now");
    
    if (Gen.MergeList(Parser) == false)

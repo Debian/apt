@@ -49,11 +49,8 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    // Store the IMS information
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
-   struct stat St;
-   if (fstat(Pkg.Fd(),&St) != 0)
-      return _error->Errno("fstat","Failed to stat");
-   CFile->Size = St.st_size;
-   CFile->mtime = St.st_mtime;
+   CFile->Size = Pkg.FileSize();
+   CFile->mtime = Pkg.ModificationTime();
    CFile->Archive = Gen.WriteUniqString("edsp::scenario");
 
    if (Gen.MergeList(Parser) == false)
