@@ -77,7 +77,18 @@ bool MMap::Map(FileFd &Fd)
    
    if (iSize == 0)
       return _error->Error(_("Can't mmap an empty file"));
-   
+
+   // We can't mmap compressed fd's directly, so we need to read it completely
+   if (Fd.IsCompressed() == true)
+   {
+      if ((Flags & ReadOnly) != ReadOnly)
+	 return _error->Error("Compressed file %s can only be mapped readonly", Fd.Name().c_str());
+      Base = new unsigned char[iSize];
+      if (Fd.Seek(0L) == false || Fd.Read(Base, iSize) == false)
+	 return false;
+      return true;
+   }
+
    // Map it.
    Base = mmap(0,iSize,Prot,Map,Fd.Fd(),0);
    if (Base == (void *)-1)

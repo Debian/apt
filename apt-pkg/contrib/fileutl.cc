@@ -44,6 +44,8 @@
 #include <set>
 #include <algorithm>
 
+#include <zlib.h>
+
 #ifdef WORDS_BIGENDIAN
 #include <inttypes.h>
 #endif
@@ -52,6 +54,12 @@
 									/*}}}*/
 
 using namespace std;
+
+class FileFdPrivate {
+	public:
+	gzFile gz;
+	FileFdPrivate() : gz(NULL) {};
+};
 
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
 // ---------------------------------------------------------------------
@@ -719,11 +727,12 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */
-bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned long Perms)
+bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned long const Perms)
 {
    if (Mode == ReadOnlyGzip)
       return Open(FileName, ReadOnly, Gzip, Perms);
    Close();
+   d = new FileFdPrivate;
    Flags = AutoClose;
 
    if (Compress == Auto && (Mode & WriteOnly) == WriteOnly)
@@ -865,6 +874,7 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
 bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose)
 {
    Close();
+   d = new FileFdPrivate;
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
    iFd = Fd;
    if (OpenInternDescriptor(Mode, Compress) == false)
@@ -883,13 +893,14 @@ bool FileFd::OpenInternDescriptor(OpenMode Mode, CompressMode Compress)
    else if (Compress == Gzip)
    {
       if ((Mode & ReadWrite) == ReadWrite)
-	 gz = gzdopen(iFd, "r+");
+	 d->gz = gzdopen(iFd, "r+");
       else if ((Mode & WriteOnly) == WriteOnly)
-	 gz = gzdopen(iFd, "w");
+	 d->gz = gzdopen(iFd, "w");
       else
-	 gz = gzdopen (iFd, "r");
-      if (gz == NULL)
+	 d->gz = gzdopen (iFd, "r");
+      if (d->gz == NULL)
 	 return false;
+      Flags |= Compressed;
    }
    else
       return false;
@@ -918,8 +929,8 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    
    do
    {
-      if (gz != NULL)
-         Res = gzread(gz,To,Size);
+      if (d->gz != NULL)
+         Res = gzread(d->gz,To,Size);
       else
          Res = read(iFd,To,Size);
       if (Res < 0 && errno == EINTR)
@@ -951,6 +962,28 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    return _error->Error(_("read, still have %llu to read but none left"), Size);
 }
 									/*}}}*/
+// FileFd::ReadLine - Read a complete line from the file		/*{{{*/
+// ---------------------------------------------------------------------
+/* Beware: This method can be quiet slow for big buffers on UNcompressed
+   files because of the naive implementation! */
+char* FileFd::ReadLine(char *To, unsigned long long const Size)
+{
+   if (d->gz != NULL)
+      return gzgets(d->gz, To, Size);
+
+   unsigned long long read = 0;
+   if (Read(To, Size, &read) == false)
+      return NULL;
+   char* c = To;
+   for (; *c != '\n' && *c != '\0' && read != 0; --read, ++c)
+      ; // find the end of the line
+   if (*c != '\0')
+      *c = '\0';
+   if (read != 0)
+      Seek(Tell() - read);
+   return To;
+}
+									/*}}}*/
 // FileFd::Write - Write to the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -960,8 +993,8 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    errno = 0;
    do
    {
-      if (gz != NULL)
-         Res = gzwrite(gz,From,Size);
+      if (d->gz != NULL)
+         Res = gzwrite(d->gz,From,Size);
       else
          Res = write(iFd,From,Size);
       if (Res < 0 && errno == EINTR)
@@ -990,8 +1023,8 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 bool FileFd::Seek(unsigned long long To)
 {
    int res;
-   if (gz)
-      res = gzseek(gz,To,SEEK_SET);
+   if (d->gz)
+      res = gzseek(d->gz,To,SEEK_SET);
    else
       res = lseek(iFd,To,SEEK_SET);
    if (res != (signed)To)
@@ -1009,8 +1042,8 @@ bool FileFd::Seek(unsigned long long To)
 bool FileFd::Skip(unsigned long long Over)
 {
    int res;
-   if (gz)
-      res = gzseek(gz,Over,SEEK_CUR);
+   if (d->gz != NULL)
+      res = gzseek(d->gz,Over,SEEK_CUR);
    else
       res = lseek(iFd,Over,SEEK_CUR);
    if (res < 0)
@@ -1027,7 +1060,7 @@ bool FileFd::Skip(unsigned long long Over)
 /* */
 bool FileFd::Truncate(unsigned long long To)
 {
-   if (gz)
+   if (d->gz != NULL)
    {
       Flags |= Fail;
       return _error->Error("Truncating gzipped files is not implemented (%s)", FileName.c_str());
@@ -1047,8 +1080,8 @@ bool FileFd::Truncate(unsigned long long To)
 unsigned long long FileFd::Tell()
 {
    off_t Res;
-   if (gz)
-     Res = gztell(gz);
+   if (d->gz != NULL)
+     Res = gztell(d->gz);
    else
      Res = lseek(iFd,0,SEEK_CUR);
    if (Res == (off_t)-1)
@@ -1076,9 +1109,9 @@ unsigned long long FileFd::Size()
    unsigned long long size = FileSize();
 
    // only check gzsize if we are actually a gzip file, just checking for
-   // "gz" is not sufficient as uncompressed files will be opened with
+   // "gz" is not sufficient as uncompressed files could be opened with
    // gzopen in "direct" mode as well
-   if (gz && !gzdirect(gz) && size > 0)
+   if (d->gz && !gzdirect(d->gz) && size > 0)
    {
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
 	* this ourselves; the original (uncompressed) file size is the last 32
@@ -1125,11 +1158,14 @@ time_t FileFd::ModificationTime()
 /* */
 bool FileFd::Close()
 {
+   if (iFd == -1)
+      return true;
+
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
    {
-      if (gz != NULL) {
-	 int const e = gzclose(gz);
+      if (d != NULL && d->gz != NULL) {
+	 int const e = gzclose(d->gz);
 	 // gzdopen() on empty files always fails with "buffer error" here, ignore that
 	 if (e != 0 && e != Z_BUF_ERROR)
 	    Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
@@ -1147,13 +1183,17 @@ bool FileFd::Close()
    }
 
    iFd = -1;
-   gz = NULL;
 
    if ((Flags & Fail) == Fail && (Flags & DelOnFail) == DelOnFail &&
        FileName.empty() == false)
       if (unlink(FileName.c_str()) != 0)
 	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file %s"), FileName.c_str());
 
+   if (d != NULL)
+   {
+      delete d;
+      d = NULL;
+   }
 
    return Res;
 }
@@ -1170,3 +1210,4 @@ bool FileFd::Sync()
    return true;
 }
 									/*}}}*/
+gzFile FileFd::gzFd() {return d->gz;};

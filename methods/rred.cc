@@ -37,13 +37,13 @@ class RredMethod : public pkgAcqMethod {
 	// return values
 	enum State {ED_OK, ED_ORDERING, ED_PARSER, ED_FAILURE, MMAP_FAILED};
 
-	State applyFile(gzFile &ed_cmds, FILE *in_file, FILE *out_file,
+	State applyFile(FileFd &ed_cmds, FILE *in_file, FILE *out_file,
 	             unsigned long &line, char *buffer, Hashes *hash) const;
 	void ignoreLineInFile(FILE *fin, char *buffer) const;
-	void ignoreLineInFile(gzFile &fin, char *buffer) const;
+	void ignoreLineInFile(FileFd &fin, char *buffer) const;
 	void copyLinesFromFileToFile(FILE *fin, FILE *fout, unsigned int lines,
 	                            Hashes *hash, char *buffer) const;
-	void copyLinesFromFileToFile(gzFile &fin, FILE *fout, unsigned int lines,
+	void copyLinesFromFileToFile(FileFd &fin, FILE *fout, unsigned int lines,
 	                            Hashes *hash, char *buffer) const;
 
 	State patchFile(FileFd &Patch, FileFd &From, FileFd &out_file, Hashes *hash) const;
@@ -72,10 +72,10 @@ public:
  *  \param hash the created file for correctness
  *  \return the success State of the ed command executor
  */
-RredMethod::State RredMethod::applyFile(gzFile &ed_cmds, FILE *in_file, FILE *out_file,
+RredMethod::State RredMethod::applyFile(FileFd &ed_cmds, FILE *in_file, FILE *out_file,
 			unsigned long &line, char *buffer, Hashes *hash) const {
 	// get the current command and parse it
-	if (gzgets(ed_cmds, buffer, BUF_SIZE) == NULL) {
+	if (ed_cmds.ReadLine(buffer, BUF_SIZE) == NULL) {
 		if (Debug == true)
 			std::clog << "rred: encounter end of file - we can start patching now." << std::endl;
 		line = 0;
@@ -130,7 +130,7 @@ RredMethod::State RredMethod::applyFile(gzFile &ed_cmds, FILE *in_file, FILE *ou
 	unsigned char mode = *idx;
 
 	// save the current position
-	unsigned const long pos = gztell(ed_cmds);
+	unsigned const long long pos = ed_cmds.Tell();
 
 	// if this is add or change then go to the next full stop
 	unsigned int data_length = 0;
@@ -164,7 +164,7 @@ RredMethod::State RredMethod::applyFile(gzFile &ed_cmds, FILE *in_file, FILE *ou
 
 	// include data from ed script
 	if (mode == MODE_CHANGED || mode == MODE_ADDED) {
-		gzseek(ed_cmds, pos, SEEK_SET);
+		ed_cmds.Seek(pos);
 		copyLinesFromFileToFile(ed_cmds, out_file, data_length, hash, buffer);
 	}
 
@@ -190,11 +190,11 @@ void RredMethod::copyLinesFromFileToFile(FILE *fin, FILE *fout, unsigned int lin
 	}
 }
 										/*}}}*/
-void RredMethod::copyLinesFromFileToFile(gzFile &fin, FILE *fout, unsigned int lines,/*{{{*/
+void RredMethod::copyLinesFromFileToFile(FileFd &fin, FILE *fout, unsigned int lines,/*{{{*/
 					Hashes *hash, char *buffer) const {
 	while (0 < lines--) {
 		do {
-			gzgets(fin, buffer, BUF_SIZE);
+			fin.ReadLine(buffer, BUF_SIZE);
 			size_t const written = fwrite(buffer, 1, strlen(buffer), fout);
 			hash->Add((unsigned char*)buffer, written);
 		} while (strlen(buffer) == (BUF_SIZE - 1) &&
@@ -211,11 +211,11 @@ void RredMethod::ignoreLineInFile(FILE *fin, char *buffer) const {		/*{{{*/
 	}
 }
 										/*}}}*/
-void RredMethod::ignoreLineInFile(gzFile &fin, char *buffer) const {		/*{{{*/
-	gzgets(fin, buffer, BUF_SIZE);
+void RredMethod::ignoreLineInFile(FileFd &fin, char *buffer) const {		/*{{{*/
+	fin.ReadLine(buffer, BUF_SIZE);
 	while (strlen(buffer) == (BUF_SIZE - 1) &&
 	       buffer[BUF_SIZE - 2] != '\n') {
-		gzgets(fin, buffer, BUF_SIZE);
+		fin.ReadLine(buffer, BUF_SIZE);
 		buffer[0] = ' ';
 	}
 }
@@ -224,12 +224,11 @@ RredMethod::State RredMethod::patchFile(FileFd &Patch, FileFd &From,		/*{{{*/
 					FileFd &out_file, Hashes *hash) const {
    char buffer[BUF_SIZE];
    FILE* fFrom = fdopen(From.Fd(), "r");
-   gzFile fPatch = Patch.gzFd();
    FILE* fTo = fdopen(out_file.Fd(), "w");
 
    /* we do a tail recursion to read the commands in the right order */
    unsigned long line = -1; // assign highest possible value
-   State const result = applyFile(fPatch, fFrom, fTo, line, buffer, hash);
+   State const result = applyFile(Patch, fFrom, fTo, line, buffer, hash);
    
    /* read the rest from infile */
    if (result == ED_OK) {
@@ -258,20 +257,7 @@ struct EdCommand {
 RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 					FileFd &out_file, Hashes *hash) const {
 #ifdef _POSIX_MAPPED_FILES
-	MMap ed_cmds(MMap::ReadOnly);
-	if (Patch.gzFd() != NULL) {
-		unsigned long long mapSize = Patch.Size();
-		DynamicMMap* dyn = new DynamicMMap(0, mapSize, 0);
-		if (dyn->validData() == false) {
-			delete dyn;
-			return MMAP_FAILED;
-		}
-		dyn->AddSize(mapSize);
-		gzread(Patch.gzFd(), dyn->Data(), mapSize);
-		ed_cmds = *dyn;
-	} else
-		ed_cmds = MMap(Patch, MMap::ReadOnly);
-
+	MMap ed_cmds(Patch, MMap::ReadOnly);
 	MMap in_file(From, MMap::ReadOnly);
 
 	if (ed_cmds.Size() == 0 || in_file.Size() == 0)
