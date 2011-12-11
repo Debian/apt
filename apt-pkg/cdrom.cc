@@ -68,12 +68,11 @@ bool pkgCdrom::FindPackages(string CD,
    if (RealFileExists(".aptignr") == true)
       return true;
 
-
    /* Check _first_ for a signature file as apt-cdrom assumes that all files
       under a Packages/Source file are in control of that file and stops 
       the scanning
    */
-   if (RealFileExists("Release.gpg") == true)
+   if (RealFileExists("Release.gpg") == true || RealFileExists("InRelease") == true)
    {
       SigList.push_back(CD);
    }
@@ -718,6 +717,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    DropRepeats(List,"Packages");
    DropRepeats(SourceList,"Sources");
    DropRepeats(SigList,"Release.gpg");
+   DropRepeats(SigList,"InRelease");
    DropRepeats(TransList,"");
    if(log != NULL) {
       msg.str("");

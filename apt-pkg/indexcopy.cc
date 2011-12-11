@@ -638,13 +638,19 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 
       string const releasegpg = *I+"Release.gpg";
       string const release = *I+"Release";
+      string const inrelease = *I+"InRelease";
+      bool useInRelease = true;
 
       // a Release.gpg without a Release should never happen
-      if(RealFileExists(release) == false)
+      if (RealFileExists(inrelease) == true)
+	 ;
+      else if(RealFileExists(release) == false || RealFileExists(releasegpg) == false)
       {
 	 delete MetaIndex;
 	 continue;
       }
+      else
+	 useInRelease = false;
 
       pid_t pid = ExecFork();
       if(pid < 0) {
@@ -652,11 +658,16 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 	 return false;
       }
       if(pid == 0)
-	 RunGPGV(release, releasegpg);
+      {
+	 if (useInRelease == true)
+	    RunGPGV(inrelease, inrelease);
+	 else
+	    RunGPGV(release, releasegpg);
+      }
 
       if(!ExecWait(pid, "gpgv")) {
 	 _error->Warning("Signature verification failed for: %s",
-			 releasegpg.c_str());
+			 (useInRelease ? inrelease.c_str() : releasegpg.c_str()));
 	 // something went wrong, don't copy the Release.gpg
 	 // FIXME: delete any existing gpg file?
 	 continue;
@@ -686,8 +697,13 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       delete MetaIndex;
    
       // everything was fine, copy the Release and Release.gpg file
-      CopyMetaIndex(CDROM, Name, prefix, "Release");
-      CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
+      if (useInRelease == true)
+	 CopyMetaIndex(CDROM, Name, prefix, "InRelease");
+      else
+      {
+	 CopyMetaIndex(CDROM, Name, prefix, "Release");
+	 CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
+      }
    }   
 
    return true;
