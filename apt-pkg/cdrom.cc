@@ -277,6 +277,7 @@ bool pkgCdrom::DropBinaryArch(vector<string> &List)
 /* Here we go and stat every file that we found and strip dup inodes. */
 bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 {
+   bool couldFindAllFiles = true;
    // Get a list of all the inodes
    ino_t *Inodes = new ino_t[List.size()];
    for (unsigned int I = 0; I != List.size(); ++I)
@@ -297,21 +298,22 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
       }
 
       if (found == false)
-         _error->Errno("stat","Failed to stat %s%s",List[I].c_str(), Name);
+      {
+	 _error->Errno("stat","Failed to stat %s%s",List[I].c_str(), Name);
+	 couldFindAllFiles = false;
+	 Inodes[I] = 0;
+      }
    }
 
-   if (_error->PendingError() == true) {
-      delete[] Inodes;
-      return false;
-   }
-   
    // Look for dups
    for (unsigned int I = 0; I != List.size(); I++)
    {
+      if (Inodes[I] == 0)
+	 continue;
       for (unsigned int J = I+1; J < List.size(); J++)
       {
 	 // No match
-	 if (Inodes[J] != Inodes[I])
+	 if (Inodes[J] == 0 || Inodes[J] != Inodes[I])
 	    continue;
 	 
 	 // We score the two paths.. and erase one
@@ -337,7 +339,7 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 	 List.erase(List.begin()+I);
    }
    
-   return true;
+   return couldFindAllFiles;
 }
 									/*}}}*/
 // ReduceSourceList - Takes the path list and reduces it		/*{{{*/
@@ -716,8 +718,13 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    DropBinaryArch(List);
    DropRepeats(List,"Packages");
    DropRepeats(SourceList,"Sources");
+   // FIXME: We ignore stat() errors here as we usually have only one of those in use
+   // This has little potencial to drop 'valid' stat() errors as we know that one of these
+   // files need to exist, but it would be better if we would check it here
+   _error->PushToStack();
    DropRepeats(SigList,"Release.gpg");
    DropRepeats(SigList,"InRelease");
+   _error->RevertToStack();
    DropRepeats(TransList,"");
    if(log != NULL) {
       msg.str("");
