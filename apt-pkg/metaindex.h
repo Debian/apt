@@ -6,6 +6,10 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/indexfile.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 class pkgAcquire;
 class pkgCacheGenerator;
 class OpProgress;

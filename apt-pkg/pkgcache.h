@@ -74,10 +74,13 @@
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
 
-
 #include <string>
 #include <time.h>
 #include <apt-pkg/mmap.h>
+
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
 
 class pkgVersioningSystem;
 class pkgCache								/*{{{*/

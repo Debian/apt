@@ -25,6 +25,10 @@
 #include <string>
 #include <sys/time.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 class Configuration;
 class OpProgress
 {

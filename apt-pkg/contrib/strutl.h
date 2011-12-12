@@ -27,6 +27,12 @@
 
 #include "macros.h"
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+using std::vector;
+using std::ostream;
+#endif
+
 bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
 char *_strstrip(char *String);
 char *_strtabexpand(char *String,size_t Len);

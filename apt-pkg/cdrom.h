@@ -4,6 +4,10 @@
 #include<string>
 #include<vector>
 
+#ifndef APT_8_CLEANER_HEADERS
+using namespace std;
+#endif
+
 class Configuration;
 class OpProgress;
 

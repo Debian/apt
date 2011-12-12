@@ -17,6 +17,11 @@
 #include <vector>
 #include <apt-pkg/macros.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+using std::vector;
+#endif
+
 class Vendor;
 class Configuration;
 

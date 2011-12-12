@@ -22,6 +22,12 @@
 #include <vector>
 #include <cstring>
 
+
+#ifndef APT_8_CLEANER_HEADERS
+using std::min;
+using std::vector;
+#endif
+
 // helper class that contains hash function name
 // and hash
 class HashString

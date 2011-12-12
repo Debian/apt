@@ -6,6 +6,10 @@
 
 #include <apt-pkg/macros.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 // A class representing a particular software provider.
 class __deprecated Vendor
 {

@@ -36,6 +36,10 @@
 
 #include <iostream>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::ostream;
+#endif
+
 class pkgAcquireStatus;
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/

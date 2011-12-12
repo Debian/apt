@@ -15,6 +15,11 @@
 #include <algorithm>
 #include <stdint.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+using std::min;
+#endif
+
 template<int N>
 class HashSumValue
 {

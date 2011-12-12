@@ -28,6 +28,10 @@
 
 #include <string>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 class FileFd;
 
 /* This should be a 32 bit type, larger tyes use too much ram and smaller

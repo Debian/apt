@@ -29,6 +29,10 @@
 
 #include <zlib.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 /* Define this for python-apt */
 #define APT_HAS_GZIP 1
 

@@ -29,6 +29,10 @@
 #include <iostream>
 #include <set>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 class pkgAcquire;
 class pkgDepCache;
 class pkgSourceList;

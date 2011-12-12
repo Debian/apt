@@ -75,6 +75,11 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::vector;
+using std::string;
+#endif
+
 class pkgAcquireStatus;
 
 /** \brief The core download scheduler.					{{{

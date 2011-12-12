@@ -15,6 +15,11 @@
 #include <map>
 #include <stdio.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::vector;
+using std::map;
+#endif
+
 class pkgDPkgPMPrivate;
 
 class pkgDPkgPM : public pkgPackageManager

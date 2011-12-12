@@ -18,6 +18,10 @@
 
 #include <string>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::min;
+#endif
+
 class pkgDirStream;
 
 class ExtractTar
