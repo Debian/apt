@@ -38,65 +38,6 @@
 
 using namespace std;
 
-// DecompressFile - wrapper for decompressing compressed files		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool DecompressFile(string Filename, int *fd, off_t *FileSize)
-{
-    struct stat Buf;
-    *fd = -1;
-
-    std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
-    std::vector<APT::Configuration::Compressor>::const_iterator UnCompress;
-    std::string file = std::string(Filename).append(UnCompress->Extension);
-    for (UnCompress = compressor.begin(); UnCompress != compressor.end(); ++UnCompress)
-    {
-	if (stat(file.c_str(), &Buf) == 0)
-	    break;
-    }
-
-    if (UnCompress == compressor.end())
-        return _error->Errno("decompressor", "Unable to parse file");
-
-    *FileSize = Buf.st_size;
-
-    // Create a data pipe
-    int Pipe[2] = {-1,-1};
-    if (pipe(Pipe) != 0)
-        return _error->Errno("pipe",_("Failed to create subprocess IPC"));
-    for (int J = 0; J != 2; J++)
-        SetCloseExec(Pipe[J],true);
-
-    *fd = Pipe[1];
-
-    // The child..
-    pid_t Pid = ExecFork();
-    if (Pid == 0)
-    {
-	dup2(Pipe[1],STDOUT_FILENO);
-	SetCloseExec(STDOUT_FILENO, false);
-
-	std::vector<char const*> Args;
-	Args.push_back(UnCompress->Binary.c_str());
-	for (std::vector<std::string>::const_iterator a = UnCompress->UncompressArgs.begin();
-	     a != UnCompress->UncompressArgs.end(); ++a)
-	    Args.push_back(a->c_str());
-	Args.push_back("--stdout");
-	Args.push_back(file.c_str());
-	Args.push_back(NULL);
-
-	execvp(Args[0],(char **)&Args[0]);
-	cerr << _("Failed to exec compressor ") << Args[0] << endl;
-	_exit(100);
-    }
-
-    // Wait for decompress to finish
-    if (ExecWait(Pid, UnCompress->Binary.c_str(), false) == false)
-        return false;
-
-    return true;
-}
-									/*}}}*/
 // IndexCopy::CopyPackages - Copy the package files from the CD		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -142,24 +83,10 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      off_t FileSize = 0;
       
       // Open the package file
-      FileFd Pkg;
-      if (RealFileExists(*I + GetFileName()) == true)
-      {
-	 Pkg.Open(*I + GetFileName(),FileFd::ReadOnly);
-	 FileSize = Pkg.Size();
-      }      
-      else
-      {
-            int fd;
-            if (!DecompressFile(string(*I + GetFileName()), &fd, &FileSize))
-                return _error->Errno("decompress","Decompress failed for %s",
-                                     string(*I + GetFileName()).c_str());                
-            Pkg.Fd(dup(fd));
-	 Pkg.Seek(0);
-      }
+      FileFd Pkg(*I + GetFileName(), FileFd::ReadOnly, FileFd::Extension);
+      off_t const FileSize = Pkg.Size();
 
       pkgTagFile Parser(&Pkg);
       if (_error->PendingError() == true)
@@ -868,23 +795,11 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      off_t FileSize = 0;
-      
+
       // Open the package file
-      FileFd Pkg;
-      if (RealFileExists(*I) == true)
-      {
-	 Pkg.Open(*I,FileFd::ReadOnly);
-	 FileSize = Pkg.Size();
-      }      
-      else
-      {
-           int fd;
-           if (!DecompressFile(*I, &fd, &FileSize))
-               return _error->Errno("decompress","Decompress failed for %s", (*I).c_str());
-           Pkg.Fd(dup(fd));
-	 Pkg.Seek(0);
-      }
+      FileFd Pkg(*I, FileFd::ReadOnly, FileFd::Extension);
+      off_t const FileSize = Pkg.Size();
+
       pkgTagFile Parser(&Pkg);
       if (_error->PendingError() == true)
 	 return false;

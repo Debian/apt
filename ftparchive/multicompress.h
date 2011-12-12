@@ -41,8 +41,6 @@ class MultiCompress
    pid_t Outputter;
    mode_t Permissions;
 
-   bool OpenCompress(APT::Configuration::Compressor const &Prog,
-		     pid_t &Pid,int const &FileFd, int &OutFd,bool const &Comp);
    bool Child(int const &Fd);
    bool Start();
    bool Die();

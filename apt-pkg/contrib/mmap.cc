@@ -66,7 +66,7 @@ MMap::~MMap()
 bool MMap::Map(FileFd &Fd)
 {
    iSize = Fd.Size();
-   
+
    // Set the permissions.
    int Prot = PROT_READ;
    int Map = MAP_SHARED;
@@ -97,6 +97,13 @@ bool MMap::Map(FileFd &Fd)
       {
 	 // The filesystem doesn't support this particular kind of mmap.
 	 // So we allocate a buffer and read the whole file into it.
+	 if ((Flags & ReadOnly) == ReadOnly)
+	 {
+	    // for readonly, we don't need sync, so make it simple
+	    Base = new unsigned char[iSize];
+	    return Fd.Read(Base, iSize);
+	 }
+	 // FIXME: Writing to compressed fd's ?
 	 int const dupped_fd = dup(Fd.Fd());
 	 if (dupped_fd == -1)
 	    return _error->Errno("mmap", _("Couldn't duplicate file descriptor %i"), Fd.Fd());

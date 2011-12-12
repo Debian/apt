@@ -16,6 +16,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
@@ -261,73 +262,6 @@ bool MultiCompress::Finalize(unsigned long long &OutSize)
    return true;
 }
 									/*}}}*/
-// MultiCompress::OpenCompress - Open the compressor			/*{{{*/
-// ---------------------------------------------------------------------
-/* This opens the compressor, either in compress mode or decompress 
-   mode. FileFd is always the compressor input/output file, 
-   OutFd is the created pipe, Input for Compress, Output for Decompress. */
-bool MultiCompress::OpenCompress(APT::Configuration::Compressor const &Prog,
-				 pid_t &Pid,int const &FileFd,int &OutFd,bool const &Comp)
-{
-   Pid = -1;
-   
-   // No compression
-   if (Prog.Binary.empty() == true)
-   {
-      OutFd = dup(FileFd);
-      return true;
-   }
-      
-   // Create a data pipe
-   int Pipe[2] = {-1,-1};
-   if (pipe(Pipe) != 0)
-      return _error->Errno("pipe",_("Failed to create subprocess IPC"));
-   for (int J = 0; J != 2; J++)
-      SetCloseExec(Pipe[J],true);
-
-   if (Comp == true)
-      OutFd = Pipe[1];
-   else
-      OutFd = Pipe[0];
-   
-   // The child..
-   Pid = ExecFork();
-   if (Pid == 0)
-   {
-      if (Comp == true)
-      {
-	 dup2(FileFd,STDOUT_FILENO);
-	 dup2(Pipe[0],STDIN_FILENO);
-      }   
-      else
-      {
-	 dup2(FileFd,STDIN_FILENO);
-	 dup2(Pipe[1],STDOUT_FILENO);
-      }
-      
-      SetCloseExec(STDOUT_FILENO,false);
-      SetCloseExec(STDIN_FILENO,false);
-
-      std::vector<char const*> Args;
-      Args.push_back(Prog.Binary.c_str());
-      std::vector<std::string> const * const addArgs =
-		(Comp == true) ? &(Prog.CompressArgs) : &(Prog.UncompressArgs);
-      for (std::vector<std::string>::const_iterator a = addArgs->begin();
-	   a != addArgs->end(); ++a)
-	 Args.push_back(a->c_str());
-      Args.push_back(NULL);
-
-      execvp(Args[0],(char **)&Args[0]);
-      cerr << _("Failed to exec compressor ") << Args[0] << endl;
-      _exit(100);
-   };      
-   if (Comp == true)
-      close(Pipe[0]);
-   else
-      close(Pipe[1]);
-   return true;
-}
-									/*}}}*/
 // MultiCompress::OpenOld - Open an old file				/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens one of the original output files, possibly decompressing it. */
@@ -344,7 +278,7 @@ bool MultiCompress::OpenOld(int &Fd,pid_t &Proc)
       return false;
    
    // Decompress the file so we can read it
-   if (OpenCompress(Best->CompressProg,Proc,F.Fd(),Fd,false) == false)
+   if (ExecCompressor(Best->CompressProg,&Proc,F.Fd(),Fd,false) == false)
       return false;
    
    return true;
@@ -374,8 +308,8 @@ bool MultiCompress::Child(int const &FD)
    // Start the compression children.
    for (Files *I = Outputs; I != 0; I = I->Next)
    {
-      if (OpenCompress(I->CompressProg,I->CompressProc,I->TmpFile.Fd(),
-		       I->Fd,true) == false)
+      if (ExecCompressor(I->CompressProg,&(I->CompressProc),I->TmpFile.Fd(),
+			 I->Fd,true) == false)
 	 return false;      
    }
 

@@ -22,6 +22,7 @@
 #define PKGLIB_FILEUTL_H
 
 #include <apt-pkg/macros.h>
+#include <apt-pkg/aptconfiguration.h>
 
 #include <string>
 #include <vector>
@@ -110,6 +111,7 @@ class FileFd
    inline int Fd() {return iFd;};
    inline void Fd(int fd) {iFd = fd;};
    __deprecated gzFile gzFd();
+
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
    inline void EraseOnFailure() {Flags |= DelOnFail;};
@@ -169,6 +171,14 @@ void SetNonBlock(int Fd,bool Block);
 bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
 pid_t ExecFork();
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
+
+bool ExecCompressor(APT::Configuration::Compressor const &Prog,
+		    pid_t *Pid, int const FileFd, int &OutFd, bool const Comp = true);
+inline bool ExecDecompressor(APT::Configuration::Compressor const &Prog,
+		      pid_t *Pid, int const FileFd, int &OutFd)
+{
+   return ExecCompressor(Prog, Pid, FileFd, OutFd, true);
+}
 
 // File string manipulators
 std::string flNotDir(std::string File);
