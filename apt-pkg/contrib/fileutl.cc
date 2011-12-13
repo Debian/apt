@@ -48,7 +48,7 @@
 // so while the current implementation satisfies the testcases it is not a real option
 // to disable it for now
 #define APT_USE_ZLIB 1
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
 #include <zlib.h>
 #endif
 
@@ -63,7 +63,7 @@ using namespace std;
 
 class FileFdPrivate {
 	public:
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
 	gzFile gz;
 #else
 	void* gz;
@@ -914,95 +914,77 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
 {
    if (Mode == ReadOnlyGzip)
       return Open(FileName, ReadOnly, Gzip, Perms);
-   Close();
-   d = new FileFdPrivate;
-   d->openmode = Mode;
-   Flags = AutoClose;
 
    if (Compress == Auto && (Mode & WriteOnly) == WriteOnly)
       return _error->Error("Autodetection on %s only works in ReadOnly openmode!", FileName.c_str());
-   if ((Mode & WriteOnly) != WriteOnly && (Mode & (Atomic | Create | Empty | Exclusive)) != 0)
-      return _error->Error("ReadOnly mode for %s doesn't accept additional flags!", FileName.c_str());
-
-   int fileflags = 0;
-#define if_FLAGGED_SET(FLAG, MODE) if ((Mode & FLAG) == FLAG) fileflags |= MODE
-   if_FLAGGED_SET(ReadWrite, O_RDWR);
-   else if_FLAGGED_SET(ReadOnly, O_RDONLY);
-   else if_FLAGGED_SET(WriteOnly, O_WRONLY);
-   else return _error->Error("No openmode provided in FileFd::Open for %s", FileName.c_str());
-
-   if_FLAGGED_SET(Create, O_CREAT);
-   if_FLAGGED_SET(Exclusive, O_EXCL);
-   else if_FLAGGED_SET(Atomic, O_EXCL);
-   if_FLAGGED_SET(Empty, O_TRUNC);
-#undef if_FLAGGED_SET
 
    // FIXME: Denote inbuilt compressors somehow - as we don't need to have the binaries for them
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
    if (Compress == Auto)
    {
-      Compress = None;
       for (; compressor != compressors.end(); ++compressor)
       {
 	 std::string file = std::string(FileName).append(compressor->Extension);
 	 if (FileExists(file) == false)
 	    continue;
 	 FileName = file;
-	 if (compressor->Binary == ".")
-	    Compress = None;
-	 else
-	    Compress = Extension;
 	 break;
       }
    }
    else if (Compress == Extension)
    {
-      Compress = None;
       std::string ext = flExtension(FileName);
-      if (ext != FileName)
-      {
+      if (ext == FileName)
+	 ext.clear();
+      else
 	 ext = "." + ext;
-	 for (; compressor != compressors.end(); ++compressor)
-	    if (ext == compressor->Extension)
+      for (; compressor != compressors.end(); ++compressor)
+	 if (ext == compressor->Extension)
+	    break;
+      // no matching extension - assume uncompressed (imagine files like 'example.org_Packages')
+      if (compressor == compressors.end())
+	 for (compressor = compressors.begin(); compressor != compressors.end(); ++compressor)
+	    if (compressor->Name == ".")
 	       break;
-      }
    }
-   else if (Compress != None)
+   else
    {
       std::string name;
       switch (Compress)
       {
+      case None: name = "."; break;
       case Gzip: name = "gzip"; break;
       case Bzip2: name = "bzip2"; break;
       case Lzma: name = "lzma"; break;
       case Xz: name = "xz"; break;
-      default: return _error->Error("Can't find a match for specified compressor mode for file %s", FileName.c_str());
+      case Auto:
+      case Extension:
+         // Unreachable
+         return _error->Error("Opening File %s in None, Auto or Extension should be already handled?!?", FileName.c_str());
       }
       for (; compressor != compressors.end(); ++compressor)
 	 if (compressor->Name == name)
 	    break;
-      if (compressor == compressors.end() && name != "gzip")
+      if (compressor == compressors.end())
 	 return _error->Error("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
    }
 
-   // if we have them, use inbuilt compressors instead of forking
-   if (compressor != compressors.end())
-   {
-#ifdef APT_USE_ZLIB
-      if (compressor->Name == "gzip")
-      {
-	 Compress = Gzip;
-	 compressor = compressors.end();
-      }
-      else
-#endif
-      if (compressor->Name == ".")
-      {
-	 Compress = None;
-	 compressor = compressors.end();
-      }
-   }
+   if (compressor == compressors.end())
+      return _error->Error("Can't find a match for specified compressor mode for file %s", FileName.c_str());
+   return Open(FileName, Mode, *compressor, Perms);
+}
+bool FileFd::Open(string FileName,OpenMode Mode,APT::Configuration::Compressor const &compressor, unsigned long const Perms)
+{
+   Close();
+   d = new FileFdPrivate;
+   d->openmode = Mode;
+   Flags = AutoClose;
+
+   if ((Mode & WriteOnly) != WriteOnly && (Mode & (Atomic | Create | Empty | Exclusive)) != 0)
+      return _error->Error("ReadOnly mode for %s doesn't accept additional flags!", FileName.c_str());
+   if ((Mode & ReadWrite) == 0)
+      return _error->Error("No openmode provided in FileFd::Open for %s", FileName.c_str());
 
    if ((Mode & Atomic) == Atomic)
    {
@@ -1023,18 +1005,35 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
 	 unlink(FileName.c_str());
    }
 
-   if (compressor != compressors.end())
+   // if we have them, use inbuilt compressors instead of forking
+   if (compressor.Name != "."
+#if APT_USE_ZLIB
+       && compressor.Name != "gzip"
+#endif
+      )
    {
       if ((Mode & ReadWrite) == ReadWrite)
-	 return _error->Error("External compressors like %s do not support readwrite mode for file %s", compressor->Name.c_str(), FileName.c_str());
+	 return _error->Error("External compressors like %s do not support readwrite mode for file %s", compressor.Name.c_str(), FileName.c_str());
 
-      if (ExecCompressor(*compressor, NULL /*d->compressor_pid*/, FileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
-         return _error->Error("Forking external compressor %s is not implemented for %s", compressor->Name.c_str(), FileName.c_str());
+      if (ExecCompressor(compressor, NULL /*d->compressor_pid*/, FileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
+         return _error->Error("Forking external compressor %s is not implemented for %s", compressor.Name.c_str(), FileName.c_str());
       d->pipe = true;
-      d->compressor = *compressor;
+      d->compressor = compressor;
    }
    else
    {
+      int fileflags = 0;
+      #define if_FLAGGED_SET(FLAG, MODE) if ((Mode & FLAG) == FLAG) fileflags |= MODE
+      if_FLAGGED_SET(ReadWrite, O_RDWR);
+      else if_FLAGGED_SET(ReadOnly, O_RDONLY);
+      else if_FLAGGED_SET(WriteOnly, O_WRONLY);
+
+      if_FLAGGED_SET(Create, O_CREAT);
+      if_FLAGGED_SET(Exclusive, O_EXCL);
+      else if_FLAGGED_SET(Atomic, O_EXCL);
+      if_FLAGGED_SET(Empty, O_TRUNC);
+      #undef if_FLAGGED_SET
+
       if (TemporaryFileName.empty() == false)
 	 iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
       else
@@ -1042,7 +1041,7 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
 
       if (iFd != -1)
       {
-	 if (OpenInternDescriptor(Mode, Compress) == false)
+	 if (OpenInternDescriptor(Mode, compressor) == false)
 	 {
 	    close (iFd);
 	    iFd = -1;
@@ -1063,12 +1062,36 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
 /* */
 bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose)
 {
+   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
+   std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
+   std::string name;
+   switch (Compress)
+   {
+   case None: name = "."; break;
+   case Gzip: name = "gzip"; break;
+   case Bzip2: name = "bzip2"; break;
+   case Lzma: name = "lzma"; break;
+   case Xz: name = "xz"; break;
+   case Auto:
+   case Extension:
+      return _error->Error("Opening Fd %d in Auto or Extension compression mode is not supported", Fd);
+   }
+   for (; compressor != compressors.end(); ++compressor)
+      if (compressor->Name == name)
+	 break;
+   if (compressor == compressors.end())
+      return _error->Error("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
+
+   return OpenDescriptor(Fd, Mode, *compressor, AutoClose);
+}
+bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, APT::Configuration::Compressor const &compressor, bool AutoClose)
+{
    Close();
    d = new FileFdPrivate;
    d->openmode = Mode;
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
    iFd = Fd;
-   if (OpenInternDescriptor(Mode, Compress) == false)
+   if (OpenInternDescriptor(Mode, compressor) == false)
    {
       if (AutoClose)
 	 close (iFd);
@@ -1077,12 +1100,12 @@ bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool A
    this->FileName = "";
    return true;
 }
-bool FileFd::OpenInternDescriptor(OpenMode Mode, CompressMode Compress)
+bool FileFd::OpenInternDescriptor(OpenMode Mode, APT::Configuration::Compressor const &compressor)
 {
-   if (Compress == None)
+   if (compressor.Name == ".")
       return true;
-#ifdef APT_USE_ZLIB
-   else if (Compress == Gzip)
+#if APT_USE_ZLIB
+   else if (compressor.Name == "gzip")
    {
       if ((Mode & ReadWrite) == ReadWrite)
 	 d->gz = gzdopen(iFd, "r+");
@@ -1096,27 +1119,7 @@ bool FileFd::OpenInternDescriptor(OpenMode Mode, CompressMode Compress)
    }
 #endif
    else
-   {
-      std::string name;
-      switch (Compress)
-      {
-      case Gzip: name = "gzip"; break;
-      case Bzip2: name = "bzip2"; break;
-      case Lzma: name = "lzma"; break;
-      case Xz: name = "xz"; break;
-      default: return _error->Error("Can't find a match for specified compressor mode for file %s", FileName.c_str());
-      }
-      std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
-      std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
-      for (; compressor != compressors.end(); ++compressor)
-	 if (compressor->Name == name)
-	    break;
-      if (compressor == compressors.end() ||
-	  ExecCompressor(*compressor, NULL /*&(d->compressor_pid)*/,
-			 FileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
-         return _error->Error("Forking external compressor %s is not implemented for %s", name.c_str(), FileName.c_str());
-      d->pipe = true;
-   }
+      return _error->Error("Can't find a match for specified compressor %s for file %s", compressor.Name.c_str(), FileName.c_str());
    return true;
 }
 									/*}}}*/
@@ -1142,7 +1145,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    *((char *)To) = '\0';
    do
    {
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
       if (d->gz != NULL)
          Res = gzread(d->gz,To,Size);
       else
@@ -1184,7 +1187,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 char* FileFd::ReadLine(char *To, unsigned long long const Size)
 {
    *To = '\0';
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
    if (d->gz != NULL)
       return gzgets(d->gz, To, Size);
 #endif
@@ -1211,7 +1214,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    errno = 0;
    do
    {
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
       if (d->gz != NULL)
          Res = gzwrite(d->gz,From,Size);
       else
@@ -1252,7 +1255,7 @@ bool FileFd::Seek(unsigned long long To)
       return result;
    }
    int res;
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
    if (d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
@@ -1273,7 +1276,7 @@ bool FileFd::Seek(unsigned long long To)
 bool FileFd::Skip(unsigned long long Over)
 {
    int res;
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
    if (d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);
    else
@@ -1313,7 +1316,7 @@ bool FileFd::Truncate(unsigned long long To)
 unsigned long long FileFd::Tell()
 {
    off_t Res;
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
    if (d->gz != NULL)
      Res = gztell(d->gz);
    else
@@ -1367,7 +1370,7 @@ unsigned long long FileFd::Size()
       } while(read != 0);
       Seek(0);
    }
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
    // only check gzsize if we are actually a gzip file, just checking for
    // "gz" is not sufficient as uncompressed files could be opened with
    // gzopen in "direct" mode as well
@@ -1439,7 +1442,7 @@ bool FileFd::Close()
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
    {
-#ifdef APT_USE_ZLIB
+#if APT_USE_ZLIB
       if (d != NULL && d->gz != NULL) {
 	 int const e = gzclose(d->gz);
 	 // gzdopen() on empty files always fails with "buffer error" here, ignore that

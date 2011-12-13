@@ -101,10 +101,12 @@ class FileFd
    }
 
    bool Open(std::string FileName,OpenMode Mode,CompressMode Compress,unsigned long const Perms = 0666);
+   bool Open(std::string FileName,OpenMode Mode,APT::Configuration::Compressor const &compressor,unsigned long const Perms = 0666);
    inline bool Open(std::string const &FileName,OpenMode Mode, unsigned long const Perms = 0666) {
       return Open(FileName, Mode, None, Perms);
    };
    bool OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose=false);
+   bool OpenDescriptor(int Fd, OpenMode Mode, APT::Configuration::Compressor const &compressor, bool AutoClose=false);
    inline bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false) {
       return OpenDescriptor(Fd, Mode, None, AutoClose);
    };
@@ -145,7 +147,7 @@ class FileFd
 
    private:
    FileFdPrivate* d;
-   bool OpenInternDescriptor(OpenMode Mode, CompressMode Compress);
+   bool OpenInternDescriptor(OpenMode Mode, APT::Configuration::Compressor const &compressor);
 };
 
 bool RunScripts(const char *Cnf);
