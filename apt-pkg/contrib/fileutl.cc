@@ -1252,7 +1252,7 @@ bool FileFd::Seek(unsigned long long To)
       return result;
    }
    int res;
-#ifdef USE_ZLIB
+#ifdef APT_USE_ZLIB
    if (d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
@@ -1273,7 +1273,7 @@ bool FileFd::Seek(unsigned long long To)
 bool FileFd::Skip(unsigned long long Over)
 {
    int res;
-#ifdef USE_ZLIB
+#ifdef APT_USE_ZLIB
    if (d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);
    else
@@ -1313,7 +1313,7 @@ bool FileFd::Truncate(unsigned long long To)
 unsigned long long FileFd::Tell()
 {
    off_t Res;
-#ifdef USE_ZLIB
+#ifdef APT_USE_ZLIB
    if (d->gz != NULL)
      Res = gztell(d->gz);
    else
@@ -1367,7 +1367,7 @@ unsigned long long FileFd::Size()
       } while(read != 0);
       Seek(0);
    }
-#ifdef USE_ZLIB
+#ifdef APT_USE_ZLIB
    // only check gzsize if we are actually a gzip file, just checking for
    // "gz" is not sufficient as uncompressed files could be opened with
    // gzopen in "direct" mode as well
@@ -1439,7 +1439,7 @@ bool FileFd::Close()
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
    {
-#ifdef USE_ZLIB
+#ifdef APT_USE_ZLIB
       if (d != NULL && d->gz != NULL) {
 	 int const e = gzclose(d->gz);
 	 // gzdopen() on empty files always fails with "buffer error" here, ignore that
