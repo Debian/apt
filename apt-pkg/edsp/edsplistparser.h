@@ -13,6 +13,12 @@
 
 #include <apt-pkg/deblistparser.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/pkgcachegen.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/tagfile.h>
+#endif
+
 class FileFd;
 
 class edspListParser : public debListParser

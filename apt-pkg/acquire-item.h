@@ -25,6 +25,14 @@
 #include <apt-pkg/weakptr.h>
 #include <apt-pkg/pkgcache.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/vendor.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/indexrecords.h>
+#endif
+
 /** \addtogroup acquire
  *  @{
  *

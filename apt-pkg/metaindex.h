@@ -7,6 +7,9 @@
 #include <apt-pkg/indexfile.h>
 
 #ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/vendor.h>
 using std::string;
 #endif
 

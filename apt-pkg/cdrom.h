@@ -5,6 +5,7 @@
 #include<vector>
 
 #ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/init.h>
 using namespace std;
 #endif
 

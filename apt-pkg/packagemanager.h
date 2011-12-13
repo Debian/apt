@@ -30,6 +30,7 @@
 #include <set>
 
 #ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/depcache.h>
 using std::string;
 #endif
 

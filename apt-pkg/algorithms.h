@@ -37,6 +37,7 @@
 #include <iostream>
 
 #ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/acquire.h>
 using std::ostream;
 #endif
 

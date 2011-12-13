@@ -18,6 +18,8 @@
 #include <apt-pkg/macros.h>
 
 #ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/vendor.h>
+#include <apt-pkg/configuration.h>
 using std::string;
 using std::vector;
 #endif

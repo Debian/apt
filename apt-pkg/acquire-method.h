@@ -25,6 +25,11 @@
 #include <string>
 #include <vector>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/strutl.h>
+#endif
+
 class Hashes;
 class pkgAcqMethod
 {
