@@ -51,8 +51,7 @@ class MultiCompress
    unsigned long UpdateMTime;
    
    bool Finalize(unsigned long long &OutSize);
-   bool OpenOld(int &Fd,pid_t &Proc);
-   bool CloseOld(int Fd,pid_t Proc);
+   bool OpenOld(FileFd &Fd);
    static bool GetStat(std::string const &Output,std::string const &Compress,struct stat &St);
    
    MultiCompress(std::string const &Output,std::string const &Compress,

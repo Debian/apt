@@ -260,7 +260,7 @@ bool MultiCompress::Finalize(unsigned long long &OutSize)
 // MultiCompress::OpenOld - Open an old file				/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens one of the original output files, possibly decompressing it. */
-bool MultiCompress::OpenOld(int &Fd,pid_t &Proc)
+bool MultiCompress::OpenOld(FileFd &Fd)
 {
    Files *Best = Outputs;
    for (Files *I = Outputs; I != 0; I = I->Next)
@@ -268,28 +268,8 @@ bool MultiCompress::OpenOld(int &Fd,pid_t &Proc)
 	 Best = I;
 
    // Open the file
-   FileFd F(Best->Output,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   // Decompress the file so we can read it
-   if (ExecCompressor(Best->CompressProg,&Proc,F.Fd(),Fd,false) == false)
-      return false;
-   
-   return true;
+   return Fd.Open(Best->Output, FileFd::ReadOnly, FileFd::Extension);
 }
-									/*}}}*/
-// MultiCompress::CloseOld - Close the old file				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool MultiCompress::CloseOld(int Fd,pid_t Proc)
-{
-   close(Fd);
-   if (Proc != -1)
-      if (ExecWait(Proc,_("decompressor"),false) == false)
-	 return false;
-   return true;
-}   
 									/*}}}*/
 // MultiCompress::Child - The writer child				/*{{{*/
 // ---------------------------------------------------------------------
@@ -345,31 +325,27 @@ bool MultiCompress::Child(int const &FD)
    // Check the MD5 of the lowest cost entity.
    while (Missing == false)
    {
-      int CompFd = -1;
-      pid_t Proc = -1;
-      if (OpenOld(CompFd,Proc) == false)
+      FileFd CompFd;
+      if (OpenOld(CompFd) == false)
       {
 	 _error->Discard();
 	 break;
       }
-            
+
       // Compute the hash
       MD5Summation OldMD5;
       unsigned long long NewFileSize = 0;
       while (1)
       {
-	 int Res = read(CompFd,Buffer,sizeof(Buffer));
+	 unsigned long long Res = 0;
+	 if (CompFd.Read(Buffer,sizeof(Buffer), &Res) == false)
+	    return _error->Errno("read",_("Failed to read while computing MD5"));
 	 if (Res == 0)
 	    break;
-	 if (Res < 0)
-	    return _error->Errno("read",_("Failed to read while computing MD5"));
 	 NewFileSize += Res;
 	 OldMD5.Add(Buffer,Res);
       }
-      
-      // Tidy the compressor
-      if (CloseOld(CompFd,Proc) == false)
-	 return false;
+      CompFd.Close();
 
       // Check the hash
       if (OldMD5.Result() == MD5.Result() &&
