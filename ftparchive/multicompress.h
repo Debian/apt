@@ -34,7 +34,6 @@ class MultiCompress
       FileFd TmpFile;
       pid_t CompressProc;
       time_t OldMTime;
-      int Fd;
    };
    
    Files *Outputs;

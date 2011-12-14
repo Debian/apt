@@ -91,7 +91,7 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
    /* Open all the temp files now so we can report any errors. File is 
       made unreable to prevent people from touching it during creating. */
    for (Files *I = Outputs; I != 0; I = I->Next)
-      I->TmpFile.Open(I->Output + ".new",FileFd::WriteEmpty,0600);
+      I->TmpFile.Open(I->Output + ".new", FileFd::WriteOnly | FileFd::Create | FileFd::Empty, FileFd::Extension, 0600);
    if (_error->PendingError() == true)
       return;
 
@@ -183,11 +183,6 @@ bool MultiCompress::Start()
       _exit(0);
    };
 
-   /* Tidy up the temp files, we open them in the constructor so as to
-      get proper error reporting. Close them now. */
-   for (Files *I = Outputs; I != 0; I = I->Next)
-      I->TmpFile.Close();
-   
    close(Pipe[0]);
    Input = fdopen(Pipe[1],"w");
    if (Input == 0)
@@ -305,14 +300,6 @@ bool MultiCompress::CloseOld(int Fd,pid_t Proc)
    is new then the temp files are renamed, otherwise they are erased. */
 bool MultiCompress::Child(int const &FD)
 {
-   // Start the compression children.
-   for (Files *I = Outputs; I != 0; I = I->Next)
-   {
-      if (ExecCompressor(I->CompressProg,&(I->CompressProc),I->TmpFile.Fd(),
-			 I->Fd,true) == false)
-	 return false;      
-   }
-
    /* Okay, now we just feed data from FD to all the other FDs. Also
       stash a hash of the data to use later. */
    SetNonBlock(FD,false);
@@ -332,25 +319,14 @@ bool MultiCompress::Child(int const &FD)
       FileSize += Res;
       for (Files *I = Outputs; I != 0; I = I->Next)
       {
-	 if (write(I->Fd,Buffer,Res) != Res)
+	 if (I->TmpFile.Write(Buffer, Res) == false)
 	 {
 	    _error->Errno("write",_("IO to subprocess/file failed"));
 	    break;
 	 }
       }      
    }   
-   
-   // Close all the writers
-   for (Files *I = Outputs; I != 0; I = I->Next)
-      close(I->Fd);
-   
-   // Wait for the compressors to exit
-   for (Files *I = Outputs; I != 0; I = I->Next)
-   {
-      if (I->CompressProc != -1)
-	 ExecWait(I->CompressProc, I->CompressProg.Binary.c_str(), false);
-   }
-   
+
    if (_error->PendingError() == true)
       return false;
    

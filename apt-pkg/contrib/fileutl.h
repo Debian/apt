@@ -100,14 +100,14 @@ class FileFd
 	return T;
    }
 
-   bool Open(std::string FileName,OpenMode Mode,CompressMode Compress,unsigned long const Perms = 0666);
-   bool Open(std::string FileName,OpenMode Mode,APT::Configuration::Compressor const &compressor,unsigned long const Perms = 0666);
-   inline bool Open(std::string const &FileName,OpenMode Mode, unsigned long const Perms = 0666) {
+   bool Open(std::string FileName,unsigned int const Mode,CompressMode Compress,unsigned long const Perms = 0666);
+   bool Open(std::string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor,unsigned long const Perms = 0666);
+   inline bool Open(std::string const &FileName,unsigned int const Mode, unsigned long const Perms = 0666) {
       return Open(FileName, Mode, None, Perms);
    };
-   bool OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose=false);
-   bool OpenDescriptor(int Fd, OpenMode Mode, APT::Configuration::Compressor const &compressor, bool AutoClose=false);
-   inline bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false) {
+   bool OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compress, bool AutoClose=false);
+   bool OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose=false);
+   inline bool OpenDescriptor(int Fd, unsigned int const Mode, bool AutoClose=false) {
       return OpenDescriptor(Fd, Mode, None, AutoClose);
    };
    bool Close();
@@ -126,16 +126,16 @@ class FileFd
    inline bool IsCompressed() {return (Flags & Compressed) == Compressed;};
    inline std::string &Name() {return FileName;};
    
-   FileFd(std::string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
+   FileFd(std::string FileName,unsigned int const Mode,unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
    {
       Open(FileName,Mode, None, Perms);
    };
-   FileFd(std::string FileName,OpenMode Mode, CompressMode Compress, unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
+   FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
    {
       Open(FileName,Mode, Compress, Perms);
    };
    FileFd() : iFd(-1), Flags(AutoClose), d(NULL) {};
-   FileFd(int const Fd, OpenMode Mode = ReadWrite, CompressMode Compress = None) : iFd(-1), Flags(0), d(NULL)
+   FileFd(int const Fd, unsigned int const Mode = ReadWrite, CompressMode Compress = None) : iFd(-1), Flags(0), d(NULL)
    {
       OpenDescriptor(Fd, Mode, Compress);
    };
@@ -147,7 +147,7 @@ class FileFd
 
    private:
    FileFdPrivate* d;
-   bool OpenInternDescriptor(OpenMode Mode, APT::Configuration::Compressor const &compressor);
+   bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
 };
 
 bool RunScripts(const char *Cnf);

@@ -50,6 +50,8 @@
 #define APT_USE_ZLIB 1
 #if APT_USE_ZLIB
 #include <zlib.h>
+#else
+#warning "Usage of zlib is DISABLED!"
 #endif
 
 #ifdef WORDS_BIGENDIAN
@@ -71,7 +73,7 @@ class FileFdPrivate {
 	pid_t compressor_pid;
 	bool pipe;
 	APT::Configuration::Compressor compressor;
-	FileFd::OpenMode openmode;
+	unsigned int openmode;
 	FileFdPrivate() : gz(NULL), compressor_pid(-1), pipe(false) {};
 };
 
@@ -858,8 +860,13 @@ bool ExecCompressor(APT::Configuration::Compressor const &Prog,
    for (int J = 0; J != 2; J++)
       SetCloseExec(Pipe[J],true);
 
+   int FileFd = -1;
    if (Comp == true)
+   {
       OutFd = Pipe[1];
+      // FIXME: we should handle openmode and permission from Open() here
+      FileFd = open(FileName.c_str(), O_WRONLY, 0666);
+   }
    else
       OutFd = Pipe[0];
 
@@ -872,13 +879,14 @@ bool ExecCompressor(APT::Configuration::Compressor const &Prog,
       if (Comp == true)
       {
 	 dup2(Pipe[0],STDIN_FILENO);
+	 dup2(FileFd,STDOUT_FILENO);
 	 SetCloseExec(STDIN_FILENO,false);
       }
       else
       {
 	 dup2(Pipe[1],STDOUT_FILENO);
-	 SetCloseExec(STDOUT_FILENO,false);
       }
+      SetCloseExec(STDOUT_FILENO,false);
 
       std::vector<char const*> Args;
       Args.push_back(Prog.Binary.c_str());
@@ -887,8 +895,11 @@ bool ExecCompressor(APT::Configuration::Compressor const &Prog,
       for (std::vector<std::string>::const_iterator a = addArgs->begin();
 	   a != addArgs->end(); ++a)
 	 Args.push_back(a->c_str());
-      Args.push_back("--stdout");
-      Args.push_back(FileName.c_str());
+      if (Comp == false)
+      {
+	 Args.push_back("--stdout");
+	 Args.push_back(FileName.c_str());
+      }
       Args.push_back(NULL);
 
       execvp(Args[0],(char **)&Args[0]);
@@ -896,7 +907,10 @@ bool ExecCompressor(APT::Configuration::Compressor const &Prog,
       _exit(100);
    }
    if (Comp == true)
+   {
       close(Pipe[0]);
+      close(FileFd);
+   }
    else
       close(Pipe[1]);
 
@@ -910,7 +924,7 @@ bool ExecCompressor(APT::Configuration::Compressor const &Prog,
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */
-bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned long const Perms)
+bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress, unsigned long const Perms)
 {
    if (Mode == ReadOnlyGzip)
       return Open(FileName, ReadOnly, Gzip, Perms);
@@ -934,11 +948,20 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
    }
    else if (Compress == Extension)
    {
-      std::string ext = flExtension(FileName);
-      if (ext == FileName)
-	 ext.clear();
-      else
-	 ext = "." + ext;
+      std::string::size_type const found = FileName.find_last_of('.');
+      std::string ext;
+      if (found != std::string::npos)
+      {
+	 ext = FileName.substr(found);
+	 if (ext == ".new" || ext == ".bak")
+	 {
+	    std::string::size_type const found2 = FileName.find_last_of('.', found - 1);
+	    if (found2 != std::string::npos)
+	       ext = FileName.substr(found2, found - found2);
+	    else
+	       ext.clear();
+	 }
+      }
       for (; compressor != compressors.end(); ++compressor)
 	 if (ext == compressor->Extension)
 	    break;
@@ -960,8 +983,8 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
       case Xz: name = "xz"; break;
       case Auto:
       case Extension:
-         // Unreachable
-         return _error->Error("Opening File %s in None, Auto or Extension should be already handled?!?", FileName.c_str());
+	 // Unreachable
+	 return _error->Error("Opening File %s in None, Auto or Extension should be already handled?!?", FileName.c_str());
       }
       for (; compressor != compressors.end(); ++compressor)
 	 if (compressor->Name == name)
@@ -974,7 +997,7 @@ bool FileFd::Open(string FileName,OpenMode Mode,CompressMode Compress, unsigned 
       return _error->Error("Can't find a match for specified compressor mode for file %s", FileName.c_str());
    return Open(FileName, Mode, *compressor, Perms);
 }
-bool FileFd::Open(string FileName,OpenMode Mode,APT::Configuration::Compressor const &compressor, unsigned long const Perms)
+bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor, unsigned long const Perms)
 {
    Close();
    d = new FileFdPrivate;
@@ -1015,8 +1038,35 @@ bool FileFd::Open(string FileName,OpenMode Mode,APT::Configuration::Compressor c
       if ((Mode & ReadWrite) == ReadWrite)
 	 return _error->Error("External compressors like %s do not support readwrite mode for file %s", compressor.Name.c_str(), FileName.c_str());
 
-      if (ExecCompressor(compressor, NULL /*d->compressor_pid*/, FileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
-         return _error->Error("Forking external compressor %s is not implemented for %s", compressor.Name.c_str(), FileName.c_str());
+      if ((Mode & (WriteOnly | Create)) == (WriteOnly | Create))
+      {
+	 if (TemporaryFileName.empty() == false)
+	 {
+	    if (RealFileExists(TemporaryFileName) == false)
+	    {
+	       iFd = open(TemporaryFileName.c_str(), O_WRONLY | O_CREAT, Perms);
+	       close(iFd);
+	       iFd = -1;
+	    }
+	 }
+	 else if (RealFileExists(FileName) == false)
+	 {
+	    iFd = open(FileName.c_str(), O_WRONLY | O_CREAT, Perms);
+	    close(iFd);
+	    iFd = -1;
+	 }
+      }
+
+      if (TemporaryFileName.empty() == false)
+      {
+	 if (ExecCompressor(compressor, &(d->compressor_pid), TemporaryFileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
+	    return _error->Error("Forking external compressor %s is not implemented for %s", compressor.Name.c_str(), TemporaryFileName.c_str());
+      }
+      else
+      {
+	 if (ExecCompressor(compressor, &(d->compressor_pid), FileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
+	    return _error->Error("Forking external compressor %s is not implemented for %s", compressor.Name.c_str(), FileName.c_str());
+      }
       d->pipe = true;
       d->compressor = compressor;
    }
@@ -1060,7 +1110,7 @@ bool FileFd::Open(string FileName,OpenMode Mode,APT::Configuration::Compressor c
 // FileFd::OpenDescriptor - Open a filedescriptor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool AutoClose)
+bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compress, bool AutoClose)
 {
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
@@ -1084,7 +1134,7 @@ bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, CompressMode Compress, bool A
 
    return OpenDescriptor(Fd, Mode, *compressor, AutoClose);
 }
-bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, APT::Configuration::Compressor const &compressor, bool AutoClose)
+bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose)
 {
    Close();
    d = new FileFdPrivate;
@@ -1100,7 +1150,7 @@ bool FileFd::OpenDescriptor(int Fd, OpenMode Mode, APT::Configuration::Compresso
    this->FileName = "";
    return true;
 }
-bool FileFd::OpenInternDescriptor(OpenMode Mode, APT::Configuration::Compressor const &compressor)
+bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor)
 {
    if (compressor.Name == ".")
       return true;
@@ -1471,8 +1521,8 @@ bool FileFd::Close()
 
    if (d != NULL)
    {
-//      if (d->compressor_pid != -1)
-//	 ExecWait(d->compressor_pid, "FileFdCompressor", true);
+      if (d->compressor_pid != -1)
+	 ExecWait(d->compressor_pid, "FileFdCompressor", true);
       delete d;
       d = NULL;
    }
