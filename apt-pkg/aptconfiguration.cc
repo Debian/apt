@@ -335,7 +335,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 		FILE *dpkg = popen(dpkgcall.c_str(), "r");
 		char buf[1024];
 		if(dpkg != NULL) {
-			if (fgets(buf, sizeof(buf), dpkg) != NULL) {
+			while (fgets(buf, sizeof(buf), dpkg) != NULL) {
 				char* arch = strtok(buf, " ");
 				while (arch != NULL) {
 					for (; isspace(*arch) != 0; ++arch);
