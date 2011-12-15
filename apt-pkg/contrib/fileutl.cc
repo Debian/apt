@@ -51,7 +51,7 @@
 #if APT_USE_ZLIB
 #include <zlib.h>
 #else
-#warning "Usage of zlib is DISABLED!"
+#pragma message "Usage of zlib is DISABLED!"
 #endif
 
 #ifdef WORDS_BIGENDIAN
@@ -70,11 +70,12 @@ class FileFdPrivate {
 #else
 	void* gz;
 #endif
+	int compressed_fd;
 	pid_t compressor_pid;
 	bool pipe;
 	APT::Configuration::Compressor compressor;
 	unsigned int openmode;
-	FileFdPrivate() : gz(NULL), compressor_pid(-1), pipe(false) {};
+	FileFdPrivate() : gz(NULL), compressed_fd(-1), compressor_pid(-1), pipe(false) {};
 };
 
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
@@ -740,187 +741,6 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 }
 									/*}}}*/
 
-// ExecCompressor - Open a de/compressor pipe				/*{{{*/
-// ---------------------------------------------------------------------
-/* This opens the compressor, either in compress mode or decompress
-   mode. FileFd is always the compressor input/output file,
-   OutFd is the created pipe, Input for Compress, Output for Decompress. */
-bool ExecCompressor(APT::Configuration::Compressor const &Prog,
-		    pid_t *Pid, int const FileFd, int &OutFd, bool const Comp)
-{
-   if (Pid != NULL)
-      *Pid = -1;
-
-   // No compression
-   if (Prog.Binary.empty() == true)
-   {
-      OutFd = dup(FileFd);
-      return true;
-   }
-
-   // Handle 'decompression' of empty files
-   if (Comp == false)
-   {
-      struct stat Buf;
-      fstat(FileFd, &Buf);
-      if (Buf.st_size == 0 && S_ISFIFO(Buf.st_mode) == false)
-      {
-	 OutFd = FileFd;
-	 return true;
-      }
-   }
-
-   // Create a data pipe
-   int Pipe[2] = {-1,-1};
-   if (pipe(Pipe) != 0)
-      return _error->Errno("pipe",_("Failed to create subprocess IPC"));
-   for (int J = 0; J != 2; J++)
-      SetCloseExec(Pipe[J],true);
-
-   if (Comp == true)
-      OutFd = Pipe[1];
-   else
-      OutFd = Pipe[0];
-
-   // The child..
-   pid_t child = ExecFork();
-   if (Pid != NULL)
-      *Pid = child;
-   if (child == 0)
-   {
-      if (Comp == true)
-      {
-	 dup2(FileFd,STDOUT_FILENO);
-	 dup2(Pipe[0],STDIN_FILENO);
-      }
-      else
-      {
-	 dup2(FileFd,STDIN_FILENO);
-	 dup2(Pipe[1],STDOUT_FILENO);
-      }
-
-      SetCloseExec(STDOUT_FILENO,false);
-      SetCloseExec(STDIN_FILENO,false);
-
-      std::vector<char const*> Args;
-      Args.push_back(Prog.Binary.c_str());
-      std::vector<std::string> const * const addArgs =
-		(Comp == true) ? &(Prog.CompressArgs) : &(Prog.UncompressArgs);
-      for (std::vector<std::string>::const_iterator a = addArgs->begin();
-	   a != addArgs->end(); ++a)
-	 Args.push_back(a->c_str());
-      Args.push_back(NULL);
-
-      execvp(Args[0],(char **)&Args[0]);
-      cerr << _("Failed to exec compressor ") << Args[0] << endl;
-      _exit(100);
-   }
-   if (Comp == true)
-      close(Pipe[0]);
-   else
-      close(Pipe[1]);
-
-   if (Pid == NULL)
-      ExecWait(child, Prog.Binary.c_str(), true);
-
-   return true;
-}
-bool ExecCompressor(APT::Configuration::Compressor const &Prog,
-		    pid_t *Pid, std::string const &FileName, int &OutFd, bool const Comp)
-{
-   if (Pid != NULL)
-      *Pid = -1;
-
-   // No compression
-   if (Prog.Binary.empty() == true)
-   {
-      if (Comp == true)
-	 OutFd = open(FileName.c_str(), O_WRONLY, 0666);
-      else
-	 OutFd = open(FileName.c_str(), O_RDONLY);
-      return true;
-   }
-
-   // Handle 'decompression' of empty files
-   if (Comp == false)
-   {
-      struct stat Buf;
-      stat(FileName.c_str(), &Buf);
-      if (Buf.st_size == 0)
-      {
-	 OutFd = open(FileName.c_str(), O_RDONLY);
-	 return true;
-      }
-   }
-
-   // Create a data pipe
-   int Pipe[2] = {-1,-1};
-   if (pipe(Pipe) != 0)
-      return _error->Errno("pipe",_("Failed to create subprocess IPC"));
-   for (int J = 0; J != 2; J++)
-      SetCloseExec(Pipe[J],true);
-
-   int FileFd = -1;
-   if (Comp == true)
-   {
-      OutFd = Pipe[1];
-      // FIXME: we should handle openmode and permission from Open() here
-      FileFd = open(FileName.c_str(), O_WRONLY, 0666);
-   }
-   else
-      OutFd = Pipe[0];
-
-   // The child..
-   pid_t child = ExecFork();
-   if (Pid != NULL)
-      *Pid = child;
-   if (child == 0)
-   {
-      if (Comp == true)
-      {
-	 dup2(Pipe[0],STDIN_FILENO);
-	 dup2(FileFd,STDOUT_FILENO);
-	 SetCloseExec(STDIN_FILENO,false);
-      }
-      else
-      {
-	 dup2(Pipe[1],STDOUT_FILENO);
-      }
-      SetCloseExec(STDOUT_FILENO,false);
-
-      std::vector<char const*> Args;
-      Args.push_back(Prog.Binary.c_str());
-      std::vector<std::string> const * const addArgs =
-		(Comp == true) ? &(Prog.CompressArgs) : &(Prog.UncompressArgs);
-      for (std::vector<std::string>::const_iterator a = addArgs->begin();
-	   a != addArgs->end(); ++a)
-	 Args.push_back(a->c_str());
-      if (Comp == false)
-      {
-	 Args.push_back("--stdout");
-	 Args.push_back(FileName.c_str());
-      }
-      Args.push_back(NULL);
-
-      execvp(Args[0],(char **)&Args[0]);
-      cerr << _("Failed to exec compressor ") << Args[0] << endl;
-      _exit(100);
-   }
-   if (Comp == true)
-   {
-      close(Pipe[0]);
-      close(FileFd);
-   }
-   else
-      close(Pipe[1]);
-
-   if (Pid == NULL)
-      ExecWait(child, Prog.Binary.c_str(), false);
-
-   return true;
-}
-									/*}}}*/
-
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */
@@ -1028,79 +848,32 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
 	 unlink(FileName.c_str());
    }
 
-   // if we have them, use inbuilt compressors instead of forking
-   if (compressor.Name != "."
-#if APT_USE_ZLIB
-       && compressor.Name != "gzip"
-#endif
-      )
-   {
-      if ((Mode & ReadWrite) == ReadWrite)
-	 return _error->Error("External compressors like %s do not support readwrite mode for file %s", compressor.Name.c_str(), FileName.c_str());
+   int fileflags = 0;
+   #define if_FLAGGED_SET(FLAG, MODE) if ((Mode & FLAG) == FLAG) fileflags |= MODE
+   if_FLAGGED_SET(ReadWrite, O_RDWR);
+   else if_FLAGGED_SET(ReadOnly, O_RDONLY);
+   else if_FLAGGED_SET(WriteOnly, O_WRONLY);
 
-      if ((Mode & (WriteOnly | Create)) == (WriteOnly | Create))
-      {
-	 if (TemporaryFileName.empty() == false)
-	 {
-	    if (RealFileExists(TemporaryFileName) == false)
-	    {
-	       iFd = open(TemporaryFileName.c_str(), O_WRONLY | O_CREAT, Perms);
-	       close(iFd);
-	       iFd = -1;
-	    }
-	 }
-	 else if (RealFileExists(FileName) == false)
-	 {
-	    iFd = open(FileName.c_str(), O_WRONLY | O_CREAT, Perms);
-	    close(iFd);
-	    iFd = -1;
-	 }
-      }
+   if_FLAGGED_SET(Create, O_CREAT);
+   if_FLAGGED_SET(Empty, O_TRUNC);
+   if_FLAGGED_SET(Exclusive, O_EXCL);
+   else if_FLAGGED_SET(Atomic, O_EXCL);
+   #undef if_FLAGGED_SET
 
-      if (TemporaryFileName.empty() == false)
-      {
-	 if (ExecCompressor(compressor, &(d->compressor_pid), TemporaryFileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
-	    return _error->Error("Forking external compressor %s is not implemented for %s", compressor.Name.c_str(), TemporaryFileName.c_str());
-      }
-      else
-      {
-	 if (ExecCompressor(compressor, &(d->compressor_pid), FileName, iFd, ((Mode & ReadOnly) != ReadOnly)) == false)
-	    return _error->Error("Forking external compressor %s is not implemented for %s", compressor.Name.c_str(), FileName.c_str());
-      }
-      d->pipe = true;
-      d->compressor = compressor;
-   }
+   if (TemporaryFileName.empty() == false)
+      iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
    else
+      iFd = open(FileName.c_str(), fileflags, Perms);
+
+   if (iFd == -1 || OpenInternDescriptor(Mode, compressor) == false)
    {
-      int fileflags = 0;
-      #define if_FLAGGED_SET(FLAG, MODE) if ((Mode & FLAG) == FLAG) fileflags |= MODE
-      if_FLAGGED_SET(ReadWrite, O_RDWR);
-      else if_FLAGGED_SET(ReadOnly, O_RDONLY);
-      else if_FLAGGED_SET(WriteOnly, O_WRONLY);
-
-      if_FLAGGED_SET(Create, O_CREAT);
-      if_FLAGGED_SET(Exclusive, O_EXCL);
-      else if_FLAGGED_SET(Atomic, O_EXCL);
-      if_FLAGGED_SET(Empty, O_TRUNC);
-      #undef if_FLAGGED_SET
-
-      if (TemporaryFileName.empty() == false)
-	 iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
-      else
-	 iFd = open(FileName.c_str(), fileflags, Perms);
-
       if (iFd != -1)
       {
-	 if (OpenInternDescriptor(Mode, compressor) == false)
-	 {
-	    close (iFd);
-	    iFd = -1;
-	 }
+	 close (iFd);
+	 iFd = -1;
       }
+      return _error->Errno("open",_("Could not open file %s"), FileName.c_str());
    }
-
-   if (iFd == -1)
-      return _error->Errno("open",_("Could not open file %s"),FileName.c_str());
 
    this->FileName = FileName;
    SetCloseExec(iFd,true);
@@ -1152,7 +925,8 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
 }
 bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor)
 {
-   if (compressor.Name == ".")
+   d->compressor = compressor;
+   if (compressor.Name == "." || compressor.Binary.empty() == true)
       return true;
 #if APT_USE_ZLIB
    else if (compressor.Name == "gzip")
@@ -1166,10 +940,90 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       if (d->gz == NULL)
 	 return false;
       Flags |= Compressed;
+      return true;
    }
 #endif
+
+   if ((Mode & ReadWrite) == ReadWrite)
+      return _error->Error("ReadWrite mode is not supported for file %s", FileName.c_str());
+
+   bool const Comp = (Mode & WriteOnly) == WriteOnly;
+   // Handle 'decompression' of empty files
+   if (Comp == false)
+   {
+      struct stat Buf;
+      fstat(iFd, &Buf);
+      if (Buf.st_size == 0 && S_ISFIFO(Buf.st_mode) == false)
+	 return true;
+
+      // We don't need the file open - instead let the compressor open it
+      // as he properly knows better how to efficiently read from 'his' file
+      if (FileName.empty() == false)
+	 close(iFd);
+   }
+
+   // Create a data pipe
+   int Pipe[2] = {-1,-1};
+   if (pipe(Pipe) != 0)
+      return _error->Errno("pipe",_("Failed to create subprocess IPC"));
+   for (int J = 0; J != 2; J++)
+      SetCloseExec(Pipe[J],true);
+
+   d->compressed_fd = iFd;
+   d->pipe = true;
+
+   if (Comp == true)
+      iFd = Pipe[1];
    else
-      return _error->Error("Can't find a match for specified compressor %s for file %s", compressor.Name.c_str(), FileName.c_str());
+      iFd = Pipe[0];
+
+   // The child..
+   d->compressor_pid = ExecFork();
+   if (d->compressor_pid == 0)
+   {
+      if (Comp == true)
+      {
+	 dup2(d->compressed_fd,STDOUT_FILENO);
+	 dup2(Pipe[0],STDIN_FILENO);
+      }
+      else
+      {
+	 if (FileName.empty() == true)
+	    dup2(d->compressed_fd,STDIN_FILENO);
+	 dup2(Pipe[1],STDOUT_FILENO);
+      }
+
+      SetCloseExec(STDOUT_FILENO,false);
+      SetCloseExec(STDIN_FILENO,false);
+
+      std::vector<char const*> Args;
+      Args.push_back(compressor.Binary.c_str());
+      std::vector<std::string> const * const addArgs =
+		(Comp == true) ? &(compressor.CompressArgs) : &(compressor.UncompressArgs);
+      for (std::vector<std::string>::const_iterator a = addArgs->begin();
+	   a != addArgs->end(); ++a)
+	 Args.push_back(a->c_str());
+      if (Comp == false && FileName.empty() == false)
+      {
+	 Args.push_back("--stdout");
+	 if (TemporaryFileName.empty() == false)
+	    Args.push_back(TemporaryFileName.c_str());
+	 else
+	    Args.push_back(FileName.c_str());
+      }
+      Args.push_back(NULL);
+
+      execvp(Args[0],(char **)&Args[0]);
+      cerr << _("Failed to exec compressor ") << Args[0] << endl;
+      _exit(100);
+   }
+   if (Comp == true)
+      close(Pipe[0]);
+   else
+      close(Pipe[1]);
+   if (Comp == true || FileName.empty() == true)
+      close(d->compressed_fd);
+
    return true;
 }
 									/*}}}*/
@@ -1297,12 +1151,22 @@ bool FileFd::Seek(unsigned long long To)
 {
    if (d->pipe == true)
    {
-      // FIXME: What about OpenDescriptor() stuff here?
+      if ((d->openmode & ReadOnly) != ReadOnly)
+	 return _error->Error("Reopen is only implemented for read-only files!");
       close(iFd);
-      bool result = ExecCompressor(d->compressor, NULL, FileName, iFd, (d->openmode & ReadOnly) != ReadOnly);
-      if (result == true && To != 0)
-	 result &= Skip(To);
-      return result;
+      if (TemporaryFileName.empty() == false)
+	 iFd = open(TemporaryFileName.c_str(), O_RDONLY);
+      else if (FileName.empty() == false)
+	 iFd = open(FileName.c_str(), O_RDONLY);
+      else
+	 return _error->Error("Reopen is not implemented for OpenDescriptor()-FileFd!");
+
+      if (OpenInternDescriptor(d->openmode, d->compressor) == false)
+	 return _error->Error("Seek on file %s because it couldn't be reopened", FileName.c_str());
+
+      if (To != 0)
+	 return Skip(To);
+      return true;
    }
    int res;
 #if APT_USE_ZLIB
@@ -1521,7 +1385,7 @@ bool FileFd::Close()
 
    if (d != NULL)
    {
-      if (d->compressor_pid != -1)
+      if (d->compressor_pid > 0)
 	 ExecWait(d->compressor_pid, "FileFdCompressor", true);
       delete d;
       d = NULL;

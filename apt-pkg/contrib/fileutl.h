@@ -178,14 +178,6 @@ bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
 pid_t ExecFork();
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
-bool ExecCompressor(APT::Configuration::Compressor const &Prog,
-		    pid_t *Pid, int const FileFd, int &OutFd, bool const Comp = true);
-inline bool ExecDecompressor(APT::Configuration::Compressor const &Prog,
-		      pid_t *Pid, int const FileFd, int &OutFd)
-{
-   return ExecCompressor(Prog, Pid, FileFd, OutFd, true);
-}
-
 // File string manipulators
 std::string flNotDir(std::string File);
 std::string flNotFile(std::string File);
