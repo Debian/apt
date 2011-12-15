@@ -26,6 +26,8 @@
 #include <sys/stat.h>
 									/*}}}*/
 
+using std::string;
+
 // SourcesIndex::debSourcesIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */

@@ -35,11 +35,13 @@
 
 #include <apti18n.h>
 									/*}}}*/
-typedef vector<pkgIndexFile *>::iterator FileIterator;
+typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
 bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang);
+
+using std::string;
 
 // CacheGenerator::pkgCacheGenerator - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
@@ -1221,14 +1223,14 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 			MMap **OutMap,bool AllowMem)
 {
    bool const Debug = _config->FindB("Debug::pkgCacheGen", false);
-   
-   vector<pkgIndexFile *> Files;
-   for (vector<metaIndex *>::const_iterator i = List.begin();
+
+   std::vector<pkgIndexFile *> Files;
+   for (std::vector<metaIndex *>::const_iterator i = List.begin();
         i != List.end();
         ++i)
    {
-      vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
-      for (vector<pkgIndexFile *>::const_iterator j = Indexes->begin();
+      std::vector <pkgIndexFile *> *Indexes = (*i)->GetIndexFiles();
+      for (std::vector<pkgIndexFile *>::const_iterator j = Indexes->begin();
 	   j != Indexes->end();
 	   ++j)
          Files.push_back (*j);
@@ -1418,7 +1420,7 @@ __deprecated bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutM
    { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {
-   vector<pkgIndexFile *> Files;
+   std::vector<pkgIndexFile *> Files;
    unsigned long EndOfSource = Files.size();
    if (_system->AddStatusFiles(Files) == false)
       return false;
