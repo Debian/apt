@@ -1154,12 +1154,19 @@ bool FileFd::Seek(unsigned long long To)
       if ((d->openmode & ReadOnly) != ReadOnly)
 	 return _error->Error("Reopen is only implemented for read-only files!");
       close(iFd);
+      iFd = 0;
       if (TemporaryFileName.empty() == false)
 	 iFd = open(TemporaryFileName.c_str(), O_RDONLY);
       else if (FileName.empty() == false)
 	 iFd = open(FileName.c_str(), O_RDONLY);
       else
-	 return _error->Error("Reopen is not implemented for OpenDescriptor()-FileFd!");
+      {
+	 if (d->compressed_fd > 0)
+	    if (lseek(d->compressed_fd, 0, SEEK_SET) != 0)
+	       iFd = d->compressed_fd;
+	 if (iFd <= 0)
+	    return _error->Error("Reopen is not implemented for pipes opened with FileFd::OpenDescriptor()!");
+      }
 
       if (OpenInternDescriptor(d->openmode, d->compressor) == false)
 	 return _error->Error("Seek on file %s because it couldn't be reopened", FileName.c_str());
