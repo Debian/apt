@@ -314,7 +314,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // take hashes
    Hashes Hash;
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd.Fd(), Fd.Size());
+   Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
    
    // keep apt updated
