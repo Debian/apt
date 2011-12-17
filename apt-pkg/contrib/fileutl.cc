@@ -75,7 +75,9 @@ class FileFdPrivate {
 	bool pipe;
 	APT::Configuration::Compressor compressor;
 	unsigned int openmode;
-	FileFdPrivate() : gz(NULL), compressed_fd(-1), compressor_pid(-1), pipe(false) {};
+	unsigned long long seekpos;
+	FileFdPrivate() : gz(NULL), compressed_fd(-1), compressor_pid(-1), pipe(false),
+			  openmode(0), seekpos(0) {};
 };
 
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
@@ -1065,6 +1067,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       
       To = (char *)To + Res;
       Size -= Res;
+      d->seekpos += Res;
       if (Actual != 0)
 	 *Actual += Res;
    }
@@ -1134,6 +1137,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
       
       From = (char *)From + Res;
       Size -= Res;
+      d->seekpos += Res;
    }
    while (Res > 0 && Size > 0);
    
@@ -1151,6 +1155,13 @@ bool FileFd::Seek(unsigned long long To)
 {
    if (d->pipe == true)
    {
+      // Our poor man seeking in pipes is costly, so try to avoid it
+      unsigned long long seekpos = Tell();
+      if (seekpos == To)
+	 return true;
+      else if (seekpos < To)
+	 return Skip(To - seekpos);
+
       if ((d->openmode & ReadOnly) != ReadOnly)
 	 return _error->Error("Reopen is only implemented for read-only files!");
       close(iFd);
@@ -1173,6 +1184,8 @@ bool FileFd::Seek(unsigned long long To)
 
       if (To != 0)
 	 return Skip(To);
+
+      d->seekpos = To;
       return true;
    }
    int res;
@@ -1187,7 +1200,8 @@ bool FileFd::Seek(unsigned long long To)
       Flags |= Fail;
       return _error->Error("Unable to seek to %llu", To);
    }
-   
+
+   d->seekpos = To;
    return true;
 }
 									/*}}}*/
@@ -1208,7 +1222,8 @@ bool FileFd::Skip(unsigned long long Over)
       Flags |= Fail;
       return _error->Error("Unable to seek ahead %llu",Over);
    }
-   
+   d->seekpos = res;
+
    return true;
 }
 									/*}}}*/
@@ -1236,6 +1251,13 @@ bool FileFd::Truncate(unsigned long long To)
 /* */
 unsigned long long FileFd::Tell()
 {
+   // In theory, we could just return seekpos here always instead of
+   // seeking around, but not all users of FileFd use always Seek() and co
+   // so d->seekpos isn't always true and we can just use it as a hint if
+   // we have nothing else, but not always as an authority…
+   if (d->pipe == true)
+      return d->seekpos;
+
    off_t Res;
 #if APT_USE_ZLIB
    if (d->gz != NULL)
@@ -1245,6 +1267,7 @@ unsigned long long FileFd::Tell()
      Res = lseek(iFd,0,SEEK_CUR);
    if (Res == (off_t)-1)
       _error->Errno("lseek","Failed to determine the current file position");
+   d->seekpos = Res;
    return Res;
 }
 									/*}}}*/
@@ -1281,15 +1304,14 @@ unsigned long long FileFd::Size()
    // so we 'read' the content and 'seek' back - see there
    if (d->pipe == true)
    {
-      // FIXME: If we have read first and then FileSize() the report is wrong
-      size = 0;
+      unsigned long long const oldSeek = Tell();
       char ignore[1000];
       unsigned long long read = 0;
       do {
 	 Read(ignore, sizeof(ignore), &read);
-	 size += read;
       } while(read != 0);
-      Seek(0);
+      size = Tell();
+      Seek(oldSeek);
    }
 #if APT_USE_ZLIB
    // only check gzsize if we are actually a gzip file, just checking for
@@ -1301,7 +1323,6 @@ unsigned long long FileFd::Size()
 	* this ourselves; the original (uncompressed) file size is the last 32
 	* bits of the file */
        // FIXME: Size for gz-files is limited by 32bit… no largefile support
-       off_t orig_pos = lseek(iFd, 0, SEEK_CUR);
        if (lseek(iFd, -4, SEEK_END) < 0)
 	   return _error->Errno("lseek","Unable to seek to end of gzipped file");
        size = 0L;
@@ -1315,7 +1336,7 @@ unsigned long long FileFd::Size()
        size = tmp_size;
 #endif
 
-       if (lseek(iFd, orig_pos, SEEK_SET) < 0)
+       if (lseek(iFd, d->seekpos, SEEK_SET) < 0)
 	   return _error->Errno("lseek","Unable to seek in gzipped file");
        return size;
    }
