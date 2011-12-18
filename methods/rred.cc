@@ -37,13 +37,10 @@ class RredMethod : public pkgAcqMethod {
 	// return values
 	enum State {ED_OK, ED_ORDERING, ED_PARSER, ED_FAILURE, MMAP_FAILED};
 
-	State applyFile(FileFd &ed_cmds, FILE *in_file, FILE *out_file,
+	State applyFile(FileFd &ed_cmds, FileFd &in_file, FileFd &out_file,
 	             unsigned long &line, char *buffer, Hashes *hash) const;
-	void ignoreLineInFile(FILE *fin, char *buffer) const;
 	void ignoreLineInFile(FileFd &fin, char *buffer) const;
-	void copyLinesFromFileToFile(FILE *fin, FILE *fout, unsigned int lines,
-	                            Hashes *hash, char *buffer) const;
-	void copyLinesFromFileToFile(FileFd &fin, FILE *fout, unsigned int lines,
+	void copyLinesFromFileToFile(FileFd &fin, FileFd &fout, unsigned int lines,
 	                            Hashes *hash, char *buffer) const;
 
 	State patchFile(FileFd &Patch, FileFd &From, FileFd &out_file, Hashes *hash) const;
@@ -72,7 +69,7 @@ public:
  *  \param hash the created file for correctness
  *  \return the success State of the ed command executor
  */
-RredMethod::State RredMethod::applyFile(FileFd &ed_cmds, FILE *in_file, FILE *out_file,
+RredMethod::State RredMethod::applyFile(FileFd &ed_cmds, FileFd &in_file, FileFd &out_file,
 			unsigned long &line, char *buffer, Hashes *hash) const {
 	// get the current command and parse it
 	if (ed_cmds.ReadLine(buffer, BUF_SIZE) == NULL) {
@@ -178,36 +175,16 @@ RredMethod::State RredMethod::applyFile(FileFd &ed_cmds, FILE *in_file, FILE *ou
 	return ED_OK;
 }
 										/*}}}*/
-void RredMethod::copyLinesFromFileToFile(FILE *fin, FILE *fout, unsigned int lines,/*{{{*/
-					Hashes *hash, char *buffer) const {
-	while (0 < lines--) {
-		do {
-			fgets(buffer, BUF_SIZE, fin);
-			size_t const written = fwrite(buffer, 1, strlen(buffer), fout);
-			hash->Add((unsigned char*)buffer, written);
-		} while (strlen(buffer) == (BUF_SIZE - 1) &&
-		       buffer[BUF_SIZE - 2] != '\n');
-	}
-}
-										/*}}}*/
-void RredMethod::copyLinesFromFileToFile(FileFd &fin, FILE *fout, unsigned int lines,/*{{{*/
+void RredMethod::copyLinesFromFileToFile(FileFd &fin, FileFd &fout, unsigned int lines,/*{{{*/
 					Hashes *hash, char *buffer) const {
 	while (0 < lines--) {
 		do {
 			fin.ReadLine(buffer, BUF_SIZE);
-			size_t const written = fwrite(buffer, 1, strlen(buffer), fout);
-			hash->Add((unsigned char*)buffer, written);
+			unsigned long long const towrite = strlen(buffer);
+			fout.Write(buffer, towrite);
+			hash->Add((unsigned char*)buffer, towrite);
 		} while (strlen(buffer) == (BUF_SIZE - 1) &&
 		       buffer[BUF_SIZE - 2] != '\n');
-	}
-}
-										/*}}}*/
-void RredMethod::ignoreLineInFile(FILE *fin, char *buffer) const {		/*{{{*/
-	fgets(buffer, BUF_SIZE, fin);
-	while (strlen(buffer) == (BUF_SIZE - 1) &&
-	       buffer[BUF_SIZE - 2] != '\n') {
-		fgets(buffer, BUF_SIZE, fin);
-		buffer[0] = ' ';
 	}
 }
 										/*}}}*/
@@ -223,20 +200,18 @@ void RredMethod::ignoreLineInFile(FileFd &fin, char *buffer) const {		/*{{{*/
 RredMethod::State RredMethod::patchFile(FileFd &Patch, FileFd &From,		/*{{{*/
 					FileFd &out_file, Hashes *hash) const {
    char buffer[BUF_SIZE];
-   FILE* fFrom = fdopen(From.Fd(), "r");
-   FILE* fTo = fdopen(out_file.Fd(), "w");
 
    /* we do a tail recursion to read the commands in the right order */
    unsigned long line = -1; // assign highest possible value
-   State const result = applyFile(Patch, fFrom, fTo, line, buffer, hash);
+   State const result = applyFile(Patch, From, out_file, line, buffer, hash);
    
    /* read the rest from infile */
    if (result == ED_OK) {
-      while (fgets(buffer, BUF_SIZE, fFrom) != NULL) {
-         size_t const written = fwrite(buffer, 1, strlen(buffer), fTo);
-         hash->Add((unsigned char*)buffer, written);
+      while (From.ReadLine(buffer, BUF_SIZE) != NULL) {
+	 unsigned long long const towrite = strlen(buffer);
+	 out_file.Write(buffer, towrite);
+	 hash->Add((unsigned char*)buffer, towrite);
       }
-      fflush(fTo);
    }
    return result;
 }
