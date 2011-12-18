@@ -1100,15 +1100,19 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
 #endif
 
    unsigned long long read = 0;
-   if (Read(To, Size, &read) == false)
+   while ((Size - 1) != read)
+   {
+      unsigned long long done = 0;
+      if (Read(To + read, 1, &done) == false)
+	 return NULL;
+      if (done == 0)
+	 break;
+      if (To[read++] == '\n')
+	 break;
+   }
+   if (read == 0)
       return NULL;
-   char* c = To;
-   for (; *c != '\n' && *c != '\0' && read != 0; --read, ++c)
-      ; // find the end of the line
-   if (*c != '\0')
-      *c = '\0';
-   if (read != 0)
-      Seek(Tell() - read);
+   To[read] = '\0';
    return To;
 }
 									/*}}}*/
@@ -1210,6 +1214,20 @@ bool FileFd::Seek(unsigned long long To)
 /* */
 bool FileFd::Skip(unsigned long long Over)
 {
+   if (d->pipe == true)
+   {
+      d->seekpos += Over;
+      char buffer[1024];
+      while (Over != 0)
+      {
+	 unsigned long long toread = std::min((unsigned long long) sizeof(buffer), Over);
+	 if (Read(buffer, toread) == false)
+	    return _error->Error("Unable to seek ahead %llu",Over);
+	 Over -= toread;
+      }
+      return true;
+   }
+
    int res;
 #if APT_USE_ZLIB
    if (d->gz != NULL)
