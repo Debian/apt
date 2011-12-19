@@ -889,22 +889,16 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
    MultiCompress Pkgs(PkgFile,PkgCompress,0,false);
    if (_error->PendingError() == true)
       return false;
-   
+
    // Open the package file
-   int CompFd = -1;
-   pid_t Proc = -1;
-   if (Pkgs.OpenOld(CompFd,Proc) == false)
+   FileFd Fd;
+   if (Pkgs.OpenOld(Fd) == false)
       return false;
-   
-   // No auto-close FD
-   FileFd Fd(CompFd,false);   
+
    pkgTagFile Tags(&Fd);
    if (_error->PendingError() == true)
-   {
-      Pkgs.CloseOld(CompFd,Proc);
       return false;
-   }
-   
+
    // Parse.
    pkgTagSection Section;
    while (Tags.Step(Section) == true)
@@ -926,11 +920,10 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
 	 _error->DumpErrors();
       }
    }
-   
+
    // Tidy the compressor
-   if (Pkgs.CloseOld(CompFd,Proc) == false)
-      return false;
-   
+   Fd.Close();
+
    return true;
 }
 

@@ -14,6 +14,11 @@
 #include <string>
 #include <stdio.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+using std::vector;
+#endif
+
 class pkgTagSection;
 class FileFd;
 class indexRecords;

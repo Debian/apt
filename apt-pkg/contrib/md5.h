@@ -31,6 +31,11 @@
 
 #include "hashsum_template.h"
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+using std::min;
+#endif
+
 typedef HashSumValue<128> MD5SumValue;
 
 class MD5Summation : public SummationImplementation

@@ -29,8 +29,8 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 {
    for (pkgSourceList::const_iterator I = List.begin(); I != List.end(); ++I)
    {
-      vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
-      for (vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
+      std::vector<pkgIndexFile *> *Indexes = (*I)->GetIndexFiles();
+      for (std::vector<pkgIndexFile *>::const_iterator J = Indexes->begin();
 	   J != Indexes->end(); ++J)
       {
          Parser* P = (*J)->CreateSrcParser();
@@ -58,7 +58,7 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : Files(0), Current(0)
 pkgSrcRecords::~pkgSrcRecords()
 {
    // Blow away all the parser objects
-   for(vector<Parser*>::iterator I = Files.begin(); I != Files.end(); ++I)
+   for(std::vector<Parser*>::iterator I = Files.begin(); I != Files.end(); ++I)
       delete *I;
 }
 									/*}}}*/
@@ -68,7 +68,7 @@ pkgSrcRecords::~pkgSrcRecords()
 bool pkgSrcRecords::Restart()
 {
    Current = Files.begin();
-   for (vector<Parser*>::iterator I = Files.begin();
+   for (std::vector<Parser*>::iterator I = Files.begin();
         I != Files.end(); ++I)
       (*I)->Restart();
    

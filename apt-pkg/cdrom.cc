@@ -58,23 +58,21 @@ bool pkgCdrom::FindPackages(string CD,
       return _error->Errno("chdir","Unable to change to %s",CD.c_str());
 
    // Look for a .disk subdirectory
-   struct stat Buf;
-   if (stat(".disk",&Buf) == 0)
+   if (DirectoryExists(".disk") == true)
    {
       if (InfoDir.empty() == true)
 	 InfoDir = CD + ".disk/";
    }
 
    // Don't look into directories that have been marked to ingore.
-   if (stat(".aptignr",&Buf) == 0)
+   if (RealFileExists(".aptignr") == true)
       return true;
-
 
    /* Check _first_ for a signature file as apt-cdrom assumes that all files
       under a Packages/Source file are in control of that file and stops 
       the scanning
    */
-   if (stat("Release.gpg",&Buf) == 0)
+   if (RealFileExists("Release.gpg") == true || RealFileExists("InRelease") == true)
    {
       SigList.push_back(CD);
    }
@@ -82,66 +80,69 @@ bool pkgCdrom::FindPackages(string CD,
    /* Aha! We found some package files. We assume that everything under 
       this dir is controlled by those package files so we don't look down
       anymore */
-    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-    types.push_back("");
-    for (std::vector<std::string>::const_iterator t = types.begin();
-         t != types.end(); ++t)
-    {
-       std::string filename = std::string("Packages");
-       if ((*t).size() > 0)
-          filename.append("."+*t);
-       if (stat(filename.c_str(), &Buf) == 0)
-       {
-          List.push_back(CD);
-      
-          // Continue down if thorough is given
-          if (_config->FindB("APT::CDROM::Thorough",false) == false)
-             return true;
-          break;
-       }
-    }
-    for (std::vector<std::string>::const_iterator t = types.begin();
-         t != types.end(); ++t)
-    {
-       std::string filename = std::string("Sources");
-       if ((*t).size() > 0)
-          filename.append("."+*t);
-       {
-          SList.push_back(CD);
-      
-          // Continue down if thorough is given
-          if (_config->FindB("APT::CDROM::Thorough",false) == false)
-             return true;
-          break;
-       }
-    }
+   std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
+   for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	c != compressor.end(); ++c)
+   {
+      if (RealFileExists(std::string("Packages").append(c->Extension).c_str()) == false)
+	 continue;
 
-   // see if we find translatin indexes
-   if (stat("i18n",&Buf) == 0)
+      if (_config->FindB("Debug::aptcdrom",false) == true)
+	 std::clog << "Found Packages in " << CD << std::endl;
+      List.push_back(CD);
+
+      // Continue down if thorough is given
+      if (_config->FindB("APT::CDROM::Thorough",false) == false)
+	 return true;
+      break;
+   }
+   for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	c != compressor.end(); ++c)
+   {
+      if (RealFileExists(std::string("Sources").append(c->Extension).c_str()) == false)
+	 continue;
+
+      if (_config->FindB("Debug::aptcdrom",false) == true)
+	 std::clog << "Found Sources in " << CD << std::endl;
+      SList.push_back(CD);
+
+      // Continue down if thorough is given
+      if (_config->FindB("APT::CDROM::Thorough",false) == false)
+	 return true;
+      break;
+   }
+
+   // see if we find translation indices
+   if (DirectoryExists("i18n") == true)
    {
       D = opendir("i18n");
       for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
       {
-	 if(strstr(Dir->d_name,"Translation") != NULL) 
+	 if(strncmp(Dir->d_name, "Translation-", strlen("Translation-")) != 0)
+	    continue;
+	 string file = Dir->d_name;
+	 for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	      c != compressor.end(); ++c)
 	 {
-	    if (_config->FindB("Debug::aptcdrom",false) == true)
-	       std::clog << "found translations: " << Dir->d_name << "\n";
-	    string file = Dir->d_name;
-            for (std::vector<std::string>::const_iterator t = types.begin();
-                 t != types.end(); ++t)
-            {
-               std::string needle = "." + *t;
-               if(file.substr(file.size()-needle.size()) == needle)
-                  file = file.substr(0, file.size()-needle.size());
-               TransList.push_back(CD+"i18n/"+ file);
-               break;
-            }
+	    string fileext = flExtension(file);
+	    if (file == fileext)
+	       fileext.clear();
+	    else if (fileext.empty() == false)
+	       fileext = "." + fileext;
+
+	    if (c->Extension == fileext)
+	    {
+	       if (_config->FindB("Debug::aptcdrom",false) == true)
+		  std::clog << "Found translation " << Dir->d_name << " in " << CD << "i18n/" << std::endl;
+	       file.erase(file.size() - fileext.size());
+	       TransList.push_back(CD + "i18n/" + file);
+	       break;
+	    }
 	 }
       }
       closedir(D);
    }
 
-   
    D = opendir(".");
    if (D == 0)
       return _error->Errno("opendir","Unable to read %s",CD.c_str());
@@ -276,38 +277,43 @@ bool pkgCdrom::DropBinaryArch(vector<string> &List)
 /* Here we go and stat every file that we found and strip dup inodes. */
 bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 {
+   bool couldFindAllFiles = true;
    // Get a list of all the inodes
    ino_t *Inodes = new ino_t[List.size()];
-   for (unsigned int I = 0; I != List.size(); I++)
+   for (unsigned int I = 0; I != List.size(); ++I)
    {
       struct stat Buf;
-      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-      types.push_back("");
-      for (std::vector<std::string>::const_iterator t = types.begin();
-           t != types.end(); ++t)
+      bool found = false;
+
+      std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
+      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	   c != compressor.end(); ++c)
       {
-         std::string filename = List[I] + Name;
-         if ((*t).size() > 0)
-            filename.append("." + *t);
+	 std::string filename = std::string(List[I]).append(Name).append(c->Extension);
          if (stat(filename.c_str(), &Buf) != 0)
-            _error->Errno("stat","Failed to stat %s%s",List[I].c_str(),
-                          Name);
-         Inodes[I] = Buf.st_ino;
+	    continue;
+	 Inodes[I] = Buf.st_ino;
+	 found = true;
+	 break;
+      }
+
+      if (found == false)
+      {
+	 _error->Errno("stat","Failed to stat %s%s",List[I].c_str(), Name);
+	 couldFindAllFiles = false;
+	 Inodes[I] = 0;
       }
    }
-   
-   if (_error->PendingError() == true) {
-      delete[] Inodes;
-      return false;
-   }
-   
+
    // Look for dups
    for (unsigned int I = 0; I != List.size(); I++)
    {
+      if (Inodes[I] == 0)
+	 continue;
       for (unsigned int J = I+1; J < List.size(); J++)
       {
 	 // No match
-	 if (Inodes[J] != Inodes[I])
+	 if (Inodes[J] == 0 || Inodes[J] != Inodes[I])
 	    continue;
 	 
 	 // We score the two paths.. and erase one
@@ -333,7 +339,7 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 	 List.erase(List.begin()+I);
    }
    
-   return true;
+   return couldFindAllFiles;
 }
 									/*}}}*/
 // ReduceSourceList - Takes the path list and reduces it		/*{{{*/
@@ -712,7 +718,13 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    DropBinaryArch(List);
    DropRepeats(List,"Packages");
    DropRepeats(SourceList,"Sources");
+   // FIXME: We ignore stat() errors here as we usually have only one of those in use
+   // This has little potencial to drop 'valid' stat() errors as we know that one of these
+   // files need to exist, but it would be better if we would check it here
+   _error->PushToStack();
    DropRepeats(SigList,"Release.gpg");
+   DropRepeats(SigList,"InRelease");
+   _error->RevertToStack();
    DropRepeats(TransList,"");
    if(log != NULL) {
       msg.str("");

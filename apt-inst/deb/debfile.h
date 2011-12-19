@@ -29,6 +29,10 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/pkgcache.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/database.h>
+#endif
+
 class FileFd;
 class pkgDataBase;
 

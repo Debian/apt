@@ -14,6 +14,8 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/dirstream.h>
 
+#include <string>
+
 class DebFile : public pkgDirStream
 {
 	FileFd File;
@@ -31,11 +33,11 @@ public:
 	bool Go();
 	bool ParseInfo();
 
-	static string GetInstalledVer(const string &package);
+	static std::string GetInstalledVer(const std::string &package);
 
-	string Package;
-	string Version;
-	string DepVer, PreDepVer;
+	std::string Package;
+	std::string Version;
+	std::string DepVer, PreDepVer;
 	unsigned int DepOp, PreDepOp;
 
 	char *Config;

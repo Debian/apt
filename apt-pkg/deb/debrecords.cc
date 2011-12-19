@@ -25,7 +25,7 @@ using std::string;
 // ---------------------------------------------------------------------
 /* */
 debRecordParser::debRecordParser(string FileName,pkgCache &Cache) : 
-                  File(FileName,FileFd::ReadOnlyGzip), 
+                  File(FileName,FileFd::ReadOnly, FileFd::Extension),
                   Tags(&File, std::max(Cache.Head().MaxVerFileSize, 
 				       Cache.Head().MaxDescFileSize) + 200)
 {

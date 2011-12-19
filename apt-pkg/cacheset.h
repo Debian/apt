@@ -20,6 +20,10 @@
 
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
+
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/cachefile.h>
+#endif
 									/*}}}*/
 
 class pkgCacheFile;

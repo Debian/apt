@@ -10,6 +10,10 @@
 
 #include <apt-pkg/debindexfile.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/indexfile.h>
+#endif
+
 class edspIndex : public debStatusIndex
 {
    /** \brief dpointer placeholder (for later in case we need it) */
