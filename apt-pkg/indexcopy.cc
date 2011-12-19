@@ -16,6 +16,7 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/indexrecords.h>
@@ -37,8 +38,6 @@
 
 using namespace std;
 
-
-
 // IndexCopy::CopyPackages - Copy the package files from the CD		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -57,15 +56,25 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    
    // Prepare the progress indicator
    off_t TotalSize = 0;
+   std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
-      if (stat(string(*I + GetFileName()).c_str(),&Buf) != 0 &&
-	  stat(string(*I + GetFileName() + ".gz").c_str(),&Buf) != 0)
-	 return _error->Errno("stat","Stat failed for %s",
-			      string(*I + GetFileName()).c_str());
+      bool found = false;
+      std::string file = std::string(*I).append(GetFileName());
+      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	   c != compressor.end(); ++c)
+      {
+	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	    continue;
+	 found = true;
+	 break;
+      }
+
+      if (found == false)
+	 return _error->Errno("stat", "Stat failed for %s", file.c_str());
       TotalSize += Buf.st_size;
-   }	
+   }
 
    off_t CurrentSize = 0;
    unsigned int NotFound = 0;
@@ -74,57 +83,11 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      off_t FileSize = 0;
       
       // Open the package file
-      FileFd Pkg;
-      if (RealFileExists(*I + GetFileName()) == true)
-      {
-	 Pkg.Open(*I + GetFileName(),FileFd::ReadOnly);
-	 FileSize = Pkg.Size();
-      }      
-      else
-      {
-	 FileFd From(*I + GetFileName() + ".gz",FileFd::ReadOnly);
-	 if (_error->PendingError() == true)
-	    return false;
-	 FileSize = From.Size();
-	 
-	 // Get a temp file
-	 FILE *tmp = tmpfile();
-	 if (tmp == 0)
-	    return _error->Errno("tmpfile","Unable to create a tmp file");
-	 Pkg.Fd(dup(fileno(tmp)));
-	 fclose(tmp);
-	 
-	 // Fork gzip
-	 pid_t Process = fork();
-	 if (Process < 0)
-	    return _error->Errno("fork","Couldn't fork gzip");
-	 
-	 // The child
-	 if (Process == 0)
-	 {	    
-	    dup2(From.Fd(),STDIN_FILENO);
-	    dup2(Pkg.Fd(),STDOUT_FILENO);
-	    SetCloseExec(STDIN_FILENO,false);
-	    SetCloseExec(STDOUT_FILENO,false);
-	    
-	    const char *Args[3];
-	    string Tmp =  _config->Find("Dir::bin::gzip","gzip");
-	    Args[0] = Tmp.c_str();
-	    Args[1] = "-d";
-	    Args[2] = 0;
-	    execvp(Args[0],(char **)Args);
-	    exit(100);
-	 }
-	 
-	 // Wait for gzip to finish
-	 if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
-	    return _error->Error("gzip failed, perhaps the disk is full.");
-	 
-	 Pkg.Seek(0);
-      }
+      FileFd Pkg(*I + GetFileName(), FileFd::ReadOnly, FileFd::Extension);
+      off_t const FileSize = Pkg.Size();
+
       pkgTagFile Parser(&Pkg);
       if (_error->PendingError() == true)
 	 return false;
@@ -602,13 +565,19 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 
       string const releasegpg = *I+"Release.gpg";
       string const release = *I+"Release";
+      string const inrelease = *I+"InRelease";
+      bool useInRelease = true;
 
       // a Release.gpg without a Release should never happen
-      if(RealFileExists(release) == false)
+      if (RealFileExists(inrelease) == true)
+	 ;
+      else if(RealFileExists(release) == false || RealFileExists(releasegpg) == false)
       {
 	 delete MetaIndex;
 	 continue;
       }
+      else
+	 useInRelease = false;
 
       pid_t pid = ExecFork();
       if(pid < 0) {
@@ -616,11 +585,16 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 	 return false;
       }
       if(pid == 0)
-	 RunGPGV(release, releasegpg);
+      {
+	 if (useInRelease == true)
+	    RunGPGV(inrelease, inrelease);
+	 else
+	    RunGPGV(release, releasegpg);
+      }
 
       if(!ExecWait(pid, "gpgv")) {
 	 _error->Warning("Signature verification failed for: %s",
-			 releasegpg.c_str());
+			 (useInRelease ? inrelease.c_str() : releasegpg.c_str()));
 	 // something went wrong, don't copy the Release.gpg
 	 // FIXME: delete any existing gpg file?
 	 continue;
@@ -650,8 +624,13 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
       delete MetaIndex;
    
       // everything was fine, copy the Release and Release.gpg file
-      CopyMetaIndex(CDROM, Name, prefix, "Release");
-      CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
+      if (useInRelease == true)
+	 CopyMetaIndex(CDROM, Name, prefix, "InRelease");
+      else
+      {
+	 CopyMetaIndex(CDROM, Name, prefix, "Release");
+	 CopyMetaIndex(CDROM, Name, prefix, "Release.gpg");
+      }
    }   
 
    return true;
@@ -789,15 +768,25 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    
    // Prepare the progress indicator
    off_t TotalSize = 0;
+   std::vector<APT::Configuration::Compressor> const compressor = APT::Configuration::getCompressors();
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {
       struct stat Buf;
-      if (stat(string(*I).c_str(),&Buf) != 0 &&
-	  stat(string(*I + ".gz").c_str(),&Buf) != 0)
-	 return _error->Errno("stat","Stat failed for %s",
-			      string(*I).c_str());
+      bool found = false;
+      std::string file = *I;
+      for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
+	   c != compressor.end(); ++c)
+      {
+	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	    continue;
+	 found = true;
+	 break;
+      }
+
+      if (found == false)
+	 return _error->Errno("stat", "Stat failed for %s", file.c_str());
       TotalSize += Buf.st_size;
-   }	
+   }
 
    off_t CurrentSize = 0;
    unsigned int NotFound = 0;
@@ -806,57 +795,11 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
    {      
       string OrigPath = string(*I,CDROM.length());
-      off_t FileSize = 0;
-      
+
       // Open the package file
-      FileFd Pkg;
-      if (RealFileExists(*I) == true)
-      {
-	 Pkg.Open(*I,FileFd::ReadOnly);
-	 FileSize = Pkg.Size();
-      }      
-      else
-      {
-	 FileFd From(*I + ".gz",FileFd::ReadOnly);
-	 if (_error->PendingError() == true)
-	    return false;
-	 FileSize = From.Size();
-	 
-	 // Get a temp file
-	 FILE *tmp = tmpfile();
-	 if (tmp == 0)
-	    return _error->Errno("tmpfile","Unable to create a tmp file");
-	 Pkg.Fd(dup(fileno(tmp)));
-	 fclose(tmp);
-	 
-	 // Fork gzip
-	 pid_t Process = fork();
-	 if (Process < 0)
-	    return _error->Errno("fork","Couldn't fork gzip");
-	 
-	 // The child
-	 if (Process == 0)
-	 {	    
-	    dup2(From.Fd(),STDIN_FILENO);
-	    dup2(Pkg.Fd(),STDOUT_FILENO);
-	    SetCloseExec(STDIN_FILENO,false);
-	    SetCloseExec(STDOUT_FILENO,false);
-	    
-	    const char *Args[3];
-	    string Tmp =  _config->Find("Dir::bin::gzip","gzip");
-	    Args[0] = Tmp.c_str();
-	    Args[1] = "-d";
-	    Args[2] = 0;
-	    execvp(Args[0],(char **)Args);
-	    exit(100);
-	 }
-	 
-	 // Wait for gzip to finish
-	 if (ExecWait(Process,_config->Find("Dir::bin::gzip","gzip").c_str(),false) == false)
-	    return _error->Error("gzip failed, perhaps the disk is full.");
-	 
-	 Pkg.Seek(0);
-      }
+      FileFd Pkg(*I, FileFd::ReadOnly, FileFd::Extension);
+      off_t const FileSize = Pkg.Size();
+
       pkgTagFile Parser(&Pkg);
       if (_error->PendingError() == true)
 	 return false;

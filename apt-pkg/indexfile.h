@@ -29,6 +29,10 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/macros.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 class pkgAcquire;
 class pkgCacheGenerator;
 class OpProgress;

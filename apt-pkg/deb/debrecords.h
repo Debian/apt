@@ -18,6 +18,10 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/indexfile.h>
+#endif
+
 class debRecordParser : public pkgRecords::Parser
 {
    /** \brief dpointer placeholder (for later in case we need it) */

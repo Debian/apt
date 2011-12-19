@@ -14,6 +14,10 @@
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/tagfile.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/indexfile.h>
+#endif
+
 class debListParser : public pkgCacheGenerator::ListParser
 {
    public:

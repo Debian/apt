@@ -12,14 +12,14 @@ apt (0.8.16~exp9) UNRELEASED; urgency=low
   [ Julian Andres Klode ]
   * apt-pkg/cdrom.cc:
     - Accept .bz2, .xz files in addition to .gz files (Closes: #649451)
-  
+
   [ Michael Vogt ]
   * apt-pkg/cdrom.cc:
     - use aptconfiguration to get the supported compression types
   * debian/control:
     - bump debhelper build-dep to debhelper (>= 8.1.3~)
     - set libapt-pkg-dev to multi-arch: same too
- 
+
   [ Colin Watson ]
   * Convert libapt-pkg4.12 and libapt-inst1.4 to Multi-Arch: same.
 
@@ -36,12 +36,22 @@ apt (0.8.16~exp9) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - ignore foreign architectures if we check if a provides has only one
       resolver as it's basically the same for the user, so no need to choose
-  
- -- Julian Andres Klode <jak@debian.org>  Mon, 21 Nov 2011 18:46:36 +0100
+  * cmdline/apt-config.cc:
+    - dump the APT::Compressor settings correctly and completely
+  * apt-pkg/contrib/fileutl.{h,cc}:
+    - implement a ModificationTime method for FileFd
+    - add a ReadLine method
+    - drop the explicit export of gz-compression handling
+  * apt-pkg/cdrom.cc:
+    - support InRelease files on cdrom
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 11 Dec 2011 19:34:58 +0100
 
 apt (0.8.16~exp8) experimental; urgency=low
 
   [ David Kalnischkies ]
+  * algorithms.cc:
+    - show a debug why a package was kept by ResolveByKeep()
   * apt-pkg/packagemanager.cc:
     - do not fail on unpacked packages in SmartUnPack, just don't
       shedule them for unpack, but do all checks and configure them
@@ -119,131 +129,6 @@ apt (0.8.16~exp6) experimental; urgency=low
   * bump ABI version
 
  -- Michael Vogt <mvo@debian.org>  Wed, 14 Sep 2011 21:06:51 +0200
-
-apt (0.8.16~exp5) experimental; urgency=low
-
-  * merged the latest debian-sid fixes
-  * apt-pkg/makefile:
-    - install sha256.h compat header
-  * apt-pkg/pkgcachegen.{cc,h}:
-    - use ref-to-ptr semantic in NewDepends() to ensure that the   
-      libapt does not segfault if the cache is remapped in between
-      (LP: #812862)
-    - fix crash when P.Arch() was used but the cache got remapped
-  * apt-pkg/acquire-item.{cc,h}:
-    - do not check for a "Package" tag in optional index targets
-      like the translations index
-  * apt-pkg/acquire.cc:
-    - fix potential divide-by-zero
-  * methods/mirror.cc:
-    - include the architecture(s) in the query string as well so 
-      that the server can make better decisions
-
- -- Michael Vogt <mvo@debian.org>  Mon, 15 Aug 2011 14:52:54 +0200
-
-apt (0.8.16~exp4) experimental; urgency=low
-
-  [ Julian Andres Klode ]
-  * apt-pkg/pkgcache.h:
-    - [ABI break] Add pkgCache::Header::CacheFileSize, storing the cache size
-  * apt-pkg/pkgcachegen.cc:
-    - Write the file size to the cache
-  * apt-pkg/pkgcache.cc:
-    - Check that cache is at least CacheFileSize bytes large (LP: #16467)
-  
-  [ Michael Vogt ]
-  * merged latest fixes from debian-sid
-  * apt-pkg/cdrom.{cc,h}:
-    - cleanup old ABI break avoidance hacks
-  * [ABI break] apt-pkg/acquire-item.{cc,h}:
-    - cleanup around OptionalIndexTarget and SubIndexTarget
-  * [ABI break] merged patch from Jonathan Thomas to have a new
-    RecordField() function in the pkgRecorder parser. Many thanks
-    Thomas
-  * [ABI break] merge patch from Jonathan Thomas to speed up the
-    depcache by caching the install-recommends and install-suggests
-    values
-  * apt-pkg/contrib/fileutl.{cc,h}:
-    - add GetModificationTime() helper
-  * apt-pkg/pkgcachegen.cc:
-    - regenerate the cache if the sources.list changes to ensure
-      that changes in the ordering there will be honored by apt
-  * apt-pkg/sourcelist.{cc,h}:
-    - add pkgSourceList::GetLastModifiedTime() helper
-
- -- Michael Vogt <mvo@debian.org>  Thu, 28 Jul 2011 16:57:08 +0200
-
-apt (0.8.16~exp3) experimental; urgency=low
-
-  [ David Kalnischkies ]
-  * apt-pkg/pkgcache.h:
-    - readd All{Foreign,Allowed} as suggested by Julian to
-      remain strictly API compatible
-  * apt-pkg/acquire*.{cc,h}:
-    - try even harder to support really big files in the fetcher by
-      converting (hopefully) everything to 'long long' (Closes: #632271)
-  * ftparchive/writer.cc:
-    - generate all checksums in one run over the file for Release
-  * cmdline/apt-get.cc:
-    - add an --assume-no option for testing to say 'no' to everything
-  * apt-pkg/deb/debmetaindex.cc:
-    - add trusted=yes option to mark unsigned (local) repository as trusted
-      based on a patch from Ansgar Burchardt, thanks a lot! (Closes: #596498)
-
-  [ Michael Vogt ]
-  * merge fixes from the debian/unstable upload
-  * merge lp:~mvo/apt/sha512-template to get fixes for the 
-    sha1/md5 verifiation (closes: #632520)
-
- -- Michael Vogt <mvo@debian.org>  Fri, 15 Jul 2011 09:56:17 +0200
-
-apt (0.8.16~exp2) experimental; urgency=low
-
-  [ David Kalnischkies ]
-  * [ABI-Break] Implement EDSP in libapt-pkg so that all front-ends which
-    use the internal resolver can now be used also with external
-    ones as the usage is hidden in between the old API
-  * provide two edsp solvers in apt-utils:
-    - 'dump' to quickly output a complete scenario and
-    - 'apt' to use the internal as an external resolver
-  * apt-pkg/pkgcache.h:
-    - clean up mess with the "all" handling in MultiArch to
-      fix LP: #733741 cleanly for everyone now
-  * apt-pkg/depcache.cc:
-    - use a boolean instead of an int for Add/Remove in AddStates
-      similar to how it works with AddSizes
-    - let the Mark methods return if their marking was successful
-    - if a Breaks can't be upgraded, remove it. If it or a Conflict
-      can't be removed the installation of the breaker fails.
-  * cmdline/apt-get.cc:
-    - do not discard the error messages from the resolver and instead
-      only show the general 'Broken packages' message if nothing else
-
-  [ Stefano Zacchiroli ]
-  * doc/external-dependency-solver-protocol.txt:
-    - describe EDSP and the configuration interface around it
-  
-  [ Michael Vogt ]
-  * [ABI-Break] merge lp:~mvo/apt/sha512-template to add support for sha512
-  * [ABI-Break] merge lp:~mvo/apt/dpointer to support easier extending
-    without breaking the ABI
-  * increase ABI version and update package names
-
- -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 13:57:28 +0200
-
-apt (0.8.16~exp1) experimental; urgency=low
-
-  * merged with the debian/unstable upload
-
- -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
-
-apt (1.8.15.9+nmu1) unstable; urgency=low
-
-  [ David Kalnischkies ]
-  * algorithms.cc:
-    - show a debug why a package was kept by ResolveByKeep()
-
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 17 Oct 2011 16:36:22 +0200
 
 apt (0.8.16~exp5ubuntu14.2) UNRELEASED; urgency=low
 
@@ -421,7 +306,7 @@ apt (0.8.16~exp5ubuntu1) oneiric; urgency=low
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 08 Aug 2011 14:30:07 +0200
 
-apt (0.8.16~exp5) UNRELEASED; urgency=low
+apt (0.8.16~exp5) experimental; urgency=low
 
   * apt-pkg/makefile:
     - install sha256.h compat header
@@ -429,8 +314,18 @@ apt (0.8.16~exp5) UNRELEASED; urgency=low
     - use ref-to-ptr semantic in NewDepends() to ensure that the   
       libapt does not segfault if the cache is remapped in between
       (LP: #812862)
+      (LP: #812862)
+    - fix crash when P.Arch() was used but the cache got remapped
+  * apt-pkg/acquire-item.{cc,h}:
+    - do not check for a "Package" tag in optional index targets
+      like the translations index
+  * apt-pkg/acquire.cc:
+    - fix potential divide-by-zero
+  * methods/mirror.cc:
+    - include the architecture(s) in the query string as well so 
+      that the server can make better decisions
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Jul 2011 13:44:01 +0200
+ -- Michael Vogt <mvo@debian.org>  Mon, 15 Aug 2011 14:52:54 +0200
 
 apt (0.8.16~exp4) experimental; urgency=low
 

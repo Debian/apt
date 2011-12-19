@@ -34,6 +34,10 @@
 #include <vector>
 #include <iostream>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 class Configuration
 {
    public:

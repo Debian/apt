@@ -22,30 +22,51 @@
 #define PKGLIB_FILEUTL_H
 
 #include <apt-pkg/macros.h>
+#include <apt-pkg/aptconfiguration.h>
 
 #include <string>
 #include <vector>
 
 #include <zlib.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
+
 /* Define this for python-apt */
 #define APT_HAS_GZIP 1
 
+class FileFdPrivate;
 class FileFd
 {
    protected:
    int iFd;
  
    enum LocalFlags {AutoClose = (1<<0),Fail = (1<<1),DelOnFail = (1<<2),
-                    HitEof = (1<<3), Replace = (1<<4) };
+                    HitEof = (1<<3), Replace = (1<<4), Compressed = (1<<5) };
    unsigned long Flags;
    std::string FileName;
    std::string TemporaryFileName;
-   gzFile gz;
 
    public:
-   enum OpenMode {ReadOnly,WriteEmpty,WriteExists,WriteAny,WriteTemp,ReadOnlyGzip,
-                  WriteAtomic};
+   enum OpenMode {
+	ReadOnly = (1 << 0),
+	WriteOnly = (1 << 1),
+	ReadWrite = ReadOnly | WriteOnly,
+
+	Create = (1 << 2),
+	Exclusive = (1 << 3),
+	Atomic = Exclusive | (1 << 4),
+	Empty = (1 << 5),
+
+	WriteEmpty = ReadWrite | Create | Empty,
+	WriteExists = ReadWrite,
+	WriteAny = ReadWrite | Create,
+	WriteTemp = ReadWrite | Create | Exclusive,
+	ReadOnlyGzip,
+	WriteAtomic = ReadWrite | Create | Atomic
+   };
+   enum CompressMode { Auto = 'A', None = 'N', Extension = 'E', Gzip = 'G', Bzip2 = 'B', Lzma = 'L', Xz = 'X' };
    
    inline bool Read(void *To,unsigned long long Size,bool AllowEof)
    {
@@ -55,6 +76,7 @@ class FileFd
       return Read(To,Size);
    }   
    bool Read(void *To,unsigned long long Size,unsigned long long *Actual = 0);
+   char* ReadLine(char *To, unsigned long long const Size);
    bool Write(const void *From,unsigned long long Size);
    bool Seek(unsigned long long To);
    bool Skip(unsigned long long To);
@@ -62,6 +84,7 @@ class FileFd
    unsigned long long Tell();
    unsigned long long Size();
    unsigned long long FileSize();
+   time_t ModificationTime();
 
    /* You want to use 'unsigned long long' if you are talking about a file
       to be able to support large files (>2 or >4 GB) properly.
@@ -77,30 +100,54 @@ class FileFd
 	return T;
    }
 
-   bool Open(std::string FileName,OpenMode Mode,unsigned long Perms = 0666);
-   bool OpenDescriptor(int Fd, OpenMode Mode, bool AutoClose=false);
+   bool Open(std::string FileName,unsigned int const Mode,CompressMode Compress,unsigned long const Perms = 0666);
+   bool Open(std::string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor,unsigned long const Perms = 0666);
+   inline bool Open(std::string const &FileName,unsigned int const Mode, unsigned long const Perms = 0666) {
+      return Open(FileName, Mode, None, Perms);
+   };
+   bool OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compress, bool AutoClose=false);
+   bool OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose=false);
+   inline bool OpenDescriptor(int Fd, unsigned int const Mode, bool AutoClose=false) {
+      return OpenDescriptor(Fd, Mode, None, AutoClose);
+   };
    bool Close();
    bool Sync();
    
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) {iFd = fd;};
-   inline gzFile gzFd() {return gz;};
+   __deprecated gzFile gzFd();
+
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
    inline void EraseOnFailure() {Flags |= DelOnFail;};
    inline void OpFail() {Flags |= Fail;};
    inline bool Eof() {return (Flags & HitEof) == HitEof;};
+   inline bool IsCompressed() {return (Flags & Compressed) == Compressed;};
    inline std::string &Name() {return FileName;};
    
-   FileFd(std::string FileName,OpenMode Mode,unsigned long Perms = 0666) : iFd(-1), 
-            Flags(0), gz(NULL)
+   FileFd(std::string FileName,unsigned int const Mode,unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
    {
-      Open(FileName,Mode,Perms);
+      Open(FileName,Mode, None, Perms);
    };
-   FileFd(int Fd = -1) : iFd(Fd), Flags(AutoClose), gz(NULL) {};
-   FileFd(int Fd,bool) : iFd(Fd), Flags(0), gz(NULL) {};
+   FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
+   {
+      Open(FileName,Mode, Compress, Perms);
+   };
+   FileFd() : iFd(-1), Flags(AutoClose), d(NULL) {};
+   FileFd(int const Fd, unsigned int const Mode = ReadWrite, CompressMode Compress = None) : iFd(-1), Flags(0), d(NULL)
+   {
+      OpenDescriptor(Fd, Mode, Compress);
+   };
+   FileFd(int const Fd, bool const AutoClose) : iFd(-1), Flags(0), d(NULL)
+   {
+      OpenDescriptor(Fd, ReadWrite, None, AutoClose);
+   };
    virtual ~FileFd();
+
+   private:
+   FileFdPrivate* d;
+   bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
 };
 
 bool RunScripts(const char *Cnf);

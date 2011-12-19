@@ -25,6 +25,10 @@
 
 #include <string>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/filelist.h>
+#endif
+
 class pkgFLCache;
 class OpProgress;
 

@@ -20,6 +20,12 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/macros.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/policy.h>
+#include <apt-pkg/sourcelist.h>
+#endif
+
 class pkgPolicy;
 class pkgSourceList;
 class OpProgress;

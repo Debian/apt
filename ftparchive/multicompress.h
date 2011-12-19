@@ -34,15 +34,12 @@ class MultiCompress
       FileFd TmpFile;
       pid_t CompressProc;
       time_t OldMTime;
-      int Fd;
    };
    
    Files *Outputs;
    pid_t Outputter;
    mode_t Permissions;
 
-   bool OpenCompress(APT::Configuration::Compressor const &Prog,
-		     pid_t &Pid,int const &FileFd, int &OutFd,bool const &Comp);
    bool Child(int const &Fd);
    bool Start();
    bool Die();
@@ -54,8 +51,7 @@ class MultiCompress
    unsigned long UpdateMTime;
    
    bool Finalize(unsigned long long &OutSize);
-   bool OpenOld(int &Fd,pid_t &Proc);
-   bool CloseOld(int Fd,pid_t Proc);
+   bool OpenOld(FileFd &Fd);
    static bool GetStat(std::string const &Output,std::string const &Compress,struct stat &St);
    
    MultiCompress(std::string const &Output,std::string const &Compress,

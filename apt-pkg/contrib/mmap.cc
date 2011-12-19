@@ -66,7 +66,7 @@ MMap::~MMap()
 bool MMap::Map(FileFd &Fd)
 {
    iSize = Fd.Size();
-   
+
    // Set the permissions.
    int Prot = PROT_READ;
    int Map = MAP_SHARED;
@@ -77,7 +77,18 @@ bool MMap::Map(FileFd &Fd)
    
    if (iSize == 0)
       return _error->Error(_("Can't mmap an empty file"));
-   
+
+   // We can't mmap compressed fd's directly, so we need to read it completely
+   if (Fd.IsCompressed() == true)
+   {
+      if ((Flags & ReadOnly) != ReadOnly)
+	 return _error->Error("Compressed file %s can only be mapped readonly", Fd.Name().c_str());
+      Base = new unsigned char[iSize];
+      if (Fd.Seek(0L) == false || Fd.Read(Base, iSize) == false)
+	 return false;
+      return true;
+   }
+
    // Map it.
    Base = mmap(0,iSize,Prot,Map,Fd.Fd(),0);
    if (Base == (void *)-1)
@@ -86,6 +97,13 @@ bool MMap::Map(FileFd &Fd)
       {
 	 // The filesystem doesn't support this particular kind of mmap.
 	 // So we allocate a buffer and read the whole file into it.
+	 if ((Flags & ReadOnly) == ReadOnly)
+	 {
+	    // for readonly, we don't need sync, so make it simple
+	    Base = new unsigned char[iSize];
+	    return Fd.Read(Base, iSize);
+	 }
+	 // FIXME: Writing to compressed fd's ?
 	 int const dupped_fd = dup(Fd.Fd());
 	 if (dupped_fd == -1)
 	    return _error->Errno("mmap", _("Couldn't duplicate file descriptor %i"), Fd.Fd());

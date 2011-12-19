@@ -13,6 +13,10 @@
 #include <vector>
 #include <ctime>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/fileutl.h>
+#endif
+
 class indexRecords
 {
    bool parseSumData(const char *&Start, const char *End, std::string &Name,

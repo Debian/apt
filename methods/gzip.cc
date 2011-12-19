@@ -48,7 +48,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    URIStart(Res);
    
    // Open the source and destination files
-   FileFd From(Path,FileFd::ReadOnlyGzip);
+   FileFd From(Path,FileFd::ReadOnly, FileFd::Gzip);
 
    if(From.FileSize() == 0)
       return _error->Error(_("Empty files can't be valid archives"));

@@ -32,9 +32,11 @@
 #include <map>
 #include <apt-pkg/pkgcache.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/metaindex.h>
 using std::string;
 using std::vector;
-    
+#endif
 
 class pkgAcquire;
 class pkgIndexFile;
@@ -57,32 +59,32 @@ class pkgSourceList
       const char *Name;
       const char *Label;
 
-      bool FixupURI(string &URI) const;
-      virtual bool ParseLine(vector<metaIndex *> &List,
+      bool FixupURI(std::string &URI) const;
+      virtual bool ParseLine(std::vector<metaIndex *> &List,
 			     const char *Buffer,
-			     unsigned long const &CurLine,string const &File) const;
-      virtual bool CreateItem(vector<metaIndex *> &List,string const &URI,
-			      string const &Dist,string const &Section,
-			      std::map<string, string> const &Options) const = 0;
+			     unsigned long const &CurLine,std::string const &File) const;
+      virtual bool CreateItem(std::vector<metaIndex *> &List,std::string const &URI,
+			      std::string const &Dist,std::string const &Section,
+			      std::map<std::string, std::string> const &Options) const = 0;
       Type();
       virtual ~Type() {};
    };
    
-   typedef vector<metaIndex *>::const_iterator const_iterator;
+   typedef std::vector<metaIndex *>::const_iterator const_iterator;
    
    protected:
 
-   vector<metaIndex *> SrcList;
+   std::vector<metaIndex *> SrcList;
    
    public:
 
    bool ReadMainList();
-   bool Read(string File);
+   bool Read(std::string File);
 
    // CNC:2003-03-03
    void Reset();
-   bool ReadAppend(string File);
-   bool ReadSourceDir(string Dir);
+   bool ReadAppend(std::string File);
+   bool ReadSourceDir(std::string Dir);
    
    // List accessors
    inline const_iterator begin() const {return SrcList.begin();};
@@ -98,7 +100,7 @@ class pkgSourceList
    time_t GetLastModifiedTime();
 
    pkgSourceList();
-   pkgSourceList(string File);
+   pkgSourceList(std::string File);
    ~pkgSourceList();      
 };
 
