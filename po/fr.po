@@ -9,14 +9,14 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-07-26 12:05+0200\n"
-"PO-Revision-Date: 2011-02-16 07:44+0100\n"
+"PO-Revision-Date: 2011-10-24 22:52+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"X-Generator: Lokalize 1.2\n"
 "Plural-Forms: Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: cmdline/apt-cache.cc:154
@@ -109,7 +109,7 @@ msgstr "Vous devez fournir au moins un motif de recherche"
 
 #: cmdline/apt-cache.cc:1353
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
+msgstr "Cette commande est obsolète. Veuillez utiliser « apt-mark showauto »."
 
 #: cmdline/apt-cache.cc:1448 apt-pkg/cacheset.cc:440
 #, c-format
@@ -162,7 +162,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s pour %s compilé sur %s %s\n"
 
 #: cmdline/apt-cache.cc:1682
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -216,7 +215,6 @@ msgstr ""
 "   unmet - Affiche les dépendances manquantes\n"
 "   search - Cherche une expression rationnelle dans la liste des paquets\n"
 "   show - Affiche la description du paquet\n"
-"   showauto - Affiche la liste des paquets installés automatiquement\n"
 "   depends - Affiche toutes les dépendances d'un paquet\n"
 "   rdepends - Affiche les dépendances inverses d'un paquet\n"
 "   pkgnames - Liste le nom de tous les paquets du système\n"
@@ -1197,6 +1195,8 @@ msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
+"Cette commande est obsolète. Veuillez utiliser « apt-mark auto » et "
+"« apt-mark manual »."
 
 #: cmdline/apt-get.cc:2114
 msgid "Calculating upgrade... "
@@ -1325,6 +1325,9 @@ msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+"Aucune information sur l'architecture n'est disponible pour %s. Veuillez "
+"consulter la section à propos de APT::Architectures dans la page de manuel "
+"apt.conf(5)."
 
 #: cmdline/apt-get.cc:2718
 #, c-format
@@ -1337,13 +1340,13 @@ msgid "%s has no build depends.\n"
 msgstr "%s n'a pas de dépendance de construction.\n"
 
 #: cmdline/apt-get.cc:2868
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr ""
-"La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s ne "
-"peut être trouvé"
+"La dépendance %s vis-à-vis de %s ne peut être satisfaite car %s n'est pas "
+"autorisé avec les paquets « %s »."
 
 #: cmdline/apt-get.cc:2889
 #, c-format
@@ -1362,22 +1365,22 @@ msgstr ""
 "est trop récent"
 
 #: cmdline/apt-get.cc:2951
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car aucune version "
-"du paquet %s ne peut satisfaire à la version requise"
+"disponible du paquet %s ne peut satisfaire les prérequis de version."
 
 #: cmdline/apt-get.cc:2957
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr ""
-"La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s ne "
-"peut être trouvé"
+"La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s n'a "
+"pas de version disponible."
 
 #: cmdline/apt-get.cc:2980
 #, c-format
@@ -1404,7 +1407,6 @@ msgid "Supported modules:"
 msgstr "Modules reconnus :"
 
 #: cmdline/apt-get.cc:3266
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1471,8 +1473,6 @@ msgstr ""
 "  clean - Supprime dans le cache local tous les fichiers téléchargés\n"
 "  autoclean - Supprime dans le cache local les fichiers inutiles\n"
 "  check - Vérifie qu'il n'y a pas de rupture de dépendances\n"
-"  markauto - Marque les paquets indiqués comme installés automatiquement\n"
-"  unmarkauto - Marque les paquets indiqués comme installés manuellement\n"
 "  changelog - Télécharge et affiche le journal des modifications\n"
 "              («  changelog ») du paquet indiqué\n"
 "  download - Télécharge le paquet dinaire dans le répertoire courant\n"
@@ -1548,43 +1548,45 @@ msgstr ""
 "dans le lecteur « %s » et appuyez sur la touche Entrée\n"
 
 #: cmdline/apt-mark.cc:46
-#, fuzzy, c-format
+#, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr "mais il n'est pas installé"
+msgstr "%s ne peut pas être marqué car il n'est pas installé.\n"
 
 #: cmdline/apt-mark.cc:52
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr "%s passé en « installé manuellement ».\n"
+msgstr "%s était déjà marqué comme installé manuellement.\n"
 
 #: cmdline/apt-mark.cc:54
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr "%s passé en « installé automatiquement ».\n"
+msgstr "%s était déjà marqué comme installé automatiquement.\n"
 
 #: cmdline/apt-mark.cc:169
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set on hold.\n"
-msgstr "%s est déjà la plus récente version disponible.\n"
+msgstr "%s était déjà marqué comme figé (« hold »).\n"
 
 #: cmdline/apt-mark.cc:171
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already not hold.\n"
-msgstr "%s est déjà la plus récente version disponible.\n"
+msgstr "%s était déjà marqué comme non figé.\n"
 
 #: cmdline/apt-mark.cc:185 cmdline/apt-mark.cc:207
-#, fuzzy, c-format
+#, c-format
 msgid "%s set on hold.\n"
-msgstr "%s passé en « installé manuellement ».\n"
+msgstr "%s passé en figé (« hold »).\n"
 
 #: cmdline/apt-mark.cc:187 cmdline/apt-mark.cc:212
-#, fuzzy, c-format
+#, c-format
 msgid "Canceled hold on %s.\n"
-msgstr "Impossible d'ouvrir %s"
+msgstr "Annulation de l'état figé pour %s.\n"
 
 #: cmdline/apt-mark.cc:220
 msgid "Executing dpkg failed. Are you root?"
 msgstr ""
+"Échec de l'exécution de dpkg. Possédez-vous les privilèges du "
+"superutilisateur ?"
 
 #: cmdline/apt-mark.cc:268
 msgid ""
@@ -3005,6 +3007,8 @@ msgid ""
 "The value '%s' is invalid for APT::Default-Release as such a release is not "
 "available in the sources"
 msgstr ""
+"La valeur « %s » n'est pas valable pour APT::Default-Release car cette "
+"version ne fait pas partie des sources disponibles."
 
 #: apt-pkg/policy.cc:389
 #, c-format
@@ -3162,6 +3166,8 @@ msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
+"Le fichier « Release » pour %s a expiré (plus valable depuis %s). Les mises à "
+"jour depuis ce dépôt  ne s'effectueront pas."
 
 #: apt-pkg/acquire-item.cc:1499
 #, c-format
@@ -3374,7 +3380,7 @@ msgstr "Somme de contrôle de hachage incohérente pour %s"
 #: apt-pkg/indexcopy.cc:677
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
+msgstr "Le fichier %s ne commence pas par un message signé en clair."
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
 #: apt-pkg/indexcopy.cc:708
@@ -3610,9 +3616,9 @@ msgstr "Aucun fichier miroir « %s » n'a été trouvé"
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:267
-#, fuzzy, c-format
+#, c-format
 msgid "Can not read mirror file '%s'"
-msgstr "Aucun fichier miroir « %s » n'a été trouvé"
+msgstr "Impossible de lire le fichier de miroir « %s »."
 
 #: methods/mirror.cc:422
 #, c-format
