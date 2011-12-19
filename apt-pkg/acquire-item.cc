@@ -438,7 +438,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 
       FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
       SHA1Summation SHA1;
-      SHA1.AddFD(fd.Fd(), fd.Size());
+      SHA1.AddFD(fd);
       string const local_sha1 = SHA1.Result();
 
       if(local_sha1 == ServerSha1) 
@@ -669,7 +669,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 
    FileFd fd(FinalFile, FileFd::ReadOnly);
    SHA1Summation SHA1;
-   SHA1.AddFD(fd.Fd(), fd.Size());
+   SHA1.AddFD(fd);
    string local_sha1 = string(SHA1.Result());
    if(Debug)
       std::clog << "QueueNextDiff: " 

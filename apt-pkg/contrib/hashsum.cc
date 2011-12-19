@@ -25,4 +25,26 @@ bool SummationImplementation::AddFD(int const Fd, unsigned long long Size) {
    }
    return true;
 }
+bool SummationImplementation::AddFD(FileFd &Fd, unsigned long long Size) {
+   unsigned char Buf[64 * 64];
+   bool ToEOF = (Size == 0);
+   while (Size != 0 || ToEOF)
+   {
+      unsigned long long n = sizeof(Buf);
+      if (!ToEOF) n = std::min(Size, n);
+      unsigned long long a = 0;
+      if (Fd.Read(Buf, n, &a) == false) // error
+	 return false;
+      if (ToEOF == false)
+      {
+	 if (a != n) // short read
+	    return false;
+      }
+      else if (a == 0) // EOF
+	 break;
+      Size -= a;
+      Add(Buf, a);
+   }
+   return true;
+}
 									/*}}}*/

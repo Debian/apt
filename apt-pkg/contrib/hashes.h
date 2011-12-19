@@ -17,6 +17,7 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha2.h>
+#include <apt-pkg/fileutl.h>
 
 #include <algorithm>
 #include <vector>
@@ -73,6 +74,10 @@ class Hashes
    inline bool AddFD(int const Fd,unsigned long long Size = 0)
    { return AddFD(Fd, Size, true, true, true, true); };
    bool AddFD(int const Fd, unsigned long long Size, bool const addMD5,
+	      bool const addSHA1, bool const addSHA256, bool const addSHA512);
+   inline bool AddFD(FileFd &Fd,unsigned long long Size = 0)
+   { return AddFD(Fd, Size, true, true, true, true); };
+   bool AddFD(FileFd &Fd, unsigned long long Size, bool const addMD5,
 	      bool const addSHA1, bool const addSHA256, bool const addSHA512);
    inline bool Add(const unsigned char *Beg,const unsigned char *End) 
                   {return Add(Beg,End-Beg);};

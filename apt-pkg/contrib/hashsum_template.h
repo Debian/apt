@@ -10,6 +10,8 @@
 #ifndef APTPKG_HASHSUM_TEMPLATE_H
 #define APTPKG_HASHSUM_TEMPLATE_H
 
+#include <apt-pkg/fileutl.h>
+
 #include <string>
 #include <cstring>
 #include <algorithm>
@@ -108,6 +110,7 @@ class SummationImplementation
    { return Add((const unsigned char *)Beg, End - Beg); };
 
    bool AddFD(int Fd, unsigned long long Size = 0);
+   bool AddFD(FileFd &Fd, unsigned long long Size = 0);
 };
 
 #endif

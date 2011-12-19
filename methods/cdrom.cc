@@ -268,7 +268,7 @@ bool CDROMMethod::Fetch(FetchItem *Itm)
 
    Hashes Hash;
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd.Fd(), Fd.Size());
+   Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
 
    URIDone(Res);
