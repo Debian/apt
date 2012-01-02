@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <stdint.h>
 
+#include <apt-pkg/strutl.h>
+
 template<int N>
 class HashSumValue
 {

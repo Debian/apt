@@ -16,6 +16,7 @@
 #include <apt-pkg/pkgsystem.h>
 
 #include <algorithm>
+#include <unistd.h>
 
 #include <apti18n.h>
 									/*}}}*/
