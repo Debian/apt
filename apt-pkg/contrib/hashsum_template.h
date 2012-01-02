@@ -17,6 +17,8 @@
 #include <algorithm>
 #include <stdint.h>
 
+#include <apt-pkg/strutl.h>
+
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 using std::min;
