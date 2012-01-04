@@ -32,7 +32,8 @@ apt (0.8.16~exp9) UNRELEASED; urgency=low
     - use Lists instead of Sets if input order should be preserved for
       commands accepting lists of packages, e.g. policy (Closes: #625960)
   * apt-pkg/depcache.cc:
-    - prefer native providers over foreigns even if the chain is foreign
+    - prefer native providers over foreigns even if the chain is foreign.
+      LP: #850264.
   * cmdline/apt-get.cc:
     - ignore foreign architectures if we check if a provides has only one
       resolver as it's basically the same for the user, so no need to choose
