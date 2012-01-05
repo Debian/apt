@@ -6,4 +6,6 @@
 
 <xsl:param name="man.output.encoding" select="'UTF-8'" />
 
+<xsl:template match="email">&lt;<xsl:apply-templates/>&gt;</xsl:template>
+
 </xsl:stylesheet>

@@ -2,7 +2,6 @@ apt (0.8.16~exp9ubuntu1) UNRELEASED; urgency=low
 
   * merge from debian/experimental:
     - new ABI
-    - header reshuffling that may cause FTBFS
   * DO NOT UPLOAD YET; THERE IS ANOTHER ABI BREAK COMMING SOON
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Nov 2011 16:51:36 +0100
@@ -45,6 +44,8 @@ apt (0.8.16~exp9) UNRELEASED; urgency=low
     - drop the explicit export of gz-compression handling
   * apt-pkg/cdrom.cc:
     - support InRelease files on cdrom
+  [ Michael Vogt ]
+  * g++ 4.7 fixes
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 11 Dec 2011 19:34:58 +0100
 
@@ -423,6 +424,26 @@ apt (0.8.16~exp1) experimental; urgency=low
   * merged with the debian/unstable upload
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
+
+apt (0.8.15.10) UNRELEASEDunstable; urgency=low
+
+  [ David Kalnischkies ]
+  * algorithms.cc:
+    - show a debug why a package was kept by ResolveByKeep()
+  * doc/manpage-style.xml:
+    - put <brackets> around email addresses
+  * doc/po/de.po:
+    - apply typo-fix from Michael Basse, thanks! (LP: #900770)
+
+  [ Chris Leick ]
+  * German manpage translation update
+  * doc/*.xml:
+    - find and fix a bunch of misspellings
+
+  [ Program translation updatex ]
+  * Dutch (Jeroen Schot). Closes: #652230
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 06 Dec 2011 16:35:39 +0100
 
 apt (0.8.15.9) unstable; urgency=low
 

@@ -10,10 +10,14 @@
 #ifndef APTPKG_HASHSUM_TEMPLATE_H
 #define APTPKG_HASHSUM_TEMPLATE_H
 
+#include <apt-pkg/fileutl.h>
+
 #include <string>
 #include <cstring>
 #include <algorithm>
 #include <stdint.h>
+
+#include <apt-pkg/strutl.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
@@ -108,6 +112,7 @@ class SummationImplementation
    { return Add((const unsigned char *)Beg, End - Beg); };
 
    bool AddFD(int Fd, unsigned long long Size = 0);
+   bool AddFD(FileFd &Fd, unsigned long long Size = 0);
 };
 
 #endif

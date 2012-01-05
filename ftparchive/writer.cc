@@ -1035,7 +1035,7 @@ bool ReleaseWriter::DoPackage(string FileName)
    CheckSums[NewFileName].size = fd.Size();
 
    Hashes hs;
-   hs.AddFD(fd.Fd(), 0, DoMD5, DoSHA1, DoSHA256, DoSHA512);
+   hs.AddFD(fd, 0, DoMD5, DoSHA1, DoSHA256, DoSHA512);
    if (DoMD5 == true)
       CheckSums[NewFileName].MD5 = hs.MD5.Result();
    if (DoSHA1 == true)

@@ -305,7 +305,7 @@ bool RSHConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
       return false;
 
    if (Resume != 0) {
-      if (Hash.AddFD(To.Fd(),Resume) == false) {
+      if (Hash.AddFD(To,Resume) == false) {
 	 _error->Errno("read",_("Problem hashing file"));
 	 return false;
       }

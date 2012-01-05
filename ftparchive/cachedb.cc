@@ -351,7 +351,7 @@ bool CacheDB::GetMD5(bool const &GenOnly)
       return false;
    }
    MD5Summation MD5;
-   if (Fd->Seek(0) == false || MD5.AddFD(Fd->Fd(),CurStat.FileSize) == false)
+   if (Fd->Seek(0) == false || MD5.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
    
    MD5Res = MD5.Result();
@@ -382,7 +382,7 @@ bool CacheDB::GetSHA1(bool const &GenOnly)
       return false;
    }
    SHA1Summation SHA1;
-   if (Fd->Seek(0) == false || SHA1.AddFD(Fd->Fd(),CurStat.FileSize) == false)
+   if (Fd->Seek(0) == false || SHA1.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
    
    SHA1Res = SHA1.Result();
@@ -413,7 +413,7 @@ bool CacheDB::GetSHA256(bool const &GenOnly)
       return false;
    }
    SHA256Summation SHA256;
-   if (Fd->Seek(0) == false || SHA256.AddFD(Fd->Fd(),CurStat.FileSize) == false)
+   if (Fd->Seek(0) == false || SHA256.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
    
    SHA256Res = SHA256.Result();
@@ -444,7 +444,7 @@ bool CacheDB::GetSHA512(bool const &GenOnly)
       return false;
    }
    SHA512Summation SHA512;
-   if (Fd->Seek(0) == false || SHA512.AddFD(Fd->Fd(),CurStat.FileSize) == false)
+   if (Fd->Seek(0) == false || SHA512.AddFD(*Fd, CurStat.FileSize) == false)
       return false;
    
    SHA512Res = SHA512.Result();
