@@ -457,10 +457,7 @@ if check_stamp $UPDATE_STAMP $UpdateInterval; then
         # now run apt-xapian-index if it is installed to ensure the index
         # is up-to-date
         if [ -x /usr/sbin/update-apt-xapian-index ]; then
-            if [ "$(dpkg --print-architecture)" = "armel" ]; then
-                xapian_extra_args='-u'
-            fi
-            nice ionice -c3 update-apt-xapian-index -q $xapian_extra_args
+            nice ionice -c3 update-apt-xapian-index -q -u
         fi
     else
 	debug_echo "download updated metadata (error)"
