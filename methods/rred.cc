@@ -235,7 +235,9 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 	MMap ed_cmds(Patch, MMap::ReadOnly);
 	MMap in_file(From, MMap::ReadOnly);
 
-	if (ed_cmds.Size() == 0 || in_file.Size() == 0)
+	unsigned long long const ed_size = ed_cmds.Size();
+	unsigned long long const in_size = in_file.Size();
+	if (ed_size == 0 || in_size == 0)
 		return MMAP_FAILED;
 
 	EdCommand* commands = 0;
@@ -244,10 +246,10 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 
 	const char* begin = (char*) ed_cmds.Data();
 	const char* end = begin;
-	const char* ed_end = (char*) ed_cmds.Data() + ed_cmds.Size();
+	const char* ed_end = (char*) ed_cmds.Data() + ed_size;
 
 	const char* input = (char*) in_file.Data();
-	const char* input_end = (char*) in_file.Data() + in_file.Size();
+	const char* input_end = (char*) in_file.Data() + in_size;
 
 	size_t i;
 

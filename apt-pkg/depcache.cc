@@ -374,11 +374,17 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    PkgIterator Pkg = Dep.ParentPkg();
    for (; P.end() != true; ++P)
    {
-      /* Provides may never be applied against the same package (or group)
-         if it is a conflicts. See the comment above. */
-      if (P.OwnerPkg()->Group == Pkg->Group && Dep.IsNegative() == true)
-	 continue;
-      
+      if (Dep.IsNegative() == true)
+      {
+	 /* Provides may never be applied against the same package (or group)
+	    if it is a conflicts. See the comment above. */
+	 if (P.OwnerPkg()->Group == Pkg->Group)
+	    continue;
+	 // Implicit group-conflicts should not be applied on providers of other groups
+	 if (Pkg->Group == Dep.TargetPkg()->Group && P.OwnerPkg()->Group != Pkg->Group)
+	    continue;
+      }
+
       // Check if the provides is a hit
       if (Type == NowVersion)
       {
