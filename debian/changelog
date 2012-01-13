@@ -6,8 +6,11 @@ apt (0.8.16~exp10) UNRELEASED; urgency=low
       only with real packages, not with virtual providers
   * apt-pkg/pkgcache.cc:
     - ignore implicit conflicts on providers in AllTarget, too
+  * apt-pkg/deb/dpkgpm.cc:
+    - check if dpkg supports multiarch with --assert-multi-arch
+      and if it does be always explicit about the architecture
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 12:47:33 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:29:07 +0100
 
 apt (0.8.16~exp9) experimental; urgency=low
 
