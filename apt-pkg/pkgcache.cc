@@ -619,13 +619,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       // Walk along the actual package providing versions
       for (VerIterator I = DPkg.VersionList(); I.end() == false; ++I)
       {
+	 if (IsIgnorable(I.ParentPkg()) == true)
+	    continue;
+
 	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
 
-	 if (IsNegative() == true &&
-	     ParentPkg() == I.ParentPkg())
-	    continue;
-	 
 	 Size++;
 	 if (Res != 0)
 	    *End++ = I;
@@ -634,13 +633,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       // Follow all provides
       for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; ++I)
       {
+	 if (IsIgnorable(I) == true)
+	    continue;
+
 	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
-	 
-	 if (IsNegative() == true &&
-	     ParentPkg()->Group == I.OwnerPkg()->Group)
-	    continue;
-	 
+
 	 Size++;
 	 if (Res != 0)
 	    *End++ = I.OwnerVer();
@@ -680,6 +678,34 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
       if (LastOR == true)
 	 End = (*this);
    }
+}
+									/*}}}*/
+// DepIterator::IsIgnorable - should this packag/providr be ignored?	/*{{{*/
+// ---------------------------------------------------------------------
+/* Deps like self-conflicts should be ignored as well as implicit conflicts
+   on virtual packages. */
+bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &Pkg) const
+{
+   if (ParentPkg() == TargetPkg())
+      return IsNegative();
+
+   return false;
+}
+bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
+{
+   if (IsNegative() == false)
+      return false;
+
+   PkgIterator const Pkg = ParentPkg();
+   /* Provides may never be applied against the same package (or group)
+      if it is a conflicts. See the comment above. */
+   if (Prv.OwnerPkg()->Group == Pkg->Group)
+      return true;
+   // Implicit group-conflicts should not be applied on providers of other groups
+   if (Pkg->Group == TargetPkg()->Group && Prv.OwnerPkg()->Group != Pkg->Group)
+      return true;
+
+   return false;
 }
 									/*}}}*/
 // ostream operator to handle string representation of a dependecy	/*{{{*/

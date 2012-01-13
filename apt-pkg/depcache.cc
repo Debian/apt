@@ -371,14 +371,11 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    
    // Check the providing packages
    PrvIterator P = Dep.TargetPkg().ProvidesList();
-   PkgIterator Pkg = Dep.ParentPkg();
    for (; P.end() != true; ++P)
    {
-      /* Provides may never be applied against the same package (or group)
-         if it is a conflicts. See the comment above. */
-      if (P.OwnerPkg()->Group == Pkg->Group && Dep.IsNegative() == true)
+      if (Dep.IsIgnorable(P) == true)
 	 continue;
-      
+
       // Check if the provides is a hit
       if (Type == NowVersion)
       {

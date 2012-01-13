@@ -283,6 +283,8 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	inline bool Reverse() const {return Type == DepRev;};
 	bool IsCritical() const;
 	bool IsNegative() const;
+	bool IsIgnorable(PrvIterator const &Prv) const;
+	bool IsIgnorable(PkgIterator const &Pkg) const;
 	void GlobOr(DepIterator &Start,DepIterator &End);
 	Version **AllTargets() const;
 	bool SmartTargetPkg(PkgIterator &Result) const;
