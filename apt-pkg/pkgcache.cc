@@ -636,11 +636,18 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       {
 	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
-	 
-	 if (IsNegative() == true &&
-	     ParentPkg()->Group == I.OwnerPkg()->Group)
-	    continue;
-	 
+
+	 if (IsNegative() == true)
+	 {
+	    /* Provides may never be applied against the same package (or group)
+	       if it is a conflicts. See the comment above. */
+	    if (I.OwnerPkg()->Group == ParentPkg()->Group)
+	       continue;
+	    // Implicit group-conflicts should not be applied on providers of other groups
+	    if (ParentPkg()->Group == TargetPkg()->Group && I.OwnerPkg()->Group != ParentPkg()->Group)
+	       continue;
+	 }
+
 	 Size++;
 	 if (Res != 0)
 	    *End++ = I.OwnerVer();
