@@ -107,7 +107,7 @@ ionice(int PID)
 {
    if (!FileExists("/usr/bin/ionice"))
       return false;
-   pid_t Process = ExecFork();      
+   pid_t Process = ExecFork();
    if (Process == 0)
    {
       char buf[32];
@@ -828,6 +828,40 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
 */
 bool pkgDPkgPM::Go(int OutStatusFd)
 {
+   // Generate the base argument list for dpkg
+   std::vector<const char *> Args;
+   unsigned long StartSize = 0;
+   string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   Args.push_back(Tmp.c_str());
+   StartSize += Tmp.length();
+
+   // Stick in any custom dpkg options
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+	 StartSize += Opts->Value.length();
+      }
+   }
+
+   size_t const BaseArgs = Args.size();
+   // we need to detect if we can qualify packages with the architecture or not
+   Args.push_back("--assert-multi-arch");
+   Args.push_back(NULL);
+
+   pid_t dpkgAssertMultiArch = ExecFork();
+   if (dpkgAssertMultiArch == 0)
+   {
+      execv(Args[0], (char**) &Args[0]);
+      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
+      _exit(2);
+   }
+
    fd_set rfds;
    struct timespec tv;
    sigset_t sigmask;
@@ -904,27 +938,20 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // create log
    OpenLog();
 
-   // Generate the base argument list for dpkg
-   std::vector<const char *> Args;
-   unsigned long StartSize = 0;
-   string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-   Args.push_back(Tmp.c_str());
-   StartSize += Tmp.length();
-
-   // Stick in any custom dpkg options
-   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
-   if (Opts != 0)
+   bool dpkgMultiArch = false;
+   if (dpkgAssertMultiArch > 0)
    {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
+      int Status = 0;
+      while (waitpid(dpkgAssertMultiArch, &Status, 0) != dpkgAssertMultiArch)
       {
-	 if (Opts->Value.empty() == true)
+	 if (errno == EINTR)
 	    continue;
-	 Args.push_back(Opts->Value.c_str());
-	 StartSize += Opts->Value.length();
+	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --assert-multi-arch");
+	 break;
       }
+      if (WIFEXITED(Status) == true && WEXITSTATUS(Status) == 0)
+	 dpkgMultiArch = true;
    }
-   size_t const BaseArgs = Args.size();
 
    // this loop is runs once per operation
    for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
@@ -964,14 +991,17 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       if (J - I > (signed)MaxArgs)
       {
 	 J = I + MaxArgs;
-	 Args.reserve(MaxArgs + 10);
+	 unsigned long const size = MaxArgs + 10;
+	 Args.reserve(size);
+	 Packages.reserve(size);
       }
       else
       {
-	 Args.reserve((J - I) + 10);
+	 unsigned long const size = (J - I) + 10;
+	 Args.reserve(size);
+	 Packages.reserve(size);
       }
 
-      
       int fd[2];
       pipe(fd);
 
@@ -1046,7 +1076,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       continue;
 	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
-	    if (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all"))
+	    // We keep this here to allow "smooth" transitions from e.g. multiarch dpkg/ubuntu to dpkg/debian
+	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all")))
 	    {
 	       char const * const name = I->Pkg.Name();
 	       ADDARG(name);

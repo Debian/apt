@@ -4,8 +4,13 @@ apt (0.8.16~exp10) UNRELEASED; urgency=low
   * apt-pkg/depcache.cc:
     - implicit conflicts (for multiarch) are supposed to conflict
       only with real packages, not with virtual providers
+  * apt-pkg/pkgcache.cc:
+    - ignore implicit conflicts on providers in AllTarget, too
+  * apt-pkg/deb/dpkgpm.cc:
+    - check if dpkg supports multiarch with --assert-multi-arch
+      and if it does be always explicit about the architecture
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 11 Jan 2012 17:59:33 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:29:07 +0100
 
 apt (0.8.16~exp9ubuntu1) UNRELEASED; urgency=low
 
