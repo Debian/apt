@@ -115,7 +115,7 @@ class FileFd
    
    // Simple manipulators
    inline int Fd() {return iFd;};
-   inline void Fd(int fd) {iFd = fd;};
+   inline void Fd(int fd) { OpenDescriptor(fd, ReadWrite);};
    __deprecated gzFile gzFd();
 
    inline bool IsOpen() {return iFd >= 0;};
