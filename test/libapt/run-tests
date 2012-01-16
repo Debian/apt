@@ -75,6 +75,35 @@ do
 		continue
 	elif [ $name = "CompareVersion${EXT}" ]; then
 		tmppath="${DIR}/versions.lst"
+	elif [ $name = "CdromFindPackages${EXT}" ]; then
+		tmppath=$(mktemp -d)
+		mkdir -p "${tmppath}/.disk" "${tmppath}/pool" \
+			"${tmppath}/dists/stable/main/binary-i386" \
+			"${tmppath}/dists/stable/main/source" \
+			"${tmppath}/dists/stable/contrib/binary-amd64" \
+			"${tmppath}/dists/stable/contrib/binary-all" \
+			"${tmppath}/dists/unstable/main/binary-i386" \
+			"${tmppath}/dists/unstable/main/i18n" \
+			"${tmppath}/dists/unstable/main/source" \
+			"${tmppath}/dists/broken/non-free/source"
+		touch "${tmppath}/dists/broken/.aptignr" \
+			"${tmppath}/dists/stable/main/binary-i386/Packages" \
+			"${tmppath}/dists/stable/main/binary-i386/Packages.bz2" \
+			"${tmppath}/dists/stable/main/source/Sources.xz" \
+			"${tmppath}/dists/stable/contrib/binary-amd64/Packages" \
+			"${tmppath}/dists/stable/contrib/binary-amd64/Packages.gz" \
+			"${tmppath}/dists/stable/contrib/binary-all/Packages" \
+			"${tmppath}/dists/unstable/main/binary-i386/Packages.xz" \
+			"${tmppath}/dists/unstable/main/binary-i386/Packages.lzma" \
+			"${tmppath}/dists/unstable/main/i18n/Translation-en" \
+			"${tmppath}/dists/unstable/main/i18n/Translation-de.bz2" \
+			"${tmppath}/dists/unstable/main/source/Sources.xz" \
+			"${tmppath}/dists/broken/non-free/source/Sources.gz" \
+			"${tmppath}/dists/stable/Release.gpg" \
+			"${tmppath}/dists/stable/Release" \
+			"${tmppath}/dists/unstable/InRelease" \
+			"${tmppath}/dists/broken/Release.gpg"
+		ln -s "${tmppath}/dists/unstable" "${tmppath}/dists/sid"
 	fi
 
 	echo -n "Testing with ${NAME} "

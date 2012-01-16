@@ -38,6 +38,10 @@
 #include <apt-pkg/versionmatch.h>
 #include <vector>
 
+#ifndef APT_8_CLEANER_HEADERS
+using std::vector;
+#endif
+
 class pkgPolicy : public pkgDepCache::Policy
 {
    protected:

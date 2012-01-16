@@ -74,10 +74,13 @@
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
 
-
 #include <string>
 #include <time.h>
 #include <apt-pkg/mmap.h>
+
+#ifndef APT_8_CLEANER_HEADERS
+using std::string;
+#endif
 
 class pkgVersioningSystem;
 class pkgCache								/*{{{*/
@@ -198,6 +201,7 @@ class pkgCache								/*{{{*/
    inline PkgFileIterator FileEnd();
 
    inline bool MultiArchCache() const { return MultiArchEnabled; };
+   inline char const * const NativeArch() const;
 
    // Make me a function
    pkgVersioningSystem *VS;
@@ -213,7 +217,6 @@ class pkgCache								/*{{{*/
 private:
    bool MultiArchEnabled;
    PkgIterator SingleArchFindPkg(const std::string &Name);
-   inline char const * const NativeArch() const;
 };
 									/*}}}*/
 // Header structure							/*{{{*/

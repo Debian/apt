@@ -50,7 +50,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual bool Files(std::vector<pkgSrcRecords::File> &F);
 
    debSrcRecordParser(std::string const &File,pkgIndexFile const *Index) 
-      : Parser(Index), Fd(File,FileFd::ReadOnlyGzip), Tags(&Fd,102400), 
+      : Parser(Index), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400), 
         Buffer(NULL) {}
    virtual ~debSrcRecordParser();
 };

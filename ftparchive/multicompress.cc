@@ -16,6 +16,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
@@ -90,7 +91,7 @@ MultiCompress::MultiCompress(string const &Output,string const &Compress,
    /* Open all the temp files now so we can report any errors. File is 
       made unreable to prevent people from touching it during creating. */
    for (Files *I = Outputs; I != 0; I = I->Next)
-      I->TmpFile.Open(I->Output + ".new",FileFd::WriteEmpty,0600);
+      I->TmpFile.Open(I->Output + ".new", FileFd::WriteOnly | FileFd::Create | FileFd::Empty, FileFd::Extension, 0600);
    if (_error->PendingError() == true)
       return;
 
@@ -182,11 +183,6 @@ bool MultiCompress::Start()
       _exit(0);
    };
 
-   /* Tidy up the temp files, we open them in the constructor so as to
-      get proper error reporting. Close them now. */
-   for (Files *I = Outputs; I != 0; I = I->Next)
-      I->TmpFile.Close();
-   
    close(Pipe[0]);
    Input = fdopen(Pipe[1],"w");
    if (Input == 0)
@@ -261,77 +257,10 @@ bool MultiCompress::Finalize(unsigned long long &OutSize)
    return true;
 }
 									/*}}}*/
-// MultiCompress::OpenCompress - Open the compressor			/*{{{*/
-// ---------------------------------------------------------------------
-/* This opens the compressor, either in compress mode or decompress 
-   mode. FileFd is always the compressor input/output file, 
-   OutFd is the created pipe, Input for Compress, Output for Decompress. */
-bool MultiCompress::OpenCompress(APT::Configuration::Compressor const &Prog,
-				 pid_t &Pid,int const &FileFd,int &OutFd,bool const &Comp)
-{
-   Pid = -1;
-   
-   // No compression
-   if (Prog.Binary.empty() == true)
-   {
-      OutFd = dup(FileFd);
-      return true;
-   }
-      
-   // Create a data pipe
-   int Pipe[2] = {-1,-1};
-   if (pipe(Pipe) != 0)
-      return _error->Errno("pipe",_("Failed to create subprocess IPC"));
-   for (int J = 0; J != 2; J++)
-      SetCloseExec(Pipe[J],true);
-
-   if (Comp == true)
-      OutFd = Pipe[1];
-   else
-      OutFd = Pipe[0];
-   
-   // The child..
-   Pid = ExecFork();
-   if (Pid == 0)
-   {
-      if (Comp == true)
-      {
-	 dup2(FileFd,STDOUT_FILENO);
-	 dup2(Pipe[0],STDIN_FILENO);
-      }   
-      else
-      {
-	 dup2(FileFd,STDIN_FILENO);
-	 dup2(Pipe[1],STDOUT_FILENO);
-      }
-      
-      SetCloseExec(STDOUT_FILENO,false);
-      SetCloseExec(STDIN_FILENO,false);
-
-      std::vector<char const*> Args;
-      Args.push_back(Prog.Binary.c_str());
-      std::vector<std::string> const * const addArgs =
-		(Comp == true) ? &(Prog.CompressArgs) : &(Prog.UncompressArgs);
-      for (std::vector<std::string>::const_iterator a = addArgs->begin();
-	   a != addArgs->end(); ++a)
-	 Args.push_back(a->c_str());
-      Args.push_back(NULL);
-
-      execvp(Args[0],(char **)&Args[0]);
-      cerr << _("Failed to exec compressor ") << Args[0] << endl;
-      _exit(100);
-   };      
-   if (Comp == true)
-      close(Pipe[0]);
-   else
-      close(Pipe[1]);
-   return true;
-}
-									/*}}}*/
 // MultiCompress::OpenOld - Open an old file				/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens one of the original output files, possibly decompressing it. */
-bool MultiCompress::OpenOld(int &Fd,pid_t &Proc)
+bool MultiCompress::OpenOld(FileFd &Fd)
 {
    Files *Best = Outputs;
    for (Files *I = Outputs; I != 0; I = I->Next)
@@ -339,28 +268,8 @@ bool MultiCompress::OpenOld(int &Fd,pid_t &Proc)
 	 Best = I;
 
    // Open the file
-   FileFd F(Best->Output,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-      return false;
-   
-   // Decompress the file so we can read it
-   if (OpenCompress(Best->CompressProg,Proc,F.Fd(),Fd,false) == false)
-      return false;
-   
-   return true;
+   return Fd.Open(Best->Output, FileFd::ReadOnly, FileFd::Extension);
 }
-									/*}}}*/
-// MultiCompress::CloseOld - Close the old file				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool MultiCompress::CloseOld(int Fd,pid_t Proc)
-{
-   close(Fd);
-   if (Proc != -1)
-      if (ExecWait(Proc,_("decompressor"),false) == false)
-	 return false;
-   return true;
-}   
 									/*}}}*/
 // MultiCompress::Child - The writer child				/*{{{*/
 // ---------------------------------------------------------------------
@@ -371,14 +280,6 @@ bool MultiCompress::CloseOld(int Fd,pid_t Proc)
    is new then the temp files are renamed, otherwise they are erased. */
 bool MultiCompress::Child(int const &FD)
 {
-   // Start the compression children.
-   for (Files *I = Outputs; I != 0; I = I->Next)
-   {
-      if (OpenCompress(I->CompressProg,I->CompressProc,I->TmpFile.Fd(),
-		       I->Fd,true) == false)
-	 return false;      
-   }
-
    /* Okay, now we just feed data from FD to all the other FDs. Also
       stash a hash of the data to use later. */
    SetNonBlock(FD,false);
@@ -398,25 +299,14 @@ bool MultiCompress::Child(int const &FD)
       FileSize += Res;
       for (Files *I = Outputs; I != 0; I = I->Next)
       {
-	 if (write(I->Fd,Buffer,Res) != Res)
+	 if (I->TmpFile.Write(Buffer, Res) == false)
 	 {
 	    _error->Errno("write",_("IO to subprocess/file failed"));
 	    break;
 	 }
       }      
    }   
-   
-   // Close all the writers
-   for (Files *I = Outputs; I != 0; I = I->Next)
-      close(I->Fd);
-   
-   // Wait for the compressors to exit
-   for (Files *I = Outputs; I != 0; I = I->Next)
-   {
-      if (I->CompressProc != -1)
-	 ExecWait(I->CompressProc, I->CompressProg.Binary.c_str(), false);
-   }
-   
+
    if (_error->PendingError() == true)
       return false;
    
@@ -435,31 +325,27 @@ bool MultiCompress::Child(int const &FD)
    // Check the MD5 of the lowest cost entity.
    while (Missing == false)
    {
-      int CompFd = -1;
-      pid_t Proc = -1;
-      if (OpenOld(CompFd,Proc) == false)
+      FileFd CompFd;
+      if (OpenOld(CompFd) == false)
       {
 	 _error->Discard();
 	 break;
       }
-            
+
       // Compute the hash
       MD5Summation OldMD5;
       unsigned long long NewFileSize = 0;
       while (1)
       {
-	 int Res = read(CompFd,Buffer,sizeof(Buffer));
+	 unsigned long long Res = 0;
+	 if (CompFd.Read(Buffer,sizeof(Buffer), &Res) == false)
+	    return _error->Errno("read",_("Failed to read while computing MD5"));
 	 if (Res == 0)
 	    break;
-	 if (Res < 0)
-	    return _error->Errno("read",_("Failed to read while computing MD5"));
 	 NewFileSize += Res;
 	 OldMD5.Add(Buffer,Res);
       }
-      
-      // Tidy the compressor
-      if (CloseOld(CompFd,Proc) == false)
-	 return false;
+      CompFd.Close();
 
       // Check the hash
       if (OldMD5.Result() == MD5.Result() &&

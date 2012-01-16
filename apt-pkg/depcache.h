@@ -46,6 +46,11 @@
 #include <set>
 #include <list>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/progress.h>
+#include <apt-pkg/error.h>
+#endif
+
 class OpProgress;
 
 class pkgDepCache : protected pkgCache::Namespace

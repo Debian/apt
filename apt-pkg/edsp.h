@@ -10,13 +10,16 @@
 #define PKGLIB_EDSP_H
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheset.h>
 
 #include <list>
 #include <string>
 
-namespace APT {
-	class PackageSet;
-};
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/progress.h>
+#endif
+
 class pkgDepCache;
 class OpProgress;
 

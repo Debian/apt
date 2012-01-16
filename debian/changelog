@@ -1,6 +1,63 @@
+apt (0.8.16~exp10) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - implicit conflicts (for multiarch) are supposed to conflict
+      only with real packages, not with virtual providers
+  * apt-pkg/pkgcache.cc:
+    - ignore implicit conflicts on providers in AllTarget, too
+  * apt-pkg/deb/dpkgpm.cc:
+    - check if dpkg supports multiarch with --assert-multi-arch
+      and if it does be always explicit about the architecture
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:29:07 +0100
+
+apt (0.8.16~exp9) experimental; urgency=low
+
+  [ Julian Andres Klode ]
+  * apt-pkg/cdrom.cc:
+    - Accept .bz2, .xz files in addition to .gz files (Closes: #649451)
+
+  [ Michael Vogt ]
+  * apt-pkg/cdrom.cc:
+    - use aptconfiguration to get the supported compression types
+  * debian/control:
+    - bump debhelper build-dep to debhelper (>= 8.1.3~)
+    - set libapt-pkg-dev to multi-arch: same too
+  * g++ 4.7 fixes
+
+  [ Colin Watson ]
+  * Convert libapt-pkg4.12 and libapt-inst1.4 to Multi-Arch: same.
+
+  [ David Kalnischkies ]
+  * apt-pkg/cacheset.cc:
+    - make the cachesets real containers which can embedding any container
+      to be able to use the same interface regardless of set or list usage
+    - provide a {Package,Version}List similar to {Package,Version}Set
+  * cmdline/apt-{get,cache,mark}.cc:
+    - use Lists instead of Sets if input order should be preserved for
+      commands accepting lists of packages, e.g. policy (Closes: #625960)
+  * apt-pkg/depcache.cc:
+    - prefer native providers over foreigns even if the chain is foreign
+  * cmdline/apt-get.cc:
+    - ignore foreign architectures if we check if a provides has only one
+      resolver as it's basically the same for the user, so no need to choose
+  * cmdline/apt-config.cc:
+    - dump the APT::Compressor settings correctly and completely
+  * apt-pkg/contrib/fileutl.{h,cc}:
+    - implement a ModificationTime method for FileFd
+    - add a ReadLine method
+    - drop the explicit export of gz-compression handling
+  * apt-pkg/cdrom.cc:
+    - support InRelease files on cdrom
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 05 Jan 2012 20:26:31 +0100
+
 apt (0.8.16~exp8) experimental; urgency=low
 
   [ David Kalnischkies ]
+  * algorithms.cc:
+    - show a debug why a package was kept by ResolveByKeep()
   * apt-pkg/packagemanager.cc:
     - do not fail on unpacked packages in SmartUnPack, just don't
       shedule them for unpack, but do all checks and configure them
@@ -9,9 +66,6 @@ apt (0.8.16~exp8) experimental; urgency=low
     - use a pointer-union to peace gcc strict-aliasing warning
   * apt-pkg/deb/deblistparser.cc:
     - M-A: foreign packages provide for other archs, too
-  
-  [ Michael Vogt ]
-  * g++ 4.7 fixes
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 03 Nov 2011 09:40:29 -0500
 
@@ -199,13 +253,25 @@ apt (0.8.16~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
 
-apt (1.8.15.9+nmu1) unstable; urgency=low
+apt (0.8.15.10) UNRELEASEDunstable; urgency=low
 
   [ David Kalnischkies ]
   * algorithms.cc:
     - show a debug why a package was kept by ResolveByKeep()
+  * doc/manpage-style.xml:
+    - put <brackets> around email addresses
+  * doc/po/de.po:
+    - apply typo-fix from Michael Basse, thanks! (LP: #900770)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 17 Oct 2011 16:36:22 +0200
+  [ Chris Leick ]
+  * German manpage translation update
+  * doc/*.xml:
+    - find and fix a bunch of misspellings
+
+  [ Program translation updatex ]
+  * Dutch (Jeroen Schot). Closes: #652230
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 06 Dec 2011 16:35:39 +0100
 
 apt (0.8.15.9) unstable; urgency=low
 

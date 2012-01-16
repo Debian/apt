@@ -35,14 +35,14 @@ bool DoAuto(CommandLine &CmdL)
    if (unlikely(Cache == NULL || DepCache == NULL))
       return false;
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
    if (pkgset.empty() == true)
       return _error->Error(_("No packages found"));
 
    bool MarkAuto = strcasecmp(CmdL.FileList[0],"auto") == 0;
    int AutoMarkChanged = 0;
 
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (Pkg->CurrentVer == 0)
       {
@@ -82,7 +82,7 @@ bool DoMarkAuto(CommandLine &CmdL)
    if (unlikely(Cache == NULL || DepCache == NULL))
       return false;
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
    if (pkgset.empty() == true)
       return _error->Error(_("No packages found"));
 
@@ -90,7 +90,7 @@ bool DoMarkAuto(CommandLine &CmdL)
    bool const Verbose = _config->FindB("APT::MarkAuto::Verbose", false);
    int AutoMarkChanged = 0;
 
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (Pkg->CurrentVer == 0 ||
 	  (((*DepCache)[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto) == MarkAuto)
@@ -158,13 +158,13 @@ bool DoHold(CommandLine &CmdL)
    if (unlikely(Cache == NULL))
       return false;
 
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1);
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
    if (pkgset.empty() == true)
       return _error->Error(_("No packages found"));
 
    bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
 
-   for (APT::PackageSet::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if ((Pkg->SelectedState == pkgCache::State::Hold) == MarkHold)
       {
@@ -182,7 +182,7 @@ bool DoHold(CommandLine &CmdL)
 
    if (_config->FindB("APT::Mark::Simulate", false) == true)
    {
-      for (APT::PackageSet::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+      for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       {
 	 if (MarkHold == false)
 	    ioprintf(c1out,_("%s set on hold.\n"), Pkg.FullName(true).c_str());
@@ -202,7 +202,7 @@ bool DoHold(CommandLine &CmdL)
    if (dpkg == NULL)
       return _error->Errno("DoHold", "fdopen on dpkg stdin failed");
 
-   for (APT::PackageSet::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (MarkHold == true)
       {

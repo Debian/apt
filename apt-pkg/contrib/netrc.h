@@ -16,6 +16,10 @@
 
 #include <string>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/strutl.h>
+#endif
+
 #define DOT_CHAR "."
 #define DIR_CHAR "/"
 

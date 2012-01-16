@@ -26,6 +26,8 @@
 #include <sys/stat.h>
 									/*}}}*/
 
+using std::string;
+
 // SourcesIndex::debSourcesIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -159,7 +161,7 @@ unsigned long debSourcesIndex::Size() const
    /* we need to ignore errors here; if the lists are absent, just return 0 */
    _error->PushToStack();
 
-   FileFd f = FileFd (IndexFile("Sources"), FileFd::ReadOnlyGzip);
+   FileFd f = FileFd (IndexFile("Sources"), FileFd::ReadOnly, FileFd::Extension);
    if (!f.Failed())
       size = f.Size();
 
@@ -288,7 +290,7 @@ unsigned long debPackagesIndex::Size() const
    /* we need to ignore errors here; if the lists are absent, just return 0 */
    _error->PushToStack();
 
-   FileFd f = FileFd (IndexFile("Packages"), FileFd::ReadOnlyGzip);
+   FileFd f = FileFd (IndexFile("Packages"), FileFd::ReadOnly, FileFd::Extension);
    if (!f.Failed())
       size = f.Size();
 
@@ -305,7 +307,7 @@ unsigned long debPackagesIndex::Size() const
 bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
    string PackageFile = IndexFile("Packages");
-   FileFd Pkg(PackageFile,FileFd::ReadOnlyGzip);
+   FileFd Pkg(PackageFile,FileFd::ReadOnly, FileFd::Extension);
    debListParser Parser(&Pkg, Architecture);
 
    if (_error->PendingError() == true)
@@ -319,11 +321,8 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    // Store the IMS information
    pkgCache::PkgFileIterator File = Gen.GetCurFile();
    pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator> DynFile(File);
-   struct stat St;
-   if (fstat(Pkg.Fd(),&St) != 0)
-      return _error->Errno("fstat","Failed to stat");
-   File->Size = St.st_size;
-   File->mtime = St.st_mtime;
+   File->Size = Pkg.FileSize();
+   File->mtime = Pkg.ModificationTime();
    
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeList %s",PackageFile.c_str());
@@ -489,7 +488,7 @@ unsigned long debTranslationsIndex::Size() const
    /* we need to ignore errors here; if the lists are absent, just return 0 */
    _error->PushToStack();
 
-   FileFd f = FileFd (IndexFile(Language), FileFd::ReadOnlyGzip);
+   FileFd f = FileFd (IndexFile(Language), FileFd::ReadOnly, FileFd::Extension);
    if (!f.Failed())
       size = f.Size();
 
@@ -509,7 +508,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    string TranslationFile = IndexFile(Language);
    if (FileExists(TranslationFile))
    {
-     FileFd Trans(TranslationFile,FileFd::ReadOnlyGzip);
+     FileFd Trans(TranslationFile,FileFd::ReadOnly, FileFd::Extension);
      debListParser TransParser(&Trans);
      if (_error->PendingError() == true)
        return false;
@@ -521,11 +520,8 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
      // Store the IMS information
      pkgCache::PkgFileIterator TransFile = Gen.GetCurFile();
-     struct stat TransSt;
-     if (fstat(Trans.Fd(),&TransSt) != 0)
-       return _error->Errno("fstat","Failed to stat");
-     TransFile->Size = TransSt.st_size;
-     TransFile->mtime = TransSt.st_mtime;
+     TransFile->Size = Trans.FileSize();
+     TransFile->mtime = Trans.ModificationTime();
    
      if (Gen.MergeList(TransParser) == false)
        return _error->Error("Problem with MergeList %s",TranslationFile.c_str());
@@ -590,7 +586,7 @@ unsigned long debStatusIndex::Size() const
 /* */
 bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 {
-   FileFd Pkg(File,FileFd::ReadOnlyGzip);
+   FileFd Pkg(File,FileFd::ReadOnly, FileFd::Extension);
    if (_error->PendingError() == true)
       return false;
    debListParser Parser(&Pkg);
@@ -604,11 +600,8 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    // Store the IMS information
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
-   struct stat St;
-   if (fstat(Pkg.Fd(),&St) != 0)
-      return _error->Errno("fstat","Failed to stat");
-   CFile->Size = St.st_size;
-   CFile->mtime = St.st_mtime;
+   CFile->Size = Pkg.FileSize();
+   CFile->mtime = Pkg.ModificationTime();
    CFile->Archive = Gen.WriteUniqString("now");
    
    if (Gen.MergeList(Parser) == false)

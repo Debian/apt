@@ -8,6 +8,10 @@
 #include <string>
 #include <vector>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/sourcelist.h>
+#endif
+
 class debReleaseIndex : public metaIndex {
    public:
 

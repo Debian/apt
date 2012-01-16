@@ -1007,31 +1007,21 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
    FailFile.c_str();   // Make sure we dont do a malloc in the signal handler
    FailFd = File->Fd();
    FailTime = Srv->Date;
-      
-   // Set the expected size
-   if (Srv->StartPos >= 0)
-   {
-      Res.ResumePoint = Srv->StartPos;
-      if (ftruncate(File->Fd(),Srv->StartPos) < 0)
-	 _error->Errno("ftruncate", _("Failed to truncate file"));
-   }
-      
-   // Set the start point
-   lseek(File->Fd(),0,SEEK_END);
 
    delete Srv->In.Hash;
    Srv->In.Hash = new Hashes;
-   
-   // Fill the Hash if the file is non-empty (resume)
-   if (Srv->StartPos > 0)
+
+   // Set the expected size and read file for the hashes
+   if (Srv->StartPos >= 0)
    {
-      lseek(File->Fd(),0,SEEK_SET);
-      if (Srv->In.Hash->AddFD(File->Fd(),Srv->StartPos) == false)
+      Res.ResumePoint = Srv->StartPos;
+      File->Truncate(Srv->StartPos);
+
+      if (Srv->In.Hash->AddFD(*File,Srv->StartPos) == false)
       {
 	 _error->Errno("read",_("Problem hashing file"));
 	 return ERROR_NOT_FROM_SERVER;
       }
-      lseek(File->Fd(),0,SEEK_END);
    }
    
    SetNonBlock(File->Fd(),true);

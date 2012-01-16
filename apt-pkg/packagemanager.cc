@@ -250,7 +250,7 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 	 continue;
       
       // Ignore self conflicts, ignore conflicts from irrelevent versions
-      if (D.ParentPkg() == Pkg || D.ParentVer() != D.ParentPkg().CurrentVer())
+      if (D.IsIgnorable(Pkg) || D.ParentVer() != D.ParentPkg().CurrentVer())
 	 continue;
       
       if (Cache.VS().CheckDep(Ver,D->CompareOp,D.TargetVer()) == false)

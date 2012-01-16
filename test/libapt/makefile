@@ -74,3 +74,9 @@ PROGRAM = Configuration${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = configuration_test.cc
 include $(PROGRAM_H)
+
+# test cdroms core FindPackages
+PROGRAM = CdromFindPackages${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = cdromfindpackages_test.cc
+include $(PROGRAM_H)

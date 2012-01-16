@@ -773,6 +773,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    // file. to provide Component pinning we use the section name now
    FileI->Component = WriteUniqString(component);
 
+   // FIXME: Code depends on the fact that Release files aren't compressed
    FILE* release = fdopen(dup(File.Fd()), "r");
    if (release == NULL)
       return false;
