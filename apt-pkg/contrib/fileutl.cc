@@ -1347,6 +1347,7 @@ unsigned long long FileFd::Size()
    // gzopen in "direct" mode as well
    else if (d->gz && !gzdirect(d->gz) && size > 0)
    {
+       off_t const oldPos = lseek(iFd,0,SEEK_CUR);
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
 	* this ourselves; the original (uncompressed) file size is the last 32
 	* bits of the file */
@@ -1364,8 +1365,9 @@ unsigned long long FileFd::Size()
        size = tmp_size;
 #endif
 
-       if (lseek(iFd, d->seekpos, SEEK_SET) < 0)
+       if (lseek(iFd, oldPos, SEEK_SET) < 0)
 	   return _error->Errno("lseek","Unable to seek in gzipped file");
+
        return size;
    }
 #endif
