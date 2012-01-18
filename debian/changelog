@@ -264,6 +264,10 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
     - show a debug why a package was kept by ResolveByKeep()
   * doc/manpage-style.xml:
     - put <brackets> around email addresses
+  * apt-pkg/aptconfiguration.cc:
+    - parse dpkg --print-foreign-architectures correctly in
+      case archs are separated by newline instead of space, too.
+      (Closes: #655590)
   * doc/po/de.po:
     - apply typo-fix from Michael Basse, thanks! (LP: #900770)
 
@@ -272,10 +276,13 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
   * doc/*.xml:
     - find and fix a bunch of misspellings
 
-  [ Program translation updatex ]
+  [ Program translation updates ]
   * Dutch (Jeroen Schot). Closes: #652230
+  * Slovak (Ivan Masar). Closes: #652985
+  * Russian (Yuri Kozlov). Closes: #654844
+  * Hungarian (Gabor Kelemen). Closes: #655238
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 06 Dec 2011 16:35:39 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:30:36 +0100
 
 apt (0.8.15.9) unstable; urgency=low
 
