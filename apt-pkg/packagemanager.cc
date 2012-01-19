@@ -322,22 +322,22 @@ bool pkgPackageManager::ConfigureAll()
    only shown when debuging*/
 bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 {
-   // If this is true, only check and correct and dependancies without the Loop flag
+   // If this is true, only check and correct and dependencies without the Loop flag
    bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
 
    if (Debug) {
       VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
       clog << OutputInDepth(Depth) << "SmartConfigure " << Pkg.Name() << " (" << InstallVer.VerStr() << ")";
       if (PkgLoop)
-        clog << " (Only Correct Dependancies)";
+        clog << " (Only Correct Dependencies)";
       clog << endl;
    }
 
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
       
-   /* Because of the ordered list, most dependancies should be unpacked, 
+   /* Because of the ordered list, most dependencies should be unpacked, 
       however if there is a loop (A depends on B, B depends on A) this will not 
-      be the case, so check for dependancies before configuring. */
+      be the case, so check for dependencies before configuring. */
    bool Bad = false;
    for (DepIterator D = instVer.DependsList();
 	D.end() == false; )
@@ -424,7 +424,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 
 	 if (Start==End) {
 	    if (Bad && Debug && List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
-		  std::clog << OutputInDepth(Depth) << "Could not satisfy dependancies for " << Pkg.Name() << std::endl;
+		  std::clog << OutputInDepth(Depth) << "Could not satisfy dependencies for " << Pkg.Name() << std::endl;
 	    break;
 	 } else {
             Start++;
