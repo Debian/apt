@@ -9,6 +9,8 @@ configarchitecture 'amd64' 'i386'
 buildsimplenativepackage 'native-pkg' 'amd64' '1.0' 'stable'
 buildsimplenativepackage 'foreign-pkg' 'i386' '0.5' 'stable' 'Multi-Arch: foreign'
 buildsimplenativepackage 'same-lib' 'amd64,i386' '0.5' 'stable' 'Multi-Arch: same'
+buildsimplenativepackage 'all-pkg' 'all' '2.0' 'stable'
+buildsimplenativepackage 'all-foreign-pkg' 'all' '2.0' 'stable'
 
 setupaptarchive
 
@@ -42,9 +44,21 @@ testqualifier 'foreign-pkg:i386' 'foreign-pkg:i386'
 testqualifier 'same-lib' 'same-lib'
 testqualifier 'same-lib:amd64' 'same-lib'
 testqualifier 'same-lib:i386' 'same-lib:i386'
+testqualifier 'all-pkg' 'all-pkg'
+testqualifier 'all-pkg:amd64' 'all-pkg'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg'
+insertinstalledpackage 'all-pkg' 'amd64' '1.0'
+insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0'
+testqualifier 'all-pkg' 'all-pkg'
+testqualifier 'all-pkg:amd64' 'all-pkg'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg'
 
 # multiarch dpkg (new interface version)
 
+rm rootdir/var/lib/dpkg/status
+touch rootdir/var/lib/dpkg/status
 echo 'Dir::Bin::dpkg "./dpkg-wrapper";' > rootdir/etc/apt/apt.conf.d/99dpkgwrapper
 echo '#! /bin/sh
 if echo "$*" | grep -q -- "--assert-multi-arch"; then
@@ -59,3 +73,13 @@ testqualifier 'foreign-pkg:i386' 'foreign-pkg:i386'
 testqualifier 'same-lib' 'same-lib:amd64'
 testqualifier 'same-lib:amd64' 'same-lib:amd64'
 testqualifier 'same-lib:i386' 'same-lib:i386'
+testqualifier 'all-pkg' 'all-pkg:all'
+testqualifier 'all-pkg:amd64' 'all-pkg:all'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg:all'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg:all'
+insertinstalledpackage 'all-pkg' 'amd64' '1.0'
+insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0'
+testqualifier 'all-pkg' 'all-pkg:all'
+testqualifier 'all-pkg:amd64' 'all-pkg:all'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg:all'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg:all'

@@ -1090,7 +1090,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    }
 	    else
 	    {
-	       char * const fullname = strdup(I->Pkg.FullName(false).c_str());
+	       std::string name = I->Pkg.Name();
+	       pkgCache::VerIterator PkgVer = Cache[I->Pkg].InstVerIter(Cache);
+	       name.append(":").append(PkgVer.Arch());
+	       char * const fullname = strdup(name.c_str());
 	       Packages.push_back(fullname);
 	       ADDARG(fullname);
 	    }
