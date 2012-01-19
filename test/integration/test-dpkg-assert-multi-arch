@@ -10,13 +10,13 @@ buildsimplenativepackage 'native-pkg' 'amd64' '1.0' 'stable'
 buildsimplenativepackage 'foreign-pkg' 'i386' '0.5' 'stable' 'Multi-Arch: foreign'
 buildsimplenativepackage 'same-lib' 'amd64,i386' '0.5' 'stable' 'Multi-Arch: same'
 buildsimplenativepackage 'all-pkg' 'all' '2.0' 'stable'
-buildsimplenativepackage 'all-foreign-pkg' 'all' '2.0' 'stable'
+buildsimplenativepackage 'all-foreign-pkg' 'all' '2.0' 'stable' 'Multi-Arch: foreign'
 
 setupaptarchive
 
 testqualifier() {
-	msgtest 'Test for correct qualifier mode' $2
-	GIVEN="$(aptget install $1 -qq -o Debug::pkgDPkgPM=1 2>&1 | grep -e '--configure' -e '^dpkg:' | sed -e 's/^.*--configure \([^ ]*\).*$/\1/')"
+	msgtest 'Test with' $1 'for correct qualifier mode' $2
+	GIVEN="$(aptget install $1 -qq -o Debug::pkgDPkgPM=1 2>&1 | grep -v -- '--unpack' | sed -e 's/^.*--[^u][^ ]* \([^ ]*\).*$/\1/')"
 	if [ "$GIVEN" = "$2" ]; then
 		msgpass
 	else
@@ -49,11 +49,17 @@ testqualifier 'all-pkg:amd64' 'all-pkg'
 testqualifier 'all-foreign-pkg' 'all-foreign-pkg'
 testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg'
 insertinstalledpackage 'all-pkg' 'amd64' '1.0'
-insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0'
+insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0' 'Multi-Arch: foreign'
 testqualifier 'all-pkg' 'all-pkg'
 testqualifier 'all-pkg:amd64' 'all-pkg'
 testqualifier 'all-foreign-pkg' 'all-foreign-pkg'
 testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg'
+insertinstalledpackage 'always-all-pkg' 'all' '1.0'
+insertinstalledpackage 'always-all-foreign-pkg' 'all' '1.0' 'Multi-Arch: foreign'
+testqualifier 'all-pkg-' 'all-pkg'
+testqualifier 'all-foreign-pkg-' 'all-foreign-pkg'
+testqualifier 'always-all-pkg-' 'always-all-pkg'
+testqualifier 'always-all-foreign-pkg-' 'always-all-foreign-pkg'
 
 # multiarch dpkg (new interface version)
 
@@ -78,8 +84,14 @@ testqualifier 'all-pkg:amd64' 'all-pkg:all'
 testqualifier 'all-foreign-pkg' 'all-foreign-pkg:all'
 testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg:all'
 insertinstalledpackage 'all-pkg' 'amd64' '1.0'
-insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0'
+insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0' 'Multi-Arch: foreign'
 testqualifier 'all-pkg' 'all-pkg:all'
 testqualifier 'all-pkg:amd64' 'all-pkg:all'
 testqualifier 'all-foreign-pkg' 'all-foreign-pkg:all'
 testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg:all'
+insertinstalledpackage 'always-all-pkg' 'all' '1.0'
+insertinstalledpackage 'always-all-foreign-pkg' 'all' '1.0' 'Multi-Arch: foreign'
+testqualifier 'all-pkg-' 'all-pkg:amd64'
+testqualifier 'all-foreign-pkg-' 'all-foreign-pkg:amd64'
+testqualifier 'always-all-pkg-' 'always-all-pkg:all'
+testqualifier 'always-all-foreign-pkg-' 'always-all-foreign-pkg:all'

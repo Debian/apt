@@ -733,7 +733,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 
-   if (Immediate == true && instVer->MultiArch == pkgCache::Version::Same)
+   if (Immediate == true && (instVer->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
    {
       /* Do lockstep M-A:same unpacking in two phases:
 	 First unpack all installed architectures, then the not installed.

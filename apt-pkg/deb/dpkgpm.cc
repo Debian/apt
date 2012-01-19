@@ -1093,9 +1093,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       pkgCache::VerIterator PkgVer;
 	       std::string name = I->Pkg.Name();
 	       if (Op == Item::Remove || Op == Item::Purge)
-                  PkgVer = I->Pkg.CurrentVer();
+		  PkgVer = I->Pkg.CurrentVer();
 	       else
-                  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
+		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
 	       name.append(":").append(PkgVer.Arch());
 	       char * const fullname = strdup(name.c_str());
 	       Packages.push_back(fullname);
