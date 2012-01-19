@@ -682,7 +682,13 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator BrokenPkg = Ver.ParentPkg();
 	    VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
-	    
+	    if (BrokenPkg.CurrentVer() != Ver)
+	    {
+	       if (Debug)
+		  std::clog << OutputInDepth(Depth) << "  Ignore not-installed version " << Ver.VerStr() << " of " << Pkg.FullName() << " for " << End << std::endl;
+	       continue;
+	    }
+
 	    // Check if it needs to be unpacked
 	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
 	        List->IsNow(BrokenPkg)) {

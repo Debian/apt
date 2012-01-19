@@ -7,8 +7,11 @@ apt (0.8.16~exp12) experimental; urgency=low
   [ David Kalnischkies ]
   * apt-pkg/cacheiterators.h:
     - return the correct version arch for all+foreign, too
+  * apt-pkg/packagemanager.cc:
+    - ignore breaks on not-installed versions while searching for
+      breakage loops as we don't have to avoid them
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 19 Jan 2012 18:38:33 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 19 Jan 2012 22:46:38 +0100
 
 apt (0.8.16~exp11) experimental; urgency=low
 
