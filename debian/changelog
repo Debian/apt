@@ -17,8 +17,12 @@ apt (0.8.16~exp12) experimental; urgency=low
   * debian/rules:
     - apply patch to enable usage of hardning CPPFLAGS and LDFLAGS by
       Moritz Muehlenhoff, thanks! (Closes: #653504)
+  * methods/https.cc:
+    - use curls list append instead of appending Range and If-Range by hand
+      which generates malformed requests, thanks Mel Collins for the hint!
+      (Closes: #646381)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 19 Jan 2012 23:23:29 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 19 Jan 2012 23:43:03 +0100
 
 apt (0.8.16~exp11) experimental; urgency=low
 

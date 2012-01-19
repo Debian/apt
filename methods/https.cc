@@ -100,7 +100,6 @@ void HttpsMethod::SetupProxy()  					/*{{{*/
    depth. */
 bool HttpsMethod::Fetch(FetchItem *Itm)
 {
-   stringstream ss;
    struct stat SBuf;
    struct curl_slist *headers=NULL;  
    char curl_errorstr[CURL_ERROR_SIZE];
@@ -199,6 +198,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       if (_config->FindB("Acquire::https::No-Store",
 		_config->FindB("Acquire::http::No-Store",false)) == true)
 	 headers = curl_slist_append(headers,"Cache-Control: no-store");
+      stringstream ss;
       ioprintf(ss, "Cache-Control: max-age=%u", _config->FindI("Acquire::https::Max-Age",
 		_config->FindI("Acquire::http::Max-Age",0)));
       headers = curl_slist_append(headers, ss.str().c_str());
@@ -246,11 +246,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       char Buf[1000];
-      sprintf(Buf,"Range: bytes=%li-\r\nIf-Range: %s\r\n",
-	      (long)SBuf.st_size - 1,
-	      TimeRFC1123(SBuf.st_mtime).c_str());
+      sprintf(Buf, "Range: bytes=%li-", (long) SBuf.st_size - 1);
       headers = curl_slist_append(headers, Buf);
-   } 
+      sprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
+      headers = curl_slist_append(headers, Buf);
+   }
    else if(Itm->LastModified > 0)
    {
       curl_easy_setopt(curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
