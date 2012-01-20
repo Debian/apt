@@ -3,9 +3,12 @@
 #include "assert.h"
 #include <string>
 #include <errno.h>
+#include <string.h>
 
 int main(int argc,char *argv[])
 {
+	std::string const textOfErrnoZero(strerror(0));
+
 	equals(_error->empty(), true);
 	equals(_error->PendingError(), false);
 	equals(_error->Notice("%s Notice", "A"), false);
@@ -80,7 +83,7 @@ int main(int argc,char *argv[])
 	equals(_error->PendingError(), true);
 	equals(_error->PopMessage(text), true);
 	equals(_error->PendingError(), false);
-	equals(text, "Something horrible happend 2 times - errno (0: Success)");
+	equals(text, std::string("Something horrible happend 2 times - errno (0: ").append(textOfErrnoZero).append(")"));
 	equals(_error->empty(), true);
 
 	std::string longText;
@@ -92,7 +95,7 @@ int main(int argc,char *argv[])
 
 	equals(_error->Errno("errno", "%s horrible %s %d times", longText.c_str(), "happend", 2), false);
 	equals(_error->PopMessage(text), true);
-	equals(text, std::string(longText).append(" horrible happend 2 times - errno (0: Success)"));
+	equals(text, std::string(longText).append(" horrible happend 2 times - errno (0: ").append(textOfErrnoZero).append(")"));
 
 	equals(_error->Warning("Репозиторий не обновлён и будут %d %s", 4, "test"), false);
 	equals(_error->PopMessage(text), false);

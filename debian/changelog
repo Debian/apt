@@ -22,7 +22,12 @@ apt (0.8.16~exp12) experimental; urgency=low
       which generates malformed requests, thanks Mel Collins for the hint!
       (Closes: #646381)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 19 Jan 2012 23:43:03 +0100
+  [ Pino Toscano ]
+  * test/libapt/globalerror_test.cc:
+    - errno 0 has a different strerror on hurd, so generate the expected
+      message dynamically instead of hardcoding 'Success' (Closes: #656530)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 20 Jan 2012 01:31:30 +0100
 
 apt (0.8.16~exp11) experimental; urgency=low
 
