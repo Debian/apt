@@ -67,11 +67,9 @@ do
 			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-st.bak" \
 			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-ast_DE"
 	elif [ $name = "HashSums${EXT}" ]; then
-		TMP="$(mktemp)"
-		dmesg > $TMP
+		TMP="$(readlink -f "./${0}")"
 		echo -n "Testing with \033[1;35m${name}\033[0m ... "
 		LD_LIBRARY_PATH=${LDPATH} ${testapp} $TMP $(md5sum $TMP | cut -d' ' -f 1) $(sha1sum $TMP | cut -d' ' -f 1) $(sha256sum $TMP | cut -d' ' -f 1) $(sha512sum $TMP | cut -d' ' -f 1) && echo "\033[1;32mOKAY\033[0m" || echo "\033[1;31mFAILED\033[0m"
-		rm $TMP
 		continue
 	elif [ $name = "CompareVersion${EXT}" ]; then
 		tmppath="${DIR}/versions.lst"

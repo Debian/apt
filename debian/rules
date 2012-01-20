@@ -19,6 +19,8 @@ endif
 
 ifneq (,$(shell which dpkg-buildflags))
   export CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
+  export LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
+  export CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS)
 else
   ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
     export CXXFLAGS = -O0 -g -Wall
@@ -92,7 +94,7 @@ build/configure-stamp: configure
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
-	cd build && CXXFLAGS="$(CXXFLAGS)" ../configure $(confflags)
+	cd build && CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" ../configure $(confflags)
 	touch $@
 
 build/build-stamp: build/configure-stamp

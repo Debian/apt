@@ -333,7 +333,12 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 		}
 		if(command_count == command_alloc) {
 			command_alloc = (command_alloc + 64) * 3 / 2;
-			commands = (EdCommand*) realloc(commands, command_alloc * sizeof(EdCommand));
+			EdCommand* newCommands = (EdCommand*) realloc(commands, command_alloc * sizeof(EdCommand));
+			if (newCommands == NULL) {
+				free(commands);
+				return MMAP_FAILED;
+			}
+			commands = newCommands;
 		}
 		commands[command_count++] = cmd;
 	}

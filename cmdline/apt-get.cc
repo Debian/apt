@@ -1730,7 +1730,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	      Pkg != tooMuch.end() && Changed == false; ++Pkg)
 	 {
 	    APT::PackageSet too;
-	    too.insert(Pkg);
+	    too.insert(*Pkg);
 	    for (pkgCache::PrvIterator Prv = Cache[Pkg].CandidateVerIter(Cache).ProvidesList();
 		 Prv.end() == false; ++Prv)
 	       too.insert(Prv.ParentPkg());
