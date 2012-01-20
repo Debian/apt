@@ -21,13 +21,16 @@ apt (0.8.16~exp12) experimental; urgency=low
     - use curls list append instead of appending Range and If-Range by hand
       which generates malformed requests, thanks Mel Collins for the hint!
       (Closes: #646381)
+  * test/libapt/run-tests:
+    - hurd doesn't have dmesg yet and we don't really need it either,
+      so use with $0 a more stable data source for hashsumming
 
   [ Pino Toscano ]
   * test/libapt/globalerror_test.cc:
     - errno 0 has a different strerror on hurd, so generate the expected
       message dynamically instead of hardcoding 'Success' (Closes: #656530)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 20 Jan 2012 01:31:30 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 20 Jan 2012 01:43:07 +0100
 
 apt (0.8.16~exp11) experimental; urgency=low
 
