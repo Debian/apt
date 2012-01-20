@@ -529,7 +529,6 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
    List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
 
    return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
-   return true;
 }
 									/*}}}*/
 // PM::SmartUnPack - Install helper					/*{{{*/

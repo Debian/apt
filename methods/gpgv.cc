@@ -98,8 +98,16 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       // Read a line.  Sigh.
       while ((c = getc(pipein)) != EOF && c != '\n')
       {
-         if (bufferoff == buffersize)
-            buffer = (char *) realloc(buffer, buffersize *= 2);
+	 if (bufferoff == buffersize)
+	 {
+	    char* newBuffer = (char *) realloc(buffer, buffersize *= 2);
+	    if (newBuffer == NULL)
+	    {
+	       free(buffer);
+	       return "Couldn't allocate a buffer big enough for reading";
+	    }
+	    buffer = newBuffer;
+	 }
          *(buffer+bufferoff) = c;
          bufferoff++;
       }
