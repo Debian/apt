@@ -1,10 +1,52 @@
-apt (0.8.16~exp10ubuntu1) UNRELEASED; urgency=low
+apt (0.8.16~exp12ubuntu1~ppa1) precise; urgency=low
 
   * merge from debian/experimental:
     - new ABI
-  * DO NOT UPLOAD YET; THERE IS ANOTHER ABI BREAK COMMING SOON
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 19 Jan 2012 09:05:16 +0100
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 24 Jan 2012 20:07:38 +0100
+
+apt (0.8.16~exp12) experimental; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - fix segfault on pkg removal
+
+  [ David Kalnischkies ]
+  * apt-pkg/cacheiterators.h:
+    - return the correct version arch for all+foreign, too
+  * apt-pkg/packagemanager.cc:
+    - ignore breaks on not-installed versions while searching for
+      breakage loops as we don't have to avoid them
+  * debian/control:
+    - remove APT from the short descriptions as lintian doesn't like it
+      and it doesn't transport any information for a reader anyway
+    - apply typofixes by Pascal De Vuyst, thanks! (Closes: #652834, #652835)
+  * debian/rules:
+    - apply patch to enable usage of hardning CPPFLAGS and LDFLAGS by
+      Moritz Muehlenhoff, thanks! (Closes: #653504)
+  * methods/https.cc:
+    - use curls list append instead of appending Range and If-Range by hand
+      which generates malformed requests, thanks Mel Collins for the hint!
+      (Closes: #646381)
+  * test/libapt/run-tests:
+    - hurd doesn't have dmesg yet and we don't really need it either,
+      so use with $0 a more stable data source for hashsumming
+
+  [ Pino Toscano ]
+  * test/libapt/globalerror_test.cc:
+    - errno 0 has a different strerror on hurd, so generate the expected
+      message dynamically instead of hardcoding 'Success' (Closes: #656530)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 24 Jan 2012 12:24:38 +0100
+
+apt (0.8.16~exp11) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - redirect out/input of dpkg --assert-multi-arch to /dev/null
+    - if multi-arch is detected ensure that pkg:all is reported as pkg:all
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 19 Jan 2012 13:48:18 +0100
 
 apt (0.8.16~exp10) experimental; urgency=low
 

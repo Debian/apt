@@ -1730,7 +1730,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	      Pkg != tooMuch.end() && Changed == false; ++Pkg)
 	 {
 	    APT::PackageSet too;
-	    too.insert(Pkg);
+	    too.insert(*Pkg);
 	    for (pkgCache::PrvIterator Prv = Cache[Pkg].CandidateVerIter(Cache).ProvidesList();
 		 Prv.end() == false; ++Prv)
 	       too.insert(Prv.ParentPkg());
@@ -2872,12 +2872,12 @@ bool DoBuildDep(CommandLine &CmdL)
 			forbidden = "Multi-Arch: same";
 		     // :native gets the buildArch
 		  }
-		  else if (Ver->MultiArch == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::AllForeign)
+		  else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
 		  {
 		     if (colon != string::npos)
 			forbidden = "Multi-Arch: foreign";
 		  }
-		  else if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
+		  else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
 		  {
 		     if (colon == string::npos)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);

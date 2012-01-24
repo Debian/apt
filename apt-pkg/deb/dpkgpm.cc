@@ -857,6 +857,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    pid_t dpkgAssertMultiArch = ExecFork();
    if (dpkgAssertMultiArch == 0)
    {
+      // redirect everything to the ultimate sink as we only need the exit-status
+      int const nullfd = open("/dev/null", O_RDONLY);
+      dup2(nullfd, STDIN_FILENO);
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
       execv(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
       _exit(2);
@@ -1084,7 +1089,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    }
 	    else
 	    {
-	       char * const fullname = strdup(I->Pkg.FullName(false).c_str());
+	       pkgCache::VerIterator PkgVer;
+	       std::string name = I->Pkg.Name();
+	       if (Op == Item::Remove || Op == Item::Purge)
+		  PkgVer = I->Pkg.CurrentVer();
+	       else
+		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
+	       name.append(":").append(PkgVer.Arch());
+	       char * const fullname = strdup(name.c_str());
 	       Packages.push_back(fullname);
 	       ADDARG(fullname);
 	    }
