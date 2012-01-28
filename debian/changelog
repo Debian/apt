@@ -8,6 +8,10 @@ apt (0.8.16~exp12ubuntu1) UNRELEASED; urgency=low
   * apt-pkg/algorithms.cc: iterate Breaks the same way as Conflicts, so that
     we resolve virtual package Breaks more effectively.  Thanks to Colin
     Watson for the patch.  Closes: #657695, LP: #922485.
+  * apt-pkg/algorithms.{cc,h}: use an int to represent resolver scores, not
+    a signed short, because large upgrades can result in an overflow for
+    core packages.  Thanks again to Colin Watson.  Closes: #657732,
+    LP: #917173.
 
  -- Steve Langasek <steve.langasek@ubuntu.com>  Sat, 28 Jan 2012 11:40:53 -0800
 
