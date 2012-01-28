@@ -2866,7 +2866,7 @@ bool DoBuildDep(CommandLine &CmdL)
 		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All);
 		  else if (Ver->MultiArch == pkgCache::Version::Same)
 		  {
-		     if (colon != string::npos)
+		     if (colon == string::npos)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
 		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
 			forbidden = "Multi-Arch: same";
