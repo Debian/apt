@@ -1,9 +1,15 @@
-apt (0.8.16~exp12ubuntu1~ppa1) precise; urgency=low
+apt (0.8.16~exp12ubuntu1) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * merge from debian/experimental:
     - new ABI
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 24 Jan 2012 20:07:38 +0100
+  [ Steve Langasek ]
+  * apt-pkg/algorithms.cc: iterate Breaks the same way as Conflicts, so that
+    we resolve virtual package Breaks more effectively.  Thanks to Colin
+    Watson for the patch.  Closes: #657695, LP: #922485.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Sat, 28 Jan 2012 11:40:53 -0800
 
 apt (0.8.16~exp12) experimental; urgency=low
 

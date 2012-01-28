@@ -1098,8 +1098,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  LEnd->Dep = End;
 		  LEnd++;
 		  
-		  if (Start->Type != pkgCache::Dep::Conflicts &&
-		      Start->Type != pkgCache::Dep::Obsoletes)
+		  if (Start.IsNegative() == false)
 		     break;
 	       }
 	    }
