@@ -2863,7 +2863,13 @@ bool DoBuildDep(CommandLine &CmdL)
 	       if ((BADVER(Ver)) == false)
 	       {
 		  string forbidden;
-		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All);
+		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
+		  {
+		     if (colon == string::npos)
+		     {
+			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
+		     }
+		  }
 		  else if (Ver->MultiArch == pkgCache::Version::Same)
 		  {
 		     if (colon == string::npos)
