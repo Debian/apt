@@ -4,6 +4,9 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - chroot if needed before dpkg --assert-multi-arch
     - ensure that dpkg binary doesn't have the chroot-directory prefixed
+  * apt-pkg/depcache.cc:
+    - if a M-A:same package is marked for reinstall, mark all it's installed
+      silbings for reinstallation as well (LP: #859188)
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -17,7 +20,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - use a signed int instead of short for score calculation as upgrades
       become so big now that it can overflow (Closes: #657732, LP: #917173)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 29 Jan 2012 14:44:19 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 29 Jan 2012 15:22:50 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
