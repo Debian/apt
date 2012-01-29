@@ -10,7 +10,12 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - for cross-build-dependencies M-A: none should be DEB_HOST_ARCH,
       not DEB_BUILD_ARCH (Closes: #646288)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 29 Jan 2012 13:14:01 +0100
+  [ Colin Watson ]
+  * apt-pkg/algorithms.cc:
+    - don't break out of the main-resolver loop for Breaks to deal with all
+      of them in a single iteration (Closes: #657695, LP: #922485)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 29 Jan 2012 13:50:10 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
