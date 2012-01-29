@@ -123,6 +123,18 @@ ionice(int PID)
    return ExecWait(Process, "ionice");
 }
 
+// dpkgChrootDirectory - chrooting for dpkg if needed			/*{{{*/
+static void dpkgChrootDirectory()
+{
+   std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+   if (chrootDir == "/")
+      return;
+   std::cerr << "Chrooting into " << chrootDir << std::endl;
+   if (chroot(chrootDir.c_str()) != 0)
+      _exit(100);
+}
+									/*}}}*/
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -328,15 +340,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 SetCloseExec(STDIN_FILENO,false);      
 	 SetCloseExec(STDERR_FILENO,false);
 
-	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
-	 {
-	    std::cerr << "Chrooting into " 
-		      << _config->FindDir("DPkg::Chroot-Directory") 
-		      << std::endl;
-	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
-	       _exit(100);
-	 }
-
+	 dpkgChrootDirectory();
 	 const char *Args[4];
 	 Args[0] = "/bin/sh";
 	 Args[1] = "-c";
@@ -858,6 +862,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    pid_t dpkgAssertMultiArch = ExecFork();
    if (dpkgAssertMultiArch == 0)
    {
+      dpkgChrootDirectory();
       // redirect everything to the ultimate sink as we only need the exit-status
       int const nullfd = open("/dev/null", O_RDONLY);
       dup2(nullfd, STDIN_FILENO);
@@ -1202,14 +1207,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 }
 	 close(fd[0]); // close the read end of the pipe
 
-	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
-	 {
-	    std::cerr << "Chrooting into " 
-		      << _config->FindDir("DPkg::Chroot-Directory") 
-		      << std::endl;
-	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
-	       _exit(100);
-	 }
+	 dpkgChrootDirectory();
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
