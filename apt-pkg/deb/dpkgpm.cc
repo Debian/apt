@@ -836,7 +836,17 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // Generate the base argument list for dpkg
    std::vector<const char *> Args;
    unsigned long StartSize = 0;
-   string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   {
+      string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
+      size_t dpkgChrootLen = dpkgChrootDir.length();
+      if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
+      {
+	 if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
+	    --dpkgChrootLen;
+	 Tmp = Tmp.substr(dpkgChrootLen);
+      }
+   }
    Args.push_back(Tmp.c_str());
    StartSize += Tmp.length();
 
