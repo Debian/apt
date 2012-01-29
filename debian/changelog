@@ -1,11 +1,16 @@
-apt (0.8.16~exp12+nmu1) experimental; urgency=low
+apt (0.8.16~exp13) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/deb/dpkgpm.cc:
     - chroot if needed before dpkg --assert-multi-arch
     - ensure that dpkg binary doesn't have the chroot-directory prefixed
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 29 Jan 2012 13:08:58 +0100
+  [ Steve Langasek ]
+  * cmdline/apt-get.cc:
+    - for cross-build-dependencies M-A: none should be DEB_HOST_ARCH,
+      not DEB_BUILD_ARCH (Closes: #646288)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 29 Jan 2012 13:14:01 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
