@@ -475,7 +475,7 @@ pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : Cache(*pCache)
 {
    // Allocate memory
    unsigned long Size = Cache.Head().PackageCount;
-   Scores = new signed short[Size];
+   Scores = new int[Size];
    Flags = new unsigned char[Size];
    memset(Flags,0,sizeof(*Flags)*Size);
    
@@ -515,20 +515,20 @@ void pkgProblemResolver::MakeScores()
    memset(Scores,0,sizeof(*Scores)*Size);
 
    // Important Required Standard Optional Extra
-   signed short PrioMap[] = {
+   int PrioMap[] = {
       0,
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Important",3),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Required",2),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Standard",1),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Optional",-1),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Extra",-2)
+      _config->FindI("pkgProblemResolver::Scores::Important",3),
+      _config->FindI("pkgProblemResolver::Scores::Required",2),
+      _config->FindI("pkgProblemResolver::Scores::Standard",1),
+      _config->FindI("pkgProblemResolver::Scores::Optional",-1),
+      _config->FindI("pkgProblemResolver::Scores::Extra",-2)
    };
-   signed short PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
-   signed short PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
-   signed short PrioDepends = _config->FindI("pkgProblemResolver::Scores::Depends",1);
-   signed short PrioRecommends = _config->FindI("pkgProblemResolver::Scores::Recommends",1);
-   signed short AddProtected = _config->FindI("pkgProblemResolver::Scores::AddProtected",10000);
-   signed short AddEssential = _config->FindI("pkgProblemResolver::Scores::AddEssential",5000);
+   int PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
+   int PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
+   int PrioDepends = _config->FindI("pkgProblemResolver::Scores::Depends",1);
+   int PrioRecommends = _config->FindI("pkgProblemResolver::Scores::Recommends",1);
+   int AddProtected = _config->FindI("pkgProblemResolver::Scores::AddProtected",10000);
+   int AddEssential = _config->FindI("pkgProblemResolver::Scores::AddEssential",5000);
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
       clog << "Settings used to calculate pkgProblemResolver::Scores::" << endl
@@ -550,7 +550,7 @@ void pkgProblemResolver::MakeScores()
       if (Cache[I].InstallVer == 0)
 	 continue;
       
-      signed short &Score = Scores[I->ID];
+      int &Score = Scores[I->ID];
       
       /* This is arbitrary, it should be high enough to elevate an
          essantial package above most other packages but low enough
@@ -588,7 +588,7 @@ void pkgProblemResolver::MakeScores()
    }   
    
    // Copy the scores to advoid additive looping
-   SPtrArray<signed short> OldScores = new signed short[Size];
+   SPtrArray<int> OldScores = new int[Size];
    memcpy(OldScores,Scores,sizeof(*Scores)*Size);
       
    /* Now we cause 1 level of dependency inheritance, that is we add the 
