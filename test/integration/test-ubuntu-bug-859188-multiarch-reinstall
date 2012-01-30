@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386' 'armel'
+
+buildsimplenativepackage 'libsame' 'amd64,i386,armel' '1.0' 'unstable' 'Multi-Arch: same'
+
+# FIXME: hack around dpkg's current inability to handle multiarch, a clean install would be better…
+insertinstalledpackage 'libsame' 'amd64,i386' '1.0' 'Multi-Arch: same'
+sed -e 's#/installed#/unstable#' -e 's#Installed-Size: 42#Installed-Size: 1#' -i rootdir/var/lib/dpkg/status
+
+setupaptarchive
+
+REINSTALL='Reading package lists...
+Building dependency tree...
+0 upgraded, 0 newly installed, 2 reinstalled, 0 to remove and 0 not upgraded.
+Inst libsame [1.0] (1.0 unstable [amd64])
+Inst libsame:i386 [1.0] (1.0 unstable [i386])
+Conf libsame (1.0 unstable [amd64])
+Conf libsame:i386 (1.0 unstable [i386])'
+
+testequal "$REINSTALL" aptget install --reinstall libsame -s
+testequal "$REINSTALL" aptget install --reinstall libsame:amd64 -s
+testequal "$REINSTALL" aptget install --reinstall libsame:i386 -s
+testequal "$REINSTALL" aptget install --reinstall libsame:amd64 libsame:i386 -s

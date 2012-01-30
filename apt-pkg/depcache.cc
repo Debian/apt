@@ -1241,19 +1241,36 @@ void pkgDepCache::SetReInstall(PkgIterator const &Pkg,bool To)
    if (unlikely(Pkg.end() == true))
       return;
 
+   APT::PackageList pkglist;
+   if (Pkg->CurrentVer != 0 &&
+       (Pkg.CurrentVer()-> MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+   {
+      pkgCache::GrpIterator Grp = Pkg.Group();
+      for (pkgCache::PkgIterator P = Grp.PackageList(); P.end() == false; P = Grp.NextPkg(P))
+      {
+	 if (P->CurrentVer != 0)
+	    pkglist.insert(P);
+      }
+   }
+   else
+      pkglist.insert(Pkg);
+
    ActionGroup group(*this);
 
-   RemoveSizes(Pkg);
-   RemoveStates(Pkg);
-   
-   StateCache &P = PkgState[Pkg->ID];
-   if (To == true)
-      P.iFlags |= ReInstall;
-   else
-      P.iFlags &= ~ReInstall;
-   
-   AddStates(Pkg);
-   AddSizes(Pkg);
+   for (APT::PackageList::const_iterator Pkg = pkglist.begin(); Pkg != pkglist.end(); ++Pkg)
+   {
+      RemoveSizes(Pkg);
+      RemoveStates(Pkg);
+
+      StateCache &P = PkgState[Pkg->ID];
+      if (To == true)
+	 P.iFlags |= ReInstall;
+      else
+	 P.iFlags &= ~ReInstall;
+
+      AddStates(Pkg);
+      AddSizes(Pkg);
+   }
 }
 									/*}}}*/
 // DepCache::SetCandidateVersion - Change the candidate version		/*{{{*/
