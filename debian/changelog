@@ -16,18 +16,6 @@ apt (0.8.16~exp12ubuntu2) precise; urgency=low
   * apt-pkg/aptconfiguration.cc:
     - chroot if needed before calling dpkg --print-foreign-architectures
 
-  [ Steve Langasek ]
-  * cmdline/apt-get.cc:
-    - for cross-build-dependencies M-A: none should be DEB_HOST_ARCH,
-      not DEB_BUILD_ARCH (Closes: #646288)
-
-  [ Colin Watson ]
-  * apt-pkg/algorithms.cc:
-    - don't break out of the main-resolver loop for Breaks to deal with all
-      of them in a single iteration (Closes: #657695, LP: #922485)
-    - use a signed int instead of short for score calculation as upgrades
-      become so big now that it can overflow (Closes: #657732, LP: #917173)
-  
   [ Michael Vogt ]
   * apt-pkg/deb/dpkgpm.cc:
     - fix crash when a package is in removed but residual config state
