@@ -20,6 +20,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <fcntl.h>
 
 #include <algorithm>
 #include <string>
@@ -328,16 +329,63 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 	// FIXME: It is a bit unclean to have debian specific code here…
 	if (archs.empty() == true) {
 		archs.push_back(arch);
-		string dpkgcall = _config->Find("Dir::Bin::dpkg", "dpkg");
-		std::vector<string> const dpkgoptions = _config->FindVector("DPkg::options");
-		for (std::vector<string>::const_iterator o = dpkgoptions.begin();
-		     o != dpkgoptions.end(); ++o)
-			dpkgcall.append(" ").append(*o);
-		dpkgcall.append(" --print-foreign-architectures 2> /dev/null");
-		FILE *dpkg = popen(dpkgcall.c_str(), "r");
+
+		// Generate the base argument list for dpkg
+		std::vector<const char *> Args;
+		string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+		{
+			string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
+			size_t dpkgChrootLen = dpkgChrootDir.length();
+			if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0) {
+				if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
+					--dpkgChrootLen;
+				Tmp = Tmp.substr(dpkgChrootLen);
+			}
+		}
+		Args.push_back(Tmp.c_str());
+
+		// Stick in any custom dpkg options
+		::Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+		if (Opts != 0) {
+			Opts = Opts->Child;
+			for (; Opts != 0; Opts = Opts->Next)
+			{
+				if (Opts->Value.empty() == true)
+					continue;
+				Args.push_back(Opts->Value.c_str());
+			}
+		}
+
+		Args.push_back("--print-foreign-architectures");
+		Args.push_back(NULL);
+
+		int external[2] = {-1, -1};
+		if (pipe(external) != 0)
+		{
+			_error->WarningE("getArchitecture", "Can't create IPC pipe for dpkg --print-foreign-architectures");
+			return archs;
+		}
+
+		pid_t dpkgMultiArch = ExecFork();
+		if (dpkgMultiArch == 0) {
+			close(external[0]);
+			std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+			if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+				_error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --print-foreign-architectures", chrootDir.c_str());
+			int const nullfd = open("/dev/null", O_RDONLY);
+			dup2(nullfd, STDIN_FILENO);
+			dup2(external[1], STDOUT_FILENO);
+			dup2(nullfd, STDERR_FILENO);
+			execv(Args[0], (char**) &Args[0]);
+			_error->WarningE("getArchitecture", "Can't detect foreign architectures supported by dpkg!");
+			_exit(100);
+		}
+		close(external[1]);
+
+		FILE *dpkg = fdopen(external[0], "r");
 		char buf[1024];
 		if(dpkg != NULL) {
-			if (fgets(buf, sizeof(buf), dpkg) != NULL) {
+			while (fgets(buf, sizeof(buf), dpkg) != NULL) {
 				char* arch = strtok(buf, " ");
 				while (arch != NULL) {
 					for (; isspace(*arch) != 0; ++arch);
@@ -349,8 +397,9 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 					arch = strtok(NULL, " ");
 				}
 			}
-			pclose(dpkg);
+			fclose(dpkg);
 		}
+		ExecWait(dpkgMultiArch, "dpkg --print-foreign-architectures", true);
 		return archs;
 	}
 

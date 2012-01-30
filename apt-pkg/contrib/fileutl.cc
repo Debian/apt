@@ -867,6 +867,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    else
       iFd = open(FileName.c_str(), fileflags, Perms);
 
+   this->FileName = FileName;
    if (iFd == -1 || OpenInternDescriptor(Mode, compressor) == false)
    {
       if (iFd != -1)
@@ -877,7 +878,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
       return _error->Errno("open",_("Could not open file %s"), FileName.c_str());
    }
 
-   this->FileName = FileName;
    SetCloseExec(iFd,true);
    return true;
 }
@@ -916,13 +916,13 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
    d->openmode = Mode;
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
    iFd = Fd;
+   this->FileName = "";
    if (OpenInternDescriptor(Mode, compressor) == false)
    {
       if (AutoClose)
 	 close (iFd);
       return _error->Errno("gzdopen",_("Could not open file descriptor %d"), Fd);
    }
-   this->FileName = "";
    return true;
 }
 bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor)
@@ -1057,11 +1057,21 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       else
 #endif
          Res = read(iFd,To,Size);
-      if (Res < 0 && errno == EINTR)
-	 continue;
+
       if (Res < 0)
       {
+	 if (errno == EINTR)
+	    continue;
 	 Flags |= Fail;
+#if APT_USE_ZLIB
+	 if (d->gz != NULL)
+	 {
+	    int err;
+	    char const * const errmsg = gzerror(d->gz, &err);
+	    if (err != Z_ERRNO)
+	       return _error->Error("gzread: %s (%d: %s)", _("Read error"), err, errmsg);
+	 }
+#endif
 	 return _error->Errno("read",_("Read error"));
       }
       
@@ -1337,6 +1347,7 @@ unsigned long long FileFd::Size()
    // gzopen in "direct" mode as well
    else if (d->gz && !gzdirect(d->gz) && size > 0)
    {
+       off_t const oldPos = lseek(iFd,0,SEEK_CUR);
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
 	* this ourselves; the original (uncompressed) file size is the last 32
 	* bits of the file */
@@ -1354,8 +1365,9 @@ unsigned long long FileFd::Size()
        size = tmp_size;
 #endif
 
-       if (lseek(iFd, d->seekpos, SEEK_SET) < 0)
+       if (lseek(iFd, oldPos, SEEK_SET) < 0)
 	   return _error->Errno("lseek","Unable to seek in gzipped file");
+
        return size;
    }
 #endif
@@ -1405,7 +1417,7 @@ bool FileFd::Close()
 #if APT_USE_ZLIB
       if (d != NULL && d->gz != NULL) {
 	 int const e = gzclose(d->gz);
-	 // gzdopen() on empty files always fails with "buffer error" here, ignore that
+	 // gzdclose() on empty files always fails with "buffer error" here, ignore that
 	 if (e != 0 && e != Z_BUF_ERROR)
 	    Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
       } else

@@ -123,6 +123,18 @@ ionice(int PID)
    return ExecWait(Process, "ionice");
 }
 
+// dpkgChrootDirectory - chrooting for dpkg if needed			/*{{{*/
+static void dpkgChrootDirectory()
+{
+   std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+   if (chrootDir == "/")
+      return;
+   std::cerr << "Chrooting into " << chrootDir << std::endl;
+   if (chroot(chrootDir.c_str()) != 0)
+      _exit(100);
+}
+									/*}}}*/
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -328,15 +340,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 SetCloseExec(STDIN_FILENO,false);      
 	 SetCloseExec(STDERR_FILENO,false);
 
-	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
-	 {
-	    std::cerr << "Chrooting into " 
-		      << _config->FindDir("DPkg::Chroot-Directory") 
-		      << std::endl;
-	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
-	       _exit(100);
-	 }
-
+	 dpkgChrootDirectory();
 	 const char *Args[4];
 	 Args[0] = "/bin/sh";
 	 Args[1] = "-c";
@@ -832,7 +836,17 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // Generate the base argument list for dpkg
    std::vector<const char *> Args;
    unsigned long StartSize = 0;
-   string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   {
+      string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
+      size_t dpkgChrootLen = dpkgChrootDir.length();
+      if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
+      {
+	 if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
+	    --dpkgChrootLen;
+	 Tmp = Tmp.substr(dpkgChrootLen);
+      }
+   }
    Args.push_back(Tmp.c_str());
    StartSize += Tmp.length();
 
@@ -858,6 +872,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    pid_t dpkgAssertMultiArch = ExecFork();
    if (dpkgAssertMultiArch == 0)
    {
+      dpkgChrootDirectory();
+      // redirect everything to the ultimate sink as we only need the exit-status
+      int const nullfd = open("/dev/null", O_RDONLY);
+      dup2(nullfd, STDIN_FILENO);
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
       execv(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
       _exit(2);
@@ -1085,7 +1105,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    }
 	    else
 	    {
-	       char * const fullname = strdup(I->Pkg.FullName(false).c_str());
+	       pkgCache::VerIterator PkgVer;
+	       std::string name = I->Pkg.Name();
+	       if (Op == Item::Remove || Op == Item::Purge)
+		  PkgVer = I->Pkg.CurrentVer();
+	       else
+		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
+	       name.append(":").append(PkgVer.Arch());
+	       char * const fullname = strdup(name.c_str());
 	       Packages.push_back(fullname);
 	       ADDARG(fullname);
 	    }
@@ -1190,14 +1217,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 }
 	 close(fd[0]); // close the read end of the pipe
 
-	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
-	 {
-	    std::cerr << "Chrooting into " 
-		      << _config->FindDir("DPkg::Chroot-Directory") 
-		      << std::endl;
-	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
-	       _exit(100);
-	 }
+	 dpkgChrootDirectory();
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);

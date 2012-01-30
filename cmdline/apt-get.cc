@@ -1730,7 +1730,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	      Pkg != tooMuch.end() && Changed == false; ++Pkg)
 	 {
 	    APT::PackageSet too;
-	    too.insert(Pkg);
+	    too.insert(*Pkg);
 	    for (pkgCache::PrvIterator Prv = Cache[Pkg].CandidateVerIter(Cache).ProvidesList();
 		 Prv.end() == false; ++Prv)
 	       too.insert(Prv.ParentPkg());
@@ -2863,21 +2863,27 @@ bool DoBuildDep(CommandLine &CmdL)
 	       if ((BADVER(Ver)) == false)
 	       {
 		  string forbidden;
-		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All);
+		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
+		  {
+		     if (colon == string::npos)
+		     {
+			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
+		     }
+		  }
 		  else if (Ver->MultiArch == pkgCache::Version::Same)
 		  {
-		     if (colon != string::npos)
+		     if (colon == string::npos)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
 		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
 			forbidden = "Multi-Arch: same";
 		     // :native gets the buildArch
 		  }
-		  else if (Ver->MultiArch == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::AllForeign)
+		  else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
 		  {
 		     if (colon != string::npos)
 			forbidden = "Multi-Arch: foreign";
 		  }
-		  else if (Ver->MultiArch == pkgCache::Version::Allowed || Ver->MultiArch == pkgCache::Version::AllAllowed)
+		  else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
 		  {
 		     if (colon == string::npos)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);

@@ -56,4 +56,22 @@ testfail 'dpkg config' 'armel'
 echo '#! /bin/sh
 echo "amd64 armel"' > ./dpkg-printer
 
+testpass 'dpkg config' 'i386'
+testpass 'dpkg config' 'amd64'
 testpass 'dpkg config' 'armel'
+
+echo '#! /bin/sh
+echo "amd64
+armel"' > ./dpkg-printer
+
+testpass 'dpkg config' 'i386'
+testpass 'dpkg config' 'amd64'
+testpass 'dpkg config' 'armel'
+
+echo '#! /bin/sh
+echo "amd64
+i386"' > ./dpkg-printer
+
+testpass 'dpkg config' 'i386'
+testpass 'dpkg config' 'amd64'
+testfail 'dpkg config' 'armel'

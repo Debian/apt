@@ -1,4 +1,79 @@
-apt (0.8.16~exp10) UNRELEASED; urgency=low
+apt (0.8.16~exp13) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - chroot if needed before dpkg --assert-multi-arch
+    - ensure that dpkg binary doesn't have the chroot-directory prefixed
+  * apt-pkg/depcache.cc:
+    - if a M-A:same package is marked for reinstall, mark all it's installed
+      silbings for reinstallation as well (LP: #859188)
+  * apt-pkg/contrib/configuration.cc:
+    - do not stop parent transversal in FindDir if the value is empty
+  * methods/http{s,}.cc:
+    - if a file without an extension is requested send an 'Accept: text/*'
+      header to avoid that the server chooses unsupported compressed files
+      in a content-negotation attempt (Closes: #657560)
+  * apt-pkg/aptconfiguration.cc:
+    - chroot if needed before calling dpkg --print-foreign-architectures
+
+  [ Steve Langasek ]
+  * cmdline/apt-get.cc:
+    - for cross-build-dependencies M-A: none should be DEB_HOST_ARCH,
+      not DEB_BUILD_ARCH (Closes: #646288)
+
+  [ Colin Watson ]
+  * apt-pkg/algorithms.cc:
+    - don't break out of the main-resolver loop for Breaks to deal with all
+      of them in a single iteration (Closes: #657695, LP: #922485)
+    - use a signed int instead of short for score calculation as upgrades
+      become so big now that it can overflow (Closes: #657732, LP: #917173)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 19:17:09 +0100
+
+apt (0.8.16~exp12) experimental; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - fix segfault on pkg removal
+
+  [ David Kalnischkies ]
+  * apt-pkg/cacheiterators.h:
+    - return the correct version arch for all+foreign, too
+  * apt-pkg/packagemanager.cc:
+    - ignore breaks on not-installed versions while searching for
+      breakage loops as we don't have to avoid them
+  * debian/control:
+    - remove APT from the short descriptions as lintian doesn't like it
+      and it doesn't transport any information for a reader anyway
+    - apply typofixes by Pascal De Vuyst, thanks! (Closes: #652834, #652835)
+  * debian/rules:
+    - apply patch to enable usage of hardning CPPFLAGS and LDFLAGS by
+      Moritz Muehlenhoff, thanks! (Closes: #653504)
+  * methods/https.cc:
+    - use curls list append instead of appending Range and If-Range by hand
+      which generates malformed requests, thanks Mel Collins for the hint!
+      (Closes: #646381)
+  * test/libapt/run-tests:
+    - hurd doesn't have dmesg yet and we don't really need it either,
+      so use with $0 a more stable data source for hashsumming
+
+  [ Pino Toscano ]
+  * test/libapt/globalerror_test.cc:
+    - errno 0 has a different strerror on hurd, so generate the expected
+      message dynamically instead of hardcoding 'Success' (Closes: #656530)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 24 Jan 2012 12:24:38 +0100
+
+apt (0.8.16~exp11) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - redirect out/input of dpkg --assert-multi-arch to /dev/null
+    - if multi-arch is detected ensure that pkg:all is reported as pkg:all
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 19 Jan 2012 13:48:18 +0100
+
+apt (0.8.16~exp10) experimental; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/depcache.cc:
@@ -9,12 +84,15 @@ apt (0.8.16~exp10) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - check if dpkg supports multiarch with --assert-multi-arch
       and if it does be always explicit about the architecture
+  * apt-pkg/contrib/fileutl.h:
+    - store the offset in the internal fd before calculate size of
+      the zlib-handled file to jump back to this place again
 
   [ Michael Vogt ]
-  * apt-pkg/contrib/fileutils.h:
-    - fix segfault from python-apt testsuite
+  * apt-pkg/contrib/fileutl.h:
+    - fix segfault triggered by the python-apt testsuite
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:29:07 +0100
+ -- Michael Vogt <mvo@debian.org>  Wed, 18 Jan 2012 12:52:26 +0100
 
 apt (0.8.16~exp9) experimental; urgency=low
 
@@ -264,6 +342,10 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
     - show a debug why a package was kept by ResolveByKeep()
   * doc/manpage-style.xml:
     - put <brackets> around email addresses
+  * apt-pkg/aptconfiguration.cc:
+    - parse dpkg --print-foreign-architectures correctly in
+      case archs are separated by newline instead of space, too.
+      (Closes: #655590)
   * doc/po/de.po:
     - apply typo-fix from Michael Basse, thanks! (LP: #900770)
 
@@ -272,10 +354,13 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
   * doc/*.xml:
     - find and fix a bunch of misspellings
 
-  [ Program translation updatex ]
+  [ Program translation updates ]
   * Dutch (Jeroen Schot). Closes: #652230
+  * Slovak (Ivan Masar). Closes: #652985
+  * Russian (Yuri Kozlov). Closes: #654844
+  * Hungarian (Gabor Kelemen). Closes: #655238
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 06 Dec 2011 16:35:39 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:30:36 +0100
 
 apt (0.8.15.9) unstable; urgency=low
 

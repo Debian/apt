@@ -25,7 +25,14 @@ msgnwarn() { echo -n "${CWARNING}W: $1${CNORMAL}" >&2; }
 msgnmsg() { echo -n "${CMSG}$1${CNORMAL}" >&2; }
 msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}" >&2; }
 msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}" >&2; }
-msgtest() { echo -n "${CINFO}$1 ${CCMD}$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} …${CNORMAL} " >&2; }
+msgtest() {
+	while [ -n "$1" ]; do
+		echo -n "${CINFO}$1${CCMD} " >&2;
+		echo -n "$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} " >&2;
+		shift 2
+	done
+	echo -n "…${CNORMAL} " >&2;
+}
 msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
 msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
 msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; }

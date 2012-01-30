@@ -85,7 +85,7 @@ bool MMap::Map(FileFd &Fd)
 	 return _error->Error("Compressed file %s can only be mapped readonly", Fd.Name().c_str());
       Base = new unsigned char[iSize];
       if (Fd.Seek(0L) == false || Fd.Read(Base, iSize) == false)
-	 return false;
+	 return _error->Error("Compressed file %s can't be read into mmap", Fd.Name().c_str());
       return true;
    }
 

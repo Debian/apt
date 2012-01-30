@@ -322,22 +322,22 @@ bool pkgPackageManager::ConfigureAll()
    only shown when debuging*/
 bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 {
-   // If this is true, only check and correct and dependancies without the Loop flag
+   // If this is true, only check and correct and dependencies without the Loop flag
    bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
 
    if (Debug) {
       VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
       clog << OutputInDepth(Depth) << "SmartConfigure " << Pkg.Name() << " (" << InstallVer.VerStr() << ")";
       if (PkgLoop)
-        clog << " (Only Correct Dependancies)";
+        clog << " (Only Correct Dependencies)";
       clog << endl;
    }
 
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
       
-   /* Because of the ordered list, most dependancies should be unpacked, 
+   /* Because of the ordered list, most dependencies should be unpacked, 
       however if there is a loop (A depends on B, B depends on A) this will not 
-      be the case, so check for dependancies before configuring. */
+      be the case, so check for dependencies before configuring. */
    bool Bad = false;
    for (DepIterator D = instVer.DependsList();
 	D.end() == false; )
@@ -424,7 +424,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 
 	 if (Start==End) {
 	    if (Bad && Debug && List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
-		  std::clog << OutputInDepth(Depth) << "Could not satisfy dependancies for " << Pkg.Name() << std::endl;
+		  std::clog << OutputInDepth(Depth) << "Could not satisfy dependencies for " << Pkg.Name() << std::endl;
 	    break;
 	 } else {
             Start++;
@@ -529,7 +529,6 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
    List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
 
    return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
-   return true;
 }
 									/*}}}*/
 // PM::SmartUnPack - Install helper					/*{{{*/
@@ -682,7 +681,13 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator BrokenPkg = Ver.ParentPkg();
 	    VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
-	    
+	    if (BrokenPkg.CurrentVer() != Ver)
+	    {
+	       if (Debug)
+		  std::clog << OutputInDepth(Depth) << "  Ignore not-installed version " << Ver.VerStr() << " of " << Pkg.FullName() << " for " << End << std::endl;
+	       continue;
+	    }
+
 	    // Check if it needs to be unpacked
 	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
 	        List->IsNow(BrokenPkg)) {
@@ -733,7 +738,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 
-   if (Immediate == true && instVer->MultiArch == pkgCache::Version::Same)
+   if (Immediate == true && (instVer->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
    {
       /* Do lockstep M-A:same unpacking in two phases:
 	 First unpack all installed architectures, then the not installed.

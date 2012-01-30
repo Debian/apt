@@ -96,7 +96,7 @@ class pkgProblemResolver						/*{{{*/
    enum Flags {Protected = (1 << 0), PreInstalled = (1 << 1),
                Upgradable = (1 << 2), ReInstateTried = (1 << 3),
                ToRemove = (1 << 4)};
-   signed short *Scores;
+   int *Scores;
    unsigned char *Flags;
    bool Debug;
    
