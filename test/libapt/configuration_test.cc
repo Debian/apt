@@ -71,6 +71,15 @@ int main(int argc,const char *argv[]) {
 	equals(Cnf.Find("APT2::Version", "33"), "33");
 	equals(Cnf.FindI("APT2::Version", 33), 33);
 
+	equals(Cnf.FindFile("Dir::State"), "");
+	equals(Cnf.FindFile("Dir::Aptitude::State"), "");
+	Cnf.Set("Dir", "/srv/sid");
+	equals(Cnf.FindFile("Dir::State"), "");
+	Cnf.Set("Dir::State", "var/lib/apt");
+	Cnf.Set("Dir::Aptitude::State", "var/lib/aptitude");
+	equals(Cnf.FindFile("Dir::State"), "/srv/sid/var/lib/apt");
+	equals(Cnf.FindFile("Dir::Aptitude::State"), "/srv/sid/var/lib/aptitude");
+
 	//FIXME: Test for configuration file parsing;
 	// currently only integration/ tests test them implicitly
 
