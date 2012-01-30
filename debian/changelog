@@ -13,6 +13,8 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - if a file without an extension is requested send an 'Accept: text/*'
       header to avoid that the server chooses unsupported compressed files
       in a content-negotation attempt (Closes: #657560)
+  * apt-pkg/aptconfiguration.cc:
+    - chroot if needed before calling dpkg --print-foreign-architectures
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -26,7 +28,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - use a signed int instead of short for score calculation as upgrades
       become so big now that it can overflow (Closes: #657732, LP: #917173)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 16:06:11 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 19:17:09 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
