@@ -9,6 +9,10 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
       silbings for reinstallation as well (LP: #859188)
   * apt-pkg/contrib/configuration.cc:
     - do not stop parent transversal in FindDir if the value is empty
+  * methods/http{s,}.cc:
+    - if a file without an extension is requested send an 'Accept: text/*'
+      header to avoid that the server chooses unsupported compressed files
+      in a content-negotation attempt (Closes: #657560)
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -22,7 +26,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - use a signed int instead of short for score calculation as upgrades
       become so big now that it can overflow (Closes: #657732, LP: #917173)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 13:07:30 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 16:06:11 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
