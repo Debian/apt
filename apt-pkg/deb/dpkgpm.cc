@@ -135,6 +135,33 @@ static void dpkgChrootDirectory()
 }
 									/*}}}*/
 
+
+// FindNowVersion - Helper to find a Version in "now" state	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is helpful when a package is no longer installed but has residual 
+ * config files
+ */
+static 
+pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
+{
+   pkgCache::VerIterator Ver;
+   for (Ver = Pkg.VersionList(); Ver.end() == false; Ver++)
+   {
+      pkgCache::VerFileIterator Vf = Ver.FileList();
+      pkgCache::PkgFileIterator F = Vf.File();
+      for (F = Vf.File(); F.end() == false; F++)
+      {
+         if (F && F.Archive())
+         {
+            if (strcmp(F.Archive(), "now")) 
+               return Ver;
+         }
+      }
+   }
+   return Ver;
+}
+									/*}}}*/
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1107,11 +1134,18 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    {
 	       pkgCache::VerIterator PkgVer;
 	       std::string name = I->Pkg.Name();
-	       if (Op == Item::Remove || Op == Item::Purge)
+	       if (Op == Item::Remove || Op == Item::Purge) 
+               {
 		  PkgVer = I->Pkg.CurrentVer();
+                  if(PkgVer.end() == true)
+                     PkgVer = FindNowVersion(I->Pkg);
+               }
 	       else
 		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
-	       name.append(":").append(PkgVer.Arch());
+               if (PkgVer.end() == false)
+                  name.append(":").append(PkgVer.Arch());
+               else
+                  _error->Warning("Can not find PkgVer for '%s'", name.c_str());
 	       char * const fullname = strdup(name.c_str());
 	       Packages.push_back(fullname);
 	       ADDARG(fullname);
