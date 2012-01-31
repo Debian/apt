@@ -242,6 +242,19 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // error handling
    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_errorstr);
 
+   // If we ask for uncompressed files servers might respond with content-
+   // negotation which lets us end up with compressed files we do not support,
+   // see 657029, 657560 and co, so if we have no extension on the request
+   // ask for text only. As a sidenote: If there is nothing to negotate servers
+   // seem to be nice and ignore it.
+   if (_config->FindB("Acquire::https::SendAccept", _config->FindB("Acquire::http::SendAccept", true)) == true)
+   {
+      size_t const filepos = Itm->Uri.find_last_of('/');
+      string const file = Itm->Uri.substr(filepos + 1);
+      if (flExtension(file) == file)
+	 headers = curl_slist_append(headers, "Accept: text/*");
+   }
+
    // if we have the file send an if-range query with a range header
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {

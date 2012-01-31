@@ -1,0 +1,56 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable-mp' 'crda' 'i386,amd64' '1.1.1-1ubuntu4mp' 'Provides: wireless-crda
+Multi-Arch: foreign'
+insertpackage 'unstable-m' 'crda' 'i386,amd64' '1.1.1-1ubuntu4m' 'Multi-Arch: foreign'
+insertpackage 'unstable-p' 'crda' 'i386,amd64' '1.1.1-1ubuntu4p' 'Provides: wireless-crda'
+insertpackage 'unstable' 'wireless-crda' 'i386,amd64' '1.16'
+
+
+insertinstalledpackage 'wireless-crda' 'amd64' '1.14'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  crda
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst crda (1.1.1-1ubuntu4m unstable-m [amd64])
+Conf crda (1.1.1-1ubuntu4m unstable-m [amd64])' aptget install crda -s -t unstable-m
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  crda
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst crda (1.1.1-1ubuntu4p unstable-p [amd64])
+Conf crda (1.1.1-1ubuntu4p unstable-p [amd64])' aptget install crda -s -t unstable-p
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  crda
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst crda (1.1.1-1ubuntu4mp unstable-mp [amd64])
+Conf crda (1.1.1-1ubuntu4mp unstable-mp [amd64])' aptget install crda -s -t unstable-mp
+
+rm rootdir/var/lib/dpkg/status
+insertinstalledpackage 'crda' 'amd64' '1.1.1-1ubuntu4mp' 'Provides: wireless-crda
+Conflicts: wireless-crda (<< 1.15)
+Replaces: wireless-crda ( << 1.15)
+Multi-arch: foreign'
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  wireless-crda
+0 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst wireless-crda (1.16 unstable [amd64])
+Conf wireless-crda (1.16 unstable [amd64])' aptget install wireless-crda -s -t unstable
