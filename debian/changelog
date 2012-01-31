@@ -27,6 +27,11 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
       of them in a single iteration (Closes: #657695, LP: #922485)
     - use a signed int instead of short for score calculation as upgrades
       become so big now that it can overflow (Closes: #657732, LP: #917173)
+  
+  [ Michael Vogt ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - fix crash when a package is in removed but residual config state
+      (LP: #923807)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 19:17:09 +0100
 
