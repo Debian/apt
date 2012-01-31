@@ -85,7 +85,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       string OrigPath = string(*I,CDROM.length());
       
       // Open the package file
-      FileFd Pkg(*I + GetFileName(), FileFd::ReadOnly, FileFd::Extension);
+      FileFd Pkg(*I + GetFileName(), FileFd::ReadOnly, FileFd::Auto);
       off_t const FileSize = Pkg.Size();
 
       pkgTagFile Parser(&Pkg);
@@ -797,7 +797,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       string OrigPath = string(*I,CDROM.length());
 
       // Open the package file
-      FileFd Pkg(*I, FileFd::ReadOnly, FileFd::Extension);
+      FileFd Pkg(*I, FileFd::ReadOnly, FileFd::Auto);
       off_t const FileSize = Pkg.Size();
 
       pkgTagFile Parser(&Pkg);
