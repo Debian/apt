@@ -890,6 +890,11 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compre
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
    std::string name;
+
+   // compat with the old API
+   if (Mode == ReadOnlyGzip && Compress == None)
+      Compress = Gzip;
+
    switch (Compress)
    {
    case None: name = "."; break;
