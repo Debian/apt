@@ -4,6 +4,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - chroot if needed before dpkg --assert-multi-arch
     - ensure that dpkg binary doesn't have the chroot-directory prefixed
+    - call dpkg --assert-multi-arch with execvp instead of execv
   * apt-pkg/depcache.cc:
     - if a M-A:same package is marked for reinstall, mark all it's installed
       silbings for reinstallation as well (LP: #859188)
@@ -29,7 +30,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
       become so big now that it can overflow (Closes: #657732, LP: #917173)
   * Fix IndexCopy::CopyPackages and TranslationsCopy::CopyTranslations to
     handle compressed files again (LP: #924182, closes: #658096)
-  
+
   [ Michael Vogt ]
   * apt-pkg/deb/dpkgpm.cc:
     - fix crash when a package is in removed but residual config state
@@ -37,7 +38,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 19:17:09 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 09 Feb 2012 18:05:34 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 

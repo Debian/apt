@@ -905,7 +905,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       dup2(nullfd, STDIN_FILENO);
       dup2(nullfd, STDOUT_FILENO);
       dup2(nullfd, STDERR_FILENO);
-      execv(Args[0], (char**) &Args[0]);
+      execvp(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
       _exit(2);
    }
