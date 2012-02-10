@@ -16,6 +16,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
       in a content-negotation attempt (Closes: #657560)
   * apt-pkg/aptconfiguration.cc:
     - chroot if needed before calling dpkg --print-foreign-architectures
+    - ensure that architectures are not added multiple times
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -38,7 +39,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 09 Feb 2012 18:05:34 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 10 Feb 2012 15:00:10 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 

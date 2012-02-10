@@ -392,7 +392,9 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 					if (arch[0] != '\0') {
 						char const* archend = arch;
 						for (; isspace(*archend) == 0 && *archend != '\0'; ++archend);
-						archs.push_back(string(arch, (archend - arch)));
+						string a(arch, (archend - arch));
+						if (std::find(archs.begin(), archs.end(), a) == archs.end())
+							archs.push_back(a);
 					}
 					arch = strtok(NULL, " ");
 				}
