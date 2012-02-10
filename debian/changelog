@@ -17,6 +17,8 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/aptconfiguration.cc:
     - chroot if needed before calling dpkg --print-foreign-architectures
     - ensure that architectures are not added multiple times
+  * cmdline/apt-mark.cc:
+    - detect if dpkg has multiarch support before calling --set-selections
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -39,7 +41,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 10 Feb 2012 15:00:10 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 10 Feb 2012 19:33:38 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
