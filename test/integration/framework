@@ -166,7 +166,7 @@ getarchitecture() {
 		if [ -n "$ARCH" ]; then
 			echo $ARCH
 		else
-			dpkg-architecture -qDEB_BUILD_ARCH
+			dpkg --print-architecture
 		fi
 	else
 		echo $1

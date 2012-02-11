@@ -280,8 +280,8 @@ bool DoHold(CommandLine &CmdL)
       if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
 	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --set-selections", chrootDir.c_str());
       int const nullfd = open("/dev/null", O_RDONLY);
-      dup2(nullfd, STDIN_FILENO);
-      dup2(external[0], STDOUT_FILENO);
+      dup2(external[0], STDIN_FILENO);
+      dup2(nullfd, STDOUT_FILENO);
       dup2(nullfd, STDERR_FILENO);
       execvp(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
