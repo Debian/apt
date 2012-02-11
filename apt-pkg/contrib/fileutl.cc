@@ -458,6 +458,80 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       std::sort(List.begin(),List.end());
    return List;
 }
+std::vector<string> GetListOfFilesInDir(string const &Dir, bool SortList)
+{
+   bool const Debug = _config->FindB("Debug::GetListOfFilesInDir", false);
+   if (Debug == true)
+      std::clog << "Accept in " << Dir << " all regular files" << std::endl;
+
+   std::vector<string> List;
+
+   if (DirectoryExists(Dir.c_str()) == false)
+   {
+      _error->Error(_("List of files can't be created as '%s' is not a directory"), Dir.c_str());
+      return List;
+   }
+
+   DIR *D = opendir(Dir.c_str());
+   if (D == 0)
+   {
+      _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
+      return List;
+   }
+
+   for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) 
+   {
+      // skip "hidden" files
+      if (Ent->d_name[0] == '.')
+	 continue;
+
+      // Make sure it is a file and not something else
+      string const File = flCombine(Dir,Ent->d_name);
+#ifdef _DIRENT_HAVE_D_TYPE
+      if (Ent->d_type != DT_REG)
+#endif
+      {
+	 if (RealFileExists(File.c_str()) == false)
+	 {
+	    if (Debug == true)
+	       std::clog << "Bad file: " << Ent->d_name << " → it is not a real file" << std::endl;
+	    continue;
+	 }
+      }
+
+      // Skip bad filenames ala run-parts
+      const char *C = Ent->d_name;
+      for (; *C != 0; ++C)
+	 if (isalpha(*C) == 0 && isdigit(*C) == 0
+	     && *C != '_' && *C != '-' && *C != '.')
+	    break;
+
+      // we don't reach the end of the name -> bad character included
+      if (*C != 0)
+      {
+	 if (Debug == true)
+	    std::clog << "Bad file: " << Ent->d_name << " → bad character »" << *C << "« in filename" << std::endl;
+	 continue;
+      }
+
+      // skip filenames which end with a period. These are never valid
+      if (*(C - 1) == '.')
+      {
+	 if (Debug == true)
+	    std::clog << "Bad file: " << Ent->d_name << " → Period as last character" << std::endl;
+	 continue;
+      }
+
+      if (Debug == true)
+	 std::clog << "Accept file: " << Ent->d_name << " in " << Dir << std::endl;
+      List.push_back(File);
+   }
+   closedir(D);
+
+   if (SortList == true)
+      std::sort(List.begin(),List.end());
+   return List;
+}
 									/*}}}*/
 // SafeGetCWD - This is a safer getcwd that returns a dynamic string	/*{{{*/
 // ---------------------------------------------------------------------
