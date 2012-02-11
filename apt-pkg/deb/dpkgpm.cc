@@ -1446,6 +1446,12 @@ void pkgDPkgPM::Reset()
 /* */
 void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg) 
 {
+   // If apport doesn't exist or isn't installed do nothing
+   // This e.g. prevents messages in 'universes' without apport
+   pkgCache::PkgIterator apportPkg = Cache.FindPkg("apport");
+   if (apportPkg.end() == true || apportPkg->CurrentVer == 0)
+      return;
+
    string pkgname, reportfile, srcpkgname, pkgver, arch;
    string::size_type pos;
    FILE *report;

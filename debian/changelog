@@ -5,6 +5,8 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - chroot if needed before dpkg --assert-multi-arch
     - ensure that dpkg binary doesn't have the chroot-directory prefixed
     - call dpkg --assert-multi-arch with execvp instead of execv
+    - save the universe by not printing messages about apport if a package
+      with this name is not installed (Closes: #619646)
   * apt-pkg/depcache.cc:
     - if a M-A:same package is marked for reinstall, mark all it's installed
       silbings for reinstallation as well (LP: #859188)
@@ -42,7 +44,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 11 Feb 2012 18:54:11 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 11 Feb 2012 20:59:13 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
