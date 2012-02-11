@@ -220,7 +220,7 @@ bool DoHold(CommandLine &CmdL)
 
    bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
 
-   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end();)
    {
       if ((Pkg->SelectedState == pkgCache::State::Hold) == MarkHold)
       {
@@ -228,9 +228,10 @@ bool DoHold(CommandLine &CmdL)
 	    ioprintf(c1out,_("%s was already set on hold.\n"), Pkg.FullName(true).c_str());
 	 else
 	    ioprintf(c1out,_("%s was already not hold.\n"), Pkg.FullName(true).c_str());
-	 pkgset.erase(Pkg);
-	 continue;
+	 Pkg = pkgset.erase(Pkg, true);
       }
+      else
+	 ++Pkg;
    }
 
    bool dpkgMultiArch = false;
