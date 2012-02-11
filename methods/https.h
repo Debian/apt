@@ -11,8 +11,6 @@
 #ifndef APT_HTTP_H
 #define APT_HTTP_H
 
-#define MAXLEN 360
-
 #include <iostream>
 #include <curl/curl.h>
 

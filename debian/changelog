@@ -16,6 +16,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - if a file without an extension is requested send an 'Accept: text/*'
       header to avoid that the server chooses unsupported compressed files
       in a content-negotation attempt (Closes: #657560)
+    - remove the arbitrary MAXLEN limit for response lines (Closes: #658346)
   * apt-pkg/aptconfiguration.cc:
     - chroot if needed before calling dpkg --print-foreign-architectures
     - ensure that architectures are not added multiple times
@@ -44,7 +45,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 11 Feb 2012 20:59:13 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 11 Feb 2012 21:23:00 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 

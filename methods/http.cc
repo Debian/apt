@@ -534,10 +534,6 @@ bool ServerState::HeaderLine(string Line)
    if (Line.empty() == true)
       return true;
 
-   // The http server might be trying to do something evil.
-   if (Line.length() >= MAXLEN)
-      return _error->Error(_("Got a single header line over %u chars"),MAXLEN);
-
    string::size_type Pos = Line.find(' ');
    if (Pos == string::npos || Pos+1 > Line.length())
    {

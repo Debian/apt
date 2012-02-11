@@ -11,8 +11,6 @@
 #ifndef APT_HTTP_H
 #define APT_HTTP_H
 
-#define MAXLEN 360
-
 #include <apt-pkg/strutl.h>
 
 #include <string>
@@ -92,7 +90,7 @@ struct ServerState
    unsigned int Major;
    unsigned int Minor;
    unsigned int Result;
-   char Code[MAXLEN];
+   char Code[360];
    
    // These are some statistics from the last parsed header lines
    unsigned long long Size;
