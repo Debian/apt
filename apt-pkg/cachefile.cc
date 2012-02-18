@@ -182,7 +182,7 @@ void pkgCacheFile::RemoveCaches()
    {
       std::string cachedir = flNotFile(pkgcache);
       std::string cachefile = flNotDir(pkgcache);
-      if (cachedir.empty() != true && cachefile.empty() != true)
+      if (cachedir.empty() != true && cachefile.empty() != true && DirectoryExists(cachedir) == true)
       {
 	 cachefile.append(".");
 	 std::vector<std::string> caches = GetListOfFilesInDir(cachedir, false);
@@ -201,7 +201,7 @@ void pkgCacheFile::RemoveCaches()
 
    std::string cachedir = flNotFile(srcpkgcache);
    std::string cachefile = flNotDir(srcpkgcache);
-   if (cachedir.empty() == true || cachefile.empty() == true)
+   if (cachedir.empty() == true || cachefile.empty() == true || DirectoryExists(cachedir) == false)
       return;
    cachefile.append(".");
    std::vector<std::string> caches = GetListOfFilesInDir(cachedir, false);
