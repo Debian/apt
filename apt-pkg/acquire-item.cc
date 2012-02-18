@@ -1395,7 +1395,12 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 				(*Target)->ShortDesc, ExpectedIndexHash);
 	 else if (transInRelease == false || MetaIndexParser->Exists((*Target)->MetaKey) == true)
 	 {
-	    new pkgAcqIndexTrans(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
+	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
+		MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true)
+	       new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
+				   (*Target)->ShortDesc, ExpectedIndexHash);
+	    else
+	       new pkgAcqIndexTrans(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
 	 }
 	 continue;
       }
