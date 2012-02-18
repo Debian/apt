@@ -904,7 +904,23 @@ struct TryToRemove {
       if ((Pkg->CurrentVer == 0 && PurgePkgs == false) ||
 	  (PurgePkgs == true && Pkg->CurrentState == pkgCache::State::NotInstalled))
       {
-	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+	 pkgCache::GrpIterator Grp = Pkg.Group();
+	 pkgCache::PkgIterator P = Grp.PackageList();
+	 for (; P.end() != true; P = Grp.NextPkg(P))
+	 {
+	    if (P == Pkg)
+	       continue;
+	    if (P->CurrentVer != 0 || (PurgePkgs == true && P->CurrentState != pkgCache::State::NotInstalled))
+	    {
+	       // TRANSLATORS: Note, this is not an interactive question
+	       ioprintf(c1out,_("Package '%s' is not installed, so not removed. Did you mean '%s'?\n"),
+			Pkg.FullName(true).c_str(), P.FullName(true).c_str());
+	       break;
+	    }
+	 }
+	 if (P.end() == true)
+	    ioprintf(c1out,_("Package '%s' is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+
 	 // MarkInstall refuses to install packages on hold
 	 Pkg->SelectedState = pkgCache::State::Hold;
       }

@@ -33,6 +33,9 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - use pdiff for Translation-* files if available (Closes: #657902)
   * ftparchive/writer.cc:
     - add 'Translation-*' to the default patterns
+  * cmdline/apt-get.cc:
+    - if a package can't be removed as it is not installed, suggest to
+      the user an (installed) multiarch silbing with 'Did you mean?'
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -55,7 +58,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 18 Feb 2012 19:44:16 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 18 Feb 2012 20:41:32 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
