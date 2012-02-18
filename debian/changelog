@@ -36,6 +36,8 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - if a package can't be removed as it is not installed, suggest to
       the user an (installed) multiarch silbing with 'Did you mean?'
+    - improve 'error' message for packages which are only referenced
+      e.g. in a Depends line and are now requested for removal
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -58,7 +60,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 18 Feb 2012 20:41:32 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 18 Feb 2012 21:19:25 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 

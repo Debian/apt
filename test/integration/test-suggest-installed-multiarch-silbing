@@ -21,6 +21,10 @@ insertpackage 'unstable' 'samefoo' 'amd64,i386,armel' '1' 'Multi-Arch: same'
 insertinstalledpackage 'samefoo2' 'i386' '1' 'Multi-Arch: same'
 insertpackage 'unstable' 'samefoo2' 'amd64,i386,armel' '1' 'Multi-Arch: same'
 
+insertinstalledpackage 'mozplugger' 'i386' '1' 'Depends: iceweasel | fireweasel'
+insertinstalledpackage 'fireweasel' 'i386' '1'
+insertpackage 'unstable' 'mozplugger' 'i386,amd64' '1' 'Depends: iceweasel | fireweasel'
+
 setupaptarchive
 
 testequal "Reading package lists...
@@ -64,3 +68,13 @@ testequal "Reading package lists...
 Building dependency tree...
 Package 'samefoo2:armel' is not installed, so not removed. Did you mean 'samefoo2:i386'?
 0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove samefoo2:armel -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'iceweasel' is not installed, so not removed
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove iceweasel -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'fireweasel' is not installed, so not removed. Did you mean 'fireweasel:i386'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove fireweasel:amd64 -s
