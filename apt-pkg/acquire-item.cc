@@ -189,14 +189,14 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
 									/*}}}*/
 // AcqSubIndex::AcqSubIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
-/* Get the Index file first and see if there are languages available
- * If so, create a pkgAcqIndexTrans for the found language(s).
- */
+/* Get a sub-index file based on checksums from a 'master' file and
+   possibly query additional files */
 pkgAcqSubIndex::pkgAcqSubIndex(pkgAcquire *Owner, string const &URI,
 				 string const &URIDesc, string const &ShortDesc,
 				 HashString const &ExpectedHash)
    : Item(Owner), ExpectedHash(ExpectedHash)
 {
+   /* XXX: Beware: Currently this class does nothing (of value) anymore ! */
    Debug = _config->FindB("Debug::pkgAcquire::SubIndex",false);
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -236,17 +236,7 @@ void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*
    Status = StatDone;
    Dequeue();
 
-   // No good Index is provided, so try guessing
-   std::vector<std::string> langs = APT::Configuration::getLanguages(true);
-   for (std::vector<std::string>::const_iterator l = langs.begin();
-	l != langs.end(); ++l)
-   {
-      if (*l == "none") continue;
-      string const file = "Translation-" + *l;
-      new pkgAcqIndexTrans(Owner, Desc.URI.substr(0, Desc.URI.rfind('/')+1).append(file),
-		Desc.Description.erase(Desc.Description.rfind(' ')+1).append(file),
-		file);
-   }
+   // No good Index is provided
 }
 									/*}}}*/
 void pkgAcqSubIndex::Done(string Message,unsigned long long Size,string Md5Hash,	/*{{{*/
@@ -305,38 +295,7 @@ bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
    indexRecords SubIndexParser;
    if (FileExists(IndexFile) == false || SubIndexParser.Load(IndexFile) == false)
       return false;
-
-   std::vector<std::string> lang = APT::Configuration::getLanguages(true);
-   for (std::vector<std::string>::const_iterator l = lang.begin();
-	l != lang.end(); ++l)
-   {
-      if (*l == "none")
-	 continue;
-
-      string file = "Translation-" + *l;
-      indexRecords::checkSum const *Record = SubIndexParser.Lookup(file);
-      HashString expected;
-      if (Record == NULL)
-      {
-	 // FIXME: the Index file provided by debian currently only includes bz2 records
-	 Record = SubIndexParser.Lookup(file + ".bz2");
-	 if (Record == NULL)
-	    continue;
-      }
-      else
-      {
-	 expected = Record->Hash;
-	 if (expected.empty() == true)
-	    continue;
-      }
-
-      IndexTarget target;
-      target.Description = Desc.Description.erase(Desc.Description.rfind(' ')+1).append(file);
-      target.MetaKey = file;
-      target.ShortDesc = file;
-      target.URI = Desc.URI.substr(0, Desc.URI.rfind('/')+1).append(file);
-      new pkgAcqIndexTrans(Owner, &target, expected, &SubIndexParser);
-   }
+   // so something with the downloaded index
    return true;
 }
 									/*}}}*/
@@ -1385,6 +1344,18 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
       return;
    }
 #endif
+   bool transInRelease = false;
+   {
+      std::vector<std::string> const keys = MetaIndexParser->MetaKeys();
+      for (std::vector<std::string>::const_iterator k = keys.begin(); k != keys.end(); ++k)
+	 // FIXME: Feels wrong to check for hardcoded string here, but what should we do else…
+	 if (k->find("Translation-") != std::string::npos)
+	 {
+	    transInRelease = true;
+	    break;
+	 }
+   }
+
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         ++Target)
@@ -1422,8 +1393,10 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 if ((*Target)->IsSubIndex() == true)
 	    new pkgAcqSubIndex(Owner, (*Target)->URI, (*Target)->Description,
 				(*Target)->ShortDesc, ExpectedIndexHash);
-	 else
+	 else if (transInRelease == false || MetaIndexParser->Exists((*Target)->MetaKey) == true)
+	 {
 	    new pkgAcqIndexTrans(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
+	 }
 	 continue;
       }
 

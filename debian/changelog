@@ -27,6 +27,11 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - clean up lost atomic cachefiles with 'clean' (Closes: #650513)
   * apt-pkg/indexrecords.cc:
     - do not create empty Entries as a sideeffect of Lookup()
+  * apt-pkg/acquire-item.cc:
+    - drop support for i18n/Index file (introduced in 0.8.11) and use
+      the Release file instead to get the Translations (Closes: #649314)
+  * ftparchive/writer.cc:
+    - add 'Translation-*' to the default patterns
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -49,7 +54,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 18 Feb 2012 18:22:14 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 18 Feb 2012 19:23:42 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 

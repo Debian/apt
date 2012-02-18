@@ -572,9 +572,6 @@ generatereleasefiles() {
 	# both should be given in notation date/touch can understand
 	msgninfo "\tGenerate Release files… "
 	if [ -e aptarchive/dists ]; then
-		for dir in $(find ./aptarchive/dists -mindepth 3 -maxdepth 3 -type d -name 'i18n'); do
-			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Patterns::='Translation-*' > $dir/Index
-		done
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
 			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
