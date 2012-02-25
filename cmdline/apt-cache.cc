@@ -1739,7 +1739,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,"installed","APT::Cache::Installed",0},
-      {0,"pre-depends","APT::Cache::ShowPreDepends",0},
+      {0,"pre-depends","APT::Cache::ShowPre-Depends",0},
       {0,"depends","APT::Cache::ShowDepends",0},
       {0,"recommends","APT::Cache::ShowRecommends",0},
       {0,"suggests","APT::Cache::ShowSuggests",0},
