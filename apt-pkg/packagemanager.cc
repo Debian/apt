@@ -689,35 +689,30 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    }
 
 	    // Check if it needs to be unpacked
-	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
+	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false &&
 	        List->IsNow(BrokenPkg)) {
-	      if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop) {
-	        // This dependancy has already been dealt with by another SmartUnPack on Pkg
-	        break;
-	      } else if (List->IsFlag(Pkg,pkgOrderList::Loop)) {
-	        /* Found a break, so unpack the package, but dont remove loop as already set.
-	           This means that there is another SmartUnPack call for this 
-	           package and it will remove the loop flag. */
-	        if (Debug) 
-	          cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
-	            
-	        SmartUnPack(BrokenPkg, false, Depth + 1);
-	      } else {
-                List->Flag(Pkg,pkgOrderList::Loop);
-	        // Found a break, so unpack the package
-	        if (Debug) 
-	          cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
-	         
-	        SmartUnPack(BrokenPkg, false, Depth + 1);
-	        List->RmFlag(Pkg,pkgOrderList::Loop);
-	      }
-	    }
-	    
-	    // Check if a package needs to be removed
-	    if (Cache[BrokenPkg].Delete() == true && !List->IsFlag(BrokenPkg,pkgOrderList::Configured)) {
-	      if (Debug) 
-	         cout << OutputInDepth(Depth) << "  Removing " << BrokenPkg.Name() << " to avoid break" << endl;
-	      SmartRemove(BrokenPkg);
+	       if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop) {
+		  // This dependancy has already been dealt with by another SmartUnPack on Pkg
+		  break;
+	       } else {
+		  // Found a break, so unpack the package,
+		  // but do not set loop if another SmartUnPack already deals with it
+		  if (Debug)
+		     cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid " << End << endl;
+		  if (PkgLoop == false)
+		     List->Flag(Pkg,pkgOrderList::Loop);
+		  SmartUnPack(BrokenPkg, false, Depth + 1);
+		  if (PkgLoop == false)
+		     List->RmFlag(Pkg,pkgOrderList::Loop);
+	       }
+	    } else {
+	       // Check if a package needs to be removed
+	       if (Cache[BrokenPkg].Delete() == true && !List->IsFlag(BrokenPkg,pkgOrderList::Configured))
+	       {
+		  if (Debug)
+		     cout << OutputInDepth(Depth) << "  Removing " << BrokenPkg.Name() << " to avoid " << End << endl;
+		  SmartRemove(BrokenPkg);
+	       }
 	    }
 	 }
       }
