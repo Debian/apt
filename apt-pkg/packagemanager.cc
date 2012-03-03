@@ -698,7 +698,12 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		  // Found a break, so unpack the package,
 		  // but do not set loop if another SmartUnPack already deals with it
 		  if (Debug)
-		     cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid " << End << endl;
+		  {
+		     cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid " << End;
+		     if (PkgLoop == true)
+			cout << " (Looping)";
+		     cout << std::endl;
+		  }
 		  if (PkgLoop == false)
 		     List->Flag(Pkg,pkgOrderList::Loop);
 		  SmartUnPack(BrokenPkg, false, Depth + 1);
