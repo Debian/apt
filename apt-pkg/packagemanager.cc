@@ -680,7 +680,6 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	 {
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator BrokenPkg = Ver.ParentPkg();
-	    VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
 	    if (BrokenPkg.CurrentVer() != Ver)
 	    {
 	       if (Debug)
@@ -695,20 +694,49 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		  // This dependancy has already been dealt with by another SmartUnPack on Pkg
 		  break;
 	       } else {
-		  // Found a break, so unpack the package,
+		  // Found a break, so see if we can unpack the package to avoid it
 		  // but do not set loop if another SmartUnPack already deals with it
-		  if (Debug)
+		  VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
+		  bool circle = false;
+		  for (pkgCache::DepIterator D = InstallVer.DependsList(); D.end() == false; ++D)
 		  {
-		     cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid " << End;
-		     if (PkgLoop == true)
-			cout << " (Looping)";
-		     cout << std::endl;
+		     if (D->Type != pkgCache::Dep::PreDepends)
+			continue;
+		     SPtrArray<Version *> VL = D.AllTargets();
+		     for (Version **I = VL; *I != 0; ++I)
+		     {
+			VerIterator V(Cache,*I);
+			PkgIterator P = V.ParentPkg();
+			// we are checking for installation as an easy 'protection' against or-groups and (unchosen) providers
+			if (P->CurrentVer == 0 || P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
+			   continue;
+			circle = true;
+			break;
+		     }
+		     if (circle == true)
+			break;
 		  }
-		  if (PkgLoop == false)
-		     List->Flag(Pkg,pkgOrderList::Loop);
-		  SmartUnPack(BrokenPkg, false, Depth + 1);
-		  if (PkgLoop == false)
-		     List->RmFlag(Pkg,pkgOrderList::Loop);
+		  if (circle == true)
+		  {
+		     if (Debug)
+		        cout << OutputInDepth(Depth) << "  Avoiding " << End << " avoided as " << BrokenPkg.FullName() << " has a pre-depends on " << Pkg.FullName() << std::endl;
+		     continue;
+		  }
+		  else
+		  {
+		     if (Debug)
+		     {
+			cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.FullName() << " to avoid " << End;
+			if (PkgLoop == true)
+			   cout << " (Looping)";
+			cout << std::endl;
+		     }
+		     if (PkgLoop == false)
+			List->Flag(Pkg,pkgOrderList::Loop);
+		     SmartUnPack(BrokenPkg, false, Depth + 1);
+		     if (PkgLoop == false)
+			List->RmFlag(Pkg,pkgOrderList::Loop);
+		  }
 	       }
 	    } else {
 	       // Check if a package needs to be removed

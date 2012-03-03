@@ -40,6 +40,9 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
       e.g. in a Depends line and are now requested for removal
   * cmdline/apt-cache.cc:
     - correct --pre-depends option by using dash consistently (LP: #940837)
+  * apt-pkg/packagemanager.cc:
+    - do not try to a void a breaks if the broken package pre-depends
+      on the breaker, but let dpkg auto-deconfigure it
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -62,7 +65,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 25 Feb 2012 19:43:04 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 03 Mar 2012 11:03:58 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
