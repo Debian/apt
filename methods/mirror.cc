@@ -147,7 +147,7 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    // append all architectures
    std::vector<std::string> vec = APT::Configuration::getArchitectures();
    for (std::vector<std::string>::const_iterator I = vec.begin();
-        I != vec.end(); I++)
+        I != vec.end(); ++I)
       if (I == vec.begin())
          fetch += "?arch" + (*I);
       else
