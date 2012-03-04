@@ -1327,7 +1327,7 @@ int HttpMethod::Loop()
                after the same URI is seen twice in a queue item. */
             StringVector &R = Redirected[Queue->DestFile];
             bool StopRedirects = false;
-            if (R.size() == 0)
+            if (R.empty() == true)
                R.push_back(Queue->Uri);
             else if (R[0] == "STOP" || R.size() > 10)
                StopRedirects = true;
