@@ -622,8 +622,7 @@ bool FTPConn::ExtGoPasv()
    }
    
    // Get a new passive address.
-   int Res;
-   if ((Res = getaddrinfo(IP.c_str(),PStr,&Hints,&PasvAddr)) != 0)
+   if (getaddrinfo(IP.c_str(),PStr,&Hints,&PasvAddr) != 0)
       return true;
    
    return true;
@@ -727,8 +726,7 @@ bool FTPConn::CreateDataFd()
    Hints.ai_socktype = SOCK_STREAM;
    Hints.ai_flags |= AI_PASSIVE;
    Hints.ai_family = ((struct sockaddr *)&ServerAddr)->sa_family;
-   int Res;
-   if ((Res = getaddrinfo(0,"0",&Hints,&BindAddr)) != 0 || BindAddr == NULL)
+   if (getaddrinfo(0,"0",&Hints,&BindAddr) != 0 || BindAddr == NULL)
       return _error->Error(_("getaddrinfo was unable to get a listening socket"));
    
    // Construct the socket
