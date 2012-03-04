@@ -26,11 +26,11 @@ unsigned long pkgSystem::GlobalListLen = 0;
 // System::pkgSystem - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* Add it to the global list.. */
-pkgSystem::pkgSystem()
+pkgSystem::pkgSystem() : Label(NULL), VS(NULL)
 {
    assert(GlobalListLen < sizeof(SysList)/sizeof(*SysList));
    SysList[GlobalListLen] = this;
-   GlobalListLen++;
+   ++GlobalListLen;
 }
 									/*}}}*/
 // System::GetSystem - Get the named system				/*{{{*/

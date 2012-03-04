@@ -31,8 +31,9 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* */
 AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int Quiet) :
-    ScreenWidth(ScreenWidth), Quiet(Quiet)
+    ScreenWidth(ScreenWidth), ID(0), Quiet(Quiet)
 {
+   BlankLine[0] = 0;
 }
 									/*}}}*/
 // AcqTextStatus::Start - Downloading has started			/*{{{*/

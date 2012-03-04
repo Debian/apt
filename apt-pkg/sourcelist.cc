@@ -33,7 +33,7 @@ unsigned long pkgSourceList::Type::GlobalListLen = 0;
 // Type::Type - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* Link this to the global list of items*/
-pkgSourceList::Type::Type()
+pkgSourceList::Type::Type() : Name(NULL), Label(NULL)
 {
    ItmList[GlobalListLen] = this;
    GlobalListLen++;

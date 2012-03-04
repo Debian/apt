@@ -51,8 +51,10 @@ using namespace std;
 class pkgDPkgPMPrivate 
 {
 public:
-   pkgDPkgPMPrivate() : dpkgbuf_pos(0), term_out(NULL), history_out(NULL)
+   pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
+			term_out(NULL), history_out(NULL)
    {
+      dpkgbuf[0] = '\0';
    }
    bool stdin_is_dev_null;
    // the buffer we use for the dpkg status-fd reading

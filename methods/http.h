@@ -115,9 +115,10 @@ struct ServerState
   
    bool HeaderLine(std::string Line);
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
-   void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
-                 Encoding = Closes; time(&Date); ServerFd = -1; 
-                 Pipeline = true;};
+   void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0;
+		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
+		 State = Header; Persistent = false; ServerFd = -1;
+		 Pipeline = true;};
 
    /** \brief Result of the header acquire */
    enum RunHeadersResult {

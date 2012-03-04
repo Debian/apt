@@ -30,7 +30,7 @@
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgCacheFile::pkgCacheFile() : Map(NULL), Cache(NULL), DCache(NULL),
+pkgCacheFile::pkgCacheFile() : d(NULL), Map(NULL), Cache(NULL), DCache(NULL),
 				SrcList(NULL), Policy(NULL)
 {
 }

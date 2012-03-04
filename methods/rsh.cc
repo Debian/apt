@@ -42,7 +42,9 @@ int RSHMethod::FailFd = -1;
 // ---------------------------------------------------------------------
 /* */
 RSHConn::RSHConn(URI Srv) : Len(0), WriteFd(-1), ReadFd(-1),
-                            ServerName(Srv), Process(-1) {}
+                            ServerName(Srv), Process(-1) {
+   Buffer[0] = '\0';
+}
 									/*}}}*/
 // RSHConn::RSHConn - Destructor					/*{{{*/
 // ---------------------------------------------------------------------
