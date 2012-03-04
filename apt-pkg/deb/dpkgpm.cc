@@ -1542,7 +1542,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 	 if(strstr(strbuf,"Package:") == strbuf)
 	 {
 	    char pkgname[255], version[255];
-	    if(sscanf(strbuf, "Package: %s %s", pkgname, version) == 2)
+	    if(sscanf(strbuf, "Package: %254s %254s", pkgname, version) == 2)
 	       if(strcmp(pkgver.c_str(), version) == 0)
 	       {
 		  fclose(report);
