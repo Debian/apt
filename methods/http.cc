@@ -42,6 +42,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <climits>
 #include <iostream>
 #include <map>
 
@@ -557,7 +558,7 @@ bool ServerState::HeaderLine(string Line)
       // Evil servers return no version
       if (Line[4] == '/')
       {
-	 int const elements = sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,&Result,Code);
+	 int const elements = sscanf(Line.c_str(),"HTTP/%3u.%3u %3u%359[^\n]",&Major,&Minor,&Result,Code);
 	 if (elements == 3)
 	 {
 	    Code[0] = '\0';
@@ -571,7 +572,7 @@ bool ServerState::HeaderLine(string Line)
       {
 	 Major = 0;
 	 Minor = 9;
-	 if (sscanf(Line.c_str(),"HTTP %u%[^\n]",&Result,Code) != 2)
+	 if (sscanf(Line.c_str(),"HTTP %3u%359[^\n]",&Result,Code) != 2)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
 
@@ -599,9 +600,10 @@ bool ServerState::HeaderLine(string Line)
       // The length is already set from the Content-Range header
       if (StartPos != 0)
 	 return true;
-      
-      if (sscanf(Val.c_str(),"%llu",&Size) != 1)
-	 return _error->Error(_("The HTTP server sent an invalid Content-Length header"));
+
+      Size = strtoull(Val.c_str(), NULL, 10);
+      if (Size == ULLONG_MAX)
+	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
       return true;
    }
 
