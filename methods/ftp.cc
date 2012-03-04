@@ -721,14 +721,14 @@ bool FTPConn::CreateDataFd()
    DataListenFd = -1;
 
    // Get the information for a listening socket.
-   struct addrinfo *BindAddr = 0;
+   struct addrinfo *BindAddr = NULL;
    struct addrinfo Hints;
    memset(&Hints,0,sizeof(Hints));
    Hints.ai_socktype = SOCK_STREAM;
    Hints.ai_flags |= AI_PASSIVE;
    Hints.ai_family = ((struct sockaddr *)&ServerAddr)->sa_family;
    int Res;
-   if ((Res = getaddrinfo(0,"0",&Hints,&BindAddr)) != 0)
+   if ((Res = getaddrinfo(0,"0",&Hints,&BindAddr)) != 0 || BindAddr == NULL)
       return _error->Error(_("getaddrinfo was unable to get a listening socket"));
    
    // Construct the socket
