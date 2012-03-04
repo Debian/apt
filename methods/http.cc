@@ -582,7 +582,7 @@ bool ServerState::HeaderLine(string Line)
 	 Persistent = false;
       else
       {
-	 if (Major == 1 && Minor <= 0)
+	 if (Major == 1 && Minor == 0)
 	    Persistent = false;
 	 else
 	    Persistent = true;
