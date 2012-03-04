@@ -1,6 +1,11 @@
 apt (0.8.16~exp13) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
+  * apt-pkg/acquire-item.cc:
+    - remove 'old' InRelease file if we can't get a new one before
+      proceeding with Release.gpg to avoid the false impression of a still
+      trusted repository by a (still present) old InRelease file.
+      Thanks to Simon Ruderich for reporting this issue! (CVE-2012-0214)
   * apt-pkg/deb/dpkgpm.cc:
     - chroot if needed before dpkg --assert-multi-arch
     - ensure that dpkg binary doesn't have the chroot-directory prefixed
@@ -65,7 +70,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 03 Mar 2012 11:03:58 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 04 Mar 2012 22:40:27 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 

@@ -1598,6 +1598,13 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
 {
    if (AuthPass == false)
    {
+      // Remove the 'old' InRelease file if we try Release.gpg now as otherwise
+      // the file will stay around and gives a false-auth impression (CVE-2012-0214)
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile.append(URItoFileName(RealURI));
+      if (FileExists(FinalFile))
+	 unlink(FinalFile.c_str());
+
       new pkgAcqMetaSig(Owner,
 			MetaSigURI, MetaSigURIDesc, MetaSigShortDesc,
 			MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
