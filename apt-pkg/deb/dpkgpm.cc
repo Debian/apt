@@ -860,6 +860,8 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
 */
 bool pkgDPkgPM::Go(int OutStatusFd)
 {
+   pkgPackageManager::SigINTStop = false;
+
    // Generate the base argument list for dpkg
    std::vector<const char *> Args;
    unsigned long StartSize = 0;
@@ -1429,9 +1431,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 }
 
 void SigINT(int sig) {
-   if (_config->FindB("APT::Immediate-Configure-All",false)) 
-      pkgPackageManager::SigINTStop = true;
-} 
+   pkgPackageManager::SigINTStop = true;
+}
 									/*}}}*/
 // pkgDpkgPM::Reset - Dump the contents of the command list		/*{{{*/
 // ---------------------------------------------------------------------

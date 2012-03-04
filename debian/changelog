@@ -12,6 +12,8 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - call dpkg --assert-multi-arch with execvp instead of execv
     - save the universe by not printing messages about apport if a package
       with this name is not installed (Closes: #619646)
+    - handle a SIGINT in all modes as a break after the currently running
+      dpkg transaction instead of ignoring it completely
   * apt-pkg/depcache.cc:
     - if a M-A:same package is marked for reinstall, mark all it's installed
       silbings for reinstallation as well (LP: #859188)
@@ -70,7 +72,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 04 Mar 2012 22:40:27 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 04 Mar 2012 22:59:55 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
