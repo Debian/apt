@@ -150,10 +150,9 @@ bool DoAdd(CommandLine &)
    bool res = true;
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
-   unsigned int count = 0;
-   
    if (AutoDetect && UdevCdroms.Dlopen())
    {
+      unsigned int count = 0;
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Add(&log);
    } else {
@@ -178,10 +177,10 @@ bool DoIdent(CommandLine &)
    bool res = true;
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
-   unsigned int count = 0;
-   
+
    if (AutoDetect && UdevCdroms.Dlopen())
    {
+      unsigned int count = 0;
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Ident(ident, &log);
    } else {
