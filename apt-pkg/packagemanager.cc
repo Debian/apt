@@ -184,8 +184,7 @@ bool pkgPackageManager::CreateOrderList()
 	 continue;
       
       // Mark the package and its dependends for immediate configuration
-      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
-	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&
+      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential) &&
 	  NoImmConfigure == false) || ImmConfigureAll)
       {
 	 if(Debug && !ImmConfigureAll)
