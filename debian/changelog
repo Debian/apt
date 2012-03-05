@@ -42,6 +42,9 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - Set the Essential flag on APT instead of only Important
   * apt-pkg/packagemanager.cc:
     - Do not use immediate configuration for packages with the Important flag
+  * Treat the Important flag like the Essential flag with two differences:
+    - No Immediate configuration (see above)
+    - Not automatically installed during dist-upgrade
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 19:17:09 +0100
 
