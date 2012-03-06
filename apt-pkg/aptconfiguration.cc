@@ -376,7 +376,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 			dup2(nullfd, STDIN_FILENO);
 			dup2(external[1], STDOUT_FILENO);
 			dup2(nullfd, STDERR_FILENO);
-			execv(Args[0], (char**) &Args[0]);
+			execvp(Args[0], (char**) &Args[0]);
 			_error->WarningE("getArchitecture", "Can't detect foreign architectures supported by dpkg!");
 			_exit(100);
 		}
@@ -392,7 +392,9 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 					if (arch[0] != '\0') {
 						char const* archend = arch;
 						for (; isspace(*archend) == 0 && *archend != '\0'; ++archend);
-						archs.push_back(string(arch, (archend - arch)));
+						string a(arch, (archend - arch));
+						if (std::find(archs.begin(), archs.end(), a) == archs.end())
+							archs.push_back(a);
 					}
 					arch = strtok(NULL, " ");
 				}

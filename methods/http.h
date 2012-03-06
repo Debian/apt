@@ -11,8 +11,6 @@
 #ifndef APT_HTTP_H
 #define APT_HTTP_H
 
-#define MAXLEN 360
-
 #include <apt-pkg/strutl.h>
 
 #include <string>
@@ -92,7 +90,7 @@ struct ServerState
    unsigned int Major;
    unsigned int Minor;
    unsigned int Result;
-   char Code[MAXLEN];
+   char Code[360];
    
    // These are some statistics from the last parsed header lines
    unsigned long long Size;
@@ -117,9 +115,10 @@ struct ServerState
   
    bool HeaderLine(std::string Line);
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
-   void Reset() {Major = 0; Minor = 0; Result = 0; Size = 0; StartPos = 0;
-                 Encoding = Closes; time(&Date); ServerFd = -1; 
-                 Pipeline = true;};
+   void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0;
+		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
+		 State = Header; Persistent = false; ServerFd = -1;
+		 Pipeline = true;};
 
    /** \brief Result of the header acquire */
    enum RunHeadersResult {

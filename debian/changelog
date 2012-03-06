@@ -1,9 +1,20 @@
 apt (0.8.16~exp13) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
+  * apt-pkg/acquire-item.cc:
+    - remove 'old' InRelease file if we can't get a new one before
+      proceeding with Release.gpg to avoid the false impression of a still
+      trusted repository by a (still present) old InRelease file.
+      Thanks to Simon Ruderich for reporting this issue! (CVE-2012-0214)
+    - add Debug::pkgAcqArchive::NoQueue to disable package downloading
   * apt-pkg/deb/dpkgpm.cc:
     - chroot if needed before dpkg --assert-multi-arch
     - ensure that dpkg binary doesn't have the chroot-directory prefixed
+    - call dpkg --assert-multi-arch with execvp instead of execv
+    - save the universe by not printing messages about apport if a package
+      with this name is not installed (Closes: #619646)
+    - handle a SIGINT in all modes as a break after the currently running
+      dpkg transaction instead of ignoring it completely
   * apt-pkg/depcache.cc:
     - if a M-A:same package is marked for reinstall, mark all it's installed
       silbings for reinstallation as well (LP: #859188)
@@ -13,8 +24,35 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - if a file without an extension is requested send an 'Accept: text/*'
       header to avoid that the server chooses unsupported compressed files
       in a content-negotation attempt (Closes: #657560)
+    - remove the arbitrary MAXLEN limit for response lines (Closes: #658346)
   * apt-pkg/aptconfiguration.cc:
     - chroot if needed before calling dpkg --print-foreign-architectures
+    - ensure that architectures are not added multiple times
+  * cmdline/apt-mark.cc:
+    - detect if dpkg has multiarch support before calling --set-selections
+    - correctly ignore already (un)hold packages
+  * apt-pkg/cachefile.cc:
+    - clean up lost atomic cachefiles with 'clean' (Closes: #650513)
+  * apt-pkg/indexrecords.cc:
+    - do not create empty Entries as a sideeffect of Lookup()
+  * apt-pkg/acquire-item.cc:
+    - drop support for i18n/Index file (introduced in 0.8.11) and use
+      the Release file instead to get the Translations (Closes: #649314)
+    - use pdiff for Translation-* files if available (Closes: #657902)
+  * ftparchive/writer.cc:
+    - add 'Translation-*' to the default patterns
+  * cmdline/apt-get.cc:
+    - if a package can't be removed as it is not installed, suggest to
+      the user an (installed) multiarch silbing with 'Did you mean?'
+    - improve 'error' message for packages which are only referenced
+      e.g. in a Depends line and are now requested for removal
+  * cmdline/apt-cache.cc:
+    - correct --pre-depends option by using dash consistently (LP: #940837)
+  * apt-pkg/packagemanager.cc:
+    - do not try to a void a breaks if the broken package pre-depends
+      on the breaker, but let dpkg auto-deconfigure it
+  * apt-pkg/contrib/fileutl.cc:
+    - do not warn about the ignoring of directories (Closes: #662762)
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -29,7 +67,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
       become so big now that it can overflow (Closes: #657732, LP: #917173)
   * Fix IndexCopy::CopyPackages and TranslationsCopy::CopyTranslations to
     handle compressed files again (LP: #924182, closes: #658096)
-  
+
   [ Michael Vogt ]
   * apt-pkg/deb/dpkgpm.cc:
     - fix crash when a package is in removed but residual config state
@@ -50,7 +88,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
     - Not automatically installed during dist-upgrade
     - No higher score for installation ordering
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 30 Jan 2012 19:17:09 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 06 Mar 2012 17:57:22 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 

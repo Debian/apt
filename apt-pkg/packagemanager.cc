@@ -36,11 +36,13 @@ bool pkgPackageManager::SigINTStop = false;
 // PM::PackageManager - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache)
+pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache),
+							    List(NULL), Res(Incomplete)
 {
    FileNames = new string[Cache.Head().PackageCount];
-   List = 0;
    Debug = _config->FindB("Debug::pkgPackageManager",false);
+   NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
 }
 									/*}}}*/
 // PM::PackageManager - Destructor					/*{{{*/
@@ -169,10 +171,7 @@ bool pkgPackageManager::CreateOrderList()
    
    delete List;
    List = new pkgOrderList(&Cache);
-   
-   NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
-   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
-   
+
    if (Debug && ImmConfigureAll) 
       clog << "CreateOrderList(): Adding Immediate flag for all packages because of APT::Immediate-Configure-All" << endl;
    
@@ -690,7 +689,6 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	 {
 	    VerIterator Ver(Cache,*I);
 	    PkgIterator BrokenPkg = Ver.ParentPkg();
-	    VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
 	    if (BrokenPkg.CurrentVer() != Ver)
 	    {
 	       if (Debug)
@@ -699,35 +697,64 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    }
 
 	    // Check if it needs to be unpacked
-	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false && 
+	    if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false &&
 	        List->IsNow(BrokenPkg)) {
-	      if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop) {
-	        // This dependancy has already been dealt with by another SmartUnPack on Pkg
-	        break;
-	      } else if (List->IsFlag(Pkg,pkgOrderList::Loop)) {
-	        /* Found a break, so unpack the package, but dont remove loop as already set.
-	           This means that there is another SmartUnPack call for this 
-	           package and it will remove the loop flag. */
-	        if (Debug) 
-	          cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
-	            
-	        SmartUnPack(BrokenPkg, false, Depth + 1);
-	      } else {
-                List->Flag(Pkg,pkgOrderList::Loop);
-	        // Found a break, so unpack the package
-	        if (Debug) 
-	          cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.Name() << " to avoid break" << endl;
-	         
-	        SmartUnPack(BrokenPkg, false, Depth + 1);
-	        List->RmFlag(Pkg,pkgOrderList::Loop);
-	      }
-	    }
-	    
-	    // Check if a package needs to be removed
-	    if (Cache[BrokenPkg].Delete() == true && !List->IsFlag(BrokenPkg,pkgOrderList::Configured)) {
-	      if (Debug) 
-	         cout << OutputInDepth(Depth) << "  Removing " << BrokenPkg.Name() << " to avoid break" << endl;
-	      SmartRemove(BrokenPkg);
+	       if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop) {
+		  // This dependancy has already been dealt with by another SmartUnPack on Pkg
+		  break;
+	       } else {
+		  // Found a break, so see if we can unpack the package to avoid it
+		  // but do not set loop if another SmartUnPack already deals with it
+		  VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
+		  bool circle = false;
+		  for (pkgCache::DepIterator D = InstallVer.DependsList(); D.end() == false; ++D)
+		  {
+		     if (D->Type != pkgCache::Dep::PreDepends)
+			continue;
+		     SPtrArray<Version *> VL = D.AllTargets();
+		     for (Version **I = VL; *I != 0; ++I)
+		     {
+			VerIterator V(Cache,*I);
+			PkgIterator P = V.ParentPkg();
+			// we are checking for installation as an easy 'protection' against or-groups and (unchosen) providers
+			if (P->CurrentVer == 0 || P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
+			   continue;
+			circle = true;
+			break;
+		     }
+		     if (circle == true)
+			break;
+		  }
+		  if (circle == true)
+		  {
+		     if (Debug)
+		        cout << OutputInDepth(Depth) << "  Avoiding " << End << " avoided as " << BrokenPkg.FullName() << " has a pre-depends on " << Pkg.FullName() << std::endl;
+		     continue;
+		  }
+		  else
+		  {
+		     if (Debug)
+		     {
+			cout << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.FullName() << " to avoid " << End;
+			if (PkgLoop == true)
+			   cout << " (Looping)";
+			cout << std::endl;
+		     }
+		     if (PkgLoop == false)
+			List->Flag(Pkg,pkgOrderList::Loop);
+		     SmartUnPack(BrokenPkg, false, Depth + 1);
+		     if (PkgLoop == false)
+			List->RmFlag(Pkg,pkgOrderList::Loop);
+		  }
+	       }
+	    } else {
+	       // Check if a package needs to be removed
+	       if (Cache[BrokenPkg].Delete() == true && !List->IsFlag(BrokenPkg,pkgOrderList::Configured))
+	       {
+		  if (Debug)
+		     cout << OutputInDepth(Depth) << "  Removing " << BrokenPkg.Name() << " to avoid " << End << endl;
+		  SmartRemove(BrokenPkg);
+	       }
 	    }
 	 }
       }

@@ -126,7 +126,8 @@ class CacheDB
          Misses += S.Misses; 
          DeLinkBytes += S.DeLinkBytes;
       };
-      Stats() : Bytes(0), MD5Bytes(0), SHA1Bytes(0), SHA256Bytes(0), Packages(0), Misses(0), DeLinkBytes(0) {};
+      Stats() : Bytes(0), MD5Bytes(0), SHA1Bytes(0), SHA256Bytes(0),
+		SHA512Bytes(0),Packages(0), Misses(0), DeLinkBytes(0) {};
    } Stats;
    
    bool ReadyDB(std::string const &DB);
@@ -142,7 +143,7 @@ class CacheDB
    
    bool Clean();
    
-   CacheDB(std::string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {ReadyDB(DB);};
+   CacheDB(std::string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {TmpKey[0]='\0'; ReadyDB(DB);};
    ~CacheDB() {ReadyDB(std::string()); delete DebFile;};
 };
     

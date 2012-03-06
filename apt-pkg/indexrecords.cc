@@ -44,7 +44,10 @@ time_t indexRecords::GetValidUntil() const
 
 const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
-   return Entries[MetaKey];
+   std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
+   if (sum == Entries.end())
+      return NULL;
+   return sum->second;
 }
 
 bool indexRecords::Exists(string const &MetaKey) const

@@ -471,7 +471,7 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 // ProblemResolver::pkgProblemResolver - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : Cache(*pCache)
+pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : d(NULL), Cache(*pCache)
 {
    // Allocate memory
    unsigned long Size = Cache.Head().PackageCount;

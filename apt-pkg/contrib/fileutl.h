@@ -171,6 +171,7 @@ std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::string
 					bool const &SortList, bool const &AllowNoExt=false);
 std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::vector<std::string> const &Ext,
 					bool const &SortList);
+std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, bool SortList);
 std::string SafeGetCWD();
 void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);

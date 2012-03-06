@@ -1,0 +1,80 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386' 'armel'
+
+insertinstalledpackage 'foo' 'i386' '1'
+insertpackage 'unstable' 'foo' 'amd64,i386' '1'
+
+insertinstalledpackage 'foo2' 'i386' '1'
+insertpackage 'unstable' 'foo2' 'i386' '1'
+
+insertinstalledpackage 'foo3' 'amd64' '1'
+insertpackage 'unstable' 'foo3' 'amd64,i386' '1'
+
+insertinstalledpackage 'samefoo' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'samefoo' 'amd64,i386,armel' '1' 'Multi-Arch: same'
+
+insertinstalledpackage 'samefoo2' 'i386' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'samefoo2' 'amd64,i386,armel' '1' 'Multi-Arch: same'
+
+insertinstalledpackage 'mozplugger' 'i386' '1' 'Depends: iceweasel | fireweasel'
+insertinstalledpackage 'fireweasel' 'i386' '1'
+insertpackage 'unstable' 'mozplugger' 'i386,amd64' '1' 'Depends: iceweasel | fireweasel'
+
+setupaptarchive
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'foo' is not installed, so not removed. Did you mean 'foo:i386'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove foo -s
+
+testequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  foo2:i386
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv foo2:i386 [1]" aptget remove foo2 -s
+
+testequal "Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  foo3
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv foo3 [1]" aptget remove foo3 -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'foo3:i386' is not installed, so not removed. Did you mean 'foo3'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove foo3:i386 -s
+
+testequalor2 "Reading package lists...
+Building dependency tree...
+Package 'samefoo:armel' is not installed, so not removed. Did you mean 'samefoo'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." "Reading package lists...
+Building dependency tree...
+Package 'samefoo:armel' is not installed, so not removed. Did you mean 'samefoo:i386'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove samefoo:armel -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'samefoo2' is not installed, so not removed. Did you mean 'samefoo2:i386'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove samefoo2 -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'samefoo2:armel' is not installed, so not removed. Did you mean 'samefoo2:i386'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove samefoo2:armel -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'iceweasel' is not installed, so not removed
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove iceweasel -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'fireweasel' is not installed, so not removed. Did you mean 'fireweasel:i386'?
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded." aptget remove fireweasel:amd64 -s
