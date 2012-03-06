@@ -1,4 +1,4 @@
-apt (0.8.15.10) UNRELEASEDunstable; urgency=low
+apt (0.8.15.10) unstable; urgency=high
 
   [ David Kalnischkies ]
   * algorithms.cc:
@@ -7,6 +7,11 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
     - put <brackets> around email addresses
   * doc/po/de.po:
     - apply typo-fix from Michael Basse, thanks! (LP: #900770)
+  * apt-pkg/acquire-item.cc:
+    - remove 'old' InRelease file if we can't get a new one before
+      proceeding with Release.gpg to avoid the false impression of a still
+      trusted repository by a (still present) old InRelease file.
+      Thanks to Simon Ruderich for reporting this issue! (CVE-2012-0214)
 
   [ Chris Leick ]
   * German manpage translation update
@@ -27,7 +32,7 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
      Correct fi translation for hash sum mismatches (lp:420403)
      Thanks to Jani Uusitalo
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 06 Dec 2011 16:35:39 +0100
+ -- Michael Vogt <mvo@debian.org>  Tue, 06 Mar 2012 14:14:26 +0100
 
 apt (0.8.15.9) unstable; urgency=low
 
