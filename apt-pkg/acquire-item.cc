@@ -1810,7 +1810,18 @@ bool pkgAcqArchive::QueueNext()
 	 else
 	    PartialSize = Buf.st_size;
       }
-      
+
+      // Disables download of archives - useful if no real installation follows,
+      // e.g. if we are just interested in proposed installation order
+      if (_config->FindB("Debug::pkgAcqArchive::NoQueue", false) == true)
+      {
+	 Complete = true;
+	 Local = true;
+	 Status = StatDone;
+	 StoreFilename = DestFile = FinalFile;
+	 return true;
+      }
+
       // Create the item
       Local = false;
       Desc.URI = Index->ArchiveURI(PkgFile);
