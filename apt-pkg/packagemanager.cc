@@ -612,10 +612,19 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       continue;
 	    }
 
-	    if (Debug)
-	       clog << OutputInDepth(Depth) << "Trying to SmartConfigure " << Pkg.Name() << endl;
-	    Bad = !SmartConfigure(Pkg, Depth + 1);
-	 }
+            // check if it needs unpack or if if configure is enough
+            if (!List->IsFlag(Pkg,pkgOrderList::UnPacked))
+            {
+               if (Debug)
+                  clog << OutputInDepth(Depth) << "Trying to SmartUnpack " << Pkg.Name() << endl;
+               // SmartUnpack with the ImmediateFlag to ensure its really ready
+               Bad = !SmartUnPack(Pkg, true, Depth + 1);
+            } else {
+               if (Debug)
+                  clog << OutputInDepth(Depth) << "Trying to SmartConfigure " << Pkg.Name() << endl;
+               Bad = !SmartConfigure(Pkg, Depth + 1);
+            }
+         }
 
 	 /* If this or element did not match then continue on to the
 	    next or element until a matching element is found */

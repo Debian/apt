@@ -36,6 +36,9 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
       (LP: #923807)
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
+  * apt-pkg/packagemanager.cc:
+    - fix bug in predepends handling - ensure that packages that needs
+      unpackaging are unpacked before they are configured (LP: #927993)
 
   [ Julian Andres Klode ]
   * apt-pkg/deb/deblistparser.cc:
