@@ -249,7 +249,7 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
       return false;
 
    if (strcmp(Pkg.Name(),"apt") == 0)
-      Pkg->Flags |= pkgCache::Flag::Important;
+      Pkg->Flags |= pkgCache::Flag::Essential | pkgCache::Flag::Important;
    
    if (ParseStatus(Pkg,Ver) == false)
       return false;

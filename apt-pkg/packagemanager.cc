@@ -183,8 +183,7 @@ bool pkgPackageManager::CreateOrderList()
 	 continue;
       
       // Mark the package and its dependends for immediate configuration
-      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
-	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&
+      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential) &&
 	  NoImmConfigure == false) || ImmConfigureAll)
       {
 	 if(Debug && !ImmConfigureAll)
@@ -486,7 +485,8 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
 
    // Essential packages get special treatment
    bool IsEssential = false;
-   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0)
+   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0 ||
+       (Pkg->Flags & pkgCache::Flag::Important) != 0)
       IsEssential = true;
 
    /* Check for packages that are the dependents of essential packages and 
@@ -496,7 +496,8 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
       for (DepIterator D = Pkg.RevDependsList(); D.end() == false &&
 	   IsEssential == false; ++D)
 	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0)
+	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0 ||
+	        (D.ParentPkg()->Flags & pkgCache::Flag::Important) != 0)
 	       IsEssential = true;
    }
 
@@ -610,10 +611,19 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       continue;
 	    }
 
-	    if (Debug)
-	       clog << OutputInDepth(Depth) << "Trying to SmartConfigure " << Pkg.Name() << endl;
-	    Bad = !SmartConfigure(Pkg, Depth + 1);
-	 }
+            // check if it needs unpack or if if configure is enough
+            if (!List->IsFlag(Pkg,pkgOrderList::UnPacked))
+            {
+               if (Debug)
+                  clog << OutputInDepth(Depth) << "Trying to SmartUnpack " << Pkg.Name() << endl;
+               // SmartUnpack with the ImmediateFlag to ensure its really ready
+               Bad = !SmartUnPack(Pkg, true, Depth + 1);
+            } else {
+               if (Debug)
+                  clog << OutputInDepth(Depth) << "Trying to SmartConfigure " << Pkg.Name() << endl;
+               Bad = !SmartConfigure(Pkg, Depth + 1);
+            }
+         }
 
 	 /* If this or element did not match then continue on to the
 	    next or element until a matching element is found */
