@@ -387,6 +387,13 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       {
 	 if (RealFileExists(File.c_str()) == false)
 	 {
+	    // do not show ignoration warnings for directories
+	    if (
+#ifdef _DIRENT_HAVE_D_TYPE
+		Ent->d_type == DT_DIR ||
+#endif
+		DirectoryExists(File.c_str()) == true)
+	       continue;
 	    if (SilentIgnore.Match(Ent->d_name) == false)
 	       _error->Notice(_("Ignoring '%s' in directory '%s' as it is not a regular file"), Ent->d_name, Dir.c_str());
 	    continue;

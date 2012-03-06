@@ -50,6 +50,8 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - do not try to a void a breaks if the broken package pre-depends
       on the breaker, but let dpkg auto-deconfigure it
+  * apt-pkg/contrib/fileutl.cc:
+    - do not warn about the ignoring of directories (Closes: #662762)
 
   [ Steve Langasek ]
   * cmdline/apt-get.cc:
@@ -72,7 +74,7 @@ apt (0.8.16~exp13) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - fix compat with FileFd::OpenDescriptor() in ReadOnlyGzip mode
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 04 Mar 2012 22:59:55 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 06 Mar 2012 10:52:00 +0100
 
 apt (0.8.16~exp12) experimental; urgency=low
 
