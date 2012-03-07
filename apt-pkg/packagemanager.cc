@@ -422,7 +422,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 
 	 if (Start==End) {
 	    if (Bad && Debug && List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
-		  std::clog << OutputInDepth(Depth) << "Could not satisfy dependencies for " << Pkg.Name() << std::endl;
+		  std::clog << OutputInDepth(Depth) << "Could not satisfy " << Start << std::endl;
 	    break;
 	 } else {
             Start++;
