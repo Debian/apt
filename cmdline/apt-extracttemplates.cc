@@ -53,8 +53,8 @@ pkgCache *DebFile::Cache = 0;
 // ---------------------------------------------------------------------
 /* */
 DebFile::DebFile(const char *debfile)
-	: File(debfile, FileFd::ReadOnly), Control(0), DepOp(0), 
-          PreDepOp(0), Config(0), Template(0), Which(None)
+	: File(debfile, FileFd::ReadOnly), Size(0), Control(NULL), ControlLen(0),
+	  DepOp(0), PreDepOp(0), Config(0), Template(0), Which(None)
 {
 }
 									/*}}}*/

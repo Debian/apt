@@ -36,11 +36,13 @@ bool pkgPackageManager::SigINTStop = false;
 // PM::PackageManager - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache)
+pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache),
+							    List(NULL), Res(Incomplete)
 {
    FileNames = new string[Cache.Head().PackageCount];
-   List = 0;
    Debug = _config->FindB("Debug::pkgPackageManager",false);
+   NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
 }
 									/*}}}*/
 // PM::PackageManager - Destructor					/*{{{*/
@@ -169,10 +171,7 @@ bool pkgPackageManager::CreateOrderList()
    
    delete List;
    List = new pkgOrderList(&Cache);
-   
-   NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
-   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
-   
+
    if (Debug && ImmConfigureAll) 
       clog << "CreateOrderList(): Adding Immediate flag for all packages because of APT::Immediate-Configure-All" << endl;
    
