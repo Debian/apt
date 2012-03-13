@@ -3,6 +3,9 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
   [ Michael Vogt ]
   * apt-pkg/packagemanager.cc:
     - fix inconsistent clog/cout usage in the debug output
+    - add APT::pkgPackageManager::MaxLoopCount to ensure that the
+      ordering code does not get into a endless loop when it flip-flops
+      between two states
   
   [ David Kalnischkies ]
   * apt-pkg/packagemanager.cc:
