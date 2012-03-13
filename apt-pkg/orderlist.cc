@@ -82,16 +82,14 @@ pkgOrderList *pkgOrderList::Me = 0;
 // OrderList::pkgOrderList - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgOrderList::pkgOrderList(pkgDepCache *pCache) : Cache(*pCache)
+pkgOrderList::pkgOrderList(pkgDepCache *pCache) : Cache(*pCache),
+						  Primary(NULL), Secondary(NULL),
+						  RevDepends(NULL), Remove(NULL),
+						  AfterEnd(NULL), FileList(NULL),
+						  LoopCount(-1), Depth(0)
 {
-   FileList = 0;
-   Primary = 0;
-   Secondary = 0;
-   RevDepends = 0;
-   Remove = 0;
-   LoopCount = -1;
    Debug = _config->FindB("Debug::pkgOrderList",false);
-   
+
    /* Construct the arrays, egcs 1.0.1 bug requires the package count
       hack */
    unsigned long Size = Cache.Head().PackageCount;

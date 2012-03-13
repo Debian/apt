@@ -471,7 +471,7 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 // ProblemResolver::pkgProblemResolver - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : Cache(*pCache)
+pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : d(NULL), Cache(*pCache)
 {
    // Allocate memory
    unsigned long Size = Cache.Head().PackageCount;
@@ -556,7 +556,8 @@ void pkgProblemResolver::MakeScores()
          essantial package above most other packages but low enough
 	 to allow an obsolete essential packages to be removed by
 	 a conflicts on a powerfull normal package (ie libc6) */
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential
+	  || (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Score += PrioEssentials;
 
       // We transform the priority
@@ -631,7 +632,8 @@ void pkgProblemResolver::MakeScores()
    {
       if ((Flags[I->ID] & Protected) != 0)
 	 Scores[I->ID] += AddProtected;
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
+          (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Scores[I->ID] += AddEssential;
    }
 }
@@ -1429,6 +1431,13 @@ static int PrioComp(const void *A,const void *B)
      return 1;
    if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential &&
        (R.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+     return -1;
+
+   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important &&
+       (R.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important)
+     return 1;
+   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important &&
+       (R.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
      return -1;
    
    if (L->Priority != R->Priority)

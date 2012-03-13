@@ -128,7 +128,7 @@ string debReleaseIndex::TranslationIndexURISuffix(const char *Type, const string
 {
    string Res ="";
    if (Dist[Dist.size() - 1] != '/')
-      Res += Section + "/i18n/";
+      Res += Section + "/i18n/Translation-";
    return Res + Type;
 }
 
@@ -210,31 +210,17 @@ vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
 	if (lang.empty() == true)
 		return IndexTargets;
 
-	// get the Translations:
-	// - if its a dists-style repository get the i18n/Index first
-	// - if its flat try to acquire files by guessing
-	if (Dist[Dist.size() - 1] == '/') {
-		for (std::set<std::string>::const_iterator s = sections.begin();
-		     s != sections.end(); ++s) {
-			for (std::vector<std::string>::const_iterator l = lang.begin();
-			     l != lang.end(); ++l) {
-				IndexTarget * Target = new OptionalIndexTarget();
-				Target->ShortDesc = "Translation-" + *l;
-				Target->MetaKey = TranslationIndexURISuffix(l->c_str(), *s);
-				Target->URI = TranslationIndexURI(l->c_str(), *s);
-				Target->Description = Info (Target->ShortDesc.c_str(), *s);
-				IndexTargets->push_back(Target);
-			}
-		}
-	} else {
-		for (std::set<std::string>::const_iterator s = sections.begin();
-		     s != sections.end(); ++s) {
-			IndexTarget * Target = new OptionalSubIndexTarget();
-			Target->ShortDesc = "TranslationIndex";
-			Target->MetaKey = TranslationIndexURISuffix("Index", *s);
-			Target->URI = TranslationIndexURI("Index", *s);
+	// get the Translation-* files, later we will skip download of non-existent if we have an index
+	for (std::set<std::string>::const_iterator s = sections.begin();
+	     s != sections.end(); ++s) {
+		for (std::vector<std::string>::const_iterator l = lang.begin();
+		     l != lang.end(); ++l) {
+			IndexTarget * Target = new OptionalIndexTarget();
+			Target->ShortDesc = "Translation-" + *l;
+			Target->MetaKey = TranslationIndexURISuffix(l->c_str(), *s);
+			Target->URI = TranslationIndexURI(l->c_str(), *s);
 			Target->Description = Info (Target->ShortDesc.c_str(), *s);
-			IndexTargets->push_back (Target);
+			IndexTargets->push_back(Target);
 		}
 	}
 

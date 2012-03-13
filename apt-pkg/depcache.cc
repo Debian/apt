@@ -963,6 +963,13 @@ struct CompareProviders {
 	 else if ((B->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
 	    return true;
       }
+      if ((A->Flags & pkgCache::Flag::Important) != (B->Flags & pkgCache::Flag::Important))
+      {
+	 if ((A->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
+	    return false;
+	 else if ((B->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
+	    return true;
+      }
       // higher priority seems like a good idea
       if (AV->Priority != BV->Priority)
 	 return AV->Priority < BV->Priority;
@@ -1641,6 +1648,7 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    {
       if(!(PkgState[p->ID].Flags & Flag::Auto) ||
 	  (p->Flags & Flag::Essential) ||
+	  (p->Flags & Flag::Important) ||
 	  userFunc.InRootSet(p) ||
 	  // be nice even then a required package violates the policy (#583517)
 	  // and do the full mark process also for required packages

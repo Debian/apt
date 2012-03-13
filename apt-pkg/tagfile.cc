@@ -30,7 +30,10 @@ using std::string;
 class pkgTagFilePrivate
 {
 public:
-   pkgTagFilePrivate(FileFd *pFd, unsigned long long Size) : Fd(*pFd), Size(Size)
+   pkgTagFilePrivate(FileFd *pFd, unsigned long long Size) : Fd(*pFd), Buffer(NULL),
+							     Start(NULL), End(NULL),
+							     Done(false), iOffset(0),
+							     Size(Size)
    {
    }
    FileFd &Fd;

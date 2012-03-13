@@ -8,10 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 
-#ifndef APT_HTTP_H
-#define APT_HTTP_H
-
-#define MAXLEN 360
+#ifndef APT_HTTPS_H
+#define APT_HTTPS_H
 
 #include <iostream>
 #include <curl/curl.h>

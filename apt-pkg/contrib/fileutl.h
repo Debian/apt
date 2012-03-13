@@ -108,10 +108,7 @@ class FileFd
    bool OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compress, bool AutoClose=false);
    bool OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose=false);
    inline bool OpenDescriptor(int Fd, unsigned int const Mode, bool AutoClose=false) {
-      if (Mode == ReadOnlyGzip)
-         return OpenDescriptor(Fd, Mode, Gzip, AutoClose);
-      else
-         return OpenDescriptor(Fd, Mode, None, AutoClose);
+      return OpenDescriptor(Fd, Mode, None, AutoClose);
    };
    bool Close();
    bool Sync();
@@ -174,6 +171,7 @@ std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::string
 					bool const &SortList, bool const &AllowNoExt=false);
 std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::vector<std::string> const &Ext,
 					bool const &SortList);
+std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, bool SortList);
 std::string SafeGetCWD();
 void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);

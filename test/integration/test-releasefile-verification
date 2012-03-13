@@ -153,6 +153,35 @@ runtest() {
 	installaptold
 }
 
+runtest2() {
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	signreleasefiles 'Joe Sixpack'
+	msgtest 'Cold archive signed by' 'Joe Sixpack'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+
+	# New .deb but now an unsigned archive. For example MITM to circumvent
+	# package verification.
+	prepare ${PKGFILE}-new
+	find aptarchive/ -name InRelease -delete
+	find aptarchive/ -name Release.gpg -delete
+	msgtest 'Warm archive signed by' 'nobody'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt
+	failaptnew
+
+	# Unsigned archive from the beginning must also be detected.
+	rm -rf rootdir/var/lib/apt/lists
+	msgtest 'Cold archive signed by' 'nobody'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt
+	failaptnew
+}
+runtest2
+
+
 DELETEFILE="InRelease"
 runtest
 DELETEFILE="Release.gpg"

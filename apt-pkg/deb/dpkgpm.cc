@@ -51,8 +51,10 @@ using namespace std;
 class pkgDPkgPMPrivate 
 {
 public:
-   pkgDPkgPMPrivate() : dpkgbuf_pos(0), term_out(NULL), history_out(NULL)
+   pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
+			term_out(NULL), history_out(NULL)
    {
+      dpkgbuf[0] = '\0';
    }
    bool stdin_is_dev_null;
    // the buffer we use for the dpkg status-fd reading
@@ -860,6 +862,8 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
 */
 bool pkgDPkgPM::Go(int OutStatusFd)
 {
+   pkgPackageManager::SigINTStop = false;
+
    // Generate the base argument list for dpkg
    std::vector<const char *> Args;
    unsigned long StartSize = 0;
@@ -905,7 +909,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       dup2(nullfd, STDIN_FILENO);
       dup2(nullfd, STDOUT_FILENO);
       dup2(nullfd, STDERR_FILENO);
-      execv(Args[0], (char**) &Args[0]);
+      execvp(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
       _exit(2);
    }
@@ -1429,9 +1433,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 }
 
 void SigINT(int sig) {
-   if (_config->FindB("APT::Immediate-Configure-All",false)) 
-      pkgPackageManager::SigINTStop = true;
-} 
+   pkgPackageManager::SigINTStop = true;
+}
 									/*}}}*/
 // pkgDpkgPM::Reset - Dump the contents of the command list		/*{{{*/
 // ---------------------------------------------------------------------
@@ -1446,6 +1449,12 @@ void pkgDPkgPM::Reset()
 /* */
 void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg) 
 {
+   // If apport doesn't exist or isn't installed do nothing
+   // This e.g. prevents messages in 'universes' without apport
+   pkgCache::PkgIterator apportPkg = Cache.FindPkg("apport");
+   if (apportPkg.end() == true || apportPkg->CurrentVer == 0)
+      return;
+
    string pkgname, reportfile, srcpkgname, pkgver, arch;
    string::size_type pos;
    FILE *report;
@@ -1533,7 +1542,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 	 if(strstr(strbuf,"Package:") == strbuf)
 	 {
 	    char pkgname[255], version[255];
-	    if(sscanf(strbuf, "Package: %s %s", pkgname, version) == 2)
+	    if(sscanf(strbuf, "Package: %254s %254s", pkgname, version) == 2)
 	       if(strcmp(pkgver.c_str(), version) == 0)
 	       {
 		  fclose(report);

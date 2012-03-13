@@ -910,17 +910,17 @@ bool StrToTime(const string &Val,time_t &Result)
 
    // Handle RFC 1123 time
    Month[0] = 0;
-   if (sscanf(I," %d %3s %d %d:%d:%d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
+   if (sscanf(I," %2d %3s %4d %2d:%2d:%2d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
 	      &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
    {
       // Handle RFC 1036 time
-      if (sscanf(I," %d-%3s-%d %d:%d:%d GMT",&Tm.tm_mday,Month,
+      if (sscanf(I," %2d-%3s-%3d %2d:%2d:%2d GMT",&Tm.tm_mday,Month,
 		 &Tm.tm_year,&Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) == 6)
 	 Tm.tm_year += 1900;
       else
       {
 	 // asctime format
-	 if (sscanf(I," %3s %d %d:%d:%d %d",Month,&Tm.tm_mday,
+	 if (sscanf(I," %3s %2d %2d:%2d:%2d %4d",Month,&Tm.tm_mday,
 		    &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec,&Tm.tm_year) != 6)
 	 {
 	    // 'ftp' time

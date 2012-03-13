@@ -42,15 +42,8 @@ msgtest 'Download of nothing if none is forced' 'with Index'
 aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
 rm -rf rootdir/var/lib/apt/lists
 
-sed -i '/i18n\/Index$/ d' $(find aptarchive -name 'Release')
+sed -i '/i18n\/Translation-.*$/ d' $(find aptarchive -name 'Release')
 signreleasefiles
-
-# we have to try as not every archive includes the i18n Index in the Release file - if it has one at all
-msgtest 'Download no Translation- if forced language is non-existent' 'with not-announced Index'
-aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-' && msgfail || msgpass
-rm -rf rootdir/var/lib/apt/lists
-
-find aptarchive -name 'Index' -delete
 
 msgtest 'Download of en as forced language' 'without Index'
 aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail

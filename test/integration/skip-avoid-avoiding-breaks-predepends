@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'native'
+
+insertinstalledpackage 'looping' 'native' '1'
+insertinstalledpackage 'loop1' 'native' '1' 'Depends: loop2 (= 1)'
+insertinstalledpackage 'loop2' 'native' '1' 'Depends: loop1 (= 1)'
+
+buildsimplenativepackage 'looping' 'native' '1.15.7.2' 'stable' 'Breaks: loop2 (<= 1)'
+buildsimplenativepackage 'loop1' 'native' '2' 'stable' 'Depends: loop2 (= 2)'
+buildsimplenativepackage 'loop2' 'native' '2' 'stable' 'Depends: loop1 (= 2)
+Pre-Depends: looping (>= 1.15)'
+
+setupaptarchive
+
+aptget dist-upgrade -y -o Debug::pkgOrderList=1 #-qq 2>&1 > /dev/null
+testdpkginstalled looping loop1 loop2
