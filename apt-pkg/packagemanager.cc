@@ -321,7 +321,7 @@ bool pkgPackageManager::ConfigureAll()
 bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 {
    // If this is true, only check and correct and dependencies without the Loop flag
-   bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
+   bool const PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
 
    if (Debug) {
       VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
@@ -336,99 +336,131 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
    /* Because of the ordered list, most dependencies should be unpacked, 
       however if there is a loop (A depends on B, B depends on A) this will not 
       be the case, so check for dependencies before configuring. */
-   bool Bad = false;
-   for (DepIterator D = instVer.DependsList();
-	D.end() == false; )
-   {
-      // Compute a single dependency element (glob or)
-      pkgCache::DepIterator Start;
-      pkgCache::DepIterator End;
-      D.GlobOr(Start,End);
-      
-      if (End->Type == pkgCache::Dep::Depends) 
-          Bad = true;
+   bool Bad = false, Changed = false;
+   do {
+      Changed = false;
+      for (DepIterator D = instVer.DependsList(); D.end() == false; )
+      {
+	 // Compute a single dependency element (glob or)
+	 pkgCache::DepIterator Start, End;
+	 D.GlobOr(Start,End);
 
-      // Check for dependanices that have not been unpacked, probably due to loops.
-      while (End->Type == pkgCache::Dep::Depends) {
-         PkgIterator DepPkg;
-         VerIterator InstallVer;
-         SPtrArray<Version *> VList = Start.AllTargets();
-         
-         // Check through each version of each package that could satisfy this dependancy
-	 for (Version **I = VList; *I != 0; I++) {
-	    VerIterator Ver(Cache,*I);
-	    DepPkg = Ver.ParentPkg();
-	    InstallVer = VerIterator(Cache,Cache[DepPkg].InstallVer);
+	 if (End->Type != pkgCache::Dep::Depends)
+	    continue;
+	 Bad = true;
 
-	    // Check if the current version of the package is avalible and will satisfy this dependancy
-	    if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true && 
-		!List->IsFlag(DepPkg,pkgOrderList::Removed) && DepPkg.State() == PkgIterator::NeedsNothing)
+	 // Search for dependencies which are unpacked but aren't configured yet (maybe loops)
+	 for (DepIterator Cur = Start; true; ++Cur)
+	 {
+	    SPtrArray<Version *> VList = Cur.AllTargets();
+
+	    for (Version **I = VList; *I != 0; ++I)
 	    {
-	       Bad = false;
-	       break;
-	    }
-	    
-	    // Check if the version that is going to be installed will satisfy the dependancy
-	    if (Cache[DepPkg].InstallVer == *I) {
-	       if (List->IsFlag(DepPkg,pkgOrderList::UnPacked)) {
-	          if (List->IsFlag(DepPkg,pkgOrderList::Loop) && PkgLoop) {
-	            // This dependancy has already been dealt with by another SmartConfigure on Pkg
-	            Bad = false;
-	            break;
-                  } else if (List->IsFlag(Pkg,pkgOrderList::Loop)) {
-	            /* Check for a loop to prevent one forming
-	               If A depends on B and B depends on A, SmartConfigure will
-	               just hop between them if this is not checked. Dont remove the 
-	               loop flag after finishing however as loop is already set.
-	               This means that there is another SmartConfigure call for this 
-	               package and it will remove the loop flag */
-	             Bad = !SmartConfigure(DepPkg, Depth + 1);
-	          } else {
-	            /* Check for a loop to prevent one forming
-	               If A depends on B and B depends on A, SmartConfigure will
-	               just hop between them if this is not checked */
-	            List->Flag(Pkg,pkgOrderList::Loop);
-	            Bad = !SmartConfigure(DepPkg, Depth + 1);
-	            List->RmFlag(Pkg,pkgOrderList::Loop);
-	          }
-	          // If SmartConfigure was succesfull, Bad is false, so break
-	          if (!Bad) break;
-	       } else if (List->IsFlag(DepPkg,pkgOrderList::Configured)) {
-	          Bad = false;
-	          break;
+	       VerIterator Ver(Cache,*I);
+	       PkgIterator DepPkg = Ver.ParentPkg();
+
+	       // Check if the current version of the package is available and will satisfy this dependency
+	       if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true &&
+		   List->IsFlag(DepPkg,pkgOrderList::Removed) == false &&
+		   DepPkg.State() == PkgIterator::NeedsNothing)
+	       {
+		  Bad = false;
+		  break;
+	       }
+
+	       // Check if the version that is going to be installed will satisfy the dependency
+	       if (Cache[DepPkg].InstallVer != *I)
+		  continue;
+
+	       if (List->IsFlag(DepPkg,pkgOrderList::UnPacked))
+	       {
+		  if (List->IsFlag(DepPkg,pkgOrderList::Loop) && PkgLoop)
+		  {
+		    // This dependency has already been dealt with by another SmartConfigure on Pkg
+		    Bad = false;
+		    break;
+		  }
+		  /* Check for a loop to prevent one forming
+		       If A depends on B and B depends on A, SmartConfigure will
+		       just hop between them if this is not checked. Dont remove the
+		       loop flag after finishing however as loop is already set.
+		       This means that there is another SmartConfigure call for this
+		       package and it will remove the loop flag */
+		  if (PkgLoop == false)
+		     List->Flag(Pkg,pkgOrderList::Loop);
+		  if (SmartConfigure(DepPkg, Depth + 1) == true)
+		  {
+		     Bad = false;
+		     if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
+			Changed = true;
+		  }
+		  if (PkgLoop == false)
+		    List->RmFlag(Pkg,pkgOrderList::Loop);
+		  // If SmartConfigure was succesfull, Bad is false, so break
+		  if (Bad == false)
+		     break;
+	       }
+	       else if (List->IsFlag(DepPkg,pkgOrderList::Configured))
+	       {
+		  Bad = false;
+		  break;
 	       }
 	    }
-	 }
-	 
-	 /* If the dependany is still not satisfied, try, if possible, unpacking a package to satisfy it */
-	 if (InstallVer != 0 && Bad) {
-	    if (List->IsNow(DepPkg)) {
-	       Bad = false;
-	       if (List->IsFlag(Pkg,pkgOrderList::Loop))
+	    if (Cur == End)
+	       break;
+         }
+
+	 if (Bad == false)
+	    continue;
+
+	 // Check for dependencies that have not been unpacked, probably due to loops.
+	 for (DepIterator Cur = Start; true; ++Cur)
+	 {
+	    SPtrArray<Version *> VList = Cur.AllTargets();
+
+	    for (Version **I = VList; *I != 0; ++I)
+	    {
+	       VerIterator Ver(Cache,*I);
+	       PkgIterator DepPkg = Ver.ParentPkg();
+
+	       // Check if the version that is going to be installed will satisfy the dependency
+	       if (Cache[DepPkg].InstallVer != *I || List->IsNow(DepPkg) == false)
+		  continue;
+
+	       if (PkgLoop == true)
 	       {
 		  if (Debug)
 		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure" << std::endl;
+	          Bad = false;
+		  break;
 	       }
 	       else
 	       {
-		  List->Flag(Pkg,pkgOrderList::Loop);
 		  if (Debug)
-		     cout << OutputInDepth(Depth) << "Unpacking " << DepPkg.FullName() << " to avoid loop" << endl;
-		  SmartUnPack(DepPkg, true, Depth + 1);
-		  List->RmFlag(Pkg,pkgOrderList::Loop);
+		     cout << OutputInDepth(Depth) << "Unpacking " << DepPkg.FullName() << " to avoid loop " << Cur << endl;
+		  if (PkgLoop == false)
+		     List->Flag(Pkg,pkgOrderList::Loop);
+		  if (SmartUnPack(DepPkg, true, Depth + 1) == true)
+		  {
+		     Bad = false;
+		     if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
+		        Changed = true;
+		  }
+		  if (PkgLoop == false)
+		     List->RmFlag(Pkg,pkgOrderList::Loop);
+		  if (Bad == false)
+		     break;
 	       }
 	    }
+
+	    if (Cur == End)
+	       break;
 	 }
-	 
-	 if (Start==End) {
-	    if (Bad && Debug && List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
-		  std::clog << OutputInDepth(Depth) << "Could not satisfy " << Start << std::endl;
-	    break;
-	 } else {
-            Start++;
-         }
+
+	 if (Bad == true && Changed == false && Debug == true)
+	    std::clog << OutputInDepth(Depth) << "Could not satisfy " << Start << std::endl;
       }
-   }
+   } while (Changed == true);
    
    if (Bad) {
       if (Debug)
