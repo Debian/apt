@@ -6,7 +6,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-insertpackage 'unstable' 'apt' 'i386' '0.8.15'
+insertpackage 'unstable' 'rapt' 'i386' '0.8.15'
 insertpackage 'unstable' 'arch' 'i386' '1.0'
 
 setupaptarchive
@@ -22,40 +22,40 @@ testcandidate() {
 	fi
 }
 
-testcandidate apt '0.8.15'
+testcandidate rapt '0.8.15'
 testequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist -q=0
 testequal 'Reading package lists...
 Building dependency tree...
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget dist-upgrade
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget dist-upgrade --trivial-only
 
-echo 'Package: apt
+echo 'Package: rapt
 Pin: release a=unstable
 Pin-Priority: -1' > rootdir/etc/apt/preferences
 
-testcandidate apt '(none)'
+testcandidate rapt '(none)'
 testequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist -q=0
 testequal 'Reading package lists...
 Building dependency tree...
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget dist-upgrade
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget dist-upgrade --trivial-only
 
 echo '
 Package: doesntexist
 Pin: release a=unstable
 Pin-Priority: 1000' >> rootdir/etc/apt/preferences
 
-testcandidate apt '(none)'
+testcandidate rapt '(none)'
 
 echo '
-Package: apt
+Package: rapt
 Pin: release a=unstable
 Pin-Priority: 1000' >> rootdir/etc/apt/preferences
 
-testcandidate apt '(none)'
+testcandidate rapt '(none)'
 testequal 'N: Unable to locate package doesntexist' aptcache policy doesntexist -q=0
 
 testequal 'Reading package lists...
 Building dependency tree...
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget dist-upgrade
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget dist-upgrade --trivial-only
 
 echo 'Package: arch:amd64
 Pin: release a=unstable

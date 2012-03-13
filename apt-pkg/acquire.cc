@@ -766,7 +766,7 @@ void pkgAcquire::Queue::Bump()
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquireStatus::pkgAcquireStatus() : Update(true), MorePulses(false)
+pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Update(true), MorePulses(false)
 {
    Start();
 }

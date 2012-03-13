@@ -77,6 +77,7 @@ FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1),
 {
    Debug = _config->FindB("Debug::Acquire::Ftp",false);
    PasvAddr = 0;
+   Buffer[0] = '\0';
 }
 									/*}}}*/
 // FTPConn::~FTPConn - Destructor					/*{{{*/

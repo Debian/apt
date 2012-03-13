@@ -18,7 +18,7 @@
 									/*}}}*/
 namespace APT {
 namespace CacheFilter {
-PackageNameMatchesRegEx::PackageNameMatchesRegEx(std::string const &Pattern) {/*{{{*/
+PackageNameMatchesRegEx::PackageNameMatchesRegEx(std::string const &Pattern) : d(NULL) {/*{{{*/
 	pattern = new regex_t;
 	int const Res = regcomp(pattern, Pattern.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
 	if (Res == 0)

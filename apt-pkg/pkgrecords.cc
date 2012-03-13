@@ -22,7 +22,7 @@
 // Records::pkgRecords - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create the necessary structures to access the status files */
-pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), 
+pkgRecords::pkgRecords(pkgCache &Cache) : d(NULL), Cache(Cache),
   Files(Cache.HeaderP->PackageFileCount)
 {
    for (pkgCache::PkgFileIterator I = Cache.FileBegin();
