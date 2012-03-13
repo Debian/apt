@@ -1,9 +1,16 @@
 apt (0.8.16~exp14) UNRELEASED; urgency=low
 
+  [ Michael Vogt ]
   * apt-pkg/packagemanager.cc:
     - fix inconsistent clog/cout usage in the debug output
+  
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc:
+    - recheck all dependencies if we changed a package in SmartConfigure
+      as this could break an earlier dependency (LP: #940396)
+    - recheck dependencies in SmartUnpack after a change, too
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 07 Mar 2012 09:20:02 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 13 Mar 2012 12:38:35 +0100
 
 apt (0.8.16~exp13) experimental; urgency=low
 
