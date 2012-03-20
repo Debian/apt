@@ -121,7 +121,7 @@ bool debDebFile::ExtractControl(pkgDataBase &DB)
    
    // Switch out of the tmp directory.
    if (chdir(Cwd.c_str()) != 0)
-      chdir("/");
+      return _error->Errno("chdir",_("Unable to change to %s"),Cwd.c_str());
    
    return true;
 }

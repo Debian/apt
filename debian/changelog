@@ -21,11 +21,21 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     - check return of chdir() as gcc recommends
   * apt-pkg/contrib/netrc.cc:
     - check return of asprintf() as gcc recommends
+  * methods/rred.cc:
+    - check return of writev() as gcc recommends
+  * methods/mirror.cc:
+    - check return of chdir() as gcc recommends
+  * apt-pkg/deb/dpkgpm.cc:
+    - check return of write() a gcc recommends
+  * apt-inst/deb/debfile.cc:
+    - check return of chdir() as gcc recommends
+  * apt-inst/deb/dpkgdb.cc:
+    - check return of chdir() as gcc recommends
   * methods/makefile:
     - do not link rred against libz anymore as FileFd handles all
       this transparently now
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 20 Mar 2012 18:29:33 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 20 Mar 2012 19:22:49 +0100
 
 apt (0.8.16~exp13) experimental; urgency=low
 

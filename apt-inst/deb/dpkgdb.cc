@@ -286,8 +286,7 @@ bool debDpkgDB::ReadFList(OpProgress &Progress)
 
    delete [] Buffer;
    if (chdir(Cwd.c_str()) != 0)
-      chdir("/");
-   
+      return _error->Errno("chdir",_("Unable to change to %s"),Cwd.c_str());
    return !_error->PendingError();
 }
 									/*}}}*/
