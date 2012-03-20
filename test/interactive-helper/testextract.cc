@@ -66,7 +66,8 @@ bool Go(int argc,char *argv[])
 	 while (feof(F) == 0)
 	 {
 	    char Line[300];
-	    fgets(Line,sizeof(Line),F);
+	    if (fgets(Line,sizeof(Line),F) == NULL)
+	       return false;
 	    Itm.Name = _strstrip(Line);
 	    Itm.Type = pkgDirStream::Item::File;
 	    if (Line[strlen(Line)-1] == '/')
