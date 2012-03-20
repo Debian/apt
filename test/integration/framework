@@ -207,7 +207,9 @@ configdpkg() {
 				if [ "${ARCH}" != "${DPKGARCH}" ]; then dpkg --add-architecture ${ARCH}; fi
 			done
 			if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
-				insertinstalledpackage 'dpkg' "all" '1.16.2~wipmultiarch~fake'
+				# dpkg doesn't really check the version as long as it is fully installed,
+				# but just to be sure we choose one above the required version
+				insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
 			fi
 		fi
 	fi
