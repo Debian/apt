@@ -3,14 +3,24 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
   [ Michael Vogt ]
   * apt-pkg/packagemanager.cc:
     - fix inconsistent clog/cout usage in the debug output
-  
+
   [ David Kalnischkies ]
   * apt-pkg/packagemanager.cc:
     - recheck all dependencies if we changed a package in SmartConfigure
       as this could break an earlier dependency (LP: #940396)
     - recheck dependencies in SmartUnpack after a change, too
+  * apt-pkg/acquire-worker.cc:
+    - check return of write() as gcc recommends
+  * apt-pkg/acquire.cc:
+    - check return of write() as gcc recommends
+  * apt-pkg/cdrom.cc:
+    - check return of chdir() and link() as gcc recommends
+  * apt-pkg/clean.cc:
+    - check return of chdir() as gcc recommends
+  * apt-pkg/contrib/netrc.cc:
+    - check return of asprintf() as gcc recommends
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 13 Mar 2012 12:38:35 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 20 Mar 2012 17:00:14 +0100
 
 apt (0.8.16~exp13) experimental; urgency=low
 

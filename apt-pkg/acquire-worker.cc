@@ -431,7 +431,23 @@ bool pkgAcquire::Worker::MediaChange(string Message)
 	     << Drive  << ":"     // drive
 	     << msg.str()         // l10n message
 	     << endl;
-      write(status_fd, status.str().c_str(), status.str().size());
+
+      std::string const dlstatus = status.str();
+      size_t done = 0;
+      size_t todo = dlstatus.size();
+      errno = 0;
+      int res = 0;
+      do
+      {
+	 res = write(status_fd, dlstatus.c_str() + done, todo);
+	 if (res < 0 && errno == EINTR)
+	    continue;
+	 if (res < 0)
+	    break;
+	 done += res;
+	 todo -= res;
+      }
+      while (res > 0 && todo > 0);
    }
 
    if (Log == 0 || Log->MediaChange(LookupTag(Message,"Media"),
