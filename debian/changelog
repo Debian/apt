@@ -5,6 +5,10 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     - fix inconsistent clog/cout usage in the debug output
 
   [ David Kalnischkies ]
+  * do not update po and pot files in the process of the build as this
+    causes timestamp changes for the mo files which therefore can't
+    be refcounted by dpkg for your M-A: same packages
+    (Closes: #659333, LP: #924628)
   * debian/libapt-pkg4.12:
     - update symbols file
   * apt-pkg/packagemanager.cc:
@@ -35,7 +39,8 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     - do not link rred against libz anymore as FileFd handles all
       this transparently now
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 20 Mar 2012 19:22:49 +0100
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 21 Mar 2012 18:50:23 +0100
 
 apt (0.8.16~exp13) experimental; urgency=low
 
