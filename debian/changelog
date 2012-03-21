@@ -11,6 +11,9 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     (Closes: #659333, LP: #924628)
   * debian/libapt-pkg4.12:
     - update symbols file
+  * debian/apt-utils.install:
+    - ship the ftparchive, apt-extractemplates and apt-sortpkgs locales
+      in the apt-utils package instead of the apt package
   * apt-pkg/packagemanager.cc:
     - recheck all dependencies if we changed a package in SmartConfigure
       as this could break an earlier dependency (LP: #940396)
@@ -39,8 +42,7 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     - do not link rred against libz anymore as FileFd handles all
       this transparently now
 
-
- -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 21 Mar 2012 18:50:23 +0100
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 22 Mar 2012 00:50:03 +0100
 
 apt (0.8.16~exp13) experimental; urgency=low
 

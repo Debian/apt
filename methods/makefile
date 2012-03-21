@@ -7,7 +7,7 @@ include ../buildlib/defaults.mak
 BIN := $(BIN)/methods
 
 include ../buildlib/libversion.mak
-APT_DOMAIN := libapt-pkg$(LIBAPTPKG_MAJOR)
+APT_DOMAIN := apt
 
 # The file method
 PROGRAM=file
