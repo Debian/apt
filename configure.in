@@ -17,11 +17,12 @@ AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
-dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.8.16~exp9")
 PACKAGE="apt"
+PACKAGE_VERSION="0.8.16~exp14"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
+AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION")
 AC_SUBST(PACKAGE)
+AC_SUBST(PACKAGE_VERSION)
 
 dnl Check the archs, we want the target type.
 AC_CANONICAL_SYSTEM
@@ -218,4 +219,4 @@ fi
 AC_SUBST(USE_NLS)
 AC_PATH_PROG(BASH, bash)
 
-AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile,make -s dirs)
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile:doc/Doxyfile.in,make -s dirs)

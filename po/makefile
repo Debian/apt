@@ -70,7 +70,7 @@ $(PACKAGE)-all.pot: $(POTFILES)
 	# but we want a header for our master-pot file, so we use a dummy pot with nothing but the header
 	$(XGETTEXT) --default-domain=$(PO)/$(PACKAGE)-dummy.pot --foreign --language=c \
 		-o $(PO)/$(PACKAGE)-dummy.pot --force-po --package-name=$(PACKAGE) \
-		--package-version=$(VERSION) --msgid-bugs-address=deity@lists.debian.org /dev/null
+		--package-version=$(PACKAGE_VERSION) --msgid-bugs-address=deity@lists.debian.org /dev/null
 	$(MSGCOMM) --more-than=0 $(PO)/$(PACKAGE)-dummy.pot $(POTFILES) --output=$(PACKAGE)-all.pot
 	rm -f $(PO)/$(PACKAGE)-dummy.pot
 

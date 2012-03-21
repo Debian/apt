@@ -91,9 +91,6 @@ doxygen-clean:
 	rm -fr $(BUILD)/doc/doxygen
 	rm -f $(BUILD)/doc/doxygen-stamp
 
-$(BUILD)/doc/Doxyfile: Doxyfile.in
-	(cd $(BUILD) && ./config.status doc/Doxyfile)
-
 $(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
 	rm -fr $(BUILD)/doc/doxygen
 	mkdir $(BUILD)/doc/doxygen  # some versions seem to not create this directory #628799
