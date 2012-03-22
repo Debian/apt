@@ -18,7 +18,6 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
-#include <apt-pkg/database.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
@@ -90,42 +89,6 @@ const ARArchive::Member *debDebFile::GotoMember(const char *Name)
    return Member;
 }
 									/*}}}*/
-// DebFile::ExtractControl - Extract Control information		/*{{{*/
-// ---------------------------------------------------------------------
-/* Extract the control information into the Database's temporary 
-   directory. */
-bool debDebFile::ExtractControl(pkgDataBase &DB)
-{
-   // Get the archive member and positition the file
-   const ARArchive::Member *Member = GotoMember("control.tar.gz");
-   if (Member == 0)
-      return false;
-      
-   // Prepare Tar
-   ControlExtract Extract;
-   ExtractTar Tar(File,Member->Size,"gzip");
-   if (_error->PendingError() == true)
-      return false;
-   
-   // Get into the temporary directory
-   std::string Cwd = SafeGetCWD();
-   std::string Tmp;
-   if (DB.GetMetaTmp(Tmp) == false)
-      return false;
-   if (chdir(Tmp.c_str()) != 0)
-      return _error->Errno("chdir",_("Couldn't change to %s"),Tmp.c_str());
-   
-   // Do extraction
-   if (Tar.Go(Extract) == false)
-      return false;
-   
-   // Switch out of the tmp directory.
-   if (chdir(Cwd.c_str()) != 0)
-      return _error->Errno("chdir",_("Unable to change to %s"),Cwd.c_str());
-   
-   return true;
-}
-									/*}}}*/
 // DebFile::ExtractArchive - Extract the archive data itself		/*{{{*/
 // ---------------------------------------------------------------------
 /* Simple wrapper around tar.. */
@@ -165,32 +128,6 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
    if (_error->PendingError() == true)
       return false;
    return Tar.Go(Stream);
-}
-									/*}}}*/
-// DebFile::MergeControl - Merge the control information		/*{{{*/
-// ---------------------------------------------------------------------
-/* This reads the extracted control file into the cache and returns the
-   version that was parsed. All this really does is select the correct
-   parser and correct file to parse. */
-pkgCache::VerIterator debDebFile::MergeControl(pkgDataBase &DB)
-{
-   // Open the control file
-   std::string Tmp;
-   if (DB.GetMetaTmp(Tmp) == false)
-      return pkgCache::VerIterator(DB.GetCache());
-   FileFd Fd(Tmp + "control",FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-      return pkgCache::VerIterator(DB.GetCache());
-   
-   // Parse it
-   debListParser Parse(&Fd);
-   pkgCache::VerIterator Ver(DB.GetCache());
-   if (DB.GetGenerator().MergeList(Parse,&Ver) == false)
-      return pkgCache::VerIterator(DB.GetCache());
-   
-   if (Ver.end() == true)
-      _error->Error(_("Failed to locate a valid control file"));
-   return Ver;
 }
 									/*}}}*/
 
