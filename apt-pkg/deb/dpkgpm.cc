@@ -163,7 +163,8 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
    return Ver;
 }
 									/*}}}*/
-ssize_t retry_write(int fd, const void *buf, size_t count)
+static ssize_t
+retry_write(int fd, const void *buf, size_t count)
 {
    int Res;
    ssize_t i = 0;

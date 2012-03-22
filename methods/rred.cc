@@ -227,7 +227,7 @@ struct EdCommand {
   char type;
 };
 #define IOV_COUNT 1024 /* Don't really want IOV_MAX since it can be arbitrarily large */
-ssize_t retry_writev(int fd, const struct iovec *iov, int iovcnt) {
+static ssize_t retry_writev(int fd, const struct iovec *iov, int iovcnt) {
 	ssize_t Res;
 	errno = 0;
 	ssize_t i = 0;
