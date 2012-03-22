@@ -203,6 +203,10 @@ apt (0.8.16~exp10) experimental; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - store the offset in the internal fd before calculate size of
       the zlib-handled file to jump back to this place again
+  * apt-pkg/aptconfiguration.cc:
+    - parse dpkg --print-foreign-architectures correctly in
+      case archs are separated by newline instead of space, too.
+      (Closes: #655590)
 
   [ Michael Vogt ]
   * apt-pkg/contrib/fileutl.h:
@@ -451,19 +455,20 @@ apt (0.8.16~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
 
-apt (0.8.15.10) UNRELEASEDunstable; urgency=low
+apt (0.8.15.10) unstable; urgency=high
 
   [ David Kalnischkies ]
   * algorithms.cc:
     - show a debug why a package was kept by ResolveByKeep()
   * doc/manpage-style.xml:
     - put <brackets> around email addresses
-  * apt-pkg/aptconfiguration.cc:
-    - parse dpkg --print-foreign-architectures correctly in
-      case archs are separated by newline instead of space, too.
-      (Closes: #655590)
   * doc/po/de.po:
     - apply typo-fix from Michael Basse, thanks! (LP: #900770)
+  * apt-pkg/acquire-item.cc:
+    - remove 'old' InRelease file if we can't get a new one before
+      proceeding with Release.gpg to avoid the false impression of a still
+      trusted repository by a (still present) old InRelease file.
+      Thanks to Simon Ruderich for reporting this issue! (CVE-2012-0214)
 
   [ Chris Leick ]
   * German manpage translation update
@@ -475,8 +480,16 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
   * Slovak (Ivan Masar). Closes: #652985
   * Russian (Yuri Kozlov). Closes: #654844
   * Hungarian (Gabor Kelemen). Closes: #655238
+  * Polish (Michał Kułach). Closes: #656908
+  * Danish (Joe Hansen). Closes: #658643
+  * French: replace "étiquetage" by "épinglage" for "pinning"
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:30:36 +0100
+  [ Michael Vogt ]
+  * merged patch from lp:~uusijani/apt/uusi-branch:
+     Correct fi translation for hash sum mismatches (lp:420403)
+     Thanks to Jani Uusitalo
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 06 Mar 2012 14:14:26 +0100
 
 apt (0.8.15.9) unstable; urgency=low
 
