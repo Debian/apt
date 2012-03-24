@@ -7,6 +7,9 @@ set -e
 #  rm /var/state/apt
 #fi
 
+dpkg-maintscript-helper rm_conffile /etc/apt/apt.conf.d/01ubuntu \
+	0.8.16~exp12ubuntu6 -- "$@"
+
 if [ "$1" = "upgrade" -o "$1" = "install" -a "$2" != "" ]; then
   if [ ! -e /var/lib/apt -a -e /var/state/apt ]; then
     # upgrading from /var/state/apt using apt.
