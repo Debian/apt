@@ -12,7 +12,12 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     - recheck all dependencies if we changed a package in SmartConfigure
       as this could break an earlier dependency (LP: #940396)
     - recheck dependencies in SmartUnpack after a change, too
-
+  
+  [ Thorsten Spindler ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - do not crash if (*I).Pkg is NULL (LP: #939867)
+  
+  
  -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 13 Mar 2012 12:38:35 +0100
 
 apt (0.8.16~exp13) experimental; urgency=low
