@@ -40,13 +40,23 @@ $(POTFILES) : $(PO)/%.pot :
 	  --keyword=P_:1,2 \
 	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot
 	rm -f $(PO)/POTFILES_$*.in
-	$(MSGCOMM) --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
+	$(MSGCOMM) --omit-header --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
 	# copy into the domain dirs to make rosetta happy
 	rm -f $(PO)/domains/$*/*.pot
 	cp $@ $(PO)/domains/$*
 
-$(PACKAGE)-all.pot: $(POTFILES)
-	$(MSGCOMM) --more-than=0 $(POTFILES) --output=$@
+$(PACKAGE)-all.pot:
+	# we create our partial pot files without a header to avoid 
+	# changing dates in *.mo files, but we want a header for our 
+	# master-pot file, so we use a dummy pot with nothing but the 
+	# header
+	$(XGETTEXT) --default-domain=$(PO)/$(PACKAGE)-dummy.pot --foreign \
+		--language=c -o $(PO)/$(PACKAGE)-dummy.pot --force-po \
+		--package-name=$(PACKAGE) --package-version=$(VERSION) \
+		--msgid-bugs-address=deity@lists.debian.org /dev/null
+	make $(POTFILES)
+	$(MSGCOMM) --more-than=0 $(PO)/$(PACKAGE)-dummy.pot $(POTFILES) --output=$@
+	rm -f $(PO)/$(PACKAGE)-dummy.pot
 
 # Filter the complete translation with the domain specific file to produce
 # only the subtext needed for this domain
@@ -77,7 +87,11 @@ update-po: $(PACKAGE)-all.pot
 	rm -f $$lang.new.po; \
 	done
 
-clean: clean/local
+check-pot-deps:
+	echo $(PACKAGE)-all.pot : $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/*/*.srclist))) >> $(PO)/apt-all.d
+	make $(PACKAGE)-all.pot
+
+clean: check-pot-deps clean/local
 clean/local: update-po
 	rm -f $(MOFILES) $(LANG_POFILES) $(PO)/*.d
 
