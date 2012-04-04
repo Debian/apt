@@ -15,7 +15,7 @@ include $(DEBIANDOC_H)
 ifdef XSLTPROC
 # generate a list of accepted man page translations
 SOURCE = $(patsubst %.xml,%,$(wildcard *.?.xml))
-INCLUDES = apt.ent
+INCLUDES = apt.ent apt-verbatim.ent
 STYLESHEET=manpage-style.xsl
 
 LOCAL := manpage-$(firstword $(SOURCE))
