@@ -5,6 +5,10 @@ apt (0.8.16~exp12ubuntu7) UNRELEASED; urgency=low
   * Build-depend on gettext:any for cross-building support.
   * Don't treat build-depends-indep as cross-build-dependencies; we should
     always install the host arch versions.  LP: #968828.
+  * Makefile, po/makefile:  make sure our pot generation datestamp doesn't
+    change at build time, since this makes translations fail to be
+    co-installable with multiarch.  Based on a patch by David Kalnischkies.
+    Closes: #659333, LP: #924628.
 
  -- Steve Langasek <steve.langasek@ubuntu.com>  Sat, 24 Mar 2012 00:05:43 -0700
 

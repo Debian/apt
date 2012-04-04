@@ -24,6 +24,7 @@ all headers library clean veryclean binary program doc dirs test:
 # Some very common aliases
 .PHONY: maintainer-clean dist-clean distclean pristine sanity 
 maintainer-clean dist-clean distclean pristine sanity: veryclean
+veryclean: clean
 
 # The startup target builds the necessary configure scripts. It should
 # be used after a CVS checkout.
