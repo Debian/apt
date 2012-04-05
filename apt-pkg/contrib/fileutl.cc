@@ -44,14 +44,8 @@
 #include <set>
 #include <algorithm>
 
-// FIXME: Compressor Fds have some speed disadvantages and are a bit buggy currently,
-// so while the current implementation satisfies the testcases it is not a real option
-// to disable it for now
-#define APT_USE_ZLIB 1
-#if APT_USE_ZLIB
-#include <zlib.h>
-#else
-#pragma message "Usage of zlib is DISABLED!"
+#ifdef HAVE_ZLIB
+	#include <zlib.h>
 #endif
 
 #ifdef WORDS_BIGENDIAN
@@ -65,7 +59,7 @@ using namespace std;
 
 class FileFdPrivate {
 	public:
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
 	gzFile gz;
 #else
 	void* gz;
@@ -1016,7 +1010,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
    d->compressor = compressor;
    if (compressor.Name == "." || compressor.Binary.empty() == true)
       return true;
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
    else if (compressor.Name == "gzip")
    {
       if ((Mode & ReadWrite) == ReadWrite)
@@ -1137,7 +1131,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    *((char *)To) = '\0';
    do
    {
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
       if (d->gz != NULL)
          Res = gzread(d->gz,To,Size);
       else
@@ -1149,7 +1143,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	 if (errno == EINTR)
 	    continue;
 	 Flags |= Fail;
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
 	 if (d->gz != NULL)
 	 {
 	    int err;
@@ -1190,7 +1184,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 char* FileFd::ReadLine(char *To, unsigned long long const Size)
 {
    *To = '\0';
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
    if (d->gz != NULL)
       return gzgets(d->gz, To, Size);
 #endif
@@ -1221,7 +1215,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    errno = 0;
    do
    {
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
       if (d->gz != NULL)
          Res = gzwrite(d->gz,From,Size);
       else
@@ -1289,7 +1283,7 @@ bool FileFd::Seek(unsigned long long To)
       return true;
    }
    int res;
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
    if (d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
@@ -1325,7 +1319,7 @@ bool FileFd::Skip(unsigned long long Over)
    }
 
    int res;
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
    if (d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);
    else
@@ -1373,7 +1367,7 @@ unsigned long long FileFd::Tell()
       return d->seekpos;
 
    off_t Res;
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
    if (d->gz != NULL)
      Res = gztell(d->gz);
    else
@@ -1427,7 +1421,7 @@ unsigned long long FileFd::Size()
       size = Tell();
       Seek(oldSeek);
    }
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
    // only check gzsize if we are actually a gzip file, just checking for
    // "gz" is not sufficient as uncompressed files could be opened with
    // gzopen in "direct" mode as well
@@ -1500,7 +1494,7 @@ bool FileFd::Close()
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
    {
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
       if (d != NULL && d->gz != NULL) {
 	 int const e = gzclose(d->gz);
 	 // gzdclose() on empty files always fails with "buffer error" here, ignore that

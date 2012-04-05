@@ -89,7 +89,7 @@ AC_CHECK_LIB(curl, curl_easy_init,
 AC_SUBST(BDBLIB)
 
 AC_CHECK_LIB(z, gzopen,
-	[AC_CHECK_HEADER(zlib.h, [], AC_MSG_ERROR([failed: zlib.h not found]))],
+	[AC_CHECK_HEADER(zlib.h, [AC_DEFINE(HAVE_ZLIB)], AC_MSG_ERROR([failed: zlib.h not found]))],
 	AC_MSG_ERROR([failed: Need libz]))
 
 dnl Converts the ARCH to be something singular for this general CPU family
