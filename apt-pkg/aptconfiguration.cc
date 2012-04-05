@@ -477,6 +477,10 @@ const Configuration::getCompressors(bool const Cached) {
 	compressors.push_back(Compressor(".", "", "", "", "", 1));
 	if (_config->Exists("Dir::Bin::gzip") == false || FileExists(_config->FindFile("Dir::Bin::gzip")) == true)
 		compressors.push_back(Compressor("gzip",".gz","gzip","-9n","-d",2));
+#ifdef HAVE_ZLIB
+	else
+		compressors.push_back(Compressor("gzip",".gz","/bin/false", "", "", 2));
+#endif
 	if (_config->Exists("Dir::Bin::bzip2") == false || FileExists(_config->FindFile("Dir::Bin::bzip2")) == true)
 		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-9","-d",3));
 	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)

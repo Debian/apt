@@ -829,7 +829,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
    if (Compress == Auto && (Mode & WriteOnly) == WriteOnly)
       return _error->Error("Autodetection on %s only works in ReadOnly openmode!", FileName.c_str());
 
-   // FIXME: Denote inbuilt compressors somehow - as we don't need to have the binaries for them
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
    if (Compress == Auto)

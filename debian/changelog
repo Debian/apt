@@ -61,6 +61,7 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
       which can be translated to apt.ent
   * apt-pkg/aptconfiguration.cc:
     - if present, prefer xz binary over lzma
+    - if we have zlib builtin insert add a dummy gzip compressor for FileFD
   * methods/bzip2.cc:
     - remove it as the functionality for all compressors can be
       provided by gzip.cc now with the usage of FileFD
@@ -73,7 +74,7 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
       number of auto-removed packages both before and after the list
       of packages (Closes: #665833)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 05 Apr 2012 18:49:35 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 05 Apr 2012 19:00:43 +0200
 
 apt (0.8.16~exp13) experimental; urgency=low
 
