@@ -479,10 +479,14 @@ const Configuration::getCompressors(bool const Cached) {
 		compressors.push_back(Compressor("gzip",".gz","gzip","-9n","-d",2));
 #ifdef HAVE_ZLIB
 	else
-		compressors.push_back(Compressor("gzip",".gz","/bin/false", "", "", 2));
+		compressors.push_back(Compressor("gzip",".gz","false", "", "", 2));
 #endif
 	if (_config->Exists("Dir::Bin::bzip2") == false || FileExists(_config->FindFile("Dir::Bin::bzip2")) == true)
 		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-9","-d",3));
+#ifdef HAVE_BZ2
+	else
+		compressors.push_back(Compressor("bzip2",".bz2","false", "", "", 3));
+#endif
 	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)
 		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",4));
 	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)

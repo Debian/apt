@@ -49,6 +49,8 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
       this transparently now
   * debian/control:
     - bump Standards-Version to 3.9.3 (no changes needed)
+    - add libbz2-dev as new build-dependency
+    - remove the libz-dev alternative from zlib1g-dev build-dependency
   * doc/apt-get.8.xml:
     - typofix: respect → respecting, thanks Mike Erickson! (Closes: #664833)
   * debian/rules:
@@ -62,9 +64,14 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
   * apt-pkg/aptconfiguration.cc:
     - if present, prefer xz binary over lzma
     - if we have zlib builtin insert add a dummy gzip compressor for FileFD
+    - do the same for bz2 builtin if available
   * methods/bzip2.cc:
     - remove it as the functionality for all compressors can be
       provided by gzip.cc now with the usage of FileFD
+  * apt-pkg/contrib/fileutl.cc:
+    - use libz2 library for (de)compression instead of the bzip2 binary as
+      the first is a dependency of dpkg and the later just priority:optional
+      so we gain 'easier' access to bz2-compressed Translation files this way
 
   [ Bogdan Purcareata ]
   * doc/apt-get.8.xml:
@@ -74,7 +81,7 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
       number of auto-removed packages both before and after the list
       of packages (Closes: #665833)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 05 Apr 2012 19:00:43 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 05 Apr 2012 20:51:01 +0200
 
 apt (0.8.16~exp13) experimental; urgency=low
 

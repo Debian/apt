@@ -47,6 +47,9 @@
 #ifdef HAVE_ZLIB
 	#include <zlib.h>
 #endif
+#ifdef HAVE_BZ2
+	#include <bzlib.h>
+#endif
 
 #ifdef WORDS_BIGENDIAN
 #include <inttypes.h>
@@ -64,13 +67,19 @@ class FileFdPrivate {
 #else
 	void* gz;
 #endif
+#ifdef HAVE_BZ2
+	BZFILE* bz2;
+#else
+	void* bz2;
+#endif
 	int compressed_fd;
 	pid_t compressor_pid;
 	bool pipe;
 	APT::Configuration::Compressor compressor;
 	unsigned int openmode;
 	unsigned long long seekpos;
-	FileFdPrivate() : gz(NULL), compressed_fd(-1), compressor_pid(-1), pipe(false),
+	FileFdPrivate() : gz(NULL), bz2(NULL),
+			  compressed_fd(-1), compressor_pid(-1), pipe(false),
 			  openmode(0), seekpos(0) {};
 };
 
@@ -1017,13 +1026,29 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       else if ((Mode & WriteOnly) == WriteOnly)
 	 d->gz = gzdopen(iFd, "w");
       else
-	 d->gz = gzdopen (iFd, "r");
+	 d->gz = gzdopen(iFd, "r");
       if (d->gz == NULL)
 	 return false;
       Flags |= Compressed;
       return true;
    }
 #endif
+#ifdef HAVE_BZ2
+   else if (compressor.Name == "bzip2")
+   {
+      if ((Mode & ReadWrite) == ReadWrite)
+	 d->bz2 = BZ2_bzdopen(iFd, "r+");
+      else if ((Mode & WriteOnly) == WriteOnly)
+	 d->bz2 = BZ2_bzdopen(iFd, "w");
+      else
+	 d->bz2 = BZ2_bzdopen(iFd, "r");
+      if (d->bz2 == NULL)
+	 return false;
+      Flags |= Compressed;
+      return true;
+   }
+#endif
+
 
    if ((Mode & ReadWrite) == ReadWrite)
       return _error->Error("ReadWrite mode is not supported for file %s", FileName.c_str());
@@ -1132,7 +1157,12 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    {
 #ifdef HAVE_ZLIB
       if (d->gz != NULL)
-         Res = gzread(d->gz,To,Size);
+	 Res = gzread(d->gz,To,Size);
+      else
+#endif
+#ifdef HAVE_BZ2
+      if (d->bz2 != NULL)
+	 Res = BZ2_bzread(d->bz2,To,Size);
       else
 #endif
          Res = read(iFd,To,Size);
@@ -1149,6 +1179,15 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	    char const * const errmsg = gzerror(d->gz, &err);
 	    if (err != Z_ERRNO)
 	       return _error->Error("gzread: %s (%d: %s)", _("Read error"), err, errmsg);
+	 }
+#endif
+#ifdef HAVE_BZ2
+	 if (d->bz2 != NULL)
+	 {
+	    int err;
+	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
+	    if (err != BZ_IO_ERROR)
+	       return _error->Error("BZ2_bzread: %s (%d: %s)", _("Read error"), err, errmsg);
 	 }
 #endif
 	 return _error->Errno("read",_("Read error"));
@@ -1219,12 +1258,35 @@ bool FileFd::Write(const void *From,unsigned long long Size)
          Res = gzwrite(d->gz,From,Size);
       else
 #endif
+#ifdef HAVE_BZ2
+      if (d->bz2 != NULL)
+         Res = BZ2_bzwrite(d->bz2,(void*)From,Size);
+      else
+#endif
          Res = write(iFd,From,Size);
       if (Res < 0 && errno == EINTR)
 	 continue;
       if (Res < 0)
       {
 	 Flags |= Fail;
+#ifdef HAVE_ZLIB
+	 if (d->gz != NULL)
+	 {
+	    int err;
+	    char const * const errmsg = gzerror(d->gz, &err);
+	    if (err != Z_ERRNO)
+	       return _error->Error("gzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
+	 }
+#endif
+#ifdef HAVE_BZ2
+	 if (d->bz2 != NULL)
+	 {
+	    int err;
+	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
+	    if (err != BZ_IO_ERROR)
+	       return _error->Error("BZ2_bzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
+	 }
+#endif
 	 return _error->Errno("write",_("Write error"));
       }
       
@@ -1246,7 +1308,11 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 /* */
 bool FileFd::Seek(unsigned long long To)
 {
-   if (d->pipe == true)
+   if (d->pipe == true
+#ifdef HAVE_BZ2
+	|| d->bz2 != NULL
+#endif
+	)
    {
       // Our poor man seeking in pipes is costly, so try to avoid it
       unsigned long long seekpos = Tell();
@@ -1257,6 +1323,10 @@ bool FileFd::Seek(unsigned long long To)
 
       if ((d->openmode & ReadOnly) != ReadOnly)
 	 return _error->Error("Reopen is only implemented for read-only files!");
+#ifdef HAVE_BZ2
+      if (d->bz2 != NULL)
+	 BZ2_bzclose(d->bz2);
+#endif
       close(iFd);
       iFd = 0;
       if (TemporaryFileName.empty() == false)
@@ -1303,7 +1373,11 @@ bool FileFd::Seek(unsigned long long To)
 /* */
 bool FileFd::Skip(unsigned long long Over)
 {
-   if (d->pipe == true)
+   if (d->pipe == true
+#ifdef HAVE_BZ2
+	|| d->bz2 != NULL
+#endif
+	)
    {
       d->seekpos += Over;
       char buffer[1024];
@@ -1339,11 +1413,13 @@ bool FileFd::Skip(unsigned long long Over)
 /* */
 bool FileFd::Truncate(unsigned long long To)
 {
-   if (d->gz != NULL)
+#if defined HAVE_ZLIB || defined HAVE_BZ2
+   if (d->gz != NULL || d->bz2 != NULL)
    {
       Flags |= Fail;
-      return _error->Error("Truncating gzipped files is not implemented (%s)", FileName.c_str());
+      return _error->Error("Truncating compressed files is not implemented (%s)", FileName.c_str());
    }
+#endif
    if (ftruncate(iFd,To) != 0)
    {
       Flags |= Fail;
@@ -1362,7 +1438,11 @@ unsigned long long FileFd::Tell()
    // seeking around, but not all users of FileFd use always Seek() and co
    // so d->seekpos isn't always true and we can just use it as a hint if
    // we have nothing else, but not always as an authority…
-   if (d->pipe == true)
+   if (d->pipe == true
+#ifdef HAVE_BZ2
+	|| d->bz2 != NULL
+#endif
+	)
       return d->seekpos;
 
    off_t Res;
@@ -1409,7 +1489,11 @@ unsigned long long FileFd::Size()
 
    // for compressor pipes st_size is undefined and at 'best' zero,
    // so we 'read' the content and 'seek' back - see there
-   if (d->pipe == true)
+   if (d->pipe == true
+#ifdef HAVE_BZ2
+	|| (d->bz2 && size > 0)
+#endif
+	)
    {
       unsigned long long const oldSeek = Tell();
       char ignore[1000];
@@ -1500,6 +1584,11 @@ bool FileFd::Close()
 	 if (e != 0 && e != Z_BUF_ERROR)
 	    Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
       } else
+#endif
+#ifdef HAVE_BZ2
+      if (d != NULL && d->bz2 != NULL)
+	 BZ2_bzclose(d->bz2);
+      else
 #endif
 	 if (iFd > 0 && close(iFd) != 0)
 	    Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
