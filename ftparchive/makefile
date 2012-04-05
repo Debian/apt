@@ -16,6 +16,6 @@ SOURCE = apt-ftparchive.cc cachedb.cc writer.cc contents.cc override.cc \
 include $(PROGRAM_H)
 else
 PROGRAM=apt-ftparchive
-MESSAGE="Must have db2 to build apt-ftparchive"
+MESSAGE="Must have libdb to build apt-ftparchive"
 include $(FAIL_H)
 endif # ifdef BDBLIB
