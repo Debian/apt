@@ -1826,7 +1826,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
       else
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
-      c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
+      c1out << P_("Use 'apt-get autoremove' to remove it.", "Use 'apt-get autoremove' to remove them.", autoRemoveCount) << std::endl;
    }
    return true;
 }
