@@ -2863,7 +2863,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	       if ((BADVER(Ver)) == false)
 	       {
 		  string forbidden;
-		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
+		  if (Ver->MultiArch == pkgCache::Version::None)
 		  {
 		     if (colon == string::npos)
 		     {
@@ -2878,7 +2878,7 @@ bool DoBuildDep(CommandLine &CmdL)
 			forbidden = "Multi-Arch: same";
 		     // :native gets the buildArch
 		  }
-		  else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
+		  else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::All)
 		  {
 		     if (colon != string::npos)
 			forbidden = "Multi-Arch: foreign";

@@ -1,0 +1,118 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'armhf'
+
+insertinstalledpackage 'build-essential' 'all' '11.5'
+
+insertpackage 'unstable' 'doxygen' 'all' '1.0' 'Depends: language-support, language-tool'
+insertpackage 'unstable' 'libc6' 'amd64,armhf' '1.0' 'Multi-Arch: same'
+insertpackage 'unstable' 'libc6-dev' 'amd64,armhf' '1.0' 'Depends: libc6
+Multi-Arch: same'
+insertpackage 'unstable' 'language-support' 'amd64,armhf' '1.0' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'language-tool' 'amd64,armhf' '1.0'
+
+insertsource 'unstable' 'apt' 'any' '0.8.15' 'Build-Depends: doxygen, libc6-dev'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  doxygen language-support language-tool libc6 libc6-dev
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Inst language-support (1.0 unstable [amd64])
+Inst language-tool (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [all])
+Inst libc6 (1.0 unstable [amd64])
+Inst libc6-dev (1.0 unstable [amd64])
+Conf language-support (1.0 unstable [amd64])
+Conf language-tool (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [all])
+Conf libc6 (1.0 unstable [amd64])
+Conf libc6-dev (1.0 unstable [amd64])' aptget build-dep apt -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  doxygen language-support language-tool libc6:armhf libc6-dev:armhf
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Inst language-support (1.0 unstable [amd64])
+Inst language-tool (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [all])
+Inst libc6:armhf (1.0 unstable [armhf])
+Inst libc6-dev:armhf (1.0 unstable [armhf])
+Conf language-support (1.0 unstable [amd64])
+Conf language-tool (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [all])
+Conf libc6:armhf (1.0 unstable [armhf])
+Conf libc6-dev:armhf (1.0 unstable [armhf])' aptget build-dep apt -s -a armhf
+
+configarchitecture 'armhf' 'amd64'
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  doxygen language-support language-tool libc6 libc6-dev
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Inst language-support (1.0 unstable [armhf])
+Inst language-tool (1.0 unstable [armhf])
+Inst doxygen (1.0 unstable [all])
+Inst libc6 (1.0 unstable [armhf])
+Inst libc6-dev (1.0 unstable [armhf])
+Conf language-support (1.0 unstable [armhf])
+Conf language-tool (1.0 unstable [armhf])
+Conf doxygen (1.0 unstable [all])
+Conf libc6 (1.0 unstable [armhf])
+Conf libc6-dev (1.0 unstable [armhf])' aptget build-dep apt -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  doxygen language-support language-tool libc6:amd64 libc6-dev:amd64
+0 upgraded, 5 newly installed, 0 to remove and 0 not upgraded.
+Inst language-support (1.0 unstable [armhf])
+Inst language-tool (1.0 unstable [armhf])
+Inst doxygen (1.0 unstable [all])
+Inst libc6:amd64 (1.0 unstable [amd64])
+Inst libc6-dev:amd64 (1.0 unstable [amd64])
+Conf language-support (1.0 unstable [armhf])
+Conf language-tool (1.0 unstable [armhf])
+Conf doxygen (1.0 unstable [all])
+Conf libc6:amd64 (1.0 unstable [amd64])
+Conf libc6-dev:amd64 (1.0 unstable [amd64])' aptget build-dep apt -s -a amd64
+
+configarchitecture 'amd64' 'armhf'
+
+insertinstalledpackage 'language-support' 'armhf' '0.5' 'Multi-Arch: foreign'
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  doxygen language-tool libc6 libc6-dev
+0 upgraded, 4 newly installed, 0 to remove and 1 not upgraded.
+Inst language-tool (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [all])
+Inst libc6 (1.0 unstable [amd64])
+Inst libc6-dev (1.0 unstable [amd64])
+Conf language-tool (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [all])
+Conf libc6 (1.0 unstable [amd64])
+Conf libc6-dev (1.0 unstable [amd64])' aptget build-dep apt -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  doxygen language-tool libc6:armhf libc6-dev:armhf
+0 upgraded, 4 newly installed, 0 to remove and 1 not upgraded.
+Inst language-tool (1.0 unstable [amd64])
+Inst doxygen (1.0 unstable [all])
+Inst libc6:armhf (1.0 unstable [armhf])
+Inst libc6-dev:armhf (1.0 unstable [armhf])
+Conf language-tool (1.0 unstable [amd64])
+Conf doxygen (1.0 unstable [all])
+Conf libc6:armhf (1.0 unstable [armhf])
+Conf libc6-dev:armhf (1.0 unstable [armhf])' aptget build-dep apt -s -a armhf
