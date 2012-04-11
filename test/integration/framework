@@ -558,7 +558,7 @@ buildaptarchivefromfiles() {
 		msgninfo "\t${line} file… "
 		cat ${line} | gzip > ${line}.gz
 		cat ${line} | bzip2 > ${line}.bz2
-		cat ${line} | lzma > ${line}.lzma
+		cat ${line} | xz --format=lzma > ${line}.lzma
 		cat ${line} | xz > ${line}.xz
 		msgdone "info"
 	done

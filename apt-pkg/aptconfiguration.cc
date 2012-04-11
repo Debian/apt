@@ -435,7 +435,7 @@ void Configuration::setDefaultConfigurationForCompressors() {
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
 	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
 	if (FileExists(_config->FindFile("Dir::Bin::xz")) == true) {
-		_config->CndSet("Dir::Bin::lzma", _config->Find("Dir::Bin::xz"));
+		_config->Clear("Dir::Bin::lzma");
 		_config->Set("APT::Compressor::lzma::Binary", "xz");
 		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
 			_config->Set("APT::Compressor::lzma::CompressArg::", "--format=lzma");
