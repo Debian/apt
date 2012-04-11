@@ -1302,6 +1302,28 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    Flags |= Fail;
    return _error->Error(_("write, still have %llu to write but couldn't"), Size);
 }
+bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
+{
+   int Res;
+   errno = 0;
+   do
+   {
+      Res = write(Fd,From,Size);
+      if (Res < 0 && errno == EINTR)
+	 continue;
+      if (Res < 0)
+	 return _error->Errno("write",_("Write error"));
+
+      From = (char *)From + Res;
+      Size -= Res;
+   }
+   while (Res > 0 && Size > 0);
+
+   if (Size == 0)
+      return true;
+
+   return _error->Error(_("write, still have %llu to write but couldn't"), Size);
+}
 									/*}}}*/
 // FileFd::Seek - Seek in the file					/*{{{*/
 // ---------------------------------------------------------------------

@@ -874,21 +874,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	     << endl;
 
       std::string const dlstatus = status.str();
-      size_t done = 0;
-      size_t todo = dlstatus.size();
-      errno = 0;
-      int res = 0;
-      do
-      {
-	 res = write(fd, dlstatus.c_str() + done, todo);
-	 if (res < 0 && errno == EINTR)
-	    continue;
-	 if (res < 0)
-	    break;
-	 done += res;
-	 todo -= res;
-      }
-      while (res > 0 && todo > 0);
+      FileFd::Write(fd, dlstatus.c_str(), dlstatus.size());
    }
 
    return true;

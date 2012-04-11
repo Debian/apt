@@ -163,26 +163,6 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
    return Ver;
 }
 									/*}}}*/
-static ssize_t
-retry_write(int fd, const void *buf, size_t count)
-{
-   int Res;
-   ssize_t i = 0;
-   errno = 0;
-   do
-   {
-      Res = write(fd, buf, count);
-      if (Res < 0 && errno == EINTR)
-	 continue;
-      if (Res < 0)
-	 break;
-      buf = (char *)buf + Res;
-      count -= Res;
-      i += Res;
-   }
-   while (Res > 0 && count > 0);
-   return i;
-}
 
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -445,7 +425,7 @@ void pkgDPkgPM::DoStdin(int master)
    unsigned char input_buf[256] = {0,}; 
    ssize_t len = read(0, input_buf, sizeof(input_buf));
    if (len)
-      retry_write(master, input_buf, len);
+      FileFd::Write(master, input_buf, len);
    else
       d->stdin_is_dev_null = true;
 }
@@ -471,7 +451,7 @@ void pkgDPkgPM::DoTerminalPty(int master)
    }  
    if(len <= 0) 
       return;
-   retry_write(1, term_buf, len);
+   FileFd::Write(1, term_buf, len);
    if(d->term_out)
       fwrite(term_buf, len, sizeof(char), d->term_out);
 }
@@ -546,7 +526,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 retry_write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
 
@@ -570,7 +550,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 retry_write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       pkgFailures++;
@@ -584,7 +564,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 retry_write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       return;
@@ -612,7 +592,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 retry_write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
    }
@@ -1257,7 +1237,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 		<< (PackagesDone/float(PackagesTotal)*100.0) 
 		<< ":" << _("Running dpkg")
 		<< endl;
-	 retry_write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       }
       Child = ExecFork();
             

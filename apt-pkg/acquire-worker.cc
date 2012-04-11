@@ -433,21 +433,7 @@ bool pkgAcquire::Worker::MediaChange(string Message)
 	     << endl;
 
       std::string const dlstatus = status.str();
-      size_t done = 0;
-      size_t todo = dlstatus.size();
-      errno = 0;
-      int res = 0;
-      do
-      {
-	 res = write(status_fd, dlstatus.c_str() + done, todo);
-	 if (res < 0 && errno == EINTR)
-	    continue;
-	 if (res < 0)
-	    break;
-	 done += res;
-	 todo -= res;
-      }
-      while (res > 0 && todo > 0);
+      FileFd::Write(status_fd, dlstatus.c_str(), dlstatus.size());
    }
 
    if (Log == 0 || Log->MediaChange(LookupTag(Message,"Media"),
@@ -546,17 +532,10 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 /* */
 bool pkgAcquire::Worker::OutFdReady()
 {
-   int Res;
-   do
-   {
-      Res = write(OutFd,OutQueue.c_str(),OutQueue.length());
-   }
-   while (Res < 0 && errno == EINTR);
-   
-   if (Res <= 0)
+   if (FileFd::Write(OutFd,OutQueue.c_str(),OutQueue.length()) == false)
       return MethodFailure();
    
-   OutQueue.erase(0,Res);
+   OutQueue.clear();
    if (OutQueue.empty() == true)
       OutReady = false;
    
