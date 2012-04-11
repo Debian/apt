@@ -425,7 +425,7 @@ void pkgDPkgPM::DoStdin(int master)
    unsigned char input_buf[256] = {0,}; 
    ssize_t len = read(0, input_buf, sizeof(input_buf));
    if (len)
-      write(master, input_buf, len);
+      FileFd::Write(master, input_buf, len);
    else
       d->stdin_is_dev_null = true;
 }
@@ -451,7 +451,7 @@ void pkgDPkgPM::DoTerminalPty(int master)
    }  
    if(len <= 0) 
       return;
-   write(1, term_buf, len);
+   FileFd::Write(1, term_buf, len);
    if(d->term_out)
       fwrite(term_buf, len, sizeof(char), d->term_out);
 }
@@ -526,7 +526,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
 
@@ -550,7 +550,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       pkgFailures++;
@@ -564,7 +564,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       return;
@@ -592,7 +592,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
    }
@@ -1055,7 +1055,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }
 
       int fd[2];
-      pipe(fd);
+      if (pipe(fd) != 0)
+	 return _error->Errno("pipe","Failed to create IPC pipe to dpkg");
 
 #define ADDARG(X) Args.push_back(X); Size += strlen(X)
 #define ADDARGC(X) Args.push_back(X); Size += sizeof(X) - 1
@@ -1236,7 +1237,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 		<< (PackagesDone/float(PackagesTotal)*100.0) 
 		<< ":" << _("Running dpkg")
 		<< endl;
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       }
       Child = ExecFork();
             

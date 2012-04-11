@@ -29,12 +29,7 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/pkgcache.h>
 
-#ifndef APT_8_CLEANER_HEADERS
-#include <apt-pkg/database.h>
-#endif
-
 class FileFd;
-class pkgDataBase;
 
 class debDebFile
 {
@@ -46,13 +41,10 @@ class debDebFile
    bool CheckMember(const char *Name);
    
    public:
-
    class ControlExtract;
    class MemControlExtract;
-   
-   bool ExtractControl(pkgDataBase &DB);
+
    bool ExtractArchive(pkgDirStream &Stream);
-   pkgCache::VerIterator MergeControl(pkgDataBase &DB);
    const ARArchive::Member *GotoMember(const char *Name);
    inline FileFd &GetFile() {return File;};
    

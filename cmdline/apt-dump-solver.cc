@@ -21,7 +21,7 @@
 bool ShowHelp() {
 
 	std::cout <<
-		PACKAGE " " VERSION " for " COMMON_ARCH " compiled on " __DATE__ " " __TIME__ << std::endl <<
+		PACKAGE " " PACKAGE_VERSION " for " COMMON_ARCH " compiled on " __DATE__ " " __TIME__ << std::endl <<
 		"Usage: apt-dump-resolver\n"
 		"\n"
 		"apt-dump-resolver is a dummy solver who just dumps its input to the\n"

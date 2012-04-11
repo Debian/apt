@@ -34,9 +34,6 @@ build:
 
 PKG=apt
 DEB_BUILD_PROG:=debuild --preserve-envvar PATH --preserve-envvar CCACHE_DIR -us -uc $(DEB_BUILD_PROG_OPTS)
-APT_DEBVER=$(shell dpkg-parsechangelog |sed -n -e '/^Version:/s/^Version: //p' | sed -e 's/\+.*$$//')
-APT_CONFVER=$(shell sed -n -e 's/^AC_DEFINE_UNQUOTED(VERSION,"\(.*\)")/\1/p' configure.in)
-APT_CVSTAG=$(shell echo "$(APT_DEBVER)" | sed -e 's/^/v/' -e 's/\./_/g')
 
 # Determine the build directory to use
 BASE=.
@@ -51,17 +48,6 @@ override BLD := $(BUILDX)
 
 ifeq ($(words $(BLD)),0)
 override BLD := ./build
-endif
-
-# Rebuild configure.in to have the correct version from the change log
-ifneq ($(APT_DEBVER),$(APT_CONFVER))
-ifneq ($(APT_DEBVER),)
-.PHONY: configure.in
-configure.in:
-	sed -e 's/$(APT_CONFVER)/$(APT_DEBVER)/' $@ > $@.$$$$ && mv $@.$$$$ $@
-endif
-else
-configure.in:
 endif
 
 # APT Programs in apt-utils

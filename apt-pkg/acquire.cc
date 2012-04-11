@@ -872,7 +872,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	     << ":"  << (CurrentBytes/float(TotalBytes)*100.0) 
 	     << ":" << msg 
 	     << endl;
-      write(fd, status.str().c_str(), status.str().size());
+
+      std::string const dlstatus = status.str();
+      FileFd::Write(fd, dlstatus.c_str(), dlstatus.size());
    }
 
    return true;

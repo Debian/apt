@@ -431,7 +431,9 @@ bool pkgAcquire::Worker::MediaChange(string Message)
 	     << Drive  << ":"     // drive
 	     << msg.str()         // l10n message
 	     << endl;
-      write(status_fd, status.str().c_str(), status.str().size());
+
+      std::string const dlstatus = status.str();
+      FileFd::Write(status_fd, dlstatus.c_str(), dlstatus.size());
    }
 
    if (Log == 0 || Log->MediaChange(LookupTag(Message,"Media"),
@@ -530,17 +532,10 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 /* */
 bool pkgAcquire::Worker::OutFdReady()
 {
-   int Res;
-   do
-   {
-      Res = write(OutFd,OutQueue.c_str(),OutQueue.length());
-   }
-   while (Res < 0 && errno == EINTR);
-   
-   if (Res <= 0)
+   if (FileFd::Write(OutFd,OutQueue.c_str(),OutQueue.length()) == false)
       return MethodFailure();
    
-   OutQueue.erase(0,Res);
+   OutQueue.clear();
    if (OutQueue.empty() == true)
       OutReady = false;
    

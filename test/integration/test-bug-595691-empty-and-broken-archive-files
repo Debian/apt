@@ -28,10 +28,10 @@ testaptgetupdate() {
 createemptyarchive() {
 	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
 	if [ "en" = "$1" ]; then
-		echo -n "" | $COMPRESSOR > aptarchive/Packages.$COMPRESS
+		echo -n "" | $COMPRESSOR_CMD > aptarchive/Packages.$COMPRESS
 	fi
 	touch aptarchive/Packages
-	echo -n "" | $COMPRESSOR > aptarchive/${1}.$COMPRESS
+	echo -n "" | $COMPRESSOR_CMD > aptarchive/${1}.$COMPRESS
 	generatereleasefiles
 	signreleasefiles
 	rm -f aptarchive/Packages
@@ -40,7 +40,7 @@ createemptyarchive() {
 createemptyfile() {
 	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
 	if [ "en" = "$1" ]; then
-		echo -n "" | $COMPRESSOR > aptarchive/Packages.$COMPRESS
+		echo -n "" | $COMPRESSOR_CMD > aptarchive/Packages.$COMPRESS
 	fi
 	touch aptarchive/Packages aptarchive/${1}.$COMPRESS
 	generatereleasefiles
@@ -50,6 +50,7 @@ createemptyfile() {
 
 setupcompressor() {
 	COMPRESSOR="$1"
+	COMPRESSOR_CMD="$1"
 	case $COMPRESSOR in
 	gzip) COMPRESS="gz";;
 	bzip2) COMPRESS="bz2";;
@@ -66,10 +67,13 @@ Dir::Bin::xz \"/does/not/exist\";" > rootdir/etc/apt/apt.conf.d/00compressor
 		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
 	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
 		echo "Dir::Bin::${COMPRESSOR} \"/usr/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
+	elif [ "${COMPRESSOR}" = 'lzma' ]; then
+		echo "Dir::Bin::xz \"/usr/bin/xz\";" >> rootdir/etc/apt/apt.conf.d/00compressor
+		COMPRESSOR_CMD='xz --format=lzma'
 	else
 		msgtest "Test for availability of compressor" "${COMPRESSOR}"
 		msgfail
-		exit 1
+		#exit 1
 	fi
 }
 

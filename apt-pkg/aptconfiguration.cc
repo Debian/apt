@@ -432,9 +432,30 @@ bool const Configuration::checkArchitecture(std::string const &Arch) {
 // setDefaultConfigurationForCompressors				/*{{{*/
 void Configuration::setDefaultConfigurationForCompressors() {
 	// Set default application paths to check for optional compression types
-	_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
-	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
+	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
+	if (FileExists(_config->FindFile("Dir::Bin::xz")) == true) {
+		_config->Clear("Dir::Bin::lzma");
+		_config->Set("APT::Compressor::lzma::Binary", "xz");
+		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::CompressArg::", "--format=lzma");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+		}
+		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "--format=lzma");
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
+		}
+	} else {
+		_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
+		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::CompressArg::", "--suffix=");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+		}
+		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "--suffix=");
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
+		}
+	}
 }
 									/*}}}*/
 // getCompressors - Return Vector of usbale compressors			/*{{{*/
@@ -456,12 +477,20 @@ const Configuration::getCompressors(bool const Cached) {
 	compressors.push_back(Compressor(".", "", "", "", "", 1));
 	if (_config->Exists("Dir::Bin::gzip") == false || FileExists(_config->FindFile("Dir::Bin::gzip")) == true)
 		compressors.push_back(Compressor("gzip",".gz","gzip","-9n","-d",2));
+#ifdef HAVE_ZLIB
+	else
+		compressors.push_back(Compressor("gzip",".gz","false", "", "", 2));
+#endif
 	if (_config->Exists("Dir::Bin::bzip2") == false || FileExists(_config->FindFile("Dir::Bin::bzip2")) == true)
 		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-9","-d",3));
-	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
-		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",4));
+#ifdef HAVE_BZ2
+	else
+		compressors.push_back(Compressor("bzip2",".bz2","false", "", "", 3));
+#endif
 	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)
-		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",5));
+		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",4));
+	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
+		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",5));
 
 	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
 	for (std::vector<std::string>::const_iterator c = comp.begin();
@@ -494,7 +523,7 @@ Configuration::Compressor::Compressor(char const *name, char const *extension,
 				      char const *binary,
 				      char const *compressArg, char const *uncompressArg,
 				      unsigned short const cost) {
-	std::string const config = std::string("APT:Compressor::").append(name).append("::");
+	std::string const config = std::string("APT::Compressor::").append(name).append("::");
 	Name = _config->Find(std::string(config).append("Name"), name);
 	Extension = _config->Find(std::string(config).append("Extension"), extension);
 	Binary = _config->Find(std::string(config).append("Binary"), binary);

@@ -6,16 +6,88 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     - add APT::pkgPackageManager::MaxLoopCount to ensure that the
       ordering code does not get into a endless loop when it flip-flops
       between two states
-  * debian/control:
-    - suggest xz-lzma instead of lzma
-  
+
   [ David Kalnischkies ]
+  * do not update po and pot files in the process of the build as this
+    causes timestamp changes for the mo files which therefore can't
+    be refcounted by dpkg for your M-A: same packages
+    (Closes: #659333, LP: #924628)
+  * apt-inst/database.{cc,h}, apt-inst/deb/dpkgdb.{cc,h}:
+    - drop instead of fix as it is only needed if you want to reimplement dpkg
+      and comes straight from the beginning of last decade (Closes: #663372)
+  * apt-inst/deb/debfile.cc:
+    - {Extract,Merge}Control() is another instance of "lets reimplement dpkg"
+      so shot of this code before someone ends up using this…
+  * debian/libapt-pkg4.12:
+    - update symbols file
+  * debian/apt-utils.install:
+    - ship the ftparchive, apt-extractemplates and apt-sortpkgs locales
+      in the apt-utils package instead of the apt package
   * apt-pkg/packagemanager.cc:
     - recheck all dependencies if we changed a package in SmartConfigure
       as this could break an earlier dependency (LP: #940396)
     - recheck dependencies in SmartUnpack after a change, too
+  * apt-pkg/acquire-worker.cc:
+    - check return of write() as gcc recommends
+  * apt-pkg/acquire.cc:
+    - check return of write() as gcc recommends
+  * apt-pkg/cdrom.cc:
+    - check return of chdir() and link() as gcc recommends
+  * apt-pkg/clean.cc:
+    - check return of chdir() as gcc recommends
+  * apt-pkg/contrib/netrc.cc:
+    - check return of asprintf() as gcc recommends
+  * methods/rred.cc:
+    - check return of writev() as gcc recommends
+  * methods/mirror.cc:
+    - check return of chdir() as gcc recommends
+  * apt-pkg/deb/dpkgpm.cc:
+    - check return of write() a gcc recommends
+  * apt-inst/deb/debfile.cc:
+    - check return of chdir() as gcc recommends
+  * apt-inst/deb/dpkgdb.cc:
+    - check return of chdir() as gcc recommends
+  * methods/makefile:
+    - do not link rred against libz anymore as FileFd handles all
+      this transparently now
+  * debian/control:
+    - bump Standards-Version to 3.9.3 (no changes needed)
+    - add libbz2-dev as new build-dependency
+    - remove the libz-dev alternative from zlib1g-dev build-dependency
+    - suggest xz-utils instead of bzip2 and lzma
+  * doc/apt-get.8.xml:
+    - typofix: respect → respecting, thanks Mike Erickson! (Closes: #664833)
+  * debian/rules:
+    - do not sed in configure.in to set the version-number
+  * prepare-release:
+    - add as a small script to lazy check and prepare releases
+  * doc/*:
+    - move the command synopsis out of each manpage into apt-verbatim.ent
+      as they are a hell to translate and just single out the parameters
+      which can be translated to apt.ent
+  * apt-pkg/aptconfiguration.cc:
+    - if present, prefer xz binary over lzma
+    - if we have zlib builtin insert add a dummy gzip compressor for FileFD
+    - do the same for bz2 builtin if available
+  * methods/bzip2.cc:
+    - remove it as the functionality for all compressors can be
+      provided by gzip.cc now with the usage of FileFD
+  * apt-pkg/contrib/fileutl.cc:
+    - use libz2 library for (de)compression instead of the bzip2 binary as
+      the first is a dependency of dpkg and the later just priority:optional
+      so we gain 'easier' access to bz2-compressed Translation files this way
+  * cmdline/apt-get.cc:
+    - print list of autoremoves in alphabetical order (Closes: #639008)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 13 Mar 2012 12:38:35 +0100
+  [ Bogdan Purcareata ]
+  * doc/apt-get.8.xml:
+    - add 'download' to the usage line (Closes: #649340)
+  * cmdline/apt-get.cc:
+    - distinguish information about 'apt-get autoremove' based on the
+      number of auto-removed packages both before and after the list
+      of packages (Closes: #665833)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 11 Apr 2012 12:09:33 +0200
 
 apt (0.8.16~exp13) experimental; urgency=low
 
@@ -166,6 +238,10 @@ apt (0.8.16~exp10) experimental; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - store the offset in the internal fd before calculate size of
       the zlib-handled file to jump back to this place again
+  * apt-pkg/aptconfiguration.cc:
+    - parse dpkg --print-foreign-architectures correctly in
+      case archs are separated by newline instead of space, too.
+      (Closes: #655590)
 
   [ Michael Vogt ]
   * apt-pkg/contrib/fileutl.h:
@@ -414,19 +490,20 @@ apt (0.8.16~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
 
-apt (0.8.15.10) UNRELEASEDunstable; urgency=low
+apt (0.8.15.10) unstable; urgency=high
 
   [ David Kalnischkies ]
   * algorithms.cc:
     - show a debug why a package was kept by ResolveByKeep()
   * doc/manpage-style.xml:
     - put <brackets> around email addresses
-  * apt-pkg/aptconfiguration.cc:
-    - parse dpkg --print-foreign-architectures correctly in
-      case archs are separated by newline instead of space, too.
-      (Closes: #655590)
   * doc/po/de.po:
     - apply typo-fix from Michael Basse, thanks! (LP: #900770)
+  * apt-pkg/acquire-item.cc:
+    - remove 'old' InRelease file if we can't get a new one before
+      proceeding with Release.gpg to avoid the false impression of a still
+      trusted repository by a (still present) old InRelease file.
+      Thanks to Simon Ruderich for reporting this issue! (CVE-2012-0214)
 
   [ Chris Leick ]
   * German manpage translation update
@@ -438,8 +515,16 @@ apt (0.8.15.10) UNRELEASEDunstable; urgency=low
   * Slovak (Ivan Masar). Closes: #652985
   * Russian (Yuri Kozlov). Closes: #654844
   * Hungarian (Gabor Kelemen). Closes: #655238
+  * Polish (Michał Kułach). Closes: #656908
+  * Danish (Joe Hansen). Closes: #658643
+  * French: replace "étiquetage" by "épinglage" for "pinning"
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 13 Jan 2012 17:30:36 +0100
+  [ Michael Vogt ]
+  * merged patch from lp:~uusijani/apt/uusi-branch:
+     Correct fi translation for hash sum mismatches (lp:420403)
+     Thanks to Jani Uusitalo
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 06 Mar 2012 14:14:26 +0100
 
 apt (0.8.15.9) unstable; urgency=low
 
