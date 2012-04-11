@@ -73,6 +73,8 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
     - use libz2 library for (de)compression instead of the bzip2 binary as
       the first is a dependency of dpkg and the later just priority:optional
       so we gain 'easier' access to bz2-compressed Translation files this way
+  * cmdline/apt-get.cc:
+    - print list of autoremoves in alphabetical order (Closes: #639008)
 
   [ Bogdan Purcareata ]
   * doc/apt-get.8.xml:
@@ -82,7 +84,7 @@ apt (0.8.16~exp14) UNRELEASED; urgency=low
       number of auto-removed packages both before and after the list
       of packages (Closes: #665833)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 05 Apr 2012 21:36:16 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 11 Apr 2012 12:09:33 +0200
 
 apt (0.8.16~exp13) experimental; urgency=low
 

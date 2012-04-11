@@ -1711,12 +1711,13 @@ bool DoAutomaticRemove(CacheFile &Cache)
    bool smallList = (hideAutoRemove == false &&
 		strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
 
-   string autoremovelist, autoremoveversions;
    unsigned long autoRemoveCount = 0;
    APT::PackageSet tooMuch;
+   APT::PackageList autoRemoveList;
    // look over the cache to see what can be removed
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; ++J)
    {
+      pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
       if (Cache[Pkg].Garbage)
       {
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
@@ -1733,6 +1734,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
 	 else
 	 {
+	    if (hideAutoRemove == false && Cache[Pkg].Delete() == false)
+	       autoRemoveList.insert(Pkg);
 	    // if the package is a new install and already garbage we don't need to
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
@@ -1742,16 +1745,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	       Cache->MarkDelete(Pkg, false);
 	    }
 	    // only show stuff in the list that is not yet marked for removal
-	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false) 
-	    {
+	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false)
 	       ++autoRemoveCount;
-	       // we don't need to fill the strings if we don't need them
-	       if (smallList == false)
-	       {
-		 autoremovelist += Pkg.FullName(true) + " ";
-		 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
-	       }
-	    }
 	 }
       }
    }
@@ -1786,14 +1781,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		    std::clog << "Save " << Pkg << " as another installed garbage package depends on it" << std::endl;
 		 Cache->MarkInstall(Pkg, false);
 		 if (hideAutoRemove == false)
-		 {
 		    ++autoRemoveCount;
-		    if (smallList == false)
-		    {
-		       autoremovelist += Pkg.FullName(true) + " ";
-		       autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
-		    }
-		 }
 		 tooMuch.erase(Pkg);
 		 Changed = true;
 		 break;
@@ -1801,6 +1789,18 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    }
 	 }
       } while (Changed == true);
+   }
+
+   std::string autoremovelist, autoremoveversions;
+   if (smallList == false && autoRemoveCount != 0)
+   {
+      for (APT::PackageList::const_iterator Pkg = autoRemoveList.begin(); Pkg != autoRemoveList.end(); ++Pkg)
+      {
+	 if (Cache[Pkg].Garbage == false)
+	    continue;
+	 autoremovelist += Pkg.FullName(true) + " ";
+	 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+      }
    }
 
    // Now see if we had destroyed anything (if we had done anything)
