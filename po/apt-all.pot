@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-19 14:28+0100\n"
+"Project-Id-Version: apt 0.8.16~exp14\n"
+"Report-Msgid-Bugs-To: deity@lists.debian.org\n"
+"POT-Creation-Date: 2012-04-11 17:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -96,8 +95,8 @@ msgid "Package file %s is out of sync."
 msgstr ""
 
 #: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1378
-#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:39
-#: cmdline/apt-mark.cc:86 cmdline/apt-mark.cc:162
+#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:40
+#: cmdline/apt-mark.cc:87 cmdline/apt-mark.cc:163
 msgid "No packages found"
 msgstr ""
 
@@ -155,7 +154,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:199 cmdline/apt-config.cc:75
 #: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-get.cc:3255 cmdline/apt-internal-solver.cc:32
-#: cmdline/apt-mark.cc:266 cmdline/apt-sortpkgs.cc:147
+#: cmdline/apt-mark.cc:267 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr ""
@@ -716,7 +715,7 @@ msgstr ""
 msgid "%s is already the newest version.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:834 cmdline/apt-get.cc:2114 cmdline/apt-mark.cc:61
+#: cmdline/apt-get.cc:834 cmdline/apt-get.cc:2114 cmdline/apt-mark.cc:62
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr ""
@@ -1020,12 +1019,12 @@ msgstr ""
 msgid "Couldn't find package %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2116 cmdline/apt-mark.cc:63
+#: cmdline/apt-get.cc:2116 cmdline/apt-mark.cc:64
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2124 cmdline/apt-mark.cc:107
+#: cmdline/apt-get.cc:2124 cmdline/apt-mark.cc:108
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
@@ -1318,46 +1317,46 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:48
+#: cmdline/apt-mark.cc:49
 #, c-format
 msgid "%s can not be marked as it is not installed.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:54
+#: cmdline/apt-mark.cc:55
 #, c-format
 msgid "%s was already set to manually installed.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:56
+#: cmdline/apt-mark.cc:57
 #, c-format
 msgid "%s was already set to automatically installed.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:171
+#: cmdline/apt-mark.cc:172
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:173
+#: cmdline/apt-mark.cc:174
 #, c-format
 msgid "%s was already not hold.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:187 cmdline/apt-mark.cc:209
+#: cmdline/apt-mark.cc:188 cmdline/apt-mark.cc:210
 #, c-format
 msgid "%s set on hold.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:189 cmdline/apt-mark.cc:214
+#: cmdline/apt-mark.cc:190 cmdline/apt-mark.cc:215
 #, c-format
 msgid "Canceled hold on %s.\n"
 msgstr ""
 
-#: cmdline/apt-mark.cc:222
+#: cmdline/apt-mark.cc:223
 msgid "Executing dpkg failed. Are you root?"
 msgstr ""
 
-#: cmdline/apt-mark.cc:270
+#: cmdline/apt-mark.cc:271
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -1509,11 +1508,13 @@ msgid "Duplicate conf file %s/%s"
 msgstr ""
 
 #: apt-inst/dirstream.cc:43 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:55
+#: apt-inst/dirstream.cc:50
 #, c-format
 msgid "Failed to write file %s"
 msgstr ""
 
 #: apt-inst/dirstream.cc:100 apt-inst/dirstream.cc:108
+#: apt-inst/dirstream.cc:98 apt-inst/dirstream.cc:106
 #, c-format
 msgid "Failed to close file %s"
 msgstr ""
@@ -1676,12 +1677,13 @@ msgid "Error parsing MD5. Offset %lu"
 msgstr ""
 
 #: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
+#: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:46
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr ""
 
 #. FIXME: add data.tar.xz here - adding it now would require a Translation round for a very small gain
-#: apt-inst/deb/debfile.cc:56
+#: apt-inst/deb/debfile.cc:56 apt-inst/deb/debfile.cc:55
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr ""
@@ -1691,7 +1693,7 @@ msgstr ""
 msgid "Couldn't change to %s"
 msgstr ""
 
-#: apt-inst/deb/debfile.cc:157
+#: apt-inst/deb/debfile.cc:157 apt-inst/deb/debfile.cc:120
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr ""
@@ -1700,7 +1702,7 @@ msgstr ""
 msgid "Failed to locate a valid control file"
 msgstr ""
 
-#: apt-inst/deb/debfile.cc:277
+#: apt-inst/deb/debfile.cc:277 apt-inst/deb/debfile.cc:214
 msgid "Unparsable control file"
 msgstr ""
 
@@ -1719,13 +1721,13 @@ msgid "Read error from %s process"
 msgstr ""
 
 #: methods/bzip2.cc:143 methods/bzip2.cc:152 methods/copy.cc:46
-#: methods/gzip.cc:94 methods/gzip.cc:103 methods/rred.cc:491
-#: methods/rred.cc:500
+#: methods/gzip.cc:94 methods/gzip.cc:103 methods/rred.cc:493
+#: methods/rred.cc:502
 msgid "Failed to stat"
 msgstr ""
 
 #: methods/bzip2.cc:149 methods/copy.cc:83 methods/gzip.cc:100
-#: methods/rred.cc:497
+#: methods/rred.cc:499
 msgid "Failed to set modification time"
 msgstr ""
 
@@ -2310,7 +2312,7 @@ msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:719
+#: apt-pkg/contrib/fileutl.cc:719 apt-pkg/deb/dpkgpm.cc:950
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr ""
@@ -3074,12 +3076,12 @@ msgstr ""
 msgid "Installing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:72 apt-pkg/deb/dpkgpm.cc:866
+#: apt-pkg/deb/dpkgpm.cc:72 apt-pkg/deb/dpkgpm.cc:900
 #, c-format
 msgid "Configuring %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:873
+#: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:907
 #, c-format
 msgid "Removing %s"
 msgstr ""
@@ -3110,86 +3112,86 @@ msgstr ""
 msgid "Could not open file '%s'"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:859
+#: apt-pkg/deb/dpkgpm.cc:893
 #, c-format
 msgid "Preparing %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:860
+#: apt-pkg/deb/dpkgpm.cc:894
 #, c-format
 msgid "Unpacking %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:865
+#: apt-pkg/deb/dpkgpm.cc:899
 #, c-format
 msgid "Preparing to configure %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:867
+#: apt-pkg/deb/dpkgpm.cc:901
 #, c-format
 msgid "Installed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:872
+#: apt-pkg/deb/dpkgpm.cc:906
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:874
+#: apt-pkg/deb/dpkgpm.cc:908
 #, c-format
 msgid "Removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:879
+#: apt-pkg/deb/dpkgpm.cc:913
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:880
+#: apt-pkg/deb/dpkgpm.cc:914
 #, c-format
 msgid "Completely removed %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1111
+#: apt-pkg/deb/dpkgpm.cc:1142
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1141
+#: apt-pkg/deb/dpkgpm.cc:1172
 msgid "Running dpkg"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1320
+#: apt-pkg/deb/dpkgpm.cc:1351
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1377
+#: apt-pkg/deb/dpkgpm.cc:1408
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1382
+#: apt-pkg/deb/dpkgpm.cc:1413
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1384
+#: apt-pkg/deb/dpkgpm.cc:1415
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1390
+#: apt-pkg/deb/dpkgpm.cc:1421
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1396
+#: apt-pkg/deb/dpkgpm.cc:1427
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1403
+#: apt-pkg/deb/dpkgpm.cc:1434
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
@@ -3237,14 +3239,14 @@ msgstr ""
 msgid "[Mirror: %s]"
 msgstr ""
 
-#: methods/rred.cc:470
+#: methods/rred.cc:472
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
 "to be corrupt."
 msgstr ""
 
-#: methods/rred.cc:475
+#: methods/rred.cc:477
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
