@@ -737,6 +737,7 @@ bool pkgDPkgPM::OpenLog()
       d->history_out = fopen(history_name.c_str(),"a");
       if (d->history_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
+      SetCloseExec(fileno(d->history_out), true);
       chmod(history_name.c_str(), 0644);
       fprintf(d->history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, reinstall, upgrade, downgrade;
