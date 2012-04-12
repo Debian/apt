@@ -1415,7 +1415,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	"all files have been overwritten by other packages:",
 	"The following packages disappeared from your system as\n"
 	"all files have been overwritten by other packages:", disappearedPkgs.size()), disappear, "");
-   c0out << _("Note: This is done automatic and on purpose by dpkg.") << std::endl;
+   c0out << _("Note: This is done automatically and on purpose by dpkg.") << std::endl;
 
    return true;
 }
