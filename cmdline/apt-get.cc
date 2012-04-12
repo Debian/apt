@@ -2864,7 +2864,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	    pkgCache::PkgIterator Pkg;
 
 	    // Cross-Building?
-	    if (StripMultiArch == false)
+	    if (StripMultiArch == false && D->Type != pkgSrcRecords::Parser::BuildDependIndep)
 	    {
 	       size_t const colon = D->Package.find(":");
 	       if (colon != string::npos &&
