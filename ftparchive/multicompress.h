@@ -16,11 +16,10 @@
 #ifndef MULTICOMPRESS_H
 #define MULTICOMPRESS_H
 
-
-
-#include <string>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/aptconfiguration.h>
+
+#include <string>
 #include <stdio.h>
 #include <sys/types.h>
     
@@ -29,21 +28,18 @@ class MultiCompress
    // An output file
    struct Files
    {
-      string Output;
+      std::string Output;
       APT::Configuration::Compressor CompressProg;
       Files *Next;
       FileFd TmpFile;
       pid_t CompressProc;
       time_t OldMTime;
-      int Fd;
    };
    
    Files *Outputs;
    pid_t Outputter;
    mode_t Permissions;
 
-   bool OpenCompress(APT::Configuration::Compressor const &Prog,
-		     pid_t &Pid,int const &FileFd, int &OutFd,bool const &Comp);
    bool Child(int const &Fd);
    bool Start();
    bool Die();
@@ -54,12 +50,11 @@ class MultiCompress
    FILE *Input;
    unsigned long UpdateMTime;
    
-   bool Finalize(unsigned long &OutSize);
-   bool OpenOld(int &Fd,pid_t &Proc);
-   bool CloseOld(int Fd,pid_t Proc);
-   static bool GetStat(string const &Output,string const &Compress,struct stat &St);
+   bool Finalize(unsigned long long &OutSize);
+   bool OpenOld(FileFd &Fd);
+   static bool GetStat(std::string const &Output,std::string const &Compress,struct stat &St);
    
-   MultiCompress(string const &Output,string const &Compress,
+   MultiCompress(std::string const &Output,std::string const &Compress,
 		 mode_t const &Permissions, bool const &Write = true);
    ~MultiCompress();
 };

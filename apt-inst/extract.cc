@@ -44,9 +44,12 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/extract.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/debversion.h>
+#include <apt-pkg/fileutl.h>
 
 #include <sys/stat.h>
 #include <stdio.h>

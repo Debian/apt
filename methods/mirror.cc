@@ -8,6 +8,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/acquire-item.h>
@@ -15,7 +18,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/sourcelist.h>
-
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/metaindex.h>
 
 #include <algorithm>
 #include <fstream>
@@ -33,7 +37,7 @@ using namespace std;
 
 #include "mirror.h"
 #include "http.h"
-#include "apti18n.h"
+#include <apti18n.h>
 									/*}}}*/
 
 /* Done:
@@ -120,9 +124,10 @@ bool MirrorMethod::Clean(string Dir)
       if (I == list.end())
 	 unlink(Dir->d_name);
    };
-   
-   chdir(StartDir.c_str());
+
    closedir(D);
+   if (chdir(StartDir.c_str()) != 0)
+      return _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
    return true;   
 }
 
@@ -134,9 +139,24 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
+#if 0 // no need for this, the getArchitectures() will also include the main 
+      // arch
+   // append main architecture
+   fetch += "?arch=" + _config->Find("Apt::Architecture");
+#endif
+
+   // append all architectures
+   std::vector<std::string> vec = APT::Configuration::getArchitectures();
+   for (std::vector<std::string>::const_iterator I = vec.begin();
+        I != vec.end(); ++I)
+      if (I == vec.begin())
+         fetch += "?arch" + (*I);
+      else
+         fetch += "&arch=" + (*I);
+
    // append the dist as a query string
    if (Dist != "")
-      fetch += "?dist=" + Dist;
+      fetch += "&dist=" + Dist;
 
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile(): '" << fetch << "'"

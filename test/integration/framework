@@ -25,7 +25,15 @@ msgnwarn() { echo -n "${CWARNING}W: $1${CNORMAL}" >&2; }
 msgnmsg() { echo -n "${CMSG}$1${CNORMAL}" >&2; }
 msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}" >&2; }
 msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}" >&2; }
-msgtest() { echo -n "${CINFO}$1 ${CCMD}$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} …${CNORMAL} " >&2; }
+msgtest() {
+	while [ -n "$1" ]; do
+		echo -n "${CINFO}$1${CCMD} " >&2;
+		echo -n "$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} " >&2;
+		shift
+		if [ -n "$1" ]; then shift; else break; fi
+	done
+	echo -n "…${CNORMAL} " >&2;
+}
 msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
 msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
 msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; }
@@ -102,14 +110,14 @@ aptitude() {
 
 addtrap() {
 	CURRENTTRAP="$CURRENTTRAP $1"
-	trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	trap "$CURRENTTRAP exit;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 }
 
 setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
-	local TESTDIR=$(readlink -f $(dirname $0))
+	TESTDIRECTORY=$(readlink -f $(dirname $0))
 	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "
-	BUILDDIRECTORY="${TESTDIR}/../../build/bin"
+	BUILDDIRECTORY="${TESTDIRECTORY}/../../build/bin"
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
 	local OLDWORKINGDIRECTORY=$(pwd)
 	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY; cd $OLDWORKINGDIRECTORY;"
@@ -119,25 +127,19 @@ setupenvironment() {
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
 	mkdir -p var/cache var/lib var/log
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
-	local STATUSFILE=$(echo "$(basename $0)" | sed -e 's/^test-/status-/' -e 's/^skip-/status-/')
-	if [ -f "${TESTDIR}/${STATUSFILE}" ]; then
-		cp "${TESTDIR}/${STATUSFILE}" var/lib/dpkg/status
-	else
-		touch var/lib/dpkg/status
-	fi
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
 	cd ..
 	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
-	if [ -f "${TESTDIR}/${PACKAGESFILE}" ]; then
-		cp "${TESTDIR}/${PACKAGESFILE}" aptarchive/Packages
+	if [ -f "${TESTDIRECTORY}/${PACKAGESFILE}" ]; then
+		cp "${TESTDIRECTORY}/${PACKAGESFILE}" aptarchive/Packages
 	fi
 	local SOURCESSFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Sources-/' -e 's/^skip-/Sources-/')
-	if [ -f "${TESTDIR}/${SOURCESSFILE}" ]; then
-		cp "${TESTDIR}/${SOURCESSFILE}" aptarchive/Sources
+	if [ -f "${TESTDIRECTORY}/${SOURCESSFILE}" ]; then
+		cp "${TESTDIRECTORY}/${SOURCESSFILE}" aptarchive/Sources
 	fi
-	cp $(find $TESTDIR -name '*.pub' -o -name '*.sec') keys/
+	cp $(find $TESTDIRECTORY -name '*.pub' -o -name '*.sec') keys/
 	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
@@ -149,6 +151,9 @@ setupenvironment() {
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
+	if ! $(which dpkg) --assert-multi-arch; then
+		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
+	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	export LC_ALL=C
@@ -156,15 +161,58 @@ setupenvironment() {
 	msgdone "info"
 }
 
+getarchitecture() {
+	if [ "$1" = "native" -o -z "$1" ]; then
+		eval `aptconfig shell ARCH APT::Architecture`
+		if [ -n "$ARCH" ]; then
+			echo $ARCH
+		else
+			dpkg --print-architecture
+		fi
+	else
+		echo $1
+	fi
+}
+
+getarchitectures() {
+	echo "$(aptconfig dump | grep APT::Architecture | cut -d'"' -f 2 | sed '/^$/ d' | sort | uniq | tr '\n' ' ')"
+}
+
 configarchitecture() {
 	local CONFFILE=rootdir/etc/apt/apt.conf.d/01multiarch.conf
 	rm -f $CONFFILE
-	echo "APT::Architecture \"$1\";" > $CONFFILE
+	echo "APT::Architecture \"$(getarchitecture $1)\";" > $CONFFILE
 	shift
 	while [ -n "$1" ]; do
-		echo "APT::Architectures:: \"$1\";" >> $CONFFILE
+		echo "APT::Architectures:: \"$(getarchitecture $1)\";" >> $CONFFILE
 		shift
 	done
+	configdpkg
+}
+
+configdpkg() {
+	if [ ! -e rootdir/var/lib/dpkg/status ]; then
+		local STATUSFILE=$(echo "$(basename $0)" | sed -e 's/^test-/status-/' -e 's/^skip-/status-/')
+		if [ -f "${TESTDIRECTORY}/${STATUSFILE}" ]; then
+			cp "${TESTDIRECTORY}/${STATUSFILE}" rootdir/var/lib/dpkg/status
+		else
+			echo -n > rootdir/var/lib/dpkg/status
+		fi
+	fi
+	if $(which dpkg) --assert-multi-arch; then
+		local ARCHS="$(getarchitectures)"
+		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
+			DPKGARCH="$(dpkg --print-architecture)"
+			for ARCH in ${ARCHS}; do
+				if [ "${ARCH}" != "${DPKGARCH}" ]; then dpkg --add-architecture ${ARCH}; fi
+			done
+			if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
+				# dpkg doesn't really check the version as long as it is fully installed,
+				# but just to be sure we choose one above the required version
+				insertinstalledpackage 'dpkg' "all" '1.16.2+fake'
+			fi
+		fi
+	fi
 }
 
 setupsimplenativepackage() {
@@ -275,7 +323,7 @@ Package: $NAME" > ${BUILDDIR}/debian/control
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 	done
 
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g'); do
+	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		rm -rf ${BUILDDIR}/debian/tmp
 		mkdir -p ${BUILDDIR}/debian/tmp/DEBIAN ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME} ${BUILDDIR}/debian/tmp/usr/bin
 		cp ${BUILDDIR}/debian/copyright ${BUILDDIR}/debian/changelog ${BUILDDIR}/FEATURES ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}
@@ -298,6 +346,7 @@ buildpackage() {
 	local BUILDDIR=$1
 	local RELEASE=$2
 	local SECTION=$3
+	local ARCH=$(getarchitecture $4)
 	msgninfo "Build package $(echo "$BUILDDIR" | grep -o '[^/]*$') for ${RELEASE} in ${SECTION}… "
 	cd $BUILDDIR
 	if [ "$ARCH" = "all" ]; then
@@ -328,7 +377,7 @@ createaptftparchiveconfig() {
 	local ARCHS="$(find pool/ -name '*.deb' | grep -oE '_[a-z0-9-]+\.deb$' | sort | uniq | sed -e '/^_all.deb$/ d' -e 's#^_\([a-z0-9-]*\)\.deb$#\1#' | tr '\n' ' ')"
 	if [ -z "$ARCHS" ]; then
 		# the pool is empty, so we will operate on faked packages - let us use the configured archs
-		ARCHS="$(aptconfig dump | grep APT::Architecture | cut -d'"' -f 2 | sed '/^$/ d' | sort | uniq | tr '\n' ' ')"
+		ARCHS="$(getarchitectures)"
 	fi
 	echo -n 'Dir {
 	ArchiveDir "' >> ftparchive.conf
@@ -408,9 +457,9 @@ insertpackage() {
 	local DEPENDENCIES="$5"
 	local PRIORITY="${6:-optional}"
 	local ARCHS=""
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g'); do
+	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		if [ "$arch" = "all" ]; then
-			ARCHS="$(aptconfig dump | grep APT::Architecture | cut -d'"' -f 2 | sed '/^$/ d' | sort | uniq | tr '\n' ' ')"
+			ARCHS="$(getarchitectures)"
 		else
 			ARCHS="$arch"
 		fi
@@ -464,8 +513,9 @@ insertinstalledpackage() {
 	local VERSION="$3"
 	local DEPENDENCIES="$4"
 	local PRIORITY="${5:-optional}"
-	local FILE="rootdir/var/lib/dpkg/status"
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g'); do
+	local FILE='rootdir/var/lib/dpkg/status'
+	local INFO='rootdir/var/lib/dpkg/info'
+	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		echo "Package: $NAME
 Status: install ok installed
 Priority: $PRIORITY
@@ -480,6 +530,11 @@ Version: $VERSION" >> $FILE
  YOU did something horribly wrong! They are autogenerated
  und used only by testcases for APT and surf no other propose…
 " >> $FILE
+		if [ "$(dpkg-query -W --showformat='${Multi-Arch}')" = 'same' ]; then
+			echo -n > ${INFO}/${NAME}:${arch}.list
+		else
+			echo -n > ${INFO}/${NAME}.list
+		fi
 	done
 }
 
@@ -503,7 +558,7 @@ buildaptarchivefromfiles() {
 		msgninfo "\t${line} file… "
 		cat ${line} | gzip > ${line}.gz
 		cat ${line} | bzip2 > ${line}.bz2
-		cat ${line} | lzma > ${line}.lzma
+		cat ${line} | xz --format=lzma > ${line}.lzma
 		cat ${line} | xz > ${line}.xz
 		msgdone "info"
 	done
@@ -520,9 +575,6 @@ generatereleasefiles() {
 	# both should be given in notation date/touch can understand
 	msgninfo "\tGenerate Release files… "
 	if [ -e aptarchive/dists ]; then
-		for dir in $(find ./aptarchive/dists -mindepth 3 -maxdepth 3 -type d -name 'i18n'); do
-			aptftparchive -qq release $dir -o APT::FTPArchive::Release::Patterns::='Translation-*' > $dir/Index
-		done
 		for dir in $(find ./aptarchive/dists -mindepth 1 -maxdepth 1 -type d); do
 			local SUITE="$(echo "$dir" | cut -d'/' -f 4)"
 			local CODENAME="$(getcodenamefromsuite $SUITE)"
@@ -715,8 +767,7 @@ N: Can't select versions from package '$1' as it is purely virtual"
 N: No packages found"
 	local COMPAREFILE=$(mktemp)
 	addtrap "rm $COMPAREFILE;"
-	local ARCH=$(dpkg-architecture -qDEB_HOST_ARCH_CPU)
-	eval `apt-config shell ARCH APT::Architecture`
+	local ARCH="$(getarchitecture 'native')"
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }

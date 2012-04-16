@@ -63,6 +63,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
@@ -80,16 +82,14 @@ pkgOrderList *pkgOrderList::Me = 0;
 // OrderList::pkgOrderList - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgOrderList::pkgOrderList(pkgDepCache *pCache) : Cache(*pCache)
+pkgOrderList::pkgOrderList(pkgDepCache *pCache) : Cache(*pCache),
+						  Primary(NULL), Secondary(NULL),
+						  RevDepends(NULL), Remove(NULL),
+						  AfterEnd(NULL), FileList(NULL),
+						  LoopCount(-1), Depth(0)
 {
-   FileList = 0;
-   Primary = 0;
-   Secondary = 0;
-   RevDepends = 0;
-   Remove = 0;
-   LoopCount = -1;
    Debug = _config->FindB("Debug::pkgOrderList",false);
-   
+
    /* Construct the arrays, egcs 1.0.1 bug requires the package count
       hack */
    unsigned long Size = Cache.Head().PackageCount;
@@ -1057,8 +1057,10 @@ bool pkgOrderList::AddLoop(DepIterator D)
    Loops[LoopCount++] = D;
    
    // Mark the packages as being part of a loop.
-   Flag(D.TargetPkg(),Loop);
-   Flag(D.ParentPkg(),Loop);
+   //Flag(D.TargetPkg(),Loop);
+   //Flag(D.ParentPkg(),Loop);
+   /* This is currently disabled because the Loop flag is being used for
+      loop management in the package manager. Check the orderlist.h file for more info */
    return true;
 }
 									/*}}}*/
@@ -1109,7 +1111,7 @@ bool pkgOrderList::CheckDep(DepIterator D)
          just needs one */
       if (D.IsNegative() == false)
       {
-	 // ignore provides by older versions of this package
+      	 // ignore provides by older versions of this package
 	 if (((D.Reverse() == false && Pkg == D.ParentPkg()) ||
 	      (D.Reverse() == true && Pkg == D.TargetPkg())) &&
 	     Cache[Pkg].InstallVer != *I)

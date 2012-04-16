@@ -11,9 +11,12 @@
 
    ##################################################################### */
 									/*}}}*/
+#include <config.h>
 
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +26,7 @@
 
 #include "netrc.h"
 
+using std::string;
 
 /* Get user and password from .netrc when given a machine name */
 
@@ -64,8 +68,7 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
     if (!home)
       return -1;
 
-    asprintf (&netrcfile, "%s%s%s", home, DIR_CHAR, NETRC);
-    if(!netrcfile)
+    if (asprintf (&netrcfile, "%s%s%s", home, DIR_CHAR, NETRC) == -1 || netrcfile == NULL)
       return -1;
     else
       netrc_alloc = true;

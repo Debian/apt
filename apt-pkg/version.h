@@ -20,11 +20,12 @@
 #ifndef PKGLIB_VERSION_H
 #define PKGLIB_VERSION_H
 
-
-#include <apt-pkg/strutl.h>    
+#include <apt-pkg/strutl.h>
 #include <string>
 
+#ifndef APT_8_CLEANER_HEADERS
 using std::string;
+#endif
 
 class pkgVersioningSystem
 {
@@ -43,7 +44,7 @@ class pkgVersioningSystem
    virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) = 0;
    virtual int DoCmpReleaseVer(const char *A,const char *Aend,
 			       const char *B,const char *Bend) = 0;
-   virtual string UpstreamVersion(const char *A) = 0;
+   virtual std::string UpstreamVersion(const char *A) = 0;
    
    // See if the given VS is compatible with this one.. 
    virtual bool TestCompatibility(pkgVersioningSystem const &Against) 
@@ -56,9 +57,5 @@ class pkgVersioningSystem
    pkgVersioningSystem();
    virtual ~pkgVersioningSystem() {};
 };
-
-#ifdef APT_COMPATIBILITY
-#include <apt-pkg/debversion.h>
-#endif
 
 #endif

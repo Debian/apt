@@ -39,40 +39,42 @@
 #include <string>
 #include <apt-pkg/pkgcache.h>
 
+#ifndef APT_8_CLEANER_HEADERS
 using std::string;
+#endif
 
 class pkgVersionMatch
 {   
    // Version Matching
-   string VerStr;
+   std::string VerStr;
    bool VerPrefixMatch;
 
    // Release Matching
-   string RelVerStr;
+   std::string RelVerStr;
    bool RelVerPrefixMatch;
-   string RelOrigin;
-   string RelRelease;
-   string RelCodename;
-   string RelArchive;
-   string RelLabel;
-   string RelComponent;
-   string RelArchitecture;
+   std::string RelOrigin;
+   std::string RelRelease;
+   std::string RelCodename;
+   std::string RelArchive;
+   std::string RelLabel;
+   std::string RelComponent;
+   std::string RelArchitecture;
    bool MatchAll;
    
    // Origin Matching
-   string OrSite;
+   std::string OrSite;
    
    public:
    
    enum MatchType {None = 0,Version,Release,Origin} Type;
    
-   bool MatchVer(const char *A,string B,bool Prefix);
+   bool MatchVer(const char *A,std::string B,bool Prefix);
    bool ExpressionMatches(const char *pattern, const char *string);
    bool ExpressionMatches(const std::string& pattern, const char *string);
    bool FileMatch(pkgCache::PkgFileIterator File);
    pkgCache::VerIterator Find(pkgCache::PkgIterator Pkg);
 			       
-   pkgVersionMatch(string Data,MatchType Type);
+   pkgVersionMatch(std::string Data,MatchType Type);
 };
 
 #endif

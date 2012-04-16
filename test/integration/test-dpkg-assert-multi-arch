@@ -1,0 +1,97 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+buildsimplenativepackage 'native-pkg' 'amd64' '1.0' 'stable'
+buildsimplenativepackage 'foreign-pkg' 'i386' '0.5' 'stable' 'Multi-Arch: foreign'
+buildsimplenativepackage 'same-lib' 'amd64,i386' '0.5' 'stable' 'Multi-Arch: same'
+buildsimplenativepackage 'all-pkg' 'all' '2.0' 'stable'
+buildsimplenativepackage 'all-foreign-pkg' 'all' '2.0' 'stable' 'Multi-Arch: foreign'
+
+setupaptarchive
+
+testqualifier() {
+	msgtest 'Test with' $1 'for correct qualifier mode' $2
+	GIVEN="$(aptget install $1 -qq -o Debug::pkgDPkgPM=1 2>&1 | grep -v -- '--unpack' | sed -e 's/^.*--[^u][^ ]* \([^ ]*\).*$/\1/')"
+	if [ "$GIVEN" = "$2" ]; then
+		msgpass
+	else
+		echo
+		echo "$GIVEN"
+		msgfail
+	fi
+}
+
+# non-multiarch or "ubuntus" old multiarchified dpkg
+echo 'Dir::Bin::dpkg "./dpkg-wrapper";' > rootdir/etc/apt/apt.conf.d/99dpkgwrapper
+echo '#! /bin/sh
+if echo "$*" | grep -q -- "--assert-multi-arch"; then
+	echo >&2 'dpkg: Fehler: unbekannte Option --assert-multi-arch'
+	echo >&1 'dpkg: Info: unbekannte Option --assert-multi-arch'
+	return 2;
+fi
+return $*' > ./dpkg-wrapper
+chmod +x ./dpkg-wrapper
+
+testqualifier 'native-pkg' 'native-pkg'
+testqualifier 'native-pkg:amd64' 'native-pkg'
+testqualifier 'foreign-pkg' 'foreign-pkg:i386'
+testqualifier 'foreign-pkg:i386' 'foreign-pkg:i386'
+testqualifier 'same-lib' 'same-lib'
+testqualifier 'same-lib:amd64' 'same-lib'
+testqualifier 'same-lib:i386' 'same-lib:i386'
+testqualifier 'all-pkg' 'all-pkg'
+testqualifier 'all-pkg:amd64' 'all-pkg'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg'
+insertinstalledpackage 'all-pkg' 'amd64' '1.0'
+insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0' 'Multi-Arch: foreign'
+testqualifier 'all-pkg' 'all-pkg'
+testqualifier 'all-pkg:amd64' 'all-pkg'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg'
+insertinstalledpackage 'always-all-pkg' 'all' '1.0'
+insertinstalledpackage 'always-all-foreign-pkg' 'all' '1.0' 'Multi-Arch: foreign'
+testqualifier 'all-pkg-' 'all-pkg'
+testqualifier 'all-foreign-pkg-' 'all-foreign-pkg'
+testqualifier 'always-all-pkg-' 'always-all-pkg'
+testqualifier 'always-all-foreign-pkg-' 'always-all-foreign-pkg'
+
+# multiarch dpkg (new interface version)
+
+rm rootdir/var/lib/dpkg/status
+touch rootdir/var/lib/dpkg/status
+echo 'Dir::Bin::dpkg "./dpkg-wrapper";' > rootdir/etc/apt/apt.conf.d/99dpkgwrapper
+echo '#! /bin/sh
+if echo "$*" | grep -q -- "--assert-multi-arch"; then
+	return 0;
+fi
+return $*' > ./dpkg-wrapper
+
+testqualifier 'native-pkg' 'native-pkg:amd64'
+testqualifier 'native-pkg:amd64' 'native-pkg:amd64'
+testqualifier 'foreign-pkg' 'foreign-pkg:i386'
+testqualifier 'foreign-pkg:i386' 'foreign-pkg:i386'
+testqualifier 'same-lib' 'same-lib:amd64'
+testqualifier 'same-lib:amd64' 'same-lib:amd64'
+testqualifier 'same-lib:i386' 'same-lib:i386'
+testqualifier 'all-pkg' 'all-pkg:all'
+testqualifier 'all-pkg:amd64' 'all-pkg:all'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg:all'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg:all'
+insertinstalledpackage 'all-pkg' 'amd64' '1.0'
+insertinstalledpackage 'all-foreign-pkg' 'amd64' '1.0' 'Multi-Arch: foreign'
+testqualifier 'all-pkg' 'all-pkg:all'
+testqualifier 'all-pkg:amd64' 'all-pkg:all'
+testqualifier 'all-foreign-pkg' 'all-foreign-pkg:all'
+testqualifier 'all-foreign-pkg:amd64' 'all-foreign-pkg:all'
+insertinstalledpackage 'always-all-pkg' 'all' '1.0'
+insertinstalledpackage 'always-all-foreign-pkg' 'all' '1.0' 'Multi-Arch: foreign'
+testqualifier 'all-pkg-' 'all-pkg:amd64'
+testqualifier 'all-foreign-pkg-' 'all-foreign-pkg:amd64'
+testqualifier 'always-all-pkg-' 'always-all-pkg:all'
+testqualifier 'always-all-foreign-pkg-' 'always-all-foreign-pkg:all'

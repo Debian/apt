@@ -8,15 +8,17 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/progress.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 
-#include <apti18n.h>
-
 #include <iostream>
 #include <stdio.h>
 #include <cstring>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -35,7 +37,7 @@ OpProgress::OpProgress() : Current(0), Total(0), Size(0), SubTotal(1),
 /* Current is the Base Overall progress in units of Total. Cur is the sub
    progress in units of SubTotal. Size is a scaling factor that says what
    percent of Total SubTotal is. */
-void OpProgress::Progress(unsigned long Cur)
+void OpProgress::Progress(unsigned long long Cur)
 {
    if (Total == 0 || Size == 0 || SubTotal == 0)
       Percent = 0;
@@ -47,8 +49,8 @@ void OpProgress::Progress(unsigned long Cur)
 // OpProgress::OverallProgress - Set the overall progress		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void OpProgress::OverallProgress(unsigned long Current, unsigned long Total,
-	  			 unsigned long Size,const string &Op)
+void OpProgress::OverallProgress(unsigned long long Current, unsigned long long Total,
+	  			 unsigned long long Size,const string &Op)
 {
    this->Current = Current;
    this->Total = Total;
@@ -65,27 +67,18 @@ void OpProgress::OverallProgress(unsigned long Current, unsigned long Total,
 // OpProgress::SubProgress - Set the sub progress state			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void OpProgress::SubProgress(unsigned long SubTotal,const string &Op)
+void OpProgress::SubProgress(unsigned long long SubTotal,const string &Op,
+			     float const Percent)
 {
    this->SubTotal = SubTotal;
-   SubOp = Op;
-   if (Total == 0)
-      Percent = 0;
+   if (Op.empty() == false)
+      SubOp = Op;
+   if (Total == 0 || Percent == 0)
+      this->Percent = 0;
+   else if (Percent != -1)
+      this->Percent = this->Current += (Size*Percent)/SubTotal;
    else
-      Percent = Current*100.0/Total;
-   Update();
-}
-									/*}}}*/
-// OpProgress::SubProgress - Set the sub progress state			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void OpProgress::SubProgress(unsigned long SubTotal)
-{
-   this->SubTotal = SubTotal;
-   if (Total == 0)
-      Percent = 0;
-   else
-      Percent = Current*100.0/Total;
+      this->Percent = Current*100.0/Total;
    Update();
 }
 									/*}}}*/

@@ -12,21 +12,24 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/pkgsystem.h>
 
-#include <config.h>
-#include <apti18n.h>
-    
 #include <vector>
 #include <algorithm>
 
 #include <locale.h>
 #include <unistd.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -141,7 +144,7 @@ bool DoIt(string InFile)
 /* */
 int ShowHelp()
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
       return 0;

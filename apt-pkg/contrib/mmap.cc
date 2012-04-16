@@ -17,10 +17,11 @@
 									/*}}}*/
 // Include Files							/*{{{*/
 #define _BSD_SOURCE
+#include <config.h>
+
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
-
-#include <apti18n.h>
+#include <apt-pkg/fileutl.h>
 
 #include <sys/mman.h>
 #include <sys/stat.h>
@@ -28,9 +29,10 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <errno.h>
-
 #include <cstring>
-   									/*}}}*/
+
+#include <apti18n.h>
+									/*}}}*/
 
 // MMap::MMap - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
@@ -64,7 +66,7 @@ MMap::~MMap()
 bool MMap::Map(FileFd &Fd)
 {
    iSize = Fd.Size();
-   
+
    // Set the permissions.
    int Prot = PROT_READ;
    int Map = MAP_SHARED;
@@ -75,7 +77,18 @@ bool MMap::Map(FileFd &Fd)
    
    if (iSize == 0)
       return _error->Error(_("Can't mmap an empty file"));
-   
+
+   // We can't mmap compressed fd's directly, so we need to read it completely
+   if (Fd.IsCompressed() == true)
+   {
+      if ((Flags & ReadOnly) != ReadOnly)
+	 return _error->Error("Compressed file %s can only be mapped readonly", Fd.Name().c_str());
+      Base = new unsigned char[iSize];
+      if (Fd.Seek(0L) == false || Fd.Read(Base, iSize) == false)
+	 return _error->Error("Compressed file %s can't be read into mmap", Fd.Name().c_str());
+      return true;
+   }
+
    // Map it.
    Base = mmap(0,iSize,Prot,Map,Fd.Fd(),0);
    if (Base == (void *)-1)
@@ -84,6 +97,13 @@ bool MMap::Map(FileFd &Fd)
       {
 	 // The filesystem doesn't support this particular kind of mmap.
 	 // So we allocate a buffer and read the whole file into it.
+	 if ((Flags & ReadOnly) == ReadOnly)
+	 {
+	    // for readonly, we don't need sync, so make it simple
+	    Base = new unsigned char[iSize];
+	    return Fd.Read(Base, iSize);
+	 }
+	 // FIXME: Writing to compressed fd's ?
 	 int const dupped_fd = dup(Fd.Fd());
 	 if (dupped_fd == -1)
 	    return _error->Errno("mmap", _("Couldn't duplicate file descriptor %i"), Fd.Fd());
@@ -94,7 +114,7 @@ bool MMap::Map(FileFd &Fd)
 	    return false;
       }
       else
-	 return _error->Errno("mmap",_("Couldn't make mmap of %lu bytes"),
+	 return _error->Errno("mmap",_("Couldn't make mmap of %llu bytes"),
 	                      iSize);
      }
 
@@ -165,7 +185,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       return true;
    
 #ifdef _POSIX_SYNCHRONIZED_IO
-   unsigned long PSize = sysconf(_SC_PAGESIZE);
+   unsigned long long PSize = sysconf(_SC_PAGESIZE);
    if ((Flags & ReadOnly) != ReadOnly)
    {
       if (SyncToFd != 0)
@@ -176,7 +196,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       }
       else
       {
-	 if (msync((char *)Base+(int)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
+	 if (msync((char *)Base+(unsigned long long)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
       }
    }
@@ -196,7 +216,7 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &Work
    if (_error->PendingError() == true)
       return;
    
-   unsigned long EndOfFile = Fd->Size();
+   unsigned long long EndOfFile = Fd->Size();
    if (EndOfFile > WorkSpace)
       WorkSpace = EndOfFile;
    else if(WorkSpace > 0)
@@ -284,7 +304,7 @@ DynamicMMap::~DynamicMMap()
       return;
    }
    
-   unsigned long EndOfFile = iSize;
+   unsigned long long EndOfFile = iSize;
    iSize = WorkSpace;
    Close(false);
    if(ftruncate(Fd->Fd(),EndOfFile) < 0)
@@ -294,9 +314,9 @@ DynamicMMap::~DynamicMMap()
 // DynamicMMap::RawAllocate - Allocate a raw chunk of unaligned space	/*{{{*/
 // ---------------------------------------------------------------------
 /* This allocates a block of memory aligned to the given size */
-unsigned long DynamicMMap::RawAllocate(unsigned long Size,unsigned long Aln)
+unsigned long DynamicMMap::RawAllocate(unsigned long long Size,unsigned long Aln)
 {
-   unsigned long Result = iSize;
+   unsigned long long Result = iSize;
    if (Aln != 0)
       Result += Aln - (iSize%Aln);
 
@@ -411,7 +431,7 @@ bool DynamicMMap::Grow() {
 	if (GrowFactor <= 0)
 		return _error->Error(_("Unable to increase size of the MMap as automatic growing is disabled by user."));
 
-	unsigned long const newSize = WorkSpace + GrowFactor;
+	unsigned long long const newSize = WorkSpace + GrowFactor;
 
 	if(Fd != 0) {
 		Fd->Seek(newSize - 1);

@@ -12,13 +12,15 @@
 
 #include <string>
 
+#ifndef APT_8_CLEANER_HEADERS
 using std::string;
+#endif
 
 // mount cdrom, DeviceName (e.g. /dev/sr0) is optional
-bool MountCdrom(string Path, string DeviceName="");
-bool UnmountCdrom(string Path);
-bool IdentCdrom(string CD,string &Res,unsigned int Version = 2);
-bool IsMounted(string &Path);
-string FindMountPointForDevice(const char *device);
+bool MountCdrom(std::string Path, std::string DeviceName="");
+bool UnmountCdrom(std::string Path);
+bool IdentCdrom(std::string CD,std::string &Res,unsigned int Version = 2);
+bool IsMounted(std::string &Path);
+std::string FindMountPointForDevice(const char *device);
 
 #endif

@@ -74,13 +74,14 @@
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
 
-
 #include <string>
 #include <time.h>
 #include <apt-pkg/mmap.h>
 
+#ifndef APT_8_CLEANER_HEADERS
 using std::string;
-    
+#endif
+
 class pkgVersioningSystem;
 class pkgCache								/*{{{*/
 {
@@ -152,10 +153,10 @@ class pkgCache								/*{{{*/
    protected:
    
    // Memory mapped cache file
-   string CacheFile;
+   std::string CacheFile;
    MMap &Map;
 
-   unsigned long sHash(const string &S) const;
+   unsigned long sHash(const std::string &S) const;
    unsigned long sHash(const char *S) const;
    
    public:
@@ -180,16 +181,16 @@ class pkgCache								/*{{{*/
    inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();};
       
    // String hashing function (512 range)
-   inline unsigned long Hash(const string &S) const {return sHash(S);};
+   inline unsigned long Hash(const std::string &S) const {return sHash(S);};
    inline unsigned long Hash(const char *S) const {return sHash(S);};
 
    // Useful transformation things
    const char *Priority(unsigned char Priority);
    
    // Accessors
-   GrpIterator FindGrp(const string &Name);
-   PkgIterator FindPkg(const string &Name);
-   PkgIterator FindPkg(const string &Name, const string &Arch);
+   GrpIterator FindGrp(const std::string &Name);
+   PkgIterator FindPkg(const std::string &Name);
+   PkgIterator FindPkg(const std::string &Name, const std::string &Arch);
 
    Header &Head() {return *HeaderP;};
    inline GrpIterator GrpBegin();
@@ -200,6 +201,7 @@ class pkgCache								/*{{{*/
    inline PkgFileIterator FileEnd();
 
    inline bool MultiArchCache() const { return MultiArchEnabled; };
+   inline char const * const NativeArch() const;
 
    // Make me a function
    pkgVersioningSystem *VS;
@@ -214,8 +216,7 @@ class pkgCache								/*{{{*/
 
 private:
    bool MultiArchEnabled;
-   PkgIterator SingleArchFindPkg(const string &Name);
-   inline char const * const NativeArch() const;
+   PkgIterator SingleArchFindPkg(const std::string &Name);
 };
 									/*}}}*/
 // Header structure							/*{{{*/
@@ -313,6 +314,9 @@ struct pkgCache::Header
        Beware: The Hashmethod assumes that the hash table sizes are equal */
    map_ptrloc PkgHashTable[2*1048];
    map_ptrloc GrpHashTable[2*1048];
+
+   /** \brief Size of the complete cache file */
+   unsigned long  CacheFileSize;
 
    bool CheckSizes(Header &Against) const;
    Header();
@@ -500,15 +504,20 @@ struct pkgCache::Version
    map_ptrloc VerStr;            // StringItem
    /** \brief section this version is filled in */
    map_ptrloc Section;           // StringItem
+
+   /** \brief Multi-Arch capabilities of a package version */
+   enum VerMultiArch { None = 0, /*!< is the default and doesn't trigger special behaviour */
+		       All = (1<<0), /*!< will cause that Ver.Arch() will report "all" */
+		       Foreign = (1<<1), /*!< can satisfy dependencies in another architecture */
+		       Same = (1<<2), /*!< can be co-installed with itself from other architectures */
+		       Allowed = (1<<3), /*!< other packages are allowed to depend on thispkg:any */
+		       AllForeign = All | Foreign,
+		       AllAllowed = All | Allowed };
    /** \brief stores the MultiArch capabilities of this version
 
-       None is the default and doesn't trigger special behaviour,
-       Foreign means that this version can fulfill dependencies even
-       if it is built for another architecture as the requester.
-       Same indicates that builds for different architectures can
-       be co-installed on the system */
-   /* FIXME: A bitflag would be better with the next abibreak… */
-   enum {None, All, Foreign, Same, Allowed, AllForeign, AllAllowed} MultiArch;
+       Flags used are defined in pkgCache::Version::VerMultiArch
+   */
+   unsigned char MultiArch;
 
    /** \brief references all the PackageFile's that this version came from
 

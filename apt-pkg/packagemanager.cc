@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>
@@ -22,21 +24,25 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
-    
-#include <apti18n.h>    
+
+#include <apti18n.h>
 #include <iostream>
-#include <fcntl.h> 
+#include <fcntl.h>
 									/*}}}*/
 using namespace std;
+
+bool pkgPackageManager::SigINTStop = false;
 
 // PM::PackageManager - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache)
+pkgPackageManager::pkgPackageManager(pkgDepCache *pCache) : Cache(*pCache),
+							    List(NULL), Res(Incomplete)
 {
    FileNames = new string[Cache.Head().PackageCount];
-   List = 0;
    Debug = _config->FindB("Debug::pkgPackageManager",false);
+   NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+   ImmConfigureAll = _config->FindB("APT::Immediate-Configure-All",false);
 }
 									/*}}}*/
 // PM::PackageManager - Destructor					/*{{{*/
@@ -146,7 +152,7 @@ void pkgPackageManager::ImmediateAdd(PkgIterator I, bool UseInstallVer, unsigned
 	 if(!List->IsFlag(D.TargetPkg(), pkgOrderList::Immediate))
 	 {
 	    if(Debug)
-	       clog << OutputInDepth(Depth) << "ImmediateAdd(): Adding Immediate flag to " << D.TargetPkg() << " cause of " << D.DepType() << " " << I.Name() << endl;
+	       clog << OutputInDepth(Depth) << "ImmediateAdd(): Adding Immediate flag to " << D.TargetPkg() << " cause of " << D.DepType() << " " << I.FullName() << endl;
 	    List->Flag(D.TargetPkg(),pkgOrderList::Immediate);
 	    ImmediateAdd(D.TargetPkg(), UseInstallVer, Depth + 1);
 	 }
@@ -165,8 +171,9 @@ bool pkgPackageManager::CreateOrderList()
    
    delete List;
    List = new pkgOrderList(&Cache);
-   
-   static bool const NoImmConfigure = !_config->FindB("APT::Immediate-Configure",true);
+
+   if (Debug && ImmConfigureAll) 
+      clog << "CreateOrderList(): Adding Immediate flag for all packages because of APT::Immediate-Configure-All" << endl;
    
    // Generate the list of affected packages and sort it
    for (PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
@@ -176,19 +183,20 @@ bool pkgPackageManager::CreateOrderList()
 	 continue;
       
       // Mark the package and its dependends for immediate configuration
-      if (((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
-	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&
-	  NoImmConfigure == false)
+      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential) &&
+	  NoImmConfigure == false) || ImmConfigureAll)
       {
-	 if(Debug)
-	    clog << "CreateOrderList(): Adding Immediate flag for " << I.Name() << endl;
+	 if(Debug && !ImmConfigureAll)
+	    clog << "CreateOrderList(): Adding Immediate flag for " << I.FullName() << endl;
 	 List->Flag(I,pkgOrderList::Immediate);
-
-	 // Look for other install packages to make immediate configurea
-	 ImmediateAdd(I, true);
 	 
-	 // And again with the current version.
-	 ImmediateAdd(I, false);
+	 if (!ImmConfigureAll) {
+	    // Look for other install packages to make immediate configurea
+	    ImmediateAdd(I, true);
+	  
+	    // And again with the current version.
+	    ImmediateAdd(I, false);
+	 }
       }
       
       // Not interesting
@@ -240,7 +248,7 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 	 continue;
       
       // Ignore self conflicts, ignore conflicts from irrelevent versions
-      if (D.ParentPkg() == Pkg || D.ParentVer() != D.ParentPkg().CurrentVer())
+      if (D.IsIgnorable(Pkg) || D.ParentVer() != D.ParentPkg().CurrentVer())
 	 continue;
       
       if (Cache.VS().CheckDep(Ver,D->CompareOp,D.TargetVer()) == false)
@@ -248,7 +256,7 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 
       if (EarlyRemove(D.ParentPkg()) == false)
 	 return _error->Error("Reverse conflicts early remove for package '%s' failed",
-			      Pkg.Name());
+			      Pkg.FullName().c_str());
    }
    return true;
 }
@@ -256,7 +264,8 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 // PM::ConfigureAll - Run the all out configuration			/*{{{*/
 // ---------------------------------------------------------------------
 /* This configures every package. It is assumed they are all unpacked and
-   that the final configuration is valid. */
+   that the final configuration is valid. This is also used to catch packages
+   that have not been configured when using ImmConfigureAll */
 bool pkgPackageManager::ConfigureAll()
 {
    pkgOrderList OList(&Cache);
@@ -277,9 +286,19 @@ bool pkgPackageManager::ConfigureAll()
    for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); ++I)
    {
       PkgIterator Pkg(Cache,*I);
+      
+      /* Check if the package has been configured, this can happen if SmartConfigure
+         calls its self */ 
+      if (List->IsFlag(Pkg,pkgOrderList::Configured)) continue;
 
-      if (ConfigurePkgs == true && Configure(Pkg) == false)
+      if (ConfigurePkgs == true && SmartConfigure(Pkg, 0) == false) {
+         if (ImmConfigureAll)
+            _error->Error(_("Could not perform immediate configuration on '%s'. "
+			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.FullName().c_str(),1);
+         else
+            _error->Error("Internal error, packages left unconfigured. %s",Pkg.FullName().c_str());
 	 return false;
+      }
       
       List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
    }
@@ -289,37 +308,185 @@ bool pkgPackageManager::ConfigureAll()
 									/*}}}*/
 // PM::SmartConfigure - Perform immediate configuration of the pkg	/*{{{*/
 // ---------------------------------------------------------------------
-/* This routine scheduals the configuration of the given package and all
-   of it's dependents. */
-bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
+/* This function tries to put the system in a state where Pkg can be configured.
+   This involves checking each of Pkg's dependanies and unpacking and 
+   configuring packages where needed. 
+   
+   Note on failure: This method can fail, without causing any problems. 
+   This can happen when using Immediate-Configure-All, SmartUnPack may call
+   SmartConfigure, it may fail because of a complex dependancy situation, but
+   a error will only be reported if ConfigureAll fails. This is why some of the
+   messages this function reports on failure (return false;) as just warnings
+   only shown when debuging*/
+bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 {
-   if (Debug == true)
-      clog << "SmartConfigure " << Pkg.Name() << endl;
+   // If this is true, only check and correct and dependencies without the Loop flag
+   bool const PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
 
-   pkgOrderList OList(&Cache);
+   if (Debug) {
+      VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
+      clog << OutputInDepth(Depth) << "SmartConfigure " << Pkg.FullName() << " (" << InstallVer.VerStr() << ")";
+      if (PkgLoop)
+        clog << " (Only Correct Dependencies)";
+      clog << endl;
+   }
 
-   if (DepAdd(OList,Pkg) == false)
+   VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
+      
+   /* Because of the ordered list, most dependencies should be unpacked, 
+      however if there is a loop (A depends on B, B depends on A) this will not 
+      be the case, so check for dependencies before configuring. */
+   bool Bad = false, Changed = false;
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
+   unsigned int i=0;
+   do
+   {
+      Changed = false;
+      for (DepIterator D = instVer.DependsList(); D.end() == false; )
+      {
+	 // Compute a single dependency element (glob or)
+	 pkgCache::DepIterator Start, End;
+	 D.GlobOr(Start,End);
+
+	 if (End->Type != pkgCache::Dep::Depends)
+	    continue;
+	 Bad = true;
+
+	 // Search for dependencies which are unpacked but aren't configured yet (maybe loops)
+	 for (DepIterator Cur = Start; true; ++Cur)
+	 {
+	    SPtrArray<Version *> VList = Cur.AllTargets();
+
+	    for (Version **I = VList; *I != 0; ++I)
+	    {
+	       VerIterator Ver(Cache,*I);
+	       PkgIterator DepPkg = Ver.ParentPkg();
+
+	       // Check if the current version of the package is available and will satisfy this dependency
+	       if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true &&
+		   List->IsFlag(DepPkg,pkgOrderList::Removed) == false &&
+		   DepPkg.State() == PkgIterator::NeedsNothing)
+	       {
+		  Bad = false;
+		  break;
+	       }
+
+	       // Check if the version that is going to be installed will satisfy the dependency
+	       if (Cache[DepPkg].InstallVer != *I)
+		  continue;
+
+	       if (List->IsFlag(DepPkg,pkgOrderList::UnPacked))
+	       {
+		  if (List->IsFlag(DepPkg,pkgOrderList::Loop) && PkgLoop)
+		  {
+		    // This dependency has already been dealt with by another SmartConfigure on Pkg
+		    Bad = false;
+		    break;
+		  }
+		  /* Check for a loop to prevent one forming
+		       If A depends on B and B depends on A, SmartConfigure will
+		       just hop between them if this is not checked. Dont remove the
+		       loop flag after finishing however as loop is already set.
+		       This means that there is another SmartConfigure call for this
+		       package and it will remove the loop flag */
+		  if (PkgLoop == false)
+		     List->Flag(Pkg,pkgOrderList::Loop);
+		  if (SmartConfigure(DepPkg, Depth + 1) == true)
+		  {
+		     Bad = false;
+		     if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
+			Changed = true;
+		  }
+		  if (PkgLoop == false)
+		    List->RmFlag(Pkg,pkgOrderList::Loop);
+		  // If SmartConfigure was succesfull, Bad is false, so break
+		  if (Bad == false)
+		     break;
+	       }
+	       else if (List->IsFlag(DepPkg,pkgOrderList::Configured))
+	       {
+		  Bad = false;
+		  break;
+	       }
+	    }
+	    if (Cur == End)
+	       break;
+         }
+
+	 if (Bad == false)
+	    continue;
+
+	 // Check for dependencies that have not been unpacked, probably due to loops.
+	 for (DepIterator Cur = Start; true; ++Cur)
+	 {
+	    SPtrArray<Version *> VList = Cur.AllTargets();
+
+	    for (Version **I = VList; *I != 0; ++I)
+	    {
+	       VerIterator Ver(Cache,*I);
+	       PkgIterator DepPkg = Ver.ParentPkg();
+
+	       // Check if the version that is going to be installed will satisfy the dependency
+	       if (Cache[DepPkg].InstallVer != *I || List->IsNow(DepPkg) == false)
+		  continue;
+
+	       if (PkgLoop == true)
+	       {
+		  if (Debug)
+		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure" << std::endl;
+	          Bad = false;
+		  break;
+	       }
+	       else
+	       {
+		  if (Debug)
+		     clog << OutputInDepth(Depth) << "Unpacking " << DepPkg.FullName() << " to avoid loop " << Cur << endl;
+		  if (PkgLoop == false)
+		     List->Flag(Pkg,pkgOrderList::Loop);
+		  if (SmartUnPack(DepPkg, true, Depth + 1) == true)
+		  {
+		     Bad = false;
+		     if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
+		        Changed = true;
+		  }
+		  if (PkgLoop == false)
+		     List->RmFlag(Pkg,pkgOrderList::Loop);
+		  if (Bad == false)
+		     break;
+	       }
+	    }
+
+	    if (Cur == End)
+	       break;
+	 }
+
+	 if (Bad == true && Changed == false && Debug == true)
+	    std::clog << OutputInDepth(Depth) << "Could not satisfy " << Start << std::endl;
+      }
+      if (i++ > max_loops)
+         return _error->Error("Internal error: MaxLoopCount reached in SmartUnPack for %s, aborting", Pkg.FullName().c_str());
+   } while (Changed == true);
+   
+   if (Bad) {
+      if (Debug)
+         _error->Warning(_("Could not configure '%s'. "),Pkg.FullName().c_str());
       return false;
+   }
+   
+   if (PkgLoop) return true;
 
    static std::string const conf = _config->Find("PackageManager::Configure","all");
    static bool const ConfigurePkgs = (conf == "all" || conf == "smart");
 
-   if (ConfigurePkgs == true)
-      if (OList.OrderConfigure() == false)
-	 return false;
+   if (List->IsFlag(Pkg,pkgOrderList::Configured)) 
+      return _error->Error("Internal configure error on '%s'.", Pkg.FullName().c_str());
 
-   // Perform the configuring
-   for (pkgOrderList::iterator I = OList.begin(); I != OList.end(); ++I)
-   {
-      PkgIterator Pkg(Cache,*I);
-      
-      if (ConfigurePkgs == true && Configure(Pkg) == false)
-	 return false;
-      
-      List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
-   }
+   if (ConfigurePkgs == true && Configure(Pkg) == false)
+      return false;
 
-   if (Cache[Pkg].InstVerIter(Cache)->MultiArch == pkgCache::Version::Same)
+   List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
+
+   if ((Cache[Pkg].InstVerIter(Cache)->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
       for (PkgIterator P = Pkg.Group().PackageList();
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
       {
@@ -327,94 +494,13 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg)
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
-	 SmartConfigure(P);
+	 SmartConfigure(P, (Depth +1));
       }
 
    // Sanity Check
    if (List->IsFlag(Pkg,pkgOrderList::Configured) == false)
-      return _error->Error(_("Could not perform immediate configuration on '%s'. "
-			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),1);
+      return _error->Error(_("Could not configure '%s'. "),Pkg.FullName().c_str());
 
-   return true;
-}
-									/*}}}*/
-// PM::DepAdd - Add all dependents to the oder list			/*{{{*/
-// ---------------------------------------------------------------------
-/* This recursively adds all dependents to the order list */
-bool pkgPackageManager::DepAdd(pkgOrderList &OList,PkgIterator Pkg,int Depth)
-{
-   if (OList.IsFlag(Pkg,pkgOrderList::Added) == true)
-      return true;
-   if (List->IsFlag(Pkg,pkgOrderList::Configured) == true)
-      return true;
-   if (List->IsFlag(Pkg,pkgOrderList::UnPacked) == false)
-      return false;
-
-   if (Debug) 
-      std::clog << OutputInDepth(Depth) << "DepAdd: " << Pkg.Name() << std::endl;
-      
-   // Put the package on the list
-   OList.push_back(Pkg);
-   OList.Flag(Pkg,pkgOrderList::Added);
-   Depth++;
-
-   // Check the dependencies to see if they are all satisfied.
-   bool Bad = false;
-   for (DepIterator D = Cache[Pkg].InstVerIter(Cache).DependsList(); D.end() == false;)
-   {
-      if (D->Type != pkgCache::Dep::Depends && D->Type != pkgCache::Dep::PreDepends)
-      {
-	 ++D;
-	 continue;
-      }
-      
-      // Grok or groups
-      Bad = true;
-      for (bool LastOR = true; D.end() == false && LastOR == true; ++D)
-      {
-	 LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
-	 
-	 if (Bad == false)
-	    continue;
-
-	 SPtrArray<Version *> VList = D.AllTargets();
-	 for (Version **I = VList; *I != 0 && Bad == true; ++I)
-	 {
-	    VerIterator Ver(Cache,*I);
-	    PkgIterator Pkg = Ver.ParentPkg();
-
-	    // See if the current version is ok
-	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true && 
-		Pkg.State() == PkgIterator::NeedsNothing)
-	    {
-	       Bad = false;
-	       continue;
-	    }
-	    
-	    // Not the install version 
-	    if (Cache[Pkg].InstallVer != *I || 
-		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
-	       continue;
-	    
-	    if (List->IsFlag(Pkg,pkgOrderList::UnPacked) == true)
-	       Bad = !DepAdd(OList,Pkg,Depth);
-	    if (List->IsFlag(Pkg,pkgOrderList::Configured) == true)
-	       Bad = false;
-	 }
-      }
-      
-      if (Bad == true)
-      {
-	 if (Debug) 
-	    std::clog << OutputInDepth(Depth) << "DepAdd FAILS on: " << Pkg.Name() << std::endl;
-	 OList.Flag(Pkg,0,pkgOrderList::Added);
-	 OList.pop_back();
-	 Depth--;
-	 return false;
-      }
-   }
-   
-   Depth--;
    return true;
 }
 									/*}}}*/
@@ -436,7 +522,8 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
 
    // Essential packages get special treatment
    bool IsEssential = false;
-   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0)
+   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0 ||
+       (Pkg->Flags & pkgCache::Flag::Important) != 0)
       IsEssential = true;
 
    /* Check for packages that are the dependents of essential packages and 
@@ -446,7 +533,8 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
       for (DepIterator D = Pkg.RevDependsList(); D.end() == false &&
 	   IsEssential == false; ++D)
 	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0)
+	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0 ||
+	        (D.ParentPkg()->Flags & pkgCache::Flag::Important) != 0)
 	       IsEssential = true;
    }
 
@@ -457,7 +545,7 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
 				"removing the essential package %s due to a "
 				"Conflicts/Pre-Depends loop. This is often bad, "
 				"but if you really want to do it, activate the "
-				"APT::Force-LoopBreak option."),Pkg.Name());
+				"APT::Force-LoopBreak option."),Pkg.FullName().c_str());
    }
    
    bool Res = SmartRemove(Pkg);
@@ -478,132 +566,289 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
    List->Flag(Pkg,pkgOrderList::Configured,pkgOrderList::States);
 
    return Remove(Pkg,(Cache[Pkg].iFlags & pkgDepCache::Purge) == pkgDepCache::Purge);
-   return true;
 }
 									/*}}}*/
 // PM::SmartUnPack - Install helper					/*{{{*/
 // ---------------------------------------------------------------------
-/* This performs the task of handling pre-depends. */
+/* This puts the system in a state where it can Unpack Pkg, if Pkg is allready
+   unpacked, or when it has been unpacked, if Immediate==true it configures it. */
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 {
-   return SmartUnPack(Pkg, true);
+   return SmartUnPack(Pkg, true, 0);
 }
-bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
+bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth)
 {
-   // Check if it is already unpacked
-   if (Pkg.State() == pkgCache::PkgIterator::NeedsConfigure &&
-       Cache[Pkg].Keep() == true)
-   {
-      List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
-      if (Immediate == true &&
-	  List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
-	 if (SmartConfigure(Pkg) == false)
-	    return _error->Error(_("Could not perform immediate configuration on already unpacked '%s'. "
-			"Please see man 5 apt.conf under APT::Immediate-Configure for details."),Pkg.Name());
-      return true;
+   bool PkgLoop = List->IsFlag(Pkg,pkgOrderList::Loop);
+
+   if (Debug) {
+      clog << OutputInDepth(Depth) << "SmartUnPack " << Pkg.FullName();
+      VerIterator InstallVer = VerIterator(Cache,Cache[Pkg].InstallVer);
+      if (Pkg.CurrentVer() == 0)
+        clog << " (install version " << InstallVer.VerStr() << ")";
+      else
+        clog << " (replace version " << Pkg.CurrentVer().VerStr() << " with " << InstallVer.VerStr() << ")";
+      if (PkgLoop)
+        clog << " (Only Perform PreUnpack Checks)";
+      clog << endl;
    }
 
    VerIterator const instVer = Cache[Pkg].InstVerIter(Cache);
 
-   /* See if this packages install version has any predependencies
-      that are not met by 'now' packages. */
-   for (DepIterator D = instVer.DependsList();
-	D.end() == false; )
+   /* PreUnpack Checks: This loop checks and attempts to rectify and problems that would prevent the package being unpacked.
+      It addresses: PreDepends, Conflicts, Obsoletes and Breaks (DpkgBreaks). Any resolutions that do not require it should
+      avoid configuration (calling SmartUnpack with Immediate=true), this is because when unpacking some packages with
+      complex dependancy structures, trying to configure some packages while breaking the loops can complicate things .
+      This will be either dealt with if the package is configured as a dependency of Pkg (if and when Pkg is configured),
+      or by the ConfigureAll call at the end of the for loop in OrderInstall. */
+   bool Changed = false;
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
+   unsigned int i;
+   do 
    {
-      // Compute a single dependency element (glob or)
-      pkgCache::DepIterator Start;
-      pkgCache::DepIterator End;
-      D.GlobOr(Start,End);
-      
-      while (End->Type == pkgCache::Dep::PreDepends)
+      Changed = false;
+      for (DepIterator D = instVer.DependsList(); D.end() == false; )
       {
-	 if (Debug == true)
-	    clog << "PreDepends order for " << Pkg.Name() << std::endl;
+	 // Compute a single dependency element (glob or)
+	 pkgCache::DepIterator Start, End;
+	 D.GlobOr(Start,End);
 
-	 // Look for possible ok targets.
-	 SPtrArray<Version *> VList = Start.AllTargets();
-	 bool Bad = true;
-	 for (Version **I = VList; *I != 0 && Bad == true; I++)
-	 {
-	    VerIterator Ver(Cache,*I);
-	    PkgIterator Pkg = Ver.ParentPkg();
-	    
-	    // See if the current version is ok
-	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true && 
-		Pkg.State() == PkgIterator::NeedsNothing)
+	 if (End->Type == pkgCache::Dep::PreDepends)
+         {
+	    bool Bad = true;
+	    if (Debug)
+	       clog << OutputInDepth(Depth) << "PreDepends order for " << Pkg.FullName() << std::endl;
+
+	    // Look for easy targets: packages that are already okay
+	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       Bad = false;
-	       if (Debug == true)
-		  clog << "Found ok package " << Pkg.Name() << endl;
+	       SPtrArray<Version *> VList = Start.AllTargets();
+	       for (Version **I = VList; *I != 0; ++I)
+	       {
+		  VerIterator Ver(Cache,*I);
+		  PkgIterator Pkg = Ver.ParentPkg();
+
+		  // See if the current version is ok
+		  if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true &&
+		      Pkg.State() == PkgIterator::NeedsNothing)
+		  {
+		     Bad = false;
+		     if (Debug)
+			clog << OutputInDepth(Depth) << "Found ok package " << Pkg.FullName() << endl;
+		     break;
+		  }
+	       }
+	       if (Cur == End)
+		  break;
+	    }
+
+	    // Look for something that could be configured.
+	    for (DepIterator Cur = Start; Bad == true; ++Cur)
+	    {
+	       SPtrArray<Version *> VList = Start.AllTargets();
+	       for (Version **I = VList; *I != 0; ++I)
+	       {
+		  VerIterator Ver(Cache,*I);
+		  PkgIterator Pkg = Ver.ParentPkg();
+
+		  // Not the install version
+		  if (Cache[Pkg].InstallVer != *I ||
+		      (Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
+		     continue;
+
+		  if (List->IsFlag(Pkg,pkgOrderList::Configured))
+		  {
+		     Bad = false;
+		     break;
+		  }
+
+		  // check if it needs unpack or if if configure is enough
+		  if (List->IsFlag(Pkg,pkgOrderList::UnPacked) == false)
+		  {
+		     if (Debug)
+			clog << OutputInDepth(Depth) << "Trying to SmartUnpack " << Pkg.FullName() << endl;
+		     // SmartUnpack with the ImmediateFlag to ensure its really ready
+		     if (SmartUnPack(Pkg, true, Depth + 1) == true)
+		     {
+			Bad = false;
+			if (List->IsFlag(Pkg,pkgOrderList::Loop) == false)
+			   Changed = true;
+			break;
+		     }
+		  }
+		  else
+		  {
+		     if (Debug)
+			clog << OutputInDepth(Depth) << "Trying to SmartConfigure " << Pkg.FullName() << endl;
+		     if (SmartConfigure(Pkg, Depth + 1) == true)
+		     {
+			Bad = false;
+			if (List->IsFlag(Pkg,pkgOrderList::Loop) == false)
+			   Changed = true;
+			break;
+		     }
+		  }
+	       }
+	    }
+
+	    if (Bad == true)
+	    {
+	       if (Start == End)
+		  return _error->Error("Couldn't configure pre-depend %s for %s, "
+					"probably a dependency cycle.",
+					End.TargetPkg().FullName().c_str(),Pkg.FullName().c_str());
+	    }
+	    else
 	       continue;
+	 }
+	 else if (End->Type == pkgCache::Dep::Conflicts ||
+		  End->Type == pkgCache::Dep::Obsoletes)
+	 {
+	    /* Look for conflicts. Two packages that are both in the install
+	       state cannot conflict so we don't check.. */
+	    SPtrArray<Version *> VList = End.AllTargets();
+	    for (Version **I = VList; *I != 0; I++)
+	    {
+	       VerIterator Ver(Cache,*I);
+	       PkgIterator ConflictPkg = Ver.ParentPkg();
+	       VerIterator InstallVer(Cache,Cache[ConflictPkg].InstallVer);
+
+	       // See if the current version is conflicting
+	       if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
+	       {
+		  clog << OutputInDepth(Depth) << Pkg.FullName() << " conflicts with " << ConflictPkg.FullName() << endl;
+		  /* If a loop is not present or has not yet been detected, attempt to unpack packages
+		     to resolve this conflict. If there is a loop present, remove packages to resolve this conflict */
+		  if (List->IsFlag(ConflictPkg,pkgOrderList::Loop) == false)
+		  {
+		     if (Cache[ConflictPkg].Keep() == 0 && Cache[ConflictPkg].InstallVer != 0)
+		     {
+			if (Debug)
+			   clog << OutputInDepth(Depth) << OutputInDepth(Depth) << "Unpacking " << ConflictPkg.FullName() << " to prevent conflict" << endl;
+			List->Flag(Pkg,pkgOrderList::Loop);
+			if (SmartUnPack(ConflictPkg,false, Depth + 1) == true)
+			   if (List->IsFlag(ConflictPkg,pkgOrderList::Loop) == false)
+			      Changed = true;
+			// Remove loop to allow it to be used later if needed
+			List->RmFlag(Pkg,pkgOrderList::Loop);
+		     }
+		     else if (EarlyRemove(ConflictPkg) == false)
+			return _error->Error("Internal Error, Could not early remove %s (1)",ConflictPkg.FullName().c_str());
+		  }
+		  else if (List->IsFlag(ConflictPkg,pkgOrderList::Removed) == false)
+		  {
+		     if (Debug)
+			clog << OutputInDepth(Depth) << "Because of conficts knot, removing " << ConflictPkg.FullName() << " to conflict violation" << endl;
+		     if (EarlyRemove(ConflictPkg) == false)
+			return _error->Error("Internal Error, Could not early remove %s (2)",ConflictPkg.FullName().c_str());
+		  }
+	       }
 	    }
 	 }
-	 
-	 // Look for something that could be configured.
-	 for (Version **I = VList; *I != 0 && Bad == true; I++)
+	 else if (End->Type == pkgCache::Dep::DpkgBreaks)
 	 {
-	    VerIterator Ver(Cache,*I);
-	    PkgIterator Pkg = Ver.ParentPkg();
-	    
-	    // Not the install version 
-	    if (Cache[Pkg].InstallVer != *I || 
-		(Cache[Pkg].Keep() == true && Pkg.State() == PkgIterator::NeedsNothing))
-	       continue;
-
-	    if (Debug == true)
-	       clog << "Trying to SmartConfigure " << Pkg.Name() << endl;
-	    Bad = !SmartConfigure(Pkg);
-	 }
-
-	 /* If this or element did not match then continue on to the
-	    next or element until a matching element is found */
-	 if (Bad == true)
-	 {
-	    // This triggers if someone make a pre-depends/depend loop.
-	    if (Start == End)
-	       return _error->Error("Couldn't configure pre-depend %s for %s, "
-				    "probably a dependency cycle.",
-				    End.TargetPkg().Name(),Pkg.Name());
-	    ++Start;
-	 }
-	 else
-	    break;
-      }
-      
-      if (End->Type == pkgCache::Dep::Conflicts || 
-	  End->Type == pkgCache::Dep::Obsoletes)
-      {
-	 /* Look for conflicts. Two packages that are both in the install
-	    state cannot conflict so we don't check.. */
-	 SPtrArray<Version *> VList = End.AllTargets();
-	 for (Version **I = VList; *I != 0; I++)
-	 {
-	    VerIterator Ver(Cache,*I);
-	    PkgIterator Pkg = Ver.ParentPkg();
-	    
-	    // See if the current version is conflicting
-	    if (Pkg.CurrentVer() == Ver && List->IsNow(Pkg) == true)
+	    SPtrArray<Version *> VList = End.AllTargets();
+	    for (Version **I = VList; *I != 0; ++I)
 	    {
-	       if (EarlyRemove(Pkg) == false)
-		  return _error->Error("Internal Error, Could not early remove %s",Pkg.Name());
+	       VerIterator Ver(Cache,*I);
+	       PkgIterator BrokenPkg = Ver.ParentPkg();
+	       if (BrokenPkg.CurrentVer() != Ver)
+	       {
+		  if (Debug)
+		     std::clog << OutputInDepth(Depth) << "  Ignore not-installed version " << Ver.VerStr() << " of " << Pkg.FullName() << " for " << End << std::endl;
+		  continue;
+	       }
+
+	       // Check if it needs to be unpacked
+	       if (List->IsFlag(BrokenPkg,pkgOrderList::InList) && Cache[BrokenPkg].Delete() == false &&
+		   List->IsNow(BrokenPkg))
+	       {
+		  if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop)
+		  {
+		     // This dependancy has already been dealt with by another SmartUnPack on Pkg
+		     break;
+		  }
+		  else
+		  {
+		     // Found a break, so see if we can unpack the package to avoid it
+		     // but do not set loop if another SmartUnPack already deals with it
+		     // Also, avoid it if the package we would unpack pre-depends on this one
+		     VerIterator InstallVer(Cache,Cache[BrokenPkg].InstallVer);
+		     bool circle = false;
+		     for (pkgCache::DepIterator D = InstallVer.DependsList(); D.end() == false; ++D)
+		     {
+			if (D->Type != pkgCache::Dep::PreDepends)
+			   continue;
+			SPtrArray<Version *> VL = D.AllTargets();
+			for (Version **I = VL; *I != 0; ++I)
+			{
+			   VerIterator V(Cache,*I);
+			   PkgIterator P = V.ParentPkg();
+			   // we are checking for installation as an easy 'protection' against or-groups and (unchosen) providers
+			   if (P->CurrentVer == 0 || P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
+			      continue;
+			   circle = true;
+			   break;
+			}
+			if (circle == true)
+			   break;
+		     }
+		     if (circle == true)
+		     {
+			if (Debug)
+			   clog << OutputInDepth(Depth) << "  Avoiding " << End << " avoided as " << BrokenPkg.FullName() << " has a pre-depends on " << Pkg.FullName() << std::endl;
+			continue;
+		     }
+		     else
+		     {
+			if (Debug)
+			{
+			   clog << OutputInDepth(Depth) << "  Unpacking " << BrokenPkg.FullName() << " to avoid " << End;
+			   if (PkgLoop == true)
+			      clog << " (Looping)";
+			   clog << std::endl;
+			}
+			if (PkgLoop == false)
+			   List->Flag(Pkg,pkgOrderList::Loop);
+			if (SmartUnPack(BrokenPkg, false, Depth + 1) == true)
+			{
+			   if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) == false)
+			      Changed = true;
+			}
+			if (PkgLoop == false)
+			   List->RmFlag(Pkg,pkgOrderList::Loop);
+		     }
+		  }
+	       }
+	       // Check if a package needs to be removed
+	       else if (Cache[BrokenPkg].Delete() == true && List->IsFlag(BrokenPkg,pkgOrderList::Configured) == false)
+	       {
+		  if (Debug)
+		     clog << OutputInDepth(Depth) << "  Removing " << BrokenPkg.FullName() << " to avoid " << End << endl;
+		  SmartRemove(BrokenPkg);
+	       }
 	    }
 	 }
       }
-   }
-
+      if (i++ > max_loops)
+         return _error->Error("Internal error: APT::pkgPackageManager::MaxLoopCount reached in SmartConfigure for %s, aborting", Pkg.FullName().c_str());
+   } while (Changed == true);
+   
    // Check for reverse conflicts.
    if (CheckRConflicts(Pkg,Pkg.RevDependsList(),
 		   instVer.VerStr()) == false)
-      return false;
+		          return false;
    
    for (PrvIterator P = instVer.ProvidesList();
 	P.end() == false; ++P)
       if (Pkg->Group != P.OwnerPkg()->Group)
 	 CheckRConflicts(Pkg,P.ParentPkg().RevDependsList(),P.ProvideVersion());
 
+   if (PkgLoop)
+      return true;
+
    List->Flag(Pkg,pkgOrderList::UnPacked,pkgOrderList::States);
 
-   if (Immediate == true && instVer->MultiArch == pkgCache::Version::Same)
+   if (Immediate == true && (instVer->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
    {
       /* Do lockstep M-A:same unpacking in two phases:
 	 First unpack all installed architectures, then the not installed.
@@ -619,7 +864,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
-	 if (SmartUnPack(P, false) == false)
+	 if (SmartUnPack(P, false, Depth + 1) == false)
 	    return false;
       }
       if (installed == false && Install(Pkg,FileNames[Pkg->ID]) == false)
@@ -631,19 +876,20 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate)
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
-	 if (SmartUnPack(P, false) == false)
+	 if (SmartUnPack(P, false, Depth + 1) == false)
 	    return false;
       }
    }
-   else if (Install(Pkg,FileNames[Pkg->ID]) == false)
+   // packages which are already unpacked don't need to be unpacked again
+   else if (Pkg.State() != pkgCache::PkgIterator::NeedsConfigure && Install(Pkg,FileNames[Pkg->ID]) == false)
       return false;
 
-   // Perform immedate configuration of the package.
-   if (Immediate == true &&
-       List->IsFlag(Pkg,pkgOrderList::Immediate) == true)
-      if (SmartConfigure(Pkg) == false)
-	 return _error->Error(_("Could not perform immediate configuration on '%s'. "
-			"Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.Name(),2);
+   if (Immediate == true) {
+      // Perform immedate configuration of the package. 
+         if (SmartConfigure(Pkg, Depth + 1) == false)
+            _error->Warning(_("Could not perform immediate configuration on '%s'. "
+               "Please see man 5 apt.conf under APT::Immediate-Configure for details. (%d)"),Pkg.FullName().c_str(),2);
+   }
    
    return true;
 }
@@ -677,18 +923,25 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); ++I)
    {
       PkgIterator Pkg(Cache,*I);
-
+      
       if (List->IsNow(Pkg) == false)
       {
-	 if (Debug == true)
-	    clog << "Skipping already done " << Pkg.Name() << endl;
+         if (!List->IsFlag(Pkg,pkgOrderList::Configured) && !NoImmConfigure) {
+            if (SmartConfigure(Pkg, 0) == false && Debug)
+               _error->Warning("Internal Error, Could not configure %s",Pkg.FullName().c_str());
+            // FIXME: The above warning message might need changing
+         } else {
+	    if (Debug == true)
+	       clog << "Skipping already done " << Pkg.FullName() << endl;
+	 }
 	 continue;
+	 
       }
       
       if (List->IsMissing(Pkg) == true)
       {
 	 if (Debug == true)
-	    clog << "Sequence completed at " << Pkg.Name() << endl;
+	    clog << "Sequence completed at " << Pkg.FullName() << endl;
 	 if (DoneSomething == false)
 	 {
 	    _error->Error("Internal Error, ordering was unable to handle the media swap");
@@ -702,7 +955,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	  Pkg.State() == pkgCache::PkgIterator::NeedsNothing &&
 	  (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall)
       {
-	 _error->Error("Internal Error, trying to manipulate a kept package (%s)",Pkg.Name());
+	 _error->Error("Internal Error, trying to manipulate a kept package (%s)",Pkg.FullName().c_str());
 	 return Failed;
       }
       
@@ -713,9 +966,16 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	    return Failed;
       }
       else
-	 if (SmartUnPack(Pkg) == false)
+	 if (SmartUnPack(Pkg,List->IsFlag(Pkg,pkgOrderList::Immediate),0) == false)
 	    return Failed;
       DoneSomething = true;
+      
+      if (ImmConfigureAll) {
+         /* ConfigureAll here to pick up and packages left unconfigured becuase they were unpacked in the 
+            "PreUnpack Checks" section */
+         if (!ConfigureAll())
+            return Failed; 
+      }
    }
 
    // Final run through the configure phase
@@ -728,10 +988,10 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       if (List->IsFlag(*I,pkgOrderList::Configured) == false)
       {
 	 _error->Error("Internal error, packages left unconfigured. %s",
-		       PkgIterator(Cache,*I).Name());
+		       PkgIterator(Cache,*I).FullName().c_str());
 	 return Failed;
       }
-   }   
+   }
 	 
    return Completed;
 }
@@ -763,4 +1023,4 @@ pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
    
    return DoInstallPostFork(statusFd);
 }
-									/*}}}*/
+									/*}}}*/	      

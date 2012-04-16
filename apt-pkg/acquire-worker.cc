@@ -12,6 +12,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
@@ -19,18 +21,18 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
-#include <apti18n.h>
-
 #include <iostream>
 #include <sstream>
 #include <fstream>
-    
+
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -256,9 +258,9 @@ bool pkgAcquire::Worker::RunMessages()
 	    
 	    CurrentItem = Itm;
 	    CurrentSize = 0;
-	    TotalSize = atoi(LookupTag(Message,"Size","0").c_str());
-	    ResumePoint = atoi(LookupTag(Message,"Resume-Point","0").c_str());
-	    Itm->Owner->Start(Message,atoi(LookupTag(Message,"Size","0").c_str()));
+	    TotalSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
+	    ResumePoint = strtoull(LookupTag(Message,"Resume-Point","0").c_str(), NULL, 10);
+	    Itm->Owner->Start(Message,strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10));
 
 	    // Display update before completion
 	    if (Log != 0 && Log->MorePulses == true)
@@ -287,9 +289,9 @@ bool pkgAcquire::Worker::RunMessages()
 	       Log->Pulse(Owner->GetOwner());
 	    
 	    OwnerQ->ItemDone(Itm);
-	    unsigned long const ServerSize = atol(LookupTag(Message,"Size","0").c_str());
+	    unsigned long long const ServerSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
 	    if (TotalSize != 0 && ServerSize != TotalSize)
-	       _error->Warning("Size of file %s is not what the server reported %s %lu",
+	       _error->Warning("Size of file %s is not what the server reported %s %llu",
 			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);
 
 	    // see if there is a hash to verify
@@ -429,7 +431,9 @@ bool pkgAcquire::Worker::MediaChange(string Message)
 	     << Drive  << ":"     // drive
 	     << msg.str()         // l10n message
 	     << endl;
-      write(status_fd, status.str().c_str(), status.str().size());
+
+      std::string const dlstatus = status.str();
+      FileFd::Write(status_fd, dlstatus.c_str(), dlstatus.size());
    }
 
    if (Log == 0 || Log->MediaChange(LookupTag(Message,"Media"),
@@ -528,17 +532,10 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
 /* */
 bool pkgAcquire::Worker::OutFdReady()
 {
-   int Res;
-   do
-   {
-      Res = write(OutFd,OutQueue.c_str(),OutQueue.length());
-   }
-   while (Res < 0 && errno == EINTR);
-   
-   if (Res <= 0)
+   if (FileFd::Write(OutFd,OutQueue.c_str(),OutQueue.length()) == false)
       return MethodFailure();
    
-   OutQueue.erase(0,Res);
+   OutQueue.clear();
    if (OutQueue.empty() == true)
       OutReady = false;
    

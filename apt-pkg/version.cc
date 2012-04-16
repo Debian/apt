@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/version.h>
 #include <apt-pkg/pkgcache.h>
 
@@ -21,10 +23,10 @@ unsigned long pkgVersioningSystem::GlobalListLen = 0;
 // pkgVS::pkgVersioningSystem - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Link to the global list of versioning systems supported */
-pkgVersioningSystem::pkgVersioningSystem()
+pkgVersioningSystem::pkgVersioningSystem() : Label(NULL)
 {
    VSList[GlobalListLen] = this;
-   GlobalListLen++;
+   ++GlobalListLen;
 }
 									/*}}}*/
 // pkgVS::GetVS - Find a VS by name					/*{{{*/

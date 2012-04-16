@@ -12,6 +12,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>
@@ -21,13 +23,14 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/fileutl.h>
-    
+#include <apt-pkg/progress.h>
+
 #include <apti18n.h>
 									/*}}}*/
 // CacheFile::CacheFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgCacheFile::pkgCacheFile() : Map(NULL), Cache(NULL), DCache(NULL),
+pkgCacheFile::pkgCacheFile() : d(NULL), Map(NULL), Cache(NULL), DCache(NULL),
 				SrcList(NULL), Policy(NULL)
 {
 }
@@ -175,6 +178,40 @@ void pkgCacheFile::RemoveCaches()
       unlink(pkgcache.c_str());
    if (srcpkgcache.empty() == false && RealFileExists(srcpkgcache) == true)
       unlink(srcpkgcache.c_str());
+   if (pkgcache.empty() == false)
+   {
+      std::string cachedir = flNotFile(pkgcache);
+      std::string cachefile = flNotDir(pkgcache);
+      if (cachedir.empty() != true && cachefile.empty() != true && DirectoryExists(cachedir) == true)
+      {
+	 cachefile.append(".");
+	 std::vector<std::string> caches = GetListOfFilesInDir(cachedir, false);
+	 for (std::vector<std::string>::const_iterator file = caches.begin(); file != caches.end(); ++file)
+	 {
+	    std::string nuke = flNotDir(*file);
+	    if (strncmp(cachefile.c_str(), nuke.c_str(), cachefile.length()) != 0)
+	       continue;
+	    unlink(file->c_str());
+	 }
+      }
+   }
+
+   if (srcpkgcache.empty() == true)
+      return;
+
+   std::string cachedir = flNotFile(srcpkgcache);
+   std::string cachefile = flNotDir(srcpkgcache);
+   if (cachedir.empty() == true || cachefile.empty() == true || DirectoryExists(cachedir) == false)
+      return;
+   cachefile.append(".");
+   std::vector<std::string> caches = GetListOfFilesInDir(cachedir, false);
+   for (std::vector<std::string>::const_iterator file = caches.begin(); file != caches.end(); ++file)
+   {
+      std::string nuke = flNotDir(*file);
+      if (strncmp(cachefile.c_str(), nuke.c_str(), cachefile.length()) != 0)
+	 continue;
+      unlink(file->c_str());
+   }
 }
 									/*}}}*/
 // CacheFile::Close - close the cache files				/*{{{*/

@@ -10,6 +10,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/policy.h>
 #include <cassert>
@@ -24,11 +26,11 @@ unsigned long pkgSystem::GlobalListLen = 0;
 // System::pkgSystem - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* Add it to the global list.. */
-pkgSystem::pkgSystem()
+pkgSystem::pkgSystem() : Label(NULL), VS(NULL)
 {
    assert(GlobalListLen < sizeof(SysList)/sizeof(*SysList));
    SysList[GlobalListLen] = this;
-   GlobalListLen++;
+   ++GlobalListLen;
 }
 									/*}}}*/
 // System::GetSystem - Get the named system				/*{{{*/

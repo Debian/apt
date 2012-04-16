@@ -15,11 +15,16 @@
 #define PKGLIB_EXTRACTTAR_H
 
 #include <apt-pkg/fileutl.h>
+
+#include <string>
+
+#ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/dirstream.h>
-
 #include <algorithm>
-
 using std::min;
+#endif
+
+class pkgDirStream;
 
 class ExtractTar
 {
@@ -38,7 +43,7 @@ class ExtractTar
    int GZPid;
    FileFd InFd;
    bool Eof;
-   string DecompressProg;
+   std::string DecompressProg;
    
    // Fork and reap gzip
    bool StartGzip();
@@ -48,7 +53,7 @@ class ExtractTar
 
    bool Go(pkgDirStream &Stream);
    
-   ExtractTar(FileFd &Fd,unsigned long Max,string DecompressionProgram);
+   ExtractTar(FileFd &Fd,unsigned long Max,std::string DecompressionProgram);
    virtual ~ExtractTar();
 };
 

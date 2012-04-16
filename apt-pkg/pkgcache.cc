@@ -20,6 +20,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/version.h>
@@ -29,13 +31,12 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/macros.h>
 
-#include <apti18n.h>
-    
 #include <string>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <ctype.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;
@@ -84,6 +85,8 @@ pkgCache::Header::Header()
    memset(PkgHashTable,0,sizeof(PkgHashTable));
    memset(GrpHashTable,0,sizeof(GrpHashTable));
    memset(Pools,0,sizeof(Pools));
+
+   CacheFileSize = 0;
 }
 									/*}}}*/
 // Cache::Header::CheckSizes - Check if the two headers have same *sz	/*{{{*/
@@ -154,6 +157,9 @@ bool pkgCache::ReMap(bool const &Errorchecks)
        HeaderP->MinorVersion != DefHeader.MinorVersion ||
        HeaderP->CheckSizes(DefHeader) == false)
       return _error->Error(_("The package cache file is an incompatible version"));
+
+   if (Map.Size() < HeaderP->CacheFileSize)
+      return _error->Error(_("The package cache file is corrupted, it is too small"));
 
    // Locate our VS..
    if (HeaderP->VerSysName == 0 ||
@@ -484,7 +490,7 @@ pkgCache::PkgIterator::CurVersion() const
    if they provide no new information (e.g. there is no newer version than candidate)
    If no version and/or section can be found "none" is used. */
 std::ostream& 
-operator<<(ostream& out, pkgCache::PkgIterator Pkg) 
+operator<<(std::ostream& out, pkgCache::PkgIterator Pkg) 
 {
    if (Pkg.end() == true)
       return out << "invalid package";
@@ -613,13 +619,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       // Walk along the actual package providing versions
       for (VerIterator I = DPkg.VersionList(); I.end() == false; ++I)
       {
+	 if (IsIgnorable(I.ParentPkg()) == true)
+	    continue;
+
 	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
 	    continue;
 
-	 if (IsNegative() == true &&
-	     ParentPkg() == I.ParentPkg())
-	    continue;
-	 
 	 Size++;
 	 if (Res != 0)
 	    *End++ = I;
@@ -628,13 +633,12 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       // Follow all provides
       for (PrvIterator I = DPkg.ProvidesList(); I.end() == false; ++I)
       {
+	 if (IsIgnorable(I) == true)
+	    continue;
+
 	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
 	    continue;
-	 
-	 if (IsNegative() == true &&
-	     ParentPkg()->Group == I.OwnerPkg()->Group)
-	    continue;
-	 
+
 	 Size++;
 	 if (Res != 0)
 	    *End++ = I.OwnerVer();
@@ -676,10 +680,38 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    }
 }
 									/*}}}*/
+// DepIterator::IsIgnorable - should this packag/providr be ignored?	/*{{{*/
+// ---------------------------------------------------------------------
+/* Deps like self-conflicts should be ignored as well as implicit conflicts
+   on virtual packages. */
+bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &Pkg) const
+{
+   if (ParentPkg() == TargetPkg())
+      return IsNegative();
+
+   return false;
+}
+bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
+{
+   if (IsNegative() == false)
+      return false;
+
+   PkgIterator const Pkg = ParentPkg();
+   /* Provides may never be applied against the same package (or group)
+      if it is a conflicts. See the comment above. */
+   if (Prv.OwnerPkg()->Group == Pkg->Group)
+      return true;
+   // Implicit group-conflicts should not be applied on providers of other groups
+   if (Pkg->Group == TargetPkg()->Group && Prv.OwnerPkg()->Group != Pkg->Group)
+      return true;
+
+   return false;
+}
+									/*}}}*/
 // ostream operator to handle string representation of a dependecy	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::ostream& operator<<(ostream& out, pkgCache::DepIterator D)
+std::ostream& operator<<(std::ostream& out, pkgCache::DepIterator D)
 {
    if (D.end() == true)
       return out << "invalid dependency";
@@ -748,9 +780,6 @@ bool pkgCache::VerIterator::Automatic() const
 	 return true;
    return false;
 }
-									/*}}}*/
-// VerIterator::Pseudo - deprecated no-op method			/*{{{*/
-bool pkgCache::VerIterator::Pseudo() const { return false; }
 									/*}}}*/
 // VerIterator::NewestFile - Return the newest file version relation	/*{{{*/
 // ---------------------------------------------------------------------
@@ -891,11 +920,22 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    {
       pkgCache::DescIterator Desc = DescriptionList();
       for (; Desc.end() == false; ++Desc)
-	 if (*l == Desc.LanguageCode() ||
-	     (*l == "en" && strcmp(Desc.LanguageCode(),"") == 0))
+	 if (*l == Desc.LanguageCode())
 	    break;
       if (Desc.end() == true)
-	 continue;
+      {
+	 if (*l == "en")
+	 {
+	    Desc = DescriptionList();
+	    for (; Desc.end() == false; ++Desc)
+	       if (strcmp(Desc.LanguageCode(), "") == 0)
+		  break;
+	    if (Desc.end() == true)
+	       continue;
+	 }
+	 else
+	    continue;
+      }
       return Desc;
    }
    for (pkgCache::DescIterator Desc = DescriptionList();

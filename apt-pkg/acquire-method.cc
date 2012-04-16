@@ -15,6 +15,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -166,6 +168,8 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       std::cout << "SHA1-Hash: " << Res.SHA1Sum << "\n";
    if (Res.SHA256Sum.empty() == false)
       std::cout << "SHA256-Hash: " << Res.SHA256Sum << "\n";
+   if (Res.SHA512Sum.empty() == false)
+      std::cout << "SHA512-Hash: " << Res.SHA512Sum << "\n";
    if (UsedMirror.empty() == false)
       std::cout << "UsedMirror: " << UsedMirror << "\n";
    if (Res.GPGVOutput.empty() == false)
@@ -199,7 +203,9 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 	 std::cout << "Alt-SHA1-Hash: " << Alt->SHA1Sum << "\n";
       if (Alt->SHA256Sum.empty() == false)
 	 std::cout << "Alt-SHA256-Hash: " << Alt->SHA256Sum << "\n";
-
+      if (Alt->SHA512Sum.empty() == false)
+         std::cout << "Alt-SHA512-Hash: " << Alt->SHA512Sum << "\n";
+     
       if (Alt->IMSHit == true)
 	 std::cout << "Alt-IMS-Hit: true\n";
    }
@@ -456,5 +462,6 @@ void pkgAcqMethod::FetchResult::TakeHashes(Hashes &Hash)
    MD5Sum = Hash.MD5.Result();
    SHA1Sum = Hash.SHA1.Result();
    SHA256Sum = Hash.SHA256.Result();
+   SHA512Sum = Hash.SHA512.Result();
 }
 									/*}}}*/

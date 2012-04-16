@@ -11,9 +11,10 @@
 #define CONNECT_H
 
 #include <string>
-#include <apt-pkg/acquire-method.h>
 
-bool Connect(string To,int Port,const char *Service,int DefPort,
+class pkgAcqMethod;
+
+bool Connect(std::string To,int Port,const char *Service,int DefPort,
 	     int &Fd,unsigned long TimeOut,pkgAcqMethod *Owner);
 void RotateDNS();
 

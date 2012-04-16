@@ -13,8 +13,13 @@
 #ifndef PKGLIB_INIT_H
 #define PKGLIB_INIT_H
 
+#ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgsystem.h>
+#endif
+
+class pkgSystem;
+class Configuration;
 
 // These lines are extracted by the makefiles and the buildsystem
 // Increasing MAJOR or MINOR results in the need of recompiling all
@@ -22,24 +27,13 @@
 // Non-ABI-Breaks should only increase RELEASE number.
 // See also buildlib/libversion.mak
 #define APT_PKG_MAJOR 4
-#define APT_PKG_MINOR 10
-#define APT_PKG_RELEASE 1
+#define APT_PKG_MINOR 12
+#define APT_PKG_RELEASE 0
     
 extern const char *pkgVersion;
 extern const char *pkgLibVersion;
 
 bool pkgInitConfig(Configuration &Cnf);
 bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys);
-
-#ifdef APT_COMPATIBILITY
-#if APT_COMPATIBILITY != 986
-#warning "Using APT_COMPATIBILITY"
-#endif
-
-inline bool pkgInitialize(Configuration &Cnf) 
-{
-   return pkgInitConfig(Cnf) && pkgInitSystem(Cnf,_system);
-};
-#endif
 
 #endif

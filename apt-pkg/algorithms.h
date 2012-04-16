@@ -33,11 +33,15 @@
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/acquire.h>
 
 #include <iostream>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/acquire.h>
 using std::ostream;
+#endif
+
+class pkgAcquireStatus;
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
@@ -63,13 +67,13 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    pkgDepCache::ActionGroup group;
    
    // The Actuall installation implementation
-   virtual bool Install(PkgIterator Pkg,string File);
+   virtual bool Install(PkgIterator Pkg,std::string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge);
 
 private:
    void ShortBreaks();
-   void Describe(PkgIterator iPkg,ostream &out,bool Current,bool Candidate);
+   void Describe(PkgIterator iPkg,std::ostream &out,bool Current,bool Candidate);
    
    public:
 
@@ -78,6 +82,9 @@ private:
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    pkgDepCache &Cache;
    typedef pkgCache::PkgIterator PkgIterator;
    typedef pkgCache::VerIterator VerIterator;
@@ -89,7 +96,7 @@ class pkgProblemResolver						/*{{{*/
    enum Flags {Protected = (1 << 0), PreInstalled = (1 << 1),
                Upgradable = (1 << 2), ReInstateTried = (1 << 3),
                ToRemove = (1 << 4)};
-   signed short *Scores;
+   int *Scores;
    unsigned char *Flags;
    bool Debug;
    
@@ -105,6 +112,9 @@ class pkgProblemResolver						/*{{{*/
 
    void MakeScores();
    bool DoUpgrade(pkgCache::PkgIterator Pkg);
+
+   bool ResolveInternal(bool const BrokenFix = false);
+   bool ResolveByKeepInternal();
    
    protected:
    bool InstOrNewPolicyBroken(pkgCache::PkgIterator Pkg);

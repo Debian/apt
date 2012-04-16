@@ -15,15 +15,18 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
-#include <apti18n.h>
 
 #include <vector>
 #include <fstream>
 #include <iostream>
+
+#include <apti18n.h>
 
 using namespace std;
 									/*}}}*/
@@ -182,8 +185,14 @@ string Configuration::FindFile(const char *Name,const char *Default) const
    }
    
    string val = Itm->Value;
-   while (Itm->Parent != 0 && Itm->Parent->Value.empty() == false)
-   {	 
+   while (Itm->Parent != 0)
+   {
+      if (Itm->Parent->Value.empty() == true)
+      {
+	 Itm = Itm->Parent;
+	 continue;
+      }
+
       // Absolute
       if (val.length() >= 1 && val[0] == '/')
          break;

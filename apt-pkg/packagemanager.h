@@ -23,14 +23,16 @@
 #ifndef PKGLIB_PACKAGEMANAGER_H
 #define PKGLIB_PACKAGEMANAGER_H
 
+#include <apt-pkg/pkgcache.h>
 
 #include <string>
 #include <iostream>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/depcache.h>
 #include <set>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/depcache.h>
 using std::string;
+#endif
 
 class pkgAcquire;
 class pkgDepCache;
@@ -42,12 +44,15 @@ class pkgPackageManager : protected pkgCache::Namespace
    public:
    
    enum OrderResult {Completed,Failed,Incomplete};
+   static bool SigINTStop;
    
    protected:
-   string *FileNames;
+   std::string *FileNames;
    pkgDepCache &Cache;
    pkgOrderList *List;
    bool Debug;
+   bool NoImmConfigure;
+   bool ImmConfigureAll;
 
    /** \brief saves packages dpkg let disappear
 
@@ -57,7 +62,6 @@ class pkgPackageManager : protected pkgCache::Namespace
    */
    std::set<std::string> disappearedPkgs;
 
-   bool DepAdd(pkgOrderList &Order,PkgIterator P,int Depth = 0);
    void ImmediateAdd(PkgIterator P, bool UseInstallVer, unsigned const int &Depth = 0);
    virtual OrderResult OrderInstall();
    bool CheckRConflicts(PkgIterator Pkg,DepIterator Dep,const char *Ver);
@@ -68,15 +72,15 @@ class pkgPackageManager : protected pkgCache::Namespace
    
    // Install helpers
    bool ConfigureAll();
-   bool SmartConfigure(PkgIterator Pkg);
+   bool SmartConfigure(PkgIterator Pkg, int const Depth);
    //FIXME: merge on abi break
    bool SmartUnPack(PkgIterator Pkg);
-   bool SmartUnPack(PkgIterator Pkg, bool const Immediate);
+   bool SmartUnPack(PkgIterator Pkg, bool const Immediate, int const Depth);
    bool SmartRemove(PkgIterator Pkg);
-   bool EarlyRemove(PkgIterator Pkg);   
+   bool EarlyRemove(PkgIterator Pkg);  
    
    // The Actual installation implementation
-   virtual bool Install(PkgIterator /*Pkg*/,string /*File*/) {return false;};
+   virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
    virtual bool Go(int statusFd=-1) {return true;};

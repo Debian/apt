@@ -8,15 +8,19 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-
-#include <apti18n.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexfile.h>
 
 #include <fstream>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -29,7 +33,7 @@ unsigned long pkgSourceList::Type::GlobalListLen = 0;
 // Type::Type - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* Link this to the global list of items*/
-pkgSourceList::Type::Type()
+pkgSourceList::Type::Type() : Name(NULL), Label(NULL)
 {
    ItmList[GlobalListLen] = this;
    GlobalListLen++;
@@ -346,10 +350,14 @@ bool pkgSourceList::ReadSourceDir(string Dir)
 /* */
 time_t pkgSourceList::GetLastModifiedTime()
 {
-   // go over the parts
+   vector<string> List;
+
    string Main = _config->FindFile("Dir::Etc::sourcelist");
    string Parts = _config->FindDir("Dir::Etc::sourceparts");
-   vector<string> const List = GetListOfFilesInDir(Parts, "list", true);
+
+   // go over the parts
+   if (DirectoryExists(Parts) == true)
+      List = GetListOfFilesInDir(Parts, "list", true);
 
    // calculate the time
    time_t mtime_sources = GetModificationTime(Main);

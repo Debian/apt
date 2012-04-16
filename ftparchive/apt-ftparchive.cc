@@ -10,24 +10,25 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include "apt-ftparchive.h"
-    
+#include <config.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/init.h>
-#include <config.h>
-#include <apti18n.h>
 #include <algorithm>
 
 #include <climits>
 #include <sys/time.h>
 #include <regex.h>
 
+#include "apt-ftparchive.h"
 #include "contents.h"
 #include "multicompress.h"
-#include "writer.h"    
+#include "writer.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;    
@@ -205,7 +206,7 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    Packages.Output = 0;      // Just in case
    
    // Finish compressing
-   unsigned long Size;
+   unsigned long long Size;
    if (Comp.Finalize(Size) == false)
    {
       c0out << endl;
@@ -291,7 +292,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    Sources.Output = 0;      // Just in case
    
    // Finish compressing
-   unsigned long Size;
+   unsigned long long Size;
    if (Comp.Finalize(Size) == false)
    {
       c0out << endl;
@@ -362,11 +363,11 @@ bool PackageMap::GenContents(Configuration &Setup,
       if (_error->PendingError() == true)
 	 return false;
       
-      unsigned long Size = Head.Size();
+      unsigned long long Size = Head.Size();
       unsigned char Buf[4096];
       while (Size != 0)
       {
-	 unsigned long ToRead = Size;
+	 unsigned long long ToRead = Size;
 	 if (Size > sizeof(Buf))
 	    ToRead = sizeof(Buf);
 	 
@@ -400,7 +401,7 @@ bool PackageMap::GenContents(Configuration &Setup,
    Contents.Finish();
    
    // Finish compressing
-   unsigned long Size;
+   unsigned long long Size;
    if (Comp.Finalize(Size) == false || _error->PendingError() == true)
    {
       c0out << endl;
@@ -586,7 +587,7 @@ void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 /* */
 bool ShowHelp(CommandLine &CmdL)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
       return true;

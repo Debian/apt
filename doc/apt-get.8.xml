@@ -33,91 +33,8 @@
     <refpurpose>APT package handling utility -- command-line interface</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-get</command>
-      <arg><option>-sqdyfmubV</option></arg>
-      <arg>
-	      <option>-o=
-			  <replaceable>config_string</replaceable>
-	      </option>
-      </arg>
-      <arg>
-	      <option>-c=
-		      <replaceable>config_file</replaceable>
-	      </option>
-      </arg>
-      <arg>
-		<option>-t=</option>
-		<arg choice='plain'>
-			<replaceable>target_release</replaceable>
-		</arg>
-      </arg>
-      <arg>
-		<option>-a=</option>
-		<arg choice='plain'>
-			<replaceable>default_architecture</replaceable>
-		</arg>
-      </arg>
+ &synopsis-command-apt-get;
 
-
-      <group choice="req">
-         <arg choice='plain'>update</arg>
-         <arg choice='plain'>upgrade</arg>
-         <arg choice='plain'>dselect-upgrade</arg>
-         <arg choice='plain'>dist-upgrade</arg>
-         <arg choice='plain'>install 
-			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
-				<arg>
-					<group choice='req'>
-						<arg choice='plain'>
-							=<replaceable>pkg_version_number</replaceable>
-						</arg>
-						<arg choice='plain'>
-							/<replaceable>target_release</replaceable>
-						</arg>
-					</group>
-				</arg>
-			 </arg>
-	     </arg>
-         <arg choice='plain'>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg choice='plain'>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg choice='plain'>source 
-			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
-				<arg>
-					<group choice='req'>
-						<arg choice='plain'>
-							=<replaceable>pkg_version_number</replaceable>
-						</arg>
-						<arg choice='plain'>
-							/<replaceable>target_release</replaceable>
-						</arg>
-					</group>
-				</arg>
-			 </arg>
-	     </arg>
-         <arg choice='plain'>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg choice='plain'>check</arg>
-         <arg choice='plain'>clean</arg>
-         <arg choice='plain'>autoclean</arg>
-         <arg choice='plain'>autoremove</arg>
-		 <arg choice='plain'>
-			 <group choice='req'>
-				<arg choice='plain'>-v</arg>
-				<arg choice='plain'>--version</arg>
-			 </group>
-		 </arg>
-		 <arg choice='plain'>
-			 <group choice='req'>
-				<arg choice='plain'>-h</arg>
-				<arg choice='plain'>--help</arg>
-			 </group>
-		 </arg>
-      </group>   
-   </cmdsynopsis>
- </refsynopsisdiv>
- 
  <refsect1><title>Description</title>
    <para><command>apt-get</command> is the command-line tool for handling packages, and may be 
    considered the user's "back-end" to other tools using the APT
@@ -431,6 +348,11 @@
      package, trying to install a unauthenticated package or removing an essential package 
      occurs then <literal>apt-get</literal> will abort. 
      Configuration Item: <literal>APT::Get::Assume-Yes</literal>.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>--assume-no</option></term>
+     <listitem><para>Automatic "no" to all prompts.
+     Configuration Item: <literal>APT::Get::Assume-No</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>-u</option></term><term><option>--show-upgraded</option></term>

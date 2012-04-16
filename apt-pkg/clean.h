@@ -15,13 +15,16 @@
 
 class pkgArchiveCleaner
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    protected:
    
-   virtual void Erase(const char * /*File*/,string /*Pkg*/,string /*Ver*/,struct stat & /*St*/) {};
+   virtual void Erase(const char * /*File*/,std::string /*Pkg*/,std::string /*Ver*/,struct stat & /*St*/) {};
 
    public:   
    
-   bool Go(string Dir,pkgCache &Cache);
+   bool Go(std::string Dir,pkgCache &Cache);
    virtual ~pkgArchiveCleaner() {};
 };
 

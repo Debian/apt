@@ -51,6 +51,12 @@ SLIBS = -lapt-pkg
 SOURCE = globalerror_test.cc
 include $(PROGRAM_H)
 
+# test the different Hashsum classes
+PROGRAM = HashSums${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = hashsums_test.cc
+include $(PROGRAM_H)
+
 # test the strutils stuff
 PROGRAM = StrUtil${BASENAME}
 SLIBS = -lapt-pkg
@@ -67,4 +73,10 @@ include $(PROGRAM_H)
 PROGRAM = Configuration${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = configuration_test.cc
+include $(PROGRAM_H)
+
+# test cdroms core FindPackages
+PROGRAM = CdromFindPackages${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = cdromfindpackages_test.cc
 include $(PROGRAM_H)

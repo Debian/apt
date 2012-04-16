@@ -1,0 +1,51 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'xserver-xorg-core' 'amd64' '2:1.7.6-2ubuntu7.10'
+for i in $(seq 1 50); do
+	insertinstalledpackage "xserver-xorg-video-driver$i" 'amd64' '1.0' 'Provides: xserver-xorg-video-6'
+done
+
+insertpackage 'unstable' 'xserver-xorg-core' 'amd64' '2:1.11.3-0ubuntu9' 'Breaks: xserver-xorg-video-6'
+
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  xserver-xorg-video-driver1 xserver-xorg-video-driver10
+  xserver-xorg-video-driver11 xserver-xorg-video-driver12
+  xserver-xorg-video-driver13 xserver-xorg-video-driver14
+  xserver-xorg-video-driver15 xserver-xorg-video-driver16
+  xserver-xorg-video-driver17 xserver-xorg-video-driver18
+  xserver-xorg-video-driver19 xserver-xorg-video-driver2
+  xserver-xorg-video-driver20 xserver-xorg-video-driver21
+  xserver-xorg-video-driver22 xserver-xorg-video-driver23
+  xserver-xorg-video-driver24 xserver-xorg-video-driver25
+  xserver-xorg-video-driver26 xserver-xorg-video-driver27
+  xserver-xorg-video-driver28 xserver-xorg-video-driver29
+  xserver-xorg-video-driver3 xserver-xorg-video-driver30
+  xserver-xorg-video-driver31 xserver-xorg-video-driver32
+  xserver-xorg-video-driver33 xserver-xorg-video-driver34
+  xserver-xorg-video-driver35 xserver-xorg-video-driver36
+  xserver-xorg-video-driver37 xserver-xorg-video-driver38
+  xserver-xorg-video-driver39 xserver-xorg-video-driver4
+  xserver-xorg-video-driver40 xserver-xorg-video-driver41
+  xserver-xorg-video-driver42 xserver-xorg-video-driver43
+  xserver-xorg-video-driver44 xserver-xorg-video-driver45
+  xserver-xorg-video-driver46 xserver-xorg-video-driver47
+  xserver-xorg-video-driver48 xserver-xorg-video-driver49
+  xserver-xorg-video-driver5 xserver-xorg-video-driver50
+  xserver-xorg-video-driver6 xserver-xorg-video-driver7
+  xserver-xorg-video-driver8 xserver-xorg-video-driver9
+The following packages will be upgraded:
+  xserver-xorg-core
+1 upgraded, 0 newly installed, 50 to remove and 0 not upgraded.
+After this operation, 2150 kB disk space will be freed.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only

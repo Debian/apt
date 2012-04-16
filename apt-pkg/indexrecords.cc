@@ -3,16 +3,24 @@
 // $Id: indexrecords.cc,v 1.1.2.4 2003/12/30 02:11:43 mdz Exp $
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-#include <apti18n.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashes.h>
+
 #include <sys/stat.h>
 #include <clocale>
 
+#include <apti18n.h>
 									/*}}}*/
+
+using std::string;
+
 string indexRecords::GetDist() const
 {
    return this->Dist;
@@ -36,7 +44,10 @@ time_t indexRecords::GetValidUntil() const
 
 const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
-   return Entries[MetaKey];
+   std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
+   if (sum == Entries.end())
+      return NULL;
+   return sum->second;
 }
 
 bool indexRecords::Exists(string const &MetaKey) const
@@ -78,7 +89,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
 
       string Name;
       string Hash;
-      size_t Size;
+      unsigned long long Size;
       while (Start < End)
       {
 	 if (!parseSumData(Start, End, Name, Hash, Size))
@@ -144,7 +155,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    return true;
 }
 									/*}}}*/
-vector<string> indexRecords::MetaKeys()					/*{{{*/
+std::vector<string> indexRecords::MetaKeys()				/*{{{*/
 {
    std::vector<std::string> keys;
    std::map<string,checkSum *>::iterator I = Entries.begin();
@@ -156,7 +167,7 @@ vector<string> indexRecords::MetaKeys()					/*{{{*/
 }
 									/*}}}*/
 bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
-				   string &Name, string &Hash, size_t &Size)
+				   string &Name, string &Hash, unsigned long long &Size)
 {
    Name = "";
    Hash = "";
@@ -193,7 +204,7 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    if (EntryEnd == End)
       return false;
    
-   Size = strtol (Start, NULL, 10);
+   Size = strtoull (Start, NULL, 10);
       
    /* Skip over intermediate blanks */
    Start = EntryEnd;

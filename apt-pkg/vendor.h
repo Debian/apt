@@ -6,29 +6,31 @@
 
 #include <apt-pkg/macros.h>
 
+#ifndef APT_8_CLEANER_HEADERS
 using std::string;
+#endif
 
-// A class representing a particular software provider. 
+// A class representing a particular software provider.
 class __deprecated Vendor
 {
    public:
    struct Fingerprint
    {
-      string Print;
-      string Description;
+      std::string Print;
+      std::string Description;
    };
 
    protected:
-   string VendorID;
-   string Origin;
-   std::map<string, string> Fingerprints;
+   std::string VendorID;
+   std::string Origin;
+   std::map<std::string, std::string> Fingerprints;
 
    public:
-   Vendor(string VendorID, string Origin,
+   Vendor(std::string VendorID, std::string Origin,
           std::vector<struct Fingerprint *> *FingerprintList);
-   virtual const string& GetVendorID() const { return VendorID; };
-   virtual const string LookupFingerprint(string Print) const;
-   virtual bool CheckDist(string Dist);
+   virtual const std::string& GetVendorID() const { return VendorID; };
+   virtual const std::string LookupFingerprint(std::string Print) const;
+   virtual bool CheckDist(std::string Dist);
    virtual ~Vendor(){};
 };
 

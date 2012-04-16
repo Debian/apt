@@ -1,12 +1,16 @@
 #ifndef PKGLIB_CDROM_H
 #define PKGLIB_CDROM_H
 
-#include<apt-pkg/init.h>
 #include<string>
 #include<vector>
 
-
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/init.h>
 using namespace std;
+#endif
+
+class Configuration;
+class OpProgress;
 
 class pkgCdromStatus							/*{{{*/
 {
@@ -20,12 +24,12 @@ class pkgCdromStatus							/*{{{*/
    // total steps
    virtual void SetTotal(int total) { totalSteps = total; };
    // update steps, will be called regularly as a "pulse"
-   virtual void Update(string text="", int current=0) = 0;
+   virtual void Update(std::string text="", int current=0) = 0;
    
    // ask for cdrom insert
    virtual bool ChangeCdrom() = 0;
    // ask for cdrom name
-   virtual bool AskCdromName(string &Name) = 0;
+   virtual bool AskCdromName(std::string &Name) = 0;
    // Progress indicator for the Index rewriter
    virtual OpProgress* GetOpProgress() {return NULL; };
 };
@@ -47,22 +51,22 @@ class pkgCdrom								/*{{{*/
    };
 
 
-   bool FindPackages(string CD,
-		     vector<string> &List,
-		     vector<string> &SList, 
-		     vector<string> &SigList,
-		     vector<string> &TransList,
-		     string &InfoDir, pkgCdromStatus *log,
+   bool FindPackages(std::string CD,
+		     std::vector<std::string> &List,
+		     std::vector<std::string> &SList, 
+		     std::vector<std::string> &SigList,
+		     std::vector<std::string> &TransList,
+		     std::string &InfoDir, pkgCdromStatus *log,
 		     unsigned int Depth = 0);
-   bool DropBinaryArch(vector<string> &List);
-   bool DropRepeats(vector<string> &List,const char *Name);
-   void ReduceSourcelist(string CD,vector<string> &List);
+   bool DropBinaryArch(std::vector<std::string> &List);
+   bool DropRepeats(std::vector<std::string> &List,const char *Name);
+   void ReduceSourcelist(std::string CD,std::vector<std::string> &List);
    bool WriteDatabase(Configuration &Cnf);
-   bool WriteSourceList(string Name,vector<string> &List,bool Source);
-   int Score(string Path);
+   bool WriteSourceList(std::string Name,std::vector<std::string> &List,bool Source);
+   int Score(std::string Path);
 
  public:
-   bool Ident(string &ident, pkgCdromStatus *log);
+   bool Ident(std::string &ident, pkgCdromStatus *log);
    bool Add(pkgCdromStatus *log);
 };
 									/*}}}*/
@@ -71,9 +75,9 @@ class pkgCdrom								/*{{{*/
 // class that uses libudev to find cdrom/removable devices dynamically
 struct CdromDevice							/*{{{*/
 {
-   string DeviceName;
+   std::string DeviceName;
    bool Mounted;
-   string MountPath;
+   std::string MountPath;
 };
 									/*}}}*/
 class pkgUdevCdromDevices						/*{{{*/
@@ -92,9 +96,7 @@ class pkgUdevCdromDevices						/*{{{*/
    struct udev_enumerate *(*udev_enumerate_new) (struct udev *udev);
    struct udev_list_entry *(*udev_list_entry_get_next)(struct udev_list_entry *list_entry);
    const char* (*udev_device_get_property_value)(struct udev_device *udev_device, const char *key);
-#if 0 // FIXME: uncomment on next ABI break
    int (*udev_enumerate_add_match_sysattr)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);
-#endif 
    // end libudev dlopen
    
  public:
@@ -104,11 +106,11 @@ class pkgUdevCdromDevices						/*{{{*/
    // try to open 
    bool Dlopen();
 
-   // this is the new interface
-   vector<CdromDevice> ScanForRemovable(bool CdromOnly);
-   // FIXME: compat with the old interface/API/ABI only
-   vector<CdromDevice> Scan();
+   // convenience interface, this will just call ScanForRemovable
+   // with "APT::cdrom::CdromOnly"
+   std::vector<CdromDevice> Scan();
 
+   std::vector<CdromDevice> ScanForRemovable(bool CdromOnly);
 };
 									/*}}}*/
 

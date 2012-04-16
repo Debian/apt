@@ -44,9 +44,11 @@
 #ifndef PKGLIB_CMNDLINE_H
 #define PKGLIB_CMNDLINE_H
 
-
-
+#ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/configuration.h>
+#endif
+
+class Configuration;
 
 class CommandLine
 {

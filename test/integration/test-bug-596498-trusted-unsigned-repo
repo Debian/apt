@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+buildsimplenativepackage 'cool' 'i386' '1.0' 'unstable'
+
+setupaptarchive
+
+aptgetupdate() {
+	rm -rf rootdir/var/lib/apt/ rootdir/var/cache/apt/*.bin
+	aptget update -qq
+}
+
+PKGTEXT="$(aptget install cool --assume-no -d | head -n 7)"
+DEBFILE='rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list'
+
+testequal "$PKGTEXT
+Download complete and in download only mode" aptget install cool --assume-no -d
+
+sed -i -e 's#deb#deb [trusted=no]#' $DEBFILE
+aptgetupdate
+
+testequal "$PKGTEXT
+WARNING: The following packages cannot be authenticated!
+  cool
+Install these packages without verification [y/N]? N
+E: Some packages could not be authenticated" aptget install cool --assume-no -d
+
+find aptarchive/ \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
+sed -i -e 's#deb \[trusted=no\]#deb#' $DEBFILE
+aptgetupdate
+
+testequal "$PKGTEXT
+WARNING: The following packages cannot be authenticated!
+  cool
+Install these packages without verification [y/N]? N
+E: Some packages could not be authenticated" aptget install cool --assume-no -d
+
+sed -i -e 's#deb#deb [trusted=yes]#' $DEBFILE
+aptgetupdate
+
+testequal "$PKGTEXT
+Download complete and in download only mode" aptget install cool --assume-no -d

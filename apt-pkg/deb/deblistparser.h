@@ -12,8 +12,11 @@
 #define PKGLIB_DEBLISTPARSER_H
 
 #include <apt-pkg/pkgcachegen.h>
-#include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
+
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/indexfile.h>
+#endif
 
 class debListParser : public pkgCacheGenerator::ListParser
 {
@@ -25,36 +28,39 @@ class debListParser : public pkgCacheGenerator::ListParser
       const char *Str;
       unsigned char Val;
    };
-   
+
    private:
-   
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
+   protected:
    pkgTagFile Tags;
    pkgTagSection Section;
    unsigned long iOffset;
-   string Arch;
+   std::string Arch;
    std::vector<std::string> Architectures;
    bool MultiArchEnabled;
 
    unsigned long UniqFindTagWrite(const char *Tag);
-   bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
+   virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);
    bool ParseProvides(pkgCache::VerIterator &Ver);
-   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, string const &Package, string const &Version);
-   static bool GrabWord(string Word,WordList *List,unsigned char &Out);
+   bool NewProvidesAllArch(pkgCache::VerIterator &Ver, std::string const &Package, std::string const &Version);
+   static bool GrabWord(std::string Word,WordList *List,unsigned char &Out);
    
    public:
 
-   static unsigned char GetPrio(string Str);
+   static unsigned char GetPrio(std::string Str);
       
    // These all operate against the current section
-   virtual string Package();
-   virtual string Architecture();
+   virtual std::string Package();
+   virtual std::string Architecture();
    virtual bool ArchitectureAll();
-   virtual string Version();
+   virtual std::string Version();
    virtual bool NewVersion(pkgCache::VerIterator &Ver);
-   virtual string Description();
-   virtual string DescriptionLanguage();
+   virtual std::string Description();
+   virtual std::string DescriptionLanguage();
    virtual MD5SumValue Description_md5();
    virtual unsigned short VersionHash();
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
@@ -65,15 +71,16 @@ class debListParser : public pkgCacheGenerator::ListParser
    virtual bool Step();
    
    bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
-			string section);
+			std::string section);
    
    static const char *ParseDepends(const char *Start,const char *Stop,
-			    string &Package,string &Ver,unsigned int &Op,
+			    std::string &Package,std::string &Ver,unsigned int &Op,
 			    bool const &ParseArchFlags = false,
 			    bool const &StripMultiArch = true);
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
-   debListParser(FileFd *File, string const &Arch = "");
+   debListParser(FileFd *File, std::string const &Arch = "");
+   virtual ~debListParser() {};
 };
 
 #endif

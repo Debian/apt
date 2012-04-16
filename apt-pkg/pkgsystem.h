@@ -37,14 +37,20 @@
 #ifndef PKGLIB_PKGSYSTEM_H
 #define PKGLIB_PKGSYSTEM_H
 
+#include <apt-pkg/pkgcache.h>
 
-#include <apt-pkg/depcache.h>
 #include <vector>
-    
+
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/depcache.h>
+#endif
+
+class pkgDepCache;
 class pkgPackageManager;
 class pkgVersioningSystem;
 class Configuration;
 class pkgIndexFile;
+class PkgFileIterator;
 
 class pkgSystem
 {   

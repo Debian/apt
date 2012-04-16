@@ -13,7 +13,7 @@ setupflataptarchive
 testaptgetupdate() {
 	rm -rf rootdir/var/lib/apt
 	aptget update 2>> testaptgetupdate.diff >> testaptgetupdate.diff || true
-	sed -i -e '/^Fetched / d' -e 's#\[[0-9]* [kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
+	sed -i -e '/^Fetched / d' -e '/Ign / d' -e 's#\[[0-9]* [kMGTPY]*B\]#\[\]#' testaptgetupdate.diff
 	GIVEN="$1"
 	shift
 	msgtest "Test for correctness of" "apt-get update with $*"
@@ -28,10 +28,10 @@ testaptgetupdate() {
 createemptyarchive() {
 	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
 	if [ "en" = "$1" ]; then
-		echo -n "" | $COMPRESSOR > aptarchive/Packages.$COMPRESS
+		echo -n "" | $COMPRESSOR_CMD > aptarchive/Packages.$COMPRESS
 	fi
 	touch aptarchive/Packages
-	echo -n "" | $COMPRESSOR > aptarchive/${1}.$COMPRESS
+	echo -n "" | $COMPRESSOR_CMD > aptarchive/${1}.$COMPRESS
 	generatereleasefiles
 	signreleasefiles
 	rm -f aptarchive/Packages
@@ -40,7 +40,7 @@ createemptyarchive() {
 createemptyfile() {
 	find aptarchive/ \( -name "Packages*" -o -name "en*" \) -type f -delete
 	if [ "en" = "$1" ]; then
-		echo -n "" | $COMPRESSOR > aptarchive/Packages.$COMPRESS
+		echo -n "" | $COMPRESSOR_CMD > aptarchive/Packages.$COMPRESS
 	fi
 	touch aptarchive/Packages aptarchive/${1}.$COMPRESS
 	generatereleasefiles
@@ -50,6 +50,7 @@ createemptyfile() {
 
 setupcompressor() {
 	COMPRESSOR="$1"
+	COMPRESSOR_CMD="$1"
 	case $COMPRESSOR in
 	gzip) COMPRESS="gz";;
 	bzip2) COMPRESS="bz2";;
@@ -66,10 +67,13 @@ Dir::Bin::xz \"/does/not/exist\";" > rootdir/etc/apt/apt.conf.d/00compressor
 		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
 	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
 		echo "Dir::Bin::${COMPRESSOR} \"/usr/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
+	elif [ "${COMPRESSOR}" = 'lzma' ]; then
+		echo "Dir::Bin::xz \"/usr/bin/xz\";" >> rootdir/etc/apt/apt.conf.d/00compressor
+		COMPRESSOR_CMD='xz --format=lzma'
 	else
 		msgtest "Test for availability of compressor" "${COMPRESSOR}"
 		msgfail
-		exit 1
+		#exit 1
 	fi
 }
 
@@ -78,7 +82,6 @@ testoverfile() {
 
 	createemptyfile 'en'
 	testaptgetupdate "Get:1 file:  InRelease []
-Ign file:  Translation-en
 Reading package lists..." "empty file en.$COMPRESS over file"
 
 	createemptyarchive 'en'
@@ -89,12 +92,10 @@ Reading package lists..." "empty archive en.$COMPRESS over file"
 	# FIXME: Why omits the file transport the Packages Get line?
 	#Get:3 file:  Packages []
 	testaptgetupdate "Get:1 file:  InRelease []
-Ign file:  Translation-en
 Reading package lists..." "empty archive Packages.$COMPRESS over file"
 
 	createemptyfile 'Packages'
 	testaptgetupdate "Get:1 file:  InRelease []
-Ign file:  Translation-en
 Err file:  Packages
   Empty files can't be valid archives
 W: Failed to fetch ${COMPRESSOR}:$(readlink -f aptarchive/Packages.$COMPRESS)  Empty files can't be valid archives
@@ -109,7 +110,6 @@ testoverhttp() {
 	testaptgetupdate "Get:1 http://localhost  InRelease []
 Get:2 http://localhost  Packages []
 Get:3 http://localhost  Translation-en
-Ign http://localhost  Translation-en
 Reading package lists..." "empty file en.$COMPRESS over http"
 
 	createemptyarchive 'en'
@@ -121,14 +121,12 @@ Reading package lists..." "empty archive en.$COMPRESS over http"
 	createemptyarchive 'Packages'
 	testaptgetupdate "Get:1 http://localhost  InRelease []
 Get:2 http://localhost  Packages []
-Ign http://localhost  Translation-en
 Reading package lists..." "empty archive Packages.$COMPRESS over http"
 
 	createemptyfile 'Packages'
 	#FIXME: we should response with a good error message instead
 	testaptgetupdate "Get:1 http://localhost  InRelease []
 Get:2 http://localhost  Packages
-Ign http://localhost  Translation-en
 Err http://localhost  Packages
   Empty files can't be valid archives
 W: Failed to fetch ${COMPRESSOR}:$(readlink -f rootdir/var/lib/apt/lists/partial/localhost:8080_Packages)  Empty files can't be valid archives

@@ -9,18 +9,20 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-    
-#include <apti18n.h>   
+
+#include <apti18n.h>
 									/*}}}*/
 
 // Records::pkgRecords - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* This will create the necessary structures to access the status files */
-pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache), 
+pkgRecords::pkgRecords(pkgCache &Cache) : d(NULL), Cache(Cache),
   Files(Cache.HeaderP->PackageFileCount)
 {
    for (pkgCache::PkgFileIterator I = Cache.FileBegin();
@@ -44,7 +46,7 @@ pkgRecords::pkgRecords(pkgCache &Cache) : Cache(Cache),
 /* */
 pkgRecords::~pkgRecords()
 {
-   for ( vector<Parser*>::iterator it = Files.begin();
+   for ( std::vector<Parser*>::iterator it = Files.begin();
      it != Files.end();
      ++it)
    {

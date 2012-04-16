@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
@@ -23,9 +25,9 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/metaindex.h>
 
-#include <apti18n.h>
-    
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -33,6 +35,8 @@
 #include <sstream>
 #include <stdio.h>
 #include <ctime>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -94,7 +98,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 // ---------------------------------------------------------------------
 /* Stash status and the file size. Note that setting Complete means 
    sub-phases of the acquire process such as decompresion are operating */
-void pkgAcquire::Item::Start(string /*Message*/,unsigned long Size)
+void pkgAcquire::Item::Start(string /*Message*/,unsigned long long Size)
 {
    Status = StatFetching;
    if (FileSize == 0 && Complete == false)
@@ -104,7 +108,7 @@ void pkgAcquire::Item::Start(string /*Message*/,unsigned long Size)
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Item::Done(string Message,unsigned long Size,string Hash,
+void pkgAcquire::Item::Done(string Message,unsigned long long Size,string Hash,
 			    pkgAcquire::MethodConfig *Cnf)
 {
    // We just downloaded something..
@@ -185,14 +189,14 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
 									/*}}}*/
 // AcqSubIndex::AcqSubIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
-/* Get the Index file first and see if there are languages available
- * If so, create a pkgAcqIndexTrans for the found language(s).
- */
+/* Get a sub-index file based on checksums from a 'master' file and
+   possibly query additional files */
 pkgAcqSubIndex::pkgAcqSubIndex(pkgAcquire *Owner, string const &URI,
 				 string const &URIDesc, string const &ShortDesc,
 				 HashString const &ExpectedHash)
    : Item(Owner), ExpectedHash(ExpectedHash)
 {
+   /* XXX: Beware: Currently this class does nothing (of value) anymore ! */
    Debug = _config->FindB("Debug::pkgAcquire::SubIndex",false);
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -232,20 +236,10 @@ void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*
    Status = StatDone;
    Dequeue();
 
-   // No good Index is provided, so try guessing
-   std::vector<std::string> langs = APT::Configuration::getLanguages(true);
-   for (std::vector<std::string>::const_iterator l = langs.begin();
-	l != langs.end(); ++l)
-   {
-      if (*l == "none") continue;
-      string const file = "Translation-" + *l;
-      new pkgAcqIndexTrans(Owner, Desc.URI.substr(0, Desc.URI.rfind('/')+1).append(file),
-		Desc.Description.erase(Desc.Description.rfind(' ')+1).append(file),
-		file);
-   }
+   // No good Index is provided
 }
 									/*}}}*/
-void pkgAcqSubIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{{*/
+void pkgAcqSubIndex::Done(string Message,unsigned long long Size,string Md5Hash,	/*{{{*/
 			   pkgAcquire::MethodConfig *Cnf)
 {
    if(Debug)
@@ -301,38 +295,7 @@ bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
    indexRecords SubIndexParser;
    if (FileExists(IndexFile) == false || SubIndexParser.Load(IndexFile) == false)
       return false;
-
-   std::vector<std::string> lang = APT::Configuration::getLanguages(true);
-   for (std::vector<std::string>::const_iterator l = lang.begin();
-	l != lang.end(); ++l)
-   {
-      if (*l == "none")
-	 continue;
-
-      string file = "Translation-" + *l;
-      indexRecords::checkSum const *Record = SubIndexParser.Lookup(file);
-      HashString expected;
-      if (Record == NULL)
-      {
-	 // FIXME: the Index file provided by debian currently only includes bz2 records
-	 Record = SubIndexParser.Lookup(file + ".bz2");
-	 if (Record == NULL)
-	    continue;
-      }
-      else
-      {
-	 expected = Record->Hash;
-	 if (expected.empty() == true)
-	    continue;
-      }
-
-      IndexTarget target;
-      target.Description = Desc.Description.erase(Desc.Description.rfind(' ')+1).append(file);
-      target.MetaKey = file;
-      target.ShortDesc = file;
-      target.URI = Desc.URI.substr(0, Desc.URI.rfind('/')+1).append(file);
-      new pkgAcqIndexTrans(Owner, &target, expected, &SubIndexParser);
-   }
+   // so something with the downloaded index
    return true;
 }
 									/*}}}*/
@@ -434,7 +397,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 
       FileFd fd(CurrentPackagesFile, FileFd::ReadOnly);
       SHA1Summation SHA1;
-      SHA1.AddFD(fd.Fd(), fd.Size());
+      SHA1.AddFD(fd);
       string const local_sha1 = SHA1.Result();
 
       if(local_sha1 == ServerSha1) 
@@ -544,7 +507,7 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{
    Dequeue();
 }
 									/*}}}*/
-void pkgAcqDiffIndex::Done(string Message,unsigned long Size,string Md5Hash,	/*{{{*/
+void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,string Md5Hash,	/*{{{*/
 			   pkgAcquire::MethodConfig *Cnf)
 {
    if(Debug)
@@ -665,7 +628,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 
    FileFd fd(FinalFile, FileFd::ReadOnly);
    SHA1Summation SHA1;
-   SHA1.AddFD(fd.Fd(), fd.Size());
+   SHA1.AddFD(fd);
    string local_sha1 = string(SHA1.Result());
    if(Debug)
       std::clog << "QueueNextDiff: " 
@@ -710,7 +673,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    return true;
 }
 									/*}}}*/
-void pkgAcqIndexDiffs::Done(string Message,unsigned long Size,string Md5Hash,	/*{{{*/
+void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Hash,	/*{{{*/
 			    pkgAcquire::MethodConfig *Cnf)
 {
    if(Debug)
@@ -808,6 +771,13 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    if (CompressionExtension.empty() == false)
       CompressionExtension.erase(CompressionExtension.end()-1);
 
+   // only verify non-optional targets, see acquire-item.h for a FIXME
+   // to make this more flexible
+   if (Target->IsOptional())
+     Verify = false;
+   else
+     Verify = true;
+
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
 									/*}}}*/
@@ -881,7 +851,7 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
    to the uncompressed version of the file. If this is so the file
    is copied into the partial directory. In all other cases the file
    is decompressed with a gzip uri. */
-void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
+void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 		       pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hash,Cfg);
@@ -905,6 +875,7 @@ void pkgAcqIndex::Done(string Message,unsigned long Size,string Hash,
 
       /* Verify the index file for correctness (all indexes must
        * have a Package field) (LP: #346386) (Closes: #627642) */
+      if (Verify == true)
       {
 	 FileFd fd(DestFile, FileFd::ReadOnly);
 	 pkgTagSection sec;
@@ -1123,7 +1094,7 @@ string pkgAcqMetaSig::Custom600Headers()
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 
-void pkgAcqMetaSig::Done(string Message,unsigned long Size,string MD5,
+void pkgAcqMetaSig::Done(string Message,unsigned long long Size,string MD5,
 			 pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,MD5,Cfg);
@@ -1232,7 +1203,7 @@ string pkgAcqMetaIndex::Custom600Headers()
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-void pkgAcqMetaIndex::Done(string Message,unsigned long Size,string Hash,	/*{{{*/
+void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,string Hash,	/*{{{*/
 			   pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hash,Cfg);
@@ -1373,6 +1344,18 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
       return;
    }
 #endif
+   bool transInRelease = false;
+   {
+      std::vector<std::string> const keys = MetaIndexParser->MetaKeys();
+      for (std::vector<std::string>::const_iterator k = keys.begin(); k != keys.end(); ++k)
+	 // FIXME: Feels wrong to check for hardcoded string here, but what should we do else…
+	 if (k->find("Translation-") != std::string::npos)
+	 {
+	    transInRelease = true;
+	    break;
+	 }
+   }
+
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         ++Target)
@@ -1410,8 +1393,15 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 if ((*Target)->IsSubIndex() == true)
 	    new pkgAcqSubIndex(Owner, (*Target)->URI, (*Target)->Description,
 				(*Target)->ShortDesc, ExpectedIndexHash);
-	 else
-	    new pkgAcqIndexTrans(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
+	 else if (transInRelease == false || MetaIndexParser->Exists((*Target)->MetaKey) == true)
+	 {
+	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
+		MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true)
+	       new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
+				   (*Target)->ShortDesc, ExpectedIndexHash);
+	    else
+	       new pkgAcqIndexTrans(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
+	 }
 	 continue;
       }
 
@@ -1738,6 +1728,8 @@ bool pkgAcqArchive::QueueNext()
       string PkgFile = Parse.FileName();
       if (ForceHash.empty() == false)
       {
+	 if(stringcasecmp(ForceHash, "sha512") == 0)
+	    ExpectedHash = HashString("SHA512", Parse.SHA512Hash());
 	 if(stringcasecmp(ForceHash, "sha256") == 0)
 	    ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
 	 else if (stringcasecmp(ForceHash, "sha1") == 0)
@@ -1748,7 +1740,9 @@ bool pkgAcqArchive::QueueNext()
       else
       {
 	 string Hash;
-	 if ((Hash = Parse.SHA256Hash()).empty() == false)
+	 if ((Hash = Parse.SHA512Hash()).empty() == false)
+	    ExpectedHash = HashString("SHA512", Hash);
+	 else if ((Hash = Parse.SHA256Hash()).empty() == false)
 	    ExpectedHash = HashString("SHA256", Hash);
 	 else if ((Hash = Parse.SHA1Hash()).empty() == false)
 	    ExpectedHash = HashString("SHA1", Hash);
@@ -1772,7 +1766,7 @@ bool pkgAcqArchive::QueueNext()
       if (stat(FinalFile.c_str(),&Buf) == 0)
       {
 	 // Make sure the size matches
-	 if ((unsigned)Buf.st_size == Version->Size)
+	 if ((unsigned long long)Buf.st_size == Version->Size)
 	 {
 	    Complete = true;
 	    Local = true;
@@ -1791,7 +1785,7 @@ bool pkgAcqArchive::QueueNext()
       if (stat(FinalFile.c_str(),&Buf) == 0)
       {
 	 // Make sure the size matches
-	 if ((unsigned)Buf.st_size == Version->Size)
+	 if ((unsigned long long)Buf.st_size == Version->Size)
 	 {
 	    Complete = true;
 	    Local = true;
@@ -1811,12 +1805,23 @@ bool pkgAcqArchive::QueueNext()
       if (stat(DestFile.c_str(),&Buf) == 0)
       {
 	 // Hmm, the partial file is too big, erase it
-	 if ((unsigned)Buf.st_size > Version->Size)
+	 if ((unsigned long long)Buf.st_size > Version->Size)
 	    unlink(DestFile.c_str());
 	 else
 	    PartialSize = Buf.st_size;
       }
-      
+
+      // Disables download of archives - useful if no real installation follows,
+      // e.g. if we are just interested in proposed installation order
+      if (_config->FindB("Debug::pkgAcqArchive::NoQueue", false) == true)
+      {
+	 Complete = true;
+	 Local = true;
+	 Status = StatDone;
+	 StoreFilename = DestFile = FinalFile;
+	 return true;
+      }
+
       // Create the item
       Local = false;
       Desc.URI = Index->ArchiveURI(PkgFile);
@@ -1834,7 +1839,7 @@ bool pkgAcqArchive::QueueNext()
 // AcqArchive::Done - Finished fetching					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqArchive::Done(string Message,unsigned long Size,string CalcHash,
+void pkgAcqArchive::Done(string Message,unsigned long long Size,string CalcHash,
 			 pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,CalcHash,Cfg);
@@ -1945,7 +1950,7 @@ void pkgAcqArchive::Finished()
 // ---------------------------------------------------------------------
 /* The file is added to the queue */
 pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
-		       unsigned long Size,string Dsc,string ShortDesc,
+		       unsigned long long Size,string Dsc,string ShortDesc,
 		       const string &DestDir, const string &DestFilename,
                        bool IsIndexFile) :
                        Item(Owner), ExpectedHash(Hash), IsIndexFile(IsIndexFile)
@@ -1973,7 +1978,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
    if (stat(DestFile.c_str(),&Buf) == 0)
    {
       // Hmm, the partial file is too big, erase it
-      if ((unsigned)Buf.st_size > Size)
+      if ((unsigned long long)Buf.st_size > Size)
 	 unlink(DestFile.c_str());
       else
 	 PartialSize = Buf.st_size;
@@ -1985,7 +1990,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
 // AcqFile::Done - Item downloaded OK					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqFile::Done(string Message,unsigned long Size,string CalcHash,
+void pkgAcqFile::Done(string Message,unsigned long long Size,string CalcHash,
 		      pkgAcquire::MethodConfig *Cnf)
 {
    Item::Done(Message,Size,CalcHash,Cnf);
@@ -2073,13 +2078,3 @@ string pkgAcqFile::Custom600Headers()
    return "";
 }
 									/*}}}*/
-bool IndexTarget::IsOptional() const {
-   if (strncmp(ShortDesc.c_str(), "Translation", 11) != 0)
-      return false;
-   return true;
-}
-bool IndexTarget::IsSubIndex() const {
-   if (ShortDesc != "TranslationIndex")
-      return false;
-   return true;
-}

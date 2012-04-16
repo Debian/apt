@@ -14,18 +14,26 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/acquire-item.h>
-    
-#include <apti18n.h>
+#include <apt-pkg/edsp.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/progress.h>
+
 #include <sys/types.h>
 #include <cstdlib>
 #include <algorithm>
 #include <iostream>
+#include <stdio.h>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -327,6 +335,12 @@ bool pkgFixBroken(pkgDepCache &Cache)
  */
 bool pkgDistUpgrade(pkgDepCache &Cache)
 {
+   std::string const solver = _config->Find("APT::Solver", "internal");
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, false, true, false, &Prog);
+   }
+
    pkgDepCache::ActionGroup group(Cache);
 
    /* Upgrade all installed packages first without autoinst to help the resolver
@@ -379,6 +393,12 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    to install packages not marked for install */
 bool pkgAllUpgrade(pkgDepCache &Cache)
 {
+   std::string const solver = _config->Find("APT::Solver", "internal");
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);
+   }
+
    pkgDepCache::ActionGroup group(Cache);
 
    pkgProblemResolver Fix(&Cache);
@@ -451,11 +471,11 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 // ProblemResolver::pkgProblemResolver - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : Cache(*pCache)
+pkgProblemResolver::pkgProblemResolver(pkgDepCache *pCache) : d(NULL), Cache(*pCache)
 {
    // Allocate memory
    unsigned long Size = Cache.Head().PackageCount;
-   Scores = new signed short[Size];
+   Scores = new int[Size];
    Flags = new unsigned char[Size];
    memset(Flags,0,sizeof(*Flags)*Size);
    
@@ -495,20 +515,20 @@ void pkgProblemResolver::MakeScores()
    memset(Scores,0,sizeof(*Scores)*Size);
 
    // Important Required Standard Optional Extra
-   signed short PrioMap[] = {
+   int PrioMap[] = {
       0,
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Important",3),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Required",2),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Standard",1),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Optional",-1),
-      (signed short) _config->FindI("pkgProblemResolver::Scores::Extra",-2)
+      _config->FindI("pkgProblemResolver::Scores::Important",3),
+      _config->FindI("pkgProblemResolver::Scores::Required",2),
+      _config->FindI("pkgProblemResolver::Scores::Standard",1),
+      _config->FindI("pkgProblemResolver::Scores::Optional",-1),
+      _config->FindI("pkgProblemResolver::Scores::Extra",-2)
    };
-   signed short PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
-   signed short PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
-   signed short PrioDepends = _config->FindI("pkgProblemResolver::Scores::Depends",1);
-   signed short PrioRecommends = _config->FindI("pkgProblemResolver::Scores::Recommends",1);
-   signed short AddProtected = _config->FindI("pkgProblemResolver::Scores::AddProtected",10000);
-   signed short AddEssential = _config->FindI("pkgProblemResolver::Scores::AddEssential",5000);
+   int PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
+   int PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
+   int PrioDepends = _config->FindI("pkgProblemResolver::Scores::Depends",1);
+   int PrioRecommends = _config->FindI("pkgProblemResolver::Scores::Recommends",1);
+   int AddProtected = _config->FindI("pkgProblemResolver::Scores::AddProtected",10000);
+   int AddEssential = _config->FindI("pkgProblemResolver::Scores::AddEssential",5000);
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
       clog << "Settings used to calculate pkgProblemResolver::Scores::" << endl
@@ -530,13 +550,14 @@ void pkgProblemResolver::MakeScores()
       if (Cache[I].InstallVer == 0)
 	 continue;
       
-      signed short &Score = Scores[I->ID];
+      int &Score = Scores[I->ID];
       
       /* This is arbitrary, it should be high enough to elevate an
          essantial package above most other packages but low enough
 	 to allow an obsolete essential packages to be removed by
 	 a conflicts on a powerfull normal package (ie libc6) */
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential
+	  || (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Score += PrioEssentials;
 
       // We transform the priority
@@ -568,7 +589,7 @@ void pkgProblemResolver::MakeScores()
    }   
    
    // Copy the scores to advoid additive looping
-   SPtrArray<signed short> OldScores = new signed short[Size];
+   SPtrArray<int> OldScores = new int[Size];
    memcpy(OldScores,Scores,sizeof(*Scores)*Size);
       
    /* Now we cause 1 level of dependency inheritance, that is we add the 
@@ -611,7 +632,8 @@ void pkgProblemResolver::MakeScores()
    {
       if ((Flags[I->ID] & Protected) != 0)
 	 Scores[I->ID] += AddProtected;
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
+          (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Scores[I->ID] += AddEssential;
    }
 }
@@ -725,7 +747,20 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
    return true;
 }
 									/*}}}*/
-// ProblemResolver::Resolve - Run the resolution pass			/*{{{*/
+// ProblemResolver::Resolve - calls a resolver to fix the situation	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgProblemResolver::Resolve(bool BrokenFix)
+{
+   std::string const solver = _config->Find("APT::Solver", "internal");
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, false, false, false, &Prog);
+   }
+   return ResolveInternal(BrokenFix);
+}
+									/*}}}*/
+// ProblemResolver::ResolveInternal - Run the resolution pass		/*{{{*/
 // ---------------------------------------------------------------------
 /* This routines works by calculating a score for each package. The score
    is derived by considering the package's priority and all reverse 
@@ -739,11 +774,9 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
  
    The BrokenFix flag enables a mode where the algorithm tries to 
    upgrade packages to advoid problems. */
-bool pkgProblemResolver::Resolve(bool BrokenFix)
+bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 {
    pkgDepCache::ActionGroup group(Cache);
-
-   unsigned long Size = Cache.Head().PackageCount;
 
    // Record which packages are marked for install
    bool Again = false;
@@ -774,7 +807,9 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
       clog << "Starting" << endl;
    
    MakeScores();
-   
+
+   unsigned long const Size = Cache.Head().PackageCount;
+
    /* We have to order the packages so that the broken fixing pass 
       operates from highest score to lowest. This prevents problems when
       high score packages cause the removal of lower score packages that
@@ -1065,8 +1100,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
 		  LEnd->Dep = End;
 		  LEnd++;
 		  
-		  if (Start->Type != pkgCache::Dep::Conflicts &&
-		      Start->Type != pkgCache::Dep::Obsoletes)
+		  if (Start.IsNegative() == false)
 		     break;
 	       }
 	    }
@@ -1176,7 +1210,6 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    return true;
 }
 									/*}}}*/
-
 // ProblemResolver::BreaksInstOrPolicy - Check if the given pkg is broken/*{{{*/
 // ---------------------------------------------------------------------
 /* This checks if the given package is broken either by a hard dependency
@@ -1207,13 +1240,28 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
 
    return false;
 }
-
+									/*}}}*/
 // ProblemResolver::ResolveByKeep - Resolve problems using keep		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the work horse of the soft upgrade routine. It is very gental 
    in that it does not install or remove any packages. It is assumed that the
    system was non-broken previously. */
 bool pkgProblemResolver::ResolveByKeep()
+{
+   std::string const solver = _config->Find("APT::Solver", "internal");
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);
+   }
+   return ResolveByKeepInternal();
+}
+									/*}}}*/
+// ProblemResolver::ResolveByKeepInternal - Resolve problems using keep	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is the work horse of the soft upgrade routine. It is very gental
+   in that it does not install or remove any packages. It is assumed that the
+   system was non-broken previously. */
+bool pkgProblemResolver::ResolveByKeepInternal()
 {
    pkgDepCache::ActionGroup group(Cache);
 
@@ -1384,6 +1432,13 @@ static int PrioComp(const void *A,const void *B)
    if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential &&
        (R.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
      return -1;
+
+   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important &&
+       (R.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important)
+     return 1;
+   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important &&
+       (R.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
+     return -1;
    
    if (L->Priority != R->Priority)
       return R->Priority - L->Priority;
@@ -1398,7 +1453,7 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    qsort(List,Count,sizeof(*List),PrioComp);
 }
 									/*}}}*/
-// CacheFile::ListUpdate - update the cache files                    	/*{{{*/
+// ListUpdate - update the cache files					/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple wrapper to update the cache. it will fetch stuff
  * from the network (or any other sources defined in sources.list)

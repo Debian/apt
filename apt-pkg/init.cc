@@ -8,19 +8,23 @@
    ##################################################################### */
 									/*}}}*/
 // Include files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/init.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/configuration.h>
 
-#include <apti18n.h>
-#include <config.h>
 #include <cstdlib>
 #include <sys/stat.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 #define Stringfy_(x) # x
 #define Stringfy(x)  Stringfy_(x)
-const char *pkgVersion = VERSION;
+const char *pkgVersion = PACKAGE_VERSION;
 const char *pkgLibVersion = Stringfy(APT_PKG_MAJOR) "."
                             Stringfy(APT_PKG_MINOR) "." 
                             Stringfy(APT_PKG_RELEASE);
@@ -74,6 +78,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("Dir::Etc::trusted", "trusted.gpg");
    Cnf.CndSet("Dir::Etc::trustedparts","trusted.gpg.d");
    Cnf.CndSet("Dir::Bin::methods","/usr/lib/apt/methods");
+   Cnf.CndSet("Dir::Bin::solvers::","/usr/lib/apt/solvers");
    Cnf.CndSet("Dir::Media::MountPath","/media/apt");
 
    // State   
@@ -104,14 +109,14 @@ bool pkgInitConfig(Configuration &Cnf)
    }
 
    // Read the configuration parts dir
-   string Parts = Cnf.FindDir("Dir::Etc::parts");
+   std::string Parts = Cnf.FindDir("Dir::Etc::parts");
    if (DirectoryExists(Parts) == true)
       Res &= ReadConfigDir(Cnf,Parts);
    else
       _error->WarningE("DirectoryExists",_("Unable to read %s"),Parts.c_str());
 
    // Read the main config file
-   string FName = Cnf.FindFile("Dir::Etc::main");
+   std::string FName = Cnf.FindFile("Dir::Etc::main");
    if (RealFileExists(FName) == true)
       Res &= ReadConfigFile(Cnf,FName);
 
@@ -138,7 +143,7 @@ bool pkgInitConfig(Configuration &Cnf)
 bool pkgInitSystem(Configuration &Cnf,pkgSystem *&Sys)
 {
    Sys = 0;
-   string Label = Cnf.Find("Apt::System","");
+   std::string Label = Cnf.Find("Apt::System","");
    if (Label.empty() == false)
    {
       Sys = pkgSystem::GetSystem(Label.c_str());

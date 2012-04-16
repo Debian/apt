@@ -16,20 +16,22 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
-
-#include <config.h>
-#include <apti18n.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include <locale.h>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -70,7 +72,7 @@ bool DoDump(CommandLine &CmdL)
 /* */
 int ShowHelp()
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
       return 0;
@@ -131,6 +133,22 @@ int main(int argc,const char *argv[])					/*{{{*/
    _config->Clear("APT::Architectures");
    for (std::vector<std::string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
       _config->Set("APT::Architectures::", *a);
+
+   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
+   _config->Clear("APT::Compressor");
+   string conf = "APT::Compressor::";
+   for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin(); c != compressors.end(); ++c)
+   {
+      string comp = conf + c->Name + "::";
+      _config->Set(comp + "Name", c->Name);
+      _config->Set(comp + "Extension", c->Extension);
+      _config->Set(comp + "Binary", c->Binary);
+      _config->Set(std::string(comp + "Cost").c_str(), c->Cost);
+      for (std::vector<std::string>::const_iterator a = c->CompressArgs.begin(); a != c->CompressArgs.end(); ++a)
+	 _config->Set(comp + "CompressArg::", *a);
+      for (std::vector<std::string>::const_iterator a = c->UncompressArgs.begin(); a != c->UncompressArgs.end(); ++a)
+	 _config->Set(comp + "UncompressArg::", *a);
+   }
 
    // Match the operation
    CmdL.DispatchArg(Cmds);

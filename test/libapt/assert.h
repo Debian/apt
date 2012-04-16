@@ -26,6 +26,18 @@ void assertEquals(int const &expect, unsigned int const &get, unsigned long cons
 	assertEquals<unsigned int const&, unsigned int const&>(expect, get, line);
 }
 
+void assertEquals(unsigned long const &expect, int const &get, unsigned long const &line) {
+	if (get < 0)
+		OutputAssertEqual(expect, "==", get, line);
+	assertEquals<unsigned long const&, unsigned long const&>(expect, get, line);
+}
+
+void assertEquals(int const &expect, unsigned long const &get, unsigned long const &line) {
+	if (expect < 0)
+		OutputAssertEqual(expect, "==", get, line);
+	assertEquals<unsigned long const&, unsigned long const&>(expect, get, line);
+}
+
 
 #define equalsOr2(x,y,z) assertEqualsOr2(y, z, x, __LINE__)
 

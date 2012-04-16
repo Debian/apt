@@ -8,10 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 
-#ifndef APT_HTTP_H
-#define APT_HTTP_H
-
-#define MAXLEN 360
+#ifndef APT_HTTPS_H
+#define APT_HTTPS_H
 
 #include <iostream>
 #include <curl/curl.h>
@@ -20,7 +18,7 @@ using std::cout;
 using std::endl;
 
 class HttpsMethod;
-
+class FileFd;
 
 class HttpsMethod : public pkgAcqMethod
 {
@@ -45,6 +43,7 @@ class HttpsMethod : public pkgAcqMethod
    };
 };
 
+#include <apt-pkg/strutl.h>
 URI Proxy;
 
 #endif

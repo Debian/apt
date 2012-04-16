@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/aptconfiguration.h>
@@ -45,9 +47,9 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator Ver) const
+std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator Ver) const
 {
-   return string();
+   return std::string();
 }
 									/*}}}*/
 // IndexFile::FindInCache - Stub					/*{{{*/
@@ -61,10 +63,10 @@ pkgCache::PkgFileIterator pkgIndexFile::FindInCache(pkgCache &Cache) const
 // IndexFile::SourceIndex - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &Record,
+std::string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &Record,
 				pkgSrcRecords::File const &File) const
 {
-   return string();
+   return std::string();
 }
 									/*}}}*/
 // IndexFile::TranslationsAvailable - Check if will use Translation	/*{{{*/
@@ -96,7 +98,7 @@ __attribute__ ((deprecated)) bool pkgIndexFile::CheckLanguageCode(const char *La
 /* As we have now possibly more than one LanguageCode this method is
    supersided by a) private classmembers or b) getLanguages().
    TODO: Remove method with next API break */
-__attribute__ ((deprecated)) string pkgIndexFile::LanguageCode() {
+__attribute__ ((deprecated)) std::string pkgIndexFile::LanguageCode() {
 	if (TranslationsAvailable() == false)
 		return "";
 	return APT::Configuration::getLanguages()[0];

@@ -15,7 +15,7 @@ include $(DEBIANDOC_H)
 ifdef XSLTPROC
 # generate a list of accepted man page translations
 SOURCE = $(patsubst %.xml,%,$(wildcard *.?.xml))
-INCLUDES = apt.ent
+INCLUDES = apt.ent apt-verbatim.ent
 STYLESHEET=manpage-style.xsl
 
 LOCAL := manpage-$(firstword $(SOURCE))
@@ -67,25 +67,20 @@ veryclean-subdirs:
 		rm -rf $$dir; \
 	done
 
+.PHONY: update-po po4a stats
+
 ifdef PO4A
 doc: po4a
 
-clean: po4a-clean
-
-.PHONY: update-po po4a stats
 update-po:
 	po4a --previous --no-backups --force --no-translations po4a.conf
 
-po4a-clean:
-	po4a --previous --rm-backups --rm-translations po4a.conf
-
 po4a:
 	po4a --previous --no-backups po4a.conf
+endif
 
 stats:
 	for i in po/*.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
-
-endif
 
 ifdef DOXYGEN
 DOXYGEN_SOURCES = $(shell find $(BASE)/apt-pkg -not -name .\\\#* -and \( -name \*.cc -or -name \*.h \) )
@@ -95,9 +90,6 @@ clean: doxygen-clean
 doxygen-clean:
 	rm -fr $(BUILD)/doc/doxygen
 	rm -f $(BUILD)/doc/doxygen-stamp
-
-$(BUILD)/doc/Doxyfile: Doxyfile.in
-	(cd $(BUILD) && ./config.status doc/Doxyfile)
 
 $(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
 	rm -fr $(BUILD)/doc/doxygen

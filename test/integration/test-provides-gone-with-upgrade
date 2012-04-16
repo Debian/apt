@@ -1,0 +1,26 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertinstalledpackage 'apt' 'i386' '0.8.14' 'Provides: libapt-pkg4.10'
+insertpackage 'unstable' 'apt' 'i386' '0.8.15' 'Depends: libapt-pkg4.10'
+insertpackage 'unstable' 'libapt-pkg4.10' 'i386' '0.8.15' 'Breaks: apt (<< 0.8.15)
+Replaces: apt (<< 0.8.15)'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libapt-pkg4.10
+The following packages will be upgraded:
+  apt
+1 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst apt [0.8.14] (0.8.15 unstable [i386]) []
+Inst libapt-pkg4.10 (0.8.15 unstable [i386])
+Conf libapt-pkg4.10 (0.8.15 unstable [i386])
+Conf apt (0.8.15 unstable [i386])' aptget dist-upgrade -s

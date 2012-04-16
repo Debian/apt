@@ -18,13 +18,15 @@
 
 class debSrcRecordParser : public pkgSrcRecords::Parser
 {
+   /** \brief dpointer placeholder (for later in case we need it) */
+   void *d;
+
    FileFd Fd;
    pkgTagFile Tags;
    pkgTagSection Sect;
-   char *StaticBinList[400];
+   std::vector<const char*> StaticBinList;
    unsigned long iOffset;
    char *Buffer;
-   unsigned int BufSize;
    
    public:
 
@@ -32,25 +34,25 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual bool Step() {iOffset = Tags.Offset(); return Tags.Step(Sect);};
    virtual bool Jump(unsigned long const &Off) {iOffset = Off; return Tags.Jump(Sect,Off);};
 
-   virtual string Package() const {return Sect.FindS("Package");};
-   virtual string Version() const {return Sect.FindS("Version");};
-   virtual string Maintainer() const {return Sect.FindS("Maintainer");};
-   virtual string Section() const {return Sect.FindS("Section");};
+   virtual std::string Package() const {return Sect.FindS("Package");};
+   virtual std::string Version() const {return Sect.FindS("Version");};
+   virtual std::string Maintainer() const {return Sect.FindS("Maintainer");};
+   virtual std::string Section() const {return Sect.FindS("Section");};
    virtual const char **Binaries();
-   virtual bool BuildDepends(vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true);
+   virtual bool BuildDepends(std::vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true);
    virtual unsigned long Offset() {return iOffset;};
-   virtual string AsStr() 
+   virtual std::string AsStr() 
    {
       const char *Start=0,*Stop=0;
       Sect.GetSection(Start,Stop);
-      return string(Start,Stop);
+      return std::string(Start,Stop);
    };
-   virtual bool Files(vector<pkgSrcRecords::File> &F);
+   virtual bool Files(std::vector<pkgSrcRecords::File> &F);
 
-   debSrcRecordParser(string const &File,pkgIndexFile const *Index) 
-      : Parser(Index), Fd(File,FileFd::ReadOnlyGzip), Tags(&Fd,102400), 
-        Buffer(0), BufSize(0) {}
-   ~debSrcRecordParser();
+   debSrcRecordParser(std::string const &File,pkgIndexFile const *Index) 
+      : Parser(Index), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400), 
+        Buffer(NULL) {}
+   virtual ~debSrcRecordParser();
 };
 
 #endif

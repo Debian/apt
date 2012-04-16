@@ -16,8 +16,10 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include <apt-pkg/extracttar.h>
+#include<config.h>
 
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
@@ -28,6 +30,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <iostream>
+
 #include <apti18n.h>
 									/*}}}*/
 

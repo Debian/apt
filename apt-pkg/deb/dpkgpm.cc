@@ -8,6 +8,8 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/dpkgpm.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
@@ -16,6 +18,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/cachefile.h>
+#include <apt-pkg/packagemanager.h>
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -40,11 +43,27 @@
 #include <sys/ioctl.h>
 #include <pty.h>
 
-#include <config.h>
 #include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
+
+class pkgDPkgPMPrivate 
+{
+public:
+   pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
+			term_out(NULL), history_out(NULL)
+   {
+      dpkgbuf[0] = '\0';
+   }
+   bool stdin_is_dev_null;
+   // the buffer we use for the dpkg status-fd reading
+   char dpkgbuf[1024];
+   int dpkgbuf_pos;
+   FILE *term_out;
+   FILE *history_out;
+   string dpkg_error;
+};
 
 namespace
 {
@@ -91,7 +110,7 @@ ionice(int PID)
 {
    if (!FileExists("/usr/bin/ionice"))
       return false;
-   pid_t Process = ExecFork();      
+   pid_t Process = ExecFork();
    if (Process == 0)
    {
       char buf[32];
@@ -106,13 +125,52 @@ ionice(int PID)
    return ExecWait(Process, "ionice");
 }
 
+// dpkgChrootDirectory - chrooting for dpkg if needed			/*{{{*/
+static void dpkgChrootDirectory()
+{
+   std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+   if (chrootDir == "/")
+      return;
+   std::cerr << "Chrooting into " << chrootDir << std::endl;
+   if (chroot(chrootDir.c_str()) != 0)
+      _exit(100);
+}
+									/*}}}*/
+
+
+// FindNowVersion - Helper to find a Version in "now" state	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is helpful when a package is no longer installed but has residual 
+ * config files
+ */
+static 
+pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
+{
+   pkgCache::VerIterator Ver;
+   for (Ver = Pkg.VersionList(); Ver.end() == false; Ver++)
+   {
+      pkgCache::VerFileIterator Vf = Ver.FileList();
+      pkgCache::PkgFileIterator F = Vf.File();
+      for (F = Vf.File(); F.end() == false; F++)
+      {
+         if (F && F.Archive())
+         {
+            if (strcmp(F.Archive(), "now")) 
+               return Ver;
+         }
+      }
+   }
+   return Ver;
+}
+									/*}}}*/
+
 // DPkgPM::pkgDPkgPM - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), dpkgbuf_pos(0),
-     term_out(NULL), history_out(NULL), PackagesDone(0), PackagesTotal(0)
+   : pkgPackageManager(Cache), PackagesDone(0), PackagesTotal(0)
 {
+   d = new pkgDPkgPMPrivate();
 }
 									/*}}}*/
 // DPkgPM::pkgDPkgPM - Destructor					/*{{{*/
@@ -120,6 +178,7 @@ pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache)
 /* */
 pkgDPkgPM::~pkgDPkgPM()
 {
+   delete d;
 }
 									/*}}}*/
 // DPkgPM::Install - Install a package					/*{{{*/
@@ -310,15 +369,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 SetCloseExec(STDIN_FILENO,false);      
 	 SetCloseExec(STDERR_FILENO,false);
 
-	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
-	 {
-	    std::cerr << "Chrooting into " 
-		      << _config->FindDir("DPkg::Chroot-Directory") 
-		      << std::endl;
-	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
-	       _exit(100);
-	 }
-
+	 dpkgChrootDirectory();
 	 const char *Args[4];
 	 Args[0] = "/bin/sh";
 	 Args[1] = "-c";
@@ -374,9 +425,9 @@ void pkgDPkgPM::DoStdin(int master)
    unsigned char input_buf[256] = {0,}; 
    ssize_t len = read(0, input_buf, sizeof(input_buf));
    if (len)
-      write(master, input_buf, len);
+      FileFd::Write(master, input_buf, len);
    else
-      stdin_is_dev_null = true;
+      d->stdin_is_dev_null = true;
 }
 									/*}}}*/
 // DPkgPM::DoTerminalPty - Read the terminal pty and write log		/*{{{*/
@@ -400,9 +451,9 @@ void pkgDPkgPM::DoTerminalPty(int master)
    }  
    if(len <= 0) 
       return;
-   write(1, term_buf, len);
-   if(term_out)
-      fwrite(term_buf, len, sizeof(char), term_out);
+   FileFd::Write(1, term_buf, len);
+   if(d->term_out)
+      fwrite(term_buf, len, sizeof(char), d->term_out);
 }
 									/*}}}*/
 // DPkgPM::ProcessDpkgStatusBuf                                        	/*{{{*/
@@ -475,7 +526,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
 
@@ -499,7 +550,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       pkgFailures++;
@@ -513,7 +564,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       return;
@@ -541,7 +592,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
    }
@@ -606,14 +657,14 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    char *p, *q;
    int len;
 
-   len=read(statusfd, &dpkgbuf[dpkgbuf_pos], sizeof(dpkgbuf)-dpkgbuf_pos);
-   dpkgbuf_pos += len;
+   len=read(statusfd, &d->dpkgbuf[d->dpkgbuf_pos], sizeof(d->dpkgbuf)-d->dpkgbuf_pos);
+   d->dpkgbuf_pos += len;
    if(len <= 0)
       return;
 
    // process line by line if we have a buffer
-   p = q = dpkgbuf;
-   while((q=(char*)memchr(p, '\n', dpkgbuf+dpkgbuf_pos-p)) != NULL)
+   p = q = d->dpkgbuf;
+   while((q=(char*)memchr(p, '\n', d->dpkgbuf+d->dpkgbuf_pos-p)) != NULL)
    {
       *q = 0;
       ProcessDpkgStatusLine(OutStatusFd, p);
@@ -621,8 +672,8 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    }
 
    // now move the unprocessed bits (after the final \n that is now a 0x0) 
-   // to the start and update dpkgbuf_pos
-   p = (char*)memrchr(dpkgbuf, 0, dpkgbuf_pos);
+   // to the start and update d->dpkgbuf_pos
+   p = (char*)memrchr(d->dpkgbuf, 0, d->dpkgbuf_pos);
    if(p == NULL)
       return;
 
@@ -630,8 +681,8 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    p++;
 
    // move the unprocessed tail to the start and update pos
-   memmove(dpkgbuf, p, p-dpkgbuf);
-   dpkgbuf_pos = dpkgbuf+dpkgbuf_pos-p;
+   memmove(d->dpkgbuf, p, p-d->dpkgbuf);
+   d->dpkgbuf_pos = d->dpkgbuf+d->dpkgbuf_pos-p;
 }
 									/*}}}*/
 // DPkgPM::WriteHistoryTag						/*{{{*/
@@ -643,7 +694,7 @@ void pkgDPkgPM::WriteHistoryTag(string const &tag, string value)
    // poor mans rstrip(", ")
    if (value[length-2] == ',' && value[length-1] == ' ')
       value.erase(length - 2, 2);
-   fprintf(history_out, "%s: %s\n", tag.c_str(), value.c_str());
+   fprintf(d->history_out, "%s: %s\n", tag.c_str(), value.c_str());
 }									/*}}}*/
 // DPkgPM::OpenLog							/*{{{*/
 bool pkgDPkgPM::OpenLog()
@@ -664,11 +715,11 @@ bool pkgDPkgPM::OpenLog()
 				   _config->Find("Dir::Log::Terminal"));
    if (!logfile_name.empty())
    {
-      term_out = fopen(logfile_name.c_str(),"a");
-      if (term_out == NULL)
+      d->term_out = fopen(logfile_name.c_str(),"a");
+      if (d->term_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), logfile_name.c_str());
-      setvbuf(term_out, NULL, _IONBF, 0);
-      SetCloseExec(fileno(term_out), true);
+      setvbuf(d->term_out, NULL, _IONBF, 0);
+      SetCloseExec(fileno(d->term_out), true);
       struct passwd *pw;
       struct group *gr;
       pw = getpwnam("root");
@@ -676,7 +727,7 @@ bool pkgDPkgPM::OpenLog()
       if (pw != NULL && gr != NULL)
 	  chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid);
       chmod(logfile_name.c_str(), 0644);
-      fprintf(term_out, "\nLog started: %s\n", timestr);
+      fprintf(d->term_out, "\nLog started: %s\n", timestr);
    }
 
    // write your history
@@ -684,11 +735,11 @@ bool pkgDPkgPM::OpenLog()
 				   _config->Find("Dir::Log::History"));
    if (!history_name.empty())
    {
-      history_out = fopen(history_name.c_str(),"a");
-      if (history_out == NULL)
+      d->history_out = fopen(history_name.c_str(),"a");
+      if (d->history_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
       chmod(history_name.c_str(), 0644);
-      fprintf(history_out, "\nStart-Date: %s\n", timestr);
+      fprintf(d->history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, reinstall, upgrade, downgrade;
       for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
       {
@@ -729,7 +780,7 @@ bool pkgDPkgPM::OpenLog()
       WriteHistoryTag("Downgrade",downgrade);
       WriteHistoryTag("Remove",remove);
       WriteHistoryTag("Purge",purge);
-      fflush(history_out);
+      fflush(d->history_out);
    }
    
    return true;
@@ -743,16 +794,16 @@ bool pkgDPkgPM::CloseLog()
    struct tm *tmp = localtime(&t);
    strftime(timestr, sizeof(timestr), "%F  %T", tmp);
 
-   if(term_out)
+   if(d->term_out)
    {
-      fprintf(term_out, "Log ended: ");
-      fprintf(term_out, "%s", timestr);
-      fprintf(term_out, "\n");
-      fclose(term_out);
+      fprintf(d->term_out, "Log ended: ");
+      fprintf(d->term_out, "%s", timestr);
+      fprintf(d->term_out, "\n");
+      fclose(d->term_out);
    }
-   term_out = NULL;
+   d->term_out = NULL;
 
-   if(history_out)
+   if(d->history_out)
    {
       if (disappearedPkgs.empty() == false)
       {
@@ -769,12 +820,12 @@ bool pkgDPkgPM::CloseLog()
 	 }
 	 WriteHistoryTag("Disappeared", disappear);
       }
-      if (dpkg_error.empty() == false)
-	 fprintf(history_out, "Error: %s\n", dpkg_error.c_str());
-      fprintf(history_out, "End-Date: %s\n", timestr);
-      fclose(history_out);
+      if (d->dpkg_error.empty() == false)
+	 fprintf(d->history_out, "Error: %s\n", d->dpkg_error.c_str());
+      fprintf(d->history_out, "End-Date: %s\n", timestr);
+      fclose(d->history_out);
    }
-   history_out = NULL;
+   d->history_out = NULL;
 
    return true;
 }
@@ -811,6 +862,58 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
 */
 bool pkgDPkgPM::Go(int OutStatusFd)
 {
+   pkgPackageManager::SigINTStop = false;
+
+   // Generate the base argument list for dpkg
+   std::vector<const char *> Args;
+   unsigned long StartSize = 0;
+   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   {
+      string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
+      size_t dpkgChrootLen = dpkgChrootDir.length();
+      if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
+      {
+	 if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
+	    --dpkgChrootLen;
+	 Tmp = Tmp.substr(dpkgChrootLen);
+      }
+   }
+   Args.push_back(Tmp.c_str());
+   StartSize += Tmp.length();
+
+   // Stick in any custom dpkg options
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+	 StartSize += Opts->Value.length();
+      }
+   }
+
+   size_t const BaseArgs = Args.size();
+   // we need to detect if we can qualify packages with the architecture or not
+   Args.push_back("--assert-multi-arch");
+   Args.push_back(NULL);
+
+   pid_t dpkgAssertMultiArch = ExecFork();
+   if (dpkgAssertMultiArch == 0)
+   {
+      dpkgChrootDirectory();
+      // redirect everything to the ultimate sink as we only need the exit-status
+      int const nullfd = open("/dev/null", O_RDONLY);
+      dup2(nullfd, STDIN_FILENO);
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
+      execvp(Args[0], (char**) &Args[0]);
+      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
+      _exit(2);
+   }
+
    fd_set rfds;
    struct timespec tv;
    sigset_t sigmask;
@@ -882,32 +985,25 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }
    }
 
-   stdin_is_dev_null = false;
+   d->stdin_is_dev_null = false;
 
    // create log
    OpenLog();
 
-   // Generate the base argument list for dpkg
-   std::vector<const char *> Args;
-   unsigned long StartSize = 0;
-   string const Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-   Args.push_back(Tmp.c_str());
-   StartSize += Tmp.length();
-
-   // Stick in any custom dpkg options
-   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
-   if (Opts != 0)
+   bool dpkgMultiArch = false;
+   if (dpkgAssertMultiArch > 0)
    {
-      Opts = Opts->Child;
-      for (; Opts != 0; Opts = Opts->Next)
+      int Status = 0;
+      while (waitpid(dpkgAssertMultiArch, &Status, 0) != dpkgAssertMultiArch)
       {
-	 if (Opts->Value.empty() == true)
+	 if (errno == EINTR)
 	    continue;
-	 Args.push_back(Opts->Value.c_str());
-	 StartSize += Opts->Value.length();
+	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --assert-multi-arch");
+	 break;
       }
+      if (WIFEXITED(Status) == true && WEXITSTATUS(Status) == 0)
+	 dpkgMultiArch = true;
    }
-   size_t const BaseArgs = Args.size();
 
    // this loop is runs once per operation
    for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
@@ -943,20 +1039,24 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // the argument list is split in a way that A depends on B
       // and they are in the same "--configure A B" run
       // - with the split they may now be configured in different
-      //   runs 
+      //   runs, using Immediate-Configure-All can help prevent this.
       if (J - I > (signed)MaxArgs)
       {
 	 J = I + MaxArgs;
-	 Args.reserve(MaxArgs + 10);
+	 unsigned long const size = MaxArgs + 10;
+	 Args.reserve(size);
+	 Packages.reserve(size);
       }
       else
       {
-	 Args.reserve((J - I) + 10);
+	 unsigned long const size = (J - I) + 10;
+	 Args.reserve(size);
+	 Packages.reserve(size);
       }
 
-      
       int fd[2];
-      pipe(fd);
+      if (pipe(fd) != 0)
+	 return _error->Errno("pipe","Failed to create IPC pipe to dpkg");
 
 #define ADDARG(X) Args.push_back(X); Size += strlen(X)
 #define ADDARGC(X) Args.push_back(X); Size += sizeof(X) - 1
@@ -965,6 +1065,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       char status_fd_buf[20];
       snprintf(status_fd_buf,sizeof(status_fd_buf),"%i", fd[1]);
       ADDARG(status_fd_buf);
+      unsigned long const Op = I->Op;
 
       switch (I->Op)
       {
@@ -1028,14 +1129,29 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	       continue;
 	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
-	    if (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all"))
+	    // We keep this here to allow "smooth" transitions from e.g. multiarch dpkg/ubuntu to dpkg/debian
+	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all")))
 	    {
 	       char const * const name = I->Pkg.Name();
 	       ADDARG(name);
 	    }
 	    else
 	    {
-	       char * const fullname = strdup(I->Pkg.FullName(false).c_str());
+	       pkgCache::VerIterator PkgVer;
+	       std::string name = I->Pkg.Name();
+	       if (Op == Item::Remove || Op == Item::Purge) 
+               {
+		  PkgVer = I->Pkg.CurrentVer();
+                  if(PkgVer.end() == true)
+                     PkgVer = FindNowVersion(I->Pkg);
+               }
+	       else
+		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
+               if (PkgVer.end() == false)
+                  name.append(":").append(PkgVer.Arch());
+               else
+                  _error->Warning("Can not find PkgVer for '%s'", name.c_str());
+	       char * const fullname = strdup(name.c_str());
 	       Packages.push_back(fullname);
 	       ADDARG(fullname);
 	    }
@@ -1067,8 +1183,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 it to all processes in the group. Since dpkg ignores the signal 
 	 it doesn't die but we do! So we must also ignore it */
       sighandler_t old_SIGQUIT = signal(SIGQUIT,SIG_IGN);
-      sighandler_t old_SIGINT = signal(SIGINT,SIG_IGN);
-
+      sighandler_t old_SIGINT = signal(SIGINT,SigINT);
+      
+      // Check here for any SIGINT
+      if (pkgPackageManager::SigINTStop && (Op == Item::Remove || Op == Item::Purge || Op == Item::Install)) 
+         break;
+      
+      
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
 
@@ -1087,8 +1208,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    const char *s = _("Can not write log, openpty() "
 	                      "failed (/dev/pts not mounted?)\n");
 	    fprintf(stderr, "%s",s);
-            if(term_out)
-              fprintf(term_out, "%s",s);
+            if(d->term_out)
+              fprintf(d->term_out, "%s",s);
 	    master = slave = -1;
 	 }  else {
 	    struct termios rtt;
@@ -1106,7 +1227,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
 	 }
       }
-
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
@@ -1117,7 +1237,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 		<< (PackagesDone/float(PackagesTotal)*100.0) 
 		<< ":" << _("Running dpkg")
 		<< endl;
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       }
       Child = ExecFork();
             
@@ -1136,14 +1256,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 }
 	 close(fd[0]); // close the read end of the pipe
 
-	 if (_config->FindDir("DPkg::Chroot-Directory","/") != "/") 
-	 {
-	    std::cerr << "Chrooting into " 
-		      << _config->FindDir("DPkg::Chroot-Directory") 
-		      << std::endl;
-	    if (chroot(_config->FindDir("DPkg::Chroot-Directory","/").c_str()) != 0)
-	       _exit(100);
-	 }
+	 dpkgChrootDirectory();
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
@@ -1213,13 +1326,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    // Restore sig int/quit
 	    signal(SIGQUIT,old_SIGQUIT);
 	    signal(SIGINT,old_SIGINT);
+
 	    signal(SIGHUP,old_SIGHUP);
 	    return _error->Errno("waitpid","Couldn't wait for subprocess");
 	 }
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 if (master >= 0 && !stdin_is_dev_null)
+	 if (master >= 0 && !d->stdin_is_dev_null)
 	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
@@ -1253,6 +1367,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // Restore sig int/quit
       signal(SIGQUIT,old_SIGQUIT);
       signal(SIGINT,old_SIGINT);
+      
       signal(SIGHUP,old_SIGHUP);
 
       if(master >= 0) 
@@ -1273,14 +1388,14 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    RunScripts("DPkg::Post-Invoke");
 
 	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
-	    strprintf(dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
+	    strprintf(d->dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
 	 else if (WIFEXITED(Status) != 0)
-	    strprintf(dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
+	    strprintf(d->dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
 	 else 
-	    strprintf(dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
+	    strprintf(d->dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
 
-	 if(dpkg_error.size() > 0)
-	    _error->Error("%s", dpkg_error.c_str());
+	 if(d->dpkg_error.size() > 0)
+	    _error->Error("%s", d->dpkg_error.c_str());
 
 	 if(stopOnError) 
 	 {
@@ -1290,6 +1405,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }      
    }
    CloseLog();
+   
+   if (pkgPackageManager::SigINTStop)
+       _error->Warning(_("Operation was interrupted before it could finish"));
 
    if (RunScripts("DPkg::Post-Invoke") == false)
       return false;
@@ -1314,6 +1432,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    Cache.writeStateFile(NULL);
    return true;
 }
+
+void SigINT(int sig) {
+   pkgPackageManager::SigINTStop = true;
+}
 									/*}}}*/
 // pkgDpkgPM::Reset - Dump the contents of the command list		/*{{{*/
 // ---------------------------------------------------------------------
@@ -1328,6 +1450,12 @@ void pkgDPkgPM::Reset()
 /* */
 void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg) 
 {
+   // If apport doesn't exist or isn't installed do nothing
+   // This e.g. prevents messages in 'universes' without apport
+   pkgCache::PkgIterator apportPkg = Cache.FindPkg("apport");
+   if (apportPkg.end() == true || apportPkg->CurrentVer == 0)
+      return;
+
    string pkgname, reportfile, srcpkgname, pkgver, arch;
    string::size_type pos;
    FILE *report;
@@ -1415,7 +1543,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
 	 if(strstr(strbuf,"Package:") == strbuf)
 	 {
 	    char pkgname[255], version[255];
-	    if(sscanf(strbuf, "Package: %s %s", pkgname, version) == 2)
+	    if(sscanf(strbuf, "Package: %254s %254s", pkgname, version) == 2)
 	       if(strcmp(pkgver.c_str(), version) == 0)
 	       {
 		  fclose(report);
@@ -1444,8 +1572,8 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    fprintf(report, "ErrorMessage:\n %s\n", errormsg);
 
    // ensure that the log is flushed
-   if(term_out)
-      fflush(term_out);
+   if(d->term_out)
+      fflush(d->term_out);
 
    // attach terminal log it if we have it
    string logfile_name = _config->FindFile("Dir::Log::Terminal");

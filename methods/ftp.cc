@@ -15,11 +15,14 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/configuration.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -30,7 +33,6 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <iostream>
-#include <apti18n.h>
 
 // Internet stuff
 #include <netinet/in.h>
@@ -41,6 +43,7 @@
 #include "rfc2553emu.h"
 #include "connect.h"
 #include "ftp.h"
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -74,6 +77,7 @@ FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1),
 {
    Debug = _config->FindB("Debug::Acquire::Ftp",false);
    PasvAddr = 0;
+   Buffer[0] = '\0';
 }
 									/*}}}*/
 // FTPConn::~FTPConn - Destructor					/*{{{*/
@@ -618,8 +622,7 @@ bool FTPConn::ExtGoPasv()
    }
    
    // Get a new passive address.
-   int Res;
-   if ((Res = getaddrinfo(IP.c_str(),PStr,&Hints,&PasvAddr)) != 0)
+   if (getaddrinfo(IP.c_str(),PStr,&Hints,&PasvAddr) != 0)
       return true;
    
    return true;
@@ -628,7 +631,7 @@ bool FTPConn::ExtGoPasv()
 // FTPConn::Size - Return the size of a file				/*{{{*/
 // ---------------------------------------------------------------------
 /* Grab the file size from the server, 0 means no size or empty file */
-bool FTPConn::Size(const char *Path,unsigned long &Size)
+bool FTPConn::Size(const char *Path,unsigned long long &Size)
 {
    // Query the size
    unsigned int Tag;
@@ -638,7 +641,7 @@ bool FTPConn::Size(const char *Path,unsigned long &Size)
       return false;
    
    char *End;
-   Size = strtol(Msg.c_str(),&End,10);
+   Size = strtoull(Msg.c_str(),&End,10);
    if (Tag >= 400 || End == Msg.c_str())
       Size = 0;
    return true;
@@ -717,14 +720,13 @@ bool FTPConn::CreateDataFd()
    DataListenFd = -1;
 
    // Get the information for a listening socket.
-   struct addrinfo *BindAddr = 0;
+   struct addrinfo *BindAddr = NULL;
    struct addrinfo Hints;
    memset(&Hints,0,sizeof(Hints));
    Hints.ai_socktype = SOCK_STREAM;
    Hints.ai_flags |= AI_PASSIVE;
    Hints.ai_family = ((struct sockaddr *)&ServerAddr)->sa_family;
-   int Res;
-   if ((Res = getaddrinfo(0,"0",&Hints,&BindAddr)) != 0)
+   if (getaddrinfo(0,"0",&Hints,&BindAddr) != 0 || BindAddr == NULL)
       return _error->Error(_("getaddrinfo was unable to get a listening socket"));
    
    // Construct the socket
@@ -840,7 +842,7 @@ bool FTPConn::Finalize()
 // ---------------------------------------------------------------------
 /* This opens a data connection, sends REST and RETR and then
    transfers the file over. */
-bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
+bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
 		  Hashes &Hash,bool &Missing)
 {
    Missing = false;
@@ -865,7 +867,7 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long Resume,
    
    if (Resume != 0)
    {
-      if (Hash.AddFD(To.Fd(),Resume) == false)
+      if (Hash.AddFD(To,Resume) == false)
       {
 	 _error->Errno("read",_("Problem hashing file"));
 	 return false;
@@ -1003,7 +1005,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    
    // Get the files information
    Status(_("Query"));
-   unsigned long Size;
+   unsigned long long Size;
    if (Server->Size(File,Size) == false ||
        Server->ModTime(File,FailTime) == false)
    {
@@ -1025,7 +1027,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
    struct stat Buf;
    if (stat(Itm->DestFile.c_str(),&Buf) == 0)
    {
-      if (Size == (unsigned)Buf.st_size && FailTime == Buf.st_mtime)
+      if (Size == (unsigned long long)Buf.st_size && FailTime == Buf.st_mtime)
       {
 	 Res.Size = Buf.st_size;
 	 Res.LastModified = Buf.st_mtime;
@@ -1035,7 +1037,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       }
       
       // Resume?
-      if (FailTime == Buf.st_mtime && Size > (unsigned)Buf.st_size)
+      if (FailTime == Buf.st_mtime && Size > (unsigned long long)Buf.st_size)
 	 Res.ResumePoint = Buf.st_size;
    }
    

@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+
+insertinstalledpackage 'openjdk-6-jre' 'i386' '6b16-1.8-0ubuntu1' 
+insertpackage 'unstable' 'openjdk-6-jre' 'i386' '6b20-1.9.8-0ubuntu1~10.04.1' 'Conflicts: openjdk-6-jre-headless (<< 6b17~pre3-1), openjdk-6-jre-lib (<< 6b17~pre3-1)'
+insertinstalledpackage 'openjdk-6-jre-lib' 'i386' '6b16-1.8-0ubuntu1' 
+insertpackage 'unstable' 'openjdk-6-jre-lib' 'i386' '6b20-1.9.8-0ubuntu1~10.04.1' 'Conflicts:  openjdk-6-jre (<< 6b17~pre3-1), openjdk-6-jre-headless (<< 6b17~pre3-1)'
+insertinstalledpackage 'openjdk-6-jre-headless' 'i386' '6b16-1.8-0ubuntu1' 
+insertpackage 'unstable' 'openjdk-6-jre-headless' 'i386' '6b20-1.9.8-0ubuntu1~10.04.1' 'Conflicts:  openjdk-6-jre (<< 6b17~pre3-1), openjdk-6-jre-lib (<< 6b17~pre3-1)'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  openjdk-6-jre openjdk-6-jre-headless openjdk-6-jre-lib
+  openjdk-6-jre-lib:i386 conflicts with openjdk-6-jre:i386
+    openjdk-6-jre:i386 conflicts with openjdk-6-jre-headless:i386
+      openjdk-6-jre-headless:i386 conflicts with openjdk-6-jre:i386
+3 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Remv openjdk-6-jre [6b16-1.8-0ubuntu1]
+      openjdk-6-jre-headless:i386 conflicts with openjdk-6-jre-lib:i386
+Remv openjdk-6-jre-lib [6b16-1.8-0ubuntu1]
+Inst openjdk-6-jre-headless [6b16-1.8-0ubuntu1] (6b20-1.9.8-0ubuntu1~10.04.1 unstable [i386])
+    openjdk-6-jre:i386 conflicts with openjdk-6-jre-lib:i386
+    openjdk-6-jre:i386 conflicts with openjdk-6-jre-lib:i386
+Inst openjdk-6-jre [6b16-1.8-0ubuntu1] (6b20-1.9.8-0ubuntu1~10.04.1 unstable [i386])
+Inst openjdk-6-jre-lib [6b16-1.8-0ubuntu1] (6b20-1.9.8-0ubuntu1~10.04.1 unstable [i386])
+Conf openjdk-6-jre-lib (6b20-1.9.8-0ubuntu1~10.04.1 unstable [i386])
+Conf openjdk-6-jre (6b20-1.9.8-0ubuntu1~10.04.1 unstable [i386])
+Conf openjdk-6-jre-headless (6b20-1.9.8-0ubuntu1~10.04.1 unstable [i386])' aptget dist-upgrade -s -o APT::Immediate-Configure-All=true

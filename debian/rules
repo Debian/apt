@@ -5,6 +5,7 @@
 
 export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+export DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 # FOR AUTOCONF 2.52 AND NEWER ONLY
 ifeq ($(DEB_BUILD_GNU_TYPE), $(DEB_HOST_GNU_TYPE))
@@ -18,6 +19,8 @@ endif
 
 ifneq (,$(shell which dpkg-buildflags))
   export CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
+  export LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
+  export CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS)
 else
   ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
     export CXXFLAGS = -O0 -g -Wall
@@ -31,9 +34,6 @@ build:
 
 PKG=apt
 DEB_BUILD_PROG:=debuild --preserve-envvar PATH --preserve-envvar CCACHE_DIR -us -uc $(DEB_BUILD_PROG_OPTS)
-APT_DEBVER=$(shell dpkg-parsechangelog |sed -n -e '/^Version:/s/^Version: //p' | sed -e 's/\+.*$$//')
-APT_CONFVER=$(shell sed -n -e 's/^AC_DEFINE_UNQUOTED(VERSION,"\(.*\)")/\1/p' configure.in)
-APT_CVSTAG=$(shell echo "$(APT_DEBVER)" | sed -e 's/^/v/' -e 's/\./_/g')
 
 # Determine the build directory to use
 BASE=.
@@ -50,19 +50,8 @@ ifeq ($(words $(BLD)),0)
 override BLD := ./build
 endif
 
-# Rebuild configure.in to have the correct version from the change log
-ifneq ($(APT_DEBVER),$(APT_CONFVER))
-ifneq ($(APT_DEBVER),)
-.PHONY: configure.in
-configure.in:
-	sed -e 's/$(APT_CONFVER)/$(APT_DEBVER)/' $@ > $@.$$$$ && mv $@.$$$$ $@
-endif
-else
-configure.in:
-endif
-
 # APT Programs in apt-utils
-APT_UTILS=ftparchive sortpkgs extracttemplates
+APT_UTILS=ftparchive sortpkgs extracttemplates internal-solver
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -70,9 +59,9 @@ APT_UTILS=ftparchive sortpkgs extracttemplates
 # Find the libapt-pkg major version for use in other control files
 include buildlib/libversion.mak
 
-# Determine which package we should provide in the control files
-LIBAPTPKG_PROVIDE=libapt-pkg$(LIBAPTPKG_MAJOR)
-LIBAPTINST_PROVIDE=libapt-inst$(LIBAPTINST_MAJOR)
+# Determine which library package names to use
+LIBAPT_PKG=libapt-pkg$(LIBAPTPKG_MAJOR)
+LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 
 # do not fail as we are just experimenting with symbol files for now
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
@@ -91,12 +80,16 @@ build/configure-stamp: configure
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
-	cd build && CXXFLAGS="$(CXXFLAGS)" ../configure $(confflags)
+	cd build && CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" ../configure $(confflags)
 	touch $@
 
 build/build-stamp: build/configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE) binary
+	# compat symlink for the locale split
+	mkdir -p build/usr/share 
+	cd build/usr/share && ln -f -s ../../locale .
+	# compile and run tests
 ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
 	$(MAKE) test
 else
@@ -114,6 +107,11 @@ clean:
 
 	[ ! -f Makefile ] || $(MAKE) clean distclean
 	rm -rf build
+	rm -f debian/$(LIBAPT_PKG).install debian/$(LIBAPT_INST).install \
+	      debian/libapt-pkg-dev.install
+
+debian/%.install: debian/%.install.in
+	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
 
 binary-indep: apt-doc libapt-pkg-doc
 # Build architecture-independent files here.
@@ -139,7 +137,7 @@ libapt-pkg-doc: build-doc
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -167,7 +165,7 @@ apt-doc: build-doc
 
 # Build architecture-dependent files here.
 
-binary-arch: apt libapt-pkg-dev apt-utils apt-transport-https
+binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
 apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
 apt: build build-doc
 	dh_testdir -p$@
@@ -187,7 +185,7 @@ apt: build build-doc
 	dh_install -p$@ --sourcedir=$(BLD)
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS))
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver)
 
 	# https has its own package
 	rm debian/$@/usr/lib/apt/methods/https
@@ -207,14 +205,13 @@ apt: build build-doc
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
-	dh_makeshlibs -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
-	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE)
+	dh_shlibdeps -p$@
+	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-libapt-pkg-dev: build
+libapt-pkg-dev: build debian/libapt-pkg-dev.install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -229,7 +226,7 @@ libapt-pkg-dev: build
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_gencontrol -p$@ -- -Vlibapt-pkg:provides=$(LIBAPTPKG_PROVIDE) -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
+	dh_gencontrol -p$@ -- -Vlibapt-pkg-name=$(LIBAPT_PKG) -Vlibapt-inst-name=$(LIBAPT_INST)
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -241,8 +238,10 @@ apt-utils: build
 	dh_installdirs -p$@
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
+	cp $(BLD)/bin/apt-dump-solver debian/$@/usr/lib/apt/solvers/dump
 
 	dh_install -p$@ --sourcedir=$(BLD)
+	dh_link -p$@
 	dh_installdocs -p$@
 	dh_installexamples -p$@
 
@@ -255,8 +254,46 @@ apt-utils: build
 	dh_fixperms -p$@
 	dh_makeshlibs -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
-	dh_gencontrol -p$@ -- -Vlibapt-inst:provides=$(LIBAPTINST_PROVIDE)
+	dh_shlibdeps -p$@
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
+$(LIBAPT_PKG): build debian/$(LIBAPT_PKG).install
+	dh_testdir -p$@
+	dh_testroot -p$@
+	dh_prep -p$@
+	dh_installdirs -p$@
+
+	dh_install -p$@ --sourcedir=$(BLD)
+	dh_installdocs -p$@
+	dh_installchangelogs -p$@
+	dh_strip -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_makeshlibs -p$@
+	dh_installdeb -p$@
+	dh_shlibdeps -p$@ 
+	dh_gencontrol -p$@
+	dh_md5sums -p$@
+	dh_builddeb -p$@
+
+$(LIBAPT_INST): build debian/$(LIBAPT_INST).install
+	dh_testdir -p$@
+	dh_testroot -p$@
+	dh_prep -p$@
+	dh_installdirs -p$@
+
+	dh_install -p$@ --sourcedir=$(BLD)
+	dh_installdocs -p$@
+	dh_installchangelogs -p$@
+	dh_strip -p$@
+	dh_compress -p$@
+	dh_fixperms -p$@
+	dh_makeshlibs -p$@
+	dh_installdeb -p$@
+	dh_shlibdeps -p$@ 
+	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
@@ -278,7 +315,7 @@ apt-transport-https: build libapt-pkg-dev
 	dh_compress -p$@
 	dh_fixperms -p$@
 	dh_installdeb -p$@
-	dh_shlibdeps -p$@ -l$(CURDIR)/debian/apt/usr/lib:$(CURDIR)/debian/$@/usr/lib
+	dh_shlibdeps -p$@ 
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@

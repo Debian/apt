@@ -8,18 +8,24 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/debrecords.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/fileutl.h>
+
 #include <langinfo.h>
 									/*}}}*/
+
+using std::string;
 
 // RecordParser::debRecordParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 debRecordParser::debRecordParser(string FileName,pkgCache &Cache) : 
-                  File(FileName,FileFd::ReadOnlyGzip), 
+                  File(FileName,FileFd::ReadOnly, FileFd::Extension),
                   Tags(&File, std::max(Cache.Head().MaxVerFileSize, 
 				       Cache.Head().MaxDescFileSize) + 200)
 {
@@ -77,12 +83,20 @@ string debRecordParser::SHA1Hash()
    return Section.FindS("SHA1");
 }
 									/*}}}*/
-// RecordParser::SHA1Hash - Return the archive hash			/*{{{*/
+// RecordParser::SHA256Hash - Return the archive hash			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 string debRecordParser::SHA256Hash()
 {
    return Section.FindS("SHA256");
+}
+									/*}}}*/
+// RecordParser::SHA512Hash - Return the archive hash			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::SHA512Hash()
+{
+   return Section.FindS("SHA512");
 }
 									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/
@@ -93,6 +107,15 @@ string debRecordParser::Maintainer()
    return Section.FindS("Maintainer");
 }
 									/*}}}*/
+// RecordParser::RecordField - Return the value of an arbitrary field       /*{{*/
+// ---------------------------------------------------------------------
+/* */
+string debRecordParser::RecordField(const char *fieldName)
+{
+   return Section.FindS(fieldName);
+}
+
+                                                                        /*}}}*/
 // RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -116,8 +139,8 @@ string debRecordParser::LongDesc()
      orig = Section.FindS("Description").c_str();
   else
   {
-     vector<string> const lang = APT::Configuration::getLanguages();
-     for (vector<string>::const_iterator l = lang.begin();
+     std::vector<string> const lang = APT::Configuration::getLanguages();
+     for (std::vector<string>::const_iterator l = lang.begin();
 	  orig.empty() && l != lang.end(); ++l)
 	orig = Section.FindS(string("Description-").append(*l).c_str());
   }

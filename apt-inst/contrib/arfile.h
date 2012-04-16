@@ -17,7 +17,11 @@
 
 
 #include <string>
+#ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/fileutl.h>
+#endif
+
+class FileFd;
 
 class ARArchive
 {
@@ -49,12 +53,12 @@ class ARArchive
 struct ARArchive::Member
 {
    // Fields from the header
-   string Name;
+   std::string Name;
    unsigned long MTime;
    unsigned long UID;
    unsigned long GID;
    unsigned long Mode;
-   unsigned long Size;
+   unsigned long long Size;
    
    // Location of the data.
    unsigned long Start;

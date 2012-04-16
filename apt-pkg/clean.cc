@@ -8,23 +8,26 @@
    ##################################################################### */
 									/*}}}*/
 // Includes								/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/clean.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
-
-#include <apti18n.h>    
+#include <apt-pkg/fileutl.h>
 
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#include <apti18n.h>
 									/*}}}*/
 // ArchiveCleaner::Go - Perform smart cleanup of the archive		/*{{{*/
 // ---------------------------------------------------------------------
 /* Scan the directory for files to erase, we check the version information
    against our database to see if it is interesting */
-bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
+bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
 {
    bool CleanInstalled = _config->FindB("APT::Clean-Installed",true);
       
@@ -32,7 +35,7 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
 
-   string StartDir = SafeGetCWD();
+   std::string StartDir = SafeGetCWD();
    if (chdir(Dir.c_str()) != 0)
    {
       closedir(D);
@@ -51,9 +54,11 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
       struct stat St;
       if (stat(Dir->d_name,&St) != 0)
       {
-	 chdir(StartDir.c_str());
+	 _error->Errno("stat",_("Unable to stat %s."),Dir->d_name);
 	 closedir(D);
-	 return _error->Errno("stat",_("Unable to stat %s."),Dir->d_name);
+	 if (chdir(StartDir.c_str()) != 0)
+	    return _error->Errno("chdir", _("Unable to change to %s"), StartDir.c_str());
+	 return false;
       }
       
       // Grab the package name
@@ -61,21 +66,21 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
       for (; *I != 0 && *I != '_';I++);
       if (*I != '_')
 	 continue;
-      string Pkg = DeQuoteString(string(Dir->d_name,I-Dir->d_name));
+      std::string Pkg = DeQuoteString(std::string(Dir->d_name,I-Dir->d_name));
 
       // Grab the version
       const char *Start = I + 1;
       for (I = Start; *I != 0 && *I != '_';I++);
       if (*I != '_')
 	 continue;
-      string Ver = DeQuoteString(string(Start,I-Start));
+      std::string Ver = DeQuoteString(std::string(Start,I-Start));
   
       // Grab the arch
       Start = I + 1;
       for (I = Start; *I != 0 && *I != '.' ;I++);
       if (*I != '.')
 	 continue;
-      string const Arch = DeQuoteString(string(Start,I-Start));
+      std::string const Arch = DeQuoteString(std::string(Start,I-Start));
       
       if (APT::Configuration::checkArchitecture(Arch) == false)
 	 continue;
@@ -112,8 +117,9 @@ bool pkgArchiveCleaner::Go(string Dir,pkgCache &Cache)
       Erase(Dir->d_name,Pkg,Ver,St);
    };
    
-   chdir(StartDir.c_str());
    closedir(D);
-   return true;   
+   if (chdir(StartDir.c_str()) != 0)
+      return _error->Errno("chdir", _("Unable to change to %s"), StartDir.c_str());
+   return true;
 }
 									/*}}}*/

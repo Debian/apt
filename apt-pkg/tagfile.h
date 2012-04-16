@@ -20,19 +20,25 @@
 #ifndef PKGLIB_TAGFILE_H
 #define PKGLIB_TAGFILE_H
 
-
-#include <apt-pkg/fileutl.h>
 #include <stdio.h>
-    
+
+#include <string>
+
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/fileutl.h>
+#endif
+
+class FileFd;
+
 class pkgTagSection
 {
    const char *Section;
-   
    // We have a limit of 256 tags per section.
    unsigned int Indexes[256];
    unsigned int AlphaIndexes[0x100];
-   
    unsigned int TagCount;
+   // dpointer placeholder (for later in case we need it)
+   void *d;
 
    /* This very simple hash function for the last 8 letters gives
       very good performance on the debian package files */
@@ -44,7 +50,6 @@ class pkgTagSection
       return Res & 0xFF;
    }
 
-
    protected:
    const char *Stop;
 
@@ -55,7 +60,7 @@ class pkgTagSection
    
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
    bool Find(const char *Tag,unsigned &Pos) const;
-   string FindS(const char *Tag) const;
+   std::string FindS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const ;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char *Tag,unsigned long &Flags,
@@ -80,17 +85,13 @@ class pkgTagSection
    };
    
    pkgTagSection() : Section(0), TagCount(0), Stop(0) {};
+   virtual ~pkgTagSection() {};
 };
 
+class pkgTagFilePrivate;
 class pkgTagFile
 {
-   FileFd &Fd;
-   char *Buffer;
-   char *Start;
-   char *End;
-   bool Done;
-   unsigned long iOffset;
-   unsigned long Size;
+   pkgTagFilePrivate *d;
 
    bool Fill();
    bool Resize();
@@ -98,11 +99,11 @@ class pkgTagFile
    public:
 
    bool Step(pkgTagSection &Section);
-   inline unsigned long Offset() {return iOffset;};
-   bool Jump(pkgTagSection &Tag,unsigned long Offset);
+   unsigned long Offset();
+   bool Jump(pkgTagSection &Tag,unsigned long long Offset);
 
-   pkgTagFile(FileFd *F,unsigned long Size = 32*1024);
-   ~pkgTagFile();
+   pkgTagFile(FileFd *F,unsigned long long Size = 32*1024);
+   virtual ~pkgTagFile();
 };
 
 /* This is the list of things to rewrite. The rewriter

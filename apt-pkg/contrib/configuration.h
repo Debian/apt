@@ -34,7 +34,9 @@
 #include <vector>
 #include <iostream>
 
+#ifndef APT_8_CLEANER_HEADERS
 using std::string;
+#endif
 
 class Configuration
 {
@@ -42,13 +44,13 @@ class Configuration
    
    struct Item
    {
-      string Value;
-      string Tag;
+      std::string Value;
+      std::string Tag;
       Item *Parent;
       Item *Child;
       Item *Next;
       
-      string FullTag(const Item *Stop = 0) const;
+      std::string FullTag(const Item *Stop = 0) const;
       
       Item() : Parent(0), Child(0), Next(0) {};
    };
@@ -67,35 +69,35 @@ class Configuration
    
    public:
 
-   string Find(const char *Name,const char *Default = 0) const;
-   string Find(string const &Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
-   string Find(string const &Name, string const &Default) const {return Find(Name.c_str(),Default.c_str());};
-   string FindFile(const char *Name,const char *Default = 0) const;
-   string FindDir(const char *Name,const char *Default = 0) const;
-   std::vector<string> FindVector(const char *Name) const;
-   std::vector<string> FindVector(string const &Name) const { return FindVector(Name.c_str()); };
+   std::string Find(const char *Name,const char *Default = 0) const;
+   std::string Find(std::string const &Name,const char *Default = 0) const {return Find(Name.c_str(),Default);};
+   std::string Find(std::string const &Name, std::string const &Default) const {return Find(Name.c_str(),Default.c_str());};
+   std::string FindFile(const char *Name,const char *Default = 0) const;
+   std::string FindDir(const char *Name,const char *Default = 0) const;
+   std::vector<std::string> FindVector(const char *Name) const;
+   std::vector<std::string> FindVector(std::string const &Name) const { return FindVector(Name.c_str()); };
    int FindI(const char *Name,int const &Default = 0) const;
-   int FindI(string const &Name,int const &Default = 0) const {return FindI(Name.c_str(),Default);};
+   int FindI(std::string const &Name,int const &Default = 0) const {return FindI(Name.c_str(),Default);};
    bool FindB(const char *Name,bool const &Default = false) const;
-   bool FindB(string const &Name,bool const &Default = false) const {return FindB(Name.c_str(),Default);};
-   string FindAny(const char *Name,const char *Default = 0) const;
+   bool FindB(std::string const &Name,bool const &Default = false) const {return FindB(Name.c_str(),Default);};
+   std::string FindAny(const char *Name,const char *Default = 0) const;
 	      
-   inline void Set(const string &Name,const string &Value) {Set(Name.c_str(),Value);};
-   void CndSet(const char *Name,const string &Value);
+   inline void Set(const std::string &Name,const std::string &Value) {Set(Name.c_str(),Value);};
+   void CndSet(const char *Name,const std::string &Value);
    void CndSet(const char *Name,const int Value);
-   void Set(const char *Name,const string &Value);
+   void Set(const char *Name,const std::string &Value);
    void Set(const char *Name,const int &Value);
    
-   inline bool Exists(const string &Name) const {return Exists(Name.c_str());};
+   inline bool Exists(const std::string &Name) const {return Exists(Name.c_str());};
    bool Exists(const char *Name) const;
    bool ExistsAny(const char *Name) const;
 
    // clear a whole tree
-   void Clear(const string &Name);
+   void Clear(const std::string &Name);
 
    // remove a certain value from a list (e.g. the list of "APT::Keep-Fds")
-   void Clear(string const &List, string const &Value);
-   void Clear(string const &List, int const &Value);
+   void Clear(std::string const &List, std::string const &Value);
+   void Clear(std::string const &List, int const &Value);
 
    inline const Item *Tree(const char *Name) const {return Lookup(Name);};
 
@@ -127,11 +129,11 @@ class Configuration
 
 extern Configuration *_config;
 
-bool ReadConfigFile(Configuration &Conf,const string &FName,
+bool ReadConfigFile(Configuration &Conf,const std::string &FName,
 		    bool const &AsSectional = false,
 		    unsigned const &Depth = 0);
 
-bool ReadConfigDir(Configuration &Conf,const string &Dir,
+bool ReadConfigDir(Configuration &Conf,const std::string &Dir,
 		   bool const &AsSectional = false,
 		   unsigned const &Depth = 0);
 

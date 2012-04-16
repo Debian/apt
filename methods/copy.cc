@@ -9,7 +9,10 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
@@ -35,7 +38,7 @@ class CopyMethod : public pkgAcqMethod
 bool CopyMethod::Fetch(FetchItem *Itm)
 {
    URI Get = Itm->Uri;
-   string File = Get.Path;
+   std::string File = Get.Path;
 
    // Stat the file and send a start message
    struct stat Buf;
@@ -82,7 +85,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    
    Hashes Hash;
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd.Fd(), Fd.Size());
+   Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
 
    URIDone(Res);

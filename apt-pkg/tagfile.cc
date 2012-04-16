@@ -11,39 +11,59 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
-#include <apti18n.h>
-    
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using std::string;
 
+class pkgTagFilePrivate
+{
+public:
+   pkgTagFilePrivate(FileFd *pFd, unsigned long long Size) : Fd(*pFd), Buffer(NULL),
+							     Start(NULL), End(NULL),
+							     Done(false), iOffset(0),
+							     Size(Size)
+   {
+   }
+   FileFd &Fd;
+   char *Buffer;
+   char *Start;
+   char *End;
+   bool Done;
+   unsigned long long iOffset;
+   unsigned long long Size;
+};
+
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
-     Fd(*pFd),
-     Size(Size)
+pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
 {
-   if (Fd.IsOpen() == false)
+   d = new pkgTagFilePrivate(pFd, Size);
+
+   if (d->Fd.IsOpen() == false)
    {
-      Buffer = 0;
-      Start = End = Buffer = 0;
-      Done = true;
-      iOffset = 0;
+      d->Start = d->End = d->Buffer = 0;
+      d->Done = true;
+      d->iOffset = 0;
       return;
    }
    
-   Buffer = new char[Size];
-   Start = End = Buffer;
-   Done = false;
-   iOffset = 0;
+   d->Buffer = new char[Size];
+   d->Start = d->End = d->Buffer;
+   d->Done = false;
+   d->iOffset = 0;
    Fill();
 }
 									/*}}}*/
@@ -52,7 +72,14 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long Size) :
 /* */
 pkgTagFile::~pkgTagFile()
 {
-   delete [] Buffer;
+   delete [] d->Buffer;
+   delete d;
+}
+									/*}}}*/
+// TagFile::Offset - Return the current offset in the buffer     	/*{{{*/
+unsigned long pkgTagFile::Offset()
+{
+   return d->iOffset;
 }
 									/*}}}*/
 // TagFile::Resize - Resize the internal buffer				/*{{{*/
@@ -63,22 +90,22 @@ pkgTagFile::~pkgTagFile()
 bool pkgTagFile::Resize()
 {
    char *tmp;
-   unsigned long EndSize = End - Start;
+   unsigned long long EndSize = d->End - d->Start;
 
    // fail is the buffer grows too big
-   if(Size > 1024*1024+1)
+   if(d->Size > 1024*1024+1)
       return false;
 
    // get new buffer and use it
-   tmp = new char[2*Size];
-   memcpy(tmp, Buffer, Size);
-   Size = Size*2;
-   delete [] Buffer;
-   Buffer = tmp;
+   tmp = new char[2*d->Size];
+   memcpy(tmp, d->Buffer, d->Size);
+   d->Size = d->Size*2;
+   delete [] d->Buffer;
+   d->Buffer = tmp;
 
    // update the start/end pointers to the new buffer
-   Start = Buffer;
-   End = Start + EndSize;
+   d->Start = d->Buffer;
+   d->End = d->Start + EndSize;
    return true;
 }
 									/*}}}*/
@@ -90,20 +117,20 @@ bool pkgTagFile::Resize()
  */
 bool pkgTagFile::Step(pkgTagSection &Tag)
 {
-   while (Tag.Scan(Start,End - Start) == false)
+   while (Tag.Scan(d->Start,d->End - d->Start) == false)
    {
       if (Fill() == false)
 	 return false;
       
-      if(Tag.Scan(Start,End - Start))
+      if(Tag.Scan(d->Start,d->End - d->Start))
 	 break;
 
       if (Resize() == false)
 	 return _error->Error(_("Unable to parse package file %s (1)"),
-				 Fd.Name().c_str());
+                              d->Fd.Name().c_str());
    }
-   Start += Tag.size();
-   iOffset += Tag.size();
+   d->Start += Tag.size();
+   d->iOffset += Tag.size();
 
    Tag.Trim();
    return true;
@@ -115,37 +142,37 @@ bool pkgTagFile::Step(pkgTagSection &Tag)
    then fills the rest from the file */
 bool pkgTagFile::Fill()
 {
-   unsigned long EndSize = End - Start;
-   unsigned long Actual = 0;
+   unsigned long long EndSize = d->End - d->Start;
+   unsigned long long Actual = 0;
    
-   memmove(Buffer,Start,EndSize);
-   Start = Buffer;
-   End = Buffer + EndSize;
+   memmove(d->Buffer,d->Start,EndSize);
+   d->Start = d->Buffer;
+   d->End = d->Buffer + EndSize;
    
-   if (Done == false)
+   if (d->Done == false)
    {
       // See if only a bit of the file is left
-      if (Fd.Read(End,Size - (End - Buffer),&Actual) == false)
+      if (d->Fd.Read(d->End, d->Size - (d->End - d->Buffer),&Actual) == false)
 	 return false;
-      if (Actual != Size - (End - Buffer))
-	 Done = true;
-      End += Actual;
+      if (Actual != d->Size - (d->End - d->Buffer))
+	 d->Done = true;
+      d->End += Actual;
    }
    
-   if (Done == true)
+   if (d->Done == true)
    {
       if (EndSize <= 3 && Actual == 0)
 	 return false;
-      if (Size - (End - Buffer) < 4)
+      if (d->Size - (d->End - d->Buffer) < 4)
 	 return true;
       
       // Append a double new line if one does not exist
       unsigned int LineCount = 0;
-      for (const char *E = End - 1; E - End < 6 && (*E == '\n' || *E == '\r'); E--)
+      for (const char *E = d->End - 1; E - d->End < 6 && (*E == '\n' || *E == '\r'); E--)
 	 if (*E == '\n')
 	    LineCount++;
       for (; LineCount < 2; LineCount++)
-	 *End++ = '\n';
+	 *d->End++ = '\n';
       
       return true;
    }
@@ -157,36 +184,36 @@ bool pkgTagFile::Fill()
 // ---------------------------------------------------------------------
 /* This jumps to a pre-recorded file location and reads the record
    that is there */
-bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long Offset)
+bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 {
    // We are within a buffer space of the next hit..
-   if (Offset >= iOffset && iOffset + (End - Start) > Offset)
+   if (Offset >= d->iOffset && d->iOffset + (d->End - d->Start) > Offset)
    {
-      unsigned long Dist = Offset - iOffset;
-      Start += Dist;
-      iOffset += Dist;
+      unsigned long long Dist = Offset - d->iOffset;
+      d->Start += Dist;
+      d->iOffset += Dist;
       return Step(Tag);
    }
 
    // Reposition and reload..
-   iOffset = Offset;
-   Done = false;
-   if (Fd.Seek(Offset) == false)
+   d->iOffset = Offset;
+   d->Done = false;
+   if (d->Fd.Seek(Offset) == false)
       return false;
-   End = Start = Buffer;
+   d->End = d->Start = d->Buffer;
    
    if (Fill() == false)
       return false;
 
-   if (Tag.Scan(Start,End - Start) == true)
+   if (Tag.Scan(d->Start, d->End - d->Start) == true)
       return true;
    
    // This appends a double new line (for the real eof handling)
    if (Fill() == false)
       return false;
    
-   if (Tag.Scan(Start,End - Start) == false)
-      return _error->Error(_("Unable to parse package file %s (2)"),Fd.Name().c_str());
+   if (Tag.Scan(d->Start, d->End - d->Start) == false)
+      return _error->Error(_("Unable to parse package file %s (2)"),d->Fd.Name().c_str());
    
    return true;
 }
@@ -457,6 +484,7 @@ static const char *iTFRewritePackageOrder[] = {
                           "MD5Sum",
                           "SHA1",
                           "SHA256",
+                          "SHA512",
                            "MSDOS-Filename",   // Obsolete
                           "Description",
                           0};

@@ -13,6 +13,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/error.h>
 
 #include <iostream>
@@ -24,8 +26,7 @@
 #include <string>
 #include <cstring>
 
-#include "config.h"
-   									/*}}}*/
+									/*}}}*/
 
 // Global Error Object							/*{{{*/
 /* If the implementation supports posix threads then the accessor function

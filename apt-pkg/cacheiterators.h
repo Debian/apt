@@ -32,6 +32,7 @@
 #include<iterator>
 
 #include<string.h>
+
 // abstract Iterator template						/*{{{*/
 /* This template provides the very basic iterator methods we
    need to have for doing some walk-over-the-cache magic */
@@ -111,7 +112,7 @@ class pkgCache::GrpIterator: public Iterator<Group, GrpIterator> {
 
 	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;};
 	inline PkgIterator PackageList() const;
-	PkgIterator FindPkg(string Arch = "any") const;
+	PkgIterator FindPkg(std::string Arch = "any") const;
 	/** \brief find the package with the "best" architecture
 
 	    The best architecture is either the "native" or the first
@@ -206,13 +207,8 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;};
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;};
 	inline const char *Arch() const {
-		if (S->MultiArch == pkgCache::Version::All ||
-		    S->MultiArch == pkgCache::Version::AllForeign ||
-		    S->MultiArch == pkgCache::Version::AllAllowed)
+		if ((S->MultiArch & pkgCache::Version::All) == pkgCache::Version::All)
 			return "all";
-		return S->ParentPkg == 0?0:Owner->StrP + ParentPkg()->Arch;
-	};
-	__deprecated inline const char *Arch(bool const pseudo) const {
 		return S->ParentPkg == 0?0:Owner->StrP + ParentPkg()->Arch;
 	};
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);};
@@ -224,10 +220,9 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline VerFileIterator FileList() const;
 	bool Downloadable() const;
 	inline const char *PriorityType() const {return Owner->Priority(S->Priority);};
-	string RelStr() const;
+	std::string RelStr() const;
 
 	bool Automatic() const;
-	__deprecated bool Pseudo() const;
 	VerFileIterator NewestFile() const;
 
 	inline VerIterator(pkgCache &Owner,Version *Trg = 0) : Iterator<Version, VerIterator>(Owner, Trg) {
@@ -288,6 +283,8 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	inline bool Reverse() const {return Type == DepRev;};
 	bool IsCritical() const;
 	bool IsNegative() const;
+	bool IsIgnorable(PrvIterator const &Prv) const;
+	bool IsIgnorable(PkgIterator const &Pkg) const;
 	void GlobOr(DepIterator &Start,DepIterator &End);
 	Version **AllTargets() const;
 	bool SmartTargetPkg(PkgIterator &Result) const;
@@ -371,7 +368,7 @@ class pkgCache::PkgFileIterator : public Iterator<PackageFile, PkgFileIterator> 
 	inline const char *IndexType() const {return S->IndexType == 0?0:Owner->StrP + S->IndexType;};
 
 	bool IsOk();
-	string RelStr();
+	std::string RelStr();
 
 	// Constructors
 	inline PkgFileIterator() : Iterator<PackageFile, PkgFileIterator>() {};

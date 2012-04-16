@@ -29,6 +29,8 @@
  */
 									/*}}} */
 // Include Files                                                        /*{{{*/
+#include <config.h>
+
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/macros.h>
@@ -36,7 +38,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <inttypes.h>
-#include <config.h>
 									/*}}}*/
 
 // SHA1Transform - Alters an existing SHA-1 hash			/*{{{*/
@@ -177,67 +178,6 @@ static void SHA1Transform(uint32_t state[5],uint8_t const buffer[64])
 }
 									/*}}}*/
 
-// SHA1SumValue::SHA1SumValue - Constructs the summation from a string  /*{{{*/
-// ---------------------------------------------------------------------
-/* The string form of a SHA1 is a 40 character hex number */
-SHA1SumValue::SHA1SumValue(string Str)
-{
-   memset(Sum,0,sizeof(Sum));
-   Set(Str);
-}
-
-									/*}}} */
-// SHA1SumValue::SHA1SumValue - Default constructor                     /*{{{*/
-// ---------------------------------------------------------------------
-/* Sets the value to 0 */
-SHA1SumValue::SHA1SumValue()
-{
-   memset(Sum,0,sizeof(Sum));
-}
-
-									/*}}} */
-// SHA1SumValue::Set - Set the sum from a string                        /*{{{*/
-// ---------------------------------------------------------------------
-/* Converts the hex string into a set of chars */
-bool SHA1SumValue::Set(string Str)
-{
-   return Hex2Num(Str,Sum,sizeof(Sum));
-}
-
-									/*}}} */
-// SHA1SumValue::Value - Convert the number into a string               /*{{{*/
-// ---------------------------------------------------------------------
-/* Converts the set of chars into a hex string in lower case */
-string SHA1SumValue::Value() const
-{
-   char Conv[16] =
-      { '0','1','2','3','4','5','6','7','8','9','a','b',
-      'c','d','e','f'
-   };
-   char Result[41];
-   Result[40] = 0;
-
-   // Convert each char into two letters
-   int J = 0;
-   int I = 0;
-   for (; I != 40; J++,I += 2)
-   {
-      Result[I] = Conv[Sum[J] >> 4];
-      Result[I + 1] = Conv[Sum[J] & 0xF];
-   }
-
-   return string(Result);
-}
-
-									/*}}} */
-// SHA1SumValue::operator == - Comparator                               /*{{{*/
-// ---------------------------------------------------------------------
-/* Call memcmp on the buffer */
-bool SHA1SumValue::operator == (const SHA1SumValue & rhs) const
-{
-   return memcmp(Sum,rhs.Sum,sizeof(Sum)) == 0;
-}
-									/*}}}*/
 // SHA1Summation::SHA1Summation - Constructor                           /*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -289,18 +229,20 @@ SHA1SumValue SHA1Summation::Result()
 
    // Transfer over the result
    SHA1SumValue Value;
+   unsigned char res[20];
    for (unsigned i = 0; i < 20; i++)
    {
-      Value.Sum[i] = (unsigned char)
+      res[i] = (unsigned char)
 	 ((state[i >> 2] >> ((3 - (i & 3)) * 8)) & 255);
    }
+   Value.Set(res);
    return Value;
 }
 									/*}}}*/
 // SHA1Summation::Add - Adds content of buffer into the checksum        /*{{{*/
 // ---------------------------------------------------------------------
 /* May not be called after Result() is called */
-bool SHA1Summation::Add(const unsigned char *data,unsigned long len)
+bool SHA1Summation::Add(const unsigned char *data,unsigned long long len)
 {
    if (Done)
       return false;
@@ -328,29 +270,6 @@ bool SHA1Summation::Add(const unsigned char *data,unsigned long len)
       i = 0;
    memcpy(&buffer[j],&data[i],len - i);
    
-   return true;
-}
-									/*}}}*/
-// SHA1Summation::AddFD - Add content of file into the checksum         /*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool SHA1Summation::AddFD(int Fd,unsigned long Size)
-{
-   unsigned char Buf[64 * 64];
-   int Res = 0;
-   int ToEOF = (Size == 0);
-   while (Size != 0 || ToEOF)
-   {
-      unsigned n = sizeof(Buf);
-      if (!ToEOF) n = min(Size,(unsigned long)n);
-      Res = read(Fd,Buf,n);
-      if (Res < 0 || (!ToEOF && (unsigned) Res != n)) // error, or short read
-	 return false;
-      if (ToEOF && Res == 0) // EOF
-         break;
-      Size -= Res;
-      Add(Buf,Res);
-   }
    return true;
 }
 									/*}}}*/

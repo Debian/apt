@@ -13,9 +13,9 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include<config.h>
+
 #include <apt-pkg/error.h>
-#include <cassert>
-#include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/init.h>
@@ -23,6 +23,7 @@
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/version.h>
@@ -30,18 +31,21 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/metaindex.h>
 
-#include <config.h>
-#include <apti18n.h>
-
+#include <cassert>
 #include <locale.h>
 #include <iostream>
 #include <unistd.h>
 #include <errno.h>
 #include <regex.h>
 #include <stdio.h>
-
 #include <iomanip>
+#include <algorithm>
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -61,12 +65,12 @@ public:
       return CacheSetHelper::canNotFindNewestVer(Cache, Pkg);
    }
 
-   virtual APT::VersionSet canNotFindAllVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+   virtual void canNotFindAllVer(APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
       virtualPkgs.insert(Pkg);
-      return CacheSetHelper::canNotFindAllVer(Cache, Pkg);
+      CacheSetHelper::canNotFindAllVer(vci, Cache, Pkg);
    }
 
-   CacheSetHelperVirtuals(bool const &ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
+   CacheSetHelperVirtuals(bool const ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
 };
 									/*}}}*/
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
@@ -104,7 +108,7 @@ void LocalitySort(pkgCache::DescFile **begin,
 // UnMet - Show unmet dependencies					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowUnMet(pkgCache::VerIterator const &V, bool const &Important)
+bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 {
 	 bool Header = false;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false;)
@@ -195,9 +199,9 @@ bool UnMet(CommandLine &CmdL)
    else
    {
       CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-      APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1,
-				APT::VersionSet::CANDIDATE, helper);
-      for (APT::VersionSet::iterator V = verset.begin(); V != verset.end(); ++V)
+      APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1,
+				APT::VersionList::CANDIDATE, helper);
+      for (APT::VersionList::iterator V = verset.begin(); V != verset.end(); ++V)
 	 if (ShowUnMet(V, Important) == false)
 	    return false;
    }
@@ -211,9 +215,9 @@ bool DumpPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
 
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       cout << "Package: " << Pkg.FullName(true) << endl;
       cout << "Versions: " << endl;
@@ -584,7 +588,7 @@ bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
       return false;
 
    CacheSetHelperVirtuals helper(false);
-   APT::VersionSet verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
    if (verset.empty() == true && helper.virtualPkgs.empty() == true)
       return _error->Error(_("No packages found"));
    std::vector<bool> Shown(Cache->Head().PackageCount);
@@ -1139,7 +1143,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
       return _error->Error(_("Package file %s is out of sync."),I.FileName());
 
    FileFd PkgF;
-   if (PkgF.Open(I.FileName(), FileFd::ReadOnlyGzip) == false)
+   if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
       return false;
 
    // Read the record
@@ -1361,10 +1365,10 @@ bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionSet::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
-			APT::VersionSet::ALL : APT::VersionSet::CANDIDATE;
-   APT::VersionSet const verset = APT::VersionSet::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
-   for (APT::VersionSet::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
+   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
+			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
+   APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
+   for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
 	 return false;
 
@@ -1527,8 +1531,8 @@ bool Policy(CommandLine &CmdL)
 
    // Print out detailed information for each package
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
-   APT::PackageSet pkgset = APT::PackageSet::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
-   for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1, helper);
+   for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       cout << Pkg.FullName(true) << ":" << endl;
 
@@ -1604,8 +1608,8 @@ bool Madison(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++)
    {
       _error->PushToStack();
-      APT::PackageSet pkgset = APT::PackageSet::FromString(CacheFile, *I, helper);
-      for (APT::PackageSet::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+      APT::PackageList pkgset = APT::PackageList::FromString(CacheFile, *I, helper);
+      for (APT::PackageList::const_iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
       {
          for (pkgCache::VerIterator V = Pkg.VersionList(); V.end() == false; ++V)
          {
@@ -1672,7 +1676,7 @@ bool GenCaches(CommandLine &Cmd)
 /* */
 bool ShowHelp(CommandLine &Cmd)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    
    if (_config->FindB("version") == true)
@@ -1735,7 +1739,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,"installed","APT::Cache::Installed",0},
-      {0,"pre-depends","APT::Cache::ShowPreDepends",0},
+      {0,"pre-depends","APT::Cache::ShowPre-Depends",0},
       {0,"depends","APT::Cache::ShowDepends",0},
       {0,"recommends","APT::Cache::ShowRecommends",0},
       {0,"suggests","APT::Cache::ShowSuggests",0},
