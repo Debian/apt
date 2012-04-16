@@ -602,7 +602,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
    const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
-   unsigned int i;
+   unsigned int i = 0;
    do 
    {
       Changed = false;

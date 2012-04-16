@@ -4,8 +4,11 @@ apt (0.9.1) unstable; urgency=low
   * cmdline/apt-get.cc:
     - if pkgCacheFile::Generate is disabled in 'update' don't
       remove the caches (and don't try to open them)
+  * apt-pkg/packagemanager.cc:
+    - init counter in SmartConfigure so that the loop-breaker isn't
+      triggered at random… (Closes: #669060)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 16 Apr 2012 22:56:31 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 16 Apr 2012 23:15:22 +0200
 
 apt (0.9.0) unstable; urgency=low
 
