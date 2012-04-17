@@ -151,7 +151,7 @@ setupenvironment() {
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
-	if ! $(which dpkg) --assert-multi-arch; then
+	if ! $(which dpkg) --assert-multi-arch 2>&1 > /dev/null; then
 		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
@@ -199,7 +199,7 @@ configdpkg() {
 			echo -n > rootdir/var/lib/dpkg/status
 		fi
 	fi
-	if $(which dpkg) --assert-multi-arch; then
+	if $(which dpkg) --assert-multi-arch 2>&1 > /dev/null; then
 		local ARCHS="$(getarchitectures)"
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
