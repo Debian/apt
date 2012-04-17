@@ -1679,10 +1679,13 @@ bool DoUpdate(CommandLine &CmdL)
        ListUpdate(Stat, *List);
 
    // Rebuild the cache.
-   pkgCacheFile::RemoveCaches();
-   if (Cache.BuildCaches() == false)
-      return false;
-   
+   if (_config->FindB("pkgCacheFile::Generate", true) == true)
+   {
+      pkgCacheFile::RemoveCaches();
+      if (Cache.BuildCaches() == false)
+	 return false;
+   }
+
    return true;
 }
 									/*}}}*/
