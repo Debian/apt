@@ -12,6 +12,11 @@ apt (0.8.16~exp12ubuntu10) UNRELEASEDprecise-proposed; urgency=low
       ordering code does not get into a endless loop when it flip-flops
       between two states
 
+  [ David Kalnischkies ]
+  * apt-pkg/cacheset.cc:
+    - actually return to the fallback modifier if we have detected we
+      should for packagenames which look like modifiers (Closes: #669591)
+
  -- Malcolm Scott <launchpad@malc.org.uk>  Thu, 19 Apr 2012 19:52:56 +0100
 
 apt (0.8.16~exp12ubuntu9) precise-proposed; urgency=low

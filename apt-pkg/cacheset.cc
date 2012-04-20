@@ -217,6 +217,7 @@ bool PackageContainerInterface::FromModifierCommandLine(unsigned short &modID, P
 							pkgCacheFile &Cache, const char * cmdline,
 							std::list<Modifier> const &mods, CacheSetHelper &helper) {
 	std::string str = cmdline;
+	unsigned short fallback = modID;
 	bool modifierPresent = false;
 	for (std::list<Modifier>::const_iterator mod = mods.begin();
 	     mod != mods.end(); ++mod) {
@@ -243,6 +244,7 @@ bool PackageContainerInterface::FromModifierCommandLine(unsigned short &modID, P
 		helper.showErrors(errors);
 		if (Pkg.end() == false) {
 			pci->insert(Pkg);
+			modID = fallback;
 			return true;
 		}
 	}
@@ -281,13 +283,14 @@ bool VersionContainerInterface::FromModifierCommandLine(unsigned short &modID,
 		modifierPresent = true;
 		break;
 	}
-
 	if (modifierPresent == true) {
 		bool const errors = helper.showErrors(false);
 		bool const found = VersionContainerInterface::FromString(vci, Cache, cmdline, select, helper, true);
 		helper.showErrors(errors);
-		if (found == true)
+		if (found == true) {
+			modID = fallback;
 			return true;
+		}
 	}
 	return FromString(vci, Cache, str, select, helper);
 }
