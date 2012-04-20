@@ -61,12 +61,14 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if ((*o).empty() == true)
 			continue;
 		// ignore types we have no method ready to use
-		if (_config->Exists(std::string("Acquire::CompressionTypes::").append(*o)) == false)
+		std::string const method = std::string("Acquire::CompressionTypes::").append(*o);
+		if (_config->Exists(method) == false)
 			continue;
 		// ignore types we have no app ready to use
+		std::string const app = _config->Find(method);
 		std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
 		for (; c != compressors.end(); ++c)
-			if (c->Name == *o)
+			if (c->Name == app)
 				break;
 		if (c == compressors.end())
 			continue;
