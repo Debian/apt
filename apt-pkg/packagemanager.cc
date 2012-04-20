@@ -338,7 +338,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
       however if there is a loop (A depends on B, B depends on A) this will not 
       be the case, so check for dependencies before configuring. */
    bool Bad = false, Changed = false;
-   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 5000);
    unsigned int i=0;
    do
    {
@@ -600,7 +600,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       This will be either dealt with if the package is configured as a dependency of Pkg (if and when Pkg is configured),
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
-   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 5000);
    unsigned int i=0;
    do 
    {
