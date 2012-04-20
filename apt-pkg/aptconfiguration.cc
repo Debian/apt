@@ -47,6 +47,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
 
 	setDefaultConfigurationForCompressors();
+	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();
 
 	// accept non-list order as override setting for config settings on commandline
 	std::string const overrideOrder = _config->Find("Acquire::CompressionTypes::Order","");
@@ -63,12 +64,12 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if (_config->Exists(std::string("Acquire::CompressionTypes::").append(*o)) == false)
 			continue;
 		// ignore types we have no app ready to use
-		std::string const appsetting = std::string("Dir::Bin::").append(*o);
-		if (_config->Exists(appsetting) == true) {
-			std::string const app = _config->FindFile(appsetting.c_str(), "");
-			if (app.empty() == false && FileExists(app) == false)
-				continue;
-		}
+		std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
+		for (; c != compressors.end(); ++c)
+			if (c->Name == *o)
+				break;
+		if (c == compressors.end())
+			continue;
 		types.push_back(*o);
 	}
 
@@ -84,12 +85,12 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if (std::find(types.begin(),types.end(),Types->Tag) != types.end())
 			continue;
 		// ignore types we have no app ready to use
-		std::string const appsetting = std::string("Dir::Bin::").append(Types->Value);
-		if (appsetting.empty() == false && _config->Exists(appsetting) == true) {
-			std::string const app = _config->FindFile(appsetting.c_str(), "");
-			if (app.empty() == false && FileExists(app) == false)
-				continue;
-		}
+		std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
+		for (; c != compressors.end(); ++c)
+			if (c->Name == Types->Value)
+				break;
+		if (c == compressors.end())
+			continue;
 		types.push_back(Types->Tag);
 	}
 
