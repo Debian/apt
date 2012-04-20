@@ -6,6 +6,12 @@ apt (0.8.16~exp12ubuntu10) UNRELEASEDprecise-proposed; urgency=low
       other than the first specified is already installed, apt-get enters an
       infinite loop (LP: #985852)
 
+  [ Michael Vogt ]
+  * apt-pkg/packagemanager.cc:
+    - add APT::pkgPackageManager::MaxLoopCount to ensure that the
+      ordering code does not get into a endless loop when it flip-flops
+      between two states
+
  -- Malcolm Scott <launchpad@malc.org.uk>  Thu, 19 Apr 2012 19:52:56 +0100
 
 apt (0.8.16~exp12ubuntu9) precise-proposed; urgency=low

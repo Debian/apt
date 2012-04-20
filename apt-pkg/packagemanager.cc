@@ -338,7 +338,10 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
       however if there is a loop (A depends on B, B depends on A) this will not 
       be the case, so check for dependencies before configuring. */
    bool Bad = false, Changed = false;
-   do {
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 100);
+   unsigned int i=0;
+   do
+   {
       Changed = false;
       for (DepIterator D = instVer.DependsList(); D.end() == false; )
       {
@@ -461,6 +464,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	 if (Bad == true && Changed == false && Debug == true)
 	    std::clog << OutputInDepth(Depth) << "Could not satisfy " << Start << std::endl;
       }
+      if (i++ > max_loops)
+         return _error->Error("Internal error: MaxLoopCount reached in SmartUnPack for %s, aborting", Pkg.FullName().c_str());
    } while (Changed == true);
    
    if (Bad) {
@@ -595,7 +600,10 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       This will be either dealt with if the package is configured as a dependency of Pkg (if and when Pkg is configured),
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
-   do {
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 100);
+   unsigned int i=0;
+   do 
+   {
       Changed = false;
       for (DepIterator D = instVer.DependsList(); D.end() == false; )
       {
@@ -820,6 +828,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    }
 	 }
       }
+      if (i++ > max_loops)
+         return _error->Error("Internal error: MaxLoopCount reached in SmartConfigure for %s, aborting", Pkg.FullName().c_str());
    } while (Changed == true);
    
    // Check for reverse conflicts.
