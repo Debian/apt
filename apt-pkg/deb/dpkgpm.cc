@@ -738,6 +738,7 @@ bool pkgDPkgPM::OpenLog()
       d->history_out = fopen(history_name.c_str(),"a");
       if (d->history_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
+      SetCloseExec(fileno(d->history_out), true);
       chmod(history_name.c_str(), 0644);
       fprintf(d->history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, reinstall, upgrade, downgrade;
@@ -1596,7 +1597,10 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    const char *ops_str[] = {"Install", "Configure","Remove","Purge"};
    fprintf(report, "AptOrdering:\n");
    for (vector<Item>::iterator I = List.begin(); I != List.end(); ++I)
-      fprintf(report, " %s: %s\n", (*I).Pkg.Name(), ops_str[(*I).Op]);
+      if ((*I).Pkg != NULL)
+         fprintf(report, " %s: %s\n", (*I).Pkg.Name(), ops_str[(*I).Op]);
+      else
+         fprintf(report, " %s: %s\n", "NULL", ops_str[(*I).Op]);
 
    // attach dmesg log (to learn about segfaults)
    if (FileExists("/bin/dmesg"))

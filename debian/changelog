@@ -1,3 +1,20 @@
+apt (0.9.2) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * apt-inst/contrib/extracttar.cc:
+    - ensure that in StartGzip the InFd is set to "AutoClose" to ensure
+      that the pipe is closed when InFd is closed. This fixes a Fd leak
+      (LP: #985452)
+
+  [ Adam Conrad ]
+  * Set FD_CLOEXEC on history.log's FD (Closes: #610069, LP: #636010)
+
+  [ Thorsten Spindler ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - do not crash if (*I).Pkg is NULL (LP: #939867)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 20 Apr 2012 09:13:19 +0200
+
 apt (0.9.1) unstable; urgency=low
 
   [ David Kalnischkies ]
