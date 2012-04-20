@@ -8,6 +8,10 @@ apt (0.9.2) unstable; urgency=low
   * apt-pkg/aptconfiguration.cc:
     - if the compressor is not installed, but we link against it's
       library accept it as a CompressionType (Closes: #669328)
+  * apt-pkg/contrib/sha2_internal.cc:
+    - do not use the input data directly but memcpy it instead as
+      it could be unaligned as in the http-transport which causes
+      a sigbus error on sparc (Closes: #669061)
 
 
   [ Malcolm Scott ]
@@ -15,7 +19,7 @@ apt (0.9.2) unstable; urgency=low
     - iterate over all pre-depends or-group member instead of looping
       endlessly over the first member in SmartUnpack (LP: #985852)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 20 Apr 2012 09:52:01 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 20 Apr 2012 09:52:21 +0200
 
 apt (0.9.1) unstable; urgency=low
 
