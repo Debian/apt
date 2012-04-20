@@ -6,6 +6,22 @@ apt (0.9.2) UNRELEASED; urgency=low
       that the pipe is closed when InFd is closed. This fixes a Fd leak
       (LP: #985452)
 
+  [ David Kalnischkies ]
+   * apt-pkg/deb/deblistparser.cc:
+    - only treat the native apt as essential by default (Closes: #669377)
+  * apt-pkg/contrib/fileutl.cc:
+    - redirect stderr from compressors to /dev/null
+  * apt-pkg/aptconfiguration.cc:
+    - if the compressor is not installed, but we link against it's
+      library accept it as a CompressionType (Closes: #669328)
+  * apt-pkg/contrib/sha2_internal.cc:
+    - do not use the input data directly but memcpy it instead as
+      it could be unaligned as in the http-transport which causes
+      a sigbus error on sparc (Closes: #669061)
+  * apt-pkg/cacheset.cc:
+    - actually return to the fallback modifier if we have detected we
+      should for packagenames which look like modifiers (Closes: #669591)
+
   [ Adam Conrad ]
   * Set FD_CLOEXEC on history.log's FD (Closes: #610069, LP: #636010)
 
@@ -13,7 +29,12 @@ apt (0.9.2) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - do not crash if (*I).Pkg is NULL (LP: #939867)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 20 Apr 2012 09:13:19 +0200
+  [ Malcolm Scott ]
+  * apt-pkg/packagemanager.cc:
+    - iterate over all pre-depends or-group member instead of looping
+      endlessly over the first member in SmartUnpack (LP: #985852)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 20 Apr 2012 10:11:24 +0200
 
 apt (0.9.1) unstable; urgency=low
 

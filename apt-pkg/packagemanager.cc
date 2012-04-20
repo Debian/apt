@@ -621,7 +621,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for easy targets: packages that are already okay
 	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Start.AllTargets();
+	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
@@ -644,7 +644,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for something that could be configured.
 	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Start.AllTargets();
+	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);

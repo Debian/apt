@@ -602,7 +602,7 @@ bool ServerState::HeaderLine(string Line)
 	 return true;
 
       Size = strtoull(Val.c_str(), NULL, 10);
-      if (Size == ULLONG_MAX)
+      if (Size >= std::numeric_limits<unsigned long long>::max())
 	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
       return true;
    }

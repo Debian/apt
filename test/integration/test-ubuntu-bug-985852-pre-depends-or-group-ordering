@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'custom' 'amd64' '1.0' 'Pre-Depends: grub-pc | grub'
+insertinstalledpackage 'grub' 'amd64' '1.0'
+insertpackage 'unstable' 'custom' 'amd64' '2.0' 'Pre-Depends: grub-pc | grub'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  custom
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst custom [1.0] (2.0 unstable [amd64])
+Conf custom (2.0 unstable [amd64])' aptget dist-upgrade -s
