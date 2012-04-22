@@ -482,24 +482,80 @@ bool Configuration::ExistsAny(const char *Name) const
 /* Dump the entire configuration space */
 void Configuration::Dump(ostream& str)
 {
-   /* Write out all of the configuration directives by walking the 
+   Dump(str, NULL, "%f \"%v\";\n", true);
+}
+void Configuration::Dump(ostream& str, char const * const root,
+			 char const * const formatstr, bool const emptyValue)
+{
+   const Configuration::Item* Top = Tree(root);
+   if (Top == 0)
+      return;
+   const Configuration::Item* const Root = (root == NULL) ? NULL : Top;
+   std::vector<std::string> const format = VectorizeString(formatstr, '%');
+
+   /* Write out all of the configuration directives by walking the
       configuration tree */
-   const Configuration::Item *Top = Tree(0);
-   for (; Top != 0;)
-   {
-      str << Top->FullTag() << " \"" << Top->Value << "\";" << endl;
-      
+   do {
+      if (emptyValue == true || Top->Value.empty() == emptyValue)
+      {
+	 std::vector<std::string>::const_iterator f = format.begin();
+	 str << *f;
+	 for (++f; f != format.end(); ++f)
+	 {
+	    if (f->empty() == true)
+	    {
+	       ++f;
+	       str << '%' << *f;
+	       continue;
+	    }
+	    char const type = (*f)[0];
+	    if (type == 'f')
+	       str << Top->FullTag();
+	    else if (type == 't')
+	       str << Top->Tag;
+	    else if (type == 'v')
+	       str << Top->Value;
+	    else if (type == 'F')
+	       str << QuoteString(Top->FullTag(), "=\"\n");
+	    else if (type == 'T')
+	       str << QuoteString(Top->Tag, "=\"\n");
+	    else if (type == 'V')
+	       str << QuoteString(Top->Value, "=\"\n");
+	    else if (type == 'n')
+	       str << "\n";
+	    else if (type == 'N')
+	       str << "\t";
+	    else
+	       str << '%' << type;
+	    str << f->c_str() + 1;
+	 }
+      }
+
       if (Top->Child != 0)
       {
 	 Top = Top->Child;
 	 continue;
       }
-      
+
       while (Top != 0 && Top->Next == 0)
 	 Top = Top->Parent;
       if (Top != 0)
 	 Top = Top->Next;
-   }
+
+      if (Root != NULL)
+      {
+	 const Configuration::Item* I = Top;
+	 while(I != 0)
+	 {
+	    if (I == Root)
+	       break;
+	    else
+	       I = I->Parent;
+	 }
+	 if (I == 0)
+	    break;
+      }
+   } while (Top != 0);
 }
 									/*}}}*/
 
