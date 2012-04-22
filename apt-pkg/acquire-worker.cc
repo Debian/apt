@@ -467,40 +467,19 @@ bool pkgAcquire::Worker::SendConfiguration()
 
    if (OutFd == -1)
       return false;
-   
-   string Message = "601 Configuration\n";
-   Message.reserve(2000);
 
-   /* Write out all of the configuration directives by walking the 
+   /* Write out all of the configuration directives by walking the
       configuration tree */
-   const Configuration::Item *Top = _config->Tree(0);
-   for (; Top != 0;)
-   {
-      if (Top->Value.empty() == false)
-      {
-	 string Line = "Config-Item: " + QuoteString(Top->FullTag(),"=\"\n") + "=";
-	 Line += QuoteString(Top->Value,"\n") + '\n';
-	 Message += Line;
-      }
-      
-      if (Top->Child != 0)
-      {
-	 Top = Top->Child;
-	 continue;
-      }
-      
-      while (Top != 0 && Top->Next == 0)
-	 Top = Top->Parent;
-      if (Top != 0)
-	 Top = Top->Next;
-   }   
-   Message += '\n';
+   std::ostringstream Message;
+   Message << "601 Configuration\n";
+   _config->Dump(Message, NULL, "Config-Item: %F=%V\n", false);
+   Message << '\n';
 
    if (Debug == true)
-      clog << " -> " << Access << ':' << QuoteString(Message,"\n") << endl;
-   OutQueue += Message;
-   OutReady = true; 
-   
+      clog << " -> " << Access << ':' << QuoteString(Message.str(),"\n") << endl;
+   OutQueue += Message.str();
+   OutReady = true;
+
    return true;
 }
 									/*}}}*/
