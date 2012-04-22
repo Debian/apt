@@ -63,7 +63,13 @@ bool DoShell(CommandLine &CmdL)
 /* */
 bool DoDump(CommandLine &CmdL)
 {
-   _config->Dump(cout);
+   bool const empty = _config->FindB("APT::Config::Dump::EmptyValue", true);
+   std::string const format = _config->Find("APT::Config::Dump::Format", "%f \"%v\";\n");
+   if (CmdL.FileSize() == 1)
+      _config->Dump(cout, NULL, format.c_str(), empty);
+   else
+      for (const char **I = CmdL.FileList + 1; *I != 0; ++I)
+	 _config->Dump(cout, *I, format.c_str(), empty);
    return true;
 }
 									/*}}}*/
@@ -100,6 +106,8 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'v',"version","version",0},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
+      {0,"empty","APT::Config::Dump::EmptyValue",CommandLine::Boolean},
+      {0,"format","APT::Config::Dump::Format",CommandLine::HasArg},
       {0,0,0,0}};
    CommandLine::Dispatch Cmds[] = {{"shell",&DoShell},
                                    {"dump",&DoDump},
