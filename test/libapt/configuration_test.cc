@@ -80,6 +80,19 @@ int main(int argc,const char *argv[]) {
 	equals(Cnf.FindFile("Dir::State"), "/srv/sid/var/lib/apt");
 	equals(Cnf.FindFile("Dir::Aptitude::State"), "/srv/sid/var/lib/aptitude");
 
+	Cnf.Set("RootDir", "/");
+	equals(Cnf.FindFile("Dir::State"), "/srv/sid/var/lib/apt");
+	equals(Cnf.FindFile("Dir::Aptitude::State"), "/srv/sid/var/lib/aptitude");
+	Cnf.Set("RootDir", "//./////.////");
+	equals(Cnf.FindFile("Dir::State"), "/srv/sid/var/lib/apt");
+	equals(Cnf.FindFile("Dir::Aptitude::State"), "/srv/sid/var/lib/aptitude");
+	Cnf.Set("RootDir", "/rootdir");
+	equals(Cnf.FindFile("Dir::State"), "/rootdir/srv/sid/var/lib/apt");
+	equals(Cnf.FindFile("Dir::Aptitude::State"), "/rootdir/srv/sid/var/lib/aptitude");
+	Cnf.Set("RootDir", "/rootdir/");
+	equals(Cnf.FindFile("Dir::State"), "/rootdir/srv/sid/var/lib/apt");
+	equals(Cnf.FindFile("Dir::Aptitude::State"), "/rootdir/srv/sid/var/lib/aptitude");
+
 	//FIXME: Test for configuration file parsing;
 	// currently only integration/ tests test them implicitly
 

@@ -171,48 +171,56 @@ string Configuration::Find(const char *Name,const char *Default) const
 string Configuration::FindFile(const char *Name,const char *Default) const
 {
    const Item *RootItem = Lookup("RootDir");
-   std::string rootDir =  (RootItem == 0) ? "" : RootItem->Value;
-   if(rootDir.size() > 0 && rootDir[rootDir.size() - 1] != '/')
-     rootDir.push_back('/');
+   std::string result =  (RootItem == 0) ? "" : RootItem->Value;
+   if(result.empty() == false && result[result.size() - 1] != '/')
+     result.push_back('/');
 
    const Item *Itm = Lookup(Name);
    if (Itm == 0 || Itm->Value.empty() == true)
    {
-      if (Default == 0)
-	 return rootDir;
-      else
-	 return rootDir + Default;
+      if (Default != 0)
+	 result.append(Default);
    }
-   
-   string val = Itm->Value;
-   while (Itm->Parent != 0)
+   else
    {
-      if (Itm->Parent->Value.empty() == true)
+      string val = Itm->Value;
+      while (Itm->Parent != 0)
       {
+	 if (Itm->Parent->Value.empty() == true)
+	 {
+	    Itm = Itm->Parent;
+	    continue;
+	 }
+
+	 // Absolute
+	 if (val.length() >= 1 && val[0] == '/')
+	    break;
+
+	 // ~/foo or ./foo
+	 if (val.length() >= 2 && (val[0] == '~' || val[0] == '.') && val[1] == '/')
+	    break;
+
+	 // ../foo
+	 if (val.length() >= 3 && val[0] == '.' && val[1] == '.' && val[2] == '/')
+	    break;
+
+	 if (Itm->Parent->Value.end()[-1] != '/')
+	    val.insert(0, "/");
+
+	 val.insert(0, Itm->Parent->Value);
 	 Itm = Itm->Parent;
-	 continue;
       }
-
-      // Absolute
-      if (val.length() >= 1 && val[0] == '/')
-         break;
-
-      // ~/foo or ./foo 
-      if (val.length() >= 2 && (val[0] == '~' || val[0] == '.') && val[1] == '/')
-	 break;
-	 
-      // ../foo 
-      if (val.length() >= 3 && val[0] == '.' && val[1] == '.' && val[2] == '/')
-	 break;
-      
-      if (Itm->Parent->Value.end()[-1] != '/')
-	 val.insert(0, "/");
-
-      val.insert(0, Itm->Parent->Value);
-      Itm = Itm->Parent;
+      result.append(val);
    }
 
-   return rootDir + val;
+   // do some normalisation by removing // and /./ from the path
+   size_t found = string::npos;
+   while ((found = result.find("/./")) != string::npos)
+      result.replace(found, 3, "/");
+   while ((found = result.find("//")) != string::npos)
+      result.replace(found, 2, "/");
+
+   return result;
 }
 									/*}}}*/
 // Configuration::FindDir - Find a directory name			/*{{{*/
