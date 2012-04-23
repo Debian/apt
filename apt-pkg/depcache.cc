@@ -1164,7 +1164,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    pkgCache::VerIterator V = Prv.OwnerVer();
 	    pkgCache::VerIterator Cand = PkgState[Prv.OwnerPkg()->ID].CandidateVerIter(*this);
 	    if (Cand.end() == true || V != Cand ||
-		VS().CheckDep(Cand.VerStr(), Start->CompareOp, Start.TargetVer()) == false)
+		VS().CheckDep(Prv.ProvideVersion(), Start->CompareOp, Start.TargetVer()) == false)
 	       continue;
 	    verlist.insert(Cand);
 	 }
