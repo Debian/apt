@@ -1152,9 +1152,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       }
 
       /* This bit is for processing the possibilty of an install/upgrade
-         fixing the problem */
-      if (Start->Type != Dep::DpkgBreaks &&
-	  (DepState[Start->ID] & DepCVer) == DepCVer)
+         fixing the problem for "positive" dependencies */
+      if (Start.IsNegative() == false && (DepState[Start->ID] & DepCVer) == DepCVer)
       {
 	 APT::VersionList verlist;
 	 pkgCache::VerIterator Cand = PkgState[Start.TargetPkg()->ID].CandidateVerIter(*this);
@@ -1198,13 +1197,13 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 }
 	 continue;
       }
-
-      /* For conflicts we just de-install the package and mark as auto,
-         Conflicts may not have or groups.  For dpkg's Breaks we try to
-         upgrade the package. */
-      if (Start.IsNegative() == true)
+      /* Negative dependencies have no or-group
+	 If the dependency isn't versioned, we try if an upgrade might solve the problem.
+	 Otherwise we remove the offender if needed */
+      else if (Start.IsNegative() == true && Start->Type != pkgCache::Dep::Obsoletes)
       {
 	 SPtrArray<Version *> List = Start.AllTargets();
+	 pkgCache::PkgIterator TrgPkg = Start.TargetPkg();
 	 for (Version **I = List; *I != 0; I++)
 	 {
 	    VerIterator Ver(*this,*I);
@@ -1215,15 +1214,17 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    if (PkgState[Pkg->ID].InstallVer == 0)
 	       continue;
 
-	    if (PkgState[Pkg->ID].CandidateVer != *I &&
-		Start->Type == Dep::DpkgBreaks &&
+	    if ((Start->Version != 0 || TrgPkg != Pkg) &&
+		PkgState[Pkg->ID].CandidateVer != PkgState[Pkg->ID].InstallVer &&
+		PkgState[Pkg->ID].CandidateVer != *I &&
 		MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps) == true)
 	       continue;
-	    else if (MarkDelete(Pkg,false,Depth + 1, false) == false)
+	    else if ((Start->Type == pkgCache::Dep::Conflicts || Start->Type == pkgCache::Dep::DpkgBreaks) &&
+		     MarkDelete(Pkg,false,Depth + 1, false) == false)
 	       break;
 	 }
 	 continue;
-      }      
+      }
    }
 
    return Dep.end() == true;

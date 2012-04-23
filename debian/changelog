@@ -12,8 +12,12 @@ apt (0.9.3) unstable; urgency=low
     - implement --empty and --format option for dump
   * apt-pkg/cdrom.cc:
     - use Dump() to generate the configuration output
+  * apt-pkg/depcache.cc:
+    - clearly separate 'positive' and 'negative' dependencies and
+      their upgrade-resolution tries in MarkInstall and especially don't
+      treat Conflicts differently compared to Breaks here
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 22 Apr 2012 13:01:04 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 23 Apr 2012 17:43:53 +0200
 
 apt (0.9.2) unstable; urgency=low
 
