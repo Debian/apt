@@ -93,6 +93,11 @@ int main(int argc,const char *argv[]) {
 	equals(Cnf.FindFile("Dir::State"), "/rootdir/srv/sid/var/lib/apt");
 	equals(Cnf.FindFile("Dir::Aptitude::State"), "/rootdir/srv/sid/var/lib/aptitude");
 
+	Cnf.Set("Dir::State", "/dev/null");
+	Cnf.Set("Dir::State::lists", "lists/");
+	equals(Cnf.FindDir("Dir::State"), "/rootdir/dev/null");
+	equals(Cnf.FindDir("Dir::State::lists"), "/rootdir/dev/null");
+
 	//FIXME: Test for configuration file parsing;
 	// currently only integration/ tests test them implicitly
 

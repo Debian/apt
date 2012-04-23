@@ -194,7 +194,11 @@ string Configuration::FindFile(const char *Name,const char *Default) const
 
 	 // Absolute
 	 if (val.length() >= 1 && val[0] == '/')
+	 {
+	    if (val.compare(0, 9, "/dev/null") == 0)
+	       val.erase(9);
 	    break;
+	 }
 
 	 // ~/foo or ./foo
 	 if (val.length() >= 2 && (val[0] == '~' || val[0] == '.') && val[1] == '/')
@@ -230,7 +234,12 @@ string Configuration::FindDir(const char *Name,const char *Default) const
 {
    string Res = FindFile(Name,Default);
    if (Res.end()[-1] != '/')
+   {
+      size_t const found = Res.rfind("/dev/null");
+      if (found != string::npos && found == Res.size() - 9)
+	 return Res; // /dev/null returning
       return Res + '/';
+   }
    return Res;
 }
 									/*}}}*/
