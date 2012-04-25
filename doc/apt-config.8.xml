@@ -85,7 +85,21 @@ eval $RES
    &apt-cmdblurb;
    
    <variablelist>
-   
+     <varlistentry>
+      <term><option>--empty</option></term>
+      <listitem><para>Include options which have an empty value. This is the default, so
+		      use --no-empty to remove them from the output.</para></listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>--format '<replaceable>&percnt;f &#x0022;&percnt;v&#x0022;;&percnt;n</replaceable>'</option></term>
+      <listitem><para>Defines the output of each config option. &percnt;t will be replaced with the tagname,
+		      &percnt;f with the complete tagname and &percnt;v with the value of the option.
+		      Use uppercase letters and the respective values will be quoted. Additionally
+		      &percnt;n will be replaced by a newline, &percnt;N by a tab. A &percnt; can be
+		      printed by using &percnt;&percnt;.</para></listitem>
+     </varlistentry>
+
      &apt-commonoptions;
      
    </variablelist>

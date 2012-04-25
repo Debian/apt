@@ -1,3 +1,32 @@
+apt (0.9.3) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/strutl.cc:
+    - remove the message size limit from ioprintf and strprintf
+  * apt-pkg/contrib/configuration.cc:
+    - add a more versatile Dump() method
+    - normalize a bit by replacing // and /./ with / in FindFile
+    - /dev/null is a special absolute path as it has no subdirectories
+  * apt-pkg/acquire-worker.cc:
+    - use Dump() to generate the configuration message for sending
+  * cmdline/apt-config.cc:
+    - make it possible to limit dump to a subtree
+    - implement --empty and --format option for dump
+  * apt-pkg/cdrom.cc:
+    - use Dump() to generate the configuration output
+  * apt-pkg/depcache.cc:
+    - clearly separate 'positive' and 'negative' dependencies and
+      their upgrade-resolution tries in MarkInstall and especially don't
+      treat Conflicts differently compared to Breaks here
+    - provider is only a possible solution if the provides has the right
+      version (or none as we have no versioned provides in debian) and not
+      if the version of the provider matches
+  * edsp/edspsystem.cc:
+    - check with RealFileExists for scenario file as otherwise a directory
+      like one provided with RootDir triggers the usage of EDSP
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 23 Apr 2012 22:02:58 +0200
+
 apt (0.9.2) unstable; urgency=low
 
   [ Michael Vogt ]
