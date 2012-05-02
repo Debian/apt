@@ -4,6 +4,23 @@ VERSION=$(dpkg-parsechangelog | sed -n -e '/^Version:/s/^Version: //p')
 DISTRIBUTION=$(dpkg-parsechangelog | sed -n -e '/^Distribution:/s/^Distribution: //p')
 
 if [ "$1" = 'pre-export' ]; then
+	libraryversioncheck() {
+		LIBRARY="$1"
+		VERSION="$2"
+		if [ ! -e "debian/${LIBRARY}${VERSION}.symbols" ]; then
+		   echo >&2 "Library ${LIBRARY} in version ${VERSION} has no symbols file! (maybe forgot to rename?)"
+		   exit 1
+		fi
+		if [ "$(head -n1 "debian/${LIBRARY}${VERSION}.symbols")" != "${LIBRARY}.so.${VERSION} ${LIBRARY}${VERSION} #MINVER#" ]; then
+		   echo >&2 "Library ${LIBRARY}${VERSION} has incorrect version in symbol header! (»$(head -n1 "debian/${LIBRARY}${VERSION}.symbols")«)"
+		   exit 2
+		fi
+	}
+
+	libraryversioncheck 'libapt-pkg' "$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/init.h | sed 's/\.$//')"
+	libraryversioncheck 'libapt-inst' "$(egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)"
+
+
 	if [ "$DISTRIBUTION" = 'sid' ]; then
 		echo >&2 '»sid« is not a valid distribution. Replace it with »unstable« for you'
 		sed -i -e 's/) sid; urgency=/) unstable; urgency=/' debian/changelog
