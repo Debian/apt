@@ -304,6 +304,9 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
       void const * const oldMap = Map.Data();
       map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+      if (unlikely(descindex == 0 && _error->PendingError()))
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			      Pkg.Name(), "NewDescription", 1);
       if (oldMap != Map.Data())
 	 LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
       *LastDesc = descindex;
@@ -456,6 +459,9 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
    oldMap = Map.Data();
    map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+   if (unlikely(descindex == 0 && _error->PendingError()))
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "NewDescription", 2);
    if (oldMap != Map.Data())
        LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
    *LastDesc = descindex;
