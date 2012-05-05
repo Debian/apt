@@ -12,13 +12,14 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apti18n.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
 
 #include "override.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 // Override::ReadOverride - Read the override file			/*{{{*/
