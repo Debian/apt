@@ -34,8 +34,12 @@ apt (0.9.3) unstable; urgency=low
   * apt-pkg/deb/deblistparser.cc:
     - check length and containing chars for a given description md5sum
   * ensure that apti18n.h is included last as advertised (Closes: #671623)
+  * apt-pkg/acquire-worker.cc:
+    - revert the use of FileFd::Write in OutFdReady as we don't want error
+      reports about EAGAIN here as we retry later. Thanks to YOSHINO Yoshihito
+      for the report. (Closes: #671721)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 05 May 2012 15:35:16 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 May 2012 21:12:23 +0200
 
 apt (0.9.2) unstable; urgency=low
 
