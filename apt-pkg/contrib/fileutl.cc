@@ -1022,6 +1022,11 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 #ifdef HAVE_ZLIB
    else if (compressor.Name == "gzip")
    {
+      if (d->gz != NULL)
+      {
+	 gzclose(d->gz);
+	 d->gz = NULL;
+      }
       if ((Mode & ReadWrite) == ReadWrite)
 	 d->gz = gzdopen(iFd, "r+");
       else if ((Mode & WriteOnly) == WriteOnly)
@@ -1037,6 +1042,11 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 #ifdef HAVE_BZ2
    else if (compressor.Name == "bzip2")
    {
+      if (d->bz2 != NULL)
+      {
+	 BZ2_bzclose(d->bz2);
+	 d->bz2 = NULL;
+      }
       if ((Mode & ReadWrite) == ReadWrite)
 	 d->bz2 = BZ2_bzdopen(iFd, "r+");
       else if ((Mode & WriteOnly) == WriteOnly)
@@ -1050,14 +1060,17 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
    }
 #endif
 
+   // collect zombies here in case we reopen
+   if (d->compressor_pid > 0)
+      ExecWait(d->compressor_pid, "FileFdCompressor", true);
 
    if ((Mode & ReadWrite) == ReadWrite)
       return _error->Error("ReadWrite mode is not supported for file %s", FileName.c_str());
 
    bool const Comp = (Mode & WriteOnly) == WriteOnly;
-   // Handle 'decompression' of empty files
    if (Comp == false)
    {
+      // Handle 'decompression' of empty files
       struct stat Buf;
       fstat(iFd, &Buf);
       if (Buf.st_size == 0 && S_ISFIFO(Buf.st_mode) == false)
