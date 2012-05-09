@@ -1065,7 +1065,10 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       // We don't need the file open - instead let the compressor open it
       // as he properly knows better how to efficiently read from 'his' file
       if (FileName.empty() == false)
+      {
 	 close(iFd);
+	 iFd = -1;
+      }
    }
 
    // Create a data pipe
@@ -1133,7 +1136,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       close(Pipe[0]);
    else
       close(Pipe[1]);
-   if (Comp == true || FileName.empty() == true)
+   if ((Comp == true || FileName.empty() == true) && d->compressed_fd != -1)
       close(d->compressed_fd);
 
    return true;
@@ -1355,8 +1358,9 @@ bool FileFd::Seek(unsigned long long To)
       if (d->bz2 != NULL)
 	 BZ2_bzclose(d->bz2);
 #endif
-      close(iFd);
-      iFd = 0;
+      if (iFd != -1)
+	 close(iFd);
+      iFd = -1;
       if (TemporaryFileName.empty() == false)
 	 iFd = open(TemporaryFileName.c_str(), O_RDONLY);
       else if (FileName.empty() == false)

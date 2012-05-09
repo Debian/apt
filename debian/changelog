@@ -1,4 +1,4 @@
-apt (0.9.3) unstable; urgency=low
+apt (0.9.3) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/contrib/strutl.cc:
@@ -38,6 +38,8 @@ apt (0.9.3) unstable; urgency=low
     - revert the use of FileFd::Write in OutFdReady as we don't want error
       reports about EAGAIN here as we retry later. Thanks to YOSHINO Yoshihito
       for the report. (Closes: #671721)
+  * apt-pkg/contrib/fileutl.cc:
+    - check that the fd which are closed are valid
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 May 2012 21:12:23 +0200
 
