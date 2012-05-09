@@ -905,8 +905,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
 bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor, unsigned long const Perms)
 {
    Close();
-   d = new FileFdPrivate;
-   d->openmode = Mode;
    Flags = AutoClose;
 
    if ((Mode & WriteOnly) != WriteOnly && (Mode & (Atomic | Create | Empty | Exclusive)) != 0)
@@ -1000,8 +998,6 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compre
 bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose)
 {
    Close();
-   d = new FileFdPrivate;
-   d->openmode = Mode;
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
    iFd = Fd;
    this->FileName = "";
@@ -1015,7 +1011,12 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
 }
 bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor)
 {
-   d->compressor = compressor;
+   if (d == NULL)
+   {
+      d = new FileFdPrivate();
+      d->openmode = Mode;
+      d->compressor = compressor;
+   }
    if (compressor.Name == "." || compressor.Binary.empty() == true)
       return true;
 #ifdef HAVE_ZLIB
