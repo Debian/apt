@@ -1065,7 +1065,10 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       ExecWait(d->compressor_pid, "FileFdCompressor", true);
 
    if ((Mode & ReadWrite) == ReadWrite)
+   {
+      Flags |= Fail;
       return _error->Error("ReadWrite mode is not supported for file %s", FileName.c_str());
+   }
 
    bool const Comp = (Mode & WriteOnly) == WriteOnly;
    if (Comp == false)
@@ -1088,7 +1091,10 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
    // Create a data pipe
    int Pipe[2] = {-1,-1};
    if (pipe(Pipe) != 0)
+   {
+      Flags |= Fail;
       return _error->Errno("pipe",_("Failed to create subprocess IPC"));
+   }
    for (int J = 0; J != 2; J++)
       SetCloseExec(Pipe[J],true);
 
@@ -1367,7 +1373,10 @@ bool FileFd::Seek(unsigned long long To)
 	 return Skip(To - seekpos);
 
       if ((d->openmode & ReadOnly) != ReadOnly)
+      {
+	 Flags |= Fail;
 	 return _error->Error("Reopen is only implemented for read-only files!");
+      }
 #ifdef HAVE_BZ2
       if (d->bz2 != NULL)
 	 BZ2_bzclose(d->bz2);
@@ -1385,11 +1394,17 @@ bool FileFd::Seek(unsigned long long To)
 	    if (lseek(d->compressed_fd, 0, SEEK_SET) != 0)
 	       iFd = d->compressed_fd;
 	 if (iFd <= 0)
+	 {
+	    Flags |= Fail;
 	    return _error->Error("Reopen is not implemented for pipes opened with FileFd::OpenDescriptor()!");
+	 }
       }
 
       if (OpenInternDescriptor(d->openmode, d->compressor) == false)
+      {
+	 Flags |= Fail;
 	 return _error->Error("Seek on file %s because it couldn't be reopened", FileName.c_str());
+      }
 
       if (To != 0)
 	 return Skip(To);
@@ -1431,7 +1446,10 @@ bool FileFd::Skip(unsigned long long Over)
       {
 	 unsigned long long toread = std::min((unsigned long long) sizeof(buffer), Over);
 	 if (Read(buffer, toread) == false)
+	 {
+	    Flags |= Fail;
 	    return _error->Error("Unable to seek ahead %llu",Over);
+	 }
 	 Over -= toread;
       }
       return true;
@@ -1499,7 +1517,10 @@ unsigned long long FileFd::Tell()
 #endif
      Res = lseek(iFd,0,SEEK_CUR);
    if (Res == (off_t)-1)
+   {
+      Flags |= Fail;
       _error->Errno("lseek","Failed to determine the current file position");
+   }
    d->seekpos = Res;
    return Res;
 }
@@ -1511,7 +1532,10 @@ unsigned long long FileFd::FileSize()
 {
    struct stat Buf;
    if (d->pipe == false && fstat(iFd,&Buf) != 0)
+   {
+      Flags |= Fail;
       return _error->Errno("fstat","Unable to determine the file size");
+   }
 
    // for compressor pipes st_size is undefined and at 'best' zero
    if (d->pipe == true || S_ISFIFO(Buf.st_mode))
@@ -1520,7 +1544,10 @@ unsigned long long FileFd::FileSize()
       // in theory the Open-methods should take care of it already
       d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
+      {
+	 Flags |= Fail;
 	 return _error->Errno("stat","Unable to determine the file size");
+      }
    }
 
    return Buf.st_size;
@@ -1562,10 +1589,16 @@ unsigned long long FileFd::Size()
 	* bits of the file */
        // FIXME: Size for gz-files is limited by 32bit… no largefile support
        if (lseek(iFd, -4, SEEK_END) < 0)
-	   return _error->Errno("lseek","Unable to seek to end of gzipped file");
+       {
+	  Flags |= Fail;
+	  return _error->Errno("lseek","Unable to seek to end of gzipped file");
+       }
        size = 0L;
        if (read(iFd, &size, 4) != 4)
-	   return _error->Errno("read","Unable to read original size of gzipped file");
+       {
+	  Flags |= Fail;
+	  return _error->Errno("read","Unable to read original size of gzipped file");
+       }
 
 #ifdef WORDS_BIGENDIAN
        uint32_t tmp_size = size;
@@ -1575,7 +1608,10 @@ unsigned long long FileFd::Size()
 #endif
 
        if (lseek(iFd, oldPos, SEEK_SET) < 0)
-	   return _error->Errno("lseek","Unable to seek in gzipped file");
+       {
+	  Flags |= Fail;
+	  return _error->Errno("lseek","Unable to seek in gzipped file");
+       }
 
        return size;
    }
@@ -1592,6 +1628,7 @@ time_t FileFd::ModificationTime()
    struct stat Buf;
    if (d->pipe == false && fstat(iFd,&Buf) != 0)
    {
+      Flags |= Fail;
       _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
       return 0;
    }
@@ -1604,6 +1641,7 @@ time_t FileFd::ModificationTime()
       d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
       {
+	 Flags |= Fail;
 	 _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
 	 return 0;
       }
@@ -1663,6 +1701,8 @@ bool FileFd::Close()
       d = NULL;
    }
 
+   if (Res == false)
+      Flags |= Fail;
    return Res;
 }
 									/*}}}*/
@@ -1673,7 +1713,10 @@ bool FileFd::Sync()
 {
 #ifdef _POSIX_SYNCHRONIZED_IO
    if (fsync(iFd) != 0)
+   {
+      Flags |= Fail;
       return _error->Errno("sync",_("Problem syncing the file"));
+   }
 #endif
    return true;
 }
