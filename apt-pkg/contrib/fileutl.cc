@@ -1011,16 +1011,18 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
 }
 bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor)
 {
+   if (compressor.Name == "." || compressor.Binary.empty() == true)
+      return true;
+
    if (d == NULL)
    {
       d = new FileFdPrivate();
       d->openmode = Mode;
       d->compressor = compressor;
    }
-   if (compressor.Name == "." || compressor.Binary.empty() == true)
-      return true;
+
 #ifdef HAVE_ZLIB
-   else if (compressor.Name == "gzip")
+   if (compressor.Name == "gzip")
    {
       if (d->gz != NULL)
       {
@@ -1040,7 +1042,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
    }
 #endif
 #ifdef HAVE_BZ2
-   else if (compressor.Name == "bzip2")
+   if (compressor.Name == "bzip2")
    {
       if (d->bz2 != NULL)
       {
@@ -1185,12 +1187,12 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    do
    {
 #ifdef HAVE_ZLIB
-      if (d->gz != NULL)
+      if (d != NULL && d->gz != NULL)
 	 Res = gzread(d->gz,To,Size);
       else
 #endif
 #ifdef HAVE_BZ2
-      if (d->bz2 != NULL)
+      if (d != NULL && d->bz2 != NULL)
 	 Res = BZ2_bzread(d->bz2,To,Size);
       else
 #endif
@@ -1202,7 +1204,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	    continue;
 	 Flags |= Fail;
 #ifdef HAVE_ZLIB
-	 if (d->gz != NULL)
+	 if (d != NULL && d->gz != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = gzerror(d->gz, &err);
@@ -1211,7 +1213,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	 }
 #endif
 #ifdef HAVE_BZ2
-	 if (d->bz2 != NULL)
+	 if (d != NULL && d->bz2 != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
@@ -1224,7 +1226,8 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       
       To = (char *)To + Res;
       Size -= Res;
-      d->seekpos += Res;
+      if (d != NULL)
+	 d->seekpos += Res;
       if (Actual != 0)
 	 *Actual += Res;
    }
@@ -1252,7 +1255,7 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
 {
    *To = '\0';
 #ifdef HAVE_ZLIB
-   if (d->gz != NULL)
+   if (d != NULL && d->gz != NULL)
       return gzgets(d->gz, To, Size);
 #endif
 
@@ -1283,12 +1286,12 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    do
    {
 #ifdef HAVE_ZLIB
-      if (d->gz != NULL)
+      if (d != NULL && d->gz != NULL)
          Res = gzwrite(d->gz,From,Size);
       else
 #endif
 #ifdef HAVE_BZ2
-      if (d->bz2 != NULL)
+      if (d != NULL && d->bz2 != NULL)
          Res = BZ2_bzwrite(d->bz2,(void*)From,Size);
       else
 #endif
@@ -1299,7 +1302,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
       {
 	 Flags |= Fail;
 #ifdef HAVE_ZLIB
-	 if (d->gz != NULL)
+	 if (d != NULL && d->gz != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = gzerror(d->gz, &err);
@@ -1308,7 +1311,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 	 }
 #endif
 #ifdef HAVE_BZ2
-	 if (d->bz2 != NULL)
+	 if (d != NULL && d->bz2 != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
@@ -1321,7 +1324,8 @@ bool FileFd::Write(const void *From,unsigned long long Size)
       
       From = (char *)From + Res;
       Size -= Res;
-      d->seekpos += Res;
+      if (d != NULL)
+	 d->seekpos += Res;
    }
    while (Res > 0 && Size > 0);
    
@@ -1359,11 +1363,11 @@ bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 /* */
 bool FileFd::Seek(unsigned long long To)
 {
-   if (d->pipe == true
+   if (d != NULL && (d->pipe == true
 #ifdef HAVE_BZ2
-	|| d->bz2 != NULL
+			|| d->bz2 != NULL
 #endif
-	)
+	))
    {
       // Our poor man seeking in pipes is costly, so try to avoid it
       unsigned long long seekpos = Tell();
@@ -1414,7 +1418,7 @@ bool FileFd::Seek(unsigned long long To)
    }
    int res;
 #ifdef HAVE_ZLIB
-   if (d->gz)
+   if (d != NULL && d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
 #endif
@@ -1425,7 +1429,8 @@ bool FileFd::Seek(unsigned long long To)
       return _error->Error("Unable to seek to %llu", To);
    }
 
-   d->seekpos = To;
+   if (d != NULL)
+      d->seekpos = To;
    return true;
 }
 									/*}}}*/
@@ -1434,11 +1439,11 @@ bool FileFd::Seek(unsigned long long To)
 /* */
 bool FileFd::Skip(unsigned long long Over)
 {
-   if (d->pipe == true
+   if (d != NULL && (d->pipe == true
 #ifdef HAVE_BZ2
-	|| d->bz2 != NULL
+			|| d->bz2 != NULL
 #endif
-	)
+	))
    {
       d->seekpos += Over;
       char buffer[1024];
@@ -1457,7 +1462,7 @@ bool FileFd::Skip(unsigned long long Over)
 
    int res;
 #ifdef HAVE_ZLIB
-   if (d->gz != NULL)
+   if (d != NULL && d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);
    else
 #endif
@@ -1467,7 +1472,8 @@ bool FileFd::Skip(unsigned long long Over)
       Flags |= Fail;
       return _error->Error("Unable to seek ahead %llu",Over);
    }
-   d->seekpos = res;
+   if (d != NULL)
+      d->seekpos = res;
 
    return true;
 }
@@ -1478,7 +1484,7 @@ bool FileFd::Skip(unsigned long long Over)
 bool FileFd::Truncate(unsigned long long To)
 {
 #if defined HAVE_ZLIB || defined HAVE_BZ2
-   if (d->gz != NULL || d->bz2 != NULL)
+   if (d != NULL && (d->gz != NULL || d->bz2 != NULL))
    {
       Flags |= Fail;
       return _error->Error("Truncating compressed files is not implemented (%s)", FileName.c_str());
@@ -1502,16 +1508,16 @@ unsigned long long FileFd::Tell()
    // seeking around, but not all users of FileFd use always Seek() and co
    // so d->seekpos isn't always true and we can just use it as a hint if
    // we have nothing else, but not always as an authority…
-   if (d->pipe == true
+   if (d != NULL && (d->pipe == true
 #ifdef HAVE_BZ2
-	|| d->bz2 != NULL
+			|| d->bz2 != NULL
 #endif
-	)
+	))
       return d->seekpos;
 
    off_t Res;
 #ifdef HAVE_ZLIB
-   if (d->gz != NULL)
+   if (d != NULL && d->gz != NULL)
      Res = gztell(d->gz);
    else
 #endif
@@ -1521,7 +1527,8 @@ unsigned long long FileFd::Tell()
       Flags |= Fail;
       _error->Errno("lseek","Failed to determine the current file position");
    }
-   d->seekpos = Res;
+   if (d != NULL)
+      d->seekpos = Res;
    return Res;
 }
 									/*}}}*/
@@ -1531,18 +1538,19 @@ unsigned long long FileFd::Tell()
 unsigned long long FileFd::FileSize()
 {
    struct stat Buf;
-   if (d->pipe == false && fstat(iFd,&Buf) != 0)
+   if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
    {
       Flags |= Fail;
       return _error->Errno("fstat","Unable to determine the file size");
    }
 
    // for compressor pipes st_size is undefined and at 'best' zero
-   if (d->pipe == true || S_ISFIFO(Buf.st_mode))
+   if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
    {
       // we set it here, too, as we get the info here for free
       // in theory the Open-methods should take care of it already
-      d->pipe = true;
+      if (d != NULL)
+	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
       {
 	 Flags |= Fail;
@@ -1562,11 +1570,11 @@ unsigned long long FileFd::Size()
 
    // for compressor pipes st_size is undefined and at 'best' zero,
    // so we 'read' the content and 'seek' back - see there
-   if (d->pipe == true
+   if (d != NULL && (d->pipe == true
 #ifdef HAVE_BZ2
-	|| (d->bz2 && size > 0)
+			|| (d->bz2 && size > 0)
 #endif
-	)
+	))
    {
       unsigned long long const oldSeek = Tell();
       char ignore[1000];
@@ -1581,7 +1589,7 @@ unsigned long long FileFd::Size()
    // only check gzsize if we are actually a gzip file, just checking for
    // "gz" is not sufficient as uncompressed files could be opened with
    // gzopen in "direct" mode as well
-   else if (d->gz && !gzdirect(d->gz) && size > 0)
+   else if (d != NULL && d->gz && !gzdirect(d->gz) && size > 0)
    {
        off_t const oldPos = lseek(iFd,0,SEEK_CUR);
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
@@ -1626,7 +1634,7 @@ unsigned long long FileFd::Size()
 time_t FileFd::ModificationTime()
 {
    struct stat Buf;
-   if (d->pipe == false && fstat(iFd,&Buf) != 0)
+   if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
    {
       Flags |= Fail;
       _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
@@ -1634,11 +1642,12 @@ time_t FileFd::ModificationTime()
    }
 
    // for compressor pipes st_size is undefined and at 'best' zero
-   if (d->pipe == true || S_ISFIFO(Buf.st_mode))
+   if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
    {
       // we set it here, too, as we get the info here for free
       // in theory the Open-methods should take care of it already
-      d->pipe = true;
+      if (d != NULL)
+	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
       {
 	 Flags |= Fail;
