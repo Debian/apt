@@ -147,5 +147,7 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
 
 bool ListUpdate(pkgAcquireStatus &progress, pkgSourceList &List, int PulseInterval=0);
-		     
+bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval = 0,
+		   bool const RunUpdateScripts = true, bool const ListCleanup = true);
+
 #endif

@@ -48,6 +48,9 @@ apt (0.9.3) UNRELEASED; urgency=low
     - ensure that d is set before accessing it
   * apt-pkg/aptconfiguration.cc:
     - use NULL instead of "" for no (un)compress parameters
+  * apt-pkg/algorithms.cc:
+    - factor out of ListUpdate a AcquireUpdate to be able to provide your
+      own pkgAcquire fetcher to the wrapper
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 May 2012 21:12:23 +0200
 
