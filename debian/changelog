@@ -51,6 +51,9 @@ apt (0.9.3) UNRELEASED; urgency=low
   * apt-pkg/algorithms.cc:
     - factor out of ListUpdate a AcquireUpdate to be able to provide your
       own pkgAcquire fetcher to the wrapper
+  * apt-inst/deb/debfile.h:
+    - readd 'md5.h' to the uncleaned header includes to make qapt build
+      against us again unchanged to unblock transition (Closes: #669163)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 May 2012 21:12:23 +0200
 
