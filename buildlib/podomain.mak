@@ -11,9 +11,9 @@ MY_DOMAIN := $(APT_DOMAIN)
 endif
 
 MKDIRS += $(PO_DOMAINS)/$(MY_DOMAIN)
-$(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list: SRC := $(addprefix $(SUBDIR)/,$(SOURCE))
-$(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list: makefile
-	(echo $(SRC) | xargs -n1 echo) > $@
+$(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list: $(addprefix $(BASE)/$(SUBDIR)/,$(SOURCE))
+$(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list: makefile dirs
+	(echo $(addprefix $(SUBDIR)/,$(SOURCE)) | xargs -n1 echo) > $@
 startup binary program clean: $(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list
 
 veryclean: veryclean/$(LOCAL)
