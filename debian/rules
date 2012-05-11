@@ -231,7 +231,7 @@ libapt-pkg-dev: build debian/libapt-pkg-dev.install
 	dh_builddeb -p$@
 
 apt-utils_MANPAGES = apt-sortpkgs apt-ftparchive apt-extracttemplates
-apt-utils: build
+apt-utils: build build-doc
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
