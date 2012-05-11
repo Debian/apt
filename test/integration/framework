@@ -107,6 +107,10 @@ aptitude() {
 		LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
 	fi
 }
+gdb() {
+	echo "gdb: run »$*«"
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1
+}
 
 addtrap() {
 	CURRENTTRAP="$CURRENTTRAP $1"

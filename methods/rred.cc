@@ -15,7 +15,6 @@
 #include <utime.h>
 #include <stdio.h>
 #include <errno.h>
-#include <zlib.h>
 #include <apti18n.h>
 										/*}}}*/
 /** \brief RredMethod - ed-style incremential patch method			{{{

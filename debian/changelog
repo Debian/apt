@@ -1,4 +1,4 @@
-apt (0.9.3) unstable; urgency=low
+apt (0.9.3) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/contrib/strutl.cc:
@@ -34,8 +34,28 @@ apt (0.9.3) unstable; urgency=low
   * apt-pkg/deb/deblistparser.cc:
     - check length and containing chars for a given description md5sum
   * ensure that apti18n.h is included last as advertised (Closes: #671623)
+  * apt-pkg/acquire-worker.cc:
+    - revert the use of FileFd::Write in OutFdReady as we don't want error
+      reports about EAGAIN here as we retry later. Thanks to YOSHINO Yoshihito
+      for the report. (Closes: #671721)
+  * apt-pkg/contrib/fileutl.cc:
+    - check that the fd which are closed are valid
+    - ensure that we do init d only once and especially not with its own
+      content as this causes some "interesting" hickups resulting in segfaults
+      as it seems (Closes: #554387, #670979)
+    - collect zombie (de)compressor processes on reopen
+    - ensure that in error conditions the Fail flag is set
+    - ensure that d is set before accessing it
+  * apt-pkg/aptconfiguration.cc:
+    - use NULL instead of "" for no (un)compress parameters
+  * apt-pkg/algorithms.cc:
+    - factor out of ListUpdate a AcquireUpdate to be able to provide your
+      own pkgAcquire fetcher to the wrapper
+  * apt-inst/deb/debfile.h:
+    - readd 'md5.h' to the uncleaned header includes to make qapt build
+      against us again unchanged to unblock transition (Closes: #669163)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sat, 05 May 2012 15:35:16 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 07 May 2012 21:12:23 +0200
 
 apt (0.9.2) unstable; urgency=low
 
