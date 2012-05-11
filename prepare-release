@@ -8,8 +8,8 @@ LIBAPTINSTVERSION="$(egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)"
 
 if [ "$1" = 'pre-export' ]; then
 	libraryversioncheck() {
-		LIBRARY="$1"
-		VERSION="$2"
+		local LIBRARY="$1"
+		local VERSION="$2"
 		if [ ! -e "debian/${LIBRARY}${VERSION}.symbols" ]; then
 		   echo >&2 "Library ${LIBRARY} in version ${VERSION} has no symbols file! (maybe forgot to rename?)"
 		   exit 1
@@ -49,7 +49,7 @@ elif [ "$1" = 'post-build' ]; then
 elif [ "$1" = 'library' ]; then
 	librarysymbols() {
 		echo "Checking $1 in version $2"
-		tmpfile=$(mktemp)
+		local tmpfile=$(mktemp)
 		dpkg-gensymbols -p${1}${2} -ebuild/bin/${1}.so.${2} -Idebian/${1}${2}.symbols -O/dev/null 2> /dev/null > $tmpfile
 		echo '=== Missing symbols:'
 		grep '^+#MISSING' $tmpfile
