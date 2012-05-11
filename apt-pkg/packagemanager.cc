@@ -25,9 +25,10 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
 
-#include <apti18n.h>
 #include <iostream>
 #include <fcntl.h>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 

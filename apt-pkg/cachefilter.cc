@@ -10,11 +10,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
 
-#include <apti18n.h>
-
 #include <string>
 
 #include <regex.h>
+
+#include <apti18n.h>
 									/*}}}*/
 namespace APT {
 namespace CacheFilter {
