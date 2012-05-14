@@ -95,12 +95,7 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    {
       std::cout << "400 URI Failure\nURI: " << Queue->Uri << "\n"
 		<< "Message: " << Err << " " << IP << "\n";
-      // Dequeue
-      FetchItem *Tmp = Queue;
-      Queue = Queue->Next;
-      delete Tmp;
-      if (Tmp == QueueBack)
-	 QueueBack = Queue;
+      Dequeue();
    }
    else
       std::cout << "400 URI Failure\nURI: <UNKNOWN>\nMessage: " << Err << "\n";
@@ -211,13 +206,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    }
 
    std::cout << "\n" << std::flush;
-
-   // Dequeue
-   FetchItem *Tmp = Queue;
-   Queue = Queue->Next;
-   delete Tmp;
-   if (Tmp == QueueBack)
-      QueueBack = Queue;
+   Dequeue();
 }
 									/*}}}*/
 // AcqMethod::MediaFail - Syncronous request for new media		/*{{{*/
@@ -463,5 +452,13 @@ void pkgAcqMethod::FetchResult::TakeHashes(Hashes &Hash)
    SHA1Sum = Hash.SHA1.Result();
    SHA256Sum = Hash.SHA256.Result();
    SHA512Sum = Hash.SHA512.Result();
+}
+									/*}}}*/
+void pkgAcqMethod::Dequeue() {						/*{{{*/
+   FetchItem const * const Tmp = Queue;
+   Queue = Queue->Next;
+   if (Tmp == QueueBack)
+      QueueBack = Queue;
+   delete Tmp;
 }
 									/*}}}*/

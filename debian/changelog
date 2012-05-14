@@ -15,6 +15,8 @@ apt (0.9.4) UNRELEASED; urgency=low
   * debian/control:
     - move doxygen and debiandoc-sgml to Build-Depends-Indep as docs
       are no longer build in the same target as the manpages
+  * apt-pkg/acquire-methods.cc:
+    - factor out into private Dequeue() to fix access to deleted pointer
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 May 2012 23:26:59 +0200
 
