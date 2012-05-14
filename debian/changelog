@@ -18,6 +18,13 @@ apt (0.9.4) UNRELEASED; urgency=low
   * apt-pkg/acquire-methods.cc:
     - factor out into private Dequeue() to fix access to deleted pointer
 
+  [ Raphael Geissert ]
+  * apt-pkg/acquire*.cc:
+    - handle redirections in the worker with the right method instead of
+      in the method the redirection occured in (Closes: #668111)
+  * methods/http.cc:
+    - forbid redirects to change protocol
+
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 May 2012 23:26:59 +0200
 
 apt (0.9.3) unstable; urgency=low

@@ -412,26 +412,14 @@ void pkgAcqMethod::Status(const char *Format,...)
 									/*}}}*/
 // AcqMethod::Redirect - Send a redirect message                       /*{{{*/
 // ---------------------------------------------------------------------
-/* This method sends the redirect message and also manipulates the queue
-   to keep the pipeline synchronized. */
+/* This method sends the redirect message and dequeues the item as
+ * the worker will enqueue again later on to the right queue */
 void pkgAcqMethod::Redirect(const string &NewURI)
 {
    std::cout << "103 Redirect\nURI: " << Queue->Uri << "\n"
 	     << "New-URI: " << NewURI << "\n"
 	     << "\n" << std::flush;
-
-   // Change the URI for the request.
-   Queue->Uri = NewURI;
-
-   /* To keep the pipeline synchronized, move the current request to
-      the end of the queue, past the end of the current pipeline. */
-   FetchItem *I;
-   for (I = Queue; I->Next != 0; I = I->Next) ;
-   I->Next = Queue;
-   Queue = Queue->Next;
-   I->Next->Next = 0;
-   if (QueueBack == 0)
-      QueueBack = I->Next;
+   Dequeue();
 }
                                                                         /*}}}*/
 // AcqMethod::FetchResult::FetchResult - Constructor			/*{{{*/

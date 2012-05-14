@@ -985,7 +985,10 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       else
       {
          NextURI = DeQuoteString(Srv->Location);
-         return TRY_AGAIN_OR_REDIRECT;
+         URI tmpURI = NextURI;
+         // Do not allow a redirection to switch protocol
+         if (tmpURI.Access == "http")
+            return TRY_AGAIN_OR_REDIRECT;
       }
       /* else pass through for error message */
    }
