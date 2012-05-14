@@ -150,7 +150,7 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
    for (std::vector<std::string>::const_iterator I = vec.begin();
         I != vec.end(); ++I)
       if (I == vec.begin())
-         fetch += "?arch" + (*I);
+         fetch += "?arch=" + (*I);
       else
          fetch += "&arch=" + (*I);
 
