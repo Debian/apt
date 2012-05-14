@@ -61,7 +61,7 @@ using namespace std;
 string HttpMethod::FailFile;
 int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
-unsigned long PipelineDepth = 10;
+unsigned long PipelineDepth = 0;
 unsigned long TimeOut = 120;
 bool AllowRedirect = false;
 bool Debug = false;

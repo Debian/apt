@@ -1,6 +1,10 @@
 apt (0.9.4) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
+  * methods/http.cc:
+    - after many years of pointless discussions disable http/1.1 pipelining
+      by default as many webservers and proxies seem to be unable to conform
+      to specification must's (rfc2616 section 8.1.2.2) (LP: #996151)
   * apt-pkg/pkgcachegen.cc:
     - make IsDuplicatedDescription static so that it is really private
       as we don't need a symbol for it as it is not in a header

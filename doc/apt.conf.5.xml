@@ -340,13 +340,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <para>The option <literal>timeout</literal> sets the timeout timer used by the method, 
      this applies to all things including connection timeout and data timeout.</para>
 
-     <para>One setting is provided to control the pipeline depth in cases where the
-     remote server is not RFC conforming or buggy (such as Squid 2.0.2).
-     <literal>Acquire::http::Pipeline-Depth</literal> can be a value from 0 to 5 
-     indicating how many outstanding requests APT should send. A value of
-     zero MUST be specified if the remote host does not properly linger
-     on TCP connections - otherwise data corruption will occur. Hosts which
-     require this are in violation of RFC 2068.</para>
+     <para>The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used to
+     enabled HTTP pipeling (RFC 2616 section 8.1.2.2) which can be beneficial e.g. on
+     high-latency connections. It specifies how many requests are send in a pipeline.
+     Previous APT versions had a default of 10 for this setting, but the default value
+     is now 0 (= disabled) to avoid problems with the ever-growing amount of webservers
+     and proxies which choose to not conform to the HTTP/1.1 specification.</para>
 
      <para>The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</literal>
      which accepts integer values in kilobyte. The default value is 0 which deactivates
