@@ -6,10 +6,12 @@ apt (0.9.4) UNRELEASED; urgency=low
       as we don't need a symbol for it as it is not in a header
   * Makefile, buildlib/*.mak:
     - reshuffle dependencies so that parallel building seems to work
+    - separate manpages from the rest of the doc building
   * prepare-release:
     - apt-inst version isn't apt versions, so don't override variable
   * debian/rules:
     - apt-utils packages manpages, so it should depend on build-doc
+    - make apt and apt-utils packages depend on manpages instead of full doc
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 May 2012 23:26:59 +0200
 

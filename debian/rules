@@ -67,7 +67,8 @@ LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
 build: build/build-stamp
-build-doc: build/build-doc-stamp
+build-doc: build-manpages build/build-doc-stamp
+build-manpages: build/build-manpages-stamp
 
 # Note that this is unconditionally done first as part of loading environment.mak
 # The true is needed to force make to reload environment.mak after running
@@ -97,9 +98,14 @@ else
 endif
 	touch $@
 
-build/build-doc-stamp: build/configure-stamp
+build/build-doc-stamp: build/build-manpages-stamp build/configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE) doc
+	touch $@
+
+build/build-manpages-stamp: build/configure-stamp
+	# Add here commands to compile the package.
+	$(MAKE) manpages
 	touch $@
 
 clean:
@@ -167,7 +173,7 @@ apt-doc: build-doc
 
 binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
 apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
-apt: build build-doc
+apt: build build-manpages
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -231,7 +237,7 @@ libapt-pkg-dev: build debian/libapt-pkg-dev.install
 	dh_builddeb -p$@
 
 apt-utils_MANPAGES = apt-sortpkgs apt-ftparchive apt-extracttemplates
-apt-utils: build build-doc
+apt-utils: build build-manpages
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
