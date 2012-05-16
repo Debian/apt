@@ -24,6 +24,9 @@ apt (0.9.4) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - ensure that we close compressed fds, wait for forks and such even if
       the FileFd itself is set to not autoclose the given Fd
+  * cmdline/apt-get.cc:
+    - use the host architecture, not the build architecture for matching
+      of [architecture restrictions] in Build-Depends (Closes: #672927)
 
   [ Raphael Geissert ]
   * apt-pkg/acquire*.cc:
@@ -38,6 +41,9 @@ apt (0.9.4) UNRELEASED; urgency=low
   [ Marius Vollmer ]
   * apt-pkg/algorithms.cc:
     - fix memory leak of Flags in pkgSimulate by a proper destructor
+
+  [ David Kalnischkies ]
+  * 
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 May 2012 23:26:59 +0200
 

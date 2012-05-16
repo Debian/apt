@@ -71,6 +71,7 @@ class pkgSrcRecords
       virtual std::string Section() const = 0;
       virtual const char **Binaries() = 0;   // Ownership does not transfer
 
+      //FIXME: Add a parameter to specify which architecture to use for [wildcard] matching
       virtual bool BuildDepends(std::vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) = 0;
       static const char *BuildDepType(unsigned char const &Type);
 
