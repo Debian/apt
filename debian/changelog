@@ -21,6 +21,9 @@ apt (0.9.4) UNRELEASED; urgency=low
       are no longer build in the same target as the manpages
   * apt-pkg/acquire-methods.cc:
     - factor out into private Dequeue() to fix access to deleted pointer
+  * apt-pkg/contrib/fileutl.cc:
+    - ensure that we close compressed fds, wait for forks and such even if
+      the FileFd itself is set to not autoclose the given Fd
 
   [ Raphael Geissert ]
   * apt-pkg/acquire*.cc:
