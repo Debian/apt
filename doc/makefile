@@ -42,6 +42,8 @@ dirs-manpage-subdirs:
 	for i in $(MANPAGEPO); do \
 		test -d $$i || mkdir $$i; \
 		test -f $$i/makefile || sed "s#@@LANG@@#$$i#" lang.makefile > $$i/makefile; \
+		test -f $$i/manpage-style.xsl || sed "/<!-- LANGUAGE -->/ i\
+<xsl:param name=\"l10n.gentext.default.language\" select=\"'$$i'\" />" manpage-style.xsl > $$i/manpage-style.xsl; \
 	done
 
 # Clean rule

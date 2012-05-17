@@ -16,7 +16,7 @@ INCLUDES = apt.ent apt-verbatim.ent
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 ifdef XSLTPROC
 
-STYLESHEET=../manpage-style.xsl
+STYLESHEET=manpage-style.xsl
 
 LOCAL := po4a-manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(SOURCE)
