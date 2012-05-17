@@ -5,6 +5,7 @@ apt (0.9.4) UNRELEASED; urgency=low
     - after many years of pointless discussions disable http/1.1 pipelining
       by default as many webservers and proxies seem to be unable to conform
       to specification must's (rfc2616 section 8.1.2.2) (LP: #996151)
+    - add spaces around PACKAGE_VERSION to fix FTBFS with -std=c++11
   * apt-pkg/pkgcachegen.cc:
     - make IsDuplicatedDescription static so that it is really private
       as we don't need a symbol for it as it is not in a header
@@ -41,9 +42,6 @@ apt (0.9.4) UNRELEASED; urgency=low
   [ Marius Vollmer ]
   * apt-pkg/algorithms.cc:
     - fix memory leak of Flags in pkgSimulate by a proper destructor
-
-  [ David Kalnischkies ]
-  * 
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 May 2012 23:26:59 +0200
 
