@@ -126,14 +126,21 @@ int main(int argc,char *argv[])
 
 	_config->Set("Dir::State::lists", argv[1]);
 	vec = APT::Configuration::getLanguages(true, false, env);
-	equals(vec.size(), 7);
+	equals(vec.size(), 8);
 	equals(vec[0], "de_DE");
 	equals(vec[1], "de");
 	equals(vec[2], "en");
 	equals(vec[3], "none");
-	equalsOr3(vec[4], "pt", "tr", "ast_DE");
-	equalsOr3(vec[5], "tr", "pt", "ast_DE");
-	equalsOr3(vec[6], "tr", "pt", "ast_DE");
+	equalsOr4(vec[4], "pt", "tr", "ast_DE", "tlh_DE");
+	equalsOr4(vec[5], "tr", "pt", "ast_DE", "tlh_DE");
+	equalsOr4(vec[6], "tr", "pt", "ast_DE", "tlh_DE");
+	equalsOr4(vec[7], "tr", "pt", "ast_DE", "tlh_DE");
+	equalsNot(vec[4], vec[5]);
+	equalsNot(vec[4], vec[6]);
+	equalsNot(vec[4], vec[7]);
+	equalsNot(vec[5], vec[6]);
+	equalsNot(vec[5], vec[7]);
+	equalsNot(vec[6], vec[7]);
 
 	_config->Set("Acquire::Languages", "none");
 	vec = APT::Configuration::getLanguages(true, false, env);

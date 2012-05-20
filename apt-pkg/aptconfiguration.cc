@@ -144,7 +144,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	if (D != 0) {
 		builtin.push_back("none");
 		for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
-			string const name = Ent->d_name;
+			string const name = SubstVar(Ent->d_name, "%5f", "_");
 			size_t const foundDash = name.rfind("-");
 			size_t const foundUnderscore = name.rfind("_", foundDash);
 			if (foundDash == string::npos || foundUnderscore == string::npos ||

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #define equals(x,y) assertEquals(y, x, __LINE__)
+#define equalsNot(x,y) assertEqualsNot(y, x, __LINE__)
 
 template < typename X, typename Y >
 void OutputAssertEqual(X expect, char const* compare, Y get, unsigned long const &line) {
@@ -12,6 +13,13 @@ void assertEquals(X expect, Y get, unsigned long const &line) {
 	if (expect == get)
 		return;
 	OutputAssertEqual(expect, "==", get, line);
+}
+
+template < typename X, typename Y >
+void assertEqualsNot(X expect, Y get, unsigned long const &line) {
+	if (expect != get)
+		return;
+	OutputAssertEqual(expect, "!=", get, line);
 }
 
 void assertEquals(unsigned int const &expect, int const &get, unsigned long const &line) {
@@ -80,6 +88,19 @@ void assertEqualsOr3(X expect1, X expect2, X expect3, Y get, unsigned long const
 	OutputAssertEqualOr3(expect1, expect2, expect3, "==", get, line);
 }
 
+#define equalsOr4(v,w,x,y,z) assertEqualsOr4(w, x, y, z, v, __LINE__)
+
+template < typename X, typename Y >
+void OutputAssertEqualOr4(X expect1, X expect2, X expect3, X expect4, char const* compare, Y get, unsigned long const &line) {
+	std::cerr << "Test FAILED: »" << expect1 << "« or »" << expect2 << "« or »" << expect3 << "« or »" << expect4 << "« " << compare << " »" << get << "« at line " << line << std::endl;
+}
+
+template < typename X, typename Y >
+void assertEqualsOr4(X expect1, X expect2, X expect3, X expect4, Y get, unsigned long const &line) {
+	if (expect1 == get || expect2 == get || expect3 == get || expect4 == get)
+		return;
+	OutputAssertEqualOr4(expect1, expect2, expect3, expect4, "==", get, line);
+}
 
 // simple helper to quickly output a vectors
 template < typename X >
