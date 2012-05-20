@@ -127,14 +127,14 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <para>All of the APT tools take a -o option which allows an arbitrary configuration 
    directive to be specified on the command line. The syntax is a full option
    name (<literal>APT::Get::Assume-Yes</literal> for instance) followed by an equals
-   sign then the new value of the option. Lists can be appended too by adding 
-   a trailing :: to the list name. (As you might suspect: The scope syntax can't be used
-   on the command line.)</para>
+   sign then the new value of the option. To append a new element to a list, add a
+   trailing :: to the name of the list. (As you might suspect: The scope syntax can't
+   be used on the command line.)</para>
 
    <para>Note that you can use :: only for appending one item per line to a list and
    that you should not use it in combination with the scope syntax.
    (The scope syntax implicit insert ::) Using both syntaxes together will trigger a bug
-   which some users unfortunately relay on: An option with the unusual name "<literal>::</literal>"
+   which some users unfortunately depend on: An option with the unusual name "<literal>::</literal>"
    which acts like every other option with a name. These introduces many problems
    including that a user who writes multiple lines in this <emphasis>wrong</emphasis> syntax in
    the hope to append to a list will gain the opposite as only the last assignment for this option
@@ -155,8 +155,10 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </varlistentry>
 
      <varlistentry><term>Architectures</term>
-     <listitem><para>All Architectures the system supports. Processors implementing the <literal>amd64</literal>
-     are e.g. also able to execute binaries compiled for <literal>i386</literal>; This list is use when fetching files and
+     <listitem><para>All Architectures the system supports. Processors implementing the
+     <literal>amd64</literal> (also called <literal>x86-64</literal>) instruction set are
+     e.g. also able to execute binaries compiled for the <literal>i386</literal>
+     (<literal>x86</literal>) instruction set; This list is use when fetching files and
      parsing package lists. The internal default is always the native architecture (<literal>APT::Architecture</literal>)
      and all foreign architectures it can retrieve by calling <command>dpkg --print-foreign-architectures</command>.
      </para></listitem>
@@ -216,10 +218,10 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <listitem><para>APT uses since version 0.7.26 a resizable memory mapped cache file to store the 'available'
      information. <literal>Cache-Start</literal> acts as a hint to which size the Cache will grow
      and is therefore the amount of memory APT will request at startup. The default value is
-     20971520 bytes (~20 MB). Note that these amount of space need to be available for APT
-     otherwise it will likely fail ungracefully, so for memory restricted devices these value should
-     be lowered while on systems with a lot of configured sources this might be increased.
-     <literal>Cache-Grow</literal> defines in byte with the default of 1048576 (~1 MB) how much
+     20971520 bytes (~20 MB). Note that this amount of space needs to be available for APT
+     otherwise it will likely fail ungracefully, so for memory restricted devices this value should
+     be lowered while on systems with a lot of configured sources it should be increased.
+     <literal>Cache-Grow</literal> defines in bytes with the default of 1048576 (~1 MB) how much
      the Cache size will be increased in the event the space defined by <literal>Cache-Start</literal>
      is not enough. These value will be applied again and again until either the cache is big
      enough to store all information or the size of the cache reaches the <literal>Cache-Limit</literal>.
@@ -270,7 +272,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 it was created (indicated by the <literal>Date</literal> header).
 	 If the Release file itself includes a <literal>Valid-Until</literal> header
 	 the earlier date of the two is used as the expiration date.
-	 The default value is <literal>0</literal> which stands for "for ever".
+	 The default value is <literal>0</literal> which stands for "for ever valid".
 	 Archive specific settings can be made by appending the label of the archive
 	 to the option name.
 	 </para></listitem>
@@ -293,7 +295,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 by default.</para>
 	 <para>Two sub-options to limit the use of PDiffs are also available:
 	 With <literal>FileLimit</literal> can be specified how many PDiff files
-	 are downloaded at most to patch a file. <literal>SizeLimit</literal>
+	 are downloaded at most to update a file. <literal>SizeLimit</literal>
 	 on the other hand is the maximum percentage of the size of all patches
 	 compared to the size of the targeted file. If one of these limits is
 	 exceeded the complete file is downloaded instead of the patches.
@@ -346,6 +348,9 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      Previous APT versions had a default of 10 for this setting, but the default value
      is now 0 (= disabled) to avoid problems with the ever-growing amount of webservers
      and proxies which choose to not conform to the HTTP/1.1 specification.</para>
+
+     <para><literal>Acquire::http::AllowRedirect</literal> controls if APT will follow
+     redirects, which is enabled by default.</para>
 
      <para>The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</literal>
      which accepts integer values in kilobyte. The default value is 0 which deactivates
@@ -493,7 +498,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      actually use them if the environment doesn't specify this languages. So the following example configuration will
      result in the order "en, de" in an english and in "de, en" in a german localization. Note that "fr" is downloaded,
      but not used if APT is not used in a french localization, in such an environment the order would be "fr, de, en".
-     <programlisting>Acquire::Languages { "environment"; "de"; "en"; "none"; "fr"; };</programlisting></para></listitem>
+     <programlisting>Acquire::Languages { "environment"; "de"; "en"; "none"; "fr"; };</programlisting></para>
+     <para>Note: To prevent problems resulting from APT being executed in different environments
+     (e.g. by different users or by other programs) all Translation files which are found in
+     <filename>/var/lib/apt/lists/</filename> will be added to the end of the list
+     (after an implicit "<literal>none</literal>").</para>
+     </listitem>
      </varlistentry>
 
    </variablelist>
@@ -505,7 +515,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    <para>The <literal>Dir::State</literal> section has directories that pertain to local 
    state information. <literal>lists</literal> is the directory to place downloaded 
    package lists in and <literal>status</literal> is the name of the dpkg status file.
-   <literal>preferences</literal> is the name of the APT preferences file.
+   <literal>preferences</literal> is the name of the APT <filename>preferences</filename> file.
    <literal>Dir::State</literal> contains the default directory to prefix on all sub 
    items if they do not start with <filename>/</filename> or <filename>./</filename>.</para>
 

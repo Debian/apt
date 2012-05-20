@@ -46,13 +46,11 @@
 
    <variablelist>
      <varlistentry><term>gencaches</term>
-     <listitem><para><literal>gencaches</literal> performs the same operation as 
-     <command>apt-get check</command>. It builds the source and package caches from 
-     the sources in &sources-list; and from
-     <filename>/var/lib/dpkg/status</filename>.</para></listitem>
+     <listitem><para><literal>gencaches</literal> creates APT's package cache. This is done
+     implicitly by all commands needing this cache if it is missing or outdated.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>showpkg <replaceable>pkg(s)</replaceable></term>
+     <varlistentry><term>showpkg <replaceable>&synopsis-pkg;</replaceable>…</term>
      <listitem><para><literal>showpkg</literal> displays information about the packages listed on the 
      command line. Remaining arguments are package names. The available 
      versions and reverse dependencies of each package listed are listed, as 
@@ -141,7 +139,7 @@ Reverse Provides:
      </para></listitem>
      </varlistentry>
      
-     <varlistentry><term>showsrc <replaceable>pkg(s)</replaceable></term>
+     <varlistentry><term>showsrc <replaceable>&synopsis-pkg;</replaceable>…</term>
      <listitem><para><literal>showsrc</literal> displays all the source package records that match
      the given package names. All versions are shown, as well as all 
      records that declare the name to be a Binary.</para></listitem>
@@ -162,13 +160,13 @@ Reverse Provides:
      package cache.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>show <replaceable>pkg(s)</replaceable></term>
+     <varlistentry><term>show <replaceable>&synopsis-pkg;</replaceable>…</term>
      <listitem><para><literal>show</literal> performs a function similar to 
      <command>dpkg --print-avail</command>; it displays the package records for the 
      named packages.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>search <replaceable>regex [ regex ... ]</replaceable></term>
+     <varlistentry><term>search <replaceable>&synopsis-regex;</replaceable>…</term>
      <listitem><para><literal>search</literal> performs a full text search on all available package
      lists for the POSIX regex pattern given, see 
      <citerefentry><refentrytitle><command>regex</command></refentrytitle>
@@ -186,17 +184,17 @@ Reverse Provides:
      are and'ed together.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>depends <replaceable>pkg(s)</replaceable></term>
+     <varlistentry><term>depends <replaceable>&synopsis-pkg;</replaceable>…</term>
      <listitem><para><literal>depends</literal> shows a listing of each dependency a package has 
      and all the possible other packages that can fulfill that dependency.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>rdepends <replaceable>pkg(s)</replaceable></term>
+     <varlistentry><term>rdepends <replaceable>&synopsis-pkg;</replaceable>…</term>
      <listitem><para><literal>rdepends</literal> shows a listing of each reverse dependency a
       package has.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>pkgnames <replaceable>[ prefix ]</replaceable></term>
+     <varlistentry><term>pkgnames [ <replaceable>&synopsis-prefix;</replaceable> ]</term>
      <listitem><para>This command prints the name of each package APT knows. The optional
      argument is a prefix match to filter the name list. The output is suitable
      for use in a shell tab complete function and the output is generated 
@@ -207,7 +205,7 @@ Reverse Provides:
      </para></listitem>
      </varlistentry>
      
-     <varlistentry><term>dotty <replaceable>pkg(s)</replaceable></term>
+     <varlistentry><term>dotty <replaceable>&synopsis-pkg;</replaceable>…</term>
      <listitem><para><literal>dotty</literal> takes a list of packages on the command line and 
      generates output suitable for use by dotty from the 
      <ulink url="http://www.research.att.com/sw/tools/graphviz/">GraphViz</ulink>
@@ -225,19 +223,19 @@ Reverse Provides:
      <para>Caution, dotty cannot graph larger sets of packages.</para></listitem>
      </varlistentry>
      
-     <varlistentry><term>xvcg <replaceable>pkg(s)</replaceable></term>
+     <varlistentry><term>xvcg <replaceable>&synopsis-pkg;</replaceable></term>
 	 <listitem><para>The same as <literal>dotty</literal>, only for xvcg from the
 	 <ulink url="http://rw4.cs.uni-sb.de/users/sander/html/gsvcg1.html">VCG tool</ulink>.
 	 </para></listitem></varlistentry>
 
-     <varlistentry><term>policy <replaceable>[ pkg(s) ]</replaceable></term>
+     <varlistentry><term>policy [ <replaceable>&synopsis-pkg;</replaceable>… ]</term>
      <listitem><para><literal>policy</literal> is meant to help debug issues relating to the 
      preferences file. With no arguments it will print out the 
      priorities of each source. Otherwise it prints out detailed information
      about the priority selection of the named package.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>madison <replaceable>[ pkg(s) ]</replaceable></term>
+     <varlistentry><term>madison <replaceable>&synopsis-pkg;</replaceable>…</term>
      <listitem><para><literal>apt-cache</literal>'s <literal>madison</literal> command attempts to mimic
      the output format and a subset of the functionality of the Debian
      archive management tool, <literal>madison</literal>.  It displays

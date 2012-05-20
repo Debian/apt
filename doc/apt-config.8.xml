@@ -93,9 +93,10 @@ eval $RES
 
      <varlistentry>
       <term><option>--format '<replaceable>&percnt;f &#x0022;&percnt;v&#x0022;;&percnt;n</replaceable>'</option></term>
-      <listitem><para>Defines the output of each config option. &percnt;t will be replaced with the tagname,
-		      &percnt;f with the complete tagname and &percnt;v with the value of the option.
-		      Use uppercase letters and the respective values will be quoted. Additionally
+      <listitem><para>Defines the output of each config option. &percnt;t will be replaced with the name of the option,
+		      &percnt;f with the complete optionname and &percnt;v with the value of the option.
+		      Use uppercase letters and special characters in the value will be encoded to ensure that
+		      it can e.g. be savely used in a quoted-string as defined by RFC822. Additionally
 		      &percnt;n will be replaced by a newline, &percnt;N by a tab. A &percnt; can be
 		      printed by using &percnt;&percnt;.</para></listitem>
      </varlistentry>
