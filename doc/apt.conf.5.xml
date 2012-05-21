@@ -148,13 +148,13 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    options for all of the tools.</para>
 
    <variablelist>
-     <varlistentry><term>Architecture</term>
+     <varlistentry><term><option>Architecture</option></term>
      <listitem><para>System Architecture; sets the architecture to use when fetching files and
      parsing package lists. The internal default is the architecture apt was 
      compiled for.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Architectures</term>
+     <varlistentry><term><option>Architectures</option></term>
      <listitem><para>All Architectures the system supports. Processors implementing the
      <literal>amd64</literal> (also called <literal>x86-64</literal>) instruction set are
      e.g. also able to execute binaries compiled for the <literal>i386</literal>
@@ -164,25 +164,25 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Default-Release</term>
+     <varlistentry><term><option>Default-Release</option></term>
      <listitem><para>Default release to install packages from if more than one
      version available. Contains release name, codename or release version. Examples: 'stable', 'testing',
      'unstable', '&stable-codename;', '&testing-codename;', '4.0', '5.0*'. See also &apt-preferences;.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Ignore-Hold</term>
+     <varlistentry><term><option>Ignore-Hold</option></term>
      <listitem><para>Ignore Held packages; This global option causes the problem resolver to
      ignore held packages in its decision making.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Clean-Installed</term>
+     <varlistentry><term><option>Clean-Installed</option></term>
      <listitem><para>Defaults to on. When turned on the autoclean feature will remove any packages
      which can no longer be downloaded from the cache. If turned off then
      packages that are locally installed are also excluded from cleaning - but
      note that APT provides no direct means to reinstall them.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Immediate-Configure</term>
+     <varlistentry><term><option>Immediate-Configure</option></term>
      <listitem><para>Defaults to on which will cause APT to install essential and important packages
      as fast as possible in the install/upgrade operation. This is done to limit the effect of a failing
      &dpkg; call: If this option is disabled APT does treat an important package in the same way as
@@ -205,7 +205,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      improving or correcting the upgrade process.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Force-LoopBreak</term>
+     <varlistentry><term><option>Force-LoopBreak</option></term>
      <listitem><para>Never Enable this option unless you -really- know what you are doing. It
      permits APT to temporarily remove an essential package to break a
      Conflicts/Conflicts or Conflicts/Pre-Depend loop between two essential
@@ -214,7 +214,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      anything that those packages depend on.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Cache-Start, Cache-Grow and Cache-Limit</term>
+     <varlistentry><term><option>Cache-Start</option></term><term><option>Cache-Grow</option></term><term><option>Cache-Limit</option></term>
      <listitem><para>APT uses since version 0.7.26 a resizable memory mapped cache file to store the 'available'
      information. <literal>Cache-Start</literal> acts as a hint to which size the Cache will grow
      and is therefore the amount of memory APT will request at startup. The default value is
@@ -230,21 +230,21 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Build-Essential</term>
+     <varlistentry><term><option>Build-Essential</option></term>
      <listitem><para>Defines which package(s) are considered essential build dependencies.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Get</term>
+     <varlistentry><term><option>Get</option></term>
      <listitem><para>The Get subsection controls the &apt-get; tool, please see its
      documentation for more information about the options here.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Cache</term>
+     <varlistentry><term><option>Cache</option></term>
      <listitem><para>The Cache subsection controls the &apt-cache; tool, please see its
      documentation for more information about the options here.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>CDROM</term>
+     <varlistentry><term><option>CDROM</option></term>
      <listitem><para>The CDROM subsection controls the &apt-cdrom; tool, please see its
      documentation for more information about the options here.</para></listitem>
      </varlistentry>
@@ -256,7 +256,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    and the URI handlers. 
 
    <variablelist>
-     <varlistentry><term>Check-Valid-Until</term>
+     <varlistentry><term><option>Check-Valid-Until</option></term>
 	 <listitem><para>Security related option defaulting to true as an
 	 expiring validation for a Release file prevents longtime replay attacks
 	 and can e.g. also help users to identify no longer updated mirrors -
@@ -267,7 +267,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Max-ValidTime</term>
+     <varlistentry><term><option>Max-ValidTime</option></term>
 	 <listitem><para>Seconds the Release file should be considered valid after
 	 it was created (indicated by the <literal>Date</literal> header).
 	 If the Release file itself includes a <literal>Valid-Until</literal> header
@@ -278,7 +278,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Min-ValidTime</term>
+     <varlistentry><term><option>Min-ValidTime</option></term>
 	 <listitem><para>Minimum of seconds the Release file should be considered
 	 valid after it was created (indicated by the <literal>Date</literal> header).
 	 Use this if you need to use a seldomly updated (local) mirror of a more
@@ -289,7 +289,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>PDiffs</term>
+     <varlistentry><term><option>PDiffs</option></term>
 	 <listitem><para>Try to download deltas called <literal>PDiffs</literal> for
 	 Packages or Sources files instead of downloading whole ones. True
 	 by default.</para>
@@ -302,7 +302,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Queue-Mode</term>
+     <varlistentry><term><option>Queue-Mode</option></term>
      <listitem><para>Queuing mode; <literal>Queue-Mode</literal> can be one of <literal>host</literal> or 
      <literal>access</literal> which determines how  APT parallelizes outgoing 
      connections. <literal>host</literal> means that one connection per target host 
@@ -310,17 +310,17 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      will be opened.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Retries</term>
+     <varlistentry><term><option>Retries</option></term>
      <listitem><para>Number of retries to perform. If this is non-zero APT will retry failed 
      files the given number of times.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Source-Symlinks</term>
+     <varlistentry><term><option>Source-Symlinks</option></term>
      <listitem><para>Use symlinks for source archives. If set to true then source archives will
      be symlinked when possible instead of copying. True is the default.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>http</term>
+     <varlistentry><term><option>http</option></term>
      <listitem><para>HTTP URIs; http::Proxy is the default http proxy to use. It is in the 
      standard form of <literal>http://[[user][:pass]@]host[:port]/</literal>. Per 
      host proxies can also be specified by using the form 
@@ -363,7 +363,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>https</term>
+     <varlistentry><term><option>https</option></term>
 	 <listitem><para>HTTPS URIs. Cache-control, Timeout, AllowRedirect, Dl-Limit and
 	 proxy options are the same as for <literal>http</literal> method and will also
 	 default to the options from the <literal>http</literal> method if they are not
@@ -388,7 +388,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 <literal>&lt;host&gt;::SslForceVersion</literal> is corresponding per-host option.
 	 </para></listitem></varlistentry>
 
-     <varlistentry><term>ftp</term>
+     <varlistentry><term><option>ftp</option></term>
      <listitem><para>FTP URIs; ftp::Proxy is the default ftp proxy to use. It is in the 
      standard form of <literal>ftp://[[user][:pass]@]host[:port]/</literal>. Per 
      host proxies can also be specified by using the form 
@@ -427,7 +427,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      do not support RFC2428.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>cdrom</term>
+     <varlistentry><term><option>cdrom</option></term>
      <listitem><para>CDROM URIs; the only setting for CDROM URIs is the mount point, 
      <literal>cdrom::Mount</literal> which must be the mount point for the CDROM drive 
      as specified in <filename>/etc/fstab</filename>. It is possible to provide 
@@ -438,13 +438,13 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      commands can be specified using UMount.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>gpgv</term>
+     <varlistentry><term><option>gpgv</option></term>
      <listitem><para>GPGV URIs; the only option for GPGV URIs is the option to pass additional parameters to gpgv.
      <literal>gpgv::Options</literal> Additional options passed to gpgv.
      </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>CompressionTypes</term>
+     <varlistentry><term><option>CompressionTypes</option></term>
      <listitem><para>List of compression types which are understood by the acquire methods.
      Files like <filename>Packages</filename> can be available in various compression formats.
      Per default the acquire methods can decompress <command>bzip2</command>, <command>lzma</command>
@@ -472,7 +472,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      useable for local mirrors.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>GzipIndexes</term>
+     <varlistentry><term><option>GzipIndexes</option></term>
 	 <listitem><para>
 	 When downloading <literal>gzip</literal> compressed indexes (Packages, Sources, or
 	 Translations), keep them gzip compressed locally instead of unpacking
@@ -481,7 +481,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Languages</term>
+     <varlistentry><term><option>Languages</option></term>
      <listitem><para>The Languages subsection controls which <filename>Translation</filename> files are downloaded
      and in which order APT tries to display the Description-Translations. APT will try to display the first
      available Description in the Language which is listed at first. Languages can be defined with their
@@ -574,7 +574,7 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    control the default behaviour. These are in the <literal>DSelect</literal> section.</para>
    
    <variablelist>
-     <varlistentry><term>Clean</term>
+     <varlistentry><term><option>Clean</option></term>
      <listitem><para>Cache Clean mode; this value may be one of always, prompt, auto,
      pre-auto and never.  always and prompt will remove all packages from
      the cache after upgrading, prompt (the default) does so conditionally. 
@@ -583,17 +583,17 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      action before downloading new packages.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>options</term>
+     <varlistentry><term><option>options</option></term>
      <listitem><para>The contents of this variable is passed to &apt-get; as command line
      options when it is run for the install phase.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Updateoptions</term>
+     <varlistentry><term><option>Updateoptions</option></term>
      <listitem><para>The contents of this variable is passed to &apt-get; as command line
      options when it is run for the update phase.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>PromptAfterUpdate</term>
+     <varlistentry><term><option>PromptAfterUpdate</option></term>
      <listitem><para>If true the [U]pdate operation in &dselect; will always prompt to continue. 
      The default is to prompt only on error.</para></listitem>
      </varlistentry>
@@ -605,20 +605,20 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    in the <literal>DPkg</literal> section.</para>
 
    <variablelist>
-     <varlistentry><term>options</term>
+     <varlistentry><term><option>options</option></term>
      <listitem><para>This is a list of options to pass to dpkg. The options must be specified
      using the list notation and each list item is passed as a single argument
      to &dpkg;.</para></listitem>
      </varlistentry>
      
-     <varlistentry><term>Pre-Invoke</term><term>Post-Invoke</term>
+     <varlistentry><term><option>Pre-Invoke</option></term><term><option>Post-Invoke</option></term>
      <listitem><para>This is a list of shell commands to run before/after invoking &dpkg;. 
      Like <literal>options</literal> this must be specified in list notation. The 
      commands are invoked in order using <filename>/bin/sh</filename>, should any 
      fail APT will abort.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Pre-Install-Pkgs</term>
+     <varlistentry><term><option>Pre-Install-Pkgs</option></term>
      <listitem><para>This is a list of shell commands to run before invoking dpkg. Like
      <literal>options</literal> this must be specified in list notation. The commands
      are invoked in order using <filename>/bin/sh</filename>, should any fail APT 
@@ -632,12 +632,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      command given to <literal>Pre-Install-Pkgs</literal>.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Run-Directory</term>
+     <varlistentry><term><option>Run-Directory</option></term>
      <listitem><para>APT chdirs to this directory before invoking dpkg, the default is 
      <filename>/</filename>.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>Build-options</term>
+     <varlistentry><term><option>Build-options</option></term>
      <listitem><para>These options are passed to &dpkg-buildpackage; when compiling packages,
      the default is to disable signing and produce all binaries.</para></listitem>
      </varlistentry>
@@ -665,7 +665,7 @@ DPkg::ConfigurePending "true";
 DPkg::TriggersPending "true";</literallayout></para>
 
      <variablelist>
-       <varlistentry><term>DPkg::NoTriggers</term>
+       <varlistentry><term><option>DPkg::NoTriggers</option></term>
        <listitem><para>Add the no triggers flag to all dpkg calls (except the ConfigurePending call).
        See &dpkg; if you are interested in what this actually means. In short: dpkg will not run the
        triggers when this flag is present unless it is explicitly called to do so in an extra call.
@@ -673,7 +673,7 @@ DPkg::TriggersPending "true";</literallayout></para>
        meaning: Previously these option only append --no-triggers to the configure calls to dpkg -
        now apt will add these flag also to the unpack and remove calls.</para></listitem>
        </varlistentry>
-       <varlistentry><term>PackageManager::Configure</term>
+       <varlistentry><term><option>PackageManager::Configure</option></term>
        <listitem><para>Valid values are "<literal>all</literal>", "<literal>smart</literal>" and "<literal>no</literal>".
        "<literal>all</literal>" is the default value and causes APT to configure all packages explicit.
        The "<literal>smart</literal>" way is it to configure only packages which need to be configured before
@@ -684,20 +684,20 @@ DPkg::TriggersPending "true";</literallayout></para>
        default as otherwise the system could end in an unconfigured status which could be unbootable!
        </para></listitem>
        </varlistentry>
-       <varlistentry><term>DPkg::ConfigurePending</term>
+       <varlistentry><term><option>DPkg::ConfigurePending</option></term>
        <listitem><para>If this option is set apt will call <command>dpkg --configure --pending</command>
        to let dpkg handle all required configurations and triggers. This option is activated automatic
        per default if the previous option is not set to <literal>all</literal>, but deactivating could be useful
        if you want to run APT multiple times in a row - e.g. in an installer. In these sceneries you could
        deactivate this option in all but the last run.</para></listitem>
        </varlistentry>
-       <varlistentry><term>DPkg::TriggersPending</term>
+       <varlistentry><term><option>DPkg::TriggersPending</option></term>
        <listitem><para>Useful for <literal>smart</literal> configuration as a package which has pending
        triggers is not considered as <literal>installed</literal> and dpkg treats them as <literal>unpacked</literal>
        currently which is a dealbreaker for Pre-Dependencies (see debbugs #526774). Note that this will
        process all triggers, not only the triggers needed to configure this package.</para></listitem>
        </varlistentry>
-       <varlistentry><term>PackageManager::UnpackAll</term>
+       <varlistentry><term><option>PackageManager::UnpackAll</option></term>
        <listitem><para>As the configuration can be deferred to be done at the end by dpkg it can be
        tried to order the unpack series only by critical needs, e.g. by Pre-Depends. Default is true
        and therefore the "old" method of ordering in various steps by everything. While both method
@@ -705,7 +705,7 @@ DPkg::TriggersPending "true";</literallayout></para>
        this method is very experimental and needs further improvements before becoming really useful.
        </para></listitem>
        </varlistentry>
-       <varlistentry><term>OrderList::Score::Immediate</term>
+       <varlistentry><term><option>OrderList::Score::Immediate</option></term>
        <listitem><para>Essential packages (and there dependencies) should be configured immediately
        after unpacking. It will be a good idea to do this quite early in the upgrade process as these
        these configure calls require currently also <literal>DPkg::TriggersPending</literal> which
@@ -788,7 +788,7 @@ DPkg::TriggersPending "true";</literallayout></para>
 
    <variablelist>
      <varlistentry>
-       <term><literal>Debug::Acquire::cdrom</literal></term>
+       <term><option>Debug::Acquire::cdrom</option></term>
 
        <listitem>
 	 <para>
@@ -799,7 +799,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::Acquire::ftp</literal></term>
+       <term><option>Debug::Acquire::ftp</option></term>
 
        <listitem>
 	 <para>
@@ -810,7 +810,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::Acquire::http</literal></term>
+       <term><option>Debug::Acquire::http</option></term>
 
        <listitem>
 	 <para>
@@ -821,7 +821,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::Acquire::https</literal></term>
+       <term><option>Debug::Acquire::https</option></term>
 
        <listitem>
 	 <para>
@@ -832,7 +832,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::Acquire::gpgv</literal></term>
+       <term><option>Debug::Acquire::gpgv</option></term>
 
        <listitem>
 	 <para>
@@ -843,7 +843,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::aptcdrom</literal></term>
+       <term><option>Debug::aptcdrom</option></term>
 
        <listitem>
 	 <para>
@@ -854,7 +854,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::BuildDeps</literal></term>
+       <term><option>Debug::BuildDeps</option></term>
        <listitem>
 	 <para>
 	   Describes the process of resolving build-dependencies in
@@ -864,7 +864,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::Hashes</literal></term>
+       <term><option>Debug::Hashes</option></term>
        <listitem>
 	 <para>
 	   Output each cryptographic hash that is generated by the
@@ -874,7 +874,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::IdentCDROM</literal></term>
+       <term><option>Debug::IdentCDROM</option></term>
        <listitem>
 	 <para>
 	   Do not include information from <literal>statfs</literal>,
@@ -885,7 +885,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::NoLocking</literal></term>
+       <term><option>Debug::NoLocking</option></term>
        <listitem>
 	 <para>
 	   Disable all file locking.  For instance, this will allow
@@ -896,7 +896,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgAcquire</literal></term>
+       <term><option>Debug::pkgAcquire</option></term>
 
        <listitem>
 	 <para>
@@ -907,7 +907,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgAcquire::Auth</literal></term>
+       <term><option>Debug::pkgAcquire::Auth</option></term>
        <listitem>
 	 <para>
 	   Output status messages and errors related to verifying
@@ -917,7 +917,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgAcquire::Diffs</literal></term>
+       <term><option>Debug::pkgAcquire::Diffs</option></term>
        <listitem>
 	 <para>
 	   Output information about downloading and applying package
@@ -928,7 +928,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgAcquire::RRed</literal></term>
+       <term><option>Debug::pkgAcquire::RRed</option></term>
 
        <listitem>
 	 <para>
@@ -939,7 +939,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgAcquire::Worker</literal></term>
+       <term><option>Debug::pkgAcquire::Worker</option></term>
 
        <listitem>
 	 <para>
@@ -950,7 +950,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgAutoRemove</literal></term>
+       <term><option>Debug::pkgAutoRemove</option></term>
 
        <listitem>
 	 <para>
@@ -961,7 +961,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgDepCache::AutoInstall</literal></term>
+       <term><option>Debug::pkgDepCache::AutoInstall</option></term>
        <listitem>
 	 <para>
 	   Generate debug messages describing which packages are being
@@ -975,7 +975,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgDepCache::Marker</literal></term>
+       <term><option>Debug::pkgDepCache::Marker</option></term>
        <listitem>
         <para>
            Generate debug messages describing which package is marked
@@ -997,7 +997,7 @@ DPkg::TriggersPending "true";</literallayout></para>
 
      <!-- Question: why doesn't this do anything?  The code says it should. -->
      <varlistentry>
-       <term><literal>Debug::pkgInitConfig</literal></term>
+       <term><option>Debug::pkgInitConfig</option></term>
        <listitem>
 	 <para>
 	   Dump the default configuration to standard error on
@@ -1007,7 +1007,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgDPkgPM</literal></term>
+       <term><option>Debug::pkgDPkgPM</option></term>
        <listitem>
 	 <para>
 	   When invoking &dpkg;, output the precise command line with
@@ -1018,7 +1018,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgDPkgProgressReporting</literal></term>
+       <term><option>Debug::pkgDPkgProgressReporting</option></term>
        <listitem>
 	 <para>
 	   Output all the data received from &dpkg; on the status file
@@ -1028,7 +1028,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgOrderList</literal></term>
+       <term><option>Debug::pkgOrderList</option></term>
 
        <listitem>
 	 <para>
@@ -1040,7 +1040,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgPackageManager</literal></term>
+       <term><option>Debug::pkgPackageManager</option></term>
 
        <listitem>
 	 <para>
@@ -1051,7 +1051,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgPolicy</literal></term>
+       <term><option>Debug::pkgPolicy</option></term>
 
        <listitem>
 	 <para>
@@ -1061,7 +1061,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgProblemResolver</literal></term>
+       <term><option>Debug::pkgProblemResolver</option></term>
 
        <listitem>
 	 <para>
@@ -1073,7 +1073,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::pkgProblemResolver::ShowScores</literal></term>
+       <term><option>Debug::pkgProblemResolver::ShowScores</option></term>
        <listitem>
         <para>
           Display a list of all installed packages with their calculated score
@@ -1084,7 +1084,7 @@ DPkg::TriggersPending "true";</literallayout></para>
      </varlistentry>
 
      <varlistentry>
-       <term><literal>Debug::sourceList</literal></term>
+       <term><option>Debug::sourceList</option></term>
 
        <listitem>
 	 <para>
