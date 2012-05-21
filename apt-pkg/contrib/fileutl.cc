@@ -81,6 +81,31 @@ class FileFdPrivate {
 	FileFdPrivate() : gz(NULL), bz2(NULL),
 			  compressed_fd(-1), compressor_pid(-1), pipe(false),
 			  openmode(0), seekpos(0) {};
+	bool CloseDown(std::string const &FileName)
+	{
+	   bool Res = true;
+#ifdef HAVE_ZLIB
+	   if (gz != NULL) {
+	      int const e = gzclose(gz);
+	      gz = NULL;
+	      // gzdclose() on empty files always fails with "buffer error" here, ignore that
+	      if (e != 0 && e != Z_BUF_ERROR)
+		 Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
+	   }
+#endif
+#ifdef HAVE_BZ2
+	   if (bz2 != NULL) {
+	      BZ2_bzclose(bz2);
+	      bz2 = NULL;
+	   }
+#endif
+	   if (compressor_pid > 0)
+	      ExecWait(compressor_pid, "FileFdCompressor", true);
+	   compressor_pid = -1;
+
+	   return Res;
+	}
+	~FileFdPrivate() { CloseDown(""); }
 };
 
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
@@ -1171,6 +1196,12 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 FileFd::~FileFd()
 {
    Close();
+   if (d != NULL)
+   {
+      d->CloseDown(FileName);
+      delete d;
+      d = NULL;
+   }
 }
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
@@ -1397,7 +1428,7 @@ bool FileFd::Seek(unsigned long long To)
 	 if (d->compressed_fd > 0)
 	    if (lseek(d->compressed_fd, 0, SEEK_SET) != 0)
 	       iFd = d->compressed_fd;
-	 if (iFd <= 0)
+	 if (iFd < 0)
 	 {
 	    Flags |= Fail;
 	    return _error->Error("Reopen is not implemented for pipes opened with FileFd::OpenDescriptor()!");
@@ -1670,21 +1701,15 @@ bool FileFd::Close()
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
    {
-#ifdef HAVE_ZLIB
-      if (d != NULL && d->gz != NULL) {
-	 int const e = gzclose(d->gz);
-	 // gzdclose() on empty files always fails with "buffer error" here, ignore that
-	 if (e != 0 && e != Z_BUF_ERROR)
-	    Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
-      } else
-#endif
-#ifdef HAVE_BZ2
-      if (d != NULL && d->bz2 != NULL)
-	 BZ2_bzclose(d->bz2);
-      else
-#endif
-	 if (iFd > 0 && close(iFd) != 0)
-	    Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
+      if ((Flags & Compressed) != Compressed && iFd > 0 && close(iFd) != 0)
+	 Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
+
+      if (d != NULL)
+      {
+	 Res &= d->CloseDown(FileName);
+	 delete d;
+	 d = NULL;
+      }
    }
 
    if ((Flags & Replace) == Replace && iFd >= 0) {
@@ -1701,14 +1726,6 @@ bool FileFd::Close()
        FileName.empty() == false)
       if (unlink(FileName.c_str()) != 0)
 	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file %s"), FileName.c_str());
-
-   if (d != NULL)
-   {
-      if (d->compressor_pid > 0)
-	 ExecWait(d->compressor_pid, "FileFdCompressor", true);
-      delete d;
-      d = NULL;
-   }
 
    if (Res == false)
       Flags |= Fail;

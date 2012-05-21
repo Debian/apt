@@ -95,12 +95,7 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    {
       std::cout << "400 URI Failure\nURI: " << Queue->Uri << "\n"
 		<< "Message: " << Err << " " << IP << "\n";
-      // Dequeue
-      FetchItem *Tmp = Queue;
-      Queue = Queue->Next;
-      delete Tmp;
-      if (Tmp == QueueBack)
-	 QueueBack = Queue;
+      Dequeue();
    }
    else
       std::cout << "400 URI Failure\nURI: <UNKNOWN>\nMessage: " << Err << "\n";
@@ -211,13 +206,7 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    }
 
    std::cout << "\n" << std::flush;
-
-   // Dequeue
-   FetchItem *Tmp = Queue;
-   Queue = Queue->Next;
-   delete Tmp;
-   if (Tmp == QueueBack)
-      QueueBack = Queue;
+   Dequeue();
 }
 									/*}}}*/
 // AcqMethod::MediaFail - Syncronous request for new media		/*{{{*/
@@ -423,26 +412,14 @@ void pkgAcqMethod::Status(const char *Format,...)
 									/*}}}*/
 // AcqMethod::Redirect - Send a redirect message                       /*{{{*/
 // ---------------------------------------------------------------------
-/* This method sends the redirect message and also manipulates the queue
-   to keep the pipeline synchronized. */
+/* This method sends the redirect message and dequeues the item as
+ * the worker will enqueue again later on to the right queue */
 void pkgAcqMethod::Redirect(const string &NewURI)
 {
    std::cout << "103 Redirect\nURI: " << Queue->Uri << "\n"
 	     << "New-URI: " << NewURI << "\n"
 	     << "\n" << std::flush;
-
-   // Change the URI for the request.
-   Queue->Uri = NewURI;
-
-   /* To keep the pipeline synchronized, move the current request to
-      the end of the queue, past the end of the current pipeline. */
-   FetchItem *I;
-   for (I = Queue; I->Next != 0; I = I->Next) ;
-   I->Next = Queue;
-   Queue = Queue->Next;
-   I->Next->Next = 0;
-   if (QueueBack == 0)
-      QueueBack = I->Next;
+   Dequeue();
 }
                                                                         /*}}}*/
 // AcqMethod::FetchResult::FetchResult - Constructor			/*{{{*/
@@ -463,5 +440,13 @@ void pkgAcqMethod::FetchResult::TakeHashes(Hashes &Hash)
    SHA1Sum = Hash.SHA1.Result();
    SHA256Sum = Hash.SHA256.Result();
    SHA512Sum = Hash.SHA512.Result();
+}
+									/*}}}*/
+void pkgAcqMethod::Dequeue() {						/*{{{*/
+   FetchItem const * const Tmp = Queue;
+   Queue = Queue->Next;
+   if (Tmp == QueueBack)
+      QueueBack = Queue;
+   delete Tmp;
 }
 									/*}}}*/

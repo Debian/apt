@@ -78,6 +78,7 @@ private:
    public:
 
    pkgSimulate(pkgDepCache *Cache);
+   ~pkgSimulate();
 };
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/

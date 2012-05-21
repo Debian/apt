@@ -1,3 +1,67 @@
+apt (0.9.4) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * methods/http.cc:
+    - after many years of pointless discussions disable http/1.1 pipelining
+      by default as many webservers and proxies seem to be unable to conform
+      to specification must's (rfc2616 section 8.1.2.2) (LP: #996151)
+    - add spaces around PACKAGE_VERSION to fix FTBFS with -std=c++11
+  * apt-pkg/pkgcachegen.cc:
+    - make IsDuplicatedDescription static so that it is really private
+      as we don't need a symbol for it as it is not in a header
+  * Makefile, buildlib/*.mak:
+    - reshuffle dependencies so that parallel building seems to work
+    - separate manpages from the rest of the doc building
+  * prepare-release:
+    - apt-inst version isn't apt versions, so don't override variable
+  * debian/rules:
+    - apt-utils packages manpages, so it should depend on build-doc
+    - make apt and apt-utils packages depend on manpages instead of full doc
+  * debian/control:
+    - move doxygen and debiandoc-sgml to Build-Depends-Indep as docs
+      are no longer build in the same target as the manpages
+  * apt-pkg/acquire-methods.cc:
+    - factor out into private Dequeue() to fix access to deleted pointer
+  * apt-pkg/contrib/fileutl.cc:
+    - ensure that we close compressed fds, wait for forks and such even if
+      the FileFd itself is set to not autoclose the given Fd
+  * cmdline/apt-get.cc:
+    - use the host architecture, not the build architecture for matching
+      of [architecture restrictions] in Build-Depends (Closes: #672927)
+  * doc/makefile:
+    - build manpages with the correct l10n.gentext.default.language setting
+      to get the correct section titles provided by docbook
+  * doc/po/de.po:
+    - updated german manpage translation by Chris Leick, thanks!
+  * apt-pkg/packagemanager.cc:
+    - do not run into loop on new-pre-depends-breaks (Closes: #673536)
+  * doc/*.xml:
+    - add a few translator notes and reword some paragraphs to ensure that
+      translators and users alike can better understand them (Closes: #669409)
+    - in <term> mark all options with <option> and mark <term><option>
+      as untranslated for po4a removing ~200 unless "translateable" strings
+  * apt-pkg/aptconfiguration.cc:
+    - longcode Translation files are saved with encoded underscore,
+      so make sure to pick these files up as well for Acquire::Languages
+  * ftparchive/writer.cc:
+    - include Contents-* files in Release files (Closes: #673647)
+
+  [ Raphael Geissert ]
+  * apt-pkg/acquire*.cc:
+    - handle redirections in the worker with the right method instead of
+      in the method the redirection occured in (Closes: #668111)
+  * methods/http.cc:
+    - forbid redirects to change protocol
+  * methods/mirror.cc:
+    - generate an equal sign also for the first arch (Closes: #669142)
+
+
+  [ Marius Vollmer ]
+  * apt-pkg/algorithms.cc:
+    - fix memory leak of Flags in pkgSimulate by a proper destructor
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 11 May 2012 23:26:59 +0200
+
 apt (0.9.3) unstable; urgency=low
 
   [ David Kalnischkies ]

@@ -11,6 +11,11 @@ SOURCE = $(wildcard *.sgml)
 DEBIANDOC_HTML_OPTIONS=-l en.UTF-8
 include $(DEBIANDOC_H)
 
+MANPAGEPO = $(patsubst %.po,%,$(notdir $(wildcard po/*.po)))
+MANPAGEPOLIST = $(patsubst %,manpages-translation-%,$(MANPAGEPO))
+
+doc: manpages
+
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 ifdef XSLTPROC
 # generate a list of accepted man page translations
@@ -22,15 +27,26 @@ LOCAL := manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(SOURCE)
 
 # Install generation hooks
-doc: $($(LOCAL)-LIST)
-veryclean: veryclean/$(LOCAL)
+manpages: $(MANPAGEPOLIST) $($(LOCAL)-LIST)
 
-$($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
+$($(LOCAL)-LIST) :: % : %.xml $(STYLESHEET) $(INCLUDES)
 	echo Creating man page $@
 	$(XSLTPROC) -o $@ $(STYLESHEET) $<
 
+$(MANPAGEPOLIST) :: manpages-translation-% : %/makefile po4a
+	$(MAKE) -C $(dir $<) doc
+
+.PHONY: manpages dirs-manpage-subdirs $(MANPAGEPOLIST)
+dirs: dirs-manpage-subdirs
+dirs-manpage-subdirs:
+	for i in $(MANPAGEPO); do \
+		test -d $$i || mkdir $$i; \
+		test -f $$i/makefile || sed "s#@@LANG@@#$$i#" lang.makefile > $$i/makefile; \
+	done
+
 # Clean rule
 .PHONY: veryclean/$(LOCAL)
+veryclean: veryclean/$(LOCAL)
 veryclean/$(LOCAL):
 	-rm -rf $($(@F)-LIST)
 
@@ -47,12 +63,6 @@ TARGET = binary
 include $(COPY_H)
 
 .PHONY: clean clean-subdirs veryclean veryclean-subdirs all binary doc
-doc:
-	for i in $(shell ls po/*.po | sed -r 's#po/([a-z]+[A-Z_]*).po#\1#'); do \
-		test -d $$i || mkdir $$i; \
-		test -f $$i/makefile || sed "s#@@LANG@@#$$i#" lang.makefile > $$i/makefile; \
-		$(MAKE) -C $$i $@; \
-	done
 
 clean: clean-subdirs
 veryclean: veryclean-subdirs

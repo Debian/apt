@@ -2789,8 +2789,18 @@ bool DoBuildDep(CommandLine &CmdL)
             
       // Process the build-dependencies
       vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
-      	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
+      // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
+      if (hostArch.empty() == false)
+      {
+	 std::string nativeArch = _config->Find("APT::Architecture");
+	 _config->Set("APT::Architecture", hostArch);
+	 bool Success = Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch);
+	 _config->Set("APT::Architecture", nativeArch);
+	 if (Success == false)
+	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
+      }
+      else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
+	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
       // Also ensure that build-essential packages are present
       Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");

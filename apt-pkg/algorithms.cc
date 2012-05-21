@@ -58,6 +58,12 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
       FileNames[I] = Jnk;
 }
 									/*}}}*/
+// Simulate::~Simulate - Destructor					/*{{{*/
+pkgSimulate::~pkgSimulate()
+{
+   delete[] Flags;
+}
+									/*}}}*/
 // Simulate::Describe - Describe a package				/*{{{*/
 // ---------------------------------------------------------------------
 /* Parameter Current == true displays the current package version,

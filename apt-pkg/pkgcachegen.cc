@@ -38,7 +38,7 @@
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
-bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang);
 
 using std::string;
@@ -1455,7 +1455,7 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 }
 									/*}}}*/
 // IsDuplicateDescription						/*{{{*/
-bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang)
 {
    // Descriptions in the same link-list have all the same md5

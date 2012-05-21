@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'native'
+
+buildsimplenativepackage 'basic' 'native' '1' 'stable'
+buildsimplenativepackage 'basic' 'native' '2' 'unstable' 'Pre-Depends: common'
+buildsimplenativepackage 'common' 'native' '2' 'unstable' 'Breaks: basic (<= 1)'
+
+setupaptarchive
+
+# we check with 'real' packages here as the simulation reports a 'Conf broken'
+# which is technical correct for the simulation, but testing errormsg is ugly
+
+aptget install basic=1 -qq > /dev/null
+testdpkginstalled basic
+testdpkgnotinstalled common
+
+aptget dist-upgrade -qq > /dev/null
+testdpkginstalled basic common

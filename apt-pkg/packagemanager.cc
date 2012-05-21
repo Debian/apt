@@ -785,7 +785,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 			   VerIterator V(Cache,*I);
 			   PkgIterator P = V.ParentPkg();
 			   // we are checking for installation as an easy 'protection' against or-groups and (unchosen) providers
-			   if (P->CurrentVer == 0 || P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
+			   if (P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
 			      continue;
 			   circle = true;
 			   break;

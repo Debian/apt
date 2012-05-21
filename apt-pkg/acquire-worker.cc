@@ -244,6 +244,21 @@ bool pkgAcquire::Worker::RunMessages()
  
             string NewURI = LookupTag(Message,"New-URI",URI.c_str());
             Itm->URI = NewURI;
+
+	    ItemDone();
+
+	    pkgAcquire::Item *Owner = Itm->Owner;
+	    pkgAcquire::ItemDesc Desc = *Itm;
+
+	    // Change the status so that it can be dequeued
+	    Owner->Status = pkgAcquire::Item::StatIdle;
+	    // Mark the item as done (taking care of all queues)
+	    // and then put it in the main queue again
+	    OwnerQ->ItemDone(Itm);
+	    OwnerQ->Owner->Enqueue(Desc);
+
+	    if (Log != 0)
+	       Log->Done(Desc);
             break;
          }
    

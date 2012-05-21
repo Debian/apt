@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>08 November 2008</date>
+   <date>2012-05-21T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -45,7 +45,7 @@
    commands below must be present.</para>
    
    <variablelist>
-     <varlistentry><term>update</term>
+     <varlistentry><term><option>update</option></term>
      <listitem><para><literal>update</literal> is used to resynchronize the package index files from
      their sources. The indexes of available packages are fetched from the
      location(s) specified in <filename>/etc/apt/sources.list</filename>.
@@ -57,7 +57,7 @@
      of the package files cannot be known in advance.</para></listitem>
      </varlistentry>
      
-     <varlistentry><term>upgrade</term>
+     <varlistentry><term><option>upgrade</option></term>
      <listitem><para><literal>upgrade</literal> is used to install the newest versions of all packages 
      currently installed on the system from the sources enumerated in
      <filename>/etc/apt/sources.list</filename>. Packages currently installed with 
@@ -70,7 +70,7 @@
      available.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>dselect-upgrade</term>
+     <varlistentry><term><option>dselect-upgrade</option></term>
      <listitem><para><literal>dselect-upgrade</literal>
      is used in conjunction with the traditional Debian packaging
      front-end, &dselect;. <literal>dselect-upgrade</literal>
@@ -80,7 +80,7 @@
      packages).</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>dist-upgrade</term>
+     <varlistentry><term><option>dist-upgrade</option></term>
      <listitem><para><literal>dist-upgrade</literal> in addition to performing the function of 
      <literal>upgrade</literal>, also intelligently handles changing dependencies 
      with new versions of packages; <command>apt-get</command> has a "smart" conflict 
@@ -93,7 +93,7 @@
      overriding the general settings for individual packages.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>install</term>
+     <varlistentry><term><option>install</option></term>
      <listitem>
 	 <para><literal>install</literal> is followed by one or more 
 	 packages desired for installation or upgrading. 
@@ -147,7 +147,7 @@
      with a '^' or '$' character, or create a more specific regular expression.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>remove</term>
+     <varlistentry><term><option>remove</option></term>
      <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
 	 removed instead of installed. Note the removing a package leaves its
 	 configuration files in system. If a plus sign is appended to the package 
@@ -155,12 +155,12 @@
      installed instead of removed.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>purge</term>
+     <varlistentry><term><option>purge</option></term>
      <listitem><para><literal>purge</literal> is identical to <literal>remove</literal> except that packages are 
      removed and purged (any configuration files are deleted too).</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>source</term>
+     <varlistentry><term><option>source</option></term>
      <listitem><para><literal>source</literal> causes <command>apt-get</command> to fetch source packages. APT 
      will examine the available packages to decide which source package to 
      fetch. It will then find and download into the current directory the 
@@ -194,25 +194,25 @@
      tar balls.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>build-dep</term>
+     <varlistentry><term><option>build-dep</option></term>
      <listitem><para><literal>build-dep</literal> causes apt-get to install/remove packages in an 
      attempt to satisfy the build dependencies for a source package. By default the dependencies are
      satisfied to build the package natively. If desired a host-architecture can be specified
      with the <option>--host-architecture</option> option instead.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>check</term>
+     <varlistentry><term><option>check</option></term>
      <listitem><para><literal>check</literal> is a diagnostic tool; it updates the package cache and checks 
      for broken dependencies.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>download</term>
+     <varlistentry><term><option>download</option></term>
        <listitem><para><literal>download</literal> will download the given
            binary package into the current directory.
        </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>clean</term>
+     <varlistentry><term><option>clean</option></term>
      <listitem><para><literal>clean</literal> clears out the local repository of retrieved package 
      files. It removes everything but the lock file from 
      <filename>&cachedir;/archives/</filename> and 
@@ -222,7 +222,7 @@
      from time to time to free up disk space.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>autoclean</term>
+     <varlistentry><term><option>autoclean</option></term>
      <listitem><para>Like <literal>clean</literal>, <literal>autoclean</literal> clears out the local 
      repository of retrieved package files. The difference is that it only 
      removes package files that can no longer be downloaded, and are largely 
@@ -232,17 +232,17 @@
      erased if it is set to off.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>autoremove</term>
+     <varlistentry><term><option>autoremove</option></term>
      <listitem><para><literal>autoremove</literal> is used to remove packages that were automatically
      installed to satisfy dependencies for other packages and are now no longer needed.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>changelog</term>
+     <varlistentry><term><option>changelog</option></term>
        <listitem><para><literal>changelog</literal> downloads a package changelog and displays
            it through <command>sensible-pager</command>. The server name and base
            directory is defined in the <literal>APT::Changelogs::Server</literal>
-           variable (e. g. <ulink>http://packages.debian.org/changelogs</ulink> for
-           Debian or <ulink>http://changelogs.ubuntu.com/changelogs</ulink> for
+	   variable (e. g. <ulink url="http://packages.debian.org/changelogs">packages.debian.org/changelogs</ulink> for
+	   Debian or <ulink url="http://changelogs.ubuntu.com/changelogs">changelogs.ubuntu.com/changelogs</ulink> for
            Ubuntu).
            By default it displays the changelog for the version that is
            installed.  However, you can specify the same options as for
@@ -397,9 +397,10 @@
      </varlistentry>
 
      <varlistentry><term><option>--only-upgrade</option></term>
-     <listitem><para>Do not install new packages; When used in conjunction with <literal>install</literal>,
-     <literal>only-upgrade</literal> will prevent packages on the command line
-     from being upgraded if they are not already installed.
+     <listitem><para>Do not install new packages; When used in conjunction
+     with <literal>install</literal>, <literal>only-upgrade</literal> will
+     install upgrades for already installed packages only and ignore requests
+     to install new packages.
      Configuration Item: <literal>APT::Get::Only-Upgrade</literal>.</para></listitem>
      </varlistentry>
 
@@ -533,17 +534,6 @@
 
  <refsect1><title>Diagnostics</title>
    <para><command>apt-get</command> returns zero on normal operation, decimal 100 on error.</para>
- </refsect1>
- <refsect1>
-	 <title>ORIGINAL AUTHORS</title>
-	 <para>&apt-author.jgunthorpe;</para>
- </refsect1>
- <refsect1>
-	 <title>CURRENT AUTHORS</title>
-	 <para>
-		 &apt-author.team;
-	 </para>
-		 &apt-qapage;
  </refsect1>
  &manbugs;
 </refentry>

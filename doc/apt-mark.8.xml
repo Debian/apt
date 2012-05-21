@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>21 April 2011</date>
+   <date>2011-04-21T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -48,7 +48,7 @@
      <command>apt-get</command> or <command>aptitude</command>.
    </para>
      <variablelist>
-       <varlistentry><term>auto</term>
+     <varlistentry><term><option>auto</option></term>
 	 <listitem><para><literal>auto</literal> is used to mark a
      package as being automatically installed, which will cause the
      package to be removed when no more manually installed packages
@@ -56,7 +56,7 @@
        </para></listitem>
        </varlistentry>
 
-       <varlistentry><term>manual</term>
+     <varlistentry><term><option>manual</option></term>
 	 <listitem><para><literal>manual</literal> is used to mark a
      package as being manually installed, which will prevent the
      package from being automatically removed if no other packages
@@ -64,7 +64,7 @@
        </para></listitem>
        </varlistentry>
 
-       <varlistentry><term>hold</term>
+       <varlistentry><term><option>hold</option></term>
 	 <listitem><para><literal>hold</literal> is used to mark a
        package as hold back, which will prevent the package from being
        automatically installed, upgraded or removed.
@@ -74,13 +74,13 @@
        </para></listitem>
        </varlistentry>
 
-       <varlistentry><term>unhold</term>
+       <varlistentry><term><option>unhold</option></term>
 	 <listitem><para><literal>unhold</literal> is used to cancel a
        previously set hold on a package to allow all actions again.
        </para></listitem>
        </varlistentry>
 
-       <varlistentry><term>showauto</term>
+       <varlistentry><term><option>showauto</option></term>
 	 <listitem><para><literal>showauto</literal> is used to print a
      list of automatically installed packages with each package on a new line.
      All automatically installed packages will be listed if no package is given.
@@ -88,14 +88,14 @@
        </para></listitem>
        </varlistentry>
 
-       <varlistentry><term>showmanual</term>
+       <varlistentry><term><option>showmanual</option></term>
 	 <listitem><para><literal>showmanual</literal> can be used in
      the same way as <literal>showauto</literal> except that it will print
      a list of manually installed packages instead.
        </para></listitem>
        </varlistentry>
 
-       <varlistentry><term>showhold</term>
+       <varlistentry><term><option>showhold</option></term>
 	 <listitem><para><literal>showhold</literal> is used to print a list
      of packages on hold in the same way as for the other show commands.
        </para></listitem>
@@ -109,12 +109,12 @@
    
    <variablelist>
 	<varlistentry>
-		<term><option>-f=<filename><replaceable>FILENAME</replaceable></filename></option></term>
-		<term><option>--file=<filename><replaceable>FILENAME</replaceable></filename></option></term>
+		<term><option>-f=<filename><replaceable>&synopsis-filename;</replaceable></filename></option></term>
+		<term><option>--file=<filename><replaceable>&synopsis-filename;</replaceable></filename></option></term>
      <listitem><para>
-      
-     Read/Write package stats from <filename><replaceable>FILENAME</replaceable></filename>
-     instead of the default location, which
+     Read/Write package stats from the filename given with the parameter
+     <filename><replaceable>&synopsis-filename;</replaceable></filename>
+     instead of from the default location, which
      is <filename>extended_status</filename> in the directory defined
      by the Configuration Item: <literal>Dir::State</literal>.</para></listitem>
      </varlistentry>
