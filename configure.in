@@ -119,12 +119,6 @@ fi
 AC_MSG_RESULT($archset)
 AC_DEFINE_UNQUOTED(COMMON_ARCH,"$archset")
 
-dnl We use C99 types if at all possible
-AC_CACHE_CHECK([for C99 integer types],apt_cv_c9x_ints,[
-    AC_TRY_COMPILE([#include <inttypes.h>],
-                   [uint8_t Foo1;uint16_t Foo2;uint32_t Foo3;],
-		   apt_cv_c9x_ints=yes,apt_cv_c9x_ints=no)])
-
 dnl Single Unix Spec statvfs
 AC_CHECK_FUNC(statvfs,[HAVE_STATVFS=yes])
 AC_SUBST(HAVE_STATVFS)
@@ -144,45 +138,8 @@ dnl We should use the real timegm function if we have it.
 AC_CHECK_FUNC(timegm,AC_DEFINE(HAVE_TIMEGM))
 AC_SUBST(HAVE_TIMEGM)
 
-dnl Check the sizes etc. of the architecture
-dnl This is stupid, it should just use the AC macros like it does below
-dnl Cross compilers can either get a real C library or preload the cache
-dnl with their size values.
-changequote(,)
-archline="`awk \" ! /^#|^\\\$/ {if (match(\\\"$archset\\\",\\\$1)) {print; exit}}\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`"
-if test "x$archline" != "x"; then
-   changequote([,])
-   set $archline
-   if test "$1" = "little"; then
-      ac_cv_c_bigendian=no
-   else
-      ac_cv_c_bigendian=yes
-   fi
-   size_char=$2
-   size_int=$3
-   size_short=$4
-   size_long=$5
-fi
-
-dnl I wonder what AC_C_BIGENDIAN does if you cross compile...
-dnl This is probably bogus, as above we only care if we have to build our own
-dnl C9x types.
-if test "$cross_compiling" = "yes" -a "x$archline" = "x"; then
-  AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
-fi
+dnl Check the architecture
 AC_C_BIGENDIAN
-
-dnl We do not need this if we have inttypes!
-HAVE_C9X=yes
-if test x"$apt_cv_c9x_ints" = x"no"; then
-   AC_CHECK_SIZEOF(char,$size_char)
-   AC_CHECK_SIZEOF(int,$size_int)
-   AC_CHECK_SIZEOF(short,$size_short)
-   AC_CHECK_SIZEOF(long,$size_long)
-  
-   HAVE_C9X=
-   AC_SUBST(HAVE_C9X)
-fi
 
 dnl HP-UX sux..
 AC_MSG_CHECKING(for missing socklen_t)
