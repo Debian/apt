@@ -51,7 +51,7 @@ override BLD := ./build
 endif
 
 # APT Programs in apt-utils
-APT_UTILS=ftparchive sortpkgs extracttemplates internal-solver
+APT_UTILS=ftparchive sortpkgs extracttemplates
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -191,7 +191,7 @@ apt: build build-manpages
 	dh_install -p$@ --sourcedir=$(BLD)
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver)
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver internal-solver)
 
 	# https has its own package
 	rm debian/$@/usr/lib/apt/methods/https
@@ -245,6 +245,7 @@ apt-utils: build build-manpages
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
 	cp $(BLD)/bin/apt-dump-solver debian/$@/usr/lib/apt/solvers/dump
+	cp $(BLD)/bin/apt-internal-solver debian/$@/usr/lib/apt/solvers/apt
 
 	dh_install -p$@ --sourcedir=$(BLD)
 	dh_link -p$@
