@@ -7,6 +7,10 @@ apt (0.9.5) UNRELEASED; urgency=low
   * buildlib/inttypes.h.in:
     - remove inttypes.h compatibility as providing such a c99 types
       compatibility conflicts with the usage of c99 type long long
+  * apt-pkg/contrib/mmap.cc:
+    - have a dummy SyncToFd around in case of ReadOnly access to a
+      compressed file as we otherwise on Close() do not delete[] the
+      char buffer but munmap() it… (Closes: #673815)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 21 May 2012 15:10:49 +0200
 
