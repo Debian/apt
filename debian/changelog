@@ -11,6 +11,9 @@ apt (0.9.5) UNRELEASED; urgency=low
     - have a dummy SyncToFd around in case of ReadOnly access to a
       compressed file as we otherwise on Close() do not delete[] the
       char buffer but munmap() it… (Closes: #673815)
+  * debian/control:
+    - moving debiandoc-sgml to Build-Depends-Indep was one step too much
+      for the buildds as we still build two sgml files in arch:any
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 21 May 2012 15:10:49 +0200
 
