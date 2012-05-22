@@ -61,7 +61,7 @@ $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	cp $@ $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo
 
 stats:
-	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
+	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
 
 binary: $(POTFILES) $(MOFILES)
 
@@ -69,8 +69,8 @@ $(PACKAGE)-all.pot: $(POTFILES)
 	# we create our partial pot files without a header to avoid changing dates in *.mo files,
 	# but we want a header for our master-pot file, so we use a dummy pot with nothing but the header
 	$(XGETTEXT) --default-domain=$(PO)/$(PACKAGE)-dummy.pot --foreign --language=c \
-		-o $(PO)/$(PACKAGE)-dummy.pot --force-po --package-name=$(PACKAGE) \
-		--package-version=$(PACKAGE_VERSION) --msgid-bugs-address=deity@lists.debian.org /dev/null
+		-o $(PO)/$(PACKAGE)-dummy.pot --force-po --package-name='$(PACKAGE)' \
+		--package-version='$(PACKAGE_VERSION)' --msgid-bugs-address='$(PACKAGE_MAIL)' /dev/null
 	$(MSGCOMM) --more-than=0 $(PO)/$(PACKAGE)-dummy.pot $(POTFILES) --output=$(PACKAGE)-all.pot
 	rm -f $(PO)/$(PACKAGE)-dummy.pot
 

@@ -83,14 +83,18 @@ ifdef PO4A
 doc: po4a
 
 update-po:
-	po4a --previous --no-backups --force --no-translations po4a.conf
+	po4a --previous --no-backups --force --no-translations \
+		--package-name='$(PACKAGE)' --package-version='$(PACKAGE_VERSION)' \
+		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 
 po4a:
-	po4a --previous --no-backups po4a.conf
+	po4a --previous --no-backups \
+		--package-name='$(PACKAGE)' --package-version='$(PACKAGE_VERSION)' \
+		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 endif
 
 stats:
-	for i in po/*.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
+	for i in po/*.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
 
 ifdef DOXYGEN
 DOXYGEN_SOURCES = $(shell find $(BASE)/apt-pkg -not -name .\\\#* -and \( -name \*.cc -or -name \*.h \) )
