@@ -17,11 +17,15 @@ AC_INIT(configure.in)
 AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
-dnl -- SET THIS TO THE RELEASE VERSION --
-AC_DEFINE_UNQUOTED(VERSION,"0.8.16~exp12ubuntu7")
 PACKAGE="apt"
+PACKAGE_VERSION="0.9.5ubuntu1~20120522"
+PACKAGE_MAIL="APT Development Team <deity@lists.debian.org>"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
+AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION")
+AC_DEFINE_UNQUOTED(PACKAGE_MAIL,"$PACKAGE_MAIL")
 AC_SUBST(PACKAGE)
+AC_SUBST(PACKAGE_VERSION)
+AC_SUBST(PACKAGE_MAIL)
 
 dnl Check the archs, we want the target type.
 AC_CANONICAL_SYSTEM
@@ -87,9 +91,21 @@ AC_CHECK_LIB(curl, curl_easy_init,
 
 AC_SUBST(BDBLIB)
 
+HAVE_ZLIB=no
 AC_CHECK_LIB(z, gzopen,
-	[AC_CHECK_HEADER(zlib.h, [], AC_MSG_ERROR([failed: zlib.h not found]))],
+	[AC_CHECK_HEADER(zlib.h, [HAVE_ZLIB=yes], AC_MSG_ERROR([failed: zlib.h not found]))],
 	AC_MSG_ERROR([failed: Need libz]))
+AC_SUBST(HAVE_ZLIB)
+if test "x$HAVE_ZLIB" = "xyes"; then
+	AC_DEFINE(HAVE_ZLIB)
+fi
+
+HAVE_BZ2=no
+AC_CHECK_LIB(bz2, BZ2_bzopen,[AC_CHECK_HEADER(bzlib.h, [HAVE_BZ2=yes], [])], [])
+AC_SUBST(HAVE_BZ2)
+if test "x$HAVE_BZ2" = "xyes"; then
+	AC_DEFINE(HAVE_BZ2)
+fi
 
 dnl Converts the ARCH to be something singular for this general CPU family
 dnl This is often the dpkg architecture string.
@@ -102,12 +118,6 @@ if test "x$archset" = "x"; then
 fi
 AC_MSG_RESULT($archset)
 AC_DEFINE_UNQUOTED(COMMON_ARCH,"$archset")
-
-dnl We use C99 types if at all possible
-AC_CACHE_CHECK([for C99 integer types],apt_cv_c9x_ints,[
-    AC_TRY_COMPILE([#include <inttypes.h>],
-                   [uint8_t Foo1;uint16_t Foo2;uint32_t Foo3;],
-		   apt_cv_c9x_ints=yes,apt_cv_c9x_ints=no)])
 
 dnl Single Unix Spec statvfs
 AC_CHECK_FUNC(statvfs,[HAVE_STATVFS=yes])
@@ -128,45 +138,8 @@ dnl We should use the real timegm function if we have it.
 AC_CHECK_FUNC(timegm,AC_DEFINE(HAVE_TIMEGM))
 AC_SUBST(HAVE_TIMEGM)
 
-dnl Check the sizes etc. of the architecture
-dnl This is stupid, it should just use the AC macros like it does below
-dnl Cross compilers can either get a real C library or preload the cache
-dnl with their size values.
-changequote(,)
-archline="`awk \" ! /^#|^\\\$/ {if (match(\\\"$archset\\\",\\\$1)) {print; exit}}\" $srcdir/buildlib/sizetable | cut -f 2- -d ' '`"
-if test "x$archline" != "x"; then
-   changequote([,])
-   set $archline
-   if test "$1" = "little"; then
-      ac_cv_c_bigendian=no
-   else
-      ac_cv_c_bigendian=yes
-   fi
-   size_char=$2
-   size_int=$3
-   size_short=$4
-   size_long=$5
-fi
-
-dnl I wonder what AC_C_BIGENDIAN does if you cross compile...
-dnl This is probably bogus, as above we only care if we have to build our own
-dnl C9x types.
-if test "$cross_compiling" = "yes" -a "x$archline" = "x"; then
-  AC_MSG_ERROR(When cross compiling, architecture must be present in sizetable)
-fi
+dnl Check the architecture
 AC_C_BIGENDIAN
-
-dnl We do not need this if we have inttypes!
-HAVE_C9X=yes
-if test x"$apt_cv_c9x_ints" = x"no"; then
-   AC_CHECK_SIZEOF(char,$size_char)
-   AC_CHECK_SIZEOF(int,$size_int)
-   AC_CHECK_SIZEOF(short,$size_short)
-   AC_CHECK_SIZEOF(long,$size_long)
-  
-   HAVE_C9X=
-   AC_SUBST(HAVE_C9X)
-fi
 
 dnl HP-UX sux..
 AC_MSG_CHECKING(for missing socklen_t)
@@ -218,4 +191,4 @@ fi
 AC_SUBST(USE_NLS)
 AC_PATH_PROG(BASH, bash)
 
-AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile,make -s dirs)
+AC_OUTPUT(environment.mak:buildlib/environment.mak.in makefile:buildlib/makefile.in doc/Doxyfile:doc/Doxyfile.in,make -s dirs)

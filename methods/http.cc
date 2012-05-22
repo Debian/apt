@@ -42,6 +42,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <climits>
 #include <iostream>
 #include <map>
 
@@ -60,7 +61,7 @@ using namespace std;
 string HttpMethod::FailFile;
 int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
-unsigned long PipelineDepth = 10;
+unsigned long PipelineDepth = 0;
 unsigned long TimeOut = 120;
 bool AllowRedirect = false;
 bool Debug = false;
@@ -534,10 +535,6 @@ bool ServerState::HeaderLine(string Line)
    if (Line.empty() == true)
       return true;
 
-   // The http server might be trying to do something evil.
-   if (Line.length() >= MAXLEN)
-      return _error->Error(_("Got a single header line over %u chars"),MAXLEN);
-
    string::size_type Pos = Line.find(' ');
    if (Pos == string::npos || Pos+1 > Line.length())
    {
@@ -561,7 +558,7 @@ bool ServerState::HeaderLine(string Line)
       // Evil servers return no version
       if (Line[4] == '/')
       {
-	 int const elements = sscanf(Line.c_str(),"HTTP/%u.%u %u%[^\n]",&Major,&Minor,&Result,Code);
+	 int const elements = sscanf(Line.c_str(),"HTTP/%3u.%3u %3u%359[^\n]",&Major,&Minor,&Result,Code);
 	 if (elements == 3)
 	 {
 	    Code[0] = '\0';
@@ -575,7 +572,7 @@ bool ServerState::HeaderLine(string Line)
       {
 	 Major = 0;
 	 Minor = 9;
-	 if (sscanf(Line.c_str(),"HTTP %u%[^\n]",&Result,Code) != 2)
+	 if (sscanf(Line.c_str(),"HTTP %3u%359[^\n]",&Result,Code) != 2)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
 
@@ -585,7 +582,7 @@ bool ServerState::HeaderLine(string Line)
 	 Persistent = false;
       else
       {
-	 if (Major == 1 && Minor <= 0)
+	 if (Major == 1 && Minor == 0)
 	    Persistent = false;
 	 else
 	    Persistent = true;
@@ -603,9 +600,10 @@ bool ServerState::HeaderLine(string Line)
       // The length is already set from the Content-Range header
       if (StartPos != 0)
 	 return true;
-      
-      if (sscanf(Val.c_str(),"%llu",&Size) != 1)
-	 return _error->Error(_("The HTTP server sent an invalid Content-Length header"));
+
+      Size = strtoull(Val.c_str(), NULL, 10);
+      if (Size >= std::numeric_limits<unsigned long long>::max())
+	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
       return true;
    }
 
@@ -760,7 +758,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
           Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
    }
    Req += "User-Agent: " + _config->Find("Acquire::http::User-Agent",
-		"Debian APT-HTTP/1.3 ("VERSION")") + "\r\n\r\n";
+		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") + "\r\n\r\n";
    
    if (Debug == true)
       cerr << Req << endl;
@@ -987,7 +985,10 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       else
       {
          NextURI = DeQuoteString(Srv->Location);
-         return TRY_AGAIN_OR_REDIRECT;
+         URI tmpURI = NextURI;
+         // Do not allow a redirection to switch protocol
+         if (tmpURI.Access == "http")
+            return TRY_AGAIN_OR_REDIRECT;
       }
       /* else pass through for error message */
    }
@@ -1329,7 +1330,7 @@ int HttpMethod::Loop()
                after the same URI is seen twice in a queue item. */
             StringVector &R = Redirected[Queue->DestFile];
             bool StopRedirects = false;
-            if (R.size() == 0)
+            if (R.empty() == true)
                R.push_back(Queue->Uri);
             else if (R[0] == "STOP" || R.size() > 10)
                StopRedirects = true;

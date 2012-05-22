@@ -7,6 +7,8 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
+#include <config.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/init.h>
@@ -18,18 +20,17 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
 
-#include <config.h>
-#include <apti18n.h>
-
 #include <unistd.h>
 #include <cstdio>
+
+#include <apti18n.h>
 									/*}}}*/
 
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool ShowHelp(CommandLine &CmdL) {
-	ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+	ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 		 COMMON_ARCH,__DATE__,__TIME__);
 
 	std::cout <<

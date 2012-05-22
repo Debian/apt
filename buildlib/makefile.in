@@ -31,11 +31,6 @@ maintainer-clean dist-clean pristine sanity distclean:
 .PHONY: dirs
 dirs: 
 	$(MAKE) -C $(SRCDIR) -f Makefile $@
-ifeq ($(HAVE_C9X),yes)
-	@rm -f include/inttypes.h > /dev/null 2>&1
-else
-	@cp -p $(SRCDIR)/buildlib/inttypes.h.in include/inttypes.h
-endif
 ifeq ($(HAVE_STATVFS),yes)
 	@rm -f include/statvfs.h > /dev/null 2>&1
 else

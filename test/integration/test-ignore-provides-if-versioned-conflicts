@@ -1,0 +1,150 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386' 'amd64'
+
+insertpackage 'unstable' 'unrlated' 'all' '1.0'
+
+insertinstalledpackage 'foo' 'i386' '2.0'
+insertpackage 'unstable' 'foo' 'i386' '4.0'
+insertpackage 'unstable' 'foo-provider' 'i386' '1.0' 'Provides: foo'
+insertpackage 'unstable' 'foo-breaker-3' 'i386' '1.0' 'Conflicts: foo (<< 3.0)'
+insertpackage 'unstable' 'foo-breaker-2' 'i386' '1.0' 'Conflicts: foo (<< 2.0)'
+insertpackage 'unstable' 'foo-breaker-none' 'i386' '1.0' 'Conflicts: foo'
+
+insertinstalledpackage 'foo-foreign' 'amd64' '2.0' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'foo-foreign' 'amd64' '4.0' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'foo-foreign-provider' 'i386' '1.0' 'Provides: foo-foreign'
+insertpackage 'unstable' 'foo-foreign-breaker-3' 'i386' '1.0' 'Conflicts: foo-foreign (<< 3.0)'
+insertpackage 'unstable' 'foo-foreign-breaker-2' 'i386' '1.0' 'Conflicts: foo-foreign (<< 2.0)'
+insertpackage 'unstable' 'foo-foreign-breaker-none' 'i386' '1.0' 'Conflicts: foo-foreign'
+
+insertinstalledpackage 'foo-same' 'i386,amd64' '2.0' 'Multi-Arch: same'
+insertpackage 'unstable' 'foo-same' 'i386,amd64' '4.0' 'Multi-Arch: same'
+insertpackage 'unstable' 'foo-same-provider' 'i386' '1.0' 'Provides: foo-same'
+insertpackage 'unstable' 'foo-same-breaker-3' 'i386' '1.0' 'Conflicts: foo-same (<< 3.0)'
+insertpackage 'unstable' 'foo-same-breaker-2' 'i386' '1.0' 'Conflicts: foo-same (<< 2.0)'
+insertpackage 'unstable' 'foo-same-breaker-none' 'i386' '1.0' 'Conflicts: foo-same'
+
+
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo-breaker-none : Conflicts: foo
+E: Unable to correct problems, you have held broken packages.' aptget install foo-provider foo-breaker-none -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-breaker-2 foo-provider
+0 upgraded, 2 newly installed, 0 to remove and 4 not upgraded.
+Inst foo-breaker-2 (1.0 unstable [i386])
+Inst foo-provider (1.0 unstable [i386])
+Conf foo-breaker-2 (1.0 unstable [i386])
+Conf foo-provider (1.0 unstable [i386])' aptget install foo-provider foo-breaker-2 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  foo-breaker-3 foo-provider
+The following packages will be upgraded:
+  foo
+1 upgraded, 2 newly installed, 0 to remove and 3 not upgraded.
+Inst foo [2.0] (4.0 unstable [i386])
+Inst foo-breaker-3 (1.0 unstable [i386])
+Inst foo-provider (1.0 unstable [i386])
+Conf foo (4.0 unstable [i386])
+Conf foo-breaker-3 (1.0 unstable [i386])
+Conf foo-provider (1.0 unstable [i386])' aptget install foo-provider foo-breaker-3 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo-foreign-breaker-none : Conflicts: foo-foreign
+E: Unable to correct problems, you have held broken packages.' aptget install foo-foreign-provider foo-foreign-breaker-none -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-foreign-breaker-2 foo-foreign-provider
+0 upgraded, 2 newly installed, 0 to remove and 4 not upgraded.
+Inst foo-foreign-breaker-2 (1.0 unstable [i386])
+Inst foo-foreign-provider (1.0 unstable [i386])
+Conf foo-foreign-breaker-2 (1.0 unstable [i386])
+Conf foo-foreign-provider (1.0 unstable [i386])' aptget install foo-foreign-provider foo-foreign-breaker-2 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo-foreign:amd64
+The following NEW packages will be installed:
+  foo-foreign-breaker-3 foo-foreign-provider
+The following packages will be upgraded:
+  foo-foreign:amd64
+1 upgraded, 2 newly installed, 0 to remove and 3 not upgraded.
+Inst foo-foreign:amd64 [2.0] (4.0 unstable [amd64])
+Inst foo-foreign-breaker-3 (1.0 unstable [i386])
+Inst foo-foreign-provider (1.0 unstable [i386])
+Conf foo-foreign:amd64 (4.0 unstable [amd64])
+Conf foo-foreign-breaker-3 (1.0 unstable [i386])
+Conf foo-foreign-provider (1.0 unstable [i386])' aptget install foo-foreign-provider foo-foreign-breaker-3 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo-same-breaker-none : Conflicts: foo-same
+E: Unable to correct problems, you have held broken packages.' aptget install foo-same-provider foo-same-breaker-none -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-same-breaker-2 foo-same-provider
+0 upgraded, 2 newly installed, 0 to remove and 4 not upgraded.
+Inst foo-same-breaker-2 (1.0 unstable [i386])
+Inst foo-same-provider (1.0 unstable [i386])
+Conf foo-same-breaker-2 (1.0 unstable [i386])
+Conf foo-same-provider (1.0 unstable [i386])' aptget install foo-same-provider foo-same-breaker-2 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo-same:amd64 foo-same
+The following NEW packages will be installed:
+  foo-same-breaker-3 foo-same-provider
+The following packages will be upgraded:
+  foo-same:amd64 foo-same
+2 upgraded, 2 newly installed, 0 to remove and 2 not upgraded.
+Inst foo-same:amd64 [2.0] (4.0 unstable [amd64]) [foo-same:amd64 on foo-same:i386] [foo-same:i386 on foo-same:amd64] [foo-same:i386 ]
+Inst foo-same [2.0] (4.0 unstable [i386])
+Conf foo-same:amd64 (4.0 unstable [amd64])
+Conf foo-same (4.0 unstable [i386])
+Inst foo-same-breaker-3 (1.0 unstable [i386])
+Inst foo-same-provider (1.0 unstable [i386])
+Conf foo-same-breaker-3 (1.0 unstable [i386])
+Conf foo-same-provider (1.0 unstable [i386])' aptget install foo-same-provider foo-same-breaker-3 -s

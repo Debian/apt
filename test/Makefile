@@ -6,8 +6,8 @@ ifndef NOISY
 .SILENT:
 endif
 
-.PHONY: headers library clean veryclean all binary program doc test
-all clean veryclean binary program dirs test:
+.PHONY: startup headers library clean veryclean all binary program doc test update-po
+startup all clean veryclean binary program dirs test update-po manpages:
 	$(MAKE) -C libapt $@
 	$(MAKE) -C interactive-helper $@
 

@@ -38,13 +38,15 @@
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
 
-#include <apti18n.h>
 #include "contents.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 // GenContents::~GenContents - Free allocated memory			/*{{{*/

@@ -78,6 +78,7 @@ class FileFd
    bool Read(void *To,unsigned long long Size,unsigned long long *Actual = 0);
    char* ReadLine(char *To, unsigned long long const Size);
    bool Write(const void *From,unsigned long long Size);
+   bool static Write(int Fd, const void *From, unsigned long long Size);
    bool Seek(unsigned long long To);
    bool Skip(unsigned long long To);
    bool Truncate(unsigned long long To);
@@ -171,6 +172,7 @@ std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::string
 					bool const &SortList, bool const &AllowNoExt=false);
 std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, std::vector<std::string> const &Ext,
 					bool const &SortList);
+std::vector<std::string> GetListOfFilesInDir(std::string const &Dir, bool SortList);
 std::string SafeGetCWD();
 void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);

@@ -58,6 +58,12 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
       FileNames[I] = Jnk;
 }
 									/*}}}*/
+// Simulate::~Simulate - Destructor					/*{{{*/
+pkgSimulate::~pkgSimulate()
+{
+   delete[] Flags;
+}
+									/*}}}*/
 // Simulate::Describe - Describe a package				/*{{{*/
 // ---------------------------------------------------------------------
 /* Parameter Current == true displays the current package version,
@@ -556,7 +562,8 @@ void pkgProblemResolver::MakeScores()
          essantial package above most other packages but low enough
 	 to allow an obsolete essential packages to be removed by
 	 a conflicts on a powerfull normal package (ie libc6) */
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential
+	  || (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Score += PrioEssentials;
 
       // We transform the priority
@@ -631,7 +638,8 @@ void pkgProblemResolver::MakeScores()
    {
       if ((Flags[I->ID] & Protected) != 0)
 	 Scores[I->ID] += AddProtected;
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
+          (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Scores[I->ID] += AddEssential;
    }
 }
@@ -1430,6 +1438,13 @@ static int PrioComp(const void *A,const void *B)
    if ((L.ParentPkg()->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential &&
        (R.ParentPkg()->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
      return -1;
+
+   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important &&
+       (R.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important)
+     return 1;
+   if ((L.ParentPkg()->Flags & pkgCache::Flag::Important) != pkgCache::Flag::Important &&
+       (R.ParentPkg()->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
+     return -1;
    
    if (L->Priority != R->Priority)
       return R->Priority - L->Priority;
@@ -1444,7 +1459,7 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    qsort(List,Count,sizeof(*List),PrioComp);
 }
 									/*}}}*/
-// ListUpdate - update the cache files					/*{{{*/
+// ListUpdate - construct Fetcher and update the cache files		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple wrapper to update the cache. it will fetch stuff
  * from the network (or any other sources defined in sources.list)
@@ -1453,7 +1468,6 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 		pkgSourceList &List, 
 		int PulseInterval)
 {
-   pkgAcquire::RunResult res;
    pkgAcquire Fetcher;
    if (Fetcher.Setup(&Stat, _config->FindDir("Dir::State::Lists")) == false)
       return false;
@@ -1462,11 +1476,24 @@ bool ListUpdate(pkgAcquireStatus &Stat,
    if (List.GetIndexes(&Fetcher) == false)
 	 return false;
 
+   return AcquireUpdate(Fetcher, PulseInterval, true);
+}
+									/*}}}*/
+// AcquireUpdate - take Fetcher and update the cache files		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is a simple wrapper to update the cache with a provided acquire
+ * If you only need control over Status and the used SourcesList use
+ * ListUpdate method instead.
+ */
+bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
+		   bool const RunUpdateScripts, bool const ListCleanup)
+{
    // Run scripts
-   RunScripts("APT::Update::Pre-Invoke");
-   
-   // check arguments
-   if(PulseInterval>0)
+   if (RunUpdateScripts == true)
+      RunScripts("APT::Update::Pre-Invoke");
+
+   pkgAcquire::RunResult res;
+   if(PulseInterval > 0)
       res = Fetcher.Run(PulseInterval);
    else
       res = Fetcher.Run();
@@ -1503,7 +1530,7 @@ bool ListUpdate(pkgAcquireStatus &Stat,
    // Clean out any old list files
    // Keep "APT::Get::List-Cleanup" name for compatibility, but
    // this is really a global option for the APT library now
-   if (!TransientNetworkFailure && !Failed &&
+   if (!TransientNetworkFailure && !Failed && ListCleanup == true &&
        (_config->FindB("APT::Get::List-Cleanup",true) == true &&
 	_config->FindB("APT::List-Cleanup",true) == true))
    {
@@ -1520,11 +1547,14 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
 
    // Run the success scripts if all was fine
-   if(!TransientNetworkFailure && !Failed)
-      RunScripts("APT::Update::Post-Invoke-Success");
+   if (RunUpdateScripts == true)
+   {
+      if(!TransientNetworkFailure && !Failed)
+	 RunScripts("APT::Update::Post-Invoke-Success");
 
-   // Run the other scripts
-   RunScripts("APT::Update::Post-Invoke");
+      // Run the other scripts
+      RunScripts("APT::Update::Post-Invoke");
+   }
    return true;
 }
 									/*}}}*/

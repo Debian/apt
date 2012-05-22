@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>2012-05-11T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,20 +33,8 @@
     <refpurpose>APT Configuration Query program</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-config</command>
-      <arg><option>-hv</option></arg>
-      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
-      <arg><option>-c=<replaceable>file</replaceable></option></arg>
-      <group choice="req">
-         <arg>shell</arg>
-         <arg>dump</arg>
-      </group>   
-   </cmdsynopsis>
- </refsynopsisdiv>
- 
+ &synopsis-command-apt-config;
+
  <refsect1><title>Description</title>
    <para><command>apt-config</command> is an internal program used by various
    portions of the APT suite to provide consistent configurability. It accesses
@@ -58,7 +46,7 @@
    </para>
    
    <variablelist>
-     <varlistentry><term>shell</term>
+     <varlistentry><term><option>shell</option></term>
      <listitem><para>
      shell is used to access the configuration information from a shell 
      script. It is given pairs of arguments, the first being a shell 
@@ -84,7 +72,7 @@ eval $RES
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>dump</term>
+     <varlistentry><term><option>dump</option></term>
      <listitem><para>
      Just show the contents of the configuration space.</para>
      </listitem>
@@ -97,7 +85,22 @@ eval $RES
    &apt-cmdblurb;
    
    <variablelist>
-   
+     <varlistentry>
+      <term><option>--empty</option></term>
+      <listitem><para>Include options which have an empty value. This is the default, so
+		      use --no-empty to remove them from the output.</para></listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>--format '<replaceable>&percnt;f &#x0022;&percnt;v&#x0022;;&percnt;n</replaceable>'</option></term>
+      <listitem><para>Defines the output of each config option. &percnt;t will be replaced with the name of the option,
+		      &percnt;f with the complete optionname and &percnt;v with the value of the option.
+		      Use uppercase letters and special characters in the value will be encoded to ensure that
+		      it can e.g. be savely used in a quoted-string as defined by RFC822. Additionally
+		      &percnt;n will be replaced by a newline, &percnt;N by a tab. A &percnt; can be
+		      printed by using &percnt;&percnt;.</para></listitem>
+     </varlistentry>
+
      &apt-commonoptions;
      
    </variablelist>

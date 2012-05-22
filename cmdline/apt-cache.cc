@@ -1676,7 +1676,7 @@ bool GenCaches(CommandLine &Cmd)
 /* */
 bool ShowHelp(CommandLine &Cmd)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    
    if (_config->FindB("version") == true)
@@ -1739,7 +1739,7 @@ int main(int argc,const char *argv[])					/*{{{*/
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,"installed","APT::Cache::Installed",0},
-      {0,"pre-depends","APT::Cache::ShowPreDepends",0},
+      {0,"pre-depends","APT::Cache::ShowPre-Depends",0},
       {0,"depends","APT::Cache::ShowDepends",0},
       {0,"recommends","APT::Cache::ShowRecommends",0},
       {0,"suggests","APT::Cache::ShowSuggests",0},

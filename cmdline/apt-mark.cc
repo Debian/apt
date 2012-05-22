@@ -14,9 +14,15 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/fileutl.h>
 
 #include <algorithm>
+#include <errno.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -158,13 +164,63 @@ bool DoHold(CommandLine &CmdL)
    if (unlikely(Cache == NULL))
       return false;
 
+   // Generate the base argument list for dpkg
+   std::vector<const char *> Args;
+   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   {
+      string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
+      size_t dpkgChrootLen = dpkgChrootDir.length();
+      if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
+      {
+	 if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
+	    --dpkgChrootLen;
+	 Tmp = Tmp.substr(dpkgChrootLen);
+      }
+   }
+   Args.push_back(Tmp.c_str());
+
+   // Stick in any custom dpkg options
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+      }
+   }
+
+   size_t const BaseArgs = Args.size();
+   // we need to detect if we can qualify packages with the architecture or not
+   Args.push_back("--assert-multi-arch");
+   Args.push_back(NULL);
+
+
+   pid_t dpkgAssertMultiArch = ExecFork();
+   if (dpkgAssertMultiArch == 0)
+   {
+      std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --assert-multi-arch", chrootDir.c_str());
+      // redirect everything to the ultimate sink as we only need the exit-status
+      int const nullfd = open("/dev/null", O_RDONLY);
+      dup2(nullfd, STDIN_FILENO);
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
+      execvp(Args[0], (char**) &Args[0]);
+      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
+      _exit(2);
+   }
+
    APT::PackageList pkgset = APT::PackageList::FromCommandLine(CacheFile, CmdL.FileList + 1);
    if (pkgset.empty() == true)
       return _error->Error(_("No packages found"));
 
    bool const MarkHold = strcasecmp(CmdL.FileList[0],"hold") == 0;
 
-   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
+   for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end();)
    {
       if ((Pkg->SelectedState == pkgCache::State::Hold) == MarkHold)
       {
@@ -172,9 +228,25 @@ bool DoHold(CommandLine &CmdL)
 	    ioprintf(c1out,_("%s was already set on hold.\n"), Pkg.FullName(true).c_str());
 	 else
 	    ioprintf(c1out,_("%s was already not hold.\n"), Pkg.FullName(true).c_str());
-	 pkgset.erase(Pkg);
-	 continue;
+	 Pkg = pkgset.erase(Pkg, true);
       }
+      else
+	 ++Pkg;
+   }
+
+   bool dpkgMultiArch = false;
+   if (dpkgAssertMultiArch > 0)
+   {
+      int Status = 0;
+      while (waitpid(dpkgAssertMultiArch, &Status, 0) != dpkgAssertMultiArch)
+      {
+	 if (errno == EINTR)
+	    continue;
+	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --assert-multi-arch");
+	 break;
+      }
+      if (WIFEXITED(Status) == true && WEXITSTATUS(Status) == 0)
+	 dpkgMultiArch = true;
    }
 
    if (pkgset.empty() == true)
@@ -192,36 +264,60 @@ bool DoHold(CommandLine &CmdL)
       return true;
    }
 
-   string dpkgcall = _config->Find("Dir::Bin::dpkg", "dpkg");
-   std::vector<string> const dpkgoptions = _config->FindVector("DPkg::options");
-   for (std::vector<string>::const_iterator o = dpkgoptions.begin();
-	o != dpkgoptions.end(); ++o)
-      dpkgcall.append(" ").append(*o);
-   dpkgcall.append(" --set-selections");
-   FILE *dpkg = popen(dpkgcall.c_str(), "w");
-   if (dpkg == NULL)
-      return _error->Errno("DoHold", "fdopen on dpkg stdin failed");
+   Args.erase(Args.begin() + BaseArgs, Args.end());
+   Args.push_back("--set-selections");
+   Args.push_back(NULL);
 
+   int external[2] = {-1, -1};
+   if (pipe(external) != 0)
+      return _error->WarningE("DoHold", "Can't create IPC pipe for dpkg --set-selections");
+
+   pid_t dpkgSelection = ExecFork();
+   if (dpkgSelection == 0)
+   {
+      close(external[1]);
+      std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
+      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --set-selections", chrootDir.c_str());
+      int const nullfd = open("/dev/null", O_RDONLY);
+      dup2(external[0], STDIN_FILENO);
+      dup2(nullfd, STDOUT_FILENO);
+      dup2(nullfd, STDERR_FILENO);
+      execvp(Args[0], (char**) &Args[0]);
+      _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
+      _exit(2);
+   }
+
+   FILE* dpkg = fdopen(external[1], "w");
    for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
       if (MarkHold == true)
       {
-	 fprintf(dpkg, "%s hold\n", Pkg.FullName(true).c_str());
+	 fprintf(dpkg, "%s hold\n", Pkg.FullName(!dpkgMultiArch).c_str());
 	 ioprintf(c1out,_("%s set on hold.\n"), Pkg.FullName(true).c_str());
       }
       else
       {
-	 fprintf(dpkg, "%s install\n", Pkg.FullName(true).c_str());
+	 fprintf(dpkg, "%s install\n", Pkg.FullName(!dpkgMultiArch).c_str());
 	 ioprintf(c1out,_("Canceled hold on %s.\n"), Pkg.FullName(true).c_str());
       }
    }
+   fclose(dpkg);
 
-   int const status = pclose(dpkg);
-   if (status == -1)
-      return _error->Errno("DoHold", "dpkg execution failed in the end");
-   if (WIFEXITED(status) == false || WEXITSTATUS(status) != 0)
-      return _error->Error(_("Executing dpkg failed. Are you root?"));
-   return true;
+   if (dpkgSelection > 0)
+   {
+      int Status = 0;
+      while (waitpid(dpkgSelection, &Status, 0) != dpkgSelection)
+      {
+	 if (errno == EINTR)
+	    continue;
+	 _error->WarningE("dpkgGo", _("Waited for %s but it wasn't there"), "dpkg --set-selection");
+	 break;
+      }
+      if (WIFEXITED(Status) == true && WEXITSTATUS(Status) == 0)
+	 return true;
+   }
+   return _error->Error(_("Executing dpkg failed. Are you root?"));
 }
 									/*}}}*/
 /* ShowHold - show packages set on hold in dpkg status			{{{*/
@@ -264,7 +360,7 @@ bool ShowHold(CommandLine &CmdL)
 /* */
 bool ShowHelp(CommandLine &CmdL)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
 
    cout <<

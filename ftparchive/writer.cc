@@ -941,12 +941,14 @@ ReleaseWriter::ReleaseWriter(string const &DB)
       AddPattern("Packages.bz2");
       AddPattern("Packages.lzma");
       AddPattern("Packages.xz");
+      AddPattern("Translation-*");
       AddPattern("Sources");
       AddPattern("Sources.gz");
       AddPattern("Sources.bz2");
       AddPattern("Sources.lzma");
       AddPattern("Sources.xz");
       AddPattern("Release");
+      AddPattern("Contents-*");
       AddPattern("Index");
       AddPattern("md5sum.txt");
    }

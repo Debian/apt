@@ -186,11 +186,13 @@ public:									/*{{{*/
 		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; };
 		operator typename Container::iterator(void) const { return _iter; }
-		operator typename PackageContainer<Container>::const_iterator() { return PackageContainer<Container>::const_iterator(_iter); }
+		operator typename PackageContainer<Container>::const_iterator() { return typename PackageContainer<Container>::const_iterator(_iter); }
 		inline iterator& operator++() { ++_iter; return *this; }
 		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };
 		inline bool operator==(iterator const &i) const { return _iter == i._iter; };
+		inline iterator& operator=(iterator const &i) { _iter = i._iter; return *this; };
+		inline iterator& operator=(typename Container::iterator const &i) { _iter = i; return *this; };
 		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
 	};
 									/*}}}*/
@@ -201,7 +203,9 @@ public:									/*{{{*/
 
 	bool empty() const { return _cont.empty(); };
 	void clear() { return _cont.clear(); };
+	//FIXME: on ABI break, replace the first with the second without bool
 	void erase(iterator position) { _cont.erase((typename Container::iterator)position); };
+	iterator& erase(iterator &position, bool) { return position = _cont.erase((typename Container::iterator)position); };
 	size_t erase(const pkgCache::PkgIterator x) { return _cont.erase(x); };
 	void erase(iterator first, iterator last) { _cont.erase(first, last); };
 	size_t size() const { return _cont.size(); };
@@ -502,11 +506,13 @@ public:									/*{{{*/
 		pkgCache::VerIterator getVer(void) const { return *_iter; }
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; };
 		operator typename Container::iterator(void) const { return _iter; }
-		operator typename VersionContainer<Container>::const_iterator() { return VersionContainer<Container>::const_iterator(_iter); }
+		operator typename VersionContainer<Container>::const_iterator() { return typename VersionContainer<Container>::const_iterator(_iter); }
 		inline iterator& operator++() { ++_iter; return *this; }
 		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };
 		inline bool operator==(iterator const &i) const { return _iter == i._iter; };
+		inline iterator& operator=(iterator const &i) { _iter = i._iter; return *this; };
+		inline iterator& operator=(typename Container::iterator const &i) { _iter = i; return *this; };
 		friend std::ostream& operator<<(std::ostream& out, iterator i) { return operator<<(out, *i); }
 	};
 									/*}}}*/
@@ -516,7 +522,9 @@ public:									/*{{{*/
 	void insert(const_iterator begin, const_iterator end) { _cont.insert(begin, end); };
 	bool empty() const { return _cont.empty(); };
 	void clear() { return _cont.clear(); };
+	//FIXME: on ABI break, replace the first with the second without bool
 	void erase(iterator position) { _cont.erase((typename Container::iterator)position); };
+	iterator& erase(iterator &position, bool) { return position = _cont.erase((typename Container::iterator)position); };
 	size_t erase(const pkgCache::VerIterator x) { return _cont.erase(x); };
 	void erase(iterator first, iterator last) { _cont.erase(first, last); };
 	size_t size() const { return _cont.size(); };

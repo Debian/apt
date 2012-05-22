@@ -23,6 +23,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <sstream>
 #include <stdio.h>
 #include <algorithm>
 #include <unistd.h>
@@ -910,17 +911,17 @@ bool StrToTime(const string &Val,time_t &Result)
 
    // Handle RFC 1123 time
    Month[0] = 0;
-   if (sscanf(I," %d %3s %d %d:%d:%d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
+   if (sscanf(I," %2d %3s %4d %2d:%2d:%2d GMT",&Tm.tm_mday,Month,&Tm.tm_year,
 	      &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) != 6)
    {
       // Handle RFC 1036 time
-      if (sscanf(I," %d-%3s-%d %d:%d:%d GMT",&Tm.tm_mday,Month,
+      if (sscanf(I," %2d-%3s-%3d %2d:%2d:%2d GMT",&Tm.tm_mday,Month,
 		 &Tm.tm_year,&Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec) == 6)
 	 Tm.tm_year += 1900;
       else
       {
 	 // asctime format
-	 if (sscanf(I," %3s %d %d:%d:%d %d",Month,&Tm.tm_mday,
+	 if (sscanf(I," %3s %2d %2d:%2d:%2d %4d",Month,&Tm.tm_mday,
 		    &Tm.tm_hour,&Tm.tm_min,&Tm.tm_sec,&Tm.tm_year) != 6)
 	 {
 	    // 'ftp' time
@@ -1168,34 +1169,50 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
    return Hits;
 }
 									/*}}}*/
-// ioprintf - C format string outputter to C++ iostreams		/*{{{*/
+// {str,io}printf - C format string outputter to C++ strings/iostreams	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is used to make the internationalization strings easier to translate
    and to allow reordering of parameters */
-void ioprintf(ostream &out,const char *format,...) 
-{
-   va_list args;
-   va_start(args,format);
-   
-   // sprintf the description
-   char S[4096];
-   vsnprintf(S,sizeof(S),format,args);
-   out << S;
+static bool iovprintf(ostream &out, const char *format,
+		      va_list &args, ssize_t &size) {
+   char *S = (char*)malloc(size);
+   ssize_t const n = vsnprintf(S, size, format, args);
+   if (n > -1 && n < size) {
+      out << S;
+      free(S);
+      return true;
+   } else {
+      if (n > -1)
+	 size = n + 1;
+      else
+	 size *= 2;
+   }
+   free(S);
+   return false;
 }
-									/*}}}*/
-// strprintf - C format string outputter to C++ strings 		/*{{{*/
-// ---------------------------------------------------------------------
-/* This is used to make the internationalization strings easier to translate
-   and to allow reordering of parameters */
-void strprintf(string &out,const char *format,...) 
+void ioprintf(ostream &out,const char *format,...)
 {
    va_list args;
-   va_start(args,format);
-   
-   // sprintf the description
-   char S[4096];
-   vsnprintf(S,sizeof(S),format,args);
-   out = string(S);
+   ssize_t size = 400;
+   while (true) {
+      va_start(args,format);
+      if (iovprintf(out, format, args, size) == true)
+	 return;
+      va_end(args);
+   }
+}
+void strprintf(string &out,const char *format,...)
+{
+   va_list args;
+   ssize_t size = 400;
+   std::ostringstream outstr;
+   while (true) {
+      va_start(args,format);
+      if (iovprintf(outstr, format, args, size) == true)
+	 break;
+      va_end(args);
+   }
+   out = outstr.str();
 }
 									/*}}}*/
 // safe_snprintf - Safer snprintf					/*{{{*/

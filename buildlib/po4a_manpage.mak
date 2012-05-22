@@ -16,7 +16,7 @@ INCLUDES = apt.ent apt-verbatim.ent
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 ifdef XSLTPROC
 
-STYLESHEET=../manpage-style.xsl
+STYLESHEET=manpage-style.xsl
 
 LOCAL := po4a-manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(SOURCE)
@@ -28,7 +28,11 @@ veryclean: veryclean/$(LOCAL)
 apt-verbatim.ent: ../apt-verbatim.ent
 	cp ../apt-verbatim.ent .
 
-$($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
+manpage-style.xsl: ../manpage-style.xsl
+	sed "/<!-- LANGUAGE -->/ i\
+<xsl:param name=\"l10n.gentext.default.language\" select=\"'$(LC)'\" />" ../manpage-style.xsl > manpage-style.xsl
+
+$($(LOCAL)-LIST) :: % : %.xml $(STYLESHEET) $(INCLUDES)
 	echo Creating man page $@
 	$(XSLTPROC) -o $@ $(STYLESHEET) $< || exit 200 # why xsltproc doesn't respect the -o flag here???
 	test -f $(subst .$(LC),,$@) || echo FIXME: xsltproc respect the -o flag now, workaround can be removed

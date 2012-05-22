@@ -713,11 +713,32 @@ public:
 	}
 
 	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::NEWEST);
-		if (verset.empty() == false)
-			return *(verset.begin());
-		if (ShowError == true)
-			ioprintf(out, _("Virtual packages like '%s' can't be removed\n"), Pkg.FullName(true).c_str());
+		if (Pkg->ProvidesList != 0)
+		{
+			APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::NEWEST);
+			if (verset.empty() == false)
+				return *(verset.begin());
+			if (ShowError == true)
+				ioprintf(out, _("Virtual packages like '%s' can't be removed\n"), Pkg.FullName(true).c_str());
+		}
+		else
+		{
+			pkgCache::GrpIterator Grp = Pkg.Group();
+			pkgCache::PkgIterator P = Grp.PackageList();
+			for (; P.end() != true; P = Grp.NextPkg(P))
+			{
+				if (P == Pkg)
+					continue;
+				if (P->CurrentVer != 0) {
+					// TRANSLATORS: Note, this is not an interactive question
+					ioprintf(c1out,_("Package '%s' is not installed, so not removed. Did you mean '%s'?\n"),
+						 Pkg.FullName(true).c_str(), P.FullName(true).c_str());
+					break;
+				}
+			}
+			if (P.end() == true)
+				ioprintf(c1out,_("Package '%s' is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+		}
 		return pkgCache::VerIterator(Cache, 0);
 	}
 
@@ -904,7 +925,23 @@ struct TryToRemove {
       if ((Pkg->CurrentVer == 0 && PurgePkgs == false) ||
 	  (PurgePkgs == true && Pkg->CurrentState == pkgCache::State::NotInstalled))
       {
-	 ioprintf(c1out,_("Package %s is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+	 pkgCache::GrpIterator Grp = Pkg.Group();
+	 pkgCache::PkgIterator P = Grp.PackageList();
+	 for (; P.end() != true; P = Grp.NextPkg(P))
+	 {
+	    if (P == Pkg)
+	       continue;
+	    if (P->CurrentVer != 0 || (PurgePkgs == true && P->CurrentState != pkgCache::State::NotInstalled))
+	    {
+	       // TRANSLATORS: Note, this is not an interactive question
+	       ioprintf(c1out,_("Package '%s' is not installed, so not removed. Did you mean '%s'?\n"),
+			Pkg.FullName(true).c_str(), P.FullName(true).c_str());
+	       break;
+	    }
+	 }
+	 if (P.end() == true)
+	    ioprintf(c1out,_("Package '%s' is not installed, so not removed\n"),Pkg.FullName(true).c_str());
+
 	 // MarkInstall refuses to install packages on hold
 	 Pkg->SelectedState = pkgCache::State::Hold;
       }
@@ -1378,7 +1415,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	"all files have been overwritten by other packages:",
 	"The following packages disappeared from your system as\n"
 	"all files have been overwritten by other packages:", disappearedPkgs.size()), disappear, "");
-   c0out << _("Note: This is done automatic and on purpose by dpkg.") << std::endl;
+   c0out << _("Note: This is done automatically and on purpose by dpkg.") << std::endl;
 
    return true;
 }
@@ -1642,10 +1679,13 @@ bool DoUpdate(CommandLine &CmdL)
        ListUpdate(Stat, *List);
 
    // Rebuild the cache.
-   pkgCacheFile::RemoveCaches();
-   if (Cache.BuildCaches() == false)
-      return false;
-   
+   if (_config->FindB("pkgCacheFile::Generate", true) == true)
+   {
+      pkgCacheFile::RemoveCaches();
+      if (Cache.BuildCaches() == false)
+	 return false;
+   }
+
    return true;
 }
 									/*}}}*/
@@ -1674,12 +1714,13 @@ bool DoAutomaticRemove(CacheFile &Cache)
    bool smallList = (hideAutoRemove == false &&
 		strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
 
-   string autoremovelist, autoremoveversions;
    unsigned long autoRemoveCount = 0;
    APT::PackageSet tooMuch;
+   APT::PackageList autoRemoveList;
    // look over the cache to see what can be removed
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; ++J)
    {
+      pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
       if (Cache[Pkg].Garbage)
       {
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
@@ -1696,6 +1737,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 }
 	 else
 	 {
+	    if (hideAutoRemove == false && Cache[Pkg].Delete() == false)
+	       autoRemoveList.insert(Pkg);
 	    // if the package is a new install and already garbage we don't need to
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
@@ -1705,16 +1748,8 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	       Cache->MarkDelete(Pkg, false);
 	    }
 	    // only show stuff in the list that is not yet marked for removal
-	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false) 
-	    {
+	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false)
 	       ++autoRemoveCount;
-	       // we don't need to fill the strings if we don't need them
-	       if (smallList == false)
-	       {
-		 autoremovelist += Pkg.FullName(true) + " ";
-		 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
-	       }
-	    }
 	 }
       }
    }
@@ -1749,14 +1784,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		    std::clog << "Save " << Pkg << " as another installed garbage package depends on it" << std::endl;
 		 Cache->MarkInstall(Pkg, false);
 		 if (hideAutoRemove == false)
-		 {
 		    ++autoRemoveCount;
-		    if (smallList == false)
-		    {
-		       autoremovelist += Pkg.FullName(true) + " ";
-		       autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
-		    }
-		 }
 		 tooMuch.erase(Pkg);
 		 Changed = true;
 		 break;
@@ -1764,6 +1792,18 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    }
 	 }
       } while (Changed == true);
+   }
+
+   std::string autoremovelist, autoremoveversions;
+   if (smallList == false && autoRemoveCount != 0)
+   {
+      for (APT::PackageList::const_iterator Pkg = autoRemoveList.begin(); Pkg != autoRemoveList.end(); ++Pkg)
+      {
+	 if (Cache[Pkg].Garbage == false)
+	    continue;
+	 autoremovelist += Pkg.FullName(true) + " ";
+	 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+      }
    }
 
    // Now see if we had destroyed anything (if we had done anything)
@@ -1789,7 +1829,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
       else
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
-      c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
+      c1out << P_("Use 'apt-get autoremove' to remove it.", "Use 'apt-get autoremove' to remove them.", autoRemoveCount) << std::endl;
    }
    return true;
 }
@@ -2749,8 +2789,18 @@ bool DoBuildDep(CommandLine &CmdL)
             
       // Process the build-dependencies
       vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
-      	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
+      // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
+      if (hostArch.empty() == false)
+      {
+	 std::string nativeArch = _config->Find("APT::Architecture");
+	 _config->Set("APT::Architecture", hostArch);
+	 bool Success = Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch);
+	 _config->Set("APT::Architecture", nativeArch);
+	 if (Success == false)
+	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
+      }
+      else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
+	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
       // Also ensure that build-essential packages are present
       Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
@@ -3261,7 +3311,7 @@ bool DoMoo(CommandLine &CmdL)
 /* */
 bool ShowHelp(CommandLine &CmdL)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
 	    
    if (_config->FindB("version") == true)

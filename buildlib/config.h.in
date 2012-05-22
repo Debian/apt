@@ -2,22 +2,14 @@
    byte first (like Motorola and SPARC, unlike Intel and VAX).  */
 #undef WORDS_BIGENDIAN
 
-/* The following 4 are only used by inttypes.h shim if the system lacks
-   inttypes.h */
-/* The number of bytes in a usigned char.  */
-#undef SIZEOF_CHAR
-
-/* The number of bytes in a unsigned int.  */
-#undef SIZEOF_INT
-
-/* The number of bytes in a unsigned long.  */
-#undef SIZEOF_LONG
-
-/* The number of bytes in a unsigned short.  */
-#undef SIZEOF_SHORT
-
 /* Define if we have the timegm() function */
 #undef HAVE_TIMEGM
+
+/* Define if we have the zlib library for gzip */
+#undef HAVE_ZLIB
+
+/* Define if we have the bz2 library for bzip2 */
+#undef HAVE_BZ2
 
 /* These two are used by the statvfs shim for glibc2.0 and bsd */
 /* Define if we have sys/vfs.h */
@@ -39,10 +31,13 @@
 /* Define the arch name string */
 #undef COMMON_ARCH
 
-/* The version number string */
-#undef VERSION
-
 /* The package name string */
 #undef PACKAGE
+
+/* The version number string */
+#undef PACKAGE_VERSION
+
+/* The mail address to reach upstream */
+#undef PACKAGE_MAIL
 
 #define APT_8_CLEANER_HEADERS

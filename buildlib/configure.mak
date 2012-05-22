@@ -20,16 +20,15 @@ startup: configure $(BUILDDIR)/config.status $(addprefix $(BUILDDIR)/,$(CONVERTE
 buildlib/config.sub:
 	ln -sf /usr/share/misc/config.sub buildlib/config.sub
 buildlib/config.guess:
-	ln -sf /usr/share/misc/config.guess buildlib/config.guess	
+	ln -sf /usr/share/misc/config.guess buildlib/config.guess
 configure: aclocal.m4 configure.in buildlib/config.guess buildlib/config.sub
 	autoconf
 
 aclocal.m4: $(wildcard buildlib/*.m4)
 	aclocal -I buildlib
-	
+
 $(BUILDDIR)/config.status: configure
-	/usr/bin/test -e $(BUILDDIR) || mkdir $(BUILDDIR)	
+	/usr/bin/test -e $(BUILDDIR) || mkdir $(BUILDDIR)
 	(HERE=`pwd`; cd $(BUILDDIR) && $$HERE/configure)
-	
-$(addprefix $(BUILDDIR)/,$(CONVERTED)):
-	(cd $(BUILDDIR) && ./config.status)
+
+$(addprefix $(BUILDDIR)/,$(CONVERTED)): $(BUILDDIR)/config.status

@@ -11,26 +11,42 @@ SOURCE = $(wildcard *.sgml)
 DEBIANDOC_HTML_OPTIONS=-l en.UTF-8
 include $(DEBIANDOC_H)
 
+MANPAGEPO = $(patsubst %.po,%,$(notdir $(wildcard po/*.po)))
+MANPAGEPOLIST = $(patsubst %,manpages-translation-%,$(MANPAGEPO))
+
+doc: manpages
+
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 ifdef XSLTPROC
 # generate a list of accepted man page translations
 SOURCE = $(patsubst %.xml,%,$(wildcard *.?.xml))
-INCLUDES = apt.ent
+INCLUDES = apt.ent apt-verbatim.ent
 STYLESHEET=manpage-style.xsl
 
 LOCAL := manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(SOURCE)
 
 # Install generation hooks
-doc: $($(LOCAL)-LIST)
-veryclean: veryclean/$(LOCAL)
+manpages: $(MANPAGEPOLIST) $($(LOCAL)-LIST)
 
-$($(LOCAL)-LIST) :: % : %.xml $(INCLUDES)
+$($(LOCAL)-LIST) :: % : %.xml $(STYLESHEET) $(INCLUDES)
 	echo Creating man page $@
 	$(XSLTPROC) -o $@ $(STYLESHEET) $<
 
+$(MANPAGEPOLIST) :: manpages-translation-% : %/makefile po4a
+	$(MAKE) -C $(dir $<) doc
+
+.PHONY: manpages dirs-manpage-subdirs $(MANPAGEPOLIST)
+dirs: dirs-manpage-subdirs
+dirs-manpage-subdirs:
+	for i in $(MANPAGEPO); do \
+		test -d $$i || mkdir $$i; \
+		test -f $$i/makefile || sed "s#@@LANG@@#$$i#" lang.makefile > $$i/makefile; \
+	done
+
 # Clean rule
 .PHONY: veryclean/$(LOCAL)
+veryclean: veryclean/$(LOCAL)
 veryclean/$(LOCAL):
 	-rm -rf $($(@F)-LIST)
 
@@ -47,12 +63,6 @@ TARGET = binary
 include $(COPY_H)
 
 .PHONY: clean clean-subdirs veryclean veryclean-subdirs all binary doc
-doc:
-	for i in $(shell ls po/*.po | sed -r 's#po/([a-z]+[A-Z_]*).po#\1#'); do \
-		test -d $$i || mkdir $$i; \
-		test -f $$i/makefile || sed "s#@@LANG@@#$$i#" lang.makefile > $$i/makefile; \
-		$(MAKE) -C $$i $@; \
-	done
 
 clean: clean-subdirs
 veryclean: veryclean-subdirs
@@ -67,25 +77,24 @@ veryclean-subdirs:
 		rm -rf $$dir; \
 	done
 
+.PHONY: update-po po4a stats
+
 ifdef PO4A
 doc: po4a
 
-clean: po4a-clean
-
-.PHONY: update-po po4a stats
 update-po:
-	po4a --previous --no-backups --force --no-translations po4a.conf
-
-po4a-clean:
-	po4a --previous --rm-backups --rm-translations po4a.conf
+	po4a --previous --no-backups --force --no-translations \
+		--package-name='$(PACKAGE)' --package-version='$(PACKAGE_VERSION)' \
+		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 
 po4a:
-	po4a --previous --no-backups po4a.conf
+	po4a --previous --no-backups \
+		--package-name='$(PACKAGE)' --package-version='$(PACKAGE_VERSION)' \
+		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
+endif
 
 stats:
-	for i in po/*.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
-
-endif
+	for i in po/*.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
 
 ifdef DOXYGEN
 DOXYGEN_SOURCES = $(shell find $(BASE)/apt-pkg -not -name .\\\#* -and \( -name \*.cc -or -name \*.h \) )
@@ -95,9 +104,6 @@ clean: doxygen-clean
 doxygen-clean:
 	rm -fr $(BUILD)/doc/doxygen
 	rm -f $(BUILD)/doc/doxygen-stamp
-
-$(BUILD)/doc/Doxyfile: Doxyfile.in
-	(cd $(BUILD) && ./config.status doc/Doxyfile)
 
 $(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
 	rm -fr $(BUILD)/doc/doxygen

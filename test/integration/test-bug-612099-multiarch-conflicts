@@ -16,7 +16,7 @@ buildsimplenativepackage 'foobar' 'amd64' '1.0' 'stable' 'Depends: libc6'
 setupaptarchive
 
 aptget install libc6:i386 -t stable -y -qq 2>&1 > /dev/null
-testdpkginstalled libc6
+testdpkginstalled libc6:i386
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
@@ -75,8 +75,13 @@ The following packages will be upgraded:
 1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
 Inst libc6 [1.0] (2.0 testing [all])
 Conf libc6 (2.0 testing [all])' aptget upgrade -t testing -s
-aptget upgrade -y -qq 2>&1 > /dev/null
-testdpkginstalled libc6
+# FIXME: on amd64 systems this test wouldn't run with a real upgrade
+# as APT (here i386) disagree about the native architecture, so
+# we fake it here:
+#aptget upgrade -y -qq 2>&1 > /dev/null
+aptget purge libc6 -y -qq 2>&1 >/dev/null
+aptget install libc6:i386 -y -qq 2>&1 >/dev/null
+testdpkginstalled libc6:all
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -125,7 +130,7 @@ buildsimplenativepackage 'foobar-same' 'amd64' '1.0' 'stable' 'Depends: libc6-sa
 setupaptarchive
 
 aptget install libc6-same:i386 -t stable -y -qq 2>&1 > /dev/null
-testdpkginstalled libc6-same
+testdpkginstalled libc6-same:i386
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -168,8 +173,14 @@ The following packages will be upgraded:
 1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
 Inst libc6-same [1.0] (2.0 testing [all])
 Conf libc6-same (2.0 testing [all])' aptget upgrade -t testing -s
-aptget upgrade -y -qq 2>&1 > /dev/null
-testdpkginstalled libc6-same
+# FIXME: on amd64 systems this test wouldn't run with a real upgrade
+# as APT (here i386) disagree about the native architecture, so
+# we fake it here:
+#aptget upgrade -y -qq 2>&1 > /dev/null
+aptget purge libc6-same -y -qq 2>&1 >/dev/null
+aptget install libc6-same:i386 -y -qq 2>&1 >/dev/null
+testdpkginstalled libc6-same:all
+
 
 testequal "Reading package lists...
 Building dependency tree...

@@ -25,9 +25,10 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
 
-#include <apti18n.h>
 #include <iostream>
 #include <fcntl.h>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -183,8 +184,7 @@ bool pkgPackageManager::CreateOrderList()
 	 continue;
       
       // Mark the package and its dependends for immediate configuration
-      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential ||
-	   (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important) &&
+      if ((((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential) &&
 	  NoImmConfigure == false) || ImmConfigureAll)
       {
 	 if(Debug && !ImmConfigureAll)
@@ -523,7 +523,8 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
 
    // Essential packages get special treatment
    bool IsEssential = false;
-   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0)
+   if ((Pkg->Flags & pkgCache::Flag::Essential) != 0 ||
+       (Pkg->Flags & pkgCache::Flag::Important) != 0)
       IsEssential = true;
 
    /* Check for packages that are the dependents of essential packages and 
@@ -533,7 +534,8 @@ bool pkgPackageManager::EarlyRemove(PkgIterator Pkg)
       for (DepIterator D = Pkg.RevDependsList(); D.end() == false &&
 	   IsEssential == false; ++D)
 	 if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
-	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0)
+	    if ((D.ParentPkg()->Flags & pkgCache::Flag::Essential) != 0 ||
+	        (D.ParentPkg()->Flags & pkgCache::Flag::Important) != 0)
 	       IsEssential = true;
    }
 
@@ -601,7 +603,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
    const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 5000);
-   unsigned int i=0;
+   unsigned int i = 0;
    do 
    {
       Changed = false;
@@ -783,7 +785,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 			   VerIterator V(Cache,*I);
 			   PkgIterator P = V.ParentPkg();
 			   // we are checking for installation as an easy 'protection' against or-groups and (unchosen) providers
-			   if (P->CurrentVer == 0 || P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
+			   if (P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
 			      continue;
 			   circle = true;
 			   break;
