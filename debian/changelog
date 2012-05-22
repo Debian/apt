@@ -1,3 +1,11 @@
+apt (0.9.6) UNRELEASED; urgency=low
+
+  * apt-pkg/contrib/fileutl.cc:
+    - dup() given compressed fd in OpenDescriptor if AutoClose
+      is disabled as otherwise gzclose() and co will close it
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 22 May 2012 18:13:19 +0200
+
 apt (0.9.5) unstable; urgency=low
 
   [ Chris Leick ]

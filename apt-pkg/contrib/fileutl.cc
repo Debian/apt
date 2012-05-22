@@ -1024,7 +1024,20 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
 {
    Close();
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
-   iFd = Fd;
+   if (AutoClose == false && (
+#ifdef HAVE_ZLIB
+	compressor.Name == "gzip" ||
+#endif
+#ifdef HAVE_BZ2
+	compressor.Name == "bzip2" ||
+#endif
+	false))
+   {
+      // Need to duplicate fd here or gzclose for cleanup will close the fd as well
+      iFd = dup(Fd);
+   }
+   else
+      iFd = Fd;
    this->FileName = "";
    if (OpenInternDescriptor(Mode, compressor) == false)
    {
@@ -1183,8 +1196,6 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       close(Pipe[0]);
    else
       close(Pipe[1]);
-   if ((Comp == true || FileName.empty() == true) && d->compressed_fd != -1)
-      close(d->compressed_fd);
 
    return true;
 }
@@ -1712,7 +1723,7 @@ bool FileFd::Close()
       }
    }
 
-   if ((Flags & Replace) == Replace && iFd >= 0) {
+   if ((Flags & Replace) == Replace) {
       if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
 	 Res &= _error->Errno("rename",_("Problem renaming the file %s to %s"), TemporaryFileName.c_str(), FileName.c_str());
 
