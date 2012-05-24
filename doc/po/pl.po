@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.25.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-05-22 16:15+0300\n"
+"POT-Creation-Date: 2012-05-23 17:06+0300\n"
 "PO-Revision-Date: 2010-03-18 22:00+0100\n"
 "Last-Translator: Robert Luberda <robert@debian.org>\n"
 "Language-Team: <debian-l10n-polish@lists.debian.org>\n"
@@ -35,8 +35,8 @@ msgstr "16 czerwca 1998"
 #. type: TH
 #: apt.8:17
 #, no-wrap
-msgid "Debian GNU/Linux"
-msgstr "Debian GNU/Linux"
+msgid "Debian"
+msgstr "Debian"
 
 #. type: SH
 #: apt.8:18
@@ -425,7 +425,7 @@ msgstr ""
 msgid ""
 "     <varlistentry><term><filename>&cachedir;/archives/partial/</filename></term>\n"
 "     <listitem><para>Storage area for package files in transit.\n"
-"     Configuration Item: <literal>Dir::Cache::Archives</literal> (<filename>partial</filename> will be implicitly appended). </para></listitem>\n"
+"     Configuration Item: <literal>Dir::Cache::Archives</literal> (<filename>partial</filename> will be implicitly appended)</para></listitem>\n"
 "     </varlistentry>\n"
 "\">\n"
 msgstr ""
@@ -538,7 +538,7 @@ msgstr ""
 msgid ""
 "     <varlistentry><term><filename>&statedir;/lists/partial/</filename></term>\n"
 "     <listitem><para>Storage area for state information in transit.\n"
-"     Configuration Item: <literal>Dir::State::Lists</literal> (<filename>partial</filename> will be implicitly appended).</para></listitem>\n"
+"     Configuration Item: <literal>Dir::State::Lists</literal> (<filename>partial</filename> will be implicitly appended)</para></listitem>\n"
 "     </varlistentry>\n"
 "\">\n"
 msgstr ""
@@ -815,7 +815,8 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cache.8.xml:44 apt-get.8.xml:44
+#: apt-cache.8.xml:44 apt-cdrom.8.xml:51 apt-config.8.xml:44
+#: apt-ftparchive.1.xml:54 apt-get.8.xml:44
 msgid ""
 "Unless the <option>-h</option>, or <option>--help</option> option is given, "
 "one of the commands below must be present."
@@ -832,8 +833,8 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term><option><replaceable>
 #: apt-cache.8.xml:53 apt-cache.8.xml:142 apt-cache.8.xml:163
-#: apt-cache.8.xml:187 apt-cache.8.xml:192 apt-cache.8.xml:208
-#: apt-cache.8.xml:226 apt-cache.8.xml:238
+#: apt-cache.8.xml:185 apt-cache.8.xml:190 apt-cache.8.xml:206
+#: apt-cache.8.xml:224 apt-cache.8.xml:236
 msgid "&synopsis-pkg;"
 msgstr ""
 
@@ -948,7 +949,7 @@ msgid ""
 "<literal>Pure virtual packages</literal> is the number of packages that "
 "exist only as a virtual package name; that is, packages only \"provide\" the "
 "virtual package name, and no package actually uses the name. For instance, "
-"\"mail-transport-agent\" in the Debian GNU/Linux system is a pure virtual "
+"\"mail-transport-agent\" in the Debian system is a pure virtual "
 "package; several packages provide \"mail-transport-agent\", but there is no "
 "package named \"mail-transport-agent\"."
 msgstr ""
@@ -965,12 +966,12 @@ msgstr ""
 msgid ""
 "<literal>Single virtual packages</literal> is the number of packages with "
 "only one package providing a particular virtual package. For example, in the "
-"Debian GNU/Linux system, \"X11-text-viewer\" is a virtual package, but only "
+"Debian system, \"X11-text-viewer\" is a virtual package, but only "
 "one package, xless, provides \"X11-text-viewer\"."
 msgstr ""
 "<literal>Pojedyncze pakiety wirtualne (Single virtual packages)</literal> - "
 "liczba pakietów, dla których istnieje tylko jeden pakiet, który dostarcza "
-"danego pakietu wirtualnego. Na przykład, w systemie Debian GNU/Linux \"X11-"
+"danego pakietu wirtualnego. Na przykład, w systemie Debian \"X11-"
 "text-viewer\" jest pakietem wirtualnym, ale tylko jeden pakiet - xless - "
 "dostarcza \"X11-text-viewer\"."
 
@@ -980,13 +981,13 @@ msgstr ""
 msgid ""
 "<literal>Mixed virtual packages</literal> is the number of packages that "
 "either provide a particular virtual package or have the virtual package name "
-"as the package name. For instance, in the Debian GNU/Linux system, \"debconf"
+"as the package name. For instance, in the Debian system, \"debconf"
 "\" is both an actual package, and provided by the debconf-tiny package."
 msgstr ""
 "<literal>Mieszane pakiety wirtualne (Mixed virtual packages)</literal> - "
 "liczba pakietów, które albo dostarczają poszczególnych pakietów wirtualnych, "
 "albo nazywają się tak, jak nazwa pakietu wirtualnego.  Na przykład w "
-"systemie Debian GNU/Linux \"debconf\" jest zarówno zwykłym pakietem, jak i "
+"systemie Debian \"debconf\" jest zarówno zwykłym pakietem, jak i "
 "jest pakietem dostarczanym przez pakiet debconf-tiny."
 
 #
@@ -1094,17 +1095,27 @@ msgstr ""
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:170
+#, fuzzy
+#| msgid ""
+#| "<literal>search</literal> performs a full text search on all available "
+#| "package lists for the POSIX regex pattern given, see "
+#| "<citerefentry><refentrytitle><command>regex</command></refentrytitle> "
+#| "<manvolnum>7</manvolnum></citerefentry>.  It searches the package names "
+#| "and the descriptions for an occurrence of the regular expression and "
+#| "prints out the package name and the short description, including virtual "
+#| "package names.  If <option>--full</option> is given then output identical "
+#| "to <literal>show</literal> is produced for each matched package, and if "
+#| "<option>--names-only</option> is given then the long description is not "
+#| "searched, only the package name is."
 msgid ""
 "<literal>search</literal> performs a full text search on all available "
-"package lists for the POSIX regex pattern given, see "
-"<citerefentry><refentrytitle><command>regex</command></refentrytitle> "
-"<manvolnum>7</manvolnum></citerefentry>.  It searches the package names and "
-"the descriptions for an occurrence of the regular expression and prints out "
-"the package name and the short description, including virtual package "
-"names.  If <option>--full</option> is given then output identical to "
-"<literal>show</literal> is produced for each matched package, and if "
-"<option>--names-only</option> is given then the long description is not "
-"searched, only the package name is."
+"package lists for the POSIX regex pattern given, see &regex;.  It searches "
+"the package names and the descriptions for an occurrence of the regular "
+"expression and prints out the package name and the short description, "
+"including virtual package names.  If <option>--full</option> is given then "
+"output identical to <literal>show</literal> is produced for each matched "
+"package, and if <option>--names-only</option> is given then the long "
+"description is not searched, only the package name is."
 msgstr ""
 "<literal>search</literal> wykonuje pełne wyszukiwanie podanego wzorca "
 "będącego wyrażeniem regularnym POSIX (patrz "
@@ -1120,7 +1131,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:183
+#: apt-cache.8.xml:181
 msgid ""
 "Separate arguments can be used to specify multiple search patterns that are "
 "and'ed together."
@@ -1130,7 +1141,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:188
+#: apt-cache.8.xml:186
 msgid ""
 "<literal>depends</literal> shows a listing of each dependency a package has "
 "and all the possible other packages that can fulfill that dependency."
@@ -1140,7 +1151,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:193
+#: apt-cache.8.xml:191
 msgid ""
 "<literal>rdepends</literal> shows a listing of each reverse dependency a "
 "package has."
@@ -1149,7 +1160,7 @@ msgstr ""
 "danego pakietu."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-cache.8.xml:197
+#: apt-cache.8.xml:195
 #, fuzzy
 #| msgid "pkgnames <replaceable>[ prefix ]</replaceable>"
 msgid "<optional><replaceable>&synopsis-prefix;</replaceable></optional>"
@@ -1157,7 +1168,7 @@ msgstr "pkgnames <replaceable>[ prefiks ]</replaceable>"
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:198
+#: apt-cache.8.xml:196
 msgid ""
 "This command prints the name of each package APT knows. The optional "
 "argument is a prefix match to filter the name list. The output is suitable "
@@ -1172,7 +1183,7 @@ msgstr ""
 "używać z opcją <option>--generate</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:203
+#: apt-cache.8.xml:201
 msgid ""
 "Note that a package which APT knows of is not necessarily available to "
 "download, installable or installed, e.g. virtual packages are also listed in "
@@ -1185,7 +1196,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:209
+#: apt-cache.8.xml:207
 msgid ""
 "<literal>dotty</literal> takes a list of packages on the command line and "
 "generates output suitable for use by dotty from the <ulink url=\"http://www."
@@ -1207,7 +1218,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:218
+#: apt-cache.8.xml:216
 msgid ""
 "The resulting nodes will have several shapes; normal packages are boxes, "
 "pure provides are triangles, mixed provides are diamonds, missing packages "
@@ -1222,12 +1233,12 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:223
+#: apt-cache.8.xml:221
 msgid "Caution, dotty cannot graph larger sets of packages."
 msgstr "Uwaga: dotty nie potrafi narysować większego zbioru pakietów."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:227
+#: apt-cache.8.xml:225
 msgid ""
 "The same as <literal>dotty</literal>, only for xvcg from the <ulink url="
 "\"http://rw4.cs.uni-sb.de/users/sander/html/gsvcg1.html\">VCG tool</ulink>."
@@ -1237,7 +1248,7 @@ msgstr ""
 "ulink>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
-#: apt-cache.8.xml:231
+#: apt-cache.8.xml:229
 #, fuzzy
 #| msgid "madison <replaceable>[ pkg(s) ]</replaceable>"
 msgid "<optional><replaceable>&synopsis-pkg;</replaceable>…</optional>"
@@ -1245,7 +1256,7 @@ msgstr "madison <replaceable>[ pakiet(y) ]</replaceable>"
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:232
+#: apt-cache.8.xml:230
 msgid ""
 "<literal>policy</literal> is meant to help debug issues relating to the "
 "preferences file. With no arguments it will print out the priorities of each "
@@ -1259,7 +1270,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:239
+#: apt-cache.8.xml:237
 msgid ""
 "<literal>apt-cache</literal>'s <literal>madison</literal> command attempts "
 "to mimic the output format and a subset of the functionality of the Debian "
@@ -1277,7 +1288,7 @@ msgstr ""
 "pakietów (<literal>APT::Architecture</literal>)."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:250 apt-config.8.xml:84 apt-extracttemplates.1.xml:52
+#: apt-cache.8.xml:248 apt-config.8.xml:84 apt-extracttemplates.1.xml:52
 #: apt-ftparchive.1.xml:504 apt-get.8.xml:259 apt-mark.8.xml:108
 #: apt-sortpkgs.1.xml:48
 msgid "options"
@@ -1285,7 +1296,7 @@ msgstr "opcje"
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:255
+#: apt-cache.8.xml:253
 msgid ""
 "Select the file to store the package cache. The package cache is the primary "
 "cache used by all operations.  Configuration Item: <literal>Dir::Cache::"
@@ -1297,7 +1308,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:261
+#: apt-cache.8.xml:259
 msgid ""
 "Select the file to store the source cache. The source is used only by "
 "<literal>gencaches</literal> and it stores a parsed version of the package "
@@ -1314,7 +1325,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:269
+#: apt-cache.8.xml:267
 msgid ""
 "Quiet; produces output suitable for logging, omitting progress indicators.  "
 "More q's will produce more quietness up to a maximum of 2. You can also use "
@@ -1329,7 +1340,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:276
+#: apt-cache.8.xml:274
 msgid ""
 "Print only important dependencies; for use with unmet and depends. Causes "
 "only Depends and Pre-Depends relations to be printed.  Configuration Item: "
@@ -1341,7 +1352,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:289
+#: apt-cache.8.xml:287
 #, fuzzy
 #| msgid ""
 #| "Make <literal>depends</literal> and <literal>rdepends</literal> recursive "
@@ -1361,7 +1372,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:296
+#: apt-cache.8.xml:294
 msgid ""
 "Print full package records when searching.  Configuration Item: "
 "<literal>APT::Cache::ShowFull</literal>."
@@ -1371,7 +1382,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:301
+#: apt-cache.8.xml:299
 msgid ""
 "Print full records for all available versions. This is the default; to turn "
 "it off, use <option>--no-all-versions</option>.  If <option>--no-all-"
@@ -1390,7 +1401,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:310
+#: apt-cache.8.xml:308
 msgid ""
 "Perform automatic package cache regeneration, rather than use the cache as "
 "it is. This is the default; to turn it off, use <option>--no-generate</"
@@ -1403,7 +1414,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:316
+#: apt-cache.8.xml:314
 msgid ""
 "Only search on the package names, not the long descriptions.  Configuration "
 "Item: <literal>APT::Cache::NamesOnly</literal>."
@@ -1413,7 +1424,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:321
+#: apt-cache.8.xml:319
 msgid ""
 "Make <literal>pkgnames</literal> print all names, including virtual packages "
 "and missing dependencies.  Configuration Item: <literal>APT::Cache::"
@@ -1426,7 +1437,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:327
+#: apt-cache.8.xml:325
 msgid ""
 "Make <literal>depends</literal> and <literal>rdepends</literal> recursive so "
 "that all packages mentioned are printed once.  Configuration Item: "
@@ -1439,7 +1450,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:334
+#: apt-cache.8.xml:332
 msgid ""
 "Limit the output of <literal>depends</literal> and <literal>rdepends</"
 "literal> to packages which are currently installed.  Configuration Item: "
@@ -1449,49 +1460,37 @@ msgstr ""
 "literal> tylko do pakietów, które są obecnie zainstalowane.  Pozycja w pliku "
 "konfiguracyjnym: <literal>APT::Cache::Installed</literal>."
 
-#. type: Content of: <refentry><refsect1><variablelist>
-#: apt-cache.8.xml:339 apt-cdrom.8.xml:140 apt-config.8.xml:104
-#: apt-extracttemplates.1.xml:63 apt-ftparchive.1.xml:591 apt-get.8.xml:514
-#: apt-mark.8.xml:122 apt-sortpkgs.1.xml:58
-msgid "&apt-commonoptions;"
-msgstr "&apt-commonoptions;"
-
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:344 apt-get.8.xml:519 apt-key.8.xml:174 apt-mark.8.xml:126
+#: apt-cache.8.xml:342 apt-get.8.xml:519 apt-key.8.xml:174 apt-mark.8.xml:125
 #: apt.conf.5.xml:1118 apt_preferences.5.xml:698
 msgid "Files"
 msgstr "Pliki"
 
-#. type: Content of: <refentry><refsect1><variablelist>
-#: apt-cache.8.xml:346
-msgid "&file-sourceslist; &file-statelists;"
-msgstr "&file-sourceslist; &file-statelists;"
-
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:351 apt-cdrom.8.xml:145 apt-config.8.xml:109
+#: apt-cache.8.xml:349 apt-cdrom.8.xml:144 apt-config.8.xml:109
 #: apt-extracttemplates.1.xml:70 apt-ftparchive.1.xml:607 apt-get.8.xml:529
-#: apt-key.8.xml:195 apt-mark.8.xml:132 apt-secure.8.xml:192
+#: apt-key.8.xml:195 apt-mark.8.xml:131 apt-secure.8.xml:192
 #: apt-sortpkgs.1.xml:63 apt.conf.5.xml:1124 apt_preferences.5.xml:705
-#: sources.list.5.xml:255
+#: sources.list.5.xml:252
 msgid "See Also"
 msgstr "Zobacz także"
 
 #
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cache.8.xml:352
+#: apt-cache.8.xml:350
 msgid "&apt-conf;, &sources-list;, &apt-get;"
 msgstr "&apt-conf;, &sources-list;, &apt-get;"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:356 apt-cdrom.8.xml:150 apt-config.8.xml:114
+#: apt-cache.8.xml:354 apt-cdrom.8.xml:149 apt-config.8.xml:114
 #: apt-extracttemplates.1.xml:74 apt-ftparchive.1.xml:611 apt-get.8.xml:535
-#: apt-mark.8.xml:136 apt-sortpkgs.1.xml:67
+#: apt-mark.8.xml:135 apt-sortpkgs.1.xml:67
 msgid "Diagnostics"
 msgstr "Diagnostyka"
 
 #
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cache.8.xml:357
+#: apt-cache.8.xml:355
 msgid ""
 "<command>apt-cache</command> returns zero on normal operation, decimal 100 "
 "on error."
@@ -1532,7 +1531,7 @@ msgstr ""
 "w wielodyskowym archiwum musi być włożony i zeskanowany oddzielnie."
 
 #
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:56
 #, fuzzy
 #| msgid ""
@@ -1555,7 +1554,7 @@ msgstr ""
 "poproszony o podanie opisu dysku."
 
 #
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:64
 msgid ""
 "APT uses a CDROM ID to track which disc is currently in the drive and "
@@ -1567,7 +1566,7 @@ msgstr ""
 "<filename>&statedir;/cdroms.list</filename>"
 
 #
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:72
 msgid ""
 "A debugging tool to report the identity of the current disc as well as the "
@@ -1576,26 +1575,14 @@ msgstr ""
 "Narzędzie debugujące, wyświetlające identyfikator włożonego dysku oraz nazwę "
 "pliku, w którym jest przechowywany."
 
-#
-#. type: Content of: <refentry><refsect1><para>
-#: apt-cdrom.8.xml:51
-msgid ""
-"Unless the <option>-h</option>, or <option>--help</option> option is given "
-"one of the commands below must be present.  <placeholder type=\"variablelist"
-"\" id=\"0\"/>"
-msgstr ""
-"Jedno z poniższych poleceń musi być użyte, chyba że została podana opcja "
-"<option>-h</option> lub <option>--help</option>. <placeholder type="
-"\"variablelist\" id=\"0\"/>"
-
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cdrom.8.xml:81 apt-key.8.xml:160
+#: apt-cdrom.8.xml:80 apt-key.8.xml:160
 msgid "Options"
 msgstr "Opcje"
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:86
+#: apt-cdrom.8.xml:85
 msgid ""
 "Mount point; specify the location to mount the cdrom. This mount point must "
 "be listed in <filename>/etc/fstab</filename> and properly configured.  "
@@ -1608,7 +1595,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:95
+#: apt-cdrom.8.xml:94
 msgid ""
 "Rename a disc; change the label of a disk or override the disks given label. "
 "This option will cause <command>apt-cdrom</command> to prompt for a new "
@@ -1621,7 +1608,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:104
+#: apt-cdrom.8.xml:103
 msgid ""
 "No mounting; prevent <command>apt-cdrom</command> from mounting and "
 "unmounting the mount point.  Configuration Item: <literal>APT::CDROM::"
@@ -1633,7 +1620,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:112
+#: apt-cdrom.8.xml:111
 msgid ""
 "Fast Copy; Assume the package files are valid and do not check every "
 "package. This option should be used only if <command>apt-cdrom</command> has "
@@ -1648,7 +1635,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:122
+#: apt-cdrom.8.xml:121
 msgid ""
 "Thorough Package Scan; This option may be needed with some old Debian "
 "1.1/1.2 discs that have Package files in strange places. It takes much "
@@ -1661,7 +1648,7 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:133
+#: apt-cdrom.8.xml:132
 msgid ""
 "No Changes; Do not change the &sources-list; file and do not write index "
 "files. Everything is still checked however.  Configuration Item: "
@@ -1673,13 +1660,13 @@ msgstr ""
 
 #
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cdrom.8.xml:146
+#: apt-cdrom.8.xml:145
 msgid "&apt-conf;, &apt-get;, &sources-list;"
 msgstr "&apt-conf;, &apt-get;, &sources-list;"
 
 #
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cdrom.8.xml:151
+#: apt-cdrom.8.xml:150
 msgid ""
 "<command>apt-cdrom</command> returns zero on normal operation, decimal 100 "
 "on error."
@@ -1704,16 +1691,6 @@ msgstr ""
 "różne części pakietu APT w celu zapewnienia spójności konfiguracji. Uzyskuje "
 "dostęp do głównego pliku konfiguracyjnego <filename>/etc/apt/apt.conf</"
 "filename> w sposób łatwy do użycia w programach skryptowych."
-
-#
-#. type: Content of: <refentry><refsect1><para>
-#: apt-config.8.xml:44 apt-ftparchive.1.xml:54
-msgid ""
-"Unless the <option>-h</option>, or <option>--help</option> option is given "
-"one of the commands below must be present."
-msgstr ""
-"Jedno z poniższych poleceń musi być użyte, chyba że została podana opcja "
-"<option>-h</option> albo <option>--help</option>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-config.8.xml:51
@@ -2028,8 +2005,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:144
-msgid "Dir Section"
-msgstr "Dir Section"
+#, fuzzy
+#| msgid "the <literal>Origin:</literal> line"
+msgid "<literal>Dir</literal> Section"
+msgstr "linia <literal>Origin:</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:146
@@ -2067,8 +2046,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:176
-msgid "Default Section"
-msgstr ""
+#, fuzzy
+#| msgid "the <literal>Label:</literal> line"
+msgid "<literal>Default</literal> Section"
+msgstr "linia <literal>Label:</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:178
@@ -2146,8 +2127,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:242
-msgid "TreeDefault Section"
-msgstr ""
+#, fuzzy
+#| msgid "the <literal>Label:</literal> line"
+msgid "<literal>TreeDefault</literal> Section"
+msgstr "linia <literal>Label:</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:244
@@ -2260,8 +2243,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:342
-msgid "Tree Section"
-msgstr ""
+#, fuzzy
+#| msgid "the <literal>Label:</literal> line"
+msgid "<literal>Tree</literal> Section"
+msgstr "linia <literal>Label:</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:344
@@ -2354,8 +2339,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:410
-msgid "BinDirectory Section"
-msgstr ""
+#, fuzzy
+#| msgid "the <literal>Component:</literal> line"
+msgid "<literal>BinDirectory</literal> Section"
+msgstr "linia <literal>Component:</literal>"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:412
@@ -2610,7 +2597,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-ftparchive.1.xml:596 apt.conf.5.xml:1112 apt_preferences.5.xml:545
-#: sources.list.5.xml:214
+#: sources.list.5.xml:211
 msgid "Examples"
 msgstr "Przykłady"
 
@@ -2765,7 +2752,7 @@ msgstr ""
 msgid ""
 "<literal>install</literal> is followed by one or more packages desired for "
 "installation or upgrading.  Each package is a package name, not a fully "
-"qualified filename (for instance, in a Debian GNU/Linux system, libc6 would "
+"qualified filename (for instance, in a Debian system, libc6 would "
 "be the argument provided, not <literal>libc6_1.9.6-2.deb</literal>). All "
 "packages required by the package(s) specified for installation will also be "
 "retrieved and installed.  The <filename>/etc/apt/sources.list</filename> "
@@ -2778,7 +2765,7 @@ msgstr ""
 "Po <literal>install</literal> musi występować nazwa jednego lub więcej "
 "pakietów przeznaczonych do zainstalowania. Każdy argument jest nazwą "
 "pakietu, a nie pełną nazwą pliku, w którym się znajduje (na przykład w "
-"systemie Debian GNU/Linux, tym argumentem byłoby libc6, a nie "
+"systemie Debian, tym argumentem byłoby libc6, a nie "
 "<literal>libc6_1.9.6-2.deb</literal>).  Wszystkie pakiety, które są "
 "potrzebne do zainstalowania żądanego(-ych)  pakietu(-ów), będą także "
 "ściągnięte i zainstalowane.  Plik <filename>/etc/apt/sources.list</filename> "
@@ -3572,15 +3559,6 @@ msgstr ""
 "nieostrzeganie o tym. Jest to użyteczne dla programów typu pbuilder. Pozycja "
 "w pliku konfiguracyjnym: <literal>APT::Get::AllowUnauthenticated</literal>."
 
-#. type: Content of: <refentry><refsect1><variablelist>
-#: apt-get.8.xml:521
-msgid ""
-"&file-sourceslist; &file-aptconf; &file-preferences; &file-cachearchives; "
-"&file-statelists;"
-msgstr ""
-"&file-sourceslist; &file-aptconf; &file-preferences; &file-cachearchives; "
-"&file-statelists;"
-
 #
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:530
@@ -3649,12 +3627,9 @@ msgstr "Usuwa klucz z listy zaufanych kluczy."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:74
-#, fuzzy
-#| msgid "Output the key <replaceable>keyid</replaceable> to standard output."
 msgid "Output the key &synopsis-param-keyid; to standard output."
 msgstr ""
-"Wyświetla klucz o podanym <replaceable>id_klucza</replaceable> na "
-"standardowe wyjście."
+"Wyświetla klucz o podanym &synopsis-param-keyid; na standardowe wyjście."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:85
@@ -3733,11 +3708,6 @@ msgstr ""
 "oraz wszystkich plików częściowych w katalogu <filename>trusted.gpg.d</"
 "filename>. <filename>trusted.gpg</filename> jest podstawową składnicą "
 "kluczy, co oznacza na przykład to, że nowe klucze będą dodawane właśnie tam."
-
-#. type: Content of: <refentry><refsect1><variablelist>
-#: apt-key.8.xml:177
-msgid "&file-trustedgpg;"
-msgstr "&file-trustedgpg;"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml:179
@@ -3909,46 +3879,22 @@ msgstr ""
 "pakietów zainstalowanych automatycznie. Każdy pakiet jest wypisywany w "
 "osobnej linii."
 
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><term><option><filename>
-#: apt-mark.8.xml:112 apt-mark.8.xml:113
-#, fuzzy
-#| msgid "xvcg <replaceable>pkg(s)</replaceable>"
-msgid "<replaceable>&synopsis-filename;</replaceable>"
-msgstr "xvcg <replaceable>pakiet(y)</replaceable>"
-
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-mark.8.xml:115
-#, fuzzy
-#| msgid ""
-#| "Read/Write package stats from <filename><replaceable>FILENAME</"
-#| "replaceable></filename> instead of the default location, which is "
-#| "<filename>extended_status</filename> in the directory defined by the "
-#| "Configuration Item: <literal>Dir::State</literal>."
 msgid ""
 "Read/Write package stats from the filename given with the parameter "
-"<filename><replaceable>&synopsis-filename;</replaceable></filename> instead "
-"of from the default location, which is <filename>extended_status</filename> "
-"in the directory defined by the Configuration Item: <literal>Dir::State</"
-"literal>."
+"&synopsis-param-filename; instead of from the default location, which is "
+"<filename>extended_status</filename> in the directory defined by the "
+"Configuration Item: <literal>Dir::State</literal>."
 msgstr ""
 "Informacje o stanie pakietów są czytane z (lub zapisywane do) pliku o "
-"podanej <replaceable>NAZWIE_PLIKU</replaceable>. Nie jest wtedy używana "
-"domyślny plik <filename>extended_status</filename> znajdujący się w katalogu "
-"określonym w pliku konfiguracyjnym w pozycji<literal>Dir::State</literal>."
-
-#. type: Content of: <refentry><refsect1><variablelist>
-#: apt-mark.8.xml:128
-msgid "  &file-extended_states;"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><para>
-#: apt-mark.8.xml:133
-msgid "&apt-get;,&aptitude;,&apt-conf;"
-msgstr "&apt-get;,&aptitude;,&apt-conf;"
+"podanej &synopsis-param-filename;. Nie jest wtedy używana domyślny plik "
+"<filename>extended_status</filename> znajdujący się w katalogu określonym w "
+"pliku konfiguracyjnym w pozycji<literal>Dir::State</literal>."
 
 #
 #. type: Content of: <refentry><refsect1><para>
-#: apt-mark.8.xml:137
+#: apt-mark.8.xml:136
 msgid ""
 "<command>apt-mark</command> returns zero on normal operation, non-zero on "
 "error."
@@ -4600,6 +4546,13 @@ msgstr ""
 msgid "The Acquire Group"
 msgstr ""
 
+#. type: Content of: <refentry><refsect1><para>
+#: apt.conf.5.xml:254
+msgid ""
+"The <literal>Acquire</literal> group of options controls the download of "
+"packages and the URI handlers."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:259
 msgid ""
@@ -4986,13 +4939,6 @@ msgid ""
 "environments (e.g. by different users or by other programs) all Translation "
 "files which are found in <filename>/var/lib/apt/lists/</filename> will be "
 "added to the end of the list (after an implicit \"<literal>none</literal>\")."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:254
-msgid ""
-"The <literal>Acquire</literal> group of options controls the download of "
-"packages and the URI handlers.  <placeholder type=\"variablelist\" id=\"0\"/>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
@@ -5386,13 +5332,10 @@ msgstr ""
 #. 	   to do this. 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: apt.conf.5.xml:775
-#, fuzzy
 msgid ""
 "<literal>Debug::IdentCdrom</literal> disables the inclusion of statfs data "
 "in CDROM IDs."
 msgstr ""
-"<literal>Debug::IdentCdrom</literal> disables the inclusion of statfs data "
-"in CDROM IDs."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:785
@@ -5593,11 +5536,6 @@ msgid ""
 "possible options."
 msgstr ""
 
-#. type: Content of: <refentry><refsect1><variablelist>
-#: apt.conf.5.xml:1120
-msgid "&file-aptconf;"
-msgstr "&file-aptconf;"
-
 #.  ? reading apt.conf 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:1125
@@ -5715,12 +5653,17 @@ msgid ""
 "\"programlisting\" id=\"0\"/> <placeholder type=\"programlisting\" id=\"1\"/>"
 msgstr ""
 
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml:101
+msgid ""
+"If the target release has been specified then APT uses the following "
+"algorithm to set the priorities of the versions of a package.  Assign:"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml:106
-#, fuzzy
-#| msgid "priority 100"
 msgid "priority 1"
-msgstr "priorytet 100"
+msgstr "priorytet 1"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:107
@@ -5766,14 +5709,6 @@ msgstr "priorytet 990"
 #: apt_preferences.5.xml:127
 msgid ""
 "to the versions that are not installed and belong to the target release."
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt_preferences.5.xml:101
-msgid ""
-"If the target release has been specified then APT uses the following "
-"algorithm to set the priorities of the versions of a package.  Assign: "
-"<placeholder type=\"variablelist\" id=\"0\"/>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
@@ -5932,18 +5867,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><programlisting>
 #: apt_preferences.5.xml:220
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Package: *\n"
-#| "Pin: origin \"\"\n"
-#| "Pin-Priority: 999\n"
+#, no-wrap
 msgid ""
 "Package: *\n"
 "Pin: origin \"ftp.de.debian.org\"\n"
 "Pin-Priority: 999\n"
 msgstr ""
 "Package: *\n"
-"Pin: origin \"\"\n"
+"Pin: origin \"ftp.de.debian.org\"\n"
 "Pin-Priority: 999\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
@@ -5986,18 +5917,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><programlisting>
 #: apt_preferences.5.xml:242
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Package: *\n"
-#| "Pin: release n=squeeze\n"
-#| "Pin-Priority: 900\n"
+#, no-wrap
 msgid ""
 "Package: *\n"
 "Pin: release n=&testing-codename;\n"
 "Pin-Priority: 900\n"
 msgstr ""
 "Package: *\n"
-"Pin: release n=squeeze\n"
+"Pin: release n=&testing-codename;\n"
 "Pin-Priority: 900\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
@@ -6037,19 +5964,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
 #: apt_preferences.5.xml:273
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Package: *\n"
-#| "Pin: release a=unstable\n"
-#| "Pin-Priority: 50\n"
+#, no-wrap
 msgid ""
 "Package: gnome* /kde/\n"
 "Pin: release n=experimental\n"
 "Pin-Priority: 500\n"
 msgstr ""
-"Package: *\n"
-"Pin: release a=unstable\n"
-"Pin-Priority: 50\n"
+"Package: gnome* /kde/\n"
+"Pin: release n=experimental\n"
+"Pin-Priority: 500\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:279
@@ -6061,19 +5984,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
 #: apt_preferences.5.xml:285
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Package: *\n"
-#| "Pin: release a=unstable\n"
-#| "Pin-Priority: 50\n"
+#, no-wrap
 msgid ""
 "Package: *\n"
 "Pin: release n=karmic*\n"
 "Pin-Priority: 990\n"
 msgstr ""
 "Package: *\n"
-"Pin: release a=unstable\n"
-"Pin-Priority: 50\n"
+"Pin: release n=karmic*\n"
+"Pin-Priority: 990\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:291
@@ -6089,6 +6008,13 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml:307
 msgid "How APT Interprets Priorities"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml:310
+msgid ""
+"Priorities (P) assigned in the APT preferences file must be positive or "
+"negative integers.  They are interpreted as follows (roughly speaking):"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
@@ -6173,14 +6099,6 @@ msgstr "P &lt; 0"
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:344
 msgid "prevents the version from being installed"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt_preferences.5.xml:310
-msgid ""
-"Priorities (P) assigned in the APT preferences file must be positive or "
-"negative integers.  They are interpreted as follows (roughly speaking): "
-"<placeholder type=\"variablelist\" id=\"0\"/>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
@@ -6272,6 +6190,18 @@ msgid ""
 "describe the packages available at that location."
 msgstr ""
 
+#. type: Content of: <refentry><refsect1><refsect2><para>
+#: apt_preferences.5.xml:399
+msgid ""
+"The <filename>Packages</filename> file is normally found in the directory "
+"<filename>.../dists/<replaceable>dist-name</replaceable>/"
+"<replaceable>component</replaceable>/<replaceable>arch</replaceable></"
+"filename>: for example, <filename>.../dists/stable/main/binary-i386/"
+"Packages</filename>.  It consists of a series of multi-line records, one for "
+"each package available in that directory.  Only two lines in each record are "
+"relevant for setting APT priorities:"
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml:407
 msgid "the <literal>Package:</literal> line"
@@ -6293,16 +6223,16 @@ msgid "gives the version number for the named package"
 msgstr "podaje numer wersji danego pakietu"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt_preferences.5.xml:399
+#: apt_preferences.5.xml:417
 msgid ""
-"The <filename>Packages</filename> file is normally found in the directory "
-"<filename>.../dists/<replaceable>dist-name</replaceable>/"
-"<replaceable>component</replaceable>/<replaceable>arch</replaceable></"
-"filename>: for example, <filename>.../dists/stable/main/binary-i386/"
-"Packages</filename>.  It consists of a series of multi-line records, one for "
-"each package available in that directory.  Only two lines in each record are "
-"relevant for setting APT priorities: <placeholder type=\"variablelist\" id="
-"\"0\"/>"
+"The <filename>Release</filename> file is normally found in the directory "
+"<filename>.../dists/<replaceable>dist-name</replaceable></filename>: for "
+"example, <filename>.../dists/stable/Release</filename>, or <filename>.../"
+"dists/&stable-codename;/Release</filename>.  It consists of a single multi-"
+"line record which applies to <emphasis>all</emphasis> of the packages in the "
+"directory tree below its parent.  Unlike the <filename>Packages</filename> "
+"file, nearly all of the lines in a <filename>Release</filename> file are "
+"relevant for setting APT priorities:"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
@@ -6345,16 +6275,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><programlisting>
 #: apt_preferences.5.xml:455
-#, fuzzy, no-wrap
-#| msgid "Pin: release a=stable\n"
+#, no-wrap
 msgid "Pin: release n=&testing-codename;\n"
-msgstr "Pin: release a=stable\n"
+msgstr "Pin: release n=&testing-codename;\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:462
 msgid ""
 "names the release version.  For example, the packages in the tree might "
-"belong to Debian GNU/Linux release version 3.0.  Note that there is normally "
+"belong to Debian release version 3.0.  Note that there is normally "
 "no version number for the <literal>testing</literal> and <literal>unstable</"
 "literal> distributions because they have not been released yet.  Specifying "
 "this in the APT preferences file would require one of the following lines."
@@ -6435,20 +6364,6 @@ msgid "Pin: release l=Debian\n"
 msgstr "Pin: release l=Debian\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
-#: apt_preferences.5.xml:417
-msgid ""
-"The <filename>Release</filename> file is normally found in the directory "
-"<filename>.../dists/<replaceable>dist-name</replaceable></filename>: for "
-"example, <filename>.../dists/stable/Release</filename>, or <filename>.../"
-"dists/&stable-codename;/Release</filename>.  It consists of a single multi-"
-"line record which applies to <emphasis>all</emphasis> of the packages in the "
-"directory tree below its parent.  Unlike the <filename>Packages</filename> "
-"file, nearly all of the lines in a <filename>Release</filename> file are "
-"relevant for setting APT priorities: <placeholder type=\"variablelist\" id="
-"\"0\"/>"
-msgstr ""
-
-#. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:523
 msgid ""
 "All of the <filename>Packages</filename> and <filename>Release</filename> "
@@ -6483,7 +6398,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><programlisting>
 #: apt_preferences.5.xml:555
-#, fuzzy, no-wrap
+#, no-wrap
 msgid ""
 "Explanation: Uninstall or do not install any Debian-originated\n"
 "Explanation: package versions other than those in the stable distro\n"
@@ -6495,15 +6410,6 @@ msgid ""
 "Pin: release o=Debian\n"
 "Pin-Priority: -10\n"
 msgstr ""
-"Explanation: Uninstall or do not install any Debian-originated\n"
-"Explanation: package versions other than those in the stable distro\n"
-"Package: *\n"
-"Pin: release a=stable\n"
-"Pin-Priority: 900\n"
-"\n"
-"Package: *\n"
-"Pin: release o=Debian\n"
-"Pin-Priority: -10\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:549
@@ -6630,7 +6536,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><programlisting>
 #: apt_preferences.5.xml:654
-#, fuzzy, no-wrap
+#, no-wrap
 msgid ""
 "Explanation: Uninstall or do not install any Debian-originated package versions\n"
 "Explanation: other than those in the distribution codenamed with &testing-codename; or sid\n"
@@ -6647,20 +6553,6 @@ msgid ""
 "Pin: release o=Debian\n"
 "Pin-Priority: -10\n"
 msgstr ""
-"Explanation: Uninstall or do not install any Debian-originated package versions\n"
-"Explanation: other than those in the distribution codenamed with squeeze or sid\n"
-"Package: *\n"
-"Pin: release n=squeeze\n"
-"Pin-Priority: 900\n"
-"\n"
-"Explanation: Debian unstable is always codenamed with sid\n"
-"Package: *\n"
-"Pin: release a=sid\n"
-"Pin-Priority: 800\n"
-"\n"
-"Package: *\n"
-"Pin: release o=Debian\n"
-"Pin-Priority: -10\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:642
@@ -6704,11 +6596,6 @@ msgid ""
 "<placeholder type=\"programlisting\" id=\"0\"/>"
 msgstr ""
 
-#. type: Content of: <refentry><refsect1><variablelist>
-#: apt_preferences.5.xml:700
-msgid "&file-preferences;"
-msgstr "&file-preferences;"
-
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml:706
 msgid "&apt-get; &apt-cache; &apt-conf; &sources-list;"
@@ -6724,12 +6611,12 @@ msgstr "Lista zasobów pakietów dla APT"
 msgid ""
 "The package resource list is used to locate archives of the package "
 "distribution system in use on the system. At this time, this manual page "
-"documents only the packaging system used by the Debian GNU/Linux system.  "
+"documents only the packaging system used by the Debian system.  "
 "This control file is <filename>/etc/apt/sources.list</filename>."
 msgstr ""
 "Lista zasobów pakietów jest używana do zlokalizowania archiwów pakietów "
 "używanego systemu dystrybucji pakietów. Obecnie ta strona podręcznika "
-"opisuje tylko system pakietów używany w systemie Debian GNU/Linux. Plikiem "
+"opisuje tylko system pakietów używany w systemie Debian. Plikiem "
 "kontrolnym jest <filename>/etc/apt/sources.list</filename>."
 
 #. type: Content of: <refentry><refsect1><para>
@@ -6963,18 +6850,14 @@ msgstr "Kilka przykładów:"
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:135
-#, fuzzy, no-wrap
-#| msgid ""
-#| "deb http://http.us.debian.org/debian stable main contrib non-free\n"
-#| "deb http://http.us.debian.org/debian dists/stable-updates/\n"
-#| "   "
+#, no-wrap
 msgid ""
 "deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
 "deb http://security.debian.org/ &stable-codename;/updates main contrib non-free\n"
 "   "
 msgstr ""
-"deb http://http.us.debian.org/debian stable main contrib non-free\n"
-"deb http://http.us.debian.org/debian dists/stable-updates/\n"
+"deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
+"deb http://security.debian.org/ &stable-codename;/updates main contrib non-free\n"
 "   "
 
 #. type: Content of: <refentry><refsect1><title>
@@ -6982,13 +6865,15 @@ msgstr ""
 msgid "URI specification"
 msgstr "Określanie URI"
 
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:146
-msgid "file"
-msgstr "file"
+#. type: Content of: <refentry><refsect1><para>
+#: sources.list.5.xml:143
+#, fuzzy
+#| msgid "more recognizable URI types"
+msgid "The currently recognized URI types are:"
+msgstr "więcej rozpoznawanych typów URI"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:148
+#: sources.list.5.xml:147
 msgid ""
 "The file scheme allows an arbitrary directory in the file system to be "
 "considered an archive. This is useful for NFS mounts and local mirrors or "
@@ -6998,13 +6883,8 @@ msgstr ""
 "plików. Jest użyteczny dla katalogów montowanych przez NFS i lokalnych kopii "
 "archiwów."
 
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:153
-msgid "cdrom"
-msgstr "cdrom"
-
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:155
+#: sources.list.5.xml:154
 msgid ""
 "The cdrom scheme allows APT to use a local CDROM drive with media swapping. "
 "Use the &apt-cdrom; program to create cdrom entries in the source list."
@@ -7013,13 +6893,8 @@ msgstr ""
 "Prosimy używać programu &apt-cdrom; do dodawania takich wpisów w sources."
 "list."
 
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:160
-msgid "http"
-msgstr "http"
-
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:162
+#: sources.list.5.xml:161
 msgid ""
 "The http scheme specifies an HTTP server for the archive. If an environment "
 "variable <envar>http_proxy</envar> is set with the format http://server:"
@@ -7035,13 +6910,8 @@ msgstr ""
 "hasło@serwer:port/. Proszę zauważyć, że taki sposób autoryzacji nie jest "
 "bezpieczny."
 
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:171
-msgid "ftp"
-msgstr "ftp"
-
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:173
+#: sources.list.5.xml:172
 msgid ""
 "The ftp scheme specifies an FTP server for the archive. APT's FTP behavior "
 "is highly configurable; for more information see the &apt-conf; manual page. "
@@ -7059,13 +6929,8 @@ msgstr ""
 "tej i TYLKO tej metody. Podane w pliku konfiguracyjnym serwery proxy ftp "
 "używające http zostaną zignorowane."
 
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:182
-msgid "copy"
-msgstr "copy"
-
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:184
+#: sources.list.5.xml:183
 msgid ""
 "The copy scheme is identical to the file scheme except that packages are "
 "copied into the cache directory instead of used directly at their location.  "
@@ -7076,18 +6941,8 @@ msgstr ""
 "katalogu bufora. Jest to użyteczne w przypadku używania dysku przenośnego do "
 "skopiowania plików przy użyciu APT."
 
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:189
-msgid "rsh"
-msgstr "rsh"
-
-#. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:189
-msgid "ssh"
-msgstr "ssh"
-
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:191
+#: sources.list.5.xml:190
 msgid ""
 "The rsh/ssh method invokes rsh/ssh to connect to a remote host as a given "
 "user and access the files. It is a good idea to do prior arrangements with "
@@ -7103,21 +6958,32 @@ msgstr ""
 "ze zdalnego komputera."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:199
-msgid "more recognizable URI types"
+#: sources.list.5.xml:198
+#, fuzzy
+#| msgid "more recognizable URI types"
+msgid "adding more recognizable URI types"
 msgstr "więcej rozpoznawanych typów URI"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:201
+#: sources.list.5.xml:200
+#, fuzzy
+#| msgid ""
+#| "APT can be extended with more methods shipped in other optional packages "
+#| "which should follow the nameing scheme <literal>apt-transport-"
+#| "<replaceable>method</replaceable></literal>.  The APT team e.g. maintains "
+#| "also the <literal>apt-transport-https</literal> package which provides "
+#| "access methods for https-URIs with features similar to the http method, "
+#| "but other methods for using e.g. debtorrent are also available, see "
+#| "<citerefentry> <refentrytitle><filename>apt-transport-debtorrent</"
+#| "filename></refentrytitle> <manvolnum>1</manvolnum></citerefentry>."
 msgid ""
 "APT can be extended with more methods shipped in other optional packages "
-"which should follow the nameing scheme <literal>apt-transport-"
-"<replaceable>method</replaceable></literal>.  The APT team e.g. maintains "
-"also the <literal>apt-transport-https</literal> package which provides "
+"which should follow the nameing scheme <package>apt-transport-"
+"<replaceable>method</replaceable></package>.  The APT team e.g. maintains "
+"also the <package>apt-transport-https</package> package which provides "
 "access methods for https-URIs with features similar to the http method, but "
-"other methods for using e.g. debtorrent are also available, see "
-"<citerefentry> <refentrytitle><filename>apt-transport-debtorrent</filename></"
-"refentrytitle> <manvolnum>1</manvolnum></citerefentry>."
+"other methods for using e.g. debtorrent are also available, see &apt-"
+"transport-debtorrent;."
 msgstr ""
 "APT może być rozszerzone o więcej metod, pochodzących z innych opcjonalnych "
 "pakietów, które powinny się nazywać <literal>apt-transport-"
@@ -7130,16 +6996,7 @@ msgstr ""
 "citerefentry>."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:143
-msgid ""
-"The currently recognized URI types are cdrom, file, http, ftp, copy, ssh, "
-"rsh.  <placeholder type=\"variablelist\" id=\"0\"/>"
-msgstr ""
-"Obecnie rozpoznawane są następujące typy URI: cdrom, file, http, ftp, copy, "
-"ssh, rsh.  <placeholder type=\"variablelist\" id=\"0\"/>"
-
-#. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:215
+#: sources.list.5.xml:212
 msgid ""
 "Uses the archive stored locally (or NFS mounted) at /home/jason/debian for "
 "stable/main, stable/contrib, and stable/non-free."
@@ -7148,36 +7005,36 @@ msgstr ""
 "debian dla zasobów stable/main, stable/contrib i stable/non-free."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:217
+#: sources.list.5.xml:214
 #, no-wrap
 msgid "deb file:/home/jason/debian stable main contrib non-free"
 msgstr "deb file:/home/jason/debian stable main contrib non-free"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:219
+#: sources.list.5.xml:216
 msgid "As above, except this uses the unstable (development) distribution."
 msgstr ""
 "Jak wyżej, z tą różnicą że używa dystrybucji niestabilnej (deweloperskiej)."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:220
+#: sources.list.5.xml:217
 #, no-wrap
 msgid "deb file:/home/jason/debian unstable main contrib non-free"
 msgstr "deb file:/home/jason/debian unstable main contrib non-free"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:222
+#: sources.list.5.xml:219
 msgid "Source line for the above"
 msgstr "Linie źródeł dla powyższego przykładu"
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:223
+#: sources.list.5.xml:220
 #, no-wrap
 msgid "deb-src file:/home/jason/debian unstable main contrib non-free"
 msgstr "deb-src file:/home/jason/debian unstable main contrib non-free"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:225
+#: sources.list.5.xml:222
 msgid ""
 "The first line gets package information for the architectures in "
 "<literal>APT::Architectures</literal> while the second always retrieves "
@@ -7185,22 +7042,17 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:227
-#, fuzzy, no-wrap
-#| msgid ""
-#| "deb http://http.us.debian.org/debian stable main contrib non-free\n"
-#| "deb http://http.us.debian.org/debian dists/stable-updates/\n"
-#| "   "
+#: sources.list.5.xml:224
+#, no-wrap
 msgid ""
 "deb http://ftp.debian.org/debian &stable-codename; main\n"
 "deb [ arch=amd64,armel ] http://ftp.debian.org/debian &stable-codename; main"
 msgstr ""
-"deb http://http.us.debian.org/debian stable main contrib non-free\n"
-"deb http://http.us.debian.org/debian dists/stable-updates/\n"
-"   "
+"deb http://ftp.debian.org/debian &stable-codename; main\n"
+"deb [ arch=amd64,armel ] http://ftp.debian.org/debian &stable-codename; main"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:230
+#: sources.list.5.xml:227
 msgid ""
 "Uses HTTP to access the archive at archive.debian.org, and uses only the "
 "hamm/main area."
@@ -7209,33 +7061,28 @@ msgstr ""
 "org i dystrybucji hamm/main."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:232
+#: sources.list.5.xml:229
 #, no-wrap
 msgid "deb http://archive.debian.org/debian-archive hamm main"
 msgstr "deb http://archive.debian.org/debian-archive hamm main"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:234
-#, fuzzy
-#| msgid ""
-#| "Uses FTP to access the archive at ftp.debian.org, under the debian "
-#| "directory, and uses only the stable/contrib area."
+#: sources.list.5.xml:231
 msgid ""
 "Uses FTP to access the archive at ftp.debian.org, under the debian "
 "directory, and uses only the &stable-codename;/contrib area."
 msgstr ""
 "Użycie FTP do uzyskania dostępu do archiwum na komputerze ftp.debian.org i "
-"dystrybucji stable/contrib."
+"dystrybucji &stable-codename;/contrib."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:236
-#, fuzzy, no-wrap
-#| msgid "deb ftp://ftp.debian.org/debian stable contrib"
+#: sources.list.5.xml:233
+#, no-wrap
 msgid "deb ftp://ftp.debian.org/debian &stable-codename; contrib"
-msgstr "deb ftp://ftp.debian.org/debian stable contrib"
+msgstr "deb ftp://ftp.debian.org/debian &stable-codename; contrib"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:238
+#: sources.list.5.xml:235
 msgid ""
 "Uses FTP to access the archive at ftp.debian.org, under the debian "
 "directory, and uses only the unstable/contrib area. If this line appears as "
@@ -7248,20 +7095,19 @@ msgstr ""
 "to pojedyncza sesja FTP będzie użyta w celu uzyskania dostępu do obu zasobów."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:242
+#: sources.list.5.xml:239
 #, no-wrap
 msgid "deb ftp://ftp.debian.org/debian unstable contrib"
 msgstr "deb ftp://ftp.debian.org/debian unstable contrib"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
-#: sources.list.5.xml:251
-#, fuzzy, no-wrap
-#| msgid "deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/"
+#: sources.list.5.xml:248
+#, no-wrap
 msgid "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
-msgstr "deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/"
+msgstr "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:244
+#: sources.list.5.xml:241
 #, fuzzy
 #| msgid ""
 #| "Uses HTTP to access the archive at nonus.debian.org, under the debian-non-"
@@ -7269,8 +7115,7 @@ msgstr "deb http://ftp.de.debian.org/debian-non-US unstable/binary-$(ARCH)/"
 #| "i386</filename> on i386 machines, <filename>unstable/binary-m68k</"
 #| "filename> on m68k, and so forth for other supported architectures. [Note "
 #| "this example only illustrates how to use the substitution variable; non-"
-#| "us is no longer structured like this] <placeholder type=\"literallayout\" "
-#| "id=\"0\"/>"
+#| "us is no longer structured like this]"
 msgid ""
 "Uses HTTP to access the archive at ftp.tlh.debian.org, under the universe "
 "directory, and uses only files found under <filename>unstable/binary-i386</"
@@ -7285,11 +7130,10 @@ msgstr ""
 "znalezionych w podkatalogu <filename>unstable/binary-i386</filename>, a dla "
 "komputerów m68k <filename>unstable/binary-m68k</filename>; i tak dalej dla "
 "innych architektur. (Uwaga: ten przykład jest tylko ilustracją, jak używać "
-"zmiennych podstawienia non-us obecnie nie zawiera już takiej struktury). "
-"<placeholder type=\"literallayout\" id=\"0\"/>"
+"zmiennych podstawienia non-us obecnie nie zawiera już takiej struktury)."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:256
+#: sources.list.5.xml:253
 msgid "&apt-cache; &apt-conf;"
 msgstr "&apt-cache;, &apt-conf;"
 
@@ -7336,7 +7180,7 @@ msgstr ""
 #. type: <p></p>
 #: guide.sgml:24 offline.sgml:25
 msgid ""
-"For more details, on Debian GNU/Linux systems, see the file /usr/share/"
+"For more details, on Debian systems, see the file /usr/share/"
 "common-licenses/GPL for the full license."
 msgstr ""
 "Więcej szczegółów można uzyskać, przeglądając plik zawierający pełen tekst "
@@ -8838,135 +8682,82 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade"
 msgid "Which will use the already fetched archives on the disc."
 msgstr "Które użyje pobranych uprzednio archiwów z dysku."
 
-#, fuzzy
-#~| msgid ""
-#~| "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~| "<date>17 August 2009</date>"
-#~ msgid "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product;"
-#~ msgstr ""
-#~ "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product;        "
-#~ "<date>17 sierpnia 2009</date>"
+#~ msgid "&apt-commonoptions;"
+#~ msgstr "&apt-commonoptions;"
 
-#~ msgid "ORIGINAL AUTHORS"
-#~ msgstr "AUTORZY ORYGINAŁU"
+#~ msgid "&file-sourceslist; &file-statelists;"
+#~ msgstr "&file-sourceslist; &file-statelists;"
 
-#~ msgid "&apt-author.jgunthorpe;"
-#~ msgstr "&apt-author.jgunthorpe;"
-
-#~ msgid "CURRENT AUTHORS"
-#~ msgstr "OBECNI AUTORZY"
-
-#~ msgid "&apt-author.team;"
-#~ msgstr "&apt-author.team;"
-
-#, fuzzy
-#~| msgid ""
-#~| "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~| "<date>17 August 2009</date>"
-#~ msgid "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product;"
-#~ msgstr ""
-#~ "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product;        "
-#~ "<date>17 sierpnia 2009</date>"
-
-#, fuzzy
+#
 #~ msgid ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; <author> <firstname>Daniel</"
-#~ "firstname> <surname>Burrows</surname> <contrib>Initial documentation of "
-#~ "Debug::*.</contrib> <email>dburrows@debian.org</email> </author> &apt-"
-#~ "email; &apt-product;"
+#~ "Unless the <option>-h</option>, or <option>--help</option> option is "
+#~ "given one of the commands below must be present.  <placeholder type="
+#~ "\"variablelist\" id=\"0\"/>"
 #~ msgstr ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; <author> <firstname>Daniel</"
-#~ "firstname> <surname>Burrows</surname> <contrib>Pierwsza dokumentacja "
-#~ "Debug::*.</contrib> <email>dburrows@debian.org</email> </author> &apt-"
-#~ "email; &apt-product; <date>18 września 2009</date>"
+#~ "Jedno z poniższych poleceń musi być użyte, chyba że została podana opcja "
+#~ "<option>-h</option> lub <option>--help</option>. <placeholder type="
+#~ "\"variablelist\" id=\"0\"/>"
 
-#, fuzzy
-#~| msgid ""
-#~| "&apt-author.team; &apt-email; &apt-product; <date>04 May 2009</date>"
-#~ msgid "&apt-author.team; &apt-email; &apt-product;"
+#
+#~ msgid ""
+#~ "Unless the <option>-h</option>, or <option>--help</option> option is "
+#~ "given one of the commands below must be present."
 #~ msgstr ""
-#~ "&apt-author.team; &apt-email; &apt-product; <date>4 maja 2009</date>"
+#~ "Jedno z poniższych poleceń musi być użyte, chyba że została podana opcja "
+#~ "<option>-h</option> albo <option>--help</option>."
+
+#~ msgid "Dir Section"
+#~ msgstr "Dir Section"
 
 #~ msgid ""
-#~ "<!-- Boiler plate docinfo section -->\n"
-#~ "<!ENTITY apt-docinfo \"\n"
-#~ " <refentryinfo>\n"
-#~ "   <address><email>apt@packages.debian.org</email></address>\n"
-#~ "   <author>\n"
-#~ "     <firstname>Jason</firstname> <surname>Gunthorpe</surname>\n"
-#~ "     <contrib></contrib>\n"
-#~ "   </author>\n"
-#~ "   <copyright><year>1998-2001</year> <holder>Jason Gunthorpe</holder></"
-#~ "copyright>\n"
-#~ "   <date>28 October 2008</date>\n"
-#~ "   <productname>Linux</productname>\n"
-#~ " </refentryinfo>\n"
-#~ "\">\n"
+#~ "&file-sourceslist; &file-aptconf; &file-preferences; &file-cachearchives; "
+#~ "&file-statelists;"
 #~ msgstr ""
-#~ "<!-- Boiler plate docinfo section -->\n"
-#~ "<!ENTITY apt-docinfo \"\n"
-#~ " <refentryinfo>\n"
-#~ "   <address><email>apt@packages.debian.org</email></address>\n"
-#~ "   <author>\n"
-#~ "     <firstname>Jason</firstname> <surname>Gunthorpe</surname>\n"
-#~ "     <contrib></contrib>\n"
-#~ "   </author>\n"
-#~ "   <copyright><year>1998-2001</year> <holder>Jason Gunthorpe</holder></"
-#~ "copyright>\n"
-#~ "   <date>28 października 2008</date>\n"
-#~ "   <productname>Linux</productname>\n"
-#~ " </refentryinfo>\n"
-#~ "\">\n"
+#~ "&file-sourceslist; &file-aptconf; &file-preferences; &file-cachearchives; "
+#~ "&file-statelists;"
 
-#, fuzzy
-#~| msgid ""
-#~| "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~| "<date>14 February 2004</date>"
-#~ msgid ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~ "<date>2012-05-21T05:49:00+01:00</date>"
-#~ msgstr ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-"
-#~ "product;          <date>14 lutego 2004</date>"
+#~ msgid "&file-trustedgpg;"
+#~ msgstr "&file-trustedgpg;"
 
-#~ msgid ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~ "<date>14 February 2004</date>"
-#~ msgstr ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-"
-#~ "product;          <date>14 lutego 2004</date>"
+#~ msgid "<replaceable>&synopsis-filename;</replaceable>"
+#~ msgstr "<replaceable>&synopsis-filename;</replaceable>"
+
+#~ msgid "&apt-get;,&aptitude;,&apt-conf;"
+#~ msgstr "&apt-get;,&aptitude;,&apt-conf;"
+
+#~ msgid "&file-aptconf;"
+#~ msgstr "&file-aptconf;"
+
+#~ msgid "&file-preferences;"
+#~ msgstr "&file-preferences;"
+
+#~ msgid "file"
+#~ msgstr "file"
+
+#~ msgid "cdrom"
+#~ msgstr "cdrom"
+
+#~ msgid "http"
+#~ msgstr "http"
+
+#~ msgid "ftp"
+#~ msgstr "ftp"
+
+#~ msgid "copy"
+#~ msgstr "copy"
+
+#~ msgid "rsh"
+#~ msgstr "rsh"
+
+#~ msgid "ssh"
+#~ msgstr "ssh"
 
 #~ msgid ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~ "<date>29 February 2004</date>"
+#~ "The currently recognized URI types are cdrom, file, http, ftp, copy, ssh, "
+#~ "rsh.  <placeholder type=\"variablelist\" id=\"0\"/>"
 #~ msgstr ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-"
-#~ "product;         <date>29 lutego 2004</date>"
-
-#~ msgid ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~ "<date>17 August 2009</date>"
-#~ msgstr ""
-#~ "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product;        "
-#~ "<date>17 sierpnia 2009</date>"
-
-#~ msgid ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-product; "
-#~ "<date>08 November 2008</date>"
-#~ msgstr ""
-#~ "&apt-author.jgunthorpe; &apt-author.team; &apt-email; &apt-"
-#~ "product;          <date>8 listopada 2008</date>"
-
-#, fuzzy
-#~| msgid ""
-#~| "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product; "
-#~| "<date>9 August 2009</date>"
-#~ msgid ""
-#~ "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product; "
-#~ "<date>21 April 2011</date>"
-#~ msgstr ""
-#~ "&apt-author.moconnor; &apt-author.team; &apt-email; &apt-product;        "
-#~ "<date>9 sierpnia 2009</date>"
+#~ "Obecnie rozpoznawane są następujące typy URI: cdrom, file, http, ftp, "
+#~ "copy, ssh, rsh.  <placeholder type=\"variablelist\" id=\"0\"/>"
 
 #~ msgid ""
 #~ "<literal>gencaches</literal> performs the same operation as <command>apt-"
@@ -9035,13 +8826,6 @@ msgstr "Które użyje pobranych uprzednio archiwów z dysku."
 #~ "Użycie HTTP do uzyskania dostępu do archiwum na komputerze  nonus.debian."
 #~ "org, w katalogu debian-non-US."
 
-#~ msgid ""
-#~ "deb http://nonus.debian.org/debian-non-US stable/non-US main contrib non-"
-#~ "free"
-#~ msgstr ""
-#~ "deb http://nonus.debian.org/debian-non-US stable/non-US main contrib non-"
-#~ "free"
-
 #~ msgid "OPTIONS"
 #~ msgstr "OPCJE"
 
@@ -9052,9 +8836,6 @@ msgstr "Które użyje pobranych uprzednio archiwów z dysku."
 #~ msgid "FILES"
 #~ msgstr "PLIKI"
 
-#~ msgid "<filename>/var/lib/apt/extended_states</filename>"
-#~ msgstr "<filename>/var/lib/apt/extended_states</filename>"
-
 #~ msgid ""
 #~ "Status list of auto-installed packages.  Configuration Item: "
 #~ "<literal>Dir::State</literal> sets the path to the "
@@ -9063,6 +8844,3 @@ msgstr "Które użyje pobranych uprzednio archiwów z dysku."
 #~ "Lista stanów pakietów zainstalowanych automatycznie. Pozycja w pliku "
 #~ "konfiguracyjnym:  <literal>Dir::State</literal> ustawia ścieżkę do pliku "
 #~ "o nazwie <filename>extended_states</filename>."
-
-#~ msgid "Pin: release n=squeeze\n"
-#~ msgstr "Pin: release n=squeeze\n"

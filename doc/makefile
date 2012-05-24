@@ -84,12 +84,12 @@ doc: po4a
 
 update-po:
 	po4a --previous --no-backups --force --no-translations \
-		--package-name='$(PACKAGE)' --package-version='$(PACKAGE_VERSION)' \
+		--package-name='$(PACKAGE)-doc' --package-version='$(PACKAGE_VERSION)' \
 		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 
 po4a:
 	po4a --previous --no-backups \
-		--package-name='$(PACKAGE)' --package-version='$(PACKAGE_VERSION)' \
+		--package-name='$(PACKAGE)-doc' --package-version='$(PACKAGE_VERSION)' \
 		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 endif
 
