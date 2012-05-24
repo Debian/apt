@@ -1,3 +1,21 @@
+apt (0.9.6) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/fileutl.cc:
+    - dup() given compressed fd in OpenDescriptor if AutoClose
+      is disabled as otherwise gzclose() and co will close it
+  * doc/*.xml:
+    - mark even more stuff as untranslateable and improve the
+      markup here and there (no real text change)
+    - use docbook DTD 4.5 instead of 4.2 to have valid docs
+
+  [ Justin B Rye ]
+  * doc/*.xml:
+    - remove 'GNU/Linux' from 'Debian systems' strings as Debian
+      has more systems than just GNU/Linux nowadays
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 22 May 2012 18:13:19 +0200
+
 apt (0.9.5) unstable; urgency=low
 
   [ Chris Leick ]

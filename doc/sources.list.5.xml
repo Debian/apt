@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -36,7 +36,7 @@
  <refsect1><title>Description</title>
    <para>The package resource list is used to locate archives of the package
    distribution system in use on the system. At this time, this manual page
-   documents only the packaging system used by the Debian GNU/Linux system.
+   documents only the packaging system used by the Debian system.
    This control file is <filename>/etc/apt/sources.list</filename>.</para>
 
    <para>The source list is designed to support any number of active sources and a
@@ -140,24 +140,23 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
 
  <refsect1><title>URI specification</title>
 
-   <para>The currently recognized URI types are cdrom, file, http, ftp, copy,
-   ssh, rsh.
+    <para>The currently recognized URI types are:
    <variablelist>
-    <varlistentry><term>file</term>
+    <varlistentry><term><command>file</command></term>
     <listitem><para>
     The file scheme allows an arbitrary directory in the file system to be
     considered an archive. This is useful for NFS mounts and local mirrors or
     archives.</para></listitem>
     </varlistentry>
     
-    <varlistentry><term>cdrom</term>
+    <varlistentry><term><command>cdrom</command></term>
     <listitem><para>
     The cdrom scheme allows APT to use a local CDROM drive with media
     swapping. Use the &apt-cdrom; program to create cdrom entries in the
     source list.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term>http</term>
+    <varlistentry><term><command>http</command></term>
     <listitem><para>
     The http scheme specifies an HTTP server for the archive. If an environment
     variable <envar>http_proxy</envar> is set with the format 
@@ -168,7 +167,7 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
     Note that this is an insecure method of authentication.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term>ftp</term>
+    <varlistentry><term><command>ftp</command></term>
     <listitem><para>
     The ftp scheme specifies an FTP server for the archive. APT's FTP behavior
     is highly configurable; for more information see the
@@ -179,14 +178,14 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
     the configuration file will be ignored.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term>copy</term>
+    <varlistentry><term><command>copy</command></term>
     <listitem><para>
     The copy scheme is identical to the file scheme except that packages are
     copied into the cache directory instead of used directly at their location.
     This is useful for people using a zip disk to copy files around with APT.</para></listitem>
     </varlistentry>
     
-    <varlistentry><term>rsh</term><term>ssh</term>
+    <varlistentry><term><command>rsh</command></term><term><command>ssh</command></term>
     <listitem><para>
     The rsh/ssh method invokes rsh/ssh to connect to a remote host
 	as a given user and access the files. It is a good idea to do prior
@@ -196,15 +195,13 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
     commands to perform the file transfers from the remote.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term>more recognizable URI types</term>
+    <varlistentry><term>adding more recognizable URI types</term>
     <listitem><para>
     APT can be extended with more methods shipped in other optional packages which should
-    follow the nameing scheme <literal>apt-transport-<replaceable>method</replaceable></literal>.
-    The APT team e.g. maintains also the <literal>apt-transport-https</literal> package which
+    follow the nameing scheme <package>apt-transport-<replaceable>method</replaceable></package>.
+    The APT team e.g. maintains also the <package>apt-transport-https</package> package which
     provides access methods for https-URIs with features similar to the http method, but other
-    methods for using e.g. debtorrent are also available, see <citerefentry>
-    <refentrytitle><filename>apt-transport-debtorrent</filename></refentrytitle>
-    <manvolnum>1</manvolnum></citerefentry>.
+    methods for using e.g. debtorrent are also available, see &apt-transport-debtorrent;.
     </para></listitem>
     </varlistentry>
   </variablelist>
