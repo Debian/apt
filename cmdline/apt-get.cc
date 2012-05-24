@@ -254,6 +254,9 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
  */
 void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 {
+   if (Cache->BrokenCount() == 0)
+      return;
+
    out << _("The following packages have unmet dependencies:") << endl;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
