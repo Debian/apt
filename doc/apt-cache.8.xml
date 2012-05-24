@@ -127,8 +127,8 @@ Reverse Provides:
 
        <listitem><para><literal>Total distinct</literal> versions is the number of package versions 
        found in the cache; this value is therefore at least equal to the 
-       number of total package names. If more than one distribution (both 
-       "stable" and "unstable", for instance), is being accessed, this value 
+       number of total package names. If more than one distribution is being accessed
+       (for instance, "stable" and "unstable"), this value
        can be considerably larger than the number of total package names.</para>
        </listitem>
 
@@ -142,7 +142,7 @@ Reverse Provides:
      <varlistentry><term><option>showsrc</option> <option><replaceable>&synopsis-pkg;</replaceable>…</option></term>
      <listitem><para><literal>showsrc</literal> displays all the source package records that match
      the given package names. All versions are shown, as well as all 
-     records that declare the name to be a Binary.</para></listitem>
+     records that declare the name to be a binary package.</para></listitem>
      </varlistentry>
      
      <varlistentry><term><option>dump</option></term>
@@ -214,9 +214,9 @@ Reverse Provides:
      set the <literal>APT::Cache::GivenOnly</literal> option.</para>
 
      <para>The resulting nodes will have several shapes; normal packages are boxes,
-     pure provides are triangles, mixed provides are diamonds, 
+     pure virtual packages are triangles, mixed virtual packages are diamonds,
      missing packages are hexagons. Orange boxes mean recursion was stopped 
-     [leaf packages], blue lines are pre-depends, green lines are conflicts.</para>
+     (leaf packages), blue lines are pre-depends, green lines are conflicts.</para>
 
      <para>Caution, dotty cannot graph larger sets of packages.</para></listitem>
      </varlistentry>
@@ -271,7 +271,8 @@ Reverse Provides:
      </varlistentry>
 
      <varlistentry><term><option>-i</option></term><term><option>--important</option></term>
-     <listitem><para>Print only important dependencies; for use with unmet and depends. Causes only Depends and 
+     <listitem><para>Print only important dependencies; for use with <literal>unmet</literal>
+     and <literal>depends</literal>. Causes only Depends and
      Pre-Depends relations to be printed.
      Configuration Item: <literal>APT::Cache::Important</literal>.</para></listitem>
      </varlistentry>
@@ -299,7 +300,7 @@ Reverse Provides:
      <listitem><para>Print full records for all available versions. This is the
      default; to turn it off, use <option>--no-all-versions</option>.
      If <option>--no-all-versions</option> is specified, only the candidate version
-     will displayed (the one which would be selected for installation).
+     will be displayed (the one which would be selected for installation).
      This option is only applicable to  the <literal>show</literal> command.
      Configuration Item: <literal>APT::Cache::AllVersions</literal>.</para></listitem>
      </varlistentry>

@@ -1,4 +1,18 @@
-apt (0.9.6) UNRELEASED; urgency=low
+apt (0.9.5ubuntu1) UNRELEASED; urgency=low
+
+  * merged from debian, remaining changes:
+    - use ubuntu keyring and ubuntu archive keyring in apt-key
+    - run update-apt-xapian-index in apt.cron
+    - support apt-key net-update and verify keys against master-keyring
+    - run apt-key net-update in cron.daily
+    - different example sources.list
+    - APT::pkgPackageManager::MaxLoopCount set to 5000
+    - apport pkgfailure handling
+    - patch for apt cross-building, see http://bugs.debian.org/666772
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 22 May 2012 15:57:26 +0200
+
+apt (0.9.5.1) unstable; urgency=low
 
   [ David Kalnischkies ]
   * apt-pkg/contrib/fileutl.cc:
@@ -13,22 +27,11 @@ apt (0.9.6) UNRELEASED; urgency=low
   * doc/*.xml:
     - remove 'GNU/Linux' from 'Debian systems' strings as Debian
       has more systems than just GNU/Linux nowadays
+  * doc/apt-cache.8.xml:
+    - fix a typo as well as adding missing literal markup
+    - three small rewordings for better english sentences
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Tue, 22 May 2012 18:13:19 +0200
-
-apt (0.9.5ubuntu1) UNRELEASED; urgency=low
-
-  * merged from debian, remaining changes:
-    - use ubuntu keyring and ubuntu archive keyring in apt-key
-    - run update-apt-xapian-index in apt.cron
-    - support apt-key net-update and verify keys against master-keyring
-    - run apt-key net-update in cron.daily
-    - different example sources.list
-    - APT::pkgPackageManager::MaxLoopCount set to 5000
-    - apport pkgfailure handling
-    - patch for apt cross-building, see http://bugs.debian.org/666772
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 22 May 2012 15:57:26 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 24 May 2012 17:16:34 +0200
 
 apt (0.9.5) unstable; urgency=low
 

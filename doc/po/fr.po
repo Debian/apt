@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-05-23 17:06+0300\n"
+"POT-Creation-Date: 2012-05-24 15:57+0300\n"
 "PO-Revision-Date: 2011-02-17 07:50+0100\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -916,9 +916,9 @@ msgid ""
 "<literal>Pure virtual packages</literal> is the number of packages that "
 "exist only as a virtual package name; that is, packages only \"provide\" the "
 "virtual package name, and no package actually uses the name. For instance, "
-"\"mail-transport-agent\" in the Debian system is a pure virtual "
-"package; several packages provide \"mail-transport-agent\", but there is no "
-"package named \"mail-transport-agent\"."
+"\"mail-transport-agent\" in the Debian system is a pure virtual package; "
+"several packages provide \"mail-transport-agent\", but there is no package "
+"named \"mail-transport-agent\"."
 msgstr ""
 "<literal>Pure virtual packages</literal> est le nombre de paquets qui "
 "n'existent que sous la forme d'un nom représentant un paquet virtuel ; ces "
@@ -933,26 +933,26 @@ msgstr ""
 msgid ""
 "<literal>Single virtual packages</literal> is the number of packages with "
 "only one package providing a particular virtual package. For example, in the "
-"Debian system, \"X11-text-viewer\" is a virtual package, but only "
-"one package, xless, provides \"X11-text-viewer\"."
+"Debian system, \"X11-text-viewer\" is a virtual package, but only one "
+"package, xless, provides \"X11-text-viewer\"."
 msgstr ""
 "<literal>Single virtual packages</literal> est le nombre de paquets virtuels "
 "qui ne peuvent être remplis que par un seul paquet. Par exemple, au sein du "
-"système Debian, « X11-text-viewer » est un paquet virtuel ; seul "
-"le paquet « xless » remplit « X11-text-viewer »."
+"système Debian, « X11-text-viewer » est un paquet virtuel ; seul le paquet "
+"« xless » remplit « X11-text-viewer »."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #: apt-cache.8.xml:114
 msgid ""
 "<literal>Mixed virtual packages</literal> is the number of packages that "
 "either provide a particular virtual package or have the virtual package name "
-"as the package name. For instance, in the Debian system, \"debconf"
-"\" is both an actual package, and provided by the debconf-tiny package."
+"as the package name. For instance, in the Debian system, \"debconf\" is both "
+"an actual package, and provided by the debconf-tiny package."
 msgstr ""
 "<literal>Mixed virtual packages</literal> est le nombre de paquets qui "
 "remplissent un paquet virtuel particulier ou dont le nom est un nom de "
-"paquet virtuel.  Par exemple, au sein du système Debian, "
-"« debconf » est un paquet réel et il est aussi fourni par « debconf-tiny »."
+"paquet virtuel.  Par exemple, au sein du système Debian, « debconf » est un "
+"paquet réel et il est aussi fourni par « debconf-tiny »."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #: apt-cache.8.xml:121
@@ -971,12 +971,19 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #: apt-cache.8.xml:128
+#, fuzzy
+#| msgid ""
+#| "<literal>Total distinct</literal> versions is the number of package "
+#| "versions found in the cache; this value is therefore at least equal to "
+#| "the number of total package names. If more than one distribution (both "
+#| "\"stable\" and \"unstable\", for instance), is being accessed, this value "
+#| "can be considerably larger than the number of total package names."
 msgid ""
 "<literal>Total distinct</literal> versions is the number of package versions "
 "found in the cache; this value is therefore at least equal to the number of "
-"total package names. If more than one distribution (both \"stable\" and "
-"\"unstable\", for instance), is being accessed, this value can be "
-"considerably larger than the number of total package names."
+"total package names. If more than one distribution is being accessed (for "
+"instance, \"stable\" and \"unstable\"), this value can be considerably "
+"larger than the number of total package names."
 msgstr ""
 "<literal>Total distinct versions</literal> est le nombre de versions de "
 "paquets trouvées dans le cache ; cette valeur est par conséquent au moins "
@@ -995,10 +1002,15 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:143
+#, fuzzy
+#| msgid ""
+#| "<literal>showsrc</literal> displays all the source package records that "
+#| "match the given package names. All versions are shown, as well as all "
+#| "records that declare the name to be a Binary."
 msgid ""
 "<literal>showsrc</literal> displays all the source package records that "
 "match the given package names. All versions are shown, as well as all "
-"records that declare the name to be a Binary."
+"records that declare the name to be a binary package."
 msgstr ""
 "<literal>showsrc</literal> affiche toutes les entrées de paquets source qui "
 "correspondent aux noms donnés. Toutes les versions sont affichées et toutes "
@@ -1163,11 +1175,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:216
+#, fuzzy
+#| msgid ""
+#| "The resulting nodes will have several shapes; normal packages are boxes, "
+#| "pure provides are triangles, mixed provides are diamonds, missing "
+#| "packages are hexagons. Orange boxes mean recursion was stopped [leaf "
+#| "packages], blue lines are pre-depends, green lines are conflicts."
 msgid ""
 "The resulting nodes will have several shapes; normal packages are boxes, "
-"pure provides are triangles, mixed provides are diamonds, missing packages "
-"are hexagons. Orange boxes mean recursion was stopped [leaf packages], blue "
-"lines are pre-depends, green lines are conflicts."
+"pure virtual packages are triangles, mixed virtual packages are diamonds, "
+"missing packages are hexagons. Orange boxes mean recursion was stopped (leaf "
+"packages), blue lines are pre-depends, green lines are conflicts."
 msgstr ""
 "Les noeuds résultants ont plusieurs formes ; les paquets normaux sont des "
 "boîtes, les « provides » purs sont des triangles, les « provides » mixtes "
@@ -1283,16 +1301,17 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:274
 msgid ""
-"Print only important dependencies; for use with unmet and depends. Causes "
-"only Depends and Pre-Depends relations to be printed.  Configuration Item: "
-"<literal>APT::Cache::Important</literal>."
+"Print only important dependencies; for use with <literal>unmet</literal> and "
+"<literal>depends</literal>. Causes only Depends and Pre-Depends relations to "
+"be printed.  Configuration Item: <literal>APT::Cache::Important</literal>."
 msgstr ""
 "N'affiche que les dépendances importantes ; à utiliser avec les commandes "
-"unmet et depends pour n'afficher que les relations Depends et Pre-Depends. "
-"Élément de configuration : <literal>APT::Cache::Important</literal>."
+"<literal>unmet</literal> et <literal>depends</literal> pour n'afficher que "
+"les relations Depends et Pre-Depends. Élément de configuration : "
+"<literal>APT::Cache::Important</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:287
+#: apt-cache.8.xml:288
 msgid ""
 "Per default the <literal>depends</literal> and <literal>rdepends</literal> "
 "print all dependencies. This can be tweaked with these flags which will omit "
@@ -1307,7 +1326,7 @@ msgstr ""
 "replaceable></literal>, p. ex. <literal>APT::Cache::ShowRecommends</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:294
+#: apt-cache.8.xml:295
 msgid ""
 "Print full package records when searching.  Configuration Item: "
 "<literal>APT::Cache::ShowFull</literal>."
@@ -1317,11 +1336,11 @@ msgstr ""
 "literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:299
+#: apt-cache.8.xml:300
 msgid ""
 "Print full records for all available versions. This is the default; to turn "
 "it off, use <option>--no-all-versions</option>.  If <option>--no-all-"
-"versions</option> is specified, only the candidate version will displayed "
+"versions</option> is specified, only the candidate version will be displayed "
 "(the one which would be selected for installation).  This option is only "
 "applicable to the <literal>show</literal> command.  Configuration Item: "
 "<literal>APT::Cache::AllVersions</literal>."
@@ -1335,7 +1354,7 @@ msgstr ""
 "<literal>APT::Cache::AllVersions</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:308
+#: apt-cache.8.xml:309
 msgid ""
 "Perform automatic package cache regeneration, rather than use the cache as "
 "it is. This is the default; to turn it off, use <option>--no-generate</"
@@ -1347,7 +1366,7 @@ msgstr ""
 "configuration : <literal>APT::Cache::Generate</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:314
+#: apt-cache.8.xml:315
 msgid ""
 "Only search on the package names, not the long descriptions.  Configuration "
 "Item: <literal>APT::Cache::NamesOnly</literal>."
@@ -1357,7 +1376,7 @@ msgstr ""
 "NamesOnly</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:319
+#: apt-cache.8.xml:320
 msgid ""
 "Make <literal>pkgnames</literal> print all names, including virtual packages "
 "and missing dependencies.  Configuration Item: <literal>APT::Cache::"
@@ -1368,7 +1387,7 @@ msgstr ""
 "configuration : <literal>APT::Cache::AllNames</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:325
+#: apt-cache.8.xml:326
 msgid ""
 "Make <literal>depends</literal> and <literal>rdepends</literal> recursive so "
 "that all packages mentioned are printed once.  Configuration Item: "
@@ -1380,7 +1399,7 @@ msgstr ""
 "literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:332
+#: apt-cache.8.xml:333
 msgid ""
 "Limit the output of <literal>depends</literal> and <literal>rdepends</"
 "literal> to packages which are currently installed.  Configuration Item: "
@@ -1391,13 +1410,13 @@ msgstr ""
 "Élément de configuration : <literal>APT::Cache::Installed</literal>."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:342 apt-get.8.xml:519 apt-key.8.xml:174 apt-mark.8.xml:125
+#: apt-cache.8.xml:343 apt-get.8.xml:519 apt-key.8.xml:174 apt-mark.8.xml:125
 #: apt.conf.5.xml:1118 apt_preferences.5.xml:698
 msgid "Files"
 msgstr "Fichiers"
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:349 apt-cdrom.8.xml:144 apt-config.8.xml:109
+#: apt-cache.8.xml:350 apt-cdrom.8.xml:144 apt-config.8.xml:109
 #: apt-extracttemplates.1.xml:70 apt-ftparchive.1.xml:607 apt-get.8.xml:529
 #: apt-key.8.xml:195 apt-mark.8.xml:131 apt-secure.8.xml:192
 #: apt-sortpkgs.1.xml:63 apt.conf.5.xml:1124 apt_preferences.5.xml:705
@@ -1406,19 +1425,19 @@ msgid "See Also"
 msgstr "Voir aussi"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cache.8.xml:350
+#: apt-cache.8.xml:351
 msgid "&apt-conf;, &sources-list;, &apt-get;"
 msgstr "&apt-conf;, &sources-list;, &apt-get;."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:354 apt-cdrom.8.xml:149 apt-config.8.xml:114
+#: apt-cache.8.xml:355 apt-cdrom.8.xml:149 apt-config.8.xml:114
 #: apt-extracttemplates.1.xml:74 apt-ftparchive.1.xml:611 apt-get.8.xml:535
 #: apt-mark.8.xml:135 apt-sortpkgs.1.xml:67
 msgid "Diagnostics"
 msgstr "Diagnostics"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cache.8.xml:355
+#: apt-cache.8.xml:356
 msgid ""
 "<command>apt-cache</command> returns zero on normal operation, decimal 100 "
 "on error."
@@ -2850,28 +2869,27 @@ msgstr ""
 msgid ""
 "<literal>install</literal> is followed by one or more packages desired for "
 "installation or upgrading.  Each package is a package name, not a fully "
-"qualified filename (for instance, in a Debian system, libc6 would "
-"be the argument provided, not <literal>libc6_1.9.6-2.deb</literal>). All "
-"packages required by the package(s) specified for installation will also be "
-"retrieved and installed.  The <filename>/etc/apt/sources.list</filename> "
-"file is used to locate the desired packages. If a hyphen is appended to the "
-"package name (with no intervening space), the identified package will be "
-"removed if it is installed.  Similarly a plus sign can be used to designate "
-"a package to install. These latter features may be used to override "
-"decisions made by apt-get's conflict resolution system."
+"qualified filename (for instance, in a Debian system, libc6 would be the "
+"argument provided, not <literal>libc6_1.9.6-2.deb</literal>). All packages "
+"required by the package(s) specified for installation will also be retrieved "
+"and installed.  The <filename>/etc/apt/sources.list</filename> file is used "
+"to locate the desired packages. If a hyphen is appended to the package name "
+"(with no intervening space), the identified package will be removed if it is "
+"installed.  Similarly a plus sign can be used to designate a package to "
+"install. These latter features may be used to override decisions made by apt-"
+"get's conflict resolution system."
 msgstr ""
 "La commande <literal>install</literal> est suivie par un ou plusieurs "
 "paquets à installer. Chaque paquet est un nom de paquet ; ce n'est pas un "
-"nom complet de fichier (par exemple, dans un système Debian, on "
-"indiquera libc6 et non pas <literal>libc6_1.9.6-2.deb</literal>). Tous les "
-"paquets requis par le(s) paquet(s) que l'on veut installer sont aussi "
-"récupérés et installés. Le fichier <filename>/etc/apt/sources.list</"
-"filename> est utilisé pour retrouver les paquets désirés. Quand un trait "
-"d'union est accolé (sans espace intermédiaire) au nom d'un paquet déjà "
-"installé, ce paquet est supprimé. De même on peut ajouter un signe « + » "
-"pour désigner un paquet à installer.  Cette dernière fonctionnalité peut "
-"être utilisée pour annuler les décisions prises par le système de résolution "
-"des conflits d'apt-get."
+"nom complet de fichier (par exemple, dans un système Debian, on indiquera "
+"libc6 et non pas <literal>libc6_1.9.6-2.deb</literal>). Tous les paquets "
+"requis par le(s) paquet(s) que l'on veut installer sont aussi récupérés et "
+"installés. Le fichier <filename>/etc/apt/sources.list</filename> est utilisé "
+"pour retrouver les paquets désirés. Quand un trait d'union est accolé (sans "
+"espace intermédiaire) au nom d'un paquet déjà installé, ce paquet est "
+"supprimé. De même on peut ajouter un signe « + » pour désigner un paquet à "
+"installer.  Cette dernière fonctionnalité peut être utilisée pour annuler "
+"les décisions prises par le système de résolution des conflits d'apt-get."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:116
@@ -7343,17 +7361,17 @@ msgstr "Pin: release n=&testing-codename;\n"
 #: apt_preferences.5.xml:462
 msgid ""
 "names the release version.  For example, the packages in the tree might "
-"belong to Debian release version 3.0.  Note that there is normally "
-"no version number for the <literal>testing</literal> and <literal>unstable</"
+"belong to Debian release version 3.0.  Note that there is normally no "
+"version number for the <literal>testing</literal> and <literal>unstable</"
 "literal> distributions because they have not been released yet.  Specifying "
 "this in the APT preferences file would require one of the following lines."
 msgstr ""
 "indique la version de la distribution. Par exemple, les paquets dans les "
-"répertoires peuvent appartenir à la distribution Debian version "
-"3.0. Il n'y a pas de numéro de version pour les distributions "
-"<literal>testing</literal> et <literal>unstable</literal> car elles n'ont "
-"pas encore été publiées. Indiquer cette valeur dans le fichier des "
-"préférences demanderait ces lignes :"
+"répertoires peuvent appartenir à la distribution Debian version 3.0. Il n'y "
+"a pas de numéro de version pour les distributions <literal>testing</literal> "
+"et <literal>unstable</literal> car elles n'ont pas encore été publiées. "
+"Indiquer cette valeur dans le fichier des préférences demanderait ces "
+"lignes :"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><programlisting>
 #: apt_preferences.5.xml:471
@@ -7778,8 +7796,8 @@ msgstr "Liste des sources de paquets"
 msgid ""
 "The package resource list is used to locate archives of the package "
 "distribution system in use on the system. At this time, this manual page "
-"documents only the packaging system used by the Debian system.  "
-"This control file is <filename>/etc/apt/sources.list</filename>."
+"documents only the packaging system used by the Debian system.  This control "
+"file is <filename>/etc/apt/sources.list</filename>."
 msgstr ""
 "La liste des sources de paquets indique où trouver les archives du système "
 "de distribution de paquets utilisé. Pour l'instant, cette page de manuel ne "
@@ -8315,8 +8333,8 @@ msgstr ""
 #. type: <p></p>
 #: guide.sgml:24 offline.sgml:25
 msgid ""
-"For more details, on Debian systems, see the file /usr/share/"
-"common-licenses/GPL for the full license."
+"For more details, on Debian systems, see the file /usr/share/common-licenses/"
+"GPL for the full license."
 msgstr ""
 "Les détails complets de cette licence sont, sur les systèmes Debian GNU/"
 "Linux, consultables dans le fichier usr/share/common-licenses/GPL."
