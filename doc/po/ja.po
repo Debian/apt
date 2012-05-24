@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.25.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-05-23 17:06+0300\n"
+"POT-Creation-Date: 2012-05-24 15:57+0300\n"
 "PO-Revision-Date: 2010-09-07 07:38+0900\n"
 "Last-Translator: KURASAWA Nozomu <nabetaro@caldron.jp>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -952,16 +952,16 @@ msgid ""
 "<literal>Pure virtual packages</literal> is the number of packages that "
 "exist only as a virtual package name; that is, packages only \"provide\" the "
 "virtual package name, and no package actually uses the name. For instance, "
-"\"mail-transport-agent\" in the Debian system is a pure virtual "
-"package; several packages provide \"mail-transport-agent\", but there is no "
-"package named \"mail-transport-agent\"."
+"\"mail-transport-agent\" in the Debian system is a pure virtual package; "
+"several packages provide \"mail-transport-agent\", but there is no package "
+"named \"mail-transport-agent\"."
 msgstr ""
 "<literal>純粋仮想パッケージ</literal>は、仮想パッケージ名としてのみ存在する"
 "パッケージ (仮想パッケージ名のみを「提供」し、実際にはいかなるパッケージもそ"
-"の名称を持たない) の数を表します。例えば、Debian システムでは "
-"\"mail-transport-agent\" は純粋仮想パッケージです。\"mail-transport-agent\" "
-"を提供するパッケージはいくつもありますが、\"mail-transport-agent\" という名称"
-"のパッケージはありません。"
+"の名称を持たない) の数を表します。例えば、Debian システムでは \"mail-"
+"transport-agent\" は純粋仮想パッケージです。\"mail-transport-agent\" を提供す"
+"るパッケージはいくつもありますが、\"mail-transport-agent\" という名称のパッ"
+"ケージはありません。"
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
@@ -969,13 +969,13 @@ msgstr ""
 msgid ""
 "<literal>Single virtual packages</literal> is the number of packages with "
 "only one package providing a particular virtual package. For example, in the "
-"Debian system, \"X11-text-viewer\" is a virtual package, but only "
-"one package, xless, provides \"X11-text-viewer\"."
+"Debian system, \"X11-text-viewer\" is a virtual package, but only one "
+"package, xless, provides \"X11-text-viewer\"."
 msgstr ""
 "<literal>単一仮想パッケージ</literal>は、特定の仮想パッケージ名を提供するパッ"
-"ケージが、ただ一つの場合の数を表します。例えば、Debian システムで"
-"は、\"X11-text-viewer\" は仮想パッケージですが、\"X11-text-viewer\" を提供す"
-"るパッケージは、xless パッケージのみということです。"
+"ケージが、ただ一つの場合の数を表します。例えば、Debian システムでは、\"X11-"
+"text-viewer\" は仮想パッケージですが、\"X11-text-viewer\" を提供するパッケー"
+"ジは、xless パッケージのみということです。"
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
@@ -983,13 +983,13 @@ msgstr ""
 msgid ""
 "<literal>Mixed virtual packages</literal> is the number of packages that "
 "either provide a particular virtual package or have the virtual package name "
-"as the package name. For instance, in the Debian system, \"debconf"
-"\" is both an actual package, and provided by the debconf-tiny package."
+"as the package name. For instance, in the Debian system, \"debconf\" is both "
+"an actual package, and provided by the debconf-tiny package."
 msgstr ""
 "<literal>複合仮想パッケージ</literal>は、その仮想パッケージ名を提供するパッ"
 "ケージが複数あるか、またパッケージ名と同じ仮想パッケージ名を持つパッケージ数"
-"を表します。例えば、Debian システムでは、debconf は実際のパッケージ"
-"名でもありますが、debconf-tiny によって提供もされています。"
+"を表します。例えば、Debian システムでは、debconf は実際のパッケージ名でもあり"
+"ますが、debconf-tiny によって提供もされています。"
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
@@ -1010,12 +1010,19 @@ msgstr ""
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><itemizedlist><listitem><para>
 #: apt-cache.8.xml:128
+#, fuzzy
+#| msgid ""
+#| "<literal>Total distinct</literal> versions is the number of package "
+#| "versions found in the cache; this value is therefore at least equal to "
+#| "the number of total package names. If more than one distribution (both "
+#| "\"stable\" and \"unstable\", for instance), is being accessed, this value "
+#| "can be considerably larger than the number of total package names."
 msgid ""
 "<literal>Total distinct</literal> versions is the number of package versions "
 "found in the cache; this value is therefore at least equal to the number of "
-"total package names. If more than one distribution (both \"stable\" and "
-"\"unstable\", for instance), is being accessed, this value can be "
-"considerably larger than the number of total package names."
+"total package names. If more than one distribution is being accessed (for "
+"instance, \"stable\" and \"unstable\"), this value can be considerably "
+"larger than the number of total package names."
 msgstr ""
 "<literal>個別バージョン総数</literal>は、キャッシュに存在するパッケージのバー"
 "ジョンの数を表します。そのため、この値は最小でもパッケージ名総数と一致しま"
@@ -1035,10 +1042,15 @@ msgstr ""
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:143
+#, fuzzy
+#| msgid ""
+#| "<literal>showsrc</literal> displays all the source package records that "
+#| "match the given package names. All versions are shown, as well as all "
+#| "records that declare the name to be a Binary."
 msgid ""
 "<literal>showsrc</literal> displays all the source package records that "
 "match the given package names. All versions are shown, as well as all "
-"records that declare the name to be a Binary."
+"records that declare the name to be a binary package."
 msgstr ""
 "<literal>showsrc</literal> は、指定したパッケージ名に一致するソースパッケージ"
 "を、すべて表示します。バイナリになるときの名称を宣言したレコードと同様に、す"
@@ -1206,11 +1218,17 @@ msgstr ""
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:216
+#, fuzzy
+#| msgid ""
+#| "The resulting nodes will have several shapes; normal packages are boxes, "
+#| "pure provides are triangles, mixed provides are diamonds, missing "
+#| "packages are hexagons. Orange boxes mean recursion was stopped [leaf "
+#| "packages], blue lines are pre-depends, green lines are conflicts."
 msgid ""
 "The resulting nodes will have several shapes; normal packages are boxes, "
-"pure provides are triangles, mixed provides are diamonds, missing packages "
-"are hexagons. Orange boxes mean recursion was stopped [leaf packages], blue "
-"lines are pre-depends, green lines are conflicts."
+"pure virtual packages are triangles, mixed virtual packages are diamonds, "
+"missing packages are hexagons. Orange boxes mean recursion was stopped (leaf "
+"packages), blue lines are pre-depends, green lines are conflicts."
 msgstr ""
 "結果のノードは数種の形状をとります。通常パッケージは四角、純粋仮想パッケージ"
 "は三角、複合仮想パッケージは菱形、六角形は欠落パッケージをそれぞれ表します。"
@@ -1324,17 +1342,17 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cache.8.xml:274
 msgid ""
-"Print only important dependencies; for use with unmet and depends. Causes "
-"only Depends and Pre-Depends relations to be printed.  Configuration Item: "
-"<literal>APT::Cache::Important</literal>."
+"Print only important dependencies; for use with <literal>unmet</literal> and "
+"<literal>depends</literal>. Causes only Depends and Pre-Depends relations to "
+"be printed.  Configuration Item: <literal>APT::Cache::Important</literal>."
 msgstr ""
-"「重要」依存関係のみ表示 - unmet や depends と共に使用します。これは「依存」"
-"関係と「先行依存」関係のみを表示するためです。設定項目 - <literal>APT::"
-"Cache::Important</literal>"
+"「重要」依存関係のみ表示 - <literal>unmet</literal> や <literal>depends</"
+"literal> と共に使用します。これは「依存」関係と「先行依存」関係のみを表示する"
+"ためです。設定項目 - <literal>APT::Cache::Important</literal>"
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:287
+#: apt-cache.8.xml:288
 #, fuzzy
 msgid ""
 "Per default the <literal>depends</literal> and <literal>rdepends</literal> "
@@ -1349,7 +1367,7 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:294
+#: apt-cache.8.xml:295
 msgid ""
 "Print full package records when searching.  Configuration Item: "
 "<literal>APT::Cache::ShowFull</literal>."
@@ -1359,11 +1377,11 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:299
+#: apt-cache.8.xml:300
 msgid ""
 "Print full records for all available versions. This is the default; to turn "
 "it off, use <option>--no-all-versions</option>.  If <option>--no-all-"
-"versions</option> is specified, only the candidate version will displayed "
+"versions</option> is specified, only the candidate version will be displayed "
 "(the one which would be selected for installation).  This option is only "
 "applicable to the <literal>show</literal> command.  Configuration Item: "
 "<literal>APT::Cache::AllVersions</literal>."
@@ -1376,7 +1394,7 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:308
+#: apt-cache.8.xml:309
 msgid ""
 "Perform automatic package cache regeneration, rather than use the cache as "
 "it is. This is the default; to turn it off, use <option>--no-generate</"
@@ -1389,7 +1407,7 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:314
+#: apt-cache.8.xml:315
 msgid ""
 "Only search on the package names, not the long descriptions.  Configuration "
 "Item: <literal>APT::Cache::NamesOnly</literal>."
@@ -1399,7 +1417,7 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:319
+#: apt-cache.8.xml:320
 msgid ""
 "Make <literal>pkgnames</literal> print all names, including virtual packages "
 "and missing dependencies.  Configuration Item: <literal>APT::Cache::"
@@ -1410,7 +1428,7 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:325
+#: apt-cache.8.xml:326
 msgid ""
 "Make <literal>depends</literal> and <literal>rdepends</literal> recursive so "
 "that all packages mentioned are printed once.  Configuration Item: "
@@ -1422,7 +1440,7 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cache.8.xml:332
+#: apt-cache.8.xml:333
 msgid ""
 "Limit the output of <literal>depends</literal> and <literal>rdepends</"
 "literal> to packages which are currently installed.  Configuration Item: "
@@ -1434,14 +1452,14 @@ msgstr ""
 
 # type: Content of: <refentry><refsect1><title>
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:342 apt-get.8.xml:519 apt-key.8.xml:174 apt-mark.8.xml:125
+#: apt-cache.8.xml:343 apt-get.8.xml:519 apt-key.8.xml:174 apt-mark.8.xml:125
 #: apt.conf.5.xml:1118 apt_preferences.5.xml:698
 msgid "Files"
 msgstr "ファイル"
 
 # type: Content of: <refentry><refsect1><title>
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:349 apt-cdrom.8.xml:144 apt-config.8.xml:109
+#: apt-cache.8.xml:350 apt-cdrom.8.xml:144 apt-config.8.xml:109
 #: apt-extracttemplates.1.xml:70 apt-ftparchive.1.xml:607 apt-get.8.xml:529
 #: apt-key.8.xml:195 apt-mark.8.xml:131 apt-secure.8.xml:192
 #: apt-sortpkgs.1.xml:63 apt.conf.5.xml:1124 apt_preferences.5.xml:705
@@ -1451,13 +1469,13 @@ msgstr "関連項目"
 
 # type: Content of: <refentry><refsect1><para>
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cache.8.xml:350
+#: apt-cache.8.xml:351
 msgid "&apt-conf;, &sources-list;, &apt-get;"
 msgstr "&apt-conf;, &sources-list;, &apt-get;"
 
 # type: Content of: <refentry><refsect1><title>
 #. type: Content of: <refentry><refsect1><title>
-#: apt-cache.8.xml:354 apt-cdrom.8.xml:149 apt-config.8.xml:114
+#: apt-cache.8.xml:355 apt-cdrom.8.xml:149 apt-config.8.xml:114
 #: apt-extracttemplates.1.xml:74 apt-ftparchive.1.xml:611 apt-get.8.xml:535
 #: apt-mark.8.xml:135 apt-sortpkgs.1.xml:67
 msgid "Diagnostics"
@@ -1465,7 +1483,7 @@ msgstr "診断メッセージ"
 
 # type: Content of: <refentry><refsect1><para>
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cache.8.xml:355
+#: apt-cache.8.xml:356
 msgid ""
 "<command>apt-cache</command> returns zero on normal operation, decimal 100 "
 "on error."
@@ -2917,12 +2935,11 @@ msgid ""
 "realize that state (for instance, the removal of old and the installation of "
 "new packages)."
 msgstr ""
-"<literal>dselect-upgrade</literal> は、伝統的な Debian パッケージ管"
-"理フロントエンドの &dselect; と共に使用されます。<literal>dselect-upgrade</"
-"literal> は、&dselect; で作られた利用可能パッケージの<literal>Status</"
-"literal> フィールドの変更を追跡し、その状態を反映させるのに必要なアクションを"
-"実行します。(例えば、古いパッケージの削除や新しいパッケージのインストールな"
-"ど)"
+"<literal>dselect-upgrade</literal> は、伝統的な Debian パッケージ管理フロント"
+"エンドの &dselect; と共に使用されます。<literal>dselect-upgrade</literal> "
+"は、&dselect; で作られた利用可能パッケージの<literal>Status</literal> フィー"
+"ルドの変更を追跡し、その状態を反映させるのに必要なアクションを実行します。(例"
+"えば、古いパッケージの削除や新しいパッケージのインストールなど)"
 
 # type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2954,21 +2971,21 @@ msgstr ""
 msgid ""
 "<literal>install</literal> is followed by one or more packages desired for "
 "installation or upgrading.  Each package is a package name, not a fully "
-"qualified filename (for instance, in a Debian system, libc6 would "
-"be the argument provided, not <literal>libc6_1.9.6-2.deb</literal>). All "
-"packages required by the package(s) specified for installation will also be "
-"retrieved and installed.  The <filename>/etc/apt/sources.list</filename> "
-"file is used to locate the desired packages. If a hyphen is appended to the "
-"package name (with no intervening space), the identified package will be "
-"removed if it is installed.  Similarly a plus sign can be used to designate "
-"a package to install. These latter features may be used to override "
-"decisions made by apt-get's conflict resolution system."
+"qualified filename (for instance, in a Debian system, libc6 would be the "
+"argument provided, not <literal>libc6_1.9.6-2.deb</literal>). All packages "
+"required by the package(s) specified for installation will also be retrieved "
+"and installed.  The <filename>/etc/apt/sources.list</filename> file is used "
+"to locate the desired packages. If a hyphen is appended to the package name "
+"(with no intervening space), the identified package will be removed if it is "
+"installed.  Similarly a plus sign can be used to designate a package to "
+"install. These latter features may be used to override decisions made by apt-"
+"get's conflict resolution system."
 msgstr ""
 "<literal>install</literal> の後には、インストールするパッケージを 1 つ以上指"
 "定します。指定するパッケージは、完全なファイル名ではなくパッケージ名です (例"
-"えば Debian システムでは、<literal>libc6_1.9.6-2.deb</literal> では"
-"なく libc6 を引数として与えます)。インストールするよう指定したすべてのパッ"
-"ケージに対し、取得・インストールを行います。<filename>/etc/apt/sources.list</"
+"えば Debian システムでは、<literal>libc6_1.9.6-2.deb</literal> ではなく "
+"libc6 を引数として与えます)。インストールするよう指定したすべてのパッケージに"
+"対し、取得・インストールを行います。<filename>/etc/apt/sources.list</"
 "filename> ファイルを、要求するパッケージの場所を特定するのに使用します。パッ"
 "ケージ名の後ろに (空白を含まず) ハイフンが追加されている場合、そのパッケージ"
 "がインストールされていれば削除します。同様に、インストールするパッケージを明"
@@ -7267,8 +7284,8 @@ msgstr "Pin: release n=&testing-codename;\n"
 #: apt_preferences.5.xml:462
 msgid ""
 "names the release version.  For example, the packages in the tree might "
-"belong to Debian release version 3.0.  Note that there is normally "
-"no version number for the <literal>testing</literal> and <literal>unstable</"
+"belong to Debian release version 3.0.  Note that there is normally no "
+"version number for the <literal>testing</literal> and <literal>unstable</"
 "literal> distributions because they have not been released yet.  Specifying "
 "this in the APT preferences file would require one of the following lines."
 msgstr ""
@@ -7729,13 +7746,13 @@ msgstr "APT 用パッケージリソースリスト"
 msgid ""
 "The package resource list is used to locate archives of the package "
 "distribution system in use on the system. At this time, this manual page "
-"documents only the packaging system used by the Debian system.  "
-"This control file is <filename>/etc/apt/sources.list</filename>."
+"documents only the packaging system used by the Debian system.  This control "
+"file is <filename>/etc/apt/sources.list</filename>."
 msgstr ""
 "このパッケージリソースリストは、システムで使用するパッケージの保管場所を特定"
-"するのに使用されます。今回このマニュアルページには、Debian システム"
-"で使用するパッケージシステムについてのみ記述します。この制御ファイルは、"
-"<filename>/etc/apt/sources.list</filename> にあります。"
+"するのに使用されます。今回このマニュアルページには、Debian システムで使用する"
+"パッケージシステムについてのみ記述します。この制御ファイルは、<filename>/etc/"
+"apt/sources.list</filename> にあります。"
 
 # type: Content of: <refentry><refsect1><para>
 #. type: Content of: <refentry><refsect1><para>
@@ -8298,11 +8315,11 @@ msgstr ""
 #. type: <p></p>
 #: guide.sgml:24 offline.sgml:25
 msgid ""
-"For more details, on Debian systems, see the file /usr/share/"
-"common-licenses/GPL for the full license."
+"For more details, on Debian systems, see the file /usr/share/common-licenses/"
+"GPL for the full license."
 msgstr ""
-"For more details, on Debian systems, see the file /usr/share/"
-"common-licenses/GPL for the full license."
+"For more details, on Debian systems, see the file /usr/share/common-licenses/"
+"GPL for the full license."
 
 #. type: <heading></heading>
 #: guide.sgml:32
