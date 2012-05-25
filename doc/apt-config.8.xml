@@ -39,7 +39,7 @@
    <para><command>apt-config</command> is an internal program used by various
    portions of the APT suite to provide consistent configurability. It accesses
    the main configuration file <filename>/etc/apt/apt.conf</filename> in a
-   manner that is easy to use by scripted applications.</para>
+   manner that is easy to use for scripted applications.</para>
 
    <para>Unless the <option>-h</option>, or <option>--help</option> option is
    given, one of the commands below must be present.
@@ -48,11 +48,11 @@
    <variablelist>
      <varlistentry><term><option>shell</option></term>
      <listitem><para>
-     shell is used to access the configuration information from a shell 
-     script. It is given pairs of arguments, the first being a shell 
-     variable and the second the configuration value to query. As output 
-     it lists a series of shell assignments commands for each present value. 
-     In a shell script it should be used like:
+     shell is used to access the configuration information from a shell
+     script. It is given pairs of arguments, the first being a shell
+     variable and the second the configuration value to query. As output
+     it lists shell assignment commands for each value present.
+     In a shell script it should be used as follows:
      </para>
      
 <informalexample><programlisting>
@@ -93,11 +93,11 @@ eval $RES
 
      <varlistentry>
       <term><option>--format '<replaceable>&percnt;f &#x0022;&percnt;v&#x0022;;&percnt;n</replaceable>'</option></term>
-      <listitem><para>Defines the output of each config option. &percnt;t will be replaced with the name of the option,
-		      &percnt;f with the complete optionname and &percnt;v with the value of the option.
+      <listitem><para>Defines the output of each config option. &percnt;t will be replaced with its individual name,
+		      &percnt;f with its full hierarchical name and &percnt;v with its value.
 		      Use uppercase letters and special characters in the value will be encoded to ensure that
-		      it can e.g. be savely used in a quoted-string as defined by RFC822. Additionally
-		      &percnt;n will be replaced by a newline, &percnt;N by a tab. A &percnt; can be
+		      it can e.g. be safely used in a quoted-string as defined by RFC822. Additionally
+		      &percnt;n will be replaced by a newline, and &percnt;N by a tab. A &percnt; can be
 		      printed by using &percnt;&percnt;.</para></listitem>
      </varlistentry>
 
