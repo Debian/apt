@@ -1946,13 +1946,13 @@ msgstr ""
 msgid ""
 "The <literal>release</literal> command generates a Release file from a "
 "directory tree. It recursively searches the given directory for uncompressed "
-"<filename>Packages</filename> and <filename>Sources</filename> files and the "
+"<filename>Packages</filename> and <filename>Sources</filename> files and "
 "ones compressed with <command>gzip</command>, <command>bzip2</command> or "
 "<command>lzma</command> as well as <filename>Release</filename> and "
 "<filename>md5sum.txt</filename> files by default (<literal>APT::FTPArchive::"
 "Release::Default-Patterns</literal>). Additional filename patterns can be "
 "added by listing them in <literal>APT::FTPArchive::Release::Patterns</"
-"literal>.  It then writes to stdout a Release file containing a MD5, SHA1 "
+"literal>.  It then writes to stdout a <filename>Release</filename> file containing an MD5, SHA1 "
 "and SHA256 digest for each file."
 msgstr ""
 
@@ -2029,7 +2029,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: apt-ftparchive.1.xml:142
 msgid ""
-"The generate configuration has 4 separate sections, each described below."
+"The generate configuration has four separate sections, each described below."
 msgstr ""
 "La configuración de «generate» tiene cuatro secciones diferentes, que se "
 "describen a continuación."
@@ -2070,7 +2070,7 @@ msgstr "Define la ubicación de los ficheros alternativos."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:165
-msgid "Specifies the location of the cache files"
+msgid "Specifies the location of the cache files."
 msgstr "Define la ubicación de los ficheros de la caché."
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
@@ -2181,12 +2181,12 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:236 apt-ftparchive.1.xml:382
 msgid ""
-"Sets if long descriptions should be included in the Packages file or split "
-"out into a master Translation-en file."
+"Specifies whether long descriptions should be included in the <filename>Packages</filename> file or split "
+"out into a master <filename>Translation-en</filename> file."
 msgstr ""
 "Define si se deben incluir las descripciones largas en el fichero "
-"«Packages», o si se deben separar, guardándolo en el fichero «Translation-"
-"en»."
+"«<filename>Packages</filename>», o si se deben separar, guardándolo en el fichero «<filename>Translation-"
+"en</filename>»."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt-ftparchive.1.xml:242
@@ -2273,7 +2273,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:293
 msgid ""
-"Set the output Translation-en master file with the long descriptions if they "
+"Sets the output Translation-en master file with the long descriptions if they "
 "should be not included in the Packages file. Defaults to <filename>$(DIST)/"
 "$(SECTION)/i18n/Translation-en</filename>"
 msgstr ""
@@ -2298,7 +2298,7 @@ msgstr ""
 msgid ""
 "Sets the output Contents file. Defaults to <filename>$(DIST)/Contents-$(ARCH)"
 "</filename>. If this setting causes multiple Packages files to map onto a "
-"single Contents file (such as the default)  then <command>apt-ftparchive</"
+"single Contents file (as is the default)  then <command>apt-ftparchive</"
 "command> will integrate those package files together automatically."
 msgstr ""
 "Define el fichero «Contents» de salida. El valor predeterminado es <filename>"
@@ -2385,7 +2385,7 @@ msgstr ""
 #: apt-ftparchive.1.xml:354
 msgid ""
 "All of the settings defined in the <literal>TreeDefault</literal> section "
-"can be use in a <literal>Tree</literal> section as well as three new "
+"can be used in a <literal>Tree</literal> section as well as three new "
 "variables."
 msgstr ""
 "Todos los valores definidos en la sección <literal>TreeDefault</literal> se "
@@ -2421,7 +2421,7 @@ msgstr ""
 #: apt-ftparchive.1.xml:368
 msgid ""
 "This is a space separated list of sections which appear under the "
-"distribution, typically this is something like <literal>main contrib non-"
+"distribution; typically this is something like <literal>main contrib non-"
 "free</literal>"
 msgstr ""
 "Es una lista de secciones separadas por espacios que aparecen bajo la "
@@ -2503,7 +2503,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:431
-msgid "Sets the Contents file output. (optional)"
+msgid "Sets the Contents file output (optional)."
 msgstr "Define el fichero «Contents» de salida. (Opcional)"
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
@@ -2540,8 +2540,8 @@ msgstr "El fichero binario alternativo"
 #: apt-ftparchive.1.xml:474
 msgid ""
 "The binary override file is fully compatible with &dpkg-scanpackages;. It "
-"contains 4 fields separated by spaces. The first field is the package name, "
-"the second is the priority to force that package to, the third is the the "
+"contains four fields separated by spaces. The first field is the package name, "
+"the second is the priority to force that package to, the third is the "
 "section to force that package to and the final field is the maintainer "
 "permutation field."
 msgstr ""
@@ -2589,7 +2589,7 @@ msgstr "El fichero de fuentes alternativo"
 #: apt-ftparchive.1.xml:492
 msgid ""
 "The source override file is fully compatible with &dpkg-scansources;. It "
-"contains 2 fields separated by spaces. The first fields is the source "
+"contains two fields separated by spaces. The first field is the source "
 "package name, the second is the section to assign it."
 msgstr ""
 "El fichero de fuentes alternativo es totalmente compatible con &dpkg-"
@@ -2605,7 +2605,7 @@ msgstr "El fichero alternativo adicional"
 #: apt-ftparchive.1.xml:499
 msgid ""
 "The extra override file allows any arbitrary tag to be added or replaced in "
-"the output. It has 3 columns, the first is the package, the second is the "
+"the output. It has three columns, the first is the package, the second is the "
 "tag and the remainder of the line is the new value."
 msgstr ""
 "El fichero alternativo adicional permite añadir o reemplazar en la salida "

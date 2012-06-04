@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.25.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-02 18:01+0300\n"
+"POT-Creation-Date: 2012-06-02 23:41+0300\n"
 "PO-Revision-Date: 2010-09-07 07:38+0900\n"
 "Last-Translator: KURASAWA Nozomu <nabetaro@caldron.jp>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -1982,14 +1982,14 @@ msgstr ""
 msgid ""
 "The <literal>release</literal> command generates a Release file from a "
 "directory tree. It recursively searches the given directory for uncompressed "
-"<filename>Packages</filename> and <filename>Sources</filename> files and the "
+"<filename>Packages</filename> and <filename>Sources</filename> files and "
 "ones compressed with <command>gzip</command>, <command>bzip2</command> or "
 "<command>lzma</command> as well as <filename>Release</filename> and "
 "<filename>md5sum.txt</filename> files by default (<literal>APT::FTPArchive::"
 "Release::Default-Patterns</literal>). Additional filename patterns can be "
 "added by listing them in <literal>APT::FTPArchive::Release::Patterns</"
-"literal>.  It then writes to stdout a Release file containing a MD5, SHA1 "
-"and SHA256 digest for each file."
+"literal>.  It then writes to stdout a <filename>Release</filename> file "
+"containing an MD5, SHA1 and SHA256 digest for each file."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -2065,7 +2065,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: apt-ftparchive.1.xml:142
 msgid ""
-"The generate configuration has 4 separate sections, each described below."
+"The generate configuration has four separate sections, each described below."
 msgstr ""
 "generate 設定には 4 個の独立したセクションがあります。以下それぞれ説明しま"
 "す。"
@@ -2110,7 +2110,7 @@ msgstr "オーバーライドファイルの場所を指定します。"
 # type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:165
-msgid "Specifies the location of the cache files"
+msgid "Specifies the location of the cache files."
 msgstr "キャッシュファイルの場所を指定します。"
 
 # type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
@@ -2229,8 +2229,9 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:236 apt-ftparchive.1.xml:382
 msgid ""
-"Sets if long descriptions should be included in the Packages file or split "
-"out into a master Translation-en file."
+"Specifies whether long descriptions should be included in the "
+"<filename>Packages</filename> file or split out into a master "
+"<filename>Translation-en</filename> file."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
@@ -2323,9 +2324,9 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:293
 msgid ""
-"Set the output Translation-en master file with the long descriptions if they "
-"should be not included in the Packages file. Defaults to <filename>$(DIST)/"
-"$(SECTION)/i18n/Translation-en</filename>"
+"Sets the output Translation-en master file with the long descriptions if "
+"they should be not included in the Packages file. Defaults to <filename>"
+"$(DIST)/$(SECTION)/i18n/Translation-en</filename>"
 msgstr ""
 
 # type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
@@ -2345,7 +2346,7 @@ msgstr ""
 msgid ""
 "Sets the output Contents file. Defaults to <filename>$(DIST)/Contents-$(ARCH)"
 "</filename>. If this setting causes multiple Packages files to map onto a "
-"single Contents file (such as the default)  then <command>apt-ftparchive</"
+"single Contents file (as is the default)  then <command>apt-ftparchive</"
 "command> will integrate those package files together automatically."
 msgstr ""
 "Contents ファイルの出力先を設定します。デフォルトは、<filename>$(DIST)/"
@@ -2434,7 +2435,7 @@ msgstr ""
 #: apt-ftparchive.1.xml:354
 msgid ""
 "All of the settings defined in the <literal>TreeDefault</literal> section "
-"can be use in a <literal>Tree</literal> section as well as three new "
+"can be used in a <literal>Tree</literal> section as well as three new "
 "variables."
 msgstr ""
 "<literal>TreeDefault</literal> セクションで定義される設定はすべて、3 個の新し"
@@ -2472,7 +2473,7 @@ msgstr ""
 #: apt-ftparchive.1.xml:368
 msgid ""
 "This is a space separated list of sections which appear under the "
-"distribution, typically this is something like <literal>main contrib non-"
+"distribution; typically this is something like <literal>main contrib non-"
 "free</literal>"
 msgstr ""
 "distribution 以下に現れるセクションを、空白区切りで指定したリストです。通常、"
@@ -2564,7 +2565,7 @@ msgstr ""
 # type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:431
-msgid "Sets the Contents file output. (optional)"
+msgid "Sets the Contents file output (optional)."
 msgstr "Contents ファイルの出力先を設定します。(オプション)"
 
 # type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
@@ -2608,8 +2609,8 @@ msgstr "バイナリオーバーライドファイル"
 #: apt-ftparchive.1.xml:474
 msgid ""
 "The binary override file is fully compatible with &dpkg-scanpackages;. It "
-"contains 4 fields separated by spaces. The first field is the package name, "
-"the second is the priority to force that package to, the third is the the "
+"contains four fields separated by spaces. The first field is the package "
+"name, the second is the priority to force that package to, the third is the "
 "section to force that package to and the final field is the maintainer "
 "permutation field."
 msgstr ""
@@ -2660,7 +2661,7 @@ msgstr "ソースオーバーライドファイル"
 #: apt-ftparchive.1.xml:492
 msgid ""
 "The source override file is fully compatible with &dpkg-scansources;. It "
-"contains 2 fields separated by spaces. The first fields is the source "
+"contains two fields separated by spaces. The first field is the source "
 "package name, the second is the section to assign it."
 msgstr ""
 "ソースオーバーライドファイルは、&dpkg-scansources; と完全に互換性があります。"
@@ -2678,8 +2679,8 @@ msgstr "特別オーバーライドファイル"
 #: apt-ftparchive.1.xml:499
 msgid ""
 "The extra override file allows any arbitrary tag to be added or replaced in "
-"the output. It has 3 columns, the first is the package, the second is the "
-"tag and the remainder of the line is the new value."
+"the output. It has three columns, the first is the package, the second is "
+"the tag and the remainder of the line is the new value."
 msgstr ""
 "特別オーバーライドファイルは、出力中に任意のタグを追加・置換できるようにしま"
 "す。3 列からなり、先頭はパッケージ、2番目はタグ、残りは新しい値です。"
