@@ -8,6 +8,9 @@
 <!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent">
 %aptverbatiment;
 
+<!ENTITY good-perl "5.10">
+<!ENTITY bad-perl "5.14">
+
 ]>
 
 <refentry>
@@ -45,7 +48,7 @@ the &sources-list; file contains references to more than one distribution
 APT assigns a priority to each version that is available.
 Subject to dependency constraints, <command>apt-get</command> selects the
 version with the highest priority for installation.
-The APT preferences file overrides the priorities that APT assigns to
+The APT preferences override the priorities that APT assigns to
 package versions by default, thus giving the user control over which
 one is selected for installation.</para>
 
@@ -53,17 +56,17 @@ one is selected for installation.</para>
 the &sources-list; file contains references to more than one source.
 In this case <command>apt-get</command> downloads the instance listed
 earliest in the &sources-list; file.
-The APT preferences file does not affect the choice of instance, only
+The APT preferences do not affect the choice of instance, only
 the choice of version.</para>
 
 <para>Preferences are a strong power in the hands of a system administrator
 but they can become also their biggest nightmare if used without care!
-APT will not questioning the preferences so wrong settings will therefore
+APT will not question the preferences, so wrong settings can
 lead to uninstallable packages or wrong decisions while upgrading packages.
-Even more problems will arise if multiply distribution releases are mixed
+Even more problems will arise if multiple distribution releases are mixed
 without a good understanding of the following paragraphs.
-Packages included in a specific release aren't tested in and
-therefore doesn't always work as expected in older or newer releases or
+Packages included in a specific release aren't tested in (and
+therefore don't always work as expected in) older or newer releases, or
 together with other packages from different releases.
 You have been warned.</para>
 
@@ -72,8 +75,8 @@ directory are parsed in alphanumeric ascending order and need to obey the
 following naming convention: The files have either no or "<literal>pref</literal>"
 as filename extension and only contain alphanumeric, hyphen (-),
 underscore (_) and period (.) characters.
-Otherwise APT will print a notice that it has ignored a file if the file
-doesn't match a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
+Otherwise APT will print a notice that it has ignored a file, unless that
+file matches a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
 configuration list - in this case it will be silently ignored.</para>
 
 <refsect2><title>APT's Default Priority Assignments</title>
@@ -106,14 +109,14 @@ algorithm to set the priorities of the versions of a package.  Assign:
 <term>priority 1</term>
 <listitem><simpara>to the versions coming from archives which in their <filename>Release</filename>
 files are marked as "NotAutomatic: yes" but <emphasis>not</emphasis> as "ButAutomaticUpgrades: yes"
-like the debian <literal>experimental</literal> archive.</simpara></listitem>
+like the Debian <literal>experimental</literal> archive.</simpara></listitem>
 </varlistentry>
 
 <varlistentry>
 <term>priority 100</term>
 <listitem><simpara>to the version that is already installed (if any) and to the versions coming
 from archives which in their <filename>Release</filename> files are marked as "NotAutomatic: yes" and
-"ButAutomaticUpgrades: yes" like the debian backports archive since <literal>squeeze-backports</literal>.
+"ButAutomaticUpgrades: yes" like the Debian backports archive since <literal>squeeze-backports</literal>.
 </simpara></listitem>
 </varlistentry>
 
@@ -185,14 +188,14 @@ and a general form.
 <itemizedlist>
 <listitem>
 <simpara>The specific form assigns a priority (a "Pin-Priority") to one or more
-specified packages and specified version or version range.  For example,
+specified packages with a specified version or version range.  For example,
 the following record assigns a high priority to all versions of
-the <filename>perl</filename> package whose version number begins with "<literal>5.8</literal>".
+the <filename>perl</filename> package whose version number begins with "<literal>&good-perl;</literal>".
 Multiple packages can be separated by spaces.</simpara>
 
 <programlisting>
 Package: perl
-Pin: version 5.8*
+Pin: version &good-perl;*
 Pin-Priority: 1001
 </programlisting>
 </listitem>
@@ -246,11 +249,11 @@ Pin-Priority: 900
 
 <simpara>The following record assigns a high priority to all package versions
 belonging to any release whose Archive name is "<literal>stable</literal>"
-and whose release Version number is "<literal>3.0</literal>".</simpara>
+and whose release Version number is "<literal>&stable-version;</literal>".</simpara>
 
 <programlisting>
 Package: *
-Pin: release a=stable, v=3.0
+Pin: release a=stable, v=&stable-version;
 Pin-Priority: 500
 </programlisting>
 </listitem>
@@ -259,12 +262,12 @@ Pin-Priority: 500
 
 </refsect2>
 
-<refsect2><title>Regular expressions and glob() syntax</title>
+<refsect2><title>Regular expressions and &glob; syntax</title>
 <para>
-APT also supports pinning by glob() expressions and regular
-expressions surrounded by /. For example, the following
+APT also supports pinning by &glob; expressions, and regular
+expressions surrounded by slashes. For example, the following
 example assigns the priority 500 to all packages from
-experimental where the name starts with gnome (as a glob()-like
+experimental where the name starts with gnome (as a &glob;-like
 expression) or contains the word kde (as a POSIX extended regular
 expression surrounded by slashes).
 </para>
@@ -278,12 +281,12 @@ Pin-Priority: 500
 <para>
 The rule for those expressions is that they can occur anywhere
 where a string can occur. Thus, the following pin assigns the
-priority 990 to all packages from a release starting with karmic.
+priority 990 to all packages from a release starting with &ubuntu-codename;.
 </para>
 
 <programlisting>
 Package: *
-Pin: release n=karmic*
+Pin: release n=&ubuntu-codename;*
 Pin-Priority: 990
 </programlisting>
 
@@ -291,11 +294,11 @@ Pin-Priority: 990
 If a regular expression occurs in a <literal>Package</literal> field,
 the behavior is the same as if this regular expression were replaced
 with a list of all package names it matches. It is undecided whether
-this will change in the future, thus you should always list wild-card
+this will change in the future; thus you should always list wild-card
 pins first, so later specific pins override it.
 
 The pattern "<literal>*</literal>" in a Package field is not considered
-a glob() expression in itself.
+a &glob; expression in itself.
 </para>
 </refsect2>
 
@@ -357,7 +360,7 @@ records presented earlier:</para>
 
 <programlisting>
 Package: perl
-Pin: version 5.8*
+Pin: version &good-perl;*
 Pin-Priority: 1001
 
 Package: *
@@ -373,8 +376,8 @@ Pin-Priority: 50
 <itemizedlist>
 <listitem><simpara>The most recent available version of the <literal>perl</literal>
 package will be installed, so long as that version's version number begins
-with "<literal>5.8</literal>".  If <emphasis>any</emphasis> 5.8* version of <literal>perl</literal> is
-available and the installed version is 5.9*, then <literal>perl</literal> will be
+with "<literal>&good-perl;</literal>".  If <emphasis>any</emphasis> &good-perl;* version of <literal>perl</literal> is
+available and the installed version is &bad-perl;*, then <literal>perl</literal> will be
 downgraded.</simpara></listitem>
 <listitem><simpara>A version of any package other than <literal>perl</literal>
 that is available from the local system has priority over other versions,
@@ -461,16 +464,16 @@ Pin: release n=&testing-codename;
 <term>the <literal>Version:</literal> line</term>
 <listitem><simpara>names the release version.  For example, the
 packages in the tree might belong to Debian release
-version 3.0.  Note that there is normally no version number for the
+version &stable-version;.  Note that there is normally no version number for the
 <literal>testing</literal> and <literal>unstable</literal> distributions because they
 have not been released yet.  Specifying this in the APT preferences
 file would require one of the following lines.
 </simpara>
 
 <programlisting>
-Pin: release v=3.0
-Pin: release a=stable, v=3.0
-Pin: release 3.0
+Pin: release v=&stable-version;
+Pin: release a=stable, v=&stable-version;
+Pin: release &stable-version;
 </programlisting>
 
 </listitem>
