@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.5.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-06 14:56+0300\n"
+"POT-Creation-Date: 2012-06-06 23:46+0300\n"
 "PO-Revision-Date: 2012-06-02 11:31+0200\n"
 "Last-Translator: Robert Luberda <robert@debian.org>\n"
 "Language-Team: Polish <manpages-pl-list@lists.sourceforge.net>\n"
@@ -1666,7 +1666,7 @@ msgstr "Pliki"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:528 apt-cache.8.xml:350 apt-key.8.xml:195 apt-mark.8.xml:131
-#: apt-secure.8.xml:192 apt-cdrom.8.xml:144 apt-config.8.xml:109
+#: apt-secure.8.xml:191 apt-cdrom.8.xml:144 apt-config.8.xml:109
 #: apt.conf.5.xml:1124 apt_preferences.5.xml:705 sources.list.5.xml:252
 #: apt-extracttemplates.1.xml:70 apt-sortpkgs.1.xml:63
 #: apt-ftparchive.1.xml:607
@@ -2670,10 +2670,10 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml:60
 msgid ""
-"If a package comes from a archive without a signature or with a signature "
-"that apt does not have a key for that package is considered untrusted and "
+"If a package comes from a archive without a signature, or with a signature "
+"that apt does not have a key for, that package is considered untrusted, and "
 "installing it will result in a big warning. <command>apt-get</command> will "
-"currently only warn for unsigned archives, future releases might force all "
+"currently only warn for unsigned archives; future releases might force all "
 "sources to be verified before downloading packages from them."
 msgstr ""
 "Jeśli pakiet pochodzi z archiwum niemającego sygnatury lub mającego "
@@ -2700,12 +2700,12 @@ msgstr "Zaufane archiwa"
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml:77
 msgid ""
-"The chain of trust from an apt archive to the end user is made up of "
-"different steps. <command>apt-secure</command> is the last step in this "
-"chain, trusting an archive does not mean that the packages that you trust it "
-"do not contain malicious code but means that you trust the archive "
-"maintainer. It's the archive maintainer responsibility to ensure that the "
-"archive integrity is correct."
+"The chain of trust from an apt archive to the end user is made up of several "
+"steps. <command>apt-secure</command> is the last step in this chain; "
+"trusting an archive does not mean that you trust its packages not to contain "
+"malicious code, but means that you trust the archive maintainer. It's the "
+"archive maintainer's responsibility to ensure that the archive's integrity "
+"is preserved."
 msgstr ""
 "Łańcuch zaufania prowadzący z archiwum APT do użytkownika końcowego składa "
 "się z kilku różnych kroków. <command>apt-secure</command> jest ostatnim z "
@@ -2730,11 +2730,11 @@ msgstr ""
 #: apt-secure.8.xml:92
 msgid ""
 "The chain of trust in Debian starts when a maintainer uploads a new package "
-"or a new version of a package to the Debian archive. This upload in order to "
-"become effective needs to be signed by a key of a maintainer within the "
-"Debian maintainer's keyring (available in the debian-keyring package). "
-"Maintainer's keys are signed by other maintainers following pre-established "
-"procedures to ensure the identity of the key holder."
+"or a new version of a package to the Debian archive. In order to become "
+"effective, this upload needs to be signed by a key contained in the Debian "
+"Maintainers keyring (available in the debian-keyring package). Maintainers' "
+"keys are signed by other maintainers following pre-established procedures to "
+"ensure the identity of the key holder."
 msgstr ""
 "Łańcuch zaufania w Debianie zaczyna się od wgrania nowego pakietu lub nowej "
 "wersji pakietu przez jego opiekuna do archiwum Debiana. Dostarczony przez "
@@ -2745,13 +2745,24 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml:102
+#, fuzzy
+#| msgid ""
+#| "Once the uploaded package is verified and included in the archive, the "
+#| "maintainer signature is stripped off, and an MD5 sum of the package is "
+#| "computed and put in the Packages file. The MD5 sums of all of the "
+#| "Packages files are then computed and put into the Release file. The "
+#| "Release file is then signed by the archive key (which is created once a "
+#| "year) and distributed through the FTP server. This key is also on the "
+#| "Debian keyring."
 msgid ""
 "Once the uploaded package is verified and included in the archive, the "
-"maintainer signature is stripped off, an MD5 sum of the package is computed "
-"and put in the Packages file. The MD5 sum of all of the packages files are "
-"then computed and put into the Release file. The Release file is then signed "
-"by the archive key (which is created once a year) and distributed through "
-"the FTP server. This key is also on the Debian keyring."
+"maintainer signature is stripped off, and checksums of the package are "
+"computed and put in the Packages file. The checksums of all of the Packages "
+"files are then computed and put into the Release file. The Release file is "
+"then signed by the archive key for this Debian release and distributed "
+"alongside the packages and the Packages files on Debian mirrors. The keys "
+"are in the Debian archive keyring available in the <package>debian-archive-"
+"keyring</package> package."
 msgstr ""
 "Po tym jak dostarczony przez opiekuna pakiet zostanie zweryfikowany i "
 "dołączony do archiwum, sygnatura opiekuna jest usuwana, a suma MD5 pakietu "
@@ -2762,13 +2773,18 @@ msgstr ""
 "archiwum znajduje się także w składnicy kluczy Debiana."
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:112
+#: apt-secure.8.xml:113
+#, fuzzy
+#| msgid ""
+#| "Any end user can check the signature of the Release file, extract the MD5 "
+#| "sum of a package from it and compare it with the MD5 sum of the package "
+#| "he downloaded. Prior to version 0.6 only the MD5 sum of the downloaded "
+#| "Debian package was checked. Now both the MD5 sum and the signature of the "
+#| "Release file are checked."
 msgid ""
-"Any end user can check the signature of the Release file, extract the MD5 "
-"sum of a package from it and compare it with the MD5 sum of the package he "
-"downloaded. Prior to version 0.6 only the MD5 sum of the downloaded Debian "
-"package was checked. Now both the MD5 sum and the signature of the Release "
-"file are checked."
+"End users can check the signature of the Release file, extract a checksum of "
+"a package from it and compare it with the checksum of the package they "
+"downloaded by hand - or rely on APT doing this automatically."
 msgstr ""
 "Użytkownik końcowy może sprawdzić sygnaturę pliku Release, wydobyć z niego "
 "sumę kontrolną MD5 pakietu i porównać ją z sumą kontrolną MD5 pobranego "
@@ -2777,7 +2793,7 @@ msgstr ""
 "Release."
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:119
+#: apt-secure.8.xml:118
 msgid ""
 "Notice that this is distinct from checking signatures on a per package "
 "basis. It is designed to prevent two possible attacks:"
@@ -2787,13 +2803,13 @@ msgstr ""
 "dwoma możliwymi typami ataków:"
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
-#: apt-secure.8.xml:124
+#: apt-secure.8.xml:123
 msgid ""
 "<literal>Network \"man in the middle\" attacks</literal>. Without signature "
-"checking, a malicious agent can introduce himself in the package download "
-"process and provide malicious software either by controlling a network "
-"element (router, switch, etc.) or by redirecting traffic to a rogue server "
-"(through arp or DNS spoofing attacks)."
+"checking, malicious agents can introduce themselves into the package "
+"download process and provide malicious software either by controlling a "
+"network element (router, switch, etc.) or by redirecting traffic to a rogue "
+"server (through ARP or DNS spoofing attacks)."
 msgstr ""
 "<literal>Ataki sieciowe \"człowiek pośrodku\" (ang. \"man in the middle\")</"
 "literal>. Jeżeli sygnatury nie są sprawdzane, to ktoś złośliwy może "
@@ -2804,7 +2820,7 @@ msgstr ""
 "\"ARP (DNS) spoofing\")."
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
-#: apt-secure.8.xml:132
+#: apt-secure.8.xml:131
 msgid ""
 "<literal>Mirror network compromise</literal>.  Without signature checking, a "
 "malicious agent can compromise a mirror host and modify the files in it to "
@@ -2818,7 +2834,7 @@ msgstr ""
 "pobierającym pakiety z tego serwera."
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:139
+#: apt-secure.8.xml:138
 msgid ""
 "However, it does not defend against a compromise of the Debian master server "
 "itself (which signs the packages) or against a compromise of the key used to "
@@ -2831,16 +2847,16 @@ msgstr ""
 "dla sprawdzania sygnatur poszczególnych pakietów."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-secure.8.xml:145
+#: apt-secure.8.xml:144
 msgid "User configuration"
 msgstr "Konfiguracja użytkownika"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:147
+#: apt-secure.8.xml:146
 msgid ""
 "<command>apt-key</command> is the program that manages the list of keys used "
-"by apt. It can be used to add or remove keys although an installation of "
-"this release will automatically provide the default Debian archive signing "
+"by apt. It can be used to add or remove keys, although an installation of "
+"this release will automatically contain the default Debian archive signing "
 "keys used in the Debian package repositories."
 msgstr ""
 "<command>apt-key</command> jest programem służącym do zarządzania listą "
@@ -2850,7 +2866,7 @@ msgstr ""
 "Debiana."
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:154
+#: apt-secure.8.xml:153
 msgid ""
 "In order to add a new key you need to first download it (you should make "
 "sure you are using a trusted communication channel when retrieving it), add "
@@ -2866,19 +2882,19 @@ msgstr ""
 "<filename>Release.gpg</filename> ze skonfigurowanych archiwów."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-secure.8.xml:163
+#: apt-secure.8.xml:162
 msgid "Archive configuration"
 msgstr "Konfiguracja archiwum"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:165
+#: apt-secure.8.xml:164
 msgid ""
 "If you want to provide archive signatures in an archive under your "
 "maintenance you have to:"
 msgstr "Aby dołączyć sygnatury do archiwum, którym się opiekujesz, należy:"
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
-#: apt-secure.8.xml:170
+#: apt-secure.8.xml:169
 msgid ""
 "<emphasis>Create a toplevel Release file</emphasis>, if it does not exist "
 "already. You can do this by running <command>apt-ftparchive release</"
@@ -2889,7 +2905,7 @@ msgstr ""
 "release</command> (dostarczanego w pakiecie apt-utils)."
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
-#: apt-secure.8.xml:175
+#: apt-secure.8.xml:174
 msgid ""
 "<emphasis>Sign it</emphasis>. You can do this by running <command>gpg --"
 "clearsign -o InRelease Release</command> and <command>gpg -abs -o Release."
@@ -2900,7 +2916,7 @@ msgstr ""
 "o Release.gpg Release</command>."
 
 #. type: Content of: <refentry><refsect1><itemizedlist><listitem><para>
-#: apt-secure.8.xml:179
+#: apt-secure.8.xml:178
 msgid ""
 "<emphasis>Publish the key fingerprint</emphasis>, that way your users will "
 "know what key they need to import in order to authenticate the files in the "
@@ -2911,17 +2927,17 @@ msgstr ""
 "autoryzować plików w archiwum."
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:186
+#: apt-secure.8.xml:185
 msgid ""
-"Whenever the contents of the archive changes (new packages are added or "
-"removed) the archive maintainer has to follow the first two steps previously "
-"outlined."
+"Whenever the contents of the archive change (new packages are added or "
+"removed) the archive maintainer has to follow the first two steps outlined "
+"above."
 msgstr ""
 "Po każdej zmianie zawartości archiwum (dodaniu lub usunięciu pakietów), "
 "opiekun archiwum musi wykonać pierwsze dwa z wymienionych powyżej kroków."
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:194
+#: apt-secure.8.xml:193
 msgid ""
 "&apt-conf;, &apt-get;, &sources-list;, &apt-key;, &apt-ftparchive;, "
 "&debsign; &debsig-verify;, &gpg;"
@@ -2930,7 +2946,7 @@ msgstr ""
 "&debsign; &debsig-verify;, &gpg;"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:198
+#: apt-secure.8.xml:197
 msgid ""
 "For more background information you might want to review the <ulink url="
 "\"http://www.debian.org/doc/manuals/securing-debian-howto/ch7\">Debian "
@@ -2946,12 +2962,12 @@ msgstr ""
 "Distribution HOWTO</ulink>\" napisanym przez V. Alexa Brennena."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-secure.8.xml:211
+#: apt-secure.8.xml:210
 msgid "Manpage Authors"
 msgstr "Autorzy strony podręcznika"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-secure.8.xml:213
+#: apt-secure.8.xml:212
 msgid ""
 "This man-page is based on the work of Javier Fernández-Sanguino Peña, Isaac "
 "Jones, Colin Walters, Florian Weimer and Michael Vogt."
@@ -5014,37 +5030,31 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
 #: apt_preferences.5.xml:187
-#, fuzzy
-#| msgid ""
-#| "The specific form assigns a priority (a \"Pin-Priority\") to one or more "
-#| "specified packages and specified version or version range.  For example, "
-#| "the following record assigns a high priority to all versions of the "
-#| "<filename>perl</filename> package whose version number begins with "
-#| "\"<literal>5.8</literal>\".  Multiple packages can be separated by spaces."
 msgid ""
 "The specific form assigns a priority (a \"Pin-Priority\") to one or more "
 "specified packages with a specified version or version range.  For example, "
 "the following record assigns a high priority to all versions of the "
 "<filename>perl</filename> package whose version number begins with "
-"\"<literal>5.8</literal>\".  Multiple packages can be separated by spaces."
+"\"<literal>&good-perl;</literal>\".  Multiple packages can be separated by "
+"spaces."
 msgstr ""
 "Postać szczegółowa przypisuje priorytet (\"Pin-Priority\") do jednego lub "
 "większej liczby podanych pakietów i podanych wersji lub zakresów wersji. Na "
 "przykład następujący rekord ustawia wysoki priorytet wszystkim wersjom "
 "pakietu <filename>perl</filename>, których numer wersji zaczyna się od "
-"\"<literal>5.8</literal>\". Można podać wiele nazw pakietów, rozdzielając je "
-"od siebie spacjami."
+"\"<literal>&good-bad;</literal>\". Można podać wiele nazw pakietów, "
+"rozdzielając je od siebie spacjami."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><programlisting>
 #: apt_preferences.5.xml:194
 #, no-wrap
 msgid ""
 "Package: perl\n"
-"Pin: version 5.8*\n"
+"Pin: version &good-perl;*\n"
 "Pin-Priority: 1001\n"
 msgstr ""
 "Package: perl\n"
-"Pin: version 5.8*\n"
+"Pin: version &good-perl;*\n"
 "Pin-Priority: 1001\n"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
@@ -5204,10 +5214,10 @@ msgstr "Składnia wyrażeń regularnych i &glob;"
 #: apt_preferences.5.xml:264
 msgid ""
 "APT also supports pinning by &glob; expressions, and regular expressions "
-"surrounded by slashes. For example, the following example assigns the priority 500 "
-"to all packages from experimental where the name starts with gnome (as a &glob;"
-"-like expression) or contains the word kde (as a POSIX extended regular "
-"expression surrounded by slashes)."
+"surrounded by slashes. For example, the following example assigns the "
+"priority 500 to all packages from experimental where the name starts with "
+"gnome (as a &glob;-like expression) or contains the word kde (as a POSIX "
+"extended regular expression surrounded by slashes)."
 msgstr ""
 "APT także wspiera dopasowywanie przy użyciu wzorców &glob; i wyrażeń "
 "regularnych otoczonych znakami /. Następujący przykład ustawia priorytet 500 "
@@ -5394,7 +5404,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "Package: perl\n"
-"Pin: version 5.8*\n"
+"Pin: version &good-perl;*\n"
 "Pin-Priority: 1001\n"
 "\n"
 "Package: *\n"
@@ -5406,7 +5416,7 @@ msgid ""
 "Pin-Priority: 50\n"
 msgstr ""
 "Package: perl\n"
-"Pin: version 5.8*\n"
+"Pin: version &good-perl;*\n"
 "Pin-Priority: 1001\n"
 "\n"
 "Package: *\n"
@@ -5427,15 +5437,16 @@ msgstr "Wtedy:"
 msgid ""
 "The most recent available version of the <literal>perl</literal> package "
 "will be installed, so long as that version's version number begins with "
-"\"<literal>5.8</literal>\".  If <emphasis>any</emphasis> 5.8* version of "
-"<literal>perl</literal> is available and the installed version is 5.9*, then "
-"<literal>perl</literal> will be downgraded."
+"\"<literal>&good-perl;</literal>\".  If <emphasis>any</emphasis> &good-perl;"
+"* version of <literal>perl</literal> is available and the installed version "
+"is &bad-perl;*, then <literal>perl</literal> will be downgraded."
 msgstr ""
 "Zostanie zainstalowana najnowsza dostępna wersja pakietu <literal>perl</"
-"literal>, jeśli tylko numer tej wersji zaczyna się od \"<literal>5.8</"
-"literal>\". Jeśli <emphasis>jakakolwiek</emphasis> wersja 5.8* jest "
-"dostępna, ale  zainstalowana jest już wersja 5.9.*, to pakiet <literal>perl</"
-"literal> zostanie zastąpiony tą dostępną wcześniejszą wersją 5.8*."
+"literal>, jeśli tylko numer tej wersji zaczyna się od \"<literal>&good-perl;"
+"</literal>\". Jeśli <emphasis>jakakolwiek</emphasis> wersja &good-perl;* "
+"jest dostępna, ale  zainstalowana jest już wersja &bad-perl;*, to pakiet "
+"<literal>perl</literal> zostanie zastąpiony tą dostępną wcześniejszą wersją "
+"&good-perl;*."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><itemizedlist><listitem><simpara>
 #: apt_preferences.5.xml:379
