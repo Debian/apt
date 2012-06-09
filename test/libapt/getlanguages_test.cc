@@ -144,7 +144,8 @@ int main(int argc,char *argv[])
 
 	_config->Set("Acquire::Languages", "none");
 	vec = APT::Configuration::getLanguages(true, false, env);
-	equals(vec.size(), 0);
+	equals(vec.size(), 1);
+	equals(vec[0], "none");
 	_config->Set("Acquire::Languages", "");
 
 	_config->Set("Dir::State::lists", "/non-existing-dir");
@@ -168,7 +169,8 @@ int main(int argc,char *argv[])
 	_config->Set("Acquire::Languages", "none");
 	env[0] = "de_DE.UTF-8";
 	vec = APT::Configuration::getLanguages(true, false, env);
-	equals(vec.size(), 0);
+	equals(vec.size(), 1);
+	equals(vec[0], "none");
 
 	_config->Set("Acquire::Languages", "");
 	//FIXME: Remove support for this deprecated setting

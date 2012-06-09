@@ -32,6 +32,9 @@ apt (0.9.5.2) UNRELEASED; urgency=low
     - set pkgCacheGen::Essential to "all" again (Closes: #675449)
   * apt-pkg/algorithms.cc:
     - force install only for one essential package out of a group
+  * apt-pkg/aptconfiguration.cc:
+    - if APT::Languages=none save "none" in allCodes so that the detected
+      configuration is cached as intended (Closes: #674690, LP: #1004947)
 
   [ Justin B Rye ]
   * doc/apt-cdrom.8.xml:
