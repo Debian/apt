@@ -106,7 +106,8 @@ bool CommandLine::Parse(int argc,const char **argv)
 	 Opt++;
 	 
 	 for (A = ArgList; A->end() == false &&
-	      stringcasecmp(Opt,OptEnd,A->LongOpt) != 0; A++);
+	      (A->LongOpt == 0 || stringcasecmp(Opt,OptEnd,A->LongOpt) != 0);
+	      ++A);
 
 	 // Failed again..
 	 if (A->end() == true && OptEnd - Opt != 1)
