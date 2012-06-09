@@ -1,6 +1,10 @@
 apt (0.9.5.2) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
+  * apt-pkg/cdrom.cc:
+    - fix regression from 0.9.3 which dumped the main configuration
+      _config instead of the cdrom settings (Cnf) as identified and
+      tested by Milan Kupcevic, thanks! (Closes: #674100)
   * cmdline/apt-get.cc:
     - do not show 'list of broken packages' header if no package
       is broken as it happens e.g. for external resolver errors
