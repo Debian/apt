@@ -3244,9 +3244,13 @@ bool DoChangelog(CommandLine &CmdL)
    pkgAcquire Fetcher;
 
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
+   {
+      bool Success = true;
       for (APT::VersionList::const_iterator Ver = verset.begin();
 	   Ver != verset.end(); ++Ver)
-	 return DownloadChangelog(Cache, Fetcher, Ver, "");
+	 Success &= DownloadChangelog(Cache, Fetcher, Ver, "");
+      return Success;
+   }
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
