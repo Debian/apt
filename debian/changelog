@@ -26,6 +26,10 @@ apt (0.9.5.2) UNRELEASED; urgency=low
   * ftparchive/apt-ftparchive.cc:
     - default to putting the Contents-* files below $(SECTION) as apt-file
       expects them there - thanks Martin-Éric Racine! (Closes: #675827)
+  * apt-pkg/deb/deblistparser.cc:
+    - set pkgCacheGen::Essential to "all" again (Closes: #675449)
+  * apt-pkg/algorithms.cc:
+    - force install only for one essential package out of a group
 
   [ Justin B Rye ]
   * doc/apt-cdrom.8.xml:

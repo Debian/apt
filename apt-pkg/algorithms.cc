@@ -362,11 +362,36 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
       if (I->CurrentVer != 0)
 	 Cache.MarkInstall(I, true, 0, false);
 
-   /* Now, auto upgrade all essential packages - this ensures that
-      the essential packages are present and working */
-   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-	 Cache.MarkInstall(I, true, 0, false);
+   /* Now, install each essential package which is not installed
+      (and not provided by another package in the same name group) */
+   std::string essential = _config->Find("pkgCacheGen::Essential", "all");
+   if (essential == "all")
+   {
+      for (pkgCache::GrpIterator G = Cache.GrpBegin(); G.end() == false; ++G)
+      {
+	 bool isEssential = false;
+	 bool instEssential = false;
+	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() == false; P = G.NextPkg(P))
+	 {
+	    if ((P->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential)
+	       continue;
+	    isEssential = true;
+	    if (Cache[P].Install() == true)
+	    {
+	       instEssential = true;
+	       break;
+	    }
+	 }
+	 if (isEssential == false || instEssential == true)
+	    continue;
+	 pkgCache::PkgIterator P = G.FindPreferredPkg();
+	 Cache.MarkInstall(P, true, 0, false);
+      }
+   }
+   else if (essential != "none")
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+	 if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+	    Cache.MarkInstall(I, true, 0, false);
    
    /* We do it again over all previously installed packages to force 
       conflict resolution on them all. */
