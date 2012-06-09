@@ -19,6 +19,9 @@ apt (0.9.5.2) UNRELEASED; urgency=low
       as we do in the manpage and as the debian-installer does
   * doc/apt-get.8.xml:
     - use apt-utils as package example instead of libc6
+  * apt-pkg/contrib/cmdline.cc:
+    - apply patch from Daniel Hartwig to fix a segfault in case
+      the LongOpt is empty (Closes: #676331)
 
   [ Justin B Rye ]
   * doc/apt-cdrom.8.xml:
