@@ -285,6 +285,7 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	bool IsNegative() const;
 	bool IsIgnorable(PrvIterator const &Prv) const;
 	bool IsIgnorable(PkgIterator const &Pkg) const;
+	bool IsMultiArchImplicit() const;
 	void GlobOr(DepIterator &Start,DepIterator &End);
 	Version **AllTargets() const;
 	bool SmartTargetPkg(PkgIterator &Result) const;
@@ -329,8 +330,9 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	inline VerIterator OwnerVer() const {return VerIterator(*Owner,Owner->VerP + S->Version);};
 	inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->Version].ParentPkg);};
 
-	inline PrvIterator() : Iterator<Provides, PrvIterator>(), Type(PrvVer) {};
+	bool IsMultiArchImplicit() const;
 
+	inline PrvIterator() : Iterator<Provides, PrvIterator>(), Type(PrvVer) {};
 	inline PrvIterator(pkgCache &Owner, Provides *Trg, Version*) :
 		Iterator<Provides, PrvIterator>(Owner, Trg), Type(PrvVer) {
 		if (S == 0)
