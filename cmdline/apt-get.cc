@@ -2499,7 +2499,7 @@ bool DoSource(CommandLine &CmdL)
 		  Src.c_str(), vcs.c_str(), uri.c_str());
 	 if(vcs == "Bzr") 
 	    ioprintf(c1out,_("Please use:\n"
-			     "bzr get %s\n"
+			     "bzr branch %s\n"
 			     "to retrieve the latest (possibly unreleased) "
 			     "updates to the package.\n"),
 		     uri.c_str());
