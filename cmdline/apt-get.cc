@@ -2919,9 +2919,9 @@ bool DoBuildDep(CommandLine &CmdL)
 		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
 		  {
 		     if (colon == string::npos)
-		     {
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
-		     }
+		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
+			forbidden = "Multi-Arch: none";
 		  }
 		  else if (Ver->MultiArch == pkgCache::Version::Same)
 		  {
@@ -2956,13 +2956,13 @@ bool DoBuildDep(CommandLine &CmdL)
 		  if (forbidden.empty() == false)
 		  {
 		     if (_config->FindB("Debug::BuildDeps",false) == true)
-			cout << " :any is not allowed from M-A: same package " << (*D).Package << endl;
+			cout << D->Package.substr(colon, string::npos) << " is not allowed from " << forbidden << " package " << (*D).Package << endl;
 		     if (hasAlternatives)
 			continue;
 		     return _error->Error(_("%s dependency for %s can't be satisfied "
 					    "because %s is not allowed on '%s' packages"),
 					  Last->BuildDepType(D->Type), Src.c_str(),
-					  D->Package.c_str(), "Multi-Arch: same");
+					  D->Package.c_str(), forbidden.c_str());
 		  }
 	       }
 	       else if (_config->FindB("Debug::BuildDeps",false) == true)
