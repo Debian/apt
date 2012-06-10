@@ -2889,33 +2889,42 @@ bool DoBuildDep(CommandLine &CmdL)
 	       else
 		  Pkg = Cache->FindPkg(D->Package);
 
-	       // We need to decide if host or build arch, so find a version we can look at
-	       pkgCache::VerIterator Ver;
-
 	       // a bad version either is invalid or doesn't satify dependency
-	       #define BADVER(Ver) Ver.end() == true || \
-				   (Ver.end() == false && D->Version.empty() == false && \
-				    Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false)
+	       #define BADVER(Ver) (Ver.end() == true || \
+				    (D->Version.empty() == false && \
+				     Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false))
 
+	       APT::VersionList verlist;
 	       if (Pkg.end() == false)
 	       {
-		  Ver = (*Cache)[Pkg].InstVerIter(*Cache);
-		  if (BADVER(Ver))
-		     Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+		  pkgCache::VerIterator Ver = (*Cache)[Pkg].InstVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
+		  Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
 	       }
-	       if (BADVER(Ver))
+	       if (verlist.empty() == true)
 	       {
 		  pkgCache::PkgIterator HostPkg = Cache->FindPkg(D->Package, hostArch);
 		  if (HostPkg.end() == false)
 		  {
-		     Ver = (*Cache)[HostPkg].InstVerIter(*Cache);
-		     if (BADVER(Ver))
-		        Ver = (*Cache)[HostPkg].CandidateVerIter(*Cache);
+		     pkgCache::VerIterator Ver = (*Cache)[HostPkg].InstVerIter(*Cache);
+		     if (BADVER(Ver) == false)
+			verlist.insert(Ver);
+		     Ver = (*Cache)[HostPkg].CandidateVerIter(*Cache);
+		     if (BADVER(Ver) == false)
+			verlist.insert(Ver);
 		  }
 	       }
-	       if ((BADVER(Ver)) == false)
+	       #undef BADVER
+
+	       string forbidden;
+	       // We need to decide if host or build arch, so find a version we can look at
+	       APT::VersionList::const_iterator Ver = verlist.begin();
+	       for (; Ver != verlist.end(); ++Ver)
 	       {
-		  string forbidden;
+		  forbidden.clear();
 		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
 		  {
 		     if (colon == string::npos)
@@ -2953,10 +2962,24 @@ bool DoBuildDep(CommandLine &CmdL)
 		     }
 		     // native gets buildArch
 		  }
+
 		  if (forbidden.empty() == false)
 		  {
 		     if (_config->FindB("Debug::BuildDeps",false) == true)
-			cout << D->Package.substr(colon, string::npos) << " is not allowed from " << forbidden << " package " << (*D).Package << endl;
+			cout << D->Package.substr(colon, string::npos) << " is not allowed from " << forbidden << " package " << (*D).Package << " (" << Ver.VerStr() << ")" << endl;
+		     continue;
+		  }
+
+		  //we found a good version
+		  break;
+	       }
+	       if (Ver == verlist.end())
+	       {
+		  if (_config->FindB("Debug::BuildDeps",false) == true)
+		     cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << endl;
+
+		  if (forbidden.empty() == false)
+		  {
 		     if (hasAlternatives)
 			continue;
 		     return _error->Error(_("%s dependency for %s can't be satisfied "
@@ -2965,9 +2988,6 @@ bool DoBuildDep(CommandLine &CmdL)
 					  D->Package.c_str(), forbidden.c_str());
 		  }
 	       }
-	       else if (_config->FindB("Debug::BuildDeps",false) == true)
-		  cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << endl;
-	       #undef BADVER
 	    }
 	    else
 	       Pkg = Cache->FindPkg(D->Package);
