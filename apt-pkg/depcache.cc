@@ -871,7 +871,6 @@ bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
    if (FromUser == false && Pkg->CurrentVer == 0)
    {
       StateCache &P = PkgState[Pkg->ID];
-      // Status == 2 means this applies for new installs only
       if (P.InstallVer != 0 && P.Status == 2 && (P.Flags & Flag::Auto) != Flag::Auto)
       {
 	 if (DebugMarker == true)

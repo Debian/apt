@@ -166,6 +166,12 @@
   </citerefentry>"
 >
 
+<!ENTITY glob "<citerefentry>
+     <refentrytitle><abbrev>glob</abbrev></refentrytitle>
+     <manvolnum>7</manvolnum>
+  </citerefentry>"
+>
+
 <!-- Boiler plate docinfo section -->
 <!ENTITY apt-email "
    <address>
@@ -202,14 +208,25 @@
 ">
 
 <!ENTITY apt-product "
-   <productname>Linux</productname>
+   <productname>APT</productname>
+   <releaseinfo role='version'>&apt-product-version;</releaseinfo>
 ">
+
+<!-- this will be updated by 'prepare-release' -->
+<!ENTITY apt-product-version "0.9.6">
 
 <!-- Codenames for debian releases -->
 <!ENTITY oldstable-codename "lenny">
 <!ENTITY stable-codename "squeeze">
 <!ENTITY testing-codename "wheezy">
+<!ENTITY stable-version "6.0">
+<!ENTITY ubuntu-codename "precise">
 
+<!-- good and bad just refers to matching and not matching a pattern…
+     It is not a remark about the specific perl version.
+     There is no way perl could be clasified "good" (or "bad") in any version… -->
+<!ENTITY good-perl "5.10">
+<!ENTITY bad-perl "5.14">
 
 <!-- Arguments -->
 <!ENTITY synopsis-arg-option "<arg><option>-o=<replaceable>&synopsis-config-string;</replaceable></option></arg>">

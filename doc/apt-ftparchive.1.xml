@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2009-08-17T00:00:00Z</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -93,12 +93,12 @@
      <listitem><para>
      The <literal>release</literal> command generates a Release file from a
      directory tree. It recursively searches the given directory for uncompressed
-     <filename>Packages</filename> and <filename>Sources</filename> files and the ones
+     <filename>Packages</filename> and <filename>Sources</filename> files and ones
      compressed with <command>gzip</command>, <command>bzip2</command> or <command>lzma</command>
      as well as <filename>Release</filename> and <filename>md5sum.txt</filename> files by default
      (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). Additional filename patterns
      can be added by listing them in <literal>APT::FTPArchive::Release::Patterns</literal>.
-     It then writes to stdout a Release file containing a MD5, SHA1 and SHA256 digest
+     It then writes to stdout a <filename>Release</filename> file containing an MD5, SHA1 and SHA256 digest
      for each file.</para>
      <para>
      Values for the additional metadata fields in the Release file are
@@ -139,7 +139,7 @@
    tree manner. This only effects how the scope tag is handled.</para>
 
    <para>
-   The generate configuration has 4 separate sections, each described below.</para>
+   The generate configuration has four separate sections, each described below.</para>
 
      <refsect2><title><literal>Dir</literal> Section</title>
      <para>
@@ -162,7 +162,7 @@
       
       <varlistentry><term><option>CacheDir</option></term>
       <listitem><para>
-      Specifies the location of the cache files</para></listitem>
+      Specifies the location of the cache files.</para></listitem>
       </varlistentry>
       
       <varlistentry><term><option>FileListDir</option></term>
@@ -182,7 +182,7 @@
       <varlistentry><term><option>Packages::Compress</option></term>
       <listitem><para>
       Sets the default compression schemes to use 
-      for the Package index files. It is a string that contains a space 
+      for the package index files. It is a string that contains a space 
       separated list of at least one of: '.' (no compression), 'gzip' and 
       'bzip2'. The default for all compression schemes is '. gzip'.</para></listitem>
       </varlistentry>
@@ -233,8 +233,8 @@
 
       <varlistentry><term><option>LongDescription</option></term>
       <listitem><para>
-      Sets if long descriptions should be included in the Packages file or split
-      out into a master Translation-en file.</para></listitem>
+      Specifies whether long descriptions should be included in the <filename>Packages</filename> file or split
+      out into a master <filename>Translation-en</filename> file.</para></listitem>
       </varlistentry>
      </variablelist>
    </refsect2>
@@ -290,7 +290,7 @@
 
       <varlistentry><term><option>Translation</option></term>
       <listitem><para>
-      Set the output Translation-en master file with the long descriptions if they
+      Sets the output Translation-en master file with the long descriptions if they
       should be not included in the Packages file. Defaults to
       <filename>$(DIST)/$(SECTION)/i18n/Translation-en</filename></para></listitem>
       </varlistentry>
@@ -305,8 +305,8 @@
       <varlistentry><term><option>Contents</option></term>
       <listitem><para>
       Sets the output Contents file. Defaults to
-      <filename>$(DIST)/Contents-$(ARCH)</filename>. If this setting causes multiple 
-      Packages files to map onto a single Contents file (such as the default) 
+      <filename>$(DIST)/$(SECTION)/Contents-$(ARCH)</filename>. If this setting causes multiple 
+      Packages files to map onto a single Contents file (as is the default) 
       then <command>apt-ftparchive</command> will integrate those package files 
       together automatically.</para></listitem>
       </varlistentry>
@@ -352,7 +352,7 @@
      Typically this is a setting such as <filename>dists/&stable-codename;</filename>.</para>
      <para>
      All of the settings defined in the <literal>TreeDefault</literal> section can be
-     use in a <literal>Tree</literal> section as well as three new variables.</para>
+     used in a <literal>Tree</literal> section as well as three new variables.</para>
      <para>
      When processing a <literal>Tree</literal> section <command>apt-ftparchive</command> 
      performs an operation similar to:
@@ -366,7 +366,7 @@ for i in Sections do
       <varlistentry><term><option>Sections</option></term>
       <listitem><para>
       This is a space separated list of sections which appear 
-      under the distribution, typically this is something like 
+      under the distribution; typically this is something like 
       <literal>main contrib non-free</literal></para></listitem>
       </varlistentry>
       
@@ -379,8 +379,8 @@ for i in Sections do
 
       <varlistentry><term><option>LongDescription</option></term>
       <listitem><para>
-      Sets if long descriptions should be included in the Packages file or split
-      out into a master Translation-en file.</para></listitem>
+      Specifies whether long descriptions should be included in the <filename>Packages</filename> file or split
+      out into a master <filename>Translation-en</filename> file.</para></listitem>
       </varlistentry>
 
       <varlistentry><term><option>BinOverride</option></term>
@@ -428,7 +428,7 @@ for i in Sections do
       
       <varlistentry><term><option>Contents</option></term>
       <listitem><para>
-      Sets the Contents file output. (optional)</para></listitem>
+      Sets the Contents file output (optional).</para></listitem>
       </varlistentry>
       
       <varlistentry><term><option>BinOverride</option></term>
@@ -472,8 +472,8 @@ for i in Sections do
 
  <refsect1><title>The Binary Override File</title>
    <para>The binary override file is fully compatible with &dpkg-scanpackages;. It
-   contains 4 fields separated by spaces. The first field is the package name,
-   the second is the priority to force that package to, the third is the
+   contains four fields separated by spaces. The first field is the package name,
+   the second is the priority to force that package to, the third is
    the section to force that package to and the final field is the maintainer 
    permutation field.</para>
    <para>The general form of the maintainer field is:
@@ -490,14 +490,14 @@ for i in Sections do
  <refsect1><title>The Source Override File</title>
    <para>
    The source override file is fully compatible with &dpkg-scansources;. It
-   contains 2 fields separated by spaces. The first fields is the source 
+   contains two fields separated by spaces. The first field is the source 
    package name, the second is the section to assign it.</para>
  </refsect1>   
 
  <refsect1><title>The Extra Override File</title>
    <para>
    The extra override file allows any arbitrary tag to be added or replaced
-   in the output. It has 3 columns, the first is the package, the second is
+   in the output. It has three columns, the first is the package, the second is
    the tag and the remainder of the line is the new value.</para>
  </refsect1>   
 

@@ -40,6 +40,7 @@ if [ "$1" = 'pre-export' ]; then
 	fi
 
 	sed -i -e "s/^PACKAGE_VERSION=\".*\"$/PACKAGE_VERSION=\"${VERSION}\"/" configure.in
+	sed -i -e "s/^<!ENTITY apt-product-version \".*\">$/<!ENTITY apt-product-version \"${VERSION}\">/" doc/apt-verbatim.ent
 elif [ "$1" = 'post-build' ]; then
 	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
 		echo >&2 "REMEMBER: Tag this release with »bzr tag ${VERSION}« if you are satisfied"

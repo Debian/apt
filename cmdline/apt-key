@@ -11,7 +11,8 @@ GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-k
 
 if [ "$(id -u)" -eq 0 ]; then
 	# we could use a tmpfile here too, but creation of this tends to be time-consuming
-	GPG_CMD="$GPG_CMD --trustdb-name /etc/apt/trustdb.gpg"
+	eval $(apt-config shell TRUSTDBDIR Dir::Etc/d)
+	GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
 fi
 
 GPG="$GPG_CMD"

@@ -234,17 +234,21 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// override the configuration settings vector of languages.
 	string const forceLang = _config->Find("Acquire::Languages","");
 	if (forceLang.empty() == false) {
-		if (forceLang == "environment") {
-			codes = environment;
-		} else if (forceLang != "none")
-			codes.push_back(forceLang);
-		else //if (forceLang == "none")
-			builtin.clear();
-		allCodes = codes;
-		for (std::vector<string>::const_iterator b = builtin.begin();
-		     b != builtin.end(); ++b)
-			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-				allCodes.push_back(*b);
+		if (forceLang == "none") {
+			codes.clear();
+			allCodes.clear();
+			allCodes.push_back("none");
+		} else {
+			if (forceLang == "environment")
+				codes = environment;
+			else
+				codes.push_back(forceLang);
+			allCodes = codes;
+			for (std::vector<string>::const_iterator b = builtin.begin();
+			     b != builtin.end(); ++b)
+				if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+					allCodes.push_back(*b);
+		}
 		if (All == true)
 			return allCodes;
 		else

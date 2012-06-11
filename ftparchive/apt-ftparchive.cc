@@ -451,7 +451,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
    string DIPrfx = Setup.Find("TreeDefault::InternalPrefix",
 			    "$(DIST)/$(SECTION)/");
    string DContents = Setup.Find("TreeDefault::Contents",
-			    "$(DIST)/Contents-$(ARCH)");
+			    "$(DIST)/$(SECTION)/Contents-$(ARCH)");
    string DContentsH = Setup.Find("TreeDefault::Contents::Header","");
    string DBCache = Setup.Find("TreeDefault::BinCacheDB",
 			       "packages-$(ARCH).db");

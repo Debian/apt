@@ -34,6 +34,12 @@ SOURCE = getlistoffilesindir_test.cc
 include $(PROGRAM_H)
 
 # Program for testing CommandLine reconstruction
+PROGRAM = Commandline${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = commandline_test.cc
+include $(PROGRAM_H)
+
+# Program for testing CommandLine reconstruction
 PROGRAM = CommandlineAsString${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = commandlineasstring_test.cc
