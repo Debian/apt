@@ -27,6 +27,12 @@ insertsource 'unstable' 'forbidden-none' 'any' '1' 'Build-Depends: amdboot:any'
 insertsource 'unstable' 'forbidden-same' 'any' '1' 'Build-Depends: libc6:any'
 insertsource 'unstable' 'forbidden-foreign' 'any' '1' 'Build-Depends: doxygen:any'
 
+insertpackage 'unstable' 'specific' 'amd64' '1.0' 'Depends: libc6:amd64'
+insertpackage 'unstable' 'specific' 'armel' '1.0' 'Depends: libc6:armel'
+
+insertsource 'unstable' 'source-specific-amd64' 'amd64' '1' 'Build-Depends: specific:amd64'
+insertsource 'unstable' 'source-specific-armel' 'armel' '1' 'Build-Depends: specific:armel'
+
 setupaptarchive
 
 testequal "Reading package lists...
@@ -38,6 +44,43 @@ E: Build-Depends dependency for forbidden-same can't be satisfied because libc6:
 testequal "Reading package lists...
 Building dependency tree...
 E: Build-Depends dependency for forbidden-foreign can't be satisfied because doxygen:any is not allowed on 'Multi-Arch: foreign' packages" aptget build-dep forbidden-foreign -s -a armel
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6 specific
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 (1.0 unstable [amd64])
+Inst specific (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf specific (1.0 unstable [amd64])' aptget build-dep source-specific-amd64 -s
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6 specific
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 (1.0 unstable [amd64])
+Inst specific (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf specific (1.0 unstable [amd64])' aptget build-dep source-specific-amd64 -s -a armel
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6:armel specific:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:armel (1.0 unstable [armel])
+Inst specific:armel (1.0 unstable [armel])
+Conf libc6:armel (1.0 unstable [armel])
+Conf specific:armel (1.0 unstable [armel])' aptget build-dep source-specific-armel -s
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6:armel specific:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:armel (1.0 unstable [armel])
+Inst specific:armel (1.0 unstable [armel])
+Conf libc6:armel (1.0 unstable [armel])
+Conf specific:armel (1.0 unstable [armel])' aptget build-dep source-specific-armel -s -a armel
 
 testequal 'Reading package lists...
 Building dependency tree...
