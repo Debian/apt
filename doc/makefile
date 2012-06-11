@@ -56,6 +56,9 @@ endif
 SOURCE = apt.8
 include $(MANPAGE_H)
 
+examples/sources.list: examples/sources.list.in apt-verbatim.ent
+	sed -e 's#&stable-codename;#$(shell grep --max-count=1 '^<!ENTITY stable-codename "' apt-verbatim.ent | cut -d'"' -f 2)#g' examples/sources.list.in > examples/sources.list
+
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf
 TO = $(DOC)

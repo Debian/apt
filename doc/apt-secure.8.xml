@@ -17,7 +17,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2012-05-21T00:00:00Z</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -57,11 +57,11 @@
    </para>
 
    <para>
-   If a package comes from a archive without a signature or with a
-   signature that apt does not have a key for that package is
-   considered untrusted and installing it will result in a big
+   If a package comes from a archive without a signature, or with a
+   signature that apt does not have a key for, that package is
+   considered untrusted, and installing it will result in a big
    warning. <command>apt-get</command> will currently only warn
-   for unsigned archives, future releases might force all sources
+   for unsigned archives; future releases might force all sources
    to be verified before downloading packages from them.
    </para>
 
@@ -75,11 +75,11 @@
 
    <para> 
    The chain of trust from an apt archive to the end user is made up of
-   different steps. <command>apt-secure</command> is the last step in
-   this chain, trusting an archive does not mean that the packages
-   that you trust it do not contain malicious code but means that you
-   trust the archive maintainer. It's the archive maintainer
-   responsibility to ensure that the archive integrity is correct.
+   several steps. <command>apt-secure</command> is the last step in
+   this chain; trusting an archive does not mean that you trust its
+   packages not to contain malicious code, but means that you
+   trust the archive maintainer. It's the archive maintainer's
+   responsibility to ensure that the archive's integrity is preserved.
    </para>
 
    <para>apt-secure does not review signatures at a
@@ -90,30 +90,29 @@
 
    <para>
    The chain of trust in Debian starts when a maintainer uploads a new
-   package or a new version of a package to the Debian archive. This
-   upload in order to become effective needs to be signed by a key of
-   a maintainer within the Debian maintainer's keyring (available in
-   the debian-keyring package). Maintainer's keys are signed by
+   package or a new version of a package to the Debian archive. In
+   order to become effective, this upload needs to be signed by a key
+   contained in the Debian Maintainers keyring (available in
+   the debian-keyring package). Maintainers' keys are signed by
    other maintainers following pre-established procedures to
    ensure the identity of the key holder.
    </para>
 
    <para>
    Once the uploaded package is verified and included in the archive,
-   the maintainer signature is stripped off, an MD5 sum of the package
-   is computed and put in the Packages file. The MD5 sum of all of the
-   packages files are then computed and put into the Release file. The
-   Release file is then signed by the archive key (which is created
-   once a year) and distributed through the FTP server. This key is
-   also on the Debian keyring.
+   the maintainer signature is stripped off, and checksums of the package
+   are computed and put in the Packages file. The checksums of all of the
+   Packages files are then computed and put into the Release file. The
+   Release file is then signed by the archive key for this Debian release,
+   and distributed alongside the packages and the Packages files on
+   Debian mirrors. The keys are in the Debian archive keyring available in
+   the <package>debian-archive-keyring</package> package.
    </para>
 
    <para>
-   Any end user can check the signature of the Release file, extract the MD5
-   sum of a package from it and compare it with the MD5 sum of the
-   package he downloaded. Prior to version 0.6 only the MD5 sum of the
-   downloaded Debian package was checked. Now both the MD5 sum and the
-   signature of the Release file are checked.
+   End users can check the signature of the Release file, extract a checksum
+   of a package from it and compare it with the checksum of the package
+   they downloaded by hand - or rely on APT doing this automatically.
    </para>
 
    <para>Notice that this is distinct from checking signatures on a
@@ -122,11 +121,11 @@
 
     <itemizedlist>
        <listitem><para><literal>Network "man in the middle"
-       attacks</literal>. Without signature checking, a malicious
-       agent can introduce himself in the package download process and
+       attacks</literal>. Without signature checking, malicious
+       agents can introduce themselves into the package download process and
        provide malicious software either by controlling a network
        element (router, switch, etc.) or by redirecting traffic to a
-       rogue server (through arp or DNS spoofing
+       rogue server (through ARP or DNS spoofing
        attacks).</para></listitem>
  
        <listitem><para><literal>Mirror network compromise</literal>.
@@ -145,8 +144,8 @@
  <refsect1><title>User configuration</title>
    <para>
    <command>apt-key</command> is the program that manages the list
-   of keys used by apt. It can be used to add or remove keys although
-   an installation of this release will automatically provide the
+   of keys used by apt. It can be used to add or remove keys, although
+   an installation of this release will automatically contain the
    default Debian archive signing keys used in the Debian package
    repositories.
    </para>
@@ -183,9 +182,9 @@
 
     </itemizedlist>
 
-    <para>Whenever the contents of the archive changes (new packages
+    <para>Whenever the contents of the archive change (new packages
     are added or removed) the archive maintainer has to follow the
-    first two steps previously outlined.</para>
+    first two steps outlined above.</para>
 
 </refsect1>
 

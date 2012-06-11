@@ -243,13 +243,12 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
    if (Pkg->Section == 0)
       Pkg->Section = UniqFindTagWrite("Section");
 
-   // Packages which are not from the "native" arch doesn't get the essential flag
-   // in the default "native" mode - it is also possible to mark "all" or "none".
-   // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
    string const static myArch = _config->Find("APT::Architecture");
-   string const static essential = _config->Find("pkgCacheGen::Essential", "native");
-   if ((essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()) ||
-       essential == "all")
+   // Possible values are: "all", "native", "installed" and "none"
+   // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
+   string const static essential = _config->Find("pkgCacheGen::Essential", "all");
+   if (essential == "all" ||
+       (essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()))
       if (Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
 	 return false;
    if (Section.FindFlag("Important",Pkg->Flags,pkgCache::Flag::Important) == false)
@@ -638,16 +637,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
    if (Section.Find(Tag,Start,Stop) == false)
       return true;
 
-   string Package;
    string const pkgArch = Ver.Arch();
-   string Version;
-   unsigned int Op;
 
    while (1)
    {
+      string Package;
+      string Version;
+      unsigned int Op;
+
       Start = ParseDepends(Start,Stop,Package,Version,Op,false,!MultiArchEnabled);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
+      size_t const found = Package.rfind(':');
 
       if (MultiArchEnabled == true &&
 	  (Type == pkgCache::Dep::Conflicts ||
@@ -658,6 +659,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	      a != Architectures.end(); ++a)
 	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
 	       return false;
+      }
+      else if (MultiArchEnabled == true && found != string::npos &&
+	       strcmp(Package.c_str() + found, ":any") != 0)
+      {
+	 string Arch = Package.substr(found+1, string::npos);
+	 Package = Package.substr(0, found);
+	 // Such dependencies are not supposed to be accepted …
+	 // … but this is probably the best thing to do.
+	 if (Arch == "native")
+	    Arch = _config->Find("APT::Architecture");
+	 if (NewDepends(Ver,Package,Arch,Version,Op,Type) == false)
+	    return false;
       }
       else if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
 	 return false;

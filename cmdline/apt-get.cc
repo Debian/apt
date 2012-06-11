@@ -254,6 +254,9 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
  */
 void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 {
+   if (Cache->BrokenCount() == 0)
+      return;
+
    out << _("The following packages have unmet dependencies:") << endl;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
@@ -2496,7 +2499,7 @@ bool DoSource(CommandLine &CmdL)
 		  Src.c_str(), vcs.c_str(), uri.c_str());
 	 if(vcs == "Bzr") 
 	    ioprintf(c1out,_("Please use:\n"
-			     "bzr get %s\n"
+			     "bzr branch %s\n"
 			     "to retrieve the latest (possibly unreleased) "
 			     "updates to the package.\n"),
 		     uri.c_str());
@@ -2886,39 +2889,48 @@ bool DoBuildDep(CommandLine &CmdL)
 	       else
 		  Pkg = Cache->FindPkg(D->Package);
 
-	       // We need to decide if host or build arch, so find a version we can look at
-	       pkgCache::VerIterator Ver;
-
 	       // a bad version either is invalid or doesn't satify dependency
-	       #define BADVER(Ver) Ver.end() == true || \
-				   (Ver.end() == false && D->Version.empty() == false && \
-				    Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false)
+	       #define BADVER(Ver) (Ver.end() == true || \
+				    (D->Version.empty() == false && \
+				     Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false))
 
+	       APT::VersionList verlist;
 	       if (Pkg.end() == false)
 	       {
-		  Ver = (*Cache)[Pkg].InstVerIter(*Cache);
-		  if (BADVER(Ver))
-		     Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+		  pkgCache::VerIterator Ver = (*Cache)[Pkg].InstVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
+		  Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
 	       }
-	       if (BADVER(Ver))
+	       if (verlist.empty() == true)
 	       {
 		  pkgCache::PkgIterator HostPkg = Cache->FindPkg(D->Package, hostArch);
 		  if (HostPkg.end() == false)
 		  {
-		     Ver = (*Cache)[HostPkg].InstVerIter(*Cache);
-		     if (BADVER(Ver))
-		        Ver = (*Cache)[HostPkg].CandidateVerIter(*Cache);
+		     pkgCache::VerIterator Ver = (*Cache)[HostPkg].InstVerIter(*Cache);
+		     if (BADVER(Ver) == false)
+			verlist.insert(Ver);
+		     Ver = (*Cache)[HostPkg].CandidateVerIter(*Cache);
+		     if (BADVER(Ver) == false)
+			verlist.insert(Ver);
 		  }
 	       }
-	       if ((BADVER(Ver)) == false)
+	       #undef BADVER
+
+	       string forbidden;
+	       // We need to decide if host or build arch, so find a version we can look at
+	       APT::VersionList::const_iterator Ver = verlist.begin();
+	       for (; Ver != verlist.end(); ++Ver)
 	       {
-		  string forbidden;
+		  forbidden.clear();
 		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
 		  {
 		     if (colon == string::npos)
-		     {
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
-		     }
+		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
+			forbidden = "Multi-Arch: none";
 		  }
 		  else if (Ver->MultiArch == pkgCache::Version::Same)
 		  {
@@ -2950,21 +2962,32 @@ bool DoBuildDep(CommandLine &CmdL)
 		     }
 		     // native gets buildArch
 		  }
+
 		  if (forbidden.empty() == false)
 		  {
 		     if (_config->FindB("Debug::BuildDeps",false) == true)
-			cout << " :any is not allowed from M-A: same package " << (*D).Package << endl;
+			cout << D->Package.substr(colon, string::npos) << " is not allowed from " << forbidden << " package " << (*D).Package << " (" << Ver.VerStr() << ")" << endl;
+		     continue;
+		  }
+
+		  //we found a good version
+		  break;
+	       }
+	       if (Ver == verlist.end())
+	       {
+		  if (_config->FindB("Debug::BuildDeps",false) == true)
+		     cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << endl;
+
+		  if (forbidden.empty() == false)
+		  {
 		     if (hasAlternatives)
 			continue;
 		     return _error->Error(_("%s dependency for %s can't be satisfied "
 					    "because %s is not allowed on '%s' packages"),
 					  Last->BuildDepType(D->Type), Src.c_str(),
-					  D->Package.c_str(), "Multi-Arch: same");
+					  D->Package.c_str(), forbidden.c_str());
 		  }
 	       }
-	       else if (_config->FindB("Debug::BuildDeps",false) == true)
-		  cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << endl;
-	       #undef BADVER
 	    }
 	    else
 	       Pkg = Cache->FindPkg(D->Package);
@@ -3241,9 +3264,13 @@ bool DoChangelog(CommandLine &CmdL)
    pkgAcquire Fetcher;
 
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
+   {
+      bool Success = true;
       for (APT::VersionList::const_iterator Ver = verset.begin();
 	   Ver != verset.end(); ++Ver)
-	 return DownloadChangelog(Cache, Fetcher, Ver, "");
+	 Success &= DownloadChangelog(Cache, Fetcher, Ver, "");
+      return Success;
+   }
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
