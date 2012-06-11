@@ -1,10 +1,14 @@
 #!/bin/sh
 
+set -e
+
 VERSION=$(dpkg-parsechangelog | sed -n -e '/^Version:/s/^Version: //p')
 DISTRIBUTION=$(dpkg-parsechangelog | sed -n -e '/^Distribution:/s/^Distribution: //p')
 
 LIBAPTPKGVERSION="$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/init.h | sed 's/\.$//')"
 LIBAPTINSTVERSION="$(egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)"
+
+dpkg-checkbuilddeps -d 'libxml2-utils'
 
 if [ "$1" = 'pre-export' ]; then
 	libraryversioncheck() {
