@@ -715,7 +715,10 @@ bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
    sometimes it is needed to identify these to ignore them… */
 bool pkgCache::DepIterator::IsMultiArchImplicit() const
 {
-   if (ParentPkg()->Arch != TargetPkg()->Arch)
+   if (ParentPkg()->Arch != TargetPkg()->Arch &&
+       (S->Type == pkgCache::Dep::Replaces ||
+	S->Type == pkgCache::Dep::DpkgBreaks ||
+	S->Type == pkgCache::Dep::Conflicts))
       return true;
    return false;
 }

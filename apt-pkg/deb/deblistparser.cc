@@ -637,16 +637,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
    if (Section.Find(Tag,Start,Stop) == false)
       return true;
 
-   string Package;
    string const pkgArch = Ver.Arch();
-   string Version;
-   unsigned int Op;
 
    while (1)
    {
+      string Package;
+      string Version;
+      unsigned int Op;
+
       Start = ParseDepends(Start,Stop,Package,Version,Op,false,!MultiArchEnabled);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
+      size_t const found = Package.rfind(':');
 
       if (MultiArchEnabled == true &&
 	  (Type == pkgCache::Dep::Conflicts ||
@@ -657,6 +659,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	      a != Architectures.end(); ++a)
 	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
 	       return false;
+      }
+      else if (MultiArchEnabled == true && found != string::npos &&
+	       strcmp(Package.c_str() + found, ":any") != 0)
+      {
+	 string Arch = Package.substr(found+1, string::npos);
+	 Package = Package.substr(0, found);
+	 // Such dependencies are not supposed to be accepted …
+	 // … but this is probably the best thing to do.
+	 if (Arch == "native")
+	    Arch = _config->Find("APT::Architecture");
+	 if (NewDepends(Ver,Package,Arch,Version,Op,Type) == false)
+	    return false;
       }
       else if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
 	 return false;
