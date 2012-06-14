@@ -14,6 +14,9 @@ apt (0.9.6.1) UNRELEASED; urgency=low
   * apt-pkg/cacheset.cc:
     - add PackageContainerInterface::FromGroup to support
       architecture specifications with wildcards on the commandline
+  * apt-pkg/pkgcache.cc:
+    - do a string comparision for architecture checking in IsMultiArchImplicit
+      as 'unique' strings in the pkgcache aren't unique (Closes: #677454)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 14 Jun 2012 15:45:13 +0200
 

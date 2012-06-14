@@ -970,7 +970,7 @@ bool pkgCache::PrvIterator::IsMultiArchImplicit() const
 {
    pkgCache::PkgIterator const Owner = OwnerPkg();
    pkgCache::PkgIterator const Parent = ParentPkg();
-   if (Owner->Arch != Parent->Arch || Owner->Name == Parent->Name)
+   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner->Name == Parent->Name)
       return true;
    return false;
 }
