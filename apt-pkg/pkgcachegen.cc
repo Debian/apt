@@ -1316,10 +1316,11 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	 }
 	 _error->RevertToStack();
       }
-      else if (Debug == true)
+      else
       {
 	 _error->MergeWithStack();
-	 std::clog << "Open filebased MMap" << std::endl;
+	 if (Debug == true)
+	    std::clog << "Open filebased MMap" << std::endl;
       }
    }
    if (Writeable == false || CacheFile.empty() == true)
