@@ -561,28 +561,27 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       // Parse an architecture
       if (I != Stop && *I == '[')
       {
+	 ++I;
 	 // malformed
-         I++;
-         if (I == Stop)
-	    return 0; 
-	 
-         const char *End = I;
-         bool Found = false;
-      	 bool NegArch = false;
-         while (I != Stop) 
+	 if (unlikely(I == Stop))
+	    return 0;
+
+	 const char *End = I;
+	 bool Found = false;
+	 bool NegArch = false;
+	 while (I != Stop)
 	 {
-            // look for whitespace or ending ']'
-	    while (End != Stop && !isspace(*End) && *End != ']') 
-	       End++;
-	 
-	    if (End == Stop) 
+	    // look for whitespace or ending ']'
+	    for (;End != Stop && !isspace(*End) && *End != ']'; ++End);
+
+	    if (unlikely(End == Stop))
 	       return 0;
 
 	    if (*I == '!')
-            {
+	    {
 	       NegArch = true;
-	       I++;
-            }
+	       ++I;
+	    }
 
 	    if (stringcmp(arch,I,End) == 0) {
 	       Found = true;
@@ -591,23 +590,31 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	       if (fnmatch(wildcard.c_str(), completeArch.c_str(), 0) == 0)
 	          Found = true;
 	    }
-	    
+
+	    if (Found == true)
+	    {
+	       if (I[-1] != '!')
+		  NegArch = false;
+	       // we found a match, so fast-forward to the end of the wildcards
+	       for (; End != Stop && *End != ']'; ++End);
+	    }
+
 	    if (*End++ == ']') {
 	       I = End;
 	       break;
 	    }
-	    
+
 	    I = End;
 	    for (;I != Stop && isspace(*I) != 0; I++);
-         }
+	 }
 
-	 if (NegArch)
+	 if (NegArch == true)
 	    Found = !Found;
-	 
-         if (Found == false)
+
+	 if (Found == false)
 	    Package = ""; /* not for this arch */
       }
-      
+
       // Skip whitespace
       for (;I != Stop && isspace(*I) != 0; I++);
    }
