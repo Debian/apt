@@ -50,18 +50,20 @@ add_keys_with_verify_against_master_keyring() {
     #   all keys that are exported must have a valid signature
     #   from a key in the $distro-master-keyring
     add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
+    all_add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^[ps]ub | cut -d: -f5`
     master_keys=`$GPG_CMD --keyring $MASTER --with-colons --list-keys | grep ^pub | cut -d: -f5`
-    
-    for add_key in $add_keys; do
 
-        # ensure there are no colisions LP: #857472
+    # ensure there are no colisions LP: #857472
+    for all_add_key in $all_add_keys; do
 	for master_key in $master_keys; do
-            if [ "$add_key" = "$master_key" ]; then
-                echo >&2 "Keyid collision for '$add_key' detected, operation aborted"
+            if [ "$all_add_key" = "$master_key" ]; then
+                echo >&2 "Keyid collision for '$all_add_key' detected, operation aborted"
                 return 1
             fi
         done
-
+    done
+    
+    for add_key in $add_keys; do
         # export the add keyring one-by-one
         rm -f $TMP_KEYRING
         $GPG_CMD --keyring $ADD_KEYRING --output $TMP_KEYRING --export $add_key 

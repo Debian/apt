@@ -49,6 +49,26 @@ else
     msgpass
 fi
 
+
+# test another possible attack vector using subkeys (LP: #1013128)
+msgtest "add_keys_with_verify_against_master_keyring with subkey attack"
+ADD_KEYRING=./keys/exploid-keyring-with-dupe-subkeys.pub
+if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
+    msgfail
+else
+    msgpass
+fi
+
+# ensure the keyring is still empty
+gpg_out=$($GPG --list-keys)
+msgtest "Test if keyring is empty"
+if [ -n "" ]; then
+    msgfail
+else
+    msgpass
+fi
+
+
 # test good keyring and ensure we get no errors
 ADD_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
 if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
@@ -72,3 +92,4 @@ uid                  Ubuntu Archive Automatic Signing Key (2012) <ftpmaster@ubun
 pub   4096R/EFE21092 2012-05-11
 uid                  Ubuntu CD Image Automatic Signing Key (2012) <cdimage@ubuntu.com>
 ' $GPG --list-keys
+
