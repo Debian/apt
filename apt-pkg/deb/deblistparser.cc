@@ -15,6 +15,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
@@ -22,7 +23,6 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/macros.h>
 
-#include <fnmatch.h>
 #include <ctype.h>
 									/*}}}*/
 
@@ -464,22 +464,6 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
    }
    return I;
 }
-
-/*
- * CompleteArch:
- *
- * The complete architecture, consisting of <kernel>-<cpu>.
- */
-static string CompleteArch(std::string const &arch) {
-    if (arch == "armel")              return "linux-arm";
-    if (arch == "armhf")              return "linux-arm";
-    if (arch == "lpia")               return "linux-i386";
-    if (arch == "powerpcspe")         return "linux-powerpc";
-    if (arch == "uclibc-linux-armel") return "linux-arm";
-    if (arch == "uclinux-armel")      return "uclinux-arm";
-
-    return (arch.find("-") != string::npos) ? arch : "linux-" + arch;
-}
 									/*}}}*/
 // ListParser::ParseDepends - Parse a dependency element		/*{{{*/
 // ---------------------------------------------------------------------
@@ -556,7 +540,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (ParseArchFlags == true)
    {
-      string completeArch = CompleteArch(arch);
+      APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(arch, false);
 
       // Parse an architecture
       if (I != Stop && *I == '[')
@@ -583,16 +567,10 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	       ++I;
 	    }
 
-	    if (stringcmp(arch,I,End) == 0) {
-	       Found = true;
-	    } else {
-	       std::string wildcard = SubstVar(string(I, End), "any", "*");
-	       if (fnmatch(wildcard.c_str(), completeArch.c_str(), 0) == 0)
-	          Found = true;
-	    }
-
-	    if (Found == true)
+	    std::string arch(I, End);
+	    if (arch.empty() == false && matchesArch(arch.c_str()) == true)
 	    {
+	       Found = true;
 	       if (I[-1] != '!')
 		  NegArch = false;
 	       // we found a match, so fast-forward to the end of the wildcards
