@@ -782,7 +782,8 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 {
    // apt-secure does no longer download individual (per-section) Release
    // file. to provide Component pinning we use the section name now
-   FileI->Component = WriteUniqString(component);
+   map_ptrloc const storage = WriteUniqString(component);
+   FileI->Component = storage;
 
    // FIXME: Code depends on the fact that Release files aren't compressed
    FILE* release = fdopen(dup(File.Fd()), "r");
@@ -869,13 +870,14 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 	       break;
 	    *s = '\0';
 	 }
+	 map_ptrloc const storage = WriteUniqString(data);
 	 switch (writeTo) {
-	 case Suite: FileI->Archive = WriteUniqString(data); break;
-	 case Component: FileI->Component = WriteUniqString(data); break;
-	 case Version: FileI->Version = WriteUniqString(data); break;
-	 case Origin: FileI->Origin = WriteUniqString(data); break;
-	 case Codename: FileI->Codename = WriteUniqString(data); break;
-	 case Label: FileI->Label = WriteUniqString(data); break;
+	 case Suite: FileI->Archive = storage; break;
+	 case Component: FileI->Component = storage; break;
+	 case Version: FileI->Version = storage; break;
+	 case Origin: FileI->Origin = storage; break;
+	 case Codename: FileI->Codename = storage; break;
+	 case Label: FileI->Label = storage; break;
 	 case None: break;
 	 }
       }
