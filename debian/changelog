@@ -1,3 +1,12 @@
+apt (0.9.7) UNRELEASED; urgency=low
+
+  * apt-pkg/contrib/mmap.cc:
+    - Fix the Fallback option to work correctly, by not calling
+      realloc() on a map mapped by mmap(), and by using malloc
+      and friends instead of new[].
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 16 Jun 2012 14:28:38 +0200
+
 apt (0.9.6) unstable; urgency=low
 
   [ David Kalnischkies ]
