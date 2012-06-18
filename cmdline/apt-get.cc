@@ -2362,6 +2362,8 @@ bool DoDownload(CommandLine &CmdL)
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
+   bool gotAll = true;
+
    for (APT::VersionList::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
@@ -2372,11 +2374,19 @@ bool DoDownload(CommandLine &CmdL)
       pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
       pkgCache::VerFileIterator Vf = Ver.FileList();
       if (Vf.end() == true)
-         return _error->Error("Can not find VerFile");
+      {
+	 _error->Error("Can not find VerFile for %s in version %s", Pkg.FullName().c_str(), Ver.VerStr());
+	 gotAll = false;
+	 continue;
+      }
       pkgCache::PkgFileIterator F = Vf.File();
       pkgIndexFile *index;
       if(SrcList->FindIndex(F, index) == false)
-         return _error->Error("FindIndex failed");
+      {
+	 _error->Error(_("Can't find a source to download version '%s' of '%s'"), Ver.VerStr(), Pkg.FullName().c_str());
+	 gotAll = false;
+	 continue;
+      }
       string uri = index->ArchiveURI(rec.FileName());
       strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
       // get the most appropriate hash
@@ -2392,6 +2402,8 @@ bool DoDownload(CommandLine &CmdL)
       // get the file
       new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
    }
+   if (gotAll == false)
+      return false;
 
    // Just print out the uris and exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
