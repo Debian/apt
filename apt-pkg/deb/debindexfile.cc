@@ -602,7 +602,8 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
    CFile->Size = Pkg.FileSize();
    CFile->mtime = Pkg.ModificationTime();
-   CFile->Archive = Gen.WriteUniqString("now");
+   map_ptrloc const storage = Gen.WriteUniqString("now");
+   CFile->Archive = storage;
    
    if (Gen.MergeList(Parser) == false)
       return _error->Error("Problem with MergeList %s",File.c_str());   

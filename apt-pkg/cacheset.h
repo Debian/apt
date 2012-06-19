@@ -139,6 +139,7 @@ public:
 	static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
+	static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
 	static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper);
 
