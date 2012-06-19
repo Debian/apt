@@ -1,14 +1,11 @@
-apt (0.9.7) UNRELEASED; urgency=low
+apt (0.9.7) unstable; urgency=low
 
+  [ Julian Andres Klode ]
   * apt-pkg/contrib/mmap.cc:
     - Fix the Fallback option to work correctly, by not calling
       realloc() on a map mapped by mmap(), and by using malloc
       and friends instead of new[].
     - Zero out the new memory allocated with realloc().
-
- -- Julian Andres Klode <jak@debian.org>  Sat, 16 Jun 2012 14:28:38 +0200
-
-apt (0.9.6.1) UNRELEASED; urgency=low
 
   [ Daniel Hartwig ]
   * apt-pkg/pkgcachegen.cc:
@@ -34,7 +31,7 @@ apt (0.9.6.1) UNRELEASED; urgency=low
     - print a friendly message in 'download' if a package can't be
       downloaded (Closes: #677887)
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Thu, 14 Jun 2012 15:45:13 +0200
+ -- Michael Vogt <mvo@debian.org>  Tue, 19 Jun 2012 16:42:43 +0200
 
 apt (0.9.6) unstable; urgency=low
 
