@@ -824,6 +824,26 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 }
 									/*}}}*/
 
+// IsPgpClearTextSignature - Check if a file is Pgp/GPG clearsigned     /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool IsPgpClearTextSignature(string const &FileName)
+{
+   static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----\n";
+   char buffer[sizeof(SIGMSG)];
+   FILE* gpg = fopen(FileName.c_str(), "r");
+   if (gpg == NULL)
+      return false;
+
+   char const * const test = fgets(buffer, sizeof(buffer), gpg);
+   fclose(gpg);
+   if (test == NULL || strcmp(buffer, SIGMSG) != 0)
+      return false;
+
+   return true;
+}
+
+
 // FileFd::Open - Open a file						/*{{{*/
 // ---------------------------------------------------------------------
 /* The most commonly used open mode combinations are given with Mode */

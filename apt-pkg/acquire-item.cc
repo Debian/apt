@@ -1235,9 +1235,17 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,string Hash,	/
       }
       else
       {
+         // if we expect a ClearTextSignature (InRelase), ensure that
+         // this is what we get and if not fail to queue a 
+         // Release/Release.gpg, see #346386
+         if (SigFile == DestFile && !IsPgpClearTextSignature(DestFile))
+         {
+            Failed(Message, Cfg);
+            return;
+         }
+
          // There was a signature file, so pass it to gpgv for
          // verification
-
          if (_config->FindB("Debug::pkgAcquire::Auth", false))
             std::cerr << "Metaindex acquired, queueing gpg verification ("
                       << SigFile << "," << DestFile << ")\n";

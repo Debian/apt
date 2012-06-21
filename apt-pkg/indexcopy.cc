@@ -648,16 +648,12 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
 {
    if (File == FileGPG)
    {
-      #define SIGMSG "-----BEGIN PGP SIGNED MESSAGE-----\n"
-      char buffer[sizeof(SIGMSG)];
       FILE* gpg = fopen(File.c_str(), "r");
       if (gpg == NULL)
 	 return _error->Errno("RunGPGV", _("Could not open file %s"), File.c_str());
-      char const * const test = fgets(buffer, sizeof(buffer), gpg);
       fclose(gpg);
-      if (test == NULL || strcmp(buffer, SIGMSG) != 0)
+      if (!IsPgpClearTextSignature(File))
 	 return _error->Error(_("File %s doesn't start with a clearsigned message"), File.c_str());
-      #undef SIGMSG
    }
 
 
