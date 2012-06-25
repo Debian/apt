@@ -4,21 +4,21 @@
 # This file is distributed under the same license as the apt package.
 #
 # Yavor Doganov <yavor@doganov.org>, 2006.
-# Damyan Ivanov <dmn@debian.org>, 2008, 2009, 2010.
+# Damyan Ivanov <dmn@debian.org>, 2008, 2009, 2010, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-06-25 09:17+0200\n"
-"PO-Revision-Date: 2010-08-27 22:33+0300\n"
+"PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: binary\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: KBabel 1.11.4\n"
 
 #: cmdline/apt-cache.cc:158
@@ -111,7 +111,7 @@ msgstr "Трябва да въведете поне един шаблон за �
 
 #: cmdline/apt-cache.cc:1357
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
+msgstr "Тази командата е остаряла. Използвайте „apt-mark showauto“ вместо нея."
 
 #: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
@@ -166,7 +166,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s за %s компилиран на %s %s\n"
 
 #: cmdline/apt-cache.cc:1686
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -203,15 +202,13 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "Употреба: apt-cache [опции] команда\n"
-"          apt-cache [опции] add файл1 [файл2 ...]\n"
 "          apt-cache [опции] showpkg пакет1 [пакет2 ...]\n"
 "          apt-cache [опции] showsrc пакет1 [пакет2 ...]\n"
 "\n"
-"apt-cache е инструмент на ниско ниво за обработка на двоичните\n"
-"кеш файлове на APT и извличане на информация от тях\n"
+"apt-cache е инструмент на ниско ниво за извличане на информация от\n"
+"двоичните кеш файлове на APT\n"
 "\n"
 "Команди:\n"
-"   add - Добавяне на пакетен файл към кеша на пакети с изходен код\n"
 "   gencaches - Генериране на кеша на пакети и пакети с изходен код\n"
 "   showpkg - Показване на обща информация за даден пакет\n"
 "   showsrc - Показване на записите за пакети с изходен код\n"
@@ -221,7 +218,6 @@ msgstr ""
 "   unmet - Показване на неудовлетворените зависимости\n"
 "   search - Търсене в списъка с пакети за регулярен израз\n"
 "   show - Показване на записа за пакет\n"
-"   showauto - Списък с пакетите, инсталирани автоматично\n"
 "   depends - Необработена информация за зависимостите на даден пакет\n"
 "   rdepends - Информация за обратните зависимости на даден пакет\n"
 "   pkgnames - Списък с имената на всички пакети, за които има информация\n"
@@ -235,7 +231,7 @@ msgstr ""
 "  -s=? Кешът за пакети с изходен код.\n"
 "  -q   Премахване на индикатора за напредък.\n"
 "  -i   Показване само на важни зависимости при командата „unmet“.\n"
-"  -c=? Четене на този конфигурационен файл.\n"
+"  -c=? Указване на файл с настройки.\n"
 "  -o=? Настройване на произволна конфигурационна опция, например -o dir::"
 "cache=/tmp\n"
 "За повече информация вижте наръчниците apt-cache(8) и apt.conf(5).\n"
@@ -296,7 +292,7 @@ msgstr "Y"
 
 #: cmdline/apt-get.cc:140
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
@@ -453,14 +449,16 @@ msgstr "Виртуални пакети като „%s“ не могат да �
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Пакетът %s не е инсталиран, така че не е премахнат\n"
+msgstr ""
+"Пакетът „%s“ не е инсталиран, така че не е премахнат. Може би имахте предвид "
+"„%s“?\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Пакетът %s не е инсталиран, така че не е премахнат\n"
+msgstr "Пакетът „%s“ не е инсталиран, така че не е премахнат\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -499,9 +497,9 @@ msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Избрана е версия %s (%s) за %s\n"
 
 #: cmdline/apt-get.cc:889
-#, fuzzy, c-format
+#, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "Избрана е версия %s (%s) за %s\n"
+msgstr "Избрана е версия „%s“ (%s) за „%s“ заради „%s“\n"
 
 #: cmdline/apt-get.cc:1025
 msgid "Correcting dependencies..."
@@ -760,10 +758,9 @@ msgstr[1] ""
 "%lu пакета са били инсталирани автоматично и вече не са необходими:\n"
 
 #: cmdline/apt-get.cc:1835
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Използвайте „apt-get autoremove“ за да ги премахнете."
+msgstr[0] "Използвайте „apt-get autoremove“ за да го премахнете."
 msgstr[1] "Използвайте „apt-get autoremove“ за да ги премахнете."
 
 #: cmdline/apt-get.cc:1854
@@ -825,6 +822,8 @@ msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
+"Тази команда е остаряла. Вместо нея използвайте „apt-mark auto“ и „apt-mark "
+"manual“."
 
 #: cmdline/apt-get.cc:2183
 msgid "Calculating upgrade... "
@@ -849,12 +848,12 @@ msgstr "Неуспех при заключването на директория
 #: cmdline/apt-get.cc:2386
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
+msgstr "Не е открит източник, от който да се изтегли версия „%s“ на „%s“"
 
 #: cmdline/apt-get.cc:2391
 #, c-format
 msgid "Downloading %s %s"
-msgstr ""
+msgstr "Изтегляне на %s %s"
 
 #: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
@@ -876,14 +875,14 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2513
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Използвайте:\n"
-"bzr get %s\n"
+"bzr branch %s\n"
 "за да изтеглите последните промени в пакета (евентуално в процес на "
 "разработка).\n"
 
@@ -956,6 +955,8 @@ msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+"Липсва информация за архитектурата %s. Прегледайте информацията за APT::"
+"Architectures в apt.conf(5)."
 
 #: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
 #, c-format
@@ -969,13 +970,13 @@ msgid "%s has no build depends.\n"
 msgstr "%s няма зависимости за компилиране.\n"
 
 #: cmdline/apt-get.cc:2997
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr ""
-"Зависимост %s за пакета %s не може да бъде удовлетворена, понеже пакета %s "
-"не може да бъде намерен"
+"Зависимост %s за пакета %s не може да бъде удовлетворена, %s не се позволява "
+"за пакети „%s“"
 
 #: cmdline/apt-get.cc:3015
 #, c-format
@@ -994,23 +995,22 @@ msgstr ""
 "пакет %s е твърде нов"
 
 #: cmdline/apt-get.cc:3077
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
-"Зависимост %s за пакета %s не може да бъде удовлетворена, понеже няма "
-"налични версии на пакета %s, които могат да удовлетворят изискването за "
-"версия"
+"Зависимост %s за пакета %s не може да бъде удовлетворена, понеже версията "
+"кандидат на пакета %s не може да удовлетвори изискването за версия"
 
 #: cmdline/apt-get.cc:3083
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr ""
 "Зависимост %s за пакета %s не може да бъде удовлетворена, понеже пакета %s "
-"не може да бъде намерен"
+"няма подходящи версии"
 
 #: cmdline/apt-get.cc:3106
 #, c-format
@@ -1027,16 +1027,15 @@ msgid "Failed to process build dependencies"
 msgstr "Неуспех при обработката на зависимостите за компилиране"
 
 #: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
-#, fuzzy, c-format
+#, c-format
 msgid "Changelog for %s (%s)"
-msgstr "Свързване с %s (%s)"
+msgstr "Журнал на промените в %s (%s)"
 
 #: cmdline/apt-get.cc:3355
 msgid "Supported modules:"
 msgstr "Поддържани модули:"
 
 #: cmdline/apt-get.cc:3396
-#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1094,7 +1093,7 @@ msgstr ""
 "   upgrade - Обновяване на системата\n"
 "   install - Инсталиране на нови пакети (пакет е libc6, а не libc6.deb)\n"
 "   remove - Премахване на пакети\n"
-"   autoremove - Автоматично премахване на неизползвани пакети\n"
+"   autoremove - Автоматично премахване на всички неизползвани пакети\n"
 "   purge - Премахване на пакети, включително файловете им с настройки\n"
 "   source - Изтегляне на изходен код на пакети\n"
 "   build-dep - Конфигуриране на зависимостите за компилиране на пакети от\n"
@@ -1104,8 +1103,8 @@ msgstr ""
 "   clean - Изтриване на изтеглените файлове\n"
 "   autoclean - Изтриване на стари изтеглени файлове\n"
 "   check - Проверка за неудовлетворени зависимости\n"
-"   markauto - Отбелязване на дадените пакети като инсталирани автоматично\n"
-"   unmarkauto - отбелязване на дадените пакети като инсталирани ръчно\n"
+"   changelog - Изтегляне и показване на журнала с промени в даден пакет\n"
+"   download - Изтегляне на двоичен пакет в текущата директория\n"
 "\n"
 "Опции:\n"
 "  -h  Този помощен текст.\n"
@@ -1176,29 +1175,29 @@ msgstr ""
 "в устройството „%s“ и натиснете „Enter“\n"
 
 #: cmdline/apt-mark.cc:55
-#, fuzzy, c-format
+#, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr "но той не е инсталиран"
+msgstr "Пакетът „%s“ не може да бъде маркиран, защото не е инсталиран.\n"
 
 #: cmdline/apt-mark.cc:61
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr "%s е отбелязан като ръчно инсталиран.\n"
+msgstr "Пакетът „%s“ вече е отбелязан като ръчно инсталиран.\n"
 
 #: cmdline/apt-mark.cc:63
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr "%s е отбелязан като автоматично инсталиран.\n"
+msgstr "Пакетът „%s“ вече е отбелязан като автоматично инсталиран.\n"
 
 #: cmdline/apt-mark.cc:228
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set on hold.\n"
-msgstr "%s вече е най-новата версия.\n"
+msgstr "Пакетът „%s“ вече е задуржан.\n"
 
 #: cmdline/apt-mark.cc:230
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already not hold.\n"
-msgstr "%s вече е най-новата версия.\n"
+msgstr "Пакетът „%s“ вече е задържан.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:314
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
@@ -1207,18 +1206,18 @@ msgid "Waited for %s but it wasn't there"
 msgstr "Изчака се завършването на %s, но той не беше пуснат"
 
 #: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:297
-#, fuzzy, c-format
+#, c-format
 msgid "%s set on hold.\n"
-msgstr "%s е отбелязан като ръчно инсталиран.\n"
+msgstr "Пакетът „%s“ е задържан.\n"
 
 #: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:302
-#, fuzzy, c-format
+#, c-format
 msgid "Canceled hold on %s.\n"
-msgstr "Неуспех при отварянето на %s"
+msgstr "Отмяна на задържането на пакета „%s“.\n"
 
 #: cmdline/apt-mark.cc:320
 msgid "Executing dpkg failed. Are you root?"
-msgstr ""
+msgstr "Неуспех при изпълняване на dpkg. Имате ли административни права?"
 
 #: cmdline/apt-mark.cc:367
 msgid ""
@@ -1241,6 +1240,25 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
+"Употреба: apt-mark [опции] {auto|manual} пкт1 [пкт2 …]\n"
+"\n"
+"apt-mark предоставя команден интерфейс за маркиране на пакети\n"
+"като инсталирани ръчно или автоматично. Предлага се и показване\n"
+"на текущата маркировка.\n"
+"\n"
+"Команди:\n"
+"   auto — Маркиране на пакети като инсталирани автоматично\n"
+"   manual — Маркиране на пакети като инсталирани ръчно\n"
+"\n"
+"Опции:\n"
+"  -h  Тази помощна информация\n"
+"  -q  Изход без информация за напредъка, подходящ за съхраняване\n"
+"  -qq Без изход, освен при грешки\n"
+"  -s  Симулация. Само се извежда какво би било направено\n"
+"  -f  Четене/запис на информацията за маркировката от указания файл\n"
+"  -c=? Указване на файл с настройки\n"
+"  -o=? Указване на произволна настройка, напр. -o dir::cache=/tmp\n"
+"За повече информация прегледайте ръководствата apt-mark(8) и apt.conf(5)."
 
 #: methods/cdrom.cc:203
 #, c-format
@@ -1529,7 +1547,7 @@ msgstr ""
 
 #: methods/gzip.cc:65
 msgid "Empty files can't be valid archives"
-msgstr ""
+msgstr "Празни файлове не могат да бъдат валидни архиви"
 
 #: methods/http.cc:394
 msgid "Waiting for headers"
@@ -1628,9 +1646,9 @@ msgstr "Файлът „%s“ на огледалния сървър не е н�
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:287
-#, fuzzy, c-format
+#, c-format
 msgid "Can not read mirror file '%s'"
-msgstr "Файлът „%s“ на огледалния сървър не е намерен "
+msgstr "Грешка при четене файла „%s“ от огледалния сървър"
 
 #: methods/mirror.cc:442
 #, c-format
@@ -1989,19 +2007,19 @@ msgid "Unable to open %s"
 msgstr "Неуспех при отварянето на %s"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Неправилно форматиран override %s, ред %lu #1"
+msgstr "Неправилно форматиран override %s, ред %llu #1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Неправилно форматиран override %s, ред %lu #2"
+msgstr "Неправилно форматиран override %s, ред %llu #2"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Неправилно форматиран override %s, ред %lu #3"
+msgstr "Неправилно форматиран override %s, ред %llu #3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -2068,6 +2086,18 @@ msgid ""
 "apt.conf(5) manual pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Употреба: apt-internal-resolver\n"
+"\n"
+"apt-internal-resolver е интерфейс към вградения в APT механизъм за "
+"удовлетворяване на зависимости\n"
+"\n"
+"Опции:\n"
+"  -h  Този помощен текст\n"
+"  -q  Изход, подходящ за журнал — без индикатор на напредъка\n"
+"  -c=? Указване на файл с настройки\n"
+"  -o=? Указване на произволна настройка, напр. -o dir::cache=/tmp\n"
+"За повече информация и настройки прегледайте наръчника apt.conf(5).\n"
+"                               Това APT има супер сили.\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2267,9 +2297,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "Неуспех при дублиране на файлов манипулатор %i"
 
 #: apt-pkg/contrib/mmap.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Неуспех при прехвърлянето в паметта на %lu байта"
+msgstr "Неуспех при прехвърлянето в паметта на %llu байта"
 
 #: apt-pkg/contrib/mmap.cc:145
 msgid "Unable to close mmap"
@@ -2495,23 +2525,24 @@ msgstr "Неуспех при достъпа до заключване %s"
 #: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:506
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
+msgstr "Не може да се създаде списък от файлове, защото „%s“ не е директория"
 
 #: apt-pkg/contrib/fileutl.cc:426
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
+msgstr "Пропускане на „%s“ в директорията „%s“, понеже не е обикновен файл"
 
 #: apt-pkg/contrib/fileutl.cc:444
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
+msgstr "Пропускане на файла „%s“ в директорията „%s“, понеже няма разширение"
 
 #: apt-pkg/contrib/fileutl.cc:453
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
+"Пропускане на файла „%s“ в директорията „%s“, понеже разширението му е грешно"
 
 #: apt-pkg/contrib/fileutl.cc:840
 #, c-format
@@ -2552,15 +2583,15 @@ msgid "Failed to exec compressor "
 msgstr "Неуспех при изпълнението на компресиращата програма "
 
 #: apt-pkg/contrib/fileutl.cc:1289
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
 msgstr ""
-"грешка при четене, все още има %lu за четене, но няма нито един останал"
+"грешка при четене, все още има %llu за четене, но няма нито един останал"
 
 #: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "грешка при запис, все още име %lu за запис, но не успя"
+msgstr "грешка при запис, все още име %llu за запис, но не успя"
 
 #: apt-pkg/contrib/fileutl.cc:1716
 #, c-format
@@ -2594,9 +2625,8 @@ msgid "The package cache file is an incompatible version"
 msgstr "Файлът за кеш на пакети е несъвместима версия"
 
 #: apt-pkg/pkgcache.cc:162
-#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "Файлът за кеш на пакети е повреден"
+msgstr "Файлът за кеш на пакети е повреден, твърде малък е"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2786,9 +2816,9 @@ msgstr ""
 "информацията за APT::Immediate-Configure в „man 5 apt.conf“. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, fuzzy, c-format
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "Неуспех при отваряне на файла „%s“"
+msgstr "Неуспех при конфигуриране на „%s“. "
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2829,12 +2859,11 @@ msgstr ""
 "Неуспех при коригирането на проблемите, имате задържани счупени пакети."
 
 #: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
-#, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
 msgstr ""
-"Някои индексни файлове не можаха да бъдат изтеглени, те са пренебрегнати или "
+"Някои индексни файлове не можаха да бъдат изтеглени. Те са пренебрегнати или "
 "са използвани по-стари."
 
 #: apt-pkg/acquire.cc:81
@@ -2918,6 +2947,8 @@ msgid ""
 "The value '%s' is invalid for APT::Default-Release as such a release is not "
 "available in the sources"
 msgstr ""
+"Стойността „%s“ на APT::Default-Release не е правилна, понеже в източниците "
+"няма такова издание"
 
 #: apt-pkg/policy.cc:396
 #, c-format
@@ -2947,9 +2978,9 @@ msgstr "Кешът има несъвместима система за верс�
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "Възникна грешка при обработката на %s (FindPkg)"
+msgstr "Възникна грешка при обработката на %s (%s%d)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -3015,11 +3046,13 @@ msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
+"Не може да се открие елемент „%s“ във файла Release (объркан ред в sources."
+"list или повреден файл)"
 
 #: apt-pkg/acquire-item.cc:1386
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "Неуспех при анализиране на файл Release %s"
+msgstr "Не е открита контролна сума за „%s“  във файла Release"
 
 #: apt-pkg/acquire-item.cc:1428
 msgid "There is no public key available for the following key IDs:\n"
@@ -3031,6 +3064,8 @@ msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
+"Файлът със служебна информация за „%s“ е остарял (валиден до %s). Няма да се "
+"прилагат обновявания от това хранилище."
 
 #: apt-pkg/acquire-item.cc:1488
 #, c-format
@@ -3239,7 +3274,7 @@ msgstr "Несъответствие на контролната сума за: 
 #: apt-pkg/indexcopy.cc:659
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
+msgstr "Файлът %s не започва с информация за подписване в обикновен текст."
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
 #: apt-pkg/indexcopy.cc:690
@@ -3304,23 +3339,25 @@ msgstr ""
 
 #: apt-pkg/edsp.cc:41 apt-pkg/edsp.cc:61
 msgid "Send scenario to solver"
-msgstr ""
+msgstr "Изпращане на сценарий към програмата за удовлетворяване на зависимости"
 
 #: apt-pkg/edsp.cc:209
 msgid "Send request to solver"
-msgstr ""
+msgstr "Изпращане на заявка към програмата за удовлетворяване на зависимости"
 
 #: apt-pkg/edsp.cc:277
 msgid "Prepare for receiving solution"
-msgstr ""
+msgstr "Подготовка за приемане на решение"
 
 #: apt-pkg/edsp.cc:284
 msgid "External solver failed without a proper error message"
 msgstr ""
+"Външната програма за удовлетворяване на зависимости се провали без да изведе "
+"съобщение за грешка"
 
 #: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
 msgid "Execute external solver"
-msgstr ""
+msgstr "Изпълняване на външна програма за удовлетворяване на зависимости"
 
 #: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
@@ -3415,7 +3452,7 @@ msgstr "Изпълняване на dpkg"
 
 #: apt-pkg/deb/dpkgpm.cc:1411
 msgid "Operation was interrupted before it could finish"
-msgstr ""
+msgstr "Операцията е прекъсната"
 
 #: apt-pkg/deb/dpkgpm.cc:1473
 msgid "No apport report written because MaxReports is reached already"
