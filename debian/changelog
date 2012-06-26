@@ -1,9 +1,19 @@
+apt (0.9.6ubuntu3) quantal; urgency=low
+
+  * SECURITY UPDATE: Disable apt-key net-update for now, as validation
+    code is still insecure
+    - cmdline/apt-key: exit 1 immediately in net_update()
+    - CVE-2012-0954
+    - LP: #1013639
+
+ -- Jamie Strandboge <jamie@ubuntu.com>  Fri, 15 Jun 2012 08:03:17 -0500
+
 apt (0.9.6ubuntu2) quantal; urgency=low
 
   * adjust apt-key to ensure no collisions on subkeys too. Patch thanks to
     Marc Deslauriers. (LP: #1013128)
 
- -- Jamie Strandboge <jamie@ubuntu.com> Thu, 14 Jun 2012 11:29:48 -0500
+ -- Jamie Strandboge <jamie@ubuntu.com>  Thu, 14 Jun 2012 11:29:48 -0500
 
 apt (0.9.6ubuntu1) quantal; urgency=low
 

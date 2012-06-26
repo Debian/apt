@@ -8,8 +8,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
-"Report-Msgid-Bugs-To: deity@lists.debian.org\n"
-"POT-Creation-Date: 2012-04-11 17:55+0200\n"
+"Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
+"POT-Creation-Date: 2012-06-26 13:47+0200\n"
 "PO-Revision-Date: 2010-08-26 14:42+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -98,8 +98,8 @@ msgid "Package file %s is out of sync."
 msgstr "软件包文件 %s 尚未同步。"
 
 #: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1378
-#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:40
-#: cmdline/apt-mark.cc:87 cmdline/apt-mark.cc:163
+#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:46
+#: cmdline/apt-mark.cc:93 cmdline/apt-mark.cc:219
 msgid "No packages found"
 msgstr "没有发现匹配的软件包"
 
@@ -111,7 +111,7 @@ msgstr "您必须明确地给出至少一个表达式"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:459
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:462
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "未发现软件包 %s"
@@ -154,10 +154,10 @@ msgstr "  软件包锁："
 msgid "  Version table:"
 msgstr "  版本列表："
 
-#: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:199 cmdline/apt-config.cc:75
-#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:590
-#: cmdline/apt-get.cc:3255 cmdline/apt-internal-solver.cc:32
-#: cmdline/apt-mark.cc:267 cmdline/apt-sortpkgs.cc:147
+#: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
+#: cmdline/apt-get.cc:3341 cmdline/apt-mark.cc:363
+#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
+#: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s，用于 %s 构架，编译于 %s %s\n"
@@ -249,7 +249,7 @@ msgstr "请把盘片插入驱动器再按回车键"
 msgid "Failed to mount '%s' to '%s'"
 msgstr "无法将 %s 挂载到 %s"
 
-#: cmdline/apt-cdrom.cc:164
+#: cmdline/apt-cdrom.cc:163
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "请对您的盘片套件中的其它盘片重复相同的操作。"
 
@@ -257,7 +257,7 @@ msgstr "请对您的盘片套件中的其它盘片重复相同的操作。"
 msgid "Arguments not in pairs"
 msgstr "参数没有成对"
 
-#: cmdline/apt-config.cc:81
+#: cmdline/apt-config.cc:87
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -285,12 +285,1363 @@ msgstr ""
 "  -c=? 读取指定的配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如：-o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:100
+#: cmdline/apt-get.cc:135
+msgid "Y"
+msgstr "Y"
+
+#: cmdline/apt-get.cc:140
+msgid "N"
+msgstr ""
+
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "编译正则表达式时出错 - %s"
+
+#: cmdline/apt-get.cc:260
+msgid "The following packages have unmet dependencies:"
+msgstr "下列软件包有未满足的依赖关系："
+
+#: cmdline/apt-get.cc:350
+#, c-format
+msgid "but %s is installed"
+msgstr "但是 %s 已经安装"
+
+#: cmdline/apt-get.cc:352
+#, c-format
+msgid "but %s is to be installed"
+msgstr "但是 %s 正要被安装"
+
+#: cmdline/apt-get.cc:359
+msgid "but it is not installable"
+msgstr "但无法安装它"
+
+#: cmdline/apt-get.cc:361
+msgid "but it is a virtual package"
+msgstr "但是它是虚拟软件包"
+
+#: cmdline/apt-get.cc:364
+msgid "but it is not installed"
+msgstr "但是它还没有被安装"
+
+#: cmdline/apt-get.cc:364
+msgid "but it is not going to be installed"
+msgstr "但是它将不会被安装"
+
+#: cmdline/apt-get.cc:369
+msgid " or"
+msgstr " 或"
+
+#: cmdline/apt-get.cc:398
+msgid "The following NEW packages will be installed:"
+msgstr "下列【新】软件包将被安装："
+
+#: cmdline/apt-get.cc:424
+msgid "The following packages will be REMOVED:"
+msgstr "下列软件包将被【卸载】："
+
+#: cmdline/apt-get.cc:446
+msgid "The following packages have been kept back:"
+msgstr "下列软件包的版本将保持不变："
+
+#: cmdline/apt-get.cc:467
+msgid "The following packages will be upgraded:"
+msgstr "下列软件包将被升级："
+
+#: cmdline/apt-get.cc:488
+msgid "The following packages will be DOWNGRADED:"
+msgstr "下列软件包将被【降级】："
+
+#: cmdline/apt-get.cc:508
+msgid "The following held packages will be changed:"
+msgstr "下列被要求保持版本不变的软件包将被改变："
+
+#: cmdline/apt-get.cc:563
+#, c-format
+msgid "%s (due to %s) "
+msgstr "%s (是由于 %s) "
+
+#: cmdline/apt-get.cc:571
+msgid ""
+"WARNING: The following essential packages will be removed.\n"
+"This should NOT be done unless you know exactly what you are doing!"
+msgstr ""
+"【警告】：下列基础软件包将被卸载。\n"
+"请勿尝试，除非您确实知道您在做什么！"
+
+#: cmdline/apt-get.cc:602
+#, c-format
+msgid "%lu upgraded, %lu newly installed, "
+msgstr "升级了 %lu 个软件包，新安装了 %lu 个软件包，"
+
+#: cmdline/apt-get.cc:606
+#, c-format
+msgid "%lu reinstalled, "
+msgstr "重新安装了 %lu 个软件包，"
+
+#: cmdline/apt-get.cc:608
+#, c-format
+msgid "%lu downgraded, "
+msgstr "降级了 %lu 个软件包，"
+
+#: cmdline/apt-get.cc:610
+#, c-format
+msgid "%lu to remove and %lu not upgraded.\n"
+msgstr "要卸载 %lu 个软件包，有 %lu 个软件包未被升级。\n"
+
+#: cmdline/apt-get.cc:614
+#, c-format
+msgid "%lu not fully installed or removed.\n"
+msgstr "有 %lu 个软件包没有被完全安装或卸载。\n"
+
+#: cmdline/apt-get.cc:635
+#, c-format
+msgid "Note, selecting '%s' for task '%s'\n"
+msgstr "注意，为任务 %2$s 选中了 %1$s\n"
+
+#: cmdline/apt-get.cc:640
+#, c-format
+msgid "Note, selecting '%s' for regex '%s'\n"
+msgstr "注意，根据正则表达式 %2$s 选中了 %1$s\n"
+
+#: cmdline/apt-get.cc:657
+#, c-format
+msgid "Package %s is a virtual package provided by:\n"
+msgstr "软件包 %s 是一个由下面的软件包提供的虚拟软件包：\n"
+
+#: cmdline/apt-get.cc:668
+msgid " [Installed]"
+msgstr " [已安装]"
+
+#: cmdline/apt-get.cc:677
+msgid " [Not candidate version]"
+msgstr " [无候选版本]"
+
+#: cmdline/apt-get.cc:679
+msgid "You should explicitly select one to install."
+msgstr "请您明确地选择一个来进行安装。"
+
+#: cmdline/apt-get.cc:682
+#, c-format
+msgid ""
+"Package %s is not available, but is referred to by another package.\n"
+"This may mean that the package is missing, has been obsoleted, or\n"
+"is only available from another source\n"
+msgstr ""
+"现在没有可用的软件包 %s，但是它被其它的软件包引用了。\n"
+"这可能意味着这个缺失的软件包可能已被废弃，\n"
+"或者只能在其他发布源中找到\n"
+
+#: cmdline/apt-get.cc:700
+msgid "However the following packages replace it:"
+msgstr "可是下列软件包取代了它："
+
+#: cmdline/apt-get.cc:712
+#, c-format
+msgid "Package '%s' has no installation candidate"
+msgstr "软件包 %s 没有可供安装的候选者"
+
+#: cmdline/apt-get.cc:725
+#, c-format
+msgid "Virtual packages like '%s' can't be removed\n"
+msgstr "类似 %s 的虚拟软件包可以卸载\n"
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr "软件包 %s 还未安装，因而不会被卸载\n"
+
+#: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "软件包 %s 还未安装，因而不会被卸载\n"
+
+#: cmdline/apt-get.cc:788
+#, c-format
+msgid "Note, selecting '%s' instead of '%s'\n"
+msgstr "注意，选取 %s 而非 %s\n"
+
+#: cmdline/apt-get.cc:818
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "忽略了 %s，它已经被安装而且没有指定要升级。\n"
+
+#: cmdline/apt-get.cc:822
+#, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr "忽略了 %s，它已经被安装而且仅请求了升级。\n"
+
+#: cmdline/apt-get.cc:834
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "不能重新安装 %s，因为无法下载它。\n"
+
+#: cmdline/apt-get.cc:839
+#, c-format
+msgid "%s is already the newest version.\n"
+msgstr "%s 已经是最新的版本了。\n"
+
+#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2157 cmdline/apt-mark.cc:68
+#, c-format
+msgid "%s set to manually installed.\n"
+msgstr "%s 被设置为手动安装。\n"
+
+#: cmdline/apt-get.cc:884
+#, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "为 %3$s 选定了版本 %1$s (%2$s)\n"
+
+#: cmdline/apt-get.cc:889
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "为 %3$s 选定了版本 %1$s (%2$s)\n"
+
+#: cmdline/apt-get.cc:1025
+msgid "Correcting dependencies..."
+msgstr "正在更正依赖关系..."
+
+#: cmdline/apt-get.cc:1028
+msgid " failed."
+msgstr " 失败。"
+
+#: cmdline/apt-get.cc:1031
+msgid "Unable to correct dependencies"
+msgstr "无法更正依赖关系"
+
+#: cmdline/apt-get.cc:1034
+msgid "Unable to minimize the upgrade set"
+msgstr "无法最小化要升级的软件包集合"
+
+#: cmdline/apt-get.cc:1036
+msgid " Done"
+msgstr " 完成"
+
+#: cmdline/apt-get.cc:1040
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "您也许需要运行“apt-get -f install”来修正上面的错误。"
+
+#: cmdline/apt-get.cc:1043
+msgid "Unmet dependencies. Try using -f."
+msgstr "不能满足依赖关系。不妨试一下 -f 选项。"
+
+#: cmdline/apt-get.cc:1068
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "【警告】：下列软件包不能通过验证！"
+
+#: cmdline/apt-get.cc:1072
+msgid "Authentication warning overridden.\n"
+msgstr "忽略了认证警告。\n"
+
+#: cmdline/apt-get.cc:1079
+msgid "Install these packages without verification [y/N]? "
+msgstr "不经验证就安装这些软件包吗？[y/N] "
+
+#: cmdline/apt-get.cc:1081
+msgid "Some packages could not be authenticated"
+msgstr "有些软件包不能通过验证"
+
+#: cmdline/apt-get.cc:1090 cmdline/apt-get.cc:1251
+msgid "There are problems and -y was used without --force-yes"
+msgstr "碰到了一些问题，您使用了 -y 选项，但是没有用 --force-yes"
+
+#: cmdline/apt-get.cc:1131
+msgid "Internal error, InstallPackages was called with broken packages!"
+msgstr "内部错误，InstallPackages 被用在了无法安装的软件包上！"
+
+#: cmdline/apt-get.cc:1140
+msgid "Packages need to be removed but remove is disabled."
+msgstr "有软件包需要被卸载，但是卸载动作被程序设置所禁止。"
+
+#: cmdline/apt-get.cc:1151
+msgid "Internal error, Ordering didn't finish"
+msgstr "内部错误，Ordering 未能完成"
+
+#: cmdline/apt-get.cc:1189
+msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
+msgstr "怪了……文件大小不符，请发信给 apt@packages.debian.org 吧"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: cmdline/apt-get.cc:1196
+#, c-format
+msgid "Need to get %sB/%sB of archives.\n"
+msgstr "需要下载 %sB/%sB 的软件包。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: cmdline/apt-get.cc:1201
+#, c-format
+msgid "Need to get %sB of archives.\n"
+msgstr "需要下载 %sB 的软件包。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: cmdline/apt-get.cc:1208
+#, c-format
+msgid "After this operation, %sB of additional disk space will be used.\n"
+msgstr "解压缩后会消耗掉 %sB 的额外空间。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: cmdline/apt-get.cc:1213
+#, c-format
+msgid "After this operation, %sB disk space will be freed.\n"
+msgstr "解压缩后将会空出 %sB 的空间。\n"
+
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2577
+#: cmdline/apt-get.cc:2580
+#, c-format
+msgid "Couldn't determine free space in %s"
+msgstr "无法获知您在 %s 上的可用空间"
+
+#: cmdline/apt-get.cc:1241
+#, c-format
+msgid "You don't have enough free space in %s."
+msgstr "您在 %s 上没有足够的可用空间。"
+
+#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1277
+msgid "Trivial Only specified but this is not a trivial operation."
+msgstr "虽然您指定了仅执行常规操作，但这不是个常规操作。"
+
+#: cmdline/apt-get.cc:1259
+msgid "Yes, do as I say!"
+msgstr "是，按我说的做！"
+
+#: cmdline/apt-get.cc:1261
+#, c-format
+msgid ""
+"You are about to do something potentially harmful.\n"
+"To continue type in the phrase '%s'\n"
+" ?] "
+msgstr ""
+"您的操作会导致潜在的危害。\n"
+"若还想继续的话，就输入下面的短句“%s”\n"
+" ?] "
+
+#: cmdline/apt-get.cc:1267 cmdline/apt-get.cc:1286
+msgid "Abort."
+msgstr "中止执行。"
+
+#: cmdline/apt-get.cc:1282
+msgid "Do you want to continue [Y/n]? "
+msgstr "您希望继续执行吗？[Y/n]"
+
+#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2642 apt-pkg/algorithms.cc:1543
+#, c-format
+msgid "Failed to fetch %s  %s\n"
+msgstr "无法下载 %s  %s\n"
+
+#: cmdline/apt-get.cc:1372
+msgid "Some files failed to download"
+msgstr "有一些文件无法下载"
+
+#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2654
+msgid "Download complete and in download only mode"
+msgstr "下载完毕，目前是“仅下载”模式"
+
+#: cmdline/apt-get.cc:1379
+msgid ""
+"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
+"missing?"
+msgstr ""
+"有几个软件包无法下载，您可以运行 apt-get update 或者加上 --fix-missing 的选项"
+"再试试？"
+
+#: cmdline/apt-get.cc:1383
+msgid "--fix-missing and media swapping is not currently supported"
+msgstr "目前还不支持 --fix-missing 和介质交换"
+
+#: cmdline/apt-get.cc:1388
+msgid "Unable to correct missing packages."
+msgstr "无法更正缺少的软件包。"
+
+#: cmdline/apt-get.cc:1389
+msgid "Aborting install."
+msgstr "中止安装。"
+
+#: cmdline/apt-get.cc:1417
+msgid ""
+"The following package disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgid_plural ""
+"The following packages disappeared from your system as\n"
+"all files have been overwritten by other packages:"
+msgstr[0] "以下软件包因为文件已被其他软件包覆盖而消失："
+
+#: cmdline/apt-get.cc:1421
+msgid "Note: This is done automatically and on purpose by dpkg."
+msgstr "注意：这是自动被 dpkg 有意完成的。"
+
+#: cmdline/apt-get.cc:1559
+#, c-format
+msgid "Ignore unavailable target release '%s' of package '%s'"
+msgstr "忽略不可用的软件包 %2$s 的目标发行版本 %1$s"
+
+#: cmdline/apt-get.cc:1591
+#, c-format
+msgid "Picking '%s' as source package instead of '%s'\n"
+msgstr "选择 %s 作为源代码包而非 %s\n"
+
+#. if (VerTag.empty() == false && Last == 0)
+#: cmdline/apt-get.cc:1629
+#, c-format
+msgid "Ignore unavailable version '%s' of package '%s'"
+msgstr "忽略不可用的 %2$s 软件包的 %1$s 版"
+
+#: cmdline/apt-get.cc:1645
+msgid "The update command takes no arguments"
+msgstr " update 命令不需要参数"
+
+#: cmdline/apt-get.cc:1711
+msgid "We are not supposed to delete stuff, can't start AutoRemover"
+msgstr "我们不应该进行删除，无法启动自动删除器"
+
+#: cmdline/apt-get.cc:1815
+msgid ""
+"Hmm, seems like the AutoRemover destroyed something which really\n"
+"shouldn't happen. Please file a bug report against apt."
+msgstr "似乎自动卸载工具损坏了一些软件，这不应该发生。请向 apt 提交错误报告。"
+
+#.
+#. if (Packages == 1)
+#. {
+#. c1out << endl;
+#. c1out <<
+#. _("Since you only requested a single operation it is extremely likely that\n"
+#. "the package is simply not installable and a bug report against\n"
+#. "that package should be filed.") << endl;
+#. }
+#.
+#: cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1987
+msgid "The following information may help to resolve the situation:"
+msgstr "下列信息可能会对解决问题有所帮助："
+
+#: cmdline/apt-get.cc:1822
+msgid "Internal Error, AutoRemover broke stuff"
+msgstr "内部错误，自动卸载工具坏事了"
+
+#: cmdline/apt-get.cc:1829
+msgid ""
+"The following package was automatically installed and is no longer required:"
+msgid_plural ""
+"The following packages were automatically installed and are no longer "
+"required:"
+msgstr[0] "下列软件包是自动安装的并且现在不需要了："
+
+#: cmdline/apt-get.cc:1833
+#, c-format
+msgid "%lu package was automatically installed and is no longer required.\n"
+msgid_plural ""
+"%lu packages were automatically installed and are no longer required.\n"
+msgstr[0] "%lu 个自动安装的的软件包现在已不再需要了。\n"
+
+#: cmdline/apt-get.cc:1835
+#, fuzzy
+msgid "Use 'apt-get autoremove' to remove it."
+msgid_plural "Use 'apt-get autoremove' to remove them."
+msgstr[0] "使用'apt-get autoremove'来卸载它们"
+
+#: cmdline/apt-get.cc:1854
+msgid "Internal error, AllUpgrade broke stuff"
+msgstr "内部错误，全部升级工具坏事了"
+
+#: cmdline/apt-get.cc:1953
+msgid "You might want to run 'apt-get -f install' to correct these:"
+msgstr "您可能需要运行“apt-get -f install”来纠正下列错误："
+
+#: cmdline/apt-get.cc:1957
+msgid ""
+"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
+"solution)."
+msgstr ""
+"有未能满足的依赖关系。请尝试不指明软件包的名字来运行“apt-get -f install”(也可"
+"以指定一个解决办法)。"
+
+#: cmdline/apt-get.cc:1972
+msgid ""
+"Some packages could not be installed. This may mean that you have\n"
+"requested an impossible situation or if you are using the unstable\n"
+"distribution that some required packages have not yet been created\n"
+"or been moved out of Incoming."
+msgstr ""
+"有一些软件包无法被安装。如果您用的是 unstable 发行版，这也许是\n"
+"因为系统无法达到您要求的状态造成的。该版本中可能会有一些您需要的软件\n"
+"包尚未被创建或是它们已被从新到(Incoming)目录移出。"
+
+#: cmdline/apt-get.cc:1993
+msgid "Broken packages"
+msgstr "破损的软件包"
+
+#: cmdline/apt-get.cc:2019
+msgid "The following extra packages will be installed:"
+msgstr "将会安装下列额外的软件包："
+
+#: cmdline/apt-get.cc:2109
+msgid "Suggested packages:"
+msgstr "建议安装的软件包："
+
+#: cmdline/apt-get.cc:2110
+msgid "Recommended packages:"
+msgstr "推荐安装的软件包："
+
+#: cmdline/apt-get.cc:2152
+#, c-format
+msgid "Couldn't find package %s"
+msgstr "无法找到软件包 %s"
+
+#: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
+#, c-format
+msgid "%s set to automatically installed.\n"
+msgstr "%s 被设置为手动安装。\n"
+
+#: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
+msgid ""
+"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
+"instead."
+msgstr ""
+
+#: cmdline/apt-get.cc:2183
+msgid "Calculating upgrade... "
+msgstr "正在对升级进行计算... "
+
+#: cmdline/apt-get.cc:2186 methods/ftp.cc:711 methods/connect.cc:115
+msgid "Failed"
+msgstr "失败"
+
+#: cmdline/apt-get.cc:2191
+msgid "Done"
+msgstr "完成"
+
+#: cmdline/apt-get.cc:2258 cmdline/apt-get.cc:2266
+msgid "Internal error, problem resolver broke stuff"
+msgstr "内部错误，问题解决工具坏事了"
+
+#: cmdline/apt-get.cc:2294 cmdline/apt-get.cc:2330
+msgid "Unable to lock the download directory"
+msgstr "无法锁定下载目录"
+
+#: cmdline/apt-get.cc:2381
+#, c-format
+msgid "Downloading %s %s"
+msgstr ""
+
+#: cmdline/apt-get.cc:2439
+msgid "Must specify at least one package to fetch source for"
+msgstr "要下载源代码，必须指定至少一个对应的软件包"
+
+#: cmdline/apt-get.cc:2479 cmdline/apt-get.cc:2791
+#, c-format
+msgid "Unable to find a source package for %s"
+msgstr "无法找到与 %s 对应的源代码包"
+
+#: cmdline/apt-get.cc:2496
+#, c-format
+msgid ""
+"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
+"%s\n"
+msgstr ""
+"提示：%s 的打包工作被维护于以下位置的 %s 版本控制系统中：\n"
+"%s\n"
+
+#: cmdline/apt-get.cc:2501
+#, fuzzy, c-format
+msgid ""
+"Please use:\n"
+"bzr branch %s\n"
+"to retrieve the latest (possibly unreleased) updates to the package.\n"
+msgstr ""
+"请使用：\n"
+"bzr get %s\n"
+"获得该软件包的最近更新(可能尚未正式发布)。\n"
+
+#: cmdline/apt-get.cc:2554
+#, c-format
+msgid "Skipping already downloaded file '%s'\n"
+msgstr "忽略已下载过的文件“%s”\n"
+
+#: cmdline/apt-get.cc:2591
+#, c-format
+msgid "You don't have enough free space in %s"
+msgstr "您在 %s 上没有足够的可用空间"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
+#: cmdline/apt-get.cc:2600
+#, c-format
+msgid "Need to get %sB/%sB of source archives.\n"
+msgstr "需要下载 %sB/%sB 的源代码包。\n"
+
+#. TRANSLATOR: The required space between number and unit is already included
+#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
+#: cmdline/apt-get.cc:2605
+#, c-format
+msgid "Need to get %sB of source archives.\n"
+msgstr "需要下载 %sB 的源代码包。\n"
+
+#: cmdline/apt-get.cc:2611
+#, c-format
+msgid "Fetch source %s\n"
+msgstr "下载源代码 %s\n"
+
+#: cmdline/apt-get.cc:2649
+msgid "Failed to fetch some archives."
+msgstr "有一些包文件无法下载。"
+
+#: cmdline/apt-get.cc:2680
+#, c-format
+msgid "Skipping unpack of already unpacked source in %s\n"
+msgstr "忽略已经被解包到 %s 目录的源代码包\n"
+
+#: cmdline/apt-get.cc:2692
+#, c-format
+msgid "Unpack command '%s' failed.\n"
+msgstr "运行解包的命令“%s”出错。\n"
+
+#: cmdline/apt-get.cc:2693
+#, c-format
+msgid "Check if the 'dpkg-dev' package is installed.\n"
+msgstr "请检查是否安装了“dpkg-dev”软件包。\n"
+
+#: cmdline/apt-get.cc:2715
+#, c-format
+msgid "Build command '%s' failed.\n"
+msgstr "执行构造软件包命令“%s”失败。\n"
+
+#: cmdline/apt-get.cc:2735
+msgid "Child process failed"
+msgstr "子进程出错"
+
+#: cmdline/apt-get.cc:2754
+msgid "Must specify at least one package to check builddeps for"
+msgstr "要检查生成软件包的构建依赖关系，必须指定至少一个软件包"
+
+#: cmdline/apt-get.cc:2779
+#, c-format
+msgid ""
+"No architecture information available for %s. See apt.conf(5) APT::"
+"Architectures for setup"
+msgstr ""
+
+#: cmdline/apt-get.cc:2803 cmdline/apt-get.cc:2806
+#, c-format
+msgid "Unable to get build-dependency information for %s"
+msgstr "无法获得 %s 的构建依赖关系信息"
+
+#: cmdline/apt-get.cc:2826
+#, c-format
+msgid "%s has no build depends.\n"
+msgstr " %s 没有构建依赖关系信息。\n"
+
+#: cmdline/apt-get.cc:2985
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
+"packages"
+msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+
+#: cmdline/apt-get.cc:3003
+#, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because the package %s cannot be "
+"found"
+msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+
+#: cmdline/apt-get.cc:3026
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新"
+
+#: cmdline/apt-get.cc:3065
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because candidate version of "
+"package %s can't satisfy version requirements"
+msgstr ""
+"由于无法找到符合要求的软件包 %3$s 的可用版本，因此不能满足 %2$s 所要求的 "
+"%1$s 依赖关系"
+
+#: cmdline/apt-get.cc:3071
+#, fuzzy, c-format
+msgid ""
+"%s dependency for %s cannot be satisfied because package %s has no candidate "
+"version"
+msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
+
+#: cmdline/apt-get.cc:3094
+#, c-format
+msgid "Failed to satisfy %s dependency for %s: %s"
+msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
+
+#: cmdline/apt-get.cc:3110
+#, c-format
+msgid "Build-dependencies for %s could not be satisfied."
+msgstr "不能满足软件包 %s 所要求的构建依赖关系。"
+
+#: cmdline/apt-get.cc:3115
+msgid "Failed to process build dependencies"
+msgstr "无法处理构建依赖关系"
+
+#: cmdline/apt-get.cc:3208 cmdline/apt-get.cc:3220
+#, fuzzy, c-format
+msgid "Changelog for %s (%s)"
+msgstr "正在连接 %s (%s)"
+
+#: cmdline/apt-get.cc:3346
+msgid "Supported modules:"
+msgstr "支持的模块："
+
+#: cmdline/apt-get.cc:3387
+#, fuzzy
+msgid ""
+"Usage: apt-get [options] command\n"
+"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [options] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get is a simple command line interface for downloading and\n"
+"installing packages. The most frequently used commands are update\n"
+"and install.\n"
+"\n"
+"Commands:\n"
+"   update - Retrieve new lists of packages\n"
+"   upgrade - Perform an upgrade\n"
+"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
+"   remove - Remove packages\n"
+"   autoremove - Remove automatically all unused packages\n"
+"   purge - Remove packages and config files\n"
+"   source - Download source archives\n"
+"   build-dep - Configure build-dependencies for source packages\n"
+"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
+"   dselect-upgrade - Follow dselect selections\n"
+"   clean - Erase downloaded archive files\n"
+"   autoclean - Erase old downloaded archive files\n"
+"   check - Verify that there are no broken dependencies\n"
+"   changelog - Download and display the changelog for the given package\n"
+"   download - Download the binary package into the current directory\n"
+"\n"
+"Options:\n"
+"  -h  This help text.\n"
+"  -q  Loggable output - no progress indicator\n"
+"  -qq No output except for errors\n"
+"  -d  Download only - do NOT install or unpack archives\n"
+"  -s  No-act. Perform ordering simulation\n"
+"  -y  Assume Yes to all queries and do not prompt\n"
+"  -f  Attempt to correct a system with broken dependencies in place\n"
+"  -m  Attempt to continue if archives are unlocatable\n"
+"  -u  Show a list of upgraded packages as well\n"
+"  -b  Build the source package after fetching it\n"
+"  -V  Show verbose version numbers\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
+"pages for more information and options.\n"
+"                       This APT has Super Cow Powers.\n"
+msgstr ""
+"用法： apt-get [选项] 命令\n"
+"　　　 apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
+"　　　 apt-get [选项] source 软件包1 [软件包2 ...]\n"
+"\n"
+"apt-get 提供了一个用于下载和安装软件包的简易命令行界面。\n"
+"最常用命令是 update 和 install。\n"
+"\n"
+"命令：\n"
+"   update - 取回更新的软件包列表信息\n"
+"   upgrade - 进行一次升级\n"
+"   install - 安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)\n"
+"   remove - 卸载软件包\n"
+"   autoremove - 卸载所有自动安装且不再使用的软件包\n"
+"   purge - 卸载并清除软件包的配置\n"
+"   source - 下载源码包文件\n"
+"   build-dep - 为源码包配置所需的编译依赖关系\n"
+"   dist-upgrade - 发布版升级，见 apt-get(8)\n"
+"   dselect-upgrade - 根据 dselect 的选择来进行升级\n"
+"   clean - 删除所有已下载的包文件\n"
+"   autoclean - 删除老版本的已下载的包文件\n"
+"   check - 核对以确认系统的依赖关系的完整性\n"
+"   markauto - 标记指定的软件包为自动安装\n"
+"   unmarkauto - 标记指定的软件包为手动安装\n"
+"\n"
+"选项：\n"
+"  -h  本帮助文档。\n"
+"  -q  让输出可作为日志 - 不显示进度\n"
+"  -qq 除了错误外，什么都不输出\n"
+"  -d  仅仅下载 - 【不】安装或解开包文件\n"
+"  -s  不作实际操作。只是依次模拟执行命令\n"
+"  -y  对所有询问都回答是(Yes)，同时不作任何提示\n"
+"  -f  当出现破损的依赖关系时，程序将尝试修正系统\n"
+"  -m  当有包文件无法找到时，程序仍尝试继续执行\n"
+"  -u  显示已升级的软件包列表\n"
+"  -b  在下载完源码包后，编译生成相应的软件包\n"
+"  -V  显示详尽的版本号\n"
+"  -c=? 读取指定配置文件\n"
+"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
+"请查阅 apt-get(8)、sources.list(5) 和 apt.conf(5)的参考手册\n"
+"以获取更多信息和选项。\n"
+"                       本 APT 具有超级牛力。\n"
+
+#: cmdline/apt-get.cc:3552
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"注意：这只是模拟！\n"
+"　　　apt-get 需要 root 特权进行实际的执行。\n"
+"　　　同时请记住此时并未锁定，所以请勿完全相信当前的情况！"
+
+#: cmdline/acqprogress.cc:60
+msgid "Hit "
+msgstr "命中 "
+
+#: cmdline/acqprogress.cc:84
+msgid "Get:"
+msgstr "获取："
+
+#: cmdline/acqprogress.cc:115
+msgid "Ign "
+msgstr "忽略 "
+
+#: cmdline/acqprogress.cc:119
+msgid "Err "
+msgstr "错误 "
+
+#: cmdline/acqprogress.cc:140
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "下载 %sB，耗时 %s (%sB/s)\n"
+
+#: cmdline/acqprogress.cc:230
+#, c-format
+msgid " [Working]"
+msgstr " [执行中]"
+
+#: cmdline/acqprogress.cc:286
+#, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
+msgstr ""
+"更换介质：请把标有\n"
+"“%s”\n"
+"的盘片插入驱动器“%s”再按回车键\n"
+
+#: cmdline/apt-mark.cc:55
+#, fuzzy, c-format
+msgid "%s can not be marked as it is not installed.\n"
+msgstr "但是它还没有被安装"
+
+#: cmdline/apt-mark.cc:61
+#, fuzzy, c-format
+msgid "%s was already set to manually installed.\n"
+msgstr "%s 被设置为手动安装。\n"
+
+#: cmdline/apt-mark.cc:63
+#, fuzzy, c-format
+msgid "%s was already set to automatically installed.\n"
+msgstr "%s 被设置为手动安装。\n"
+
+#: cmdline/apt-mark.cc:228
+#, fuzzy, c-format
+msgid "%s was already set on hold.\n"
+msgstr "%s 已经是最新的版本了。\n"
+
+#: cmdline/apt-mark.cc:230
+#, fuzzy, c-format
+msgid "%s was already not hold.\n"
+msgstr "%s 已经是最新的版本了。\n"
+
+#: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:314
+#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "等待子进程 %s 的退出，但是它并不存在"
+
+#: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:297
+#, fuzzy, c-format
+msgid "%s set on hold.\n"
+msgstr "%s 已设置为手动安装。\n"
+
+#: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:302
+#, fuzzy, c-format
+msgid "Canceled hold on %s.\n"
+msgstr "无法打开 %s"
+
+#: cmdline/apt-mark.cc:320
+msgid "Executing dpkg failed. Are you root?"
+msgstr ""
+
+#: cmdline/apt-mark.cc:367
+msgid ""
+"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+"\n"
+"apt-mark is a simple command line interface for marking packages\n"
+"as manual or automatical installed. It can also list marks.\n"
+"\n"
+"Commands:\n"
+"   auto - Mark the given packages as automatically installed\n"
+"   manual - Mark the given packages as manually installed\n"
+"\n"
+"Options:\n"
+"  -h  This help text.\n"
+"  -q  Loggable output - no progress indicator\n"
+"  -qq No output except for errors\n"
+"  -s  No-act. Just prints what would be done.\n"
+"  -f  read/write auto/manual marking in the given file\n"
+"  -c=? Read this configuration file\n"
+"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+"See the apt-mark(8) and apt.conf(5) manual pages for more information."
+msgstr ""
+
+#: methods/cdrom.cc:203
+#, c-format
+msgid "Unable to read the cdrom database %s"
+msgstr "无法读取盘片数据库 %s"
+
+#: methods/cdrom.cc:212
+msgid ""
+"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
+"cannot be used to add new CD-ROMs"
+msgstr ""
+"请使用 apt-cdrom，通过它就可以让 APT 能识别该盘片。apt-get upgdate 不能被用来"
+"加入新的盘片。"
+
+#: methods/cdrom.cc:222
+msgid "Wrong CD-ROM"
+msgstr "错误的 CD-ROM"
+
+#: methods/cdrom.cc:249
+#, c-format
+msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
+msgstr "无法卸载现在挂载于 %s 的 CD-ROM，它可能正在使用中。"
+
+#: methods/cdrom.cc:254
+msgid "Disk not found."
+msgstr "找不到盘片。"
+
+#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:273
+msgid "File not found"
+msgstr "无法找到该文件"
+
+#: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
+#: methods/rred.cc:512 methods/rred.cc:521
+msgid "Failed to stat"
+msgstr "无法读取状态"
+
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+msgid "Failed to set modification time"
+msgstr "无法设置文件的修改日期"
+
+#: methods/file.cc:47
+msgid "Invalid URI, local URIS must not start with //"
+msgstr "无效的 URI，本地的 URI 不能以 // 开头"
+
+#. Login must be before getpeername otherwise dante won't work.
+#: methods/ftp.cc:173
+msgid "Logging in"
+msgstr "正在登录"
+
+#: methods/ftp.cc:179
+msgid "Unable to determine the peer name"
+msgstr "无法获知对方主机名"
+
+#: methods/ftp.cc:184
+msgid "Unable to determine the local name"
+msgstr "无法获知本地主机名"
+
+#: methods/ftp.cc:215 methods/ftp.cc:243
+#, c-format
+msgid "The server refused the connection and said: %s"
+msgstr "服务器拒绝了我们的连接，响应信息为：%s"
+
+#: methods/ftp.cc:221
+#, c-format
+msgid "USER failed, server said: %s"
+msgstr "USER 指令出错，服务器响应信息为：%s"
+
+#: methods/ftp.cc:228
+#, c-format
+msgid "PASS failed, server said: %s"
+msgstr "PASS 指令出错，服务器响应信息为：%s"
+
+#: methods/ftp.cc:248
+msgid ""
+"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
+"is empty."
+msgstr ""
+"您指定了代理服务器，但是没有登陆脚本，Acquire::ftp::ProxyLogin 设置为空。"
+
+#: methods/ftp.cc:276
+#, c-format
+msgid "Login script command '%s' failed, server said: %s"
+msgstr "登录脚本命令“%s”出错，服务器响应信息为：%s"
+
+#: methods/ftp.cc:302
+#, c-format
+msgid "TYPE failed, server said: %s"
+msgstr "TYPE 指令出错，服务器响应信息为：%s"
+
+#: methods/ftp.cc:340 methods/ftp.cc:451 methods/rsh.cc:192 methods/rsh.cc:235
+msgid "Connection timeout"
+msgstr "连接超时"
+
+#: methods/ftp.cc:346
+msgid "Server closed the connection"
+msgstr "服务器关闭了连接"
+
+#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1254
+#: apt-pkg/contrib/fileutl.cc:1263 apt-pkg/contrib/fileutl.cc:1266
+msgid "Read error"
+msgstr "读错误"
+
+#: methods/ftp.cc:356 methods/rsh.cc:206
+msgid "A response overflowed the buffer."
+msgstr "回应超出了缓存区大小。"
+
+#: methods/ftp.cc:373 methods/ftp.cc:385
+msgid "Protocol corruption"
+msgstr "协议有误"
+
+#: methods/ftp.cc:457 methods/rred.cc:238 methods/rsh.cc:241
+#: apt-pkg/contrib/fileutl.cc:1352 apt-pkg/contrib/fileutl.cc:1361
+#: apt-pkg/contrib/fileutl.cc:1364 apt-pkg/contrib/fileutl.cc:1390
+msgid "Write error"
+msgstr "写出错"
+
+#: methods/ftp.cc:696 methods/ftp.cc:702 methods/ftp.cc:737
+msgid "Could not create a socket"
+msgstr "无法创建套接字"
+
+#: methods/ftp.cc:707
+msgid "Could not connect data socket, connection timed out"
+msgstr "无法连接上数据套接字，连接超时"
+
+#: methods/ftp.cc:713
+msgid "Could not connect passive socket."
+msgstr "无法连接被动模式的套接字。"
+
+#: methods/ftp.cc:730
+msgid "getaddrinfo was unable to get a listening socket"
+msgstr "getaddrinfo 无法得到监听套接字"
+
+#: methods/ftp.cc:744
+msgid "Could not bind a socket"
+msgstr "无法绑定套接字"
+
+#: methods/ftp.cc:748
+msgid "Could not listen on the socket"
+msgstr "无法在套接字上监听"
+
+#: methods/ftp.cc:755
+msgid "Could not determine the socket's name"
+msgstr "无法确定套接字的名字"
+
+#: methods/ftp.cc:787
+msgid "Unable to send PORT command"
+msgstr "无法发出 PORT 指令"
+
+#: methods/ftp.cc:797
+#, c-format
+msgid "Unknown address family %u (AF_*)"
+msgstr "无法识别的地址族 %u (AF_*)"
+
+#: methods/ftp.cc:806
+#, c-format
+msgid "EPRT failed, server said: %s"
+msgstr "EPRT 指令出错，服务器响应信息为：%s"
+
+#: methods/ftp.cc:826
+msgid "Data socket connect timed out"
+msgstr "数据套接字连接超时"
+
+#: methods/ftp.cc:833
+msgid "Unable to accept connection"
+msgstr "无法接受连接"
+
+#: methods/ftp.cc:872 methods/http.cc:1035 methods/rsh.cc:311
+msgid "Problem hashing file"
+msgstr "把文件加入哈希表时出错"
+
+#: methods/ftp.cc:885
+#, c-format
+msgid "Unable to fetch file, server said '%s'"
+msgstr "无法获取文件，服务器响应信息为“%s”"
+
+#: methods/ftp.cc:900 methods/rsh.cc:330
+msgid "Data socket timed out"
+msgstr "数据套接字超时"
+
+#: methods/ftp.cc:930
+#, c-format
+msgid "Data transfer failed, server said '%s'"
+msgstr "数据传送出错，服务器响应信息为“%s”"
+
+#. Get the files information
+#: methods/ftp.cc:1007
+msgid "Query"
+msgstr "查询"
+
+#: methods/ftp.cc:1119
+msgid "Unable to invoke "
+msgstr "无法调用 "
+
+#: methods/connect.cc:75
+#, c-format
+msgid "Connecting to %s (%s)"
+msgstr "正在连接 %s (%s)"
+
+#: methods/connect.cc:86
+#, c-format
+msgid "[IP: %s %s]"
+msgstr "[IP: %s %s]"
+
+#: methods/connect.cc:93
+#, c-format
+msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
+msgstr "无法为 %s 创建套接字(f=%u t=%u p=%u)"
+
+#: methods/connect.cc:99
+#, c-format
+msgid "Cannot initiate the connection to %s:%s (%s)."
+msgstr "无法发起与 %s:%s (%s) 的连接"
+
+#: methods/connect.cc:107
+#, c-format
+msgid "Could not connect to %s:%s (%s), connection timed out"
+msgstr "无法连接上 %s:%s (%s)，连接超时"
+
+#: methods/connect.cc:125
+#, c-format
+msgid "Could not connect to %s:%s (%s)."
+msgstr "无法连接上 %s:%s (%s)。"
+
+#. We say this mainly because the pause here is for the
+#. ssh connection that is still going
+#: methods/connect.cc:153 methods/rsh.cc:433
+#, c-format
+msgid "Connecting to %s"
+msgstr "正在连接 %s"
+
+#: methods/connect.cc:172 methods/connect.cc:191
+#, c-format
+msgid "Could not resolve '%s'"
+msgstr "无法解析域名“%s”"
+
+#: methods/connect.cc:197
+#, c-format
+msgid "Temporary failure resolving '%s'"
+msgstr "暂时不能解析域名“%s”"
+
+#: methods/connect.cc:200
+#, c-format
+msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
+msgstr "解析“%s:%s”时，出现了某些故障(%i - %s)"
+
+#: methods/connect.cc:247
+#, c-format
+msgid "Unable to connect to %s:%s:"
+msgstr "不能连接到 %s：%s："
+
+#: methods/gpgv.cc:180
+msgid ""
+"Internal error: Good signature, but could not determine key fingerprint?!"
+msgstr "内部错误：签名正确无误，但是无法确认密钥指纹？！"
+
+#: methods/gpgv.cc:185
+msgid "At least one invalid signature was encountered."
+msgstr "至少发现一个无效的签名。"
+
+#: methods/gpgv.cc:189
+msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
+msgstr "无法运行 gpgv 以验证签名(您安装了 gpgv 吗？)"
+
+#: methods/gpgv.cc:194
+msgid "Unknown error executing gpgv"
+msgstr "运行 gpgv 时发生未知错误"
+
+#: methods/gpgv.cc:228 methods/gpgv.cc:235
+msgid "The following signatures were invalid:\n"
+msgstr "下列签名无效：\n"
+
+#: methods/gpgv.cc:242
+msgid ""
+"The following signatures couldn't be verified because the public key is not "
+"available:\n"
+msgstr "由于没有公钥，无法验证下列签名：\n"
+
+#: methods/gzip.cc:65
+msgid "Empty files can't be valid archives"
+msgstr ""
+
+#: methods/http.cc:394
+msgid "Waiting for headers"
+msgstr "正在等待报头"
+
+#: methods/http.cc:544
+msgid "Bad header line"
+msgstr "错误的报头行"
+
+#: methods/http.cc:569 methods/http.cc:576
+msgid "The HTTP server sent an invalid reply header"
+msgstr "该 HTTP 服务器发送了一个无效的应答报头"
+
+#: methods/http.cc:606
+msgid "The HTTP server sent an invalid Content-Length header"
+msgstr "该 HTTP 服务器发送了一个无效的 Content-Length 报头"
+
+#: methods/http.cc:621
+msgid "The HTTP server sent an invalid Content-Range header"
+msgstr "该 HTTP 服务器发送了一个无效的 Content-Range 报头"
+
+#: methods/http.cc:623
+msgid "This HTTP server has broken range support"
+msgstr "该 HTTP 服务器的 range 支持不正常"
+
+#: methods/http.cc:647
+msgid "Unknown date format"
+msgstr "无法识别的日期格式"
+
+#: methods/http.cc:818
+msgid "Select failed"
+msgstr "select 调用出错"
+
+#: methods/http.cc:823
+msgid "Connection timed out"
+msgstr "连接超时"
+
+#: methods/http.cc:846
+msgid "Error writing to output file"
+msgstr "写输出文件时出错"
+
+#: methods/http.cc:877
+msgid "Error writing to file"
+msgstr "写入文件出错"
+
+#: methods/http.cc:905
+msgid "Error writing to the file"
+msgstr "写入文件出错"
+
+#: methods/http.cc:919
+msgid "Error reading from server. Remote end closed connection"
+msgstr "从服务器读取数据时出错，对方关闭了连接"
+
+#: methods/http.cc:921
+msgid "Error reading from server"
+msgstr "从服务器读取数据出错"
+
+#: methods/http.cc:1194
+msgid "Bad header data"
+msgstr "错误的报头数据"
+
+#: methods/http.cc:1211 methods/http.cc:1266
+msgid "Connection failed"
+msgstr "连接失败"
+
+#: methods/http.cc:1358
+msgid "Internal error"
+msgstr "内部错误"
+
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: methods/mirror.cc:95 apt-inst/extract.cc:465
+#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:400
+#: apt-pkg/contrib/fileutl.cc:513 apt-pkg/sourcelist.cc:208
+#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:109
+#: apt-pkg/init.cc:117 apt-pkg/clean.cc:36 apt-pkg/policy.cc:359
+#, c-format
+msgid "Unable to read %s"
+msgstr "无法读取 %s"
+
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:179
+#: apt-pkg/contrib/cdromutl.cc:213 apt-pkg/acquire.cc:491
+#: apt-pkg/acquire.cc:516 apt-pkg/clean.cc:42 apt-pkg/clean.cc:60
+#: apt-pkg/clean.cc:122
+#, c-format
+msgid "Unable to change to %s"
+msgstr "无法切换工作目录到 %s"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:280
+#, c-format
+msgid "No mirror file '%s' found "
+msgstr "没有找到镜像文件 %s"
+
+#. FIXME: fallback to a default mirror here instead
+#. and provide a config option to define that default
+#: methods/mirror.cc:287
+#, fuzzy, c-format
+msgid "Can not read mirror file '%s'"
+msgstr "没有找到镜像文件 %s"
+
+#: methods/mirror.cc:442
+#, c-format
+msgid "[Mirror: %s]"
+msgstr "[镜像：%s]"
+
+#: methods/rred.cc:491
+#, c-format
+msgid ""
+"Could not patch %s with mmap and with file operation usage - the patch seems "
+"to be corrupt."
+msgstr "无法连同 mmap 和文件操作用途为 %s 打补丁 - 补丁可能已损坏。"
+
+#: methods/rred.cc:496
+#, c-format
+msgid ""
+"Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
+"to be corrupt."
+msgstr "无法连同 mmap 为 %s 打补丁(但没有 mmap 的错误) - 补丁可能已损坏。"
+
+#: methods/rsh.cc:99 ftparchive/multicompress.cc:168
+msgid "Failed to create IPC pipe to subprocess"
+msgstr "无法为子进程创建 IPC 管道"
+
+#: methods/rsh.cc:338
+msgid "Connection closed prematurely"
+msgstr "连接被永久关闭"
+
+#: dselect/install:32
+msgid "Bad default setting!"
+msgstr "错误的默认设置！"
+
+#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:94
+#: dselect/install:105 dselect/update:45
+msgid "Press enter to continue."
+msgstr "按回车键继续。"
+
+#: dselect/install:91
+msgid "Do you want to erase any previously downloaded .deb files?"
+msgstr "您想要删除之前下载的所有 .deb 文件吗？"
+
+#: dselect/install:101
+msgid "Some errors occurred while unpacking. Packages that were installed"
+msgstr "在解包时发生了一些错误。已经安装的软件包"
+
+#: dselect/install:102
+msgid "will be configured. This may result in duplicate errors"
+msgstr "将被配置。这个操作可能会导致出现重复的错误"
+
+#: dselect/install:103
+msgid "or errors caused by missing dependencies. This is OK, only the errors"
+msgstr "或一些由于依赖关系不能满足所产生的错误。这个问题不大，只有"
+
+#: dselect/install:104
+msgid ""
+"above this message are important. Please fix them and run [I]nstall again"
+msgstr "这个提示之前的错误消息才值得您注意。请更正它们，然后再次执行 [I]nstall"
+
+#: dselect/update:30
+msgid "Merging available information"
+msgstr "正在合并可用信息"
+
+#: cmdline/apt-extracttemplates.cc:102
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s 不是一个有效的 DEB 软件包。"
 
-#: cmdline/apt-extracttemplates.cc:234
+#: cmdline/apt-extracttemplates.cc:236
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -314,12 +1665,12 @@ msgstr ""
 "  -c=? 读指定的配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:269 apt-pkg/pkgcachegen.cc:1271
+#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1277
 #, c-format
 msgid "Unable to write to %s"
 msgstr "无法写入 %s"
 
-#: cmdline/apt-extracttemplates.cc:311
+#: cmdline/apt-extracttemplates.cc:313
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "无法获得 debconf 的版本。您安装了 debconf 吗？"
 
@@ -436,39 +1787,39 @@ msgstr "没有任何选定项是匹配的"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "软件包文件组“%s”中缺少一些文件"
 
-#: ftparchive/cachedb.cc:46
+#: ftparchive/cachedb.cc:47
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "数据库被损坏，该数据库文件的文件名已改成 %s.old"
 
-#: ftparchive/cachedb.cc:64
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "数据库已过期，现尝试进行升级 %s"
 
-#: ftparchive/cachedb.cc:75
+#: ftparchive/cachedb.cc:76
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
 msgstr ""
 "数据库格式无效。如果您是从一个老版本的 apt 升级而来，请删除数据库并重建它。"
 
-#: ftparchive/cachedb.cc:80
+#: ftparchive/cachedb.cc:81
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "无法打开数据库文件 %s：%s"
 
-#: ftparchive/cachedb.cc:126 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210
 #, c-format
 msgid "Failed to stat %s"
 msgstr "无法获得 %s 的状态"
 
-#: ftparchive/cachedb.cc:248
+#: ftparchive/cachedb.cc:249
 msgid "Archive has no control record"
 msgstr "归档文件没有包含控制字段"
 
-#: ftparchive/cachedb.cc:489
+#: ftparchive/cachedb.cc:490
 msgid "Unable to get a cursor"
 msgstr "无法获得游标"
 
@@ -557,31 +1908,31 @@ msgstr "  %s 没有源代码的 override 项\n"
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s 中没有二进制文件的 override 项\n"
 
-#: ftparchive/contents.cc:339 ftparchive/contents.cc:370
+#: ftparchive/contents.cc:341 ftparchive/contents.cc:372
 msgid "realloc - Failed to allocate memory"
 msgstr "realloc - 分配内存失败"
 
-#: ftparchive/override.cc:34 ftparchive/override.cc:142
+#: ftparchive/override.cc:35 ftparchive/override.cc:143
 #, c-format
 msgid "Unable to open %s"
 msgstr "无法打开 %s"
 
-#: ftparchive/override.cc:60 ftparchive/override.cc:166
+#: ftparchive/override.cc:61 ftparchive/override.cc:167
 #, fuzzy, c-format
 msgid "Malformed override %s line %llu #1"
 msgstr "override 文件 %s 第 %lu 行的格式有误 #1"
 
-#: ftparchive/override.cc:74 ftparchive/override.cc:178
+#: ftparchive/override.cc:75 ftparchive/override.cc:179
 #, fuzzy, c-format
 msgid "Malformed override %s line %llu #2"
 msgstr "override 文件 %s 第 %lu 行的格式有误 #2"
 
-#: ftparchive/override.cc:88 ftparchive/override.cc:191
+#: ftparchive/override.cc:89 ftparchive/override.cc:192
 #, fuzzy, c-format
 msgid "Malformed override %s line %llu #3"
 msgstr "override 文件 %s 第 %lu 行的格式有误 #3"
 
-#: ftparchive/override.cc:127 ftparchive/override.cc:201
+#: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
 msgid "Failed to read the override file %s"
 msgstr "无法读取 override 文件 %s"
@@ -595,10 +1946,6 @@ msgstr "未知的压缩算法“%s”"
 #, c-format
 msgid "Compressed output %s needs a compression set"
 msgstr "压缩后的输出文件 %s 要求有一个压缩文件集合"
-
-#: ftparchive/multicompress.cc:168 methods/rsh.cc:97
-msgid "Failed to create IPC pipe to subprocess"
-msgstr "无法为子进程创建 IPC 管道"
 
 #: ftparchive/multicompress.cc:189
 msgid "Failed to create FILE*"
@@ -635,841 +1982,7 @@ msgstr "在使用 unlink 删除 %s 时出错"
 msgid "Failed to rename %s to %s"
 msgstr "无法将 %s 重命名为 %s"
 
-#: cmdline/apt-get.cc:135
-msgid "Y"
-msgstr "Y"
-
-#: cmdline/apt-get.cc:140
-msgid "N"
-msgstr ""
-
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "编译正则表达式时出错 - %s"
-
-#: cmdline/apt-get.cc:257
-msgid "The following packages have unmet dependencies:"
-msgstr "下列软件包有未满足的依赖关系："
-
-#: cmdline/apt-get.cc:347
-#, c-format
-msgid "but %s is installed"
-msgstr "但是 %s 已经安装"
-
-#: cmdline/apt-get.cc:349
-#, c-format
-msgid "but %s is to be installed"
-msgstr "但是 %s 正要被安装"
-
-#: cmdline/apt-get.cc:356
-msgid "but it is not installable"
-msgstr "但无法安装它"
-
-#: cmdline/apt-get.cc:358
-msgid "but it is a virtual package"
-msgstr "但是它是虚拟软件包"
-
-#: cmdline/apt-get.cc:361
-msgid "but it is not installed"
-msgstr "但是它还没有被安装"
-
-#: cmdline/apt-get.cc:361
-msgid "but it is not going to be installed"
-msgstr "但是它将不会被安装"
-
-#: cmdline/apt-get.cc:366
-msgid " or"
-msgstr " 或"
-
-#: cmdline/apt-get.cc:395
-msgid "The following NEW packages will be installed:"
-msgstr "下列【新】软件包将被安装："
-
-#: cmdline/apt-get.cc:421
-msgid "The following packages will be REMOVED:"
-msgstr "下列软件包将被【卸载】："
-
-#: cmdline/apt-get.cc:443
-msgid "The following packages have been kept back:"
-msgstr "下列软件包的版本将保持不变："
-
-#: cmdline/apt-get.cc:464
-msgid "The following packages will be upgraded:"
-msgstr "下列软件包将被升级："
-
-#: cmdline/apt-get.cc:485
-msgid "The following packages will be DOWNGRADED:"
-msgstr "下列软件包将被【降级】："
-
-#: cmdline/apt-get.cc:505
-msgid "The following held packages will be changed:"
-msgstr "下列被要求保持版本不变的软件包将被改变："
-
-#: cmdline/apt-get.cc:560
-#, c-format
-msgid "%s (due to %s) "
-msgstr "%s (是由于 %s) "
-
-#: cmdline/apt-get.cc:568
-msgid ""
-"WARNING: The following essential packages will be removed.\n"
-"This should NOT be done unless you know exactly what you are doing!"
-msgstr ""
-"【警告】：下列基础软件包将被卸载。\n"
-"请勿尝试，除非您确实知道您在做什么！"
-
-#: cmdline/apt-get.cc:599
-#, c-format
-msgid "%lu upgraded, %lu newly installed, "
-msgstr "升级了 %lu 个软件包，新安装了 %lu 个软件包，"
-
-#: cmdline/apt-get.cc:603
-#, c-format
-msgid "%lu reinstalled, "
-msgstr "重新安装了 %lu 个软件包，"
-
-#: cmdline/apt-get.cc:605
-#, c-format
-msgid "%lu downgraded, "
-msgstr "降级了 %lu 个软件包，"
-
-#: cmdline/apt-get.cc:607
-#, c-format
-msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "要卸载 %lu 个软件包，有 %lu 个软件包未被升级。\n"
-
-#: cmdline/apt-get.cc:611
-#, c-format
-msgid "%lu not fully installed or removed.\n"
-msgstr "有 %lu 个软件包没有被完全安装或卸载。\n"
-
-#: cmdline/apt-get.cc:632
-#, c-format
-msgid "Note, selecting '%s' for task '%s'\n"
-msgstr "注意，为任务 %2$s 选中了 %1$s\n"
-
-#: cmdline/apt-get.cc:637
-#, c-format
-msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr "注意，根据正则表达式 %2$s 选中了 %1$s\n"
-
-#: cmdline/apt-get.cc:654
-#, c-format
-msgid "Package %s is a virtual package provided by:\n"
-msgstr "软件包 %s 是一个由下面的软件包提供的虚拟软件包：\n"
-
-#: cmdline/apt-get.cc:665
-msgid " [Installed]"
-msgstr " [已安装]"
-
-#: cmdline/apt-get.cc:674
-msgid " [Not candidate version]"
-msgstr " [无候选版本]"
-
-#: cmdline/apt-get.cc:676
-msgid "You should explicitly select one to install."
-msgstr "请您明确地选择一个来进行安装。"
-
-#: cmdline/apt-get.cc:679
-#, c-format
-msgid ""
-"Package %s is not available, but is referred to by another package.\n"
-"This may mean that the package is missing, has been obsoleted, or\n"
-"is only available from another source\n"
-msgstr ""
-"现在没有可用的软件包 %s，但是它被其它的软件包引用了。\n"
-"这可能意味着这个缺失的软件包可能已被废弃，\n"
-"或者只能在其他发布源中找到\n"
-
-#: cmdline/apt-get.cc:697
-msgid "However the following packages replace it:"
-msgstr "可是下列软件包取代了它："
-
-#: cmdline/apt-get.cc:709
-#, c-format
-msgid "Package '%s' has no installation candidate"
-msgstr "软件包 %s 没有可供安装的候选者"
-
-#: cmdline/apt-get.cc:720
-#, c-format
-msgid "Virtual packages like '%s' can't be removed\n"
-msgstr "类似 %s 的虚拟软件包可以卸载\n"
-
-#: cmdline/apt-get.cc:764
-#, c-format
-msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr "注意，选取 %s 而非 %s\n"
-
-#: cmdline/apt-get.cc:794
-#, c-format
-msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "忽略了 %s，它已经被安装而且没有指定要升级。\n"
-
-#: cmdline/apt-get.cc:798
-#, c-format
-msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr "忽略了 %s，它已经被安装而且仅请求了升级。\n"
-
-#: cmdline/apt-get.cc:810
-#, c-format
-msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr "不能重新安装 %s，因为无法下载它。\n"
-
-#: cmdline/apt-get.cc:815
-#, c-format
-msgid "%s is already the newest version.\n"
-msgstr "%s 已经是最新的版本了。\n"
-
-#: cmdline/apt-get.cc:834 cmdline/apt-get.cc:2114 cmdline/apt-mark.cc:62
-#, c-format
-msgid "%s set to manually installed.\n"
-msgstr "%s 被设置为手动安装。\n"
-
-#: cmdline/apt-get.cc:860
-#, c-format
-msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr "为 %3$s 选定了版本 %1$s (%2$s)\n"
-
-#: cmdline/apt-get.cc:865
-#, fuzzy, c-format
-msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "为 %3$s 选定了版本 %1$s (%2$s)\n"
-
-#: cmdline/apt-get.cc:907
-#, c-format
-msgid "Package %s is not installed, so not removed\n"
-msgstr "软件包 %s 还未安装，因而不会被卸载\n"
-
-#: cmdline/apt-get.cc:985
-msgid "Correcting dependencies..."
-msgstr "正在更正依赖关系..."
-
-#: cmdline/apt-get.cc:988
-msgid " failed."
-msgstr " 失败。"
-
-#: cmdline/apt-get.cc:991
-msgid "Unable to correct dependencies"
-msgstr "无法更正依赖关系"
-
-#: cmdline/apt-get.cc:994
-msgid "Unable to minimize the upgrade set"
-msgstr "无法最小化要升级的软件包集合"
-
-#: cmdline/apt-get.cc:996
-msgid " Done"
-msgstr " 完成"
-
-#: cmdline/apt-get.cc:1000
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "您也许需要运行“apt-get -f install”来修正上面的错误。"
-
-#: cmdline/apt-get.cc:1003
-msgid "Unmet dependencies. Try using -f."
-msgstr "不能满足依赖关系。不妨试一下 -f 选项。"
-
-#: cmdline/apt-get.cc:1028
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "【警告】：下列软件包不能通过验证！"
-
-#: cmdline/apt-get.cc:1032
-msgid "Authentication warning overridden.\n"
-msgstr "忽略了认证警告。\n"
-
-#: cmdline/apt-get.cc:1039
-msgid "Install these packages without verification [y/N]? "
-msgstr "不经验证就安装这些软件包吗？[y/N] "
-
-#: cmdline/apt-get.cc:1041
-msgid "Some packages could not be authenticated"
-msgstr "有些软件包不能通过验证"
-
-#: cmdline/apt-get.cc:1050 cmdline/apt-get.cc:1211
-msgid "There are problems and -y was used without --force-yes"
-msgstr "碰到了一些问题，您使用了 -y 选项，但是没有用 --force-yes"
-
-#: cmdline/apt-get.cc:1091
-msgid "Internal error, InstallPackages was called with broken packages!"
-msgstr "内部错误，InstallPackages 被用在了无法安装的软件包上！"
-
-#: cmdline/apt-get.cc:1100
-msgid "Packages need to be removed but remove is disabled."
-msgstr "有软件包需要被卸载，但是卸载动作被程序设置所禁止。"
-
-#: cmdline/apt-get.cc:1111
-msgid "Internal error, Ordering didn't finish"
-msgstr "内部错误，Ordering 未能完成"
-
-#: cmdline/apt-get.cc:1149
-msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
-msgstr "怪了……文件大小不符，请发信给 apt@packages.debian.org 吧"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1156
-#, c-format
-msgid "Need to get %sB/%sB of archives.\n"
-msgstr "需要下载 %sB/%sB 的软件包。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1161
-#, c-format
-msgid "Need to get %sB of archives.\n"
-msgstr "需要下载 %sB 的软件包。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1168
-#, c-format
-msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "解压缩后会消耗掉 %sB 的额外空间。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1173
-#, c-format
-msgid "After this operation, %sB disk space will be freed.\n"
-msgstr "解压缩后将会空出 %sB 的空间。\n"
-
-#: cmdline/apt-get.cc:1188 cmdline/apt-get.cc:1191 cmdline/apt-get.cc:2534
-#: cmdline/apt-get.cc:2537
-#, c-format
-msgid "Couldn't determine free space in %s"
-msgstr "无法获知您在 %s 上的可用空间"
-
-#: cmdline/apt-get.cc:1201
-#, c-format
-msgid "You don't have enough free space in %s."
-msgstr "您在 %s 上没有足够的可用空间。"
-
-#: cmdline/apt-get.cc:1217 cmdline/apt-get.cc:1237
-msgid "Trivial Only specified but this is not a trivial operation."
-msgstr "虽然您指定了仅执行常规操作，但这不是个常规操作。"
-
-#: cmdline/apt-get.cc:1219
-msgid "Yes, do as I say!"
-msgstr "是，按我说的做！"
-
-#: cmdline/apt-get.cc:1221
-#, c-format
-msgid ""
-"You are about to do something potentially harmful.\n"
-"To continue type in the phrase '%s'\n"
-" ?] "
-msgstr ""
-"您的操作会导致潜在的危害。\n"
-"若还想继续的话，就输入下面的短句“%s”\n"
-" ?] "
-
-#: cmdline/apt-get.cc:1227 cmdline/apt-get.cc:1246
-msgid "Abort."
-msgstr "中止执行。"
-
-#: cmdline/apt-get.cc:1242
-msgid "Do you want to continue [Y/n]? "
-msgstr "您希望继续执行吗？[Y/n]"
-
-#: cmdline/apt-get.cc:1314 cmdline/apt-get.cc:2599 apt-pkg/algorithms.cc:1492
-#, c-format
-msgid "Failed to fetch %s  %s\n"
-msgstr "无法下载 %s  %s\n"
-
-#: cmdline/apt-get.cc:1332
-msgid "Some files failed to download"
-msgstr "有一些文件无法下载"
-
-#: cmdline/apt-get.cc:1333 cmdline/apt-get.cc:2611
-msgid "Download complete and in download only mode"
-msgstr "下载完毕，目前是“仅下载”模式"
-
-#: cmdline/apt-get.cc:1339
-msgid ""
-"Unable to fetch some archives, maybe run apt-get update or try with --fix-"
-"missing?"
-msgstr ""
-"有几个软件包无法下载，您可以运行 apt-get update 或者加上 --fix-missing 的选项"
-"再试试？"
-
-#: cmdline/apt-get.cc:1343
-msgid "--fix-missing and media swapping is not currently supported"
-msgstr "目前还不支持 --fix-missing 和介质交换"
-
-#: cmdline/apt-get.cc:1348
-msgid "Unable to correct missing packages."
-msgstr "无法更正缺少的软件包。"
-
-#: cmdline/apt-get.cc:1349
-msgid "Aborting install."
-msgstr "中止安装。"
-
-#: cmdline/apt-get.cc:1377
-msgid ""
-"The following package disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgid_plural ""
-"The following packages disappeared from your system as\n"
-"all files have been overwritten by other packages:"
-msgstr[0] "以下软件包因为文件已被其他软件包覆盖而消失："
-
-#: cmdline/apt-get.cc:1381
-msgid "Note: This is done automatically and on purpose by dpkg."
-msgstr "注意：这是自动被 dpkg 有意完成的。"
-
-#: cmdline/apt-get.cc:1519
-#, c-format
-msgid "Ignore unavailable target release '%s' of package '%s'"
-msgstr "忽略不可用的软件包 %2$s 的目标发行版本 %1$s"
-
-#: cmdline/apt-get.cc:1551
-#, c-format
-msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "选择 %s 作为源代码包而非 %s\n"
-
-#. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1589
-#, c-format
-msgid "Ignore unavailable version '%s' of package '%s'"
-msgstr "忽略不可用的 %2$s 软件包的 %1$s 版"
-
-#: cmdline/apt-get.cc:1605
-msgid "The update command takes no arguments"
-msgstr " update 命令不需要参数"
-
-#: cmdline/apt-get.cc:1668
-msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr "我们不应该进行删除，无法启动自动删除器"
-
-#: cmdline/apt-get.cc:1772
-msgid ""
-"Hmm, seems like the AutoRemover destroyed something which really\n"
-"shouldn't happen. Please file a bug report against apt."
-msgstr "似乎自动卸载工具损坏了一些软件，这不应该发生。请向 apt 提交错误报告。"
-
-#.
-#. if (Packages == 1)
-#. {
-#. c1out << endl;
-#. c1out <<
-#. _("Since you only requested a single operation it is extremely likely that\n"
-#. "the package is simply not installable and a bug report against\n"
-#. "that package should be filed.") << endl;
-#. }
-#.
-#: cmdline/apt-get.cc:1775 cmdline/apt-get.cc:1944
-msgid "The following information may help to resolve the situation:"
-msgstr "下列信息可能会对解决问题有所帮助："
-
-#: cmdline/apt-get.cc:1779
-msgid "Internal Error, AutoRemover broke stuff"
-msgstr "内部错误，自动卸载工具坏事了"
-
-#: cmdline/apt-get.cc:1786
-msgid ""
-"The following package was automatically installed and is no longer required:"
-msgid_plural ""
-"The following packages were automatically installed and are no longer "
-"required:"
-msgstr[0] "下列软件包是自动安装的并且现在不需要了："
-
-#: cmdline/apt-get.cc:1790
-#, c-format
-msgid "%lu package was automatically installed and is no longer required.\n"
-msgid_plural ""
-"%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] "%lu 个自动安装的的软件包现在已不再需要了。\n"
-
-#: cmdline/apt-get.cc:1792
-msgid "Use 'apt-get autoremove' to remove them."
-msgstr "使用'apt-get autoremove'来卸载它们"
-
-#: cmdline/apt-get.cc:1811
-msgid "Internal error, AllUpgrade broke stuff"
-msgstr "内部错误，全部升级工具坏事了"
-
-#: cmdline/apt-get.cc:1910
-msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "您可能需要运行“apt-get -f install”来纠正下列错误："
-
-#: cmdline/apt-get.cc:1914
-msgid ""
-"Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
-"solution)."
-msgstr ""
-"有未能满足的依赖关系。请尝试不指明软件包的名字来运行“apt-get -f install”(也可"
-"以指定一个解决办法)。"
-
-#: cmdline/apt-get.cc:1929
-msgid ""
-"Some packages could not be installed. This may mean that you have\n"
-"requested an impossible situation or if you are using the unstable\n"
-"distribution that some required packages have not yet been created\n"
-"or been moved out of Incoming."
-msgstr ""
-"有一些软件包无法被安装。如果您用的是 unstable 发行版，这也许是\n"
-"因为系统无法达到您要求的状态造成的。该版本中可能会有一些您需要的软件\n"
-"包尚未被创建或是它们已被从新到(Incoming)目录移出。"
-
-#: cmdline/apt-get.cc:1950
-msgid "Broken packages"
-msgstr "破损的软件包"
-
-#: cmdline/apt-get.cc:1976
-msgid "The following extra packages will be installed:"
-msgstr "将会安装下列额外的软件包："
-
-#: cmdline/apt-get.cc:2066
-msgid "Suggested packages:"
-msgstr "建议安装的软件包："
-
-#: cmdline/apt-get.cc:2067
-msgid "Recommended packages:"
-msgstr "推荐安装的软件包："
-
-#: cmdline/apt-get.cc:2109
-#, c-format
-msgid "Couldn't find package %s"
-msgstr "无法找到软件包 %s"
-
-#: cmdline/apt-get.cc:2116 cmdline/apt-mark.cc:64
-#, c-format
-msgid "%s set to automatically installed.\n"
-msgstr "%s 被设置为手动安装。\n"
-
-#: cmdline/apt-get.cc:2124 cmdline/apt-mark.cc:108
-msgid ""
-"This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
-"instead."
-msgstr ""
-
-#: cmdline/apt-get.cc:2140
-msgid "Calculating upgrade... "
-msgstr "正在对升级进行计算... "
-
-#: cmdline/apt-get.cc:2143 methods/ftp.cc:711 methods/connect.cc:115
-msgid "Failed"
-msgstr "失败"
-
-#: cmdline/apt-get.cc:2148
-msgid "Done"
-msgstr "完成"
-
-#: cmdline/apt-get.cc:2215 cmdline/apt-get.cc:2223
-msgid "Internal error, problem resolver broke stuff"
-msgstr "内部错误，问题解决工具坏事了"
-
-#: cmdline/apt-get.cc:2251 cmdline/apt-get.cc:2287
-msgid "Unable to lock the download directory"
-msgstr "无法锁定下载目录"
-
-#: cmdline/apt-get.cc:2338
-#, c-format
-msgid "Downloading %s %s"
-msgstr ""
-
-#: cmdline/apt-get.cc:2396
-msgid "Must specify at least one package to fetch source for"
-msgstr "要下载源代码，必须指定至少一个对应的软件包"
-
-#: cmdline/apt-get.cc:2436 cmdline/apt-get.cc:2748
-#, c-format
-msgid "Unable to find a source package for %s"
-msgstr "无法找到与 %s 对应的源代码包"
-
-#: cmdline/apt-get.cc:2453
-#, c-format
-msgid ""
-"NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
-"%s\n"
-msgstr ""
-"提示：%s 的打包工作被维护于以下位置的 %s 版本控制系统中：\n"
-"%s\n"
-
-#: cmdline/apt-get.cc:2458
-#, c-format
-msgid ""
-"Please use:\n"
-"bzr get %s\n"
-"to retrieve the latest (possibly unreleased) updates to the package.\n"
-msgstr ""
-"请使用：\n"
-"bzr get %s\n"
-"获得该软件包的最近更新(可能尚未正式发布)。\n"
-
-#: cmdline/apt-get.cc:2511
-#, c-format
-msgid "Skipping already downloaded file '%s'\n"
-msgstr "忽略已下载过的文件“%s”\n"
-
-#: cmdline/apt-get.cc:2548
-#, c-format
-msgid "You don't have enough free space in %s"
-msgstr "您在 %s 上没有足够的可用空间"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2557
-#, c-format
-msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "需要下载 %sB/%sB 的源代码包。\n"
-
-#. TRANSLATOR: The required space between number and unit is already included
-#. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2562
-#, c-format
-msgid "Need to get %sB of source archives.\n"
-msgstr "需要下载 %sB 的源代码包。\n"
-
-#: cmdline/apt-get.cc:2568
-#, c-format
-msgid "Fetch source %s\n"
-msgstr "下载源代码 %s\n"
-
-#: cmdline/apt-get.cc:2606
-msgid "Failed to fetch some archives."
-msgstr "有一些包文件无法下载。"
-
-#: cmdline/apt-get.cc:2637
-#, c-format
-msgid "Skipping unpack of already unpacked source in %s\n"
-msgstr "忽略已经被解包到 %s 目录的源代码包\n"
-
-#: cmdline/apt-get.cc:2649
-#, c-format
-msgid "Unpack command '%s' failed.\n"
-msgstr "运行解包的命令“%s”出错。\n"
-
-#: cmdline/apt-get.cc:2650
-#, c-format
-msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "请检查是否安装了“dpkg-dev”软件包。\n"
-
-#: cmdline/apt-get.cc:2672
-#, c-format
-msgid "Build command '%s' failed.\n"
-msgstr "执行构造软件包命令“%s”失败。\n"
-
-#: cmdline/apt-get.cc:2692
-msgid "Child process failed"
-msgstr "子进程出错"
-
-#: cmdline/apt-get.cc:2711
-msgid "Must specify at least one package to check builddeps for"
-msgstr "要检查生成软件包的构建依赖关系，必须指定至少一个软件包"
-
-#: cmdline/apt-get.cc:2736
-#, c-format
-msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
-msgstr ""
-
-#: cmdline/apt-get.cc:2753
-#, c-format
-msgid "Unable to get build-dependency information for %s"
-msgstr "无法获得 %s 的构建依赖关系信息"
-
-#: cmdline/apt-get.cc:2773
-#, c-format
-msgid "%s has no build depends.\n"
-msgstr " %s 没有构建依赖关系信息。\n"
-
-#: cmdline/apt-get.cc:2903
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
-"packages"
-msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
-
-#: cmdline/apt-get.cc:2924
-#, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because the package %s cannot be "
-"found"
-msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
-
-#: cmdline/apt-get.cc:2947
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
-msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：已安装的软件包 %3$s 太新"
-
-#: cmdline/apt-get.cc:2986
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because candidate version of "
-"package %s can't satisfy version requirements"
-msgstr ""
-"由于无法找到符合要求的软件包 %3$s 的可用版本，因此不能满足 %2$s 所要求的 "
-"%1$s 依赖关系"
-
-#: cmdline/apt-get.cc:2992
-#, fuzzy, c-format
-msgid ""
-"%s dependency for %s cannot be satisfied because package %s has no candidate "
-"version"
-msgstr "由于无法找到软件包 %3$s ，因此不能满足 %2$s 所要求的 %1$s 依赖关系"
-
-#: cmdline/apt-get.cc:3015
-#, c-format
-msgid "Failed to satisfy %s dependency for %s: %s"
-msgstr "无法满足 %2$s 所要求 %1$s 依赖关系：%3$s"
-
-#: cmdline/apt-get.cc:3031
-#, c-format
-msgid "Build-dependencies for %s could not be satisfied."
-msgstr "不能满足软件包 %s 所要求的构建依赖关系。"
-
-#: cmdline/apt-get.cc:3036
-msgid "Failed to process build dependencies"
-msgstr "无法处理构建依赖关系"
-
-#: cmdline/apt-get.cc:3129 cmdline/apt-get.cc:3141
-#, fuzzy, c-format
-msgid "Changelog for %s (%s)"
-msgstr "正在连接 %s (%s)"
-
-#: cmdline/apt-get.cc:3260
-msgid "Supported modules:"
-msgstr "支持的模块："
-
-#: cmdline/apt-get.cc:3301
-#, fuzzy
-msgid ""
-"Usage: apt-get [options] command\n"
-"       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-"       apt-get [options] source pkg1 [pkg2 ...]\n"
-"\n"
-"apt-get is a simple command line interface for downloading and\n"
-"installing packages. The most frequently used commands are update\n"
-"and install.\n"
-"\n"
-"Commands:\n"
-"   update - Retrieve new lists of packages\n"
-"   upgrade - Perform an upgrade\n"
-"   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-"   remove - Remove packages\n"
-"   autoremove - Remove automatically all unused packages\n"
-"   purge - Remove packages and config files\n"
-"   source - Download source archives\n"
-"   build-dep - Configure build-dependencies for source packages\n"
-"   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-"   dselect-upgrade - Follow dselect selections\n"
-"   clean - Erase downloaded archive files\n"
-"   autoclean - Erase old downloaded archive files\n"
-"   check - Verify that there are no broken dependencies\n"
-"   changelog - Download and display the changelog for the given package\n"
-"   download - Download the binary package into the current directory\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -d  Download only - do NOT install or unpack archives\n"
-"  -s  No-act. Perform ordering simulation\n"
-"  -y  Assume Yes to all queries and do not prompt\n"
-"  -f  Attempt to correct a system with broken dependencies in place\n"
-"  -m  Attempt to continue if archives are unlocatable\n"
-"  -u  Show a list of upgraded packages as well\n"
-"  -b  Build the source package after fetching it\n"
-"  -V  Show verbose version numbers\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-"pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
-msgstr ""
-"用法： apt-get [选项] 命令\n"
-"　　　 apt-get [选项] install|remove 软件包1 [软件包2 ...]\n"
-"　　　 apt-get [选项] source 软件包1 [软件包2 ...]\n"
-"\n"
-"apt-get 提供了一个用于下载和安装软件包的简易命令行界面。\n"
-"最常用命令是 update 和 install。\n"
-"\n"
-"命令：\n"
-"   update - 取回更新的软件包列表信息\n"
-"   upgrade - 进行一次升级\n"
-"   install - 安装新的软件包(注：软件包名称是 libc6 而非 libc6.deb)\n"
-"   remove - 卸载软件包\n"
-"   autoremove - 卸载所有自动安装且不再使用的软件包\n"
-"   purge - 卸载并清除软件包的配置\n"
-"   source - 下载源码包文件\n"
-"   build-dep - 为源码包配置所需的编译依赖关系\n"
-"   dist-upgrade - 发布版升级，见 apt-get(8)\n"
-"   dselect-upgrade - 根据 dselect 的选择来进行升级\n"
-"   clean - 删除所有已下载的包文件\n"
-"   autoclean - 删除老版本的已下载的包文件\n"
-"   check - 核对以确认系统的依赖关系的完整性\n"
-"   markauto - 标记指定的软件包为自动安装\n"
-"   unmarkauto - 标记指定的软件包为手动安装\n"
-"\n"
-"选项：\n"
-"  -h  本帮助文档。\n"
-"  -q  让输出可作为日志 - 不显示进度\n"
-"  -qq 除了错误外，什么都不输出\n"
-"  -d  仅仅下载 - 【不】安装或解开包文件\n"
-"  -s  不作实际操作。只是依次模拟执行命令\n"
-"  -y  对所有询问都回答是(Yes)，同时不作任何提示\n"
-"  -f  当出现破损的依赖关系时，程序将尝试修正系统\n"
-"  -m  当有包文件无法找到时，程序仍尝试继续执行\n"
-"  -u  显示已升级的软件包列表\n"
-"  -b  在下载完源码包后，编译生成相应的软件包\n"
-"  -V  显示详尽的版本号\n"
-"  -c=? 读取指定配置文件\n"
-"  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
-"请查阅 apt-get(8)、sources.list(5) 和 apt.conf(5)的参考手册\n"
-"以获取更多信息和选项。\n"
-"                       本 APT 具有超级牛力。\n"
-
-#: cmdline/apt-get.cc:3466
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"注意：这只是模拟！\n"
-"　　　apt-get 需要 root 特权进行实际的执行。\n"
-"　　　同时请记住此时并未锁定，所以请勿完全相信当前的情况！"
-
-#: cmdline/acqprogress.cc:59
-msgid "Hit "
-msgstr "命中 "
-
-#: cmdline/acqprogress.cc:83
-msgid "Get:"
-msgstr "获取："
-
-#: cmdline/acqprogress.cc:114
-msgid "Ign "
-msgstr "忽略 "
-
-#: cmdline/acqprogress.cc:118
-msgid "Err "
-msgstr "错误 "
-
-#: cmdline/acqprogress.cc:139
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "下载 %sB，耗时 %s (%sB/s)\n"
-
-#: cmdline/acqprogress.cc:229
-#, c-format
-msgid " [Working]"
-msgstr " [执行中]"
-
-#: cmdline/acqprogress.cc:285
-#, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press enter\n"
-msgstr ""
-"更换介质：请把标有\n"
-"“%s”\n"
-"的盘片插入驱动器“%s”再按回车键\n"
-
-#: cmdline/apt-internal-solver.cc:36
+#: cmdline/apt-internal-solver.cc:37
 msgid ""
 "Usage: apt-internal-resolver\n"
 "\n"
@@ -1483,67 +1996,6 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "apt.conf(5) manual pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
-msgstr ""
-
-#: cmdline/apt-mark.cc:49
-#, fuzzy, c-format
-msgid "%s can not be marked as it is not installed.\n"
-msgstr "但是它还没有被安装"
-
-#: cmdline/apt-mark.cc:55
-#, fuzzy, c-format
-msgid "%s was already set to manually installed.\n"
-msgstr "%s 被设置为手动安装。\n"
-
-#: cmdline/apt-mark.cc:57
-#, fuzzy, c-format
-msgid "%s was already set to automatically installed.\n"
-msgstr "%s 被设置为手动安装。\n"
-
-#: cmdline/apt-mark.cc:172
-#, fuzzy, c-format
-msgid "%s was already set on hold.\n"
-msgstr "%s 已经是最新的版本了。\n"
-
-#: cmdline/apt-mark.cc:174
-#, fuzzy, c-format
-msgid "%s was already not hold.\n"
-msgstr "%s 已经是最新的版本了。\n"
-
-#: cmdline/apt-mark.cc:188 cmdline/apt-mark.cc:210
-#, fuzzy, c-format
-msgid "%s set on hold.\n"
-msgstr "%s 已设置为手动安装。\n"
-
-#: cmdline/apt-mark.cc:190 cmdline/apt-mark.cc:215
-#, fuzzy, c-format
-msgid "Canceled hold on %s.\n"
-msgstr "无法打开 %s"
-
-#: cmdline/apt-mark.cc:223
-msgid "Executing dpkg failed. Are you root?"
-msgstr ""
-
-#: cmdline/apt-mark.cc:271
-msgid ""
-"Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-"\n"
-"apt-mark is a simple command line interface for marking packages\n"
-"as manual or automatical installed. It can also list marks.\n"
-"\n"
-"Commands:\n"
-"   auto - Mark the given packages as automatically installed\n"
-"   manual - Mark the given packages as manually installed\n"
-"\n"
-"Options:\n"
-"  -h  This help text.\n"
-"  -q  Loggable output - no progress indicator\n"
-"  -qq No output except for errors\n"
-"  -s  No-act. Just prints what would be done.\n"
-"  -f  read/write auto/manual marking in the given file\n"
-"  -c=? Read this configuration file\n"
-"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
 
 #: cmdline/apt-sortpkgs.cc:89
@@ -1573,40 +2025,6 @@ msgstr ""
 "  -s   根据源文件排序\n"
 "  -c=? 读取指定配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
-
-#: dselect/install:32
-msgid "Bad default setting!"
-msgstr "错误的默认设置！"
-
-#: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:94
-#: dselect/install:105 dselect/update:45
-msgid "Press enter to continue."
-msgstr "按回车键继续。"
-
-#: dselect/install:91
-msgid "Do you want to erase any previously downloaded .deb files?"
-msgstr "您想要删除之前下载的所有 .deb 文件吗？"
-
-#: dselect/install:101
-msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr "在解包时发生了一些错误。已经安装的软件包"
-
-#: dselect/install:102
-msgid "will be configured. This may result in duplicate errors"
-msgstr "将被配置。这个操作可能会导致出现重复的错误"
-
-#: dselect/install:103
-msgid "or errors caused by missing dependencies. This is OK, only the errors"
-msgstr "或一些由于依赖关系不能满足所产生的错误。这个问题不大，只有"
-
-#: dselect/install:104
-msgid ""
-"above this message are important. Please fix them and run [I]nstall again"
-msgstr "这个提示之前的错误消息才值得您注意。请更正它们，然后再次执行 [I]nstall"
-
-#: dselect/update:30
-msgid "Merging available information"
-msgstr "正在合并可用信息"
 
 #: apt-inst/contrib/extracttar.cc:117
 msgid "Failed to create pipes"
@@ -1685,13 +2103,11 @@ msgstr "添加了两个转移项 %s-> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "重复的配置文件 %s/%s"
 
-#: apt-inst/dirstream.cc:43 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:55
-#: apt-inst/dirstream.cc:50
+#: apt-inst/dirstream.cc:43 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:55
 #, c-format
 msgid "Failed to write file %s"
 msgstr "无法写入文件 %s"
 
-#: apt-inst/dirstream.cc:100 apt-inst/dirstream.cc:108
 #: apt-inst/dirstream.cc:98 apt-inst/dirstream.cc:106
 #, c-format
 msgid "Failed to close file %s"
@@ -1744,542 +2160,63 @@ msgstr "用来覆盖的软件包不属于 %s 的任何版本"
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "文件 %s/%s 会覆盖属于软件包 %s 中的同名文件"
 
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: apt-inst/extract.cc:465 apt-pkg/contrib/cdromutl.cc:183
-#: apt-pkg/contrib/fileutl.cc:372 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:456 apt-pkg/init.cc:108
-#: apt-pkg/init.cc:116 apt-pkg/clean.cc:36 apt-pkg/policy.cc:359
-#: methods/mirror.cc:95
-#, c-format
-msgid "Unable to read %s"
-msgstr "无法读取 %s"
-
 #: apt-inst/extract.cc:492
 #, c-format
 msgid "Unable to stat %s"
 msgstr "无法读取 %s 的状态"
 
-#: apt-inst/deb/dpkgdb.cc:55 apt-inst/deb/dpkgdb.cc:61
-#, c-format
-msgid "Failed to remove %s"
-msgstr "无法卸载 %s"
-
-#: apt-inst/deb/dpkgdb.cc:110 apt-inst/deb/dpkgdb.cc:112
-#, c-format
-msgid "Unable to create %s"
-msgstr "无法创建 %s "
-
-#: apt-inst/deb/dpkgdb.cc:118
-#, c-format
-msgid "Failed to stat %sinfo"
-msgstr "无法读取 %sinfo 的状态"
-
-#: apt-inst/deb/dpkgdb.cc:123
-msgid "The info and temp directories need to be on the same filesystem"
-msgstr "info 和 temp 目录要求处于同一文件系统之下"
-
-#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:1170
-#: apt-pkg/pkgcachegen.cc:1274 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1436
-msgid "Reading package lists"
-msgstr "正在读取软件包列表"
-
-#: apt-inst/deb/dpkgdb.cc:180
-#, c-format
-msgid "Failed to change to the admin dir %sinfo"
-msgstr "无法切换工作目录到 admin 目录 %sinfo"
-
-#: apt-inst/deb/dpkgdb.cc:201 apt-inst/deb/dpkgdb.cc:355
-#: apt-inst/deb/dpkgdb.cc:448
-msgid "Internal error getting a package name"
-msgstr "在获取软件包名字时出现内部错误"
-
-#: apt-inst/deb/dpkgdb.cc:205 apt-inst/deb/dpkgdb.cc:386
-msgid "Reading file listing"
-msgstr "正在读取文件列表"
-
-#: apt-inst/deb/dpkgdb.cc:216
-#, c-format
-msgid ""
-"Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
-"then make it empty and immediately re-install the same version of the "
-"package!"
-msgstr ""
-"无法打开列表文件“%sinfo/%s”。如果您不能恢复这个文件，那么就清空该文件并马上重"
-"新安装相同版本的这个软件包！"
-
-#: apt-inst/deb/dpkgdb.cc:229 apt-inst/deb/dpkgdb.cc:242
-#, c-format
-msgid "Failed reading the list file %sinfo/%s"
-msgstr "无法读取列表文件 %sinfo/%s"
-
-#: apt-inst/deb/dpkgdb.cc:266
-msgid "Internal error getting a node"
-msgstr "获得一个节点时出现内部错误"
-
-#: apt-inst/deb/dpkgdb.cc:309
-#, c-format
-msgid "Failed to open the diversions file %sdiversions"
-msgstr "无法打开转移配置文件 %sdiversions"
-
-#: apt-inst/deb/dpkgdb.cc:324
-msgid "The diversion file is corrupted"
-msgstr "该转移配置文件被损坏了"
-
-#: apt-inst/deb/dpkgdb.cc:331 apt-inst/deb/dpkgdb.cc:336
-#: apt-inst/deb/dpkgdb.cc:341
-#, c-format
-msgid "Invalid line in the diversion file: %s"
-msgstr "转移配置文件中有一行是无效的：%s"
-
-#: apt-inst/deb/dpkgdb.cc:362
-msgid "Internal error adding a diversion"
-msgstr "添加转移配置时出现内部错误"
-
-#: apt-inst/deb/dpkgdb.cc:383
-msgid "The pkg cache must be initialized first"
-msgstr "必须首先初始化软件包缓存"
-
-#: apt-inst/deb/dpkgdb.cc:443
-#, c-format
-msgid "Failed to find a Package: header, offset %lu"
-msgstr "无法找到某个软件包：包头，于偏移位置 %lu"
-
-#: apt-inst/deb/dpkgdb.cc:465
-#, c-format
-msgid "Bad ConfFile section in the status file. Offset %lu"
-msgstr "状态文件中有错误的 ConfFile 段。位于偏移位置 %lu"
-
-#: apt-inst/deb/dpkgdb.cc:470
-#, c-format
-msgid "Error parsing MD5. Offset %lu"
-msgstr "解析 MD5 出错。文件内偏移量为 %lu"
-
-#: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
 #: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:46
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”"
 
 #. FIXME: add data.tar.xz here - adding it now would require a Translation round for a very small gain
-#: apt-inst/deb/debfile.cc:56 apt-inst/deb/debfile.cc:55
+#: apt-inst/deb/debfile.cc:55
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”，“%s”或者“%s”"
 
-#: apt-inst/deb/debfile.cc:116
-#, c-format
-msgid "Couldn't change to %s"
-msgstr "无法切换工作目录到 %s"
-
-#: apt-inst/deb/debfile.cc:157 apt-inst/deb/debfile.cc:120
+#: apt-inst/deb/debfile.cc:120
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr "内部错误，无法定位包内文件 %s"
 
-#: apt-inst/deb/debfile.cc:192
-msgid "Failed to locate a valid control file"
-msgstr "无法在归档文件中找到有效的主控文件"
-
-#: apt-inst/deb/debfile.cc:277 apt-inst/deb/debfile.cc:214
+#: apt-inst/deb/debfile.cc:214
 msgid "Unparsable control file"
 msgstr "不能解析的主控文件"
-
-#: methods/bzip2.cc:63 methods/gzip.cc:54
-msgid "Empty files can't be valid archives"
-msgstr ""
-
-#: methods/bzip2.cc:67
-#, c-format
-msgid "Couldn't open pipe for %s"
-msgstr "无法为 %s 开启管道"
-
-#: methods/bzip2.cc:111
-#, c-format
-msgid "Read error from %s process"
-msgstr "从 %s 进程读取数据出错"
-
-#: methods/bzip2.cc:143 methods/bzip2.cc:152 methods/copy.cc:46
-#: methods/gzip.cc:94 methods/gzip.cc:103 methods/rred.cc:493
-#: methods/rred.cc:502
-msgid "Failed to stat"
-msgstr "无法读取状态"
-
-#: methods/bzip2.cc:149 methods/copy.cc:83 methods/gzip.cc:100
-#: methods/rred.cc:499
-msgid "Failed to set modification time"
-msgstr "无法设置文件的修改日期"
-
-#: methods/cdrom.cc:203
-#, c-format
-msgid "Unable to read the cdrom database %s"
-msgstr "无法读取盘片数据库 %s"
-
-#: methods/cdrom.cc:212
-msgid ""
-"Please use apt-cdrom to make this CD-ROM recognized by APT. apt-get update "
-"cannot be used to add new CD-ROMs"
-msgstr ""
-"请使用 apt-cdrom，通过它就可以让 APT 能识别该盘片。apt-get upgdate 不能被用来"
-"加入新的盘片。"
-
-#: methods/cdrom.cc:222
-msgid "Wrong CD-ROM"
-msgstr "错误的 CD-ROM"
-
-#: methods/cdrom.cc:249
-#, c-format
-msgid "Unable to unmount the CD-ROM in %s, it may still be in use."
-msgstr "无法卸载现在挂载于 %s 的 CD-ROM，它可能正在使用中。"
-
-#: methods/cdrom.cc:254
-msgid "Disk not found."
-msgstr "找不到盘片。"
-
-#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:271
-msgid "File not found"
-msgstr "无法找到该文件"
-
-#: methods/file.cc:47
-msgid "Invalid URI, local URIS must not start with //"
-msgstr "无效的 URI，本地的 URI 不能以 // 开头"
-
-#. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc:172
-msgid "Logging in"
-msgstr "正在登录"
-
-#: methods/ftp.cc:178
-msgid "Unable to determine the peer name"
-msgstr "无法获知对方主机名"
-
-#: methods/ftp.cc:183
-msgid "Unable to determine the local name"
-msgstr "无法获知本地主机名"
-
-#: methods/ftp.cc:214 methods/ftp.cc:242
-#, c-format
-msgid "The server refused the connection and said: %s"
-msgstr "服务器拒绝了我们的连接，响应信息为：%s"
-
-#: methods/ftp.cc:220
-#, c-format
-msgid "USER failed, server said: %s"
-msgstr "USER 指令出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc:227
-#, c-format
-msgid "PASS failed, server said: %s"
-msgstr "PASS 指令出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc:247
-msgid ""
-"A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
-"is empty."
-msgstr ""
-"您指定了代理服务器，但是没有登陆脚本，Acquire::ftp::ProxyLogin 设置为空。"
-
-#: methods/ftp.cc:275
-#, c-format
-msgid "Login script command '%s' failed, server said: %s"
-msgstr "登录脚本命令“%s”出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc:301
-#, c-format
-msgid "TYPE failed, server said: %s"
-msgstr "TYPE 指令出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc:339 methods/ftp.cc:450 methods/rsh.cc:190 methods/rsh.cc:233
-msgid "Connection timeout"
-msgstr "连接超时"
-
-#: methods/ftp.cc:345
-msgid "Server closed the connection"
-msgstr "服务器关闭了连接"
-
-#: methods/ftp.cc:348 apt-pkg/contrib/fileutl.cc:1065 methods/rsh.cc:197
-msgid "Read error"
-msgstr "读错误"
-
-#: methods/ftp.cc:355 methods/rsh.cc:204
-msgid "A response overflowed the buffer."
-msgstr "回应超出了缓存区大小。"
-
-#: methods/ftp.cc:372 methods/ftp.cc:384
-msgid "Protocol corruption"
-msgstr "协议有误"
-
-#: methods/ftp.cc:456 apt-pkg/contrib/fileutl.cc:1139 methods/rsh.cc:239
-msgid "Write error"
-msgstr "写出错"
-
-#: methods/ftp.cc:696 methods/ftp.cc:702 methods/ftp.cc:738
-msgid "Could not create a socket"
-msgstr "无法创建套接字"
-
-#: methods/ftp.cc:707
-msgid "Could not connect data socket, connection timed out"
-msgstr "无法连接上数据套接字，连接超时"
-
-#: methods/ftp.cc:713
-msgid "Could not connect passive socket."
-msgstr "无法连接被动模式的套接字。"
-
-#: methods/ftp.cc:731
-msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo 无法得到监听套接字"
-
-#: methods/ftp.cc:745
-msgid "Could not bind a socket"
-msgstr "无法绑定套接字"
-
-#: methods/ftp.cc:749
-msgid "Could not listen on the socket"
-msgstr "无法在套接字上监听"
-
-#: methods/ftp.cc:756
-msgid "Could not determine the socket's name"
-msgstr "无法确定套接字的名字"
-
-#: methods/ftp.cc:788
-msgid "Unable to send PORT command"
-msgstr "无法发出 PORT 指令"
-
-#: methods/ftp.cc:798
-#, c-format
-msgid "Unknown address family %u (AF_*)"
-msgstr "无法识别的地址族 %u (AF_*)"
-
-#: methods/ftp.cc:807
-#, c-format
-msgid "EPRT failed, server said: %s"
-msgstr "EPRT 指令出错，服务器响应信息为：%s"
-
-#: methods/ftp.cc:827
-msgid "Data socket connect timed out"
-msgstr "数据套接字连接超时"
-
-#: methods/ftp.cc:834
-msgid "Unable to accept connection"
-msgstr "无法接受连接"
-
-#: methods/ftp.cc:873 methods/http.cc:1022 methods/rsh.cc:309
-msgid "Problem hashing file"
-msgstr "把文件加入哈希表时出错"
-
-#: methods/ftp.cc:886
-#, c-format
-msgid "Unable to fetch file, server said '%s'"
-msgstr "无法获取文件，服务器响应信息为“%s”"
-
-#: methods/ftp.cc:901 methods/rsh.cc:328
-msgid "Data socket timed out"
-msgstr "数据套接字超时"
-
-#: methods/ftp.cc:931
-#, c-format
-msgid "Data transfer failed, server said '%s'"
-msgstr "数据传送出错，服务器响应信息为“%s”"
-
-#. Get the files information
-#: methods/ftp.cc:1008
-msgid "Query"
-msgstr "查询"
-
-#: methods/ftp.cc:1120
-msgid "Unable to invoke "
-msgstr "无法调用 "
-
-#: methods/connect.cc:75
-#, c-format
-msgid "Connecting to %s (%s)"
-msgstr "正在连接 %s (%s)"
-
-#: methods/connect.cc:86
-#, c-format
-msgid "[IP: %s %s]"
-msgstr "[IP: %s %s]"
-
-#: methods/connect.cc:93
-#, c-format
-msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
-msgstr "无法为 %s 创建套接字(f=%u t=%u p=%u)"
-
-#: methods/connect.cc:99
-#, c-format
-msgid "Cannot initiate the connection to %s:%s (%s)."
-msgstr "无法发起与 %s:%s (%s) 的连接"
-
-#: methods/connect.cc:107
-#, c-format
-msgid "Could not connect to %s:%s (%s), connection timed out"
-msgstr "无法连接上 %s:%s (%s)，连接超时"
-
-#: methods/connect.cc:125
-#, c-format
-msgid "Could not connect to %s:%s (%s)."
-msgstr "无法连接上 %s:%s (%s)。"
-
-#. We say this mainly because the pause here is for the
-#. ssh connection that is still going
-#: methods/connect.cc:153 methods/rsh.cc:431
-#, c-format
-msgid "Connecting to %s"
-msgstr "正在连接 %s"
-
-#: methods/connect.cc:172 methods/connect.cc:191
-#, c-format
-msgid "Could not resolve '%s'"
-msgstr "无法解析域名“%s”"
-
-#: methods/connect.cc:197
-#, c-format
-msgid "Temporary failure resolving '%s'"
-msgstr "暂时不能解析域名“%s”"
-
-#: methods/connect.cc:200
-#, c-format
-msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr "解析“%s:%s”时，出现了某些故障(%i - %s)"
-
-#: methods/connect.cc:247
-#, c-format
-msgid "Unable to connect to %s:%s:"
-msgstr "不能连接到 %s：%s："
-
-#: methods/gpgv.cc:172
-msgid ""
-"Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr "内部错误：签名正确无误，但是无法确认密钥指纹？！"
-
-#: methods/gpgv.cc:177
-msgid "At least one invalid signature was encountered."
-msgstr "至少发现一个无效的签名。"
-
-#: methods/gpgv.cc:181
-msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
-msgstr "无法运行 gpgv 以验证签名(您安装了 gpgv 吗？)"
-
-#: methods/gpgv.cc:186
-msgid "Unknown error executing gpgv"
-msgstr "运行 gpgv 时发生未知错误"
-
-#: methods/gpgv.cc:220 methods/gpgv.cc:227
-msgid "The following signatures were invalid:\n"
-msgstr "下列签名无效：\n"
-
-#: methods/gpgv.cc:234
-msgid ""
-"The following signatures couldn't be verified because the public key is not "
-"available:\n"
-msgstr "由于没有公钥，无法验证下列签名：\n"
-
-#: methods/http.cc:393
-msgid "Waiting for headers"
-msgstr "正在等待报头"
-
-#: methods/http.cc:539
-#, c-format
-msgid "Got a single header line over %u chars"
-msgstr "接收到一行报头行，它的长度超过了 %u 个字符"
-
-#: methods/http.cc:547
-msgid "Bad header line"
-msgstr "错误的报头行"
-
-#: methods/http.cc:572 methods/http.cc:579
-msgid "The HTTP server sent an invalid reply header"
-msgstr "该 HTTP 服务器发送了一个无效的应答报头"
-
-#: methods/http.cc:608
-msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "该 HTTP 服务器发送了一个无效的 Content-Length 报头"
-
-#: methods/http.cc:623
-msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "该 HTTP 服务器发送了一个无效的 Content-Range 报头"
-
-#: methods/http.cc:625
-msgid "This HTTP server has broken range support"
-msgstr "该 HTTP 服务器的 range 支持不正常"
-
-#: methods/http.cc:649
-msgid "Unknown date format"
-msgstr "无法识别的日期格式"
-
-#: methods/http.cc:808
-msgid "Select failed"
-msgstr "select 调用出错"
-
-#: methods/http.cc:813
-msgid "Connection timed out"
-msgstr "连接超时"
-
-#: methods/http.cc:836
-msgid "Error writing to output file"
-msgstr "写输出文件时出错"
-
-#: methods/http.cc:867
-msgid "Error writing to file"
-msgstr "写入文件出错"
-
-#: methods/http.cc:895
-msgid "Error writing to the file"
-msgstr "写入文件出错"
-
-#: methods/http.cc:909
-msgid "Error reading from server. Remote end closed connection"
-msgstr "从服务器读取数据时出错，对方关闭了连接"
-
-#: methods/http.cc:911
-msgid "Error reading from server"
-msgstr "从服务器读取数据出错"
-
-#: methods/http.cc:1181
-msgid "Bad header data"
-msgstr "错误的报头数据"
-
-#: methods/http.cc:1198 methods/http.cc:1253
-msgid "Connection failed"
-msgstr "连接失败"
-
-#: methods/http.cc:1345
-msgid "Internal error"
-msgstr "内部错误"
 
 #: apt-pkg/contrib/mmap.cc:79
 msgid "Can't mmap an empty file"
 msgstr "无法 mmap 一个空文件"
 
-#: apt-pkg/contrib/mmap.cc:109
+#: apt-pkg/contrib/mmap.cc:110
 #, c-format
 msgid "Couldn't duplicate file descriptor %i"
 msgstr "无法为复制文件描述符 %i"
 
-#: apt-pkg/contrib/mmap.cc:117
+#: apt-pkg/contrib/mmap.cc:118
 #, fuzzy, c-format
 msgid "Couldn't make mmap of %llu bytes"
 msgstr "无法 mmap %lu 字节的数据"
 
-#: apt-pkg/contrib/mmap.cc:144
+#: apt-pkg/contrib/mmap.cc:145
 msgid "Unable to close mmap"
 msgstr "无法关闭 mmap"
 
-#: apt-pkg/contrib/mmap.cc:172 apt-pkg/contrib/mmap.cc:200
+#: apt-pkg/contrib/mmap.cc:173 apt-pkg/contrib/mmap.cc:201
 msgid "Unable to synchronize mmap"
 msgstr "无法同步 mmap "
 
-#: apt-pkg/contrib/mmap.cc:278
+#: apt-pkg/contrib/mmap.cc:279
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "无法 mmap %lu 字节的数据"
 
-#: apt-pkg/contrib/mmap.cc:311
+#: apt-pkg/contrib/mmap.cc:312
 msgid "Failed to truncate file"
 msgstr "无法截断文件"
 
-#: apt-pkg/contrib/mmap.cc:330
+#: apt-pkg/contrib/mmap.cc:331
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
@@ -2288,98 +2225,98 @@ msgstr ""
 "动态 MMap 没有空间了。请增大 APT::Cache-Limit 的大小。当前值：%lu。(man 5 "
 "apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:429
+#: apt-pkg/contrib/mmap.cc:430
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr "无法增加 MMap 的大小，因为已经达到 %lu 字节的限制。"
 
-#: apt-pkg/contrib/mmap.cc:432
+#: apt-pkg/contrib/mmap.cc:433
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr "无法增加 MMap 大小，因为用户已禁用自动增加。"
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:371
+#: apt-pkg/contrib/strutl.cc:372
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%li天 %li小时 %li分 %li秒"
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:378
+#: apt-pkg/contrib/strutl.cc:379
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%li小时 %li分 %li秒"
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:385
+#: apt-pkg/contrib/strutl.cc:386
 #, c-format
 msgid "%limin %lis"
 msgstr "%li分 %li秒"
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:390
+#: apt-pkg/contrib/strutl.cc:391
 #, c-format
 msgid "%lis"
 msgstr "%li秒"
 
-#: apt-pkg/contrib/strutl.cc:1165
+#: apt-pkg/contrib/strutl.cc:1166
 #, c-format
 msgid "Selection %s not found"
 msgstr "找不到您选则的 %s"
 
-#: apt-pkg/contrib/configuration.cc:468
+#: apt-pkg/contrib/configuration.cc:491
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "无法识别的类型缩写：“%c”"
 
-#: apt-pkg/contrib/configuration.cc:526
+#: apt-pkg/contrib/configuration.cc:605
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "正在打开配置文件 %s"
 
-#: apt-pkg/contrib/configuration.cc:694
+#: apt-pkg/contrib/configuration.cc:773
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "语法错误 %s:%u：配置小节没有以名字开头"
 
-#: apt-pkg/contrib/configuration.cc:713
+#: apt-pkg/contrib/configuration.cc:792
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "语法错误 %s:%u：标签格式有误"
 
-#: apt-pkg/contrib/configuration.cc:730
+#: apt-pkg/contrib/configuration.cc:809
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "语法错误 %s:%u：配置值后有多余的无意义数据"
 
-#: apt-pkg/contrib/configuration.cc:770
+#: apt-pkg/contrib/configuration.cc:849
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr "语法错误 %s:%u：只能在顶层配置文件中使用指示"
 
-#: apt-pkg/contrib/configuration.cc:777
+#: apt-pkg/contrib/configuration.cc:856
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "语法错误 %s:%u：太多的嵌套 include 命令"
 
-#: apt-pkg/contrib/configuration.cc:781 apt-pkg/contrib/configuration.cc:786
+#: apt-pkg/contrib/configuration.cc:860 apt-pkg/contrib/configuration.cc:865
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "语法错误 %s:%u：Included from here"
 
-#: apt-pkg/contrib/configuration.cc:790
+#: apt-pkg/contrib/configuration.cc:869
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "语法错误 %s:%u：不支持的指令“%s”"
 
-#: apt-pkg/contrib/configuration.cc:793
+#: apt-pkg/contrib/configuration.cc:872
 #, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr "语法错误 %s:%u：clean 指令需要一个选项树作为参数"
 
-#: apt-pkg/contrib/configuration.cc:843
+#: apt-pkg/contrib/configuration.cc:922
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "语法错误 %s:%u：文件尾部有多余的无意义的数据"
@@ -2399,43 +2336,43 @@ msgstr "%c%s... 完成"
 msgid "Command line option '%c' [from %s] is not known."
 msgstr "未知的命令行选项“%c” [来自 %s]"
 
-#: apt-pkg/contrib/cmndline.cc:104 apt-pkg/contrib/cmndline.cc:112
-#: apt-pkg/contrib/cmndline.cc:120
+#: apt-pkg/contrib/cmndline.cc:105 apt-pkg/contrib/cmndline.cc:114
+#: apt-pkg/contrib/cmndline.cc:122
 #, c-format
 msgid "Command line option %s is not understood"
 msgstr "无法识别命令行选项 %s"
 
-#: apt-pkg/contrib/cmndline.cc:125
+#: apt-pkg/contrib/cmndline.cc:127
 #, c-format
 msgid "Command line option %s is not boolean"
 msgstr "命令行选项 %s 不是布尔值"
 
-#: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
+#: apt-pkg/contrib/cmndline.cc:168 apt-pkg/contrib/cmndline.cc:189
 #, c-format
 msgid "Option %s requires an argument."
 msgstr "选项 %s 要求有一个参数"
 
-#: apt-pkg/contrib/cmndline.cc:200 apt-pkg/contrib/cmndline.cc:206
+#: apt-pkg/contrib/cmndline.cc:202 apt-pkg/contrib/cmndline.cc:208
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "选项 %s：配置项后必须包含有形如“=<变量>”的具体指定"
 
-#: apt-pkg/contrib/cmndline.cc:235
+#: apt-pkg/contrib/cmndline.cc:237
 #, c-format
 msgid "Option %s requires an integer argument, not '%s'"
 msgstr "选项 %s 要求有一个整数作为参数，而不是“%s”"
 
-#: apt-pkg/contrib/cmndline.cc:266
+#: apt-pkg/contrib/cmndline.cc:268
 #, c-format
 msgid "Option '%s' is too long"
 msgstr "选项“%s”太长"
 
-#: apt-pkg/contrib/cmndline.cc:298
+#: apt-pkg/contrib/cmndline.cc:300
 #, c-format
 msgid "Sense %s is not understood, try true or false."
 msgstr "不能识别参数 %s，请用 true 或 false"
 
-#: apt-pkg/contrib/cmndline.cc:348
+#: apt-pkg/contrib/cmndline.cc:350
 #, c-format
 msgid "Invalid operation %s"
 msgstr "无效的操作 %s"
@@ -2445,132 +2382,120 @@ msgstr "无效的操作 %s"
 msgid "Unable to stat the mount point %s"
 msgstr "无法读取文件系统挂载点 %s 的状态"
 
-#: apt-pkg/contrib/cdromutl.cc:179 apt-pkg/contrib/cdromutl.cc:213
-#: apt-pkg/acquire.cc:462 apt-pkg/acquire.cc:487 apt-pkg/clean.cc:42
-#: methods/mirror.cc:101
-#, c-format
-msgid "Unable to change to %s"
-msgstr "无法切换工作目录到 %s"
-
 #: apt-pkg/contrib/cdromutl.cc:224
 msgid "Failed to stat the cdrom"
 msgstr "无法读取盘片的状态"
 
-#: apt-pkg/contrib/fileutl.cc:197
+#: apt-pkg/contrib/fileutl.cc:93
+#, c-format
+msgid "Problem closing the gzip file %s"
+msgstr "关闭 gzip %s 文件出错"
+
+#: apt-pkg/contrib/fileutl.cc:225
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "由于文件系统为只读，因而无法使用文件锁 %s"
 
-#: apt-pkg/contrib/fileutl.cc:202
+#: apt-pkg/contrib/fileutl.cc:230
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "无法打开锁文件 %s"
 
-#: apt-pkg/contrib/fileutl.cc:220
+#: apt-pkg/contrib/fileutl.cc:248
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "无法在 nfs 文件系统上使用文件锁 %s"
 
-#: apt-pkg/contrib/fileutl.cc:224
+#: apt-pkg/contrib/fileutl.cc:252
 #, c-format
 msgid "Could not get lock %s"
 msgstr "无法获得锁 %s"
 
-#: apt-pkg/contrib/fileutl.cc:364
+#: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:506
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:391
+#: apt-pkg/contrib/fileutl.cc:426
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:409
+#: apt-pkg/contrib/fileutl.cc:444
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:418
+#: apt-pkg/contrib/fileutl.cc:453
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:719 apt-pkg/deb/dpkgpm.cc:950
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "等待子进程 %s 的退出，但是它并不存在"
-
-#: apt-pkg/contrib/fileutl.cc:731
+#: apt-pkg/contrib/fileutl.cc:840
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "子进程 %s 发生了段错误"
 
-#: apt-pkg/contrib/fileutl.cc:733
+#: apt-pkg/contrib/fileutl.cc:842
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "子进程 %s 收到信号 %u。"
 
-#: apt-pkg/contrib/fileutl.cc:737
+#: apt-pkg/contrib/fileutl.cc:846
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "子进程 %s 返回了一个错误号 (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:739
+#: apt-pkg/contrib/fileutl.cc:848
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子进程 %s 异常退出"
 
-#: apt-pkg/contrib/fileutl.cc:877 apt-pkg/indexcopy.cc:655
+#: apt-pkg/contrib/fileutl.cc:984 apt-pkg/indexcopy.cc:655
 #, c-format
 msgid "Could not open file %s"
 msgstr "无法打开文件 %s"
 
-#: apt-pkg/contrib/fileutl.cc:923
+#: apt-pkg/contrib/fileutl.cc:1046
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "无法打开文件描述符 %d"
 
-#: apt-pkg/contrib/fileutl.cc:970
+#: apt-pkg/contrib/fileutl.cc:1136
 msgid "Failed to create subprocess IPC"
 msgstr "无法创建子进程的 IPC 管道"
 
-#: apt-pkg/contrib/fileutl.cc:1019
+#: apt-pkg/contrib/fileutl.cc:1192
 msgid "Failed to exec compressor "
 msgstr "无法执行压缩程序"
 
-#: apt-pkg/contrib/fileutl.cc:1087
+#: apt-pkg/contrib/fileutl.cc:1289
 #, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "读取文件出错，还剩 %lu 字节没有读出"
 
-#: apt-pkg/contrib/fileutl.cc:1152
+#: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
 #, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "写入文件出错，还剩 %lu 字节没有保存"
 
-#: apt-pkg/contrib/fileutl.cc:1410
-#, c-format
-msgid "Problem closing the gzip file %s"
-msgstr "关闭 gzip %s 文件出错"
-
-#: apt-pkg/contrib/fileutl.cc:1414
+#: apt-pkg/contrib/fileutl.cc:1716
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "关闭文件 %s 出错"
 
-#: apt-pkg/contrib/fileutl.cc:1419
+#: apt-pkg/contrib/fileutl.cc:1728
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "重命名文件 %s 为 %s 出错"
 
-#: apt-pkg/contrib/fileutl.cc:1430
+#: apt-pkg/contrib/fileutl.cc:1739
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "用 unlink 删除文件 %s 出错"
 
-#: apt-pkg/contrib/fileutl.cc:1450
+#: apt-pkg/contrib/fileutl.cc:1755
 msgid "Problem syncing the file"
 msgstr "同步文件出错"
 
@@ -2682,12 +2607,12 @@ msgstr "无法打开状态文件 %s"
 msgid "Failed to write temporary StateFile %s"
 msgstr "无法写入临时状态文件 %s"
 
-#: apt-pkg/tagfile.cc:126
+#: apt-pkg/tagfile.cc:129
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "无法解析软件包文件 %s (1)"
 
-#: apt-pkg/tagfile.cc:213
+#: apt-pkg/tagfile.cc:216
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "无法解析软件包文件 %s (2)"
@@ -2747,7 +2672,7 @@ msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(发行版解析)"
 msgid "Opening %s"
 msgstr "正在打开 %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:485
+#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:469
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "源列表 %2$s 的第 %1$u 行太长了。"
@@ -2762,7 +2687,7 @@ msgstr "在源列表 %2$s 中第 %1$u 行的格式有误(类型)"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "无法识别在源列表 %3$s 里，第 %2$u 行中的软件包类别“%1$s”"
 
-#: apt-pkg/packagemanager.cc:298 apt-pkg/packagemanager.cc:775
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:891
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2771,12 +2696,12 @@ msgstr ""
 "无法立即对 %s 进行配置。请查看 man 5 apt.conf 中的 APT::Immediate-Configure "
 "(%d)"
 
-#: apt-pkg/packagemanager.cc:437 apt-pkg/packagemanager.cc:467
+#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "无法打开文件 %s"
 
-#: apt-pkg/packagemanager.cc:507
+#: apt-pkg/packagemanager.cc:545
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2792,13 +2717,13 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "不支持索引文件类型“%s”"
 
-#: apt-pkg/algorithms.cc:255
+#: apt-pkg/algorithms.cc:261
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "软件包 %s 需要重新安装，但是我无法找到相应的安装文件。"
 
-#: apt-pkg/algorithms.cc:1191
+#: apt-pkg/algorithms.cc:1223
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2806,13 +2731,13 @@ msgstr ""
 "错误，pkgProblemResolver::Resolve 发生故障，这可能是有软件包被要求保持现状的"
 "缘故。"
 
-#: apt-pkg/algorithms.cc:1193
+#: apt-pkg/algorithms.cc:1225
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 "无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关"
 "系。"
 
-#: apt-pkg/algorithms.cc:1518 apt-pkg/algorithms.cc:1520
+#: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
 #, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -2837,12 +2762,12 @@ msgstr "无法对目录 %s 加锁"
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:864
+#: apt-pkg/acquire.cc:893
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "正在下载第 %li 个文件，共 %li 个(还剩 %s 个)"
 
-#: apt-pkg/acquire.cc:866
+#: apt-pkg/acquire.cc:895
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "正在下载第 %li 个文件，共 %li 个"
@@ -2857,21 +2782,21 @@ msgstr "无法找到获取软件包的渠道 %s 所需的驱动程序。"
 msgid "Method %s did not start correctly"
 msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动。"
 
-#: apt-pkg/acquire-worker.cc:425
+#: apt-pkg/acquire-worker.cc:440
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "请把标有“%s”的盘片插入驱动器“%s”再按回车键。"
 
-#: apt-pkg/init.cc:151
+#: apt-pkg/init.cc:152
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "不支持“%s”打包系统"
 
-#: apt-pkg/init.cc:167
+#: apt-pkg/init.cc:168
 msgid "Unable to determine a suitable packaging system type"
 msgstr "无法确定适合的打包系统类型"
 
-#: apt-pkg/clean.cc:59
+#: apt-pkg/clean.cc:57
 #, c-format
 msgid "Unable to stat %s."
 msgstr "无法读取 %s 的状态。"
@@ -2920,12 +2845,13 @@ msgstr "软件包暂存区使用的是不兼容的版本控制系统"
 #. TRANSLATOR: The first placeholder is a package name,
 #. the other two should be copied verbatim as they include debug info
 #: apt-pkg/pkgcachegen.cc:211 apt-pkg/pkgcachegen.cc:277
-#: apt-pkg/pkgcachegen.cc:313 apt-pkg/pkgcachegen.cc:355
-#: apt-pkg/pkgcachegen.cc:359 apt-pkg/pkgcachegen.cc:376
-#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:390
-#: apt-pkg/pkgcachegen.cc:394 apt-pkg/pkgcachegen.cc:415
-#: apt-pkg/pkgcachegen.cc:420 apt-pkg/pkgcachegen.cc:465
-#: apt-pkg/pkgcachegen.cc:496 apt-pkg/pkgcachegen.cc:510
+#: apt-pkg/pkgcachegen.cc:308 apt-pkg/pkgcachegen.cc:316
+#: apt-pkg/pkgcachegen.cc:358 apt-pkg/pkgcachegen.cc:362
+#: apt-pkg/pkgcachegen.cc:379 apt-pkg/pkgcachegen.cc:389
+#: apt-pkg/pkgcachegen.cc:393 apt-pkg/pkgcachegen.cc:397
+#: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
+#: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
+#: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
 #, fuzzy, c-format
 msgid "Error occurred while processing %s (%s%d)"
 msgstr "处理 %s (FindPkg)时出错"
@@ -2946,21 +2872,26 @@ msgstr "哇，软件包说明数量超出了本 APT 的处理能力。"
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "哇，依赖关系数量超出了本 APT 的处理能力。"
 
-#: apt-pkg/pkgcachegen.cc:517
+#: apt-pkg/pkgcachegen.cc:523
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "当处理文件依赖关系时，无法找到软件包 %s %s"
 
-#: apt-pkg/pkgcachegen.cc:1082
+#: apt-pkg/pkgcachegen.cc:1088
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "无法获取源软件包列表 %s 的状态"
 
-#: apt-pkg/pkgcachegen.cc:1187
+#: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
+#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1442
+msgid "Reading package lists"
+msgstr "正在读取软件包列表"
+
+#: apt-pkg/pkgcachegen.cc:1193
 msgid "Collecting File Provides"
 msgstr "正在收集文件所提供的软件包"
 
-#: apt-pkg/pkgcachegen.cc:1378 apt-pkg/pkgcachegen.cc:1385
+#: apt-pkg/pkgcachegen.cc:1384 apt-pkg/pkgcachegen.cc:1391
 msgid "IO Error saving source cache"
 msgstr "无法读取或写入软件源缓存"
 
@@ -2969,44 +2900,44 @@ msgstr "无法读取或写入软件源缓存"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "无法重命名文件，%s (%s -> %s)。"
 
-#: apt-pkg/acquire-item.cc:640
+#: apt-pkg/acquire-item.cc:599
 msgid "MD5Sum mismatch"
 msgstr "MD5 校验和不符"
 
-#: apt-pkg/acquire-item.cc:911 apt-pkg/acquire-item.cc:1863
-#: apt-pkg/acquire-item.cc:2006
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1859
+#: apt-pkg/acquire-item.cc:2002
 msgid "Hash Sum mismatch"
 msgstr "Hash 校验和不符"
 
-#: apt-pkg/acquire-item.cc:1399
+#: apt-pkg/acquire-item.cc:1370
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1415
+#: apt-pkg/acquire-item.cc:1386
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "无法解析软件包仓库 Release 文件 %s"
 
-#: apt-pkg/acquire-item.cc:1450
+#: apt-pkg/acquire-item.cc:1428
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "以下 ID 的密钥没有可用的公钥：\n"
 
-#: apt-pkg/acquire-item.cc:1488
+#: apt-pkg/acquire-item.cc:1466
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1510
+#: apt-pkg/acquire-item.cc:1488
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "冲突的发行版：%s (期望 %s 但得到 %s)"
 
-#: apt-pkg/acquire-item.cc:1543
+#: apt-pkg/acquire-item.cc:1521
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3015,12 +2946,12 @@ msgstr ""
 "校验签名出错。此仓库未被更新，仍然使用以前的索引文件。GPG 错误：%s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1553 apt-pkg/acquire-item.cc:1558
+#: apt-pkg/acquire-item.cc:1531 apt-pkg/acquire-item.cc:1536
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG 错误：%s: %s"
 
-#: apt-pkg/acquire-item.cc:1650
+#: apt-pkg/acquire-item.cc:1635
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3029,7 +2960,7 @@ msgstr ""
 "我无法找到一个对应 %s 软件包的文件。在这种情况下可能需要您手动修正这个软件"
 "包。(缘于架构缺失)"
 
-#: apt-pkg/acquire-item.cc:1709
+#: apt-pkg/acquire-item.cc:1694
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3037,37 +2968,37 @@ msgid ""
 msgstr ""
 "我无法找到对应 %s 软件包的文件。在这种情况下您可能需要手动修正这个软件包。"
 
-#: apt-pkg/acquire-item.cc:1768
+#: apt-pkg/acquire-item.cc:1753
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "软件包的索引文件已损坏。找不到对应软件包 %s 的 Filename: 字段。"
 
-#: apt-pkg/acquire-item.cc:1855
+#: apt-pkg/acquire-item.cc:1851
 msgid "Size mismatch"
 msgstr "大小不符"
 
-#: apt-pkg/indexrecords.cc:61
+#: apt-pkg/indexrecords.cc:64
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "无法解析软件包仓库 Release 文件 %s"
 
-#: apt-pkg/indexrecords.cc:71
+#: apt-pkg/indexrecords.cc:74
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "软件包仓库 Release 文件 %s 内无组件章节信息"
 
-#: apt-pkg/indexrecords.cc:105
+#: apt-pkg/indexrecords.cc:108
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "软件包仓库 Release 文件 %s 内无哈希条目"
 
-#: apt-pkg/indexrecords.cc:118
+#: apt-pkg/indexrecords.cc:121
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "软件包仓库 Release 文件 %s 内 Valid-Until 条目无效"
 
-#: apt-pkg/indexrecords.cc:137
+#: apt-pkg/indexrecords.cc:140
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "软件包仓库 Release 文件 %s 内 Date 条目无效"
@@ -3077,7 +3008,7 @@ msgstr "软件包仓库 Release 文件 %s 内 Date 条目无效"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "软件提供者数据块内 %s 没有包含指纹信息"
 
-#: apt-pkg/cdrom.cc:566
+#: apt-pkg/cdrom.cc:550
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -3086,41 +3017,41 @@ msgstr ""
 "现把 %s 作为了 CD-ROM 的挂载点\n"
 "正在挂载 CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:575 apt-pkg/cdrom.cc:672
+#: apt-pkg/cdrom.cc:559 apt-pkg/cdrom.cc:656
 msgid "Identifying.. "
 msgstr "正在鉴别.. "
 
-#: apt-pkg/cdrom.cc:603
+#: apt-pkg/cdrom.cc:587
 #, c-format
 msgid "Stored label: %s\n"
 msgstr "已归档文件的标签：%s\n"
 
-#: apt-pkg/cdrom.cc:612 apt-pkg/cdrom.cc:894
+#: apt-pkg/cdrom.cc:596 apt-pkg/cdrom.cc:879
 msgid "Unmounting CD-ROM...\n"
 msgstr "正在卸载 CD-ROM...\n"
 
-#: apt-pkg/cdrom.cc:632
+#: apt-pkg/cdrom.cc:616
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "现把 %s 作为了 CD-ROM 的挂载点\n"
 
-#: apt-pkg/cdrom.cc:650
+#: apt-pkg/cdrom.cc:634
 msgid "Unmounting CD-ROM\n"
 msgstr "正在卸载 CD-ROM 文件系统\n"
 
-#: apt-pkg/cdrom.cc:655
+#: apt-pkg/cdrom.cc:639
 msgid "Waiting for disc...\n"
 msgstr "等待插入盘片……\n"
 
-#: apt-pkg/cdrom.cc:664
+#: apt-pkg/cdrom.cc:648
 msgid "Mounting CD-ROM...\n"
 msgstr "正在挂载 CD-ROM 文件系统……\n"
 
-#: apt-pkg/cdrom.cc:683
+#: apt-pkg/cdrom.cc:667
 msgid "Scanning disc for index files..\n"
 msgstr "正在盘片中查找索引文件..\n"
 
-#: apt-pkg/cdrom.cc:731
+#: apt-pkg/cdrom.cc:716
 #, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
@@ -3129,7 +3060,7 @@ msgstr ""
 "找到了 %zu 个软件包索引、%zu 个源代码包索引、%zu 个翻译索引和 %zu 个数字签"
 "名\n"
 
-#: apt-pkg/cdrom.cc:742
+#: apt-pkg/cdrom.cc:727
 msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
@@ -3137,16 +3068,16 @@ msgstr ""
 "无法确定任何包文件的位置，可能这不是一张 Debian 盘片或者是选择了错误的硬件构"
 "架。"
 
-#: apt-pkg/cdrom.cc:769
+#: apt-pkg/cdrom.cc:754
 #, c-format
 msgid "Found label '%s'\n"
 msgstr "找到标签 '%s'\n"
 
-#: apt-pkg/cdrom.cc:798
+#: apt-pkg/cdrom.cc:783
 msgid "That is not a valid name, try again.\n"
 msgstr "这不是一个有效的名字，请重试。\n"
 
-#: apt-pkg/cdrom.cc:815
+#: apt-pkg/cdrom.cc:800
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -3155,15 +3086,15 @@ msgstr ""
 "这张盘片现在的名字是：\n"
 "“%s”\n"
 
-#: apt-pkg/cdrom.cc:817
+#: apt-pkg/cdrom.cc:802
 msgid "Copying package lists..."
 msgstr "正在复制软件包列表……"
 
-#: apt-pkg/cdrom.cc:844
+#: apt-pkg/cdrom.cc:829
 msgid "Writing new source list\n"
 msgstr "正在写入新的源列表\n"
 
-#: apt-pkg/cdrom.cc:852
+#: apt-pkg/cdrom.cc:837
 msgid "Source list entries for this disc are:\n"
 msgstr "对应于该盘片的软件源设置项是：\n"
 
@@ -3213,49 +3144,49 @@ msgstr ""
 msgid "No keyring installed in %s."
 msgstr "%s 中没有安装密钥环。"
 
-#: apt-pkg/cacheset.cc:352
+#: apt-pkg/cacheset.cc:355
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "未找到“%2$s”的“%1$s”发布版本"
 
-#: apt-pkg/cacheset.cc:355
+#: apt-pkg/cacheset.cc:358
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "未找到“%2$s”的“%1$s”版本"
 
-#: apt-pkg/cacheset.cc:466
+#: apt-pkg/cacheset.cc:469
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "无法找到任务 %s"
 
-#: apt-pkg/cacheset.cc:472
+#: apt-pkg/cacheset.cc:475
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "无法按照正则表达式 %s 找到任何软件包"
 
-#: apt-pkg/cacheset.cc:483
+#: apt-pkg/cacheset.cc:486
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr "无法从完全虚拟的软件包 %s 中选择版本"
 
-#: apt-pkg/cacheset.cc:490 apt-pkg/cacheset.cc:497
+#: apt-pkg/cacheset.cc:493 apt-pkg/cacheset.cc:500
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr "因为软件包 %s 没有已安装或候选的版本，无法进行选择"
 
-#: apt-pkg/cacheset.cc:504
+#: apt-pkg/cacheset.cc:507
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr "因为软件包 %s 是完全的虚拟软件包，无法选择它的最新版"
 
-#: apt-pkg/cacheset.cc:512
+#: apt-pkg/cacheset.cc:515
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr "因为软件包 %s 没有候选版本，无法进行选择"
 
-#: apt-pkg/cacheset.cc:520
+#: apt-pkg/cacheset.cc:523
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr "因为软件包 %s 没有安装，无法选择它的已安装版本"
@@ -3264,143 +3195,150 @@ msgstr "因为软件包 %s 没有安装，无法选择它的已安装版本"
 msgid "Send scenario to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:213
+#: apt-pkg/edsp.cc:209
 msgid "Send request to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:281
+#: apt-pkg/edsp.cc:277
 msgid "Prepare for receiving solution"
 msgstr ""
 
-#: apt-pkg/edsp.cc:288
+#: apt-pkg/edsp.cc:284
 msgid "External solver failed without a proper error message"
 msgstr ""
 
-#: apt-pkg/edsp.cc:559 apt-pkg/edsp.cc:562 apt-pkg/edsp.cc:567
+#: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
 msgid "Execute external solver"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:71
+#: apt-pkg/deb/dpkgpm.cc:72
 #, c-format
 msgid "Installing %s"
 msgstr "正在安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:72 apt-pkg/deb/dpkgpm.cc:900
+#: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:951
 #, c-format
 msgid "Configuring %s"
 msgstr "正在配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:907
+#: apt-pkg/deb/dpkgpm.cc:74 apt-pkg/deb/dpkgpm.cc:958
 #, c-format
 msgid "Removing %s"
 msgstr "正在删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:74
+#: apt-pkg/deb/dpkgpm.cc:75
 #, c-format
 msgid "Completely removing %s"
 msgstr "完全删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:75
+#: apt-pkg/deb/dpkgpm.cc:76
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "注意到 %s 已经消失"
 
-#: apt-pkg/deb/dpkgpm.cc:76
+#: apt-pkg/deb/dpkgpm.cc:77
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "执行安装后执行的触发器 %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:672
+#: apt-pkg/deb/dpkgpm.cc:704
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "目录 %s 缺失"
 
-#: apt-pkg/deb/dpkgpm.cc:687 apt-pkg/deb/dpkgpm.cc:707
+#: apt-pkg/deb/dpkgpm.cc:719 apt-pkg/deb/dpkgpm.cc:739
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "无法打开文件 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:893
+#: apt-pkg/deb/dpkgpm.cc:944
 #, c-format
 msgid "Preparing %s"
 msgstr "正在准备 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:894
+#: apt-pkg/deb/dpkgpm.cc:945
 #, c-format
 msgid "Unpacking %s"
 msgstr "正在解压缩 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:899
+#: apt-pkg/deb/dpkgpm.cc:950
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "正在准备配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:901
+#: apt-pkg/deb/dpkgpm.cc:952
 #, c-format
 msgid "Installed %s"
 msgstr "已安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:906
+#: apt-pkg/deb/dpkgpm.cc:957
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "正在准备 %s 的删除操作"
 
-#: apt-pkg/deb/dpkgpm.cc:908
+#: apt-pkg/deb/dpkgpm.cc:959
 #, c-format
 msgid "Removed %s"
 msgstr "已删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:913
+#: apt-pkg/deb/dpkgpm.cc:964
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "正在准备完全删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:914
+#: apt-pkg/deb/dpkgpm.cc:965
 #, c-format
 msgid "Completely removed %s"
 msgstr "完全删除了 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1142
+#: apt-pkg/deb/dpkgpm.cc:1208
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr "无法写入日志。 openpty() 失败(没有挂载 /dev/pts ？)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1172
+#: apt-pkg/deb/dpkgpm.cc:1238
 msgid "Running dpkg"
 msgstr "正在运行 dpkg"
 
-#: apt-pkg/deb/dpkgpm.cc:1351
+#: apt-pkg/deb/dpkgpm.cc:1410
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1408
+#: apt-pkg/deb/dpkgpm.cc:1472
 msgid "No apport report written because MaxReports is reached already"
 msgstr "由于已经达到 MaxReports 限制，没有写入 apport 报告。"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1413
+#: apt-pkg/deb/dpkgpm.cc:1477
 msgid "dependency problems - leaving unconfigured"
 msgstr "依赖问题 - 保持未配置"
 
-#: apt-pkg/deb/dpkgpm.cc:1415
+#: apt-pkg/deb/dpkgpm.cc:1479
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr "因为错误消息指示这是由于上一个问题导致的错误，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1421
+#: apt-pkg/deb/dpkgpm.cc:1485
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr "因为错误消息指示这是由于磁盘已满，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1427
+#: apt-pkg/deb/dpkgpm.cc:1492
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr "因为错误消息指示这是由于内存不足，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1434
+#: apt-pkg/deb/dpkgpm.cc:1499 apt-pkg/deb/dpkgpm.cc:1505
+#, fuzzy
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr "因为错误消息指示这是由于磁盘已满，没有写入 apport 报告。"
+
+#: apt-pkg/deb/dpkgpm.cc:1526
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr "因为错误消息指示这是一个 dpkg I/O 错误，没有写入 apport 报告。"
@@ -3429,42 +3367,79 @@ msgstr "dpkg 被中断，您必须手工运行 %s 解决此问题。"
 msgid "Not locked"
 msgstr "未锁定"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc:279
-#, c-format
-msgid "No mirror file '%s' found "
-msgstr "没有找到镜像文件 %s"
+#~ msgid "Failed to remove %s"
+#~ msgstr "无法卸载 %s"
 
-#. FIXME: fallback to a default mirror here instead
-#. and provide a config option to define that default
-#: methods/mirror.cc:286
-#, fuzzy, c-format
-msgid "Can not read mirror file '%s'"
-msgstr "没有找到镜像文件 %s"
+#~ msgid "Unable to create %s"
+#~ msgstr "无法创建 %s "
 
-#: methods/mirror.cc:441
-#, c-format
-msgid "[Mirror: %s]"
-msgstr "[镜像：%s]"
+#~ msgid "Failed to stat %sinfo"
+#~ msgstr "无法读取 %sinfo 的状态"
 
-#: methods/rred.cc:472
-#, c-format
-msgid ""
-"Could not patch %s with mmap and with file operation usage - the patch seems "
-"to be corrupt."
-msgstr "无法连同 mmap 和文件操作用途为 %s 打补丁 - 补丁可能已损坏。"
+#~ msgid "The info and temp directories need to be on the same filesystem"
+#~ msgstr "info 和 temp 目录要求处于同一文件系统之下"
 
-#: methods/rred.cc:477
-#, c-format
-msgid ""
-"Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
-"to be corrupt."
-msgstr "无法连同 mmap 为 %s 打补丁(但没有 mmap 的错误) - 补丁可能已损坏。"
+#~ msgid "Failed to change to the admin dir %sinfo"
+#~ msgstr "无法切换工作目录到 admin 目录 %sinfo"
 
-#: methods/rsh.cc:336
-msgid "Connection closed prematurely"
-msgstr "连接被永久关闭"
+#~ msgid "Internal error getting a package name"
+#~ msgstr "在获取软件包名字时出现内部错误"
+
+#~ msgid "Reading file listing"
+#~ msgstr "正在读取文件列表"
+
+#~ msgid ""
+#~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
+#~ "then make it empty and immediately re-install the same version of the "
+#~ "package!"
+#~ msgstr ""
+#~ "无法打开列表文件“%sinfo/%s”。如果您不能恢复这个文件，那么就清空该文件并马"
+#~ "上重新安装相同版本的这个软件包！"
+
+#~ msgid "Failed reading the list file %sinfo/%s"
+#~ msgstr "无法读取列表文件 %sinfo/%s"
+
+#~ msgid "Internal error getting a node"
+#~ msgstr "获得一个节点时出现内部错误"
+
+#~ msgid "Failed to open the diversions file %sdiversions"
+#~ msgstr "无法打开转移配置文件 %sdiversions"
+
+#~ msgid "The diversion file is corrupted"
+#~ msgstr "该转移配置文件被损坏了"
+
+#~ msgid "Invalid line in the diversion file: %s"
+#~ msgstr "转移配置文件中有一行是无效的：%s"
+
+#~ msgid "Internal error adding a diversion"
+#~ msgstr "添加转移配置时出现内部错误"
+
+#~ msgid "The pkg cache must be initialized first"
+#~ msgstr "必须首先初始化软件包缓存"
+
+#~ msgid "Failed to find a Package: header, offset %lu"
+#~ msgstr "无法找到某个软件包：包头，于偏移位置 %lu"
+
+#~ msgid "Bad ConfFile section in the status file. Offset %lu"
+#~ msgstr "状态文件中有错误的 ConfFile 段。位于偏移位置 %lu"
+
+#~ msgid "Error parsing MD5. Offset %lu"
+#~ msgstr "解析 MD5 出错。文件内偏移量为 %lu"
+
+#~ msgid "Couldn't change to %s"
+#~ msgstr "无法切换工作目录到 %s"
+
+#~ msgid "Failed to locate a valid control file"
+#~ msgstr "无法在归档文件中找到有效的主控文件"
+
+#~ msgid "Couldn't open pipe for %s"
+#~ msgstr "无法为 %s 开启管道"
+
+#~ msgid "Read error from %s process"
+#~ msgstr "从 %s 进程读取数据出错"
+
+#~ msgid "Got a single header line over %u chars"
+#~ msgstr "接收到一行报头行，它的长度超过了 %u 个字符"
 
 #~ msgid "Note: This is done automatic and on purpose by dpkg."
 #~ msgstr "注意：这是自动被 dpkg 有意完成的。"

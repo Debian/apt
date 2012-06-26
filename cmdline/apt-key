@@ -86,6 +86,8 @@ add_keys_with_verify_against_master_keyring() {
 # the archive-keyring keys needs to be signed with the master key
 # (otherwise it does not make sense from a security POV)
 net_update() {
+    # Disabled for now as code is insecure (LP: #1013639 (and 857472, 1013128))
+    exit 1
 
     if [ -z "$ARCHIVE_KEYRING_URI" ]; then
 	echo >&2 "ERROR: Your distribution is not supported in net-update as no uri for the archive-keyring is set"
