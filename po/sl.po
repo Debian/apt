@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-25 09:17+0200\n"
-"PO-Revision-Date: 2011-03-06 15:47+0000\n"
+"POT-Creation-Date: 2012-06-27 10:17+0200\n"
+"PO-Revision-Date: 2012-06-15 00:43+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
 "Language: sl\n"
@@ -14,8 +14,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
-"X-Launchpad-Export-Date: 2011-03-07 13:08+0000\n"
-"X-Generator: Launchpad (build 12515)\n"
+"X-Launchpad-Export-Date: 2012-06-25 20:00+0000\n"
+"X-Generator: Launchpad (build 15482)\n"
 "X-Poedit-Country: SLOVENIA\n"
 "X-Poedit-Language: Slovenian\n"
 "X-Poedit-SourceCharset: utf-8\n"
@@ -110,7 +110,7 @@ msgstr "Podati morate vsaj en iskalni vzorec"
 
 #: cmdline/apt-cache.cc:1357
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr ""
+msgstr "Ta ukaz je zastarel. Namesto njega uporabite 'apt-mark showauto'."
 
 #: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
@@ -156,7 +156,7 @@ msgid "  Version table:"
 msgstr "  Preglednica različic:"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3350 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3349 cmdline/apt-mark.cc:363
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -164,7 +164,6 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s za %s kodno preveden na %s %s\n"
 
 #: cmdline/apt-cache.cc:1686
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -201,40 +200,39 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "Uporaba: apt-cache [možnosti] ukaz\n"
-"       apt-cache [options] showpkg pak1 [pak2 ...]\n"
-"       apt-cache [options] showsrc pak1 [pak2 ...]\n"
+"       apt-cache [možnosti] showpkg paket1 [paket2 ...]\n"
+"       apt-cache [možnosti] showsrc paket1 [paket2 ...]\n"
 "\n"
 "apt-cache je orodje nizke ravni za poizvedbo podatkov\n"
-"iz APT-ovih binarnih datotek predpomnilnika\n"
+"iz binarni datotek predpomnilnika APT\n"
 "\n"
 "Ukazi:\n"
-"   gencaches - izgradi tako predpomnilnik paketa kot izvorne kode\n"
-"   showpkg - pokaže nekaj podrobnosti za posamezen paket\n"
-"   showsrc - pokaže zapise izvorne kode\n"
-"   stats - pokaže nekaj osnovne statistike\n"
-"   dump - pokaže celotno datoteko v obliki terse\n"
-"   dumpavail - izpiše razpoložljivo datoteko na stdout\n"
-"   unmet - pokaže nezadoščene odvisnosti\n"
-"   search - išče po seznamu paketov za vzorec logičnega izraza\n"
-"   show - pokaže berljiv zapis za paket\n"
-"   showauto - pokaže seznam samodejno nameščenih pakrov\n"
-"   depends - pokaže surove podrobnosti odvisnosti za paket\n"
-"   rdepends - pokaže obratne podrobnosti odvisnosti za paket\n"
-"   pkgnames - izpiše imena vseh paketov na sistemu\n"
-"   dotty - ustvari grafe paketov za GraphViz\n"
-"   xvcg - ustvari grafe paketov za xvcg\n"
-"   policy - pokaži nastavitve pravil\n"
+"   gencaches - Izgradi tako predpomnilnik paketa in izvorne kode\n"
+"   showpkg - Prikaže nekaj splošnih podatkov o posameznem paketu\n"
+"   showsrc - Prikaže zapise izvorne kode\n"
+"   stats - Prikaže nekaj osnovne statistike\n"
+"   dump - Prikaže celotno datoteko v skrajšani obliki\n"
+"   dumpavail - Izpiše razpoložljivo datoteko na stdout\n"
+"   unmet - Prikaže nezadoščene odvisnosti\n"
+"   search - Išče seznam paketov z vzorcem logičnega izraza\n"
+"   show - Show a readable record for the package\n"
+"   depends - Prikaže surove podatke odvisnosti za paket\n"
+"   rdepends - Pokaže obratne podatke odvisnosti za paket\n"
+"   pkgnames - Izpiše imena vseh paketov na sistemu\n"
+"   dotty - Ustvari grafe paketa za GraphViz\n"
+"   xvcg -  Ustvari grafe paketa za xvcg\n"
+"   policy - Prikaže nastavitve pravil\n"
 "\n"
 "Možnosti:\n"
-"  -h to besedilo pomoči.\n"
-"  -p=? predpomnilnik paketa.\n"
-"  -s=? predpomnilnik izvorne kode.\n"
-"  -q onemogoči kazalnik napredka.\n"
-"  -i pokaže le pomembne odvisnosti za nezadoščen ukaz.\n"
-"  -c=? prebere to nastavitveno datoteko\n"
-"  -o=? nastavi poljubno nastavitveno možnost, npr -o dir::cahce=/tmp\n"
-"Oglejte si strani priročnika apt-cache(8) in apt.conf(5) za več "
-"podrobnosti.\n"
+"  -h To besedilo pomoči.\n"
+"  -p=? Predpomnilnik paketov.\n"
+"  -s=? Predpomnilnik izvorne kode.\n"
+"  -q Onemogoči kazalnik napredka.\n"
+"  -i Pokaže le pomembne odvisnosti za neujemajoč ukaz.\n"
+"  -c=? Prebere to nastavitveno datoteko\n"
+"  -o=? Nastavi poljubno možnost nastavitve, na primer -o dir::cache=/tmp\n"
+"Za več podrobnosti si oglejte strani priročnikov apt-cache(8) in apt.conf"
+"(5).\n"
 
 #: cmdline/apt-cdrom.cc:79
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -291,7 +289,7 @@ msgstr "Y"
 
 #: cmdline/apt-get.cc:140
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
@@ -482,7 +480,7 @@ msgstr "Ponovna namestitev %s ni možna, ker prejem ni možen.\n"
 msgid "%s is already the newest version.\n"
 msgstr "Najnovejša različica %s je že nameščena.\n"
 
-#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2157 cmdline/apt-mark.cc:68
+#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2156 cmdline/apt-mark.cc:68
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s je bil nastavljen na ročno nameščen.\n"
@@ -533,31 +531,31 @@ msgstr "POZOR: Naslednjih paketov ni bilo mogoče overiti!"
 msgid "Authentication warning overridden.\n"
 msgstr "Opozorilo overitve je bilo prepisano.\n"
 
-#: cmdline/apt-get.cc:1079
+#: cmdline/apt-get.cc:1082
 msgid "Install these packages without verification [y/N]? "
 msgstr "Ali želite te pakete namestiti brez preverjanja [y/N]? "
 
-#: cmdline/apt-get.cc:1081
+#: cmdline/apt-get.cc:1084
 msgid "Some packages could not be authenticated"
 msgstr "Nekaterih paketkov bi bilo mogoče overiti"
 
-#: cmdline/apt-get.cc:1090 cmdline/apt-get.cc:1251
+#: cmdline/apt-get.cc:1089 cmdline/apt-get.cc:1250
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Prišlo je do težav in -y je bil uporabljen brez --force-yes"
 
-#: cmdline/apt-get.cc:1131
+#: cmdline/apt-get.cc:1130
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Notranja napaka, NamestiPakete je bil klican z pokvarjenimi paketi!"
 
-#: cmdline/apt-get.cc:1140
+#: cmdline/apt-get.cc:1139
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Odstraniti je treba pakete, a je odstranjevanje onemogočeno."
 
-#: cmdline/apt-get.cc:1151
+#: cmdline/apt-get.cc:1150
 msgid "Internal error, Ordering didn't finish"
 msgstr "Notranja napaka, Urejanje se ni končalo"
 
-#: cmdline/apt-get.cc:1189
+#: cmdline/apt-get.cc:1188
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Kako čudno .. Velikosti se ne ujemata, pošljite sporočilo na apt@packages."
@@ -565,52 +563,52 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1196
+#: cmdline/apt-get.cc:1195
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Potrebno je dobiti %sB/%sB arhivov.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1201
+#: cmdline/apt-get.cc:1200
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Potrebno je dobiti %sB arhivov.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1208
+#: cmdline/apt-get.cc:1207
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Po tem opravilu bo porabljenega %sB dodatnega prostora.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1213
+#: cmdline/apt-get.cc:1212
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Po tem opravilu bo sproščenega %sB prostora na disku.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
-#: cmdline/apt-get.cc:2592
+#: cmdline/apt-get.cc:1227 cmdline/apt-get.cc:1230 cmdline/apt-get.cc:2588
+#: cmdline/apt-get.cc:2591
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Ni mogoče določiti prostega prostora v %s"
 
-#: cmdline/apt-get.cc:1241
+#: cmdline/apt-get.cc:1240
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Na %s je premalo prostora."
 
-#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1277
+#: cmdline/apt-get.cc:1256 cmdline/apt-get.cc:1276
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Navedena je možnost Samo preprosto, a to opravilo ni preprosto."
 
-#: cmdline/apt-get.cc:1259
+#: cmdline/apt-get.cc:1258
 msgid "Yes, do as I say!"
 msgstr "Da, naredi tako kot pravim!"
 
-#: cmdline/apt-get.cc:1261
+#: cmdline/apt-get.cc:1260
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -621,28 +619,28 @@ msgstr ""
 "Za nadaljevanje vtipkajte frazo '%s'\n"
 " ?] "
 
-#: cmdline/apt-get.cc:1267 cmdline/apt-get.cc:1286
+#: cmdline/apt-get.cc:1266 cmdline/apt-get.cc:1285
 msgid "Abort."
 msgstr "Prekini."
 
-#: cmdline/apt-get.cc:1282
+#: cmdline/apt-get.cc:1281
 msgid "Do you want to continue [Y/n]? "
 msgstr "Ali želite nadaljevati [Y/n]? "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1353 cmdline/apt-get.cc:2653 apt-pkg/algorithms.cc:1543
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Ni mogoče dobiti %s  %s\n"
 
-#: cmdline/apt-get.cc:1372
+#: cmdline/apt-get.cc:1371
 msgid "Some files failed to download"
 msgstr "Prejem nekaterih datotek ni uspel"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
+#: cmdline/apt-get.cc:1372 cmdline/apt-get.cc:2665
 msgid "Download complete and in download only mode"
 msgstr "Prejem je dokončan in uporabljen je način samo prejema"
 
-#: cmdline/apt-get.cc:1379
+#: cmdline/apt-get.cc:1378
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -650,19 +648,19 @@ msgstr ""
 "Nekaterih arhivov ni mogoče dobiti. Poskusite uporabiti apt-get update ali --"
 "fix-missing."
 
-#: cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1382
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing in izmenjava medija trenutno nista podprta"
 
-#: cmdline/apt-get.cc:1388
+#: cmdline/apt-get.cc:1387
 msgid "Unable to correct missing packages."
 msgstr "Ni mogoče popraviti manjkajočih paketov."
 
-#: cmdline/apt-get.cc:1389
+#: cmdline/apt-get.cc:1388
 msgid "Aborting install."
 msgstr "Prekinjanje namestitve."
 
-#: cmdline/apt-get.cc:1417
+#: cmdline/apt-get.cc:1416
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -682,37 +680,38 @@ msgstr[3] ""
 "Naslednji paketi so izginili z vašega sistema, ker so vse\n"
 "datoteke prepisali drugi paketi:"
 
-#: cmdline/apt-get.cc:1421
+#: cmdline/apt-get.cc:1420
+#, fuzzy
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "Opomba: To je dpkg storil samodejno in namenoma."
 
-#: cmdline/apt-get.cc:1559
+#: cmdline/apt-get.cc:1558
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr "Prezri nerazpoložljiv cilj izdaje '%s' paketa '%s'"
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1590
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "Izbiranje '%s' kot vir paketa namesto '%s'\n"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1629
+#: cmdline/apt-get.cc:1628
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr "Prezri nerazpoložljivo različico '%s' paketa '%s'"
 
-#: cmdline/apt-get.cc:1645
+#: cmdline/apt-get.cc:1644
 msgid "The update command takes no arguments"
 msgstr "Ukaz update ne sprejema argumentov"
 
-#: cmdline/apt-get.cc:1711
+#: cmdline/apt-get.cc:1710
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 "Program ne bi smel brisati stvari, ni mogoče zagnati "
 "SamodejnegaOdstranjevalnika"
 
-#: cmdline/apt-get.cc:1815
+#: cmdline/apt-get.cc:1814
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -731,15 +730,15 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1987
+#: cmdline/apt-get.cc:1817 cmdline/apt-get.cc:1986
 msgid "The following information may help to resolve the situation:"
 msgstr "Naslednji podatki vam bodo morda pomagali rešiti težavo:"
 
-#: cmdline/apt-get.cc:1822
+#: cmdline/apt-get.cc:1821
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Notranja napaka, SamodejniOdstranjevalnik je pokvaril stvari"
 
-#: cmdline/apt-get.cc:1829
+#: cmdline/apt-get.cc:1828
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -751,7 +750,7 @@ msgstr[2] ""
 "Naslednja paketa sta bila samodejno nameščena in nista več zahtevana:"
 msgstr[3] "Naslednji paketi so bili samodejno nameščeni in niso več zahtevani:"
 
-#: cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:1832
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -761,7 +760,7 @@ msgstr[1] "%lu paket je bil samodejno nameščen in ni bil več zahtevan.\n"
 msgstr[2] "%lu paketa sta bila samodejno nameščena in nista več zahtevana.\n"
 msgstr[3] "%lu paketi so bili samodejno nameščeni in niso več zahtevani.\n"
 
-#: cmdline/apt-get.cc:1835
+#: cmdline/apt-get.cc:1834
 #, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
@@ -770,15 +769,15 @@ msgstr[1] "Uporabite 'apt-get autoremove' za njihovo odstranitev."
 msgstr[2] "Uporabite 'apt-get autoremove' za njihovo odstranitev."
 msgstr[3] "Uporabite 'apt-get autoremove' za njihovo odstranitev."
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1853
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Notranja napaka zaradi AllUpgrade."
 
-#: cmdline/apt-get.cc:1953
+#: cmdline/apt-get.cc:1952
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "Poskusite zagnati 'apt-get -f install', če želite popraviti naslednje:"
 
-#: cmdline/apt-get.cc:1957
+#: cmdline/apt-get.cc:1956
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -786,7 +785,7 @@ msgstr ""
 "Nerešene odvisnosti. Poskusite 'apt-get -f install' brez paketov (ali "
 "navedite rešitev)."
 
-#: cmdline/apt-get.cc:1972
+#: cmdline/apt-get.cc:1971
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -798,79 +797,81 @@ msgstr ""
 ", da nekateri zahtevani paketi še niso ustvarjeni ali premaknjeni\n"
 " iz Prihajajočega."
 
-#: cmdline/apt-get.cc:1993
+#: cmdline/apt-get.cc:1992
 msgid "Broken packages"
 msgstr "Pokvarjeni paketi"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2018
 msgid "The following extra packages will be installed:"
 msgstr "Naslednji dodatni paketi bodo nameščeni:"
 
-#: cmdline/apt-get.cc:2109
+#: cmdline/apt-get.cc:2108
 msgid "Suggested packages:"
 msgstr "Predlagani paketi:"
 
-#: cmdline/apt-get.cc:2110
+#: cmdline/apt-get.cc:2109
 msgid "Recommended packages:"
 msgstr "Priporočeni paketi:"
 
-#: cmdline/apt-get.cc:2152
+#: cmdline/apt-get.cc:2151
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Ni mogoče najti paketa %s"
 
-#: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:2158 cmdline/apt-mark.cc:70
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "%s je nastavljen na samodejno nameščen.\n"
 
-#: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
+#: cmdline/apt-get.cc:2166 cmdline/apt-mark.cc:114
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
+"Ta ukaz je zastarel. Namesto njega uporabite 'apt-mark auto' in 'apt-mark "
+"manual'."
 
-#: cmdline/apt-get.cc:2183
+#: cmdline/apt-get.cc:2182
 msgid "Calculating upgrade... "
 msgstr "Preračunavanje nadgradnje ... "
 
-#: cmdline/apt-get.cc:2186 methods/ftp.cc:711 methods/connect.cc:115
+#: cmdline/apt-get.cc:2185 methods/ftp.cc:711 methods/connect.cc:115
 msgid "Failed"
 msgstr "Spodletelo"
 
-#: cmdline/apt-get.cc:2191
+#: cmdline/apt-get.cc:2190
 msgid "Done"
 msgstr "Opravljeno"
 
-#: cmdline/apt-get.cc:2258 cmdline/apt-get.cc:2266
+#: cmdline/apt-get.cc:2257 cmdline/apt-get.cc:2265
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Notranja napaka, reševalnik težav je pokvaril stvari"
 
-#: cmdline/apt-get.cc:2294 cmdline/apt-get.cc:2330
+#: cmdline/apt-get.cc:2293 cmdline/apt-get.cc:2329
 msgid "Unable to lock the download directory"
 msgstr "Ni mogoče zakleniti mape prejemov"
 
-#: cmdline/apt-get.cc:2386
+#: cmdline/apt-get.cc:2385
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:2391
+#: cmdline/apt-get.cc:2390
 #, c-format
 msgid "Downloading %s %s"
 msgstr "Prejemanje %s %s"
 
-#: cmdline/apt-get.cc:2451
+#: cmdline/apt-get.cc:2450
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Potrebno je navesti vsaj en paket, za katerega želite dobiti izvorno kodo"
 
-#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
+#: cmdline/apt-get.cc:2490 cmdline/apt-get.cc:2802
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Izvornega paketa za %s ni mogoče najti"
 
-#: cmdline/apt-get.cc:2508
+#: cmdline/apt-get.cc:2507
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -879,158 +880,162 @@ msgstr ""
 "OPOMBA: pakiranje '%s' vzdrževano v sistemu nadzora različice '%s' na:\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2513
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2512
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Uporabite:\n"
-"bzr get %s\n"
-"za pridobivanje zadnjih (morda neizdanih) posodobitev paketa.\n"
+"bzr branch %s\n"
+"za pridobitev zadnjih (morda še neizdanih) posodobitev paketa.\n"
 
-#: cmdline/apt-get.cc:2566
+#: cmdline/apt-get.cc:2565
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Preskok že prejete datoteke '%s'\n"
 
-#: cmdline/apt-get.cc:2603
+#: cmdline/apt-get.cc:2602
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Nimate dovolj prostora na %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2612
+#: cmdline/apt-get.cc:2611
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Potrebno je dobiti %sB/%sB izvornih arhivov.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2617
+#: cmdline/apt-get.cc:2616
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Potrebno je dobiti %sB izvornih arhivov.\n"
 
-#: cmdline/apt-get.cc:2623
+#: cmdline/apt-get.cc:2622
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Dobi vir %s\n"
 
-#: cmdline/apt-get.cc:2661
+#: cmdline/apt-get.cc:2660
 msgid "Failed to fetch some archives."
 msgstr "Nekaterih arhivov ni mogoče pridobiti."
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2691
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Odpakiranje že odpakiranih izvornih paketov v %s je bilo preskočeno\n"
 
-#: cmdline/apt-get.cc:2704
+#: cmdline/apt-get.cc:2703
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Ukaz odpakiranja '%s' ni uspel.\n"
 
-#: cmdline/apt-get.cc:2705
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Izberite, če je paket 'dpkg-dev' nameščen.\n"
 
-#: cmdline/apt-get.cc:2727
+#: cmdline/apt-get.cc:2726
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Ukaz gradnje '%s' ni uspel.\n"
 
-#: cmdline/apt-get.cc:2747
+#: cmdline/apt-get.cc:2746
 msgid "Child process failed"
 msgstr "Podrejeno opravilo ni uspelo"
 
-#: cmdline/apt-get.cc:2766
+#: cmdline/apt-get.cc:2765
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Potrebno je navesti vsaj en paket, za katerega želite preveriti odvisnosti "
 "za gradnjo"
 
-#: cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2790
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
+"Za %s ni bilo mogoče najti podatkov o arhitekturi. Za nastavitev si oglejte "
+"apt.conf(5) APT::Architectures"
 
-#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
+#: cmdline/apt-get.cc:2814 cmdline/apt-get.cc:2817
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Ni mogoče dobiti podrobnosti o odvisnostih za gradnjo za %s"
 
-#: cmdline/apt-get.cc:2838
+#: cmdline/apt-get.cc:2837
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s nima odvisnosti za gradnjo.\n"
 
-#: cmdline/apt-get.cc:2997
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2996
+#, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
-msgstr "%s odvisnosti za %s ni mogoče zadostiti, ker ni mogoče najti paketa %s"
+msgstr ""
+"odvisnosti %s za %s ni mogoče zadovoljiti, ker %s ni dovoljen na paketih '%s'"
 
-#: cmdline/apt-get.cc:3015
+#: cmdline/apt-get.cc:3014
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%s odvisnosti za %s ni mogoče zadostiti, ker ni mogoče najti paketa %s"
 
-#: cmdline/apt-get.cc:3038
+#: cmdline/apt-get.cc:3037
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Ni mogoče zadostiti %s odvisnosti za %s. Nameščen paket %s je preveč nov"
 
-#: cmdline/apt-get.cc:3077
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:3076
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
-"%s odvisnosti za %s ni mogoče zadostiti, ker nobena različica paketa %s ne "
-"more zadostiti zahtevi po različici"
+"odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
+"%s ne more zadostiti zahtev različice"
 
-#: cmdline/apt-get.cc:3083
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:3082
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
-msgstr "%s odvisnosti za %s ni mogoče zadostiti, ker ni mogoče najti paketa %s"
+msgstr ""
+"odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
+"%s nima različice kandidata"
 
-#: cmdline/apt-get.cc:3106
+#: cmdline/apt-get.cc:3105
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Ni mogoče zadostiti %s odvisnosti za %s: %s"
 
-#: cmdline/apt-get.cc:3122
+#: cmdline/apt-get.cc:3121
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Odvisnosti za gradnjo %s ni bilo mogoče zadostiti."
 
-#: cmdline/apt-get.cc:3127
+#: cmdline/apt-get.cc:3126
 msgid "Failed to process build dependencies"
 msgstr "Obdelava odvisnosti za gradnjo je spodletela"
 
-#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
+#: cmdline/apt-get.cc:3219 cmdline/apt-get.cc:3231
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Dnevnik sprememb za %s (%s)"
 
-#: cmdline/apt-get.cc:3355
+#: cmdline/apt-get.cc:3354
 msgid "Supported modules:"
 msgstr "Podprti moduli:"
 
-#: cmdline/apt-get.cc:3396
-#, fuzzy
+#: cmdline/apt-get.cc:3395
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1076,50 +1081,48 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 "Uporaba: apt-get [možnosti] ukaz\n"
-"       apt-get [možnosti] install|remove pak1 [pak2 ...]\n"
-"       apt-get [možnosti] source pak1 [pak2 ...]\n"
+"       apt-get [možnosti] install|remove paket1 [paket2 ...]\n"
+"       apt-get [možnosti] source paket1 [paket2 ...]\n"
 "\n"
-"apt-get je enostaven vmesnik ukazne vrstice za prejemanje\n"
-"in nameščanje paketov. Najpogosteje uporabljena ukaza\n"
-"sta update in install.\n"
+"apt-get je enostaven vmesnik ukazne vrstice za prejem in nameščanje\n"
+"paketov. Najbolj pogosto uporabljana ukaza sta update in install.\n"
 "\n"
 "Ukazi:\n"
-"   update - pridobi sezname novih paketov\n"
-"   upgrade - izvede nadgradnjo\n"
-"   install - namesti nove pakete (paket je libc6, ne libc6.deb)\n"
-"   remove - odstrani pakete\n"
-"   autoremove - samodejno odstrani vse neuporabljene pakete\n"
-"   purge - odstrani pakete in nastavitvene datoteke\n"
-"   source - prejme arhive izvorne kode\n"
-"   dist-upgrade - nadgradnja distrbucije, oglejte si apt-get(8)\n"
-"   dselect-upgrade - sledi izbiram dselect\n"
-"   clean - izbriši prejete datoteke arhiva\n"
-"   autoclean - izbriše stare prejete datoteke arhiva\n"
-"   check - preveri, da ni zlomljenih odvisnosti\n"
-"   markauto - označi dane pakete kot samodejno nameščene\n"
-"   unmarkauto - označi dane pakete kot ročno nameščene\n"
-"   changelog - prejme in prikaže dnevnik sprememb za dani paket\n"
-"   download - prejme binarni paket v trenutno mapo\n"
+"   update - Pridobi nove sezname paketov\n"
+"   upgrade - Izvedix nadgradnjo\n"
+"   install - Namesti nove pakete (paket je libc6, ne libc6.deb)\n"
+"   remove - Odstrani pakete\n"
+"   autoremove - Samodejno odstrani vse neuporabljene pakete\n"
+"   purge - Odstrani pakete in nastavitvene datoteke\n"
+"   source - Prejmi arhive izvorne kode\n"
+"   build-dep - Nastavi odvisnosti gradnje za paket izvorne kode\n"
+"   dist-upgrade - Nadgradnja distribucije, oglejte si apt-get(8)\n"
+"   dselect-upgrade - Sledi izbiri dselect\n"
+"   clean - Izbriši prejete datoteke arhivov\n"
+"   autoclean - Izbriše stare prejete datoteke arhivov\n"
+"   check - Preveri, da ni pokvarjenih odvisnosti\n"
+"   changelog - Prejmi in prikaže dnevnik sprememb za dani paket\n"
+"   download - Prejmi binarni paket v trenutno mapo\n"
 "\n"
 "Možnosti:\n"
-"  -h to besedilo pomoči.\n"
-"  -q beležljiv izhod - brez indikatorja napredka\n"
-"  -qq ni izhoda razen napak\n"
-"  -d le prejmi - NE namesti ali odpakiraj arhivov\n"
-"  -s izvedi simulacijo ukaza\n"
-"  -y predpostavi Yes za vsa vprašanja in ne postavljaj vprašanj\n"
-"  -f poskusi popraviti sistem z zlomljenimi odvisnostmi\n"
-"  -m poskusi nadaljevati, če arhivov ni mogoče najti\n"
-"  -u pokaži tudi seznam nadgrajenih paketov\n"
-"  -b izgradi izvorni paket po njegovem pridobivanju\n"
-"  -V pokaže podrobno izpisane številke različic\n"
-"  -c=? prebere to nastavitveno datoteko\n"
-"  -o=? nastavi poljubno nastavitveno možnost, na primer dir::cache=/temo\n"
-"Za več podrobnosti in možnosti si oglejte priročnike apt-get(8),\n"
-"sources.list(5) in apt.conf(5).\n"
-"                       Ta APT ima zmožnosti Super krave.\n"
+"  -h To besedilo pomoči.\n"
+"  -q Izhod se beleži - brez kazalnika napredka\n"
+"  -qq Ni izhoda razen napak\n"
+"  -d Le prejmi - NE nameščaj ali odpakiraj arhivov\n"
+"  -s Ne naredi ničesar. Izvedi simulacijo ukaza\n"
+"  -y Predpostavi Da vsem poizvedbam in ne pozivaj\n"
+"  -f Poskusi popraviti sistem s pokvarjenimi odvisnostmi\n"
+"  -m Poskusi nadaljevati, če arhivov ni mogoče najti\n"
+"  -u Pokaži tudi seznam nadgrajenih paketov\n"
+"  -b Po pridobitvi izgradi izvorni paket\n"
+"  -V Pokaži podrobne številke različic\n"
+"  -c=? Preberi to nastavitveno datoteko\n"
+"  -o=? Nastavi poljubno nastavitveno možnost, na primer -o dir::cache=/tmp\n"
+"Za več podrobnosti in možnosti si oglejte strani priročnikov apt-get(8),\n"
+" sources.list(5) in apt.conf(5). \n"
+"                       Ta APT ima moči super krav.\n"
 
-#: cmdline/apt-get.cc:3561
+#: cmdline/apt-get.cc:3560
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1169,29 +1172,29 @@ msgstr ""
 "v enoto '%s' in pritisnite vnosno tipko\n"
 
 #: cmdline/apt-mark.cc:55
-#, fuzzy, c-format
+#, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr "vendar ni nameščen"
+msgstr "paket %s ne more biti označen, ker ni nameščen.\n"
 
 #: cmdline/apt-mark.cc:61
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr "%s je bil nastavljen na ročno nameščen.\n"
+msgstr "paket %s je bil že nastavljen na ročno nameščen.\n"
 
 #: cmdline/apt-mark.cc:63
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr "%s je nastavljen na samodejno nameščen.\n"
+msgstr "paket %s je bil že nastavljen kot samodejno nameščen.\n"
 
 #: cmdline/apt-mark.cc:228
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already set on hold.\n"
-msgstr "Najnovejša različica %s je že nameščena.\n"
+msgstr "paket %s je bil že nastavljen kot na čakanju.\n"
 
 #: cmdline/apt-mark.cc:230
-#, fuzzy, c-format
+#, c-format
 msgid "%s was already not hold.\n"
-msgstr "Najnovejša različica %s je že nameščena.\n"
+msgstr "paket %s je bil že nastavljen kot ne na čakanju.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:314
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
@@ -1200,18 +1203,18 @@ msgid "Waited for %s but it wasn't there"
 msgstr "Program je čakal na %s a ga ni bilo tam"
 
 #: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:297
-#, fuzzy, c-format
+#, c-format
 msgid "%s set on hold.\n"
-msgstr "%s je bil nastavljen na ročno nameščen.\n"
+msgstr "paket %s je nastavljen kot na čakanju.\n"
 
 #: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:302
-#, fuzzy, c-format
+#, c-format
 msgid "Canceled hold on %s.\n"
-msgstr "Ni mogoče odprti %s"
+msgstr "Čakanje za %s je bilo preklicano.\n"
 
 #: cmdline/apt-mark.cc:320
 msgid "Executing dpkg failed. Are you root?"
-msgstr ""
+msgstr "Izvajanje dpkg je spodletelo. Ali ste skrbnik?"
 
 #: cmdline/apt-mark.cc:367
 msgid ""
@@ -1234,6 +1237,24 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
+"Uporaba: apt-mark [možnosti] {auto|manual} paket1 [paket2 ...]\n"
+"\n"
+"apt-mark je enostaven vmesnik ukazne vrstice za označevanje paketov\n"
+"kot ročno ali samodejno nameščenih. Oznake lahko tudi izpiše.\n"
+"\n"
+"Ukazi:\n"
+"   auto - Označi dane pakete kot samodejno nameščene\n"
+"  manual - Označi dane pakete kot ročno nameščene\n"
+"\n"
+"Možnosti:\n"
+"  -h To besedilo pomoči.\n"
+"  -q Izhod se beleži - brez kazalnika napredka\n"
+"  -qq Brez izhoda razen napak\n"
+"  -s Ne naredi ničesar. Samo napiše kaj bi bilo narejeno.\n"
+"  -f Prebere/zapiše oznako ročno/samodejno za dano datoteko\n"
+"  -c=? Prebere to nastavitveno datoteko\n"
+"  -o=? Nastavi poljubno nastavitveno možnost, na primer -o dir::cache=/tmp\n"
+"Za več podrobnosti si oglejte strani priročnika apt-mark(8) in apt-conf(5)."
 
 #: methods/cdrom.cc:203
 #, c-format
@@ -1615,9 +1636,9 @@ msgstr "Datoteke zrcalnih strežnikov '%s' ni mogoče najti "
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:287
-#, fuzzy, c-format
+#, c-format
 msgid "Can not read mirror file '%s'"
-msgstr "Datoteke zrcalnih strežnikov '%s' ni mogoče najti "
+msgstr "Datoteke zrcalnega strežnika '%s' ni mogoče prebrati"
 
 #: methods/mirror.cc:442
 #, c-format
@@ -1970,19 +1991,19 @@ msgid "Unable to open %s"
 msgstr "Ni mogoče odpreti %s"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Napačno oblikovana prepisana vrstica %s %lu #1"
+msgstr "Slabo oblikovan prepis %s v vrstici %llu št. 1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Napačno oblikovana prepisana vrstica %s %lu #2"
+msgstr "Slabo oblikovan prepis %s v vrstici %llu št. 1"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Napačno oblikovanje prepisane vrstice %s %lu #3"
+msgstr "Slabo oblikovan prepis %s v vrstici %llu št. 3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -2049,6 +2070,19 @@ msgid ""
 "apt.conf(5) manual pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Uporaba: apt-internal-resolver\n"
+"\n"
+"apt-internal-resolver je vmesnik za uporabo trenutnega notranjega\n"
+"reševalnika kot zunanji reševalnik za družino APT za razhroščevanje ali "
+"podobno.\n"
+"\n"
+"Možnosti:\n"
+"  -h To besedilo pomoči\n"
+"  -q Izhod se beleži - ni kazalnika napredka\n"
+"  -c=? Prebere to nastavitveno datoteko\n"
+"  -o=? Nastavi poljubno nastavitveno možnost, na primer dir::cache=/tmp\n"
+"Oglejte si strani priročnika apt.conf(5) za več podrobnosti in možnosti.\n"
+"                       Ta APT ima moči super krave.\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2248,9 +2282,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "Ni mogoče podvojiti opisnika datotek %i"
 
 #: apt-pkg/contrib/mmap.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Ni mogoče narediti mmap %lu bajtov"
+msgstr "Ni mogoče narediti mmap %llu bajtov"
 
 #: apt-pkg/contrib/mmap.cc:145
 msgid "Unable to close mmap"
@@ -2529,14 +2563,14 @@ msgid "Failed to exec compressor "
 msgstr "Ni mogoče izvesti stiskanja "
 
 #: apt-pkg/contrib/fileutl.cc:1289
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "branje, še vedno %lu za branje, a nobeden ni ostal"
+msgstr "Prebrano, še vedno je treba prebrati %llu bajtov, vendar ni nič ostalo"
 
 #: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "pisanje, še vedno %lu za pisanje, a ni mogoče"
+msgstr "pisanje, preostalo je še %llu za pisanje, vendar ni bilo mogoče pisati"
 
 #: apt-pkg/contrib/fileutl.cc:1716
 #, c-format
@@ -2570,9 +2604,8 @@ msgid "The package cache file is an incompatible version"
 msgstr "Različica datoteke s predpomnilnikom paketov ni združljiva"
 
 #: apt-pkg/pkgcache.cc:162
-#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "Datoteka s predpomnilnikom paketov je pokvarjena"
+msgstr "Datoteka predpomnilnika paketa je okvarjena. Je premajhna"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2761,9 +2794,9 @@ msgstr ""
 "APT::Takojąnja-nastavitev za podrobnosti. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, fuzzy, c-format
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "Ni mogoče odpreti datoteke '%s'"
+msgstr "Ni mogoče nastaviti '%s' "
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2885,6 +2918,8 @@ msgid ""
 "The value '%s' is invalid for APT::Default-Release as such a release is not "
 "available in the sources"
 msgstr ""
+"Vrednost '%s' je neveljavna za APT::Default-Release in zato takšna izdaja ni "
+"na voljo v virih"
 
 #: apt-pkg/policy.cc:396
 #, c-format
@@ -2914,9 +2949,9 @@ msgstr "Predpomnilnik ima neustrezen sistem različic"
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "Prišlo je do napake med obdelavo %s  (Najdi paket)"
+msgstr "Med obdelovanjem %s je prišlo do napake (%s%d)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2995,6 +3030,8 @@ msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
+"Datoteka Release za %s je potekla (neveljavna od %s). Posodobitev za to "
+"skladišče ne bo uveljavljena."
 
 #: apt-pkg/acquire-item.cc:1488
 #, c-format
@@ -3206,7 +3243,7 @@ msgstr "Neujemanje razpršila za: %s"
 #: apt-pkg/indexcopy.cc:659
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
+msgstr "Datoteka %s se ne začne s čisto podpisanim sporočilom"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
 #: apt-pkg/indexcopy.cc:690
@@ -3267,23 +3304,23 @@ msgstr "Ni mogoče izbrati nameščene različice iz paketa %s, saj ni namešče
 
 #: apt-pkg/edsp.cc:41 apt-pkg/edsp.cc:61
 msgid "Send scenario to solver"
-msgstr ""
+msgstr "Pošlji scenarij reševalniku"
 
 #: apt-pkg/edsp.cc:209
 msgid "Send request to solver"
-msgstr ""
+msgstr "Pošlji zahtevo reševalniku"
 
 #: apt-pkg/edsp.cc:277
 msgid "Prepare for receiving solution"
-msgstr ""
+msgstr "Priprava za rešitev prejemanja"
 
 #: apt-pkg/edsp.cc:284
 msgid "External solver failed without a proper error message"
-msgstr ""
+msgstr "Zunanji reševalnik je spodletel brez pravega sporočila o napakah"
 
 #: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
 msgid "Execute external solver"
-msgstr ""
+msgstr "Izvedi zunanji reševalnik"
 
 #: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
@@ -3378,7 +3415,7 @@ msgstr "Poganjanje dpkg"
 
 #: apt-pkg/deb/dpkgpm.cc:1411
 msgid "Operation was interrupted before it could finish"
-msgstr ""
+msgstr "Opravilo je bilo prekinjeno preden se je lahko končalo"
 
 #: apt-pkg/deb/dpkgpm.cc:1473
 msgid "No apport report written because MaxReports is reached already"
@@ -3521,8 +3558,12 @@ msgstr "Ni zaklenjeno"
 #~ msgid "Got a single header line over %u chars"
 #~ msgstr "Dobljena je ena vrstica glave preko %u znakov"
 
-#~ msgid "Note: This is done automatic and on purpose by dpkg."
-#~ msgstr "Opomba: To je dpkg storil samodejno in namenoma."
+#~ msgid ""
+#~ "No apport report written because the error message indicates an issue on "
+#~ "the local system"
+#~ msgstr ""
+#~ "Poročilo apport je bilo napisano, ker sporočilo o napaki nakazuje na "
+#~ "težavo na krajevnem sistemu"
 
 #~ msgid "Malformed override %s line %lu #1"
 #~ msgstr "Napačno oblikovana prepisana vrstica %s %lu #1"
@@ -3541,13 +3582,6 @@ msgstr "Ni zaklenjeno"
 
 #~ msgid "write, still have %lu to write but couldn't"
 #~ msgstr "pisanje, še vedno %lu za pisanje, a ni mogoče"
-
-#~ msgid ""
-#~ "Could not perform immediate configuration on already unpacked '%s'. "
-#~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
-#~ msgstr ""
-#~ "Ni mogoče izvesti takojąnje nastavitve že razpakiranega '%s'. Oglejte si "
-#~ "man 5 apt.conf pod APT::Takojšnja-Nastavitev za podrobnosti"
 
 #~ msgid "Error occurred while processing %s (NewPackage)"
 #~ msgstr "Prišlo je do napake med obdelavo %s (Nov paket)"
@@ -3579,200 +3613,9 @@ msgstr "Ni zaklenjeno"
 #~ msgid "Error occurred while processing %s (CollectFileProvides)"
 #~ msgstr "Prišlo je do napake med obdelavo %s (Zberi dobavitelje datotek)"
 
-#~ msgid "Internal error, could not locate member"
-#~ msgstr "Notranja napaka. Ni mogoče najti člana."
-
-#~ msgid "Internal error, group '%s' has no installable pseudo package"
-#~ msgstr "Notranja napaka, skupina '%s' nima namestljivega psevdo paketa"
-
-#~ msgid "Release file expired, ignoring %s (invalid since %s)"
-#~ msgstr "Datoteka Release je potekla, prezrtje %s (neveljavno od %s)"
-
-#~ msgid "short read in buffer_copy %s"
-#~ msgstr "kratko branje v kopiji_medpomnilnika %s"
-
 #~ msgid ""
-#~ "Usage: apt-cache [options] command\n"
-#~ "       apt-cache [options] add file1 [file2 ...]\n"
-#~ "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
-#~ "       apt-cache [options] showsrc pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-cache is a low-level tool used to manipulate APT's binary\n"
-#~ "cache files, and query information from them\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   add - Add a package file to the source cache\n"
-#~ "   gencaches - Build both the package and source cache\n"
-#~ "   showpkg - Show some general information for a single package\n"
-#~ "   showsrc - Show source records\n"
-#~ "   stats - Show some basic statistics\n"
-#~ "   dump - Show the entire file in a terse form\n"
-#~ "   dumpavail - Print an available file to stdout\n"
-#~ "   unmet - Show unmet dependencies\n"
-#~ "   search - Search the package list for a regex pattern\n"
-#~ "   show - Show a readable record for the package\n"
-#~ "   showauto - Display a list of automatically installed packages\n"
-#~ "   depends - Show raw dependency information for a package\n"
-#~ "   rdepends - Show reverse dependency information for a package\n"
-#~ "   pkgnames - List the names of all packages in the system\n"
-#~ "   dotty - Generate package graphs for GraphViz\n"
-#~ "   xvcg - Generate package graphs for xvcg\n"
-#~ "   policy - Show policy settings\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h   This help text.\n"
-#~ "  -p=? The package cache.\n"
-#~ "  -s=? The source cache.\n"
-#~ "  -q   Disable progress indicator.\n"
-#~ "  -i   Show only important deps for the unmet command.\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
+#~ "Could not perform immediate configuration on already unpacked '%s'. "
+#~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
 #~ msgstr ""
-#~ "Uporaba: apt-cache [možnosti] ukaz\n"
-#~ "       apt-cache [možnosti] add datoteka1 [datoteka2 ...]\n"
-#~ "       apt-cache [možnosti] showpkg paket1 [paket2 ...]\n"
-#~ "       apt-cache [možnosti] showsrc paket 1 [paket2 ...]\n"
-#~ "\n"
-#~ "apt-cache je orodje nizke ravni, ki se uporablja za upravljanje APT-ovih\n"
-#~ "binarnih datotek predpomnilnika in za poizvedbo podatkov iz njih\n"
-#~ "\n"
-#~ "Ukazi:   add - dodat datoteko paketa v predpomnilnik vira\n"
-#~ "   gencaches - izgradi tako paket kot izvorni predpomnilnik\n"
-#~ "   showpkg - pokaže nekaj splošnih podatkov za posamezen paket\n"
-#~ "   showsrc - pokaže zapise vira\n"
-#~ "   stats - pokaže nekaj osnovne statistike\n"
-#~ "   dump - pokaže celotno datoteko v obliki terse\n"
-#~ "   dumpavail - izpiše razpoložljivo datoteko na standardni izhod\n"
-#~ "   unmet - pokaže nerazrešene odvisnosti\n"
-#~ "   search - išče seznam paketov za vzorec logičnega izraza\n"
-#~ "   show - išče berljiv zapis paketa\n"
-#~ "   showauto - pokaže seznam samodejno nameščenih paketov\n"
-#~ "   depends - pokaže surove podatke odvisnosti za paket\n"
-#~ "   rdepends - pokaže obratne podatke odvisnosti za paket\n"
-#~ "   pkgnames - našteje imena vseh paketov na sistemu\n"
-#~ "   dotty - ustvari grafe paketov za GraphViz\n"
-#~ "   xvcg - ustvari grafe paketov za xvcg\n"
-#~ "   policy - pokaže nastavitve pravil\n"
-#~ "\n"
-#~ "Možnosti:\n"
-#~ "  -h to besedilo pomoči\n"
-#~ "  -p=? predpomnilnik paketa\n"
-#~ "  -s=? predpomnilnik vira\n"
-#~ "  -q onemogoči pokazatelj napredka\n"
-#~ "  -i pokaže le pomembne odvisnosti za ukaz unmet.\n"
-#~ "  -c=? prebere podano datoteko nastavitev\n"
-#~ "  -o=? nastavi poljubno možnost nastavitev, na primer -o dir::cache=/tmp\n"
-#~ "Za več podrobnosti si oglejte strani priročnikov apt-cache(8) in apt-conf"
-#~ "(5).\n"
-
-#~ msgid ""
-#~ "Usage: apt-get [options] command\n"
-#~ "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
-#~ "       apt-get [options] source pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-get is a simple command line interface for downloading and\n"
-#~ "installing packages. The most frequently used commands are update\n"
-#~ "and install.\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   update - Retrieve new lists of packages\n"
-#~ "   upgrade - Perform an upgrade\n"
-#~ "   install - Install new packages (pkg is libc6 not libc6.deb)\n"
-#~ "   remove - Remove packages\n"
-#~ "   autoremove - Remove automatically all unused packages\n"
-#~ "   purge - Remove packages and config files\n"
-#~ "   source - Download source archives\n"
-#~ "   build-dep - Configure build-dependencies for source packages\n"
-#~ "   dist-upgrade - Distribution upgrade, see apt-get(8)\n"
-#~ "   dselect-upgrade - Follow dselect selections\n"
-#~ "   clean - Erase downloaded archive files\n"
-#~ "   autoclean - Erase old downloaded archive files\n"
-#~ "   check - Verify that there are no broken dependencies\n"
-#~ "   markauto - Mark the given packages as automatically installed\n"
-#~ "   unmarkauto - Mark the given packages as manually installed\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -qq No output except for errors\n"
-#~ "  -d  Download only - do NOT install or unpack archives\n"
-#~ "  -s  No-act. Perform ordering simulation\n"
-#~ "  -y  Assume Yes to all queries and do not prompt\n"
-#~ "  -f  Attempt to correct a system with broken dependencies in place\n"
-#~ "  -m  Attempt to continue if archives are unlocatable\n"
-#~ "  -u  Show a list of upgraded packages as well\n"
-#~ "  -b  Build the source package after fetching it\n"
-#~ "  -V  Show verbose version numbers\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-get(8), sources.list(5) and apt.conf(5) manual\n"
-#~ "pages for more information and options.\n"
-#~ "                       This APT has Super Cow Powers.\n"
-#~ msgstr ""
-#~ "Uporaba: apt-get [možnosti] ukaz\n"
-#~ "     apt-get [možnosti] install|remove paket1 [paket2 ...]\n"
-#~ "     apt-get [možnosti] source paket1 [paket2 ...]\n"
-#~ "\n"
-#~ "apt-get je enostaven vmesnik ukazne vrstice za prejemanje in\n"
-#~ "nameščanje paketov. Najpogosteje uporabljana ukaza sta update\n"
-#~ "in install.\n"
-#~ "\n"
-#~ "Ukazi:\n"
-#~ "  update - pridobi nov seznam paketov\n"
-#~ "  upgrade - izvede nadgradnjo  install - namesti nove pakete (paket je "
-#~ "libc6 ne libc6.deb)\n"
-#~ "  remove - odstrani pakete\n"
-#~ "  autoremove - samodejno odstrani vse neuporabljene pakete\n"
-#~ "  purge - odstrani pakete in nastavitvene datoteke\n"
-#~ "  source - prejme izvorne arhive\n"
-#~ "  build-deb - nastavi odvisnosti gradnje za izvorne pakete\n"
-#~ "  dist-upgrade - nadgradi distribucijo, oglejte si apt-get(8)\n"
-#~ "  dselect-upgrade - sledi naslednjim izbiram\n"
-#~ "  clean - izbriše prejete datoteke arhivov\n"
-#~ "  markauto - označi dane pakete kot samodejno nameščene\n"
-#~ "  unmarkauto - odstrani dane pakete kot ročno nameščene\n"
-#~ "\n"
-#~ "Možnosti:\n"
-#~ " -h to besedilo pomoči\n"
-#~ " -q beležljiv izhod - brez pokazatelja napredka\n"
-#~ " -qq brez izhoda razen za napake\n"
-#~ " -d le prejme - NE namesti ali razpakira arhivov\n"
-#~ " -s izvede simulacijo ukaza.\n"
-#~ " -y predpostavi y za vsa vprašanja in ne sprašuje\n"
-#~ " -f poskuša popraviti sistem s pokvarjenimi odvisnostmi\n"
-#~ " -m poskuša nadaljevati, če arhivov ni mogoče najti\n"
-#~ " -u pokaže tudi seznam nadgrajenih paketov\n"
-#~ " -b izgradi izvorni paket po njegovem pridobivanju\n"
-#~ " -V pokaže podroben izpis števila različice\n"
-#~ " -c=? prebere to nastavitveno datoteko\n"
-#~ " -o=? nastavi poljubno nastavitveno možnost, na primer -0 dir::cache=/"
-#~ "tmp\n"
-#~ "Oglejte si strani apt-get(8), sources.list(5) in priročnik apt.conf(5)\n"
-#~ "  za več podrobnosti in možnosti.\n"
-#~ "                      Ta APT ima moči Super Krav.\n"
-
-#~ msgid ""
-#~ "Could not perform immediate configuration on '%s'.Please see man 5 apt."
-#~ "conf under APT::Immediate-Configure for details. (%d)"
-#~ msgstr ""
-#~ "Ni mogoče izvesti takojšnje nastavitve na '%s'. Oglejte si man5 apt.conf "
-#~ "pod APT::Takojšnja-nastavitev za podrobnosti. (%d)"
-
-#~ msgid ""
-#~ "Could not perform immediate configuration on already unpacked '%s'.Please "
-#~ "see man 5 apt.conf under APT::Immediate-Configure for details."
-#~ msgstr ""
-#~ "Ni mogoče izvesti takojšnje nastavitve že razpakiranega '%s'. Oglejte si "
+#~ "Ni mogoče izvesti takojąnje nastavitve že razpakiranega '%s'. Oglejte si "
 #~ "man 5 apt.conf pod APT::Takojšnja-Nastavitev za podrobnosti"
-
-#~ msgid ""
-#~ "Some index files failed to download, they have been ignored, or old ones "
-#~ "used instead."
-#~ msgstr ""
-#~ "Nekaterih kazal ni mogoče prejeti, zato so prezrta, ali pa so uporabljena "
-#~ "starejša."
-
-#~ msgid "Can't select versions from package '%s' as it purely virtual"
-#~ msgstr ""
-#~ "Ni mogoče izbrati različic in paketa '%s', saj je popolnoma navidezen"
