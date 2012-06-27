@@ -367,7 +367,7 @@ bool ShowHelp(CommandLine &CmdL)
     _("Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
       "\n"
       "apt-mark is a simple command line interface for marking packages\n"
-      "as manual or automatical installed. It can also list marks.\n"
+      "as manually or automatically installed. It can also list marks.\n"
       "\n"
       "Commands:\n"
       "   auto - Mark the given packages as automatically installed\n"
