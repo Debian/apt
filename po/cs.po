@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-26 13:47+0200\n"
+"POT-Creation-Date: 2012-06-29 15:38+0200\n"
 "PO-Revision-Date: 2010-11-27 13:54+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -109,7 +109,7 @@ msgstr "Musíte zadat alespoň jeden vyhledávací vzor"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:462
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nelze najít balík %s"
@@ -153,7 +153,7 @@ msgid "  Version table:"
 msgstr "  Tabulka verzí:"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3341 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3353 cmdline/apt-mark.cc:363
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -291,7 +291,7 @@ msgstr "Y"
 msgid "N"
 msgstr ""
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Chyba při kompilaci regulárního výrazu - %s"
@@ -590,8 +590,8 @@ msgstr "Po této operaci bude na disku použito dalších %sB.\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Po této operaci bude na disku uvolněno %sB.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2577
-#: cmdline/apt-get.cc:2580
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2592
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Nelze určit volné místo v %s"
@@ -628,7 +628,7 @@ msgstr "Přerušeno."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Chcete pokračovat [Y/n]? "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2642 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Selhalo stažení %s  %s\n"
@@ -637,7 +637,7 @@ msgstr "Selhalo stažení %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Některé soubory nemohly být staženy"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2654
+#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
 msgid "Download complete and in download only mode"
 msgstr "Stahování dokončeno v režimu pouze stáhnout"
 
@@ -840,21 +840,26 @@ msgstr "Vnitřní chyba, řešitel problémů pokazil věci"
 msgid "Unable to lock the download directory"
 msgstr "Nelze zamknout adresář pro stahování"
 
-#: cmdline/apt-get.cc:2381
+#: cmdline/apt-get.cc:2386
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+
+#: cmdline/apt-get.cc:2391
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2439
+#: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
 msgstr "Musíte zadat aspoň jeden balík, pro který se stáhnou zdrojové texty"
 
-#: cmdline/apt-get.cc:2479 cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Nelze najít zdrojový balík pro %s"
 
-#: cmdline/apt-get.cc:2496
+#: cmdline/apt-get.cc:2508
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -863,7 +868,7 @@ msgstr ""
 "INFO: Balík „%s“ je spravován v systému pro správu verzí „%s“ na:\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2513
 #, fuzzy, c-format
 msgid ""
 "Please use:\n"
@@ -874,107 +879,107 @@ msgstr ""
 "použijte:\n"
 "bzr get %s\n"
 
-#: cmdline/apt-get.cc:2554
+#: cmdline/apt-get.cc:2566
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Přeskakuji dříve stažený soubor „%s“\n"
 
-#: cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:2603
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Na %s nemáte dostatek volného místa"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2600
+#: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Potřebuji stáhnout %sB/%sB zdrojových archivů.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2605
+#: cmdline/apt-get.cc:2617
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Potřebuji stáhnout %sB zdrojových archivů.\n"
 
-#: cmdline/apt-get.cc:2611
+#: cmdline/apt-get.cc:2623
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Stáhnout zdroj %s\n"
 
-#: cmdline/apt-get.cc:2649
+#: cmdline/apt-get.cc:2661
 msgid "Failed to fetch some archives."
 msgstr "Stažení některých archivů selhalo."
 
-#: cmdline/apt-get.cc:2680
+#: cmdline/apt-get.cc:2692
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Přeskakuji rozbalení již rozbaleného zdroje v %s\n"
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Příkaz pro rozbalení „%s“ selhal.\n"
 
-#: cmdline/apt-get.cc:2693
+#: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Zkontrolujte, zda je nainstalován balíček „dpkg-dev“.\n"
 
-#: cmdline/apt-get.cc:2715
+#: cmdline/apt-get.cc:2727
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Příkaz pro sestavení „%s“ selhal.\n"
 
-#: cmdline/apt-get.cc:2735
+#: cmdline/apt-get.cc:2747
 msgid "Child process failed"
 msgstr "Synovský proces selhal"
 
-#: cmdline/apt-get.cc:2754
+#: cmdline/apt-get.cc:2766
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Musíte zadat alespoň jeden balík, pro který budou kontrolovány závislosti "
 "pro sestavení"
 
-#: cmdline/apt-get.cc:2779
+#: cmdline/apt-get.cc:2791
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2803 cmdline/apt-get.cc:2806
+#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Nelze získat závislosti pro sestavení %s"
 
-#: cmdline/apt-get.cc:2826
+#: cmdline/apt-get.cc:2838
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s nemá žádné závislosti pro sestavení.\n"
 
-#: cmdline/apt-get.cc:2985
+#: cmdline/apt-get.cc:2997
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr "%s závislost pro %s nemůže být splněna, protože balík %s nebyl nalezen"
 
-#: cmdline/apt-get.cc:3003
+#: cmdline/apt-get.cc:3015
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%s závislost pro %s nemůže být splněna, protože balík %s nebyl nalezen"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3038
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Selhalo splnění %s závislosti pro %s: Instalovaný balík %s je příliš nový"
 
-#: cmdline/apt-get.cc:3065
+#: cmdline/apt-get.cc:3077
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -983,37 +988,37 @@ msgstr ""
 "%s závislost pro %s nemůže být splněna protože není k dispozici verze balíku "
 "%s, která odpovídá požadavku na verzi"
 
-#: cmdline/apt-get.cc:3071
+#: cmdline/apt-get.cc:3083
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr "%s závislost pro %s nemůže být splněna, protože balík %s nebyl nalezen"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3106
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Selhalo splnění %s závislosti pro %s: %s"
 
-#: cmdline/apt-get.cc:3110
+#: cmdline/apt-get.cc:3122
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Závislosti pro sestavení %s nemohly být splněny."
 
-#: cmdline/apt-get.cc:3115
+#: cmdline/apt-get.cc:3127
 msgid "Failed to process build dependencies"
 msgstr "Chyba při zpracování závislostí pro sestavení"
 
-#: cmdline/apt-get.cc:3208 cmdline/apt-get.cc:3220
+#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Připojuji se k %s (%s)"
 
-#: cmdline/apt-get.cc:3346
+#: cmdline/apt-get.cc:3358
 msgid "Supported modules:"
 msgstr "Podporované moduly:"
 
-#: cmdline/apt-get.cc:3387
+#: cmdline/apt-get.cc:3399
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1101,7 +1106,7 @@ msgstr ""
 "a apt.conf(5).\n"
 "                       Tato APT má schopnosti svaté krávy.\n"
 
-#: cmdline/apt-get.cc:3552
+#: cmdline/apt-get.cc:3564
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1200,7 +1205,7 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manual or automatical installed. It can also list marks.\n"
+"as manually or automatically installed. It can also list marks.\n"
 "\n"
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
@@ -2013,10 +2018,11 @@ msgid "Failed to rename %s to %s"
 msgstr "Selhalo přejmenování %s na %s"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
-"Usage: apt-internal-resolver\n"
+"Usage: apt-internal-solver\n"
 "\n"
-"apt-internal-resolver is an interface to use the current internal\n"
+"apt-internal-solver is an interface to use the current internal\n"
 "like an external resolver for the APT family for debugging or alike\n"
 "\n"
 "Options:\n"
@@ -2024,9 +2030,16 @@ msgid ""
 "  -q  Loggable output - no progress indicator\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"apt.conf(5) manual pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Použití: apt-extracttemplates soubor1 [soubor2 …]\n"
+"\n"
+"apt-extracttemplates umí z balíků vytáhnout konfigurační skripty a šablony\n"
+"\n"
+"Volby:\n"
+"  -h   Tato nápověda.\n"
+"  -t   Nastaví dočasný adresář\n"
+"  -c=? Načte tento konfigurační soubor\n"
+"  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2242,11 +2255,11 @@ msgstr "Nelze synchronizovat mmap"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nešlo mmapovat %lu bajtů"
 
-#: apt-pkg/contrib/mmap.cc:312
+#: apt-pkg/contrib/mmap.cc:311
 msgid "Failed to truncate file"
 msgstr "Nelze zmenšit soubor"
 
-#: apt-pkg/contrib/mmap.cc:331
+#: apt-pkg/contrib/mmap.cc:330
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
@@ -2255,14 +2268,14 @@ msgstr ""
 "Dynamickému MMapu došlo místo. Zvyšte prosím hodnotu APT::Cache-Limit. "
 "Současná hodnota: %lu. (man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:430
+#: apt-pkg/contrib/mmap.cc:429
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr "Nelze zvýšit velikost MMapu, protože limit %lu bajtů již byl dosažen."
 
-#: apt-pkg/contrib/mmap.cc:433
+#: apt-pkg/contrib/mmap.cc:432
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2918,7 +2931,7 @@ msgid "Couldn't stat source package list %s"
 msgstr "Nešlo vyhodnotit seznam zdrojových balíků %s"
 
 #: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1442
+#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
 msgid "Reading package lists"
 msgstr "Čtu seznamy balíků"
 
@@ -2926,7 +2939,7 @@ msgstr "Čtu seznamy balíků"
 msgid "Collecting File Provides"
 msgstr "Collecting File poskytuje"
 
-#: apt-pkg/pkgcachegen.cc:1384 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
 msgid "IO Error saving source cache"
 msgstr "Chyba IO při ukládání zdrojové cache"
 
@@ -3182,32 +3195,32 @@ msgstr ""
 msgid "No keyring installed in %s."
 msgstr "V %s není nainstalována žádná klíčenka."
 
-#: apt-pkg/cacheset.cc:355
+#: apt-pkg/cacheset.cc:401
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Vydání „%s“ pro „%s“ nebylo nalezeno"
 
-#: apt-pkg/cacheset.cc:358
+#: apt-pkg/cacheset.cc:404
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Verze „%s“ pro „%s“ nebyla nalezena"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:515
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Nelze najít úlohu „%s“"
 
-#: apt-pkg/cacheset.cc:475
+#: apt-pkg/cacheset.cc:521
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "Nelze najít balík vyhovující regulárnímu výrazu „%s“"
 
-#: apt-pkg/cacheset.cc:486
+#: apt-pkg/cacheset.cc:532
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr "Nelze vybrat verze balíku „%s“, protože je čistě virtuální"
 
-#: apt-pkg/cacheset.cc:493 apt-pkg/cacheset.cc:500
+#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3216,17 +3229,17 @@ msgstr ""
 "Nelze vybrat nainstalovanou ani kandidátskou verzi balíku „%s“, protože "
 "žádné takové verze nemá"
 
-#: apt-pkg/cacheset.cc:507
+#: apt-pkg/cacheset.cc:553
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr "Nelze vybrat nejnovější verzi balíku „%s“, protože je čistě virtuální"
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:561
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr "Nelze vybrat kandidátskou verzi balíku %s, protože žádnou nemá"
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:569
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr "Nelze vybrat nainstalované verze balíku %s, protože není nainstalován"
@@ -3417,30 +3430,6 @@ msgstr "dpkg byl přerušen, pro nápravu problému musíte ručně spustit „%
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Není uzamčen"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: apt-internal-solver\n"
-#~ "\n"
-#~ "apt-internal-solver is an interface to use the current internal\n"
-#~ "like an external resolver for the APT family for debugging or alike\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Použití: apt-extracttemplates soubor1 [soubor2 …]\n"
-#~ "\n"
-#~ "apt-extracttemplates umí z balíků vytáhnout konfigurační skripty a "
-#~ "šablony\n"
-#~ "\n"
-#~ "Volby:\n"
-#~ "  -h   Tato nápověda.\n"
-#~ "  -t   Nastaví dočasný adresář\n"
-#~ "  -c=? Načte tento konfigurační soubor\n"
-#~ "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "Selhalo odstranění %s"

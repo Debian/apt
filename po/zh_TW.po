@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-26 13:47+0200\n"
+"POT-Creation-Date: 2012-06-29 15:38+0200\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -112,7 +112,7 @@ msgstr "您必須明確得給定一個樣式"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:462
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "找不到套件 %s"
@@ -156,7 +156,7 @@ msgid "  Version table:"
 msgstr "  版本列表："
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3341 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3353 cmdline/apt-mark.cc:363
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -294,7 +294,7 @@ msgstr "Y"
 msgid "N"
 msgstr ""
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "編譯正規表示式時發生錯誤 - %s"
@@ -590,8 +590,8 @@ msgstr "此操作完成之後，會多佔用 %sB 的磁碟空間。\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "此操作完成之後，會空出 %sB 的磁碟空間。\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2577
-#: cmdline/apt-get.cc:2580
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2592
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "無法確認 %s 的未使用空間"
@@ -628,7 +628,7 @@ msgstr "放棄執行。"
 msgid "Do you want to continue [Y/n]? "
 msgstr "是否繼續進行 [Y/n]？"
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2642 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "無法取得 %s，%s\n"
@@ -637,7 +637,7 @@ msgstr "無法取得 %s，%s\n"
 msgid "Some files failed to download"
 msgstr "有部份檔案無法下載"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2654
+#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
 msgid "Download complete and in download only mode"
 msgstr "下載完成，且這是『僅下載』模式"
 
@@ -828,28 +828,33 @@ msgstr "內部錯誤，問題排除器造成了損壞"
 msgid "Unable to lock the download directory"
 msgstr "無法鎖定下載目錄"
 
-#: cmdline/apt-get.cc:2381
+#: cmdline/apt-get.cc:2386
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+
+#: cmdline/apt-get.cc:2391
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2439
+#: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
 msgstr "在取得原始碼時必須至少指定一個套件"
 
-#: cmdline/apt-get.cc:2479 cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "無法找到 %s 的原始碼套件"
 
-#: cmdline/apt-get.cc:2496
+#: cmdline/apt-get.cc:2508
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2513
 #, c-format
 msgid ""
 "Please use:\n"
@@ -857,104 +862,104 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2554
+#: cmdline/apt-get.cc:2566
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "略過已下載的檔案 '%s'\n"
 
-#: cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:2603
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "在 %s 裡沒有足夠的的未使用空間"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2600
+#: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "需要下載 %sB/%sB 的原始套件檔。\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2605
+#: cmdline/apt-get.cc:2617
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "需要下載 %sB 的原始套件檔。\n"
 
-#: cmdline/apt-get.cc:2611
+#: cmdline/apt-get.cc:2623
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "取得原始碼 %s\n"
 
-#: cmdline/apt-get.cc:2649
+#: cmdline/apt-get.cc:2661
 msgid "Failed to fetch some archives."
 msgstr "無法取得某些套件檔。"
 
-#: cmdline/apt-get.cc:2680
+#: cmdline/apt-get.cc:2692
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "不解開，因原始碼已解開至 %s\n"
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "解開指令 '%s' 失敗。\n"
 
-#: cmdline/apt-get.cc:2693
+#: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
 
-#: cmdline/apt-get.cc:2715
+#: cmdline/apt-get.cc:2727
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "編譯指令 '%s' 失敗。\n"
 
-#: cmdline/apt-get.cc:2735
+#: cmdline/apt-get.cc:2747
 msgid "Child process failed"
 msgstr "子程序失敗"
 
-#: cmdline/apt-get.cc:2754
+#: cmdline/apt-get.cc:2766
 msgid "Must specify at least one package to check builddeps for"
 msgstr "在檢查編譯相依關係時必須至少指定一個套件"
 
-#: cmdline/apt-get.cc:2779
+#: cmdline/apt-get.cc:2791
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2803 cmdline/apt-get.cc:2806
+#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "無法取得 %s 的編譯相依關係資訊"
 
-#: cmdline/apt-get.cc:2826
+#: cmdline/apt-get.cc:2838
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s 沒有編譯相依關係。\n"
 
-#: cmdline/apt-get.cc:2985
+#: cmdline/apt-get.cc:2997
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr "無法滿足 %2$s 所要求的 %1$s 相依關係，因為找不到套件 %3$s"
 
-#: cmdline/apt-get.cc:3003
+#: cmdline/apt-get.cc:3015
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "無法滿足 %2$s 所要求的 %1$s 相依關係，因為找不到套件 %3$s"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3038
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr "無法滿足 %2$s 的相依關係 %1$s：已安裝的套件 %3$s 太新了"
 
-#: cmdline/apt-get.cc:3065
+#: cmdline/apt-get.cc:3077
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -962,37 +967,37 @@ msgid ""
 msgstr ""
 "無法滿足 %2$s 所要求的 %1$s 相依關係，因為套件 %3$s 沒有版本符合其版本需求"
 
-#: cmdline/apt-get.cc:3071
+#: cmdline/apt-get.cc:3083
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr "無法滿足 %2$s 所要求的 %1$s 相依關係，因為找不到套件 %3$s"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3106
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "無法滿足 %2$s 的相依關係 %1$s：%3$s"
 
-#: cmdline/apt-get.cc:3110
+#: cmdline/apt-get.cc:3122
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "無法滿足套件 %s 的編譯相依關係。"
 
-#: cmdline/apt-get.cc:3115
+#: cmdline/apt-get.cc:3127
 msgid "Failed to process build dependencies"
 msgstr "無法處理編譯相依關係"
 
-#: cmdline/apt-get.cc:3208 cmdline/apt-get.cc:3220
+#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "正和 %s (%s) 連線"
 
-#: cmdline/apt-get.cc:3346
+#: cmdline/apt-get.cc:3358
 msgid "Supported modules:"
 msgstr "已支援模組："
 
-#: cmdline/apt-get.cc:3387
+#: cmdline/apt-get.cc:3399
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1078,7 +1083,7 @@ msgstr ""
 "以取得更多資訊和選項。\n"
 "                        該 APT 有著超級牛力。\n"
 
-#: cmdline/apt-get.cc:3552
+#: cmdline/apt-get.cc:3564
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1173,7 +1178,7 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manual or automatical installed. It can also list marks.\n"
+"as manually or automatically installed. It can also list marks.\n"
 "\n"
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
@@ -1980,10 +1985,11 @@ msgid "Failed to rename %s to %s"
 msgstr "無法將 %s 更名為 %s"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
-"Usage: apt-internal-resolver\n"
+"Usage: apt-internal-solver\n"
 "\n"
-"apt-internal-resolver is an interface to use the current internal\n"
+"apt-internal-solver is an interface to use the current internal\n"
 "like an external resolver for the APT family for debugging or alike\n"
 "\n"
 "Options:\n"
@@ -1991,9 +1997,17 @@ msgid ""
 "  -q  Loggable output - no progress indicator\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"apt.conf(5) manual pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
 msgstr ""
+"用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
+"\n"
+"apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
+"的工具\n"
+"\n"
+"選項\n"
+"  -h   本幫助訊息。\n"
+"  -t   指定暫存目錄\n"
+"  -c=? 讀取指定的設定檔\n"
+"  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2210,11 +2224,11 @@ msgstr "無法 invoke "
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "無法 mmap 到 %lu 位元組"
 
-#: apt-pkg/contrib/mmap.cc:312
+#: apt-pkg/contrib/mmap.cc:311
 msgid "Failed to truncate file"
 msgstr "無法截短檔案"
 
-#: apt-pkg/contrib/mmap.cc:331
+#: apt-pkg/contrib/mmap.cc:330
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
@@ -2223,14 +2237,14 @@ msgstr ""
 "動態 MMap 已用完所有空間。請增加 APT::Cache-Limit 的大小。目前大小為：%lu。"
 "(man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:430
+#: apt-pkg/contrib/mmap.cc:429
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:433
+#: apt-pkg/contrib/mmap.cc:432
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2875,7 +2889,7 @@ msgid "Couldn't stat source package list %s"
 msgstr "無法取得來源套件列表 %s 的狀態"
 
 #: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1442
+#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
 msgid "Reading package lists"
 msgstr "正在讀取套件清單"
 
@@ -2883,7 +2897,7 @@ msgstr "正在讀取套件清單"
 msgid "Collecting File Provides"
 msgstr "正在收集檔案提供者"
 
-#: apt-pkg/pkgcachegen.cc:1384 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
 msgid "IO Error saving source cache"
 msgstr "在儲存來源快取時 IO 錯誤"
 
@@ -3130,49 +3144,49 @@ msgstr ""
 msgid "No keyring installed in %s."
 msgstr "放棄安裝。"
 
-#: apt-pkg/cacheset.cc:355
+#: apt-pkg/cacheset.cc:401
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "找不到 '%2$s' 的 '%1$s' 發行版"
 
-#: apt-pkg/cacheset.cc:358
+#: apt-pkg/cacheset.cc:404
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "找不到 '%s' 版的 '%s'"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:515
 #, fuzzy, c-format
 msgid "Couldn't find task '%s'"
 msgstr "無法找到主題 %s"
 
-#: apt-pkg/cacheset.cc:475
+#: apt-pkg/cacheset.cc:521
 #, fuzzy, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "無法找到套件 %s"
 
-#: apt-pkg/cacheset.cc:486
+#: apt-pkg/cacheset.cc:532
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:493 apt-pkg/cacheset.cc:500
+#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:507
+#: apt-pkg/cacheset.cc:553
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:561
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:569
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3351,30 +3365,6 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: apt-internal-solver\n"
-#~ "\n"
-#~ "apt-internal-solver is an interface to use the current internal\n"
-#~ "like an external resolver for the APT family for debugging or alike\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "用法：apt-extracttemplates 檔案1 [檔案2 ...]\n"
-#~ "\n"
-#~ "apt-extracttemplates 是用來從 debian 套件中解壓出設定檔和模板資訊\n"
-#~ "的工具\n"
-#~ "\n"
-#~ "選項\n"
-#~ "  -h   本幫助訊息。\n"
-#~ "  -t   指定暫存目錄\n"
-#~ "  -c=? 讀取指定的設定檔\n"
-#~ "  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "無法移除 %s"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.15.9\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-26 13:47+0200\n"
+"POT-Creation-Date: 2012-06-29 15:38+0200\n"
 "PO-Revision-Date: 2011-12-05 17:10+0100\n"
 "Last-Translator: Jeroen Schot <schot@a-eskwadraat.nl>\n"
 "Language-Team: Debian l10n Dutch <debian-l10n-dutch@lists.debian.org>\n"
@@ -113,7 +113,7 @@ msgstr "U dient precies één zoekpatroon op te geven"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:462
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Kan pakket %s niet vinden"
@@ -157,7 +157,7 @@ msgid "  Version table:"
 msgstr "  Versietabel:"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3341 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3353 cmdline/apt-mark.cc:363
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -298,7 +298,7 @@ msgstr "J"
 msgid "N"
 msgstr ""
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Regex-compilatiefout - %s"
@@ -602,8 +602,8 @@ msgstr "Door deze operatie zal er %sB extra schijfruimte gebruikt worden.\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Door deze operatie zal er %sB schijfruimte vrijkomen.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2577
-#: cmdline/apt-get.cc:2580
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2592
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Kon de hoeveelheid vrije schijfruimte op %s niet bepalen"
@@ -640,7 +640,7 @@ msgstr "Afbreken."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Wilt u doorgaan [J/n]? "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2642 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Ophalen van %s is mislukt  %s\n"
@@ -649,7 +649,7 @@ msgstr "Ophalen van %s is mislukt  %s\n"
 msgid "Some files failed to download"
 msgstr "Ophalen van sommige bestanden is mislukt"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2654
+#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
 msgid "Download complete and in download only mode"
 msgstr "Ophalen klaar en alleen-ophalen-modus staat aan"
 
@@ -850,23 +850,28 @@ msgstr "Interne fout, probleemoplosser heeft dingen stukgemaakt"
 msgid "Unable to lock the download directory"
 msgstr "Kon de ophaalmap niet vergrendelen"
 
-#: cmdline/apt-get.cc:2381
+#: cmdline/apt-get.cc:2386
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+
+#: cmdline/apt-get.cc:2391
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2439
+#: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "U dient minstens 1 pakket op te geven waarvan de broncode opgehaald moet "
 "worden"
 
-#: cmdline/apt-get.cc:2479 cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Kan geen bronpakket vinden voor %s"
 
-#: cmdline/apt-get.cc:2496
+#: cmdline/apt-get.cc:2508
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -876,7 +881,7 @@ msgstr ""
 "'%s' op:\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2513
 #, fuzzy, c-format
 msgid ""
 "Please use:\n"
@@ -888,87 +893,87 @@ msgstr ""
 "om de nieuwste (mogelijk nog niet uit uitgebrachte) versie van het pakket op "
 "te halen.\n"
 
-#: cmdline/apt-get.cc:2554
+#: cmdline/apt-get.cc:2566
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Reeds opgehaald bestand '%s' wordt overgeslagen\n"
 
-#: cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:2603
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "U heeft niet voldoende vrije schijfruimte op %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2600
+#: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Moet %sB/%sB aan bronarchieven ophalen.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2605
+#: cmdline/apt-get.cc:2617
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Moet %sB aan bronarchieven ophalen.\n"
 
-#: cmdline/apt-get.cc:2611
+#: cmdline/apt-get.cc:2623
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Ophalen bron %s\n"
 
-#: cmdline/apt-get.cc:2649
+#: cmdline/apt-get.cc:2661
 msgid "Failed to fetch some archives."
 msgstr "Ophalen van sommige archieven is mislukt."
 
-#: cmdline/apt-get.cc:2680
+#: cmdline/apt-get.cc:2692
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Het uitpakken van de reeds uitgepakte bron in %s wordt overgeslagen\n"
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Uitpakopdracht '%s' is mislukt.\n"
 
-#: cmdline/apt-get.cc:2693
+#: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Gelieve na te gaan of het 'dpkg-dev'-pakket geïnstalleerd is.\n"
 
-#: cmdline/apt-get.cc:2715
+#: cmdline/apt-get.cc:2727
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Bouwopdracht '%s' is mislukt.\n"
 
-#: cmdline/apt-get.cc:2735
+#: cmdline/apt-get.cc:2747
 msgid "Child process failed"
 msgstr "Dochterproces is mislukt"
 
-#: cmdline/apt-get.cc:2754
+#: cmdline/apt-get.cc:2766
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "U dient tenminste één pakket op te geven om de bouwvereisten van te "
 "controleren"
 
-#: cmdline/apt-get.cc:2779
+#: cmdline/apt-get.cc:2791
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2803 cmdline/apt-get.cc:2806
+#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Kan de informatie over de bouwvereisten voor %s niet ophalen"
 
-#: cmdline/apt-get.cc:2826
+#: cmdline/apt-get.cc:2838
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s heeft geen bouwvereisten.\n"
 
-#: cmdline/apt-get.cc:2985
+#: cmdline/apt-get.cc:2997
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -977,7 +982,7 @@ msgstr ""
 "De vereiste %s van pakket %s kan niet voldaan worden omdat pakket %s "
 "onvindbaar is"
 
-#: cmdline/apt-get.cc:3003
+#: cmdline/apt-get.cc:3015
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -986,14 +991,14 @@ msgstr ""
 "De vereiste %s van pakket %s kan niet voldaan worden omdat pakket %s "
 "onvindbaar is"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3038
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Voldoen van Vereiste %s van pakket %s is mislukt: geïnstalleerde versie %s "
 "is te nieuw"
 
-#: cmdline/apt-get.cc:3065
+#: cmdline/apt-get.cc:3077
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -1002,7 +1007,7 @@ msgstr ""
 "De vereiste %s van pakket %s kan niet voldaan worden omdat er geen "
 "beschikbare versies zijn van pakket %s die aan de versievereisten voldoen"
 
-#: cmdline/apt-get.cc:3071
+#: cmdline/apt-get.cc:3083
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1011,30 +1016,30 @@ msgstr ""
 "De vereiste %s van pakket %s kan niet voldaan worden omdat pakket %s "
 "onvindbaar is"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3106
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Voldoen van de vereiste %s van pakket %s is mislukt: %s"
 
-#: cmdline/apt-get.cc:3110
+#: cmdline/apt-get.cc:3122
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Bouwvereisten voor %s konden niet voldaan worden."
 
-#: cmdline/apt-get.cc:3115
+#: cmdline/apt-get.cc:3127
 msgid "Failed to process build dependencies"
 msgstr "Verwerken van de bouwvereisten is mislukt"
 
-#: cmdline/apt-get.cc:3208 cmdline/apt-get.cc:3220
+#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Er wordt verbinding gemaakt met %s (%s)"
 
-#: cmdline/apt-get.cc:3346
+#: cmdline/apt-get.cc:3358
 msgid "Supported modules:"
 msgstr "Ondersteunde modules:"
 
-#: cmdline/apt-get.cc:3387
+#: cmdline/apt-get.cc:3399
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1123,7 +1128,7 @@ msgstr ""
 "voor meer informatie en opties.\n"
 "                       Deze APT heeft Super Koe kracht.\n"
 
-#: cmdline/apt-get.cc:3552
+#: cmdline/apt-get.cc:3564
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1222,7 +1227,7 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manual or automatical installed. It can also list marks.\n"
+"as manually or automatically installed. It can also list marks.\n"
 "\n"
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
@@ -2056,10 +2061,11 @@ msgid "Failed to rename %s to %s"
 msgstr "Hernoemen van %s naar %s is mislukt"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
-"Usage: apt-internal-resolver\n"
+"Usage: apt-internal-solver\n"
 "\n"
-"apt-internal-resolver is an interface to use the current internal\n"
+"apt-internal-solver is an interface to use the current internal\n"
 "like an external resolver for the APT family for debugging or alike\n"
 "\n"
 "Options:\n"
@@ -2067,9 +2073,18 @@ msgid ""
 "  -q  Loggable output - no progress indicator\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"apt.conf(5) manual pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Gebruik: apt-extracttemplates bestand1 [bestand2 ...]\n"
+"\n"
+"apt-extracttemplates is een programma om configuratie- en "
+"sjablooninformatie\n"
+"uit Debian pakketten te halen.\n"
+"\n"
+"Opties:\n"
+"  -h     Deze hulptekst.\n"
+"  -t      Stel de tijdelijke map in.\n"
+"  -c=? Lees dit configuratiebestand.\n"
+"  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2286,11 +2301,11 @@ msgstr "Kan mmap niet synchronizeren"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Kon van %lu bytes geen mmap maken"
 
-#: apt-pkg/contrib/mmap.cc:312
+#: apt-pkg/contrib/mmap.cc:311
 msgid "Failed to truncate file"
 msgstr "Afkorten van bestand is mislukt"
 
-#: apt-pkg/contrib/mmap.cc:331
+#: apt-pkg/contrib/mmap.cc:330
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
@@ -2299,7 +2314,7 @@ msgstr ""
 "Onvoldoende ruimte voor Dynamische MMap. Gelieve de grootte van APT::Cache-"
 "Limit te verhogen. Huidige waarde: %lu. (man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:430
+#: apt-pkg/contrib/mmap.cc:429
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
@@ -2308,7 +2323,7 @@ msgstr ""
 "Kan het formaat van de MMap niet vergroten omdat de grens van %lu bytes al "
 "is bereikt"
 
-#: apt-pkg/contrib/mmap.cc:433
+#: apt-pkg/contrib/mmap.cc:432
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2984,7 +2999,7 @@ msgid "Couldn't stat source package list %s"
 msgstr "Kon de status van de bronpakketlijst %s niet opvragen"
 
 #: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1442
+#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
 msgid "Reading package lists"
 msgstr "Pakketlijsten worden ingelezen"
 
@@ -2992,7 +3007,7 @@ msgstr "Pakketlijsten worden ingelezen"
 msgid "Collecting File Provides"
 msgstr "Voorziene bestanden worden verzameld"
 
-#: apt-pkg/pkgcachegen.cc:1384 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
 msgid "IO Error saving source cache"
 msgstr "Invoer/Uitvoer-fout tijdens wegschrijven bronpakket-cache"
 
@@ -3253,33 +3268,33 @@ msgstr ""
 msgid "No keyring installed in %s."
 msgstr "Geen sleutelring geïnstalleerd in %s."
 
-#: apt-pkg/cacheset.cc:355
+#: apt-pkg/cacheset.cc:401
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Release '%s' voor '%s' is niet gevonden"
 
-#: apt-pkg/cacheset.cc:358
+#: apt-pkg/cacheset.cc:404
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Versie '%s' voor '%s' is niet gevonden"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:515
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Kon taak '%s' niet vinden"
 
-#: apt-pkg/cacheset.cc:475
+#: apt-pkg/cacheset.cc:521
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "Kon geen enkel pakket vinden bij regex '%s'"
 
-#: apt-pkg/cacheset.cc:486
+#: apt-pkg/cacheset.cc:532
 #, fuzzy, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 "Kan geen versies selecteren voor pakket '%s' omdat deze zuiver virtueel is"
 
-#: apt-pkg/cacheset.cc:493 apt-pkg/cacheset.cc:500
+#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3288,21 +3303,21 @@ msgstr ""
 "Kan noch de geïnstalleerde, noch de kandidaat-versie van het pakket '%s' "
 "selecteren omdat deze geen van beide heeft"
 
-#: apt-pkg/cacheset.cc:507
+#: apt-pkg/cacheset.cc:553
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Kan de nieuwste versie van het pakket '%s' niet selecteren omdat deze zuiver "
 "virtueel is"
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:561
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "Kan de kandidaat-versie van het pakket %s niet selecteren omdat deze geen "
 "kandidaat heeft"
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:569
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3501,31 +3516,6 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Niet vergrendeld"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: apt-internal-solver\n"
-#~ "\n"
-#~ "apt-internal-solver is an interface to use the current internal\n"
-#~ "like an external resolver for the APT family for debugging or alike\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Gebruik: apt-extracttemplates bestand1 [bestand2 ...]\n"
-#~ "\n"
-#~ "apt-extracttemplates is een programma om configuratie- en "
-#~ "sjablooninformatie\n"
-#~ "uit Debian pakketten te halen.\n"
-#~ "\n"
-#~ "Opties:\n"
-#~ "  -h     Deze hulptekst.\n"
-#~ "  -t      Stel de tijdelijke map in.\n"
-#~ "  -c=? Lees dit configuratiebestand.\n"
-#~ "  -o=? Stel een willekeurige optie in, b.v. -o dir::cache=/tmp\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "Verwijderen van %s is mislukt"

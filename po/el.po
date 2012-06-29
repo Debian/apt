@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_el\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-26 13:47+0200\n"
+"POT-Creation-Date: 2012-06-29 15:38+0200\n"
 "PO-Revision-Date: 2008-08-26 18:25+0300\n"
 "Last-Translator: quad-nrg.net <yodesy@quad-nrg.net>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -121,7 +121,7 @@ msgstr "Πρέπει να δώσετε ακριβώς μία παράσταση"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:462
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Αδυναμία εντοπισμού του πακέτου %s"
@@ -166,7 +166,7 @@ msgid "  Version table:"
 msgstr "  Πίνακας Έκδοσης:"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3341 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3353 cmdline/apt-mark.cc:363
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -308,7 +308,7 @@ msgstr "Y"
 msgid "N"
 msgstr ""
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "σφάλμα μεταγλωτισμου - %s"
@@ -616,8 +616,8 @@ msgstr ""
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Μετά από αυτή τη λειτουργία, θα ελευθερωθούν %sB χώρου από το δίσκο.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2577
-#: cmdline/apt-get.cc:2580
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2592
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Δεν μπόρεσα να προσδιορίσω τον ελεύθερο χώρο στο %s"
@@ -654,7 +654,7 @@ msgstr "Εγκατάλειψη."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Θέλετε να συνεχίσετε [Ν/ο]; "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2642 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Αποτυχία ανάκτησης του %s   %s\n"
@@ -663,7 +663,7 @@ msgstr "Αποτυχία ανάκτησης του %s   %s\n"
 msgid "Some files failed to download"
 msgstr "Για μερικά αρχεία απέτυχε η μεταφόρτωση"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2654
+#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
 msgid "Download complete and in download only mode"
 msgstr "Ολοκληρώθηκε η μεταφόρτωση μόνο"
 
@@ -864,30 +864,35 @@ msgstr ""
 msgid "Unable to lock the download directory"
 msgstr "Αδύνατο το κλείδωμα του καταλόγου μεταφόρτωσης"
 
-#: cmdline/apt-get.cc:2381
+#: cmdline/apt-get.cc:2386
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+
+#: cmdline/apt-get.cc:2391
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2439
+#: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για να μεταφορτώσετε τον "
 "κωδικάτου"
 
-#: cmdline/apt-get.cc:2479 cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Αδυναμία εντοπισμού του κώδικά του πακέτου %s"
 
-#: cmdline/apt-get.cc:2496
+#: cmdline/apt-get.cc:2508
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2513
 #, c-format
 msgid ""
 "Please use:\n"
@@ -895,86 +900,86 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2554
+#: cmdline/apt-get.cc:2566
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Παράκαμψη του ήδη μεταφορτωμένου αρχείου `%s`\n"
 
-#: cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:2603
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Δεν διαθέτετε αρκετό ελεύθερο χώρο στο %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2600
+#: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB πηγαίου κώδικα.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2605
+#: cmdline/apt-get.cc:2617
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB πηγαίου κώδικα.\n"
 
-#: cmdline/apt-get.cc:2611
+#: cmdline/apt-get.cc:2623
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Μεταφόρτωση Κωδικα %s\n"
 
-#: cmdline/apt-get.cc:2649
+#: cmdline/apt-get.cc:2661
 msgid "Failed to fetch some archives."
 msgstr "Αποτυχία μεταφόρτωσης μερικών αρχειοθηκών."
 
-#: cmdline/apt-get.cc:2680
+#: cmdline/apt-get.cc:2692
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Παράκαμψη της αποσυμπίεσης ήδη μεταφορτωμένου κώδικα στο %s\n"
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή αποσυμπίεσης %s\n"
 
-#: cmdline/apt-get.cc:2693
+#: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Ελέγξτε αν είναι εγκαταστημένο το πακέτο 'dpkg-dev'.\n"
 
-#: cmdline/apt-get.cc:2715
+#: cmdline/apt-get.cc:2727
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή χτισίματος %s.\n"
 
-#: cmdline/apt-get.cc:2735
+#: cmdline/apt-get.cc:2747
 msgid "Child process failed"
 msgstr "Η απογονική διεργασία απέτυχε"
 
-#: cmdline/apt-get.cc:2754
+#: cmdline/apt-get.cc:2766
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για έλεγχο των εξαρτήσεων του"
 
-#: cmdline/apt-get.cc:2779
+#: cmdline/apt-get.cc:2791
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2803 cmdline/apt-get.cc:2806
+#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Αδύνατη η εύρεση πληροφοριών χτισίματος για το %s"
 
-#: cmdline/apt-get.cc:2826
+#: cmdline/apt-get.cc:2838
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "το %s δεν έχει εξαρτήσεις χτισίματος.\n"
 
-#: cmdline/apt-get.cc:2985
+#: cmdline/apt-get.cc:2997
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -982,7 +987,7 @@ msgid ""
 msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή το πακέτο %s δεν βρέθηκε"
 
-#: cmdline/apt-get.cc:3003
+#: cmdline/apt-get.cc:3015
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -990,14 +995,14 @@ msgid ""
 msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή το πακέτο %s δεν βρέθηκε"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3038
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Αποτυχία ικανοποίησης %s εξαρτήσεων για το %s: Το εγκατεστημένο πακέτο %s "
 "είναι νεώτερο"
 
-#: cmdline/apt-get.cc:3065
+#: cmdline/apt-get.cc:3077
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -1006,7 +1011,7 @@ msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή δεν υπάρχουν διαθέσιμες "
 "εκδόσεις του πακέτου %s που να ικανοποιούν τις απαιτήσεις έκδοσης"
 
-#: cmdline/apt-get.cc:3071
+#: cmdline/apt-get.cc:3083
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1014,30 +1019,30 @@ msgid ""
 msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή το πακέτο %s δεν βρέθηκε"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3106
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Αποτυχία ικανοποίησης %s εξάρτησης για το %s: %s"
 
-#: cmdline/apt-get.cc:3110
+#: cmdline/apt-get.cc:3122
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Οι εξαρτήσεις χτισίματος για το %s δεν ικανοποιούνται."
 
-#: cmdline/apt-get.cc:3115
+#: cmdline/apt-get.cc:3127
 msgid "Failed to process build dependencies"
 msgstr "Αποτυχία επεξεργασίας εξαρτήσεων χτισίματος"
 
-#: cmdline/apt-get.cc:3208 cmdline/apt-get.cc:3220
+#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Σύνδεση στο %s (%s)"
 
-#: cmdline/apt-get.cc:3346
+#: cmdline/apt-get.cc:3358
 msgid "Supported modules:"
 msgstr "Υποστηριζόμενοι Οδηγοί:"
 
-#: cmdline/apt-get.cc:3387
+#: cmdline/apt-get.cc:3399
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1122,7 +1127,7 @@ msgstr ""
 "για περισσότερες πληροφορίες και επιλογές.\n"
 "                       This APT has Super Cow Powers.\n"
 
-#: cmdline/apt-get.cc:3552
+#: cmdline/apt-get.cc:3564
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1217,7 +1222,7 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manual or automatical installed. It can also list marks.\n"
+"as manually or automatically installed. It can also list marks.\n"
 "\n"
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
@@ -2044,10 +2049,11 @@ msgid "Failed to rename %s to %s"
 msgstr "Αποτυχία μετονομασίας του %s σε %s"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
-"Usage: apt-internal-resolver\n"
+"Usage: apt-internal-solver\n"
 "\n"
-"apt-internal-resolver is an interface to use the current internal\n"
+"apt-internal-solver is an interface to use the current internal\n"
 "like an external resolver for the APT family for debugging or alike\n"
 "\n"
 "Options:\n"
@@ -2055,9 +2061,17 @@ msgid ""
 "  -q  Loggable output - no progress indicator\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"apt.conf(5) manual pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
+"\n"
+"το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
+"και πρότυπα από πακέτα debian\n"
+"\n"
+"Επιλογές:\n"
+"  -h   Το παρόν κείμενο βοήθειας\n"
+"  -t   Καθορισμός προσωρινού καταλόγου\n"
+"  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
+"  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2277,26 +2291,26 @@ msgstr "Αδύνατη η εκτέλεση"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Αδύνατη η απεικόνιση μέσω mmap %lu bytes"
 
-#: apt-pkg/contrib/mmap.cc:312
+#: apt-pkg/contrib/mmap.cc:311
 #, fuzzy
 msgid "Failed to truncate file"
 msgstr "Αποτυχία εγγραφής του αρχείου %s"
 
-#: apt-pkg/contrib/mmap.cc:331
+#: apt-pkg/contrib/mmap.cc:330
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:430
+#: apt-pkg/contrib/mmap.cc:429
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:433
+#: apt-pkg/contrib/mmap.cc:432
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2962,7 +2976,7 @@ msgid "Couldn't stat source package list %s"
 msgstr "Αδύνατη η εύρεση της κατάστασης της λίστας πηγαίων πακέτων %s"
 
 #: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1442
+#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
 msgid "Reading package lists"
 msgstr "Ανάγνωση Λιστών Πακέτων"
 
@@ -2970,7 +2984,7 @@ msgstr "Ανάγνωση Λιστών Πακέτων"
 msgid "Collecting File Provides"
 msgstr "Συλλογή Παροχών Αρχείου"
 
-#: apt-pkg/pkgcachegen.cc:1384 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
 msgid "IO Error saving source cache"
 msgstr "Σφάλμα IO κατά την αποθήκευση της cache πηγών"
 
@@ -3223,49 +3237,49 @@ msgstr ""
 msgid "No keyring installed in %s."
 msgstr "Εγκατάλειψη της εγκατάστασης."
 
-#: apt-pkg/cacheset.cc:355
+#: apt-pkg/cacheset.cc:401
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Η έκδοση %s για το %s δεν βρέθηκε"
 
-#: apt-pkg/cacheset.cc:358
+#: apt-pkg/cacheset.cc:404
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Η έκδοση %s για το %s δεν βρέθηκε"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:515
 #, fuzzy, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Αδύνατη η εύρεση του συνόλου πακέτων %s"
 
-#: apt-pkg/cacheset.cc:475
+#: apt-pkg/cacheset.cc:521
 #, fuzzy, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "Αδύνατη η εύρεση του πακέτου %s"
 
-#: apt-pkg/cacheset.cc:486
+#: apt-pkg/cacheset.cc:532
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:493 apt-pkg/cacheset.cc:500
+#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:507
+#: apt-pkg/cacheset.cc:553
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:561
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:569
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3446,30 +3460,6 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: apt-internal-solver\n"
-#~ "\n"
-#~ "apt-internal-solver is an interface to use the current internal\n"
-#~ "like an external resolver for the APT family for debugging or alike\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Χρήση: apt-extracttemplates αρχείο1 [αρχείο2 ...]\n"
-#~ "\n"
-#~ "το apt-extracttemplates είναι ένα βοήθημα για να εξάγετε ρυθμίσεις \n"
-#~ "και πρότυπα από πακέτα debian\n"
-#~ "\n"
-#~ "Επιλογές:\n"
-#~ "  -h   Το παρόν κείμενο βοήθειας\n"
-#~ "  -t   Καθορισμός προσωρινού καταλόγου\n"
-#~ "  -c=? Ανάγνωση αυτού του αρχείου ρυθμίσεων\n"
-#~ "  -o=? Καθορισμός αυθαίρετης επιλογής παραμέτρου, πχ -o dir::cache=/tmp\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "Αποτυχία διαγραφής του %s"

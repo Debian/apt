@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-26 13:47+0200\n"
+"POT-Creation-Date: 2012-06-29 15:38+0200\n"
 "PO-Revision-Date: 2012-06-25 19:58+0200\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -111,7 +111,7 @@ msgstr "Vous devez fournir au moins un motif de recherche"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "Cette commande est obsolète. Veuillez utiliser « apt-mark showauto »."
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:462
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Impossible de trouver le paquet %s"
@@ -155,7 +155,7 @@ msgid "  Version table:"
 msgstr " Table de version :"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3341 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3353 cmdline/apt-mark.cc:363
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -297,7 +297,7 @@ msgstr "O"
 msgid "N"
 msgstr "N"
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Erreur de compilation de l'expression rationnelle - %s"
@@ -604,8 +604,8 @@ msgstr ""
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Après cette opération, %so d'espace disque seront libérés.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2577
-#: cmdline/apt-get.cc:2580
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2592
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Impossible de déterminer l'espace disponible sur %s"
@@ -646,7 +646,7 @@ msgstr "Annulation."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Souhaitez-vous continuer [O/n] ? "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2642 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Impossible de récupérer %s  %s\n"
@@ -655,7 +655,7 @@ msgstr "Impossible de récupérer %s  %s\n"
 msgid "Some files failed to download"
 msgstr "Certains fichiers n'ont pu être téléchargés."
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2654
+#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
 msgid "Download complete and in download only mode"
 msgstr "Téléchargement achevé et dans le mode téléchargement uniquement"
 
@@ -867,21 +867,28 @@ msgstr ""
 msgid "Unable to lock the download directory"
 msgstr "Impossible de verrouiller le répertoire de téléchargement"
 
-#: cmdline/apt-get.cc:2381
+#: cmdline/apt-get.cc:2386
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+"Impossible de trouver une source de téléchargement de la version « %s » de "
+"« %s »"
+
+#: cmdline/apt-get.cc:2391
 #, c-format
 msgid "Downloading %s %s"
 msgstr "Téléchargement de %s %s"
 
-#: cmdline/apt-get.cc:2439
+#: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
 msgstr "Vous devez spécifier au moins un paquet source"
 
-#: cmdline/apt-get.cc:2479 cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Impossible de trouver une source de paquet pour %s"
 
-#: cmdline/apt-get.cc:2496
+#: cmdline/apt-get.cc:2508
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -891,7 +898,7 @@ msgstr ""
 "suivi de versions « %s » à l'adresse :\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2513
 #, c-format
 msgid ""
 "Please use:\n"
@@ -903,70 +910,70 @@ msgstr ""
 "pour récupérer les dernières mises à jour (éventuellement non encore "
 "publiées) du paquet.\n"
 
-#: cmdline/apt-get.cc:2554
+#: cmdline/apt-get.cc:2566
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Saut du téléchargement du fichier « %s », déjà téléchargé\n"
 
-#: cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:2603
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Pas assez d'espace disponible sur %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2600
+#: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Nécessité de prendre %so/%so dans les sources.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2605
+#: cmdline/apt-get.cc:2617
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Nécessité de prendre %so dans les sources.\n"
 
-#: cmdline/apt-get.cc:2611
+#: cmdline/apt-get.cc:2623
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Récupération des sources %s\n"
 
-#: cmdline/apt-get.cc:2649
+#: cmdline/apt-get.cc:2661
 msgid "Failed to fetch some archives."
 msgstr "Échec lors de la récupération de quelques archives."
 
-#: cmdline/apt-get.cc:2680
+#: cmdline/apt-get.cc:2692
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Saut du décompactage des paquets sources déjà décompactés dans %s\n"
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "La commande de décompactage « %s » a échoué.\n"
 
-#: cmdline/apt-get.cc:2693
+#: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Veuillez vérifier si le paquet dpkg-dev est installé.\n"
 
-#: cmdline/apt-get.cc:2715
+#: cmdline/apt-get.cc:2727
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "La commande de construction « %s » a échoué.\n"
 
-#: cmdline/apt-get.cc:2735
+#: cmdline/apt-get.cc:2747
 msgid "Child process failed"
 msgstr "Échec du processus fils"
 
-#: cmdline/apt-get.cc:2754
+#: cmdline/apt-get.cc:2766
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Il faut spécifier au moins un paquet pour vérifier les dépendances de "
 "construction"
 
-#: cmdline/apt-get.cc:2779
+#: cmdline/apt-get.cc:2791
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -976,17 +983,17 @@ msgstr ""
 "consulter la section à propos de APT::Architectures dans la page de manuel "
 "apt.conf(5)."
 
-#: cmdline/apt-get.cc:2803 cmdline/apt-get.cc:2806
+#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Impossible d'obtenir les dépendances de construction pour %s"
 
-#: cmdline/apt-get.cc:2826
+#: cmdline/apt-get.cc:2838
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s n'a pas de dépendance de construction.\n"
 
-#: cmdline/apt-get.cc:2985
+#: cmdline/apt-get.cc:2997
 #, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -995,7 +1002,7 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car %s n'est pas "
 "autorisé avec les paquets « %s »."
 
-#: cmdline/apt-get.cc:3003
+#: cmdline/apt-get.cc:3015
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1004,14 +1011,14 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s ne "
 "peut être trouvé"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3038
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Impossible de satisfaire la dépendance %s pour %s : le paquet installé %s "
 "est trop récent"
 
-#: cmdline/apt-get.cc:3065
+#: cmdline/apt-get.cc:3077
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -1020,7 +1027,7 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car aucune version "
 "disponible du paquet %s ne peut satisfaire les prérequis de version."
 
-#: cmdline/apt-get.cc:3071
+#: cmdline/apt-get.cc:3083
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1029,31 +1036,31 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s "
 "n'a pas de version disponible."
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3106
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Impossible de satisfaire les dépendances %s pour %s : %s"
 
-#: cmdline/apt-get.cc:3110
+#: cmdline/apt-get.cc:3122
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr ""
 "Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
 
-#: cmdline/apt-get.cc:3115
+#: cmdline/apt-get.cc:3127
 msgid "Failed to process build dependencies"
 msgstr "Impossible d'activer les dépendances de construction"
 
-#: cmdline/apt-get.cc:3208 cmdline/apt-get.cc:3220
+#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Journal des modifications pour %s (%s)"
 
-#: cmdline/apt-get.cc:3346
+#: cmdline/apt-get.cc:3358
 msgid "Supported modules:"
 msgstr "Modules reconnus :"
 
-#: cmdline/apt-get.cc:3387
+#: cmdline/apt-get.cc:3399
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1143,7 +1150,7 @@ msgstr ""
 "apt.conf(5) pour plus d'informations et d'options.\n"
 "                      Cet APT a les « Super Cow Powers »\n"
 
-#: cmdline/apt-get.cc:3552
+#: cmdline/apt-get.cc:3564
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1246,7 +1253,7 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manual or automatical installed. It can also list marks.\n"
+"as manually or automatically installed. It can also list marks.\n"
 "\n"
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
@@ -1262,6 +1269,28 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 msgstr ""
+"Utilisation: apt-mark [options] {auto|manual} paquet 1 [paquet2 ...]\n"
+"\n"
+"apt-mark est une interface simple, en ligne de commande, qui permet\n"
+"de marquer des paquets comme installés manuellement ou automatiquement.\n"
+"Cette commande permet également d'afficher cet état.\n"
+"\n"
+"Commandes :\n"
+"   auto - marquer les paquets indiqués comme installés automatiquement\n"
+"   manual - marquer les paquets indiqués comme installés manuellement\n"
+"\n"
+"Options:\n"
+"  -h  Affiche la présente aide.\n"
+"  -q  Affichage journalisable - pas de barre de progression\n"
+"  -qq Pas d'affichage à part les erreurs\n"
+"  -s  Mode simulation : aucune action effectuée.\n"
+"      Affiche simplement ce qui serait effectué.\n"
+"  -f  lecture/écriture des états dans le fichier indiqué\n"
+"  -c=? lecture du fichier de configuration indiqué\n"
+"  -o=? utilisation d'une option de configuration,\n"
+"       p. ex. -o dir::cache=/tmp\n"
+"Veuillez consulter les pages de manuel apt-mark(8) et apt.conf(5)\n"
+"pour plus d'informations."
 
 #: methods/cdrom.cc:203
 #, c-format
@@ -2081,9 +2110,9 @@ msgstr "Impossible de changer le nom %s en %s"
 
 #: cmdline/apt-internal-solver.cc:37
 msgid ""
-"Usage: apt-internal-resolver\n"
+"Usage: apt-internal-solver\n"
 "\n"
-"apt-internal-resolver is an interface to use the current internal\n"
+"apt-internal-solver is an interface to use the current internal\n"
 "like an external resolver for the APT family for debugging or alike\n"
 "\n"
 "Options:\n"
@@ -2091,9 +2120,20 @@ msgid ""
 "  -q  Loggable output - no progress indicator\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"apt.conf(5) manual pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Utilisation: apt-internal-solver\n"
+"\n"
+"apt-internal-solver est une interface en ligne de commande\n"
+"permettant d'utiliser la résolution interne d'apt de manière externe\n"
+"avec les outils de la famille d'APT  à des fins de déboguage ou\n"
+"équivalent.\n"
+"\n"
+"Options:\n"
+"  -h  La présente aide.\n"
+"  -q  Affichage journalisable - pas de barre de progression\n"
+"  -c=? lecture du fichier de configuration indiqué\n"
+"  -o=? utilisation d'une option de configuration,\n"
+"       p. ex. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2312,11 +2352,11 @@ msgstr "Impossible de synchroniser la « mmap »"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Impossible de réaliser un mapping de %lu octets en mémoire"
 
-#: apt-pkg/contrib/mmap.cc:312
+#: apt-pkg/contrib/mmap.cc:311
 msgid "Failed to truncate file"
 msgstr "Échec de la troncature du fichier"
 
-#: apt-pkg/contrib/mmap.cc:331
+#: apt-pkg/contrib/mmap.cc:330
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
@@ -2326,7 +2366,7 @@ msgstr ""
 "Vous devriez augmenter la taille de APT::Cache-Limit, dont la valeur "
 "actuelle est de %lu (voir « man 5 apt.conf »)."
 
-#: apt-pkg/contrib/mmap.cc:430
+#: apt-pkg/contrib/mmap.cc:429
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
@@ -2335,7 +2375,7 @@ msgstr ""
 "Impossible d'augmenter la taille de la « mmap » car la limite de %lu octets "
 "est déjà atteinte."
 
-#: apt-pkg/contrib/mmap.cc:433
+#: apt-pkg/contrib/mmap.cc:432
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -3033,7 +3073,7 @@ msgid "Couldn't stat source package list %s"
 msgstr "Impossible de localiser la liste des paquets sources %s"
 
 #: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1442
+#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
 msgid "Reading package lists"
 msgstr "Lecture des listes de paquets"
 
@@ -3041,7 +3081,7 @@ msgstr "Lecture des listes de paquets"
 msgid "Collecting File Provides"
 msgstr "Assemblage des fichiers listés dans les champs Provides"
 
-#: apt-pkg/pkgcachegen.cc:1384 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
 msgid "IO Error saving source cache"
 msgstr ""
 "Erreur d'entrée/sortie lors de la sauvegarde du fichier de cache des sources"
@@ -3308,36 +3348,36 @@ msgstr "Le fichier %s ne commence pas par un message signé en clair."
 msgid "No keyring installed in %s."
 msgstr "Pas de porte-clés installé dans %s."
 
-#: apt-pkg/cacheset.cc:355
+#: apt-pkg/cacheset.cc:401
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "La version  « %s » de « %s » est introuvable"
 
-#: apt-pkg/cacheset.cc:358
+#: apt-pkg/cacheset.cc:404
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "La version « %s » de « %s » n'a pu être trouvée"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:515
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Impossible de trouver la tâche « %s »"
 
-#: apt-pkg/cacheset.cc:475
+#: apt-pkg/cacheset.cc:521
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr ""
 "Impossible de trouver de paquet correspondant à l'expression rationnelle "
 "« %s »"
 
-#: apt-pkg/cacheset.cc:486
+#: apt-pkg/cacheset.cc:532
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 "Impossible de choisir les versions du paquet « %s » qui n'est qu'un paquet "
 "virtuel"
 
-#: apt-pkg/cacheset.cc:493 apt-pkg/cacheset.cc:500
+#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3346,20 +3386,20 @@ msgstr ""
 "Impossible de choisir une version installée ou candidate du paquet « %s » "
 "qui n'en n'a aucune"
 
-#: apt-pkg/cacheset.cc:507
+#: apt-pkg/cacheset.cc:553
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Impossible de choisir une nouvelle version du paquet « %s » qui n'est qu'un "
 "paquet virtuel"
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:561
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "Impossible de choisir une version candidate du paquet « %s » qui n'en n'a pas"
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:569
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3557,80 +3597,6 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Non verrouillé"
-
-#~ msgid "Can't find a source to download version '%s' of '%s'"
-#~ msgstr ""
-#~ "Impossible de trouver une source de téléchargement de la version « %s » "
-#~ "de « %s »"
-
-#~ msgid ""
-#~ "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-mark is a simple command line interface for marking packages\n"
-#~ "as manually or automatically installed. It can also list marks.\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   auto - Mark the given packages as automatically installed\n"
-#~ "   manual - Mark the given packages as manually installed\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -qq No output except for errors\n"
-#~ "  -s  No-act. Just prints what would be done.\n"
-#~ "  -f  read/write auto/manual marking in the given file\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
-#~ msgstr ""
-#~ "Utilisation: apt-mark [options] {auto|manual} paquet 1 [paquet2 ...]\n"
-#~ "\n"
-#~ "apt-mark est une interface simple, en ligne de commande, qui permet\n"
-#~ "de marquer des paquets comme installés manuellement ou automatiquement.\n"
-#~ "Cette commande permet également d'afficher cet état.\n"
-#~ "\n"
-#~ "Commandes :\n"
-#~ "   auto - marquer les paquets indiqués comme installés automatiquement\n"
-#~ "   manual - marquer les paquets indiqués comme installés manuellement\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  Affiche la présente aide.\n"
-#~ "  -q  Affichage journalisable - pas de barre de progression\n"
-#~ "  -qq Pas d'affichage à part les erreurs\n"
-#~ "  -s  Mode simulation : aucune action effectuée.\n"
-#~ "      Affiche simplement ce qui serait effectué.\n"
-#~ "  -f  lecture/écriture des états dans le fichier indiqué\n"
-#~ "  -c=? lecture du fichier de configuration indiqué\n"
-#~ "  -o=? utilisation d'une option de configuration,\n"
-#~ "       p. ex. -o dir::cache=/tmp\n"
-#~ "Veuillez consulter les pages de manuel apt-mark(8) et apt.conf(5)\n"
-#~ "pour plus d'informations."
-
-#~ msgid ""
-#~ "Usage: apt-internal-solver\n"
-#~ "\n"
-#~ "apt-internal-solver is an interface to use the current internal\n"
-#~ "like an external resolver for the APT family for debugging or alike\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "Utilisation: apt-internal-solver\n"
-#~ "\n"
-#~ "apt-internal-solver est une interface en ligne de commande\n"
-#~ "permettant d'utiliser la résolution interne d'apt de manière externe\n"
-#~ "avec les outils de la famille d'APT  à des fins de déboguage ou\n"
-#~ "équivalent.\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  La présente aide.\n"
-#~ "  -q  Affichage journalisable - pas de barre de progression\n"
-#~ "  -c=? lecture du fichier de configuration indiqué\n"
-#~ "  -o=? utilisation d'une option de configuration,\n"
-#~ "       p. ex. -o dir::cache=/tmp\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "Impossible de supprimer %s"

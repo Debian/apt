@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po.pot\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-26 13:47+0200\n"
+"POT-Creation-Date: 2012-06-29 15:38+0200\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -115,7 +115,7 @@ msgstr "ཁྱོད་ཀྱིས་ཏག་ཏག་སྦེ་དཔེ་
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:462
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "%sཐུམ་སྒྲིལ་འདི་ག་ཡོད་ཟཚོལ་མ་ཐོབ།"
@@ -160,7 +160,7 @@ msgid "  Version table:"
 msgstr "ཐོན་རིམ་ཐིག་ཁྲམ།:"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3341 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3353 cmdline/apt-mark.cc:363
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, fuzzy, c-format
@@ -300,7 +300,7 @@ msgstr "ཝའི།"
 msgid "N"
 msgstr ""
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "རི་ཇེགསི་ཕྱོགས་སྒྲིག་འཛོལ་བ་- %s"
@@ -605,8 +605,8 @@ msgstr "ཁ་སྐོང་གི་%sB་འདི་བཤུབ་པའི
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "%sB་འདི་ཤུབ་པའི་ཤུལ་ལས་ཀྱི་བར་སྟོང་དེ་དལཝ་སྦེ་ལུས་འོང་།\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2577
-#: cmdline/apt-get.cc:2580
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
+#: cmdline/apt-get.cc:2592
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "%s་ནང་བར་སྟོང་"
@@ -643,7 +643,7 @@ msgstr "བར་བཤོལ་འབད།"
 msgid "Do you want to continue [Y/n]? "
 msgstr "ཁྱོན་ཀྱི་འཕྲོ་མཐུད་ནི་འབད་ནི་ཨིན་ན་[Y/n]?"
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2642 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "%s  %s་ ལེན་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།\n"
@@ -652,7 +652,7 @@ msgstr "%s  %s་ ལེན་ནི་ལུ་འཐུས་ཤོར་བ�
 msgid "Some files failed to download"
 msgstr "ཡིག་སྣོད་ལ་ལུ་ཅིག་ཕབ་ལེན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2654
+#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
 msgid "Download complete and in download only mode"
 msgstr "ཕབ་ལེན་ཐབས་ལམ་རྐྱངམ་གཅིག་ནང་མཇུག་བསྡུཝ་སྦེ་རང་ཕབ་ལེན་འབད།"
 
@@ -842,28 +842,33 @@ msgstr "ནང་འཁོད་འཛོལ་བ་ དཀའ་ངལ་མ�
 msgid "Unable to lock the download directory"
 msgstr "ཕབ་ལེན་འབད་ནིའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབས་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:2381
+#: cmdline/apt-get.cc:2386
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+
+#: cmdline/apt-get.cc:2391
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2439
+#: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
 msgstr "གི་དོན་ལུ་འབྱུང་ཁུངས་ལེན་ནི་ལུ་ཉུང་མཐའ་རང་ཐུམ་སྒྲིལ་གཅིག་ལེན་དགོ"
 
-#: cmdline/apt-get.cc:2479 cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "%s་གི་དོན་ལུ་འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་ཅིག་འཚོལ་མ་འཐོབ"
 
-#: cmdline/apt-get.cc:2496
+#: cmdline/apt-get.cc:2508
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2501
+#: cmdline/apt-get.cc:2513
 #, c-format
 msgid ""
 "Please use:\n"
@@ -871,106 +876,106 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2554
+#: cmdline/apt-get.cc:2566
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "གོམ་འགྱོ་གིས་ཧེ་མ་ལས་རང་'%s'་ཡིག་སྣོད་དེ་ཕབ་ལེན་འབད་ནུག\n"
 
-#: cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:2603
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr " %s་ནང་ཁྱོད་ལུ་བར་སྟོང་ཚུ་ལངམ་སྦེ་མིན་འདུག་"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2600
+#: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "%sB་ལེན་དགོཔ་འདུག་  འབྱུང་ཁུངས་ཡིག་མཛོད་ཀྱི་%sB།\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2605
+#: cmdline/apt-get.cc:2617
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "འབྱུང་ཁུངས་ཡིག་མཛོད་ཚུ་ཀྱི་%sB་ལེན་དགོ་པསས།\n"
 
-#: cmdline/apt-get.cc:2611
+#: cmdline/apt-get.cc:2623
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "%s་འབྱུང་ཁུངས་ལེན།\n"
 
-#: cmdline/apt-get.cc:2649
+#: cmdline/apt-get.cc:2661
 msgid "Failed to fetch some archives."
 msgstr "ཡིག་མཛོད་ལ་ལུ་ཅིག་ལེན་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: cmdline/apt-get.cc:2680
+#: cmdline/apt-get.cc:2692
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "%s་ནང་ཧེ་མ་ལས་སྦུང་ཚན་བཟོ་བཤོལ་ཨིན་མའི་སྦུང་ཚན་བཟོ་བཤོལ་གོམ་འགྱོ་འབད་དོ།\n"
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "'%s'སྦུང་ཚན་བཟོ་བཤོལ་འཐུས་ཤོར་བྱུང་ཡོད།\n"
 
-#: cmdline/apt-get.cc:2693
+#: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "'dpkg-dev'་ཐུམ་སྒྲིལ་དེ་གཞི་བཙུགས་འབད་ཡོད་པ་ཅིན་ཨེབ་གཏང་འབད།\n"
 
-#: cmdline/apt-get.cc:2715
+#: cmdline/apt-get.cc:2727
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "'%s'་བཟོ་བརྩིགས་བརྡ་བཀོད་འཐུས་ཤོར་བྱུང་ཡོད།\n"
 
-#: cmdline/apt-get.cc:2735
+#: cmdline/apt-get.cc:2747
 msgid "Child process failed"
 msgstr "ཆ་ལག་ལས་སྦྱོར་དེ་འཐུས་ཤོར་བྱུང་ནུག"
 
-#: cmdline/apt-get.cc:2754
+#: cmdline/apt-get.cc:2766
 msgid "Must specify at least one package to check builddeps for"
 msgstr "builddeps ཞིབ་དཔྱད་འབད་ནིའི་དོན་ལུ་ཉུང་མཐའ་རང་ཐུམ་སྒྲིལ་གཅིག་གསལ་བཀོད་འབད་དགོ"
 
-#: cmdline/apt-get.cc:2779
+#: cmdline/apt-get.cc:2791
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2803 cmdline/apt-get.cc:2806
+#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "%s་གི་དོན་ལུ་བཟོ་བརྩིགས་-རྟེན་འབྲེལ་བརྡ་དོན་དེ་ལེན་མ་ཚུགས།"
 
-#: cmdline/apt-get.cc:2826
+#: cmdline/apt-get.cc:2838
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s ལུ་བཟོ་བརྩིགས་རྟེན་འབྲེལ་མིན་འདུག\n"
 
-#: cmdline/apt-get.cc:2985
+#: cmdline/apt-get.cc:2997
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr "%sཐུམ་སྒྲིལ་འདི་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་ %sགི་དོན་ལུ་%s རྟེན་འབྲེལ་དེ་ངལ་རང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:3003
+#: cmdline/apt-get.cc:3015
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%sཐུམ་སྒྲིལ་འདི་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་ %sགི་དོན་ལུ་%s རྟེན་འབྲེལ་དེ་ངལ་རང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3038
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "%s:གི་དོན་ལུ་%s་རྟེན་འབྲེལ་དེ་གི་རེ་བ་སྐོང་ནི་འདི་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན་  གཞི་བཙུགས་འབད་ཡོད་པའི་ཐུམ་"
 "སྒྲིལ་%s་དེ་གནམ་མེད་ས་མེད་གསརཔ་ཨིན་པས།"
 
-#: cmdline/apt-get.cc:3065
+#: cmdline/apt-get.cc:3077
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -979,37 +984,37 @@ msgstr ""
 "%s གི་དོན་ལུ་%s་རྟེན་འབྲེལ་འདི་གི་རེ་བ་སྐོང་མི་ཚུགས་ནུག་ག་ཅི་འབད་ཟེར་བ་ཅིན་ཐུམ་སྒརིལ་%s་གི་འཐོན་རིམ་"
 "ཚུ་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་འཐོན་རིམ་དགོས་མཁོ་ཚུ་གི་རེ་བ་དོ་སྐོང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:3071
+#: cmdline/apt-get.cc:3083
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr "%sཐུམ་སྒྲིལ་འདི་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་ %sགི་དོན་ལུ་%s རྟེན་འབྲེལ་དེ་ངལ་རང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3106
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "%s: %s་གི་དོན་ལུ་་%s་རྟེན་འབྲེལ་འདི་ངལ་རངས་འབད་ནི་འཐུས་ཤོར་བྱུང་ནུག"
 
-#: cmdline/apt-get.cc:3110
+#: cmdline/apt-get.cc:3122
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr " %s་གི་དོན་ལུ་བཟོ་བརྩིགས་-རྟེན་འབྲེལ་འདི་ངལ་རངས་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:3115
+#: cmdline/apt-get.cc:3127
 msgid "Failed to process build dependencies"
 msgstr "བཟོ་བརྩིགས་རྟེན་འབྲེལ་འདི་ལས་སྦྱོར་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན།"
 
-#: cmdline/apt-get.cc:3208 cmdline/apt-get.cc:3220
+#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "%s (%s)་ལུ་མཐུད་དོ།"
 
-#: cmdline/apt-get.cc:3346
+#: cmdline/apt-get.cc:3358
 msgid "Supported modules:"
 msgstr "རྒྱབ་སྐྱོར་འབད་ཡོད་པའི་ཚད་གཞི་ཚུ:"
 
-#: cmdline/apt-get.cc:3387
+#: cmdline/apt-get.cc:3399
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1098,7 +1103,7 @@ msgstr ""
 "ཤོག་ལེབ་ཚུ་ལུ་བལྟ།\n"
 "                       འ་ནི་ ཨེ་ཊི་པི་འདི་ལུ་ཡང་དག་ ཀའུ་ ནུས་ཤུགས་ཚུ་ཡོད།\n"
 
-#: cmdline/apt-get.cc:3552
+#: cmdline/apt-get.cc:3564
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1193,7 +1198,7 @@ msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
 "apt-mark is a simple command line interface for marking packages\n"
-"as manual or automatical installed. It can also list marks.\n"
+"as manually or automatically installed. It can also list marks.\n"
 "\n"
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
@@ -2018,10 +2023,11 @@ msgid "Failed to rename %s to %s"
 msgstr "%s་ལུ་%s་བསྐྱར་མིང་བཏགས་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
-"Usage: apt-internal-resolver\n"
+"Usage: apt-internal-solver\n"
 "\n"
-"apt-internal-resolver is an interface to use the current internal\n"
+"apt-internal-solver is an interface to use the current internal\n"
 "like an external resolver for the APT family for debugging or alike\n"
 "\n"
 "Options:\n"
@@ -2029,9 +2035,17 @@ msgid ""
 "  -q  Loggable output - no progress indicator\n"
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-"apt.conf(5) manual pages for more information and options.\n"
-"                       This APT has Super Cow Powers.\n"
 msgstr ""
+"ལག་ལེན་: apt-extracttemplates file1 [file2 ...]\n"
+"\n"
+"apt-extracttemplates འདི་ཌེ་བི་ཡཱན་ ཐུམ་སྒྲིལ་ཚུ་ནང་ལས་\n"
+"རིམ་སྒྲིག་དང་ ཊེམ་པེལེཊི་ བརྡ་དོན་ཕྱིར་དོན་འབད་ནིའི་ལག་ཆས་ཅིགཨིན།\n"
+"གདམ་ཁ་ཚུ།\n"
+"  -h   འདི་གིས་ཚིག་ཡིག་འདི་གྲོགས་རམ་འབདཝ་ཨིན།\n"
+"  -t   འདི་གིས་temp་སྣོད་ཐོ་འདི་གཞི་སྒྲིག་འབདཝ་ཨིན།\n"
+"  -c=? འདི་གིས་ རིམ་སྒྲིག་ཡིག་སྣོད་འདི་ལྷགཔ་ཨིན།\n"
+"  -o=? འདི་གིས་མཐུན་སྒྲིག་རིམ་སྒྲིག་གདམ་ཁ་ཅིག་གཞི་སྒྲིག་འབདཝ་ཨིན་  དཔེར་ན་-o dir::cache=/tmp་"
+"བཟུམ།\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2251,26 +2265,26 @@ msgstr "ལས་བཀོལ་འབད་མ་ཚུགས།"
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "%lu་བཱའིཊིསི་གི་mmap་བཟོ་མ་ཚུགས།"
 
-#: apt-pkg/contrib/mmap.cc:312
+#: apt-pkg/contrib/mmap.cc:311
 #, fuzzy
 msgid "Failed to truncate file"
 msgstr "%s་ཡིག་སྣོད་འདི་འབྲི་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: apt-pkg/contrib/mmap.cc:331
+#: apt-pkg/contrib/mmap.cc:330
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:430
+#: apt-pkg/contrib/mmap.cc:429
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:433
+#: apt-pkg/contrib/mmap.cc:432
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2925,7 +2939,7 @@ msgid "Couldn't stat source package list %s"
 msgstr "འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་གྱི་ཐོ་ཡིག་%s་དེ་ངོ་བཤུས་འབད་མ་ཚུགས།"
 
 #: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1442
+#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
 msgid "Reading package lists"
 msgstr "ཐུམ་སྒྲིལ་ཐོ་ཡིག་ཚུ་ལྷག་དོ།"
 
@@ -2933,7 +2947,7 @@ msgstr "ཐུམ་སྒྲིལ་ཐོ་ཡིག་ཚུ་ལྷག་
 msgid "Collecting File Provides"
 msgstr "ཡིག་སྣོད་བྱིན་མི་ཚུ་བསྡུ་ལེན་འབད་དོ།"
 
-#: apt-pkg/pkgcachegen.cc:1384 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
 msgid "IO Error saving source cache"
 msgstr "IO འཛོལ་བ་འབྱུང་ཁུངས་འདྲ་མཛོད་སྲུང་བཞག་འབད་དོ།"
 
@@ -3187,49 +3201,49 @@ msgstr ""
 msgid "No keyring installed in %s."
 msgstr "གཞི་བཙུགས་བར་བཤོལ་འབད་དོ།"
 
-#: apt-pkg/cacheset.cc:355
+#: apt-pkg/cacheset.cc:401
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "%sགི་དོན་ལུ་འཛིན་གྲོལ་'%s'་དེ་མ་འཐོབ་པས།"
 
-#: apt-pkg/cacheset.cc:358
+#: apt-pkg/cacheset.cc:404
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "'%s'་གི་དོན་ལུ་འཐོན་རིམ་'%s'་དེ་མ་འཐོབ་པས།"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:515
 #, fuzzy, c-format
 msgid "Couldn't find task '%s'"
 msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
 
-#: apt-pkg/cacheset.cc:475
+#: apt-pkg/cacheset.cc:521
 #, fuzzy, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
 
-#: apt-pkg/cacheset.cc:486
+#: apt-pkg/cacheset.cc:532
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:493 apt-pkg/cacheset.cc:500
+#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:507
+#: apt-pkg/cacheset.cc:553
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:561
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:569
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3408,30 +3422,6 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr ""
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: apt-internal-solver\n"
-#~ "\n"
-#~ "apt-internal-solver is an interface to use the current internal\n"
-#~ "like an external resolver for the APT family for debugging or alike\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ msgstr ""
-#~ "ལག་ལེན་: apt-extracttemplates file1 [file2 ...]\n"
-#~ "\n"
-#~ "apt-extracttemplates འདི་ཌེ་བི་ཡཱན་ ཐུམ་སྒྲིལ་ཚུ་ནང་ལས་\n"
-#~ "རིམ་སྒྲིག་དང་ ཊེམ་པེལེཊི་ བརྡ་དོན་ཕྱིར་དོན་འབད་ནིའི་ལག་ཆས་ཅིགཨིན།\n"
-#~ "གདམ་ཁ་ཚུ།\n"
-#~ "  -h   འདི་གིས་ཚིག་ཡིག་འདི་གྲོགས་རམ་འབདཝ་ཨིན།\n"
-#~ "  -t   འདི་གིས་temp་སྣོད་ཐོ་འདི་གཞི་སྒྲིག་འབདཝ་ཨིན།\n"
-#~ "  -c=? འདི་གིས་ རིམ་སྒྲིག་ཡིག་སྣོད་འདི་ལྷགཔ་ཨིན།\n"
-#~ "  -o=? འདི་གིས་མཐུན་སྒྲིག་རིམ་སྒྲིག་གདམ་ཁ་ཅིག་གཞི་སྒྲིག་འབདཝ་ཨིན་  དཔེར་ན་-o dir::cache=/"
-#~ "tmp་བཟུམ།\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "%s་རྩ་བསྐྲད་གཏང་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
