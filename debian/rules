@@ -67,7 +67,7 @@ LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
 build: build/build-stamp
-build-doc: build-manpages build/build-doc-stamp
+build-debiandoc: build/build-debiandoc-stamp
 build-manpages: build/build-manpages-stamp
 
 # Note that this is unconditionally done first as part of loading environment.mak
@@ -98,9 +98,9 @@ else
 endif
 	touch $@
 
-build/build-doc-stamp: build/build-manpages-stamp build/configure-stamp
+build/build-debiandoc-stamp: build/configure-stamp
 	# Add here commands to compile the package.
-	$(MAKE) doc
+	$(MAKE) debiandoc
 	touch $@
 
 build/build-manpages-stamp: build/configure-stamp
@@ -121,7 +121,7 @@ debian/%.install: debian/%.install.in
 
 binary-indep: apt-doc libapt-pkg-doc
 # Build architecture-independent files here.
-libapt-pkg-doc: build-doc
+libapt-pkg-doc: build-debiandoc
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -147,7 +147,7 @@ libapt-pkg-doc: build-doc
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-apt-doc: build-doc
+apt-doc: build-debiandoc
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
