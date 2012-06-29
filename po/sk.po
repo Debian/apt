@@ -4,14 +4,14 @@
 # thanks to Miroslav Kure <kurem@debian.cz>
 #
 # Peter Mann <Peter.Mann@tuke.sk>, 2006.
-# Ivan Masár <helix84@centrum.sk>, 2008, 2009, 2010, 2011.
+# Ivan Masár <helix84@centrum.sk>, 2008, 2009, 2010, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-06-27 11:17+0200\n"
-"PO-Revision-Date: 2011-12-22 14:58+0100\n"
+"PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "Language: sk\n"
@@ -291,7 +291,7 @@ msgstr "Y"
 
 #: cmdline/apt-get.cc:140
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
@@ -447,14 +447,16 @@ msgstr "Virtuálne balíky ako „%s“ nemožno odstrániť\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Balík %s nie je nainštalovaný, nedá sa teda odstrániť\n"
+msgstr ""
+"Balík „%s“ nie je nainštalovaný, nedá sa teda odstrániť. Mali ste na mysli "
+"„%s“?\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Balík %s nie je nainštalovaný, nedá sa teda odstrániť\n"
+msgstr "Balík „%s“ nie je nainštalovaný, nedá sa teda odstrániť\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -759,10 +761,9 @@ msgstr[2] ""
 "%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
 
 #: cmdline/apt-get.cc:1835
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Na ich odstránenie použite „apt-get autoremove“."
+msgstr[0] "Na jeho odstránenie použite „apt-get autoremove“."
 msgstr[1] "Na ich odstránenie použite „apt-get autoremove“."
 msgstr[2] "Na ich odstránenie použite „apt-get autoremove“."
 
@@ -851,7 +852,7 @@ msgstr "Adresár pre sťahovanie sa nedá zamknúť"
 #: cmdline/apt-get.cc:2386
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
+msgstr "Nie je možné nájsť zdroj na stiahnutie verzie „%s“ balíka „%s“"
 
 #: cmdline/apt-get.cc:2391
 #, c-format
@@ -878,14 +879,14 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2513
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Prosím, použite:\n"
-"bzr get %s\n"
+"bzr branch %s\n"
 "ak chcete získať najnovšie (a pravdepodobne zatiaľ nevydané) aktualizácie "
 "balíka.\n"
 
@@ -1990,19 +1991,19 @@ msgid "Unable to open %s"
 msgstr "Nedá sa otvoriť %s"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Skomolený „override“ %s riadok %lu #1"
+msgstr "Skomolený „override“ %s riadok %llu #1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Skomolený „override“ %s riadok %lu #2"
+msgstr "Skomolený „override“ %s riadok %llu #2"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Skomolený „override“ %s riadok %lu #3"
+msgstr "Skomolený „override“ %s riadok %llu #3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -2055,7 +2056,6 @@ msgid "Failed to rename %s to %s"
 msgstr "Premenovanie %s na %s zlyhalo"
 
 #: cmdline/apt-internal-solver.cc:37
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -2068,14 +2068,14 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Použitie: apt-extracttemplates súbor1 [súbor2 ...]\n"
+"Použitie: apt-internal-solver\n"
 "\n"
-"apt-extracttemplates je nástroj na vyňatie konfiguračných skriptov\n"
-"a šablón z balíkov Debian\n"
+"apt-internal-solver je rozhranie na použitie aktuálneho vnútorného\n"
+"riešiteľa ako vonkajší pre rodinu APT na ladenie a pod.\n"
 "\n"
 "Voľby:\n"
 "  -h   Tento pomocník.\n"
-"  -t   Nastaví dočasný adresár\n"
+"  -q   Výstup vhodný do záznamu - bez indikátora priebehu\n"
 "  -c=? Načíta tento konfiguračný súbor\n"
 "  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
 
@@ -2276,9 +2276,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "Nedá sa duplikovať popisovač súboru %i"
 
 #: apt-pkg/contrib/mmap.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Nedá sa urobiť mmap %lu bajtov"
+msgstr "Nedá sa urobiť mmap %llu bajtov"
 
 #: apt-pkg/contrib/mmap.cc:145
 msgid "Unable to close mmap"
@@ -2558,14 +2558,14 @@ msgid "Failed to exec compressor "
 msgstr "Nepodarilo sa spustiť kompresor "
 
 #: apt-pkg/contrib/fileutl.cc:1289
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "čítanie, stále treba prečítať %lu, ale už nič neostáva"
+msgstr "čítanie, treba prečítať ešte %llu, ale už nič neostáva"
 
 #: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "zápis, stále treba zapísať %lu, no nedá sa to"
+msgstr "zápis, treba zapísať ešte %llu, no nedá sa to"
 
 #: apt-pkg/contrib/fileutl.cc:1716
 #, c-format
@@ -2599,9 +2599,8 @@ msgid "The package cache file is an incompatible version"
 msgstr "Súbor vyrovnávacej pamäti balíkov je nezlučiteľnej verzie"
 
 #: apt-pkg/pkgcache.cc:162
-#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "Súbor vyrovnávacej pamäti balíkov je poškodený"
+msgstr "Súbor vyrovnávacej pamäti balíkov je poškodený, je príliš malý"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2785,9 +2784,9 @@ msgstr ""
 "man 5 apt.conf pod APT::Immediate-Configure (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, fuzzy, c-format
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "Nedá sa otvoriť súbor „%s“"
+msgstr "Nedá sa nakonfigurovať „%s“."
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2940,9 +2939,9 @@ msgstr "Vyrovnávacia pamäť má nezlučiteľný systém na správu verzií"
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "Chyba pri spracovávaní %s (FindPkg)"
+msgstr "Vyskytla sa chyba pri spracovávaní %s (%s%d)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -3296,23 +3295,23 @@ msgstr ""
 
 #: apt-pkg/edsp.cc:41 apt-pkg/edsp.cc:61
 msgid "Send scenario to solver"
-msgstr ""
+msgstr "Poslať scénár riešiteľovi"
 
 #: apt-pkg/edsp.cc:209
 msgid "Send request to solver"
-msgstr ""
+msgstr "Poslať požiadavku riešiteľovi"
 
 #: apt-pkg/edsp.cc:277
 msgid "Prepare for receiving solution"
-msgstr ""
+msgstr "Pripraviť sa na prijatie riešenia"
 
 #: apt-pkg/edsp.cc:284
 msgid "External solver failed without a proper error message"
-msgstr ""
+msgstr "Externý riešiteľ zlyhal bez uvedenia chybovej správy"
 
 #: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
 msgid "Execute external solver"
-msgstr ""
+msgstr "Spustiť externého riešiteľa"
 
 #: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
@@ -3407,7 +3406,7 @@ msgstr "Spúšťa sa dpkg"
 
 #: apt-pkg/deb/dpkgpm.cc:1411
 msgid "Operation was interrupted before it could finish"
-msgstr ""
+msgstr "Operácia bola prerušená predtým, než sa stihla dokončiť"
 
 #: apt-pkg/deb/dpkgpm.cc:1473
 msgid "No apport report written because MaxReports is reached already"
