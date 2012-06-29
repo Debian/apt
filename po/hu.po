@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: apt trunk\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-06-26 13:47+0200\n"
-"PO-Revision-Date: 2012-01-06 22:03+0100\n"
+"PO-Revision-Date: 2012-06-25 17:09+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
@@ -202,8 +202,8 @@ msgid ""
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
 "Használat: apt-cache [kapcsolók] parancs\n"
-"           apt-cache [kapcsolók] showpkg pkg1 [pkg2 …]\n"
-"           apt-cache [kapcsolók] showsrc pkg1 [pkg2 …]\n"
+"           apt-cache [kapcsolók] showpkg pkg1 [pkg2 ...]\n"
+"           apt-cache [kapcsolók] showsrc pkg1 [pkg2 ...]\n"
 "\n"
 "Az apt-cache egy alacsony szintű eszköz információk lekérdezésére\n"
 "az APT bináris gyorsítótár-fájljaiból\n"
@@ -446,14 +446,15 @@ msgstr "A virtuális csomagokat, mint a(z) „%s” nem lehet eltávolítani\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "A megadott %s csomag nincs telepítve, így nem lett törölve\n"
+msgstr ""
+"A(z) „%s” csomag nincs telepítve, így nem lett törölve. Erre gondolt: „%s”?\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "A megadott %s csomag nincs telepítve, így nem lett törölve\n"
+msgstr "A(z) „%s” csomag nincs telepítve, így nem lett törölve\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -497,7 +498,7 @@ msgstr "„%s” (%s) verzió lett kijelölve ehhez: „%s”, a(z) „%s” mia
 
 #: cmdline/apt-get.cc:1025
 msgid "Correcting dependencies..."
-msgstr "Függőségek javítása…"
+msgstr "Függőségek javítása..."
 
 #: cmdline/apt-get.cc:1028
 msgid " failed."
@@ -751,10 +752,9 @@ msgstr[1] ""
 "%lu csomag automatikusan lett telepítve, és már nincs rájuk szükség.\n"
 
 #: cmdline/apt-get.cc:1835
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Ezeket az „apt-get autoremove” paranccsal törölheti."
+msgstr[0] "Ezt az „apt-get autoremove” paranccsal törölheti."
 msgstr[1] "Ezeket az „apt-get autoremove” paranccsal törölheti."
 
 #: cmdline/apt-get.cc:1854
@@ -822,7 +822,7 @@ msgstr ""
 
 #: cmdline/apt-get.cc:2183
 msgid "Calculating upgrade... "
-msgstr "Frissítés kiszámítása… "
+msgstr "Frissítés kiszámítása... "
 
 #: cmdline/apt-get.cc:2186 methods/ftp.cc:711 methods/connect.cc:115
 msgid "Failed"
@@ -866,14 +866,14 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2501
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Használja a következő parancsot:\n"
-"bzr get %s\n"
+"bzr branch %s\n"
 "a csomag legújabb (esetleg kiadatlan) frissítéseinek letöltéséhez.\n"
 
 #: cmdline/apt-get.cc:2554
@@ -1070,8 +1070,8 @@ msgid ""
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
 "Használat: apt-get [kapcsolók] parancs\n"
-"           apt-get [kapcsolók] install|remove pkg1 [pkg2 …]\n"
-"           apt-get [kapcsolók] source pkg1 [pkg2 …]\n"
+"           apt-get [kapcsolók] install|remove pkg1 [pkg2 ...]\n"
+"           apt-get [kapcsolók] source pkg1 [pkg2 ...]\n"
 "\n"
 "Az apt-get egy egyszerű parancssori felület csomagok letöltéséhez és\n"
 "telepítéséhez. A leggyakrabban használt parancsok az update és az install. \n"
@@ -1723,7 +1723,7 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Használat:apt-extracttemplates fájl1 [fájl2 …]\n"
+"Használat:apt-extracttemplates fájl1 [fájl2 ...]\n"
 "\n"
 "Az apt-extracttemplates egy eszköz konfigurációs- és mintainformációk "
 "debian-\n"
@@ -1991,19 +1991,19 @@ msgid "Unable to open %s"
 msgstr "%s megnyitása sikertelen"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Deformált felülbírálás %s %lu. sorában #1"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában #1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Deformált felülbírálás %s %lu. sorában #2"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában #2"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Deformált felülbírálás %s %lu. sorában #3"
+msgstr "%s felülbírálás deformált a(z) %llu. sorában #3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -2103,7 +2103,7 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Használat: apt-sortpkgs [kapcsolók] fájl1 [fájl2 …]\n"
+"Használat: apt-sortpkgs [kapcsolók] fájl1 [fájl2 ...]\n"
 "\n"
 "Az apt-sortpkgs egy egyszerű eszköz csomagfájlok rendezésére. A -s "
 "kapcsolót\n"
@@ -2285,9 +2285,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "Nem lehetett kettőzni a(z) %i fájlleírót"
 
 #: apt-pkg/contrib/mmap.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Nem sikerült %lu bájtot mmap-olni"
+msgstr "Nem sikerült %llu bájtot mmap-olni"
 
 #: apt-pkg/contrib/mmap.cc:145
 msgid "Unable to close mmap"
@@ -2419,12 +2419,12 @@ msgstr "Szintaktikai hiba %s: %u: fölösleges szemét a fájl végén"
 #: apt-pkg/contrib/progress.cc:146
 #, c-format
 msgid "%c%s... Error!"
-msgstr "%c%s… Hiba!"
+msgstr "%c%s... Hiba!"
 
 #: apt-pkg/contrib/progress.cc:148
 #, c-format
 msgid "%c%s... Done"
-msgstr "%c%s… Kész"
+msgstr "%c%s... Kész"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -2572,14 +2572,14 @@ msgid "Failed to exec compressor "
 msgstr "Nem sikerült elindítani a tömörítőt "
 
 #: apt-pkg/contrib/fileutl.cc:1289
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "olvasás, még kellene %lu, de már az összes elfogyott"
+msgstr "olvasás, még kellene %llu, de már az összes elfogyott"
 
 #: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "írás, még kiírandó %lu, de ez nem lehetséges"
+msgstr "írás, még kiírandó %llu, de ez nem lehetséges"
 
 #: apt-pkg/contrib/fileutl.cc:1716
 #, c-format
@@ -2807,9 +2807,9 @@ msgstr ""
 "lásd a man 5 apt.conf oldalt az APT::Immediate-Configure címszó alatt. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, fuzzy, c-format
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "A(z) „%s” fájl megnyitása sikertelen"
+msgstr "A(z) „%s” beállítása sikertelen"
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -3144,7 +3144,7 @@ msgstr ""
 
 #: apt-pkg/cdrom.cc:559 apt-pkg/cdrom.cc:656
 msgid "Identifying.. "
-msgstr "Azonosítás… "
+msgstr "Azonosítás... "
 
 #: apt-pkg/cdrom.cc:587
 #, c-format
@@ -3153,7 +3153,7 @@ msgstr "Tárolt címke: %s\n"
 
 #: apt-pkg/cdrom.cc:596 apt-pkg/cdrom.cc:879
 msgid "Unmounting CD-ROM...\n"
-msgstr "CD-ROM leválasztása…\n"
+msgstr "CD-ROM leválasztása...\n"
 
 #: apt-pkg/cdrom.cc:616
 #, c-format
@@ -3166,15 +3166,15 @@ msgstr "CD-ROM leválasztása\n"
 
 #: apt-pkg/cdrom.cc:639
 msgid "Waiting for disc...\n"
-msgstr "Várakozás a lemezre…\n"
+msgstr "Várakozás a lemezre...\n"
 
 #: apt-pkg/cdrom.cc:648
 msgid "Mounting CD-ROM...\n"
-msgstr "CD-ROM csatolása…\n"
+msgstr "CD-ROM csatolása...\n"
 
 #: apt-pkg/cdrom.cc:667
 msgid "Scanning disc for index files..\n"
-msgstr "Indexfájlok keresése a lemezen…\n"
+msgstr "Indexfájlok keresése a lemezen...\n"
 
 #: apt-pkg/cdrom.cc:716
 #, c-format
@@ -3213,7 +3213,7 @@ msgstr ""
 
 #: apt-pkg/cdrom.cc:802
 msgid "Copying package lists..."
-msgstr "Csomaglisták másolása…"
+msgstr "Csomaglisták másolása..."
 
 #: apt-pkg/cdrom.cc:829
 msgid "Writing new source list\n"
@@ -3433,7 +3433,7 @@ msgstr "A dpkg futtatása"
 
 #: apt-pkg/deb/dpkgpm.cc:1410
 msgid "Operation was interrupted before it could finish"
-msgstr ""
+msgstr "A művelet megszakadt, mielőtt befejeződhetett volna"
 
 #: apt-pkg/deb/dpkgpm.cc:1472
 msgid "No apport report written because MaxReports is reached already"
@@ -3510,6 +3510,76 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Nincs zárolva"
+
+#~ msgid "Can't find a source to download version '%s' of '%s'"
+#~ msgstr "Nem található forrás a(z) „%2$s” „%1$s” verziójának letöltéséhez"
+
+#~ msgid ""
+#~ "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-mark is a simple command line interface for marking packages\n"
+#~ "as manually or automatically installed. It can also list marks.\n"
+#~ "\n"
+#~ "Commands:\n"
+#~ "   auto - Mark the given packages as automatically installed\n"
+#~ "   manual - Mark the given packages as manually installed\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Használat: apt-mark [kapcsolók] {auto|manual} csom1 [csom2 ...]\n"
+#~ "\n"
+#~ "Az apt-mark egy egyszerű parancssori felület csomagok megjelölésére\n"
+#~ "kézileg vagy automatikusan telepítettként. Képes felsorolni a jelöléseket "
+#~ "is.\n"
+#~ "\n"
+#~ "Parancsok:\n"
+#~ "   auto -Az adott csomagok megjelölése automatikusan telepítettként\n"
+#~ "   manual - Az adott csomagok megjelölése kézzel telepítettként\n"
+#~ "\n"
+#~ "Kapcsolók:\n"
+#~ "  -h  Ez a súgó szöveg.\n"
+#~ "  -q  Naplózható kimenet - nincs folyamatjelző\n"
+#~ "  -qq Nincs kimenet, kivéve a hibákat\n"
+#~ "  -s  Szimulációs mód. Csak kiírja, mi történne.\n"
+#~ "  -f  auto/kézi megjelölés olvasása/írása az adott fájlból/fájlba\n"
+#~ "  -c=? Ezt a konfigurációs fájlt olvassa be\n"
+#~ "  -o=? Beállít egy tetszőleges konfigurációs opciót, pl. -o dir::cache=/"
+#~ "tmp\n"
+#~ "Lásd még az apt-mark(8) és apt.conf(5) kézikönyvlapokat további\n"
+#~ "információkért."
+
+#~ msgid ""
+#~ "Usage: apt-internal-solver\n"
+#~ "\n"
+#~ "apt-internal-solver is an interface to use the current internal\n"
+#~ "like an external resolver for the APT family for debugging or alike\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Használat: apt-internal-solver\n"
+#~ "\n"
+#~ "Az apt-internal-solver felülettel a jelenlegi belső feloldó külső\n"
+#~ "feloldóként használható az APT családhoz hibakeresési vagy hasonló "
+#~ "céllal\n"
+#~ "\n"
+#~ "Kapcsolók:\n"
+#~ "   -h  Ez a súgó szöveg.\n"
+#~ "   -q  Naplózható kimenet - nincs folyamatjelző\n"
+#~ "   -c=? Ezt a konfigurációs fájlt olvassa be\n"
+#~ "   -o=? Beállít egy tetszőleges konfigurációs opciót, pl. -o dir::cache=/"
+#~ "tmp\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "%s eltávolítása sikertelen"

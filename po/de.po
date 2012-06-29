@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: apt 0.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-06-26 13:47+0200\n"
-"PO-Revision-Date: 2012-05-12 23:00+0200\n"
+"PO-Revision-Date: 2012-06-27 10:55+0200\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
 "Language: \n"
@@ -457,14 +457,16 @@ msgstr "Virtuelle Pakete wie »%s« können nicht entfernt werden.\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Paket %s ist nicht installiert, wird also auch nicht entfernt.\n"
+msgstr ""
+"Paket »%s« ist nicht installiert, wird also auch nicht entfernt. Meinten Sie "
+"»%s«?\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Paket %s ist nicht installiert, wird also auch nicht entfernt.\n"
+msgstr "Paket »%s« ist nicht installiert, wird also auch nicht entfernt.\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -772,10 +774,9 @@ msgstr[1] ""
 "%lu Pakete wurden automatisch installiert und werden nicht mehr benötigt.\n"
 
 #: cmdline/apt-get.cc:1835
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Verwenden Sie »apt-get autoremove«, um sie zu entfernen."
+msgstr[0] "Verwenden Sie »apt-get autoremove«, um es zu entfernen."
 msgstr[1] "Verwenden Sie »apt-get autoremove«, um sie zu entfernen."
 
 #: cmdline/apt-get.cc:1854
@@ -887,14 +888,14 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2501
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Bitte verwenden Sie:\n"
-"bzr get %s\n"
+"bzr branch %s\n"
 "um die neuesten (möglicherweise noch unveröffentlichten) Aktualisierungen\n"
 "für das Paket abzurufen.\n"
 
@@ -3588,6 +3589,78 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Nicht gesperrt"
+
+#~ msgid "Can't find a source to download version '%s' of '%s'"
+#~ msgstr ""
+#~ "Es konnte keine Quelle gefunden werden, um Version »%s« von »%s« "
+#~ "herunterzuladen."
+
+#~ msgid ""
+#~ "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-mark is a simple command line interface for marking packages\n"
+#~ "as manually or automatically installed. It can also list marks.\n"
+#~ "\n"
+#~ "Commands:\n"
+#~ "   auto - Mark the given packages as automatically installed\n"
+#~ "   manual - Mark the given packages as manually installed\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Aufruf: apt-mark [Optionen] {auto|manual} paket1 [paket2 ...]\n"
+#~ "\n"
+#~ "apt-mark ist ein einfaches Befehlszeilenprogramm, um Pakete als manuell\n"
+#~ "oder automatisch installiert zu markieren. Diese Markierungen können "
+#~ "auch\n"
+#~ "aufgelistet werden.\n"
+#~ "\n"
+#~ "Befehle:\n"
+#~ "   auto   – das angegebene Paket als »Automatisch installiert« markieren\n"
+#~ "   manual – das angegebene Paket als »Manuell installiert« markieren\n"
+#~ "\n"
+#~ "Optionen:\n"
+#~ "  -h   dieser Hilfetext\n"
+#~ "  -q   protokollierbare Ausgabe – keine Fortschrittsanzeige\n"
+#~ "  -qq  keine Ausgabe, außer bei Fehlern\n"
+#~ "  -s   nichts tun, nur eine Simulation der Aktionen durchführen\n"
+#~ "  -f   Autom./Manuell-Markierung in der angegebenen Datei lesen/"
+#~ "schreiben\n"
+#~ "  -c=? Diese Konfigurationsdatei benutzen\n"
+#~ "  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
+#~ "Siehe auch die Handbuchseiten apt-mark(8) und apt.conf(5) bezüglich\n"
+#~ "weitergehender Informationen und Optionen."
+
+#~ msgid ""
+#~ "Usage: apt-internal-solver\n"
+#~ "\n"
+#~ "apt-internal-solver is an interface to use the current internal\n"
+#~ "like an external resolver for the APT family for debugging or alike\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ msgstr ""
+#~ "Aufruf: apt-internal-solver\n"
+#~ "\n"
+#~ "apt-internal-solver ist eine Schnittstelle, um den derzeitigen internen\n"
+#~ "Problemlöser für die APT-Familie wie einen externen zu verwenden, zwecks\n"
+#~ "Fehlersuche oder ähnlichem.\n"
+#~ "\n"
+#~ "Optionen:\n"
+#~ "  -h   dieser Hilfetext\n"
+#~ "  -q   protokollierbare Ausgabe – keine Fortschrittsanzeige\n"
+#~ "  -c=? Diese Konfigurationsdatei benutzen\n"
+#~ "  -o=? Beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "%s konnte nicht entfernt werden."

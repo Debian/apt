@@ -83,7 +83,7 @@ bool MMap::Map(FileFd &Fd)
    {
       if ((Flags & ReadOnly) != ReadOnly)
 	 return _error->Error("Compressed file %s can only be mapped readonly", Fd.Name().c_str());
-      Base = new unsigned char[iSize];
+      Base = malloc(iSize);
       SyncToFd = new FileFd();
       if (Fd.Seek(0L) == false || Fd.Read(Base, iSize) == false)
 	 return _error->Error("Compressed file %s can't be read into mmap", Fd.Name().c_str());
@@ -91,17 +91,17 @@ bool MMap::Map(FileFd &Fd)
    }
 
    // Map it.
-   Base = mmap(0,iSize,Prot,Map,Fd.Fd(),0);
+   Base = (Flags & Fallback) ? MAP_FAILED : mmap(0,iSize,Prot,Map,Fd.Fd(),0);
    if (Base == (void *)-1)
    {
-      if (errno == ENODEV || errno == EINVAL)
+      if (errno == ENODEV || errno == EINVAL || (Flags & Fallback))
       {
 	 // The filesystem doesn't support this particular kind of mmap.
 	 // So we allocate a buffer and read the whole file into it.
 	 if ((Flags & ReadOnly) == ReadOnly)
 	 {
 	    // for readonly, we don't need sync, so make it simple
-	    Base = new unsigned char[iSize];
+	    Base = malloc(iSize);
 	    return Fd.Read(Base, iSize);
 	 }
 	 // FIXME: Writing to compressed fd's ?
@@ -109,7 +109,7 @@ bool MMap::Map(FileFd &Fd)
 	 if (dupped_fd == -1)
 	    return _error->Errno("mmap", _("Couldn't duplicate file descriptor %i"), Fd.Fd());
 
-	 Base = new unsigned char[iSize];
+	 Base = calloc(iSize, 1);
 	 SyncToFd = new FileFd (dupped_fd);
 	 if (!SyncToFd->Seek(0L) || !SyncToFd->Read(Base, iSize))
 	    return false;
@@ -135,7 +135,7 @@ bool MMap::Close(bool DoSync)
 
    if (SyncToFd != NULL)
    {
-      delete[] (char *)Base;
+      free(Base);
       delete SyncToFd;
       SyncToFd = NULL;
    }
@@ -283,8 +283,7 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long const &WorkSpace,
 	}
 #endif
 	// fallback to a static allocated space
-	Base = new unsigned char[WorkSpace];
-	memset(Base,0,WorkSpace);
+	Base = calloc(WorkSpace, 1);
 	iSize = 0;
 }
 									/*}}}*/
@@ -300,7 +299,7 @@ DynamicMMap::~DynamicMMap()
 #ifdef _POSIX_MAPPED_FILES
       munmap(Base, WorkSpace);
 #else
-      delete [] (unsigned char *)Base;
+      free(Base);
 #endif
       return;
    }
@@ -464,6 +463,9 @@ bool DynamicMMap::Grow() {
 		Base = realloc(Base, newSize);
 		if (Base == NULL)
 			return false;
+		else
+			/* Set new memory to 0 */
+			memset((char*)Base + WorkSpace, 0, newSize - WorkSpace);
 	}
 
 	Pools =(Pool*) Base + poolOffset;

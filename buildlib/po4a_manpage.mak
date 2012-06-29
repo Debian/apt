@@ -13,6 +13,8 @@
 SOURCE = $(patsubst %.xml,%,$(wildcard *.$(LC).?.xml))
 INCLUDES = apt.ent apt-verbatim.ent
 
+manpages:
+
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 ifdef XSLTPROC
 
@@ -22,7 +24,7 @@ LOCAL := po4a-manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(SOURCE)
 
 # Install generation hooks
-doc: $($(LOCAL)-LIST)
+manpages: $($(LOCAL)-LIST)
 veryclean: veryclean/$(LOCAL)
 
 apt-verbatim.ent: ../apt-verbatim.ent

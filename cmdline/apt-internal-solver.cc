@@ -34,18 +34,16 @@ bool ShowHelp(CommandLine &CmdL) {
 		 COMMON_ARCH,__DATE__,__TIME__);
 
 	std::cout <<
-		_("Usage: apt-internal-resolver\n"
+		_("Usage: apt-internal-solver\n"
 		"\n"
-		"apt-internal-resolver is an interface to use the current internal\n"
+		"apt-internal-solver is an interface to use the current internal\n"
 		"like an external resolver for the APT family for debugging or alike\n"
 		"\n"
 		"Options:\n"
 		"  -h  This help text.\n"
 		"  -q  Loggable output - no progress indicator\n"
 		"  -c=? Read this configuration file\n"
-		"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-		"apt.conf(5) manual pages for more information and options.\n"
-		"                       This APT has Super Cow Powers.\n");
+		"  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
 	return true;
 }
 									/*}}}*/

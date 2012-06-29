@@ -15,6 +15,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
@@ -22,7 +23,6 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/macros.h>
 
-#include <fnmatch.h>
 #include <ctype.h>
 									/*}}}*/
 
@@ -464,22 +464,6 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
    }
    return I;
 }
-
-/*
- * CompleteArch:
- *
- * The complete architecture, consisting of <kernel>-<cpu>.
- */
-static string CompleteArch(std::string const &arch) {
-    if (arch == "armel")              return "linux-arm";
-    if (arch == "armhf")              return "linux-arm";
-    if (arch == "lpia")               return "linux-i386";
-    if (arch == "powerpcspe")         return "linux-powerpc";
-    if (arch == "uclibc-linux-armel") return "linux-arm";
-    if (arch == "uclinux-armel")      return "uclinux-arm";
-
-    return (arch.find("-") != string::npos) ? arch : "linux-" + arch;
-}
 									/*}}}*/
 // ListParser::ParseDepends - Parse a dependency element		/*{{{*/
 // ---------------------------------------------------------------------
@@ -556,58 +540,59 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (ParseArchFlags == true)
    {
-      string completeArch = CompleteArch(arch);
+      APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(arch, false);
 
       // Parse an architecture
       if (I != Stop && *I == '[')
       {
+	 ++I;
 	 // malformed
-         I++;
-         if (I == Stop)
-	    return 0; 
-	 
-         const char *End = I;
-         bool Found = false;
-      	 bool NegArch = false;
-         while (I != Stop) 
+	 if (unlikely(I == Stop))
+	    return 0;
+
+	 const char *End = I;
+	 bool Found = false;
+	 bool NegArch = false;
+	 while (I != Stop)
 	 {
-            // look for whitespace or ending ']'
-	    while (End != Stop && !isspace(*End) && *End != ']') 
-	       End++;
-	 
-	    if (End == Stop) 
+	    // look for whitespace or ending ']'
+	    for (;End != Stop && !isspace(*End) && *End != ']'; ++End);
+
+	    if (unlikely(End == Stop))
 	       return 0;
 
 	    if (*I == '!')
-            {
+	    {
 	       NegArch = true;
-	       I++;
-            }
-
-	    if (stringcmp(arch,I,End) == 0) {
-	       Found = true;
-	    } else {
-	       std::string wildcard = SubstVar(string(I, End), "any", "*");
-	       if (fnmatch(wildcard.c_str(), completeArch.c_str(), 0) == 0)
-	          Found = true;
+	       ++I;
 	    }
-	    
+
+	    std::string arch(I, End);
+	    if (arch.empty() == false && matchesArch(arch.c_str()) == true)
+	    {
+	       Found = true;
+	       if (I[-1] != '!')
+		  NegArch = false;
+	       // we found a match, so fast-forward to the end of the wildcards
+	       for (; End != Stop && *End != ']'; ++End);
+	    }
+
 	    if (*End++ == ']') {
 	       I = End;
 	       break;
 	    }
-	    
+
 	    I = End;
 	    for (;I != Stop && isspace(*I) != 0; I++);
-         }
+	 }
 
-	 if (NegArch)
+	 if (NegArch == true)
 	    Found = !Found;
-	 
-         if (Found == false)
+
+	 if (Found == false)
 	    Package = ""; /* not for this arch */
       }
-      
+
       // Skip whitespace
       for (;I != Stop && isspace(*I) != 0; I++);
    }
@@ -797,7 +782,8 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 {
    // apt-secure does no longer download individual (per-section) Release
    // file. to provide Component pinning we use the section name now
-   FileI->Component = WriteUniqString(component);
+   map_ptrloc const storage = WriteUniqString(component);
+   FileI->Component = storage;
 
    // FIXME: Code depends on the fact that Release files aren't compressed
    FILE* release = fdopen(dup(File.Fd()), "r");
@@ -884,13 +870,14 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 	       break;
 	    *s = '\0';
 	 }
+	 map_ptrloc const storage = WriteUniqString(data);
 	 switch (writeTo) {
-	 case Suite: FileI->Archive = WriteUniqString(data); break;
-	 case Component: FileI->Component = WriteUniqString(data); break;
-	 case Version: FileI->Version = WriteUniqString(data); break;
-	 case Origin: FileI->Origin = WriteUniqString(data); break;
-	 case Codename: FileI->Codename = WriteUniqString(data); break;
-	 case Label: FileI->Label = WriteUniqString(data); break;
+	 case Suite: FileI->Archive = storage; break;
+	 case Component: FileI->Component = storage; break;
+	 case Version: FileI->Version = storage; break;
+	 case Origin: FileI->Origin = storage; break;
+	 case Codename: FileI->Codename = storage; break;
+	 case Label: FileI->Label = storage; break;
 	 case None: break;
 	 }
       }
