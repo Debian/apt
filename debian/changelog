@@ -16,6 +16,11 @@ apt (0.9.7.2) UNRELEASED; urgency=low
   * ftparchive/writer.cc:
     - handle the APT::FTPArchive::Packages::SHA512 option correctly instead
       of overriding SHA256, thanks Christian Marillat! (Closes: #680252)
+  * cmdline/apt-mark.cc:
+    - arch:all packages are treated as arch:native packages, but dpkg
+      expects pkg:all for selections, so use the arch of the installed
+      version instead of the package structure if possible.
+      Thanks to Stepan Golosunov for the report! (Closes: #680041)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 01 Jul 2012 08:20:57 +0200
 
