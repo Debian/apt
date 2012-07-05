@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-06-09 22:05+0300\n"
-"PO-Revision-Date: 2012-07-02 18:12-0600\n"
+"PO-Revision-Date: 2012-07-04 20:24-0600\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
 "Language: fr\n"
@@ -4230,7 +4230,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:411
-#, fuzzy
 #| msgid ""
 #| "<literal>CaInfo</literal> suboption specifies place of file that holds "
 #| "info about trusted certificates.  <literal>&lt;host&gt;::CaInfo</literal> "
@@ -4276,12 +4275,12 @@ msgstr ""
 "à utiliser pour l'authentification du client.  <literal>SslKey</literal> "
 "détermine quelle clef privée doit être utilisée pour l'authentification du "
 "client. <literal>SslForceVersion</literal> surcharge la valeur par défaut "
-"pour la version de SSL à utiliser et peut contenir l'une des chaînes 'TLSv1' "
-"ou 'SSLv3'."
+"pour la version de SSL à utiliser et peut contenir l'une des chaînes <literal>"
+"TLSv1</literal> "
+"ou <literal>SSLv3</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:432
-#, fuzzy
 #| msgid ""
 #| "FTP URIs; ftp::Proxy is the default ftp proxy to use. It is in the "
 #| "standard form of <literal>ftp://[[user][:pass]@]host[:port]/</literal>. "
@@ -4313,11 +4312,12 @@ msgid ""
 "$(SITE_USER)</literal>, <literal>$(SITE_PASS)</literal>, <literal>$(SITE)</"
 "literal> and <literal>$(SITE_PORT)</literal>."
 msgstr ""
-"URI FTP ; ftp::Proxy est le mandataire (proxy) FTP à utiliser par défaut.  "
+"<literal>ftp::Proxy</literal> est le mandataire (proxy) FTP à utiliser par "
+"défaut pour les URI FTP.  "
 "Il se présente sous la forme standard : <literal>ftp://[[user][:pass]@]host[:"
 "port]/</literal>. On peut spécifier un mandataire particulier par hôte "
-"distant en utilisant la syntaxe : <literal>ftp::Proxy::&lt;hôte&gt;</"
-"literal>. Le mot-clé spécial <literal>DIRECT</literal> indique alors de "
+"distant en utilisant la syntaxe : <literal>ftp::Proxy::&lt;hôte&gt;</literal>"
+". Le mot-clé spécial <literal>DIRECT</literal> indique alors de "
 "n'utiliser aucun mandataire pour l'hôte. Si aucun des paramètres précédents "
 "n'est définis, la variable d'environnement <envar>ftp_proxy</envar> annule "
 "et replace toutes les options de mandataire FTP. Pour utiliser un mandataire "
@@ -4325,14 +4325,13 @@ msgstr ""
 "le fichier de configuration. Cette entrée spécifie les commandes à envoyer "
 "au mandataire pour lui préciser à quoi il doit se connecter. Voyez "
 "&configureindex; pour savoir comment faire. Les variables de substitution "
-"disponibles sont : <literal>$(PROXY_USER)</literal>, <literal>$(PROXY_PASS)</"
+"qui représentent le composant d'URI correspondant sont : <literal>"
+"$(PROXY_USER)</literal>, <literal>$(PROXY_PASS)</"
 "literal>, <literal>$(SITE_USER)</literal>, <literal>$(SITE_PASS)</literal>, "
-"<literal>$(SITE)</literal> et <literal>$(SITE_PORT)</literal>. Chacune "
-"correspond à l'élément respectif de l'URI."
+"<literal>$(SITE)</literal> et <literal>$(SITE_PORT)</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:452
-#, fuzzy
 #| msgid ""
 #| "Several settings are provided to control passive mode. Generally it is "
 #| "safe to leave passive mode on; it works in nearly every environment.  "
@@ -4394,7 +4393,6 @@ msgstr "/cdrom/::Mount \"foo\";"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:473
-#, fuzzy
 #| msgid ""
 #| "CD-ROM URIs; the only setting for CD-ROM URIs is the mount point, "
 #| "<literal>cdrom::Mount</literal> which must be the mount point for the CD-"
@@ -4414,19 +4412,21 @@ msgid ""
 "<literal>cdrom</literal> block. It is important to have the trailing slash.  "
 "Unmount commands can be specified using UMount."
 msgstr ""
-"URI CD ; la seule option de configuration pour les URI de CD est le point de "
+"La seule option de configuration pour les URI qui utilisent la méthode <"
+"literal>cdrom</literal> est le point de "
 "montage : <literal>cdrom::Mount</literal> ; il doit représenter le point de "
-"montage du lecteur de CD-ROM indiqué dans <filename>/etc/fstab</filename>.  "
+"montage du lecteur de CD-ROM (ou DVD, etc.) indiqué dans <filename>"
+"/etc/fstab</filename>.  "
 "D'autres commandes de montage et de démontage peuvent être fournies quand le "
 "point de montage ne peut être listé dans le fichier <filename>/etc/fstab</"
-"filename> (par exemple, un montage SMB). Syntaxiquement, il faut placer "
-"<placeholder type=\"literallayout\" id=\"0\"/> dans le bloc cdrom.  La barre "
+"filename>. Syntaxiquement, il faut placer "
+"<placeholder type=\"literallayout\" id=\"0\"/> dans le bloc <literal>cdrom<"
+"/literal>.  La barre "
 "oblique finale est importante. Les commandes de démontage peuvent être "
 "spécifiées en utilisant <literal>UMount</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:486
-#, fuzzy
 #| msgid ""
 #| "GPGV URIs; the only option for GPGV URIs is the option to pass additional "
 #| "parameters to gpgv.  <literal>gpgv::Options</literal> Additional options "
@@ -4435,9 +4435,9 @@ msgid ""
 "For GPGV URIs the only configurable option is <literal>gpgv::Options</"
 "literal>, which passes additional parameters to gpgv."
 msgstr ""
-"URI GPGV ; la seule option pour les URI GPGV est celle qui permet de passer "
-"des paramètres à gpgv.  <literal>gpgv::Options</literal> : options "
-"supplémentaires passées à gpgv."
+"La seule option pour les URI GPGV est <literal>gpgv::Options</literal>, qui "
+"permet de passer "
+"des paramètres à gpgv"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><synopsis>
 #: apt.conf.5.xml:497
@@ -4483,7 +4483,6 @@ msgstr "Acquire::CompressionTypes::Order { \"lzma\"; \"gz\"; };"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:498
-#, fuzzy
 #| msgid ""
 #| "Also, the <literal>Order</literal> subgroup can be used to define in "
 #| "which order the acquire system will try to download the compressed files. "
@@ -4518,8 +4517,9 @@ msgstr ""
 "les fichiers compressés. Le premier système mentionné sera essayé en "
 "premier, puis le suivant en cas d'échec. Ainsi, pour privilégier un format "
 "par rapport à un autre, il suffit de le placer en premier dans cette liste. "
-"Les types par défaut qui ne sont pas déjà indiqués seront ajoutés en fin de "
-"liste au moment de l'exécution. Ainsi, par exemple,  <placeholder type="
+"Les types par défaut qui ne sont pas déjà indiqués seront ajoutés "
+"implicitement au moment de l'exécution. Ainsi, par exemple,  <placeholder "
+"type="
 "\"synopsis\" id=\"0\"/> peut être utiliser de préférence les fichiers "
 "compressés avec <command>gzip</command> par rapport à <command>bzip2</"
 "command> et <command>lzma</command>. Si l'objectif est d'utiliser "
@@ -4536,7 +4536,6 @@ msgstr "Dir::Bin::bzip2 \"/bin/bzip2\";"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:507
-#, fuzzy
 #| msgid ""
 #| "Note that at run time the <literal>Dir::Bin::<replaceable>Methodname</"
 #| "replaceable></literal> will be checked: If this setting exists the method "
@@ -4560,9 +4559,11 @@ msgid ""
 "list style.  This will not override the defined list; it will only prefix "
 "the list with this type."
 msgstr ""
-"Veuillez noter qu'à l'exécution, <literal>Dir::Bin::<replaceable>Methodname</"
-"replaceable></literal> sera vérifié : si ce réglage existe, la méthode ne "
-"sera utilisée que si ce fichier existe. Ainsi, pour la méthode bzip2, le "
+"Veuillez noter que <literal>Dir::Bin::<replaceable>Methodname</"
+"replaceable></literal> sera contrôlé : si cette option est utilisée, la "
+"méthode ne "
+"sera utilisée que si ce fichier existe. Ainsi, pour la méthode <literal>"
+"bzip2</literal>, le "
 "réglage (utilisé en interne) est <placeholder type=\"literallayout\" id="
 "\"0\"/>. Veuillez également noter que les éléments de liste indiqués à la "
 "ligne de commande seront ajoutés à la fin de la liste indiquée dans les "
@@ -4601,7 +4602,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:532
-#, fuzzy
 #| msgid ""
 #| "The Languages subsection controls which <filename>Translation</filename> "
 #| "files are downloaded and in which order APT tries to display the "
@@ -4626,9 +4626,8 @@ msgstr ""
 "première traduction disponible pour le champ Description dans la langue "
 "choisie en premier. Les langues peuvent être indiquées par leur code long ou "
 "court. Veuillez noter que tous les dépôts ne fournissent pas les fichiers "
-"<filename>Translation</filename> pour toutes les langues, particulièrement "
-"pour les codes rarement utilisés. Il est donc conseillé de vous renseigner "
-"sur ce qui est disponible avant d'établir des réglages impossibles."
+"<filename>Translation</filename> pour toutes les langues, les codes longs de "
+"langues étant particulièrement rares."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para><programlisting>
 #: apt.conf.5.xml:549
@@ -4640,7 +4639,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:537
-#, fuzzy
 #| msgid ""
 #| "The default list includes \"environment\" and \"en\". "
 #| "\"<literal>environment</literal>\" has a special meaning here: It will be "
@@ -4689,9 +4687,9 @@ msgstr ""
 "fichier de traduction, il est nécessaire d'utiliser le réglage "
 "<literal>Acquire::Languages=none</literal>. La valeur « <literal>none</"
 "literal> » a une signification spéciale et indique de ne rechercher aucun "
-"fichier <filename>Translation</filename>. Cela permet à l'administrateur "
-"local d'indiquer à APT de télécharger des fichiers sans les utiliser si la "
-"variable d'environnement ne les comporte pas. Ainsi, dans l'exemple qui "
+"fichier <filename>Translation</filename>. Cela indique à APT de télécharger "
+"ces traductions, sans nécessairement les utiliser sauf si la "
+"variable d'environnement indique ces langues. Ainsi, dans l'exemple qui "
 "suit, l'ordre utilisé sera « en, fr » si dans un environnement configuré "
 "pour l'anglais et « fr, en » pour un environnement configuré en français. "
 "Les fichiers pour l'allemand seront également téléchargés mais ne sont "
@@ -4707,6 +4705,11 @@ msgid ""
 "files which are found in <filename>/var/lib/apt/lists/</filename> will be "
 "added to the end of the list (after an implicit \"<literal>none</literal>\")."
 msgstr ""
+"Note : afin d'éviter des problèmes lorsqu'APT est exécuté dans différents "
+"environnements (p. ex. par différents utilisateurs ou différents programmes), "
+"tous les fichiers « Translation »qui sont trouvés dans <filename>"
+"/var/lib/apt/lists/</filename> seront ajoutés à la fin de la liste (après un "
+"« <literal>none</literal> » implicite)."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:560
@@ -4715,7 +4718,6 @@ msgstr "Les répertoires"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:562
-#, fuzzy
 #| msgid ""
 #| "The <literal>Dir::State</literal> section has directories that pertain to "
 #| "local state information. <literal>lists</literal> is the directory to "
@@ -4737,14 +4739,14 @@ msgstr ""
 "système local. <literal>lists</literal> est le répertoire où placer les "
 "listes de paquets téléchargés et <literal>status</literal> est le nom du "
 "fichier d'état de &dpkg;.  <literal>preferences</literal> concerne APT : "
-"c'est le nom du fichier des préférences.  <literal>Dir::State</literal> "
+"c'est le nom du fichier <filename>preferences</preferences>.  <literal>"
+"Dir::State</literal> "
 "contient le répertoire par défaut préfixé à tous les sous-éléments, quand "
 "ceux-ci ne commencent pas par <filename>/</filename> ou <filename>./</"
 "filename>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:569
-#, fuzzy
 #| msgid ""
 #| "<literal>Dir::Cache</literal> contains locations pertaining to local "
 #| "cache information, such as the two package caches <literal>srcpkgcache</"
@@ -4967,7 +4969,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:674
-#, fuzzy
 #| msgid ""
 #| "This is a list of shell commands to run before invoking &dpkg;. Like "
 #| "<literal>options</literal> this must be specified in list notation. The "
@@ -5032,7 +5033,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt.conf.5.xml:699
-#, fuzzy
 #| msgid ""
 #| "APT can call &dpkg; in a way so it can make aggressive use of triggers "
 #| "over multiple calls of &dpkg;. Without further options &dpkg; will use "
@@ -5059,8 +5059,8 @@ msgid ""
 msgstr ""
 "APT peut lancer &dpkg; pour utiliser les actions différées de manière "
 "agressive entre les appels successifs à &dpkg;. Sans options "
-"supplémentaires, &dpkg; n'utilisera les actions différées que dans le cadre "
-"de sa propre exécution. Si ces options sont utilisées, le temps d'exécution "
+"supplémentaires, &dpkg; utilisera les actions différées une fois à chacune de "
+"ses exécutions. Si ces options sont utilisées, le temps d'exécution "
 "peut diminuer fortement dans les actions d'installation ou de mise à jour. "
 "Il est prévu de les activer par défaut dans le futur mais étant donné "
 "qu'elles changent notablement la méthode qu'utilise APT pour lancer &dpkg;, "
@@ -5133,7 +5133,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:729
-#, fuzzy
 #| msgid ""
 #| "Valid values are \"<literal>all</literal>\", \"<literal>smart</literal>\" "
 #| "and \"<literal>no</literal>\".  \"<literal>all</literal>\" is the default "
@@ -5163,11 +5162,12 @@ msgid ""
 msgstr ""
 "Les valeurs possibles sont « <literal>all</literal> », « <literal>smart</"
 "literal> » et « <literal>no</literal> ». La valeur par défaut est "
-"« <literal>all</literal> » où APT configure explicitement tous les paquets. "
+"« <literal>all</literal> » où APT configure tous les paquets. "
 "La valeur « <literal>smart</literal> » permet de ne configurer que les "
 "paquets qui ont besoin de l'être avant la décompaction d'un autre paquet (à "
 "cause d'une pré-dépendance) ; les autres configurations sont laissées pour "
-"un appel ultérieur à &dpkg;. L'option « <literal>no</literal> » ne "
+"un appel ultérieur à &dpkg; via un appel créé par l'option ConfigurePending "
+"(voir plus loin). L'option « <literal>no</literal> » ne "
 "provoquera aucune configuration et s'en remettra totalement à &dpkg; pour "
 "ces opérations (ce qui échouera en cas de pré-dépendances). Si cette option "
 "est définie sur une valeur différente de « <literal>all</literal> », "
@@ -5176,7 +5176,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:744
-#, fuzzy
 #| msgid ""
 #| "If this option is set, APT will call <command>dpkg --configure --pending</"
 #| "command> to let &dpkg; handle all required configurations and triggers. "
@@ -5646,7 +5645,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml:42
-#, fuzzy
 #| msgid ""
 #| "Several versions of a package may be available for installation when the "
 #| "&sources-list; file contains references to more than one distribution "
@@ -5671,13 +5669,13 @@ msgstr ""
 "literal>), plusieurs versions d'un paquet peuvent être installées. APT "
 "affecte une priorité à chaque version disponible. La commande <command>apt-"
 "get</command>, tenant compte des contraintes de dépendance, installe la "
-"version qui possède la priorité la plus haute.  Le fichier des préférences "
+"version qui possède la priorité la plus haute.  Le fichier <filename>"
+"preferences</filename> "
 "annule les priorités assignées par défaut aux versions des paquets : ainsi "
 "l'utilisateur peut choisir la version qu'il veut installer."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt_preferences.5.xml:52
-#, fuzzy
 #| msgid ""
 #| "Several instances of the same version of a package may be available when "
 #| "the &sources-list; file contains references to more than one source.  In "
@@ -5695,7 +5693,8 @@ msgstr ""
 "références à plusieurs sites de téléchargement, il peut exister plusieurs "
 "exemplaires de la même version d'un paquet. Dans ce cas, <command>apt-get</"
 "command> télécharge l'exemplaire qui apparaît en premier dans le fichier "
-"&sources-list;. Le fichier des préférences n'influe pas sur le choix des "
+"&sources-list;. Le fichier <filename>preferences</filename> n'influe pas sur "
+"le choix des "
 "exemplaires, seulement sur le choix de la version."
 
 #. type: Content of: <refentry><refsect1><para>
@@ -5803,7 +5802,6 @@ msgstr "priorité 1"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:107
-#, fuzzy
 #| msgid ""
 #| "to the versions coming from archives which in their <filename>Release</"
 #| "filename> files are marked as \"NotAutomatic: yes\" like the Debian "
@@ -5815,8 +5813,9 @@ msgid ""
 "<literal>experimental</literal> archive."
 msgstr ""
 "pour les versions issues d'archives dont le fichier <filename>Release</"
-"filename> comporte la mention « NotAutomatic: yes » comme, par exemple, "
-"l'archive « experimental » de Debian."
+"filename> comporte la mention « NotAutomatic: yes » mais <emphasis>pas<"
+"/emphasis> « ButAutomaticUpgrades: yes » comme"
+"l'archive <literal>experimental</literal> de Debian."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml:113
@@ -5825,7 +5824,6 @@ msgstr "une priorité égale à 100"
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><listitem><simpara>
 #: apt_preferences.5.xml:114
-#, fuzzy
 #| msgid ""
 #| "to the versions coming from archives which in their <filename>Release</"
 #| "filename> files are marked as \"NotAutomatic: yes\" like the Debian "
@@ -5837,8 +5835,9 @@ msgid ""
 "backports archive since <literal>squeeze-backports</literal>."
 msgstr ""
 "pour les versions issues d'archives dont le fichier <filename>Release</"
-"filename> comporte la mention « NotAutomatic: yes » comme, par exemple, "
-"l'archive « experimental » de Debian."
+"filename> comporte la mention « NotAutomatic: yes » et "
+"« ButAutomaticUpgrades: yes » comme l'archive des rétroportages de Debian "
+"depuis <literal>squeeze-backports</literal>."
 
 #. type: Content of: <refentry><refsect1><refsect2><para><variablelist><varlistentry><term>
 #: apt_preferences.5.xml:121
@@ -5869,7 +5868,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:132
-#, fuzzy
 #| msgid ""
 #| "If the target release has not been specified then APT simply assigns "
 #| "priority 100 to all installed package versions and priority 500 to all "
@@ -5889,7 +5887,8 @@ msgstr ""
 "une priorité égale à 500 à tout version non installée. Cela à l'exception "
 "des versions issues des archives qui ont la mention « NotAutomatic: yes » "
 "dans leur fichier <filename>Release</filename>, qui auront alors une "
-"priorité égale à 1."
+"priorité égale à 1 ou à 100 si elles sont également marquées avec "
+"« ButAutomaticUpgrades: yes »."
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:139
@@ -6186,7 +6185,7 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml:262
 msgid "Regular expressions and &glob; syntax"
-msgstr ""
+msgstr "Expressions régulières et syntaxe &glob;"
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt_preferences.5.xml:264
@@ -6197,6 +6196,12 @@ msgid ""
 "gnome (as a &glob;-like expression) or contains the word kde (as a POSIX "
 "extended regular expression surrounded by slashes)."
 msgstr ""
+"APT gére également l'épinglage (« pinning ») avec des expressions &glob; et "
+"des expressions régulières entourées par des barres obliques. Par exemple, "
+"l'exemple qui suit affecte une priorité de 500 à tous les paquets "
+"d'experimental dont le nom commence par gnome (en tant qu'expression  de type "
+"&glob;) ou contient le mot kde (sous format d'une expression régulière POSIX "
+"étendue, entourée de barres obliques)."
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
 #: apt_preferences.5.xml:273
@@ -6217,6 +6222,10 @@ msgid ""
 "string can occur. Thus, the following pin assigns the priority 990 to all "
 "packages from a release starting with &ubuntu-codename;."
 msgstr ""
+"La règle pour ces expressions est qu'elles peuvent prendre place dès que la "
+"chaîne correspondante est trouvée. Ainsi, l'épinglage qui suit affecte une "
+"priorité de 990 à tous les paquets d'une version de distribution commençant "
+"par &ubuntu-codename;."
 
 #. type: Content of: <refentry><refsect1><refsect2><programlisting>
 #: apt_preferences.5.xml:285
@@ -6240,6 +6249,14 @@ msgid ""
 "specific pins override it.  The pattern \"<literal>*</literal>\" in a "
 "Package field is not considered a &glob; expression in itself."
 msgstr ""
+"Si une expression régulière est rencontrée dans un champ <literal>Package<"
+"/literal>, le comportement sera celui qui aurait eu lieu si cette expression "
+"était remplacée par la liste de tous les paquets auxquels elle correspond. Il "
+"n'est pas encore décidé si cela sera conservé dans le futur : il est donc "
+"conseillé d'utiliser des épinglages avec caractères génériques en premier "
+"afin qu'ils soient remplacés par des épinglages plus spécifiques. Le motif "
+"« <literal>*</literal> » dans un champ Package n'est pas considéré comme une "
+"expression &glob; en soi."
 
 #. type: Content of: <refentry><refsect1><refsect2><title>
 #: apt_preferences.5.xml:307
@@ -6999,7 +7016,7 @@ msgstr "&apt-get; &apt-cache; &apt-conf; &sources-list;"
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: sources.list.5.xml:33
 msgid "List of configured APT data sources"
-msgstr ""
+msgstr "Liste des sources de données APT configurées"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:38
@@ -7011,6 +7028,12 @@ msgid ""
 "<command>apt-get update</command> (or by an equivalent command from another "
 "APT front-end)."
 msgstr ""
+"Le fichier de liste de sources <filename>/etc/apt/sources.list</filename> est "
+"prévu pour pouvoir gérer un nombre quelconque de sources actives et de "
+"supports. Le fichier donne une source par ligne, avec les sources "
+"prioritaires en premier. L'information relative aux sources configurées est "
+"récupérée par la commande <command>apt-get update</command> (ou par une "
+"commande équivalent avec une autre interface à APT)."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:45
@@ -7021,6 +7044,12 @@ msgid ""
 "and a <literal>#</literal> character anywhere on a line marks the remainder "
 "of that line as a comment."
 msgstr ""
+"Chaque ligne qui indique une source commence par son type (p. ex. <literal>"
+"deb-src</"
+"literal>), suivi d'options et paramètres pour ce type. Les entrées "
+"individuelles ne peuvent pas être multilignes. Les lignes vides sont ignorées "
+"et un caractère <literal>#</literal> sur une ligne indique que le reste de la "
+"ligne est un commentaire."
 
 #. type: Content of: <refentry><refsect1><title>
 #: sources.list.5.xml:53
@@ -7093,14 +7122,13 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:81
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "deb uri distribution [component1] [component2] [...]"
 msgid "deb [ options ] uri distribution [component1] [component2] [...]"
-msgstr "deb uri distribution [composant1] [composant2] [...]"
+msgstr "deb [ options ] uri distribution [composant1] [composant2] [...]"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:83
-#, fuzzy
 #| msgid ""
 #| "The URI for the <literal>deb</literal> type must specify the base of the "
 #| "Debian distribution, from which APT will find the information it needs.  "
@@ -7132,7 +7160,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:92
-#, fuzzy
 #| msgid ""
 #| "<literal>distribution</literal> may also contain a variable, <literal>"
 #| "$(ARCH)</literal> which expands to the Debian architecture (i386, amd64, "
@@ -7150,8 +7177,10 @@ msgid ""
 "architecture otherwise."
 msgstr ""
 "<literal>distribution</literal> peut aussi contenir une variable <literal>"
-"$(ARCH)</literal>, qui sera remplacée par l'architecture Debian (i386, "
-"amd64, powerpc, ...)  sur laquelle s'exécute le système. On peut ainsi "
+"$(ARCH)</literal>, qui sera remplacée par l'architecture Debian (comme <"
+"literal>amd64</"
+"literal> ou <literal>armel</literal>)  sur laquelle s'exécute le système. On "
+"peut ainsi "
 "utiliser un fichier <filename>sources.list</filename> qui ne dépend pas "
 "d'une architecture. En général, ce n'est intéressant que si l'on indique un "
 "chemin exact ; sinon <literal>APT</literal> crée automatiquement un URI en "
@@ -7193,6 +7222,12 @@ msgid ""
 "following settings are supported by APT (note however that unsupported "
 "settings will be ignored silently):"
 msgstr ""
+"<literal>options</literal> est toujours optionnel et doit être entouré par "
+"des crochets. It est constitué de réglages multiples sous la forme <literal><"
+"replaceable>réglage</replaceable>=<replaceable>valeur</"
+"replaceable></literal>. Des réglages multiples sont séparés par des espaces. "
+"Les réglages suivants sont gérés par APT (des réglages non gérés seront "
+"ignorés silencieusement) :"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:117
@@ -7203,6 +7238,11 @@ msgid ""
 "architectures defined by the <literal>APT::Architectures</literal> option "
 "will be downloaded."
 msgstr ""
+"<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
+"replaceable>,…</literal> peut être utilisé pour indiquer les architectures "
+"pour lesquelles l'information doit être téléchargée. Si cette option n'est "
+"pas utilisée, toutes les architectures définies par l'option <literal>"
+"APT::Architectures</literal> sera téléchargée."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:121
@@ -7214,6 +7254,14 @@ msgid ""
 "and trusted context. <literal>trusted=no</literal> is the opposite which "
 "handles even correctly authenticated sources as not authenticated."
 msgstr ""
+"<literal>trusted=yes</literal> peut être utilisée pour indiquer que les "
+"paquets issus de cette source doivent être authentifiés même si le fichier <"
+"filename>Release</"
+"filename> n'est pas signé ou que la signature ne peut pas être vérifiée. Cela "
+"désactive certaines parties d'&apt-secure; et ne devrait donc être utilisé "
+"que dans un contexte local ou sûr. <literal>trusted=no</literal> est l'opposé "
+"et considérera même les sources correctement authentifiées comme non "
+"authentifiées."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:128
@@ -7254,10 +7302,9 @@ msgstr "Spécification des URI"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:143
-#, fuzzy
 #| msgid "more recognizable URI types"
 msgid "The currently recognized URI types are:"
-msgstr "plus de types d'URI simples à reconnaître"
+msgstr "Les types d'URI actuellement reconnues sont :"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml:147
@@ -7299,7 +7346,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml:172
-#, fuzzy
 #| msgid ""
 #| "The ftp scheme specifies an FTP server for the archive. APT's FTP "
 #| "behavior is highly configurable; for more information see the &apt-conf; "
@@ -7321,15 +7367,15 @@ msgstr ""
 "Le procédé <literal>ftp</literal> indique un serveur FTP comme archive. Le "
 "fonctionnement en mode ftp est largement configurable ; référez-vous à la "
 "page de manuel de &apt-cdrom; pour d'autres informations. On remarquera "
-"qu'on peut indiquer un mandataire ftp avec la variable d'environnement "
-"<envar>ftp_proxy</envar>. On peut aussi spécifier un mandataire http (les "
-"serveurs mandataires http comprennent souvent les URL ftp) en utilisant "
-"cette méthode et SEULEMENT cette méthode. Les mandataires ftp utilisant http "
+"qu'on peut indiquer un mandataire FTP avec la variable d'environnement "
+"<envar>ftp_proxy</envar>. On peut aussi spécifier un mandataire HTTP (les "
+"serveurs mandataires HTTP comprennent souvent les URL FTP) en utilisant "
+"cette méthode et <emphasis>seulement</emphasis> cette méthode. Les "
+"mandataires qui utilisent HTTP "
 "et qui sont spécifiés dans le fichier de configuration seront ignorés."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml:184
-#, fuzzy
 #| msgid ""
 #| "The copy scheme is identical to the file scheme except that packages are "
 #| "copied into the cache directory instead of used directly at their "
@@ -7343,12 +7389,12 @@ msgid ""
 msgstr ""
 "Le procédé <literal>copy</literal> est identique au procédé <literal>file</"
 "literal> excepté que les paquets sont copiés dans le cache du répertoire au "
-"lieu d'être utilisés directement depuis leur emplacement. C'est utile aux "
-"gens qui utilisent un disque zip pour recopier des fichiers avec APT."
+"lieu d'être utilisés directement depuis leur emplacement. Ce réglage peut "
+"servir aux utilisateurs qui se servent d'un support amovible pour recopier "
+"des fichiers avec APT."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml:191
-#, fuzzy
 #| msgid ""
 #| "The rsh/ssh method invokes rsh/ssh to connect to a remote host as a given "
 #| "user and access the files. It is a good idea to do prior arrangements "
@@ -7362,21 +7408,21 @@ msgid ""
 "commands are used to perform the file transfers from the remote host."
 msgstr ""
 "Le procédé rsh/ssh utilise rsh/ssh pour se connecter à une machine distante "
-"en tant qu'un certain utilisateur et pour accéder aux fichiers. Il est "
-"préférable au préalable de s'arranger avec des clés RSA ou bien rhosts. Pour "
-"l'accès aux fichiers de la machine distante et le transfert, on utilise les "
-"commandes standard <command>find</command> et <command>dd</command>."
+"et pour accéder aux fichiers en tant qu'un certain utilisateur. Il est "
+"recommandé de régler préalablement les hôtes distants (rhosts) ou les clés "
+"RSA. Les "
+"commandes standard <command>find</command> et <command>dd</command> sont "
+"utilisées pour "
+"l'accès aux fichiers de la machine distante."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
 #: sources.list.5.xml:198
-#, fuzzy
 #| msgid "more recognizable URI types"
 msgid "adding more recognizable URI types"
-msgstr "plus de types d'URI simples à reconnaître"
+msgstr "ajout de types d'URI supplémentaires reconnues"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
 #: sources.list.5.xml:200
-#, fuzzy
 #| msgid ""
 #| "APT can be extended with more methods shipped in other optional packages "
 #| "which should follow the nameing scheme <package>apt-transport-"
@@ -7448,6 +7494,9 @@ msgid ""
 "<literal>APT::Architectures</literal> while the second always retrieves "
 "<literal>amd64</literal> and <literal>armel</literal>."
 msgstr ""
+"La première ligne récupère l'information des paquets pour les architectures "
+"de <literal>APT::Architectures</literal> alors que la deuxième récupère <"
+"literal>amd64</literal> et <literal>armel</literal>."
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:224
@@ -7628,7 +7677,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-sortpkgs.1.xml:45
-#, fuzzy
 #| msgid "All output is sent to stdout, the input must be a seekable file."
 msgid ""
 "All output is sent to standard output; the input must be a seekable file."
@@ -8210,7 +8258,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><refsect2><para>
 #: apt-ftparchive.1.xml:354
-#, fuzzy
 #| msgid ""
 #| "All of the settings defined in the <literal>TreeDefault</literal> section "
 #| "can be use in a <literal>Tree</literal> section as well as three new "
@@ -8447,7 +8494,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:510
-#, fuzzy
 #| msgid ""
 #| "Values for the additional metadata fields in the Release file are taken "
 #| "from the corresponding variables under <literal>APT::FTPArchive::Release</"
@@ -8468,14 +8514,17 @@ msgid ""
 "literal> and <literal><replaceable>Checksum</replaceable></literal> can be "
 "<literal>MD5</literal>, <literal>SHA1</literal> or <literal>SHA256</literal>."
 msgstr ""
-"La valeur des autres champs de métadonnées du fichier Release sont tirées de "
-"la valeur correspondante dans <literal>APT::FTPArchive::Release</literal>, "
-"p. ex. <literal>APT::FTPArchive::Release::Origin</literal>.  Les champs "
-"reconnus sont : <literal>Origin</literal>, <literal>Label</literal>, "
-"<literal>Suite</literal>, <literal>Version</literal>, <literal>Codename</"
-"literal>, <literal>Date</literal>, <literal>Valid-Until</literal>, "
-"<literal>Architectures</literal>, <literal>Components</literal>, "
-"<literal>Description</literal>."
+"Crée la somme de contrôle indiquée. Si ces options sont actives par défaut. "
+"Quand elles sont désactivées, les fichiers d'index créés n'auront pas de "
+"champ de somme de contrôle là où cela était possible. Éléments de "
+"configuration :"
+"<literal>APT::FTPArchive::<replaceable>Checksum</"
+"replaceable></literal> et <literal>APT::FTPArchive::<replaceable>Index</"
+"replaceable>::<replaceable>Checksum</replaceable></literal> où "
+"<literal><replaceable>Index</replaceable></literal> peut être "
+"<literal>Packages</literal>, <literal>Sources</literal> ou <literal>Release</"
+"literal> et <literal><replaceable>Checksum</replaceable></literal> peut être "
+"<literal>MD5</literal>, <literal>SHA1</literal> ou <literal>SHA256</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-ftparchive.1.xml:521
