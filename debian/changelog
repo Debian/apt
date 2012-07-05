@@ -21,6 +21,9 @@ apt (0.9.7.2) UNRELEASED; urgency=low
       expects pkg:all for selections, so use the arch of the installed
       version instead of the package structure if possible.
       Thanks to Stepan Golosunov for the report! (Closes: #680041)
+  * apt-pkg/clean.cc:
+    - run autoclean against pkg:arch and not always against pkg:native as
+      this removes valid cache entries (Closes: #679371)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 01 Jul 2012 08:20:57 +0200
 
