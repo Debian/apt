@@ -688,7 +688,12 @@ signreleasefiles() {
 }
 
 changetowebserver() {
-	if which weborf > /dev/null; then
+	if test -x ${BUILDDIRECTORY}/aptwebserver; then
+		cd aptarchive
+		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/aptwebserver 2> /dev/null > /dev/null &
+		addtrap "kill $!;"
+		cd - > /dev/null
+	elif which weborf > /dev/null; then
 		weborf -xb aptarchive/ 2>&1 > /dev/null &
 		addtrap "kill $!;"
 	elif which gatling > /dev/null; then
