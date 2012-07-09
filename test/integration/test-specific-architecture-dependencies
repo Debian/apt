@@ -1,0 +1,182 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'libc6' 'amd64,i386' '1' 'Multi-Arch: same'
+insertinstalledpackage 'libold' 'amd64,i386' '1' 'Multi-Arch: same'
+insertinstalledpackage 'provider' 'amd64' '1' 'Provides: foo'
+
+insertpackage 'unstable' 'pre-depender' 'all' '1' 'Pre-Depends: libc6:i386'
+insertpackage 'unstable' 'depender' 'all' '1' 'Depends: libc6:i386'
+
+insertpackage 'unstable' 'breaker' 'all' '1' 'Breaks: libold (<< 2)'
+insertpackage 'unstable' 'breaker-x32' 'amd64' '1' 'Breaks: libold:i386 (<< 2)'
+insertpackage 'unstable' 'breaker-x64' 'i386' '1' 'Breaks: libold:amd64 (<< 2)'
+# conflicts with no effect
+insertpackage 'unstable' 'oldconflictor' 'all' '1' 'Conflicts: libold (<< 0)'
+insertpackage 'unstable' 'oldconflictor-x32' 'amd64' '1' 'Conflicts: libold:i386 (<< 0)'
+insertpackage 'unstable' 'oldconflictor-x64' 'i386' '1' 'Conflicts: libold:amd64 (<< 0)'
+
+insertpackage 'unstable' 'foo-depender' 'i386,amd64' '1' 'Depends: foo'
+insertpackage 'unstable' 'foo-foreign-depender' 'i386' '1' 'Depends: foo:amd64'
+
+insertpackage 'unstable' 'foo-conflictor' 'i386,amd64' '1' 'Conflicts: foo'
+insertpackage 'unstable' 'foo-foreign-conflictor' 'i386' '1' 'Conflicts: foo:amd64'
+insertpackage 'unstable' 'foo-no-conflictor' 'i386' '1' 'Conflicts: foo:i386'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libc6:i386
+The following NEW packages will be installed:
+  libc6:i386 pre-depender
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:i386 (1 unstable [i386])
+Conf libc6:i386 (1 unstable [i386])
+Inst pre-depender (1 unstable [all])
+Conf pre-depender (1 unstable [all])' aptget install pre-depender -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libc6:i386
+The following NEW packages will be installed:
+  depender libc6:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:i386 (1 unstable [i386])
+Inst depender (1 unstable [all])
+Conf libc6:i386 (1 unstable [i386])
+Conf depender (1 unstable [all])' aptget install depender -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libold libold:i386
+The following NEW packages will be installed:
+  breaker
+0 upgraded, 1 newly installed, 2 to remove and 0 not upgraded.
+Remv libold [1]
+Remv libold:i386 [1]
+Inst breaker (1 unstable [all])
+Conf breaker (1 unstable [all])' aptget install breaker -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libold:i386
+The following NEW packages will be installed:
+  breaker-x32
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libold:i386 [1]
+Inst breaker-x32 (1 unstable [amd64])
+Conf breaker-x32 (1 unstable [amd64])' aptget install breaker-x32 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libold
+The following NEW packages will be installed:
+  breaker-x64:i386
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libold [1]
+Inst breaker-x64:i386 (1 unstable [i386])
+Conf breaker-x64:i386 (1 unstable [i386])' aptget install breaker-x64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  oldconflictor
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst oldconflictor (1 unstable [all])
+Conf oldconflictor (1 unstable [all])' aptget install oldconflictor -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  oldconflictor-x32
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst oldconflictor-x32 (1 unstable [amd64])
+Conf oldconflictor-x32 (1 unstable [amd64])' aptget install oldconflictor-x32 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  oldconflictor-x64:i386
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst oldconflictor-x64:i386 (1 unstable [i386])
+Conf oldconflictor-x64:i386 (1 unstable [i386])' aptget install oldconflictor-x64 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-depender
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo-depender (1 unstable [amd64])
+Conf foo-depender (1 unstable [amd64])' aptget install foo-depender -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo-depender:i386 : Depends: foo:i386 but it is not installable
+E: Unable to correct problems, you have held broken packages.' aptget install foo-depender:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-foreign-depender:i386
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo-foreign-depender:i386 (1 unstable [i386])
+Conf foo-foreign-depender:i386 (1 unstable [i386])' aptget install foo-foreign-depender:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  provider
+The following NEW packages will be installed:
+  foo-conflictor
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv provider [1]
+Inst foo-conflictor (1 unstable [amd64])
+Conf foo-conflictor (1 unstable [amd64])' aptget install foo-conflictor -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  provider
+The following NEW packages will be installed:
+  foo-conflictor:i386
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv provider [1]
+Inst foo-conflictor:i386 (1 unstable [i386])
+Conf foo-conflictor:i386 (1 unstable [i386])' aptget install foo-conflictor:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  provider
+The following NEW packages will be installed:
+  foo-foreign-conflictor:i386
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv provider [1]
+Inst foo-foreign-conflictor:i386 (1 unstable [i386])
+Conf foo-foreign-conflictor:i386 (1 unstable [i386])' aptget install foo-foreign-conflictor:i386 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo-no-conflictor:i386
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo-no-conflictor:i386 (1 unstable [i386])
+Conf foo-no-conflictor:i386 (1 unstable [i386])' aptget install foo-no-conflictor:i386 -s
