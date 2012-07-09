@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+buildsimplenativepackage 'pkgall' 'all' '1' 'stable'
+buildsimplenativepackage 'pkgnative' 'amd64' '1' 'stable'
+buildsimplenativepackage 'pkgforeign' 'i386' '1' 'stable'
+
+setupaptarchive
+
+changetowebserver
+
+aptget update -qq
+aptget install pkgall pkgnative pkgforeign -y -qq > /dev/null
+
+testdpkginstalled pkgall pkgnative pkgforeign
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...' aptget autoclean -s

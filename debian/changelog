@@ -1,9 +1,37 @@
 apt (0.9.7.2) UNRELEASED; urgency=low
 
+
   [ Manpages translation updates ]
   * French (Christian Perrier)
 
- -- Christian Perrier <bubulle@debian.org>  Tue, 03 Jul 2012 13:56:41 -0600
+  [ Program translation updates ]
+  * Greek (Θανάσης Νάτσης)
+
+  * Japanese (Kenshi Muto) (Closes: #679662)
+  * Russian (Yuri Kozlov) (Closes: #679599)
+  * Danish (Joe Dalton) (Closes: #680119)
+  * Portuguese (Miguel Figueiredo) (Closes: #680616)
+
+  [ Manpage translation updates ]
+  * German (Chris Leick)
+
+  [ David Kalnischkies ]
+  * debian/apt.cron.daily:
+    - do not try to backup extended_states file if it doesn't
+      exist (Closes: #680287)
+  * ftparchive/writer.cc:
+    - handle the APT::FTPArchive::Packages::SHA512 option correctly instead
+      of overriding SHA256, thanks Christian Marillat! (Closes: #680252)
+  * cmdline/apt-mark.cc:
+    - arch:all packages are treated as arch:native packages, but dpkg
+      expects pkg:all for selections, so use the arch of the installed
+      version instead of the package structure if possible.
+      Thanks to Stepan Golosunov for the report! (Closes: #680041)
+  * apt-pkg/clean.cc:
+    - run autoclean against pkg:arch and not always against pkg:native as
+      this removes valid cache entries (Closes: #679371)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 01 Jul 2012 08:20:57 +0200
 
 apt (0.9.7.1) unstable; urgency=low
 

@@ -291,14 +291,26 @@ bool DoHold(CommandLine &CmdL)
    FILE* dpkg = fdopen(external[1], "w");
    for (APT::PackageList::iterator Pkg = pkgset.begin(); Pkg != pkgset.end(); ++Pkg)
    {
+      if (dpkgMultiArch == false)
+	 fprintf(dpkg, "%s", Pkg.FullName(true).c_str());
+      else
+      {
+	 if (Pkg->CurrentVer != 0)
+	    fprintf(dpkg, "%s:%s", Pkg.Name(), Pkg.CurrentVer().Arch());
+	 else if (Pkg.VersionList().end() == false)
+	    fprintf(dpkg, "%s:%s", Pkg.Name(), Pkg.VersionList().Arch());
+	 else
+	    fprintf(dpkg, "%s", Pkg.FullName(false).c_str());
+      }
+
       if (MarkHold == true)
       {
-	 fprintf(dpkg, "%s hold\n", Pkg.FullName(!dpkgMultiArch).c_str());
+	 fprintf(dpkg, " hold\n");
 	 ioprintf(c1out,_("%s set on hold.\n"), Pkg.FullName(true).c_str());
       }
       else
       {
-	 fprintf(dpkg, "%s install\n", Pkg.FullName(!dpkgMultiArch).c_str());
+	 fprintf(dpkg, " install\n");
 	 ioprintf(c1out,_("Canceled hold on %s.\n"), Pkg.FullName(true).c_str());
       }
    }
