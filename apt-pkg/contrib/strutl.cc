@@ -752,7 +752,8 @@ bool ReadMessages(int Fd, vector<string> &List)
       // Look for the end of the message
       for (char *I = Buffer; I + 1 < End; I++)
       {
-	 if (I[0] != '\n' || I[1] != '\n')
+	 if (I[1] != '\n' ||
+	     (strncmp(I, "\n\n", 2) != 0 && strncmp(I, "\r\n\r\n", 4) != 0))
 	    continue;
 	 
 	 // Pull the message out
@@ -760,7 +761,7 @@ bool ReadMessages(int Fd, vector<string> &List)
 	 PartialMessage += Message;
 
 	 // Fix up the buffer
-	 for (; I < End && *I == '\n'; I++);
+	 for (; I < End && (*I == '\r' || *I == '\n'); ++I);
 	 End -= I-Buffer;	 
 	 memmove(Buffer,I,End-Buffer);
 	 I = Buffer;
