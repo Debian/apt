@@ -311,6 +311,8 @@ int main(int const argc, const char * argv[])
 	    std::string filename = m->substr(5, filestart - 5);
 	    if (filename.empty() == true)
 	       filename = ".";
+	    else
+	       filename = DeQuoteString(filename);
 
 	    if (simulate_broken_server == true) {
 	       std::string data("ni ni ni\n");
