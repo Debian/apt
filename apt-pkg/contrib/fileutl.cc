@@ -858,7 +858,7 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 bool IsPgpClearTextSignature(string const &FileName)
 {
    static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----\n";
-   char buffer[sizeof(SIGMSG)];
+   char buffer[strlen(SIGMSG)+1];
    FILE* gpg = fopen(FileName.c_str(), "r");
    if (gpg == NULL)
       return false;
