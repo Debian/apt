@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+
+setupaptarchive
+simulatebrokenwebserver
+
+rm -rf rootdir/var/lib/apt/lists
+aptget update 
+testequal 'partial' "$(ls rootdir/var/lib/apt/lists/)"
+
+

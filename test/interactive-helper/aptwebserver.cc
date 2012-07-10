@@ -244,11 +244,11 @@ int main(int argc, const char *argv[])
 	 }
 	 _error->DumpErrors(std::cerr);
 	 messages.clear();
-      }
 
-      std::clog << "CLOSE client " << client 
-                << " on socket " << sock << std::endl;
-      close(client);
+         std::clog << "CLOSE client " << client 
+                   << " on socket " << sock << std::endl;
+         close(client);
+      }
    }
    return 0;
 }
