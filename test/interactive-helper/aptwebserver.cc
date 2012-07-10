@@ -78,6 +78,13 @@ void addFileHeaders(std::list<std::string> &headers, FileFd &data) { /*{{{*/
    lastmodified.append(TimeRFC1123(data.ModificationTime()));
    headers.push_back(lastmodified);
 } /*}}}*/
+
+void addDataHeaders(std::list<std::string> &headers, std::string &data) {/*{{{*/
+   std::ostringstream contentlength;
+   contentlength << "Content-Length: " << data.size();
+   headers.push_back(contentlength.str());
+} /*}}}*/
+
 bool sendHead(int client, int httpcode, std::list<std::string> &headers) { /*{{{*/
    string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
@@ -124,14 +131,16 @@ bool sendData(int client, std::string &data) { /*{{{*/
 
 void sendError(int client, int httpcode, string request, bool content) { /*{{{*/
    std::list<std::string> headers;
+   string response;   
+   if (content == true) {
+      response.append("<html><head><title>");
+      response.append(httpcodeToStr(httpcode)).append("</title></head>");
+      response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
+      response.append("This error is a result of the request: <pre>");
+      response.append(request).append("</pre></body></html>");
+      addDataHeaders(headers, response);
+   }
    sendHead(client, httpcode, headers);
-   if (content == false)
-      return;
-   string response("<html><head><title>");
-   response.append(httpcodeToStr(httpcode)).append("</title></head>");
-   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
-   response.append("This error is a result of the request: <pre>");
-   response.append(request).append("</pre></body></html>");
    sendData(client, response);
 } /*}}}*/
 
@@ -219,8 +228,9 @@ int main(int argc, const char *argv[])
 	    string filename = m->substr(5, filestart - 5);
 
             if (simulate_broken_server == true) {
+               string data("ni ni ni\n");
+               addDataHeaders(headers, data);
                sendHead(client, 200, headers);
-               string data("ni ni ni");
                sendData(client, data);
             }
 	    else if (RealFileExists(filename) == false)
@@ -244,11 +254,11 @@ int main(int argc, const char *argv[])
 	 }
 	 _error->DumpErrors(std::cerr);
 	 messages.clear();
-
-         std::clog << "CLOSE client " << client 
-                   << " on socket " << sock << std::endl;
-         close(client);
       }
+
+      std::clog << "CLOSE client " << client 
+                << " on socket " << sock << std::endl;
+      close(client);
    }
    return 0;
 }
