@@ -181,7 +181,7 @@ pid_t ExecFork();
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
 // check if the given file starts with a PGP cleartext signature
-bool IsPgpClearTextSignature(std::string const &FileName);
+bool StartsWithGPGClearTextSignature(std::string const &FileName);
 
 // File string manipulators
 std::string flNotDir(std::string File);

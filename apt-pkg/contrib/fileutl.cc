@@ -852,10 +852,10 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
 }
 									/*}}}*/
 
-// IsPgpClearTextSignature - Check if a file is Pgp/GPG clearsigned     /*{{{*/
+// StartsWithGPGClearTextSignature - Check if a file is Pgp/GPG clearsigned     /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool IsPgpClearTextSignature(string const &FileName)
+bool StartsWithGPGClearTextSignature(string const &FileName)
 {
    static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----\n";
    char buffer[strlen(SIGMSG)+1];

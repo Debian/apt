@@ -652,7 +652,7 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileGPG,
       if (gpg == NULL)
 	 return _error->Errno("RunGPGV", _("Could not open file %s"), File.c_str());
       fclose(gpg);
-      if (!IsPgpClearTextSignature(File))
+      if (!StartsWithGPGClearTextSignature(File))
 	 return _error->Error(_("File %s doesn't start with a clearsigned message"), File.c_str());
    }
 
