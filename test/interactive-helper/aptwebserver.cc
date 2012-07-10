@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
@@ -88,7 +90,7 @@ void addDataHeaders(std::list<std::string> &headers, std::string &data) {/*{{{*/
 }
 									/*}}}*/
 bool sendHead(int const client, int const httpcode, std::list<std::string> &headers) { /*{{{*/
-   string response("HTTP/1.1 ");
+   std::string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
    headers.push_front(response);
 
@@ -131,9 +133,9 @@ bool sendData(int const client, std::string const &data) {		/*{{{*/
    return Success;
 }
 									/*}}}*/
-void sendError(int const client, int const httpcode, string const &request, bool content) { /*{{{*/
+void sendError(int const client, int const httpcode, std::string const &request, bool content) { /*{{{*/
    std::list<std::string> headers;
-   string response("<html><head><title>");
+   std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
    response.append("This error is a result of the request: <pre>");
@@ -181,7 +183,7 @@ int grouped_alpha_case_sort(const struct dirent **a, const struct dirent **b) {
    }
    return strcasecmp((*a)->d_name, (*b)->d_name);
 }
-void sendDirectoryListing(int const client, string const &dir, string const &request, bool content) {
+void sendDirectoryListing(int const client, std::string const &dir, std::string const &request, bool content) {
    std::list<std::string> headers;
    std::ostringstream listing;
 
@@ -306,12 +308,12 @@ int main(int const argc, const char * argv[])
 	    }
 
 	    size_t const filestart = m->find(' ', 5);
-	    string filename = m->substr(5, filestart - 5);
+	    std::string filename = m->substr(5, filestart - 5);
 	    if (filename.empty() == true)
 	       filename = ".";
 
 	    if (simulate_broken_server == true) {
-	       string data("ni ni ni\n");
+	       std::string data("ni ni ni\n");
 	       addDataHeaders(headers, data);
 	       sendHead(client, 200, headers);
 	       sendData(client, data);
