@@ -18,7 +18,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-char const * const httpcodeToStr(int httpcode) { /*{{{*/
+char const * const httpcodeToStr(int const httpcode) {			/*{{{*/
    switch (httpcode) {
       // Informational 1xx
       case 100: return "100 Continue";
@@ -67,9 +67,9 @@ char const * const httpcodeToStr(int httpcode) { /*{{{*/
       case 505: return "HTTP Version not supported";
    }
    return NULL;
-} /*}}}*/
-
-void addFileHeaders(std::list<std::string> &headers, FileFd &data) { /*{{{*/
+}
+									/*}}}*/
+void addFileHeaders(std::list<std::string> &headers, FileFd &data) {	/*{{{*/
    std::ostringstream contentlength;
    contentlength << "Content-Length: " << data.FileSize();
    headers.push_back(contentlength.str());
@@ -77,15 +77,15 @@ void addFileHeaders(std::list<std::string> &headers, FileFd &data) { /*{{{*/
    std::string lastmodified("Last-Modified: ");
    lastmodified.append(TimeRFC1123(data.ModificationTime()));
    headers.push_back(lastmodified);
-} /*}}}*/
-
+}
+									/*}}}*/
 void addDataHeaders(std::list<std::string> &headers, std::string &data) {/*{{{*/
    std::ostringstream contentlength;
    contentlength << "Content-Length: " << data.size();
    headers.push_back(contentlength.str());
-} /*}}}*/
-
-bool sendHead(int client, int httpcode, std::list<std::string> &headers) { /*{{{*/
+}
+									/*}}}*/
+bool sendHead(int const client, int const httpcode, std::list<std::string> &headers) { /*{{{*/
    string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
    headers.push_front(response);
@@ -107,9 +107,9 @@ bool sendHead(int client, int httpcode, std::list<std::string> &headers) { /*{{{
    Success &= FileFd::Write(client, "\r\n", 2);
    std::clog << "<<<<<<<<<<<<<<<<" << std::endl;
    return Success;
-} /*}}}*/
-
-bool sendFile(int client, FileFd &data) { /*{{{*/
+}
+									/*}}}*/
+bool sendFile(int const client, FileFd &data) {				/*{{{*/
    bool Success = true;
    char buffer[500];
    unsigned long long actual = 0;
@@ -120,34 +120,32 @@ bool sendFile(int client, FileFd &data) { /*{{{*/
    }
    Success &= FileFd::Write(client, "\r\n", 2);
    return Success;
-} /*}}}*/
-
-bool sendData(int client, std::string &data) { /*{{{*/
+}
+									/*}}}*/
+bool sendData(int const client, std::string const &data) {		/*{{{*/
    bool Success = true;
    Success &= FileFd::Write(client, data.c_str(), data.size());
    Success &= FileFd::Write(client, "\r\n", 2);
    return Success;
-} /*}}}*/
-
-void sendError(int client, int httpcode, string request, bool content) { /*{{{*/
+}
+									/*}}}*/
+void sendError(int const client, int const httpcode, string const &request, bool content) { /*{{{*/
    std::list<std::string> headers;
-   string response;   
-   if (content == true) {
-      response.append("<html><head><title>");
-      response.append(httpcodeToStr(httpcode)).append("</title></head>");
-      response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
-      response.append("This error is a result of the request: <pre>");
-      response.append(request).append("</pre></body></html>");
-      addDataHeaders(headers, response);
-   }
+   string response("<html><head><title>");
+   response.append(httpcodeToStr(httpcode)).append("</title></head>");
+   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
+   response.append("This error is a result of the request: <pre>");
+   response.append(request).append("</pre></body></html>");
+   addDataHeaders(headers, response);
    sendHead(client, httpcode, headers);
-   sendData(client, response);
-} /*}}}*/
-
-int main(int argc, const char *argv[])
+   if (content == true)
+      sendData(client, response);
+}
+									/*}}}*/
+int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
-      {0, "simulate-paywall", "aptwebserver::Simulate-Paywall", 
+      {0, "simulate-paywall", "aptwebserver::Simulate-Paywall",
        CommandLine::Boolean},
       {0, "port", "aptwebserver::port", CommandLine::HasArg},
       {0,0,0,0}
@@ -198,18 +196,19 @@ int main(int argc, const char *argv[])
    }
 
    listen(sock, 1);
+   /*}}}*/
 
    std::vector<std::string> messages;
    int client;
    while ((client = accept(sock, NULL, NULL)) != -1) {
       std::clog << "ACCEPT client " << client
-                << " on socket " << sock << std::endl;
+		<< " on socket " << sock << std::endl;
 
       while (ReadMessages(client, messages)) {
 	 for (std::vector<std::string>::const_iterator m = messages.begin();
 	      m != messages.end(); ++m) {
-	    std::clog << ">>> REQUEST >>>>" << std::endl << *m 
-                      << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
+	    std::clog << ">>> REQUEST >>>>" << std::endl << *m
+		      << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
 	    std::list<std::string> headers;
 	    bool sendContent = true;
 	    if (strncmp(m->c_str(), "HEAD ", 5) == 0)
@@ -227,12 +226,12 @@ int main(int argc, const char *argv[])
 	    size_t const filestart = m->find(' ', 5);
 	    string filename = m->substr(5, filestart - 5);
 
-            if (simulate_broken_server == true) {
-               string data("ni ni ni\n");
-               addDataHeaders(headers, data);
-               sendHead(client, 200, headers);
-               sendData(client, data);
-            }
+	    if (simulate_broken_server == true) {
+	       string data("ni ni ni\n");
+	       addDataHeaders(headers, data);
+	       sendHead(client, 200, headers);
+	       sendData(client, data);
+	    }
 	    else if (RealFileExists(filename) == false)
 	       sendError(client, 404, *m, sendContent);
 	    else {
@@ -240,8 +239,8 @@ int main(int argc, const char *argv[])
 	       std::string condition = LookupTag(*m, "If-Modified-Since", "");
 	       if (condition.empty() == false) {
 		  time_t cache;
-		  if (RFC1123StrToTime(condition.c_str(), cache) == true && 
-                      cache >= data.ModificationTime()) {
+		  if (RFC1123StrToTime(condition.c_str(), cache) == true &&
+		      cache >= data.ModificationTime()) {
 		     sendError(client, 304, *m, false);
 		     continue;
 		  }
@@ -256,8 +255,8 @@ int main(int argc, const char *argv[])
 	 messages.clear();
       }
 
-      std::clog << "CLOSE client " << client 
-                << " on socket " << sock << std::endl;
+      std::clog << "CLOSE client " << client
+		<< " on socket " << sock << std::endl;
       close(client);
    }
    return 0;
