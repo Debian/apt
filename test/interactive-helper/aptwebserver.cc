@@ -146,6 +146,26 @@ void sendError(int const client, int const httpcode, std::string const &request,
       sendData(client, response);
 }
 									/*}}}*/
+void sendRedirect(int const client, int const httpcode, std::string const &uri, std::string const &request, bool content) { /*{{{*/
+   std::list<std::string> headers;
+   std::string response("<html><head><title>");
+   response.append(httpcodeToStr(httpcode)).append("</title></head>");
+   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
+   response.append("<p>You should be redirected to <em>").append(uri).append("</em></p>");
+   response.append("This page is a result of the request: <pre>");
+   response.append(request).append("</pre></body></html>");
+   addDataHeaders(headers, response);
+   std::string location("Location: ");
+   if (strncmp(uri.c_str(), "http://", 7) != 0)
+      location.append("http://").append(LookupTag(request, "Host")).append("/").append(uri);
+   else
+      location.append(uri);
+   headers.push_back(location);
+   sendHead(client, httpcode, headers);
+   if (content == true)
+      sendData(client, response);
+}
+									/*}}}*/
 // sendDirectoryLisiting						/*{{{*/
 int filter_hidden_files(const struct dirent *a) {
    if (a->d_name[0] == '.')
@@ -209,12 +229,15 @@ void sendDirectoryListing(int const client, std::string const &dir, std::string 
       std::string filename(dir);
       filename.append("/").append(namelist[i]->d_name);
       stat(filename.c_str(), &fs);
-      listing << "<tr><td>" << ((S_ISDIR(fs.st_mode)) ? 'd' : 'f') << "</td>"
-	      << "<td><a href=\"" << namelist[i]->d_name << "\">" << namelist[i]->d_name << "</a></td>";
-      if (S_ISDIR(fs.st_mode))
-	 listing << "<td>-</td>";
-      else
-	 listing << "<td>" << SizeToStr(fs.st_size) << "B</td>";
+      if (S_ISDIR(fs.st_mode)) {
+	 listing << "<tr><td>d</td>"
+		 << "<td><a href=\"" << namelist[i]->d_name << "/\">" << namelist[i]->d_name << "</a></td>"
+		 << "<td>-</td>";
+      } else {
+	 listing << "<tr><td>f</td>"
+		 << "<td><a href=\"" << namelist[i]->d_name << "\">" << namelist[i]->d_name << "</a></td>"
+		 << "<td>" << SizeToStr(fs.st_size) << "B</td>";
+      }
       listing << "<td>" << TimeRFC1123(fs.st_mtime) << "</td></tr>" << std::endl;
    }
    listing << "</table></body></html>" << std::endl;
@@ -337,7 +360,10 @@ int main(int const argc, const char * argv[])
 		  sendFile(client, data);
 	    }
 	    else if (DirectoryExists(filename) == true) {
-	       sendDirectoryListing(client, filename, *m, sendContent);
+	       if (filename == "." || filename[filename.length()-1] == '/')
+		  sendDirectoryListing(client, filename, *m, sendContent);
+	       else
+		  sendRedirect(client, 301, filename.append("/"), *m, sendContent);
 	    }
 	    else
 	       sendError(client, 404, *m, false);
