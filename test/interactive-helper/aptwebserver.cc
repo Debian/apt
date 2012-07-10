@@ -2,6 +2,8 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/init.h>
 
 #include <vector>
 #include <string>
@@ -66,6 +68,7 @@ char const * const httpcodeToStr(int httpcode) { /*{{{*/
    }
    return NULL;
 } /*}}}*/
+
 void addFileHeaders(std::list<std::string> &headers, FileFd &data) { /*{{{*/
    std::ostringstream contentlength;
    contentlength << "Content-Length: " << data.FileSize();
@@ -98,6 +101,7 @@ bool sendHead(int client, int httpcode, std::list<std::string> &headers) { /*{{{
    std::clog << "<<<<<<<<<<<<<<<<" << std::endl;
    return Success;
 } /*}}}*/
+
 bool sendFile(int client, FileFd &data) { /*{{{*/
    bool Success = true;
    char buffer[500];
@@ -110,12 +114,14 @@ bool sendFile(int client, FileFd &data) { /*{{{*/
    Success &= FileFd::Write(client, "\r\n", 2);
    return Success;
 } /*}}}*/
+
 bool sendData(int client, std::string &data) { /*{{{*/
    bool Success = true;
    Success &= FileFd::Write(client, data.c_str(), data.size());
    Success &= FileFd::Write(client, "\r\n", 2);
    return Success;
 } /*}}}*/
+
 void sendError(int client, int httpcode, string request, bool content) { /*{{{*/
    std::list<std::string> headers;
    sendHead(client, httpcode, headers);
@@ -131,6 +137,19 @@ void sendError(int client, int httpcode, string request, bool content) { /*{{{*/
 
 int main(int argc, const char *argv[])
 {
+   CommandLine::Args Args[] = {
+      {0, "simulate-paywall", "aptwebserver::Simulate-Paywall", 
+       CommandLine::Boolean},
+      {0, "port", "aptwebserver::port", CommandLine::HasArg},
+      {0,0,0,0}
+   };
+
+   CommandLine CmdL(Args, _config);
+   if(pkgInitConfig(*_config) == false || CmdL.Parse(argc,argv) == false) {
+      _error->DumpErrors();
+      exit(1);
+   }
+
    // create socket, bind and listen to it {{{
    int sock = socket(AF_INET6, SOCK_STREAM, 0);
    if(sock < 0 ) {
@@ -138,6 +157,10 @@ int main(int argc, const char *argv[])
       _error->DumpErrors(std::cerr);
       return 1;
    }
+
+   // get the port
+   int const port = _config->FindI("aptwebserver::port", 8080);
+   bool const simulate_broken_server = _config->FindB("aptwebserver::Simulate-Paywall", false);
 
    // ensure that we accept all connections: v4 or v6
    int const iponly = 0;
@@ -149,7 +172,7 @@ int main(int argc, const char *argv[])
    struct sockaddr_in6 locAddr;
    memset(&locAddr, 0, sizeof(locAddr));
    locAddr.sin6_family = AF_INET6;
-   locAddr.sin6_port = htons(8080);
+   locAddr.sin6_port = htons(port);
    locAddr.sin6_addr = in6addr_any;
 
    if (bind(sock, (struct sockaddr*) &locAddr, sizeof(locAddr)) < 0) {
@@ -158,18 +181,26 @@ int main(int argc, const char *argv[])
       return 2;
    }
 
+   if (simulate_broken_server) {
+      std::clog << "Simulating a broken web server that return nonsense "
+                   "for all querries" << std::endl;
+   } else {
+      std::clog << "Serving ANY file on port: " << port << std::endl;
+   }
+
    listen(sock, 1);
-   /*}}}*/
 
    std::vector<std::string> messages;
    int client;
    while ((client = accept(sock, NULL, NULL)) != -1) {
-      std::clog << "ACCEPT client " << client << " on socket " << sock << std::endl;
+      std::clog << "ACCEPT client " << client
+                << " on socket " << sock << std::endl;
 
       while (ReadMessages(client, messages)) {
 	 for (std::vector<std::string>::const_iterator m = messages.begin();
 	      m != messages.end(); ++m) {
-	    std::clog << ">>> REQUEST >>>>" << std::endl << *m << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
+	    std::clog << ">>> REQUEST >>>>" << std::endl << *m 
+                      << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
 	    std::list<std::string> headers;
 	    bool sendContent = true;
 	    if (strncmp(m->c_str(), "HEAD ", 5) == 0)
@@ -187,14 +218,20 @@ int main(int argc, const char *argv[])
 	    size_t const filestart = m->find(' ', 5);
 	    string filename = m->substr(5, filestart - 5);
 
-	    if (RealFileExists(filename) == false)
+            if (simulate_broken_server == true) {
+               sendHead(client, 200, headers);
+               string data("ni ni ni");
+               sendData(client, data);
+            }
+	    else if (RealFileExists(filename) == false)
 	       sendError(client, 404, *m, sendContent);
 	    else {
 	       FileFd data(filename, FileFd::ReadOnly);
 	       std::string condition = LookupTag(*m, "If-Modified-Since", "");
 	       if (condition.empty() == false) {
 		  time_t cache;
-		  if (RFC1123StrToTime(condition.c_str(), cache) == true && cache >= data.ModificationTime()) {
+		  if (RFC1123StrToTime(condition.c_str(), cache) == true && 
+                      cache >= data.ModificationTime()) {
 		     sendError(client, 304, *m, false);
 		     continue;
 		  }
@@ -209,7 +246,8 @@ int main(int argc, const char *argv[])
 	 messages.clear();
       }
 
-      std::clog << "CLOSE client " << client << " on socket " << sock << std::endl;
+      std::clog << "CLOSE client " << client 
+                << " on socket " << sock << std::endl;
       close(client);
    }
    return 0;
