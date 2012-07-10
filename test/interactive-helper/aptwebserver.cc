@@ -154,7 +154,7 @@ int main(int argc, const char *argv[])
    };
 
    CommandLine CmdL(Args, _config);
-   if(pkgInitConfig(*_config) == false || CmdL.Parse(argc,argv) == false) {
+   if(CmdL.Parse(argc,argv) == false) {
       _error->DumpErrors();
       exit(1);
    }

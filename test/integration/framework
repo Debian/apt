@@ -687,14 +687,11 @@ signreleasefiles() {
 	msgdone "info"
 }
 
-simulatebrokenwebserver() {
-	if ! test -x ${BUILDDIRECTORY}/aptwebserver; then
-                 msgdie 'Need the aptwebserver to simulate broken connections'
-        fi
-        changetowebserver '--simulate-paywall'
-}
-
 changetowebserver() {
+        if [ -n "$1" ] && ! test -x ${BUILDDIRECTORY}/aptwebserver; then
+            msgdie 'Need the aptwebserver when passing arguments'
+        fi
+
 	if test -x ${BUILDDIRECTORY}/aptwebserver; then
 		cd aptarchive
 		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/aptwebserver $@ 2> /dev/null > /dev/null &
