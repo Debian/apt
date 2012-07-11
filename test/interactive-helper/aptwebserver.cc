@@ -21,6 +21,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <dirent.h>
+#include <signal.h>
 
 char const * const httpcodeToStr(int const httpcode) {			/*{{{*/
    switch (httpcode) {
@@ -105,10 +106,12 @@ bool sendHead(int const client, int const httpcode, std::list<std::string> &head
    for (std::list<std::string>::const_iterator h = headers.begin();
 	Success == true && h != headers.end(); ++h) {
       Success &= FileFd::Write(client, h->c_str(), h->size());
-      Success &= FileFd::Write(client, "\r\n", 2);
+      if (Success == true)
+	 Success &= FileFd::Write(client, "\r\n", 2);
       std::clog << *h << std::endl;
    }
-   Success &= FileFd::Write(client, "\r\n", 2);
+   if (Success == true)
+      Success &= FileFd::Write(client, "\r\n", 2);
    std::clog << "<<<<<<<<<<<<<<<<" << std::endl;
    return Success;
 }
@@ -122,14 +125,16 @@ bool sendFile(int const client, FileFd &data) {				/*{{{*/
 	 break;
       Success &= FileFd::Write(client, buffer, actual);
    }
-   Success &= FileFd::Write(client, "\r\n", 2);
+   if (Success == true)
+      Success &= FileFd::Write(client, "\r\n", 2);
    return Success;
 }
 									/*}}}*/
 bool sendData(int const client, std::string const &data) {		/*{{{*/
    bool Success = true;
    Success &= FileFd::Write(client, data.c_str(), data.size());
-   Success &= FileFd::Write(client, "\r\n", 2);
+   if (Success == true)
+      Success &= FileFd::Write(client, "\r\n", 2);
    return Success;
 }
 									/*}}}*/
@@ -318,6 +323,8 @@ int main(int const argc, const char * argv[])
    }
 
    // create socket, bind and listen to it {{{
+   // ignore SIGPIPE, this can happen on write() if the socket closes connection
+   signal(SIGPIPE, SIG_IGN);
    int sock = socket(AF_INET6, SOCK_STREAM, 0);
    if(sock < 0 ) {
       _error->Errno("aptwerbserver", "Couldn't create socket");
