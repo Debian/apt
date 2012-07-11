@@ -51,24 +51,24 @@ char const * const httpcodeToStr(int const httpcode) {			/*{{{*/
       case 404: return "404 Not Found";
       case 405: return "405 Method Not Allowed";
       case 406: return "406 Not Acceptable";
-      case 407: return "Proxy Authentication Required";
-      case 408: return "Request Time-out";
-      case 409: return "Conflict";
-      case 410: return "Gone";
-      case 411: return "Length Required";
-      case 412: return "Precondition Failed";
-      case 413: return "Request Entity Too Large";
-      case 414: return "Request-URI Too Large";
-      case 415: return "Unsupported Media Type";
-      case 416: return "Requested range not satisfiable";
-      case 417: return "Expectation Failed";
+      case 407: return "407 Proxy Authentication Required";
+      case 408: return "408 Request Time-out";
+      case 409: return "409 Conflict";
+      case 410: return "410 Gone";
+      case 411: return "411 Length Required";
+      case 412: return "412 Precondition Failed";
+      case 413: return "413 Request Entity Too Large";
+      case 414: return "414 Request-URI Too Large";
+      case 415: return "415 Unsupported Media Type";
+      case 416: return "416 Requested range not satisfiable";
+      case 417: return "417 Expectation Failed";
       // Server error 5xx
-      case 500: return "Internal Server Error";
-      case 501: return "Not Implemented";
-      case 502: return "Bad Gateway";
-      case 503: return "Service Unavailable";
-      case 504: return "Gateway Time-out";
-      case 505: return "HTTP Version not supported";
+      case 500: return "500 Internal Server Error";
+      case 501: return "501 Not Implemented";
+      case 502: return "502 Bad Gateway";
+      case 503: return "503 Service Unavailable";
+      case 504: return "504 Gateway Time-out";
+      case 505: return "505 HTTP Version not supported";
    }
    return NULL;
 }
@@ -133,11 +133,13 @@ bool sendData(int const client, std::string const &data) {		/*{{{*/
    return Success;
 }
 									/*}}}*/
-void sendError(int const client, int const httpcode, std::string const &request, bool content) { /*{{{*/
+void sendError(int const client, int const httpcode, std::string const &request, bool content, std::string const &error = "") { /*{{{*/
    std::list<std::string> headers;
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
+   if (error.empty() == false)
+      response.append("<p><em>Error</em>: ").append(error).append("</p>");
    response.append("This error is a result of the request: <pre>");
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
@@ -249,6 +251,55 @@ void sendDirectoryListing(int const client, std::string const &dir, std::string 
       sendData(client, response);
 }
 									/*}}}*/
+bool parseFirstLine(int const client, std::string const &request, std::string &filename, bool &sendContent) { /*{{{*/
+   if (strncmp(request.c_str(), "HEAD ", 5) == 0)
+      sendContent = false;
+   if (strncmp(request.c_str(), "GET ", 4) != 0)
+   {
+      sendError(client, 501, request, true);
+      return false;
+   }
+
+   size_t const lineend = request.find('\n');
+   size_t filestart = request.find(' ');
+   for (; request[filestart] == ' '; ++filestart);
+   size_t fileend = request.rfind(' ', lineend);
+   if (lineend == std::string::npos || filestart == std::string::npos ||
+	 fileend == std::string::npos || filestart == fileend) {
+      sendError(client, 500, request, sendContent, "Filename can't be extracted");
+      return false;
+   }
+
+   size_t httpstart = fileend;
+   for (; request[httpstart] == ' '; ++httpstart);
+   if (strncmp(request.c_str() + httpstart, "HTTP/1.1\r", 9) != 0) {
+      sendError(client, 500, request, sendContent, "Not an HTTP/1.1 request");
+      return false;
+   }
+
+   filename = request.substr(filestart, fileend - filestart);
+   if (filename.find(' ') != std::string::npos) {
+      sendError(client, 500, request, sendContent, "Filename contains an unencoded space");
+      return false;
+   }
+   filename = DeQuoteString(filename);
+
+   // this is not a secure server, but at least prevent the obvious …
+   if (filename.empty() == true || filename[0] != '/' ||
+       strncmp(filename.c_str(), "//", 2) == 0 ||
+       filename.find_first_of("\r\n\t\f\v") != std::string::npos ||
+       filename.find("/../") != std::string::npos) {
+      sendError(client, 400, request, sendContent, "Filename contains illegal character (sequence)");
+      return false;
+   }
+
+   // nuke the first character which is a / as we assured above
+   filename.erase(0, 1);
+   if (filename.empty() == true)
+      filename = ".";
+   return true;
+}
+									/*}}}*/
 int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
@@ -318,26 +369,19 @@ int main(int const argc, const char * argv[])
 	      m != messages.end(); ++m) {
 	    std::clog << ">>> REQUEST >>>>" << std::endl << *m
 		      << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
+
 	    std::list<std::string> headers;
+	    std::string filename;
 	    bool sendContent = true;
-	    if (strncmp(m->c_str(), "HEAD ", 5) == 0)
-	       sendContent = false;
-	    if (strncmp(m->c_str(), "GET ", 4) != 0)
-	       sendError(client, 501, *m, true);
+	    if (parseFirstLine(client, *m, filename, sendContent) == false)
+	       continue;
 
 	    std::string host = LookupTag(*m, "Host", "");
 	    if (host.empty() == true) {
-	       // RFC 2616 §14.23 Host
-	       sendError(client, 400, *m, sendContent);
+	       // RFC 2616 §14.23 requires Host
+	       sendError(client, 400, *m, sendContent, "Host header is required");
 	       continue;
 	    }
-
-	    size_t const filestart = m->find(' ', 5);
-	    std::string filename = m->substr(5, filestart - 5);
-	    if (filename.empty() == true)
-	       filename = ".";
-	    else
-	       filename = DeQuoteString(filename);
 
 	    if (simulate_broken_server == true) {
 	       std::string data("ni ni ni\n");
