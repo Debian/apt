@@ -82,6 +82,18 @@ void addFileHeaders(std::list<std::string> &headers, FileFd &data) {	/*{{{*/
    std::string lastmodified("Last-Modified: ");
    lastmodified.append(TimeRFC1123(data.ModificationTime()));
    headers.push_back(lastmodified);
+
+   std::string const fileext = flExtension(data.Name());
+   if (fileext.empty() == false && fileext != data.Name()) {
+      std::string confcontenttype("aptwebserver::ContentType::");
+      confcontenttype.append(fileext);
+      std::string const contenttype = _config->Find(confcontenttype);
+      if (contenttype.empty() == false) {
+	 std::string header("Content-Type: ");
+	 header.append(contenttype);
+	 headers.push_back(header);
+      }
+   }
 }
 									/*}}}*/
 void addDataHeaders(std::list<std::string> &headers, std::string &data) {/*{{{*/
