@@ -137,7 +137,7 @@ void sendError(int const client, int const httpcode, std::string const &request,
    std::list<std::string> headers;
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
-   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
+   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
    response.append("This error is a result of the request: <pre>");
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
@@ -255,6 +255,8 @@ int main(int const argc, const char * argv[])
       {0, "simulate-paywall", "aptwebserver::Simulate-Paywall",
        CommandLine::Boolean},
       {0, "port", "aptwebserver::port", CommandLine::HasArg},
+      {'c',"config-file",0,CommandLine::ConfigFile},
+      {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}
    };
 
@@ -366,7 +368,20 @@ int main(int const argc, const char * argv[])
 		  sendRedirect(client, 301, filename.append("/"), *m, sendContent);
 	    }
 	    else
-	       sendError(client, 404, *m, false);
+	    {
+	       ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
+	       if (Replaces != NULL) {
+		  std::string redirect = "/" + filename;
+		  for (::Configuration::Item *I = Replaces->Child; I != NULL; I = I->Next)
+		     redirect = SubstVar(redirect, I->Tag, I->Value);
+		  redirect.erase(0,1);
+		  if (redirect != filename) {
+		     sendRedirect(client, 301, redirect, *m, sendContent);
+		     continue;
+		  }
+	       }
+	       sendError(client, 404, *m, sendContent);
+	    }
 	 }
 	 _error->DumpErrors(std::cerr);
 	 messages.clear();
