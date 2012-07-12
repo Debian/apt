@@ -28,6 +28,12 @@ apt (0.9.7.2) UNRELEASED; urgency=low
   * apt-pkg/deb/deblistparser.cc:
     - negative dependencies need to apply to all architectures,
       but those with a specific architecture only apply to this one
+  * apt-pkg/cachefilter.cc:
+    - remove architecture-specific arch to tuple expansion-rules as they lead
+      to the same tuples for different architectures (e.g. linux-arm for arm,
+      armel and armhf) while the dpkg-architecture code uses triples which
+      are different (in the first part, which we omit in our tuples), so e.g.
+      build-dep restrictions for armel ended up effecting armhf as well
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 01 Jul 2012 08:20:57 +0200
 
