@@ -35,7 +35,7 @@ char const * const httpcodeToStr(int const httpcode) {			/*{{{*/
       case 203: return "203 Non-Authoritative Information";
       case 204: return "204 No Content";
       case 205: return "205 Reset Content";
-      case 206: return "206 Partial Conent";
+      case 206: return "206 Partial Content";
       // Redirections 3xx
       case 300: return "300 Multiple Choices";
       case 301: return "301 Moved Permanently";
@@ -113,6 +113,8 @@ bool sendHead(int const client, int const httpcode, std::list<std::string> &head
    date.append(TimeRFC1123(time(NULL)));
    headers.push_back(date);
 
+   headers.push_back("Accept-Ranges: bytes");
+
    std::clog << ">>> RESPONSE >>>" << std::endl;
    bool Success = true;
    for (std::list<std::string>::const_iterator h = headers.begin();
@@ -135,7 +137,8 @@ bool sendFile(int const client, FileFd &data) {				/*{{{*/
    while ((Success &= data.Read(buffer, sizeof(buffer), &actual)) == true) {
       if (actual == 0)
 	 break;
-      Success &= FileFd::Write(client, buffer, actual);
+      if (Success == true)
+	 Success &= FileFd::Write(client, buffer, actual);
    }
    if (Success == true)
       Success &= FileFd::Write(client, "\r\n", 2);
@@ -268,7 +271,7 @@ void sendDirectoryListing(int const client, std::string const &dir, std::string 
       sendData(client, response);
 }
 									/*}}}*/
-bool parseFirstLine(int const client, std::string const &request, std::string &filename, bool &sendContent) { /*{{{*/
+bool parseFirstLine(int const client, std::string const &request, std::string &filename, bool &sendContent, bool &closeConnection) { /*{{{*/
    if (strncmp(request.c_str(), "HEAD ", 5) == 0)
       sendContent = false;
    if (strncmp(request.c_str(), "GET ", 4) != 0)
@@ -289,8 +292,12 @@ bool parseFirstLine(int const client, std::string const &request, std::string &f
 
    size_t httpstart = fileend;
    for (; request[httpstart] == ' '; ++httpstart);
-   if (strncmp(request.c_str() + httpstart, "HTTP/1.1\r", 9) != 0) {
-      sendError(client, 500, request, sendContent, "Not an HTTP/1.1 request");
+   if (strncmp(request.c_str() + httpstart, "HTTP/1.1\r", 9) == 0)
+      closeConnection = strcasecmp(LookupTag(request, "Connection", "Keep-Alive").c_str(), "Keep-Alive") != 0;
+   else if (strncmp(request.c_str() + httpstart, "HTTP/1.0\r", 9) == 0)
+      closeConnection = strcasecmp(LookupTag(request, "Connection", "Keep-Alive").c_str(), "close") == 0;
+   else {
+      sendError(client, 500, request, sendContent, "Not an HTTP/1.{0,1} request");
       return false;
    }
 
@@ -384,15 +391,15 @@ int main(int const argc, const char * argv[])
 		<< " on socket " << sock << std::endl;
 
       while (ReadMessages(client, messages)) {
+	 bool closeConnection = false;
 	 for (std::vector<std::string>::const_iterator m = messages.begin();
-	      m != messages.end(); ++m) {
+	      m != messages.end() && closeConnection == false; ++m) {
 	    std::clog << ">>> REQUEST >>>>" << std::endl << *m
 		      << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
-
 	    std::list<std::string> headers;
 	    std::string filename;
 	    bool sendContent = true;
-	    if (parseFirstLine(client, *m, filename, sendContent) == false)
+	    if (parseFirstLine(client, *m, filename, sendContent, closeConnection) == false)
 	       continue;
 
 	    std::string host = LookupTag(*m, "Host", "");
@@ -419,6 +426,52 @@ int main(int const argc, const char * argv[])
 		     continue;
 		  }
 	       }
+	       condition = LookupTag(*m, "If-Range", "");
+	       bool ignoreRange = false;
+	       if (condition.empty() == false) {
+		  time_t cache;
+		  if (RFC1123StrToTime(condition.c_str(), cache) == false ||
+		      cache < data.ModificationTime())
+		     ignoreRange = true;
+	       }
+	       condition = LookupTag(*m, "Range", "");
+	       if (ignoreRange == false && condition.empty() == false &&
+		   strncmp(condition.c_str(), "bytes=", 6) == 0) {
+		  size_t end = condition.find(',');
+		  // FIXME: support multiple byte-ranges
+		  if (end == std::string::npos) {
+		     size_t start = 6;
+		     unsigned long long filestart = strtoull(condition.c_str() + start, NULL, 10);
+		     // FIXME: no fileend support
+		     size_t dash = condition.find('-') + 1;
+		     unsigned long long fileend = strtoull(condition.c_str() + dash, NULL, 10);
+		     unsigned long long filesize = data.FileSize();
+		     if (fileend == 0 || fileend == filesize) {
+			if (filesize > filestart) {
+			   data.Skip(filestart);
+			   std::ostringstream contentlength;
+			   contentlength << "Content-Length: " << (filesize - filestart);
+			   headers.push_back(contentlength.str());
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes " << filestart << "-"
+					<< filesize - 1 << "/" << filesize;
+			   headers.push_back(contentrange.str());
+			   sendHead(client, 206, headers);
+			   if (sendContent == true)
+			      sendFile(client, data);
+			   continue;
+			} else {
+			   headers.push_back("Content-Length: 0");
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes 0-0/" << filesize;
+			   headers.push_back(contentrange.str());
+			   sendHead(client, 416, headers);
+			   continue;
+			}
+		     }
+		  }
+	       }
+
 	       addFileHeaders(headers, data);
 	       sendHead(client, 200, headers);
 	       if (sendContent == true)
@@ -448,6 +501,8 @@ int main(int const argc, const char * argv[])
 	 }
 	 _error->DumpErrors(std::cerr);
 	 messages.clear();
+	 if (closeConnection == true)
+	    break;
       }
 
       std::clog << "CLOSE client " << client
