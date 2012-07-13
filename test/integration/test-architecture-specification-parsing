@@ -4,7 +4,7 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture 'amd64'
+configarchitecture 'amd64' 'armel'
 
 buildsimplenativepackage 'pkg-arch-foo' 'amd64' '1.0' 'stable' 'Build-Depends: foo [amd64 !amd64]
 Depends: foo [amd64 !amd64]'
@@ -14,6 +14,8 @@ buildsimplenativepackage 'pkg-arch-foo-unrelated-no' 'amd64' '1.0' 'stable' 'Bui
 Depends: foo [!kfreebsd-any amd64]'
 buildsimplenativepackage 'pkg-arch-foo-unrelated-no2' 'amd64' '1.0' 'stable' 'Build-Depends: foo [amd64 !kfreebsd-any]
 Depends: foo [amd64 !kfreebsd-any]'
+buildsimplenativepackage 'no-depends' 'armel' '1.0' 'stable' 'Build-Depends: foo [armhf], bar [arm]
+Depends: foo [armhf], bar [arm]'
 
 buildsimplenativepackage 'foo' 'amd64' '1.0' 'stable'
 
@@ -93,4 +95,15 @@ The following NEW packages will be installed:
 Inst foo (1.0 stable [amd64])
 Conf foo (1.0 stable [amd64])' aptget build-dep pkg-arch-foo-unrelated-no2 -s
 
+testequal 'Reading package lists...
+Building dependency tree...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget build-dep no-depends -s
 
+# this is not really testing APT - more that dpkg is in line with us
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  no-depends:armel
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst no-depends:armel (1.0 stable [armel])
+Conf no-depends:armel (1.0 stable [armel])' aptget install no-depends -s
