@@ -10,6 +10,9 @@ apt (0.9.7.3) UNRELEASED; urgency=low
   * apt-pkg/cacheset.cc:
     - handle :all and :native correctly as architectures again
       in the commandline parsing (regression in 0.9.7)
+  * apt-pkg/packagemanager.cc:
+    - do not segfault if nothing can be configured to statisfy
+      a pre-depends (e.g. in a pre-depends loop) (Closes: #681958)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
 
