@@ -13,6 +13,9 @@ apt (0.9.7.3) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - do not segfault if nothing can be configured to statisfy
       a pre-depends (e.g. in a pre-depends loop) (Closes: #681958)
+  * apt-pkg/contrib/mmap.cc:
+    - refer to APT::Cache-Start in case the growing failed as if -Limit is
+      really the offender it will be noted in a previous error message.
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
 

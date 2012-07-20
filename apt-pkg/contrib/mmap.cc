@@ -328,7 +328,7 @@ unsigned long DynamicMMap::RawAllocate(unsigned long long Size,unsigned long Aln
       if(!Grow())
       {
 	 _error->Fatal(_("Dynamic MMap ran out of room. Please increase the size "
-			 "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
+			 "of APT::Cache-Start. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
 	 return 0;
       }
    }
