@@ -102,6 +102,7 @@ bool MMap::Map(FileFd &Fd)
 	 {
 	    // for readonly, we don't need sync, so make it simple
 	    Base = malloc(iSize);
+	    SyncToFd = new FileFd();
 	    return Fd.Read(Base, iSize);
 	 }
 	 // FIXME: Writing to compressed fd's ?

@@ -18,6 +18,8 @@ apt (0.9.7.3) UNRELEASED; urgency=low
       second (filebased) constructor of DynamicMMap (Closes: #677704)
     - refer to APT::Cache-Start in case the growing failed as if -Limit is
       really the offender it will be noted in a previous error message.
+    - for filesystems not supporting mmap'ing a file we need to use a
+      SyncToFd dummy just as we did for compressed files in 0.9.5
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
 
