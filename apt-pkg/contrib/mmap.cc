@@ -216,7 +216,17 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &Work
 {
    if (_error->PendingError() == true)
       return;
-   
+
+   // disable Moveable if we don't grow
+   if (Grow == 0)
+      this->Flags &= ~Moveable;
+
+#ifndef __linux__
+   // kfreebsd doesn't have mremap, so we use the fallback
+   if ((this->Flags & Moveable) == Moveable)
+      this->Flags |= Fallback;
+#endif
+
    unsigned long long EndOfFile = Fd->Size();
    if (EndOfFile > WorkSpace)
       WorkSpace = EndOfFile;

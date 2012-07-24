@@ -14,6 +14,8 @@ apt (0.9.7.3) UNRELEASED; urgency=low
     - do not segfault if nothing can be configured to statisfy
       a pre-depends (e.g. in a pre-depends loop) (Closes: #681958)
   * apt-pkg/contrib/mmap.cc:
+    - trigger the usage of the fallback code for kfreebsd also in the
+      second (filebased) constructor of DynamicMMap (Closes: #677704)
     - refer to APT::Cache-Start in case the growing failed as if -Limit is
       really the offender it will be noted in a previous error message.
 
