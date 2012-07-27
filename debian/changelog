@@ -1,4 +1,4 @@
-apt (0.9.7.3) UNRELEASED; urgency=low
+apt (0.9.7.3) unstable; urgency=low
 
   [ Manpages translation updates ]
   * Spanish; (Omar Campagne). Closes: #681566
@@ -6,24 +6,35 @@ apt (0.9.7.3) UNRELEASED; urgency=low
   [ Program translation updates ]
   * Czech (Miroslav Kure). Closes: #680758
 
- -- Christian Perrier <bubulle@debian.org>  Sat, 14 Jul 2012 09:47:02 -0600
+  [ David Kalnischkies ]
+  * apt-pkg/cacheset.cc:
+    - handle :all and :native correctly as architectures again
+      in the commandline parsing (regression in 0.9.7)
+  * apt-pkg/packagemanager.cc:
+    - do not segfault if nothing can be configured to statisfy
+      a pre-depends (e.g. in a pre-depends loop) (Closes: #681958)
+  * apt-pkg/contrib/mmap.cc:
+    - trigger the usage of the fallback code for kfreebsd also in the
+      second (filebased) constructor of DynamicMMap (Closes: #677704)
+    - refer to APT::Cache-Start in case the growing failed as if -Limit is
+      really the offender it will be noted in a previous error message.
+    - for filesystems not supporting mmap'ing a file we need to use a
+      SyncToFd dummy just as we did for compressed files in 0.9.5
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 27 Jul 2012 17:53:41 +0200
 
 apt (0.9.7.2) unstable; urgency=low
 
-
   [ Manpages translation updates ]
   * French (Christian Perrier)
+  * German (Chris Leick)
 
   [ Program translation updates ]
   * Greek (Θανάσης Νάτσης)
-
   * Japanese (Kenshi Muto) (Closes: #679662)
   * Russian (Yuri Kozlov) (Closes: #679599)
   * Danish (Joe Dalton) (Closes: #680119)
   * Portuguese (Miguel Figueiredo) (Closes: #680616)
-
-  [ Manpage translation updates ]
-  * German (Chris Leick)
 
   [ David Kalnischkies ]
   * debian/apt.cron.daily:
