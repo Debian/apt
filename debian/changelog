@@ -6,6 +6,12 @@ apt (0.9.7.4) UNRELEASED; urgency=low
   [ Program translation updates ]
   * Polish (Michał Kułach)
 
+  [ Pino Toscano ]
+  * apt-pkg/contrib/mmap.cc:
+    - guard only the msync call with _POSIX_SYNCHRONIZED_IO rather
+      than also the fallback code as it breaks APT on hurd since 0.9.7.3
+      as the fallback is now always used on non-linux (Closes: #683354)
+
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
 
 apt (0.9.7.3) UNRELEASED; urgency=low

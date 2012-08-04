@@ -156,11 +156,10 @@ bool MMap::Close(bool DoSync)
 /* This is done in syncronous mode - the docs indicate that this will 
    not return till all IO is complete */
 bool MMap::Sync()
-{   
+{
    if ((Flags & UnMapped) == UnMapped)
       return true;
-   
-#ifdef _POSIX_SYNCHRONIZED_IO   
+
    if ((Flags & ReadOnly) != ReadOnly)
    {
       if (SyncToFd != NULL)
@@ -170,11 +169,12 @@ bool MMap::Sync()
       }
       else
       {
+#ifdef _POSIX_SYNCHRONIZED_IO
 	 if (msync((char *)Base, iSize, MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
+#endif
       }
    }
-#endif   
    return true;
 }
 									/*}}}*/
@@ -185,8 +185,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 {
    if ((Flags & UnMapped) == UnMapped)
       return true;
-   
-#ifdef _POSIX_SYNCHRONIZED_IO
+
    unsigned long long PSize = sysconf(_SC_PAGESIZE);
    if ((Flags & ReadOnly) != ReadOnly)
    {
@@ -198,11 +197,12 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       }
       else
       {
+#ifdef _POSIX_SYNCHRONIZED_IO
 	 if (msync((char *)Base+(unsigned long long)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
+#endif
       }
    }
-#endif   
    return true;
 }
 									/*}}}*/
