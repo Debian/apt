@@ -3004,7 +3004,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	    else
 	       Pkg = Cache->FindPkg(D->Package);
 
-	    if (Pkg.end() == true || Pkg->VersionList == 0)
+	    if (Pkg.end() == true || (Pkg->VersionList == 0 && Pkg->ProvidesList == 0))
             {
                if (_config->FindB("Debug::BuildDeps",false) == true)
                     cout << " (not found)" << (*D).Package << endl;

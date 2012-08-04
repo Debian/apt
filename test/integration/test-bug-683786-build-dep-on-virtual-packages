@@ -15,6 +15,9 @@ insertpackage 'unstable' 'make-po-debconf-pure-virtual' 'armel' '1' 'Depends: po
 insertpackage 'unstable' 'po-debconf' 'amd64' '1'
 insertsource 'unstable' 'diffutils' 'any' '1' 'Build-Depends: texi2html'
 
+insertpackage 'unstable' 'libselinux1-dev' 'amd64' '1' 'Provides: libselinux-dev'
+insertsource 'unstable' 'sed' 'any' '1' 'Build-Depends: libselinux-dev'
+
 setupaptarchive
 
 testequal 'Package: po-debconf:armel
@@ -42,3 +45,12 @@ E: Build-Depends dependency for dash cannot be satisfied because the package po-
 testequal 'Reading package lists...
 Building dependency tree...
 E: Build-Depends dependency for diffutils cannot be satisfied because the package texi2html cannot be found' aptget build-dep -aarmel diffutils -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'libselinux1-dev' instead of 'libselinux-dev'
+The following NEW packages will be installed:
+  libselinux1-dev
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libselinux1-dev (1 unstable [amd64])
+Conf libselinux1-dev (1 unstable [amd64])" aptget build-dep sed -s
