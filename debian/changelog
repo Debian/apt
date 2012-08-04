@@ -16,6 +16,10 @@ apt (0.9.7.4) UNRELEASED; urgency=low
   * apt-pkg/contrib/fileutl.cc:
     - remove _POSIX_SYNCHRONIZED_IO guard in FileFd::Sync() around fsync
       as this guard is only needed for fdatasync and not defined on hurd
+  * cmdline/apt-get.cc:
+    - error out on (unsatisfiable) build-deps on purly virtual packages
+      instead of ignoring these dependencies; thanks to Johannes Schauer
+      for the detailed report! (Closes: #683786)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
 
