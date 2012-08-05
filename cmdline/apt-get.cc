@@ -1434,7 +1434,7 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0)
    {
       CacheSetHelperAPTGet helper(c1out);
-      helper.showErrors(AllowFail == false);
+      helper.showErrors(false);
       pkgCache::VerIterator Ver = helper.canNotFindNewestVer(Cache, Pkg);
       if (Ver.end() == false)
 	 Pkg = Ver.ParentPkg();
