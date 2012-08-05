@@ -18,6 +18,9 @@ insertsource 'unstable' 'diffutils' 'any' '1' 'Build-Depends: texi2html'
 insertpackage 'unstable' 'libselinux1-dev' 'amd64' '1' 'Provides: libselinux-dev'
 insertsource 'unstable' 'sed' 'any' '1' 'Build-Depends: libselinux-dev'
 
+insertpackage 'unstable' 'libsehurd1-dev' 'amd64,armel' '1' 'Provides: libsehurd-dev'
+insertsource 'unstable' 'sed2' 'any' '1' 'Build-Depends: libsehurd-dev'
+
 setupaptarchive
 
 testequal 'Package: po-debconf:armel
@@ -54,3 +57,25 @@ The following NEW packages will be installed:
 0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 Inst libselinux1-dev (1 unstable [amd64])
 Conf libselinux1-dev (1 unstable [amd64])" aptget build-dep sed -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+E: Build-Depends dependency for sed cannot be satisfied because the package libselinux-dev cannot be found' aptget build-dep -aarmel sed -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'libsehurd1-dev' instead of 'libsehurd-dev'
+The following NEW packages will be installed:
+  libsehurd1-dev
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsehurd1-dev (1 unstable [amd64])
+Conf libsehurd1-dev (1 unstable [amd64])" aptget build-dep sed2 -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'libsehurd1-dev:armel' instead of 'libsehurd-dev:armel'
+The following NEW packages will be installed:
+  libsehurd1-dev:armel
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsehurd1-dev:armel (1 unstable [armel])
+Conf libsehurd1-dev:armel (1 unstable [armel])" aptget build-dep -aarmel sed2 -s

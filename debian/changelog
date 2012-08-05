@@ -20,6 +20,9 @@ apt (0.9.7.4) UNRELEASED; urgency=low
     - error out on (unsatisfiable) build-deps on purly virtual packages
       instead of ignoring these dependencies; thanks to Johannes Schauer
       for the detailed report! (Closes: #683786)
+    - ensure that the right architecture is used for cross-dependencies in
+      cases we have to choose a provider by defaulting on host-arch
+      instead of build-arch
   * doc/apt-verbatim.ent:
     - denote 'wheezy' as stable codename and 'jessie' as testing codename
       in the documentation in preparation for release
