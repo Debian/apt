@@ -29,6 +29,9 @@ apt (0.9.7.4) UNRELEASED; urgency=low
   * apt-pkg/indexcopy.cc:
     - do not use atomic writing if the target is /dev/null as we don't want
       to replace it, not even automically. (Closes: #683410)
+  * apt-pkg/cdrom.cc:
+    - do not link() but rename() the cdroms.list to cdroms.list~ as a backup
+      to ensure that apt-cdrom can be run multiple times (Closes: #676302)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
 
