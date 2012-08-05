@@ -26,6 +26,9 @@ apt (0.9.7.4) UNRELEASED; urgency=low
   * doc/apt-verbatim.ent:
     - denote 'wheezy' as stable codename and 'jessie' as testing codename
       in the documentation in preparation for release
+  * apt-pkg/indexcopy.cc:
+    - do not use atomic writing if the target is /dev/null as we don't want
+      to replace it, not even automically. (Closes: #683410)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
 
