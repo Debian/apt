@@ -1,3 +1,40 @@
+apt (0.9.7.4) UNRELEASED; urgency=low
+
+  [ Manpages translation updates ]
+  * Polish (Robert Luberda) (Closes: #683109)
+
+  [ Program translation updates ]
+  * Polish (Michał Kułach)
+
+  [ Pino Toscano ]
+  * apt-pkg/contrib/mmap.cc:
+    - guard only the msync call with _POSIX_SYNCHRONIZED_IO rather
+      than also the fallback code as it breaks APT on hurd since 0.9.7.3
+      as the fallback is now always used on non-linux (Closes: #683354)
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/fileutl.cc:
+    - remove _POSIX_SYNCHRONIZED_IO guard in FileFd::Sync() around fsync
+      as this guard is only needed for fdatasync and not defined on hurd
+  * cmdline/apt-get.cc:
+    - error out on (unsatisfiable) build-deps on purly virtual packages
+      instead of ignoring these dependencies; thanks to Johannes Schauer
+      for the detailed report! (Closes: #683786)
+    - ensure that the right architecture is used for cross-dependencies in
+      cases we have to choose a provider by defaulting on host-arch
+      instead of build-arch
+  * doc/apt-verbatim.ent:
+    - denote 'wheezy' as stable codename and 'jessie' as testing codename
+      in the documentation in preparation for release
+  * apt-pkg/indexcopy.cc:
+    - do not use atomic writing if the target is /dev/null as we don't want
+      to replace it, not even automically. (Closes: #683410)
+  * apt-pkg/cdrom.cc:
+    - do not link() but rename() the cdroms.list to cdroms.list~ as a backup
+      to ensure that apt-cdrom can be run multiple times (Closes: #676302)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 18 Jul 2012 11:45:57 +0200
+
 apt (0.9.7.3) unstable; urgency=low
 
   [ Manpages translation updates ]

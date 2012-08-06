@@ -9,17 +9,17 @@
 # Michał Kułach <michal.kulach@gmail.com>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7.23.1\n"
+"Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-06-27 11:17+0200\n"
-"PO-Revision-Date: 2012-01-22 20:35+0100\n"
+"POT-Creation-Date: 2012-07-28 21:53+0200\n"
+"PO-Revision-Date: 2012-07-28 21:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"X-Generator: Lokalize 1.2\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
@@ -115,7 +115,7 @@ msgstr "Należy podać przynajmniej jeden wzorzec"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "To polecenie jest przestarzałe. Prosimy używać \"apt-mark showauto\"."
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:510
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nie udało się odnaleźć pakietu %s"
@@ -161,7 +161,7 @@ msgid "  Version table:"
 msgstr "  Tabela wersji:"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3350 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3350 cmdline/apt-mark.cc:375
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -294,7 +294,7 @@ msgstr "T"
 
 #: cmdline/apt-get.cc:140
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
@@ -451,14 +451,16 @@ msgstr "Pakiety wirtualne, takie jak \"%s\" nie mogą być usunięte\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Pakiet %s nie jest zainstalowany, więc nie zostanie usunięty.\n"
+msgstr ""
+"Pakiet %s nie jest zainstalowany, więc nie zostanie usunięty. Czy chodziło o "
+"\"%s\"?\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Pakiet %s nie jest zainstalowany, więc nie zostanie usunięty.\n"
+msgstr "Pakiet \"%s\" nie jest zainstalowany, więc nie zostanie usunięty\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -772,10 +774,9 @@ msgstr[2] ""
 "wymagane.\n"
 
 #: cmdline/apt-get.cc:1835
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Aby je usunąć należy użyć \"apt-get autoremove\"."
+msgstr[0] "Aby go usunąć należy użyć \"apt-get autoremove\"."
 msgstr[1] "Aby je usunąć należy użyć \"apt-get autoremove\"."
 msgstr[2] "Aby je usunąć należy użyć \"apt-get autoremove\"."
 
@@ -865,7 +866,7 @@ msgstr "Nie udało się zablokować katalogu pobierania"
 #: cmdline/apt-get.cc:2386
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
+msgstr "Nie można znaleźć źródła do pobrania wersji \"%s\" pakietu \"%s\""
 
 #: cmdline/apt-get.cc:2391
 #, c-format
@@ -894,14 +895,14 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2513
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Proszę użyć:\n"
-"bzr get %s\n"
+"bzr branch %s\n"
 "by pobrać najnowsze (prawdopodobnie jeszcze niewydane) poprawki tego "
 "pakietu.\n"
 
@@ -1218,29 +1219,29 @@ msgstr "%s został już zatrzymany.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s został już odznaczony jako zatrzymany.\n"
 
-#: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:314
+#: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Oczekiwano na proces %s, ale nie było go"
 
-#: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:297
+#: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
 #, c-format
 msgid "%s set on hold.\n"
 msgstr "%s został zatrzymany.\n"
 
-#: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:302
+#: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
 #, c-format
 msgid "Canceled hold on %s.\n"
 msgstr "Odznaczono zatrzymanie %s\n"
 
 # Musi pasować do su i sudo.
-#: cmdline/apt-mark.cc:320
+#: cmdline/apt-mark.cc:332
 msgid "Executing dpkg failed. Are you root?"
 msgstr ""
 "Uruchomienie dpkg nie powiodło się. Czy użyto uprawnień administratora?"
 
-#: cmdline/apt-mark.cc:367
+#: cmdline/apt-mark.cc:379
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -1653,7 +1654,7 @@ msgstr "Nie można czytać %s"
 #: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:179
 #: apt-pkg/contrib/cdromutl.cc:213 apt-pkg/acquire.cc:491
 #: apt-pkg/acquire.cc:516 apt-pkg/clean.cc:42 apt-pkg/clean.cc:60
-#: apt-pkg/clean.cc:122
+#: apt-pkg/clean.cc:123
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nie udało się przejść do %s"
@@ -2028,19 +2029,19 @@ msgid "Unable to open %s"
 msgstr "Nie można otworzyć %s"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Nieprawidłowa linia %2$lu #1 pliku override %1$s"
+msgstr "Nieprawidłowa linia %llu #1 pliku override %s"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Nieprawidłowa linia %2$lu #2 pliku override %1$s"
+msgstr "Nieprawidłowa linia %llu #2 pliku override %s"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Nieprawidłowa linia %2$lu #3 pliku override %1$s"
+msgstr "Nieprawidłowa linia %llu #3 pliku override %s"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -2093,7 +2094,6 @@ msgid "Failed to rename %s to %s"
 msgstr "Nie udało się zmienić nazwy %s na %s"
 
 #: cmdline/apt-internal-solver.cc:37
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -2106,15 +2106,16 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Użycie: apt-extracttemplates plik1 [plik2 ...]\n"
+"Użycie: apt-internal-solver\n"
 "\n"
-"apt-extracttemplates to narzędzie służące do pobierania informacji\n"
-"i konfiguracji i szablonach z pakietów Debiana.\n"
+"apt-internal-solver jest interfejsem do używania bieżącego, wewnętrznego\n"
+"mechanizmu rozwiązywania zależności - w sposób podobny jak zewnętrznego\n"
+"mechanizmu rodziny APT - do celów debugowania itp.\n"
 "\n"
 "Opcje:\n"
 "  -h   Ten tekst pomocy.\n"
-"  -t   Ustawia katalog tymczasowy\n"
-"  -c=? Czyta wskazany plik konfiguracyjny.\n"
+"  -q   Zapisywalne wyjście - brak wskaźnika postępu\n"
+"  -c=? Czyta wskazany plik konfiguracyjny\n"
 "  -o=? Ustawia dowolną opcję konfiguracji, np. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
@@ -2310,43 +2311,43 @@ msgstr "Plik kontrolny nie może zostać poprawnie zinterpretowany"
 msgid "Can't mmap an empty file"
 msgstr "Nie można wykonać mmap na pustym pliku"
 
-#: apt-pkg/contrib/mmap.cc:110
+#: apt-pkg/contrib/mmap.cc:111
 #, c-format
 msgid "Couldn't duplicate file descriptor %i"
 msgstr "Nie udało się zduplikować deskryptora pliku %i"
 
-#: apt-pkg/contrib/mmap.cc:118
-#, fuzzy, c-format
+#: apt-pkg/contrib/mmap.cc:119
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Nie udało się wykonać mmap %lu bajtów"
+msgstr "Nie udało się wykonać mmap %llu bajtów"
 
-#: apt-pkg/contrib/mmap.cc:145
+#: apt-pkg/contrib/mmap.cc:146
 msgid "Unable to close mmap"
 msgstr "Nie udało się zamknąć mmap"
 
-#: apt-pkg/contrib/mmap.cc:173 apt-pkg/contrib/mmap.cc:201
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
 msgid "Unable to synchronize mmap"
 msgstr "Nie udało się zsynchronizować mmap"
 
-#: apt-pkg/contrib/mmap.cc:279
+#: apt-pkg/contrib/mmap.cc:290
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nie udało się wykonać mmap %lu bajtów"
 
-#: apt-pkg/contrib/mmap.cc:311
+#: apt-pkg/contrib/mmap.cc:322
 msgid "Failed to truncate file"
 msgstr "Nie udało się uciąć zawartości pliku %s"
 
-#: apt-pkg/contrib/mmap.cc:330
+#: apt-pkg/contrib/mmap.cc:341
 #, c-format
 msgid ""
 "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
 "Brak miejsca dla dynamicznego MMap. Proszę zwiększyć rozmiar APT::Cache-"
-"Start. Aktualna wartość: %lu. (man 5 apt.conf)"
+"Start. Bieżąca wartość: %lu. (man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:429
+#: apt-pkg/contrib/mmap.cc:440
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
@@ -2355,7 +2356,7 @@ msgstr ""
 "Nie udało się zwiększyć rozmiaru MMap, ponieważ limit %lu bajtów został już "
 "osiągnięty."
 
-#: apt-pkg/contrib/mmap.cc:432
+#: apt-pkg/contrib/mmap.cc:443
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2603,14 +2604,14 @@ msgid "Failed to exec compressor "
 msgstr "Nie udało się uruchomić kompresora "
 
 #: apt-pkg/contrib/fileutl.cc:1289
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "należało przeczytać jeszcze %lu, ale nic nie zostało"
+msgstr "należało przeczytać jeszcze %llu, ale nic nie zostało"
 
 #: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "należało zapisać jeszcze %lu, ale nie udało się to"
+msgstr "należało zapisać jeszcze %llu, ale nie udało się to"
 
 #: apt-pkg/contrib/fileutl.cc:1716
 #, c-format
@@ -2644,9 +2645,8 @@ msgid "The package cache file is an incompatible version"
 msgstr "Magazyn podręczny pakietów jest w niezgodnej wersji"
 
 #: apt-pkg/pkgcache.cc:162
-#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "Magazyn podręczny pakietów jest uszkodzony"
+msgstr "Magazyn podręczny pakietów jest uszkodzony - jest zbyt mały"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2832,9 +2832,9 @@ msgstr ""
 "się więcej. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, fuzzy, c-format
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "Nie udało się otworzyć pliku \"%s\""
+msgstr "Nie udało się skonfigurować \"%s\". "
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2990,9 +2990,9 @@ msgstr "Magazyn podręczny ma niezgodny system wersji"
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "Wystąpił błąd podczas przetwarzania %s (FindPkg)"
+msgstr "Wystąpił błąd podczas przetwarzania %s (%s%d)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -3290,35 +3290,35 @@ msgstr "Plik %s nie zaczyna się wiadomością podpisaną w trybie clearsign"
 msgid "No keyring installed in %s."
 msgstr "Brak zainstalowanej bazy kluczy w %s."
 
-#: apt-pkg/cacheset.cc:401
+#: apt-pkg/cacheset.cc:403
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Wydanie \"%s\" dla \"%s\" nie zostało znalezione"
 
-#: apt-pkg/cacheset.cc:404
+#: apt-pkg/cacheset.cc:406
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Wersja \"%s\" dla \"%s\" nie została znaleziona"
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:517
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Nie udało się odnaleźć zadania \"%s\""
 
-#: apt-pkg/cacheset.cc:521
+#: apt-pkg/cacheset.cc:523
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr ""
 "Nie udało się znaleźć żadnego pakietu według wyrażenia regularnego \"%s\""
 
-#: apt-pkg/cacheset.cc:532
+#: apt-pkg/cacheset.cc:534
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 "Nie udało się wybrać wersji z pakietu \"%s\", ponieważ jest on czysto "
 "wirtualny"
 
-#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
+#: apt-pkg/cacheset.cc:541 apt-pkg/cacheset.cc:548
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3327,21 +3327,21 @@ msgstr ""
 "Nie udało się wybrać zainstalowanej ani kandydującej wersji pakietu \"%s\", "
 "ponieważ nie ma żadnej z nich"
 
-#: apt-pkg/cacheset.cc:553
+#: apt-pkg/cacheset.cc:555
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Nie udało się wybrać najnowszej wersji pakietu \"%s\", ponieważ jest on "
 "czysto wirtualny"
 
-#: apt-pkg/cacheset.cc:561
+#: apt-pkg/cacheset.cc:563
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "Nie udało się wybrać wersji kandydującej pakietu %s, ponieważ nie ma "
 "kandydata"
 
-#: apt-pkg/cacheset.cc:569
+#: apt-pkg/cacheset.cc:571
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3350,23 +3350,25 @@ msgstr ""
 
 #: apt-pkg/edsp.cc:41 apt-pkg/edsp.cc:61
 msgid "Send scenario to solver"
-msgstr ""
+msgstr "Wysyłanie scenariusza do mechanizmu rozwiązywania zależności"
 
 #: apt-pkg/edsp.cc:209
 msgid "Send request to solver"
-msgstr ""
+msgstr "Wysyłanie żądania do mechanizmu rozwiązywania zależności"
 
 #: apt-pkg/edsp.cc:277
 msgid "Prepare for receiving solution"
-msgstr ""
+msgstr "Przygotowywanie na otrzymanie rozwiązania"
 
 #: apt-pkg/edsp.cc:284
 msgid "External solver failed without a proper error message"
 msgstr ""
+"Zewnętrzny mechanizm rozwiązywania zależności zawiódł, bez podania "
+"prawidłowego komunikatu o błędzie"
 
 #: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
 msgid "Execute external solver"
-msgstr ""
+msgstr "Wykonywanie zewnętrznego mechanizmu rozwiązywania zależności"
 
 #: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
@@ -3461,7 +3463,7 @@ msgstr "Uruchamianie dpkg"
 
 #: apt-pkg/deb/dpkgpm.cc:1411
 msgid "Operation was interrupted before it could finish"
-msgstr ""
+msgstr "Operacja została przerwana, zanim mogła zostać zakończona"
 
 #: apt-pkg/deb/dpkgpm.cc:1473
 msgid "No apport report written because MaxReports is reached already"
