@@ -34,7 +34,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
    if (F == 0)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
    
-   char Line[500];
+   char Line[1000];
    unsigned long long Counter = 0;
    while (fgets(Line,sizeof(Line),F) != 0)
    {
@@ -142,7 +142,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &Source)
    if (F == 0)
       return _error->Errno("fopen",_("Unable to open %s"),File.c_str());
   
-   char Line[500];
+   char Line[1000];
    unsigned long long Counter = 0;
    while (fgets(Line,sizeof(Line),F) != 0)
    {
