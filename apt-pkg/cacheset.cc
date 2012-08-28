@@ -193,6 +193,8 @@ bool PackageContainerInterface::FromGroup(PackageContainerInterface * const pci,
 	if (archfound != std::string::npos) {
 		arch = pkg.substr(archfound+1);
 		pkg.erase(archfound);
+		if (arch == "all" || arch == "native")
+			arch = _config->Find("APT::Architecture");
 	}
 
 	pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(pkg);

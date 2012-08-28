@@ -736,6 +736,11 @@ testfileequal() {
 	fi
 }
 
+testempty() {
+	msgtest "Test for no output of" "$*"
+	test -z "$($* 2>&1)" && msgpass || msgfail
+}
+
 testequal() {
 	local COMPAREFILE=$(mktemp)
 	addtrap "rm $COMPAREFILE;"

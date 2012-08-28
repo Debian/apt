@@ -1,11 +1,123 @@
-apt (0.9.7.1ubuntu3) quantal; urgency=low
+apt (0.9.7.5ubuntu1) UNRELEASEDquantal; urgency=low
 
+  [ Michael Vogt ]
+  * merged from debian-sid
+  
   [ TJ ]
   * apt-pkg/contrib/netrc.cc:
     - increase LOGINSIZE/PASSWORDSIZE limits and add proper error
       if the limits are reached (LP: #1008289)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 28 Aug 2012 11:57:22 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 28 Aug 2012 12:00:17 +0200
+
+apt (0.9.7.5) UNRELEASED; urgency=low
+
+  [ Manpages translation updates ]
+  * Japanese (KURASAWA Nozomu) (Closes: #684435)
+
+ -- Christian Perrier <bubulle@debian.org>  Fri, 10 Aug 2012 07:52:17 +0200
+
+apt (0.9.7.4) unstable; urgency=low
+
+  [ Manpages translation updates ]
+  * Polish (Robert Luberda) (Closes: #683109)
+
+  [ Program translation updates ]
+  * Polish (Michał Kułach)
+
+  [ Pino Toscano ]
+  * apt-pkg/contrib/mmap.cc:
+    - guard only the msync call with _POSIX_SYNCHRONIZED_IO rather
+      than also the fallback code as it breaks APT on hurd since 0.9.7.3
+      as the fallback is now always used on non-linux (Closes: #683354)
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/fileutl.cc:
+    - remove _POSIX_SYNCHRONIZED_IO guard in FileFd::Sync() around fsync
+      as this guard is only needed for fdatasync and not defined on hurd
+  * cmdline/apt-get.cc:
+    - error out on (unsatisfiable) build-deps on purly virtual packages
+      instead of ignoring these dependencies; thanks to Johannes Schauer
+      for the detailed report! (Closes: #683786)
+    - ensure that the right architecture is used for cross-dependencies in
+      cases we have to choose a provider by defaulting on host-arch
+      instead of build-arch
+  * doc/apt-verbatim.ent:
+    - denote 'wheezy' as stable codename and 'jessie' as testing codename
+      in the documentation in preparation for release
+  * apt-pkg/indexcopy.cc:
+    - do not use atomic writing if the target is /dev/null as we don't want
+      to replace it, not even automically. (Closes: #683410)
+  * apt-pkg/cdrom.cc:
+    - do not link() but rename() the cdroms.list to cdroms.list~ as a backup
+      to ensure that apt-cdrom can be run multiple times (Closes: #676302)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 06 Aug 2012 15:55:04 +0200
+
+apt (0.9.7.3) unstable; urgency=low
+
+  [ Manpages translation updates ]
+  * Spanish; (Omar Campagne). Closes: #681566
+
+  [ Program translation updates ]
+  * Czech (Miroslav Kure). Closes: #680758
+
+  [ David Kalnischkies ]
+  * apt-pkg/cacheset.cc:
+    - handle :all and :native correctly as architectures again
+      in the commandline parsing (regression in 0.9.7)
+  * apt-pkg/packagemanager.cc:
+    - do not segfault if nothing can be configured to statisfy
+      a pre-depends (e.g. in a pre-depends loop) (Closes: #681958)
+  * apt-pkg/contrib/mmap.cc:
+    - trigger the usage of the fallback code for kfreebsd also in the
+      second (filebased) constructor of DynamicMMap (Closes: #677704)
+    - refer to APT::Cache-Start in case the growing failed as if -Limit is
+      really the offender it will be noted in a previous error message.
+    - for filesystems not supporting mmap'ing a file we need to use a
+      SyncToFd dummy just as we did for compressed files in 0.9.5
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 27 Jul 2012 17:53:41 +0200
+
+apt (0.9.7.2) unstable; urgency=low
+
+  [ Manpages translation updates ]
+  * French (Christian Perrier)
+  * German (Chris Leick)
+
+  [ Program translation updates ]
+  * Greek (Θανάσης Νάτσης)
+  * Japanese (Kenshi Muto) (Closes: #679662)
+  * Russian (Yuri Kozlov) (Closes: #679599)
+  * Danish (Joe Dalton) (Closes: #680119)
+  * Portuguese (Miguel Figueiredo) (Closes: #680616)
+
+  [ David Kalnischkies ]
+  * debian/apt.cron.daily:
+    - do not try to backup extended_states file if it doesn't
+      exist (Closes: #680287)
+  * ftparchive/writer.cc:
+    - handle the APT::FTPArchive::Packages::SHA512 option correctly instead
+      of overriding SHA256, thanks Christian Marillat! (Closes: #680252)
+  * cmdline/apt-mark.cc:
+    - arch:all packages are treated as arch:native packages, but dpkg
+      expects pkg:all for selections, so use the arch of the installed
+      version instead of the package structure if possible.
+      Thanks to Stepan Golosunov for the report! (Closes: #680041)
+  * apt-pkg/clean.cc:
+    - run autoclean against pkg:arch and not always against pkg:native as
+      this removes valid cache entries (Closes: #679371)
+  * apt-pkg/deb/deblistparser.cc:
+    - negative dependencies need to apply to all architectures,
+      but those with a specific architecture only apply to this one
+  * apt-pkg/cachefilter.cc:
+    - remove architecture-specific arch to tuple expansion-rules as they lead
+      to the same tuples for different architectures (e.g. linux-arm for arm,
+      armel and armhf) while the dpkg-architecture code uses triples which
+      are different (in the first part, which we omit in our tuples), so e.g.
+      build-dep restrictions for armel ended up effecting armhf as well
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 13 Jul 2012 21:33:56 +0200
 
 apt (0.9.7.1ubuntu2) quantal; urgency=low
 

@@ -1434,7 +1434,7 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0)
    {
       CacheSetHelperAPTGet helper(c1out);
-      helper.showErrors(AllowFail == false);
+      helper.showErrors(false);
       pkgCache::VerIterator Ver = helper.canNotFindNewestVer(Cache, Pkg);
       if (Ver.end() == false)
 	 Pkg = Ver.ParentPkg();
@@ -2895,11 +2895,15 @@ bool DoBuildDep(CommandLine &CmdL)
 	    if (StripMultiArch == false && D->Type != pkgSrcRecords::Parser::BuildDependIndep)
 	    {
 	       size_t const colon = D->Package.find(":");
-	       if (colon != string::npos &&
-		   (strcmp(D->Package.c_str() + colon, ":any") == 0 || strcmp(D->Package.c_str() + colon, ":native") == 0))
-		  Pkg = Cache->FindPkg(D->Package.substr(0,colon));
+	       if (colon != string::npos)
+	       {
+		  if (strcmp(D->Package.c_str() + colon, ":any") == 0 || strcmp(D->Package.c_str() + colon, ":native") == 0)
+		     Pkg = Cache->FindPkg(D->Package.substr(0,colon));
+		  else
+		     Pkg = Cache->FindPkg(D->Package);
+	       }
 	       else
-		  Pkg = Cache->FindPkg(D->Package);
+		  Pkg = Cache->FindPkg(D->Package, hostArch);
 
 	       // a bad version either is invalid or doesn't satify dependency
 	       #define BADVER(Ver) (Ver.end() == true || \
@@ -2918,13 +2922,13 @@ bool DoBuildDep(CommandLine &CmdL)
 	       }
 	       if (verlist.empty() == true)
 	       {
-		  pkgCache::PkgIterator HostPkg = Cache->FindPkg(D->Package, hostArch);
-		  if (HostPkg.end() == false)
+		  pkgCache::PkgIterator BuildPkg = Cache->FindPkg(D->Package, "native");
+		  if (BuildPkg.end() == false && Pkg != BuildPkg)
 		  {
-		     pkgCache::VerIterator Ver = (*Cache)[HostPkg].InstVerIter(*Cache);
+		     pkgCache::VerIterator Ver = (*Cache)[BuildPkg].InstVerIter(*Cache);
 		     if (BADVER(Ver) == false)
 			verlist.insert(Ver);
-		     Ver = (*Cache)[HostPkg].CandidateVerIter(*Cache);
+		     Ver = (*Cache)[BuildPkg].CandidateVerIter(*Cache);
 		     if (BADVER(Ver) == false)
 			verlist.insert(Ver);
 		  }
@@ -2943,6 +2947,8 @@ bool DoBuildDep(CommandLine &CmdL)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
 		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
 			forbidden = "Multi-Arch: none";
+		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
 		  }
 		  else if (Ver->MultiArch == pkgCache::Version::Same)
 		  {
@@ -2950,11 +2956,15 @@ bool DoBuildDep(CommandLine &CmdL)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
 		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
 			forbidden = "Multi-Arch: same";
-		     // :native gets the buildArch
+		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
 		  }
 		  else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign || Ver->MultiArch == pkgCache::Version::All)
 		  {
-		     if (colon != string::npos)
+		     if (colon == string::npos)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
+		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0 ||
+			      strcmp(D->Package.c_str() + colon, ":native") == 0)
 			forbidden = "Multi-Arch: foreign";
 		  }
 		  else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
@@ -2972,7 +2982,8 @@ bool DoBuildDep(CommandLine &CmdL)
 			if (Pkg.end() == true)
 			   Pkg = Grp.FindPreferredPkg(true);
 		     }
-		     // native gets buildArch
+		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
 		  }
 
 		  if (forbidden.empty() == false)
@@ -3004,7 +3015,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	    else
 	       Pkg = Cache->FindPkg(D->Package);
 
-	    if (Pkg.end() == true)
+	    if (Pkg.end() == true || (Pkg->VersionList == 0 && Pkg->ProvidesList == 0))
             {
                if (_config->FindB("Debug::BuildDeps",false) == true)
                     cout << " (not found)" << (*D).Package << endl;
@@ -3087,7 +3098,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	       }
 	    }
 
-            if (TryToInstallBuildDep(Pkg,Cache,Fix,false,false) == true)
+            if (TryToInstallBuildDep(Pkg,Cache,Fix,false,false,false) == true)
             {
                // We successfully installed something; skip remaining alternatives
                skipAlternatives = hasAlternatives;

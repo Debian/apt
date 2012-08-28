@@ -635,7 +635,8 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 return _error->Error("Problem parsing dependency %s",Tag);
       size_t const found = Package.rfind(':');
 
-      if (MultiArchEnabled == true &&
+      // If negative is unspecific it needs to apply on all architectures
+      if (MultiArchEnabled == true && found == string::npos &&
 	  (Type == pkgCache::Dep::Conflicts ||
 	   Type == pkgCache::Dep::DpkgBreaks ||
 	   Type == pkgCache::Dep::Replaces))

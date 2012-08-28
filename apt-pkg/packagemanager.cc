@@ -643,7 +643,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    }
 
 	    // Look for something that could be configured.
-	    for (DepIterator Cur = Start; Bad == true; ++Cur)
+	    for (DepIterator Cur = Start; Bad == true && Cur.end() == false; ++Cur)
 	    {
 	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)

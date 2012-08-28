@@ -11,17 +11,17 @@
 # Yuri Kozlov <yuray@komyakino.ru>, 2009, 2010, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.8.15.9\n"
+"Project-Id-Version: apt rev2227.1.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-08-20 12:04+0100\n"
-"PO-Revision-Date: 2012-01-06 10:36+0400\n"
+"PO-Revision-Date: 2012-06-30 08:47+0400\n"
 "Last-Translator: Yuri Kozlov <yuray@komyakino.ru>\n"
 "Language-Team: Russian <debian-l10n-russian@lists.debian.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"X-Generator: Lokalize 1.2\n"
 "Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -33,7 +33,7 @@ msgstr "Пакет %s версии %s имеет неудовлетворённ�
 
 #: cmdline/apt-cache.cc:286
 msgid "Total package names: "
-msgstr "Всего имён пакетов : "
+msgstr "Всего имён пакетов: "
 
 #: cmdline/apt-cache.cc:288
 msgid "Total package structures: "
@@ -295,7 +295,7 @@ msgstr "д"
 
 #: cmdline/apt-get.cc:140
 msgid "N"
-msgstr ""
+msgstr "н"
 
 #: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
 #, c-format
@@ -453,14 +453,16 @@ msgstr "Виртуальные пакеты, подобные «%s», не мо�
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "Пакет %s не установлен, поэтому не может быть удалён\n"
+msgstr ""
+"Пакет «%s» не установлен, поэтому не может быть удалён. Возможно имелся в "
+"виду «%s»?\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "Пакет %s не установлен, поэтому не может быть удалён\n"
+msgstr "Пакет «%s» не установлен, поэтому не может быть удалён\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -569,7 +571,7 @@ msgstr "Внутренняя ошибка, Ordering не завершилась"
 
 #: cmdline/apt-get.cc:1189
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
-msgstr "Странно.. Несовпадение размеров, напишите на apt@packages.debian.org"
+msgstr "Странно. Несовпадение размеров, напишите на apt@packages.debian.org"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
@@ -654,7 +656,7 @@ msgstr "Некоторые файлы скачать не удалось"
 
 #: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
 msgid "Download complete and in download only mode"
-msgstr "Указан режим \"только скачивание\", и скачивание завершено"
+msgstr "Указан режим «только скачивание», и скачивание завершено"
 
 #: cmdline/apt-get.cc:1379
 msgid ""
@@ -769,10 +771,9 @@ msgstr[1] "%lu пакета было установлено автоматиче
 msgstr[2] "%lu пакетов было установлены автоматически и больше не требуются.\n"
 
 #: cmdline/apt-get.cc:1835
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Для их удаления используйте «apt-get autoremove»."
+msgstr[0] "Для его удаления используйте «apt-get autoremove»."
 msgstr[1] "Для их удаления используйте «apt-get autoremove»."
 msgstr[2] "Для их удаления используйте «apt-get autoremove»."
 
@@ -862,7 +863,7 @@ msgstr "Невозможно заблокировать каталог, куда
 #: cmdline/apt-get.cc:2386
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
+msgstr "Невозможно найти источник для загрузки «%2$s» версии «%1$s»"
 
 #: cmdline/apt-get.cc:2391
 #, c-format
@@ -889,14 +890,14 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2513
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Используйте:\n"
-"bzr get %s\n"
+"bzr branch %s\n"
 "для получения последних (возможно не выпущенных) обновлений пакета.\n"
 
 #: cmdline/apt-get.cc:2566
@@ -2025,24 +2026,24 @@ msgid "Unable to open %s"
 msgstr "Не удалось открыть %s"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Неправильная запись о переназначении (override) %s на строке %lu #1"
+msgstr "Неправильная запись о переназначении (override) %s в строке %llu #1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Неправильная запись о переназначении (override) %s на строке %lu #2"
+msgstr "Неправильная запись о переназначении (override) %s в строке %llu #2"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, fuzzy, c-format
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Неправильная запись о переназначении (override) %s на строке %lu #3"
+msgstr "Неправильная запись о переназначении (override) %s в строке %llu #3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
 msgid "Failed to read the override file %s"
-msgstr "Не удалось прочесть файл переназначений (override)%s"
+msgstr "Не удалось прочесть файл переназначений (override) %s"
 
 #: ftparchive/multicompress.cc:70
 #, c-format
@@ -2091,7 +2092,6 @@ msgid "Failed to rename %s to %s"
 msgstr "Не удалось переименовать %s в %s"
 
 #: cmdline/apt-internal-solver.cc:37
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -2104,13 +2104,14 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Использование: apt-extracttemplates файл1 [файл2…]\n"
+"Использование: apt-internal-solver\n"
 "\n"
-"apt-extracttemplates извлекает из пакетов Debian данные config и template\n"
+"apt-internal-solver — интерфейс к внутреннему решателю, предназначен\n"
+"для отладки, подобен интерфейсу внешнего решателя семейства APT\n"
 "\n"
 "Параметры:\n"
 "  -h   Этот текст\n"
-"  -t   Задать каталог для временных файлов\n"
+"  -q   Вывод протокола работы — индикатор выполнения отключён\n"
 "  -c=? Читать указанный файл настройки\n"
 "  -o=? Задать значение произвольной настройке, например, -o dir::cache=/tmp\n"
 
@@ -2313,9 +2314,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "Не удалось сделать копию файлового дескриптора %i"
 
 #: apt-pkg/contrib/mmap.cc:118
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Невозможно отобразить в память %lu байт"
+msgstr "Невозможно отобразить в память %llu байт"
 
 #: apt-pkg/contrib/mmap.cc:145
 msgid "Unable to close mmap"
@@ -2603,15 +2604,15 @@ msgid "Failed to exec compressor "
 msgstr "Не удалось выполнить компрессор "
 
 #: apt-pkg/contrib/fileutl.cc:1289
-#, fuzzy, c-format
+#, c-format
 msgid "read, still have %llu to read but none left"
 msgstr ""
-"ошибка при чтении. собирались прочесть ещё %lu байт, но ничего больше нет"
+"ошибка при чтении; собирались прочесть ещё %llu байт, но ничего больше нет"
 
 #: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
-#, fuzzy, c-format
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "ошибка при записи, собирались записать ещё %lu байт, но не смогли"
+msgstr "ошибка при записи; собирались записать ещё %llu байт, но не смогли"
 
 #: apt-pkg/contrib/fileutl.cc:1716
 #, c-format
@@ -2645,9 +2646,8 @@ msgid "The package cache file is an incompatible version"
 msgstr "Не поддерживаемая версия кэша пакетов"
 
 #: apt-pkg/pkgcache.cc:162
-#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "Кэш пакетов повреждён"
+msgstr "Кэш пакетов повреждён, он слишком мал"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2834,9 +2834,9 @@ msgstr ""
 "apt.conf о APT::Immediate-Configure. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, fuzzy, c-format
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "Не удалось открыть файл «%s»"
+msgstr "Не удалось настроить «%s»."
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2992,26 +2992,31 @@ msgstr "Кэш имеет несовместимую систему версий
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, fuzzy, c-format
+#, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "Произошла ошибка во время обработки %s (FindPkg)"
+msgstr "Произошла ошибка во время обработки %s (%s%d)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "Превышено допустимое количество имён пакетов."
+msgstr ""
+"Превышено допустимое количество имён пакетов, которое способен обработать "
+"APT."
 
 #: apt-pkg/pkgcachegen.cc:237
 msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "Превышено допустимое количество версий."
+msgstr ""
+"Превышено допустимое количество версий, которое способен обработать APT."
 
 #: apt-pkg/pkgcachegen.cc:240
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr ""
-"Вах, превышено допустимое количество описаний, с которым может работать APT."
+"Превышено допустимое количество описаний, которое способен обработать APT."
 
 #: apt-pkg/pkgcachegen.cc:243
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "Превышено допустимое количество зависимостей."
+msgstr ""
+"Превышено допустимое количество зависимостей, которое способен обработать "
+"APT."
 
 #: apt-pkg/pkgcachegen.cc:523
 #, c-format
@@ -3351,23 +3356,23 @@ msgstr ""
 
 #: apt-pkg/edsp.cc:41 apt-pkg/edsp.cc:61
 msgid "Send scenario to solver"
-msgstr ""
+msgstr "Отправка сценария решателю"
 
 #: apt-pkg/edsp.cc:209
 msgid "Send request to solver"
-msgstr ""
+msgstr "Отправка запроса решателю"
 
 #: apt-pkg/edsp.cc:277
 msgid "Prepare for receiving solution"
-msgstr ""
+msgstr "Подготовка к приёму решения"
 
 #: apt-pkg/edsp.cc:284
 msgid "External solver failed without a proper error message"
-msgstr ""
+msgstr "Внешний решатель завершился с ошибкой не передав сообщения об ошибке"
 
 #: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
 msgid "Execute external solver"
-msgstr ""
+msgstr "Запустить внешний решатель"
 
 #: apt-pkg/deb/dpkgpm.cc:72
 #, c-format
@@ -3462,7 +3467,7 @@ msgstr "Запускается dpkg"
 
 #: apt-pkg/deb/dpkgpm.cc:1410
 msgid "Operation was interrupted before it could finish"
-msgstr ""
+msgstr "Действие прервано до его завершения"
 
 #: apt-pkg/deb/dpkgpm.cc:1472
 msgid "No apport report written because MaxReports is reached already"
@@ -3544,46 +3549,11 @@ msgid "Not locked"
 msgstr "Не заблокирован"
 
 #~ msgid ""
-#~ "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
-#~ "\n"
-#~ "apt-mark is a simple command line interface for marking packages\n"
-#~ "as manual or automatical installed. It can also list marks.\n"
-#~ "\n"
-#~ "Commands:\n"
-#~ "   auto - Mark the given packages as automatically installed\n"
-#~ "   manual - Mark the given packages as manually installed\n"
-#~ "\n"
-#~ "Options:\n"
-#~ "  -h  This help text.\n"
-#~ "  -q  Loggable output - no progress indicator\n"
-#~ "  -qq No output except for errors\n"
-#~ "  -s  No-act. Just prints what would be done.\n"
-#~ "  -f  read/write auto/manual marking in the given file\n"
-#~ "  -c=? Read this configuration file\n"
-#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
-#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
+#~ "Start. Current value: %lu. (man 5 apt.conf)"
 #~ msgstr ""
-#~ "Использование: apt-mark [параметры] {auto|manual} пакет1 [пакет2…]\n"
-#~ "\n"
-#~ "apt-mark — простая программа с интерфейсом командной строки\n"
-#~ "для отметки пакетов, что они установлены вручную или автоматически.\n"
-#~ "Также может показывать списки помеченных пакетов.\n"
-#~ "\n"
-#~ "Команды:\n"
-#~ "   auto - пометить указанные пакеты, как установленные автоматически\n"
-#~ "   manual - пометить указанные пакеты, как установленные вручную\n"
-#~ "\n"
-#~ "Параметры:\n"
-#~ "  -h   эта справка\n"
-#~ "  -q   показывать сообщения о работе, не выводить индикатор хода работы\n"
-#~ "  -qq  показывать только сообщения об ошибках\n"
-#~ "  -s   не выполнять действия на самом деле, только имитация работы\n"
-#~ "  -f   читать/писать данные о пометках в заданный файл\n"
-#~ "  -c=? читать указанный файл настройки\n"
-#~ "  -o=? задать значение произвольному параметру настройки,\n"
-#~ "       например, -o dir::cache=/tmp\n"
-#~ "В справочных страницах apt-mark(8) и apt.conf(5)\n"
-#~ "содержится подробная информация и описание параметров."
+#~ "Не хватает места для Dynamic MMap. Увеличьте значение APT::Cache-Start. "
+#~ "Текущее значение: %lu. (man 5 apt.conf)"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "Не удалось удалить %s"
