@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-08-20 12:04+0100\n"
+"POT-Creation-Date: 2012-08-28 12:02+0200\n"
 "PO-Revision-Date: 2012-07-28 21:53+0200\n"
 "Last-Translator: Michał Kułach <michal.kulach@gmail.com>\n"
 "Language-Team: Polish <debian-l10n-polish@lists.debian.org>\n"
@@ -115,7 +115,7 @@ msgstr "Należy podać przynajmniej jeden wzorzec"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "To polecenie jest przestarzałe. Prosimy używać \"apt-mark showauto\"."
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:508
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:510
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nie udało się odnaleźć pakietu %s"
@@ -161,7 +161,7 @@ msgid "  Version table:"
 msgstr "  Tabela wersji:"
 
 #: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3353 cmdline/apt-mark.cc:363
+#: cmdline/apt-get.cc:3364 cmdline/apt-mark.cc:375
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -988,7 +988,7 @@ msgstr "Nie udało się pobrać informacji o zależnościach dla budowania %s"
 msgid "%s has no build depends.\n"
 msgstr "%s nie ma zależności dla budowania.\n"
 
-#: cmdline/apt-get.cc:2997
+#: cmdline/apt-get.cc:3008
 #, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -997,7 +997,7 @@ msgstr ""
 "Zależność %s od %s nie może zostać spełniona, ponieważ %s nie jest dozwolone "
 "w pakietach \"%s\""
 
-#: cmdline/apt-get.cc:3015
+#: cmdline/apt-get.cc:3026
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1006,14 +1006,14 @@ msgstr ""
 "Zależność %s od %s nie może zostać spełniona, ponieważ nie znaleziono "
 "pakietu %s"
 
-#: cmdline/apt-get.cc:3038
+#: cmdline/apt-get.cc:3049
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Nie udało się spełnić zależności %s od %s: Zainstalowany pakiet %s jest zbyt "
 "nowy"
 
-#: cmdline/apt-get.cc:3077
+#: cmdline/apt-get.cc:3088
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -1022,7 +1022,7 @@ msgstr ""
 "Zależność %s od %s nie może zostać spełniona, ponieważ kandydująca wersja "
 "pakietu %s nie spełnia wymagań wersji"
 
-#: cmdline/apt-get.cc:3083
+#: cmdline/apt-get.cc:3094
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1031,30 +1031,30 @@ msgstr ""
 "Zależność %s od %s nie może zostać spełniona, ponieważ pakiet %s nie ma "
 "wersji kandydującej"
 
-#: cmdline/apt-get.cc:3106
+#: cmdline/apt-get.cc:3117
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Nie udało się spełnić zależności %s od %s: %s"
 
-#: cmdline/apt-get.cc:3122
+#: cmdline/apt-get.cc:3133
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Nie udało się spełnić zależności dla budowania %s."
 
-#: cmdline/apt-get.cc:3127
+#: cmdline/apt-get.cc:3138
 msgid "Failed to process build dependencies"
 msgstr "Nie udało się przetworzyć zależności dla budowania"
 
-#: cmdline/apt-get.cc:3220 cmdline/apt-get.cc:3232
+#: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Dziennik zmian %s (%s)"
 
-#: cmdline/apt-get.cc:3358
+#: cmdline/apt-get.cc:3369
 msgid "Supported modules:"
 msgstr "Obsługiwane moduły:"
 
-#: cmdline/apt-get.cc:3399
+#: cmdline/apt-get.cc:3410
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1142,7 +1142,7 @@ msgstr ""
 "apt-get(8), sources.list(5) i apt.conf(5).\n"
 "                         Ten APT ma moce Super Krowy.\n"
 
-#: cmdline/apt-get.cc:3564
+#: cmdline/apt-get.cc:3575
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1219,29 +1219,29 @@ msgstr "%s został już zatrzymany.\n"
 msgid "%s was already not hold.\n"
 msgstr "%s został już odznaczony jako zatrzymany.\n"
 
-#: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:314
+#: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Oczekiwano na proces %s, ale nie było go"
 
-#: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:297
+#: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
 #, c-format
 msgid "%s set on hold.\n"
 msgstr "%s został zatrzymany.\n"
 
-#: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:302
+#: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
 #, c-format
 msgid "Canceled hold on %s.\n"
 msgstr "Odznaczono zatrzymanie %s\n"
 
 # Musi pasować do su i sudo.
-#: cmdline/apt-mark.cc:320
+#: cmdline/apt-mark.cc:332
 msgid "Executing dpkg failed. Are you root?"
 msgstr ""
 "Uruchomienie dpkg nie powiodło się. Czy użyto uprawnień administratora?"
 
-#: cmdline/apt-mark.cc:367
+#: cmdline/apt-mark.cc:379
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -1654,7 +1654,7 @@ msgstr "Nie można czytać %s"
 #: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:179
 #: apt-pkg/contrib/cdromutl.cc:213 apt-pkg/acquire.cc:491
 #: apt-pkg/acquire.cc:516 apt-pkg/clean.cc:42 apt-pkg/clean.cc:60
-#: apt-pkg/clean.cc:122
+#: apt-pkg/clean.cc:123
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nie udało się przejść do %s"
@@ -2311,43 +2311,43 @@ msgstr "Plik kontrolny nie może zostać poprawnie zinterpretowany"
 msgid "Can't mmap an empty file"
 msgstr "Nie można wykonać mmap na pustym pliku"
 
-#: apt-pkg/contrib/mmap.cc:110
+#: apt-pkg/contrib/mmap.cc:111
 #, c-format
 msgid "Couldn't duplicate file descriptor %i"
 msgstr "Nie udało się zduplikować deskryptora pliku %i"
 
-#: apt-pkg/contrib/mmap.cc:118
+#: apt-pkg/contrib/mmap.cc:119
 #, c-format
 msgid "Couldn't make mmap of %llu bytes"
 msgstr "Nie udało się wykonać mmap %llu bajtów"
 
-#: apt-pkg/contrib/mmap.cc:145
+#: apt-pkg/contrib/mmap.cc:146
 msgid "Unable to close mmap"
 msgstr "Nie udało się zamknąć mmap"
 
-#: apt-pkg/contrib/mmap.cc:173 apt-pkg/contrib/mmap.cc:201
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
 msgid "Unable to synchronize mmap"
 msgstr "Nie udało się zsynchronizować mmap"
 
-#: apt-pkg/contrib/mmap.cc:279
+#: apt-pkg/contrib/mmap.cc:290
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nie udało się wykonać mmap %lu bajtów"
 
-#: apt-pkg/contrib/mmap.cc:311
+#: apt-pkg/contrib/mmap.cc:322
 msgid "Failed to truncate file"
 msgstr "Nie udało się uciąć zawartości pliku %s"
 
-#: apt-pkg/contrib/mmap.cc:330
+#: apt-pkg/contrib/mmap.cc:341
 #, c-format
 msgid ""
-"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
 "Current value: %lu. (man 5 apt.conf)"
 msgstr ""
 "Brak miejsca dla dynamicznego MMap. Proszę zwiększyć rozmiar APT::Cache-"
-"Limit. Aktualna wartość: %lu. (man 5 apt.conf)"
+"Start. Bieżąca wartość: %lu. (man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:429
+#: apt-pkg/contrib/mmap.cc:440
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
@@ -2356,7 +2356,7 @@ msgstr ""
 "Nie udało się zwiększyć rozmiaru MMap, ponieważ limit %lu bajtów został już "
 "osiągnięty."
 
-#: apt-pkg/contrib/mmap.cc:432
+#: apt-pkg/contrib/mmap.cc:443
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2628,7 +2628,7 @@ msgstr "Problem przy zapisywaniu pliku %s w %s"
 msgid "Problem unlinking the file %s"
 msgstr "Problem przy odlinkowywaniu pliku %s"
 
-#: apt-pkg/contrib/fileutl.cc:1755
+#: apt-pkg/contrib/fileutl.cc:1754
 msgid "Problem syncing the file"
 msgstr "Problem przy zapisywaniu pliku na dysk"
 
@@ -3244,22 +3244,22 @@ msgstr "Zapisywanie nowej listy źródeł\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "Źródła dla tej płyty to:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:873
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:878
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Zapisano %i rekordów.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:875
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:880
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Zapisano %i rekordów z %i brakującymi plikami.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:878
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:883
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Zapisano %i rekordów z %i niepasującymi plikami\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:881
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:886
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Zapisano %i rekordów z %i brakującymi plikami i %i niepasującymi\n"
@@ -3290,35 +3290,35 @@ msgstr "Plik %s nie zaczyna się wiadomością podpisaną w trybie clearsign"
 msgid "No keyring installed in %s."
 msgstr "Brak zainstalowanej bazy kluczy w %s."
 
-#: apt-pkg/cacheset.cc:401
+#: apt-pkg/cacheset.cc:403
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Wydanie \"%s\" dla \"%s\" nie zostało znalezione"
 
-#: apt-pkg/cacheset.cc:404
+#: apt-pkg/cacheset.cc:406
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Wersja \"%s\" dla \"%s\" nie została znaleziona"
 
-#: apt-pkg/cacheset.cc:515
+#: apt-pkg/cacheset.cc:517
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Nie udało się odnaleźć zadania \"%s\""
 
-#: apt-pkg/cacheset.cc:521
+#: apt-pkg/cacheset.cc:523
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr ""
 "Nie udało się znaleźć żadnego pakietu według wyrażenia regularnego \"%s\""
 
-#: apt-pkg/cacheset.cc:532
+#: apt-pkg/cacheset.cc:534
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 "Nie udało się wybrać wersji z pakietu \"%s\", ponieważ jest on czysto "
 "wirtualny"
 
-#: apt-pkg/cacheset.cc:539 apt-pkg/cacheset.cc:546
+#: apt-pkg/cacheset.cc:541 apt-pkg/cacheset.cc:548
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3327,21 +3327,21 @@ msgstr ""
 "Nie udało się wybrać zainstalowanej ani kandydującej wersji pakietu \"%s\", "
 "ponieważ nie ma żadnej z nich"
 
-#: apt-pkg/cacheset.cc:553
+#: apt-pkg/cacheset.cc:555
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Nie udało się wybrać najnowszej wersji pakietu \"%s\", ponieważ jest on "
 "czysto wirtualny"
 
-#: apt-pkg/cacheset.cc:561
+#: apt-pkg/cacheset.cc:563
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "Nie udało się wybrać wersji kandydującej pakietu %s, ponieważ nie ma "
 "kandydata"
 
-#: apt-pkg/cacheset.cc:569
+#: apt-pkg/cacheset.cc:571
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3546,10 +3546,10 @@ msgstr "Niezablokowany"
 
 #~ msgid ""
 #~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Start. Current value: %lu. (man 5 apt.conf)"
+#~ "Limit. Current value: %lu. (man 5 apt.conf)"
 #~ msgstr ""
 #~ "Brak miejsca dla dynamicznego MMap. Proszę zwiększyć rozmiar APT::Cache-"
-#~ "Start. Bieżąca wartość: %lu. (man 5 apt.conf)"
+#~ "Limit. Aktualna wartość: %lu. (man 5 apt.conf)"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "Nie udało się usunąć %s"
