@@ -40,8 +40,8 @@ enum {
 };
 
 /* make sure we have room for at least this size: */
-#define LOGINSIZE 1024
-#define PASSWORDSIZE 1024
+#define LOGINSIZE 256
+#define PASSWORDSIZE 256
 #define NETRC DOT_CHAR "netrc"
 
 /* returns -1 on failure, 0 if the host is found, 1 is the host isn't found */
