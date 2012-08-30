@@ -523,11 +523,12 @@ insertinstalledpackage() {
 	local VERSION="$3"
 	local DEPENDENCIES="$4"
 	local PRIORITY="${5:-optional}"
+	local STATUS="${6:-install ok installed}"
 	local FILE='rootdir/var/lib/dpkg/status'
 	local INFO='rootdir/var/lib/dpkg/info'
 	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		echo "Package: $NAME
-Status: install ok installed
+Status: $STATUS
 Priority: $PRIORITY
 Section: other
 Installed-Size: 42
