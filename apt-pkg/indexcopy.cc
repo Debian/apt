@@ -350,9 +350,6 @@ bool IndexCopy::ReconstructChop(unsigned long &Chop,string Dir,string File)
  */
 void IndexCopy::ConvertToSourceList(string CD,string &Path)
 {
-   char S[300];
-   snprintf(S,sizeof(S),"binary-%s",_config->Find("Apt::Architecture").c_str());
-   
    // Strip the cdrom base path
    Path = string(Path,CD.length());
    if (Path.empty() == true)
@@ -388,7 +385,13 @@ void IndexCopy::ConvertToSourceList(string CD,string &Path)
 	 return;
       string Binary = string(Path,Slash+1,BinSlash - Slash-1);
       
-      if (Binary != S && Binary != "source")
+      if (strncmp(Binary.c_str(), "binary-", strlen("binary-")) == 0)
+      {
+	 Binary.erase(0, strlen("binary-"));
+	 if (APT::Configuration::checkArchitecture(Binary) == false)
+	    continue;
+      }
+      else if (Binary != "source")
 	 continue;
 
       Path = Dist + ' ' + Comp;

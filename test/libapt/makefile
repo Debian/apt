@@ -86,3 +86,9 @@ PROGRAM = CdromFindPackages${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = cdromfindpackages_test.cc
 include $(PROGRAM_H)
+
+# text IndexCopy::ConvertToSourceList
+PROGRAM = IndexCopyToSourceList${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = indexcopytosourcelist_test.cc
+include $(PROGRAM_H)
