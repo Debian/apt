@@ -18,6 +18,9 @@ apt (0.9.7.5) UNRELEASED; urgency=low
   * apt-pkg/indexcopy.cc:
     - do not create duplicated flat-archive cdrom sources for foreign
       architectures on multi-arch cdroms
+  * apt-pkg/cdrom.cc:
+    - handle Components in the reduction for the source.list as multi-arch cds
+      otherwise create duplicated source entries (e.g. "wheezy main main")
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 26 Aug 2012 10:49:17 +0200
 

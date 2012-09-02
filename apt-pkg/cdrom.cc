@@ -363,6 +363,7 @@ void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
 
       string Word1 = string(*I,Space,SSpace-Space);
       string Prefix = string(*I,0,Space);
+      string Component = string(*I,SSpace);
       for (vector<string>::iterator J = List.begin(); J != I; ++J)
       {
 	 // Find a space..
@@ -377,9 +378,11 @@ void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
 	    continue;
 	 if (string(*J,Space2,SSpace2-Space2) != Word1)
 	    continue;
-	 
-	 *J += string(*I,SSpace);
-	 *I = string();
+
+	 string Component2 = string(*J, SSpace2) + " ";
+	 if (Component2.find(Component + " ") == std::string::npos)
+	    *J += Component;
+	 I->clear();
       }
    }   
 
