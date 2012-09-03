@@ -497,17 +497,20 @@ bool SourceCopy::RewriteEntry(FILE *Target,string File)
 bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
 {
    const indexRecords::checkSum *Record = MetaIndex->Lookup(file);
+   bool const Debug = _config->FindB("Debug::aptcdrom",false);
 
-   // we skip non-existing files in the verifcation to support a cdrom
-   // with no Packages file (just a Package.gz), see LP: #255545
-   // (non-existing files are not considered a error)
+   // we skip non-existing files in the verifcation of the Release file
+   // as non-existing files do not harm, but a warning scares people and
+   // makes it hard to strip unneeded files from an ISO like uncompressed
+   // indexes as it is done on the mirrors (see also LP: #255545 )
    if(!RealFileExists(prefix+file))
    {
-      _error->Warning(_("Skipping nonexistent file %s"), string(prefix+file).c_str());
+      if (Debug == true)
+	 cout << "Skipping nonexistent in " << prefix << " file " << file << std::endl;
       return true;
    }
 
-   if (!Record) 
+   if (!Record)
    {
       _error->Warning(_("Can't find authentication record for: %s"), file.c_str());
       return false;
@@ -519,7 +522,7 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
       return false;
    }
 
-   if(_config->FindB("Debug::aptcdrom",false)) 
+   if(Debug == true)
    {
       cout << "File: " << prefix+file << endl;
       cout << "Expected Hash " << Record->Hash.toStr() << endl;

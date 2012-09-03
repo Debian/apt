@@ -16,10 +16,13 @@ apt (0.9.7.5) UNRELEASED; urgency=low
     - use the correct interval (x <= P < y) for pin value documentation as
       these are the intervals used by the code (Closes: #685989)
   * apt-pkg/indexcopy.cc:
-    - do not create duplicated flat-archive cdrom sources for foreign
-      architectures on multi-arch cdroms
+    - do not create duplicated flat-archive CD-ROM sources for foreign
+      architectures on multi-arch CD-ROMs
+    - do not warn about files which have a record in the Release file, but
+      are not present on the CD to mirror the behavior of the other methods
+      and to allow uncompressed indexes to be dropped without scaring users
   * apt-pkg/cdrom.cc:
-    - handle Components in the reduction for the source.list as multi-arch cds
+    - handle Components in the reduction for the source.list as multi-arch CDs
       otherwise create duplicated source entries (e.g. "wheezy main main")
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 26 Aug 2012 10:49:17 +0200
