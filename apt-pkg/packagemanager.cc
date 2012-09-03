@@ -856,7 +856,10 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	 This way we avoid that M-A: enabled packages are installed before
 	 their older non-M-A enabled packages are replaced by newer versions */
       bool const installed = Pkg->CurrentVer != 0;
-      if (installed == true && Install(Pkg,FileNames[Pkg->ID]) == false)
+      if (installed == true &&
+	  (instVer != Pkg.CurrentVer() ||
+	   ((Cache[Pkg].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall)) &&
+	  Install(Pkg,FileNames[Pkg->ID]) == false)
 	 return false;
       for (PkgIterator P = Pkg.Group().PackageList();
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
