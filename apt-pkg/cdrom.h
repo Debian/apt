@@ -60,6 +60,7 @@ class pkgCdrom								/*{{{*/
 		     unsigned int Depth = 0);
    bool DropBinaryArch(std::vector<std::string> &List);
    bool DropRepeats(std::vector<std::string> &List,const char *Name);
+   bool DropTranslation(std::vector<std::string> &List);
    void ReduceSourcelist(std::string CD,std::vector<std::string> &List);
    bool WriteDatabase(Configuration &Cnf);
    bool WriteSourceList(std::string Name,std::vector<std::string> &List,bool Source);
