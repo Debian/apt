@@ -187,7 +187,7 @@ pkgDPkgPM::~pkgDPkgPM()
 bool pkgDPkgPM::Install(PkgIterator Pkg,string File)
 {
    if (File.empty() == true || Pkg.end() == true)
-      return _error->Error("Internal Error, No file name for %s",Pkg.Name());
+      return _error->Error("Internal Error, No file name for %s",Pkg.FullName().c_str());
 
    // If the filename string begins with DPkg::Chroot-Directory, return the
    // substr that is within the chroot so dpkg can access it.
