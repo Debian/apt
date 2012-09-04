@@ -73,7 +73,7 @@ public:									/*{{{*/
 	 *  \param All defines if we check against all codes or only against used codes
 	 *  \return true if we are interested, false otherwise
 	 */
-	bool static const Configuration::checkLanguage(std::string Lang, bool const All = false);
+	bool static const checkLanguage(std::string Lang, bool const All = false);
 
 	/** \brief Returns a vector of Architectures we support
 	 *
