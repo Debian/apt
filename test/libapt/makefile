@@ -86,3 +86,15 @@ PROGRAM = CdromFindPackages${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = cdromfindpackages_test.cc
 include $(PROGRAM_H)
+
+# test cdroms index reduction for source.list
+PROGRAM = CdromReduceSourceList${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = cdromreducesourcelist_test.cc
+include $(PROGRAM_H)
+
+# text IndexCopy::ConvertToSourceList
+PROGRAM = IndexCopyToSourceList${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = indexcopytosourcelist_test.cc
+include $(PROGRAM_H)

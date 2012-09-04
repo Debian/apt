@@ -1,0 +1,121 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'libqtcore4' 'i386,amd64' '2' 'Multi-Arch: same'
+setupaptarchive
+
+DPKGSTATUS='rootdir/var/lib/dpkg/status'
+cp $DPKGSTATUS dpkg.status
+
+cleanstatus() {
+	cp dpkg.status $DPKGSTATUS
+	rm rootdir/var/cache/apt/*.bin
+}
+
+#FIXME: the reported version is wrong, it should be 1, not 2
+insertinstalledpackage 'libqtcore4' 'i386,amd64' '1' 'Multi-Arch: same' '' 'install ok unpacked'
+testequal 'Reading package lists...
+Building dependency tree...
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+2 not fully installed or removed.
+Conf libqtcore4 (2 unstable [amd64])
+Conf libqtcore4:i386 (2 unstable [i386])' aptget install -s -f
+
+cleanstatus
+insertinstalledpackage 'libqtcore4' 'amd64' '2' 'Multi-Arch: same' '' 'install ok unpacked'
+insertinstalledpackage 'libqtcore4' 'i386' '1' 'Multi-Arch: same' '' 'install ok unpacked'
+testequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies... Done
+The following extra packages will be installed:
+  libqtcore4:i386
+The following packages will be upgraded:
+  libqtcore4:i386
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+2 not fully installed or removed.
+Inst libqtcore4:i386 [1] (2 unstable [i386])
+Conf libqtcore4:i386 (2 unstable [i386])
+Conf libqtcore4 (2 unstable [amd64])' aptget install -s -f
+
+cleanstatus
+insertinstalledpackage 'libqtcore4' 'i386' '2' 'Multi-Arch: same' '' 'install ok unpacked'
+insertinstalledpackage 'libqtcore4' 'amd64' '1' 'Multi-Arch: same' '' 'install ok unpacked'
+testequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies... Done
+The following extra packages will be installed:
+  libqtcore4
+The following packages will be upgraded:
+  libqtcore4
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+2 not fully installed or removed.
+Inst libqtcore4 [1] (2 unstable [amd64])
+Conf libqtcore4 (2 unstable [amd64])
+Conf libqtcore4:i386 (2 unstable [i386])' aptget install -s -f
+
+cleanstatus
+insertinstalledpackage 'libqtcore4' 'amd64' '2' 'Multi-Arch: same' '' 'install ok unpacked'
+insertinstalledpackage 'libqtcore4' 'i386' '1' 'Multi-Arch: same'
+testequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies... Done
+The following extra packages will be installed:
+  libqtcore4:i386
+The following packages will be upgraded:
+  libqtcore4:i386
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Inst libqtcore4:i386 [1] (2 unstable [i386])
+Conf libqtcore4:i386 (2 unstable [i386])
+Conf libqtcore4 (2 unstable [amd64])' aptget install -s -f
+
+cleanstatus
+insertinstalledpackage 'libqtcore4' 'i386' '2' 'Multi-Arch: same' '' 'install ok unpacked'
+insertinstalledpackage 'libqtcore4' 'amd64' '1' 'Multi-Arch: same'
+testequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies... Done
+The following extra packages will be installed:
+  libqtcore4
+The following packages will be upgraded:
+  libqtcore4
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Inst libqtcore4 [1] (2 unstable [amd64])
+Conf libqtcore4 (2 unstable [amd64])
+Conf libqtcore4:i386 (2 unstable [i386])' aptget install -s -f
+
+cleanstatus
+insertinstalledpackage 'libqtcore4' 'amd64' '2' 'Multi-Arch: same'
+insertinstalledpackage 'libqtcore4' 'i386' '1' 'Multi-Arch: same' '' 'install ok unpacked'
+testequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies... Done
+The following extra packages will be installed:
+  libqtcore4:i386
+The following packages will be upgraded:
+  libqtcore4:i386
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Inst libqtcore4:i386 [1] (2 unstable [i386])
+Conf libqtcore4:i386 (2 unstable [i386])' aptget install -s -f
+
+cleanstatus
+insertinstalledpackage 'libqtcore4' 'i386' '2' 'Multi-Arch: same'
+insertinstalledpackage 'libqtcore4' 'amd64' '1' 'Multi-Arch: same' '' 'install ok unpacked'
+testequal 'Reading package lists...
+Building dependency tree...
+Correcting dependencies... Done
+The following extra packages will be installed:
+  libqtcore4
+The following packages will be upgraded:
+  libqtcore4
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+1 not fully installed or removed.
+Inst libqtcore4 [1] (2 unstable [amd64])
+Conf libqtcore4 (2 unstable [amd64])' aptget install -s -f

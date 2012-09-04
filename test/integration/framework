@@ -91,6 +91,7 @@ runapt() {
 }
 aptconfig() { runapt apt-config $*; }
 aptcache() { runapt apt-cache $*; }
+aptcdrom() { runapt apt-cdrom $*; }
 aptget() { runapt apt-get $*; }
 aptftparchive() { runapt apt-ftparchive $*; }
 aptkey() { runapt apt-key $*; }
@@ -523,11 +524,12 @@ insertinstalledpackage() {
 	local VERSION="$3"
 	local DEPENDENCIES="$4"
 	local PRIORITY="${5:-optional}"
+	local STATUS="${6:-install ok installed}"
 	local FILE='rootdir/var/lib/dpkg/status'
 	local INFO='rootdir/var/lib/dpkg/info'
 	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		echo "Package: $NAME
-Status: install ok installed
+Status: $STATUS
 Priority: $PRIORITY
 Section: other
 Installed-Size: 42
@@ -722,6 +724,21 @@ server.stat-cache-engine = \"disable\"" > lighttpd.conf
 		sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
 	done
 	return 0
+}
+
+changetocdrom() {
+	mkdir -p rootdir/media/cdrom/.disk
+	local CD="$(readlink -f rootdir/media/cdrom)"
+	echo "acquire::cdrom::mount \"${CD}\";" > rootdir/etc/apt/apt.conf.d/00cdrom
+	echo 'acquire::cdrom::autodetect 0;' >> rootdir/etc/apt/apt.conf.d/00cdrom
+	echo -n "$1" > ${CD}/.disk/info
+	if [ ! -d aptarchive/dists ]; then
+		msgdie 'Flat file archive cdroms can not be created currently'
+		return 1
+	fi
+	mv aptarchive/dists $CD
+	ln -s "$(readlink -f ./incoming)" $CD/pool
+	find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list' -delete
 }
 
 checkdiff() {
