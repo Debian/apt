@@ -6,8 +6,7 @@ ensure_n_canary_strings_in_dir() {
     CANARY_STRING=$2
     EXPECTED_N=$3
 
-    msgtest "Testing for $EXPECTED_N canary strings '$CANARY_STRING' in in $DIR"
-    
+    msgtest "Testing for $EXPECTED_N canary strings '$CANARY_STRING' in in" "$DIR"
 
     N=$(grep "$CANARY_STRING" $DIR/* 2>/dev/null |wc -l )
     if [ "$N" = "$EXPECTED_N" ]; then
@@ -23,25 +22,26 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture 'amd64'
+configarchitecture 'native'
 
-buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+insertpackage 'unstable' 'unrelated' 'all' '1.0' 'stable'
 
 setupaptarchive
 changetowebserver --simulate-paywall
 
 rm -rf rootdir/var/lib/apt/lists
-if aptget update -qq 2>/dev/null; then
-    msgfail "excpected apt-get update failure"
-fi
-ensure_n_canary_strings_in_dir rootdir/var/lib/apt/lists/ "ni ni ni" 0
+msgtest 'excpected failure of' 'apt-get update'
+aptget update -qq 2>/dev/null && msgfail || msgpass
+
+ensure_n_canary_strings_in_dir rootdir/var/lib/apt/lists/ 'ni ni ni' 0
 testequal 'partial' ls rootdir/var/lib/apt/lists/
 
 # again, this time with pre-existing files valid data
-for f in Release Release.gpg main_binary-amd64_Packages stable_main_source_Sources; do 
+for f in Release Release.gpg main_binary-amd64_Packages stable_main_source_Sources; do
     echo "canary" > rootdir/var/lib/apt/lists/localhost:8080_dists_stable_${f}
 done
-# this will fail, the important part is that the canaries remain
-aptget update -qq 2>/dev/null || true
-ensure_n_canary_strings_in_dir rootdir/var/lib/apt/lists/ "canary" 4
 
+# this will fail, the important part is that the canaries remain
+msgtest 'excpected failure of' 'apt-get update'
+aptget update -qq 2>/dev/null && msgfail || msgpass
+ensure_n_canary_strings_in_dir rootdir/var/lib/apt/lists/ 'canary' 4
