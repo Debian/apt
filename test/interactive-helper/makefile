@@ -37,3 +37,10 @@ include $(PROGRAM_H)
 #SLIBS = -lapt-pkg -lrpm
 #SOURCE = rpmver.cc
 #include $(PROGRAM_H)
+
+# very simple webserver for APT testing
+PROGRAM=aptwebserver
+SLIBS = -lapt-pkg
+LIB_MAKES = apt-pkg/makefile
+SOURCE = aptwebserver.cc
+include $(PROGRAM_H)
