@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-09-04 14:07+0200\n"
+"POT-Creation-Date: 2012-09-04 15:34+0200\n"
 "PO-Revision-Date: 2010-08-26 14:42+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -2466,7 +2466,7 @@ msgstr "子进程 %s 返回了一个错误号 (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子进程 %s 异常退出"
 
-#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:653
+#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:659
 #, c-format
 msgid "Could not open file %s"
 msgstr "无法打开文件 %s"
@@ -2686,7 +2686,7 @@ msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(发行版解析)"
 msgid "Opening %s"
 msgstr "正在打开 %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:469
+#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "源列表 %2$s 的第 %1$u 行太长了。"
@@ -2701,7 +2701,7 @@ msgstr "在源列表 %2$s 中第 %1$u 行的格式有误(类型)"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "无法识别在源列表 %3$s 里，第 %2$u 行中的软件包类别“%1$s”"
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:891
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -3022,7 +3022,7 @@ msgstr "软件包仓库 Release 文件 %s 内 Date 条目无效"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "软件提供者数据块内 %s 没有包含指纹信息"
 
-#: apt-pkg/cdrom.cc:550
+#: apt-pkg/cdrom.cc:576
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -3031,41 +3031,41 @@ msgstr ""
 "现把 %s 作为了 CD-ROM 的挂载点\n"
 "正在挂载 CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:559 apt-pkg/cdrom.cc:656
+#: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:682
 msgid "Identifying.. "
 msgstr "正在鉴别.. "
 
-#: apt-pkg/cdrom.cc:587
+#: apt-pkg/cdrom.cc:613
 #, c-format
 msgid "Stored label: %s\n"
 msgstr "已归档文件的标签：%s\n"
 
-#: apt-pkg/cdrom.cc:596 apt-pkg/cdrom.cc:879
+#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
 msgid "Unmounting CD-ROM...\n"
 msgstr "正在卸载 CD-ROM...\n"
 
-#: apt-pkg/cdrom.cc:616
+#: apt-pkg/cdrom.cc:642
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "现把 %s 作为了 CD-ROM 的挂载点\n"
 
-#: apt-pkg/cdrom.cc:634
+#: apt-pkg/cdrom.cc:660
 msgid "Unmounting CD-ROM\n"
 msgstr "正在卸载 CD-ROM 文件系统\n"
 
-#: apt-pkg/cdrom.cc:639
+#: apt-pkg/cdrom.cc:665
 msgid "Waiting for disc...\n"
 msgstr "等待插入盘片……\n"
 
-#: apt-pkg/cdrom.cc:648
+#: apt-pkg/cdrom.cc:674
 msgid "Mounting CD-ROM...\n"
 msgstr "正在挂载 CD-ROM 文件系统……\n"
 
-#: apt-pkg/cdrom.cc:667
+#: apt-pkg/cdrom.cc:693
 msgid "Scanning disc for index files..\n"
 msgstr "正在盘片中查找索引文件..\n"
 
-#: apt-pkg/cdrom.cc:716
+#: apt-pkg/cdrom.cc:744
 #, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
@@ -3074,7 +3074,7 @@ msgstr ""
 "找到了 %zu 个软件包索引、%zu 个源代码包索引、%zu 个翻译索引和 %zu 个数字签"
 "名\n"
 
-#: apt-pkg/cdrom.cc:727
+#: apt-pkg/cdrom.cc:755
 msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
@@ -3082,16 +3082,16 @@ msgstr ""
 "无法确定任何包文件的位置，可能这不是一张 Debian 盘片或者是选择了错误的硬件构"
 "架。"
 
-#: apt-pkg/cdrom.cc:754
+#: apt-pkg/cdrom.cc:782
 #, c-format
 msgid "Found label '%s'\n"
 msgstr "找到标签 '%s'\n"
 
-#: apt-pkg/cdrom.cc:783
+#: apt-pkg/cdrom.cc:811
 msgid "That is not a valid name, try again.\n"
 msgstr "这不是一个有效的名字，请重试。\n"
 
-#: apt-pkg/cdrom.cc:800
+#: apt-pkg/cdrom.cc:828
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -3100,60 +3100,55 @@ msgstr ""
 "这张盘片现在的名字是：\n"
 "“%s”\n"
 
-#: apt-pkg/cdrom.cc:802
+#: apt-pkg/cdrom.cc:830
 msgid "Copying package lists..."
 msgstr "正在复制软件包列表……"
 
-#: apt-pkg/cdrom.cc:829
+#: apt-pkg/cdrom.cc:857
 msgid "Writing new source list\n"
 msgstr "正在写入新的源列表\n"
 
-#: apt-pkg/cdrom.cc:837
+#: apt-pkg/cdrom.cc:865
 msgid "Source list entries for this disc are:\n"
 msgstr "对应于该盘片的软件源设置项是：\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:874
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "已写入 %i 条记录。\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:876
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "已写入 %i 条记录，并有 %i 个文件缺失。\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:879
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "已写入 %i 条记录，并有 %i 个文件不匹配\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "已写入 %i 条记录，并有 %i 个缺失，以及 %i 个文件不匹配\n"
 
-#: apt-pkg/indexcopy.cc:503
-#, c-format
-msgid "Skipping nonexistent file %s"
-msgstr "跳过不存在的文件 %s"
-
-#: apt-pkg/indexcopy.cc:509
+#: apt-pkg/indexcopy.cc:515
 #, c-format
 msgid "Can't find authentication record for: %s"
 msgstr "无法找到认证记录：%s"
 
-#: apt-pkg/indexcopy.cc:515
+#: apt-pkg/indexcopy.cc:521
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Hash 校验和不符：%s"
 
-#: apt-pkg/indexcopy.cc:656
+#: apt-pkg/indexcopy.cc:662
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
 msgstr ""
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:686
+#: apt-pkg/indexcopy.cc:692
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "%s 中没有安装密钥环。"
@@ -3380,6 +3375,9 @@ msgstr "dpkg 被中断，您必须手工运行 %s 解决此问题。"
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "未锁定"
+
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "跳过不存在的文件 %s"
 
 #~ msgid ""
 #~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"

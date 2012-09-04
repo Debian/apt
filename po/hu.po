@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt trunk\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-09-04 14:07+0200\n"
+"POT-Creation-Date: 2012-09-04 15:34+0200\n"
 "PO-Revision-Date: 2012-06-25 17:09+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
@@ -2552,7 +2552,7 @@ msgstr "%s alfolyamat hibakóddal tért vissza (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "%s alfolyamat váratlanul kilépett"
 
-#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:653
+#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:659
 #, c-format
 msgid "Could not open file %s"
 msgstr "Nem lehet megnyitni a(z) %s fájlt"
@@ -2781,7 +2781,7 @@ msgstr "A(z) %lu. sor hibás a(z) %s forráslistában (dist feldolgozás)"
 msgid "Opening %s"
 msgstr "%s megnyitása"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:469
+#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "A(z) %u. sor túl hosszú a(z) %s forráslistában."
@@ -2796,7 +2796,7 @@ msgstr "A(z) %u. sor hibás a(z) %s forráslistában (típus)"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "„%1$s” típus nem ismert a(z) %3$s forráslista %2$u. sorában"
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:891
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -3132,7 +3132,7 @@ msgstr "Érvénytelen „Date” bejegyzés a(z) %s Release fájlban"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "A(z) %s terjesztőblokk nem tartalmaz ujjlenyomatot"
 
-#: apt-pkg/cdrom.cc:550
+#: apt-pkg/cdrom.cc:576
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -3141,41 +3141,41 @@ msgstr ""
 "%s CD-ROM csatolási pont használata\n"
 "CD-ROM csatolása\n"
 
-#: apt-pkg/cdrom.cc:559 apt-pkg/cdrom.cc:656
+#: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:682
 msgid "Identifying.. "
 msgstr "Azonosítás... "
 
-#: apt-pkg/cdrom.cc:587
+#: apt-pkg/cdrom.cc:613
 #, c-format
 msgid "Stored label: %s\n"
 msgstr "Tárolt címke: %s\n"
 
-#: apt-pkg/cdrom.cc:596 apt-pkg/cdrom.cc:879
+#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
 msgid "Unmounting CD-ROM...\n"
 msgstr "CD-ROM leválasztása...\n"
 
-#: apt-pkg/cdrom.cc:616
+#: apt-pkg/cdrom.cc:642
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "%s CD-ROM csatolási pont használata\n"
 
-#: apt-pkg/cdrom.cc:634
+#: apt-pkg/cdrom.cc:660
 msgid "Unmounting CD-ROM\n"
 msgstr "CD-ROM leválasztása\n"
 
-#: apt-pkg/cdrom.cc:639
+#: apt-pkg/cdrom.cc:665
 msgid "Waiting for disc...\n"
 msgstr "Várakozás a lemezre...\n"
 
-#: apt-pkg/cdrom.cc:648
+#: apt-pkg/cdrom.cc:674
 msgid "Mounting CD-ROM...\n"
 msgstr "CD-ROM csatolása...\n"
 
-#: apt-pkg/cdrom.cc:667
+#: apt-pkg/cdrom.cc:693
 msgid "Scanning disc for index files..\n"
 msgstr "Indexfájlok keresése a lemezen...\n"
 
-#: apt-pkg/cdrom.cc:716
+#: apt-pkg/cdrom.cc:744
 #, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
@@ -3184,7 +3184,7 @@ msgstr ""
 "%zu csomagindex, %zu forrásindex, %zu fordításindex és %zu aláírás "
 "megtalálva\n"
 
-#: apt-pkg/cdrom.cc:727
+#: apt-pkg/cdrom.cc:755
 msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
@@ -3192,16 +3192,16 @@ msgstr ""
 "Nem találhatók csomagfájlok, lehet hogy ez nem Debian lemez, vagy nem "
 "megfelelő az architektúra?"
 
-#: apt-pkg/cdrom.cc:754
+#: apt-pkg/cdrom.cc:782
 #, c-format
 msgid "Found label '%s'\n"
 msgstr "Talált címke: „%s”\n"
 
-#: apt-pkg/cdrom.cc:783
+#: apt-pkg/cdrom.cc:811
 msgid "That is not a valid name, try again.\n"
 msgstr "A név érvénytelen, próbálja újra.\n"
 
-#: apt-pkg/cdrom.cc:800
+#: apt-pkg/cdrom.cc:828
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -3210,60 +3210,55 @@ msgstr ""
 "A lemez neve: \n"
 "„%s”\n"
 
-#: apt-pkg/cdrom.cc:802
+#: apt-pkg/cdrom.cc:830
 msgid "Copying package lists..."
 msgstr "Csomaglisták másolása..."
 
-#: apt-pkg/cdrom.cc:829
+#: apt-pkg/cdrom.cc:857
 msgid "Writing new source list\n"
 msgstr "Új forráslista írása\n"
 
-#: apt-pkg/cdrom.cc:837
+#: apt-pkg/cdrom.cc:865
 msgid "Source list entries for this disc are:\n"
 msgstr "A lemezhez tartozó forráslistabejegyzések a következők:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:874
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "%i rekord kiírva.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:876
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "%i rekord kiírva, %i hiányzó fájllal.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:879
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "%i rekord kiírva %i eltérő fájllal\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "%i rekord kiírva %i hiányzó és %i eltérő fájllal\n"
 
-#: apt-pkg/indexcopy.cc:503
-#, c-format
-msgid "Skipping nonexistent file %s"
-msgstr "A nem létező %s fájl kihagyása"
-
-#: apt-pkg/indexcopy.cc:509
+#: apt-pkg/indexcopy.cc:515
 #, c-format
 msgid "Can't find authentication record for: %s"
 msgstr "%s hitelesítési rekordja nem található"
 
-#: apt-pkg/indexcopy.cc:515
+#: apt-pkg/indexcopy.cc:521
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "%s ellenőrzőösszege nem megfelelő"
 
-#: apt-pkg/indexcopy.cc:656
+#: apt-pkg/indexcopy.cc:662
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
 msgstr "A(z) %s fájl nem digitálisan aláírt üzenettel kezdődik"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:686
+#: apt-pkg/indexcopy.cc:692
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "Nincs kulcstartó telepítve ide: %s."
@@ -3509,6 +3504,9 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Nincs zárolva"
+
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "A nem létező %s fájl kihagyása"
 
 #~ msgid ""
 #~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"

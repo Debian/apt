@@ -1,7 +1,6 @@
-apt (0.9.7.5ubuntu2) UNRELEASED; urgency=low
+apt (0.9.7.5ubuntu2) quantal; urgency=low
 
-  Merged from lp:~donkult/apt/experimental, 
-              sftp://bzr.debian.org/bzr/apt/apt/debian-sid
+  Merged from lp:~donkult/apt/experimental:
   
   [ David Kalnischkies ]
   * apt-pkg/contrib/strutl.cc:
@@ -11,7 +10,36 @@ apt (0.9.7.5ubuntu2) UNRELEASED; urgency=low
   * lp:~mvo/apt/webserver-simulate-broken-with-fix346386:
     - merge fix for LP: #346386 
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 09 Jul 2012 17:36:40 +0200
+
+  Merged from http://bzr.debian.org/bzr/apt/apt/debian-sid:
+
+  [ David Kalnischkies ]
+  * apt-pkg/cdrom.cc:
+    - copy only configured translation files from a CD-ROM and not all
+      available translation files preventing new installs with d-i from
+      being initialized with all translations (Closes: #678227)
+    - handle Components in the reduction for the source.list as multi-arch CDs
+      otherwise create duplicated source entries (e.g. "wheezy main main")
+  * apt-pkg/packagemanager.cc:
+    - unpack versions only in case a different version from the package
+      is currently in unpack state to recover from broken system states
+      (like different file in M-A:same package and other dpkg errors)
+      and avoid re-unpack otherwise (Closes: #670900)
+  * debian/control:
+    - let libapt-pkg break apt < 0.9.4 to ensure that the installed http-
+      method supports the new redirection-style, thanks to Raphael Geissert
+      for reporting & testing (Closes: #685192)
+  * doc/apt_preferences.5.xml:
+    - use the correct interval (x <= P < y) for pin value documentation as
+      these are the intervals used by the code (Closes: #685989)
+  * apt-pkg/indexcopy.cc:
+    - do not create duplicated flat-archive CD-ROM sources for foreign
+      architectures on multi-arch CD-ROMs
+    - do not warn about files which have a record in the Release file, but
+      are not present on the CD to mirror the behavior of the other methods
+      and to allow uncompressed indexes to be dropped without scaring users
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 04 Sep 2012 15:42:09 +0200
 
 apt (0.9.7.5ubuntu1) quantal; urgency=low
 

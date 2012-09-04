@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-09-04 14:07+0200\n"
+"POT-Creation-Date: 2012-09-04 15:34+0200\n"
 "PO-Revision-Date: 2012-06-27 10:55+0200\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -2609,7 +2609,7 @@ msgstr "Unterprozess %s hat Fehlercode zurückgegeben (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Unterprozess %s unerwartet beendet"
 
-#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:653
+#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:659
 #, c-format
 msgid "Could not open file %s"
 msgstr "Datei %s konnte nicht geöffnet werden."
@@ -2834,7 +2834,7 @@ msgstr "Missgestaltete Zeile %lu in Quellliste %s (»dist parse«)"
 msgid "Opening %s"
 msgstr "%s wird geöffnet."
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:469
+#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Zeile %u in Quellliste %s zu lang."
@@ -2849,7 +2849,7 @@ msgstr "Missgestaltete Zeile %u in Quellliste %s (»type«)"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typ »%s« in Zeile %u der Quellliste %s ist unbekannt."
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:891
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -3201,7 +3201,7 @@ msgstr "Ungültiger »Date«-Eintrag in Release-Datei %s"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Herstellerblock %s enthält keinen Fingerabdruck."
 
-#: apt-pkg/cdrom.cc:550
+#: apt-pkg/cdrom.cc:576
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -3210,41 +3210,41 @@ msgstr ""
 "Verwendeter CD-ROM-Einbindungspunkt: %s\n"
 "CD-ROM wird eingebunden.\n"
 
-#: apt-pkg/cdrom.cc:559 apt-pkg/cdrom.cc:656
+#: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:682
 msgid "Identifying.. "
 msgstr "Identifizieren ... "
 
-#: apt-pkg/cdrom.cc:587
+#: apt-pkg/cdrom.cc:613
 #, c-format
 msgid "Stored label: %s\n"
 msgstr "Gespeicherte Kennzeichnung: %s\n"
 
-#: apt-pkg/cdrom.cc:596 apt-pkg/cdrom.cc:879
+#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
 msgid "Unmounting CD-ROM...\n"
 msgstr "Einbindung der CD-ROM wird gelöst ...\n"
 
-#: apt-pkg/cdrom.cc:616
+#: apt-pkg/cdrom.cc:642
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "Verwendeter CD-ROM-Einbindungspunkt: %s\n"
 
-#: apt-pkg/cdrom.cc:634
+#: apt-pkg/cdrom.cc:660
 msgid "Unmounting CD-ROM\n"
 msgstr "Lösen der CD-ROM-Einbindung\n"
 
-#: apt-pkg/cdrom.cc:639
+#: apt-pkg/cdrom.cc:665
 msgid "Waiting for disc...\n"
 msgstr "Warten auf Medium ...\n"
 
-#: apt-pkg/cdrom.cc:648
+#: apt-pkg/cdrom.cc:674
 msgid "Mounting CD-ROM...\n"
 msgstr "CD-ROM wird eingebunden ...\n"
 
-#: apt-pkg/cdrom.cc:667
+#: apt-pkg/cdrom.cc:693
 msgid "Scanning disc for index files..\n"
 msgstr "Durchsuchen des Mediums nach Index-Dateien ...\n"
 
-#: apt-pkg/cdrom.cc:716
+#: apt-pkg/cdrom.cc:744
 #, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
@@ -3253,7 +3253,7 @@ msgstr ""
 "%zu Paketindizes, %zu Quellindizes, %zu Übersetzungsindizes und %zu "
 "Signaturen gefunden\n"
 
-#: apt-pkg/cdrom.cc:727
+#: apt-pkg/cdrom.cc:755
 msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
@@ -3261,16 +3261,16 @@ msgstr ""
 "Es konnten keine Paketdateien gefunden werden; möglicherweise ist dies keine "
 "Debian-Disk oder eine für die falsche Architektur?"
 
-#: apt-pkg/cdrom.cc:754
+#: apt-pkg/cdrom.cc:782
 #, c-format
 msgid "Found label '%s'\n"
 msgstr "Kennzeichnung »%s« gefunden\n"
 
-#: apt-pkg/cdrom.cc:783
+#: apt-pkg/cdrom.cc:811
 msgid "That is not a valid name, try again.\n"
 msgstr "Dies ist kein gültiger Name, versuchen Sie es erneut.\n"
 
-#: apt-pkg/cdrom.cc:800
+#: apt-pkg/cdrom.cc:828
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -3279,62 +3279,57 @@ msgstr ""
 "Dieses Medium heißt: \n"
 "»%s«\n"
 
-#: apt-pkg/cdrom.cc:802
+#: apt-pkg/cdrom.cc:830
 msgid "Copying package lists..."
 msgstr "Kopieren der Paketlisten ..."
 
-#: apt-pkg/cdrom.cc:829
+#: apt-pkg/cdrom.cc:857
 msgid "Writing new source list\n"
 msgstr "Schreiben der neuen Quellliste\n"
 
-#: apt-pkg/cdrom.cc:837
+#: apt-pkg/cdrom.cc:865
 msgid "Source list entries for this disc are:\n"
 msgstr "Quelllisteneinträge für dieses Medium sind:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:874
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Es wurden %i Datensätze geschrieben.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:876
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Es wurden %i Datensätze mit %i fehlenden Dateien geschrieben.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:879
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Es wurden %i Datensätze mit %i nicht passenden Dateien geschrieben.\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
 "Es wurden %i Datensätze mit %i fehlenden und %i nicht passenden Dateien "
 "geschrieben.\n"
 
-#: apt-pkg/indexcopy.cc:503
-#, c-format
-msgid "Skipping nonexistent file %s"
-msgstr "Nicht vorhandene Datei %s wird übersprungen."
-
-#: apt-pkg/indexcopy.cc:509
+#: apt-pkg/indexcopy.cc:515
 #, c-format
 msgid "Can't find authentication record for: %s"
 msgstr "Authentifizierungs-Datensatz konnte nicht gefunden werden für: %s"
 
-#: apt-pkg/indexcopy.cc:515
+#: apt-pkg/indexcopy.cc:521
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Hash-Summe stimmt nicht überein für: %s"
 
-#: apt-pkg/indexcopy.cc:656
+#: apt-pkg/indexcopy.cc:662
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
 msgstr "Datei %s beginnt nicht mit einer Klartext-signierten Nachricht."
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:686
+#: apt-pkg/indexcopy.cc:692
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "Kein Schlüsselring in %s installiert"
@@ -3591,6 +3586,9 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Nicht gesperrt"
+
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "Nicht vorhandene Datei %s wird übersprungen."
 
 #~ msgid ""
 #~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-09-04 14:07+0200\n"
+"POT-Creation-Date: 2012-09-04 15:34+0200\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -2560,7 +2560,7 @@ msgstr "Подпроцесът %s върна код за грешка (%u)"
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Подпроцесът %s завърши неочаквано"
 
-#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:653
+#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:659
 #, c-format
 msgid "Could not open file %s"
 msgstr "Неуспех при отварянето на файла %s"
@@ -2787,7 +2787,7 @@ msgstr ""
 msgid "Opening %s"
 msgstr "Отваряне на %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:469
+#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Ред %u в списъка с източници %s е твърде дълъг."
@@ -2802,7 +2802,7 @@ msgstr "Лошо форматиран ред %u в списъка с източ�
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:891
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -3142,7 +3142,7 @@ msgstr "Неправилна стойност за „Date“ във фай�
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Блокът на производителя %s не съдържа отпечатък"
 
-#: apt-pkg/cdrom.cc:550
+#: apt-pkg/cdrom.cc:576
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -3151,41 +3151,41 @@ msgstr ""
 "Използване на точка за монтиране на CD-ROM %s\n"
 "Монтиране на CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:559 apt-pkg/cdrom.cc:656
+#: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:682
 msgid "Identifying.. "
 msgstr "Идентифициране..."
 
-#: apt-pkg/cdrom.cc:587
+#: apt-pkg/cdrom.cc:613
 #, c-format
 msgid "Stored label: %s\n"
 msgstr "Запазен етикет: %s \n"
 
-#: apt-pkg/cdrom.cc:596 apt-pkg/cdrom.cc:879
+#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
 msgid "Unmounting CD-ROM...\n"
 msgstr "Демонтиране на CD-ROM...\n"
 
-#: apt-pkg/cdrom.cc:616
+#: apt-pkg/cdrom.cc:642
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "Използване на точка за монтиране на CD-ROM %s\n"
 
-#: apt-pkg/cdrom.cc:634
+#: apt-pkg/cdrom.cc:660
 msgid "Unmounting CD-ROM\n"
 msgstr "Демонтиране на CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:639
+#: apt-pkg/cdrom.cc:665
 msgid "Waiting for disc...\n"
 msgstr "Чакане за диск...\n"
 
-#: apt-pkg/cdrom.cc:648
+#: apt-pkg/cdrom.cc:674
 msgid "Mounting CD-ROM...\n"
 msgstr "Монтиране на CD-ROM...\n"
 
-#: apt-pkg/cdrom.cc:667
+#: apt-pkg/cdrom.cc:693
 msgid "Scanning disc for index files..\n"
 msgstr "Сканиране на диска за индексни файлове...\n"
 
-#: apt-pkg/cdrom.cc:716
+#: apt-pkg/cdrom.cc:744
 #, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
@@ -3194,7 +3194,7 @@ msgstr ""
 "Намерени са %zu индекса на пакети, %zu индекса на пакети с изходен код, %zu "
 "индекса с преводи и %zu подписа.\n"
 
-#: apt-pkg/cdrom.cc:727
+#: apt-pkg/cdrom.cc:755
 msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
@@ -3202,16 +3202,16 @@ msgstr ""
 "Не са намерени файлове с пакети. Мое би дискът не е с Дебиан или е за "
 "погрешна компютърна архитектура."
 
-#: apt-pkg/cdrom.cc:754
+#: apt-pkg/cdrom.cc:782
 #, c-format
 msgid "Found label '%s'\n"
 msgstr "Намерен е етикет „%s“\n"
 
-#: apt-pkg/cdrom.cc:783
+#: apt-pkg/cdrom.cc:811
 msgid "That is not a valid name, try again.\n"
 msgstr "Това не е валидно име, опитайте отново.\n"
 
-#: apt-pkg/cdrom.cc:800
+#: apt-pkg/cdrom.cc:828
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -3220,60 +3220,55 @@ msgstr ""
 "Наименование на този диск: \n"
 "„%s“\n"
 
-#: apt-pkg/cdrom.cc:802
+#: apt-pkg/cdrom.cc:830
 msgid "Copying package lists..."
 msgstr "Копиране на списъците с пакети..."
 
-#: apt-pkg/cdrom.cc:829
+#: apt-pkg/cdrom.cc:857
 msgid "Writing new source list\n"
 msgstr "Запазване на новия списък с източници\n"
 
-#: apt-pkg/cdrom.cc:837
+#: apt-pkg/cdrom.cc:865
 msgid "Source list entries for this disc are:\n"
 msgstr "Записите в списъка с източници за този диск са:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:874
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Записани са %i записа.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:876
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Записани са %i записа с %i липсващи файла.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:879
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Записани са %i записа с %i несъответстващи файла\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Записани са %i записа с %i липсващи и %i несъответстващи файла\n"
 
-#: apt-pkg/indexcopy.cc:503
-#, c-format
-msgid "Skipping nonexistent file %s"
-msgstr "Пропускане на несъществуващ файл %s"
-
-#: apt-pkg/indexcopy.cc:509
+#: apt-pkg/indexcopy.cc:515
 #, c-format
 msgid "Can't find authentication record for: %s"
 msgstr "Не е намерен oторизационен запис за: %s"
 
-#: apt-pkg/indexcopy.cc:515
+#: apt-pkg/indexcopy.cc:521
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Несъответствие на контролната сума за: %s"
 
-#: apt-pkg/indexcopy.cc:656
+#: apt-pkg/indexcopy.cc:662
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
 msgstr "Файлът %s не започва с информация за подписване в обикновен текст."
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:686
+#: apt-pkg/indexcopy.cc:692
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "В %s няма инсталиран ключодържател."
@@ -3529,6 +3524,9 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Без заключване"
+
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "Пропускане на несъществуващ файл %s"
 
 #~ msgid ""
 #~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
