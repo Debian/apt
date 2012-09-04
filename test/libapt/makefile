@@ -80,3 +80,9 @@ PROGRAM = CdromFindPackages${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = cdromfindpackages_test.cc
 include $(PROGRAM_H)
+
+# test fileutls
+PROGRAM = FileUtl${BASENAME}
+SLIBS = -lapt-pkg 
+SOURCE = fileutl_test.cc
+include $(PROGRAM_H)
