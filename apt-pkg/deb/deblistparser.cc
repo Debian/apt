@@ -15,6 +15,7 @@
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
@@ -22,7 +23,6 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/macros.h>
 
-#include <fnmatch.h>
 #include <ctype.h>
 									/*}}}*/
 
@@ -215,15 +215,22 @@ string debListParser::DescriptionLanguage()
  */
 MD5SumValue debListParser::Description_md5()
 {
-   string value = Section.FindS("Description-md5");
-
-   if (value.empty()) 
+   string const value = Section.FindS("Description-md5");
+   if (value.empty() == true)
    {
       MD5Summation md5;
       md5.Add((Description() + "\n").c_str());
       return md5.Result();
-   } else
-      return MD5SumValue(value);
+   }
+   else if (likely(value.size() == 32))
+   {
+      if (likely(value.find_first_not_of("0123456789abcdefABCDEF") == string::npos))
+	 return MD5SumValue(value);
+      _error->Error("Malformed Description-md5 line; includes invalid character '%s'", value.c_str());
+      return MD5SumValue();
+   }
+   _error->Error("Malformed Description-md5 line; doesn't have the required length (32 != %d) '%s'", (int)value.size(), value.c_str());
+   return MD5SumValue();
 }
                                                                         /*}}}*/
 // ListParser::UsePackage - Update a package structure			/*{{{*/
@@ -236,21 +243,26 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
    if (Pkg->Section == 0)
       Pkg->Section = UniqFindTagWrite("Section");
 
-   // Packages which are not from the "native" arch doesn't get the essential flag
-   // in the default "native" mode - it is also possible to mark "all" or "none".
-   // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
    string const static myArch = _config->Find("APT::Architecture");
-   string const static essential = _config->Find("pkgCacheGen::Essential", "native");
-   if ((essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()) ||
-       essential == "all")
+   // Possible values are: "all", "native", "installed" and "none"
+   // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
+   string const static essential = _config->Find("pkgCacheGen::Essential", "all");
+   if (essential == "all" ||
+       (essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()))
       if (Section.FindFlag("Essential",Pkg->Flags,pkgCache::Flag::Essential) == false)
 	 return false;
    if (Section.FindFlag("Important",Pkg->Flags,pkgCache::Flag::Important) == false)
       return false;
 
    if (strcmp(Pkg.Name(),"apt") == 0)
-      Pkg->Flags |= pkgCache::Flag::Essential | pkgCache::Flag::Important;
-   
+   {
+      if ((essential == "native" && Pkg->Arch != 0 && myArch == Pkg.Arch()) ||
+	  essential == "all")
+	 Pkg->Flags |= pkgCache::Flag::Essential | pkgCache::Flag::Important;
+      else
+	 Pkg->Flags |= pkgCache::Flag::Important;
+   }
+
    if (ParseStatus(Pkg,Ver) == false)
       return false;
    return true;
@@ -452,22 +464,6 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
    }
    return I;
 }
-
-/*
- * CompleteArch:
- *
- * The complete architecture, consisting of <kernel>-<cpu>.
- */
-static string CompleteArch(std::string const &arch) {
-    if (arch == "armel")              return "linux-arm";
-    if (arch == "armhf")              return "linux-arm";
-    if (arch == "lpia")               return "linux-i386";
-    if (arch == "powerpcspe")         return "linux-powerpc";
-    if (arch == "uclibc-linux-armel") return "linux-arm";
-    if (arch == "uclinux-armel")      return "uclinux-arm";
-
-    return (arch.find("-") != string::npos) ? arch : "linux-" + arch;
-}
 									/*}}}*/
 // ListParser::ParseDepends - Parse a dependency element		/*{{{*/
 // ---------------------------------------------------------------------
@@ -544,58 +540,59 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (ParseArchFlags == true)
    {
-      string completeArch = CompleteArch(arch);
+      APT::CacheFilter::PackageArchitectureMatchesSpecification matchesArch(arch, false);
 
       // Parse an architecture
       if (I != Stop && *I == '[')
       {
+	 ++I;
 	 // malformed
-         I++;
-         if (I == Stop)
-	    return 0; 
-	 
-         const char *End = I;
-         bool Found = false;
-      	 bool NegArch = false;
-         while (I != Stop) 
+	 if (unlikely(I == Stop))
+	    return 0;
+
+	 const char *End = I;
+	 bool Found = false;
+	 bool NegArch = false;
+	 while (I != Stop)
 	 {
-            // look for whitespace or ending ']'
-	    while (End != Stop && !isspace(*End) && *End != ']') 
-	       End++;
-	 
-	    if (End == Stop) 
+	    // look for whitespace or ending ']'
+	    for (;End != Stop && !isspace(*End) && *End != ']'; ++End);
+
+	    if (unlikely(End == Stop))
 	       return 0;
 
 	    if (*I == '!')
-            {
+	    {
 	       NegArch = true;
-	       I++;
-            }
-
-	    if (stringcmp(arch,I,End) == 0) {
-	       Found = true;
-	    } else {
-	       std::string wildcard = SubstVar(string(I, End), "any", "*");
-	       if (fnmatch(wildcard.c_str(), completeArch.c_str(), 0) == 0)
-	          Found = true;
+	       ++I;
 	    }
-	    
+
+	    std::string arch(I, End);
+	    if (arch.empty() == false && matchesArch(arch.c_str()) == true)
+	    {
+	       Found = true;
+	       if (I[-1] != '!')
+		  NegArch = false;
+	       // we found a match, so fast-forward to the end of the wildcards
+	       for (; End != Stop && *End != ']'; ++End);
+	    }
+
 	    if (*End++ == ']') {
 	       I = End;
 	       break;
 	    }
-	    
+
 	    I = End;
 	    for (;I != Stop && isspace(*I) != 0; I++);
-         }
+	 }
 
-	 if (NegArch)
+	 if (NegArch == true)
 	    Found = !Found;
-	 
-         if (Found == false)
+
+	 if (Found == false)
 	    Package = ""; /* not for this arch */
       }
-      
+
       // Skip whitespace
       for (;I != Stop && isspace(*I) != 0; I++);
    }
@@ -625,16 +622,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
    if (Section.Find(Tag,Start,Stop) == false)
       return true;
 
-   string Package;
    string const pkgArch = Ver.Arch();
-   string Version;
-   unsigned int Op;
 
    while (1)
    {
+      string Package;
+      string Version;
+      unsigned int Op;
+
       Start = ParseDepends(Start,Stop,Package,Version,Op,false,!MultiArchEnabled);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
+      size_t const found = Package.rfind(':');
 
       if (MultiArchEnabled == true &&
 	  (Type == pkgCache::Dep::Conflicts ||
@@ -645,6 +644,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	      a != Architectures.end(); ++a)
 	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
 	       return false;
+      }
+      else if (MultiArchEnabled == true && found != string::npos &&
+	       strcmp(Package.c_str() + found, ":any") != 0)
+      {
+	 string Arch = Package.substr(found+1, string::npos);
+	 Package = Package.substr(0, found);
+	 // Such dependencies are not supposed to be accepted …
+	 // … but this is probably the best thing to do.
+	 if (Arch == "native")
+	    Arch = _config->Find("APT::Architecture");
+	 if (NewDepends(Ver,Package,Arch,Version,Op,Type) == false)
+	    return false;
       }
       else if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
 	 return false;
@@ -771,7 +782,8 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 {
    // apt-secure does no longer download individual (per-section) Release
    // file. to provide Component pinning we use the section name now
-   FileI->Component = WriteUniqString(component);
+   map_ptrloc const storage = WriteUniqString(component);
+   FileI->Component = storage;
 
    // FIXME: Code depends on the fact that Release files aren't compressed
    FILE* release = fdopen(dup(File.Fd()), "r");
@@ -858,13 +870,14 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 	       break;
 	    *s = '\0';
 	 }
+	 map_ptrloc const storage = WriteUniqString(data);
 	 switch (writeTo) {
-	 case Suite: FileI->Archive = WriteUniqString(data); break;
-	 case Component: FileI->Component = WriteUniqString(data); break;
-	 case Version: FileI->Version = WriteUniqString(data); break;
-	 case Origin: FileI->Origin = WriteUniqString(data); break;
-	 case Codename: FileI->Codename = WriteUniqString(data); break;
-	 case Label: FileI->Label = WriteUniqString(data); break;
+	 case Suite: FileI->Archive = storage; break;
+	 case Component: FileI->Component = storage; break;
+	 case Version: FileI->Version = storage; break;
+	 case Origin: FileI->Origin = storage; break;
+	 case Codename: FileI->Codename = storage; break;
+	 case Label: FileI->Label = storage; break;
 	 case None: break;
 	 }
       }

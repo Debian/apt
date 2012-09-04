@@ -38,7 +38,7 @@
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
-bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang);
 
 using std::string;
@@ -286,7 +286,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
       pkgCache::DescIterator Desc = Ver.DescriptionList();
 
       // a version can only have one md5 describing it
-      if (MD5SumValue(Desc.md5()) != CurMd5)
+      if (Desc.end() == true || MD5SumValue(Desc.md5()) != CurMd5)
 	 continue;
 
       // don't add a new description if we have one for the given
@@ -304,6 +304,9 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
       void const * const oldMap = Map.Data();
       map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+      if (unlikely(descindex == 0 && _error->PendingError()))
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			      Pkg.Name(), "NewDescription", 1);
       if (oldMap != Map.Data())
 	 LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
       *LastDesc = descindex;
@@ -456,6 +459,9 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
    oldMap = Map.Data();
    map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+   if (unlikely(descindex == 0 && _error->PendingError()))
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "NewDescription", 2);
    if (oldMap != Map.Data())
        LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
    *LastDesc = descindex;
@@ -1310,10 +1316,11 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	 }
 	 _error->RevertToStack();
       }
-      else if (Debug == true)
+      else
       {
 	 _error->MergeWithStack();
-	 std::clog << "Open filebased MMap" << std::endl;
+	 if (Debug == true)
+	    std::clog << "Open filebased MMap" << std::endl;
       }
    }
    if (Writeable == false || CacheFile.empty() == true)
@@ -1449,11 +1456,11 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 }
 									/*}}}*/
 // IsDuplicateDescription						/*{{{*/
-bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang)
 {
    // Descriptions in the same link-list have all the same md5
-   if (MD5SumValue(Desc.md5()) != CurMd5)
+   if (Desc.end() == true || MD5SumValue(Desc.md5()) != CurMd5)
       return false;
    for (; Desc.end() == false; ++Desc)
       if (Desc.LanguageCode() == CurLang)

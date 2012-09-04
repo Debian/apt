@@ -180,11 +180,16 @@ bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
 pid_t ExecFork();
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
+// check if the given file starts with a PGP cleartext signature
+bool StartsWithGPGClearTextSignature(std::string const &FileName);
+
 // File string manipulators
 std::string flNotDir(std::string File);
 std::string flNotFile(std::string File);
 std::string flNoLink(std::string File);
 std::string flExtension(std::string File);
 std::string flCombine(std::string Dir,std::string File);
+
+
 
 #endif

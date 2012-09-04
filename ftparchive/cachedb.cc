@@ -19,11 +19,12 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
-    
+
 #include <netinet/in.h>       // htonl, etc
 
-#include <apti18n.h>
 #include "cachedb.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 // CacheDB::ReadyDB - Ready the DB2					/*{{{*/

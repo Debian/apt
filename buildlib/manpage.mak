@@ -14,7 +14,8 @@ LOCAL := manpage-$(firstword $(SOURCE))
 $(LOCAL)-LIST := $(addprefix $(DOC)/,$(SOURCE))
 
 # Install generation hooks
-doc: $($(LOCAL)-LIST)
+doc: manpages
+manpages: $($(LOCAL)-LIST)
 veryclean: veryclean/$(LOCAL)
 
 MKDIRS += $(DOC)

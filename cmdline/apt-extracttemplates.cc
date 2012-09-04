@@ -36,11 +36,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <locale.h>
+
 #include <fstream>
 
-#include <locale.h>
-#include <apti18n.h>
 #include "apt-extracttemplates.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;

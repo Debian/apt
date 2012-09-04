@@ -103,6 +103,8 @@ class Configuration
 
    inline void Dump() { Dump(std::clog); };
    void Dump(std::ostream& str);
+   void Dump(std::ostream& str, char const * const root,
+	     char const * const format, bool const emptyValue);
 
    Configuration(const Item *Root);
    Configuration();

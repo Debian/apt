@@ -51,7 +51,7 @@ override BLD := ./build
 endif
 
 # APT Programs in apt-utils
-APT_UTILS=ftparchive sortpkgs extracttemplates internal-solver
+APT_UTILS=ftparchive sortpkgs extracttemplates
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
@@ -67,7 +67,8 @@ LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
 build: build/build-stamp
-build-doc: build/build-doc-stamp
+build-debiandoc: build/build-debiandoc-stamp
+build-manpages: build/build-manpages-stamp
 
 # Note that this is unconditionally done first as part of loading environment.mak
 # The true is needed to force make to reload environment.mak after running
@@ -97,9 +98,14 @@ else
 endif
 	touch $@
 
-build/build-doc-stamp: build/configure-stamp
+build/build-debiandoc-stamp: build/configure-stamp
 	# Add here commands to compile the package.
-	$(MAKE) doc
+	$(MAKE) debiandoc
+	touch $@
+
+build/build-manpages-stamp: build/configure-stamp
+	# Add here commands to compile the package.
+	$(MAKE) manpages
 	touch $@
 
 clean:
@@ -115,7 +121,7 @@ debian/%.install: debian/%.install.in
 
 binary-indep: apt-doc libapt-pkg-doc
 # Build architecture-independent files here.
-libapt-pkg-doc: build-doc
+libapt-pkg-doc: build-debiandoc
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -141,7 +147,7 @@ libapt-pkg-doc: build-doc
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-apt-doc: build-doc
+apt-doc: build-debiandoc
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -167,7 +173,7 @@ apt-doc: build-doc
 
 binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
 apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
-apt: build build-doc
+apt: build build-manpages
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -185,7 +191,7 @@ apt: build build-doc
 	dh_install -p$@ --sourcedir=$(BLD)
 
 	# Remove the bits that are in apt-utils
-	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver)
+	rm $(addprefix debian/$@/usr/bin/apt-,$(APT_UTILS) dump-solver internal-solver)
 
 	# https has its own package
 	rm debian/$@/usr/lib/apt/methods/https
@@ -231,7 +237,7 @@ libapt-pkg-dev: build debian/libapt-pkg-dev.install
 	dh_builddeb -p$@
 
 apt-utils_MANPAGES = apt-sortpkgs apt-ftparchive apt-extracttemplates
-apt-utils: build
+apt-utils: build build-manpages
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -239,6 +245,7 @@ apt-utils: build
 
 	cp $(addprefix $(BLD)/bin/apt-,$(APT_UTILS)) debian/$@/usr/bin/
 	cp $(BLD)/bin/apt-dump-solver debian/$@/usr/lib/apt/solvers/dump
+	cp $(BLD)/bin/apt-internal-solver debian/$@/usr/lib/apt/solvers/apt
 
 	dh_install -p$@ --sourcedir=$(BLD)
 	dh_link -p$@

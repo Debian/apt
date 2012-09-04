@@ -10,7 +10,7 @@ int main(int argc,char *argv[]) {
 	unsigned int Null = 0;
 	bool StripMultiArch = true;
 	bool ParseArchFlags = false;
-	_config->Set("APT::Architecture","dsk");
+	_config->Set("APT::Architecture","amd64");
 
 	const char* Depends =
 		"debhelper:any (>= 5.0), "
@@ -19,13 +19,13 @@ int main(int argc,char *argv[]) {
 		"libcurl4-gnutls-dev:native | libcurl3-gnutls-dev (>> 7.15.5), "
 		"debiandoc-sgml, "
 		"apt (>= 0.7.25), "
-		"not-for-me [ !dsk ], "
-		"only-for-me [ dsk ], "
+		"not-for-me [ !amd64 ], "
+		"only-for-me [ amd64 ], "
 		"any-for-me [ any ], "
 		"not-for-darwin [ !darwin-any ], "
-		"cpu-for-me [ any-dsk ], "
+		"cpu-for-me [ any-amd64 ], "
 		"os-for-me [ linux-any ], "
-		"cpu-not-for-me [ any-amd64 ], "
+		"cpu-not-for-me [ any-armel ], "
 		"os-not-for-me [ kfreebsd-any ], "
 		"overlord-dev:any (= 7.15.3~) | overlord-dev:native (>> 7.15.5), "
 	;

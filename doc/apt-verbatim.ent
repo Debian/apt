@@ -154,6 +154,24 @@
   </citerefentry>"
 >
 
+<!ENTITY apt-transport-debtorrent "<citerefentry>
+    <refentrytitle><package>apt-transport-debtorrent</package></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY regex "<citerefentry>
+     <refentrytitle><abbrev>regex</abbrev></refentrytitle>
+     <manvolnum>7</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY glob "<citerefentry>
+     <refentrytitle><abbrev>glob</abbrev></refentrytitle>
+     <manvolnum>7</manvolnum>
+  </citerefentry>"
+>
+
 <!-- Boiler plate docinfo section -->
 <!ENTITY apt-email "
    <address>
@@ -177,6 +195,11 @@
    </author>
 ">
 
+<!ENTITY apt-name.dburrows "
+     <firstname>Daniel</firstname>
+     <surname>Burrows</surname>
+">
+
 <!ENTITY apt-copyright "
     <copyright>
      <holder>Jason Gunthorpe</holder>
@@ -185,14 +208,25 @@
 ">
 
 <!ENTITY apt-product "
-   <productname>Linux</productname>
+   <productname>APT</productname>
+   <releaseinfo role='version'>&apt-product-version;</releaseinfo>
 ">
+
+<!-- this will be updated by 'prepare-release' -->
+<!ENTITY apt-product-version "0.9.7.1">
 
 <!-- Codenames for debian releases -->
 <!ENTITY oldstable-codename "lenny">
 <!ENTITY stable-codename "squeeze">
 <!ENTITY testing-codename "wheezy">
+<!ENTITY stable-version "6.0">
+<!ENTITY ubuntu-codename "precise">
 
+<!-- good and bad just refers to matching and not matching a pattern…
+     It is not a remark about the specific perl version.
+     There is no way perl could be clasified "good" (or "bad") in any version… -->
+<!ENTITY good-perl "5.10">
+<!ENTITY bad-perl "5.14">
 
 <!-- Arguments -->
 <!ENTITY synopsis-arg-option "<arg><option>-o=<replaceable>&synopsis-config-string;</replaceable></option></arg>">
@@ -249,10 +283,10 @@
 		<arg choice='plain'>show &synopsis-arg-pkgver;</arg>
 		<arg choice='plain'>depends &synopsis-arg-pkgver;</arg>
 		<arg choice='plain'>rdepends &synopsis-arg-pkgver;</arg>
-		<arg choice='plain'>pkgnames <arg choice='plain'><replaceable>&synopsis-prefix;</replaceable></arg></arg>
+		<arg choice='plain'>pkgnames <arg><replaceable>&synopsis-prefix;</replaceable></arg></arg>
 		<arg choice='plain'>dotty &synopsis-arg-pkgver;</arg>
 		<arg choice='plain'>xvcg &synopsis-arg-pkgver;</arg>
-		<arg choice='plain'>policy &synopsis-arg-pkg;</arg>
+		<arg choice='plain'>policy <arg rep='repeat'><replaceable>&synopsis-pkg;</replaceable></arg></arg>
 		<arg choice='plain'>madison &synopsis-arg-pkg;</arg>
 		&synopsis-help;
 	</group>
@@ -269,8 +303,11 @@
 		&synopsis-help;
 	</group>
 </cmdsynopsis></refsynopsisdiv>">
+<!--<arg><option>- -format '<replaceable>&#37;f \"&#37;v\";&#37;n</replaceable>'</option></arg>-->
 <!ENTITY synopsis-command-apt-config "<refsynopsisdiv><cmdsynopsis>
 	<command>apt-config</command>
+	<arg><option>--empty</option></arg>
+	<arg><option>--format '<replaceable>&percnt;f &#x0022;&percnt;v&#x0022;;&percnt;n</replaceable>'</option></arg>
 	&synopsis-arg-option;
 	&synopsis-arg-config;
 	<group choice='req'>

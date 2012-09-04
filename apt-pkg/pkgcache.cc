@@ -708,6 +708,21 @@ bool pkgCache::DepIterator::IsIgnorable(PrvIterator const &Prv) const
    return false;
 }
 									/*}}}*/
+// DepIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/
+// ---------------------------------------------------------------------
+/* MultiArch can be translated to SingleArch for an resolver and we did so,
+   by adding dependencies to help the resolver understand the problem, but
+   sometimes it is needed to identify these to ignore them… */
+bool pkgCache::DepIterator::IsMultiArchImplicit() const
+{
+   if (ParentPkg()->Arch != TargetPkg()->Arch &&
+       (S->Type == pkgCache::Dep::Replaces ||
+	S->Type == pkgCache::Dep::DpkgBreaks ||
+	S->Type == pkgCache::Dep::Conflicts))
+      return true;
+   return false;
+}
+									/*}}}*/
 // ostream operator to handle string representation of a dependecy	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -945,4 +960,18 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
    return DescriptionList();
 };
 
+									/*}}}*/
+// PrvIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/
+// ---------------------------------------------------------------------
+/* MultiArch can be translated to SingleArch for an resolver and we did so,
+   by adding provides to help the resolver understand the problem, but
+   sometimes it is needed to identify these to ignore them… */
+bool pkgCache::PrvIterator::IsMultiArchImplicit() const
+{
+   pkgCache::PkgIterator const Owner = OwnerPkg();
+   pkgCache::PkgIterator const Parent = ParentPkg();
+   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner->Name == Parent->Name)
+      return true;
+   return false;
+}
 									/*}}}*/

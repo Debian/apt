@@ -1,3 +1,379 @@
+apt (0.9.8~exp1) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/strutl.cc:
+    - support \n and \r\n line endings in ReadMessages
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 09 Jul 2012 17:36:40 +0200
+
+apt (0.9.7.1) unstable; urgency=low
+
+  [ Program translation updates ]
+  * Bulgarian (Damyan Ivanov) (Closes: #678983)
+  * Hungarian (Gabor Kelemen)
+  * Italian (Milo Casagrande)
+  * Slovenian (Andrej Znidarsic)
+  * German (Holger Wansing) (Closes: #679314)
+  * Slovak (Ivan Masár) (Closes: #679448)
+
+  [ David Kalnischkies ]
+  * cmdline/apt-internal-solver.cc, cmdline/apt-mark.cc:
+    - typo fixes and unfuzzy translations
+  * debian/control:
+    - libapt-{pkg,inst} packages should be in section 'libs' instead
+      of 'admin' as by ftp-master override request in #677596
+    - demote debiandoc-sgml to Build-Depends-Indep
+  * doc/makefile:
+    - separate translation building of debiandoc from manpages
+      so that we don't need to build debiandoc for binary packages
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 29 Jun 2012 14:26:32 +0200
+
+apt (0.9.7) unstable; urgency=low
+
+  [ Julian Andres Klode ]
+  * apt-pkg/contrib/mmap.cc:
+    - Fix the Fallback option to work correctly, by not calling
+      realloc() on a map mapped by mmap(), and by using malloc
+      and friends instead of new[].
+    - Zero out the new memory allocated with realloc().
+
+  [ Daniel Hartwig ]
+  * apt-pkg/pkgcachegen.cc:
+    - always reset _error->StackCount in MakeStatusCache (Closes: #677175)
+
+  [ David Kalnischkies ]
+  * apt-pkg/deb/deblistparser.cc:
+    - ensure that mixed positive/negative architecture wildcards
+      are handled in the same way as dpkg handles them
+    - use PackageArchitectureMatchesSpecification filter
+  * apt-pkg/cachefilter.cc:
+    - add PackageArchitectureMatchesSpecification (Closes: #672603)
+  * apt-pkg/cacheset.cc:
+    - add PackageContainerInterface::FromGroup to support
+      architecture specifications with wildcards on the commandline
+  * apt-pkg/pkgcache.cc:
+    - do a string comparision for architecture checking in IsMultiArchImplicit
+      as 'unique' strings in the pkgcache aren't unique (Closes: #677454)
+  * buildlib/configure.mak:
+    - print a message detailing how to get config.guess and config.sub
+      in case they are not in /usr/share/misc (Closes: #677312)
+  * cmdline/apt-get.cc:
+    - print a friendly message in 'download' if a package can't be
+      downloaded (Closes: #677887)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 19 Jun 2012 16:42:43 +0200
+
+apt (0.9.6) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/cdrom.cc:
+    - fix regression from 0.9.3 which dumped the main configuration
+      _config instead of the cdrom settings (Cnf) as identified and
+      tested by Milan Kupcevic, thanks! (Closes: #674100)
+  * cmdline/apt-get.cc:
+    - do not show 'list of broken packages' header if no package
+      is broken as it happens e.g. for external resolver errors
+    - print URIs for all changelogs in case of --print-uris,
+      thanks to Daniel Hartwig for the patch! (Closes: #674897)
+    - show 'bzr branch' as 'bzr get' is deprecated (LP: #1011032)
+    - check build-dep candidate if install is forbidden
+  * debian/apt-utils.links:
+    - the internal resolver 'apt' is now directly installed in
+      /usr/lib/apt/solvers, so don't instruct dh to create a broken link
+  * doc/apt-verbatim.ent:
+    - APT doesn't belong to the product 'Linux', so use 'APT' instead
+      as after all APT is a big suite of applications
+  * doc/examples/sources.list:
+    - use the codename instead of 'stable' in the examples sources.list
+      as we do in the manpage and as the debian-installer does
+  * doc/apt-get.8.xml:
+    - use apt-utils as package example instead of libc6
+  * apt-pkg/contrib/cmdline.cc:
+    - apply patch from Daniel Hartwig to fix a segfault in case
+      the LongOpt is empty (Closes: #676331)
+    - fix segfault with empty LongOpt in --no-* branch
+  * ftparchive/apt-ftparchive.cc:
+    - default to putting the Contents-* files below $(SECTION) as apt-file
+      expects them there - thanks Martin-Éric Racine! (Closes: #675827)
+  * apt-pkg/deb/deblistparser.cc:
+    - set pkgCacheGen::Essential to "all" again (Closes: #675449)
+  * apt-pkg/algorithms.cc:
+    - force install only for one essential package out of a group
+  * apt-pkg/aptconfiguration.cc:
+    - if APT::Languages=none save "none" in allCodes so that the detected
+      configuration is cached as intended (Closes: #674690, LP: #1004947)
+  * apt-pkg/cacheiterators.h:
+    - add an IsMultiArchImplicit() method for Dep- and PrvIterator
+
+  [ Justin B Rye ]
+  * doc/apt-cdrom.8.xml:
+    - replace CDROM with the proper CD-ROM in text
+    - correct disc vs. disk issues
+  * doc/apt-extracttemplates.1.xml:
+    - debconf is not DebConf
+  * doc/apt-get.8.xml:
+    - move dselect-upgrade below dist-upgrade
+    - review and fix spelling issues
+  * doc/apt-ftparchive.8.xml, doc/apt-config.8.xml,
+    doc/apt-key.8.xml, doc/apt-mark.8.xml,
+    doc/apt_preferences.5.xml, doc/apt-secure.8.xml,
+    doc/apt-sortpkgs.1.xml, sources.list.5.xml:
+    - review and fix typo, grammar and style issues
+  * doc/apt.conf.5.xml:
+    - review and fix typo, grammar and style issues
+    - rephrase APT::Immediate-Configuration and many others
+
+  [ Sebastian Heinlein ]
+  * cmdline/apt-key:
+    - do not hardcode /etc but use Dir::Etc instead
+
+  [ Robert Luberda ]
+  * Polish manpage translation update (Closes: #675603)
+  * doc/apt-mark.8.xml:
+    - in hold, the option name is --file not --filename
+
+  [ Christian Perrier ]
+  * French program and manpage translation update
+  * Danish program translation by Joe Hansen. Closes: #675605
+
+  [ Thibaut Girka ]
+  * cmdline/apt-get.cc:
+    - complain correctly about :any build-dep on M-A:none packages
+  * apt-pkg/deb/deblistparser.cc:
+    - add support for arch-specific qualifiers in dependencies
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 11 Jun 2012 16:21:53 +0200
+
+apt (0.9.5.1) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/fileutl.cc:
+    - dup() given compressed fd in OpenDescriptor if AutoClose
+      is disabled as otherwise gzclose() and co will close it
+  * doc/*.xml:
+    - mark even more stuff as untranslateable and improve the
+      markup here and there (no real text change)
+    - use docbook DTD 4.5 instead of 4.2 to have valid docs
+
+  [ Justin B Rye ]
+  * doc/*.xml:
+    - remove 'GNU/Linux' from 'Debian systems' strings as Debian
+      has more systems than just GNU/Linux nowadays
+  * doc/apt-cache.8.xml:
+    - fix a typo as well as adding missing literal markup
+    - three small rewordings for better english sentences
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 24 May 2012 17:16:34 +0200
+
+apt (0.9.5) unstable; urgency=low
+
+  [ Chris Leick ]
+  * proofreading of the manpage pot
+  * German manpage translation update (Closes: #673294)
+
+  [ David Kalnischkies ]
+  * buildlib/podomain.mak:
+    - ensure that all sources end up in the srclist so that we don't
+      forget to extract half of the translation strings
+  * buildlib/inttypes.h.in:
+    - remove inttypes.h compatibility as providing such a c99 types
+      compatibility conflicts with the usage of c99 type long long
+  * apt-pkg/contrib/mmap.cc:
+    - have a dummy SyncToFd around in case of ReadOnly access to a
+      compressed file as we otherwise on Close() do not delete[] the
+      char buffer but munmap() it… (Closes: #673815)
+  * debian/control:
+    - moving debiandoc-sgml to Build-Depends-Indep was one step too much
+      for the buildds as we still build two sgml files in arch:any
+  * debian/rules:
+    - move internal-solver as 'apt' to his friend dump-solver in
+      /usr/lib/apt/solvers to avoid writing a manpage for it
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 22 May 2012 16:14:22 +0200
+
+apt (0.9.4) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * methods/http.cc:
+    - after many years of pointless discussions disable http/1.1 pipelining
+      by default as many webservers and proxies seem to be unable to conform
+      to specification must's (rfc2616 section 8.1.2.2) (LP: #996151)
+    - add spaces around PACKAGE_VERSION to fix FTBFS with -std=c++11
+  * apt-pkg/pkgcachegen.cc:
+    - make IsDuplicatedDescription static so that it is really private
+      as we don't need a symbol for it as it is not in a header
+  * Makefile, buildlib/*.mak:
+    - reshuffle dependencies so that parallel building seems to work
+    - separate manpages from the rest of the doc building
+  * prepare-release:
+    - apt-inst version isn't apt versions, so don't override variable
+  * debian/rules:
+    - apt-utils packages manpages, so it should depend on build-doc
+    - make apt and apt-utils packages depend on manpages instead of full doc
+  * debian/control:
+    - move doxygen and debiandoc-sgml to Build-Depends-Indep as docs
+      are no longer build in the same target as the manpages
+  * apt-pkg/acquire-methods.cc:
+    - factor out into private Dequeue() to fix access to deleted pointer
+  * apt-pkg/contrib/fileutl.cc:
+    - ensure that we close compressed fds, wait for forks and such even if
+      the FileFd itself is set to not autoclose the given Fd
+  * cmdline/apt-get.cc:
+    - use the host architecture, not the build architecture for matching
+      of [architecture restrictions] in Build-Depends (Closes: #672927)
+  * doc/makefile:
+    - build manpages with the correct l10n.gentext.default.language setting
+      to get the correct section titles provided by docbook
+  * doc/po/de.po:
+    - updated german manpage translation by Chris Leick, thanks!
+  * apt-pkg/packagemanager.cc:
+    - do not run into loop on new-pre-depends-breaks (Closes: #673536)
+  * doc/*.xml:
+    - add a few translator notes and reword some paragraphs to ensure that
+      translators and users alike can better understand them (Closes: #669409)
+    - in <term> mark all options with <option> and mark <term><option>
+      as untranslated for po4a removing ~200 unless "translateable" strings
+  * apt-pkg/aptconfiguration.cc:
+    - longcode Translation files are saved with encoded underscore,
+      so make sure to pick these files up as well for Acquire::Languages
+  * ftparchive/writer.cc:
+    - include Contents-* files in Release files (Closes: #673647)
+
+  [ Michael Vogt ]
+  * merged updated de.po, thanks to Holger Wansing (closes: #672466)
+  
+  [ Raphael Geissert ]
+  * apt-pkg/acquire*.cc:
+    - handle redirections in the worker with the right method instead of
+      in the method the redirection occured in (Closes: #668111)
+  * methods/http.cc:
+    - forbid redirects to change protocol
+  * methods/mirror.cc:
+    - generate an equal sign also for the first arch (Closes: #669142)
+
+  [ Marius Vollmer ]
+  * apt-pkg/algorithms.cc:
+    - fix memory leak of Flags in pkgSimulate by a proper destructor
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 21 May 2012 12:29:05 +0200
+
+apt (0.9.3) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/contrib/strutl.cc:
+    - remove the message size limit from ioprintf and strprintf
+  * apt-pkg/contrib/configuration.cc:
+    - add a more versatile Dump() method
+    - normalize a bit by replacing // and /./ with / in FindFile
+    - /dev/null is a special absolute path as it has no subdirectories
+  * apt-pkg/acquire-worker.cc:
+    - use Dump() to generate the configuration message for sending
+  * cmdline/apt-config.cc:
+    - make it possible to limit dump to a subtree
+    - implement --empty and --format option for dump
+  * apt-pkg/cdrom.cc:
+    - use Dump() to generate the configuration output
+  * apt-pkg/depcache.cc:
+    - clearly separate 'positive' and 'negative' dependencies and
+      their upgrade-resolution tries in MarkInstall and especially don't
+      treat Conflicts differently compared to Breaks here
+    - provider is only a possible solution if the provides has the right
+      version (or none as we have no versioned provides in debian) and not
+      if the version of the provider matches
+  * edsp/edspsystem.cc:
+    - check with RealFileExists for scenario file as otherwise a directory
+      like one provided with RootDir triggers the usage of EDSP
+  * debian/libapt-inst1.5.symbols:
+    - use the correct library name the symbols header
+  * apt-pkg/pkgcachegen.cc:
+    - check if NewDescription allocation has failed and error out accordingly
+    - check if we work on a valid description in IsDuplicateDescription as
+      we end up working on dangling pointers otherwise which segfaults on
+      s390x and ppc64 (Closes: #669427)
+  * apt-pkg/deb/deblistparser.cc:
+    - check length and containing chars for a given description md5sum
+  * ensure that apti18n.h is included last as advertised (Closes: #671623)
+  * apt-pkg/acquire-worker.cc:
+    - revert the use of FileFd::Write in OutFdReady as we don't want error
+      reports about EAGAIN here as we retry later. Thanks to YOSHINO Yoshihito
+      for the report. (Closes: #671721)
+  * apt-pkg/contrib/fileutl.cc:
+    - check that the fd which are closed are valid
+    - ensure that we do init d only once and especially not with its own
+      content as this causes some "interesting" hickups resulting in segfaults
+      as it seems (Closes: #554387, #670979)
+    - collect zombie (de)compressor processes on reopen
+    - ensure that in error conditions the Fail flag is set
+    - ensure that d is set before accessing it
+  * apt-pkg/aptconfiguration.cc:
+    - use NULL instead of "" for no (un)compress parameters
+  * apt-pkg/algorithms.cc:
+    - factor out of ListUpdate a AcquireUpdate to be able to provide your
+      own pkgAcquire fetcher to the wrapper
+  * apt-inst/deb/debfile.h:
+    - readd 'md5.h' to the uncleaned header includes to make qapt build
+      against us again unchanged to unblock transition (Closes: #669163)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 11 May 2012 17:16:22 +0200
+
+apt (0.9.2) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * apt-inst/contrib/extracttar.cc:
+    - ensure that in StartGzip the InFd is set to "AutoClose" to ensure
+      that the pipe is closed when InFd is closed. This fixes a Fd leak
+      (LP: #985452)
+
+  [ David Kalnischkies ]
+   * apt-pkg/deb/deblistparser.cc:
+    - only treat the native apt as essential by default (Closes: #669377)
+  * apt-pkg/contrib/fileutl.cc:
+    - redirect stderr from compressors to /dev/null
+  * apt-pkg/aptconfiguration.cc:
+    - if the compressor is not installed, but we link against it's
+      library accept it as a CompressionType (Closes: #669328)
+  * apt-pkg/contrib/sha2_internal.cc:
+    - do not use the input data directly but memcpy it instead as
+      it could be unaligned as in the http-transport which causes
+      a sigbus error on sparc (Closes: #669061)
+  * apt-pkg/cacheset.cc:
+    - actually return to the fallback modifier if we have detected we
+      should for packagenames which look like modifiers (Closes: #669591)
+
+  [ Adam Conrad ]
+  * Set FD_CLOEXEC on history.log's FD (Closes: #610069, LP: #636010)
+
+  [ Thorsten Spindler ]
+  * apt-pkg/deb/dpkgpm.cc:
+    - do not crash if (*I).Pkg is NULL (LP: #939867)
+
+  [ Malcolm Scott ]
+  * apt-pkg/packagemanager.cc:
+    - iterate over all pre-depends or-group member instead of looping
+      endlessly over the first member in SmartUnpack (LP: #985852)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 20 Apr 2012 11:26:16 +0200
+
+apt (0.9.1) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * cmdline/apt-get.cc:
+    - if pkgCacheFile::Generate is disabled in 'update' don't
+      remove the caches (and don't try to open them)
+  * apt-pkg/packagemanager.cc:
+    - init counter in SmartConfigure so that the loop-breaker isn't
+      triggered at random… (Closes: #669060)
+
+  [ Christian Perrier ]
+  * Fix typo in apt-get(8). Closes: #664833
+  * Replace "argument" by "paramètre" in French translation.
+    Merci, les Titeps!
+  * Drop hardcoded "en.html" suffix in apt-secure manpage.
+    Thanks to David Prevot.
+  
+ -- Michael Vogt <mvo@debian.org>  Tue, 17 Apr 2012 09:49:31 +0200
+
 apt (0.9.0) unstable; urgency=low
 
   * upload to debian/unstable
@@ -506,6 +882,16 @@ apt (0.8.16~exp1) experimental; urgency=low
   * merged with the debian/unstable upload
 
  -- Michael Vogt <mvo@debian.org>  Wed, 29 Jun 2011 12:40:31 +0200
+
+apt (0.8.15.11) UNRELEASED; urgency=low
+
+  * Fix typo in apt-get(8). Closes: #664833
+  * Replace "argument" by "paramètre" in French translation.
+    Merci, les Titeps!
+  * Drop hardcoded "en.html" suffix in apt-secure manpage.
+    Thanks to David Prevot.
+
+ -- Christian Perrier <bubulle@debian.org>  Tue, 27 Mar 2012 20:31:38 +0200
 
 apt (0.8.15.10) unstable; urgency=high
 

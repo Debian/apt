@@ -61,7 +61,7 @@ using namespace std;
 string HttpMethod::FailFile;
 int HttpMethod::FailFd = -1;
 time_t HttpMethod::FailTime = 0;
-unsigned long PipelineDepth = 10;
+unsigned long PipelineDepth = 0;
 unsigned long TimeOut = 120;
 bool AllowRedirect = false;
 bool Debug = false;
@@ -602,7 +602,7 @@ bool ServerState::HeaderLine(string Line)
 	 return true;
 
       Size = strtoull(Val.c_str(), NULL, 10);
-      if (Size == ULLONG_MAX)
+      if (Size >= std::numeric_limits<unsigned long long>::max())
 	 return _error->Errno("HeaderLine", _("The HTTP server sent an invalid Content-Length header"));
       return true;
    }
@@ -758,7 +758,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
           Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
    }
    Req += "User-Agent: " + _config->Find("Acquire::http::User-Agent",
-		"Debian APT-HTTP/1.3 ("PACKAGE_VERSION")") + "\r\n\r\n";
+		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") + "\r\n\r\n";
    
    if (Debug == true)
       cerr << Req << endl;
@@ -985,7 +985,10 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       else
       {
          NextURI = DeQuoteString(Srv->Location);
-         return TRY_AGAIN_OR_REDIRECT;
+         URI tmpURI = NextURI;
+         // Do not allow a redirection to switch protocol
+         if (tmpURI.Access == "http")
+            return TRY_AGAIN_OR_REDIRECT;
       }
       /* else pass through for error message */
    }

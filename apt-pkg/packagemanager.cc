@@ -25,9 +25,10 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
 
-#include <apti18n.h>
 #include <iostream>
 #include <fcntl.h>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -602,7 +603,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
    const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
-   unsigned int i;
+   unsigned int i = 0;
    do 
    {
       Changed = false;
@@ -621,7 +622,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for easy targets: packages that are already okay
 	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Start.AllTargets();
+	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
@@ -644,7 +645,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for something that could be configured.
 	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Start.AllTargets();
+	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
@@ -784,7 +785,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 			   VerIterator V(Cache,*I);
 			   PkgIterator P = V.ParentPkg();
 			   // we are checking for installation as an easy 'protection' against or-groups and (unchosen) providers
-			   if (P->CurrentVer == 0 || P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
+			   if (P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
 			      continue;
 			   circle = true;
 			   break;

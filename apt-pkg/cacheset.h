@@ -139,6 +139,7 @@ public:
 	static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
+	static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
 	static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper);
 
@@ -186,7 +187,7 @@ public:									/*{{{*/
 		pkgCache::PkgIterator getPkg(void) const { return *_iter; }
 		inline pkgCache::PkgIterator operator*(void) const { return *_iter; };
 		operator typename Container::iterator(void) const { return _iter; }
-		operator typename PackageContainer<Container>::const_iterator() { return PackageContainer<Container>::const_iterator(_iter); }
+		operator typename PackageContainer<Container>::const_iterator() { return typename PackageContainer<Container>::const_iterator(_iter); }
 		inline iterator& operator++() { ++_iter; return *this; }
 		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };
@@ -506,7 +507,7 @@ public:									/*{{{*/
 		pkgCache::VerIterator getVer(void) const { return *_iter; }
 		inline pkgCache::VerIterator operator*(void) const { return *_iter; };
 		operator typename Container::iterator(void) const { return _iter; }
-		operator typename VersionContainer<Container>::const_iterator() { return VersionContainer<Container>::const_iterator(_iter); }
+		operator typename VersionContainer<Container>::const_iterator() { return typename VersionContainer<Container>::const_iterator(_iter); }
 		inline iterator& operator++() { ++_iter; return *this; }
 		inline iterator operator++(int) { iterator tmp(*this); operator++(); return tmp; }
 		inline bool operator!=(iterator const &i) const { return _iter != i._iter; };

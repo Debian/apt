@@ -8,8 +8,9 @@ Uploaders: Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>,
 Standards-Version: 3.9.3
 Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 8.1.3~), libdb-dev,
  gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.0),
- zlib1g-dev, libbz2-dev, debiandoc-sgml, xsltproc, docbook-xsl, docbook-xml,
- po4a (>= 0.34-2), autotools-dev, autoconf, automake, doxygen
+ zlib1g-dev, libbz2-dev, xsltproc, docbook-xsl, docbook-xml,
+ po4a (>= 0.34-2), autotools-dev, autoconf, automake
+Build-Depends-Indep: doxygen, debiandoc-sgml
 Build-Conflicts: autoconf2.13, automake1.4
 Vcs-Bzr: http://bzr.debian.org/apt/debian-sid/
 Vcs-Browser: http://bzr.debian.org/loggerhead/apt/debian-sid/
@@ -40,6 +41,7 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Section: libs
 Description: package managment runtime library
  This library provides the common functionality for searching and
  managing packages as well as information about packages.
@@ -61,6 +63,7 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Section: libs
 Description: deb package format runtime library
  This library provides methods to query and extract information
  from deb packages. This includes the control data and the package

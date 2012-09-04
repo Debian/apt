@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+
+setupaptarchive
+changetowebserver
+
+rm -rf rootdir/var/lib/apt/lists
+aptget update -qq
+testequal 'Hit http://localhost stable InRelease
+Hit http://localhost stable/main Sources
+Hit http://localhost stable/main amd64 Packages
+Hit http://localhost stable/main Translation-en
+Reading package lists...' aptget update
+
+mv rootdir/var/lib/apt/lists/localhost* rootdir/var/lib/apt/lists/partial
+aptget update
+

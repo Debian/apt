@@ -182,15 +182,61 @@ pkgCache::PkgIterator PackageContainerInterface::FromName(pkgCacheFile &Cache,
 	return Pkg;
 }
 									/*}}}*/
+// FromGroup - Returns the package defined  by this string		/*{{{*/
+bool PackageContainerInterface::FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache,
+			std::string pkg, CacheSetHelper &helper) {
+	if (unlikely(Cache.GetPkgCache() == 0))
+		return false;
+
+	size_t const archfound = pkg.find_last_of(':');
+	std::string arch;
+	if (archfound != std::string::npos) {
+		arch = pkg.substr(archfound+1);
+		pkg.erase(archfound);
+	}
+
+	pkgCache::GrpIterator Grp = Cache.GetPkgCache()->FindGrp(pkg);
+	if (Grp.end() == false) {
+		if (arch.empty() == true) {
+			pkgCache::PkgIterator Pkg = Grp.FindPreferredPkg();
+			if (Pkg.end() == false)
+			{
+			   pci->insert(Pkg);
+			   return true;
+			}
+		} else {
+			bool found = false;
+			// for 'linux-any' return the first package matching, for 'linux-*' return all matches
+			bool const isGlobal = arch.find('*') != std::string::npos;
+			APT::CacheFilter::PackageArchitectureMatchesSpecification pams(arch);
+			for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() == false; Pkg = Grp.NextPkg(Pkg)) {
+				if (pams(Pkg) == false)
+					continue;
+				pci->insert(Pkg);
+				found = true;
+				if (isGlobal == false)
+					break;
+			}
+			if (found == true)
+				return true;
+		}
+	}
+
+	pkgCache::PkgIterator Pkg = helper.canNotFindPkgName(Cache, pkg);
+	if (Pkg.end() == true)
+	   return false;
+
+	pci->insert(Pkg);
+	return true;
+}
+									/*}}}*/
 // FromString - Return all packages matching a specific string		/*{{{*/
 bool PackageContainerInterface::FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str, CacheSetHelper &helper) {
 	bool found = true;
 	_error->PushToStack();
 
-	pkgCache::PkgIterator Pkg = FromName(Cache, str, helper);
-	if (Pkg.end() == false)
-		pci->insert(Pkg);
-	else if (FromTask(pci, Cache, str, helper) == false &&
+	if (FromGroup(pci, Cache, str, helper) == false &&
+		 FromTask(pci, Cache, str, helper) == false &&
 		 FromRegEx(pci, Cache, str, helper) == false)
 	{
 		helper.canNotFindPackage(pci, Cache, str);
@@ -217,6 +263,7 @@ bool PackageContainerInterface::FromModifierCommandLine(unsigned short &modID, P
 							pkgCacheFile &Cache, const char * cmdline,
 							std::list<Modifier> const &mods, CacheSetHelper &helper) {
 	std::string str = cmdline;
+	unsigned short fallback = modID;
 	bool modifierPresent = false;
 	for (std::list<Modifier>::const_iterator mod = mods.begin();
 	     mod != mods.end(); ++mod) {
@@ -243,6 +290,7 @@ bool PackageContainerInterface::FromModifierCommandLine(unsigned short &modID, P
 		helper.showErrors(errors);
 		if (Pkg.end() == false) {
 			pci->insert(Pkg);
+			modID = fallback;
 			return true;
 		}
 	}
@@ -281,13 +329,14 @@ bool VersionContainerInterface::FromModifierCommandLine(unsigned short &modID,
 		modifierPresent = true;
 		break;
 	}
-
 	if (modifierPresent == true) {
 		bool const errors = helper.showErrors(false);
 		bool const found = VersionContainerInterface::FromString(vci, Cache, cmdline, select, helper, true);
 		helper.showErrors(errors);
-		if (found == true)
+		if (found == true) {
+			modID = fallback;
 			return true;
+		}
 	}
 	return FromString(vci, Cache, str, select, helper);
 }

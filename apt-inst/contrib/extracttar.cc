@@ -146,7 +146,7 @@ bool ExtractTar::StartGzip()
    }
 
    // Fix up our FDs
-   InFd.Fd(Pipes[0]);
+   InFd.OpenDescriptor(Pipes[0], FileFd::ReadOnly, FileFd::None, true);
    close(Pipes[1]);
    return true;
 }

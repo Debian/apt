@@ -42,6 +42,28 @@ template <class T> void TestMill(const char *Out)
 
 int main(int argc, char** argv)
 {
+   // test HashSumValue which doesn't calculate but just stores sums
+   {
+   string md5sum = argv[2];
+   MD5SumValue md5(md5sum);
+   equals(md5.Value(), md5sum);
+   }
+   {
+   string sha1sum = argv[3];
+   SHA1SumValue sha1(sha1sum);
+   equals(sha1.Value(), sha1sum);
+   }
+   {
+   string sha2sum = argv[4];
+   SHA256SumValue sha2(sha2sum);
+   equals(sha2.Value(), sha2sum);
+   }
+   {
+   string sha2sum = argv[5];
+   SHA512SumValue sha2(sha2sum);
+   equals(sha2.Value(), sha2sum);
+   }
+
    // From  FIPS PUB 180-1
    Test<SHA1Summation>("","da39a3ee5e6b4b0d3255bfef95601890afd80709");
    Test<SHA1Summation>("abc","a9993e364706816aba3e25717850c26c9cd0d89d");

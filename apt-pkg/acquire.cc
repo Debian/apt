@@ -244,11 +244,19 @@ void pkgAcquire::Dequeue(Item *Itm)
 {
    Queue *I = Queues;
    bool Res = false;
-   for (; I != 0; I = I->Next)
-      Res |= I->Dequeue(Itm);
-   
    if (Debug == true)
       clog << "Dequeuing " << Itm->DestFile << endl;
+
+   for (; I != 0; I = I->Next)
+   {
+      if (I->Dequeue(Itm))
+      {
+         Res = true;
+	 if (Debug == true)
+	    clog << "Dequeued from " << I->Name << endl;
+      }
+   }
+
    if (Res == true)
       ToFetch--;
 }
@@ -269,9 +277,30 @@ string pkgAcquire::QueueName(string Uri,MethodConfig const *&Config)
    /* Single-Instance methods get exactly one queue per URI. This is
       also used for the Access queue method  */
    if (Config->SingleInstance == true || QueueMode == QueueAccess)
-       return U.Access;
+      return U.Access;
 
-   return U.Access + ':' + U.Host;
+   string AccessSchema = U.Access + ':',
+	FullQueueName = AccessSchema + U.Host;
+   unsigned int Instances = 0, SchemaLength = AccessSchema.length();
+
+   Queue *I = Queues;
+   for (; I != 0; I = I->Next) {
+      // if the queue already exists, re-use it
+      if (I->Name == FullQueueName)
+	 return FullQueueName;
+
+      if (I->Name.compare(0, SchemaLength, AccessSchema) == 0)
+	 Instances++;
+   }
+
+   if (Debug) {
+      clog << "Found " << Instances << " instances of " << U.Access << endl;
+   }
+
+   if (Instances >= (unsigned int)_config->FindI("Acquire::QueueHost::Limit",10))
+      return U.Access;
+
+   return FullQueueName;
 }
 									/*}}}*/
 // Acquire::GetConfig - Fetch the configuration information		/*{{{*/

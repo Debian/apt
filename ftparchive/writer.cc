@@ -948,6 +948,7 @@ ReleaseWriter::ReleaseWriter(string const &DB)
       AddPattern("Sources.lzma");
       AddPattern("Sources.xz");
       AddPattern("Release");
+      AddPattern("Contents-*");
       AddPattern("Index");
       AddPattern("md5sum.txt");
    }

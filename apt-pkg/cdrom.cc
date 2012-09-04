@@ -409,27 +409,10 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    
    /* Write out all of the configuration directives by walking the
       configuration tree */
-   const Configuration::Item *Top = Cnf.Tree(0);
-   for (; Top != 0;)
-   {
-      // Print the config entry
-      if (Top->Value.empty() == false)
-	 Out <<  Top->FullTag() + " \"" << Top->Value << "\";" << endl;
-      
-      if (Top->Child != 0)
-      {
-	 Top = Top->Child;
-	 continue;
-      }
-      
-      while (Top != 0 && Top->Next == 0)
-	 Top = Top->Parent;
-      if (Top != 0)
-	 Top = Top->Next;
-   }   
+   Cnf.Dump(Out, NULL, "%f \"%v\";\n", false);
 
    Out.close();
-   
+
    if (FileExists(DFile) == true && link(DFile.c_str(),string(DFile + '~').c_str()) != 0)
       return _error->Errno("link", "Failed to link %s to %s~", DFile.c_str(), DFile.c_str());
    if (rename(NewFile.c_str(),DFile.c_str()) != 0)

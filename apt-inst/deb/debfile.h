@@ -29,6 +29,10 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/pkgcache.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/md5.h>
+#endif
+
 class FileFd;
 
 class debDebFile

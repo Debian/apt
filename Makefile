@@ -10,7 +10,7 @@ endif
 default: startup all
 
 .PHONY: headers library clean veryclean all binary program doc test update-po
-startup all headers library clean veryclean binary program doc dirs test update-po:
+all headers library clean veryclean binary program doc manpages debiandoc test update-po startup dirs:
 	$(MAKE) -C apt-pkg $@
 	$(MAKE) -C apt-inst $@
 	$(MAKE) -C methods $@
@@ -21,11 +21,14 @@ startup all headers library clean veryclean binary program doc dirs test update-
 	$(MAKE) -C po $@
 	$(MAKE) -C test $@
 
-update-po: startup
+all headers library clean veryclean binary program doc manpages debiandoc test update-po: startup dirs
+
+dirs: startup
 
 # Some very common aliases
-.PHONY: maintainer-clean dist-clean distclean pristine sanity 
+.PHONY: maintainer-clean dist-clean distclean pristine sanity
 maintainer-clean dist-clean distclean pristine sanity: veryclean
+veryclean: clean
 
 # The startup target builds the necessary configure scripts. It should
 # be used after a CVS checkout.
