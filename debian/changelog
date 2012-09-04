@@ -3,8 +3,33 @@ apt (0.9.7.5) UNRELEASED; urgency=low
   [ Manpages translation updates ]
   * Japanese (KURASAWA Nozomu) (Closes: #684435)
 
+  [ David Kalnischkies ]
+  * apt-pkg/cdrom.cc:
+    - copy only configured translation files from a CD-ROM and not all
+      available translation files preventing new installs with d-i from
+      being initialized with all translations (Closes: #678227)
+    - handle Components in the reduction for the source.list as multi-arch CDs
+      otherwise create duplicated source entries (e.g. "wheezy main main")
+  * apt-pkg/packagemanager.cc:
+    - unpack versions only in case a different version from the package
+      is currently in unpack state to recover from broken system states
+      (like different file in M-A:same package and other dpkg errors)
+      and avoid re-unpack otherwise (Closes: #670900)
+  * debian/control:
+    - let libapt-pkg break apt < 0.9.4 to ensure that the installed http-
+      method supports the new redirection-style, thanks to Raphael Geissert
+      for reporting & testing (Closes: #685192)
+  * doc/apt_preferences.5.xml:
+    - use the correct interval (x <= P < y) for pin value documentation as
+      these are the intervals used by the code (Closes: #685989)
+  * apt-pkg/indexcopy.cc:
+    - do not create duplicated flat-archive CD-ROM sources for foreign
+      architectures on multi-arch CD-ROMs
+    - do not warn about files which have a record in the Release file, but
+      are not present on the CD to mirror the behavior of the other methods
+      and to allow uncompressed indexes to be dropped without scaring users
 
- -- Christian Perrier <bubulle@debian.org>  Fri, 10 Aug 2012 07:52:17 +0200
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 26 Aug 2012 10:49:17 +0200
 
 apt (0.9.7.4) unstable; urgency=low
 

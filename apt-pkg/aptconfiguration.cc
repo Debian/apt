@@ -319,6 +319,17 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		return codes;
 }
 									/*}}}*/
+// checkLanguage - are we interested in the given Language?		/*{{{*/
+bool const Configuration::checkLanguage(std::string Lang, bool const All) {
+	// the empty Language is always interesting as it is the original
+	if (Lang.empty() == true)
+		return true;
+	// filenames are encoded, so undo this
+	Lang = SubstVar(Lang, "%5f", "_");
+	std::vector<std::string> const langs = getLanguages(All, true);
+	return (std::find(langs.begin(), langs.end(), Lang) != langs.end());
+}
+									/*}}}*/
 // getArchitectures - Return Vector of prefered Architectures		/*{{{*/
 std::vector<std::string> const Configuration::getArchitectures(bool const &Cached) {
 	using std::string;
