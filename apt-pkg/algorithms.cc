@@ -194,6 +194,11 @@ bool pkgSimulate::Remove(PkgIterator iPkg,bool Purge)
 {
    // Adapt the iterator
    PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
+   if (Pkg.end() == true)
+   {
+      std::cerr << (Purge ? "Purg" : "Remv") << " invalid package " << iPkg.FullName() << std::endl;
+      return false;
+   }
 
    Flags[Pkg->ID] = 3;
    Sim.MarkDelete(Pkg);

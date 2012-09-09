@@ -238,7 +238,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
-	if (MultiArchCache() == false) {
+	if (MultiArchCache() == false && Arch != "none") {
 		if (Arch == "native" || Arch == "all" || Arch == "any" ||
 		    Arch == NativeArch())
 			return SingleArchFindPkg(Name);
@@ -376,6 +376,10 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &Prefer
 		if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 			return Pkg;
 	}
+	// packages without an architecture
+	Pkg = FindPkg("none");
+	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
+		return Pkg;
 
 	if (PreferNonVirtual == true)
 		return FindPreferredPkg(false);

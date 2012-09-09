@@ -4,6 +4,10 @@ apt (0.9.7.5) UNRELEASED; urgency=low
   * Japanese (KURASAWA Nozomu) (Closes: #684435)
 
   [ David Kalnischkies ]
+  * handle packages without a mandatory architecture (debian-policy §5.3)
+    by introducing a pseudo-architecture 'none' so that the small group of
+    users with these packages can get right of them without introducing too
+    much hassle for other users (Closes: #686346)
   * apt-pkg/cdrom.cc:
     - copy only configured translation files from a CD-ROM and not all
       available translation files preventing new installs with d-i from
