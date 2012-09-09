@@ -32,6 +32,9 @@ apt (0.9.7.5) UNRELEASED; urgency=low
     - do not warn about files which have a record in the Release file, but
       are not present on the CD to mirror the behavior of the other methods
       and to allow uncompressed indexes to be dropped without scaring users
+  * apt-pkg/pkgcachegen.cc:
+    - do not create 'native' (or now 'none') package structures as a side
+      effect of description translation parsing as it pollutes the cache
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 26 Aug 2012 10:49:17 +0200
 

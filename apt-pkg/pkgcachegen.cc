@@ -195,8 +195,10 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       string const Version = List.Version();
       if (Version.empty() == true && Arch.empty() == true)
       {
+	 // package descriptions
 	 if (MergeListGroup(List, PackageName) == false)
 	    return false;
+	 continue;
       }
 
       if (Arch.empty() == true)
