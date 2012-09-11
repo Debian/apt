@@ -5,6 +5,10 @@ apt (0.9.7.5) UNRELEASED; urgency=low
   * Portuguese (Américo Monteiro) (Closes: #686975)
 
   [ David Kalnischkies ]
+  * handle packages without a mandatory architecture (debian-policy §5.3)
+    by introducing a pseudo-architecture 'none' so that the small group of
+    users with these packages can get right of them without introducing too
+    much hassle for other users (Closes: #686346)
   * apt-pkg/cdrom.cc:
     - copy only configured translation files from a CD-ROM and not all
       available translation files preventing new installs with d-i from
@@ -29,6 +33,9 @@ apt (0.9.7.5) UNRELEASED; urgency=low
     - do not warn about files which have a record in the Release file, but
       are not present on the CD to mirror the behavior of the other methods
       and to allow uncompressed indexes to be dropped without scaring users
+  * apt-pkg/pkgcachegen.cc:
+    - do not create 'native' (or now 'none') package structures as a side
+      effect of description translation parsing as it pollutes the cache
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 26 Aug 2012 10:49:17 +0200
 
