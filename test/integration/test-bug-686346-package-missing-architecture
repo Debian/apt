@@ -85,3 +85,25 @@ The following packages have unmet dependencies:
  pkgg : Conflicts: pkgb but 2 is installed
         Conflicts: pkgb:none but 1 is installed
 E: Unmet dependencies. Try using -f." aptget check
+
+# check that dependencies are generated for none-packages
+rm rootdir/var/lib/dpkg/status
+insertinstalledpackage 'pkgx' 'none' '1'
+insertinstalledpackage 'pkgy' 'none' '1' 'Depends: pkgz, pkgx (>= 1)'
+insertinstalledpackage 'pkgz' 'none' '1'
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  pkgx:none* pkgy:none*
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Purg pkgy:none [1]
+Purg pkgx:none [1]' aptget purge pkgx -s
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  pkgy:none* pkgz:none*
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Purg pkgy:none [1]
+Purg pkgz:none [1]' aptget purge pkgz -s

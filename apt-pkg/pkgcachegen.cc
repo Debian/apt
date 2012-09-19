@@ -922,7 +922,7 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
    // Locate the target package
    pkgCache::PkgIterator Pkg = Grp.FindPkg(Arch);
    // we don't create 'none' packages and their dependencies if we can avoid it …
-   if (Pkg.end() == true && Arch == "none")
+   if (Pkg.end() == true && Arch == "none" && strcmp(Ver.ParentPkg().Arch(), "none") != 0)
       return true;
    Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
    if (Pkg.end() == true) {
