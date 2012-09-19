@@ -209,6 +209,7 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
 	    just for these :none packages to a proper MultiArchCache, so just ensure
 	    that we have always a native package structure first for SingleArch */
 	 pkgCache::PkgIterator NP;
+	 Dynamic<pkgCache::PkgIterator> DynPkg(NP);
 	 if (NewPackage(NP, PackageName, _config->Find("APT::Architecture")) == false)
 	 // TRANSLATOR: The first placeholder is a package name,
 	 // the other two should be copied verbatim as they include debug info
@@ -459,6 +460,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
 	       map_ptrloc *OldDepLast = NULL;
 	       pkgCache::VerIterator ConVersion = D.ParentVer();
+	       Dynamic<pkgCache::VerIterator> DynV(ConVersion);
 	       // duplicate the Conflicts/Breaks/Replaces for :none arch
 	       if (D->Version == 0)
 		  NewDepends(Pkg, ConVersion, "", 0, D->Type, OldDepLast);
@@ -772,6 +774,7 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
+   Dynamic<pkgCache::VerIterator> DynV(Ver);
    Ver->NextVer = Next;
    Ver->ID = Cache.HeaderP->VersionCount++;
    map_ptrloc const idxVerStr = WriteStringInMap(VerStr);

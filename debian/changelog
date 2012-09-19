@@ -3,6 +3,8 @@ apt (0.9.7.6) UNRELEASED; urgency=low
   [ David Kalnischkies ]
   * apt-pkg/pkgcachegen.cc:
     - ensure that dependencies for packages:none are always generated
+    - add 3 missing remap registrations causing a segfault in case
+      we use the not remapped iterators after a move of the mmap again
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 19 Sep 2012 11:29:56 +0200
 
