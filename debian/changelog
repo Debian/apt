@@ -1,3 +1,21 @@
+apt (0.9.7.6) UNRELEASED; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcachegen.cc:
+    - ensure that dependencies for packages:none are always generated
+    - add 3 missing remap registrations causing a segfault in case
+      we use the not remapped iterators after a move of the mmap again
+  * apt-pkg/pkgcache.cc:
+    - ignore negative dependencies applying in the same group for
+      M-A:same packages on the real package name as self-conflicts
+  * cmdline/apt-cache.cc:
+    - print versioned dependency relations in (r)depends if the option
+      APT::Cache::ShowVersion is true (default: false) as discussed in
+      #218995 to help debian-cd fixing #687949. Thanks to Sam Lidder
+      for initial patch and Steve McIntyre for nagging and testing!
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 19 Sep 2012 11:29:56 +0200
+
 apt (0.9.7.5) unstable; urgency=low
 
   [ Manpages translation updates ]
