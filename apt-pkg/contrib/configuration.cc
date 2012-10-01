@@ -405,8 +405,9 @@ void Configuration::Clear(string const &Name, string const &Value)
      
 }
 									/*}}}*/
-// Configuration::ClearAll - Clear everything				/*{{{*/
-void Configuration::ClearAll()
+// Configuration::Clear - Clear everything				/*{{{*/
+// ---------------------------------------------------------------------
+void Configuration::Clear()
 {
    const Configuration::Item *Top = Tree(0);
    while( Top != 0 )

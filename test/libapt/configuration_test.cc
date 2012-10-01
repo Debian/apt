@@ -81,7 +81,7 @@ int main(int argc,const char *argv[]) {
 	equals(Cnf.FindFile("Dir::Aptitude::State"), "/srv/sid/var/lib/aptitude");
 
         Cnf.Set("Moo::Bar", "1");
-        Cnf.ClearAll();
+        Cnf.Clear();
         equals(Cnf.Find("Moo::Bar"), "");
 
 	//FIXME: Test for configuration file parsing;
