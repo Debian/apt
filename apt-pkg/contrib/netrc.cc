@@ -15,6 +15,7 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 
 #include <iostream>
@@ -39,8 +40,8 @@ enum {
 };
 
 /* make sure we have room for at least this size: */
-#define LOGINSIZE 64
-#define PASSWORDSIZE 64
+#define LOGINSIZE 256
+#define PASSWORDSIZE 256
 #define NETRC DOT_CHAR "netrc"
 
 /* returns -1 on failure, 0 if the host is found, 1 is the host isn't found */
@@ -122,11 +123,21 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
             if (specific_login)
               state_our_login = !strcasecmp (login, tok);
             else
+            {
+              if (strlen(tok) > LOGINSIZE)
+                 _error->Error("login token too long %i (max: %i)", 
+                               strlen(tok), LOGINSIZE);
               strncpy (login, tok, LOGINSIZE - 1);
+            }
             state_login = 0;
           } else if (state_password) {
-            if (state_our_login || !specific_login)
+             if (state_our_login || !specific_login) 
+             {
+              if (strlen(tok) > PASSWORDSIZE)
+                 _error->Error("password token too long %i (max %i)", 
+                               strlen(tok), PASSWORDSIZE);
               strncpy (password, tok, PASSWORDSIZE - 1);
+             }
             state_password = 0;
           } else if (!strcasecmp ("login", tok))
             state_login = 1;
@@ -162,8 +173,8 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
   {
     if (NetRCFile.empty () == false)
     {
-      char login[64] = "";
-      char password[64] = "";
+      char login[LOGINSIZE] = "";
+      char password[PASSWORDSIZE] = "";
       char *netrcfile = strdup(NetRCFile.c_str());
 
       // first check for a generic host based netrc entry
