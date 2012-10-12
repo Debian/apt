@@ -11,14 +11,16 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-09-04 15:34+0200\n"
-"PO-Revision-Date: 2012-06-28 20:49+0100\n"
-"Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
+"PO-Revision-Date: 2012-09-07 13:19+0000\n"
+"Last-Translator: helix84 <Unknown>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
-"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
+"X-Launchpad-Export-Date: 2012-10-12 10:33+0000\n"
+"X-Generator: Launchpad (build 16130)\n"
+"Language: sk\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -99,8 +101,8 @@ msgid "Package file %s is out of sync."
 msgstr "Súbor balíkov %s je neaktuálny."
 
 #: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1378
-#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:46
-#: cmdline/apt-mark.cc:93 cmdline/apt-mark.cc:219
+#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:39
+#: cmdline/apt-mark.cc:86 cmdline/apt-mark.cc:162
 msgid "No packages found"
 msgstr "Neboli nájdené žiadne balíky"
 
@@ -114,7 +116,7 @@ msgstr ""
 "Tento príkaz je zavrhovaný. Prosím, použite namiesto neho „apt-mark "
 "showauto“."
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:510
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:445
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nedá sa nájsť balík %s"
@@ -150,17 +152,17 @@ msgstr "(žiadna)"
 
 #: cmdline/apt-cache.cc:1557
 msgid "  Package pin: "
-msgstr "  Pripevnený balík:"
+msgstr "  Pripevnený balík: "
 
 #. Show the priority tables
 #: cmdline/apt-cache.cc:1566
 msgid "  Version table:"
 msgstr "  Tabuľka verzií:"
 
-#: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3364 cmdline/apt-mark.cc:375
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
-#: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
+#: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:199 cmdline/apt-config.cc:75
+#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:590
+#: cmdline/apt-get.cc:3247 cmdline/apt-internal-solver.cc:32
+#: cmdline/apt-mark.cc:266 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s pre %s skompilovaný %s %s\n"
@@ -249,7 +251,7 @@ msgstr "Vložte disk do mechaniky a stlačte Enter"
 msgid "Failed to mount '%s' to '%s'"
 msgstr "Pripojenie „%s“ na „%s“ zlyhalo"
 
-#: cmdline/apt-cdrom.cc:163
+#: cmdline/apt-cdrom.cc:164
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Zopakujte tento postup pre všetky CD v sade diskov."
 
@@ -257,7 +259,7 @@ msgstr "Zopakujte tento postup pre všetky CD v sade diskov."
 msgid "Arguments not in pairs"
 msgstr "Argumenty nie sú vo dvojiciach"
 
-#: cmdline/apt-config.cc:87
+#: cmdline/apt-config.cc:81
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -293,75 +295,75 @@ msgstr "Y"
 msgid "N"
 msgstr "N"
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Chyba pri preklade regulárneho výrazu - %s"
 
-#: cmdline/apt-get.cc:260
+#: cmdline/apt-get.cc:257
 msgid "The following packages have unmet dependencies:"
 msgstr "Nasledovné balíky majú nesplnené závislosti:"
 
-#: cmdline/apt-get.cc:350
+#: cmdline/apt-get.cc:347
 #, c-format
 msgid "but %s is installed"
 msgstr "ale nainštalovaný je %s"
 
-#: cmdline/apt-get.cc:352
+#: cmdline/apt-get.cc:349
 #, c-format
 msgid "but %s is to be installed"
 msgstr "ale inštalovať sa bude %s"
 
-#: cmdline/apt-get.cc:359
+#: cmdline/apt-get.cc:356
 msgid "but it is not installable"
 msgstr "ale sa nedá nainštalovať"
 
-#: cmdline/apt-get.cc:361
+#: cmdline/apt-get.cc:358
 msgid "but it is a virtual package"
 msgstr "ale je to virtuálny balík"
 
-#: cmdline/apt-get.cc:364
+#: cmdline/apt-get.cc:361
 msgid "but it is not installed"
 msgstr "ale nie je nainštalovaný"
 
-#: cmdline/apt-get.cc:364
+#: cmdline/apt-get.cc:361
 msgid "but it is not going to be installed"
 msgstr "ale sa nebude inštalovať"
 
-#: cmdline/apt-get.cc:369
+#: cmdline/apt-get.cc:366
 msgid " or"
 msgstr " alebo"
 
-#: cmdline/apt-get.cc:398
+#: cmdline/apt-get.cc:395
 msgid "The following NEW packages will be installed:"
 msgstr "Nainštalujú sa nasledovné NOVÉ balíky:"
 
-#: cmdline/apt-get.cc:424
+#: cmdline/apt-get.cc:421
 msgid "The following packages will be REMOVED:"
 msgstr "Nasledovné balíky sa ODSTRÁNIA:"
 
-#: cmdline/apt-get.cc:446
+#: cmdline/apt-get.cc:443
 msgid "The following packages have been kept back:"
 msgstr "Nasledovné balíky sa ponechajú v súčasnej verzii:"
 
-#: cmdline/apt-get.cc:467
+#: cmdline/apt-get.cc:464
 msgid "The following packages will be upgraded:"
 msgstr "Nasledovné balíky sa aktualizujú:"
 
-#: cmdline/apt-get.cc:488
+#: cmdline/apt-get.cc:485
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Nasledovné balíky sa DEGRADUJÚ:"
 
-#: cmdline/apt-get.cc:508
+#: cmdline/apt-get.cc:505
 msgid "The following held packages will be changed:"
 msgstr "Nasledovné pridržané balíky sa zmenia:"
 
-#: cmdline/apt-get.cc:563
+#: cmdline/apt-get.cc:560
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (kvôli %s) "
 
-#: cmdline/apt-get.cc:571
+#: cmdline/apt-get.cc:568
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -369,59 +371,59 @@ msgstr ""
 "UPOZORNENIE: Nasledovné dôležité balíky sa odstránia.\n"
 "Ak presne neviete, čo robíte, tak to NEROBTE!"
 
-#: cmdline/apt-get.cc:602
+#: cmdline/apt-get.cc:599
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu aktualizovaných, %lu nových nainštalovaných, "
 
-#: cmdline/apt-get.cc:606
+#: cmdline/apt-get.cc:603
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu reinštalovaných, "
 
-#: cmdline/apt-get.cc:608
+#: cmdline/apt-get.cc:605
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu degradovaných, "
 
-#: cmdline/apt-get.cc:610
+#: cmdline/apt-get.cc:607
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu na odstránenie a %lu neaktualizovaných.\n"
 
-#: cmdline/apt-get.cc:614
+#: cmdline/apt-get.cc:611
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu iba čiastočne nainštalovaných alebo odstránených.\n"
 
-#: cmdline/apt-get.cc:635
+#: cmdline/apt-get.cc:633
 #, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
 msgstr "Poznámka: vyberá sa „%s“ pre úlohu „%s“\n"
 
-#: cmdline/apt-get.cc:640
+#: cmdline/apt-get.cc:639
 #, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
 msgstr "Poznámka: vyberá sa „%s“ pre regulárny výraz „%s“\n"
 
-#: cmdline/apt-get.cc:657
+#: cmdline/apt-get.cc:656
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "Balík %s je virtuálny balík poskytovaný balíkmi:\n"
 
-#: cmdline/apt-get.cc:668
+#: cmdline/apt-get.cc:667
 msgid " [Installed]"
 msgstr " [Nainštalovaný]"
 
-#: cmdline/apt-get.cc:677
+#: cmdline/apt-get.cc:676
 msgid " [Not candidate version]"
 msgstr " [Nie je kandidátska verzia]"
 
-#: cmdline/apt-get.cc:679
+#: cmdline/apt-get.cc:678
 msgid "You should explicitly select one to install."
 msgstr "Mali by ste explicitne vybrať jeden na inštaláciu."
 
-#: cmdline/apt-get.cc:682
+#: cmdline/apt-get.cc:681
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -431,16 +433,16 @@ msgstr ""
 "Balík %s nie je dostupný, ale odkazuje naň iný balík. Možno to znamená,\n"
 "že balík chýba, bol zrušený alebo je dostupný iba z iného zdroja\n"
 
-#: cmdline/apt-get.cc:700
+#: cmdline/apt-get.cc:699
 msgid "However the following packages replace it:"
 msgstr "Avšak nahrádzajú ho nasledovné balíky:"
 
-#: cmdline/apt-get.cc:712
+#: cmdline/apt-get.cc:711
 #, c-format
 msgid "Package '%s' has no installation candidate"
 msgstr "Balík „%s“ nemá kandidáta na inštaláciu"
 
-#: cmdline/apt-get.cc:725
+#: cmdline/apt-get.cc:722
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
 msgstr "Virtuálne balíky ako „%s“ nemožno odstrániť\n"
@@ -458,161 +460,161 @@ msgstr ""
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Balík „%s“ nie je nainštalovaný, nedá sa teda odstrániť\n"
 
-#: cmdline/apt-get.cc:788
+#: cmdline/apt-get.cc:753
 #, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Poznámka: „%s“ sa vyberá namiesto „%s“\n"
 
-#: cmdline/apt-get.cc:818
+#: cmdline/apt-get.cc:783
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Preskakuje sa %s, pretože je už nainštalovaný.\n"
 
-#: cmdline/apt-get.cc:822
+#: cmdline/apt-get.cc:787
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "Preskakuje sa %s, nie je nainštalovaný a bola vy6iadan8 iba aktualizácia.\n"
 
-#: cmdline/apt-get.cc:834
+#: cmdline/apt-get.cc:799
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Nie je možná reinštalácia %s, pretože sa nedá stiahnuť.\n"
 
-#: cmdline/apt-get.cc:839
+#: cmdline/apt-get.cc:804
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s je už najnovšej verzie.\n"
 
-#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2157 cmdline/apt-mark.cc:68
+#: cmdline/apt-get.cc:823 cmdline/apt-get.cc:2103 cmdline/apt-mark.cc:61
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s je označený ako manuálne nainštalovaný.\n"
 
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:849
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Vybraná verzia „%s“ (%s) pre „%s“\n"
 
-#: cmdline/apt-get.cc:889
+#: cmdline/apt-get.cc:854
 #, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Vybraná verzia „%s“ (%s) pre „%s“ kvôli „%s“\n"
 
-#: cmdline/apt-get.cc:1025
+#: cmdline/apt-get.cc:974
 msgid "Correcting dependencies..."
 msgstr "Opravujú sa závislosti..."
 
-#: cmdline/apt-get.cc:1028
+#: cmdline/apt-get.cc:977
 msgid " failed."
 msgstr " zlyhalo."
 
-#: cmdline/apt-get.cc:1031
+#: cmdline/apt-get.cc:980
 msgid "Unable to correct dependencies"
 msgstr "Závislosti sa nedajú opraviť"
 
-#: cmdline/apt-get.cc:1034
+#: cmdline/apt-get.cc:983
 msgid "Unable to minimize the upgrade set"
 msgstr "Sada na aktualizáciu sa nedá minimalizovať"
 
-#: cmdline/apt-get.cc:1036
+#: cmdline/apt-get.cc:985
 msgid " Done"
 msgstr " Hotovo"
 
-#: cmdline/apt-get.cc:1040
+#: cmdline/apt-get.cc:989
 msgid "You might want to run 'apt-get -f install' to correct these."
 msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“."
 
-#: cmdline/apt-get.cc:1043
+#: cmdline/apt-get.cc:992
 msgid "Unmet dependencies. Try using -f."
 msgstr "Nesplnené závislosti. Skúste použiť -f."
 
-#: cmdline/apt-get.cc:1068
+#: cmdline/apt-get.cc:1017
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "UPOZORNENIE: Pri nasledovných balíkoch sa nedá overiť vierohodnosť!"
 
-#: cmdline/apt-get.cc:1072
+#: cmdline/apt-get.cc:1021
 msgid "Authentication warning overridden.\n"
 msgstr "Upozornenie o vierohodnosti bolo potlačené.\n"
 
-#: cmdline/apt-get.cc:1079
+#: cmdline/apt-get.cc:1028
 msgid "Install these packages without verification [y/N]? "
 msgstr "Nainštalovať tieto nekontrolované balíky [y/N]? "
 
-#: cmdline/apt-get.cc:1081
+#: cmdline/apt-get.cc:1030
 msgid "Some packages could not be authenticated"
 msgstr "Nedala sa zistiť vierohodnosť niektorých balíkov"
 
-#: cmdline/apt-get.cc:1090 cmdline/apt-get.cc:1251
+#: cmdline/apt-get.cc:1039 cmdline/apt-get.cc:1200
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Nastali problémy a -y bolo použité bez --force-yes"
 
-#: cmdline/apt-get.cc:1131
+#: cmdline/apt-get.cc:1080
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Vnútorná chyba, InstallPackages bolo volané s poškodenými balíkmi!"
 
-#: cmdline/apt-get.cc:1140
+#: cmdline/apt-get.cc:1089
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Je potrebné odstránenie balíka, ale funkcia Odstrániť je vypnutá."
 
-#: cmdline/apt-get.cc:1151
+#: cmdline/apt-get.cc:1100
 msgid "Internal error, Ordering didn't finish"
 msgstr "Vnútorná chyba, Triedenie sa neukončilo"
 
-#: cmdline/apt-get.cc:1189
+#: cmdline/apt-get.cc:1138
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
-"Nezvyčajná udalosť... Veľkosti nesúhlasia, pošlite e-mail na apt@packages."
-"debian.org"
+"Nezvyčajná udalosť... Veľkosti nesúhlasia, pošlite e-mail na "
+"apt@packages.debian.org"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1196
+#: cmdline/apt-get.cc:1145
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Je potrebné stiahnuť %sB/%sB archívov.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1201
+#: cmdline/apt-get.cc:1150
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Je potrebné stiahnuť %sB archívov.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1208
+#: cmdline/apt-get.cc:1157
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Po tejto operácii sa na disku použije ďalších %sB.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1213
+#: cmdline/apt-get.cc:1162
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Po tejto operácii sa na disku uvoľní %sB.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
-#: cmdline/apt-get.cc:2592
+#: cmdline/apt-get.cc:1177 cmdline/apt-get.cc:1180 cmdline/apt-get.cc:2523
+#: cmdline/apt-get.cc:2526
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Na %s sa nedá zistiť veľkosť voľného miesta"
 
-#: cmdline/apt-get.cc:1241
+#: cmdline/apt-get.cc:1190
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Na %s nemáte dostatok voľného miesta."
 
-#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1277
+#: cmdline/apt-get.cc:1206 cmdline/apt-get.cc:1226
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Zadané „iba triviálne“, ale toto nie je triviálna operácia."
 
-#: cmdline/apt-get.cc:1259
+#: cmdline/apt-get.cc:1208
 msgid "Yes, do as I say!"
 msgstr "Áno, urob to, čo vravím!"
 
-#: cmdline/apt-get.cc:1261
+#: cmdline/apt-get.cc:1210
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -621,30 +623,30 @@ msgid ""
 msgstr ""
 "Možno sa chystáte vykonať niečo škodlivé.\n"
 "Ak chcete pokračovať, opíšte frázu „%s“\n"
-" ?]"
+" ?] "
 
-#: cmdline/apt-get.cc:1267 cmdline/apt-get.cc:1286
+#: cmdline/apt-get.cc:1216 cmdline/apt-get.cc:1235
 msgid "Abort."
 msgstr "Prerušené."
 
-#: cmdline/apt-get.cc:1282
+#: cmdline/apt-get.cc:1231
 msgid "Do you want to continue [Y/n]? "
 msgstr "Chcete pokračovať [Y/n]? "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1303 cmdline/apt-get.cc:2588 apt-pkg/algorithms.cc:1492
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Zlyhalo stiahnutie %s  %s\n"
 
-#: cmdline/apt-get.cc:1372
+#: cmdline/apt-get.cc:1321
 msgid "Some files failed to download"
 msgstr "Niektoré súbory sa nedajú stiahnuť"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
+#: cmdline/apt-get.cc:1322 cmdline/apt-get.cc:2600
 msgid "Download complete and in download only mode"
 msgstr "Sťahovanie ukončené v režime „iba stiahnuť“"
 
-#: cmdline/apt-get.cc:1379
+#: cmdline/apt-get.cc:1328
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -652,19 +654,19 @@ msgstr ""
 "Niektoré archívy sa nedajú stiahnuť. Skúste spustiť apt-get update alebo --"
 "fix-missing"
 
-#: cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1332
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing a výmena nosiča nie sú momentálne podporované"
 
-#: cmdline/apt-get.cc:1388
+#: cmdline/apt-get.cc:1337
 msgid "Unable to correct missing packages."
 msgstr "Chýbajúce balíky sa nedajú opraviť."
 
-#: cmdline/apt-get.cc:1389
+#: cmdline/apt-get.cc:1338
 msgid "Aborting install."
 msgstr "Inštalácia sa prerušuje."
 
-#: cmdline/apt-get.cc:1417
+#: cmdline/apt-get.cc:1366
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -672,10 +674,10 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
-"Nasledovný balík zmizol z vášho systému, pretože\n"
+"Nasledovné balíky zmizli z vášho systému, pretože\n"
 "všetky súbory boli prepísané inými balíkmi:"
 msgstr[1] ""
-"Nasledovné balíky zmizli z vášho systému, pretože\n"
+"Nasledovný balík zmizol z vášho systému, pretože\n"
 "všetky súbory boli prepísané inými balíkmi:"
 msgstr[2] ""
 "Nasledovné balíky zmizli z vášho systému, pretože\n"
@@ -685,31 +687,31 @@ msgstr[2] ""
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "Pozn.: Toto robí dpkg automaticky a zámerne."
 
-#: cmdline/apt-get.cc:1559
+#: cmdline/apt-get.cc:1508
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr "Ignorovať nedostupné cieľové vydanie „%s“ balíka „%s“"
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1540
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "Vyberá sa „%s“ ako zdrojový balík namiesto „%s“\n"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1629
+#: cmdline/apt-get.cc:1578
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr "Ignorovať nedostupnú verziu „%s“ balíka „%s“"
 
-#: cmdline/apt-get.cc:1645
+#: cmdline/apt-get.cc:1594
 msgid "The update command takes no arguments"
 msgstr "Príkaz update neprijíma žiadne argumenty"
 
-#: cmdline/apt-get.cc:1711
+#: cmdline/apt-get.cc:1657
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "Nemajú sa odstraňovať veci, nespustí sa AutoRemover"
 
-#: cmdline/apt-get.cc:1815
+#: cmdline/apt-get.cc:1761
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -717,7 +719,7 @@ msgstr ""
 "Hmm, zdá sa, že AutoRemover niečo zničil, čo sa naozaj nemalo stať.\n"
 "Prosím, pošlite hlásenie o chybe balíka apt."
 
-#.
+#. 
 #. if (Packages == 1)
 #. {
 #. c1out << endl;
@@ -726,56 +728,56 @@ msgstr ""
 #. "the package is simply not installable and a bug report against\n"
 #. "that package should be filed.") << endl;
 #. }
-#.
-#: cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1987
+#. 
+#: cmdline/apt-get.cc:1764 cmdline/apt-get.cc:1933
 msgid "The following information may help to resolve the situation:"
 msgstr "Nasledovné informácie vám možno pomôžu vyriešiť túto situáciu:"
 
-#: cmdline/apt-get.cc:1822
+#: cmdline/apt-get.cc:1768
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Vnútorná chyba, AutoRemover niečo pokazil"
 
-#: cmdline/apt-get.cc:1829
+#: cmdline/apt-get.cc:1775
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
 msgstr[0] ""
-"Nasledovný balík bol nainštalovaný automaticky a už viac nie je potrebný:"
-msgstr[1] ""
 "Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
+msgstr[1] ""
+"Nasledovný balík bol nainštalovaný automaticky a už viac nie je potrebný:"
 msgstr[2] ""
 "Nasledovné balíky boli nainštalované automaticky a už viac nie sú potrebné:"
 
-#: cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:1779
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] ""
-"%lu balík bol nainštalovaný automaticky a už viac nie je potrebný.\n"
-msgstr[1] ""
 "%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
+msgstr[1] ""
+"%lu balík bol nainštalovaný automaticky a už viac nie je potrebný.\n"
 msgstr[2] ""
 "%lu balíkov bolo nainštalovaných automaticky a už viac nie sú potrebné.\n"
 
 #: cmdline/apt-get.cc:1835
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Na jeho odstránenie použite „apt-get autoremove“."
-msgstr[1] "Na ich odstránenie použite „apt-get autoremove“."
+msgstr[0] "Na ich odstránenie použite „apt-get autoremove“."
+msgstr[1] "Na jeho odstránenie použite „apt-get autoremove“."
 msgstr[2] "Na ich odstránenie použite „apt-get autoremove“."
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1800
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Vnútorná chyba, AllUpgrade pokazil veci"
 
-#: cmdline/apt-get.cc:1953
+#: cmdline/apt-get.cc:1899
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "Možno to budete chcieť napraviť spustením „apt-get -f install“:"
 
-#: cmdline/apt-get.cc:1957
+#: cmdline/apt-get.cc:1903
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -783,7 +785,7 @@ msgstr ""
 "Nesplnené závislosti. Skúste spustiť „apt-get -f install“ bez balíkov (alebo "
 "navrhnite riešenie)."
 
-#: cmdline/apt-get.cc:1972
+#: cmdline/apt-get.cc:1918
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -795,33 +797,33 @@ msgstr ""
 "požadované balíky ešte neboli vytvorené alebo presunuté z fronty\n"
 "Novoprichádzajúcich (Incoming) balíkov."
 
-#: cmdline/apt-get.cc:1993
+#: cmdline/apt-get.cc:1939
 msgid "Broken packages"
 msgstr "Poškodené balíky"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:1965
 msgid "The following extra packages will be installed:"
 msgstr "Nainštalujú sa nasledovné extra balíky:"
 
-#: cmdline/apt-get.cc:2109
+#: cmdline/apt-get.cc:2055
 msgid "Suggested packages:"
 msgstr "Navrhované balíky:"
 
-#: cmdline/apt-get.cc:2110
+#: cmdline/apt-get.cc:2056
 msgid "Recommended packages:"
 msgstr "Odporúčané balíky:"
 
-#: cmdline/apt-get.cc:2152
+#: cmdline/apt-get.cc:2098
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Balík %s sa nedá nájsť"
 
-#: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:2105 cmdline/apt-mark.cc:63
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "%s je označený ako automaticky nainštalovaný.\n"
 
-#: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
+#: cmdline/apt-get.cc:2113 cmdline/apt-mark.cc:107
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
@@ -829,23 +831,23 @@ msgstr ""
 "Tento príkaz je zavrhovaný. Prosím, použite namiesto neho „apt-mark auto“ a "
 "„apt-mark manual“."
 
-#: cmdline/apt-get.cc:2183
+#: cmdline/apt-get.cc:2129
 msgid "Calculating upgrade... "
 msgstr "Prepočítava sa aktualizácia... "
 
-#: cmdline/apt-get.cc:2186 methods/ftp.cc:711 methods/connect.cc:115
+#: cmdline/apt-get.cc:2132 methods/ftp.cc:711 methods/connect.cc:115
 msgid "Failed"
 msgstr "Chyba"
 
-#: cmdline/apt-get.cc:2191
+#: cmdline/apt-get.cc:2137
 msgid "Done"
 msgstr "Hotovo"
 
-#: cmdline/apt-get.cc:2258 cmdline/apt-get.cc:2266
+#: cmdline/apt-get.cc:2204 cmdline/apt-get.cc:2212
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Vnútorná chyba, „problem resolver“ niečo pokazil"
 
-#: cmdline/apt-get.cc:2294 cmdline/apt-get.cc:2330
+#: cmdline/apt-get.cc:2240 cmdline/apt-get.cc:2276
 msgid "Unable to lock the download directory"
 msgstr "Adresár pre sťahovanie sa nedá zamknúť"
 
@@ -854,21 +856,21 @@ msgstr "Adresár pre sťahovanie sa nedá zamknúť"
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Nie je možné nájsť zdroj na stiahnutie verzie „%s“ balíka „%s“"
 
-#: cmdline/apt-get.cc:2391
+#: cmdline/apt-get.cc:2327
 #, c-format
 msgid "Downloading %s %s"
 msgstr "Sťahuje sa %s %s"
 
-#: cmdline/apt-get.cc:2451
+#: cmdline/apt-get.cc:2385
 msgid "Must specify at least one package to fetch source for"
 msgstr "Musíte zadať aspoň jeden balík, pre ktorý sa stiahnu zdrojové texty"
 
-#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
+#: cmdline/apt-get.cc:2425 cmdline/apt-get.cc:2737
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Nedá sa nájsť zdrojový balík pre %s"
 
-#: cmdline/apt-get.cc:2508
+#: cmdline/apt-get.cc:2442
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -878,7 +880,7 @@ msgstr ""
 "adrese:\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2513
+#: cmdline/apt-get.cc:2447
 #, c-format
 msgid ""
 "Please use:\n"
@@ -890,89 +892,89 @@ msgstr ""
 "ak chcete získať najnovšie (a pravdepodobne zatiaľ nevydané) aktualizácie "
 "balíka.\n"
 
-#: cmdline/apt-get.cc:2566
+#: cmdline/apt-get.cc:2500
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Preskakuje sa už stiahnutý súbor „%s“\n"
 
-#: cmdline/apt-get.cc:2603
+#: cmdline/apt-get.cc:2537
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Na %s nemáte dostatok voľného miesta"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2612
+#: cmdline/apt-get.cc:2546
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Je potrebné stiahnuť %sB/%sB zdrojových archívov.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2617
+#: cmdline/apt-get.cc:2551
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Je potrebné stiahnuť %sB zdrojových archívov.\n"
 
-#: cmdline/apt-get.cc:2623
+#: cmdline/apt-get.cc:2557
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Stiahnuť zdroj %s\n"
 
-#: cmdline/apt-get.cc:2661
+#: cmdline/apt-get.cc:2595
 msgid "Failed to fetch some archives."
 msgstr "Zlyhalo stiahnutie niektorých archívov."
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2626
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Preskakuje sa rozbalenie už rozbaleného zdroja v %s\n"
 
-#: cmdline/apt-get.cc:2704
+#: cmdline/apt-get.cc:2638
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Príkaz na rozbalenie „%s“ zlyhal.\n"
 
-#: cmdline/apt-get.cc:2705
+#: cmdline/apt-get.cc:2639
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Skontrolujte, či je nainštalovaný balík „dpkg-dev“.\n"
 
-#: cmdline/apt-get.cc:2727
+#: cmdline/apt-get.cc:2661
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Príkaz na zostavenie „%s“ zlyhal.\n"
 
-#: cmdline/apt-get.cc:2747
+#: cmdline/apt-get.cc:2681
 msgid "Child process failed"
 msgstr "Proces potomka zlyhal"
 
-#: cmdline/apt-get.cc:2766
+#: cmdline/apt-get.cc:2700
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Musíte zadať aspoň jeden balík, pre ktorý sa budú overovať závislosti na "
 "zostavenie"
 
-#: cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2725
 #, c-format
 msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
+"No architecture information available for %s. See apt.conf(5) "
+"APT::Architectures for setup"
 msgstr ""
 "Informácie o architektúre nie sú dostupné pre %s. Informácie o nastavení "
 "nájdete v apt.conf(5) APT::Architectures"
 
-#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
+#: cmdline/apt-get.cc:2742
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Nedajú sa získať závislosti na zostavenie %s"
 
-#: cmdline/apt-get.cc:2838
+#: cmdline/apt-get.cc:2762
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s nemá žiadne závislosti na zostavenie.\n"
 
-#: cmdline/apt-get.cc:3008
+#: cmdline/apt-get.cc:2892
 #, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -981,20 +983,21 @@ msgstr ""
 "%s závislosť pre %s nemožno splniť, pretože %s nie je povolené na balíkoch "
 "„%s“"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:2913
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%s závislosť pre %s nemožno splniť, pretože sa nedá nájsť balík %s"
 
-#: cmdline/apt-get.cc:3049
+#: cmdline/apt-get.cc:2936
 #, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgid ""
+"Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Zlyhalo splnenie %s závislosti pre %s: Inštalovaný balík %s je príliš nový"
 
-#: cmdline/apt-get.cc:3088
+#: cmdline/apt-get.cc:2975
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -1003,7 +1006,7 @@ msgstr ""
 "%s závislosť pre %s nemožno splniť, pretože kandidátska verzia balíka %s, "
 "nedokáže splniť požiadavky na verziu"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:2981
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1011,30 +1014,30 @@ msgid ""
 msgstr ""
 "%s závislosť pre %s nemožno splniť, pretože balík %s nemá kandidátsku verziu"
 
-#: cmdline/apt-get.cc:3117
+#: cmdline/apt-get.cc:3004
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Zlyhalo splnenie %s závislosti pre %s: %s"
 
-#: cmdline/apt-get.cc:3133
+#: cmdline/apt-get.cc:3020
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Závislosti na zostavenie %s nemožno splniť."
 
-#: cmdline/apt-get.cc:3138
+#: cmdline/apt-get.cc:3025
 msgid "Failed to process build dependencies"
 msgstr "Spracovanie závislostí na zostavenie zlyhalo"
 
-#: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
+#: cmdline/apt-get.cc:3118 cmdline/apt-get.cc:3130
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Záznam zmien %s (%s)"
 
-#: cmdline/apt-get.cc:3369
+#: cmdline/apt-get.cc:3252
 msgid "Supported modules:"
 msgstr "Podporované moduly:"
 
-#: cmdline/apt-get.cc:3410
+#: cmdline/apt-get.cc:3293
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1089,8 +1092,8 @@ msgstr ""
 "Príkazy:\n"
 "   update          - Získa nové zoznamy balíkov\n"
 "   upgrade         - Vykoná aktualizáciu\n"
-"   install         - Nainštaluje nové balíky (balík je libc6, nie libc6."
-"deb)\n"
+"   install         - Nainštaluje nové balíky (balík je libc6, nie "
+"libc6.deb)\n"
 "   remove          - Odstráni balíky\n"
 "   autoremove      - Automaticky odstráni všetky nepoužité balíky\n"
 "   purge           - Odstráni a balíky a ich konfiguračné súbory\n"
@@ -1122,7 +1125,7 @@ msgstr ""
 "a apt.conf(5).\n"
 "                       Tento APT má schopnosti posvätnej kravy.\n"
 
-#: cmdline/apt-get.cc:3575
+#: cmdline/apt-get.cc:3458
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1134,33 +1137,33 @@ msgstr ""
 "      Tiež pamätajte, že zamykanie je deaktivované, takže\n"
 "      sa nespoliehajte na to že to bude platiť v reálnej situácii!"
 
-#: cmdline/acqprogress.cc:60
+#: cmdline/acqprogress.cc:59
 msgid "Hit "
 msgstr "Už existuje "
 
-#: cmdline/acqprogress.cc:84
+#: cmdline/acqprogress.cc:83
 msgid "Get:"
 msgstr "Získava sa:"
 
-#: cmdline/acqprogress.cc:115
+#: cmdline/acqprogress.cc:114
 msgid "Ign "
 msgstr "Ign "
 
-#: cmdline/acqprogress.cc:119
+#: cmdline/acqprogress.cc:118
 msgid "Err "
 msgstr "Chyba "
 
-#: cmdline/acqprogress.cc:140
+#: cmdline/acqprogress.cc:139
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "%sB sa stiahlo za %s (%sB/s)\n"
 
-#: cmdline/acqprogress.cc:230
+#: cmdline/acqprogress.cc:229
 #, c-format
 msgid " [Working]"
 msgstr " [Prebieha spracovanie]"
 
-#: cmdline/acqprogress.cc:286
+#: cmdline/acqprogress.cc:285
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -1171,48 +1174,47 @@ msgstr ""
 " „%s“\n"
 "do mechaniky „%s“ a stlačte Enter\n"
 
-#: cmdline/apt-mark.cc:55
+#: cmdline/apt-mark.cc:48
 #, c-format
 msgid "%s can not be marked as it is not installed.\n"
 msgstr "%s nemožno označiť, pretože nie je nainštalovaný.\n"
 
-#: cmdline/apt-mark.cc:61
+#: cmdline/apt-mark.cc:54
 #, c-format
 msgid "%s was already set to manually installed.\n"
 msgstr "%s už bol označený ako manuálne nainštalovaný.\n"
 
-#: cmdline/apt-mark.cc:63
+#: cmdline/apt-mark.cc:56
 #, c-format
 msgid "%s was already set to automatically installed.\n"
 msgstr "%s už bol označený ako automaticky nainštalovaný.\n"
 
-#: cmdline/apt-mark.cc:228
+#: cmdline/apt-mark.cc:171
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s bol už nastavený na podržanie.\n"
 
-#: cmdline/apt-mark.cc:230
+#: cmdline/apt-mark.cc:173
 #, c-format
 msgid "%s was already not hold.\n"
 msgstr "%s bol už nastavený na nepodržanie.\n"
 
-#: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
+#: apt-pkg/contrib/fileutl.cc:691
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Čakalo sa na %s, ale nebolo to tam"
 
-#: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
+#: cmdline/apt-mark.cc:187 cmdline/apt-mark.cc:209
 #, c-format
 msgid "%s set on hold.\n"
 msgstr "%s je označený na podržanie.\n"
 
-#: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
+#: cmdline/apt-mark.cc:189 cmdline/apt-mark.cc:214
 #, c-format
 msgid "Canceled hold on %s.\n"
 msgstr "Zrušené podržanie %s.\n"
 
-#: cmdline/apt-mark.cc:332
+#: cmdline/apt-mark.cc:222
 msgid "Executing dpkg failed. Are you root?"
 msgstr "Vykonanie dpkg zlyhalo. Ste root?"
 
@@ -1283,16 +1285,18 @@ msgstr "Nedá sa odpojiť CD-ROM v %s - možno sa ešte používa."
 msgid "Disk not found."
 msgstr "Disk sa nenašiel."
 
-#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:273
+#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:271
 msgid "File not found"
 msgstr "Súbor sa nenašiel"
 
-#: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/bzip2.cc:143 methods/bzip2.cc:152 methods/copy.cc:46
+#: methods/gzip.cc:94 methods/gzip.cc:103 methods/rred.cc:530
+#: methods/rred.cc:539
 msgid "Failed to stat"
 msgstr "Vyhodnotenie zlyhalo"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/bzip2.cc:149 methods/copy.cc:83 methods/gzip.cc:100
+#: methods/rred.cc:536
 msgid "Failed to set modification time"
 msgstr "Zlyhalo nastavenie času zmeny"
 
@@ -1301,79 +1305,76 @@ msgid "Invalid URI, local URIS must not start with //"
 msgstr "Neplatné URI, lokálne URI nesmie začínať s //"
 
 #. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc:173
+#: methods/ftp.cc:172
 msgid "Logging in"
 msgstr "Prihlasovanie"
 
-#: methods/ftp.cc:179
+#: methods/ftp.cc:178
 msgid "Unable to determine the peer name"
 msgstr "Nedá sa zistiť názov druhej strany"
 
-#: methods/ftp.cc:184
+#: methods/ftp.cc:183
 msgid "Unable to determine the local name"
 msgstr "Nedá sa zistiť lokálny názov"
 
-#: methods/ftp.cc:215 methods/ftp.cc:243
+#: methods/ftp.cc:214 methods/ftp.cc:242
 #, c-format
 msgid "The server refused the connection and said: %s"
 msgstr "Server zamietol naše spojenie s chybou: %s"
 
-#: methods/ftp.cc:221
+#: methods/ftp.cc:220
 #, c-format
 msgid "USER failed, server said: %s"
 msgstr "Zlyhalo zadanie používateľa, server odpovedal: %s"
 
-#: methods/ftp.cc:228
+#: methods/ftp.cc:227
 #, c-format
 msgid "PASS failed, server said: %s"
 msgstr "Zlyhalo zadanie hesla, server odpovedal: %s"
 
-#: methods/ftp.cc:248
+#: methods/ftp.cc:247
 msgid ""
 "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
 "is empty."
 msgstr ""
-"Bol zadaný proxy server, ale nie prihlasovací skript. Acquire::ftp::"
-"ProxyLogin je prázdny."
+"Bol zadaný proxy server, ale nie prihlasovací skript. "
+"Acquire::ftp::ProxyLogin je prázdny."
 
-#: methods/ftp.cc:276
+#: methods/ftp.cc:275
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
 msgstr "Príkaz „%s“ prihlasovacieho skriptu zlyhal, server odpovedal: %s"
 
-#: methods/ftp.cc:302
+#: methods/ftp.cc:301
 #, c-format
 msgid "TYPE failed, server said: %s"
 msgstr "Zlyhalo zadanie typu, server odpovedal: %s"
 
-#: methods/ftp.cc:340 methods/ftp.cc:451 methods/rsh.cc:192 methods/rsh.cc:235
+#: methods/ftp.cc:339 methods/ftp.cc:450 methods/rsh.cc:190 methods/rsh.cc:233
 msgid "Connection timeout"
 msgstr "Uplynul čas spojenia"
 
-#: methods/ftp.cc:346
+#: methods/ftp.cc:345
 msgid "Server closed the connection"
 msgstr "Server ukončil spojenie"
 
-#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1274
-#: apt-pkg/contrib/fileutl.cc:1283 apt-pkg/contrib/fileutl.cc:1286
+#: methods/ftp.cc:348 apt-pkg/contrib/fileutl.cc:832 methods/rsh.cc:197
 msgid "Read error"
 msgstr "Chyba pri čítaní"
 
-#: methods/ftp.cc:356 methods/rsh.cc:206
+#: methods/ftp.cc:355 methods/rsh.cc:204
 msgid "A response overflowed the buffer."
 msgstr "Odpoveď preplnila zásobník."
 
-#: methods/ftp.cc:373 methods/ftp.cc:385
+#: methods/ftp.cc:372 methods/ftp.cc:384
 msgid "Protocol corruption"
 msgstr "Narušenie protokolu"
 
-#: methods/ftp.cc:457 methods/rred.cc:238 methods/rsh.cc:241
-#: apt-pkg/contrib/fileutl.cc:1372 apt-pkg/contrib/fileutl.cc:1381
-#: apt-pkg/contrib/fileutl.cc:1384 apt-pkg/contrib/fileutl.cc:1410
+#: methods/ftp.cc:456 apt-pkg/contrib/fileutl.cc:874 methods/rsh.cc:239
 msgid "Write error"
 msgstr "Chyba pri zápise"
 
-#: methods/ftp.cc:696 methods/ftp.cc:702 methods/ftp.cc:737
+#: methods/ftp.cc:696 methods/ftp.cc:702 methods/ftp.cc:738
 msgid "Could not create a socket"
 msgstr "Nedá sa vytvoriť socket"
 
@@ -1385,68 +1386,68 @@ msgstr "Nedá sa pripojiť dátový socket, uplynul čas spojenia"
 msgid "Could not connect passive socket."
 msgstr "Nedá sa pripojiť pasívny socket."
 
-#: methods/ftp.cc:730
+#: methods/ftp.cc:731
 msgid "getaddrinfo was unable to get a listening socket"
 msgstr "getaddrinfo nezískal počúvajúci socket"
 
-#: methods/ftp.cc:744
+#: methods/ftp.cc:745
 msgid "Could not bind a socket"
 msgstr "Nedá sa nadviazať socket"
 
-#: methods/ftp.cc:748
+#: methods/ftp.cc:749
 msgid "Could not listen on the socket"
 msgstr "Na sockete sa nedá počúvať"
 
-#: methods/ftp.cc:755
+#: methods/ftp.cc:756
 msgid "Could not determine the socket's name"
 msgstr "Názov socketu sa nedá zistiť"
 
-#: methods/ftp.cc:787
+#: methods/ftp.cc:788
 msgid "Unable to send PORT command"
 msgstr "Príkaz PORT sa nedá odoslať"
 
-#: methods/ftp.cc:797
+#: methods/ftp.cc:798
 #, c-format
 msgid "Unknown address family %u (AF_*)"
 msgstr "Neznáma rodina adries %u (AF_*)"
 
-#: methods/ftp.cc:806
+#: methods/ftp.cc:807
 #, c-format
 msgid "EPRT failed, server said: %s"
 msgstr "Zlyhalo zadanie EPRT, server odpovedal: %s"
 
-#: methods/ftp.cc:826
+#: methods/ftp.cc:827
 msgid "Data socket connect timed out"
 msgstr "Uplynulo spojenie dátového socketu"
 
-#: methods/ftp.cc:833
+#: methods/ftp.cc:834
 msgid "Unable to accept connection"
 msgstr "Spojenie sa nedá prijať"
 
-#: methods/ftp.cc:872 methods/http.cc:1035 methods/rsh.cc:311
+#: methods/ftp.cc:873 methods/http.cc:1031 methods/rsh.cc:309
 msgid "Problem hashing file"
 msgstr "Problém s hašovaním súboru"
 
-#: methods/ftp.cc:885
+#: methods/ftp.cc:886
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
 msgstr "Súbor sa nedá stiahnuť, server odpovedal „%s“"
 
-#: methods/ftp.cc:900 methods/rsh.cc:330
+#: methods/ftp.cc:901 methods/rsh.cc:328
 msgid "Data socket timed out"
 msgstr "Uplynula doba dátového socketu"
 
-#: methods/ftp.cc:930
+#: methods/ftp.cc:931
 #, c-format
 msgid "Data transfer failed, server said '%s'"
 msgstr "Prenos dát zlyhal, server odpovedal „%s“"
 
 #. Get the files information
-#: methods/ftp.cc:1007
+#: methods/ftp.cc:1008
 msgid "Query"
 msgstr "Dotaz"
 
-#: methods/ftp.cc:1119
+#: methods/ftp.cc:1120
 msgid "Unable to invoke "
 msgstr "Nedá sa vyvolať "
 
@@ -1482,7 +1483,7 @@ msgstr "Nedá sa pripojiť k %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:153 methods/rsh.cc:433
+#: methods/connect.cc:153 methods/rsh.cc:431
 #, c-format
 msgid "Connecting to %s"
 msgstr "Pripája sa k %s"
@@ -1507,28 +1508,30 @@ msgstr "Niečo veľmi zlé sa prihodilo pri preklade „%s:%s“ (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Nedá sa pripojiť k %s:%s:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:172
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
-msgstr "Vnútorná chyba: Správna signatúra, ale sa nedá zistiť odtlačok kľúča?!"
+msgstr ""
+"Vnútorná chyba: Správna signatúra, ale sa nedá zistiť odtlačok kľúča?!"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:177
 msgid "At least one invalid signature was encountered."
 msgstr "Bola zistená aspoň jedna nesprávna signatúra."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:181
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
-msgstr "Nedá sa spustiť „gpgv“ kvôli overeniu podpisu (je nainštalované gpgv?)"
+msgstr ""
+"Nedá sa spustiť „gpgv“ kvôli overeniu podpisu (je nainštalované gpgv?)"
 
-#: methods/gpgv.cc:194
+#: methods/gpgv.cc:186
 msgid "Unknown error executing gpgv"
 msgstr "Neznáma chyba pri spustení gpgv"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:220 methods/gpgv.cc:227
 msgid "The following signatures were invalid:\n"
 msgstr "Nasledovné signatúry sú neplatné:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:234
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1536,117 +1539,116 @@ msgstr ""
 "Nasledovné signatúry sa nedajú overiť, pretože nie je dostupný verejný "
 "kľúč:\n"
 
-#: methods/gzip.cc:65
+#: methods/bzip2.cc:63 methods/gzip.cc:54
 msgid "Empty files can't be valid archives"
 msgstr "Prázdne súbory nemôžu byť platné archívy"
 
-#: methods/http.cc:394
+#: methods/http.cc:393
 msgid "Waiting for headers"
 msgstr "Čaká sa na hlavičky"
 
-#: methods/http.cc:544
+#: methods/http.cc:547
 msgid "Bad header line"
 msgstr "Chybná hlavička"
 
-#: methods/http.cc:569 methods/http.cc:576
+#: methods/http.cc:572 methods/http.cc:579
 msgid "The HTTP server sent an invalid reply header"
 msgstr "HTTP server poslal neplatnú hlavičku odpovede"
 
-#: methods/http.cc:606
+#: methods/http.cc:608
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "HTTP server poslal neplatnú hlavičku Content-Length"
 
-#: methods/http.cc:621
+#: methods/http.cc:623
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "HTTP server poslal neplatnú hlavičku Content-Range"
 
-#: methods/http.cc:623
+#: methods/http.cc:625
 msgid "This HTTP server has broken range support"
 msgstr "Tento HTTP server má poškodenú podporu rozsahov"
 
-#: methods/http.cc:647
+#: methods/http.cc:649
 msgid "Unknown date format"
 msgstr "Neznámy formát dátumu"
 
-#: methods/http.cc:818
+#: methods/http.cc:808
 msgid "Select failed"
 msgstr "Výber zlyhal"
 
-#: methods/http.cc:823
+#: methods/http.cc:813
 msgid "Connection timed out"
 msgstr "Uplynul čas spojenia"
 
-#: methods/http.cc:846
+#: methods/http.cc:836
 msgid "Error writing to output file"
 msgstr "Chyba zápisu do výstupného súboru"
 
-#: methods/http.cc:877
+#: methods/http.cc:867
 msgid "Error writing to file"
 msgstr "Chyba zápisu do súboru"
 
-#: methods/http.cc:905
+#: methods/http.cc:895
 msgid "Error writing to the file"
 msgstr "Chyba zápisu do tohto súboru"
 
-#: methods/http.cc:919
+#: methods/http.cc:909
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Chyba pri čítaní zo servera. Druhá strana ukončila spojenie"
 
-#: methods/http.cc:921
+#: methods/http.cc:911
 msgid "Error reading from server"
 msgstr "Chyba pri čítaní zo servera"
 
-#: methods/http.cc:1194
+#: methods/http.cc:1191
 msgid "Bad header data"
 msgstr "Zlé dátové záhlavie"
 
-#: methods/http.cc:1211 methods/http.cc:1266
+#: methods/http.cc:1208 methods/http.cc:1263
 msgid "Connection failed"
 msgstr "Spojenie zlyhalo"
 
-#: methods/http.cc:1358
+#: methods/http.cc:1355
 msgid "Internal error"
 msgstr "Vnútorná chyba"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:465
-#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:400
-#: apt-pkg/contrib/fileutl.cc:513 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:109
-#: apt-pkg/init.cc:117 apt-pkg/clean.cc:36 apt-pkg/policy.cc:359
+#: apt-inst/extract.cc:465 apt-pkg/contrib/cdromutl.cc:183
+#: apt-pkg/contrib/fileutl.cc:344 apt-pkg/sourcelist.cc:208
+#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:456 apt-pkg/init.cc:108
+#: apt-pkg/init.cc:116 apt-pkg/clean.cc:36 apt-pkg/policy.cc:359
+#: methods/mirror.cc:95
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nedá sa načítať %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:179
-#: apt-pkg/contrib/cdromutl.cc:213 apt-pkg/acquire.cc:491
-#: apt-pkg/acquire.cc:516 apt-pkg/clean.cc:42 apt-pkg/clean.cc:60
-#: apt-pkg/clean.cc:123
+#: apt-pkg/contrib/cdromutl.cc:179 apt-pkg/contrib/cdromutl.cc:213
+#: apt-pkg/acquire.cc:462 apt-pkg/acquire.cc:487 apt-pkg/clean.cc:42
+#: methods/mirror.cc:101
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nedá sa prejsť do %s"
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
-#: methods/mirror.cc:280
+#: methods/mirror.cc:279
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr "Na zrkadle nebol nájdený súbor „%s“"
+msgstr "Na zrkadle nebol nájdený súbor „%s“ "
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
-#: methods/mirror.cc:287
+#: methods/mirror.cc:286
 #, c-format
 msgid "Can not read mirror file '%s'"
 msgstr "Nepodarilo sa prečítať súbor „%s“ na zrkadle"
 
-#: methods/mirror.cc:442
+#: methods/mirror.cc:441
 #, c-format
 msgid "[Mirror: %s]"
 msgstr "[Zrkadlo: %s]"
 
-#: methods/rred.cc:491
+#: methods/rred.cc:509
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
@@ -1655,7 +1657,7 @@ msgstr ""
 "Nepodarilo sa záplatovať %s pomocou mmap a pomocou operácie so súborom - zdá "
 "sa, že záplata je poškodená."
 
-#: methods/rred.cc:496
+#: methods/rred.cc:514
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
@@ -1664,11 +1666,11 @@ msgstr ""
 "Nepodarilo sa záplatovať %s pomocou mmap (ale nevyskytla sa chyba týkajúca "
 "sa mmap) - zdá sa, že záplata je poškodená."
 
-#: methods/rsh.cc:99 ftparchive/multicompress.cc:168
+#: ftparchive/multicompress.cc:167 methods/rsh.cc:97
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Zlyhalo vytvorenie IPC rúry k podprocesu"
 
-#: methods/rsh.cc:338
+#: methods/rsh.cc:336
 msgid "Connection closed prematurely"
 msgstr "Spojenie bolo predčasne ukončené"
 
@@ -1708,12 +1710,12 @@ msgstr ""
 msgid "Merging available information"
 msgstr "Zlučujú sa dostupné informácie"
 
-#: cmdline/apt-extracttemplates.cc:102
+#: cmdline/apt-extracttemplates.cc:100
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s nie je platný balík DEB."
 
-#: cmdline/apt-extracttemplates.cc:236
+#: cmdline/apt-extracttemplates.cc:234
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1737,12 +1739,12 @@ msgstr ""
 "  -c=? Načíta tento konfiguračný súbor\n"
 "  -o=? Nastaví ľubovoľnú voľbu, napr. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1277
+#: cmdline/apt-extracttemplates.cc:269 apt-pkg/pkgcachegen.cc:1269
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Do %s sa nedá zapisovať"
 
-#: cmdline/apt-extracttemplates.cc:313
+#: cmdline/apt-extracttemplates.cc:311
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nedá sa určiť verzia programu debconf. Je debconf nainštalovaný?"
 
@@ -1859,17 +1861,17 @@ msgstr "Nevyhovel žiaden výber"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "V súbore balíka skupiny „%s“ chýbajú niektoré súbory"
 
-#: ftparchive/cachedb.cc:47
+#: ftparchive/cachedb.cc:46
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "DB je narušená, súbor je premenovaný na %s.old"
 
-#: ftparchive/cachedb.cc:65
+#: ftparchive/cachedb.cc:64
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "DB je neaktuálna, prebieha pokus o aktualizáciu %s"
 
-#: ftparchive/cachedb.cc:76
+#: ftparchive/cachedb.cc:75
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
@@ -1877,22 +1879,22 @@ msgstr ""
 "Formát DB je neplatný. Ak ste aktualizovali staršiu verziu apt, musíte "
 "odstrániť a znovu vytvoriť databázu."
 
-#: ftparchive/cachedb.cc:81
+#: ftparchive/cachedb.cc:80
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "Nedá sa otvoriť DB súbor %s: %s"
 
-#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210
+#: ftparchive/cachedb.cc:126 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
 #, c-format
 msgid "Failed to stat %s"
 msgstr "%s sa nedá vyhodnotiť"
 
-#: ftparchive/cachedb.cc:249
+#: ftparchive/cachedb.cc:248
 msgid "Archive has no control record"
 msgstr "Archív nemá riadiaci záznam"
 
-#: ftparchive/cachedb.cc:490
+#: ftparchive/cachedb.cc:489
 msgid "Unable to get a cursor"
 msgstr "Nedá sa získať kurzor"
 
@@ -1964,7 +1966,7 @@ msgstr "Archív neobsahuje pole „package“"
 #: ftparchive/writer.cc:409 ftparchive/writer.cc:711
 #, c-format
 msgid "  %s has no override entry\n"
-msgstr " %s nemá žiadnu položku override\n"
+msgstr "  %s nemá žiadnu položku override\n"
 
 #: ftparchive/writer.cc:477 ftparchive/writer.cc:827
 #, c-format
@@ -1974,83 +1976,83 @@ msgstr "  správcom %s je %s, nie %s\n"
 #: ftparchive/writer.cc:721
 #, c-format
 msgid "  %s has no source override entry\n"
-msgstr " %s nemá žiadnu položku „source override“\n"
+msgstr "  %s nemá žiadnu položku „source override“\n"
 
 #: ftparchive/writer.cc:725
 #, c-format
 msgid "  %s has no binary override entry either\n"
-msgstr " %s nemá žiadnu položku „binary override“\n"
+msgstr "  %s nemá žiadnu položku „binary override“\n"
 
-#: ftparchive/contents.cc:341 ftparchive/contents.cc:372
+#: ftparchive/contents.cc:339 ftparchive/contents.cc:370
 msgid "realloc - Failed to allocate memory"
 msgstr "realloc - Zlyhal pokus o pridelenie pamäti"
 
-#: ftparchive/override.cc:35 ftparchive/override.cc:143
+#: ftparchive/override.cc:34 ftparchive/override.cc:142
 #, c-format
 msgid "Unable to open %s"
 msgstr "Nedá sa otvoriť %s"
 
-#: ftparchive/override.cc:61 ftparchive/override.cc:167
+#: ftparchive/override.cc:60 ftparchive/override.cc:166
 #, c-format
 msgid "Malformed override %s line %llu #1"
 msgstr "Skomolený „override“ %s riadok %llu #1"
 
-#: ftparchive/override.cc:75 ftparchive/override.cc:179
+#: ftparchive/override.cc:74 ftparchive/override.cc:178
 #, c-format
 msgid "Malformed override %s line %llu #2"
 msgstr "Skomolený „override“ %s riadok %llu #2"
 
-#: ftparchive/override.cc:89 ftparchive/override.cc:192
+#: ftparchive/override.cc:88 ftparchive/override.cc:191
 #, c-format
 msgid "Malformed override %s line %llu #3"
 msgstr "Skomolený „override“ %s riadok %llu #3"
 
-#: ftparchive/override.cc:128 ftparchive/override.cc:202
+#: ftparchive/override.cc:127 ftparchive/override.cc:201
 #, c-format
 msgid "Failed to read the override file %s"
 msgstr "Nepodarilo sa prečítať „override“ súbor %s"
 
-#: ftparchive/multicompress.cc:70
+#: ftparchive/multicompress.cc:69
 #, c-format
 msgid "Unknown compression algorithm '%s'"
 msgstr "Neznámy kompresný algoritmus „%s“"
 
-#: ftparchive/multicompress.cc:100
+#: ftparchive/multicompress.cc:99
 #, c-format
 msgid "Compressed output %s needs a compression set"
 msgstr "Komprimovaný výstup %s potrebuje kompresnú sadu"
 
-#: ftparchive/multicompress.cc:189
+#: ftparchive/multicompress.cc:193
 msgid "Failed to create FILE*"
 msgstr "Zlyhalo vytvorenie FILE*"
 
-#: ftparchive/multicompress.cc:192
+#: ftparchive/multicompress.cc:196
 msgid "Failed to fork"
 msgstr "Volanie fork() zlyhalo"
 
-#: ftparchive/multicompress.cc:206
+#: ftparchive/multicompress.cc:210
 msgid "Compress child"
 msgstr "Komprimovať potomka"
 
-#: ftparchive/multicompress.cc:229
+#: ftparchive/multicompress.cc:233
 #, c-format
 msgid "Internal error, failed to create %s"
 msgstr "Vnútorná chyba, nepodarilo sa vytvoriť %s"
 
-#: ftparchive/multicompress.cc:304
+#: ftparchive/multicompress.cc:403
 msgid "IO to subprocess/file failed"
 msgstr "V/V operácia s podprocesom/súborom zlyhala"
 
-#: ftparchive/multicompress.cc:342
+#: ftparchive/multicompress.cc:455
 msgid "Failed to read while computing MD5"
 msgstr "Chyba čítania pri výpočte MD5"
 
-#: ftparchive/multicompress.cc:358
+#: ftparchive/multicompress.cc:472
 #, c-format
 msgid "Problem unlinking %s"
 msgstr "Problém s odlinkovaním %s"
 
-#: ftparchive/multicompress.cc:373 apt-inst/extract.cc:188
+#: ftparchive/multicompress.cc:487 apt-inst/extract.cc:188
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "Premenovanie %s na %s zlyhalo"
@@ -2184,12 +2186,12 @@ msgstr "Dvojité pridanie diverzie %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Duplicitný konfiguračný súbor %s/%s"
 
-#: apt-inst/dirstream.cc:43 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:55
+#: apt-inst/dirstream.cc:43 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:55
 #, c-format
 msgid "Failed to write file %s"
 msgstr "Zápis súboru %s zlyhal"
 
-#: apt-inst/dirstream.cc:98 apt-inst/dirstream.cc:106
+#: apt-inst/dirstream.cc:100 apt-inst/dirstream.cc:108
 #, c-format
 msgid "Failed to close file %s"
 msgstr "Zatvorenie súboru %s zlyhalo"
@@ -2246,23 +2248,23 @@ msgstr "Súbor %s/%s prepisuje ten z balíka %s"
 msgid "Unable to stat %s"
 msgstr "Nedá sa vyhodnotiť %s"
 
-#: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:46
+#: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Toto nie je platný DEB archív, chýba časť „%s“"
 
 #. FIXME: add data.tar.xz here - adding it now would require a Translation round for a very small gain
-#: apt-inst/deb/debfile.cc:55
+#: apt-inst/deb/debfile.cc:56
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr "Toto nie je platný DEB archív, chýba časť „%s“, „%s“ alebo „%s“"
 
-#: apt-inst/deb/debfile.cc:120
+#: apt-inst/deb/debfile.cc:157
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr "Vnútorná chyba, nedá sa nájsť časť %s"
 
-#: apt-inst/deb/debfile.cc:214
+#: apt-inst/deb/debfile.cc:277
 msgid "Unparsable control file"
 msgstr "Nespracovateľný riadiaci súbor"
 
@@ -2270,30 +2272,30 @@ msgstr "Nespracovateľný riadiaci súbor"
 msgid "Can't mmap an empty file"
 msgstr "Nedá sa vykonať mmap prázdneho súboru"
 
-#: apt-pkg/contrib/mmap.cc:111
+#: apt-pkg/contrib/mmap.cc:91
 #, c-format
 msgid "Couldn't duplicate file descriptor %i"
 msgstr "Nedá sa duplikovať popisovač súboru %i"
 
-#: apt-pkg/contrib/mmap.cc:119
+#: apt-pkg/contrib/mmap.cc:99
 #, c-format
 msgid "Couldn't make mmap of %llu bytes"
 msgstr "Nedá sa urobiť mmap %llu bajtov"
 
-#: apt-pkg/contrib/mmap.cc:146
+#: apt-pkg/contrib/mmap.cc:126
 msgid "Unable to close mmap"
 msgstr "Nedá sa zatvoriť mmap"
 
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+#: apt-pkg/contrib/mmap.cc:154 apt-pkg/contrib/mmap.cc:182
 msgid "Unable to synchronize mmap"
 msgstr "Nedá sa synchronizovať mmap"
 
-#: apt-pkg/contrib/mmap.cc:290
+#: apt-pkg/contrib/mmap.cc:260
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "Nedá sa urobiť mmap %lu bajtov"
 
-#: apt-pkg/contrib/mmap.cc:322
+#: methods/http.cc:1016 apt-pkg/contrib/mmap.cc:293
 msgid "Failed to truncate file"
 msgstr "Nepodarilo sa skrátiť súbor"
 
@@ -2306,7 +2308,7 @@ msgstr ""
 "Nedostatok miesta pre dynamický MMap. Prosím, zväčšite veľkosť APT::Cache-"
 "Start. Aktuálna hodnota: %lu. (man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:440
+#: apt-pkg/contrib/mmap.cc:411
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
@@ -2314,7 +2316,7 @@ msgid ""
 msgstr ""
 "Napodarilo sa zväčšiť veľkosť MMap, pretože limit %lu už bol dosiahnutý."
 
-#: apt-pkg/contrib/mmap.cc:443
+#: apt-pkg/contrib/mmap.cc:414
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2322,87 +2324,88 @@ msgstr ""
 "používateľ."
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:371
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%li d %li h %li min %li s"
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%li h %li min %li s"
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%limin %lis"
 msgstr "%li min %li s"
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:390
 #, c-format
 msgid "%lis"
 msgstr "%li s"
 
-#: apt-pkg/contrib/strutl.cc:1167
+#: apt-pkg/contrib/strutl.cc:1165
 #, c-format
 msgid "Selection %s not found"
 msgstr "Voľba %s nenájdená"
 
-#: apt-pkg/contrib/configuration.cc:491
+#: apt-pkg/contrib/configuration.cc:468
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Nerozpoznaná skratka typu: „%c“"
 
-#: apt-pkg/contrib/configuration.cc:605
+#: apt-pkg/contrib/configuration.cc:526
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "Otvára sa konfiguračný súbor %s"
 
-#: apt-pkg/contrib/configuration.cc:773
+#: apt-pkg/contrib/configuration.cc:694
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Syntaktická chyba %s:%u: Blok začína bez názvu."
 
-#: apt-pkg/contrib/configuration.cc:792
+#: apt-pkg/contrib/configuration.cc:713
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "Syntaktická chyba %s:%u: Skomolená značka"
 
-#: apt-pkg/contrib/configuration.cc:809
+#: apt-pkg/contrib/configuration.cc:730
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Syntaktická chyba %s:%u: Za hodnotou nasledujú chybné údaje"
 
-#: apt-pkg/contrib/configuration.cc:849
+#: apt-pkg/contrib/configuration.cc:770
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Syntaktická chyba %s:%u: Direktívy sa dajú vykonať len na najvyššej úrovni"
 
-#: apt-pkg/contrib/configuration.cc:856
+#: apt-pkg/contrib/configuration.cc:777
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Syntaktická chyba %s:%u: Príliš mnoho vnorených prepojení (include)"
 
-#: apt-pkg/contrib/configuration.cc:860 apt-pkg/contrib/configuration.cc:865
+#: apt-pkg/contrib/configuration.cc:781 apt-pkg/contrib/configuration.cc:786
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Syntaktická chyba %s:%u: Zahrnuté odtiaľ"
 
-#: apt-pkg/contrib/configuration.cc:869
+#: apt-pkg/contrib/configuration.cc:790
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Syntaktická chyba %s:%u: Nepodporovaná direktíva „%s“"
 
-#: apt-pkg/contrib/configuration.cc:872
+#: apt-pkg/contrib/configuration.cc:793
 #, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgid ""
+"Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr ""
 "Syntaktická chyba %s:%u: direktíva clear vyžaduje ako argument strom volieb"
 
-#: apt-pkg/contrib/configuration.cc:922
+#: apt-pkg/contrib/configuration.cc:843
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Syntaktická chyba %s:%u: Na konci súboru sú chybné údaje"
@@ -2422,43 +2425,43 @@ msgstr "%c%s... Hotovo"
 msgid "Command line option '%c' [from %s] is not known."
 msgstr "Parameter príkazového riadka „%c“ [z %s] je neznámy"
 
-#: apt-pkg/contrib/cmndline.cc:105 apt-pkg/contrib/cmndline.cc:114
-#: apt-pkg/contrib/cmndline.cc:122
+#: apt-pkg/contrib/cmndline.cc:104 apt-pkg/contrib/cmndline.cc:112
+#: apt-pkg/contrib/cmndline.cc:120
 #, c-format
 msgid "Command line option %s is not understood"
 msgstr "Nezrozumiteľný parameter %s na príkazovom riadku"
 
-#: apt-pkg/contrib/cmndline.cc:127
+#: apt-pkg/contrib/cmndline.cc:125
 #, c-format
 msgid "Command line option %s is not boolean"
 msgstr "Parameter príkazového riadku %s nie je pravdivostná hodnota"
 
-#: apt-pkg/contrib/cmndline.cc:168 apt-pkg/contrib/cmndline.cc:189
+#: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
 #, c-format
 msgid "Option %s requires an argument."
 msgstr "Voľba %s vyžaduje argument."
 
-#: apt-pkg/contrib/cmndline.cc:202 apt-pkg/contrib/cmndline.cc:208
+#: apt-pkg/contrib/cmndline.cc:200 apt-pkg/contrib/cmndline.cc:206
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "Parameter %s: Zadanie konfiguračnej položky musí obsahovať =<hodn>."
 
-#: apt-pkg/contrib/cmndline.cc:237
+#: apt-pkg/contrib/cmndline.cc:235
 #, c-format
 msgid "Option %s requires an integer argument, not '%s'"
 msgstr "Voľba %s vyžaduje ako argument celé číslo (integer), nie „%s“"
 
-#: apt-pkg/contrib/cmndline.cc:268
+#: apt-pkg/contrib/cmndline.cc:266
 #, c-format
 msgid "Option '%s' is too long"
 msgstr "Voľba „%s“ je príliš dlhá"
 
-#: apt-pkg/contrib/cmndline.cc:300
+#: apt-pkg/contrib/cmndline.cc:298
 #, c-format
 msgid "Sense %s is not understood, try true or false."
-msgstr "Nezrozumiteľný význam %s, skúste true alebo false. "
+msgstr "Nezrozumiteľný význam %s, skúste true alebo false."
 
-#: apt-pkg/contrib/cmndline.cc:350
+#: apt-pkg/contrib/cmndline.cc:348
 #, c-format
 msgid "Invalid operation %s"
 msgstr "Neplatná operácia %s"
@@ -2472,117 +2475,117 @@ msgstr "Prípojný bod %s sa nedá vyhodnotiť"
 msgid "Failed to stat the cdrom"
 msgstr "Nedá sa vykonať stat() CD-ROM"
 
-#: apt-pkg/contrib/fileutl.cc:93
+#: apt-pkg/contrib/fileutl.cc:1023
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Problém pri zatváraní gzip súboru %s"
 
-#: apt-pkg/contrib/fileutl.cc:225
+#: apt-pkg/contrib/fileutl.cc:169
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "Zamykanie pre súbor zámku %s, ktorý je iba na čítanie, sa nepoužíva"
 
-#: apt-pkg/contrib/fileutl.cc:230
+#: apt-pkg/contrib/fileutl.cc:174
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "Súbor zámku %s sa nedá otvoriť"
 
-#: apt-pkg/contrib/fileutl.cc:248
+#: apt-pkg/contrib/fileutl.cc:192
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Zamykanie pre súbor zámku %s pripojený cez NFS sa nepoužíva"
 
-#: apt-pkg/contrib/fileutl.cc:252
+#: apt-pkg/contrib/fileutl.cc:196
 #, c-format
 msgid "Could not get lock %s"
 msgstr "Zámok %s sa nedá získať"
 
-#: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:506
+#: apt-pkg/contrib/fileutl.cc:336
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr "Zoznam súborov nemožno vytvoriť, pretože „%s“ nie je adresár"
 
-#: apt-pkg/contrib/fileutl.cc:426
+#: apt-pkg/contrib/fileutl.cc:363
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr "Ignoruje sa „%s“ v adresári „%s“, pretože to nie je obyčajný súbor"
 
-#: apt-pkg/contrib/fileutl.cc:444
+#: apt-pkg/contrib/fileutl.cc:381
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr "Ignoruje sa „%s“ v adresári „%s“, pretože nemá príponu názvu súboru"
 
-#: apt-pkg/contrib/fileutl.cc:453
+#: apt-pkg/contrib/fileutl.cc:390
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 "Ignoruje sa „%s“ v adresári „%s“, pretože má neplatnú príponu názvu súboru"
 
-#: apt-pkg/contrib/fileutl.cc:840
+#: apt-pkg/contrib/fileutl.cc:703
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Podproces %s obdržal chybu segmentácie."
 
-#: apt-pkg/contrib/fileutl.cc:842
+#: apt-pkg/contrib/fileutl.cc:705
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "Podproces %s dostal signál %u."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:709
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Podproces %s vrátil chybový kód (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:711
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Podproces %s neočakávane skončil"
 
-#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:659
+#: apt-pkg/contrib/fileutl.cc:776 apt-pkg/indexcopy.cc:676
 #, c-format
 msgid "Could not open file %s"
 msgstr "Nedá sa otvoriť súbor %s"
 
-#: apt-pkg/contrib/fileutl.cc:1066
+#: apt-pkg/contrib/fileutl.cc:793
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Nedá sa otvoriť popisovač súboru %d"
 
-#: apt-pkg/contrib/fileutl.cc:1156
+#: ftparchive/multicompress.cc:284
 msgid "Failed to create subprocess IPC"
 msgstr "Nedá sa vytvoriť podproces IPC"
 
-#: apt-pkg/contrib/fileutl.cc:1212
+#: ftparchive/multicompress.cc:321
 msgid "Failed to exec compressor "
 msgstr "Nepodarilo sa spustiť kompresor "
 
-#: apt-pkg/contrib/fileutl.cc:1309
+#: apt-pkg/contrib/fileutl.cc:853
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "čítanie, treba prečítať ešte %llu, ale už nič neostáva"
 
-#: apt-pkg/contrib/fileutl.cc:1398 apt-pkg/contrib/fileutl.cc:1420
+#: apt-pkg/contrib/fileutl.cc:886
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "zápis, treba zapísať ešte %llu, no nedá sa to"
 
-#: apt-pkg/contrib/fileutl.cc:1736
+#: apt-pkg/contrib/fileutl.cc:1026
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Problém pri zatváraní súboru %s"
 
-#: apt-pkg/contrib/fileutl.cc:1748
+#: apt-pkg/contrib/fileutl.cc:1031
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Problém pri synchronizovaní súboru %s na %s"
 
-#: apt-pkg/contrib/fileutl.cc:1759
+#: apt-pkg/contrib/fileutl.cc:1042
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Problém pri odstraňovaní súboru %s"
 
-#: apt-pkg/contrib/fileutl.cc:1774
+#: apt-pkg/contrib/fileutl.cc:1055
 msgid "Problem syncing the file"
 msgstr "Problém pri synchronizovaní súboru"
 
@@ -2667,38 +2670,38 @@ msgstr "voliteľný"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/depcache.cc:132 apt-pkg/depcache.cc:161
+#: apt-pkg/depcache.cc:130 apt-pkg/depcache.cc:159
 msgid "Building dependency tree"
 msgstr "Vytvára sa strom závislostí"
 
-#: apt-pkg/depcache.cc:133
+#: apt-pkg/depcache.cc:131
 msgid "Candidate versions"
 msgstr "Kandidátske verzie"
 
-#: apt-pkg/depcache.cc:162
+#: apt-pkg/depcache.cc:160
 msgid "Dependency generation"
 msgstr "Generovanie závislostí"
 
-#: apt-pkg/depcache.cc:182 apt-pkg/depcache.cc:215 apt-pkg/depcache.cc:219
+#: apt-pkg/depcache.cc:180 apt-pkg/depcache.cc:213 apt-pkg/depcache.cc:217
 msgid "Reading state information"
 msgstr "Načítavajú sa stavové informácie"
 
-#: apt-pkg/depcache.cc:244
+#: apt-pkg/depcache.cc:242
 #, c-format
 msgid "Failed to open StateFile %s"
 msgstr "Nie je možné otvoriť StateFile %s"
 
-#: apt-pkg/depcache.cc:250
+#: apt-pkg/depcache.cc:248
 #, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr "Nie je možné zapísať dočasný StateFile %s"
 
-#: apt-pkg/tagfile.cc:129
+#: apt-pkg/tagfile.cc:126
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "Súbor %s sa nedá spracovať (1)"
 
-#: apt-pkg/tagfile.cc:216
+#: apt-pkg/tagfile.cc:213
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "Súbor %s sa nedá spracovať (2)"
@@ -2712,7 +2715,8 @@ msgstr ""
 #: apt-pkg/sourcelist.cc:99
 #, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Skomolený riadok %lu v zozname zdrojov %s ([option] je príliš krátke)"
+msgstr ""
+"Skomolený riadok %lu v zozname zdrojov %s ([option] je príliš krátke)"
 
 #: apt-pkg/sourcelist.cc:110
 #, c-format
@@ -2727,7 +2731,8 @@ msgstr "Skomolený riadok %lu v zozname zdrojov %s ([%s] nemá kľúč)"
 #: apt-pkg/sourcelist.cc:119
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Skomolený riadok %lu v zozname zdrojov %s ([%s] kľúč %s nemá hodnotu)"
+msgstr ""
+"Skomolený riadok %lu v zozname zdrojov %s ([%s] kľúč %s nemá hodnotu)"
 
 #: apt-pkg/sourcelist.cc:132
 #, c-format
@@ -2759,7 +2764,7 @@ msgstr "Skomolený riadok %lu v zozname zdrojov %s (spracovanie dist)"
 msgid "Opening %s"
 msgstr "Otvára sa %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:447
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Riadok %u v zozname zdrojov %s je príliš dlhý."
@@ -2774,7 +2779,7 @@ msgstr "Skomolený riadok %u v zozname zdrojov %s (typ)"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typ „%s“ je neznámy na riadku %u v zozname zdrojov %s"
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
+#: apt-pkg/packagemanager.cc:298 apt-pkg/packagemanager.cc:775
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2783,12 +2788,12 @@ msgstr ""
 "Nebolo možné vykonať okamžitú konfiguráciu „%s“. Pozri prosím podrobnosti v "
 "man 5 apt.conf pod APT::Immediate-Configure (%d)"
 
-#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
+#: apt-pkg/packagemanager.cc:437 apt-pkg/packagemanager.cc:467
 #, c-format
 msgid "Could not configure '%s'. "
-msgstr "Nedá sa nakonfigurovať „%s“."
+msgstr "Nedá sa nakonfigurovať „%s“. "
 
-#: apt-pkg/packagemanager.cc:545
+#: apt-pkg/packagemanager.cc:507
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2804,13 +2809,13 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "Indexový súbor typu „%s“ nie je podporovaný"
 
-#: apt-pkg/algorithms.cc:261
+#: apt-pkg/algorithms.cc:255
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "Je nutné preinštalovať balík %s, ale nedá sa nájsť jeho archív."
 
-#: apt-pkg/algorithms.cc:1223
+#: apt-pkg/algorithms.cc:1191
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2818,11 +2823,12 @@ msgstr ""
 "Chyba, pkgProblemResolver::Resolve vytvára poruchy, čo môže být spôsobené "
 "pridržanými balíkmi."
 
-#: apt-pkg/algorithms.cc:1225
+#: apt-pkg/algorithms.cc:1193
 msgid "Unable to correct problems, you have held broken packages."
-msgstr "Problémy sa nedajú opraviť, niektoré balíky držíte v poškodenom stave."
+msgstr ""
+"Problémy sa nedajú opraviť, niektoré balíky držíte v poškodenom stave."
 
-#: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
+#: apt-pkg/algorithms.cc:1518 apt-pkg/algorithms.cc:1520
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
@@ -2847,12 +2853,12 @@ msgstr "Adresár %s sa nedá zamknúť"
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:893
+#: apt-pkg/acquire.cc:864
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "Sťahuje sa %li. súbor z %li (zostáva %s)"
 
-#: apt-pkg/acquire.cc:895
+#: apt-pkg/acquire.cc:866
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "Sťahuje sa %li. súbor z %li"
@@ -2867,21 +2873,22 @@ msgstr "Nedá sa nájsť ovládač spôsobu %s."
 msgid "Method %s did not start correctly"
 msgstr "Spôsob %s nebol správne spustený"
 
-#: apt-pkg/acquire-worker.cc:440
+#: apt-pkg/acquire-worker.cc:425
 #, c-format
-msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgid ""
+"Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Vložte disk nazvaný „%s“ do mechaniky „%s“ a stlačte Enter."
 
-#: apt-pkg/init.cc:152
+#: apt-pkg/init.cc:151
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "Systém balíkov „%s“ nie je podporovaný"
 
-#: apt-pkg/init.cc:168
+#: apt-pkg/init.cc:167
 msgid "Unable to determine a suitable packaging system type"
 msgstr "Nedá sa určiť vhodný typ systému balíkov"
 
-#: apt-pkg/clean.cc:57
+#: apt-pkg/clean.cc:59
 #, c-format
 msgid "Unable to stat %s."
 msgstr "Nie je možné vykonať stat %s."
@@ -2892,7 +2899,8 @@ msgstr "Do sources.list musíte zadať nejaký „source“ (zdrojový) URI"
 
 #: apt-pkg/cachefile.cc:87
 msgid "The package lists or status file could not be parsed or opened."
-msgstr "Zoznamy balíkov alebo stavový súbor sa nedajú spracovať alebo otvoriť."
+msgstr ""
+"Zoznamy balíkov alebo stavový súbor sa nedajú spracovať alebo otvoriť."
 
 #: apt-pkg/cachefile.cc:91
 msgid "You may want to run apt-get update to correct these problems"
@@ -2925,62 +2933,63 @@ msgstr "Nezrozumiteľné pridržanie typu %s"
 msgid "No priority (or zero) specified for pin"
 msgstr "Nebola zadaná žiadna (alebo nulová) priorita na pridržanie"
 
-#: apt-pkg/pkgcachegen.cc:85
+#: apt-pkg/pkgcachegen.cc:83
 msgid "Cache has an incompatible versioning system"
 msgstr "Vyrovnávacia pamäť má nezlučiteľný systém na správu verzií"
 
 #. TRANSLATOR: The first placeholder is a package name,
 #. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:211 apt-pkg/pkgcachegen.cc:277
-#: apt-pkg/pkgcachegen.cc:308 apt-pkg/pkgcachegen.cc:316
-#: apt-pkg/pkgcachegen.cc:358 apt-pkg/pkgcachegen.cc:362
-#: apt-pkg/pkgcachegen.cc:379 apt-pkg/pkgcachegen.cc:389
-#: apt-pkg/pkgcachegen.cc:393 apt-pkg/pkgcachegen.cc:397
-#: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
-#: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
-#: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
+#: apt-pkg/pkgcachegen.cc:209 apt-pkg/pkgcachegen.cc:275
+#: apt-pkg/pkgcachegen.cc:311 apt-pkg/pkgcachegen.cc:353
+#: apt-pkg/pkgcachegen.cc:357 apt-pkg/pkgcachegen.cc:374
+#: apt-pkg/pkgcachegen.cc:384 apt-pkg/pkgcachegen.cc:388
+#: apt-pkg/pkgcachegen.cc:392 apt-pkg/pkgcachegen.cc:413
+#: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:463
+#: apt-pkg/pkgcachegen.cc:494 apt-pkg/pkgcachegen.cc:508
 #, c-format
 msgid "Error occurred while processing %s (%s%d)"
 msgstr "Vyskytla sa chyba pri spracovávaní %s (%s%d)"
 
-#: apt-pkg/pkgcachegen.cc:234
+#: apt-pkg/pkgcachegen.cc:232
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
 "Fíha, prekročili ste počet názvov balíkov, ktoré toto APT zvládne spracovať."
 
-#: apt-pkg/pkgcachegen.cc:237
+#: apt-pkg/pkgcachegen.cc:235
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Fíha, prekročili ste počet verzií, ktoré toto APT zvládne spracovať."
 
-#: apt-pkg/pkgcachegen.cc:240
+#: apt-pkg/pkgcachegen.cc:238
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Fíha, prekročili ste počet popisov, ktoré toto APT zvládne spracovať."
+msgstr ""
+"Fíha, prekročili ste počet popisov, ktoré toto APT zvládne spracovať."
 
-#: apt-pkg/pkgcachegen.cc:243
+#: apt-pkg/pkgcachegen.cc:241
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr ""
 "Fíha, prekročili ste počet závislostí, ktoré toto APT zvládne spracovať."
 
-#: apt-pkg/pkgcachegen.cc:523
+#: apt-pkg/pkgcachegen.cc:515
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "Pri spracovaní závislostí nebol nájdený balík %s %s"
 
-#: apt-pkg/pkgcachegen.cc:1088
+#: apt-pkg/pkgcachegen.cc:1080
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Nedá sa vyhodnotiť zoznam zdrojových balíkov %s"
 
-#: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
+#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:1168
+#: apt-pkg/pkgcachegen.cc:1272 apt-pkg/pkgcachegen.cc:1278
+#: apt-pkg/pkgcachegen.cc:1434
 msgid "Reading package lists"
 msgstr "Načítavajú sa zoznamy balíkov"
 
-#: apt-pkg/pkgcachegen.cc:1193
+#: apt-pkg/pkgcachegen.cc:1185
 msgid "Collecting File Provides"
 msgstr "Collecting File poskytuje"
 
-#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
+#: apt-pkg/pkgcachegen.cc:1376 apt-pkg/pkgcachegen.cc:1383
 msgid "IO Error saving source cache"
 msgstr "V/V chyba pri ukladaní zdrojovej vyrovnávacej pamäti"
 
@@ -2989,16 +2998,16 @@ msgstr "V/V chyba pri ukladaní zdrojovej vyrovnávacej pamäti"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "premenovanie zlyhalo, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:599
+#: apt-pkg/acquire-item.cc:640
 msgid "MD5Sum mismatch"
 msgstr "Nezhoda kontrolných MD5 súčtov"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1870
-#: apt-pkg/acquire-item.cc:2013
+#: apt-pkg/acquire-item.cc:911 apt-pkg/acquire-item.cc:1863
+#: apt-pkg/acquire-item.cc:2006
 msgid "Hash Sum mismatch"
 msgstr "Nezhoda kontrolných haš súčtov"
 
-#: apt-pkg/acquire-item.cc:1381
+#: apt-pkg/acquire-item.cc:1399
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
@@ -3007,16 +3016,16 @@ msgstr ""
 "Nepodarilo sa nájsť očakávanú položku „%s“ v súbore Release (Nesprávna "
 "položka sources.list alebo chybný formát súboru)"
 
-#: apt-pkg/acquire-item.cc:1397
+#: apt-pkg/acquire-item.cc:1415
 #, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Nepodarilo sa nájsť haš „%s“ v súbore Release"
 
-#: apt-pkg/acquire-item.cc:1439
+#: apt-pkg/acquire-item.cc:1450
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Nie sú dostupné žiadne verejné kľúče ku kľúčom s nasledovnými ID:\n"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1488
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
@@ -3025,12 +3034,12 @@ msgstr ""
 "Súbor Release pre %s vypršal (neplatný od %s). Aktualizácie tohto zdroja "
 "softvéru sa nepoužijú."
 
-#: apt-pkg/acquire-item.cc:1499
+#: apt-pkg/acquire-item.cc:1510
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "V konflikte s distribúciou: %s (očakávalo sa %s ale dostali sme %s)"
 
-#: apt-pkg/acquire-item.cc:1532
+#: apt-pkg/acquire-item.cc:1543
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3040,12 +3049,12 @@ msgstr ""
 "použijú sa predošlé indexové súbory. Chyba GPG: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1542 apt-pkg/acquire-item.cc:1547
+#: apt-pkg/acquire-item.cc:1553 apt-pkg/acquire-item.cc:1558
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "Chyba GPG: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1646
+#: apt-pkg/acquire-item.cc:1650
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3054,7 +3063,7 @@ msgstr ""
 "Nedá sa nájsť súbor s balíkom %s. To by mohlo znamenať, že tento balík je "
 "potrebné opraviť manuálne (kvôli chýbajúcej architektúre)."
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1709
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3063,37 +3072,38 @@ msgstr ""
 "Nedá sa nájsť súbor s balíkom %s. Asi budete musieť opraviť tento balík "
 "manuálne."
 
-#: apt-pkg/acquire-item.cc:1764
+#: apt-pkg/acquire-item.cc:1768
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
-msgstr "Indexové súbory balíka sú narušené. Chýba pole Filename: pre balík %s."
+msgstr ""
+"Indexové súbory balíka sú narušené. Chýba pole Filename: pre balík %s."
 
-#: apt-pkg/acquire-item.cc:1862
+#: apt-pkg/acquire-item.cc:1855
 msgid "Size mismatch"
 msgstr "Veľkosti sa nezhodujú"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:61
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Nedá spracovať súbor Release %s"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:71
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "Žiadne sekcie v Release súbore %s"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:105
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "Chýba položka „Hash“ v súbore Release %s"
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:118
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "Chýba položka „Valid-Until“ v súbore Release %s"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:137
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Chýba položka „Date“ v súbore Release %s"
@@ -3103,7 +3113,7 @@ msgstr "Chýba položka „Date“ v súbore Release %s"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "Blok výrobcu %s neobsahuje otlačok (fingerprint)"
 
-#: apt-pkg/cdrom.cc:576
+#: apt-pkg/cdrom.cc:528
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -3112,41 +3122,41 @@ msgstr ""
 "Použije sa CD-ROM prípojný bod %s\n"
 "Pripája sa CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:682
+#: apt-pkg/cdrom.cc:537 apt-pkg/cdrom.cc:634
 msgid "Identifying.. "
-msgstr "Identifikuje sa.."
+msgstr "Identifikuje sa.. "
 
-#: apt-pkg/cdrom.cc:613
+#: apt-pkg/cdrom.cc:565
 #, c-format
 msgid "Stored label: %s\n"
-msgstr "Uložená menovka: %s \n"
+msgstr "Uložená menovka: %s\n"
 
-#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
+#: apt-pkg/cdrom.cc:574 apt-pkg/cdrom.cc:850
 msgid "Unmounting CD-ROM...\n"
 msgstr "CD-ROM sa odpája...\n"
 
-#: apt-pkg/cdrom.cc:642
+#: apt-pkg/cdrom.cc:594
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "Použije sa prípojný bod CD-ROM %s\n"
 
-#: apt-pkg/cdrom.cc:660
+#: apt-pkg/cdrom.cc:612
 msgid "Unmounting CD-ROM\n"
 msgstr "CD-ROM sa odpája\n"
 
-#: apt-pkg/cdrom.cc:665
+#: apt-pkg/cdrom.cc:617
 msgid "Waiting for disc...\n"
 msgstr "Čaká sa na disk...\n"
 
-#: apt-pkg/cdrom.cc:674
+#: apt-pkg/cdrom.cc:626
 msgid "Mounting CD-ROM...\n"
 msgstr "Pripája sa CD-ROM...\n"
 
-#: apt-pkg/cdrom.cc:693
+#: apt-pkg/cdrom.cc:645
 msgid "Scanning disc for index files..\n"
 msgstr "Na disku sa hľadajú indexové súbory..\n"
 
-#: apt-pkg/cdrom.cc:744
+#: apt-pkg/cdrom.cc:687
 #, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
@@ -3155,7 +3165,7 @@ msgstr ""
 "Nájdených %zu indexov balíkov, %zu indexov zdrojových balíkov, %zu indexov "
 "prekladov a %zu signatúr\n"
 
-#: apt-pkg/cdrom.cc:755
+#: apt-pkg/cdrom.cc:698
 msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
@@ -3163,16 +3173,16 @@ msgstr ""
 "Nepodarilo sa nájsť žiadne súbory balíkov, možno toto nie je disk s Debianom "
 "alebo je pre nesprávnu architektúru?"
 
-#: apt-pkg/cdrom.cc:782
+#: apt-pkg/cdrom.cc:725
 #, c-format
 msgid "Found label '%s'\n"
 msgstr "Nájdená menovka: „%s“\n"
 
-#: apt-pkg/cdrom.cc:811
+#: apt-pkg/cdrom.cc:754
 msgid "That is not a valid name, try again.\n"
 msgstr "Neplatný názov, skúste znova.\n"
 
-#: apt-pkg/cdrom.cc:828
+#: apt-pkg/cdrom.cc:771
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -3181,85 +3191,85 @@ msgstr ""
 "Názov tohto disku je: \n"
 "„%s“\n"
 
-#: apt-pkg/cdrom.cc:830
+#: apt-pkg/cdrom.cc:773
 msgid "Copying package lists..."
 msgstr "Kopírujú sa zoznamy balíkov..."
 
-#: apt-pkg/cdrom.cc:857
+#: apt-pkg/cdrom.cc:800
 msgid "Writing new source list\n"
 msgstr "Zapisuje sa nový zoznam zdrojov\n"
 
-#: apt-pkg/cdrom.cc:865
+#: apt-pkg/cdrom.cc:808
 msgid "Source list entries for this disc are:\n"
 msgstr "Položky zoznamu zdrojov pre tento disk sú:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
+#: apt-pkg/indexcopy.cc:273 apt-pkg/indexcopy.cc:930
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Zapísaných %i záznamov.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:275 apt-pkg/indexcopy.cc:932
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Zapísaných %i záznamov s %i chýbajúcimi súbormi.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
+#: apt-pkg/indexcopy.cc:278 apt-pkg/indexcopy.cc:935
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Zapísaných %i záznamov s %i chybnými súbormi\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
+#: apt-pkg/indexcopy.cc:281 apt-pkg/indexcopy.cc:938
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Zapísaných %i záznamov s %i chýbajúcimi a %i chybnými súbormi\n"
 
-#: apt-pkg/indexcopy.cc:515
+#: apt-pkg/indexcopy.cc:546
 #, c-format
 msgid "Can't find authentication record for: %s"
 msgstr "Nebolo možné nájsť autentifikačný záznam pre: %s"
 
-#: apt-pkg/indexcopy.cc:521
+#: apt-pkg/indexcopy.cc:552
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Nezhoda kontrolných haš súčtov: %s"
 
-#: apt-pkg/indexcopy.cc:662
+#: apt-pkg/indexcopy.cc:680
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
 msgstr "Súbor %s nezačína podpísanou správou v čistom texte (clearsigned)"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:692
+#: apt-pkg/indexcopy.cc:711
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "V %s nie je nainštalovaný žiaden zväzok kľúčov."
 
-#: apt-pkg/cacheset.cc:403
+#: apt-pkg/cacheset.cc:342
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Nebolo nájdené vydanie „%s“ pre „%s“"
 
-#: apt-pkg/cacheset.cc:406
+#: apt-pkg/cacheset.cc:345
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Nebola nájdená verzia „%s“ pre „%s“"
 
-#: apt-pkg/cacheset.cc:517
+#: apt-pkg/cacheset.cc:452
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Nebolo možné nájsť úlohu „%s“"
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:459
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
 
-#: apt-pkg/cacheset.cc:534
+#: apt-pkg/cacheset.cc:472
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr "Nie je možné vybrať verzie z balíka „%s“, pretože je čisto virtuálny"
 
-#: apt-pkg/cacheset.cc:541 apt-pkg/cacheset.cc:548
+#: apt-pkg/cacheset.cc:480 apt-pkg/cacheset.cc:488
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3268,20 +3278,20 @@ msgstr ""
 "Nie je možné vybrať nainštalované ani kandidátske verzie z balíka „%s“, "
 "pretože nemá žiadnu z nich"
 
-#: apt-pkg/cacheset.cc:555
+#: apt-pkg/cacheset.cc:496
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Nie je možné vybrať najnovšiu verziu z balíka „%s“, pretože je čisto "
 "virtuálny"
 
-#: apt-pkg/cacheset.cc:563
+#: apt-pkg/cacheset.cc:504
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "Nie je možné vybrať kandidátsku verziu z balíka „%s“, pretože nemá kandidáta"
 
-#: apt-pkg/cacheset.cc:571
+#: apt-pkg/cacheset.cc:512
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3292,127 +3302,128 @@ msgstr ""
 msgid "Send scenario to solver"
 msgstr "Poslať scénár riešiteľovi"
 
-#: apt-pkg/edsp.cc:209
+#: apt-pkg/edsp.cc:213
 msgid "Send request to solver"
 msgstr "Poslať požiadavku riešiteľovi"
 
-#: apt-pkg/edsp.cc:277
+#: apt-pkg/edsp.cc:281
 msgid "Prepare for receiving solution"
 msgstr "Pripraviť sa na prijatie riešenia"
 
-#: apt-pkg/edsp.cc:284
+#: apt-pkg/edsp.cc:288
 msgid "External solver failed without a proper error message"
 msgstr "Externý riešiteľ zlyhal bez uvedenia chybovej správy"
 
-#: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
+#: apt-pkg/edsp.cc:559 apt-pkg/edsp.cc:562 apt-pkg/edsp.cc:567
 msgid "Execute external solver"
 msgstr "Spustiť externého riešiteľa"
 
-#: apt-pkg/deb/dpkgpm.cc:72
+#: apt-pkg/deb/dpkgpm.cc:70
 #, c-format
 msgid "Installing %s"
 msgstr "Inštaluje sa %s"
 
-#: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:951
+#: apt-pkg/deb/dpkgpm.cc:71 apt-pkg/deb/dpkgpm.cc:865
 #, c-format
 msgid "Configuring %s"
 msgstr "Nastavuje sa %s"
 
-#: apt-pkg/deb/dpkgpm.cc:74 apt-pkg/deb/dpkgpm.cc:958
+#: apt-pkg/deb/dpkgpm.cc:72 apt-pkg/deb/dpkgpm.cc:872
 #, c-format
 msgid "Removing %s"
 msgstr "Odstraňuje sa %s"
 
-#: apt-pkg/deb/dpkgpm.cc:75
+#: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
 msgid "Completely removing %s"
 msgstr "Úplne sa odstraňuje %s"
 
-#: apt-pkg/deb/dpkgpm.cc:76
+#: apt-pkg/deb/dpkgpm.cc:74
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "Zaznamenali sme zmiznutie %s"
 
-#: apt-pkg/deb/dpkgpm.cc:77
+#: apt-pkg/deb/dpkgpm.cc:75
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Vykonáva sa spúšťač post-installation %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:704
+#: apt-pkg/deb/dpkgpm.cc:671
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Adresár „%s“ chýba"
 
-#: apt-pkg/deb/dpkgpm.cc:719 apt-pkg/deb/dpkgpm.cc:739
+#: apt-pkg/deb/dpkgpm.cc:686 apt-pkg/deb/dpkgpm.cc:706
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Nedá sa otvoriť súbor „%s“"
 
-#: apt-pkg/deb/dpkgpm.cc:944
+#: apt-pkg/deb/dpkgpm.cc:858
 #, c-format
 msgid "Preparing %s"
 msgstr "Pripravuje sa %s"
 
-#: apt-pkg/deb/dpkgpm.cc:945
+#: apt-pkg/deb/dpkgpm.cc:859
 #, c-format
 msgid "Unpacking %s"
 msgstr "Rozbaľuje sa %s"
 
-#: apt-pkg/deb/dpkgpm.cc:950
+#: apt-pkg/deb/dpkgpm.cc:864
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Pripravuje sa nastavenie %s"
 
-#: apt-pkg/deb/dpkgpm.cc:952
+#: apt-pkg/deb/dpkgpm.cc:866
 #, c-format
 msgid "Installed %s"
 msgstr "Nainštalovaný balík %s"
 
-#: apt-pkg/deb/dpkgpm.cc:957
+#: apt-pkg/deb/dpkgpm.cc:871
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Pripravuje sa odstránenie %s"
 
-#: apt-pkg/deb/dpkgpm.cc:959
+#: apt-pkg/deb/dpkgpm.cc:873
 #, c-format
 msgid "Removed %s"
 msgstr "Odstránený balík %s"
 
-#: apt-pkg/deb/dpkgpm.cc:964
+#: apt-pkg/deb/dpkgpm.cc:878
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Pripravuje sa úplné odstránenie %s"
 
-#: apt-pkg/deb/dpkgpm.cc:965
+#: apt-pkg/deb/dpkgpm.cc:879
 #, c-format
 msgid "Completely removed %s"
 msgstr "Balík „%s“ je úplne odstránený"
 
-#: apt-pkg/deb/dpkgpm.cc:1208
+#: apt-pkg/deb/dpkgpm.cc:1110
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 "Nedá sa zapísať záznam, volanie openpty() zlyhalo (/dev/pts nie je "
 "pripojený?)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1238
+#: apt-pkg/deb/dpkgpm.cc:1140
 msgid "Running dpkg"
 msgstr "Spúšťa sa dpkg"
 
-#: apt-pkg/deb/dpkgpm.cc:1410
+#: apt-pkg/deb/dpkgpm.cc:1319
 msgid "Operation was interrupted before it could finish"
 msgstr "Operácia bola prerušená predtým, než sa stihla dokončiť"
 
-#: apt-pkg/deb/dpkgpm.cc:1472
+#: apt-pkg/deb/dpkgpm.cc:1376
 msgid "No apport report written because MaxReports is reached already"
-msgstr "Nezapíše sa správa apport, pretože už bol dosiahnutý limit MaxReports"
+msgstr ""
+"Nezapíše sa správa apport, pretože už bol dosiahnutý limit MaxReports"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1477
+#: apt-pkg/deb/dpkgpm.cc:1381
 msgid "dependency problems - leaving unconfigured"
 msgstr "problém so závislosťami - ponecháva sa nenakonfigurované"
 
-#: apt-pkg/deb/dpkgpm.cc:1479
+#: apt-pkg/deb/dpkgpm.cc:1383
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3420,7 +3431,7 @@ msgstr ""
 "Nezapíše sa správa apport, pretože chybová správa indikuje, že je to chyba v "
 "nadväznosti na predošlé zlyhanie."
 
-#: apt-pkg/deb/dpkgpm.cc:1485
+#: apt-pkg/deb/dpkgpm.cc:1389
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3428,7 +3439,7 @@ msgstr ""
 "Nezapíše sa správa apport, pretože chybová správa indikuje, že je disk "
 "zaplnený"
 
-#: apt-pkg/deb/dpkgpm.cc:1492
+#: apt-pkg/deb/dpkgpm.cc:1396
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3436,16 +3447,13 @@ msgstr ""
 "Nezapíše sa správa apport, pretože chybová správa indikuje chybu nedostatku "
 "pamäte"
 
-#: apt-pkg/deb/dpkgpm.cc:1499 apt-pkg/deb/dpkgpm.cc:1505
-#, fuzzy
+#: apt-pkg/deb/dpkgpm.cc:1403 apt-pkg/deb/dpkgpm.cc:1409
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
-"Nezapíše sa správa apport, pretože chybová správa indikuje, že je disk "
-"zaplnený"
 
-#: apt-pkg/deb/dpkgpm.cc:1526
+#: apt-pkg/deb/dpkgpm.cc:1430
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
@@ -3475,37 +3483,94 @@ msgstr "dpkg bol prerušený, musíte ručne opraviť problém spustením „%s�
 msgid "Not locked"
 msgstr "Nie je zamknuté"
 
-#~ msgid "Skipping nonexistent file %s"
-#~ msgstr "Preskakuje sa neexistujúci súbor %s"
+#, c-format
+#~ msgid "Got a single header line over %u chars"
+#~ msgstr "Získal sa jeden riadok hlavičky cez %u znakov"
 
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "Nedostatok miesta pre dynamický MMap. Prosím, zväčšite veľkosť APT::Cache-"
-#~ "Limit. Aktuálna hodnota: %lu. (man 5 apt.conf)"
+#, c-format
+#~ msgid "Read error from %s process"
+#~ msgstr "Chyba pri čítaní z procesu %s"
 
-#~ msgid "Failed to remove %s"
-#~ msgstr "Odstránenie %s zlyhalo"
+#, c-format
+#~ msgid "Couldn't open pipe for %s"
+#~ msgstr "Nedá sa otvoriť rúra pre %s"
 
-#~ msgid "Unable to create %s"
-#~ msgstr "Nedá sa vytvoriť %s"
+#~ msgid "Failed to locate a valid control file"
+#~ msgstr "Nedá sa nájsť platný riadiaci súbor"
 
-#~ msgid "Failed to stat %sinfo"
-#~ msgstr "Vyhodnotenie %sinfo zlyhalo"
+#, c-format
+#~ msgid "Couldn't change to %s"
+#~ msgstr "Nedá sa prejsť do %s"
 
-#~ msgid "The info and temp directories need to be on the same filesystem"
-#~ msgstr "Adresáre info a temp musia byť na tom istom súborovom systéme"
+#, c-format
+#~ msgid "Error parsing MD5. Offset %lu"
+#~ msgstr "Chyba pri spracovaní MD5. Pozícia %lu"
 
-#~ msgid "Failed to change to the admin dir %sinfo"
-#~ msgstr "Nedá sa zmeniť na admin adresár %sinfo"
+#, c-format
+#~ msgid "Bad ConfFile section in the status file. Offset %lu"
+#~ msgstr "Zlá sekcia ConfFile v stavovom súbore na pozícii %lu"
 
-#~ msgid "Internal error getting a package name"
-#~ msgstr "Vnútorná chyba pri získavaní názvu balíka"
+#, c-format
+#~ msgid "Failed to find a Package: header, offset %lu"
+#~ msgstr "Chyba pri hľadaní Balíka: hlavička, pozícia %lu"
+
+#~ msgid "The pkg cache must be initialized first"
+#~ msgstr "Vyrovnávacia pamäť balíkov sa musí najprv inicializovať"
+
+#~ msgid "Internal error adding a diversion"
+#~ msgstr "Vnútorná chyba pri pridávaní diverzie"
+
+#, c-format
+#~ msgid "Invalid line in the diversion file: %s"
+#~ msgstr "Neplatný riadok v diverznom súbore: %s"
+
+#~ msgid "The diversion file is corrupted"
+#~ msgstr "Diverzný súbor je porušený"
+
+#, c-format
+#~ msgid "Failed to open the diversions file %sdiversions"
+#~ msgstr "Zlyhalo otvorenie súboru s diverziami %sdiversions"
+
+#~ msgid "Internal error getting a node"
+#~ msgstr "Vnútorná chyba pri získavaní uzla"
+
+#, c-format
+#~ msgid "Failed reading the list file %sinfo/%s"
+#~ msgstr "Chyba pri čítaní súboru so zoznamami %sinfo/%s"
 
 #~ msgid "Reading file listing"
 #~ msgstr "Načítava sa zoznam súborov"
 
+#~ msgid "Internal error getting a package name"
+#~ msgstr "Vnútorná chyba pri získavaní názvu balíka"
+
+#, c-format
+#~ msgid "Failed to change to the admin dir %sinfo"
+#~ msgstr "Nedá sa zmeniť na admin adresár %sinfo"
+
+#~ msgid "The info and temp directories need to be on the same filesystem"
+#~ msgstr "Adresáre info a temp musia byť na tom istom súborovom systéme"
+
+#, c-format
+#~ msgid "Failed to stat %sinfo"
+#~ msgstr "Vyhodnotenie %sinfo zlyhalo"
+
+#, c-format
+#~ msgid "Unable to create %s"
+#~ msgstr "Nedá sa vytvoriť %s"
+
+#, c-format
+#~ msgid "Failed to remove %s"
+#~ msgstr "Odstránenie %s zlyhalo"
+
+#, c-format
+#~ msgid "Package %s is not installed, so not removed\n"
+#~ msgstr "Balík %s nie je nainštalovaný, nedá sa teda odstrániť\n"
+
+#~ msgid "Use 'apt-get autoremove' to remove them."
+#~ msgstr "Na ich odstránenie použite „apt-get autoremove“."
+
+#, c-format
 #~ msgid ""
 #~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
 #~ "then make it empty and immediately re-install the same version of the "
@@ -3515,114 +3580,57 @@ msgstr "Nie je zamknuté"
 #~ "súbor, vytvorte nový prázdny a ihneď znovu nainštalujte tú istú verziu "
 #~ "balíka!"
 
-#~ msgid "Failed reading the list file %sinfo/%s"
-#~ msgstr "Chyba pri čítaní súboru so zoznamami %sinfo/%s"
+#, c-format
+#~ msgid ""
+#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+#~ "Current value: %lu. (man 5 apt.conf)"
+#~ msgstr ""
+#~ "Nedostatok miesta pre dynamický MMap. Prosím, zväčšite veľkosť APT::Cache-"
+#~ "Limit. Aktuálna hodnota: %lu. (man 5 apt.conf)"
 
-#~ msgid "Internal error getting a node"
-#~ msgstr "Vnútorná chyba pri získavaní uzla"
-
-#~ msgid "Failed to open the diversions file %sdiversions"
-#~ msgstr "Zlyhalo otvorenie súboru s diverziami %sdiversions"
-
-#~ msgid "The diversion file is corrupted"
-#~ msgstr "Diverzný súbor je porušený"
-
-#~ msgid "Invalid line in the diversion file: %s"
-#~ msgstr "Neplatný riadok v diverznom súbore: %s"
-
-#~ msgid "Internal error adding a diversion"
-#~ msgstr "Vnútorná chyba pri pridávaní diverzie"
-
-#~ msgid "The pkg cache must be initialized first"
-#~ msgstr "Vyrovnávacia pamäť balíkov sa musí najprv inicializovať"
-
-#~ msgid "Failed to find a Package: header, offset %lu"
-#~ msgstr "Chyba pri hľadaní Balíka: hlavička, pozícia %lu"
-
-#~ msgid "Bad ConfFile section in the status file. Offset %lu"
-#~ msgstr "Zlá sekcia ConfFile v stavovom súbore na pozícii %lu"
-
-#~ msgid "Error parsing MD5. Offset %lu"
-#~ msgstr "Chyba pri spracovaní MD5. Pozícia %lu"
-
-#~ msgid "Couldn't change to %s"
-#~ msgstr "Nedá sa prejsť do %s"
-
-#~ msgid "Failed to locate a valid control file"
-#~ msgstr "Nedá sa nájsť platný riadiaci súbor"
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Nedá sa otvoriť rúra pre %s"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "Chyba pri čítaní z procesu %s"
-
-#~ msgid "Got a single header line over %u chars"
-#~ msgstr "Získal sa jeden riadok hlavičky cez %u znakov"
+#, c-format
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "Preskakuje sa neexistujúci súbor %s"
 
 #~ msgid "Note: This is done automatic and on purpose by dpkg."
 #~ msgstr "Pozn.: Toto robí dpkg automaticky a zámerne."
 
-#~ msgid "Malformed override %s line %lu #1"
-#~ msgstr "Skomolený „override“ %s riadok %lu #1"
-
-#~ msgid "Malformed override %s line %lu #2"
-#~ msgstr "Skomolený „override“ %s riadok %lu #2"
-
-#~ msgid "Malformed override %s line %lu #3"
-#~ msgstr "Skomolený „override“ %s riadok %lu #3"
-
-#~ msgid "decompressor"
-#~ msgstr "dekompresor"
-
-#~ msgid "read, still have %lu to read but none left"
-#~ msgstr "čítanie, stále treba prečítať %lu, ale už nič neostáva"
-
-#~ msgid "write, still have %lu to write but couldn't"
-#~ msgstr "zápis, stále treba zapísať %lu, no nedá sa to"
-
 #~ msgid ""
-#~ "Could not perform immediate configuration on already unpacked '%s'. "
-#~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
+#~ "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-mark is a simple command line interface for marking packages\n"
+#~ "as manual or automatical installed. It can also list marks.\n"
+#~ "\n"
+#~ "Commands:\n"
+#~ "   auto - Mark the given packages as automatically installed\n"
+#~ "   manual - Mark the given packages as manually installed\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
 #~ msgstr ""
-#~ "Nebolo možné vykonať okamžitú konfiguráciu už rozbaleného „%s“. Pozri "
-#~ "prosím podrobnosti v man 5 apt.conf pod APT::Immediate-Configure"
-
-#~ msgid "Error occurred while processing %s (NewPackage)"
-#~ msgstr "Chyba pri spracovávaní %s (NewPackage)"
-
-#~ msgid "Error occurred while processing %s (UsePackage1)"
-#~ msgstr "Chyba pri spracovávaní %s (UsePackage1)"
-
-#~ msgid "Error occurred while processing %s (NewFileDesc1)"
-#~ msgstr "Chyba pri spracovávaní %s (NewFileDesc1)"
-
-#~ msgid "Error occurred while processing %s (UsePackage2)"
-#~ msgstr "Chyba pri spracovávaní %s (UsePackage2)"
-
-#~ msgid "Error occurred while processing %s (NewFileVer1)"
-#~ msgstr "Chyba pri spracovávaní %s (NewFileVer1)"
-
-#~ msgid "Error occurred while processing %s (NewVersion%d)"
-#~ msgstr "Vyskytla sa chyba pri spracovávaní %s (NewVersion%d)"
-
-#~ msgid "Error occurred while processing %s (UsePackage3)"
-#~ msgstr "Chyba pri spracovávaní %s (UsePackage3)"
-
-#~ msgid "Error occurred while processing %s (NewFileDesc2)"
-#~ msgstr "Vyskytla sa chyba pri spracovávaní %s (NewFileDesc2)"
-
-#~ msgid "Error occurred while processing %s (FindPkg)"
-#~ msgstr "Chyba pri spracovávaní %s (FindPkg)"
-
-#~ msgid "Error occurred while processing %s (CollectFileProvides)"
-#~ msgstr "Chyba pri spracovávaní %s (CollectFileProvides)"
-
-#~ msgid "Internal error, could not locate member"
-#~ msgstr "Vnútorná chyba, nedá sa nájsť člen"
-
-#~ msgid "Internal error, group '%s' has no installable pseudo package"
-#~ msgstr "Vnútorná chyba, skupina „%s“ nemá žiaden inštalovateľný pseudobalík"
-
-#~ msgid "Release file expired, ignoring %s (invalid since %s)"
-#~ msgstr "Platnosť súboru Release vypršala, ignoruje sa %s (neplatný od %s)"
+#~ "Použitie: apt-mark [voľby] {auto|manual} balík1 [balík2 ...]\n"
+#~ "\n"
+#~ "apt-mark je jednoduché rozhranie príkazového riadka na označovanie\n"
+#~ "balíkov ako manuálne alebo automaticky nainštalované.\n"
+#~ "Tiež dokáže označenia vypisovať.\n"
+#~ "\n"
+#~ "Príkazy:\n"
+#~ "   auto - Označí uvedené balíky ako automaticky nainštalované\n"
+#~ "   manual - Označí uvedené balíky ako manuálne nainštalované\n"
+#~ "\n"
+#~ "Voľby:\n"
+#~ "  -h  Tento text pomocníka.\n"
+#~ "  -q  Výstup vhodný do záznamu - bez indikátora priebehu\n"
+#~ "  -qq Nevypisovať nič, len chyby\n"
+#~ "  -s  Nevykonávať zmeny. Iba vypísať, čo by sa urobilo.\n"
+#~ "  -f  čítanie/zápis označenia auto/manálne v uvedenom súbore\n"
+#~ "  -c=? Načítať tento konfiguračný súbor\n"
+#~ "  -o=? Nastaviť ľubovoľný konfiguračnú voľbu, napr. -o dir::cache=/tmp\n"
+#~ "Ďalšie informácie nájdete na manuálových stránkach apt-mark(8) a apt.conf(5)."

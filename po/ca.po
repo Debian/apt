@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: apt 0.8.15\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-09-04 15:34+0200\n"
-"PO-Revision-Date: 2011-06-16 01:41+0200\n"
-"Last-Translator: Jordi Mallach <jordi@debian.org>\n"
+"PO-Revision-Date: 2012-09-07 13:17+0000\n"
+"Last-Translator: Jordi Mallach <jordi@canonical.com>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
-"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Launchpad-Export-Date: 2012-10-12 10:33+0000\n"
+"X-Generator: Launchpad (build 16130)\n"
+"Language: ca\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -97,8 +99,8 @@ msgid "Package file %s is out of sync."
 msgstr "El fitxer %s del paquet està desincronitzat."
 
 #: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1378
-#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:46
-#: cmdline/apt-mark.cc:93 cmdline/apt-mark.cc:219
+#: cmdline/apt-cache.cc:1380 cmdline/apt-cache.cc:1457 cmdline/apt-mark.cc:39
+#: cmdline/apt-mark.cc:86 cmdline/apt-mark.cc:162
 msgid "No packages found"
 msgstr "No s'han trobat paquets"
 
@@ -108,9 +110,10 @@ msgstr "Heu de donar com a mínim un patró de cerca"
 
 #: cmdline/apt-cache.cc:1357
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
-msgstr "Aquesta ordre és desfasada. Empreu «apt-mark showauto» en el seu lloc."
+msgstr ""
+"Aquesta ordre és desfasada. Empreu «apt-mark showauto» en el seu lloc."
 
-#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:510
+#: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:445
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "No s'ha trobat el paquet %s"
@@ -154,16 +157,15 @@ msgstr "  Etiqueta del paquet: "
 msgid "  Version table:"
 msgstr "  Taula de versió:"
 
-#: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3364 cmdline/apt-mark.cc:375
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
-#: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
+#: cmdline/apt-cache.cc:1679 cmdline/apt-cdrom.cc:199 cmdline/apt-config.cc:75
+#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:590
+#: cmdline/apt-get.cc:3247 cmdline/apt-internal-solver.cc:32
+#: cmdline/apt-mark.cc:266 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s per a %s compilat el %s %s\n"
 
 #: cmdline/apt-cache.cc:1686
-#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -199,45 +201,11 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
-"Forma d'ús: apt-cache [opcions] ordre\n"
-"    apt-cache [opcions] add fitxer1 [fitxer2 …]\n"
-"    apt-cache [opcions] showpkg paquet1 [paquet2 …]\n"
-"    apt-cache [opcions] showsrc paquet1 [paquet2 …]\n"
-"\n"
-"apt-cache és una eina de baix nivell emprada per consultar\n"
-"la informació dels fitxers binaris de memòria cau de l'APT.\n"
-"\n"
-"Ordres:\n"
-"   gencaches - Crea la memòria cau de paquets i fonts\n"
-"   showpkg - Mostra informació general d'un sol paquet\n"
-"   showsrc - Mostra un registre d'un paquet font\n"
-"   stats - Mostra algunes estadístiques bàsiques\n"
-"   dump - Mostra el fitxer sencer en un format concís\n"
-"   dumpavail - Imprimeix un fitxer «available» per sortida estàndard\n"
-"   unmet - Mostra dependències sense satisfer\n"
-"   search - Cerca un patró d'expressió regular a la llista de paquets\n"
-"   show - Mostra un registre llegible pel paquet\n"
-"   depends - Mostra informació de dependències (en cru) d'un paquet\n"
-"   rdepends - Mostra informació de dependències inverses d'un paquet\n"
-"   pkgnames - Llista els noms de tots els paquets del sistema\n"
-"   dotty - Genera gràfiques de paquets per al GraphViz\n"
-"   xvcg - Genera gràfiques de paquets per al xvcg\n"
-"   policy - Mostra la configuració de política\n"
-"\n"
-"Opcions:\n"
-"  -h   Aquest text d'ajuda.\n"
-"  -p=? La memòria cau de paquets.\n"
-"  -s=? La memòria cau de la font.\n"
-"  -q   Inhabilita l'indicador de progrés.\n"
-"  -i   Només mostra dependències importants amb l'opció «unmet».\n"
-"  -c=? Llegeix aquest fitxer de configuració.\n"
-"  -o=? Estableix una opció de conf arbitrària, p. ex. -o dir::cache=/tmp\n"
-"Vegeu les pàgines de manual apt-cache(8) i apt.conf(5) per a més "
-"informació.\n"
 
 #: cmdline/apt-cdrom.cc:79
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr "Doneu un nom per a aquest disc, com per exemple «Debian 5.0.3 Disk 1»"
+msgstr ""
+"Doneu un nom per a aquest disc, com per exemple «Debian 5.0.3 Disk 1»"
 
 #: cmdline/apt-cdrom.cc:94
 msgid "Please insert a Disc in the drive and press enter"
@@ -248,7 +216,7 @@ msgstr "Inseriu un disc en la unitat i premeu Intro"
 msgid "Failed to mount '%s' to '%s'"
 msgstr "No s'ha pogut muntar '%s' a '%s'"
 
-#: cmdline/apt-cdrom.cc:163
+#: cmdline/apt-cdrom.cc:164
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Repetiu aquest procés per a la resta de CD del vostre joc."
 
@@ -256,7 +224,7 @@ msgstr "Repetiu aquest procés per a la resta de CD del vostre joc."
 msgid "Arguments not in pairs"
 msgstr "Els arguments no són en parells"
 
-#: cmdline/apt-config.cc:87
+#: cmdline/apt-config.cc:81
 msgid ""
 "Usage: apt-config [options] command\n"
 "\n"
@@ -292,75 +260,75 @@ msgstr "S"
 msgid "N"
 msgstr ""
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
+#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:31
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "S'ha produït un error de compilació de l'expressió regular - %s"
 
-#: cmdline/apt-get.cc:260
+#: cmdline/apt-get.cc:257
 msgid "The following packages have unmet dependencies:"
 msgstr "Els següents paquets tenen dependències sense satisfer:"
 
-#: cmdline/apt-get.cc:350
+#: cmdline/apt-get.cc:347
 #, c-format
 msgid "but %s is installed"
 msgstr "però està instaŀlat %s"
 
-#: cmdline/apt-get.cc:352
+#: cmdline/apt-get.cc:349
 #, c-format
 msgid "but %s is to be installed"
 msgstr "però s'instaŀlarà %s"
 
-#: cmdline/apt-get.cc:359
+#: cmdline/apt-get.cc:356
 msgid "but it is not installable"
 msgstr "però no és instaŀlable"
 
-#: cmdline/apt-get.cc:361
+#: cmdline/apt-get.cc:358
 msgid "but it is a virtual package"
 msgstr "però és un paquet virtual"
 
-#: cmdline/apt-get.cc:364
+#: cmdline/apt-get.cc:361
 msgid "but it is not installed"
 msgstr "però no està instaŀlat"
 
-#: cmdline/apt-get.cc:364
+#: cmdline/apt-get.cc:361
 msgid "but it is not going to be installed"
 msgstr "però no serà instaŀlat"
 
-#: cmdline/apt-get.cc:369
+#: cmdline/apt-get.cc:366
 msgid " or"
 msgstr " o"
 
-#: cmdline/apt-get.cc:398
+#: cmdline/apt-get.cc:395
 msgid "The following NEW packages will be installed:"
 msgstr "S'instaŀlaran els paquets NOUS següents:"
 
-#: cmdline/apt-get.cc:424
+#: cmdline/apt-get.cc:421
 msgid "The following packages will be REMOVED:"
 msgstr "Es SUPRIMIRAN els paquets següents:"
 
-#: cmdline/apt-get.cc:446
+#: cmdline/apt-get.cc:443
 msgid "The following packages have been kept back:"
 msgstr "S'han mantingut els paquets següents:"
 
-#: cmdline/apt-get.cc:467
+#: cmdline/apt-get.cc:464
 msgid "The following packages will be upgraded:"
 msgstr "S'actualitzaran els paquets següents:"
 
-#: cmdline/apt-get.cc:488
+#: cmdline/apt-get.cc:485
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Es DESACTUALITZARAN els paquets següents:"
 
-#: cmdline/apt-get.cc:508
+#: cmdline/apt-get.cc:505
 msgid "The following held packages will be changed:"
 msgstr "Es canviaran els paquets retinguts següents:"
 
-#: cmdline/apt-get.cc:563
+#: cmdline/apt-get.cc:560
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (per %s) "
 
-#: cmdline/apt-get.cc:571
+#: cmdline/apt-get.cc:568
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -368,59 +336,59 @@ msgstr ""
 "AVÍS: Es suprimiran els paquets essencials següents.\n"
 "Això NO s'ha de fer a menys que sapigueu exactament el que esteu fent!"
 
-#: cmdline/apt-get.cc:602
+#: cmdline/apt-get.cc:599
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu actualitzats, %lu nous a instaŀlar, "
 
-#: cmdline/apt-get.cc:606
+#: cmdline/apt-get.cc:603
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu reinstaŀlats, "
 
-#: cmdline/apt-get.cc:608
+#: cmdline/apt-get.cc:605
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu desactualitzats, "
 
-#: cmdline/apt-get.cc:610
+#: cmdline/apt-get.cc:607
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu a suprimir i %lu no actualitzats.\n"
 
-#: cmdline/apt-get.cc:614
+#: cmdline/apt-get.cc:611
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu no instaŀlats o suprimits completament.\n"
 
-#: cmdline/apt-get.cc:635
+#: cmdline/apt-get.cc:633
 #, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
 msgstr "Nota: s'està seleccionant '%s' per a la tasca '%s'\n"
 
-#: cmdline/apt-get.cc:640
+#: cmdline/apt-get.cc:639
 #, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
 msgstr "Nota: s'està seleccionant '%s' per a l'expressió regular '%s'\n"
 
-#: cmdline/apt-get.cc:657
+#: cmdline/apt-get.cc:656
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "El paquet %s és un paquet virtual proveït per:\n"
 
-#: cmdline/apt-get.cc:668
+#: cmdline/apt-get.cc:667
 msgid " [Installed]"
 msgstr " [Instaŀlat]"
 
-#: cmdline/apt-get.cc:677
+#: cmdline/apt-get.cc:676
 msgid " [Not candidate version]"
-msgstr "[Versió no candidata]"
+msgstr " [Versió no candidata]"
 
-#: cmdline/apt-get.cc:679
+#: cmdline/apt-get.cc:678
 msgid "You should explicitly select one to install."
 msgstr "Necessiteu seleccionar-ne un explícitament per a instaŀlar-lo."
 
-#: cmdline/apt-get.cc:682
+#: cmdline/apt-get.cc:681
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -431,158 +399,158 @@ msgstr ""
 "en fa referència. Això normalment vol dir que el paquet falta,\n"
 "s'ha tornat obsolet o només és disponible des d'una altra font.\n"
 
-#: cmdline/apt-get.cc:700
+#: cmdline/apt-get.cc:699
 msgid "However the following packages replace it:"
 msgstr "Tot i que els següents paquets el reemplacen:"
 
-#: cmdline/apt-get.cc:712
+#: cmdline/apt-get.cc:711
 #, c-format
 msgid "Package '%s' has no installation candidate"
 msgstr "El paquet «%s» no té candidat d'instaŀlació"
 
-#: cmdline/apt-get.cc:725
+#: cmdline/apt-get.cc:722
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
 msgstr "Els paquets virtuals com «%s» no poden ser esborrats\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr "El paquet %s no està instaŀlat, així doncs no es suprimirà\n"
+msgstr ""
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "El paquet %s no està instaŀlat, així doncs no es suprimirà\n"
+msgstr ""
 
-#: cmdline/apt-get.cc:788
+#: cmdline/apt-get.cc:753
 #, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Nota: s'està seleccionant «%s» en lloc de «%s»\n"
 
-#: cmdline/apt-get.cc:818
+#: cmdline/apt-get.cc:783
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "S'està ometent %s, ja està instaŀlat i l'actualització no està establerta.\n"
 
-#: cmdline/apt-get.cc:822
+#: cmdline/apt-get.cc:787
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "S'està ometent '%s', no està instaŀlat i només es demana l'actualització.\n"
 
-#: cmdline/apt-get.cc:834
+#: cmdline/apt-get.cc:799
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "No es possible la reinstaŀlació del paquet %s, no es pot baixar.\n"
 
-#: cmdline/apt-get.cc:839
+#: cmdline/apt-get.cc:804
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s ja es troba en la versió més recent.\n"
 
-#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2157 cmdline/apt-mark.cc:68
+#: cmdline/apt-get.cc:823 cmdline/apt-get.cc:2103 cmdline/apt-mark.cc:61
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "S'ha marcat %s com instaŀlat manualment.\n"
 
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:849
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Versió seleccionada '%s' (%s) per a '%s'\n"
 
-#: cmdline/apt-get.cc:889
+#: cmdline/apt-get.cc:854
 #, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Versió seleccionada «%s» (%s) per a «%s» degut a «%s»\n"
 
-#: cmdline/apt-get.cc:1025
+#: cmdline/apt-get.cc:974
 msgid "Correcting dependencies..."
 msgstr "S'estan corregint les dependències…"
 
-#: cmdline/apt-get.cc:1028
+#: cmdline/apt-get.cc:977
 msgid " failed."
 msgstr " ha fallat."
 
-#: cmdline/apt-get.cc:1031
+#: cmdline/apt-get.cc:980
 msgid "Unable to correct dependencies"
 msgstr "No es poden corregir les dependències"
 
-#: cmdline/apt-get.cc:1034
+#: cmdline/apt-get.cc:983
 msgid "Unable to minimize the upgrade set"
 msgstr "No es pot minimitzar el joc de versions revisades"
 
-#: cmdline/apt-get.cc:1036
+#: cmdline/apt-get.cc:985
 msgid " Done"
 msgstr " Fet"
 
-#: cmdline/apt-get.cc:1040
+#: cmdline/apt-get.cc:989
 msgid "You might want to run 'apt-get -f install' to correct these."
 msgstr "Potser voldreu executar «apt-get -f install» per a corregir-ho."
 
-#: cmdline/apt-get.cc:1043
+#: cmdline/apt-get.cc:992
 msgid "Unmet dependencies. Try using -f."
 msgstr "Dependències sense satisfer. Proveu-ho emprant -f."
 
-#: cmdline/apt-get.cc:1068
+#: cmdline/apt-get.cc:1017
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "AVÍS: No es poden autenticar els següents paquets!"
 
-#: cmdline/apt-get.cc:1072
+#: cmdline/apt-get.cc:1021
 msgid "Authentication warning overridden.\n"
 msgstr "S'ha descartat l'avís d'autenticació.\n"
 
-#: cmdline/apt-get.cc:1079
+#: cmdline/apt-get.cc:1028
 msgid "Install these packages without verification [y/N]? "
 msgstr "Voleu instaŀlar aquests paquets sense verificar-los [s/N]? "
 
-#: cmdline/apt-get.cc:1081
+#: cmdline/apt-get.cc:1030
 msgid "Some packages could not be authenticated"
 msgstr "No s'ha pogut autenticar alguns paquets"
 
-#: cmdline/apt-get.cc:1090 cmdline/apt-get.cc:1251
+#: cmdline/apt-get.cc:1039 cmdline/apt-get.cc:1200
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Hi ha problemes i s'ha emprat -y sense --force-yes"
 
-#: cmdline/apt-get.cc:1131
+#: cmdline/apt-get.cc:1080
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 "S'ha produït un error intern, s'ha cridat a InstallPackages amb paquets "
 "trencats!"
 
-#: cmdline/apt-get.cc:1140
+#: cmdline/apt-get.cc:1089
 msgid "Packages need to be removed but remove is disabled."
 msgstr ""
 "Els paquets necessiten ser suprimits però s'ha inhabilitat la supressió."
 
-#: cmdline/apt-get.cc:1151
+#: cmdline/apt-get.cc:1100
 msgid "Internal error, Ordering didn't finish"
 msgstr "S'ha produït un error intern, l'ordenació no ha acabat"
 
-#: cmdline/apt-get.cc:1189
+#: cmdline/apt-get.cc:1138
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Què estrany… les mides no coincideixen, informeu a apt@packages.debian.org"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1196
+#: cmdline/apt-get.cc:1145
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "S'ha d'obtenir %sB/%sB d'arxius.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1201
+#: cmdline/apt-get.cc:1150
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "S'ha d'obtenir %sB d'arxius.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1208
+#: cmdline/apt-get.cc:1157
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
@@ -590,31 +558,31 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1213
+#: cmdline/apt-get.cc:1162
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Després d'aquesta operació s'alliberaran %sB d'espai en disc.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
-#: cmdline/apt-get.cc:2592
+#: cmdline/apt-get.cc:1177 cmdline/apt-get.cc:1180 cmdline/apt-get.cc:2523
+#: cmdline/apt-get.cc:2526
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "No s'ha pogut determinar l'espai lliure en %s"
 
-#: cmdline/apt-get.cc:1241
+#: cmdline/apt-get.cc:1190
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "No teniu prou espai lliure en %s."
 
-#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1277
+#: cmdline/apt-get.cc:1206 cmdline/apt-get.cc:1226
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "S'ha especificat «Trivial Only» però aquesta operació no és trivial."
 
-#: cmdline/apt-get.cc:1259
+#: cmdline/apt-get.cc:1208
 msgid "Yes, do as I say!"
 msgstr "Sí, fes el que et dic!"
 
-#: cmdline/apt-get.cc:1261
+#: cmdline/apt-get.cc:1210
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -625,28 +593,28 @@ msgstr ""
 "Per continuar escriviu la frase «%s»\n"
 " ?] "
 
-#: cmdline/apt-get.cc:1267 cmdline/apt-get.cc:1286
+#: cmdline/apt-get.cc:1216 cmdline/apt-get.cc:1235
 msgid "Abort."
 msgstr "Avortat."
 
-#: cmdline/apt-get.cc:1282
+#: cmdline/apt-get.cc:1231
 msgid "Do you want to continue [Y/n]? "
 msgstr "Voleu continuar [S/n]? "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1543
+#: cmdline/apt-get.cc:1303 cmdline/apt-get.cc:2588 apt-pkg/algorithms.cc:1492
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "No s'ha pogut obtenir %s  %s\n"
 
-#: cmdline/apt-get.cc:1372
+#: cmdline/apt-get.cc:1321
 msgid "Some files failed to download"
 msgstr "Alguns fitxers no s'han pogut baixar"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
+#: cmdline/apt-get.cc:1322 cmdline/apt-get.cc:2600
 msgid "Download complete and in download only mode"
 msgstr "Baixada completa i en mode de només baixada"
 
-#: cmdline/apt-get.cc:1379
+#: cmdline/apt-get.cc:1328
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -654,19 +622,20 @@ msgstr ""
 "No es poden baixar alguns arxius, proveu a executar apt-get update o "
 "intenteu-ho amb --fix-missing."
 
-#: cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1332
 msgid "--fix-missing and media swapping is not currently supported"
-msgstr "--fix-missing i els medi intercanviables actualment no estan suportats"
+msgstr ""
+"--fix-missing i els medi intercanviables actualment no estan suportats"
 
-#: cmdline/apt-get.cc:1388
+#: cmdline/apt-get.cc:1337
 msgid "Unable to correct missing packages."
 msgstr "No es poden corregir els paquets que falten."
 
-#: cmdline/apt-get.cc:1389
+#: cmdline/apt-get.cc:1338
 msgid "Aborting install."
 msgstr "S'està avortant la instaŀlació."
 
-#: cmdline/apt-get.cc:1417
+#: cmdline/apt-get.cc:1366
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -684,33 +653,33 @@ msgstr[1] ""
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "Nota: Això ho fa el dpkg automàticament i a propòsit."
 
-#: cmdline/apt-get.cc:1559
+#: cmdline/apt-get.cc:1508
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr "Ignora la versió objectiu «%s» no disponible del paquet «%s»"
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1540
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "S'està agafant «%s» com a paquet font en lloc de '%s'\n"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1629
+#: cmdline/apt-get.cc:1578
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr "Descarta la versió «%s» no disponible del paquet «%s»"
 
-#: cmdline/apt-get.cc:1645
+#: cmdline/apt-get.cc:1594
 msgid "The update command takes no arguments"
 msgstr "L'ordre update no pren arguments"
 
-#: cmdline/apt-get.cc:1711
+#: cmdline/apt-get.cc:1657
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 "Es suposa que no hauriem de suprimir coses, no es pot iniciar el supressor "
 "automàtic"
 
-#: cmdline/apt-get.cc:1815
+#: cmdline/apt-get.cc:1761
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -718,7 +687,7 @@ msgstr ""
 "Sembla que el supressor automàtic ha destruït alguna cosa que no deuria. Si "
 "us plau, envieu un informe d'error per a l'apt."
 
-#.
+#. 
 #. if (Packages == 1)
 #. {
 #. c1out << endl;
@@ -727,16 +696,17 @@ msgstr ""
 #. "the package is simply not installable and a bug report against\n"
 #. "that package should be filed.") << endl;
 #. }
-#.
-#: cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1987
+#. 
+#: cmdline/apt-get.cc:1764 cmdline/apt-get.cc:1933
 msgid "The following information may help to resolve the situation:"
 msgstr "La informació següent pot ajudar-vos a resoldre la situació:"
 
-#: cmdline/apt-get.cc:1822
+#: cmdline/apt-get.cc:1768
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "S'ha produït un error intern, el supressor automàtic ha trencat coses"
+msgstr ""
+"S'ha produït un error intern, el supressor automàtic ha trencat coses"
 
-#: cmdline/apt-get.cc:1829
+#: cmdline/apt-get.cc:1775
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -747,7 +717,7 @@ msgstr[0] ""
 msgstr[1] ""
 "Els paquets següents s'han instaŀlat automàticament i ja no són necessaris:"
 
-#: cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:1779
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -758,21 +728,20 @@ msgstr[1] ""
 "Els paquets %lu es van s'instaŀlar automàticament i ja no són necessaris:\n"
 
 #: cmdline/apt-get.cc:1835
-#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] "Empreu «apt-get autoremove» per a suprimir-los."
-msgstr[1] "Empreu «apt-get autoremove» per a suprimir-los."
+msgstr[0] ""
+msgstr[1] ""
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1800
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Error intern, AllUpgrade ha trencat coses"
 
-#: cmdline/apt-get.cc:1953
+#: cmdline/apt-get.cc:1899
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "Potser voldreu executar «apt-get -f install» per corregir-ho:"
 
-#: cmdline/apt-get.cc:1957
+#: cmdline/apt-get.cc:1903
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -780,7 +749,7 @@ msgstr ""
 "Dependències insatisfetes. Proveu amb «apt-get -f install» sense paquets (o "
 "especifiqueu una solució)."
 
-#: cmdline/apt-get.cc:1972
+#: cmdline/apt-get.cc:1918
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -792,33 +761,33 @@ msgstr ""
 "«unstable» i alguns paquets requerits encara no han estat creats o bé\n"
 "encara no els hi han introduït des d'«Incoming»."
 
-#: cmdline/apt-get.cc:1993
+#: cmdline/apt-get.cc:1939
 msgid "Broken packages"
 msgstr "Paquets trencats"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:1965
 msgid "The following extra packages will be installed:"
 msgstr "S'instaŀlaran els següents paquets extres:"
 
-#: cmdline/apt-get.cc:2109
+#: cmdline/apt-get.cc:2055
 msgid "Suggested packages:"
 msgstr "Paquets suggerits:"
 
-#: cmdline/apt-get.cc:2110
+#: cmdline/apt-get.cc:2056
 msgid "Recommended packages:"
 msgstr "Paquets recomanats:"
 
-#: cmdline/apt-get.cc:2152
+#: cmdline/apt-get.cc:2098
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "No s'ha pogut trobar el paquet %s"
 
-#: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:2105 cmdline/apt-mark.cc:63
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "S'ha marcat %s com instaŀlat automàticament.\n"
 
-#: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
+#: cmdline/apt-get.cc:2113 cmdline/apt-mark.cc:107
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
@@ -826,24 +795,24 @@ msgstr ""
 "Aquesta ordre és desfasada. Empreu «apt-mark auto» i «apt-mark manual» en el "
 "seu lloc."
 
-#: cmdline/apt-get.cc:2183
+#: cmdline/apt-get.cc:2129
 msgid "Calculating upgrade... "
 msgstr "S'està calculant l'actualització… "
 
-#: cmdline/apt-get.cc:2186 methods/ftp.cc:711 methods/connect.cc:115
+#: cmdline/apt-get.cc:2132 methods/ftp.cc:711 methods/connect.cc:115
 msgid "Failed"
 msgstr "Ha fallat"
 
-#: cmdline/apt-get.cc:2191
+#: cmdline/apt-get.cc:2137
 msgid "Done"
 msgstr "Fet"
 
-#: cmdline/apt-get.cc:2258 cmdline/apt-get.cc:2266
+#: cmdline/apt-get.cc:2204 cmdline/apt-get.cc:2212
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 "S'ha produït un error intern, el solucionador de problemes ha trencat coses"
 
-#: cmdline/apt-get.cc:2294 cmdline/apt-get.cc:2330
+#: cmdline/apt-get.cc:2240 cmdline/apt-get.cc:2276
 msgid "Unable to lock the download directory"
 msgstr "No és possible blocar el directori de descàrrega"
 
@@ -852,21 +821,21 @@ msgstr "No és possible blocar el directori de descàrrega"
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:2391
+#: cmdline/apt-get.cc:2327
 #, c-format
 msgid "Downloading %s %s"
 msgstr "S'està baixant %s %s"
 
-#: cmdline/apt-get.cc:2451
+#: cmdline/apt-get.cc:2385
 msgid "Must specify at least one package to fetch source for"
 msgstr "Haureu d'especificar un paquet de codi font per a baixar"
 
-#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
+#: cmdline/apt-get.cc:2425 cmdline/apt-get.cc:2737
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "No es pot trobar un paquet de fonts per a %s"
 
-#: cmdline/apt-get.cc:2508
+#: cmdline/apt-get.cc:2442
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -876,110 +845,104 @@ msgstr ""
 "versions «%s» a:\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2513
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2447
+#, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
-"Empreu:\n"
-"bzr get %s\n"
-"per a obtenir les últimes actualitzacions (possiblement no publicades) del "
-"paquet.\n"
 
-#: cmdline/apt-get.cc:2566
+#: cmdline/apt-get.cc:2500
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "S'està ometent el fitxer ja baixat «%s»\n"
 
-#: cmdline/apt-get.cc:2603
+#: cmdline/apt-get.cc:2537
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "No teniu prou espai lliure en %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2612
+#: cmdline/apt-get.cc:2546
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Es necessita baixar %sB/%sB d'arxius font.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2617
+#: cmdline/apt-get.cc:2551
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Es necessita baixar %sB d'arxius font.\n"
 
-#: cmdline/apt-get.cc:2623
+#: cmdline/apt-get.cc:2557
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Obtén el font %s\n"
 
-#: cmdline/apt-get.cc:2661
+#: cmdline/apt-get.cc:2595
 msgid "Failed to fetch some archives."
 msgstr "No s'ha pogut baixar alguns arxius."
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2626
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 "S'està ometent el desempaquetament de les fonts que ja ho estan en %s\n"
 
-#: cmdline/apt-get.cc:2704
+#: cmdline/apt-get.cc:2638
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "L'ordre de desempaquetar «%s» ha fallat.\n"
 
-#: cmdline/apt-get.cc:2705
+#: cmdline/apt-get.cc:2639
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Comproveu si el paquet «dpkgdev» està instaŀlat.\n"
 
-#: cmdline/apt-get.cc:2727
+#: cmdline/apt-get.cc:2661
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "L'ordre de construir «%s» ha fallat.\n"
 
-#: cmdline/apt-get.cc:2747
+#: cmdline/apt-get.cc:2681
 msgid "Child process failed"
 msgstr "Ha fallat el procés fill"
 
-#: cmdline/apt-get.cc:2766
+#: cmdline/apt-get.cc:2700
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "S'ha d'especificar un paquet per a verificar les dependències de construcció "
 "per a"
 
-#: cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2725
 #, c-format
 msgid ""
-"No architecture information available for %s. See apt.conf(5) APT::"
-"Architectures for setup"
+"No architecture information available for %s. See apt.conf(5) "
+"APT::Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
+#: cmdline/apt-get.cc:2742
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr ""
 "No es pot obtenir informació sobre les dependències de construcció per a %s"
 
-#: cmdline/apt-get.cc:2838
+#: cmdline/apt-get.cc:2762
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s no té dependències de construcció.\n"
 
-#: cmdline/apt-get.cc:3008
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2892
+#, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr ""
-"La dependència %s en %s no es pot satisfer per que no es pot trobar el "
-"paquet %s"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:2913
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -988,56 +951,52 @@ msgstr ""
 "La dependència %s en %s no es pot satisfer per que no es pot trobar el "
 "paquet %s"
 
-#: cmdline/apt-get.cc:3049
+#: cmdline/apt-get.cc:2936
 #, c-format
-msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
+msgid ""
+"Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "No s'ha pogut satisfer la dependència %s per a %s: El paquet instaŀlat %s és "
 "massa nou"
 
-#: cmdline/apt-get.cc:3088
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2975
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
-"La dependència %s per a %s no es pot satisfer per que cap versió del paquet "
-"%s pot satisfer els requeriments de versions"
 
-#: cmdline/apt-get.cc:3094
-#, fuzzy, c-format
+#: cmdline/apt-get.cc:2981
+#, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr ""
-"La dependència %s en %s no es pot satisfer per que no es pot trobar el "
-"paquet %s"
 
-#: cmdline/apt-get.cc:3117
+#: cmdline/apt-get.cc:3004
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "No s'ha pogut satisfer la dependència %s per a %s: %s"
 
-#: cmdline/apt-get.cc:3133
+#: cmdline/apt-get.cc:3020
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "No s'han pogut satisfer les dependències de construcció per a %s"
 
-#: cmdline/apt-get.cc:3138
+#: cmdline/apt-get.cc:3025
 msgid "Failed to process build dependencies"
 msgstr "No es poden processar les dependències de construcció"
 
-#: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
+#: cmdline/apt-get.cc:3118 cmdline/apt-get.cc:3130
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Registre de canvis per a %s (%s)"
 
-#: cmdline/apt-get.cc:3369
+#: cmdline/apt-get.cc:3252
 msgid "Supported modules:"
 msgstr "Mòduls suportats:"
 
-#: cmdline/apt-get.cc:3410
-#, fuzzy
+#: cmdline/apt-get.cc:3293
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1082,51 +1041,8 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
-"Forma d'ús:  apt-get [opcions] ordre\n"
-"             apt-get [opcions] install|remove paq1 [paq2 …]\n"
-"             apt-get [opcions] source paq1 [paq2 …]\n"
-"\n"
-"apt-get és una interfície de línia d'ordres simple per\n"
-"baixar i instaŀlar paquets. Les ordres més freqüents són\n"
-"«update» i «install».\n"
-"\n"
-"Ordres:\n"
-"   update - Obtén llistes noves dels paquets\n"
-"   upgrade - Realitza una actualització\n"
-"   install - Instaŀla nous paquets (el paquet és libc6, no libc6.deb)\n"
-"   remove - Suprimeix paquets\n"
-"   autoremove - Suprimeix automàticament tots els paquets en desús\n"
-"   purge - Suprimeix i purga paquets\n"
-"   source - Baixa arxius font\n"
-"   build-dep - Configura dependències de construcció pels paquets font\n"
-"   dist-upgrade - Actualitza la distribució, vegeu apt-get(8)\n"
-"   dselect-upgrade - Segueix les seleccions del dselect\n"
-"   clean - Suprimeix els fitxers d'arxiu baixats\n"
-"   autoclean - Suprimeix els fitxers d'arxiu antics baixats\n"
-"   check - Verifica que no hi hagi dependències trencades\n"
-"   changelog - Baixa i mostra el registre de canvis del paquet\n"
-"   download - Baixa el paquet binari al directori actual\n"
-"\n"
-"Opcions:\n"
-"  -h  Aquest text d'ajuda\n"
-"  -q  Sortida enregistrable - sense indicador de progrés\n"
-"  -qq Sense sortida, llevat dels errors\n"
-"  -d  Només baixa - NO instaŀles o desempaquetes arxius\n"
-"  -s  No actues. Realitza les ordres en mode de simulació\n"
-"  -y  Assumeix «Sí» per a totes les preguntes i no preguntes\n"
-"  -f  Intenta corregir un sistema amb dependències trencades\n"
-"  -m  Intenta continuar si no es troben els arxius\n"
-"  -u  Mostra també una llista dels paquets actualitzats\n"
-"  -b  Construeix el paquet font després de baixar-lo\n"
-"  -V  Mostra els números de versió detallats\n"
-"  -c=? Llegeix aquest fitxer de configuració\n"
-"  -o=? Estableix una opció de configuració arbitrària, p. ex.\n"
-"       -o dir::cache=/tmp\n"
-"Vegeu les pàgines de manual apt-get(8), sources.list(5) i apt.conf(5)\n"
-"per a obtenir més informació i opcions.\n"
-"                       Aquest APT té superpoders bovins.\n"
 
-#: cmdline/apt-get.cc:3575
+#: cmdline/apt-get.cc:3458
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1138,33 +1054,33 @@ msgstr ""
 "      Tingueu en ment que el bloqueig està desactivat,\n"
 "      per tant, no es depèn de la situació actual real."
 
-#: cmdline/acqprogress.cc:60
+#: cmdline/acqprogress.cc:59
 msgid "Hit "
 msgstr "Obj "
 
-#: cmdline/acqprogress.cc:84
+#: cmdline/acqprogress.cc:83
 msgid "Get:"
 msgstr "Bai:"
 
-#: cmdline/acqprogress.cc:115
+#: cmdline/acqprogress.cc:114
 msgid "Ign "
 msgstr "Ign "
 
-#: cmdline/acqprogress.cc:119
+#: cmdline/acqprogress.cc:118
 msgid "Err "
 msgstr "Err "
 
-#: cmdline/acqprogress.cc:140
+#: cmdline/acqprogress.cc:139
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "S'ha baixat %sB en %s (%sB/s)\n"
 
-#: cmdline/acqprogress.cc:230
+#: cmdline/acqprogress.cc:229
 #, c-format
 msgid " [Working]"
 msgstr " [Treballant]"
 
-#: cmdline/acqprogress.cc:286
+#: cmdline/acqprogress.cc:285
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -1175,48 +1091,47 @@ msgstr ""
 " «%s»\n"
 "en la unitat «%s» i premeu Intro\n"
 
-#: cmdline/apt-mark.cc:55
+#: cmdline/apt-mark.cc:48
 #, c-format
 msgid "%s can not be marked as it is not installed.\n"
 msgstr "%s no es pot marcar perquè no està instaŀlat.\n"
 
-#: cmdline/apt-mark.cc:61
+#: cmdline/apt-mark.cc:54
 #, c-format
 msgid "%s was already set to manually installed.\n"
 msgstr "%s ja estava marcat com instaŀlat manualment.\n"
 
-#: cmdline/apt-mark.cc:63
+#: cmdline/apt-mark.cc:56
 #, c-format
 msgid "%s was already set to automatically installed.\n"
 msgstr "%s ja estava marcat com instaŀlat automàticament.\n"
 
-#: cmdline/apt-mark.cc:228
+#: cmdline/apt-mark.cc:171
 #, c-format
 msgid "%s was already set on hold.\n"
 msgstr "%s ja estava mantingut.\n"
 
-#: cmdline/apt-mark.cc:230
+#: cmdline/apt-mark.cc:173
 #, c-format
 msgid "%s was already not hold.\n"
 msgstr "%s ja estava sense marcar com a mantingut.\n"
 
-#: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
+#: apt-pkg/contrib/fileutl.cc:691
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Esperava %s però no hi era"
 
-#: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
+#: cmdline/apt-mark.cc:187 cmdline/apt-mark.cc:209
 #, c-format
 msgid "%s set on hold.\n"
 msgstr "S'ha establert %s com a mantingut.\n"
 
-#: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
+#: cmdline/apt-mark.cc:189 cmdline/apt-mark.cc:214
 #, c-format
 msgid "Canceled hold on %s.\n"
 msgstr "S'ha canceŀlat la marca com a mantingut de %s.\n"
 
-#: cmdline/apt-mark.cc:332
+#: cmdline/apt-mark.cc:222
 msgid "Executing dpkg failed. Are you root?"
 msgstr "Ha fallat l'execució del dpkg. Sou el superusuari?"
 
@@ -1288,16 +1203,18 @@ msgstr "No es pot muntar el CD-ROM en %s, potser estigui encara en ús."
 msgid "Disk not found."
 msgstr "No s'ha trobat el disc"
 
-#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:273
+#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:271
 msgid "File not found"
 msgstr "Fitxer no trobat"
 
-#: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/bzip2.cc:143 methods/bzip2.cc:152 methods/copy.cc:46
+#: methods/gzip.cc:94 methods/gzip.cc:103 methods/rred.cc:530
+#: methods/rred.cc:539
 msgid "Failed to stat"
 msgstr "L'estat ha fallat"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/bzip2.cc:149 methods/copy.cc:83 methods/gzip.cc:100
+#: methods/rred.cc:536
 msgid "Failed to set modification time"
 msgstr "No s'ha pogut establir el temps de modificació"
 
@@ -1306,34 +1223,34 @@ msgid "Invalid URI, local URIS must not start with //"
 msgstr "URI no vàlid, els URI locals no han de començar per //"
 
 #. Login must be before getpeername otherwise dante won't work.
-#: methods/ftp.cc:173
+#: methods/ftp.cc:172
 msgid "Logging in"
 msgstr "S'està accedint a"
 
-#: methods/ftp.cc:179
+#: methods/ftp.cc:178
 msgid "Unable to determine the peer name"
 msgstr "No es pot determinar el nom de la màquina distant"
 
-#: methods/ftp.cc:184
+#: methods/ftp.cc:183
 msgid "Unable to determine the local name"
 msgstr "No es pot determinar el nom local"
 
-#: methods/ftp.cc:215 methods/ftp.cc:243
+#: methods/ftp.cc:214 methods/ftp.cc:242
 #, c-format
 msgid "The server refused the connection and said: %s"
 msgstr "El servidor ha rebutjat la nostra connexió i ha dit: %s"
 
-#: methods/ftp.cc:221
+#: methods/ftp.cc:220
 #, c-format
 msgid "USER failed, server said: %s"
 msgstr "USER ha fallat, el servidor ha dit: %s"
 
-#: methods/ftp.cc:228
+#: methods/ftp.cc:227
 #, c-format
 msgid "PASS failed, server said: %s"
 msgstr "PASS ha fallat, el servidor ha dit: %s"
 
-#: methods/ftp.cc:248
+#: methods/ftp.cc:247
 msgid ""
 "A proxy server was specified but no login script, Acquire::ftp::ProxyLogin "
 "is empty."
@@ -1341,44 +1258,41 @@ msgstr ""
 "S'ha especificat un servidor intermediari però no un script d'accés, "
 "Acquire::ftp::ProxyLogin està buit."
 
-#: methods/ftp.cc:276
+#: methods/ftp.cc:275
 #, c-format
 msgid "Login script command '%s' failed, server said: %s"
 msgstr "L'ordre «%s» de l'script d'accés ha fallat, el servidor ha dit: %s"
 
-#: methods/ftp.cc:302
+#: methods/ftp.cc:301
 #, c-format
 msgid "TYPE failed, server said: %s"
 msgstr "TYPE ha fallat, el servidor ha dit: %s"
 
-#: methods/ftp.cc:340 methods/ftp.cc:451 methods/rsh.cc:192 methods/rsh.cc:235
+#: methods/ftp.cc:339 methods/ftp.cc:450 methods/rsh.cc:190 methods/rsh.cc:233
 msgid "Connection timeout"
 msgstr "Temps de connexió finalitzat"
 
-#: methods/ftp.cc:346
+#: methods/ftp.cc:345
 msgid "Server closed the connection"
 msgstr "El servidor ha tancat la connexió"
 
-#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1274
-#: apt-pkg/contrib/fileutl.cc:1283 apt-pkg/contrib/fileutl.cc:1286
+#: methods/ftp.cc:348 apt-pkg/contrib/fileutl.cc:832 methods/rsh.cc:197
 msgid "Read error"
 msgstr "Error de lectura"
 
-#: methods/ftp.cc:356 methods/rsh.cc:206
+#: methods/ftp.cc:355 methods/rsh.cc:204
 msgid "A response overflowed the buffer."
 msgstr "Una resposta ha desbordat la memòria intermèdia."
 
-#: methods/ftp.cc:373 methods/ftp.cc:385
+#: methods/ftp.cc:372 methods/ftp.cc:384
 msgid "Protocol corruption"
 msgstr "Protocol corromput"
 
-#: methods/ftp.cc:457 methods/rred.cc:238 methods/rsh.cc:241
-#: apt-pkg/contrib/fileutl.cc:1372 apt-pkg/contrib/fileutl.cc:1381
-#: apt-pkg/contrib/fileutl.cc:1384 apt-pkg/contrib/fileutl.cc:1410
+#: methods/ftp.cc:456 apt-pkg/contrib/fileutl.cc:874 methods/rsh.cc:239
 msgid "Write error"
 msgstr "Error d'escriptura"
 
-#: methods/ftp.cc:696 methods/ftp.cc:702 methods/ftp.cc:737
+#: methods/ftp.cc:696 methods/ftp.cc:702 methods/ftp.cc:738
 msgid "Could not create a socket"
 msgstr "No s'ha pogut crear un sòcol"
 
@@ -1390,71 +1304,71 @@ msgstr "No s'ha pogut connectar amb el sòcol de dades, connexió finalitzada"
 msgid "Could not connect passive socket."
 msgstr "No s'ha pogut connectar amb el sòcol passiu."
 
-#: methods/ftp.cc:730
+#: methods/ftp.cc:731
 msgid "getaddrinfo was unable to get a listening socket"
 msgstr "gettaddrinfo no es pot obtenir un sòcol que escolte"
 
 # abastar? huh? jm
-#: methods/ftp.cc:744
+#: methods/ftp.cc:745
 msgid "Could not bind a socket"
 msgstr "No s'ha pogut vincular a un connector"
 
-#: methods/ftp.cc:748
+#: methods/ftp.cc:749
 msgid "Could not listen on the socket"
 msgstr "No s'ha pogut escoltar sobre el sòcol"
 
-#: methods/ftp.cc:755
+#: methods/ftp.cc:756
 msgid "Could not determine the socket's name"
 msgstr "No s'ha pogut determinar el nom del sòcol"
 
-#: methods/ftp.cc:787
+#: methods/ftp.cc:788
 msgid "Unable to send PORT command"
 msgstr "No es pot enviar l'ordre PORT"
 
-#: methods/ftp.cc:797
+#: methods/ftp.cc:798
 #, c-format
 msgid "Unknown address family %u (AF_*)"
 msgstr "La família d'adreces %u és desconeguda (AF_*)"
 
-#: methods/ftp.cc:806
+#: methods/ftp.cc:807
 #, c-format
 msgid "EPRT failed, server said: %s"
 msgstr "EPRT ha fallat, el servidor ha dit: %s"
 
-#: methods/ftp.cc:826
+#: methods/ftp.cc:827
 msgid "Data socket connect timed out"
 msgstr "S'ha esgotat el temps de connexió al sòcol de dades"
 
-#: methods/ftp.cc:833
+#: methods/ftp.cc:834
 msgid "Unable to accept connection"
 msgstr "No es pot acceptar la connexió"
 
-#: methods/ftp.cc:872 methods/http.cc:1035 methods/rsh.cc:311
+#: methods/ftp.cc:873 methods/http.cc:1031 methods/rsh.cc:309
 msgid "Problem hashing file"
 msgstr "Problema escollint el fitxer"
 
-#: methods/ftp.cc:885
+#: methods/ftp.cc:886
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
 msgstr "No és possible obtenir el fitxer, el servidor ha dit '%s'"
 
-#: methods/ftp.cc:900 methods/rsh.cc:330
+#: methods/ftp.cc:901 methods/rsh.cc:328
 msgid "Data socket timed out"
 msgstr "S'ha esgotat el temps d'espera per al sòcol de dades"
 
-#: methods/ftp.cc:930
+#: methods/ftp.cc:931
 #, c-format
 msgid "Data transfer failed, server said '%s'"
 msgstr "Ha fallat la transferència de dades, el servidor ha dit '%s'"
 
 #. Get the files information
-#: methods/ftp.cc:1007
+#: methods/ftp.cc:1008
 msgid "Query"
 msgstr "Consulta"
 
-#: methods/ftp.cc:1119
+#: methods/ftp.cc:1120
 msgid "Unable to invoke "
-msgstr "No es pot invocar"
+msgstr "No es pot invocar "
 
 #: methods/connect.cc:75
 #, c-format
@@ -1488,7 +1402,7 @@ msgstr "No s'ha pogut connectar amb %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:153 methods/rsh.cc:433
+#: methods/connect.cc:153 methods/rsh.cc:431
 #, c-format
 msgid "Connecting to %s"
 msgstr "S'està connectant amb %s"
@@ -1513,32 +1427,32 @@ msgstr "Ha passat alguna cosa estranya en resoldre '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "No es pot connectar amb %s:%s:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:172
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Error intern: La signatura és correcta, però no s'ha pogut determinar "
 "l'emprempta digital de la clau!"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:177
 msgid "At least one invalid signature was encountered."
 msgstr "S'ha trobat almenys una signatura invàlida."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:181
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
 "No s'ha pogut executar «gpgv» per a verificar la signatura (està instaŀlat "
 "el gpgv?)"
 
-#: methods/gpgv.cc:194
+#: methods/gpgv.cc:186
 msgid "Unknown error executing gpgv"
 msgstr "S'ha produït un error desconegut en executar el gpgv"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:220 methods/gpgv.cc:227
 msgid "The following signatures were invalid:\n"
 msgstr "Les signatures següents són invàlides:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:234
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1546,118 +1460,117 @@ msgstr ""
 "Les signatures següents no s'han pogut verificar perquè la clau pública no "
 "està disponible:\n"
 
-#: methods/gzip.cc:65
+#: methods/bzip2.cc:63 methods/gzip.cc:54
 msgid "Empty files can't be valid archives"
 msgstr "Els fitxers buits no poden ser arxius vàlids"
 
-#: methods/http.cc:394
+#: methods/http.cc:393
 msgid "Waiting for headers"
 msgstr "S'estan esperant les capçaleres"
 
-#: methods/http.cc:544
+#: methods/http.cc:547
 msgid "Bad header line"
 msgstr "Línia de capçalera incorrecta"
 
-#: methods/http.cc:569 methods/http.cc:576
+#: methods/http.cc:572 methods/http.cc:579
 msgid "The HTTP server sent an invalid reply header"
 msgstr "El servidor HTTP ha enviat una capçalera de resposta no vàlida"
 
-#: methods/http.cc:606
+#: methods/http.cc:608
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr "El servidor HTTP ha enviat una capçalera de Content-Length no vàlida"
 
-#: methods/http.cc:621
+#: methods/http.cc:623
 msgid "The HTTP server sent an invalid Content-Range header"
 msgstr "El servidor HTTP ha enviat una capçalera de Content-Range no vàlida"
 
-#: methods/http.cc:623
+#: methods/http.cc:625
 msgid "This HTTP server has broken range support"
 msgstr "Aquest servidor HTTP té el suport d'abast trencat"
 
-#: methods/http.cc:647
+#: methods/http.cc:649
 msgid "Unknown date format"
 msgstr "Format de la data desconegut"
 
-#: methods/http.cc:818
+#: methods/http.cc:808
 msgid "Select failed"
 msgstr "Ha fallat la selecció"
 
-#: methods/http.cc:823
+#: methods/http.cc:813
 msgid "Connection timed out"
 msgstr "Connexió finalitzada"
 
-#: methods/http.cc:846
+#: methods/http.cc:836
 msgid "Error writing to output file"
 msgstr "S'ha produït un error en escriure al fitxer de sortida"
 
-#: methods/http.cc:877
+#: methods/http.cc:867
 msgid "Error writing to file"
 msgstr "S'ha produït un error en escriure al fitxer"
 
-#: methods/http.cc:905
+#: methods/http.cc:895
 msgid "Error writing to the file"
 msgstr "S'ha produït un error en escriure al fitxer"
 
-#: methods/http.cc:919
+#: methods/http.cc:909
 msgid "Error reading from server. Remote end closed connection"
 msgstr ""
 "S'ha produït un error en llegir, el servidor remot ha tancat la connexió"
 
-#: methods/http.cc:921
+#: methods/http.cc:911
 msgid "Error reading from server"
 msgstr "S'ha produït un error en llegir des del servidor"
 
-#: methods/http.cc:1194
+#: methods/http.cc:1191
 msgid "Bad header data"
 msgstr "Capçalera de dades no vàlida"
 
-#: methods/http.cc:1211 methods/http.cc:1266
+#: methods/http.cc:1208 methods/http.cc:1263
 msgid "Connection failed"
 msgstr "Ha fallat la connexió"
 
-#: methods/http.cc:1358
+#: methods/http.cc:1355
 msgid "Internal error"
 msgstr "Error intern"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:465
-#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:400
-#: apt-pkg/contrib/fileutl.cc:513 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:109
-#: apt-pkg/init.cc:117 apt-pkg/clean.cc:36 apt-pkg/policy.cc:359
+#: apt-inst/extract.cc:465 apt-pkg/contrib/cdromutl.cc:183
+#: apt-pkg/contrib/fileutl.cc:344 apt-pkg/sourcelist.cc:208
+#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:456 apt-pkg/init.cc:108
+#: apt-pkg/init.cc:116 apt-pkg/clean.cc:36 apt-pkg/policy.cc:359
+#: methods/mirror.cc:95
 #, c-format
 msgid "Unable to read %s"
 msgstr "No es pot llegir %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:179
-#: apt-pkg/contrib/cdromutl.cc:213 apt-pkg/acquire.cc:491
-#: apt-pkg/acquire.cc:516 apt-pkg/clean.cc:42 apt-pkg/clean.cc:60
-#: apt-pkg/clean.cc:123
+#: apt-pkg/contrib/cdromutl.cc:179 apt-pkg/contrib/cdromutl.cc:213
+#: apt-pkg/acquire.cc:462 apt-pkg/acquire.cc:487 apt-pkg/clean.cc:42
+#: methods/mirror.cc:101
 #, c-format
 msgid "Unable to change to %s"
 msgstr "No es pot canviar a %s"
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
-#: methods/mirror.cc:280
+#: methods/mirror.cc:279
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr "No s'ha trobat el fitxer rèplica «%s»"
+msgstr "No s'ha trobat el fitxer rèplica «%s» "
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
-#: methods/mirror.cc:287
+#: methods/mirror.cc:286
 #, c-format
 msgid "Can not read mirror file '%s'"
 msgstr "No s'ha pogut llegir el fitxer rèplica «%s»"
 
-#: methods/mirror.cc:442
+#: methods/mirror.cc:441
 #, c-format
 msgid "[Mirror: %s]"
 msgstr "[Rèplica: %s]"
 
-#: methods/rred.cc:491
+#: methods/rred.cc:509
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
@@ -1666,7 +1579,7 @@ msgstr ""
 "No s'ha pogut apedaçar %s amb el mmap ni amb la utilització de la operació "
 "del fitxer - el pedaç sembla ser incorrecte"
 
-#: methods/rred.cc:496
+#: methods/rred.cc:514
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
@@ -1675,11 +1588,11 @@ msgstr ""
 "No s'ha pogut apedaçar %s amb el mmap (però no s'ha produït un error "
 "específic del mmap)  - el pedaç sembla ser incorrecte"
 
-#: methods/rsh.cc:99 ftparchive/multicompress.cc:168
+#: ftparchive/multicompress.cc:167 methods/rsh.cc:97
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "No s'ha pogut crear el conducte IPC al subprocés"
 
-#: methods/rsh.cc:338
+#: methods/rsh.cc:336
 msgid "Connection closed prematurely"
 msgstr "La connexió s'ha tancat prematurament"
 
@@ -1722,12 +1635,12 @@ msgstr ""
 msgid "Merging available information"
 msgstr "S'està fusionant la informació disponible"
 
-#: cmdline/apt-extracttemplates.cc:102
+#: cmdline/apt-extracttemplates.cc:100
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s no és un paquet DEB vàlid."
 
-#: cmdline/apt-extracttemplates.cc:236
+#: cmdline/apt-extracttemplates.cc:234
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1751,12 +1664,12 @@ msgstr ""
 "  -c=? Llegeix aquest fitxer de configuració\n"
 "  -o=? Estableix una opció de conf arbitrària, p.e. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1277
+#: cmdline/apt-extracttemplates.cc:269 apt-pkg/pkgcachegen.cc:1269
 #, c-format
 msgid "Unable to write to %s"
 msgstr "No es pot escriure en %s"
 
-#: cmdline/apt-extracttemplates.cc:313
+#: cmdline/apt-extracttemplates.cc:311
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "No es pot determinar la versió de debconf. Està instaŀlat debconf?"
 
@@ -1777,7 +1690,8 @@ msgstr "La llista d'extensions de les fonts és massa llarga"
 
 #: ftparchive/apt-ftparchive.cc:378
 msgid "Error writing header to contents file"
-msgstr "S'ha produït un error en escriure la capçalera al fitxer de continguts"
+msgstr ""
+"S'ha produït un error en escriure la capçalera al fitxer de continguts"
 
 #: ftparchive/apt-ftparchive.cc:408
 #, c-format
@@ -1874,17 +1788,17 @@ msgstr "No s'ha trobat cap selecció"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "No es troben alguns fitxers dins del grup de fitxers del paquet `%s'"
 
-#: ftparchive/cachedb.cc:47
+#: ftparchive/cachedb.cc:46
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "La base de dades està corrompuda, fitxer renomenat a %s.old"
 
-#: ftparchive/cachedb.cc:65
+#: ftparchive/cachedb.cc:64
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "La BD és vella, s'està intentant actualitzar %s"
 
-#: ftparchive/cachedb.cc:76
+#: ftparchive/cachedb.cc:75
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
@@ -1892,22 +1806,22 @@ msgstr ""
 "El format de la base de dades és invàlid. Si heu actualitzat des d'una "
 "versió més antiga de l'apt, suprimiu i torneu a crear la base de dades."
 
-#: ftparchive/cachedb.cc:81
+#: ftparchive/cachedb.cc:80
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "No es pot obrir el fitxer de DB %s: %s"
 
-#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210
+#: ftparchive/cachedb.cc:126 apt-inst/extract.cc:181 apt-inst/extract.cc:193
+#: apt-inst/extract.cc:210 apt-inst/deb/dpkgdb.cc:121
 #, c-format
 msgid "Failed to stat %s"
 msgstr "No es pot determinar l'estat de %s"
 
-#: ftparchive/cachedb.cc:249
+#: ftparchive/cachedb.cc:248
 msgid "Archive has no control record"
 msgstr "Arxiu sense registre de control"
 
-#: ftparchive/cachedb.cc:490
+#: ftparchive/cachedb.cc:489
 msgid "Unable to get a cursor"
 msgstr "No es pot aconseguir un cursor"
 
@@ -1996,82 +1910,81 @@ msgstr "  %s no té una entrada dominant de font\n"
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s no té una entrada dominant de binari\n"
 
-#: ftparchive/contents.cc:341 ftparchive/contents.cc:372
+#: ftparchive/contents.cc:339 ftparchive/contents.cc:370
 msgid "realloc - Failed to allocate memory"
 msgstr "realloc - No s'ha pogut assignar espai en memòria"
 
-#: ftparchive/override.cc:35 ftparchive/override.cc:143
+#: ftparchive/override.cc:34 ftparchive/override.cc:142
 #, c-format
 msgid "Unable to open %s"
 msgstr "No es pot obrir %s"
 
-#: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, fuzzy, c-format
+#: ftparchive/override.cc:60 ftparchive/override.cc:166
+#, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Línia predominant %s línia malformada %lu núm 1"
+msgstr ""
 
-#: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, fuzzy, c-format
+#: ftparchive/override.cc:74 ftparchive/override.cc:178
+#, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Línia predominant %s línia malformada %lu núm 2"
+msgstr ""
 
-#: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, fuzzy, c-format
+#: ftparchive/override.cc:88 ftparchive/override.cc:191
+#, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Línia predominant %s línia malformada %lu núm 3"
+msgstr ""
 
-#: ftparchive/override.cc:128 ftparchive/override.cc:202
+#: ftparchive/override.cc:127 ftparchive/override.cc:201
 #, c-format
 msgid "Failed to read the override file %s"
 msgstr "No s'ha pogut llegir la línia predominant del fitxer %s"
 
-#: ftparchive/multicompress.cc:70
+#: ftparchive/multicompress.cc:69
 #, c-format
 msgid "Unknown compression algorithm '%s'"
 msgstr "Algorisme de compressió desconegut '%s'"
 
-#: ftparchive/multicompress.cc:100
+#: ftparchive/multicompress.cc:99
 #, c-format
 msgid "Compressed output %s needs a compression set"
 msgstr "La sortida comprimida %s necessita un joc de compressió"
 
-#: ftparchive/multicompress.cc:189
+#: ftparchive/multicompress.cc:193
 msgid "Failed to create FILE*"
 msgstr "No s'ha pogut crear FILE*"
 
-#: ftparchive/multicompress.cc:192
+#: ftparchive/multicompress.cc:196
 msgid "Failed to fork"
 msgstr "No s'ha pogut bifurcar"
 
-#: ftparchive/multicompress.cc:206
+#: ftparchive/multicompress.cc:210
 msgid "Compress child"
 msgstr "Comprimeix el fil"
 
-#: ftparchive/multicompress.cc:229
+#: ftparchive/multicompress.cc:233
 #, c-format
 msgid "Internal error, failed to create %s"
 msgstr "S'ha produït un error intern, no s'ha pogut crear %s"
 
-#: ftparchive/multicompress.cc:304
+#: ftparchive/multicompress.cc:403
 msgid "IO to subprocess/file failed"
 msgstr "Ha fallat l'E/S del subprocés sobre el fitxer"
 
-#: ftparchive/multicompress.cc:342
+#: ftparchive/multicompress.cc:455
 msgid "Failed to read while computing MD5"
 msgstr "No s'ha pogut llegir mentre es calculava la suma MD5"
 
-#: ftparchive/multicompress.cc:358
+#: ftparchive/multicompress.cc:472
 #, c-format
 msgid "Problem unlinking %s"
 msgstr "S'ha trobat un problema treient l'enllaç %s"
 
-#: ftparchive/multicompress.cc:373 apt-inst/extract.cc:188
+#: ftparchive/multicompress.cc:487 apt-inst/extract.cc:188
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "No s'ha pogut canviar el nom de %s a %s"
 
 #: cmdline/apt-internal-solver.cc:37
-#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -2084,16 +1997,6 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
-"Forma d'ús: apt-extracttemplates fitxer1 [fitxer2 …]\n"
-"\n"
-"apt-extracttemplates és una eina per a extreure informació de\n"
-"configuració i plantilles dels paquets debian\n"
-"\n"
-"Opcions:\n"
-"  -h   Aquest text d'ajuda.\n"
-"  -t   Estableix el directori temporal\n"
-"  -c=? Llegeix aquest fitxer de configuració\n"
-"  -o=? Estableix una opció de conf arbitrària, p.e. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2200,12 +2103,12 @@ msgstr "Afegit doble d'una desviació %s -> %s"
 msgid "Duplicate conf file %s/%s"
 msgstr "Fitxer de conf. duplicat %s/%s"
 
-#: apt-inst/dirstream.cc:43 apt-inst/dirstream.cc:50 apt-inst/dirstream.cc:55
+#: apt-inst/dirstream.cc:43 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:55
 #, c-format
 msgid "Failed to write file %s"
 msgstr "No s'ha pogut escriure el fitxer %s"
 
-#: apt-inst/dirstream.cc:98 apt-inst/dirstream.cc:106
+#: apt-inst/dirstream.cc:100 apt-inst/dirstream.cc:108
 #, c-format
 msgid "Failed to close file %s"
 msgstr "Ha fallat el tancament del fitxer %s"
@@ -2262,23 +2165,24 @@ msgstr "El fitxer %s/%s sobreescriu al que està en el paquet %s"
 msgid "Unable to stat %s"
 msgstr "No es pot veure l'estat de %s"
 
-#: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:46
+#: apt-inst/deb/debfile.cc:42 apt-inst/deb/debfile.cc:47
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Aquest no és un arxiu DEB vàlid, falta el membre «%s»"
 
 #. FIXME: add data.tar.xz here - adding it now would require a Translation round for a very small gain
-#: apt-inst/deb/debfile.cc:55
+#: apt-inst/deb/debfile.cc:56
 #, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
-msgstr "Aquest no és un arxiu DEB vàlid, li manca el membre «%s», «%s» o «%s»"
+msgstr ""
+"Aquest no és un arxiu DEB vàlid, li manca el membre «%s», «%s» o «%s»"
 
-#: apt-inst/deb/debfile.cc:120
+#: apt-inst/deb/debfile.cc:157
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr "Error intern, no s'ha pogut localitzar al membre %s"
 
-#: apt-inst/deb/debfile.cc:214
+#: apt-inst/deb/debfile.cc:277
 msgid "Unparsable control file"
 msgstr "El fitxer de control no es pot analitzar"
 
@@ -2286,30 +2190,30 @@ msgstr "El fitxer de control no es pot analitzar"
 msgid "Can't mmap an empty file"
 msgstr "No es pot transferir un fitxer buit a memòria"
 
-#: apt-pkg/contrib/mmap.cc:111
+#: apt-pkg/contrib/mmap.cc:91
 #, c-format
 msgid "Couldn't duplicate file descriptor %i"
 msgstr "No s'ha pogut duplicar el descriptor del fitxer %i"
 
-#: apt-pkg/contrib/mmap.cc:119
-#, fuzzy, c-format
+#: apt-pkg/contrib/mmap.cc:99
+#, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "No s'ha pogut crear un mapa de memòria de %lu octets"
+msgstr ""
 
-#: apt-pkg/contrib/mmap.cc:146
+#: apt-pkg/contrib/mmap.cc:126
 msgid "Unable to close mmap"
 msgstr "No es pot tancar el mmap"
 
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+#: apt-pkg/contrib/mmap.cc:154 apt-pkg/contrib/mmap.cc:182
 msgid "Unable to synchronize mmap"
 msgstr "No es pot sincronitzar el mmap"
 
-#: apt-pkg/contrib/mmap.cc:290
+#: apt-pkg/contrib/mmap.cc:260
 #, c-format
 msgid "Couldn't make mmap of %lu bytes"
 msgstr "No s'ha pogut crear un mapa de memòria de %lu octets"
 
-#: apt-pkg/contrib/mmap.cc:322
+#: methods/http.cc:1016 apt-pkg/contrib/mmap.cc:293
 msgid "Failed to truncate file"
 msgstr "No s'ha pogut truncar el fitxer %s"
 
@@ -2322,7 +2226,7 @@ msgstr ""
 "No hi ha espai per al «Dynamic MMap». Incrementeu la mida d'APT::Cache-"
 "Start. Valor actual: %lu. (man 5 apt.conf)"
 
-#: apt-pkg/contrib/mmap.cc:440
+#: apt-pkg/contrib/mmap.cc:411
 #, c-format
 msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
@@ -2331,7 +2235,7 @@ msgstr ""
 "No s'ha pogut incrementar la mida del MMap ja que el limit de %lu bytes ja "
 "s'ha superat."
 
-#: apt-pkg/contrib/mmap.cc:443
+#: apt-pkg/contrib/mmap.cc:414
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
@@ -2339,87 +2243,89 @@ msgstr ""
 "està deshabilitat per l'usuari."
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:371
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%lid %lih %limin %lis"
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%lih %limin %lis"
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%limin %lis"
 msgstr "%limin %lis"
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:390
 #, c-format
 msgid "%lis"
 msgstr "%lis"
 
-#: apt-pkg/contrib/strutl.cc:1167
+#: apt-pkg/contrib/strutl.cc:1165
 #, c-format
 msgid "Selection %s not found"
 msgstr "No s'ha trobat la selecció %s"
 
-#: apt-pkg/contrib/configuration.cc:491
+#: apt-pkg/contrib/configuration.cc:468
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Abreujament de tipus no reconegut: «%c»"
 
-#: apt-pkg/contrib/configuration.cc:605
+#: apt-pkg/contrib/configuration.cc:526
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "S'està obrint el fitxer de configuració %s"
 
-#: apt-pkg/contrib/configuration.cc:773
+#: apt-pkg/contrib/configuration.cc:694
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Error sintàctic %s:%u: No comença el camp amb un nom."
 
-#: apt-pkg/contrib/configuration.cc:792
+#: apt-pkg/contrib/configuration.cc:713
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "Error sintàctic %s:%u: Etiqueta malformada"
 
-#: apt-pkg/contrib/configuration.cc:809
+#: apt-pkg/contrib/configuration.cc:730
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Error sintàctic %s:%u Text extra després del valor"
 
-#: apt-pkg/contrib/configuration.cc:849
+#: apt-pkg/contrib/configuration.cc:770
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "Error sintàctic %s:%u: Es permeten directrius només al nivell més alt"
+msgstr ""
+"Error sintàctic %s:%u: Es permeten directrius només al nivell més alt"
 
-#: apt-pkg/contrib/configuration.cc:856
+#: apt-pkg/contrib/configuration.cc:777
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Error sintàctic %s:%u: Hi ha masses fitxers include niats"
 
-#: apt-pkg/contrib/configuration.cc:860 apt-pkg/contrib/configuration.cc:865
+#: apt-pkg/contrib/configuration.cc:781 apt-pkg/contrib/configuration.cc:786
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Error sintàctic %s:%u: Inclusió des d'aquí"
 
-#: apt-pkg/contrib/configuration.cc:869
+#: apt-pkg/contrib/configuration.cc:790
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Error sintàctic %s:%u: Directriu no suportada «%s»"
 
-#: apt-pkg/contrib/configuration.cc:872
+#: apt-pkg/contrib/configuration.cc:793
 #, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgid ""
+"Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr ""
 "Error sintàctic %s:%u: la directiva clear requereix un arbre d'opcions com a "
 "argument"
 
-#: apt-pkg/contrib/configuration.cc:922
+#: apt-pkg/contrib/configuration.cc:843
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Error sintàctic %s:%u: Text extra al final del fitxer"
@@ -2439,43 +2345,43 @@ msgstr "%c%s… Fet"
 msgid "Command line option '%c' [from %s] is not known."
 msgstr "L'opció de la línia d'ordres «%c» [de %s] és desconeguda."
 
-#: apt-pkg/contrib/cmndline.cc:105 apt-pkg/contrib/cmndline.cc:114
-#: apt-pkg/contrib/cmndline.cc:122
+#: apt-pkg/contrib/cmndline.cc:104 apt-pkg/contrib/cmndline.cc:112
+#: apt-pkg/contrib/cmndline.cc:120
 #, c-format
 msgid "Command line option %s is not understood"
 msgstr "No s'entén l'opció de la línia d'ordres %s"
 
-#: apt-pkg/contrib/cmndline.cc:127
+#: apt-pkg/contrib/cmndline.cc:125
 #, c-format
 msgid "Command line option %s is not boolean"
 msgstr "No és lògica l'opció de la línia d'ordres %s"
 
-#: apt-pkg/contrib/cmndline.cc:168 apt-pkg/contrib/cmndline.cc:189
+#: apt-pkg/contrib/cmndline.cc:166 apt-pkg/contrib/cmndline.cc:187
 #, c-format
 msgid "Option %s requires an argument."
 msgstr "L'opció de la línia d'ordres %s precisa un paràmetre."
 
-#: apt-pkg/contrib/cmndline.cc:202 apt-pkg/contrib/cmndline.cc:208
+#: apt-pkg/contrib/cmndline.cc:200 apt-pkg/contrib/cmndline.cc:206
 #, c-format
 msgid "Option %s: Configuration item specification must have an =<val>."
 msgstr "Opció %s: Paràmetre de configuració ha de ser en la forma =<val>"
 
-#: apt-pkg/contrib/cmndline.cc:237
+#: apt-pkg/contrib/cmndline.cc:235
 #, c-format
 msgid "Option %s requires an integer argument, not '%s'"
 msgstr "L'opció %s precisa un paràmetre numèric, no '%s'"
 
-#: apt-pkg/contrib/cmndline.cc:268
+#: apt-pkg/contrib/cmndline.cc:266
 #, c-format
 msgid "Option '%s' is too long"
 msgstr "L'opció '%s' és massa llarga"
 
-#: apt-pkg/contrib/cmndline.cc:300
+#: apt-pkg/contrib/cmndline.cc:298
 #, c-format
 msgid "Sense %s is not understood, try true or false."
 msgstr "El sentit %s no s'entén, proveu «true» (vertader) o «false» (fals)."
 
-#: apt-pkg/contrib/cmndline.cc:350
+#: apt-pkg/contrib/cmndline.cc:348
 #, c-format
 msgid "Invalid operation %s"
 msgstr "Operació no vàlida %s"
@@ -2489,50 +2395,51 @@ msgstr "No es pot obtenir informació del punt de muntatge %s"
 msgid "Failed to stat the cdrom"
 msgstr "No s'ha pogut fer «stat» del cdrom"
 
-#: apt-pkg/contrib/fileutl.cc:93
+#: apt-pkg/contrib/fileutl.cc:1023
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Ha hagut un problema en tancar el fitxer gzip %s"
 
-#: apt-pkg/contrib/fileutl.cc:225
+#: apt-pkg/contrib/fileutl.cc:169
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 "No s'empren blocats per a llegir el fitxer de blocat de sols lectura %s"
 
-#: apt-pkg/contrib/fileutl.cc:230
+#: apt-pkg/contrib/fileutl.cc:174
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "No es pot resoldre el fitxer de blocat %s"
 
-#: apt-pkg/contrib/fileutl.cc:248
+#: apt-pkg/contrib/fileutl.cc:192
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "No s'empren blocats per al fitxer de blocat %s de muntar nfs"
 
-#: apt-pkg/contrib/fileutl.cc:252
+#: apt-pkg/contrib/fileutl.cc:196
 #, c-format
 msgid "Could not get lock %s"
 msgstr "No s'ha pogut blocar %s"
 
-#: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:506
+#: apt-pkg/contrib/fileutl.cc:336
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr "No es pot crear la llista de fitxers perquè «%s» no és un directori"
 
-#: apt-pkg/contrib/fileutl.cc:426
+#: apt-pkg/contrib/fileutl.cc:363
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr "S'està descartant «%s» al directori «%s» perquè no és un fitxer normal"
+msgstr ""
+"S'està descartant «%s» al directori «%s» perquè no és un fitxer normal"
 
-#: apt-pkg/contrib/fileutl.cc:444
+#: apt-pkg/contrib/fileutl.cc:381
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr ""
 "S'està descartant «%s» al directori «%s» perquè no té extensió del nom de "
 "fitxer"
 
-#: apt-pkg/contrib/fileutl.cc:453
+#: apt-pkg/contrib/fileutl.cc:390
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
@@ -2540,70 +2447,70 @@ msgstr ""
 "S'està descartant «%s» al directori «%s» perquè té una extensió del nom de "
 "fitxer invàlida"
 
-#: apt-pkg/contrib/fileutl.cc:840
+#: apt-pkg/contrib/fileutl.cc:703
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "El sub-procés %s ha rebut una violació de segment."
 
-#: apt-pkg/contrib/fileutl.cc:842
+#: apt-pkg/contrib/fileutl.cc:705
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "El sub-procés %s ha rebut un senyal %u."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:709
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "El sub-procés %s ha retornat un codi d'error (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:711
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "El sub-procés %s ha sortit inesperadament"
 
-#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:659
+#: apt-pkg/contrib/fileutl.cc:776 apt-pkg/indexcopy.cc:676
 #, c-format
 msgid "Could not open file %s"
 msgstr "No s'ha pogut obrir el fitxer %s"
 
-#: apt-pkg/contrib/fileutl.cc:1066
+#: apt-pkg/contrib/fileutl.cc:793
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "No s'ha pogut obrir el descriptor del fitxer %d"
 
-#: apt-pkg/contrib/fileutl.cc:1156
+#: ftparchive/multicompress.cc:284
 msgid "Failed to create subprocess IPC"
 msgstr "No s'ha pogut crear el subprocés IPC"
 
-#: apt-pkg/contrib/fileutl.cc:1212
+#: ftparchive/multicompress.cc:321
 msgid "Failed to exec compressor "
 msgstr "No s'ha pogut executar el compressor "
 
-#: apt-pkg/contrib/fileutl.cc:1309
-#, fuzzy, c-format
+#: apt-pkg/contrib/fileutl.cc:853
+#, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "llegits, falten %lu per llegir, però no queda res"
+msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:1398 apt-pkg/contrib/fileutl.cc:1420
-#, fuzzy, c-format
+#: apt-pkg/contrib/fileutl.cc:886
+#, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "escrits, falten %lu per escriure però no s'ha pogut"
+msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:1736
+#: apt-pkg/contrib/fileutl.cc:1026
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Ha hagut un problema en tancar el fitxer %s"
 
-#: apt-pkg/contrib/fileutl.cc:1748
+#: apt-pkg/contrib/fileutl.cc:1031
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Ha hagut un problema en reanomenar el fitxer %s a %s"
 
-#: apt-pkg/contrib/fileutl.cc:1759
+#: apt-pkg/contrib/fileutl.cc:1042
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Ha hagut un problema en desenllaçar el fitxer %s"
 
-#: apt-pkg/contrib/fileutl.cc:1774
+#: apt-pkg/contrib/fileutl.cc:1055
 msgid "Problem syncing the file"
 msgstr "Ha hagut un problema en sincronitzar el fitxer"
 
@@ -2620,9 +2527,8 @@ msgid "The package cache file is an incompatible version"
 msgstr "El fitxer de memòria cau de paquets és una versió incompatible"
 
 #: apt-pkg/pkgcache.cc:162
-#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "El fitxer de memòria cau de paquets està corromput"
+msgstr ""
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2689,38 +2595,38 @@ msgstr "opcional"
 msgid "extra"
 msgstr "extra"
 
-#: apt-pkg/depcache.cc:132 apt-pkg/depcache.cc:161
+#: apt-pkg/depcache.cc:130 apt-pkg/depcache.cc:159
 msgid "Building dependency tree"
 msgstr "S'està construint l'arbre de dependències"
 
-#: apt-pkg/depcache.cc:133
+#: apt-pkg/depcache.cc:131
 msgid "Candidate versions"
 msgstr "Versions candidates"
 
-#: apt-pkg/depcache.cc:162
+#: apt-pkg/depcache.cc:160
 msgid "Dependency generation"
 msgstr "Dependències que genera"
 
-#: apt-pkg/depcache.cc:182 apt-pkg/depcache.cc:215 apt-pkg/depcache.cc:219
+#: apt-pkg/depcache.cc:180 apt-pkg/depcache.cc:213 apt-pkg/depcache.cc:217
 msgid "Reading state information"
 msgstr "S'està llegint la informació de l'estat"
 
-#: apt-pkg/depcache.cc:244
+#: apt-pkg/depcache.cc:242
 #, c-format
 msgid "Failed to open StateFile %s"
 msgstr "No s'ha pogut obrir el fitxer d'estat %s"
 
-#: apt-pkg/depcache.cc:250
+#: apt-pkg/depcache.cc:248
 #, c-format
 msgid "Failed to write temporary StateFile %s"
 msgstr "No s'ha pogut escriure el fitxer d'estat temporal %s"
 
-#: apt-pkg/tagfile.cc:129
+#: apt-pkg/tagfile.cc:126
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "No es pot analitzar el fitxer del paquet %s (1)"
 
-#: apt-pkg/tagfile.cc:216
+#: apt-pkg/tagfile.cc:213
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "No es pot analitzar el fitxer del paquet %s (2)"
@@ -2783,7 +2689,7 @@ msgstr "Línia %lu malformada en la llista de fonts %s (analitzant dist)"
 msgid "Opening %s"
 msgstr "S'està obrint %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:447
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "La línia %u és massa llarga en la llista de fonts %s."
@@ -2798,7 +2704,7 @@ msgstr "La línia %u és malformada en la llista de fonts %s (tipus)"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "El tipus «%s» no és conegut en la línia %u de la llista de fonts %s"
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
+#: apt-pkg/packagemanager.cc:298 apt-pkg/packagemanager.cc:775
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2807,12 +2713,12 @@ msgstr ""
 "No s'ha pogut realitzar la configuració immediata de '%s'. Consulteu man 5 "
 "apt.conf, secció APT::Immediate-Configure per a més detalls. (%d)"
 
-#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, fuzzy, c-format
+#: apt-pkg/packagemanager.cc:437 apt-pkg/packagemanager.cc:467
+#, c-format
 msgid "Could not configure '%s'. "
-msgstr "No s'ha pogut obrir el fitxer «%s»"
+msgstr ""
 
-#: apt-pkg/packagemanager.cc:545
+#: apt-pkg/packagemanager.cc:507
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2829,14 +2735,14 @@ msgstr ""
 msgid "Index file type '%s' is not supported"
 msgstr "El tipus de fitxer índex «%s» no està suportat"
 
-#: apt-pkg/algorithms.cc:261
+#: apt-pkg/algorithms.cc:255
 #, c-format
 msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr ""
 "El paquet %s necessita ser reinstaŀlat, però no se li pot trobar un arxiu."
 
-#: apt-pkg/algorithms.cc:1223
+#: apt-pkg/algorithms.cc:1191
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2844,20 +2750,17 @@ msgstr ""
 "Error, pkgProblemResolver::Resolve ha generat pauses, això pot haver estat "
 "causat per paquets retinguts."
 
-#: apt-pkg/algorithms.cc:1225
+#: apt-pkg/algorithms.cc:1193
 msgid "Unable to correct problems, you have held broken packages."
 msgstr ""
 "No es poden corregir els problemes, teniu paquets retinguts que estan "
 "trencats."
 
-#: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
-#, fuzzy
+#: apt-pkg/algorithms.cc:1518 apt-pkg/algorithms.cc:1520
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
 msgstr ""
-"Alguns índex no s'han pogut baixar. S'han descartat, o en el seu lloc s'han "
-"emprat els antics."
 
 #: apt-pkg/acquire.cc:81
 #, c-format
@@ -2876,12 +2779,12 @@ msgstr "No es pot blocar el directori %s"
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:893
+#: apt-pkg/acquire.cc:864
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "S'està obtenint el fitxer %li de %li (falten %s)"
 
-#: apt-pkg/acquire.cc:895
+#: apt-pkg/acquire.cc:866
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "S'està obtenint el fitxer %li de %li"
@@ -2896,21 +2799,23 @@ msgstr "No s'ha pogut trobar el mètode de control %s."
 msgid "Method %s did not start correctly"
 msgstr "El mètode %s no s'ha iniciat correctament"
 
-#: apt-pkg/acquire-worker.cc:440
+#: apt-pkg/acquire-worker.cc:425
 #, c-format
-msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr "Inseriu el disc amb l'etiqueta: «%s» en la unitat «%s» i premeu Intro."
+msgid ""
+"Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgstr ""
+"Inseriu el disc amb l'etiqueta: «%s» en la unitat «%s» i premeu Intro."
 
-#: apt-pkg/init.cc:152
+#: apt-pkg/init.cc:151
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "El sistema d'empaquetament «%s» no està suportat"
 
-#: apt-pkg/init.cc:168
+#: apt-pkg/init.cc:167
 msgid "Unable to determine a suitable packaging system type"
 msgstr "No es pot determinar un tipus de sistema d'empaquetament adequat."
 
-#: apt-pkg/clean.cc:57
+#: apt-pkg/clean.cc:59
 #, c-format
 msgid "Unable to stat %s."
 msgstr "No es pot veure l'estat de %s."
@@ -2943,7 +2848,8 @@ msgstr ""
 #: apt-pkg/policy.cc:396
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
-msgstr "Registre no vàlid al fitxer de preferències %s, paquet sense capçalera"
+msgstr ""
+"Registre no vàlid al fitxer de preferències %s, paquet sense capçalera"
 
 #: apt-pkg/policy.cc:418
 #, c-format
@@ -2954,67 +2860,67 @@ msgstr "No s'ha entès el pin de tipus %s"
 msgid "No priority (or zero) specified for pin"
 msgstr "No hi ha prioritat especificada per al pin (o és zero)"
 
-#: apt-pkg/pkgcachegen.cc:85
+#: apt-pkg/pkgcachegen.cc:83
 msgid "Cache has an incompatible versioning system"
 msgstr "La memòria cau té un sistema de versions incompatible"
 
 #. TRANSLATOR: The first placeholder is a package name,
 #. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:211 apt-pkg/pkgcachegen.cc:277
-#: apt-pkg/pkgcachegen.cc:308 apt-pkg/pkgcachegen.cc:316
-#: apt-pkg/pkgcachegen.cc:358 apt-pkg/pkgcachegen.cc:362
-#: apt-pkg/pkgcachegen.cc:379 apt-pkg/pkgcachegen.cc:389
-#: apt-pkg/pkgcachegen.cc:393 apt-pkg/pkgcachegen.cc:397
-#: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
-#: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
-#: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, fuzzy, c-format
+#: apt-pkg/pkgcachegen.cc:209 apt-pkg/pkgcachegen.cc:275
+#: apt-pkg/pkgcachegen.cc:311 apt-pkg/pkgcachegen.cc:353
+#: apt-pkg/pkgcachegen.cc:357 apt-pkg/pkgcachegen.cc:374
+#: apt-pkg/pkgcachegen.cc:384 apt-pkg/pkgcachegen.cc:388
+#: apt-pkg/pkgcachegen.cc:392 apt-pkg/pkgcachegen.cc:413
+#: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:463
+#: apt-pkg/pkgcachegen.cc:494 apt-pkg/pkgcachegen.cc:508
+#, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "S'ha produït un error durant el processament de %s (FindPkg)"
+msgstr ""
 
-#: apt-pkg/pkgcachegen.cc:234
+#: apt-pkg/pkgcachegen.cc:232
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr ""
 "Uau, heu excedit el nombre de paquets que aquest APT és capaç de gestionar."
 
-#: apt-pkg/pkgcachegen.cc:237
+#: apt-pkg/pkgcachegen.cc:235
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr ""
 "Uau, heu excedit el nombre de versions que aquest APT és capaç de gestionar."
 
-#: apt-pkg/pkgcachegen.cc:240
+#: apt-pkg/pkgcachegen.cc:238
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr ""
 "Uau, heu excedit el nombre de descripcions que aquest APT és capaç de "
-"gestionar. "
+"gestionar."
 
-#: apt-pkg/pkgcachegen.cc:243
+#: apt-pkg/pkgcachegen.cc:241
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr ""
 "Uau, heu excedit el nombre de dependències que aquest APT és capaç de "
 "gestionar."
 
-#: apt-pkg/pkgcachegen.cc:523
+#: apt-pkg/pkgcachegen.cc:515
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr ""
 "No s'ha trobat el paquet %s %s en processar les dependències del fitxer"
 
-#: apt-pkg/pkgcachegen.cc:1088
+#: apt-pkg/pkgcachegen.cc:1080
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "No s'ha pogut llegir la llista de paquets font %s"
 
-#: apt-pkg/pkgcachegen.cc:1176 apt-pkg/pkgcachegen.cc:1280
-#: apt-pkg/pkgcachegen.cc:1286 apt-pkg/pkgcachegen.cc:1443
+#: apt-inst/deb/dpkgdb.cc:139 apt-pkg/pkgcachegen.cc:1168
+#: apt-pkg/pkgcachegen.cc:1272 apt-pkg/pkgcachegen.cc:1278
+#: apt-pkg/pkgcachegen.cc:1434
 msgid "Reading package lists"
 msgstr "S'està llegint la llista de paquets"
 
-#: apt-pkg/pkgcachegen.cc:1193
+#: apt-pkg/pkgcachegen.cc:1185
 msgid "Collecting File Provides"
 msgstr "S'estan recollint els fitxers que proveeixen"
 
-#: apt-pkg/pkgcachegen.cc:1385 apt-pkg/pkgcachegen.cc:1392
+#: apt-pkg/pkgcachegen.cc:1376 apt-pkg/pkgcachegen.cc:1383
 msgid "IO Error saving source cache"
 msgstr "Error d'E/S en desar la memòria cau de la font"
 
@@ -3023,16 +2929,16 @@ msgstr "Error d'E/S en desar la memòria cau de la font"
 msgid "rename failed, %s (%s -> %s)."
 msgstr "no s'ha pogut canviar el nom, %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:599
+#: apt-pkg/acquire-item.cc:640
 msgid "MD5Sum mismatch"
 msgstr "La suma MD5 no concorda"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1870
-#: apt-pkg/acquire-item.cc:2013
+#: apt-pkg/acquire-item.cc:911 apt-pkg/acquire-item.cc:1863
+#: apt-pkg/acquire-item.cc:2006
 msgid "Hash Sum mismatch"
 msgstr "La suma resum no concorda"
 
-#: apt-pkg/acquire-item.cc:1381
+#: apt-pkg/acquire-item.cc:1399
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
@@ -3041,28 +2947,28 @@ msgstr ""
 "No s'ha trobat l'entrada «%s» esperada, al fitxer Release (entrada errònia "
 "al sources.list o fitxer malformat)"
 
-#: apt-pkg/acquire-item.cc:1397
+#: apt-pkg/acquire-item.cc:1415
 #, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "No s'ha trobat la suma de comprovació per a «%s» al fitxer Release"
 
-#: apt-pkg/acquire-item.cc:1439
+#: apt-pkg/acquire-item.cc:1450
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "No hi ha cap clau pública disponible per als següents ID de clau:\n"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1488
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1499
+#: apt-pkg/acquire-item.cc:1510
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Distribució en conflicte: %s (s'esperava %s però s'ha obtingut %s)"
 
-#: apt-pkg/acquire-item.cc:1532
+#: apt-pkg/acquire-item.cc:1543
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3073,12 +2979,12 @@ msgstr ""
 "%s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1542 apt-pkg/acquire-item.cc:1547
+#: apt-pkg/acquire-item.cc:1553 apt-pkg/acquire-item.cc:1558
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "S'ha produït un error amb el GPG: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1646
+#: apt-pkg/acquire-item.cc:1650
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3088,7 +2994,7 @@ msgstr ""
 "significar que haureu d'arreglar aquest paquet manualment (segons "
 "arquitectura)."
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1709
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3097,7 +3003,7 @@ msgstr ""
 "No s'ha trobat un fitxer pel paquet %s. Això podria significar que haureu "
 "d'arreglar aquest paquet manualment."
 
-#: apt-pkg/acquire-item.cc:1764
+#: apt-pkg/acquire-item.cc:1768
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -3105,31 +3011,31 @@ msgstr ""
 "L'índex dels fitxers en el paquet està corromput. Fitxer no existent: camp "
 "per al paquet %s."
 
-#: apt-pkg/acquire-item.cc:1862
+#: apt-pkg/acquire-item.cc:1855
 msgid "Size mismatch"
 msgstr "La mida no concorda"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:61
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "No es pot analitzar el fitxer Release %s"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:71
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "No hi ha seccions al fitxer Release %s"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:105
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "No hi ha una entrada Hash al fitxer Release %s"
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:118
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "No hi ha una entrada 'Valid-Until' vàlida al fitxer Release %s"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:137
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "No hi ha una entrada 'date' al fitxer Release %s"
@@ -3139,7 +3045,7 @@ msgstr "No hi ha una entrada 'date' al fitxer Release %s"
 msgid "Vendor block %s contains no fingerprint"
 msgstr "El camp del proveïdor %s no té una empremta digital"
 
-#: apt-pkg/cdrom.cc:576
+#: apt-pkg/cdrom.cc:528
 #, c-format
 msgid ""
 "Using CD-ROM mount point %s\n"
@@ -3148,41 +3054,41 @@ msgstr ""
 "S'està utilitzant el punt de muntatge de CD-ROM %s\n"
 "S'està muntant el CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:682
+#: apt-pkg/cdrom.cc:537 apt-pkg/cdrom.cc:634
 msgid "Identifying.. "
-msgstr "S'està identificant…"
+msgstr "S'està identificant… "
 
-#: apt-pkg/cdrom.cc:613
+#: apt-pkg/cdrom.cc:565
 #, c-format
 msgid "Stored label: %s\n"
 msgstr "S'ha emmagatzemat l'etiqueta: %s\n"
 
-#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
+#: apt-pkg/cdrom.cc:574 apt-pkg/cdrom.cc:850
 msgid "Unmounting CD-ROM...\n"
 msgstr "S'esta desmuntant el CD-ROM…\n"
 
-#: apt-pkg/cdrom.cc:642
+#: apt-pkg/cdrom.cc:594
 #, c-format
 msgid "Using CD-ROM mount point %s\n"
 msgstr "S'està utilitzant el punt de muntatge de CD-ROM %s\n"
 
-#: apt-pkg/cdrom.cc:660
+#: apt-pkg/cdrom.cc:612
 msgid "Unmounting CD-ROM\n"
 msgstr "S'està desmuntant el CD-ROM\n"
 
-#: apt-pkg/cdrom.cc:665
+#: apt-pkg/cdrom.cc:617
 msgid "Waiting for disc...\n"
 msgstr "S'està esperant al disc…\n"
 
-#: apt-pkg/cdrom.cc:674
+#: apt-pkg/cdrom.cc:626
 msgid "Mounting CD-ROM...\n"
 msgstr "S'està muntant el CD-ROM…\n"
 
-#: apt-pkg/cdrom.cc:693
+#: apt-pkg/cdrom.cc:645
 msgid "Scanning disc for index files..\n"
 msgstr "S'està analitzant el disc per a fitxers d'índex…\n"
 
-#: apt-pkg/cdrom.cc:744
+#: apt-pkg/cdrom.cc:687
 #, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
@@ -3191,7 +3097,7 @@ msgstr ""
 "S'han trobat %zu índexos de paquets, %zu índexos de fonts, %zu indexos de "
 "traduccions i %zu signatures\n"
 
-#: apt-pkg/cdrom.cc:755
+#: apt-pkg/cdrom.cc:698
 msgid ""
 "Unable to locate any package files, perhaps this is not a Debian Disc or the "
 "wrong architecture?"
@@ -3199,16 +3105,16 @@ msgstr ""
 "No s'ha pogut localitzar cap fitxer del paquet, potser no és un disc de "
 "Debian o la arquitectura és incorrecta?"
 
-#: apt-pkg/cdrom.cc:782
+#: apt-pkg/cdrom.cc:725
 #, c-format
 msgid "Found label '%s'\n"
 msgstr "S'ha trobat l'etiqueta «%s»\n"
 
-#: apt-pkg/cdrom.cc:811
+#: apt-pkg/cdrom.cc:754
 msgid "That is not a valid name, try again.\n"
 msgstr "Aquest no és un nom vàlid, torneu-ho a provar.\n"
 
-#: apt-pkg/cdrom.cc:828
+#: apt-pkg/cdrom.cc:771
 #, c-format
 msgid ""
 "This disc is called: \n"
@@ -3217,89 +3123,89 @@ msgstr ""
 "El disc es diu:\n"
 "«%s»\n"
 
-#: apt-pkg/cdrom.cc:830
+#: apt-pkg/cdrom.cc:773
 msgid "Copying package lists..."
 msgstr "S'estan copiant les llistes de paquets…"
 
-#: apt-pkg/cdrom.cc:857
+#: apt-pkg/cdrom.cc:800
 msgid "Writing new source list\n"
 msgstr "S'està escrivint una nova llista de fonts\n"
 
-#: apt-pkg/cdrom.cc:865
+#: apt-pkg/cdrom.cc:808
 msgid "Source list entries for this disc are:\n"
 msgstr "Les entrades de la llista de fonts per a aquest disc són:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
+#: apt-pkg/indexcopy.cc:273 apt-pkg/indexcopy.cc:930
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "S'han escrit %i registres.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:275 apt-pkg/indexcopy.cc:932
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "S'han escrit %i registres, on falten %i fitxers.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
+#: apt-pkg/indexcopy.cc:278 apt-pkg/indexcopy.cc:935
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "S'han escrit %i registres, on hi ha %i fitxers no coincidents\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
+#: apt-pkg/indexcopy.cc:281 apt-pkg/indexcopy.cc:938
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
 "S'han escrit %i registres, on falten %i fitxers i hi ha %i fitxers no "
 "coincidents\n"
 
-#: apt-pkg/indexcopy.cc:515
+#: apt-pkg/indexcopy.cc:546
 #, c-format
 msgid "Can't find authentication record for: %s"
 msgstr "No s'ha pogut trobar el registre d'autenticatió per a: %s"
 
-#: apt-pkg/indexcopy.cc:521
+#: apt-pkg/indexcopy.cc:552
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "El resum no coincideix per a: %s"
 
-#: apt-pkg/indexcopy.cc:662
+#: apt-pkg/indexcopy.cc:680
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
 msgstr ""
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:692
+#: apt-pkg/indexcopy.cc:711
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "No s'ha instaŀlat cap clauer a %s."
 
-#: apt-pkg/cacheset.cc:403
+#: apt-pkg/cacheset.cc:342
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "No s'ha trobat la versió puntual «%s» per a «%s»"
 
-#: apt-pkg/cacheset.cc:406
+#: apt-pkg/cacheset.cc:345
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "No s'ha trobat la versió «%s» per a «%s»"
 
-#: apt-pkg/cacheset.cc:517
+#: apt-pkg/cacheset.cc:452
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "No s'ha pogut trobar la tasca «%s»"
 
-#: apt-pkg/cacheset.cc:523
+#: apt-pkg/cacheset.cc:459
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "No s'ha pogut trobar el paquet a través de l'expressió regular «%s»"
 
-#: apt-pkg/cacheset.cc:534
+#: apt-pkg/cacheset.cc:472
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 "No s'han pogut seleccionar les versions del paquet «%s» ja que és purament "
 "virtual"
 
-#: apt-pkg/cacheset.cc:541 apt-pkg/cacheset.cc:548
+#: apt-pkg/cacheset.cc:480 apt-pkg/cacheset.cc:488
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3308,21 +3214,21 @@ msgstr ""
 "No s'han pogut seleccionar la versió instaŀlada ni la candidata del paquet "
 "«%s» ja que no estan disponibles cap de les dues"
 
-#: apt-pkg/cacheset.cc:555
+#: apt-pkg/cacheset.cc:496
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "No s'ha pogut seleccionar la versió més nova del paquet «%s» ja que és "
 "purament virtual"
 
-#: apt-pkg/cacheset.cc:563
+#: apt-pkg/cacheset.cc:504
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "No s'ha pogut seleccionar la versió candidata del paquet %s ja que no té "
 "candidata"
 
-#: apt-pkg/cacheset.cc:571
+#: apt-pkg/cacheset.cc:512
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""
@@ -3333,127 +3239,127 @@ msgstr ""
 msgid "Send scenario to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:209
+#: apt-pkg/edsp.cc:213
 msgid "Send request to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:277
+#: apt-pkg/edsp.cc:281
 msgid "Prepare for receiving solution"
 msgstr ""
 
-#: apt-pkg/edsp.cc:284
+#: apt-pkg/edsp.cc:288
 msgid "External solver failed without a proper error message"
 msgstr ""
 
-#: apt-pkg/edsp.cc:555 apt-pkg/edsp.cc:558 apt-pkg/edsp.cc:563
+#: apt-pkg/edsp.cc:559 apt-pkg/edsp.cc:562 apt-pkg/edsp.cc:567
 msgid "Execute external solver"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:72
+#: apt-pkg/deb/dpkgpm.cc:70
 #, c-format
 msgid "Installing %s"
 msgstr "S'està instaŀlant %s"
 
-#: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:951
+#: apt-pkg/deb/dpkgpm.cc:71 apt-pkg/deb/dpkgpm.cc:865
 #, c-format
 msgid "Configuring %s"
 msgstr "S'està configurant el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:74 apt-pkg/deb/dpkgpm.cc:958
+#: apt-pkg/deb/dpkgpm.cc:72 apt-pkg/deb/dpkgpm.cc:872
 #, c-format
 msgid "Removing %s"
 msgstr "S'està suprimint el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:75
+#: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
 msgid "Completely removing %s"
 msgstr "S'ha suprimit completament %s"
 
-#: apt-pkg/deb/dpkgpm.cc:76
+#: apt-pkg/deb/dpkgpm.cc:74
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "Anotant la desaparició de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:77
+#: apt-pkg/deb/dpkgpm.cc:75
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "S'està executant l'activador de postinstaŀlació %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:704
+#: apt-pkg/deb/dpkgpm.cc:671
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Manca el directori «%s»"
 
-#: apt-pkg/deb/dpkgpm.cc:719 apt-pkg/deb/dpkgpm.cc:739
+#: apt-pkg/deb/dpkgpm.cc:686 apt-pkg/deb/dpkgpm.cc:706
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "No s'ha pogut obrir el fitxer «%s»"
 
-#: apt-pkg/deb/dpkgpm.cc:944
+#: apt-pkg/deb/dpkgpm.cc:858
 #, c-format
 msgid "Preparing %s"
 msgstr "S'està preparant el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:945
+#: apt-pkg/deb/dpkgpm.cc:859
 #, c-format
 msgid "Unpacking %s"
 msgstr "S'està desempaquetant %s"
 
-#: apt-pkg/deb/dpkgpm.cc:950
+#: apt-pkg/deb/dpkgpm.cc:864
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "S'està preparant per a configurar el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:952
+#: apt-pkg/deb/dpkgpm.cc:866
 #, c-format
 msgid "Installed %s"
 msgstr "S'ha instaŀlat el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:957
+#: apt-pkg/deb/dpkgpm.cc:871
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "S'està preparant per a la supressió del paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:959
+#: apt-pkg/deb/dpkgpm.cc:873
 #, c-format
 msgid "Removed %s"
 msgstr "S'ha suprimit el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:964
+#: apt-pkg/deb/dpkgpm.cc:878
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "S'està preparant per a suprimir completament el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:965
+#: apt-pkg/deb/dpkgpm.cc:879
 #, c-format
 msgid "Completely removed %s"
 msgstr "S'ha suprimit completament el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1208
+#: apt-pkg/deb/dpkgpm.cc:1110
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
-"No es pot escriure el registre, ha fallat openpty() (no s'ha muntat /dev/"
-"pts?)\n"
+"No es pot escriure el registre, ha fallat openpty() (no s'ha muntat "
+"/dev/pts?)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1238
+#: apt-pkg/deb/dpkgpm.cc:1140
 msgid "Running dpkg"
 msgstr "S'està executant dpkg"
 
-#: apt-pkg/deb/dpkgpm.cc:1410
+#: apt-pkg/deb/dpkgpm.cc:1319
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1472
+#: apt-pkg/deb/dpkgpm.cc:1376
 msgid "No apport report written because MaxReports is reached already"
 msgstr "No s'ha escrit cap informe perquè ja s'ha superat MaxReports"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1477
+#: apt-pkg/deb/dpkgpm.cc:1381
 msgid "dependency problems - leaving unconfigured"
 msgstr "S'han produït problemes de depències, es deixa sense configurar"
 
-#: apt-pkg/deb/dpkgpm.cc:1479
+#: apt-pkg/deb/dpkgpm.cc:1383
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3461,7 +3367,7 @@ msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica que és un error "
 "consequent de una fallida anterior."
 
-#: apt-pkg/deb/dpkgpm.cc:1485
+#: apt-pkg/deb/dpkgpm.cc:1389
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3469,7 +3375,7 @@ msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica una fallida per "
 "disc ple"
 
-#: apt-pkg/deb/dpkgpm.cc:1492
+#: apt-pkg/deb/dpkgpm.cc:1396
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3477,16 +3383,13 @@ msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica una fallida per "
 "falta de memòria"
 
-#: apt-pkg/deb/dpkgpm.cc:1499 apt-pkg/deb/dpkgpm.cc:1505
-#, fuzzy
+#: apt-pkg/deb/dpkgpm.cc:1403 apt-pkg/deb/dpkgpm.cc:1409
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
-"No s'ha escrit cap informe perquè el missatge d'error indica una fallida per "
-"disc ple"
 
-#: apt-pkg/deb/dpkgpm.cc:1526
+#: apt-pkg/deb/dpkgpm.cc:1430
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
@@ -3515,237 +3418,163 @@ msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
 "S'ha interromput el dpkg, harieu d'executar manualment «%s» per a corregir "
-"el problema."
+"el problema. "
 
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "No blocat"
 
-#~ msgid "Skipping nonexistent file %s"
-#~ msgstr "S'està ometent el fitxer %s que no existeix"
+#, c-format
+#~ msgid "Couldn't open pipe for %s"
+#~ msgstr "No s'ha pogut obrir un conducte per a %s"
 
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "No hi ha espai per al «Dynamic MMap». Incrementeu la mida d'APT::Cache-"
-#~ "Limit. Valor actual: %lu. (man 5 apt.conf)"
+#~ msgid "Failed to locate a valid control file"
+#~ msgstr "No s'ha trobat un fitxer de control vàlid"
 
-#~ msgid "Failed to remove %s"
-#~ msgstr "No es pot suprimir %s"
+#, c-format
+#~ msgid "Couldn't change to %s"
+#~ msgstr "No s'ha pogut canviar a %s"
 
-#~ msgid "Unable to create %s"
-#~ msgstr "No es pot crear %s"
+#, c-format
+#~ msgid "Error parsing MD5. Offset %lu"
+#~ msgstr "S'ha produït un error en analitzar la suma MD5. Desplaçament %lu"
 
-#~ msgid "Failed to stat %sinfo"
-#~ msgstr "No s'ha pogut fer «stat» de %sinfo"
+#, c-format
+#~ msgid "Bad ConfFile section in the status file. Offset %lu"
+#~ msgstr "Secció ConfFile dolenta al fitxer d'estat. Desplaçament %lu"
+
+#, c-format
+#~ msgid "Failed to find a Package: header, offset %lu"
+#~ msgstr "No s'ha trobat una capçalera Package:, desplaçament %lu"
+
+#~ msgid "The pkg cache must be initialized first"
+#~ msgstr "Primer s'ha d'inicialitzar la memòria cau d'aquest paquet"
+
+#~ msgid "Internal error adding a diversion"
+#~ msgstr "S'ha produït un error intern en afegir una desviació"
+
+#, c-format
+#~ msgid "Invalid line in the diversion file: %s"
+#~ msgstr "Línia no vàlida al fitxer de desviació: %s"
+
+#~ msgid "The diversion file is corrupted"
+#~ msgstr "El fitxer de desviació està corrupte"
+
+#, c-format
+#~ msgid "Failed to open the diversions file %sdiversions"
+#~ msgstr "S'ha produït un error en obrir el fitxer de desviació %sdiversions"
+
+#~ msgid "Internal error getting a node"
+#~ msgstr "S'ha produït un error en obtenir un node"
+
+#, c-format
+#~ msgid "Failed reading the list file %sinfo/%s"
+#~ msgstr "No s'ha pogut llegir la llista del fitxer %sinfo/%s"
+
+#~ msgid "Reading file listing"
+#~ msgstr "S'està llegint el llistat de fitxers"
+
+#~ msgid "Internal error getting a package name"
+#~ msgstr "S'ha produït un error intern en obtenir un nom de paquet"
 
 #~ msgid "The info and temp directories need to be on the same filesystem"
 #~ msgstr ""
 #~ "La info i els directoris temp necessiten estar en el mateix sistema de "
 #~ "fitxers"
 
+#, c-format
+#~ msgid "Failed to stat %sinfo"
+#~ msgstr "No s'ha pogut fer «stat» de %sinfo"
+
+#, c-format
+#~ msgid "Unable to create %s"
+#~ msgstr "No es pot crear %s"
+
+#~ msgid "Use 'apt-get autoremove' to remove them."
+#~ msgstr "Empreu «apt-get autoremove» per a suprimir-los."
+
+#, c-format
+#~ msgid "Failed to remove %s"
+#~ msgstr "No es pot suprimir %s"
+
+#, c-format
+#~ msgid "Read error from %s process"
+#~ msgstr "S'ha produït un error en llegir des del procés %s"
+
+#, c-format
+#~ msgid "Got a single header line over %u chars"
+#~ msgstr "S'ha obtingut una capçalera d'una sola línea de més de %u caràcters"
+
+#, c-format
+#~ msgid ""
+#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-Limit. "
+#~ "Current value: %lu. (man 5 apt.conf)"
+#~ msgstr ""
+#~ "No hi ha espai per al «Dynamic MMap». Incrementeu la mida d'APT::Cache-"
+#~ "Limit. Valor actual: %lu. (man 5 apt.conf)"
+
+#, c-format
 #~ msgid "Failed to change to the admin dir %sinfo"
 #~ msgstr "No s'ha pogut canviar al directori d'administració %sinfo"
 
-#~ msgid "Internal error getting a package name"
-#~ msgstr "S'ha produït un error intern en obtenir un nom de paquet"
+#, c-format
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "S'està ometent el fitxer %s que no existeix"
 
-#~ msgid "Reading file listing"
-#~ msgstr "S'està llegint el llistat de fitxers"
+#, c-format
+#~ msgid "Package %s is not installed, so not removed\n"
+#~ msgstr "El paquet %s no està instaŀlat, així doncs no es suprimirà\n"
 
+#~ msgid "Note: This is done automatic and on purpose by dpkg."
+#~ msgstr "Nota: Això ho fa el dpkg automàticament i a propòsit."
+
+#~ msgid ""
+#~ "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
+#~ "\n"
+#~ "apt-mark is a simple command line interface for marking packages\n"
+#~ "as manual or automatical installed. It can also list marks.\n"
+#~ "\n"
+#~ "Commands:\n"
+#~ "   auto - Mark the given packages as automatically installed\n"
+#~ "   manual - Mark the given packages as manually installed\n"
+#~ "\n"
+#~ "Options:\n"
+#~ "  -h  This help text.\n"
+#~ "  -q  Loggable output - no progress indicator\n"
+#~ "  -qq No output except for errors\n"
+#~ "  -s  No-act. Just prints what would be done.\n"
+#~ "  -f  read/write auto/manual marking in the given file\n"
+#~ "  -c=? Read this configuration file\n"
+#~ "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
+#~ "See the apt-mark(8) and apt.conf(5) manual pages for more information."
+#~ msgstr ""
+#~ "Forma d'ús: apt-mark [opcions] {auto|manual} paq1 [paq2 …]\n"
+#~ "\n"
+#~ "apt-mark és una interfície simple de la línia d'ordres per a marcar\n"
+#~ "paquets com a instaŀlats automàticament o manual. També pot llistar\n"
+#~ "les marques.\n"
+#~ "\n"
+#~ "Ordres:\n"
+#~ "\n"
+#~ "    auto - Marca els paquets donats com a instaŀlats automàticament\n"
+#~ "    manual - Marca els paquets donats com a instaŀlats manualment\n"
+#~ "\n"
+#~ "Opcions:\n"
+#~ "  -h   Aquest text d'ajuda.\n"
+#~ "  -q   Sortida enregistrable - sense indicador de progrés\n"
+#~ "  -qq  Sense sortida, llevat dels errors\n"
+#~ "  -s   No actues. Mostra només què es faria.\n"
+#~ "  -f   Llegeix/escriu les marques auto/manual emprant el fitxer donat\n"
+#~ "  -c=? Llegeix aquest fitxer de configuració\n"
+#~ "  -o=? Estableix una opció de configuració, p. ex: -o dir::cache=/tmp\n"
+#~ "Vegeu les pàgines de manual apt-mark(8) i apt.conf(5) per a més informació."
+
+#, c-format
 #~ msgid ""
 #~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
 #~ "then make it empty and immediately re-install the same version of the "
 #~ "package!"
 #~ msgstr ""
-#~ "No s'ha pogut obrir la llista del fitxer «%sinfo/%s». Si no podeu "
-#~ "restaurar aquest fitxer, creeu-lo buit i torneu a instaŀlar immediatament "
-#~ "la mateixa versió del paquet!"
-
-#~ msgid "Failed reading the list file %sinfo/%s"
-#~ msgstr "No s'ha pogut llegir la llista del fitxer %sinfo/%s"
-
-#~ msgid "Internal error getting a node"
-#~ msgstr "S'ha produït un error en obtenir un node"
-
-#~ msgid "Failed to open the diversions file %sdiversions"
-#~ msgstr "S'ha produït un error en obrir el fitxer de desviació %sdiversions"
-
-#~ msgid "The diversion file is corrupted"
-#~ msgstr "El fitxer de desviació està corrupte"
-
-#~ msgid "Invalid line in the diversion file: %s"
-#~ msgstr "Línia no vàlida al fitxer de desviació: %s"
-
-#~ msgid "Internal error adding a diversion"
-#~ msgstr "S'ha produït un error intern en afegir una desviació"
-
-#~ msgid "The pkg cache must be initialized first"
-#~ msgstr "Primer s'ha d'inicialitzar la memòria cau d'aquest paquet"
-
-#~ msgid "Failed to find a Package: header, offset %lu"
-#~ msgstr "No s'ha trobat una capçalera Package:, desplaçament %lu"
-
-#~ msgid "Bad ConfFile section in the status file. Offset %lu"
-#~ msgstr "Secció ConfFile dolenta al fitxer d'estat. Desplaçament %lu"
-
-#~ msgid "Error parsing MD5. Offset %lu"
-#~ msgstr "S'ha produït un error en analitzar la suma MD5. Desplaçament %lu"
-
-#~ msgid "Couldn't change to %s"
-#~ msgstr "No s'ha pogut canviar a %s"
-
-#~ msgid "Failed to locate a valid control file"
-#~ msgstr "No s'ha trobat un fitxer de control vàlid"
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "No s'ha pogut obrir un conducte per a %s"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "S'ha produït un error en llegir des del procés %s"
-
-#~ msgid "Got a single header line over %u chars"
-#~ msgstr "S'ha obtingut una capçalera d'una sola línea de més de %u caràcters"
-
-#~ msgid "Note: This is done automatic and on purpose by dpkg."
-#~ msgstr "Nota: Això ho fa el dpkg automàticament i a propòsit."
-
-#~ msgid "Malformed override %s line %lu #1"
-#~ msgstr "Línia predominant %s línia malformada %lu núm 1"
-
-#~ msgid "Malformed override %s line %lu #2"
-#~ msgstr "Línia predominant %s línia malformada %lu núm 2"
-
-#~ msgid "Malformed override %s line %lu #3"
-#~ msgstr "Línia predominant %s línia malformada %lu núm 3"
-
-#~ msgid "decompressor"
-#~ msgstr "decompressor"
-
-#~ msgid "read, still have %lu to read but none left"
-#~ msgstr "llegits, falten %lu per llegir, però no queda res"
-
-#~ msgid "write, still have %lu to write but couldn't"
-#~ msgstr "escrits, falten %lu per escriure però no s'ha pogut"
-
-#~ msgid ""
-#~ "Could not perform immediate configuration on already unpacked '%s'. "
-#~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
-#~ msgstr ""
-#~ "No s'ha pogut realitzar la configuració immediata de '%s' ja "
-#~ "desempaquetat. Consulteu man 5 apt.conf, secció APT::Immediate-Configure "
-#~ "per a més detalls."
-
-#~ msgid "Error occurred while processing %s (NewPackage)"
-#~ msgstr "S'ha produït un error durant el processament de %s (NewPackage)"
-
-#~ msgid "Error occurred while processing %s (UsePackage1)"
-#~ msgstr "S'ha produït un error durant el processament de %s (UsePackage1)"
-
-#~ msgid "Error occurred while processing %s (NewFileDesc1)"
-#~ msgstr "S'ha produït un error durant el processament de %s (NewFileDesc1)"
-
-#~ msgid "Error occurred while processing %s (UsePackage2)"
-#~ msgstr "S'ha produït un error durant el processament de %s (UsePackage2)"
-
-#~ msgid "Error occurred while processing %s (NewFileVer1)"
-#~ msgstr "S'ha produït un error durant el processament de %s (NewFileVer1)"
-
-#~ msgid "Error occurred while processing %s (NewVersion%d)"
-#~ msgstr "S'ha produït un error durant el processament de %s (NewVersion%d)"
-
-#~ msgid "Error occurred while processing %s (UsePackage3)"
-#~ msgstr "S'ha produït un error durant el processament de %s (UsePackage3)"
-
-#~ msgid "Error occurred while processing %s (NewFileDesc2)"
-#~ msgstr "S'ha produït un error durant el processament de %s (NewFileDesc2)"
-
-#~ msgid "Error occurred while processing %s (FindPkg)"
-#~ msgstr "S'ha produït un error durant el processament de %s (FindPkg)"
-
-#~ msgid "Error occurred while processing %s (CollectFileProvides)"
-#~ msgstr ""
-#~ "S'ha produït un error durant el processament de %s (CollectFileProvides)"
-
-#~ msgid "Internal error, could not locate member"
-#~ msgstr "S'ha produït un error intern, no s'ha trobat el membre"
-
-#~ msgid "Internal error, group '%s' has no installable pseudo package"
-#~ msgstr ""
-#~ "S'ha produït un error intern, el grup '%s' no disposa d'un pseudopaquet "
-#~ "instaŀlable"
-
-#~ msgid "Release file expired, ignoring %s (invalid since %s)"
-#~ msgstr ""
-#~ "El fitxer Release ha caducat, s'està ignorant %s (invàlid des de %s)"
-
-#~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
-#~ msgstr ""
-#~ "E: La llista d'arguments d'Acquire::gpgv::Options és massa llarga. S'està "
-#~ "sortint."
-
-#~ msgid "Error occurred while processing %s (NewVersion2)"
-#~ msgstr "S'ha produït un error durant el processament de %s (NewVersion2)"
-
-#~ msgid "Malformed line %u in source list %s (vendor id)"
-#~ msgstr ""
-#~ "La línia %u és malformada en la llista de fonts %s (id del proveïdor)"
-
-#~ msgid "Couldn't access keyring: '%s'"
-#~ msgstr "No s'ha pogut accedir a l'anell de claus: «%s»"
-
-#~ msgid "Could not patch file"
-#~ msgstr "No s'ha pogut aplicar el pedaç al fitxer"
-
-#~ msgid "       %4i %s\n"
-#~ msgstr "       %4i %s\n"
-
-#~ msgid "No source package '%s' picking '%s' instead\n"
-#~ msgstr "No hi ha cap paquet font «%s», es selecciona «%s» en el seu lloc\n"
-
-#~ msgid "%4i %s\n"
-#~ msgstr "%4i %s\n"
-
-#~ msgid "Processing triggers for %s"
-#~ msgstr "S'estan processant els activadors per al paquet %s"
-
-#~ msgid "Dynamic MMap ran out of room"
-#~ msgstr "L'MMap dinàmic s'ha quedat sense espai"
-
-#~ msgid ""
-#~ "Since you only requested a single operation it is extremely likely that\n"
-#~ "the package is simply not installable and a bug report against\n"
-#~ "that package should be filed."
-#~ msgstr ""
-#~ "Degut a que només heu requerit una única operació, serà molt\n"
-#~ "probable que el paquet no sigui instaŀlable i que s'hagi d'emetre\n"
-#~ "un informe d'error en contra d'aquest per a arxivar-lo."
-
-#~ msgid "File date has changed %s"
-#~ msgstr "La data del fitxer ha canviat %s"
-
-#~ msgid "Reading file list"
-#~ msgstr "S'està llegint la llista de fitxers"
-
-#~ msgid "Could not execute "
-#~ msgstr "No s'ha pogut executar "
-
-#~ msgid "Preparing for remove with config %s"
-#~ msgstr "S'està preparant per a suprimir amb la configuració %s"
-
-#~ msgid "Removed with config %s"
-#~ msgstr "S'ha suprimit amb la configuració %s"
-
-#~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
-#~ msgstr ""
-#~ "ID del proveïdor '%s' desconeguda en la línia %u de la llista de fonts %s"
-
-#~ msgid ""
-#~ "Some broken packages were found while trying to process build-"
-#~ "dependencies for %s.\n"
-#~ "You might want to run 'apt-get -f install' to correct these."
-#~ msgstr ""
-#~ "S'han trobat alguns paquets trencats mentre es processaven les\n"
-#~ "dependències de construcció per a %s.\n"
-#~ "Potser voldreu executar 'apt-get -f install' per a corregir-ho."
+#~ "No s'ha pogut obrir la llista del fitxer «%sinfo/%s». Si no podeu restaurar "
+#~ "aquest fitxer, creeu-lo buit i torneu a instaŀlar immediatament la mateixa "
+#~ "versió del paquet!"
