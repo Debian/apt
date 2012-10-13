@@ -774,7 +774,7 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
-   Dynamic<pkgCache::VerIterator> DynV(Ver);
+   //Dynamic<pkgCache::VerIterator> DynV(Ver); // caller MergeListVersion already takes care of it
    Ver->NextVer = Next;
    Ver->ID = Cache.HeaderP->VersionCount++;
    map_ptrloc const idxVerStr = WriteStringInMap(VerStr);
