@@ -44,11 +44,11 @@ enum {
 #define NETRC DOT_CHAR "netrc"
 
 /* returns -1 on failure, 0 if the host is found, 1 is the host isn't found */
-int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
+static int parsenetrc_string (char *host, std::string &login, std::string &password, char *netrcfile = NULL)
 {
   FILE *file;
   int retcode = 1;
-  int specific_login = (login[0] != 0);
+  int specific_login = (login.empty() == false);
   char *home = NULL;
   bool netrc_alloc = false;
 
@@ -88,7 +88,7 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
     while (!done && fgets(netrcbuffer, sizeof (netrcbuffer), file)) {
       tok = strtok_r (netrcbuffer, " \t\n", &tok_buf);
       while (!done && tok) {
-        if(login[0] && password[0]) {
+        if(login.empty() == false && password.empty() == false) {
           done = true;
           break;
         }
@@ -120,13 +120,13 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
           /* we are now parsing sub-keywords concerning "our" host */
           if (state_login) {
             if (specific_login)
-              state_our_login = !strcasecmp (login, tok);
+              state_our_login = !strcasecmp (login.c_str(), tok);
             else
-              strncpy (login, tok, LOGINSIZE - 1);
+              login = tok;
             state_login = 0;
           } else if (state_password) {
             if (state_our_login || !specific_login)
-              strncpy (password, tok, PASSWORDSIZE - 1);
+              password = tok;
             state_password = 0;
           } else if (!strcasecmp ("login", tok))
             state_login = 1;
@@ -152,6 +152,18 @@ int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
 
   return retcode;
 }
+// for some unknown reason this method is exported so keep a compatible interface for now …
+int parsenetrc (char *host, char *login, char *password, char *netrcfile = NULL)
+{
+   std::string login_string, password_string;
+   int const ret = parsenetrc_string(host, login_string, password_string, netrcfile);
+   if (ret < 0)
+      return ret;
+   strncpy(login, login_string.c_str(), LOGINSIZE - 1);
+   strncpy(password, password_string.c_str(), PASSWORDSIZE - 1);
+   return ret;
+}
+
 
 void maybe_add_auth (URI &Uri, string NetRCFile)
 {
@@ -162,21 +174,20 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
   {
     if (NetRCFile.empty () == false)
     {
-      char login[64] = "";
-      char password[64] = "";
+       std::string login, password;
       char *netrcfile = strdup(NetRCFile.c_str());
 
       // first check for a generic host based netrc entry
       char *host = strdup(Uri.Host.c_str());
-      if (host && parsenetrc (host, login, password, netrcfile) == 0)
+      if (host && parsenetrc_string(host, login, password, netrcfile) == 0)
       {
 	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
 	    std::clog << "host: " << host 
 		      << " user: " << login
-		      << " pass-size: " << strlen(password)
+		      << " pass-size: " << password.size()
 		      << std::endl;
-        Uri.User = string (login);
-        Uri.Password = string (password);
+        Uri.User = login;
+        Uri.Password = password;
 	free(netrcfile);
 	free(host);
 	return;
@@ -187,15 +198,15 @@ void maybe_add_auth (URI &Uri, string NetRCFile)
       // a lookup uri.startswith(host) in the netrc file parser (because
       // of the "/"
       char *hostpath = strdup(string(Uri.Host+Uri.Path).c_str());
-      if (hostpath && parsenetrc (hostpath, login, password, netrcfile) == 0)
+      if (hostpath && parsenetrc_string(hostpath, login, password, netrcfile) == 0)
       {
 	 if (_config->FindB("Debug::Acquire::netrc", false) == true)
 	    std::clog << "hostpath: " << hostpath
 		      << " user: " << login
-		      << " pass-size: " << strlen(password)
+		      << " pass-size: " << password.size()
 		      << std::endl;
-	 Uri.User = string (login);
-	 Uri.Password = string (password);
+	 Uri.User = login;
+	 Uri.Password = password;
       }
       free(netrcfile);
       free(hostpath);
