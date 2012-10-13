@@ -8,6 +8,9 @@ apt (0.9.7.6) UNRELEASED; urgency=low
     - ensure that dependencies for packages:none are always generated
     - add 2 missing remap registrations causing a segfault in case
       we use the not remapped iterators after a move of the mmap again
+    - write the native architecture as unique string into the cache header
+      as it is used for arch:all packages as a map to arch:native.
+      Otherwise arch comparisons later will see differences (Closes: #689323)
   * apt-pkg/pkgcache.cc:
     - ignore negative dependencies applying in the same group for
       M-A:same packages on the real package name as self-conflicts
