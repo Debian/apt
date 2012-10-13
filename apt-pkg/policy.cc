@@ -27,6 +27,7 @@
 
 #include <apt-pkg/policy.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
@@ -259,17 +260,33 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
    }
 
    // find the package (group) this pin applies to
-   pkgCache::GrpIterator Grp;
-   pkgCache::PkgIterator Pkg;
-   if (Arch.empty() == false)
-      Pkg = Cache->FindPkg(Name, Arch);
-   else {
-      Grp = Cache->FindGrp(Name);
-      if (Grp.end() == false)
-	 Pkg = Grp.PackageList();
+   pkgCache::GrpIterator Grp = Cache->FindGrp(Name);
+   bool matched = false;
+   if (Grp.end() == false)
+   {
+      std::string MatchingArch;
+      if (Arch.empty() == true)
+	 MatchingArch = Cache->NativeArch();
+      else
+	 MatchingArch = Arch;
+      APT::CacheFilter::PackageArchitectureMatchesSpecification pams(MatchingArch);
+      for (pkgCache::PkgIterator Pkg = Grp.PackageList(); Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
+      {
+	 if (pams(Pkg.Arch()) == false)
+	    continue;
+	 Pin *P = Pins + Pkg->ID;
+	 // the first specific stanza for a package is the ruler,
+	 // all others need to be ignored
+	 if (P->Type != pkgVersionMatch::None)
+	    P = &*Unmatched.insert(Unmatched.end(),PkgPin(Pkg.FullName()));
+	 P->Type = Type;
+	 P->Priority = Priority;
+	 P->Data = Data;
+	 matched = true;
+      }
    }
 
-   if (Pkg.end() == true)
+   if (matched == false)
    {
       PkgPin *P = &*Unmatched.insert(Unmatched.end(),PkgPin(Name));
       if (Arch.empty() == false)
@@ -278,20 +295,6 @@ void pkgPolicy::CreatePin(pkgVersionMatch::MatchType Type,string Name,
       P->Priority = Priority;
       P->Data = Data;
       return;
-   }
-
-   for (; Pkg.end() != true; Pkg = Grp.NextPkg(Pkg))
-   {
-      Pin *P = Pins + Pkg->ID;
-      // the first specific stanza for a package is the ruler,
-      // all others need to be ignored
-      if (P->Type != pkgVersionMatch::None)
-	 P = &*Unmatched.insert(Unmatched.end(),PkgPin(Pkg.FullName()));
-      P->Type = Type;
-      P->Priority = Priority;
-      P->Data = Data;
-      if (Grp.end() == true)
-	 break;
    }
 }
 									/*}}}*/
