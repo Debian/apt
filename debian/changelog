@@ -27,6 +27,7 @@ apt (0.9.7.6) UNRELEASED; urgency=low
       (partly fixing #687255, b= support has to wait for jessie)
   * apt-pkg/contrib/netrc.cc:
     - remove the 64 char limit for login/password in internal usage
+    - remove 256 char line limit by using getline() (POSIX.1-2008)
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 19 Sep 2012 11:29:56 +0200
 

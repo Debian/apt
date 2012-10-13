@@ -79,13 +79,14 @@ static int parsenetrc_string (char *host, std::string &login, std::string &passw
     char *tok;
     char *tok_buf;
     bool done = false;
-    char netrcbuffer[256];
+    char *netrcbuffer = NULL;
+    size_t netrcbuffer_size = 0;
 
     int state = NOTHING;
     char state_login = 0;        /* Found a login keyword */
     char state_password = 0;     /* Found a password keyword */
 
-    while (!done && fgets(netrcbuffer, sizeof (netrcbuffer), file)) {
+    while (!done && getline(&netrcbuffer, &netrcbuffer_size, file) != -1) {
       tok = strtok_r (netrcbuffer, " \t\n", &tok_buf);
       while (!done && tok) {
         if(login.empty() == false && password.empty() == false) {
@@ -142,8 +143,9 @@ static int parsenetrc_string (char *host, std::string &login, std::string &passw
 
         tok = strtok_r (NULL, " \t\n", &tok_buf);
       } /* while(tok) */
-    } /* while fgets() */
+    } /* while getline() */
 
+    free(netrcbuffer);
     fclose(file);
   }
 
