@@ -1,8 +1,16 @@
 apt (0.9.7.5ubuntu4) UNRELEASED; urgency=low
 
+  [ Colin Watson ]
   * apt-pkg/pkgcachegen.cc:
     - Fix crash if the cache is remapped while writing a Provides version
       (LP: #1066445).
+
+  Cherry-pick from http://bzr.debian.org/bzr/apt/apt/debian-sid:
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcachegen.cc:
+    - add a missing remap registration causing a segfault in case
+      we use the not remapped iterators after a move of the mmap again
 
  -- Colin Watson <cjwatson@ubuntu.com>  Sun, 14 Oct 2012 23:42:31 +0100
 
