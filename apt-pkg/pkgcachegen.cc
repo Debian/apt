@@ -69,7 +69,9 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       *Cache.HeaderP = pkgCache::Header();
       map_ptrloc const idxVerSysName = WriteStringInMap(_system->VS->Label);
       Cache.HeaderP->VerSysName = idxVerSysName;
-      map_ptrloc const idxArchitecture = WriteStringInMap(_config->Find("APT::Architecture"));
+      // this pointer is set in ReMap, but we need it now for WriteUniqString
+      Cache.StringItemP = (pkgCache::StringItem *)Map.Data();
+      map_ptrloc const idxArchitecture = WriteUniqString(_config->Find("APT::Architecture"));
       Cache.HeaderP->Architecture = idxArchitecture;
       if (unlikely(idxVerSysName == 0 || idxArchitecture == 0))
 	 return;
@@ -774,7 +776,7 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
-   Dynamic<pkgCache::VerIterator> DynV(Ver);
+   //Dynamic<pkgCache::VerIterator> DynV(Ver); // caller MergeListVersion already takes care of it
    Ver->NextVer = Next;
    Ver->ID = Cache.HeaderP->VersionCount++;
    map_ptrloc const idxVerStr = WriteStringInMap(VerStr);
