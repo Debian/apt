@@ -975,8 +975,12 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
    Prv->Version = Ver.Index();
    Prv->NextPkgProv = Ver->ProvidesList;
    Ver->ProvidesList = Prv.Index();
-   if (Version.empty() == false && unlikely((Prv->ProvideVersion = WriteString(Version)) == 0))
-      return false;
+   if (Version.empty() == false) {
+      map_ptrloc const idxProvideVersion = WriteString(Version);
+      Prv->ProvideVersion = idxProvideVersion;
+      if (unlikely(idxProvideVersion == 0))
+	 return false;
+   }
    
    // Locate the target package
    pkgCache::PkgIterator Pkg;

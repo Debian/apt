@@ -33,6 +33,11 @@ apt (0.9.7.6) UNRELEASED; urgency=low
   * increase the maximum netrc login/password size and show proper
     error message on overflow
 
+  [ Colin Watson ]
+  * apt-pkg/pkgcachegen.cc:
+    - Fix crash if the cache is remapped while writing a Provides version
+      (LP: #1066445).
+
  -- David Kalnischkies <kalnischkies@gmail.com>  Wed, 19 Sep 2012 11:29:56 +0200
 
 apt (0.9.7.5) unstable; urgency=low
