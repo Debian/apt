@@ -722,7 +722,6 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
-   Dynamic<pkgCache::VerIterator> DynV(Ver);
    Ver->NextVer = Next;
    Ver->ID = Cache.HeaderP->VersionCount++;
    map_ptrloc const idxVerStr = WriteStringInMap(VerStr);
