@@ -1768,13 +1768,11 @@ bool FileFd::Close()
 /* */
 bool FileFd::Sync()
 {
-#ifdef _POSIX_SYNCHRONIZED_IO
    if (fsync(iFd) != 0)
    {
       Flags |= Fail;
       return _error->Errno("sync",_("Problem syncing the file"));
    }
-#endif
    return true;
 }
 									/*}}}*/

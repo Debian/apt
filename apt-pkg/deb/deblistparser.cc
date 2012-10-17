@@ -635,7 +635,8 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 return _error->Error("Problem parsing dependency %s",Tag);
       size_t const found = Package.rfind(':');
 
-      if (MultiArchEnabled == true &&
+      // If negative is unspecific it needs to apply on all architectures
+      if (MultiArchEnabled == true && found == string::npos &&
 	  (Type == pkgCache::Dep::Conflicts ||
 	   Type == pkgCache::Dep::DpkgBreaks ||
 	   Type == pkgCache::Dep::Replaces))
@@ -644,6 +645,8 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	      a != Architectures.end(); ++a)
 	    if (NewDepends(Ver,Package,*a,Version,Op,Type) == false)
 	       return false;
+	 if (NewDepends(Ver,Package,"none",Version,Op,Type) == false)
+	    return false;
       }
       else if (MultiArchEnabled == true && found != string::npos &&
 	       strcmp(Package.c_str() + found, ":any") != 0)
@@ -657,8 +660,18 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
 	 if (NewDepends(Ver,Package,Arch,Version,Op,Type) == false)
 	    return false;
       }
-      else if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
-	 return false;
+      else
+      {
+	 if (NewDepends(Ver,Package,pkgArch,Version,Op,Type) == false)
+	    return false;
+	 if ((Type == pkgCache::Dep::Conflicts ||
+	      Type == pkgCache::Dep::DpkgBreaks ||
+	      Type == pkgCache::Dep::Replaces) &&
+	     NewDepends(Ver, Package,
+			(pkgArch != "none") ? "none" : _config->Find("APT::Architecture"),
+			Version,Op,Type) == false)
+	    return false;
+      }
       if (Start == Stop)
 	 break;
    }
@@ -752,12 +765,14 @@ bool debListParser::Step()
          drop the whole section. A missing arch tag only happens (in theory)
          inside the Status file, so that is a positive return */
       string const Architecture = Section.FindS("Architecture");
-      if (Architecture.empty() == true)
-	 return true;
 
       if (Arch.empty() == true || Arch == "any" || MultiArchEnabled == false)
       {
 	 if (APT::Configuration::checkArchitecture(Architecture) == true)
+	    return true;
+	 /* parse version stanzas without an architecture only in the status file
+	    (and as misfortune bycatch flat-archives) */
+	 if ((Arch.empty() == true || Arch == "any") && Architecture.empty() == true)
 	    return true;
       }
       else

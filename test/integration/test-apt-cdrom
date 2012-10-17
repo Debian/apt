@@ -1,0 +1,104 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+buildsimplenativepackage 'testing' 'amd64,i386' '0.8.15' 'stable'
+setupaptarchive
+
+changetocdrom 'Debian APT Testdisk 0.8.15'
+
+# -de is not in the Release file, but picked up anyway for compatibility
+cd rootdir/media/cdrom/dists/stable/main/i18n
+sed -e '/^Description-en:/ d' -e '/^ / d' -e '/^$/ d' Translation-en > Translation-de
+echo 'Description-de: automatisch generiertes Testpaket testing=0.8.15/stable
+ Diese Pakete sind nur für das testen von APT gedacht,
+ sie erfüllen keinen Zweck auf einem normalen System…
+' >> Translation-de
+cat Translation-de | gzip > Translation-de.gz
+cat Translation-de | bzip2 > Translation-de.bz2
+cat Translation-de | xz --format=lzma > Translation-de.lzma
+cat Translation-de | xz > Translation-de.xz
+rm Translation-en Translation-de
+cd - > /dev/null
+
+aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
+sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
+testfileequal apt-cdrom.log "Scanning disc for index files..
+Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
+Found label 'Debian APT Testdisk 0.8.15'
+This disc is called: 
+'Debian APT Testdisk 0.8.15'
+Writing new source list
+Source list entries for this disc are:
+deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+Repeat this process for the rest of the CDs in your set."
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  testing
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst testing (0.8.15 stable [amd64])
+Conf testing (0.8.15 stable [amd64])' aptget install testing -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  testing:i386
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst testing:i386 (0.8.15 stable [i386])
+Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
+
+# check Idempotence of apt-cdrom (and disabling of Translation dropping)
+aptcdrom add -m -o quiet=1 -o APT::CDROM::DropTranslation=0 > apt-cdrom.log 2>&1
+sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
+testfileequal apt-cdrom.log "Scanning disc for index files..
+Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
+This disc is called: 
+'Debian APT Testdisk 0.8.15'
+Writing new source list
+Source list entries for this disc are:
+deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+Repeat this process for the rest of the CDs in your set."
+
+# take Translations from previous runs as needed
+aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
+sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
+testfileequal apt-cdrom.log "Scanning disc for index files..
+Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
+This disc is called: 
+'Debian APT Testdisk 0.8.15'
+Writing new source list
+Source list entries for this disc are:
+deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+Repeat this process for the rest of the CDs in your set."
+msgtest 'Test for the german description translation of' 'testing'
+aptcache show testing -o Acquire::Languages=de | grep -q '^Description-de: ' && msgpass || msgfail
+rm -rf rootdir/var/lib/apt/lists
+mkdir -p rootdir/var/lib/apt/lists/partial
+aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
+sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
+testfileequal apt-cdrom.log "Scanning disc for index files..
+Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
+This disc is called: 
+'Debian APT Testdisk 0.8.15'
+Writing new source list
+Source list entries for this disc are:
+deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
+Repeat this process for the rest of the CDs in your set."
+msgtest 'Test for the english description translation of' 'testing'
+aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && msgpass || msgfail
+
+
+# check that we really can install from a 'cdrom'
+testdpkgnotinstalled testing
+aptget install testing -y > /dev/null 2>&1
+testdpkginstalled testing

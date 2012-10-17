@@ -327,12 +327,14 @@ check_power(){
 
 # ------------------------ main ----------------------------
 
-# Backup the 7 last versions of APT's extended_states file
-# shameless copy from dpkg cron
-if cd /var/backups ; then
-    if ! cmp -s apt.extended_states.0 /var/lib/apt/extended_states; then
-	cp -p /var/lib/apt/extended_states apt.extended_states
-	savelog -c 7 apt.extended_states >/dev/null
+if test -r /var/lib/apt/extended_states; then
+    # Backup the 7 last versions of APT's extended_states file
+    # shameless copy from dpkg cron
+    if cd /var/backups ; then
+	if ! cmp -s apt.extended_states.0 /var/lib/apt/extended_states; then
+	    cp -p /var/lib/apt/extended_states apt.extended_states
+	    savelog -c 7 apt.extended_states >/dev/null
+	fi
     fi
 fi
 

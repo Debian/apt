@@ -66,12 +66,6 @@ static std::string CompleteArch(std::string const &arch) {
 		complete = complete.substr(1, complete.size()-2);
 		return complete;
 	}
-	else if (arch == "armel")		return "linux-arm";
-	else if (arch == "armhf")		return "linux-arm";
-	else if (arch == "lpia")		return "linux-i386";
-	else if (arch == "powerpcspe")		return "linux-powerpc";
-	else if (arch == "uclibc-linux-armel")	return "linux-arm";
-	else if (arch == "uclinux-armel")	return "uclinux-arm";
 	else if (arch == "any")			return "*-*";
 	else					return "linux-" + arch;
 }

@@ -238,7 +238,7 @@ pkgCache::PkgIterator pkgCache::FindPkg(const string &Name) {
 // ---------------------------------------------------------------------
 /* Returns 0 on error, pointer to the package otherwise */
 pkgCache::PkgIterator pkgCache::FindPkg(const string &Name, string const &Arch) {
-	if (MultiArchCache() == false) {
+	if (MultiArchCache() == false && Arch != "none") {
 		if (Arch == "native" || Arch == "all" || Arch == "any" ||
 		    Arch == NativeArch())
 			return SingleArchFindPkg(Name);
@@ -376,6 +376,10 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPreferredPkg(bool const &Prefer
 		if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
 			return Pkg;
 	}
+	// packages without an architecture
+	Pkg = FindPkg("none");
+	if (Pkg.end() == false && (PreferNonVirtual == false || Pkg->VersionList != 0))
+		return Pkg;
 
 	if (PreferNonVirtual == true)
 		return FindPreferredPkg(false);
@@ -686,8 +690,29 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
    on virtual packages. */
 bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &Pkg) const
 {
-   if (ParentPkg() == TargetPkg())
-      return IsNegative();
+   if (IsNegative() == false)
+      return false;
+
+   pkgCache::PkgIterator PP = ParentPkg();
+   pkgCache::PkgIterator PT = TargetPkg();
+   if (PP->Group != PT->Group)
+      return false;
+   // self-conflict
+   if (PP == PT)
+      return true;
+   pkgCache::VerIterator PV = ParentVer();
+   // ignore group-conflict on a M-A:same package - but not our implicit dependencies
+   // so that we can have M-A:same packages conflicting with their own real name
+   if ((PV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+   {
+      // Replaces: ${self}:other ( << ${binary:Version})
+      if (S->Type == pkgCache::Dep::Replaces && S->CompareOp == pkgCache::Dep::Less && strcmp(PV.VerStr(), TargetVer()) == 0)
+	 return false;
+      // Breaks: ${self}:other (!= ${binary:Version})
+      if (S->Type == pkgCache::Dep::DpkgBreaks && S->CompareOp == pkgCache::Dep::NotEquals && strcmp(PV.VerStr(), TargetVer()) == 0)
+	 return false;
+      return true;
+   }
 
    return false;
 }

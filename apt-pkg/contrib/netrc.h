@@ -25,11 +25,9 @@
 
 class URI;
 
-// Assume: password[0]=0, host[0] != 0.
-// If login[0] = 0, search for login and password within a machine section
-// in the netrc.
-// If login[0] != 0, search for password within machine and login.
-int parsenetrc (char *host, char *login, char *password, char *filename);
+// kill this export on the next ABI break - strongly doubt its in use anyway
+// outside of the apt itself, its really a internal interface
+__deprecated int parsenetrc (char *host, char *login, char *password, char *filename);
 
 void maybe_add_auth (URI &Uri, std::string NetRCFile);
 #endif

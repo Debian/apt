@@ -643,7 +643,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    }
 
 	    // Look for something that could be configured.
-	    for (DepIterator Cur = Start; Bad == true; ++Cur)
+	    for (DepIterator Cur = Start; Bad == true && Cur.end() == false; ++Cur)
 	    {
 	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)
@@ -856,7 +856,10 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	 This way we avoid that M-A: enabled packages are installed before
 	 their older non-M-A enabled packages are replaced by newer versions */
       bool const installed = Pkg->CurrentVer != 0;
-      if (installed == true && Install(Pkg,FileNames[Pkg->ID]) == false)
+      if (installed == true &&
+	  (instVer != Pkg.CurrentVer() ||
+	   ((Cache[Pkg].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall)) &&
+	  Install(Pkg,FileNames[Pkg->ID]) == false)
 	 return false;
       for (PkgIterator P = Pkg.Group().PackageList();
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
@@ -882,7 +885,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       }
    }
    // packages which are already unpacked don't need to be unpacked again
-   else if (Pkg.State() != pkgCache::PkgIterator::NeedsConfigure && Install(Pkg,FileNames[Pkg->ID]) == false)
+   else if ((instVer != Pkg.CurrentVer() ||
+	     ((Cache[Pkg].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall)) &&
+	    Install(Pkg,FileNames[Pkg->ID]) == false)
       return false;
 
    if (Immediate == true) {

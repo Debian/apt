@@ -1,0 +1,72 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'pkgarch' 'amd64' '1'
+insertinstalledpackage 'pkgall' 'all' '1'
+
+insertpackage 'unstable' 'pkgarch' 'amd64' '2'
+insertpackage 'unstable' 'pkgall' 'all' '2'
+
+setupaptarchive
+
+runtests() {
+	testempty aptmark showhold
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  pkgall pkgarch
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 0 B of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only
+
+	testequal 'pkgarch set on hold.' aptmark hold pkgarch
+	testequal 'pkgarch' aptmark showhold
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  pkgarch
+The following packages will be upgraded:
+  pkgall
+1 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.
+After this operation, 0 B of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only
+
+	testequal 'Canceled hold on pkgarch.' aptmark unhold pkgarch
+	testempty aptmark showhold
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  pkgall pkgarch
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+After this operation, 0 B of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only
+
+	testequal 'pkgall set on hold.' aptmark hold pkgall
+	testequal 'pkgall' aptmark showhold
+
+	testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  pkgall
+The following packages will be upgraded:
+  pkgarch
+1 upgraded, 0 newly installed, 0 to remove and 1 not upgraded.
+After this operation, 0 B of additional disk space will be used.
+E: Trivial Only specified but this is not a trivial operation.' aptget dist-upgrade --trivial-only
+
+	testequal 'Canceled hold on pkgall.' aptmark unhold pkgall
+	testempty aptmark showhold
+}
+# single-arch
+runtests
+# multi-arch
+configarchitecture 'amd64' 'i386'
+runtests

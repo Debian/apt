@@ -187,7 +187,7 @@ pkgDPkgPM::~pkgDPkgPM()
 bool pkgDPkgPM::Install(PkgIterator Pkg,string File)
 {
    if (File.empty() == true || Pkg.end() == true)
-      return _error->Error("Internal Error, No file name for %s",Pkg.Name());
+      return _error->Error("Internal Error, No file name for %s",Pkg.FullName().c_str());
 
    // If the filename string begins with DPkg::Chroot-Directory, return the
    // substr that is within the chroot so dpkg can access it.
@@ -1131,7 +1131,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
 	    // We keep this here to allow "smooth" transitions from e.g. multiarch dpkg/ubuntu to dpkg/debian
-	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all")))
+	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch ||
+					   strcmp(I->Pkg.Arch(), "all") == 0 ||
+					   strcmp(I->Pkg.Arch(), "none") == 0))
 	    {
 	       char const * const name = I->Pkg.Name();
 	       ADDARG(name);
@@ -1148,7 +1150,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
                }
 	       else
 		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
-               if (PkgVer.end() == false)
+	       if (strcmp(I->Pkg.Arch(), "none") == 0)
+		  ; // never arch-qualify a package without an arch
+	       else if (PkgVer.end() == false)
                   name.append(":").append(PkgVer.Arch());
                else
                   _error->Warning("Can not find PkgVer for '%s'", name.c_str());
