@@ -25,9 +25,5 @@
 
 class URI;
 
-// kill this export on the next ABI break - strongly doubt its in use anyway
-// outside of the apt itself, its really a internal interface
-__deprecated int parsenetrc (char *host, char *login, char *password, char *filename);
-
 void maybe_add_auth (URI &Uri, std::string NetRCFile);
 #endif
