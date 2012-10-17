@@ -422,6 +422,18 @@ void Configuration::Clear(string const &Name, string const &Value)
      
 }
 									/*}}}*/
+// Configuration::Clear - Clear everything				/*{{{*/
+// ---------------------------------------------------------------------
+void Configuration::Clear()
+{
+   const Configuration::Item *Top = Tree(0);
+   while( Top != 0 )
+   {
+      Clear(Top->FullTag());
+      Top = Top->Next;
+   }
+}
+									/*}}}*/
 // Configuration::Clear - Clear an entire tree				/*{{{*/
 // ---------------------------------------------------------------------
 /* */

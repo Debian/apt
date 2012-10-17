@@ -94,6 +94,7 @@ class Configuration
 
    // clear a whole tree
    void Clear(const std::string &Name);
+   void Clear();
 
    // remove a certain value from a list (e.g. the list of "APT::Keep-Fds")
    void Clear(std::string const &List, std::string const &Value);
