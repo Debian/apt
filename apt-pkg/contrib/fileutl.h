@@ -190,6 +190,7 @@ std::string flNoLink(std::string File);
 std::string flExtension(std::string File);
 std::string flCombine(std::string Dir,std::string File);
 
-
+// simple c++ glob
+std::vector<std::string> Glob(std::string const &pattern, int flags=0);
 
 #endif

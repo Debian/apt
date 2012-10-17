@@ -41,6 +41,8 @@
 #include <dirent.h>
 #include <signal.h>
 #include <errno.h>
+#include <glob.h>
+
 #include <set>
 #include <algorithm>
 
@@ -1778,3 +1780,32 @@ bool FileFd::Sync()
 									/*}}}*/
 
 gzFile FileFd::gzFd() { return (gzFile) d->gz; }
+
+
+// Glob - wrapper around "glob()"                                      /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::vector<std::string> Glob(std::string const &pattern, int flags)
+{
+   std::vector<std::string> result;
+   glob_t globbuf;
+   int glob_res, i;
+
+   glob_res = glob(pattern.c_str(),  flags, NULL, &globbuf);
+
+   if (glob_res != 0)
+   {
+      if(glob_res != GLOB_NOMATCH) {
+         _error->Errno("glob", "Problem with glob");
+         return result;
+      }
+   }
+
+   // append results
+   for(i=0;i<globbuf.gl_pathc;i++)
+      result.push_back(string(globbuf.gl_pathv[i]));
+
+   globfree(&globbuf);
+   return result;
+}
+									/*}}}*/
