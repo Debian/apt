@@ -1255,7 +1255,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    {
       if (_config->FindB("APT::Get::Trivial-Only",false) == true)
 	 return _error->Error(_("Trivial Only specified but this is not a trivial operation."));
-      
+
+      // TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+      //             careful with hard to type or special characters (like non-breaking spaces)
       const char *Prompt = _("Yes, do as I say!");
       ioprintf(c2out,
 	       _("You are about to do something potentially harmful.\n"
