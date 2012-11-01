@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-10-16 11:36+0100\n"
-"PO-Revision-Date: 2012-09-07 13:19+0000\n"
+"PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
 "Language: ko\n"
@@ -14,8 +14,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2012-10-12 10:33+0000\n"
-"X-Generator: Launchpad (build 16130)\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -161,6 +159,7 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s(%s), 컴파일 시각 %s %s\n"
 
 #: cmdline/apt-cache.cc:1686
+#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -196,6 +195,42 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
+"사용법: apt-cache [옵션] 명령\n"
+"        apt-cache [옵션] add 파일1 [파일2 ...]\n"
+"        apt-cache [옵션] showpkg 패키지1 [패키지2 ...]\n"
+"        apt-cache [옵션] showsrc 패키지1 [패키지2 ...]\n"
+"\n"
+"apt-cache는 APT의 바이너리 캐시 파일을 처리하고, 캐시 파일에\n"
+"정보를 질의하는 저수준 도구입니다.\n"
+"\n"
+"명령:\n"
+"   add - 소스 캐시에 패키지 파일을 추가합니다\n"
+"   gencaches - 패키지 캐시 및 소스 캐시를 만듭니다\n"
+"   showpkg - 한 개의 패키지에 대한 일반적인 정보를 봅니다\n"
+"   showsrc - 소스 기록을 봅니다\n"
+"   stats - 기본적인 통계를 봅니다\n"
+"   dump - 전체 파일을 간략한 형태로 봅니다\n"
+"   dumpavail - 사용 가능한 파일을 표준출력에 표시합니다\n"
+"   unmet - 맞지 않는 의존성을 봅니다\n"
+"   search - 정규식 패턴에 맞는 패키지 목록을 찾습니다\n"
+"   show - 패키지에 대해 읽을 수 있는 기록을 봅니다\n"
+"   showauto - 자동으로 설치한 패키지 목록을 표시합니다\n"
+"   depends - 패키지에 대해 의존성 정보를 그대로 봅니다\n"
+"   rdepends - 패키지의 역 의존성 정보를 봅니다\n"
+"   pkgnames - 시스템에 들어 있는 패키지의 이름을 모두 봅니다\n"
+"   dotty - GraphViz용 패키지 그래프를 만듭니다\n"
+"   xvcg - xvcg용 패키지 그래프를 만듭니다\n"
+"   policy - 정책 설정을 봅니다\n"
+"\n"
+"옵션:\n"
+"  -h   이 도움말.\n"
+"  -p=? 패키지 캐시.\n"
+"  -s=? 소스 캐시.\n"
+"  -q   상태 표시를 하지 않습니다.\n"
+"  -i   unmet 명령에서 중요한 의존성만 봅니다.\n"
+"  -c=? 지정한 설정 파일을 읽습니다.\n"
+"  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
+"좀 더 자세한 정보는 apt-cache(8) 및 apt.conf(5) 매뉴얼 페이지를 보십시오.\n"
 
 #: cmdline/apt-cdrom.cc:79
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -376,7 +411,7 @@ msgstr " [설치함]"
 
 #: cmdline/apt-get.cc:677
 msgid " [Not candidate version]"
-msgstr " [후보 버전 아님]"
+msgstr "[후보 버전 아님]"
 
 #: cmdline/apt-get.cc:679
 msgid "You should explicitly select one to install."
@@ -409,14 +444,14 @@ msgstr "'%s' 패키지와 같은 가상 패키지는 제거할 수 없습니다\
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
+msgstr "%s 패키지를 설치하지 않았으므로, 지우지 않습니다\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr ""
+msgstr "%s 패키지를 설치하지 않았으므로, 지우지 않습니다\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -455,9 +490,9 @@ msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "'%3$s' 패키지의 '%1$s' (%2$s) 버전을 선택합니다\n"
 
 #: cmdline/apt-get.cc:889
-#, c-format
+#, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr ""
+msgstr "'%3$s' 패키지의 '%1$s' (%2$s) 버전을 선택합니다\n"
 
 #: cmdline/apt-get.cc:1025
 msgid "Correcting dependencies..."
@@ -709,10 +744,10 @@ msgid_plural ""
 msgstr[0] "패키지 %lu개가 자동으로 설치되었지만 더 이상 필요하지 않습니다.\n"
 
 #: cmdline/apt-get.cc:1835
+#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "이들을 지우려면 'apt-get autoremove'를 사용하십시오."
 
 #: cmdline/apt-get.cc:1854
 msgid "Internal error, AllUpgrade broke stuff"
@@ -766,7 +801,7 @@ msgstr "%s 패키지를 찾을 수 없습니다"
 #: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
 #, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "%s 패키지 자동설치로 지정합니다.\n"
+msgstr "%s 패키지는 수동설치로 지정합니다.\n"
 
 #: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
 msgid ""
@@ -823,12 +858,15 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2513
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
+"패키지의 최근 (아마도 릴리스되지 않은) 업데이트를 받으려면\n"
+"다음과 같이 하십시오:\n"
+"bzr get %s\n"
 
 #: cmdline/apt-get.cc:2566
 #, c-format
@@ -909,11 +947,13 @@ msgid "%s has no build depends.\n"
 msgstr "%s 패키지에 빌드 의존성이 없습니다.\n"
 
 #: cmdline/apt-get.cc:3008
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr ""
+"%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 패키지를 찾을 수 없습니"
+"다"
 
 #: cmdline/apt-get.cc:3026
 #, c-format
@@ -932,18 +972,22 @@ msgstr ""
 "무 최근 버전입니다"
 
 #: cmdline/apt-get.cc:3088
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
+"%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 패키지의 사용 가능한 버"
+"전 중에서는 이 버전 요구사항을 만족시킬 수 없습니다"
 
 #: cmdline/apt-get.cc:3094
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr ""
+"%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 패키지를 찾을 수 없습니"
+"다"
 
 #: cmdline/apt-get.cc:3117
 #, c-format
@@ -960,15 +1004,16 @@ msgid "Failed to process build dependencies"
 msgstr "빌드 의존성을 처리하는데 실패했습니다"
 
 #: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
-#, c-format
+#, fuzzy, c-format
 msgid "Changelog for %s (%s)"
-msgstr ""
+msgstr "%s(%s)에 연결하는 중입니다"
 
 #: cmdline/apt-get.cc:3369
 msgid "Supported modules:"
 msgstr "지원하는 모듈:"
 
 #: cmdline/apt-get.cc:3410
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1013,6 +1058,47 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
+"사용법: apt-get [옵션] 명령어\n"
+"        apt-get [옵션] install|remove 패키지1 [패키지2 ...]\n"
+"        apt-get [옵션] source 패키지1 [패키지2 ...]\n"
+"\n"
+"apt-get은 패키지를 내려받고 설치하는 간단한 명령행 인터페이스입니다.\n"
+"가장 자주 사용하는 명령은 update와 install입니다.\n"
+"\n"
+"명령어:\n"
+"   update - 패키지 목록을 새로 가져옵니다\n"
+"   upgrade - 업그레이드를 합니다\n"
+"   install - 새 패키지를 설치합니다 (패키지는 libc6 식으로. libc6.deb 아님)\n"
+"   remove - 패키지를 지웁니다\n"
+"   autoremove - 사용하지 않는 패키지를 자동으로 전부 지웁니다\n"
+"   purge - 패키지를 완전히 지웁니다\n"
+"   source - 소스 아카이브를 다운로드합니다\n"
+"   build-dep - 소스 패키지의 빌드 의존성을 설정합니다\n"
+"   dist-upgrade - 배포판 업그레이드, apt-get(8) 참고\n"
+"   dselect-upgrade - dselect에서 선택한 걸 따릅니다\n"
+"   clean - 내려받은 아카이브 파일들을 지웁니다\n"
+"   autoclean - 과거에 내려받은 아카이브 파일들을 지웁니다\n"
+"   check - 의존성이 망가지지 않았는지 확인합니다\n"
+"   markauto - 패키지를 자동 설치로 표시합니다\n"
+"   unmarkauto - 패키지를 수동 설치로 표시합니다\n"
+"\n"
+"옵션:\n"
+"  -h  이 도움말.\n"
+"  -q  기록 가능한 출력 - 진행 상황 표시를 하지 않습니다\n"
+"  -qq 오류만 출력 합니다\n"
+"  -d  내려받기만 합니다 - 아카이브를 설치하거나 풀거나 하지 않습니다\n"
+"  -s  실제 작업을 하지 않고, 순서대로 시뮬레이션만 합니다\n"
+"  -y  모든 질문에 대해 \"예\"라고 가정하고 물어보지 않습니다\n"
+"  -f  패키지 내용 검사가 실패해도 계속 진행해봅니다\n"
+"  -m  아카이브를 찾을 수 없어도 계속 진행해봅니다\n"
+"  -u  업그레이드하는 패키지의 목록도 봅니다\n"
+"  -b  소스 패키지를 받은 다음에 빌드합니다\n"
+"  -V  버전 번호를 자세히 봅니다\n"
+"  -c=? 이 설정 파일을 읽습니다\n"
+"  -o=? 임의의 옵션을 지정합니다. 예를 들어 -o dir::cache=/tmp\n"
+"더 자세한 정보와 옵션을 보려면 apt-get(8), sources.list(5)나\n"
+"apt.conf(5) 매뉴얼 페이지를 보십시오.\n"
+"                       이 APT는 Super Cow Powers로 무장했습니다.\n"
 
 #: cmdline/apt-get.cc:3575
 msgid ""
@@ -1036,7 +1122,7 @@ msgstr "받기:"
 
 #: cmdline/acqprogress.cc:115
 msgid "Ign "
-msgstr "무시 "
+msgstr "무시"
 
 #: cmdline/acqprogress.cc:119
 msgid "Err "
@@ -1064,29 +1150,29 @@ msgstr ""
 " '%1$s'\n"
 
 #: cmdline/apt-mark.cc:55
-#, c-format
+#, fuzzy, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr ""
+msgstr "하지만 설치하지 않았습니다"
 
 #: cmdline/apt-mark.cc:61
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr ""
+msgstr "%s 패키지 수동설치로 지정합니다.\n"
 
 #: cmdline/apt-mark.cc:63
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr ""
+msgstr "%s 패키지는 수동설치로 지정합니다.\n"
 
 #: cmdline/apt-mark.cc:228
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set on hold.\n"
-msgstr ""
+msgstr "%s 패키지는 이미 최신 버전입니다.\n"
 
 #: cmdline/apt-mark.cc:230
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already not hold.\n"
-msgstr ""
+msgstr "%s 패키지는 이미 최신 버전입니다.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
@@ -1095,14 +1181,14 @@ msgid "Waited for %s but it wasn't there"
 msgstr "%s 프로세스를 기다렸지만 해당 프로세스가 없습니다"
 
 #: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
-#, c-format
+#, fuzzy, c-format
 msgid "%s set on hold.\n"
-msgstr ""
+msgstr "%s 패키지 수동설치로 지정합니다.\n"
 
 #: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
-#, c-format
+#, fuzzy, c-format
 msgid "Canceled hold on %s.\n"
-msgstr ""
+msgstr "%s 파일을 여는데 실패했습니다"
 
 #: cmdline/apt-mark.cc:332
 msgid "Executing dpkg failed. Are you root?"
@@ -1509,9 +1595,9 @@ msgstr "'%s' 미러 파일이 없습니다 "
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:287
-#, c-format
+#, fuzzy, c-format
 msgid "Can not read mirror file '%s'"
-msgstr ""
+msgstr "'%s' 미러 파일이 없습니다 "
 
 #: methods/mirror.cc:442
 #, c-format
@@ -1865,19 +1951,19 @@ msgid "Unable to open %s"
 msgstr "%s 열 수 없습니다"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr ""
+msgstr "override %s의 %lu번 줄 #1이 잘못되었습니다"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr ""
+msgstr "override %s의 %lu번 줄 #2가 잘못되었습니다"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr ""
+msgstr "override %s의 %lu번 줄 #3이 잘못되었습니다"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -1930,6 +2016,7 @@ msgid "Failed to rename %s to %s"
 msgstr "%s 파일의 이름을 %s(으)로 바꾸는데 실패했습니다"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -1942,6 +2029,16 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
+"사용법: apt-extracttemplates 파일1 [파일2 ...]\n"
+"\n"
+"apt-extracttemplates는 데비안 패키지에서 설정 및 서식 정보를 뽑아내는\n"
+"도구입니다\n"
+"\n"
+"옵션:\n"
+"  -h   이 도움말\n"
+"  -t   임시 디렉토리 설정\n"
+"  -c=? 설정 파일을 읽습니다\n"
+"  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -1978,7 +2075,7 @@ msgstr "파이프 만들기가 실패했습니다"
 
 #: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
-msgstr "gzip 실행이 실패했습니다 "
+msgstr "gzip 실행이 실패했습니다"
 
 #: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:211
 msgid "Corrupted archive"
@@ -2141,9 +2238,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "%i 파일 디스크립터를 복사할 수 없습니다"
 
 #: apt-pkg/contrib/mmap.cc:119
-#, c-format
+#, fuzzy, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr ""
+msgstr "%lu바이트를 메모리 매핑할 수 없습니다"
 
 #: apt-pkg/contrib/mmap.cc:146
 msgid "Unable to close mmap"
@@ -2418,14 +2515,14 @@ msgid "Failed to exec compressor "
 msgstr "다음 압축 프로그램을 실행하는데 실패했습니다: "
 
 #: apt-pkg/contrib/fileutl.cc:1309
-#, c-format
+#, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
-msgstr ""
+msgstr "%lu만큼 더 읽어야 하지만 더 이상 읽을 데이터가 없습니다"
 
 #: apt-pkg/contrib/fileutl.cc:1398 apt-pkg/contrib/fileutl.cc:1420
-#, c-format
+#, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr ""
+msgstr "%lu만큼 더 써야 하지만 더 이상 쓸 수 없습니다"
 
 #: apt-pkg/contrib/fileutl.cc:1736
 #, c-format
@@ -2459,8 +2556,9 @@ msgid "The package cache file is an incompatible version"
 msgstr "패키지 캐시 파일이 호환되지 않는 버전입니다"
 
 #: apt-pkg/pkgcache.cc:162
+#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr ""
+msgstr "패키지 캐시 파일이 손상되었습니다"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2644,9 +2742,9 @@ msgstr ""
 "서 APT::Immediate-Configure 항목을 보십시오. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, c-format
+#, fuzzy, c-format
 msgid "Could not configure '%s'. "
-msgstr ""
+msgstr "'%s' 파일을 열 수 없습니다"
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2684,10 +2782,13 @@ msgid "Unable to correct problems, you have held broken packages."
 msgstr "문제를 바로잡을 수 없습니다. 망가진 고정 패키지가 있습니다."
 
 #: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
+#, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
 msgstr ""
+"일부 인덱스 파일을 다운로드하는데 실패했습니다. 해당 파일을 무시하거나 과거"
+"의 버전을 대신 사용합니다."
 
 #: apt-pkg/acquire.cc:81
 #, c-format
@@ -2797,9 +2898,9 @@ msgstr "캐시의 버전 시스템이 호환되지 않습니다"
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, c-format
+#, fuzzy, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr ""
+msgstr "%s 처리 중에 오류가 발생했습니다 (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2852,7 +2953,7 @@ msgstr "MD5Sum이 맞지 않습니다"
 #: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1870
 #: apt-pkg/acquire-item.cc:2013
 msgid "Hash Sum mismatch"
-msgstr "해시 값이 맞지 않습니다"
+msgstr "해시 합이 맞지 않습니다"
 
 #: apt-pkg/acquire-item.cc:1381
 #, c-format
@@ -2862,9 +2963,9 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/acquire-item.cc:1397
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
-msgstr ""
+msgstr "Release 파일 %s 파일을 파싱할 수 없습니다"
 
 #: apt-pkg/acquire-item.cc:1439
 msgid "There is no public key available for the following key IDs:\n"
@@ -3017,7 +3118,7 @@ msgstr ""
 #: apt-pkg/cdrom.cc:782
 #, c-format
 msgid "Found label '%s'\n"
-msgstr "레이블 발견: %s\n"
+msgstr "레이블 발견: %s \n"
 
 #: apt-pkg/cdrom.cc:811
 msgid "That is not a valid name, try again.\n"
@@ -3311,65 +3412,35 @@ msgstr "관리 디렉터리를 (%s) 잠글 수 없습니다. 루트 사용자가
 msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
-"dpkg가 중단되었습니다. 수동으로 '%s' 명령을 실행해 문제점을 바로잡으십시오. "
+"dpkg가 중단되었습니다. 수동으로 '%s' 명령을 실행해 문제점을 바로잡으십시오."
 
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "잠기지 않음"
 
-#~ msgid "Package %s is not installed, so not removed\n"
-#~ msgstr "%s 패키지를 설치하지 않았으므로, 지우지 않습니다\n"
-
-#~ msgid "Unable to create %s"
-#~ msgstr "%s을(를) 만들 수 없습니다"
-
-#~ msgid "The info and temp directories need to be on the same filesystem"
-#~ msgstr "정보 디렉토리와 임시 디렉토리는 같은 파일 시스템에 있어야 합니다"
-
-#~ msgid "Reading file listing"
-#~ msgstr "파일 목록을 읽는 중입니다"
-
-#~ msgid "The diversion file is corrupted"
-#~ msgstr "전환 파일이 손상되었습니다"
-
-#~ msgid "Invalid line in the diversion file: %s"
-#~ msgstr "전환 파일에 잘못된 줄이 있습니다: %s"
-
-#~ msgid "The pkg cache must be initialized first"
-#~ msgstr "패키지 캐시를 먼저 초기화해야 합니다"
-
-#~ msgid "Bad ConfFile section in the status file. Offset %lu"
-#~ msgstr "status 파일에서 ConfFile 섹션이 잘못되었습니다. 오프셋 %lu"
-
-#~ msgid "Error parsing MD5. Offset %lu"
-#~ msgstr "MD5 분석에 오류가 있습니다. 오프셋 %lu"
-
-#~ msgid "Couldn't change to %s"
-#~ msgstr "%s 디렉토리로 이동할 수 없습니다"
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "%s에 대한 파이프를 열 수 없습니다"
-
-#~ msgid "Got a single header line over %u chars"
-#~ msgstr "헤더 한 줄에 %u개가 넘는 문자가 들어 있습니다"
-
-#~ msgid "Note: This is done automatic and on purpose by dpkg."
-#~ msgstr "주의: dpkg에서 자동으로 의도적으로 수행했습니다."
-
-#~ msgid "Use 'apt-get autoremove' to remove them."
-#~ msgstr "이들을 지우려면 'apt-get autoremove'를 사용하십시오."
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "%s 파일은 없으므로 무시합니다"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "%s을(를) 지우는데 실패했습니다"
 
+#~ msgid "Unable to create %s"
+#~ msgstr "%s을(를) 만들 수 없습니다"
+
 #~ msgid "Failed to stat %sinfo"
 #~ msgstr "%sinfo의 정보를 읽는데 실패했습니다"
+
+#~ msgid "The info and temp directories need to be on the same filesystem"
+#~ msgstr "정보 디렉토리와 임시 디렉토리는 같은 파일 시스템에 있어야 합니다"
 
 #~ msgid "Failed to change to the admin dir %sinfo"
 #~ msgstr "관리 디렉토리를 %sinfo로 바꾸는데 실패했습니다"
 
 #~ msgid "Internal error getting a package name"
 #~ msgstr "패키지 이름을 가져오는데 내부 오류"
+
+#~ msgid "Reading file listing"
+#~ msgstr "파일 목록을 읽는 중입니다"
 
 #~ msgid ""
 #~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
@@ -3388,24 +3459,105 @@ msgstr "잠기지 않음"
 #~ msgid "Failed to open the diversions file %sdiversions"
 #~ msgstr "전환 파일 %sdiversions를 여는데 실패했습니다"
 
+#~ msgid "The diversion file is corrupted"
+#~ msgstr "전환 파일이 손상되었습니다"
+
+#~ msgid "Invalid line in the diversion file: %s"
+#~ msgstr "전환 파일에 잘못된 줄이 있습니다: %s"
+
 #~ msgid "Internal error adding a diversion"
 #~ msgstr "diversion을 추가하는데 내부 오류"
+
+#~ msgid "The pkg cache must be initialized first"
+#~ msgstr "패키지 캐시를 먼저 초기화해야 합니다"
 
 #~ msgid "Failed to find a Package: header, offset %lu"
 #~ msgstr "패키지를 찾는데 실패했습니다: 헤더, 오프셋 %lu"
 
+#~ msgid "Bad ConfFile section in the status file. Offset %lu"
+#~ msgstr "status 파일에서 ConfFile 섹션이 잘못되었습니다. 오프셋 %lu"
+
+#~ msgid "Error parsing MD5. Offset %lu"
+#~ msgstr "MD5 분석에 오류가 있습니다. 오프셋 %lu"
+
+#~ msgid "Couldn't change to %s"
+#~ msgstr "%s 디렉토리로 이동할 수 없습니다"
+
 #~ msgid "Failed to locate a valid control file"
 #~ msgstr "올바른 control 파일을 찾는데 실패했습니다"
+
+#~ msgid "Couldn't open pipe for %s"
+#~ msgstr "%s에 대한 파이프를 열 수 없습니다"
 
 #~ msgid "Read error from %s process"
 #~ msgstr "%s 프로세스에서 읽는데 오류가 발생했습니다"
 
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "동적 mmap이 한계를 벗어났습니다. APT::Cache-Limit의 크기를 높이십시오. 현"
-#~ "재 값: %lu. (man 5 apt.conf)"
+#~ msgid "Got a single header line over %u chars"
+#~ msgstr "헤더 한 줄에 %u개가 넘는 문자가 들어 있습니다"
 
-#~ msgid "Skipping nonexistent file %s"
-#~ msgstr "%s 파일은 없으므로 무시합니다"
+#~ msgid "Note: This is done automatic and on purpose by dpkg."
+#~ msgstr "주의: dpkg에서 자동으로 의도적으로 수행했습니다."
+
+#~ msgid "Malformed override %s line %lu #1"
+#~ msgstr "override %s의 %lu번 줄 #1이 잘못되었습니다"
+
+#~ msgid "Malformed override %s line %lu #2"
+#~ msgstr "override %s의 %lu번 줄 #2가 잘못되었습니다"
+
+#~ msgid "Malformed override %s line %lu #3"
+#~ msgstr "override %s의 %lu번 줄 #3이 잘못되었습니다"
+
+#~ msgid "decompressor"
+#~ msgstr "압축 해제 프로그램"
+
+#~ msgid "read, still have %lu to read but none left"
+#~ msgstr "%lu만큼 더 읽어야 하지만 더 이상 읽을 데이터가 없습니다"
+
+#~ msgid "write, still have %lu to write but couldn't"
+#~ msgstr "%lu만큼 더 써야 하지만 더 이상 쓸 수 없습니다"
+
+#~ msgid ""
+#~ "Could not perform immediate configuration on already unpacked '%s'. "
+#~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
+#~ msgstr ""
+#~ "이미 압축이 풀린 '%s' 패키지에 대해 즉시 설정을 할 수 없습니다. 자세한 설"
+#~ "명은 man 5 apt.conf 페이지에서 APT::Immediate-Configure 항목을 보십시오."
+
+#~ msgid "Error occurred while processing %s (NewPackage)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewPackage)"
+
+#~ msgid "Error occurred while processing %s (UsePackage1)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (UsePackage1)"
+
+#~ msgid "Error occurred while processing %s (NewFileDesc1)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewFileDesc1)"
+
+#~ msgid "Error occurred while processing %s (UsePackage2)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (UsePackage2)"
+
+#~ msgid "Error occurred while processing %s (NewFileVer1)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewFileVer1)"
+
+#~ msgid "Error occurred while processing %s (NewVersion%d)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewVersion%d)"
+
+#~ msgid "Error occurred while processing %s (UsePackage3)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (UsePackage3)"
+
+#~ msgid "Error occurred while processing %s (NewFileDesc2)"
+#~ msgstr "%s 처리하는 중에 오류가 발생했습니다 (NewFileDesc1)"
+
+#~ msgid "Error occurred while processing %s (FindPkg)"
+#~ msgstr "%s 처리 중에 오류가 발생했습니다 (FindPkg)"
+
+#~ msgid "Error occurred while processing %s (CollectFileProvides)"
+#~ msgstr "%s 처리 중에 오류가 발생했습니다 (CollectFileProvides)"
+
+#~ msgid "Internal error, could not locate member"
+#~ msgstr "내부 오류, 멤버를 찾을 수 없습니다"
+
+#~ msgid "Internal error, group '%s' has no installable pseudo package"
+#~ msgstr "내부 오류, '%s' 그룹에 설치할 수 있는 패키지가 없습니다."
+
+#~ msgid "Release file expired, ignoring %s (invalid since %s)"
+#~ msgstr "Release 파일이 만료되었습니다. %s 무시. (%s 이후로 무효)"

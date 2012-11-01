@@ -346,7 +346,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    /* Check simple depends. A depends -should- never self match but 
       we allow it anyhow because dpkg does. Technically it is a packaging
       bug. Conflicts may never self match */
-   if (Dep.TargetPkg() != Dep.ParentPkg() || Dep.IsNegative() == false)
+   if (Dep.IsIgnorable(Res) == false)
    {
       PkgIterator Pkg = Dep.TargetPkg();
       // Check the base package

@@ -492,6 +492,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
       {
 	 if (Pkg == P || List->IsFlag(P,pkgOrderList::Configured) == true ||
+	     List->IsFlag(P,pkgOrderList::UnPacked) == false ||
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
@@ -877,6 +878,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
       {
 	 if (P->CurrentVer != 0 || P == Pkg || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
+	     List->IsFlag(P,pkgOrderList::Configured) == true ||
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;

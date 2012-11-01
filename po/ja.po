@@ -9,16 +9,14 @@ msgstr ""
 "Project-Id-Version: apt 0.9.7.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-10-16 11:36+0100\n"
-"PO-Revision-Date: 2012-10-09 02:34+0000\n"
-"Last-Translator: Kentaro Kazuhama <kazken3@gmail.com>\n"
+"PO-Revision-Date: 2012-07-01 00:14+0900\n"
+"Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Launchpad-Export-Date: 2012-10-12 10:32+0000\n"
-"X-Generator: Launchpad (build 16130)\n"
+"Content-Transfer-Encoding: 8 bit\n"
+"Plural-Forms: Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -116,7 +114,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:1452 apt-pkg/cacheset.cc:510
 #, c-format
 msgid "Unable to locate package %s"
-msgstr "%s のパッケージが見つかりません"
+msgstr "パッケージ %s が見つかりません"
 
 #: cmdline/apt-cache.cc:1482
 msgid "Package files:"
@@ -129,7 +127,7 @@ msgstr "キャッシュが同期しておらず、パッケージファイルを
 #. Show any packages have explicit pins
 #: cmdline/apt-cache.cc:1503
 msgid "Pinned packages:"
-msgstr "Pin パッケージ:"
+msgstr "Pin されたパッケージ:"
 
 #: cmdline/apt-cache.cc:1515 cmdline/apt-cache.cc:1560
 msgid "(not found)"
@@ -240,7 +238,7 @@ msgstr "このディスクに、'Debian 5.0.3 Disk 1' のような名前を付�
 
 #: cmdline/apt-cdrom.cc:94
 msgid "Please insert a Disc in the drive and press enter"
-msgstr "ディスクをドライブに入れて enter を押してください"
+msgstr "ディスクをドライブに入れて Enter キーを押してください"
 
 #: cmdline/apt-cdrom.cc:129
 #, c-format
@@ -282,7 +280,7 @@ msgstr ""
 "オプション:\n"
 "  -h   このヘルプを表示する\n"
 "  -c=? 指定した設定ファイルを読み込む\n"
-"  -o=? 指定した設定オプションを適用する(例: -o dir::cache=/tmp)\n"
+"  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
 
 #: cmdline/apt-get.cc:135
 msgid "Y"
@@ -371,17 +369,17 @@ msgstr ""
 #: cmdline/apt-get.cc:602
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "アップグレード: %lu 個、新規インストール: %lu 個、 "
+msgstr "アップグレード: %lu 個、新規インストール: %lu 個、"
 
 #: cmdline/apt-get.cc:606
 #, c-format
 msgid "%lu reinstalled, "
-msgstr "再インストール: %lu 個、 "
+msgstr "再インストール: %lu 個、"
 
 #: cmdline/apt-get.cc:608
 #, c-format
 msgid "%lu downgraded, "
-msgstr "ダウングレード: %lu 個、 "
+msgstr "ダウングレード: %lu 個、"
 
 #: cmdline/apt-get.cc:610
 #, c-format
@@ -414,7 +412,7 @@ msgstr " [インストール済み]"
 
 #: cmdline/apt-get.cc:677
 msgid " [Not candidate version]"
-msgstr " [候補バージョンなし]"
+msgstr "[候補バージョンなし]"
 
 #: cmdline/apt-get.cc:679
 msgid "You should explicitly select one to install."
@@ -653,7 +651,7 @@ msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
 msgstr ""
-"いくつかのアーカイブが取得できません。apt-get update を実行するか --fix-"
+"いくつかのアーカイブを取得できません。apt-get update を実行するか --fix-"
 "missing オプションを付けて試してみてください。"
 
 #: cmdline/apt-get.cc:1383
@@ -676,6 +674,9 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
+"以下のパッケージは、全ファイルが別のパッケージで上書きされたため、\n"
+"システムから消えました:"
+msgstr[1] ""
 "以下のパッケージは、全ファイルが別のパッケージで上書きされたため、\n"
 "システムから消えました:"
 
@@ -742,6 +743,8 @@ msgid_plural ""
 "required:"
 msgstr[0] ""
 "以下のパッケージが自動でインストールされましたが、もう必要とされていません:"
+msgstr[1] ""
+"以下のパッケージが自動でインストールされましたが、もう必要とされていません:"
 
 #: cmdline/apt-get.cc:1833
 #, c-format
@@ -751,11 +754,15 @@ msgid_plural ""
 msgstr[0] ""
 "%lu つのパッケージが自動でインストールされましたが、もう必要とされていませ"
 "ん:\n"
+msgstr[1] ""
+"%lu つのパッケージが自動でインストールされましたが、もう必要とされていませ"
+"ん:\n"
 
 #: cmdline/apt-get.cc:1835
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "これを削除するには 'apt-get autoremove' を利用してください。"
+msgstr[1] "これらを削除するには 'apt-get autoremove' を利用してください。"
 
 #: cmdline/apt-get.cc:1854
 msgid "Internal error, AllUpgrade broke stuff"
@@ -854,7 +861,7 @@ msgstr "%s %s をダウンロードしています"
 #: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
-"ソースを取得するには少なくともひとつのパッケージ名を指定する必要があります"
+"ソースを取得するには少なくとも 1 つのパッケージ名を指定する必要があります"
 
 #: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
@@ -867,7 +874,7 @@ msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
-"注意: '%s' パッケージは以下の場所の '%s' バージョン管理システムで保守されてい"
+"注意: '%s' パッケージは以下の場所の '%s' バージョン制御システムで保守されてい"
 "ます:\n"
 "%s\n"
 
@@ -1170,7 +1177,7 @@ msgid ""
 msgstr ""
 "メディア変更: \n"
 " '%s'\n"
-"とラベルの付いたディスクをドライブ '%s' に入れて enter を押してください\n"
+"とラベルの付いたディスクをドライブ '%s' に入れて Enter キーを押してください\n"
 
 #: cmdline/apt-mark.cc:55
 #, c-format
@@ -1388,7 +1395,7 @@ msgstr "パッシブソケットに接続できません。"
 
 #: methods/ftp.cc:730
 msgid "getaddrinfo was unable to get a listening socket"
-msgstr "getaddrinfo はリスニングポートを取得することができませんでした"
+msgstr "getaddrinfo はリスニングソケットを取得できませんでした"
 
 #: methods/ftp.cc:744
 msgid "Could not bind a socket"
@@ -1449,7 +1456,7 @@ msgstr "問い合わせ"
 
 #: methods/ftp.cc:1119
 msgid "Unable to invoke "
-msgstr "呼び出せません "
+msgstr "呼び出せません"
 
 #: methods/connect.cc:75
 #, c-format
@@ -1551,19 +1558,19 @@ msgstr "不正なヘッダ行です"
 
 #: methods/http.cc:569 methods/http.cc:576
 msgid "The HTTP server sent an invalid reply header"
-msgstr "http サーバが不正なリプライヘッダを送信してきました"
+msgstr "HTTP サーバが不正なリプライヘッダを送信してきました"
 
 #: methods/http.cc:606
 msgid "The HTTP server sent an invalid Content-Length header"
-msgstr "http サーバが不正な Content-Length ヘッダを送信してきました"
+msgstr "HTTP サーバが不正な Content-Length ヘッダを送信してきました"
 
 #: methods/http.cc:621
 msgid "The HTTP server sent an invalid Content-Range header"
-msgstr "http サーバが不正な Content-Range ヘッダを送信してきました"
+msgstr "HTTP サーバが不正な Content-Range ヘッダを送信してきました"
 
 #: methods/http.cc:623
 msgid "This HTTP server has broken range support"
-msgstr "http サーバのレンジサポートが壊れています"
+msgstr "HTTP サーバのレンジサポートが壊れています"
 
 #: methods/http.cc:647
 msgid "Unknown date format"
@@ -1680,7 +1687,7 @@ msgstr "不正なデフォルト設定です!"
 #: dselect/install:51 dselect/install:83 dselect/install:87 dselect/install:94
 #: dselect/install:105 dselect/update:45
 msgid "Press enter to continue."
-msgstr "enter を押すと続行します。"
+msgstr "Enter キーを押すと続行します。"
 
 #: dselect/install:91
 msgid "Do you want to erase any previously downloaded .deb files?"
@@ -2114,7 +2121,7 @@ msgstr "パイプの生成に失敗しました"
 
 #: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
-msgstr "gzip の実行に失敗しました "
+msgstr "gzip の実行に失敗しました"
 
 #: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:211
 msgid "Corrupted archive"
@@ -2122,7 +2129,7 @@ msgstr "壊れたアーカイブ"
 
 #: apt-inst/contrib/extracttar.cc:196
 msgid "Tar checksum failed, archive corrupted"
-msgstr "tar チェックサムが失敗しました。アーカイブが壊れています"
+msgstr "tar チェックサム検証が失敗しました。アーカイブが壊れています"
 
 #: apt-inst/contrib/extracttar.cc:303
 #, c-format
@@ -2472,7 +2479,7 @@ msgstr "マウントポイント %s の状態を取得できません"
 
 #: apt-pkg/contrib/cdromutl.cc:224
 msgid "Failed to stat the cdrom"
-msgstr "cdrom の状態を取得するのに失敗しました"
+msgstr "CD-ROM の状態を取得するのに失敗しました"
 
 #: apt-pkg/contrib/fileutl.cc:93
 #, c-format
@@ -2793,7 +2800,7 @@ msgstr ""
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
 #, c-format
 msgid "Could not configure '%s'. "
-msgstr "'%s' を設定できませんでした。 "
+msgstr "'%s' を設定できませんでした。"
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2880,8 +2887,8 @@ msgstr "メソッド %s が正常に開始しませんでした"
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
-"'%s' とラベルの付いたディスクをドライブ '%s' に入れて enter を押してくださ"
-"い。"
+"'%s' とラベルの付いたディスクをドライブ '%s' に入れて Enter キーを押してくだ"
+"さい。"
 
 #: apt-pkg/init.cc:152
 #, c-format
@@ -2936,7 +2943,7 @@ msgstr ""
 #: apt-pkg/policy.cc:418
 #, c-format
 msgid "Did not understand pin type %s"
-msgstr "pin タイプ %s が理解できませんでした"
+msgstr "pin タイプ %s を理解できませんでした"
 
 #: apt-pkg/policy.cc:426
 msgid "No priority (or zero) specified for pin"
@@ -3138,7 +3145,7 @@ msgstr "確認しています.. "
 #: apt-pkg/cdrom.cc:613
 #, c-format
 msgid "Stored label: %s\n"
-msgstr "格納されたラベル: %s\n"
+msgstr "格納されたラベル: %s \n"
 
 #: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
 msgid "Unmounting CD-ROM...\n"
@@ -3493,104 +3500,11 @@ msgid ""
 "dpkg was interrupted, you must manually run '%s' to correct the problem. "
 msgstr ""
 "dpkg は中断されました。問題を修正するには '%s' を手動で実行する必要がありま"
-"す。 "
+"す。"
 
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "ロックされていません"
-
-#~ msgid "Got a single header line over %u chars"
-#~ msgstr "%u 文字を超える 1 行のヘッダを取得しました"
-
-#~ msgid "Read error from %s process"
-#~ msgstr "%s プロセスからの読み込みエラー"
-
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "%s に対してパイプを開けませんでした"
-
-#~ msgid "Failed to locate a valid control file"
-#~ msgstr "正しいコントロールファイルを特定できませんでした"
-
-#~ msgid "Couldn't change to %s"
-#~ msgstr "%s に変更できませんでした"
-
-#~ msgid "Error parsing MD5. Offset %lu"
-#~ msgstr "MD5 の解析エラー。オフセット %lu"
-
-#~ msgid "Bad ConfFile section in the status file. Offset %lu"
-#~ msgstr ""
-#~ "status ファイルに不正な ConfFile セクションがあります。オフセット %lu"
-
-#~ msgid "Failed to find a Package: header, offset %lu"
-#~ msgstr "Package: ヘッダを見つけるのに失敗しました。オフセット %lu"
-
-#~ msgid "The pkg cache must be initialized first"
-#~ msgstr "最初にパッケージキャッシュを初期化しなければなりません"
-
-#~ msgid "Internal error adding a diversion"
-#~ msgstr "内部エラー、diversion の追加"
-
-#~ msgid "Invalid line in the diversion file: %s"
-#~ msgstr "diversion ファイルに不正な行があります: %s"
-
-#~ msgid "The diversion file is corrupted"
-#~ msgstr "diversion ファイルが壊れています"
-
-#~ msgid "Failed to open the diversions file %sdiversions"
-#~ msgstr "diversions ファイル %sdiversions のオープンに失敗しました"
-
-#~ msgid "Internal error getting a node"
-#~ msgstr "内部エラー、ノードの取得"
-
-#~ msgid "Failed reading the list file %sinfo/%s"
-#~ msgstr "リストファイル %sinfo/%s の読み込みに失敗しました"
-
-#~ msgid ""
-#~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
-#~ "then make it empty and immediately re-install the same version of the "
-#~ "package!"
-#~ msgstr ""
-#~ "リストファイル '%sinfo/%s' のオープンに失敗しました。このファイルを元に戻"
-#~ "すことができないなら、その内容を空にして即座に同じバージョンのパッケージを"
-#~ "再インストールしてください!"
-
-#~ msgid "Reading file listing"
-#~ msgstr "ファイルリストを読み込んでいます"
-
-#~ msgid "Internal error getting a package name"
-#~ msgstr "パッケージ名取得中の内部エラー"
-
-#~ msgid "Failed to change to the admin dir %sinfo"
-#~ msgstr "管理ディレクトリ %sinfo への移動に失敗しました"
-
-#~ msgid "The info and temp directories need to be on the same filesystem"
-#~ msgstr ""
-#~ "info と temp ディレクトリは同じファイルシステム上になければなりません"
-
-#~ msgid "Failed to stat %sinfo"
-#~ msgstr "%sinfo の状態の取得に失敗しました"
-
-#~ msgid "Unable to create %s"
-#~ msgstr "%s を作成できません"
-
-#~ msgid "Failed to remove %s"
-#~ msgstr "%s の削除に失敗しました"
-
-#~ msgid "Use 'apt-get autoremove' to remove them."
-#~ msgstr "これらを削除するには 'apt-get autoremove' を利用してください。"
-
-#~ msgid "Package %s is not installed, so not removed\n"
-#~ msgstr "パッケージ %s はインストールされていないため、削除はできません\n"
-
-#~ msgid "Note: This is done automatic and on purpose by dpkg."
-#~ msgstr "注意: これは dpkg により自動でわざと行われれます。"
-
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "動的 MMap が範囲を越えました。APT::Cache-Limit の大きさを増やしてくださ"
-#~ "い。現在値は %lu です (man 5 apt.conf を参照)。"
 
 #~ msgid "Skipping nonexistent file %s"
 #~ msgstr "存在しないファイル %s をスキップしています"

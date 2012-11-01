@@ -214,9 +214,11 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
       if (Progress != NULL && p % 100 == 0)
          Progress->Progress(p);
       string* req;
-      if (Cache[Pkg].Delete() == true)
+      pkgDepCache::StateCache &P = Cache[Pkg];
+      if (P.Delete() == true)
 	 req = &del;
-      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
+      else if (P.NewInstall() == true || P.Upgrade() == true || P.ReInstall() == true ||
+	       (P.Mode == pkgDepCache::ModeKeep && (P.iFlags & pkgDepCache::Protected) == pkgDepCache::Protected))
 	 req = &inst;
       else
 	 continue;

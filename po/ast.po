@@ -5,16 +5,15 @@ msgstr ""
 "Project-Id-Version: apt 0.7.18\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-10-16 11:36+0100\n"
-"PO-Revision-Date: 2012-09-07 13:19+0000\n"
-"Last-Translator: Marcos Alvarez Costales <Unknown>\n"
+"PO-Revision-Date: 2010-10-02 23:35+0100\n"
+"Last-Translator: Iñigo Varela <ivarela@softastur.org>\n"
 "Language-Team: Asturian (ast)\n"
 "Language: ast\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2012-10-12 10:33+0000\n"
-"X-Generator: Launchpad (build 16130)\n"
+"X-Generator: Virtaal 0.5.2\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -102,7 +101,7 @@ msgstr "Nun s'alcontraron paquetes"
 
 #: cmdline/apt-cache.cc:1222
 msgid "You must give at least one search pattern"
-msgstr "Has dar polo menos un patrón de gueta"
+msgstr "Has de dar polo menos un patrón de gueta"
 
 #: cmdline/apt-cache.cc:1357
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
@@ -161,6 +160,7 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s pa %s compiláu en %s %s\n"
 
 #: cmdline/apt-cache.cc:1686
+#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -196,6 +196,44 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
+"Usu: apt-cache [opciones] orde\n"
+"     apt-cache [opciones] add ficheru1 [ficheru2 ...]\n"
+"     apt-cache [opciones] showpkg paq1 [paq2 ...]\n"
+"     apt-cache [opciones] showsrc paq1 [paq2 ...]\n"
+"\n"
+"apt-cache ye una ferramienta de baxu nivel usada pa remanar\n"
+"ficheros de caché binarios d'APT y consultar información d'ellos\n"
+"\n"
+"Ordes:\n"
+"   add - Amesta un ficheru de paquete a la caché fonte\n"
+"   gencaches - Creal dambes cachés, la de paquetes y la de fontes\n"
+"   showpkg - Amuesa algo d'información xeneral d'un sólu paquete\n"
+"   showsrc - Amuesa los rexistros de fonte\n"
+"   stats - Amuesa dalgunes estadístiques básiques\n"
+"   dump - Amuesa'l ficheru ensembre en formatu tersu\n"
+"   dumpavail - Imprenta un ficheru disponible na salida estándar\n"
+"   unmet - Amuesa dependencies nun atopáes\n"
+"   search - Restola na llista de paquetes por el patrón d'una espresión "
+"regular\n"
+"   show - Amuesa un rexistru lleíble pal paquete\n"
+"   showauto - Amouesa una llista de paquetes instalaos automáticamente\n"
+"   depends - Amuesa la información de dependencies en bruto d'un paquete\n"
+"   rdepends - Amuesa la información de dependencies inverses d'un paquete\n"
+"   pkgnames - Llista los nomes de tolos paquetes nel sistema\n"
+"   dotty - Xenera gráfiques del paquete pa GraphViz\n"
+"   xvcg - Xenera gráfiques del paquete pa xvcg\n"
+"   policy - Amuesa los axustes de les normes\n"
+"\n"
+"Opciones:\n"
+"  -h   Esti testu d'aida.\n"
+"  -p=? La cache de paquetes.\n"
+"  -s=? La cache de fontes.\n"
+"  -q   Desactiva l'indicador de progresu.\n"
+"  -i   Amuesa sólo les dependencies importantes de la orde incumplida.\n"
+"  -c=? Lleer esti ficheru de configuración\n"
+"  -o=? Conseña una opción de configuración arbitraria, ex -o dir::cache=/"
+"tmp\n"
+"Ver les páxines del manual apt-cache(8) y apt.conf(5) pa más información.\n"
 
 #: cmdline/apt-cdrom.cc:79
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -303,11 +341,11 @@ msgstr "Los siguientes paquetes van DESANICIASE:"
 
 #: cmdline/apt-get.cc:446
 msgid "The following packages have been kept back:"
-msgstr "Los siguientes paquetes tán reteníos:"
+msgstr "Los siguientes paquetes tan reteníos:"
 
 #: cmdline/apt-get.cc:467
 msgid "The following packages will be upgraded:"
-msgstr "Van anovase los siguientes paquetes:"
+msgstr "Los siguientes paquetes van actualizase:"
 
 #: cmdline/apt-get.cc:488
 msgid "The following packages will be DOWNGRADED:"
@@ -333,7 +371,7 @@ msgstr ""
 #: cmdline/apt-get.cc:602
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
-msgstr "%lu anovaos, %lu nuevos instalaos, "
+msgstr "%lu actualizaos, %lu nuevos instalaos, "
 
 #: cmdline/apt-get.cc:606
 #, c-format
@@ -348,7 +386,7 @@ msgstr "%lu desactualizaos, "
 #: cmdline/apt-get.cc:610
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
-msgstr "%lu pa desaniciar y %lu non anovaos.\n"
+msgstr "%lu para desaniciar y %lu nun actualizaos.\n"
 
 #: cmdline/apt-get.cc:614
 #, c-format
@@ -395,7 +433,7 @@ msgstr ""
 
 #: cmdline/apt-get.cc:700
 msgid "However the following packages replace it:"
-msgstr "Sicasí, los siguientes paquetes tróquenlu:"
+msgstr "Sicasí, los siguientes paquetes reemplacenlu:"
 
 #: cmdline/apt-get.cc:712
 #, c-format
@@ -409,14 +447,14 @@ msgstr "Los paquetes virtuales como '%s' nun pueden desaniciase\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
+msgstr "El paquete %s nun ta instalau, nun va desaniciase\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr ""
+msgstr "El paquete %s nun ta instalau, nun va desaniciase\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -426,7 +464,7 @@ msgstr "Nota, escoyendo %s nel llugar de %s\n"
 #: cmdline/apt-get.cc:818
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "Saltando %s, yá ta instaláu y l'anovamientu nun ta activáu.\n"
+msgstr "Saltando %s, ya ta instalau y la actualización nun ta activada.\n"
 
 #: cmdline/apt-get.cc:822
 #, c-format
@@ -454,9 +492,9 @@ msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Esbillada la versión %s (%s) pa %s\n"
 
 #: cmdline/apt-get.cc:889
-#, c-format
+#, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr ""
+msgstr "Esbillada la versión %s (%s) pa %s\n"
 
 #: cmdline/apt-get.cc:1025
 msgid "Correcting dependencies..."
@@ -480,7 +518,7 @@ msgstr " Fecho"
 
 #: cmdline/apt-get.cc:1040
 msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Habríes d'executar 'apt-get -f install' pa igualo."
+msgstr "Habríes d'executar 'apt-get -f install' para igualo."
 
 #: cmdline/apt-get.cc:1043
 msgid "Unmet dependencies. Try using -f."
@@ -527,14 +565,14 @@ msgstr "Que raro.. Los tamaños nun concasen, escribe a apt@packages.debian.org"
 #: cmdline/apt-get.cc:1196
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
-msgstr "Necesiten descargase %sB/%sB d'archivos.\n"
+msgstr "Hai que descargar %sB/%sB d'archivos.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: cmdline/apt-get.cc:1201
 #, c-format
 msgid "Need to get %sB of archives.\n"
-msgstr "Necesiten descargase %sB d'archivos.\n"
+msgstr "Hai que descargar %sB d'archivos.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -629,11 +667,11 @@ msgid_plural ""
 "The following packages disappeared from your system as\n"
 "all files have been overwritten by other packages:"
 msgstr[0] ""
-"El siguiente paquete desapareció del sistema y\n"
-"sobrescribiéronse tolos ficheros por otros paquetes:"
+"El siguiente paquete desapareció del sistema como\n"
+"tolos ficheros fueron sobroescritos por otros paquetes:"
 msgstr[1] ""
-"Los siguientes paquetes desaparecieron del sistema y\n"
-"sobrescribiéronse tolos ficheros por otros paquetes:"
+"Los siguientes paquetes desaparecieron del sistema como\n"
+"tolos ficheros fueron sobroescritos por otros paquetes:"
 
 #: cmdline/apt-get.cc:1421
 msgid "Note: This is done automatically and on purpose by dpkg."
@@ -647,7 +685,7 @@ msgstr "Inorar release destín non disponible '%s' pal paquete '%s'"
 #: cmdline/apt-get.cc:1591
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr "Tomando '%s' como paquete d'oríxenes en llugar de '%s'\n"
+msgstr "Tomando '%s' como paquetes d'oríxenes en llugar de '%s'\n"
 
 #. if (VerTag.empty() == false && Last == 0)
 #: cmdline/apt-get.cc:1629
@@ -661,8 +699,7 @@ msgstr "La orde update nun lleva argumentos"
 
 #: cmdline/apt-get.cc:1711
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
-msgstr ""
-"Entiéndese que nun vamos desaniciar coses, nun pue entamase «AutoRemover»"
+msgstr "Suponse que nun vamos esborrar coses; nun pue entamase AutoRemover"
 
 #: cmdline/apt-get.cc:1815
 msgid ""
@@ -670,7 +707,7 @@ msgid ""
 "shouldn't happen. Please file a bug report against apt."
 msgstr ""
 "Hmm, paez que AutoRemover destruyó daqué, lo que nun tendría\n"
-"por qué pasar. Por favor, unvia un informe de fallu escontra apt."
+"por qué pasar. Por favor, unvía un informe de fallu escontra apt."
 
 #.
 #. if (Packages == 1)
@@ -684,11 +721,11 @@ msgstr ""
 #.
 #: cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1987
 msgid "The following information may help to resolve the situation:"
-msgstr "La siguiente información pue ayudar a resolver la situación:"
+msgstr "La siguiente información pue aidar a resolver la situación:"
 
 #: cmdline/apt-get.cc:1822
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr "Error internu, «AutoRemover» frañó coses"
+msgstr "Error internu, AutoRemover rompió coses"
 
 #: cmdline/apt-get.cc:1829
 msgid ""
@@ -698,7 +735,8 @@ msgid_plural ""
 "required:"
 msgstr[0] "El siguiente paquete instalóse mou automáticu y yá nun se necesita:"
 msgstr[1] ""
-"Los siguientes paquetes instaláronse de mou automáticu y yá nun se necesiten:"
+"Los siguientes paquetes instaláronse de manera automática y ya nun se "
+"necesiten:"
 
 #: cmdline/apt-get.cc:1833
 #, c-format
@@ -710,25 +748,26 @@ msgstr[1] ""
 "Los paquetes %lu instaláronse de manera automática y ya nun se necesiten\n"
 
 #: cmdline/apt-get.cc:1835
+#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Usa 'apt-get autoremove' pa desinstalalos."
+msgstr[1] "Usa 'apt-get autoremove' pa desinstalalos."
 
 #: cmdline/apt-get.cc:1854
 msgid "Internal error, AllUpgrade broke stuff"
-msgstr "Error Internu, AllUpgrade frañó coses"
+msgstr "Error internu, AllUpgrade rompió coses"
 
 #: cmdline/apt-get.cc:1953
 msgid "You might want to run 'apt-get -f install' to correct these:"
-msgstr "Tendríes d'executar 'apt-get -f install' pa correxir esto:"
+msgstr "Habríes d'executar 'apt-get -f install' para iguar estos:"
 
 #: cmdline/apt-get.cc:1957
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Dependencies ensin cubrir. Intenta 'apt-get -f install' ensin paquetes (o "
+"Dependencies ensin cubrir. Tenta 'apt-get -f install' ensin paquetes (o "
 "conseña una solución)."
 
 #: cmdline/apt-get.cc:1972
@@ -738,9 +777,9 @@ msgid ""
 "distribution that some required packages have not yet been created\n"
 "or been moved out of Incoming."
 msgstr ""
-"Nun pudieron instalase dellos paquetes. Esto pue significar que\n"
-"conseñasti una situación imposible o, si tas usando la distribución\n"
-"inestable, que nun se crearon dellos paquetes necesarios o que\n"
+"Dellos paquetes nun pudieron instalase. Esto puede significar que\n"
+"conseñaste una situación imposible o, si tas usando la distribución\n"
+"inestable, que dellos paquetes necesarios nun se crearon o que\n"
 "s'allugaron fuera d'Incoming."
 
 #: cmdline/apt-get.cc:1993
@@ -749,11 +788,11 @@ msgstr "Paquetes frañaos"
 
 #: cmdline/apt-get.cc:2019
 msgid "The following extra packages will be installed:"
-msgstr "Van instalase los siguientes paquetes estra:"
+msgstr "Instalaránse los siguientes paquetes extra:"
 
 #: cmdline/apt-get.cc:2109
 msgid "Suggested packages:"
-msgstr "Paquetes suxeríos:"
+msgstr "Paquetes afalaos:"
 
 #: cmdline/apt-get.cc:2110
 msgid "Recommended packages:"
@@ -767,7 +806,7 @@ msgstr "Nun pudo alcontrase'l paquete %s"
 #: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
 #, c-format
 msgid "%s set to automatically installed.\n"
-msgstr "%s afitáu pa instalación automática.\n"
+msgstr "%s axustáu como instaláu automáticamente.\n"
 
 #: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
 msgid ""
@@ -793,7 +832,7 @@ msgstr "Error internu, l'iguador de problemes frañó coses"
 
 #: cmdline/apt-get.cc:2294 cmdline/apt-get.cc:2330
 msgid "Unable to lock the download directory"
-msgstr "Nun pue bloquiase'l direutoriu de descargues"
+msgstr "Nun pue bloquiase'l direutoriu de descarga"
 
 #: cmdline/apt-get.cc:2386
 #, c-format
@@ -807,12 +846,12 @@ msgstr "Descargando %s %s"
 
 #: cmdline/apt-get.cc:2451
 msgid "Must specify at least one package to fetch source for"
-msgstr "Has conseñar polo menos un paquete p'algamar el so códigu fonte"
+msgstr "Has de conseñar polo menos un paquete p'algamar so fonte"
 
 #: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
 #, c-format
 msgid "Unable to find a source package for %s"
-msgstr "Nun pudo alcontrase un paquete de fontes pa %s"
+msgstr "Nun pudo alcontrase un paquete fonte pa %s"
 
 #: cmdline/apt-get.cc:2508
 #, c-format
@@ -820,17 +859,20 @@ msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
-"AVISU: l'empaquetáu de «%s» caltiénse col sistema de control de versiones "
-"«%s» en:\n"
+"AVISU: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 
 #: cmdline/apt-get.cc:2513
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
+"Por favor, usa:\n"
+"bzr get %s\n"
+"pa baxar los caberos anovamientos (posiblemente tovía nun sacaos) pal "
+"paquete.\n"
 
 #: cmdline/apt-get.cc:2566
 #, c-format
@@ -847,14 +889,14 @@ msgstr "Nun hai espaciu llibre bastante en %s"
 #: cmdline/apt-get.cc:2612
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
-msgstr "Fai falta descargar %sB/%sB d'archivos fonte.\n"
+msgstr "Hai falta descargar %sB/%sB d'archivos fonte.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: cmdline/apt-get.cc:2617
 #, c-format
 msgid "Need to get %sB of source archives.\n"
-msgstr "Fai falta descargar %sB d'archivos fonte.\n"
+msgstr "Hai falta descargar %sB d'archivos fonte.\n"
 
 #: cmdline/apt-get.cc:2623
 #, c-format
@@ -878,7 +920,7 @@ msgstr "Falló la orde de desempaquetáu '%s'.\n"
 #: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
-msgstr "Comprueba que'l paquete 'dpkg-dev' ta instaláu.\n"
+msgstr "Comprueba qu'el paquete 'dpkg-dev' ta instaláu.\n"
 
 #: cmdline/apt-get.cc:2727
 #, c-format
@@ -887,12 +929,12 @@ msgstr "Falló la orde build '%s'.\n"
 
 #: cmdline/apt-get.cc:2747
 msgid "Child process failed"
-msgstr "Falló'l procesu fíu"
+msgstr "Falló el procesu fíu"
 
 #: cmdline/apt-get.cc:2766
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
-"Hai de conseñar polo menos un paquete pa verificar les dependencies de "
+"Hai que conseñar polo menos un paquete pa verificar les dependencies de "
 "construcción"
 
 #: cmdline/apt-get.cc:2791
@@ -913,11 +955,13 @@ msgid "%s has no build depends.\n"
 msgstr "%s nun tien dependencies de construcción.\n"
 
 #: cmdline/apt-get.cc:3008
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr ""
+"La dependencia %s en %s nun puede satisfacese porque nun se puede atopar el "
+"paquete %s"
 
 #: cmdline/apt-get.cc:3026
 #, c-format
@@ -936,18 +980,22 @@ msgstr ""
 "enforma nuevu"
 
 #: cmdline/apt-get.cc:3088
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
+"La dependencia %s en %s nun puede satisfacese porque denguna versión "
+"disponible del paquete %s satisfaz los requisitos de versión"
 
 #: cmdline/apt-get.cc:3094
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr ""
+"La dependencia %s en %s nun puede satisfacese porque nun se puede atopar el "
+"paquete %s"
 
 #: cmdline/apt-get.cc:3117
 #, c-format
@@ -964,15 +1012,16 @@ msgid "Failed to process build dependencies"
 msgstr "Fallu al procesar les dependencies de construcción"
 
 #: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
-#, c-format
+#, fuzzy, c-format
 msgid "Changelog for %s (%s)"
-msgstr "Rexistru de cambeos de %s (%s)"
+msgstr "Coneutando a %s (%s)"
 
 #: cmdline/apt-get.cc:3369
 msgid "Supported modules:"
 msgstr "Módulos sofitaos:"
 
 #: cmdline/apt-get.cc:3410
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1017,6 +1066,50 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Usu: apt-get [opciones] comandu\n"
+"       apt-get [opciones] install|remove pkg1 [pkg2 ...]\n"
+"       apt-get [opciones] source pkg1 [pkg2 ...]\n"
+"\n"
+"apt-get ye una interface de llínia de comandos simple pa baxar ya\n"
+"instalar paquetes. L'usu más frecuente de comandos ye p'anovar\n"
+"ya instalar.\n"
+"\n"
+"Comandos:\n"
+"   update - Algamar nueva llista de paquetes\n"
+"   upgrade - Facer una anovación\n"
+"   install - Instalar nuevos paquetes (pkg ye libc6 non libc6.deb)\n"
+"   remove - Desaniciar paquetes\n"
+"   autoremove - Desaniciar automáticamente tolos paquetes non usaos\n"
+"   purge - Quitar y desaniciar paquetes\n"
+"   source - Baxar fonte del ficheru\n"
+"   build-dep - Configurar dependencies pa los paquetes fonte\n"
+"   dist-upgrade - Actualización de la distribución, ver apt-get(8)\n"
+"   dselect-upgrade - Siguir seleiciones dselect\n"
+"   clean - Esborrar los ficheros de ficheros baxaos\n"
+"   autoclean - Esborrar ficheros de ficheros vieyos baxaos\n"
+"   check - Verificar que nun hai dependencies frayaes\n"
+"   markauto - Marcar paquetes como automáticamente instalaos\n"
+"   unmarkauto - Marcar paquetes como manualmente instalaos\n"
+"\n"
+"Opciones:\n"
+"  -h  Esti testu d'aida.\n"
+"  -q  Salida Log - ensín indicación de progresu\n"
+"  -qq Ensín salida excepto pa fallos\n"
+"  -d  Baxar sólo - NON instalar o desempaquetar los archivos\n"
+"  -s  Non aición. Facer una simulación ordenada\n"
+"  -y  Asumir Yes pa toles entruges y nun visualizar la petición\n"
+"  -f  Intentar correxir un sistema con dependencies frayaes\n"
+"  -m  Intentar siguir si los archivos nun tan disponibles\n"
+"  -u  Amosar una lilsta de paquetes que tan bien\n"
+"  -b  Facer el paquete fonte dempues d'algamalu\n"
+"  -V  Amosar númberos de versiones\n"
+"  -c=? Lleer esti ficheru de configuración\n"
+"  -o=? Afitar una opción de configuración arbitraria, p. ex. -o dir::cache=/"
+"tmp\n"
+"Ver lés páxines de los manuales d' apt-get(8), sources.list(5) y apt.conf"
+"(5)\n"
+"pa más información y opciones.\n"
+"                       Esti APT tien Poderes de Super Vaca.\n"
 
 #: cmdline/apt-get.cc:3575
 msgid ""
@@ -1028,7 +1121,8 @@ msgstr ""
 "NOTA: ¡Esto sólo ye una simulación!\n"
 "       apt-get necesita privilexos de root pa la execución real.\n"
 "       ¡Ten tamién en cuenta que'l bloquéu ta desactiváu,\n"
-"       asina que nun dependen de la relevancia de la situación real actual!"
+"       asina que nun dependen de la pertinencia de la verdadera situación "
+"actual!"
 
 #: cmdline/acqprogress.cc:60
 msgid "Hit "
@@ -1068,29 +1162,29 @@ msgstr ""
 "na unidá '%s' y calca Intro\n"
 
 #: cmdline/apt-mark.cc:55
-#, c-format
+#, fuzzy, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr ""
+msgstr "pero nun ta instaláu"
 
 #: cmdline/apt-mark.cc:61
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr ""
+msgstr "%s axustáu como instaláu manualmente.\n"
 
 #: cmdline/apt-mark.cc:63
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr ""
+msgstr "%s axustáu como instaláu automáticamente.\n"
 
 #: cmdline/apt-mark.cc:228
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set on hold.\n"
-msgstr ""
+msgstr "%s yá ta na versión más nueva.\n"
 
 #: cmdline/apt-mark.cc:230
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already not hold.\n"
-msgstr ""
+msgstr "%s yá ta na versión más nueva.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
@@ -1099,14 +1193,14 @@ msgid "Waited for %s but it wasn't there"
 msgstr "Esperaba %s pero nun taba ellí"
 
 #: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
-#, c-format
+#, fuzzy, c-format
 msgid "%s set on hold.\n"
-msgstr ""
+msgstr "%s axustáu como instaláu manualmente.\n"
 
 #: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
-#, c-format
+#, fuzzy, c-format
 msgid "Canceled hold on %s.\n"
-msgstr ""
+msgstr "Nun pudo abrise %s"
 
 #: cmdline/apt-mark.cc:332
 msgid "Executing dpkg failed. Are you root?"
@@ -1510,14 +1604,14 @@ msgstr "Nun se pudo cambiar a %s"
 #: methods/mirror.cc:280
 #, c-format
 msgid "No mirror file '%s' found "
-msgstr "Nun s'alcontró ficheru espeyu '%s' "
+msgstr "Nun s'alcontró ficheru espeyu '%s'"
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:287
-#, c-format
+#, fuzzy, c-format
 msgid "Can not read mirror file '%s'"
-msgstr ""
+msgstr "Nun s'alcontró ficheru espeyu '%s'"
 
 #: methods/mirror.cc:442
 #, c-format
@@ -1544,7 +1638,7 @@ msgstr ""
 
 #: methods/rsh.cc:99 ftparchive/multicompress.cc:168
 msgid "Failed to create IPC pipe to subprocess"
-msgstr "Falló crear un tubu IPC al soprocesu"
+msgstr "Falló criar un tubu IPC al soprocesu"
 
 #: methods/rsh.cc:338
 msgid "Connection closed prematurely"
@@ -1874,19 +1968,19 @@ msgid "Unable to open %s"
 msgstr "Nun pudo abrise %s"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr ""
+msgstr "Saltu mal formáu %s llinia %lu #1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr ""
+msgstr "Saltu mal formáu %s llinia %lu #2"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr ""
+msgstr "Saltu mal formáu %s llinia %lu #3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -1905,7 +1999,7 @@ msgstr "La salida comprimida %s necesita un xuegu de compresión"
 
 #: ftparchive/multicompress.cc:189
 msgid "Failed to create FILE*"
-msgstr "Nun pudo crease FICHERU*"
+msgstr "Nun pudo criase FICHERU*"
 
 #: ftparchive/multicompress.cc:192
 msgid "Failed to fork"
@@ -1918,7 +2012,7 @@ msgstr "Comprimir fíu"
 #: ftparchive/multicompress.cc:229
 #, c-format
 msgid "Internal error, failed to create %s"
-msgstr "Error internu, nun pudo crease %s"
+msgstr "Error internu, nun pudo criase %s"
 
 #: ftparchive/multicompress.cc:304
 msgid "IO to subprocess/file failed"
@@ -1939,6 +2033,7 @@ msgid "Failed to rename %s to %s"
 msgstr "Nun pudo renomase %s como %s"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -1951,6 +2046,17 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
+"Usu: apt-extracttemplates ficheru1 [ficheru2 ...]\n"
+"\n"
+"apt-extracttemplates ye un preséu pa sacar información de\n"
+"configuración y plantíes de paquetes de debian.\n"
+"\n"
+"Opciones:\n"
+"-h Esti testu d'aida.\n"
+"-t Define'l direutoriu temporal\n"
+"-c=? Llei esti ficheru de configuración\n"
+"-o=? Afita una opción de configuración arbitraria, p. ej. -o dir::cache=/"
+"tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2017,7 +2123,7 @@ msgstr "Testera de miembru del archivu %s inválida"
 
 #: apt-inst/contrib/arfile.cc:106
 msgid "Invalid archive member header"
-msgstr "Testera de miembru del archivu inválida"
+msgstr "Testera de miembru del ficheru inválida"
 
 #: apt-inst/contrib/arfile.cc:132
 msgid "Archive is too short"
@@ -2150,9 +2256,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "Nun pudo duplicase'l ficheru descriptor %i"
 
 #: apt-pkg/contrib/mmap.cc:119
-#, c-format
+#, fuzzy, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr ""
+msgstr "Nun se pudo facer mmap de %lu bytes"
 
 #: apt-pkg/contrib/mmap.cc:146
 msgid "Unable to close mmap"
@@ -2160,7 +2266,7 @@ msgstr "Nun pudo zarrase mmap"
 
 #: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
 msgid "Unable to synchronize mmap"
-msgstr "Nun se pudo sincronizase mmap"
+msgstr "Nun se pudo sincronizase mmap "
 
 #: apt-pkg/contrib/mmap.cc:290
 #, c-format
@@ -2186,13 +2292,13 @@ msgid ""
 "Unable to increase the size of the MMap as the limit of %lu bytes is already "
 "reached."
 msgstr ""
-"Nun pudo incrementase'l tamañu de MMap col llímite de %lu bytes yá torgáu"
+"Nun pudó incrementase'l tamañu de MMap col llímite de %lu bytes ya torgáu"
 
 #: apt-pkg/contrib/mmap.cc:443
 msgid ""
 "Unable to increase size of the MMap as automatic growing is disabled by user."
 msgstr ""
-"Nun pudo incrementase'l tamañu de MMap yá que crecer automáticamente ta "
+"Nun pudó incrementase'l tamañu de MMap ya que crecer automáticamente ta "
 "desactivao pol usuariu."
 
 #. d means days, h means hours, min means minutes, s means seconds
@@ -2425,21 +2531,21 @@ msgstr "Nun pudo abrise un ficheru descriptor %d"
 
 #: apt-pkg/contrib/fileutl.cc:1156
 msgid "Failed to create subprocess IPC"
-msgstr "Nun pudo crease'l soprocesu IPC"
+msgstr "Nun pudo criase'l soprocesu IPC"
 
 #: apt-pkg/contrib/fileutl.cc:1212
 msgid "Failed to exec compressor "
 msgstr "Nun pudo executase'l compresor "
 
 #: apt-pkg/contrib/fileutl.cc:1309
-#, c-format
+#, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
-msgstr ""
+msgstr "lleíos, entá tenía de lleer %lu pero nun queda nada"
 
 #: apt-pkg/contrib/fileutl.cc:1398 apt-pkg/contrib/fileutl.cc:1420
-#, c-format
+#, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr ""
+msgstr "escritos, entá tenía d'escribir %lu pero nun pudo facerse"
 
 #: apt-pkg/contrib/fileutl.cc:1736
 #, c-format
@@ -2473,8 +2579,9 @@ msgid "The package cache file is an incompatible version"
 msgstr "El ficheru de caché de paquetes ye una versión incompatible"
 
 #: apt-pkg/pkgcache.cc:162
+#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr ""
+msgstr "El ficheru de caché de paquetes ta tollíu"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2656,13 +2763,13 @@ msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
-"Nun pudo facese la configuración inmediatamente en '%s'. Por favor, mira man "
+"Nun pudó facese la configuración inmediatamente en '%s'. Por favor, mira man "
 "5 apt.conf embaxo APT::Immediate-Configure for details. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, c-format
+#, fuzzy, c-format
 msgid "Could not configure '%s'. "
-msgstr ""
+msgstr "Nun pudo abrise'l ficheru '%s'"
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2700,10 +2807,13 @@ msgid "Unable to correct problems, you have held broken packages."
 msgstr "Nun pueden iguase los problemes; tienes paquetes frañaos reteníos."
 
 #: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
+#, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
 msgstr ""
+"Nun pudieron descargase dellos ficheros d'índiz; inoráronse o usáronse los "
+"antiguos nel so llugar."
 
 #: apt-pkg/acquire.cc:81
 #, c-format
@@ -2814,9 +2924,9 @@ msgstr "La caché tien un sistema de versiones incompatible"
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, c-format
+#, fuzzy, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr ""
+msgstr "Hebo un error al procesar %s (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2880,9 +2990,9 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/acquire-item.cc:1397
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
-msgstr ""
+msgstr "Nun se pudo parchear el ficheru release %s"
 
 #: apt-pkg/acquire-item.cc:1439
 msgid "There is no public key available for the following key IDs:\n"
@@ -3330,7 +3440,7 @@ msgid ""
 "Unable to lock the administration directory (%s), is another process using "
 "it?"
 msgstr ""
-"Nun pudo bloquiase'l direutoriu d'alministración (%s), ¿hai otru procesu "
+"Nun pudó bloquease'l direutoriu d'alministración (%s), ¿hai otru procesu "
 "usándolu?"
 
 #: apt-pkg/deb/debsystem.cc:87
@@ -3352,46 +3462,8 @@ msgstr ""
 msgid "Not locked"
 msgstr "Non bloquiáu"
 
-#~ msgid "The info and temp directories need to be on the same filesystem"
-#~ msgstr ""
-#~ "Los direutorios info y temp tienen de tar nel mesmu sistema de ficheros"
-
-#~ msgid "Couldn't change to %s"
-#~ msgstr "Nun fui a camudar a %s"
-
-#~ msgid "Internal error getting a package name"
-#~ msgstr "Fallu internu al obtener un Nome de Paquete"
-
-#~ msgid ""
-#~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
-#~ "then make it empty and immediately re-install the same version of the "
-#~ "package!"
-#~ msgstr ""
-#~ "Nun pude abrir el ficheru de llista '%sinfo/%s'. ¡Si nun yes a "
-#~ "restablecer esti ficheru entós crea ún baleru y darréu reinstala la mesma "
-#~ "versión del paquete!"
-
-#~ msgid "Invalid line in the diversion file: %s"
-#~ msgstr "Llinia inválida nel ficheru de desviación: %s"
-
-#~ msgid "Internal error adding a diversion"
-#~ msgstr "Fallu internu al amestar una desviación"
-
-#~ msgid "The diversion file is corrupted"
-#~ msgstr "El ficheru de desviación ta tollíu"
-
-#~ msgid "Failed to locate a valid control file"
-#~ msgstr "Nun fui a atopar un ficheru de control válidu"
-
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "Dynamic MMap escosó l'espaciu. Por favor aumenta'l tamañu de APT::Cache-"
-#~ "Limit. El valor actual ye : %lu. (man 5 apt.conf)"
-
-#~ msgid "Use 'apt-get autoremove' to remove them."
-#~ msgstr "Usa 'apt-get autoremove' pa desinstalalos."
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "Saltando'l ficheru non esistente %s"
 
 #~ msgid "Failed to remove %s"
 #~ msgstr "Nun ye a desaniciar %s"
@@ -3402,11 +3474,27 @@ msgstr "Non bloquiáu"
 #~ msgid "Failed to stat %sinfo"
 #~ msgstr "Nun ye a lleer %s"
 
+#~ msgid "The info and temp directories need to be on the same filesystem"
+#~ msgstr ""
+#~ "Los direutorios info y temp tienen de tar nel mesmu sistema de ficheros"
+
 #~ msgid "Failed to change to the admin dir %sinfo"
 #~ msgstr "Fallu al camudar al direutoriu d'alministración %sinfo"
 
+#~ msgid "Internal error getting a package name"
+#~ msgstr "Fallu internu al obtener un Nome de Paquete"
+
 #~ msgid "Reading file listing"
 #~ msgstr "Lleendo llistáu de ficheros"
+
+#~ msgid ""
+#~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
+#~ "then make it empty and immediately re-install the same version of the "
+#~ "package!"
+#~ msgstr ""
+#~ "Nun pude abrir el ficheru de llista '%sinfo/%s'. ¡Si nun yes a "
+#~ "restablecer esti ficheru entós crea ún baleru y darréu reinstala la mesma "
+#~ "versión del paquete!"
 
 #~ msgid "Failed reading the list file %sinfo/%s"
 #~ msgstr "Fallu al lleer el ficheru de llista %sinfo/%s"
@@ -3416,6 +3504,15 @@ msgstr "Non bloquiáu"
 
 #~ msgid "Failed to open the diversions file %sdiversions"
 #~ msgstr "Fallu al abrir el ficheru de desviación %sdiversions"
+
+#~ msgid "The diversion file is corrupted"
+#~ msgstr "El ficheru de desviación ta tollíu"
+
+#~ msgid "Invalid line in the diversion file: %s"
+#~ msgstr "Llinia inválida nel ficheru de desviación: %s"
+
+#~ msgid "Internal error adding a diversion"
+#~ msgstr "Fallu internu al amestar una desviación"
 
 #~ msgid "The pkg cache must be initialized first"
 #~ msgstr "El caché del paquete tien d'entamase primero"
@@ -3429,6 +3526,12 @@ msgstr "Non bloquiáu"
 #~ msgid "Error parsing MD5. Offset %lu"
 #~ msgstr "Fallu al lleer Md5. Desplazamientu %lu"
 
+#~ msgid "Couldn't change to %s"
+#~ msgstr "Nun fui a camudar a %s"
+
+#~ msgid "Failed to locate a valid control file"
+#~ msgstr "Nun fui a atopar un ficheru de control válidu"
+
 #~ msgid "Couldn't open pipe for %s"
 #~ msgstr "Nun se pudo abrir una tubería pa %s"
 
@@ -3441,8 +3544,95 @@ msgstr "Non bloquiáu"
 #~ msgid "Note: This is done automatic and on purpose by dpkg."
 #~ msgstr "Nota: Esto faise automáticamente y baxo demanda por dpkg."
 
-#~ msgid "Skipping nonexistent file %s"
-#~ msgstr "Saltando'l ficheru non esistente %s"
+#~ msgid "Malformed override %s line %lu #1"
+#~ msgstr "Saltu mal formáu %s llinia %lu #1"
 
-#~ msgid "Package %s is not installed, so not removed\n"
-#~ msgstr "El paquete %s nun ta instaláu, nun va desaniciase\n"
+#~ msgid "Malformed override %s line %lu #2"
+#~ msgstr "Saltu mal formáu %s llinia %lu #2"
+
+#~ msgid "Malformed override %s line %lu #3"
+#~ msgstr "Saltu mal formáu %s llinia %lu #3"
+
+#~ msgid "decompressor"
+#~ msgstr "descompresor"
+
+#~ msgid "read, still have %lu to read but none left"
+#~ msgstr "lleíos, entá tenía de lleer %lu pero nun queda nada"
+
+#~ msgid "write, still have %lu to write but couldn't"
+#~ msgstr "escritos, entá tenía d'escribir %lu pero nun pudo facerse"
+
+#~ msgid ""
+#~ "Could not perform immediate configuration on already unpacked '%s'. "
+#~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
+#~ msgstr ""
+#~ "Nun pudó facese la configuración inmediatamente nel desempaquetáu '%s'. "
+#~ "Por favor, mira man 5 apt.conf embaxo APT::Immediate-Configure for "
+#~ "details."
+
+#~ msgid "Error occurred while processing %s (NewPackage)"
+#~ msgstr "Hebo un error al procesar %s (NewPackage)"
+
+#~ msgid "Error occurred while processing %s (UsePackage1)"
+#~ msgstr "Hebo un error al procesar %s (UsePackage1)"
+
+#~ msgid "Error occurred while processing %s (NewFileDesc1)"
+#~ msgstr "Hebo un error al procesar %s (NewFileDesc1)"
+
+#~ msgid "Error occurred while processing %s (UsePackage2)"
+#~ msgstr "Hebo un error al procesar %s (UsePackage2)"
+
+#~ msgid "Error occurred while processing %s (NewFileVer1)"
+#~ msgstr "Hebo un error al procesar %s (NewFileVer1)"
+
+#~ msgid "Error occurred while processing %s (NewVersion%d)"
+#~ msgstr "Hebo un error al procesar %s (NewVersion%d)"
+
+#~ msgid "Error occurred while processing %s (UsePackage3)"
+#~ msgstr "Hebo un error al procesar %s (UsePackage3)"
+
+#~ msgid "Error occurred while processing %s (NewFileDesc2)"
+#~ msgstr "Hebo un error al procesar %s (NewFileDesc2)"
+
+#~ msgid "Error occurred while processing %s (FindPkg)"
+#~ msgstr "Hebo un error al procesar %s (FindPkg)"
+
+#~ msgid "Error occurred while processing %s (CollectFileProvides)"
+#~ msgstr "Hebo un error al procesar %s (CollectFileProvides)"
+
+#~ msgid "Internal error, could not locate member"
+#~ msgstr "Fallu internu, nun fui a atopar el miembru"
+
+#~ msgid "Internal error, group '%s' has no installable pseudo package"
+#~ msgstr "Fallu internu, grupu '%s' nun tien paquete pseudo instalable"
+
+#~ msgid "Release file expired, ignoring %s (invalid since %s)"
+#~ msgstr "El ficheru release espiró, inorando %s (nun válidu dende %s)"
+
+#~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
+#~ msgstr ""
+#~ "E: Llista d'argumentos d'Acquire::gpgv::Options demasiao llarga. Colando."
+
+#~ msgid "Error occurred while processing %s (NewVersion2)"
+#~ msgstr "Hebo un error al procesar %s (NewVersion2)"
+
+#~ msgid "Malformed line %u in source list %s (vendor id)"
+#~ msgstr "Llinia %u mal formada na llista d'oríxenes %s (id del proveedor)"
+
+#~ msgid "Couldn't access keyring: '%s'"
+#~ msgstr "Nun se pudo acceder al aniellu de claves '%s'"
+
+#~ msgid "Could not patch file"
+#~ msgstr "Nun fui quien a parchiar el ficheru"
+
+#~ msgid "       %4i %s\n"
+#~ msgstr "       %4i %s\n"
+
+#~ msgid "No source package '%s' picking '%s' instead\n"
+#~ msgstr "Nenguna fonte de paquetes'% s' esbillada '% s' ehí\n"
+
+#~ msgid "%4i %s\n"
+#~ msgstr "%4i %s\n"
+
+#~ msgid "Processing triggers for %s"
+#~ msgstr "Procesando disparadores pa %s"

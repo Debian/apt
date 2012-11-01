@@ -11,16 +11,14 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-10-16 11:36+0100\n"
-"PO-Revision-Date: 2012-09-07 13:17+0000\n"
-"Last-Translator: Eric Pareja <eric.pareja@gmail.com>\n"
+"PO-Revision-Date: 2007-03-29 21:36+0800\n"
+"Last-Translator: Eric Pareja <xenos@upm.edu.ph>\n"
 "Language-Team: Tagalog <debian-tl@banwa.upm.edu.ph>\n"
 "Language: tl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Launchpad-Export-Date: 2012-10-12 10:33+0000\n"
-"X-Generator: Launchpad (build 16130)\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -32,8 +30,9 @@ msgid "Total package names: "
 msgstr "Kabuuan ng mga Pakete : "
 
 #: cmdline/apt-cache.cc:288
+#, fuzzy
 msgid "Total package structures: "
-msgstr ""
+msgstr "Kabuuan ng mga Pakete : "
 
 #: cmdline/apt-cache.cc:328
 msgid "  Normal packages: "
@@ -60,8 +59,9 @@ msgid "Total distinct versions: "
 msgstr "Kabuuan ng Natatanging mga Bersyon: "
 
 #: cmdline/apt-cache.cc:336
+#, fuzzy
 msgid "Total distinct descriptions: "
-msgstr ""
+msgstr "Kabuuan ng Natatanging mga Bersyon: "
 
 #: cmdline/apt-cache.cc:338
 msgid "Total dependencies: "
@@ -72,8 +72,9 @@ msgid "Total ver/file relations: "
 msgstr "Kabuuan ng ugnayang Ber/Talaksan: "
 
 #: cmdline/apt-cache.cc:343
+#, fuzzy
 msgid "Total Desc/File relations: "
-msgstr ""
+msgstr "Kabuuan ng ugnayang Ber/Talaksan: "
 
 #: cmdline/apt-cache.cc:345
 msgid "Total Provides mappings: "
@@ -107,8 +108,9 @@ msgid "No packages found"
 msgstr "Walang nahanap na mga pakete"
 
 #: cmdline/apt-cache.cc:1222
+#, fuzzy
 msgid "You must give at least one search pattern"
-msgstr ""
+msgstr "Kailangan niyong magbigay ng isa lamang na pattern"
 
 #: cmdline/apt-cache.cc:1357
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
@@ -161,11 +163,12 @@ msgstr "  Talaang Bersyon:"
 #: cmdline/apt-get.cc:3364 cmdline/apt-mark.cc:375
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
-#, c-format
+#, fuzzy, c-format
 msgid "%s %s for %s compiled on %s %s\n"
-msgstr ""
+msgstr "%s %s para sa %s %s kinompile noong %s %s\n"
 
 #: cmdline/apt-cache.cc:1686
+#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -201,19 +204,58 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
+"Pag-gamit: apt-cache [mga option] utos\n"
+"       apt-cache [mga option] add talaksan1 [talaksan2 ...]\n"
+"       apt-cache [mga option] showpkg pkt1 [pkt2 ...]\n"
+"       apt-cache [mga option] showsrc pkt1 [pkt2 ...]\n"
+"\n"
+"apt-cache ay isang kagamitang low-level para sa pag-manipula\n"
+"ng mga talaksan sa binary cache ng APT, at upang makakuha ng\n"
+"impormasyon mula sa kanila\n"
+"\n"
+"Mga utos:\n"
+"   add - Magdagdag ng talaksang pakete sa source cache\n"
+"   gencaches - Buuin pareho ang cache ng pakete at source\n"
+"   showpkg - Ipakita ang impormasyon tungkol sa isang pakete\n"
+"   showsrc - Ipakita ang mga record ng source\n"
+"   stats - Ipakita ang ilang mga estadistika\n"
+"   dump - Ipakita ang buong talaksan sa anyong maikli\n"
+"   dumpavail - Ipakita ang talaksang available sa stdout\n"
+"   unmet - Ipakita ang mga kulang na mga dependensiya\n"
+"   search - Maghanap sa listahan ng mga pakete ng regex pattern\n"
+"   show - Ipakita ang nababasang record ng pakete\n"
+"   depends - Ipakita ang impormasyon tungkol sa ganap na dependensiya\n"
+"             ng pakete\n"
+"   rdepends - Ipakita ang impormasyong kabaliktarang dependensiya ng pakete\n"
+"   pkgnames - Ipakita ang listahan ng pangalan ng lahat ng mga pakete\n"
+"   dotty - Bumuo ng graph ng mga pakete para sa GraphViz\n"
+"   xvcg - Bumuo ng graph ng mga pakete para sa xvcg\n"
+"   policy - Ipakita ang pagkaayos ng mga policy\n"
+"\n"
+"Mga option:\n"
+"  -h   Itong tulong na ito.\n"
+"  -p=? Ang cache ng mga pakete.\n"
+"  -s=? Ang cache ng mga source.\n"
+"  -q   Huwag ipakita ang hudyat ng progreso.\n"
+"  -i   Ipakita lamang ang importanteng mga dep para sa utos na unmet\n"
+"  -c=? Basahin ang talaksang pagkaayos na ito\n"
+"  -o=? Magtakda ng isang option ng pagkaayos, hal. -o dir::cache=/tmp\n"
+"Basahin ang pahina ng manwal ng apt-cache(8) at apt.conf(5) para sa \n"
+"karagdagang impormasyon\n"
 
 #: cmdline/apt-cdrom.cc:79
+#, fuzzy
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
-msgstr ""
+msgstr "Bigyan ng pangalan ang Disk na ito, tulad ng 'Debian 2.1r1 Disk 1'"
 
 #: cmdline/apt-cdrom.cc:94
 msgid "Please insert a Disc in the drive and press enter"
 msgstr "Paki-pasok ang isang Disk sa drive at pindutin ang enter"
 
 #: cmdline/apt-cdrom.cc:129
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to mount '%s' to '%s'"
-msgstr ""
+msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
 
 #: cmdline/apt-cdrom.cc:163
 msgid "Repeat this process for the rest of the CDs in your set."
@@ -361,14 +403,14 @@ msgid "%lu not fully installed or removed.\n"
 msgstr "%lu na hindi lubos na nailuklok o tinanggal.\n"
 
 #: cmdline/apt-get.cc:635
-#, c-format
+#, fuzzy, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
-msgstr ""
+msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
 
 #: cmdline/apt-get.cc:640
-#, c-format
+#, fuzzy, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
-msgstr ""
+msgstr "Paunawa, pinili ang %s para sa regex '%s'\n"
 
 #: cmdline/apt-get.cc:657
 #, c-format
@@ -380,8 +422,9 @@ msgid " [Installed]"
 msgstr " [Nakaluklok]"
 
 #: cmdline/apt-get.cc:677
+#, fuzzy
 msgid " [Not candidate version]"
-msgstr ""
+msgstr "Bersyong Kandidato"
 
 #: cmdline/apt-get.cc:679
 msgid "You should explicitly select one to install."
@@ -403,9 +446,9 @@ msgid "However the following packages replace it:"
 msgstr "Gayunpaman, ang sumusunod na mga pakete ay humahalili sa kanya:"
 
 #: cmdline/apt-get.cc:712
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' has no installation candidate"
-msgstr ""
+msgstr "Ang paketeng %s ay walang kandidatong maaaring instolahin"
 
 #: cmdline/apt-get.cc:725
 #, c-format
@@ -414,19 +457,19 @@ msgstr ""
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
+msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr ""
+msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
 
 #: cmdline/apt-get.cc:788
-#, c-format
+#, fuzzy, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
-msgstr ""
+msgstr "Paunawa, pinili ang %s imbes na %s\n"
 
 #: cmdline/apt-get.cc:818
 #, c-format
@@ -435,9 +478,10 @@ msgstr ""
 "Linaktawan ang %s, ito'y nakaluklok na at hindi nakatakda ang upgrade.\n"
 
 #: cmdline/apt-get.cc:822
-#, c-format
+#, fuzzy, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
+"Linaktawan ang %s, ito'y nakaluklok na at hindi nakatakda ang upgrade.\n"
 
 #: cmdline/apt-get.cc:834
 #, c-format
@@ -450,19 +494,19 @@ msgid "%s is already the newest version.\n"
 msgstr "%s ay pinakabagong bersyon na.\n"
 
 #: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2157 cmdline/apt-mark.cc:68
-#, c-format
+#, fuzzy, c-format
 msgid "%s set to manually installed.\n"
-msgstr ""
+msgstr "ngunit ang %s ay iluluklok"
 
 #: cmdline/apt-get.cc:884
-#, c-format
+#, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr ""
+msgstr "Ang napiling bersyon %s (%s) para sa %s\n"
 
 #: cmdline/apt-get.cc:889
-#, c-format
+#, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr ""
+msgstr "Ang napiling bersyon %s (%s) para sa %s\n"
 
 #: cmdline/apt-get.cc:1025
 msgid "Correcting dependencies..."
@@ -551,16 +595,17 @@ msgstr "Kailangang kumuha ng %sB ng arkibo.\n"
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: cmdline/apt-get.cc:1208
-#, c-format
+#, fuzzy, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr ""
+"Matapos magbuklat ay %sB na karagdagang puwang sa disk ang magagamit.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
 #: cmdline/apt-get.cc:1213
-#, c-format
+#, fuzzy, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
-msgstr ""
+msgstr "Matapos magbuklat ay %sB na puwang sa disk ang mapapalaya.\n"
 
 #: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
 #: cmdline/apt-get.cc:2592
@@ -653,9 +698,9 @@ msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr ""
 
 #: cmdline/apt-get.cc:1591
-#, c-format
+#, fuzzy, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
-msgstr ""
+msgstr "Hindi ma-stat ang talaan ng pagkukunan ng pakete %s"
 
 #. if (VerTag.empty() == false && Last == 0)
 #: cmdline/apt-get.cc:1629
@@ -693,25 +738,27 @@ msgstr ""
 "Ang sumusunod na impormasyon ay maaaring makatulong sa pag-ayos ng problema:"
 
 #: cmdline/apt-get.cc:1822
+#, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
-msgstr ""
+msgstr "Error na internal, may nasira ang problem resolver"
 
 #: cmdline/apt-get.cc:1829
+#, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
 "The following packages were automatically installed and are no longer "
 "required:"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
 
 #: cmdline/apt-get.cc:1833
-#, c-format
+#, fuzzy, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
+msgstr[1] "Ang sumusunod na mga paketeng BAGO ay iluluklok:"
 
 #: cmdline/apt-get.cc:1835
 msgid "Use 'apt-get autoremove' to remove it."
@@ -769,9 +816,9 @@ msgid "Couldn't find package %s"
 msgstr "Hindi mahanap ang paketeng %s"
 
 #: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
-#, c-format
+#, fuzzy, c-format
 msgid "%s set to automatically installed.\n"
-msgstr ""
+msgstr "ngunit ang %s ay iluluklok"
 
 #: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
 msgid ""
@@ -912,11 +959,13 @@ msgid "%s has no build depends.\n"
 msgstr "Walang build depends ang %s.\n"
 
 #: cmdline/apt-get.cc:3008
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr ""
+"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
+"mahanap"
 
 #: cmdline/apt-get.cc:3026
 #, c-format
@@ -935,18 +984,22 @@ msgstr ""
 "%s ay bagong-bago pa lamang."
 
 #: cmdline/apt-get.cc:3088
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
+"Dependensiyang %s para sa %s ay hindi mabuo dahil walang magamit na bersyon "
+"ng paketeng %s na tumutugon sa kinakailangang bersyon"
 
 #: cmdline/apt-get.cc:3094
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr ""
+"Dependensiyang %s para sa %s ay hindi mabuo dahil ang paketeng %s ay hindi "
+"mahanap"
 
 #: cmdline/apt-get.cc:3117
 #, c-format
@@ -963,15 +1016,16 @@ msgid "Failed to process build dependencies"
 msgstr "Bigo sa pagproseso ng build dependencies"
 
 #: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
-#, c-format
+#, fuzzy, c-format
 msgid "Changelog for %s (%s)"
-msgstr ""
+msgstr "Kumokonekta sa %s (%s)"
 
 #: cmdline/apt-get.cc:3369
 msgid "Supported modules:"
 msgstr "Suportadong mga Module:"
 
 #: cmdline/apt-get.cc:3410
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1016,6 +1070,44 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Pag-gamit: apt-get [mga option] utos\n"
+"           apt-get [mga option] install|remove pkt1 [pkt2 ...]\n"
+"           apt-get [mga option] source pkt1 [pkt2 ...]\n"
+"\n"
+"Ang apt-get ay payak na command line interface para sa pagkuha at\n"
+"pag-instol ng mga pakete. Ang pinakamadalas na gamiting utos ay update\n"
+"at install.\n"
+"\n"
+"Mga utos:\n"
+"   update - Kunin ang bagong listahan ng mga pakete\n"
+"   upgrade - Gumawa ng upgrade\n"
+"   install - Mag-instol ng bagong mga pakete (pkt ay libc6 hindi libc6.deb)\n"
+"   remove - Mag-tanggal ng mga pakete\n"
+"   source - Kumuha ng arkibong source\n"
+"   build-dep - Magsaayos ng build-dependencies para sa mga paketeng source\n"
+"   dist-upgrade - Mag-upgrade ng pamudmod, basahin ang apt-get(8)\n"
+"   dselect-upgrade - Sundan ang mga pinili sa dselect\n"
+"   clean - Burahin ang mga nakuhang mga talaksang naka-arkibo\n"
+"   autoclean - Burahin ang mga lumang naka-arkibo na nakuhang mga talaksan\n"
+"   check - Tiyakin na walang mga sirang dependensiya\n"
+"\n"
+"Mga option:\n"
+"  -h  Itong tulong na ito.\n"
+"  -q  Output na maaaring itala - walang indikator ng progreso\n"
+"  -qq Walang output maliban sa mga error\n"
+"  -d  Kunin lamang - HINDI mag-instol o mag-buklat ng mga arkibo\n"
+"  -s  Walang gagawin. Mag-simulate lamang ang pagkasunod-sunod.\n"
+"  -y  Assume Yes to all queries and do not prompt\n"
+"  -f  Subukang magpatuloy kung bigo ang pagsuri ng integridad\n"
+"  -m  Subukang magpatuloy kung hindi mahanap ang mga arkibo\n"
+"  -u  Ipakita rin ang listahan ng mga paketeng i-upgrade\n"
+"  -b  Ibuo ang paketeng source matapos kunin ito\n"
+"  -V  Ipakita ng buo ang bilang ng bersyon\n"
+"  -c=? Basahin itong talaksang pagkaayos\n"
+"  -o=? Itakda ang isang option ng pagkaayos, hal. -o dir::cache=/tmp\n"
+"Basahin ang pahinang manwal ng apt-get(8), sources.list(5) at apt.conf(5)\n"
+"para sa karagdagang impormasyon at mga option.\n"
+"                       Ang APT na ito ay may Kapangyarihan Super Kalabaw.\n"
 
 #: cmdline/apt-get.cc:3575
 msgid ""
@@ -1031,7 +1123,7 @@ msgstr "Tumama "
 
 #: cmdline/acqprogress.cc:84
 msgid "Get:"
-msgstr "Kunin:"
+msgstr "Kunin: "
 
 #: cmdline/acqprogress.cc:115
 msgid "Ign "
@@ -1063,29 +1155,29 @@ msgstr ""
 "sa drive '%s' at pindutin ang enter\n"
 
 #: cmdline/apt-mark.cc:55
-#, c-format
+#, fuzzy, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr ""
+msgstr "ngunit ito ay hindi nakaluklok"
 
 #: cmdline/apt-mark.cc:61
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr ""
+msgstr "ngunit ang %s ay iluluklok"
 
 #: cmdline/apt-mark.cc:63
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr ""
+msgstr "ngunit ang %s ay iluluklok"
 
 #: cmdline/apt-mark.cc:228
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set on hold.\n"
-msgstr ""
+msgstr "%s ay pinakabagong bersyon na.\n"
 
 #: cmdline/apt-mark.cc:230
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already not hold.\n"
-msgstr ""
+msgstr "%s ay pinakabagong bersyon na.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
@@ -1094,14 +1186,14 @@ msgid "Waited for %s but it wasn't there"
 msgstr "Naghintay, para sa %s ngunit wala nito doon"
 
 #: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
-#, c-format
+#, fuzzy, c-format
 msgid "%s set on hold.\n"
-msgstr ""
+msgstr "ngunit ang %s ay iluluklok"
 
 #: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
-#, c-format
+#, fuzzy, c-format
 msgid "Canceled hold on %s.\n"
-msgstr ""
+msgstr "Bigo ang pagbukas ng %s"
 
 #: cmdline/apt-mark.cc:332
 msgid "Executing dpkg failed. Are you root?"
@@ -1370,14 +1462,14 @@ msgid "Temporary failure resolving '%s'"
 msgstr "Pansamantalang kabiguan sa pagresolba ng '%s'"
 
 #: methods/connect.cc:200
-#, c-format
+#, fuzzy, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
-msgstr ""
+msgstr "May naganap na kababalaghan sa pagresolba ng '%s:%s' (%i)"
 
 #: methods/connect.cc:247
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to connect to %s:%s:"
-msgstr ""
+msgstr "Hindi maka-konekta sa %s %s:"
 
 #: methods/gpgv.cc:180
 msgid ""
@@ -1391,8 +1483,10 @@ msgid "At least one invalid signature was encountered."
 msgstr "Hindi kukulang sa isang hindi tanggap na lagda ang na-enkwentro."
 
 #: methods/gpgv.cc:189
+#, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
+"Hindi maitakbo ang '%s' upang maberipika ang lagda (nakaluklok ba ang gpgv?)"
 
 #: methods/gpgv.cc:194
 msgid "Unknown error executing gpgv"
@@ -1511,9 +1605,9 @@ msgstr ""
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:287
-#, c-format
+#, fuzzy, c-format
 msgid "Can not read mirror file '%s'"
-msgstr ""
+msgstr "Hindi mabuksan ang talaksang %s"
 
 #: methods/mirror.cc:442
 #, c-format
@@ -1556,12 +1650,14 @@ msgid "Do you want to erase any previously downloaded .deb files?"
 msgstr ""
 
 #: dselect/install:101
+#, fuzzy
 msgid "Some errors occurred while unpacking. Packages that were installed"
-msgstr ""
+msgstr "May mga error na naganap habang nagbubuklat. Isasaayos ko ang"
 
 #: dselect/install:102
+#, fuzzy
 msgid "will be configured. This may result in duplicate errors"
-msgstr ""
+msgstr "mga paketeng naluklok. Maaaring dumulot ito ng mga error na doble"
 
 #: dselect/install:103
 msgid "or errors caused by missing dependencies. This is OK, only the errors"
@@ -1746,10 +1842,13 @@ msgid "DB is old, attempting to upgrade %s"
 msgstr "Luma ang DB, sinusubukang maupgrade ang %s"
 
 #: ftparchive/cachedb.cc:76
+#, fuzzy
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
 msgstr ""
+"Hindi tanggap ang anyo ng DB. Kung kayo ay nagsariwa mula sa nakaraang "
+"bersiyon ng apt, tanggalin at likhain muli ang database."
 
 #: ftparchive/cachedb.cc:81
 #, c-format
@@ -1865,19 +1964,19 @@ msgid "Unable to open %s"
 msgstr "Hindi mabuksan %s"
 
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr ""
+msgstr "Maling anyo ng override %s linya %lu #1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr ""
+msgstr "Maling anyo ng override %s linya %lu #2"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr ""
+msgstr "Maling anyo ng override %s linya %lu #3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -1930,6 +2029,7 @@ msgid "Failed to rename %s to %s"
 msgstr "Bigo ang pagpangalan muli ng %s tungong %s"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -1942,6 +2042,16 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
+"Pag-gamit: apt-extracttemplates talaksan1 [talaksan2 ...]\n"
+"\n"
+"Ang apt-extracttemplates ay kagamitan sa pagkuha ng info tungkol\n"
+"sa pagkaayos at template mula sa mga paketeng debian\n"
+"\n"
+"Mga opsyon:\n"
+"  -h   Itong tulong na ito\n"
+"  -t   Itakda ang dir na pansamantala\n"
+"  -c=? Basahin ang talaksang pagkaayos na ito\n"
+"  -o=? Itakda ang isang optiong pagkaayos, hal. -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2002,9 +2112,9 @@ msgid "Error reading archive member header"
 msgstr "Error sa pagbasa ng header ng miyembro ng arkibo"
 
 #: apt-inst/contrib/arfile.cc:94
-#, c-format
+#, fuzzy, c-format
 msgid "Invalid archive member header %s"
-msgstr ""
+msgstr "Hindi tanggap na header ng miyembro ng arkibo"
 
 #: apt-inst/contrib/arfile.cc:106
 msgid "Invalid archive member header"
@@ -2118,9 +2228,10 @@ msgstr "Hindi ito tanggap na arkibong DEB, may kulang na miyembrong '%s'"
 
 #. FIXME: add data.tar.xz here - adding it now would require a Translation round for a very small gain
 #: apt-inst/deb/debfile.cc:55
-#, c-format
+#, fuzzy, c-format
 msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 msgstr ""
+"Hindi ito tanggap na arkibong DEB, may kulang na miyembrong '%s' o '%s'"
 
 #: apt-inst/deb/debfile.cc:120
 #, c-format
@@ -2136,22 +2247,24 @@ msgid "Can't mmap an empty file"
 msgstr "Hindi mai-mmap ang talaksang walang laman"
 
 #: apt-pkg/contrib/mmap.cc:111
-#, c-format
+#, fuzzy, c-format
 msgid "Couldn't duplicate file descriptor %i"
-msgstr ""
+msgstr "Hindi makapag-bukas ng pipe para sa %s"
 
 #: apt-pkg/contrib/mmap.cc:119
-#, c-format
+#, fuzzy, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr ""
+msgstr "Hindi makagawa ng mmap ng %lu na byte"
 
 #: apt-pkg/contrib/mmap.cc:146
+#, fuzzy
 msgid "Unable to close mmap"
-msgstr ""
+msgstr "Hindi mabuksan %s"
 
 #: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+#, fuzzy
 msgid "Unable to synchronize mmap"
-msgstr ""
+msgstr "Hindi ma-invoke "
 
 #: apt-pkg/contrib/mmap.cc:290
 #, c-format
@@ -2159,8 +2272,9 @@ msgid "Couldn't make mmap of %lu bytes"
 msgstr "Hindi makagawa ng mmap ng %lu na byte"
 
 #: apt-pkg/contrib/mmap.cc:322
+#, fuzzy
 msgid "Failed to truncate file"
-msgstr ""
+msgstr "Bigo sa pagsulat ng talaksang %s"
 
 #: apt-pkg/contrib/mmap.cc:341
 #, c-format
@@ -2257,9 +2371,10 @@ msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Syntax error %s:%u: Di suportadong direktiba '%s'"
 
 #: apt-pkg/contrib/configuration.cc:872
-#, c-format
+#, fuzzy, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr ""
+"Syntax error %s:%u: Maaari lamang gawin ang mga direktiba sa tuktok na antas"
 
 #: apt-pkg/contrib/configuration.cc:922
 #, c-format
@@ -2334,9 +2449,9 @@ msgid "Failed to stat the cdrom"
 msgstr "Bigo sa pag-stat ng cdrom"
 
 #: apt-pkg/contrib/fileutl.cc:93
-#, c-format
+#, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
-msgstr ""
+msgstr "Problema sa pagsara ng talaksan"
 
 #: apt-pkg/contrib/fileutl.cc:225
 #, c-format
@@ -2388,9 +2503,9 @@ msgid "Sub-process %s received a segmentation fault."
 msgstr "Nakatanggap ang sub-process %s ng segmentation fault."
 
 #: apt-pkg/contrib/fileutl.cc:842
-#, c-format
+#, fuzzy, c-format
 msgid "Sub-process %s received signal %u."
-msgstr ""
+msgstr "Nakatanggap ang sub-process %s ng segmentation fault."
 
 #: apt-pkg/contrib/fileutl.cc:846
 #, c-format
@@ -2408,9 +2523,9 @@ msgid "Could not open file %s"
 msgstr "Hindi mabuksan ang talaksang %s"
 
 #: apt-pkg/contrib/fileutl.cc:1066
-#, c-format
+#, fuzzy, c-format
 msgid "Could not open file descriptor %d"
-msgstr ""
+msgstr "Hindi makapag-bukas ng pipe para sa %s"
 
 #: apt-pkg/contrib/fileutl.cc:1156
 msgid "Failed to create subprocess IPC"
@@ -2418,32 +2533,32 @@ msgstr "Bigo ang paglikha ng subprocess IPC"
 
 #: apt-pkg/contrib/fileutl.cc:1212
 msgid "Failed to exec compressor "
-msgstr "Bigo ang pag-exec ng taga-compress "
+msgstr "Bigo ang pag-exec ng taga-compress"
 
 #: apt-pkg/contrib/fileutl.cc:1309
-#, c-format
+#, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
-msgstr ""
+msgstr "pagbasa, mayroong %lu na babasahin ngunit walang natira"
 
 #: apt-pkg/contrib/fileutl.cc:1398 apt-pkg/contrib/fileutl.cc:1420
-#, c-format
+#, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr ""
+msgstr "pagsulat, mayroon pang %lu na isusulat ngunit hindi makasulat"
 
 #: apt-pkg/contrib/fileutl.cc:1736
-#, c-format
+#, fuzzy, c-format
 msgid "Problem closing the file %s"
-msgstr ""
+msgstr "Problema sa pagsara ng talaksan"
 
 #: apt-pkg/contrib/fileutl.cc:1748
-#, c-format
+#, fuzzy, c-format
 msgid "Problem renaming the file %s to %s"
-msgstr ""
+msgstr "Problema sa pag-sync ng talaksan"
 
 #: apt-pkg/contrib/fileutl.cc:1759
-#, c-format
+#, fuzzy, c-format
 msgid "Problem unlinking the file %s"
-msgstr ""
+msgstr "Problema sa pag-unlink ng talaksan"
 
 #: apt-pkg/contrib/fileutl.cc:1774
 msgid "Problem syncing the file"
@@ -2462,8 +2577,9 @@ msgid "The package cache file is an incompatible version"
 msgstr "Ang talaksan ng cache ng pakete ay hindi magamit na bersyon"
 
 #: apt-pkg/pkgcache.cc:162
+#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr ""
+msgstr "Sira ang talaksan ng cache ng pakete"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2543,18 +2659,19 @@ msgid "Dependency generation"
 msgstr "Pagbuo ng Dependensiya"
 
 #: apt-pkg/depcache.cc:182 apt-pkg/depcache.cc:215 apt-pkg/depcache.cc:219
+#, fuzzy
 msgid "Reading state information"
-msgstr ""
+msgstr "Pinagsasama ang magagamit na impormasyon"
 
 #: apt-pkg/depcache.cc:244
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to open StateFile %s"
-msgstr ""
+msgstr "Bigo ang pagbukas ng %s"
 
 #: apt-pkg/depcache.cc:250
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to write temporary StateFile %s"
-msgstr ""
+msgstr "Bigo sa pagsulat ng talaksang %s"
 
 #: apt-pkg/tagfile.cc:129
 #, c-format
@@ -2567,29 +2684,29 @@ msgid "Unable to parse package file %s (2)"
 msgstr "Hindi ma-parse ang talaksang pakete %s (2)"
 
 #: apt-pkg/sourcelist.cc:96
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr ""
+msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (dist parse)<"
 
 #: apt-pkg/sourcelist.cc:99
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr ""
+msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (dist)"
 
 #: apt-pkg/sourcelist.cc:110
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr ""
+msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (dist parse)<"
 
 #: apt-pkg/sourcelist.cc:116
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr ""
+msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (dist parse)<"
 
 #: apt-pkg/sourcelist.cc:119
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr ""
+msgstr "Maling anyo ng linyang %lu sa talaan ng pagkukunan %s (dist parse)<"
 
 #: apt-pkg/sourcelist.cc:132
 #, c-format
@@ -2644,9 +2761,9 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, c-format
+#, fuzzy, c-format
 msgid "Could not configure '%s'. "
-msgstr ""
+msgstr "Hindi mabuksan ang talaksang %s"
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2687,25 +2804,28 @@ msgstr ""
 "Hindi maayos ang mga problema, mayroon kayong sirang mga pakete na naka-hold."
 
 #: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
+#, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
 msgstr ""
+"May mga talaksang index na hindi nakuha, sila'y di pinansin, o ginamit ang "
+"mga luma na lamang."
 
 #: apt-pkg/acquire.cc:81
-#, c-format
+#, fuzzy, c-format
 msgid "List directory %spartial is missing."
-msgstr ""
+msgstr "Nawawala ang directory ng talaan %spartial."
 
 #: apt-pkg/acquire.cc:85
-#, c-format
+#, fuzzy, c-format
 msgid "Archives directory %spartial is missing."
-msgstr ""
+msgstr "Nawawala ang directory ng arkibo %spartial."
 
 #: apt-pkg/acquire.cc:93
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to lock directory %s"
-msgstr ""
+msgstr "Hindi maaldaba ang directory ng talaan"
 
 #. only show the ETA if it makes sense
 #. two days
@@ -2742,7 +2862,7 @@ msgstr "Hindi suportado ang sistema ng paketeng '%s'"
 
 #: apt-pkg/init.cc:168
 msgid "Unable to determine a suitable packaging system type"
-msgstr "Hindi matuklasan ang akmang uri ng sistema ng pakete"
+msgstr "Hindi matuklasan ang akmang uri ng sistema ng pakete "
 
 #: apt-pkg/clean.cc:57
 #, c-format
@@ -2776,9 +2896,9 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/policy.cc:396
-#, c-format
+#, fuzzy, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
-msgstr ""
+msgstr "Di tanggap na record sa talaksang pagtatangi, walang Package header"
 
 #: apt-pkg/policy.cc:418
 #, c-format
@@ -2803,9 +2923,9 @@ msgstr "Hindi akma ang versioning system ng cache"
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, c-format
+#, fuzzy, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr ""
+msgstr "May naganap na error habang prinoseso ang %s (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2817,8 +2937,9 @@ msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "Wow, nalagpasan niyo ang bilang ng bersyon na kaya ng APT na ito."
 
 #: apt-pkg/pkgcachegen.cc:240
+#, fuzzy
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr ""
+msgstr "Wow, nalagpasan niyo ang bilang ng bersyon na kaya ng APT na ito."
 
 #: apt-pkg/pkgcachegen.cc:243
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
@@ -2859,8 +2980,9 @@ msgstr "Di tugmang MD5Sum"
 
 #: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1870
 #: apt-pkg/acquire-item.cc:2013
+#, fuzzy
 msgid "Hash Sum mismatch"
-msgstr ""
+msgstr "Di tugmang MD5Sum"
 
 #: apt-pkg/acquire-item.cc:1381
 #, c-format
@@ -2870,9 +2992,9 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/acquire-item.cc:1397
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
-msgstr ""
+msgstr "Hindi ma-parse ang talaksang pakete %s (1)"
 
 #: apt-pkg/acquire-item.cc:1439
 msgid "There is no public key available for the following key IDs:\n"
@@ -2934,14 +3056,14 @@ msgid "Size mismatch"
 msgstr "Di tugmang laki"
 
 #: apt-pkg/indexrecords.cc:64
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to parse Release file %s"
-msgstr ""
+msgstr "Hindi ma-parse ang talaksang pakete %s (1)"
 
 #: apt-pkg/indexrecords.cc:74
-#, c-format
+#, fuzzy, c-format
 msgid "No sections in Release file %s"
-msgstr ""
+msgstr "Paunawa, pinili ang %s imbes na %s\n"
 
 #: apt-pkg/indexrecords.cc:108
 #, c-format
@@ -2949,14 +3071,14 @@ msgid "No Hash entry in Release file %s"
 msgstr ""
 
 #: apt-pkg/indexrecords.cc:121
-#, c-format
+#, fuzzy, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr ""
+msgstr "Di tanggap na linya sa talaksang diversion: %s"
 
 #: apt-pkg/indexrecords.cc:140
-#, c-format
+#, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
-msgstr ""
+msgstr "Hindi ma-parse ang talaksang pakete %s (1)"
 
 #: apt-pkg/vendorlist.cc:78
 #, c-format
@@ -2974,16 +3096,17 @@ msgstr ""
 
 #: apt-pkg/cdrom.cc:585 apt-pkg/cdrom.cc:682
 msgid "Identifying.. "
-msgstr "Kinikilala... "
+msgstr "Kinikilala..."
 
 #: apt-pkg/cdrom.cc:613
 #, c-format
 msgid "Stored label: %s\n"
-msgstr "Naka-imbak na Label: %s\n"
+msgstr "Naka-imbak na Label: %s \n"
 
 #: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
+#, fuzzy
 msgid "Unmounting CD-ROM...\n"
-msgstr ""
+msgstr "Ina-unmount ang CD-ROM..."
 
 #: apt-pkg/cdrom.cc:642
 #, c-format
@@ -3007,11 +3130,13 @@ msgid "Scanning disc for index files..\n"
 msgstr "Sinisiyasat ang Disc para sa talaksang index...\n"
 
 #: apt-pkg/cdrom.cc:744
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Found %zu package indexes, %zu source indexes, %zu translation indexes and "
 "%zu signatures\n"
 msgstr ""
+"Nakahanap ng %i na index ng mga pakete, %i na index ng source at %i na "
+"signature\n"
 
 #: apt-pkg/cdrom.cc:755
 msgid ""
@@ -3020,9 +3145,9 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/cdrom.cc:782
-#, c-format
+#, fuzzy, c-format
 msgid "Found label '%s'\n"
-msgstr ""
+msgstr "Naka-imbak na Label: %s \n"
 
 #: apt-pkg/cdrom.cc:811
 msgid "That is not a valid name, try again.\n"
@@ -3077,9 +3202,9 @@ msgid "Can't find authentication record for: %s"
 msgstr ""
 
 #: apt-pkg/indexcopy.cc:521
-#, c-format
+#, fuzzy, c-format
 msgid "Hash mismatch for: %s"
-msgstr ""
+msgstr "Di tugmang MD5Sum"
 
 #: apt-pkg/indexcopy.cc:662
 #, c-format
@@ -3088,9 +3213,9 @@ msgstr ""
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
 #: apt-pkg/indexcopy.cc:692
-#, c-format
+#, fuzzy, c-format
 msgid "No keyring installed in %s."
-msgstr ""
+msgstr "Ina-abort ang pag-instol."
 
 #: apt-pkg/cacheset.cc:403
 #, c-format
@@ -3103,14 +3228,14 @@ msgid "Version '%s' for '%s' was not found"
 msgstr "Bersyon '%s' para sa '%s' ay hindi nahanap"
 
 #: apt-pkg/cacheset.cc:517
-#, c-format
+#, fuzzy, c-format
 msgid "Couldn't find task '%s'"
-msgstr ""
+msgstr "Hindi mahanap ang paketeng %s"
 
 #: apt-pkg/cacheset.cc:523
-#, c-format
+#, fuzzy, c-format
 msgid "Couldn't find any package by regex '%s'"
-msgstr ""
+msgstr "Hindi mahanap ang paketeng %s"
 
 #: apt-pkg/cacheset.cc:534
 #, c-format
@@ -3160,9 +3285,9 @@ msgid "Execute external solver"
 msgstr ""
 
 #: apt-pkg/deb/dpkgpm.cc:72
-#, c-format
+#, fuzzy, c-format
 msgid "Installing %s"
-msgstr ""
+msgstr "Iniluklok ang %s"
 
 #: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:951
 #, c-format
@@ -3175,9 +3300,9 @@ msgid "Removing %s"
 msgstr "Tinatanggal ang %s"
 
 #: apt-pkg/deb/dpkgpm.cc:75
-#, c-format
+#, fuzzy, c-format
 msgid "Completely removing %s"
-msgstr ""
+msgstr "Natanggal ng lubusan ang %s"
 
 #: apt-pkg/deb/dpkgpm.cc:76
 #, c-format
@@ -3191,14 +3316,14 @@ msgstr ""
 
 #. FIXME: use a better string after freeze
 #: apt-pkg/deb/dpkgpm.cc:704
-#, c-format
+#, fuzzy, c-format
 msgid "Directory '%s' missing"
-msgstr ""
+msgstr "Nawawala ang directory ng talaan %spartial."
 
 #: apt-pkg/deb/dpkgpm.cc:719 apt-pkg/deb/dpkgpm.cc:739
-#, c-format
+#, fuzzy, c-format
 msgid "Could not open file '%s'"
-msgstr ""
+msgstr "Hindi mabuksan ang talaksang %s"
 
 #: apt-pkg/deb/dpkgpm.cc:944
 #, c-format
@@ -3298,9 +3423,9 @@ msgid ""
 msgstr ""
 
 #: apt-pkg/deb/debsystem.cc:87
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr ""
+msgstr "Hindi maaldaba ang directory ng talaan"
 
 #. TRANSLATORS: the %s contains the recovery command, usually
 #. dpkg --configure -a
@@ -3314,50 +3439,30 @@ msgstr ""
 msgid "Not locked"
 msgstr ""
 
-#~ msgid "Got a single header line over %u chars"
-#~ msgstr "Nakatanggap ng isang linyang panimula mula %u na mga karakter"
+#, fuzzy
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "Binubuksan ang talaksang pagsasaayos %s"
 
-#~ msgid "Read error from %s process"
-#~ msgstr "Error sa pagbasa mula sa prosesong %s"
+#~ msgid "Failed to remove %s"
+#~ msgstr "Bigo sa pagtanggal ng %s"
 
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Hindi makapag-bukas ng pipe para sa %s"
+#~ msgid "Unable to create %s"
+#~ msgstr "Hindi malikha ang %s"
 
-#~ msgid "Failed to locate a valid control file"
-#~ msgstr "Bigo sa paghanap ng tanggap na talaksang control"
+#~ msgid "Failed to stat %sinfo"
+#~ msgstr "Bigo sa pag-stat ng %sinfo"
 
-#~ msgid "Couldn't change to %s"
-#~ msgstr "Hindi makalipat sa %s"
+#~ msgid "The info and temp directories need to be on the same filesystem"
+#~ msgstr "Ang info at temp directory ay kailangang nasa parehong filesystem"
 
-#~ msgid "Error parsing MD5. Offset %lu"
-#~ msgstr "Error sa pag-parse ng MD5. Offset %lu"
+#~ msgid "Failed to change to the admin dir %sinfo"
+#~ msgstr "Bigo sa paglipat sa admin dir %sinfo"
 
-#~ msgid "Bad ConfFile section in the status file. Offset %lu"
-#~ msgstr "Maling ConfFile section sa talaksang status. Offset %lu"
+#~ msgid "Internal error getting a package name"
+#~ msgstr "Internal error sa pagkuha ng pangalan ng pakete"
 
-#~ msgid "Failed to find a Package: header, offset %lu"
-#~ msgstr "Bigo sa paghanap ng Pakete: Header, offset %lu"
-
-#~ msgid "The pkg cache must be initialized first"
-#~ msgstr "Ang cache ng pkg ay dapat ma-initialize muna"
-
-#~ msgid "Internal error adding a diversion"
-#~ msgstr "Internal error sa pagdagdag ng diversion"
-
-#~ msgid "Invalid line in the diversion file: %s"
-#~ msgstr "Di tanggap na linya sa talaksang diversion: %s"
-
-#~ msgid "The diversion file is corrupted"
-#~ msgstr "Ang talaksang diversion ay sira"
-
-#~ msgid "Failed to open the diversions file %sdiversions"
-#~ msgstr "Bigo sa pagbukas ng talaksang diversions %sdiversions"
-
-#~ msgid "Internal error getting a node"
-#~ msgstr "Internal error sa pagkuha ng Node"
-
-#~ msgid "Failed reading the list file %sinfo/%s"
-#~ msgstr "Bigo sa pagbasa ng talaksang listahan %sinfo/%s"
+#~ msgid "Reading file listing"
+#~ msgstr "Binabasa ang Talaksang Listahan"
 
 #~ msgid ""
 #~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
@@ -3368,26 +3473,189 @@ msgstr ""
 #~ "maibalik ang talaksang ito, gawin itong walang laman at muling instolahin "
 #~ "kaagad ang parehong bersyon ng pakete!"
 
-#~ msgid "Reading file listing"
+#~ msgid "Failed reading the list file %sinfo/%s"
+#~ msgstr "Bigo sa pagbasa ng talaksang listahan %sinfo/%s"
+
+#~ msgid "Internal error getting a node"
+#~ msgstr "Internal error sa pagkuha ng Node"
+
+#~ msgid "Failed to open the diversions file %sdiversions"
+#~ msgstr "Bigo sa pagbukas ng talaksang diversions %sdiversions"
+
+#~ msgid "The diversion file is corrupted"
+#~ msgstr "Ang talaksang diversion ay sira"
+
+#~ msgid "Invalid line in the diversion file: %s"
+#~ msgstr "Di tanggap na linya sa talaksang diversion: %s"
+
+#~ msgid "Internal error adding a diversion"
+#~ msgstr "Internal error sa pagdagdag ng diversion"
+
+#~ msgid "The pkg cache must be initialized first"
+#~ msgstr "Ang cache ng pkg ay dapat ma-initialize muna"
+
+#~ msgid "Failed to find a Package: header, offset %lu"
+#~ msgstr "Bigo sa paghanap ng Pakete: Header, offset %lu"
+
+#~ msgid "Bad ConfFile section in the status file. Offset %lu"
+#~ msgstr "Maling ConfFile section sa talaksang status. Offset %lu"
+
+#~ msgid "Error parsing MD5. Offset %lu"
+#~ msgstr "Error sa pag-parse ng MD5. Offset %lu"
+
+#~ msgid "Couldn't change to %s"
+#~ msgstr "Hindi makalipat sa %s"
+
+#~ msgid "Failed to locate a valid control file"
+#~ msgstr "Bigo sa paghanap ng tanggap na talaksang control"
+
+#~ msgid "Couldn't open pipe for %s"
+#~ msgstr "Hindi makapag-bukas ng pipe para sa %s"
+
+#~ msgid "Read error from %s process"
+#~ msgstr "Error sa pagbasa mula sa prosesong %s"
+
+#~ msgid "Got a single header line over %u chars"
+#~ msgstr "Nakatanggap ng isang linyang panimula mula %u na mga karakter"
+
+#~ msgid "Malformed override %s line %lu #1"
+#~ msgstr "Maling anyo ng override %s linya %lu #1"
+
+#~ msgid "Malformed override %s line %lu #2"
+#~ msgstr "Maling anyo ng override %s linya %lu #2"
+
+#~ msgid "Malformed override %s line %lu #3"
+#~ msgstr "Maling anyo ng override %s linya %lu #3"
+
+#~ msgid "decompressor"
+#~ msgstr "taga-decompress"
+
+#~ msgid "read, still have %lu to read but none left"
+#~ msgstr "pagbasa, mayroong %lu na babasahin ngunit walang natira"
+
+#~ msgid "write, still have %lu to write but couldn't"
+#~ msgstr "pagsulat, mayroon pang %lu na isusulat ngunit hindi makasulat"
+
+#~ msgid "Error occurred while processing %s (NewPackage)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewPackage)"
+
+#~ msgid "Error occurred while processing %s (UsePackage1)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (UsePackage1)"
+
+#, fuzzy
+#~ msgid "Error occurred while processing %s (NewFileDesc1)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewFileVer1)"
+
+#~ msgid "Error occurred while processing %s (UsePackage2)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (UsePackage2)"
+
+#~ msgid "Error occurred while processing %s (NewFileVer1)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewFileVer1)"
+
+#, fuzzy
+#~ msgid "Error occurred while processing %s (NewVersion%d)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewVersion1)"
+
+#~ msgid "Error occurred while processing %s (UsePackage3)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (UsePackage3)"
+
+#, fuzzy
+#~ msgid "Error occurred while processing %s (NewFileDesc2)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewFileVer1)"
+
+#~ msgid "Error occurred while processing %s (FindPkg)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (FindPkg)"
+
+#~ msgid "Error occurred while processing %s (CollectFileProvides)"
+#~ msgstr "May naganap na Error habang prinoseso ang %s (CollectFileProvides)"
+
+#~ msgid "Internal error, could not locate member"
+#~ msgstr "Internal error, hindi mahanap ang miyembro"
+
+#~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
+#~ msgstr ""
+#~ "E: Sobrang haba ng talaan ng argumento mula sa Acquire::gpgv::Options. "
+#~ "Lalabas."
+
+#~ msgid "Error occurred while processing %s (NewVersion2)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewVersion2)"
+
+#~ msgid "Malformed line %u in source list %s (vendor id)"
+#~ msgstr "Maling anyo ng linyang %u sa talaksang pagkukunan %s (vendor id)"
+
+#~ msgid "Couldn't access keyring: '%s'"
+#~ msgstr "Hindi mabasa ang keyring: '%s'"
+
+#~ msgid "Could not patch file"
+#~ msgstr "Hindi mai-patch ang talaksan"
+
+#~ msgid "       %4i %s\n"
+#~ msgstr "       %4i %s\n"
+
+#~ msgid "%4i %s\n"
+#~ msgstr "%4i %s\n"
+
+#, fuzzy
+#~ msgid "Processing triggers for %s"
+#~ msgstr "Error sa pagproseso ng directory %s"
+
+#~ msgid ""
+#~ "Since you only requested a single operation it is extremely likely that\n"
+#~ "the package is simply not installable and a bug report against\n"
+#~ "that package should be filed."
+#~ msgstr ""
+#~ "Dahil ang hiniling niyo ay mag-isang operasyon, malamang ay ang pakete "
+#~ "ay\n"
+#~ "hindi talaga mailuklok at kailangang magpadala ng bug report tungkol sa\n"
+#~ "pakete na ito."
+
+#, fuzzy
+#~ msgid "Line %d too long (max %lu)"
+#~ msgstr "Labis ang haba ng linyang %d (max %d)"
+
+#, fuzzy
+#~ msgid "Line %d too long (max %d)"
+#~ msgstr "Labis ang haba ng linyang %d (max %d)"
+
+#, fuzzy
+#~ msgid "Error occured while processing %s (NewFileDesc1)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewFileVer1)"
+
+#, fuzzy
+#~ msgid "Error occured while processing %s (NewFileDesc2)"
+#~ msgstr "May naganap na error habang prinoseso ang %s (NewFileVer1)"
+
+#, fuzzy
+#~ msgid "Stored label: %s \n"
+#~ msgstr "Naka-imbak na Label: %s \n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Found %i package indexes, %i source indexes, %i translation indexes and "
+#~ "%i signatures\n"
+#~ msgstr ""
+#~ "Nakahanap ng %i na index ng mga pakete, %i na index ng source at %i na "
+#~ "signature\n"
+
+#, fuzzy
+#~ msgid "openpty failed\n"
+#~ msgstr "Bigo ang pagpili"
+
+#~ msgid "File date has changed %s"
+#~ msgstr "Nagbago ang petsa ng talaksang %s"
+
+#~ msgid "Reading file list"
 #~ msgstr "Binabasa ang Talaksang Listahan"
 
-#~ msgid "Internal error getting a package name"
-#~ msgstr "Internal error sa pagkuha ng pangalan ng pakete"
+#~ msgid "Could not execute "
+#~ msgstr "Hindi ma-execute ang "
 
-#~ msgid "Failed to change to the admin dir %sinfo"
-#~ msgstr "Bigo sa paglipat sa admin dir %sinfo"
+#~ msgid "Preparing for remove with config %s"
+#~ msgstr "Naghahanda upang tanggalin ang %s kasama ang pagkasaayos nito"
 
-#~ msgid "The info and temp directories need to be on the same filesystem"
-#~ msgstr "Ang info at temp directory ay kailangang nasa parehong filesystem"
+#~ msgid "Removed with config %s"
+#~ msgstr "Tinanggal ang %s kasama ang pagkasaayos nito"
 
-#~ msgid "Failed to stat %sinfo"
-#~ msgstr "Bigo sa pag-stat ng %sinfo"
-
-#~ msgid "Unable to create %s"
-#~ msgstr "Hindi malikha ang %s"
-
-#~ msgid "Failed to remove %s"
-#~ msgstr "Bigo sa pagtanggal ng %s"
-
-#~ msgid "Package %s is not installed, so not removed\n"
-#~ msgstr "Hindi nakaluklok ang paketeng %s, kaya't hindi ito tinanggal\n"
+#~ msgid "Unknown vendor ID '%s' in line %u of source list %s"
+#~ msgstr ""
+#~ "Hindi kilalang vendor ID '%s' sa linya %u ng talaksang pagkukunan %s"

@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'unstable' 'virtual-provider' 'amd64,i386' '2' 'Provides: virtual
+Conflicts: virtual
+Multi-Arch: same'
+insertpackage 'unstable' 'real' 'amd64,i386' '2' 'Conflicts: real
+Multi-Arch: same'
+insertpackage 'unstable' 'real-provider' 'amd64,i386' '2' 'Provides: real-provider
+Conflicts: real-provider
+Multi-Arch: same'
+setupaptarchive
+
+testequal "Reading package lists...
+Building dependency tree...
+Note, selecting 'virtual-provider' instead of 'virtual'
+Note, selecting 'virtual-provider:i386' instead of 'virtual:i386'
+The following NEW packages will be installed:
+  virtual-provider virtual-provider:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst virtual-provider (2 unstable [amd64])
+Inst virtual-provider:i386 (2 unstable [i386])
+Conf virtual-provider (2 unstable [amd64])
+Conf virtual-provider:i386 (2 unstable [i386])" aptget install virtual:* -s -q=0
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  real real:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst real (2 unstable [amd64])
+Inst real:i386 (2 unstable [i386])
+Conf real (2 unstable [amd64])
+Conf real:i386 (2 unstable [i386])' aptget install real:* -s -q=0
+
+# ensure that we are not confused by the provides
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  real-provider real-provider:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst real-provider (2 unstable [amd64])
+Inst real-provider:i386 (2 unstable [i386])
+Conf real-provider (2 unstable [amd64])
+Conf real-provider:i386 (2 unstable [i386])' aptget install real-provider:* -s -q=0

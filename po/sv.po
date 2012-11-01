@@ -10,16 +10,14 @@ msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2012-10-16 11:36+0100\n"
-"PO-Revision-Date: 2012-09-07 13:19+0000\n"
-"Last-Translator: Daniel Nylander <yeager@ubuntu.com>\n"
+"PO-Revision-Date: 2010-08-24 21:18+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <debian-l10n-swedish@debian.org>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2012-10-12 10:33+0000\n"
-"X-Generator: Launchpad (build 16130)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -166,6 +164,7 @@ msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s för %s kompilerad den %s %s\n"
 
 #: cmdline/apt-cache.cc:1686
+#, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -201,6 +200,42 @@ msgid ""
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 "See the apt-cache(8) and apt.conf(5) manual pages for more information.\n"
 msgstr ""
+"Användning: apt-cache [flaggor] kommando\n"
+"            apt-cache [flaggor] add fil1 [fil2 ...]\n"
+"            apt-cache [flaggor] showpkg paket1 [paket2 ...]\n"
+"            apt-cache [flaggor] showsrc paket1 [paket2 ...]\n"
+"\n"
+"apt-cache är ett lågnivåverktyg för att hantera APTs binära cachefiler\n"
+"samt hämta information från dem\n"
+"\n"
+"Kommandon:\n"
+"   add - Lägg till en paketfil till källcachen\n"
+"   gencaches - Bygg både paket- och källcache\n"
+"   showpkg - Visa viss allmän information om ett enskilt paket\n"
+"   showsrc - Visa källkodsposter\n"
+"   stats - Visa viss grundläggande statistik\n"
+"   dump - Visa hela filen i koncis form\n"
+"   dumpavail - Skriv en \"available\"-fil på standard ut\n"
+"   unmet - Visa otillfredsställbara beroenden\n"
+"   search - Sök i paketlistan med ett reguljärt uttryck\n"
+"   show - Visa en läsbar post för paketet\n"
+"   showauto - Visa en lista över automatiskt installerade paket\n"
+"   depends - Visa rå information om beroenden för ett paket\n"
+"   rdepends - Visa information om omvända beroenden för ett paket\n"
+"   pkgnames - Lista namnen på alla paket i systemet\n"
+"   dotty - Generera paketdiagram för GraphViz\n"
+"   xvcg - Generera paketdiagram för xvcg\n"
+"   policy - Visa policyinställningar\n"
+"\n"
+"Flaggor:\n"
+"  -h   Denna hjälptext.\n"
+"  -p=? Paketcachen.\n"
+"  -s=? Källcachen.\n"
+"  -q   Inaktivera förloppsindikatorn.\n"
+"  -i   Visa endast viktiga beroenden för \"unmet\"-kommandot.\n"
+"  -c=? Läs denna konfigurationsfil.\n"
+"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
+"Se manualsidorna för apt-cache(8) och apt.conf(5) för mer information.\n"
 
 #: cmdline/apt-cdrom.cc:79
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -414,14 +449,14 @@ msgstr "Virtuella paket som \"%s\" kan inte tas bort\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
+msgstr "Paketet %s är inte installerat, så det tas inte bort\n"
 
 #: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
-#, c-format
+#, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr ""
+msgstr "Paketet %s är inte installerat, så det tas inte bort\n"
 
 #: cmdline/apt-get.cc:788
 #, c-format
@@ -462,9 +497,9 @@ msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Valde version \"%s\" (%s) för \"%s\"\n"
 
 #: cmdline/apt-get.cc:889
-#, c-format
+#, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr "Valde version \"%s\" (%s) för \"%s\" på grund av \"%s\"\n"
+msgstr "Valde version \"%s\" (%s) för \"%s\"\n"
 
 #: cmdline/apt-get.cc:1025
 msgid "Correcting dependencies..."
@@ -724,10 +759,11 @@ msgstr[1] ""
 "%lu paket blev installerade automatiskt och är inte längre nödvändiga.\n"
 
 #: cmdline/apt-get.cc:1835
+#, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Använd \"apt-get autoremove\" för att ta bort dem."
+msgstr[1] "Använd \"apt-get autoremove\" för att ta bort dem."
 
 #: cmdline/apt-get.cc:1854
 msgid "Internal error, AllUpgrade broke stuff"
@@ -841,16 +877,15 @@ msgstr ""
 "%s\n"
 
 #: cmdline/apt-get.cc:2513
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Please use:\n"
 "bzr branch %s\n"
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 "Använd:\n"
-"bzr branch %s\n"
-"för att hämta de senaste (möjligen inte utgivna) uppdateringarna för "
-"paketet.\n"
+"bzr get %s\n"
+"för att hämta senaste (möjligen inte utgivna) uppdateringar av paketet.\n"
 
 #: cmdline/apt-get.cc:2566
 #, c-format
@@ -933,13 +968,13 @@ msgid "%s has no build depends.\n"
 msgstr "%s har inga byggberoenden.\n"
 
 #: cmdline/apt-get.cc:3008
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr ""
-"%s beroende för %s kan inte tillfredsställas eftersom %s inte tillåts på \"%s"
-"\"-paket"
+"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte kan "
+"hittas"
 
 #: cmdline/apt-get.cc:3026
 #, c-format
@@ -958,22 +993,22 @@ msgstr ""
 "paketet %s är för nytt"
 
 #: cmdline/apt-get.cc:3088
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
 "package %s can't satisfy version requirements"
 msgstr ""
-"%s beroende för %s kan inte tillfredsställas eftersom kandidatversionen av "
-"paketet %s inte kan tillfredsställa versionskraven"
+"%s-beroendet på %s kan inte tillfredsställas eftersom inga tillgängliga "
+"versioner av paketet %s tillfredsställer versionskraven"
 
 #: cmdline/apt-get.cc:3094
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr ""
-"%s beroende för %s kan inte tillfredsställas eftersom paketet %s inte har en "
-"kandidatversion"
+"%s-beroendet på %s kan inte tillfredsställas eftersom paketet %s inte kan "
+"hittas"
 
 #: cmdline/apt-get.cc:3117
 #, c-format
@@ -989,16 +1024,18 @@ msgstr "Byggberoenden för %s kunde inte tillfredsställas."
 msgid "Failed to process build dependencies"
 msgstr "Misslyckades med att behandla byggberoenden"
 
+# Felmeddelande för misslyckad chdir
 #: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
-#, c-format
+#, fuzzy, c-format
 msgid "Changelog for %s (%s)"
-msgstr "Ändringslogg för %s (%s)"
+msgstr "Ansluter till %s (%s)"
 
 #: cmdline/apt-get.cc:3369
 msgid "Supported modules:"
 msgstr "Moduler som stöds:"
 
 #: cmdline/apt-get.cc:3410
+#, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1043,6 +1080,47 @@ msgid ""
 "pages for more information and options.\n"
 "                       This APT has Super Cow Powers.\n"
 msgstr ""
+"Användning: apt-get [flaggor] kommando\n"
+"       apt-get [flaggor] install|remove paket1 [paket2 ...]\n"
+"       apt-get [flaggor] source paket1 [paket2 ...]\n"
+"\n"
+"apt-get är ett enkelt kommandoradsgränssnitt för att hämta och installera\n"
+"paket. De mest använda kommandona är \"update\" och \"install\".\n"
+"\n"
+"Kommandon:\n"
+"   update - Hämta nya paketlistor\n"
+"   upgrade - Genomför en uppgradering\n"
+"   install - Installera nya paket (paket är libc6, inte libc6.deb)\n"
+"   remove - Ta bort paket\n"
+"   autoremove - Ta automatiskt bort alla oanvända paket\n"
+"   purge - Ta bort paket och konfigurationsfiler\n"
+"   source - Hämta källkodsarkiv\n"
+"   build-dep - Tillfredsställ byggberoenden för källkodspaket\n"
+"   dist-upgrade - Uppgradering av distributionen, se apt-get(8)\n"
+"   dselect-upgrade - Följ valen från dselect\n"
+"   clean - Ta bort hämtade arkivfiler\n"
+"   autoclean - Ta bort gamla hämtade arkivfiler\n"
+"   check - Kontrollera att det inte finns några trasiga beroenden\n"
+"   markauto - Markera angivna paket som automatiskt installerade\n"
+"   unmarkauto - Markera angivna paket som manuellt installerade\n"
+"\n"
+"Flaggor:\n"
+"  -h   Denna hjälptext.\n"
+"  -q   Utdata lämplig för loggar - ingen förloppsindikator.\n"
+"  -qq  Ingen utdata förutom vid fel.\n"
+"  -d   Bara hämta - VARKEN installera eller packa upp arkiven.\n"
+"  -s   Gör ingenting, simulera vad som skulle hända.\n"
+"  -y   Antag ja på alla frågor utan att fråga.\n"
+"  -f   Försök rätta ett system med otillfredsställda beroenden.\n"
+"  -m   Försök fortsätta även om arkiven inte kan hittas.\n"
+"  -u   Visa även en lista över uppgraderade paket.\n"
+"  -b   Bygg källkodspaketet när det hämtats.\n"
+"  -V   Visa pratsamma versionsnummer.\n"
+"  -c=? Läs denna konfigurationsfil.\n"
+"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
+"Se manualsidorna för apt-get(8), sources.list(5) och apt.conf(5)\n"
+"för mer information och flaggor.\n"
+"                     Denna APT har Speciella Ko-Krafter.\n"
 
 #: cmdline/apt-get.cc:3575
 msgid ""
@@ -1099,29 +1177,29 @@ msgstr ""
 "i enheten \"%s\" och tryck på Enter\n"
 
 #: cmdline/apt-mark.cc:55
-#, c-format
+#, fuzzy, c-format
 msgid "%s can not be marked as it is not installed.\n"
-msgstr "%s kan inte markeras eftersom det inte är installerat.\n"
+msgstr "men det är inte installerat"
 
 #: cmdline/apt-mark.cc:61
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to manually installed.\n"
-msgstr "%s är redan inställt som manuellt installerat.\n"
+msgstr "%s är satt till manuellt installerad.\n"
 
 #: cmdline/apt-mark.cc:63
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set to automatically installed.\n"
-msgstr "%s är redan inställt som automatiskt installerat.\n"
+msgstr "%s är satt till automatiskt installerad.\n"
 
 #: cmdline/apt-mark.cc:228
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already set on hold.\n"
-msgstr "%s var redan inställd att hållas kvar.\n"
+msgstr "%s är redan den senaste versionen.\n"
 
 #: cmdline/apt-mark.cc:230
-#, c-format
+#, fuzzy, c-format
 msgid "%s was already not hold.\n"
-msgstr "%s var redan inställd att inte hållas kvar.\n"
+msgstr "%s är redan den senaste versionen.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
 #: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
@@ -1130,14 +1208,14 @@ msgid "Waited for %s but it wasn't there"
 msgstr "Väntade på %s men den fanns inte där"
 
 #: cmdline/apt-mark.cc:260 cmdline/apt-mark.cc:309
-#, c-format
+#, fuzzy, c-format
 msgid "%s set on hold.\n"
-msgstr "%s är inställd att hållas kvar.\n"
+msgstr "%s är satt till manuellt installerad.\n"
 
 #: cmdline/apt-mark.cc:262 cmdline/apt-mark.cc:314
-#, c-format
+#, fuzzy, c-format
 msgid "Canceled hold on %s.\n"
-msgstr "Avbröt kvarhållning för %s.\n"
+msgstr "Misslyckades med att öppna %s"
 
 #: cmdline/apt-mark.cc:332
 msgid "Executing dpkg failed. Are you root?"
@@ -1465,7 +1543,7 @@ msgstr "Felaktig rubrikrad"
 
 #: methods/http.cc:569 methods/http.cc:576
 msgid "The HTTP server sent an invalid reply header"
-msgstr "Http-servern skickade en ogiltig svarsrubrik"
+msgstr "Http-servern sände ett ogiltigt svarshuvud"
 
 #: methods/http.cc:606
 msgid "The HTTP server sent an invalid Content-Length header"
@@ -1513,7 +1591,7 @@ msgstr "Fel vid läsning från server"
 
 #: methods/http.cc:1194
 msgid "Bad header data"
-msgstr "Felaktiga data i rubrik"
+msgstr "Felaktiga data i huvud"
 
 #: methods/http.cc:1211 methods/http.cc:1266
 msgid "Connection failed"
@@ -1553,9 +1631,9 @@ msgstr "Ingen spegelfil \"%s\" hittades "
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
 #: methods/mirror.cc:287
-#, c-format
+#, fuzzy, c-format
 msgid "Can not read mirror file '%s'"
-msgstr "Kan inte läsa spegelfilen \"%s\""
+msgstr "Ingen spegelfil \"%s\" hittades "
 
 #: methods/mirror.cc:442
 #, c-format
@@ -1912,20 +1990,21 @@ msgstr "realloc - Misslyckades med att allokera minne"
 msgid "Unable to open %s"
 msgstr "Kunde inte öppna %s"
 
+# parametrar: filnamn, radnummer
 #: ftparchive/override.cc:61 ftparchive/override.cc:167
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #1"
-msgstr "Felformaterad åsidosättning %s rad %llu #1"
+msgstr "Felaktig override %s rad %lu #1"
 
 #: ftparchive/override.cc:75 ftparchive/override.cc:179
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #2"
-msgstr "Felformaterad åsidosättning %s rad %llu #2"
+msgstr "Felaktig override %s rad %lu #2"
 
 #: ftparchive/override.cc:89 ftparchive/override.cc:192
-#, c-format
+#, fuzzy, c-format
 msgid "Malformed override %s line %llu #3"
-msgstr "Felformaterad åsidosättning %s rad %llu #3"
+msgstr "Felaktig override %s rad %lu #3"
 
 #: ftparchive/override.cc:128 ftparchive/override.cc:202
 #, c-format
@@ -1979,6 +2058,7 @@ msgid "Failed to rename %s to %s"
 msgstr "Misslyckades med att byta namn på %s till %s"
 
 #: cmdline/apt-internal-solver.cc:37
+#, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -1991,6 +2071,16 @@ msgid ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 msgstr ""
+"Användning: apt-extracttemplates fil1 [fil2 ...]\n"
+"\n"
+"apt-extracttemplates är ett verktyg för att hämta ut konfigurations- \n"
+"och mallinformation från paket\n"
+"\n"
+"Flaggor:\n"
+"  -h   Denna hjälptext.\n"
+"  -t   Ställ in temporärkatalogen.\n"
+"  -c=? Läs denna konfigurationsfil.\n"
+"  -o=? Ställ in en godtycklig konfigurationsflagga, t.ex -o dir::cache=/tmp\n"
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
@@ -2026,7 +2116,7 @@ msgstr "Misslyckades med att skapa rör"
 
 #: apt-inst/contrib/extracttar.cc:144
 msgid "Failed to exec gzip "
-msgstr "Misslyckades med att köra gzip "
+msgstr "Misslyckades med att köra gzip"
 
 #: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:211
 msgid "Corrupted archive"
@@ -2189,9 +2279,9 @@ msgid "Couldn't duplicate file descriptor %i"
 msgstr "Kunde inte duplicera filhandtag %i"
 
 #: apt-pkg/contrib/mmap.cc:119
-#, c-format
+#, fuzzy, c-format
 msgid "Couldn't make mmap of %llu bytes"
-msgstr "Kunde inte göra mmap av %llu byte"
+msgstr "Kunde inte utföra mmap på %lu byte"
 
 #: apt-pkg/contrib/mmap.cc:146
 msgid "Unable to close mmap"
@@ -2472,14 +2562,14 @@ msgid "Failed to exec compressor "
 msgstr "Misslyckades med att starta komprimerare "
 
 #: apt-pkg/contrib/fileutl.cc:1309
-#, c-format
+#, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
-msgstr "läsning, har fortfarande %llu att läsa men inget är kvar"
+msgstr "läsning, har fortfarande %lu att läsa men ingenting finns kvar"
 
 #: apt-pkg/contrib/fileutl.cc:1398 apt-pkg/contrib/fileutl.cc:1420
-#, c-format
+#, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
-msgstr "skrivning. har fortfarande %llu att skriva men kan inte"
+msgstr "skrivning, har fortfarande %lu att skriva men kunde inte"
 
 #: apt-pkg/contrib/fileutl.cc:1736
 #, c-format
@@ -2514,8 +2604,9 @@ msgid "The package cache file is an incompatible version"
 msgstr "Paketcachefilens version är inkompatibel"
 
 #: apt-pkg/pkgcache.cc:162
+#, fuzzy
 msgid "The package cache file is corrupted, it is too small"
-msgstr "Paketlagringsfilen är skadad; den är för liten"
+msgstr "Paketcachefilen är skadad"
 
 #: apt-pkg/pkgcache.cc:167
 #, c-format
@@ -2700,9 +2791,9 @@ msgstr ""
 "under APT::Immediate-Configure för information. (%d)"
 
 #: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
-#, c-format
+#, fuzzy, c-format
 msgid "Could not configure '%s'. "
-msgstr "Kunde inte konfigurera \"%s\". "
+msgstr "Kunde inte öppna filen \"%s\""
 
 #: apt-pkg/packagemanager.cc:545
 #, c-format
@@ -2741,12 +2832,13 @@ msgid "Unable to correct problems, you have held broken packages."
 msgstr "Kunde inte korrigera problemen, du har hållit tillbaka trasiga paket."
 
 #: apt-pkg/algorithms.cc:1569 apt-pkg/algorithms.cc:1571
+#, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
 msgstr ""
-"Några indexfiler gick inte att hämta. De kommer att ignoreras eller så "
-"används de gamla istället."
+"Vissa indexfiler kunde inte hämtas, de har ignorerats eller så har de gamla "
+"använts istället."
 
 #: apt-pkg/acquire.cc:81
 #, c-format
@@ -2850,6 +2942,7 @@ msgstr "Prioritet ej angiven (eller noll) för nål"
 msgid "Cache has an incompatible versioning system"
 msgstr "Cachen har ett inkompatibelt versionssystem"
 
+# NewPackage etc. är funktionsnamn
 #. TRANSLATOR: The first placeholder is a package name,
 #. the other two should be copied verbatim as they include debug info
 #: apt-pkg/pkgcachegen.cc:211 apt-pkg/pkgcachegen.cc:277
@@ -2860,9 +2953,9 @@ msgstr "Cachen har ett inkompatibelt versionssystem"
 #: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:423
 #: apt-pkg/pkgcachegen.cc:463 apt-pkg/pkgcachegen.cc:471
 #: apt-pkg/pkgcachegen.cc:502 apt-pkg/pkgcachegen.cc:516
-#, c-format
+#, fuzzy, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "Fel uppstod vid behandling av %s (%s%d)"
+msgstr "Fel uppstod vid hantering av %s (FindPkg)"
 
 #: apt-pkg/pkgcachegen.cc:234
 msgid "Wow, you exceeded the number of package names this APT is capable of."
@@ -2928,9 +3021,9 @@ msgstr ""
 "sources.list eller felformulerad fil)"
 
 #: apt-pkg/acquire-item.cc:1397
-#, c-format
+#, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "Kunde inte hitta kontrollsumma för \"%s\" i Release-filen"
+msgstr "Kunde inte tolka \"Release\"-filen %s"
 
 #: apt-pkg/acquire-item.cc:1439
 msgid "There is no public key available for the following key IDs:\n"
@@ -3040,7 +3133,7 @@ msgstr "Identifierar.. "
 #: apt-pkg/cdrom.cc:613
 #, c-format
 msgid "Stored label: %s\n"
-msgstr "Lagrad etikett: %s\n"
+msgstr "Lagrad etikett: %s \n"
 
 #: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
 msgid "Unmounting CD-ROM...\n"
@@ -3399,49 +3492,30 @@ msgstr ""
 msgid "Not locked"
 msgstr "Inte låst"
 
-#~ msgid "Got a single header line over %u chars"
-#~ msgstr "Fick en ensam rubrikrad på %u tecken"
+#~ msgid "Skipping nonexistent file %s"
+#~ msgstr "Hoppar över icke-existerande filen %s"
 
-# %s = programnamn
-#~ msgid "Read error from %s process"
-#~ msgstr "Läsfel från %s-processen"
+#~ msgid "Failed to remove %s"
+#~ msgstr "Misslyckades med att ta bort %s"
 
-#~ msgid "Couldn't open pipe for %s"
-#~ msgstr "Kunde inte öppna rör för %s"
+#~ msgid "Unable to create %s"
+#~ msgstr "Kunde inte skapa %s"
 
-#~ msgid "Failed to locate a valid control file"
-#~ msgstr "Misslyckades med att hitta en giltig control-fil"
+#~ msgid "Failed to stat %sinfo"
+#~ msgstr "Misslyckades att ta status på %sinfo"
 
-# chdir
-#~ msgid "Couldn't change to %s"
-#~ msgstr "Kunde inte byta till %s"
+#~ msgid "The info and temp directories need to be on the same filesystem"
+#~ msgstr "Katalogerna info och temp måste vara på samma filsystem"
 
-#~ msgid "Error parsing MD5. Offset %lu"
-#~ msgstr "Fel vid tolkning av MD5. Position %lu"
+# Felmeddelande för misslyckad chdir
+#~ msgid "Failed to change to the admin dir %sinfo"
+#~ msgstr "Misslyckades att växla till adminkatalogen %sinfo"
 
-#~ msgid "Bad ConfFile section in the status file. Offset %lu"
-#~ msgstr "Felaktig ConfFile-sektion i statusfilen. Position %lu"
+#~ msgid "Internal error getting a package name"
+#~ msgstr "Internt fel när namn på Package-fil skulle hämtas"
 
-#~ msgid "The pkg cache must be initialized first"
-#~ msgstr "Paketcachen måste först initieras"
-
-#~ msgid "Internal error adding a diversion"
-#~ msgstr "Internt fel när en omdirigering skulle läggas till"
-
-#~ msgid "Invalid line in the diversion file: %s"
-#~ msgstr "Felaktig rad i omdirigeringsfilen: %s"
-
-#~ msgid "The diversion file is corrupted"
-#~ msgstr "Omdirigeringsfilen är skadad"
-
-#~ msgid "Failed to open the diversions file %sdiversions"
-#~ msgstr "Misslyckades med att öppna omdirigeringsfilen %sdiversions"
-
-#~ msgid "Internal error getting a node"
-#~ msgstr "Internt fel när en nod skulle hämtas"
-
-#~ msgid "Failed reading the list file %sinfo/%s"
-#~ msgstr "Misslyckades med att läsa listfilen %sinfo/%s"
+#~ msgid "Reading file listing"
+#~ msgstr "Läser fillista"
 
 #~ msgid ""
 #~ "Failed to open the list file '%sinfo/%s'. If you cannot restore this file "
@@ -3452,46 +3526,141 @@ msgstr "Inte låst"
 #~ "återskapa filen, skapa en tom och installera omedelbart om samma version "
 #~ "av paketet!"
 
-#~ msgid "Reading file listing"
-#~ msgstr "Läser fillista"
+#~ msgid "Failed reading the list file %sinfo/%s"
+#~ msgstr "Misslyckades med att läsa listfilen %sinfo/%s"
 
-#~ msgid "Internal error getting a package name"
-#~ msgstr "Internt fel när namn på Package-fil skulle hämtas"
+#~ msgid "Internal error getting a node"
+#~ msgstr "Internt fel när en nod skulle hämtas"
 
-# Felmeddelande för misslyckad chdir
-#~ msgid "Failed to change to the admin dir %sinfo"
-#~ msgstr "Misslyckades att växla till adminkatalogen %sinfo"
+#~ msgid "Failed to open the diversions file %sdiversions"
+#~ msgstr "Misslyckades med att öppna omdirigeringsfilen %sdiversions"
 
-#~ msgid "The info and temp directories need to be on the same filesystem"
-#~ msgstr "Katalogerna info och temp måste vara på samma filsystem"
+#~ msgid "The diversion file is corrupted"
+#~ msgstr "Omdirigeringsfilen är skadad"
 
-#~ msgid "Failed to stat %sinfo"
-#~ msgstr "Misslyckades att ta status på %sinfo"
+#~ msgid "Invalid line in the diversion file: %s"
+#~ msgstr "Felaktig rad i omdirigeringsfilen: %s"
 
-#~ msgid "Unable to create %s"
-#~ msgstr "Kunde inte skapa %s"
+#~ msgid "Internal error adding a diversion"
+#~ msgstr "Internt fel när en omdirigering skulle läggas till"
 
-#~ msgid "Failed to remove %s"
-#~ msgstr "Misslyckades med att ta bort %s"
-
-#~ msgid "Use 'apt-get autoremove' to remove them."
-#~ msgstr "Använd \"apt-get autoremove\" för att ta bort dem."
-
-#~ msgid "Package %s is not installed, so not removed\n"
-#~ msgstr "Paketet %s är inte installerat, så det tas inte bort\n"
-
-#~ msgid ""
-#~ "Dynamic MMap ran out of room. Please increase the size of APT::Cache-"
-#~ "Limit. Current value: %lu. (man 5 apt.conf)"
-#~ msgstr ""
-#~ "Dynamisk MMap fick slut på utrymme. Öka storleken för APT::Cache-Limit. "
-#~ "Aktuellt värde: %lu. (man 5 apt.conf)"
+#~ msgid "The pkg cache must be initialized first"
+#~ msgstr "Paketcachen måste först initieras"
 
 #~ msgid "Failed to find a Package: header, offset %lu"
 #~ msgstr "Misslyckades med att hitta Package:-rubrik, position %lu"
 
-#~ msgid "Skipping nonexistent file %s"
-#~ msgstr "Hoppar över icke-existerande filen %s"
+#~ msgid "Bad ConfFile section in the status file. Offset %lu"
+#~ msgstr "Felaktig ConfFile-sektion i statusfilen. Position %lu"
+
+#~ msgid "Error parsing MD5. Offset %lu"
+#~ msgstr "Fel vid tolkning av MD5. Position %lu"
+
+# chdir
+#~ msgid "Couldn't change to %s"
+#~ msgstr "Kunde inte byta till %s"
+
+#~ msgid "Failed to locate a valid control file"
+#~ msgstr "Misslyckades med att hitta en giltig control-fil"
+
+#~ msgid "Couldn't open pipe for %s"
+#~ msgstr "Kunde inte öppna rör för %s"
+
+# %s = programnamn
+#~ msgid "Read error from %s process"
+#~ msgstr "Läsfel från %s-processen"
+
+#~ msgid "Got a single header line over %u chars"
+#~ msgstr "Fick en ensam rubrikrad på %u tecken"
 
 #~ msgid "Note: This is done automatic and on purpose by dpkg."
 #~ msgstr "Observera: Detta sker med automatik och vid behov av dpkg."
+
+# parametrar: filnamn, radnummer
+#~ msgid "Malformed override %s line %lu #1"
+#~ msgstr "Felaktig override %s rad %lu #1"
+
+#~ msgid "Malformed override %s line %lu #2"
+#~ msgstr "Felaktig override %s rad %lu #2"
+
+#~ msgid "Malformed override %s line %lu #3"
+#~ msgstr "Felaktig override %s rad %lu #3"
+
+#~ msgid "decompressor"
+#~ msgstr "uppackare"
+
+#~ msgid "read, still have %lu to read but none left"
+#~ msgstr "läsning, har fortfarande %lu att läsa men ingenting finns kvar"
+
+#~ msgid "write, still have %lu to write but couldn't"
+#~ msgstr "skrivning, har fortfarande %lu att skriva men kunde inte"
+
+#~ msgid ""
+#~ "Could not perform immediate configuration on already unpacked '%s'. "
+#~ "Please see man 5 apt.conf under APT::Immediate-Configure for details."
+#~ msgstr ""
+#~ "Kunde inte genomföra omedelbar konfiguration på redan uppackade \"%s\". "
+#~ "Se man 5 apt.conf under APT::Immediate-Configure för information."
+
+# NewPackage etc. är funktionsnamn
+#~ msgid "Error occurred while processing %s (NewPackage)"
+#~ msgstr "Fel uppstod vid hantering av %s (NewPackage)"
+
+#~ msgid "Error occurred while processing %s (UsePackage1)"
+#~ msgstr "Fel uppstod vid hantering av %s (UsePackage1)"
+
+#~ msgid "Error occurred while processing %s (NewFileDesc1)"
+#~ msgstr "Fel uppstod vid hantering av %s (NewFileDesc1)"
+
+#~ msgid "Error occurred while processing %s (UsePackage2)"
+#~ msgstr "Fel uppstod vid hantering av %s (UsePackage2)"
+
+#~ msgid "Error occurred while processing %s (NewFileVer1)"
+#~ msgstr "Fel uppstod vid hantering av %s (NewFileVer1)"
+
+#~ msgid "Error occurred while processing %s (NewVersion%d)"
+#~ msgstr "Fel uppstod vid behandling av %s (NewVersion%d)"
+
+#~ msgid "Error occurred while processing %s (UsePackage3)"
+#~ msgstr "Fel uppstod vid hantering av %s (UsePackage3)"
+
+#~ msgid "Error occurred while processing %s (NewFileDesc2)"
+#~ msgstr "Fel uppstod vid hantering av %s (NewFileDesc2)"
+
+# NewPackage etc. är funktionsnamn
+#~ msgid "Error occurred while processing %s (FindPkg)"
+#~ msgstr "Fel uppstod vid hantering av %s (FindPkg)"
+
+#~ msgid "Error occurred while processing %s (CollectFileProvides)"
+#~ msgstr "Fel uppstod vid hantering av %s (CollectFileProvides)"
+
+#~ msgid "Internal error, could not locate member"
+#~ msgstr "Internt fel, kunde inte hitta del"
+
+#~ msgid "Internal error, group '%s' has no installable pseudo package"
+#~ msgstr "Internt fel, gruppen \"%s\" har inget installerbart pseudo-paket"
+
+#~ msgid "Release file expired, ignoring %s (invalid since %s)"
+#~ msgstr "Release-filen har gått ut, ignorerar %s (ogiltig sedan %s)"
+
+#~ msgid "E: Too many keyrings should be passed to gpgv. Exiting."
+#~ msgstr "F: För många nyckelringar skulle skickas till gpgv. Avslutar."
+
+#~ msgid "E: Argument list from Acquire::gpgv::Options too long. Exiting."
+#~ msgstr ""
+#~ "E: Argumentslistan från Acquire::gpgv::Options är för lång. Avslutar."
+
+#~ msgid "Malformed line %u in source list %s (vendor id)"
+#~ msgstr "Rad %u i källistan %s har fel format (leverantörs-id)"
+
+#~ msgid "Error occurred while processing %s (NewVersion2)"
+#~ msgstr "Fel uppstod vid hantering av %s (NewVersion2)"
+
+#~ msgid "Couldn't access keyring: '%s'"
+#~ msgstr "Kunde inte komma åt nyckelring: \"%s\""
+
+#~ msgid "Could not patch file"
+#~ msgstr "Kunde inte lägga på programfix på filen"
+
+#~ msgid "       %4i %s\n"
+#~ msgstr "       %4i %s\n"

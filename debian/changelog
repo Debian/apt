@@ -1,3 +1,59 @@
+apt (0.9.7.6ubuntu1) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * merged from debian-sid
+  
+  [ Program translation updates ]
+  * Catalan (Jordi Mallach)
+  * Drop a confusing non-breaking space. Closes: #691024
+  * Thai (Theppitak Karoonboonyanan). Closes: #691613
+
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc:
+    - do not do lock-step configuration for a M-A:same package if it isn't
+      unpacked yet in SmartConfigure and do not unpack a M-A:same package
+      again in SmartUnPack if we have already configured it (LP: #1062503)
+
+ -- Jordi Mallach <jordi@debian.org>  Thu, 18 Oct 2012 23:30:46 +0200
+
+apt (0.9.7.6) unstable; urgency=low
+
+  [ Program translation updates ]
+  * Ukrainian (A. Bondarenko)
+
+  [ David Kalnischkies ]
+  * apt-pkg/pkgcachegen.cc:
+    - ensure that dependencies for packages:none are always generated
+    - add 2 missing remap registrations causing a segfault in case
+      we use the not remapped iterators after a move of the mmap again
+    - write the native architecture as unique string into the cache header
+      as it is used for arch:all packages as a map to arch:native.
+      Otherwise arch comparisons later will see differences (Closes: #689323)
+  * apt-pkg/pkgcache.cc:
+    - ignore negative dependencies applying in the same group for M-A:same
+      packages on the real package name as self-conflicts (Closes: #688863)
+  * cmdline/apt-cache.cc:
+    - print versioned dependency relations in (r)depends if the option
+      APT::Cache::ShowVersion is true (default: false) as discussed in
+      #218995 to help debian-cd fixing #687949. Thanks to Sam Lidder
+      for initial patch and Steve McIntyre for nagging and testing!
+  * apt-pkg/edsp.cc:
+    - include reinstall requests and already installed (= protected) packages
+      in the install-request for external resolvers (Closes: #689331)
+  * apt-pkg/policy.cc:
+    - match pins with(out) an architecture as we do on the commandline
+      (partly fixing #687255, b= support has to wait for jessie)
+  * apt-pkg/contrib/netrc.cc:
+    - remove the 64 char limit for login/password in internal usage
+    - remove 256 char line limit by using getline() (POSIX.1-2008)
+  
+  [ Colin Watson ]
+  * apt-pkg/pkgcachegen.cc:
+    - Fix crash if the cache is remapped while writing a Provides version
+      (LP: #1066445).
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 Oct 2012 18:08:53 +0200
+
 apt (0.9.7.5ubuntu5) quantal; urgency=low
 
   * Revert "missing remap registration" change from 0.9.7.5ubuntu4; this
@@ -85,7 +141,7 @@ apt (0.9.7.5ubuntu1) quantal; urgency=low
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 28 Aug 2012 12:06:48 +0200
 
-apt (0.9.7.5) UNRELEASED; urgency=low
+apt (0.9.7.5) unstable; urgency=low
 
   [ Manpages translation updates ]
   * Japanese (KURASAWA Nozomu) (Closes: #684435)
@@ -115,8 +171,16 @@ apt (0.9.7.5) UNRELEASED; urgency=low
     - do not warn about files which have a record in the Release file, but
       are not present on the CD to mirror the behavior of the other methods
       and to allow uncompressed indexes to be dropped without scaring users
+    - do not create duplicated flat-archive CD-ROM sources for foreign
+      architectures on multi-arch CD-ROMs
+    - do not warn about files which have a record in the Release file, but
+      are not present on the CD to mirror the behavior of the other methods
+      and to allow uncompressed indexes to be dropped without scaring users
+  * apt-pkg/pkgcachegen.cc:
+    - do not create 'native' (or now 'none') package structures as a side
+      effect of description translation parsing as it pollutes the cache
 
- -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 26 Aug 2012 10:49:17 +0200
+ -- Michael Vogt <mvo@debian.org>  Tue, 11 Sep 2012 15:56:44 +0200
 
 apt (0.9.7.4) unstable; urgency=low
 
@@ -1042,10 +1106,10 @@ apt (0.8.16~exp10) experimental; urgency=low
   * apt-pkg/contrib/fileutl.h:
     - store the offset in the internal fd before calculate size of
       the zlib-handled file to jump back to this place again
-  [ David Kalnischkies ]
-  [ Michael Vogt ]
-  * apt-pkg/contrib/fileutl.h:
-    - fix segfault triggered by the python-apt testsuite
+  * apt-pkg/aptconfiguration.cc:
+    - parse dpkg --print-foreign-architectures correctly in
+      case archs are separated by newline instead of space, too.
+      (Closes: #655590)
 
   [ Michael Vogt ]
   * apt-pkg/contrib/fileutl.h:
