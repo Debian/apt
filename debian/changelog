@@ -54,6 +54,19 @@ apt (0.9.7.6) unstable; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Tue, 16 Oct 2012 18:08:53 +0200
 
+apt (0.9.7.5ubuntu6) UNRELEASED; urgency=low
+
+  * debian/apt.conf.autoremove: don't include linux-image*,
+    linux-restricted-modules*, and linux-ubuntu-modules* packages in the
+    list to never be autoremoved.
+  * debian/apt.auto-removal.sh, debian/rules, debian/apt.dirs: install new
+    script to /etc/kernel/postinst.d/ which ensures we only automatically
+    keep the currently-running kernel, the being-installed kernel, and the
+    newest kernel, so we don't fill /boot up with an unlimited number of
+    kernels.  LP: #923876.
+
+ -- Steve Langasek <steve.langasek@ubuntu.com>  Fri, 02 Nov 2012 23:13:00 +0000
+
 apt (0.9.7.5ubuntu5) quantal; urgency=low
 
   * Revert "missing remap registration" change from 0.9.7.5ubuntu4; this
