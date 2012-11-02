@@ -183,6 +183,8 @@ apt: build build-manpages
 # apt install
 #
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
+	cp debian/apt.auto-removal.sh debian/$@/etc/kernel/postinst.d/apt-auto-removal
+	chmod 755 debian/$@/etc/kernel/postinst.d/apt-auto-removal
 
 	# make rosetta happy and remove pot files in po/ (but leave stuff
 	# in po/domains/* untouched) and cp *.po into each domain dir

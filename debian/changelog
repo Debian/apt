@@ -6,6 +6,16 @@ apt (0.9.9.1) UNRELEASED; urgency=low
   * apt-pkg/packagemanager.cc:
     - increate APT::pkgPackageManager::MaxLoopCount to 5000
 
+  [ Steve Langasek ]
+  * debian/apt.conf.autoremove: don't include linux-image*,
+    linux-restricted-modules*, and linux-ubuntu-modules* packages in the
+    list to never be autoremoved.
+  * debian/apt.auto-removal.sh, debian/rules, debian/apt.dirs: install new
+    script to /etc/kernel/postinst.d/ which ensures we only automatically
+    keep the currently-running kernel, the being-installed kernel, and the
+    newest kernel, so we don't fill /boot up with an unlimited number of
+    kernels.  LP: #923876.
+
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 05 Jul 2013 16:39:34 +0200
 
 apt (0.9.9) unstable; urgency=low
