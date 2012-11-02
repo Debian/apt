@@ -14,6 +14,16 @@ apt (0.9.7.6ubuntu1) UNRELEASED; urgency=low
       unpacked yet in SmartConfigure and do not unpack a M-A:same package
       again in SmartUnPack if we have already configured it (LP: #1062503)
 
+  [ Steve Langasek ]
+  * debian/apt.conf.autoremove: don't include linux-image*,
+    linux-restricted-modules*, and linux-ubuntu-modules* packages in the
+    list to never be autoremoved.
+  * debian/apt.auto-removal.sh, debian/rules, debian/apt.dirs: install new
+    script to /etc/kernel/postinst.d/ which ensures we only automatically
+    keep the currently-running kernel, the being-installed kernel, and the
+    newest kernel, so we don't fill /boot up with an unlimited number of
+    kernels.  LP: #923876.
+
  -- Jordi Mallach <jordi@debian.org>  Thu, 18 Oct 2012 23:30:46 +0200
 
 apt (0.9.7.6) unstable; urgency=low
@@ -53,19 +63,6 @@ apt (0.9.7.6) unstable; urgency=low
       (LP: #1066445).
 
  -- Michael Vogt <mvo@debian.org>  Tue, 16 Oct 2012 18:08:53 +0200
-
-apt (0.9.7.5ubuntu6) UNRELEASED; urgency=low
-
-  * debian/apt.conf.autoremove: don't include linux-image*,
-    linux-restricted-modules*, and linux-ubuntu-modules* packages in the
-    list to never be autoremoved.
-  * debian/apt.auto-removal.sh, debian/rules, debian/apt.dirs: install new
-    script to /etc/kernel/postinst.d/ which ensures we only automatically
-    keep the currently-running kernel, the being-installed kernel, and the
-    newest kernel, so we don't fill /boot up with an unlimited number of
-    kernels.  LP: #923876.
-
- -- Steve Langasek <steve.langasek@ubuntu.com>  Fri, 02 Nov 2012 23:13:00 +0000
 
 apt (0.9.7.5ubuntu5) quantal; urgency=low
 
