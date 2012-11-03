@@ -9,6 +9,10 @@ set -e
 #  - the kernel version we've been called for
 #  - the latest kernel version (determined using rules copied from the grub
 #    package for deciding which kernel to boot)
+#  - the second-latest kernel version, if the booted kernel version is
+#    already the latest and this script is called for that same version,
+#    to ensure a fallback remains available in the event the newly-installed
+#    kernel at this ABI fails to boot
 # In the common case, this results in exactly two kernels saved, but it can
 # result in three kernels being saved.  It's better to err on the side of
 # saving too many kernels than saving too few.
@@ -35,16 +39,30 @@ version_test_gt ()
 list=$(dpkg -l 'linux-image-[0-9]*'|awk '/^ii/ { print $2 }' | sed -e's/linux-image-//')
 
 latest_version=""
+previous_version=""
 for i in $list; do
 	if version_test_gt "$i" "$latest_version"; then
+		previous_version="$latest_version"
 		latest_version="$i"
+	elif version_test_gt "$i" "$previous_version"; then
+		previous_version="$i"
 	fi
 done
+
+if [ "$latest_version" != "$installed_version" ] \
+   || [ "$latest_version" != "$running_version" ] \
+   || [ "$installed_version" != "$running_version" ]
+then
+	# We have at least two kernels that we have reason to think the
+	# user wants, so don't save the second-newest version.
+	previous_version=
+fi
 
 kernels=$(sort -u <<EOF
 $latest_version
 $installed_version
 $running_version
+$previous_version
 EOF
 )
 
