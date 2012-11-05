@@ -21,7 +21,14 @@ set -e
 # packages in the database because this runs from a postinst script, and apt
 # will overwrite the db when it exits.
 
-config_file=/etc/apt/apt.conf.d/01autoremove-kernels
+
+# 
+eval $(apt-config shell APT_CONF_D Dir::Etc::parts/d)
+test -n "${APT_CONF_D}" || APT_CONF_D="/etc/apt/apt.conf.d"
+config_file=${APT_CONF_D}/01autoremove-kernels
+
+eval $(apt-config shell DPKG Dir::bin::dpkg/f)
+test -n "$DPKG" || DPKG="/usr/bin/dpkg"
 
 installed_version="$1"
 running_version="$(uname -r)"
@@ -32,11 +39,11 @@ version_test_gt ()
 	local version_test_gt_sedexp="s/[._-]\(pre\|rc\|test\|git\|old\|trunk\)/~\1/g"
 	local version_a="`echo "$1" | sed -e "$version_test_gt_sedexp"`"
 	local version_b="`echo "$2" | sed -e "$version_test_gt_sedexp"`"
-	dpkg --compare-versions "$version_a" gt "$version_b"
+	$DPKG --compare-versions "$version_a" gt "$version_b"
 	return "$?"
 }
 
-list=$(dpkg -l 'linux-image-[0-9]*'|awk '/^ii/ { print $2 }' | sed -e's/linux-image-//')
+list=$($DPKG -l 'linux-image-[0-9]*'|awk '/^ii/ { print $2 }' | sed -e's/linux-image-//')
 
 latest_version=""
 previous_version=""
