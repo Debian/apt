@@ -18,7 +18,6 @@ set -e
 # will overwrite the db when it exits.
 
 
-# 
 eval $(apt-config shell APT_CONF_D Dir::Etc::parts/d)
 test -n "${APT_CONF_D}" || APT_CONF_D="/etc/apt/apt.conf.d"
 config_file=${APT_CONF_D}/01autoremove-kernels
@@ -39,7 +38,7 @@ version_test_gt ()
 	return "$?"
 }
 
-list=$($DPKG -l 'linux-image-[0-9]*'|awk '/^ii/ { print $2 }' | sed -e's/linux-image-//')
+list=$(${DPKG} -l 'linux-image-[0-9]*'|awk '/^ii/ { print $2 }' | sed -e's/linux-image-//')
 
 latest_version=""
 for i in $list; do
