@@ -3,7 +3,7 @@ set -e
 
 if [ "$1" = "-l" ]; then
     echo "ii  linux-image-1.0.0-2-generic  1.0.01-2  amd64"
-    echo "ii  linux-image-3.5.0-17-generic  3.5.0-17  amd64"
+    echo "ii  linux-image-$(uname -r)  not-used  amd64"
     echo "ii linux-image-10.0.0-1-generic  10.0.0.1-1  amd64"
 elif [ "$1" = "--compare-versions" ]; then
     dpkg "$1" "$2" "$3" "$4"
