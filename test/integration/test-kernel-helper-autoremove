@@ -28,7 +28,7 @@ sh  ${TESTDIR}/../../debian/apt.auto-removal.sh
 # and ensure its there, valid and version 10.0.0-1 is there too
 test -e $TMPDIR/apt.conf.d/01autoremove-kernels
 apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic\.\*" 
-# ... and also that the running kernel is exlucded
+# ... and also that the running kernel is excluded
 apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)\.\*" 
 
 # done
