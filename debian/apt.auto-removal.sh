@@ -17,7 +17,8 @@ set -e
 # packages in the database because this runs from a postinst script, and apt
 # will overwrite the db when it exits.
 
-config_file=/etc/apt/apt.conf.d/01autoremove-kernels
+eval $(apt-config shell APT_CONF_D Dir::Etc::parts/d)
+config_file=${APT_CONF_D}/01autoremove-kernels
 
 installed_version="$1"
 running_version="$(uname -r)"
