@@ -16,6 +16,12 @@ apt (0.9.9.1) UNRELEASED; urgency=low
     newest kernel, so we don't fill /boot up with an unlimited number of
     kernels.  LP: #923876.
 
+  [ Adam Conrad ]
+  * Fix up two things in debian/apt.auto-removal.sh:
+    - Use exact matches with $-terminated regexes, so we don't get
+      confusion between similarly-named kernel flavours.
+    - Keep linux-backports-modules in sync with installed kernels.
+
  -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 05 Jul 2013 16:39:34 +0200
 
 apt (0.9.9) unstable; urgency=low
