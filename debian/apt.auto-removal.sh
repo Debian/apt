@@ -80,9 +80,10 @@ APT
   {
 EOF
 for kernel in $kernels; do
-	echo "    \"^linux-image-$kernel.*\";" >> "$config_file".dpkg-new
-	echo "    \"^linux-image-extra-$kernel.*\";" >> "$config_file".dpkg-new
-	echo "    \"^linux-signed-image-$kernel.*\";" >> "$config_file".dpkg-new
+	echo "    \"^linux-image-${kernel}$\";" >> "$config_file".dpkg-new
+	echo "    \"^linux-image-extra-${kernel}$\";" >> "$config_file".dpkg-new
+	echo "    \"^linux-signed-image-${kernel}$\";" >> "$config_file".dpkg-new
+	echo "    \"^linux-backports-modules-.*-${kernel}$\";" >> "$config_file".dpkg-new
 done
 cat >> "$config_file".dpkg-new <<EOF
   };
