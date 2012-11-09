@@ -1178,22 +1178,15 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
 			 << " as " << Start.DepType() << " of " << Pkg.Name()
 			 << std::endl;
- 	    // now check if we should consider it a automatic dependency or not
- 	    if(Pkg.Section() && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
- 	    {
+	    MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps);
+	    // now check if we should consider it a automatic dependency or not
+	    if(InstPkg->CurrentVer == 0 && Pkg->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
+	    {
 	       if(DebugAutoInstall == true)
 		  std::clog << OutputInDepth(Depth) << "Setting NOT as auto-installed (direct "
                             << Start.DepType() << " of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
- 	       MarkInstall(InstPkg,true,Depth + 1, true);
- 	    }
- 	    else 
- 	    {
- 	       // mark automatic dependency
- 	       MarkInstall(InstPkg,true,Depth + 1, false, ForceImportantDeps);
- 	       // Set the autoflag, after MarkInstall because MarkInstall unsets it
- 	       if (InstPkg->CurrentVer == 0)
- 		  PkgState[InstPkg->ID].Flags |= Flag::Auto;
- 	    }
+	       MarkAuto(InstPkg, false);
+	    }
 	 }
 	 continue;
       }
