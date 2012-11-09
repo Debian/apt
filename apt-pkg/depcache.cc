@@ -913,11 +913,15 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
       return true;
 
    StateCache &P = PkgState[Pkg->ID];
+   // not changing the mode is obviously also fine as we might want to call
+   // e.g. MarkInstall multiple times with different arguments for the same package
+   if (P.Mode == mode)
+      return true;
 
    // if previous state was set by user only user can reset it
    if ((P.iFlags & Protected) == Protected)
    {
-      if (unlikely(DebugMarker == true) && P.Mode != mode)
+      if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
 		   << " of " << Pkg << " as its mode (" << PrintMode(P.Mode)
 		   << ") is protected" << std::endl;
@@ -927,7 +931,7 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
    else if (mode != ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
 	    _config->FindB("APT::Ignore-Hold",false) == false)
    {
-      if (unlikely(DebugMarker == true) && P.Mode != mode)
+      if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
 		   << " of " << Pkg << std::endl;
       return false;
