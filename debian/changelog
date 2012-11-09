@@ -17,6 +17,9 @@ apt (0.9.7.7) UNRELEASED; urgency=low
   * cmdline/apt-get.cc:
     - do not call Mark{Install,Delete} from the autoremove code with
       the FromUser bit set to avoid modifying the auto-installed bit
+  * apt-pkg/algorithms.cc:
+    - ensure pkgProblemResolver calls MarkDelete without FromUser set
+      so that it can't overrule holds and the protection flag
 
  -- Jordi Mallach <jordi@debian.org>  Thu, 18 Oct 2012 23:30:46 +0200
 
