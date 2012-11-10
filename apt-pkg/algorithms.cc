@@ -1419,12 +1419,18 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	 continue;
       
       // Restart again.
-      if (K == LastStop)
-	 return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.",I.FullName(false).c_str());
+      if (K == LastStop) {
+          // I is an iterator based off our temporary package list,
+          // so copy the name we need before deleting the temporary list
+          std::string const LoopingPackage = I.FullName(false);
+          delete[] PList;
+          return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.", LoopingPackage.c_str());
+      }
       LastStop = K;
       K = PList - 1;
-   }   
+   }
 
+   delete[] PList;
    return true;
 }
 									/*}}}*/
