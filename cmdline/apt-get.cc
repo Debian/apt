@@ -2943,7 +2943,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	       for (; Ver != verlist.end(); ++Ver)
 	       {
 		  forbidden.clear();
-		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
+		  if (Ver->MultiArch == pkgCache::Version::None)
 		  {
 		     if (colon == string::npos)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
