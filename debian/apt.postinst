@@ -21,6 +21,13 @@ case "$1" in
 		rm -f $SECRING
 	fi
 	apt-key update
+
+        # ensure tighter permissons on the logs, see LP: #975199
+        if dpkg --compare-versions "$2" lt-nl 0.9.7.7; then
+            # ensure permissions are right
+            chmod -f 0640 /var/log/apt/term.log* || true
+        fi
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

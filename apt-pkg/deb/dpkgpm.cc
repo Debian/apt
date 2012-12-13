@@ -725,7 +725,7 @@ bool pkgDPkgPM::OpenLog()
       gr = getgrnam("adm");
       if (pw != NULL && gr != NULL)
 	  chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid);
-      chmod(logfile_name.c_str(), 0644);
+      chmod(logfile_name.c_str(), 0640);
       fprintf(d->term_out, "\nLog started: %s\n", timestr);
    }
 
