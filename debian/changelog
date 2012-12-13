@@ -13,9 +13,23 @@ apt (0.9.7.7) UNRELEASED; urgency=low
     - do not do lock-step configuration for a M-A:same package if it isn't
       unpacked yet in SmartConfigure and do not unpack a M-A:same package
       again in SmartUnPack if we have already configured it (LP: #1062503)
+  * apt-pkg/depcache.cc:
+    - don't call MarkInstall with the FromUser flag set for packages
+      which are dependencies of APT::Never-MarkAuto-Sections matchers
+    - no mode changes should obviously be ok for pkgDepCache::IsModeChangeOk
+  * cmdline/apt-get.cc:
+    - do not call Mark{Install,Delete} from the autoremove code with
+      the FromUser bit set to avoid modifying the auto-installed bit
+  * apt-pkg/algorithms.cc:
+    - ensure pkgProblemResolver calls MarkDelete without FromUser set
+      so that it can't overrule holds and the protection flag
   
   [ Michael Vogt ]
   * change permissions of /var/log/apt/term.log to 0640 (LP: #975199)
+
+  [ Jonathan Thomas ]
+  * apt-pkg/algorithms.cc:
+    - fix package-pointer array memory leak in ResolveByKeepInternal()
 
  -- Michael Vogt <mvo@debian.org>  Tue, 04 Dec 2012 15:57:01 +0100
 
