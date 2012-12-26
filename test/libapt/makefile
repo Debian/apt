@@ -34,6 +34,12 @@ SOURCE = getlistoffilesindir_test.cc
 include $(PROGRAM_H)
 
 # Program for testing CommandLine reconstruction
+PROGRAM = Commandline${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = commandline_test.cc
+include $(PROGRAM_H)
+
+# Program for testing CommandLine reconstruction
 PROGRAM = CommandlineAsString${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = commandlineasstring_test.cc
@@ -79,4 +85,16 @@ include $(PROGRAM_H)
 PROGRAM = CdromFindPackages${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = cdromfindpackages_test.cc
+include $(PROGRAM_H)
+
+# test cdroms index reduction for source.list
+PROGRAM = CdromReduceSourceList${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = cdromreducesourcelist_test.cc
+include $(PROGRAM_H)
+
+# text IndexCopy::ConvertToSourceList
+PROGRAM = IndexCopyToSourceList${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = indexcopytosourcelist_test.cc
 include $(PROGRAM_H)

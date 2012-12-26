@@ -25,9 +25,10 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
 
-#include <apti18n.h>
 #include <iostream>
 #include <fcntl.h>
+
+#include <apti18n.h>
 									/*}}}*/
 using namespace std;
 
@@ -337,7 +338,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
       however if there is a loop (A depends on B, B depends on A) this will not 
       be the case, so check for dependencies before configuring. */
    bool Bad = false, Changed = false;
-   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 100);
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
    unsigned int i=0;
    do
    {
@@ -491,6 +492,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
       {
 	 if (Pkg == P || List->IsFlag(P,pkgOrderList::Configured) == true ||
+	     List->IsFlag(P,pkgOrderList::UnPacked) == false ||
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
@@ -601,8 +603,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       This will be either dealt with if the package is configured as a dependency of Pkg (if and when Pkg is configured),
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
-   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 100);
-   unsigned int i;
+   const unsigned int max_loops = _config->FindI("APT::pkgPackageManager::MaxLoopCount", 500);
+   unsigned int i = 0;
    do 
    {
       Changed = false;
@@ -621,7 +623,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    // Look for easy targets: packages that are already okay
 	    for (DepIterator Cur = Start; Bad == true; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Start.AllTargets();
+	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
@@ -642,9 +644,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	    }
 
 	    // Look for something that could be configured.
-	    for (DepIterator Cur = Start; Bad == true; ++Cur)
+	    for (DepIterator Cur = Start; Bad == true && Cur.end() == false; ++Cur)
 	    {
-	       SPtrArray<Version *> VList = Start.AllTargets();
+	       SPtrArray<Version *> VList = Cur.AllTargets();
 	       for (Version **I = VList; *I != 0; ++I)
 	       {
 		  VerIterator Ver(Cache,*I);
@@ -784,7 +786,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 			   VerIterator V(Cache,*I);
 			   PkgIterator P = V.ParentPkg();
 			   // we are checking for installation as an easy 'protection' against or-groups and (unchosen) providers
-			   if (P->CurrentVer == 0 || P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
+			   if (P != Pkg || (P.CurrentVer() != V && Cache[P].InstallVer != V))
 			      continue;
 			   circle = true;
 			   break;
@@ -830,7 +832,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	 }
       }
       if (i++ > max_loops)
-         return _error->Error("Internal error: MaxLoopCount reached in SmartConfigure for %s, aborting", Pkg.FullName().c_str());
+         return _error->Error("Internal error: APT::pkgPackageManager::MaxLoopCount reached in SmartConfigure for %s, aborting", Pkg.FullName().c_str());
    } while (Changed == true);
    
    // Check for reverse conflicts.
@@ -855,7 +857,10 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	 This way we avoid that M-A: enabled packages are installed before
 	 their older non-M-A enabled packages are replaced by newer versions */
       bool const installed = Pkg->CurrentVer != 0;
-      if (installed == true && Install(Pkg,FileNames[Pkg->ID]) == false)
+      if (installed == true &&
+	  (instVer != Pkg.CurrentVer() ||
+	   ((Cache[Pkg].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall)) &&
+	  Install(Pkg,FileNames[Pkg->ID]) == false)
 	 return false;
       for (PkgIterator P = Pkg.Group().PackageList();
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
@@ -873,6 +878,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	   P.end() == false; P = Pkg.Group().NextPkg(P))
       {
 	 if (P->CurrentVer != 0 || P == Pkg || List->IsFlag(P,pkgOrderList::UnPacked) == true ||
+	     List->IsFlag(P,pkgOrderList::Configured) == true ||
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
@@ -881,7 +887,9 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
       }
    }
    // packages which are already unpacked don't need to be unpacked again
-   else if (Pkg.State() != pkgCache::PkgIterator::NeedsConfigure && Install(Pkg,FileNames[Pkg->ID]) == false)
+   else if ((instVer != Pkg.CurrentVer() ||
+	     ((Cache[Pkg].iFlags & pkgDepCache::ReInstall) == pkgDepCache::ReInstall)) &&
+	    Install(Pkg,FileNames[Pkg->ID]) == false)
       return false;
 
    if (Immediate == true) {

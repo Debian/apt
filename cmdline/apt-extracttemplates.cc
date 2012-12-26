@@ -36,11 +36,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <locale.h>
+
 #include <fstream>
 
-#include <locale.h>
-#include <apti18n.h>
 #include "apt-extracttemplates.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 using namespace std;
@@ -224,7 +226,7 @@ bool DebFile::ParseInfo()
 /* */
 int ShowHelp(void)
 {
-   	ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   	ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
 
 	if (_config->FindB("version") == true) 

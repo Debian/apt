@@ -1,0 +1,83 @@
+#!/bin/sh
+
+VERSION=$(dpkg-parsechangelog | sed -n -e '/^Version:/s/^Version: //p')
+DISTRIBUTION=$(dpkg-parsechangelog | sed -n -e '/^Distribution:/s/^Distribution: //p')
+
+LIBAPTPKGVERSION="$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/init.h | sed 's/\.$//')"
+LIBAPTINSTVERSION="$(egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)"
+
+if [ "$1" = 'pre-export' ]; then
+	libraryversioncheck() {
+		local LIBRARY="$1"
+		local VERSION="$2"
+		if [ ! -e "debian/${LIBRARY}${VERSION}.symbols" ]; then
+		   echo >&2 "Library ${LIBRARY} in version ${VERSION} has no symbols file! (maybe forgot to rename?)"
+		   exit 1
+		fi
+		if [ "$(head -n1 "debian/${LIBRARY}${VERSION}.symbols")" != "${LIBRARY}.so.${VERSION} ${LIBRARY}${VERSION} #MINVER#" ]; then
+		   echo >&2 "Library ${LIBRARY}${VERSION} has incorrect version in symbol header! (»$(head -n1 "debian/${LIBRARY}${VERSION}.symbols")«)"
+		   exit 2
+		fi
+	}
+
+	libraryversioncheck 'libapt-pkg' "$LIBAPTPKGVERSION"
+	libraryversioncheck 'libapt-inst' "$LIBAPTINSTVERSION"
+
+
+	if [ "$DISTRIBUTION" = 'sid' ]; then
+		echo >&2 '»sid« is not a valid distribution. Replace it with »unstable« for you'
+		sed -i -e 's/) sid; urgency=/) unstable; urgency=/' debian/changelog
+		DISTRIBUTION='unstable'
+	elif [ "$DISTRIBUTION" = 'UNRELEASED' ]; then
+		echo >&2 'WARNING: Remember to change to a valid distribution for release'
+		VERSION="$VERSION~$(date +%Y%m%d)"
+	fi
+
+	if [ "$(date +%Y-%m-%d)" != "$(grep --max-count=1 '^"POT-Creation-Date: .*\n"$' po/apt-all.pot | cut -d' ' -f 2)" -o \
+	     "$(date +%Y-%m-%d)" != "$(grep --max-count=1 '^"POT-Creation-Date: .*\n"$' doc/po/apt-doc.pot | cut -d' ' -f 2)" ]; then
+		echo >&2 'POT files are not up-to-date. Execute »make update-po« for you…'
+		make update-po
+	fi
+
+	sed -i -e "s/^PACKAGE_VERSION=\".*\"$/PACKAGE_VERSION=\"${VERSION}\"/" configure.in
+	sed -i -e "s/^<!ENTITY apt-product-version \".*\">$/<!ENTITY apt-product-version \"${VERSION}\">/" doc/apt-verbatim.ent
+elif [ "$1" = 'post-build' ]; then
+	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
+		echo >&2 "REMEMBER: Tag this release with »bzr tag ${VERSION}« if you are satisfied"
+	else
+		echo >&2 'REMEMBER: Change to a valid distribution before release'
+	fi
+	if ! xmllint --nonet --valid --noout $(find doc/ -maxdepth 1 -name '*.xml'); then
+		echo >&2 'WARNING: original docbook manpages have errors!'
+	elif ! xmllint --nonet --valid --noout $(find doc/ -mindepth 2 -maxdepth 2 -name '*.xml'); then
+		echo >&2 'WARNING: translated docbook manpages have errors, but originals are okay!'
+	fi
+elif [ "$1" = 'library' ]; then
+	librarysymbols() {
+		echo "Checking $1 in version $2"
+		local tmpfile=$(mktemp)
+		dpkg-gensymbols -p${1}${2} -ebuild/bin/${1}.so.${2} -Idebian/${1}${2}.symbols -O/dev/null 2> /dev/null > $tmpfile
+		echo '=== Missing symbols:'
+		grep '^+#MISSING' $tmpfile
+		echo '=== New symbols:'
+		grep '^+ ' $tmpfile | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
+			echo " (c++)\"${line}@Base\" $VERSION"
+		done | sort -u
+		rm $tmpfile
+	}
+	librarysymbols 'libapt-pkg' "${LIBAPTPKGVERSION}"
+	echo
+	librarysymbols 'libapt-inst' "${LIBAPTINSTVERSION}"
+else
+	echo >&1 "Usage:\t$0 pre-export
+\t$0 post-build
+\t$0 library
+
+If you use »bzr builddeb« you can leave this script alone as it will
+be run at the right places auto-magically. Otherwise you should use
+»pre-export« to update po and pot files as well as version numbering.
+»post-build« can be used to run some more or less useful checks later on.
+
+»library« isn't run automatically but can be useful for maintaining the
+(more or less experimental) symbols files we provide"
+fi

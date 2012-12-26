@@ -39,7 +39,7 @@ COMPAREFILE=$(mktemp)
 echo "The following package disappeared from your system as
 all files have been overwritten by other packages:
   old-pkg
-Note: This is done automatic and on purpose by dpkg." > $COMPAREFILE
+Note: This is done automatically and on purpose by dpkg." > $COMPAREFILE
 $CMD 2>&1 | tail -n 4 | diff $COMPAREFILE - && msgpass || msgfail
 rm $COMPAREFILE
 

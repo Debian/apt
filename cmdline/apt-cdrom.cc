@@ -195,7 +195,7 @@ bool DoIdent(CommandLine &)
 /* */
 int ShowHelp()
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
       return 0;

@@ -346,7 +346,7 @@ bool pkgDepCache::CheckDep(DepIterator Dep,int Type,PkgIterator &Res)
    /* Check simple depends. A depends -should- never self match but 
       we allow it anyhow because dpkg does. Technically it is a packaging
       bug. Conflicts may never self match */
-   if (Dep.TargetPkg() != Dep.ParentPkg() || Dep.IsNegative() == false)
+   if (Dep.IsIgnorable(Res) == false)
    {
       PkgIterator Pkg = Dep.TargetPkg();
       // Check the base package
@@ -913,11 +913,15 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
       return true;
 
    StateCache &P = PkgState[Pkg->ID];
+   // not changing the mode is obviously also fine as we might want to call
+   // e.g. MarkInstall multiple times with different arguments for the same package
+   if (P.Mode == mode)
+      return true;
 
    // if previous state was set by user only user can reset it
    if ((P.iFlags & Protected) == Protected)
    {
-      if (unlikely(DebugMarker == true) && P.Mode != mode)
+      if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
 		   << " of " << Pkg << " as its mode (" << PrintMode(P.Mode)
 		   << ") is protected" << std::endl;
@@ -927,7 +931,7 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
    else if (mode != ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
 	    _config->FindB("APT::Ignore-Hold",false) == false)
    {
-      if (unlikely(DebugMarker == true) && P.Mode != mode)
+      if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
 		   << " of " << Pkg << std::endl;
       return false;
@@ -1152,9 +1156,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       }
 
       /* This bit is for processing the possibilty of an install/upgrade
-         fixing the problem */
-      if (Start->Type != Dep::DpkgBreaks &&
-	  (DepState[Start->ID] & DepCVer) == DepCVer)
+         fixing the problem for "positive" dependencies */
+      if (Start.IsNegative() == false && (DepState[Start->ID] & DepCVer) == DepCVer)
       {
 	 APT::VersionList verlist;
 	 pkgCache::VerIterator Cand = PkgState[Start.TargetPkg()->ID].CandidateVerIter(*this);
@@ -1165,7 +1168,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    pkgCache::VerIterator V = Prv.OwnerVer();
 	    pkgCache::VerIterator Cand = PkgState[Prv.OwnerPkg()->ID].CandidateVerIter(*this);
 	    if (Cand.end() == true || V != Cand ||
-		VS().CheckDep(Cand.VerStr(), Start->CompareOp, Start.TargetVer()) == false)
+		VS().CheckDep(Prv.ProvideVersion(), Start->CompareOp, Start.TargetVer()) == false)
 	       continue;
 	    verlist.insert(Cand);
 	 }
@@ -1179,32 +1182,25 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
 			 << " as " << Start.DepType() << " of " << Pkg.Name()
 			 << std::endl;
- 	    // now check if we should consider it a automatic dependency or not
- 	    if(Pkg.Section() && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
- 	    {
+	    MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps);
+	    // now check if we should consider it a automatic dependency or not
+	    if(InstPkg->CurrentVer == 0 && Pkg->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
+	    {
 	       if(DebugAutoInstall == true)
 		  std::clog << OutputInDepth(Depth) << "Setting NOT as auto-installed (direct "
                             << Start.DepType() << " of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
- 	       MarkInstall(InstPkg,true,Depth + 1, true);
- 	    }
- 	    else 
- 	    {
- 	       // mark automatic dependency
- 	       MarkInstall(InstPkg,true,Depth + 1, false, ForceImportantDeps);
- 	       // Set the autoflag, after MarkInstall because MarkInstall unsets it
- 	       if (InstPkg->CurrentVer == 0)
- 		  PkgState[InstPkg->ID].Flags |= Flag::Auto;
- 	    }
+	       MarkAuto(InstPkg, false);
+	    }
 	 }
 	 continue;
       }
-
-      /* For conflicts we just de-install the package and mark as auto,
-         Conflicts may not have or groups.  For dpkg's Breaks we try to
-         upgrade the package. */
-      if (Start.IsNegative() == true)
+      /* Negative dependencies have no or-group
+	 If the dependency isn't versioned, we try if an upgrade might solve the problem.
+	 Otherwise we remove the offender if needed */
+      else if (Start.IsNegative() == true && Start->Type != pkgCache::Dep::Obsoletes)
       {
 	 SPtrArray<Version *> List = Start.AllTargets();
+	 pkgCache::PkgIterator TrgPkg = Start.TargetPkg();
 	 for (Version **I = List; *I != 0; I++)
 	 {
 	    VerIterator Ver(*this,*I);
@@ -1215,15 +1211,17 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    if (PkgState[Pkg->ID].InstallVer == 0)
 	       continue;
 
-	    if (PkgState[Pkg->ID].CandidateVer != *I &&
-		Start->Type == Dep::DpkgBreaks &&
+	    if ((Start->Version != 0 || TrgPkg != Pkg) &&
+		PkgState[Pkg->ID].CandidateVer != PkgState[Pkg->ID].InstallVer &&
+		PkgState[Pkg->ID].CandidateVer != *I &&
 		MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps) == true)
 	       continue;
-	    else if (MarkDelete(Pkg,false,Depth + 1, false) == false)
+	    else if ((Start->Type == pkgCache::Dep::Conflicts || Start->Type == pkgCache::Dep::DpkgBreaks) &&
+		     MarkDelete(Pkg,false,Depth + 1, false) == false)
 	       break;
 	 }
 	 continue;
-      }      
+      }
    }
 
    return Dep.end() == true;

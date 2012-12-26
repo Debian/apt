@@ -47,6 +47,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	_config->CndSet("Acquire::CompressionTypes::gz","gzip");
 
 	setDefaultConfigurationForCompressors();
+	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();
 
 	// accept non-list order as override setting for config settings on commandline
 	std::string const overrideOrder = _config->Find("Acquire::CompressionTypes::Order","");
@@ -60,15 +61,17 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if ((*o).empty() == true)
 			continue;
 		// ignore types we have no method ready to use
-		if (_config->Exists(std::string("Acquire::CompressionTypes::").append(*o)) == false)
+		std::string const method = std::string("Acquire::CompressionTypes::").append(*o);
+		if (_config->Exists(method) == false)
 			continue;
 		// ignore types we have no app ready to use
-		std::string const appsetting = std::string("Dir::Bin::").append(*o);
-		if (_config->Exists(appsetting) == true) {
-			std::string const app = _config->FindFile(appsetting.c_str(), "");
-			if (app.empty() == false && FileExists(app) == false)
-				continue;
-		}
+		std::string const app = _config->Find(method);
+		std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
+		for (; c != compressors.end(); ++c)
+			if (c->Name == app)
+				break;
+		if (c == compressors.end())
+			continue;
 		types.push_back(*o);
 	}
 
@@ -84,12 +87,12 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 		if (std::find(types.begin(),types.end(),Types->Tag) != types.end())
 			continue;
 		// ignore types we have no app ready to use
-		std::string const appsetting = std::string("Dir::Bin::").append(Types->Value);
-		if (appsetting.empty() == false && _config->Exists(appsetting) == true) {
-			std::string const app = _config->FindFile(appsetting.c_str(), "");
-			if (app.empty() == false && FileExists(app) == false)
-				continue;
-		}
+		std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin();
+		for (; c != compressors.end(); ++c)
+			if (c->Name == Types->Value)
+				break;
+		if (c == compressors.end())
+			continue;
 		types.push_back(Types->Tag);
 	}
 
@@ -141,7 +144,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	if (D != 0) {
 		builtin.push_back("none");
 		for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
-			string const name = Ent->d_name;
+			string const name = SubstVar(Ent->d_name, "%5f", "_");
 			size_t const foundDash = name.rfind("-");
 			size_t const foundUnderscore = name.rfind("_", foundDash);
 			if (foundDash == string::npos || foundUnderscore == string::npos ||
@@ -231,17 +234,21 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// override the configuration settings vector of languages.
 	string const forceLang = _config->Find("Acquire::Languages","");
 	if (forceLang.empty() == false) {
-		if (forceLang == "environment") {
-			codes = environment;
-		} else if (forceLang != "none")
-			codes.push_back(forceLang);
-		else //if (forceLang == "none")
-			builtin.clear();
-		allCodes = codes;
-		for (std::vector<string>::const_iterator b = builtin.begin();
-		     b != builtin.end(); ++b)
-			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-				allCodes.push_back(*b);
+		if (forceLang == "none") {
+			codes.clear();
+			allCodes.clear();
+			allCodes.push_back("none");
+		} else {
+			if (forceLang == "environment")
+				codes = environment;
+			else
+				codes.push_back(forceLang);
+			allCodes = codes;
+			for (std::vector<string>::const_iterator b = builtin.begin();
+			     b != builtin.end(); ++b)
+				if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+					allCodes.push_back(*b);
+		}
 		if (All == true)
 			return allCodes;
 		else
@@ -310,6 +317,17 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		return allCodes;
 	else
 		return codes;
+}
+									/*}}}*/
+// checkLanguage - are we interested in the given Language?		/*{{{*/
+bool const Configuration::checkLanguage(std::string Lang, bool const All) {
+	// the empty Language is always interesting as it is the original
+	if (Lang.empty() == true)
+		return true;
+	// filenames are encoded, so undo this
+	Lang = SubstVar(Lang, "%5f", "_");
+	std::vector<std::string> const langs = getLanguages(All, true);
+	return (std::find(langs.begin(), langs.end(), Lang) != langs.end());
 }
 									/*}}}*/
 // getArchitectures - Return Vector of prefered Architectures		/*{{{*/
@@ -432,9 +450,30 @@ bool const Configuration::checkArchitecture(std::string const &Arch) {
 // setDefaultConfigurationForCompressors				/*{{{*/
 void Configuration::setDefaultConfigurationForCompressors() {
 	// Set default application paths to check for optional compression types
-	_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
-	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
+	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
+	if (FileExists(_config->FindFile("Dir::Bin::xz")) == true) {
+		_config->Clear("Dir::Bin::lzma");
+		_config->Set("APT::Compressor::lzma::Binary", "xz");
+		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::CompressArg::", "--format=lzma");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+		}
+		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "--format=lzma");
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
+		}
+	} else {
+		_config->CndSet("Dir::Bin::lzma", "/usr/bin/lzma");
+		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::CompressArg::", "--suffix=");
+			_config->Set("APT::Compressor::lzma::CompressArg::", "-9");
+		}
+		if (_config->Exists("APT::Compressor::lzma::UncompressArg") == false) {
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "--suffix=");
+			_config->Set("APT::Compressor::lzma::UncompressArg::", "-d");
+		}
+	}
 }
 									/*}}}*/
 // getCompressors - Return Vector of usbale compressors			/*{{{*/
@@ -453,15 +492,23 @@ const Configuration::getCompressors(bool const Cached) {
 
 	setDefaultConfigurationForCompressors();
 
-	compressors.push_back(Compressor(".", "", "", "", "", 1));
+	compressors.push_back(Compressor(".", "", "", NULL, NULL, 1));
 	if (_config->Exists("Dir::Bin::gzip") == false || FileExists(_config->FindFile("Dir::Bin::gzip")) == true)
 		compressors.push_back(Compressor("gzip",".gz","gzip","-9n","-d",2));
+#ifdef HAVE_ZLIB
+	else
+		compressors.push_back(Compressor("gzip",".gz","false", NULL, NULL, 2));
+#endif
 	if (_config->Exists("Dir::Bin::bzip2") == false || FileExists(_config->FindFile("Dir::Bin::bzip2")) == true)
 		compressors.push_back(Compressor("bzip2",".bz2","bzip2","-9","-d",3));
-	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
-		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",4));
+#ifdef HAVE_BZ2
+	else
+		compressors.push_back(Compressor("bzip2",".bz2","false", NULL, NULL, 3));
+#endif
 	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)
-		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",5));
+		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",4));
+	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
+		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",5));
 
 	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
 	for (std::vector<std::string>::const_iterator c = comp.begin();
@@ -494,7 +541,7 @@ Configuration::Compressor::Compressor(char const *name, char const *extension,
 				      char const *binary,
 				      char const *compressArg, char const *uncompressArg,
 				      unsigned short const cost) {
-	std::string const config = std::string("APT:Compressor::").append(name).append("::");
+	std::string const config = std::string("APT::Compressor::").append(name).append("::");
 	Name = _config->Find(std::string(config).append("Name"), name);
 	Extension = _config->Find(std::string(config).append("Extension"), extension);
 	Binary = _config->Find(std::string(config).append("Binary"), binary);

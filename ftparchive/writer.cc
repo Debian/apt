@@ -318,7 +318,7 @@ PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string c
    DoMD5 = _config->FindB("APT::FTPArchive::Packages::MD5",DoMD5);
    DoSHA1 = _config->FindB("APT::FTPArchive::Packages::SHA1",DoSHA1);
    DoSHA256 = _config->FindB("APT::FTPArchive::Packages::SHA256",DoSHA256);
-   DoSHA256 = _config->FindB("APT::FTPArchive::Packages::SHA512",true);
+   DoSHA512 = _config->FindB("APT::FTPArchive::Packages::SHA512",DoSHA512);
    DoAlwaysStat = _config->FindB("APT::FTPArchive::AlwaysStat", false);
    DoContents = _config->FindB("APT::FTPArchive::Contents",true);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
@@ -948,6 +948,7 @@ ReleaseWriter::ReleaseWriter(string const &DB)
       AddPattern("Sources.lzma");
       AddPattern("Sources.xz");
       AddPattern("Release");
+      AddPattern("Contents-*");
       AddPattern("Index");
       AddPattern("md5sum.txt");
    }

@@ -67,6 +67,14 @@ public:									/*{{{*/
 	std::vector<std::string> static const getLanguages(bool const &All = false,
 			bool const &Cached = true, char const ** const Locale = 0);
 
+	/** \brief Are we interested in the given Language?
+	 *
+	 *  \param Lang is the language we want to check
+	 *  \param All defines if we check against all codes or only against used codes
+	 *  \return true if we are interested, false otherwise
+	 */
+	bool static const checkLanguage(std::string Lang, bool const All = false);
+
 	/** \brief Returns a vector of Architectures we support
 	 *
 	 *  \param Cached saves the result so we need to calculated it only once

@@ -1,0 +1,123 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'armel'
+
+#insertinstalledpackage 'xserver-xorg-core' 'amd64' '2:1.7.6-2ubuntu7.10'
+insertpackage 'unstable' 'libsame' 'armel,amd64' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'foo' 'all' '1'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Conf libsame (1 unstable [amd64])' aptget -s install libsame
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame:armel
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame:armel (1 unstable [armel])
+Conf libsame:armel (1 unstable [armel])' aptget -s install libsame:armel
+testequal 'Reading package lists...
+Building dependency tree...
+E: Unable to locate package libsame' aptget -s install libsame:armhf
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Conf libsame (1 unstable [amd64])' aptget -s install libsame:amd64
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame libsame:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Inst libsame:armel (1 unstable [armel])
+Conf libsame (1 unstable [amd64])
+Conf libsame:armel (1 unstable [armel])' aptget -s install libsame:armel libsame:amd64
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame libsame:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Inst libsame:armel (1 unstable [armel])
+Conf libsame (1 unstable [amd64])
+Conf libsame:armel (1 unstable [armel])' aptget -s install libsame:*
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Conf libsame (1 unstable [amd64])' aptget -s install libsame:any
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame libsame:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Inst libsame:armel (1 unstable [armel])
+Conf libsame (1 unstable [amd64])
+Conf libsame:armel (1 unstable [armel])' aptget -s install libsame:a*
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Conf libsame (1 unstable [amd64])' aptget -s install libsame:linux-any
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libsame libsame:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame (1 unstable [amd64])
+Inst libsame:armel (1 unstable [armel])
+Conf libsame (1 unstable [amd64])
+Conf libsame:armel (1 unstable [armel])' aptget -s install libsame:linux-*
+testequal 'Reading package lists...
+Building dependency tree...
+E: Unable to locate package libsame' aptget -s install libsame:windows-any
+
+testequal 'Reading package lists...
+Building dependency tree...
+E: Unable to locate package foo' aptget -s install foo:armel
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Conf foo (1 unstable [all])' aptget -s install foo
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Conf foo (1 unstable [all])' aptget -s install foo:all
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Conf foo (1 unstable [all])' aptget -s install foo:amd64
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Conf foo (1 unstable [all])' aptget -s install foo:native

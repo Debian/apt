@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,38 +33,26 @@
     <refpurpose>APT Configuration Query program</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-config</command>
-      <arg><option>-hv</option></arg>
-      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
-      <arg><option>-c=<replaceable>file</replaceable></option></arg>
-      <group choice="req">
-         <arg>shell</arg>
-         <arg>dump</arg>
-      </group>   
-   </cmdsynopsis>
- </refsynopsisdiv>
- 
+ &synopsis-command-apt-config;
+
  <refsect1><title>Description</title>
    <para><command>apt-config</command> is an internal program used by various
    portions of the APT suite to provide consistent configurability. It accesses
    the main configuration file <filename>/etc/apt/apt.conf</filename> in a
-   manner that is easy to use by scripted applications.</para>
+   manner that is easy to use for scripted applications.</para>
 
    <para>Unless the <option>-h</option>, or <option>--help</option> option is
-   given one of the commands below must be present.
+   given, one of the commands below must be present.
    </para>
    
    <variablelist>
-     <varlistentry><term>shell</term>
+     <varlistentry><term><option>shell</option></term>
      <listitem><para>
-     shell is used to access the configuration information from a shell 
-     script. It is given pairs of arguments, the first being a shell 
-     variable and the second the configuration value to query. As output 
-     it lists a series of shell assignments commands for each present value. 
-     In a shell script it should be used like:
+     shell is used to access the configuration information from a shell
+     script. It is given pairs of arguments, the first being a shell
+     variable and the second the configuration value to query. As output
+     it lists shell assignment commands for each value present.
+     In a shell script it should be used as follows:
      </para>
      
 <informalexample><programlisting>
@@ -84,7 +72,7 @@ eval $RES
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>dump</term>
+     <varlistentry><term><option>dump</option></term>
      <listitem><para>
      Just show the contents of the configuration space.</para>
      </listitem>
@@ -97,7 +85,22 @@ eval $RES
    &apt-cmdblurb;
    
    <variablelist>
-   
+     <varlistentry>
+      <term><option>--empty</option></term>
+      <listitem><para>Include options which have an empty value. This is the default, so
+		      use --no-empty to remove them from the output.</para></listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term><option>--format '<replaceable>&percnt;f &#x0022;&percnt;v&#x0022;;&percnt;n</replaceable>'</option></term>
+      <listitem><para>Defines the output of each config option. &percnt;t will be replaced with its individual name,
+		      &percnt;f with its full hierarchical name and &percnt;v with its value.
+		      Use uppercase letters and special characters in the value will be encoded to ensure that
+		      it can e.g. be safely used in a quoted-string as defined by RFC822. Additionally
+		      &percnt;n will be replaced by a newline, and &percnt;N by a tab. A &percnt; can be
+		      printed by using &percnt;&percnt;.</para></listitem>
+     </varlistentry>
+
      &apt-commonoptions;
      
    </variablelist>

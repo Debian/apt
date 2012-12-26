@@ -54,9 +54,11 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
       struct stat St;
       if (stat(Dir->d_name,&St) != 0)
       {
-	 chdir(StartDir.c_str());
+	 _error->Errno("stat",_("Unable to stat %s."),Dir->d_name);
 	 closedir(D);
-	 return _error->Errno("stat",_("Unable to stat %s."),Dir->d_name);
+	 if (chdir(StartDir.c_str()) != 0)
+	    return _error->Errno("chdir", _("Unable to change to %s"), StartDir.c_str());
+	 return false;
       }
       
       // Grab the package name
@@ -79,12 +81,13 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
       if (*I != '.')
 	 continue;
       std::string const Arch = DeQuoteString(std::string(Start,I-Start));
-      
+
+      // ignore packages of unconfigured architectures
       if (APT::Configuration::checkArchitecture(Arch) == false)
 	 continue;
       
       // Lookup the package
-      pkgCache::PkgIterator P = Cache.FindPkg(Pkg);
+      pkgCache::PkgIterator P = Cache.FindPkg(Pkg, Arch);
       if (P.end() != true)
       {
 	 pkgCache::VerIterator V = P.VersionList();
@@ -115,8 +118,9 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
       Erase(Dir->d_name,Pkg,Ver,St);
    };
    
-   chdir(StartDir.c_str());
    closedir(D);
-   return true;   
+   if (chdir(StartDir.c_str()) != 0)
+      return _error->Errno("chdir", _("Unable to change to %s"), StartDir.c_str());
+   return true;
 }
 									/*}}}*/

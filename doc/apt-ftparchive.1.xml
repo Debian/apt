@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>17 August 2009</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,29 +33,8 @@
     <refpurpose>Utility to generate index files</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-ftparchive</command>
-      <arg><option>-hvdsq</option></arg>
-      <arg><option>--md5</option></arg>
-      <arg><option>--delink</option></arg>
-      <arg><option>--readonly</option></arg>
-      <arg><option>--contents</option></arg>
-      <arg><option>--arch <replaceable>architecture</replaceable></option></arg>
-      <arg><option>-o <replaceable>config</replaceable>=<replaceable>string</replaceable></option></arg>
-      <arg><option>-c=<replaceable>file</replaceable></option></arg>      
-      <group choice="req">
-         <arg>packages<arg choice="plain" rep="repeat"><replaceable>path</replaceable></arg><arg><replaceable>override</replaceable><arg><replaceable>pathprefix</replaceable></arg></arg></arg>
-         <arg>sources<arg choice="plain" rep="repeat"><replaceable>path</replaceable></arg><arg><replaceable>override</replaceable><arg><replaceable>pathprefix</replaceable></arg></arg></arg>
-         <arg>contents <arg choice="plain"><replaceable>path</replaceable></arg></arg>
-         <arg>release <arg choice="plain"><replaceable>path</replaceable></arg></arg>
-         <arg>generate <arg choice="plain"><replaceable>config-file</replaceable></arg> <arg choice="plain" rep="repeat"><replaceable>section</replaceable></arg></arg>
-         <arg>clean <arg choice="plain"><replaceable>config-file</replaceable></arg></arg>
-      </group>
-   </cmdsynopsis>
- </refsynopsisdiv>
- 
+ &synopsis-command-apt-ftparchive;
+
  <refsect1><title>Description</title>
    <para><command>apt-ftparchive</command> is the command line tool that generates the index 
    files that APT uses to access a distribution source. The index files should 
@@ -72,11 +51,11 @@
    programs aside from &gzip;. When doing a full generate it automatically 
    performs file-change checks and builds the desired compressed output files.</para>
    
-   <para>Unless the <option>-h</option>, or <option>--help</option> option is given one of the
-   commands below must be present.</para>
+   <para>Unless the <option>-h</option>, or <option>--help</option> option is given,
+   one of the commands below must be present.</para>
    
    <variablelist>
-     <varlistentry><term>packages</term>
+     <varlistentry><term><option>packages</option></term>
      <listitem><para>
      The packages command generates a package file from a directory tree. It
      takes the given directory and recursively searches it for .deb files, 
@@ -86,7 +65,7 @@
      <para>The option <option>--db</option> can be used to specify a binary caching DB.</para></listitem>
      </varlistentry>
      
-     <varlistentry><term>sources</term>
+     <varlistentry><term><option>sources</option></term>
      <listitem><para>
      The <literal>sources</literal> command generates a source index file from a directory tree. 
      It takes the given directory and recursively searches it for .dsc files,
@@ -98,7 +77,7 @@
      used to change the source override file that will be used.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>contents</term>
+     <varlistentry><term><option>contents</option></term>
      <listitem><para>
      The <literal>contents</literal> command generates a contents file from a directory tree. It
      takes the given directory and recursively searches it for .deb files, 
@@ -110,16 +89,16 @@
      The option <option>--db</option> can be used to specify a binary caching DB.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>release</term>
+     <varlistentry><term><option>release</option></term>
      <listitem><para>
      The <literal>release</literal> command generates a Release file from a
      directory tree. It recursively searches the given directory for uncompressed
-     <filename>Packages</filename> and <filename>Sources</filename> files and the ones
+     <filename>Packages</filename> and <filename>Sources</filename> files and ones
      compressed with <command>gzip</command>, <command>bzip2</command> or <command>lzma</command>
      as well as <filename>Release</filename> and <filename>md5sum.txt</filename> files by default
      (<literal>APT::FTPArchive::Release::Default-Patterns</literal>). Additional filename patterns
      can be added by listing them in <literal>APT::FTPArchive::Release::Patterns</literal>.
-     It then writes to stdout a Release file containing a MD5, SHA1 and SHA256 digest
+     It then writes to stdout a <filename>Release</filename> file containing an MD5, SHA1 and SHA256 digest
      for each file.</para>
      <para>
      Values for the additional metadata fields in the Release file are
@@ -133,7 +112,7 @@
 
      </varlistentry>
 
-     <varlistentry><term>generate</term>
+     <varlistentry><term><option>generate</option></term>
      <listitem><para>
      The <literal>generate</literal> command is designed to be runnable from a cron script and
      builds indexes according to the given config file. The config language
@@ -142,7 +121,7 @@
      required settings.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>clean</term>
+     <varlistentry><term><option>clean</option></term>
      <listitem><para>
      The <literal>clean</literal> command tidies the databases used by the given 
      configuration file by removing any records that are no longer necessary.</para></listitem>
@@ -160,33 +139,33 @@
    tree manner. This only effects how the scope tag is handled.</para>
 
    <para>
-   The generate configuration has 4 separate sections, each described below.</para>
+   The generate configuration has four separate sections, each described below.</para>
 
-   <refsect2><title>Dir Section</title>
+     <refsect2><title><literal>Dir</literal> Section</title>
      <para>
      The <literal>Dir</literal> section defines the standard directories needed to 
      locate the files required during the generation process. These 
      directories are prepended certain relative paths defined in later 
      sections to produce a complete an absolute path.</para>
      <variablelist>     
-      <varlistentry><term>ArchiveDir</term>
+      <varlistentry><term><option>ArchiveDir</option></term>
       <listitem><para>
       Specifies the root of the FTP archive, in a standard
       Debian configuration this is the directory that contains the 
       <filename>ls-LR</filename> and dist nodes.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>OverrideDir</term>
+      <varlistentry><term><option>OverrideDir</option></term>
       <listitem><para>
       Specifies the location of the override files.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>CacheDir</term>
+      <varlistentry><term><option>CacheDir</option></term>
       <listitem><para>
-      Specifies the location of the cache files</para></listitem>
+      Specifies the location of the cache files.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>FileListDir</term>
+      <varlistentry><term><option>FileListDir</option></term>
       <listitem><para>
       Specifies the location of the file list files, 
       if the <literal>FileList</literal> setting is used below.</para></listitem>
@@ -194,87 +173,87 @@
      </variablelist>
    </refsect2>
    
-   <refsect2><title>Default Section</title>
+   <refsect2><title><literal>Default</literal> Section</title>
      <para>
      The <literal>Default</literal> section specifies default values, and settings 
      that control the operation of the generator. Other sections may override 
      these defaults with a per-section setting.</para>
      <variablelist>     
-      <varlistentry><term>Packages::Compress</term>
+      <varlistentry><term><option>Packages::Compress</option></term>
       <listitem><para>
       Sets the default compression schemes to use 
-      for the Package index files. It is a string that contains a space 
+      for the package index files. It is a string that contains a space 
       separated list of at least one of: '.' (no compression), 'gzip' and 
       'bzip2'. The default for all compression schemes is '. gzip'.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>Packages::Extensions</term>
+      <varlistentry><term><option>Packages::Extensions</option></term>
       <listitem><para>
       Sets the default list of file extensions that are package files.
       This defaults to '.deb'.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Sources::Compress</term>
+      <varlistentry><term><option>Sources::Compress</option></term>
       <listitem><para>
       This is similar to <literal>Packages::Compress</literal> 
       except that it controls the compression for the Sources files.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Sources::Extensions</term>
+      <varlistentry><term><option>Sources::Extensions</option></term>
       <listitem><para>
       Sets the default list of file extensions that are source files.
       This defaults to '.dsc'.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Contents::Compress</term>
+      <varlistentry><term><option>Contents::Compress</option></term>
       <listitem><para>
       This is similar to <literal>Packages::Compress</literal> 
       except that it controls the compression for the Contents files.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>Translation::Compress</term>
+      <varlistentry><term><option>Translation::Compress</option></term>
       <listitem><para>
       This is similar to <literal>Packages::Compress</literal> 
       except that it controls the compression for the Translation-en master file.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>DeLinkLimit</term>
+      <varlistentry><term><option>DeLinkLimit</option></term>
       <listitem><para>
       Specifies the number of kilobytes to delink (and 
       replace with hard links) per run. This is used in conjunction with the 
       per-section <literal>External-Links</literal> setting.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>FileMode</term>
+      <varlistentry><term><option>FileMode</option></term>
       <listitem><para>
       Specifies the mode of all created index files. It 
       defaults to 0644. All index files are set to this mode with no regard 
       to the umask.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>LongDescription</term>
+      <varlistentry><term><option>LongDescription</option></term>
       <listitem><para>
-      Sets if long descriptions should be included in the Packages file or split
-      out into a master Translation-en file.</para></listitem>
+      Specifies whether long descriptions should be included in the <filename>Packages</filename> file or split
+      out into a master <filename>Translation-en</filename> file.</para></listitem>
       </varlistentry>
      </variablelist>
    </refsect2>
    
-   <refsect2><title>TreeDefault Section</title>
+   <refsect2><title><literal>TreeDefault</literal> Section</title>
      <para>
      Sets defaults specific to <literal>Tree</literal> sections. All of these
      variables are substitution variables and have the strings $(DIST), 
      $(SECTION) and $(ARCH) replaced with their respective values.</para>
      
      <variablelist>     
-      <varlistentry><term>MaxContentsChange</term>
+      <varlistentry><term><option>MaxContentsChange</option></term>
       <listitem><para>
       Sets  the number of kilobytes of contents 
       files that are generated each day. The contents files are round-robined
       so that over several days they will all be rebuilt.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>ContentsAge</term>
+      <varlistentry><term><option>ContentsAge</option></term>
       <listitem><para>
       Controls the number of days a contents file is allowed
       to be checked without changing. If this limit is passed the mtime of the 
@@ -285,72 +264,72 @@
       the units are in days.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Directory</term>
+      <varlistentry><term><option>Directory</option></term>
       <listitem><para>
       Sets the top of the .deb directory tree. Defaults to
       <filename>$(DIST)/$(SECTION)/binary-$(ARCH)/</filename></para></listitem>
       </varlistentry>
       
-      <varlistentry><term>SrcDirectory</term>
+      <varlistentry><term><option>SrcDirectory</option></term>
       <listitem><para>
       Sets the top of the source package directory tree. Defaults to
       <filename>$(DIST)/$(SECTION)/source/</filename></para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Packages</term>
+      <varlistentry><term><option>Packages</option></term>
       <listitem><para>
       Sets the output Packages file. Defaults to 
       <filename>$(DIST)/$(SECTION)/binary-$(ARCH)/Packages</filename></para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Sources</term>
+      <varlistentry><term><option>Sources</option></term>
       <listitem><para>
       Sets the output Sources file. Defaults to 
       <filename>$(DIST)/$(SECTION)/source/Sources</filename></para></listitem>
       </varlistentry>
 
-      <varlistentry><term>Translation</term>
+      <varlistentry><term><option>Translation</option></term>
       <listitem><para>
-      Set the output Translation-en master file with the long descriptions if they
+      Sets the output Translation-en master file with the long descriptions if they
       should be not included in the Packages file. Defaults to
       <filename>$(DIST)/$(SECTION)/i18n/Translation-en</filename></para></listitem>
       </varlistentry>
 
-      <varlistentry><term>InternalPrefix</term>
+      <varlistentry><term><option>InternalPrefix</option></term>
       <listitem><para>
       Sets the path prefix that causes a symlink to be
       considered an internal link instead of an external link. Defaults to
       <filename>$(DIST)/$(SECTION)/</filename></para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Contents</term>
+      <varlistentry><term><option>Contents</option></term>
       <listitem><para>
       Sets the output Contents file. Defaults to
-      <filename>$(DIST)/Contents-$(ARCH)</filename>. If this setting causes multiple 
-      Packages files to map onto a single Contents file (such as the default) 
+      <filename>$(DIST)/$(SECTION)/Contents-$(ARCH)</filename>. If this setting causes multiple 
+      Packages files to map onto a single Contents file (as is the default) 
       then <command>apt-ftparchive</command> will integrate those package files 
       together automatically.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Contents::Header</term>
+      <varlistentry><term><option>Contents::Header</option></term>
       <listitem><para>
       Sets header file to prepend to the contents output.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>BinCacheDB</term>
+      <varlistentry><term><option>BinCacheDB</option></term>
       <listitem><para>
       Sets the binary cache database to use for this 
       section. Multiple sections can share the same database.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>FileList</term>
+      <varlistentry><term><option>FileList</option></term>
       <listitem><para>
       Specifies that instead of walking the directory tree, 
       <command>apt-ftparchive</command> should read the list of files from the given 
       file. Relative files names are prefixed with the archive directory.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>SourceFileList</term>
+      <varlistentry><term><option>SourceFileList</option></term>
       <listitem><para>
       Specifies that instead of walking the directory tree, 
       <command>apt-ftparchive</command> should read the list of files from the given 
@@ -360,7 +339,7 @@
      </variablelist>     
    </refsect2>
    
-   <refsect2><title>Tree Section</title>
+   <refsect2><title><literal>Tree</literal> Section</title>
      <para>
      The <literal>Tree</literal> section defines a standard Debian file tree which 
      consists of a base directory, then multiple sections in that base 
@@ -373,7 +352,7 @@
      Typically this is a setting such as <filename>dists/&stable-codename;</filename>.</para>
      <para>
      All of the settings defined in the <literal>TreeDefault</literal> section can be
-     use in a <literal>Tree</literal> section as well as three new variables.</para>
+     used in a <literal>Tree</literal> section as well as three new variables.</para>
      <para>
      When processing a <literal>Tree</literal> section <command>apt-ftparchive</command> 
      performs an operation similar to:
@@ -384,51 +363,51 @@ for i in Sections do
      </programlisting></para>
 
      <variablelist>     
-      <varlistentry><term>Sections</term>
+      <varlistentry><term><option>Sections</option></term>
       <listitem><para>
       This is a space separated list of sections which appear 
-      under the distribution, typically this is something like 
+      under the distribution; typically this is something like 
       <literal>main contrib non-free</literal></para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Architectures</term>
+      <varlistentry><term><option>Architectures</option></term>
       <listitem><para>
       This is a space separated list of all the 
       architectures that appear under search section. The special architecture 
       'source' is used to indicate that this tree has a source archive.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>LongDescription</term>
+      <varlistentry><term><option>LongDescription</option></term>
       <listitem><para>
-      Sets if long descriptions should be included in the Packages file or split
-      out into a master Translation-en file.</para></listitem>
+      Specifies whether long descriptions should be included in the <filename>Packages</filename> file or split
+      out into a master <filename>Translation-en</filename> file.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>BinOverride</term>
+      <varlistentry><term><option>BinOverride</option></term>
       <listitem><para>
       Sets the binary override file. The override file 
       contains section, priority and maintainer address information.</para></listitem>
       </varlistentry>
 
-      <varlistentry><term>SrcOverride</term>
+      <varlistentry><term><option>SrcOverride</option></term>
       <listitem><para>
       Sets the source override file. The override file 
       contains section information.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>ExtraOverride</term>
+      <varlistentry><term><option>ExtraOverride</option></term>
       <listitem><para>
       Sets the binary extra override file.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>SrcExtraOverride</term>
+      <varlistentry><term><option>SrcExtraOverride</option></term>
       <listitem><para>
       Sets the source extra override file.</para></listitem> 
       </varlistentry>
      </variablelist>
    </refsect2>
    
-   <refsect2><title>BinDirectory Section</title>
+   <refsect2><title><literal>BinDirectory</literal> Section</title>
      <para>
      The <literal>bindirectory</literal> section defines a binary directory tree 
      with no special structure. The scope tag specifies the location of 
@@ -436,53 +415,53 @@ for i in Sections do
      section with no substitution variables or
      <literal>Section</literal><literal>Architecture</literal> settings.</para>
      <variablelist>
-      <varlistentry><term>Packages</term>
+      <varlistentry><term><option>Packages</option></term>
       <listitem><para>
       Sets the Packages file output.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Sources</term>
+      <varlistentry><term><option>Sources</option></term>
       <listitem><para>
       Sets the Sources file output. At least one of
       <literal>Packages</literal> or <literal>Sources</literal> is required.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>Contents</term>
+      <varlistentry><term><option>Contents</option></term>
       <listitem><para>
-      Sets the Contents file output. (optional)</para></listitem>
+      Sets the Contents file output (optional).</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>BinOverride</term>
+      <varlistentry><term><option>BinOverride</option></term>
       <listitem><para>
       Sets the binary override file.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>SrcOverride</term>
+      <varlistentry><term><option>SrcOverride</option></term>
       <listitem><para>
       Sets the source override file.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>ExtraOverride</term>
+      <varlistentry><term><option>ExtraOverride</option></term>
       <listitem><para>
       Sets the binary extra override file.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>SrcExtraOverride</term>
+      <varlistentry><term><option>SrcExtraOverride</option></term>
       <listitem><para>
       Sets the source extra override file.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>BinCacheDB</term>
+      <varlistentry><term><option>BinCacheDB</option></term>
       <listitem><para>
       Sets the cache DB.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>PathPrefix</term>
+      <varlistentry><term><option>PathPrefix</option></term>
       <listitem><para>
       Appends a path to all the output paths.</para></listitem>
       </varlistentry>
       
-      <varlistentry><term>FileList, SourceFileList</term>
+      <varlistentry><term><option>FileList</option></term><term><option>SourceFileList</option></term>
       <listitem><para>
       Specifies the file list file.</para></listitem>
       </varlistentry>
@@ -493,8 +472,8 @@ for i in Sections do
 
  <refsect1><title>The Binary Override File</title>
    <para>The binary override file is fully compatible with &dpkg-scanpackages;. It
-   contains 4 fields separated by spaces. The first field is the package name,
-   the second is the priority to force that package to, the third is the
+   contains four fields separated by spaces. The first field is the package name,
+   the second is the priority to force that package to, the third is
    the section to force that package to and the final field is the maintainer 
    permutation field.</para>
    <para>The general form of the maintainer field is:
@@ -511,14 +490,14 @@ for i in Sections do
  <refsect1><title>The Source Override File</title>
    <para>
    The source override file is fully compatible with &dpkg-scansources;. It
-   contains 2 fields separated by spaces. The first fields is the source 
+   contains two fields separated by spaces. The first field is the source 
    package name, the second is the section to assign it.</para>
  </refsect1>   
 
  <refsect1><title>The Extra Override File</title>
    <para>
    The extra override file allows any arbitrary tag to be added or replaced
-   in the output. It has 3 columns, the first is the package, the second is
+   in the output. It has three columns, the first is the package, the second is
    the tag and the remainder of the line is the new value.</para>
  </refsect1>   
 
@@ -526,7 +505,7 @@ for i in Sections do
    &apt-cmdblurb;
    
    <variablelist>
-     <varlistentry><term><option>--md5</option>, <option>--sha1</option>, <option>--sha256</option></term>
+     <varlistentry><term><option>--md5</option></term><term><option>--sha1</option></term><term><option>--sha256</option></term>
      <listitem><para>
      Generate the given checksum. These options default to on, when turned off the generated
      index files will not have the checksum fields where possible.

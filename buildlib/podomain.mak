@@ -12,9 +12,9 @@ endif
 
 MKDIRS += $(PO_DOMAINS)/$(MY_DOMAIN)
 $(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list: SRC := $(addprefix $(SUBDIR)/,$(SOURCE))
-$(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list: makefile
+$(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list: makefile dirs
 	(echo $(SRC) | xargs -n1 echo) > $@
-binary program clean: $(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list
+startup binary program clean update-po: $(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list
 
 veryclean: veryclean/$(LOCAL)
 veryclean/po/$(LOCAL): LIST := $(PO_DOMAINS)/$(MY_DOMAIN)/$(LOCAL).$(TYPE)list

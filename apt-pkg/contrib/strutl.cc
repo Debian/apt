@@ -23,6 +23,7 @@
 
 #include <ctype.h>
 #include <string.h>
+#include <sstream>
 #include <stdio.h>
 #include <algorithm>
 #include <unistd.h>
@@ -1168,34 +1169,50 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
    return Hits;
 }
 									/*}}}*/
-// ioprintf - C format string outputter to C++ iostreams		/*{{{*/
+// {str,io}printf - C format string outputter to C++ strings/iostreams	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is used to make the internationalization strings easier to translate
    and to allow reordering of parameters */
-void ioprintf(ostream &out,const char *format,...) 
-{
-   va_list args;
-   va_start(args,format);
-   
-   // sprintf the description
-   char S[4096];
-   vsnprintf(S,sizeof(S),format,args);
-   out << S;
+static bool iovprintf(ostream &out, const char *format,
+		      va_list &args, ssize_t &size) {
+   char *S = (char*)malloc(size);
+   ssize_t const n = vsnprintf(S, size, format, args);
+   if (n > -1 && n < size) {
+      out << S;
+      free(S);
+      return true;
+   } else {
+      if (n > -1)
+	 size = n + 1;
+      else
+	 size *= 2;
+   }
+   free(S);
+   return false;
 }
-									/*}}}*/
-// strprintf - C format string outputter to C++ strings 		/*{{{*/
-// ---------------------------------------------------------------------
-/* This is used to make the internationalization strings easier to translate
-   and to allow reordering of parameters */
-void strprintf(string &out,const char *format,...) 
+void ioprintf(ostream &out,const char *format,...)
 {
    va_list args;
-   va_start(args,format);
-   
-   // sprintf the description
-   char S[4096];
-   vsnprintf(S,sizeof(S),format,args);
-   out = string(S);
+   ssize_t size = 400;
+   while (true) {
+      va_start(args,format);
+      if (iovprintf(out, format, args, size) == true)
+	 return;
+      va_end(args);
+   }
+}
+void strprintf(string &out,const char *format,...)
+{
+   va_list args;
+   ssize_t size = 400;
+   std::ostringstream outstr;
+   while (true) {
+      va_start(args,format);
+      if (iovprintf(outstr, format, args, size) == true)
+	 break;
+      va_end(args);
+   }
+   out = outstr.str();
 }
 									/*}}}*/
 // safe_snprintf - Safer snprintf					/*{{{*/

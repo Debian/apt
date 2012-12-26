@@ -24,7 +24,7 @@
 
 #define Stringfy_(x) # x
 #define Stringfy(x)  Stringfy_(x)
-const char *pkgVersion = VERSION;
+const char *pkgVersion = PACKAGE_VERSION;
 const char *pkgLibVersion = Stringfy(APT_PKG_MAJOR) "."
                             Stringfy(APT_PKG_MINOR) "." 
                             Stringfy(APT_PKG_RELEASE);

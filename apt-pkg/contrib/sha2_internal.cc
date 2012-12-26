@@ -552,7 +552,9 @@ void SHA256_Update(SHA256_CTX* context, const sha2_byte *data, size_t len) {
 	}
 	while (len >= SHA256_BLOCK_LENGTH) {
 		/* Process as many complete blocks as we can */
-		SHA256_Transform(context, (sha2_word32*)data);
+		sha2_byte buffer[SHA256_BLOCK_LENGTH];
+		MEMCPY_BCOPY(buffer, data, SHA256_BLOCK_LENGTH);
+		SHA256_Transform(context, (sha2_word32*)buffer);
 		context->bitcount += SHA256_BLOCK_LENGTH << 3;
 		len -= SHA256_BLOCK_LENGTH;
 		data += SHA256_BLOCK_LENGTH;
@@ -879,7 +881,9 @@ void SHA512_Update(SHA512_CTX* context, const sha2_byte *data, size_t len) {
 	}
 	while (len >= SHA512_BLOCK_LENGTH) {
 		/* Process as many complete blocks as we can */
-		SHA512_Transform(context, (sha2_word64*)data);
+		sha2_byte buffer[SHA512_BLOCK_LENGTH];
+		MEMCPY_BCOPY(buffer, data, SHA512_BLOCK_LENGTH);
+		SHA512_Transform(context, (sha2_word64*)buffer);
 		ADDINC128(context->bitcount, SHA512_BLOCK_LENGTH << 3);
 		len -= SHA512_BLOCK_LENGTH;
 		data += SHA512_BLOCK_LENGTH;

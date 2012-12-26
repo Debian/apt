@@ -118,8 +118,7 @@ void EDSP::WriteScenarioDependency(pkgDepCache &Cache, FILE* output, pkgCache::P
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
-      // Ignore implicit dependencies for multiarch here
-      if (strcmp(Pkg.Arch(), Dep.TargetPkg().Arch()) != 0)
+      if (Dep.IsMultiArchImplicit() == true)
 	 continue;
       if (orGroup == false)
 	 dependencies[Dep->Type].append(", ");
@@ -140,8 +139,7 @@ void EDSP::WriteScenarioDependency(pkgDepCache &Cache, FILE* output, pkgCache::P
    string provides;
    for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
    {
-      // Ignore implicit provides for multiarch here
-      if (strcmp(Pkg.Arch(), Prv.ParentPkg().Arch()) != 0 || strcmp(Pkg.Name(),Prv.Name()) == 0)
+      if (Prv.IsMultiArchImplicit() == true)
 	 continue;
       provides.append(", ").append(Prv.Name());
    }
@@ -159,8 +157,7 @@ void EDSP::WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
    bool orGroup = false;
    for (pkgCache::DepIterator Dep = Ver.DependsList(); Dep.end() == false; ++Dep)
    {
-      // Ignore implicit dependencies for multiarch here
-      if (strcmp(Pkg.Arch(), Dep.TargetPkg().Arch()) != 0)
+      if (Dep.IsMultiArchImplicit() == true)
 	 continue;
       if (orGroup == false)
       {
@@ -193,8 +190,7 @@ void EDSP::WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
    string provides;
    for (pkgCache::PrvIterator Prv = Ver.ProvidesList(); Prv.end() == false; ++Prv)
    {
-      // Ignore implicit provides for multiarch here
-      if (strcmp(Pkg.Arch(), Prv.ParentPkg().Arch()) != 0 || strcmp(Pkg.Name(),Prv.Name()) == 0)
+      if (Prv.IsMultiArchImplicit() == true)
 	 continue;
       if (pkgset.find(Prv.ParentPkg()) == pkgset.end())
 	 continue;
@@ -218,9 +214,11 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
       if (Progress != NULL && p % 100 == 0)
          Progress->Progress(p);
       string* req;
-      if (Cache[Pkg].Delete() == true)
+      pkgDepCache::StateCache &P = Cache[Pkg];
+      if (P.Delete() == true)
 	 req = &del;
-      else if (Cache[Pkg].NewInstall() == true || Cache[Pkg].Upgrade() == true)
+      else if (P.NewInstall() == true || P.Upgrade() == true || P.ReInstall() == true ||
+	       (P.Mode == pkgDepCache::ModeKeep && (P.iFlags & pkgDepCache::Protected) == pkgDepCache::Protected))
 	 req = &inst;
       else
 	 continue;

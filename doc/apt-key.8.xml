@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -11,8 +11,15 @@
 ]>
 
 <refentry>
- &apt-docinfo;
- 
+ <refentryinfo>
+   &apt-author.jgunthorpe;
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>2012-06-09T00:00:00Z</date>
+ </refentryinfo>
+
  <refmeta>
    <refentrytitle>apt-key</refentrytitle>
    <manvolnum>8</manvolnum>
@@ -25,15 +32,7 @@
     <refpurpose>APT key management utility</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-key</command>
-      <arg><option>--keyring <replaceable>filename</replaceable></option></arg>
-      <arg><replaceable>command</replaceable></arg>
-      <arg rep="repeat"><option><replaceable>arguments</replaceable></option></arg>
-   </cmdsynopsis>
- </refsynopsisdiv>
+ &synopsis-command-apt-key;
 
  <refsect1><title>Description</title>
    <para>
@@ -45,19 +44,19 @@
 
 <refsect1><title>Commands</title>
    <variablelist>
-     <varlistentry><term>add <replaceable>filename</replaceable></term>
+     <varlistentry><term><option>add</option> <option>&synopsis-param-filename;</option></term>
      <listitem>
      <para>
-
-       Add a new key to the list of trusted keys.  The key is read
-       from <replaceable>filename</replaceable>, or standard input if
-       <replaceable>filename</replaceable> is <literal>-</literal>.
+       Add a new key to the list of trusted keys.
+       The key is read from the filename given with the parameter
+       &synopsis-param-filename; or if the filename is <literal>-</literal>
+       from standard input.
      </para>
 
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>del <replaceable>keyid</replaceable></term>
+     <varlistentry><term><option>del</option> <option>&synopsis-param-keyid;</option></term>
      <listitem>
      <para>
 
@@ -68,18 +67,18 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>export <replaceable>keyid</replaceable></term>
+     <varlistentry><term><option>export</option> <option>&synopsis-param-keyid;</option></term>
      <listitem>
      <para>
 
-        Output the key <replaceable>keyid</replaceable> to standard output.
+        Output the key &synopsis-param-keyid; to standard output.
 
      </para>
 
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>exportall</term>
+     <varlistentry><term><option>exportall</option></term>
      <listitem>
      <para>
 
@@ -90,7 +89,7 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>list</term>
+     <varlistentry><term><option>list</option></term>
      <listitem>
      <para>
 
@@ -101,7 +100,7 @@
      </listitem>
      </varlistentry>
      
-	 <varlistentry><term>finger</term>
+     <varlistentry><term><option>finger</option></term>
      <listitem>
      <para>
 
@@ -112,7 +111,7 @@
      </listitem>
      </varlistentry>
      
-	 <varlistentry><term>adv</term>
+     <varlistentry><term><option>adv</option></term>
      <listitem>
      <para>
 
@@ -124,7 +123,7 @@
      </listitem>
      </varlistentry>
 
-     <varlistentry><term>update</term>
+     <varlistentry><term><option>update</option></term>
      <listitem>
      <para>
 
@@ -138,17 +137,17 @@
      </listitem>
      </varlistentry>
      
-     <varlistentry><term>net-update</term>
+     <varlistentry><term><option>net-update</option></term>
      <listitem>
      <para>
 
-       Work similar to the <command>update</command> command above, but get the
-       archive keyring from an URI instead and validate it against a master key.
+       Perform an update working similarly to the <command>update</command> command above,
+       but get the archive keyring from a URI instead and validate it against a master key.
 
        This requires an installed &wget; and an APT build configured to have
        a server to fetch from and a master keyring to validate.
 
-       APT in Debian does not support this command and relies on
+       APT in Debian does not support this command, relying on
        <command>update</command> instead, but Ubuntu's APT does.
 
      </para>
@@ -161,8 +160,8 @@
  <refsect1><title>Options</title>
 <para>Note that options need to be defined before the commands described in the previous section.</para>
    <variablelist>
-      <varlistentry><term>--keyring <replaceable>filename</replaceable></term>
-      <listitem><para>With this option it is possible to specify a specific keyring
+      <varlistentry><term><option>--keyring</option> <option>&synopsis-param-filename;</option></term>
+      <listitem><para>With this option it is possible to specify a particular keyring
       file the command should operate on. The default is that a command is executed
       on the <filename>trusted.gpg</filename> file as well as on all parts in the
       <filename>trusted.gpg.d</filename> directory, though <filename>trusted.gpg</filename>

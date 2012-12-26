@@ -29,7 +29,7 @@ GETDOMAIN = $(word 1,$(subst /, ,$(1)))
 # Generate the list of files from the bits the other make files dropped 
 # and produce the .pot file.
 $(POTFILES) : $(PO)/%.pot :
-	printf "%s " "Generating POT file $@"
+	echo "Generating POT file $@"
 	echo $@ : $(wildcard $(PO)/domains/$*/*.*list) $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/$*/*.srclist))) > $@.d
 # From sh source
 	cat $(PO)/domains/$*/*.shlist 2> /dev/null | (cd $(BASE) && xargs -n1 bash --dump-po-strings) > $(PO)/domains/$*/sh.pot
@@ -40,22 +40,19 @@ $(POTFILES) : $(PO)/%.pot :
 	  --keyword=P_:1,2 \
 	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot
 	rm -f $(PO)/POTFILES_$*.in
-	$(MSGCOMM) --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
+	$(MSGCOMM) --omit-header --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
 	# copy into the domain dirs to make rosetta happy
 	rm -f $(PO)/domains/$*/*.pot
 	cp $@ $(PO)/domains/$*
-
-$(PACKAGE)-all.pot: $(POTFILES)
-	$(MSGCOMM) --more-than=0 $(POTFILES) --output=$@
 
 # Filter the complete translation with the domain specific file to produce
 # only the subtext needed for this domain
 # We cannot express the dependencies required for this directly with a pattern
 # rule, so we use the .d hack.
-$(LANG_POFILES) : $(PO_DOMAINS)/%.po : $(PACKAGE)-all.pot
+$(LANG_POFILES) : $(PO_DOMAINS)/%.po : $(POTFILES)
 	printf "%s " "Generating $@"
 	echo $@ : $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot > $(PO)/$(call GETDOMAIN,$*)_$(notdir $@).d
-	$(MSGMERGE) $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
+	$(MSGMERGE) --no-location $(notdir $@) $(PO)/$(call GETDOMAIN,$*).pot -o $@
 
 $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	printf "%s: " "Generating $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo"
@@ -64,9 +61,18 @@ $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	cp $@ $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo
 
 stats:
-	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --statistics $$i; done
+	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
 
-binary: $(POTFILES) $(PACKAGE)-all.pot $(MOFILES)
+binary: $(POTFILES) $(MOFILES)
+
+$(PACKAGE)-all.pot: $(POTFILES)
+	# we create our partial pot files without a header to avoid changing dates in *.mo files,
+	# but we want a header for our master-pot file, so we use a dummy pot with nothing but the header
+	$(XGETTEXT) --default-domain=$(PO)/$(PACKAGE)-dummy.pot --foreign --language=c \
+		-o $(PO)/$(PACKAGE)-dummy.pot --force-po --package-name='$(PACKAGE)' \
+		--package-version='$(PACKAGE_VERSION)' --msgid-bugs-address='$(PACKAGE_MAIL)' /dev/null
+	$(MSGCOMM) --more-than=0 $(PO)/$(PACKAGE)-dummy.pot $(POTFILES) --output=$(PACKAGE)-all.pot
+	rm -f $(PO)/$(PACKAGE)-dummy.pot
 
 .PHONY: update-po
 update-po: $(PACKAGE)-all.pot
@@ -78,7 +84,7 @@ update-po: $(PACKAGE)-all.pot
 	done
 
 clean: clean/local
-clean/local: update-po
+clean/local:
 	rm -f $(MOFILES) $(LANG_POFILES) $(PO)/*.d
 
 # Include the dependencies that are available

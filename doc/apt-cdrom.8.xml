@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -17,7 +17,7 @@
    &apt-author.team;
    &apt-email;
    &apt-product;
-   <date>14 February 2004</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
 
  <refmeta>
@@ -29,26 +29,13 @@
  <!-- Man page title -->
  <refnamediv>
     <refname>apt-cdrom</refname>
-    <refpurpose>APT CDROM management utility</refpurpose>
+    <refpurpose>APT CD-ROM management utility</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-cdrom</command>
-      <arg><option>-hvrmfan</option></arg>
-      <arg><option>-d=<replaceable>cdrom mount point</replaceable></option></arg>
-      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
-      <arg><option>-c=<replaceable>file</replaceable></option></arg>
-      <group>
-         <arg>add</arg>
-         <arg>ident</arg>
-      </group>   
-   </cmdsynopsis>
- </refsynopsisdiv>
+ &synopsis-command-apt-cdrom;
 
  <refsect1><title>Description</title>
-   <para><command>apt-cdrom</command> is used to add a new CDROM to APTs list
+   <para><command>apt-cdrom</command> is used to add a new CD-ROM to APT's list
     of available sources. <command>apt-cdrom</command> takes care of
    determining the structure of
    the disc as well as correcting for several possible mis-burns and 
@@ -56,39 +43,38 @@
    </para>
 
    <para>It is necessary to use <command>apt-cdrom</command> to add CDs to the
-   APT system, 
-   it cannot be done by hand. Furthermore each disk in a multi-cd set must be
+   APT system;
+   it cannot be done by hand. Furthermore each disc in a multi-CD set must be
    inserted and scanned separately to account for possible mis-burns.
    </para>
 
    <para>Unless the <option>-h</option>, or <option>--help</option> option is
-    given one of the commands below must be present.
-   
+   given, one of the commands below must be present.</para>
+
     <variablelist>
-     <varlistentry><term>add</term>
+     <varlistentry><term><option>add</option></term>
      <listitem><para><literal>add</literal> is used to add a new disc to the
      source list. It will unmount the
-     CDROM device, prompt for a disk to be inserted and then proceed to 
+     CD-ROM device, prompt for a disc to be inserted and then proceed to 
      scan it and copy the index files. If the disc does not have a proper
-     <filename>disk</filename> directory you will be prompted for a descriptive 
+     <filename>.disk</filename> directory you will be prompted for a descriptive 
      title.
      </para>
 
-     <para>APT uses a CDROM ID to track which disc is currently in the drive and
+     <para>APT uses a CD-ROM ID to track which disc is currently in the drive and
      maintains a database of these IDs in 
      <filename>&statedir;/cdroms.list</filename>
      </para>
      </listitem>
      </varlistentry>
      
-     <varlistentry><term>ident</term>
+     <varlistentry><term><option>ident</option></term>
      <listitem><para>A debugging tool to report the identity of the current
       disc as well as the stored file name
      </para>
      </listitem>
      </varlistentry>
     </variablelist>
-   </para>
  </refsect1>
 
  <refsect1><title>Options</title>
@@ -96,7 +82,7 @@
    
    <variablelist>
      <varlistentry><term><option>-d</option></term><term><option>--cdrom</option></term>
-     <listitem><para>Mount point; specify the location to mount the cdrom. This
+     <listitem><para>Mount point; specify the location to mount the CD-ROM. This
       mount point must be listed in <filename>/etc/fstab</filename> and
       properly configured.
       Configuration Item: <literal>Acquire::cdrom::mount</literal>.
@@ -105,8 +91,8 @@
      </varlistentry>
      
      <varlistentry><term><option>-r</option></term><term><option>--rename</option></term>
-     <listitem><para>Rename a disc; change the label of a disk or override the
-      disks given label. This option will cause <command>apt-cdrom</command> to
+     <listitem><para>Rename a disc; change the label of a disc or override the
+      disc's given label. This option will cause <command>apt-cdrom</command> to
       prompt for a new label.
      Configuration Item: <literal>APT::CDROM::Rename</literal>.
      </para>

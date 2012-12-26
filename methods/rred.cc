@@ -15,7 +15,6 @@
 #include <utime.h>
 #include <stdio.h>
 #include <errno.h>
-#include <zlib.h>
 #include <apti18n.h>
 										/*}}}*/
 /** \brief RredMethod - ed-style incremential patch method			{{{
@@ -227,6 +226,21 @@ struct EdCommand {
   char type;
 };
 #define IOV_COUNT 1024 /* Don't really want IOV_MAX since it can be arbitrarily large */
+static ssize_t retry_writev(int fd, const struct iovec *iov, int iovcnt) {
+	ssize_t Res;
+	errno = 0;
+	ssize_t i = 0;
+	do {
+		Res = writev(fd, iov + i, iovcnt);
+		if (Res < 0 && errno == EINTR)
+			continue;
+		if (Res < 0)
+			return _error->Errno("writev",_("Write error"));
+		iovcnt -= Res;
+		i += Res;
+	} while (Res > 0 && iovcnt > 0);
+	return i;
+}
 #endif
 										/*}}}*/
 RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
@@ -377,7 +391,7 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 			hash->Add((const unsigned char*) begin, input - begin);
 
 			if(++iov_size == IOV_COUNT) {
-				writev(out_file.Fd(), iov, IOV_COUNT);
+				retry_writev(out_file.Fd(), iov, IOV_COUNT);
 				iov_size = 0;
 			}
 		}
@@ -402,7 +416,7 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 				iov[iov_size].iov_len);
 
 				if(++iov_size == IOV_COUNT) {
-					writev(out_file.Fd(), iov, IOV_COUNT);
+					retry_writev(out_file.Fd(), iov, IOV_COUNT);
 					iov_size = 0;
 				}
 			}
@@ -417,15 +431,15 @@ RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
 	}
 
 	if(iov_size) {
-		writev(out_file.Fd(), iov, iov_size);
+		retry_writev(out_file.Fd(), iov, iov_size);
 		iov_size = 0;
 	}
 
 	for(i = 0; i < iov_size; i += IOV_COUNT) {
 		if(iov_size - i < IOV_COUNT)
-			writev(out_file.Fd(), iov + i, iov_size - i);
+			retry_writev(out_file.Fd(), iov + i, iov_size - i);
 		else
-			writev(out_file.Fd(), iov + i, IOV_COUNT);
+			retry_writev(out_file.Fd(), iov + i, IOV_COUNT);
 	}
 
 	delete [] iov;

@@ -92,8 +92,9 @@ bool CommandLine::Parse(int argc,const char **argv)
       // Match up to a = against the list
       Args *A;
       const char *OptEnd = strchrnul(Opt, '=');
-      for (A = ArgList; A->end() == false && 
-	   stringcasecmp(Opt,OptEnd,A->LongOpt) != 0; A++);
+      for (A = ArgList; A->end() == false &&
+	   (A->LongOpt == 0 || stringcasecmp(Opt,OptEnd,A->LongOpt) != 0);
+	   ++A);
       
       // Failed, look for a word after the first - (no-foo)
       bool PreceedMatch = false;
@@ -105,7 +106,8 @@ bool CommandLine::Parse(int argc,const char **argv)
 	 Opt++;
 	 
 	 for (A = ArgList; A->end() == false &&
-	      stringcasecmp(Opt,OptEnd,A->LongOpt) != 0; A++);
+	      (A->LongOpt == 0 || stringcasecmp(Opt,OptEnd,A->LongOpt) != 0);
+	      ++A);
 
 	 // Failed again..
 	 if (A->end() == true && OptEnd - Opt != 1)

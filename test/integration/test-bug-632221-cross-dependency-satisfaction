@@ -18,16 +18,77 @@ insertpackage 'unstable' 'libfwibble-dev' 'amd64,armel' '1.0' 'Depends: libfwibb
 insertpackage 'unstable' 'cool' 'amd64,armel' '1.0' 'Multi-Arch: allowed'
 insertpackage 'unstable' 'amdboot' 'amd64' '1.0'
 insertpackage 'unstable' 'foreigner' 'amd64,armel' '1.0' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'arm-stuff' 'armel' '1.0'
+insertpackage 'unstable' 'linux-stuff' 'amd64,armel' '1.0'
 
-insertsource 'unstable' 'apt' 'any' '0.8.15' 'Build-Depends: doxygen, libc6-dev, libc6-dev:native, cool:any, amdboot:amd64, foreigner, libfwibble-dev'
+insertsource 'unstable' 'apt' 'any' '0.8.15' 'Build-Depends: doxygen, libc6-dev, libc6-dev:native, cool:any, amdboot:amd64, foreigner, libfwibble-dev, arm-stuff [any-armel] | linux-stuff [ linux-any]'
+
+insertsource 'unstable' 'forbidden-none' 'any' '1' 'Build-Depends: amdboot:any'
+insertsource 'unstable' 'forbidden-same' 'any' '1' 'Build-Depends: libc6:any'
+insertsource 'unstable' 'forbidden-foreign' 'any' '1' 'Build-Depends: doxygen:any'
+
+insertpackage 'unstable' 'specific' 'amd64' '1.0' 'Depends: libc6:amd64'
+insertpackage 'unstable' 'specific' 'armel' '1.0' 'Depends: libc6:armel'
+
+insertsource 'unstable' 'source-specific-amd64' 'amd64' '1' 'Build-Depends: specific:amd64'
+insertsource 'unstable' 'source-specific-armel' 'armel' '1' 'Build-Depends: specific:armel'
 
 setupaptarchive
+
+testequal "Reading package lists...
+Building dependency tree...
+E: Build-Depends dependency for forbidden-none can't be satisfied because amdboot:any is not allowed on 'Multi-Arch: none' packages" aptget build-dep forbidden-none -s -a armel
+testequal "Reading package lists...
+Building dependency tree...
+E: Build-Depends dependency for forbidden-same can't be satisfied because libc6:any is not allowed on 'Multi-Arch: same' packages" aptget build-dep forbidden-same -s -a armel
+testequal "Reading package lists...
+Building dependency tree...
+E: Build-Depends dependency for forbidden-foreign can't be satisfied because doxygen:any is not allowed on 'Multi-Arch: foreign' packages" aptget build-dep forbidden-foreign -s -a armel
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6 specific
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 (1.0 unstable [amd64])
+Inst specific (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf specific (1.0 unstable [amd64])' aptget build-dep source-specific-amd64 -s
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6 specific
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6 (1.0 unstable [amd64])
+Inst specific (1.0 unstable [amd64])
+Conf libc6 (1.0 unstable [amd64])
+Conf specific (1.0 unstable [amd64])' aptget build-dep source-specific-amd64 -s -a armel
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6:armel specific:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:armel (1.0 unstable [armel])
+Inst specific:armel (1.0 unstable [armel])
+Conf libc6:armel (1.0 unstable [armel])
+Conf specific:armel (1.0 unstable [armel])' aptget build-dep source-specific-armel -s
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libc6:armel specific:armel
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libc6:armel (1.0 unstable [armel])
+Inst specific:armel (1.0 unstable [armel])
+Conf libc6:armel (1.0 unstable [armel])
+Conf specific:armel (1.0 unstable [armel])' aptget build-dep source-specific-armel -s -a armel
 
 testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot cool doxygen foreigner libc6 libc6-dev libfwibble-dev libfwibble1
-0 upgraded, 8 newly installed, 0 to remove and 0 not upgraded.
+  linux-stuff
+0 upgraded, 9 newly installed, 0 to remove and 0 not upgraded.
 Inst amdboot (1.0 unstable [amd64])
 Inst cool (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [amd64])
@@ -36,6 +97,7 @@ Inst libc6 (1.0 unstable [amd64])
 Inst libc6-dev (1.0 unstable [amd64])
 Inst libfwibble1 (1.0 unstable [amd64])
 Inst libfwibble-dev (1.0 unstable [amd64])
+Inst linux-stuff (1.0 unstable [amd64])
 Conf amdboot (1.0 unstable [amd64])
 Conf cool (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [amd64])
@@ -43,15 +105,17 @@ Conf foreigner (1.0 unstable [amd64])
 Conf libc6 (1.0 unstable [amd64])
 Conf libc6-dev (1.0 unstable [amd64])
 Conf libfwibble1 (1.0 unstable [amd64])
-Conf libfwibble-dev (1.0 unstable [amd64])' aptget build-dep apt -s
+Conf libfwibble-dev (1.0 unstable [amd64])
+Conf linux-stuff (1.0 unstable [amd64])' aptget build-dep apt -s
 
 testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
-  amdboot cool doxygen foreigner libc6 libc6:armel libc6-dev libc6-dev:armel
-  libfwibble-dev:armel libfwibble1:armel
-0 upgraded, 10 newly installed, 0 to remove and 0 not upgraded.
+  amdboot arm-stuff:armel cool doxygen foreigner libc6 libc6:armel libc6-dev
+  libc6-dev:armel libfwibble-dev:armel libfwibble1:armel
+0 upgraded, 11 newly installed, 0 to remove and 0 not upgraded.
 Inst amdboot (1.0 unstable [amd64])
+Inst arm-stuff:armel (1.0 unstable [armel])
 Inst cool (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [amd64])
 Inst foreigner (1.0 unstable [amd64])
@@ -62,6 +126,7 @@ Inst libc6-dev:armel (1.0 unstable [armel])
 Inst libfwibble1:armel (1.0 unstable [armel])
 Inst libfwibble-dev:armel (1.0 unstable [armel])
 Conf amdboot (1.0 unstable [amd64])
+Conf arm-stuff:armel (1.0 unstable [armel])
 Conf cool (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [amd64])
 Conf foreigner (1.0 unstable [amd64])
@@ -77,10 +142,11 @@ configarchitecture 'armel' 'amd64'
 testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
-  amdboot:amd64 cool doxygen foreigner libc6 libc6-dev libfwibble-dev
-  libfwibble1
-0 upgraded, 8 newly installed, 0 to remove and 0 not upgraded.
+  amdboot:amd64 arm-stuff cool doxygen foreigner libc6 libc6-dev
+  libfwibble-dev libfwibble1
+0 upgraded, 9 newly installed, 0 to remove and 0 not upgraded.
 Inst amdboot:amd64 (1.0 unstable [amd64])
+Inst arm-stuff (1.0 unstable [armel])
 Inst cool (1.0 unstable [armel])
 Inst doxygen (1.0 unstable [armel])
 Inst foreigner (1.0 unstable [armel])
@@ -89,6 +155,7 @@ Inst libc6-dev (1.0 unstable [armel])
 Inst libfwibble1 (1.0 unstable [armel])
 Inst libfwibble-dev (1.0 unstable [armel])
 Conf amdboot:amd64 (1.0 unstable [amd64])
+Conf arm-stuff (1.0 unstable [armel])
 Conf cool (1.0 unstable [armel])
 Conf doxygen (1.0 unstable [armel])
 Conf foreigner (1.0 unstable [armel])
@@ -101,8 +168,8 @@ testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot:amd64 cool doxygen foreigner libc6:amd64 libc6 libc6-dev:amd64
-  libc6-dev libfwibble-dev:amd64 libfwibble1:amd64
-0 upgraded, 10 newly installed, 0 to remove and 0 not upgraded.
+  libc6-dev libfwibble-dev:amd64 libfwibble1:amd64 linux-stuff:amd64
+0 upgraded, 11 newly installed, 0 to remove and 0 not upgraded.
 Inst amdboot:amd64 (1.0 unstable [amd64])
 Inst cool (1.0 unstable [armel])
 Inst doxygen (1.0 unstable [armel])
@@ -113,6 +180,7 @@ Inst libc6-dev:amd64 (1.0 unstable [amd64])
 Inst libc6-dev (1.0 unstable [armel])
 Inst libfwibble1:amd64 (1.0 unstable [amd64])
 Inst libfwibble-dev:amd64 (1.0 unstable [amd64])
+Inst linux-stuff:amd64 (1.0 unstable [amd64])
 Conf amdboot:amd64 (1.0 unstable [amd64])
 Conf cool (1.0 unstable [armel])
 Conf doxygen (1.0 unstable [armel])
@@ -122,7 +190,8 @@ Conf libc6 (1.0 unstable [armel])
 Conf libc6-dev:amd64 (1.0 unstable [amd64])
 Conf libc6-dev (1.0 unstable [armel])
 Conf libfwibble1:amd64 (1.0 unstable [amd64])
-Conf libfwibble-dev:amd64 (1.0 unstable [amd64])' aptget build-dep apt -s -a amd64
+Conf libfwibble-dev:amd64 (1.0 unstable [amd64])
+Conf linux-stuff:amd64 (1.0 unstable [amd64])' aptget build-dep apt -s -a amd64
 
 configarchitecture 'amd64' 'armel'
 
@@ -132,28 +201,31 @@ insertinstalledpackage 'foreigner' 'armel' '0.5'
 testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
-  amdboot doxygen libc6 libc6-dev libfwibble-dev libfwibble1
-0 upgraded, 6 newly installed, 0 to remove and 2 not upgraded.
+  amdboot doxygen libc6 libc6-dev libfwibble-dev libfwibble1 linux-stuff
+0 upgraded, 7 newly installed, 0 to remove and 2 not upgraded.
 Inst amdboot (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [amd64])
 Inst libc6 (1.0 unstable [amd64])
 Inst libc6-dev (1.0 unstable [amd64])
 Inst libfwibble1 (1.0 unstable [amd64])
 Inst libfwibble-dev (1.0 unstable [amd64])
+Inst linux-stuff (1.0 unstable [amd64])
 Conf amdboot (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [amd64])
 Conf libc6 (1.0 unstable [amd64])
 Conf libc6-dev (1.0 unstable [amd64])
 Conf libfwibble1 (1.0 unstable [amd64])
-Conf libfwibble-dev (1.0 unstable [amd64])' aptget build-dep apt -s
+Conf libfwibble-dev (1.0 unstable [amd64])
+Conf linux-stuff (1.0 unstable [amd64])' aptget build-dep apt -s
 
 testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
-  amdboot doxygen libc6 libc6:armel libc6-dev libc6-dev:armel
+  amdboot arm-stuff:armel doxygen libc6 libc6:armel libc6-dev libc6-dev:armel
   libfwibble-dev:armel libfwibble1:armel
-0 upgraded, 8 newly installed, 0 to remove and 2 not upgraded.
+0 upgraded, 9 newly installed, 0 to remove and 2 not upgraded.
 Inst amdboot (1.0 unstable [amd64])
+Inst arm-stuff:armel (1.0 unstable [armel])
 Inst doxygen (1.0 unstable [amd64])
 Inst libc6 (1.0 unstable [amd64])
 Inst libc6:armel (1.0 unstable [armel])
@@ -162,6 +234,7 @@ Inst libc6-dev:armel (1.0 unstable [armel])
 Inst libfwibble1:armel (1.0 unstable [armel])
 Inst libfwibble-dev:armel (1.0 unstable [armel])
 Conf amdboot (1.0 unstable [amd64])
+Conf arm-stuff:armel (1.0 unstable [armel])
 Conf doxygen (1.0 unstable [amd64])
 Conf libc6 (1.0 unstable [amd64])
 Conf libc6:armel (1.0 unstable [armel])
@@ -178,10 +251,12 @@ Building dependency tree...
 The following packages will be REMOVED:
   cool:amd64
 The following NEW packages will be installed:
-  amdboot:amd64 cool doxygen libc6 libc6-dev libfwibble-dev libfwibble1
-0 upgraded, 7 newly installed, 1 to remove and 1 not upgraded.
+  amdboot:amd64 arm-stuff cool doxygen libc6 libc6-dev libfwibble-dev
+  libfwibble1
+0 upgraded, 8 newly installed, 1 to remove and 1 not upgraded.
 Remv cool:amd64 [0.5]
 Inst amdboot:amd64 (1.0 unstable [amd64])
+Inst arm-stuff (1.0 unstable [armel])
 Inst cool (1.0 unstable [armel])
 Inst doxygen (1.0 unstable [armel])
 Inst libc6 (1.0 unstable [armel])
@@ -189,6 +264,7 @@ Inst libc6-dev (1.0 unstable [armel])
 Inst libfwibble1 (1.0 unstable [armel])
 Inst libfwibble-dev (1.0 unstable [armel])
 Conf amdboot:amd64 (1.0 unstable [amd64])
+Conf arm-stuff (1.0 unstable [armel])
 Conf cool (1.0 unstable [armel])
 Conf doxygen (1.0 unstable [armel])
 Conf libc6 (1.0 unstable [armel])
@@ -200,8 +276,8 @@ testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
   amdboot:amd64 doxygen libc6:amd64 libc6 libc6-dev:amd64 libc6-dev
-  libfwibble-dev:amd64 libfwibble1:amd64
-0 upgraded, 8 newly installed, 0 to remove and 2 not upgraded.
+  libfwibble-dev:amd64 libfwibble1:amd64 linux-stuff:amd64
+0 upgraded, 9 newly installed, 0 to remove and 2 not upgraded.
 Inst amdboot:amd64 (1.0 unstable [amd64])
 Inst doxygen (1.0 unstable [armel])
 Inst libc6:amd64 (1.0 unstable [amd64])
@@ -210,6 +286,7 @@ Inst libc6-dev:amd64 (1.0 unstable [amd64])
 Inst libc6-dev (1.0 unstable [armel])
 Inst libfwibble1:amd64 (1.0 unstable [amd64])
 Inst libfwibble-dev:amd64 (1.0 unstable [amd64])
+Inst linux-stuff:amd64 (1.0 unstable [amd64])
 Conf amdboot:amd64 (1.0 unstable [amd64])
 Conf doxygen (1.0 unstable [armel])
 Conf libc6:amd64 (1.0 unstable [amd64])
@@ -217,6 +294,5 @@ Conf libc6 (1.0 unstable [armel])
 Conf libc6-dev:amd64 (1.0 unstable [amd64])
 Conf libc6-dev (1.0 unstable [armel])
 Conf libfwibble1:amd64 (1.0 unstable [amd64])
-Conf libfwibble-dev:amd64 (1.0 unstable [amd64])' aptget build-dep apt -s -a amd64
-
-
+Conf libfwibble-dev:amd64 (1.0 unstable [amd64])
+Conf linux-stuff:amd64 (1.0 unstable [amd64])' aptget build-dep apt -s -a amd64

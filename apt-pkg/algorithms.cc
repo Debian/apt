@@ -58,6 +58,12 @@ pkgSimulate::pkgSimulate(pkgDepCache *Cache) : pkgPackageManager(Cache),
       FileNames[I] = Jnk;
 }
 									/*}}}*/
+// Simulate::~Simulate - Destructor					/*{{{*/
+pkgSimulate::~pkgSimulate()
+{
+   delete[] Flags;
+}
+									/*}}}*/
 // Simulate::Describe - Describe a package				/*{{{*/
 // ---------------------------------------------------------------------
 /* Parameter Current == true displays the current package version,
@@ -188,6 +194,11 @@ bool pkgSimulate::Remove(PkgIterator iPkg,bool Purge)
 {
    // Adapt the iterator
    PkgIterator Pkg = Sim.FindPkg(iPkg.Name(), iPkg.Arch());
+   if (Pkg.end() == true)
+   {
+      std::cerr << (Purge ? "Purg" : "Remv") << " invalid package " << iPkg.FullName() << std::endl;
+      return false;
+   }
 
    Flags[Pkg->ID] = 3;
    Sim.MarkDelete(Pkg);
@@ -276,13 +287,13 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
 	       Cache.MarkInstall(I, true, 0, false);
 	    else
-	       Cache.MarkDelete(I);
+	       Cache.MarkDelete(I, false, 0, false);
 	 }
 	 break;
 
 	 // This means removal failed
 	 case pkgCache::State::HalfInstalled:
-	 Cache.MarkDelete(I);
+	 Cache.MarkDelete(I, false, 0, false);
 	 break;
 	 
 	 default:
@@ -356,11 +367,36 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
       if (I->CurrentVer != 0)
 	 Cache.MarkInstall(I, true, 0, false);
 
-   /* Now, auto upgrade all essential packages - this ensures that
-      the essential packages are present and working */
-   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
-      if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
-	 Cache.MarkInstall(I, true, 0, false);
+   /* Now, install each essential package which is not installed
+      (and not provided by another package in the same name group) */
+   std::string essential = _config->Find("pkgCacheGen::Essential", "all");
+   if (essential == "all")
+   {
+      for (pkgCache::GrpIterator G = Cache.GrpBegin(); G.end() == false; ++G)
+      {
+	 bool isEssential = false;
+	 bool instEssential = false;
+	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() == false; P = G.NextPkg(P))
+	 {
+	    if ((P->Flags & pkgCache::Flag::Essential) != pkgCache::Flag::Essential)
+	       continue;
+	    isEssential = true;
+	    if (Cache[P].Install() == true)
+	    {
+	       instEssential = true;
+	       break;
+	    }
+	 }
+	 if (isEssential == false || instEssential == true)
+	    continue;
+	 pkgCache::PkgIterator P = G.FindPreferredPkg();
+	 Cache.MarkInstall(P, true, 0, false);
+      }
+   }
+   else if (essential != "none")
+      for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+	 if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential)
+	    Cache.MarkInstall(I, true, 0, false);
    
    /* We do it again over all previously installed packages to force 
       conflict resolution on them all. */
@@ -738,7 +774,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
       if (WasKept == true)
 	 Cache.MarkKeep(Pkg, false, false);
       else
-	 Cache.MarkDelete(Pkg);
+	 Cache.MarkDelete(Pkg, false, 0, false);
       return false;
    }	 
    
@@ -867,7 +903,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		OldBreaks < Cache.BrokenCount())
 	    {
 	       if (OldVer == 0)
-		  Cache.MarkDelete(I);
+		  Cache.MarkDelete(I, false, 0, false);
 	       else
 		  Cache.MarkKeep(I, false, false);
 	    }	    
@@ -906,7 +942,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		     {
 			if (Debug == true)
 			   clog << "  Or group remove for " << I.FullName(false) << endl;
-			Cache.MarkDelete(I);
+			Cache.MarkDelete(I, false, 0, false);
 			Change = true;
 		     }
 		  }
@@ -1041,7 +1077,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 			{
 			   if (Debug == true)
 			      clog << "  Removing " << I.FullName(false) << " rather than change " << Start.TargetPkg().FullName(false) << endl;
-			   Cache.MarkDelete(I);
+			   Cache.MarkDelete(I, false, 0, false);
 			   if (Counter > 1 && Scores[Pkg->ID] > Scores[I->ID])
 			      Scores[I->ID] = Scores[Pkg->ID];
 			}
@@ -1130,7 +1166,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  if (Debug == true)
 		     clog << "  Removing " << I.FullName(false) << " because I can't find " << Start.TargetPkg().FullName(false) << endl;
 		  if (InOr == false)
-		     Cache.MarkDelete(I);
+		     Cache.MarkDelete(I, false, 0, false);
 	       }
 
 	       Change = true;
@@ -1157,7 +1193,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  {
 		     if (Debug == true)
 			clog << "  Fixing " << I.FullName(false) << " via remove of " << J->Pkg.FullName(false) << endl;
-		     Cache.MarkDelete(J->Pkg);
+		     Cache.MarkDelete(J->Pkg, false, 0, false);
 		  }
 	       }
 	       else
@@ -1383,12 +1419,18 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	 continue;
       
       // Restart again.
-      if (K == LastStop)
-	 return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.",I.FullName(false).c_str());
+      if (K == LastStop) {
+          // I is an iterator based off our temporary package list,
+          // so copy the name we need before deleting the temporary list
+          std::string const LoopingPackage = I.FullName(false);
+          delete[] PList;
+          return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.", LoopingPackage.c_str());
+      }
       LastStop = K;
       K = PList - 1;
-   }   
+   }
 
+   delete[] PList;
    return true;
 }
 									/*}}}*/
@@ -1453,7 +1495,7 @@ void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List)
    qsort(List,Count,sizeof(*List),PrioComp);
 }
 									/*}}}*/
-// ListUpdate - update the cache files					/*{{{*/
+// ListUpdate - construct Fetcher and update the cache files		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a simple wrapper to update the cache. it will fetch stuff
  * from the network (or any other sources defined in sources.list)
@@ -1462,7 +1504,6 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 		pkgSourceList &List, 
 		int PulseInterval)
 {
-   pkgAcquire::RunResult res;
    pkgAcquire Fetcher;
    if (Fetcher.Setup(&Stat, _config->FindDir("Dir::State::Lists")) == false)
       return false;
@@ -1471,11 +1512,24 @@ bool ListUpdate(pkgAcquireStatus &Stat,
    if (List.GetIndexes(&Fetcher) == false)
 	 return false;
 
+   return AcquireUpdate(Fetcher, PulseInterval, true);
+}
+									/*}}}*/
+// AcquireUpdate - take Fetcher and update the cache files		/*{{{*/
+// ---------------------------------------------------------------------
+/* This is a simple wrapper to update the cache with a provided acquire
+ * If you only need control over Status and the used SourcesList use
+ * ListUpdate method instead.
+ */
+bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval,
+		   bool const RunUpdateScripts, bool const ListCleanup)
+{
    // Run scripts
-   RunScripts("APT::Update::Pre-Invoke");
-   
-   // check arguments
-   if(PulseInterval>0)
+   if (RunUpdateScripts == true)
+      RunScripts("APT::Update::Pre-Invoke");
+
+   pkgAcquire::RunResult res;
+   if(PulseInterval > 0)
       res = Fetcher.Run(PulseInterval);
    else
       res = Fetcher.Run();
@@ -1512,7 +1566,7 @@ bool ListUpdate(pkgAcquireStatus &Stat,
    // Clean out any old list files
    // Keep "APT::Get::List-Cleanup" name for compatibility, but
    // this is really a global option for the APT library now
-   if (!TransientNetworkFailure && !Failed &&
+   if (!TransientNetworkFailure && !Failed && ListCleanup == true &&
        (_config->FindB("APT::Get::List-Cleanup",true) == true &&
 	_config->FindB("APT::List-Cleanup",true) == true))
    {
@@ -1529,11 +1583,14 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 
 
    // Run the success scripts if all was fine
-   if(!TransientNetworkFailure && !Failed)
-      RunScripts("APT::Update::Post-Invoke-Success");
+   if (RunUpdateScripts == true)
+   {
+      if(!TransientNetworkFailure && !Failed)
+	 RunScripts("APT::Update::Post-Invoke-Success");
 
-   // Run the other scripts
-   RunScripts("APT::Update::Post-Invoke");
+      // Run the other scripts
+      RunScripts("APT::Update::Post-Invoke");
+   }
    return true;
 }
 									/*}}}*/

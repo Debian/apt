@@ -104,6 +104,9 @@ class pkgAcqMethod
    
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
    virtual ~pkgAcqMethod() {};
+
+   private:
+   void Dequeue();
 };
 
 /** @} */

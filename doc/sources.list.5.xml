@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -30,24 +30,24 @@
  <!-- Man page title -->
  <refnamediv>
     <refname>sources.list</refname>
-    <refpurpose>Package resource list for APT</refpurpose>
+    <refpurpose>List of configured APT data sources</refpurpose>
  </refnamediv>
  
  <refsect1><title>Description</title>
-   <para>The package resource list is used to locate archives of the package
-   distribution system in use on the system. At this time, this manual page
-   documents only the packaging system used by the Debian GNU/Linux system.
-   This control file is <filename>/etc/apt/sources.list</filename>.</para>
-
-   <para>The source list is designed to support any number of active sources and a
-   variety of source media. The file lists one source per line, with the
-   most preferred source listed first. The format of each line is:
-   <literal>type uri args</literal> The first item, <literal>type</literal>
-   determines the format for <literal>args</literal>. <literal>uri</literal> is
-   a Universal Resource Identifier 
-   (URI), which is a superset of the more specific and well-known Universal
-   Resource Locator, or URL. The rest of the line can be marked as a comment 
-   by using a #.</para>
+   <para>
+   The source list <filename>/etc/apt/sources.list</filename> is designed to support
+   any number of active sources and a variety of source media. The file lists one
+   source per line, with the most preferred source listed first. The information available
+   from the configured sources is acquired by <command>apt-get update</command>
+   (or by an equivalent command from another APT front-end).
+   </para>
+   <para>
+   Each line specifying a source starts with type (e.g. <literal>deb-src</literal>)
+   followed by options and arguments for this type.
+   Individual entries cannot be continued onto a following line. Empty lines
+   are ignored, and a <literal>#</literal> character anywhere on a line marks
+   the remainder of that line as a comment.
+   </para>
  </refsect1>
  
  <refsect1><title>sources.list.d</title>
@@ -57,20 +57,20 @@
    File names need to end with
    <filename>.list</filename> and may only contain letters (a-z and A-Z),
    digits (0-9), underscore (_), hyphen (-) and period (.) characters.
-   Otherwise APT will print a notice that it has ignored a file if the file
-   doesn't match a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
-   configuration list - in this case it will be silently ignored.</para>
+   Otherwise APT will print a notice that it has ignored a file, unless that
+   file matches a pattern in the <literal>Dir::Ignore-Files-Silently</literal>
+   configuration list - in which case it will be silently ignored.</para>
  </refsect1>
 
  <refsect1><title>The deb and deb-src types</title>
-   <para>The <literal>deb</literal> type describes a typical two-level Debian
-   archive, <filename>distribution/component</filename>. Typically,
-   <literal>distribution</literal> is generally an archivename like
+   <para>The <literal>deb</literal> type references a typical two-level Debian
+   archive, <filename>distribution/component</filename>. The
+   <literal>distribution</literal> is generally an archive name like
    <literal>stable</literal> or <literal>testing</literal> or a codename like
    <literal>&stable-codename;</literal> or <literal>&testing-codename;</literal>
-   while component is one of <literal>main</literal> <literal>contrib</literal> or
+   while component is one of <literal>main</literal>, <literal>contrib</literal> or
    <literal>non-free</literal>. The
-   <literal>deb-src</literal> type describes a debian distribution's source
+   <literal>deb-src</literal> type references a Debian distribution's source
    code in the same form as the <literal>deb</literal> type.
    A <literal>deb-src</literal> line is required to fetch source indexes.</para>
 
@@ -84,15 +84,15 @@
    Debian distribution, from which APT will find the information it needs. 
    <literal>distribution</literal> can specify an exact path, in which case the 
    components must be omitted and <literal>distribution</literal> must end with
-   a slash (/). This is useful for when the case only a particular sub-section of the 
-   archive denoted by the URI is of interest.
+   a slash (<literal>/</literal>). This is useful for the case when only a
+   particular sub-section of the archive denoted by the URI is of interest.
    If <literal>distribution</literal> does not specify an exact path, at least
    one <literal>component</literal> must be present.</para>
 
    <para><literal>distribution</literal> may also contain a variable, 
    <literal>$(ARCH)</literal>
-   which expands to the Debian architecture (i386, m68k, powerpc, ...)
-   used on the system. This permits architecture-independent
+   which expands to the Debian architecture (such as <literal>amd64</literal> or
+   <literal>armel</literal>) used on the system. This permits architecture-independent
    <filename>sources.list</filename> files to be used. In general this is only
    of interest when specifying an exact path, <literal>APT</literal> will
    automatically generate a URI with the current architecture otherwise.</para>
@@ -109,20 +109,20 @@
    simultaneous anonymous users. APT also parallelizes connections to 
    different hosts to more effectively deal with sites with low bandwidth.</para>
 
-   <para><literal>options</literal> is always optional and needs to be surounded by
+   <para><literal>options</literal> is always optional and needs to be surrounded by
    square brackets. It can consist of multiple settings in the form
    <literal><replaceable>setting</replaceable>=<replaceable>value</replaceable></literal>.
-   Multiple settings are separated by spaces. The following settings are supported by APT,
-   note though that unsupported settings will be ignored silently:
+   Multiple settings are separated by spaces. The following settings are supported by APT
+   (note however that unsupported settings will be ignored silently):
    <itemizedlist><listitem><para><literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
-   can be used to specify for which architectures packages information should
+   can be used to specify for which architectures information should
    be downloaded. If this option is not set all architectures defined by the
    <literal>APT::Architectures</literal> option will be downloaded.</para></listitem>
    <listitem><para><literal>trusted=yes</literal> can be set to indicate that packages
-   from this source are always authenificated even if the <filename>Release</filename> file
+   from this source are always authenticated even if the <filename>Release</filename> file
    is not signed or the signature can't be checked. This disables parts of &apt-secure;
    and should therefore only be used in a local and trusted context. <literal>trusted=no</literal>
-   is the opposite which handles even correctly authenificated sources as not authenificated.</para></listitem>
+   is the opposite which handles even correctly authenticated sources as not authenticated.</para></listitem>
    </itemizedlist></para>
 
    <para>It is important to list sources in order of preference, with the most
@@ -140,24 +140,23 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
 
  <refsect1><title>URI specification</title>
 
-   <para>The currently recognized URI types are cdrom, file, http, ftp, copy,
-   ssh, rsh.
+    <para>The currently recognized URI types are:
    <variablelist>
-    <varlistentry><term>file</term>
+    <varlistentry><term><command>file</command></term>
     <listitem><para>
     The file scheme allows an arbitrary directory in the file system to be
     considered an archive. This is useful for NFS mounts and local mirrors or
     archives.</para></listitem>
     </varlistentry>
     
-    <varlistentry><term>cdrom</term>
+    <varlistentry><term><command>cdrom</command></term>
     <listitem><para>
-    The cdrom scheme allows APT to use a local CDROM drive with media
+    The cdrom scheme allows APT to use a local CD-ROM drive with media
     swapping. Use the &apt-cdrom; program to create cdrom entries in the
     source list.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term>http</term>
+    <varlistentry><term><command>http</command></term>
     <listitem><para>
     The http scheme specifies an HTTP server for the archive. If an environment
     variable <envar>http_proxy</envar> is set with the format 
@@ -168,43 +167,41 @@ deb http://security.debian.org/ &stable-codename;/updates main contrib non-free
     Note that this is an insecure method of authentication.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term>ftp</term>
+    <varlistentry><term><command>ftp</command></term>
     <listitem><para>
     The ftp scheme specifies an FTP server for the archive. APT's FTP behavior
     is highly configurable; for more information see the
-    &apt-conf; manual page. Please note that a ftp proxy can be specified
+    &apt-conf; manual page. Please note that an FTP proxy can be specified
     by using the <envar>ftp_proxy</envar> environment variable. It is possible
-    to specify a http proxy (http proxy servers often understand ftp urls)
-    using this method and ONLY this method. ftp proxies using http specified in
+    to specify an HTTP proxy (HTTP proxy servers often understand FTP URLs)
+    using this environment variable and <emphasis>only</emphasis> this
+    environment variable. Proxies using HTTP specified in
     the configuration file will be ignored.</para></listitem>
     </varlistentry>
 
-    <varlistentry><term>copy</term>
+    <varlistentry><term><command>copy</command></term>
     <listitem><para>
     The copy scheme is identical to the file scheme except that packages are
     copied into the cache directory instead of used directly at their location.
-    This is useful for people using a zip disk to copy files around with APT.</para></listitem>
+    This is useful for people using removable media to copy files around with APT.</para></listitem>
     </varlistentry>
     
-    <varlistentry><term>rsh</term><term>ssh</term>
+    <varlistentry><term><command>rsh</command></term><term><command>ssh</command></term>
     <listitem><para>
-    The rsh/ssh method invokes rsh/ssh to connect to a remote host
-	as a given user and access the files. It is a good idea to do prior
-	arrangements with RSA keys or rhosts.
-    Access to files on the remote uses standard <command>find</command> and
-    <command>dd</command> 
-    commands to perform the file transfers from the remote.</para></listitem>
+    The rsh/ssh method invokes RSH/SSH to connect to a remote host and
+    access the files as a given user. Prior configuration of rhosts or RSA keys
+    is recommended. The standard <command>find</command> and <command>dd</command>
+    commands are used to perform the file transfers from the remote host.
+    </para></listitem>
     </varlistentry>
 
-    <varlistentry><term>more recognizable URI types</term>
+    <varlistentry><term>adding more recognizable URI types</term>
     <listitem><para>
-    APT can be extended with more methods shipped in other optional packages which should
-    follow the nameing scheme <literal>apt-transport-<replaceable>method</replaceable></literal>.
-    The APT team e.g. maintains also the <literal>apt-transport-https</literal> package which
-    provides access methods for https-URIs with features similar to the http method, but other
-    methods for using e.g. debtorrent are also available, see <citerefentry>
-    <refentrytitle><filename>apt-transport-debtorrent</filename></refentrytitle>
-    <manvolnum>1</manvolnum></citerefentry>.
+    APT can be extended with more methods shipped in other optional packages, which should
+    follow the naming scheme <package>apt-transport-<replaceable>method</replaceable></package>.
+    For instance, the APT team also maintains the package <package>apt-transport-https</package>,
+    which provides access methods for HTTPS URIs with features similar to the http method.
+    Methods for using e.g. debtorrent are also available - see &apt-transport-debtorrent;.
     </para></listitem>
     </varlistentry>
   </variablelist>

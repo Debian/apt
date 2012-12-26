@@ -254,6 +254,9 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
  */
 void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
 {
+   if (Cache->BrokenCount() == 0)
+      return;
+
    out << _("The following packages have unmet dependencies:") << endl;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
@@ -1252,7 +1255,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    {
       if (_config->FindB("APT::Get::Trivial-Only",false) == true)
 	 return _error->Error(_("Trivial Only specified but this is not a trivial operation."));
-      
+
+      // TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+      //             careful with hard to type or special characters (like non-breaking spaces)
       const char *Prompt = _("Yes, do as I say!");
       ioprintf(c2out,
 	       _("You are about to do something potentially harmful.\n"
@@ -1415,7 +1420,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	"all files have been overwritten by other packages:",
 	"The following packages disappeared from your system as\n"
 	"all files have been overwritten by other packages:", disappearedPkgs.size()), disappear, "");
-   c0out << _("Note: This is done automatic and on purpose by dpkg.") << std::endl;
+   c0out << _("Note: This is done automatically and on purpose by dpkg.") << std::endl;
 
    return true;
 }
@@ -1431,7 +1436,7 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    if (Cache[Pkg].CandidateVer == 0 && Pkg->ProvidesList != 0)
    {
       CacheSetHelperAPTGet helper(c1out);
-      helper.showErrors(AllowFail == false);
+      helper.showErrors(false);
       pkgCache::VerIterator Ver = helper.canNotFindNewestVer(Cache, Pkg);
       if (Ver.end() == false)
 	 Pkg = Ver.ParentPkg();
@@ -1679,10 +1684,13 @@ bool DoUpdate(CommandLine &CmdL)
        ListUpdate(Stat, *List);
 
    // Rebuild the cache.
-   pkgCacheFile::RemoveCaches();
-   if (Cache.BuildCaches() == false)
-      return false;
-   
+   if (_config->FindB("pkgCacheFile::Generate", true) == true)
+   {
+      pkgCacheFile::RemoveCaches();
+      if (Cache.BuildCaches() == false)
+	 return false;
+   }
+
    return true;
 }
 									/*}}}*/
@@ -1711,12 +1719,13 @@ bool DoAutomaticRemove(CacheFile &Cache)
    bool smallList = (hideAutoRemove == false &&
 		strcasecmp(_config->Find("APT::Get::HideAutoRemove","").c_str(),"small") == 0);
 
-   string autoremovelist, autoremoveversions;
    unsigned long autoRemoveCount = 0;
    APT::PackageSet tooMuch;
+   APT::PackageList autoRemoveList;
    // look over the cache to see what can be removed
-   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); ! Pkg.end(); ++Pkg)
+   for (unsigned J = 0; J < Cache->Head().PackageCount; ++J)
    {
+      pkgCache::PkgIterator Pkg(Cache,Cache.List[J]);
       if (Cache[Pkg].Garbage)
       {
 	 if(Pkg.CurrentVer() != 0 || Cache[Pkg].Install())
@@ -1727,31 +1736,25 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
 	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
-	       Cache->MarkDelete(Pkg, purgePkgs);
+	       Cache->MarkDelete(Pkg, purgePkgs, 0, false);
 	    else
 	       Cache->MarkKeep(Pkg, false, false);
 	 }
 	 else
 	 {
+	    if (hideAutoRemove == false && Cache[Pkg].Delete() == false)
+	       autoRemoveList.insert(Pkg);
 	    // if the package is a new install and already garbage we don't need to
 	    // install it in the first place, so nuke it instead of show it
 	    if (Cache[Pkg].Install() == true && Pkg.CurrentVer() == 0)
 	    {
 	       if (Pkg.CandVersion() != 0)
 	          tooMuch.insert(Pkg);
-	       Cache->MarkDelete(Pkg, false);
+	       Cache->MarkDelete(Pkg, false, 0, false);
 	    }
 	    // only show stuff in the list that is not yet marked for removal
-	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false) 
-	    {
+	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false)
 	       ++autoRemoveCount;
-	       // we don't need to fill the strings if we don't need them
-	       if (smallList == false)
-	       {
-		 autoremovelist += Pkg.FullName(true) + " ";
-		 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
-	       }
-	    }
 	 }
       }
    }
@@ -1784,16 +1787,9 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		    continue;
 		 if (Debug == true)
 		    std::clog << "Save " << Pkg << " as another installed garbage package depends on it" << std::endl;
-		 Cache->MarkInstall(Pkg, false);
+		 Cache->MarkInstall(Pkg, false, 0, false);
 		 if (hideAutoRemove == false)
-		 {
 		    ++autoRemoveCount;
-		    if (smallList == false)
-		    {
-		       autoremovelist += Pkg.FullName(true) + " ";
-		       autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
-		    }
-		 }
 		 tooMuch.erase(Pkg);
 		 Changed = true;
 		 break;
@@ -1801,6 +1797,18 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    }
 	 }
       } while (Changed == true);
+   }
+
+   std::string autoremovelist, autoremoveversions;
+   if (smallList == false && autoRemoveCount != 0)
+   {
+      for (APT::PackageList::const_iterator Pkg = autoRemoveList.begin(); Pkg != autoRemoveList.end(); ++Pkg)
+      {
+	 if (Cache[Pkg].Garbage == false)
+	    continue;
+	 autoremovelist += Pkg.FullName(true) + " ";
+	 autoremoveversions += string(Cache[Pkg].CandVersion) + "\n";
+      }
    }
 
    // Now see if we had destroyed anything (if we had done anything)
@@ -1826,7 +1834,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
       else
 	 ioprintf(c1out, P_("%lu package was automatically installed and is no longer required.\n",
 	          "%lu packages were automatically installed and are no longer required.\n", autoRemoveCount), autoRemoveCount);
-      c1out << _("Use 'apt-get autoremove' to remove them.") << std::endl;
+      c1out << P_("Use 'apt-get autoremove' to remove it.", "Use 'apt-get autoremove' to remove them.", autoRemoveCount) << std::endl;
    }
    return true;
 }
@@ -2356,6 +2364,8 @@ bool DoDownload(CommandLine &CmdL)
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
+   bool gotAll = true;
+
    for (APT::VersionList::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
@@ -2366,11 +2376,19 @@ bool DoDownload(CommandLine &CmdL)
       pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
       pkgCache::VerFileIterator Vf = Ver.FileList();
       if (Vf.end() == true)
-         return _error->Error("Can not find VerFile");
+      {
+	 _error->Error("Can not find VerFile for %s in version %s", Pkg.FullName().c_str(), Ver.VerStr());
+	 gotAll = false;
+	 continue;
+      }
       pkgCache::PkgFileIterator F = Vf.File();
       pkgIndexFile *index;
       if(SrcList->FindIndex(F, index) == false)
-         return _error->Error("FindIndex failed");
+      {
+	 _error->Error(_("Can't find a source to download version '%s' of '%s'"), Ver.VerStr(), Pkg.FullName().c_str());
+	 gotAll = false;
+	 continue;
+      }
       string uri = index->ArchiveURI(rec.FileName());
       strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
       // get the most appropriate hash
@@ -2386,6 +2404,8 @@ bool DoDownload(CommandLine &CmdL)
       // get the file
       new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
    }
+   if (gotAll == false)
+      return false;
 
    // Just print out the uris and exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
@@ -2493,7 +2513,7 @@ bool DoSource(CommandLine &CmdL)
 		  Src.c_str(), vcs.c_str(), uri.c_str());
 	 if(vcs == "Bzr") 
 	    ioprintf(c1out,_("Please use:\n"
-			     "bzr get %s\n"
+			     "bzr branch %s\n"
 			     "to retrieve the latest (possibly unreleased) "
 			     "updates to the package.\n"),
 		     uri.c_str());
@@ -2786,8 +2806,18 @@ bool DoBuildDep(CommandLine &CmdL)
             
       // Process the build-dependencies
       vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
-      if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
-      	return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
+      // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
+      if (hostArch.empty() == false)
+      {
+	 std::string nativeArch = _config->Find("APT::Architecture");
+	 _config->Set("APT::Architecture", hostArch);
+	 bool Success = Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch);
+	 _config->Set("APT::Architecture", nativeArch);
+	 if (Success == false)
+	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
+      }
+      else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
+	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
    
       // Also ensure that build-essential packages are present
       Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
@@ -2864,48 +2894,63 @@ bool DoBuildDep(CommandLine &CmdL)
 	    pkgCache::PkgIterator Pkg;
 
 	    // Cross-Building?
-	    if (StripMultiArch == false)
+	    if (StripMultiArch == false && D->Type != pkgSrcRecords::Parser::BuildDependIndep)
 	    {
 	       size_t const colon = D->Package.find(":");
-	       if (colon != string::npos &&
-		   (strcmp(D->Package.c_str() + colon, ":any") == 0 || strcmp(D->Package.c_str() + colon, ":native") == 0))
-		  Pkg = Cache->FindPkg(D->Package.substr(0,colon));
+	       if (colon != string::npos)
+	       {
+		  if (strcmp(D->Package.c_str() + colon, ":any") == 0 || strcmp(D->Package.c_str() + colon, ":native") == 0)
+		     Pkg = Cache->FindPkg(D->Package.substr(0,colon));
+		  else
+		     Pkg = Cache->FindPkg(D->Package);
+	       }
 	       else
-		  Pkg = Cache->FindPkg(D->Package);
-
-	       // We need to decide if host or build arch, so find a version we can look at
-	       pkgCache::VerIterator Ver;
+		  Pkg = Cache->FindPkg(D->Package, hostArch);
 
 	       // a bad version either is invalid or doesn't satify dependency
-	       #define BADVER(Ver) Ver.end() == true || \
-				   (Ver.end() == false && D->Version.empty() == false && \
-				    Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false)
+	       #define BADVER(Ver) (Ver.end() == true || \
+				    (D->Version.empty() == false && \
+				     Cache->VS().CheckDep(Ver.VerStr(),D->Op,D->Version.c_str()) == false))
 
+	       APT::VersionList verlist;
 	       if (Pkg.end() == false)
 	       {
-		  Ver = (*Cache)[Pkg].InstVerIter(*Cache);
-		  if (BADVER(Ver))
-		     Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+		  pkgCache::VerIterator Ver = (*Cache)[Pkg].InstVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
+		  Ver = (*Cache)[Pkg].CandidateVerIter(*Cache);
+		  if (BADVER(Ver) == false)
+		     verlist.insert(Ver);
 	       }
-	       if (BADVER(Ver))
+	       if (verlist.empty() == true)
 	       {
-		  pkgCache::PkgIterator HostPkg = Cache->FindPkg(D->Package, hostArch);
-		  if (HostPkg.end() == false)
+		  pkgCache::PkgIterator BuildPkg = Cache->FindPkg(D->Package, "native");
+		  if (BuildPkg.end() == false && Pkg != BuildPkg)
 		  {
-		     Ver = (*Cache)[HostPkg].InstVerIter(*Cache);
-		     if (BADVER(Ver))
-		        Ver = (*Cache)[HostPkg].CandidateVerIter(*Cache);
+		     pkgCache::VerIterator Ver = (*Cache)[BuildPkg].InstVerIter(*Cache);
+		     if (BADVER(Ver) == false)
+			verlist.insert(Ver);
+		     Ver = (*Cache)[BuildPkg].CandidateVerIter(*Cache);
+		     if (BADVER(Ver) == false)
+			verlist.insert(Ver);
 		  }
 	       }
-	       if ((BADVER(Ver)) == false)
+	       #undef BADVER
+
+	       string forbidden;
+	       // We need to decide if host or build arch, so find a version we can look at
+	       APT::VersionList::const_iterator Ver = verlist.begin();
+	       for (; Ver != verlist.end(); ++Ver)
 	       {
-		  string forbidden;
+		  forbidden.clear();
 		  if (Ver->MultiArch == pkgCache::Version::None || Ver->MultiArch == pkgCache::Version::All)
 		  {
 		     if (colon == string::npos)
-		     {
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
-		     }
+		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
+			forbidden = "Multi-Arch: none";
+		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
 		  }
 		  else if (Ver->MultiArch == pkgCache::Version::Same)
 		  {
@@ -2913,11 +2958,15 @@ bool DoBuildDep(CommandLine &CmdL)
 			Pkg = Ver.ParentPkg().Group().FindPkg(hostArch);
 		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0)
 			forbidden = "Multi-Arch: same";
-		     // :native gets the buildArch
+		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
 		  }
 		  else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
 		  {
-		     if (colon != string::npos)
+		     if (colon == string::npos)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
+		     else if (strcmp(D->Package.c_str() + colon, ":any") == 0 ||
+			      strcmp(D->Package.c_str() + colon, ":native") == 0)
 			forbidden = "Multi-Arch: foreign";
 		  }
 		  else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
@@ -2935,28 +2984,40 @@ bool DoBuildDep(CommandLine &CmdL)
 			if (Pkg.end() == true)
 			   Pkg = Grp.FindPreferredPkg(true);
 		     }
-		     // native gets buildArch
+		     else if (strcmp(D->Package.c_str() + colon, ":native") == 0)
+			Pkg = Ver.ParentPkg().Group().FindPkg("native");
 		  }
+
 		  if (forbidden.empty() == false)
 		  {
 		     if (_config->FindB("Debug::BuildDeps",false) == true)
-			cout << " :any is not allowed from M-A: same package " << (*D).Package << endl;
+			cout << D->Package.substr(colon, string::npos) << " is not allowed from " << forbidden << " package " << (*D).Package << " (" << Ver.VerStr() << ")" << endl;
+		     continue;
+		  }
+
+		  //we found a good version
+		  break;
+	       }
+	       if (Ver == verlist.end())
+	       {
+		  if (_config->FindB("Debug::BuildDeps",false) == true)
+		     cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << endl;
+
+		  if (forbidden.empty() == false)
+		  {
 		     if (hasAlternatives)
 			continue;
 		     return _error->Error(_("%s dependency for %s can't be satisfied "
 					    "because %s is not allowed on '%s' packages"),
 					  Last->BuildDepType(D->Type), Src.c_str(),
-					  D->Package.c_str(), "Multi-Arch: same");
+					  D->Package.c_str(), forbidden.c_str());
 		  }
 	       }
-	       else if (_config->FindB("Debug::BuildDeps",false) == true)
-		  cout << " No multiarch info as we have no satisfying installed nor candidate for " << D->Package << " on build or host arch" << endl;
-	       #undef BADVER
 	    }
 	    else
 	       Pkg = Cache->FindPkg(D->Package);
 
-	    if (Pkg.end() == true)
+	    if (Pkg.end() == true || (Pkg->VersionList == 0 && Pkg->ProvidesList == 0))
             {
                if (_config->FindB("Debug::BuildDeps",false) == true)
                     cout << " (not found)" << (*D).Package << endl;
@@ -3039,7 +3100,7 @@ bool DoBuildDep(CommandLine &CmdL)
 	       }
 	    }
 
-            if (TryToInstallBuildDep(Pkg,Cache,Fix,false,false) == true)
+            if (TryToInstallBuildDep(Pkg,Cache,Fix,false,false,false) == true)
             {
                // We successfully installed something; skip remaining alternatives
                skipAlternatives = hasAlternatives;
@@ -3228,9 +3289,13 @@ bool DoChangelog(CommandLine &CmdL)
    pkgAcquire Fetcher;
 
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
+   {
+      bool Success = true;
       for (APT::VersionList::const_iterator Ver = verset.begin();
 	   Ver != verset.end(); ++Ver)
-	 return DownloadChangelog(Cache, Fetcher, Ver, "");
+	 Success &= DownloadChangelog(Cache, Fetcher, Ver, "");
+      return Success;
+   }
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
    Fetcher.Setup(&Stat);
@@ -3295,7 +3360,7 @@ bool DoMoo(CommandLine &CmdL)
 /* */
 bool ShowHelp(CommandLine &CmdL)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
 	    
    if (_config->FindB("version") == true)

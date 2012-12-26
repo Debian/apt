@@ -187,7 +187,7 @@ pkgDPkgPM::~pkgDPkgPM()
 bool pkgDPkgPM::Install(PkgIterator Pkg,string File)
 {
    if (File.empty() == true || Pkg.end() == true)
-      return _error->Error("Internal Error, No file name for %s",Pkg.Name());
+      return _error->Error("Internal Error, No file name for %s",Pkg.FullName().c_str());
 
    // If the filename string begins with DPkg::Chroot-Directory, return the
    // substr that is within the chroot so dpkg can access it.
@@ -425,7 +425,7 @@ void pkgDPkgPM::DoStdin(int master)
    unsigned char input_buf[256] = {0,}; 
    ssize_t len = read(0, input_buf, sizeof(input_buf));
    if (len)
-      write(master, input_buf, len);
+      FileFd::Write(master, input_buf, len);
    else
       d->stdin_is_dev_null = true;
 }
@@ -451,7 +451,7 @@ void pkgDPkgPM::DoTerminalPty(int master)
    }  
    if(len <= 0) 
       return;
-   write(1, term_buf, len);
+   FileFd::Write(1, term_buf, len);
    if(d->term_out)
       fwrite(term_buf, len, sizeof(char), d->term_out);
 }
@@ -526,7 +526,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
 
@@ -550,7 +550,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       pkgFailures++;
@@ -564,7 +564,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << list[3]
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       return;
@@ -592,7 +592,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":" << s
 	     << endl;
       if(OutStatusFd > 0)
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
    }
@@ -726,7 +726,7 @@ bool pkgDPkgPM::OpenLog()
       gr = getgrnam("adm");
       if (pw != NULL && gr != NULL)
 	  chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid);
-      chmod(logfile_name.c_str(), 0644);
+      chmod(logfile_name.c_str(), 0640);
       fprintf(d->term_out, "\nLog started: %s\n", timestr);
    }
 
@@ -738,6 +738,7 @@ bool pkgDPkgPM::OpenLog()
       d->history_out = fopen(history_name.c_str(),"a");
       if (d->history_out == NULL)
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), history_name.c_str());
+      SetCloseExec(fileno(d->history_out), true);
       chmod(history_name.c_str(), 0644);
       fprintf(d->history_out, "\nStart-Date: %s\n", timestr);
       string remove, purge, install, reinstall, upgrade, downgrade;
@@ -1055,7 +1056,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }
 
       int fd[2];
-      pipe(fd);
+      if (pipe(fd) != 0)
+	 return _error->Errno("pipe","Failed to create IPC pipe to dpkg");
 
 #define ADDARG(X) Args.push_back(X); Size += strlen(X)
 #define ADDARGC(X) Args.push_back(X); Size += sizeof(X) - 1
@@ -1129,7 +1131,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
 	       continue;
 	    // We keep this here to allow "smooth" transitions from e.g. multiarch dpkg/ubuntu to dpkg/debian
-	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch || !strcmp(I->Pkg.Arch(), "all")))
+	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch ||
+					   strcmp(I->Pkg.Arch(), "all") == 0 ||
+					   strcmp(I->Pkg.Arch(), "none") == 0))
 	    {
 	       char const * const name = I->Pkg.Name();
 	       ADDARG(name);
@@ -1146,7 +1150,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
                }
 	       else
 		  PkgVer = Cache[I->Pkg].InstVerIter(Cache);
-               if (PkgVer.end() == false)
+	       if (strcmp(I->Pkg.Arch(), "none") == 0)
+		  ; // never arch-qualify a package without an arch
+	       else if (PkgVer.end() == false)
                   name.append(":").append(PkgVer.Arch());
                else
                   _error->Warning("Can not find PkgVer for '%s'", name.c_str());
@@ -1236,7 +1242,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 		<< (PackagesDone/float(PackagesTotal)*100.0) 
 		<< ":" << _("Running dpkg")
 		<< endl;
-	 write(OutStatusFd, status.str().c_str(), status.str().size());
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       }
       Child = ExecFork();
             

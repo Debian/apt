@@ -451,7 +451,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
    string DIPrfx = Setup.Find("TreeDefault::InternalPrefix",
 			    "$(DIST)/$(SECTION)/");
    string DContents = Setup.Find("TreeDefault::Contents",
-			    "$(DIST)/Contents-$(ARCH)");
+			    "$(DIST)/$(SECTION)/Contents-$(ARCH)");
    string DContentsH = Setup.Find("TreeDefault::Contents::Header","");
    string DBCache = Setup.Find("TreeDefault::BinCacheDB",
 			       "packages-$(ARCH).db");
@@ -587,7 +587,7 @@ void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 /* */
 bool ShowHelp(CommandLine &CmdL)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,VERSION,
+   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
       return true;

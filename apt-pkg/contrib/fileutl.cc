@@ -44,14 +44,11 @@
 #include <set>
 #include <algorithm>
 
-// FIXME: Compressor Fds have some speed disadvantages and are a bit buggy currently,
-// so while the current implementation satisfies the testcases it is not a real option
-// to disable it for now
-#define APT_USE_ZLIB 1
-#if APT_USE_ZLIB
-#include <zlib.h>
-#else
-#pragma message "Usage of zlib is DISABLED!"
+#ifdef HAVE_ZLIB
+	#include <zlib.h>
+#endif
+#ifdef HAVE_BZ2
+	#include <bzlib.h>
 #endif
 
 #ifdef WORDS_BIGENDIAN
@@ -65,10 +62,15 @@ using namespace std;
 
 class FileFdPrivate {
 	public:
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
 	gzFile gz;
 #else
 	void* gz;
+#endif
+#ifdef HAVE_BZ2
+	BZFILE* bz2;
+#else
+	void* bz2;
 #endif
 	int compressed_fd;
 	pid_t compressor_pid;
@@ -76,8 +78,34 @@ class FileFdPrivate {
 	APT::Configuration::Compressor compressor;
 	unsigned int openmode;
 	unsigned long long seekpos;
-	FileFdPrivate() : gz(NULL), compressed_fd(-1), compressor_pid(-1), pipe(false),
+	FileFdPrivate() : gz(NULL), bz2(NULL),
+			  compressed_fd(-1), compressor_pid(-1), pipe(false),
 			  openmode(0), seekpos(0) {};
+	bool CloseDown(std::string const &FileName)
+	{
+	   bool Res = true;
+#ifdef HAVE_ZLIB
+	   if (gz != NULL) {
+	      int const e = gzclose(gz);
+	      gz = NULL;
+	      // gzdclose() on empty files always fails with "buffer error" here, ignore that
+	      if (e != 0 && e != Z_BUF_ERROR)
+		 Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
+	   }
+#endif
+#ifdef HAVE_BZ2
+	   if (bz2 != NULL) {
+	      BZ2_bzclose(bz2);
+	      bz2 = NULL;
+	   }
+#endif
+	   if (compressor_pid > 0)
+	      ExecWait(compressor_pid, "FileFdCompressor", true);
+	   compressor_pid = -1;
+
+	   return Res;
+	}
+	~FileFdPrivate() { CloseDown(""); }
 };
 
 // RunScripts - Run a set of scripts from a configuration subtree	/*{{{*/
@@ -835,7 +863,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
    if (Compress == Auto && (Mode & WriteOnly) == WriteOnly)
       return _error->Error("Autodetection on %s only works in ReadOnly openmode!", FileName.c_str());
 
-   // FIXME: Denote inbuilt compressors somehow - as we don't need to have the binaries for them
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
    if (Compress == Auto)
@@ -903,8 +930,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
 bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor, unsigned long const Perms)
 {
    Close();
-   d = new FileFdPrivate;
-   d->openmode = Mode;
    Flags = AutoClose;
 
    if ((Mode & WriteOnly) != WriteOnly && (Mode & (Atomic | Create | Empty | Exclusive)) != 0)
@@ -998,10 +1023,21 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compre
 bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose)
 {
    Close();
-   d = new FileFdPrivate;
-   d->openmode = Mode;
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
-   iFd = Fd;
+   if (AutoClose == false && (
+#ifdef HAVE_ZLIB
+	compressor.Name == "gzip" ||
+#endif
+#ifdef HAVE_BZ2
+	compressor.Name == "bzip2" ||
+#endif
+	false))
+   {
+      // Need to duplicate fd here or gzclose for cleanup will close the fd as well
+      iFd = dup(Fd);
+   }
+   else
+      iFd = Fd;
    this->FileName = "";
    if (OpenInternDescriptor(Mode, compressor) == false)
    {
@@ -1013,32 +1049,71 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
 }
 bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor)
 {
-   d->compressor = compressor;
    if (compressor.Name == "." || compressor.Binary.empty() == true)
       return true;
-#if APT_USE_ZLIB
-   else if (compressor.Name == "gzip")
+
+   if (d == NULL)
    {
+      d = new FileFdPrivate();
+      d->openmode = Mode;
+      d->compressor = compressor;
+   }
+
+#ifdef HAVE_ZLIB
+   if (compressor.Name == "gzip")
+   {
+      if (d->gz != NULL)
+      {
+	 gzclose(d->gz);
+	 d->gz = NULL;
+      }
       if ((Mode & ReadWrite) == ReadWrite)
 	 d->gz = gzdopen(iFd, "r+");
       else if ((Mode & WriteOnly) == WriteOnly)
 	 d->gz = gzdopen(iFd, "w");
       else
-	 d->gz = gzdopen (iFd, "r");
+	 d->gz = gzdopen(iFd, "r");
       if (d->gz == NULL)
 	 return false;
       Flags |= Compressed;
       return true;
    }
 #endif
+#ifdef HAVE_BZ2
+   if (compressor.Name == "bzip2")
+   {
+      if (d->bz2 != NULL)
+      {
+	 BZ2_bzclose(d->bz2);
+	 d->bz2 = NULL;
+      }
+      if ((Mode & ReadWrite) == ReadWrite)
+	 d->bz2 = BZ2_bzdopen(iFd, "r+");
+      else if ((Mode & WriteOnly) == WriteOnly)
+	 d->bz2 = BZ2_bzdopen(iFd, "w");
+      else
+	 d->bz2 = BZ2_bzdopen(iFd, "r");
+      if (d->bz2 == NULL)
+	 return false;
+      Flags |= Compressed;
+      return true;
+   }
+#endif
+
+   // collect zombies here in case we reopen
+   if (d->compressor_pid > 0)
+      ExecWait(d->compressor_pid, "FileFdCompressor", true);
 
    if ((Mode & ReadWrite) == ReadWrite)
+   {
+      Flags |= Fail;
       return _error->Error("ReadWrite mode is not supported for file %s", FileName.c_str());
+   }
 
    bool const Comp = (Mode & WriteOnly) == WriteOnly;
-   // Handle 'decompression' of empty files
    if (Comp == false)
    {
+      // Handle 'decompression' of empty files
       struct stat Buf;
       fstat(iFd, &Buf);
       if (Buf.st_size == 0 && S_ISFIFO(Buf.st_mode) == false)
@@ -1047,13 +1122,19 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       // We don't need the file open - instead let the compressor open it
       // as he properly knows better how to efficiently read from 'his' file
       if (FileName.empty() == false)
+      {
 	 close(iFd);
+	 iFd = -1;
+      }
    }
 
    // Create a data pipe
    int Pipe[2] = {-1,-1};
    if (pipe(Pipe) != 0)
+   {
+      Flags |= Fail;
       return _error->Errno("pipe",_("Failed to create subprocess IPC"));
+   }
    for (int J = 0; J != 2; J++)
       SetCloseExec(Pipe[J],true);
 
@@ -1079,6 +1160,12 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 if (FileName.empty() == true)
 	    dup2(d->compressed_fd,STDIN_FILENO);
 	 dup2(Pipe[1],STDOUT_FILENO);
+      }
+      int const nullfd = open("/dev/null", O_WRONLY);
+      if (nullfd != -1)
+      {
+	 dup2(nullfd,STDERR_FILENO);
+	 close(nullfd);
       }
 
       SetCloseExec(STDOUT_FILENO,false);
@@ -1109,8 +1196,6 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       close(Pipe[0]);
    else
       close(Pipe[1]);
-   if (Comp == true || FileName.empty() == true)
-      close(d->compressed_fd);
 
    return true;
 }
@@ -1122,6 +1207,12 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 FileFd::~FileFd()
 {
    Close();
+   if (d != NULL)
+   {
+      d->CloseDown(FileName);
+      delete d;
+      d = NULL;
+   }
 }
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
@@ -1137,9 +1228,14 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    *((char *)To) = '\0';
    do
    {
-#if APT_USE_ZLIB
-      if (d->gz != NULL)
-         Res = gzread(d->gz,To,Size);
+#ifdef HAVE_ZLIB
+      if (d != NULL && d->gz != NULL)
+	 Res = gzread(d->gz,To,Size);
+      else
+#endif
+#ifdef HAVE_BZ2
+      if (d != NULL && d->bz2 != NULL)
+	 Res = BZ2_bzread(d->bz2,To,Size);
       else
 #endif
          Res = read(iFd,To,Size);
@@ -1149,8 +1245,8 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	 if (errno == EINTR)
 	    continue;
 	 Flags |= Fail;
-#if APT_USE_ZLIB
-	 if (d->gz != NULL)
+#ifdef HAVE_ZLIB
+	 if (d != NULL && d->gz != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = gzerror(d->gz, &err);
@@ -1158,12 +1254,22 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	       return _error->Error("gzread: %s (%d: %s)", _("Read error"), err, errmsg);
 	 }
 #endif
+#ifdef HAVE_BZ2
+	 if (d != NULL && d->bz2 != NULL)
+	 {
+	    int err;
+	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
+	    if (err != BZ_IO_ERROR)
+	       return _error->Error("BZ2_bzread: %s (%d: %s)", _("Read error"), err, errmsg);
+	 }
+#endif
 	 return _error->Errno("read",_("Read error"));
       }
       
       To = (char *)To + Res;
       Size -= Res;
-      d->seekpos += Res;
+      if (d != NULL)
+	 d->seekpos += Res;
       if (Actual != 0)
 	 *Actual += Res;
    }
@@ -1190,8 +1296,8 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 char* FileFd::ReadLine(char *To, unsigned long long const Size)
 {
    *To = '\0';
-#if APT_USE_ZLIB
-   if (d->gz != NULL)
+#ifdef HAVE_ZLIB
+   if (d != NULL && d->gz != NULL)
       return gzgets(d->gz, To, Size);
 #endif
 
@@ -1221,9 +1327,14 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    errno = 0;
    do
    {
-#if APT_USE_ZLIB
-      if (d->gz != NULL)
+#ifdef HAVE_ZLIB
+      if (d != NULL && d->gz != NULL)
          Res = gzwrite(d->gz,From,Size);
+      else
+#endif
+#ifdef HAVE_BZ2
+      if (d != NULL && d->bz2 != NULL)
+         Res = BZ2_bzwrite(d->bz2,(void*)From,Size);
       else
 #endif
          Res = write(iFd,From,Size);
@@ -1232,12 +1343,31 @@ bool FileFd::Write(const void *From,unsigned long long Size)
       if (Res < 0)
       {
 	 Flags |= Fail;
+#ifdef HAVE_ZLIB
+	 if (d != NULL && d->gz != NULL)
+	 {
+	    int err;
+	    char const * const errmsg = gzerror(d->gz, &err);
+	    if (err != Z_ERRNO)
+	       return _error->Error("gzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
+	 }
+#endif
+#ifdef HAVE_BZ2
+	 if (d != NULL && d->bz2 != NULL)
+	 {
+	    int err;
+	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
+	    if (err != BZ_IO_ERROR)
+	       return _error->Error("BZ2_bzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
+	 }
+#endif
 	 return _error->Errno("write",_("Write error"));
       }
       
       From = (char *)From + Res;
       Size -= Res;
-      d->seekpos += Res;
+      if (d != NULL)
+	 d->seekpos += Res;
    }
    while (Res > 0 && Size > 0);
    
@@ -1247,13 +1377,39 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    Flags |= Fail;
    return _error->Error(_("write, still have %llu to write but couldn't"), Size);
 }
+bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
+{
+   int Res;
+   errno = 0;
+   do
+   {
+      Res = write(Fd,From,Size);
+      if (Res < 0 && errno == EINTR)
+	 continue;
+      if (Res < 0)
+	 return _error->Errno("write",_("Write error"));
+
+      From = (char *)From + Res;
+      Size -= Res;
+   }
+   while (Res > 0 && Size > 0);
+
+   if (Size == 0)
+      return true;
+
+   return _error->Error(_("write, still have %llu to write but couldn't"), Size);
+}
 									/*}}}*/
 // FileFd::Seek - Seek in the file					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool FileFd::Seek(unsigned long long To)
 {
-   if (d->pipe == true)
+   if (d != NULL && (d->pipe == true
+#ifdef HAVE_BZ2
+			|| d->bz2 != NULL
+#endif
+	))
    {
       // Our poor man seeking in pipes is costly, so try to avoid it
       unsigned long long seekpos = Tell();
@@ -1263,9 +1419,17 @@ bool FileFd::Seek(unsigned long long To)
 	 return Skip(To - seekpos);
 
       if ((d->openmode & ReadOnly) != ReadOnly)
+      {
+	 Flags |= Fail;
 	 return _error->Error("Reopen is only implemented for read-only files!");
-      close(iFd);
-      iFd = 0;
+      }
+#ifdef HAVE_BZ2
+      if (d->bz2 != NULL)
+	 BZ2_bzclose(d->bz2);
+#endif
+      if (iFd != -1)
+	 close(iFd);
+      iFd = -1;
       if (TemporaryFileName.empty() == false)
 	 iFd = open(TemporaryFileName.c_str(), O_RDONLY);
       else if (FileName.empty() == false)
@@ -1275,12 +1439,18 @@ bool FileFd::Seek(unsigned long long To)
 	 if (d->compressed_fd > 0)
 	    if (lseek(d->compressed_fd, 0, SEEK_SET) != 0)
 	       iFd = d->compressed_fd;
-	 if (iFd <= 0)
+	 if (iFd < 0)
+	 {
+	    Flags |= Fail;
 	    return _error->Error("Reopen is not implemented for pipes opened with FileFd::OpenDescriptor()!");
+	 }
       }
 
       if (OpenInternDescriptor(d->openmode, d->compressor) == false)
+      {
+	 Flags |= Fail;
 	 return _error->Error("Seek on file %s because it couldn't be reopened", FileName.c_str());
+      }
 
       if (To != 0)
 	 return Skip(To);
@@ -1289,8 +1459,8 @@ bool FileFd::Seek(unsigned long long To)
       return true;
    }
    int res;
-#if APT_USE_ZLIB
-   if (d->gz)
+#ifdef HAVE_ZLIB
+   if (d != NULL && d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
 #endif
@@ -1301,7 +1471,8 @@ bool FileFd::Seek(unsigned long long To)
       return _error->Error("Unable to seek to %llu", To);
    }
 
-   d->seekpos = To;
+   if (d != NULL)
+      d->seekpos = To;
    return true;
 }
 									/*}}}*/
@@ -1310,7 +1481,11 @@ bool FileFd::Seek(unsigned long long To)
 /* */
 bool FileFd::Skip(unsigned long long Over)
 {
-   if (d->pipe == true)
+   if (d != NULL && (d->pipe == true
+#ifdef HAVE_BZ2
+			|| d->bz2 != NULL
+#endif
+	))
    {
       d->seekpos += Over;
       char buffer[1024];
@@ -1318,15 +1493,18 @@ bool FileFd::Skip(unsigned long long Over)
       {
 	 unsigned long long toread = std::min((unsigned long long) sizeof(buffer), Over);
 	 if (Read(buffer, toread) == false)
+	 {
+	    Flags |= Fail;
 	    return _error->Error("Unable to seek ahead %llu",Over);
+	 }
 	 Over -= toread;
       }
       return true;
    }
 
    int res;
-#if APT_USE_ZLIB
-   if (d->gz != NULL)
+#ifdef HAVE_ZLIB
+   if (d != NULL && d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);
    else
 #endif
@@ -1336,7 +1514,8 @@ bool FileFd::Skip(unsigned long long Over)
       Flags |= Fail;
       return _error->Error("Unable to seek ahead %llu",Over);
    }
-   d->seekpos = res;
+   if (d != NULL)
+      d->seekpos = res;
 
    return true;
 }
@@ -1346,11 +1525,13 @@ bool FileFd::Skip(unsigned long long Over)
 /* */
 bool FileFd::Truncate(unsigned long long To)
 {
-   if (d->gz != NULL)
+#if defined HAVE_ZLIB || defined HAVE_BZ2
+   if (d != NULL && (d->gz != NULL || d->bz2 != NULL))
    {
       Flags |= Fail;
-      return _error->Error("Truncating gzipped files is not implemented (%s)", FileName.c_str());
+      return _error->Error("Truncating compressed files is not implemented (%s)", FileName.c_str());
    }
+#endif
    if (ftruncate(iFd,To) != 0)
    {
       Flags |= Fail;
@@ -1369,19 +1550,27 @@ unsigned long long FileFd::Tell()
    // seeking around, but not all users of FileFd use always Seek() and co
    // so d->seekpos isn't always true and we can just use it as a hint if
    // we have nothing else, but not always as an authority…
-   if (d->pipe == true)
+   if (d != NULL && (d->pipe == true
+#ifdef HAVE_BZ2
+			|| d->bz2 != NULL
+#endif
+	))
       return d->seekpos;
 
    off_t Res;
-#if APT_USE_ZLIB
-   if (d->gz != NULL)
+#ifdef HAVE_ZLIB
+   if (d != NULL && d->gz != NULL)
      Res = gztell(d->gz);
    else
 #endif
      Res = lseek(iFd,0,SEEK_CUR);
    if (Res == (off_t)-1)
+   {
+      Flags |= Fail;
       _error->Errno("lseek","Failed to determine the current file position");
-   d->seekpos = Res;
+   }
+   if (d != NULL)
+      d->seekpos = Res;
    return Res;
 }
 									/*}}}*/
@@ -1391,17 +1580,24 @@ unsigned long long FileFd::Tell()
 unsigned long long FileFd::FileSize()
 {
    struct stat Buf;
-   if (d->pipe == false && fstat(iFd,&Buf) != 0)
+   if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
+   {
+      Flags |= Fail;
       return _error->Errno("fstat","Unable to determine the file size");
+   }
 
    // for compressor pipes st_size is undefined and at 'best' zero
-   if (d->pipe == true || S_ISFIFO(Buf.st_mode))
+   if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
    {
       // we set it here, too, as we get the info here for free
       // in theory the Open-methods should take care of it already
-      d->pipe = true;
+      if (d != NULL)
+	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
+      {
+	 Flags |= Fail;
 	 return _error->Errno("stat","Unable to determine the file size");
+      }
    }
 
    return Buf.st_size;
@@ -1416,7 +1612,11 @@ unsigned long long FileFd::Size()
 
    // for compressor pipes st_size is undefined and at 'best' zero,
    // so we 'read' the content and 'seek' back - see there
-   if (d->pipe == true)
+   if (d != NULL && (d->pipe == true
+#ifdef HAVE_BZ2
+			|| (d->bz2 && size > 0)
+#endif
+	))
    {
       unsigned long long const oldSeek = Tell();
       char ignore[1000];
@@ -1427,11 +1627,11 @@ unsigned long long FileFd::Size()
       size = Tell();
       Seek(oldSeek);
    }
-#if APT_USE_ZLIB
+#ifdef HAVE_ZLIB
    // only check gzsize if we are actually a gzip file, just checking for
    // "gz" is not sufficient as uncompressed files could be opened with
    // gzopen in "direct" mode as well
-   else if (d->gz && !gzdirect(d->gz) && size > 0)
+   else if (d != NULL && d->gz && !gzdirect(d->gz) && size > 0)
    {
        off_t const oldPos = lseek(iFd,0,SEEK_CUR);
        /* unfortunately zlib.h doesn't provide a gzsize(), so we have to do
@@ -1439,10 +1639,16 @@ unsigned long long FileFd::Size()
 	* bits of the file */
        // FIXME: Size for gz-files is limited by 32bit… no largefile support
        if (lseek(iFd, -4, SEEK_END) < 0)
-	   return _error->Errno("lseek","Unable to seek to end of gzipped file");
+       {
+	  Flags |= Fail;
+	  return _error->Errno("lseek","Unable to seek to end of gzipped file");
+       }
        size = 0L;
        if (read(iFd, &size, 4) != 4)
-	   return _error->Errno("read","Unable to read original size of gzipped file");
+       {
+	  Flags |= Fail;
+	  return _error->Errno("read","Unable to read original size of gzipped file");
+       }
 
 #ifdef WORDS_BIGENDIAN
        uint32_t tmp_size = size;
@@ -1452,7 +1658,10 @@ unsigned long long FileFd::Size()
 #endif
 
        if (lseek(iFd, oldPos, SEEK_SET) < 0)
-	   return _error->Errno("lseek","Unable to seek in gzipped file");
+       {
+	  Flags |= Fail;
+	  return _error->Errno("lseek","Unable to seek in gzipped file");
+       }
 
        return size;
    }
@@ -1467,20 +1676,23 @@ unsigned long long FileFd::Size()
 time_t FileFd::ModificationTime()
 {
    struct stat Buf;
-   if (d->pipe == false && fstat(iFd,&Buf) != 0)
+   if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
    {
+      Flags |= Fail;
       _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
       return 0;
    }
 
    // for compressor pipes st_size is undefined and at 'best' zero
-   if (d->pipe == true || S_ISFIFO(Buf.st_mode))
+   if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
    {
       // we set it here, too, as we get the info here for free
       // in theory the Open-methods should take care of it already
-      d->pipe = true;
+      if (d != NULL)
+	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
       {
+	 Flags |= Fail;
 	 _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
 	 return 0;
       }
@@ -1500,19 +1712,18 @@ bool FileFd::Close()
    bool Res = true;
    if ((Flags & AutoClose) == AutoClose)
    {
-#if APT_USE_ZLIB
-      if (d != NULL && d->gz != NULL) {
-	 int const e = gzclose(d->gz);
-	 // gzdclose() on empty files always fails with "buffer error" here, ignore that
-	 if (e != 0 && e != Z_BUF_ERROR)
-	    Res &= _error->Errno("close",_("Problem closing the gzip file %s"), FileName.c_str());
-      } else
-#endif
-	 if (iFd > 0 && close(iFd) != 0)
-	    Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
+      if ((Flags & Compressed) != Compressed && iFd > 0 && close(iFd) != 0)
+	 Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
+
+      if (d != NULL)
+      {
+	 Res &= d->CloseDown(FileName);
+	 delete d;
+	 d = NULL;
+      }
    }
 
-   if ((Flags & Replace) == Replace && iFd >= 0) {
+   if ((Flags & Replace) == Replace) {
       if (rename(TemporaryFileName.c_str(), FileName.c_str()) != 0)
 	 Res &= _error->Errno("rename",_("Problem renaming the file %s to %s"), TemporaryFileName.c_str(), FileName.c_str());
 
@@ -1527,14 +1738,8 @@ bool FileFd::Close()
       if (unlink(FileName.c_str()) != 0)
 	 Res &= _error->WarningE("unlnk",_("Problem unlinking the file %s"), FileName.c_str());
 
-   if (d != NULL)
-   {
-      if (d->compressor_pid > 0)
-	 ExecWait(d->compressor_pid, "FileFdCompressor", true);
-      delete d;
-      d = NULL;
-   }
-
+   if (Res == false)
+      Flags |= Fail;
    return Res;
 }
 									/*}}}*/
@@ -1543,10 +1748,11 @@ bool FileFd::Close()
 /* */
 bool FileFd::Sync()
 {
-#ifdef _POSIX_SYNCHRONIZED_IO
    if (fsync(iFd) != 0)
+   {
+      Flags |= Fail;
       return _error->Errno("sync",_("Problem syncing the file"));
-#endif
+   }
    return true;
 }
 									/*}}}*/

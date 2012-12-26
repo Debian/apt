@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -30,19 +30,11 @@
  <!-- Man page title -->
  <refnamediv>
     <refname>apt-extracttemplates</refname>
-    <refpurpose>Utility to extract DebConf config and templates from Debian packages</refpurpose>
+    <refpurpose>Utility to extract <command>debconf</command> config and templates from Debian packages</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-extracttemplates</command>
-      <arg><option>-hv</option></arg>
-      <arg><option>-t=<replaceable>temporary directory</replaceable></option></arg>
-      <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
-   </cmdsynopsis>
- </refsynopsisdiv>
- 
+ &synopsis-command-apt-extracttemplates;
+
  <refsect1><title>Description</title>
    <para><command>apt-extracttemplates</command> will take one or more Debian package files
    as input and write out (to a temporary directory) all associated config
@@ -51,8 +43,9 @@
    in the format:</para>
    <para>package version template-file config-script</para>
    <para>template-file and config-script are written to the temporary directory
-   specified by the -t or --tempdir (<literal>APT::ExtractTemplates::TempDir</literal>) 
-   directory, with filenames of the form <filename>package.template.XXXX</filename> and 
+   specified by the <option>-t</option> or <option>--tempdir</option>
+   (<literal>APT::ExtractTemplates::TempDir</literal>) directory,
+   with filenames of the form <filename>package.template.XXXX</filename> and
    <filename>package.config.XXXX</filename></para>
  </refsect1>
  
@@ -62,7 +55,7 @@
    <variablelist>
      <varlistentry><term><option>-t</option></term><term><option>--tempdir</option></term>
      <listitem><para>
-     Temporary directory in which to write extracted debconf template files
+     Temporary directory in which to write extracted <command>debconf</command> template files
      and config scripts.
      Configuration Item: <literal>APT::ExtractTemplates::TempDir</literal></para></listitem>
      </varlistentry>

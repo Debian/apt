@@ -38,7 +38,7 @@
 typedef std::vector<pkgIndexFile *>::iterator FileIterator;
 template <typename Iter> std::vector<Iter*> pkgCacheGenerator::Dynamic<Iter>::toReMap;
 
-bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang);
 
 using std::string;
@@ -69,7 +69,9 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       *Cache.HeaderP = pkgCache::Header();
       map_ptrloc const idxVerSysName = WriteStringInMap(_system->VS->Label);
       Cache.HeaderP->VerSysName = idxVerSysName;
-      map_ptrloc const idxArchitecture = WriteStringInMap(_config->Find("APT::Architecture"));
+      // this pointer is set in ReMap, but we need it now for WriteUniqString
+      Cache.StringItemP = (pkgCache::StringItem *)Map.Data();
+      map_ptrloc const idxArchitecture = WriteUniqString(_config->Find("APT::Architecture"));
       Cache.HeaderP->Architecture = idxArchitecture;
       if (unlikely(idxVerSysName == 0 || idxArchitecture == 0))
 	 return;
@@ -195,12 +197,27 @@ bool pkgCacheGenerator::MergeList(ListParser &List,
       string const Version = List.Version();
       if (Version.empty() == true && Arch.empty() == true)
       {
+	 // package descriptions
 	 if (MergeListGroup(List, PackageName) == false)
 	    return false;
+	 continue;
       }
 
       if (Arch.empty() == true)
-	 Arch = _config->Find("APT::Architecture");
+      {
+	 // use the pseudo arch 'none' for arch-less packages
+	 Arch = "none";
+	 /* We might built a SingleArchCache here, which we don't want to blow up
+	    just for these :none packages to a proper MultiArchCache, so just ensure
+	    that we have always a native package structure first for SingleArch */
+	 pkgCache::PkgIterator NP;
+	 Dynamic<pkgCache::PkgIterator> DynPkg(NP);
+	 if (NewPackage(NP, PackageName, _config->Find("APT::Architecture")) == false)
+	 // TRANSLATOR: The first placeholder is a package name,
+	 // the other two should be copied verbatim as they include debug info
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			      PackageName.c_str(), "NewPackage", 0);
+      }
 
       // Get a pointer to the package structure
       pkgCache::PkgIterator Pkg;
@@ -286,7 +303,7 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
       pkgCache::DescIterator Desc = Ver.DescriptionList();
 
       // a version can only have one md5 describing it
-      if (MD5SumValue(Desc.md5()) != CurMd5)
+      if (Desc.end() == true || MD5SumValue(Desc.md5()) != CurMd5)
 	 continue;
 
       // don't add a new description if we have one for the given
@@ -304,6 +321,9 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
       void const * const oldMap = Map.Data();
       map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+      if (unlikely(descindex == 0 && _error->PendingError()))
+	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			      Pkg.Name(), "NewDescription", 1);
       if (oldMap != Map.Data())
 	 LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
       *LastDesc = descindex;
@@ -415,6 +435,43 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 				    Pkg.Name(), "AddImplicitDepends", 1);
       }
+      /* :none packages are packages without an architecture. They are forbidden by
+	 debian-policy, so usually they will only be in (old) dpkg status files -
+	 and dpkg will complain about them - and are pretty rare. We therefore do
+	 usually not create conflicts while the parent is created, but only if a :none
+	 package (= the target) appears. This creates incorrect dependencies on :none
+	 for architecture-specific dependencies on the package we copy from, but we
+	 will ignore this bug as architecture-specific dependencies are only allowed
+	 in jessie and until then the :none packages should be extinct (hopefully).
+	 In other words: This should work long enough to allow graceful removal of
+	 these packages, it is not supposed to allow users to keep using them … */
+      if (strcmp(Pkg.Arch(), "none") == 0)
+      {
+	 pkgCache::PkgIterator M = Grp.FindPreferredPkg();
+	 if (M.end() == false && Pkg != M)
+	 {
+	    pkgCache::DepIterator D = M.RevDependsList();
+	    Dynamic<pkgCache::DepIterator> DynD(D);
+	    for (; D.end() == false; ++D)
+	    {
+	       if ((D->Type != pkgCache::Dep::Conflicts &&
+		    D->Type != pkgCache::Dep::DpkgBreaks &&
+		    D->Type != pkgCache::Dep::Replaces) ||
+		   D.ParentPkg().Group() == Grp)
+		  continue;
+
+	       map_ptrloc *OldDepLast = NULL;
+	       pkgCache::VerIterator ConVersion = D.ParentVer();
+	       Dynamic<pkgCache::VerIterator> DynV(ConVersion);
+	       // duplicate the Conflicts/Breaks/Replaces for :none arch
+	       if (D->Version == 0)
+		  NewDepends(Pkg, ConVersion, "", 0, D->Type, OldDepLast);
+	       else
+		  NewDepends(Pkg, ConVersion, D.TargetVer(),
+			     D->CompareOp, D->Type, OldDepLast);
+	    }
+	 }
+      }
    }
    if (unlikely(AddImplicitDepends(Grp, Pkg, Ver) == false))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
@@ -456,6 +513,9 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
    oldMap = Map.Data();
    map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+   if (unlikely(descindex == 0 && _error->PendingError()))
+      return _error->Error(_("Error occurred while processing %s (%s%d)"),
+			   Pkg.Name(), "NewDescription", 2);
    if (oldMap != Map.Data())
        LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
    *LastDesc = descindex;
@@ -716,6 +776,7 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    
    // Fill it in
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
+   //Dynamic<pkgCache::VerIterator> DynV(Ver); // caller MergeListVersion already takes care of it
    Ver->NextVer = Next;
    Ver->ID = Cache.HeaderP->VersionCount++;
    map_ptrloc const idxVerStr = WriteStringInMap(VerStr);
@@ -865,6 +926,9 @@ bool pkgCacheGenerator::ListParser::NewDepends(pkgCache::VerIterator &Ver,
 
    // Locate the target package
    pkgCache::PkgIterator Pkg = Grp.FindPkg(Arch);
+   // we don't create 'none' packages and their dependencies if we can avoid it …
+   if (Pkg.end() == true && Arch == "none" && strcmp(Ver.ParentPkg().Arch(), "none") != 0)
+      return true;
    Dynamic<pkgCache::PkgIterator> DynPkg(Pkg);
    if (Pkg.end() == true) {
       if (unlikely(Owner->NewPackage(Pkg, PackageName, Arch) == false))
@@ -911,8 +975,12 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
    Prv->Version = Ver.Index();
    Prv->NextPkgProv = Ver->ProvidesList;
    Ver->ProvidesList = Prv.Index();
-   if (Version.empty() == false && unlikely((Prv->ProvideVersion = WriteString(Version)) == 0))
-      return false;
+   if (Version.empty() == false) {
+      map_ptrloc const idxProvideVersion = WriteString(Version);
+      Prv->ProvideVersion = idxProvideVersion;
+      if (unlikely(idxProvideVersion == 0))
+	 return false;
+   }
    
    // Locate the target package
    pkgCache::PkgIterator Pkg;
@@ -1310,10 +1378,11 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 	 }
 	 _error->RevertToStack();
       }
-      else if (Debug == true)
+      else
       {
 	 _error->MergeWithStack();
-	 std::clog << "Open filebased MMap" << std::endl;
+	 if (Debug == true)
+	    std::clog << "Open filebased MMap" << std::endl;
       }
    }
    if (Writeable == false || CacheFile.empty() == true)
@@ -1449,11 +1518,11 @@ bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **O
 }
 									/*}}}*/
 // IsDuplicateDescription						/*{{{*/
-bool IsDuplicateDescription(pkgCache::DescIterator Desc,
+static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 			    MD5SumValue const &CurMd5, std::string const &CurLang)
 {
    // Descriptions in the same link-list have all the same md5
-   if (MD5SumValue(Desc.md5()) != CurMd5)
+   if (Desc.end() == true || MD5SumValue(Desc.md5()) != CurMd5)
       return false;
    for (; Desc.end() == false; ++Desc)
       if (Desc.LanguageCode() == CurLang)

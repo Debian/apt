@@ -14,13 +14,15 @@ LOCAL := debiandoc-$(firstword $(SOURCE))
 $(LOCAL)-HTML := $(addsuffix .html,$(addprefix $(DOC)/,$(basename $(SOURCE))))
 $(LOCAL)-TEXT := $(addsuffix .text,$(addprefix $(DOC)/,$(basename $(SOURCE))))
 
+debiandoc:
+
 #---------
 
 # Rules to build HTML documentations
 ifdef DEBIANDOC_HTML
 
 # Install generation hooks
-doc: $($(LOCAL)-HTML)
+debiandoc: $($(LOCAL)-HTML)
 veryclean: veryclean/html/$(LOCAL)
 
 vpath %.sgml $(SUBDIRS)
@@ -42,7 +44,7 @@ endif
 ifdef DEBIANDOC_TEXT
 
 # Install generation hooks
-doc: $($(LOCAL)-TEXT)
+debiandoc: $($(LOCAL)-TEXT)
 veryclean: veryclean/text/$(LOCAL)
 
 vpath %.sgml $(SUBDIRS)

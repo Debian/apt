@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>29 February 2004</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,25 +33,16 @@
     <refpurpose>Utility to sort package index files</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-sortpkgs</command>
-      <arg><option>-hvs</option></arg>
-      <arg><option>-o=<replaceable>config string</replaceable></option></arg>
-      <arg><option>-c=<replaceable>file</replaceable></option></arg>
-      <arg choice="plain" rep="repeat"><replaceable>file</replaceable></arg>
-   </cmdsynopsis>
- </refsynopsisdiv>
- 
+ &synopsis-command-apt-sortpkgs;
+
  <refsect1><title>Description</title>
-   <para><command>apt-sortpkgs</command> will take an index file (Source index or Package 
+   <para><command>apt-sortpkgs</command> will take an index file (source index or package 
    index) and sort the records so that they are ordered by the package name. 
    It will also sort the internal fields of each record according to the 
    internal sorting rules.</para>
 
    <para>
-   All output is sent to stdout, the input must be a seekable file.</para>
+   All output is sent to standard output; the input must be a seekable file.</para>
  </refsect1>
  
  <refsect1><title>options</title>
@@ -60,7 +51,7 @@
    <variablelist>
      <varlistentry><term><option>-s</option></term><term><option>--source</option></term>
      <listitem><para>
-     Use Source index field ordering.
+     Use source index field ordering.
      Configuration Item: <literal>APT::SortPkgs::Source</literal>.</para></listitem>
      </varlistentry>
    

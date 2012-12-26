@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-  "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
 
 <!ENTITY % aptent SYSTEM "apt.ent">
 %aptent;
@@ -18,7 +18,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>08 November 2008</date>
+   <date>2012-06-09T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -33,91 +33,8 @@
     <refpurpose>APT package handling utility -- command-line interface</refpurpose>
  </refnamediv>
 
- <!-- Arguments -->
- <refsynopsisdiv>
-   <cmdsynopsis>
-      <command>apt-get</command>
-      <arg><option>-sqdyfmubV</option></arg>
-      <arg>
-	      <option>-o=
-			  <replaceable>config_string</replaceable>
-	      </option>
-      </arg>
-      <arg>
-	      <option>-c=
-		      <replaceable>config_file</replaceable>
-	      </option>
-      </arg>
-      <arg>
-		<option>-t=</option>
-		<arg choice='plain'>
-			<replaceable>target_release</replaceable>
-		</arg>
-      </arg>
-      <arg>
-		<option>-a=</option>
-		<arg choice='plain'>
-			<replaceable>default_architecture</replaceable>
-		</arg>
-      </arg>
+ &synopsis-command-apt-get;
 
-
-      <group choice="req">
-         <arg choice='plain'>update</arg>
-         <arg choice='plain'>upgrade</arg>
-         <arg choice='plain'>dselect-upgrade</arg>
-         <arg choice='plain'>dist-upgrade</arg>
-         <arg choice='plain'>install 
-			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
-				<arg>
-					<group choice='req'>
-						<arg choice='plain'>
-							=<replaceable>pkg_version_number</replaceable>
-						</arg>
-						<arg choice='plain'>
-							/<replaceable>target_release</replaceable>
-						</arg>
-					</group>
-				</arg>
-			 </arg>
-	     </arg>
-         <arg choice='plain'>remove <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg choice='plain'>purge <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg choice='plain'>source 
-			 <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable>
-				<arg>
-					<group choice='req'>
-						<arg choice='plain'>
-							=<replaceable>pkg_version_number</replaceable>
-						</arg>
-						<arg choice='plain'>
-							/<replaceable>target_release</replaceable>
-						</arg>
-					</group>
-				</arg>
-			 </arg>
-	     </arg>
-         <arg choice='plain'>build-dep <arg choice="plain" rep="repeat"><replaceable>pkg</replaceable></arg></arg>
-         <arg choice='plain'>check</arg>
-         <arg choice='plain'>clean</arg>
-         <arg choice='plain'>autoclean</arg>
-         <arg choice='plain'>autoremove</arg>
-		 <arg choice='plain'>
-			 <group choice='req'>
-				<arg choice='plain'>-v</arg>
-				<arg choice='plain'>--version</arg>
-			 </group>
-		 </arg>
-		 <arg choice='plain'>
-			 <group choice='req'>
-				<arg choice='plain'>-h</arg>
-				<arg choice='plain'>--help</arg>
-			 </group>
-		 </arg>
-      </group>   
-   </cmdsynopsis>
- </refsynopsisdiv>
- 
  <refsect1><title>Description</title>
    <para><command>apt-get</command> is the command-line tool for handling packages, and may be 
    considered the user's "back-end" to other tools using the APT
@@ -128,7 +45,7 @@
    commands below must be present.</para>
    
    <variablelist>
-     <varlistentry><term>update</term>
+     <varlistentry><term><option>update</option></term>
      <listitem><para><literal>update</literal> is used to resynchronize the package index files from
      their sources. The indexes of available packages are fetched from the
      location(s) specified in <filename>/etc/apt/sources.list</filename>.
@@ -140,7 +57,7 @@
      of the package files cannot be known in advance.</para></listitem>
      </varlistentry>
      
-     <varlistentry><term>upgrade</term>
+     <varlistentry><term><option>upgrade</option></term>
      <listitem><para><literal>upgrade</literal> is used to install the newest versions of all packages 
      currently installed on the system from the sources enumerated in
      <filename>/etc/apt/sources.list</filename>. Packages currently installed with 
@@ -153,7 +70,20 @@
      available.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>dselect-upgrade</term>
+     <varlistentry><term><option>dist-upgrade</option></term>
+     <listitem><para><literal>dist-upgrade</literal> in addition to performing the function of 
+     <literal>upgrade</literal>, also intelligently handles changing dependencies 
+     with new versions of packages; <command>apt-get</command> has a "smart" conflict 
+     resolution system, and it will attempt to upgrade the most important 
+     packages at the expense of less important ones if necessary. 
+     The <literal>dist-upgrade</literal> command may therefore remove some packages.
+     The <filename>/etc/apt/sources.list</filename> file contains a list of locations 
+     from which to retrieve desired package files.
+     See also &apt-preferences; for a mechanism for
+     overriding the general settings for individual packages.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>dselect-upgrade</option></term>
      <listitem><para><literal>dselect-upgrade</literal>
      is used in conjunction with the traditional Debian packaging
      front-end, &dselect;. <literal>dselect-upgrade</literal>
@@ -163,27 +93,14 @@
      packages).</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>dist-upgrade</term>
-     <listitem><para><literal>dist-upgrade</literal> in addition to performing the function of 
-     <literal>upgrade</literal>, also intelligently handles changing dependencies 
-     with new versions of packages; <command>apt-get</command> has a "smart" conflict 
-     resolution system, and it will attempt to upgrade the most important 
-     packages at the expense of less important ones if necessary. 
-	 So, <literal>dist-upgrade</literal> command may remove some packages.
-     The <filename>/etc/apt/sources.list</filename> file contains a list of locations 
-     from which to retrieve desired package files.
-     See also &apt-preferences; for a mechanism for
-     overriding the general settings for individual packages.</para></listitem>
-     </varlistentry>
-
-     <varlistentry><term>install</term>
+     <varlistentry><term><option>install</option></term>
      <listitem>
 	 <para><literal>install</literal> is followed by one or more 
 	 packages desired for installation or upgrading. 
 	 Each package is a package name, not a fully qualified 
-	 filename (for instance, in a Debian GNU/Linux system, 
-	 libc6 would be the argument provided, not 
-	 <literal>libc6_1.9.6-2.deb</literal>). All packages required 
+	 filename (for instance, in a Debian system, 
+	 <package>apt-utils</package> would be the argument provided, not 
+	 <filename>apt-utils_&apt-product-version;_amd64.deb</filename>). All packages required 
 	 by the package(s) specified for installation will also 
 	 be retrieved and installed. 
 	 The <filename>/etc/apt/sources.list</filename> file is 
@@ -230,34 +147,33 @@
      with a '^' or '$' character, or create a more specific regular expression.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>remove</term>
+     <varlistentry><term><option>remove</option></term>
      <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
-	 removed instead of installed. Note the removing a package leaves its
-	 configuration files in system. If a plus sign is appended to the package 
+	 removed instead of installed. Note that removing a package leaves its
+	 configuration files on the system. If a plus sign is appended to the package 
      name (with no intervening space), the identified package will be 
      installed instead of removed.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>purge</term>
+     <varlistentry><term><option>purge</option></term>
      <listitem><para><literal>purge</literal> is identical to <literal>remove</literal> except that packages are 
      removed and purged (any configuration files are deleted too).</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>source</term>
+     <varlistentry><term><option>source</option></term>
      <listitem><para><literal>source</literal> causes <command>apt-get</command> to fetch source packages. APT 
      will examine the available packages to decide which source package to 
      fetch. It will then find and download into the current directory the 
-     newest available version of that source package while respect the
+     newest available version of that source package while respecting the
      default release, set with the option <literal>APT::Default-Release</literal>,
      the <option>-t</option> option or per package with the
      <literal>pkg/release</literal> syntax, if possible.</para>
 
      <para>Source packages are tracked separately
-     from binary packages via <literal>deb-src</literal> type lines 
+     from binary packages via <literal>deb-src</literal> lines 
      in the &sources-list; file. This means that you will need to add such a line
-     for each repository you want to get sources from. If you don't do this
-     you will properly get another (newer, older or none) source version than
-     the one you have installed or could install.</para>
+     for each repository you want to get sources from; otherwise you will probably
+     get either the wrong (too old/too new) source versions or none at all.</para>
 
      <para>If the <option>--compile</option> option is specified
      then the package will be compiled to a binary .deb using
@@ -271,31 +187,31 @@
      used for the package files. This enables exact matching of the source 
      package name and version, implicitly enabling the 
      <literal>APT::Get::Only-Source</literal> option.</para>
-     
-     <para>Note that source packages are not tracked like binary packages, they 
-     exist only in the current directory and are similar to downloading source
-     tar balls.</para></listitem>
+
+     <para>Note that source packages are not installed and tracked in the
+     <command>dpkg</command> database like binary packages; they are simply downloaded
+     to the current directory, like source tarballs.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>build-dep</term>
+     <varlistentry><term><option>build-dep</option></term>
      <listitem><para><literal>build-dep</literal> causes apt-get to install/remove packages in an 
      attempt to satisfy the build dependencies for a source package. By default the dependencies are
      satisfied to build the package natively. If desired a host-architecture can be specified
      with the <option>--host-architecture</option> option instead.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>check</term>
+     <varlistentry><term><option>check</option></term>
      <listitem><para><literal>check</literal> is a diagnostic tool; it updates the package cache and checks 
      for broken dependencies.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>download</term>
+     <varlistentry><term><option>download</option></term>
        <listitem><para><literal>download</literal> will download the given
            binary package into the current directory.
        </para></listitem>
      </varlistentry>
 
-     <varlistentry><term>clean</term>
+     <varlistentry><term><option>clean</option></term>
      <listitem><para><literal>clean</literal> clears out the local repository of retrieved package 
      files. It removes everything but the lock file from 
      <filename>&cachedir;/archives/</filename> and 
@@ -305,7 +221,7 @@
      from time to time to free up disk space.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>autoclean</term>
+     <varlistentry><term><option>autoclean</option></term>
      <listitem><para>Like <literal>clean</literal>, <literal>autoclean</literal> clears out the local 
      repository of retrieved package files. The difference is that it only 
      removes package files that can no longer be downloaded, and are largely 
@@ -315,17 +231,17 @@
      erased if it is set to off.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>autoremove</term>
+     <varlistentry><term><option>autoremove</option></term>
      <listitem><para><literal>autoremove</literal> is used to remove packages that were automatically
      installed to satisfy dependencies for other packages and are now no longer needed.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term>changelog</term>
+     <varlistentry><term><option>changelog</option></term>
        <listitem><para><literal>changelog</literal> downloads a package changelog and displays
            it through <command>sensible-pager</command>. The server name and base
            directory is defined in the <literal>APT::Changelogs::Server</literal>
-           variable (e. g. <ulink>http://packages.debian.org/changelogs</ulink> for
-           Debian or <ulink>http://changelogs.ubuntu.com/changelogs</ulink> for
+	   variable (e.g. <ulink url="http://packages.debian.org/changelogs">packages.debian.org/changelogs</ulink> for
+	   Debian or <ulink url="http://changelogs.ubuntu.com/changelogs">changelogs.ubuntu.com/changelogs</ulink> for
            Ubuntu).
            By default it displays the changelog for the version that is
            installed.  However, you can specify the same options as for
@@ -374,7 +290,7 @@
 
      <varlistentry><term><option>-m</option></term><term><option>--ignore-missing</option></term>
      <term><option>--fix-missing</option></term>
-     <listitem><para>Ignore missing packages; If packages cannot be retrieved or fail the    
+     <listitem><para>Ignore missing packages; if packages cannot be retrieved or fail the    
      integrity check after retrieval (corrupted package files), hold back    
      those packages and handle the result. Use of this option together with  
      <option>-f</option> may produce an error in some situations. If a package is 
@@ -395,9 +311,9 @@
      <listitem><para>Quiet; produces output suitable for logging, omitting progress indicators.
      More q's will produce more quiet up to a maximum of 2. You can also use
      <option>-q=#</option> to set the quiet level, overriding the configuration file. 
-     Note that quiet level 2 implies <option>-y</option>, you should never use -qq 
+     Note that quiet level 2 implies <option>-y</option>; you should never use -qq 
      without a no-action modifier such as -d, --print-uris or -s as APT may 
-     decided to do something you did not expect.
+     decide to do something you did not expect.
      Configuration Item: <literal>quiet</literal>.</para></listitem>
      </varlistentry>
 
@@ -411,17 +327,18 @@
      actually change the system. 
      Configuration Item: <literal>APT::Get::Simulate</literal>.</para>
 
-     <para>Simulation run as user will deactivate locking (<literal>Debug::NoLocking</literal>)
-     automatic. Also a notice will be displayed indicating that this is only a simulation,
-     if the option <literal>APT::Get::Show-User-Simulation-Note</literal> is set (Default: true).
-     Neither NoLocking nor the notice will be triggered if run as root (root should know what
-     he is doing without further warnings by <literal>apt-get</literal>).</para>
+     <para>Simulated runs performed as a user will automatically deactivate locking
+     (<literal>Debug::NoLocking</literal>), and if the option
+     <literal>APT::Get::Show-User-Simulation-Note</literal> is set
+     (as it is by default) a notice will also be displayed indicating that
+     this is only a simulation. Runs performed as root do not trigger either
+     NoLocking or the notice - superusers should know what they are doing
+     without further warnings from <literal>apt-get</literal>.</para>
 
-     <para>Simulate prints out
-     a series of lines each one representing a dpkg operation, Configure (Conf),
-     Remove (Remv), Unpack (Inst). Square brackets indicate broken packages
-     and empty set of square brackets meaning breaks that are of no consequence
-     (rare).</para></listitem>
+     <para>Simulated runs print out a series of lines, each representing a <command>dpkg</command>
+     operation: configure (<literal>Conf</literal>), remove (<literal>Remv</literal>)
+     or unpack (<literal>Inst</literal>). Square brackets indicate broken packages, and
+     empty square brackets indicate breaks that are of no consequence (rare).</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>-y</option></term><term><option>--yes</option></term>
@@ -439,7 +356,7 @@
      </varlistentry>
 
      <varlistentry><term><option>-u</option></term><term><option>--show-upgraded</option></term>
-     <listitem><para>Show upgraded packages; Print out a list of all packages that are to be
+     <listitem><para>Show upgraded packages; print out a list of all packages that are to be
      upgraded. 
      Configuration Item: <literal>APT::Get::Show-Upgraded</literal>.</para></listitem>
      </varlistentry>
@@ -466,28 +383,29 @@
      </varlistentry>
 
      <varlistentry><term><option>--ignore-hold</option></term>
-     <listitem><para>Ignore package Holds; This causes <command>apt-get</command> to ignore a hold 
+     <listitem><para>Ignore package holds; this causes <command>apt-get</command> to ignore a hold 
      placed on a package. This may be useful in conjunction with 
      <literal>dist-upgrade</literal> to override a large number of undesired holds. 
      Configuration Item: <literal>APT::Ignore-Hold</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--no-upgrade</option></term>
-     <listitem><para>Do not upgrade packages; When used in conjunction with <literal>install</literal>,
+     <listitem><para>Do not upgrade packages; when used in conjunction with <literal>install</literal>,
      <literal>no-upgrade</literal> will prevent packages on the command line
      from being upgraded if they are already installed.
      Configuration Item: <literal>APT::Get::Upgrade</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--only-upgrade</option></term>
-     <listitem><para>Do not install new packages; When used in conjunction with <literal>install</literal>,
-     <literal>only-upgrade</literal> will prevent packages on the command line
-     from being upgraded if they are not already installed.
+     <listitem><para>Do not install new packages; when used in conjunction
+     with <literal>install</literal>, <literal>only-upgrade</literal> will
+     install upgrades for already installed packages only and ignore requests
+     to install new packages.
      Configuration Item: <literal>APT::Get::Only-Upgrade</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--force-yes</option></term>
-     <listitem><para>Force yes; This is a dangerous option that will cause apt to continue 
+     <listitem><para>Force yes; this is a dangerous option that will cause apt to continue 
      without prompting if it is doing something potentially harmful. It 
      should not be used except in very special situations. Using 
      <literal>force-yes</literal> can potentially destroy your system! 
@@ -497,7 +415,7 @@
      <varlistentry><term><option>--print-uris</option></term>
      <listitem><para>Instead of fetching the files to install their URIs are printed. Each
      URI will have the path, the destination file name, the size and the expected
-     md5 hash. Note that the file name to write to will not always match
+     MD5 hash. Note that the file name to write to will not always match
      the file name on the remote site! This also works with the 
      <literal>source</literal> and <literal>update</literal> commands. When used with the
      <literal>update</literal> command the MD5 and size are not included, and it is
@@ -514,23 +432,22 @@
      </varlistentry>
 
      <varlistentry><term><option>--reinstall</option></term>
-     <listitem><para>Re-Install packages that are already installed and at the newest version.
+     <listitem><para>Re-install packages that are already installed and at the newest version.
      Configuration Item: <literal>APT::Get::ReInstall</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>--list-cleanup</option></term>
-     <listitem><para>This option defaults to on, use <literal>--no-list-cleanup</literal> to turn it 
-     off. When on <command>apt-get</command> will automatically manage the contents of 
-     <filename>&statedir;/lists</filename> to ensure that obsolete files are erased. 
-     The only  reason to turn it off is if you frequently change your source 
-     list. 
+     <listitem><para>This option is on by default; use <literal>--no-list-cleanup</literal> to turn
+     it off. When it is on, <command>apt-get</command> will automatically manage the contents
+     of <filename>&statedir;/lists</filename> to ensure that obsolete files are erased.
+     The only reason to turn it off is if you frequently change your sources list.
      Configuration Item: <literal>APT::Get::List-Cleanup</literal>.</para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>-t</option></term>
                    <term><option>--target-release</option></term>
                    <term><option>--default-release</option></term>
-     <listitem><para>This option controls the default input to the policy engine, it creates
+     <listitem><para>This option controls the default input to the policy engine; it creates
      a default pin at priority 990 using the specified release string.
      This overrides the general settings in <filename>/etc/apt/preferences</filename>.
      Specifically pinned packages are not affected by the value
@@ -546,7 +463,7 @@
      <varlistentry><term><option>--trivial-only</option></term>
      <listitem><para>
      Only perform operations that are 'trivial'. Logically this can be considered
-     related to <option>--assume-yes</option>, where <option>--assume-yes</option> will answer 
+     related to <option>--assume-yes</option>; where <option>--assume-yes</option> will answer 
      yes to any prompt, <option>--trivial-only</option> will answer no. 
      Configuration Item: <literal>APT::Get::Trivial-Only</literal>.</para></listitem>
      </varlistentry>
@@ -559,7 +476,7 @@
 
      <varlistentry><term><option>--auto-remove</option></term>
      <listitem><para>If the command is either <literal>install</literal> or <literal>remove</literal>,
-     then this option acts like running <literal>autoremove</literal> command, removing the unused
+     then this option acts like running the <literal>autoremove</literal> command, removing unused
      dependency packages. Configuration Item: <literal>APT::Get::AutomaticRemove</literal>.
      </para></listitem>
      </varlistentry>
@@ -616,17 +533,6 @@
 
  <refsect1><title>Diagnostics</title>
    <para><command>apt-get</command> returns zero on normal operation, decimal 100 on error.</para>
- </refsect1>
- <refsect1>
-	 <title>ORIGINAL AUTHORS</title>
-	 <para>&apt-author.jgunthorpe;</para>
- </refsect1>
- <refsect1>
-	 <title>CURRENT AUTHORS</title>
-	 <para>
-		 &apt-author.team;
-	 </para>
-		 &apt-qapage;
  </refsect1>
  &manbugs;
 </refentry>

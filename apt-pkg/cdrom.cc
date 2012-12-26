@@ -272,6 +272,29 @@ bool pkgCdrom::DropBinaryArch(vector<string> &List)
    return true;
 }
 									/*}}}*/
+// DropTranslation - Dump unwanted Translation-<lang> files		/*{{{*/
+// ---------------------------------------------------------------------
+/* Here we drop everything that is not configured in Acquire::Languages */
+bool pkgCdrom::DropTranslation(vector<string> &List)
+{
+   for (unsigned int I = 0; I < List.size(); I++)
+   {
+      const char *Start;
+      if ((Start = strstr(List[I].c_str(), "/Translation-")) == NULL)
+	 continue;
+      Start += strlen("/Translation-");
+
+      if (APT::Configuration::checkLanguage(Start, true) == true)
+	 continue;
+
+      // not accepted -> Erase it
+      List.erase(List.begin() + I);
+      --I; // the next entry is at the same index after the erase
+   }
+
+   return true;
+}
+									/*}}}*/
 // DropRepeats - Drop repeated files resulting from symlinks		/*{{{*/
 // ---------------------------------------------------------------------
 /* Here we go and stat every file that we found and strip dup inodes. */
@@ -363,6 +386,7 @@ void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
 
       string Word1 = string(*I,Space,SSpace-Space);
       string Prefix = string(*I,0,Space);
+      string Component = string(*I,SSpace);
       for (vector<string>::iterator J = List.begin(); J != I; ++J)
       {
 	 // Find a space..
@@ -377,9 +401,11 @@ void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
 	    continue;
 	 if (string(*J,Space2,SSpace2-Space2) != Word1)
 	    continue;
-	 
-	 *J += string(*I,SSpace);
-	 *I = string();
+
+	 string Component2 = string(*J, SSpace2) + " ";
+	 if (Component2.find(Component + " ") == std::string::npos)
+	    *J += Component;
+	 I->clear();
       }
    }   
 
@@ -409,28 +435,12 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    
    /* Write out all of the configuration directives by walking the
       configuration tree */
-   const Configuration::Item *Top = Cnf.Tree(0);
-   for (; Top != 0;)
-   {
-      // Print the config entry
-      if (Top->Value.empty() == false)
-	 Out <<  Top->FullTag() + " \"" << Top->Value << "\";" << endl;
-      
-      if (Top->Child != 0)
-      {
-	 Top = Top->Child;
-	 continue;
-      }
-      
-      while (Top != 0 && Top->Next == 0)
-	 Top = Top->Parent;
-      if (Top != 0)
-	 Top = Top->Next;
-   }   
+   Cnf.Dump(Out, NULL, "%f \"%v\";\n", false);
 
    Out.close();
-   
-   link(DFile.c_str(),string(DFile + '~').c_str());
+
+   if (FileExists(DFile) == true)
+      rename(DFile.c_str(), string(DFile + '~').c_str());
    if (rename(NewFile.c_str(),DFile.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   DFile.c_str(),DFile.c_str());
@@ -697,7 +707,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       return false;
    }
 
-   chdir(StartDir.c_str());
+   if (chdir(StartDir.c_str()) != 0)
+      return _error->Errno("chdir","Unable to change to %s", StartDir.c_str());
 
    if (_config->FindB("Debug::aptcdrom",false) == true)
    {
@@ -726,6 +737,8 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    DropRepeats(SigList,"InRelease");
    _error->RevertToStack();
    DropRepeats(TransList,"");
+   if (_config->FindB("APT::CDROM::DropTranslation", true) == true)
+      DropTranslation(TransList);
    if(log != NULL) {
       msg.str("");
       ioprintf(msg, _("Found %zu package indexes, %zu source indexes, "

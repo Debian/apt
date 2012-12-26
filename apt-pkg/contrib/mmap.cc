@@ -83,24 +83,26 @@ bool MMap::Map(FileFd &Fd)
    {
       if ((Flags & ReadOnly) != ReadOnly)
 	 return _error->Error("Compressed file %s can only be mapped readonly", Fd.Name().c_str());
-      Base = new unsigned char[iSize];
+      Base = malloc(iSize);
+      SyncToFd = new FileFd();
       if (Fd.Seek(0L) == false || Fd.Read(Base, iSize) == false)
 	 return _error->Error("Compressed file %s can't be read into mmap", Fd.Name().c_str());
       return true;
    }
 
    // Map it.
-   Base = mmap(0,iSize,Prot,Map,Fd.Fd(),0);
+   Base = (Flags & Fallback) ? MAP_FAILED : mmap(0,iSize,Prot,Map,Fd.Fd(),0);
    if (Base == (void *)-1)
    {
-      if (errno == ENODEV || errno == EINVAL)
+      if (errno == ENODEV || errno == EINVAL || (Flags & Fallback))
       {
 	 // The filesystem doesn't support this particular kind of mmap.
 	 // So we allocate a buffer and read the whole file into it.
 	 if ((Flags & ReadOnly) == ReadOnly)
 	 {
 	    // for readonly, we don't need sync, so make it simple
-	    Base = new unsigned char[iSize];
+	    Base = malloc(iSize);
+	    SyncToFd = new FileFd();
 	    return Fd.Read(Base, iSize);
 	 }
 	 // FIXME: Writing to compressed fd's ?
@@ -108,7 +110,7 @@ bool MMap::Map(FileFd &Fd)
 	 if (dupped_fd == -1)
 	    return _error->Errno("mmap", _("Couldn't duplicate file descriptor %i"), Fd.Fd());
 
-	 Base = new unsigned char[iSize];
+	 Base = calloc(iSize, 1);
 	 SyncToFd = new FileFd (dupped_fd);
 	 if (!SyncToFd->Seek(0L) || !SyncToFd->Read(Base, iSize))
 	    return false;
@@ -134,7 +136,7 @@ bool MMap::Close(bool DoSync)
 
    if (SyncToFd != NULL)
    {
-      delete[] (char *)Base;
+      free(Base);
       delete SyncToFd;
       SyncToFd = NULL;
    }
@@ -154,11 +156,10 @@ bool MMap::Close(bool DoSync)
 /* This is done in syncronous mode - the docs indicate that this will 
    not return till all IO is complete */
 bool MMap::Sync()
-{   
+{
    if ((Flags & UnMapped) == UnMapped)
       return true;
-   
-#ifdef _POSIX_SYNCHRONIZED_IO   
+
    if ((Flags & ReadOnly) != ReadOnly)
    {
       if (SyncToFd != NULL)
@@ -168,11 +169,12 @@ bool MMap::Sync()
       }
       else
       {
+#ifdef _POSIX_SYNCHRONIZED_IO
 	 if (msync((char *)Base, iSize, MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
+#endif
       }
    }
-#endif   
    return true;
 }
 									/*}}}*/
@@ -183,9 +185,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
 {
    if ((Flags & UnMapped) == UnMapped)
       return true;
-   
-#ifdef _POSIX_SYNCHRONIZED_IO
-   unsigned long long PSize = sysconf(_SC_PAGESIZE);
+
    if ((Flags & ReadOnly) != ReadOnly)
    {
       if (SyncToFd != 0)
@@ -196,11 +196,13 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       }
       else
       {
+#ifdef _POSIX_SYNCHRONIZED_IO
+	 unsigned long long const PSize = sysconf(_SC_PAGESIZE);
 	 if (msync((char *)Base+(unsigned long long)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
+#endif
       }
    }
-#endif   
    return true;
 }
 									/*}}}*/
@@ -215,7 +217,17 @@ DynamicMMap::DynamicMMap(FileFd &F,unsigned long Flags,unsigned long const &Work
 {
    if (_error->PendingError() == true)
       return;
-   
+
+   // disable Moveable if we don't grow
+   if (Grow == 0)
+      this->Flags &= ~Moveable;
+
+#ifndef __linux__
+   // kfreebsd doesn't have mremap, so we use the fallback
+   if ((this->Flags & Moveable) == Moveable)
+      this->Flags |= Fallback;
+#endif
+
    unsigned long long EndOfFile = Fd->Size();
    if (EndOfFile > WorkSpace)
       WorkSpace = EndOfFile;
@@ -282,8 +294,7 @@ DynamicMMap::DynamicMMap(unsigned long Flags,unsigned long const &WorkSpace,
 	}
 #endif
 	// fallback to a static allocated space
-	Base = new unsigned char[WorkSpace];
-	memset(Base,0,WorkSpace);
+	Base = calloc(WorkSpace, 1);
 	iSize = 0;
 }
 									/*}}}*/
@@ -299,7 +310,7 @@ DynamicMMap::~DynamicMMap()
 #ifdef _POSIX_MAPPED_FILES
       munmap(Base, WorkSpace);
 #else
-      delete [] (unsigned char *)Base;
+      free(Base);
 #endif
       return;
    }
@@ -328,7 +339,7 @@ unsigned long DynamicMMap::RawAllocate(unsigned long long Size,unsigned long Aln
       if(!Grow())
       {
 	 _error->Fatal(_("Dynamic MMap ran out of room. Please increase the size "
-			 "of APT::Cache-Limit. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
+			 "of APT::Cache-Start. Current value: %lu. (man 5 apt.conf)"), WorkSpace);
 	 return 0;
       }
    }
@@ -463,6 +474,9 @@ bool DynamicMMap::Grow() {
 		Base = realloc(Base, newSize);
 		if (Base == NULL)
 			return false;
+		else
+			/* Set new memory to 0 */
+			memset((char*)Base + WorkSpace, 0, newSize - WorkSpace);
 	}
 
 	Pools =(Pool*) Base + poolOffset;
