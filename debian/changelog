@@ -14,6 +14,9 @@ apt (0.9.8~exp1) UNRELEASED; urgency=low
   * lp:~mvo/apt/config-clear:
     - support Configuration.Clear() for a clear of the entire 
       configuration
+  * apt-pkg/deb/dpkgpm.cc:
+    - use tcgetattr() on STDOUT instead of STDIN so that term.log
+      works for redirected stdin
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Mon, 09 Jul 2012 17:36:40 +0200
 

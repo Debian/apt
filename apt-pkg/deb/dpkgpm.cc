@@ -1205,7 +1205,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // if tcgetattr does not return zero there was a error
       // and we do not do any pty magic
-      if (tcgetattr(0, &tt) == 0)
+      if (tcgetattr(STDOUT_FILENO, &tt) == 0)
       {
 	 ioctl(0, TIOCGWINSZ, (char *)&win);
 	 if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
