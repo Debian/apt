@@ -7,6 +7,8 @@ apt (0.9.7.8) UNRELEASED; urgency=low
   * apt-pkg/deb/dpkgpm.cc:
     - use tcgetattr() on STDOUT instead of STDIN so that term.log
       works for redirected stdin
+    - print error in log if tcgetattr() fails instead of writing
+      a empty file
 
  -- Christian Perrier <bubulle@debian.org>  Mon, 24 Dec 2012 07:01:20 +0100
 
