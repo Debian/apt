@@ -1255,7 +1255,9 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
    {
       if (_config->FindB("APT::Get::Trivial-Only",false) == true)
 	 return _error->Error(_("Trivial Only specified but this is not a trivial operation."));
-      
+
+      // TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+      //             careful with hard to type or special characters (like non-breaking spaces)
       const char *Prompt = _("Yes, do as I say!");
       ioprintf(c2out,
 	       _("You are about to do something potentially harmful.\n"
@@ -1734,7 +1736,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
 	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
-	       Cache->MarkDelete(Pkg, purgePkgs);
+	       Cache->MarkDelete(Pkg, purgePkgs, 0, false);
 	    else
 	       Cache->MarkKeep(Pkg, false, false);
 	 }
@@ -1748,7 +1750,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    {
 	       if (Pkg.CandVersion() != 0)
 	          tooMuch.insert(Pkg);
-	       Cache->MarkDelete(Pkg, false);
+	       Cache->MarkDelete(Pkg, false, 0, false);
 	    }
 	    // only show stuff in the list that is not yet marked for removal
 	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false)
@@ -1785,7 +1787,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		    continue;
 		 if (Debug == true)
 		    std::clog << "Save " << Pkg << " as another installed garbage package depends on it" << std::endl;
-		 Cache->MarkInstall(Pkg, false);
+		 Cache->MarkInstall(Pkg, false, 0, false);
 		 if (hideAutoRemove == false)
 		    ++autoRemoveCount;
 		 tooMuch.erase(Pkg);

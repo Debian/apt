@@ -287,13 +287,13 @@ bool pkgApplyStatus(pkgDepCache &Cache)
 		 Cache[I].CandidateVerIter(Cache).Downloadable() == true)
 	       Cache.MarkInstall(I, true, 0, false);
 	    else
-	       Cache.MarkDelete(I);
+	       Cache.MarkDelete(I, false, 0, false);
 	 }
 	 break;
 
 	 // This means removal failed
 	 case pkgCache::State::HalfInstalled:
-	 Cache.MarkDelete(I);
+	 Cache.MarkDelete(I, false, 0, false);
 	 break;
 	 
 	 default:
@@ -774,7 +774,7 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
       if (WasKept == true)
 	 Cache.MarkKeep(Pkg, false, false);
       else
-	 Cache.MarkDelete(Pkg);
+	 Cache.MarkDelete(Pkg, false, 0, false);
       return false;
    }	 
    
@@ -903,7 +903,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		OldBreaks < Cache.BrokenCount())
 	    {
 	       if (OldVer == 0)
-		  Cache.MarkDelete(I);
+		  Cache.MarkDelete(I, false, 0, false);
 	       else
 		  Cache.MarkKeep(I, false, false);
 	    }	    
@@ -942,7 +942,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		     {
 			if (Debug == true)
 			   clog << "  Or group remove for " << I.FullName(false) << endl;
-			Cache.MarkDelete(I);
+			Cache.MarkDelete(I, false, 0, false);
 			Change = true;
 		     }
 		  }
@@ -1077,7 +1077,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 			{
 			   if (Debug == true)
 			      clog << "  Removing " << I.FullName(false) << " rather than change " << Start.TargetPkg().FullName(false) << endl;
-			   Cache.MarkDelete(I);
+			   Cache.MarkDelete(I, false, 0, false);
 			   if (Counter > 1 && Scores[Pkg->ID] > Scores[I->ID])
 			      Scores[I->ID] = Scores[Pkg->ID];
 			}
@@ -1166,7 +1166,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  if (Debug == true)
 		     clog << "  Removing " << I.FullName(false) << " because I can't find " << Start.TargetPkg().FullName(false) << endl;
 		  if (InOr == false)
-		     Cache.MarkDelete(I);
+		     Cache.MarkDelete(I, false, 0, false);
 	       }
 
 	       Change = true;
@@ -1193,7 +1193,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 		  {
 		     if (Debug == true)
 			clog << "  Fixing " << I.FullName(false) << " via remove of " << J->Pkg.FullName(false) << endl;
-		     Cache.MarkDelete(J->Pkg);
+		     Cache.MarkDelete(J->Pkg, false, 0, false);
 		  }
 	       }
 	       else
@@ -1419,12 +1419,18 @@ bool pkgProblemResolver::ResolveByKeepInternal()
 	 continue;
       
       // Restart again.
-      if (K == LastStop)
-	 return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.",I.FullName(false).c_str());
+      if (K == LastStop) {
+          // I is an iterator based off our temporary package list,
+          // so copy the name we need before deleting the temporary list
+          std::string const LoopingPackage = I.FullName(false);
+          delete[] PList;
+          return _error->Error("Internal Error, pkgProblemResolver::ResolveByKeep is looping on package %s.", LoopingPackage.c_str());
+      }
       LastStop = K;
       K = PList - 1;
-   }   
+   }
 
+   delete[] PList;
    return true;
 }
 									/*}}}*/
