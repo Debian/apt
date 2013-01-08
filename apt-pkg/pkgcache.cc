@@ -51,7 +51,7 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 8;
+   MajorVersion = 9;
    MinorVersion = 0;
    Dirty = false;
    

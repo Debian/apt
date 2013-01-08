@@ -550,14 +550,12 @@ void pkgProblemResolver::MakeScores()
    unsigned long Size = Cache.Head().PackageCount;
    memset(Scores,0,sizeof(*Scores)*Size);
 
-   // Maps to pkgCache::State::VerPriority
-   //   which is "Important Required Standard Optional Extra"
-   // (yes, that is confusing, the order of pkgCache::State::VerPriority
-   //  needs to be adjusted but that requires a ABI break)
+   // maps to pkgCache::State::VerPriority: 
+   //    Required Important Standard Optional Extra
    int PrioMap[] = {
       0,
-      _config->FindI("pkgProblemResolver::Scores::Important",2),
       _config->FindI("pkgProblemResolver::Scores::Required",3),
+      _config->FindI("pkgProblemResolver::Scores::Important",2),
       _config->FindI("pkgProblemResolver::Scores::Standard",1),
       _config->FindI("pkgProblemResolver::Scores::Optional",-1),
       _config->FindI("pkgProblemResolver::Scores::Extra",-2)
