@@ -550,11 +550,14 @@ void pkgProblemResolver::MakeScores()
    unsigned long Size = Cache.Head().PackageCount;
    memset(Scores,0,sizeof(*Scores)*Size);
 
-   // Important Required Standard Optional Extra
+   // Maps to pkgCache::State::VerPriority
+   //   which is "Important Required Standard Optional Extra"
+   // (yes, that is confusing, the order of pkgCache::State::VerPriority
+   //  needs to be adjusted but that requires a ABI break)
    int PrioMap[] = {
       0,
-      _config->FindI("pkgProblemResolver::Scores::Important",3),
-      _config->FindI("pkgProblemResolver::Scores::Required",2),
+      _config->FindI("pkgProblemResolver::Scores::Important",2),
+      _config->FindI("pkgProblemResolver::Scores::Required",3),
       _config->FindI("pkgProblemResolver::Scores::Standard",1),
       _config->FindI("pkgProblemResolver::Scores::Optional",-1),
       _config->FindI("pkgProblemResolver::Scores::Extra",-2)
@@ -568,11 +571,11 @@ void pkgProblemResolver::MakeScores()
 
    if (_config->FindB("Debug::pkgProblemResolver::ShowScores",false) == true)
       clog << "Settings used to calculate pkgProblemResolver::Scores::" << endl
-         << "  Important => " << PrioMap[1] << endl
-         << "  Required => " << PrioMap[2] << endl
-         << "  Standard => " << PrioMap[3] << endl
-         << "  Optional => " << PrioMap[4] << endl
-         << "  Extra => " << PrioMap[5] << endl
+         << "  Required => " << PrioMap[pkgCache::State::Required] << endl
+         << "  Important => " << PrioMap[pkgCache::State::Important] << endl
+         << "  Standard => " << PrioMap[pkgCache::State::Standard] << endl
+         << "  Optional => " << PrioMap[pkgCache::State::Optional] << endl
+         << "  Extra => " << PrioMap[pkgCache::State::Extra] << endl
          << "  Essentials => " << PrioEssentials << endl
          << "  InstalledAndNotObsolete => " << PrioInstalledAndNotObsolete << endl
          << "  Depends => " << PrioDepends << endl
