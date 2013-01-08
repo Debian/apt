@@ -28,12 +28,13 @@
 
 using std::string;
 
-static debListParser::WordList PrioList[] = {{"important",pkgCache::State::Important},
-                       {"required",pkgCache::State::Required},
-                       {"standard",pkgCache::State::Standard},
-                       {"optional",pkgCache::State::Optional},
-	               {"extra",pkgCache::State::Extra},
-                       {}};
+static debListParser::WordList PrioList[] = {
+   {"required",pkgCache::State::Required},
+   {"important",pkgCache::State::Important},
+   {"standard",pkgCache::State::Standard},
+   {"optional",pkgCache::State::Optional},
+   {"extra",pkgCache::State::Extra},
+   {}};
 
 // ListParser::debListParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
