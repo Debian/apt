@@ -41,6 +41,11 @@ class HttpsMethod : public pkgAcqMethod
       File = 0;
       curl = curl_easy_init();
    };
+
+   ~HttpsMethod()
+   {
+      curl_easy_cleanup(curl);
+   };
 };
 
 #include <apt-pkg/strutl.h>
