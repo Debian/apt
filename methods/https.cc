@@ -124,7 +124,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
-   curl_easy_setopt(curl, CURLOPT_FAILONERROR, true);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
 
    // SSL parameters are set by default to the common (non mirror-specific) value
@@ -240,6 +239,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
 
    // error handling
+   curl_errorstr[0] = '\0';
    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_errorstr);
 
    // If we ask for uncompressed files servers might respond with content-
@@ -288,7 +288,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    File->Close();
 
    // cleanup
-   if(success != 0) 
+   if(success != 0 || (curl_responsecode != 200 && curl_responsecode != 304))
    {
       _error->Error("%s", curl_errorstr);
       // unlink, no need keep 401/404 page content in partial/
