@@ -13,6 +13,10 @@ apt (0.9.7.8) UNRELEASED; urgency=low
       of e.g. apt-get update. While this adds new translatable strings,
       not having translations for them will not break anything.
       Thanks to Guillem Jover. Closes: #696225
+  * debian/apt.cron.daily:
+    - when reading from /dev/urandom, use less entropy and fix a rare
+      bug when the random number chksum is less than 1000.
+      Closes: #695285
 
  -- Christian Perrier <bubulle@debian.org>  Mon, 24 Dec 2012 07:01:20 +0100
 
