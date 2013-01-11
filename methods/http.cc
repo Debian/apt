@@ -686,7 +686,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       and we expect the proxy to do this */
    if (Proxy.empty() == true || Proxy.Host.empty())
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\nConnection: keep-alive\r\n",
-	      QuoteString(Uri.Path,"~").c_str(),ProperHost.c_str());
+	      QuoteString(Uri.Path,"~ ").c_str(),ProperHost.c_str());
    else
    {
       /* Generate a cache control header if necessary. We place a max
