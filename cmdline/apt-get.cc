@@ -2560,7 +2560,7 @@ bool DoSource(CommandLine &CmdL)
 	 if(!I->Hash.empty() && FileExists(flNotDir(I->Path)))  
 	 {
             HashString hash_string = HashString(I->Hash);
-            if(hash_string.VerifyFile(I->Path))
+            if(hash_string.VerifyFile(flNotDir(I->Path)))
 	    {
 	       ioprintf(c1out,_("Skipping already downloaded file '%s'\n"),
 			flNotDir(I->Path).c_str());

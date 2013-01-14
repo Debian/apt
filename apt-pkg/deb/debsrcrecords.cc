@@ -116,16 +116,21 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 {
    List.erase(List.begin(),List.end());
 
+   // FIXME: build string dynamically from 
+   //            Hashes::SupportedHashes
    const char *hash_field[] = { "Checksums-Sha512", 
                             "Checksums-Sha256",
                             "Checksums-Sha1",
                             "Files", // historic name
                             NULL,
    };
-   const char *hash_type[] = { "Sha512", 
-                            "Sha256",
-                            "Sha1",
-                            "md5sum",
+
+   // FIXME: use string from Hashes::SupportedHashes
+   // FIXME2: this is case senstivie
+   const char *hash_type[] = { "SHA512", 
+                            "SHA256",
+                            "SHA1",
+                            "MD5Sum",
                             NULL,
    };
    
