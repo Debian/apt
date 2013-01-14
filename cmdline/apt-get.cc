@@ -2555,15 +2555,12 @@ bool DoSource(CommandLine &CmdL)
 	 if(queued.find(Last->Index().ArchiveURI(I->Path)) != queued.end())
 	    continue;
 	 queued.insert(Last->Index().ArchiveURI(I->Path));
-	    
+
 	 // check if we have a file with that md5 sum already localy
-	 if(!I->MD5Hash.empty() && FileExists(flNotDir(I->Path)))  
+	 if(!I->Hash.empty() && FileExists(flNotDir(I->Path)))  
 	 {
-	    FileFd Fd(flNotDir(I->Path), FileFd::ReadOnly);
-	    MD5Summation sum;
-	    sum.AddFD(Fd.Fd(), Fd.Size());
-	    Fd.Close();
-	    if((string)sum.Result() == I->MD5Hash) 
+            HashString hash_string = HashString(I->Hash);
+            if(hash_string.VerifyFile(I->Path))
 	    {
 	       ioprintf(c1out,_("Skipping already downloaded file '%s'\n"),
 			flNotDir(I->Path).c_str());
@@ -2572,7 +2569,7 @@ bool DoSource(CommandLine &CmdL)
 	 }
 
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
-			I->MD5Hash,I->Size,
+			I->Hash,I->Size,
 			Last->Index().SourceInfo(*Last,*I),Src);
       }
    }
