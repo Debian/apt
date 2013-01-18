@@ -84,6 +84,7 @@ for kernel in $kernels; do
 	echo "    \"^linux-image-extra-${kernel}$\";" >> "$config_file".dpkg-new
 	echo "    \"^linux-signed-image-${kernel}$\";" >> "$config_file".dpkg-new
 	echo "    \"^linux-backports-modules-.*-${kernel}$\";" >> "$config_file".dpkg-new
+	echo "    \"^linux-headers-${kernel}$\";" >> "$config_file".dpkg-new
 done
 cat >> "$config_file".dpkg-new <<EOF
   };

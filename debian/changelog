@@ -1,3 +1,45 @@
+apt (0.9.7.7ubuntu1) raring; urgency=low
+
+  * Merge from Debian unstable, pulling in new translations and fixes.
+  * Add linux-headers to /etc/kernel/postinst.d/apt-auto-removal guard.
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Fri, 18 Jan 2013 00:32:14 -0700
+
+apt (0.9.7.7) unstable; urgency=low
+
+  [ Program translation updates ]
+  * Catalan (Jordi Mallach)
+  * Drop a confusing non-breaking space. Closes: #691024
+  * Thai (Theppitak Karoonboonyanan). Closes: #691613
+  * Vietnamese (Trần Ngọc Quân). Closes: #693773
+  * Fix Plural forms in German, French, Japanese and Portuguese
+    translations. Thanks to Jakub Wilk for reporting these errors.
+
+  [ David Kalnischkies ]
+  * apt-pkg/packagemanager.cc:
+    - do not do lock-step configuration for a M-A:same package if it isn't
+      unpacked yet in SmartConfigure and do not unpack a M-A:same package
+      again in SmartUnPack if we have already configured it (LP: #1062503)
+  * apt-pkg/depcache.cc:
+    - don't call MarkInstall with the FromUser flag set for packages
+      which are dependencies of APT::Never-MarkAuto-Sections matchers
+    - no mode changes should obviously be ok for pkgDepCache::IsModeChangeOk
+  * cmdline/apt-get.cc:
+    - do not call Mark{Install,Delete} from the autoremove code with
+      the FromUser bit set to avoid modifying the auto-installed bit
+  * apt-pkg/algorithms.cc:
+    - ensure pkgProblemResolver calls MarkDelete without FromUser set
+      so that it can't overrule holds and the protection flag
+  
+  [ Michael Vogt ]
+  * change permissions of /var/log/apt/term.log to 0640 (LP: #975199)
+
+  [ Jonathan Thomas ]
+  * apt-pkg/algorithms.cc:
+    - fix package-pointer array memory leak in ResolveByKeepInternal()
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 13 Dec 2012 09:52:19 +0100
+
 apt (0.9.7.6ubuntu6) raring; urgency=low
 
   * merged from the debian-sid branch
@@ -202,8 +244,13 @@ apt (0.9.7.5) unstable; urgency=low
 
   [ Manpages translation updates ]
   * Japanese (KURASAWA Nozomu) (Closes: #684435)
+  * Portuguese (Américo Monteiro) (Closes: #686975)
 
   [ David Kalnischkies ]
+  * handle packages without a mandatory architecture (debian-policy §5.3)
+    by introducing a pseudo-architecture 'none' so that the small group of
+    users with these packages can get right of them without introducing too
+    much hassle for other users (Closes: #686346)
   * apt-pkg/cdrom.cc:
     - copy only configured translation files from a CD-ROM and not all
       available translation files preventing new installs with d-i from
@@ -223,11 +270,6 @@ apt (0.9.7.5) unstable; urgency=low
     - use the correct interval (x <= P < y) for pin value documentation as
       these are the intervals used by the code (Closes: #685989)
   * apt-pkg/indexcopy.cc:
-    - do not create duplicated flat-archive CD-ROM sources for foreign
-      architectures on multi-arch CD-ROMs
-    - do not warn about files which have a record in the Release file, but
-      are not present on the CD to mirror the behavior of the other methods
-      and to allow uncompressed indexes to be dropped without scaring users
     - do not create duplicated flat-archive CD-ROM sources for foreign
       architectures on multi-arch CD-ROMs
     - do not warn about files which have a record in the Release file, but
@@ -1201,7 +1243,6 @@ apt (0.8.16~exp9) experimental; urgency=low
       commands accepting lists of packages, e.g. policy (Closes: #625960)
   * apt-pkg/depcache.cc:
     - prefer native providers over foreigns even if the chain is foreign
-      LP: #850264.
   * cmdline/apt-get.cc:
     - ignore foreign architectures if we check if a provides has only one
       resolver as it's basically the same for the user, so no need to choose
@@ -1484,12 +1525,12 @@ apt (0.8.16~exp5ubuntu1) oneiric; urgency=low
 
 apt (0.8.16~exp5) experimental; urgency=low
 
+  * merged the latest debian-sid fixes
   * apt-pkg/makefile:
     - install sha256.h compat header
   * apt-pkg/pkgcachegen.{cc,h}:
     - use ref-to-ptr semantic in NewDepends() to ensure that the   
       libapt does not segfault if the cache is remapped in between
-      (LP: #812862)
       (LP: #812862)
     - fix crash when P.Arch() was used but the cache got remapped
   * apt-pkg/acquire-item.{cc,h}:
@@ -1616,10 +1657,6 @@ apt (0.8.15.10) unstable; urgency=high
     - show a debug why a package was kept by ResolveByKeep()
   * doc/manpage-style.xml:
     - put <brackets> around email addresses
-  * apt-pkg/aptconfiguration.cc:
-    - parse dpkg --print-foreign-architectures correctly in
-      case archs are separated by newline instead of space, too.
-      (Closes: #655590)
   * doc/po/de.po:
     - apply typo-fix from Michael Basse, thanks! (LP: #900770)
   * apt-pkg/acquire-item.cc:
@@ -1643,8 +1680,8 @@ apt (0.8.15.10) unstable; urgency=high
   * French: replace "étiquetage" by "épinglage" for "pinning"
 
   [ Michael Vogt ]
-  * merged patch from lp:~uusijani/apt/uusi-branch: 
-     Correct fi translation for hash sum mismatches (LP: #420403)
+  * merged patch from lp:~uusijani/apt/uusi-branch:
+     Correct fi translation for hash sum mismatches (lp:420403)
      Thanks to Jani Uusitalo
 
  -- Michael Vogt <mvo@debian.org>  Tue, 06 Mar 2012 14:14:26 +0100
@@ -6872,7 +6909,7 @@ apt (0.6.46.3-0.2) unstable; urgency=high
   * Fix FTBFS on most arches (regression from the fix of #400874)
 
  -- Andreas Barth <aba@not.so.argh.org>  Tue,  5 Dec 2006 15:51:22 +0000 
-  
+
 apt (0.6.46.3-0.1) unstable; urgency=high
 
   * Non-maintainer upload with permission of Michael Vogt.
@@ -7534,7 +7571,7 @@ apt (0.6.42.2) unstable; urgency=high
   * Priority high to get the AMD key into testing ASAP.
 
  -- Frans Pop <fjp@debian.org>  Sun, 30 Oct 2005 21:29:11 +0100
- 
+
 apt (0.6.42.1) unstable; urgency=low
 
   * fix a incorrect example in the apt_prefrences man page
@@ -9646,3 +9683,4 @@ apt (0.0.1) unstable; urgency=low
   * Initial Release.
 
  -- Scott K. Ellis <scott@debian.org>  Tue, 31 Mar 1998 12:49:28 -0500
+

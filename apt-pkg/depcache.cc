@@ -913,11 +913,15 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
       return true;
 
    StateCache &P = PkgState[Pkg->ID];
+   // not changing the mode is obviously also fine as we might want to call
+   // e.g. MarkInstall multiple times with different arguments for the same package
+   if (P.Mode == mode)
+      return true;
 
    // if previous state was set by user only user can reset it
    if ((P.iFlags & Protected) == Protected)
    {
-      if (unlikely(DebugMarker == true) && P.Mode != mode)
+      if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Ignore Mark" << PrintMode(mode)
 		   << " of " << Pkg << " as its mode (" << PrintMode(P.Mode)
 		   << ") is protected" << std::endl;
@@ -927,7 +931,7 @@ bool pkgDepCache::IsModeChangeOk(ModeList const mode, PkgIterator const &Pkg,
    else if (mode != ModeKeep && Pkg->SelectedState == pkgCache::State::Hold &&
 	    _config->FindB("APT::Ignore-Hold",false) == false)
    {
-      if (unlikely(DebugMarker == true) && P.Mode != mode)
+      if (unlikely(DebugMarker == true))
 	 std::clog << OutputInDepth(Depth) << "Hold prevents Mark" << PrintMode(mode)
 		   << " of " << Pkg << std::endl;
       return false;
@@ -1178,22 +1182,15 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
 			 << " as " << Start.DepType() << " of " << Pkg.Name()
 			 << std::endl;
- 	    // now check if we should consider it a automatic dependency or not
- 	    if(Pkg.Section() && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
- 	    {
+	    MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps);
+	    // now check if we should consider it a automatic dependency or not
+	    if(InstPkg->CurrentVer == 0 && Pkg->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
+	    {
 	       if(DebugAutoInstall == true)
 		  std::clog << OutputInDepth(Depth) << "Setting NOT as auto-installed (direct "
                             << Start.DepType() << " of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
- 	       MarkInstall(InstPkg,true,Depth + 1, true);
- 	    }
- 	    else 
- 	    {
- 	       // mark automatic dependency
- 	       MarkInstall(InstPkg,true,Depth + 1, false, ForceImportantDeps);
- 	       // Set the autoflag, after MarkInstall because MarkInstall unsets it
- 	       if (InstPkg->CurrentVer == 0)
- 		  PkgState[InstPkg->ID].Flags |= Flag::Auto;
- 	    }
+	       MarkAuto(InstPkg, false);
+	    }
 	 }
 	 continue;
       }

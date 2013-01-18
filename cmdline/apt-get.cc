@@ -1736,7 +1736,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	 {
 	    if(Pkg.CurrentVer() != 0 && 
 	       Pkg->CurrentState != pkgCache::State::ConfigFiles)
-	       Cache->MarkDelete(Pkg, purgePkgs);
+	       Cache->MarkDelete(Pkg, purgePkgs, 0, false);
 	    else
 	       Cache->MarkKeep(Pkg, false, false);
 	 }
@@ -1750,7 +1750,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 	    {
 	       if (Pkg.CandVersion() != 0)
 	          tooMuch.insert(Pkg);
-	       Cache->MarkDelete(Pkg, false);
+	       Cache->MarkDelete(Pkg, false, 0, false);
 	    }
 	    // only show stuff in the list that is not yet marked for removal
 	    else if(hideAutoRemove == false && Cache[Pkg].Delete() == false)
@@ -1787,7 +1787,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		    continue;
 		 if (Debug == true)
 		    std::clog << "Save " << Pkg << " as another installed garbage package depends on it" << std::endl;
-		 Cache->MarkInstall(Pkg, false);
+		 Cache->MarkInstall(Pkg, false, 0, false);
 		 if (hideAutoRemove == false)
 		    ++autoRemoveCount;
 		 tooMuch.erase(Pkg);
