@@ -173,7 +173,7 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    Hash = "";
    Size = 0;
    /* Skip over the first blank */
-   while ((*Start == '\t' || *Start == ' ' || *Start == '\n')
+   while ((*Start == '\t' || *Start == ' ' || *Start == '\n' || *Start == '\r')
 	  && Start < End)
       Start++;
    if (Start >= End)
@@ -215,7 +215,8 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    
    EntryEnd = Start;
    /* Find the end of the third entry (the filename) */
-   while ((*EntryEnd != '\t' && *EntryEnd != ' ' && *EntryEnd != '\n')
+   while ((*EntryEnd != '\t' && *EntryEnd != ' ' && 
+           *EntryEnd != '\n' && *EntryEnd != '\r')
 	  && EntryEnd < End)
       EntryEnd++;
 
