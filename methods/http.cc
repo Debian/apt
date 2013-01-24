@@ -685,8 +685,12 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
       pass it on, HTTP/1.1 says the connection should default to keep alive
       and we expect the proxy to do this */
    if (Proxy.empty() == true || Proxy.Host.empty())
+   {
+      // see LP bugs #1003633 and #1086997. The "+" is encoded as a workaround
+      // for a amazon S3 bug
       sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\nConnection: keep-alive\r\n",
-	      QuoteString(Uri.Path,"~ ").c_str(),ProperHost.c_str());
+	      QuoteString(Uri.Path,"+~ ").c_str(),ProperHost.c_str());
+   }
    else
    {
       /* Generate a cache control header if necessary. We place a max
