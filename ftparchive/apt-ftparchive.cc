@@ -254,7 +254,8 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    SrcDone = true;
    
    // Create a package writer object.
-   SourcesWriter Sources(flCombine(OverrideDir,BinOverride),
+   SourcesWriter Sources(_config->Find("APT::FTPArchive::DB"),
+			 flCombine(OverrideDir,BinOverride),
 			 flCombine(OverrideDir,SrcOverride),
 			 flCombine(OverrideDir,SrcExtraOverride));
    if (SrcExt.empty() == false && Sources.SetExts(SrcExt) == false)
@@ -705,7 +706,7 @@ bool SimpleGenSources(CommandLine &CmdL)
 			     SOverride.c_str());
        
    // Create a package writer object.
-   SourcesWriter Sources(Override,SOverride);
+   SourcesWriter Sources(_config->Find("APT::FTPArchive::DB"),Override,SOverride);
    if (_error->PendingError() == true)
       return false;
    
