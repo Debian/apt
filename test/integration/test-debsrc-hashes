@@ -1,0 +1,77 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# pkg-sha256-bad has a bad SHA sum, but good MD5 sum.  If apt is
+# checking the best available hash (as it should), this will trigger
+# a hash mismatch.
+
+cat > aptarchive/Sources <<EOF
+Package: pkg-md5-ok
+Binary: pkg-md5-ok
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: i386
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-ok_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-ok_1.0.tar.gz
+
+Package: pkg-sha256-ok
+Binary: pkg-sha256-ok
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: i386
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-ok_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-ok_1.0.tar.gz
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-ok_1.0.dsc
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-ok_1.0.tar.gz
+Checksums-Sha256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-sha256-ok_1.0.dsc
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-sha256-ok_1.0.tar.gz
+
+Package: pkg-sha256-bad
+Binary: pkg-sha256-bad
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: i386
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-bad_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-bad_1.0.tar.gz
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-bad_1.0.dsc
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-bad_1.0.tar.gz
+Checksums-Sha256:
+ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 0 pkg-sha256-bad_1.0.dsc
+ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 0 pkg-sha256-bad_1.0.tar.gz
+EOF
+
+# create fetchable files
+for x in "pkg-md5-ok" "pkg-sha256-ok" "pkg-sha256-bad"; do
+    touch aptarchive/${x}_1.0.dsc
+    touch aptarchive/${x}_1.0.tar.gz
+done
+
+testok() {
+    msgtest "Test for hash ok of" "$*"
+    $* 2>&1 | grep "Download complete" > /dev/null && msgpass || msgfail
+}
+
+testmismatch() {
+    msgtest "Test for hash mismatch of" "$*"
+    $* 2>&1 | grep "Hash Sum mismatch" > /dev/null && msgpass || msgfail
+}
+
+setupaptarchive
+changetowebserver
+aptget update -qq
+
+testok aptget source -d pkg-md5-ok
+testok aptget source -d pkg-sha256-ok
+testmismatch aptget source -d pkg-sha256-bad
