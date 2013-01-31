@@ -116,28 +116,21 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 {
    List.erase(List.begin(),List.end());
 
-   // FIXME: build string dynamically from 
-   //            Hashes::SupportedHashes
-   const char *hash_field[] = { "Checksums-Sha512", 
-                            "Checksums-Sha256",
-                            "Checksums-Sha1",
-                            "Files", // historic name
-                            NULL,
-   };
-
-   // FIXME: use string from Hashes::SupportedHashes
-   // FIXME2: this is case senstivie
-   const char *hash_type[] = { "SHA512", 
-                            "SHA256",
-                            "SHA1",
-                            "MD5Sum",
-                            NULL,
+   // map from the Hashsum field to the hashsum function,
+   // unfortunately this is not a 1:1 mapping from
+   // Hashes::SupporedHashes as e.g. Files is a historic name for the md5
+   const std::pair<const char*, const char*> SourceHashFields[] = {
+      std::make_pair( "Checksums-Sha512",  "SHA512"),
+      std::make_pair( "Checksums-Sha256",  "SHA256"),
+      std::make_pair( "Checksums-Sha1",  "SHA1"),
+      std::make_pair( "Files",  "MD5Sum"),      // historic Name
    };
    
-   for (int i=0; hash_field[i] != NULL; i++)
+   for (unsigned int i=0;
+        i < sizeof(SourceHashFields)/sizeof(SourceHashFields[0]);
+        i++)
    {
-
-      string Files = Sect.FindS(hash_field[i]);
+      string Files = Sect.FindS(SourceHashFields[i].first);
       if (Files.empty() == true)
          continue;
 
@@ -160,9 +153,10 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
          if (ParseQuoteWord(C, RawHash) == false ||
              ParseQuoteWord(C, Size) == false ||
              ParseQuoteWord(C, F.Path) == false)
-            return _error->Error("Error parsing '%s' record", hash_field[i]);
+            return _error->Error("Error parsing '%s' record", 
+                                 SourceHashFields[i].first);
          // assign full hash string
-         F.Hash = HashString(hash_type[i], RawHash).toStr();
+         F.Hash = HashString(SourceHashFields[i].second, RawHash).toStr();
          
          // Parse the size and append the directory
          F.Size = atoi(Size.c_str());
