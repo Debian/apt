@@ -1,0 +1,104 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertpackage 'stable' 'libmesa' 'amd64,i386' '1' 'Multi-Arch: same'
+insertpackage 'stable' 'libmesa-lts' 'amd64,i386' '1' 'Provides: libmesa
+Conflicts: libmesa
+Multi-Arch: same'
+insertpackage 'stable' 'steam' 'i386' '1' 'Depends: libmesa'
+
+insertpackage 'unstable' 'libmesa' 'amd64,i386' '2' 'Multi-Arch: same'
+insertpackage 'unstable' 'libmesa-lts' 'amd64,i386' '2' 'Provides: libmesa
+Conflicts: libmesa
+Multi-Arch: same'
+insertpackage 'unstable' 'steam' 'i386' '2' 'Depends: libmesa'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libmesa:i386
+The following NEW packages will be installed:
+  libmesa:i386 steam:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libmesa:i386 (1 stable [i386])
+Inst steam:i386 (1 stable [i386])
+Conf libmesa:i386 (1 stable [i386])
+Conf steam:i386 (1 stable [i386])' aptget install steam -st stable
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libmesa:i386
+The following NEW packages will be installed:
+  libmesa:i386 steam:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libmesa:i386 (2 unstable [i386])
+Inst steam:i386 (2 unstable [i386])
+Conf libmesa:i386 (2 unstable [i386])
+Conf steam:i386 (2 unstable [i386])' aptget install steam -st unstable
+
+cp rootdir/var/lib/dpkg/status default-status.dpkg
+insertinstalledpackage 'libmesa' 'amd64' '1' 'Multi-Arch: same'
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libmesa:i386
+The following NEW packages will be installed:
+  libmesa:i386 steam:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libmesa:i386 (1 stable [i386])
+Inst steam:i386 (1 stable [i386])
+Conf libmesa:i386 (1 stable [i386])
+Conf steam:i386 (1 stable [i386])' aptget install steam -st stable
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libmesa libmesa:i386
+The following NEW packages will be installed:
+  libmesa:i386 steam:i386
+The following packages will be upgraded:
+  libmesa
+1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libmesa [1] (2 unstable [amd64])
+Inst libmesa:i386 (2 unstable [i386])
+Inst steam:i386 (2 unstable [i386])
+Conf libmesa (2 unstable [amd64])
+Conf libmesa:i386 (2 unstable [i386])
+Conf steam:i386 (2 unstable [i386])' aptget install steam -st unstable
+
+cp default-status.dpkg rootdir/var/lib/dpkg/status
+insertinstalledpackage 'libmesa-lts' 'amd64' '1' 'Provides: libmesa
+Conflicts: libmesa
+Multi-Arch: same'
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libmesa-lts:i386
+The following NEW packages will be installed:
+  libmesa-lts:i386 steam:i386
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libmesa-lts:i386 (1 stable [i386])
+Inst steam:i386 (1 stable [i386])
+Conf libmesa-lts:i386 (1 stable [i386])
+Conf steam:i386 (1 stable [i386])' aptget install steam -st stable
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libmesa-lts libmesa-lts:i386
+The following NEW packages will be installed:
+  libmesa-lts:i386 steam:i386
+The following packages will be upgraded:
+  libmesa-lts
+1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libmesa-lts [1] (2 unstable [amd64])
+Inst libmesa-lts:i386 (2 unstable [i386])
+Inst steam:i386 (2 unstable [i386])
+Conf libmesa-lts (2 unstable [amd64])
+Conf libmesa-lts:i386 (2 unstable [i386])
+Conf steam:i386 (2 unstable [i386])' aptget install steam -st unstable
