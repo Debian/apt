@@ -31,6 +31,7 @@ class pkgSrcRecords
    // Describes a single file
    struct File
    {
+      std::string MD5Hash;
       std::string Hash;
       unsigned long Size;
       std::string Path;

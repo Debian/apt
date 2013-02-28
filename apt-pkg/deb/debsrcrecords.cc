@@ -157,6 +157,9 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
                                  SourceHashFields[i].first);
          // assign full hash string
          F.Hash = HashString(SourceHashFields[i].second, RawHash).toStr();
+         // API compat hack 
+         if(SourceHashFields[i].second == "MD5Sum")
+            F.MD5Hash = RawHash;
          
          // Parse the size and append the directory
          F.Size = atoi(Size.c_str());
