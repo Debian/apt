@@ -423,7 +423,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 void pkgDPkgPM::DoStdin(int master)
 {
    unsigned char input_buf[256] = {0,}; 
-   ssize_t len = read(0, input_buf, sizeof(input_buf));
+   ssize_t len = read(STDIN_FILENO, input_buf, sizeof(input_buf));
    if (len)
       FileFd::Write(master, input_buf, len);
    else
@@ -1231,6 +1231,11 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    tcsetattr(0, TCSAFLUSH, &rtt);
 	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
 	 }
+      } else {
+         const char *s = _("Can not write log, tcgetattr() failed for stdout");
+         fprintf(stderr, "%s", s);
+         if(d->term_out)
+            fprintf(d->term_out, "%s",s); 
       }
        // Fork dpkg
       pid_t Child;
