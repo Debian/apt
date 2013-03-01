@@ -1741,7 +1741,7 @@ bool pkgAcqArchive::QueueNext()
       {
 	 if(stringcasecmp(ForceHash, "sha512") == 0)
 	    ExpectedHash = HashString("SHA512", Parse.SHA512Hash());
-	 if(stringcasecmp(ForceHash, "sha256") == 0)
+	 else if(stringcasecmp(ForceHash, "sha256") == 0)
 	    ExpectedHash = HashString("SHA256", Parse.SHA256Hash());
 	 else if (stringcasecmp(ForceHash, "sha1") == 0)
 	    ExpectedHash = HashString("SHA1", Parse.SHA1Hash());
