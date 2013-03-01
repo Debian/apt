@@ -951,6 +951,37 @@ struct CompareProviders {
    {
       pkgCache::PkgIterator const A = AV.ParentPkg();
       pkgCache::PkgIterator const B = BV.ParentPkg();
+      // Prefer MA:same packages if other architectures for it are installed
+      if ((AV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same ||
+	  (BV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+      {
+	 bool instA = false;
+	 if ((AV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+	 {
+	    pkgCache::GrpIterator Grp = A.Group();
+	    for (pkgCache::PkgIterator P = Grp.PackageList(); P.end() == false; P = Grp.NextPkg(P))
+	       if (P->CurrentVer != 0)
+	       {
+		  instA = true;
+		  break;
+	       }
+	 }
+	 bool instB = false;
+	 if ((BV->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+	 {
+	    pkgCache::GrpIterator Grp = B.Group();
+	    for (pkgCache::PkgIterator P = Grp.PackageList(); P.end() == false; P = Grp.NextPkg(P))
+	    {
+	       if (P->CurrentVer != 0)
+	       {
+		  instB = true;
+		  break;
+	       }
+	    }
+	 }
+	 if (instA != instB)
+	    return instA == false;
+      }
       // Prefer packages in the same group as the target; e.g. foo:i386, foo:amd64
       if (A->Group != B->Group)
       {
