@@ -172,7 +172,7 @@ apt-doc: build-debiandoc
 # Build architecture-dependent files here.
 
 binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
-apt_MANPAGES = apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
+apt_MANPAGES = apt apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
 apt: build build-manpages
 	dh_testdir -p$@
 	dh_testroot -p$@

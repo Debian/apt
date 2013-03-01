@@ -289,7 +289,7 @@ random_sleep()
     fi
     if [ -z "$RANDOM" ] ; then
         # A fix for shells that do not have this bash feature.
-	RANDOM=$(dd if=/dev/urandom count=1 2> /dev/null | cksum | cut -c"1-5")
+	RANDOM=$(( $(dd if=/dev/urandom bs=2 count=1 2> /dev/null | cksum | cut -d' ' -f1) % 32767 ))
     fi
     TIME=$(($RANDOM % $RandomSleep))
     debug_echo "sleeping for $TIME seconds"
