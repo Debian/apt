@@ -157,6 +157,7 @@ class ContentsWriter : public FTWScanner
 
 class SourcesWriter : public FTWScanner
 {
+   CacheDB Db;
    Override BOver;
    Override SOver;
    char *Buffer;
@@ -165,6 +166,7 @@ class SourcesWriter : public FTWScanner
    public:
 
    bool NoOverride;
+   bool DoAlwaysStat;
    
    // General options
    string PathPrefix;
@@ -174,7 +176,7 @@ class SourcesWriter : public FTWScanner
 
    virtual bool DoPackage(string FileName);
 
-   SourcesWriter(string const &BOverrides,string const &SOverrides,
+   SourcesWriter(string const &DB,string const &BOverrides,string const &SOverrides,
 		 string const &ExtOverrides=string());
    virtual ~SourcesWriter() {free(Buffer);};
 };
