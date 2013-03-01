@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-10-15 09:49+0200\n"
+"POT-Creation-Date: 2013-03-01 12:27+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -156,8 +156,8 @@ msgid "  Version table:"
 msgstr "  Preglednica različic:"
 
 #: cmdline/apt-cache.cc:1683 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3361 cmdline/apt-mark.cc:375
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
+#: cmdline/apt-get.cc:3360 cmdline/apt-mark.cc:375
+#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -481,7 +481,7 @@ msgstr "Ponovna namestitev %s ni možna, ker prejem ni možen.\n"
 msgid "%s is already the newest version.\n"
 msgstr "Najnovejša različica %s je že nameščena.\n"
 
-#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2157 cmdline/apt-mark.cc:68
+#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:68
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s je bil nastavljen na ročno nameščen.\n"
@@ -590,8 +590,8 @@ msgstr "Po tem opravilu bo porabljenega %sB dodatnega prostora.\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Po tem opravilu bo sproščenega %sB prostora na disku.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
-#: cmdline/apt-get.cc:2592
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2588
+#: cmdline/apt-get.cc:2591
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Ni mogoče določiti prostega prostora v %s"
@@ -601,15 +601,17 @@ msgstr "Ni mogoče določiti prostega prostora v %s"
 msgid "You don't have enough free space in %s."
 msgstr "Na %s je premalo prostora."
 
-#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1277
+#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1279
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Navedena je možnost Samo preprosto, a to opravilo ni preprosto."
 
-#: cmdline/apt-get.cc:1259
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: cmdline/apt-get.cc:1261
 msgid "Yes, do as I say!"
 msgstr "Da, naredi tako kot pravim!"
 
-#: cmdline/apt-get.cc:1261
+#: cmdline/apt-get.cc:1263
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -620,28 +622,28 @@ msgstr ""
 "Za nadaljevanje vtipkajte frazo '%s'\n"
 " ?] "
 
-#: cmdline/apt-get.cc:1267 cmdline/apt-get.cc:1286
+#: cmdline/apt-get.cc:1269 cmdline/apt-get.cc:1288
 msgid "Abort."
 msgstr "Prekini."
 
-#: cmdline/apt-get.cc:1282
+#: cmdline/apt-get.cc:1284
 msgid "Do you want to continue [Y/n]? "
 msgstr "Ali želite nadaljevati [Y/n]? "
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1548
+#: cmdline/apt-get.cc:1356 cmdline/apt-get.cc:2653 apt-pkg/algorithms.cc:1555
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Ni mogoče dobiti %s  %s\n"
 
-#: cmdline/apt-get.cc:1372
+#: cmdline/apt-get.cc:1374
 msgid "Some files failed to download"
 msgstr "Prejem nekaterih datotek ni uspel"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
+#: cmdline/apt-get.cc:1375 cmdline/apt-get.cc:2665
 msgid "Download complete and in download only mode"
 msgstr "Prejem je dokončan in uporabljen je način samo prejema"
 
-#: cmdline/apt-get.cc:1379
+#: cmdline/apt-get.cc:1381
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -649,19 +651,19 @@ msgstr ""
 "Nekaterih arhivov ni mogoče dobiti. Poskusite uporabiti apt-get update ali --"
 "fix-missing."
 
-#: cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1385
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing in izmenjava medija trenutno nista podprta"
 
-#: cmdline/apt-get.cc:1388
+#: cmdline/apt-get.cc:1390
 msgid "Unable to correct missing packages."
 msgstr "Ni mogoče popraviti manjkajočih paketov."
 
-#: cmdline/apt-get.cc:1389
+#: cmdline/apt-get.cc:1391
 msgid "Aborting install."
 msgstr "Prekinjanje namestitve."
 
-#: cmdline/apt-get.cc:1417
+#: cmdline/apt-get.cc:1419
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -681,37 +683,37 @@ msgstr[3] ""
 "Naslednji paketi so izginili z vašega sistema, ker so vse\n"
 "datoteke prepisali drugi paketi:"
 
-#: cmdline/apt-get.cc:1421
+#: cmdline/apt-get.cc:1423
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "Opomba: To je dpkg storil samodejno in namenoma."
 
-#: cmdline/apt-get.cc:1559
+#: cmdline/apt-get.cc:1561
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr "Prezri nerazpoložljiv cilj izdaje '%s' paketa '%s'"
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1593
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "Izbiranje '%s' kot vir paketa namesto '%s'\n"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1629
+#: cmdline/apt-get.cc:1631
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr "Prezri nerazpoložljivo različico '%s' paketa '%s'"
 
-#: cmdline/apt-get.cc:1645
+#: cmdline/apt-get.cc:1647
 msgid "The update command takes no arguments"
 msgstr "Ukaz update ne sprejema argumentov"
 
-#: cmdline/apt-get.cc:1711
+#: cmdline/apt-get.cc:1713
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 "Program ne bi smel brisati stvari, ni mogoče zagnati "
 "SamodejnegaOdstranjevalnika"
 
-#: cmdline/apt-get.cc:1815
+#: cmdline/apt-get.cc:1817
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -730,15 +732,15 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1987
+#: cmdline/apt-get.cc:1820 cmdline/apt-get.cc:1989
 msgid "The following information may help to resolve the situation:"
 msgstr "Naslednji podatki vam bodo morda pomagali rešiti težavo:"
 
-#: cmdline/apt-get.cc:1822
+#: cmdline/apt-get.cc:1824
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Notranja napaka, SamodejniOdstranjevalnik je pokvaril stvari"
 
-#: cmdline/apt-get.cc:1829
+#: cmdline/apt-get.cc:1831
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -750,7 +752,7 @@ msgstr[2] ""
 "Naslednja paketa sta bila samodejno nameščena in nista več zahtevana:"
 msgstr[3] "Naslednji paketi so bili samodejno nameščeni in niso več zahtevani:"
 
-#: cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:1835
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -760,7 +762,7 @@ msgstr[1] "%lu paket je bil samodejno nameščen in ni bil več zahtevan.\n"
 msgstr[2] "%lu paketa sta bila samodejno nameščena in nista več zahtevana.\n"
 msgstr[3] "%lu paketi so bili samodejno nameščeni in niso več zahtevani.\n"
 
-#: cmdline/apt-get.cc:1835
+#: cmdline/apt-get.cc:1837
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "Uporabite 'apt-get autoremove' za njihovo odstranitev."
@@ -768,15 +770,15 @@ msgstr[1] "Uporabite 'apt-get autoremove' za njegovo odstranitev."
 msgstr[2] "Uporabite 'apt-get autoremove' za njuno odstranitev."
 msgstr[3] "Uporabite 'apt-get autoremove' za njihovo odstranitev."
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1856
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Notranja napaka zaradi AllUpgrade."
 
-#: cmdline/apt-get.cc:1953
+#: cmdline/apt-get.cc:1955
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "Poskusite zagnati 'apt-get -f install', če želite popraviti naslednje:"
 
-#: cmdline/apt-get.cc:1957
+#: cmdline/apt-get.cc:1959
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -784,7 +786,7 @@ msgstr ""
 "Nerešene odvisnosti. Poskusite 'apt-get -f install' brez paketov (ali "
 "navedite rešitev)."
 
-#: cmdline/apt-get.cc:1972
+#: cmdline/apt-get.cc:1974
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -796,33 +798,33 @@ msgstr ""
 ", da nekateri zahtevani paketi še niso ustvarjeni ali premaknjeni\n"
 " iz Prihajajočega."
 
-#: cmdline/apt-get.cc:1993
+#: cmdline/apt-get.cc:1995
 msgid "Broken packages"
 msgstr "Pokvarjeni paketi"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2021
 msgid "The following extra packages will be installed:"
 msgstr "Naslednji dodatni paketi bodo nameščeni:"
 
-#: cmdline/apt-get.cc:2109
+#: cmdline/apt-get.cc:2111
 msgid "Suggested packages:"
 msgstr "Predlagani paketi:"
 
-#: cmdline/apt-get.cc:2110
+#: cmdline/apt-get.cc:2112
 msgid "Recommended packages:"
 msgstr "Priporočeni paketi:"
 
-#: cmdline/apt-get.cc:2152
+#: cmdline/apt-get.cc:2154
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Ni mogoče najti paketa %s"
 
-#: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:2161 cmdline/apt-mark.cc:70
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "%s je nastavljen na samodejno nameščen.\n"
 
-#: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
+#: cmdline/apt-get.cc:2169 cmdline/apt-mark.cc:114
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
@@ -830,47 +832,47 @@ msgstr ""
 "Ta ukaz je zastarel. Namesto njega uporabite 'apt-mark auto' in 'apt-mark "
 "manual'."
 
-#: cmdline/apt-get.cc:2183
+#: cmdline/apt-get.cc:2185
 msgid "Calculating upgrade... "
 msgstr "Preračunavanje nadgradnje ... "
 
-#: cmdline/apt-get.cc:2186 methods/ftp.cc:711 methods/connect.cc:115
+#: cmdline/apt-get.cc:2188 methods/ftp.cc:711 methods/connect.cc:115
 msgid "Failed"
 msgstr "Spodletelo"
 
-#: cmdline/apt-get.cc:2191
+#: cmdline/apt-get.cc:2193
 msgid "Done"
 msgstr "Opravljeno"
 
-#: cmdline/apt-get.cc:2258 cmdline/apt-get.cc:2266
+#: cmdline/apt-get.cc:2260 cmdline/apt-get.cc:2268
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Notranja napaka, reševalnik težav je pokvaril stvari"
 
-#: cmdline/apt-get.cc:2294 cmdline/apt-get.cc:2330
+#: cmdline/apt-get.cc:2296 cmdline/apt-get.cc:2332
 msgid "Unable to lock the download directory"
 msgstr "Ni mogoče zakleniti mape prejemov"
 
-#: cmdline/apt-get.cc:2386
+#: cmdline/apt-get.cc:2388
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Ni mogoče najti vira za prejem različice '%s' paketa '%s'"
 
-#: cmdline/apt-get.cc:2391
+#: cmdline/apt-get.cc:2393
 #, c-format
 msgid "Downloading %s %s"
 msgstr "Prejemanje %s %s"
 
-#: cmdline/apt-get.cc:2451
+#: cmdline/apt-get.cc:2453
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Potrebno je navesti vsaj en paket, za katerega želite dobiti izvorno kodo"
 
-#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
+#: cmdline/apt-get.cc:2493 cmdline/apt-get.cc:2802
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Izvornega paketa za %s ni mogoče najti"
 
-#: cmdline/apt-get.cc:2508
+#: cmdline/apt-get.cc:2510
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -879,7 +881,7 @@ msgstr ""
 "OPOMBA: pakiranje '%s' vzdrževano v sistemu nadzora različice '%s' na:\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2513
+#: cmdline/apt-get.cc:2515
 #, c-format
 msgid ""
 "Please use:\n"
@@ -890,70 +892,70 @@ msgstr ""
 "bzr branch %s\n"
 "za pridobitev zadnjih (morda še neizdanih) posodobitev paketa.\n"
 
-#: cmdline/apt-get.cc:2566
+#: cmdline/apt-get.cc:2565
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Preskok že prejete datoteke '%s'\n"
 
-#: cmdline/apt-get.cc:2603
+#: cmdline/apt-get.cc:2602
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Nimate dovolj prostora na %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2612
+#: cmdline/apt-get.cc:2611
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Potrebno je dobiti %sB/%sB izvornih arhivov.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2617
+#: cmdline/apt-get.cc:2616
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Potrebno je dobiti %sB izvornih arhivov.\n"
 
-#: cmdline/apt-get.cc:2623
+#: cmdline/apt-get.cc:2622
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Dobi vir %s\n"
 
-#: cmdline/apt-get.cc:2661
+#: cmdline/apt-get.cc:2660
 msgid "Failed to fetch some archives."
 msgstr "Nekaterih arhivov ni mogoče pridobiti."
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2691
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Odpakiranje že odpakiranih izvornih paketov v %s je bilo preskočeno\n"
 
-#: cmdline/apt-get.cc:2704
+#: cmdline/apt-get.cc:2703
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Ukaz odpakiranja '%s' ni uspel.\n"
 
-#: cmdline/apt-get.cc:2705
+#: cmdline/apt-get.cc:2704
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Izberite, če je paket 'dpkg-dev' nameščen.\n"
 
-#: cmdline/apt-get.cc:2727
+#: cmdline/apt-get.cc:2726
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Ukaz gradnje '%s' ni uspel.\n"
 
-#: cmdline/apt-get.cc:2747
+#: cmdline/apt-get.cc:2746
 msgid "Child process failed"
 msgstr "Podrejeno opravilo ni uspelo"
 
-#: cmdline/apt-get.cc:2766
+#: cmdline/apt-get.cc:2765
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Potrebno je navesti vsaj en paket, za katerega želite preveriti odvisnosti "
 "za gradnjo"
 
-#: cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2790
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -962,17 +964,17 @@ msgstr ""
 "Za %s ni bilo mogoče najti podatkov o arhitekturi. Za nastavitev si oglejte "
 "apt.conf(5) APT::Architectures"
 
-#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
+#: cmdline/apt-get.cc:2814 cmdline/apt-get.cc:2817
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Ni mogoče dobiti podrobnosti o odvisnostih za gradnjo za %s"
 
-#: cmdline/apt-get.cc:2838
+#: cmdline/apt-get.cc:2837
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s nima odvisnosti za gradnjo.\n"
 
-#: cmdline/apt-get.cc:3008
+#: cmdline/apt-get.cc:3007
 #, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -980,20 +982,20 @@ msgid ""
 msgstr ""
 "odvisnosti %s za %s ni mogoče zadovoljiti, ker %s ni dovoljen na paketih '%s'"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3025
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%s odvisnosti za %s ni mogoče zadostiti, ker ni mogoče najti paketa %s"
 
-#: cmdline/apt-get.cc:3049
+#: cmdline/apt-get.cc:3048
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Ni mogoče zadostiti %s odvisnosti za %s. Nameščen paket %s je preveč nov"
 
-#: cmdline/apt-get.cc:3088
+#: cmdline/apt-get.cc:3087
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -1002,7 +1004,7 @@ msgstr ""
 "odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
 "%s ne more zadostiti zahtev različice"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3093
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1011,30 +1013,30 @@ msgstr ""
 "odvisnosti %s za %s ni mogoče zadovoljiti, ker je različica kandidata paketa "
 "%s nima različice kandidata"
 
-#: cmdline/apt-get.cc:3117
+#: cmdline/apt-get.cc:3116
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Ni mogoče zadostiti %s odvisnosti za %s: %s"
 
-#: cmdline/apt-get.cc:3133
+#: cmdline/apt-get.cc:3132
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Odvisnosti za gradnjo %s ni bilo mogoče zadostiti."
 
-#: cmdline/apt-get.cc:3138
+#: cmdline/apt-get.cc:3137
 msgid "Failed to process build dependencies"
 msgstr "Obdelava odvisnosti za gradnjo je spodletela"
 
-#: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
+#: cmdline/apt-get.cc:3230 cmdline/apt-get.cc:3242
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Dnevnik sprememb za %s (%s)"
 
-#: cmdline/apt-get.cc:3366
+#: cmdline/apt-get.cc:3365
 msgid "Supported modules:"
 msgstr "Podprti moduli:"
 
-#: cmdline/apt-get.cc:3407
+#: cmdline/apt-get.cc:3406
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1121,7 +1123,7 @@ msgstr ""
 " sources.list(5) in apt.conf(5). \n"
 "                       Ta APT ima moči super krav.\n"
 
-#: cmdline/apt-get.cc:3572
+#: cmdline/apt-get.cc:3571
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1196,7 +1198,7 @@ msgid "%s was already not hold.\n"
 msgstr "paket %s je bil že nastavljen kot ne na čakanju.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
+#: apt-pkg/contrib/fileutl.cc:830 apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Program je čakal na %s a ga ni bilo tam"
@@ -1352,8 +1354,8 @@ msgstr "Povezava je zakasnela"
 msgid "Server closed the connection"
 msgstr "Strežnik je zaprl povezavo"
 
-#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1254
-#: apt-pkg/contrib/fileutl.cc:1263 apt-pkg/contrib/fileutl.cc:1266
+#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1276
+#: apt-pkg/contrib/fileutl.cc:1285 apt-pkg/contrib/fileutl.cc:1288
 msgid "Read error"
 msgstr "Napaka branja"
 
@@ -1366,8 +1368,8 @@ msgid "Protocol corruption"
 msgstr "Okvara protokola"
 
 #: methods/ftp.cc:457 methods/rred.cc:238 methods/rsh.cc:241
-#: apt-pkg/contrib/fileutl.cc:1352 apt-pkg/contrib/fileutl.cc:1361
-#: apt-pkg/contrib/fileutl.cc:1364 apt-pkg/contrib/fileutl.cc:1390
+#: apt-pkg/contrib/fileutl.cc:1374 apt-pkg/contrib/fileutl.cc:1383
+#: apt-pkg/contrib/fileutl.cc:1386 apt-pkg/contrib/fileutl.cc:1412
 msgid "Write error"
 msgstr "Napaka pisanja"
 
@@ -1421,7 +1423,7 @@ msgstr "Povezava podatkovne vtičnice je zakasnela"
 msgid "Unable to accept connection"
 msgstr "Ni mogoče sprejeti povezave"
 
-#: methods/ftp.cc:872 methods/http.cc:1035 methods/rsh.cc:311
+#: methods/ftp.cc:872 methods/http.cc:1039 methods/rsh.cc:311
 msgid "Problem hashing file"
 msgstr "Težava med razprševanjem datoteke"
 
@@ -1566,51 +1568,51 @@ msgstr "Ta strežnik HTTP ima pokvarjen obseg podpore"
 msgid "Unknown date format"
 msgstr "Neznana oblika datuma"
 
-#: methods/http.cc:818
+#: methods/http.cc:822
 msgid "Select failed"
 msgstr "Izbira ni uspela"
 
-#: methods/http.cc:823
+#: methods/http.cc:827
 msgid "Connection timed out"
 msgstr "Povezava je zakasnela"
 
-#: methods/http.cc:846
+#: methods/http.cc:850
 msgid "Error writing to output file"
 msgstr "Napaka med pisanjem v izhodno datoteko"
 
-#: methods/http.cc:877
+#: methods/http.cc:881
 msgid "Error writing to file"
 msgstr "Napaka med pisanjem v datoteko"
 
-#: methods/http.cc:905
+#: methods/http.cc:909
 msgid "Error writing to the file"
 msgstr "Napaka med pisanjem v datoteko"
 
-#: methods/http.cc:919
+#: methods/http.cc:923
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Napaka med branjem s strežnika. Oddaljeni del je zaprl povezavo"
 
-#: methods/http.cc:921
+#: methods/http.cc:925
 msgid "Error reading from server"
 msgstr "Napaka med branjem s strežnika"
 
-#: methods/http.cc:1194
+#: methods/http.cc:1198
 msgid "Bad header data"
 msgstr "Napačni podatki glave"
 
-#: methods/http.cc:1211 methods/http.cc:1266
+#: methods/http.cc:1215 methods/http.cc:1270
 msgid "Connection failed"
 msgstr "Povezava ni uspela"
 
-#: methods/http.cc:1358
+#: methods/http.cc:1362
 msgid "Internal error"
 msgstr "Notranja napaka"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:465
-#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:400
-#: apt-pkg/contrib/fileutl.cc:513 apt-pkg/sourcelist.cc:208
+#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:402
+#: apt-pkg/contrib/fileutl.cc:515 apt-pkg/sourcelist.cc:208
 #: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:108
 #: apt-pkg/init.cc:116 apt-pkg/clean.cc:36 apt-pkg/policy.cc:362
 #, c-format
@@ -1736,7 +1738,7 @@ msgstr ""
 "  -c=? Prebere podano datoteko z nastavitvami\n"
 "  -o=? Nastavi poljubno nastavitveno možnost, na primer. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1335
+#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1339
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Ni mogoče pisati na %s"
@@ -1745,31 +1747,31 @@ msgstr "Ni mogoče pisati na %s"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Ni mogoče ugotoviti različice debconfa. Je sploh nameščen?"
 
-#: ftparchive/apt-ftparchive.cc:171 ftparchive/apt-ftparchive.cc:348
+#: ftparchive/apt-ftparchive.cc:171 ftparchive/apt-ftparchive.cc:349
 msgid "Package extension list is too long"
 msgstr "Seznam razširitev paketov je predolg"
 
 #: ftparchive/apt-ftparchive.cc:173 ftparchive/apt-ftparchive.cc:190
-#: ftparchive/apt-ftparchive.cc:213 ftparchive/apt-ftparchive.cc:263
-#: ftparchive/apt-ftparchive.cc:277 ftparchive/apt-ftparchive.cc:299
+#: ftparchive/apt-ftparchive.cc:213 ftparchive/apt-ftparchive.cc:264
+#: ftparchive/apt-ftparchive.cc:278 ftparchive/apt-ftparchive.cc:300
 #, c-format
 msgid "Error processing directory %s"
 msgstr "Napaka med obdelavo mape %s"
 
-#: ftparchive/apt-ftparchive.cc:261
+#: ftparchive/apt-ftparchive.cc:262
 msgid "Source extension list is too long"
 msgstr "Seznam razširitev virov je predolg"
 
-#: ftparchive/apt-ftparchive.cc:378
+#: ftparchive/apt-ftparchive.cc:379
 msgid "Error writing header to contents file"
 msgstr "Napaka med pisanjem glave v datoteko vsebine"
 
-#: ftparchive/apt-ftparchive.cc:408
+#: ftparchive/apt-ftparchive.cc:409
 #, c-format
 msgid "Error processing contents %s"
 msgstr "Napaka med obdelavo vsebine %s"
 
-#: ftparchive/apt-ftparchive.cc:596
+#: ftparchive/apt-ftparchive.cc:597
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -1849,11 +1851,11 @@ msgstr ""
 "  -c=? prebere to nastavitveno datoteko\n"
 "  -o=? nastavi poljubno možnost nastavitve"
 
-#: ftparchive/apt-ftparchive.cc:802
+#: ftparchive/apt-ftparchive.cc:803
 msgid "No selections matched"
 msgstr "Nobena izbira se ne ujema"
 
-#: ftparchive/apt-ftparchive.cc:880
+#: ftparchive/apt-ftparchive.cc:881
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Nekatere datoteke manjkajo v skupini datotek paketov `%s'"
@@ -1960,22 +1962,22 @@ msgstr " Dosežena meja RazVezovanja %sB.\n"
 msgid "Archive had no package field"
 msgstr "Arhiv ni imel polja s paketom"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:711
+#: ftparchive/writer.cc:409 ftparchive/writer.cc:714
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s nima prepisanega vnosa\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:827
+#: ftparchive/writer.cc:477 ftparchive/writer.cc:858
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  Vzdrževalec %s je %s in ne %s\n"
 
-#: ftparchive/writer.cc:721
+#: ftparchive/writer.cc:724
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s nima izvornega vnosa prepisa\n"
 
-#: ftparchive/writer.cc:725
+#: ftparchive/writer.cc:728
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s nima tudi binarnega vnosa prepisa\n"
@@ -2345,64 +2347,64 @@ msgstr "%limin %lis"
 msgid "%lis"
 msgstr "%lis"
 
-#: apt-pkg/contrib/strutl.cc:1166
+#: apt-pkg/contrib/strutl.cc:1167
 #, c-format
 msgid "Selection %s not found"
 msgstr "Izbire %s ni mogoče najti"
 
-#: apt-pkg/contrib/configuration.cc:491
+#: apt-pkg/contrib/configuration.cc:503
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Neprepoznana vrsta okrajšave: '%c'"
 
-#: apt-pkg/contrib/configuration.cc:605
+#: apt-pkg/contrib/configuration.cc:617
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "Odpiranje nastavitvene datoteke %s"
 
-#: apt-pkg/contrib/configuration.cc:773
+#: apt-pkg/contrib/configuration.cc:785
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Skladenjska napaka %s:%u: Blok se začne brez imena."
 
-#: apt-pkg/contrib/configuration.cc:792
+#: apt-pkg/contrib/configuration.cc:804
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "Skladenjska napaka %s:%u: Slabo oblikovana oznaka."
 
-#: apt-pkg/contrib/configuration.cc:809
+#: apt-pkg/contrib/configuration.cc:821
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Skladenjska napaka %s:%u: Dodatna krama za vrednostjo."
 
-#: apt-pkg/contrib/configuration.cc:849
+#: apt-pkg/contrib/configuration.cc:861
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr ""
 "Skladenjska napaka %s:%u: Napotki se lahko izvedejo le na vrhnji ravni."
 
-#: apt-pkg/contrib/configuration.cc:856
+#: apt-pkg/contrib/configuration.cc:868
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Skladenjska napaka %s:%u: Preveč vgnezdenih vključitev"
 
-#: apt-pkg/contrib/configuration.cc:860 apt-pkg/contrib/configuration.cc:865
+#: apt-pkg/contrib/configuration.cc:872 apt-pkg/contrib/configuration.cc:877
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Skladenjska napaka %s:%u: Vključeno od tu"
 
-#: apt-pkg/contrib/configuration.cc:869
+#: apt-pkg/contrib/configuration.cc:881
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Skladenjska napaka %s:%u: Nepodprt napotek '%s'"
 
-#: apt-pkg/contrib/configuration.cc:872
+#: apt-pkg/contrib/configuration.cc:884
 #, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr ""
 "Skladenjska napaka %s:%u: počisti ukaz zahteva drevo možnosti kot argument"
 
-#: apt-pkg/contrib/configuration.cc:922
+#: apt-pkg/contrib/configuration.cc:934
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Skladenjska napaka %s:%u: Dodatna krama na koncu datoteke"
@@ -2416,6 +2418,16 @@ msgstr "%c%s ... Napaka!"
 #, c-format
 msgid "%c%s... Done"
 msgstr "%c%s ... Narejeno"
+
+#: apt-pkg/contrib/progress.cc:179
+msgid "..."
+msgstr ""
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:195
+#, c-format
+msgid "\r%s... %u%%"
+msgstr ""
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -2472,117 +2484,117 @@ msgstr "Ni mogoče določiti priklopne točke %s"
 msgid "Failed to stat the cdrom"
 msgstr "Ni mogoče določiti CD-ROM-a"
 
-#: apt-pkg/contrib/fileutl.cc:93
+#: apt-pkg/contrib/fileutl.cc:95
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Težava med zapiranjem gzip datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:225
+#: apt-pkg/contrib/fileutl.cc:227
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "Brez uporabe zaklepanja za zaklenjeno datoteko le za branje %s"
 
-#: apt-pkg/contrib/fileutl.cc:230
+#: apt-pkg/contrib/fileutl.cc:232
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "Ni mogoče odprti zaklenjene datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:248
+#: apt-pkg/contrib/fileutl.cc:250
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Brez uporabe zaklepanja za datoteko %s, priklopljeno z NTFS"
 
-#: apt-pkg/contrib/fileutl.cc:252
+#: apt-pkg/contrib/fileutl.cc:254
 #, c-format
 msgid "Could not get lock %s"
 msgstr "Ni mogoče zakleniti datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:506
+#: apt-pkg/contrib/fileutl.cc:394 apt-pkg/contrib/fileutl.cc:508
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr "Seznama datotek ni mogoče ustvariti, ker '%s' ni mapa"
 
-#: apt-pkg/contrib/fileutl.cc:426
+#: apt-pkg/contrib/fileutl.cc:428
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr "Preziranje '%s' v mapi '%s', ker ni običajna datoteka"
 
-#: apt-pkg/contrib/fileutl.cc:444
+#: apt-pkg/contrib/fileutl.cc:446
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr "Preziranje datoteke '%s' v mapi '%s', ker nima pripone imena datotek"
 
-#: apt-pkg/contrib/fileutl.cc:453
+#: apt-pkg/contrib/fileutl.cc:455
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 "Preziranje datoteke '%s' v mapi '%s', ker nima veljavne pripone imena datotek"
 
-#: apt-pkg/contrib/fileutl.cc:840
+#: apt-pkg/contrib/fileutl.cc:842
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Pod-opravilo %s je prejelo segmentacijsko napako."
 
-#: apt-pkg/contrib/fileutl.cc:842
+#: apt-pkg/contrib/fileutl.cc:844
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "Pod-opravilo %s je prejelo signal %u."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:848
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Pod-opravilo %s je vrnilo kodo napake (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:850
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Pod-opravilo %s se je nepričakovano zaključilo"
 
-#: apt-pkg/contrib/fileutl.cc:984 apt-pkg/indexcopy.cc:661
+#: apt-pkg/contrib/fileutl.cc:1006 apt-pkg/indexcopy.cc:659
 #, c-format
 msgid "Could not open file %s"
 msgstr "Ni mogoče odpreti datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:1046
+#: apt-pkg/contrib/fileutl.cc:1068
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Ni mogoče odpreti opisnika datotek %d"
 
-#: apt-pkg/contrib/fileutl.cc:1136
+#: apt-pkg/contrib/fileutl.cc:1158
 msgid "Failed to create subprocess IPC"
 msgstr "Ni mogoče ustvariti podopravila IPD"
 
-#: apt-pkg/contrib/fileutl.cc:1192
+#: apt-pkg/contrib/fileutl.cc:1214
 msgid "Failed to exec compressor "
 msgstr "Ni mogoče izvesti stiskanja "
 
-#: apt-pkg/contrib/fileutl.cc:1289
+#: apt-pkg/contrib/fileutl.cc:1311
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "Prebrano, še vedno je treba prebrati %llu bajtov, vendar ni nič ostalo"
 
-#: apt-pkg/contrib/fileutl.cc:1378 apt-pkg/contrib/fileutl.cc:1400
+#: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1422
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "pisanje, preostalo je še %llu za pisanje, vendar ni bilo mogoče pisati"
 
-#: apt-pkg/contrib/fileutl.cc:1716
+#: apt-pkg/contrib/fileutl.cc:1738
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Težava med zapiranjem datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:1728
+#: apt-pkg/contrib/fileutl.cc:1750
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Težava med preimenovanje datoteke %s v %s"
 
-#: apt-pkg/contrib/fileutl.cc:1739
+#: apt-pkg/contrib/fileutl.cc:1761
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Težava med razvezovanjem datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:1754
+#: apt-pkg/contrib/fileutl.cc:1776
 msgid "Problem syncing the file"
 msgstr "Težava med usklajevanjem datoteke"
 
@@ -2779,7 +2791,7 @@ msgstr "Slabo oblikovana vrstica %u v seznamu virov %s (vrsta)"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Vrsta '%s' v vrstici %u na seznamu virov %s ni znana"
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:898
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2788,12 +2800,12 @@ msgstr ""
 "Ni mogoče izvesti takojąnje nastavitve na '%s'. Oglejte si man5 apt.conf pod "
 "APT::Immediate-Configure za podrobnosti. (%d)"
 
-#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
+#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:504
 #, c-format
 msgid "Could not configure '%s'. "
 msgstr "Ni mogoče nastaviti '%s' "
 
-#: apt-pkg/packagemanager.cc:545
+#: apt-pkg/packagemanager.cc:546
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2815,7 +2827,7 @@ msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "Paket %s mora biti znova nameščen, vendar ni mogoče najti arhiva zanj."
 
-#: apt-pkg/algorithms.cc:1228
+#: apt-pkg/algorithms.cc:1229
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2823,11 +2835,11 @@ msgstr ""
 "Napaka. pkgProblemResolver::Resolve pri razrešitvi, ki so jih morda "
 "povzročili zadržani paketi."
 
-#: apt-pkg/algorithms.cc:1230
+#: apt-pkg/algorithms.cc:1231
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Ni mogoče popraviti težav. Imate pokvarjene pakete."
 
-#: apt-pkg/algorithms.cc:1574 apt-pkg/algorithms.cc:1576
+#: apt-pkg/algorithms.cc:1581 apt-pkg/algorithms.cc:1583
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
@@ -2970,21 +2982,21 @@ msgstr "Čestitamo, presegli ste število odvisnosti, ki jih zmore APT."
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "Paketa %s %s ni bilo mogoče najti med obdelavo odvisnosti datotek"
 
-#: apt-pkg/pkgcachegen.cc:1146
+#: apt-pkg/pkgcachegen.cc:1150
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Ni mogoče določiti seznama izvornih paketov %s"
 
-#: apt-pkg/pkgcachegen.cc:1234 apt-pkg/pkgcachegen.cc:1338
-#: apt-pkg/pkgcachegen.cc:1344 apt-pkg/pkgcachegen.cc:1501
+#: apt-pkg/pkgcachegen.cc:1238 apt-pkg/pkgcachegen.cc:1342
+#: apt-pkg/pkgcachegen.cc:1348 apt-pkg/pkgcachegen.cc:1505
 msgid "Reading package lists"
 msgstr "Branje seznama paketov"
 
-#: apt-pkg/pkgcachegen.cc:1251
+#: apt-pkg/pkgcachegen.cc:1255
 msgid "Collecting File Provides"
 msgstr "Zbiranje dobaviteljev datotek"
 
-#: apt-pkg/pkgcachegen.cc:1443 apt-pkg/pkgcachegen.cc:1450
+#: apt-pkg/pkgcachegen.cc:1447 apt-pkg/pkgcachegen.cc:1454
 msgid "IO Error saving source cache"
 msgstr "Napaka VI med shranjevanjem predpomnilnika virov"
 
@@ -2997,12 +3009,12 @@ msgstr "preimenovanje je spodletelo, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "Neujemanje vsote MD5"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1859
-#: apt-pkg/acquire-item.cc:2002
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1870
+#: apt-pkg/acquire-item.cc:2013
 msgid "Hash Sum mismatch"
 msgstr "Neujemanje vsote razpršil"
 
-#: apt-pkg/acquire-item.cc:1370
+#: apt-pkg/acquire-item.cc:1381
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
@@ -3011,16 +3023,16 @@ msgstr ""
 "Ni mogoče najti pričakovanega vnosa '%s' v datoteki Release (napačen vnos "
 "sources.list ali slabo oblikovana datoteka)"
 
-#: apt-pkg/acquire-item.cc:1386
+#: apt-pkg/acquire-item.cc:1397
 #, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Ni mogoče najti vsote razprševanja za '%s' v datoteki Release"
 
-#: apt-pkg/acquire-item.cc:1428
+#: apt-pkg/acquire-item.cc:1439
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Za naslednje ID-je ključa ni na voljo javnih ključev:\n"
 
-#: apt-pkg/acquire-item.cc:1466
+#: apt-pkg/acquire-item.cc:1477
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
@@ -3029,12 +3041,12 @@ msgstr ""
 "Datoteka Release za %s je potekla (neveljavna od %s). Posodobitev za to "
 "skladišče ne bo uveljavljena."
 
-#: apt-pkg/acquire-item.cc:1488
+#: apt-pkg/acquire-item.cc:1499
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Distribucija v sporu: %s (pričakovana %s, toda dobljena %s)"
 
-#: apt-pkg/acquire-item.cc:1521
+#: apt-pkg/acquire-item.cc:1532
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3044,12 +3056,12 @@ msgstr ""
 "zato bodo uporabljene predhodne datoteke kazal. Napaka GPG: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1531 apt-pkg/acquire-item.cc:1536
+#: apt-pkg/acquire-item.cc:1542 apt-pkg/acquire-item.cc:1547
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "Napaka GPG: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1635
+#: apt-pkg/acquire-item.cc:1646
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3058,7 +3070,7 @@ msgstr ""
 "Ni bilo mogoče najti datoteke za paket %s. Morda boste morali ročno "
 "popraviti ta paket (zaradi manjkajočega arhiva)."
 
-#: apt-pkg/acquire-item.cc:1694
+#: apt-pkg/acquire-item.cc:1705
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3067,7 +3079,7 @@ msgstr ""
 "Ni bilo mogoče najti datoteke za paket %s. Morda boste morali ročno "
 "popraviti ta paket."
 
-#: apt-pkg/acquire-item.cc:1753
+#: apt-pkg/acquire-item.cc:1764
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -3075,7 +3087,7 @@ msgstr ""
 "Datoteke s kazali paketov so pokvarjene. Brez imena datotek: polje za paket "
 "%s."
 
-#: apt-pkg/acquire-item.cc:1851
+#: apt-pkg/acquire-item.cc:1862
 msgid "Size mismatch"
 msgstr "Neujemanje velikosti"
 
@@ -3199,22 +3211,22 @@ msgstr "Pisanje novega seznama virov\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "Izvorni vnosi za ta disk so:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:884
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Zapisanih je bilo %i zapisov.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:886
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Zapisanih je bilo %i zapisov z %i manjkajočimi datotekami.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:889
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Zapisanih je bilo %i zapisov z %i neujemajočimi datotekami.\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:892
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
@@ -3231,13 +3243,13 @@ msgstr "Ni mogoče najti zapisa overitve za: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Neujemanje razpršila za: %s"
 
-#: apt-pkg/indexcopy.cc:665
+#: apt-pkg/indexcopy.cc:662
 #, c-format
 msgid "File %s doesn't start with a clearsigned message"
 msgstr "Datoteka %s se ne začne s čisto podpisanim sporočilom"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:696
+#: apt-pkg/indexcopy.cc:692
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "V %s ni nameščenih zbirk ključev."
@@ -3400,25 +3412,32 @@ msgstr ""
 "Ni mogoče pisati dnevnika, openpty() je spodletelo (/dev/pts ni "
 "prklopljen?)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1243
+#: apt-pkg/deb/dpkgpm.cc:1235
+#, fuzzy
+msgid "Can not write log, tcgetattr() failed for stdout"
+msgstr ""
+"Ni mogoče pisati dnevnika, openpty() je spodletelo (/dev/pts ni "
+"prklopljen?)\n"
+
+#: apt-pkg/deb/dpkgpm.cc:1248
 msgid "Running dpkg"
 msgstr "Poganjanje dpkg"
 
-#: apt-pkg/deb/dpkgpm.cc:1415
+#: apt-pkg/deb/dpkgpm.cc:1420
 msgid "Operation was interrupted before it could finish"
 msgstr "Opravilo je bilo prekinjeno preden se je lahko končalo"
 
-#: apt-pkg/deb/dpkgpm.cc:1477
+#: apt-pkg/deb/dpkgpm.cc:1482
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 "Poročilo apport ni bilo napisano, ker je bilo število MaxReports že doseženo"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1482
+#: apt-pkg/deb/dpkgpm.cc:1487
 msgid "dependency problems - leaving unconfigured"
 msgstr "težave odvisnosti - puščanje nenastavljenega"
 
-#: apt-pkg/deb/dpkgpm.cc:1484
+#: apt-pkg/deb/dpkgpm.cc:1489
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3426,7 +3445,7 @@ msgstr ""
 "Poročilo apport ni bilo napisano, ker sporočilo o napaki nakazuje na "
 "navezujočo napako iz predhodne napake."
 
-#: apt-pkg/deb/dpkgpm.cc:1490
+#: apt-pkg/deb/dpkgpm.cc:1495
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3434,7 +3453,7 @@ msgstr ""
 "Poročilo apport ni bilo napisano, ker sporočilo o napaki nakazuje na napako "
 "polnega diska"
 
-#: apt-pkg/deb/dpkgpm.cc:1496
+#: apt-pkg/deb/dpkgpm.cc:1501
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3442,7 +3461,7 @@ msgstr ""
 "Poročilo apport ni bilo napisano, ker sporočilo o napaki nakazuje na napako "
 "zaradi pomanjkanja pomnilnika"
 
-#: apt-pkg/deb/dpkgpm.cc:1503
+#: apt-pkg/deb/dpkgpm.cc:1508
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

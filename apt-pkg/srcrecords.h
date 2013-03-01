@@ -32,6 +32,7 @@ class pkgSrcRecords
    struct File
    {
       std::string MD5Hash;
+      std::string Hash;
       unsigned long Size;
       std::string Path;
       std::string Type;
