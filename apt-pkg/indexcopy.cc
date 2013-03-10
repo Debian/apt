@@ -141,7 +141,6 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	    File = OrigPath + ChopDirs(File,Chop);
 	 
 	 // See if the file exists
-	 bool Mangled = false;
 	 if (NoStat == false || Hits < 10)
 	 {
 	    // Attempt to fix broken structure
@@ -164,6 +163,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0 || 
 		Buf.st_size == 0)
 	    {
+	       bool Mangled = false;
 	       // Attempt to fix busted symlink support for one instance
 	       string OrigFile = File;
 	       string::size_type Start = File.find("binary-");
@@ -799,9 +799,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    unsigned int WrongSize = 0;
    unsigned int Packages = 0;
    for (vector<string>::iterator I = List.begin(); I != List.end(); ++I)
-   {      
-      string OrigPath = string(*I,CDROM.length());
-
+   {
       // Open the package file
       FileFd Pkg(*I, FileFd::ReadOnly, FileFd::Auto);
       off_t const FileSize = Pkg.Size();

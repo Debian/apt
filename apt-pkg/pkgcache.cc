@@ -279,22 +279,22 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
    type in the weird debian style.. */
 const char *pkgCache::CompTypeDeb(unsigned char Comp)
 {
-   const char *Ops[] = {"","<=",">=","<<",">>","=","!="};
-   if ((unsigned)(Comp & 0xF) < 7)
-      return Ops[Comp & 0xF];
-   return "";	 
+   const char * const Ops[] = {"","<=",">=","<<",">>","=","!="};
+   if (unlikely((unsigned)(Comp & 0xF) >= sizeof(Ops)/sizeof(Ops[0])))
+      return "";
+   return Ops[Comp & 0xF];
 }
 									/*}}}*/
 // Cache::CompType - Return a string describing the compare type	/*{{{*/
 // ---------------------------------------------------------------------
-/* This returns a string representation of the dependency compare 
+/* This returns a string representation of the dependency compare
    type */
 const char *pkgCache::CompType(unsigned char Comp)
 {
-   const char *Ops[] = {"","<=",">=","<",">","=","!="};
-   if ((unsigned)(Comp & 0xF) < 7)
-      return Ops[Comp & 0xF];
-   return "";	 
+   const char * const Ops[] = {"","<=",">=","<",">","=","!="};
+   if (unlikely((unsigned)(Comp & 0xF) >= sizeof(Ops)/sizeof(Ops[0])))
+      return "";
+   return Ops[Comp & 0xF];
 }
 									/*}}}*/
 // Cache::DepType - Return a string describing the dep type		/*{{{*/

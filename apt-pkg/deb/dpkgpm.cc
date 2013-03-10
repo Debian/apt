@@ -147,11 +147,11 @@ static
 pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
 {
    pkgCache::VerIterator Ver;
-   for (Ver = Pkg.VersionList(); Ver.end() == false; Ver++)
+   for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
       pkgCache::VerFileIterator Vf = Ver.FileList();
       pkgCache::PkgFileIterator F = Vf.File();
-      for (F = Vf.File(); F.end() == false; F++)
+      for (F = Vf.File(); F.end() == false; ++F)
       {
          if (F && F.Archive())
          {
@@ -1585,12 +1585,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    if (!logfile_name.empty())
    {
       FILE *log = NULL;
-      char buf[1024];
 
       fprintf(report, "DpkgTerminalLog:\n");
       log = fopen(logfile_name.c_str(),"r");
       if(log != NULL)
       {
+	 char buf[1024];
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
 	 fclose(log);
@@ -1609,13 +1609,11 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // attach dmesg log (to learn about segfaults)
    if (FileExists("/bin/dmesg"))
    {
-      FILE *log = NULL;
-      char buf[1024];
-
       fprintf(report, "Dmesg:\n");
-      log = popen("/bin/dmesg","r");
+      FILE *log = popen("/bin/dmesg","r");
       if(log != NULL)
       {
+	 char buf[1024];
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
 	 pclose(log);
@@ -1625,13 +1623,12 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // attach df -l log (to learn about filesystem status)
    if (FileExists("/bin/df"))
    {
-      FILE *log = NULL;
-      char buf[1024];
 
       fprintf(report, "Df:\n");
-      log = popen("/bin/df -l","r");
+      FILE *log = popen("/bin/df -l","r");
       if(log != NULL)
       {
+	 char buf[1024];
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
 	 pclose(log);

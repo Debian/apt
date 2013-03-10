@@ -560,7 +560,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
 
-   if(available_patches.size() == 0) 
+   if(available_patches.empty() == true)
    {
       // we are done (yeah!)
       Finish(true);
@@ -1643,7 +1643,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       assumption here that all the available sources for this version share
       the same extension.. */
    // Skip not source sources, they do not have file fields.
-   for (; Vf.end() == false; Vf++)
+   for (; Vf.end() == false; ++Vf)
    {
       if ((Vf.File()->Flags & pkgCache::Flag::NotSource) != 0)
 	 continue;

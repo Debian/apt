@@ -81,8 +81,6 @@ pkgExtract::pkgExtract(pkgFLCache &FLCache,pkgCache::VerIterator Ver) :
 /* This performs the setup for the extraction.. */
 bool pkgExtract::DoItem(Item &Itm,int &Fd)
 {
-   char Temp[sizeof(FileName)];
-   
    /* Strip any leading/trailing /s from the filename, then copy it to the
       temp buffer and re-apply the leading / We use a class variable
       to store the new filename for use by the three extraction funcs */
@@ -183,6 +181,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
       // See if we can recover the backup file
       if (Nde.end() == false)
       {
+	 char Temp[sizeof(FileName)];
 	 snprintf(Temp,sizeof(Temp),"%s.%s",Itm.Name,TempExt);
 	 if (rename(Temp,Itm.Name) != 0 && errno != ENOENT)
 	    return _error->Errno("rename",_("Failed to rename %s to %s"),

@@ -71,8 +71,7 @@ static std::string CompleteArch(std::string const &arch) {
 }
 									/*}}}*/
 PackageArchitectureMatchesSpecification::PackageArchitectureMatchesSpecification(std::string const &pattern, bool const isPattern) :/*{{{*/
-					literal(pattern), isPattern(isPattern), d(NULL) {
-	complete = CompleteArch(pattern);
+					literal(pattern), complete(CompleteArch(pattern)), isPattern(isPattern), d(NULL) {
 }
 									/*}}}*/
 bool PackageArchitectureMatchesSpecification::operator() (char const * const &arch) {/*{{{*/

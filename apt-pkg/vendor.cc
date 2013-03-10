@@ -12,7 +12,7 @@ Vendor::Vendor(std::string VendorID,
    this->VendorID = VendorID;
    this->Origin = Origin;
    for (std::vector<struct Vendor::Fingerprint *>::iterator I = FingerprintList->begin();
-	I != FingerprintList->end(); I++)
+	I != FingerprintList->end(); ++I)
    {
       if (_config->FindB("Debug::Vendor", false))
          std::cerr << "Vendor \"" << VendorID << "\": Mapping \""

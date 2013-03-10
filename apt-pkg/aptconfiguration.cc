@@ -401,8 +401,8 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 		close(external[1]);
 
 		FILE *dpkg = fdopen(external[0], "r");
-		char buf[1024];
 		if(dpkg != NULL) {
+			char buf[1024];
 			while (fgets(buf, sizeof(buf), dpkg) != NULL) {
 				char* arch = strtok(buf, " ");
 				while (arch != NULL) {
