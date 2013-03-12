@@ -300,36 +300,35 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
-      pkgCache::DescIterator Desc = Ver.DescriptionList();
+      pkgCache::DescIterator VerDesc = Ver.DescriptionList();
 
       // a version can only have one md5 describing it
-      if (Desc.end() == true || MD5SumValue(Desc.md5()) != CurMd5)
+      if (VerDesc.end() == true || MD5SumValue(VerDesc.md5()) != CurMd5)
 	 continue;
 
       // don't add a new description if we have one for the given
       // md5 && language
-      if (IsDuplicateDescription(Desc, CurMd5, CurLang) == true)
+      if (IsDuplicateDescription(VerDesc, CurMd5, CurLang) == true)
 	 continue;
 
+      pkgCache::DescIterator Desc;
       Dynamic<pkgCache::DescIterator> DynDesc(Desc);
-      // we add at the end, so that the start is constant as we need
-      // that to be able to efficiently share these lists
-      map_ptrloc *LastDesc = &Ver->DescriptionList;
-      for (;Desc.end() == false && Desc->NextDesc != 0; ++Desc);
-      if (Desc.end() == false)
-	 LastDesc = &Desc->NextDesc;
 
-      void const * const oldMap = Map.Data();
-      map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+      map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, VerDesc->md5sum);
       if (unlikely(descindex == 0 && _error->PendingError()))
 	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			      Pkg.Name(), "NewDescription", 1);
-      if (oldMap != Map.Data())
-	 LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
-      *LastDesc = descindex;
+
       Desc->ParentPkg = Pkg.Index();
 
-      if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
+      // we add at the end, so that the start is constant as we need
+      // that to be able to efficiently share these lists
+      VerDesc = Ver.DescriptionList(); // old value might be invalid after ReMap
+      for (;VerDesc.end() == false && VerDesc->NextDesc != 0; ++VerDesc);
+      map_ptrloc * const LastNextDesc = (VerDesc.end() == true) ? &Ver->DescriptionList : &VerDesc->NextDesc;
+      *LastNextDesc = descindex;
+
+      if (NewFileDesc(Desc,List) == false)
 	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			      Pkg.Name(), "NewFileDesc", 1);
 
@@ -509,19 +508,16 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    // We haven't found reusable descriptions, so add the first description
    pkgCache::DescIterator Desc = Ver.DescriptionList();
    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
-   map_ptrloc *LastDesc = &Ver->DescriptionList;
 
-   oldMap = Map.Data();
-   map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, *LastDesc);
+   map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, 0);
    if (unlikely(descindex == 0 && _error->PendingError()))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			   Pkg.Name(), "NewDescription", 2);
-   if (oldMap != Map.Data())
-       LastDesc += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
-   *LastDesc = descindex;
-   Desc->ParentPkg = Pkg.Index();
 
-   if ((*LastDesc == 0 && _error->PendingError()) || NewFileDesc(Desc,List) == false)
+   Desc->ParentPkg = Pkg.Index();
+   Ver->DescriptionList = descindex;
+
+   if (NewFileDesc(Desc,List) == false)
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			   Pkg.Name(), "NewFileDesc", 2);
 
@@ -825,9 +821,9 @@ bool pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator &Desc,
 // ---------------------------------------------------------------------
 /* This puts a description structure in the linked list */
 map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
-					    const string &Lang, 
-                                            const MD5SumValue &md5sum,
-					    map_ptrloc Next)
+					    const string &Lang,
+					    const MD5SumValue &md5sum,
+					    map_ptrloc idxmd5str)
 {
    // Get a structure
    map_ptrloc const Description = AllocateInMap(sizeof(pkgCache::Description));
@@ -836,14 +832,21 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
 
    // Fill it in
    Desc = pkgCache::DescIterator(Cache,Cache.DescP + Description);
-   Desc->NextDesc = Next;
    Desc->ID = Cache.HeaderP->DescriptionCount++;
    map_ptrloc const idxlanguage_code = WriteStringInMap(Lang);
-   map_ptrloc const idxmd5sum = WriteStringInMap(md5sum.Value());
-   if (unlikely(idxlanguage_code == 0 || idxmd5sum == 0))
+   if (unlikely(idxlanguage_code == 0))
       return 0;
    Desc->language_code = idxlanguage_code;
-   Desc->md5sum = idxmd5sum;
+
+   if (idxmd5str != 0)
+      Desc->md5sum = idxmd5str;
+   else
+   {
+      map_ptrloc const idxmd5sum = WriteStringInMap(md5sum.Value());
+      if (unlikely(idxmd5sum == 0))
+	 return 0;
+      Desc->md5sum = idxmd5sum;
+   }
 
    return Description;
 }

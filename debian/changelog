@@ -2,6 +2,9 @@ apt (0.9.7.8~exp2+nmu1) UNRELEASED; urgency=low
 
   [ David Kalnischkies ]
   * various simple changes to fix cppcheck warnings
+  * apt-pkg/pkgcachegen.cc:
+    - do not store the MD5Sum for every description language variant as
+      it will be the same for all so it can be shared to save cache space
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 10 Mar 2013 12:23:24 +0100
 
