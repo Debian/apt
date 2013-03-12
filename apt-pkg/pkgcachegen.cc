@@ -833,7 +833,7 @@ map_ptrloc pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    // Fill it in
    Desc = pkgCache::DescIterator(Cache,Cache.DescP + Description);
    Desc->ID = Cache.HeaderP->DescriptionCount++;
-   map_ptrloc const idxlanguage_code = WriteStringInMap(Lang);
+   map_ptrloc const idxlanguage_code = WriteUniqString(Lang);
    if (unlikely(idxlanguage_code == 0))
       return 0;
    Desc->language_code = idxlanguage_code;
