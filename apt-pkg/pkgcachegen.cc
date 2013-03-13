@@ -463,11 +463,8 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	       pkgCache::VerIterator ConVersion = D.ParentVer();
 	       Dynamic<pkgCache::VerIterator> DynV(ConVersion);
 	       // duplicate the Conflicts/Breaks/Replaces for :none arch
-	       if (D->Version == 0)
-		  NewDepends(Pkg, ConVersion, "", 0, D->Type, OldDepLast);
-	       else
-		  NewDepends(Pkg, ConVersion, D.TargetVer(),
-			     D->CompareOp, D->Type, OldDepLast);
+	       NewDepends(Pkg, ConVersion, D->Version,
+		     D->CompareOp, D->Type, OldDepLast);
 	    }
 	 }
       }
@@ -671,6 +668,7 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::GrpIterator &G,
    bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
    pkgCache::PkgIterator D = G.PackageList();
    Dynamic<pkgCache::PkgIterator> DynD(D);
+   map_ptrloc const VerStrIdx = V->VerStr;
    for (; D.end() != true; D = G.NextPkg(D))
    {
       if (Arch == D.Arch() || D->VersionList == 0)
@@ -681,16 +679,16 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::GrpIterator &G,
       if (coInstall == true)
       {
 	 // Replaces: ${self}:other ( << ${binary:Version})
-	 NewDepends(D, V, V.VerStr(),
+	 NewDepends(D, V, VerStrIdx,
 		    pkgCache::Dep::Less, pkgCache::Dep::Replaces,
 		    OldDepLast);
 	 // Breaks: ${self}:other (!= ${binary:Version})
-	 NewDepends(D, V, V.VerStr(),
+	 NewDepends(D, V, VerStrIdx,
 		    pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
 		    OldDepLast);
       } else {
 	 // Conflicts: ${self}:other
-	 NewDepends(D, V, "",
+	 NewDepends(D, V, 0,
 		    pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
 		    OldDepLast);
       }
@@ -707,17 +705,18 @@ bool pkgCacheGenerator::AddImplicitDepends(pkgCache::VerIterator &V,
    bool const coInstall = ((V->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same);
    if (coInstall == true)
    {
+      map_ptrloc const VerStrIdx = V->VerStr;
       // Replaces: ${self}:other ( << ${binary:Version})
-      NewDepends(D, V, V.VerStr(),
+      NewDepends(D, V, VerStrIdx,
 		 pkgCache::Dep::Less, pkgCache::Dep::Replaces,
 		 OldDepLast);
       // Breaks: ${self}:other (!= ${binary:Version})
-      NewDepends(D, V, V.VerStr(),
+      NewDepends(D, V, VerStrIdx,
 		 pkgCache::Dep::NotEquals, pkgCache::Dep::DpkgBreaks,
 		 OldDepLast);
    } else {
       // Conflicts: ${self}:other
-      NewDepends(D, V, "",
+      NewDepends(D, V, 0,
 		 pkgCache::Dep::NoOp, pkgCache::Dep::Conflicts,
 		 OldDepLast);
    }
@@ -862,33 +861,39 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 				   unsigned int const &Type,
 				   map_ptrloc* &OldDepLast)
 {
+   map_ptrloc index = 0;
+   if (Version.empty() == false)
+   {
+      void const * const oldMap = Map.Data();
+      index = WriteStringInMap(Version);
+      if (unlikely(index == 0))
+	 return false;
+      if (oldMap != Map.Data())
+	 OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+   }
+   return NewDepends(Pkg, Ver, index, Op, Type, OldDepLast);
+}
+bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
+				   pkgCache::VerIterator &Ver,
+				   map_ptrloc const Version,
+				   unsigned int const &Op,
+				   unsigned int const &Type,
+				   map_ptrloc* &OldDepLast)
+{
    void const * const oldMap = Map.Data();
    // Get a structure
    map_ptrloc const Dependency = AllocateInMap(sizeof(pkgCache::Dependency));
    if (unlikely(Dependency == 0))
       return false;
-   
+
    // Fill it in
    pkgCache::DepIterator Dep(Cache,Cache.DepP + Dependency);
    Dynamic<pkgCache::DepIterator> DynDep(Dep);
    Dep->ParentVer = Ver.Index();
    Dep->Type = Type;
    Dep->CompareOp = Op;
+   Dep->Version = Version;
    Dep->ID = Cache.HeaderP->DependsCount++;
-
-   // Probe the reverse dependency list for a version string that matches
-   if (Version.empty() == false)
-   {
-/*      for (pkgCache::DepIterator I = Pkg.RevDependsList(); I.end() == false; I++)
-	 if (I->Version != 0 && I.TargetVer() == Version)
-	    Dep->Version = I->Version;*/
-      if (Dep->Version == 0) {
-	 map_ptrloc const index = WriteStringInMap(Version);
-	 if (unlikely(index == 0))
-	    return false;
-	 Dep->Version = index;
-      }
-   }
 
    // Link it to the package
    Dep->Package = Pkg.Index();
