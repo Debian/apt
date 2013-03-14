@@ -19,7 +19,8 @@ msgtest 'Test redirection works in' 'apt-get update'
 aptget update -qq && msgpass || msgfail
 
 # check that I-M-S header is kept in redirections
-testequal 'Hit http://localhost unstable InRelease
+testequal 'Hit http://localhost unstable Release.gpg
+Hit http://localhost unstable Release
 Hit http://localhost unstable/main Sources
 Hit http://localhost unstable/main amd64 Packages
 Hit http://localhost unstable/main Translation-en

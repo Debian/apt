@@ -236,16 +236,23 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			 (*Target)->ShortDesc, HashString());
       }
+
+      // this is normally created in pkgAcqMetaSig, but if we run
+      // in --print-uris mode, we add it here
+      new pkgAcqMetaIndex(Owner, MetaIndexURI("Release"),
+			  MetaIndexInfo("Release"), "Release",
+			  MetaIndexURI("Release.gpg"),
+			  ComputeIndexTargets(),
+			  new indexRecords (Dist));
    }
 
-	new pkgAcqMetaClearSig(Owner, MetaIndexURI("InRelease"),
-		MetaIndexInfo("InRelease"), "InRelease",
-		MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
-		MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
-		ComputeIndexTargets(),
-		new indexRecords (Dist));
+   new pkgAcqMetaSig(Owner, MetaIndexURI("Release.gpg"),
+		     MetaIndexInfo("Release.gpg"), "Release.gpg",
+		     MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
+		     ComputeIndexTargets(),
+		     new indexRecords (Dist));
 
-	return true;
+   return true;
 }
 
 void debReleaseIndex::SetTrusted(bool const Trusted)

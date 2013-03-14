@@ -1,3 +1,17 @@
+apt (0.9.7.7ubuntu3) raring; urgency=low
+
+  * SECURITY UPDATE: InRelease verification bypass
+    - CVE-2013-1051
+
+  [ David Kalnischk ]
+  * apt-pkg/deb/debmetaindex.cc,
+    test/integration/test-bug-595691-empty-and-broken-archive-files,
+    test/integration/test-releasefile-verification:
+    - disable InRelease downloading until the verification issue is
+      fixed, thanks to Ansgar Burchardt for finding the flaw
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 14 Mar 2013 14:25:56 +0100
+
 apt (0.9.7.7ubuntu2) raring; urgency=low
 
   * Cherry-pick from David's sid branch to fix a multiarch library
