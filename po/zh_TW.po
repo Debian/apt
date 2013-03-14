@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2012-10-15 09:49+0200\n"
+"POT-Creation-Date: 2013-03-14 08:05+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -156,7 +156,7 @@ msgid "  Version table:"
 msgstr "  版本列表："
 
 #: cmdline/apt-cache.cc:1683 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3361 cmdline/apt-mark.cc:375
+#: cmdline/apt-get.cc:3363 cmdline/apt-mark.cc:375
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:590
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -483,7 +483,7 @@ msgstr "無法重新安裝 %s，因為它無法下載。\n"
 msgid "%s is already the newest version.\n"
 msgstr "%s 已經是最新版本了。\n"
 
-#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2157 cmdline/apt-mark.cc:68
+#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:68
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s 被設定為手動安裝。\n"
@@ -590,8 +590,8 @@ msgstr "此操作完成之後，會多佔用 %sB 的磁碟空間。\n"
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "此操作完成之後，會空出 %sB 的磁碟空間。\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2589
-#: cmdline/apt-get.cc:2592
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:2594
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "無法確認 %s 的未使用空間"
@@ -601,15 +601,17 @@ msgstr "無法確認 %s 的未使用空間"
 msgid "You don't have enough free space in %s."
 msgstr "在 %s 裡沒有足夠的的未使用空間。"
 
-#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1277
+#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1279
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "雖然指定了 Trivial Only（自動答 NO）選項，但這並不是 trivial 操作。"
 
-#: cmdline/apt-get.cc:1259
+#. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
+#. careful with hard to type or special characters (like non-breaking spaces)
+#: cmdline/apt-get.cc:1261
 msgid "Yes, do as I say!"
 msgstr "Yes, do as I say!"
 
-#: cmdline/apt-get.cc:1261
+#: cmdline/apt-get.cc:1263
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -620,28 +622,28 @@ msgstr ""
 "請輸入 '%s' 這個句子以繼續進行\n"
 " ?] "
 
-#: cmdline/apt-get.cc:1267 cmdline/apt-get.cc:1286
+#: cmdline/apt-get.cc:1269 cmdline/apt-get.cc:1288
 msgid "Abort."
 msgstr "放棄執行。"
 
-#: cmdline/apt-get.cc:1282
+#: cmdline/apt-get.cc:1284
 msgid "Do you want to continue [Y/n]? "
 msgstr "是否繼續進行 [Y/n]？"
 
-#: cmdline/apt-get.cc:1354 cmdline/apt-get.cc:2654 apt-pkg/algorithms.cc:1548
+#: cmdline/apt-get.cc:1356 cmdline/apt-get.cc:2656 apt-pkg/algorithms.cc:1554
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "無法取得 %s，%s\n"
 
-#: cmdline/apt-get.cc:1372
+#: cmdline/apt-get.cc:1374
 msgid "Some files failed to download"
 msgstr "有部份檔案無法下載"
 
-#: cmdline/apt-get.cc:1373 cmdline/apt-get.cc:2666
+#: cmdline/apt-get.cc:1375 cmdline/apt-get.cc:2668
 msgid "Download complete and in download only mode"
 msgstr "下載完成，且這是『僅下載』模式"
 
-#: cmdline/apt-get.cc:1379
+#: cmdline/apt-get.cc:1381
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -649,19 +651,19 @@ msgstr ""
 "有部份套件檔無法取得，試著執行 apt-get update 或者試著加上 --fix-missing 選"
 "項？"
 
-#: cmdline/apt-get.cc:1383
+#: cmdline/apt-get.cc:1385
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "目前尚未支援 --fix-missing 和媒體抽換"
 
-#: cmdline/apt-get.cc:1388
+#: cmdline/apt-get.cc:1390
 msgid "Unable to correct missing packages."
 msgstr "無法修正欠缺的套件。"
 
-#: cmdline/apt-get.cc:1389
+#: cmdline/apt-get.cc:1391
 msgid "Aborting install."
 msgstr "放棄安裝。"
 
-#: cmdline/apt-get.cc:1417
+#: cmdline/apt-get.cc:1419
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -671,35 +673,35 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: cmdline/apt-get.cc:1421
+#: cmdline/apt-get.cc:1423
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr ""
 
-#: cmdline/apt-get.cc:1559
+#: cmdline/apt-get.cc:1561
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1593
 #, fuzzy, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "無法取得來源套件列表 %s 的狀態"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1629
+#: cmdline/apt-get.cc:1631
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1645
+#: cmdline/apt-get.cc:1647
 msgid "The update command takes no arguments"
 msgstr "update 指令不需任何參數"
 
-#: cmdline/apt-get.cc:1711
+#: cmdline/apt-get.cc:1713
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "我們沒有計劃要刪除任何東西，無法啟動 AutoRemover"
 
-#: cmdline/apt-get.cc:1815
+#: cmdline/apt-get.cc:1817
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -717,15 +719,15 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1818 cmdline/apt-get.cc:1987
+#: cmdline/apt-get.cc:1820 cmdline/apt-get.cc:1989
 msgid "The following information may help to resolve the situation:"
 msgstr "以下的資訊或許有助於解決當前的情況："
 
-#: cmdline/apt-get.cc:1822
+#: cmdline/apt-get.cc:1824
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "內部錯誤，AutoRemover 處理失敗"
 
-#: cmdline/apt-get.cc:1829
+#: cmdline/apt-get.cc:1831
 #, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
@@ -735,7 +737,7 @@ msgid_plural ""
 msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
 msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
 
-#: cmdline/apt-get.cc:1833
+#: cmdline/apt-get.cc:1835
 #, fuzzy, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -743,22 +745,22 @@ msgid_plural ""
 msgstr[0] "以下套件是被自動安裝進來的，且已不再會被用到了："
 msgstr[1] "以下套件是被自動安裝進來的，且已不再會被用到了："
 
-#: cmdline/apt-get.cc:1835
+#: cmdline/apt-get.cc:1837
 #, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "使用 'apt-get autoremove' 來將其移除。"
 msgstr[1] "使用 'apt-get autoremove' 來將其移除。"
 
-#: cmdline/apt-get.cc:1854
+#: cmdline/apt-get.cc:1856
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "內部錯誤，AllUpgrade 造成了損壞"
 
-#: cmdline/apt-get.cc:1953
+#: cmdline/apt-get.cc:1955
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "您也許得執行 'apt-get -f install' 以修正這些問題："
 
-#: cmdline/apt-get.cc:1957
+#: cmdline/apt-get.cc:1959
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -766,7 +768,7 @@ msgstr ""
 "未能滿足相依關係。請試著不指定套件來執行 'apt-get -f install'（或採取其它的解"
 "決方案）。"
 
-#: cmdline/apt-get.cc:1972
+#: cmdline/apt-get.cc:1974
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -776,85 +778,85 @@ msgstr ""
 "有些套件無法安裝。這可能意謂著您的要求難以解決，或是若您使用的是\n"
 "unstable 發行版，可能有些必要的套件尚未建立，或是被移出 Incoming 了。"
 
-#: cmdline/apt-get.cc:1993
+#: cmdline/apt-get.cc:1995
 msgid "Broken packages"
 msgstr "損毀的套件"
 
-#: cmdline/apt-get.cc:2019
+#: cmdline/apt-get.cc:2021
 msgid "The following extra packages will be installed:"
 msgstr "下列的額外套件將被安裝："
 
-#: cmdline/apt-get.cc:2109
+#: cmdline/apt-get.cc:2111
 msgid "Suggested packages:"
 msgstr "建議套件："
 
-#: cmdline/apt-get.cc:2110
+#: cmdline/apt-get.cc:2112
 msgid "Recommended packages:"
 msgstr "推薦套件："
 
-#: cmdline/apt-get.cc:2152
+#: cmdline/apt-get.cc:2154
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "無法找到套件 %s"
 
-#: cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:2161 cmdline/apt-mark.cc:70
 #, fuzzy, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "%s 被設定為手動安裝。\n"
 
-#: cmdline/apt-get.cc:2167 cmdline/apt-mark.cc:114
+#: cmdline/apt-get.cc:2169 cmdline/apt-mark.cc:114
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
 
-#: cmdline/apt-get.cc:2183
+#: cmdline/apt-get.cc:2185
 msgid "Calculating upgrade... "
 msgstr "籌備升級中... "
 
-#: cmdline/apt-get.cc:2186 methods/ftp.cc:711 methods/connect.cc:115
+#: cmdline/apt-get.cc:2188 methods/ftp.cc:711 methods/connect.cc:115
 msgid "Failed"
 msgstr "失敗"
 
-#: cmdline/apt-get.cc:2191
+#: cmdline/apt-get.cc:2193
 msgid "Done"
 msgstr "完成"
 
-#: cmdline/apt-get.cc:2258 cmdline/apt-get.cc:2266
+#: cmdline/apt-get.cc:2260 cmdline/apt-get.cc:2268
 msgid "Internal error, problem resolver broke stuff"
 msgstr "內部錯誤，問題排除器造成了損壞"
 
-#: cmdline/apt-get.cc:2294 cmdline/apt-get.cc:2330
+#: cmdline/apt-get.cc:2296 cmdline/apt-get.cc:2332
 msgid "Unable to lock the download directory"
 msgstr "無法鎖定下載目錄"
 
-#: cmdline/apt-get.cc:2386
+#: cmdline/apt-get.cc:2388
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:2391
+#: cmdline/apt-get.cc:2393
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2451
+#: cmdline/apt-get.cc:2453
 msgid "Must specify at least one package to fetch source for"
 msgstr "在取得原始碼時必須至少指定一個套件"
 
-#: cmdline/apt-get.cc:2491 cmdline/apt-get.cc:2803
+#: cmdline/apt-get.cc:2493 cmdline/apt-get.cc:2805
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "無法找到 %s 的原始碼套件"
 
-#: cmdline/apt-get.cc:2508
+#: cmdline/apt-get.cc:2510
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2513
+#: cmdline/apt-get.cc:2515
 #, c-format
 msgid ""
 "Please use:\n"
@@ -862,104 +864,104 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2566
+#: cmdline/apt-get.cc:2568
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "略過已下載的檔案 '%s'\n"
 
-#: cmdline/apt-get.cc:2603
+#: cmdline/apt-get.cc:2605
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "在 %s 裡沒有足夠的的未使用空間"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2612
+#: cmdline/apt-get.cc:2614
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "需要下載 %sB/%sB 的原始套件檔。\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2617
+#: cmdline/apt-get.cc:2619
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "需要下載 %sB 的原始套件檔。\n"
 
-#: cmdline/apt-get.cc:2623
+#: cmdline/apt-get.cc:2625
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "取得原始碼 %s\n"
 
-#: cmdline/apt-get.cc:2661
+#: cmdline/apt-get.cc:2663
 msgid "Failed to fetch some archives."
 msgstr "無法取得某些套件檔。"
 
-#: cmdline/apt-get.cc:2692
+#: cmdline/apt-get.cc:2694
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "不解開，因原始碼已解開至 %s\n"
 
-#: cmdline/apt-get.cc:2704
+#: cmdline/apt-get.cc:2706
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "解開指令 '%s' 失敗。\n"
 
-#: cmdline/apt-get.cc:2705
+#: cmdline/apt-get.cc:2707
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
 
-#: cmdline/apt-get.cc:2727
+#: cmdline/apt-get.cc:2729
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "編譯指令 '%s' 失敗。\n"
 
-#: cmdline/apt-get.cc:2747
+#: cmdline/apt-get.cc:2749
 msgid "Child process failed"
 msgstr "子程序失敗"
 
-#: cmdline/apt-get.cc:2766
+#: cmdline/apt-get.cc:2768
 msgid "Must specify at least one package to check builddeps for"
 msgstr "在檢查編譯相依關係時必須至少指定一個套件"
 
-#: cmdline/apt-get.cc:2791
+#: cmdline/apt-get.cc:2793
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2815 cmdline/apt-get.cc:2818
+#: cmdline/apt-get.cc:2817 cmdline/apt-get.cc:2820
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "無法取得 %s 的編譯相依關係資訊"
 
-#: cmdline/apt-get.cc:2838
+#: cmdline/apt-get.cc:2840
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s 沒有編譯相依關係。\n"
 
-#: cmdline/apt-get.cc:3008
+#: cmdline/apt-get.cc:3010
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr "無法滿足 %2$s 所要求的 %1$s 相依關係，因為找不到套件 %3$s"
 
-#: cmdline/apt-get.cc:3026
+#: cmdline/apt-get.cc:3028
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "無法滿足 %2$s 所要求的 %1$s 相依關係，因為找不到套件 %3$s"
 
-#: cmdline/apt-get.cc:3049
+#: cmdline/apt-get.cc:3051
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr "無法滿足 %2$s 的相依關係 %1$s：已安裝的套件 %3$s 太新了"
 
-#: cmdline/apt-get.cc:3088
+#: cmdline/apt-get.cc:3090
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -967,37 +969,37 @@ msgid ""
 msgstr ""
 "無法滿足 %2$s 所要求的 %1$s 相依關係，因為套件 %3$s 沒有版本符合其版本需求"
 
-#: cmdline/apt-get.cc:3094
+#: cmdline/apt-get.cc:3096
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr "無法滿足 %2$s 所要求的 %1$s 相依關係，因為找不到套件 %3$s"
 
-#: cmdline/apt-get.cc:3117
+#: cmdline/apt-get.cc:3119
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "無法滿足 %2$s 的相依關係 %1$s：%3$s"
 
-#: cmdline/apt-get.cc:3133
+#: cmdline/apt-get.cc:3135
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "無法滿足套件 %s 的編譯相依關係。"
 
-#: cmdline/apt-get.cc:3138
+#: cmdline/apt-get.cc:3140
 msgid "Failed to process build dependencies"
 msgstr "無法處理編譯相依關係"
 
-#: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
+#: cmdline/apt-get.cc:3233 cmdline/apt-get.cc:3245
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "正和 %s (%s) 連線"
 
-#: cmdline/apt-get.cc:3366
+#: cmdline/apt-get.cc:3368
 msgid "Supported modules:"
 msgstr "已支援模組："
 
-#: cmdline/apt-get.cc:3407
+#: cmdline/apt-get.cc:3409
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1083,7 +1085,7 @@ msgstr ""
 "以取得更多資訊和選項。\n"
 "                        該 APT 有著超級牛力。\n"
 
-#: cmdline/apt-get.cc:3572
+#: cmdline/apt-get.cc:3574
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1668,7 +1670,7 @@ msgstr ""
 "  -c=? 讀取指定的設定檔\n"
 "  -o=? 指定任意的設定選項，例如:-o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1335
+#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1339
 #, c-format
 msgid "Unable to write to %s"
 msgstr "無法寫入 %s"
@@ -2699,19 +2701,19 @@ msgstr "來源列表 %2$s 中的第 %1$u 行的格式錯誤（類型）"
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "未知的類型 '%1$s'，位於在來源列表 %3$s 中的第 %2$u 行"
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:896
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:898
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:503
+#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:504
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "無法開啟檔案 %s"
 
-#: apt-pkg/packagemanager.cc:545
+#: apt-pkg/packagemanager.cc:546
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2744,7 +2746,7 @@ msgstr ""
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "無法修正問題，您保留 (hold) 了損毀的套件。"
 
-#: apt-pkg/algorithms.cc:1574 apt-pkg/algorithms.cc:1576
+#: apt-pkg/algorithms.cc:1580 apt-pkg/algorithms.cc:1582
 #, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -2884,21 +2886,21 @@ msgstr "哇呀，您已經超過這個 APT 所能處理的相依關係數量了�
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "在計算檔案相依性時找不到套件 %s %s"
 
-#: apt-pkg/pkgcachegen.cc:1146
+#: apt-pkg/pkgcachegen.cc:1150
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "無法取得來源套件列表 %s 的狀態"
 
-#: apt-pkg/pkgcachegen.cc:1234 apt-pkg/pkgcachegen.cc:1338
-#: apt-pkg/pkgcachegen.cc:1344 apt-pkg/pkgcachegen.cc:1501
+#: apt-pkg/pkgcachegen.cc:1238 apt-pkg/pkgcachegen.cc:1342
+#: apt-pkg/pkgcachegen.cc:1348 apt-pkg/pkgcachegen.cc:1505
 msgid "Reading package lists"
 msgstr "正在讀取套件清單"
 
-#: apt-pkg/pkgcachegen.cc:1251
+#: apt-pkg/pkgcachegen.cc:1255
 msgid "Collecting File Provides"
 msgstr "正在收集檔案提供者"
 
-#: apt-pkg/pkgcachegen.cc:1443 apt-pkg/pkgcachegen.cc:1450
+#: apt-pkg/pkgcachegen.cc:1447 apt-pkg/pkgcachegen.cc:1454
 msgid "IO Error saving source cache"
 msgstr "在儲存來源快取時 IO 錯誤"
 
