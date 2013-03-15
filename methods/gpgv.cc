@@ -6,6 +6,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/indexcopy.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/gpgv.h>
 
 #include <utime.h>
 #include <stdio.h>
@@ -72,7 +73,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    else if (pid == 0)
    {
       _error->PushToStack();
-      bool const success = SigVerify::RunGPGV(outfile, file, 3, fd);
+      bool const success = ExecGPGV(outfile, file, 3, fd);
       if (success == false)
       {
 	 string errmsg;
