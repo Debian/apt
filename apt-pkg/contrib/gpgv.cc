@@ -2,14 +2,13 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
-#include <iostream>
-#include <sstream>
-#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
+
+#include <vector>
 
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
@@ -85,12 +84,12 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    Args.push_back(gpgvpath.c_str());
    Args.push_back("--ignore-time-conflict");
 
+   char statusfdstr[10];
    if (statusfd != -1)
    {
       Args.push_back("--status-fd");
-      char fd[10];
-      snprintf(fd, sizeof(fd), "%i", statusfd);
-      Args.push_back(fd);
+      snprintf(statusfdstr, sizeof(fd), "%i", statusfd);
+      Args.push_back(statusfdstr);
    }
 
    for (vector<string>::const_iterator K = keyrings.begin();
@@ -131,8 +130,10 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       int const nullfd = open("/dev/null", O_RDONLY);
       close(fd[0]);
       // Redirect output to /dev/null; we read from the status fd
-      dup2(nullfd, STDOUT_FILENO);
-      dup2(nullfd, STDERR_FILENO);
+      if (statusfd != STDOUT_FILENO)
+	 dup2(nullfd, STDOUT_FILENO);
+      if (statusfd != STDERR_FILENO)
+	 dup2(nullfd, STDERR_FILENO);
       // Redirect the pipe to the status fd (3)
       dup2(fd[1], statusfd);
 

@@ -6,6 +6,7 @@ apt (0.9.7.9) UNRELEASED; urgency=low
   * apt-pkg/contrib/gpgv.cc:
     - ExecGPGV is a method which should never return, so mark it as such
       and fix the inconsistency of returning in error cases
+    - don't close stdout/stderr if it is also the statusfd
 
  -- David Kalnischkies <kalnischkies@gmail.com>  Fri, 15 Mar 2013 14:15:43 +0100
 
