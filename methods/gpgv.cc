@@ -71,19 +71,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    if (pid < 0)
       return string("Couldn't spawn new process") + strerror(errno);
    else if (pid == 0)
-   {
-      _error->PushToStack();
-      bool const success = ExecGPGV(outfile, file, 3, fd);
-      if (success == false)
-      {
-	 string errmsg;
-	 _error->PopMessage(errmsg);
-	 _error->RevertToStack();
-	 return errmsg;
-      }
-      _error->RevertToStack();
-      exit(111);
-   }
+      ExecGPGV(outfile, file, 3, fd);
    close(fd[1]);
 
    FILE *pipein = fdopen(fd[0], "r");

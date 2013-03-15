@@ -101,11 +101,13 @@ class SigVerify								/*{{{*/
 
    __deprecated static bool RunGPGV(std::string const &File, std::string const &FileOut,
 		       int const &statusfd, int fd[2]) {
-      return ExecGPGV(File, FileOut, statusfd, fd);
+      ExecGPGV(File, FileOut, statusfd, fd);
+      return false;
    };
    __deprecated static bool RunGPGV(std::string const &File, std::string const &FileOut,
 			      int const &statusfd = -1) {
-      return ExecGPGV(File, FileOut, statusfd);
+      ExecGPGV(File, FileOut, statusfd);
+      return false;
    };
 };
 									/*}}}*/

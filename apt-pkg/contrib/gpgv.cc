@@ -25,20 +25,28 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* Generating the commandline for calling gpgv is somehow complicated as
    we need to add multiple keyrings and user supplied options. */
-bool ExecGPGV(std::string const &File, std::string const &FileGPG,
+void ExecGPGV(std::string const &File, std::string const &FileGPG,
 			int const &statusfd, int fd[2])
 {
+   #define EINTERNAL 111
+
    if (File == FileGPG)
    {
       #define SIGMSG "-----BEGIN PGP SIGNED MESSAGE-----\n"
       char buffer[sizeof(SIGMSG)];
       FILE* gpg = fopen(File.c_str(), "r");
       if (gpg == NULL)
-	 return _error->Errno("RunGPGV", _("Could not open file %s"), File.c_str());
+      {
+	 ioprintf(std::cerr, _("Could not open file %s"), File.c_str());
+	 exit(EINTERNAL);
+      }
       char const * const test = fgets(buffer, sizeof(buffer), gpg);
       fclose(gpg);
       if (test == NULL || strcmp(buffer, SIGMSG) != 0)
-	 return _error->Error(_("File %s doesn't start with a clearsigned message"), File.c_str());
+      {
+	 ioprintf(std::cerr, _("File %s doesn't start with a clearsigned message"), File.c_str());
+	 exit(EINTERNAL);
+      }
       #undef SIGMSG
    }
 
@@ -69,8 +77,9 @@ bool ExecGPGV(std::string const &File, std::string const &FileGPG,
    if (keyrings.empty() == true)
    {
       // TRANSLATOR: %s is the trusted keyring parts directory
-      return _error->Error(_("No keyring installed in %s."),
-			   _config->FindDir("Dir::Etc::TrustedParts").c_str());
+      ioprintf(std::cerr, _("No keyring installed in %s."),
+	    _config->FindDir("Dir::Etc::TrustedParts").c_str());
+      exit(EINTERNAL);
    }
 
    Args.push_back(gpgvpath.c_str());
@@ -133,6 +142,7 @@ bool ExecGPGV(std::string const &File, std::string const &FileGPG,
    }
 
    execvp(gpgvpath.c_str(), (char **) &Args[0]);
-   return true;
+   ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
+   exit(EINTERNAL);
 }
 									/*}}}*/
