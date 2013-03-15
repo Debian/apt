@@ -117,7 +117,13 @@ char *_strstrip(char *String)
 
    if (*String == 0)
       return String;
-
+   return _strrstrip(String);
+}
+									/*}}}*/
+// strrstrip - Remove white space from the back of a string	/*{{{*/
+// ---------------------------------------------------------------------
+char *_strrstrip(char *String)
+{
    char *End = String + strlen(String) - 1;
    for (;End != String - 1 && (*End == ' ' || *End == '\t' || *End == '\n' ||
 			       *End == '\r'); End--);
