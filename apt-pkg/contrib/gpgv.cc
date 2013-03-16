@@ -214,19 +214,25 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 ioprintf(std::cerr, _("Waited for %s but it wasn't there"), "gpgv");
 	 UNLINK_EXIT(EINTERNAL);
       }
+#undef UNLINK_EXIT
+      // we don't need the files any longer as we have the filedescriptors still open
+      unlink(sig);
+      unlink(data);
+      free(sig);
+      free(data);
 
       // check if it exit'ed normally …
       if (WIFEXITED(Status) == false)
       {
 	 ioprintf(std::cerr, _("Sub-process %s exited unexpectedly"), "gpgv");
-	 UNLINK_EXIT(EINTERNAL);
+	 exit(EINTERNAL);
       }
 
       // … and with a good exit code
       if (WEXITSTATUS(Status) != 0)
       {
 	 ioprintf(std::cerr, _("Sub-process %s returned an error code (%u)"), "gpgv", WEXITSTATUS(Status));
-	 UNLINK_EXIT(WEXITSTATUS(Status));
+	 exit(WEXITSTATUS(Status));
       }
 
       /* looks like its fine. Our caller will check the status fd,
@@ -236,12 +242,11 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       if (RecombineToClearSignedFile(File, dataFd, dataHeader, sigFd) == false)
       {
 	 _error->DumpErrors(std::cerr);
-	 UNLINK_EXIT(EINTERNAL);
+	 exit(EINTERNAL);
       }
 
       // everything fine, we have a clean file now!
-      UNLINK_EXIT(0);
-#undef UNLINK_EXIT
+      exit(0);
    }
    exit(EINTERNAL); // unreachable safe-guard
 }
@@ -259,7 +264,10 @@ bool RecombineToClearSignedFile(std::string const &OutFile, int const ContentFil
    FILE *data_file = fdopen(ContentFile, "r");
    FILE *sig_file = fdopen(SignatureFile, "r");
    if (data_file == NULL || sig_file == NULL)
+   {
+      fclose(clean_file);
       return _error->Error("Couldn't open splitfiles to recombine them into %s", OutFile.c_str());
+   }
    char *buf = NULL;
    size_t buf_size = 0;
    while (getline(&buf, &buf_size, data_file) != -1)
@@ -287,13 +295,21 @@ bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
    {
       out_content = fdopen(ContentFile, "w");
       if (out_content == NULL)
+      {
+	 fclose(in);
 	 return _error->Errno("fdopen", "Failed to open file to write content to from %s", InFile.c_str());
+      }
    }
    if (SignatureFile != -1)
    {
       out_signature = fdopen(SignatureFile, "w");
       if (out_signature == NULL)
+      {
+	 fclose(in);
+	 if (out_content != NULL)
+	    fclose(out_content);
 	 return _error->Errno("fdopen", "Failed to open file to write signature to from %s", InFile.c_str());
+      }
    }
 
    bool found_message_start = false;
@@ -358,6 +374,7 @@ bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
       fclose(out_content);
    if (out_signature != NULL)
       fclose(out_signature);
+   fclose(in);
 
    return true;
 }
