@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 
 #define equals(x,y) assertEquals(y, x, __LINE__)
 #define equalsNot(x,y) assertEqualsNot(y, x, __LINE__)
@@ -6,6 +7,7 @@
 template < typename X, typename Y >
 void OutputAssertEqual(X expect, char const* compare, Y get, unsigned long const &line) {
 	std::cerr << "Test FAILED: »" << expect << "« " << compare << " »" << get << "« at line " << line << std::endl;
+	std::exit(EXIT_FAILURE);
 }
 
 template < typename X, typename Y >
