@@ -12,6 +12,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/gpgv.h>
 
 #include <sys/stat.h>
 #include <clocale>
@@ -57,7 +58,10 @@ bool indexRecords::Exists(string const &MetaKey) const
 
 bool indexRecords::Load(const string Filename)				/*{{{*/
 {
-   FileFd Fd(Filename, FileFd::ReadOnly);
+   FileFd Fd;
+   if (OpenMaybeClearSignedFile(Filename, Fd) == false)
+      return false;
+
    pkgTagFile TagFile(&Fd, Fd.Size() + 256); // XXX
    if (_error->PendingError() == true)
    {

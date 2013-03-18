@@ -24,6 +24,8 @@ cat Translation-de | xz --format=lzma > Translation-de.lzma
 cat Translation-de | xz > Translation-de.xz
 rm Translation-en Translation-de
 cd - > /dev/null
+addtrap "chmod -R +w $PWD/rootdir/media/cdrom/dists/;"
+chmod -R -w rootdir/media/cdrom/dists
 
 aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
 sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log

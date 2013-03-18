@@ -215,7 +215,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 UNLINK_EXIT(EINTERNAL);
       }
 #undef UNLINK_EXIT
-      // we don't need the files any longer as we have the filedescriptors still open
+      // we don't need the files any longer
       unlink(sig);
       unlink(data);
       free(sig);
@@ -235,50 +235,10 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 exit(WEXITSTATUS(Status));
       }
 
-      /* looks like its fine. Our caller will check the status fd,
-	 but we construct a good-known clear-signed file without garbage
-	 and other non-sense. In a perfect world, we get the same file,
-	 but empty lines, trailing whitespaces and stuff makes it inperfect … */
-      if (RecombineToClearSignedFile(File, dataFd, dataHeader, sigFd) == false)
-      {
-	 _error->DumpErrors(std::cerr);
-	 exit(EINTERNAL);
-      }
-
-      // everything fine, we have a clean file now!
+      // everything fine
       exit(0);
    }
    exit(EINTERNAL); // unreachable safe-guard
-}
-									/*}}}*/
-// RecombineToClearSignedFile - combine data/signature to message	/*{{{*/
-bool RecombineToClearSignedFile(std::string const &OutFile, int const ContentFile,
-      std::vector<std::string> const &ContentHeader, int const SignatureFile)
-{
-   FILE *clean_file = fopen(OutFile.c_str(), "w");
-   fputs("-----BEGIN PGP SIGNED MESSAGE-----\n", clean_file);
-   for (std::vector<std::string>::const_iterator h = ContentHeader.begin(); h != ContentHeader.end(); ++h)
-      fprintf(clean_file, "%s\n", h->c_str());
-   fputs("\n", clean_file);
-
-   FILE *data_file = fdopen(ContentFile, "r");
-   FILE *sig_file = fdopen(SignatureFile, "r");
-   if (data_file == NULL || sig_file == NULL)
-   {
-      fclose(clean_file);
-      return _error->Error("Couldn't open splitfiles to recombine them into %s", OutFile.c_str());
-   }
-   char *buf = NULL;
-   size_t buf_size = 0;
-   while (getline(&buf, &buf_size, data_file) != -1)
-      fputs(buf, clean_file);
-   fclose(data_file);
-   fputs("\n", clean_file);
-   while (getline(&buf, &buf_size, sig_file) != -1)
-      fputs(buf, clean_file);
-   fclose(sig_file);
-   fclose(clean_file);
-   return true;
 }
 									/*}}}*/
 // SplitClearSignedFile - split message into data/signature		/*{{{*/

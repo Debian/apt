@@ -69,20 +69,6 @@ inline void ExecGPGV(std::string const &File, std::string const &FileSig,
 bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
       std::vector<std::string> * const ContentHeader, int const SignatureFile);
 
-/** \brief recombines message and signature to an inline signature
- *
- *  Reverses the splitting down by #SplitClearSignedFile by writing
- *  a well-formed clear-signed message without unsigned messages,
- *  additional signed messages or just trailing whitespaces
- *
- *  @param OutFile will be clear-signed file
- *  @param ContentFile is the Fd the message will be read from
- *  @param ContentHeader is a list of all required Amored Headers for the message
- *  @param SignatureFile is the Fd all signatures will be read from
- */
-bool RecombineToClearSignedFile(std::string const &OutFile, int const ContentFile,
-      std::vector<std::string> const &ContentHeader, int const SignatureFile);
-
 /** \brief open a file which might be clear-signed
  *
  * This method tries to extract the (signed) message of a file.

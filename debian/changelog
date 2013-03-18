@@ -8,19 +8,18 @@ apt (0.9.7.9) UNRELEASED; urgency=low
       and fix the inconsistency of returning in error cases
     - don't close stdout/stderr if it is also the statusfd
     - if ExecGPGV deals with a clear-signed file it will split this file
-      into data and signatures, pass it to gpgv for verification and
-      recombines it after that in a known-good way without unsigned blocks
-      and whitespaces resulting usually in more or less the same file as
-      before, but later code can be sure about the format
+      into data and signatures, pass it to gpgv for verification
     - add method to open (maybe) clearsigned files transparently
   * apt-pkg/acquire-item.cc:
     - keep the last good InRelease file around just as we do it with
       Release.gpg in case the new one we download isn't good for us
   * apt-pkg/deb/debmetaindex.cc:
     - reenable InRelease by default
-  * ftparchive/writer.cc:
+  * ftparchive/writer.cc,
+    apt-pkg/deb/debindexfile.cc,
+    apt-pkg/deb/deblistparser.cc:
     - use OpenMaybeClearSignedFile to be free from detecting and
-      skipping clearsigning metadata in dsc files
+      skipping clearsigning metadata in dsc and Release files
 
   [ Michael Vogt ]
   * add regression test for CVE-2013-1051
