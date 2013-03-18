@@ -282,10 +282,17 @@ void pkgTagSection::Trim()
    for (; Stop > Section + 2 && (Stop[-2] == '\n' || Stop[-2] == '\r'); Stop--);
 }
 									/*}}}*/
+// TagSection::Exists - return True if a tag exists                	/*{{{*/
+bool pkgTagSection::Exists(const char* const Tag)
+{
+   unsigned int tmp;
+   return Find(Tag, tmp);
+}
+									/*}}}*/
 // TagSection::Find - Locate a tag					/*{{{*/
 // ---------------------------------------------------------------------
 /* This searches the section for a tag that matches the given string. */
-bool pkgTagSection::Find(const char *Tag,unsigned &Pos) const
+bool pkgTagSection::Find(const char *Tag,unsigned int &Pos) const
 {
    unsigned int Length = strlen(Tag);
    unsigned int I = AlphaIndexes[AlphaHash(Tag)];
