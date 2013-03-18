@@ -1,6 +1,6 @@
 #!/bin/sh -- # no runable script, just for vi
 
-TESTFAILURES="no"
+TESTFAILURES=0
 
 # we all like colorful messages
 if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
@@ -38,7 +38,7 @@ msgtest() {
 }
 msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
 msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
-msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; TESTFAILURES="yes"; }
+msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; TESTFAILURES=$((TESTFAILURES+1)); }
 
 # enable / disable Debugging
 MSGLEVEL=${MSGLEVEL:-3}
@@ -116,7 +116,12 @@ gdb() {
 }
 
 exitwithstatus() {
-	[ "$TESTFAILURES" = "yes" ] && exit 1 || exit 0;
+        # error if we about to overflow, but ...
+        #   "255 failures ought to be enough for everybody"
+        if [ $TESTFAILURES -gt 255 ]; then
+            msgdie "Total failure count $TESTFAILURES too big"
+        fi
+        exit $((TESTFAILURES <= 255 ? TESTFAILURES : 255));
 }
 
 addtrap() {
