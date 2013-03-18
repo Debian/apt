@@ -19,7 +19,7 @@
 
 #include <apti18n.h>
 									/*}}}*/
-char * GenerateTemporaryFileTemplate(const char *basename)		/*{{{*/
+static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
 {
    const char *tmpdir = getenv("TMPDIR");
 #ifdef P_tmpdir
@@ -376,5 +376,58 @@ bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
       fclose(out_signature);
    fclose(in);
 
+   if (found_signature == true)
+      return _error->Error("Signature in file %s wasn't closed", InFile.c_str());
+
+   // if we haven't found any of them, this an unsigned file,
+   // so don't generate an error, but splitting was unsuccessful none-the-less
+   if (found_message_start == false && found_message_end == false)
+      return false;
+   // otherwise one missing indicates a syntax error
+   else if (found_message_start == false || found_message_end == false)
+      return _error->Error("Splitting of file %s failed as it doesn't contain all expected parts", InFile.c_str());
+
    return true;
 }
+									/*}}}*/
+bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &MessageFile) /*{{{*/
+{
+   char * const message = GenerateTemporaryFileTemplate("fileutl.message");
+   int const messageFd = mkstemp(message);
+   if (messageFd == -1)
+   {
+      free(message);
+      return _error->Errno("mkstemp", "Couldn't create temporary file to work with %s", ClearSignedFileName.c_str());
+   }
+   // we have the fd, thats enough for us
+   unlink(message);
+   free(message);
+
+   int const duppedMsg = dup(messageFd);
+   if (duppedMsg == -1)
+      return _error->Errno("dup", "Couldn't duplicate FD to work with %s", ClearSignedFileName.c_str());
+
+   _error->PushToStack();
+   bool const splitDone = SplitClearSignedFile(ClearSignedFileName.c_str(), messageFd, NULL, -1);
+   bool const errorDone = _error->PendingError();
+   _error->MergeWithStack();
+   if (splitDone == false)
+   {
+      close(duppedMsg);
+
+      if (errorDone == true)
+	 return false;
+
+      // we deal with an unsigned file
+      MessageFile.Open(ClearSignedFileName, FileFd::ReadOnly);
+   }
+   else // clear-signed
+   {
+      if (lseek(duppedMsg, 0, SEEK_SET) < 0)
+	 return _error->Errno("lseek", "Unable to seek back in message fd for file %s", ClearSignedFileName.c_str());
+      MessageFile.OpenDescriptor(duppedMsg, FileFd::ReadOnly, true);
+   }
+
+   return MessageFile.Failed() == false;
+}
+									/*}}}*/

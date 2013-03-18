@@ -20,6 +20,8 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/deblistparser.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/gpgv.h>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -598,77 +600,62 @@ SourcesWriter::SourcesWriter(string const &BOverrides,string const &SOverrides,
 // ---------------------------------------------------------------------
 /* */
 bool SourcesWriter::DoPackage(string FileName)
-{      
+{
    // Open the archive
-   FileFd F(FileName,FileFd::ReadOnly);
-   if (_error->PendingError() == true)
+   FileFd F;
+   if (OpenMaybeClearSignedFile(FileName, F) == false)
       return false;
-   
-   // Stat the file for later
-   struct stat St;
-   if (fstat(F.Fd(),&St) != 0)
-      return _error->Errno("fstat","Failed to stat %s",FileName.c_str());
 
-   if (St.st_size > 128*1024)
+   unsigned long long const FSize = F.FileSize();
+   //FIXME: do we really need to enforce a maximum size of the dsc file?
+   if (FSize > 128*1024)
       return _error->Error("DSC file '%s' is too large!",FileName.c_str());
-         
-   if (BufSize < (unsigned long long)St.st_size+1)
+
+   if (BufSize < FSize + 2)
    {
-      BufSize = St.st_size+1;
-      Buffer = (char *)realloc(Buffer,St.st_size+1);
+      BufSize = FSize + 2;
+      Buffer = (char *)realloc(Buffer , BufSize);
    }
-   
-   if (F.Read(Buffer,St.st_size) == false)
+
+   if (F.Read(Buffer, FSize) == false)
       return false;
+
+   // Stat the file for later (F might be clearsigned, so not F.FileSize())
+   struct stat St;
+   if (stat(FileName.c_str(), &St) != 0)
+      return _error->Errno("fstat","Failed to stat %s",FileName.c_str());
 
    // Hash the file
    char *Start = Buffer;
-   char *BlkEnd = Buffer + St.st_size;
+   char *BlkEnd = Buffer + FSize;
 
-   MD5Summation MD5;
-   SHA1Summation SHA1;
-   SHA256Summation SHA256;
-   SHA256Summation SHA512;
+   Hashes DscHashes;
+   if (FSize == (unsigned long long) St.st_size)
+   {
+      if (DoMD5 == true)
+	 DscHashes.MD5.Add((unsigned char *)Start,BlkEnd - Start);
+      if (DoSHA1 == true)
+	 DscHashes.SHA1.Add((unsigned char *)Start,BlkEnd - Start);
+      if (DoSHA256 == true)
+	 DscHashes.SHA256.Add((unsigned char *)Start,BlkEnd - Start);
+      if (DoSHA512 == true)
+	 DscHashes.SHA512.Add((unsigned char *)Start,BlkEnd - Start);
+   }
+   else
+   {
+      FileFd DscFile(FileName, FileFd::ReadOnly);
+      DscHashes.AddFD(DscFile, St.st_size, DoMD5, DoSHA1, DoSHA256, DoSHA512);
+   }
 
-   if (DoMD5 == true)
-      MD5.Add((unsigned char *)Start,BlkEnd - Start);
-   if (DoSHA1 == true)
-      SHA1.Add((unsigned char *)Start,BlkEnd - Start);
-   if (DoSHA256 == true)
-      SHA256.Add((unsigned char *)Start,BlkEnd - Start);
-   if (DoSHA512 == true)
-      SHA512.Add((unsigned char *)Start,BlkEnd - Start);
-
-   // Add an extra \n to the end, just in case
+   // Add extra \n to the end, just in case (as in clearsigned they are missing)
    *BlkEnd++ = '\n';
-   
-   /* Remove the PGP trailer. Some .dsc's have this without a blank line 
-      before */
-   const char *Key = "-----BEGIN PGP SIGNATURE-----";
-   for (char *MsgEnd = Start; MsgEnd < BlkEnd - strlen(Key) -1; MsgEnd++)
-   {
-      if (*MsgEnd == '\n' && strncmp(MsgEnd+1,Key,strlen(Key)) == 0)
-      {
-	 MsgEnd[1] = '\n';
-	 break;
-      }      
-   }
-   
-   /* Read records until we locate the Source record. This neatly skips the
-      GPG header (which is RFC822 formed) without any trouble. */
+   *BlkEnd++ = '\n';
+
    pkgTagSection Tags;
-   do
-   {
-      unsigned Pos;
-      if (Tags.Scan(Start,BlkEnd - Start) == false)
-	 return _error->Error("Could not find a record in the DSC '%s'",FileName.c_str());
-      if (Tags.Find("Source",Pos) == true)
-	 break;
-      Start += Tags.size();
-   }
-   while (1);
+   if (Tags.Scan(Start,BlkEnd - Start) == false || Tags.Exists("Source") == false)
+      return _error->Error("Could not find a record in the DSC '%s'",FileName.c_str());
    Tags.Trim();
-      
+
    // Lookup the overide information, finding first the best priority.
    string BestPrio;
    string Bins = Tags.FindS("Binary");
@@ -732,25 +719,25 @@ bool SourcesWriter::DoPackage(string FileName)
    string const strippedName = flNotDir(FileName);
    std::ostringstream ostreamFiles;
    if (DoMD5 == true && Tags.Exists("Files"))
-      ostreamFiles << "\n " << string(MD5.Result()) << " " << St.st_size << " "
+      ostreamFiles << "\n " << string(DscHashes.MD5.Result()) << " " << St.st_size << " "
 		   << strippedName << "\n " << Tags.FindS("Files");
    string const Files = ostreamFiles.str();
 
    std::ostringstream ostreamSha1;
    if (DoSHA1 == true && Tags.Exists("Checksums-Sha1"))
-      ostreamSha1 << "\n " << string(SHA1.Result()) << " " << St.st_size << " "
+      ostreamSha1 << "\n " << string(DscHashes.SHA1.Result()) << " " << St.st_size << " "
 		   << strippedName << "\n " << Tags.FindS("Checksums-Sha1");
    string const ChecksumsSha1 = ostreamSha1.str();
 
    std::ostringstream ostreamSha256;
    if (DoSHA256 == true && Tags.Exists("Checksums-Sha256"))
-      ostreamSha256 << "\n " << string(SHA256.Result()) << " " << St.st_size << " "
+      ostreamSha256 << "\n " << string(DscHashes.SHA256.Result()) << " " << St.st_size << " "
 		   << strippedName << "\n " << Tags.FindS("Checksums-Sha256");
    string const ChecksumsSha256 = ostreamSha256.str();
 
    std::ostringstream ostreamSha512;
    if (Tags.Exists("Checksums-Sha512"))
-      ostreamSha512 << "\n " << string(SHA512.Result()) << " " << St.st_size << " "
+      ostreamSha512 << "\n " << string(DscHashes.SHA512.Result()) << " " << St.st_size << " "
 		   << strippedName << "\n " << Tags.FindS("Checksums-Sha512");
    string const ChecksumsSha512 = ostreamSha512.str();
 

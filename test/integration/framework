@@ -328,9 +328,15 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 	fi
 
 	echo '3.0 (native)' > ${BUILDDIR}/debian/source/format
-	local SRCS="$( (cd ${BUILDDIR}/..; dpkg-source -b ${NAME}-${VERSION} 2>&1) | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
-	for SRC in $SRCS; do
+	(cd ${BUILDDIR}/..; dpkg-source -b ${NAME}-${VERSION} 2>&1) | sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' \
+		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
+#		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
+#			gpg --yes --no-default-keyring --secret-keyring ./keys/joesixpack.sec \
+#				--keyring ./keys/joesixpack.pub --default-key 'Joe Sixpack' \
+#				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
+#			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
+#		fi
 	done
 
 	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do

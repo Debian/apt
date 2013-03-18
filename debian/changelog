@@ -12,12 +12,16 @@ apt (0.9.7.9) UNRELEASED; urgency=low
       recombines it after that in a known-good way without unsigned blocks
       and whitespaces resulting usually in more or less the same file as
       before, but later code can be sure about the format
+    - add method to open (maybe) clearsigned files transparently
   * apt-pkg/acquire-item.cc:
     - keep the last good InRelease file around just as we do it with
       Release.gpg in case the new one we download isn't good for us
   * apt-pkg/deb/debmetaindex.cc:
     - reenable InRelease by default
-  
+  * ftparchive/writer.cc:
+    - use OpenMaybeClearSignedFile to be free from detecting and
+      skipping clearsigning metadata in dsc files
+
   [ Michael Vogt ]
   * add regression test for CVE-2013-1051
   * implement GPGSplit() based on the idea from Ansgar Burchardt
