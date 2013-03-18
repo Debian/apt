@@ -4,6 +4,7 @@
 #include "assert.h"
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 char *tempfile = NULL;
 int tempfile_fd = -1;
