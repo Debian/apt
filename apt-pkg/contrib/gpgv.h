@@ -51,9 +51,6 @@ inline void ExecGPGV(std::string const &File, std::string const &FileSig,
  *  If a FileFd pointers is NULL it will not be used and the content
  *  which would have been written to it is silently discarded.
  *
- *  The code doesn't support dash-encoded lines as these are not
- *  expected to be present in files we have to deal with.
- *
  *  The content of the split files is undefined if the splitting was
  *  unsuccessful.
  *

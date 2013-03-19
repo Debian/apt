@@ -298,20 +298,21 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 	       SignatureFile->Write("\n", 1);
 	    }
 	 }
-	 else if (found_message_end == false)
+	 else if (found_message_end == false) // we are in the message block
 	 {
-	    // we are in the message block
+	    // we don't have any fields which need dash-escaped,
+	    // but implementations are free to encode all lines …
+	    char const * dashfree = buf;
+	    if (strncmp(dashfree, "- ", 2) == 0)
+	       dashfree += 2;
 	    if(first_line == true) // first line does not need a newline
-	    {
-	       if (ContentFile != NULL)
-		  ContentFile->Write(buf, strlen(buf));
 	       first_line = false;
-	    }
 	    else if (ContentFile != NULL)
-	    {
 	       ContentFile->Write("\n", 1);
-	       ContentFile->Write(buf, strlen(buf));
-	    }
+	    else
+	       continue;
+	    if (ContentFile != NULL)
+	       ContentFile->Write(dashfree, strlen(dashfree));
 	 }
       }
       else if (found_signature == true)
@@ -333,10 +334,10 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 
    // if we haven't found any of them, this an unsigned file,
    // so don't generate an error, but splitting was unsuccessful none-the-less
-   if (found_message_start == false && found_message_end == false)
+   if (first_line == true && found_message_start == false && found_message_end == false)
       return false;
    // otherwise one missing indicates a syntax error
-   else if (found_message_start == false || found_message_end == false)
+   else if (first_line == false || found_message_start == false || found_message_end == false)
       return _error->Error("Splitting of file %s failed as it doesn't contain all expected parts", InFile.c_str());
 
    return true;
