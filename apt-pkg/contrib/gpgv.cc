@@ -41,6 +41,7 @@ static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
    Also, as gpgv has no options to enforce a certain reduced style of
    clear-signed files (=the complete content of the file is signed and
    the content isn't encoded) we do a divide and conquer approach here
+   and split up the clear-signed file in message and signature for gpgv
 */
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
              int const &statusfd, int fd[2])
@@ -108,8 +109,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       }
    }
 
-   int sigFd = -1;
-   int dataFd = -1;
    std::vector<std::string> dataHeader;
    char * sig = NULL;
    char * data = NULL;
@@ -126,17 +125,29 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       data = GenerateTemporaryFileTemplate("apt.data");
       if (sig == NULL || data == NULL)
       {
+	 ioprintf(std::cerr, "Couldn't create tempfile names for splitting up %s", File.c_str());
+	 exit(EINTERNAL);
+      }
+
+      int const sigFd = mkstemp(sig);
+      int const dataFd = mkstemp(data);
+      if (sigFd == -1 || dataFd == -1)
+      {
+	 if (dataFd != -1)
+	    unlink(sig);
+	 if (sigFd != -1)
+	    unlink(data);
 	 ioprintf(std::cerr, "Couldn't create tempfiles for splitting up %s", File.c_str());
 	 exit(EINTERNAL);
       }
 
-      sigFd = mkstemp(sig);
-      dataFd = mkstemp(data);
-      int const duppedSigFd = dup(sigFd);
-      int const duppedDataFd = dup(dataFd);
+      FileFd signature;
+      signature.OpenDescriptor(sigFd, FileFd::WriteOnly, true);
+      FileFd message;
+      message.OpenDescriptor(dataFd, FileFd::WriteOnly, true);
 
-      if (dataFd == -1 || sigFd == -1 || duppedDataFd == -1 || duppedSigFd == -1 ||
-	    SplitClearSignedFile(File, duppedDataFd, &dataHeader, duppedSigFd) == false)
+      if (signature.Failed() == true || message.Failed() == true ||
+	    SplitClearSignedFile(File, &message, &dataHeader, &signature) == false)
       {
 	 if (dataFd != -1)
 	    unlink(sig);
@@ -145,8 +156,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 ioprintf(std::cerr, "Splitting up %s into data and signature failed", File.c_str());
 	 exit(EINTERNAL);
       }
-      lseek(dataFd, 0, SEEK_SET);
-      lseek(sigFd, 0, SEEK_SET);
       Args.push_back(sig);
       Args.push_back(data);
    }
@@ -242,35 +251,12 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 }
 									/*}}}*/
 // SplitClearSignedFile - split message into data/signature		/*{{{*/
-bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
-      std::vector<std::string> * const ContentHeader, int const SignatureFile)
+bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
+      std::vector<std::string> * const ContentHeader, FileFd * const SignatureFile)
 {
    FILE *in = fopen(InFile.c_str(), "r");
    if (in == NULL)
       return _error->Errno("fopen", "can not open %s", InFile.c_str());
-
-   FILE *out_content = NULL;
-   FILE *out_signature = NULL;
-   if (ContentFile != -1)
-   {
-      out_content = fdopen(ContentFile, "w");
-      if (out_content == NULL)
-      {
-	 fclose(in);
-	 return _error->Errno("fdopen", "Failed to open file to write content to from %s", InFile.c_str());
-      }
-   }
-   if (SignatureFile != -1)
-   {
-      out_signature = fdopen(SignatureFile, "w");
-      if (out_signature == NULL)
-      {
-	 fclose(in);
-	 if (out_content != NULL)
-	    fclose(out_content);
-	 return _error->Errno("fdopen", "Failed to open file to write signature to from %s", InFile.c_str());
-      }
-   }
 
    bool found_message_start = false;
    bool found_message_end = false;
@@ -280,7 +266,8 @@ bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
 
    char *buf = NULL;
    size_t buf_size = 0;
-   while (getline(&buf, &buf_size, in) != -1)
+   ssize_t line_len = 0;
+   while ((line_len = getline(&buf, &buf_size, in)) != -1)
    {
       _strrstrip(buf);
       if (found_message_start == false)
@@ -305,35 +292,40 @@ bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
 	 {
 	    found_signature = true;
 	    found_message_end = true;
-	    if (out_signature != NULL)
-	       fprintf(out_signature, "%s\n", buf);
+	    if (SignatureFile != NULL)
+	    {
+	       SignatureFile->Write(buf, strlen(buf));
+	       SignatureFile->Write("\n", 1);
+	    }
 	 }
 	 else if (found_message_end == false)
 	 {
 	    // we are in the message block
 	    if(first_line == true) // first line does not need a newline
 	    {
-	       if (out_content != NULL)
-		  fprintf(out_content, "%s", buf);
+	       if (ContentFile != NULL)
+		  ContentFile->Write(buf, strlen(buf));
 	       first_line = false;
 	    }
-	    else if (out_content != NULL)
-	       fprintf(out_content, "\n%s", buf);
+	    else if (ContentFile != NULL)
+	    {
+	       ContentFile->Write("\n", 1);
+	       ContentFile->Write(buf, strlen(buf));
+	    }
 	 }
       }
       else if (found_signature == true)
       {
-	 if (out_signature != NULL)
-	    fprintf(out_signature, "%s\n", buf);
+	 if (SignatureFile != NULL)
+	 {
+	    SignatureFile->Write(buf, strlen(buf));
+	    SignatureFile->Write("\n", 1);
+	 }
 	 if (strcmp(buf, "-----END PGP SIGNATURE-----") == 0)
 	    found_signature = false; // look for other signatures
       }
       // all the rest is whitespace, unsigned garbage or additional message blocks we ignore
    }
-   if (out_content != NULL)
-      fclose(out_content);
-   if (out_signature != NULL)
-      fclose(out_signature);
    fclose(in);
 
    if (found_signature == true)
@@ -363,17 +355,17 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
    unlink(message);
    free(message);
 
-   int const duppedMsg = dup(messageFd);
-   if (duppedMsg == -1)
-      return _error->Errno("dup", "Couldn't duplicate FD to work with %s", ClearSignedFileName.c_str());
+   MessageFile.OpenDescriptor(messageFd, FileFd::ReadWrite, true);
+   if (MessageFile.Failed() == true)
+      return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
 
    _error->PushToStack();
-   bool const splitDone = SplitClearSignedFile(ClearSignedFileName.c_str(), messageFd, NULL, -1);
+   bool const splitDone = SplitClearSignedFile(ClearSignedFileName.c_str(), &MessageFile, NULL, NULL);
    bool const errorDone = _error->PendingError();
    _error->MergeWithStack();
    if (splitDone == false)
    {
-      close(duppedMsg);
+      MessageFile.Close();
 
       if (errorDone == true)
 	 return false;
@@ -383,9 +375,8 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
    }
    else // clear-signed
    {
-      if (lseek(duppedMsg, 0, SEEK_SET) < 0)
-	 return _error->Errno("lseek", "Unable to seek back in message fd for file %s", ClearSignedFileName.c_str());
-      MessageFile.OpenDescriptor(duppedMsg, FileFd::ReadOnly, true);
+      if (MessageFile.Seek(0) == false)
+	 return _error->Errno("lseek", "Unable to seek back in message for file %s", ClearSignedFileName.c_str());
    }
 
    return MessageFile.Failed() == false;

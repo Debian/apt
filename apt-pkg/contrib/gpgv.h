@@ -48,8 +48,8 @@ inline void ExecGPGV(std::string const &File, std::string const &FileSig,
  *  whitespaces are discarded. The resulting files are suitable to
  *  be checked with gpgv.
  *
- *  If one or all Fds are -1 they will not be used and the content
- *  which would have been written to them is discarded.
+ *  If a FileFd pointers is NULL it will not be used and the content
+ *  which would have been written to it is silently discarded.
  *
  *  The code doesn't support dash-encoded lines as these are not
  *  expected to be present in files we have to deal with.
@@ -61,13 +61,13 @@ inline void ExecGPGV(std::string const &File, std::string const &FileSig,
  *  not generate an error message.
  *
  *  @param InFile is the clear-signed file
- *  @param ContentFile is the Fd the message will be written to
+ *  @param ContentFile is the FileFd the message will be written to
  *  @param ContentHeader is a list of all required Amored Headers for the message
- *  @param SignatureFile is the Fd all signatures will be written to
+ *  @param SignatureFile is the FileFd all signatures will be written to
  *  @return true if the splitting was successful, false otherwise
  */
-bool SplitClearSignedFile(std::string const &InFile, int const ContentFile,
-      std::vector<std::string> * const ContentHeader, int const SignatureFile);
+bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
+      std::vector<std::string> * const ContentHeader, FileFd * const SignatureFile);
 
 /** \brief open a file which might be clear-signed
  *
