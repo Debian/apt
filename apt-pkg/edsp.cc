@@ -474,8 +474,10 @@ bool EDSP::WriteSolution(pkgDepCache &Cache, FILE* output)
       {
 	 fprintf(output, "Autoremove: %d\n", Pkg.CurrentVer()->ID);
 	 if (Debug == true)
+         {
 	    fprintf(output, "Package: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
 	    fprintf(stderr, "Autoremove: %s\nVersion: %s\n", Pkg.FullName().c_str(), Pkg.CurrentVer().VerStr());
+         }
       }
       else
 	 continue;
