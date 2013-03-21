@@ -197,6 +197,9 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
 	       return _error->Error(_("Temporary failure resolving '%s'"),
 				    Host.c_str());
 	    }
+	    if (Res == EAI_SYSTEM)
+	       return _error->Error(_("System error resolving '%s:%s' (%s)"),
+				    Host.c_str(),ServStr,strerror(errno));
 	    return _error->Error(_("Something wicked happened resolving '%s:%s' (%i - %s)"),
 				 Host.c_str(),ServStr,Res,gai_strerror(Res));
 	 }
