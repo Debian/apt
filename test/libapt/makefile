@@ -93,8 +93,15 @@ SLIBS = -lapt-pkg
 SOURCE = cdromreducesourcelist_test.cc
 include $(PROGRAM_H)
 
-# text IndexCopy::ConvertToSourceList
+# test IndexCopy::ConvertToSourceList
 PROGRAM = IndexCopyToSourceList${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = indexcopytosourcelist_test.cc
 include $(PROGRAM_H)
+
+# test tagfile
+PROGRAM = PkgTagFile${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = tagfile_test.cc
+include $(PROGRAM_H)
+

@@ -34,6 +34,11 @@ apt (0.9.7.8~exp3) UNRELEASEDexperimental; urgency=low
   * add new config options "Acquire::ForceIPv4" and 
     "Acquire::ForceIPv6" to allow focing one or the other
     (closes: #611891)
+  * lp:~mvo/apt/fix-tagfile-hash:
+    - fix false positives in pkgTagSection.Exists(), thanks to
+      Niels Thykier for the testcase (closes: #703240)
+    - this will require rebuilds of the clients as this used to
+      be a inline function
 
  -- Michael Vogt <mvo@debian.org>  Sun, 17 Mar 2013 19:46:23 +0100
 
