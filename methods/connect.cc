@@ -17,6 +17,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-method.h>
+#include <apt-pkg/configuration.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -167,6 +168,13 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
       Hints.ai_flags = AI_ADDRCONFIG;
       Hints.ai_protocol = 0;
       
+      if(_config->FindB("Acquire::ForceIPv4", false) == true)
+         Hints.ai_family = AF_INET;
+      else if(_config->FindB("Acquire::ForceIPv6", false) == true)
+         Hints.ai_family = AF_INET6;
+      else
+         Hints.ai_family = AF_UNSPEC;
+
       // if we couldn't resolve the host before, we don't try now
       if(bad_addr.find(Host) != bad_addr.end()) 
 	 return _error->Error(_("Could not resolve '%s'"),Host.c_str());
