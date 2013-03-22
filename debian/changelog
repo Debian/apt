@@ -1,3 +1,17 @@
+apt (0.9.7.8) unstable; urgency=criticial
+
+  * SECURITY UPDATE: InRelease verification bypass
+    - CVE-2013-1051
+  
+  [ David Kalnischk ]
+  * apt-pkg/deb/debmetaindex.cc,
+    test/integration/test-bug-595691-empty-and-broken-archive-files,
+    test/integration/test-releasefile-verification:
+    - disable InRelease downloading until the verification issue is
+      fixed, thanks to Ansgar Burchardt for finding the flaw
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 14 Mar 2013 07:47:36 +0100
+
 apt (0.9.7.8~exp3) UNRELEASEDexperimental; urgency=low
 
   [ Niels Thykier ]
