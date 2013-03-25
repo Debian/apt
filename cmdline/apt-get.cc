@@ -2714,7 +2714,7 @@ bool DoSource(CommandLine &CmdL)
 	 {
 	    string buildopts = _config->Find("APT::Get::Host-Architecture");
 	    if (buildopts.empty() == false)
-	       buildopts = "-a " + buildopts + " ";
+	       buildopts = "-a" + buildopts + " ";
 	    buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
 
 	    // Call dpkg-buildpackage
