@@ -800,13 +800,12 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    map_ptrloc const storage = WriteUniqString(component);
    FileI->Component = storage;
 
-   // FIXME: Code depends on the fact that Release files aren't compressed
+   // FIXME: should use FileFd and TagSection
    FILE* release = fdopen(dup(File.Fd()), "r");
    if (release == NULL)
       return false;
 
    char buffer[101];
-   bool gpgClose = false;
    while (fgets(buffer, sizeof(buffer), release) != NULL)
    {
       size_t len = 0;
@@ -817,15 +816,6 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
          ;
       if (buffer[len] == '\0')
 	 continue;
-
-      // only evalute the first GPG section
-      if (strncmp("-----", buffer, 5) == 0)
-      {
-	 if (gpgClose == true)
-	    break;
-	 gpgClose = true;
-	 continue;
-      }
 
       // seperate the tag from the data
       const char* dataStart = strchr(buffer + len, ':');
