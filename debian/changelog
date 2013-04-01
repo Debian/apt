@@ -8,6 +8,8 @@ apt (0.9.7.8~exp2+nmu1) UNRELEASED; urgency=low
     - handle language tags for descriptions are unique strings to be shared
     - factor version string creation out of NewDepends, so we can easily reuse
       version strings e.g. for implicit multi-arch dependencies
+    - equal comparisions are used mostly in same-source relations,
+      so use this to try to reuse some version strings
   * apt-pkg/deb/debversion.cc:
     - add a string-equal shortcut for equal version comparisions
 

@@ -864,12 +864,20 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
    map_ptrloc index = 0;
    if (Version.empty() == false)
    {
-      void const * const oldMap = Map.Data();
-      index = WriteStringInMap(Version);
-      if (unlikely(index == 0))
-	 return false;
-      if (oldMap != Map.Data())
-	 OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+      int const CmpOp = Op & 0x0F;
+      // =-deps are used (79:1) for lockstep on same-source packages (e.g. data-packages)
+      if (CmpOp == pkgCache::Dep::Equals && strcmp(Version.c_str(), Ver.VerStr()) == 0)
+	 index = Ver->VerStr;
+
+      if (index == 0)
+      {
+	 void const * const oldMap = Map.Data();
+	 index = WriteStringInMap(Version);
+	 if (unlikely(index == 0))
+	    return false;
+	 if (oldMap != Map.Data())
+	    OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+      }
    }
    return NewDepends(Pkg, Ver, index, Op, Type, OldDepLast);
 }
