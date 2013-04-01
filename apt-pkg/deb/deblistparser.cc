@@ -284,7 +284,7 @@ unsigned short debListParser::VersionHash()
                             "Replaces",0};
    unsigned long Result = INIT_FCS;
    char S[1024];
-   for (const char **I = Sections; *I != 0; I++)
+   for (const char * const *I = Sections; *I != 0; ++I)
    {
       const char *Start;
       const char *End;
@@ -295,13 +295,13 @@ unsigned short debListParser::VersionHash()
          of certain fields. dpkg also has the rather interesting notion of
          reformatting depends operators < -> <= */
       char *J = S;
-      for (; Start != End; Start++)
+      for (; Start != End; ++Start)
       {
-	 if (isspace(*Start) == 0)
-	    *J++ = tolower_ascii(*Start);
-	 if (*Start == '<' && Start[1] != '<' && Start[1] != '=')
-	    *J++ = '=';
-	 if (*Start == '>' && Start[1] != '>' && Start[1] != '=')
+	 if (isspace(*Start) != 0)
+	    continue;
+	 *J++ = tolower_ascii(*Start);
+
+	 if ((*Start == '<' || *Start == '>') && Start[1] != *Start && Start[1] != '=')
 	    *J++ = '=';
       }
 
