@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-03-24 08:53+0100\n"
+"POT-Creation-Date: 2013-04-02 15:13+0200\n"
 "PO-Revision-Date: 2012-07-03 23:51+0200\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <debian-l10n-danish@lists.debian.org>\n"
@@ -1191,7 +1191,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s var allerede ikke i bero.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
+#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Ventede på %s, men den var der ikke"
@@ -1494,7 +1495,7 @@ msgstr "Midlertidig fejl ved omsætning af navnet '%s'"
 
 #: methods/connect.cc:209
 #, fuzzy, c-format
-msgid "System error resolving '%s:%s' (%s)"
+msgid "System error resolving '%s:%s'"
 msgstr "Der skete noget underligt under opløsning af '%s:%s' (%i - %s)"
 
 #: methods/connect.cc:211
@@ -1507,30 +1508,30 @@ msgstr "Der skete noget underligt under opløsning af '%s:%s' (%i - %s)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Kunne ikke forbinde til %s:%s:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:169
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Intern fejl: Gyldig signatur, men kunne ikke afgøre nøgle-fingeraftryk?!"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:174
 msgid "At least one invalid signature was encountered."
 msgstr "Stødte på mindst én ugyldig signatur."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:178
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
 "Kunne ikke køre 'gpgv' for at verificere signaturen (er gpgv installeret?)"
 
-#: methods/gpgv.cc:194
+#: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
 msgstr "Ukendt fejl ved kørsel af gpgv"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:217 methods/gpgv.cc:224
 msgid "The following signatures were invalid:\n"
 msgstr "Følgende signaturer var ugyldige:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:231
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1902,87 +1903,87 @@ msgstr "Arkivet har ingen kontrolindgang"
 msgid "Unable to get a cursor"
 msgstr "Kunne skaffe en markør"
 
-#: ftparchive/writer.cc:80
+#: ftparchive/writer.cc:82
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "A: Kunne ikke læse mappen %s\n"
 
-#: ftparchive/writer.cc:85
+#: ftparchive/writer.cc:87
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "W: Kunne ikke finde %s\n"
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:143
 msgid "E: "
 msgstr "F: "
 
-#: ftparchive/writer.cc:143
+#: ftparchive/writer.cc:145
 msgid "W: "
 msgstr "A: "
 
-#: ftparchive/writer.cc:150
+#: ftparchive/writer.cc:152
 msgid "E: Errors apply to file "
 msgstr "F: Fejlene vedrører filen "
 
-#: ftparchive/writer.cc:168 ftparchive/writer.cc:200
+#: ftparchive/writer.cc:170 ftparchive/writer.cc:202
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Kunne ikke omsætte navnet %s"
 
-#: ftparchive/writer.cc:181
+#: ftparchive/writer.cc:183
 msgid "Tree walking failed"
 msgstr "Trævandring mislykkedes"
 
-#: ftparchive/writer.cc:208
+#: ftparchive/writer.cc:210
 #, c-format
 msgid "Failed to open %s"
 msgstr "Kunne ikke åbne %s"
 
-#: ftparchive/writer.cc:267
+#: ftparchive/writer.cc:269
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:277
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Kunne ikke »readlink« %s"
 
-#: ftparchive/writer.cc:279
+#: ftparchive/writer.cc:281
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "Kunne ikke frigøre %s"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:288
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Kunne ikke lænke %s til %s"
 
-#: ftparchive/writer.cc:296
+#: ftparchive/writer.cc:298
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Nåede DeLink-begrænsningen på %sB.\n"
 
-#: ftparchive/writer.cc:401
+#: ftparchive/writer.cc:403
 msgid "Archive had no package field"
 msgstr "Arkivet havde intet package-felt"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:711
+#: ftparchive/writer.cc:411 ftparchive/writer.cc:698
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s har ingen tvangs-post\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:827
+#: ftparchive/writer.cc:479 ftparchive/writer.cc:814
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  pakkeansvarlig for %s er %s, ikke %s\n"
 
-#: ftparchive/writer.cc:721
+#: ftparchive/writer.cc:708
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s har ingen linje med tilsidesættelse af standard for kildefiler\n"
 
-#: ftparchive/writer.cc:725
+#: ftparchive/writer.cc:712
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr ""
@@ -2333,30 +2334,30 @@ msgstr ""
 "bruger."
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%lid %lih %limin %lis"
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%lih %limin %lis"
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:392
 #, c-format
 msgid "%limin %lis"
 msgstr "%limin %lis"
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:397
 #, c-format
 msgid "%lis"
 msgstr "%lis"
 
-#: apt-pkg/contrib/strutl.cc:1166
+#: apt-pkg/contrib/strutl.cc:1172
 #, c-format
 msgid "Selection %s not found"
 msgstr "Det valgte %s blev ikke fundet"
@@ -2547,17 +2548,17 @@ msgstr "Underprocessen %s modtog en segmenteringsfejl."
 msgid "Sub-process %s received signal %u."
 msgstr "Underprocessen %s modtog en signal %u."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:846 apt-pkg/contrib/gpgv.cc:243
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Underprocessen %s returnerede en fejlkode (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:848 apt-pkg/contrib/gpgv.cc:236
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Underprocessen %s afsluttedes uventet"
 
-#: apt-pkg/contrib/fileutl.cc:984 apt-pkg/indexcopy.cc:661
+#: apt-pkg/contrib/fileutl.cc:984
 #, c-format
 msgid "Could not open file %s"
 msgstr "Kunne ikke åbne filen %s"
@@ -2603,6 +2604,12 @@ msgstr "Fejl ved frigivelse af filen %s"
 #: apt-pkg/contrib/fileutl.cc:1754
 msgid "Problem syncing the file"
 msgstr "Problem under synkronisering af fil"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:76
+#, c-format
+msgid "No keyring installed in %s."
+msgstr "Ingen nøglering installeret i %s."
 
 #: apt-pkg/pkgcache.cc:148
 msgid "Empty package cache"
@@ -3014,8 +3021,8 @@ msgstr "omdøbning mislykkedes, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum stemmer ikke"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1859
-#: apt-pkg/acquire-item.cc:2002
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1865
+#: apt-pkg/acquire-item.cc:2008
 msgid "Hash Sum mismatch"
 msgstr "Hashsum stemmer ikke"
 
@@ -3052,7 +3059,7 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Konfliktdistribution: %s (forventede %s men fik %s)"
 
-#: apt-pkg/acquire-item.cc:1521
+#: apt-pkg/acquire-item.cc:1518
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3062,12 +3069,12 @@ msgstr ""
 "og den forrige indeksfil vil blive brugt. GPG-fejl: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1531 apt-pkg/acquire-item.cc:1536
+#: apt-pkg/acquire-item.cc:1528 apt-pkg/acquire-item.cc:1533
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG-fejl: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1635
+#: apt-pkg/acquire-item.cc:1641
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3076,7 +3083,7 @@ msgstr ""
 "Jeg kunne ikke lokalisere filen til %s-pakken. Det betyder muligvis at du er "
 "nødt til manuelt at reparere denne pakke. (grundet manglende arch)"
 
-#: apt-pkg/acquire-item.cc:1694
+#: apt-pkg/acquire-item.cc:1700
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3085,37 +3092,37 @@ msgstr ""
 "Jeg kunne ikke lokalisere filen til %s-pakken. Det betyder muligvis at du er "
 "nødt til manuelt at reparere denne pakke."
 
-#: apt-pkg/acquire-item.cc:1753
+#: apt-pkg/acquire-item.cc:1759
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "Pakkeindeksfilerne er i stykker. Intet 'Filename:'-felt for pakken %s."
 
-#: apt-pkg/acquire-item.cc:1851
+#: apt-pkg/acquire-item.cc:1857
 msgid "Size mismatch"
 msgstr "Størrelsen stemmer ikke"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:68
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Kunne ikke fortolke udgivelsesfil %s"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:78
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "Ingen afsnit i udgivelsesfil %s"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:112
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "Intet hashpunkt i udgivelsesfil %s"
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:125
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "Ugyldigt punkt 'Valid-Until' i udgivelsesfil %s"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:144
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Ugyldigt punkt 'Date' i udgivelsesfil %s"
@@ -3215,22 +3222,22 @@ msgstr "Skriver ny kildeliste\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "Denne disk har følgende kildeliste-indgange:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:884
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:766
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Skrev %i poster.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:886
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:768
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Skrev %i poster med %i manglende filer.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:889
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:771
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Skrev %i poster med %i ikke-trufne filer\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:892
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:774
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Skrev %i poster med %i manglende filer og %i ikke-trufne filer\n"
@@ -3244,17 +3251,6 @@ msgstr "Kan ikke finde godkendelsesregistrering for: %s"
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Hashsum stemmer ikke: %s"
-
-#: apt-pkg/indexcopy.cc:665
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr "Fil %s starter ikke med en »clearsigned« besked"
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:696
-#, c-format
-msgid "No keyring installed in %s."
-msgstr "Ingen nøglering installeret i %s."
 
 #: apt-pkg/cacheset.cc:403
 #, c-format
@@ -3482,6 +3478,9 @@ msgstr "dpkg blev afbrudt, du skal manuelt køre '%s' for at rette problemet."
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Ikke låst"
+
+#~ msgid "File %s doesn't start with a clearsigned message"
+#~ msgstr "Fil %s starter ikke med en »clearsigned« besked"
 
 #~ msgid "Skipping nonexistent file %s"
 #~ msgstr "Springer ikkeeksisterende fil over %s"

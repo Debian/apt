@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-03-24 08:53+0100\n"
+"POT-Creation-Date: 2013-04-02 15:13+0200\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -1156,7 +1156,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s 已經是最新版本了。\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
+#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "等待 %s 但是它並不存在"
@@ -1437,7 +1438,7 @@ msgstr "暫時無法解析 '%s'"
 
 #: methods/connect.cc:209
 #, fuzzy, c-format
-msgid "System error resolving '%s:%s' (%s)"
+msgid "System error resolving '%s:%s'"
 msgstr "在解析 '%s:%s' (%i) 時出了怪事"
 
 #: methods/connect.cc:211
@@ -1450,29 +1451,29 @@ msgstr "在解析 '%s:%s' (%i) 時出了怪事"
 msgid "Unable to connect to %s:%s:"
 msgstr "無法連線至 %s %s："
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:169
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr "內部錯誤：簽章無誤，但卻無法辨識密鑰的指紋碼？！"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:174
 msgid "At least one invalid signature was encountered."
 msgstr "至少發現一個無效的簽章。"
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:178
 #, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr "無法執行 '%s' 來驗證簽章（gpgv 是否安裝了？）"
 
-#: methods/gpgv.cc:194
+#: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
 msgstr "在執行 gpgv 時發生未知的錯誤"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:217 methods/gpgv.cc:224
 msgid "The following signatures were invalid:\n"
 msgstr "以下簽名無效：\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:231
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1832,87 +1833,87 @@ msgstr "套件檔沒有 control 記錄"
 msgid "Unable to get a cursor"
 msgstr "無法取得遊標"
 
-#: ftparchive/writer.cc:80
+#: ftparchive/writer.cc:82
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "警告：無法讀取目錄 %s\n"
 
-#: ftparchive/writer.cc:85
+#: ftparchive/writer.cc:87
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "警告：無法取得 %s 狀態\n"
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:143
 msgid "E: "
 msgstr "錯誤："
 
-#: ftparchive/writer.cc:143
+#: ftparchive/writer.cc:145
 msgid "W: "
 msgstr "警告："
 
-#: ftparchive/writer.cc:150
+#: ftparchive/writer.cc:152
 msgid "E: Errors apply to file "
 msgstr "錯誤：套用到檔案時發生錯誤"
 
-#: ftparchive/writer.cc:168 ftparchive/writer.cc:200
+#: ftparchive/writer.cc:170 ftparchive/writer.cc:202
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "無法解析 %s"
 
-#: ftparchive/writer.cc:181
+#: ftparchive/writer.cc:183
 msgid "Tree walking failed"
 msgstr "無法走訪目錄樹"
 
-#: ftparchive/writer.cc:208
+#: ftparchive/writer.cc:210
 #, c-format
 msgid "Failed to open %s"
 msgstr "無法開啟 %s"
 
-#: ftparchive/writer.cc:267
+#: ftparchive/writer.cc:269
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:277
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "無法讀取連結 %s"
 
-#: ftparchive/writer.cc:279
+#: ftparchive/writer.cc:281
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "無法移除連結 %s"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:288
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** 無法將 %s 連結到 %s"
 
-#: ftparchive/writer.cc:296
+#: ftparchive/writer.cc:298
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " 達到了 DeLink 的上限 %sB。\n"
 
-#: ftparchive/writer.cc:401
+#: ftparchive/writer.cc:403
 msgid "Archive had no package field"
 msgstr "套件檔裡沒有套件資訊"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:711
+#: ftparchive/writer.cc:411 ftparchive/writer.cc:698
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s 沒有重新定義項目\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:827
+#: ftparchive/writer.cc:479 ftparchive/writer.cc:814
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s 的維護者是 %s，而非 %s\n"
 
-#: ftparchive/writer.cc:721
+#: ftparchive/writer.cc:708
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s 沒有原始碼重新定義項目\n"
 
-#: ftparchive/writer.cc:725
+#: ftparchive/writer.cc:712
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s 也沒有二元碼重新定義項目\n"
@@ -2257,30 +2258,30 @@ msgid ""
 msgstr ""
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr ""
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%lih %limin %lis"
 msgstr ""
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:392
 #, c-format
 msgid "%limin %lis"
 msgstr ""
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:397
 #, c-format
 msgid "%lis"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1166
+#: apt-pkg/contrib/strutl.cc:1172
 #, c-format
 msgid "Selection %s not found"
 msgstr "選項 %s 找不到"
@@ -2471,17 +2472,17 @@ msgstr "子程序 %s 收到一個記憶體錯誤。"
 msgid "Sub-process %s received signal %u."
 msgstr "子程序 %s 收到一個記憶體錯誤。"
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:846 apt-pkg/contrib/gpgv.cc:243
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "子程序 %s 傳回錯誤碼 (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:848 apt-pkg/contrib/gpgv.cc:236
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子程序 %s 不預期得結束"
 
-#: apt-pkg/contrib/fileutl.cc:984 apt-pkg/indexcopy.cc:661
+#: apt-pkg/contrib/fileutl.cc:984
 #, c-format
 msgid "Could not open file %s"
 msgstr "無法開啟檔案 %s"
@@ -2527,6 +2528,12 @@ msgstr "在刪除檔案時發生問題"
 #: apt-pkg/contrib/fileutl.cc:1754
 msgid "Problem syncing the file"
 msgstr "在同步檔案時發生問題"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:76
+#, fuzzy, c-format
+msgid "No keyring installed in %s."
+msgstr "放棄安裝。"
 
 #: apt-pkg/pkgcache.cc:148
 msgid "Empty package cache"
@@ -2928,8 +2935,8 @@ msgstr "無法重新命名，%s (%s -> %s)。"
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum 不符"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1859
-#: apt-pkg/acquire-item.cc:2002
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1865
+#: apt-pkg/acquire-item.cc:2008
 msgid "Hash Sum mismatch"
 msgstr "Hash Sum 不符"
 
@@ -2961,7 +2968,7 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "發行版本衝突：%s（應當是 %s 但卻得到 %s）"
 
-#: apt-pkg/acquire-item.cc:1521
+#: apt-pkg/acquire-item.cc:1518
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -2969,12 +2976,12 @@ msgid ""
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1531 apt-pkg/acquire-item.cc:1536
+#: apt-pkg/acquire-item.cc:1528 apt-pkg/acquire-item.cc:1533
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1635
+#: apt-pkg/acquire-item.cc:1641
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2983,44 +2990,44 @@ msgstr ""
 "找不到 %s 套件的某個檔案。這意味著您可能要手動修復這個套件。（因為找不到平"
 "台）"
 
-#: apt-pkg/acquire-item.cc:1694
+#: apt-pkg/acquire-item.cc:1700
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
 "to manually fix this package."
 msgstr "找不到 %s 套件的某個檔案。這意味著您可能要手動修復這個套件。"
 
-#: apt-pkg/acquire-item.cc:1753
+#: apt-pkg/acquire-item.cc:1759
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr "這個套件的索引檔損壞了。沒有套件 %s 的 Filename: 欄位。"
 
-#: apt-pkg/acquire-item.cc:1851
+#: apt-pkg/acquire-item.cc:1857
 msgid "Size mismatch"
 msgstr "大小不符"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:68
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "無法辨別 Release 檔 %s"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:78
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "在 Release 檔 %s 裡沒有區段"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:112
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "在 Release 檔 %s 裡沒有 Hash 項目"
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:125
 #, fuzzy, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "在 Release 檔 %s 裡沒有 Hash 項目"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:144
 #, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "在 Release 檔 %s 裡沒有 Hash 項目"
@@ -3116,22 +3123,22 @@ msgstr "正在寫入新的來源列表\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "該碟片的來源列表項目為：\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:884
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:766
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "寫入 %i 筆紀錄。\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:886
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:768
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "寫入 %i 筆紀綠，其中有 %i 個檔案遺失了。\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:889
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:771
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "寫入 %i 筆紀綠，其中有 %i 個檔案不符\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:892
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:774
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "寫入 %i 筆紀綠，其中有 %i 個檔案遺失了，有 %i 個檔案不符\n"
@@ -3145,17 +3152,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Hash Sum 不符"
-
-#: apt-pkg/indexcopy.cc:665
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:696
-#, fuzzy, c-format
-msgid "No keyring installed in %s."
-msgstr "放棄安裝。"
 
 #: apt-pkg/cacheset.cc:403
 #, c-format

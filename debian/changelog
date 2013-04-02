@@ -12,14 +12,38 @@ apt (0.9.7.9~exp2) UNRELEASED; urgency=low
     - fix test now that #1098752 is fixed
   * po/{ca,cs,ru}.po:
     - fix merge artifact
-  
+
+  [ David Kalnischkies ]
+  * apt-pkg/indexcopy.cc:
+    - rename RunGPGV to ExecGPGV and move it to apt-pkg/contrib/gpgv.cc
+  * apt-pkg/contrib/gpgv.cc:
+    - ExecGPGV is a method which should never return, so mark it as such
+      and fix the inconsistency of returning in error cases
+    - don't close stdout/stderr if it is also the statusfd
+    - if ExecGPGV deals with a clear-signed file it will split this file
+      into data and signatures, pass it to gpgv for verification
+    - add method to open (maybe) clearsigned files transparently
+  * apt-pkg/acquire-item.cc:
+    - keep the last good InRelease file around just as we do it with
+      Release.gpg in case the new one we download isn't good for us
+  * apt-pkg/deb/debmetaindex.cc:
+    - reenable InRelease by default
+  * ftparchive/writer.cc,
+    apt-pkg/deb/debindexfile.cc,
+    apt-pkg/deb/deblistparser.cc:
+    - use OpenMaybeClearSignedFile to be free from detecting and
+      skipping clearsigning metadata in dsc and Release files
+
   [ Michael Vogt ]
+  * add regression test for CVE-2013-1051
+  * implement GPGSplit() based on the idea from Ansgar Burchardt
+    (many thanks!)
   * methods/connect.cc:
     - use Errno() instead of strerror(), thanks to David Kalnischk
   * doc/apt.conf.5.xml:
     - document Acquire::ForceIPv{4,6}
 
- -- Christian Perrier <bubulle@debian.org>  Sun, 24 Mar 2013 08:57:45 +0100
+ -- Michael Vogt <mvo@debian.org>  Tue, 02 Apr 2013 15:13:50 +0200
 
 apt (0.9.7.9~exp1) experimental; urgency=low
 

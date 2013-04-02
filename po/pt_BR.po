@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-03-24 08:53+0100\n"
+"POT-Creation-Date: 2013-04-02 15:13+0200\n"
 "PO-Revision-Date: 2008-11-17 02:33-0200\n"
 "Last-Translator: Felipe Augusto van de Wiel (faw) <faw@debian.org>\n"
 "Language-Team: Brazilian Portuguese <debian-l10n-portuguese@lists.debian."
@@ -1190,7 +1190,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s já é a versão mais nova.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
+#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Esperado %s mas este não estava lá"
@@ -1473,7 +1474,7 @@ msgstr "Falha temporária resolvendo '%s'"
 
 #: methods/connect.cc:209
 #, fuzzy, c-format
-msgid "System error resolving '%s:%s' (%s)"
+msgid "System error resolving '%s:%s'"
 msgstr "Algo estranho aconteceu resolvendo '%s:%s' (%i)"
 
 #: methods/connect.cc:211
@@ -1486,33 +1487,33 @@ msgstr "Algo estranho aconteceu resolvendo '%s:%s' (%i)"
 msgid "Unable to connect to %s:%s:"
 msgstr "Impossível conectar em %s %s:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:169
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Erro interno: Assinatura boa, mas não foi possível determinar a impressão "
 "digital da chave?!"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:174
 msgid "At least one invalid signature was encountered."
 msgstr "Ao menos uma assinatura inválida foi encontrada."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:178
 #, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
 "Não foi possível executar '%s' para verificar a assinatura (o gpgv está "
 "instalado?)"
 
-#: methods/gpgv.cc:194
+#: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
 msgstr "Erro desconhecido executando gpgv"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:217 methods/gpgv.cc:224
 msgid "The following signatures were invalid:\n"
 msgstr "As seguintes assinaturas eram inválidas:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:231
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1886,87 +1887,87 @@ msgstr "Repositório não possui registro de controle"
 msgid "Unable to get a cursor"
 msgstr "Impossível obter um cursor"
 
-#: ftparchive/writer.cc:80
+#: ftparchive/writer.cc:82
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "W: Impossível ler o diretório %s\n"
 
-#: ftparchive/writer.cc:85
+#: ftparchive/writer.cc:87
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "W: Impossível executar \"stat\" em %s\n"
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:143
 msgid "E: "
 msgstr "E: "
 
-#: ftparchive/writer.cc:143
+#: ftparchive/writer.cc:145
 msgid "W: "
 msgstr "W: "
 
-#: ftparchive/writer.cc:150
+#: ftparchive/writer.cc:152
 msgid "E: Errors apply to file "
 msgstr "E: Erros que se aplicam ao arquivo "
 
-#: ftparchive/writer.cc:168 ftparchive/writer.cc:200
+#: ftparchive/writer.cc:170 ftparchive/writer.cc:202
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Falhou ao resolver %s"
 
-#: ftparchive/writer.cc:181
+#: ftparchive/writer.cc:183
 msgid "Tree walking failed"
 msgstr "Falhou ao percorrer a árvore"
 
-#: ftparchive/writer.cc:208
+#: ftparchive/writer.cc:210
 #, c-format
 msgid "Failed to open %s"
 msgstr "Falhou ao abrir %s"
 
-#: ftparchive/writer.cc:267
+#: ftparchive/writer.cc:269
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:277
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Falhou ao executar \"readlink\" %s"
 
-#: ftparchive/writer.cc:279
+#: ftparchive/writer.cc:281
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "Falhou ao executar \"unlink\" %s"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:288
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Falhou ao ligar %s a %s"
 
-#: ftparchive/writer.cc:296
+#: ftparchive/writer.cc:298
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Limite DeLink de %sB atingido.\n"
 
-#: ftparchive/writer.cc:401
+#: ftparchive/writer.cc:403
 msgid "Archive had no package field"
 msgstr "Repositório não possuía campo pacote"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:711
+#: ftparchive/writer.cc:411 ftparchive/writer.cc:698
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s não possui entrada override\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:827
+#: ftparchive/writer.cc:479 ftparchive/writer.cc:814
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  mantenedor de %s é %s, não %s\n"
 
-#: ftparchive/writer.cc:721
+#: ftparchive/writer.cc:708
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s não possui entrada override fonte\n"
 
-#: ftparchive/writer.cc:725
+#: ftparchive/writer.cc:712
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s também não possui entrada override binária\n"
@@ -2313,30 +2314,30 @@ msgid ""
 msgstr ""
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr ""
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%lih %limin %lis"
 msgstr ""
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:392
 #, c-format
 msgid "%limin %lis"
 msgstr ""
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:397
 #, c-format
 msgid "%lis"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1166
+#: apt-pkg/contrib/strutl.cc:1172
 #, c-format
 msgid "Selection %s not found"
 msgstr "Seleção %s não encontrada"
@@ -2530,17 +2531,17 @@ msgstr "Sub-processo %s recebeu uma falha de segmentação."
 msgid "Sub-process %s received signal %u."
 msgstr "Sub-processo %s recebeu uma falha de segmentação."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:846 apt-pkg/contrib/gpgv.cc:243
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Sub-processo %s retornou um código de erro (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:848 apt-pkg/contrib/gpgv.cc:236
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Sub-processo %s finalizou inesperadamente"
 
-#: apt-pkg/contrib/fileutl.cc:984 apt-pkg/indexcopy.cc:661
+#: apt-pkg/contrib/fileutl.cc:984
 #, c-format
 msgid "Could not open file %s"
 msgstr "Não foi possível abrir arquivo %s"
@@ -2586,6 +2587,12 @@ msgstr "Problema removendo o arquivo"
 #: apt-pkg/contrib/fileutl.cc:1754
 msgid "Problem syncing the file"
 msgstr "Problema sincronizando o arquivo"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:76
+#, fuzzy, c-format
+msgid "No keyring installed in %s."
+msgstr "Abortando instalação."
 
 #: apt-pkg/pkgcache.cc:148
 msgid "Empty package cache"
@@ -3007,8 +3014,8 @@ msgstr "renomeação falhou, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum incorreto"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1859
-#: apt-pkg/acquire-item.cc:2002
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1865
+#: apt-pkg/acquire-item.cc:2008
 msgid "Hash Sum mismatch"
 msgstr "Hash Sum incorreto"
 
@@ -3040,7 +3047,7 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1521
+#: apt-pkg/acquire-item.cc:1518
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3048,12 +3055,12 @@ msgid ""
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1531 apt-pkg/acquire-item.cc:1536
+#: apt-pkg/acquire-item.cc:1528 apt-pkg/acquire-item.cc:1533
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1635
+#: apt-pkg/acquire-item.cc:1641
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3063,7 +3070,7 @@ msgstr ""
 "que você precisa consertar manualmente este pacote. (devido a arquitetura "
 "não especificada)."
 
-#: apt-pkg/acquire-item.cc:1694
+#: apt-pkg/acquire-item.cc:1700
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3072,7 +3079,7 @@ msgstr ""
 "Não foi possível localizar arquivo para o pacote %s. Isto pode significar "
 "que você precisa consertar manualmente este pacote."
 
-#: apt-pkg/acquire-item.cc:1753
+#: apt-pkg/acquire-item.cc:1759
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -3080,31 +3087,31 @@ msgstr ""
 "Os arquivos de índice de pacotes estão corrompidos. Nenhum campo \"Filename:"
 "\" para o pacote %s."
 
-#: apt-pkg/acquire-item.cc:1851
+#: apt-pkg/acquire-item.cc:1857
 msgid "Size mismatch"
 msgstr "Tamanho incorreto"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:68
 #, fuzzy, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Impossível analisar arquivo de pacote %s (1)"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:78
 #, fuzzy, c-format
 msgid "No sections in Release file %s"
 msgstr "Nota, selecionando %s ao invés de %s\n"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:112
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr ""
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:125
 #, fuzzy, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "Linha inválida no arquivo de desvios: %s"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:144
 #, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Impossível analisar arquivo de pacote %s (1)"
@@ -3202,22 +3209,22 @@ msgstr "Gravando nova lista de fontes\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "Entradas na lista de fontes para este disco são:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:884
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:766
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Gravados %i registros.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:886
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:768
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Gravados %i registros com %i arquivos faltando.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:889
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:771
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Gravados %i registros com %i arquivos que não combinam\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:892
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:774
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
@@ -3233,17 +3240,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Hash Sum incorreto"
-
-#: apt-pkg/indexcopy.cc:665
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:696
-#, fuzzy, c-format
-msgid "No keyring installed in %s."
-msgstr "Abortando instalação."
 
 #: apt-pkg/cacheset.cc:403
 #, c-format

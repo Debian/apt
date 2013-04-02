@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-all\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-03-24 08:53+0100\n"
+"POT-Creation-Date: 2013-04-02 15:13+0200\n"
 "PO-Revision-Date: 2012-09-25 20:19+0300\n"
 "Last-Translator: A. Bondarenko <artem.brz@gmail.com>\n"
 "Language-Team: Українська <uk@li.org>\n"
@@ -1216,7 +1216,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s вже був незафіксований.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
+#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Очікував на %s, але його там не було"
@@ -1520,7 +1521,7 @@ msgstr "Тимчасова помилка при отриманні IP адре�
 
 #: methods/connect.cc:209
 #, fuzzy, c-format
-msgid "System error resolving '%s:%s' (%s)"
+msgid "System error resolving '%s:%s'"
 msgstr "Сталося щось дивне при спробі отримати IP адрес для '%s:%s' (%i - %s)"
 
 #: methods/connect.cc:211
@@ -1533,30 +1534,30 @@ msgstr "Сталося щось дивне при спробі отримати 
 msgid "Unable to connect to %s:%s:"
 msgstr "Неможливо під'єднатися до %s:%s:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:169
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Внутрішня помилка: Вірний підпис (signature), але не можливо визначити його "
 "відбиток?!"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:174
 msgid "At least one invalid signature was encountered."
 msgstr "Знайдено як мінімум один невірний підпис."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:178
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr "Неможливо виконати 'gpgv' для перевірки підпису (чи встановлено gpgv?)"
 
-#: methods/gpgv.cc:194
+#: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
 msgstr "Невідома помилка виконання gpgv"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:217 methods/gpgv.cc:224
 msgid "The following signatures were invalid:\n"
 msgstr "Наступні підписи були невірними:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:231
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1937,87 +1938,87 @@ msgstr "В архіві немає запису 'control'"
 msgid "Unable to get a cursor"
 msgstr "Неможливо одержати курсор"
 
-#: ftparchive/writer.cc:80
+#: ftparchive/writer.cc:82
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "У: Не вдалося прочитати директорію %s\n"
 
-#: ftparchive/writer.cc:85
+#: ftparchive/writer.cc:87
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "У: Неможливо прочитати атрибути %s\n"
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:143
 msgid "E: "
 msgstr "П: "
 
-#: ftparchive/writer.cc:143
+#: ftparchive/writer.cc:145
 msgid "W: "
 msgstr "У: "
 
-#: ftparchive/writer.cc:150
+#: ftparchive/writer.cc:152
 msgid "E: Errors apply to file "
 msgstr "П: Помилки відносяться до файлу "
 
-#: ftparchive/writer.cc:168 ftparchive/writer.cc:200
+#: ftparchive/writer.cc:170 ftparchive/writer.cc:202
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Не вдалося визначити %s"
 
-#: ftparchive/writer.cc:181
+#: ftparchive/writer.cc:183
 msgid "Tree walking failed"
 msgstr "Не вдалося зробити обхід дерева"
 
-#: ftparchive/writer.cc:208
+#: ftparchive/writer.cc:210
 #, c-format
 msgid "Failed to open %s"
 msgstr "Не вдалося відкрити %s"
 
-#: ftparchive/writer.cc:267
+#: ftparchive/writer.cc:269
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr "DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:277
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Не вдалося прочитати посилання (readlink) %s"
 
-#: ftparchive/writer.cc:279
+#: ftparchive/writer.cc:281
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "Не вдалося видалити посилання (unlink) %s"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:288
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Не вдалося створити посилання %s на %s"
 
-#: ftparchive/writer.cc:296
+#: ftparchive/writer.cc:298
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Перевищено ліміт в %sB в DeLink.\n"
 
-#: ftparchive/writer.cc:401
+#: ftparchive/writer.cc:403
 msgid "Archive had no package field"
 msgstr "Архів не мав поля 'package'"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:711
+#: ftparchive/writer.cc:411 ftparchive/writer.cc:698
 #, fuzzy, c-format
 msgid "  %s has no override entry\n"
 msgstr "  Відсутній запис про перепризначення (override) для %s\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:827
+#: ftparchive/writer.cc:479 ftparchive/writer.cc:814
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  пакунок %s супроводжується %s, а не %s\n"
 
-#: ftparchive/writer.cc:721
+#: ftparchive/writer.cc:708
 #, fuzzy, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  Відсутній запис про перепризначення вихідних текстів для %s\n"
 
-#: ftparchive/writer.cc:725
+#: ftparchive/writer.cc:712
 #, fuzzy, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  Крім того, відсутній запис про бінарне перепризначення для %s\n"
@@ -2370,30 +2371,30 @@ msgstr ""
 "користувачем."
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%liд %liг %liхв %liс"
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%liг %liхв %liс"
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:392
 #, c-format
 msgid "%limin %lis"
 msgstr "%liхв %liс"
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:397
 #, c-format
 msgid "%lis"
 msgstr "%liс"
 
-#: apt-pkg/contrib/strutl.cc:1166
+#: apt-pkg/contrib/strutl.cc:1172
 #, c-format
 msgid "Selection %s not found"
 msgstr "Вибір %s не знайдено"
@@ -2594,17 +2595,17 @@ msgstr "Підпроцес %s отримав 'segmentation fault' (фаталь�
 msgid "Sub-process %s received signal %u."
 msgstr "Підпроцес %s отримав сигнал %u."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:846 apt-pkg/contrib/gpgv.cc:243
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Підпроцес %s повернув код помилки (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:848 apt-pkg/contrib/gpgv.cc:236
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Підпроцес %s раптово завершився"
 
-#: apt-pkg/contrib/fileutl.cc:984 apt-pkg/indexcopy.cc:661
+#: apt-pkg/contrib/fileutl.cc:984
 #, c-format
 msgid "Could not open file %s"
 msgstr "Неможливо відкрити файл %s"
@@ -2650,6 +2651,12 @@ msgstr "Проблема з роз'єднанням файла %s"
 #: apt-pkg/contrib/fileutl.cc:1754
 msgid "Problem syncing the file"
 msgstr "Проблема з синхронізацією файла"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:76
+#, c-format
+msgid "No keyring installed in %s."
+msgstr "Не встановлено 'keyring' у %s."
 
 #: apt-pkg/pkgcache.cc:148
 msgid "Empty package cache"
@@ -3062,8 +3069,8 @@ msgstr "не вдалося перейменувати, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "Невідповідність MD5Sum"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1859
-#: apt-pkg/acquire-item.cc:2002
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1865
+#: apt-pkg/acquire-item.cc:2008
 msgid "Hash Sum mismatch"
 msgstr "Невідповідність хешу MD5Sum"
 
@@ -3099,7 +3106,7 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Конфліктуючий дистрибутив: %s (очікувався %s, але є %s)"
 
-#: apt-pkg/acquire-item.cc:1521
+#: apt-pkg/acquire-item.cc:1518
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3109,12 +3116,12 @@ msgstr ""
 "попередні індексні файли будуть використані. Помилка GPG: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1531 apt-pkg/acquire-item.cc:1536
+#: apt-pkg/acquire-item.cc:1528 apt-pkg/acquire-item.cc:1533
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "Помилка GPG: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1635
+#: apt-pkg/acquire-item.cc:1641
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3123,7 +3130,7 @@ msgstr ""
 "Я не зміг знайти файл для пакунку %s. Можливо, це значить, що вам потрібно "
 "власноруч виправити цей пакунок. (через відсутність 'arch')"
 
-#: apt-pkg/acquire-item.cc:1694
+#: apt-pkg/acquire-item.cc:1700
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3132,38 +3139,38 @@ msgstr ""
 "Я не зміг знайти файл для пакунку %s. Можливо, це значить, що вам потрібно "
 "власноруч виправити цей пакунок."
 
-#: apt-pkg/acquire-item.cc:1753
+#: apt-pkg/acquire-item.cc:1759
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 "Індексні файли пакунків пошкоджені. Немає поля 'Filename' для пакунку %s."
 
-#: apt-pkg/acquire-item.cc:1851
+#: apt-pkg/acquire-item.cc:1857
 msgid "Size mismatch"
 msgstr "Невідповідність розміру"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:68
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Неможливо проаналізувати 'Release' файл %s"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:78
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "Немає секцій у 'Release' файлі %s"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:112
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "Немає запису 'Hash' у 'Release' файлі %s"
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:125
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "Невірний запис 'Valid-Until' у 'Release' файлі %s"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:144
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Невірний запис 'Date' у 'Release' файлі %s"
@@ -3263,22 +3270,22 @@ msgstr "Записується новий перелік вихідних тек
 msgid "Source list entries for this disc are:\n"
 msgstr "Перелік вихідних текстів для цього диска:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:884
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:766
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Записано %i записів.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:886
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:768
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Записано %i записів з %i відсутніми файлами.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:889
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:771
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Записано %i записів з %i невідповідними файлам\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:892
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:774
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "Записано %i записів з %i відсутніми і %i невідповідними файлами\n"
@@ -3292,17 +3299,6 @@ msgstr "Неможливо знайти аутентифікаційний за�
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Невідповідність хешу для: %s"
-
-#: apt-pkg/indexcopy.cc:665
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr "Файл %s починається з не 'clearsigned' повідомленням"
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:696
-#, c-format
-msgid "No keyring installed in %s."
-msgstr "Не встановлено 'keyring' у %s."
 
 #: apt-pkg/cacheset.cc:403
 #, c-format
@@ -3546,6 +3542,9 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "Не заблоковано"
+
+#~ msgid "File %s doesn't start with a clearsigned message"
+#~ msgstr "Файл %s починається з не 'clearsigned' повідомленням"
 
 #~ msgid "Skipping nonexistent file %s"
 #~ msgstr "Пропускається неіснуючий файл %s"

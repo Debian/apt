@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-03-24 08:53+0100\n"
+"POT-Creation-Date: 2013-04-02 15:13+0200\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -1177,7 +1177,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s 패키지는 이미 최신 버전입니다.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1002
+#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "%s 프로세스를 기다렸지만 해당 프로세스가 없습니다"
@@ -1460,7 +1461,7 @@ msgstr "'%s'의 주소를 알아내는데 임시로 실패했습니다"
 
 #: methods/connect.cc:209
 #, fuzzy, c-format
-msgid "System error resolving '%s:%s' (%s)"
+msgid "System error resolving '%s:%s'"
 msgstr "'%s:%s'의 주소를 알아내는데 무언가 이상한 일이 발생했습니다 (%i - %s)"
 
 #: methods/connect.cc:211
@@ -1473,29 +1474,29 @@ msgstr "'%s:%s'의 주소를 알아내는데 무언가 이상한 일이 발생�
 msgid "Unable to connect to %s:%s:"
 msgstr "%s:%s에 연결할 수 없습니다:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:169
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr "내부 오류: 서명은 올바르지만 키 핑거프린트를 확인할 수 없습니다?!"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:174
 msgid "At least one invalid signature was encountered."
 msgstr "최소한 하나 이상의 서명이 잘못되었습니다."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:178
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
 "서명을 확인하는 'gpgv' 프로그램을 실행할 수 없습니다. (gpgv를 설치했습니까?)"
 
-#: methods/gpgv.cc:194
+#: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
 msgstr "gpgv 실행 도중 알 수 없는 오류 발생"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:217 methods/gpgv.cc:224
 msgid "The following signatures were invalid:\n"
 msgstr "다음 서명이 올바르지 않습니다:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:231
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1862,88 +1863,88 @@ msgstr "아카이브에 컨트롤 기록이 없습니다"
 msgid "Unable to get a cursor"
 msgstr "커서를 가져올 수 없습니다"
 
-#: ftparchive/writer.cc:80
+#: ftparchive/writer.cc:82
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "경고: %s 디렉터리를 읽을 수 없습니다\n"
 
-#: ftparchive/writer.cc:85
+#: ftparchive/writer.cc:87
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "경고: %s의 정보를 읽을 수 없습니다\n"
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:143
 msgid "E: "
 msgstr "오류: "
 
-#: ftparchive/writer.cc:143
+#: ftparchive/writer.cc:145
 msgid "W: "
 msgstr "경고: "
 
-#: ftparchive/writer.cc:150
+#: ftparchive/writer.cc:152
 msgid "E: Errors apply to file "
 msgstr "오류: 다음 파일에 적용하는데 오류가 발생했습니다: "
 
-#: ftparchive/writer.cc:168 ftparchive/writer.cc:200
+#: ftparchive/writer.cc:170 ftparchive/writer.cc:202
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "%s의 경로를 알아내는데 실패했습니다"
 
-#: ftparchive/writer.cc:181
+#: ftparchive/writer.cc:183
 msgid "Tree walking failed"
 msgstr "트리에서 이동이 실패했습니다"
 
-#: ftparchive/writer.cc:208
+#: ftparchive/writer.cc:210
 #, c-format
 msgid "Failed to open %s"
 msgstr "%s 파일을 여는데 실패했습니다"
 
 # FIXME: ??
-#: ftparchive/writer.cc:267
+#: ftparchive/writer.cc:269
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " 링크 %s [%s] 없애기\n"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:277
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s 파일에 readlink하는데 실패했습니다"
 
-#: ftparchive/writer.cc:279
+#: ftparchive/writer.cc:281
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "%s 파일을 지우는데 실패했습니다"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:288
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** %s 파일을 %s에 링크하는데 실패했습니다"
 
-#: ftparchive/writer.cc:296
+#: ftparchive/writer.cc:298
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " DeLink 한계값 %s바이트에 도달했습니다.\n"
 
-#: ftparchive/writer.cc:401
+#: ftparchive/writer.cc:403
 msgid "Archive had no package field"
 msgstr "아카이브에 패키지 필드가 없습니다"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:711
+#: ftparchive/writer.cc:411 ftparchive/writer.cc:698
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s에는 override 항목이 없습니다\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:827
+#: ftparchive/writer.cc:479 ftparchive/writer.cc:814
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s 관리자가 %s입니다 (%s 아님)\n"
 
-#: ftparchive/writer.cc:721
+#: ftparchive/writer.cc:708
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s에는 source override 항목이 없습니다\n"
 
-#: ftparchive/writer.cc:725
+#: ftparchive/writer.cc:712
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s에는 binary override 항목이 없습니다\n"
@@ -2289,30 +2290,30 @@ msgstr ""
 "mmap 크기를 늘릴 수 없습니다. 자동으로 늘리는 기능을 사용자가 금지했습니다."
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%li일 %li시간 %li분 %li초"
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%li시간 %li분 %li초"
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:392
 #, c-format
 msgid "%limin %lis"
 msgstr "%li분 %li초"
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:397
 #, c-format
 msgid "%lis"
 msgstr "%li초"
 
-#: apt-pkg/contrib/strutl.cc:1166
+#: apt-pkg/contrib/strutl.cc:1172
 #, c-format
 msgid "Selection %s not found"
 msgstr "선택한 %s이(가) 없습니다"
@@ -2503,17 +2504,17 @@ msgstr "하위 프로세스 %s 프로세스가 세그멘테이션 오류를 받�
 msgid "Sub-process %s received signal %u."
 msgstr "하위 프로세스 %s 프로세스가 %u번 시그널을 받았습니다."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:846 apt-pkg/contrib/gpgv.cc:243
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "하위 프로세스 %s 프로세스가 오류 코드(%u)를 리턴했습니다"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:848 apt-pkg/contrib/gpgv.cc:236
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "하위 프로세스 %s 프로세스가 예상치 못하게 끝났습니다"
 
-#: apt-pkg/contrib/fileutl.cc:984 apt-pkg/indexcopy.cc:661
+#: apt-pkg/contrib/fileutl.cc:984
 #, c-format
 msgid "Could not open file %s"
 msgstr "%s 파일을 열 수 없습니다"
@@ -2559,6 +2560,12 @@ msgstr "%s 파일을 삭제하는데 문제가 있습니다"
 #: apt-pkg/contrib/fileutl.cc:1754
 msgid "Problem syncing the file"
 msgstr "파일을 동기화하는데 문제가 있습니다"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:76
+#, c-format
+msgid "No keyring installed in %s."
+msgstr "%s에 키 모음을 설치하지 않았습니다."
 
 #: apt-pkg/pkgcache.cc:148
 msgid "Empty package cache"
@@ -2968,8 +2975,8 @@ msgstr "이름 바꾸기가 실패했습니다. %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum이 맞지 않습니다"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1859
-#: apt-pkg/acquire-item.cc:2002
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1865
+#: apt-pkg/acquire-item.cc:2008
 msgid "Hash Sum mismatch"
 msgstr "해시 합이 맞지 않습니다"
 
@@ -3001,7 +3008,7 @@ msgstr ""
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "배포판 충돌: %s (예상값 %s, 실제값 %s)"
 
-#: apt-pkg/acquire-item.cc:1521
+#: apt-pkg/acquire-item.cc:1518
 #, c-format
 msgid ""
 "A error occurred during the signature verification. The repository is not "
@@ -3011,12 +3018,12 @@ msgstr ""
 "예전의 인덱스 파일을 사용합니다. GPG 오류: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1531 apt-pkg/acquire-item.cc:1536
+#: apt-pkg/acquire-item.cc:1528 apt-pkg/acquire-item.cc:1533
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG 오류: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1635
+#: apt-pkg/acquire-item.cc:1641
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3025,7 +3032,7 @@ msgstr ""
 "%s 패키지의 파일을 찾을 수 없습니다. 수동으로 이 패키지를 고쳐야 할 수도 있습"
 "니다. (아키텍쳐가 빠졌기 때문입니다)"
 
-#: apt-pkg/acquire-item.cc:1694
+#: apt-pkg/acquire-item.cc:1700
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3034,38 +3041,38 @@ msgstr ""
 "%s 패키지의 파일을 찾을 수 없습니다. 수동으로 이 패키지를 고쳐야 할 수도 있습"
 "니다."
 
-#: apt-pkg/acquire-item.cc:1753
+#: apt-pkg/acquire-item.cc:1759
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
 msgstr ""
 "패키지 인덱스 파일이 손상되었습니다. %s 패키지에 Filename: 필드가 없습니다."
 
-#: apt-pkg/acquire-item.cc:1851
+#: apt-pkg/acquire-item.cc:1857
 msgid "Size mismatch"
 msgstr "크기가 맞지 않습니다"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:68
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Release 파일 %s 파일을 파싱할 수 없습니다"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:78
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "Release 파일 %s에 섹션이 없습니다"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:112
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "Release 파일 %s에 Hash 항목이 없습니다"
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:125
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "Release 파일 %s에 'Valid-Until' 항목이 잘못되었습니다"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:144
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Release 파일 %s에 'Date' 항목이 잘못되었습니다"
@@ -3163,22 +3170,22 @@ msgstr "새 소스 리스트를 쓰는 중입니다\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "이 디스크의 소스 리스트 항목은 다음과 같습니다:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:884
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:766
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "레코드 %i개를 썼습니다.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:886
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:768
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "레코드 %i개를 파일 %i개가 빠진 상태로 썼습니다.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:889
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:771
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "레코드 %i개를 파일 %i개가 맞지 않은 상태로 썼습니다\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:892
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:774
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "레코드 %i개를 파일 %i개가 빠지고 %i개가 맞지 않은 상태로 썼습니다\n"
@@ -3192,17 +3199,6 @@ msgstr "다음의 인증 기록을 찾을 수 없습니다: %s"
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "다음의 해시가 다릅니다: %s"
-
-#: apt-pkg/indexcopy.cc:665
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:696
-#, c-format
-msgid "No keyring installed in %s."
-msgstr "%s에 키 모음을 설치하지 않았습니다."
 
 #: apt-pkg/cacheset.cc:403
 #, c-format
