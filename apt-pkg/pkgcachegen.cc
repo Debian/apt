@@ -595,8 +595,11 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
 
    // Insert it into the hash table
    unsigned long const Hash = Cache.Hash(Name);
-   Grp->Next = Cache.HeaderP->GrpHashTable[Hash];
-   Cache.HeaderP->GrpHashTable[Hash] = Group;
+   map_ptrloc *insertAt = &Cache.HeaderP->GrpHashTable[Hash];
+   while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.GrpP + *insertAt)->Name) > 0)
+      insertAt = &(Cache.GrpP + *insertAt)->Next;
+   Grp->Next = *insertAt;
+   *insertAt = Group;
 
    Grp->ID = Cache.HeaderP->GroupCount++;
    return true;
@@ -625,11 +628,14 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    // Insert the package into our package list
    if (Grp->FirstPackage == 0) // the group is new
    {
+      Grp->FirstPackage = Package;
       // Insert it into the hash table
       unsigned long const Hash = Cache.Hash(Name);
-      Pkg->NextPackage = Cache.HeaderP->PkgHashTable[Hash];
-      Cache.HeaderP->PkgHashTable[Hash] = Package;
-      Grp->FirstPackage = Package;
+      map_ptrloc *insertAt = &Cache.HeaderP->PkgHashTable[Hash];
+      while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.PkgP + *insertAt)->Name) > 0)
+	 insertAt = &(Cache.PkgP + *insertAt)->NextPackage;
+      Pkg->NextPackage = *insertAt;
+      *insertAt = Package;
    }
    else // Group the Packages together
    {

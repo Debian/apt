@@ -52,7 +52,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    MajorVersion = 8;
-   MinorVersion = 0;
+   MinorVersion = 1;
    Dirty = false;
    
    HeaderSz = sizeof(pkgCache::Header);
@@ -182,18 +182,17 @@ unsigned long pkgCache::sHash(const string &Str) const
 {
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
-      Hash = 5*Hash + tolower_ascii(*I);
+      Hash = 41 * Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->PkgHashTable);
 }
 
 unsigned long pkgCache::sHash(const char *Str) const
 {
-   unsigned long Hash = 0;
-   for (const char *I = Str; *I != 0; ++I)
-      Hash = 5*Hash + tolower_ascii(*I);
+   unsigned long Hash = tolower_ascii(*Str);
+   for (const char *I = Str + 1; *I != 0; ++I)
+      Hash = 41 * Hash + tolower_ascii(*I);
    return Hash % _count(HeaderP->PkgHashTable);
 }
-
 									/*}}}*/
 // Cache::SingleArchFindPkg - Locate a package by name			/*{{{*/
 // ---------------------------------------------------------------------
@@ -206,9 +205,14 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
    Package *Pkg = PkgP + HeaderP->PkgHashTable[Hash(Name)];
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
    {
-      if (Pkg->Name != 0 && StrP[Pkg->Name] == Name[0] &&
-          stringcasecmp(Name,StrP + Pkg->Name) == 0)
-         return PkgIterator(*this,Pkg);
+      if (unlikely(Pkg->Name == 0))
+	 continue;
+
+      int const cmp = strcasecmp(Name.c_str(), StrP + Pkg->Name);
+      if (cmp == 0)
+	 return PkgIterator(*this, Pkg);
+      else if (cmp < 0)
+	 break;
    }
    return PkgIterator(*this,0);
 }
@@ -265,9 +269,14 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
 	// Look at the hash bucket for the group
 	Group *Grp = GrpP + HeaderP->GrpHashTable[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
-		if (Grp->Name != 0 && StrP[Grp->Name] == Name[0] &&
-		    stringcasecmp(Name, StrP + Grp->Name) == 0)
+		if (unlikely(Grp->Name == 0))
+		   continue;
+
+		int const cmp = strcasecmp(Name.c_str(), StrP + Grp->Name);
+		if (cmp == 0)
 			return GrpIterator(*this, Grp);
+		else if (cmp < 0)
+			break;
 	}
 
 	return GrpIterator(*this,0);
