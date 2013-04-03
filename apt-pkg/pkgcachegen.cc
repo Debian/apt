@@ -390,7 +390,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    }
 
    // Add a new version
-   map_ptrloc const verindex = NewVersion(Ver,Version,*LastVer);
+   map_ptrloc const verindex = NewVersion(Ver, Version, Pkg.Index(), Hash, *LastVer);
    if (verindex == 0 && _error->PendingError())
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
 			   Pkg.Name(), "NewVersion", 1);
@@ -398,8 +398,6 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    if (oldMap != Map.Data())
 	 LastVer += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
    *LastVer = verindex;
-   Ver->ParentPkg = Pkg.Index();
-   Ver->Hash = Hash;
 
    if (unlikely(List.NewVersion(Ver) == false))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
@@ -557,7 +555,7 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
       Dynamic<pkgCache::VerIterator> DynVer(Ver);
       for (; Ver.end() == false; ++Ver)
       {
-	 if (Ver->Hash == Hash && Version.c_str() == Ver.VerStr())
+	 if (Ver->Hash == Hash && Version == Ver.VerStr())
 	 {
 	    if (List.CollectFileProvides(Cache,Ver) == false)
 	       return _error->Error(_("Error occurred while processing %s (%s%d)"),
@@ -768,6 +766,8 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
 /* This puts a version structure in the linked list */
 unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
 					    const string &VerStr,
+					    map_ptrloc const ParentPkg,
+					    unsigned long const Hash,
 					    unsigned long Next)
 {
    // Get a structure
@@ -779,12 +779,37 @@ unsigned long pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
    Ver = pkgCache::VerIterator(Cache,Cache.VerP + Version);
    //Dynamic<pkgCache::VerIterator> DynV(Ver); // caller MergeListVersion already takes care of it
    Ver->NextVer = Next;
+   Ver->ParentPkg = ParentPkg;
+   Ver->Hash = Hash;
    Ver->ID = Cache.HeaderP->VersionCount++;
+
+   // try to find the version string in the group for reuse
+   pkgCache::PkgIterator Pkg = Ver.ParentPkg();
+   pkgCache::GrpIterator Grp = Pkg.Group();
+   if (Pkg.end() == false && Grp.end() == false)
+   {
+      for (pkgCache::PkgIterator P = Grp.PackageList(); P.end() == false; P = Grp.NextPkg(P))
+      {
+	 if (Pkg == P)
+	    continue;
+	 for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
+	 {
+	    int const cmp = strcmp(V.VerStr(), VerStr.c_str());
+	    if (cmp == 0)
+	    {
+	       Ver->VerStr = V->VerStr;
+	       return Version;
+	    }
+	    else if (cmp < 0)
+	       break;
+	 }
+      }
+   }
+   // haven't found the version string, so create
    map_ptrloc const idxVerStr = WriteStringInMap(VerStr);
    if (unlikely(idxVerStr == 0))
       return 0;
    Ver->VerStr = idxVerStr;
-   
    return Version;
 }
 									/*}}}*/
@@ -881,7 +906,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 	 index = WriteStringInMap(Version);
 	 if (unlikely(index == 0))
 	    return false;
-	 if (oldMap != Map.Data())
+	 if (OldDepLast != 0 && oldMap != Map.Data())
 	    OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
       }
    }

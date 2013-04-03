@@ -217,16 +217,12 @@ bool debVersioningSystem::CheckDep(const char *PkgVer,
       return false;
    Op &= 0x0F;
 
-   size_t const lenPkgVer = strlen(PkgVer);
-   size_t const lenDepVer = strlen(DepVer);
-
-   // take a shortcut for equals which are string-equal as well
-   if (Op == pkgCache::Dep::Equals && lenPkgVer == lenDepVer &&
-	 memcmp(PkgVer, DepVer, lenPkgVer) == 0)
-      return true;
+   // fast track for (equal) strings [by location] which are by definition equal versions
+   if (PkgVer == DepVer)
+      return Op == pkgCache::Dep::Equals || Op == pkgCache::Dep::LessEq || Op == pkgCache::Dep::GreaterEq;
 
    // Perform the actual comparision.
-   int const Res = DoCmpVersion(PkgVer, PkgVer + lenPkgVer, DepVer, DepVer + lenDepVer);
+   int const Res = CmpVersion(PkgVer, DepVer);
    switch (Op)
    {
       case pkgCache::Dep::LessEq:

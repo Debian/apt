@@ -11,6 +11,8 @@ apt (0.9.7.8~exp2+nmu1) UNRELEASED; urgency=low
     - equal comparisions are used mostly in same-source relations,
       so use this to try to reuse some version strings
     - sort group and package names in the hashtable on insert
+    - share version strings between same versions (of different architectures)
+      to save some space and allow quick comparisions later on
   * apt-pkg/pkgcache.cc:
     - assume sorted hashtable entries for groups/packages
   * apt-pkg/cacheiterators.h:
