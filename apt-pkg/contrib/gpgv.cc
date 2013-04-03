@@ -337,8 +337,8 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
    if (first_line == true && found_message_start == false && found_message_end == false)
       return false;
    // otherwise one missing indicates a syntax error
-   else if (first_line == false || found_message_start == false || found_message_end == false)
-      return _error->Error("Splitting of file %s failed as it doesn't contain all expected parts", InFile.c_str());
+   else if (first_line == true || found_message_start == false || found_message_end == false)
+     return _error->Error("Splitting of file %s failed as it doesn't contain all expected parts %i %i %i", InFile.c_str(), first_line, found_message_start, found_message_end);
 
    return true;
 }
