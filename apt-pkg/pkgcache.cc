@@ -634,8 +634,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       {
 	 if (IsIgnorable(I.ParentPkg()) == true)
 	    continue;
-
-	 if (Owner->VS->CheckDep(I.VerStr(),S->CompareOp,TargetVer()) == false)
+	 if (IsSatisfied(I) == false)
 	    continue;
 
 	 Size++;
@@ -648,8 +647,7 @@ pkgCache::Version **pkgCache::DepIterator::AllTargets() const
       {
 	 if (IsIgnorable(I) == true)
 	    continue;
-
-	 if (Owner->VS->CheckDep(I.ProvideVersion(),S->CompareOp,TargetVer()) == false)
+	 if (IsSatisfied(I) == false)
 	    continue;
 
 	 Size++;
@@ -755,6 +753,16 @@ bool pkgCache::DepIterator::IsMultiArchImplicit() const
 	S->Type == pkgCache::Dep::Conflicts))
       return true;
    return false;
+}
+									/*}}}*/
+// DepIterator::IsSatisfied - check if a version satisfied the dependency /*{{{*/
+bool pkgCache::DepIterator::IsSatisfied(VerIterator const &Ver) const
+{
+   return Owner->VS->CheckDep(Ver.VerStr(),S->CompareOp,TargetVer());
+}
+bool pkgCache::DepIterator::IsSatisfied(PrvIterator const &Prv) const
+{
+   return Owner->VS->CheckDep(Prv.ProvideVersion(),S->CompareOp,TargetVer());
 }
 									/*}}}*/
 // ostream operator to handle string representation of a dependecy	/*{{{*/
