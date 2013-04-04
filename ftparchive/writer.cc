@@ -562,8 +562,9 @@ TranslationWriter::~TranslationWriter()
 // SourcesWriter::SourcesWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-SourcesWriter::SourcesWriter(string const &BOverrides,string const &SOverrides,
-			     string const &ExtOverrides)
+SourcesWriter::SourcesWriter(string const &DB, string const &BOverrides,string const &SOverrides,
+			     string const &ExtOverrides) :
+   Db(DB), Stats(Db.Stats)
 {
    Output = stdout;
    AddPattern("*.dsc");
@@ -575,7 +576,9 @@ SourcesWriter::SourcesWriter(string const &BOverrides,string const &SOverrides,
    DoMD5 = _config->FindB("APT::FTPArchive::Sources::MD5",DoMD5);
    DoSHA1 = _config->FindB("APT::FTPArchive::Sources::SHA1",DoSHA1);
    DoSHA256 = _config->FindB("APT::FTPArchive::Sources::SHA256",DoSHA256);
+   DoSHA512 = _config->FindB("APT::FTPArchive::Sources::SHA512",DoSHA512);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
+   DoAlwaysStat = _config->FindB("APT::FTPArchive::AlwaysStat", false);
 
    // Read the override file
    if (BOverrides.empty() == false && BOver.ReadOverride(BOverrides) == false)
@@ -740,19 +743,16 @@ bool SourcesWriter::DoPackage(string FileName)
    if (DoSHA1 == true && Tags.Exists("Checksums-Sha1"))
       ostreamSha1 << "\n " << string(SHA1.Result()) << " " << St.st_size << " "
 		   << strippedName << "\n " << Tags.FindS("Checksums-Sha1");
-   string const ChecksumsSha1 = ostreamSha1.str();
 
    std::ostringstream ostreamSha256;
    if (DoSHA256 == true && Tags.Exists("Checksums-Sha256"))
       ostreamSha256 << "\n " << string(SHA256.Result()) << " " << St.st_size << " "
 		   << strippedName << "\n " << Tags.FindS("Checksums-Sha256");
-   string const ChecksumsSha256 = ostreamSha256.str();
 
    std::ostringstream ostreamSha512;
-   if (Tags.Exists("Checksums-Sha512"))
+   if (DoSHA512 == true && Tags.Exists("Checksums-Sha512"))
       ostreamSha512 << "\n " << string(SHA512.Result()) << " " << St.st_size << " "
 		   << strippedName << "\n " << Tags.FindS("Checksums-Sha512");
-   string const ChecksumsSha512 = ostreamSha512.str();
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -768,7 +768,7 @@ bool SourcesWriter::DoPackage(string FileName)
    string Directory = flNotFile(OriginalPath);
    string Package = Tags.FindS("Source");
 
-   // Perform the delinking operation over all of the files
+   // Perform operation over all of the files
    string ParseJnk;
    const char *C = Files.c_str();
    char *RealPath = NULL;
@@ -780,9 +780,36 @@ bool SourcesWriter::DoPackage(string FileName)
 	  ParseQuoteWord(C,ParseJnk) == false ||
 	  ParseQuoteWord(C,ParseJnk) == false)
 	 return _error->Error("Error parsing file record");
-      
-      char Jnk[2];
+
       string OriginalPath = Directory + ParseJnk;
+
+      // Add missing hashes to source files
+      if ((DoSHA1 == true && !Tags.Exists("Checksums-Sha1")) ||
+          (DoSHA256 == true && !Tags.Exists("Checksums-Sha256")) ||
+          (DoSHA512 == true && !Tags.Exists("Checksums-Sha512")))
+      {
+         if (Db.GetFileInfo(OriginalPath, false, false, false, DoMD5, DoSHA1, DoSHA256, DoSHA512, DoAlwaysStat)
+               == false)
+         {
+            return _error->Error("Error getting file info");
+         }
+
+         if (DoSHA1 == true && !Tags.Exists("Checksums-Sha1"))
+            ostreamSha1 << "\n " << string(Db.SHA1Res) << " "
+               << Db.GetFileSize() << " " << ParseJnk;
+
+         if (DoSHA256 == true && !Tags.Exists("Checksums-Sha256"))
+            ostreamSha256 << "\n " << string(Db.SHA256Res) << " "
+               << Db.GetFileSize() << " " << ParseJnk;
+
+         if (DoSHA512 == true && !Tags.Exists("Checksums-Sha512"))
+            ostreamSha512 << "\n " << string(Db.SHA512Res) << " "
+               << Db.GetFileSize() << " " << ParseJnk;
+      }
+
+      // Perform the delinking operation
+      char Jnk[2];
+
       if (readlink(OriginalPath.c_str(),Jnk,sizeof(Jnk)) != -1 &&
 	  (RealPath = realpath(OriginalPath.c_str(),NULL)) != 0)
       {
@@ -796,6 +823,10 @@ bool SourcesWriter::DoPackage(string FileName)
    Directory = flNotFile(NewFileName);
    if (Directory.length() > 2)
       Directory.erase(Directory.end()-1);
+
+   string const ChecksumsSha1 = ostreamSha1.str();
+   string const ChecksumsSha256 = ostreamSha256.str();
+   string const ChecksumsSha512 = ostreamSha512.str();
 
    // This lists all the changes to the fields we are going to make.
    // (5 hardcoded + checksums + maintainer + end marker)
@@ -844,7 +875,7 @@ bool SourcesWriter::DoPackage(string FileName)
 
    Stats.Packages++;
    
-   return true;
+   return Db.Finish();
 }
 									/*}}}*/
 
