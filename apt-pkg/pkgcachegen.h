@@ -77,7 +77,14 @@ class pkgCacheGenerator							/*{{{*/
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   std::string const &Version, unsigned int const &Op,
 		   unsigned int const &Type, map_ptrloc* &OldDepLast);
-   unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next);
+   bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
+		   map_ptrloc const Version, unsigned int const &Op,
+		   unsigned int const &Type, map_ptrloc* &OldDepLast);
+   __deprecated unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next)
+   { return NewVersion(Ver, VerStr, 0, 0, Next); }
+   unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,
+			    map_ptrloc const ParentPkg, unsigned long const Hash,
+			    unsigned long Next);
    map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
 
    public:

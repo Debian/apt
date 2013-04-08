@@ -286,6 +286,8 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	bool IsIgnorable(PrvIterator const &Prv) const;
 	bool IsIgnorable(PkgIterator const &Pkg) const;
 	bool IsMultiArchImplicit() const;
+	bool IsSatisfied(VerIterator const &Ver) const;
+	bool IsSatisfied(PrvIterator const &Prv) const;
 	void GlobOr(DepIterator &Start,DepIterator &End);
 	Version **AllTargets() const;
 	bool SmartTargetPkg(PkgIterator &Result) const;

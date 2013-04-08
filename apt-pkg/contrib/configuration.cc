@@ -958,7 +958,7 @@ Configuration::MatchAgainstConfig::MatchAgainstConfig(char const * Config)
 	 continue;
       }
    }
-   if (strings.size() == 0)
+   if (strings.empty() == true)
       patterns.push_back(NULL);
 }
 									/*}}}*/

@@ -42,7 +42,7 @@ pkgSrcRecords::pkgSrcRecords(pkgSourceList &List) : d(NULL), Files(0), Current(0
    }
    
    // Doesn't work without any source index files
-   if (Files.size() == 0)
+   if (Files.empty() == true)
    {
       _error->Error(_("You must put some 'source' URIs"
 		    " in your sources.list"));
@@ -121,14 +121,13 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool const &SrcOn
 /* */
 const char *pkgSrcRecords::Parser::BuildDepType(unsigned char const &Type)
 {
-   const char *fields[] = {"Build-Depends", 
-                           "Build-Depends-Indep",
+   const char *fields[] = {"Build-Depends",
+			   "Build-Depends-Indep",
 			   "Build-Conflicts",
 			   "Build-Conflicts-Indep"};
-   if (Type < 4) 
-      return fields[Type]; 
-   else 
+   if (unlikely(Type >= sizeof(fields)/sizeof(fields[0])))
       return "";
+   return fields[Type];
 }
 									/*}}}*/
 

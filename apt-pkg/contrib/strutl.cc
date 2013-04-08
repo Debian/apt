@@ -1252,7 +1252,7 @@ string StripEpoch(const string &VerStr)
       return VerStr;
    return VerStr.substr(i+1);
 }
-
+									/*}}}*/
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
 /* This little function is the most called method we have and tries
@@ -1290,14 +1290,14 @@ bool CheckDomainList(const string &Host,const string &List)
    return false;
 }
 									/*}}}*/
-// DeEscapeString - unescape (\0XX and \xXX) from a string      	/*{{{*/
+// DeEscapeString - unescape (\0XX and \xXX) from a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 string DeEscapeString(const string &input)
 {
    char tmp[3];
-   string::const_iterator it, escape_start;
-   string output, octal, hex;
+   string::const_iterator it;
+   string output;
    for (it = input.begin(); it != input.end(); ++it)
    {
       // just copy non-escape chars
