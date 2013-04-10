@@ -1515,7 +1515,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	    VerifiedSigFile.append(".gpg");
 	 Rename(LastGoodSigFile, VerifiedSigFile);
 	 Status = StatTransientNetworkError;
-	 _error->Warning(_("A error occurred during the signature "
+	 _error->Warning(_("An error occurred during the signature "
 			   "verification. The repository is not updated "
 			   "and the previous index files will be used. "
 			   "GPG error: %s: %s\n"),
