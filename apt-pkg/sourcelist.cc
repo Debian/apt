@@ -270,7 +270,11 @@ bool pkgSourceList::ReadAppend(string File)
       // CNC:2003-02-20 - Do not break if '#' is inside [].
       for (I = Buffer; *I != 0 && *I != '#'; I++)
          if (*I == '[')
-	    I = strchr(I + 1, ']');
+         {
+	    char *b_end = strchr(I + 1, ']');
+            if (b_end != NULL)
+               I = b_end;
+         }
       *I = 0;
       
       const char *C = _strstrip(Buffer);

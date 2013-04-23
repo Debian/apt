@@ -28,7 +28,150 @@ apt (0.9.8~exp1) UNRELEASED; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Fri, 01 Mar 2013 12:12:39 +0100
 
-apt (0.9.7.8) UNRELEASED; urgency=low
+apt (0.9.7.9~exp3) UNRELEASED; urgency=low
+
+  [ Michael Vogt ]
+  * apt-pkg/sourcelist.cc:
+    - fix segfault when a hostname contains a [, thanks to 
+      Tzafrir Cohen (closes: #704653)
+  * debian/control:
+    - replace manpages-it (closes: #704723)
+
+  [ David Kalnischkies ]
+  * various simple changes to fix cppcheck warnings
+  * apt-pkg/pkgcachegen.cc:
+    - do not store the MD5Sum for every description language variant as
+      it will be the same for all so it can be shared to save cache space
+    - handle language tags for descriptions are unique strings to be shared
+    - factor version string creation out of NewDepends, so we can easily reuse
+      version strings e.g. for implicit multi-arch dependencies
+    - equal comparisions are used mostly in same-source relations,
+      so use this to try to reuse some version strings
+    - sort group and package names in the hashtable on insert
+    - share version strings between same versions (of different architectures)
+      to save some space and allow quick comparisions later on
+  * apt-pkg/pkgcache.cc:
+    - assume sorted hashtable entries for groups/packages
+  * apt-pkg/cacheiterators.h:
+    - provide DepIterator::IsSatisfied as a nicer shorthand for DepCheck
+  * apt-pkg/deb/debversion.cc:
+    - add a string-equal shortcut for equal version comparisions
+
+  [ Marc Deslauriers ]
+  * make apt-ftparchive generate missing deb-src hashes (LP: #1078697)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 08 Apr 2013 08:43:21 +0200
+
+apt (0.9.7.9~exp2) experimental; urgency=low
+
+  [ Programs translations ]
+  * Update all PO files and apt-all.pot
+  * French translation completed (Christian Perrier)
+  
+  [ Daniel Hartwig ]
+  * cmdline/apt-get.cc:
+    - do not have space between "-a" and option when cross building
+      (closes: #703792)
+  * test/integration/test-apt-get-download:
+    - fix test now that #1098752 is fixed
+  * po/{ca,cs,ru}.po:
+    - fix merge artifact
+
+  [ David Kalnischkies ]
+  * apt-pkg/indexcopy.cc:
+    - rename RunGPGV to ExecGPGV and move it to apt-pkg/contrib/gpgv.cc
+  * apt-pkg/contrib/gpgv.cc:
+    - ExecGPGV is a method which should never return, so mark it as such
+      and fix the inconsistency of returning in error cases
+    - don't close stdout/stderr if it is also the statusfd
+    - if ExecGPGV deals with a clear-signed file it will split this file
+      into data and signatures, pass it to gpgv for verification
+    - add method to open (maybe) clearsigned files transparently
+  * apt-pkg/acquire-item.cc:
+    - keep the last good InRelease file around just as we do it with
+      Release.gpg in case the new one we download isn't good for us
+  * apt-pkg/deb/debmetaindex.cc:
+    - reenable InRelease by default
+  * ftparchive/writer.cc,
+    apt-pkg/deb/debindexfile.cc,
+    apt-pkg/deb/deblistparser.cc:
+    - use OpenMaybeClearSignedFile to be free from detecting and
+      skipping clearsigning metadata in dsc and Release files
+
+  [ Michael Vogt ]
+  * add regression test for CVE-2013-1051
+  * implement GPGSplit() based on the idea from Ansgar Burchardt
+    (many thanks!)
+  * methods/connect.cc:
+    - use Errno() instead of strerror(), thanks to David Kalnischk
+  * doc/apt.conf.5.xml:
+    - document Acquire::ForceIPv{4,6}
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 03 Apr 2013 14:19:58 +0200
+
+apt (0.9.7.9~exp1) experimental; urgency=low
+
+  [ Niels Thykier ]
+  * test/libapt/assert.h, test/libapt/run-tests:
+    - exit with status 1 on test failure
+  
+  [ Daniel Hartwig ]
+  * test/integration/framework:
+    - continue after test failure but preserve exit status
+
+  [ Programs translation updates ]
+  * Turkish (Mert Dirik). Closes: #703526
+
+  [ Colin Watson ]
+  * methods/connect.cc:
+    - provide useful error message in case of EAI_SYSTEM
+      (closes: #703603)
+  
+  [ Michael Vogt ]
+  * add new config options "Acquire::ForceIPv4" and 
+    "Acquire::ForceIPv6" to allow focing one or the other
+    (closes: #611891)
+  * lp:~mvo/apt/fix-tagfile-hash:
+    - fix false positives in pkgTagSection.Exists(), thanks to
+      Niels Thykier for the testcase (closes: #703240)
+    - this will require rebuilds of the clients as this used to
+      be a inline function
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 22 Mar 2013 21:57:08 +0100
+
+apt (0.9.7.8) unstable; urgency=criticial
+
+  * SECURITY UPDATE: InRelease verification bypass
+    - CVE-2013-1051
+  
+  [ Programs translation updates ]
+  * Japanese (Kenshi Muto). Closes: #699783
+  
+  [ David Kalnischk ]
+  * apt-pkg/deb/debmetaindex.cc,
+    test/integration/test-bug-595691-empty-and-broken-archive-files,
+  * [ABI BREAK] apt-pkg/pkgcache.h:
+    - adjust pkgCache::State::VerPriority enum, to match reality
+    test/integration/test-releasefile-verification:
+    - disable InRelease downloading until the verification issue is
+      fixed, thanks to Ansgar Burchardt for finding the flaw
+    - quote plus in filenames to work around a bug in the S3 server
+      (LP: #1003633)
+  * apt-pkg/indexrecords.cc:
+    - support '\r' in the Release file
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 14 Mar 2013 07:47:36 +0100
+
+apt (0.9.7.8~exp2) experimental; urgency=low
+
+  * include two missing patches to really fix bug #696225, thanks to
+    Guillem Jover 
+  * ensure sha512 is really used when available, thanks to Tyler Hicks
+   (LP: #1098752)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 01 Mar 2013 19:06:55 +0100
+
+apt (0.9.7.8~exp1) experimental; urgency=low
 
   [ Manpages translation updates ]
   * Italian (Beatrice Torracca). Closes: #696601
@@ -39,8 +182,6 @@ apt (0.9.7.8) UNRELEASED; urgency=low
   [ Michael Vogt ]
   * fix pkgProblemResolver::Scores, thanks to Paul Wise. 
     Closes: #697577
-  * [ABI BREAK] apt-pkg/pkgcache.h:
-    - adjust pkgCache::State::VerPriority enum, to match reality
   * fix missing translated apt.8 manpages, thanks to Helge Kreutzmann
     for the report. Closes: #696923
   * apt-pkg/contrib/progress.cc:
@@ -66,7 +207,12 @@ apt (0.9.7.8) UNRELEASED; urgency=low
   * apt-pkg/indexrecords.cc:
     - support '\r' in the Release file
 
- -- Christian Perrier <bubulle@debian.org>  Mon, 24 Dec 2012 07:01:20 +0100
+  [ David Kalnischkies ]
+  * apt-pkg/depcache.cc:
+    - prefer to install packages which have an already installed M-A:same
+      sibling while choosing providers (LP: #1130419)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 01 Mar 2013 14:16:42 +0100
 
 apt (0.9.7.7) unstable; urgency=low
 

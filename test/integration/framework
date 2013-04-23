@@ -1,5 +1,7 @@
 #!/bin/sh -- # no runable script, just for vi
 
+EXIT_CODE=0
+
 # we all like colorful messages
 if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
    expr match "$(readlink -f /proc/$$/fd/2)" '/dev/pts/[0-9]\+' > /dev/null; then
@@ -36,7 +38,7 @@ msgtest() {
 }
 msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
 msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
-msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; }
+msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
 
 # enable / disable Debugging
 MSGLEVEL=${MSGLEVEL:-3}
@@ -113,9 +115,18 @@ gdb() {
 	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1
 }
 
+exitwithstatus() {
+        # error if we about to overflow, but ...
+        #   "255 failures ought to be enough for everybody"
+        if [ $EXIT_CODE -gt 255 ]; then
+            msgdie "Total failure count $EXIT_CODE too big"
+        fi
+        exit $((EXIT_CODE <= 255 ? EXIT_CODE : 255));
+}
+
 addtrap() {
 	CURRENTTRAP="$CURRENTTRAP $1"
-	trap "$CURRENTTRAP exit;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	trap "$CURRENTTRAP exitwithstatus;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 }
 
 setupenvironment() {
@@ -328,9 +339,15 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 	fi
 
 	echo '3.0 (native)' > ${BUILDDIR}/debian/source/format
-	local SRCS="$( (cd ${BUILDDIR}/..; dpkg-source -b ${NAME}-${VERSION} 2>&1) | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
-	for SRC in $SRCS; do
+	(cd ${BUILDDIR}/..; dpkg-source -b ${NAME}-${VERSION} 2>&1) | sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' \
+		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
+#		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
+#			gpg --yes --no-default-keyring --secret-keyring ./keys/joesixpack.sec \
+#				--keyring ./keys/joesixpack.pub --default-key 'Joe Sixpack' \
+#				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
+#			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
+#		fi
 	done
 
 	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do

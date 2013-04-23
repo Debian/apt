@@ -389,7 +389,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
 
    std::vector<string> List;
 
-   if (DirectoryExists(Dir.c_str()) == false)
+   if (DirectoryExists(Dir) == false)
    {
       _error->Error(_("List of files can't be created as '%s' is not a directory"), Dir.c_str());
       return List;
@@ -415,14 +415,14 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       if (Ent->d_type != DT_REG)
 #endif
       {
-	 if (RealFileExists(File.c_str()) == false)
+	 if (RealFileExists(File) == false)
 	 {
 	    // do not show ignoration warnings for directories
 	    if (
 #ifdef _DIRENT_HAVE_D_TYPE
 		Ent->d_type == DT_DIR ||
 #endif
-		DirectoryExists(File.c_str()) == true)
+		DirectoryExists(File) == true)
 	       continue;
 	    if (SilentIgnore.Match(Ent->d_name) == false)
 	       _error->Notice(_("Ignoring '%s' in directory '%s' as it is not a regular file"), Ent->d_name, Dir.c_str());
@@ -503,7 +503,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, bool SortList)
 
    std::vector<string> List;
 
-   if (DirectoryExists(Dir.c_str()) == false)
+   if (DirectoryExists(Dir) == false)
    {
       _error->Error(_("List of files can't be created as '%s' is not a directory"), Dir.c_str());
       return List;
@@ -528,7 +528,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, bool SortList)
       if (Ent->d_type != DT_REG)
 #endif
       {
-	 if (RealFileExists(File.c_str()) == false)
+	 if (RealFileExists(File) == false)
 	 {
 	    if (Debug == true)
 	       std::clog << "Bad file: " << Ent->d_name << " → it is not a real file" << std::endl;

@@ -59,7 +59,7 @@ class pkgTagSection
    inline bool operator !=(const pkgTagSection &rhs) {return Section != rhs.Section;};
    
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
-   bool Find(const char *Tag,unsigned &Pos) const;
+   bool Find(const char *Tag,unsigned int &Pos) const;
    std::string FindS(const char *Tag) const;
    signed int FindI(const char *Tag,signed long Default = 0) const ;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
@@ -73,7 +73,7 @@ class pkgTagSection
    virtual void TrimRecord(bool BeforeRecord, const char* &End);
    
    inline unsigned int Count() const {return TagCount;};
-   inline bool Exists(const char* const Tag) {return AlphaIndexes[AlphaHash(Tag)] != 0;}
+   bool Exists(const char* const Tag);
  
    inline void Get(const char *&Start,const char *&Stop,unsigned int I) const
                    {Start = Section + Indexes[I]; Stop = Section + Indexes[I+1];}

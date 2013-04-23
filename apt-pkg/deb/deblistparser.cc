@@ -284,7 +284,7 @@ unsigned short debListParser::VersionHash()
                             "Replaces",0};
    unsigned long Result = INIT_FCS;
    char S[1024];
-   for (const char **I = Sections; *I != 0; I++)
+   for (const char * const *I = Sections; *I != 0; ++I)
    {
       const char *Start;
       const char *End;
@@ -295,13 +295,13 @@ unsigned short debListParser::VersionHash()
          of certain fields. dpkg also has the rather interesting notion of
          reformatting depends operators < -> <= */
       char *J = S;
-      for (; Start != End; Start++)
+      for (; Start != End; ++Start)
       {
-	 if (isspace(*Start) == 0)
-	    *J++ = tolower_ascii(*Start);
-	 if (*Start == '<' && Start[1] != '<' && Start[1] != '=')
-	    *J++ = '=';
-	 if (*Start == '>' && Start[1] != '>' && Start[1] != '=')
+	 if (isspace(*Start) != 0)
+	    continue;
+	 *J++ = tolower_ascii(*Start);
+
+	 if ((*Start == '<' || *Start == '>') && Start[1] != *Start && Start[1] != '=')
 	    *J++ = '=';
       }
 
@@ -801,13 +801,12 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    map_ptrloc const storage = WriteUniqString(component);
    FileI->Component = storage;
 
-   // FIXME: Code depends on the fact that Release files aren't compressed
+   // FIXME: should use FileFd and TagSection
    FILE* release = fdopen(dup(File.Fd()), "r");
    if (release == NULL)
       return false;
 
    char buffer[101];
-   bool gpgClose = false;
    while (fgets(buffer, sizeof(buffer), release) != NULL)
    {
       size_t len = 0;
@@ -818,15 +817,6 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
          ;
       if (buffer[len] == '\0')
 	 continue;
-
-      // only evalute the first GPG section
-      if (strncmp("-----", buffer, 5) == 0)
-      {
-	 if (gpgClose == true)
-	    break;
-	 gpgClose = true;
-	 continue;
-      }
 
       // seperate the tag from the data
       const char* dataStart = strchr(buffer + len, ':');

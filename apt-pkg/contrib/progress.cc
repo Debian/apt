@@ -192,7 +192,7 @@ void OpTextProgress::Update()
    }
    
    // Print the spinner
-   snprintf(S,sizeof(S),_("\r%s... %u%%"),Op.c_str(),(unsigned int)Percent);
+   snprintf(S,sizeof(S),_("%c%s... %u%%"),'\r',Op.c_str(),(unsigned int)Percent);
    Write(S);
 
    OldOp = Op;

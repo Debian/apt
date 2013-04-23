@@ -26,6 +26,14 @@ MD5Sum:
  2182897e0a2a0c09e760beaae117a015     2023 Packages.diff/Index
  1b895931853981ad8204d2439821b999     4144 Packages.gz'; echo; cat ${RELEASE}.old;) > ${RELEASE}
 done
-aptget update -qq > /dev/null 2> starts-with-unsigned.msg
-sed -i 's#File .*InRelease#File InRelease#' starts-with-unsigned.msg
-testfileequal starts-with-unsigned.msg "W: GPG error: file: unstable InRelease: File InRelease doesn't start with a clearsigned message"
+
+msgtest 'The unsigned garbage before signed block is' 'ignored'
+aptget update -qq > /dev/null 2>&1 && msgpass || msgfail
+
+ROOTDIR="$(readlink -f .)"
+testequal "Package files:
+ 100 ${ROOTDIR}/rootdir/var/lib/dpkg/status
+     release a=now
+ 500 file:${ROOTDIR}/aptarchive/ unstable/main i386 Packages
+     release a=unstable,n=unstable,c=main
+Pinned packages:" aptcache policy
