@@ -1845,6 +1845,9 @@ bool DoAutomaticRemove(CacheFile &Cache)
    packages */
 bool DoUpgrade(CommandLine &CmdL)
 {
+   if (CmdL.FileSize() != 1)
+      return _error->Error(_("The upgrade command takes no arguments"));
+
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
@@ -2178,6 +2181,9 @@ bool DoMarkAuto(CommandLine &CmdL)
 /* Intelligent upgrader that will install and remove packages at will */
 bool DoDistUpgrade(CommandLine &CmdL)
 {
+   if (CmdL.FileSize() != 1)
+      return _error->Error(_("The dist-upgrade command takes no arguments"));
+
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
