@@ -12,6 +12,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/gpgv.h>
 
 #include <sys/stat.h>
 #include <clocale>
@@ -57,7 +58,10 @@ bool indexRecords::Exists(string const &MetaKey) const
 
 bool indexRecords::Load(const string Filename)				/*{{{*/
 {
-   FileFd Fd(Filename, FileFd::ReadOnly);
+   FileFd Fd;
+   if (OpenMaybeClearSignedFile(Filename, Fd) == false)
+      return false;
+
    pkgTagFile TagFile(&Fd, Fd.Size() + 256); // XXX
    if (_error->PendingError() == true)
    {
@@ -173,7 +177,7 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    Hash = "";
    Size = 0;
    /* Skip over the first blank */
-   while ((*Start == '\t' || *Start == ' ' || *Start == '\n')
+   while ((*Start == '\t' || *Start == ' ' || *Start == '\n' || *Start == '\r')
 	  && Start < End)
       Start++;
    if (Start >= End)
@@ -215,7 +219,8 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    
    EntryEnd = Start;
    /* Find the end of the third entry (the filename) */
-   while ((*EntryEnd != '\t' && *EntryEnd != ' ' && *EntryEnd != '\n')
+   while ((*EntryEnd != '\t' && *EntryEnd != ' ' && 
+           *EntryEnd != '\n' && *EntryEnd != '\r')
 	  && EntryEnd < End)
       EntryEnd++;
 

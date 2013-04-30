@@ -154,11 +154,9 @@ int getaddrinfo(const char *nodename, const char *servname,
 /* */
 void freeaddrinfo(struct addrinfo *ai)
 {
-   struct addrinfo *Tmp;
    while (ai != 0)
    {
       free(ai->ai_addr);
-      Tmp = ai;
       ai = ai->ai_next;
       free(ai);
    }

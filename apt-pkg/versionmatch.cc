@@ -181,9 +181,9 @@ pkgCache::VerIterator pkgVersionMatch::Find(pkgCache::PkgIterator Pkg)
 bool pkgVersionMatch::ExpressionMatches(const char *pattern, const char *string)
 {
    if (pattern[0] == '/') {
-      bool res = false;
       size_t length = strlen(pattern);
       if (pattern[length - 1] == '/') {
+	 bool res = false;
 	 regex_t preg;
 	 char *regex = strdup(pattern + 1);
 	 regex[length - 2] = '\0';

@@ -158,7 +158,7 @@ class HttpMethod : public pkgAcqMethod
       ERROR_UNRECOVERABLE,
       /** \brief The server reported a error with a error content page */
       ERROR_WITH_CONTENT_PAGE,
-      /** \brief A error on the client side */
+      /** \brief An error on the client side */
       ERROR_NOT_FROM_SERVER,
       /** \brief A redirect or retry request */
       TRY_AGAIN_OR_REDIRECT 

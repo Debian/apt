@@ -1912,7 +1912,6 @@ bool DoInstall(CommandLine &CmdL)
       return false;
    }
 
-   unsigned short const order[] = { MOD_REMOVE, MOD_INSTALL, 0 };
 
   TryToInstall InstallAction(Cache, Fix, BrokenFix);
   TryToRemove RemoveAction(Cache, Fix);
@@ -1920,6 +1919,7 @@ bool DoInstall(CommandLine &CmdL)
    // new scope for the ActionGroup
    {
       pkgDepCache::ActionGroup group(Cache);
+      unsigned short const order[] = { MOD_REMOVE, MOD_INSTALL, 0 };
 
       for (unsigned short i = 0; order[i] != 0; ++i)
       {
@@ -2023,7 +2023,7 @@ bool DoInstall(CommandLine &CmdL)
 
    /* Print out a list of suggested and recommended packages */
    {
-      string SuggestsList, RecommendsList, List;
+      string SuggestsList, RecommendsList;
       string SuggestsVersions, RecommendsVersions;
       for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
       {
@@ -2395,7 +2395,7 @@ bool DoDownload(CommandLine &CmdL)
       HashString hash;
       if (rec.SHA512Hash() != "")
          hash = HashString("sha512", rec.SHA512Hash());
-      if (rec.SHA256Hash() != "")
+      else if (rec.SHA256Hash() != "")
          hash = HashString("sha256", rec.SHA256Hash());
       else if (rec.SHA1Hash() != "")
          hash = HashString("sha1", rec.SHA1Hash());
@@ -2714,7 +2714,7 @@ bool DoSource(CommandLine &CmdL)
 	 {
 	    string buildopts = _config->Find("APT::Get::Host-Architecture");
 	    if (buildopts.empty() == false)
-	       buildopts = "-a " + buildopts + " ";
+	       buildopts = "-a" + buildopts + " ";
 	    buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
 
 	    // Call dpkg-buildpackage

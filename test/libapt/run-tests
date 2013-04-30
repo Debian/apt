@@ -7,6 +7,7 @@ echo "Compiling the tests …"
 echo "Running all testcases …"
 LDPATH="$DIR/../../build/bin"
 EXT="_libapt_test"
+EXIT_CODE=0
 
 # detect if output is on a terminal (colorful) or better not
 if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
@@ -106,9 +107,15 @@ do
 	fi
 
 	echo -n "Testing with ${NAME} "
-	LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} && echo "$TESTOKAY" || echo "$TESTFAIL"
+	if LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} ; then
+ 		echo "$TESTOKAY"
+	else
+		echo "$TESTFAIL"
+		EXIT_CODE=1
+	fi
 
 	if [ -n "$tmppath" -a -d "$tmppath" ]; then
 		rm -rf "$tmppath"
 	fi
 done
+exit $EXIT_CODE

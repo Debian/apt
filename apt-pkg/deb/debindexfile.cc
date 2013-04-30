@@ -22,6 +22,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/debmetaindex.h>
+#include <apt-pkg/gpgv.h>
 
 #include <sys/stat.h>
 									/*}}}*/
@@ -337,7 +338,12 @@ bool debPackagesIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 
    if (releaseExists == true || FileExists(ReleaseFile) == true)
    {
-      FileFd Rel(ReleaseFile,FileFd::ReadOnly);
+      FileFd Rel;
+      // Beware: The 'Release' file might be clearsigned in case the
+      // signature for an 'InRelease' file couldn't be checked
+      if (OpenMaybeClearSignedFile(ReleaseFile, Rel) == false)
+	 return false;
+
       if (_error->PendingError() == true)
 	 return false;
       Parser.LoadReleaseInfo(File,Rel,Section);

@@ -37,4 +37,5 @@ for testcase in $(run-parts --list $DIR | grep '/test-'); do
 done
 
 echo "failures: $FAIL"
-exit $FAIL
+# ensure we don't overflow
+exit $((FAIL <= 255 ? FAIL : 255))

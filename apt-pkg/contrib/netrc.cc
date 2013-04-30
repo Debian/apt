@@ -50,14 +50,10 @@ static int parsenetrc_string (char *host, std::string &login, std::string &passw
   FILE *file;
   int retcode = 1;
   int specific_login = (login.empty() == false);
-  char *home = NULL;
   bool netrc_alloc = false;
 
-  int state_our_login = false;  /* With specific_login,
-                                   found *our* login name */
-
   if (!netrcfile) {
-    home = getenv ("HOME"); /* portable environment reader */
+    char const * home = getenv ("HOME"); /* portable environment reader */
 
     if (!home) {
       struct passwd *pw;
@@ -86,6 +82,8 @@ static int parsenetrc_string (char *host, std::string &login, std::string &passw
     int state = NOTHING;
     char state_login = 0;        /* Found a login keyword */
     char state_password = 0;     /* Found a password keyword */
+    int state_our_login = false;  /* With specific_login,
+				     found *our* login name */
 
     while (!done && getline(&netrcbuffer, &netrcbuffer_size, file) != -1) {
       tok = strtok_r (netrcbuffer, " \t\n", &tok_buf);
