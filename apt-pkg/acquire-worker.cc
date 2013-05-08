@@ -305,7 +305,15 @@ bool pkgAcquire::Worker::RunMessages()
 	    
 	    OwnerQ->ItemDone(Itm);
 	    unsigned long long const ServerSize = strtoull(LookupTag(Message,"Size","0").c_str(), NULL, 10);
-	    if (TotalSize != 0 && ServerSize != TotalSize)
+            bool isHit = StringToBool(LookupTag(Message,"IMS-Hit"),false) ||
+                         StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false);
+            // Using the https method the server might return 200, but the
+            // If-Modified-Since condition is not satsified, libcurl will
+            // discard the download. In this case, however, TotalSize will be
+            // set to the actual size of the file, while ServerSize will be set
+            // to 0. Therefore, if the item is marked as a hit and the
+            // downloaded size (ServerSize) is 0, we ignore TotalSize.
+	    if (TotalSize != 0 && (!isHit || ServerSize != 0) && ServerSize != TotalSize)
 	       _error->Warning("Size of file %s is not what the server reported %s %llu",
 			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);
 
@@ -332,8 +340,7 @@ bool pkgAcquire::Worker::RunMessages()
 	    // Log that we are done
 	    if (Log != 0)
 	    {
-	       if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true ||
-		   StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
+	       if (isHit)
 	       {
 		  /* Hide 'hits' for local only sources - we also manage to
 		     hide gets */

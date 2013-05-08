@@ -285,6 +285,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    long curl_servdate;
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &curl_servdate);
 
+   // If the server returns 200 OK but the If-Modified-Since condition is not
+   // met, CURLINFO_CONDITION_UNMET will be set to 1
+   long curl_condition_unmet = 0;
+   curl_easy_getinfo(curl, CURLINFO_CONDITION_UNMET, &curl_condition_unmet);
+
    File->Close();
 
    // cleanup
@@ -312,7 +317,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Res.Filename = File->Name();
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
-      if (curl_responsecode == 304)
+      if (curl_responsecode == 304 || curl_condition_unmet)
       {
 	 unlink(File->Name().c_str());
 	 Res.IMSHit = true;
