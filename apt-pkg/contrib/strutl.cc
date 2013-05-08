@@ -1483,9 +1483,12 @@ URI::operator string()
           
       if (User.empty() == false)
       {
-	 Res +=  User;
+	 // FIXME: Technically userinfo is permitted even less
+	 // characters than these, but this is not conveniently
+	 // expressed with a blacklist.
+	 Res += QuoteString(User, ":/?#[]@");
 	 if (Password.empty() == false)
-	    Res += ":" + Password;
+	    Res += ":" + QuoteString(Password, ":/?#[]@");
 	 Res += "@";
       }
       
@@ -1524,7 +1527,6 @@ string URI::SiteOnly(const string &URI)
    U.User.clear();
    U.Password.clear();
    U.Path.clear();
-   U.Port = 0;
    return U;
 }
 									/*}}}*/
@@ -1536,7 +1538,6 @@ string URI::NoUserPassword(const string &URI)
    ::URI U(URI);
    U.User.clear();
    U.Password.clear();
-   U.Port = 0;
    return U;
 }
 									/*}}}*/

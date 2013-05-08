@@ -50,6 +50,23 @@ apt (0.9.8) UNRELEASED; urgency=low
   [ Manpages translations ]
   * French translation completed (Christian Perrier)
 
+  [ Daniel Hartwig ]
+  * apt-pkg/contrib/strutl.cc:
+    - include port in shortened URIs (e.g. with apt-cache policy, progress
+      display) thanks to James McCoy (Closes: #154868, #322074)
+    - percent-encode username and password when writing URIs
+  * methods/http.cc:
+    - properly escape IP-literals (e.g. IPv6 address) when building
+      Host headers and URIs (Closes: #620344)
+  * methods/https.cc:
+    - use https_proxy environment variable if present, falling back to
+      http_proxy otherwise
+    - use authentication credentials from proxy URI
+      (Closes: #651640, LP: #1087512)
+    - environment variables do not override an explicit no proxy
+      directive ("DIRECT") in apt.conf
+    - disregard all_proxy environment variable, like other methods
+  
  -- Michael Vogt <mvo@debian.org>  Mon, 08 Apr 2013 08:43:21 +0200
 
 apt (0.9.7.9~exp2) experimental; urgency=low
