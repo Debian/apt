@@ -645,7 +645,10 @@ void pkgProblemResolver::MakeScores()
 	      D->Type != pkgCache::Dep::Recommends))
 	    continue;	 
 	 
-	 Scores[I->ID] += abs(OldScores[D.ParentPkg()->ID]);
+	 // Do not propagate negative scores otherwise
+	 // an extra (-2) package might score better than an optional (-1)
+	 if (OldScores[D.ParentPkg()->ID] > 0)
+	     Scores[I->ID] += OldScores[D.ParentPkg()->ID];
       }      
    }
 

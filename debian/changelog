@@ -4,7 +4,13 @@ apt (0.9.7.9) UNRELEASED; urgency=low
   * properly handle if-modfied-since with libcurl/https 
     (closes: #705648)
   
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 08 May 2013 16:20:13 +0200
+  [ Andreas Beckman ]
+  * apt-pkg/algorithms.cc:
+    - Do not propagate negative scores from rdepends. Propagating the absolute
+      value of a negative score may boost obsolete packages and keep them
+      installed instead of installing their successors.  (Closes: #699759)
+  
+ -- Michael Vogt <mvo@debian.org>  Wed, 08 May 2013 17:46:10 +0200
 
 apt (0.9.7.8) unstable; urgency=criticial
 
