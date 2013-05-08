@@ -1,5 +1,15 @@
-apt (0.9.7.9~exp3) experimental; urgency=low
+apt (0.9.8) UNRELEASED; urgency=low
 
+  [ Ludovico Cavedon ]
+  * properly handle if-modfied-since with libcurl/https 
+    (closes: #705648)
+  
+  [ Andreas Beckman ]
+  * apt-pkg/algorithms.cc:
+    - Do not propagate negative scores from rdepends. Propagating the absolute
+      value of a negative score may boost obsolete packages and keep them
+      installed instead of installing their successors.  (Closes: #699759)
+  
   [ Michael Vogt ]
   * apt-pkg/sourcelist.cc:
     - fix segfault when a hostname contains a [, thanks to 
@@ -39,8 +49,8 @@ apt (0.9.7.9~exp3) experimental; urgency=low
   
   [ Manpages translations ]
   * French translation completed (Christian Perrier)
-  
- -- Michael Vogt <mvo@debian.org>  Mon, 08 Apr 2013 17:09:00 +0200
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 08 Apr 2013 08:43:21 +0200
 
 apt (0.9.7.9~exp2) experimental; urgency=low
 
