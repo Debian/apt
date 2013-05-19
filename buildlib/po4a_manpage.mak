@@ -25,6 +25,7 @@ $(LOCAL)-LIST := $(SOURCE)
 
 # Install generation hooks
 manpages: $($(LOCAL)-LIST)
+clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
 apt-verbatim.ent: ../apt-verbatim.ent
@@ -37,15 +38,16 @@ manpage-style.xsl: ../manpage-style.xsl
 $($(LOCAL)-LIST) :: % : %.xml $(STYLESHEET) $(INCLUDES)
 	echo Creating man page $@
 	$(XSLTPROC) -o $@ $(STYLESHEET) $< || exit 200 # why xsltproc doesn't respect the -o flag here???
-	test -f $(subst .$(LC),,$@) || echo FIXME: xsltproc respect the -o flag now, workaround can be removed
+	test -f $(subst .$(LC),,$@) || echo 'FIXME: xsltproc respects the -o flag now, workaround can be removed'
 	mv -f $(subst .$(LC),,$@) $@
 
 # Clean rule
-.PHONY: veryclean/$(LOCAL)
+.PHONY: clean/$(LOCAL) veryclean/$(LOCAL)
+clean/$(LOCAL):
+	rm -f $($(@F)-LIST) apt.ent apt-verbatim.ent
 veryclean/$(LOCAL):
-	-rm -rf $($(@F)-LIST) apt.ent apt-verbatim.ent apt.$(LC).8 \
-		$(addsuffix .xml,$($(@F)-LIST)) \
-		offline.$(LC).sgml guide.$(LC).sgml
+	# we are nuking the directory we are working in as it is auto-generated
+	rm -rf $(shell readlink -f .)
 
 HAVE_PO4A=yes
 endif
