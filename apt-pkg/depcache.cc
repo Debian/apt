@@ -1004,7 +1004,7 @@ struct CompareProviders {
       }
       // higher priority seems like a good idea
       if (AV->Priority != BV->Priority)
-	 return AV->Priority < BV->Priority;
+	 return AV->Priority > BV->Priority;
       // prefer native architecture
       if (strcmp(A.Arch(), B.Arch()) != 0)
       {

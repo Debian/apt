@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'native'
+
+insertpackage 'unstable' 'foo' 'all' '1' 'Provides: stuff' 'important'
+insertpackage 'unstable' 'bar' 'all' '1' 'Provides: stuff' 'optional'
+insertpackage 'unstable' 'baz' 'all' '1' 'Provides: stuff' 'extra'
+insertpackage 'unstable' 'awesome' 'all' '1' 'Depends: stuff'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  awesome foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf awesome (1 unstable [all])' aptget install awesome -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  awesome foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf awesome (1 unstable [all])' aptget install awesome foo -s
