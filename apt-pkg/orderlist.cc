@@ -301,9 +301,8 @@ bool pkgOrderList::OrderConfigure()
 /* Higher scores order earlier */
 int pkgOrderList::Score(PkgIterator Pkg)
 {
-   static int const ScoreDelete = _config->FindI("OrderList::Score::Delete", 500);
-
-   // Removal is always done first
+   // Removals should be done after we dealt with essentials
+   static int const ScoreDelete = _config->FindI("OrderList::Score::Delete", 100);
    if (Cache[Pkg].Delete() == true)
       return ScoreDelete;
 
