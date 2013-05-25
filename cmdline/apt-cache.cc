@@ -1247,7 +1247,7 @@ bool Search(CommandLine &CmdL)
    }
    
    ExDescFile *DFList = new ExDescFile[Cache->HeaderP->GroupCount+1];
-   memset(DFList,0,sizeof(*DFList)*Cache->HeaderP->GroupCount+1);
+   memset(DFList, 0, sizeof(*DFList) * (Cache->HeaderP->GroupCount + 1));
 
    // Map versions that we want to write out onto the VerList array.
    for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() == false; ++G)
