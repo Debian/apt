@@ -861,7 +861,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
       return Open(FileName, ReadOnly, Gzip, Perms);
 
    if (Compress == Auto && (Mode & WriteOnly) == WriteOnly)
-      return _error->Error("Autodetection on %s only works in ReadOnly openmode!", FileName.c_str());
+      return FileFdError("Autodetection on %s only works in ReadOnly openmode!", FileName.c_str());
 
    std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
    std::vector<APT::Configuration::Compressor>::const_iterator compressor = compressors.begin();
@@ -914,17 +914,17 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
       case Auto:
       case Extension:
 	 // Unreachable
-	 return _error->Error("Opening File %s in None, Auto or Extension should be already handled?!?", FileName.c_str());
+	 return FileFdError("Opening File %s in None, Auto or Extension should be already handled?!?", FileName.c_str());
       }
       for (; compressor != compressors.end(); ++compressor)
 	 if (compressor->Name == name)
 	    break;
       if (compressor == compressors.end())
-	 return _error->Error("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
+	 return FileFdError("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
    }
 
    if (compressor == compressors.end())
-      return _error->Error("Can't find a match for specified compressor mode for file %s", FileName.c_str());
+      return FileFdError("Can't find a match for specified compressor mode for file %s", FileName.c_str());
    return Open(FileName, Mode, *compressor, Perms);
 }
 bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor, unsigned long const Perms)
@@ -933,9 +933,9 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    Flags = AutoClose;
 
    if ((Mode & WriteOnly) != WriteOnly && (Mode & (Atomic | Create | Empty | Exclusive)) != 0)
-      return _error->Error("ReadOnly mode for %s doesn't accept additional flags!", FileName.c_str());
+      return FileFdError("ReadOnly mode for %s doesn't accept additional flags!", FileName.c_str());
    if ((Mode & ReadWrite) == 0)
-      return _error->Error("No openmode provided in FileFd::Open for %s", FileName.c_str());
+      return FileFdError("No openmode provided in FileFd::Open for %s", FileName.c_str());
 
    if ((Mode & Atomic) == Atomic)
    {
@@ -981,7 +981,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
 	 close (iFd);
 	 iFd = -1;
       }
-      return _error->Errno("open",_("Could not open file %s"), FileName.c_str());
+      return FileFdErrno("open",_("Could not open file %s"), FileName.c_str());
    }
 
    SetCloseExec(iFd,true);
@@ -1010,13 +1010,13 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compre
    case Xz: name = "xz"; break;
    case Auto:
    case Extension:
-      return _error->Error("Opening Fd %d in Auto or Extension compression mode is not supported", Fd);
+      return FileFdError("Opening Fd %d in Auto or Extension compression mode is not supported", Fd);
    }
    for (; compressor != compressors.end(); ++compressor)
       if (compressor->Name == name)
 	 break;
    if (compressor == compressors.end())
-      return _error->Error("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
+      return FileFdError("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
 
    return OpenDescriptor(Fd, Mode, *compressor, AutoClose);
 }
@@ -1043,7 +1043,7 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
    {
       if (AutoClose)
 	 close (iFd);
-      return _error->Errno("gzdopen",_("Could not open file descriptor %d"), Fd);
+      return FileFdErrno("gzdopen",_("Could not open file descriptor %d"), Fd);
    }
    return true;
 }
@@ -1105,10 +1105,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       ExecWait(d->compressor_pid, "FileFdCompressor", true);
 
    if ((Mode & ReadWrite) == ReadWrite)
-   {
-      Flags |= Fail;
-      return _error->Error("ReadWrite mode is not supported for file %s", FileName.c_str());
-   }
+      return FileFdError("ReadWrite mode is not supported for file %s", FileName.c_str());
 
    bool const Comp = (Mode & WriteOnly) == WriteOnly;
    if (Comp == false)
@@ -1131,10 +1128,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
    // Create a data pipe
    int Pipe[2] = {-1,-1};
    if (pipe(Pipe) != 0)
-   {
-      Flags |= Fail;
-      return _error->Errno("pipe",_("Failed to create subprocess IPC"));
-   }
+      return FileFdErrno("pipe",_("Failed to create subprocess IPC"));
    for (int J = 0; J != 2; J++)
       SetCloseExec(Pipe[J],true);
 
@@ -1244,14 +1238,13 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       {
 	 if (errno == EINTR)
 	    continue;
-	 Flags |= Fail;
 #ifdef HAVE_ZLIB
 	 if (d != NULL && d->gz != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = gzerror(d->gz, &err);
 	    if (err != Z_ERRNO)
-	       return _error->Error("gzread: %s (%d: %s)", _("Read error"), err, errmsg);
+	       return FileFdError("gzread: %s (%d: %s)", _("Read error"), err, errmsg);
 	 }
 #endif
 #ifdef HAVE_BZ2
@@ -1260,10 +1253,10 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
 	    if (err != BZ_IO_ERROR)
-	       return _error->Error("BZ2_bzread: %s (%d: %s)", _("Read error"), err, errmsg);
+	       return FileFdError("BZ2_bzread: %s (%d: %s)", _("Read error"), err, errmsg);
 	 }
 #endif
-	 return _error->Errno("read",_("Read error"));
+	 return FileFdErrno("read",_("Read error"));
       }
       
       To = (char *)To + Res;
@@ -1284,9 +1277,8 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       Flags |= HitEof;
       return true;
    }
-   
-   Flags |= Fail;
-   return _error->Error(_("read, still have %llu to read but none left"), Size);
+
+   return FileFdError(_("read, still have %llu to read but none left"), Size);
 }
 									/*}}}*/
 // FileFd::ReadLine - Read a complete line from the file		/*{{{*/
@@ -1342,14 +1334,13 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 	 continue;
       if (Res < 0)
       {
-	 Flags |= Fail;
 #ifdef HAVE_ZLIB
 	 if (d != NULL && d->gz != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = gzerror(d->gz, &err);
 	    if (err != Z_ERRNO)
-	       return _error->Error("gzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
+	       return FileFdError("gzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
 	 }
 #endif
 #ifdef HAVE_BZ2
@@ -1358,10 +1349,10 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
 	    if (err != BZ_IO_ERROR)
-	       return _error->Error("BZ2_bzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
+	       return FileFdError("BZ2_bzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
 	 }
 #endif
-	 return _error->Errno("write",_("Write error"));
+	 return FileFdErrno("write",_("Write error"));
       }
       
       From = (char *)From + Res;
@@ -1373,9 +1364,8 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    
    if (Size == 0)
       return true;
-   
-   Flags |= Fail;
-   return _error->Error(_("write, still have %llu to write but couldn't"), Size);
+
+   return FileFdError(_("write, still have %llu to write but couldn't"), Size);
 }
 bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 {
@@ -1419,10 +1409,7 @@ bool FileFd::Seek(unsigned long long To)
 	 return Skip(To - seekpos);
 
       if ((d->openmode & ReadOnly) != ReadOnly)
-      {
-	 Flags |= Fail;
-	 return _error->Error("Reopen is only implemented for read-only files!");
-      }
+	 return FileFdError("Reopen is only implemented for read-only files!");
 #ifdef HAVE_BZ2
      if (d->bz2 != NULL) 
      {
@@ -1443,17 +1430,11 @@ bool FileFd::Seek(unsigned long long To)
 	    if (lseek(d->compressed_fd, 0, SEEK_SET) != 0)
 	       iFd = d->compressed_fd;
 	 if (iFd < 0)
-	 {
-	    Flags |= Fail;
-	    return _error->Error("Reopen is not implemented for pipes opened with FileFd::OpenDescriptor()!");
-	 }
+	    return FileFdError("Reopen is not implemented for pipes opened with FileFd::OpenDescriptor()!");
       }
 
       if (OpenInternDescriptor(d->openmode, d->compressor) == false)
-      {
-	 Flags |= Fail;
-	 return _error->Error("Seek on file %s because it couldn't be reopened", FileName.c_str());
-      }
+	 return FileFdError("Seek on file %s because it couldn't be reopened", FileName.c_str());
 
       if (To != 0)
 	 return Skip(To);
@@ -1469,10 +1450,7 @@ bool FileFd::Seek(unsigned long long To)
 #endif
       res = lseek(iFd,To,SEEK_SET);
    if (res != (signed)To)
-   {
-      Flags |= Fail;
-      return _error->Error("Unable to seek to %llu", To);
-   }
+      return FileFdError("Unable to seek to %llu", To);
 
    if (d != NULL)
       d->seekpos = To;
@@ -1496,10 +1474,7 @@ bool FileFd::Skip(unsigned long long Over)
       {
 	 unsigned long long toread = std::min((unsigned long long) sizeof(buffer), Over);
 	 if (Read(buffer, toread) == false)
-	 {
-	    Flags |= Fail;
-	    return _error->Error("Unable to seek ahead %llu",Over);
-	 }
+	    return FileFdError("Unable to seek ahead %llu",Over);
 	 Over -= toread;
       }
       return true;
@@ -1513,10 +1488,7 @@ bool FileFd::Skip(unsigned long long Over)
 #endif
       res = lseek(iFd,Over,SEEK_CUR);
    if (res < 0)
-   {
-      Flags |= Fail;
-      return _error->Error("Unable to seek ahead %llu",Over);
-   }
+      return FileFdError("Unable to seek ahead %llu",Over);
    if (d != NULL)
       d->seekpos = res;
 
@@ -1530,17 +1502,11 @@ bool FileFd::Truncate(unsigned long long To)
 {
 #if defined HAVE_ZLIB || defined HAVE_BZ2
    if (d != NULL && (d->gz != NULL || d->bz2 != NULL))
-   {
-      Flags |= Fail;
-      return _error->Error("Truncating compressed files is not implemented (%s)", FileName.c_str());
-   }
+      return FileFdError("Truncating compressed files is not implemented (%s)", FileName.c_str());
 #endif
    if (ftruncate(iFd,To) != 0)
-   {
-      Flags |= Fail;
-      return _error->Error("Unable to truncate to %llu",To);
-   }
-   
+      return FileFdError("Unable to truncate to %llu",To);
+
    return true;
 }
 									/*}}}*/
@@ -1568,10 +1534,7 @@ unsigned long long FileFd::Tell()
 #endif
      Res = lseek(iFd,0,SEEK_CUR);
    if (Res == (off_t)-1)
-   {
-      Flags |= Fail;
-      _error->Errno("lseek","Failed to determine the current file position");
-   }
+      FileFdErrno("lseek","Failed to determine the current file position");
    if (d != NULL)
       d->seekpos = Res;
    return Res;
@@ -1584,10 +1547,7 @@ unsigned long long FileFd::FileSize()
 {
    struct stat Buf;
    if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
-   {
-      Flags |= Fail;
-      return _error->Errno("fstat","Unable to determine the file size");
-   }
+      return FileFdErrno("fstat","Unable to determine the file size");
 
    // for compressor pipes st_size is undefined and at 'best' zero
    if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
@@ -1597,10 +1557,7 @@ unsigned long long FileFd::FileSize()
       if (d != NULL)
 	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
-      {
-	 Flags |= Fail;
-	 return _error->Errno("stat","Unable to determine the file size");
-      }
+	 return FileFdErrno("stat","Unable to determine the file size");
    }
 
    return Buf.st_size;
@@ -1642,16 +1599,10 @@ unsigned long long FileFd::Size()
 	* bits of the file */
        // FIXME: Size for gz-files is limited by 32bit… no largefile support
        if (lseek(iFd, -4, SEEK_END) < 0)
-       {
-	  Flags |= Fail;
-	  return _error->Errno("lseek","Unable to seek to end of gzipped file");
-       }
+	  return FileFdErrno("lseek","Unable to seek to end of gzipped file");
        size = 0L;
        if (read(iFd, &size, 4) != 4)
-       {
-	  Flags |= Fail;
-	  return _error->Errno("read","Unable to read original size of gzipped file");
-       }
+	  return FileFdErrno("read","Unable to read original size of gzipped file");
 
 #ifdef WORDS_BIGENDIAN
        uint32_t tmp_size = size;
@@ -1661,10 +1612,7 @@ unsigned long long FileFd::Size()
 #endif
 
        if (lseek(iFd, oldPos, SEEK_SET) < 0)
-       {
-	  Flags |= Fail;
-	  return _error->Errno("lseek","Unable to seek in gzipped file");
-       }
+	  return FileFdErrno("lseek","Unable to seek in gzipped file");
 
        return size;
    }
@@ -1681,8 +1629,7 @@ time_t FileFd::ModificationTime()
    struct stat Buf;
    if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
    {
-      Flags |= Fail;
-      _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
+      FileFdErrno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
       return 0;
    }
 
@@ -1695,8 +1642,7 @@ time_t FileFd::ModificationTime()
 	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
       {
-	 Flags |= Fail;
-	 _error->Errno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
+	 FileFdErrno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
 	 return 0;
       }
    }
@@ -1752,11 +1698,40 @@ bool FileFd::Close()
 bool FileFd::Sync()
 {
    if (fsync(iFd) != 0)
-   {
-      Flags |= Fail;
-      return _error->Errno("sync",_("Problem syncing the file"));
-   }
+      return FileFdErrno("sync",_("Problem syncing the file"));
    return true;
+}
+									/*}}}*/
+// FileFd::FileFdErrno - set Fail and call _error->Errno		*{{{*/
+bool FileFd::FileFdErrno(const char *Function, const char *Description,...)
+{
+   Flags |= Fail;
+   va_list args;
+   size_t msgSize = 400;
+   int const errsv = errno;
+   while (true)
+   {
+      va_start(args,Description);
+      if (_error->InsertErrno(GlobalError::ERROR, Function, Description, args, errsv, msgSize) == false)
+	 break;
+      va_end(args);
+   }
+   return false;
+}
+									/*}}}*/
+// FileFd::FileFdError - set Fail and call _error->Error		*{{{*/
+bool FileFd::FileFdError(const char *Description,...) {
+   Flags |= Fail;
+   va_list args;
+   size_t msgSize = 400;
+   while (true)
+   {
+      va_start(args,Description);
+      if (_error->Insert(GlobalError::ERROR, Description, args, msgSize) == false)
+	 break;
+      va_end(args);
+   }
+   return false;
 }
 									/*}}}*/
 
