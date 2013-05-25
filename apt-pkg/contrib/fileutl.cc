@@ -1010,14 +1010,19 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compre
    case Xz: name = "xz"; break;
    case Auto:
    case Extension:
+      if (AutoClose == true && Fd != -1)
+	 close(Fd);
       return FileFdError("Opening Fd %d in Auto or Extension compression mode is not supported", Fd);
    }
    for (; compressor != compressors.end(); ++compressor)
       if (compressor->Name == name)
 	 break;
    if (compressor == compressors.end())
+   {
+      if (AutoClose == true && Fd != -1)
+	 close(Fd);
       return FileFdError("Can't find a configured compressor %s for file %s", name.c_str(), FileName.c_str());
-
+   }
    return OpenDescriptor(Fd, Mode, *compressor, AutoClose);
 }
 bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose)
@@ -1039,11 +1044,21 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
    else
       iFd = Fd;
    this->FileName = "";
-   if (OpenInternDescriptor(Mode, compressor) == false)
+   if (Fd == -1 || OpenInternDescriptor(Mode, compressor) == false)
    {
-      if (AutoClose)
+      if (iFd != -1 && (
+#ifdef HAVE_ZLIB
+	compressor.Name == "gzip" ||
+#endif
+#ifdef HAVE_BZ2
+	compressor.Name == "bzip2" ||
+#endif
+	AutoClose == true))
+      {
 	 close (iFd);
-      return FileFdErrno("gzdopen",_("Could not open file descriptor %d"), Fd);
+	 iFd = -1;
+      }
+      return FileFdError(_("Could not open file descriptor %d"), Fd);
    }
    return true;
 }
