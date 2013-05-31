@@ -1,6 +1,7 @@
 # -*- make -*-
 BASE=../..
 SUBDIR=test/interactive-helper
+APT_DOMAIN=none
 
 # Bring in the default rules
 include ../../buildlib/defaults.mak

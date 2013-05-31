@@ -36,7 +36,7 @@ $(DOCDIRLIST) :: %/makefile : lang.makefile
 	test -d $(dir $@) || mkdir $(dir $@)
 	sed "s#@@LANG@@#$(subst /,,$(dir $@))#" $< > $@
 
-debiandoc/subdirs manpages/subdirs clean/subdirs veryclean/subdirs: dirs
+debiandoc/subdirs manpages/subdirs clean/subdirs veryclean/subdirs:
 	for dir in en $(dir $(DOCDIRLIST)); do \
 		$(MAKE) -C $$dir $(patsubst %/subdirs,%,$@); \
 	done

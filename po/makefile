@@ -30,17 +30,23 @@ GETDOMAIN = $(word 1,$(subst /, ,$(1)))
 # and produce the .pot file.
 $(POTFILES) : $(PO)/%.pot :
 	echo "Generating POT file $@"
-	echo $@ : $(wildcard $(PO)/domains/$*/*.*list) $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/$*/*.srclist))) > $@.d
+	echo $@ : $(wildcard $(PO)/domains/$*/*.*list) $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/$*/*.srclist))) > $@.d.tmp
+	cmp --silent $@.d.tmp $@.d || mv $@.d.tmp $@.d
 # From sh source
-	cat $(PO)/domains/$*/*.shlist 2> /dev/null | (cd $(BASE) && xargs -n1 bash --dump-po-strings) > $(PO)/domains/$*/sh.pot
+	cat $(PO)/domains/$*/*.shlist 2> /dev/null | (cd $(BASE) && xargs -n1 bash --dump-po-strings) > $(PO)/domains/$*/sh.pot.tmp
+	cmp --silent $(PO)/domains/$*/sh.pot.tmp $(PO)/domains/$*/sh.pot || \
+		mv $(PO)/domains/$*/sh.pot.tmp $(PO)/domains/$*/sh.pot
 # From C/C++ source
 	cat $(PO)/domains/$*/*.srclist > $(PO)/POTFILES_$*.in
 	$(XGETTEXT) --default-domain=$* --directory=$(BASE) \
 	  --add-comments --foreign --keyword=_ --keyword=N_ \
 	  --keyword=P_:1,2 \
-	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot
+	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot.tmp
+	cmp --silent $(PO)/domains/$*/c.pot.tmp $(PO)/domains/$*/c.pot || \
+		mv $(PO)/domains/$*/c.pot.tmp $(PO)/domains/$*/c.pot
 	rm -f $(PO)/POTFILES_$*.in
-	$(MSGCOMM) --omit-header --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
+	$(MSGCOMM) --omit-header --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@.tmp
+	cmp --silent $@ $@.tmp || mv $@.tmp $@
 	# copy into the domain dirs to make rosetta happy
 	rm -f $(PO)/domains/$*/*.pot
 	cp $@ $(PO)/domains/$*
@@ -93,4 +99,5 @@ ifneq ($(words $(The_DFiles)),0)
 include $(The_DFiles)
 endif
 
+# otherwise the output is completely screwed
 .NOTPARALLEL:
