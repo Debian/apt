@@ -1067,30 +1067,12 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
 {
    Close();
    Flags = (AutoClose) ? FileFd::AutoClose : 0;
-   if (AutoClose == false && (
-#ifdef HAVE_ZLIB
-	compressor.Name == "gzip" ||
-#endif
-#ifdef HAVE_BZ2
-	compressor.Name == "bzip2" ||
-#endif
-	false))
-   {
-      // Need to duplicate fd here or gzclose for cleanup will close the fd as well
-      iFd = dup(Fd);
-   }
-   else
-      iFd = Fd;
+   iFd = Fd;
    this->FileName = "";
-   if (Fd == -1 || OpenInternDescriptor(Mode, compressor) == false)
+   if (OpenInternDescriptor(Mode, compressor) == false)
    {
       if (iFd != -1 && (
-#ifdef HAVE_ZLIB
-	compressor.Name == "gzip" ||
-#endif
-#ifdef HAVE_BZ2
-	compressor.Name == "bzip2" ||
-#endif
+	(Flags & Compressed) == Compressed ||
 	AutoClose == true))
       {
 	 close (iFd);
@@ -1102,6 +1084,8 @@ bool FileFd::OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration:
 }
 bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor)
 {
+   if (iFd == -1)
+      return false;
    if (compressor.Name == "." || compressor.Binary.empty() == true)
       return true;
 
@@ -1110,6 +1094,21 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       d = new FileFdPrivate();
       d->openmode = Mode;
       d->compressor = compressor;
+      if (AutoClose == false && (
+#ifdef HAVE_ZLIB
+	       compressor.Name == "gzip" ||
+#endif
+#ifdef HAVE_BZ2
+	       compressor.Name == "bzip2" ||
+#endif
+	       false))
+      {
+	 // Need to duplicate fd here or gz/bz2 close for cleanup will close the fd as well
+	 int const internFd = dup(iFd);
+	 if (internFd == -1)
+	    return FileFdErrno("OpenInternDescriptor", _("Could not open file descriptor %d"), iFd);
+	 iFd = internFd;
+      }
    }
 
 #ifdef HAVE_ZLIB
