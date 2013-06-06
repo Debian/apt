@@ -311,6 +311,9 @@ bool MirrorMethod::InitMirrors()
 
       AllMirrors.push_back(s);
    }
+   if (AllMirrors.empty()) {
+	return _error->Error(_("No entry found in mirror file '%s'"), MirrorFile.c_str());
+   }
    Mirror = AllMirrors[0];
    UsedMirror = Mirror;
    return true;
