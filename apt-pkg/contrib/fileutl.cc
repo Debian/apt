@@ -1424,8 +1424,11 @@ bool FileFd::Seek(unsigned long long To)
 	 return _error->Error("Reopen is only implemented for read-only files!");
       }
 #ifdef HAVE_BZ2
-      if (d->bz2 != NULL)
-	 BZ2_bzclose(d->bz2);
+     if (d->bz2 != NULL) 
+     {
+	BZ2_bzclose(d->bz2);
+	d->bz2 = NULL;
+     }
 #endif
       if (iFd != -1)
 	 close(iFd);
