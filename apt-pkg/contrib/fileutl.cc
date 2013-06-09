@@ -184,7 +184,8 @@ bool RunScripts(const char *Cnf)
 /* The caller is expected to set things so that failure causes erasure */
 bool CopyFile(FileFd &From,FileFd &To)
 {
-   if (From.IsOpen() == false || To.IsOpen() == false)
+   if (From.IsOpen() == false || To.IsOpen() == false ||
+	 From.Failed() == true || To.Failed() == true)
       return false;
    
    // Buffered copy between fds
