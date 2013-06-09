@@ -1089,19 +1089,32 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
    if (compressor.Name == "." || compressor.Binary.empty() == true)
       return true;
 
+#if defined HAVE_ZLIB || defined HAVE_BZ2
+   // the API to open files is similar, so setup to avoid code duplicates later
+   // and while at it ensure that we close before opening (if its a reopen)
+   void* (*compress_open)(int, const char *) = NULL;
+#define APT_COMPRESS_INIT(NAME,OPEN,CLOSE,STRUCT) \
+   if (compressor.Name == NAME) \
+   { \
+      compress_open = (void*(*)(int, const char *)) OPEN; \
+      if (d != NULL && STRUCT != NULL) { CLOSE(STRUCT); STRUCT = NULL; } \
+   }
+#ifdef HAVE_ZLIB
+   APT_COMPRESS_INIT("gzip", gzdopen, gzclose, d->gz)
+#endif
+#ifdef HAVE_BZ2
+   APT_COMPRESS_INIT("bzip2", BZ2_bzdopen, BZ2_bzclose, d->bz2)
+#endif
+#undef APT_COMPRESS_INIT
+#endif
+
    if (d == NULL)
    {
       d = new FileFdPrivate();
       d->openmode = Mode;
       d->compressor = compressor;
-      if (AutoClose == false && (
-#ifdef HAVE_ZLIB
-	       compressor.Name == "gzip" ||
-#endif
-#ifdef HAVE_BZ2
-	       compressor.Name == "bzip2" ||
-#endif
-	       false))
+#if defined HAVE_ZLIB || defined HAVE_BZ2
+      if (AutoClose == false && compress_open != NULL)
       {
 	 // Need to duplicate fd here or gz/bz2 close for cleanup will close the fd as well
 	 int const internFd = dup(iFd);
@@ -1109,44 +1122,30 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	    return FileFdErrno("OpenInternDescriptor", _("Could not open file descriptor %d"), iFd);
 	 iFd = internFd;
       }
+#endif
    }
 
-#ifdef HAVE_ZLIB
-   if (compressor.Name == "gzip")
+#if defined HAVE_ZLIB || defined HAVE_BZ2
+   if (compress_open != NULL)
    {
-      if (d->gz != NULL)
-      {
-	 gzclose(d->gz);
-	 d->gz = NULL;
-      }
+      void* compress_struct = NULL;
       if ((Mode & ReadWrite) == ReadWrite)
-	 d->gz = gzdopen(iFd, "r+");
+	 compress_struct = compress_open(iFd, "r+");
       else if ((Mode & WriteOnly) == WriteOnly)
-	 d->gz = gzdopen(iFd, "w");
+	 compress_struct = compress_open(iFd, "w");
       else
-	 d->gz = gzdopen(iFd, "r");
-      if (d->gz == NULL)
+	 compress_struct = compress_open(iFd, "r");
+      if (compress_struct == NULL)
 	 return false;
-      Flags |= Compressed;
-      return true;
-   }
+
+#ifdef HAVE_ZLIB
+      if (compressor.Name == "gzip")
+	 d->gz = (gzFile) compress_struct;
 #endif
 #ifdef HAVE_BZ2
-   if (compressor.Name == "bzip2")
-   {
-      if (d->bz2 != NULL)
-      {
-	 BZ2_bzclose(d->bz2);
-	 d->bz2 = NULL;
-      }
-      if ((Mode & ReadWrite) == ReadWrite)
-	 d->bz2 = BZ2_bzdopen(iFd, "r+");
-      else if ((Mode & WriteOnly) == WriteOnly)
-	 d->bz2 = BZ2_bzdopen(iFd, "w");
-      else
-	 d->bz2 = BZ2_bzdopen(iFd, "r");
-      if (d->bz2 == NULL)
-	 return false;
+      if (compressor.Name == "bzip2")
+	 d->bz2 = (BZFILE*) compress_struct;
+#endif
       Flags |= Compressed;
       return true;
    }
