@@ -692,9 +692,11 @@ setupaptarchive() {
 		setupflataptarchive
 	fi
 	signreleasefiles
-	msgninfo "\tSync APT's cache with the archive… "
-	aptget update -qq
-	msgdone "info"
+	if [ "$1" != '--no-update' ]; then
+		msgninfo "\tSync APT's cache with the archive… "
+		aptget update -qq
+		msgdone "info"
+	fi
 }
 
 signreleasefiles() {
