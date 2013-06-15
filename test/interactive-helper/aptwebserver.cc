@@ -420,6 +420,22 @@ int main(int const argc, const char * argv[])
 	       continue;
 	    }
 
+	    // string replacements in the requested filename
+	    ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
+	    if (Replaces != NULL)
+	    {
+	       std::string redirect = "/" + filename;
+	       for (::Configuration::Item *I = Replaces->Child; I != NULL; I = I->Next)
+		  redirect = SubstVar(redirect, I->Tag, I->Value);
+	       redirect.erase(0,1);
+	       if (redirect != filename)
+	       {
+		  sendRedirect(client, 301, redirect, *m, sendContent);
+		  continue;
+	       }
+	    }
+
+	    // deal with the request
 	    if (RealFileExists(filename) == true)
 	    {
 	       FileFd data(filename, FileFd::ReadOnly);
