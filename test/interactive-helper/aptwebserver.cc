@@ -13,12 +13,14 @@
 #include <sstream>
 
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <errno.h>
 #include <time.h>
 #include <stdlib.h>
+#include <dirent.h>
 #include <signal.h>
 
 char const * const httpcodeToStr(int const httpcode)			/*{{{*/
@@ -160,6 +162,118 @@ void sendError(int const client, int const httpcode, std::string const &request,
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
    sendHead(client, httpcode, headers);
+   if (content == true)
+      sendData(client, response);
+}
+									/*}}}*/
+void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
+		  std::string const &request, bool content)
+{
+   std::list<std::string> headers;
+   std::string response("<html><head><title>");
+   response.append(httpcodeToStr(httpcode)).append("</title></head>");
+   response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1");
+   response.append("<p>You should be redirected to <em>").append(uri).append("</em></p>");
+   response.append("This page is a result of the request: <pre>");
+   response.append(request).append("</pre></body></html>");
+   addDataHeaders(headers, response);
+   std::string location("Location: ");
+   if (strncmp(uri.c_str(), "http://", 7) != 0)
+      location.append("http://").append(LookupTag(request, "Host")).append("/").append(uri);
+   else
+      location.append(uri);
+   headers.push_back(location);
+   sendHead(client, httpcode, headers);
+   if (content == true)
+      sendData(client, response);
+}
+									/*}}}*/
+int filter_hidden_files(const struct dirent *a)				/*{{{*/
+{
+   if (a->d_name[0] == '.')
+      return 0;
+#ifdef _DIRENT_HAVE_D_TYPE
+   // if we have the d_type check that only files and dirs will be included
+   if (a->d_type != DT_UNKNOWN &&
+       a->d_type != DT_REG &&
+       a->d_type != DT_LNK && // this includes links to regular files
+       a->d_type != DT_DIR)
+      return 0;
+#endif
+   return 1;
+}
+int grouped_alpha_case_sort(const struct dirent **a, const struct dirent **b) {
+#ifdef _DIRENT_HAVE_D_TYPE
+   if ((*a)->d_type == DT_DIR && (*b)->d_type == DT_DIR);
+   else if ((*a)->d_type == DT_DIR && (*b)->d_type == DT_REG)
+      return -1;
+   else if ((*b)->d_type == DT_DIR && (*a)->d_type == DT_REG)
+      return 1;
+   else
+#endif
+   {
+      struct stat f_prop; //File's property
+      stat((*a)->d_name, &f_prop);
+      int const amode = f_prop.st_mode;
+      stat((*b)->d_name, &f_prop);
+      int const bmode = f_prop.st_mode;
+      if (S_ISDIR(amode) && S_ISDIR(bmode));
+      else if (S_ISDIR(amode))
+	 return -1;
+      else if (S_ISDIR(bmode))
+	 return 1;
+   }
+   return strcasecmp((*a)->d_name, (*b)->d_name);
+}
+									/*}}}*/
+void sendDirectoryListing(int const client, std::string const &dir,	/*{{{*/
+			  std::string const &request, bool content)
+{
+   std::list<std::string> headers;
+   std::ostringstream listing;
+
+   struct dirent **namelist;
+   int const counter = scandir(dir.c_str(), &namelist, filter_hidden_files, grouped_alpha_case_sort);
+   if (counter == -1)
+   {
+      sendError(client, 500, request, content);
+      return;
+   }
+
+   listing << "<html><head><title>Index of " << dir << "</title>"
+	   << "<style type=\"text/css\"><!-- td {padding: 0.02em 0.5em 0.02em 0.5em;}"
+	   << "tr:nth-child(even){background-color:#dfdfdf;}"
+	   << "h1, td:nth-child(3){text-align:center;}"
+	   << "table {margin-left:auto;margin-right:auto;} --></style>"
+	   << "</head>" << std::endl
+	   << "<body><h1>Index of " << dir << "</h1>" << std::endl
+	   << "<table><tr><th>#</th><th>Name</th><th>Size</th><th>Last-Modified</th></tr>" << std::endl;
+   if (dir != ".")
+      listing << "<tr><td>d</td><td><a href=\"..\">Parent Directory</a></td><td>-</td><td>-</td></tr>";
+   for (int i = 0; i < counter; ++i) {
+      struct stat fs;
+      std::string filename(dir);
+      filename.append("/").append(namelist[i]->d_name);
+      stat(filename.c_str(), &fs);
+      if (S_ISDIR(fs.st_mode))
+      {
+	 listing << "<tr><td>d</td>"
+		 << "<td><a href=\"" << namelist[i]->d_name << "/\">" << namelist[i]->d_name << "</a></td>"
+		 << "<td>-</td>";
+      }
+      else
+      {
+	 listing << "<tr><td>f</td>"
+		 << "<td><a href=\"" << namelist[i]->d_name << "\">" << namelist[i]->d_name << "</a></td>"
+		 << "<td>" << SizeToStr(fs.st_size) << "B</td>";
+      }
+      listing << "<td>" << TimeRFC1123(fs.st_mtime) << "</td></tr>" << std::endl;
+   }
+   listing << "</table></body></html>" << std::endl;
+
+   std::string response(listing.str());
+   addDataHeaders(headers, response);
+   sendHead(client, 200, headers);
    if (content == true)
       sendData(client, response);
 }
@@ -325,6 +439,13 @@ int main(int const argc, const char * argv[])
 	       sendHead(client, 200, headers);
 	       if (sendContent == true)
 		  sendFile(client, data);
+	    }
+	    else if (DirectoryExists(filename) == true)
+	    {
+	       if (filename == "." || filename[filename.length()-1] == '/')
+		  sendDirectoryListing(client, filename, *m, sendContent);
+	       else
+		  sendRedirect(client, 301, filename.append("/"), *m, sendContent);
 	    }
 	    else
 	       sendError(client, 404, *m, sendContent);
