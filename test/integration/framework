@@ -718,12 +718,20 @@ signreleasefiles() {
 }
 
 changetowebserver() {
-	if which weborf > /dev/null; then
-		weborf -xb aptarchive/ 2>&1 > /dev/null &
+	local LOG='/dev/null'
+	if test -x ${BUILDDIRECTORY}/aptwebserver; then
+		cd aptarchive
+		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/aptwebserver "$@" >$LOG 2>&1 &
+		addtrap "kill $!;"
+		cd - > /dev/null
+	elif [ $# -gt 0 ]; then
+		msgdie 'Need the aptwebserver when passing arguments for the webserver'
+	elif which weborf > /dev/null; then
+		weborf -xb aptarchive/ >$LOG 2>&1 &
 		addtrap "kill $!;"
 	elif which gatling > /dev/null; then
 		cd aptarchive
-		gatling -p 8080 -F -S 2>&1 > /dev/null &
+		gatling -p 8080 -F -S >$LOG 2>&1 &
 		addtrap "kill $!;"
 		cd - > /dev/null
 	elif which lighttpd > /dev/null; then
@@ -731,11 +739,10 @@ changetowebserver() {
 server.port = 8080
 server.stat-cache-engine = \"disable\"" > lighttpd.conf
 		lighttpd -t -f lighttpd.conf >/dev/null || msgdie 'Can not change to webserver: our lighttpd config is invalid'
-		lighttpd -D -f lighttpd.conf 2>/dev/null >/dev/null &
+		lighttpd -D -f lighttpd.conf >$LOG 2>&1 &
 		addtrap "kill $!;"
 	else
-		msgdie 'You have to install weborf or lighttpd first'
-		return 1
+		msgdie 'You have to build aptwerbserver or install a webserver'
 	fi
 	local APTARCHIVE="file://$(readlink -f ./aptarchive)"
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do

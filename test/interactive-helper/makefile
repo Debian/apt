@@ -38,3 +38,10 @@ include $(PROGRAM_H)
 #SLIBS = -lapt-pkg -lrpm
 #SOURCE = rpmver.cc
 #include $(PROGRAM_H)
+
+# Program for testing udevcdrom
+PROGRAM=aptwebserver
+SLIBS = -lapt-pkg
+LIB_MAKES = apt-pkg/makefile
+SOURCE = aptwebserver.cc
+include $(PROGRAM_H)
