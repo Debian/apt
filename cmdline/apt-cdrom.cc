@@ -150,14 +150,12 @@ bool DoAdd(CommandLine &)
    bool res = true;
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
+   unsigned int count = 0;
    if (AutoDetect && UdevCdroms.Dlopen())
-   {
-      unsigned int count = 0;
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Add(&log);
-   } else {
+   if (count == 0)
       res = cdrom.Add(&log);
-   }
 
    if(res)
       cout << _("Repeat this process for the rest of the CDs in your set.") << endl;
@@ -178,15 +176,12 @@ bool DoIdent(CommandLine &)
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
 
+   unsigned int count = 0;
    if (AutoDetect && UdevCdroms.Dlopen())
-   {
-      unsigned int count = 0;
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Ident(ident, &log);
-   } else {
+   if (count == 0)
       return cdrom.Ident(ident, &log);
-   }
- 
    return res;
 }
 									/*}}}*/
