@@ -296,6 +296,8 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
    // Find the right version to write the description
    MD5SumValue CurMd5 = List.Description_md5();
+   if (CurMd5.Value().empty() == true || List.Description().empty() == true)
+      return true;
    std::string CurLang = List.DescriptionLanguage();
 
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
@@ -480,7 +482,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 
    /* Record the Description (it is not translated) */
    MD5SumValue CurMd5 = List.Description_md5();
-   if (CurMd5.Value().empty() == true)
+   if (CurMd5.Value().empty() == true || List.Description().empty() == true)
       return true;
    std::string CurLang = List.DescriptionLanguage();
 

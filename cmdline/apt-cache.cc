@@ -1161,7 +1161,11 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    }
 
    // Get a pointer to start of Description field
-   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
+   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "\nDescription");
+   if (DescP != NULL)
+      ++DescP;
+   else
+      DescP = Buffer + V.FileList()->Size;
 
    // Write all but Description
    if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
@@ -1173,25 +1177,38 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    // Show the right description
    pkgRecords Recs(*Cache);
    pkgCache::DescIterator Desc = V.TranslatedDescription();
-   pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
-   cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
-
-   // Find the first field after the description (if there is any)
-   for(DescP++;DescP != &Buffer[V.FileList()->Size];DescP++) 
+   if (Desc.end() == false)
    {
-      if(*DescP == '\n' && *(DescP+1) != ' ') 
-      {
-	 // write the rest of the buffer
-	 const unsigned char *end=&Buffer[V.FileList()->Size];
-	 if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP)) 
-	 {
-	    delete [] Buffer;
-	    return false;
-	 }
+      pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
+      cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
+      cout << std::endl << "Description-md5: " << Desc.md5() << std::endl;
 
-	 break;
+      // Find the first field after the description (if there is any)
+      while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
+      {
+	 if (DescP[1] == ' ')
+	    DescP += 2;
+	 else if (strncmp((char*)DescP, "\nDescription", strlen("\nDescription")) == 0)
+	    DescP += strlen("\nDescription");
+	 else
+	    break;
+      }
+      if (DescP != NULL)
+	 ++DescP;
+   }
+   // if we have no translation, we found a lonely Description-md5, so don't skip it
+
+   if (DescP != NULL)
+   {
+      // write the rest of the buffer
+      const unsigned char *end=&Buffer[V.FileList()->Size];
+      if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP))
+      {
+	 delete [] Buffer;
+	 return false;
       }
    }
+
    // write a final newline (after the description)
    cout<<endl;
    delete [] Buffer;
