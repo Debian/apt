@@ -38,7 +38,11 @@ msgtest() {
 }
 msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
 msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
-msgfail() { echo "${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
+msgfail() {
+	if [ $# -gt 0 ]; then echo "${CFAIL}FAIL: $*${CNORMAL}" >&2;
+	else echo "${CFAIL}FAIL${CNORMAL}" >&2; fi
+	EXIT_CODE=$((EXIT_CODE+1));
+}
 
 # enable / disable Debugging
 MSGLEVEL=${MSGLEVEL:-3}
@@ -56,9 +60,9 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgpass() { echo -n " ${CPASS}P${CNORMAL}" >&2; }
 	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
 	if [ -n "$CFAIL" ]; then
-		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; }
+		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
 	else
-		msgfail() { echo -n " ###FAILED###" >&2; }
+		msgfail() { echo -n " ###FAILED###" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
 	fi
 fi
 if [ $MSGLEVEL -le 3 ]; then
