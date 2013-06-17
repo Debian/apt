@@ -118,6 +118,9 @@ gdb() {
 	echo "gdb: run »$*«"
 	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1
 }
+http() {
+	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
+}
 
 exitwithstatus() {
         # error if we about to overflow, but ...

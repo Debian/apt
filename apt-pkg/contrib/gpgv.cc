@@ -154,7 +154,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 if (sigFd != -1)
 	    unlink(data);
 	 ioprintf(std::cerr, "Splitting up %s into data and signature failed", File.c_str());
-	 exit(EINTERNAL);
+	 exit(112);
       }
       Args.push_back(sig);
       Args.push_back(data);

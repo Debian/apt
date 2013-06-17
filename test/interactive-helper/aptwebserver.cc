@@ -435,6 +435,32 @@ int main(int const argc, const char * argv[])
 	       }
 	    }
 
+	    ::Configuration::Item const *Overwrite = _config->Tree("aptwebserver::overwrite");
+	    if (Overwrite != NULL)
+	    {
+	       for (::Configuration::Item *I = Overwrite->Child; I != NULL; I = I->Next)
+	       {
+		  regex_t *pattern = new regex_t;
+		  int const res = regcomp(pattern, I->Tag.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
+		  if (res != 0)
+		  {
+		     char error[300];
+		     regerror(res, pattern, error, sizeof(error));
+		     sendError(client, 500, *m, sendContent, error);
+		     continue;
+		  }
+		  if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
+		  {
+		      filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", filename);
+		      if (filename[0] == '/')
+			 filename.erase(0,1);
+		      regfree(pattern);
+		      break;
+		  }
+		  regfree(pattern);
+	       }
+	    }
+
 	    // deal with the request
 	    if (RealFileExists(filename) == true)
 	    {
