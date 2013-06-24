@@ -106,7 +106,10 @@ bool ARArchive::LoadHeaders()
 	    return _error->Error(_("Invalid archive member header"));
 	 }
 	 if (File.Read(S,Len) == false)
+	 {
+	    delete Memb;
 	    return false;
+	 }
 	 S[Len] = 0;
 	 Memb->Name = S;
 	 Memb->Size -= Len;
