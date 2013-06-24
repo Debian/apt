@@ -420,11 +420,14 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
    do
    {
       Changed = false;
-      for (std::list<DepIterator>::iterator D = needConfigure.begin(); D != needConfigure.end(); ++D)
+      for (std::list<DepIterator>::const_iterator D = needConfigure.begin(); D != needConfigure.end(); ++D)
       {
-	 // Compute a single dependency element (glob or)
+	 // Compute a single dependency element (glob or) without modifying D
 	 pkgCache::DepIterator Start, End;
-	 D->GlobOr(Start,End);
+	 {
+	    pkgCache::DepIterator Discard = *D;
+	    Discard.GlobOr(Start,End);
+	 }
 
 	 if (End->Type != pkgCache::Dep::Depends)
 	    continue;
@@ -483,9 +486,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          }
 
 
-
 	 if (Bad == true && Changed == false && Debug == true)
-	    std::clog << OutputInDepth(Depth) << "Could not satisfy " << Start << std::endl;
+	    std::clog << OutputInDepth(Depth) << "Could not satisfy " << *D << std::endl;
       }
       if (i++ > max_loops)
          return _error->Error("Internal error: MaxLoopCount reached in SmartUnPack (2) for %s, aborting", Pkg.FullName().c_str());
