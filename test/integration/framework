@@ -605,9 +605,12 @@ buildaptarchivefromfiles() {
 		cat ${line} | bzip2 > ${line}.bz2
 		cat ${line} | xz --format=lzma > ${line}.lzma
 		cat ${line} | xz > ${line}.xz
+		if [ -n "$1" ]; then
+			touch -d "$1" ${line}.gz ${line}.bz2 ${line}.lzma ${line}.xz
+		fi
 		msgdone "info"
 	done
-	generatereleasefiles
+	generatereleasefiles "$@"
 }
 
 # can be overridden by testcases for their pleasure
@@ -719,7 +722,10 @@ signreleasefiles() {
 	done
 	for RELEASE in $(find aptarchive/ -name Release); do
 		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" -abs -o ${RELEASE}.gpg ${RELEASE}
-		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" --clearsign -o "$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')" $RELEASE
+		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
+		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" --clearsign -o $INRELEASE $RELEASE
+		# we might have set a specific date for the Release file, so copy it
+		touch -d "$(stat --format "%y" ${RELEASE})" ${RELEASE}.gpg ${INRELEASE}
 	done
 	msgdone "info"
 }
@@ -728,8 +734,12 @@ changetowebserver() {
 	local LOG='/dev/null'
 	if test -x ${BUILDDIRECTORY}/aptwebserver; then
 		cd aptarchive
-		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/aptwebserver "$@" >$LOG 2>&1 &
-		addtrap "kill $!;"
+		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1
+		local PID="$(cat aptwebserver.pid)"
+		if [ -z "$PID" ]; then
+			msgdie 'Could not fork aptwebserver successfully'
+		fi
+		addtrap "kill $PID;"
 		cd - > /dev/null
 	elif [ $# -gt 0 ]; then
 		msgdie 'Need the aptwebserver when passing arguments for the webserver'

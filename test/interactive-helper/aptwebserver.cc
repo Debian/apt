@@ -387,6 +387,41 @@ int main(int const argc, const char * argv[])
       return 2;
    }
 
+   FileFd pidfile;
+   if (_config->FindB("aptwebserver::fork", false) == true)
+   {
+      std::string const pidfilename = _config->Find("aptwebserver::pidfile", "aptwebserver.pid");
+      int const pidfilefd = GetLock(pidfilename);
+      if (pidfilefd < 0 || pidfile.OpenDescriptor(pidfilefd, FileFd::WriteOnly) == false)
+      {
+	 _error->Errno("aptwebserver", "Couldn't acquire lock on pidfile '%s'", pidfilename.c_str());
+	 _error->DumpErrors(std::cerr);
+	 return 3;
+      }
+
+      pid_t child = fork();
+      if (child < 0)
+      {
+	 _error->Errno("aptwebserver", "Forking failed");
+	 _error->DumpErrors(std::cerr);
+	 return 4;
+      }
+      else if (child != 0)
+      {
+	 // successfully forked: ready to serve!
+	 std::string pidcontent;
+	 strprintf(pidcontent, "%d", child);
+	 pidfile.Write(pidcontent.c_str(), pidcontent.size());
+	 if (_error->PendingError() == true)
+	 {
+	    _error->DumpErrors(std::cerr);
+	    return 5;
+	 }
+	 std::cout << "Successfully forked as " << child << std::endl;
+	 return 0;
+      }
+   }
+
    std::clog << "Serving ANY file on port: " << port << std::endl;
 
    listen(sock, 1);
@@ -502,5 +537,7 @@ int main(int const argc, const char * argv[])
 		<< " on socket " << sock << std::endl;
       close(client);
    }
+   pidfile.Close();
+
    return 0;
 }
