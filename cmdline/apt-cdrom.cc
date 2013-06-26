@@ -41,10 +41,10 @@
 									/*}}}*/
 static const char *W_NO_CDROM_FOUND = \
    N_("No CD-ROM could be auto-detected or found using "
-      "the default mount path.\n"
-      "You may try the --cdrom option to set the CD-ROM mount path. "
+      "the default mount point.\n"
+      "You may try the --cdrom option to set the CD-ROM mount point. "
       "See 'man apt-cdrom' for more "
-      "information about the CD-ROM auto-detection and mount path.");
+      "information about the CD-ROM auto-detection and mount point.");
 
 using namespace std;
 
@@ -162,7 +162,7 @@ bool DoAdd(CommandLine &)
    if (count == 0) {
       res = cdrom.Add(&log);
       if (res == false) {
-         _error->Warning(_(W_NO_CDROM_FOUND));
+         _error->Error(_(W_NO_CDROM_FOUND));
       }
    }
 
@@ -192,7 +192,7 @@ bool DoIdent(CommandLine &)
    if (count == 0) {
       res = cdrom.Ident(ident, &log);
       if (res == false) {
-         _error->Warning(_(W_NO_CDROM_FOUND));
+         _error->Error(_(W_NO_CDROM_FOUND));
       }
    }
    return res;
