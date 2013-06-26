@@ -688,11 +688,17 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      will abort. APT will pass the filenames of all .deb files it is going to
      install to the commands, one per line on standard input.</para>
 
-     <para>Version 2 of this protocol dumps more information, including the 
+     <para>Version 2 of this protocol dumps more information, including the
      protocol version, the APT configuration space and the packages, files
-     and versions being changed. Version 2 is enabled by setting 
-     <literal>DPkg::Tools::options::cmd::Version</literal> to 2. <literal>cmd</literal> is a
-     command given to <literal>Pre-Install-Pkgs</literal>.</para></listitem>
+     and versions being changed. Version 3 adds the architecture and <literal>MultiArch</literal>
+     flag to each version being dumped.</para>
+
+     <para>The version of the protocol to be used for the command
+     <literal><replaceable>cmd</replaceable></literal> can be chosen by setting
+     <literal>DPkg::Tools::options::<replaceable>cmd</replaceable>::Version</literal>
+     accordingly, the default being version 1. If APT isn't supporting the requested
+     version it will send the information in the highest version it has support for instead.
+     </para></listitem>
      </varlistentry>
 
      <varlistentry><term><option>Run-Directory</option></term>
