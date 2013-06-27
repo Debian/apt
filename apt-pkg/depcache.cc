@@ -1243,9 +1243,16 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 		PkgState[Pkg->ID].CandidateVer != *I &&
 		MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps) == true)
 	       continue;
-	    else if ((Start->Type == pkgCache::Dep::Conflicts || Start->Type == pkgCache::Dep::DpkgBreaks) &&
-		     MarkDelete(Pkg,false,Depth + 1, false) == false)
-	       break;
+	    else if (Start->Type == pkgCache::Dep::Conflicts || 
+                     Start->Type == pkgCache::Dep::DpkgBreaks) 
+            {
+               if(DebugAutoInstall == true)
+                  std::clog << OutputInDepth(Depth) 
+                            << " Removing: " << Pkg.Name()
+                            << std::endl;
+               if (MarkDelete(Pkg,false,Depth + 1, false) == false)
+                  break;
+            }
 	 }
 	 continue;
       }
