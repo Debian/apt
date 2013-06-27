@@ -846,8 +846,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    while (Again == true);
 
    if (Debug == true) {
-      clog << "Starting" << endl;
-      clog << " Broken count: " << Cache.BrokenCount() << endl;
+      clog << "Starting, broken count: " << Cache.BrokenCount() << endl;
    }
    
    MakeScores();
@@ -877,8 +876,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    }
 
    if (Debug == true) {
-      clog << "Starting 2" << endl;
-      clog << " Broken count: " << Cache.BrokenCount() << endl;
+      clog << "Starting 2, broken count: " << Cache.BrokenCount() << endl;
    }
 
    /* Now consider all broken packages. For each broken package we either
