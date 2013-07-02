@@ -1004,7 +1004,7 @@ struct CompareProviders {
       }
       // higher priority seems like a good idea
       if (AV->Priority != BV->Priority)
-	 return AV->Priority < BV->Priority;
+	 return AV->Priority > BV->Priority;
       // prefer native architecture
       if (strcmp(A.Arch(), B.Arch()) != 0)
       {
@@ -1200,16 +1200,23 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    verlist.insert(Cand);
 	 }
 	 CompareProviders comp(Start);
-	 APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
 
-	 if (InstVer != verlist.end())
-	 {
+	 do {
+	    APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
+
+	    if (InstVer == verlist.end())
+	       break;
+
 	    pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
 	    if(DebugAutoInstall == true)
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
 			 << " as " << Start.DepType() << " of " << Pkg.Name()
 			 << std::endl;
-	    MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps);
+	    if (MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps) == false)
+	    {
+	       verlist.erase(InstVer);
+	       continue;
+	    }
 	    // now check if we should consider it a automatic dependency or not
 	    if(InstPkg->CurrentVer == 0 && Pkg->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
 	    {
@@ -1218,7 +1225,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
                             << Start.DepType() << " of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
 	       MarkAuto(InstPkg, false);
 	    }
-	 }
+	    break;
+	 } while(true);
 	 continue;
       }
       /* Negative dependencies have no or-group
@@ -1243,9 +1251,16 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 		PkgState[Pkg->ID].CandidateVer != *I &&
 		MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps) == true)
 	       continue;
-	    else if ((Start->Type == pkgCache::Dep::Conflicts || Start->Type == pkgCache::Dep::DpkgBreaks) &&
-		     MarkDelete(Pkg,false,Depth + 1, false) == false)
-	       break;
+	    else if (Start->Type == pkgCache::Dep::Conflicts || 
+                     Start->Type == pkgCache::Dep::DpkgBreaks) 
+            {
+               if(DebugAutoInstall == true)
+                  std::clog << OutputInDepth(Depth) 
+                            << " Removing: " << Pkg.Name()
+                            << std::endl;
+               if (MarkDelete(Pkg,false,Depth + 1, false) == false)
+                  break;
+            }
 	 }
 	 continue;
       }

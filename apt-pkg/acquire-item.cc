@@ -1300,7 +1300,14 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
       if (SigFile == DestFile)
+      {
 	 SigFile = FinalFile;
+	 // constructor of pkgAcqMetaClearSig moved it out of the way,
+	 // now move it back in on IMS hit for the 'old' file
+	 string const OldClearSig = DestFile + ".reverify";
+	 if (RealFileExists(OldClearSig) == true)
+	    Rename(OldClearSig, FinalFile);
+      }
       DestFile = FinalFile;
    }
    Complete = true;
@@ -1606,7 +1613,11 @@ string pkgAcqMetaClearSig::Custom600Headers()
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
-      return "\nIndex-File: true\nFail-Ignore: true\n";
+   {
+      Final = DestFile + ".reverify";
+      if (stat(Final.c_str(),&Buf) != 0)
+	 return "\nIndex-File: true\nFail-Ignore: true\n";
+   }
 
    return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }

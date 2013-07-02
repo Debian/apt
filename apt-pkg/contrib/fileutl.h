@@ -149,6 +149,10 @@ class FileFd
    private:
    FileFdPrivate* d;
    bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
+
+   // private helpers to set Fail flag and call _error->Error
+   bool FileFdErrno(const char* Function, const char* Description,...) __like_printf(3) __cold;
+   bool FileFdError(const char* Description,...) __like_printf(2) __cold;
 };
 
 bool RunScripts(const char *Cnf);

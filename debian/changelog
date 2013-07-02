@@ -1,11 +1,154 @@
-apt (0.9.7.9~exp3ubuntu1) UNRELEASEDsaucy; urgency=low
+apt (0.9.9ubuntu1) UNRELEASEDsaucy; urgency=low
 
-  * merged from debian
+  * merged from the debian/sid branch
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 30 Apr 2013 10:28:43 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 02 Jul 2013 16:48:08 +0200
+
+apt (0.9.9) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * improve debug output for the Debug::pkgProblemResolver and
+    Debug::pkgDepCache::AutoInstall
+  * improve apt-cdrom output when no CD-ROM can be auto-detected
+  * document --no-auto-detect in apt-cdrom
+
+  [ David Kalnischkies ]
+  * build the en manpages in subdirectory doc/en
+  * remove -ldl from cdrom and -lutil from apt-get linkage
+  * rewrite pkgOrderList::DepRemove to stop incorrect immediate setting
+    (Closes: 645713)
+  * prefer Essentials over Removals in ordering score
+  * fix priority sorting by prefering higher in MarkInstall
+  * try all providers in order if uninstallable in MarkInstall
+  * do unpacks before configures in SmartConfigure (Closes: #707578)
+  * fix support for multiple patterns in apt-cache search (Closes: #691453)
+  * set Fail flag in FileFd on all errors consistently
+  * don't explicitly init ExtractTar InFd with invalid fd
+  * OpenDescriptor should autoclose fd always on error (Closes: #704608)
+  * fail in CopyFile if the FileFds have error flag set
+  * ensure state-dir exists before coyping cdrom files
+  * fix file location for configure-index.gz in apt.conf(5) (Closes: #711921)
+  * handle missing "Description" in apt-cache show (Closes: #712435)
+  * try defaults if auto-detection failed in apt-cdrom (Closes: #712433)
+  * support \n and \r\n line endings in ReadMessages
+  * do not redownload unchanged InRelease files
+  * trigger NODATA error for invalid InRelease files (Closes: #712486)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 02 Jul 2013 08:58:33 +0200
+
+apt (0.9.8.2) unstable; urgency=low
+
+  [ Programs translations ]
+  * French translation : typo fix. Closes: #677272
+
+  [ Guillem Jover ]
+  * Update Vcs fields (Closes: #708562)
+  
+  [ Michael Vogt ]
+  * buildlib/apti18n.h.in:
+    - fix build failure when building without NLS (closes: #671587)
+  
+  [ Gregoire Menuel ]
+  * Fix double free (closes: #711045)
+  
+  [ Raphael Geissert ]
+  * Fix crash when the "mirror" method does not find any entry
+    (closes: #699303)
+
+  [ Johan Kiviniemi ]
+  * cmdline/apt-key:
+    - Create new keyrings with mode 0644 instead of 0600.
+    - Accept a nonexistent --keyring file with the adv subcommand as well.
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 06 Jun 2013 19:15:14 +0200
+
+apt (0.9.8.1) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/indexcopy.cc:
+    - non-inline RunGPGV methods to restore ABI compatibility with previous
+      versions to fix partial upgrades (Closes: #707771)
+  
+  [ Michael Vogt ]
+  * moved source to http://git.debian.org/apt/apt.git
+  * updated gbp.conf to match what bzr-buildpackage is doing
+  * remove .bzr-buildpackage/default.conf (superseeded by gbp.conf)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 16 May 2013 14:50:43 +0200
+
+apt (0.9.8) unstable; urgency=low
+
+  [ Ludovico Cavedon ]
+  * properly handle if-modfied-since with libcurl/https 
+    (closes: #705648)
+  
+  [ Andreas Beckman ]
+  * apt-pkg/algorithms.cc:
+    - Do not propagate negative scores from rdepends. Propagating the absolute
+      value of a negative score may boost obsolete packages and keep them
+      installed instead of installing their successors.  (Closes: #699759)
+
+  [ Michael Vogt ]
+  * apt-pkg/sourcelist.cc:
+    - fix segfault when a hostname contains a [, thanks to
+      Tzafrir Cohen (closes: #704653)
+  * debian/control:
+    - replace manpages-it (closes: #704723)
+
+  [ David Kalnischkies ]
+  * various simple changes to fix cppcheck warnings
+  * apt-pkg/pkgcachegen.cc:
+    - do not store the MD5Sum for every description language variant as
+      it will be the same for all so it can be shared to save cache space
+    - handle language tags for descriptions are unique strings to be shared
+    - factor version string creation out of NewDepends, so we can easily reuse
+      version strings e.g. for implicit multi-arch dependencies
+    - equal comparisions are used mostly in same-source relations,
+      so use this to try to reuse some version strings
+    - sort group and package names in the hashtable on insert
+    - share version strings between same versions (of different architectures)
+      to save some space and allow quick comparisions later on
+  * apt-pkg/pkgcache.cc:
+    - assume sorted hashtable entries for groups/packages
+  * apt-pkg/cacheiterators.h:
+    - provide DepIterator::IsSatisfied as a nicer shorthand for DepCheck
+  * apt-pkg/deb/debversion.cc:
+    - add a string-equal shortcut for equal version comparisions
+
+  [ Marc Deslauriers ]
+  * make apt-ftparchive generate missing deb-src hashes (LP: #1078697)
+
+  [ Yaroslav Halchenko ]
+  * Fix English spelling error in a message ('A error'). Unfuzzy
+    translations. Closes: #705087
+
+  [ Programs translations ]
+  * French translation completed (Christian Perrier)
+
+  [ Manpages translations ]
+  * French translation completed (Christian Perrier)
+
+  [ Daniel Hartwig ]
+  * apt-pkg/contrib/strutl.cc:
+    - include port in shortened URIs (e.g. with apt-cache policy, progress
+      display) thanks to James McCoy (Closes: #154868, #322074)
+    - percent-encode username and password when writing URIs
+  * methods/http.cc:
+    - properly escape IP-literals (e.g. IPv6 address) when building
+      Host headers and URIs (Closes: #620344)
+  * methods/https.cc:
+    - use https_proxy environment variable if present, falling back to
+      http_proxy otherwise
+    - use authentication credentials from proxy URI
+      (Closes: #651640, LP: #1087512)
+    - environment variables do not override an explicit no proxy
+      directive ("DIRECT") in apt.conf
+    - disregard all_proxy environment variable, like other methods
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 08 May 2013 18:43:28 +0200
 
 apt (0.9.7.9~exp3) experimental; urgency=low
-
+  
   [ Michael Vogt ]
   * apt-pkg/sourcelist.cc:
     - fix segfault when a hostname contains a [, thanks to 
@@ -45,8 +188,25 @@ apt (0.9.7.9~exp3) experimental; urgency=low
   
   [ Manpages translations ]
   * French translation completed (Christian Perrier)
+
+  [ Daniel Hartwig ]
+  * apt-pkg/contrib/strutl.cc:
+    - include port in shortened URIs (e.g. with apt-cache policy, progress
+      display) thanks to James McCoy (Closes: #154868, #322074)
+    - percent-encode username and password when writing URIs
+  * methods/http.cc:
+    - properly escape IP-literals (e.g. IPv6 address) when building
+      Host headers and URIs (Closes: #620344)
+  * methods/https.cc:
+    - use https_proxy environment variable if present, falling back to
+      http_proxy otherwise
+    - use authentication credentials from proxy URI
+      (Closes: #651640, LP: #1087512)
+    - environment variables do not override an explicit no proxy
+      directive ("DIRECT") in apt.conf
+    - disregard all_proxy environment variable, like other methods
   
- -- Michael Vogt <mvo@debian.org>  Mon, 08 Apr 2013 17:09:00 +0200
+ -- Michael Vogt <mvo@debian.org>  Wed, 08 May 2013 18:43:28 +0200
 
 apt (0.9.7.9~exp2) experimental; urgency=low
 

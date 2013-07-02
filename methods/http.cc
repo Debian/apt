@@ -667,7 +667,12 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
 
    // The HTTP server expects a hostname with a trailing :port
    char Buf[1000];
-   string ProperHost = Uri.Host;
+   string ProperHost;
+
+   if (Uri.Host.find(':') != string::npos)
+      ProperHost = '[' + Uri.Host + ']';
+   else
+      ProperHost = Uri.Host;
    if (Uri.Port != 0)
    {
       sprintf(Buf,":%u",Uri.Port);
@@ -975,12 +980,7 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       {
 	 URI Uri = Queue->Uri;
 	 if (Uri.Host.empty() == false)
-	 {
-	    if (Uri.Port != 0)
-	       strprintf(NextURI, "http://%s:%u", Uri.Host.c_str(), Uri.Port);
-	    else
-	       NextURI = "http://" + Uri.Host;
-	 }
+            NextURI = URI::SiteOnly(Uri);
 	 else
 	    NextURI.clear();
 	 NextURI.append(DeQuoteString(Srv->Location));

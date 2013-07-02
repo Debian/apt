@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+buildsimplenativepackage 'testing' 'amd64,i386' '0.8.15' 'stable' 'Depends: libtest'
+buildsimplenativepackage 'libtest' 'amd64,i386' '0.8.15' 'stable' 'Multi-Arch: same'
+buildsimplenativepackage 'libtest' 'amd64,i386' '1' 'unstable' 'Multi-Arch: same'
+
+# needed by the ftparchive.conf
+cd aptarchive
+ln -s ../incoming pool
+createaptftparchiveconfig
+cd - >/dev/null
+# create an amd64 cdrom
+sed -i 's#Architectures .*$#Architectures "amd64 source";#' aptarchive/ftparchive.conf
+setupaptarchive --no-update
+changetocdrom 'Debian APT Testdisk amd64 0.8.15'
+mv rootdir/media/cdrom rootdir/media/cdrom-amd64
+addtrap 'prefix' "chmod -R +w $PWD/rootdir/media/cdrom-amd64/dists/;"
+chmod -R -w rootdir/media/cdrom-amd64/dists
+ln -s $PWD/rootdir/media/cdrom-amd64 $PWD/rootdir/media/cdrom
+aptcdrom add -m -o quiet=1
+rm $PWD/rootdir/media/cdrom
+# do it again to create a i386 cdrom
+sed -i 's#Architectures .*$#Architectures "i386 source";#' aptarchive/ftparchive.conf
+setupaptarchive --no-update
+changetocdrom 'Debian APT Testdisk i386 0.8.15'
+mv rootdir/media/cdrom rootdir/media/cdrom-i386
+addtrap 'prefix' "chmod -R +w $PWD/rootdir/media/cdrom-i386/dists/;"
+chmod -R -w rootdir/media/cdrom-i386/dists
+ln -s $PWD/rootdir/media/cdrom-i386 $PWD/rootdir/media/cdrom
+aptcdrom add -m -o quiet=1
+
+# play with the cdroms
+testdpkgnotinstalled testing
+aptget install testing -t stable -y #> /dev/null 2>&1
+testdpkginstalled testing
+
+testdpkgnotinstalled testing:i386
+aptget install testing:i386 -t stable -y #> /dev/null 2>&1
+testdpkginstalled testing:i386
+
+aptget dist-upgrade -y

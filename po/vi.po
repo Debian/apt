@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-04-11 14:52+0200\n"
+"POT-Creation-Date: 2013-06-26 07:37+0200\n"
 "PO-Revision-Date: 2012-11-20 14:12+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -99,74 +99,74 @@ msgstr "Tổng chỗ đã tính: "
 msgid "Package file %s is out of sync."
 msgstr "Tập tin gói %s không đồng bộ được."
 
-#: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1382
-#: cmdline/apt-cache.cc:1384 cmdline/apt-cache.cc:1461 cmdline/apt-mark.cc:46
+#: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1422
+#: cmdline/apt-cache.cc:1424 cmdline/apt-cache.cc:1501 cmdline/apt-mark.cc:46
 #: cmdline/apt-mark.cc:93 cmdline/apt-mark.cc:219
 msgid "No packages found"
 msgstr "Không tìm thấy gói"
 
-#: cmdline/apt-cache.cc:1226
+#: cmdline/apt-cache.cc:1243
 msgid "You must give at least one search pattern"
 msgstr "Bạn phải đưa ra ít nhất 1 chuỗi tìm kiếm"
 
-#: cmdline/apt-cache.cc:1361
+#: cmdline/apt-cache.cc:1401
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 "Lệnh này đã bị loại bỏ. Xin hãy dùng lệnh 'apt-mark showauto' để thay thế."
 
-#: cmdline/apt-cache.cc:1456 apt-pkg/cacheset.cc:510
+#: cmdline/apt-cache.cc:1496 apt-pkg/cacheset.cc:510
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Không thể định vị gói %s"
 
-#: cmdline/apt-cache.cc:1486
+#: cmdline/apt-cache.cc:1526
 msgid "Package files:"
 msgstr "Tập tin gói:"
 
-#: cmdline/apt-cache.cc:1493 cmdline/apt-cache.cc:1584
+#: cmdline/apt-cache.cc:1533 cmdline/apt-cache.cc:1624
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr ""
 "Bộ nhớ tạm không đồng bộ được nên không thể tham chiếu chéo tập tin gói"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1507
+#: cmdline/apt-cache.cc:1547
 msgid "Pinned packages:"
 msgstr "Các gói đã ghim:"
 
-#: cmdline/apt-cache.cc:1519 cmdline/apt-cache.cc:1564
+#: cmdline/apt-cache.cc:1559 cmdline/apt-cache.cc:1604
 msgid "(not found)"
 msgstr "(không tìm thấy)"
 
-#: cmdline/apt-cache.cc:1527
+#: cmdline/apt-cache.cc:1567
 msgid "  Installed: "
 msgstr "  Đã cài đặt: "
 
-#: cmdline/apt-cache.cc:1528
+#: cmdline/apt-cache.cc:1568
 msgid "  Candidate: "
 msgstr "  Ứng cử: "
 
-#: cmdline/apt-cache.cc:1546 cmdline/apt-cache.cc:1554
+#: cmdline/apt-cache.cc:1586 cmdline/apt-cache.cc:1594
 msgid "(none)"
 msgstr "(không có)"
 
-#: cmdline/apt-cache.cc:1561
+#: cmdline/apt-cache.cc:1601
 msgid "  Package pin: "
 msgstr "  Ghim gói: "
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1570
+#: cmdline/apt-cache.cc:1610
 msgid "  Version table:"
 msgstr "  Bảng phiên bản:"
 
-#: cmdline/apt-cache.cc:1683 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3366 cmdline/apt-mark.cc:375
+#: cmdline/apt-cache.cc:1723 cmdline/apt-cdrom.cc:206 cmdline/apt-config.cc:81
+#: cmdline/apt-get.cc:3361 cmdline/apt-mark.cc:375
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s dành cho %s được biên dịch %s %s\n"
 
-#: cmdline/apt-cache.cc:1690
+#: cmdline/apt-cache.cc:1730
 msgid ""
 "Usage: apt-cache [options] command\n"
 "       apt-cache [options] showpkg pkg1 [pkg2 ...]\n"
@@ -240,20 +240,28 @@ msgstr ""
 "Để tìm thông tin thêm, xem hai trang man (hướng dẫn)\n"
 "                 apt-cache(8) và apt.conf(5).\n"
 
-#: cmdline/apt-cdrom.cc:79
+#. }}}
+#: cmdline/apt-cdrom.cc:43
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point. See 'man apt-"
+"cdrom' for more information about the CD-ROM auto-detection and mount point."
+msgstr ""
+
+#: cmdline/apt-cdrom.cc:85
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr "Hãy cung cấp tên cho Đĩa này, như “Debian 5.0.3 Đĩa 1”"
 
-#: cmdline/apt-cdrom.cc:94
+#: cmdline/apt-cdrom.cc:100
 msgid "Please insert a Disc in the drive and press enter"
 msgstr "Hãy nạp đĩa vào ổ và bấm nút Enter"
 
-#: cmdline/apt-cdrom.cc:129
+#: cmdline/apt-cdrom.cc:135
 #, c-format
 msgid "Failed to mount '%s' to '%s'"
 msgstr "Gặp lỗi khi gắn “%s” vào “%s”"
 
-#: cmdline/apt-cdrom.cc:163
+#: cmdline/apt-cdrom.cc:170
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Hãy lặp lại tiến trình này cho các Đĩa còn lại trong bộ đĩa của bạn."
 
@@ -489,7 +497,7 @@ msgstr "Không thể cài đặt lại %s vì không thể tải về nó.\n"
 msgid "%s is already the newest version.\n"
 msgstr "%s là phiên bản mơi nhất.\n"
 
-#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:68
+#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2158 cmdline/apt-mark.cc:68
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s được đặt thành “được cài đặt bằng tay”.\n"
@@ -599,8 +607,8 @@ msgstr "Sau thao tác này, %sB dung lượng đĩa thêm sẽ được dùng th
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Sau thao tác này, %sB dung lượng đĩa sẽ được giải phóng.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2591
-#: cmdline/apt-get.cc:2594
+#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2590
+#: cmdline/apt-get.cc:2593
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Không thể tìm được chỗ trống trong %s"
@@ -640,7 +648,7 @@ msgstr "Hủy bỏ."
 msgid "Do you want to continue [Y/n]? "
 msgstr "Bạn có muốn tiếp tục không? [C/k] "
 
-#: cmdline/apt-get.cc:1356 cmdline/apt-get.cc:2656 apt-pkg/algorithms.cc:1554
+#: cmdline/apt-get.cc:1356 cmdline/apt-get.cc:2655 apt-pkg/algorithms.cc:1562
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Việc lấy %s bị lỗi  %s\n"
@@ -649,7 +657,7 @@ msgstr "Việc lấy %s bị lỗi  %s\n"
 msgid "Some files failed to download"
 msgstr "Một số tập tin không tải về được"
 
-#: cmdline/apt-get.cc:1375 cmdline/apt-get.cc:2668
+#: cmdline/apt-get.cc:1375 cmdline/apt-get.cc:2667
 msgid "Download complete and in download only mode"
 msgstr "Mới tải về xong và trong chế độ chỉ tải về"
 
@@ -732,7 +740,7 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1820 cmdline/apt-get.cc:1989
+#: cmdline/apt-get.cc:1820 cmdline/apt-get.cc:1988
 msgid "The following information may help to resolve the situation:"
 msgstr "Có lẽ thông tin theo đây sẽ giúp đỡ quyết định trường hợp:"
 
@@ -777,7 +785,7 @@ msgstr ""
 "Gói còn phụ thuộc vào phần mềm chưa có. Hãy cố chạy lệnh “apt-get -f "
 "install” mà không có gói nào (hoặc ghi rõ cách quyết định)."
 
-#: cmdline/apt-get.cc:1974
+#: cmdline/apt-get.cc:1973
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -789,33 +797,33 @@ msgstr ""
 "bất định, có lẽ chưa tạo một số gói cần thiết,\n"
 "hoặc chưa di chuyển chúng ra phần Incoming (Đến)."
 
-#: cmdline/apt-get.cc:1995
+#: cmdline/apt-get.cc:1994
 msgid "Broken packages"
 msgstr "Gói bị hỏng"
 
-#: cmdline/apt-get.cc:2021
+#: cmdline/apt-get.cc:2020
 msgid "The following extra packages will be installed:"
 msgstr "Những gói thêm theo đây sẽ được cài đặt:"
 
-#: cmdline/apt-get.cc:2111
+#: cmdline/apt-get.cc:2110
 msgid "Suggested packages:"
 msgstr "Các gói đề nghị:"
 
-#: cmdline/apt-get.cc:2112
+#: cmdline/apt-get.cc:2111
 msgid "Recommended packages:"
 msgstr "Gói khuyến khích:"
 
-#: cmdline/apt-get.cc:2154
+#: cmdline/apt-get.cc:2153
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Không tìm thấy gói %s"
 
-#: cmdline/apt-get.cc:2161 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:2160 cmdline/apt-mark.cc:70
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "%s được đặt thành “được tự động cài đặt”.\n"
 
-#: cmdline/apt-get.cc:2169 cmdline/apt-mark.cc:114
+#: cmdline/apt-get.cc:2168 cmdline/apt-mark.cc:114
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
@@ -823,46 +831,46 @@ msgstr ""
 "Lệnh này đã bị loại bỏ. Xin hãy dùng lệnh 'apt-mark auto' và 'apt-mark "
 "manual' để thay thế."
 
-#: cmdline/apt-get.cc:2185
+#: cmdline/apt-get.cc:2184
 msgid "Calculating upgrade... "
 msgstr "Đang tính bước nâng cấp... "
 
-#: cmdline/apt-get.cc:2188 methods/ftp.cc:711 methods/connect.cc:115
+#: cmdline/apt-get.cc:2187 methods/ftp.cc:711 methods/connect.cc:116
 msgid "Failed"
 msgstr "Gặp lỗi"
 
-#: cmdline/apt-get.cc:2193
+#: cmdline/apt-get.cc:2192
 msgid "Done"
 msgstr "Hoàn tất"
 
-#: cmdline/apt-get.cc:2260 cmdline/apt-get.cc:2268
+#: cmdline/apt-get.cc:2259 cmdline/apt-get.cc:2267
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Lỗi nội bộ: bộ tháo gỡ vấn đề đã ngắt gì"
 
-#: cmdline/apt-get.cc:2296 cmdline/apt-get.cc:2332
+#: cmdline/apt-get.cc:2295 cmdline/apt-get.cc:2331
 msgid "Unable to lock the download directory"
 msgstr "Không thể khoá thư mục tải về"
 
-#: cmdline/apt-get.cc:2388
+#: cmdline/apt-get.cc:2387
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Không tìm thấy nguồn cho việc tải về phiên bản '%s' of '%s'"
 
-#: cmdline/apt-get.cc:2393
+#: cmdline/apt-get.cc:2392
 #, c-format
 msgid "Downloading %s %s"
 msgstr "Đang tải về %s %s"
 
-#: cmdline/apt-get.cc:2453
+#: cmdline/apt-get.cc:2452
 msgid "Must specify at least one package to fetch source for"
 msgstr "Phải ghi rõ ít nhất một gói cho đó cần lấy mã nguồn"
 
-#: cmdline/apt-get.cc:2493 cmdline/apt-get.cc:2805
+#: cmdline/apt-get.cc:2492 cmdline/apt-get.cc:2804
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Không tìm thấy gói nguồn cho %s"
 
-#: cmdline/apt-get.cc:2510
+#: cmdline/apt-get.cc:2509
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -872,7 +880,7 @@ msgstr ""
 "“%s” tại:\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:2515
+#: cmdline/apt-get.cc:2514
 #, c-format
 msgid ""
 "Please use:\n"
@@ -883,69 +891,69 @@ msgstr ""
 "bzr branch %s\n"
 "để lấy các gói mới nhất (có thể là chưa phát hành).\n"
 
-#: cmdline/apt-get.cc:2568
+#: cmdline/apt-get.cc:2567
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Đang bỏ qua tập tin đã được tải về “%s”\n"
 
-#: cmdline/apt-get.cc:2605
+#: cmdline/apt-get.cc:2604
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Không đủ sức chứa còn rảnh trong %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2614
+#: cmdline/apt-get.cc:2613
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Cần phải lấy %sB/%sB kho nguồn.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2619
+#: cmdline/apt-get.cc:2618
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Cần phải lấy %sB từ kho nguồn.\n"
 
-#: cmdline/apt-get.cc:2625
+#: cmdline/apt-get.cc:2624
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Lấy nguồn %s\n"
 
-#: cmdline/apt-get.cc:2663
+#: cmdline/apt-get.cc:2662
 msgid "Failed to fetch some archives."
 msgstr "Việc lấy một số kho bị lỗi."
 
-#: cmdline/apt-get.cc:2694
+#: cmdline/apt-get.cc:2693
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Đang bỏ qua giải nén nguồn đã giải nén trong %s\n"
 
-#: cmdline/apt-get.cc:2706
+#: cmdline/apt-get.cc:2705
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Lệnh giải nén “%s” bị lỗi.\n"
 
-#: cmdline/apt-get.cc:2707
+#: cmdline/apt-get.cc:2706
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Hãy kiểm tra xem gói “dpkg-dev” có được cài đặt chưa.\n"
 
-#: cmdline/apt-get.cc:2729
+#: cmdline/apt-get.cc:2728
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Lệnh xây dụng “%s” bị lỗi.\n"
 
-#: cmdline/apt-get.cc:2749
+#: cmdline/apt-get.cc:2748
 msgid "Child process failed"
 msgstr "Tiến trình con bị lỗi"
 
-#: cmdline/apt-get.cc:2768
+#: cmdline/apt-get.cc:2767
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Phải ghi rõ ít nhất một gói cần kiểm tra cách phụ thuộc khi xây dụng cho nó"
 
-#: cmdline/apt-get.cc:2793
+#: cmdline/apt-get.cc:2792
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -954,17 +962,17 @@ msgstr ""
 "Không có thông tin kiến trúc sẵn sàng cho %s. Xem apt.conf(5) APT::"
 "Architectures để cài đặt"
 
-#: cmdline/apt-get.cc:2817 cmdline/apt-get.cc:2820
+#: cmdline/apt-get.cc:2816 cmdline/apt-get.cc:2819
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Không thể lấy thông tin về cách phụ thuộc khi xây dụng cho %s"
 
-#: cmdline/apt-get.cc:2840
+#: cmdline/apt-get.cc:2839
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s không phụ thuộc vào gì khi xây dụng.\n"
 
-#: cmdline/apt-get.cc:3010
+#: cmdline/apt-get.cc:3009
 #, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -972,20 +980,20 @@ msgid ""
 msgstr ""
 "phụ thuộc %s cho %s không ổn thỏa bởi vì %s không được cho phép trên gói '%s'"
 
-#: cmdline/apt-get.cc:3028
+#: cmdline/apt-get.cc:3027
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "cách phụ thuộc %s cho %s không thể được thỏa vì không tìm thấy gọi %s"
 
-#: cmdline/apt-get.cc:3051
+#: cmdline/apt-get.cc:3050
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi vì gói đã cài đặt %s quá mới"
 
-#: cmdline/apt-get.cc:3090
+#: cmdline/apt-get.cc:3089
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -994,7 +1002,7 @@ msgstr ""
 "cách phụ thuộc %s cho %s không thể được thỏa mãn phiên bản ứng cử của gói %s "
 "có thể thỏa mãn điều kiện phiên bản"
 
-#: cmdline/apt-get.cc:3096
+#: cmdline/apt-get.cc:3095
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1003,30 +1011,30 @@ msgstr ""
 "cách phụ thuộc %s cho %s không thể được thỏa mãn bởi vì gói %s không có bản "
 "ứng cử"
 
-#: cmdline/apt-get.cc:3119
+#: cmdline/apt-get.cc:3118
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi: %s."
 
-#: cmdline/apt-get.cc:3135
+#: cmdline/apt-get.cc:3133
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Không thể thỏa cách phụ thuộc khi xây dụng cho %s."
 
-#: cmdline/apt-get.cc:3140
+#: cmdline/apt-get.cc:3138
 msgid "Failed to process build dependencies"
 msgstr "Việc xử lý cách phụ thuộc khi xây dụng bị lỗi"
 
-#: cmdline/apt-get.cc:3233 cmdline/apt-get.cc:3245
+#: cmdline/apt-get.cc:3231 cmdline/apt-get.cc:3243
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Changelog cho %s (%s)"
 
-#: cmdline/apt-get.cc:3371
+#: cmdline/apt-get.cc:3366
 msgid "Supported modules:"
 msgstr "Mô-đun đã hỗ trợ:"
 
-#: cmdline/apt-get.cc:3412
+#: cmdline/apt-get.cc:3407
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -1119,7 +1127,7 @@ msgstr ""
 "       apt-get(8), sources.list(5) và apt.conf(5).\n"
 "                       Trình APT này có năng lực của siêu bò.\n"
 
-#: cmdline/apt-get.cc:3577
+#: cmdline/apt-get.cc:3572
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1194,7 +1202,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s đã sẵn được đặt là chưa nắm giữ.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:828 apt-pkg/deb/dpkgpm.cc:1001
+#: apt-pkg/contrib/fileutl.cc:829 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Đã đợi %s nhưng mà chưa gặp nó"
@@ -1352,8 +1361,8 @@ msgstr "Thời hạn kết nối"
 msgid "Server closed the connection"
 msgstr "Máy phục vụ đã đóng kết nối"
 
-#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1274
-#: apt-pkg/contrib/fileutl.cc:1283 apt-pkg/contrib/fileutl.cc:1286
+#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1263
+#: apt-pkg/contrib/fileutl.cc:1272 apt-pkg/contrib/fileutl.cc:1275
 msgid "Read error"
 msgstr "Lỗi đọc"
 
@@ -1366,8 +1375,8 @@ msgid "Protocol corruption"
 msgstr "Giao thức bị hỏng"
 
 #: methods/ftp.cc:457 methods/rred.cc:238 methods/rsh.cc:241
-#: apt-pkg/contrib/fileutl.cc:1372 apt-pkg/contrib/fileutl.cc:1381
-#: apt-pkg/contrib/fileutl.cc:1384 apt-pkg/contrib/fileutl.cc:1410
+#: apt-pkg/contrib/fileutl.cc:1359 apt-pkg/contrib/fileutl.cc:1368
+#: apt-pkg/contrib/fileutl.cc:1371 apt-pkg/contrib/fileutl.cc:1396
 msgid "Write error"
 msgstr "Lỗi ghi"
 
@@ -1421,7 +1430,7 @@ msgstr "Quá giờ kết nối ổ cắm dữ liệu"
 msgid "Unable to accept connection"
 msgstr "Không thể chấp nhận kết nối"
 
-#: methods/ftp.cc:872 methods/http.cc:1035 methods/rsh.cc:311
+#: methods/ftp.cc:872 methods/http.cc:1039 methods/rsh.cc:311
 msgid "Problem hashing file"
 msgstr "Gặp khó khăn khi tạo chuỗi duy nhất cho tập tin"
 
@@ -1448,87 +1457,100 @@ msgstr "Truy vấn"
 msgid "Unable to invoke "
 msgstr "Không thể gọi "
 
-#: methods/connect.cc:75
+#: methods/connect.cc:76
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Đang kết nối đến %s (%s)..."
 
-#: methods/connect.cc:86
+#: methods/connect.cc:87
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[Địa chỉ IP: %s %s]"
 
-#: methods/connect.cc:93
+#: methods/connect.cc:94
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
 msgstr "Không thể tạo ổ cắm cho %s (f=%u t=%u p=%u)"
 
-#: methods/connect.cc:99
+#: methods/connect.cc:100
 #, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Không thể sở khởi kết nối đến %s:%s (%s)."
 
-#: methods/connect.cc:107
+#: methods/connect.cc:108
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr "Không thể kết nối đến %s:%s (%s), kết nối đã quá giờ"
 
-#: methods/connect.cc:125
+#: methods/connect.cc:126
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Không thể kết nối đến %s:%s (%s)."
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:153 methods/rsh.cc:433
+#: methods/connect.cc:154 methods/rsh.cc:433
 #, c-format
 msgid "Connecting to %s"
 msgstr "Đang kết nối đến %s..."
 
-#: methods/connect.cc:172 methods/connect.cc:191
+#: methods/connect.cc:180 methods/connect.cc:199
 #, c-format
 msgid "Could not resolve '%s'"
 msgstr "Không thể tháo gỡ “%s”"
 
-#: methods/connect.cc:197
+#: methods/connect.cc:205
 #, c-format
 msgid "Temporary failure resolving '%s'"
 msgstr "Việc tháo gỡ “%s” bị lỗi tạm thời"
 
-#: methods/connect.cc:200
+#: methods/connect.cc:209
+#, fuzzy, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "Gặp lỗi nghiệm trọng khi tháo gỡ “%s:%s” (%i - %s)"
+
+#: methods/connect.cc:211
 #, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
 msgstr "Gặp lỗi nghiệm trọng khi tháo gỡ “%s:%s” (%i - %s)"
 
-#: methods/connect.cc:247
+#: methods/connect.cc:258
 #, c-format
 msgid "Unable to connect to %s:%s:"
 msgstr "Không thể kết nối đến %s: %s:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:166
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr ""
 "Lỗi nội bộ: chữ ký đúng, nhưng không thể quyết định vân tay của khóa ?!"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:170
 msgid "At least one invalid signature was encountered."
 msgstr "Gặp ít nhất một chữ ký không hợp lệ."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:172
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr ""
 "Không thể thực hiện “gpgv” để thẩm tra chữ ký (gpgv đã được cài đặt chưa?)"
 
-#: methods/gpgv.cc:194
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc:178
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#: methods/gpgv.cc:182
 msgid "Unknown error executing gpgv"
 msgstr "Gặp lỗi không rõ khi thực hiện gpgv"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:215 methods/gpgv.cc:222
 msgid "The following signatures were invalid:\n"
 msgstr "Những chữ ký theo đây vẫn không hợp lệ:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:229
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1571,53 +1593,53 @@ msgstr "Máy phục vụ HTTP đã ngắt cách hỗ trợ phạm vị"
 msgid "Unknown date format"
 msgstr "Không rõ dạng ngày"
 
-#: methods/http.cc:818
+#: methods/http.cc:827
 msgid "Select failed"
 msgstr "Việc chọn bị lỗi"
 
-#: methods/http.cc:823
+#: methods/http.cc:832
 msgid "Connection timed out"
 msgstr "Kết nối đã quá giờ"
 
-#: methods/http.cc:846
+#: methods/http.cc:855
 msgid "Error writing to output file"
 msgstr "Gặp lỗi khi ghi vào tập tin xuất"
 
-#: methods/http.cc:877
+#: methods/http.cc:886
 msgid "Error writing to file"
 msgstr "Gặp lỗi khi ghi vào tập tin"
 
-#: methods/http.cc:905
+#: methods/http.cc:914
 msgid "Error writing to the file"
 msgstr "Gặp lỗi khi ghi vào tập tin đó"
 
-#: methods/http.cc:919
+#: methods/http.cc:928
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Gặp lỗi khi đọc từ máy phục vụ: cuối ở xa đã đóng kết nối"
 
-#: methods/http.cc:921
+#: methods/http.cc:930
 msgid "Error reading from server"
 msgstr "Gặp lỗi khi đọc từ máy phục vụ"
 
-#: methods/http.cc:1194
+#: methods/http.cc:1198
 msgid "Bad header data"
 msgstr "Dữ liệu dòng đầu sai"
 
-#: methods/http.cc:1211 methods/http.cc:1266
+#: methods/http.cc:1215 methods/http.cc:1270
 msgid "Connection failed"
 msgstr "Kết nối bị ngắt"
 
-#: methods/http.cc:1358
+#: methods/http.cc:1362
 msgid "Internal error"
 msgstr "Gặp lỗi nội bộ"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:465
-#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:400
-#: apt-pkg/contrib/fileutl.cc:513 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:109
-#: apt-pkg/init.cc:117 apt-pkg/clean.cc:36 apt-pkg/policy.cc:362
+#: methods/mirror.cc:95 apt-inst/extract.cc:464
+#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:401
+#: apt-pkg/contrib/fileutl.cc:514 apt-pkg/sourcelist.cc:208
+#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:108
+#: apt-pkg/init.cc:116 apt-pkg/clean.cc:36 apt-pkg/policy.cc:362
 #, c-format
 msgid "Unable to read %s"
 msgstr "Không thể đọc %s"
@@ -1644,7 +1666,12 @@ msgstr "Không tìm thấy tập tin nhân bản “%s”"
 msgid "Can not read mirror file '%s'"
 msgstr "Không thể đọc tập tin mirror '%s'"
 
-#: methods/mirror.cc:442
+#: methods/mirror.cc:315
+#, fuzzy, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "Không thể đọc tập tin mirror '%s'"
+
+#: methods/mirror.cc:445
 #, c-format
 msgid "[Mirror: %s]"
 msgstr "[Nhân bản: %s]"
@@ -1744,7 +1771,7 @@ msgstr ""
 "  -c=? Đọc tập tin cấu hình này\n"
 "  -o=? Đặt một tùy chọn cấu hình nhiệm ý, v.d. “-o dir::cache=/tmp”\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1339
+#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Không thể ghi vào %s"
@@ -1905,8 +1932,8 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Không thể mở tập tin cơ sở dữ liệu %s: %s."
 
-#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:179 apt-inst/extract.cc:192
+#: apt-inst/extract.cc:209
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Việc lấy thông tin toàn bộ cho %s bị lỗi"
@@ -1919,87 +1946,87 @@ msgstr "Kho không có mục ghi điều khiển"
 msgid "Unable to get a cursor"
 msgstr "Không thể lấy con chạy"
 
-#: ftparchive/writer.cc:80
+#: ftparchive/writer.cc:82
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "CB: Không thể đọc thư mục %s\n"
 
-#: ftparchive/writer.cc:85
+#: ftparchive/writer.cc:87
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "CB: Không thể lấy thông tin toàn bộ cho %s\n"
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:143
 msgid "E: "
 msgstr "LỖI: "
 
-#: ftparchive/writer.cc:143
+#: ftparchive/writer.cc:145
 msgid "W: "
 msgstr "CB: "
 
-#: ftparchive/writer.cc:150
+#: ftparchive/writer.cc:152
 msgid "E: Errors apply to file "
 msgstr "LỖI: có lỗi áp dụng vào tập tin "
 
-#: ftparchive/writer.cc:168 ftparchive/writer.cc:200
+#: ftparchive/writer.cc:170 ftparchive/writer.cc:202
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Việc quyết định %s bị lỗi"
 
-#: ftparchive/writer.cc:181
+#: ftparchive/writer.cc:183
 msgid "Tree walking failed"
 msgstr "Việc di chuyển qua cây bị lỗi"
 
-#: ftparchive/writer.cc:208
+#: ftparchive/writer.cc:210
 #, c-format
 msgid "Failed to open %s"
 msgstr "Việc mở %s bị lỗi"
 
-#: ftparchive/writer.cc:267
+#: ftparchive/writer.cc:269
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " Bỏ liên kết %s [%s]\n"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:277
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Việc tạo liên kết lại %s bị lỗi"
 
-#: ftparchive/writer.cc:279
+#: ftparchive/writer.cc:281
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "Việc bỏ liên kết %s bị lỗi"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:288
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Việc liên kết %s đến %s bị lỗi"
 
-#: ftparchive/writer.cc:296
+#: ftparchive/writer.cc:298
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " Hết hạn bỏ liên kết của %sB.\n"
 
-#: ftparchive/writer.cc:401
+#: ftparchive/writer.cc:403
 msgid "Archive had no package field"
 msgstr "Kho không có trường gói"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:714
+#: ftparchive/writer.cc:411 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s không có mục ghi đè\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:858
+#: ftparchive/writer.cc:479 ftparchive/writer.cc:845
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  người bảo trì %s là %s không phải %s\n"
 
-#: ftparchive/writer.cc:724
+#: ftparchive/writer.cc:711
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s không có mục ghi đè nguồn\n"
 
-#: ftparchive/writer.cc:728
+#: ftparchive/writer.cc:715
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s cũng không có mục ghi đè nhị phân\n"
@@ -2073,7 +2100,7 @@ msgstr "Việc đọc khi tính MD5 bị lỗi"
 msgid "Problem unlinking %s"
 msgstr "Gặp lỗi khi bỏ liên kết %s"
 
-#: ftparchive/multicompress.cc:373 apt-inst/extract.cc:188
+#: ftparchive/multicompress.cc:373 apt-inst/extract.cc:187
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "Việc đổi tên %s thành %s bị lỗi"
@@ -2133,23 +2160,23 @@ msgstr ""
 "  -c=? Đọc tập tin cấu hình này\n"
 "  -o=? Đặt tùy chọn cấu hình nhiệm ý, v.d. “-o dir::cache=/tmp”\n"
 
-#: apt-inst/contrib/extracttar.cc:117
+#: apt-inst/contrib/extracttar.cc:116
 msgid "Failed to create pipes"
 msgstr "Việc tạo những ống bị lỗi"
 
-#: apt-inst/contrib/extracttar.cc:144
+#: apt-inst/contrib/extracttar.cc:143
 msgid "Failed to exec gzip "
 msgstr "Việc thực hiện gzip bị lỗi "
 
-#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:211
+#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:210
 msgid "Corrupted archive"
 msgstr "Kho bị hỏng."
 
-#: apt-inst/contrib/extracttar.cc:196
+#: apt-inst/contrib/extracttar.cc:195
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Lỗi kiểm tổng tar, kho bị hỏng"
 
-#: apt-inst/contrib/extracttar.cc:303
+#: apt-inst/contrib/extracttar.cc:302
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "Không rõ kiểu phần đầu tar %u, bộ phận %s"
@@ -2220,54 +2247,54 @@ msgstr "Việc ghi tập tin %s gặp lỗi"
 msgid "Failed to close file %s"
 msgstr "Việc đóng tập tin %s gặp lỗi"
 
-#: apt-inst/extract.cc:96 apt-inst/extract.cc:167
+#: apt-inst/extract.cc:94 apt-inst/extract.cc:165
 #, c-format
 msgid "The path %s is too long"
 msgstr "Đường dẫn %s quá dài"
 
-#: apt-inst/extract.cc:127
+#: apt-inst/extract.cc:125
 #, c-format
 msgid "Unpacking %s more than once"
 msgstr "Đang giải nén %s nhiều lần"
 
-#: apt-inst/extract.cc:137
+#: apt-inst/extract.cc:135
 #, c-format
 msgid "The directory %s is diverted"
 msgstr "Thư mục %s bị trệch hướng"
 
-#: apt-inst/extract.cc:147
+#: apt-inst/extract.cc:145
 #, c-format
 msgid "The package is trying to write to the diversion target %s/%s"
 msgstr "Gói này đang cố ghi vào đích trệch đi %s/%s"
 
-#: apt-inst/extract.cc:157 apt-inst/extract.cc:300
+#: apt-inst/extract.cc:155 apt-inst/extract.cc:299
 msgid "The diversion path is too long"
 msgstr "Đường dẫn trệch đi quá dài."
 
-#: apt-inst/extract.cc:243
+#: apt-inst/extract.cc:242
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
 msgstr "Thư mục %s đang được thay thế do điều không phải là thư mục"
 
-#: apt-inst/extract.cc:283
+#: apt-inst/extract.cc:282
 msgid "Failed to locate node in its hash bucket"
 msgstr "Việc định vị điểm nút trong hộp băm nó bị lỗi"
 
-#: apt-inst/extract.cc:287
+#: apt-inst/extract.cc:286
 msgid "The path is too long"
 msgstr "Đường dẫn quá dài"
 
-#: apt-inst/extract.cc:415
+#: apt-inst/extract.cc:414
 #, c-format
 msgid "Overwrite package match with no version for %s"
 msgstr "Ghi đè lên gói đã khớp mà không có phiên bản cho %s"
 
-#: apt-inst/extract.cc:432
+#: apt-inst/extract.cc:431
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "Tập tin %s/%s ghi đè lên điều trong gói %s"
 
-#: apt-inst/extract.cc:492
+#: apt-inst/extract.cc:491
 #, c-format
 msgid "Unable to stat %s"
 msgstr "Không thể lấy các thông tin về %s"
@@ -2350,30 +2377,30 @@ msgstr ""
 "dùng tắt."
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr "%lingày %ligiờ %liphút %ligiây"
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%lih %limin %lis"
 msgstr "%ligiờ %liphút %ligiây"
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:392
 #, c-format
 msgid "%limin %lis"
 msgstr "%liphút %ligiây"
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:397
 #, c-format
 msgid "%lis"
 msgstr "%ligiây"
 
-#: apt-pkg/contrib/strutl.cc:1167
+#: apt-pkg/contrib/strutl.cc:1173
 #, c-format
 msgid "Selection %s not found"
 msgstr "Không tìm thấy vùng chọn %s"
@@ -2444,6 +2471,16 @@ msgstr "%c%s... Lỗi!"
 msgid "%c%s... Done"
 msgstr "%c%s... Hoàn tất"
 
+#: apt-pkg/contrib/progress.cc:179
+msgid "..."
+msgstr ""
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:195
+#, fuzzy, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s... Hoàn tất"
+
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
 msgid "Command line option '%c' [from %s] is not known."
@@ -2504,44 +2541,44 @@ msgstr "Việc lấy cac thông tin cho đĩa CD-ROM bị lỗi"
 msgid "Problem closing the gzip file %s"
 msgstr "Gặp vấn đề khi đóng tập tin gzip %s"
 
-#: apt-pkg/contrib/fileutl.cc:225
+#: apt-pkg/contrib/fileutl.cc:226
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "Không dùng khả năng khóa cho tập tin khóa chỉ đọc %s"
 
-#: apt-pkg/contrib/fileutl.cc:230
+#: apt-pkg/contrib/fileutl.cc:231
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "Không thể mở tập tin khóa %s"
 
-#: apt-pkg/contrib/fileutl.cc:248
+#: apt-pkg/contrib/fileutl.cc:249
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Không dùng khả năng khóa cho tập tin khóa đã lắp kiểu NFS %s"
 
-#: apt-pkg/contrib/fileutl.cc:252
+#: apt-pkg/contrib/fileutl.cc:253
 #, c-format
 msgid "Could not get lock %s"
 msgstr "Không thể lấy khóa %s"
 
-#: apt-pkg/contrib/fileutl.cc:392 apt-pkg/contrib/fileutl.cc:506
+#: apt-pkg/contrib/fileutl.cc:393 apt-pkg/contrib/fileutl.cc:507
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr ""
 "Liệt kê các tập tin không thể được tạo ra vì '%s' không phải là một thư mục"
 
-#: apt-pkg/contrib/fileutl.cc:426
+#: apt-pkg/contrib/fileutl.cc:427
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr "Bỏ qua '%s' trong thư mục '%s'vì nó không phải là tập tin bình thường"
 
-#: apt-pkg/contrib/fileutl.cc:444
+#: apt-pkg/contrib/fileutl.cc:445
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr ""
 "Bỏ qua tập tin '%s' trong thư mục '%s' vì nó không có phần đuôi mở rộng"
 
-#: apt-pkg/contrib/fileutl.cc:453
+#: apt-pkg/contrib/fileutl.cc:454
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
@@ -2549,72 +2586,78 @@ msgstr ""
 "Bỏ qua tập tin '%s' trong thư mục '%s' vì nó có phần đuôi mở rộng không hợp "
 "lệ"
 
-#: apt-pkg/contrib/fileutl.cc:840
+#: apt-pkg/contrib/fileutl.cc:841
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Tiến trình phụ %s đã nhận một lỗi chia ra từng đoạn."
 
-#: apt-pkg/contrib/fileutl.cc:842
+#: apt-pkg/contrib/fileutl.cc:843
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "Tiến trình phụ %s đã nhận tín hiệu %u."
 
-#: apt-pkg/contrib/fileutl.cc:846
+#: apt-pkg/contrib/fileutl.cc:847 apt-pkg/contrib/gpgv.cc:243
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Tiến trình phụ %s đã trả lời mã lỗi (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:849 apt-pkg/contrib/gpgv.cc:236
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Tiến trình phụ %s đã thoát bất thường"
 
-#: apt-pkg/contrib/fileutl.cc:1004 apt-pkg/indexcopy.cc:659
+#: apt-pkg/contrib/fileutl.cc:985
 #, c-format
 msgid "Could not open file %s"
 msgstr "Không thể mở tập tin %s"
 
-#: apt-pkg/contrib/fileutl.cc:1066
+#: apt-pkg/contrib/fileutl.cc:1062
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Không thể mở bộ mô tả tập tin %d"
 
-#: apt-pkg/contrib/fileutl.cc:1156
+#: apt-pkg/contrib/fileutl.cc:1147
 msgid "Failed to create subprocess IPC"
 msgstr "Việc tạo tiến trình con IPC bị lỗi"
 
-#: apt-pkg/contrib/fileutl.cc:1212
+#: apt-pkg/contrib/fileutl.cc:1202
 msgid "Failed to exec compressor "
 msgstr "Việc thực hiện bô nén bị lỗi "
 
-#: apt-pkg/contrib/fileutl.cc:1309
+#: apt-pkg/contrib/fileutl.cc:1297
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "đọc, còn cần đọc %llu nhưng mà không có gì còn lại cả"
 
-#: apt-pkg/contrib/fileutl.cc:1398 apt-pkg/contrib/fileutl.cc:1420
+#: apt-pkg/contrib/fileutl.cc:1384 apt-pkg/contrib/fileutl.cc:1406
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "ghi, còn cần ghi %llu nhưng mà không thể"
 
-#: apt-pkg/contrib/fileutl.cc:1736
+#: apt-pkg/contrib/fileutl.cc:1681
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Gặp vấn đề khi đóng tập tin %s"
 
-#: apt-pkg/contrib/fileutl.cc:1748
+#: apt-pkg/contrib/fileutl.cc:1693
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Gặp vấn đề khi thay tên tập tin %s bằng %s"
 
-#: apt-pkg/contrib/fileutl.cc:1759
+#: apt-pkg/contrib/fileutl.cc:1704
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Gặp vấn đề khi bỏ liên kết tập tin %s"
 
-#: apt-pkg/contrib/fileutl.cc:1774
+#: apt-pkg/contrib/fileutl.cc:1717
 msgid "Problem syncing the file"
 msgstr "Gặp vấn đề khi đồng bộ hóa tập tin"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:76
+#, c-format
+msgid "No keyring installed in %s."
+msgstr "Không có vòng khoá nào được cài đặt vào %s."
 
 #: apt-pkg/pkgcache.cc:148
 msgid "Empty package cache"
@@ -2641,59 +2684,59 @@ msgstr "Trình APT này không hỗ trợ hệ thống điều khiển phiên b�
 msgid "The package cache was built for a different architecture"
 msgstr "Bộ nhớ tạm gói được xây dựng cho một kiến trức khác"
 
-#: apt-pkg/pkgcache.cc:305
+#: apt-pkg/pkgcache.cc:314
 msgid "Depends"
 msgstr "Phụ thuộc"
 
-#: apt-pkg/pkgcache.cc:305
+#: apt-pkg/pkgcache.cc:314
 msgid "PreDepends"
 msgstr "Phụ thuộc sẵn"
 
-#: apt-pkg/pkgcache.cc:305
+#: apt-pkg/pkgcache.cc:314
 msgid "Suggests"
 msgstr "Đề nghị"
 
-#: apt-pkg/pkgcache.cc:306
+#: apt-pkg/pkgcache.cc:315
 msgid "Recommends"
 msgstr "Khuyến khích"
 
-#: apt-pkg/pkgcache.cc:306
+#: apt-pkg/pkgcache.cc:315
 msgid "Conflicts"
 msgstr "Xung đột"
 
-#: apt-pkg/pkgcache.cc:306
+#: apt-pkg/pkgcache.cc:315
 msgid "Replaces"
 msgstr "Thay thế"
 
-#: apt-pkg/pkgcache.cc:307
+#: apt-pkg/pkgcache.cc:316
 msgid "Obsoletes"
 msgstr "Làm cũ"
 
-#: apt-pkg/pkgcache.cc:307
+#: apt-pkg/pkgcache.cc:316
 msgid "Breaks"
 msgstr "Làm hư"
 
-#: apt-pkg/pkgcache.cc:307
+#: apt-pkg/pkgcache.cc:316
 msgid "Enhances"
 msgstr "Tăng cường"
 
-#: apt-pkg/pkgcache.cc:318
+#: apt-pkg/pkgcache.cc:327
 msgid "important"
 msgstr "quan trọng"
 
-#: apt-pkg/pkgcache.cc:318
+#: apt-pkg/pkgcache.cc:327
 msgid "required"
 msgstr "yêu cầu"
 
-#: apt-pkg/pkgcache.cc:318
+#: apt-pkg/pkgcache.cc:327
 msgid "standard"
 msgstr "chuẩn"
 
-#: apt-pkg/pkgcache.cc:319
+#: apt-pkg/pkgcache.cc:328
 msgid "optional"
 msgstr "tùy chọn"
 
-#: apt-pkg/pkgcache.cc:319
+#: apt-pkg/pkgcache.cc:328
 msgid "extra"
 msgstr "bổ sung"
 
@@ -2802,17 +2845,17 @@ msgstr "Đang mở %s"
 msgid "Line %u too long in source list %s."
 msgstr "Dòng %u quá dài trong danh sách nguồn %s."
 
-#: apt-pkg/sourcelist.cc:285
+#: apt-pkg/sourcelist.cc:289
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Gặp dòng dạng sai %u trong danh sách nguồn %s (kiểu)."
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:293
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Không biết kiểu “%s” trên dòng %u trong danh sách nguồn %s."
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:898
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:921
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -2821,12 +2864,12 @@ msgstr ""
 "Không thể thực hiện ngay lập tức tiến trình cấu hình “%s”. Xem “man 5 apt."
 "conf ” dưới “APT::Immediate-Configure” để tìm chi tiết. (%d)"
 
-#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:504
+#: apt-pkg/packagemanager.cc:496 apt-pkg/packagemanager.cc:527
 #, c-format
 msgid "Could not configure '%s'. "
 msgstr "Không thể cấu hình '%s'. "
 
-#: apt-pkg/packagemanager.cc:546
+#: apt-pkg/packagemanager.cc:569
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2849,7 +2892,7 @@ msgid ""
 "The package %s needs to be reinstalled, but I can't find an archive for it."
 msgstr "Cần phải cài đặt lại gói %s, nhưng mà không thể tìm kho cho nó."
 
-#: apt-pkg/algorithms.cc:1228
+#: apt-pkg/algorithms.cc:1234
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2857,11 +2900,11 @@ msgstr ""
 "Lỗi: “pkgProblemResolver::Resolve” (bộ tháo gỡ vấn đề gọi::tháo gỡ) đã tạo "
 "ra nhiều chỗ ngắt, có lẽ một số gói đã giữ lại đã gây ra trường hợp này."
 
-#: apt-pkg/algorithms.cc:1230
+#: apt-pkg/algorithms.cc:1236
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Không thể sửa vấn đề, bạn đã giữ lại một số gói bị ngắt."
 
-#: apt-pkg/algorithms.cc:1580 apt-pkg/algorithms.cc:1582
+#: apt-pkg/algorithms.cc:1588 apt-pkg/algorithms.cc:1590
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
 "used instead."
@@ -2869,7 +2912,7 @@ msgstr ""
 "Một số tập tin chỉ mục không tải về được. Chúng đã bị bỏ qua, hoặc cái cũ đã "
 "được dùng thay thế."
 
-#: apt-pkg/acquire.cc:81
+#: apt-pkg/acquire.cc:81 apt-pkg/cdrom.cc:838
 #, c-format
 msgid "List directory %spartial is missing."
 msgstr "Thiếu thư mục danh sách %spartial."
@@ -2906,17 +2949,17 @@ msgstr "Không tìm thấy trình điều khiển phương pháp %s."
 msgid "Method %s did not start correctly"
 msgstr "Phương pháp %s đã không bắt đầu cho đúng."
 
-#: apt-pkg/acquire-worker.cc:440
+#: apt-pkg/acquire-worker.cc:447
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Hãy nạp đĩa có nhãn “%s” vào ổ “%s” và bấm nút Enter."
 
-#: apt-pkg/init.cc:152
+#: apt-pkg/init.cc:151
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "Không hỗ trợ hệ thống đóng gói “%s”"
 
-#: apt-pkg/init.cc:168
+#: apt-pkg/init.cc:167
 msgid "Unable to determine a suitable packaging system type"
 msgstr "Không thể quyết định kiểu hệ thống đóng gói thích hợp"
 
@@ -2974,14 +3017,14 @@ msgstr "Bộ nhớ tạm có hệ thống điêu khiển phiên bản không tư
 #. TRANSLATOR: The first placeholder is a package name,
 #. the other two should be copied verbatim as they include debug info
 #: apt-pkg/pkgcachegen.cc:218 apt-pkg/pkgcachegen.cc:228
-#: apt-pkg/pkgcachegen.cc:294 apt-pkg/pkgcachegen.cc:325
-#: apt-pkg/pkgcachegen.cc:333 apt-pkg/pkgcachegen.cc:375
-#: apt-pkg/pkgcachegen.cc:379 apt-pkg/pkgcachegen.cc:396
-#: apt-pkg/pkgcachegen.cc:406 apt-pkg/pkgcachegen.cc:410
-#: apt-pkg/pkgcachegen.cc:414 apt-pkg/pkgcachegen.cc:435
-#: apt-pkg/pkgcachegen.cc:477 apt-pkg/pkgcachegen.cc:517
-#: apt-pkg/pkgcachegen.cc:525 apt-pkg/pkgcachegen.cc:556
-#: apt-pkg/pkgcachegen.cc:570
+#: apt-pkg/pkgcachegen.cc:294 apt-pkg/pkgcachegen.cc:321
+#: apt-pkg/pkgcachegen.cc:334 apt-pkg/pkgcachegen.cc:376
+#: apt-pkg/pkgcachegen.cc:380 apt-pkg/pkgcachegen.cc:397
+#: apt-pkg/pkgcachegen.cc:405 apt-pkg/pkgcachegen.cc:409
+#: apt-pkg/pkgcachegen.cc:413 apt-pkg/pkgcachegen.cc:434
+#: apt-pkg/pkgcachegen.cc:473 apt-pkg/pkgcachegen.cc:511
+#: apt-pkg/pkgcachegen.cc:518 apt-pkg/pkgcachegen.cc:549
+#: apt-pkg/pkgcachegen.cc:563
 #, c-format
 msgid "Error occurred while processing %s (%s%d)"
 msgstr "Gặp lỗi khi xử lý %s (%s%d)"
@@ -3002,26 +3045,26 @@ msgstr "Ồ, bạn đã vượt quá số mô tả mà trình APT này có thể
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "Ồ, bạn đã vượt quá số cách phụ thuộc mà trình APT này có thể quản lý."
 
-#: apt-pkg/pkgcachegen.cc:577
+#: apt-pkg/pkgcachegen.cc:570
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "Không tìm thấy gói %s %s khi xử lý quan hệ phụ thuộc của tập tin"
 
-#: apt-pkg/pkgcachegen.cc:1150
+#: apt-pkg/pkgcachegen.cc:1199
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Không thể lấy các thông tin về danh sách gói nguồn %s"
 
-#: apt-pkg/pkgcachegen.cc:1238 apt-pkg/pkgcachegen.cc:1342
-#: apt-pkg/pkgcachegen.cc:1348 apt-pkg/pkgcachegen.cc:1505
+#: apt-pkg/pkgcachegen.cc:1287 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1397 apt-pkg/pkgcachegen.cc:1554
 msgid "Reading package lists"
 msgstr "Đang đọc các danh sách gói"
 
-#: apt-pkg/pkgcachegen.cc:1255
+#: apt-pkg/pkgcachegen.cc:1304
 msgid "Collecting File Provides"
 msgstr "Đang tập hợp các Nhà cung cấp Tập tin"
 
-#: apt-pkg/pkgcachegen.cc:1447 apt-pkg/pkgcachegen.cc:1454
+#: apt-pkg/pkgcachegen.cc:1496 apt-pkg/pkgcachegen.cc:1503
 msgid "IO Error saving source cache"
 msgstr "Lỗi nhập/xuất khi lưu bộ nhớ tạm nguồn"
 
@@ -3034,12 +3077,12 @@ msgstr "việc thay đổi tên bị lỗi, %s (%s → %s)."
 msgid "MD5Sum mismatch"
 msgstr "Sai khớp MD5Sum (tổng kiểm)"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1870
-#: apt-pkg/acquire-item.cc:2013
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1876
+#: apt-pkg/acquire-item.cc:2019
 msgid "Hash Sum mismatch"
 msgstr "Sai khớp tổng chuỗi duy nhất (hash sum)"
 
-#: apt-pkg/acquire-item.cc:1381
+#: apt-pkg/acquire-item.cc:1377
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
@@ -3048,16 +3091,16 @@ msgstr ""
 "Không tìm thấy mục cần thiết '%s' trong tập tin Phát hành (Sai mục trong "
 "sources.list hoặc tập tin bị hỏng)"
 
-#: apt-pkg/acquire-item.cc:1397
+#: apt-pkg/acquire-item.cc:1393
 #, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Không thể tìm thấy mã băm tổng kiểm tra cho tập tin Phát hành %s"
 
-#: apt-pkg/acquire-item.cc:1439
+#: apt-pkg/acquire-item.cc:1435
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Không có khóa công sẵn sàng cho những mã số khoá theo đây:\n"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1473
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
@@ -3066,15 +3109,15 @@ msgstr ""
 "Tập tin phát hành %s đã hết hạn (không hợp lệ kể từ %s). Cập nhật cho kho "
 "này sẽ không được áp dụng."
 
-#: apt-pkg/acquire-item.cc:1499
+#: apt-pkg/acquire-item.cc:1495
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Bản phát hành xung đột: %s (mong đợi %s còn nhận %s)"
 
-#: apt-pkg/acquire-item.cc:1532
+#: apt-pkg/acquire-item.cc:1525
 #, c-format
 msgid ""
-"A error occurred during the signature verification. The repository is not "
+"An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s\n"
 msgstr ""
 "Gặp lỗi trong khi thẩm tra chữ ký.\n"
@@ -3082,12 +3125,12 @@ msgstr ""
 "Lỗi GPG: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1542 apt-pkg/acquire-item.cc:1547
+#: apt-pkg/acquire-item.cc:1535 apt-pkg/acquire-item.cc:1540
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "Lỗi GPG: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1646
+#: apt-pkg/acquire-item.cc:1652
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3096,7 +3139,7 @@ msgstr ""
 "Không tìm thấy tập tin liên quan đến gói %s. Có lẽ bạn cần phải tự sửa gói "
 "này, do thiếu kiến trúc."
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1711
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3105,7 +3148,7 @@ msgstr ""
 "Không tìm thấy tập tin liên quan đến gói %s. Có lẽ bạn cần phải tự sửa gói "
 "này."
 
-#: apt-pkg/acquire-item.cc:1764
+#: apt-pkg/acquire-item.cc:1770
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -3113,33 +3156,33 @@ msgstr ""
 "Các tập tin chỉ mục của gói này bị hỏng. Không có trường Filename: (Tên tập "
 "tin:) cho gói %s."
 
-#: apt-pkg/acquire-item.cc:1862
+#: apt-pkg/acquire-item.cc:1868
 msgid "Size mismatch"
 msgstr "Sai khớp kích cỡ"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:68
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Không thể phân tích cú pháp của tập tin Phát hành %s"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:78
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "Không có phần nào trong tập tin Phát hành %s"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:112
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "Không có mục Hash (chuỗi duy nhất) nào trong tập tin Phát hành %s"
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:125
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr ""
 "Gặp mục nhập “Valid-Until” (hợp lệ đến khi) không hợp lệ trong tập tin Phát "
 "hành %s"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:144
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr ""
@@ -3168,7 +3211,7 @@ msgstr "Đang nhận diện... "
 msgid "Stored label: %s\n"
 msgstr "Nhãn đã lưu: %s\n"
 
-#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
+#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:915
 msgid "Unmounting CD-ROM...\n"
 msgstr "Đang tháo lắp đĩa CD-ROM...\n"
 
@@ -3231,30 +3274,30 @@ msgstr ""
 msgid "Copying package lists..."
 msgstr "Đang sao chép các danh sách gói..."
 
-#: apt-pkg/cdrom.cc:857
+#: apt-pkg/cdrom.cc:865
 msgid "Writing new source list\n"
 msgstr "Đang ghi danh sách nguồn mới\n"
 
-#: apt-pkg/cdrom.cc:865
+#: apt-pkg/cdrom.cc:873
 msgid "Source list entries for this disc are:\n"
 msgstr "Các mục nhập danh sách nguồn cho đĩa này:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:774
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "Mới ghi %i mục ghi.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:776
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "Mới ghi %i mục ghi với %i tập tin còn thiếu.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:779
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "Mới ghi %i mục ghi với %i tập tin không khớp với nhau\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:782
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
@@ -3270,17 +3313,6 @@ msgstr "Không tìm thấy mục ghi xác thực cho: %s"
 #, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Sai khớp chuỗi duy nhất cho: %s"
-
-#: apt-pkg/indexcopy.cc:662
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr "Tập tin %s không bắt đầu bằng một đoạn chữ ký (gpg)"
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:692
-#, c-format
-msgid "No keyring installed in %s."
-msgstr "Không có vòng khoá nào được cài đặt vào %s."
 
 #: apt-pkg/cacheset.cc:403
 #, c-format
@@ -3349,114 +3381,114 @@ msgstr "Chuẩn bị để lấy cách giải quyết"
 msgid "External solver failed without a proper error message"
 msgstr "Bộ phân giải bên ngoài gặp lỗi mà không trả về thông tin lỗi thích hợp"
 
-#: apt-pkg/edsp.cc:557 apt-pkg/edsp.cc:560 apt-pkg/edsp.cc:565
+#: apt-pkg/edsp.cc:556 apt-pkg/edsp.cc:559 apt-pkg/edsp.cc:564
 msgid "Execute external solver"
 msgstr "Thi hành bộ phân giải từ bên ngoài"
 
-#: apt-pkg/deb/dpkgpm.cc:72
+#: apt-pkg/deb/dpkgpm.cc:73
 #, c-format
 msgid "Installing %s"
 msgstr "Đang cài đặt %s"
 
-#: apt-pkg/deb/dpkgpm.cc:73 apt-pkg/deb/dpkgpm.cc:951
+#: apt-pkg/deb/dpkgpm.cc:74 apt-pkg/deb/dpkgpm.cc:952
 #, c-format
 msgid "Configuring %s"
 msgstr "Đang cấu hình %s"
 
-#: apt-pkg/deb/dpkgpm.cc:74 apt-pkg/deb/dpkgpm.cc:958
+#: apt-pkg/deb/dpkgpm.cc:75 apt-pkg/deb/dpkgpm.cc:959
 #, c-format
 msgid "Removing %s"
 msgstr "Đang gỡ bỏ %s"
 
-#: apt-pkg/deb/dpkgpm.cc:75
+#: apt-pkg/deb/dpkgpm.cc:76
 #, c-format
 msgid "Completely removing %s"
 msgstr "Đang gỡ bỏ hoàn toàn %s"
 
-#: apt-pkg/deb/dpkgpm.cc:76
+#: apt-pkg/deb/dpkgpm.cc:77
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "Đang ghi lưu sự biến mất của %s"
 
-#: apt-pkg/deb/dpkgpm.cc:77
+#: apt-pkg/deb/dpkgpm.cc:78
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Đang chạy bộ gây nên tiến trình cuối cùng cài đặt %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:704
+#: apt-pkg/deb/dpkgpm.cc:705
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Thiếu thư mục “%s”"
 
-#: apt-pkg/deb/dpkgpm.cc:719 apt-pkg/deb/dpkgpm.cc:739
+#: apt-pkg/deb/dpkgpm.cc:720 apt-pkg/deb/dpkgpm.cc:740
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Không thể mở tập tin “%s”"
 
-#: apt-pkg/deb/dpkgpm.cc:944
+#: apt-pkg/deb/dpkgpm.cc:945
 #, c-format
 msgid "Preparing %s"
 msgstr "Đang chuẩn bị %s"
 
-#: apt-pkg/deb/dpkgpm.cc:945
+#: apt-pkg/deb/dpkgpm.cc:946
 #, c-format
 msgid "Unpacking %s"
 msgstr "Đang mở gói %s"
 
-#: apt-pkg/deb/dpkgpm.cc:950
+#: apt-pkg/deb/dpkgpm.cc:951
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Đang chuẩn bị cấu hình %s"
 
-#: apt-pkg/deb/dpkgpm.cc:952
+#: apt-pkg/deb/dpkgpm.cc:953
 #, c-format
 msgid "Installed %s"
 msgstr "Đã cài đặt %s"
 
-#: apt-pkg/deb/dpkgpm.cc:957
+#: apt-pkg/deb/dpkgpm.cc:958
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Đang chuẩn bị gỡ bỏ %s"
 
-#: apt-pkg/deb/dpkgpm.cc:959
+#: apt-pkg/deb/dpkgpm.cc:960
 #, c-format
 msgid "Removed %s"
 msgstr "Đã gỡ bỏ %s"
 
-#: apt-pkg/deb/dpkgpm.cc:964
+#: apt-pkg/deb/dpkgpm.cc:965
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Đang chuẩn bị gỡ bỏ hoàn toàn %s"
 
-#: apt-pkg/deb/dpkgpm.cc:965
+#: apt-pkg/deb/dpkgpm.cc:966
 #, c-format
 msgid "Completely removed %s"
 msgstr "Mới gỡ bỏ hoàn toàn %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1212
+#: apt-pkg/deb/dpkgpm.cc:1213
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr "Không thể ghi lưu, openpty() bị lỗi (“/dev/pts” chưa lắp ?)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1242
+#: apt-pkg/deb/dpkgpm.cc:1243
 msgid "Running dpkg"
 msgstr "Đang chạy dpkg"
 
-#: apt-pkg/deb/dpkgpm.cc:1414
+#: apt-pkg/deb/dpkgpm.cc:1415
 msgid "Operation was interrupted before it could finish"
 msgstr "Hệ điều hành đã ngắt trước khi nó kịp hoàn thành"
 
-#: apt-pkg/deb/dpkgpm.cc:1476
+#: apt-pkg/deb/dpkgpm.cc:1477
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 "Không ghi báo cáo apport, vì đã tới giới hạn số các báo cáo (MaxReports)"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1481
+#: apt-pkg/deb/dpkgpm.cc:1482
 msgid "dependency problems - leaving unconfigured"
 msgstr "gặp vấn đề về quan hệ phụ thuộc nên để lại không có cấu hình"
 
-#: apt-pkg/deb/dpkgpm.cc:1483
+#: apt-pkg/deb/dpkgpm.cc:1484
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3464,7 +3496,7 @@ msgstr ""
 "Không ghi báo cáo apport, vì thông điệp lỗi ngụ ý rằng nó là một lỗi kế tiếp "
 "do một sự thất bại trước."
 
-#: apt-pkg/deb/dpkgpm.cc:1489
+#: apt-pkg/deb/dpkgpm.cc:1490
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3477,13 +3509,7 @@ msgid ""
 msgstr ""
 "Không ghi báo cáo apport, vì thông điệp lỗi ngụ ý một lỗi “không đủ bộ nhớ”"
 
-#: apt-pkg/deb/dpkgpm.cc:1503 apt-pkg/deb/dpkgpm.cc:1509
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1530
+#: apt-pkg/deb/dpkgpm.cc:1503
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr "Không ghi báo cáo apport, vì thông điệp lỗi ngụ ý một lỗi “V/R dpkg”"
@@ -3514,21 +3540,8 @@ msgstr "dpkg bị gián đoạn, bạn cần phải tự động chạy “%s”
 msgid "Not locked"
 msgstr "Chưa được khoá"
 
-#, fuzzy
-#~ msgid "System error resolving '%s:%s'"
-#~ msgstr "Gặp lỗi nghiệm trọng khi tháo gỡ “%s:%s” (%i - %s)"
-
-#, fuzzy
-#~ msgid "%c%s... %u%%"
-#~ msgstr "%c%s... Hoàn tất"
-
-#~ msgid ""
-#~ "An error occurred during the signature verification. The repository is "
-#~ "not updated and the previous index files will be used. GPG error: %s: %s\n"
-#~ msgstr ""
-#~ "Gặp lỗi trong khi thẩm tra chữ ký.\n"
-#~ "Kho lưu chưa được cập nhật nên dùng những tập tin chỉ mục trước.\n"
-#~ "Lỗi GPG: %s: %s\n"
+#~ msgid "File %s doesn't start with a clearsigned message"
+#~ msgstr "Tập tin %s không bắt đầu bằng một đoạn chữ ký (gpg)"
 
 #~ msgid "Skipping nonexistent file %s"
 #~ msgstr "Đang bỏ qua tập tin không tồn tại %s"

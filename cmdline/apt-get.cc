@@ -1962,7 +1962,6 @@ bool DoInstall(CommandLine &CmdL)
       if (Fix != NULL)
       {
 	 // Call the scored problem resolver
-	 Fix->InstallProtect();
 	 Fix->Resolve(true);
 	 delete Fix;
       }
@@ -3123,8 +3122,7 @@ bool DoBuildDep(CommandLine &CmdL)
             }
 	 }	       
       }
-      
-      Fix.InstallProtect();
+
       if (Fix.Resolve(true) == false)
 	 _error->Discard();
       

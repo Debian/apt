@@ -210,7 +210,7 @@ apt: build build-manpages
 	dh_bugfiles -p$@
 	dh_lintian -p$@
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
-	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/en/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
 	dh_installcron -p$@
 	dh_installdocs -p$@
 	dh_installchangelogs -p$@
@@ -260,7 +260,7 @@ apt-utils: build build-manpages
 	dh_installexamples -p$@
 
 	# Install the man pages..
-	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt-utils_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt-utils_MANPAGES)))
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/en/%.[158],$(apt-utils_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt-utils_MANPAGES)))
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@

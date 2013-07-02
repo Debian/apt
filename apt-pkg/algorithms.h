@@ -36,6 +36,8 @@
 
 #include <iostream>
 
+#include <apt-pkg/macros.h>
+
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/acquire.h>
 using std::ostream;
@@ -132,9 +134,8 @@ class pkgProblemResolver						/*{{{*/
    // Try to resolve problems only by using keep
    bool ResolveByKeep();
 
-   // Install all protected packages   
-   void InstallProtect();   
-   
+   __deprecated void InstallProtect();
+
    pkgProblemResolver(pkgDepCache *Cache);
    ~pkgProblemResolver();
 };

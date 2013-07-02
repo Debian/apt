@@ -759,7 +759,8 @@ bool ReadMessages(int Fd, vector<string> &List)
       for (char *I = Buffer; I + 1 < End; I++)
       {
 	 if (I[1] != '\n' ||
-	     (strncmp(I, "\n\n", 2) != 0 && strncmp(I, "\r\n\r\n", 4) != 0))
+
+	       (I[0] != '\n' && strncmp(I, "\r\n\r\n", 4) != 0))
 	    continue;
 	 
 	 // Pull the message out
@@ -767,7 +768,7 @@ bool ReadMessages(int Fd, vector<string> &List)
 	 PartialMessage += Message;
 
 	 // Fix up the buffer
-	 for (; I < End && (*I == '\r' || *I == '\n'); ++I);
+	 for (; I < End && (*I == '\n' || *I == '\r'); ++I);
 	 End -= I-Buffer;	 
 	 memmove(Buffer,I,End-Buffer);
 	 I = Buffer;
@@ -1484,9 +1485,12 @@ URI::operator string()
           
       if (User.empty() == false)
       {
-	 Res +=  User;
+	 // FIXME: Technically userinfo is permitted even less
+	 // characters than these, but this is not conveniently
+	 // expressed with a blacklist.
+	 Res += QuoteString(User, ":/?#[]@");
 	 if (Password.empty() == false)
-	    Res += ":" + Password;
+	    Res += ":" + QuoteString(Password, ":/?#[]@");
 	 Res += "@";
       }
       
@@ -1525,7 +1529,6 @@ string URI::SiteOnly(const string &URI)
    U.User.clear();
    U.Password.clear();
    U.Path.clear();
-   U.Port = 0;
    return U;
 }
 									/*}}}*/
@@ -1537,7 +1540,6 @@ string URI::NoUserPassword(const string &URI)
    ::URI U(URI);
    U.User.clear();
    U.Password.clear();
-   U.Port = 0;
    return U;
 }
 									/*}}}*/

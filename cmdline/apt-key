@@ -32,6 +32,16 @@ requires_root() {
 	fi
 }
 
+# gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
+init_keyring() {
+    for path; do
+        if ! [ -e "$path" ]; then
+            touch -- "$path"
+            chmod 0644 -- "$path"
+        fi
+    done
+}
+
 add_keys_with_verify_against_master_keyring() {
     ADD_KEYRING=$1
     MASTER=$2
@@ -173,7 +183,7 @@ if [ "$1" = "--keyring" ]; then
         #echo "keyfile given"
 	shift
 	TRUSTEDFILE="$1"
-	if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ]; then
+	if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ] || [ "$2" = 'adv' ]; then
 		GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
 	else
 		echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"
@@ -218,33 +228,42 @@ fi
 case "$command" in
     add)
         requires_root
+        init_keyring "$TRUSTEDFILE"
         $GPG --quiet --batch --import "$1"
         echo "OK"
         ;;
     del|rm|remove)
         requires_root
+        init_keyring "$TRUSTEDFILE"
         $GPG --quiet --batch --delete-key --yes "$1"
         echo "OK"
         ;;
     update)
+        init_keyring "$TRUSTEDFILE"
 	update
 	;;
     net-update)
+        init_keyring "$TRUSTEDFILE"
 	net_update
 	;;
     list)
+        init_keyring "$TRUSTEDFILE"
         $GPG --batch --list-keys
         ;;
     finger*)
+        init_keyring "$TRUSTEDFILE"
         $GPG --batch --fingerprint
         ;;
     export)
+        init_keyring "$TRUSTEDFILE"
         $GPG --armor --export "$1"
         ;;
     exportall)
+        init_keyring "$TRUSTEDFILE"
         $GPG --armor --export
         ;;
     adv*)
+        init_keyring "$TRUSTEDFILE"
         echo "Executing: $GPG $*"
         $GPG $*
         ;;

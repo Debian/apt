@@ -63,6 +63,12 @@ void HttpsMethod::SetupProxy()  					/*{{{*/
 {
    URI ServerName = Queue->Uri;
 
+   // Curl should never read proxy settings from the environment, as
+   // we determine which proxy to use.  Do this for consistency among
+   // methods and prevent an environment variable overriding a
+   // no-proxy ("DIRECT") setting in apt.conf.
+   curl_easy_setopt(curl, CURLOPT_PROXY, "");
+
    // Determine the proxy setting - try https first, fallback to http and use env at last
    string UseProxy = _config->Find("Acquire::https::Proxy::" + ServerName.Host,
 				   _config->Find("Acquire::http::Proxy::" + ServerName.Host).c_str());
@@ -81,7 +87,14 @@ void HttpsMethod::SetupProxy()  					/*{{{*/
       if (getenv("no_proxy") != 0 && CheckDomainList(ServerName.Host,getenv("no_proxy")) == true)
 	 return;
    } else {
-      const char* result = getenv("http_proxy");
+      const char* result = getenv("https_proxy");
+      // FIXME: Fall back to http_proxy is to remain compatible with
+      // existing setups and behaviour of apt.conf.  This should be
+      // deprecated in the future (including apt.conf).  Most other
+      // programs do not fall back to http proxy settings and neither
+      // should Apt.
+      if (result == NULL)
+         result = getenv("http_proxy");
       UseProxy = result == NULL ? "" : result;
    }
 
@@ -92,6 +105,11 @@ void HttpsMethod::SetupProxy()  					/*{{{*/
       if (Proxy.Port != 1)
 	 curl_easy_setopt(curl, CURLOPT_PROXYPORT, Proxy.Port);
       curl_easy_setopt(curl, CURLOPT_PROXY, Proxy.Host.c_str());
+      if (Proxy.User.empty() == false || Proxy.Password.empty() == false)
+      {
+         curl_easy_setopt(curl, CURLOPT_PROXYUSERNAME, Proxy.User.c_str());
+         curl_easy_setopt(curl, CURLOPT_PROXYPASSWORD, Proxy.Password.c_str());
+      }
    }
 }									/*}}}*/
 // HttpsMethod::Fetch - Fetch an item					/*{{{*/
@@ -285,6 +303,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    long curl_servdate;
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &curl_servdate);
 
+   // If the server returns 200 OK but the If-Modified-Since condition is not
+   // met, CURLINFO_CONDITION_UNMET will be set to 1
+   long curl_condition_unmet = 0;
+   curl_easy_getinfo(curl, CURLINFO_CONDITION_UNMET, &curl_condition_unmet);
+
    File->Close();
 
    // cleanup
@@ -312,7 +335,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Res.Filename = File->Name();
       Res.LastModified = Buf.st_mtime;
       Res.IMSHit = false;
-      if (curl_responsecode == 304)
+      if (curl_responsecode == 304 || curl_condition_unmet)
       {
 	 unlink(File->Name().c_str());
 	 Res.IMSHit = true;

@@ -1161,7 +1161,11 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    }
 
    // Get a pointer to start of Description field
-   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "Description:");
+   const unsigned char *DescP = (unsigned char*)strstr((char*)Buffer, "\nDescription");
+   if (DescP != NULL)
+      ++DescP;
+   else
+      DescP = Buffer + V.FileList()->Size;
 
    // Write all but Description
    if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
@@ -1173,25 +1177,38 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    // Show the right description
    pkgRecords Recs(*Cache);
    pkgCache::DescIterator Desc = V.TranslatedDescription();
-   pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
-   cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
-
-   // Find the first field after the description (if there is any)
-   for(DescP++;DescP != &Buffer[V.FileList()->Size];DescP++) 
+   if (Desc.end() == false)
    {
-      if(*DescP == '\n' && *(DescP+1) != ' ') 
-      {
-	 // write the rest of the buffer
-	 const unsigned char *end=&Buffer[V.FileList()->Size];
-	 if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP)) 
-	 {
-	    delete [] Buffer;
-	    return false;
-	 }
+      pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
+      cout << "Description" << ( (strcmp(Desc.LanguageCode(),"") != 0) ? "-" : "" ) << Desc.LanguageCode() << ": " << P.LongDesc();
+      cout << std::endl << "Description-md5: " << Desc.md5() << std::endl;
 
-	 break;
+      // Find the first field after the description (if there is any)
+      while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
+      {
+	 if (DescP[1] == ' ')
+	    DescP += 2;
+	 else if (strncmp((char*)DescP, "\nDescription", strlen("\nDescription")) == 0)
+	    DescP += strlen("\nDescription");
+	 else
+	    break;
+      }
+      if (DescP != NULL)
+	 ++DescP;
+   }
+   // if we have no translation, we found a lonely Description-md5, so don't skip it
+
+   if (DescP != NULL)
+   {
+      // write the rest of the buffer
+      const unsigned char *end=&Buffer[V.FileList()->Size];
+      if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP))
+      {
+	 delete [] Buffer;
+	 return false;
       }
    }
+
    // write a final newline (after the description)
    cout<<endl;
    delete [] Buffer;
@@ -1203,7 +1220,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
-   bool NameMatch;
+   map_ptrloc ID;
 };
 
 // Search - Perform a search						/*{{{*/
@@ -1246,37 +1263,48 @@ bool Search(CommandLine &CmdL)
       return false;
    }
    
-   ExDescFile *DFList = new ExDescFile[Cache->HeaderP->GroupCount+1];
-   memset(DFList,0,sizeof(*DFList)*Cache->HeaderP->GroupCount+1);
+   size_t const descCount = Cache->HeaderP->GroupCount + 1;
+   ExDescFile *DFList = new ExDescFile[descCount];
+   memset(DFList,0,sizeof(*DFList) * descCount);
+
+   bool PatternMatch[descCount * NumPatterns];
+   memset(PatternMatch,false,sizeof(PatternMatch));
 
    // Map versions that we want to write out onto the VerList array.
    for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() == false; ++G)
    {
-      if (DFList[G->ID].NameMatch == true)
+      size_t const PatternOffset = G->ID * NumPatterns;
+      size_t unmatched = 0, matched = 0;
+      for (unsigned I = 0; I < NumPatterns; ++I)
+      {
+	 if (PatternMatch[PatternOffset + I] == true)
+	    ++matched;
+	 else if (regexec(&Patterns[I],G.Name(),0,0,0) == 0)
+	    PatternMatch[PatternOffset + I] = true;
+	 else
+	    ++unmatched;
+      }
+
+      // already dealt with this package?
+      if (matched == NumPatterns)
 	 continue;
 
-      DFList[G->ID].NameMatch = true;
-      for (unsigned I = 0; I != NumPatterns; I++)
-      {
-	 if (regexec(&Patterns[I],G.Name(),0,0,0) == 0)
-	    continue;
-	 DFList[G->ID].NameMatch = false;
-	 break;
-      }
-        
-      // Doing names only, drop any that dont match..
-      if (NamesOnly == true && DFList[G->ID].NameMatch == false)
+      // Doing names only, drop any that don't match..
+      if (NamesOnly == true && unmatched == NumPatterns)
 	 continue;
-	 
+
       // Find the proper version to use
       pkgCache::PkgIterator P = G.FindPreferredPkg();
       if (P.end() == true)
 	 continue;
       pkgCache::VerIterator V = Plcy->GetCandidateVer(P);
       if (V.end() == false)
+      {
 	 DFList[G->ID].Df = V.TranslatedDescription().FileList();
+	 DFList[G->ID].ID = G->ID;
+      }
 
-      if (DFList[G->ID].NameMatch == false)
+      if (unmatched == NumPatterns)
 	 continue;
 
       // Include all the packages that provide matching names too
@@ -1288,33 +1316,45 @@ bool Search(CommandLine &CmdL)
 
 	 unsigned long id = Prv.OwnerPkg().Group()->ID;
 	 DFList[id].Df = V.TranslatedDescription().FileList();
-	 DFList[id].NameMatch = true;
+	 DFList[id].ID = id;
+
+	 size_t const PrvPatternOffset = id * NumPatterns;
+	 for (unsigned I = 0; I < NumPatterns; ++I)
+	    PatternMatch[PrvPatternOffset + I] = PatternMatch[PatternOffset + I];
       }
    }
-   
+
    LocalitySort(&DFList->Df,Cache->HeaderP->GroupCount,sizeof(*DFList));
 
    // Create the text record parser
    pkgRecords Recs(*Cache);
    // Iterate over all the version records and check them
-   for (ExDescFile *J = DFList; J->Df != 0; J++)
+   for (ExDescFile *J = DFList; J->Df != 0; ++J)
    {
       pkgRecords::Parser &P = Recs.Lookup(pkgCache::DescFileIterator(*Cache,J->Df));
+      size_t const PatternOffset = J->ID * NumPatterns;
 
-      if (J->NameMatch == false && NamesOnly == false)
+      if (NamesOnly == false)
       {
 	 string const LongDesc = P.LongDesc();
-	 J->NameMatch = true;
-	 for (unsigned I = 0; I != NumPatterns; I++)
+	 for (unsigned I = 0; I < NumPatterns; ++I)
 	 {
-	    if (regexec(&Patterns[I],LongDesc.c_str(),0,0,0) == 0)
+	    if (PatternMatch[PatternOffset + I] == true)
 	       continue;
-	    J->NameMatch = false;
-	    break;
+	    else if (regexec(&Patterns[I],LongDesc.c_str(),0,0,0) == 0)
+	       PatternMatch[PatternOffset + I] = true;
 	 }
       }
-      
-      if (J->NameMatch == true)
+
+      bool matchedAll = true;
+      for (unsigned I = 0; I < NumPatterns; ++I)
+	 if (PatternMatch[PatternOffset + I] == false)
+	 {
+	    matchedAll = false;
+	    break;
+	 }
+
+      if (matchedAll == true)
       {
 	 if (ShowFull == true)
 	 {

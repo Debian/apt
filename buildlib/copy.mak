@@ -21,7 +21,7 @@ veryclean: veryclean/$(LOCAL)
 
 MKDIRS += $(dir $($(LOCAL)-LIST))
 
-$($(LOCAL)-LIST) : $(TO)/% : % dirs
+$($(LOCAL)-LIST) : $(TO)/% : %
 	echo Installing $< to $(@D)
 	cp $< $(@D)
 
