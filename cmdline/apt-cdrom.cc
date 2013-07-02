@@ -39,6 +39,12 @@
 
 #include <apti18n.h>
 									/*}}}*/
+static const char *W_NO_CDROM_FOUND = \
+   N_("No CD-ROM could be auto-detected or found using "
+      "the default mount point.\n"
+      "You may try the --cdrom option to set the CD-ROM mount point. "
+      "See 'man apt-cdrom' for more "
+      "information about the CD-ROM auto-detection and mount point.");
 
 using namespace std;
 
@@ -135,7 +141,6 @@ bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i)
    return true;
 }
 									/*}}}*/
-
 // DoAdd - Add a new CDROM						/*{{{*/
 // ---------------------------------------------------------------------
 /* This does the main add bit.. We show some status and things. The
@@ -154,8 +159,12 @@ bool DoAdd(CommandLine &)
    if (AutoDetect && UdevCdroms.Dlopen())
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Add(&log);
-   if (count == 0)
+   if (count == 0) {
       res = cdrom.Add(&log);
+      if (res == false) {
+         _error->Error(_(W_NO_CDROM_FOUND));
+      }
+   }
 
    if(res)
       cout << _("Repeat this process for the rest of the CDs in your set.") << endl;
@@ -180,8 +189,12 @@ bool DoIdent(CommandLine &)
    if (AutoDetect && UdevCdroms.Dlopen())
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Ident(ident, &log);
-   if (count == 0)
-      return cdrom.Ident(ident, &log);
+   if (count == 0) {
+      res = cdrom.Ident(ident, &log);
+      if (res == false) {
+         _error->Error(_(W_NO_CDROM_FOUND));
+      }
+   }
    return res;
 }
 									/*}}}*/
@@ -213,7 +226,7 @@ int ShowHelp()
       "  -m   No mounting\n"
       "  -f   Fast mode, don't check package files\n"
       "  -a   Thorough scan mode\n"
-      "  --auto-detect Auto detect drive and mount point\n"
+      "  --no-auto-detect Do not try to auto detect drive and mount point\n"
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
       "See fstab(5)\n";
@@ -224,7 +237,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
-      {  0,"auto-detect","Acquire::cdrom::AutoDetect",0},
+      {  0,"auto-detect","Acquire::cdrom::AutoDetect", CommandLine::Boolean},
       {'v',"version","version",0},
       {'d',"cdrom","Acquire::cdrom::mount",CommandLine::HasArg},
       {'r',"rename","APT::CDROM::Rename",0},
