@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 0.9.8.1\n"
+"Project-Id-Version: apt-doc 0.9.9ubuntu1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-06-13 13:46+0300\n"
+"POT-Creation-Date: 2013-07-02 17:09+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1110,7 +1110,7 @@ msgid "Files"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-get.8.xml:528 apt-cache.8.xml:350 apt-key.8.xml:195 apt-mark.8.xml:131 apt-secure.8.xml:191 apt-cdrom.8.xml:144 apt-config.8.xml:109 apt.conf.5.xml:1173 apt_preferences.5.xml:705 sources.list.5.xml:252 apt-extracttemplates.1.xml:70 apt-sortpkgs.1.xml:63 apt-ftparchive.1.xml:607
+#: apt-get.8.xml:528 apt-cache.8.xml:350 apt-key.8.xml:195 apt-mark.8.xml:131 apt-secure.8.xml:191 apt-cdrom.8.xml:152 apt-config.8.xml:109 apt.conf.5.xml:1173 apt_preferences.5.xml:705 sources.list.5.xml:252 apt-extracttemplates.1.xml:70 apt-sortpkgs.1.xml:63 apt-ftparchive.1.xml:607
 msgid "See Also"
 msgstr ""
 
@@ -1123,7 +1123,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt-get.8.xml:534 apt-cache.8.xml:355 apt-mark.8.xml:135 apt-cdrom.8.xml:149 apt-config.8.xml:114 apt-extracttemplates.1.xml:74 apt-sortpkgs.1.xml:67 apt-ftparchive.1.xml:611
+#: apt-get.8.xml:534 apt-cache.8.xml:355 apt-mark.8.xml:135 apt-cdrom.8.xml:157 apt-config.8.xml:114 apt-extracttemplates.1.xml:74 apt-sortpkgs.1.xml:67 apt-ftparchive.1.xml:611
 msgid "Diagnostics"
 msgstr ""
 
@@ -1620,8 +1620,8 @@ msgid ""
 "Update the local keyring with the archive keyring and remove from the local "
 "keyring the archive keys which are no longer valid.  The archive keyring is "
 "shipped in the <literal>archive-keyring</literal> package of your "
-"distribution, e.g. the <literal>debian-archive-keyring</literal> package in "
-"Debian."
+"distribution, e.g. the <literal>ubuntu-archive-keyring</literal> package in "
+"Ubuntu."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
@@ -1670,22 +1670,22 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml:183
-msgid "<filename>/usr/share/keyrings/debian-archive-keyring.gpg</filename>"
+msgid "<filename>/usr/share/keyrings/ubuntu-archive-keyring.gpg</filename>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:184
-msgid "Keyring of Debian archive trusted keys."
+msgid "Keyring of Ubuntu archive trusted keys."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml:187
-msgid "<filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>"
+msgid "<filename>/usr/share/keyrings/ubuntu-archive-removed-keys.gpg</filename>"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:188
-msgid "Keyring of Debian archive removed trusted keys."
+msgid "Keyring of Ubuntu archive removed trusted keys."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
@@ -2060,13 +2060,21 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:85
 msgid ""
+"Do not try to auto-detect the CD-ROM path. Usually combined with the "
+"<option>--cdrom</option> option.  Configuration Item: "
+"<literal>Acquire::cdrom::AutoDetect</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt-cdrom.8.xml:93
+msgid ""
 "Mount point; specify the location to mount the CD-ROM. This mount point must "
 "be listed in <filename>/etc/fstab</filename> and properly configured.  "
 "Configuration Item: <literal>Acquire::cdrom::mount</literal>."
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:94
+#: apt-cdrom.8.xml:102
 msgid ""
 "Rename a disc; change the label of a disc or override the disc's given "
 "label. This option will cause <command>apt-cdrom</command> to prompt for a "
@@ -2074,7 +2082,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:103
+#: apt-cdrom.8.xml:111
 msgid ""
 "No mounting; prevent <command>apt-cdrom</command> from mounting and "
 "unmounting the mount point.  Configuration Item: "
@@ -2082,7 +2090,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:111
+#: apt-cdrom.8.xml:119
 msgid ""
 "Fast Copy; Assume the package files are valid and do not check every "
 "package. This option should be used only if <command>apt-cdrom</command> has "
@@ -2091,7 +2099,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:121
+#: apt-cdrom.8.xml:129
 msgid ""
 "Thorough Package Scan; This option may be needed with some old Debian "
 "1.1/1.2 discs that have Package files in strange places. It takes much "
@@ -2099,7 +2107,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:132
+#: apt-cdrom.8.xml:140
 msgid ""
 "No Changes; Do not change the &sources-list; file and do not write index "
 "files. Everything is still checked however.  Configuration Item: "
@@ -2107,12 +2115,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cdrom.8.xml:145
+#: apt-cdrom.8.xml:153
 msgid "&apt-conf;, &apt-get;, &sources-list;"
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cdrom.8.xml:150
+#: apt-cdrom.8.xml:158
 msgid ""
 "<command>apt-cdrom</command> returns zero on normal operation, decimal 100 "
 "on error."
