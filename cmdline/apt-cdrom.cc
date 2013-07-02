@@ -162,7 +162,7 @@ bool DoAdd(CommandLine &)
    if (count == 0) {
       res = cdrom.Add(&log);
       if (res == false) {
-         _error->Error(_(W_NO_CDROM_FOUND));
+         _error->Error("%s", _(W_NO_CDROM_FOUND));
       }
    }
 
@@ -192,7 +192,7 @@ bool DoIdent(CommandLine &)
    if (count == 0) {
       res = cdrom.Ident(ident, &log);
       if (res == false) {
-         _error->Error(_(W_NO_CDROM_FOUND));
+         _error->Error("%s", _(W_NO_CDROM_FOUND));
       }
    }
    return res;
