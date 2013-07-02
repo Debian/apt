@@ -63,7 +63,6 @@ ExtractTar::ExtractTar(FileFd &Fd,unsigned long Max,string DecompressionProgram)
 
 {
    GZPid = -1;
-   InFd = -1;
    Eof = false;
 }
 									/*}}}*/

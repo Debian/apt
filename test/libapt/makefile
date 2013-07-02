@@ -2,6 +2,7 @@
 BASE=../..
 SUBDIR=test/libapt
 BASENAME=_libapt_test
+APT_DOMAIN=none
 
 # Bring in the default rules
 include ../../buildlib/defaults.mak

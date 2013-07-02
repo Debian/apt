@@ -544,11 +544,9 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
       FileFd Rel;
       Target.Open(TargetF,FileFd::WriteAtomic);
       Rel.Open(prefix + file,FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-	 return false;
       if (CopyFile(Rel,Target) == false)
-	 return false;
-   
+	 return _error->Error("Copying of '%s' for '%s' from '%s' failed", file.c_str(), CDName.c_str(), prefix.c_str());
+
       return true;
 }
 									/*}}}*/

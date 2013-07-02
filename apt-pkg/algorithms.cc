@@ -1444,9 +1444,11 @@ bool pkgProblemResolver::ResolveByKeepInternal()
    return true;
 }
 									/*}}}*/
-// ProblemResolver::InstallProtect - Install all protected packages	/*{{{*/
+// ProblemResolver::InstallProtect - deprecated cpu-eating no-op	/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used to make sure protected packages are installed */
+/* Actions issued with FromUser bit set are protected from further
+   modification (expect by other calls with FromUser set) nowadays , so we
+   don't need to reissue actions here, they are already set in stone. */
 void pkgProblemResolver::InstallProtect()
 {
    pkgDepCache::ActionGroup group(Cache);

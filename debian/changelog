@@ -4,7 +4,29 @@ apt (0.9.9) unstable; urgency=low
   * improve debug output for the Debug::pkgProblemResolver and
     Debug::pkgDepCache::AutoInstall
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 02 Jul 2013 08:26:17 +0200
+  [ David Kalnischkies ]
+  * build the en manpages in subdirectory doc/en
+  * remove -ldl from cdrom and -lutil from apt-get linkage
+  * rewrite pkgOrderList::DepRemove to stop incorrect immediate setting
+    (Closes: 645713)
+  * prefer Essentials over Removals in ordering score
+  * fix priority sorting by prefering higher in MarkInstall
+  * try all providers in order if uninstallable in MarkInstall
+  * do unpacks before configures in SmartConfigure (Closes: #707578)
+  * fix support for multiple patterns in apt-cache search (Closes: #691453)
+  * set Fail flag in FileFd on all errors consistently
+  * don't explicitly init ExtractTar InFd with invalid fd
+  * OpenDescriptor should autoclose fd always on error (Closes: #704608)
+  * fail in CopyFile if the FileFds have error flag set
+  * ensure state-dir exists before coyping cdrom files
+  * fix file location for configure-index.gz in apt.conf(5) (Closes: #711921)
+  * handle missing "Description" in apt-cache show (Closes: #712435)
+  * try defaults if auto-detection failed in apt-cdrom (Closes: #712433)
+  * support \n and \r\n line endings in ReadMessages
+  * do not redownload unchanged InRelease files
+  * trigger NODATA error for invalid InRelease files (Closes: #712486)
+
+ -- David Kalnischkies <kalnischkies@gmail.com>  Sun, 09 Jun 2013 15:06:24 +0200
 
 apt (0.9.8.2) unstable; urgency=low
 
@@ -24,7 +46,6 @@ apt (0.9.8.2) unstable; urgency=low
   [ Raphael Geissert ]
   * Fix crash when the "mirror" method does not find any entry
     (closes: #699303)
-
 
   [ Johan Kiviniemi ]
   * cmdline/apt-key:
