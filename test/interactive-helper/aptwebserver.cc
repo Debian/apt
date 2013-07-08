@@ -341,8 +341,6 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
 int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
-      {0, "simulate-paywall", "aptwebserver::Simulate-Paywall",
-       CommandLine::Boolean},
       {0, "port", "aptwebserver::port", CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
@@ -367,9 +365,7 @@ int main(int const argc, const char * argv[])
       return 1;
    }
 
-   // get the port
    int const port = _config->FindI("aptwebserver::port", 8080);
-   bool const simulate_broken_server = _config->FindB("aptwebserver::Simulate-Paywall", false);
 
    // ensure that we accept all connections: v4 or v6
    int const iponly = 0;
@@ -426,12 +422,8 @@ int main(int const argc, const char * argv[])
       }
    }
 
-   if (simulate_broken_server) {
-      std::clog << "Simulating a broken web server that return nonsense "
-                   "for all querries" << std::endl;
-   } else {
-      std::clog << "Serving ANY file on port: " << port << std::endl;
-   }
+   std::clog << "Serving ANY file on port: " << port << std::endl;
+
    listen(sock, 1);
    /*}}}*/
 
@@ -461,14 +453,6 @@ int main(int const argc, const char * argv[])
 	       // RFC 2616 §14.23 requires Host
 	       sendError(client, 400, *m, sendContent, "Host header is required");
 	       continue;
-	    }
-
-	    if (simulate_broken_server == true) {
-	       std::string data("ni ni ni\n");
-	       addDataHeaders(headers, data);
-	       sendHead(client, 200, headers);
-	       sendData(client, data);
-               continue;
 	    }
 
 	    // string replacements in the requested filename
