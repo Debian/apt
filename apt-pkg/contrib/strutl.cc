@@ -759,7 +759,6 @@ bool ReadMessages(int Fd, vector<string> &List)
       for (char *I = Buffer; I + 1 < End; I++)
       {
 	 if (I[1] != '\n' ||
-
 	       (I[0] != '\n' && strncmp(I, "\r\n\r\n", 4) != 0))
 	    continue;
 	 
