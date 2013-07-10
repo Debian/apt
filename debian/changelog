@@ -1,7 +1,17 @@
 apt (0.9.9ubuntu1) UNRELEASEDsaucy; urgency=low
 
-  * merged from the debian/sid branch
+  * merged from the debian/sid branch:
     - debian/gbp.conf: change build branch to ubuntu/master
+    - use ubuntu keyring and ubuntu archive keyring in apt-key
+    - run update-apt-xapian-index in apt.cron
+    - run apt-key net-update in cron.daily
+    - different example sources.list
+    - APT::pkgPackageManager::MaxLoopCount set to 5000
+    - apport pkgfailure handling
+    - ubuntu changelog download handling
+    - patch for apt cross-building, see http://bugs.debian.org/666772
+    - debian/apt.auto-removal.sh
+      + make kernels auto-removable
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 02 Jul 2013 16:48:08 +0200
 
