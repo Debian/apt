@@ -620,6 +620,9 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << s
 	     << endl;
+      if(_config->FindB("DPkgPM::Progress", false) == true)
+         SendTerminalProgress(PackagesDone/float(PackagesTotal)*100.0);
+
       if(OutStatusFd > 0)
 	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
@@ -858,6 +861,18 @@ bool pkgDPkgPM::CloseLog()
    d->history_out = NULL;
 
    return true;
+}
+									/*}}}*/
+// DPkgPM::SendTerminalProgress 					/*{{{*/
+// ---------------------------------------------------------------------
+/* Send progress info to the terminal
+ */
+void pkgDPkgPM::SendTerminalProgress(float percentage)
+{
+   // FIXME: use colors too
+   std::cout << "\r\n"
+             << "Progress: [" << percentage << "%]"
+             << "\r\n";
 }
 									/*}}}*/
 /*{{{*/
@@ -1274,7 +1289,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       }
       Child = ExecFork();
-            
+      
       // This is the child
       if (Child == 0)
       {
