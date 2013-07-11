@@ -1,10 +1,12 @@
-apt (0.9.9.1) UNRELEASED; urgency=low
+apt (0.9.9.1) unstable; urgency=low
 
   [ Michael Vogt ]
   * debian/rules:
     - call dh_clean in clean (closes: #714980)
   * apt-pkg/packagemanager.cc:
     - increate APT::pkgPackageManager::MaxLoopCount to 5000
+  * cherry pick debian/apt.auto-removal.sh feature from the
+    ubuntu/master branch
 
   [ Steve Langasek ]
   * debian/apt.conf.autoremove: don't include linux-image*,
@@ -22,7 +24,12 @@ apt (0.9.9.1) UNRELEASED; urgency=low
       confusion between similarly-named kernel flavours.
     - Keep linux-backports-modules in sync with installed kernels.
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 05 Jul 2013 16:39:34 +0200
+  [ David Kalnischkies ]
+  * Version 3 for DPkg::Pre-Install-Pkgs with MultiArch info (Closes: #712116)
+  * implement arch+= and arch-= for sources.list
+  * prevent MarkInstall of unsynced Multi-Arch:same siblings
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 11 Jul 2013 20:44:31 +0200
 
 apt (0.9.9) unstable; urgency=low
 
