@@ -158,39 +158,48 @@ usage() {
     echo "If no specific keyring file is given the command applies to all keyring files."
 }
 
-# Determine on which keyring we want to work
-if [ "$1" = "--keyring" ]; then
-        #echo "keyfile given"
-	shift
-	TRUSTEDFILE="$1"
-	if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ] || [ "$2" = 'adv' ]; then
-		GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
-	else
-		echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"
-		exit 1
-	fi
-	shift
-# otherwise use the default
-else
-	#echo "generate list"
-	TRUSTEDFILE="/etc/apt/trusted.gpg"
-	eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
-	eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
-	if [ -r "$TRUSTEDFILE" ]; then
-		GPG="$GPG --keyring $TRUSTEDFILE"
-	fi
-	GPG="$GPG --primary-keyring $TRUSTEDFILE"
-	TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
-	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
-	if [ -d "$TRUSTEDPARTS" ]; then
-		#echo "parts active"
-		for trusted in $(run-parts --list $TRUSTEDPARTS --regex '^.*\.gpg$'); do
-			#echo "part -> $trusted"
-			GPG="$GPG --keyring $trusted"
-		done
-	fi
+while [ -n "$1" ]; do
+   case "$1" in
+      --keyring)
+	 shift
+	 TRUSTEDFILE="$1"
+	 if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ] || [ "$2" = 'adv' ]; then
+	    GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
+	 else
+	    echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"
+	    exit 1
+	 fi
+	 shift
+	 ;;
+      --fakeroot)
+	 requires_root() { true; }
+	 shift
+	 ;;
+      --*)
+	 echo >&2 "Unknown option: $1"
+	 usage
+	 exit 1;;
+      *)
+	 break;;
+   esac
+done
+
+if [ -z "$TRUSTEDFILE" ]; then
+   TRUSTEDFILE="/etc/apt/trusted.gpg"
+   eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
+   eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
+   if [ -r "$TRUSTEDFILE" ]; then
+      GPG="$GPG --keyring $TRUSTEDFILE"
+   fi
+   GPG="$GPG --primary-keyring $TRUSTEDFILE"
+   TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
+   eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
+   if [ -d "$TRUSTEDPARTS" ]; then
+      for trusted in $(run-parts --list $TRUSTEDPARTS --regex '^.*\.gpg$'); do
+	 GPG="$GPG --keyring $trusted"
+      done
+   fi
 fi
-#echo "COMMAND: $GPG"
 
 command="$1"
 if [ -z "$command" ]; then
