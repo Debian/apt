@@ -6,15 +6,23 @@ unset GREP_OPTIONS
 # We don't use a secret keyring, of course, but gpg panics and
 # implodes if there isn't one available
 SECRETKEYRING="$(mktemp)"
-trap "rm -f '${SECRETKEYRING}'" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+CURRENTTRAP="rm -f '${SECRETKEYRING}';"
+trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring ${SECRETKEYRING}"
 
-if [ "$(id -u)" -eq 0 ]; then
-	# we could use a tmpfile here too, but creation of this tends to be time-consuming
-	eval $(apt-config shell TRUSTDBDIR Dir::Etc/d)
-	GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
+eval $(apt-config shell TRUSTDBDIR Dir::Etc/d)
+if [ "$(id -u)" -eq 0 ] || [ -r "${TRUSTDBDIR}/trustdb.gpg" ]; then
+   # root can read/create the file as needed, so use the default
+   true
+else
+   # gpg needs a trustdb to function, but it can't be invalid (not even empty)
+   # so we create a tempory directory to store our fresh readable trustdb in
+   TRUSTDBDIR="$(mktemp -d)"
+   CURRENTTRAP="${CURRENTTRAP} rm -rf '${TRUSTDBDIR}';"
+   trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+   chmod 700 "$TRUSTDBDIR"
 fi
-
+GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
 GPG="$GPG_CMD"
 
 MASTER_KEYRING=""
