@@ -1238,16 +1238,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // if tcgetattr does not return zero there was a error
       // and we do not do any pty magic
-      if (tcgetattr(0, &tt) == 0)
+      _error->PushToStack();
+      if (tcgetattr(STDOUT_FILENO, &tt) == 0)
       {
 	 ioctl(0, TIOCGWINSZ, (char *)&win);
-	 if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+	 if (openpty(&master, &slave, NULL, &tt, &win) < 0)
 	 {
-	    const char *s = _("Can not write log, openpty() "
-	                      "failed (/dev/pts not mounted?)\n");
-	    fprintf(stderr, "%s",s);
-            if(d->term_out)
-              fprintf(d->term_out, "%s",s);
+	    _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
 	    master = slave = -1;
 	 }  else {
 	    struct termios rtt;
@@ -1265,6 +1262,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
 	 }
       }
+      // complain only if stdout is either a terminal (but still failed) or is an invalid
+      // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
+      else if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
+         _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
+
+      if (_error->PendingError() == true)
+	 _error->DumpErrors(std::cerr);
+      _error->RevertToStack();
+
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
