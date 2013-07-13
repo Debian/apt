@@ -177,7 +177,7 @@ setupenvironment() {
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
-	if ! $(which dpkg) --assert-multi-arch 2>&1 > /dev/null; then
+	if ! $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
 		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
@@ -225,7 +225,7 @@ configdpkg() {
 			echo -n > rootdir/var/lib/dpkg/status
 		fi
 	fi
-	if $(which dpkg) --assert-multi-arch 2>&1 > /dev/null; then
+	if $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
 		local ARCHS="$(getarchitectures)"
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
@@ -851,7 +851,7 @@ testequalor2() {
 	echo "$2" > $COMPAREFILE2
 	shift 2
 	msgtest "Test for equality OR of" "$*"
-	$* 2>&1 1> $COMPAREAGAINST
+	$* >$COMPAREAGAINST 2>&1
 	(checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
 		checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
 		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(checkdiff $COMPAREFILE1 $COMPAREAGAINST)" \
