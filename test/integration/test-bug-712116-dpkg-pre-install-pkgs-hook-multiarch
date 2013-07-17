@@ -13,6 +13,13 @@ buildsimplenativepackage 'libsame' 'i386,amd64' '2' 'unstable' 'Multi-Arch: same
 buildsimplenativepackage 'stuff' 'i386,amd64' '1' 'stable' 'Depends: libsame (= 1), toolkit (= 1)'
 buildsimplenativepackage 'stuff' 'i386,amd64' '2' 'unstable' 'Depends: libsame (= 2), toolkit (= 2)'
 
+setupsimplenativepackage 'confpkg' 'amd64' '1' 'unstable'
+BUILDDIR='incoming/confpkg-1'
+echo 'foo "bar";' > ${BUILDDIR}/pkg.conf
+echo 'pkg.conf	/etc/pkg.conf' >> ${BUILDDIR}/debian/install
+buildpackage "$BUILDDIR" 'unstable' 'main' 'amd64'
+rm -rf "$BUILDDIR"
+
 setupaptarchive
 
 hook='pre-install-pkgs'
@@ -93,3 +100,21 @@ testfileequal "${hook}-v3.list" 'libsame 2 amd64 same > - - none **REMOVE**
 stuff 2 i386 none > - - none **REMOVE**
 libsame 2 i386 same > - - none **REMOVE**
 toolkit 2 amd64 foreign > - - none **REMOVE**'
+
+observehook install confpkg
+testfileequal "${hook}-v2.list" 'confpkg - < 1 **CONFIGURE**'
+testfileequal "${hook}-v3.list" 'confpkg - - none < 1 amd64 none **CONFIGURE**'
+
+observehook remove confpkg
+testfileequal "${hook}-v2.list" 'confpkg 1 > - **REMOVE**'
+testfileequal "${hook}-v3.list" 'confpkg 1 amd64 none > - - none **REMOVE**'
+
+msgtest 'Conffiles of package remained after remove' 'confpkg'
+dpkg -l confpkg | grep -q '^rc' && msgpass || msgfail
+
+observehook purge confpkg
+testfileequal "${hook}-v2.list" 'confpkg 1 > - **REMOVE**'
+testfileequal "${hook}-v3.list" 'confpkg 1 amd64 none > - - none **REMOVE**'
+
+msgtest 'Conffiles are gone after purge' 'confpkg'
+dpkg -l confpkg 2>/dev/null | grep -q '^rc' && msgfail || msgpass
