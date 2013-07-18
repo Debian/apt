@@ -137,3 +137,29 @@ X-Some-Flag: yes
 X-Foo-Flag: Something with a Description
 X-Bar-Flag: no
 " aptcache show apt-intermixed3
+
+msgtest 'Test that no description does not destroy' 'showpkg'
+aptcache showpkg apt-none | sed 's#/tmp/.*_aptarchive_#/tmp/aptarchive_#' >showpkg.explosion && msgpass || msgfail
+testfileequal showpkg.explosion 'Package: apt-none
+Versions: 
+0.9.7.8 (/tmp/aptarchive_Packages)
+
+
+Reverse Depends: 
+Dependencies: 
+0.9.7.8 - 
+Provides: 
+0.9.7.8 - 
+Reverse Provides: '
+
+testempty aptcache search nonexistentstring
+
+# packages without a description can't be found
+testequal 'apt-normal - commandline package manager
+apt-both-below - commandline package manager
+apt-both-middle - commandline package manager
+apt-both-top - commandline package manager
+apt-trans - commandline package manager
+apt-intermixed - commandline package manager
+apt-intermixed2 - commandline package manager
+apt-intermixed3 - commandline package manager' aptcache search apt

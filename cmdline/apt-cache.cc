@@ -1130,12 +1130,14 @@ bool Dotty(CommandLine &CmdL)
 
 static unsigned char const* skipDescriptionFields(unsigned char const * DescP)
 {
+   char const * const TagName = "\nDescription";
+   size_t const TagLen = strlen(TagName);
    while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
    {
       if (DescP[1] == ' ')
 	 DescP += 2;
-      else if (strncmp((char*)DescP, "\nDescription", strlen("\nDescription")) == 0)
-	 DescP += strlen("\nDescription");
+      else if (strncmp((char*)DescP, TagName, TagLen) == 0)
+	 DescP += TagLen;
       else
 	 break;
    }
@@ -1166,11 +1168,12 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
       return false;
 
-   // Read the record
-   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+1];
-   Buffer[V.FileList()->Size] = '\n';
-   if (PkgF.Seek(V.FileList()->Offset) == false ||
-       PkgF.Read(Buffer,V.FileList()->Size) == false)
+   // Read the record (and ensure that it ends with a newline and NUL)
+   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+2];
+   Buffer[Vf->Size] = '\n';
+   Buffer[Vf->Size+1] = '\0';
+   if (PkgF.Seek(Vf->Offset) == false ||
+       PkgF.Read(Buffer,Vf->Size) == false)
    {
       delete [] Buffer;
       return false;
@@ -1181,7 +1184,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    if (DescP != NULL)
       ++DescP;
    else
-      DescP = Buffer + V.FileList()->Size;
+      DescP = Buffer + Vf->Size;
 
    // Write all but Description
    if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
@@ -1211,7 +1214,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
       const unsigned char *End = (unsigned char*)strstr((char*)DescP, "\nDescription");
       if (End == NULL)
       {
-	 End = &Buffer[V.FileList()->Size];
+	 End = &Buffer[Vf->Size];
 	 DescP = NULL;
       }
       else
@@ -1318,7 +1321,11 @@ bool Search(CommandLine &CmdL)
       pkgCache::VerIterator V = Plcy->GetCandidateVer(P);
       if (V.end() == false)
       {
-	 DFList[G->ID].Df = V.TranslatedDescription().FileList();
+	 pkgCache::DescIterator const D = V.TranslatedDescription();
+	 //FIXME: packages without a description can't be found
+	 if (D.end() == true)
+	    continue;
+	 DFList[G->ID].Df = D.FileList();
 	 DFList[G->ID].ID = G->ID;
       }
 
@@ -1333,7 +1340,11 @@ bool Search(CommandLine &CmdL)
 	    continue;
 
 	 unsigned long id = Prv.OwnerPkg().Group()->ID;
-	 DFList[id].Df = V.TranslatedDescription().FileList();
+	 pkgCache::DescIterator const D = V.TranslatedDescription();
+	 //FIXME: packages without a description can't be found
+	 if (D.end() == true)
+	    continue;
+	 DFList[id].Df = D.FileList();
 	 DFList[id].ID = id;
 
 	 size_t const PrvPatternOffset = id * NumPatterns;
