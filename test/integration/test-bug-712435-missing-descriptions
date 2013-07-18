@@ -52,7 +52,32 @@ $PACKAGESTANZA
 Description-md5: dddddddddddddddddddddddddddddddd
 
 Package: apt-none
-$PACKAGESTANZA" > aptarchive/Packages
+$PACKAGESTANZA
+
+Package: apt-intermixed
+$PACKAGESTANZA
+$DESCRIPTION
+X-Some-Flag: yes
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+Package: apt-intermixed2
+$PACKAGESTANZA
+$DESCRIPTION
+X-Some-Flag: yes
+$TRANSDESCRIPTION
+X-Foo-Flag: Something with a Description
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Bar-Flag: no
+
+Package: apt-intermixed3
+$PACKAGESTANZA
+$DESCRIPTION
+X-Some-Flag: yes
+$TRANSDESCRIPTION
+X-Foo-Flag: Something with a Description
+X-Bar-Flag: no
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" > aptarchive/Packages
+
 
 setupaptarchive
 
@@ -87,3 +112,28 @@ Description-md5: dddddddddddddddddddddddddddddddd
 testequal "Package: apt-none
 $PACKAGESTANZA
 " aptcache show apt-none
+
+testequal "Package: apt-intermixed
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Some-Flag: yes
+" aptcache show apt-intermixed
+
+testequal "Package: apt-intermixed2
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Some-Flag: yes
+X-Foo-Flag: Something with a Description
+X-Bar-Flag: no
+" aptcache show apt-intermixed2
+
+testequal "Package: apt-intermixed3
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Some-Flag: yes
+X-Foo-Flag: Something with a Description
+X-Bar-Flag: no
+" aptcache show apt-intermixed3

@@ -1127,6 +1127,22 @@ bool Dotty(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* This displays the package record from the proper package index file. 
    It is not used by DumpAvail for performance reasons. */
+
+static unsigned char const* skipDescriptionFields(unsigned char const * DescP)
+{
+   while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
+   {
+      if (DescP[1] == ' ')
+	 DescP += 2;
+      else if (strncmp((char*)DescP, "\nDescription", strlen("\nDescription")) == 0)
+	 DescP += strlen("\nDescription");
+      else
+	 break;
+   }
+   if (DescP != NULL)
+      ++DescP;
+   return DescP;
+}
 bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 {
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1184,32 +1200,34 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
       cout << std::endl << "Description-md5: " << Desc.md5() << std::endl;
 
       // Find the first field after the description (if there is any)
-      while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
-      {
-	 if (DescP[1] == ' ')
-	    DescP += 2;
-	 else if (strncmp((char*)DescP, "\nDescription", strlen("\nDescription")) == 0)
-	    DescP += strlen("\nDescription");
-	 else
-	    break;
-      }
-      if (DescP != NULL)
-	 ++DescP;
+      DescP = skipDescriptionFields(DescP);
    }
-   // if we have no translation, we found a lonely Description-md5, so don't skip it
+   // else we have no translation, so we found a lonely Description-md5 -> don't skip it
 
-   if (DescP != NULL)
+   // write the rest of the buffer, but skip mixed in Descriptions* fields
+   while (DescP != NULL)
    {
-      // write the rest of the buffer
-      const unsigned char *end=&Buffer[V.FileList()->Size];
-      if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP))
+      const unsigned char * const Start = DescP;
+      const unsigned char *End = (unsigned char*)strstr((char*)DescP, "\nDescription");
+      if (End == NULL)
+      {
+	 End = &Buffer[V.FileList()->Size];
+	 DescP = NULL;
+      }
+      else
+      {
+	 ++End; // get the newline into the output
+	 DescP = skipDescriptionFields(End + strlen("Description"));
+      }
+      size_t const length = End - Start;
+      if (fwrite(Start, 1, length, stdout) < length)
       {
 	 delete [] Buffer;
 	 return false;
       }
    }
 
-   // write a final newline (after the description)
+   // write a final newline after the last field
    cout<<endl;
    delete [] Buffer;
 
