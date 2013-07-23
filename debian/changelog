@@ -4,6 +4,12 @@ apt (0.9.9.3) UNRELEASED; urgency=low
   * debian/apt.auto-removal.sh:
     - do not include debug symbol packages for the kernel in the 
       blacklist (closes: #717616)
+  
+  [ Michael Vogt ]
+  * debian/apt.postinst:
+    - run /etc/kernel/postinst.d/apt-auto-removal once on upgrade
+      to ensure that the correct auto-removal list is generated
+      (closes: #717615)
 
  -- Michael Vogt <mvo@debian.org>  Tue, 23 Jul 2013 19:54:31 +0200
 
