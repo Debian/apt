@@ -35,7 +35,7 @@ SHA1-History:
 SHA1-Patches:
  7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
  $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
-generatereleasefiles
+generatereleasefiles '+1hour'
 signreleasefiles
 find aptarchive -name 'Packages*' -type f -delete
 aptget update -qq

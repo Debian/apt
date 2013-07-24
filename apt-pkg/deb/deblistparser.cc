@@ -219,8 +219,12 @@ MD5SumValue debListParser::Description_md5()
    string const value = Section.FindS("Description-md5");
    if (value.empty() == true)
    {
+      std::string const desc = Description() + "\n";
+      if (desc == "\n")
+	 return MD5SumValue();
+
       MD5Summation md5;
-      md5.Add((Description() + "\n").c_str());
+      md5.Add(desc.c_str());
       return md5.Result();
    }
    else if (likely(value.size() == 32))

@@ -23,9 +23,18 @@
 /** \brief generates and run the command to verify a file with gpgv
  *
  * If File and FileSig specify the same file it is assumed that we
- * deal with a clear-signed message. In that case the file will be
- * rewritten to be in a good-known format without uneeded whitespaces
- * and additional messages (unsigned or signed).
+ * deal with a clear-signed message. Note that the method will accept
+ * and validate files which include additional (unsigned) messages
+ * without complaining. Do NOT open files accepted by this method
+ * for reading. Use #OpenMaybeClearSignedFile to access the message
+ * instead to ensure you are only reading signed data.
+ *
+ * The method does not return, but has some noteable exit-codes:
+ * 111 signals an internal error like the inability to execute gpgv,
+ * 112 indicates a clear-signed file which doesn't include a message,
+ *  which can happen if APT is run while on a network requiring
+ *  authentication before usage (e.g. in hotels)
+ * All other exit-codes are passed-through from gpgv.
  *
  * @param File is the message (unsigned or clear-signed)
  * @param FileSig is the signature (detached or clear-signed)

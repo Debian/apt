@@ -18,6 +18,7 @@ MAJOR=1.5
 MINOR=0
 SLIBS=$(PTHREADLIB) -lapt-pkg
 APT_DOMAIN:=libapt-inst$(MAJOR)
+LIBRARYDEPENDS=$(LIB)/libapt-pkg.so
 
 # Source code for the contributed non-core things
 SOURCE = contrib/extracttar.cc contrib/arfile.cc

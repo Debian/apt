@@ -1,6 +1,7 @@
 # -*- make -*-
 BASE=../..
 SUBDIR=test/interactive-helper
+APT_DOMAIN=none
 
 # Bring in the default rules
 include ../../buildlib/defaults.mak
@@ -37,3 +38,10 @@ include $(PROGRAM_H)
 #SLIBS = -lapt-pkg -lrpm
 #SOURCE = rpmver.cc
 #include $(PROGRAM_H)
+
+# Program for testing udevcdrom
+PROGRAM=aptwebserver
+SLIBS = -lapt-pkg
+LIB_MAKES = apt-pkg/makefile
+SOURCE = aptwebserver.cc
+include $(PROGRAM_H)

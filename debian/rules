@@ -110,6 +110,7 @@ build/build-manpages-stamp: build/configure-stamp
 
 clean:
 	dh_testdir
+	dh_clean
 
 	[ ! -f Makefile ] || $(MAKE) clean distclean
 	rm -rf build
@@ -182,6 +183,8 @@ apt: build build-manpages
 # apt install
 #
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
+	cp debian/apt.auto-removal.sh debian/$@/etc/kernel/postinst.d/apt-auto-removal
+	chmod 755 debian/$@/etc/kernel/postinst.d/apt-auto-removal
 
 	# make rosetta happy and remove pot files in po/ (but leave stuff
 	# in po/domains/* untouched) and cp *.po into each domain dir
@@ -203,7 +206,7 @@ apt: build build-manpages
 	dh_bugfiles -p$@
 	dh_lintian -p$@
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
-	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/en/%.[158],$(apt_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt_MANPAGES)))
 	dh_installcron -p$@
 	dh_installdocs -p$@
 	dh_installchangelogs -p$@
@@ -253,7 +256,7 @@ apt-utils: build build-manpages
 	dh_installexamples -p$@
 
 	# Install the man pages..
-	dh_installman -p$@ $(wildcard $(patsubst %,doc/%.[158],$(apt-utils_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt-utils_MANPAGES)))
+	dh_installman -p$@ $(wildcard $(patsubst %,doc/en/%.[158],$(apt-utils_MANPAGES)) $(patsubst %,doc/*/%.*.[158],$(apt-utils_MANPAGES)))
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@

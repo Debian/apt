@@ -1,3 +1,68 @@
+apt (0.9.9.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * debian/rules:
+    - call dh_clean in clean (closes: #714980)
+  * apt-pkg/packagemanager.cc:
+    - increate APT::pkgPackageManager::MaxLoopCount to 5000
+  * cherry pick debian/apt.auto-removal.sh feature from the
+    ubuntu/master branch
+
+  [ Steve Langasek ]
+  * debian/apt.conf.autoremove: don't include linux-image*,
+    linux-restricted-modules*, and linux-ubuntu-modules* packages in the
+    list to never be autoremoved.
+  * debian/apt.auto-removal.sh, debian/rules, debian/apt.dirs: install new
+    script to /etc/kernel/postinst.d/ which ensures we only automatically
+    keep the currently-running kernel, the being-installed kernel, and the
+    newest kernel, so we don't fill /boot up with an unlimited number of
+    kernels.  LP: #923876.
+
+  [ Adam Conrad ]
+  * Fix up two things in debian/apt.auto-removal.sh:
+    - Use exact matches with $-terminated regexes, so we don't get
+      confusion between similarly-named kernel flavours.
+    - Keep linux-backports-modules in sync with installed kernels.
+
+  [ David Kalnischkies ]
+  * Version 3 for DPkg::Pre-Install-Pkgs with MultiArch info (Closes: #712116)
+  * implement arch+= and arch-= for sources.list
+  * prevent MarkInstall of unsynced Multi-Arch:same siblings
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 11 Jul 2013 20:44:31 +0200
+
+apt (0.9.9) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * improve debug output for the Debug::pkgProblemResolver and
+    Debug::pkgDepCache::AutoInstall
+  * improve apt-cdrom output when no CD-ROM can be auto-detected
+  * document --no-auto-detect in apt-cdrom
+
+  [ David Kalnischkies ]
+  * build the en manpages in subdirectory doc/en
+  * remove -ldl from cdrom and -lutil from apt-get linkage
+  * rewrite pkgOrderList::DepRemove to stop incorrect immediate setting
+    (Closes: 645713)
+  * prefer Essentials over Removals in ordering score
+  * fix priority sorting by prefering higher in MarkInstall
+  * try all providers in order if uninstallable in MarkInstall
+  * do unpacks before configures in SmartConfigure (Closes: #707578)
+  * fix support for multiple patterns in apt-cache search (Closes: #691453)
+  * set Fail flag in FileFd on all errors consistently
+  * don't explicitly init ExtractTar InFd with invalid fd
+  * OpenDescriptor should autoclose fd always on error (Closes: #704608)
+  * fail in CopyFile if the FileFds have error flag set
+  * ensure state-dir exists before coyping cdrom files
+  * fix file location for configure-index.gz in apt.conf(5) (Closes: #711921)
+  * handle missing "Description" in apt-cache show (Closes: #712435)
+  * try defaults if auto-detection failed in apt-cdrom (Closes: #712433)
+  * support \n and \r\n line endings in ReadMessages
+  * do not redownload unchanged InRelease files
+  * trigger NODATA error for invalid InRelease files (Closes: #712486)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 02 Jul 2013 08:58:33 +0200
+
 apt (0.9.8.2) unstable; urgency=low
 
   [ Programs translations ]
@@ -16,7 +81,6 @@ apt (0.9.8.2) unstable; urgency=low
   [ Raphael Geissert ]
   * Fix crash when the "mirror" method does not find any entry
     (closes: #699303)
-
 
   [ Johan Kiviniemi ]
   * cmdline/apt-key:

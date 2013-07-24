@@ -301,9 +301,8 @@ bool pkgOrderList::OrderConfigure()
 /* Higher scores order earlier */
 int pkgOrderList::Score(PkgIterator Pkg)
 {
-   static int const ScoreDelete = _config->FindI("OrderList::Score::Delete", 500);
-
-   // Removal is always done first
+   // Removals should be done after we dealt with essentials
+   static int const ScoreDelete = _config->FindI("OrderList::Score::Delete", 100);
    if (Cache[Pkg].Delete() == true)
       return ScoreDelete;
 
@@ -893,149 +892,136 @@ bool pkgOrderList::DepConfigure(DepIterator D)
 									/*}}}*/
 // OrderList::DepRemove - Removal ordering				/*{{{*/
 // ---------------------------------------------------------------------
-/* Removal visits all reverse depends. It considers if the dependency
-   of the Now state version to see if it is okay with removing this
-   package. This check should always fail, but is provided for symetery
-   with the other critical handlers.
- 
-   Loops are preprocessed and logged. Removal loops can also be
-   detected in the critical handler. They are characterized by an
-   old version of A depending on B but the new version of A conflicting
-   with B, thus either A or B must break to install. */
-bool pkgOrderList::DepRemove(DepIterator D)
+/* Checks all given dependencies if they are broken by the remove of a
+   package and if so fix it by visiting another provider or or-group
+   member to ensure that the dependee keeps working which is especially
+   important for Immediate packages like e.g. those depending on an
+   awk implementation. If the dependency can't be fixed with another
+   package this means an upgrade of the package will solve the problem. */
+bool pkgOrderList::DepRemove(DepIterator Broken)
 {
-   if (D.Reverse() == false)
+   if (Broken.Reverse() == false)
       return true;
-   for (; D.end() == false; ++D)
-      if (D->Type == pkgCache::Dep::Depends || D->Type == pkgCache::Dep::PreDepends)
+
+   for (; Broken.end() == false; ++Broken)
+   {
+      if (Broken->Type != pkgCache::Dep::Depends &&
+	    Broken->Type != pkgCache::Dep::PreDepends)
+	 continue;
+
+      PkgIterator BrokenPkg = Broken.ParentPkg();
+      // uninstalled packages can't break via a remove
+      if (BrokenPkg->CurrentVer == 0)
+	 continue;
+
+      // if its already added, we can't do anything useful
+      if (IsFlag(BrokenPkg, AddPending) == true || IsFlag(BrokenPkg, Added) == true)
+	 continue;
+
+      // if the dependee is going to be removed, visit it now
+      if (Cache[BrokenPkg].Delete() == true)
+	 return VisitNode(BrokenPkg, "Remove-Dependee");
+
+      // The package stays around, so find out how this is possible
+      for (DepIterator D = BrokenPkg.CurrentVer().DependsList(); D.end() == false;)
       {
-	 // Duplication elimination, consider the current version only
-	 if (D.ParentPkg().CurrentVer() != D.ParentVer())
-	    continue;
-
-	 /* We wish to see if the dep on the parent package is okay
-	    in the removed (install) state of the target pkg. */
-	 bool tryFixDeps = false;
-	 if (CheckDep(D) == true)
+	 // only important or-groups need fixing
+	 if (D->Type != pkgCache::Dep::Depends &&
+	       D->Type != pkgCache::Dep::PreDepends)
 	 {
-	    // We want to catch loops with the code below.
-	    if (IsFlag(D.ParentPkg(),AddPending) == false)
-	       continue;
-	 }
-	 else
-	    tryFixDeps = true;
-
-	 // This is the loop detection
-	 if (IsFlag(D.ParentPkg(),Added) == true || 
-	     IsFlag(D.ParentPkg(),AddPending) == true)
-	 {
-	    if (IsFlag(D.ParentPkg(),AddPending) == true)
-	       AddLoop(D);
+	    ++D;
 	    continue;
 	 }
 
-	 if (tryFixDeps == true)
+	 // Start is the beginning of the or-group, D is the first one after or
+	 DepIterator Start = D;
+	 bool foundBroken = false;
+	 for (bool LastOR = true; D.end() == false && LastOR == true; ++D)
 	 {
-	    for (pkgCache::DepIterator F = D.ParentPkg().CurrentVer().DependsList();
-		 F.end() == false; ++F)
+	    LastOR = (D->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or;
+	    if (D == Broken)
+	       foundBroken = true;
+	 }
+
+	 // this or-group isn't the broken one: keep searching
+	 if (foundBroken == false)
+	    continue;
+
+	 // iterate over all members of the or-group searching for a ready replacement
+	 bool readyReplacement = false;
+	 for (DepIterator OrMember = Start; OrMember != D && readyReplacement == false; ++OrMember)
+	 {
+	    Version ** Replacements = OrMember.AllTargets();
+	    for (Version **R = Replacements; *R != 0; ++R)
 	    {
-	       if (F->Type != pkgCache::Dep::Depends && F->Type != pkgCache::Dep::PreDepends)
+	       VerIterator Ver(Cache,*R);
+	       // only currently installed packages can be a replacement
+	       PkgIterator RPkg = Ver.ParentPkg();
+	       if (RPkg.CurrentVer() != Ver)
 		  continue;
-	       // Check the Providers
-	       if (F.TargetPkg()->ProvidesList != 0)
-	       {
-		  pkgCache::PrvIterator Prov = F.TargetPkg().ProvidesList();
-		  for (; Prov.end() == false; ++Prov)
-		  {
-		     pkgCache::PkgIterator const P = Prov.OwnerPkg();
-		     if (IsFlag(P, InList) == true &&
-			 IsFlag(P, AddPending) == true &&
-			 IsFlag(P, Added) == false &&
-			 Cache[P].InstallVer == 0)
-			break;
-		  }
-		  if (Prov.end() == false)
-		     for (pkgCache::PrvIterator Prv = F.TargetPkg().ProvidesList();
-			  Prv.end() == false; ++Prv)
-		     {
-			pkgCache::PkgIterator const P = Prv.OwnerPkg();
-			if (IsFlag(P, InList) == true &&
-			    IsFlag(P, AddPending) == false &&
-			    Cache[P].InstallVer != 0 &&
-			    VisitNode(P, "Remove-P") == true)
-			{
-			   Flag(P, Immediate);
-			   tryFixDeps = false;
-			   break;
-			}
-		     }
-		  if (tryFixDeps == false)
-		     break;
-	       }
 
-	       // Check for Or groups
-	       if ((F->CompareOp & pkgCache::Dep::Or) != pkgCache::Dep::Or)
+	       // packages going to be removed can't be a replacement
+	       if (Cache[RPkg].Delete() == true)
 		  continue;
-	       // Lets see if the package is part of the Or group
-	       pkgCache::DepIterator S = F;
-	       for (; S.end() == false; ++S)
-	       {
-		  if (S.TargetPkg() == D.TargetPkg())
-		     break;
-		  if ((S->CompareOp & pkgCache::Dep::Or) != pkgCache::Dep::Or ||
-		      CheckDep(S)) // Or group is satisfied by another package
-		     for (;S.end() == false; ++S);
-	       }
-	       if (S.end() == true)
-		  continue;
-	       // skip to the end of the or group
-	       for (;S.end() == false && (S->CompareOp & pkgCache::Dep::Or) == pkgCache::Dep::Or; ++S);
-	       ++S;
-	       // The soon to be removed is part of the Or group
-	       // start again in the or group and find something which will serve as replacement
-	       for (; F.end() == false && F != S; ++F)
-	       {
-		  if (IsFlag(F.TargetPkg(), InList) == true &&
-		      IsFlag(F.TargetPkg(), AddPending) == false &&
-		      Cache[F.TargetPkg()].InstallVer != 0 &&
-		      VisitNode(F.TargetPkg(), "Remove-Target") == true)
-		  {
-		     Flag(F.TargetPkg(), Immediate);
-		     tryFixDeps = false;
-		     break;
-		  }
-		  else if (F.TargetPkg()->ProvidesList != 0)
-		  {
-		     pkgCache::PrvIterator Prv = F.TargetPkg().ProvidesList();
-		     for (; Prv.end() == false; ++Prv)
-		     {
-			if (IsFlag(Prv.OwnerPkg(), InList) == true &&
-			    IsFlag(Prv.OwnerPkg(), AddPending) == false &&
-			    Cache[Prv.OwnerPkg()].InstallVer != 0 &&
-			    VisitNode(Prv.OwnerPkg(), "Remove-Owner") == true)
-			{
-			   Flag(Prv.OwnerPkg(), Immediate);
-			   tryFixDeps = false;
-			   break;
-			}
-		     }
-		     if (Prv.end() == false)
-			break;
-		  }
-	       }
-	       if (tryFixDeps == false)
-		  break;
+
+	       readyReplacement = true;
+	       break;
 	    }
+	    delete[] Replacements;
 	 }
 
-	 // Skip over missing files
-	 if (IsMissing(D.ParentPkg()) == true)
+	 // something else is ready to take over, do nothing
+	 if (readyReplacement == true)
 	    continue;
-	 
-	 if (VisitNode(D.ParentPkg(), "Remove-Parent") == false)
+
+	 // see if we can visit a replacement
+	 bool visitReplacement = false;
+	 for (DepIterator OrMember = Start; OrMember != D && visitReplacement == false; ++OrMember)
+	 {
+	    Version ** Replacements = OrMember.AllTargets();
+	    for (Version **R = Replacements; *R != 0; ++R)
+	    {
+	       VerIterator Ver(Cache,*R);
+	       // consider only versions we plan to install
+	       PkgIterator RPkg = Ver.ParentPkg();
+	       if (Cache[RPkg].Install() == false || Cache[RPkg].InstallVer != Ver)
+		  continue;
+
+	       // loops are not going to help us, so don't create them
+	       if (IsFlag(RPkg, AddPending) == true)
+		  continue;
+
+	       if (IsMissing(RPkg) == true)
+		  continue;
+
+	       visitReplacement = true;
+	       if (IsFlag(BrokenPkg, Immediate) == false)
+	       {
+		  if (VisitNode(RPkg, "Remove-Rep") == true)
+		     break;
+	       }
+	       else
+	       {
+		  Flag(RPkg, Immediate);
+		  if (VisitNode(RPkg, "Remove-ImmRep") == true)
+		     break;
+	       }
+	       visitReplacement = false;
+	    }
+	    delete[] Replacements;
+	 }
+	 if (visitReplacement == true)
+	    continue;
+
+	 // the broken package in current version can't be fixed, so install new version
+	 if (IsMissing(BrokenPkg) == true)
+	    break;
+
+	 if (VisitNode(BrokenPkg, "Remove-Upgrade") == false)
 	    return false;
       }
-   
+   }
+
    return true;
 }
 									/*}}}*/

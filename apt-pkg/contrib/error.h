@@ -123,6 +123,25 @@ public:									/*{{{*/
 	bool InsertErrno(MsgType const &type, const char* Function,
 			 const char* Description,...) __like_printf(4) __cold;
 
+	/** \brief adds an errno message with the given type
+	 *
+	 * args needs to be initialized with va_start and terminated
+	 * with va_end by the caller. msgSize is also an out-parameter
+	 * in case the msgSize was not enough to store the complete message.
+	 *
+	 * \param type of the error message
+	 * \param Function which failed
+	 * \param Description is the format string for args
+	 * \param args list from a printf-like function
+	 * \param errsv is the errno the error is for
+	 * \param msgSize is the size of the char[] used to store message
+	 * \return true if the message was added, false if not - the caller
+	 * should call this method again in that case
+	 */
+	bool InsertErrno(MsgType type, const char* Function,
+			 const char* Description, va_list &args,
+			 int const errsv, size_t &msgSize);
+
 	/** \brief add an fatal error message to the list
 	 *
 	 *  Most of the stuff we consider as "error" is also "fatal" for
@@ -184,6 +203,22 @@ public:									/*{{{*/
 	 * \param Description of the error
 	 */
 	bool Insert(MsgType const &type, const char* Description,...) __like_printf(3) __cold;
+
+	/** \brief adds an error message with the given type
+	 *
+	 * args needs to be initialized with va_start and terminated
+	 * with va_end by the caller. msgSize is also an out-parameter
+	 * in case the msgSize was not enough to store the complete message.
+	 *
+	 * \param type of the error message
+	 * \param Description is the format string for args
+	 * \param args list from a printf-like function
+	 * \param msgSize is the size of the char[] used to store message
+	 * \return true if the message was added, false if not - the caller
+	 * should call this method again in that case
+	 */
+	bool Insert(MsgType type, const char* Description,
+			 va_list &args, size_t &msgSize) __cold;
 
 	/** \brief is an error in the list?
 	 *
@@ -305,12 +340,6 @@ private:								/*{{{*/
 	};
 
 	std::list<MsgStack> Stacks;
-
-	bool InsertErrno(MsgType type, const char* Function,
-			 const char* Description, va_list &args,
-			 int const errsv, size_t &msgSize);
-	bool Insert(MsgType type, const char* Description,
-			 va_list &args, size_t &msgSize);
 									/*}}}*/
 };
 									/*}}}*/

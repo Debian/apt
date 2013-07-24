@@ -1,0 +1,106 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'native'
+
+insertpackage 'unstable' 'foo' 'all' '1' 'Provides: stuff' 'important'
+insertpackage 'unstable' 'bar' 'all' '1' 'Provides: stuff' 'optional'
+insertpackage 'unstable' 'baz' 'all' '1' 'Provides: stuff' 'extra'
+insertpackage 'unstable' 'awesome' 'all' '1' 'Depends: stuff'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  awesome foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf awesome (1 unstable [all])' aptget install awesome -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  awesome foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf awesome (1 unstable [all])' aptget install awesome foo -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'bar' is not installed, so not removed
+Package 'baz' is not installed, so not removed
+The following extra packages will be installed:
+  foo
+The following NEW packages will be installed:
+  awesome foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf foo (1 unstable [all])
+Conf awesome (1 unstable [all])" aptget install awesome bar- baz- -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'foo' is not installed, so not removed
+The following extra packages will be installed:
+  bar
+The following NEW packages will be installed:
+  awesome bar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf bar (1 unstable [all])
+Conf awesome (1 unstable [all])" aptget install awesome foo- -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'foo' is not installed, so not removed
+Package 'baz' is not installed, so not removed
+The following extra packages will be installed:
+  bar
+The following NEW packages will be installed:
+  awesome bar
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf bar (1 unstable [all])
+Conf awesome (1 unstable [all])" aptget install awesome foo- baz- -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'foo' is not installed, so not removed
+Package 'bar' is not installed, so not removed
+The following extra packages will be installed:
+  baz
+The following NEW packages will be installed:
+  awesome baz
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst baz (1 unstable [all])
+Inst awesome (1 unstable [all])
+Conf baz (1 unstable [all])
+Conf awesome (1 unstable [all])" aptget install awesome foo- bar- -s
+
+testequal "Reading package lists...
+Building dependency tree...
+Package 'foo' is not installed, so not removed
+Package 'bar' is not installed, so not removed
+Package 'baz' is not installed, so not removed
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ awesome : Depends: stuff
+E: Unable to correct problems, you have held broken packages." aptget install awesome foo- bar- baz- -s
