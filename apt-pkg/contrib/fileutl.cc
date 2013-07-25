@@ -1218,11 +1218,9 @@ FileFd::~FileFd()
 {
    Close();
    if (d != NULL)
-   {
       d->CloseDown(FileName);
-      delete d;
-      d = NULL;
-   }
+   delete d;
+   d = NULL;
 }
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
