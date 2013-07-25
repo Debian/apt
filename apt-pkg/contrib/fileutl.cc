@@ -244,17 +244,21 @@ int GetLock(string File,bool Errors)
    fl.l_len = 0;
    if (fcntl(FD,F_SETLK,&fl) == -1)
    {
-      if (errno == ENOLCK)
-      {
-	 _error->Warning(_("Not using locking for nfs mounted lock file %s"),File.c_str());
-	 return dup(0);       // Need something for the caller to close	 
-      }      
-      if (Errors == true)
-	 _error->Errno("open",_("Could not get lock %s"),File.c_str());
-      
+      // always close to not leak resources
       int Tmp = errno;
       close(FD);
       errno = Tmp;
+
+      if (errno == ENOLCK)
+      {
+
+	 _error->Warning(_("Not using locking for nfs mounted lock file %s"),File.c_str());
+	 return dup(0);       // Need something for the caller to close	 
+      }
+  
+      if (Errors == true)
+	 _error->Errno("open",_("Could not get lock %s"),File.c_str());
+      
       return -1;
    }
 
