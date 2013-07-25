@@ -714,9 +714,9 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       } else {
 	 Target.Open(TargetF,FileFd::WriteAtomic);
       }
-      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
+      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (TargetFl == 0)
 	 return _error->Errno("fdopen","Failed to reopen fd");
       
