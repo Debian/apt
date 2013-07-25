@@ -238,6 +238,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			 (*Target)->ShortDesc, HashString());
       }
+      delete targets;
 
       // this is normally created in pkgAcqMetaSig, but if we run
       // in --print-uris mode, we add it here
