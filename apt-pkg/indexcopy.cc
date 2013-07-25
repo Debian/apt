@@ -601,6 +601,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 			 (useInRelease ? inrelease.c_str() : releasegpg.c_str()));
 	 // something went wrong, don't copy the Release.gpg
 	 // FIXME: delete any existing gpg file?
+	 delete MetaIndex;
 	 continue;
       }
 
