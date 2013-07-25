@@ -251,7 +251,6 @@ int GetLock(string File,bool Errors)
 
       if (errno == ENOLCK)
       {
-
 	 _error->Warning(_("Not using locking for nfs mounted lock file %s"),File.c_str());
 	 return dup(0);       // Need something for the caller to close	 
       }

@@ -152,6 +152,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       }
    }
    fclose(pipein);
+   free(buffer);
 
    int status;
    waitpid(pid, &status, 0);
