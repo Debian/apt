@@ -2290,9 +2290,10 @@ bool DoClean(CommandLine &CmdL)
    FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
-      Lock.Fd(GetLock(archivedir + "lock"));
-      if (_error->PendingError() == true)
+      int lock_fd = GetLock(archivedir + "lock");
+      if (lock_fd < 0)
 	 return _error->Error(_("Unable to lock the download directory"));
+      Lock.Fd(lock_fd);
    }
    
    pkgAcquire Fetcher;
@@ -2326,9 +2327,10 @@ bool DoAutoClean(CommandLine &CmdL)
    FileFd Lock;
    if (_config->FindB("Debug::NoLocking",false) == false)
    {
-      Lock.Fd(GetLock(_config->FindDir("Dir::Cache::Archives") + "lock"));
-      if (_error->PendingError() == true)
+      int lock_fd = GetLock(_config->FindDir("Dir::Cache::Archives") + "lock");
+      if (lock_fd < 0)
 	 return _error->Error(_("Unable to lock the download directory"));
+      Lock.Fd(lock_fd);
    }
    
    CacheFile Cache;
