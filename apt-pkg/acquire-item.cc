@@ -1369,9 +1369,20 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
    {
       HashString ExpectedIndexHash;
       const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+      bool compressedAvailable = false;
       if (Record == NULL)
       {
-	 if (verify == true && (*Target)->IsOptional() == false)
+	 if ((*Target)->IsOptional() == true)
+	 {
+	    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+	    for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+	       if (MetaIndexParser->Exists(string((*Target)->MetaKey).append(".").append(*t)) == true)
+	       {
+		  compressedAvailable = true;
+		  break;
+	       }
+	 }
+	 else if (verify == true)
 	 {
 	    Status = StatAuthError;
 	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
@@ -1400,7 +1411,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 if ((*Target)->IsSubIndex() == true)
 	    new pkgAcqSubIndex(Owner, (*Target)->URI, (*Target)->Description,
 				(*Target)->ShortDesc, ExpectedIndexHash);
-	 else if (transInRelease == false || MetaIndexParser->Exists((*Target)->MetaKey) == true)
+	 else if (transInRelease == false || Record != NULL || compressedAvailable == true)
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
 		MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true)

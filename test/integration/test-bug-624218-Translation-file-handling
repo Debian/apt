@@ -14,34 +14,47 @@ changetowebserver
 
 rm -rf rootdir/var/lib/apt/lists
 
-msgtest 'No download of non-existent locals' 'with Index'
-LC_ALL="" aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
-rm -rf rootdir/var/lib/apt/lists
+translationslisted() {
+	msgtest 'No download of non-existent locals' "$1"
+	LC_ALL="" aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+	rm -rf rootdir/var/lib/apt/lists
 
-msgtest 'Download of existent locals' 'with Index'
-LC_ALL="" aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
-rm -rf rootdir/var/lib/apt/lists
+	msgtest 'Download of existent locals' "$1"
+	LC_ALL="" aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
+	rm -rf rootdir/var/lib/apt/lists
 
-msgtest 'Download of en in LC_ALL=C' 'with Index'
-LC_ALL=C aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
-rm -rf rootdir/var/lib/apt/lists
+	msgtest 'Download of en in LC_ALL=C' "$1"
+	LC_ALL=C aptget update | grep -q -e 'Translation-en ' && msgpass || msgfail
+	rm -rf rootdir/var/lib/apt/lists
 
-msgtest 'Download of en as forced language' 'with Index'
-aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail
-rm -rf rootdir/var/lib/apt/lists
+	msgtest 'Download of en as forced language' "$1"
+	aptget update -o Acquire::Languages=en | grep -q -e 'Translation-en ' && msgpass || msgfail
+	rm -rf rootdir/var/lib/apt/lists
 
-msgtest 'Download of nothing else in forced language' 'with Index'
-aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
-rm -rf rootdir/var/lib/apt/lists
+	msgtest 'Download of nothing else in forced language' "$1"
+	aptget update -o Acquire::Languages=en | grep -q -e 'Translation-[^e][^n] ' && msgfail || msgpass
+	rm -rf rootdir/var/lib/apt/lists
 
-msgtest 'Download no Translation- if forced language is non-existent' 'with Index'
-aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-' && msgfail || msgpass
-rm -rf rootdir/var/lib/apt/lists
+	msgtest 'Download no Translation- if forced language is non-existent' "$1"
+	aptget update -o Acquire::Languages=ast_DE | grep -q -e 'Translation-' && msgfail || msgpass
+	rm -rf rootdir/var/lib/apt/lists
 
-msgtest 'Download of nothing if none is forced' 'with Index'
-aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
-rm -rf rootdir/var/lib/apt/lists
+	msgtest 'Download of nothing if none is forced' "$1"
+	aptget update -o Acquire::Languages=none | grep -q -e 'Translation' && msgfail || msgpass
+	rm -rf rootdir/var/lib/apt/lists
+}
 
+translationslisted 'with full Index'
+
+
+# only compressed files available (as it happens on CD-ROM)
+sed -i '/i18n\/Translation-[^.]*$/ d' $(find aptarchive -name 'Release')
+signreleasefiles
+
+translationslisted 'with partial Index'
+
+
+# no records at all about Translation files (fallback to guessing)
 sed -i '/i18n\/Translation-.*$/ d' $(find aptarchive -name 'Release')
 signreleasefiles
 
