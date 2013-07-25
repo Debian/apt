@@ -1127,6 +1127,24 @@ bool Dotty(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* This displays the package record from the proper package index file. 
    It is not used by DumpAvail for performance reasons. */
+
+static unsigned char const* skipDescriptionFields(unsigned char const * DescP)
+{
+   char const * const TagName = "\nDescription";
+   size_t const TagLen = strlen(TagName);
+   while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
+   {
+      if (DescP[1] == ' ')
+	 DescP += 2;
+      else if (strncmp((char*)DescP, TagName, TagLen) == 0)
+	 DescP += TagLen;
+      else
+	 break;
+   }
+   if (DescP != NULL)
+      ++DescP;
+   return DescP;
+}
 bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 {
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1150,11 +1168,12 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
       return false;
 
-   // Read the record
-   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+1];
-   Buffer[V.FileList()->Size] = '\n';
-   if (PkgF.Seek(V.FileList()->Offset) == false ||
-       PkgF.Read(Buffer,V.FileList()->Size) == false)
+   // Read the record (and ensure that it ends with a newline and NUL)
+   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+2];
+   Buffer[Vf->Size] = '\n';
+   Buffer[Vf->Size+1] = '\0';
+   if (PkgF.Seek(Vf->Offset) == false ||
+       PkgF.Read(Buffer,Vf->Size) == false)
    {
       delete [] Buffer;
       return false;
@@ -1165,7 +1184,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    if (DescP != NULL)
       ++DescP;
    else
-      DescP = Buffer + V.FileList()->Size;
+      DescP = Buffer + Vf->Size;
 
    // Write all but Description
    if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
@@ -1184,32 +1203,34 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
       cout << std::endl << "Description-md5: " << Desc.md5() << std::endl;
 
       // Find the first field after the description (if there is any)
-      while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
-      {
-	 if (DescP[1] == ' ')
-	    DescP += 2;
-	 else if (strncmp((char*)DescP, "\nDescription", strlen("\nDescription")) == 0)
-	    DescP += strlen("\nDescription");
-	 else
-	    break;
-      }
-      if (DescP != NULL)
-	 ++DescP;
+      DescP = skipDescriptionFields(DescP);
    }
-   // if we have no translation, we found a lonely Description-md5, so don't skip it
+   // else we have no translation, so we found a lonely Description-md5 -> don't skip it
 
-   if (DescP != NULL)
+   // write the rest of the buffer, but skip mixed in Descriptions* fields
+   while (DescP != NULL)
    {
-      // write the rest of the buffer
-      const unsigned char *end=&Buffer[V.FileList()->Size];
-      if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP))
+      const unsigned char * const Start = DescP;
+      const unsigned char *End = (unsigned char*)strstr((char*)DescP, "\nDescription");
+      if (End == NULL)
+      {
+	 End = &Buffer[Vf->Size];
+	 DescP = NULL;
+      }
+      else
+      {
+	 ++End; // get the newline into the output
+	 DescP = skipDescriptionFields(End + strlen("Description"));
+      }
+      size_t const length = End - Start;
+      if (fwrite(Start, 1, length, stdout) < length)
       {
 	 delete [] Buffer;
 	 return false;
       }
    }
 
-   // write a final newline (after the description)
+   // write a final newline after the last field
    cout<<endl;
    delete [] Buffer;
 
@@ -1300,7 +1321,11 @@ bool Search(CommandLine &CmdL)
       pkgCache::VerIterator V = Plcy->GetCandidateVer(P);
       if (V.end() == false)
       {
-	 DFList[G->ID].Df = V.TranslatedDescription().FileList();
+	 pkgCache::DescIterator const D = V.TranslatedDescription();
+	 //FIXME: packages without a description can't be found
+	 if (D.end() == true)
+	    continue;
+	 DFList[G->ID].Df = D.FileList();
 	 DFList[G->ID].ID = G->ID;
       }
 
@@ -1315,7 +1340,11 @@ bool Search(CommandLine &CmdL)
 	    continue;
 
 	 unsigned long id = Prv.OwnerPkg().Group()->ID;
-	 DFList[id].Df = V.TranslatedDescription().FileList();
+	 pkgCache::DescIterator const D = V.TranslatedDescription();
+	 //FIXME: packages without a description can't be found
+	 if (D.end() == true)
+	    continue;
+	 DFList[id].Df = D.FileList();
 	 DFList[id].ID = id;
 
 	 size_t const PrvPatternOffset = id * NumPatterns;
