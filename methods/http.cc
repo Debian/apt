@@ -1401,7 +1401,7 @@ bool HttpMethod::AutoDetectProxy()
    char buf[512];
    int InFd = Pipes[0];
    close(Pipes[1]);
-   int res = read(InFd, buf, sizeof(buf));
+   int res = read(InFd, buf, sizeof(buf)-1);
    ExecWait(Process, "ProxyAutoDetect", true);
 
    if (res < 0)
