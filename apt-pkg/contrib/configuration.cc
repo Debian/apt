@@ -811,7 +811,7 @@ bool ReadConfigFile(Configuration &Conf,const string &FName,bool const &AsSectio
 	    // Go down a level
 	    if (TermChar == '{')
 	    {
-	       if (StackPos <= 100)
+	       if (StackPos < sizeof(Stack)/sizeof(std::string))
 		  Stack[StackPos++] = ParentTag;
 	       
 	       /* Make sectional tags incorperate the section into the
