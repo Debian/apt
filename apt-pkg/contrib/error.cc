@@ -67,9 +67,10 @@ bool GlobalError::NAME (const char *Function, const char *Description,...) { \
 	int const errsv = errno; \
 	while (true) { \
 		va_start(args,Description); \
-		if (InsertErrno(TYPE, Function, Description, args, errsv, msgSize) == false) \
-			break; \
+		bool const retry = InsertErrno(TYPE, Function, Description, args, errsv, msgSize); \
 		va_end(args); \
+		if (retry == false) \
+			break; \
 	} \
 	return false; \
 }
@@ -88,9 +89,10 @@ bool GlobalError::InsertErrno(MsgType const &type, const char *Function,
 	int const errsv = errno;
 	while (true) {
 		va_start(args,Description);
-		if (InsertErrno(type, Function, Description, args, errsv, msgSize) == false)
-			break;
+		bool const retry = InsertErrno(type, Function, Description, args, errsv, msgSize);
 		va_end(args);
+		if (retry == false)
+		   break;
 	}
 	return false;
 }
