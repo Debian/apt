@@ -1598,7 +1598,11 @@ unsigned long long FileFd::Size()
       char ignore[1000];
       unsigned long long read = 0;
       do {
-	 Read(ignore, sizeof(ignore), &read);
+	 if (Read(ignore, sizeof(ignore), &read) == false)
+	 {
+	    Seek(oldSeek);
+	    return 0;
+	 }
       } while(read != 0);
       size = Tell();
       Seek(oldSeek);
@@ -1615,10 +1619,16 @@ unsigned long long FileFd::Size()
 	* bits of the file */
        // FIXME: Size for gz-files is limited by 32bit… no largefile support
        if (lseek(iFd, -4, SEEK_END) < 0)
-	  return FileFdErrno("lseek","Unable to seek to end of gzipped file");
-       size = 0L;
+       {
+	  FileFdErrno("lseek","Unable to seek to end of gzipped file");
+	  return 0;
+       }
+       size = 0;
        if (read(iFd, &size, 4) != 4)
-	  return FileFdErrno("read","Unable to read original size of gzipped file");
+       {
+	  FileFdErrno("read","Unable to read original size of gzipped file");
+	  return 0;
+       }
 
 #ifdef WORDS_BIGENDIAN
        uint32_t tmp_size = size;
@@ -1628,7 +1638,10 @@ unsigned long long FileFd::Size()
 #endif
 
        if (lseek(iFd, oldPos, SEEK_SET) < 0)
-	  return FileFdErrno("lseek","Unable to seek in gzipped file");
+       {
+	  FileFdErrno("lseek","Unable to seek in gzipped file");
+	  return 0;
+       }
 
        return size;
    }
