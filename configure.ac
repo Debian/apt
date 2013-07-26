@@ -180,10 +180,6 @@ AC_SUBST(DOTDIR)
 ah_NUM_PROCS
 ah_GCC3DEP
 
-dnl It used to be that the user could select translations and that could get
-dnl passed to the makefiles, but now that can only work if you use special
-dnl gettext approved makefiles, so this feature is unsupported by this.
-ALL_LINGUAS="bg bs ca cs cy da de dz el es eu fi fr gl hu it ja ko ku nb nl nn pl pt_BR pt ro ru sk sl sv th tl uk vi zn_CN zh_TW"
 AM_GNU_GETTEXT(external)
 if test x"$USE_NLS" = "xyes"; then
    AC_DEFINE(USE_NLS)
