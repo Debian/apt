@@ -77,7 +77,7 @@ build/environment.mak: build/configure-stamp
 	@true
 
 configure: configure.ac
-build/configure-stamp: configure
+build/configure-stamp: configure buildlib/config.sub buildlib/config.guess
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
@@ -116,6 +116,8 @@ clean:
 	rm -rf build
 	rm -f debian/$(LIBAPT_PKG).install debian/$(LIBAPT_INST).install \
 	      debian/libapt-pkg-dev.install
+	test ! -L buildlib/config.guess || rm -f buildlib/config.guess
+	test ! -L buildlib/config.sub || rm -f buildlib/config.sub
 
 debian/%.install: debian/%.install.in
 	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
@@ -327,6 +329,9 @@ apt-transport-https: build-binary libapt-pkg-dev
 	dh_gencontrol -p$@
 	dh_md5sums -p$@
 	dh_builddeb -p$@
+
+buildlib/config.guess buildlib/config.sub:
+	$(MAKE) "$@"
 
 configure:
 	$(MAKE) configure
