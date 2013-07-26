@@ -39,7 +39,7 @@ if [ "$1" = 'pre-export' ]; then
 		make update-po
 	fi
 
-	sed -i -e "s/^PACKAGE_VERSION=\".*\"$/PACKAGE_VERSION=\"${VERSION}\"/" configure.in
+	sed -i -e "s/^PACKAGE_VERSION=\".*\"$/PACKAGE_VERSION=\"${VERSION}\"/" configure.ac
 	sed -i -e "s/^<!ENTITY apt-product-version \".*\">$/<!ENTITY apt-product-version \"${VERSION}\">/" doc/apt-verbatim.ent
 elif [ "$1" = 'post-build' ]; then
 	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then

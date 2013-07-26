@@ -10,10 +10,10 @@ dnl need a C++ compiler that is semi-standard conformant, exceptions are
 dnl not used but STL is.
 
 dnl 'make -f Makefile startup' will generate the configure file from 
-dnl configure.in correctly and can be run at any time
+dnl configure.ac correctly and can be run at any time
 
 AC_PREREQ(2.50)
-AC_INIT(configure.in)
+AC_INIT(configure.ac)
 AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
