@@ -218,6 +218,8 @@ bool RSHConn::WriteMsg(std::string &Text,bool Sync,const char *Fmt,...)
    // sprintf the description
    char S[512];
    vsnprintf(S,sizeof(S) - 4,Fmt,args);
+   va_end(args);
+
    if (Sync == true)
       strcat(S," 2> /dev/null || echo\n");
    else

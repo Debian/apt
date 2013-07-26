@@ -436,6 +436,7 @@ bool FTPConn::WriteMsg(unsigned int &Ret,string &Text,const char *Fmt,...)
    char S[400];
    vsnprintf(S,sizeof(S) - 4,Fmt,args);
    strcat(S,"\r\n");
+   va_end(args);
  
    if (Debug == true)
       cerr << "-> '" << QuoteString(S,"") << "'" << endl;
