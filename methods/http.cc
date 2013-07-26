@@ -682,15 +682,27 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
    // Just in case.
    if (Itm->Uri.length() >= sizeof(Buf))
        abort();
-       
+
+   /* RFC 2616 §5.1.2 requires absolute URIs for requests to proxies,
+      but while its a must for all servers to accept absolute URIs,
+      it is assumed clients will sent an absolute path for non-proxies */
+   std::string requesturi;
+   if (Proxy.empty() == true || Proxy.Host.empty())
+      requesturi = Uri.Path;
+   else
+      requesturi = Itm->Uri;
+
+   // The "+" is encoded as a workaround for a amazon S3 bug
+   // see LP bugs #1003633 and #1086997.
+   requesturi = QuoteString(requesturi, "+~ ");
+
    /* Build the request. No keep-alive is included as it is the default
       in 1.1, can cause problems with proxies, and we are an HTTP/1.1
       client anyway.
       C.f. https://tools.ietf.org/wg/httpbis/trac/ticket/158 */
-   // see LP bugs #1003633 and #1086997. The "+" is encoded as a workaround
-   // for a amazon S3 bug
    sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
-	   QuoteString(Uri.Path,"+~ ").c_str(),ProperHost.c_str());
+	   requesturi.c_str(),ProperHost.c_str());
+
    // generate a cache control header (if needed)
    if (_config->FindB("Acquire::http::No-Cache",false) == true) 
    {
