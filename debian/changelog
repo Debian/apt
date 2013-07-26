@@ -1,3 +1,15 @@
+apt (0.9.9.4) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * pick up Translation-* even if only compressed available (Closes: 717665)
+  * request absolute URIs from proxies again (0.9.9.3 regession)
+    (Closes: 717891)
+  
+  [ Michael vogt ]
+  * fix missing changelog entry for 0.9.9.3 (git-dch issue)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 26 Jul 2013 09:58:17 +0200
+
 apt (0.9.9.3) unstable; urgency=low
 
   [ Ben Hutchings ]
@@ -15,6 +27,9 @@ apt (0.9.9.3) unstable; urgency=low
   * skip all Description fields in apt-cache, not just first (Closes: 717254)
   * fix 'apt-cache search' crash with missing description (Closes: 647590)
 
+  [ Raphael Geissert ]
+  * Do not send a connection: keep-alive, at all
+  
  -- Michael Vogt <mvo@debian.org>  Thu, 25 Jul 2013 17:14:58 +0200
 
 apt (0.9.9.2) unstable; urgency=low
