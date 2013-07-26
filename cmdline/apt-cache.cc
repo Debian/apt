@@ -1187,7 +1187,8 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
       DescP = Buffer + Vf->Size;
 
    // Write all but Description
-   if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
+   size_t const length = DescP - Buffer;
+   if (length != 0 && FileFd::Write(STDOUT_FILENO, Buffer, length) == false)
    {
       delete [] Buffer;
       return false;
@@ -1223,7 +1224,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 	 DescP = skipDescriptionFields(End + strlen("Description"));
       }
       size_t const length = End - Start;
-      if (fwrite(Start, 1, length, stdout) < length)
+      if (length != 0 && FileFd::Write(STDOUT_FILENO, Start, length) == false)
       {
 	 delete [] Buffer;
 	 return false;
@@ -1232,8 +1233,8 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 
    // write a final newline after the last field
    cout<<endl;
-   delete [] Buffer;
 
+   delete [] Buffer;
    return true;
 }
 									/*}}}*/
