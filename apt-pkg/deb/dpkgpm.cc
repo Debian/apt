@@ -134,6 +134,7 @@ static void dpkgChrootDirectory()
    std::cerr << "Chrooting into " << chrootDir << std::endl;
    if (chroot(chrootDir.c_str()) != 0)
       _exit(100);
+   chdir("/");
 }
 									/*}}}*/
 
