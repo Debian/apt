@@ -202,13 +202,13 @@ bool DoHold(CommandLine &CmdL)
    if (dpkgAssertMultiArch == 0)
    {
       std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
-	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --assert-multi-arch", chrootDir.c_str());
       // redirect everything to the ultimate sink as we only need the exit-status
       int const nullfd = open("/dev/null", O_RDONLY);
       dup2(nullfd, STDIN_FILENO);
       dup2(nullfd, STDOUT_FILENO);
       dup2(nullfd, STDERR_FILENO);
+      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --assert-multi-arch", chrootDir.c_str());
       execvp(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
       _exit(2);

@@ -11,7 +11,6 @@
 // Include Files							/*{{{*/
 #include <iostream>
 #include <fstream>
-#include <list>
 #include <map>
 #include <set>
 #include <list>

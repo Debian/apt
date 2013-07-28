@@ -1233,12 +1233,12 @@ char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
    va_list args;
    int Did;
 
-   va_start(args,Format);
-
    if (End <= Buffer)
       return End;
-
+   va_start(args,Format);
    Did = vsnprintf(Buffer,End - Buffer,Format,args);
+   va_end(args);
+
    if (Did < 0 || Buffer + Did > End)
       return End;
    return Buffer + Did;

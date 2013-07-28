@@ -1,0 +1,5 @@
+language: cpp
+before_install:
+ - sudo apt-get update -q
+ - sudo apt-get install -q dpkg-dev debhelper libdb-dev gettext libcurl4-gnutls-dev zlib1g-dev libbz2-dev xsltproc docbook-xsl docbook-xml po4a autotools-dev autoconf automake doxygen debiandoc-sgml
+script: make && make test && test/integration/run-tests
