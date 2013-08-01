@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'arm64'
+
+insertpackage 'unstable' 'm4' 'amd64' '1' 'Multi-Arch: foreign' 'optional'
+insertpackage 'unstable' 'm4' 'arm64' '1' 'Multi-Arch: foreign' 'standard'
+insertpackage 'unstable' 'autoconf' 'all' '1' 'Depends: m4'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  m4
+The following NEW packages will be installed:
+  autoconf m4
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst m4 (1 unstable [amd64])
+Inst autoconf (1 unstable [all])
+Conf m4 (1 unstable [amd64])
+Conf autoconf (1 unstable [all])' aptget install autoconf -s
