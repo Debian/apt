@@ -130,13 +130,42 @@ class CacheFile : public pkgCacheFile
 /* Returns true on a Yes.*/
 bool YnPrompt(bool Default=true)
 {
+   /* nl_langinfo does not support LANGUAGE setting, so we unset it here
+      to have the help-message (hopefully) match the expected characters */
+   char * language = getenv("LANGUAGE");
+   if (language != NULL)
+      language = strdup(language);
+   if (language != NULL)
+      unsetenv("LANGUAGE");
+
+   if (Default == true)
+      // TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+      //             e.g. "Do you want to continue? [Y/n] "
+      //             The user has to answer with an input matching the
+      //             YESEXPR/NOEXPR defined in your l10n.
+      c2out << " " << _("[Y/n]") << " " << std::flush;
+   else
+      // TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+      //             e.g. "Should this file be removed? [y/N] "
+      //             The user has to answer with an input matching the
+      //             YESEXPR/NOEXPR defined in your l10n.
+      c2out << " " << _("[y/N]") << " " << std::flush;
+
+   if (language != NULL)
+   {
+      setenv("LANGUAGE", language, 0);
+      free(language);
+   }
+
    if (_config->FindB("APT::Get::Assume-Yes",false) == true)
    {
+      // TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
       c1out << _("Y") << endl;
       return true;
    }
    else if (_config->FindB("APT::Get::Assume-No",false) == true)
    {
+      // TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
       c1out << _("N") << endl;
       return false;
    }
@@ -1076,7 +1105,7 @@ static bool CheckAuth(pkgAcquire& Fetcher)
    if (_config->FindI("quiet",0) < 2
        && _config->FindB("APT::Get::Assume-Yes",false) == false)
    {
-      c2out << _("Install these packages without verification [y/N]? ") << flush;
+      c2out << _("Install these packages without verification?") << flush;
       if (!YnPrompt(false))
          return _error->Error(_("Some packages could not be authenticated"));
 
@@ -1281,8 +1310,8 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
 	 if (_config->FindI("quiet",0) < 2 &&
 	     _config->FindB("APT::Get::Assume-Yes",false) == false)
 	 {
-	    c2out << _("Do you want to continue [Y/n]? ") << flush;
-	 
+	    c2out << _("Do you want to continue?") << flush;
+
 	    if (YnPrompt() == false)
 	    {
 	       c2out << _("Abort.") << endl;
