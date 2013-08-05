@@ -319,6 +319,33 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
       sendError(client, 500, request, sendContent, "Filename contains an unencoded space");
       return false;
    }
+
+   std::string host = LookupTag(request, "Host", "");
+   if (host.empty() == true)
+   {
+      // RFC 2616 §14.23 requires Host
+      sendError(client, 400, request, sendContent, "Host header is required");
+      return false;
+   }
+   host = "http://" + host;
+
+   // Proxies require absolute uris, so this is a simple proxy-fake option
+   std::string const absolute = _config->Find("aptwebserver::request::absolute", "uri,path");
+   if (strncmp(host.c_str(), filename.c_str(), host.length()) == 0)
+   {
+      if (absolute.find("uri") == std::string::npos)
+      {
+	 sendError(client, 400, request, sendContent, "Request is absoluteURI, but configured to not accept that");
+	 return false;
+      }
+      // strip the host from the request to make it an absolute path
+      filename.erase(0, host.length());
+   }
+   else if (absolute.find("path") == std::string::npos)
+   {
+      sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that");
+      return false;
+   }
    filename = DeQuoteString(filename);
 
    // this is not a secure server, but at least prevent the obvious …
@@ -342,6 +369,7 @@ int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
       {0, "port", "aptwebserver::port", CommandLine::HasArg},
+      {0, "request-absolute", "aptwebserver::request::absolute", CommandLine::HasArg},
       {'c',"config-file",0,CommandLine::ConfigFile},
       {'o',"option",0,CommandLine::ArbItem},
       {0,0,0,0}
@@ -446,14 +474,6 @@ int main(int const argc, const char * argv[])
 	    bool sendContent = true;
 	    if (parseFirstLine(client, *m, filename, sendContent, closeConnection) == false)
 	       continue;
-
-	    std::string host = LookupTag(*m, "Host", "");
-	    if (host.empty() == true)
-	    {
-	       // RFC 2616 §14.23 requires Host
-	       sendError(client, 400, *m, sendContent, "Host header is required");
-	       continue;
-	    }
 
 	    // string replacements in the requested filename
 	    ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");

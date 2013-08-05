@@ -295,7 +295,7 @@ bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
       if (CurVer.end() == true && (I->Op == Item::Remove || I->Op == Item::Purge))
 	 CurVer = FindNowVersion(I->Pkg);
 
-      else if (CurVer.end() == true)
+      if (CurVer.end() == true)
       {
 	 if (Version <= 2)
 	    fprintf(F, "- ");

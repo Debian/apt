@@ -1007,9 +1007,6 @@ struct CompareProviders {
 	 else if ((B->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	    return true;
       }
-      // higher priority seems like a good idea
-      if (AV->Priority != BV->Priority)
-	 return AV->Priority > BV->Priority;
       // prefer native architecture
       if (strcmp(A.Arch(), B.Arch()) != 0)
       {
@@ -1024,6 +1021,9 @@ struct CompareProviders {
 	    else if (*a == B.Arch())
 	       return true;
       }
+      // higher priority seems like a good idea
+      if (AV->Priority != BV->Priority)
+	 return AV->Priority > BV->Priority;
       // unable to decide…
       return A->ID < B->ID;
    }
