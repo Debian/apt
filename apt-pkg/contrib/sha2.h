@@ -60,10 +60,11 @@ class SHA256Summation : public SHA2SummationBase
       res.Set(Sum);
       return res;
    };
-   SHA256Summation() 
+   SHA256Summation()
    {
       SHA256_Init(&ctx);
       Done = false;
+      memset(&Sum, 0, sizeof(Sum));
    };
 };
 
@@ -96,6 +97,7 @@ class SHA512Summation : public SHA2SummationBase
    {
       SHA512_Init(&ctx);
       Done = false;
+      memset(&Sum, 0, sizeof(Sum));
    };
 };
 
