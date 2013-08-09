@@ -711,22 +711,45 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
+	local GPG="gpg --batch --yes --no-default-keyring --trustdb-name rootdir/etc/apt/trustdb.gpg"
 	msgninfo "\tSign archive with $SIGNER key… "
-	local SECKEYS=""
+	local REXKEY='keys/rexexpired'
+	local SECEXPIREBAK="${REXKEY}.sec.bak"
+	local PUBEXPIREBAK="${REXKEY}.pub.bak"
+	if [ "${SIGNER}" = 'Rex Expired' ]; then
+		# the key is expired, so gpg doesn't allow to sign with and the --faked-system-time
+		# option doesn't exist anymore (and using faketime would add a new obscure dependency)
+		# therefore we 'temporary' make the key not expired and restore a backup after signing
+		cp ${REXKEY}.sec $SECEXPIREBAK
+		cp ${REXKEY}.pub $PUBEXPIREBAK
+		local SECUNEXPIRED="${REXKEY}.sec.unexpired"
+		local PUBUNEXPIRED="${REXKEY}.pub.unexpired"
+		if [ -f "$SECUNEXPIRED" ] && [ -f "$PUBUNEXPIRED" ]; then
+			cp $SECUNEXPIRED ${REXKEY}.sec
+			cp $PUBUNEXPIRED ${REXKEY}.pub
+		else
+			printf "expire\n1w\nsave\n" | $GPG --keyring ${REXKEY}.pub --secret-keyring ${REXKEY}.sec --command-fd 0 --edit-key "${SIGNER}" >/dev/null 2>&1 || true
+			cp ${REXKEY}.sec $SECUNEXPIRED
+			cp ${REXKEY}.pub $PUBUNEXPIRED
+		fi
+	fi
 	for KEY in $(find keys/ -name '*.sec'); do
-		SECKEYS="$SECKEYS --secret-keyring $KEY"
+		GPG="$GPG --secret-keyring $KEY"
 	done
-	local PUBKEYS=""
 	for KEY in $(find keys/ -name '*.pub'); do
-		PUBKEYS="$PUBKEYS --keyring $KEY"
+		GPG="$GPG --keyring $KEY"
 	done
 	for RELEASE in $(find aptarchive/ -name Release); do
-		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" -abs -o ${RELEASE}.gpg ${RELEASE}
+		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output ${RELEASE}.gpg ${RELEASE}
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
-		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" --clearsign -o $INRELEASE $RELEASE
+		$GPG --default-key "$SIGNER" --clearsign --output $INRELEASE $RELEASE
 		# we might have set a specific date for the Release file, so copy it
 		touch -d "$(stat --format "%y" ${RELEASE})" ${RELEASE}.gpg ${INRELEASE}
 	done
+	if [ -f "$SECEXPIREBAK" ] && [ -f "$PUBEXPIREBAK" ]; then
+		mv -f $SECEXPIREBAK ${REXKEY}.sec
+		mv -f $PUBEXPIREBAK ${REXKEY}.pub
+	fi
 	msgdone "info"
 }
 
