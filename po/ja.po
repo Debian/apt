@@ -6,10 +6,10 @@
 # Debian Project, Kenshi Muto <kmuto@debian.org>, 2004-2012
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.9.7.1\n"
+"Project-Id-Version: apt 0.9.9.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2013-07-31 16:24+0200\n"
-"PO-Revision-Date: 2012-07-01 00:14+0900\n"
+"PO-Revision-Date: 2013-08-10 09:39+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -296,7 +296,7 @@ msgstr ""
 #. YESEXPR/NOEXPR defined in your l10n.
 #: cmdline/apt-get.cc:146
 msgid "[Y/n]"
-msgstr "[Y/n]"
+msgstr ""
 
 #. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
 #. e.g. "Should this file be removed? [y/N] "
@@ -304,7 +304,7 @@ msgstr "[Y/n]"
 #. YESEXPR/NOEXPR defined in your l10n.
 #: cmdline/apt-get.cc:152
 msgid "[y/N]"
-msgstr "[y/N]"
+msgstr ""
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
 #: cmdline/apt-get.cc:163
@@ -565,12 +565,14 @@ msgid "Authentication warning overridden.\n"
 msgstr "認証の警告は上書きされました。\n"
 
 #: cmdline/apt-get.cc:1108
+#, fuzzy
+#| msgid "Install these packages without verification [y/N]? "
 msgid "Install these packages without verification?"
-msgstr "検証なしにこれらのパッケージをインストールしますか?"
+msgstr "検証なしにこれらのパッケージをインストールしますか [y/N]? "
 
 #: cmdline/apt-get.cc:1110
 msgid "Some packages could not be authenticated"
-msgstr "いくつかのパッケージを認証できませんでした?"
+msgstr "いくつかのパッケージを認証できませんでした"
 
 #: cmdline/apt-get.cc:1119 cmdline/apt-get.cc:1280
 msgid "There are problems and -y was used without --force-yes"
@@ -658,8 +660,10 @@ msgid "Abort."
 msgstr "中断しました。"
 
 #: cmdline/apt-get.cc:1313
+#, fuzzy
+#| msgid "Do you want to continue [Y/n]? "
 msgid "Do you want to continue?"
-msgstr "続行しますか"
+msgstr "続行しますか [Y/n]? "
 
 #: cmdline/apt-get.cc:1385 cmdline/apt-get.cc:2686 apt-pkg/algorithms.cc:1566
 #, c-format
@@ -1526,9 +1530,9 @@ msgid "Temporary failure resolving '%s'"
 msgstr "'%s' が一時的に解決できません"
 
 #: methods/connect.cc:209
-#, fuzzy, c-format
+#, c-format
 msgid "System error resolving '%s:%s'"
-msgstr "'%s:%s' (%i - %s) の解決中に何か問題が起こりました"
+msgstr "'%s:%s' の解決中にシステムエラーが発生しました"
 
 #: methods/connect.cc:211
 #, c-format
@@ -1684,6 +1688,7 @@ msgstr "ミラーファイル '%s' を読み込めません"
 
 #: methods/mirror.cc:315
 #, fuzzy, c-format
+#| msgid "Can not read mirror file '%s'"
 msgid "No entry found in mirror file '%s'"
 msgstr "ミラーファイル '%s' を読み込めません"
 
@@ -2466,13 +2471,13 @@ msgstr "%c%s... 完了"
 
 #: apt-pkg/contrib/progress.cc:179
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc:195
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... %u%%"
-msgstr "%c%s... 完了"
+msgstr "%c%s... %u%%"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -3541,9 +3546,3 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "ロックされていません"
-
-#~ msgid "File %s doesn't start with a clearsigned message"
-#~ msgstr "ファイル %s はクリア署名されたメッセージで始まっていません"
-
-#~ msgid "Skipping nonexistent file %s"
-#~ msgstr "存在しないファイル %s をスキップしています"
