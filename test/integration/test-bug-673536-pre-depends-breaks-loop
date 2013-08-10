@@ -15,9 +15,9 @@ setupaptarchive
 # we check with 'real' packages here as the simulation reports a 'Conf broken'
 # which is technical correct for the simulation, but testing errormsg is ugly
 
-aptget install basic=1 -qq > /dev/null
+testsuccess aptget install basic=1 -y
 testdpkginstalled basic
 testdpkgnotinstalled common
 
-aptget dist-upgrade -qq > /dev/null
+testsuccess aptget dist-upgrade -y
 testdpkginstalled basic common

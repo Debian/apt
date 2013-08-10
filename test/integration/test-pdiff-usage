@@ -11,7 +11,7 @@ buildaptarchive
 setupflataptarchive
 changetowebserver
 signreleasefiles
-aptget update -qq
+testsuccess aptget update
 
 testnopackage newstuff
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
@@ -38,7 +38,7 @@ SHA1-Patches:
 generatereleasefiles '+1hour'
 signreleasefiles
 find aptarchive -name 'Packages*' -type f -delete
-aptget update -qq
+testsuccess aptget update
 
 testnopackage oldstuff
 testequal "$(cat ${PKGFILE}-new)

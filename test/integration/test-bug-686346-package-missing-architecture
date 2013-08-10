@@ -58,13 +58,13 @@ Building dependency tree...
 # pkgd has no update with an architecture
 testdpkginstalled pkgd
 msgtest 'Test apt-get purge' 'pkgd'
-aptget purge pkgd -y >/dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg aptget purge pkgd -y
 testdpkgnotinstalled pkgd
 
 # there is a pkgb with an architecture
 testdpkginstalled pkgb
 msgtest 'Test apt-get purge' 'pkgb:none'
-aptget purge pkgb:none -y >/dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg aptget purge pkgb:none -y
 testdpkgnotinstalled pkgb
 
 # check that dependencies are created after the none package exists in the cache

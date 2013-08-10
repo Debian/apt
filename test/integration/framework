@@ -928,6 +928,40 @@ testmarkedauto() {
 	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
 
+testsuccess() {
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest 'Test for successful execution of' "$*"
+	fi
+	local OUTPUT=$(mktemp)
+	addtrap "rm $OUTPUT;"
+	if $@ >${OUTPUT} 2>&1; then
+		msgpass
+	else
+		echo
+		cat $OUTPUT
+		msgfail
+	fi
+}
+
+testfailure() {
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest 'Test for failure in  execution of' "$*"
+	fi
+	local OUTPUT=$(mktemp)
+	addtrap "rm $OUTPUT;"
+	if $@ >${OUTPUT} 2>&1; then
+		echo
+		cat $OUTPUT
+		msgfail
+	else
+		msgpass
+	fi
+}
+
 pause() {
 	echo "STOPPED execution. Press enter to continue"
 	local IGNORE

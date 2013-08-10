@@ -18,12 +18,10 @@ setupaptarchive
 
 
 testdpkgnotinstalled compiz-core
-msgtest 'Install package' 'compiz-core'
-aptget install compiz-core -qq 2>&1 >/dev/null && msgpass || msgfail
+testsuccess aptget install compiz-core
 testdpkginstalled compiz-core
 
-msgtest 'Remove package' 'compiz-core'
-aptget remove compiz-core -y -qq 2>&1 >/dev/null && msgpass || msgfail
+testsuccess aptget remove compiz-core -y
 testdpkgnotinstalled compiz-core
 
 msgtest 'Check that conffiles are still around for' 'compiz-core'
