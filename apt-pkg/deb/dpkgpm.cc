@@ -134,7 +134,8 @@ static void dpkgChrootDirectory()
    std::cerr << "Chrooting into " << chrootDir << std::endl;
    if (chroot(chrootDir.c_str()) != 0)
       _exit(100);
-   chdir("/");
+   if (chdir("/") != 0)
+      _exit(100);
 }
 									/*}}}*/
 
@@ -755,7 +756,8 @@ bool pkgDPkgPM::OpenLog()
       pw = getpwnam("root");
       gr = getgrnam("adm");
       if (pw != NULL && gr != NULL)
-	  chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid);
+         if(chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+            _error->Errno("OpenLog", "chown failed");
       chmod(logfile_name.c_str(), 0640);
       fprintf(d->term_out, "\nLog started: %s\n", timestr);
    }

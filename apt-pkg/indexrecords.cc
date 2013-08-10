@@ -62,7 +62,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    if (OpenMaybeClearSignedFile(Filename, Fd) == false)
       return false;
 
-   pkgTagFile TagFile(&Fd, Fd.Size() + 256); // XXX
+   pkgTagFile TagFile(&Fd);
    if (_error->PendingError() == true)
    {
       strprintf(ErrorText, _("Unable to parse Release file %s"),Filename.c_str());
@@ -71,16 +71,11 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
 
    pkgTagSection Section;
    const char *Start, *End;
-   // Skip over sections beginning with ----- as this is an idicator for clearsigns
-   do {
-      if (TagFile.Step(Section) == false)
-      {
-	 strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
-	 return false;
-      }
-
-      Section.Get (Start, End, 0);
-   } while (End - Start > 5 && strncmp(Start, "-----", 5) == 0);
+   if (TagFile.Step(Section) == false)
+   {
+      strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
+      return false;
+   }
 
    Suite = Section.FindS("Suite");
    Dist = Section.FindS("Codename");

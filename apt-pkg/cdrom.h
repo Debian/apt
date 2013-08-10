@@ -18,7 +18,7 @@ class pkgCdromStatus							/*{{{*/
    int totalSteps;
 
  public:
-   pkgCdromStatus() {};
+   pkgCdromStatus() : totalSteps(0) {};
    virtual ~pkgCdromStatus() {};
 
    // total steps

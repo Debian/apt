@@ -66,7 +66,8 @@ void pkgCdromTextStatus::Prompt(const char *Text)
 {
    char C;
    cout << Text << ' ' << flush;
-   read(STDIN_FILENO,&C,1);
+   if (read(STDIN_FILENO,&C,1) < 0)
+      _error->Errno("pkgCdromTextStatus::Prompt", "failed to prompt");
    if (C != '\n')
       cout << endl;
 }

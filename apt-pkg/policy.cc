@@ -166,10 +166,14 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
       tracks the default when the default is taken away, and a permanent
       pin that stays at that setting.
     */
+   bool PrefSeen = false;
    for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
       /* Lets see if this version is the installed version */
       bool instVer = (Pkg.CurrentVer() == Ver);
+
+      if (Pref == Ver)
+	 PrefSeen = true;
 
       for (pkgCache::VerFileIterator VF = Ver.FileList(); VF.end() == false; ++VF)
       {
@@ -187,26 +191,33 @@ pkgCache::VerIterator pkgPolicy::GetCandidateVer(pkgCache::PkgIterator const &Pk
 	 {
 	    Pref = Ver;
 	    Max = Prio;
+	    PrefSeen = true;
 	 }
 	 if (Prio > MaxAlt)
 	 {
 	    PrefAlt = Ver;
 	    MaxAlt = Prio;
-	 }	 
-      }      
-      
+	 }
+      }
+
       if (instVer == true && Max < 1000)
       {
+	 /* Not having seen the Pref yet means we have a specific pin below 1000
+	    on a version below the current installed one, so ignore the specific pin
+	    as this would be a downgrade otherwise */
+	 if (PrefSeen == false || Pref.end() == true)
+	 {
+	    Pref = Ver;
+	    PrefSeen = true;
+	 }
 	 /* Elevate our current selection (or the status file itself)
 	    to the Pseudo-status priority. */
-	 if (Pref.end() == true)
-	    Pref = Ver;
 	 Max = 1000;
-	 
+
 	 // Fast path optimize.
 	 if (StatusOverride == false)
 	    break;
-      }            
+      }
    }
    // If we do not find our candidate, use the one with the highest pin.
    // This means that if there is a version available with pin > 0; there
