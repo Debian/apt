@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: apt 0.9.9.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2013-07-31 16:24+0200\n"
-"PO-Revision-Date: 2013-08-10 09:39+0900\n"
+"PO-Revision-Date: 2013-08-11 19:39+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -239,6 +239,10 @@ msgid ""
 "You may try the --cdrom option to set the CD-ROM mount point. See 'man apt-"
 "cdrom' for more information about the CD-ROM auto-detection and mount point."
 msgstr ""
+"CD-ROM が自動検出されなかったか、デフォルトで利用するマウントポイントに見当た"
+"りませんでした。CD-ROM のマウントポイントを設定するために --cdrom オプション"
+"を試すことができます。CD-ROM の自動検出およびマウントポイントの詳細について"
+"は、'man apt-cdrom' を参照してください。"
 
 #: cmdline/apt-cdrom.cc:85
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -296,7 +300,7 @@ msgstr ""
 #. YESEXPR/NOEXPR defined in your l10n.
 #: cmdline/apt-get.cc:146
 msgid "[Y/n]"
-msgstr ""
+msgstr "[Y/n]"
 
 #. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
 #. e.g. "Should this file be removed? [y/N] "
@@ -304,7 +308,7 @@ msgstr ""
 #. YESEXPR/NOEXPR defined in your l10n.
 #: cmdline/apt-get.cc:152
 msgid "[y/N]"
-msgstr ""
+msgstr "[y/N]"
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
 #: cmdline/apt-get.cc:163
@@ -565,10 +569,8 @@ msgid "Authentication warning overridden.\n"
 msgstr "認証の警告は上書きされました。\n"
 
 #: cmdline/apt-get.cc:1108
-#, fuzzy
-#| msgid "Install these packages without verification [y/N]? "
 msgid "Install these packages without verification?"
-msgstr "検証なしにこれらのパッケージをインストールしますか [y/N]? "
+msgstr "検証なしにこれらのパッケージをインストールしますか?"
 
 #: cmdline/apt-get.cc:1110
 msgid "Some packages could not be authenticated"
@@ -660,10 +662,8 @@ msgid "Abort."
 msgstr "中断しました。"
 
 #: cmdline/apt-get.cc:1313
-#, fuzzy
-#| msgid "Do you want to continue [Y/n]? "
 msgid "Do you want to continue?"
-msgstr "続行しますか [Y/n]? "
+msgstr "続行しますか?"
 
 #: cmdline/apt-get.cc:1385 cmdline/apt-get.cc:2686 apt-pkg/algorithms.cc:1566
 #, c-format
@@ -1566,6 +1566,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
+"クリアサインされたファイルが有効ではなく、'%s' を得ました (認証にネットワーク"
+"が必要?)"
 
 #: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
@@ -1687,10 +1689,9 @@ msgid "Can not read mirror file '%s'"
 msgstr "ミラーファイル '%s' を読み込めません"
 
 #: methods/mirror.cc:315
-#, fuzzy, c-format
-#| msgid "Can not read mirror file '%s'"
+#, c-format
 msgid "No entry found in mirror file '%s'"
-msgstr "ミラーファイル '%s' を読み込めません"
+msgstr "ミラーファイル '%s' のエントリが見つかりません"
 
 #: methods/mirror.cc:445
 #, c-format
