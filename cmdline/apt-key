@@ -26,12 +26,16 @@ GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
 GPG="$GPG_CMD"
 
 MASTER_KEYRING=""
-ARCHIVE_KEYRING_URI=""
 #MASTER_KEYRING=/usr/share/keyrings/debian-master-keyring.gpg
+eval $(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)
+ARCHIVE_KEYRING_URI=""
 #ARCHIVE_KEYRING_URI=http://ftp.debian.org/debian/debian-archive-keyring.gpg
+eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
 
 ARCHIVE_KEYRING=/usr/share/keyrings/debian-archive-keyring.gpg
+eval $(apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring)
 REMOVED_KEYS=/usr/share/keyrings/debian-archive-removed-keys.gpg
+eval $(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)
 
 requires_root() {
 	if [ "$(id -u)" -ne 0 ]; then

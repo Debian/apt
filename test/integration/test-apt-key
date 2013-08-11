@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+msgtest 'Check that paths in list output are not' 'double-slashed'
+aptkey list 2>&1 | grep -q '//' && msgfail || msgpass
+
+msgtest 'Check that paths in finger output are not' 'double-slashed'
+aptkey finger 2>&1 | grep -q '//' && msgfail || msgpass
+
+echo 'APT::Key::ArchiveKeyring "./keys/joesixpack.pub";
+APT::Key::RemovedKeys "./keys/rexexpired.pub";' > rootdir/etc/apt/apt.conf.d/aptkey.conf
+
+aptkey list | grep '^pub' > aptkey.list
+testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+
+testequal 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
+gpg: Total number processed: 1
+gpg:              unchanged: 1' aptkey --fakeroot update
+
+aptkey list | grep '^pub' > aptkey.list
+testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+
+testsuccess aptkey --fakeroot add ./keys/rexexpired.pub
+
+aptkey list | grep '^pub' > aptkey.list
+testfileequal ./aptkey.list 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
+pub   2048R/DBAC8DAE 2010-08-18'
+
+msgtest 'Execute update again to trigger removal of' 'Rex Expired key'
+testsuccess --nomsg aptkey --fakeroot update
+
+aptkey list | grep '^pub' > aptkey.list
+testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
