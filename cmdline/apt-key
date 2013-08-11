@@ -203,7 +203,12 @@ if [ -z "$TRUSTEDFILE" ]; then
    TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
    eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
    if [ -d "$TRUSTEDPARTS" ]; then
-      for trusted in $(run-parts --list $TRUSTEDPARTS --regex '^.*\.gpg$'); do
+      # strip / suffix as gpg will double-slash in that case (#665411)
+      STRIPPED_TRUSTEDPARTS="${TRUSTEDPARTS%/}"
+      if [ "${STRIPPED_TRUSTEDPARTS}/" = "$TRUSTEDPARTS" ]; then
+	 TRUSTEDPARTS="$STRIPPED_TRUSTEDPARTS"
+      fi
+      for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
 	 GPG="$GPG --keyring $trusted"
       done
    fi
