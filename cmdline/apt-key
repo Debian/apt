@@ -3,26 +3,26 @@
 set -e
 unset GREP_OPTIONS
 
-# We don't use a secret keyring, of course, but gpg panics and
-# implodes if there isn't one available
-SECRETKEYRING="$(mktemp)"
-CURRENTTRAP="rm -f '${SECRETKEYRING}';"
-trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring ${SECRETKEYRING}"
+GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
 
-eval $(apt-config shell TRUSTDBDIR Dir::Etc/d)
-if [ "$(id -u)" -eq 0 ] || [ -r "${TRUSTDBDIR}/trustdb.gpg" ]; then
-   # root can read/create the file as needed, so use the default
-   true
-else
-   # gpg needs a trustdb to function, but it can't be invalid (not even empty)
-   # so we create a tempory directory to store our fresh readable trustdb in
-   TRUSTDBDIR="$(mktemp -d)"
-   CURRENTTRAP="${CURRENTTRAP} rm -rf '${TRUSTDBDIR}';"
-   trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-   chmod 700 "$TRUSTDBDIR"
-fi
+# gpg needs a trustdb to function, but it can't be invalid (not even empty)
+# so we create a temporary directory to store our fresh readable trustdb in
+TRUSTDBDIR="$(mktemp -d)"
+CURRENTTRAP="${CURRENTTRAP} rm -rf '${TRUSTDBDIR}';"
+trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+chmod 700 "$TRUSTDBDIR"
+# We also don't use a secret keyring, of course, but gpg panics and
+# implodes if there isn't one available - and writeable for imports
+SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
+touch $SECRETKEYRING
+GPG_CMD="$GPG_CMD --secret-keyring $SECRETKEYRING"
 GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
+
+# now create the trustdb with an (empty) dummy keyring
+$GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING
+# and make sure that gpg isn't trying to update the file
+GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
+
 GPG="$GPG_CMD"
 
 MASTER_KEYRING=""
