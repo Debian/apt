@@ -131,13 +131,23 @@ exitwithstatus() {
         exit $((EXIT_CODE <= 255 ? EXIT_CODE : 255));
 }
 
+shellsetedetector() {
+	local exit_status=$?
+	if [ "$exit_status" != '0' ]; then
+		echo >&2 "${CERROR}E: Looks like the testcases ended prematurely with exitcode: ${exit_status}${CNORMAL}"
+		if [ "$EXIT_CODE" = '0' ]; then
+			EXIT_CODE="$exit_status"
+		fi
+	fi
+}
+
 addtrap() {
 	if [ "$1" = 'prefix' ]; then
 		CURRENTTRAP="$2 $CURRENTTRAP"
 	else
 		CURRENTTRAP="$CURRENTTRAP $1"
 	fi
-	trap "$CURRENTTRAP exitwithstatus;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	trap "shellsetedetector; $CURRENTTRAP exitwithstatus;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 }
 
 setupenvironment() {
