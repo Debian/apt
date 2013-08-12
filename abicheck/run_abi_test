@@ -5,8 +5,8 @@ if [ ! -d ../build ]; then
 	exit 1
 fi
 
-if [ ! -x $(which abi-complicance-checker > /dev/null 2>&1) ]; then
-	echo "Please install the 'abi-complicance-checker' package"
+if [ ! -x "$(which abi-compliance-checker 2>/dev/null )" ]; then
+	echo "Please install the 'abi-compliance-checker' package"
 	exit 1
 fi
 
