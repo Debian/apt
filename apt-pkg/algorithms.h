@@ -143,7 +143,11 @@ class pkgProblemResolver						/*{{{*/
 bool pkgDistUpgrade(pkgDepCache &Cache);
 bool pkgApplyStatus(pkgDepCache &Cache);
 bool pkgFixBroken(pkgDepCache &Cache);
+
 bool pkgAllUpgrade(pkgDepCache &Cache);
+
+bool pkgAllUpgradeNoDelete(pkgDepCache &Cache);
+
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);

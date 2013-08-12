@@ -131,13 +131,14 @@ public:
 	virtual bool empty() const = 0;
 	virtual void clear() = 0;
 
-	enum Constructor { UNKNOWN, REGEX, TASK };
+	enum Constructor { UNKNOWN, REGEX, TASK, FNMATCH };
 	virtual void setConstructor(Constructor const &con) = 0;
 	virtual Constructor getConstructor() const = 0;
 
 	static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
+	static bool FromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
 	static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
 	static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper);
@@ -257,6 +258,16 @@ public:									/*{{{*/
 	static PackageContainer FromRegEx(pkgCacheFile &Cache, std::string const &pattern) {
 		CacheSetHelper helper;
 		return FromRegEx(Cache, pattern, helper);
+	}
+
+	static PackageContainer FromFnmatch(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+		PackageContainer cont(FNMATCH);
+		PackageContainerInterface::FromFnmatch(&cont, Cache, pattern, helper);
+		return cont;
+	}
+	static PackageContainer FromFnMatch(pkgCacheFile &Cache, std::string const &pattern) {
+		CacheSetHelper helper;
+		return FromFnmatch(Cache, pattern, helper);
 	}
 
 	/** \brief returns a package specified by a string

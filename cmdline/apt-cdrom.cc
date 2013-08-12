@@ -37,6 +37,8 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#include <apt-private/private-cmndline.h>
+
 #include <apti18n.h>
 									/*}}}*/
 static const char *W_NO_CDROM_FOUND = \
@@ -203,12 +205,12 @@ bool DoIdent(CommandLine &)
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp()
+bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
-      return 0;
+      return true;
    
    cout << 
       "Usage: apt-cdrom [options] command\n"
@@ -232,37 +234,25 @@ int ShowHelp()
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
       "See fstab(5)\n";
-   return 0;
+   return true;
 }
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Args Args[] = {
-      {'h',"help","help",0},
-      {  0,"auto-detect","Acquire::cdrom::AutoDetect", CommandLine::Boolean},
-      {'v',"version","version",0},
-      {'d',"cdrom","Acquire::cdrom::mount",CommandLine::HasArg},
-      {'r',"rename","APT::CDROM::Rename",0},
-      {'m',"no-mount","APT::CDROM::NoMount",0},
-      {'f',"fast","APT::CDROM::Fast",0},
-      {'n',"just-print","APT::CDROM::NoAct",0},
-      {'n',"recon","APT::CDROM::NoAct",0},      
-      {'n',"no-act","APT::CDROM::NoAct",0},
-      {'a',"thorough","APT::CDROM::Thorough",0},
-      {'c',"config-file",0,CommandLine::ConfigFile},
-      {'o',"option",0,CommandLine::ArbItem},
-      {0,0,0,0}};
    CommandLine::Dispatch Cmds[] = {
       {"add",&DoAdd},
       {"ident",&DoIdent},
+      {"help",&ShowHelp},
       {0,0}};
+
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-cdrom", CommandLine::GetCommand(Cmds, argc, argv));
 
    // Set up gettext support
    setlocale(LC_ALL,"");
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args,_config);
+   CommandLine CmdL(Args.data(),_config);
    if (pkgInitConfig(*_config) == false ||
        CmdL.Parse(argc,argv) == false ||
        pkgInitSystem(*_config,_system) == false)
@@ -274,7 +264,7 @@ int main(int argc,const char *argv[])					/*{{{*/
    // See if the help should be shown
    if (_config->FindB("help") == true || _config->FindB("version") == true ||
        CmdL.FileSize() == 0)
-      return ShowHelp();
+      return ShowHelp(CmdL);
 
    // Deal with stdout not being a tty
    if (isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)

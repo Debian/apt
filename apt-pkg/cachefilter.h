@@ -14,16 +14,39 @@
 									/*}}}*/
 namespace APT {
 namespace CacheFilter {
+
+class PackageMatcher {
+ public:
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg) { return false; };
+   virtual bool operator() (pkgCache::GrpIterator const &Grp) { return false; };
+   virtual bool operator() (pkgCache::VerIterator const &Ver) { return false; };
+   
+   virtual ~PackageMatcher() {};
+};
+
 // PackageNameMatchesRegEx						/*{{{*/
-class PackageNameMatchesRegEx {
+class PackageNameMatchesRegEx : public PackageMatcher {
          /** \brief dpointer placeholder (for later in case we need it) */
          void *d;
 	regex_t* pattern;
 public:
 	PackageNameMatchesRegEx(std::string const &Pattern);
-	bool operator() (pkgCache::PkgIterator const &Pkg);
-	bool operator() (pkgCache::GrpIterator const &Grp);
+	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+	virtual bool operator() (pkgCache::GrpIterator const &Grp);
 	~PackageNameMatchesRegEx();
+};
+									/*}}}*/
+// PackageNameMatchesFnmatch						/*{{{*/
+ class PackageNameMatchesFnmatch : public PackageMatcher{
+         /** \brief dpointer placeholder (for later in case we need it) */
+         void *d;
+         const std::string Pattern;
+public:
+         PackageNameMatchesFnmatch(std::string const &Pattern) 
+            : Pattern(Pattern) {};
+        virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+	virtual bool operator() (pkgCache::GrpIterator const &Grp);
+	~PackageNameMatchesFnmatch() {};
 };
 									/*}}}*/
 // PackageArchitectureMatchesSpecification				/*{{{*/
@@ -35,7 +58,7 @@ public:
    debian-policy §11.1 "Architecture specification strings".
 
    Examples: i386, mipsel, linux-any, any-amd64, any */
-class PackageArchitectureMatchesSpecification {
+class PackageArchitectureMatchesSpecification : public PackageMatcher {
 	std::string literal;
 	std::string complete;
 	bool isPattern;
@@ -51,8 +74,8 @@ public:
 	 */
 	PackageArchitectureMatchesSpecification(std::string const &pattern, bool const isPattern = true);
 	bool operator() (char const * const &arch);
-	bool operator() (pkgCache::PkgIterator const &Pkg);
-	bool operator() (pkgCache::VerIterator const &Ver);
+	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+	virtual bool operator() (pkgCache::VerIterator const &Ver);
 	~PackageArchitectureMatchesSpecification();
 };
 									/*}}}*/
