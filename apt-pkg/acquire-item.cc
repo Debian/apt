@@ -984,6 +984,8 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
    DestFile += ".decomp";
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
+
+   // FIXME: this points to a c++ string that goes out of scope
    Mode = decompProg.c_str();
 }
 									/*}}}*/

@@ -361,6 +361,7 @@ bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
 void CommandLine::SaveInConfig(unsigned int const &argc, char const * const * const argv)
 {
    char cmdline[100 + argc * 50];
+   memset(cmdline, 0, sizeof(cmdline));
    unsigned int length = 0;
    bool lastWasOption = false;
    bool closeQuote = false;
