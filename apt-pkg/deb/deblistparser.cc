@@ -805,7 +805,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    map_ptrloc const storage = WriteUniqString(component);
    FileI->Component = storage;
 
-   pkgTagFile TagFile(&File);
+   pkgTagFile TagFile(&File, File.Size());
    pkgTagSection Section;
    if (_error->PendingError() == true || TagFile.Step(Section) == false)
       return false;
