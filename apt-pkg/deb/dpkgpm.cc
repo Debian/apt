@@ -1261,11 +1261,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    tcsetattr(0, TCSAFLUSH, &rtt);
 	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
 	 }
-      } else {
-         const char *s = _("Can not write log, tcgetattr() failed for stdout");
-         fprintf(stderr, "%s", s);
-         if(d->term_out)
-            fprintf(d->term_out, "%s",s); 
       }
       // complain only if stdout is either a terminal (but still failed) or is an invalid
       // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
