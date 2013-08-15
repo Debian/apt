@@ -1,20 +1,10 @@
 apt (0.9.10~exp1) UNRELEASED; urgency=low
 
-  [ Daniel Hartwig ]
-  * Clarify units of Acquire::http::Dl-Limit (closes: #705445)
-  * Show a error message if {,dist-}upgrade is used with additional
-    arguments (closes: #705510)
-
   [ Michael Vogt ]
   * lp:~mvo/apt/webserver-simulate-broken-with-fix346386:
     - fix invalid InRelease file download checking and add regression
       test to server broken files to the buildin test webserver
   * stop exporting the accidently exported parsenetrc() symbol
-  * lp:~mvo/apt/add-glob-function:
-    -  add Glob() to fileutl.{cc,h}
-  * lp:~mvo/apt/config-clear:
-    - support Configuration.Clear() for a clear of the entire 
-      configuration
   * apt-pkg/deb/dpkgpm.cc:
     - use tcgetattr() on STDOUT instead of STDIN so that term.log
       works for redirected stdin
