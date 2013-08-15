@@ -2,9 +2,11 @@
 set -e
 
 DIR=$(readlink -f $(dirname $0))
-echo "Compiling the tests …"
-(cd $DIR && make)
-echo "Running all testcases …"
+if [ -z "$MAKELEVEL" ]; then
+	echo 'Compiling the tests …'
+	(cd $DIR && make)
+	echo 'Running all testcases …'
+fi
 LDPATH="$DIR/../../build/bin"
 EXT="_libapt_test"
 EXIT_CODE=0
