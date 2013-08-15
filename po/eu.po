@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_eu\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-03-01 12:27+0100\n"
+"POT-Creation-Date: 2013-07-31 16:24+0200\n"
 "PO-Revision-Date: 2009-05-17 00:41+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
@@ -92,80 +92,80 @@ msgstr "Guztira galdutako tokia:"
 msgid "Total space accounted for: "
 msgstr "Guztira erregistratutako lekua: "
 
-#: cmdline/apt-cache.cc:515 cmdline/apt-cache.cc:1147
+#: cmdline/apt-cache.cc:515 cmdline/apt-cache.cc:1165
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "%s pakete fitxategia ez dago sinkronizatuta."
 
-#: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1382
-#: cmdline/apt-cache.cc:1384 cmdline/apt-cache.cc:1461 cmdline/apt-mark.cc:46
+#: cmdline/apt-cache.cc:593 cmdline/apt-cache.cc:1452
+#: cmdline/apt-cache.cc:1454 cmdline/apt-cache.cc:1531 cmdline/apt-mark.cc:46
 #: cmdline/apt-mark.cc:93 cmdline/apt-mark.cc:219
 msgid "No packages found"
 msgstr "Ez da paketerik aurkitu"
 
-#: cmdline/apt-cache.cc:1226
+#: cmdline/apt-cache.cc:1265
 #, fuzzy
 msgid "You must give at least one search pattern"
 msgstr "Zehazki eredu bat eman behar duzu."
 
-#: cmdline/apt-cache.cc:1361
+#: cmdline/apt-cache.cc:1431
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1456 apt-pkg/cacheset.cc:510
+#: cmdline/apt-cache.cc:1526 apt-pkg/cacheset.cc:510
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Ezin da %s paketea lokalizatu"
 
-#: cmdline/apt-cache.cc:1486
+#: cmdline/apt-cache.cc:1556
 msgid "Package files:"
 msgstr "Pakete Fitxategiak:"
 
-#: cmdline/apt-cache.cc:1493 cmdline/apt-cache.cc:1584
+#: cmdline/apt-cache.cc:1563 cmdline/apt-cache.cc:1654
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr ""
 "Katxea ez dago sinkronizatuta, ezin zaio erreferentziarik (x-ref) egin "
 "pakete fitxategi bati"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1507
+#: cmdline/apt-cache.cc:1577
 msgid "Pinned packages:"
 msgstr "Pin duten Paketeak:"
 
-#: cmdline/apt-cache.cc:1519 cmdline/apt-cache.cc:1564
+#: cmdline/apt-cache.cc:1589 cmdline/apt-cache.cc:1634
 msgid "(not found)"
 msgstr "(ez da aurkitu)"
 
-#: cmdline/apt-cache.cc:1527
+#: cmdline/apt-cache.cc:1597
 msgid "  Installed: "
 msgstr "  Instalatuta: "
 
-#: cmdline/apt-cache.cc:1528
+#: cmdline/apt-cache.cc:1598
 msgid "  Candidate: "
 msgstr "  Hautagaia: "
 
-#: cmdline/apt-cache.cc:1546 cmdline/apt-cache.cc:1554
+#: cmdline/apt-cache.cc:1616 cmdline/apt-cache.cc:1624
 msgid "(none)"
 msgstr "(bat ere ez)"
 
-#: cmdline/apt-cache.cc:1561
+#: cmdline/apt-cache.cc:1631
 msgid "  Package pin: "
 msgstr "  Paketearen pin-a:"
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1570
+#: cmdline/apt-cache.cc:1640
 msgid "  Version table:"
 msgstr "  Bertsio taula:"
 
-#: cmdline/apt-cache.cc:1683 cmdline/apt-cdrom.cc:198 cmdline/apt-config.cc:81
-#: cmdline/apt-get.cc:3360 cmdline/apt-mark.cc:375
+#: cmdline/apt-cache.cc:1753 cmdline/apt-cdrom.cc:206 cmdline/apt-config.cc:81
+#: cmdline/apt-get.cc:3392 cmdline/apt-mark.cc:375
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:33 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s %s-rentzat %s %s-ean konpilatua\n"
 
-#: cmdline/apt-cache.cc:1690
+#: cmdline/apt-cache.cc:1760
 #, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
@@ -237,22 +237,30 @@ msgstr ""
 "  -o=? Ezarri konfigurazio aukera arbitrario bat. Adib.: -o dir::cache=/tmp\n"
 "Informazio gehiago nahi izanez gero: ikus apt-cache(8) eta apt.conf(5).\n"
 
-#: cmdline/apt-cdrom.cc:79
+#. }}}
+#: cmdline/apt-cdrom.cc:43
+msgid ""
+"No CD-ROM could be auto-detected or found using the default mount point.\n"
+"You may try the --cdrom option to set the CD-ROM mount point. See 'man apt-"
+"cdrom' for more information about the CD-ROM auto-detection and mount point."
+msgstr ""
+
+#: cmdline/apt-cdrom.cc:85
 #, fuzzy
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
 msgstr ""
 "Mesedez idatzi izen bat diska honentzat, 'Debian 2.1r1 1 Diska' antzerakoan"
 
-#: cmdline/apt-cdrom.cc:94
+#: cmdline/apt-cdrom.cc:100
 msgid "Please insert a Disc in the drive and press enter"
 msgstr "Mesedez sar diska bat gailuan eta enter sakatu"
 
-#: cmdline/apt-cdrom.cc:129
+#: cmdline/apt-cdrom.cc:135
 #, fuzzy, c-format
 msgid "Failed to mount '%s' to '%s'"
 msgstr "Huts egin du %s izenaren ordez %s ipintzean"
 
-#: cmdline/apt-cdrom.cc:163
+#: cmdline/apt-cdrom.cc:170
 msgid "Repeat this process for the rest of the CDs in your set."
 msgstr "Prozesu hau bildumako beste CD guztiekin errepikatu."
 
@@ -288,83 +296,101 @@ msgstr ""
 "  -c=? Irakurri konfigurazio fitxategi hau\n"
 "  -o=? Ezarri konfigurazio aukera arbitrario bat. Adib.: -o dir::cache=/tmp\n"
 
-#: cmdline/apt-get.cc:135
-msgid "Y"
-msgstr "Y"
+#. TRANSLATOR: Yes/No question help-text: defaulting to Y[es]
+#. e.g. "Do you want to continue? [Y/n] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: cmdline/apt-get.cc:146
+msgid "[Y/n]"
+msgstr "[B/e]"
 
-#: cmdline/apt-get.cc:140
+#. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
+#. e.g. "Should this file be removed? [y/N] "
+#. The user has to answer with an input matching the
+#. YESEXPR/NOEXPR defined in your l10n.
+#: cmdline/apt-get.cc:152
+msgid "[y/N]"
+msgstr "[b/E]"
+
+#. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
+#: cmdline/apt-get.cc:163
+msgid "Y"
+msgstr ""
+
+#. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
+#: cmdline/apt-get.cc:169
 msgid "N"
 msgstr ""
 
-#: cmdline/apt-get.cc:162 apt-pkg/cachefilter.cc:33
+#: cmdline/apt-get.cc:191 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Adierazpen erregularren konpilazio errorea - %s"
 
-#: cmdline/apt-get.cc:260
+#: cmdline/apt-get.cc:289
 msgid "The following packages have unmet dependencies:"
 msgstr "Ondorengo paketeetan bete gabeko mendekotasunak daude:"
 
-#: cmdline/apt-get.cc:350
+#: cmdline/apt-get.cc:379
 #, c-format
 msgid "but %s is installed"
 msgstr "baina %s instalatuta dago"
 
-#: cmdline/apt-get.cc:352
+#: cmdline/apt-get.cc:381
 #, c-format
 msgid "but %s is to be installed"
 msgstr "baina %s instalatzeko dago"
 
-#: cmdline/apt-get.cc:359
+#: cmdline/apt-get.cc:388
 msgid "but it is not installable"
 msgstr "baina ez da instalagarria"
 
-#: cmdline/apt-get.cc:361
+#: cmdline/apt-get.cc:390
 msgid "but it is a virtual package"
 msgstr "baina pakete birtuala da"
 
-#: cmdline/apt-get.cc:364
+#: cmdline/apt-get.cc:393
 msgid "but it is not installed"
 msgstr "baina ez dago instalatuta"
 
-#: cmdline/apt-get.cc:364
+#: cmdline/apt-get.cc:393
 msgid "but it is not going to be installed"
 msgstr "baina ez da instalatuko"
 
-#: cmdline/apt-get.cc:369
+#: cmdline/apt-get.cc:398
 msgid " or"
 msgstr " edo"
 
-#: cmdline/apt-get.cc:398
+#: cmdline/apt-get.cc:427
 msgid "The following NEW packages will be installed:"
 msgstr "Ondorengo pakete BERRIAK instalatuko dira:"
 
-#: cmdline/apt-get.cc:424
+#: cmdline/apt-get.cc:453
 msgid "The following packages will be REMOVED:"
 msgstr "Ondorengo paketeak KENDUKO dira:"
 
-#: cmdline/apt-get.cc:446
+#: cmdline/apt-get.cc:475
 msgid "The following packages have been kept back:"
 msgstr "Ondorengo paketeak mantendu egin dira:"
 
-#: cmdline/apt-get.cc:467
+#: cmdline/apt-get.cc:496
 msgid "The following packages will be upgraded:"
 msgstr "Ondorengo paketeak bertsio-berrituko dira:"
 
-#: cmdline/apt-get.cc:488
+#: cmdline/apt-get.cc:517
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Ondorengo paketeak AURREKO BERTSIORA itzuliko dira:"
 
-#: cmdline/apt-get.cc:508
+#: cmdline/apt-get.cc:537
 msgid "The following held packages will be changed:"
 msgstr "Ondorengo pakete atxikiak aldatu egingo dira:"
 
-#: cmdline/apt-get.cc:563
+#: cmdline/apt-get.cc:592
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (arrazoia: %s) "
 
-#: cmdline/apt-get.cc:571
+#: cmdline/apt-get.cc:600
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -372,60 +398,60 @@ msgstr ""
 "KONTUZ: Ondorengo funtsezko paketeak kendu egingo dira\n"
 "EZ ezazu horrelakorik egin, ez badakizu ondo zertan ari zaren!"
 
-#: cmdline/apt-get.cc:602
+#: cmdline/apt-get.cc:631
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu bertsio berritua(k), %lu berriki instalatuta, "
 
-#: cmdline/apt-get.cc:606
+#: cmdline/apt-get.cc:635
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu berrinstalatuta, "
 
-#: cmdline/apt-get.cc:608
+#: cmdline/apt-get.cc:637
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu aurreko bertsiora itzulita, "
 
-#: cmdline/apt-get.cc:610
+#: cmdline/apt-get.cc:639
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu kentzeko, eta %lu bertsio-berritu gabe.\n"
 
-#: cmdline/apt-get.cc:614
+#: cmdline/apt-get.cc:643
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu ez erabat instalatuta edo kenduta.\n"
 
-#: cmdline/apt-get.cc:635
+#: cmdline/apt-get.cc:664
 #, fuzzy, c-format
 msgid "Note, selecting '%s' for task '%s'\n"
 msgstr "Oharra: %s hautatzen '%s' adierazpen erregularrarentzat\n"
 
-#: cmdline/apt-get.cc:640
+#: cmdline/apt-get.cc:669
 #, fuzzy, c-format
 msgid "Note, selecting '%s' for regex '%s'\n"
 msgstr "Oharra: %s hautatzen '%s' adierazpen erregularrarentzat\n"
 
-#: cmdline/apt-get.cc:657
+#: cmdline/apt-get.cc:686
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
 msgstr "%s pakete birtual bat da, honek hornitua:\n"
 
-#: cmdline/apt-get.cc:668
+#: cmdline/apt-get.cc:697
 msgid " [Installed]"
 msgstr " [Instalatuta]"
 
-#: cmdline/apt-get.cc:677
+#: cmdline/apt-get.cc:706
 #, fuzzy
 msgid " [Not candidate version]"
 msgstr "Hautagaien bertsioak"
 
-#: cmdline/apt-get.cc:679
+#: cmdline/apt-get.cc:708
 msgid "You should explicitly select one to install."
 msgstr "Zehazki bat hautatu behar duzu instalatzeko."
 
-#: cmdline/apt-get.cc:682
+#: cmdline/apt-get.cc:711
 #, c-format
 msgid ""
 "Package %s is not available, but is referred to by another package.\n"
@@ -436,132 +462,132 @@ msgstr ""
 "egiten dio. Beharbada paketea faltako da, edo zaharkituta egongo da, edo \n"
 "beste iturburu batean bakarrik egongo da erabilgarri\n"
 
-#: cmdline/apt-get.cc:700
+#: cmdline/apt-get.cc:729
 msgid "However the following packages replace it:"
 msgstr "Baina ondorengo paketeek ordezten dute:"
 
-#: cmdline/apt-get.cc:712
+#: cmdline/apt-get.cc:741
 #, fuzzy, c-format
 msgid "Package '%s' has no installation candidate"
 msgstr "%s paketeak ez du instalatzeko hautagairik"
 
-#: cmdline/apt-get.cc:725
+#: cmdline/apt-get.cc:754
 #, c-format
 msgid "Virtual packages like '%s' can't be removed\n"
 msgstr ""
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: cmdline/apt-get.cc:737 cmdline/apt-get.cc:940
+#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:969
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr "%s paketea ez dago instalatuta, eta, beraz, ez da kenduko\n"
 
-#: cmdline/apt-get.cc:743 cmdline/apt-get.cc:946
+#: cmdline/apt-get.cc:772 cmdline/apt-get.cc:975
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "%s paketea ez dago instalatuta, eta, beraz, ez da kenduko\n"
 
-#: cmdline/apt-get.cc:788
+#: cmdline/apt-get.cc:817
 #, fuzzy, c-format
 msgid "Note, selecting '%s' instead of '%s'\n"
 msgstr "Oharra, %s hautatzen %s(r)en ordez\n"
 
-#: cmdline/apt-get.cc:818
+#: cmdline/apt-get.cc:847
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "%s saltatzen. Instalatuta dago, eta ez dago bertsio-berritzerik.\n"
 
-#: cmdline/apt-get.cc:822
+#: cmdline/apt-get.cc:851
 #, fuzzy, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr "%s saltatzen. Instalatuta dago, eta ez dago bertsio-berritzerik.\n"
 
-#: cmdline/apt-get.cc:834
+#: cmdline/apt-get.cc:863
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "%s berriro instalatzea ez da posible; ezin da deskargatu.\n"
 
-#: cmdline/apt-get.cc:839
+#: cmdline/apt-get.cc:868
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s bertsiorik berriena da jada.\n"
 
-#: cmdline/apt-get.cc:858 cmdline/apt-get.cc:2159 cmdline/apt-mark.cc:68
+#: cmdline/apt-get.cc:887 cmdline/apt-get.cc:2187 cmdline/apt-mark.cc:68
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s eskuz instalatua bezala ezarri.\n"
 
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:913
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Hautatutako bertsioa: %s (%s) -- %s\n"
 
-#: cmdline/apt-get.cc:889
+#: cmdline/apt-get.cc:918
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Hautatutako bertsioa: %s (%s) -- %s\n"
 
-#: cmdline/apt-get.cc:1025
+#: cmdline/apt-get.cc:1054
 msgid "Correcting dependencies..."
 msgstr "Mendekotasunak zuzentzen..."
 
-#: cmdline/apt-get.cc:1028
+#: cmdline/apt-get.cc:1057
 msgid " failed."
 msgstr " : huts egin du."
 
-#: cmdline/apt-get.cc:1031
+#: cmdline/apt-get.cc:1060
 msgid "Unable to correct dependencies"
 msgstr "Ezin dira mendekotasunak zuzendu"
 
-#: cmdline/apt-get.cc:1034
+#: cmdline/apt-get.cc:1063
 msgid "Unable to minimize the upgrade set"
 msgstr "Ezin da bertsio berritzeko multzoa minimizatu"
 
-#: cmdline/apt-get.cc:1036
+#: cmdline/apt-get.cc:1065
 msgid " Done"
 msgstr " Eginda"
 
-#: cmdline/apt-get.cc:1040
+#: cmdline/apt-get.cc:1069
 msgid "You might want to run 'apt-get -f install' to correct these."
 msgstr "Beharbada 'apt-get -f install' exekutatu nahiko duzu zuzentzeko."
 
-#: cmdline/apt-get.cc:1043
+#: cmdline/apt-get.cc:1072
 msgid "Unmet dependencies. Try using -f."
 msgstr "Bete gabeko mendekotasunak. Probatu -f erabiliz."
 
-#: cmdline/apt-get.cc:1068
+#: cmdline/apt-get.cc:1097
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "KONTUZ: Hurrengo paketeak ezin dira egiaztatu!"
 
-#: cmdline/apt-get.cc:1072
+#: cmdline/apt-get.cc:1101
 msgid "Authentication warning overridden.\n"
 msgstr "Egiaztapen abisua gainidazten.\n"
 
-#: cmdline/apt-get.cc:1079
-msgid "Install these packages without verification [y/N]? "
-msgstr "Paketeak egiaztapen gabe instalatu [b/E]? "
+#: cmdline/apt-get.cc:1108
+msgid "Install these packages without verification?"
+msgstr "Paketeak egiaztapen gabe instalatu?"
 
-#: cmdline/apt-get.cc:1081
+#: cmdline/apt-get.cc:1110
 msgid "Some packages could not be authenticated"
 msgstr "Zenbait pakete ezin dira egiaztatu"
 
-#: cmdline/apt-get.cc:1090 cmdline/apt-get.cc:1251
+#: cmdline/apt-get.cc:1119 cmdline/apt-get.cc:1280
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Arazoak daude, eta -y erabili da --force-yes gabe"
 
-#: cmdline/apt-get.cc:1131
+#: cmdline/apt-get.cc:1160
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Barne errorea, InstallPackages apurturiko paketeez deitu da!"
 
-#: cmdline/apt-get.cc:1140
+#: cmdline/apt-get.cc:1169
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Paketeak ezabatu beharra dute baina Ezabatzea ezgaiturik dago."
 
-#: cmdline/apt-get.cc:1151
+#: cmdline/apt-get.cc:1180
 msgid "Internal error, Ordering didn't finish"
 msgstr "Barne errorea, ez da ordenatzeaz amaitu"
 
-#: cmdline/apt-get.cc:1189
+#: cmdline/apt-get.cc:1218
 msgid "How odd.. The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Hau bitxia.. Tamainak ez dira berdina, idatzi apt@packages.debian.org-ra "
@@ -569,54 +595,54 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1196
+#: cmdline/apt-get.cc:1225
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Artxiboetako %sB/%sB eskuratu behar dira.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1201
+#: cmdline/apt-get.cc:1230
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Artxiboetako %sB eskuratu behar dira.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1208
+#: cmdline/apt-get.cc:1237
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Ekintza honen ondoren, %sB gehiago erabiliko dira diskoan.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:1213
+#: cmdline/apt-get.cc:1242
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Ekintza honen ondoren, %sB libratuko dira diskoan.\n"
 
-#: cmdline/apt-get.cc:1228 cmdline/apt-get.cc:1231 cmdline/apt-get.cc:2588
-#: cmdline/apt-get.cc:2591
+#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1260 cmdline/apt-get.cc:2621
+#: cmdline/apt-get.cc:2624
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Ezin da %s(e)n duzun leku librea atzeman."
 
-#: cmdline/apt-get.cc:1241
+#: cmdline/apt-get.cc:1270
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Ez daukazu nahikoa leku libre %s(e)n."
 
-#: cmdline/apt-get.cc:1257 cmdline/apt-get.cc:1279
+#: cmdline/apt-get.cc:1286 cmdline/apt-get.cc:1308
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "'Trivial Only' zehaztu da, baina hau ez da eragiketa tribial bat."
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: cmdline/apt-get.cc:1261
+#: cmdline/apt-get.cc:1290
 msgid "Yes, do as I say!"
 msgstr "Bai, egin esandakoa!"
 
-#: cmdline/apt-get.cc:1263
+#: cmdline/apt-get.cc:1292
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -627,28 +653,28 @@ msgstr ""
 "Jarraitzeko, idatzi '%s' esaldia\n"
 " ?] "
 
-#: cmdline/apt-get.cc:1269 cmdline/apt-get.cc:1288
+#: cmdline/apt-get.cc:1298 cmdline/apt-get.cc:1317
 msgid "Abort."
 msgstr "Abortatu."
 
-#: cmdline/apt-get.cc:1284
-msgid "Do you want to continue [Y/n]? "
-msgstr "Aurrera jarraitu nahi al duzu [B/e]? "
+#: cmdline/apt-get.cc:1313
+msgid "Do you want to continue?"
+msgstr "Aurrera jarraitu nahi al duzu?"
 
-#: cmdline/apt-get.cc:1356 cmdline/apt-get.cc:2653 apt-pkg/algorithms.cc:1555
+#: cmdline/apt-get.cc:1385 cmdline/apt-get.cc:2686 apt-pkg/algorithms.cc:1566
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Ezin da lortu %s  %s\n"
 
-#: cmdline/apt-get.cc:1374
+#: cmdline/apt-get.cc:1403
 msgid "Some files failed to download"
 msgstr "Fitxategi batzuk ezin izan dira deskargatu"
 
-#: cmdline/apt-get.cc:1375 cmdline/apt-get.cc:2665
+#: cmdline/apt-get.cc:1404 cmdline/apt-get.cc:2698
 msgid "Download complete and in download only mode"
 msgstr "Deskarga amaituta eta deskarga soileko moduan"
 
-#: cmdline/apt-get.cc:1381
+#: cmdline/apt-get.cc:1410
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -656,19 +682,19 @@ msgstr ""
 "Ezin izan dira artxibo batzuk lortu; beharbada apt-get update exekutatu, edo "
 "--fix-missing aukerarekin saiatu?"
 
-#: cmdline/apt-get.cc:1385
+#: cmdline/apt-get.cc:1414
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing eta euskarri aldaketa ez dira onartzen oraingoz"
 
-#: cmdline/apt-get.cc:1390
+#: cmdline/apt-get.cc:1419
 msgid "Unable to correct missing packages."
 msgstr "Falta diren paketeak ezin dira zuzendu."
 
-#: cmdline/apt-get.cc:1391
+#: cmdline/apt-get.cc:1420
 msgid "Aborting install."
 msgstr "Abortatu instalazioa."
 
-#: cmdline/apt-get.cc:1419
+#: cmdline/apt-get.cc:1448
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -678,35 +704,35 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: cmdline/apt-get.cc:1423
+#: cmdline/apt-get.cc:1452
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr ""
 
-#: cmdline/apt-get.cc:1561
+#: cmdline/apt-get.cc:1590
 #, c-format
 msgid "Ignore unavailable target release '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1593
+#: cmdline/apt-get.cc:1622
 #, fuzzy, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "Ezin da atzitu %s iturburu paketeen zerrenda"
 
 #. if (VerTag.empty() == false && Last == 0)
-#: cmdline/apt-get.cc:1631
+#: cmdline/apt-get.cc:1660
 #, c-format
 msgid "Ignore unavailable version '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:1647
+#: cmdline/apt-get.cc:1676
 msgid "The update command takes no arguments"
 msgstr "Eguneratzeko komandoak ez du argumenturik hartzen"
 
-#: cmdline/apt-get.cc:1713
+#: cmdline/apt-get.cc:1742
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "Suposatu ez dugun zerbait ezabatuko da, ezin da AutoRemover abiarazi"
 
-#: cmdline/apt-get.cc:1817
+#: cmdline/apt-get.cc:1846
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -724,15 +750,15 @@ msgstr ""
 #. "that package should be filed.") << endl;
 #. }
 #.
-#: cmdline/apt-get.cc:1820 cmdline/apt-get.cc:1989
+#: cmdline/apt-get.cc:1849 cmdline/apt-get.cc:2017
 msgid "The following information may help to resolve the situation:"
 msgstr "Informazio honek arazoa konpontzen lagun dezake:"
 
-#: cmdline/apt-get.cc:1824
+#: cmdline/apt-get.cc:1853
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Barne Errorea, AutoRemover-ek zerbait apurtu du"
 
-#: cmdline/apt-get.cc:1831
+#: cmdline/apt-get.cc:1860
 #, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
@@ -746,7 +772,7 @@ msgstr[1] ""
 "Ondorengo pakete automatikoki instalatuak izan ziren eta ez dira luzaroago "
 "behar."
 
-#: cmdline/apt-get.cc:1835
+#: cmdline/apt-get.cc:1864
 #, fuzzy, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -758,22 +784,22 @@ msgstr[1] ""
 "Ondorengo pakete automatikoki instalatuak izan ziren eta ez dira luzaroago "
 "behar."
 
-#: cmdline/apt-get.cc:1837
+#: cmdline/apt-get.cc:1866
 #, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "'apt-get autoremove' erabili ezabatzeko."
 msgstr[1] "'apt-get autoremove' erabili ezabatzeko."
 
-#: cmdline/apt-get.cc:1856
+#: cmdline/apt-get.cc:1885
 msgid "Internal error, AllUpgrade broke stuff"
 msgstr "Barne Errorea, AllUpgade-k zerbait apurtu du"
 
-#: cmdline/apt-get.cc:1955
+#: cmdline/apt-get.cc:1984
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "Beharbada 'apt-get -f install' exekutatu nahiko duzu hauek zuzentzeko:"
 
-#: cmdline/apt-get.cc:1959
+#: cmdline/apt-get.cc:1988
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -781,7 +807,7 @@ msgstr ""
 "Bete gabeko mendekotasunak. Probatu 'apt-get -f install' paketerik gabe (edo "
 "zehaztu konponbide bat)."
 
-#: cmdline/apt-get.cc:1974
+#: cmdline/apt-get.cc:2002
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -793,85 +819,85 @@ msgstr ""
 "beharrezko pakete batzuk ez ziren sortuko oraindik, edo \n"
 "Sarrerakoetan (Incoming) egoten jarraituko dute."
 
-#: cmdline/apt-get.cc:1995
+#: cmdline/apt-get.cc:2023
 msgid "Broken packages"
 msgstr "Hautsitako paketeak"
 
-#: cmdline/apt-get.cc:2021
+#: cmdline/apt-get.cc:2049
 msgid "The following extra packages will be installed:"
 msgstr "Ondorengo pakete gehigarriak instalatuko dira:"
 
-#: cmdline/apt-get.cc:2111
+#: cmdline/apt-get.cc:2139
 msgid "Suggested packages:"
 msgstr "Iradokitako paketeak:"
 
-#: cmdline/apt-get.cc:2112
+#: cmdline/apt-get.cc:2140
 msgid "Recommended packages:"
 msgstr "Gomendatutako paketeak:"
 
-#: cmdline/apt-get.cc:2154
+#: cmdline/apt-get.cc:2182
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Ezin izan da %s paketea aurkitu"
 
-#: cmdline/apt-get.cc:2161 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:2189 cmdline/apt-mark.cc:70
 #, fuzzy, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "%s eskuz instalatua bezala ezarri.\n"
 
-#: cmdline/apt-get.cc:2169 cmdline/apt-mark.cc:114
+#: cmdline/apt-get.cc:2197 cmdline/apt-mark.cc:114
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
 
-#: cmdline/apt-get.cc:2185
+#: cmdline/apt-get.cc:2213
 msgid "Calculating upgrade... "
 msgstr "Berriketak kalkulatzen... "
 
-#: cmdline/apt-get.cc:2188 methods/ftp.cc:711 methods/connect.cc:115
+#: cmdline/apt-get.cc:2216 methods/ftp.cc:712 methods/connect.cc:116
 msgid "Failed"
 msgstr "Huts egin du"
 
-#: cmdline/apt-get.cc:2193
+#: cmdline/apt-get.cc:2221
 msgid "Done"
 msgstr "Eginda"
 
-#: cmdline/apt-get.cc:2260 cmdline/apt-get.cc:2268
+#: cmdline/apt-get.cc:2288 cmdline/apt-get.cc:2296
 msgid "Internal error, problem resolver broke stuff"
 msgstr "Barne Errorea, arazo konpontzaileak zerbait apurtu du"
 
-#: cmdline/apt-get.cc:2296 cmdline/apt-get.cc:2332
+#: cmdline/apt-get.cc:2324 cmdline/apt-get.cc:2361
 msgid "Unable to lock the download directory"
 msgstr "Ezin da deskarga direktorioa blokeatu"
 
-#: cmdline/apt-get.cc:2388
+#: cmdline/apt-get.cc:2418
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:2393
+#: cmdline/apt-get.cc:2423
 #, c-format
 msgid "Downloading %s %s"
 msgstr ""
 
-#: cmdline/apt-get.cc:2453
+#: cmdline/apt-get.cc:2483
 msgid "Must specify at least one package to fetch source for"
 msgstr "Gutxienez pakete bat zehaztu behar duzu iturburua lortzeko"
 
-#: cmdline/apt-get.cc:2493 cmdline/apt-get.cc:2802
+#: cmdline/apt-get.cc:2523 cmdline/apt-get.cc:2835
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Ezin da iturburu paketerik aurkitu %s(r)entzat"
 
-#: cmdline/apt-get.cc:2510
+#: cmdline/apt-get.cc:2540
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2515
+#: cmdline/apt-get.cc:2545
 #, c-format
 msgid ""
 "Please use:\n"
@@ -879,87 +905,87 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:2565
+#: cmdline/apt-get.cc:2598
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Dagoeneko deskargaturiko '%s' fitxategia saltatzen\n"
 
-#: cmdline/apt-get.cc:2602
+#: cmdline/apt-get.cc:2635
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Ez daukazu nahikoa leku libre %s(e)n."
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2611
+#: cmdline/apt-get.cc:2644
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Iturburu artxiboetako %sB/%sB eskuratu behar dira.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:2616
+#: cmdline/apt-get.cc:2649
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Iturburu artxiboetako %sB eskuratu behar dira.\n"
 
-#: cmdline/apt-get.cc:2622
+#: cmdline/apt-get.cc:2655
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Eskuratu %s iturburua\n"
 
-#: cmdline/apt-get.cc:2660
+#: cmdline/apt-get.cc:2693
 msgid "Failed to fetch some archives."
 msgstr "Huts egin du zenbat artxibo lortzean."
 
-#: cmdline/apt-get.cc:2691
+#: cmdline/apt-get.cc:2724
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr ""
 "%s(e)n dagoeneko deskonprimitutako iturburua deskonprimitzea saltatzen\n"
 
-#: cmdline/apt-get.cc:2703
+#: cmdline/apt-get.cc:2736
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Deskonprimitzeko '%s' komandoak huts egin du.\n"
 
-#: cmdline/apt-get.cc:2704
+#: cmdline/apt-get.cc:2737
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Egiaztatu 'dpkg-dev' paketea instalaturik dagoen.\n"
 
-#: cmdline/apt-get.cc:2726
+#: cmdline/apt-get.cc:2759
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Eraikitzeko '%s' komandoak huts egin du.\n"
 
-#: cmdline/apt-get.cc:2746
+#: cmdline/apt-get.cc:2779
 msgid "Child process failed"
 msgstr "Prozesu umeak huts egin du"
 
-#: cmdline/apt-get.cc:2765
+#: cmdline/apt-get.cc:2798
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Gutxienez pakete bat zehaztu behar duzu eraikitze mendekotasunak egiaztatzeko"
 
-#: cmdline/apt-get.cc:2790
+#: cmdline/apt-get.cc:2823
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:2814 cmdline/apt-get.cc:2817
+#: cmdline/apt-get.cc:2847 cmdline/apt-get.cc:2850
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Ezin izan da %s(r)en eraikitze mendekotasunen informazioa eskuratu"
 
-#: cmdline/apt-get.cc:2837
+#: cmdline/apt-get.cc:2870
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s: ez du eraikitze mendekotasunik.\n"
 
-#: cmdline/apt-get.cc:3007
+#: cmdline/apt-get.cc:3040
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -967,7 +993,7 @@ msgid ""
 msgstr ""
 "%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako aurkitu"
 
-#: cmdline/apt-get.cc:3025
+#: cmdline/apt-get.cc:3058
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -975,14 +1001,14 @@ msgid ""
 msgstr ""
 "%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako aurkitu"
 
-#: cmdline/apt-get.cc:3048
+#: cmdline/apt-get.cc:3081
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Huts egin du %2$s(r)en %1$s mendekotasuna betetzean: instalatutako %3$s "
 "paketea berriegia da"
 
-#: cmdline/apt-get.cc:3087
+#: cmdline/apt-get.cc:3120
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -991,7 +1017,7 @@ msgstr ""
 "%2$s(r)en %1$s mendekotasuna ezin da bete, ez baitago bertsio-eskakizunak "
 "betetzen dituen %3$s paketearen bertsio erabilgarririk"
 
-#: cmdline/apt-get.cc:3093
+#: cmdline/apt-get.cc:3126
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -999,30 +1025,30 @@ msgid ""
 msgstr ""
 "%2$s(r)en %1$s mendekotasuna ezin da bete, %3$s paketea ezin delako aurkitu"
 
-#: cmdline/apt-get.cc:3116
+#: cmdline/apt-get.cc:3149
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Huts egin du %2$s(r)en %1$s mendekotasuna betetzean: %3$s"
 
-#: cmdline/apt-get.cc:3132
+#: cmdline/apt-get.cc:3164
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "%s(r)en eraikitze mendekotasunak ezin izan dira bete."
 
-#: cmdline/apt-get.cc:3137
+#: cmdline/apt-get.cc:3169
 msgid "Failed to process build dependencies"
 msgstr "Huts egin du eraikitze mendekotasunak prozesatzean"
 
-#: cmdline/apt-get.cc:3230 cmdline/apt-get.cc:3242
+#: cmdline/apt-get.cc:3262 cmdline/apt-get.cc:3274
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Konektatzen -> %s.(%s)"
 
-#: cmdline/apt-get.cc:3365
+#: cmdline/apt-get.cc:3397
 msgid "Supported modules:"
 msgstr "Onartutako Moduluak:"
 
-#: cmdline/apt-get.cc:3406
+#: cmdline/apt-get.cc:3438
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -1109,7 +1135,7 @@ msgstr ""
 "sources.list(5) eta apt.conf(5) orrialdeak eskuliburuan.\n"
 "                       APT honek Super Behiaren Ahalmenak ditu.\n"
 
-#: cmdline/apt-get.cc:3571
+#: cmdline/apt-get.cc:3603
 msgid ""
 "NOTE: This is only a simulation!\n"
 "      apt-get needs root privileges for real execution.\n"
@@ -1180,7 +1206,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s bertsiorik berriena da jada.\n"
 
 #: cmdline/apt-mark.cc:245 cmdline/apt-mark.cc:326
-#: apt-pkg/contrib/fileutl.cc:830 apt-pkg/deb/dpkgpm.cc:1002
+#: apt-pkg/contrib/fileutl.cc:832 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/deb/dpkgpm.cc:1032
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "%s espero zen baina ez zegoen han"
@@ -1248,7 +1275,7 @@ msgstr ""
 msgid "Disk not found."
 msgstr "Ez da diska aurkitu"
 
-#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:273
+#: methods/cdrom.cc:262 methods/file.cc:82 methods/rsh.cc:275
 msgid "File not found"
 msgstr "Ez da fitxategia aurkitu"
 
@@ -1313,7 +1340,7 @@ msgstr ""
 msgid "TYPE failed, server said: %s"
 msgstr "TYPEk huts egin du, eta zerbitzariak hau esan du: %s"
 
-#: methods/ftp.cc:340 methods/ftp.cc:451 methods/rsh.cc:192 methods/rsh.cc:235
+#: methods/ftp.cc:340 methods/ftp.cc:452 methods/rsh.cc:192 methods/rsh.cc:237
 msgid "Connection timeout"
 msgstr "Konexioa denboraz kanpo"
 
@@ -1321,8 +1348,8 @@ msgstr "Konexioa denboraz kanpo"
 msgid "Server closed the connection"
 msgstr "Zerbitzariak konexioa itxi du"
 
-#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1276
-#: apt-pkg/contrib/fileutl.cc:1285 apt-pkg/contrib/fileutl.cc:1288
+#: methods/ftp.cc:349 methods/rsh.cc:199 apt-pkg/contrib/fileutl.cc:1264
+#: apt-pkg/contrib/fileutl.cc:1273 apt-pkg/contrib/fileutl.cc:1276
 msgid "Read error"
 msgstr "Irakurketa errorea"
 
@@ -1334,171 +1361,184 @@ msgstr "Erantzun batek bufferrari gainez eragin dio."
 msgid "Protocol corruption"
 msgstr "Protokolo hondatzea"
 
-#: methods/ftp.cc:457 methods/rred.cc:238 methods/rsh.cc:241
-#: apt-pkg/contrib/fileutl.cc:1374 apt-pkg/contrib/fileutl.cc:1383
-#: apt-pkg/contrib/fileutl.cc:1386 apt-pkg/contrib/fileutl.cc:1412
+#: methods/ftp.cc:458 methods/rred.cc:238 methods/rsh.cc:243
+#: apt-pkg/contrib/fileutl.cc:1360 apt-pkg/contrib/fileutl.cc:1369
+#: apt-pkg/contrib/fileutl.cc:1372 apt-pkg/contrib/fileutl.cc:1397
 msgid "Write error"
 msgstr "Idazketa errorea"
 
-#: methods/ftp.cc:696 methods/ftp.cc:702 methods/ftp.cc:737
+#: methods/ftp.cc:697 methods/ftp.cc:703 methods/ftp.cc:738
 msgid "Could not create a socket"
 msgstr "Ezin izan da socket-a sortu"
 
-#: methods/ftp.cc:707
+#: methods/ftp.cc:708
 msgid "Could not connect data socket, connection timed out"
 msgstr ""
 "Ezin izan da datu-socketa konektatu; konexioak denbora muga gainditu du"
 
-#: methods/ftp.cc:713
+#: methods/ftp.cc:714
 msgid "Could not connect passive socket."
 msgstr "Ezin izan da socket pasibora konektatu."
 
-#: methods/ftp.cc:730
+#: methods/ftp.cc:731
 msgid "getaddrinfo was unable to get a listening socket"
 msgstr "getaddrinfo-k ezin izan du socket entzule bat eskuratu"
 
-#: methods/ftp.cc:744
+#: methods/ftp.cc:745
 msgid "Could not bind a socket"
 msgstr "Ezin izan da socket bat lotu"
 
-#: methods/ftp.cc:748
+#: methods/ftp.cc:749
 msgid "Could not listen on the socket"
 msgstr "Ezin izan da socket-ean entzun"
 
-#: methods/ftp.cc:755
+#: methods/ftp.cc:756
 msgid "Could not determine the socket's name"
 msgstr "Ezin izan da socket-aren izena zehaztu"
 
-#: methods/ftp.cc:787
+#: methods/ftp.cc:788
 msgid "Unable to send PORT command"
 msgstr "Ezin da PORT komandoa bidali"
 
-#: methods/ftp.cc:797
+#: methods/ftp.cc:798
 #, c-format
 msgid "Unknown address family %u (AF_*)"
 msgstr "Helbide familia ezezagunaa: %u (AF_*)"
 
-#: methods/ftp.cc:806
+#: methods/ftp.cc:807
 #, c-format
 msgid "EPRT failed, server said: %s"
 msgstr "EPRTek huts egin du, eta zerbitzariak hau esan du: %s"
 
-#: methods/ftp.cc:826
+#: methods/ftp.cc:827
 msgid "Data socket connect timed out"
 msgstr "Datu-socket konexioak denbora muga gainditu du"
 
-#: methods/ftp.cc:833
+#: methods/ftp.cc:834
 msgid "Unable to accept connection"
 msgstr "Ezin da konexioa onartu"
 
-#: methods/ftp.cc:872 methods/http.cc:1039 methods/rsh.cc:311
+#: methods/ftp.cc:873 methods/http.cc:1038 methods/rsh.cc:313
 msgid "Problem hashing file"
 msgstr "Arazoa fitxategiaren hash egitean"
 
-#: methods/ftp.cc:885
+#: methods/ftp.cc:886
 #, c-format
 msgid "Unable to fetch file, server said '%s'"
 msgstr "Ezin da fitxategia lortu; zerbitzariak hau esan du: '%s'"
 
-#: methods/ftp.cc:900 methods/rsh.cc:330
+#: methods/ftp.cc:901 methods/rsh.cc:332
 msgid "Data socket timed out"
 msgstr "Datu-socketak denbora muga gainditu du"
 
-#: methods/ftp.cc:930
+#: methods/ftp.cc:931
 #, c-format
 msgid "Data transfer failed, server said '%s'"
 msgstr "Datu transferentziak huts egin du, eta zerbitzariak hau esan du: '%s'"
 
 #. Get the files information
-#: methods/ftp.cc:1007
+#: methods/ftp.cc:1008
 msgid "Query"
 msgstr "Kontsulta"
 
-#: methods/ftp.cc:1119
+#: methods/ftp.cc:1120
 msgid "Unable to invoke "
 msgstr "Ezin da deitu "
 
-#: methods/connect.cc:75
+#: methods/connect.cc:76
 #, c-format
 msgid "Connecting to %s (%s)"
 msgstr "Konektatzen -> %s.(%s)"
 
-#: methods/connect.cc:86
+#: methods/connect.cc:87
 #, c-format
 msgid "[IP: %s %s]"
 msgstr "[IP: %s %s]"
 
-#: methods/connect.cc:93
+#: methods/connect.cc:94
 #, c-format
 msgid "Could not create a socket for %s (f=%u t=%u p=%u)"
 msgstr "Ezin izan da socket-ik sortu honentzat: %s (f=%u t=%u p=%u)"
 
-#: methods/connect.cc:99
+#: methods/connect.cc:100
 #, c-format
 msgid "Cannot initiate the connection to %s:%s (%s)."
 msgstr "Ezin izan da konexioa hasi -> %s:%s (%s)."
 
-#: methods/connect.cc:107
+#: methods/connect.cc:108
 #, c-format
 msgid "Could not connect to %s:%s (%s), connection timed out"
 msgstr ""
 "Ezin izan da konektatu -> %s:%s (%s). Konexioak denbora muga gainditu du"
 
-#: methods/connect.cc:125
+#: methods/connect.cc:126
 #, c-format
 msgid "Could not connect to %s:%s (%s)."
 msgstr "Ezin izan da konektatu -> %s:%s (%s)"
 
 #. We say this mainly because the pause here is for the
 #. ssh connection that is still going
-#: methods/connect.cc:153 methods/rsh.cc:433
+#: methods/connect.cc:154 methods/rsh.cc:435
 #, c-format
 msgid "Connecting to %s"
 msgstr "Konektatzen -> %s..."
 
-#: methods/connect.cc:172 methods/connect.cc:191
+#: methods/connect.cc:180 methods/connect.cc:199
 #, c-format
 msgid "Could not resolve '%s'"
 msgstr "Ezin izan da '%s' ebatzi"
 
-#: methods/connect.cc:197
+#: methods/connect.cc:205
 #, c-format
 msgid "Temporary failure resolving '%s'"
 msgstr "Aldi baterako akatsa '%s' ebaztean"
 
-#: methods/connect.cc:200
+#: methods/connect.cc:209
+#, fuzzy, c-format
+msgid "System error resolving '%s:%s'"
+msgstr "Zerbait arraroa pasatu da '%s:%s' (%i) ebaztean"
+
+#: methods/connect.cc:211
 #, fuzzy, c-format
 msgid "Something wicked happened resolving '%s:%s' (%i - %s)"
 msgstr "Zerbait arraroa pasatu da '%s:%s' (%i) ebaztean"
 
-#: methods/connect.cc:247
+#: methods/connect.cc:258
 #, fuzzy, c-format
 msgid "Unable to connect to %s:%s:"
 msgstr "Ezin da konektatu -> %s %s:"
 
-#: methods/gpgv.cc:180
+#: methods/gpgv.cc:167
 msgid ""
 "Internal error: Good signature, but could not determine key fingerprint?!"
 msgstr "Barne errorea: Sinadura zuzena, baina ezin da egiaztapen marka zehaztu"
 
-#: methods/gpgv.cc:185
+#: methods/gpgv.cc:171
 msgid "At least one invalid signature was encountered."
 msgstr "Beintza sinadura baliogabe bat aurkitu da."
 
-#: methods/gpgv.cc:189
+#: methods/gpgv.cc:173
 #, fuzzy
 msgid "Could not execute 'gpgv' to verify signature (is gpgv installed?)"
 msgstr "Ezin da %s abiarazi sinadura egiaztatzeko (gpgv instalaturik al dago?)"
 
-#: methods/gpgv.cc:194
+#. TRANSLATORS: %s is a single techy word like 'NODATA'
+#: methods/gpgv.cc:179
+#, c-format
+msgid ""
+"Clearsigned file isn't valid, got '%s' (does the network require "
+"authentication?)"
+msgstr ""
+
+#: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
 msgstr "Errore ezezaguna gpgv exekutatzean"
 
-#: methods/gpgv.cc:228 methods/gpgv.cc:235
+#: methods/gpgv.cc:216 methods/gpgv.cc:223
 msgid "The following signatures were invalid:\n"
 msgstr "Ondorengo sinadurak baliogabeak dira:\n"
 
-#: methods/gpgv.cc:242
+#: methods/gpgv.cc:230
 msgid ""
 "The following signatures couldn't be verified because the public key is not "
 "available:\n"
@@ -1538,59 +1578,59 @@ msgstr "http zerbitzariak barruti onarpena apurturik du"
 msgid "Unknown date format"
 msgstr "Datu formatu ezezaguna"
 
-#: methods/http.cc:822
+#: methods/http.cc:826
 msgid "Select failed"
 msgstr "Hautapenak huts egin du"
 
-#: methods/http.cc:827
+#: methods/http.cc:831
 msgid "Connection timed out"
 msgstr "Konexioaren denbora muga gainditu da"
 
-#: methods/http.cc:850
+#: methods/http.cc:854
 msgid "Error writing to output file"
 msgstr "Errorea irteerako fitxategian idaztean"
 
-#: methods/http.cc:881
+#: methods/http.cc:885
 msgid "Error writing to file"
 msgstr "Errorea fitxategian idaztean"
 
-#: methods/http.cc:909
+#: methods/http.cc:913
 msgid "Error writing to the file"
 msgstr "Errorea fitxategian idaztean"
 
-#: methods/http.cc:923
+#: methods/http.cc:927
 msgid "Error reading from server. Remote end closed connection"
 msgstr "Errorea zerbitzaritik irakurtzen Urrunetik amaitutako konexio itxiera"
 
-#: methods/http.cc:925
+#: methods/http.cc:929
 msgid "Error reading from server"
 msgstr "Errorea zerbitzaritik irakurtzean"
 
-#: methods/http.cc:1198
+#: methods/http.cc:1197
 msgid "Bad header data"
 msgstr "Goiburu data gaizki dago"
 
-#: methods/http.cc:1215 methods/http.cc:1270
+#: methods/http.cc:1214 methods/http.cc:1269
 msgid "Connection failed"
 msgstr "Konexioak huts egin du"
 
-#: methods/http.cc:1362
+#: methods/http.cc:1361
 msgid "Internal error"
 msgstr "Barne errorea"
 
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:465
-#: apt-pkg/contrib/cdromutl.cc:183 apt-pkg/contrib/fileutl.cc:402
-#: apt-pkg/contrib/fileutl.cc:515 apt-pkg/sourcelist.cc:208
+#: methods/mirror.cc:95 apt-inst/extract.cc:464
+#: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:404
+#: apt-pkg/contrib/fileutl.cc:517 apt-pkg/sourcelist.cc:208
 #: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:108
 #: apt-pkg/init.cc:116 apt-pkg/clean.cc:36 apt-pkg/policy.cc:362
 #, c-format
 msgid "Unable to read %s"
 msgstr "Ezin da %s irakurri"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:179
-#: apt-pkg/contrib/cdromutl.cc:213 apt-pkg/acquire.cc:491
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:180
+#: apt-pkg/contrib/cdromutl.cc:214 apt-pkg/acquire.cc:491
 #: apt-pkg/acquire.cc:516 apt-pkg/clean.cc:42 apt-pkg/clean.cc:60
 #: apt-pkg/clean.cc:123
 #, c-format
@@ -1611,7 +1651,12 @@ msgstr ""
 msgid "Can not read mirror file '%s'"
 msgstr "%s fitxategia ezin izan da ireki"
 
-#: methods/mirror.cc:442
+#: methods/mirror.cc:315
+#, fuzzy, c-format
+msgid "No entry found in mirror file '%s'"
+msgstr "%s fitxategia ezin izan da ireki"
+
+#: methods/mirror.cc:445
 #, c-format
 msgid "[Mirror: %s]"
 msgstr ""
@@ -1634,7 +1679,7 @@ msgstr ""
 msgid "Failed to create IPC pipe to subprocess"
 msgstr "Huts egin du azpiprozesuarentzako IPC kanalizazio bat sortzean"
 
-#: methods/rsh.cc:338
+#: methods/rsh.cc:340
 msgid "Connection closed prematurely"
 msgstr "Konexioa behar baino lehenago itxi da"
 
@@ -1705,7 +1750,7 @@ msgstr ""
 "  -c=? Irakurri konfigurazio fitxategi hau\n"
 "  -o=? Ezarri konfigurazio aukera arbitrario bat. Adib.: -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1339
+#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s : ezin da idatzi"
@@ -1850,8 +1895,8 @@ msgstr ""
 msgid "Unable to open DB file %s: %s"
 msgstr "Ezin da ireki %s datu-base fitxategia: %s"
 
-#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:181 apt-inst/extract.cc:193
-#: apt-inst/extract.cc:210
+#: ftparchive/cachedb.cc:127 apt-inst/extract.cc:179 apt-inst/extract.cc:192
+#: apt-inst/extract.cc:209
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Huts egin du %s(e)tik datuak lortzean"
@@ -1864,87 +1909,87 @@ msgstr "Artxiboak ez du kontrol erregistrorik"
 msgid "Unable to get a cursor"
 msgstr "Ezin da kurtsorerik eskuratu"
 
-#: ftparchive/writer.cc:80
+#: ftparchive/writer.cc:82
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "A: Ezin da %s direktorioa irakurri\n"
 
-#: ftparchive/writer.cc:85
+#: ftparchive/writer.cc:87
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "A: Ezin da %s atzitu\n"
 
-#: ftparchive/writer.cc:141
+#: ftparchive/writer.cc:143
 msgid "E: "
 msgstr "E: "
 
-#: ftparchive/writer.cc:143
+#: ftparchive/writer.cc:145
 msgid "W: "
 msgstr "A: "
 
-#: ftparchive/writer.cc:150
+#: ftparchive/writer.cc:152
 msgid "E: Errors apply to file "
 msgstr "E: Erroreak fitxategiari dagozkio "
 
-#: ftparchive/writer.cc:168 ftparchive/writer.cc:200
+#: ftparchive/writer.cc:170 ftparchive/writer.cc:202
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "Huts egin du %s ebaztean"
 
-#: ftparchive/writer.cc:181
+#: ftparchive/writer.cc:183
 msgid "Tree walking failed"
 msgstr "Huts egin dute zuhaitz-urratsek"
 
-#: ftparchive/writer.cc:208
+#: ftparchive/writer.cc:210
 #, c-format
 msgid "Failed to open %s"
 msgstr "Huts egin du %s irekitzean"
 
-#: ftparchive/writer.cc:267
+#: ftparchive/writer.cc:269
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:275
+#: ftparchive/writer.cc:277
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "Huts egin du %s esteka irakurtzean"
 
-#: ftparchive/writer.cc:279
+#: ftparchive/writer.cc:281
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "Huts egin du %s desestekatzean"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:288
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** Ezin izan da %s %s(r)ekin estekatu"
 
-#: ftparchive/writer.cc:296
+#: ftparchive/writer.cc:298
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " DeLink-en mugara (%sB) heldu da.\n"
 
-#: ftparchive/writer.cc:401
+#: ftparchive/writer.cc:403
 msgid "Archive had no package field"
 msgstr "Artxiboak ez du pakete eremurik"
 
-#: ftparchive/writer.cc:409 ftparchive/writer.cc:714
+#: ftparchive/writer.cc:411 ftparchive/writer.cc:701
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s: ez du override sarrerarik\n"
 
-#: ftparchive/writer.cc:477 ftparchive/writer.cc:858
+#: ftparchive/writer.cc:479 ftparchive/writer.cc:845
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s mantentzailea %s da, eta ez %s\n"
 
-#: ftparchive/writer.cc:724
+#: ftparchive/writer.cc:711
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s: ez du jatorri gainidazketa sarrerarik\n"
 
-#: ftparchive/writer.cc:728
+#: ftparchive/writer.cc:715
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s: ez du bitar gainidazketa sarrerarik\n"
@@ -2018,7 +2063,7 @@ msgstr "Huts egin du MD5 konputatzean"
 msgid "Problem unlinking %s"
 msgstr "Arazoa %s desestekatzean"
 
-#: ftparchive/multicompress.cc:373 apt-inst/extract.cc:188
+#: ftparchive/multicompress.cc:373 apt-inst/extract.cc:187
 #, c-format
 msgid "Failed to rename %s to %s"
 msgstr "Huts egin du %s izenaren ordez %s ipintzean"
@@ -2076,23 +2121,23 @@ msgstr ""
 "  -c=? Irakurri konfigurazio fitxategi hau\n"
 "  -o=? Ezarri konfigurazio aukera arbitrario bat. Adib: -o dir::cache=/tmp\n"
 
-#: apt-inst/contrib/extracttar.cc:117
+#: apt-inst/contrib/extracttar.cc:116
 msgid "Failed to create pipes"
 msgstr "Huts egin du kanalizazioak sortzean"
 
-#: apt-inst/contrib/extracttar.cc:144
+#: apt-inst/contrib/extracttar.cc:143
 msgid "Failed to exec gzip "
 msgstr "Huts egin du gzip exekutatzean "
 
-#: apt-inst/contrib/extracttar.cc:181 apt-inst/contrib/extracttar.cc:211
+#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:210
 msgid "Corrupted archive"
 msgstr "Hondatutako artxiboa"
 
-#: apt-inst/contrib/extracttar.cc:196
+#: apt-inst/contrib/extracttar.cc:195
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar egiaztapenak huts egin, hondatutakofitxategia"
 
-#: apt-inst/contrib/extracttar.cc:303
+#: apt-inst/contrib/extracttar.cc:302
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "%u TAR goiburu mota ezezaguna, %s kidea"
@@ -2114,11 +2159,11 @@ msgstr "Artxiboko kidearen goiburua baliogabea da"
 msgid "Invalid archive member header"
 msgstr "Artxiboko kidearen goiburua baliogabea da"
 
-#: apt-inst/contrib/arfile.cc:132
+#: apt-inst/contrib/arfile.cc:135
 msgid "Archive is too short"
 msgstr "Artxiboa laburregia da"
 
-#: apt-inst/contrib/arfile.cc:136
+#: apt-inst/contrib/arfile.cc:139
 msgid "Failed to read the archive headers"
 msgstr "Huts egin artxibo goiburuak irakurtzean"
 
@@ -2163,54 +2208,54 @@ msgstr "Ezin izan da %s fitxategian idatzi"
 msgid "Failed to close file %s"
 msgstr "Ezin izan da %s fitxategia itxi"
 
-#: apt-inst/extract.cc:96 apt-inst/extract.cc:167
+#: apt-inst/extract.cc:94 apt-inst/extract.cc:165
 #, c-format
 msgid "The path %s is too long"
 msgstr "%s bidea luzeegia da"
 
-#: apt-inst/extract.cc:127
+#: apt-inst/extract.cc:125
 #, c-format
 msgid "Unpacking %s more than once"
 msgstr "%s behin baino gehiagotan deskonprimitzen"
 
-#: apt-inst/extract.cc:137
+#: apt-inst/extract.cc:135
 #, c-format
 msgid "The directory %s is diverted"
 msgstr "%s direktorioa desbideratuta dago"
 
-#: apt-inst/extract.cc:147
+#: apt-inst/extract.cc:145
 #, c-format
 msgid "The package is trying to write to the diversion target %s/%s"
 msgstr "Paketea desbideratze helburuan %s/%s idazten saiatzen ari da"
 
-#: apt-inst/extract.cc:157 apt-inst/extract.cc:300
+#: apt-inst/extract.cc:155 apt-inst/extract.cc:299
 msgid "The diversion path is too long"
 msgstr "Desbideratzearen bidea luzeegia da"
 
-#: apt-inst/extract.cc:243
+#: apt-inst/extract.cc:242
 #, c-format
 msgid "The directory %s is being replaced by a non-directory"
 msgstr "%s direktorioa ez-direktorio batekin ordezten ari da"
 
-#: apt-inst/extract.cc:283
+#: apt-inst/extract.cc:282
 msgid "Failed to locate node in its hash bucket"
 msgstr "Huts egin du nodoa bere hash-ontzian lokalizatzean"
 
-#: apt-inst/extract.cc:287
+#: apt-inst/extract.cc:286
 msgid "The path is too long"
 msgstr "Bidea luzeegia da"
 
-#: apt-inst/extract.cc:415
+#: apt-inst/extract.cc:414
 #, c-format
 msgid "Overwrite package match with no version for %s"
 msgstr "Gainidatzi pakete-konkordantzia %s(r)en bertsiorik gabe"
 
-#: apt-inst/extract.cc:432
+#: apt-inst/extract.cc:431
 #, c-format
 msgid "File %s/%s overwrites the one in the package %s"
 msgstr "%s/%s fitxategiak %s paketekoa gainidazten du"
 
-#: apt-inst/extract.cc:492
+#: apt-inst/extract.cc:491
 #, c-format
 msgid "Unable to stat %s"
 msgstr "Ezin da daturik lortu %s(e)tik"
@@ -2291,85 +2336,85 @@ msgid ""
 msgstr ""
 
 #. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:372
+#: apt-pkg/contrib/strutl.cc:378
 #, c-format
 msgid "%lid %lih %limin %lis"
 msgstr ""
 
 #. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:379
+#: apt-pkg/contrib/strutl.cc:385
 #, c-format
 msgid "%lih %limin %lis"
 msgstr ""
 
 #. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:386
+#: apt-pkg/contrib/strutl.cc:392
 #, c-format
 msgid "%limin %lis"
 msgstr ""
 
 #. s means seconds
-#: apt-pkg/contrib/strutl.cc:391
+#: apt-pkg/contrib/strutl.cc:397
 #, c-format
 msgid "%lis"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1167
+#: apt-pkg/contrib/strutl.cc:1173
 #, c-format
 msgid "Selection %s not found"
 msgstr "%s hautapena ez da aurkitu"
 
-#: apt-pkg/contrib/configuration.cc:503
+#: apt-pkg/contrib/configuration.cc:491
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "Mota ezezaguneko laburtzapena: '%c'"
 
-#: apt-pkg/contrib/configuration.cc:617
+#: apt-pkg/contrib/configuration.cc:605
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "%s konfigurazio fitxategia irekitzen"
 
-#: apt-pkg/contrib/configuration.cc:785
+#: apt-pkg/contrib/configuration.cc:773
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "Sintaxi errorea, %s:%u: Blokearen hasieran ez dago izenik."
 
-#: apt-pkg/contrib/configuration.cc:804
+#: apt-pkg/contrib/configuration.cc:792
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "Sintaxi errorea %s:%u: Gaizki eratutako"
 
-#: apt-pkg/contrib/configuration.cc:821
+#: apt-pkg/contrib/configuration.cc:809
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "Sintaxi errorea, %s:%u: Zabor gehigarria balioaren ondoren"
 
-#: apt-pkg/contrib/configuration.cc:861
+#: apt-pkg/contrib/configuration.cc:849
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr "Sintaxi errorea, %s:%u: Direktibak goi-mailan bakarrik egin daitezke"
 
-#: apt-pkg/contrib/configuration.cc:868
+#: apt-pkg/contrib/configuration.cc:856
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "Sintaxi errorea, %s:%u: habiaratutako elementu gehiegi"
 
-#: apt-pkg/contrib/configuration.cc:872 apt-pkg/contrib/configuration.cc:877
+#: apt-pkg/contrib/configuration.cc:860 apt-pkg/contrib/configuration.cc:865
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "Sintaxi errorea, %s:%u: hemendik barne hartuta"
 
-#: apt-pkg/contrib/configuration.cc:881
+#: apt-pkg/contrib/configuration.cc:869
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "Sintaxi errorea, %s:%u: onartu gabeko '%s' direktiba"
 
-#: apt-pkg/contrib/configuration.cc:884
+#: apt-pkg/contrib/configuration.cc:872
 #, fuzzy, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr "Sintaxi errorea, %s:%u: Direktibak goi-mailan bakarrik egin daitezke"
 
-#: apt-pkg/contrib/configuration.cc:934
+#: apt-pkg/contrib/configuration.cc:922
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "Sintaxi errorea, %s:%u: Zabor gehigarria fitxategi amaieran"
@@ -2390,9 +2435,9 @@ msgstr ""
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc:195
-#, c-format
-msgid "\r%s... %u%%"
-msgstr ""
+#, fuzzy, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s... Eginda"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
@@ -2446,125 +2491,131 @@ msgstr "Eragiketa baliogabea: %s"
 msgid "Unable to stat the mount point %s"
 msgstr "Ezin da atzitu %s muntatze puntua"
 
-#: apt-pkg/contrib/cdromutl.cc:224
+#: apt-pkg/contrib/cdromutl.cc:225
 msgid "Failed to stat the cdrom"
 msgstr "Huts egin du CDROMa atzitzean"
 
-#: apt-pkg/contrib/fileutl.cc:95
+#: apt-pkg/contrib/fileutl.cc:93
 #, fuzzy, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Arazoa fitxategia ixtean"
 
-#: apt-pkg/contrib/fileutl.cc:227
+#: apt-pkg/contrib/fileutl.cc:226
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 "Ez da blokeorik erabiltzen ari irakurtzeko soilik den %s blokeo "
 "fitxategiarentzat"
 
-#: apt-pkg/contrib/fileutl.cc:232
+#: apt-pkg/contrib/fileutl.cc:231
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "Ezin izan da %s blokeo fitxategia ireki"
 
-#: apt-pkg/contrib/fileutl.cc:250
+#: apt-pkg/contrib/fileutl.cc:254
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr ""
 "Ez da blokeorik erabiltzen ari nfs %s muntatutako blokeo fitxategiarentzat"
 
-#: apt-pkg/contrib/fileutl.cc:254
+#: apt-pkg/contrib/fileutl.cc:259
 #, c-format
 msgid "Could not get lock %s"
 msgstr "Ezin izan da %s blokeoa hartu"
 
-#: apt-pkg/contrib/fileutl.cc:394 apt-pkg/contrib/fileutl.cc:508
+#: apt-pkg/contrib/fileutl.cc:396 apt-pkg/contrib/fileutl.cc:510
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:428
+#: apt-pkg/contrib/fileutl.cc:430
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:446
+#: apt-pkg/contrib/fileutl.cc:448
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:455
+#: apt-pkg/contrib/fileutl.cc:457
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:842
+#: apt-pkg/contrib/fileutl.cc:844
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "%s azpiprozesuak segmentaziuo hutsegitea jaso du."
 
-#: apt-pkg/contrib/fileutl.cc:844
+#: apt-pkg/contrib/fileutl.cc:846
 #, fuzzy, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "%s azpiprozesuak segmentaziuo hutsegitea jaso du."
 
-#: apt-pkg/contrib/fileutl.cc:848
+#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:243
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "%s azpiprozesuak errore kode bat itzuli du (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:850
+#: apt-pkg/contrib/fileutl.cc:852 apt-pkg/contrib/gpgv.cc:236
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "%s azpiprozesua ustekabean amaitu da"
 
-#: apt-pkg/contrib/fileutl.cc:1006 apt-pkg/indexcopy.cc:659
+#: apt-pkg/contrib/fileutl.cc:988
 #, c-format
 msgid "Could not open file %s"
 msgstr "%s fitxategia ezin izan da ireki"
 
-#: apt-pkg/contrib/fileutl.cc:1068
+#: apt-pkg/contrib/fileutl.cc:1065
 #, fuzzy, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Ezin izan da %s(r)en kanalizazioa ireki"
 
-#: apt-pkg/contrib/fileutl.cc:1158
+#: apt-pkg/contrib/fileutl.cc:1150
 msgid "Failed to create subprocess IPC"
 msgstr "Huts egin du IPC azpiprozesua sortzean"
 
-#: apt-pkg/contrib/fileutl.cc:1214
+#: apt-pkg/contrib/fileutl.cc:1205
 msgid "Failed to exec compressor "
 msgstr "Huts egin du konpresorea exekutatzean "
 
-#: apt-pkg/contrib/fileutl.cc:1311
+#: apt-pkg/contrib/fileutl.cc:1298
 #, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "irakurrita; oraindik %lu irakurtzeke, baina ez da ezer geratzen"
 
-#: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1422
+#: apt-pkg/contrib/fileutl.cc:1385 apt-pkg/contrib/fileutl.cc:1407
 #, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "idatzita; oraindik %lu idazteke, baina ezin da"
 
-#: apt-pkg/contrib/fileutl.cc:1738
+#: apt-pkg/contrib/fileutl.cc:1695
 #, fuzzy, c-format
 msgid "Problem closing the file %s"
 msgstr "Arazoa fitxategia ixtean"
 
-#: apt-pkg/contrib/fileutl.cc:1750
+#: apt-pkg/contrib/fileutl.cc:1707
 #, fuzzy, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Arazoa fitxategia sinkronizatzean"
 
-#: apt-pkg/contrib/fileutl.cc:1761
+#: apt-pkg/contrib/fileutl.cc:1718
 #, fuzzy, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Arazoa fitxategia desestekatzean"
 
-#: apt-pkg/contrib/fileutl.cc:1776
+#: apt-pkg/contrib/fileutl.cc:1731
 msgid "Problem syncing the file"
 msgstr "Arazoa fitxategia sinkronizatzean"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:76
+#, fuzzy, c-format
+msgid "No keyring installed in %s."
+msgstr "Abortatu instalazioa."
 
 #: apt-pkg/pkgcache.cc:148
 msgid "Empty package cache"
@@ -2592,59 +2643,59 @@ msgstr "APT honek ez du '%s' bertsio sistema onartzen"
 msgid "The package cache was built for a different architecture"
 msgstr "Paketeen katxea beste arkitektura batentzat sortuta dago"
 
-#: apt-pkg/pkgcache.cc:305
+#: apt-pkg/pkgcache.cc:314
 msgid "Depends"
 msgstr "Mendekotasuna:"
 
-#: apt-pkg/pkgcache.cc:305
+#: apt-pkg/pkgcache.cc:314
 msgid "PreDepends"
 msgstr "Aurremendekotasuna:"
 
-#: apt-pkg/pkgcache.cc:305
+#: apt-pkg/pkgcache.cc:314
 msgid "Suggests"
 msgstr "Iradokizuna:"
 
-#: apt-pkg/pkgcache.cc:306
+#: apt-pkg/pkgcache.cc:315
 msgid "Recommends"
 msgstr "Gomendioa:"
 
-#: apt-pkg/pkgcache.cc:306
+#: apt-pkg/pkgcache.cc:315
 msgid "Conflicts"
 msgstr "Gatazka:"
 
-#: apt-pkg/pkgcache.cc:306
+#: apt-pkg/pkgcache.cc:315
 msgid "Replaces"
 msgstr "Ordeztea:"
 
-#: apt-pkg/pkgcache.cc:307
+#: apt-pkg/pkgcache.cc:316
 msgid "Obsoletes"
 msgstr "Zaharkitzea:"
 
-#: apt-pkg/pkgcache.cc:307
+#: apt-pkg/pkgcache.cc:316
 msgid "Breaks"
 msgstr "Apurturik"
 
-#: apt-pkg/pkgcache.cc:307
+#: apt-pkg/pkgcache.cc:316
 msgid "Enhances"
 msgstr ""
 
-#: apt-pkg/pkgcache.cc:318
+#: apt-pkg/pkgcache.cc:327
 msgid "important"
 msgstr "garrantzitsua"
 
-#: apt-pkg/pkgcache.cc:318
+#: apt-pkg/pkgcache.cc:327
 msgid "required"
 msgstr "beharrezkoa"
 
-#: apt-pkg/pkgcache.cc:318
+#: apt-pkg/pkgcache.cc:327
 msgid "standard"
 msgstr "estandarra"
 
-#: apt-pkg/pkgcache.cc:319
+#: apt-pkg/pkgcache.cc:328
 msgid "optional"
 msgstr "aukerakoa"
 
-#: apt-pkg/pkgcache.cc:319
+#: apt-pkg/pkgcache.cc:328
 msgid "extra"
 msgstr "estra"
 
@@ -2744,29 +2795,29 @@ msgstr "%s irekitzen"
 msgid "Line %u too long in source list %s."
 msgstr "%2$s iturburu zerrendako %1$u lerroa luzeegia da."
 
-#: apt-pkg/sourcelist.cc:285
+#: apt-pkg/sourcelist.cc:289
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Gaizki osatutako %u lerroa %s Iturburu zerrendan (type)"
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:293
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "'%s' mota ez da ezagutzen %u lerroan %s Iturburu zerrendan"
 
-#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:898
+#: apt-pkg/packagemanager.cc:297 apt-pkg/packagemanager.cc:923
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:473 apt-pkg/packagemanager.cc:504
+#: apt-pkg/packagemanager.cc:498 apt-pkg/packagemanager.cc:529
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "%s fitxategia ezin izan da ireki"
 
-#: apt-pkg/packagemanager.cc:546
+#: apt-pkg/packagemanager.cc:571
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2790,7 +2841,7 @@ msgid ""
 msgstr ""
 "%s paketea berriro instalatu behar da, baina ezin dut artxiborik aurkitu."
 
-#: apt-pkg/algorithms.cc:1229
+#: apt-pkg/algorithms.cc:1238
 msgid ""
 "Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
 "held packages."
@@ -2798,11 +2849,11 @@ msgstr ""
 "Errorea: pkgProblemResolver::Resolve. Etenak sortu ditu, beharbada "
 "atxikitako paketeek eraginda."
 
-#: apt-pkg/algorithms.cc:1231
+#: apt-pkg/algorithms.cc:1240
 msgid "Unable to correct problems, you have held broken packages."
 msgstr "Ezin dira arazoak konpondu; hautsitako paketeak atxiki dituzu."
 
-#: apt-pkg/algorithms.cc:1581 apt-pkg/algorithms.cc:1583
+#: apt-pkg/algorithms.cc:1592 apt-pkg/algorithms.cc:1594
 #, fuzzy
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -2811,7 +2862,7 @@ msgstr ""
 "Indize fitxategi batzuk ezin izan dira deskargatu; ez ikusi egin zaie, edo "
 "zaharrak erabili dira haien ordez."
 
-#: apt-pkg/acquire.cc:81
+#: apt-pkg/acquire.cc:81 apt-pkg/cdrom.cc:838
 #, fuzzy, c-format
 msgid "List directory %spartial is missing."
 msgstr "%spartial zerrenda-direktorioa falta da."
@@ -2848,7 +2899,7 @@ msgstr "Ezin izan da %s metodo kontrolatzailea aurkitu."
 msgid "Method %s did not start correctly"
 msgstr "%s metodoa ez da behar bezala abiarazi"
 
-#: apt-pkg/acquire-worker.cc:440
+#: apt-pkg/acquire-worker.cc:447
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Mesedez sa ''%s' izeneko diska '%s' gailuan eta enter sakatu"
@@ -2911,14 +2962,14 @@ msgstr "Katxearen bertsio sistema ez da bateragarria"
 #. TRANSLATOR: The first placeholder is a package name,
 #. the other two should be copied verbatim as they include debug info
 #: apt-pkg/pkgcachegen.cc:218 apt-pkg/pkgcachegen.cc:228
-#: apt-pkg/pkgcachegen.cc:294 apt-pkg/pkgcachegen.cc:325
-#: apt-pkg/pkgcachegen.cc:333 apt-pkg/pkgcachegen.cc:375
-#: apt-pkg/pkgcachegen.cc:379 apt-pkg/pkgcachegen.cc:396
-#: apt-pkg/pkgcachegen.cc:406 apt-pkg/pkgcachegen.cc:410
-#: apt-pkg/pkgcachegen.cc:414 apt-pkg/pkgcachegen.cc:435
-#: apt-pkg/pkgcachegen.cc:477 apt-pkg/pkgcachegen.cc:517
-#: apt-pkg/pkgcachegen.cc:525 apt-pkg/pkgcachegen.cc:556
-#: apt-pkg/pkgcachegen.cc:570
+#: apt-pkg/pkgcachegen.cc:294 apt-pkg/pkgcachegen.cc:321
+#: apt-pkg/pkgcachegen.cc:334 apt-pkg/pkgcachegen.cc:376
+#: apt-pkg/pkgcachegen.cc:380 apt-pkg/pkgcachegen.cc:397
+#: apt-pkg/pkgcachegen.cc:405 apt-pkg/pkgcachegen.cc:409
+#: apt-pkg/pkgcachegen.cc:413 apt-pkg/pkgcachegen.cc:434
+#: apt-pkg/pkgcachegen.cc:473 apt-pkg/pkgcachegen.cc:511
+#: apt-pkg/pkgcachegen.cc:518 apt-pkg/pkgcachegen.cc:549
+#: apt-pkg/pkgcachegen.cc:563
 #, fuzzy, c-format
 msgid "Error occurred while processing %s (%s%d)"
 msgstr "Errorea gertatu da %s prozesatzean (FindPkg)"
@@ -2939,26 +2990,26 @@ msgstr "APT honek maneia dezakeen azalpen kopurua gainditu duzu."
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "APT honek maneia dezakeen mendekotasun muga gainditu duzu."
 
-#: apt-pkg/pkgcachegen.cc:577
+#: apt-pkg/pkgcachegen.cc:570
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "%s %s paketea ez da aurkitu fitxategi mendekotasunak prozesatzean"
 
-#: apt-pkg/pkgcachegen.cc:1150
+#: apt-pkg/pkgcachegen.cc:1199
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "Ezin da atzitu %s iturburu paketeen zerrenda"
 
-#: apt-pkg/pkgcachegen.cc:1238 apt-pkg/pkgcachegen.cc:1342
-#: apt-pkg/pkgcachegen.cc:1348 apt-pkg/pkgcachegen.cc:1505
+#: apt-pkg/pkgcachegen.cc:1287 apt-pkg/pkgcachegen.cc:1391
+#: apt-pkg/pkgcachegen.cc:1397 apt-pkg/pkgcachegen.cc:1554
 msgid "Reading package lists"
 msgstr "Pakete Zerrenda irakurtzen"
 
-#: apt-pkg/pkgcachegen.cc:1255
+#: apt-pkg/pkgcachegen.cc:1304
 msgid "Collecting File Provides"
 msgstr "Fitxategiaren erreferentziak biltzen"
 
-#: apt-pkg/pkgcachegen.cc:1447 apt-pkg/pkgcachegen.cc:1454
+#: apt-pkg/pkgcachegen.cc:1496 apt-pkg/pkgcachegen.cc:1503
 msgid "IO Error saving source cache"
 msgstr "S/I errorea iturburu katxea gordetzean"
 
@@ -2971,53 +3022,53 @@ msgstr "huts egin du izen-aldaketak, %s (%s -> %s)."
 msgid "MD5Sum mismatch"
 msgstr "MD5Sum ez dator bat"
 
-#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1870
-#: apt-pkg/acquire-item.cc:2013
+#: apt-pkg/acquire-item.cc:870 apt-pkg/acquire-item.cc:1887
+#: apt-pkg/acquire-item.cc:2030
 msgid "Hash Sum mismatch"
 msgstr "Egiaztapena ez dator bat"
 
-#: apt-pkg/acquire-item.cc:1381
+#: apt-pkg/acquire-item.cc:1388
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1397
+#: apt-pkg/acquire-item.cc:1404
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Ezin da %s pakete fitxategia analizatu (1)"
 
-#: apt-pkg/acquire-item.cc:1439
+#: apt-pkg/acquire-item.cc:1446
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Ez dago gako publiko erabilgarririk hurrengo gako ID hauentzat:\n"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1484
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1499
+#: apt-pkg/acquire-item.cc:1506
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1532
+#: apt-pkg/acquire-item.cc:1536
 #, c-format
 msgid ""
-"A error occurred during the signature verification. The repository is not "
+"An error occurred during the signature verification. The repository is not "
 "updated and the previous index files will be used. GPG error: %s: %s\n"
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1542 apt-pkg/acquire-item.cc:1547
+#: apt-pkg/acquire-item.cc:1546 apt-pkg/acquire-item.cc:1551
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1646
+#: apt-pkg/acquire-item.cc:1663
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3026,7 +3077,7 @@ msgstr ""
 "Ezin izan dut %s paketeko fitxategi bat lokalizatu. Beharbada eskuz konpondu "
 "beharko duzu paketea. (arkitektura falta delako)"
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1722
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3035,7 +3086,7 @@ msgstr ""
 "Ezin izan dut %s paketeko fitxategi bat lokalizatu. Beharbada eskuz konpondu "
 "beharko duzu paketea."
 
-#: apt-pkg/acquire-item.cc:1764
+#: apt-pkg/acquire-item.cc:1781
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -3043,31 +3094,31 @@ msgstr ""
 "Paketearen indize fitxategiak hondatuta daude. 'Filename:' eremurik ez %s "
 "paketearentzat."
 
-#: apt-pkg/acquire-item.cc:1862
+#: apt-pkg/acquire-item.cc:1879
 msgid "Size mismatch"
 msgstr "Tamaina ez dator bat"
 
-#: apt-pkg/indexrecords.cc:64
+#: apt-pkg/indexrecords.cc:68
 #, fuzzy, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Ezin da %s pakete fitxategia analizatu (1)"
 
-#: apt-pkg/indexrecords.cc:74
+#: apt-pkg/indexrecords.cc:78
 #, fuzzy, c-format
 msgid "No sections in Release file %s"
 msgstr "Oharra, %s hautatzen %s(r)en ordez\n"
 
-#: apt-pkg/indexrecords.cc:108
+#: apt-pkg/indexrecords.cc:112
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr ""
 
-#: apt-pkg/indexrecords.cc:121
+#: apt-pkg/indexrecords.cc:125
 #, fuzzy, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "Lerro baliogabea desbideratze fitxategian: %s"
 
-#: apt-pkg/indexrecords.cc:140
+#: apt-pkg/indexrecords.cc:144
 #, fuzzy, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Ezin da %s pakete fitxategia analizatu (1)"
@@ -3095,7 +3146,7 @@ msgstr "Egiaztatzen... "
 msgid "Stored label: %s\n"
 msgstr "Gordetako Etiketa: %s \n"
 
-#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:907
+#: apt-pkg/cdrom.cc:622 apt-pkg/cdrom.cc:915
 msgid "Unmounting CD-ROM...\n"
 msgstr "CD-ROM Desmuntatzen...\n"
 
@@ -3157,30 +3208,30 @@ msgstr ""
 msgid "Copying package lists..."
 msgstr "Pakete zerrendak kopiatzen..."
 
-#: apt-pkg/cdrom.cc:857
+#: apt-pkg/cdrom.cc:865
 msgid "Writing new source list\n"
 msgstr "Jatorri zerrenda berria idazten\n"
 
-#: apt-pkg/cdrom.cc:865
+#: apt-pkg/cdrom.cc:873
 msgid "Source list entries for this disc are:\n"
 msgstr "Diskoarentzako jatorri sarrerak:\n"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:880
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:775
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "%i erregistro grabaturik.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:882
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:777
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "%i erregistro eta %i galdutako fitxategi grabaturik.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:885
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:780
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "%i erregistro eta %i okerreko fitxategi grabaturik\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:888
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:783
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr ""
@@ -3195,17 +3246,6 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Hash mismatch for: %s"
 msgstr "Egiaztapena ez dator bat"
-
-#: apt-pkg/indexcopy.cc:662
-#, c-format
-msgid "File %s doesn't start with a clearsigned message"
-msgstr ""
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/indexcopy.cc:692
-#, fuzzy, c-format
-msgid "No keyring installed in %s."
-msgstr "Abortatu instalazioa."
 
 #: apt-pkg/cacheset.cc:403
 #, c-format
@@ -3270,7 +3310,7 @@ msgstr ""
 msgid "External solver failed without a proper error message"
 msgstr ""
 
-#: apt-pkg/edsp.cc:557 apt-pkg/edsp.cc:560 apt-pkg/edsp.cc:565
+#: apt-pkg/edsp.cc:556 apt-pkg/edsp.cc:559 apt-pkg/edsp.cc:564
 msgid "Execute external solver"
 msgstr ""
 
@@ -3279,12 +3319,12 @@ msgstr ""
 msgid "Installing %s"
 msgstr "%s Instalatzen"
 
-#: apt-pkg/deb/dpkgpm.cc:74 apt-pkg/deb/dpkgpm.cc:952
+#: apt-pkg/deb/dpkgpm.cc:74 apt-pkg/deb/dpkgpm.cc:982
 #, c-format
 msgid "Configuring %s"
 msgstr "%s konfiguratzen"
 
-#: apt-pkg/deb/dpkgpm.cc:75 apt-pkg/deb/dpkgpm.cc:959
+#: apt-pkg/deb/dpkgpm.cc:75 apt-pkg/deb/dpkgpm.cc:989
 #, c-format
 msgid "Removing %s"
 msgstr "%s kentzen"
@@ -3305,105 +3345,98 @@ msgid "Running post-installation trigger %s"
 msgstr "Inbstalazio-ondorengo %s abiarazlea exekutatzen"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:705
+#: apt-pkg/deb/dpkgpm.cc:735
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "'%s' direktorioa falta da"
 
-#: apt-pkg/deb/dpkgpm.cc:720 apt-pkg/deb/dpkgpm.cc:740
+#: apt-pkg/deb/dpkgpm.cc:750 apt-pkg/deb/dpkgpm.cc:770
 #, fuzzy, c-format
 msgid "Could not open file '%s'"
 msgstr "%s fitxategia ezin izan da ireki"
 
-#: apt-pkg/deb/dpkgpm.cc:945
+#: apt-pkg/deb/dpkgpm.cc:975
 #, c-format
 msgid "Preparing %s"
 msgstr "%s prestatzen"
 
-#: apt-pkg/deb/dpkgpm.cc:946
+#: apt-pkg/deb/dpkgpm.cc:976
 #, c-format
 msgid "Unpacking %s"
 msgstr "%s irekitzen"
 
-#: apt-pkg/deb/dpkgpm.cc:951
+#: apt-pkg/deb/dpkgpm.cc:981
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "%s konfiguratzeko prestatzen"
 
-#: apt-pkg/deb/dpkgpm.cc:953
+#: apt-pkg/deb/dpkgpm.cc:983
 #, c-format
 msgid "Installed %s"
 msgstr "%s Instalatuta"
 
-#: apt-pkg/deb/dpkgpm.cc:958
+#: apt-pkg/deb/dpkgpm.cc:988
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "%s kentzeko prestatzen"
 
-#: apt-pkg/deb/dpkgpm.cc:960
+#: apt-pkg/deb/dpkgpm.cc:990
 #, c-format
 msgid "Removed %s"
 msgstr "%s kendurik"
 
-#: apt-pkg/deb/dpkgpm.cc:965
+#: apt-pkg/deb/dpkgpm.cc:995
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "%s guztiz ezabatzeko prestatzen"
 
-#: apt-pkg/deb/dpkgpm.cc:966
+#: apt-pkg/deb/dpkgpm.cc:996
 #, c-format
 msgid "Completely removed %s"
 msgstr "%s guztiz ezabatu da"
 
-#: apt-pkg/deb/dpkgpm.cc:1213
+#: apt-pkg/deb/dpkgpm.cc:1243
 msgid "Can not write log, openpty() failed (/dev/pts not mounted?)\n"
 msgstr ""
 "Ezin da erregistroa idatzi, openpty() -ek huts egin du (/dev/pts ez dago "
 "muntaturik?)\n"
 
-#: apt-pkg/deb/dpkgpm.cc:1235
-#, fuzzy
-msgid "Can not write log, tcgetattr() failed for stdout"
-msgstr ""
-"Ezin da erregistroa idatzi, openpty() -ek huts egin du (/dev/pts ez dago "
-"muntaturik?)\n"
-
-#: apt-pkg/deb/dpkgpm.cc:1248
+#: apt-pkg/deb/dpkgpm.cc:1273
 msgid "Running dpkg"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1420
+#: apt-pkg/deb/dpkgpm.cc:1445
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1482
+#: apt-pkg/deb/dpkgpm.cc:1507
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1487
+#: apt-pkg/deb/dpkgpm.cc:1512
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1489
+#: apt-pkg/deb/dpkgpm.cc:1514
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1495
+#: apt-pkg/deb/dpkgpm.cc:1520
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1501
+#: apt-pkg/deb/dpkgpm.cc:1526
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1508
+#: apt-pkg/deb/dpkgpm.cc:1533
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
@@ -3431,14 +3464,6 @@ msgstr ""
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr ""
-
-#, fuzzy
-#~ msgid "System error resolving '%s:%s'"
-#~ msgstr "Zerbait arraroa pasatu da '%s:%s' (%i) ebaztean"
-
-#, fuzzy
-#~ msgid "%c%s... %u%%"
-#~ msgstr "%c%s... Eginda"
 
 #, fuzzy
 #~ msgid "Skipping nonexistent file %s"

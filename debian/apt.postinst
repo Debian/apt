@@ -15,12 +15,16 @@ set -e
 
 case "$1" in
     configure)
-	SECRING='/etc/apt/secring.gpg'
-	# test if secring is an empty normal file
-	if test -f $SECRING -a ! -s $SECRING; then
-		rm -f $SECRING
+	if dpkg --compare-versions "$2" lt-nl 0.9.9.5; then
+	    # we are using tmpfiles for both
+	    rm -f /etc/apt/trustdb.gpg
+	    # this removal was done unconditional since 0.8.15.3
+	    SECRING='/etc/apt/secring.gpg'
+	    # test if secring is an empty normal file
+	    if test -f $SECRING -a ! -s $SECRING; then
+	        rm -f $SECRING
+	    fi
 	fi
-	apt-key update
 
         # ensure tighter permissons on the logs, see LP: #975199
         if dpkg --compare-versions "$2" lt-nl 0.9.7.7; then
@@ -28,6 +32,10 @@ case "$1" in
             chmod -f 0640 /var/log/apt/term.log* || true
         fi
 
+        # create kernel autoremoval blacklist on update
+        if dpkg --compare-versions "$2" lt-nl 0.9.9.3; then
+            /etc/kernel/postinst.d/apt-auto-removal
+        fi
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

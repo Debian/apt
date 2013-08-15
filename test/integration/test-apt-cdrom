@@ -7,7 +7,7 @@ setupenvironment
 configarchitecture 'amd64' 'i386'
 
 buildsimplenativepackage 'testing' 'amd64,i386' '0.8.15' 'stable'
-setupaptarchive
+setupaptarchive --no-update
 
 changetocdrom 'Debian APT Testdisk 0.8.15'
 
@@ -24,7 +24,7 @@ cat Translation-de | xz --format=lzma > Translation-de.lzma
 cat Translation-de | xz > Translation-de.xz
 rm Translation-en Translation-de
 cd - > /dev/null
-addtrap "chmod -R +w $PWD/rootdir/media/cdrom/dists/;"
+addtrap 'prefix' "chmod -R +w $PWD/rootdir/media/cdrom/dists/;"
 chmod -R -w rootdir/media/cdrom/dists
 
 aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
@@ -102,5 +102,5 @@ aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && 
 
 # check that we really can install from a 'cdrom'
 testdpkgnotinstalled testing
-aptget install testing -y > /dev/null 2>&1
+testsuccess aptget install testing -y
 testdpkginstalled testing

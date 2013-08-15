@@ -1,9 +1,5 @@
-apt (0.9.8~exp1) UNRELEASED; urgency=low
+apt (0.9.10~exp1) UNRELEASED; urgency=low
 
-  [ David Kalnischkies ]
-  * apt-pkg/contrib/strutl.cc:
-    - support \n and \r\n line endings in ReadMessages
-  
   [ Daniel Hartwig ]
   * Clarify units of Acquire::http::Dl-Limit (closes: #705445)
   * Show a error message if {,dist-}upgrade is used with additional
@@ -27,14 +23,216 @@ apt (0.9.8~exp1) UNRELEASED; urgency=low
   * use sha512 when available (LP: #1098752)
   * [ABI-Break] lp:~mvo/apt/source-hashes:
     - use sha{512,256,1} for deb-src when available LP: #1098738
- 
-  [ Marc Deslauriers ]
-  * make apt-ftparchive generate missing deb-src hashes (LP: #1078697)
 
  -- Michael Vogt <mvo@debian.org>  Fri, 01 Mar 2013 12:12:39 +0100
 
-apt (0.9.7.9~exp3) UNRELEASED; urgency=low
+apt (0.9.10) unstable; urgency=low
 
+  The "Hello to Debconf" upload
+  
+  [ Christian Perrier ]
+  * Vietnamese translation update. Closes: #718615
+  * Japanese translation update. Closes: #719279
+
+  [ Michael Vogt ]
+  * work on fixing coverity scan results:
+    - fix some off-by-one errors
+    - fix some resource leaks
+    - fixes in chroot() handling
+    - fix some missing va_end()
+  * make the code -Wall clean again
+  * remove duplicated #include<list>
+  * add .travis.yml
+  * use the 'abi-complicance-checker' package and remove the buildin 
+    copy for the abi checks
+
+  [ David Kalnischkies ]
+  * ensure that FileFd::Size returns 0 in error cases
+  * add missing Turkish (tr) to po/LINGUAS
+  * correct management-typo in description found by lintian
+  * implement debian/rules build-{arch,indep} as required by policy 3.9.4
+  * reenable automatic parallel build of APT
+  * exclude config.{sub,guess} from source package
+  * update the symbol files to reflect current state
+  * unset LANGUAGE for showing [Y/n] answer hints
+  * fix some unitialized data members
+  * specific pins below 1000 cause downgrades (Closes: 543966)
+  * use pkgTagFile to parse "header" of Release files
+  * fix: --print-uris removes authentication (Closes: 719263)
+  * always use our own trustdb.gpg in apt-key
+  * use a tmpfile for trustdb.gpg in apt-key.
+    Thanks to Andreas Beckmann for the initial patch! (Closes: #687611)
+  * do not double-slash paths in apt-key (Closes: 665411)
+  * make the keyring locations in apt-key configurable
+  * let apt-key del work better with softlink and single key keyrings
+  * do not call 'apt-key update' in apt.postinst
+
+  [ Colin Watson ]
+  * prefer native arch over higher priority for providers (Closes: #718482)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 12 Aug 2013 21:45:07 +0200
+
+apt (0.9.9.4) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * pick up Translation-* even if only compressed available (Closes: 717665)
+  * request absolute URIs from proxies again (0.9.9.3 regession)
+    (Closes: 717891)
+  
+  [ Michael vogt ]
+  * fix missing changelog entry for 0.9.9.3 (git-dch issue)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 26 Jul 2013 09:58:17 +0200
+
+apt (0.9.9.3) unstable; urgency=low
+
+  [ Ben Hutchings ]
+  * debian/apt.auto-removal.sh:
+    - do not include debug symbol packages for the kernel in the 
+      blacklist (closes: #717616)
+  
+  [ Michael Vogt ]
+  * debian/apt.postinst:
+    - run /etc/kernel/postinst.d/apt-auto-removal once on upgrade
+      to ensure that the correct auto-removal list is generated
+      (closes: #717615)
+
+  [ David Kalnischkies ]
+  * skip all Description fields in apt-cache, not just first (Closes: 717254)
+  * fix 'apt-cache search' crash with missing description (Closes: 647590)
+
+  [ Raphael Geissert ]
+  * Do not send a connection: keep-alive, at all
+  
+ -- Michael Vogt <mvo@debian.org>  Thu, 25 Jul 2013 17:14:58 +0200
+
+apt (0.9.9.2) unstable; urgency=low
+
+  [ Programs translations ]
+  * Vietnamese updated by Tran Ngoc Quan. Closes: #717016
+
+  [ David Kalnischkies ]
+  * fix if-clause to generate hook-info for 'rc' packages (Closes: 717006)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 17 Jul 2013 14:56:34 +0200
+
+apt (0.9.9.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * debian/rules:
+    - call dh_clean in clean (closes: #714980)
+  * apt-pkg/packagemanager.cc:
+    - increate APT::pkgPackageManager::MaxLoopCount to 5000
+  * cherry pick debian/apt.auto-removal.sh feature from the
+    ubuntu/master branch
+
+  [ Steve Langasek ]
+  * debian/apt.conf.autoremove: don't include linux-image*,
+    linux-restricted-modules*, and linux-ubuntu-modules* packages in the
+    list to never be autoremoved.
+  * debian/apt.auto-removal.sh, debian/rules, debian/apt.dirs: install new
+    script to /etc/kernel/postinst.d/ which ensures we only automatically
+    keep the currently-running kernel, the being-installed kernel, and the
+    newest kernel, so we don't fill /boot up with an unlimited number of
+    kernels.  LP: #923876.
+
+  [ Adam Conrad ]
+  * Fix up two things in debian/apt.auto-removal.sh:
+    - Use exact matches with $-terminated regexes, so we don't get
+      confusion between similarly-named kernel flavours.
+    - Keep linux-backports-modules in sync with installed kernels.
+
+  [ David Kalnischkies ]
+  * Version 3 for DPkg::Pre-Install-Pkgs with MultiArch info (Closes: #712116)
+  * implement arch+= and arch-= for sources.list
+  * prevent MarkInstall of unsynced Multi-Arch:same siblings
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 11 Jul 2013 20:44:31 +0200
+
+apt (0.9.9) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * improve debug output for the Debug::pkgProblemResolver and
+    Debug::pkgDepCache::AutoInstall
+  * improve apt-cdrom output when no CD-ROM can be auto-detected
+  * document --no-auto-detect in apt-cdrom
+
+  [ David Kalnischkies ]
+  * build the en manpages in subdirectory doc/en
+  * remove -ldl from cdrom and -lutil from apt-get linkage
+  * rewrite pkgOrderList::DepRemove to stop incorrect immediate setting
+    (Closes: 645713)
+  * prefer Essentials over Removals in ordering score
+  * fix priority sorting by prefering higher in MarkInstall
+  * try all providers in order if uninstallable in MarkInstall
+  * do unpacks before configures in SmartConfigure (Closes: #707578)
+  * fix support for multiple patterns in apt-cache search (Closes: #691453)
+  * set Fail flag in FileFd on all errors consistently
+  * don't explicitly init ExtractTar InFd with invalid fd
+  * OpenDescriptor should autoclose fd always on error (Closes: #704608)
+  * fail in CopyFile if the FileFds have error flag set
+  * ensure state-dir exists before coyping cdrom files
+  * fix file location for configure-index.gz in apt.conf(5) (Closes: #711921)
+  * handle missing "Description" in apt-cache show (Closes: #712435)
+  * try defaults if auto-detection failed in apt-cdrom (Closes: #712433)
+  * support \n and \r\n line endings in ReadMessages
+  * do not redownload unchanged InRelease files
+  * trigger NODATA error for invalid InRelease files (Closes: #712486)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 02 Jul 2013 08:58:33 +0200
+
+apt (0.9.8.2) unstable; urgency=low
+
+  [ Programs translations ]
+  * French translation : typo fix. Closes: #677272
+
+  [ Guillem Jover ]
+  * Update Vcs fields (Closes: #708562)
+  
+  [ Michael Vogt ]
+  * buildlib/apti18n.h.in:
+    - fix build failure when building without NLS (closes: #671587)
+  
+  [ Gregoire Menuel ]
+  * Fix double free (closes: #711045)
+  
+  [ Raphael Geissert ]
+  * Fix crash when the "mirror" method does not find any entry
+    (closes: #699303)
+
+  [ Johan Kiviniemi ]
+  * cmdline/apt-key:
+    - Create new keyrings with mode 0644 instead of 0600.
+    - Accept a nonexistent --keyring file with the adv subcommand as well.
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 06 Jun 2013 19:15:14 +0200
+
+apt (0.9.8.1) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * apt-pkg/indexcopy.cc:
+    - non-inline RunGPGV methods to restore ABI compatibility with previous
+      versions to fix partial upgrades (Closes: #707771)
+  
+  [ Michael Vogt ]
+  * moved source to http://git.debian.org/apt/apt.git
+  * updated gbp.conf to match what bzr-buildpackage is doing
+  * remove .bzr-buildpackage/default.conf (superseeded by gbp.conf)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 16 May 2013 14:50:43 +0200
+
+apt (0.9.8) unstable; urgency=low
+
+  [ Ludovico Cavedon ]
+  * properly handle if-modfied-since with libcurl/https 
+    (closes: #705648)
+  
+  [ Andreas Beckman ]
+  * apt-pkg/algorithms.cc:
+    - Do not propagate negative scores from rdepends. Propagating the absolute
+      value of a negative score may boost obsolete packages and keep them
+      installed instead of installing their successors.  (Closes: #699759)
+  
   [ Michael Vogt ]
   * apt-pkg/sourcelist.cc:
     - fix segfault when a hostname contains a [, thanks to 
@@ -64,8 +262,35 @@ apt (0.9.7.9~exp3) UNRELEASED; urgency=low
 
   [ Marc Deslauriers ]
   * make apt-ftparchive generate missing deb-src hashes (LP: #1078697)
+  
+  [ Yaroslav Halchenko ]
+  * Fix English spelling error in a message ('A error'). Unfuzzy
+    translations. Closes: #705087
 
- -- Michael Vogt <mvo@debian.org>  Mon, 08 Apr 2013 08:43:21 +0200
+  [ Programs translations ]
+  * French translation completed (Christian Perrier)
+  
+  [ Manpages translations ]
+  * French translation completed (Christian Perrier)
+
+  [ Daniel Hartwig ]
+  * apt-pkg/contrib/strutl.cc:
+    - include port in shortened URIs (e.g. with apt-cache policy, progress
+      display) thanks to James McCoy (Closes: #154868, #322074)
+    - percent-encode username and password when writing URIs
+  * methods/http.cc:
+    - properly escape IP-literals (e.g. IPv6 address) when building
+      Host headers and URIs (Closes: #620344)
+  * methods/https.cc:
+    - use https_proxy environment variable if present, falling back to
+      http_proxy otherwise
+    - use authentication credentials from proxy URI
+      (Closes: #651640, LP: #1087512)
+    - environment variables do not override an explicit no proxy
+      directive ("DIRECT") in apt.conf
+    - disregard all_proxy environment variable, like other methods
+  
+ -- Michael Vogt <mvo@debian.org>  Wed, 08 May 2013 18:43:28 +0200
 
 apt (0.9.7.9~exp2) experimental; urgency=low
 

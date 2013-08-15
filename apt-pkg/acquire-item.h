@@ -774,6 +774,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
 		 std::string MetaIndexURI, std::string MetaIndexURIDesc, std::string MetaIndexShortDesc,
 		 const std::vector<struct IndexTarget*>* IndexTargets,
 		 indexRecords* MetaIndexParser);
+   virtual ~pkgAcqMetaSig();
 };
 									/*}}}*/
 /** \brief An item that is responsible for downloading the meta-index	{{{
@@ -904,6 +905,7 @@ public:
 		std::string const &MetaSigURI, std::string const &MetaSigURIDesc, std::string const &MetaSigShortDesc,
 		const std::vector<struct IndexTarget*>* IndexTargets,
 		indexRecords* MetaIndexParser);
+   virtual ~pkgAcqMetaClearSig();
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching a package file.	{{{

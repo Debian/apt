@@ -220,6 +220,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline VerFileIterator FileList() const;
 	bool Downloadable() const;
 	inline const char *PriorityType() const {return Owner->Priority(S->Priority);};
+	const char *MultiArchType() const;
 	std::string RelStr() const;
 
 	bool Automatic() const;

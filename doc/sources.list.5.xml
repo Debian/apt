@@ -114,10 +114,14 @@
    <literal><replaceable>setting</replaceable>=<replaceable>value</replaceable></literal>.
    Multiple settings are separated by spaces. The following settings are supported by APT
    (note however that unsupported settings will be ignored silently):
-   <itemizedlist><listitem><para><literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
+   <itemizedlist>
+   <listitem><para><literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
    can be used to specify for which architectures information should
    be downloaded. If this option is not set all architectures defined by the
    <literal>APT::Architectures</literal> option will be downloaded.</para></listitem>
+   <listitem><para><literal>arch+=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
+   and <literal>arch-=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceable>,…</literal>
+   which can be used to add/remove architectures from the set which will be downloaded.</para></listitem>
    <listitem><para><literal>trusted=yes</literal> can be set to indicate that packages
    from this source are always authenticated even if the <filename>Release</filename> file
    is not signed or the signature can't be checked. This disables parts of &apt-secure;

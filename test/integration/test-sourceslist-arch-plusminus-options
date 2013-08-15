@@ -1,0 +1,85 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+testbinaries() {
+	msgtest 'Test acquired archs for' "$1"
+	shift
+	rm -f gotarchs.list
+	aptget update --print-uris | grep -o '/binary-[a-z0-9-]\+/Packages' | sort > gotarchs.list
+	while [ -n "$1" ]; do
+		echo "/binary-${1}/Packages"
+		shift
+	done | sort | checkdiff - gotarchs.list && msgpass || msgfail
+}
+
+echo 'deb http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'default & native' 'amd64'
+configarchitecture 'amd64' 'i386'
+testbinaries 'default & native + foreign' 'amd64' 'i386'
+configarchitecture 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+testbinaries 'default & native + many foreigns' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+
+echo 'deb [arch=amd64] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch=native' 'amd64'
+
+echo 'deb [arch=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch=foreign' 'mips'
+
+echo 'deb [arch=kfreebsd-armel] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch=unknown' 'kfreebsd-armel'
+
+echo 'deb [arch=amd64,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch=native,foreign' 'amd64' 'i386'
+
+echo 'deb [arch=mips,armhf] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch=foreign,foreign' 'mips' 'armhf'
+
+echo 'deb [arch=kfreebsd-armel,hurd-powerpc,mipsel,armel] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch=unknown,unknown,foreign,foreign' 'kfreebsd-armel' 'hurd-powerpc' 'mipsel' 'armel'
+
+echo 'deb [arch+=amd64] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch+=native' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+
+echo 'deb [arch+=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch+=foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+
+echo 'deb [arch+=mips,armhf,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch+=foreign,foreign,foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+
+echo 'deb [arch+=hurd-powerpc] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch+=unknown' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'hurd-powerpc'
+
+echo 'deb [arch+=mips,hurd-powerpc,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch+=foreign,unknown,foreign' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel' 'hurd-powerpc'
+
+echo 'deb [arch-=amd64] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch-=native' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+
+echo 'deb [arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch-=foreign' 'amd64' 'i386' 'armel' 'armhf' 'mipsel'
+
+echo 'deb [arch-=mips,armhf,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch-=foreign,foreign,foreign' 'amd64' 'armel' 'mipsel'
+
+echo 'deb [arch-=hurd-powerpc] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch-=unknown' 'amd64' 'i386' 'armel' 'armhf' 'mips' 'mipsel'
+
+echo 'deb [arch-=mips,hurd-powerpc,i386] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'arch-=foreign,unknown,foreign' 'amd64' 'armel' 'armhf' 'mipsel'
+
+echo 'deb [arch=mips,i386 arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'substract from a arch-set' 'i386'
+
+echo 'deb [arch=mips,i386 arch-=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'useless substract from a arch-set' 'i386'
+
+echo 'deb [arch=mips,i386 arch+=armhf] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'addition to a arch-set' 'i386' 'mips' 'armhf'
+
+echo 'deb [arch=mips,i386 arch+=mips] http://example.org/debian stable rocks' > rootdir/etc/apt/sources.list
+testbinaries 'useless addition to a arch-set' 'i386' 'mips'

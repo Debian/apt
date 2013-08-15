@@ -924,6 +924,18 @@ string pkgCache::VerIterator::RelStr() const
    return Res;
 }
 									/*}}}*/
+// VerIterator::MultiArchType - string representing MultiArch flag	/*{{{*/
+const char * pkgCache::VerIterator::MultiArchType() const
+{
+   if ((S->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
+      return "same";
+   else if ((S->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign)
+      return "foreign";
+   else if ((S->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+      return "allowed";
+   return "none";
+}
+									/*}}}*/
 // PkgFileIterator::IsOk - Checks if the cache is in sync with the file	/*{{{*/
 // ---------------------------------------------------------------------
 /* This stats the file and compares its stats with the ones that were

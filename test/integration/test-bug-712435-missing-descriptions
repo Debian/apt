@@ -1,0 +1,165 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+PACKAGESTANZA='Version: 0.9.7.8
+Installed-Size: 3270
+Maintainer: APT Development Team <deity@lists.debian.org>
+Architecture: amd64
+Filename: pool/main/a/apt/apt_0.9.7.8_amd64.deb
+MD5sum: 3a622acda41620df50aa22a9fac6f32e'
+
+DESCRIPTION='Description: commandline package manager
+ This APT has Super Cow Powers.'
+
+TRANSDESCRIPTION='Description-en: commandline package manager
+ This APT has translated Super Cow Powers.'
+
+echo "Package: apt-normal
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+Package: apt-both-below
+$PACKAGESTANZA
+$DESCRIPTION
+$TRANSDESCRIPTION
+Description-md5: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+Package: apt-both-middle
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+$TRANSDESCRIPTION
+
+Package: apt-both-top
+$PACKAGESTANZA
+Description-md5: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+$DESCRIPTION
+$TRANSDESCRIPTION
+
+Package: apt-trans
+$PACKAGESTANZA
+$TRANSDESCRIPTION
+Description-md5: cccccccccccccccccccccccccccccccc
+
+Package: apt-md5
+$PACKAGESTANZA
+Description-md5: dddddddddddddddddddddddddddddddd
+
+Package: apt-none
+$PACKAGESTANZA
+
+Package: apt-intermixed
+$PACKAGESTANZA
+$DESCRIPTION
+X-Some-Flag: yes
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+Package: apt-intermixed2
+$PACKAGESTANZA
+$DESCRIPTION
+X-Some-Flag: yes
+$TRANSDESCRIPTION
+X-Foo-Flag: Something with a Description
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Bar-Flag: no
+
+Package: apt-intermixed3
+$PACKAGESTANZA
+$DESCRIPTION
+X-Some-Flag: yes
+$TRANSDESCRIPTION
+X-Foo-Flag: Something with a Description
+X-Bar-Flag: no
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" > aptarchive/Packages
+
+
+setupaptarchive
+
+testequal "Package: apt-normal
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+" aptcache show apt-normal
+
+# displaying the translated Description would be equally valid,
+# but we assume only one description is in a Packages file and
+# so we prefer "Description" over "Description-*" currently.
+for variant in 'below' 'middle' 'top'; do
+	testequal "Package: apt-both-$variant
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+" aptcache show apt-both-$variant
+done
+
+testequal "Package: apt-trans
+$PACKAGESTANZA
+$TRANSDESCRIPTION
+Description-md5: cccccccccccccccccccccccccccccccc
+" aptcache show apt-trans
+
+testequal "Package: apt-md5
+$PACKAGESTANZA
+Description-md5: dddddddddddddddddddddddddddddddd
+" aptcache show apt-md5
+
+testequal "Package: apt-none
+$PACKAGESTANZA
+" aptcache show apt-none
+
+testequal "Package: apt-intermixed
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Some-Flag: yes
+" aptcache show apt-intermixed
+
+testequal "Package: apt-intermixed2
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Some-Flag: yes
+X-Foo-Flag: Something with a Description
+X-Bar-Flag: no
+" aptcache show apt-intermixed2
+
+testequal "Package: apt-intermixed3
+$PACKAGESTANZA
+$DESCRIPTION
+Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+X-Some-Flag: yes
+X-Foo-Flag: Something with a Description
+X-Bar-Flag: no
+" aptcache show apt-intermixed3
+
+msgtest 'Test that no description does not destroy' 'showpkg'
+aptcache showpkg apt-none | sed 's#/tmp/.*_aptarchive_#/tmp/aptarchive_#' >showpkg.explosion && msgpass || msgfail
+testfileequal showpkg.explosion 'Package: apt-none
+Versions: 
+0.9.7.8 (/tmp/aptarchive_Packages)
+
+
+Reverse Depends: 
+Dependencies: 
+0.9.7.8 - 
+Provides: 
+0.9.7.8 - 
+Reverse Provides: '
+
+testempty aptcache search nonexistentstring
+
+# packages without a description can't be found
+testequal 'apt-normal - commandline package manager
+apt-both-below - commandline package manager
+apt-both-middle - commandline package manager
+apt-both-top - commandline package manager
+apt-trans - commandline package manager
+apt-intermixed - commandline package manager
+apt-intermixed2 - commandline package manager
+apt-intermixed3 - commandline package manager' aptcache search apt

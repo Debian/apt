@@ -103,23 +103,23 @@ testoverhttp() {
 	setupcompressor "$1"
 
 	createemptyfile 'en'
-	testaptgetupdate "Get: http://localhost  Packages []
-Get: http://localhost  Translation-en
+	testaptgetupdate "Get: http://localhost:8080  Packages []
+Get: http://localhost:8080  Translation-en
 Reading package lists..." "empty file en.$COMPRESS over http"
 
 	createemptyarchive 'en'
-	testaptgetupdate "Get: http://localhost  Packages []
-Get: http://localhost  Translation-en []
+	testaptgetupdate "Get: http://localhost:8080  Packages []
+Get: http://localhost:8080  Translation-en []
 Reading package lists..." "empty archive en.$COMPRESS over http"
 
 	createemptyarchive 'Packages'
-	testaptgetupdate "Get: http://localhost  Packages []
+	testaptgetupdate "Get: http://localhost:8080  Packages []
 Reading package lists..." "empty archive Packages.$COMPRESS over http"
 
 	createemptyfile 'Packages'
 	#FIXME: we should response with a good error message instead
-	testaptgetupdate "Get: http://localhost  Packages
-Err http://localhost  Packages
+	testaptgetupdate "Get: http://localhost:8080  Packages
+Err http://localhost:8080  Packages
   Empty files can't be valid archives
 W: Failed to fetch ${COMPRESSOR}:$(readlink -f rootdir/var/lib/apt/lists/partial/localhost:8080_Packages)  Empty files can't be valid archives
 

@@ -14,7 +14,7 @@ SUBDIR=po
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-CATALOGS := $(addsuffix .gmo,$(shell cat LINGUAS))
+CATALOGS := $(addsuffix .gmo, $(shell sed -e '/^\#/ d' -e '/^$$/ d' LINGUAS | tr '\n' ' '))
 DOMAINS := $(notdir $(wildcard $(PO_DOMAINS)/*))
 POTFILES := $(addsuffix .pot,$(addprefix $(PO)/,$(DOMAINS)))
 
@@ -30,17 +30,23 @@ GETDOMAIN = $(word 1,$(subst /, ,$(1)))
 # and produce the .pot file.
 $(POTFILES) : $(PO)/%.pot :
 	echo "Generating POT file $@"
-	echo $@ : $(wildcard $(PO)/domains/$*/*.*list) $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/$*/*.srclist))) > $@.d
+	echo $@ : $(wildcard $(PO)/domains/$*/*.*list) $(addprefix $(BASE)/,$(shell cat $(wildcard $(PO)/domains/$*/*.srclist))) > $@.d.tmp
+	cmp --silent $@.d.tmp $@.d || mv $@.d.tmp $@.d
 # From sh source
-	cat $(PO)/domains/$*/*.shlist 2> /dev/null | (cd $(BASE) && xargs -n1 bash --dump-po-strings) > $(PO)/domains/$*/sh.pot
+	cat $(PO)/domains/$*/*.shlist 2> /dev/null | (cd $(BASE) && xargs -n1 bash --dump-po-strings) > $(PO)/domains/$*/sh.pot.tmp
+	cmp --silent $(PO)/domains/$*/sh.pot.tmp $(PO)/domains/$*/sh.pot || \
+		mv $(PO)/domains/$*/sh.pot.tmp $(PO)/domains/$*/sh.pot
 # From C/C++ source
 	cat $(PO)/domains/$*/*.srclist > $(PO)/POTFILES_$*.in
 	$(XGETTEXT) --default-domain=$* --directory=$(BASE) \
 	  --add-comments --foreign --keyword=_ --keyword=N_ \
 	  --keyword=P_:1,2 \
-	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot
+	  --files-from=$(PO)/POTFILES_$*.in -o $(PO)/domains/$*/c.pot.tmp
+	cmp --silent $(PO)/domains/$*/c.pot.tmp $(PO)/domains/$*/c.pot || \
+		mv $(PO)/domains/$*/c.pot.tmp $(PO)/domains/$*/c.pot
 	rm -f $(PO)/POTFILES_$*.in
-	$(MSGCOMM) --omit-header --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@
+	$(MSGCOMM) --omit-header --more-than=0 $(PO)/domains/$*/c.pot $(PO)/domains/$*/sh.pot --output=$@.tmp
+	cmp --silent $@ $@.tmp || mv $@.tmp $@
 	# copy into the domain dirs to make rosetta happy
 	rm -f $(PO)/domains/$*/*.pot
 	cp $@ $(PO)/domains/$*
@@ -60,10 +66,10 @@ $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	mkdir -p $(LOCALE)/$(notdir $*)/LC_MESSAGES/
 	cp $@ $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo
 
-stats:
+stats: all-linguas-enabled
 	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
 
-binary: $(POTFILES) $(MOFILES)
+binary: $(POTFILES) $(MOFILES) all-linguas-enabled
 
 $(PACKAGE)-all.pot: $(POTFILES)
 	# we create our partial pot files without a header to avoid changing dates in *.mo files,
@@ -74,14 +80,24 @@ $(PACKAGE)-all.pot: $(POTFILES)
 	$(MSGCOMM) --more-than=0 $(PO)/$(PACKAGE)-dummy.pot $(POTFILES) --output=$(PACKAGE)-all.pot
 	rm -f $(PO)/$(PACKAGE)-dummy.pot
 
-.PHONY: update-po
-update-po: $(PACKAGE)-all.pot
+.PHONY: update-po all-linguas-enabled
+update-po: $(PACKAGE)-all.pot all-linguas-enabled
 	for lang in ${LINGUAS}; do \
 	echo "Updating $$lang.po"; \
 	$(MSGMERGE) $$lang.po $(PACKAGE)-all.pot -o $$lang.new.po; \
 	cmp $$lang.new.po $$lang.po || cp $$lang.new.po $$lang.po; \
 	rm -f $$lang.new.po; \
 	done
+
+all-linguas-enabled: LINGUAS
+ifdef NOISY
+	echo "Available Translations: $(shell ls *.po | cut -d'.' -f 1 | sort | tr '\n' ' ')"
+	echo "Mentioned Translations: $(shell sed -e '/^\#\#/ d' -e '/^$$/ d' -e 's/# //' LINGUAS | tr ' ' '\n' | sort | tr '\n' ' ')"
+	echo "Build Translations:     $(shell echo "$(LINGUAS)" | tr ' ' '\n' | sort | tr '\n' ' ')"
+endif
+	test "$(shell ls *.po | cut -d'.' -f 1 | sort | tr '\n' ' ')" = \
+	   "$(shell sed -e '/^\#\#/ d' -e '/^$$/ d' -e 's/# //' LINGUAS | tr ' ' '\n' | sort | tr '\n' ' ')" || \
+	   ( echo "ERROR: Not all available translations are mentioned in po/LINGUAS!"; exit 100)
 
 clean: clean/local
 clean/local:
@@ -93,4 +109,5 @@ ifneq ($(words $(The_DFiles)),0)
 include $(The_DFiles)
 endif
 
+# otherwise the output is completely screwed
 .NOTPARALLEL:

@@ -14,13 +14,13 @@ insertinstalledpackage 'libapt' 'armel' '1.0'
 testpass() {
 	rm rootdir/var/cache/apt/*.bin
 	msgtest 'Test architecture handling' "$1 with $2"
-	aptcache show libapt:$2 2> /dev/null > /dev/null && msgpass || msgfail
+	testsuccess --nomsg aptcache show libapt:$2
 }
 
 testfail() {
 	rm rootdir/var/cache/apt/*.bin
 	msgtest 'Test architecture handling' "$1 with $2"
-	aptcache show libapt:$2 2> /dev/null > /dev/null && msgfail || msgpass
+	testfailure --nomsg aptcache show libapt:$2
 }
 
 testpass 'no config' 'i386'

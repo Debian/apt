@@ -14,7 +14,7 @@ include $(PROGRAM_H)
 
 # The apt-get program
 PROGRAM=apt-get
-SLIBS = -lapt-pkg -lutil $(INTLLIBS)
+SLIBS = -lapt-pkg $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-get.cc acqprogress.cc
 include $(PROGRAM_H)

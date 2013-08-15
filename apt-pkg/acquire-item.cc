@@ -1067,8 +1067,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
       
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) == 0)
+   if (RealFileExists(Final) == true)
    {
       // File was already in place.  It needs to be re-downloaded/verified
       // because Release might have changed, we do give it a differnt
@@ -1080,6 +1079,19 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
    }
 
    QueueURI(Desc);
+}
+									/*}}}*/
+pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
+{
+   // if the file was never queued undo file-changes done in the constructor
+   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false &&
+	 LastGoodSig.empty() == false)
+   {
+      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
+	 Rename(LastGoodSig, Final);
+   }
+
 }
 									/*}}}*/
 // pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
@@ -1300,7 +1312,14 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
       if (SigFile == DestFile)
+      {
 	 SigFile = FinalFile;
+	 // constructor of pkgAcqMetaClearSig moved it out of the way,
+	 // now move it back in on IMS hit for the 'old' file
+	 string const OldClearSig = DestFile + ".reverify";
+	 if (RealFileExists(OldClearSig) == true)
+	    Rename(OldClearSig, FinalFile);
+      }
       DestFile = FinalFile;
    }
    Complete = true;
@@ -1373,9 +1392,20 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
    {
       HashString ExpectedIndexHash;
       const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+      bool compressedAvailable = false;
       if (Record == NULL)
       {
-	 if (verify == true && (*Target)->IsOptional() == false)
+	 if ((*Target)->IsOptional() == true)
+	 {
+	    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+	    for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+	       if (MetaIndexParser->Exists(string((*Target)->MetaKey).append(".").append(*t)) == true)
+	       {
+		  compressedAvailable = true;
+		  break;
+	       }
+	 }
+	 else if (verify == true)
 	 {
 	    Status = StatAuthError;
 	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
@@ -1404,7 +1434,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 if ((*Target)->IsSubIndex() == true)
 	    new pkgAcqSubIndex(Owner, (*Target)->URI, (*Target)->Description,
 				(*Target)->ShortDesc, ExpectedIndexHash);
-	 else if (transInRelease == false || MetaIndexParser->Exists((*Target)->MetaKey) == true)
+	 else if (transInRelease == false || Record != NULL || compressedAvailable == true)
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
 		MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true)
@@ -1526,7 +1556,7 @@ void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 	    VerifiedSigFile.append(".gpg");
 	 Rename(LastGoodSigFile, VerifiedSigFile);
 	 Status = StatTransientNetworkError;
-	 _error->Warning(_("A error occurred during the signature "
+	 _error->Warning(_("An error occurred during the signature "
 			   "verification. The repository is not updated "
 			   "and the previous index files will be used. "
 			   "GPG error: %s: %s\n"),
@@ -1588,11 +1618,22 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 
    // keep the old InRelease around in case of transistent network errors
    string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) == 0)
+   if (RealFileExists(Final) == true)
    {
       string const LastGoodSig = DestFile + ".reverify";
       Rename(Final,LastGoodSig);
+   }
+}
+									/*}}}*/
+pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
+{
+   // if the file was never queued undo file-changes done in the constructor
+   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false)
+   {
+      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+      string const LastGoodSig = DestFile + ".reverify";
+      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
+	 Rename(LastGoodSig, Final);
    }
 }
 									/*}}}*/
@@ -1606,7 +1647,11 @@ string pkgAcqMetaClearSig::Custom600Headers()
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
-      return "\nIndex-File: true\nFail-Ignore: true\n";
+   {
+      Final = DestFile + ".reverify";
+      if (stat(Final.c_str(),&Buf) != 0)
+	 return "\nIndex-File: true\nFail-Ignore: true\n";
+   }
 
    return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }

@@ -865,6 +865,11 @@ bool pkgDepCache::MarkDelete(PkgIterator const &Pkg, bool rPurge,
 bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
 			      unsigned long Depth, bool FromUser)
 {
+   return IsDeleteOkProtectInstallRequests(Pkg, rPurge, Depth, FromUser);
+}
+bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
+      bool const rPurge, unsigned long const Depth, bool const FromUser)
+{
    if (FromUser == false && Pkg->CurrentVer == 0)
    {
       StateCache &P = PkgState[Pkg->ID];
@@ -1002,9 +1007,6 @@ struct CompareProviders {
 	 else if ((B->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	    return true;
       }
-      // higher priority seems like a good idea
-      if (AV->Priority != BV->Priority)
-	 return AV->Priority < BV->Priority;
       // prefer native architecture
       if (strcmp(A.Arch(), B.Arch()) != 0)
       {
@@ -1019,6 +1021,9 @@ struct CompareProviders {
 	    else if (*a == B.Arch())
 	       return true;
       }
+      // higher priority seems like a good idea
+      if (AV->Priority != BV->Priority)
+	 return AV->Priority > BV->Priority;
       // unable to decide…
       return A->ID < B->ID;
    }
@@ -1047,9 +1052,10 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       return true;
    }
 
-   // check if we are allowed to install the package
-   if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
-      return false;
+   // check if we are allowed to install the package (if we haven't already)
+   if (P.Mode != ModeInstall || P.InstallVer != P.CandidateVer)
+      if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
+	 return false;
 
    ActionGroup group(*this);
    P.iFlags &= ~AutoKept;
@@ -1200,16 +1206,23 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    verlist.insert(Cand);
 	 }
 	 CompareProviders comp(Start);
-	 APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
 
-	 if (InstVer != verlist.end())
-	 {
+	 do {
+	    APT::VersionList::iterator InstVer = std::max_element(verlist.begin(), verlist.end(), comp);
+
+	    if (InstVer == verlist.end())
+	       break;
+
 	    pkgCache::PkgIterator InstPkg = InstVer.ParentPkg();
 	    if(DebugAutoInstall == true)
 	       std::clog << OutputInDepth(Depth) << "Installing " << InstPkg.Name()
 			 << " as " << Start.DepType() << " of " << Pkg.Name()
 			 << std::endl;
-	    MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps);
+	    if (MarkInstall(InstPkg, true, Depth + 1, false, ForceImportantDeps) == false)
+	    {
+	       verlist.erase(InstVer);
+	       continue;
+	    }
 	    // now check if we should consider it a automatic dependency or not
 	    if(InstPkg->CurrentVer == 0 && Pkg->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
 	    {
@@ -1218,7 +1231,8 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
                             << Start.DepType() << " of pkg in APT::Never-MarkAuto-Sections)" << std::endl;
 	       MarkAuto(InstPkg, false);
 	    }
-	 }
+	    break;
+	 } while(true);
 	 continue;
       }
       /* Negative dependencies have no or-group
@@ -1243,9 +1257,16 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 		PkgState[Pkg->ID].CandidateVer != *I &&
 		MarkInstall(Pkg,true,Depth + 1, false, ForceImportantDeps) == true)
 	       continue;
-	    else if ((Start->Type == pkgCache::Dep::Conflicts || Start->Type == pkgCache::Dep::DpkgBreaks) &&
-		     MarkDelete(Pkg,false,Depth + 1, false) == false)
-	       break;
+	    else if (Start->Type == pkgCache::Dep::Conflicts || 
+                     Start->Type == pkgCache::Dep::DpkgBreaks) 
+            {
+               if(DebugAutoInstall == true)
+                  std::clog << OutputInDepth(Depth) 
+                            << " Removing: " << Pkg.Name()
+                            << std::endl;
+               if (MarkDelete(Pkg,false,Depth + 1, false) == false)
+                  break;
+            }
 	 }
 	 continue;
       }
@@ -1256,11 +1277,50 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 									/*}}}*/
 // DepCache::IsInstallOk - check if it is ok to install this package	/*{{{*/
 // ---------------------------------------------------------------------
-/* The default implementation does nothing.
+/* The default implementation checks if the installation of an M-A:same
+   package would lead us into a version-screw and if so forbids it.
    dpkg holds are enforced by the private IsModeChangeOk */
 bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
 			      unsigned long Depth, bool FromUser)
 {
+   return IsInstallOkMultiArchSameVersionSynced(Pkg,AutoInst, Depth, FromUser);
+}
+bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
+      bool const AutoInst, unsigned long const Depth, bool const FromUser)
+{
+   if (FromUser == true) // as always: user is always right
+      return true;
+
+   // ignore packages with none-M-A:same candidates
+   VerIterator const CandVer = PkgState[Pkg->ID].CandidateVerIter(*this);
+   if (unlikely(CandVer.end() == true) || CandVer == Pkg.CurrentVer() ||
+	 (CandVer->MultiArch & pkgCache::Version::Same) != pkgCache::Version::Same)
+      return true;
+
+   GrpIterator const Grp = Pkg.Group();
+   for (PkgIterator P = Grp.PackageList(); P.end() == false; P = Grp.NextPkg(P))
+   {
+      // not installed or version synced: fine by definition
+      // (simple string-compare as stuff like '1' == '0:1-0' can't happen here)
+      if (P->CurrentVer == 0 || strcmp(Pkg.CandVersion(), P.CandVersion()) == 0)
+	 continue;
+      // packages loosing M-A:same can be out-of-sync
+      VerIterator CV = PkgState[P->ID].CandidateVerIter(*this);
+      if (unlikely(CV.end() == true) ||
+	    (CV->MultiArch & pkgCache::Version::Same) != pkgCache::Version::Same)
+	 continue;
+
+      // not downloadable means the package is obsolete, so allow out-of-sync
+      if (CV.Downloadable() == false)
+	 continue;
+
+      PkgState[Pkg->ID].iFlags |= AutoKept;
+      if (unlikely(DebugMarker == true))
+	 std::clog << OutputInDepth(Depth) << "Ignore MarkInstall of " << Pkg
+	    << " as its M-A:same siblings are not version-synced" << std::endl;
+      return false;
+   }
+
    return true;
 }
 									/*}}}*/

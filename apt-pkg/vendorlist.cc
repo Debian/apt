@@ -66,7 +66,7 @@ bool pkgVendorList::CreateList(Configuration& Cnf)			/*{{{*/
       Configuration Block(Top);
       string VendorID = Top->Tag;
       vector <struct Vendor::Fingerprint *> *Fingerprints = new vector<Vendor::Fingerprint *>;
-      struct Vendor::Fingerprint *Fingerprint = new struct Vendor::Fingerprint;
+      struct Vendor::Fingerprint *Fingerprint = new struct Vendor::Fingerprint();
       string Origin = Block.Find("Origin");
 
       Fingerprint->Print = Block.Find("Fingerprint");

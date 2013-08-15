@@ -100,15 +100,9 @@ class SigVerify								/*{{{*/
 		      std::vector<std::string> PkgList,std::vector<std::string> SrcList);
 
    __deprecated static bool RunGPGV(std::string const &File, std::string const &FileOut,
-		       int const &statusfd, int fd[2]) {
-      ExecGPGV(File, FileOut, statusfd, fd);
-      return false;
-   };
+		       int const &statusfd, int fd[2]);
    __deprecated static bool RunGPGV(std::string const &File, std::string const &FileOut,
-			      int const &statusfd = -1) {
-      ExecGPGV(File, FileOut, statusfd);
-      return false;
-   };
+			      int const &statusfd = -1);
 };
 									/*}}}*/
 

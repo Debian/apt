@@ -51,7 +51,7 @@ $(LIB)/lib$(LIBRARY).so: $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR)
 	ln -sf $(<F) $@
 
 # The binary build rule
-$(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
+$(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS) $(LIBRARYDEPENDS)
 	-rm -f $(LIB)/lib$($(@F)-LIBRARY)*.so* 2> /dev/null
 	echo Building shared library $@
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(PICFLAGS) $(LFLAGS) $(LFLAGS_SO)\
@@ -61,7 +61,7 @@ $(LIB)/lib$(LIBRARY).so.$(MAJOR).$(MINOR): $($(LOCAL)-HEADERS) $($(LOCAL)-OBJS)
 
 # Compilation rules
 vpath %.cc $(SUBDIRS)
-$(OBJ)/%.opic: %.cc
+$(OBJ)/%.opic: %.cc $(LIBRARYDEPENDS)
 	echo Compiling $< to $@
 	$(CXX) -c $(INLINEDEPFLAG) $(CPPFLAGS) $(CXXFLAGS) $(PICFLAGS) -o $@ $<
 	$(DoDep)

@@ -228,16 +228,16 @@ testequalpolicycoolstuff "" "2.0~bpo1" 990 500 600 "2.0~bpo1" -o Test=ButAutomat
 testequalpolicycoolstuff "" "1.0" 100 990 600 "2.0~bpo1" -o Test=ButAutomaticUpgrades -t stable
 
 rm rootdir/etc/apt/preferences
-aptget install coolstuff -qq > /dev/null 2> /dev/null
+testsuccess aptget install coolstuff -y
 testequalpolicycoolstuff "1.0" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
-aptget dist-upgrade -qq > /dev/null 2> /dev/null
+testsuccess aptget dist-upgrade -y
 testequalpolicycoolstuff "1.0" "1.0" 100 500 0 "" -o Test=ButAutomaticUpgrades
 testequalpolicycoolstuff "1.0" "1.0" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
 testequalpolicycoolstuff "1.0" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports
 
-aptget install coolstuff -t backports -qq > /dev/null 2> /dev/null
+testsuccess aptget install coolstuff -t backports -y
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 0 "" -o Test=ButAutomaticUpgrades
-aptget dist-upgrade -qq > /dev/null 2> /dev/null
+testsuccess aptget dist-upgrade -y
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 500 0 "" -o Test=ButAutomaticUpgrades
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 100 990 0 "" -o Test=ButAutomaticUpgrades -t stable
 testequalpolicycoolstuff "2.0~bpo1" "2.0~bpo1" 990 500 0 "" -o Test=ButAutomaticUpgrades -t backports

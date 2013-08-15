@@ -108,5 +108,13 @@ int main() {
 	equals("/debian/", U.Path);
 	}
 
+        // Percent-encoding.
+        {
+        URI U("ftp://foo:b%40r@example.org");
+        equals("foo", U.User);
+        equals("b@r", U.Password);
+        equals("ftp://foo:b%40r@example.org/", (std::string) U);
+        }
+
 	return 0;
 }

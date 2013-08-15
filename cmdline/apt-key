@@ -3,33 +3,55 @@
 set -e
 unset GREP_OPTIONS
 
-# We don't use a secret keyring, of course, but gpg panics and
-# implodes if there isn't one available
-SECRETKEYRING="$(mktemp)"
-trap "rm -f '${SECRETKEYRING}'" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring --secret-keyring ${SECRETKEYRING}"
+GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
 
-if [ "$(id -u)" -eq 0 ]; then
-	# we could use a tmpfile here too, but creation of this tends to be time-consuming
-	eval $(apt-config shell TRUSTDBDIR Dir::Etc/d)
-	GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
-fi
+# gpg needs a trustdb to function, but it can't be invalid (not even empty)
+# so we create a temporary directory to store our fresh readable trustdb in
+TRUSTDBDIR="$(mktemp -d)"
+CURRENTTRAP="${CURRENTTRAP} rm -rf '${TRUSTDBDIR}';"
+trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+chmod 700 "$TRUSTDBDIR"
+# We also don't use a secret keyring, of course, but gpg panics and
+# implodes if there isn't one available - and writeable for imports
+SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
+touch $SECRETKEYRING
+GPG_CMD="$GPG_CMD --secret-keyring $SECRETKEYRING"
+GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
+
+# now create the trustdb with an (empty) dummy keyring
+$GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING
+# and make sure that gpg isn't trying to update the file
+GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
 
 GPG="$GPG_CMD"
 
 MASTER_KEYRING=""
-ARCHIVE_KEYRING_URI=""
 #MASTER_KEYRING=/usr/share/keyrings/debian-master-keyring.gpg
+eval $(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)
+ARCHIVE_KEYRING_URI=""
 #ARCHIVE_KEYRING_URI=http://ftp.debian.org/debian/debian-archive-keyring.gpg
+eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
 
 ARCHIVE_KEYRING=/usr/share/keyrings/debian-archive-keyring.gpg
+eval $(apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring)
 REMOVED_KEYS=/usr/share/keyrings/debian-archive-removed-keys.gpg
+eval $(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)
 
 requires_root() {
 	if [ "$(id -u)" -ne 0 ]; then
 		echo >&1 "ERROR: This command can only be used by root."
 		exit 1
 	fi
+}
+
+# gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
+init_keyring() {
+    for path; do
+        if ! [ -e "$path" ]; then
+            touch -- "$path"
+            chmod 0644 -- "$path"
+        fi
+    done
 }
 
 add_keys_with_verify_against_master_keyring() {
@@ -129,6 +151,60 @@ update() {
     fi
 }
 
+remove_key_from_keyring() {
+    local GPG="$GPG_CMD --keyring $1"
+    # check if the key is in this keyring: the key id is in the 5 column at the end
+    if ! $GPG --with-colons --list-keys 2>&1 | grep -q "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]\+$2:"; then
+	return
+    fi
+    if [ ! -w "$1" ]; then
+	echo >&2 "Key ${2} is in keyring ${1}, but can't be removed as it is read only."
+	return
+    fi
+    # check if it is the only key in the keyring and if so remove the keyring alltogether
+    if [ '1' = "$($GPG --with-colons --list-keys | grep "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]\+:" | wc -l)" ]; then
+	mv -f "$1" "${1}~" # behave like gpg
+	return
+    fi
+    # we can't just modify pointed to files as these might be in /usr or something
+    local REALTARGET
+    if [ -L "$1" ]; then
+	REALTARGET="$(readlink -f "$1")"
+	mv -f "$1" "${1}.dpkg-tmp"
+	cp -a "$REALTARGET" "$1"
+	ls "$(dirname $1)"
+    fi
+    # delete the key from the keyring
+    $GPG --batch --delete-key --yes "$2"
+    if [ -n "$REALTARGET" ]; then
+	# the real backup is the old link, not the copy we made
+	mv -f "${1}.dpkg-tmp" "${1}~"
+    fi
+}
+
+remove_key() {
+    requires_root
+
+    # if a --keyring was given, just remove from there
+    if [ -n "$FORCED_KEYRING" ]; then
+	remove_key_from_keyring "$FORCED_KEYRING" "$1"
+    else
+	# otherwise all known keyrings are up for inspection
+	local TRUSTEDFILE="/etc/apt/trusted.gpg"
+	eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
+	eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
+	remove_key_from_keyring "$TRUSTEDFILE" "$1"
+	TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
+	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
+	if [ -d "$TRUSTEDPARTS" ]; then
+	    for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
+		remove_key_from_keyring "$trusted" "$1"
+	    done
+	fi
+    fi
+    echo "OK"
+}
+
 
 usage() {
     echo "Usage: apt-key [--keyring file] [command] [arguments]"
@@ -148,39 +224,54 @@ usage() {
     echo "If no specific keyring file is given the command applies to all keyring files."
 }
 
-# Determine on which keyring we want to work
-if [ "$1" = "--keyring" ]; then
-        #echo "keyfile given"
-	shift
-	TRUSTEDFILE="$1"
-	if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ]; then
-		GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
-	else
-		echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"
-		exit 1
-	fi
-	shift
-# otherwise use the default
-else
-	#echo "generate list"
-	TRUSTEDFILE="/etc/apt/trusted.gpg"
-	eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
-	eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
-	if [ -r "$TRUSTEDFILE" ]; then
-		GPG="$GPG --keyring $TRUSTEDFILE"
-	fi
-	GPG="$GPG --primary-keyring $TRUSTEDFILE"
-	TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
-	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
-	if [ -d "$TRUSTEDPARTS" ]; then
-		#echo "parts active"
-		for trusted in $(run-parts --list $TRUSTEDPARTS --regex '^.*\.gpg$'); do
-			#echo "part -> $trusted"
-			GPG="$GPG --keyring $trusted"
-		done
-	fi
+while [ -n "$1" ]; do
+   case "$1" in
+      --keyring)
+	 shift
+	 TRUSTEDFILE="$1"
+	 FORCED_KEYRING="$1"
+	 if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ] || [ "$2" = 'adv' ]; then
+	    GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
+	 else
+	    echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"
+	    exit 1
+	 fi
+	 shift
+	 ;;
+      --fakeroot)
+	 requires_root() { true; }
+	 shift
+	 ;;
+      --*)
+	 echo >&2 "Unknown option: $1"
+	 usage
+	 exit 1;;
+      *)
+	 break;;
+   esac
+done
+
+if [ -z "$TRUSTEDFILE" ]; then
+   TRUSTEDFILE="/etc/apt/trusted.gpg"
+   eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
+   eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
+   if [ -r "$TRUSTEDFILE" ]; then
+      GPG="$GPG --keyring $TRUSTEDFILE"
+   fi
+   GPG="$GPG --primary-keyring $TRUSTEDFILE"
+   TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
+   eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
+   if [ -d "$TRUSTEDPARTS" ]; then
+      # strip / suffix as gpg will double-slash in that case (#665411)
+      STRIPPED_TRUSTEDPARTS="${TRUSTEDPARTS%/}"
+      if [ "${STRIPPED_TRUSTEDPARTS}/" = "$TRUSTEDPARTS" ]; then
+	 TRUSTEDPARTS="$STRIPPED_TRUSTEDPARTS"
+      fi
+      for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
+	 GPG="$GPG --keyring $trusted"
+      done
+   fi
 fi
-#echo "COMMAND: $GPG"
 
 command="$1"
 if [ -z "$command" ]; then
@@ -198,33 +289,40 @@ fi
 case "$command" in
     add)
         requires_root
+        init_keyring "$TRUSTEDFILE"
         $GPG --quiet --batch --import "$1"
         echo "OK"
         ;;
     del|rm|remove)
-        requires_root
-        $GPG --quiet --batch --delete-key --yes "$1"
-        echo "OK"
+        init_keyring "$TRUSTEDFILE"
+	remove_key "$1"
         ;;
     update)
+        init_keyring "$TRUSTEDFILE"
 	update
 	;;
     net-update)
+        init_keyring "$TRUSTEDFILE"
 	net_update
 	;;
     list)
+        init_keyring "$TRUSTEDFILE"
         $GPG --batch --list-keys
         ;;
     finger*)
+        init_keyring "$TRUSTEDFILE"
         $GPG --batch --fingerprint
         ;;
     export)
+        init_keyring "$TRUSTEDFILE"
         $GPG --armor --export "$1"
         ;;
     exportall)
+        init_keyring "$TRUSTEDFILE"
         $GPG --armor --export
         ;;
     adv*)
+        init_keyring "$TRUSTEDFILE"
         echo "Executing: $GPG $*"
         $GPG $*
         ;;

@@ -1,0 +1,100 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386' 'armel'
+
+insertpackage 'stable' 'allarchs' 'all' '1'
+insertpackage 'unstable' 'allarchs' 'all' '2'
+
+insertinstalledpackage 'fine' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'stable' 'fine' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'fine' 'amd64,i386' '2' 'Multi-Arch: same'
+
+insertinstalledpackage 'fine-installed' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'stable' 'fine-installed' 'i386,amd64,armel' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'fine-installed' 'i386,amd64' '2' 'Multi-Arch: same'
+
+insertinstalledpackage 'out-of-sync-native' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'stable' 'out-of-sync-native' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'out-of-sync-native' 'amd64' '2' 'Multi-Arch: same'
+
+insertinstalledpackage 'out-of-sync-foreign' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'stable' 'out-of-sync-foreign' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'out-of-sync-foreign' 'i386' '2' 'Multi-Arch: same'
+
+insertinstalledpackage 'out-of-sync-gone-native' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'stable' 'out-of-sync-gone-native' 'i386' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'out-of-sync-gone-native' 'i386' '2' 'Multi-Arch: same'
+
+insertinstalledpackage 'out-of-sync-gone-foreign' 'i386,amd64' '1' 'Multi-Arch: same'
+insertpackage 'stable' 'out-of-sync-gone-foreign' 'amd64' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'out-of-sync-gone-foreign' 'amd64' '2' 'Multi-Arch: same'
+
+insertpackage 'stable' 'libsame2' 'i386' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'libsame2' 'amd64' '2' 'Multi-Arch: same'
+insertpackage 'unstable' 'depender2' 'all' '2' 'Depends: libsame2 (= 2)'
+insertpackage 'stable' 'libsame3' 'i386' '1' 'Multi-Arch: same'
+insertpackage 'unstable' 'libsame3' 'i386,amd64' '3' 'Multi-Arch: same'
+insertpackage 'unstable' 'depender3' 'all' '3' 'Depends: libsame3 (= 3)'
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  out-of-sync-gone-foreign:i386 out-of-sync-gone-native
+The following packages have been kept back:
+  out-of-sync-foreign:i386 out-of-sync-native
+The following packages will be upgraded:
+  fine fine:i386 fine-installed fine-installed:i386 out-of-sync-gone-foreign
+  out-of-sync-gone-native:i386
+6 upgraded, 0 newly installed, 2 to remove and 2 not upgraded.
+Remv out-of-sync-gone-foreign:i386 [1]
+Remv out-of-sync-gone-native [1]
+Inst fine [1] (2 unstable [amd64]) [fine:amd64 on fine:i386] [fine:i386 on fine:amd64] [fine:i386 ]
+Inst fine:i386 [1] (2 unstable [i386])
+Conf fine (2 unstable [amd64])
+Conf fine:i386 (2 unstable [i386])
+Inst fine-installed [1] (2 unstable [amd64]) [fine-installed:amd64 on fine-installed:i386] [fine-installed:i386 on fine-installed:amd64] [fine-installed:i386 ]
+Inst fine-installed:i386 [1] (2 unstable [i386])
+Conf fine-installed (2 unstable [amd64])
+Conf fine-installed:i386 (2 unstable [i386])
+Inst out-of-sync-gone-foreign [1] (2 unstable [amd64])
+Inst out-of-sync-gone-native:i386 [1] (2 unstable [i386])
+Conf out-of-sync-gone-foreign (2 unstable [amd64])
+Conf out-of-sync-gone-native:i386 (2 unstable [i386])' aptget dist-upgrade -s #-o Debug::pkgDepCache::Marker=1
+
+rm rootdir/var/lib/dpkg/status
+insertinstalledpackage 'libsame2' 'i386' '1' 'Multi-Arch: same'
+insertinstalledpackage 'libsame3' 'i386' '1' 'Multi-Arch: same'
+
+# the error message isn't great, but better than nothing, right?
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ depender2 : Depends: libsame2 (= 2) but it is not going to be installed
+E: Unable to correct problems, you have held broken packages.' aptget install depender2 -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libsame3:i386 libsame3
+The following NEW packages will be installed:
+  depender3 libsame3
+The following packages will be upgraded:
+  libsame3:i386
+1 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst libsame3:i386 [1] (3 unstable [i386])
+Inst libsame3 (3 unstable [amd64])
+Inst depender3 (3 unstable [all])
+Conf libsame3:i386 (3 unstable [i386])
+Conf libsame3 (3 unstable [amd64])
+Conf depender3 (3 unstable [all])' aptget install depender3 -s

@@ -9,8 +9,9 @@ configarchitecture 'i386' 'amd64'
 # we need a valid locale here, otherwise the language configuration
 # will be overridden by LC_ALL=C
 LOCALE="$(echo "$LANG" | cut -d'_' -f 1)"
+MD5Sum='Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c'
 
-PACKAGESTANZA="Package: apt
+PACKAGESTANZA='Package: apt
 Priority: important
 Section: admin
 Installed-Size: 5984
@@ -19,8 +20,7 @@ Architecture: i386
 Version: 0.8.7
 Filename: pool/main/a/apt/apt_0.8.7_i386.deb
 Size: 2140230
-MD5sum: 74769bfbcef9ebc4fa74f7a5271b9c08
-Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c"
+MD5sum: 74769bfbcef9ebc4fa74f7a5271b9c08'
 
 PACKAGESTANZA2='Package: apt
 Priority: important
@@ -31,22 +31,23 @@ Architecture: amd64
 Version: 0.8.7
 Filename: pool/main/a/apt/apt_0.8.7_amd64.deb
 Size: 2210342
-MD5sum: 4a869bfbdef9ebc9fa74f7a5271e8d1a
-Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c'
+MD5sum: 4a869bfbdef9ebc9fa74f7a5271e8d1a'
 
 echo "$PACKAGESTANZA
 Description: Advanced front-end for dpkg
+$MD5Sum
 
 $PACKAGESTANZA2
-Description: Advanced front-end for dpkg" > aptarchive/Packages
+Description: Advanced front-end for dpkg
+$MD5Sum" > aptarchive/Packages
 
 echo "Package: apt
-Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c
 Description-${LOCALE}: Mächtige Oberfläche für dpkg
  Das Paket bietet dem Nutzer technisch führende Methoden für den Zugriff
  auf den dpkg-Paketmanager. Es beinhaltet das apt-get-Werkzeug und die
  APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
- um Pakete zu installieren und Upgrades durchzuführen." | bzip2 > aptarchive/${LOCALE}.bz2
+ um Pakete zu installieren und Upgrades durchzuführen.
+$MD5Sum" | bzip2 > aptarchive/${LOCALE}.bz2
 
 # the $LOCALE translation file will not be included as it is a flat archive it came from and therefore
 # its name can not be guessed correctly… (in non-flat archives the files are called Translation-*)
@@ -54,10 +55,12 @@ echo 'APT::Cache::Generate "false";' > rootdir/etc/apt/apt.conf.d/00nogenerate
 
 NOLONGSTANZA="$PACKAGESTANZA
 Description: Advanced front-end for dpkg
+$MD5Sum
 "
 
 ENGLISHSTANZA="$PACKAGESTANZA
 Description: Advanced front-end for dpkg
+$MD5Sum
 "
 
 LOCALESTANZA="$PACKAGESTANZA
@@ -66,6 +69,7 @@ Description-${LOCALE}: Mächtige Oberfläche für dpkg
  auf den dpkg-Paketmanager. Es beinhaltet das apt-get-Werkzeug und die
  APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
  um Pakete zu installieren und Upgrades durchzuführen.
+$MD5Sum
 "
 LOCALESTANZA2="$PACKAGESTANZA2
 Description-${LOCALE}: Mächtige Oberfläche für dpkg
@@ -73,6 +77,7 @@ Description-${LOCALE}: Mächtige Oberfläche für dpkg
  auf den dpkg-Paketmanager. Es beinhaltet das apt-get-Werkzeug und die
  APT-Dselect-Methode. Beides sind einfache und sicherere Wege,
  um Pakete zu installieren und Upgrades durchzuführen.
+$MD5Sum
 "
 
 testrun() {
@@ -97,28 +102,32 @@ testrun
 
 echo "$PACKAGESTANZA
 Description: Advanced front-end for dpkg
+$MD5Sum
 
 $PACKAGESTANZA2
-Description: Advanced front-end for dpkg" > aptarchive/Packages
+Description: Advanced front-end for dpkg
+$MD5Sum" > aptarchive/Packages
 
 echo "Package: apt
-Description-md5: d41ee493aa9fcc6cbc9ce4eb7069959c
 Description-en: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
  It provides the apt-get utility and APT dselect method that provides a
- simpler, safer way to install and upgrade packages." | bzip2 > aptarchive/en.bz2
+ simpler, safer way to install and upgrade packages.
+$MD5Sum" | bzip2 > aptarchive/en.bz2
 
 ENGLISHSTANZA="$PACKAGESTANZA
 Description-en: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
  It provides the apt-get utility and APT dselect method that provides a
  simpler, safer way to install and upgrade packages.
+$MD5Sum
 "
 ENGLISHSTANZA2="$PACKAGESTANZA2
 Description-en: Advanced front-end for dpkg
  This is Debian's next generation front-end for the dpkg package manager.
  It provides the apt-get utility and APT dselect method that provides a
  simpler, safer way to install and upgrade packages.
+$MD5Sum
 "
 
 testrun

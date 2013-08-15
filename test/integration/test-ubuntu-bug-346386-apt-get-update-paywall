@@ -1,23 +1,6 @@
 #!/bin/sh
 set -e
 
-ensure_n_canary_strings_in_dir() {
-    DIR=$1
-    CANARY_STRING=$2
-    EXPECTED_N=$3
-
-    msgtest "Testing for $EXPECTED_N canary strings '$CANARY_STRING' in in" "$DIR"
-
-    N=$(grep "$CANARY_STRING" $DIR/* 2>/dev/null |wc -l )
-    if [ "$N" = "$EXPECTED_N" ]; then
-        msgpass
-        return 0
-    else
-        msgfail "Expected $EXPECTED_N canaries, got $N"
-        return 1
-    fi
-}
-
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
@@ -25,23 +8,57 @@ setupenvironment
 configarchitecture 'native'
 
 insertpackage 'unstable' 'unrelated' 'all' '1.0' 'stable'
+insertsource 'unstable' 'unrelated' 'all' '1.0' 'stable'
+
+echo 'ni ni ni' > aptarchive/knights
 
 setupaptarchive
-changetowebserver --simulate-paywall
+changetowebserver -o 'aptwebserver::overwrite::.*::filename=/knights'
 
+msgtest 'Acquire test file from the webserver to check' 'overwrite'
+echo '601 Configuration
+Config-Item: Acquire::http::DependOnSTDIN=0
+
+600 Acquire URI
+URI: http://localhost:8080/holygrail
+Filename: knights-talking
+' | http >/dev/null 2>&1 && msgpass || msgfail
+testfileequal knights-talking 'ni ni ni'
+
+ensure_n_canary_strings_in_dir() {
+	local DIR="$1"
+	local CANARY_STRING="$2"
+	local EXPECTED_N="$3"
+
+	msgtest "Testing in $DIR for $EXPECTED_N canary" "$CANARY_STRING"
+	local N=$(grep "$CANARY_STRING" $DIR/* 2>/dev/null |wc -l )
+	test "$N" = "$EXPECTED_N" && msgpass || msgfail "Expected $EXPECTED_N canaries, got $N"
+}
+
+LISTS='rootdir/var/lib/apt/lists'
 rm -rf rootdir/var/lib/apt/lists
-msgtest 'excpected failure of' 'apt-get update'
-aptget update -qq 2>/dev/null && msgfail || msgpass
+msgtest 'Got expected NODATA failure in' 'apt-get update'
+aptget update -qq 2>&1 | grep -q 'E: GPG error.*NODATA' && msgpass || msgfail
 
-ensure_n_canary_strings_in_dir rootdir/var/lib/apt/lists/ 'ni ni ni' 0
-testequal 'partial' ls rootdir/var/lib/apt/lists/
+ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0
+testequal 'partial' ls $LISTS
 
-# again, this time with pre-existing files valid data
-for f in Release Release.gpg main_binary-amd64_Packages stable_main_source_Sources; do
-    echo "canary" > rootdir/var/lib/apt/lists/localhost:8080_dists_stable_${f}
+# and again with pre-existing files with "valid data" which should remain
+for f in Release Release.gpg main_binary-amd64_Packages main_source_Sources; do
+    echo 'peng neee-wom' > $LISTS/localhost:8080_dists_stable_${f}
 done
 
-# this will fail, the important part is that the canaries remain
+msgtest 'Got expected NODATA failure in' 'apt-get update'
+aptget update -qq 2>&1 | grep -q 'E: GPG error.*NODATA' && msgpass || msgfail
+
+ensure_n_canary_strings_in_dir $LISTS 'peng neee-wom' 4
+ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0
+
+# and now with a pre-existing InRelease file
+echo 'peng neee-wom' > $LISTS/localhost:8080_dists_stable_InRelease
+rm -f $LISTS/localhost:8080_dists_stable_Release $LISTS/localhost:8080_dists_stable_Release.gpg
 msgtest 'excpected failure of' 'apt-get update'
-aptget update -qq 2>/dev/null && msgfail || msgpass
-ensure_n_canary_strings_in_dir rootdir/var/lib/apt/lists/ 'canary' 4
+aptget update -qq 2>&1 | grep -q 'E: GPG error.*NODATA' && msgpass || msgfail
+
+ensure_n_canary_strings_in_dir $LISTS 'peng neee-wom' 3
+ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0

@@ -106,9 +106,9 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       } else {
          Target.Open(TargetF,FileFd::WriteAtomic);
       }
-      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
+      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (TargetFl == 0)
 	 return _error->Errno("fdopen","Failed to reopen fd");
       
@@ -544,11 +544,9 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
       FileFd Rel;
       Target.Open(TargetF,FileFd::WriteAtomic);
       Rel.Open(prefix + file,FileFd::ReadOnly);
-      if (_error->PendingError() == true)
-	 return false;
       if (CopyFile(Rel,Target) == false)
-	 return false;
-   
+	 return _error->Error("Copying of '%s' for '%s' from '%s' failed", file.c_str(), CDName.c_str(), prefix.c_str());
+
       return true;
 }
 									/*}}}*/
@@ -603,6 +601,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 			 (useInRelease ? inrelease.c_str() : releasegpg.c_str()));
 	 // something went wrong, don't copy the Release.gpg
 	 // FIXME: delete any existing gpg file?
+	 delete MetaIndex;
 	 continue;
       }
 
@@ -641,6 +640,18 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 
    return true;
 }
+									/*}}}*/
+// SigVerify::RunGPGV - deprecated wrapper calling ExecGPGV		/*{{{*/
+bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
+      int const &statusfd, int fd[2]) {
+   ExecGPGV(File, FileOut, statusfd, fd);
+   return false;
+};
+bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
+      int const &statusfd) {
+   ExecGPGV(File, FileOut, statusfd);
+   return false;
+};
 									/*}}}*/
 bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 				vector<string> &List, pkgCdromStatus *log)
@@ -704,9 +715,9 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       } else {
 	 Target.Open(TargetF,FileFd::WriteAtomic);
       }
-      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
+      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (TargetFl == 0)
 	 return _error->Errno("fdopen","Failed to reopen fd");
       

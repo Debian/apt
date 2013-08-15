@@ -219,8 +219,12 @@ MD5SumValue debListParser::Description_md5()
    string const value = Section.FindS("Description-md5");
    if (value.empty() == true)
    {
+      std::string const desc = Description() + "\n";
+      if (desc == "\n")
+	 return MD5SumValue();
+
       MD5Summation md5;
-      md5.Add((Description() + "\n").c_str());
+      md5.Add(desc.c_str());
       return md5.Result();
    }
    else if (likely(value.size() == 32))
@@ -801,94 +805,28 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    map_ptrloc const storage = WriteUniqString(component);
    FileI->Component = storage;
 
-   // FIXME: should use FileFd and TagSection
-   FILE* release = fdopen(dup(File.Fd()), "r");
-   if (release == NULL)
+   pkgTagFile TagFile(&File);
+   pkgTagSection Section;
+   if (_error->PendingError() == true || TagFile.Step(Section) == false)
       return false;
 
-   char buffer[101];
-   while (fgets(buffer, sizeof(buffer), release) != NULL)
-   {
-      size_t len = 0;
-
-      // Skip empty lines
-      for (; buffer[len] == '\r' && buffer[len] == '\n'; ++len)
-         /* nothing */
-         ;
-      if (buffer[len] == '\0')
-	 continue;
-
-      // seperate the tag from the data
-      const char* dataStart = strchr(buffer + len, ':');
-      if (dataStart == NULL)
-	 continue;
-      len = dataStart - buffer;
-      for (++dataStart; *dataStart == ' '; ++dataStart)
-         /* nothing */
-         ;
-      const char* dataEnd = (const char*)rawmemchr(dataStart, '\0');
-      // The last char should be a newline, but we can never be sure: #633350
-      const char* lineEnd = dataEnd;
-      for (--lineEnd; *lineEnd == '\r' || *lineEnd == '\n'; --lineEnd)
-         /* nothing */
-         ;
-      ++lineEnd;
-
-      // which datastorage need to be updated
-      enum { Suite, Component, Version, Origin, Codename, Label, None } writeTo = None;
-      if (buffer[0] == ' ')
-	 ;
-      #define APT_PARSER_WRITETO(X) else if (strncmp(#X, buffer, len) == 0) writeTo = X;
-      APT_PARSER_WRITETO(Suite)
-      APT_PARSER_WRITETO(Component)
-      APT_PARSER_WRITETO(Version)
-      APT_PARSER_WRITETO(Origin)
-      APT_PARSER_WRITETO(Codename)
-      APT_PARSER_WRITETO(Label)
-      #undef APT_PARSER_WRITETO
-      #define APT_PARSER_FLAGIT(X) else if (strncmp(#X, buffer, len) == 0) \
-	 pkgTagSection::FindFlag(FileI->Flags, pkgCache::Flag:: X, dataStart, lineEnd);
-      APT_PARSER_FLAGIT(NotAutomatic)
-      APT_PARSER_FLAGIT(ButAutomaticUpgrades)
-      #undef APT_PARSER_FLAGIT
-
-      // load all data from the line and save it
-      string data;
-      if (writeTo != None)
-	 data.append(dataStart, dataEnd);
-      if (sizeof(buffer) - 1 == (dataEnd - buffer))
-      {
-	 while (fgets(buffer, sizeof(buffer), release) != NULL)
-	 {
-	    if (writeTo != None)
-	       data.append(buffer);
-	    if (strlen(buffer) != sizeof(buffer) - 1)
-	       break;
-	 }
-      }
-      if (writeTo != None)
-      {
-	 // remove spaces and stuff from the end of the data line
-	 for (std::string::reverse_iterator s = data.rbegin();
-	      s != data.rend(); ++s)
-	 {
-	    if (*s != '\r' && *s != '\n' && *s != ' ')
-	       break;
-	    *s = '\0';
-	 }
-	 map_ptrloc const storage = WriteUniqString(data);
-	 switch (writeTo) {
-	 case Suite: FileI->Archive = storage; break;
-	 case Component: FileI->Component = storage; break;
-	 case Version: FileI->Version = storage; break;
-	 case Origin: FileI->Origin = storage; break;
-	 case Codename: FileI->Codename = storage; break;
-	 case Label: FileI->Label = storage; break;
-	 case None: break;
-	 }
-      }
+   std::string data;
+   #define APT_INRELEASE(TAG, STORE) \
+   data = Section.FindS(TAG); \
+   if (data.empty() == false) \
+   { \
+      map_ptrloc const storage = WriteUniqString(data); \
+      STORE = storage; \
    }
-   fclose(release);
+   APT_INRELEASE("Suite", FileI->Archive)
+   APT_INRELEASE("Component", FileI->Component)
+   APT_INRELEASE("Version", FileI->Version)
+   APT_INRELEASE("Origin", FileI->Origin)
+   APT_INRELEASE("Codename", FileI->Codename)
+   APT_INRELEASE("Label", FileI->Label)
+   #undef APT_INRELEASE
+   Section.FindFlag("NotAutomatic", FileI->Flags, pkgCache::Flag::NotAutomatic);
+   Section.FindFlag("ButAutomaticUpgrades", FileI->Flags, pkgCache::Flag::ButAutomaticUpgrades);
 
    return !_error->PendingError();
 }

@@ -646,7 +646,10 @@ void pkgProblemResolver::MakeScores()
 	      D->Type != pkgCache::Dep::Recommends))
 	    continue;	 
 	 
-	 Scores[I->ID] += abs(OldScores[D.ParentPkg()->ID]);
+	 // Do not propagate negative scores otherwise
+	 // an extra (-2) package might score better than an optional (-1)
+	 if (OldScores[D.ParentPkg()->ID] > 0)
+	     Scores[I->ID] += OldScores[D.ParentPkg()->ID];
       }      
    }
 
@@ -840,8 +843,10 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
    }
    while (Again == true);
 
-   if (Debug == true)
-      clog << "Starting" << endl;
+   if (Debug == true) {
+      clog << "Starting pkgProblemResolver with broken count: " 
+           << Cache.BrokenCount() << endl;
+   }
    
    MakeScores();
 
@@ -869,8 +874,10 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
          }
    }
 
-   if (Debug == true)
-      clog << "Starting 2" << endl;
+   if (Debug == true) {
+      clog << "Starting 2 pkgProblemResolver with broken count: " 
+           << Cache.BrokenCount() << endl;
+   }
 
    /* Now consider all broken packages. For each broken package we either
       remove the package or fix it's problem. We do this once, it should
@@ -1435,9 +1442,11 @@ bool pkgProblemResolver::ResolveByKeepInternal()
    return true;
 }
 									/*}}}*/
-// ProblemResolver::InstallProtect - Install all protected packages	/*{{{*/
+// ProblemResolver::InstallProtect - deprecated cpu-eating no-op	/*{{{*/
 // ---------------------------------------------------------------------
-/* This is used to make sure protected packages are installed */
+/* Actions issued with FromUser bit set are protected from further
+   modification (expect by other calls with FromUser set) nowadays , so we
+   don't need to reissue actions here, they are already set in stone. */
 void pkgProblemResolver::InstallProtect()
 {
    pkgDepCache::ActionGroup group(Cache);

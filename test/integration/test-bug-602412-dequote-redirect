@@ -16,14 +16,14 @@ mv aptarchive/pool aptarchive/newpool
 mv aptarchive/dists aptarchive/newdists
 
 msgtest 'Test redirection works in' 'apt-get update'
-aptget update -qq && msgpass || msgfail
+testsuccess --nomsg aptget update
 
 # check that I-M-S header is kept in redirections
-testequal 'Hit http://localhost unstable InRelease
-Hit http://localhost unstable/main Sources
-Hit http://localhost unstable/main amd64 Packages
-Hit http://localhost unstable/main Translation-en
-Reading package lists...' aptget update
+testequal 'Hit http://localhost:8080 unstable InRelease
+Hit http://localhost:8080 unstable/main Sources
+Hit http://localhost:8080 unstable/main amd64 Packages
+Hit http://localhost:8080 unstable/main Translation-en
+Reading package lists...' aptget update #-o debug::pkgacquire=1 -o debug::pkgacquire::worker=1
 
 msgtest 'Test redirection works in' 'package download'
-aptget install unrelated --download-only -qq && msgpass || msgfail
+testsuccess --nomsg aptget install unrelated --download-only -y

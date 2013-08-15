@@ -15,7 +15,7 @@ buildsimplenativepackage 'foobar' 'amd64' '1.0' 'stable' 'Depends: libc6'
 
 setupaptarchive
 
-aptget install libc6:i386 -t stable -y -qq 2>&1 > /dev/null
+testsuccess aptget install libc6:i386 -t stable -y
 testdpkginstalled libc6:i386
 testequal 'Reading package lists...
 Building dependency tree...
@@ -78,9 +78,9 @@ Conf libc6 (2.0 testing [all])' aptget upgrade -t testing -s
 # FIXME: on amd64 systems this test wouldn't run with a real upgrade
 # as APT (here i386) disagree about the native architecture, so
 # we fake it here:
-#aptget upgrade -y -qq 2>&1 > /dev/null
-aptget purge libc6 -y -qq 2>&1 >/dev/null
-aptget install libc6:i386 -y -qq 2>&1 >/dev/null
+#aptget upgrade -y -qq >/dev/null 2>&1
+testsuccess aptget purge libc6 -y
+testsuccess aptget install libc6:i386 -y
 testdpkginstalled libc6:all
 
 testequal 'Reading package lists...
@@ -129,7 +129,7 @@ buildsimplenativepackage 'foobar-same' 'amd64' '1.0' 'stable' 'Depends: libc6-sa
 
 setupaptarchive
 
-aptget install libc6-same:i386 -t stable -y -qq 2>&1 > /dev/null
+testsuccess aptget install libc6-same:i386 -t stable -y
 testdpkginstalled libc6-same:i386
 
 testequal 'Reading package lists...
@@ -176,9 +176,9 @@ Conf libc6-same (2.0 testing [all])' aptget upgrade -t testing -s
 # FIXME: on amd64 systems this test wouldn't run with a real upgrade
 # as APT (here i386) disagree about the native architecture, so
 # we fake it here:
-#aptget upgrade -y -qq 2>&1 > /dev/null
-aptget purge libc6-same -y -qq 2>&1 >/dev/null
-aptget install libc6-same:i386 -y -qq 2>&1 >/dev/null
+#aptget upgrade -y -qq >/dev/null 2>&1
+testsuccess aptget purge libc6-same -y
+testsuccess aptget install libc6-same:i386 -y
 testdpkginstalled libc6-same:all
 
 

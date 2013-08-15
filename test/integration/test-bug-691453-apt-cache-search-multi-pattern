@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'native'
+
+insertpackage 'unstable' 'foobar' 'native' '1' '' '' 'funky tool'
+insertpackage 'unstable' 'coolstuff' 'native' '1' '' '' 'funky tool just like foo and bar'
+insertpackage 'unstable' 'foo' 'native' '1' '' '' 'tool best used with bar'
+insertpackage 'unstable' 'bar' 'native' '1' '' '' 'tool best used with foo'
+insertpackage 'unstable' 'baz' 'native' '1' 'Provides: bar' '' 'alternative tool best used with foo'
+
+setupaptarchive
+
+# in this special case the following queries should be equal
+FOOBAR='foobar - funky tool
+coolstuff - funky tool just like foo and bar
+foo - tool best used with bar
+bar - tool best used with foo
+baz - alternative tool best used with foo'
+
+testequal "$FOOBAR" aptcache search foo
+testequal "$FOOBAR" aptcache search bar
+testequal "$FOOBAR" aptcache search foo bar
+
+testequal 'foobar - funky tool
+foo - tool best used with bar' aptcache search -n foo
+testequal 'foobar - funky tool
+bar - tool best used with foo
+baz - alternative tool best used with foo' aptcache search -n bar
+testequal 'foobar - funky tool' aptcache search -n foo bar

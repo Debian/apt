@@ -39,6 +39,12 @@
 
 #include <apti18n.h>
 									/*}}}*/
+static const char *W_NO_CDROM_FOUND = \
+   N_("No CD-ROM could be auto-detected or found using "
+      "the default mount point.\n"
+      "You may try the --cdrom option to set the CD-ROM mount point. "
+      "See 'man apt-cdrom' for more "
+      "information about the CD-ROM auto-detection and mount point.");
 
 using namespace std;
 
@@ -60,7 +66,9 @@ void pkgCdromTextStatus::Prompt(const char *Text)
 {
    char C;
    cout << Text << ' ' << flush;
-   read(STDIN_FILENO,&C,1);
+   if (read(STDIN_FILENO,&C,1) < 0)
+      _error->Errno("pkgCdromTextStatus::Prompt", 
+                    "Failed to read from standard input (not a terminal?)");
    if (C != '\n')
       cout << endl;
 }
@@ -135,7 +143,6 @@ bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i)
    return true;
 }
 									/*}}}*/
-
 // DoAdd - Add a new CDROM						/*{{{*/
 // ---------------------------------------------------------------------
 /* This does the main add bit.. We show some status and things. The
@@ -150,13 +157,15 @@ bool DoAdd(CommandLine &)
    bool res = true;
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
+   unsigned int count = 0;
    if (AutoDetect && UdevCdroms.Dlopen())
-   {
-      unsigned int count = 0;
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Add(&log);
-   } else {
+   if (count == 0) {
       res = cdrom.Add(&log);
+      if (res == false) {
+         _error->Error("%s", _(W_NO_CDROM_FOUND));
+      }
    }
 
    if(res)
@@ -178,15 +187,16 @@ bool DoIdent(CommandLine &)
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
 
+   unsigned int count = 0;
    if (AutoDetect && UdevCdroms.Dlopen())
-   {
-      unsigned int count = 0;
       while (AutoDetectCdrom(UdevCdroms, count))
 	 res &= cdrom.Ident(ident, &log);
-   } else {
-      return cdrom.Ident(ident, &log);
+   if (count == 0) {
+      res = cdrom.Ident(ident, &log);
+      if (res == false) {
+         _error->Error("%s", _(W_NO_CDROM_FOUND));
+      }
    }
- 
    return res;
 }
 									/*}}}*/
@@ -218,7 +228,7 @@ int ShowHelp()
       "  -m   No mounting\n"
       "  -f   Fast mode, don't check package files\n"
       "  -a   Thorough scan mode\n"
-      "  --auto-detect Auto detect drive and mount point\n"
+      "  --no-auto-detect Do not try to auto detect drive and mount point\n"
       "  -c=? Read this configuration file\n"
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
       "See fstab(5)\n";
@@ -229,7 +239,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Args Args[] = {
       {'h',"help","help",0},
-      {  0,"auto-detect","Acquire::cdrom::AutoDetect",0},
+      {  0,"auto-detect","Acquire::cdrom::AutoDetect", CommandLine::Boolean},
       {'v',"version","version",0},
       {'d',"cdrom","Acquire::cdrom::mount",CommandLine::HasArg},
       {'r',"rename","APT::CDROM::Rename",0},

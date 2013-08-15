@@ -829,6 +829,14 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       log->Update(msg.str());
       log->Update(_("Copying package lists..."), STEP_COPY);
    }
+
+   // check for existence and possibly create state directory for copying
+   string const listDir = _config->FindDir("Dir::State::lists");
+   string const partialListDir = listDir + "partial/";
+   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
+       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
+      return _error->Errno("cdrom", _("List directory %spartial is missing."), listDir.c_str());
+
    // take care of the signatures and copy them if they are ok
    // (we do this before PackageCopy as it modifies "List" and "SourceList")
    SigVerify SignVerify;

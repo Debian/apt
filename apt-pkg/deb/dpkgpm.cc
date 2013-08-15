@@ -134,6 +134,8 @@ static void dpkgChrootDirectory()
    std::cerr << "Chrooting into " << chrootDir << std::endl;
    if (chroot(chrootDir.c_str()) != 0)
       _exit(100);
+   if (chdir("/") != 0)
+      _exit(100);
 }
 									/*}}}*/
 
@@ -238,15 +240,23 @@ bool pkgDPkgPM::Remove(PkgIterator Pkg,bool Purge)
    return true;
 }
 									/*}}}*/
-// DPkgPM::SendV2Pkgs - Send version 2 package info			/*{{{*/
+// DPkgPM::SendPkgInfo - Send info for install-pkgs hook		/*{{{*/
 // ---------------------------------------------------------------------
 /* This is part of the helper script communication interface, it sends
    very complete information down to the other end of the pipe.*/
 bool pkgDPkgPM::SendV2Pkgs(FILE *F)
 {
-   fprintf(F,"VERSION 2\n");
-   
-   /* Write out all of the configuration directives by walking the 
+   return SendPkgsInfo(F, 2);
+}
+bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
+{
+   // This version of APT supports only v3, so don't sent higher versions
+   if (Version <= 3)
+      fprintf(F,"VERSION %u\n", Version);
+   else
+      fprintf(F,"VERSION 3\n");
+
+   /* Write out all of the configuration directives by walking the
       configuration tree */
    const Configuration::Item *Top = _config->Tree(0);
    for (; Top != 0;)
@@ -280,30 +290,51 @@ bool pkgDPkgPM::SendV2Pkgs(FILE *F)
       pkgDepCache::StateCache &S = Cache[I->Pkg];
       
       fprintf(F,"%s ",I->Pkg.Name());
-      // Current version
-      if (I->Pkg->CurrentVer == 0)
-	 fprintf(F,"- ");
-      else
-	 fprintf(F,"%s ",I->Pkg.CurrentVer().VerStr());
-      
-      // Show the compare operator
-      // Target version
-      if (S.InstallVer != 0)
+
+      // Current version which we are going to replace
+      pkgCache::VerIterator CurVer = I->Pkg.CurrentVer();
+      if (CurVer.end() == true && (I->Op == Item::Remove || I->Op == Item::Purge))
+	 CurVer = FindNowVersion(I->Pkg);
+
+      if (CurVer.end() == true)
       {
-	 int Comp = 2;
-	 if (I->Pkg->CurrentVer != 0)
-	    Comp = S.InstVerIter(Cache).CompareVer(I->Pkg.CurrentVer());
-	 if (Comp < 0)
-	    fprintf(F,"> ");
-	 if (Comp == 0)
-	    fprintf(F,"= ");
-	 if (Comp > 0)
-	    fprintf(F,"< ");
-	 fprintf(F,"%s ",S.InstVerIter(Cache).VerStr());
+	 if (Version <= 2)
+	    fprintf(F, "- ");
+	 else
+	    fprintf(F, "- - none ");
       }
       else
-	 fprintf(F,"> - ");
-      
+      {
+	 fprintf(F, "%s ", CurVer.VerStr());
+	 if (Version >= 3)
+	    fprintf(F, "%s %s ", CurVer.Arch(), CurVer.MultiArchType());
+      }
+
+      // Show the compare operator between current and install version
+      if (S.InstallVer != 0)
+      {
+	 pkgCache::VerIterator const InstVer = S.InstVerIter(Cache);
+	 int Comp = 2;
+	 if (CurVer.end() == false)
+	    Comp = InstVer.CompareVer(CurVer);
+	 if (Comp < 0)
+	    fprintf(F,"> ");
+	 else if (Comp == 0)
+	    fprintf(F,"= ");
+	 else if (Comp > 0)
+	    fprintf(F,"< ");
+	 fprintf(F, "%s ", InstVer.VerStr());
+	 if (Version >= 3)
+	    fprintf(F, "%s %s ", InstVer.Arch(), InstVer.MultiArchType());
+      }
+      else
+      {
+	 if (Version <= 2)
+	    fprintf(F, "> - ");
+	 else
+	    fprintf(F, "> - - none ");
+      }
+
       // Show the filename/operation
       if (I->Op == Item::Install)
       {
@@ -313,9 +344,9 @@ bool pkgDPkgPM::SendV2Pkgs(FILE *F)
 	 else
 	    fprintf(F,"%s\n",I->File.c_str());
       }      
-      if (I->Op == Item::Configure)
+      else if (I->Op == Item::Configure)
 	 fprintf(F,"**CONFIGURE**\n");
-      if (I->Op == Item::Remove ||
+      else if (I->Op == Item::Remove ||
 	  I->Op == Item::Purge)
 	 fprintf(F,"**REMOVE**\n");
       
@@ -404,7 +435,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 }
       }
       else
-	 SendV2Pkgs(F);
+	 SendPkgsInfo(F, Version);
 
       fclose(F);
       
@@ -720,13 +751,15 @@ bool pkgDPkgPM::OpenLog()
 	 return _error->WarningE("OpenLog", _("Could not open file '%s'"), logfile_name.c_str());
       setvbuf(d->term_out, NULL, _IONBF, 0);
       SetCloseExec(fileno(d->term_out), true);
-      struct passwd *pw;
-      struct group *gr;
-      pw = getpwnam("root");
-      gr = getgrnam("adm");
-      if (pw != NULL && gr != NULL)
-	  chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid);
-      chmod(logfile_name.c_str(), 0640);
+      if (getuid() == 0) // if we aren't root, we can't chown a file, so don't try it
+      {
+	 struct passwd *pw = getpwnam("root");
+	 struct group *gr = getgrnam("adm");
+	 if (pw != NULL && gr != NULL && chown(logfile_name.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+	    _error->WarningE("OpenLog", "chown to root:adm of file %s failed", logfile_name.c_str());
+      }
+      if (chmod(logfile_name.c_str(), 0640) != 0)
+	 _error->WarningE("OpenLog", "chmod 0640 of file %s failed", logfile_name.c_str());
       fprintf(d->term_out, "\nLog started: %s\n", timestr);
    }
 
@@ -1205,16 +1238,13 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
       // if tcgetattr does not return zero there was a error
       // and we do not do any pty magic
+      _error->PushToStack();
       if (tcgetattr(STDOUT_FILENO, &tt) == 0)
       {
 	 ioctl(0, TIOCGWINSZ, (char *)&win);
-	 if (openpty(&master, &slave, NULL, &tt, &win) < 0) 
+	 if (openpty(&master, &slave, NULL, &tt, &win) < 0)
 	 {
-	    const char *s = _("Can not write log, openpty() "
-	                      "failed (/dev/pts not mounted?)\n");
-	    fprintf(stderr, "%s",s);
-            if(d->term_out)
-              fprintf(d->term_out, "%s",s);
+	    _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
 	    master = slave = -1;
 	 }  else {
 	    struct termios rtt;
@@ -1237,6 +1267,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
          if(d->term_out)
             fprintf(d->term_out, "%s",s); 
       }
+      // complain only if stdout is either a terminal (but still failed) or is an invalid
+      // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
+      else if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
+         _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
+
+      if (_error->PendingError() == true)
+	 _error->DumpErrors(std::cerr);
+      _error->RevertToStack();
+
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
