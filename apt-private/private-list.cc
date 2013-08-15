@@ -53,6 +53,9 @@ struct PackageSortAlphabetic
     }
 };
 
+#ifdef PACKAGE_MATCHER_ABI_COMPAT
+#define PackageMatcher PackageNameMatchesFnmatch
+#endif
 class PackageNameMatcher : public Matcher
 {
   public:
@@ -61,11 +64,16 @@ class PackageNameMatcher : public Matcher
       for(int i=0; patterns[i] != NULL; i++)
       {
          std::string pattern = patterns[i];
+#ifdef PACKAGE_MATCHER_ABI_COMPAT
+            APT::CacheFilter::PackageNameMatchesFnmatch *cachefilter = NULL;
+            cachefilter = new APT::CacheFilter::PackageNameMatchesFnmatch(pattern);
+#else
          APT::CacheFilter::PackageMatcher *cachefilter = NULL;
          if(_config->FindB("APT::Cmd::UseRegexp", false) == true)
             cachefilter = new APT::CacheFilter::PackageNameMatchesRegEx(pattern);
          else
             cachefilter = new APT::CacheFilter::PackageNameMatchesFnmatch(pattern);
+#endif
          filters.push_back(cachefilter);
       }
    }
@@ -88,6 +96,7 @@ class PackageNameMatcher : public Matcher
 private:
    std::vector<APT::CacheFilter::PackageMatcher*> filters;   
    std::vector<APT::CacheFilter::PackageMatcher*>::const_iterator J;
+   #undef PackageMatcher
 };
 
 
