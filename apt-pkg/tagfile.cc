@@ -58,18 +58,19 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
    d = new pkgTagFilePrivate(pFd, Size);
 
    if (d->Fd.IsOpen() == false)
-   {
       d->Start = d->End = d->Buffer = 0;
+   else
+      d->Buffer = (char*)malloc(sizeof(char) * Size);
+
+   if (d->Buffer == NULL)
       d->Done = true;
-      d->iOffset = 0;
-      return;
-   }
-   
-   d->Buffer = new char[Size];
+   else
+      d->Done = false;
+
    d->Start = d->End = d->Buffer;
-   d->Done = false;
    d->iOffset = 0;
-   Fill();
+   if (d->Done == false)
+      Fill();
 }
 									/*}}}*/
 // TagFile::~pkgTagFile - Destructor					/*{{{*/
@@ -77,11 +78,11 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
 /* */
 pkgTagFile::~pkgTagFile()
 {
-   delete [] d->Buffer;
+   free(d->Buffer);
    delete d;
 }
 									/*}}}*/
-// TagFile::Offset - Return the current offset in the buffer     	/*{{{*/
+// TagFile::Offset - Return the current offset in the buffer		/*{{{*/
 unsigned long pkgTagFile::Offset()
 {
    return d->iOffset;
@@ -103,14 +104,13 @@ bool pkgTagFile::Resize()
 bool pkgTagFile::Resize(unsigned long long const newSize)
 {
    unsigned long long const EndSize = d->End - d->Start;
-   char *tmp;
 
    // get new buffer and use it
-   tmp = new char[newSize];
-   memcpy(tmp, d->Buffer, d->Size);
+   char* newBuffer = (char*)realloc(d->Buffer, sizeof(char) * newSize);
+   if (newBuffer == NULL)
+      return false;
+   d->Buffer = newBuffer;
    d->Size = newSize;
-   delete [] d->Buffer;
-   d->Buffer = tmp;
 
    // update the start/end pointers to the new buffer
    d->Start = d->Buffer;
