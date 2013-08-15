@@ -111,8 +111,8 @@ do
 	fi
 
 	echo -n "Testing with ${NAME} "
-	if LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} ; then
- 		echo "$TESTOKAY"
+	if MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} ; then
+		echo "$TESTOKAY"
 	else
 		echo "$TESTFAIL"
 		EXIT_CODE=1
