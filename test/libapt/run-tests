@@ -72,9 +72,11 @@ do
 			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-tlh%5fDE"
 	elif [ $name = "HashSums${EXT}" ]; then
 		TMP="$(readlink -f "./${0}")"
-		echo -n "Testing with ${NAME} "
-		LD_LIBRARY_PATH=${LDPATH} ${testapp} $TMP $(md5sum $TMP | cut -d' ' -f 1) $(sha1sum $TMP | cut -d' ' -f 1) $(sha256sum $TMP | cut -d' ' -f 1) $(sha512sum $TMP | cut -d' ' -f 1) && echo "$TESTOKAY" || echo "$TESTFAIL"
-		continue
+		tmppath="$TMP"
+		tmppath="${tmppath} $(md5sum $TMP | cut -d' ' -f 1)"
+		tmppath="${tmppath} $(sha1sum $TMP | cut -d' ' -f 1)"
+		tmppath="${tmppath} $(sha256sum $TMP | cut -d' ' -f 1)"
+		tmppath="${tmppath} $(sha512sum $TMP | cut -d' ' -f 1)"
 	elif [ $name = "CompareVersion${EXT}" ]; then
 		tmppath="${DIR}/versions.lst"
 	elif [ $name = "CdromFindPackages${EXT}" ]; then
