@@ -33,7 +33,7 @@ public:
 	PackageNameMatchesRegEx(std::string const &Pattern);
 	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
 	virtual bool operator() (pkgCache::GrpIterator const &Grp);
-	~PackageNameMatchesRegEx();
+	virtual ~PackageNameMatchesRegEx();
 };
 									/*}}}*/
 // PackageNameMatchesFnmatch						/*{{{*/
@@ -46,7 +46,7 @@ public:
             : Pattern(Pattern) {};
         virtual bool operator() (pkgCache::PkgIterator const &Pkg);
 	virtual bool operator() (pkgCache::GrpIterator const &Grp);
-	~PackageNameMatchesFnmatch() {};
+	virtual ~PackageNameMatchesFnmatch() {};
 };
 									/*}}}*/
 // PackageArchitectureMatchesSpecification				/*{{{*/
@@ -76,7 +76,7 @@ public:
 	bool operator() (char const * const &arch);
 	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
 	virtual bool operator() (pkgCache::VerIterator const &Ver);
-	~PackageArchitectureMatchesSpecification();
+	virtual ~PackageArchitectureMatchesSpecification();
 };
 									/*}}}*/
 }
