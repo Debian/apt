@@ -50,6 +50,11 @@ public:
 /* */
 pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
 {
+   /* The size is increased by 4 because if we start with the Size of the
+      filename we need to try to read 1 char more to see an EOF faster, 1
+      char the end-pointer can be on and maybe 2 newlines need to be added
+      to the end of the file -> 4 extra chars */
+   Size += 4;
    d = new pkgTagFilePrivate(pFd, Size);
 
    if (d->Fd.IsOpen() == false)
@@ -89,17 +94,21 @@ unsigned long pkgTagFile::Offset()
  */
 bool pkgTagFile::Resize()
 {
-   char *tmp;
-   unsigned long long EndSize = d->End - d->Start;
-
    // fail is the buffer grows too big
    if(d->Size > 1024*1024+1)
       return false;
 
+   return Resize(d->Size * 2);
+}
+bool pkgTagFile::Resize(unsigned long long const newSize)
+{
+   unsigned long long const EndSize = d->End - d->Start;
+   char *tmp;
+
    // get new buffer and use it
-   tmp = new char[2*d->Size];
+   tmp = new char[newSize];
    memcpy(tmp, d->Buffer, d->Size);
-   d->Size = d->Size*2;
+   d->Size = newSize;
    delete [] d->Buffer;
    d->Buffer = tmp;
 
@@ -152,9 +161,10 @@ bool pkgTagFile::Fill()
    if (d->Done == false)
    {
       // See if only a bit of the file is left
-      if (d->Fd.Read(d->End, d->Size - (d->End - d->Buffer),&Actual) == false)
+      unsigned long long const dataSize = d->Size - ((d->End - d->Buffer) + 1);
+      if (d->Fd.Read(d->End, dataSize, &Actual) == false)
 	 return false;
-      if (Actual != d->Size - (d->End - d->Buffer))
+      if (Actual != dataSize || d->Fd.Eof() == true)
 	 d->Done = true;
       d->End += Actual;
    }
@@ -171,8 +181,13 @@ bool pkgTagFile::Fill()
       for (const char *E = d->End - 1; E - d->End < 6 && (*E == '\n' || *E == '\r'); E--)
 	 if (*E == '\n')
 	    LineCount++;
-      for (; LineCount < 2; LineCount++)
-	 *d->End++ = '\n';
+      if (LineCount < 2)
+      {
+	 if ((unsigned)(d->End - d->Buffer) >= d->Size)
+	    Resize(d->Size + 3);
+	 for (; LineCount < 2; LineCount++)
+	    *d->End++ = '\n';
+      }
       
       return true;
    }
