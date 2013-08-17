@@ -459,6 +459,49 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
    return Fix.ResolveByKeep();
 }
 									/*}}}*/
+// AllUpgradeNoDelete - Upgrade without removing packages		/*{{{*/
+// ---------------------------------------------------------------------
+/* Right now the system must be consistent before this can be called.
+ * Upgrade as much as possible without deleting anything (useful for
+ * stable systems)
+ */
+bool pkgAllUpgradeNoDelete(pkgDepCache &Cache)
+{
+   pkgDepCache::ActionGroup group(Cache);
+
+   pkgProblemResolver Fix(&Cache);
+
+   if (Cache.BrokenCount() != 0)
+      return false;
+
+   // provide the initial set of stuff we want to upgrade by marking
+   // all upgradable packages for upgrade
+   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+   {
+      if (I->CurrentVer != 0 && Cache[I].InstallVer != 0)
+      {
+         if (_config->FindB("APT::Ignore-Hold",false) == false)
+            if (I->SelectedState == pkgCache::State::Hold)
+               continue;
+
+	 Cache.MarkInstall(I, false, 0, false);
+      }
+   }
+
+   // then let auto-install loose
+   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+      if (Cache[I].Install())
+	 Cache.MarkInstall(I, true, 0, false);
+
+   // ... but it may remove stuff, we we need to clean up afterwards again
+   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
+      if (Cache[I].Delete() == true)
+	 Cache.MarkKeep(I, false, false);
+
+   // resolve remaining issues via keep
+   return Fix.ResolveByKeep();
+}
+									/*}}}*/
 // MinimizeUpgrade - Minimizes the set of packages to be upgraded	/*{{{*/
 // ---------------------------------------------------------------------
 /* This simply goes over the entire set of packages and tries to keep 

@@ -382,23 +382,31 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       OptSec = "DPkg::Tools::Options::" + string(Opts->Value.c_str(),Pos);
       
       unsigned int Version = _config->FindI(OptSec+"::Version",1);
+      unsigned int InfoFD = _config->FindI(OptSec + "::InfoFD", STDIN_FILENO);
       
       // Create the pipes
       int Pipes[2];
       if (pipe(Pipes) != 0)
 	 return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
-      SetCloseExec(Pipes[0],true);
+      if (InfoFD != (unsigned)Pipes[0])
+	 SetCloseExec(Pipes[0],true);
+      else
+	 _config->Set("APT::Keep-Fds::", Pipes[0]);
       SetCloseExec(Pipes[1],true);
-      
+
       // Purified Fork for running the script
-      pid_t Process = ExecFork();      
+      pid_t Process = ExecFork();
       if (Process == 0)
       {
 	 // Setup the FDs
-	 dup2(Pipes[0],STDIN_FILENO);
+	 dup2(Pipes[0], InfoFD);
 	 SetCloseExec(STDOUT_FILENO,false);
-	 SetCloseExec(STDIN_FILENO,false);      
+	 SetCloseExec(STDIN_FILENO,false);
 	 SetCloseExec(STDERR_FILENO,false);
+
+	 string hookfd;
+	 strprintf(hookfd, "%d", InfoFD);
+	 setenv("APT_HOOK_INFO_FD", hookfd.c_str(), 1);
 
 	 dpkgChrootDirectory();
 	 const char *Args[4];
@@ -409,6 +417,8 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 execv(Args[0],(char **)Args);
 	 _exit(100);
       }
+      if (InfoFD == (unsigned)Pipes[0])
+	 _config->Clear("APT::Keep-Fds", Pipes[0]);
       close(Pipes[0]);
       FILE *F = fdopen(Pipes[1],"w");
       if (F == 0)

@@ -155,6 +155,69 @@ bool PackageContainerInterface::FromRegEx(PackageContainerInterface * const pci,
 	return true;
 }
 									/*}}}*/
+// FromFnmatch - Returns the package defined  by this fnmatch		/*{{{*/
+bool 
+PackageContainerInterface::FromFnmatch(PackageContainerInterface * const pci, 
+                                       pkgCacheFile &Cache,
+                                       std::string pattern,
+                                       CacheSetHelper &helper)
+{
+	static const char * const isfnmatch = ".?*[]!";
+	if (pattern.find_first_of(isfnmatch) == std::string::npos)
+		return false;
+
+	bool const wasEmpty = pci->empty();
+	if (wasEmpty == true)
+		pci->setConstructor(FNMATCH);
+
+	size_t archfound = pattern.find_last_of(':');
+	std::string arch = "native";
+	if (archfound != std::string::npos) {
+		arch = pattern.substr(archfound+1);
+		if (arch.find_first_of(isfnmatch) == std::string::npos)
+			pattern.erase(archfound);
+		else
+			arch = "native";
+	}
+
+	if (unlikely(Cache.GetPkgCache() == 0))
+		return false;
+
+	APT::CacheFilter::PackageNameMatchesFnmatch filter(pattern);
+
+	bool found = false;
+	for (pkgCache::GrpIterator Grp = Cache.GetPkgCache()->GrpBegin(); Grp.end() == false; ++Grp) {
+		if (filter(Grp) == false)
+			continue;
+		pkgCache::PkgIterator Pkg = Grp.FindPkg(arch);
+		if (Pkg.end() == true) {
+			if (archfound == std::string::npos) {
+				std::vector<std::string> archs = APT::Configuration::getArchitectures();
+				for (std::vector<std::string>::const_iterator a = archs.begin();
+				     a != archs.end() && Pkg.end() != true; ++a)
+					Pkg = Grp.FindPkg(*a);
+			}
+			if (Pkg.end() == true)
+				continue;
+		}
+
+		pci->insert(Pkg);
+		helper.showRegExSelection(Pkg, pattern);
+		found = true;
+	}
+
+	if (found == false) {
+		helper.canNotFindRegEx(pci, Cache, pattern);
+		pci->setConstructor(UNKNOWN);
+		return false;
+	}
+
+	if (wasEmpty == false && pci->getConstructor() != UNKNOWN)
+		pci->setConstructor(UNKNOWN);
+
+	return true;
+}
+									/*}}}*/
 // FromName - Returns the package defined  by this string		/*{{{*/
 pkgCache::PkgIterator PackageContainerInterface::FromName(pkgCacheFile &Cache,
 			std::string const &str, CacheSetHelper &helper) {
@@ -239,6 +302,7 @@ bool PackageContainerInterface::FromString(PackageContainerInterface * const pci
 
 	if (FromGroup(pci, Cache, str, helper) == false &&
 		 FromTask(pci, Cache, str, helper) == false &&
+		 FromFnmatch(pci, Cache, str, helper) == false &&
 		 FromRegEx(pci, Cache, str, helper) == false)
 	{
 		helper.canNotFindPackage(pci, Cache, str);

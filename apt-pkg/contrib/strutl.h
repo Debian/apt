@@ -108,6 +108,10 @@ inline int stringcasecmp(std::string::const_iterator A,std::string::const_iterat
 APT_MKSTRCMP2(stringcmp,stringcmp);
 APT_MKSTRCMP2(stringcasecmp,stringcasecmp);
 
+// Return the length of a NULL-terminated string array
+size_t strv_length(const char **str_array);
+
+
 inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);};
 
 class URI

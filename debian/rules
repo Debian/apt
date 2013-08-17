@@ -115,7 +115,7 @@ clean:
 	[ ! -f Makefile ] || $(MAKE) clean distclean
 	rm -rf build
 	rm -f debian/$(LIBAPT_PKG).install debian/$(LIBAPT_INST).install \
-	      debian/libapt-pkg-dev.install
+	      debian/libapt-pkg-dev.install debian/apt.install
 	test ! -L buildlib/config.guess || rm -f buildlib/config.guess
 	test ! -L buildlib/config.sub || rm -f buildlib/config.sub
 
@@ -174,7 +174,7 @@ apt-doc: build-debiandoc
 # Build architecture-dependent files here.
 
 apt_MANPAGES = apt apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
-apt: build-binary build-manpages
+apt: build-binary build-manpages debian/apt.install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@

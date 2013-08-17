@@ -55,6 +55,17 @@ PackageNameMatchesRegEx::~PackageNameMatchesRegEx() {			/*{{{*/
 }
 									/*}}}*/
 
+// Fnmatch support					/*{{{*/
+//----------------------------------------------------------------------
+bool PackageNameMatchesFnmatch::operator() (pkgCache::PkgIterator const &Pkg) {/*{{{*/
+   return fnmatch(Pattern.c_str(), Pkg.Name(), FNM_CASEFOLD) == 0;
+}
+									/*}}}*/
+bool PackageNameMatchesFnmatch::operator() (pkgCache::GrpIterator const &Grp) {/*{{{*/
+   return fnmatch(Pattern.c_str(), Grp.Name(), FNM_CASEFOLD) == 0;
+}
+									/*}}}*/
+
 // CompleteArch to <kernel>-<cpu> tuple					/*{{{*/
 //----------------------------------------------------------------------
 /* The complete architecture, consisting of <kernel>-<cpu>. */

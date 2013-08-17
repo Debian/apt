@@ -5,30 +5,37 @@ SUBDIR=cmdline
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
+# The apt program
+PROGRAM=apt
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile
+SOURCE = apt.cc
+include $(PROGRAM_H)
+
 # The apt-cache program
 PROGRAM=apt-cache
-SLIBS = -lapt-pkg $(INTLLIBS)
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-cache.cc
 include $(PROGRAM_H)
 
 # The apt-get program
 PROGRAM=apt-get
-SLIBS = -lapt-pkg $(INTLLIBS)
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
-SOURCE = apt-get.cc acqprogress.cc
+SOURCE = apt-get.cc 
 include $(PROGRAM_H)
 
 # The apt-config program
 PROGRAM=apt-config
-SLIBS = -lapt-pkg $(INTLLIBS)
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-config.cc
 include $(PROGRAM_H)
 
 # The apt-cdrom program
 PROGRAM=apt-cdrom
-SLIBS = -lapt-pkg $(INTLLIBS)
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-cdrom.cc 
 include $(PROGRAM_H)
@@ -41,7 +48,7 @@ include $(COPY_H)
 
 # The apt-mark program
 PROGRAM=apt-mark
-SLIBS = -lapt-pkg $(INTLLIBS)
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-mark.cc
 include $(PROGRAM_H)

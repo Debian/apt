@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 apt (0.9.10~exp1) UNRELEASED; urgency=low
 
   [ Michael Vogt ]
@@ -15,6 +16,39 @@ apt (0.9.10~exp1) UNRELEASED; urgency=low
     - use sha{512,256,1} for deb-src when available LP: #1098738
 
  -- Michael Vogt <mvo@debian.org>  Fri, 01 Mar 2013 12:12:39 +0100
+=======
+apt (0.9.11) UNRELEASED; urgency=low
+
+  The "Happy 20th Birthday Debian" upload
+  
+  [ Daniel Hartwig ]
+  * Clarify units of Acquire::http::Dl-Limit (closes: #705445)
+  * Show a error message if {,dist-}upgrade is used with additional
+    arguments (closes: #705510)
+
+  [ Michael Vogt ]
+  * lp:~mvo/apt/config-clear:
+    - support Configuration.Clear() for a clear of the entire 
+      configuration
+  * lp:~mvo/apt/add-glob-function:
+    -  add Glob() to fileutl.{cc,h}
+  * feature/apt-binary2
+    - refactor large chunks of cmdline/*.cc into a new libapt-private
+      library that is shared between the internal apt cmdline tools
+    - install libapt-private* into the apt binary
+    - add PACKAGE_MATCHER_ABI_COMPAT define so that this branch can be 
+      merged without breaking ABI
+
+  [ David Kalnischkies ]
+  * ensure that pkgTagFile isn't writing past Buffer length (Closes: 719629)
+  * allow Pre-Install-Pkgs hooks to get info over an FD != stdin
+    (Closes: #671728)
+
+  [ Christian PERRIER ]
+  * French translation update.
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 15 Aug 2013 09:27:35 +0200
+>>>>>>> debian/sid
 
 apt (0.9.10) unstable; urgency=low
 
@@ -23,6 +57,7 @@ apt (0.9.10) unstable; urgency=low
   [ Christian Perrier ]
   * Vietnamese translation update. Closes: #718615
   * Japanese translation update. Closes: #719279
+  * French translation update.
 
   [ Michael Vogt ]
   * work on fixing coverity scan results:
@@ -56,7 +91,7 @@ apt (0.9.10) unstable; urgency=low
   * make the keyring locations in apt-key configurable
   * let apt-key del work better with softlink and single key keyrings
   * do not call 'apt-key update' in apt.postinst
-
+  
   [ Colin Watson ]
   * prefer native arch over higher priority for providers (Closes: #718482)
 

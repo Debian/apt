@@ -95,6 +95,7 @@ class pkgTagFile
 
    bool Fill();
    bool Resize();
+   bool Resize(unsigned long long const newSize);
 
    public:
 

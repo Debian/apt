@@ -83,6 +83,12 @@ class CommandLine
    unsigned int FileSize() const;
    bool DispatchArg(Dispatch *List,bool NoMatch = true);
       
+   static char const * GetCommand(Dispatch const * const Map,
+	 unsigned int const argc, char const * const * const argv);
+
+   static CommandLine::Args MakeArgs(char ShortOpt, char const *LongOpt,
+	 char const *ConfName, unsigned long Flags);
+
    CommandLine(Args *AList,Configuration *Conf);
    ~CommandLine();
 };

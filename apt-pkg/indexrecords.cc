@@ -62,7 +62,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    if (OpenMaybeClearSignedFile(Filename, Fd) == false)
       return false;
 
-   pkgTagFile TagFile(&Fd);
+   pkgTagFile TagFile(&Fd, Fd.Size());
    if (_error->PendingError() == true)
    {
       strprintf(ErrorText, _("Unable to parse Release file %s"),Filename.c_str());
