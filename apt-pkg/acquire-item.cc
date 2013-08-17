@@ -1067,8 +1067,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
       
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) == 0)
+   if (RealFileExists(Final) == true)
    {
       // File was already in place.  It needs to be re-downloaded/verified
       // because Release might have changed, we do give it a differnt
@@ -1080,6 +1079,19 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
    }
 
    QueueURI(Desc);
+}
+									/*}}}*/
+pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
+{
+   // if the file was never queued undo file-changes done in the constructor
+   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false &&
+	 LastGoodSig.empty() == false)
+   {
+      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
+	 Rename(LastGoodSig, Final);
+   }
+
 }
 									/*}}}*/
 // pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
@@ -1595,11 +1607,22 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 
    // keep the old InRelease around in case of transistent network errors
    string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) == 0)
+   if (RealFileExists(Final) == true)
    {
       string const LastGoodSig = DestFile + ".reverify";
       Rename(Final,LastGoodSig);
+   }
+}
+									/*}}}*/
+pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
+{
+   // if the file was never queued undo file-changes done in the constructor
+   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false)
+   {
+      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+      string const LastGoodSig = DestFile + ".reverify";
+      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
+	 Rename(LastGoodSig, Final);
    }
 }
 									/*}}}*/

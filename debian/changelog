@@ -1,10 +1,65 @@
-apt (0.9.9.5) UNRELEASED; urgency=low
+apt (0.9.11) UNRELEASED; urgency=low
 
+  [ Daniel Hartwig ]
+  * Clarify units of Acquire::http::Dl-Limit (closes: #705445)
+  * Show a error message if {,dist-}upgrade is used with additional
+    arguments (closes: #705510)
+
+  [ Michael Vogt ]
+  * lp:~mvo/apt/config-clear:
+    - support Configuration.Clear() for a clear of the entire 
+      configuration
+  * lp:~mvo/apt/add-glob-function:
+    -  add Glob() to fileutl.{cc,h}
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 15 Aug 2013 09:27:35 +0200
+
+apt (0.9.10) unstable; urgency=low
+
+  The "Hello to Debconf" upload
+  
+  [ Christian Perrier ]
   * Vietnamese translation update. Closes: #718615
   * Japanese translation update. Closes: #719279
   * French translation update.
 
- -- Christian Perrier <bubulle@debian.org>  Sat, 03 Aug 2013 16:06:55 +0200
+  [ Michael Vogt ]
+  * work on fixing coverity scan results:
+    - fix some off-by-one errors
+    - fix some resource leaks
+    - fixes in chroot() handling
+    - fix some missing va_end()
+  * make the code -Wall clean again
+  * remove duplicated #include<list>
+  * add .travis.yml
+  * use the 'abi-complicance-checker' package and remove the buildin 
+    copy for the abi checks
+
+  [ David Kalnischkies ]
+  * ensure that FileFd::Size returns 0 in error cases
+  * add missing Turkish (tr) to po/LINGUAS
+  * correct management-typo in description found by lintian
+  * implement debian/rules build-{arch,indep} as required by policy 3.9.4
+  * reenable automatic parallel build of APT
+  * exclude config.{sub,guess} from source package
+  * update the symbol files to reflect current state
+  * unset LANGUAGE for showing [Y/n] answer hints
+  * fix some unitialized data members
+  * specific pins below 1000 cause downgrades (Closes: 543966)
+  * use pkgTagFile to parse "header" of Release files
+  * fix: --print-uris removes authentication (Closes: 719263)
+  * always use our own trustdb.gpg in apt-key
+  * use a tmpfile for trustdb.gpg in apt-key.
+    Thanks to Andreas Beckmann for the initial patch! (Closes: #687611)
+  * do not double-slash paths in apt-key (Closes: 665411)
+  * make the keyring locations in apt-key configurable
+  * let apt-key del work better with softlink and single key keyrings
+  * do not call 'apt-key update' in apt.postinst
+  
+  [ Colin Watson ]
+  * prefer native arch over higher priority for providers (Closes: #718482)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 12 Aug 2013 21:45:07 +0200
 
 apt (0.9.9.4) unstable; urgency=low
 

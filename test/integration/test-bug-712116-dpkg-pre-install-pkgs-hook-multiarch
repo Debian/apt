@@ -42,7 +42,7 @@ enablehookversion 3
 observehook() {
 	rm -f ${hook}-v2.list ${hook}-v3.list
 	msgtest 'Observe hooks while' "$*"
-	aptget "$@" -y --force-yes >/dev/null 2>&1 && msgpass || msgfail
+	testsuccess --nomsg aptget "$@" -y --force-yes
 }
 
 observehook install stuff -t stable

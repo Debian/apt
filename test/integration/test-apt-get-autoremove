@@ -11,11 +11,11 @@ buildsimplenativepackage 'po-debconf' 'all' '1.0.16' 'unstable'
 buildsimplenativepackage 'debhelper' 'all' '8.0.0' 'unstable' 'Depends: po-debconf'
 setupaptarchive
 
-aptget install unrelated debhelper -qq 2>&1 > /dev/null
+testsuccess aptget install unrelated debhelper -y
 testdpkginstalled 'unrelated' 'debhelper' 'po-debconf'
 
 testmarkedauto 'po-debconf'
-aptget remove debhelper -y -qq 2>&1 > /dev/null
+testsuccess aptget remove debhelper -y
 testdpkgnotinstalled 'debhelper'
 testdpkginstalled 'po-debconf' 'unrelated'
 
@@ -30,15 +30,15 @@ Remv po-debconf [1.0.16]' aptget autoremove -s
 testdpkginstalled 'po-debconf'
 
 echo 'APT::NeverAutoRemove { "^po-debconf$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
-aptget autoremove -y -qq 2>&1 > /dev/null
+testsuccess aptget autoremove -y
 testdpkginstalled 'po-debconf'
 
 echo 'APT::NeverAutoRemove { "^po-.*$"; };' > rootdir/etc/apt/apt.conf.d/00autoremove
-aptget autoremove -y -qq 2>&1 > /dev/null
+testsuccess aptget autoremove -y
 testdpkginstalled "po-debconf"
 
 rm rootdir/etc/apt/apt.conf.d/00autoremove
-aptget autoremove -y -qq 2>&1 > /dev/null
+testsuccess aptget autoremove -y
 testdpkgnotinstalled 'po-debconf'
 testmarkedauto
 

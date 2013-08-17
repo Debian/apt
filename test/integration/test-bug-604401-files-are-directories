@@ -11,7 +11,7 @@ test ! -e rootdir/etc/apt/apt.conf || mv rootdir/etc/apt/apt.conf rootdir/etc/ap
 
 msgtest "Directory instead of a file as apt.conf ignored"
 mkdir -p rootdir/etc/apt/apt.conf
-aptconfig dump > /dev/null && msgpass || msgfail
+testsuccess --nomsg aptconfig dump
 rmdir rootdir/etc/apt/apt.conf
 
 msgtest "Good link instead of a file as apt.conf ignored"
@@ -22,7 +22,7 @@ rm rootdir/etc/apt/apt.conf
 
 msgtest "Broken link instead of a file as apt.conf ignored"
 ln -s /tmp/doesnt-exist rootdir/etc/apt/apt.conf
-aptconfig dump > /dev/null && msgpass || msgfail
+testsuccess --nomsg aptconfig dump
 rm rootdir/etc/apt/apt.conf
 
 
@@ -30,7 +30,7 @@ test ! -e rootdir/etc/apt/sources.list || mv rootdir/etc/apt/sources.list rootdi
 
 msgtest "Directory instead of a file as sources.list ignored"
 mkdir -p rootdir/etc/apt/sources.list
-aptget update --print-uris 2> /dev/null && msgpass || msgfail
+testsuccess --nomsg aptget update --print-uris
 rmdir rootdir/etc/apt/sources.list
 
 msgtest "Good link instead of a file as sources.list ignored"
@@ -49,7 +49,7 @@ test ! -e rootdir/etc/apt/preferences || mv rootdir/etc/apt/preferences rootdir/
 
 msgtest "Directory instead of a file as preferences ignored"
 mkdir -p rootdir/etc/apt/preferences
-aptcache policy > /dev/null 2> /dev/null && msgpass || msgfail
+testsuccess --nomsg aptcache policy
 rmdir rootdir/etc/apt/preferences
 
 msgtest "Good link instead of a file as preferences ignored"
@@ -62,5 +62,5 @@ rm rootdir/etc/apt/preferences
 
 msgtest "Broken link instead of a file as preferences ignored"
 ln -s /tmp/doesnt-exist rootdir/etc/apt/preferences
-aptcache policy > /dev/null 2> /dev/null && msgpass || msgfail
+testsuccess --nomsg aptcache policy
 rm rootdir/etc/apt/preferences

@@ -16,7 +16,7 @@ buildsimplenativepackage 'apt' 'i386' '2' 'unstable' 'Depends: libsame (= 2)' ''
 buildsimplenativepackage 'apt2' 'amd64' '2' 'unstable' 'Depends: libsame (= 2)' '' 'required'
 
 setupaptarchive
-aptget dist-upgrade -s 2>&1 > output.apt
+aptget dist-upgrade -s >output.apt 2>&1
 
 # order in switch libsame:{amd64,i386} are unpacked is irrelevant, as both are installed - but we need to do it together
 LS_U_AMD="$(grep -o -n '^Inst libsame ' output.apt | cut -d: -f1)"

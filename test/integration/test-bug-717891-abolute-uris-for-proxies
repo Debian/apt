@@ -12,12 +12,12 @@ setupaptarchive
 changetowebserver --request-absolute='uri'
 
 msgtest 'Check that absolute paths are' 'not accepted'
-aptget update >/dev/null 2>&1 && msgfail || msgpass
+testfailure --nomsg aptget update
 
 echo 'Acquire::http::Proxy "http://localhost:8080";' > rootdir/etc/apt/apt.conf.d/99proxy
 
 msgtest 'Check that requests to proxies are' 'absolute uris'
-aptget update >/dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg aptget update
 
 testequal 'Reading package lists...
 Building dependency tree...

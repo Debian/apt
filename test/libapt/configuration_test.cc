@@ -98,6 +98,10 @@ int main(int argc,const char *argv[]) {
 	equals(Cnf.FindDir("Dir::State"), "/rootdir/dev/null");
 	equals(Cnf.FindDir("Dir::State::lists"), "/rootdir/dev/null");
 
+        Cnf.Set("Moo::Bar", "1");
+        Cnf.Clear();
+        equals(Cnf.Find("Moo::Bar"), "");
+
 	//FIXME: Test for configuration file parsing;
 	// currently only integration/ tests test them implicitly
 

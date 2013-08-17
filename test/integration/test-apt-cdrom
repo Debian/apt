@@ -102,5 +102,5 @@ aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && 
 
 # check that we really can install from a 'cdrom'
 testdpkgnotinstalled testing
-aptget install testing -y > /dev/null 2>&1
+testsuccess aptget install testing -y
 testdpkginstalled testing

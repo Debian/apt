@@ -131,13 +131,23 @@ exitwithstatus() {
         exit $((EXIT_CODE <= 255 ? EXIT_CODE : 255));
 }
 
+shellsetedetector() {
+	local exit_status=$?
+	if [ "$exit_status" != '0' ]; then
+		echo >&2 "${CERROR}E: Looks like the testcases ended prematurely with exitcode: ${exit_status}${CNORMAL}"
+		if [ "$EXIT_CODE" = '0' ]; then
+			EXIT_CODE="$exit_status"
+		fi
+	fi
+}
+
 addtrap() {
 	if [ "$1" = 'prefix' ]; then
 		CURRENTTRAP="$2 $CURRENTTRAP"
 	else
 		CURRENTTRAP="$CURRENTTRAP $1"
 	fi
-	trap "$CURRENTTRAP exitwithstatus;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	trap "shellsetedetector; $CURRENTTRAP exitwithstatus;" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 }
 
 setupenvironment() {
@@ -177,7 +187,7 @@ setupenvironment() {
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
-	if ! $(which dpkg) --assert-multi-arch 2>&1 > /dev/null; then
+	if ! $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
 		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
@@ -225,7 +235,7 @@ configdpkg() {
 			echo -n > rootdir/var/lib/dpkg/status
 		fi
 	fi
-	if $(which dpkg) --assert-multi-arch 2>&1 > /dev/null; then
+	if $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
 		local ARCHS="$(getarchitectures)"
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
@@ -711,22 +721,45 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
+	local GPG="gpg --batch --yes --no-default-keyring --trustdb-name rootdir/etc/apt/trustdb.gpg"
 	msgninfo "\tSign archive with $SIGNER key… "
-	local SECKEYS=""
+	local REXKEY='keys/rexexpired'
+	local SECEXPIREBAK="${REXKEY}.sec.bak"
+	local PUBEXPIREBAK="${REXKEY}.pub.bak"
+	if [ "${SIGNER}" = 'Rex Expired' ]; then
+		# the key is expired, so gpg doesn't allow to sign with and the --faked-system-time
+		# option doesn't exist anymore (and using faketime would add a new obscure dependency)
+		# therefore we 'temporary' make the key not expired and restore a backup after signing
+		cp ${REXKEY}.sec $SECEXPIREBAK
+		cp ${REXKEY}.pub $PUBEXPIREBAK
+		local SECUNEXPIRED="${REXKEY}.sec.unexpired"
+		local PUBUNEXPIRED="${REXKEY}.pub.unexpired"
+		if [ -f "$SECUNEXPIRED" ] && [ -f "$PUBUNEXPIRED" ]; then
+			cp $SECUNEXPIRED ${REXKEY}.sec
+			cp $PUBUNEXPIRED ${REXKEY}.pub
+		else
+			printf "expire\n1w\nsave\n" | $GPG --keyring ${REXKEY}.pub --secret-keyring ${REXKEY}.sec --command-fd 0 --edit-key "${SIGNER}" >/dev/null 2>&1 || true
+			cp ${REXKEY}.sec $SECUNEXPIRED
+			cp ${REXKEY}.pub $PUBUNEXPIRED
+		fi
+	fi
 	for KEY in $(find keys/ -name '*.sec'); do
-		SECKEYS="$SECKEYS --secret-keyring $KEY"
+		GPG="$GPG --secret-keyring $KEY"
 	done
-	local PUBKEYS=""
 	for KEY in $(find keys/ -name '*.pub'); do
-		PUBKEYS="$PUBKEYS --keyring $KEY"
+		GPG="$GPG --keyring $KEY"
 	done
 	for RELEASE in $(find aptarchive/ -name Release); do
-		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" -abs -o ${RELEASE}.gpg ${RELEASE}
+		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output ${RELEASE}.gpg ${RELEASE}
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
-		gpg --yes --no-default-keyring $SECKEYS $PUBKEYS --default-key "$SIGNER" --clearsign -o $INRELEASE $RELEASE
+		$GPG --default-key "$SIGNER" --clearsign --output $INRELEASE $RELEASE
 		# we might have set a specific date for the Release file, so copy it
 		touch -d "$(stat --format "%y" ${RELEASE})" ${RELEASE}.gpg ${INRELEASE}
 	done
+	if [ -f "$SECEXPIREBAK" ] && [ -f "$PUBEXPIREBAK" ]; then
+		mv -f $SECEXPIREBAK ${REXKEY}.sec
+		mv -f $PUBEXPIREBAK ${REXKEY}.pub
+	fi
 	msgdone "info"
 }
 
@@ -828,7 +861,7 @@ testequalor2() {
 	echo "$2" > $COMPAREFILE2
 	shift 2
 	msgtest "Test for equality OR of" "$*"
-	$* 2>&1 1> $COMPAREAGAINST
+	$* >$COMPAREAGAINST 2>&1
 	(checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
 		checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
 		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(checkdiff $COMPAREFILE1 $COMPAREAGAINST)" \
@@ -903,6 +936,40 @@ testmarkedauto() {
 		echo -n > $COMPAREFILE
 	fi
 	aptmark showauto 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
+}
+
+testsuccess() {
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest 'Test for successful execution of' "$*"
+	fi
+	local OUTPUT=$(mktemp)
+	addtrap "rm $OUTPUT;"
+	if $@ >${OUTPUT} 2>&1; then
+		msgpass
+	else
+		echo
+		cat $OUTPUT
+		msgfail
+	fi
+}
+
+testfailure() {
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest 'Test for failure in  execution of' "$*"
+	fi
+	local OUTPUT=$(mktemp)
+	addtrap "rm $OUTPUT;"
+	if $@ >${OUTPUT} 2>&1; then
+		echo
+		cat $OUTPUT
+		msgfail
+	else
+		msgpass
+	fi
 }
 
 pause() {

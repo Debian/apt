@@ -107,13 +107,24 @@ runtest() {
 " aptcache show apt
 	installaptnew
 
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	signreleasefiles 'Rex Expired'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Cold archive signed by' 'Rex Expired'
+	aptget update 2>&1 | grep -E '^W: .* KEYEXPIRED' > /dev/null && msgpass || msgfail
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	failaptold
+	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 
 	prepare ${PKGFILE}
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Marvin Paranoid'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgpass || msgfail
+	aptget update 2>&1 | grep -E '^W: .* NO_PUBKEY' > /dev/null && msgpass || msgfail
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt
 	failaptold
@@ -147,10 +158,30 @@ runtest() {
 	signreleasefiles 'Marvin Paranoid'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Good warm archive signed by' 'Marvin Paranoid'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgpass || msgfail
+	aptget update 2>&1 | grep -E '^W: .* NO_PUBKEY' > /dev/null && msgpass || msgfail
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
+
+	prepare ${PKGFILE}-new
+	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	signreleasefiles 'Rex Expired'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Good warm archive signed by' 'Rex Expired'
+	aptget update 2>&1 | grep -E '^W: .* KEYEXPIRED' > /dev/null && msgpass || msgfail
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	installaptold
+	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+
+	prepare ${PKGFILE}-new
+	signreleasefiles
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Good warm archive signed by' 'Joe Sixpack'
+	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt
+	installaptnew
 }
 
 runtest2() {

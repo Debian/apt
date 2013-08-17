@@ -386,10 +386,12 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <para><literal>Acquire::http::AllowRedirect</literal> controls whether APT will follow
      redirects, which is enabled by default.</para>
 
-     <para>The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</literal>
-     which accepts integer values in kilobytes. The default value is 0 which deactivates
-     the limit and tries to use all available bandwidth (note that this option implicitly
-     disables downloading from multiple servers at the same time.)</para>
+     <para>The used bandwidth can be limited with
+     <literal>Acquire::http::Dl-Limit</literal> which accepts integer
+     values in kilobytes per second. The default value is 0 which
+     deactivates the limit and tries to use all available bandwidth.
+     Note that this option implicitly disables downloading from
+     multiple servers at the same time.</para>
 
      <para><literal>Acquire::http::User-Agent</literal> can be used to set a different
      User-Agent for the http download method as some proxies allow access for clients

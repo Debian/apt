@@ -1,0 +1,41 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'unrelated' 'all' '1'
+buildsimplenativepackage 'unrelated' 'all' '2' 'unstable'
+
+setupaptarchive
+
+testnoact() {
+	cp -a rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status-backup-noact
+	touch rootdir/var/lib/apt/extended_states
+	testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be upgraded:
+  unrelated
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst unrelated [1] (2 unstable [all])
+Conf unrelated (2 unstable [all])' aptget install unrelated -s
+	testsuccess aptget install unrelated -y
+	testdpkginstalled unrelated
+	cp -a rootdir/var/lib/dpkg/status-backup-noact rootdir/var/lib/dpkg/status
+}
+
+testnoact
+testsuccess aptget update --print-uris
+testnoact
+
+# same thing, just not with InRelease this time
+rm -rf rootdir/var/lib/apt/lists
+testsuccess aptget update -o Acquire::TryInRelease=0
+
+testnoact
+testsuccess aptget update --print-uris -o Acquire::TryInRelease=0
+testnoact
