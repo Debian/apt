@@ -1291,6 +1291,18 @@ bool CheckDomainList(const string &Host,const string &List)
    return false;
 }
 									/*}}}*/
+// strv_length - Return the length of a NULL-terminated string array	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+size_t strv_length(const char **str_array)
+{
+   size_t i;
+   for (i=0; str_array[i] != NULL; i++)
+      /* nothing */
+      ;
+   return i;
+}
+
 // DeEscapeString - unescape (\0XX and \xXX) from a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

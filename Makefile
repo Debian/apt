@@ -13,6 +13,7 @@ default: startup all
 all headers library clean veryclean binary program doc manpages debiandoc test update-po startup dirs:
 	$(MAKE) -C apt-pkg $@
 	$(MAKE) -C apt-inst $@
+	$(MAKE) -C apt-private $@
 	$(MAKE) -C methods $@
 	$(MAKE) -C cmdline $@
 	$(MAKE) -C ftparchive $@

@@ -31,6 +31,8 @@
 #include <string>
 #include <vector>
 
+#include <apt-private/private-cmndline.h>
+
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;
@@ -76,12 +78,12 @@ bool DoDump(CommandLine &CmdL)
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp()
+bool ShowHelp(CommandLine &CmdL)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
    if (_config->FindB("version") == true)
-      return 0;
+      return true;
    
    cout <<
     _("Usage: apt-config [options] command\n"
@@ -96,29 +98,24 @@ int ShowHelp()
       "  -h   This help text.\n" 
       "  -c=? Read this configuration file\n" 
       "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n");
-   return 0;
+   return true;
 }
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Args Args[] = {
-      {'h',"help","help",0},
-      {'v',"version","version",0},
-      {'c',"config-file",0,CommandLine::ConfigFile},
-      {'o',"option",0,CommandLine::ArbItem},
-      {0,"empty","APT::Config::Dump::EmptyValue",CommandLine::Boolean},
-      {0,"format","APT::Config::Dump::Format",CommandLine::HasArg},
-      {0,0,0,0}};
    CommandLine::Dispatch Cmds[] = {{"shell",&DoShell},
                                    {"dump",&DoDump},
+				   {"help",&ShowHelp},
                                    {0,0}};
+
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-cdrom", CommandLine::GetCommand(Cmds, argc, argv));
 
    // Set up gettext support
    setlocale(LC_ALL,"");
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args,_config);
+   CommandLine CmdL(Args.data(),_config);
    if (pkgInitConfig(*_config) == false ||
        CmdL.Parse(argc,argv) == false ||
        pkgInitSystem(*_config,_system) == false)
@@ -130,7 +127,7 @@ int main(int argc,const char *argv[])					/*{{{*/
    // See if the help should be shown
    if (_config->FindB("help") == true ||
        CmdL.FileSize() == 0)
-      return ShowHelp();
+      return ShowHelp(CmdL);
 
    std::vector<std::string> const langs = APT::Configuration::getLanguages(true);
    _config->Clear("Acquire::Languages");
