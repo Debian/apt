@@ -2,9 +2,11 @@
 set -e
 
 DIR=$(readlink -f $(dirname $0))
-echo "Compiling the tests …"
-(cd $DIR && make)
-echo "Running all testcases …"
+if [ -z "$MAKELEVEL" ]; then
+	echo 'Compiling the tests …'
+	(cd $DIR && make)
+	echo 'Running all testcases …'
+fi
 LDPATH="$DIR/../../build/bin"
 EXT="_libapt_test"
 EXIT_CODE=0
@@ -70,9 +72,11 @@ do
 			"${tmppath}/ftp.de.debian.org_debian_dists_sid_main_i18n_Translation-tlh%5fDE"
 	elif [ $name = "HashSums${EXT}" ]; then
 		TMP="$(readlink -f "./${0}")"
-		echo -n "Testing with ${NAME} "
-		LD_LIBRARY_PATH=${LDPATH} ${testapp} $TMP $(md5sum $TMP | cut -d' ' -f 1) $(sha1sum $TMP | cut -d' ' -f 1) $(sha256sum $TMP | cut -d' ' -f 1) $(sha512sum $TMP | cut -d' ' -f 1) && echo "$TESTOKAY" || echo "$TESTFAIL"
-		continue
+		tmppath="$TMP"
+		tmppath="${tmppath} $(md5sum $TMP | cut -d' ' -f 1)"
+		tmppath="${tmppath} $(sha1sum $TMP | cut -d' ' -f 1)"
+		tmppath="${tmppath} $(sha256sum $TMP | cut -d' ' -f 1)"
+		tmppath="${tmppath} $(sha512sum $TMP | cut -d' ' -f 1)"
 	elif [ $name = "CompareVersion${EXT}" ]; then
 		tmppath="${DIR}/versions.lst"
 	elif [ $name = "CdromFindPackages${EXT}" ]; then
@@ -107,8 +111,8 @@ do
 	fi
 
 	echo -n "Testing with ${NAME} "
-	if LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} ; then
- 		echo "$TESTOKAY"
+	if MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${LDPATH} ${testapp} ${tmppath} ; then
+		echo "$TESTOKAY"
 	else
 		echo "$TESTFAIL"
 		EXIT_CODE=1
