@@ -1,5 +1,7 @@
 apt (0.9.11) UNRELEASED; urgency=low
 
+  The "Happy 20th Birthday Debian" upload
+  
   [ Daniel Hartwig ]
   * Clarify units of Acquire::http::Dl-Limit (closes: #705445)
   * Show a error message if {,dist-}upgrade is used with additional
@@ -14,6 +16,17 @@ apt (0.9.11) UNRELEASED; urgency=low
   * feature/apt-binary2
     - refactor large chunks of cmdline/*.cc into a new libapt-private
       library that is shared between the internal apt cmdline tools
+    - install libapt-private* into the apt binary
+    - add PACKAGE_MATCHER_ABI_COMPAT define so that this branch can be 
+      merged without breaking ABI
+
+  [ David Kalnischkies ]
+  * ensure that pkgTagFile isn't writing past Buffer length (Closes: 719629)
+  * allow Pre-Install-Pkgs hooks to get info over an FD != stdin
+    (Closes: #671728)
+
+  [ Christian PERRIER ]
+  * French translation update.
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 15 Aug 2013 09:27:35 +0200
 
