@@ -27,7 +27,7 @@
 #include <iostream>
 									/*}}}*/
 
-const char* HashString::_SupportedHashes[] = 
+const char * HashString::_SupportedHashes[] =
 {
    "SHA512", "SHA256", "SHA1", "MD5Sum", NULL
 };
@@ -42,11 +42,16 @@ HashString::HashString(std::string Type, std::string Hash) : Type(Type), Hash(Ha
 
 HashString::HashString(std::string StringedHash)			/*{{{*/
 {
-   // legacy: md5sum without "MD5Sum:" prefix
-   if (StringedHash.find(":") == std::string::npos && StringedHash.size() == 32)
+   if (StringedHash.find(":") == std::string::npos)
    {
-      Type = "MD5Sum";
-      Hash = StringedHash;
+      // legacy: md5sum without "MD5Sum:" prefix
+      if (StringedHash.size() == 32)
+      {
+	 Type = "MD5Sum";
+	 Hash = StringedHash;
+      }
+      if(_config->FindB("Debug::Hashes",false) == true)
+	 std::clog << "HashString(string): invalid StringedHash " << StringedHash << std::endl;
       return;
    }
    std::string::size_type pos = StringedHash.find(":");
@@ -82,25 +87,25 @@ std::string HashString::GetHashForFile(std::string filename) const      /*{{{*/
    std::string fileHash;
 
    FileFd Fd(filename, FileFd::ReadOnly);
-   if(Type == "MD5Sum")
+   if(strcasecmp(Type.c_str(), "MD5Sum") == 0)
    {
       MD5Summation MD5;
       MD5.AddFD(Fd);
       fileHash = (std::string)MD5.Result();
    }
-   else if (Type == "SHA1")
+   else if (strcasecmp(Type.c_str(), "SHA1") == 0)
    {
       SHA1Summation SHA1;
       SHA1.AddFD(Fd);
       fileHash = (std::string)SHA1.Result();
    }
-   else if (Type == "SHA256")
+   else if (strcasecmp(Type.c_str(), "SHA256") == 0)
    {
       SHA256Summation SHA256;
       SHA256.AddFD(Fd);
       fileHash = (std::string)SHA256.Result();
    }
-   else if (Type == "SHA512")
+   else if (strcasecmp(Type.c_str(), "SHA512") == 0)
    {
       SHA512Summation SHA512;
       SHA512.AddFD(Fd);
@@ -111,20 +116,105 @@ std::string HashString::GetHashForFile(std::string filename) const      /*{{{*/
    return fileHash;
 }
 									/*}}}*/
-const char** HashString::SupportedHashes()
+const char** HashString::SupportedHashes()				/*{{{*/
 {
    return _SupportedHashes;
 }
-
-APT_PURE bool HashString::empty() const
+									/*}}}*/
+APT_PURE bool HashString::empty() const					/*{{{*/
 {
    return (Type.empty() || Hash.empty());
 }
-
-std::string HashString::toStr() const
+									/*}}}*/
+std::string HashString::toStr() const					/*{{{*/
 {
-   return Type + std::string(":") + Hash;
+   return Type + ":" + Hash;
 }
+									/*}}}*/
+APT_PURE bool HashString::operator==(HashString const &other) const	/*{{{*/
+{
+   return (strcasecmp(Type.c_str(), other.Type.c_str()) == 0 && Hash == other.Hash);
+}
+APT_PURE bool HashString::operator!=(HashString const &other) const
+{
+   return !(*this == other);
+}
+									/*}}}*/
+
+HashString const * HashStringList::find(char const * const type) const /*{{{*/
+{
+   if (type == NULL || type[0] == '\0')
+   {
+      std::string forcedType = _config->Find("Acquire::ForceHash", "");
+      if (forcedType.empty() == false)
+	 return find(forcedType.c_str());
+      for (char const * const * t = HashString::SupportedHashes(); *t != NULL; ++t)
+	 for (std::vector<HashString>::const_iterator hs = list.begin(); hs != list.end(); ++hs)
+	    if (strcasecmp(hs->HashType().c_str(), *t) == 0)
+	       return &*hs;
+      return NULL;
+   }
+   for (std::vector<HashString>::const_iterator hs = list.begin(); hs != list.end(); ++hs)
+      if (strcasecmp(hs->HashType().c_str(), type) == 0)
+	 return &*hs;
+   return NULL;
+}
+									/*}}}*/
+bool HashStringList::supported(char const * const type)			/*{{{*/
+{
+   for (char const * const * t = HashString::SupportedHashes(); *t != NULL; ++t)
+      if (strcasecmp(*t, type) == 0)
+	 return true;
+   return false;
+}
+									/*}}}*/
+bool HashStringList::push_back(const HashString &hashString)		/*{{{*/
+{
+   if (hashString.HashType().empty() == true ||
+	 hashString.HashValue().empty() == true ||
+	 supported(hashString.HashType().c_str()) == false)
+      return false;
+
+   // ensure that each type is added only once
+   HashString const * const hs = find(hashString.HashType().c_str());
+   if (hs != NULL)
+      return *hs == hashString;
+
+   list.push_back(hashString);
+   return true;
+}
+									/*}}}*/
+bool HashStringList::VerifyFile(std::string filename) const		/*{{{*/
+{
+   if (list.empty() == true)
+      return false;
+   HashString const * const hs = find(NULL);
+   if (hs == NULL || hs->VerifyFile(filename) == false)
+      return false;
+   return true;
+}
+									/*}}}*/
+bool HashStringList::operator==(HashStringList const &other) const	/*{{{*/
+{
+   short matches = 0;
+   for (const_iterator hs = begin(); hs != end(); ++hs)
+   {
+      HashString const * const ohs = other.find(hs->HashType());
+      if (ohs == NULL)
+	 continue;
+      if (*hs != *ohs)
+	 return false;
+      ++matches;
+   }
+   if (matches == 0)
+      return false;
+   return true;
+}
+bool HashStringList::operator!=(HashStringList const &other) const
+{
+   return !(*this == other);
+}
+									/*}}}*/
 
 // Hashes::AddFD - Add the contents of the FD				/*{{{*/
 // ---------------------------------------------------------------------
