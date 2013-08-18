@@ -1,0 +1,260 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'native'
+
+cat > aptarchive/Sources <<EOF
+Package: pkg-md5-ok
+Binary: pkg-md5-ok
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-ok_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-ok_1.0.tar.gz
+
+Package: pkg-sha256-ok
+Binary: pkg-sha256-ok
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-ok_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-ok_1.0.tar.gz
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-ok_1.0.dsc
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-ok_1.0.tar.gz
+Checksums-Sha256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-sha256-ok_1.0.dsc
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-sha256-ok_1.0.tar.gz
+
+Package: pkg-sha256-bad
+Binary: pkg-sha256-bad
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-bad_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-bad_1.0.tar.gz
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-bad_1.0.dsc
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-bad_1.0.tar.gz
+Checksums-Sha256:
+ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 0 pkg-sha256-bad_1.0.dsc
+ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 0 pkg-sha256-bad_1.0.tar.gz
+
+Package: pkg-no-md5
+Binary: pkg-no-md5
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-no-md5_1.0.dsc
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-no-md5_1.0.tar.gz
+Checksums-Sha256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-no-md5_1.0.dsc
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-no-md5_1.0.tar.gz
+
+Package: pkg-mixed-ok
+Binary: pkg-mixed-ok
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-mixed-ok_1.0.tar.gz
+Checksums-Sha256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-mixed-ok_1.0.dsc
+
+Package: pkg-mixed-sha1-bad
+Binary: pkg-mixed-sha1-bad
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Checksums-Sha1:
+ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 0 pkg-mixed-sha1-bad_1.0.dsc
+Checksums-Sha256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-mixed-sha1-bad_1.0.tar.gz
+
+Package: pkg-mixed-sha2-bad
+Binary: pkg-mixed-sha2-bad
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-mixed-sha2-bad_1.0.dsc
+Checksums-Sha256:
+ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 0 pkg-mixed-sha2-bad_1.0.tar.gz
+
+Package: pkg-md5-disagree
+Binary: pkg-md5-disagree
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-disagree_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-disagree_1.0.tar.gz
+ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 0 pkg-md5-disagree_1.0.dsc
+ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 0 pkg-md5-disagree_1.0.tar.gz
+
+Package: pkg-md5-agree
+Binary: pkg-md5-agree
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-agree_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-agree_1.0.tar.gz
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-agree_1.0.tar.gz
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-md5-agree_1.0.dsc
+
+Package: pkg-sha256-disagree
+Binary: pkg-sha256-disagree
+Version: 1.0
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Files:
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-disagree_1.0.dsc
+ d41d8cd98f00b204e9800998ecf8427e 0 pkg-sha256-disagree_1.0.tar.gz
+Checksums-Sha1:
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-disagree_1.0.dsc
+ da39a3ee5e6b4b0d3255bfef95601890afd80709 0 pkg-sha256-disagree_1.0.tar.gz
+Checksums-Sha256:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-sha256-disagree_1.0.dsc
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 0 pkg-sha256-disagree_1.0.tar.gz
+ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 0 pkg-sha256-disagree_1.0.dsc
+ bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb 0 pkg-sha256-disagree_1.0.tar.gz
+EOF
+
+# create fetchable files
+for x in 'pkg-md5-ok' 'pkg-sha256-ok' 'pkg-sha256-bad' 'pkg-no-md5' \
+	 'pkg-mixed-ok' 'pkg-mixed-sha1-bad' 'pkg-mixed-sha2-bad' \
+	 'pkg-md5-agree' 'pkg-md5-disagree' 'pkg-sha256-disagree'; do
+	touch aptarchive/${x}_1.0.dsc aptarchive/${x}_1.0.tar.gz
+done
+
+setupaptarchive
+changetowebserver
+testsuccess aptget update
+
+testok() {
+	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+	testequal "Reading package lists...
+Building dependency tree...
+Need to get 0 B of source archives.
+Get:1 http://localhost:8080/  $1 1.0 (dsc)
+Get:2 http://localhost:8080/  $1 1.0 (tar)
+Download complete and in download only mode" aptget source -d "$@"
+	msgtest 'Files were successfully downloaded for' "$1"
+	testsuccess --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
+	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+}
+
+testkeep() {
+	touch ${1}_1.0.dsc ${1}_1.0.tar.gz
+	testequal "Reading package lists...
+Building dependency tree...
+Skipping already downloaded file '${1}_1.0.dsc'
+Skipping already downloaded file '${1}_1.0.tar.gz'
+Need to get 0 B of source archives.
+Download complete and in download only mode" aptget source -d "$@"
+	msgtest 'Files already downloaded are kept for' "$1"
+	testsuccess --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
+	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+}
+
+testmismatch() {
+	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+	testequal "Reading package lists...
+Building dependency tree...
+Need to get 0 B of source archives.
+Get:1 http://localhost:8080/  $1 1.0 (dsc)
+Get:2 http://localhost:8080/  $1 1.0 (tar)
+E: Failed to fetch http://localhost:8080/${1}_1.0.dsc  Hash Sum mismatch
+
+E: Failed to fetch http://localhost:8080/${1}_1.0.tar.gz  Hash Sum mismatch
+
+E: Failed to fetch some archives." aptget source -d "$@"
+	msgtest 'Files were not download as they have hashsum mismatches for' "$1"
+	testfailure --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
+
+	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+	testequal "Reading package lists...
+Building dependency tree...
+Skipping download of file 'pkg-sha256-bad_1.0.dsc' as requested hashsum is not available for authentication
+Skipping download of file 'pkg-sha256-bad_1.0.tar.gz' as requested hashsum is not available for authentication
+Need to get 0 B of source archives.
+Download complete and in download only mode" aptget source -d "$@" -o Acquire::ForceHash=ROT26
+	msgtest 'Files were not download as hash is unavailable for' "$1"
+	testfailure --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
+
+	rm -f ${1}_1.0.dsc ${1}_1.0.tar.gz
+	testequal "Reading package lists...
+Building dependency tree...
+Need to get 0 B of source archives.
+Get:1 http://localhost:8080/  $1 1.0 (dsc)
+Get:2 http://localhost:8080/  $1 1.0 (tar)
+Download complete and in download only mode" aptget source --allow-unauthenticated -d "$@" -o Acquire::ForceHash=ROT26
+	msgtest 'Files were downloaded unauthenticated as user allowed it' "$1"
+	testsuccess --nomsg test -e ${1}_1.0.dsc -a -e ${1}_1.0.tar.gz
+}
+
+testok pkg-md5-ok
+testkeep pkg-md5-ok
+testok pkg-sha256-ok
+testkeep pkg-sha256-ok
+
+# pkg-sha256-bad has a bad SHA sum, but good MD5 sum.  If apt is
+# checking the best available hash (as it should), this will trigger
+# a hash mismatch.
+testmismatch pkg-sha256-bad
+testmismatch pkg-sha256-bad
+testok pkg-sha256-bad -o Acquire::ForceHash=MD5Sum
+
+# not having MD5 sum doesn't mean the file doesn't exist at all …
+testok pkg-no-md5
+testok pkg-no-md5 -o Acquire::ForceHash=SHA256
+testequal "Reading package lists...
+Building dependency tree...
+Skipping download of file 'pkg-no-md5_1.0.dsc' as requested hashsum is not available for authentication
+Skipping download of file 'pkg-no-md5_1.0.tar.gz' as requested hashsum is not available for authentication
+Need to get 0 B of source archives.
+Download complete and in download only mode" aptget source -d pkg-no-md5 -o Acquire::ForceHash=MD5Sum
+msgtest 'Files were not download as MD5 is not available for this package' 'pkg-no-md5'
+testfailure --nomsg test -e pkg-no-md5_1.0.dsc -a -e pkg-no-md5_1.0.tar.gz
+
+# deal with cases in which we haven't for all files the same checksum type
+# mostly pathologic as this shouldn't happen, but just to be sure
+testok pkg-mixed-ok
+testequal 'Reading package lists...
+Building dependency tree...
+Need to get 0 B of source archives.
+Get:1 http://localhost:8080/  pkg-mixed-sha1-bad 1.0 (tar)
+Get:2 http://localhost:8080/  pkg-mixed-sha1-bad 1.0 (dsc)
+E: Failed to fetch http://localhost:8080/pkg-mixed-sha1-bad_1.0.dsc  Hash Sum mismatch
+
+E: Failed to fetch some archives.' aptget source -d pkg-mixed-sha1-bad
+msgtest 'Only tar file is downloaded as the dsc has hashsum mismatch' 'pkg-mixed-sha1-bad'
+testsuccess --nomsg test ! -e pkg-mixed-sha1-bad_1.0.dsc -a -e pkg-mixed-sha1-bad_1.0.tar.gz
+testequal 'Reading package lists...
+Building dependency tree...
+Need to get 0 B of source archives.
+Get:1 http://localhost:8080/  pkg-mixed-sha2-bad 1.0 (tar)
+Get:2 http://localhost:8080/  pkg-mixed-sha2-bad 1.0 (dsc)
+E: Failed to fetch http://localhost:8080/pkg-mixed-sha2-bad_1.0.tar.gz  Hash Sum mismatch
+
+E: Failed to fetch some archives.' aptget source -d pkg-mixed-sha2-bad
+msgtest 'Only dsc file is downloaded as the tar has hashsum mismatch' 'pkg-mixed-sha2-bad'
+testsuccess --nomsg test -e pkg-mixed-sha2-bad_1.0.dsc -a ! -e pkg-mixed-sha2-bad_1.0.tar.gz
+
+# it gets even more pathologic: multiple entries for one file, some even disagreeing!
+testok pkg-md5-agree
+testequal 'Reading package lists...
+Building dependency tree...
+E: Error parsing checksum in Files of source package pkg-md5-disagree' aptget source -d pkg-md5-disagree
+testequal 'Reading package lists...
+Building dependency tree...
+E: Error parsing checksum in Checksums-SHA256 of source package pkg-sha256-disagree' aptget source -d pkg-sha256-disagree

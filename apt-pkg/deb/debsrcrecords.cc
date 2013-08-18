@@ -124,85 +124,113 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 {
    List.erase(List.begin(),List.end());
 
-   // map from the Hashsum field to the hashsum function,
-   // unfortunately this is not a 1:1 mapping from
-   // Hashes::SupporedHashes as e.g. Files is a historic name for the md5
-   const std::pair<const char*, const char*> SourceHashFields[] = {
-      std::make_pair( "Checksums-Sha512",  "SHA512"),
-      std::make_pair( "Checksums-Sha256",  "SHA256"),
-      std::make_pair( "Checksums-Sha1",  "SHA1"),
-      std::make_pair( "Files",  "MD5Sum"),      // historic Name
-   };
-   
-   for (unsigned int i=0;
-        i < sizeof(SourceHashFields)/sizeof(SourceHashFields[0]);
-        i++)
+   // Stash the / terminated directory prefix
+   string Base = Sect.FindS("Directory");
+   if (Base.empty() == false && Base[Base.length()-1] != '/')
+      Base += '/';
+
+   std::vector<std::string> const compExts = APT::Configuration::getCompressorExtensions();
+
+   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
    {
-      string Files = Sect.FindS(SourceHashFields[i].first);
+      // derive field from checksum type
+      std::string checksumField("Checksums-");
+      if (strcmp(*type, "MD5Sum") == 0)
+	 checksumField = "Files"; // historic name for MD5 checksums
+      else
+	 checksumField.append(*type);
+
+      string const Files = Sect.FindS(checksumField.c_str());
       if (Files.empty() == true)
-         continue;
-
-      // Stash the / terminated directory prefix
-      string Base = Sect.FindS("Directory");
-      if (Base.empty() == false && Base[Base.length()-1] != '/')
-         Base += '/';
-
-      std::vector<std::string> const compExts = APT::Configuration::getCompressorExtensions();
+	 continue;
 
       // Iterate over the entire list grabbing each triplet
       const char *C = Files.c_str();
       while (*C != 0)
-      {   
-         pkgSrcRecords::File F;
-         string Size;
-         
-         // Parse each of the elements
-         std::string RawHash;
-         if (ParseQuoteWord(C, RawHash) == false ||
-             ParseQuoteWord(C, Size) == false ||
-             ParseQuoteWord(C, F.Path) == false)
-            return _error->Error("Error parsing '%s' record", 
-                                 SourceHashFields[i].first);
-         // assign full hash string
-         F.Hash = HashString(SourceHashFields[i].second, RawHash).toStr();
-         // API compat hack 
-         if(strcmp(SourceHashFields[i].second, "MD5Sum") == 0)
-            F.MD5Hash = RawHash;
-         
-         // Parse the size and append the directory
-         F.Size = atoi(Size.c_str());
-         F.Path = Base + F.Path;
-         
-         // Try to guess what sort of file it is we are getting.
-         string::size_type Pos = F.Path.length()-1;
-         while (1)
-         {
-            string::size_type Tmp = F.Path.rfind('.',Pos);
-            if (Tmp == string::npos)
-               break;
-            if (F.Type == "tar") {
-               // source v3 has extension 'debian.tar.*' instead of 'diff.*'
-               if (string(F.Path, Tmp+1, Pos-Tmp) == "debian")
-                  F.Type = "diff";
-               break;
-            }
-            F.Type = string(F.Path,Tmp+1,Pos-Tmp);
-            
-            if (std::find(compExts.begin(), compExts.end(), std::string(".").append(F.Type)) != compExts.end() ||
-                F.Type == "tar")
-            {
-               Pos = Tmp-1;
-               continue;
-            }
-	 
-            break;
-         }
-      
-         List.push_back(F);
+      {
+	 string hash, size, path;
+
+	 // Parse each of the elements
+	 if (ParseQuoteWord(C, hash) == false ||
+	       ParseQuoteWord(C, size) == false ||
+	       ParseQuoteWord(C, path) == false)
+	    return _error->Error("Error parsing file record in %s of source package %s", checksumField.c_str(), Package().c_str());
+
+	 HashString const hashString(*type, hash);
+	 if (Base.empty() == false)
+	    path = Base + path;
+
+	 // look if we have a record for this file already
+	 std::vector<pkgSrcRecords::File>::iterator file = List.begin();
+	 for (; file != List.end(); ++file)
+	    if (file->Path == path)
+	       break;
+
+	 // we have it already, store the new hash and be done
+	 if (file != List.end())
+	 {
+#if __GNUC__ >= 4
+	// set for compatibility only, so warn users not us
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	    if (checksumField == "Files")
+	       file->MD5Hash = hash;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+	    // an error here indicates that we have two different hashes for the same file
+	    if (file->Hashes.push_back(hashString) == false)
+	       return _error->Error("Error parsing checksum in %s of source package %s", checksumField.c_str(), Package().c_str());
+	    continue;
+	 }
+
+	 // we haven't seen this file yet
+	 pkgSrcRecords::File F;
+	 F.Path = path;
+	 F.Size = strtoull(size.c_str(), NULL, 10);
+	 F.Hashes.push_back(hashString);
+
+#if __GNUC__ >= 4
+	// set for compatibility only, so warn users not us
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	 if (checksumField == "Files")
+	    F.MD5Hash = hash;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+
+	 // Try to guess what sort of file it is we are getting.
+	 string::size_type Pos = F.Path.length()-1;
+	 while (1)
+	 {
+	    string::size_type Tmp = F.Path.rfind('.',Pos);
+	    if (Tmp == string::npos)
+	       break;
+	    if (F.Type == "tar") {
+	       // source v3 has extension 'debian.tar.*' instead of 'diff.*'
+	       if (string(F.Path, Tmp+1, Pos-Tmp) == "debian")
+		  F.Type = "diff";
+	       break;
+	    }
+	    F.Type = string(F.Path,Tmp+1,Pos-Tmp);
+
+	    if (std::find(compExts.begin(), compExts.end(), std::string(".").append(F.Type)) != compExts.end() ||
+		  F.Type == "tar")
+	    {
+	       Pos = Tmp-1;
+	       continue;
+	    }
+
+	    break;
+	 }
+	 List.push_back(F);
       }
-      break;
    }
-   return (List.size() > 0);
+
+   return true;
 }
 									/*}}}*/
 // SrcRecordParser::~SrcRecordParser - Destructor			/*{{{*/
