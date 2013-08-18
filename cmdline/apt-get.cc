@@ -838,8 +838,7 @@ static bool DoSource(CommandLine &CmdL)
 	    }
 
 	 // see if we have a hash (Acquire::ForceHash is the only way to have none)
-	 HashString const * const hs = I->Hashes.find(NULL);
-	 if (hs == NULL && _config->FindB("APT::Get::AllowUnauthenticated",false) == false)
+	 if (I->Hashes.usable() == false && _config->FindB("APT::Get::AllowUnauthenticated",false) == false)
 	 {
 	    ioprintf(c1out, "Skipping download of file '%s' as requested hashsum is not available for authentication\n",
 		     localFile.c_str());
@@ -847,8 +846,7 @@ static bool DoSource(CommandLine &CmdL)
 	 }
 
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
-			hs != NULL ? hs->toStr() : "", I->Size,
-			Last->Index().SourceInfo(*Last,*I),Src);
+			I->Hashes, I->Size, Last->Index().SourceInfo(*Last,*I), Src);
       }
    }
    

@@ -42,13 +42,11 @@ class debRecordParser : public pkgRecords::Parser
 
    // These refer to the archive file for the Version
    virtual std::string FileName();
-   virtual std::string MD5Hash();
-   virtual std::string SHA1Hash();
-   virtual std::string SHA256Hash();
-   virtual std::string SHA512Hash();
    virtual std::string SourcePkg();
    virtual std::string SourceVer();
-   
+
+   virtual HashStringList Hashes() const;
+
    // These are some general stats about the package
    virtual std::string Maintainer();
    virtual std::string ShortDesc();

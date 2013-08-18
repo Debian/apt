@@ -105,7 +105,7 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
 	    return false;
 	 indexRecords::checkSum *Sum = new indexRecords::checkSum;
 	 Sum->MetaKeyFilename = Name;
-	 Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);
+	 Sum->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
 	 Sum->Size = Size;
 	 Entries[Name] = Sum;
       }

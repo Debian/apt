@@ -18,6 +18,8 @@
 #define PKGLIB_PKGRECORDS_H
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/macros.h>
 
 #include <string>
 #include <vector>
@@ -56,12 +58,20 @@ class pkgRecords::Parser						/*{{{*/
    
    // These refer to the archive file for the Version
    virtual std::string FileName() {return std::string();};
-   virtual std::string MD5Hash() {return std::string();};
-   virtual std::string SHA1Hash() {return std::string();};
-   virtual std::string SHA256Hash() {return std::string();};
-   virtual std::string SHA512Hash() {return std::string();};
    virtual std::string SourcePkg() {return std::string();};
    virtual std::string SourceVer() {return std::string();};
+
+   /** return all known hashes in this record.
+    *
+    * For authentication proposes packages come with hashsums which
+    * this method is supposed to parse and return so that clients can
+    * choose the hash to be used.
+    */
+   virtual HashStringList Hashes() const { return HashStringList(); };
+   APT_DEPRECATED std::string MD5Hash() const { return GetHashFromHashes("MD5Sum"); };
+   APT_DEPRECATED std::string SHA1Hash() const { return GetHashFromHashes("SHA1"); };
+   APT_DEPRECATED std::string SHA256Hash() const { return GetHashFromHashes("SHA256"); };
+   APT_DEPRECATED std::string SHA512Hash() const { return GetHashFromHashes("SHA512"); };
 
    // These are some general stats about the package
    virtual std::string Maintainer() {return std::string();};
@@ -77,6 +87,14 @@ class pkgRecords::Parser						/*{{{*/
    virtual void GetRec(const char *&Start,const char *&Stop) {Start = Stop = 0;};
    
    virtual ~Parser() {};
+
+   private:
+   APT_HIDDEN std::string GetHashFromHashes(char const * const type) const
+   {
+      HashStringList const hashes = Hashes();
+      HashString const * const hs = hashes.find(type);
+      return hs != NULL ? hs->HashValue() : "";
+   };
 };
 									/*}}}*/
 #endif

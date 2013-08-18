@@ -73,36 +73,17 @@ string debRecordParser::Homepage()
    return Section.FindS("Homepage");
 }
 									/*}}}*/
-// RecordParser::MD5Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::MD5Hash()
+// RecordParser::Hashes - return the available archive hashes		/*{{{*/
+HashStringList debRecordParser::Hashes() const
 {
-   return Section.FindS("MD5Sum");
-}
-									/*}}}*/
-// RecordParser::SHA1Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SHA1Hash()
-{
-   return Section.FindS("SHA1");
-}
-									/*}}}*/
-// RecordParser::SHA256Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SHA256Hash()
-{
-   return Section.FindS("SHA256");
-}
-									/*}}}*/
-// RecordParser::SHA512Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SHA512Hash()
-{
-   return Section.FindS("SHA512");
+   HashStringList hashes;
+   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   {
+      std::string const hash = Section.FindS(*type);
+      if (hash.empty() == false)
+	 hashes.push_back(HashString(*type, hash));
+   }
+   return hashes;
 }
 									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/

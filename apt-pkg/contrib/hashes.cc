@@ -141,11 +141,21 @@ APT_PURE bool HashString::operator!=(HashString const &other) const
 }
 									/*}}}*/
 
+bool HashStringList::usable() const					/*{{{*/
+{
+   if (empty() == true)
+      return false;
+   std::string const forcedType = _config->Find("Acquire::ForceHash", "");
+   if (forcedType.empty() == true)
+      return true;
+   return find(forcedType) != NULL;
+}
+									/*}}}*/
 HashString const * HashStringList::find(char const * const type) const /*{{{*/
 {
    if (type == NULL || type[0] == '\0')
    {
-      std::string forcedType = _config->Find("Acquire::ForceHash", "");
+      std::string const forcedType = _config->Find("Acquire::ForceHash", "");
       if (forcedType.empty() == false)
 	 return find(forcedType.c_str());
       for (char const * const * t = HashString::SupportedHashes(); *t != NULL; ++t)
@@ -196,6 +206,15 @@ bool HashStringList::VerifyFile(std::string filename) const		/*{{{*/
 									/*}}}*/
 bool HashStringList::operator==(HashStringList const &other) const	/*{{{*/
 {
+   std::string const forcedType = _config->Find("Acquire::ForceHash", "");
+   if (forcedType.empty() == false)
+   {
+      HashString const * const hs = other.find(forcedType);
+      HashString const * const ohs = other.find(forcedType);
+      if (hs == NULL || ohs == NULL)
+	 return false;
+      return hs == ohs;
+   }
    short matches = 0;
    for (const_iterator hs = begin(); hs != end(); ++hs)
    {
@@ -216,11 +235,28 @@ bool HashStringList::operator!=(HashStringList const &other) const
 }
 									/*}}}*/
 
-// Hashes::AddFD - Add the contents of the FD				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool Hashes::AddFD(int const Fd,unsigned long long Size, bool const addMD5,
-		   bool const addSHA1, bool const addSHA256, bool const addSHA512)
+// Hashes::Add* - Add the contents of data or FD			/*{{{*/
+bool Hashes::Add(const unsigned char * const Data,unsigned long long const Size, unsigned int const Hashes)
+{
+   bool Res = true;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+   if ((Hashes & MD5SUM) == MD5SUM)
+      Res &= MD5.Add(Data, Size);
+   if ((Hashes & SHA1SUM) == SHA1SUM)
+      Res &= SHA1.Add(Data, Size);
+   if ((Hashes & SHA256SUM) == SHA256SUM)
+      Res &= SHA256.Add(Data, Size);
+   if ((Hashes & SHA512SUM) == SHA512SUM)
+      Res &= SHA512.Add(Data, Size);
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+   return Res;
+}
+bool Hashes::AddFD(int const Fd,unsigned long long Size, unsigned int const Hashes)
 {
    unsigned char Buf[64*64];
    bool const ToEOF = (Size == UntilEOF);
@@ -234,19 +270,12 @@ bool Hashes::AddFD(int const Fd,unsigned long long Size, bool const addMD5,
       if (ToEOF && Res == 0) // EOF
 	 break;
       Size -= Res;
-      if (addMD5 == true)
-	 MD5.Add(Buf,Res);
-      if (addSHA1 == true)
-	 SHA1.Add(Buf,Res);
-      if (addSHA256 == true)
-	 SHA256.Add(Buf,Res);
-      if (addSHA512 == true)
-	 SHA512.Add(Buf,Res);
+      if (Add(Buf, Res, Hashes) == false)
+	 return false;
    }
    return true;
 }
-bool Hashes::AddFD(FileFd &Fd,unsigned long long Size, bool const addMD5,
-		   bool const addSHA1, bool const addSHA256, bool const addSHA512)
+bool Hashes::AddFD(FileFd &Fd,unsigned long long Size, unsigned int const Hashes)
 {
    unsigned char Buf[64*64];
    bool const ToEOF = (Size == 0);
@@ -265,15 +294,35 @@ bool Hashes::AddFD(FileFd &Fd,unsigned long long Size, bool const addMD5,
       else if (a == 0) // EOF
 	 break;
       Size -= a;
-      if (addMD5 == true)
-	 MD5.Add(Buf, a);
-      if (addSHA1 == true)
-	 SHA1.Add(Buf, a);
-      if (addSHA256 == true)
-	 SHA256.Add(Buf, a);
-      if (addSHA512 == true)
-	 SHA512.Add(Buf, a);
+      if (Add(Buf, a, Hashes) == false)
+	 return false;
    }
    return true;
 }
 									/*}}}*/
+HashStringList Hashes::GetHashStringList()
+{
+   HashStringList hashes;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+   hashes.push_back(HashString("MD5Sum", MD5.Result().Value()));
+   hashes.push_back(HashString("SHA1", SHA1.Result().Value()));
+   hashes.push_back(HashString("SHA256", SHA256.Result().Value()));
+   hashes.push_back(HashString("SHA512", SHA512.Result().Value()));
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+   return hashes;
+}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+	#pragma GCC diagnostic ignored "-Wsuggest-attribute=const"
+#endif
+Hashes::Hashes() {}
+Hashes::~Hashes() {}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
