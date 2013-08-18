@@ -49,8 +49,8 @@ class debRecordParser : public pkgRecords::Parser
 
    // These are some general stats about the package
    virtual std::string Maintainer();
-   virtual std::string ShortDesc();
-   virtual std::string LongDesc();
+   virtual std::string ShortDesc(std::string const &lang);
+   virtual std::string LongDesc(std::string const &lang);
    virtual std::string Name();
    virtual std::string Homepage();
 

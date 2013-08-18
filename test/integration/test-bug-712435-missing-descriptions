@@ -87,13 +87,10 @@ $DESCRIPTION
 Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 " aptcache show apt-normal
 
-# displaying the translated Description would be equally valid,
-# but we assume only one description is in a Packages file and
-# so we prefer "Description" over "Description-*" currently.
 for variant in 'below' 'middle' 'top'; do
 	testequal "Package: apt-both-$variant
 $PACKAGESTANZA
-$DESCRIPTION
+$TRANSDESCRIPTION
 Description-md5: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
 " aptcache show apt-both-$variant
 done
@@ -122,7 +119,7 @@ X-Some-Flag: yes
 
 testequal "Package: apt-intermixed2
 $PACKAGESTANZA
-$DESCRIPTION
+$TRANSDESCRIPTION
 Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 X-Some-Flag: yes
 X-Foo-Flag: Something with a Description
@@ -131,7 +128,7 @@ X-Bar-Flag: no
 
 testequal "Package: apt-intermixed3
 $PACKAGESTANZA
-$DESCRIPTION
+$TRANSDESCRIPTION
 Description-md5: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 X-Some-Flag: yes
 X-Foo-Flag: Something with a Description

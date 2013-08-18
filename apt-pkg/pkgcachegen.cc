@@ -302,10 +302,9 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
 
    // Find the right version to write the description
    MD5SumValue CurMd5 = List.Description_md5();
-   if (CurMd5.Value().empty() == true || List.Description().empty() == true)
+   if (CurMd5.Value().empty() == true && List.Description("").empty() == true)
       return true;
-   std::string CurLang = List.DescriptionLanguage();
-
+   std::vector<std::string> availDesc = List.AvailableDescriptionLanguages();
    for (Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
    {
       pkgCache::DescIterator VerDesc = Ver.DescriptionList();
@@ -314,31 +313,16 @@ bool pkgCacheGenerator::MergeListPackage(ListParser &List, pkgCache::PkgIterator
       if (VerDesc.end() == true || MD5SumValue(VerDesc.md5()) != CurMd5)
 	 continue;
 
-      // don't add a new description if we have one for the given
-      // md5 && language
-      if (IsDuplicateDescription(VerDesc, CurMd5, CurLang) == true)
-	 continue;
+      map_ptrloc md5idx = VerDesc->md5sum;
+      for (std::vector<std::string>::const_iterator CurLang = availDesc.begin(); CurLang != availDesc.end(); ++CurLang)
+      {
+	 // don't add a new description if we have one for the given
+	 // md5 && language
+	 if (IsDuplicateDescription(VerDesc, CurMd5, *CurLang) == true)
+	    continue;
 
-      pkgCache::DescIterator Desc;
-      Dynamic<pkgCache::DescIterator> DynDesc(Desc);
-
-      map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, VerDesc->md5sum);
-      if (unlikely(descindex == 0 && _error->PendingError()))
-	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
-			      Pkg.Name(), "NewDescription", 1);
-
-      Desc->ParentPkg = Pkg.Index();
-
-      // we add at the end, so that the start is constant as we need
-      // that to be able to efficiently share these lists
-      VerDesc = Ver.DescriptionList(); // old value might be invalid after ReMap
-      for (;VerDesc.end() == false && VerDesc->NextDesc != 0; ++VerDesc);
-      map_ptrloc * const LastNextDesc = (VerDesc.end() == true) ? &Ver->DescriptionList : &VerDesc->NextDesc;
-      *LastNextDesc = descindex;
-
-      if (NewFileDesc(Desc,List) == false)
-	 return _error->Error(_("Error occurred while processing %s (%s%d)"),
-			      Pkg.Name(), "NewFileDesc", 1);
+	 AddNewDescription(List, Ver, *CurLang, CurMd5, md5idx);
+      }
 
       // we can stop here as all "same" versions will share the description
       break;
@@ -486,11 +470,10 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       return true;
    }
 
-   /* Record the Description (it is not translated) */
+   /* Record the Description(s) based on their master md5sum */
    MD5SumValue CurMd5 = List.Description_md5();
-   if (CurMd5.Value().empty() == true || List.Description().empty() == true)
+   if (CurMd5.Value().empty() == true && List.Description("").empty() == true)
       return true;
-   std::string CurLang = List.DescriptionLanguage();
 
    /* Before we add a new description we first search in the group for
       a version with a description of the same MD5 - if so we reuse this
@@ -501,28 +484,44 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       for (pkgCache::VerIterator V = P.VersionList();
 	   V.end() == false; ++V)
       {
-	 if (IsDuplicateDescription(V.DescriptionList(), CurMd5, "") == false)
+	 if (V->DescriptionList == 0 || MD5SumValue(V.DescriptionList().md5()) != CurMd5)
 	    continue;
 	 Ver->DescriptionList = V->DescriptionList;
-	 return true;
       }
    }
 
-   // We haven't found reusable descriptions, so add the first description
-   pkgCache::DescIterator Desc = Ver.DescriptionList();
+   // We haven't found reusable descriptions, so add the first description(s)
+   map_ptrloc md5idx = Ver->DescriptionList == 0 ? 0 : Ver.DescriptionList()->md5sum;
+   std::vector<std::string> availDesc = List.AvailableDescriptionLanguages();
+   for (std::vector<std::string>::const_iterator CurLang = availDesc.begin(); CurLang != availDesc.end(); ++CurLang)
+      if (AddNewDescription(List, Ver, *CurLang, CurMd5, md5idx) == false)
+	 return false;
+   return true;
+}
+									/*}}}*/
+bool pkgCacheGenerator::AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver, std::string const &lang, MD5SumValue const &CurMd5, map_ptrloc &md5idx) /*{{{*/
+{
+   pkgCache::DescIterator Desc;
    Dynamic<pkgCache::DescIterator> DynDesc(Desc);
 
-   map_ptrloc const descindex = NewDescription(Desc, CurLang, CurMd5, 0);
+   map_ptrloc const descindex = NewDescription(Desc, lang, CurMd5, md5idx);
    if (unlikely(descindex == 0 && _error->PendingError()))
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
-			   Pkg.Name(), "NewDescription", 2);
+	    Ver.ParentPkg().Name(), "NewDescription", 1);
 
-   Desc->ParentPkg = Pkg.Index();
-   Ver->DescriptionList = descindex;
+   md5idx = Desc->md5sum;
+   Desc->ParentPkg = Ver.ParentPkg().Index();
+
+   // we add at the end, so that the start is constant as we need
+   // that to be able to efficiently share these lists
+   pkgCache::DescIterator VerDesc = Ver.DescriptionList(); // old value might be invalid after ReMap
+   for (;VerDesc.end() == false && VerDesc->NextDesc != 0; ++VerDesc);
+   map_ptrloc * const LastNextDesc = (VerDesc.end() == true) ? &Ver->DescriptionList : &VerDesc->NextDesc;
+   *LastNextDesc = descindex;
 
    if (NewFileDesc(Desc,List) == false)
       return _error->Error(_("Error occurred while processing %s (%s%d)"),
-			   Pkg.Name(), "NewFileDesc", 2);
+	    Ver.ParentPkg().Name(), "NewFileDesc", 1);
 
    return true;
 }

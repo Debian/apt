@@ -75,8 +75,22 @@ class pkgRecords::Parser						/*{{{*/
 
    // These are some general stats about the package
    virtual std::string Maintainer() {return std::string();};
-   virtual std::string ShortDesc() {return std::string();};
-   virtual std::string LongDesc() {return std::string();};
+   /** return short description in language from record.
+    *
+    * @see #LongDesc
+    */
+   virtual std::string ShortDesc(std::string const &/*lang*/) {return std::string();};
+   /** return long description in language from record.
+    *
+    * If \b lang is empty the "best" available language will be
+    * returned as determined by the APT::Languages configuration.
+    * If a (requested) language can't be found in this record an empty
+    * string will be returned.
+    */
+   virtual std::string LongDesc(std::string const &/*lang*/) {return std::string();};
+   std::string ShortDesc() {return ShortDesc("");};
+   std::string LongDesc() {return LongDesc("");};
+
    virtual std::string Name() {return std::string();};
    virtual std::string Homepage() {return std::string();}
 

@@ -194,35 +194,31 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 /* This is to return the string describing the package in debian
    form. If this returns the blank string then the entry is assumed to
    only describe package properties */
-string debListParser::Description()
+string debListParser::Description(std::string const &lang)
 {
-   string const lang = DescriptionLanguage();
    if (lang.empty())
       return Section.FindS("Description");
    else
       return Section.FindS(string("Description-").append(lang).c_str());
 }
-                                                                        /*}}}*/
-// ListParser::DescriptionLanguage - Return the description lang string	/*{{{*/
-// ---------------------------------------------------------------------
-/* This is to return the string describing the language of
-   description. If this returns the blank string then the entry is
-   assumed to describe original description. */
-string debListParser::DescriptionLanguage()
+									/*}}}*/
+// ListParser::AvailableDescriptionLanguages				/*{{{*/
+std::vector<std::string> debListParser::AvailableDescriptionLanguages()
 {
-   if (Section.FindS("Description").empty() == false)
-      return "";
-
-   std::vector<string> const lang = APT::Configuration::getLanguages(true);
-   for (std::vector<string>::const_iterator l = lang.begin();
-	l != lang.end(); ++l)
-      if (Section.FindS(string("Description-").append(*l).c_str()).empty() == false)
-	 return *l;
-
-   return "";
+   std::vector<std::string> const understood = APT::Configuration::getLanguages();
+   std::vector<std::string> avail;
+   if (Section.Exists("Description") == true)
+      avail.push_back("");
+   for (std::vector<std::string>::const_iterator lang = understood.begin(); lang != understood.end(); ++lang)
+   {
+      std::string const tagname = "Description-" + *lang;
+      if (Section.Exists(tagname.c_str()) == true)
+	 avail.push_back(*lang);
+   }
+   return avail;
 }
-                                                                        /*}}}*/
-// ListParser::Description - Return the description_md5 MD5SumValue	/*{{{*/
+									/*}}}*/
+// ListParser::Description_md5 - Return the description_md5 MD5SumValue	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is to return the md5 string to allow the check if it is the right
    description. If no Description-md5 is found in the section it will be
@@ -233,7 +229,7 @@ MD5SumValue debListParser::Description_md5()
    string const value = Section.FindS("Description-md5");
    if (value.empty() == true)
    {
-      std::string const desc = Description() + "\n";
+      std::string const desc = Description("") + "\n";
       if (desc == "\n")
 	 return MD5SumValue();
 
