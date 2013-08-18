@@ -207,16 +207,56 @@ TEST(HashSumsTest, FileBased)
    }
    fd.Close();
 
-   {
-      HashString sha2("SHA256", sha256.Value());
-      EXPECT_TRUE(sha2.VerifyFile(__FILE__));
-   }
-   {
-      HashString sha2("SHA512", sha512.Value());
-      EXPECT_TRUE(sha2.VerifyFile(__FILE__));
-   }
-   {
-      HashString sha2("SHA256:" + sha256.Value());
-      EXPECT_TRUE(sha2.VerifyFile(__FILE__));
-   }
+   HashString sha2file("SHA512", sha512.Value());
+   EXPECT_TRUE(sha2file.VerifyFile(__FILE__));
+   HashString sha2wrong("SHA512", "00000000000");
+   EXPECT_FALSE(sha2wrong.VerifyFile(__FILE__));
+   EXPECT_EQ(sha2file, sha2file);
+   EXPECT_TRUE(sha2file == sha2file);
+   EXPECT_NE(sha2file, sha2wrong);
+   EXPECT_TRUE(sha2file != sha2wrong);
+
+   HashString sha2big("SHA256", sha256.Value());
+   EXPECT_TRUE(sha2big.VerifyFile(__FILE__));
+   HashString sha2small("sha256:" + sha256.Value());
+   EXPECT_TRUE(sha2small.VerifyFile(__FILE__));
+   EXPECT_EQ(sha2big, sha2small);
+   EXPECT_TRUE(sha2big == sha2small);
+   EXPECT_FALSE(sha2big != sha2small);
+
+   HashStringList hashes;
+   EXPECT_TRUE(hashes.empty());
+   EXPECT_TRUE(hashes.push_back(sha2file));
+   EXPECT_FALSE(hashes.empty());
+   EXPECT_EQ(1, hashes.size());
+
+   HashStringList wrong;
+   EXPECT_TRUE(wrong.push_back(sha2wrong));
+   EXPECT_NE(wrong, hashes);
+   EXPECT_FALSE(wrong == hashes);
+   EXPECT_TRUE(wrong != hashes);
+
+   HashStringList similar;
+   EXPECT_TRUE(similar.push_back(sha2big));
+   EXPECT_NE(similar, hashes);
+   EXPECT_FALSE(similar == hashes);
+   EXPECT_TRUE(similar != hashes);
+
+   EXPECT_TRUE(hashes.push_back(sha2big));
+   EXPECT_EQ(2, hashes.size());
+   EXPECT_TRUE(hashes.push_back(sha2small));
+   EXPECT_EQ(2, hashes.size());
+   EXPECT_FALSE(hashes.push_back(sha2wrong));
+   EXPECT_EQ(2, hashes.size());
+   EXPECT_TRUE(hashes.VerifyFile(__FILE__));
+
+   EXPECT_EQ(similar, hashes);
+   EXPECT_TRUE(similar == hashes);
+   EXPECT_FALSE(similar != hashes);
+   similar.clear();
+   EXPECT_TRUE(similar.empty());
+   EXPECT_EQ(0, similar.size());
+   EXPECT_NE(similar, hashes);
+   EXPECT_FALSE(similar == hashes);
+   EXPECT_TRUE(similar != hashes);
 }
