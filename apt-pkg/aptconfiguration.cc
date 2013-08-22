@@ -392,7 +392,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 			dup2(nullfd, STDIN_FILENO);
 			dup2(external[1], STDOUT_FILENO);
 			dup2(nullfd, STDERR_FILENO);
-			if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+			if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
 				_error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --print-foreign-architectures", chrootDir.c_str());
 			execvp(Args[0], (char**) &Args[0]);
 			_error->WarningE("getArchitecture", "Can't detect foreign architectures supported by dpkg!");

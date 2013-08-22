@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'tshark' 'amd64' '1.0.4-1' 'Depends: wireshark-common'
+insertinstalledpackage 'wireshark-common' 'amd64' '1.0.4-1' 'Recommends: wireshark (>= 1.0.4-1) | tshark (>= 1.0.4-1)'
+insertpackage 'unstable' 'tshark' 'amd64' '1.2.1-2' 'Depends: wireshark-common (= 1.2.1-2)'
+insertpackage 'unstable' 'wireshark-common' 'amd64' '1.2.1-2' 'Recommends: wireshark (>= 1.2.1-2) | tshark (>= 1.2.1-2)'
+insertpackage 'unstable' 'wireshark' 'amd64' '1.2.1-2' 'Depends: wireshark-common (= 1.2.1-2)'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  tshark wireshark-common
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst wireshark-common [1.0.4-1] (1.2.1-2 unstable [amd64])
+Inst tshark [1.0.4-1] (1.2.1-2 unstable [amd64])
+Conf wireshark-common (1.2.1-2 unstable [amd64])
+Conf tshark (1.2.1-2 unstable [amd64])' aptget dist-upgrade -s

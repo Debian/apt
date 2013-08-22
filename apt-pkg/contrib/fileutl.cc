@@ -1777,7 +1777,8 @@ std::vector<std::string> Glob(std::string const &pattern, int flags)
 {
    std::vector<std::string> result;
    glob_t globbuf;
-   int glob_res, i;
+   int glob_res;
+   unsigned int i;
 
    glob_res = glob(pattern.c_str(),  flags, NULL, &globbuf);
 
