@@ -237,7 +237,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 // ---------------------------------------------------------------------
 /* */
 pkgTagSection::pkgTagSection()
-   : Section(0), TagCount(0), Stop(0), d(NULL)
+   : Section(0), TagCount(0), d(NULL), Stop(0)
 {
    memset(&Indexes, 0, sizeof(Indexes));
    memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));

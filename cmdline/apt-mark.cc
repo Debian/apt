@@ -209,7 +209,7 @@ bool DoHold(CommandLine &CmdL)
       dup2(nullfd, STDIN_FILENO);
       dup2(nullfd, STDOUT_FILENO);
       dup2(nullfd, STDERR_FILENO);
-      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
 	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --assert-multi-arch", chrootDir.c_str());
       execvp(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
@@ -279,7 +279,7 @@ bool DoHold(CommandLine &CmdL)
    {
       close(external[1]);
       std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
 	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --set-selections", chrootDir.c_str());
       int const nullfd = open("/dev/null", O_RDONLY);
       dup2(external[0], STDIN_FILENO);
