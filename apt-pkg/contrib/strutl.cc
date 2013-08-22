@@ -943,6 +943,8 @@ bool StrToTime(const string &Val,time_t &Result)
    Tm.tm_isdst = 0;
    if (Month[0] != 0)
       Tm.tm_mon = MonthConv(Month);
+   else
+      Tm.tm_mon = 0; // we don't have a month, so pick something
    Tm.tm_year -= 1900;
    
    // Convert to local time and then to GMT

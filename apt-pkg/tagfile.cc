@@ -233,6 +233,16 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
    return true;
 }
 									/*}}}*/
+// pkgTagSection::pkgTagSection - Constructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgTagSection::pkgTagSection()
+   : Section(0), TagCount(0), Stop(0), d(NULL)
+{
+   memset(&Indexes, 0, sizeof(Indexes));
+   memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
+}
+									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
 // ---------------------------------------------------------------------
 /* This looks for the first double new line in the data stream.
