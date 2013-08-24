@@ -49,7 +49,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
       // Strip space leading up to the package name, skip blank lines
       char *Pkg = Line;
       for (; isspace(*Pkg) && *Pkg != 0;Pkg++);
-      if (Pkg == 0)
+      if (*Pkg == 0)
 	 continue;
 
       // Find the package and zero..
