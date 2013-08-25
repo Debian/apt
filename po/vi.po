@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-0.9.9.4\n"
+"Project-Id-Version: apt-0.9.11\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2013-07-31 16:24+0200\n"
-"PO-Revision-Date: 2013-08-03 08:52+0700\n"
+"PO-Revision-Date: 2013-08-25 14:13+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
 "Language: vi\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:158
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Gói %s phiên bản %s phụ thuộc vào phần mềm chưa có:\n"
+msgstr "Gói %s phiên bản %s chưa thỏa mãn quan hệ phụ thuộc:\n"
 
 #: cmdline/apt-cache.cc:286
 msgid "Total package names: "
@@ -112,7 +112,7 @@ msgstr "Bạn phải đưa ra ít nhất một mẫu tìm kiếm"
 #: cmdline/apt-cache.cc:1431
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
-"Lệnh này đã bị loại bỏ. Xin hãy dùng lệnh 'apt-mark showauto' để thay thế."
+"Lệnh này đã lạc hậu. Xin hãy dùng lệnh 'apt-mark showauto' để thay thế."
 
 #: cmdline/apt-cache.cc:1526 apt-pkg/cacheset.cc:510
 #, c-format
@@ -219,7 +219,7 @@ msgstr ""
 "   stats - Hiện phần thống kê cơ bản\n"
 "   dump - Hiện toàn bộ tập tin dạng ngắn (đổ)\n"
 "   dumpavail - In ra một tập tin sẵn dùng ra thiết bị xuất chuẩn\n"
-"   unmet - Hiện các cách phụ thuộc chưa thỏa mãn\n"
+"   unmet - Hiện các gói chưa thỏa mãn quan hệ phụ thuộc\n"
 "   search - Tìm kiếm danh sách các gói dựa trên biểu thức chính quy\n"
 "   show - Hiển thị bản ghi có thể đọc cho những gói đó\n"
 "   depends - Hiện thông tin quan hệ phụ thuộc dạng thô cho gói\n"
@@ -336,7 +336,7 @@ msgstr "Lỗi biên dịch biểu thức chính quy - %s"
 
 #: cmdline/apt-get.cc:289
 msgid "The following packages have unmet dependencies:"
-msgstr "Những gói theo đây có phần phụ thuộc chưa có:"
+msgstr "Những gói theo đây chưa thỏa mãn quan hệ phụ thuộc:"
 
 #: cmdline/apt-get.cc:379
 #, c-format
@@ -443,7 +443,7 @@ msgstr "Ghi chú: đang chọn “%s” cho biểu thức chính quy “%s”\n"
 #: cmdline/apt-get.cc:686
 #, c-format
 msgid "Package %s is a virtual package provided by:\n"
-msgstr "Gói %s là gói ảo được cung cấp do:\n"
+msgstr "Gói %s là gói ảo được cung cấp bởi:\n"
 
 #: cmdline/apt-get.cc:697
 msgid " [Installed]"
@@ -560,9 +560,7 @@ msgstr "Bạn có thể chạy lệnh “apt-get -f install” để sửa nhữ
 
 #: cmdline/apt-get.cc:1072
 msgid "Unmet dependencies. Try using -f."
-msgstr ""
-"Còn có cách phụ thuộc vào phần mềm chưa có. Như thế thì bạn hãy cố dùng tùy "
-"chọn “-f”."
+msgstr "Chưa thỏa mãn quan hệ phụ thuộc. Hãy thử dùng tùy chọn “-f”."
 
 #: cmdline/apt-get.cc:1097
 msgid "WARNING: The following packages cannot be authenticated!"
@@ -574,7 +572,7 @@ msgstr "Cảnh báo xác thực bị đè.\n"
 
 #: cmdline/apt-get.cc:1108
 msgid "Install these packages without verification?"
-msgstr "Cài đặt những gói này mà không cần thẩm tra không?"
+msgstr "Cài đặt những gói này mà không cần thẩm tra?"
 
 #: cmdline/apt-get.cc:1110
 msgid "Some packages could not be authenticated"
@@ -582,7 +580,7 @@ msgstr "Một số gói không thể được xác thực"
 
 #: cmdline/apt-get.cc:1119 cmdline/apt-get.cc:1280
 msgid "There are problems and -y was used without --force-yes"
-msgstr "Gặp lỗi và đã dùng tùy chọn “-y” mà không có  “--force-yes”"
+msgstr "Có lỗi và đã dùng tùy chọn “-y” mà không có  “--force-yes”"
 
 #: cmdline/apt-get.cc:1160
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -620,7 +618,7 @@ msgstr "Cần phải lấy %sB từ kho chứa.\n"
 #: cmdline/apt-get.cc:1237
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
-msgstr "Sau thao tác này, %sB dung lượng đĩa thêm sẽ được dùng thêm.\n"
+msgstr "Sau thao tác này, %sB dung lượng đĩa sẽ bị chiếm dụng.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
@@ -682,7 +680,7 @@ msgstr "Một số tập tin không tải về được"
 
 #: cmdline/apt-get.cc:1404 cmdline/apt-get.cc:2698
 msgid "Download complete and in download only mode"
-msgstr "Mới tải về xong và trong chế độ chỉ tải về"
+msgstr "Hoàn tất việc tải về và trong chế độ chỉ tải về"
 
 #: cmdline/apt-get.cc:1410
 msgid ""
@@ -805,8 +803,8 @@ msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
 msgstr ""
-"Gói còn phụ thuộc vào phần mềm chưa có. Hãy cố chạy lệnh “apt-get -f "
-"install” mà không có gói nào (hoặc chỉ định cách thức giải quyết)."
+"Thưa thỏa mãn quan hệ phụ thuộc. Hãy thử chạy lệnh “apt-get -f install” mà "
+"không có gói nào (hoặc chỉ định cách thức giải quyết)."
 
 #: cmdline/apt-get.cc:2002
 msgid ""
@@ -816,9 +814,9 @@ msgid ""
 "or been moved out of Incoming."
 msgstr ""
 "Không thể cài đặt một số gói. Điều đó có nghĩa là bạn đã yêu cầu\n"
-"một trường hợp không thể, hoặc nếu bạn sử dụng bản phân phối\n"
+"một trường hợp không thể, hoặc nếu bạn đang sử dụng bản phân phối\n"
 "chưa ổn định cái mà yêu cầu các gói mà nó còn chưa được tạo ra\n"
-"hoặc di chuyển chúng ra khỏi phần Incoming (Đến)."
+"hay chưa được chuyển ra khỏi phần Incoming (Đến)."
 
 #: cmdline/apt-get.cc:2023
 msgid "Broken packages"
@@ -851,8 +849,8 @@ msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
-"Lệnh này đã bị loại bỏ. Xin hãy dùng lệnh 'apt-mark auto' và 'apt-mark "
-"manual' để thay thế."
+"Lệnh này đã lỗi thời. Xin hãy dùng lệnh 'apt-mark auto' và 'apt-mark manual' "
+"để thay thế."
 
 #: cmdline/apt-get.cc:2213
 msgid "Calculating upgrade... "
@@ -899,7 +897,7 @@ msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
-"GHI CHÚ: sự đóng gói “%s” được bảo trì trong hệ thống điều khiển phiên bản "
+"GHI CHÚ: việc đóng gói “%s” được bảo trì trong hệ thống quản lý mã nguồn "
 "“%s” tại:\n"
 "%s\n"
 
@@ -945,7 +943,7 @@ msgstr "Lấy mã nguồn %s\n"
 
 #: cmdline/apt-get.cc:2693
 msgid "Failed to fetch some archives."
-msgstr "Gặp lỗi lkhi lấy một số kho."
+msgstr "Gặp lỗi khi lấy một số kho."
 
 #: cmdline/apt-get.cc:2724
 #, c-format
@@ -1008,13 +1006,15 @@ msgstr ""
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
-msgstr "cách phụ thuộc %s cho %s không thể được thỏa vì không tìm thấy gọi %s"
+msgstr ""
+"cách phụ thuộc %s cho %s không thể được thỏa mãn vì không tìm thấy gói %s"
 
 #: cmdline/apt-get.cc:3081
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
-"Việc cố thỏa cách phụ thuộc %s cho %s bị lỗi vì gói đã cài đặt %s là quá mới"
+"Việc cố thỏa mãn quan hệ phụ thuộc %s cho %s bị lỗi vì gói đã cài đặt %s là "
+"quá mới"
 
 #: cmdline/apt-get.cc:3120
 #, c-format
@@ -1111,22 +1111,23 @@ msgstr ""
 "remove:  gỡ bỏ\n"
 "source:  nguồn\n"
 "\n"
-"apt-get là một giao diện dòng lệnh đơn giản để tải về và cài đặt gói phần "
-"mềm.\n"
+"apt-get là một giao diện dòng lệnh đơn giản dùng để tải về và cài đặt gói "
+"phần mềm.\n"
 "Những lệnh được dùng thường nhất là update (cập nhật) và install (cài đặt).\n"
 "\n"
 "Lệnh:\n"
 "   update - Lấy danh sách gói mới (cập nhật cơ sở dữ liệu)\n"
-"   upgrade - Nâng cấp\n"
+"   upgrade - Nâng cấp lên phiên bản mới hơn\n"
 "   install - Cài đặt gói mới (gói có dạng libc6 không phải libc6.deb)\n"
 "   remove - Gỡ bỏ gói phần mềm\n"
 "   autoremove - Tự động gỡ bỏ tất cả các gói không dùng\n"
 "   purge - Gỡ bỏ và tẩy xóa gói\n"
 "   source - Tải về kho nguồn\n"
 "   build-dep - Định cấu hình quan hệ phụ thuộc khi xây dụng, cho gói nguồn\n"
-"   dist-upgrade - Nâng cấp bản phân phối hãy xem apt-get(8)\n"
+"   dist-upgrade - Nâng cấp hệ điều hành lên phiên bản mới hơn, hãy xem apt-"
+"get(8)\n"
 "   dselect-upgrade - Cho phép chọn dselect\n"
-"   clean - Xóa các tập tin kho đã tải về (dọn dẹp thư mục lưu)\n"
+"   clean - Xóa các tập tin kho đã tải về (dọn dẹp thư mục lưu trữ)\n"
 "   autoclean - Xóa các tập tin kho cũ đã tải về (tự động làm sạch)\n"
 "   check - Kiểm tra xem có quan hệ phụ thuộc bị sai không\n"
 "   changelog - Tải về và hiển thị các thay đổi cho gói đã cho\n"
@@ -1299,7 +1300,7 @@ msgid ""
 "cannot be used to add new CD-ROMs"
 msgstr ""
 "Hãy sử dụng lệnh “apt-cdrom” để làm cho APT chấp nhận đĩa CD này. Không thể "
-"sử dụng lệnh “apt-get update” (lấy cập nhật) để thêm đĩa CD mới."
+"sử dụng lệnh “apt-get update” (cập nhật cơ sở dữ liệu) để thêm đĩa CD mới."
 
 #: methods/cdrom.cc:222
 msgid "Wrong CD-ROM"
@@ -1564,8 +1565,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
-"Tập tin Clearsigned không hợp lệ,  nhận được '%s' (mạng yêu cầu xác nhận "
-"phải không?)"
+"Tập tin Clearsigned không hợp lệ, nhận được '%s' (mạng yêu cầu xác nhận phải "
+"không?)"
 
 #: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
@@ -1588,7 +1589,7 @@ msgstr "Các tập tin trống rỗng không phải là kho lưu hợp lệ"
 
 #: methods/http.cc:394
 msgid "Waiting for headers"
-msgstr "Đang đợi những phần đầu..."
+msgstr "Đang đợi phần đầu dữ liệu..."
 
 #: methods/http.cc:544
 msgid "Bad header line"
@@ -1601,7 +1602,7 @@ msgstr "Máy phục vụ HTTP đã gửi một dòng đầu trả lời không h
 #: methods/http.cc:606
 msgid "The HTTP server sent an invalid Content-Length header"
 msgstr ""
-"Máy phục vụ HTTP đã gửi một dòng đầu Content-Length (độ dài nội dụng) không "
+"Máy phục vụ HTTP đã gửi một dòng đầu Content-Length (độ dài nội dung) không "
 "hợp lệ"
 
 #: methods/http.cc:621
@@ -1612,7 +1613,7 @@ msgstr ""
 
 #: methods/http.cc:623
 msgid "This HTTP server has broken range support"
-msgstr "Máy phục vụ HTTP đã ngắt cách hỗ trợ phạm vi"
+msgstr "Máy phục vụ HTTP không hỗ trợ tải một phần tập tin"
 
 #: methods/http.cc:647
 msgid "Unknown date format"
@@ -1628,7 +1629,7 @@ msgstr "Kết nối đã quá giờ"
 
 #: methods/http.cc:854
 msgid "Error writing to output file"
-msgstr "Gặp lỗi khi ghi vào tập tin xuất"
+msgstr "Gặp lỗi khi ghi vào tập tin đầu ra"
 
 #: methods/http.cc:885
 msgid "Error writing to file"
@@ -1782,8 +1783,8 @@ msgid ""
 msgstr ""
 "Cách dùng: apt-extracttemplates tập_tin1 [tập_tin2 ...]\n"
 "\n"
-"[extract:  rút;\n"
-"templates: những biểu mẫu]\n"
+"[extract:  rút trích;\n"
+"templates: mẫu]\n"
 "\n"
 "apt-extracttemplates là một công cụ rút thông tin kiểu cấu hình\n"
 "\tvà biểu mẫu đều từ gói Debian\n"
@@ -2156,7 +2157,7 @@ msgstr ""
 
 #: cmdline/apt-sortpkgs.cc:89
 msgid "Unknown package record!"
-msgstr "Không rõ bản ghi gói!"
+msgstr "Không hiểu bản ghi gói!"
 
 #: cmdline/apt-sortpkgs.cc:153
 msgid ""
@@ -2211,16 +2212,16 @@ msgstr "Chữ ký kho không hợp lệ"
 
 #: apt-inst/contrib/arfile.cc:82
 msgid "Error reading archive member header"
-msgstr "Gặp lỗi khi đọc phần đầu bộ phận kho"
+msgstr "Gặp lỗi khi đọc phần đầu thành viên kho"
 
 #: apt-inst/contrib/arfile.cc:94
 #, c-format
 msgid "Invalid archive member header %s"
-msgstr "Phần đầu bộ phận kho lưu không hợp lệ %s"
+msgstr "Phần đầu thành viên kho lưu không hợp lệ %s"
 
 #: apt-inst/contrib/arfile.cc:106
 msgid "Invalid archive member header"
-msgstr "Phần đầu bộ phận kho không hợp lê"
+msgstr "Phần đầu thành viên kho không hợp lê"
 
 #: apt-inst/contrib/arfile.cc:135
 msgid "Archive is too short"
@@ -2927,7 +2928,7 @@ msgstr ""
 
 #: apt-pkg/algorithms.cc:1240
 msgid "Unable to correct problems, you have held broken packages."
-msgstr "Không thể sửa vấn đề, bạn đã giữ lại một số gói bị ngắt."
+msgstr "Không thể sửa trục trặc này, bạn đã giữ lại một số gói bị hỏng."
 
 #: apt-pkg/algorithms.cc:1592 apt-pkg/algorithms.cc:1594
 msgid ""
@@ -2967,12 +2968,12 @@ msgstr "Đang tải tập tin %li trong tổng số %li"
 #: apt-pkg/acquire-worker.cc:112
 #, c-format
 msgid "The method driver %s could not be found."
-msgstr "Không tìm thấy trình điều khiển phương pháp %s."
+msgstr "Không tìm thấy trình điều khiển phương thức %s."
 
 #: apt-pkg/acquire-worker.cc:161
 #, c-format
 msgid "Method %s did not start correctly"
-msgstr "Phương pháp %s đã không bắt đầu cho đúng."
+msgstr "Phương thức %s đã không khởi chạy đúng đắn."
 
 #: apt-pkg/acquire-worker.cc:447
 #, c-format
@@ -3000,12 +3001,13 @@ msgstr ""
 
 #: apt-pkg/cachefile.cc:87
 msgid "The package lists or status file could not be parsed or opened."
-msgstr "Không thể phân tích hay mở danh sách gói hay tâp tin trạng thái."
+msgstr "Không thể phân tích hay mở danh sách gói hay tập tin trạng thái."
 
 #: apt-pkg/cachefile.cc:91
 msgid "You may want to run apt-get update to correct these problems"
 msgstr ""
-"Bạn nên chạy lệnh “apt-get update” (lấy cập nhật) để sửa các vấn đề này"
+"Bạn nên lấy cơ sở dữ liệu mới bằng lệnh “apt-get update” để sửa các vấn đề "
+"này"
 
 #: apt-pkg/cachefile.cc:109
 msgid "The list of sources could not be read."
@@ -3052,7 +3054,7 @@ msgstr "Bộ nhớ tạm có hệ thống điều khiển phiên bản không t�
 #: apt-pkg/pkgcachegen.cc:563
 #, c-format
 msgid "Error occurred while processing %s (%s%d)"
-msgstr "Gặp lỗi khi xử lý %s (%s%d)"
+msgstr "Có lỗi phát sinh khi xử lý %s (%s%d)"
 
 #: apt-pkg/pkgcachegen.cc:251
 msgid "Wow, you exceeded the number of package names this APT is capable of."
