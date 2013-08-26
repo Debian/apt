@@ -114,7 +114,7 @@ bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char const * co
 bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "deselect-upgrade", "autoremove"))
+	    "dselect-upgrade", "autoremove"))
    {
       addArg(0, "dpkg-progress", "DpkgPM::Progress", 0);
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
