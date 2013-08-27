@@ -240,7 +240,13 @@ configdpkg() {
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
 			for ARCH in ${ARCHS}; do
-				if [ "${ARCH}" != "${DPKGARCH}" ]; then dpkg --add-architecture ${ARCH}; fi
+				if [ "${ARCH}" != "${DPKGARCH}" ]; then
+					if ! dpkg --add-architecture ${ARCH}; then
+						# old-style used e.g. in Ubuntu-P – and as it seems travis
+						echo "DPKG::options:: \"--foreign-architecture\";" >> aptconfig.conf
+						echo "DPKG::options:: \"${ARCH}\";" >> aptconfig.conf
+					fi
+				fi
 			done
 			if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
 				# dpkg doesn't really check the version as long as it is fully installed,
