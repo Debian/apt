@@ -968,27 +968,23 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if_FLAGGED_SET(Create, O_CREAT);
    if_FLAGGED_SET(Empty, O_TRUNC);
    if_FLAGGED_SET(Exclusive, O_EXCL);
-   else if_FLAGGED_SET(Atomic, O_EXCL);
    #undef if_FLAGGED_SET
 
    if ((Mode & Atomic) == Atomic)
    {
       char *name = strdup((FileName + ".XXXXXX").c_str());
 
-      if((iFd = mkostemp(name, fileflags)) == -1)
+      if((iFd = mkstemp(name)) == -1)
       {
           free(name);
           return FileFdErrno("mkostemp", "Could not create temporary file for %s", FileName.c_str());
       }
 
       TemporaryFileName = string(name);
-
-      if(fchmod(iFd, Perms) == -1)
-      {
-          free(name);
-          return FileFdErrno("fchmod", "Could not assign permissions to temporary file %s with error %s", FileName.c_str(), strerror(errno));
-      }
       free(name);
+
+      if(Perms != 600 && fchmod(iFd, Perms) == -1)
+          return FileFdErrno("fchmod", "Could not change permissions for temporary file %s", TemporaryFileName.c_str());
    }
    else
       iFd = open(FileName.c_str(), fileflags, Perms);
