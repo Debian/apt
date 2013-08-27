@@ -21,9 +21,7 @@ prepare() {
 	done
 	cp $1 aptarchive/Packages
 	find aptarchive -name 'Release' -delete
-	cat aptarchive/Packages | gzip > aptarchive/Packages.gz
-	cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
-	cat aptarchive/Packages | xz --format=lzma > aptarchive/Packages.lzma
+	compressfile aptarchive/Packages
         # create Release file with incorret checksums
 	cat > aptarchive/Release <<EOF
 Date: Fri, 05 Aug 2011 09:22:08 UTC

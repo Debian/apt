@@ -19,9 +19,7 @@ testequal "$(cat ${PKGFILE})
 " aptcache show apt oldstuff
 
 cp ${PKGFILE}-new aptarchive/Packages
-cat aptarchive/Packages | gzip > aptarchive/Packages.gz
-cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
-cat aptarchive/Packages | xz --format=lzma > aptarchive/Packages.lzma
+compressfile 'aptarchive/Packages'
 rm -rf aptarchive/Packages.diff
 mkdir -p aptarchive/Packages.diff
 PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
