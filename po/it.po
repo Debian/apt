@@ -1,15 +1,15 @@
 # Italian translation of apt
-# Copyright (C) 2002-2010, 2011, 2012 The Free Software Foundation, Inc.
+# Copyright (C) 2002-2010, 2011, 2012, 2013 The Free Software Foundation, Inc.
 # This file is distributed under the same license as the apt package.
 # Samuele Giovanni Tonon <samu@debian.org>, 2002.
-# Milo Casagrande <milo@ubuntu.com>, 2009, 2010, 2011, 2012.
+# Milo Casagrande <milo@ubuntu.com>, 2009, 2010, 2011, 2012, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2013-07-31 16:24+0200\n"
-"PO-Revision-Date: 2012-06-25 21:54+0200\n"
+"PO-Revision-Date: 2013-08-27 11:32+0200\n"
 "Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8-bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Launchpad-Export-Date: 2012-06-25 19:48+0000\n"
-"X-Generator: Launchpad (build 15482)\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: cmdline/apt-cache.cc:158
 #, c-format
@@ -245,6 +245,12 @@ msgid ""
 "You may try the --cdrom option to set the CD-ROM mount point. See 'man apt-"
 "cdrom' for more information about the CD-ROM auto-detection and mount point."
 msgstr ""
+"Impossibile rilevare automaticamente un CD-ROM oppure è stato trovato con "
+"il\n"
+"punto di mount predefinito.\n"
+"È possibile provare l'opzione --cdrom per impostare il punto di mount del\n"
+"CD-ROM. Per maggiori informazioni sull'autorilevamento e sul punto di mount\n"
+"del CD-ROM, consultare \"man apt-cdrom\"."
 
 #: cmdline/apt-cdrom.cc:85
 msgid "Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'"
@@ -301,7 +307,7 @@ msgstr ""
 #. YESEXPR/NOEXPR defined in your l10n.
 #: cmdline/apt-get.cc:146
 msgid "[Y/n]"
-msgstr "[S/n]"
+msgstr ""
 
 #. TRANSLATOR: Yes/No question help-text: defaulting to N[o]
 #. e.g. "Should this file be removed? [y/N] "
@@ -309,7 +315,7 @@ msgstr "[S/n]"
 #. YESEXPR/NOEXPR defined in your l10n.
 #: cmdline/apt-get.cc:152
 msgid "[y/N]"
-msgstr "[s/N]"
+msgstr ""
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
 #: cmdline/apt-get.cc:163
@@ -568,8 +574,10 @@ msgid "Authentication warning overridden.\n"
 msgstr "Avviso di autenticazione disabilitato.\n"
 
 #: cmdline/apt-get.cc:1108
+#, fuzzy
+#| msgid "Install these packages without verification [y/N]? "
 msgid "Install these packages without verification?"
-msgstr "Installare questi pacchetti senza verificarli?"
+msgstr "Installare questi pacchetti senza verificarli [s/N]? "
 
 #: cmdline/apt-get.cc:1110
 msgid "Some packages could not be authenticated"
@@ -666,8 +674,10 @@ msgid "Abort."
 msgstr "Interrotto."
 
 #: cmdline/apt-get.cc:1313
+#, fuzzy
+#| msgid "Do you want to continue [Y/n]? "
 msgid "Do you want to continue?"
-msgstr "Continuare?"
+msgstr "Continuare [S/n]? "
 
 #: cmdline/apt-get.cc:1385 cmdline/apt-get.cc:2686 apt-pkg/algorithms.cc:1566
 #, c-format
@@ -1547,10 +1557,9 @@ msgid "Temporary failure resolving '%s'"
 msgstr "Risoluzione di \"%s\" temporaneamente non riuscita"
 
 #: methods/connect.cc:209
-#, fuzzy, c-format
+#, c-format
 msgid "System error resolving '%s:%s'"
-msgstr ""
-"Si è verificato qualcosa di anormale nella risoluzione di \"%s:%s\" (%i - %s)"
+msgstr "Errore di sistema nella risoluzione di \"%s:%s\""
 
 #: methods/connect.cc:211
 #, c-format
@@ -1587,6 +1596,8 @@ msgid ""
 "Clearsigned file isn't valid, got '%s' (does the network require "
 "authentication?)"
 msgstr ""
+"Il file con la firma in chiaro non è valido, ottenuto \"%s\" (la rete "
+"richiede autenticazione?)"
 
 #: methods/gpgv.cc:183
 msgid "Unknown error executing gpgv"
@@ -1710,9 +1721,9 @@ msgid "Can not read mirror file '%s'"
 msgstr "Impossibile leggere il file mirror \"%s\""
 
 #: methods/mirror.cc:315
-#, fuzzy, c-format
+#, c-format
 msgid "No entry found in mirror file '%s'"
-msgstr "Impossibile leggere il file mirror \"%s\""
+msgstr "Nessuna voce trovata nel file mirror \"%s\""
 
 #: methods/mirror.cc:445
 #, c-format
@@ -2508,13 +2519,13 @@ msgstr "%c%s... Fatto"
 
 #: apt-pkg/contrib/progress.cc:179
 msgid "..."
-msgstr ""
+msgstr "..."
 
 #. Print the spinner
 #: apt-pkg/contrib/progress.cc:195
-#, fuzzy, c-format
+#, c-format
 msgid "%c%s... %u%%"
-msgstr "%c%s... Fatto"
+msgstr "%c%s... %u%%"
 
 #: apt-pkg/contrib/cmndline.cc:80
 #, c-format
