@@ -163,6 +163,9 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
       addArg('s', "no-act", "APT::Get::Simulate", 0);
    }
 
+   if (CmdMatches("upgrade"))
+      addArg(0, "allow-new", "APT::Get::UpgradeAllowNew", CommandLine::Boolean);
+
    // FIXME: move to the correct command(s)
    addArg('d',"download-only","APT::Get::Download-Only",0);
    addArg('y',"yes","APT::Get::Assume-Yes",0);
