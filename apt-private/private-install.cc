@@ -595,7 +595,7 @@ bool DoInstall(CommandLine &CmdL)
    if (Cache->BrokenCount() != 0)
       BrokenFix = true;
 
-   pkgProblemResolver* Fix = NULL;
+   SPtr<pkgProblemResolver> Fix;
    if (_config->FindB("APT::Get::CallResolver", true) == true)
       Fix = new pkgProblemResolver(Cache);
 
@@ -628,8 +628,6 @@ bool DoInstall(CommandLine &CmdL)
    if (_error->PendingError() == true)
    {
       helper.showVirtualPackageErrors(Cache);
-      if (Fix != NULL)
-	 delete Fix;
       return false;
    }
 
@@ -663,8 +661,6 @@ bool DoInstall(CommandLine &CmdL)
 
       if (_error->PendingError() == true)
       {
-	 if (Fix != NULL)
-	    delete Fix;
 	 return false;
       }
 
@@ -675,8 +671,6 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 c1out << _("You might want to run 'apt-get -f install' to correct these:") << std::endl;
 	 ShowBroken(c1out,Cache,false);
-	 if (Fix != NULL)
-	    delete Fix;
 	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
       }
 
@@ -684,7 +678,6 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 // Call the scored problem resolver
 	 Fix->Resolve(true);
-	 delete Fix;
       }
 
       // Now we check the state of the packages,
