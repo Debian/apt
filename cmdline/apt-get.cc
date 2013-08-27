@@ -350,9 +350,6 @@ bool DoMarkAuto(CommandLine &CmdL)
 /* Intelligent upgrader that will install and remove packages at will */
 bool DoDistUpgrade(CommandLine &CmdL)
 {
-   if (CmdL.FileSize() != 1)
-      return _error->Error(_("The dist-upgrade command takes no arguments"));
-
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
@@ -365,6 +362,10 @@ bool DoDistUpgrade(CommandLine &CmdL)
       return false;
    }
    
+   // parse additional cmdline pkg manipulation switches
+   if(!DoCacheManipulationFromCommandLine(CmdL, Cache))
+      return false;
+
    c0out << _("Done") << endl;
    
    return InstallPackages(Cache,true);

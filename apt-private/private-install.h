@@ -14,6 +14,9 @@
 
 bool DoInstall(CommandLine &Cmd);
 
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
+                                        std::map<unsigned short, APT::VersionSet> &verset);
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache);
 
 bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
                         bool Safety = true);
