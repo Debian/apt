@@ -13,9 +13,6 @@
    packages */
 bool DoUpgradeNoNewPackages(CommandLine &CmdL)
 {
-   if (CmdL.FileSize() != 1)
-      return _error->Error(_("The upgrade command takes no arguments"));
-
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
@@ -26,6 +23,10 @@ bool DoUpgradeNoNewPackages(CommandLine &CmdL)
       ShowBroken(c1out,Cache,false);
       return _error->Error(_("Internal error, AllUpgrade broke stuff"));
    }
+
+   // parse additional cmdline pkg manipulation switches
+   if(!DoCacheManipulationFromCommandLine(CmdL, Cache))
+      return false;
    
    return InstallPackages(Cache,true);
 }
@@ -34,9 +35,6 @@ bool DoUpgradeNoNewPackages(CommandLine &CmdL)
 // DoSafeUpgrade - Upgrade all packages with install but not remove	/*{{{*/
 bool DoUpgradeWithAllowNewPackages(CommandLine &CmdL)
 {
-   if (CmdL.FileSize() != 1)
-      return _error->Error(_("The upgrade command takes no arguments"));
-
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
@@ -47,6 +45,10 @@ bool DoUpgradeWithAllowNewPackages(CommandLine &CmdL)
       ShowBroken(c1out,Cache,false);
       return _error->Error(_("Internal error, AllUpgrade broke stuff"));
    }
+
+   // parse additional cmdline pkg manipulation switches
+   if(!DoCacheManipulationFromCommandLine(CmdL, Cache))
+      return false;
    
    return InstallPackages(Cache,true);
 }
