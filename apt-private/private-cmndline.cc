@@ -125,7 +125,8 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
       if (CmdMatches("upgrade"))
       {
-	 addArg(0, "allow-new", "APT::Get::UpgradeAllowNew", 0);
+         addArg(0, "allow-new", "APT::Get::Upgrade-Allow-New", 
+                CommandLine::Boolean);
       }
    }
    else if (CmdMatches("update"))
@@ -162,9 +163,6 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
       addArg('s', "dry-run", "APT::Get::Simulate", 0);
       addArg('s', "no-act", "APT::Get::Simulate", 0);
    }
-
-   if (CmdMatches("upgrade"))
-      addArg(0, "allow-new", "APT::Get::UpgradeAllowNew", CommandLine::Boolean);
 
    // FIXME: move to the correct command(s)
    addArg('d',"download-only","APT::Get::Download-Only",0);
