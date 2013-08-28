@@ -22,9 +22,7 @@ prepare() {
 	aptget clean
 	cp $1 aptarchive/Packages
 	find aptarchive -name 'Release' -delete
-	cat aptarchive/Packages | gzip > aptarchive/Packages.gz
-	cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
-	cat aptarchive/Packages | xz --format=lzma > aptarchive/Packages.lzma
+	compressfile 'aptarchive/Packages'
 	generatereleasefiles "$DATE"
 }
 

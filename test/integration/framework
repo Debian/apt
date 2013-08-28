@@ -194,6 +194,7 @@ setupenvironment() {
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	export LC_ALL=C
 	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
+	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 	msgdone "info"
 }
 
@@ -240,7 +241,13 @@ configdpkg() {
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
 			for ARCH in ${ARCHS}; do
-				if [ "${ARCH}" != "${DPKGARCH}" ]; then dpkg --add-architecture ${ARCH}; fi
+				if [ "${ARCH}" != "${DPKGARCH}" ]; then
+					if ! dpkg --add-architecture ${ARCH}; then
+						# old-style used e.g. in Ubuntu-P – and as it seems travis
+						echo "DPKG::options:: \"--foreign-architecture\";" >> aptconfig.conf
+						echo "DPKG::options:: \"${ARCH}\";" >> aptconfig.conf
+					fi
+				fi
 			done
 			if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
 				# dpkg doesn't really check the version as long as it is fully installed,
@@ -249,6 +256,20 @@ configdpkg() {
 			fi
 		fi
 	fi
+}
+
+configcompression() {
+	while [ -n "$1" ]; do
+		case "$1" in
+		'.') echo ".\t.\tcat";;
+		'gz') echo "gzip\tgz\tgzip";;
+		'bz2') echo "bzip2\tbz2\tbzip2";;
+		'lzma') echo "lzma\tlzma\txz --format=lzma";;
+		'xz') echo "xz\txz\txz";;
+		*) echo "$1\t$1\t$1";;
+		esac
+		shift
+	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf
 }
 
 setupsimplenativepackage() {
@@ -421,6 +442,8 @@ buildaptarchive() {
 }
 
 createaptftparchiveconfig() {
+	local COMPRESSORS="$(cut -d'	' -f 1 ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | tr '\n' ' ')"
+	COMPRESSORS="${COMPRESSORS%* }"
 	local ARCHS="$(find pool/ -name '*.deb' | grep -oE '_[a-z0-9-]+\.deb$' | sort | uniq | sed -e '/^_all.deb$/ d' -e 's#^_\([a-z0-9-]*\)\.deb$#\1#' | tr '\n' ' ')"
 	if [ -z "$ARCHS" ]; then
 		# the pool is empty, so we will operate on faked packages - let us use the configured archs
@@ -438,10 +461,10 @@ createaptftparchiveconfig() {
 	echo -n '";
 };
 Default {
-	Packages::Compress ". gzip bzip2 lzma xz";
-	Sources::Compress ". gzip bzip2 lzma xz";
-	Contents::Compress ". gzip bzip2 lzma xz";
-	Translation::Compress ". gzip bzip2 lzma xz";
+	Packages::Compress "'"$COMPRESSORS"'";
+	Sources::Compress "'"$COMPRESSORS"'";
+	Contents::Compress "'"$COMPRESSORS"'";
+	Translation::Compress "'"$COMPRESSORS"'";
 	LongDescription "false";
 };
 TreeDefault {
@@ -611,16 +634,25 @@ buildaptarchivefromfiles() {
 	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
 	find aptarchive -name 'Packages' -o -name 'Sources' | while read line; do
 		msgninfo "\t${line} file… "
-		cat ${line} | gzip > ${line}.gz
-		cat ${line} | bzip2 > ${line}.bz2
-		cat ${line} | xz --format=lzma > ${line}.lzma
-		cat ${line} | xz > ${line}.xz
-		if [ -n "$1" ]; then
-			touch -d "$1" ${line}.gz ${line}.bz2 ${line}.lzma ${line}.xz
-		fi
+		compressfile "$line" "$1"
 		msgdone "info"
 	done
 	generatereleasefiles "$@"
+}
+
+compressfile() {
+	cat ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | while read compressor extension command; do
+		if [ "$compressor" = '.' ]; then
+			if [ -n "$2" ]; then
+				touch -d "$2" "$1"
+			fi
+			continue
+		fi
+		cat "$1" | $command > "${1}.${extension}"
+		if [ -n "$2" ]; then
+			touch -d "$2" "${1}.${extension}"
+		fi
+	done
 }
 
 # can be overridden by testcases for their pleasure
