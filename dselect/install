@@ -5,7 +5,8 @@ TEXTDOMAIN="apt"
 
 # Get the configuration from /etc/apt/apt.conf
 CLEAN="prompt"
-OPTS="-f"
+OPTS=""
+DSELECT_UPGRADE_OPTS="-f"
 APTGET="/usr/bin/apt-get"
 DPKG="/usr/bin/dpkg"
 DPKG_OPTS="--admindir=$1"
@@ -47,12 +48,12 @@ yesno() {
 }
 
 if [ "$WAIT" = "true" ]; then
-   $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" -d dselect-upgrade
+   $APTGET $DSELECT_UPGRADE_OPTS $OPTS "$APT_OPT0" "$APT_OPT1" -d dselect-upgrade
    echo $"Press enter to continue." && read RES
-   $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
+   $APTGET $DSELECT_UPGRADE_OPTS $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
    RES=$?
 else
-   $APTGET $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
+   $APTGET $DSELECT_UPGRADE_OPTS $OPTS "$APT_OPT0" "$APT_OPT1" dselect-upgrade
    RES=$?
 fi
 

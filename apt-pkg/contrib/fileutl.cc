@@ -946,9 +946,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if ((Mode & Atomic) == Atomic)
    {
       Flags |= Replace;
-      char *name = strdup((FileName + ".XXXXXX").c_str());
-      TemporaryFileName = string(mktemp(name));
-      free(name);
    }
    else if ((Mode & (Exclusive | Create)) == (Exclusive | Create))
    {
@@ -971,11 +968,24 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if_FLAGGED_SET(Create, O_CREAT);
    if_FLAGGED_SET(Empty, O_TRUNC);
    if_FLAGGED_SET(Exclusive, O_EXCL);
-   else if_FLAGGED_SET(Atomic, O_EXCL);
    #undef if_FLAGGED_SET
 
-   if (TemporaryFileName.empty() == false)
-      iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
+   if ((Mode & Atomic) == Atomic)
+   {
+      char *name = strdup((FileName + ".XXXXXX").c_str());
+
+      if((iFd = mkstemp(name)) == -1)
+      {
+          free(name);
+          return FileFdErrno("mkostemp", "Could not create temporary file for %s", FileName.c_str());
+      }
+
+      TemporaryFileName = string(name);
+      free(name);
+
+      if(Perms != 600 && fchmod(iFd, Perms) == -1)
+          return FileFdErrno("fchmod", "Could not change permissions for temporary file %s", TemporaryFileName.c_str());
+   }
    else
       iFd = open(FileName.c_str(), fileflags, Perms);
 

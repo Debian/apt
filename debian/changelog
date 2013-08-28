@@ -1,18 +1,43 @@
-apt (0.9.11~exp3) UNRELEASEDexperimental; urgency=low
+apt (0.9.11.2) UNRELEASED; urgency=low
 
-  * fix incorrect bugnumber for the Pre-Install-Pkgs hook
+  [ Milo Casagrande ]
+  * Update Italian translation. Closes: #721030
+  
+  [ Trần Ngọc Quân ]
+  * Update Vietnamese translation. Closes: #720752
+  
+  [ Michael Vogt ]
+  * dselect/install:
+   - remove "-f" option for apt-get clean/auto-clean (closes: #720532)
+  * apt-private/private-cmndline.cc:
+    - fix typo in CmdMatches() selection for dselect-upgrade (closes: #720532)
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 19 Aug 2013 15:53:47 +0200
+ -- Christian Perrier <bubulle@debian.org>  Sun, 25 Aug 2013 15:39:40 +0200
 
-apt (0.9.11~exp2) experimental; urgency=low
+apt (0.9.11.1) unstable; urgency=low
 
-  * add lintian override for no-shlibs-control-file so that
-    the internal libapt-private.so.0.0.0 can be shipped
-  * adjust apt.install.in to only install libapt-private.so.*
+  [ Michael Vogt ]
+  * more coverity fixes:
+    - explicit init 
+    - always chdir("/") after chroot()
+    - ftparchive/override.cc: fix "skip empty lines" code, the pointer 
+      needs to get de-referenced first
+  * dselect/update: 
+    - remove "-f" option for apt-get update to fix breakage (closes: 720532)
 
- -- Michael Vogt <mvo@debian.org>  Mon, 19 Aug 2013 14:54:58 +0200
+  [ Christopher Baines ]
+  * Add test for bug #507998
 
-apt (0.9.11~exp1) experimental; urgency=low
+  [ David Kalnischkies ]
+  * add a breaks libapt-inst for FileFd changes in 0.9.9 (Closes: 720449)
+  * add versions to manpages-it Replaces+Breaks
+
+  [ Ángel Guzmán Maeso ]
+  * apt-pkg:contrib Avoid compiler warning about sign-compare
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 24 Aug 2013 09:13:27 +0200
+
+apt (0.9.11) unstable; urgency=low
 
   [ Daniel Hartwig ]
   * Clarify units of Acquire::http::Dl-Limit (closes: #705445)
@@ -31,6 +56,9 @@ apt (0.9.11~exp1) experimental; urgency=low
     - install libapt-private* into the apt binary
     - add PACKAGE_MATCHER_ABI_COMPAT define so that this branch can be 
       merged without breaking ABI
+    - add lintian override for no-shlibs-control-file so that
+      the internal libapt-private.so.0.0.0 can be shipped
+    - adjust apt.install.in to only install libapt-private.so.*
 
   [ David Kalnischkies ]
   * ensure that pkgTagFile isn't writing past Buffer length (Closes: 719629)
@@ -40,7 +68,7 @@ apt (0.9.11~exp1) experimental; urgency=low
   [ Christian PERRIER ]
   * French translation update.
 
- -- Michael Vogt <mvo@debian.org>  Mon, 19 Aug 2013 13:25:45 +0200
+ -- Michael Vogt <mvo@debian.org>  Wed, 21 Aug 2013 17:51:09 +0200
 
 apt (0.9.10) unstable; urgency=low
 
