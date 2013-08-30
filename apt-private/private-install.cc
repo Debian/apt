@@ -94,8 +94,6 @@ static bool CheckAuth(pkgAcquire& Fetcher)
    return _error->Error(_("There are problems and -y was used without --force-yes"));
 }
 									/*}}}*/
-
-
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
@@ -429,8 +427,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    return true;
 }
 									/*}}}*/
-
-
 // DoAutomaticRemove - Remove all automatic unused packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* Remove unused automatic packages */
@@ -576,7 +572,7 @@ bool DoAutomaticRemove(CacheFile &Cache)
    return true;
 }
 									/*}}}*/
-
+// DoCacheManipulationFromCommandLine					/*{{{*/
 static const unsigned short MOD_REMOVE = 1;
 static const unsigned short MOD_INSTALL = 2;
 
@@ -585,7 +581,6 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache)
    std::map<unsigned short, APT::VersionSet> verset;
    return DoCacheManipulationFromCommandLine(CmdL, Cache, verset);
 }
-
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
                                         std::map<unsigned short, APT::VersionSet> &verset)
 {
@@ -719,8 +714,7 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 
    return true;
 }
-
-
+									/*}}}*/
 // DoInstall - Install packages from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 /* Install named packages */

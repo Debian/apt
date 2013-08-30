@@ -84,10 +84,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-
 using namespace std;
-
-
 
 // TryToInstallBuildDep - Try to install a single package		/*{{{*/
 // ---------------------------------------------------------------------
@@ -1625,15 +1622,14 @@ void SigWinch(int)
 #endif
 }
 									/*}}}*/
-
-bool DoUpgrade(CommandLine &CmdL)
+bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
 {
    if (_config->FindB("APT::Get::UpgradeAllowNew", false) == true)
       return DoUpgradeWithAllowNewPackages(CmdL);
    else
       return DoUpgradeNoNewPackages(CmdL);
 }
-
+									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},

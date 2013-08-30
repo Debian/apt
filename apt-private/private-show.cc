@@ -1,3 +1,4 @@
+// Includes								/*{{{*/
 #include <apt-pkg/error.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cachefilter.h>
@@ -23,6 +24,7 @@
 
 #include "private-output.h"
 #include "private-cacheset.h"
+									/*}}}*/
 
 namespace APT {
    namespace Cmd {
@@ -87,8 +89,7 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    return true;
 }
 									/*}}}*/
-
-bool ShowPackage(CommandLine &CmdL)
+bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);

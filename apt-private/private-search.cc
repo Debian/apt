@@ -1,3 +1,4 @@
+// Includes								/*{{{*/
 #include <apt-pkg/error.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cachefilter.h>
@@ -34,9 +35,9 @@
 
 #include "private-search.h"
 #include "private-cacheset.h"
+									/*}}}*/
 
-
-bool FullTextSearch(CommandLine &CmdL)
+bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -97,3 +98,4 @@ bool FullTextSearch(CommandLine &CmdL)
 
    return true;
 }
+									/*}}}*/

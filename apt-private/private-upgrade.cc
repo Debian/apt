@@ -1,13 +1,13 @@
-
+// Includes								/*{{{*/
 #include <apt-pkg/algorithms.h>
 
 #include "private-install.h"
 #include "private-cachefile.h"
 #include "private-upgrade.h"
 #include "private-output.h"
+									/*}}}*/
 
-
-// DoUpgradeNoNewPackages - Upgrade all packages        		/*{{{*/
+// DoUpgradeNoNewPackages - Upgrade all packages			/*{{{*/
 // ---------------------------------------------------------------------
 /* Upgrade all packages without installing new packages or erasing old
    packages */
@@ -31,7 +31,6 @@ bool DoUpgradeNoNewPackages(CommandLine &CmdL)
    return InstallPackages(Cache,true);
 }
 									/*}}}*/
-
 // DoSafeUpgrade - Upgrade all packages with install but not remove	/*{{{*/
 bool DoUpgradeWithAllowNewPackages(CommandLine &CmdL)
 {

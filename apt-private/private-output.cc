@@ -28,8 +28,7 @@ std::ostream c2out(0);
 std::ofstream devnull("/dev/null");
 unsigned int ScreenWidth = 80 - 1; /* - 1 for the cursor */
 
-
-bool InitOutput()
+bool InitOutput()							/*{{{*/
 {
    c0out.rdbuf(cout.rdbuf());
    c1out.rdbuf(cout.rdbuf());
@@ -60,8 +59,8 @@ bool InitOutput()
 
    return true;
 }
-
-std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver)
+									/*}}}*/
+std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) /*{{{*/
 {
    std::string suite = "";
    if (ver && ver.FileList() && ver.FileList())
@@ -77,8 +76,8 @@ std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver)
    }
    return suite;
 }
-
-std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
+									/*}}}*/
+std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgDepCache *DepCache = CacheFile.GetDepCache();
    pkgDepCache::StateCache &state = (*DepCache)[P];
@@ -94,23 +93,23 @@ std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
       flags_str = "-";
    return flags_str;
 }
-
-std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
+									/*}}}*/
+std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
    pkgCache::VerIterator cand = policy->GetCandidateVer(P);
 
    return cand ? cand.VerStr() : "(none)";
 }
-
-std::string GetInstalledVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
+									/*}}}*/
+std::string GetInstalledVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgCache::VerIterator inst = P.CurrentVer();
 
    return inst ? inst.VerStr() : "(none)";
 }
-
-std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
+									/*}}}*/
+std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)/*{{{*/
 {
    pkgCache::PkgIterator P = V.ParentPkg();
    if (V == P.CurrentVer())
@@ -127,8 +126,8 @@ std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
       return DeNull(V.VerStr());
    return "(none)";
 }
-
-std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
+									/*}}}*/
+std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
    pkgCache::VerIterator inst = P.CurrentVer();
@@ -136,8 +135,8 @@ std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
    
    return inst ? inst.Arch() : cand.Arch();
 }
-
-std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)
+									/*}}}*/
+std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
 
@@ -157,8 +156,8 @@ std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pk
    }
    return ShortDescription;
 }
-
-void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records, 
+									/*}}}*/
+void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
                        pkgCache::VerIterator V, std::ostream &out)
 {
    pkgCache::PkgIterator P = V.ParentPkg();
@@ -230,8 +229,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
                 << std::endl;
    }
 }
-
-
+									/*}}}*/
 // ShowList - Show a list						/*{{{*/
 // ---------------------------------------------------------------------
 /* This prints out a string of space separated words with a title and 

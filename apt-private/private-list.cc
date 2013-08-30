@@ -42,7 +42,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-struct PackageSortAlphabetic
+struct PackageSortAlphabetic						/*{{{*/
 {
    bool operator () (const pkgCache::PkgIterator &p_lhs, 
                      const pkgCache::PkgIterator &p_rhs)
@@ -52,12 +52,12 @@ struct PackageSortAlphabetic
        return (l_name < r_name);
     }
 };
-
+									/*}}}*/
+class PackageNameMatcher : public Matcher				/*{{{*/
+{
 #ifdef PACKAGE_MATCHER_ABI_COMPAT
 #define PackageMatcher PackageNameMatchesFnmatch
 #endif
-class PackageNameMatcher : public Matcher
-{
   public:
    PackageNameMatcher(const char **patterns)
    {
@@ -98,9 +98,8 @@ private:
    std::vector<APT::CacheFilter::PackageMatcher*>::const_iterator J;
    #undef PackageMatcher
 };
-
-
-void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records, 
+									/*}}}*/
+void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
                      pkgCache::PkgIterator P,    
                      std::ostream &outs)
 {
@@ -108,7 +107,7 @@ void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,
         Ver.end() == false; Ver++) 
       ListSingleVersion(CacheFile, records, Ver, outs);
 }
-
+									/*}}}*/
 // list - list package based on criteria        			/*{{{*/
 // ---------------------------------------------------------------------
 bool List(CommandLine &Cmd)
