@@ -1,4 +1,4 @@
-apt (0.9.11.2) UNRELEASED; urgency=low
+apt (0.9.11.2) unstable; urgency=low
 
   [ Milo Casagrande ]
   * Update Italian translation. Closes: #721030
@@ -11,8 +11,15 @@ apt (0.9.11.2) UNRELEASED; urgency=low
    - remove "-f" option for apt-get clean/auto-clean (closes: #720532)
   * apt-private/private-cmndline.cc:
     - fix typo in CmdMatches() selection for dselect-upgrade (closes: #720532)
+  * use SPtr<pkgProblemResolver> in DoInstall() to simplify the code
+  * allow pkg manipulation in the upgrade/dist-upgrade commandline, like
+    apt-get dist-upgrade 2vcard- 4g8+ (thanks to Thorsten Glaser for the
+    suggestion)
 
- -- Christian Perrier <bubulle@debian.org>  Sun, 25 Aug 2013 15:39:40 +0200
+  [ Angel Guzman Maeso ]
+  * replace usage of potential dangerous mktemp with mkstemp
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 31 Aug 2013 16:45:31 +0200
 
 apt (0.9.11.1) unstable; urgency=low
 
