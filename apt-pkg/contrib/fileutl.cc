@@ -977,7 +977,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
       if((iFd = mkstemp(name)) == -1)
       {
           free(name);
-          return FileFdErrno("mkostemp", "Could not create temporary file for %s", FileName.c_str());
+          return FileFdErrno("mkstemp", "Could not create temporary file for %s", FileName.c_str());
       }
 
       TemporaryFileName = string(name);
