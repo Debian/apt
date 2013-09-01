@@ -375,7 +375,7 @@ fi
 check_power || exit 0
 
 # check if we can lock the cache and if the cache is clean
-if which apt-get >/dev/null && ! eval apt-get check -f $XAPTOPT $XSTDERR ; then
+if which apt-get >/dev/null && ! eval apt-get check $XAPTOPT $XSTDERR ; then
     debug_echo "error encountered in cron job with \"apt-get check\"."
     exit 0
 fi
