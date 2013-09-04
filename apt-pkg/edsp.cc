@@ -231,7 +231,7 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
 	 continue;
       req->append(" ").append(Pkg.FullName());
    }
-   fprintf(output, "Request: EDSP 0.4\n");
+   fprintf(output, "Request: EDSP 0.5\n");
    if (del.empty() == false)
       fprintf(output, "Remove: %s\n", del.c_str()+1);
    if (inst.empty() == false)
