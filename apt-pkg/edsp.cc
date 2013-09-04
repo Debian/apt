@@ -232,6 +232,15 @@ bool EDSP::WriteRequest(pkgDepCache &Cache, FILE* output, bool const Upgrade,
       req->append(" ").append(Pkg.FullName());
    }
    fprintf(output, "Request: EDSP 0.5\n");
+
+   const char *arch = _config->Find("APT::Architecture").c_str();
+   std::vector<string> archs = APT::Configuration::getArchitectures();
+   fprintf(output, "Architecture: %s\n", arch);
+   fprintf(output, "Architectures:");
+   for (std::vector<string>::const_iterator a = archs.begin(); a != archs.end(); ++a)
+       fprintf(output, " %s", a->c_str());
+   fprintf(output, "\n");
+
    if (del.empty() == false)
       fprintf(output, "Remove: %s\n", del.c_str()+1);
    if (inst.empty() == false)
