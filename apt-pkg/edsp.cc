@@ -18,6 +18,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/pkgrecords.h>
 
 #include <ctype.h>
 #include <stddef.h>
@@ -87,7 +88,12 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
 void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgIterator const &Pkg,
 				pkgCache::VerIterator const &Ver)
 {
+   pkgRecords Recs(Cache);
+   pkgRecords::Parser &rec = Recs.Lookup(Ver.FileList());
+   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
+
    fprintf(output, "Package: %s\n", Pkg.Name());
+   fprintf(output, "Source: %s\n", srcpkg.c_str());
    fprintf(output, "Architecture: %s\n", Ver.Arch());
    fprintf(output, "Version: %s\n", Ver.VerStr());
    if (Pkg.CurrentVer() == Ver)
