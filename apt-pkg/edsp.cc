@@ -113,10 +113,22 @@ void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgI
    else if ((Ver->MultiArch & pkgCache::Version::Same) == pkgCache::Version::Same)
       fprintf(output, "Multi-Arch: same\n");
    signed short Pin = std::numeric_limits<signed short>::min();
-   for (pkgCache::VerFileIterator File = Ver.FileList(); File.end() == false; ++File) {
-      signed short const p = Cache.GetPolicy().GetPriority(File.File());
+   std::set<string> Releases;
+   for (pkgCache::VerFileIterator I = Ver.FileList(); I.end() == false; ++I) {
+      pkgCache::PkgFileIterator File = I.File();
+      signed short const p = Cache.GetPolicy().GetPriority(File);
       if (Pin < p)
 	 Pin = p;
+      if ((File->Flags & pkgCache::Flag::NotSource) != pkgCache::Flag::NotSource) {
+	 string Release = File.RelStr();
+	 if (!Release.empty())
+	    Releases.insert(Release);
+      }
+   }
+   if (!Releases.empty()) {
+       fprintf(output, "APT-Release:\n");
+       for (std::set<string>::iterator R = Releases.begin(); R != Releases.end(); ++R)
+	   fprintf(output, " %s\n", R->c_str());
    }
    fprintf(output, "APT-Pin: %d\n", Pin);
    if (Cache.GetCandidateVer(Pkg) == Ver)

@@ -209,6 +209,15 @@ field. The following fields are supported in package stanzas:
   should be removed by the solver only when the Autoremove action is
   requested (see Request section).
 
+- **APT-Release:** (optional) The releases the package belongs to, according to
+  APT. The format of this field is multiline with one value per line and the
+  first line (the one containing the field name) empty. Each subsequent line
+  corresponds to one of the releases the package belongs to and looks like
+  this: `o=Debian,a=unstable,n=sid,l=Debian,c=main`. That is, each release line
+  is a comma-separated list of "key=value" pairs, each of which denotes a
+  Release file entry (Origin, Label, Codename, etc.) in the format of
+  APT_PREFERENCES(5).
+
 ### Answer
 
 An answer from the external solver to APT is either a *solution* or an
