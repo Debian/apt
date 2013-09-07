@@ -66,7 +66,7 @@ bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) __attrib_const;
 // like python string.split
-std::vector<std::string> StringSplit(std::string const &haystack, std::string const &sep) __attrib_const;
+std::vector<std::string> StringSplit(std::string const &haystack, std::string const &sep, unsigned int maxsplit=0) __attrib_const;
 void ioprintf(std::ostream &out,const char *format,...) __like_printf(2);
 void strprintf(std::string &out,const char *format,...) __like_printf(2);
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...) __like_printf(3);
