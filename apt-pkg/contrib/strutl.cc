@@ -1118,10 +1118,11 @@ vector<string> VectorizeString(string const &haystack, char const &split)
    return exploded;
 }
 									/*}}}*/
-// StringSplit - like python string.split		/*{{{*/
+// StringSplit - split a string into a string vector by token		/*{{{*/
 // ---------------------------------------------------------------------
-/* This can be used to split a given string up into a vector of strings
- * The seperator is a string
+/* This can be used to split a given string up from a given string token
+ * into a vector of strings. A optional "maxsplit" argument can be used
+ * to limit the splitting, in this case the 
  */
 vector<string> StringSplit(string const &s, std::string const &sep,
                            unsigned int maxsplit)
@@ -1129,22 +1130,24 @@ vector<string> StringSplit(string const &s, std::string const &sep,
    vector<string> split;
    size_t start, pos;
 
+   // no seperator given, this is bogus
    if(sep.size() == 0)
       return split;
 
    start = pos = 0;
-   do {
+   while (pos != string::npos)
+   {
       pos = s.find(sep, start);
       split.push_back(s.substr(start, pos-start));
       
-      // deal with the max-split
+      // if maxsplit is reached, the remaining string is the last item
       if(maxsplit > 0 && split.size() >= maxsplit)
       {
          split[split.size()-1] = s.substr(start);
          break;
       }
       start = pos+sep.size();
-   } while (pos != string::npos);
+   }
    return split;
 }
 									/*}}}*/
