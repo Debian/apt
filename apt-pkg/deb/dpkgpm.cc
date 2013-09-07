@@ -512,7 +512,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 
 
    /* dpkg sends strings like this:
-      'status:   <pkg>:  <pkg  qstate>'
+      'status:   <pkg>: <pkg  qstate>'
+      'status:   <pkg>:<arch>: <pkg  qstate>'
       errors look like this:
       'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
       and conffile-prompt like this
@@ -527,29 +528,36 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: trigproc: trigger'
 	    
    */
-   char* list[6];
-   //        dpkg sends multiline error messages sometimes (see
-   //        #374195 for a example. we should support this by
-   //        either patching dpkg to not send multiline over the
-   //        statusfd or by rewriting the code here to deal with
-   //        it. for now we just ignore it and not crash
-   TokSplitString(':', line, list, sizeof(list)/sizeof(list[0]));
-   if( list[0] == NULL || list[1] == NULL || list[2] == NULL) 
+   // we need to split on ": " (note the appended space) as the ':' is
+   // part of the pkgname:arch information that dpkg sends
+   // 
+   // A dpkg error message may contain additional ":" (like
+   //  "failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ..."
+   // so we need to ensure to not split too much
+   std::vector<std::string> list = StringSplit(line, ": ", 3);
+   if(list.size() != 3)
    {
       if (Debug == true)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
       return;
    }
-   const char* const pkg = list[1];
-   const char* action = _strstrip(list[2]);
+   // dpkg does not send always send "pkgname:arch" so we add it here if needed
+   std::string pkgname = list[1];
+   if (pkgname.find(":") == std::string::npos)
+   {
+      string const nativeArch = _config->Find("APT::Architecture");
+      pkgname = pkgname + ":" + nativeArch;
+   }
+   const char* const pkg = pkgname.c_str();
+   const char* action = list[2].c_str();
 
    // 'processing' from dpkg looks like
    // 'processing: action: pkg'
-   if(strncmp(list[0], "processing", strlen("processing")) == 0)
+   if(strncmp(list[0].c_str(), "processing", strlen("processing")) == 0)
    {
       char s[200];
-      const char* const pkg_or_trigger = _strstrip(list[2]);
-      action = _strstrip( list[1]);
+      const char* const pkg_or_trigger = list[2].c_str();
+      action =  list[1].c_str();
       const std::pair<const char *, const char *> * const iter =
 	std::find_if(PackageProcessingOpsBegin,
 		     PackageProcessingOpsEnd,
@@ -578,14 +586,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 
    if(strncmp(action,"error",strlen("error")) == 0)
    {
-      // urgs, sometime has ":" in its error string so that we
-      // end up with the error message split between list[3]
-      // and list[4], e.g. the message: 
-      // "failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ..."
-      // concat them again
-      if( list[4] != NULL )
-	 list[3][strlen(list[3])] = ':';
-
       status << "pmerror:" << list[1]
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << list[3]
@@ -595,7 +595,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
       pkgFailures++;
-      WriteApportReport(list[1], list[3]);
+      WriteApportReport(list[1].c_str(), list[3].c_str());
       return;
    }
    else if(strncmp(action,"conffile",strlen("conffile")) == 0)
@@ -1035,7 +1035,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       if((*I).Pkg.end() == true)
 	 continue;
 
-      string const name = (*I).Pkg.Name();
+      string const name = (*I).Pkg.FullName();
       PackageOpsDone[name] = 0;
       for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL; ++i)
       {
