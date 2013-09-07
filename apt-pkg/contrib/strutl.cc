@@ -1118,6 +1118,28 @@ vector<string> VectorizeString(string const &haystack, char const &split)
    return exploded;
 }
 									/*}}}*/
+// StringSplit - like python string.split		/*{{{*/
+// ---------------------------------------------------------------------
+/* This can be used to split a given string up into a vector of strings
+ * The seperator is a string
+ */
+vector<string> StringSplit(string const &s, std::string const &sep)
+{
+   vector<string> split;
+   size_t start, pos;
+   start = pos = 0;
+   if(sep.size() == 0)
+      return split;
+   
+   do {
+      pos = s.find(sep, start);
+      split.push_back(s.substr(start, pos-start));
+      if(pos != string::npos)
+         start = pos+sep.size();
+   } while (pos != string::npos);
+   return split;
+}
+									/*}}}*/
 // RegexChoice - Simple regex list/list matcher				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
