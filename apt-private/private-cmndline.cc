@@ -62,8 +62,12 @@ bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char const * con
    {
       addArg(0, "all-names", "APT::Cache::AllNames", 0);
    }
+   else if (CmdMatches("unmet"))
+   {
+      addArg('i', "important", "APT::Cache::Important", 0);
+   }
    else if (CmdMatches("gencaches", "showsrc", "showpkg", "stats", "dump",
-	    "dumpavail", "unmet", "showauto", "policy", "madison"))
+	    "dumpavail", "showauto", "policy", "madison"))
       ;
    else
       return false;
