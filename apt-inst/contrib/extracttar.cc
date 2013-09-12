@@ -161,8 +161,8 @@ bool ExtractTar::Go(pkgDirStream &Stream)
       return false;
    
    // Loop over all blocks
-   string LastLongLink;
-   string LastLongName;
+   string LastLongLink, ItemLink;
+   string LastLongName, ItemName;
    while (1)
    {
       bool BadRecord = false;      
@@ -208,25 +208,23 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	  StrToNum(Tar->Major,Itm.Major,sizeof(Tar->Major),8) == false ||
 	  StrToNum(Tar->Minor,Itm.Minor,sizeof(Tar->Minor),8) == false)
 	 return _error->Error(_("Corrupted archive"));
-      
-      // Grab the filename
+
+      // Grab the filename and link target: use last long name if one was
+      // set, otherwise use the header value as-is, but remember that it may
+      // fill the entire 100-byte block and needs to be zero-terminated.
+      // See Debian Bug #689582.
       if (LastLongName.empty() == false)
 	 Itm.Name = (char *)LastLongName.c_str();
       else
-      {
-	 Tar->Name[sizeof(Tar->Name)-1] = 0;
-	 Itm.Name = Tar->Name;
-      }      
+	 Itm.Name = (char *)ItemName.assign(Tar->Name, sizeof(Tar->Name)).c_str();
       if (Itm.Name[0] == '.' && Itm.Name[1] == '/' && Itm.Name[2] != 0)
 	 Itm.Name += 2;
-      
-      // Grab the link target
-      Tar->Name[sizeof(Tar->LinkName)-1] = 0;
-      Itm.LinkTarget = Tar->LinkName;
 
       if (LastLongLink.empty() == false)
 	 Itm.LinkTarget = (char *)LastLongLink.c_str();
-      
+      else
+	 Itm.LinkTarget = (char *)ItemLink.assign(Tar->LinkName, sizeof(Tar->LinkName)).c_str();
+
       // Convert the type over
       switch (Tar->LinkFlag)
       {
