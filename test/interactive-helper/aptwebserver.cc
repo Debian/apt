@@ -100,8 +100,13 @@ bool sendHead(int const client, int const httpcode, std::list<std::string> &head
    std::string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
    headers.push_front(response);
+   _config->Set("APTWebserver::Last-Status-Code", httpcode);
 
-   headers.push_back("Server: APT webserver");
+   std::stringstream buffer;
+   _config->Dump(buffer, "aptwebserver::response-header", "%t: %v%n", false);
+   std::vector<std::string> addheaders = VectorizeString(buffer.str(), '\n');
+   for (std::vector<std::string>::const_iterator h = addheaders.begin(); h != addheaders.end(); ++h)
+      headers.push_back(*h);
 
    std::string date("Date: ");
    date.append(TimeRFC1123(time(NULL)));
@@ -512,6 +517,9 @@ int main(int const argc, const char * argv[])
    listen(sock, 1);
    /*}}}*/
 
+   _config->CndSet("aptwebserver::response-header::Server", "APT webserver");
+   _config->CndSet("aptwebserver::response-header::Accept-Ranges", "bytes");
+
    std::vector<std::string> messages;
    int client;
    while ((client = accept(sock, NULL, NULL)) != -1)
@@ -597,6 +605,60 @@ int main(int const argc, const char * argv[])
 		  {
 		     sendHead(client, 304, headers);
 		     continue;
+		  }
+	       }
+
+	       if (_config->FindB("aptwebserver::support::range", true) == true)
+		  condition = LookupTag(*m, "Range", "");
+	       else
+		  condition.clear();
+	       if (condition.empty() == false && strncmp(condition.c_str(), "bytes=", 6) == 0)
+	       {
+		  time_t cache;
+		  std::string ifrange;
+		  if (_config->FindB("aptwebserver::support::if-range", true) == true)
+		     ifrange = LookupTag(*m, "If-Range", "");
+		  bool validrange = (ifrange.empty() == true ||
+			(RFC1123StrToTime(ifrange.c_str(), cache) == true &&
+			 cache <= data.ModificationTime()));
+
+		  // FIXME: support multiple byte-ranges (APT clients do not do this)
+		  if (condition.find(',') == std::string::npos)
+		  {
+		     size_t start = 6;
+		     unsigned long long filestart = strtoull(condition.c_str() + start, NULL, 10);
+		     // FIXME: no support for last-byte-pos being not the end of the file (APT clients do not do this)
+		     size_t dash = condition.find('-') + 1;
+		     unsigned long long fileend = strtoull(condition.c_str() + dash, NULL, 10);
+		     unsigned long long filesize = data.FileSize();
+		     if ((fileend == 0 || (fileend == filesize && fileend >= filestart)) &&
+			   validrange == true)
+		     {
+			if (filesize > filestart)
+			{
+			   data.Skip(filestart);
+			   std::ostringstream contentlength;
+			   contentlength << "Content-Length: " << (filesize - filestart);
+			   headers.push_back(contentlength.str());
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes " << filestart << "-"
+			      << filesize - 1 << "/" << filesize;
+			   headers.push_back(contentrange.str());
+			   sendHead(client, 206, headers);
+			   if (sendContent == true)
+			      sendFile(client, data);
+			   continue;
+			}
+			else
+			{
+			   headers.push_back("Content-Length: 0");
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes */" << filesize;
+			   headers.push_back(contentrange.str());
+			   sendHead(client, 416, headers);
+			   continue;
+			}
+		     }
 		  }
 	       }
 
