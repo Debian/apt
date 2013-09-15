@@ -156,14 +156,28 @@ void sendError(int const client, int const httpcode, std::string const &request,
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
-   if (error.empty() == false)
-      response.append("<p><em>Error</em>: ").append(error).append("</p>");
-   response.append("This error is a result of the request: <pre>");
+   if (httpcode != 200)
+   {
+      if (error.empty() == false)
+	 response.append("<p><em>Error</em>: ").append(error).append("</p>");
+      response.append("This error is a result of the request: <pre>");
+   }
+   else
+   {
+      if (error.empty() == false)
+	 response.append("<p><em>Success</em>: ").append(error).append("</p>");
+      response.append("The successfully executed operation was requested by: <pre>");
+   }
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
    sendHead(client, httpcode, headers);
    if (content == true)
       sendData(client, response);
+}
+void sendSuccess(int const client, std::string const &request,
+	       bool content, std::string const &error = "")
+{
+   sendError(client, 200, request, content, error);
 }
 									/*}}}*/
 void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
@@ -365,6 +379,49 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
    return true;
 }
 									/*}}}*/
+bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+{
+   size_t const pcount = parts.size();
+   if (pcount == 4 && parts[1] == "set")
+   {
+      _config->Set(parts[2], parts[3]);
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!");
+      return true;
+   }
+   else if (pcount == 4 && parts[1] == "find")
+   {
+      std::list<std::string> headers;
+      std::string response = _config->Find(parts[2], parts[3]);
+      addDataHeaders(headers, response);
+      sendHead(client, 200, headers);
+      sendData(client, response);
+      return true;
+   }
+   else if (pcount == 3 && parts[1] == "find")
+   {
+      std::list<std::string> headers;
+      if (_config->Exists(parts[2]) == true)
+      {
+	 std::string response = _config->Find(parts[2]);
+	 addDataHeaders(headers, response);
+	 sendHead(client, 200, headers);
+	 sendData(client, response);
+	 return true;
+      }
+      sendError(client, 404, request, "Requested Configuration option doesn't exist.");
+      return false;
+   }
+   else if (pcount == 3 && parts[1] == "clear")
+   {
+      _config->Clear(parts[2]);
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.");
+      return true;
+   }
+
+   sendError(client, 400, request, true, "Unknown on-the-fly configuration request");
+   return false;
+}
+									/*}}}*/
 int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
@@ -474,6 +531,17 @@ int main(int const argc, const char * argv[])
 	    bool sendContent = true;
 	    if (parseFirstLine(client, *m, filename, sendContent, closeConnection) == false)
 	       continue;
+
+	    // special webserver command request
+	    if (filename.length() > 1 && filename[0] == '_')
+	    {
+	       std::vector<std::string> parts = VectorizeString(filename, '/');
+	       if (parts[0] == "_config")
+	       {
+		  handleOnTheFlyReconfiguration(client, *m, parts);
+		  continue;
+	       }
+	    }
 
 	    // string replacements in the requested filename
 	    ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
