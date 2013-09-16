@@ -750,7 +750,7 @@ void HttpMethod::SendReq(FetchItem *Itm,CircleBuf &Out)
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       // In this case we send an if-range query with a range header
-      sprintf(Buf,"Range: bytes=%lli-\r\nIf-Range: %s\r\n",(long long)SBuf.st_size - 1,
+      sprintf(Buf,"Range: bytes=%lli-\r\nIf-Range: %s\r\n",(long long)SBuf.st_size,
 	      TimeRFC1123(SBuf.st_mtime).c_str());
       Req += Buf;
    }
@@ -1004,11 +1004,24 @@ HttpMethod::DealWithHeaders(FetchResult &Res,ServerState *Srv)
       /* else pass through for error message */
    }
    // retry after an invalid range response without partial data
-   else if (Srv->Result == 416 && FileExists(Queue->DestFile) == true &&
-	 unlink(Queue->DestFile.c_str()) == 0)
+   else if (Srv->Result == 416)
    {
-      NextURI = Queue->Uri;
-      return TRY_AGAIN_OR_REDIRECT;
+      struct stat SBuf;
+      if (stat(Queue->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
+      {
+	 if ((unsigned long long)SBuf.st_size == Srv->Size)
+	 {
+	    // the file is completely downloaded, but was not moved
+	    Srv->StartPos = Srv->Size;
+	    Srv->Result = 200;
+	    Srv->HaveContent = false;
+	 }
+	 else if (unlink(Queue->DestFile.c_str()) == 0)
+	 {
+	    NextURI = Queue->Uri;
+	    return TRY_AGAIN_OR_REDIRECT;
+	 }
+      }
    }
  
    /* We have a reply we dont handle. This should indicate a perm server
@@ -1246,7 +1259,9 @@ int HttpMethod::Loop()
 	    URIStart(Res);
 
 	    // Run the data
-	    bool Result =  Server->RunData();
+	    bool Result = true;
+            if (Server->HaveContent)
+	       Result = Server->RunData();
 
 	    /* If the server is sending back sizeless responses then fill in
 	       the size now */
