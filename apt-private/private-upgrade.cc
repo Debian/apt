@@ -39,7 +39,7 @@ bool DoUpgradeWithAllowNewPackages(CommandLine &CmdL)
       return false;
 
    // Do the upgrade
-   if (pkgAllUpgradeNoDelete(Cache) == false)
+   if (APT::Upgrade::Upgrade(Cache, APT::Upgrade::ALLOW_NEW_INSTALLS) == false)
    {
       ShowBroken(c1out,Cache,false);
       return _error->Error(_("Internal error, AllUpgrade broke stuff"));

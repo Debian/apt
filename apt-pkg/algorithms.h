@@ -45,6 +45,15 @@ using std::ostream;
 
 class pkgAcquireStatus;
 
+namespace APT {
+   namespace Upgrade {
+      enum UpgradeMode {NO_INSTALL_OR_REMOVE,
+                        ALLOW_NEW_INSTALLS,
+                        ALLOW_REMOVAL_AND_NEW_INSTALLS};
+      bool Upgrade(pkgDepCache &Cache, UpgradeMode mode);
+   }
+}
+
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
    protected:
@@ -85,6 +94,7 @@ private:
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
 {
+ private:
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
@@ -145,8 +155,6 @@ bool pkgApplyStatus(pkgDepCache &Cache);
 bool pkgFixBroken(pkgDepCache &Cache);
 
 bool pkgAllUpgrade(pkgDepCache &Cache);
-
-bool pkgAllUpgradeNoDelete(pkgDepCache &Cache);
 
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 

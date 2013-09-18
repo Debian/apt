@@ -422,12 +422,8 @@ bool pkgDistUpgrade(pkgDepCache &Cache)
    return Fix.Resolve();
 }
 									/*}}}*/
-// AllUpgrade - Upgrade as many packages as possible			/*{{{*/
-// ---------------------------------------------------------------------
-/* Right now the system must be consistent before this can be called.
-   It also will not change packages marked for install, it only tries
-   to install packages not marked for install */
-bool pkgAllUpgrade(pkgDepCache &Cache)
+// AllUpgradeNoNewPackages - Upgrade but no removals or new pkgs        /*{{{*/
+bool pkgAllUpgradeNoNewPackages(pkgDepCache &Cache)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
    if (solver != "internal") {
@@ -459,13 +455,13 @@ bool pkgAllUpgrade(pkgDepCache &Cache)
    return Fix.ResolveByKeep();
 }
 									/*}}}*/
-// AllUpgradeNoDelete - Upgrade without removing packages		/*{{{*/
+// AllUpgradeWithNewInstalls - Upgrade + install new packages as needed /*{{{*/
 // ---------------------------------------------------------------------
 /* Right now the system must be consistent before this can be called.
  * Upgrade as much as possible without deleting anything (useful for
  * stable systems)
  */
-bool pkgAllUpgradeNoDelete(pkgDepCache &Cache)
+bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache)
 {
    pkgDepCache::ActionGroup group(Cache);
 
@@ -500,6 +496,16 @@ bool pkgAllUpgradeNoDelete(pkgDepCache &Cache)
 
    // resolve remaining issues via keep
    return Fix.ResolveByKeep();
+}
+									/*}}}*/
+// AllUpgrade - Upgrade as many packages as possible			/*{{{*/
+// ---------------------------------------------------------------------
+/* Right now the system must be consistent before this can be called.
+   It also will not change packages marked for install, it only tries
+   to install packages not marked for install */
+bool pkgAllUpgrade(pkgDepCache &Cache)
+{
+   return pkgAllUpgradeNoNewPackages(Cache);
 }
 									/*}}}*/
 // MinimizeUpgrade - Minimizes the set of packages to be upgraded	/*{{{*/
@@ -545,6 +551,22 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
       return _error->Error("Internal Error in pkgMinimizeUpgrade");
    
    return true;
+}
+									/*}}}*/
+// APT::Upgrade::Upgrade - Upgrade using a specific strategy     	/*{{{*/
+bool APT::Upgrade::Upgrade(pkgDepCache &Cache, APT::Upgrade::UpgradeMode mode)
+{
+   switch(mode) {
+      case APT::Upgrade::NO_INSTALL_OR_REMOVE:
+         return pkgAllUpgradeNoNewPackages(Cache);
+      case APT::Upgrade::ALLOW_NEW_INSTALLS:
+         return pkgAllUpgradeWithNewPackages(Cache);
+      case APT::Upgrade::ALLOW_REMOVAL_AND_NEW_INSTALLS:
+         return pkgDistUpgrade(Cache);
+      default:
+         _error->Error("pkgAllUpgrade called with unknwon mode %i", mode);
+   }
+   return false;
 }
 									/*}}}*/
 // ProblemResolver::pkgProblemResolver - Constructor			/*{{{*/
