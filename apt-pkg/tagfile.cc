@@ -164,7 +164,7 @@ bool pkgTagFile::Fill()
       unsigned long long const dataSize = d->Size - ((d->End - d->Buffer) + 1);
       if (d->Fd.Read(d->End, dataSize, &Actual) == false)
 	 return false;
-      if (Actual != dataSize || d->Fd.Eof() == true)
+      if (Actual != dataSize)
 	 d->Done = true;
       d->End += Actual;
    }
