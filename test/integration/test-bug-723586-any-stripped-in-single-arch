@@ -1,0 +1,54 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'python3' 'all' '3.2.3-6'
+
+insertpackage 'unstable' 'python3' 'amd64' '3.3.2-16' 'Multi-Arch: allowed'
+insertpackage 'stable' 'python3-gnupg' 'all' '0.3.5-2' 'Depends: python3:any (>= 3.2.3-3~)'
+
+insertpackage 'unstable' 'python-mips' 'amd64' '3' 'Depends: python3:mips'
+
+setupaptarchive
+
+INSTALLLOG='Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  python3
+The following NEW packages will be installed:
+  python3-gnupg
+The following packages will be upgraded:
+  python3
+1 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst python3 [3.2.3-6] (3.3.2-16 unstable [amd64])
+Inst python3-gnupg (0.3.5-2 stable [all])
+Conf python3 (3.3.2-16 unstable [amd64])
+Conf python3-gnupg (0.3.5-2 stable [all])'
+
+FAILLOG='Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ python-mips : Depends: python3:mips but it is not installable
+E: Unable to correct problems, you have held broken packages.'
+
+testequal "$INSTALLLOG" aptget install python3-gnupg -s
+aptcache showpkg python3 > showpkg.log
+testequal "$FAILLOG" aptget install python-mips -s
+
+# same test, but this time in a multi-arch environment
+configarchitecture 'amd64' 'armhf'
+rm rootdir/var/cache/apt/*.bin
+
+testequal "$INSTALLLOG" aptget install python3-gnupg -s
+testequal "$(sed 's#3.3.2-16 - python3#3.3.2-16 - python3:any:armhf python3#' showpkg.log)" aptcache showpkg python3
+testequal "$FAILLOG" aptget install python-mips -s
