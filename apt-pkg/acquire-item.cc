@@ -1719,27 +1719,34 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
    }
 
    // check if we have one trusted source for the package. if so, switch
-   // to "TrustedOnly" mode
+   // to "TrustedOnly" mode - but only if not in AllowUnauthenticated mode
+   bool const allowUnauth = _config->FindB("APT::Get::AllowUnauthenticated", false);
+   bool const debugAuth = _config->FindB("Debug::pkgAcquire::Auth", false);
+   bool seenUntrusted = false;
    for (pkgCache::VerFileIterator i = Version.FileList(); i.end() == false; ++i)
    {
       pkgIndexFile *Index;
       if (Sources->FindIndex(i.File(),Index) == false)
          continue;
-      if (_config->FindB("Debug::pkgAcquire::Auth", false))
-      {
+
+      if (debugAuth == true)
          std::cerr << "Checking index: " << Index->Describe()
-                   << "(Trusted=" << Index->IsTrusted() << ")\n";
-      }
-      if (Index->IsTrusted()) {
+                   << "(Trusted=" << Index->IsTrusted() << ")" << std::endl;
+
+      if (Index->IsTrusted() == true)
+      {
          Trusted = true;
-	 break;
+	 if (allowUnauth == false)
+	    break;
       }
+      else
+         seenUntrusted = true;
    }
 
    // "allow-unauthenticated" restores apts old fetching behaviour
    // that means that e.g. unauthenticated file:// uris are higher
    // priority than authenticated http:// uris
-   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+   if (allowUnauth == true && seenUntrusted == true)
       Trusted = false;
 
    // Select a source
