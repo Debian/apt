@@ -49,11 +49,12 @@ struct ServerState
    protected:
    ServerMethod *Owner;
 
-   bool HeaderLine(std::string Line);
    virtual bool ReadHeaderLines(std::string &Data) = 0;
    virtual bool LoadNextResponse(bool const ToFile, FileFd * const File) = 0;
 
    public:
+   bool HeaderLine(std::string Line);
+
    /** \brief Result of the header acquire */
    enum RunHeadersResult {
       /** \brief Header ok */
@@ -134,6 +135,7 @@ class ServerMethod : public pkgAcqMethod
 
    virtual void SendReq(FetchItem *Itm) = 0;
    virtual ServerState * CreateServerState(URI uri) = 0;
+   virtual void RotateDNS() = 0;
 
    ServerMethod(const char *Ver,unsigned long Flags = 0) : pkgAcqMethod(Ver, Flags), PipelineDepth(0), AllowRedirect(false), Debug(false) {};
    virtual ~ServerMethod() {};

@@ -55,7 +55,7 @@ include $(PROGRAM_H)
 PROGRAM=https
 SLIBS = -lapt-pkg -lcurl $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
-SOURCE = https.cc
+SOURCE = https.cc server.cc
 include $(PROGRAM_H)
 
 # The ftp method

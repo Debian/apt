@@ -126,6 +126,7 @@ class HttpMethod : public ServerMethod
    virtual bool Configuration(std::string Message);
 
    virtual ServerState * CreateServerState(URI uri);
+   virtual void RotateDNS();
 
    protected:
    std::string AutoDetectProxyCmd;

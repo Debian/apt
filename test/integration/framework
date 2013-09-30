@@ -795,6 +795,13 @@ signreleasefiles() {
 	msgdone "info"
 }
 
+rewritesourceslist() {
+	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive")"
+	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
+		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:8080/#${1}#" -e "s#http://localhost:4433/#${1}#"
+	done
+}
+
 changetowebserver() {
 	local LOG='/dev/null'
 	if test -x ${BUILDDIRECTORY}/aptwebserver; then
@@ -806,31 +813,32 @@ changetowebserver() {
 		fi
 		addtrap "kill $PID;"
 		cd - > /dev/null
-	elif [ $# -gt 0 ]; then
-		msgdie 'Need the aptwebserver when passing arguments for the webserver'
-	elif which weborf > /dev/null; then
-		weborf -xb aptarchive/ >$LOG 2>&1 &
-		addtrap "kill $!;"
-	elif which gatling > /dev/null; then
-		cd aptarchive
-		gatling -p 8080 -F -S >$LOG 2>&1 &
-		addtrap "kill $!;"
-		cd - > /dev/null
-	elif which lighttpd > /dev/null; then
-		echo "server.document-root = \"$(readlink -f ./aptarchive)\"
-server.port = 8080
-server.stat-cache-engine = \"disable\"" > lighttpd.conf
-		lighttpd -t -f lighttpd.conf >/dev/null || msgdie 'Can not change to webserver: our lighttpd config is invalid'
-		lighttpd -D -f lighttpd.conf >$LOG 2>&1 &
-		addtrap "kill $!;"
 	else
 		msgdie 'You have to build aptwerbserver or install a webserver'
 	fi
-	local APTARCHIVE="file://$(readlink -f ./aptarchive)"
-	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
-		sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
-	done
-	return 0
+	if [ "$1" != '--no-rewrite' ]; then
+		rewritesourceslist 'http://localhost:8080/'
+	fi
+}
+
+changetohttpswebserver() {
+	if ! which stunnel4 >/dev/null; then
+		msgdie 'You need to install stunnel4 for https testcases'
+	fi
+	if [ ! -e "${TMPWORKINGDIRECTORY}/aptarchive/aptwebserver.pid" ]; then
+		changetowebserver --no-rewrite
+	fi
+	echo "pid = ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid
+cert = ${TESTDIRECTORY}/apt.pem
+
+[https]
+accept = 4433
+connect = 8080
+" > ${TMPWORKINGDIRECTORY}/stunnel.conf
+	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
+	local PID="$(cat ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid)"
+	addtrap 'prefix' "kill ${PID};"
+	rewritesourceslist 'https://localhost:4433/'
 }
 
 changetocdrom() {
@@ -846,6 +854,46 @@ changetocdrom() {
 	mv aptarchive/dists $CD
 	ln -s "$(readlink -f ./incoming)" $CD/pool
 	find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list' -delete
+}
+
+downloadfile() {
+	PROTO="$(echo "$1" | cut -d':' -f 1)"
+	local DOWNLOG="${TMPWORKINGDIRECTORY}/download.log"
+	rm -f "$DOWNLOG"
+	touch "$DOWNLOG"
+	{
+		echo "601 Configuration
+Config-Item: Acquire::https::CaInfo=${TESTDIR}/apt.pem
+Config-Item: Debug::Acquire::${PROTO}=1
+
+600 Acquire URI
+URI: $1
+Filename: ${2}
+"
+		# simple worker keeping stdin open until we are done (201) or error (400)
+		# and requesting new URIs on try-agains/redirects inbetween
+		{ tail -n 999 -f "$DOWNLOG" & echo "TAILPID: $!"; } | while read f1 f2; do
+			if [ "$f1" = 'TAILPID:' ]; then
+				TAILPID="$f2"
+			elif [ "$f1" = 'New-URI:' ]; then
+				echo "600 Acquire URI
+URI: $f2
+Filename: ${2}
+"
+			elif [ "$f1" = '201' ] || [ "$f1" = '400' ]; then
+				# tail would only die on next read – which never happens
+				test -z "$TAILPID" || kill -s HUP "$TAILPID"
+				break
+			fi
+		done
+	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/${PROTO} 2>&1 | tee "$DOWNLOG"
+	rm "$DOWNLOG"
+	# only if the file exists the download was successful
+	if [ -e "$2" ]; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 checkdiff() {

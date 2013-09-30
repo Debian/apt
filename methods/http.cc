@@ -863,3 +863,8 @@ ServerState * HttpMethod::CreateServerState(URI uri)			/*{{{*/
    return new HttpServerState(uri, this);
 }
 									/*}}}*/
+void HttpMethod::RotateDNS()						/*{{{*/
+{
+   ::RotateDNS();
+}
+									/*}}}*/

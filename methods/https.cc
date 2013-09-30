@@ -36,6 +36,41 @@
 									/*}}}*/
 using namespace std;
 
+size_t
+HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+   size_t len = size * nmemb;
+   HttpsMethod *me = (HttpsMethod *)userp;
+   std::string line((char*) buffer, len);
+   for (--len; len > 0; --len)
+      if (isspace(line[len]) == 0)
+      {
+	 ++len;
+	 break;
+      }
+   line.erase(len);
+
+   if (line.empty() == true)
+   {
+      if (me->Server->Result != 416 && me->Server->StartPos != 0)
+	 ;
+      else if (me->Server->Result == 416 && me->Server->Size == me->File->FileSize())
+      {
+         me->Server->Result = 200;
+	 me->Server->StartPos = me->Server->Size;
+      }
+      else
+	 me->Server->StartPos = 0;
+
+      me->File->Truncate(me->Server->StartPos);
+      me->File->Seek(me->Server->StartPos);
+   }
+   else if (me->Server->HeaderLine(line) == false)
+      return 0;
+
+   return size*nmemb;
+}
+
 size_t 
 HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
@@ -58,6 +93,14 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
    }
    return 0;
 }
+
+// HttpsServerState::HttpsServerState - Constructor			/*{{{*/
+HttpsServerState::HttpsServerState(URI Srv,HttpsMethod *Owner) : ServerState(Srv, NULL)
+{
+   TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
+   Reset();
+}
+									/*}}}*/
 
 void HttpsMethod::SetupProxy()  					/*{{{*/
 {
@@ -136,6 +179,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, static_cast<string>(Uri).c_str());
+   curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, parse_header);
+   curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
@@ -289,16 +334,13 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   if (File->Size() > 0)
-      File->Seek(File->Size());
+   Server = new HttpsServerState(Itm->Uri, this);
 
    // keep apt updated
    Res.Filename = Itm->DestFile;
 
    // get it!
    CURLcode success = curl_easy_perform(curl);
-   long curl_responsecode;
-   curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &curl_responsecode);
 
    // If the server returns 200 OK but the If-Modified-Since condition is not
    // met, CURLINFO_CONDITION_UNMET will be set to 1
@@ -317,7 +359,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    }
 
    // server says file not modified
-   if (curl_responsecode == 304 || curl_condition_unmet == 1)
+   if (Server->Result == 304 || curl_condition_unmet == 1)
    {
       unlink(File->Name().c_str());
       Res.IMSHit = true;
@@ -326,13 +368,14 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       URIDone(Res);
       return true;
    }
+   Res.IMSHit = false;
 
-   if (curl_responsecode != 200 && // OK
-	 curl_responsecode != 206 && // Partial
-	 curl_responsecode != 416) // invalid Range
+   if (Server->Result != 200 && // OK
+	 Server->Result != 206 && // Partial
+	 Server->Result != 416) // invalid Range
    {
       char err[255];
-      snprintf(err, sizeof(err) - 1, "HttpError%ld", curl_responsecode);
+      snprintf(err, sizeof(err) - 1, "HttpError%i", Server->Result);
       SetFailReason(err);
       _error->Error("%s", err);
       // unlink, no need keep 401/404 page content in partial/
@@ -349,7 +392,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    Res.Size = resultStat.st_size;
 
    // invalid range-request
-   if (curl_responsecode == 416)
+   if (Server->Result == 416)
    {
       unlink(File->Name().c_str());
       Res.Size = 0;
@@ -357,18 +400,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
       Redirect(Itm->Uri);
       return true;
    }
-
-   // check the downloaded result
-   if (curl_responsecode == 304 || curl_condition_unmet)
-   {
-      unlink(File->Name().c_str());
-      Res.IMSHit = true;
-      Res.LastModified = Itm->LastModified;
-      Res.Size = 0;
-      URIDone(Res);
-      return true;
-   }
-   Res.IMSHit = false;
 
    // Timestamp
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
@@ -407,5 +438,4 @@ int main()
 
    return Mth.Run();
 }
-
 
