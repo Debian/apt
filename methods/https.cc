@@ -121,7 +121,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    struct stat SBuf;
    struct curl_slist *headers=NULL;  
    char curl_errorstr[CURL_ERROR_SIZE];
-   long curl_responsecode;
    URI Uri = Itm->Uri;
    string remotehost = Uri.Host;
 
@@ -277,7 +276,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       char Buf[1000];
-      sprintf(Buf, "Range: bytes=%li-", (long) SBuf.st_size - 1);
+      sprintf(Buf, "Range: bytes=%li-", (long) SBuf.st_size);
       headers = curl_slist_append(headers, Buf);
       sprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
       headers = curl_slist_append(headers, Buf);
@@ -291,17 +290,15 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
    if (File->Size() > 0)
-      File->Seek(File->Size() - 1);
-   
+      File->Seek(File->Size());
+
    // keep apt updated
    Res.Filename = Itm->DestFile;
 
    // get it!
    CURLcode success = curl_easy_perform(curl);
+   long curl_responsecode;
    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &curl_responsecode);
-
-   long curl_servdate;
-   curl_easy_getinfo(curl, CURLINFO_FILETIME, &curl_servdate);
 
    // If the server returns 200 OK but the If-Modified-Since condition is not
    // met, CURLINFO_CONDITION_UNMET will be set to 1
@@ -309,57 +306,94 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_getinfo(curl, CURLINFO_CONDITION_UNMET, &curl_condition_unmet);
 
    File->Close();
+   curl_slist_free_all(headers);
 
    // cleanup
-   if(success != 0 || (curl_responsecode != 200 && curl_responsecode != 304))
+   if (success != 0)
    {
       _error->Error("%s", curl_errorstr);
-      // unlink, no need keep 401/404 page content in partial/
       unlink(File->Name().c_str());
-      Fail();
+      return false;
+   }
+
+   // server says file not modified
+   if (curl_responsecode == 304 || curl_condition_unmet == 1)
+   {
+      unlink(File->Name().c_str());
+      Res.IMSHit = true;
+      Res.LastModified = Itm->LastModified;
+      Res.Size = 0;
+      URIDone(Res);
       return true;
    }
 
-   // Timestamp
-   struct utimbuf UBuf;
-   if (curl_servdate != -1) {
-       UBuf.actime = curl_servdate;
-       UBuf.modtime = curl_servdate;
-       utime(File->Name().c_str(),&UBuf);
+   if (curl_responsecode != 200 && // OK
+	 curl_responsecode != 206 && // Partial
+	 curl_responsecode != 416) // invalid Range
+   {
+      char err[255];
+      snprintf(err, sizeof(err) - 1, "HttpError%ld", curl_responsecode);
+      SetFailReason(err);
+      _error->Error("%s", err);
+      // unlink, no need keep 401/404 page content in partial/
+      unlink(File->Name().c_str());
+      return false;
+   }
+
+   struct stat resultStat;
+   if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
+   {
+      _error->Errno("stat", "Unable to access file %s", File->Name().c_str());
+      return false;
+   }
+   Res.Size = resultStat.st_size;
+
+   // invalid range-request
+   if (curl_responsecode == 416)
+   {
+      unlink(File->Name().c_str());
+      Res.Size = 0;
+      delete File;
+      Redirect(Itm->Uri);
+      return true;
    }
 
    // check the downloaded result
-   struct stat Buf;
-   if (stat(File->Name().c_str(),&Buf) == 0)
+   if (curl_responsecode == 304 || curl_condition_unmet)
    {
-      Res.Filename = File->Name();
-      Res.LastModified = Buf.st_mtime;
-      Res.IMSHit = false;
-      if (curl_responsecode == 304 || curl_condition_unmet)
-      {
-	 unlink(File->Name().c_str());
-	 Res.IMSHit = true;
-	 Res.LastModified = Itm->LastModified;
-	 Res.Size = 0;
-	 URIDone(Res);
-	 return true;
-      }
-      Res.Size = Buf.st_size;
+      unlink(File->Name().c_str());
+      Res.IMSHit = true;
+      Res.LastModified = Itm->LastModified;
+      Res.Size = 0;
+      URIDone(Res);
+      return true;
    }
+   Res.IMSHit = false;
+
+   // Timestamp
+   curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
+   if (Res.LastModified != -1)
+   {
+      struct utimbuf UBuf;
+      UBuf.actime = Res.LastModified;
+      UBuf.modtime = Res.LastModified;
+      utime(File->Name().c_str(),&UBuf);
+   }
+   else
+      Res.LastModified = resultStat.st_mtime;
 
    // take hashes
    Hashes Hash;
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
-   
+
    // keep apt updated
    URIDone(Res);
 
    // cleanup
    Res.Size = 0;
    delete File;
-   curl_slist_free_all(headers);
 
    return true;
 };
