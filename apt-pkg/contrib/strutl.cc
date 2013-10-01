@@ -1120,11 +1120,9 @@ vector<string> VectorizeString(string const &haystack, char const &split)
 									/*}}}*/
 // StringSplit - split a string into a string vector by token		/*{{{*/
 // ---------------------------------------------------------------------
-/* This can be used to split a given string up from a given string token
- * into a vector of strings. A optional "maxsplit" argument can be used
- * to limit the splitting, in this case the 
+/* See header for details.
  */
-vector<string> StringSplit(string const &s, std::string const &sep,
+vector<string> StringSplit(std::string const &s, std::string const &sep,
                            unsigned int maxsplit)
 {
    vector<string> split;
