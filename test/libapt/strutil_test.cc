@@ -65,5 +65,9 @@ int main(int argc,char *argv[])
    equals(result[0], "x");
    equals(result[1], "y:z");
 
+   input = "abc";
+   result = StringSplit(input, "");
+   equals(result.size(), 0);
+
    return 0;
 }

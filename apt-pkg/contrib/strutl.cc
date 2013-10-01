@@ -1139,7 +1139,7 @@ vector<string> StringSplit(std::string const &s, std::string const &sep,
       split.push_back(s.substr(start, pos-start));
       
       // if maxsplit is reached, the remaining string is the last item
-      if(maxsplit > 0 && split.size() >= maxsplit)
+      if(split.size() >= maxsplit)
       {
          split[split.size()-1] = s.substr(start);
          break;

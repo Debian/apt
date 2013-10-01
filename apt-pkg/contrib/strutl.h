@@ -17,7 +17,7 @@
 #define STRUTL_H
 
 
-
+#include <limits>
 #include <stdlib.h>
 #include <string>
 #include <cstring>
@@ -86,7 +86,7 @@ std::vector<std::string> VectorizeString(std::string const &haystack, char const
  */
 std::vector<std::string> StringSplit(std::string const &input, 
                                      std::string const &sep, 
-                                     unsigned int maxsplit=0) __attrib_const;
+                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) __attrib_const;
 
 void ioprintf(std::ostream &out,const char *format,...) __like_printf(2);
 void strprintf(std::string &out,const char *format,...) __like_printf(2);
