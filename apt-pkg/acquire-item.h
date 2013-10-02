@@ -83,7 +83,7 @@ class pkgAcquire::Item : public WeakPointable
     *  overwritten.
     */
    void Rename(std::string From,std::string To);
-   
+
    public:
 
    /** \brief The current status of this item. */
@@ -281,6 +281,21 @@ class pkgAcquire::Item : public WeakPointable
     *  pkgAcquire::Remove.
     */
    virtual ~Item();
+
+   protected:
+
+   enum RenameOnErrorState {
+      HashSumMismatch,
+      SizeMismatch,
+      InvalidFormat
+   };
+
+   /** \brief Rename failed file and set error
+    *
+    * \param state respresenting the error we encountered
+    * \param errorMsg a message describing the error
+    */
+   bool RenameOnError(RenameOnErrorState const state);
 };
 									/*}}}*/
 /** \brief Information about an index patch (aka diff). */		/*{{{*/
@@ -982,7 +997,7 @@ class pkgAcqArchive : public pkgAcquire::Item
     *
     *  \param Version The package version to download.
     *
-    *  \param StoreFilename A location in which the actual filename of
+    *  \param[out] StoreFilename A location in which the actual filename of
     *  the package should be stored.  It will be set to a guessed
     *  basename in the constructor, and filled in with a fully
     *  qualified filename once the download finishes.
