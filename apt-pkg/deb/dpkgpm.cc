@@ -37,6 +37,7 @@
 #include <map>
 #include <pwd.h>
 #include <grp.h>
+#include <iomanip>
 
 #include <termios.h>
 #include <unistd.h>
@@ -52,7 +53,8 @@ class pkgDPkgPMPrivate
 {
 public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
-			term_out(NULL), history_out(NULL)
+			term_out(NULL), history_out(NULL), 
+                        last_reported_progress(0.0)
    {
       dpkgbuf[0] = '\0';
    }
@@ -63,6 +65,8 @@ public:
    FILE *term_out;
    FILE *history_out;
    string dpkg_error;
+
+   float last_reported_progress;
 };
 
 namespace
@@ -883,10 +887,16 @@ bool pkgDPkgPM::CloseLog()
  */
 void pkgDPkgPM::SendTerminalProgress(float percentage)
 {
+   int reporting_steps = _config->FindI("DpkgPM::Reporting-Steps", 1);
+
+   if(percentage < (d->last_reported_progress + reporting_steps))
+      return;
+
    // FIXME: use colors too
    std::cout << "\r\n"
-             << "Progress: [" << percentage << "%]"
+             << "Progress: [" << std::setw(3) << int(percentage) << "%]"
              << "\r\n";
+   d->last_reported_progress = percentage;
 }
 									/*}}}*/
 /*{{{*/
@@ -1444,7 +1454,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 tcsetattr(0, TCSAFLUSH, &tt);
 	 close(master);
       }
-       
+
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
       {
@@ -1474,6 +1484,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       }      
    }
    CloseLog();
+
+   // dpkg is done at this point
+   if(_config->FindB("DPkgPM::Progress", false) == true)
+      SendTerminalProgress(100);
    
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));
