@@ -438,15 +438,15 @@ bool DoAutomaticRemove(CacheFile &Cache)
       do {
 	 Changed = false;
 	 for (APT::PackageSet::const_iterator Pkg = tooMuch.begin();
-	      Pkg != tooMuch.end() && Changed == false; ++Pkg)
+	      Pkg != tooMuch.end(); ++Pkg)
 	 {
 	    APT::PackageSet too;
 	    too.insert(*Pkg);
 	    for (pkgCache::PrvIterator Prv = Cache[Pkg].CandidateVerIter(Cache).ProvidesList();
 		 Prv.end() == false; ++Prv)
 	       too.insert(Prv.ParentPkg());
-	    for (APT::PackageSet::const_iterator P = too.begin();
-		 P != too.end() && Changed == false; ++P) {
+	    for (APT::PackageSet::const_iterator P = too.begin(); P != too.end(); ++P)
+	    {
 	       for (pkgCache::DepIterator R = P.RevDependsList();
 		    R.end() == false; ++R)
 	       {
@@ -465,7 +465,11 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		 Changed = true;
 		 break;
 	       }
+	       if (Changed == true)
+		  break;
 	    }
+	    if (Changed == true)
+	       break;
 	 }
       } while (Changed == true);
    }
