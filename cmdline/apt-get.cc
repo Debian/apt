@@ -50,7 +50,7 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 
-
+#include <apt-private/private-download.h>
 #include <apt-private/private-install.h>
 #include <apt-private/private-upgrade.h>
 #include <apt-private/private-output.h>
@@ -62,9 +62,11 @@
 #include <apt-private/acqprogress.h>
 
 #include <set>
+#include <fstream>
+#include <sstream>
+
 #include <locale.h>
 #include <langinfo.h>
-#include <fstream>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -76,7 +78,6 @@
 #include <errno.h>
 #include <regex.h>
 #include <sys/wait.h>
-#include <sstream>
 
 #include <apt-private/private-output.h>
 #include <apt-private/private-main.h>
@@ -812,27 +813,10 @@ bool DoSource(CommandLine &CmdL)
       delete[] Dsc;
       return true;
    }
-   
-   // Run it
-   if (Fetcher.Run() == pkgAcquire::Failed)
-   {
-      delete[] Dsc;
-      return false;
-   }
 
-   // Print error messages
+   // Run it
    bool Failed = false;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
-   {
-      if ((*I)->Status == pkgAcquire::Item::StatDone &&
-	  (*I)->Complete == true)
-	 continue;
-      
-      fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
-	      (*I)->ErrorText.c_str());
-      Failed = true;
-   }
-   if (Failed == true)
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
    {
       delete[] Dsc;
       return _error->Error(_("Failed to fetch some archives."));
