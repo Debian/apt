@@ -1118,6 +1118,37 @@ vector<string> VectorizeString(string const &haystack, char const &split)
    return exploded;
 }
 									/*}}}*/
+// StringSplit - split a string into a string vector by token		/*{{{*/
+// ---------------------------------------------------------------------
+/* See header for details.
+ */
+vector<string> StringSplit(std::string const &s, std::string const &sep,
+                           unsigned int maxsplit)
+{
+   vector<string> split;
+   size_t start, pos;
+
+   // no seperator given, this is bogus
+   if(sep.size() == 0)
+      return split;
+
+   start = pos = 0;
+   while (pos != string::npos)
+   {
+      pos = s.find(sep, start);
+      split.push_back(s.substr(start, pos-start));
+      
+      // if maxsplit is reached, the remaining string is the last item
+      if(split.size() >= maxsplit)
+      {
+         split[split.size()-1] = s.substr(start);
+         break;
+      }
+      start = pos+sep.size();
+   }
+   return split;
+}
+									/*}}}*/
 // RegexChoice - Simple regex list/list matcher				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
