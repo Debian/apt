@@ -48,7 +48,7 @@ bool DoUpgradeNoNewPackages(CommandLine &CmdL)
    // Do the upgrade
    return UpgradeHelper(CmdL, 
                         APT::Upgrade::FORBID_REMOVE_PACKAGES|
-                        APT::Upgrade::FORBID_NEW_INSTALL_PACKAGES);
+                        APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES);
 }
 									/*}}}*/
 // DoSafeUpgrade - Upgrade all packages with install but not remove	/*{{{*/

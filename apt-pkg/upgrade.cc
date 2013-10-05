@@ -251,7 +251,7 @@ bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode)
    {
       return pkgAllUpgradeWithNewPackages(Cache);
    } 
-   else if ((mode & ~(FORBID_REMOVE_PACKAGES|FORBID_NEW_INSTALL_PACKAGES)) == 0)
+   else if ((mode & ~(FORBID_REMOVE_PACKAGES|FORBID_INSTALL_NEW_PACKAGES)) == 0)
    {
       return pkgAllUpgradeNoNewPackages(Cache);
    }

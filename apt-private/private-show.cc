@@ -103,7 +103,7 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 	Pkg != helper.virtualPkgs.end(); ++Pkg)
    {
        c1out << "Package: " << Pkg.FullName(true) << std::endl;
-       c1out << "State: " << _("not a real pacakge (virtual)") << std::endl;
+       c1out << "State: " << _("not a real package (virtual)") << std::endl;
        // FIXME: show providers, see private-cacheset.h
        //        CacheSetHelperAPTGet::showVirtualPackageErrors()
    }

@@ -42,6 +42,7 @@
 #include <sstream>
 
 #include "private-install.h"
+#include "private-download.h"
 #include "private-cachefile.h"
 #include "private-output.h"
 #include "private-cacheset.h"
@@ -50,50 +51,6 @@
 #include <apti18n.h>
 									/*}}}*/
 
-// CheckAuth - check if each download comes form a trusted source	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool CheckAuth(pkgAcquire& Fetcher)
-{
-   std::string UntrustedList;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd(); ++I)
-   {
-      if (!(*I)->IsTrusted())
-      {
-          UntrustedList += std::string((*I)->ShortDesc()) + " ";
-      }
-   }
-
-   if (UntrustedList == "")
-   {
-      return true;
-   }
-        
-   ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"),UntrustedList,"");
-
-   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
-   {
-      c2out << _("Authentication warning overridden.\n");
-      return true;
-   }
-
-   if (_config->FindI("quiet",0) < 2
-       && _config->FindB("APT::Get::Assume-Yes",false) == false)
-   {
-      c2out << _("Install these packages without verification?") << std::flush;
-      if (!YnPrompt(false))
-         return _error->Error(_("Some packages could not be authenticated"));
-
-      return true;
-   }
-   else if (_config->FindB("APT::Get::Force-Yes",false) == true)
-   {
-      return true;
-   }
-
-   return _error->Error(_("There are problems and -y was used without --force-yes"));
-}
-									/*}}}*/
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
@@ -299,12 +256,12 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 c1out << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	 std::cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
       return true;
    }
 
-   if (!CheckAuth(Fetcher))
+   if (!CheckAuth(Fetcher, true))
       return false;
 
    /* Unlock the dpkg lock if we are not going to be doing an install
@@ -336,29 +293,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 	    I = Fetcher.ItemsBegin();
 	 }	 
       }
-      
-      if (Fetcher.Run() == pkgAcquire::Failed)
-	 return false;
-      
-      // Print out errors
-      bool Failed = false;
-      for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
-      {
-	 if ((*I)->Status == pkgAcquire::Item::StatDone &&
-	     (*I)->Complete == true)
-	    continue;
-	 
-	 if ((*I)->Status == pkgAcquire::Item::StatIdle)
-	 {
-	    Transient = true;
-	    // Failed = true;
-	    continue;
-	 }
 
-	 fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
-		 (*I)->ErrorText.c_str());
-	 Failed = true;
-      }
+      bool Failed = false;
+      if (AcquireRun(Fetcher, 0, &Failed, &Transient) == false)
+	 return false;
 
       /* If we are in no download mode and missing files and there were
          'failures' then the user must specify -m. Furthermore, there 
@@ -500,15 +438,15 @@ bool DoAutomaticRemove(CacheFile &Cache)
       do {
 	 Changed = false;
 	 for (APT::PackageSet::const_iterator Pkg = tooMuch.begin();
-	      Pkg != tooMuch.end() && Changed == false; ++Pkg)
+	      Pkg != tooMuch.end(); ++Pkg)
 	 {
 	    APT::PackageSet too;
 	    too.insert(*Pkg);
 	    for (pkgCache::PrvIterator Prv = Cache[Pkg].CandidateVerIter(Cache).ProvidesList();
 		 Prv.end() == false; ++Prv)
 	       too.insert(Prv.ParentPkg());
-	    for (APT::PackageSet::const_iterator P = too.begin();
-		 P != too.end() && Changed == false; ++P) {
+	    for (APT::PackageSet::const_iterator P = too.begin(); P != too.end(); ++P)
+	    {
 	       for (pkgCache::DepIterator R = P.RevDependsList();
 		    R.end() == false; ++R)
 	       {
@@ -527,7 +465,11 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		 Changed = true;
 		 break;
 	       }
+	       if (Changed == true)
+		  break;
 	    }
+	    if (Changed == true)
+	       break;
 	 }
       } while (Changed == true);
    }

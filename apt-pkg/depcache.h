@@ -128,7 +128,7 @@ class pkgDepCache : protected pkgCache::Namespace
    enum InternalFlags {AutoKept = (1 << 0), Purge = (1 << 1), ReInstall = (1 << 2), Protected = (1 << 3)};
       
    enum VersionTypes {NowVersion, InstallVersion, CandidateVersion};
-   enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2};
+   enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2, ModeGarbage = 3};
 
    /** \brief Represents an active action group.
     *

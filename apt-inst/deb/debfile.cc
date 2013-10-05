@@ -51,8 +51,7 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
        !CheckMember("data.tar.bz2") &&
        !CheckMember("data.tar.lzma") &&
        !CheckMember("data.tar.xz")) {
-      // FIXME: add data.tar.xz here - adding it now would require a Translation round for a very small gain
-      _error->Error(_("This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"), "data.tar.gz", "data.tar.bz2", "data.tar.lzma");
+      _error->Error(_("This is not a valid DEB archive, missing '%s' member"), "data.tar");
       return;
    }
 }

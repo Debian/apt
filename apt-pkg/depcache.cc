@@ -896,6 +896,7 @@ char const* PrintMode(char const mode)
 	 case pkgDepCache::ModeInstall: return "Install";
 	 case pkgDepCache::ModeKeep: return "Keep";
 	 case pkgDepCache::ModeDelete: return "Delete";
+	 case pkgDepCache::ModeGarbage: return "Garbage";
 	 default: return "UNKNOWN";
 	 }
 }
@@ -1726,8 +1727,6 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    follow_recommends = MarkFollowsRecommends();
    follow_suggests   = MarkFollowsSuggests();
 
-
-
    // do the mark part, this is the core bit of the algorithm
    for(PkgIterator p = PkgBegin(); !p.end(); ++p)
    {
@@ -1738,7 +1737,9 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 	  // be nice even then a required package violates the policy (#583517)
 	  // and do the full mark process also for required packages
 	  (p.CurrentVer().end() != true &&
-	   p.CurrentVer()->Priority == pkgCache::State::Required))
+	   p.CurrentVer()->Priority == pkgCache::State::Required) ||
+	  // packages which can't be changed (like holds) can't be garbage
+	  (IsModeChangeOk(ModeGarbage, p, 0, false) == false))
       {
 	 // the package is installed (and set to keep)
 	 if(PkgState[p->ID].Keep() && !p.CurrentVer().end())

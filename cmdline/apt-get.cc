@@ -51,6 +51,7 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/upgrade.h>
 
+#include <apt-private/private-download.h>
 #include <apt-private/private-install.h>
 #include <apt-private/private-upgrade.h>
 #include <apt-private/private-output.h>
@@ -62,9 +63,11 @@
 #include <apt-private/acqprogress.h>
 
 #include <set>
+#include <fstream>
+#include <sstream>
+
 #include <locale.h>
 #include <langinfo.h>
-#include <fstream>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -76,7 +79,6 @@
 #include <errno.h>
 #include <regex.h>
 #include <sys/wait.h>
-#include <sstream>
 
 #include <apt-private/private-output.h>
 #include <apt-private/private-main.h>
@@ -498,7 +500,7 @@ bool DoDownload(CommandLine &CmdL)
    CacheFile Cache;
    if (Cache.ReadOnlyOpen() == false)
       return false;
-   
+
    APT::CacheSetHelper helper(c0out);
    APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
 		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
@@ -506,67 +508,57 @@ bool DoDownload(CommandLine &CmdL)
    if (verset.empty() == true)
       return false;
 
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet", 0));
    pkgAcquire Fetcher;
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   if (_config->FindB("APT::Get::Print-URIs") == false)
-      Fetcher.Setup(&Stat);
+   if (Fetcher.Setup(&Stat) == false)
+      return false;
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
-   bool gotAll = true;
 
-   for (APT::VersionList::const_iterator Ver = verset.begin(); 
-        Ver != verset.end(); 
-        ++Ver) 
+   // reuse the usual acquire methods for deb files, but don't drop them into
+   // the usual directories - keep everything in the current directory
+   std::vector<std::string> storefile(verset.size());
+   std::string const cwd = SafeGetCWD();
+   _config->Set("Dir::Cache::Archives", cwd);
+   int i = 0;
+   for (APT::VersionList::const_iterator Ver = verset.begin();
+	 Ver != verset.end(); ++Ver, ++i)
    {
-      string descr;
-      // get the right version
-      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-      pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
-      pkgCache::VerFileIterator Vf = Ver.FileList();
-      if (Vf.end() == true)
-      {
-	 _error->Error("Can not find VerFile for %s in version %s", Pkg.FullName().c_str(), Ver.VerStr());
-	 gotAll = false;
-	 continue;
-      }
-      pkgCache::PkgFileIterator F = Vf.File();
-      pkgIndexFile *index;
-      if(SrcList->FindIndex(F, index) == false)
-      {
-	 _error->Error(_("Can't find a source to download version '%s' of '%s'"), Ver.VerStr(), Pkg.FullName().c_str());
-	 gotAll = false;
-	 continue;
-      }
-      string uri = index->ArchiveURI(rec.FileName());
-      strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
-      // get the most appropriate hash
-      HashString hash;
-      if (rec.SHA512Hash() != "")
-         hash = HashString("sha512", rec.SHA512Hash());
-      else if (rec.SHA256Hash() != "")
-         hash = HashString("sha256", rec.SHA256Hash());
-      else if (rec.SHA1Hash() != "")
-         hash = HashString("sha1", rec.SHA1Hash());
-      else if (rec.MD5Hash() != "")
-         hash = HashString("md5", rec.MD5Hash());
-      // get the file
-      new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
+      pkgAcquire::Item *I = new pkgAcqArchive(&Fetcher, SrcList, &Recs, *Ver, storefile[i]);
+      std::string const filename = cwd + flNotDir(storefile[i]);
+      storefile[i].assign(filename);
+      I->DestFile.assign(filename);
    }
-   if (gotAll == false)
-      return false;
 
    // Just print out the uris and exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
 
-   return (Fetcher.Run() == pkgAcquire::Continue);
+   if (_error->PendingError() == true || CheckAuth(Fetcher, false) == false)
+      return false;
+
+   bool Failed = false;
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false)
+      return false;
+
+   // copy files in local sources to the current directory
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
+      if ((*I)->Local == true && (*I)->Status == pkgAcquire::Item::StatDone)
+      {
+	 std::string const filename = cwd + flNotDir((*I)->DestFile);
+	 std::ifstream src((*I)->DestFile.c_str(), std::ios::binary);
+	 std::ofstream dst(filename.c_str(), std::ios::binary);
+	 dst << src.rdbuf();
+      }
+
+   return Failed == false;
 }
 									/*}}}*/
 // DoCheck - Perform the check operation				/*{{{*/
@@ -786,27 +778,10 @@ bool DoSource(CommandLine &CmdL)
       delete[] Dsc;
       return true;
    }
-   
-   // Run it
-   if (Fetcher.Run() == pkgAcquire::Failed)
-   {
-      delete[] Dsc;
-      return false;
-   }
 
-   // Print error messages
+   // Run it
    bool Failed = false;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
-   {
-      if ((*I)->Status == pkgAcquire::Item::StatDone &&
-	  (*I)->Complete == true)
-	 continue;
-      
-      fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
-	      (*I)->ErrorText.c_str());
-      Failed = true;
-   }
-   if (Failed == true)
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
    {
       delete[] Dsc;
       return _error->Error(_("Failed to fetch some archives."));
