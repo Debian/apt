@@ -47,10 +47,12 @@ class pkgAcquireStatus;
 
 namespace APT {
    namespace Upgrade {
-      enum UpgradeMode {NO_INSTALL_OR_REMOVE,
-                        ALLOW_NEW_INSTALLS,
-                        ALLOW_REMOVAL_AND_NEW_INSTALLS};
-      bool Upgrade(pkgDepCache &Cache, UpgradeMode mode);
+      // FIXME: make this "enum class UpgradeMode {" once we enable c++11
+      enum UpgradeMode {
+         FORBID_REMOVE_PACKAGES = 1,
+         FORBID_NEW_INSTALL_PACKAGES = 2,
+      };
+      bool Upgrade(pkgDepCache &Cache, int UpgradeMode);
    }
 }
 

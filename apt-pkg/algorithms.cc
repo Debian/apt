@@ -554,18 +554,23 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 }
 									/*}}}*/
 // APT::Upgrade::Upgrade - Upgrade using a specific strategy     	/*{{{*/
-bool APT::Upgrade::Upgrade(pkgDepCache &Cache, APT::Upgrade::UpgradeMode mode)
+bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode)
 {
-   switch(mode) {
-      case APT::Upgrade::NO_INSTALL_OR_REMOVE:
-         return pkgAllUpgradeNoNewPackages(Cache);
-      case APT::Upgrade::ALLOW_NEW_INSTALLS:
-         return pkgAllUpgradeWithNewPackages(Cache);
-      case APT::Upgrade::ALLOW_REMOVAL_AND_NEW_INSTALLS:
-         return pkgDistUpgrade(Cache);
-      default:
-         _error->Error("pkgAllUpgrade called with unknwon mode %i", mode);
+   if (mode == 0) 
+   {
+      return pkgDistUpgrade(Cache);
    }
+   else if ((mode & ~FORBID_REMOVE_PACKAGES) == 0)
+   {
+      return pkgAllUpgradeWithNewPackages(Cache);
+   } 
+   else if ((mode & ~(FORBID_REMOVE_PACKAGES|FORBID_NEW_INSTALL_PACKAGES)) == 0)
+   {
+      return pkgAllUpgradeNoNewPackages(Cache);
+   }
+   else
+      _error->Error("pkgAllUpgrade called with unsupported mode %i", mode);
+
    return false;
 }
 									/*}}}*/
