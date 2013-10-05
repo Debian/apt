@@ -26,17 +26,26 @@ testrun() {
 	rm -rf rootdir/var/lib/apt
 	testsuccess aptget update
 
-	testsuccess aptget download cool
-	testfileexists 'cool_1.0_i386.deb'
+	if [ "$1" = 'trusted' ]; then
+		testsuccess aptget download cool
+		testfileexists 'cool_1.0_i386.deb'
+
+		testsuccess aptget download cool --allow-unauthenticated
+		testfileexists 'cool_1.0_i386.deb'
+	else
+		testfailure aptget download cool
+		testfilemissing 'cool_1.0_i386.deb'
+
+		testsuccess aptget download cool --allow-unauthenticated
+		testfileexists 'cool_1.0_i386.deb'
+	fi
 
 	mv aptarchive/pool/cool_1.0_i386.deb aptarchive/pool/cool_1.0_i386.deb.bak
 	echo 'this is not a good package' > aptarchive/pool/cool_1.0_i386.deb
-	# FIXME: apt-get download should exit non-zero if download fails
-	aptget download cool
+	testfailure aptget download cool
 	testfilemissing cool_1.0_i386.deb
 
-	# FIXME: apt-get download should exit non-zero if download fails
-	aptget download cool --allow-unauthenticated  # unauthenticated doesn't mean unchecked
+	testfailure aptget download cool --allow-unauthenticated  # unauthenticated doesn't mean unchecked
 	testfilemissing cool_1.0_i386.deb
 
 	rm -f aptarchive/pool/cool_1.0_i386.deb
@@ -45,8 +54,10 @@ testrun() {
 	testfileexists 'cool_1.0_i386.deb'
 }
 
-testrun
+testrun 'trusted'
 
 find aptarchive/ \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
-# FIXME: apt-get download should warn about untrusted downloads
-testrun
+testrun 'untrusted'
+
+changetowebserver
+testrun 'untrusted'

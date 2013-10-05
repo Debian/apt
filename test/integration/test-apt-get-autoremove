@@ -49,3 +49,23 @@ Install: unrelated:i386 (1), debhelper:i386 (8.0.0), po-debconf:i386 (1.0.16, au
 Remove: debhelper:i386 (8.0.0)
 
 Remove: po-debconf:i386 (1.0.16)'
+
+testsuccess aptget install debhelper -y
+testdpkginstalled 'unrelated' 'debhelper' 'po-debconf'
+testsuccess aptmark auto debhelper
+
+testmarkedauto 'debhelper' 'po-debconf'
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  debhelper po-debconf
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Remv debhelper [8.0.0]
+Remv po-debconf [1.0.16]' aptget autoremove -s
+
+testsuccess aptmark hold debhelper
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget autoremove -s

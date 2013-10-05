@@ -143,6 +143,32 @@ void pkgAcquire::Item::Rename(string From,string To)
    }   
 }
 									/*}}}*/
+bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const error)/*{{{*/
+{
+   if(FileExists(DestFile))
+      Rename(DestFile, DestFile + ".FAILED");
+
+   switch (error)
+   {
+      case HashSumMismatch:
+	 ErrorText = _("Hash Sum mismatch");
+	 Status = StatAuthError;
+	 ReportMirrorFailure("HashChecksumFailure");
+	 break;
+      case SizeMismatch:
+	 ErrorText = _("Size mismatch");
+	 Status = StatAuthError;
+	 ReportMirrorFailure("SizeFailure");
+	 break;
+      case InvalidFormat:
+	 ErrorText = _("Invalid file format");
+	 Status = StatError;
+	 // do not report as usually its not the mirrors fault, but Portal/Proxy
+	 break;
+   }
+   return false;
+}
+									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/
 // ---------------------------------------------------------------------
 void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
@@ -595,9 +621,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 
       if(!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
       {
-	 Status = StatAuthError;
-	 ErrorText = _("MD5Sum mismatch");
-	 Rename(DestFile,DestFile + ".FAILED");
+	 RenameOnError(HashSumMismatch);
 	 Dequeue();
 	 return;
       }
@@ -866,10 +890,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 
       if (!ExpectedHash.empty() && ExpectedHash.toStr() != Hash)
       {
-         Status = StatAuthError;
-         ErrorText = _("Hash Sum mismatch");
-         Rename(DestFile,DestFile + ".FAILED");
-	 ReportMirrorFailure("HashChecksumFailure");
+	 RenameOnError(HashSumMismatch);
          return;
       }
 
@@ -878,22 +899,18 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
       if (Verify == true)
       {
 	 FileFd fd(DestFile, FileFd::ReadOnly);
-	 pkgTagSection sec;
-	 pkgTagFile tag(&fd);
+	 // Only test for correctness if the file is not empty (empty is ok)
+	 if (fd.FileSize() > 0)
+	 {
+	    pkgTagSection sec;
+	    pkgTagFile tag(&fd);
 
-         // Only test for correctness if the file is not empty (empty is ok)
-         if (fd.Size() > 0) {
-            if (_error->PendingError() || !tag.Step(sec)) {
-               Status = StatError;
-               _error->DumpErrors();
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            } else if (!sec.Exists("Package")) {
-               Status = StatError;
-               ErrorText = ("Encountered a section with no Package: header");
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            }
+	    // all our current indexes have a field 'Package' in each section
+	    if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
+	    {
+	       RenameOnError(InvalidFormat);
+	       return;
+	    }
          }
       }
        
@@ -1751,9 +1768,8 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error(_("I wasn't able to locate a file for the %s package. "
-		    "This might mean you need to manually fix this package."),
-		    Version.ParentPkg().Name());
+      _error->Error(_("Can't find a source to download version '%s' of '%s'"),
+		    Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
 }
 									/*}}}*/
 // AcqArchive::QueueNext - Queue the next file source			/*{{{*/
@@ -1907,18 +1923,14 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size,string CalcHash,
    // Check the size
    if (Size != Version->Size)
    {
-      Status = StatError;
-      ErrorText = _("Size mismatch");
+      RenameOnError(SizeMismatch);
       return;
    }
    
    // Check the hash
    if(ExpectedHash.toStr() != CalcHash)
    {
-      Status = StatError;
-      ErrorText = _("Hash Sum mismatch");
-      if(FileExists(DestFile))
-	 Rename(DestFile,DestFile + ".FAILED");
+      RenameOnError(HashSumMismatch);
       return;
    }
 
@@ -2058,9 +2070,7 @@ void pkgAcqFile::Done(string Message,unsigned long long Size,string CalcHash,
    // Check the hash
    if(!ExpectedHash.empty() && ExpectedHash.toStr() != CalcHash)
    {
-      Status = StatError;
-      ErrorText = _("Hash Sum mismatch");
-      Rename(DestFile,DestFile + ".FAILED");
+      RenameOnError(HashSumMismatch);
       return;
    }
    

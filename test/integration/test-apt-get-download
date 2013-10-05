@@ -20,13 +20,14 @@ testdownload() {
 	fi
 	msgtest "Test download of package file $1 with" "$APT"
 	aptget -qq download ${APT} && test -f $1 && msgpass || msgfail
+	rm $1
 }
 
 testdownload apt_1.0_all.deb apt stable
 testdownload apt_2.0_all.deb apt
 
 DEBFILE="$(readlink -f aptarchive)/pool/apt_2.0_all.deb"
-testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) sha512:$(sha512sum $DEBFILE | cut -d' ' -f 1)" aptget download apt --print-uris
+testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) SHA512:$(sha512sum $DEBFILE | cut -d' ' -f 1)" aptget download apt --print-uris
 
 # deb:677887
 testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms

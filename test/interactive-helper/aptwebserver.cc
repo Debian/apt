@@ -100,8 +100,13 @@ bool sendHead(int const client, int const httpcode, std::list<std::string> &head
    std::string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
    headers.push_front(response);
+   _config->Set("APTWebserver::Last-Status-Code", httpcode);
 
-   headers.push_back("Server: APT webserver");
+   std::stringstream buffer;
+   _config->Dump(buffer, "aptwebserver::response-header", "%t: %v%n", false);
+   std::vector<std::string> addheaders = VectorizeString(buffer.str(), '\n');
+   for (std::vector<std::string>::const_iterator h = addheaders.begin(); h != addheaders.end(); ++h)
+      headers.push_back(*h);
 
    std::string date("Date: ");
    date.append(TimeRFC1123(time(NULL)));
@@ -156,14 +161,28 @@ void sendError(int const client, int const httpcode, std::string const &request,
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
-   if (error.empty() == false)
-      response.append("<p><em>Error</em>: ").append(error).append("</p>");
-   response.append("This error is a result of the request: <pre>");
+   if (httpcode != 200)
+   {
+      if (error.empty() == false)
+	 response.append("<p><em>Error</em>: ").append(error).append("</p>");
+      response.append("This error is a result of the request: <pre>");
+   }
+   else
+   {
+      if (error.empty() == false)
+	 response.append("<p><em>Success</em>: ").append(error).append("</p>");
+      response.append("The successfully executed operation was requested by: <pre>");
+   }
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
    sendHead(client, httpcode, headers);
    if (content == true)
       sendData(client, response);
+}
+void sendSuccess(int const client, std::string const &request,
+	       bool content, std::string const &error = "")
+{
+   sendError(client, 200, request, content, error);
 }
 									/*}}}*/
 void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
@@ -365,6 +384,49 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
    return true;
 }
 									/*}}}*/
+bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+{
+   size_t const pcount = parts.size();
+   if (pcount == 4 && parts[1] == "set")
+   {
+      _config->Set(parts[2], parts[3]);
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!");
+      return true;
+   }
+   else if (pcount == 4 && parts[1] == "find")
+   {
+      std::list<std::string> headers;
+      std::string response = _config->Find(parts[2], parts[3]);
+      addDataHeaders(headers, response);
+      sendHead(client, 200, headers);
+      sendData(client, response);
+      return true;
+   }
+   else if (pcount == 3 && parts[1] == "find")
+   {
+      std::list<std::string> headers;
+      if (_config->Exists(parts[2]) == true)
+      {
+	 std::string response = _config->Find(parts[2]);
+	 addDataHeaders(headers, response);
+	 sendHead(client, 200, headers);
+	 sendData(client, response);
+	 return true;
+      }
+      sendError(client, 404, request, "Requested Configuration option doesn't exist.");
+      return false;
+   }
+   else if (pcount == 3 && parts[1] == "clear")
+   {
+      _config->Clear(parts[2]);
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.");
+      return true;
+   }
+
+   sendError(client, 400, request, true, "Unknown on-the-fly configuration request");
+   return false;
+}
+									/*}}}*/
 int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
@@ -455,6 +517,9 @@ int main(int const argc, const char * argv[])
    listen(sock, 1);
    /*}}}*/
 
+   _config->CndSet("aptwebserver::response-header::Server", "APT webserver");
+   _config->CndSet("aptwebserver::response-header::Accept-Ranges", "bytes");
+
    std::vector<std::string> messages;
    int client;
    while ((client = accept(sock, NULL, NULL)) != -1)
@@ -474,6 +539,17 @@ int main(int const argc, const char * argv[])
 	    bool sendContent = true;
 	    if (parseFirstLine(client, *m, filename, sendContent, closeConnection) == false)
 	       continue;
+
+	    // special webserver command request
+	    if (filename.length() > 1 && filename[0] == '_')
+	    {
+	       std::vector<std::string> parts = VectorizeString(filename, '/');
+	       if (parts[0] == "_config")
+	       {
+		  handleOnTheFlyReconfiguration(client, *m, parts);
+		  continue;
+	       }
+	    }
 
 	    // string replacements in the requested filename
 	    ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
@@ -529,6 +605,60 @@ int main(int const argc, const char * argv[])
 		  {
 		     sendHead(client, 304, headers);
 		     continue;
+		  }
+	       }
+
+	       if (_config->FindB("aptwebserver::support::range", true) == true)
+		  condition = LookupTag(*m, "Range", "");
+	       else
+		  condition.clear();
+	       if (condition.empty() == false && strncmp(condition.c_str(), "bytes=", 6) == 0)
+	       {
+		  time_t cache;
+		  std::string ifrange;
+		  if (_config->FindB("aptwebserver::support::if-range", true) == true)
+		     ifrange = LookupTag(*m, "If-Range", "");
+		  bool validrange = (ifrange.empty() == true ||
+			(RFC1123StrToTime(ifrange.c_str(), cache) == true &&
+			 cache <= data.ModificationTime()));
+
+		  // FIXME: support multiple byte-ranges (APT clients do not do this)
+		  if (condition.find(',') == std::string::npos)
+		  {
+		     size_t start = 6;
+		     unsigned long long filestart = strtoull(condition.c_str() + start, NULL, 10);
+		     // FIXME: no support for last-byte-pos being not the end of the file (APT clients do not do this)
+		     size_t dash = condition.find('-') + 1;
+		     unsigned long long fileend = strtoull(condition.c_str() + dash, NULL, 10);
+		     unsigned long long filesize = data.FileSize();
+		     if ((fileend == 0 || (fileend == filesize && fileend >= filestart)) &&
+			   validrange == true)
+		     {
+			if (filesize > filestart)
+			{
+			   data.Skip(filestart);
+			   std::ostringstream contentlength;
+			   contentlength << "Content-Length: " << (filesize - filestart);
+			   headers.push_back(contentlength.str());
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes " << filestart << "-"
+			      << filesize - 1 << "/" << filesize;
+			   headers.push_back(contentrange.str());
+			   sendHead(client, 206, headers);
+			   if (sendContent == true)
+			      sendFile(client, data);
+			   continue;
+			}
+			else
+			{
+			   headers.push_back("Content-Length: 0");
+			   std::ostringstream contentrange;
+			   contentrange << "Content-Range: bytes */" << filesize;
+			   headers.push_back(contentrange.str());
+			   sendHead(client, 416, headers);
+			   continue;
+			}
+		     }
 		  }
 	       }
 
