@@ -1,5 +1,6 @@
 // Includes								/*{{{*/
 #include <apt-pkg/algorithms.h>
+#include <apt-pkg/upgrade.h>
 #include <iostream>
 #include "private-install.h"
 #include "private-cachefile.h"

@@ -49,7 +49,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
-
+#include <apt-pkg/upgrade.h>
 
 #include <apt-private/private-install.h>
 #include <apt-private/private-upgrade.h>

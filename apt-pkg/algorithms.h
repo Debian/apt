@@ -40,21 +40,16 @@
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/acquire.h>
+// include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatiblity
 using std::ostream;
+#endif
+
+#ifndef APT_9_CLEANER_HEADERS
+#include <apt-pkg/upgrade.h>
 #endif
 
 class pkgAcquireStatus;
 
-namespace APT {
-   namespace Upgrade {
-      // FIXME: make this "enum class UpgradeMode {" once we enable c++11
-      enum UpgradeMode {
-         FORBID_REMOVE_PACKAGES = 1,
-         FORBID_NEW_INSTALL_PACKAGES = 2,
-      };
-      bool Upgrade(pkgDepCache &Cache, int UpgradeMode);
-   }
-}
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
@@ -152,13 +147,8 @@ class pkgProblemResolver						/*{{{*/
    ~pkgProblemResolver();
 };
 									/*}}}*/
-bool pkgDistUpgrade(pkgDepCache &Cache);
 bool pkgApplyStatus(pkgDepCache &Cache);
 bool pkgFixBroken(pkgDepCache &Cache);
-
-bool pkgAllUpgrade(pkgDepCache &Cache);
-
-bool pkgMinimizeUpgrade(pkgDepCache &Cache);
 
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
 
