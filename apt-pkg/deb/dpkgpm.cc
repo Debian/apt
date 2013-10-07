@@ -963,7 +963,7 @@ void pkgDPkgPM::SetupTerminalScrollArea(int nr_rows)
 
      // scroll down a bit to avoid visual glitch when the screen
      // area shrinks by one row
-     std::cout << "\n\n";
+     std::cout << "\n";
          
      // save cursor
      std::cout << "\033[s";
