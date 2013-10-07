@@ -58,7 +58,7 @@ public:
                         fancy_progress_output(false)
    {
       dpkgbuf[0] = '\0';
-      if(_config->FindB("DpkgPM::Progress-Fancy", false))
+      if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
       {
          fancy_progress_output = true;
          _config->Set("DpkgPM::Progress", true);
