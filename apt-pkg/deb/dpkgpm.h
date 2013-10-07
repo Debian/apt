@@ -84,6 +84,8 @@ class pkgDPkgPM : public pkgPackageManager
    bool SendPkgsInfo(FILE * const F, unsigned int const &Version);
    void WriteHistoryTag(std::string const &tag, std::string value);
 
+   // Terminal progress 
+   void SetupTerminalScrollArea(int nr_scrolled_rows);
    void SendTerminalProgress(float percentage);
 
    // apport integration
