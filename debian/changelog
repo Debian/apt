@@ -1,4 +1,4 @@
-apt (0.9.11.5) UNRELEASED; urgency=low
+apt (0.9.12) UNRELEASED; urgency=low
 
   [ Christian Perrier ]
   * Fix typo in apt-private/private-show.cc. Thanks to Benjamin
@@ -7,7 +7,39 @@ apt (0.9.11.5) UNRELEASED; urgency=low
   [ Mark Hymers ]
   * fix libapt-inst for >2G debs (closes: #725483)
 
- -- Christian Perrier <bubulle@debian.org>  Mon, 23 Sep 2013 07:05:34 +0200
+  [ David Kalnischkies ]
+  * don't strip :any from dependencies in single-arch (Closes: 723586)
+  * pkg from only trusted sources keeps being trusted (Closes: 617690)
+  * compression-neutral message for missing data.tar member (Closes: 722710)
+  * print-uris prints regardless of quiet-level again (Closes: 722207)
+  * retry without partial data after a 416 response (Closes: 710924)
+  * replace "filesize - 1" trick in http with proper 416 handling
+  * fix partial (206 and 416) support in https
+  * handle complete responses to https range requests (Closes: 617643, 667699)
+    (LP: 1157943)
+  * don't consider holds for autoremoval (Closes: 724995)
+  * put fetch errors in 'source' on our errorstack
+  * use pkgAcqArchive in 'download' for proper errors
+  * fix lzma-support detection via xz binary
+  * do not ++ on erased package pointers in autoremove
+
+  [ Michael Vogt ]
+  * Add new "apt-get upgrade --with-new-pkgs" option (and add man-page for it).
+    So "apt-get upgrade --with-new-pkgs" will pull in new dependencies but
+    never remove packages
+  * Rename "--dpkg-progress" to "--show-progress" and document it in 
+    apt-get.8. This will show global install progress information in the
+    terminal window.
+  * Fix status-fd progress calculation for certain multi-arch install/upgrade
+    situations
+  * add new -o DpkgPM::Progress-Fancy for nicer dpkg progress output 
+    on vt100+ terminals
+  * fix libapt-inst for >2G debs (closes: #725483), thanks to Mark Hymers 
+  * debian/apt.postinst: use --compare-versions lt instead of lt-nl, 
+    to ensure the apt-auto-removal file is correctly create, 
+    thanks to Ben Hutchings
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 08 Oct 2013 20:38:55 +0200
 
 apt (0.9.11.4) unstable; urgency=low
 
