@@ -129,7 +129,8 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
       if (CmdMatches("upgrade"))
       {
-	 addArg(0, "allow-new", "APT::Get::UpgradeAllowNew", 0);
+         addArg(0, "new-pkgs", "APT::Get::Upgrade-Allow-New", 
+                CommandLine::Boolean);
       }
    }
    else if (CmdMatches("update"))

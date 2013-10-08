@@ -1598,7 +1598,7 @@ void SigWinch(int)
 									/*}}}*/
 bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
 {
-   if (_config->FindB("APT::Get::UpgradeAllowNew", false) == true)
+   if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
       return DoUpgradeWithAllowNewPackages(CmdL);
    else
       return DoUpgradeNoNewPackages(CmdL);
