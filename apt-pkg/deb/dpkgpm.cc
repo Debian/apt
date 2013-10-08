@@ -54,9 +54,15 @@ class pkgDPkgPMPrivate
 public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
 			term_out(NULL), history_out(NULL), 
-                        last_reported_progress(0.0)
+                        last_reported_progress(0.0), nr_terminal_rows(0),
+                        fancy_progress_output(false)
    {
       dpkgbuf[0] = '\0';
+      if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
+      {
+         fancy_progress_output = true;
+         _config->Set("DpkgPM::Progress", true);
+      }
    }
    bool stdin_is_dev_null;
    // the buffer we use for the dpkg status-fd reading
@@ -67,6 +73,8 @@ public:
    string dpkg_error;
 
    float last_reported_progress;
+   int nr_terminal_rows;
+   bool fancy_progress_output;
 };
 
 namespace
@@ -892,10 +900,37 @@ void pkgDPkgPM::SendTerminalProgress(float percentage)
    if(percentage < (d->last_reported_progress + reporting_steps))
       return;
 
-   // FIXME: use colors too
-   std::cout << "\r\n"
-             << "Progress: [" << std::setw(3) << int(percentage) << "%]"
-             << "\r\n";
+   std::string progress_str;
+   strprintf(progress_str, "Progress: [%3i%%]", (int)percentage);
+   if (d->fancy_progress_output)
+   {
+         int row = d->nr_terminal_rows;
+
+         static string save_cursor = "\033[s";
+         static string restore_cursor = "\033[u";
+
+         static string set_bg_color = "\033[42m"; // green
+         static string set_fg_color = "\033[30m"; // black
+
+         static string restore_bg =  "\033[49m";
+         static string restore_fg = "\033[39m";
+
+         std::cout << save_cursor
+            // move cursor position to last row
+                   << "\033[" << row << ";0f" 
+                   << set_bg_color
+                   << set_fg_color
+                   << progress_str
+                   << restore_cursor
+                   << restore_bg
+                   << restore_fg;
+   }
+   else
+   {
+         std::cout << progress_str << "\r\n";
+   }
+   std::flush(std::cout);
+                   
    d->last_reported_progress = percentage;
 }
 									/*}}}*/
@@ -920,6 +955,29 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
    return retval;
 }
 /*}}}*/
+
+void pkgDPkgPM::SetupTerminalScrollArea(int nr_rows)
+{
+     if(!d->fancy_progress_output)
+        return;
+
+     // scroll down a bit to avoid visual glitch when the screen
+     // area shrinks by one row
+     std::cout << "\n";
+         
+     // save cursor
+     std::cout << "\033[s";
+         
+     // set scroll region (this will place the cursor in the top left)
+     std::cout << "\033[1;" << nr_rows - 1 << "r";
+            
+     // restore cursor but ensure its inside the scrolling area
+     std::cout << "\033[u";
+     static const char *move_cursor_up = "\033[1A";
+     std::cout << move_cursor_up;
+     std::flush(std::cout);
+}
+
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
@@ -1276,7 +1334,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       _error->PushToStack();
       if (tcgetattr(STDOUT_FILENO, &tt) == 0)
       {
-	 ioctl(0, TIOCGWINSZ, (char *)&win);
+	 ioctl(1, TIOCGWINSZ, (char *)&win);
+         d->nr_terminal_rows = win.ws_row;
 	 if (openpty(&master, &slave, NULL, &tt, &win) < 0)
 	 {
 	    _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
@@ -1318,11 +1377,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 		<< endl;
 	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       }
+
       Child = ExecFork();
-      
       // This is the child
       if (Child == 0)
       {
+
 	 if(slave >= 0 && master >= 0) 
 	 {
 	    setsid();
@@ -1339,7 +1399,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 if (chdir(_config->FindDir("DPkg::Run-Directory","/").c_str()) != 0)
 	    _exit(100);
-	 
+
 	 if (_config->FindB("DPkg::FlushSTDIN",true) == true && isatty(STDIN_FILENO))
 	 {
 	    int Flags,dummy;
@@ -1355,6 +1415,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
 	       _exit(100);
 	 }
+         SetupTerminalScrollArea(d->nr_terminal_rows);
 
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
@@ -1449,6 +1510,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       
       signal(SIGHUP,old_SIGHUP);
 
+      // reset scroll area
+      SetupTerminalScrollArea(d->nr_terminal_rows);
+      if(d->fancy_progress_output)
+      {
+         // override the progress line (sledgehammer)
+         static const char* clear_screen_below_cursor = "\033[J";
+         std::cout << clear_screen_below_cursor;
+      }
+
       if(master >= 0) 
       {
 	 tcsetattr(0, TCSAFLUSH, &tt);
@@ -1488,7 +1558,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // dpkg is done at this point
    if(_config->FindB("DPkgPM::Progress", false) == true)
       SendTerminalProgress(100);
-   
+
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));
 
