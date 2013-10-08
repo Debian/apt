@@ -1511,7 +1511,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       signal(SIGHUP,old_SIGHUP);
 
       // reset scroll area
-      SetupTerminalScrollArea(d->nr_terminal_rows);
+      SetupTerminalScrollArea(d->nr_terminal_rows + 1);
       if(d->fancy_progress_output)
       {
          // override the progress line (sledgehammer)
