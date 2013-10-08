@@ -33,7 +33,7 @@ case "$1" in
         fi
 
         # create kernel autoremoval blacklist on update
-        if dpkg --compare-versions "$2" lt-nl 0.9.9.3; then
+        if dpkg --compare-versions "$2" lt 0.9.9.3; then
             /etc/kernel/postinst.d/apt-auto-removal
         fi
     ;;
