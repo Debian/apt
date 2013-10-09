@@ -1,0 +1,78 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# simple case
+insertpackage 'stable' 'upgrade-simple' 'all' '1.0'
+insertpackage 'unstable' 'upgrade-simple' 'all' '2.0'
+insertinstalledpackage 'upgrade-simple' 'all' '1.0'
+
+# upgrade with a new dependency
+insertpackage 'stable' 'upgrade-with-new-dep' 'all' '1.0' 
+insertpackage 'unstable' 'upgrade-with-new-dep' 'all' '2.0' 'Depends: new-dep'
+insertpackage 'stable' 'new-dep' 'all' '1.0'
+insertinstalledpackage 'upgrade-with-new-dep' 'all' '1.0'
+
+# upgrade with conflict and a new pkg with higher priority than conflict
+insertpackage 'stable' 'upgrade-with-conflict' 'all' '1.0'
+insertpackage 'unstable' 'upgrade-with-conflict' 'all' '2.0' 'Conflicts: conflicting-dep' 'standard'
+insertpackage 'stable' 'conflicting-dep' 'all' '1.0'
+insertinstalledpackage 'upgrade-with-conflict' 'all' '1.0'
+insertinstalledpackage 'conflicting-dep' 'all' '1.0'
+
+
+setupaptarchive
+
+# Test if normal upgrade works as expected
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  upgrade-with-conflict upgrade-with-new-dep
+The following packages will be upgraded:
+  upgrade-simple
+1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Conf upgrade-simple (2.0 unstable [all])' aptget -s upgrade
+
+# Test if apt-get upgrade --with-new-pkgs works
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  new-dep
+The following packages have been kept back:
+  upgrade-with-conflict
+The following packages will be upgraded:
+  upgrade-simple upgrade-with-new-dep
+2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s upgrade --with-new-pkgs
+
+# Test if apt-get dist-upgrade works
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  conflicting-dep
+The following NEW packages will be installed:
+  new-dep
+The following packages will be upgraded:
+  upgrade-simple upgrade-with-conflict upgrade-with-new-dep
+3 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv conflicting-dep [1.0]
+Inst upgrade-with-conflict [1.0] (2.0 unstable [all])
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf upgrade-with-conflict (2.0 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade
+
