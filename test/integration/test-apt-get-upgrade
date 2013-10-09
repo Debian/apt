@@ -28,7 +28,7 @@ insertinstalledpackage 'conflicting-dep' 'all' '1.0'
 
 setupaptarchive
 
-msgtest "Test normal upgrade works"
+# Test if normal upgrade works as expected
 testequal 'Reading package lists...
 Building dependency tree...
 The following packages have been kept back:
@@ -37,9 +37,9 @@ The following packages will be upgraded:
   upgrade-simple
 1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
 Inst upgrade-simple [1.0] (2.0 unstable [all])
-Conf upgrade-simple (2.0 unstable [all])' aptget -s upgrade && msgpass || msgfail
+Conf upgrade-simple (2.0 unstable [all])' aptget -s upgrade
 
-msgtest "Test if upgrade --with-new-pkgs works"
+# Test if apt-get upgrade --with-new-pkgs works
 testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
@@ -54,9 +54,9 @@ Inst upgrade-simple [1.0] (2.0 unstable [all])
 Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
 Conf new-dep (1.0 stable [all])
 Conf upgrade-simple (2.0 unstable [all])
-Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s upgrade --with-new-pkgs && msgpass || msgfail
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s upgrade --with-new-pkgs
 
-msgtest "Test dist-upgrade works"
+# Test if apt-get dist-upgrade works
 testequal 'Reading package lists...
 Building dependency tree...
 The following packages will be REMOVED:
@@ -74,5 +74,5 @@ Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
 Conf upgrade-with-conflict (2.0 unstable [all])
 Conf new-dep (1.0 stable [all])
 Conf upgrade-simple (2.0 unstable [all])
-Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade && msgpass || msgfail
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade
 
