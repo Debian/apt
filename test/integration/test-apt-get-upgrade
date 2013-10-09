@@ -1,0 +1,69 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# FIXME: use simulated packages instead
+
+buildsimplenativepackage 'foo' 'all' '1.0'
+buildsimplenativepackage 'bar' 'all' '1.0'
+
+buildsimplenativepackage 'apx' 'all' '1.0' 'stable'
+buildsimplenativepackage 'apx' 'all' '2.0' 'unstable' 'Conflicts: foo'
+
+buildsimplenativepackage 'apc' 'all' '1.0' 'stable'
+buildsimplenativepackage 'apc' 'all' '2.0' 'unstable' 'Depends: bar'
+
+insertinstalledpackage 'apx' 'all' '1.0'
+insertinstalledpackage 'apc' 'all' '1.0'
+insertinstalledpackage 'foo' 'all' '1.0'
+
+setupaptarchive
+
+msgtest "Test normal upgrade works"
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  apc apx
+The following packages will be upgraded:
+  foo
+1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+Inst foo [1.0] (1.0 unstable [all])
+Conf foo (1.0 unstable [all])' aptget -s upgrade && msgpass || msgfail
+
+msgtest "Test if upgrade --with-new-pkgs works"
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar
+The following packages have been kept back:
+  apx foo
+The following packages will be upgraded:
+  apc
+1 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst bar (1.0 unstable [all])
+Inst apc [1.0] (2.0 unstable [all])
+Conf bar (1.0 unstable [all])
+Conf apc (2.0 unstable [all])' aptget -s upgrade --with-new-pkgs && msgpass || msgfail
+
+msgtest "Test dist-upgrade works"
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar
+The following packages have been kept back:
+  apx
+The following packages will be upgraded:
+  apc foo
+2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst bar (1.0 unstable [all])
+Inst apc [1.0] (2.0 unstable [all])
+Inst foo [1.0] (1.0 unstable [all])
+Conf bar (1.0 unstable [all])
+Conf apc (2.0 unstable [all])
+Conf foo (1.0 unstable [all])' aptget -s dist-upgrade && msgpass || msgfail
+
