@@ -460,7 +460,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	 if (available_patches.empty() == false)
 	 {
 	    // patching with too many files is rather slow compared to a fast download
-	    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 0);
+	    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 20);
 	    if (fileLimit != 0 && fileLimit < available_patches.size())
 	    {
 	       if (Debug)
