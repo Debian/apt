@@ -9,14 +9,16 @@ configarchitecture "i386"
 
 # FIXME: use simulated packages instead
 
-buildsimplenativepackage 'foo' 'all' '1.0'
-buildsimplenativepackage 'bar' 'all' '1.0'
+insertpackage 'stable' 'foo' 'all' '1.0'
+insertpackage 'unstable' 'foo' 'all' '2.0'
 
-buildsimplenativepackage 'apx' 'all' '1.0' 'stable'
-buildsimplenativepackage 'apx' 'all' '2.0' 'unstable' 'Conflicts: foo'
+insertpackage 'unstable' 'bar' 'all' '1.0'
 
-buildsimplenativepackage 'apc' 'all' '1.0' 'stable'
-buildsimplenativepackage 'apc' 'all' '2.0' 'unstable' 'Depends: bar'
+insertpackage 'stable' 'apx' 'all' '1.0'
+insertpackage 'unstable' 'apx' 'all' '2.0' 'Conflicts: foo'
+
+insertpackage 'stable' 'apc' 'all' '1.0' 
+insertpackage 'unstable' 'apc' 'all' '2.0' 'Depends: bar'
 
 insertinstalledpackage 'apx' 'all' '1.0'
 insertinstalledpackage 'apc' 'all' '1.0'
@@ -32,8 +34,8 @@ The following packages have been kept back:
 The following packages will be upgraded:
   foo
 1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
-Inst foo [1.0] (1.0 unstable [all])
-Conf foo (1.0 unstable [all])' aptget -s upgrade && msgpass || msgfail
+Inst foo [1.0] (2.0 unstable [all])
+Conf foo (2.0 unstable [all])' aptget -s upgrade && msgpass || msgfail
 
 msgtest "Test if upgrade --with-new-pkgs works"
 testequal 'Reading package lists...
@@ -62,8 +64,8 @@ The following packages will be upgraded:
 2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
 Inst bar (1.0 unstable [all])
 Inst apc [1.0] (2.0 unstable [all])
-Inst foo [1.0] (1.0 unstable [all])
+Inst foo [1.0] (2.0 unstable [all])
 Conf bar (1.0 unstable [all])
 Conf apc (2.0 unstable [all])
-Conf foo (1.0 unstable [all])' aptget -s dist-upgrade && msgpass || msgfail
+Conf foo (2.0 unstable [all])' aptget -s dist-upgrade && msgpass || msgfail
 
