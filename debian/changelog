@@ -39,6 +39,10 @@ apt (0.9.12) UNRELEASED; urgency=low
     to ensure the apt-auto-removal file is correctly create, 
     thanks to Ben Hutchings
   * update Uploaders to match recent uploaders better
+  * Set the default "Acquire::PDiffs::FileLimit" to 20. If the amount
+    of pdiffs is bigger things tend to get slower. Set
+      Acquire::PDiffs::FileLimit "0";
+    in /etc/apt/preferences to get the old behavior back.
 
  -- Michael Vogt <mvo@debian.org>  Tue, 08 Oct 2013 20:38:55 +0200
 
