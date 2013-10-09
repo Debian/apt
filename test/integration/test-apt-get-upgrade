@@ -7,22 +7,24 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-# FIXME: use simulated packages instead
+# simple case
+insertpackage 'stable' 'upgrade-simple' 'all' '1.0'
+insertpackage 'unstable' 'upgrade-simple' 'all' '2.0'
+insertinstalledpackage 'upgrade-simple' 'all' '1.0'
 
-insertpackage 'stable' 'foo' 'all' '1.0'
-insertpackage 'unstable' 'foo' 'all' '2.0'
+# upgrade with a new dependency
+insertpackage 'stable' 'upgrade-with-new-dep' 'all' '1.0' 
+insertpackage 'unstable' 'upgrade-with-new-dep' 'all' '2.0' 'Depends: new-dep'
+insertpackage 'stable' 'new-dep' 'all' '1.0'
+insertinstalledpackage 'upgrade-with-new-dep' 'all' '1.0'
 
-insertpackage 'unstable' 'bar' 'all' '1.0'
+# upgrade with conflict and a new pkg with higher priority than conflict
+insertpackage 'stable' 'upgrade-with-conflict' 'all' '1.0'
+insertpackage 'unstable' 'upgrade-with-conflict' 'all' '2.0' 'Conflicts: conflicting-dep' 'standard'
+insertpackage 'stable' 'conflicting-dep' 'all' '1.0'
+insertinstalledpackage 'upgrade-with-conflict' 'all' '1.0'
+insertinstalledpackage 'conflicting-dep' 'all' '1.0'
 
-insertpackage 'stable' 'apx' 'all' '1.0'
-insertpackage 'unstable' 'apx' 'all' '2.0' 'Conflicts: foo'
-
-insertpackage 'stable' 'apc' 'all' '1.0' 
-insertpackage 'unstable' 'apc' 'all' '2.0' 'Depends: bar'
-
-insertinstalledpackage 'apx' 'all' '1.0'
-insertinstalledpackage 'apc' 'all' '1.0'
-insertinstalledpackage 'foo' 'all' '1.0'
 
 setupaptarchive
 
@@ -30,42 +32,47 @@ msgtest "Test normal upgrade works"
 testequal 'Reading package lists...
 Building dependency tree...
 The following packages have been kept back:
-  apc apx
+  upgrade-with-conflict upgrade-with-new-dep
 The following packages will be upgraded:
-  foo
+  upgrade-simple
 1 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
-Inst foo [1.0] (2.0 unstable [all])
-Conf foo (2.0 unstable [all])' aptget -s upgrade && msgpass || msgfail
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Conf upgrade-simple (2.0 unstable [all])' aptget -s upgrade && msgpass || msgfail
 
 msgtest "Test if upgrade --with-new-pkgs works"
 testequal 'Reading package lists...
 Building dependency tree...
 The following NEW packages will be installed:
-  bar
+  new-dep
 The following packages have been kept back:
-  apx foo
+  upgrade-with-conflict
 The following packages will be upgraded:
-  apc
-1 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
-Inst bar (1.0 unstable [all])
-Inst apc [1.0] (2.0 unstable [all])
-Conf bar (1.0 unstable [all])
-Conf apc (2.0 unstable [all])' aptget -s upgrade --with-new-pkgs && msgpass || msgfail
+  upgrade-simple upgrade-with-new-dep
+2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s upgrade --with-new-pkgs && msgpass || msgfail
 
 msgtest "Test dist-upgrade works"
 testequal 'Reading package lists...
 Building dependency tree...
+The following packages will be REMOVED:
+  conflicting-dep
 The following NEW packages will be installed:
-  bar
-The following packages have been kept back:
-  apx
+  new-dep
 The following packages will be upgraded:
-  apc foo
-2 upgraded, 1 newly installed, 0 to remove and 1 not upgraded.
-Inst bar (1.0 unstable [all])
-Inst apc [1.0] (2.0 unstable [all])
-Inst foo [1.0] (2.0 unstable [all])
-Conf bar (1.0 unstable [all])
-Conf apc (2.0 unstable [all])
-Conf foo (2.0 unstable [all])' aptget -s dist-upgrade && msgpass || msgfail
+  upgrade-simple upgrade-with-conflict upgrade-with-new-dep
+3 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv conflicting-dep [1.0]
+Inst upgrade-with-conflict [1.0] (2.0 unstable [all])
+Inst new-dep (1.0 stable [all])
+Inst upgrade-simple [1.0] (2.0 unstable [all])
+Inst upgrade-with-new-dep [1.0] (2.0 unstable [all])
+Conf upgrade-with-conflict (2.0 unstable [all])
+Conf new-dep (1.0 stable [all])
+Conf upgrade-simple (2.0 unstable [all])
+Conf upgrade-with-new-dep (2.0 unstable [all])' aptget -s dist-upgrade && msgpass || msgfail
 
