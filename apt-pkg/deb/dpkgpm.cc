@@ -901,7 +901,7 @@ void pkgDPkgPM::SendTerminalProgress(float percentage)
       return;
 
    std::string progress_str;
-   strprintf(progress_str, "Progress: [%3i%%]", (int)percentage);
+   strprintf(progress_str, _("Progress: [%3i%%]"), (int)percentage);
    if (d->fancy_progress_output)
    {
          int row = d->nr_terminal_rows;
