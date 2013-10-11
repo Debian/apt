@@ -137,21 +137,21 @@ bool sendFile(int const client, FileFd &data)				/*{{{*/
    {
       if (actual == 0)
 	 break;
-      if (Success == true)
-	 Success &= FileFd::Write(client, buffer, actual);
+      Success &= FileFd::Write(client, buffer, actual);
    }
-   if (Success == true)
-      Success &= FileFd::Write(client, "\r\n", 2);
+   if (Success == false)
+      std::cerr << "SENDFILE: READ/WRITE ERROR to " << client << std::endl;
    return Success;
 }
 									/*}}}*/
 bool sendData(int const client, std::string const &data)		/*{{{*/
 {
-   bool Success = true;
-   Success &= FileFd::Write(client, data.c_str(), data.size());
-   if (Success == true)
-      Success &= FileFd::Write(client, "\r\n", 2);
-   return Success;
+   if (FileFd::Write(client, data.c_str(), data.size()) == false)
+   {
+      std::cerr << "SENDDATA: WRITE ERROR to " << client << std::endl;
+      return false;
+   }
+   return true;
 }
 									/*}}}*/
 void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
