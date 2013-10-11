@@ -23,6 +23,7 @@ using std::map;
 
 class pkgDPkgPMPrivate;
 
+
 class pkgDPkgPM : public pkgPackageManager
 {
    private:
