@@ -1545,6 +1545,9 @@ bool FileFd::Skip(unsigned long long Over)
 /* */
 bool FileFd::Truncate(unsigned long long To)
 {
+   // truncating /dev/null is always successful - as we get an error otherwise
+   if (To == 0 && FileName == "/dev/null")
+      return true;
 #if defined HAVE_ZLIB || defined HAVE_BZ2
    if (d != NULL && (d->gz != NULL || d->bz2 != NULL))
       return FileFdError("Truncating compressed files is not implemented (%s)", FileName.c_str());
