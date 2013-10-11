@@ -7,7 +7,7 @@
 namespace APT {
 namespace Progress {
 
-static void SetupTerminalScrollArea(int nr_rows)
+void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 {
      // scroll down a bit to avoid visual glitch when the screen
      // area shrinks by one row
@@ -23,6 +23,7 @@ static void SetupTerminalScrollArea(int nr_rows)
      std::cout << "\033[u";
      static const char *move_cursor_up = "\033[1A";
      std::cout << move_cursor_up;
+
      std::flush(std::cout);
 }
 
@@ -38,16 +39,20 @@ PackageManagerFancy::PackageManagerFancy()
 
 void PackageManagerFancy::Started()
 {
-   SetupTerminalScrollArea(nr_terminal_rows);
+   if (nr_terminal_rows > 0)
+      SetupTerminalScrollArea(nr_terminal_rows);
 }
 
 void PackageManagerFancy::Finished()
 {
-   SetupTerminalScrollArea(nr_terminal_rows + 1);
+   if (nr_terminal_rows > 0)
+   {
+      SetupTerminalScrollArea(nr_terminal_rows + 1);
 
-   // override the progress line (sledgehammer)
-   static const char* clear_screen_below_cursor = "\033[J";
-   std::cout << clear_screen_below_cursor;
+      // override the progress line (sledgehammer)
+      static const char* clear_screen_below_cursor = "\033[J";
+      std::cout << clear_screen_below_cursor;
+   }
 }
 
 void PackageManagerFancy::StatusChanged(std::string PackageName, 

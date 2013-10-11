@@ -30,6 +30,8 @@ namespace Progress {
  protected:
     int last_reported_progress;
     int nr_terminal_rows;
+    void SetupTerminalScrollArea(int nr_rows);
+
  public:
     PackageManagerFancy();
     virtual void Started();
