@@ -58,9 +58,10 @@ public:
                         last_reported_progress(0.0)
    {
       dpkgbuf[0] = '\0';
-      if(_config->FindB("DpkgPM::Progress-Fancy", false) == true)
+      if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
          progress = new APT::Progress::PackageManagerFancy();
-      else if (_config->FindB("DpkgPM::Progress", false) == true)
+      else if (_config->FindB("Dpkg::Progress", 
+                _config->FindB("DpkgPM::Progress", false)) == true)
          progress = new APT::Progress::PackageManagerText();
       else
          progress = new APT::Progress::PackageManager();

@@ -1,11 +1,26 @@
 #include <apt-pkg/iprogress.h>
 #include <apt-pkg/strutl.h>
+#include <apti18n.h>
 
 #include <termios.h>
 #include <sys/ioctl.h>
 
 namespace APT {
 namespace Progress {
+
+bool PackageManager::StatusChanged(std::string PackageName, 
+                               unsigned int StepsDone,
+                               unsigned int TotalSteps)
+{
+   int reporting_steps = _config->FindI("DpkgPM::Reporting-Steps", 1);
+   percentage = StepsDone/(float)TotalSteps * 100.0;
+   strprintf(progress_str, _("Progress: [%3i%%]"), (int)percentage);
+
+   if(percentage < (last_reported_progress + reporting_steps))
+      return false;
+
+   return true;
+}
 
 void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 {
@@ -55,18 +70,12 @@ void PackageManagerFancy::Finished()
    }
 }
 
-void PackageManagerFancy::StatusChanged(std::string PackageName, 
+bool PackageManagerFancy::StatusChanged(std::string PackageName, 
                                         unsigned int StepsDone,
                                         unsigned int TotalSteps)
 {
-   int reporting_steps = _config->FindI("DpkgPM::Reporting-Steps", 1);
-   float percentage = StepsDone/(float)TotalSteps * 100.0;
-
-   if(percentage < (last_reported_progress + reporting_steps))
-      return;
-
-   std::string progress_str;
-   strprintf(progress_str, "Progress: [%3i%%]", (int)percentage);
+   if (!PackageManager::StatusChanged(PackageName, StepsDone, TotalSteps))
+      return false;
 
    int row = nr_terminal_rows;
 
@@ -90,25 +99,23 @@ void PackageManagerFancy::StatusChanged(std::string PackageName,
              << restore_fg;
    std::flush(std::cout);
    last_reported_progress = percentage;
+
+   return true;
 }
 
-void PackageManagerText::StatusChanged(std::string PackageName, 
+bool PackageManagerText::StatusChanged(std::string PackageName, 
                                        unsigned int StepsDone,
                                        unsigned int TotalSteps)
 {
-   int reporting_steps = _config->FindI("DpkgPM::Reporting-Steps", 1);
-   float percentage = StepsDone/(float)TotalSteps * 100.0;
-
-   if(percentage < (last_reported_progress + reporting_steps))
-      return;
-
-   std::string progress_str;
-   strprintf(progress_str, "Progress: [%3i%%]", (int)percentage);
+   if (!PackageManager::StatusChanged(PackageName, StepsDone, TotalSteps))
+      return false;
 
    std::cout << progress_str << "\r\n";
    std::flush(std::cout);
                    
    last_reported_progress = percentage;
+
+   return true;
 }
 
 

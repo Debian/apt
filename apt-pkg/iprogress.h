@@ -14,21 +14,26 @@ namespace Progress {
     /** \brief dpointer placeholder */
     void *d;
 
+ protected:
+    std::string progress_str;
+    float percentage;
+    int last_reported_progress;
+
  public:
+    PackageManager() : percentage(0.0), last_reported_progress(0) {};
     virtual ~PackageManager() {};
 
     virtual void Started() {};
     virtual void Finished() {};
     
-    virtual void StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
-                               unsigned int TotalSteps) {};
+                               unsigned int TotalSteps);
  };
 
  class PackageManagerFancy : public PackageManager
  {
  protected:
-    int last_reported_progress;
     int nr_terminal_rows;
     void SetupTerminalScrollArea(int nr_rows);
 
@@ -36,19 +41,15 @@ namespace Progress {
     PackageManagerFancy();
     virtual void Started();
     virtual void Finished();
-    virtual void StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
                                unsigned int TotalSteps);
  };
 
  class PackageManagerText : public PackageManager
  {
- protected:
-    int last_reported_progress;
-
  public:
-    PackageManagerText() : last_reported_progress(0) {};
-    virtual void StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
                                unsigned int TotalSteps);
 
