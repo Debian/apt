@@ -18,7 +18,7 @@ testdownloadfile() {
 	rm -f "$DOWNLOG"
 	msgtest "Testing download of file $2 with" "$1"
 	if ! downloadfile "$2" "$3" > "$DOWNLOG"; then
-		cat "$DOWNLOG"
+		cat >&2 "$DOWNLOG"
 		msgfail
 	else
 		msgpass
@@ -40,21 +40,23 @@ testdownloadfile() {
 		if [ "$EXPECTED" "$4" "$hash" ]; then
 			msgpass
 		else
-			cat "$DOWNLOG"
+			cat >&2 "$DOWNLOG"
 			msgfail "expected: $EXPECTED ; got: $hash"
 		fi
 	done
 }
 
 testwebserverlaststatuscode() {
-	STATUS="$(mktemp)"
+	local DOWNLOG='download-testfile.log'
+	rm -f "$DOWNLOG"
+	local STATUS="$(mktemp)"
 	addtrap "rm $STATUS;"
 	msgtest 'Test last status code from the webserver was' "$1"
-	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" >/dev/null
+	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
 	if [ "$(cat "$STATUS")" = "$1" ]; then
 		msgpass
 	else
-		cat download-testfile.log
+		cat >&2 "$DOWNLOG"
 		msgfail "Status was $(cat "$STATUS")"
 	fi
 }

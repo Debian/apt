@@ -192,6 +192,7 @@ setupenvironment() {
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
+	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	export LC_ALL=C
 	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
@@ -799,6 +800,11 @@ rewritesourceslist() {
 }
 
 changetowebserver() {
+	if [ "$1" != '--no-rewrite' ]; then
+		rewritesourceslist 'http://localhost:8080/'
+	else
+		shift
+	fi
 	local LOG='/dev/null'
 	if test -x ${BUILDDIRECTORY}/aptwebserver; then
 		cd aptarchive
@@ -812,9 +818,6 @@ changetowebserver() {
 	else
 		msgdie 'You have to build aptwerbserver or install a webserver'
 	fi
-	if [ "$1" != '--no-rewrite' ]; then
-		rewritesourceslist 'http://localhost:8080/'
-	fi
 }
 
 changetohttpswebserver() {
@@ -826,6 +829,7 @@ changetohttpswebserver() {
 	fi
 	echo "pid = ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid
 cert = ${TESTDIRECTORY}/apt.pem
+output = /dev/null
 
 [https]
 accept = 4433
