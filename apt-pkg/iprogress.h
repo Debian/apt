@@ -28,7 +28,12 @@ namespace Progress {
     virtual void Finished() {};
 
     virtual pid_t fork() {return fork(); };
-    
+
+    virtual void Pulse() {};
+    virtual long GetPulseInterval() {
+         return 500000;
+    };
+
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
                                unsigned int TotalSteps,

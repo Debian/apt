@@ -1364,13 +1364,14 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 FD_SET(_dpkgin, &rfds);
 	 if(master >= 0)
 	    FD_SET(master, &rfds);
-	 tv.tv_sec = 1;
-	 tv.tv_nsec = 0;
+	 tv.tv_sec = 0;
+	 tv.tv_nsec = d->progress->GetPulseInterval();
 	 select_ret = pselect(max(master, _dpkgin)+1, &rfds, NULL, NULL, 
 			      &tv, &original_sigmask);
 	 if (select_ret < 0 && (errno == EINVAL || errno == ENOSYS))
 	    select_ret = racy_pselect(max(master, _dpkgin)+1, &rfds, NULL,
 				      NULL, &tv, &original_sigmask);
+         d->progress->Pulse();
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)
