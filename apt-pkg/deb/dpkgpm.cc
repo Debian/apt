@@ -546,8 +546,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    // A dpkg error message may contain additional ":" (like
    //  "failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ..."
    // so we need to ensure to not split too much
-   std::vector<std::string> list = StringSplit(line, ": ", 3);
-   if(list.size() != 3)
+   std::vector<std::string> list = StringSplit(line, ": ", 4);
+   if(list.size() < 3)
    {
       if (Debug == true)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
