@@ -1,16 +1,22 @@
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/iprogress.h>
 #include <apt-pkg/strutl.h>
+
 #include <apti18n.h>
 
 #include <termios.h>
 #include <sys/ioctl.h>
+#include <sstream>
+
 
 namespace APT {
 namespace Progress {
 
 bool PackageManager::StatusChanged(std::string PackageName, 
-                               unsigned int StepsDone,
-                               unsigned int TotalSteps)
+                                   unsigned int StepsDone,
+                                   unsigned int TotalSteps,
+                                   std::string HumanReadableAction)
 {
    int reporting_steps = _config->FindI("DpkgPM::Reporting-Steps", 1);
    percentage = StepsDone/(float)TotalSteps * 100.0;
@@ -19,6 +25,80 @@ bool PackageManager::StatusChanged(std::string PackageName,
    if(percentage < (last_reported_progress + reporting_steps))
       return false;
 
+   return true;
+}
+
+PackageManagerProgressFd::PackageManagerProgressFd(int progress_fd)
+{
+   OutStatusFd = progress_fd;
+}
+
+void PackageManagerProgressFd::Started()
+{
+   _config->Set("APT::Keep-Fds::", OutStatusFd);
+
+   // send status information that we are about to fork dpkg
+   if(OutStatusFd > 0) {
+      std::ostringstream status;
+      status << "pmstatus:dpkg-exec:" 
+             << (StepsDone/float(StepsTotal)*100.0) 
+             << ":" << _("Running dpkg")
+             << std::endl;
+      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+   }
+}
+
+void PackageManagerProgressFd::Finished()
+{
+   // clear the Keep-Fd again
+   _config->Clear("APT::Keep-Fds", OutStatusFd);
+}
+
+void PackageManagerProgressFd::Error(std::string PackageName,
+                                     unsigned int StepsDone,
+                                     unsigned int TotalSteps,
+                                     std::string ErrorMessage)
+{
+   std::ostringstream status;
+   status << "pmerror:" << PackageName
+          << ":"  << (StepsDone/float(TotalSteps)*100.0) 
+          << ":" << ErrorMessage
+          << std::endl;
+   if(OutStatusFd > 0)
+      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+}
+
+void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
+                                              unsigned int StepsDone,
+                                              unsigned int TotalSteps,
+                                              std::string ConfMessage)
+{
+   std::ostringstream status;
+   status << "pmconffile:" << PackageName
+          << ":"  << (StepsDone/float(TotalSteps)*100.0) 
+          << ":" << ConfMessage
+          << std::endl;
+   if(OutStatusFd > 0)
+      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+}
+
+
+bool PackageManagerProgressFd::StatusChanged(std::string PackageName, 
+                                             unsigned int xStepsDone,
+                                             unsigned int xTotalSteps,
+                                             std::string pkg_action)
+{
+   StepsDone = xStepsDone;
+   StepsTotal = xTotalSteps;
+
+   // build the status str
+   std::ostringstream status;
+   status << "pmstatus:" << PackageName
+          << ":"  << (StepsDone/float(StepsTotal)*100.0) 
+          << ":" << pkg_action
+          << std::endl;
+   if(OutStatusFd > 0)
+      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
    return true;
 }
 
@@ -72,9 +152,11 @@ void PackageManagerFancy::Finished()
 
 bool PackageManagerFancy::StatusChanged(std::string PackageName, 
                                         unsigned int StepsDone,
-                                        unsigned int TotalSteps)
+                                        unsigned int TotalSteps,
+                                        std::string HumanReadableAction)
 {
-   if (!PackageManager::StatusChanged(PackageName, StepsDone, TotalSteps))
+   if (!PackageManager::StatusChanged(PackageName, StepsDone, TotalSteps,
+          HumanReadableAction))
       return false;
 
    int row = nr_terminal_rows;
@@ -105,9 +187,10 @@ bool PackageManagerFancy::StatusChanged(std::string PackageName,
 
 bool PackageManagerText::StatusChanged(std::string PackageName, 
                                        unsigned int StepsDone,
-                                       unsigned int TotalSteps)
+                                       unsigned int TotalSteps,
+                                       std::string HumanReadableAction)
 {
-   if (!PackageManager::StatusChanged(PackageName, StepsDone, TotalSteps))
+   if (!PackageManager::StatusChanged(PackageName, StepsDone, TotalSteps, HumanReadableAction))
       return false;
 
    std::cout << progress_str << "\r\n";

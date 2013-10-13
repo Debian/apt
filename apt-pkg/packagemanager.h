@@ -24,6 +24,7 @@
 #define PKGLIB_PACKAGEMANAGER_H
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/iprogress.h>
 
 #include <string>
 #include <iostream>
@@ -39,6 +40,7 @@ class pkgDepCache;
 class pkgSourceList;
 class pkgOrderList;
 class pkgRecords;
+
 
 class pkgPackageManager : protected pkgCache::Namespace
 {
@@ -84,7 +86,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
-   virtual bool Go(int statusFd=-1) {return true;};
+   virtual bool Go(APT::Progress::PackageManager *progress) {return true;};
    virtual void Reset() {};
 
    // the result of the operation
@@ -97,7 +99,17 @@ class pkgPackageManager : protected pkgCache::Namespace
 		    pkgRecords *Recs);
 
    // Do the installation 
-   OrderResult DoInstall(int statusFd=-1);
+   OrderResult DoInstall(APT::Progress::PackageManager *progress);
+
+   // compat
+   OrderResult DoInstall(int statusFd=-1) {
+      APT::Progress::PackageManager *progress = new
+         APT::Progress::PackageManagerProgressFd(statusFd);
+      OrderResult res = DoInstall(progress);
+      delete progress;
+      return res;
+   }
+
 
    // stuff that needs to be done before the fork() of a library that
    // uses apt
@@ -107,7 +119,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    };
 
    // stuff that needs to be done after the fork
-   OrderResult DoInstallPostFork(int statusFd=-1);
+   OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
    bool FixMissing();
 
    /** \brief returns all packages dpkg let disappear */

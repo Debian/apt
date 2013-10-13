@@ -99,14 +99,15 @@ class pkgDPkgPM : public pkgPackageManager
    // input processing
    void DoStdin(int master);
    void DoTerminalPty(int master);
-   void DoDpkgStatusFd(int statusfd, int OutStatusFd);
-   void ProcessDpkgStatusLine(int OutStatusFd, char *line);
+   void DoDpkgStatusFd(int statusfd);
+   void ProcessDpkgStatusLine(char *line);
 
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,std::string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge = false);
-   virtual bool Go(int StatusFd=-1);
+
+   virtual bool Go(APT::Progress::PackageManager *progress);
    virtual void Reset();
    
    public:

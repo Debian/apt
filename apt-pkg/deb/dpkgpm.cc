@@ -55,20 +55,12 @@ class pkgDPkgPMPrivate
 public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
 			term_out(NULL), history_out(NULL), 
-                        last_reported_progress(0.0)
+                        last_reported_progress(0.0), progress(NULL)
    {
       dpkgbuf[0] = '\0';
-      if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
-         progress = new APT::Progress::PackageManagerFancy();
-      else if (_config->FindB("Dpkg::Progress", 
-                _config->FindB("DpkgPM::Progress", false)) == true)
-         progress = new APT::Progress::PackageManagerText();
-      else
-         progress = new APT::Progress::PackageManager();
    }
    ~pkgDPkgPMPrivate()
    {
-      delete progress;
    }
 
    bool stdin_is_dev_null;
@@ -519,11 +511,9 @@ void pkgDPkgPM::DoTerminalPty(int master)
 // ---------------------------------------------------------------------
 /*
  */
-void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
+void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 {
    bool const Debug = _config->FindB("Debug::pkgDPkgProgressReporting",false);
-   // the status we output
-   ostringstream status;
 
    if (Debug == true)
       std::clog << "got from dpkg '" << line << "'" << std::endl;
@@ -573,7 +563,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    // 'processing: action: pkg'
    if(strncmp(list[0].c_str(), "processing", strlen("processing")) == 0)
    {
-      char s[200];
       const char* const pkg_or_trigger = list[2].c_str();
       action =  list[1].c_str();
       const std::pair<const char *, const char *> * const iter =
@@ -586,17 +575,11 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	    std::clog << "ignoring unknown action: " << action << std::endl;
 	 return;
       }
-      snprintf(s, sizeof(s), _(iter->second), pkg_or_trigger);
+      std::string pkg_action;
+      strprintf(pkg_action, _(iter->second), pkg_or_trigger);
 
-      status << "pmstatus:" << pkg_or_trigger
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << s
-	     << endl;
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
-
+      d->progress->StatusChanged(pkg_or_trigger, PackagesDone, PackagesTotal,
+                                 pkg_action);
       if (strncmp(action, "disappear", strlen("disappear")) == 0)
 	 handleDisappearAction(pkg_or_trigger);
       return;
@@ -604,28 +587,15 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 
    if(strncmp(action,"error",strlen("error")) == 0)
    {
-      status << "pmerror:" << list[1]
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << list[3]
-	     << endl;
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
+      d->progress->Error(list[1], PackagesDone, PackagesTotal, list[3]);
       pkgFailures++;
       WriteApportReport(list[1].c_str(), list[3].c_str());
       return;
    }
    else if(strncmp(action,"conffile",strlen("conffile")) == 0)
    {
-      status << "pmconffile:" << list[1]
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << list[3]
-	     << endl;
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
+      d->progress->ConffilePrompt(list[1], PackagesDone, PackagesTotal,
+                                  list[3]);
       return;
    }
 
@@ -638,24 +608,15 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    {
       // only read the translation if there is actually a next
       // action
-      const char *translation = _(states[PackageOpsDone[pkg]].str);
-      char s[200];
-      snprintf(s, sizeof(s), translation, pkg);
+      std::string translation;
+      strprintf(translation, _(states[PackageOpsDone[pkg]].str), pkg);
 
       // we moved from one dpkg state to a new one, report that
       PackageOpsDone[pkg]++;
       PackagesDone++;
-      // build the status str
-      status << "pmstatus:" << pkg 
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << s
-	     << endl;
-      d->progress->StatusChanged(pkg, PackagesDone, PackagesTotal);
-
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
+      // and send to the progress
+      d->progress->StatusChanged(pkg, PackagesDone, PackagesTotal,
+                                 translation);
    }
    if (Debug == true) 
       std::clog << "(parsed from dpkg) pkg: " << pkg 
@@ -713,7 +674,7 @@ void pkgDPkgPM::handleDisappearAction(string const &pkgname)
 // ---------------------------------------------------------------------
 /*
  */
-void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
+void pkgDPkgPM::DoDpkgStatusFd(int statusfd)
 {
    char *p, *q;
    int len;
@@ -728,7 +689,7 @@ void pkgDPkgPM::DoDpkgStatusFd(int statusfd, int OutStatusFd)
    while((q=(char*)memchr(p, '\n', d->dpkgbuf+d->dpkgbuf_pos-p)) != NULL)
    {
       *q = 0;
-      ProcessDpkgStatusLine(OutStatusFd, p);
+      ProcessDpkgStatusLine(p);
       p=q+1; // continue with next line
    }
 
@@ -920,14 +881,15 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
  *   
- * If it is called with "OutStatusFd" set to a valid file descriptor
- * apt will report the install progress over this fd. It maps the
- * dpkg states a package goes through to human readable (and i10n-able)
+ * If it is called with a progress object apt will report the install
+ * progress to this object. It maps the dpkg states a package goes
+ * through to human readable (and i10n-able)
  * names and calculates a percentage for each step.
 */
-bool pkgDPkgPM::Go(int OutStatusFd)
+bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 {
    pkgPackageManager::SigINTStop = false;
+   d->progress = progress;
 
    // Generate the base argument list for dpkg
    std::vector<const char *> Args;
@@ -1304,16 +1266,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
        // Fork dpkg
       pid_t Child;
-      _config->Set("APT::Keep-Fds::",fd[1]);
-      // send status information that we are about to fork dpkg
-      if(OutStatusFd > 0) {
-	 ostringstream status;
-	 status << "pmstatus:dpkg-exec:" 
-		<< (PackagesDone/float(PackagesTotal)*100.0) 
-		<< ":" << _("Running dpkg")
-		<< endl;
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      }
+      d->progress->Started();
 
       Child = ExecFork();
       // This is the child
@@ -1360,14 +1313,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
       }      
-      d->progress->Started();
 
       // apply ionice
       if (_config->FindB("DPkg::UseIoNice", false) == true)
 	 ionice(Child);
-
-      // clear the Keep-Fd again
-      _config->Clear("APT::Keep-Fds",fd[1]);
 
       // Wait for dpkg
       int Status = 0;
@@ -1437,7 +1386,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 if(master >= 0 && FD_ISSET(0, &rfds))
 	    DoStdin(master);
 	 if(FD_ISSET(_dpkgin, &rfds))
-	    DoDpkgStatusFd(_dpkgin, OutStatusFd);
+	    DoDpkgStatusFd(_dpkgin);
       }
       close(_dpkgin);
 
@@ -1487,7 +1436,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    CloseLog();
 
    // dpkg is done at this point
-   d->progress->StatusChanged("", PackagesDone, PackagesTotal);
+   d->progress->StatusChanged("", PackagesDone, PackagesTotal, "");
 
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));

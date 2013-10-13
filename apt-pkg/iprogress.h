@@ -1,12 +1,12 @@
 #ifndef PKGLIB_IPROGRESS_H
-#define PKGLIB_IPROGRSS_H
+#define PKGLIB_IPROGRESS_H
 
+#include <string>
+#include <unistd.h>
 
-#include <apt-pkg/packagemanager.h>
 
 namespace APT {
 namespace Progress {
-
 
  class PackageManager
  {
@@ -20,15 +20,54 @@ namespace Progress {
     int last_reported_progress;
 
  public:
-    PackageManager() : percentage(0.0), last_reported_progress(0) {};
+    PackageManager() 
+       : percentage(0.0), last_reported_progress(0) {};
     virtual ~PackageManager() {};
 
     virtual void Started() {};
     virtual void Finished() {};
+
+    virtual pid_t fork() {return fork(); };
     
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
-                               unsigned int TotalSteps);
+                               unsigned int TotalSteps,
+                               std::string HumanReadableAction) ;
+    virtual void Error(std::string PackageName,                                
+                       unsigned int StepsDone,
+                       unsigned int TotalSteps,
+                       std::string ErrorMessage) {};
+    virtual void ConffilePrompt(std::string PackageName,
+                                unsigned int StepsDone,
+                                unsigned int TotalSteps,
+                                std::string ConfMessage) {};
+ };
+
+ class PackageManagerProgressFd : public PackageManager
+ {
+ protected:
+    int OutStatusFd;
+    int StepsDone;
+    int StepsTotal;
+
+ public:
+    PackageManagerProgressFd(int progress_fd);
+    virtual void Started();
+    virtual void Finished();
+
+    virtual bool StatusChanged(std::string PackageName, 
+                               unsigned int StepsDone,
+                               unsigned int TotalSteps,
+                               std::string HumanReadableAction);
+    virtual void Error(std::string PackageName,                                
+                       unsigned int StepsDone,
+                       unsigned int TotalSteps,
+                          std::string ErrorMessage);
+    virtual void ConffilePrompt(std::string PackageName,
+                                unsigned int StepsDone,
+                                unsigned int TotalSteps,
+                                   std::string ConfMessage);
+
  };
 
  class PackageManagerFancy : public PackageManager
@@ -43,7 +82,8 @@ namespace Progress {
     virtual void Finished();
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
-                               unsigned int TotalSteps);
+                               unsigned int TotalSteps,
+                               std::string HumanReadableAction);
  };
 
  class PackageManagerText : public PackageManager
@@ -51,8 +91,8 @@ namespace Progress {
  public:
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
-                               unsigned int TotalSteps);
-
+                               unsigned int TotalSteps,
+                               std::string HumanReadableAction);
  };
 
 

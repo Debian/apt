@@ -1032,28 +1032,32 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 // PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
 // ---------------------------------------------------------------------
 pkgPackageManager::OrderResult 
-pkgPackageManager::DoInstallPostFork(int statusFd)
+pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
 {
+// FIXME: port to new structure
+#if 0
       if(statusFd > 0)
          // FIXME: use SetCloseExec here once it taught about throwing
 	 //        exceptions instead of doing _exit(100) on failure
 	 fcntl(statusFd,F_SETFD,FD_CLOEXEC); 
-      bool goResult = Go(statusFd);
+#endif
+      bool goResult = Go(progress);
       if(goResult == false) 
 	 return Failed;
 
       return Res;
 };
-
+									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
-pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
+pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
 {
    if(DoInstallPreFork() == Failed)
       return Failed;
    
-   return DoInstallPostFork(statusFd);
+   return DoInstallPostFork(progress);
 }
 									/*}}}*/	      

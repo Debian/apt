@@ -23,6 +23,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/iprogress.h>
 
 #include <set>
 #include <locale.h>
@@ -104,7 +105,11 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    {
       pkgSimulate PM(Cache);
       int status_fd = _config->FindI("APT::Status-Fd",-1);
-      pkgPackageManager::OrderResult Res = PM.DoInstall(status_fd);
+      APT::Progress::PackageManager *progress = NULL;
+      if (status_fd > 0)
+         progress = new APT::Progress::PackageManagerProgressFd(status_fd);
+      pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
+      delete progress;
       if (Res == pkgPackageManager::Failed)
 	 return false;
       if (Res != pkgPackageManager::Completed)
@@ -332,8 +337,23 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
 
       _system->UnLock();
+      
+      // FIXME: make this a factory
+      // select the right progress
       int status_fd = _config->FindI("APT::Status-Fd",-1);
-      pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
+      APT::Progress::PackageManager *progress = NULL;
+      if (status_fd > 0)
+         progress = new APT::Progress::PackageManagerProgressFd(status_fd);
+      else if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
+         progress = new APT::Progress::PackageManagerFancy();
+      else if (_config->FindB("Dpkg::Progress", 
+                _config->FindB("DpkgPM::Progress", false)) == true)
+         progress = new APT::Progress::PackageManagerText();
+      else
+         progress = new APT::Progress::PackageManager();
+      pkgPackageManager::OrderResult Res = PM->DoInstall(progress);
+      delete progress;
+
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;
       if (Res == pkgPackageManager::Completed)
