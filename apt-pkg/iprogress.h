@@ -54,9 +54,12 @@ namespace Progress {
     int OutStatusFd;
     int StepsDone;
     int StepsTotal;
+    void WriteToStatusFd(std::string msg);
 
  public:
     PackageManagerProgressFd(int progress_fd);
+
+    // FIXME: rename to Start/Stop to match the pkgAcquireStatus
     virtual void Started();
     virtual void Finished();
 

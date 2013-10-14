@@ -33,19 +33,24 @@ PackageManagerProgressFd::PackageManagerProgressFd(int progress_fd)
    OutStatusFd = progress_fd;
 }
 
+void PackageManagerProgressFd::WriteToStatusFd(std::string s)
+{
+   if(OutStatusFd <= 0)
+      return;
+   FileFd::Write(OutStatusFd, s.c_str(), s.size());   
+}
+
 void PackageManagerProgressFd::Started()
 {
    _config->Set("APT::Keep-Fds::", OutStatusFd);
 
    // send status information that we are about to fork dpkg
-   if(OutStatusFd > 0) {
-      std::ostringstream status;
-      status << "pmstatus:dpkg-exec:" 
-             << (StepsDone/float(StepsTotal)*100.0) 
-             << ":" << _("Running dpkg")
-             << std::endl;
-      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-   }
+   std::ostringstream status;
+   status << "pmstatus:dpkg-exec:" 
+          << (StepsDone/float(StepsTotal)*100.0) 
+          << ":" << _("Running dpkg")
+          << std::endl;
+   WriteToStatusFd(status.str());
 }
 
 void PackageManagerProgressFd::Finished()
@@ -64,8 +69,7 @@ void PackageManagerProgressFd::Error(std::string PackageName,
           << ":"  << (StepsDone/float(TotalSteps)*100.0) 
           << ":" << ErrorMessage
           << std::endl;
-   if(OutStatusFd > 0)
-      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+   WriteToStatusFd(status.str());
 }
 
 void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
@@ -78,8 +82,7 @@ void PackageManagerProgressFd::ConffilePrompt(std::string PackageName,
           << ":"  << (StepsDone/float(TotalSteps)*100.0) 
           << ":" << ConfMessage
           << std::endl;
-   if(OutStatusFd > 0)
-      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+   WriteToStatusFd(status.str());
 }
 
 
@@ -97,8 +100,7 @@ bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
           << ":"  << (StepsDone/float(StepsTotal)*100.0) 
           << ":" << pkg_action
           << std::endl;
-   if(OutStatusFd > 0)
-      FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+   WriteToStatusFd(status.str());
    return true;
 }
 
