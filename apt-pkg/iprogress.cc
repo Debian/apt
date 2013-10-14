@@ -40,7 +40,7 @@ void PackageManagerProgressFd::WriteToStatusFd(std::string s)
    FileFd::Write(OutStatusFd, s.c_str(), s.size());   
 }
 
-void PackageManagerProgressFd::Started()
+void PackageManagerProgressFd::Start()
 {
    _config->Set("APT::Keep-Fds::", OutStatusFd);
 
@@ -53,7 +53,7 @@ void PackageManagerProgressFd::Started()
    WriteToStatusFd(status.str());
 }
 
-void PackageManagerProgressFd::Finished()
+void PackageManagerProgressFd::Stop()
 {
    // clear the Keep-Fd again
    _config->Clear("APT::Keep-Fds", OutStatusFd);
@@ -134,13 +134,13 @@ PackageManagerFancy::PackageManagerFancy()
    }
 }
 
-void PackageManagerFancy::Started()
+void PackageManagerFancy::Start()
 {
    if (nr_terminal_rows > 0)
       SetupTerminalScrollArea(nr_terminal_rows);
 }
 
-void PackageManagerFancy::Finished()
+void PackageManagerFancy::Stop()
 {
    if (nr_terminal_rows > 0)
    {

@@ -24,8 +24,8 @@ namespace Progress {
        : percentage(0.0), last_reported_progress(0) {};
     virtual ~PackageManager() {};
 
-    virtual void Started() {};
-    virtual void Finished() {};
+    virtual void Start() {};
+    virtual void Stop() {};
 
     virtual pid_t fork() {return fork(); };
 
@@ -59,9 +59,8 @@ namespace Progress {
  public:
     PackageManagerProgressFd(int progress_fd);
 
-    // FIXME: rename to Start/Stop to match the pkgAcquireStatus
-    virtual void Started();
-    virtual void Finished();
+    virtual void Start();
+    virtual void Stop();
 
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
@@ -86,8 +85,8 @@ namespace Progress {
 
  public:
     PackageManagerFancy();
-    virtual void Started();
-    virtual void Finished();
+    virtual void Start();
+    virtual void Stop();
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
                                unsigned int TotalSteps,

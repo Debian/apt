@@ -1264,11 +1264,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 _error->DumpErrors(std::cerr);
       _error->RevertToStack();
 
-       // Fork dpkg
-      pid_t Child;
-      d->progress->Started();
-
-      Child = ExecFork();
+       // Tell the progress that its starting and fork dpkg 
+      d->progress->Start();
+      pid_t Child = ExecFork();
       // This is the child
       if (Child == 0)
       {
@@ -1398,7 +1396,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       signal(SIGHUP,old_SIGHUP);
 
       // tell the progress
-      d->progress->Finished();
+      d->progress->Stop();
 
       if(master >= 0) 
       {
