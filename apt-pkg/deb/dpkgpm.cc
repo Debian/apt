@@ -1264,6 +1264,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 _error->DumpErrors(std::cerr);
       _error->RevertToStack();
 
+      // this is the dpkg status-fd, we need to keep it
+      _config->Set("APT::Keep-Fds::",fd[1]);
+
        // Tell the progress that its starting and fork dpkg 
       d->progress->Start();
       pid_t Child = ExecFork();
@@ -1315,6 +1318,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       // apply ionice
       if (_config->FindB("DPkg::UseIoNice", false) == true)
 	 ionice(Child);
+
+      // clear the Keep-Fd again
+      _config->Clear("APT::Keep-Fds",fd[1]);
 
       // Wait for dpkg
       int Status = 0;

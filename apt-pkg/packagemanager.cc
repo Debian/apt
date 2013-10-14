@@ -26,7 +26,6 @@
 #include <apt-pkg/sptr.h>
 
 #include <iostream>
-#include <fcntl.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1034,18 +1033,11 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
 {
-// FIXME: port to new structure
-#if 0
-      if(statusFd > 0)
-         // FIXME: use SetCloseExec here once it taught about throwing
-	 //        exceptions instead of doing _exit(100) on failure
-	 fcntl(statusFd,F_SETFD,FD_CLOEXEC); 
-#endif
-      bool goResult = Go(progress);
-      if(goResult == false) 
-	 return Failed;
-
-      return Res;
+   bool goResult = Go(progress);
+   if(goResult == false) 
+      return Failed;
+   
+   return Res;
 };
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/

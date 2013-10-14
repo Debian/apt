@@ -104,12 +104,14 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (_config->FindB("APT::Get::Simulate") == true)
    {
       pkgSimulate PM(Cache);
+
       int status_fd = _config->FindI("APT::Status-Fd",-1);
       APT::Progress::PackageManager *progress = NULL;
       if (status_fd > 0)
          progress = new APT::Progress::PackageManagerProgressFd(status_fd);
       pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
       delete progress;
+
       if (Res == pkgPackageManager::Failed)
 	 return false;
       if (Res != pkgPackageManager::Completed)
@@ -341,6 +343,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       // FIXME: make this a factory
       // select the right progress
       int status_fd = _config->FindI("APT::Status-Fd",-1);
+
       APT::Progress::PackageManager *progress = NULL;
       if (status_fd > 0)
          progress = new APT::Progress::PackageManagerProgressFd(status_fd);

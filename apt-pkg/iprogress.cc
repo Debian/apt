@@ -8,7 +8,7 @@
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sstream>
-
+#include <fcntl.h>
 
 namespace APT {
 namespace Progress {
@@ -42,7 +42,12 @@ void PackageManagerProgressFd::WriteToStatusFd(std::string s)
 
 void PackageManagerProgressFd::Start()
 {
-   _config->Set("APT::Keep-Fds::", OutStatusFd);
+   if(OutStatusFd <= 0)
+      return;
+
+   // FIXME: use SetCloseExec here once it taught about throwing
+   //        exceptions instead of doing _exit(100) on failure
+   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
 
    // send status information that we are about to fork dpkg
    std::ostringstream status;
