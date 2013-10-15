@@ -395,10 +395,6 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
                 if [ -n "$FILE_TREE" ]; then
                     cp -ar "$FILE_TREE" ${BUILDDIR}/debian/tmp
                 fi
-                if [ -n "$POSTINST" ]; then
-                    echo "$POSTINST" > ${BUILDDIR}/debian/tmp/DEBIAN/postinst
-                    chmod +x  ${BUILDDIR}/debian/tmp/DEBIAN/postinst
-                fi
 
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
