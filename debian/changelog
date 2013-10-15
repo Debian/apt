@@ -1,3 +1,17 @@
+apt (0.9.12.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * do not send pkgname:arch over the APT::Status-Fd to not break
+    clients (closes: 726156). A new APT::Status-deb822-Fd will be
+    used to fix this.
+  * add integration tests for APT::Status-Fd
+  * add missing _() around the new "Progress" string
+
+  [ David Kalnischkies ]
+  * fix progress-segfault in case of dpkg errors/prompts (Closes: 726047)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 15 Oct 2013 18:25:51 +0200
+
 apt (0.9.12) unstable; urgency=low
 
   [ Christian Perrier ]
