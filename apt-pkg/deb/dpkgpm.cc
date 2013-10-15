@@ -557,11 +557,26 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    std::string pkgname = list[1];
    if (pkgname.find(":") == std::string::npos)
    {
-      string const nativeArch = _config->Find("APT::Architecture");
-      pkgname = pkgname + ":" + nativeArch;
+      // find the package in the group that is in a touched by dpkg
+      // if there are multiple dpkg will send us a full pkgname:arch
+      pkgCache::GrpIterator Grp = Cache.FindGrp(pkgname);
+      if (Grp.end() == false) 
+      {
+          pkgCache::PkgIterator P = Grp.PackageList();
+          for (; P.end() != true; P = Grp.NextPkg(P))
+          {
+              if(Cache[P].Mode != pkgDepCache::ModeKeep)
+              {
+                  pkgname = P.FullName();
+                  break;
+              }
+          }
+      }
    }
    const char* const pkg = pkgname.c_str();
    const char* action = list[2].c_str();
+   
+   std::string short_pkgname = StringSplit(pkgname, ":")[0];
 
    // 'processing' from dpkg looks like
    // 'processing: action: pkg'
@@ -640,7 +655,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       PackageOpsDone[pkg]++;
       PackagesDone++;
       // build the status str
-      status << "pmstatus:" << pkg 
+      status << "pmstatus:" << short_pkgname
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
 	     << ":" << s
 	     << endl;
@@ -653,7 +668,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 std::clog << "send: '" << status.str() << "'" << endl;
    }
    if (Debug == true) 
-      std::clog << "(parsed from dpkg) pkg: " << pkg 
+      std::clog << "(parsed from dpkg) pkg: " << short_pkgname
 		<< " action: " << action << endl;
 }
 									/*}}}*/
