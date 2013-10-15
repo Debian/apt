@@ -649,7 +649,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       // action
       const char *translation = _(states[PackageOpsDone[pkg]].str);
       char s[200];
-      snprintf(s, sizeof(s), translation, pkg);
+      snprintf(s, sizeof(s), translation, short_pkgname.c_str());
 
       // we moved from one dpkg state to a new one, report that
       PackageOpsDone[pkg]++;
