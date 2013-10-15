@@ -546,8 +546,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    // A dpkg error message may contain additional ":" (like
    //  "failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ..."
    // so we need to ensure to not split too much
-   std::vector<std::string> list = StringSplit(line, ": ", 3);
-   if(list.size() != 3)
+   std::vector<std::string> list = StringSplit(line, ": ", 4);
+   if(list.size() < 3)
    {
       if (Debug == true)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
@@ -916,7 +916,7 @@ void pkgDPkgPM::SendTerminalProgress(float percentage)
       return;
 
    std::string progress_str;
-   strprintf(progress_str, "Progress: [%3i%%]", (int)percentage);
+   strprintf(progress_str, _("Progress: [%3i%%]"), (int)percentage);
    if (d->fancy_progress_output)
    {
          int row = d->nr_terminal_rows;
