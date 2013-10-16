@@ -198,7 +198,17 @@ void sendRedirect(int const client, int const httpcode, std::string const &uri,/
    addDataHeaders(headers, response);
    std::string location("Location: ");
    if (strncmp(uri.c_str(), "http://", 7) != 0)
-      location.append("http://").append(LookupTag(request, "Host")).append("/").append(uri);
+   {
+      location.append("http://").append(LookupTag(request, "Host")).append("/");
+      if (strncmp("/home/", uri.c_str(), strlen("/home/")) == 0 && uri.find("/public_html/") != std::string::npos)
+      {
+	 std::string homeuri = SubstVar(uri, "/home/", "~");
+	 homeuri = SubstVar(homeuri, "/public_html/", "/");
+	 location.append(homeuri);
+      }
+      else
+	 location.append(uri);
+   }
    else
       location.append(uri);
    headers.push_back(location);
@@ -381,6 +391,20 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
    filename.erase(0, 1);
    if (filename.empty() == true)
       filename = ".";
+   // support ~user/ uris to refer to /home/user/public_html/ as a kind-of special directory
+   else if (filename[0] == '~')
+   {
+      // /home/user is actually not entirely correct, but good enough for now
+      size_t dashpos = filename.find('/');
+      if (dashpos != std::string::npos)
+      {
+	 std::string home = filename.substr(1, filename.find('/') - 1);
+	 std::string pubhtml = filename.substr(filename.find('/') + 1);
+	 filename = "/home/" + home + "/public_html/" + pubhtml;
+      }
+      else
+	 filename = "/home/" + filename.substr(1) + "/public_html/";
+   }
    return true;
 }
 									/*}}}*/
