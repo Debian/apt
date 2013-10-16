@@ -308,7 +308,7 @@ void sendDirectoryListing(int const client, std::string const &dir,	/*{{{*/
 }
 									/*}}}*/
 bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
-		    std::string &filename, bool &sendContent,
+		    std::string &filename, std::string &params, bool &sendContent,
 		    bool &closeConnection)
 {
    if (strncmp(request.c_str(), "HEAD ", 5) == 0)
@@ -375,6 +375,14 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
       sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that");
       return false;
    }
+
+   size_t paramspos = filename.find('?');
+   if (paramspos != std::string::npos)
+   {
+      params = filename.substr(paramspos + 1);
+      filename.erase(paramspos);
+   }
+
    filename = DeQuoteString(filename);
 
    // this is not a secure server, but at least prevent the obvious …
