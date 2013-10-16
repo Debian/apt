@@ -112,7 +112,7 @@ bool sendHead(int const client, int const httpcode, std::list<std::string> &head
    date.append(TimeRFC1123(time(NULL)));
    headers.push_back(date);
 
-   std::clog << ">>> RESPONSE >>>" << std::endl;
+   std::clog << ">>> RESPONSE to " << client << " >>>" << std::endl;
    bool Success = true;
    for (std::list<std::string>::const_iterator h = headers.begin();
 	Success == true && h != headers.end(); ++h)
@@ -470,6 +470,173 @@ bool handleOnTheFlyReconfiguration(int const client, std::string const &request,
    return false;
 }
 									/*}}}*/
+void * handleClient(void * voidclient)					/*{{{*/
+{
+   int client = *((int*)(voidclient));
+   std::clog << "ACCEPT client " << client << std::endl;
+   std::vector<std::string> messages;
+   while (ReadMessages(client, messages))
+   {
+      bool closeConnection = false;
+      for (std::vector<std::string>::const_iterator m = messages.begin();
+	    m != messages.end() && closeConnection == false; ++m) {
+	 std::clog << ">>> REQUEST from " << client << " >>>" << std::endl << *m
+	    << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
+	 std::list<std::string> headers;
+	 std::string filename;
+	 std::string params;
+	 bool sendContent = true;
+	 if (parseFirstLine(client, *m, filename, params, sendContent, closeConnection) == false)
+	    continue;
+
+	 // special webserver command request
+	 if (filename.length() > 1 && filename[0] == '_')
+	 {
+	    std::vector<std::string> parts = VectorizeString(filename, '/');
+	    if (parts[0] == "_config")
+	    {
+	       handleOnTheFlyReconfiguration(client, *m, parts);
+	       continue;
+	    }
+	 }
+
+	 // string replacements in the requested filename
+	 ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
+	 if (Replaces != NULL)
+	 {
+	    std::string redirect = "/" + filename;
+	    for (::Configuration::Item *I = Replaces->Child; I != NULL; I = I->Next)
+	       redirect = SubstVar(redirect, I->Tag, I->Value);
+	    redirect.erase(0,1);
+	    if (redirect != filename)
+	    {
+	       sendRedirect(client, 301, redirect, *m, sendContent);
+	       continue;
+	    }
+	 }
+
+	 ::Configuration::Item const *Overwrite = _config->Tree("aptwebserver::overwrite");
+	 if (Overwrite != NULL)
+	 {
+	    for (::Configuration::Item *I = Overwrite->Child; I != NULL; I = I->Next)
+	    {
+	       regex_t *pattern = new regex_t;
+	       int const res = regcomp(pattern, I->Tag.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
+	       if (res != 0)
+	       {
+		  char error[300];
+		  regerror(res, pattern, error, sizeof(error));
+		  sendError(client, 500, *m, sendContent, error);
+		  continue;
+	       }
+	       if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
+	       {
+		  filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", filename);
+		  if (filename[0] == '/')
+		     filename.erase(0,1);
+		  regfree(pattern);
+		  break;
+	       }
+	       regfree(pattern);
+	    }
+	 }
+
+	 // deal with the request
+	 if (RealFileExists(filename) == true)
+	 {
+	    FileFd data(filename, FileFd::ReadOnly);
+	    std::string condition = LookupTag(*m, "If-Modified-Since", "");
+	    if (condition.empty() == false)
+	    {
+	       time_t cache;
+	       if (RFC1123StrToTime(condition.c_str(), cache) == true &&
+		     cache >= data.ModificationTime())
+	       {
+		  sendHead(client, 304, headers);
+		  continue;
+	       }
+	    }
+
+	    if (_config->FindB("aptwebserver::support::range", true) == true)
+	       condition = LookupTag(*m, "Range", "");
+	    else
+	       condition.clear();
+	    if (condition.empty() == false && strncmp(condition.c_str(), "bytes=", 6) == 0)
+	    {
+	       time_t cache;
+	       std::string ifrange;
+	       if (_config->FindB("aptwebserver::support::if-range", true) == true)
+		  ifrange = LookupTag(*m, "If-Range", "");
+	       bool validrange = (ifrange.empty() == true ||
+		     (RFC1123StrToTime(ifrange.c_str(), cache) == true &&
+		      cache <= data.ModificationTime()));
+
+	       // FIXME: support multiple byte-ranges (APT clients do not do this)
+	       if (condition.find(',') == std::string::npos)
+	       {
+		  size_t start = 6;
+		  unsigned long long filestart = strtoull(condition.c_str() + start, NULL, 10);
+		  // FIXME: no support for last-byte-pos being not the end of the file (APT clients do not do this)
+		  size_t dash = condition.find('-') + 1;
+		  unsigned long long fileend = strtoull(condition.c_str() + dash, NULL, 10);
+		  unsigned long long filesize = data.FileSize();
+		  if ((fileend == 0 || (fileend == filesize && fileend >= filestart)) &&
+			validrange == true)
+		  {
+		     if (filesize > filestart)
+		     {
+			data.Skip(filestart);
+			std::ostringstream contentlength;
+			contentlength << "Content-Length: " << (filesize - filestart);
+			headers.push_back(contentlength.str());
+			std::ostringstream contentrange;
+			contentrange << "Content-Range: bytes " << filestart << "-"
+			   << filesize - 1 << "/" << filesize;
+			headers.push_back(contentrange.str());
+			sendHead(client, 206, headers);
+			if (sendContent == true)
+			   sendFile(client, data);
+			continue;
+		     }
+		     else
+		     {
+			headers.push_back("Content-Length: 0");
+			std::ostringstream contentrange;
+			contentrange << "Content-Range: bytes */" << filesize;
+			headers.push_back(contentrange.str());
+			sendHead(client, 416, headers);
+			continue;
+		     }
+		  }
+	       }
+	    }
+
+	    addFileHeaders(headers, data);
+	    sendHead(client, 200, headers);
+	    if (sendContent == true)
+	       sendFile(client, data);
+	 }
+	 else if (DirectoryExists(filename) == true)
+	 {
+	    if (filename[filename.length()-1] == '/')
+	       sendDirectoryListing(client, filename, *m, sendContent);
+	    else
+	       sendRedirect(client, 301, filename.append("/"), *m, sendContent);
+	 }
+	 else
+	    sendError(client, 404, *m, sendContent);
+      }
+      _error->DumpErrors(std::cerr);
+      messages.clear();
+      if (closeConnection == true)
+	 break;
+   }
+   close(client);
+   std::clog << "CLOSE client " << client << std::endl;
+   return NULL;
+}
+									/*}}}*/
+
 int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
@@ -490,6 +657,9 @@ int main(int const argc, const char * argv[])
    // create socket, bind and listen to it {{{
    // ignore SIGPIPE, this can happen on write() if the socket closes connection
    signal(SIGPIPE, SIG_IGN);
+   // we don't care for our slaves, so ignore their death
+   signal(SIGCHLD, SIG_IGN);
+
    int sock = socket(AF_INET6, SOCK_STREAM, 0);
    if(sock < 0)
    {
@@ -557,179 +727,47 @@ int main(int const argc, const char * argv[])
 
    std::clog << "Serving ANY file on port: " << port << std::endl;
 
-   listen(sock, 1);
+   int const slaves = _config->FindB("aptwebserver::slaves", SOMAXCONN);
+   listen(sock, slaves);
    /*}}}*/
 
    _config->CndSet("aptwebserver::response-header::Server", "APT webserver");
    _config->CndSet("aptwebserver::response-header::Accept-Ranges", "bytes");
    _config->CndSet("aptwebserver::directoryindex", "index.html");
 
-   std::vector<std::string> messages;
-   int client;
-   while ((client = accept(sock, NULL, NULL)) != -1)
+   std::list<int> accepted_clients;
+
+   while (true)
    {
-      std::clog << "ACCEPT client " << client
-		<< " on socket " << sock << std::endl;
-
-      while (ReadMessages(client, messages))
+      int client = accept(sock, NULL, NULL);
+      if (client == -1)
       {
-	 bool closeConnection = false;
-	 for (std::vector<std::string>::const_iterator m = messages.begin();
-	      m != messages.end() && closeConnection == false; ++m) {
-	    std::clog << ">>> REQUEST >>>>" << std::endl << *m
-		      << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
-	    std::list<std::string> headers;
-	    std::string filename;
-	    bool sendContent = true;
-	    if (parseFirstLine(client, *m, filename, sendContent, closeConnection) == false)
-	       continue;
-
-	    // special webserver command request
-	    if (filename.length() > 1 && filename[0] == '_')
-	    {
-	       std::vector<std::string> parts = VectorizeString(filename, '/');
-	       if (parts[0] == "_config")
-	       {
-		  handleOnTheFlyReconfiguration(client, *m, parts);
-		  continue;
-	       }
-	    }
-
-	    // string replacements in the requested filename
-	    ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
-	    if (Replaces != NULL)
-	    {
-	       std::string redirect = "/" + filename;
-	       for (::Configuration::Item *I = Replaces->Child; I != NULL; I = I->Next)
-		  redirect = SubstVar(redirect, I->Tag, I->Value);
-	       redirect.erase(0,1);
-	       if (redirect != filename)
-	       {
-		  sendRedirect(client, 301, redirect, *m, sendContent);
-		  continue;
-	       }
-	    }
-
-	    ::Configuration::Item const *Overwrite = _config->Tree("aptwebserver::overwrite");
-	    if (Overwrite != NULL)
-	    {
-	       for (::Configuration::Item *I = Overwrite->Child; I != NULL; I = I->Next)
-	       {
-		  regex_t *pattern = new regex_t;
-		  int const res = regcomp(pattern, I->Tag.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
-		  if (res != 0)
-		  {
-		     char error[300];
-		     regerror(res, pattern, error, sizeof(error));
-		     sendError(client, 500, *m, sendContent, error);
-		     continue;
-		  }
-		  if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
-		  {
-		      filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", filename);
-		      if (filename[0] == '/')
-			 filename.erase(0,1);
-		      regfree(pattern);
-		      break;
-		  }
-		  regfree(pattern);
-	       }
-	    }
-
-	    // deal with the request
-	    if (RealFileExists(filename) == true)
-	    {
-	       FileFd data(filename, FileFd::ReadOnly);
-	       std::string condition = LookupTag(*m, "If-Modified-Since", "");
-	       if (condition.empty() == false)
-	       {
-		  time_t cache;
-		  if (RFC1123StrToTime(condition.c_str(), cache) == true &&
-			cache >= data.ModificationTime())
-		  {
-		     sendHead(client, 304, headers);
-		     continue;
-		  }
-	       }
-
-	       if (_config->FindB("aptwebserver::support::range", true) == true)
-		  condition = LookupTag(*m, "Range", "");
-	       else
-		  condition.clear();
-	       if (condition.empty() == false && strncmp(condition.c_str(), "bytes=", 6) == 0)
-	       {
-		  time_t cache;
-		  std::string ifrange;
-		  if (_config->FindB("aptwebserver::support::if-range", true) == true)
-		     ifrange = LookupTag(*m, "If-Range", "");
-		  bool validrange = (ifrange.empty() == true ||
-			(RFC1123StrToTime(ifrange.c_str(), cache) == true &&
-			 cache <= data.ModificationTime()));
-
-		  // FIXME: support multiple byte-ranges (APT clients do not do this)
-		  if (condition.find(',') == std::string::npos)
-		  {
-		     size_t start = 6;
-		     unsigned long long filestart = strtoull(condition.c_str() + start, NULL, 10);
-		     // FIXME: no support for last-byte-pos being not the end of the file (APT clients do not do this)
-		     size_t dash = condition.find('-') + 1;
-		     unsigned long long fileend = strtoull(condition.c_str() + dash, NULL, 10);
-		     unsigned long long filesize = data.FileSize();
-		     if ((fileend == 0 || (fileend == filesize && fileend >= filestart)) &&
-			   validrange == true)
-		     {
-			if (filesize > filestart)
-			{
-			   data.Skip(filestart);
-			   std::ostringstream contentlength;
-			   contentlength << "Content-Length: " << (filesize - filestart);
-			   headers.push_back(contentlength.str());
-			   std::ostringstream contentrange;
-			   contentrange << "Content-Range: bytes " << filestart << "-"
-			      << filesize - 1 << "/" << filesize;
-			   headers.push_back(contentrange.str());
-			   sendHead(client, 206, headers);
-			   if (sendContent == true)
-			      sendFile(client, data);
-			   continue;
-			}
-			else
-			{
-			   headers.push_back("Content-Length: 0");
-			   std::ostringstream contentrange;
-			   contentrange << "Content-Range: bytes */" << filesize;
-			   headers.push_back(contentrange.str());
-			   sendHead(client, 416, headers);
-			   continue;
-			}
-		     }
-		  }
-	       }
-
-	       addFileHeaders(headers, data);
-	       sendHead(client, 200, headers);
-	       if (sendContent == true)
-		  sendFile(client, data);
-	    }
-	    else if (DirectoryExists(filename) == true)
-	    {
-	       if (filename[filename.length()-1] == '/')
-		  sendDirectoryListing(client, filename, *m, sendContent);
-	       else
-		  sendRedirect(client, 301, filename.append("/"), *m, sendContent);
-	    }
-	    else
-	       sendError(client, 404, *m, sendContent);
-	 }
+	 if (errno == EINTR)
+	    continue;
+	 _error->Errno("accept", "Couldn't accept client on socket %d", sock);
 	 _error->DumpErrors(std::cerr);
-	 messages.clear();
-	 if (closeConnection == true)
-	    break;
+	 return 6;
       }
 
-      std::clog << "CLOSE client " << client
-		<< " on socket " << sock << std::endl;
-      close(client);
+      pthread_attr_t attr;
+      if (pthread_attr_init(&attr) != 0 || pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0)
+      {
+	 _error->Errno("pthread_attr", "Couldn't set detach attribute for a fresh thread to handle client %d on socket %d", client, sock);
+	 _error->DumpErrors(std::cerr);
+	 close(client);
+	 continue;
+      }
+
+      pthread_t tid;
+      // thats rather dirty, but we need to store the client socket somewhere safe
+      accepted_clients.push_front(client);
+      if (pthread_create(&tid, &attr, &handleClient, &(*accepted_clients.begin())) != 0)
+      {
+	 _error->Errno("pthread_create", "Couldn't create a fresh thread to handle client %d on socket %d", client, sock);
+	 _error->DumpErrors(std::cerr);
+	 close(client);
+	 continue;
+      }
    }
    pidfile.Close();
 
