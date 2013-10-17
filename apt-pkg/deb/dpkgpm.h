@@ -87,6 +87,7 @@ class pkgDPkgPM : public pkgPackageManager
    // Terminal progress 
    void SetupTerminalScrollArea(int nr_scrolled_rows);
    void SendTerminalProgress(float percentage);
+   void CleanupTerminal();
 
    // apport integration
    void WriteApportReport(const char *pkgpath, const char *errormsg);

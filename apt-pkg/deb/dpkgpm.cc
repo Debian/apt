@@ -993,6 +993,20 @@ void pkgDPkgPM::SetupTerminalScrollArea(int nr_rows)
      std::flush(std::cout);
 }
 
+void pkgDPkgPM::CleanupTerminal()
+{
+   // reset scroll area
+   SetupTerminalScrollArea(d->nr_terminal_rows + 1);
+   if(d->fancy_progress_output)
+   {
+      // override the progress line (sledgehammer)
+      static const char* clear_screen_below_cursor = "\033[J";
+      std::cout << clear_screen_below_cursor;
+      std::flush(std::cout);
+   }
+}
+
+
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
@@ -1430,7 +1444,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
 	       _exit(100);
 	 }
+         // setup terminal
          SetupTerminalScrollArea(d->nr_terminal_rows);
+         SendTerminalProgress(PackagesDone/float(PackagesTotal)*100.0);
 
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
@@ -1525,15 +1541,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       
       signal(SIGHUP,old_SIGHUP);
 
-      // reset scroll area
-      SetupTerminalScrollArea(d->nr_terminal_rows + 1);
-      if(d->fancy_progress_output)
-      {
-         // override the progress line (sledgehammer)
-         static const char* clear_screen_below_cursor = "\033[J";
-         std::cout << clear_screen_below_cursor;
-      }
-
       if(master >= 0) 
       {
 	 tcsetattr(0, TCSAFLUSH, &tt);
@@ -1564,6 +1571,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 if(stopOnError) 
 	 {
 	    CloseLog();
+            CleanupTerminal();
 	    return false;
 	 }
       }      
@@ -1573,6 +1581,8 @@ bool pkgDPkgPM::Go(int OutStatusFd)
    // dpkg is done at this point
    if(_config->FindB("DPkgPM::Progress", false) == true)
       SendTerminalProgress(100);
+
+   CleanupTerminal();
 
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));
