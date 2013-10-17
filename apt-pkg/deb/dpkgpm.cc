@@ -542,8 +542,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    // A dpkg error message may contain additional ":" (like
    //  "failed in buffer_write(fd) (10, ret=-1): backend dpkg-deb ..."
    // so we need to ensure to not split too much
-   std::vector<std::string> list = StringSplit(line, ": ", 3);
-   if(list.size() != 3)
+   std::vector<std::string> list = StringSplit(line, ": ", 4);
+   if(list.size() < 3)
    {
       if (Debug == true)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
@@ -553,11 +553,32 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    std::string pkgname = list[1];
    if (pkgname.find(":") == std::string::npos)
    {
-      string const nativeArch = _config->Find("APT::Architecture");
-      pkgname = pkgname + ":" + nativeArch;
+      // find the package in the group that is in a touched by dpkg
+      // if there are multiple dpkg will send us a full pkgname:arch
+      pkgCache::GrpIterator Grp = Cache.FindGrp(pkgname);
+      if (Grp.end() == false) 
+      {
+          pkgCache::PkgIterator P = Grp.PackageList();
+          for (; P.end() != true; P = Grp.NextPkg(P))
+          {
+              if(Cache[P].Mode != pkgDepCache::ModeKeep)
+              {
+                  pkgname = P.FullName();
+                  break;
+              }
+          }
+      }
    }
    const char* const pkg = pkgname.c_str();
    const char* action = list[2].c_str();
+   
+   std::string short_pkgname = StringSplit(pkgname, ":")[0];
+   std::string i18n_pkgname = short_pkgname;
+   if (pkgname.find(":") != string::npos)
+   {
+      strprintf(i18n_pkgname, "%s (%s)", short_pkgname.c_str(),
+                StringSplit(pkgname, ":")[1].c_str());
+   }
 
    // 'processing' from dpkg looks like
    // 'processing: action: pkg'
@@ -609,17 +630,19 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       // only read the translation if there is actually a next
       // action
       std::string translation;
-      strprintf(translation, _(states[PackageOpsDone[pkg]].str), pkg);
+      strprintf(translation, _(states[PackageOpsDone[pkg]].str), 
+                i18n_pkgname.c_str());
 
       // we moved from one dpkg state to a new one, report that
       PackageOpsDone[pkg]++;
       PackagesDone++;
+
       // and send to the progress
-      d->progress->StatusChanged(pkg, PackagesDone, PackagesTotal,
+      d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal,
                                  translation);
    }
    if (Debug == true) 
-      std::clog << "(parsed from dpkg) pkg: " << pkg 
+      std::clog << "(parsed from dpkg) pkg: " << pkgname
 		<< " action: " << action << endl;
 }
 									/*}}}*/
@@ -1268,7 +1291,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       _config->Set("APT::Keep-Fds::",fd[1]);
 
        // Tell the progress that its starting and fork dpkg 
+      // FIXME: this is called once per dpkg run which is *too often*
       d->progress->Start();
+
       pid_t Child = ExecFork();
       // This is the child
       if (Child == 0)
@@ -1376,6 +1401,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	    select_ret = racy_pselect(max(master, _dpkgin)+1, &rfds, NULL,
 				      NULL, &tv, &original_sigmask);
          d->progress->Pulse();
+
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)
@@ -1400,9 +1426,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
       signal(SIGINT,old_SIGINT);
       
       signal(SIGHUP,old_SIGHUP);
-
-      // tell the progress
-      d->progress->Stop();
 
       if(master >= 0) 
       {
@@ -1434,6 +1457,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 if(stopOnError) 
 	 {
 	    CloseLog();
+            d->progress->Stop();
 	    return false;
 	 }
       }      
@@ -1442,6 +1466,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 
    // dpkg is done at this point
    d->progress->StatusChanged("", PackagesDone, PackagesTotal, "");
+   d->progress->Stop();
+
 
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));

@@ -1,3 +1,17 @@
+apt (0.9.12.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * do not send pkgname:arch over the APT::Status-Fd to not break
+    clients (closes: 726156). A new APT::Status-deb822-Fd will be
+    used to fix this.
+  * add integration tests for APT::Status-Fd
+  * add missing _() around the new "Progress" string
+
+  [ David Kalnischkies ]
+  * fix progress-segfault in case of dpkg errors/prompts (Closes: 726047)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 15 Oct 2013 18:25:51 +0200
+
 apt (0.9.12) unstable; urgency=low
 
   [ Christian Perrier ]
@@ -29,7 +43,7 @@ apt (0.9.12) unstable; urgency=low
     never remove packages
   * Rename "--dpkg-progress" to "--show-progress" and document it in 
     apt-get.8. This will show global install progress information in the
-    terminal window.
+    terminal.
   * Fix status-fd progress calculation for certain multi-arch install/upgrade
     situations
   * add new -o DpkgPM::Progress-Fancy for nicer dpkg progress output 
@@ -44,7 +58,7 @@ apt (0.9.12) unstable; urgency=low
       Acquire::PDiffs::FileLimit "0";
     in /etc/apt/apt.conf to get the old behavior back.
 
- -- Michael Vogt <mvo@debian.org>  Wed, 09 Oct 2013 20:50:03 +0200
+ -- Michael Vogt <mvo@debian.org>  Wed, 09 Oct 2013 22:39:41 +0200
 
 apt (0.9.11.4) unstable; urgency=low
 
