@@ -561,7 +561,9 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
           pkgCache::PkgIterator P = Grp.PackageList();
           for (; P.end() != true; P = Grp.NextPkg(P))
           {
-              if(Cache[P].Mode != pkgDepCache::ModeKeep)
+             if(Cache[P].Install() || Cache[P].ReInstall() || 
+                Cache[P].Upgrade() || Cache[P].Downgrade() ||
+                Cache[P].Delete() || Cache[P].Purge())
               {
                   pkgname = P.FullName();
                   break;
@@ -569,6 +571,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
           }
       }
    }
+
    const char* const pkg = pkgname.c_str();
    const char* action = list[2].c_str();
    
