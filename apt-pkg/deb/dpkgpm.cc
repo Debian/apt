@@ -540,6 +540,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       'processing: trigproc: trigger'
 	    
    */
+
    // we need to split on ": " (note the appended space) as the ':' is
    // part of the pkgname:arch information that dpkg sends
    // 
@@ -553,8 +554,26 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
       return;
    }
+
+   std::string prefix = APT::String::Strip(list[0]);
+   std::string pkgname;
+   std::string action_str;
+   if (prefix == "processing")
+   {
+      pkgname = APT::String::Strip(list[2]);
+      action_str = APT::String::Strip(list[1]);
+   }
+   else if (prefix == "status")
+   {
+      pkgname = APT::String::Strip(list[1]);
+      action_str = APT::String::Strip(list[2]);
+   } else {
+      if (Debug == true)
+	 std::clog << "unknown prefix '" << prefix << "'" << std::endl;
+      return;
+   }
+
    // dpkg does not send always send "pkgname:arch" so we add it here if needed
-   std::string pkgname = list[1];
    if (pkgname.find(":") == std::string::npos)
    {
       // find the package in the group that is in a touched by dpkg
@@ -574,13 +593,12 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       }
    }
    const char* const pkg = pkgname.c_str();
-   const char* action = list[2].c_str();
-   
+   const char* action = action_str.c_str();
    std::string short_pkgname = StringSplit(pkgname, ":")[0];
 
    // 'processing' from dpkg looks like
    // 'processing: action: pkg'
-   if(strncmp(list[0].c_str(), "processing", strlen("processing")) == 0)
+   if(prefix == "processing")
    {
       char s[200];
       const char* const pkg_or_trigger = list[2].c_str();
@@ -609,7 +627,11 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       if (strncmp(action, "disappear", strlen("disappear")) == 0)
 	 handleDisappearAction(pkg_or_trigger);
       return;
-   }
+   } 
+
+   // FIXME: fix indent once the progress-refactor branch is merged
+   if (prefix == "status")
+   {
 
    if(strncmp(action,"error",strlen("error")) == 0)
    {
@@ -670,6 +692,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    if (Debug == true) 
       std::clog << "(parsed from dpkg) pkg: " << short_pkgname
 		<< " action: " << action << endl;
+   }
 }
 									/*}}}*/
 // DPkgPM::handleDisappearAction					/*{{{*/
