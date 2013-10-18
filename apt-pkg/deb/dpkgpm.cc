@@ -555,6 +555,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       return;
    }
 
+   // build the (prefix, pkgname, action) tuple, position of this
+   // is different for "processing" or "status" messages
    std::string prefix = APT::String::Strip(list[0]);
    std::string pkgname;
    std::string action_str;
@@ -571,6 +573,38 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       if (Debug == true)
 	 std::clog << "unknown prefix '" << prefix << "'" << std::endl;
       return;
+   }
+
+   // FIXME: fix indent once the progress-refactor branch is merged
+   if (prefix == "status")
+   {
+
+   if(action_str == "error")
+   {
+      status << "pmerror:" << list[1]
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+	     << ":" << list[3]
+	     << endl;
+      if(OutStatusFd > 0)
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (Debug == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+      pkgFailures++;
+      WriteApportReport(list[1].c_str(), list[3].c_str());
+      return;
+   }
+   else if(action_str == "conffile")
+   {
+      status << "pmconffile:" << list[1]
+	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+	     << ":" << list[3]
+	     << endl;
+      if(OutStatusFd > 0)
+	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+      if (Debug == true)
+	 std::clog << "send: '" << status.str() << "'" << endl;
+      return;
+   }
    }
 
    // dpkg does not send always send "pkgname:arch" so we add it here if needed
@@ -595,6 +629,12 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    const char* const pkg = pkgname.c_str();
    const char* action = action_str.c_str();
    std::string short_pkgname = StringSplit(pkgname, ":")[0];
+   std::string arch = "";
+   if (pkgname.find(":") != string::npos)
+      arch = StringSplit(pkgname, ":")[1];
+   std::string i18n_pkgname = pkgname;
+   if (arch.size() != 0)
+      strprintf(i18n_pkgname, "%s (%s)", short_pkgname.c_str(), arch.c_str());
 
    // 'processing' from dpkg looks like
    // 'processing: action: pkg'
@@ -629,36 +669,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       return;
    } 
 
-   // FIXME: fix indent once the progress-refactor branch is merged
    if (prefix == "status")
    {
-
-   if(strncmp(action,"error",strlen("error")) == 0)
-   {
-      status << "pmerror:" << list[1]
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << list[3]
-	     << endl;
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
-      pkgFailures++;
-      WriteApportReport(list[1].c_str(), list[3].c_str());
-      return;
-   }
-   else if(strncmp(action,"conffile",strlen("conffile")) == 0)
-   {
-      status << "pmconffile:" << list[1]
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << list[3]
-	     << endl;
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
-      return;
-   }
 
    vector<struct DpkgState> const &states = PackageOps[pkg];
    const char *next_action = NULL;
