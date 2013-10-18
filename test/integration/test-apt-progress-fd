@@ -18,14 +18,14 @@ testsuccess aptget install testing=0.1 -y -o APT::Status-Fd=3
 testequal "dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:0:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
-pmstatus:testing:0:Installing testing
-pmstatus:testing:20:Preparing testing
-pmstatus:testing:40:Unpacking testing
+pmstatus:testing:0:Installing testing (amd64)
+pmstatus:testing:20:Preparing testing (amd64)
+pmstatus:testing:40:Unpacking testing (amd64)
 pmstatus:testing:60:Preparing to configure testing
 pmstatus:dpkg-exec:60:Running dpkg
-pmstatus:testing:60:Configuring testing
-pmstatus:testing:80:Configuring testing
-pmstatus:testing:100:Installed testing" cat apt-progress.log
+pmstatus:testing:60:Configuring testing (amd64)
+pmstatus:testing:80:Configuring testing (amd64)
+pmstatus:testing:100:Installed testing (amd64)" cat apt-progress.log
 
 # upgrade
 exec 3> apt-progress.log
@@ -33,22 +33,22 @@ testsuccess aptget install testing=0.8.15 -y -o APT::Status-Fd=3
 testequal "dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:0:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
-pmstatus:testing:20:Preparing testing
-pmstatus:testing:40:Unpacking testing
+pmstatus:testing:20:Preparing testing (amd64)
+pmstatus:testing:40:Unpacking testing (amd64)
 pmstatus:testing:60:Preparing to configure testing
 pmstatus:dpkg-exec:60:Running dpkg
-pmstatus:testing:60:Configuring testing
-pmstatus:testing:80:Configuring testing
-pmstatus:testing:100:Installed testing" cat apt-progress.log
+pmstatus:testing:60:Configuring testing (amd64)
+pmstatus:testing:80:Configuring testing (amd64)
+pmstatus:testing:100:Installed testing (amd64)" cat apt-progress.log
 
 # and remove
 exec 3> apt-progress.log
 testsuccess aptget remove testing -y -o APT::Status-Fd=3
 testequal "pmstatus:dpkg-exec:0:Running dpkg
-pmstatus:testing:0:Removing testing
-pmstatus:testing:33.3333:Preparing for removal of testing
-pmstatus:testing:66.6667:Removing testing
-pmstatus:testing:100:Removed testing" cat apt-progress.log
+pmstatus:testing:0:Removing testing (amd64)
+pmstatus:testing:33.3333:Preparing for removal of testing (amd64)
+pmstatus:testing:66.6667:Removing testing (amd64)
+pmstatus:testing:100:Removed testing (amd64)" cat apt-progress.log
 
 
 # install non-native and ensure we get proper progress info
@@ -59,13 +59,13 @@ testsuccess aptget install testing2:i386 -y -o APT::Status-Fd=3
 testequal "dlstatus:1:0:Retrieving file 1 of 1
 dlstatus:1:0:Retrieving file 1 of 1
 pmstatus:dpkg-exec:0:Running dpkg
-pmstatus:testing2:0:Installing testing2
-pmstatus:testing2:20:Preparing testing2
-pmstatus:testing2:40:Unpacking testing2
-pmstatus:testing2:60:Preparing to configure testing2
+pmstatus:testing2:0:Installing testing2 (i386)
+pmstatus:testing2:20:Preparing testing2 (i386)
+pmstatus:testing2:40:Unpacking testing2 (i386)
+pmstatus:testing2:60:Preparing to configure testing2 (i386)
 pmstatus:dpkg-exec:60:Running dpkg
-pmstatus:testing2:60:Configuring testing2
-pmstatus:testing2:80:Configuring testing2
-pmstatus:testing2:100:Installed testing2" cat apt-progress.log
+pmstatus:testing2:60:Configuring testing2 (i386)
+pmstatus:testing2:80:Configuring testing2 (i386)
+pmstatus:testing2:100:Installed testing2 (i386)" cat apt-progress.log
 
 rm -f apt-progress*.log

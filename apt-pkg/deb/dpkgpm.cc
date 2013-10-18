@@ -507,6 +507,34 @@ void pkgDPkgPM::DoTerminalPty(int master)
       fwrite(term_buf, len, sizeof(char), d->term_out);
 }
 									/*}}}*/
+
+std::string pkgDPkgPM::ExpandShortPackageName(pkgDepCache &Cache,
+                                   const std::string &short_pkgname)
+{
+   if (short_pkgname.find(":") != string::npos)
+      return short_pkgname;
+
+   std::string pkgname = short_pkgname;
+   // find the package in the group that is in a touched by dpkg
+   // if there are multiple dpkg will send us a full pkgname:arch
+   pkgCache::GrpIterator Grp = Cache.FindGrp(pkgname);
+   if (Grp.end() == false) 
+   {
+      pkgCache::PkgIterator P = Grp.PackageList();
+      for (; P.end() != true; P = Grp.NextPkg(P))
+      {
+         if(Cache[P].Install() || Cache[P].ReInstall() || 
+            Cache[P].Upgrade() || Cache[P].Downgrade() ||
+            Cache[P].Delete() || Cache[P].Purge())
+         {
+            pkgname = P.FullName();
+            return pkgname;
+         }
+      }
+   }
+   return pkgname;
+}
+
 // DPkgPM::ProcessDpkgStatusBuf                                        	/*{{{*/
 // ---------------------------------------------------------------------
 /*
@@ -549,32 +577,35 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 	 std::clog << "ignoring line: not enough ':'" << std::endl;
       return;
    }
-   // dpkg does not send always send "pkgname:arch" so we add it here if needed
-   std::string pkgname = list[1];
-   if (pkgname.find(":") == std::string::npos)
+
+   if (list[0] != "processing" && list[0] != "status")
    {
-      // find the package in the group that is in a touched by dpkg
-      // if there are multiple dpkg will send us a full pkgname:arch
-      pkgCache::GrpIterator Grp = Cache.FindGrp(pkgname);
-      if (Grp.end() == false) 
-      {
-          pkgCache::PkgIterator P = Grp.PackageList();
-          for (; P.end() != true; P = Grp.NextPkg(P))
-          {
-             if(Cache[P].Install() || Cache[P].ReInstall() || 
-                Cache[P].Upgrade() || Cache[P].Downgrade() ||
-                Cache[P].Delete() || Cache[P].Purge())
-              {
-                  pkgname = P.FullName();
-                  break;
-              }
-          }
-      }
+      if (Debug == true)
+	 std::clog << "ignoring line: unknown prefix '" << list[0] << "'"
+                   << std::endl;
+      return;
    }
 
+   std::string prefix = list[0];
+   std::string pkgname;
+   std::string action;
+   if (prefix == "processing")
+   {
+      action = list[1];
+      pkgname = list[2];
+      if (action != "install" && action != "configure" &&
+          action != "remove" && action != "purge" &&
+          action != "disappear")
+         return;
+   } else if (prefix == "status") {
+      pkgname = list[1];
+      action = list[2];
+   }
+
+   // dpkg does not always send out the architecture so we need to guess
+   // it here
+   pkgname = ExpandShortPackageName(Cache, pkgname);
    const char* const pkg = pkgname.c_str();
-   const char* action = list[2].c_str();
-   
    std::string short_pkgname = StringSplit(pkgname, ":")[0];
    std::string i18n_pkgname = short_pkgname;
    if (pkgname.find(":") != string::npos)
@@ -587,48 +618,52 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    // 'processing: action: pkg'
    if(strncmp(list[0].c_str(), "processing", strlen("processing")) == 0)
    {
-      const char* const pkg_or_trigger = list[2].c_str();
-      action =  list[1].c_str();
       const std::pair<const char *, const char *> * const iter =
 	std::find_if(PackageProcessingOpsBegin,
 		     PackageProcessingOpsEnd,
-		     MatchProcessingOp(action));
+		     MatchProcessingOp(action.c_str()));
       if(iter == PackageProcessingOpsEnd)
       {
 	 if (Debug == true)
 	    std::clog << "ignoring unknown action: " << action << std::endl;
 	 return;
       }
-      std::string pkg_action;
-      strprintf(pkg_action, _(iter->second), pkg_or_trigger);
 
-      d->progress->StatusChanged(pkg_or_trigger, PackagesDone, PackagesTotal,
+      std::string pkg_action;
+      strprintf(pkg_action, _(iter->second), short_pkgname.c_str());
+
+      d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal,
                                  pkg_action);
-      if (strncmp(action, "disappear", strlen("disappear")) == 0)
-	 handleDisappearAction(pkg_or_trigger);
+
+      if (strncmp(action.c_str(), "disappear", strlen("disappear")) == 0)
+	 handleDisappearAction(pkgname);
       return;
    }
 
-   if(strncmp(action,"error",strlen("error")) == 0)
+   // FIXME: fix indent once this goes into debian/sid
+   if(strncmp(prefix.c_str(), "status", strlen("processing")) == 0)
+   {
+
+   if(strncmp(action.c_str(),"error",strlen("error")) == 0)
    {
       d->progress->Error(list[1], PackagesDone, PackagesTotal, list[3]);
       pkgFailures++;
       WriteApportReport(list[1].c_str(), list[3].c_str());
       return;
    }
-   else if(strncmp(action,"conffile",strlen("conffile")) == 0)
+   else if(strncmp(action.c_str(),"conffile",strlen("conffile")) == 0)
    {
       d->progress->ConffilePrompt(list[1], PackagesDone, PackagesTotal,
                                   list[3]);
       return;
-   }
+   } else {
 
    vector<struct DpkgState> const &states = PackageOps[pkg];
    const char *next_action = NULL;
    if(PackageOpsDone[pkg] < states.size())
       next_action = states[PackageOpsDone[pkg]].state;
    // check if the package moved to the next dpkg state
-   if(next_action && (strcmp(action, next_action) == 0)) 
+   if(next_action && (strcmp(action.c_str(), next_action) == 0)) 
    {
       // only read the translation if there is actually a next
       // action
@@ -644,9 +679,12 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal,
                                  translation);
    }
+   
    if (Debug == true) 
       std::clog << "(parsed from dpkg) pkg: " << pkgname
 		<< " action: " << action << endl;
+   }
+   }
 }
 									/*}}}*/
 // DPkgPM::handleDisappearAction					/*{{{*/

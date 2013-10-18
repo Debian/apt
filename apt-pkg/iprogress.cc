@@ -101,7 +101,7 @@ bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
 
    // build the status str
    std::ostringstream status;
-   status << "pmstatus:" << PackageName
+   status << "pmstatus:" << StringSplit(PackageName, ":")[0]
           << ":"  << (StepsDone/float(StepsTotal)*100.0) 
           << ":" << pkg_action
           << std::endl;
