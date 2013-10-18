@@ -516,29 +516,15 @@ void pkgDPkgPM::DoTerminalPty(int master)
 void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 {
    bool const Debug = _config->FindB("Debug::pkgDPkgProgressReporting",false);
-   // the status we output
-   ostringstream status;
-
    if (Debug == true)
       std::clog << "got from dpkg '" << line << "'" << std::endl;
-
 
    /* dpkg sends strings like this:
       'status:   <pkg>: <pkg  qstate>'
       'status:   <pkg>:<arch>: <pkg  qstate>'
-      errors look like this:
-      'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
-      and conffile-prompt like this
-      'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
       
-      Newer versions of dpkg sent also:
-      'processing: install: pkg'
-      'processing: configure: pkg'
-      'processing: remove: pkg'
-      'processing: purge: pkg'
-      'processing: disappear: pkg'
-      'processing: trigproc: trigger'
-	    
+      'processing: {install,configure,remove,purge,disappear,trigproc}: pkg'
+      'processing: {install,configure,remove,purge,disappear,trigproc}: trigger'
    */
 
    // we need to split on ": " (note the appended space) as the ':' is
@@ -560,11 +546,30 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    std::string prefix = APT::String::Strip(list[0]);
    std::string pkgname;
    std::string action_str;
+   ostringstream status;
+
+   // "processing" has the form "processing: action: pkg or trigger"
+   // with action = ["install", "configure", "remove", "purge", "disappear",
+   //                "trigproc"]
    if (prefix == "processing")
    {
       pkgname = APT::String::Strip(list[2]);
       action_str = APT::String::Strip(list[1]);
+
+      // this is what we support in the processing stage
+      if(action_str != "install" && action_str != "configure" &&
+         action_str != "remove" && action_str != "purge" && 
+         action_str != "purge")
+      {
+         if (Debug == true)
+            std::clog << "ignoring processing action: '" << action_str
+                      << "'" << std::endl;
+         return;
+      }
    }
+   // "status" has the form: "status: pkg: state"
+   // with state in ["half-installed", "unpacked", "half-configured", 
+   //                "installed", "config-files", "not-installed"]
    else if (prefix == "status")
    {
       pkgname = APT::String::Strip(list[1]);
@@ -575,37 +580,46 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       return;
    }
 
-   // FIXME: fix indent once the progress-refactor branch is merged
+
+   /* handle the special cases first:
+
+      errors look like this:
+      'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
+      and conffile-prompt like this
+      'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+   */
    if (prefix == "status")
    {
+      if(action_str == "error")
+      {
+         status << "pmerror:" << list[1]
+                << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+                << ":" << list[3]
+                << endl;
+         if(OutStatusFd > 0)
+            FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+         if (Debug == true)
+            std::clog << "send: '" << status.str() << "'" << endl;
+         pkgFailures++;
+         WriteApportReport(list[1].c_str(), list[3].c_str());
+         return;
+      }
+      else if(action_str == "conffile")
+      {
+         status << "pmconffile:" << list[1]
+                << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+                << ":" << list[3]
+                << endl;
+         if(OutStatusFd > 0)
+            FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+         if (Debug == true)
+            std::clog << "send: '" << status.str() << "'" << endl;
+         return;
+      }
+   }
 
-   if(action_str == "error")
-   {
-      status << "pmerror:" << list[1]
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << list[3]
-	     << endl;
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
-      pkgFailures++;
-      WriteApportReport(list[1].c_str(), list[3].c_str());
-      return;
-   }
-   else if(action_str == "conffile")
-   {
-      status << "pmconffile:" << list[1]
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << list[3]
-	     << endl;
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
-      return;
-   }
-   }
+   // at this point we know that we should have a valid pkgname, so build all 
+   // the info from it
 
    // dpkg does not send always send "pkgname:arch" so we add it here if needed
    if (pkgname.find(":") == std::string::npos)
@@ -626,6 +640,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
           }
       }
    }
+   
    const char* const pkg = pkgname.c_str();
    const char* action = action_str.c_str();
    std::string short_pkgname = StringSplit(pkgname, ":")[0];
@@ -671,39 +686,38 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 
    if (prefix == "status")
    {
-
-   vector<struct DpkgState> const &states = PackageOps[pkg];
-   const char *next_action = NULL;
-   if(PackageOpsDone[pkg] < states.size())
-      next_action = states[PackageOpsDone[pkg]].state;
-   // check if the package moved to the next dpkg state
-   if(next_action && (strcmp(action, next_action) == 0)) 
-   {
-      // only read the translation if there is actually a next
-      // action
-      const char *translation = _(states[PackageOpsDone[pkg]].str);
-      char s[200];
-      snprintf(s, sizeof(s), translation, short_pkgname.c_str());
-
-      // we moved from one dpkg state to a new one, report that
-      PackageOpsDone[pkg]++;
-      PackagesDone++;
-      // build the status str
-      status << "pmstatus:" << short_pkgname
-	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << s
-	     << endl;
-      if(_config->FindB("DPkgPM::Progress", false) == true)
-         SendTerminalProgress(PackagesDone/float(PackagesTotal)*100.0);
-
-      if(OutStatusFd > 0)
-	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
-      if (Debug == true)
-	 std::clog << "send: '" << status.str() << "'" << endl;
-   }
-   if (Debug == true) 
-      std::clog << "(parsed from dpkg) pkg: " << short_pkgname
-		<< " action: " << action << endl;
+      vector<struct DpkgState> const &states = PackageOps[pkg];
+      const char *next_action = NULL;
+      if(PackageOpsDone[pkg] < states.size())
+         next_action = states[PackageOpsDone[pkg]].state;
+      // check if the package moved to the next dpkg state
+      if(next_action && (strcmp(action, next_action) == 0)) 
+      {
+         // only read the translation if there is actually a next
+         // action
+         const char *translation = _(states[PackageOpsDone[pkg]].str);
+         char s[200];
+         snprintf(s, sizeof(s), translation, short_pkgname.c_str());
+         
+         // we moved from one dpkg state to a new one, report that
+         PackageOpsDone[pkg]++;
+         PackagesDone++;
+         // build the status str
+         status << "pmstatus:" << short_pkgname
+                << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
+                << ":" << s
+                << endl;
+         if(_config->FindB("DPkgPM::Progress", false) == true)
+            SendTerminalProgress(PackagesDone/float(PackagesTotal)*100.0);
+         
+         if(OutStatusFd > 0)
+            FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
+         if (Debug == true)
+            std::clog << "send: '" << status.str() << "'" << endl;
+      }
+      if (Debug == true) 
+         std::clog << "(parsed from dpkg) pkg: " << short_pkgname
+                   << " action: " << action << endl;
    }
 }
 									/*}}}*/
