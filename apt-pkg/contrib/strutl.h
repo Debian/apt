@@ -33,6 +33,13 @@ using std::vector;
 using std::ostream;
 #endif
 
+namespace APT {
+   namespace String {
+      std::string Strip(const std::string &s);
+   };
+};
+
+
 bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
 char *_strstrip(char *String);
 char *_strrstrip(char *String); // right strip only

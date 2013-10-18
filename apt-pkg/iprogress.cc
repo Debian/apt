@@ -29,6 +29,7 @@ bool PackageManager::StatusChanged(std::string PackageName,
 }
 
 PackageManagerProgressFd::PackageManagerProgressFd(int progress_fd)
+   : StepsDone(0), StepsTotal(1)
 {
    OutStatusFd = progress_fd;
 }
@@ -106,6 +107,13 @@ bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
           << ":" << pkg_action
           << std::endl;
    WriteToStatusFd(status.str());
+
+   if(_config->FindB("Debug::APT::Progress::PackageManagerFd", false) == true)
+      std::cerr << "progress: " << PackageName << " " << xStepsDone
+                << " " << xTotalSteps << " " << pkg_action
+                << std::endl;
+
+
    return true;
 }
 

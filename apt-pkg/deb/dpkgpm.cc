@@ -668,6 +668,10 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       // check if the package moved to the next dpkg state
       if(next_action && (action == next_action))
       {
+         // we moved from one dpkg state to a new one, report that
+         PackageOpsDone[pkg]++;
+         PackagesDone++;
+
          // only read the translation if there is actually a next
          // action
          const char *translation = _(states[PackageOpsDone[pkg]].str);
@@ -675,9 +679,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
          strprintf(msg, translation, i18n_pkgname.c_str());
          d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal, msg);
          
-         // we moved from one dpkg state to a new one, report that
-         PackageOpsDone[pkg]++;
-         PackagesDone++;
       }
       if (Debug == true) 
          std::clog << "(parsed from dpkg) pkg: " << short_pkgname

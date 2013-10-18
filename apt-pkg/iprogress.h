@@ -21,7 +21,7 @@ namespace Progress {
 
  public:
     PackageManager() 
-       : percentage(0.0), last_reported_progress(0) {};
+       : percentage(0.0), last_reported_progress(-1) {};
     virtual ~PackageManager() {};
 
     virtual void Start() {};
