@@ -545,7 +545,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    // is different for "processing" or "status" messages
    std::string prefix = APT::String::Strip(list[0]);
    std::string pkgname;
-   std::string action_str;
+   std::string action;
    ostringstream status;
 
    // "processing" has the form "processing: action: pkg or trigger"
@@ -554,15 +554,14 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    if (prefix == "processing")
    {
       pkgname = APT::String::Strip(list[2]);
-      action_str = APT::String::Strip(list[1]);
+      action = APT::String::Strip(list[1]);
 
       // this is what we support in the processing stage
-      if(action_str != "install" && action_str != "configure" &&
-         action_str != "remove" && action_str != "purge" && 
-         action_str != "purge")
+      if(action != "install" && action != "configure" &&
+         action != "remove" && action != "purge" && action != "purge")
       {
          if (Debug == true)
-            std::clog << "ignoring processing action: '" << action_str
+            std::clog << "ignoring processing action: '" << action
                       << "'" << std::endl;
          return;
       }
@@ -573,7 +572,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    else if (prefix == "status")
    {
       pkgname = APT::String::Strip(list[1]);
-      action_str = APT::String::Strip(list[2]);
+      action = APT::String::Strip(list[2]);
    } else {
       if (Debug == true)
 	 std::clog << "unknown prefix '" << prefix << "'" << std::endl;
@@ -590,7 +589,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    */
    if (prefix == "status")
    {
-      if(action_str == "error")
+      if(action == "error")
       {
          status << "pmerror:" << list[1]
                 << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
@@ -604,7 +603,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
          WriteApportReport(list[1].c_str(), list[3].c_str());
          return;
       }
-      else if(action_str == "conffile")
+      else if(action == "conffile")
       {
          status << "pmconffile:" << list[1]
                 << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
@@ -621,7 +620,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    // at this point we know that we should have a valid pkgname, so build all 
    // the info from it
 
-   // dpkg does not send always send "pkgname:arch" so we add it here if needed
+   // dpkg does not send always send "pkgname:arch" so we add it here 
+   // if needed
    if (pkgname.find(":") == std::string::npos)
    {
       // find the package in the group that is in a touched by dpkg
@@ -642,7 +642,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    }
    
    const char* const pkg = pkgname.c_str();
-   const char* action = action_str.c_str();
    std::string short_pkgname = StringSplit(pkgname, ":")[0];
    std::string arch = "";
    if (pkgname.find(":") != string::npos)
@@ -655,32 +654,33 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    // 'processing: action: pkg'
    if(prefix == "processing")
    {
-      char s[200];
-      const char* const pkg_or_trigger = list[2].c_str();
-      action =  list[1].c_str();
       const std::pair<const char *, const char *> * const iter =
 	std::find_if(PackageProcessingOpsBegin,
 		     PackageProcessingOpsEnd,
-		     MatchProcessingOp(action));
+		     MatchProcessingOp(action.c_str()));
       if(iter == PackageProcessingOpsEnd)
       {
 	 if (Debug == true)
 	    std::clog << "ignoring unknown action: " << action << std::endl;
 	 return;
       }
-      snprintf(s, sizeof(s), _(iter->second), pkg_or_trigger);
+      std::string msg;
+      strprintf(msg, _(iter->second), short_pkgname.c_str());
 
-      status << "pmstatus:" << pkg_or_trigger
+      status << "pmstatus:" << short_pkgname
 	     << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-	     << ":" << s
+	     << ":" << msg
 	     << endl;
       if(OutStatusFd > 0)
 	 FileFd::Write(OutStatusFd, status.str().c_str(), status.str().size());
       if (Debug == true)
 	 std::clog << "send: '" << status.str() << "'" << endl;
 
-      if (strncmp(action, "disappear", strlen("disappear")) == 0)
-	 handleDisappearAction(pkg_or_trigger);
+      // FIXME: this needs a muliarch testcase
+      // FIXME2: is "pkgname" here reliable with dpkg only sending us 
+      //         short pkgnames?
+      if (action == "disappear")
+	 handleDisappearAction(pkgname);
       return;
    } 
 
@@ -691,13 +691,13 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
       if(PackageOpsDone[pkg] < states.size())
          next_action = states[PackageOpsDone[pkg]].state;
       // check if the package moved to the next dpkg state
-      if(next_action && (strcmp(action, next_action) == 0)) 
+      if(next_action && (action == next_action))
       {
          // only read the translation if there is actually a next
          // action
          const char *translation = _(states[PackageOpsDone[pkg]].str);
-         char s[200];
-         snprintf(s, sizeof(s), translation, short_pkgname.c_str());
+         std::string msg;
+         strprintf(msg, translation, short_pkgname.c_str());
          
          // we moved from one dpkg state to a new one, report that
          PackageOpsDone[pkg]++;
@@ -705,7 +705,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
          // build the status str
          status << "pmstatus:" << short_pkgname
                 << ":"  << (PackagesDone/float(PackagesTotal)*100.0) 
-                << ":" << s
+                << ":" << msg
                 << endl;
          if(_config->FindB("DPkgPM::Progress", false) == true)
             SendTerminalProgress(PackagesDone/float(PackagesTotal)*100.0);
