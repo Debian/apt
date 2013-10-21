@@ -23,7 +23,8 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
-#include <apt-pkg/iprogress.h>
+
+#include <apt-private/private-progress.h>
 
 #include <set>
 #include <locale.h>
@@ -342,10 +343,14 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       
       // FIXME: make this a factory
       // select the right progress
-      int status_fd = _config->FindI("APT::Status-Fd",-1);
+      int status_fd = _config->FindI("APT::Status-Fd", -1);
+      int status_deb822_fd = _config->FindI("APT::Status-deb822-Fd", -1);
 
       APT::Progress::PackageManager *progress = NULL;
-      if (status_fd > 0)
+      if (status_deb822_fd > 0)
+         progress = new APT::Progress::PackageManagerProgressDeb822Fd(
+            status_deb822_fd);
+      else if (status_fd > 0)
          progress = new APT::Progress::PackageManagerProgressFd(status_fd);
       else if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
          progress = new APT::Progress::PackageManagerFancy();

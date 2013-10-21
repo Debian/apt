@@ -77,6 +77,34 @@ namespace Progress {
 
  };
 
+ class PackageManagerProgressDeb822Fd : public PackageManager
+ {
+ protected:
+    int OutStatusFd;
+    int StepsDone;
+    int StepsTotal;
+    void WriteToStatusFd(std::string msg);
+
+ public:
+    PackageManagerProgressDeb822Fd(int progress_fd);
+
+    virtual void Start();
+    virtual void Stop();
+
+    virtual bool StatusChanged(std::string PackageName, 
+                               unsigned int StepsDone,
+                               unsigned int TotalSteps,
+                               std::string HumanReadableAction);
+    virtual void Error(std::string PackageName,                                
+                       unsigned int StepsDone,
+                       unsigned int TotalSteps,
+                          std::string ErrorMessage);
+    virtual void ConffilePrompt(std::string PackageName,
+                                unsigned int StepsDone,
+                                unsigned int TotalSteps,
+                                   std::string ConfMessage);
+ };
+
  class PackageManagerFancy : public PackageManager
  {
  protected:

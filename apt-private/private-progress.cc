@@ -1,7 +1,8 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/iprogress.h>
 #include <apt-pkg/strutl.h>
+
+#include <apt-private/private-progress.h>
 
 #include <apti18n.h>
 
@@ -117,6 +118,89 @@ bool PackageManagerProgressFd::StatusChanged(std::string PackageName,
    return true;
 }
 
+
+PackageManagerProgressDeb822Fd::PackageManagerProgressDeb822Fd(int progress_fd)
+   : StepsDone(0), StepsTotal(1)
+{
+   OutStatusFd = progress_fd;
+}
+
+void PackageManagerProgressDeb822Fd::WriteToStatusFd(std::string s)
+{
+   FileFd::Write(OutStatusFd, s.c_str(), s.size());   
+}
+
+void PackageManagerProgressDeb822Fd::Start()
+{
+   // FIXME: use SetCloseExec here once it taught about throwing
+   //        exceptions instead of doing _exit(100) on failure
+   fcntl(OutStatusFd,F_SETFD,FD_CLOEXEC); 
+
+   // send status information that we are about to fork dpkg
+   std::ostringstream status;
+   status << "Status: " << "progress" << std::endl
+          << "Percent: " << (StepsDone/float(StepsTotal)*100.0) << std::endl
+          << "Message: " << _("Running dpkg") << std::endl
+          << std::endl;
+   WriteToStatusFd(status.str());
+}
+
+void PackageManagerProgressDeb822Fd::Stop()
+{
+   // clear the Keep-Fd again
+   _config->Clear("APT::Keep-Fds", OutStatusFd);
+}
+
+void PackageManagerProgressDeb822Fd::Error(std::string PackageName,
+                                     unsigned int StepsDone,
+                                     unsigned int TotalSteps,
+                                     std::string ErrorMessage)
+{
+   std::ostringstream status;
+   status << "Status: " << "Error" << std::endl
+          << "Package:" << PackageName << std::endl
+          << "Percent: "  << (StepsDone/float(TotalSteps)*100.0) << std::endl
+          << "Message: " << ErrorMessage << std::endl
+          << std::endl;
+   WriteToStatusFd(status.str());
+}
+
+void PackageManagerProgressDeb822Fd::ConffilePrompt(std::string PackageName,
+                                              unsigned int StepsDone,
+                                              unsigned int TotalSteps,
+                                              std::string ConfMessage)
+{
+   std::ostringstream status;
+   status << "Status: " << "ConfFile" << std::endl
+          << "Package:" << PackageName << std::endl
+          << "Percent: "  << (StepsDone/float(TotalSteps)*100.0) << std::endl
+          << "Message: " << ConfMessage << std::endl
+          << std::endl;
+   WriteToStatusFd(status.str());
+}
+
+
+bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName, 
+                                             unsigned int xStepsDone,
+                                             unsigned int xTotalSteps,
+                                             std::string message)
+{
+   StepsDone = xStepsDone;
+   StepsTotal = xTotalSteps;
+
+   // build the status str
+   std::ostringstream status;
+   status << "Status: " << "progress" << std::endl
+          << "Package: " << PackageName << std::endl
+          << "Percent: "  << (StepsDone/float(StepsTotal)*100.0) << std::endl
+          << "Message: " << message << std::endl
+          << std::endl;
+   WriteToStatusFd(status.str());
+
+   return true;
+}
+
+
 void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 {
      // scroll down a bit to avoid visual glitch when the screen
@@ -215,6 +299,7 @@ bool PackageManagerText::StatusChanged(std::string PackageName,
 
    return true;
 }
+
 
 
 }; // namespace progress
