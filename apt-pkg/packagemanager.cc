@@ -1027,6 +1027,18 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	 
    return Completed;
 }
+// PM::DoInstallPostFork - compat /*{{{*/
+// ---------------------------------------------------------------------
+									/*}}}*/
+pkgPackageManager::OrderResult
+pkgPackageManager::DoInstallPostFork(int statusFd)
+{
+      APT::Progress::PackageManager *progress = new
+         APT::Progress::PackageManagerProgressFd(statusFd);
+      pkgPackageManager::OrderResult res = DoInstallPostFork(progress);
+      delete progress;
+      return res;
+   }
 									/*}}}*/
 // PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
 // ---------------------------------------------------------------------
@@ -1039,6 +1051,19 @@ pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
    
    return Res;
 };
+									/*}}}*/	
+// PM::DoInstall - Does the installation				/*{{{*/
+// ---------------------------------------------------------------------
+/* compat */
+pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstall(int statusFd)
+{
+    APT::Progress::PackageManager *progress = new
+       APT::Progress::PackageManagerProgressFd(statusFd);
+    OrderResult res = DoInstall(progress);
+    delete progress;
+    return res;
+ }
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------

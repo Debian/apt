@@ -23,8 +23,10 @@
 #ifndef PKGLIB_PACKAGEMANAGER_H
 #define PKGLIB_PACKAGEMANAGER_H
 
+#include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/iprogress.h>
+
+#include <apt-private/private-progress.h>
 
 #include <string>
 #include <iostream>
@@ -100,16 +102,8 @@ class pkgPackageManager : protected pkgCache::Namespace
 
    // Do the installation 
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
-
    // compat
-   OrderResult DoInstall(int statusFd=-1) {
-      APT::Progress::PackageManager *progress = new
-         APT::Progress::PackageManagerProgressFd(statusFd);
-      OrderResult res = DoInstall(progress);
-      delete progress;
-      return res;
-   }
-
+   __deprecated OrderResult DoInstall(int statusFd=-1);
 
    // stuff that needs to be done before the fork() of a library that
    // uses apt
@@ -120,6 +114,10 @@ class pkgPackageManager : protected pkgCache::Namespace
 
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
+   // compat
+   __deprecated OrderResult DoInstallPostFork(int statusFd=-1);
+
+   // ?
    bool FixMissing();
 
    /** \brief returns all packages dpkg let disappear */
