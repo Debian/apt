@@ -17,7 +17,7 @@ MAJOR=0.0
 MINOR=0
 SLIBS=$(PTHREADLIB) -lapt-pkg
 
-PRIVATES=list install download output cachefile cacheset update upgrade cmndline moo search show main
+PRIVATES=list install download output cachefile cacheset update upgrade cmndline moo search show main progress
 SOURCE += $(foreach private, $(PRIVATES), private-$(private).cc)
 HEADERS += $(foreach private, $(PRIVATES), private-$(private).h)
 
