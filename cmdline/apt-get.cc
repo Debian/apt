@@ -49,6 +49,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/upgrade.h>
 
 #include <apt-private/private-download.h>
 #include <apt-private/private-install.h>
@@ -341,32 +342,6 @@ bool DoMarkAuto(CommandLine &CmdL)
    if (AutoMarkChanged && ! _config->FindB("APT::Get::Simulate",false))
       return Cache->writeStateFile(NULL);
    return false;
-}
-									/*}}}*/
-// DoDistUpgrade - Automatic smart upgrader				/*{{{*/
-// ---------------------------------------------------------------------
-/* Intelligent upgrader that will install and remove packages at will */
-bool DoDistUpgrade(CommandLine &CmdL)
-{
-   CacheFile Cache;
-   if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
-      return false;
-
-   c0out << _("Calculating upgrade... ") << flush;
-   if (pkgDistUpgrade(*Cache) == false)
-   {
-      c0out << _("Failed") << endl;
-      ShowBroken(c1out,Cache,false);
-      return false;
-   }
-   
-   // parse additional cmdline pkg manipulation switches
-   if(!DoCacheManipulationFromCommandLine(CmdL, Cache))
-      return false;
-
-   c0out << _("Done") << endl;
-   
-   return InstallPackages(Cache,true);
 }
 									/*}}}*/
 // DoDSelectUpgrade - Do an upgrade by following dselects selections	/*{{{*/
