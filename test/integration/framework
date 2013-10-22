@@ -116,7 +116,7 @@ aptitude() {
 }
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1 --args $*
 }
 http() {
 	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http

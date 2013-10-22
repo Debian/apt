@@ -2,6 +2,7 @@
 #include<config.h>
 
 #include <apt-pkg/algorithms.h>
+#include <apt-pkg/upgrade.h>
 #include <apt-pkg/error.h>
 
 #include <cstdlib>

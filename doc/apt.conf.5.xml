@@ -396,6 +396,14 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <para><literal>Acquire::http::User-Agent</literal> can be used to set a different
      User-Agent for the http download method as some proxies allow access for clients
      only if the client uses a known identifier.</para>
+
+     <para><literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to
+     specify a external command to discover the http proxy to use. Apt expects
+     the command to output the proxy on stdout in the style
+     <literal>http://proxy:port/</literal>. See the 
+     &squid-deb-proxy-client; package for a example implementation that
+     uses avahi.</para>
+
      </listitem>
      </varlistentry>
 

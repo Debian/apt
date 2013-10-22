@@ -798,7 +798,6 @@ bool HttpMethod::Configuration(string Message)
    PipelineDepth = _config->FindI("Acquire::http::Pipeline-Depth",
 				  PipelineDepth);
    Debug = _config->FindB("Debug::Acquire::http",false);
-   AutoDetectProxyCmd = _config->Find("Acquire::http::ProxyAutoDetect");
 
    // Get the proxy to use
    AutoDetectProxy();
@@ -811,6 +810,11 @@ bool HttpMethod::Configuration(string Message)
 /* */
 bool HttpMethod::AutoDetectProxy()
 {
+   // option is "Acquire::http::Proxy-Auto-Detect" but we allow the old
+   // name without the dash ("-")
+   AutoDetectProxyCmd = _config->Find("Acquire::http::Proxy-Auto-Detect",
+                                      _config->Find("Acquire::http::ProxyAutoDetect"));
+
    if (AutoDetectProxyCmd.empty())
       return true;
 

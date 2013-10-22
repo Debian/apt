@@ -2,6 +2,7 @@
 set -e
 
 FAIL=0
+FAILED_TESTS=""
 DIR=$(readlink -f $(dirname $0))
 if [ "$1" = "-q" ]; then
 	export MSGLEVEL=2
@@ -29,6 +30,7 @@ for testcase in $(run-parts --list $DIR | grep '/test-'); do
 	fi
 	if ! ${testcase}; then
                  FAIL=$((FAIL+1))
+                 FAILED_TESTS="$FAILED_TESTS $(basename $testcase)"
                  echo "$(basename $testcase) ... FAIL"
         fi
 	if [ "$MSGLEVEL" -le 2 ]; then
@@ -37,5 +39,8 @@ for testcase in $(run-parts --list $DIR | grep '/test-'); do
 done
 
 echo "failures: $FAIL"
+if [ -n "$FAILED_TESTS" ]; then 
+    echo "Failed tests: $FAILED_TESTS";
+fi
 # ensure we don't overflow
 exit $((FAIL <= 255 ? FAIL : 255))
