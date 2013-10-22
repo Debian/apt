@@ -680,12 +680,12 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
 // DPkgPM::handleDisappearAction					/*{{{*/
 void pkgDPkgPM::handleDisappearAction(string const &pkgname)
 {
-   // record the package name for display and stuff later
-   disappearedPkgs.insert(pkgname);
-
    pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
    if (unlikely(Pkg.end() == true))
       return;
+
+   // record the package name for display and stuff later
+   disappearedPkgs.insert(Pkg.FullName(true));
 
    // the disappeared package was auto-installed - nothing to do
    if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
@@ -1209,7 +1209,7 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 {
 	    if((*I).Pkg.end() == true)
 	       continue;
-	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.FullName()) != disappearedPkgs.end())
+	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.FullName(true)) != disappearedPkgs.end())
 	       continue;
 	    // We keep this here to allow "smooth" transitions from e.g. multiarch dpkg/ubuntu to dpkg/debian
 	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch ||
