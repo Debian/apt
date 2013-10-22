@@ -1,3 +1,314 @@
+apt (0.9.12.1ubuntu1) trusty; urgency=low
+
+  * merged from the debian/sid branch:
+    - debian/gbp.conf: change build branch to ubuntu/master
+    - use ubuntu keyring and ubuntu archive keyring in apt-key
+    - run update-apt-xapian-index in apt.cron
+    - run apt-key net-update in cron.daily
+    - different example sources.list
+    - APT::pkgPackageManager::MaxLoopCount set to 5000
+    - apport pkgfailure handling
+    - ubuntu changelog download handling
+    - patch for apt cross-building, see http://bugs.debian.org/666772
+    - debian/apt.auto-removal.sh
+      + Keep linux-tools packages matching installed kernels
+  
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 22 Oct 2013 16:46:46 +0200
+
+apt (0.9.12.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * do not send pkgname:arch over the APT::Status-Fd to not break
+    clients (closes: 726156). A new APT::Status-deb822-Fd will be
+    used to fix this.
+  * add integration tests for APT::Status-Fd
+  * add missing _() around the new "Progress" string
+
+  [ David Kalnischkies ]
+  * fix progress-segfault in case of dpkg errors/prompts (Closes: 726047)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 15 Oct 2013 18:25:51 +0200
+
+apt (0.9.12) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Fix typo in apt-private/private-show.cc. Thanks to Benjamin
+    Keresa. Closes: #724073
+  
+  [ Mark Hymers ]
+  * fix libapt-inst for >2G debs (closes: #725483)
+
+  [ David Kalnischkies ]
+  * don't strip :any from dependencies in single-arch (Closes: 723586)
+  * pkg from only trusted sources keeps being trusted (Closes: 617690)
+  * compression-neutral message for missing data.tar member (Closes: 722710)
+  * print-uris prints regardless of quiet-level again (Closes: 722207)
+  * retry without partial data after a 416 response (Closes: 710924)
+  * replace "filesize - 1" trick in http with proper 416 handling
+  * fix partial (206 and 416) support in https
+  * handle complete responses to https range requests (Closes: 617643, 667699)
+    (LP: 1157943)
+  * don't consider holds for autoremoval (Closes: 724995)
+  * put fetch errors in 'source' on our errorstack
+  * use pkgAcqArchive in 'download' for proper errors
+  * fix lzma-support detection via xz binary
+  * do not ++ on erased package pointers in autoremove
+
+  [ Michael Vogt ]
+  * Add new "apt-get upgrade --with-new-pkgs" option (and add man-page for it).
+    So "apt-get upgrade --with-new-pkgs" will pull in new dependencies but
+    never remove packages
+  * Rename "--dpkg-progress" to "--show-progress" and document it in 
+    apt-get.8. This will show global install progress information in the
+    terminal.
+  * Fix status-fd progress calculation for certain multi-arch install/upgrade
+    situations
+  * add new -o DpkgPM::Progress-Fancy for nicer dpkg progress output 
+    on vt100+ terminals
+  * fix libapt-inst for >2G debs (closes: #725483), thanks to Mark Hymers 
+  * debian/apt.postinst: use --compare-versions lt instead of lt-nl, 
+    to ensure the apt-auto-removal file is correctly create, 
+    thanks to Ben Hutchings
+  * update Uploaders to match recent uploaders better
+  * Set the default "Acquire::PDiffs::FileLimit" to 20. If the amount
+    of pdiffs is bigger things tend to get slower. Set
+      Acquire::PDiffs::FileLimit "0";
+    in /etc/apt/apt.conf to get the old behavior back.
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 09 Oct 2013 22:39:41 +0200
+
+apt (0.9.11.4) unstable; urgency=low
+
+  [ Oskari Saarenmaa ]
+  * don't truncate 100 char long paths in tar extraction.
+    Thanks to Mika Eloranta for the testcase! (Closes: #689582)
+
+  [ David Kalnischkies ]
+  * do not trust FileFd::Eof() in pkgTagFile::Fill()
+    Thanks to Cyril Brulebois (Closes: 723705)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 20 Sep 2013 16:12:07 +0200
+
+apt (0.9.11.3) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * Add DPkgPM::Progress option to enable terminal install 
+    progress
+  * fix typo (mkostemp->mkstemp)
+  * Remove invalid "-f" option for apt-get check, thanks to
+    Philipp Weis (closes: #721477)
+  * Fix regression of "apt-cache unmet -i", thanks to Daniel Schepler
+    (closes: #722324)
+
+  [ David Kalnischkies ]
+  * use FileFd in HashSum test to unbreak non-linux ports.
+    Thanks to Aaron M. Ucko (Closes: 721723)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 10 Sep 2013 17:32:02 +0200
+
+apt (0.9.11.2) unstable; urgency=low
+
+  [ Milo Casagrande ]
+  * Update Italian translation. Closes: #721030
+  
+  [ Trần Ngọc Quân ]
+  * Update Vietnamese translation. Closes: #720752
+  
+  [ Michael Vogt ]
+  * dselect/install:
+   - remove "-f" option for apt-get clean/auto-clean (closes: #720532)
+  * apt-private/private-cmndline.cc:
+    - fix typo in CmdMatches() selection for dselect-upgrade (closes: #720532)
+  * use SPtr<pkgProblemResolver> in DoInstall() to simplify the code
+  * allow pkg manipulation in the upgrade/dist-upgrade commandline, like
+    apt-get dist-upgrade 2vcard- 4g8+ (thanks to Thorsten Glaser for the
+    suggestion)
+
+  [ Angel Guzman Maeso ]
+  * replace usage of potential dangerous mktemp with mkstemp
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 31 Aug 2013 16:45:31 +0200
+
+apt (0.9.11.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * more coverity fixes:
+    - explicit init 
+    - always chdir("/") after chroot()
+    - ftparchive/override.cc: fix "skip empty lines" code, the pointer 
+      needs to get de-referenced first
+  * dselect/update: 
+    - remove "-f" option for apt-get update to fix breakage (closes: 720532)
+
+  [ Christopher Baines ]
+  * Add test for bug #507998
+
+  [ David Kalnischkies ]
+  * add a breaks libapt-inst for FileFd changes in 0.9.9 (Closes: 720449)
+  * add versions to manpages-it Replaces+Breaks
+
+  [ Ángel Guzmán Maeso ]
+  * apt-pkg:contrib Avoid compiler warning about sign-compare
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 24 Aug 2013 09:13:27 +0200
+
+apt (0.9.11) unstable; urgency=low
+
+  [ Daniel Hartwig ]
+  * Clarify units of Acquire::http::Dl-Limit (closes: #705445)
+  * Show a error message if {,dist-}upgrade is used with additional
+    arguments (closes: #705510)
+
+  [ Michael Vogt ]
+  * lp:~mvo/apt/config-clear:
+    - support Configuration.Clear() for a clear of the entire 
+      configuration
+  * lp:~mvo/apt/add-glob-function:
+    -  add Glob() to fileutl.{cc,h}
+  * feature/apt-binary2
+    - refactor large chunks of cmdline/*.cc into a new libapt-private
+      library that is shared between the internal apt cmdline tools
+    - install libapt-private* into the apt binary
+    - add PACKAGE_MATCHER_ABI_COMPAT define so that this branch can be 
+      merged without breaking ABI
+    - add lintian override for no-shlibs-control-file so that
+      the internal libapt-private.so.0.0.0 can be shipped
+    - adjust apt.install.in to only install libapt-private.so.*
+
+  [ David Kalnischkies ]
+  * ensure that pkgTagFile isn't writing past Buffer length (Closes: 719629)
+  * allow Pre-Install-Pkgs hooks to get info over an FD != stdin
+    (Closes: #671726)
+
+  [ Christian PERRIER ]
+  * French translation update.
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 21 Aug 2013 17:51:09 +0200
+
+apt (0.9.10) unstable; urgency=low
+
+  The "Hello to Debconf" upload
+  
+  [ Christian Perrier ]
+  * Vietnamese translation update. Closes: #718615
+  * Japanese translation update. Closes: #719279
+  * French translation update.
+
+  [ Michael Vogt ]
+  * work on fixing coverity scan results:
+    - fix some off-by-one errors
+    - fix some resource leaks
+    - fixes in chroot() handling
+    - fix some missing va_end()
+  * make the code -Wall clean again
+  * remove duplicated #include<list>
+  * add .travis.yml
+  * use the 'abi-complicance-checker' package and remove the buildin 
+    copy for the abi checks
+
+  [ David Kalnischkies ]
+  * ensure that FileFd::Size returns 0 in error cases
+  * add missing Turkish (tr) to po/LINGUAS
+  * correct management-typo in description found by lintian
+  * implement debian/rules build-{arch,indep} as required by policy 3.9.4
+  * reenable automatic parallel build of APT
+  * exclude config.{sub,guess} from source package
+  * update the symbol files to reflect current state
+  * unset LANGUAGE for showing [Y/n] answer hints
+  * fix some unitialized data members
+  * specific pins below 1000 cause downgrades (Closes: 543966)
+  * use pkgTagFile to parse "header" of Release files
+  * fix: --print-uris removes authentication (Closes: 719263)
+  * always use our own trustdb.gpg in apt-key
+  * use a tmpfile for trustdb.gpg in apt-key.
+    Thanks to Andreas Beckmann for the initial patch! (Closes: #687611)
+  * do not double-slash paths in apt-key (Closes: 665411)
+  * make the keyring locations in apt-key configurable
+  * let apt-key del work better with softlink and single key keyrings
+  * do not call 'apt-key update' in apt.postinst
+  
+  [ Colin Watson ]
+  * prefer native arch over higher priority for providers (Closes: #718482)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 12 Aug 2013 21:45:07 +0200
+
+apt (0.9.9.4) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * pick up Translation-* even if only compressed available (Closes: 717665)
+  * request absolute URIs from proxies again (0.9.9.3 regession)
+    (Closes: 717891)
+  
+  [ Michael vogt ]
+  * fix missing changelog entry for 0.9.9.3 (git-dch issue)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 26 Jul 2013 09:58:17 +0200
+
+apt (0.9.9.3) unstable; urgency=low
+
+  [ Ben Hutchings ]
+  * debian/apt.auto-removal.sh:
+    - do not include debug symbol packages for the kernel in the 
+      blacklist (closes: #717616)
+  
+  [ Michael Vogt ]
+  * debian/apt.postinst:
+    - run /etc/kernel/postinst.d/apt-auto-removal once on upgrade
+      to ensure that the correct auto-removal list is generated
+      (closes: #717615)
+
+  [ David Kalnischkies ]
+  * skip all Description fields in apt-cache, not just first (Closes: 717254)
+  * fix 'apt-cache search' crash with missing description (Closes: 647590)
+
+  [ Raphael Geissert ]
+  * Do not send a connection: keep-alive, at all
+  
+ -- Michael Vogt <mvo@debian.org>  Thu, 25 Jul 2013 17:14:58 +0200
+
+apt (0.9.9.2) unstable; urgency=low
+
+  [ Programs translations ]
+  * Vietnamese updated by Tran Ngoc Quan. Closes: #717016
+
+  [ David Kalnischkies ]
+  * fix if-clause to generate hook-info for 'rc' packages (Closes: 717006)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 17 Jul 2013 14:56:34 +0200
+
+apt (0.9.9.1) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * debian/rules:
+    - call dh_clean in clean (closes: #714980)
+  * apt-pkg/packagemanager.cc:
+    - increate APT::pkgPackageManager::MaxLoopCount to 5000
+  * cherry pick debian/apt.auto-removal.sh feature from the
+    ubuntu/master branch
+
+  [ Steve Langasek ]
+  * debian/apt.conf.autoremove: don't include linux-image*,
+    linux-restricted-modules*, and linux-ubuntu-modules* packages in the
+    list to never be autoremoved.
+  * debian/apt.auto-removal.sh, debian/rules, debian/apt.dirs: install new
+    script to /etc/kernel/postinst.d/ which ensures we only automatically
+    keep the currently-running kernel, the being-installed kernel, and the
+    newest kernel, so we don't fill /boot up with an unlimited number of
+    kernels.  LP: #923876.
+
+  [ Adam Conrad ]
+  * Fix up two things in debian/apt.auto-removal.sh:
+    - Use exact matches with $-terminated regexes, so we don't get
+      confusion between similarly-named kernel flavours.
+    - Keep linux-backports-modules in sync with installed kernels.
+
+  [ David Kalnischkies ]
+  * Version 3 for DPkg::Pre-Install-Pkgs with MultiArch info (Closes: #712116)
+  * implement arch+= and arch-= for sources.list
+  * prevent MarkInstall of unsynced Multi-Arch:same siblings
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 11 Jul 2013 20:44:31 +0200
+
 apt (0.9.9.1~ubuntu3) saucy; urgency=low
 
   * Keep linux-tools packages matching installed kernels (LP: #1205284)
@@ -27,13 +338,6 @@ apt (0.9.9.1~ubuntu1) saucy; urgency=low
       + make kernels auto-removable
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 10 Jul 2013 17:03:52 +0200
-
-apt (0.9.9.1) UNRELEASED; urgency=low
-
-  * debian/rules:
-    - call dh_clean in clean (closes: #714980)
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 05 Jul 2013 16:39:34 +0200
 
 apt (0.9.9) unstable; urgency=low
 

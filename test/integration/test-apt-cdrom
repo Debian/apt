@@ -18,10 +18,7 @@ echo 'Description-de: automatisch generiertes Testpaket testing=0.8.15/stable
  Diese Pakete sind nur für das testen von APT gedacht,
  sie erfüllen keinen Zweck auf einem normalen System…
 ' >> Translation-de
-cat Translation-de | gzip > Translation-de.gz
-cat Translation-de | bzip2 > Translation-de.bz2
-cat Translation-de | xz --format=lzma > Translation-de.lzma
-cat Translation-de | xz > Translation-de.xz
+compressfile Translation-de
 rm Translation-en Translation-de
 cd - > /dev/null
 addtrap 'prefix' "chmod -R +w $PWD/rootdir/media/cdrom/dists/;"
@@ -102,5 +99,5 @@ aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && 
 
 # check that we really can install from a 'cdrom'
 testdpkgnotinstalled testing
-aptget install testing -y > /dev/null 2>&1
+testsuccess aptget install testing -y
 testdpkginstalled testing

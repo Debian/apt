@@ -35,14 +35,14 @@ setupaptarchive
 
 passdist() {
 	msgtest 'Test that target-release is accepted' $1
-	aptget dist-upgrade -t $1 -qq && msgpass || msgfail
+	testsuccess --nomsg aptget dist-upgrade -t $1
 	msgtest 'Test that target-release pins with' $1
 	aptcache policy -t $1 | grep -q ' 990' && msgpass || msgfail
 }
 
 faildist() {
 	msgtest 'Test that target-release is refused' $1
-	aptget dist-upgrade -t $1 -qq 2> /dev/null && msgfail || msgpass
+	testfailure --nomsg aptget dist-upgrade -t $1
 }
 
 msgtest 'Test that no default-release is active in this test' 'setup'

@@ -28,7 +28,7 @@ MD5Sum:
 done
 
 msgtest 'The unsigned garbage before signed block is' 'ignored'
-aptget update -qq > /dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg aptget update
 
 ROOTDIR="$(readlink -f .)"
 testequal "Package files:

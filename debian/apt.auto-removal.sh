@@ -42,7 +42,7 @@ version_test_gt ()
 	return "$?"
 }
 
-list=$(${DPKG} -l 'linux-image-[0-9]*'|awk '/^ii/ { print $2 }' | sed -e's/linux-image-//')
+list=$(${DPKG} -l 'linux-image-[0-9]*'|awk '/^ii/ && $2 !~ /-dbg$/ { print $2 }' | sed -e's/linux-image-//')
 
 latest_version=""
 previous_version=""

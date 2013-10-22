@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+
+setupaptarchive
+changetowebserver --request-absolute='uri'
+
+msgtest 'Check that absolute paths are' 'not accepted'
+testfailure --nomsg aptget update
+
+echo 'Acquire::http::Proxy "http://localhost:8080";' > rootdir/etc/apt/apt.conf.d/99proxy
+
+msgtest 'Check that requests to proxies are' 'absolute uris'
+testsuccess --nomsg aptget update
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  unrelated
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst unrelated (0.5~squeeze1 unstable [all])
+Conf unrelated (0.5~squeeze1 unstable [all])' aptget install unrelated -s

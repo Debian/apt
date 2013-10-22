@@ -106,9 +106,9 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       } else {
          Target.Open(TargetF,FileFd::WriteAtomic);
       }
-      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
+      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (TargetFl == 0)
 	 return _error->Errno("fdopen","Failed to reopen fd");
       
@@ -601,6 +601,7 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 			 (useInRelease ? inrelease.c_str() : releasegpg.c_str()));
 	 // something went wrong, don't copy the Release.gpg
 	 // FIXME: delete any existing gpg file?
+	 delete MetaIndex;
 	 continue;
       }
 
@@ -714,9 +715,9 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       } else {
 	 Target.Open(TargetF,FileFd::WriteAtomic);
       }
-      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (_error->PendingError() == true)
 	 return false;
+      FILE *TargetFl = fdopen(dup(Target.Fd()),"w");
       if (TargetFl == 0)
 	 return _error->Errno("fdopen","Failed to reopen fd");
       

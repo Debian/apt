@@ -2,7 +2,7 @@
 
 # This make fragment is included by the toplevel make to handle configure
 # and setup. It defines a target called startup that when run will init
-# the build directory, generate configure from configure.in, create aclocal
+# the build directory, generate configure from configure.ac, create aclocal
 # and has rules to run config.status should one of the .in files change.
 
 # Input
@@ -48,7 +48,7 @@ missing-config-files:
 	@echo "http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD"
 	exit 100
 
-configure: aclocal.m4 configure.in buildlib/config.guess buildlib/config.sub
+configure: aclocal.m4 configure.ac buildlib/config.guess buildlib/config.sub
 	autoconf
 
 aclocal.m4: $(wildcard buildlib/*.m4)

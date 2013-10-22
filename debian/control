@@ -3,10 +3,9 @@ Section: admin
 Priority: important
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 XSBC-Original-Maintainer: APT Development Team <deity@lists.debian.org>
-Uploaders: Michael Vogt <mvo@debian.org>, Otavio Salvador <otavio@debian.org>,
- Christian Perrier <bubulle@debian.org>, Daniel Burrows <dburrows@debian.org>,
+Uploaders:  Michael Vogt <mvo@debian.org>, Christian Perrier <bubulle@debian.org>, 
  Julian Andres Klode <jak@debian.org>
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Build-Depends: dpkg-dev (>= 1.15.8), debhelper (>= 8.1.3~), libdb-dev,
  gettext (>= 0.12), libcurl4-gnutls-dev (>= 7.19.4~),
  zlib1g-dev, libbz2-dev, xsltproc, docbook-xsl, docbook-xml,
@@ -19,7 +18,8 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=apt/apt.git
 Package: apt
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ubuntu-keyring, gnupg
-Replaces: manpages-pl (<< 20060617-3~), manpages-it
+Replaces: manpages-pl (<< 20060617-3~), manpages-it (<< 2.80-4~)
+Breaks: manpages-pl (<< 20060617-3~), manpages-it (<< 2.80-4~)
 Conflicts: python-apt (<< 0.7.93.2~)
 Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, xz-utils, python-apt
 Description: commandline package manager
@@ -42,9 +42,9 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Breaks: apt (<< 0.9.4~)
+Breaks: apt (<< 0.9.4~), libapt-inst1.5 (<< 0.9.9~)
 Section: libs
-Description: package managment runtime library
+Description: package management runtime library
  This library provides the common functionality for searching and
  managing packages as well as information about packages.
  Higher-level package managers can depend upon this library.
@@ -108,9 +108,9 @@ Package: apt-utils
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: xz-utils
-Description: package managment related utility programs
+Description: package management related utility programs
  This package contains some less used commandline utilities related
- to package managment with APT.
+ to package management with APT.
  .
   * apt-extracttemplates is used by debconf to prompt for configuration
     questions before installation.

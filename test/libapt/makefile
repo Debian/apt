@@ -98,6 +98,11 @@ include $(PROGRAM_H)
 PROGRAM = IndexCopyToSourceList${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = indexcopytosourcelist_test.cc
+
+# test fileutls
+PROGRAM = FileUtl${BASENAME}
+SLIBS = -lapt-pkg 
+SOURCE = fileutl_test.cc
 include $(PROGRAM_H)
 
 # test tagfile

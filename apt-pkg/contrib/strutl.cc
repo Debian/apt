@@ -36,7 +36,22 @@
 
 using namespace std;
 									/*}}}*/
-
+// Strip - Remove white space from the front and back of a string       /*{{{*/
+// ---------------------------------------------------------------------
+namespace APT {
+   namespace String {
+std::string Strip(const std::string &s)
+{
+   size_t start = s.find_first_not_of(" \t\n");
+   // only whitespace
+   if (start == string::npos)
+      return "";
+   size_t end = s.find_last_not_of(" \t\n");
+   return s.substr(start, end-start+1);
+}
+}
+}
+									/*}}}*/
 // UTF8ToCodeset - Convert some UTF-8 string for some codeset   	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is handy to use before display some information for enduser  */
@@ -943,6 +958,8 @@ bool StrToTime(const string &Val,time_t &Result)
    Tm.tm_isdst = 0;
    if (Month[0] != 0)
       Tm.tm_mon = MonthConv(Month);
+   else
+      Tm.tm_mon = 0; // we don't have a month, so pick something
    Tm.tm_year -= 1900;
    
    // Convert to local time and then to GMT
@@ -1116,6 +1133,37 @@ vector<string> VectorizeString(string const &haystack, char const &split)
    return exploded;
 }
 									/*}}}*/
+// StringSplit - split a string into a string vector by token		/*{{{*/
+// ---------------------------------------------------------------------
+/* See header for details.
+ */
+vector<string> StringSplit(std::string const &s, std::string const &sep,
+                           unsigned int maxsplit)
+{
+   vector<string> split;
+   size_t start, pos;
+
+   // no seperator given, this is bogus
+   if(sep.size() == 0)
+      return split;
+
+   start = pos = 0;
+   while (pos != string::npos)
+   {
+      pos = s.find(sep, start);
+      split.push_back(s.substr(start, pos-start));
+      
+      // if maxsplit is reached, the remaining string is the last item
+      if(split.size() >= maxsplit)
+      {
+         split[split.size()-1] = s.substr(start);
+         break;
+      }
+      start = pos+sep.size();
+   }
+   return split;
+}
+									/*}}}*/
 // RegexChoice - Simple regex list/list matcher				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1233,12 +1281,12 @@ char *safe_snprintf(char *Buffer,char *End,const char *Format,...)
    va_list args;
    int Did;
 
-   va_start(args,Format);
-
    if (End <= Buffer)
       return End;
-
+   va_start(args,Format);
    Did = vsnprintf(Buffer,End - Buffer,Format,args);
+   va_end(args);
+
    if (Did < 0 || Buffer + Did > End)
       return End;
    return Buffer + Did;
@@ -1291,6 +1339,18 @@ bool CheckDomainList(const string &Host,const string &List)
    return false;
 }
 									/*}}}*/
+// strv_length - Return the length of a NULL-terminated string array	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+size_t strv_length(const char **str_array)
+{
+   size_t i;
+   for (i=0; str_array[i] != NULL; i++)
+      /* nothing */
+      ;
+   return i;
+}
+
 // DeEscapeString - unescape (\0XX and \xXX) from a string		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

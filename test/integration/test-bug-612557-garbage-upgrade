@@ -13,7 +13,7 @@ insertpackage 'unstable' 'libreoffice-common' 'all' '1:3.3.0-2' 'Conflicts: open
 setupaptarchive
 
 touch rootdir/var/lib/apt/extended_states
-aptmark markauto python-uno openoffice.org-common
+testsuccess aptmark markauto python-uno openoffice.org-common
 #aptmark unmarkauto openoffice.org-emailmerge
 testmarkedauto python-uno openoffice.org-common
 
@@ -32,7 +32,7 @@ The following packages will be upgraded:
 After this operation, 53.2 MB disk space will be freed.
 E: Trivial Only specified but this is not a trivial operation.' aptget --trivial-only install python-uno
 
-aptmark markauto openoffice.org-emailmerge
+testsuccess aptmark markauto openoffice.org-emailmerge
 testmarkedauto python-uno openoffice.org-common openoffice.org-emailmerge
 
 testequal 'Reading package lists...

@@ -21,13 +21,16 @@ DEBFILE='rootdir/etc/apt/sources.list.d/apt-test-unstable-deb.list'
 testequal "$PKGTEXT
 Download complete and in download only mode" aptget install cool --assume-no -d
 
+testequal "$PKGTEXT
+Download complete and in download only mode" aptget install cool --assume-no -d --allow-unauthenticated
+
 sed -i -e 's#deb#deb [trusted=no]#' $DEBFILE
 aptgetupdate
 
 testequal "$PKGTEXT
 WARNING: The following packages cannot be authenticated!
   cool
-Install these packages without verification [y/N]? N
+Install these packages without verification? [y/N] N
 E: Some packages could not be authenticated" aptget install cool --assume-no -d
 
 find aptarchive/ \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
@@ -37,8 +40,14 @@ aptgetupdate
 testequal "$PKGTEXT
 WARNING: The following packages cannot be authenticated!
   cool
-Install these packages without verification [y/N]? N
+Install these packages without verification? [y/N] N
 E: Some packages could not be authenticated" aptget install cool --assume-no -d
+
+testequal "$PKGTEXT
+WARNING: The following packages cannot be authenticated!
+  cool
+Authentication warning overridden.
+Download complete and in download only mode" aptget install cool --assume-no -d --allow-unauthenticated
 
 sed -i -e 's#deb#deb [trusted=yes]#' $DEBFILE
 aptgetupdate

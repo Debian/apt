@@ -46,10 +46,10 @@ testrun() {
 			msgpass
 		fi
 		msgtest "Check if package is downloadable"
-		aptget install -d testpkg -qq && msgpass || msgfail
-		msgtest "\tdeb file is present"; test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb && msgpass || msgfail
+		testsuccess --nomsg aptget install -d testpkg
+		msgtest "\tdeb file is present"; testsuccess --nomsg test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb
 		aptget clean
-		msgtest "\tdeb file is gone"; ! test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb && msgpass || msgfail
+		msgtest "\tdeb file is gone"; testfailure --nomsg test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb
 	fi
 	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
 	testequal "$GOODSHOW" aptcache show testpkg
@@ -62,9 +62,9 @@ testrun() {
 	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
 	aptget clean
 	msgtest "Check if the source is aptgetable"
-	aptget source testpkg -qq 2> /dev/null > /dev/null && msgpass || msgfail
-	msgtest "\tdsc file is present"; test -f testpkg_1.0.dsc && msgpass || msgfail
-	msgtest "\tdirectory is present"; test -d testpkg-1.0 && msgpass || msgfail
+	testsuccess --nomsg aptget source testpkg
+	msgtest "\tdsc file is present"; testsuccess --nomsg test -f testpkg_1.0.dsc
+	msgtest "\tdirectory is present"; testsuccess --nomsg test -d testpkg-1.0
 	rm -rf testpkg-1.0
 }
 
@@ -72,11 +72,11 @@ echo 'Acquire::GzipIndexes "false";' > rootdir/etc/apt/apt.conf.d/02compressinde
 msgmsg "File: Test with uncompressed indexes"
 testrun
 
-aptget update -qq -o Acquire::Pdiffs=1
+testsuccess aptget update -o Acquire::Pdiffs=1
 msgmsg "File: Test with uncompressed indexes (update unchanged with pdiffs)"
 testrun
 
-aptget update -qq -o Acquire::Pdiffs=0
+testsuccess aptget update -o Acquire::Pdiffs=0
 msgmsg "File: Test with uncompressed indexes (update unchanged without pdiffs)"
 testrun
 
@@ -84,21 +84,21 @@ rm -rf rootdir/var/lib/apt/lists
 echo 'Acquire::CompressionTypes::Order:: "gz";
 Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
 
-aptget update -qq
+testsuccess aptget update
 msgmsg "File: Test with compressed indexes"
 testrun "compressed"
 
-aptget update -qq -o Acquire::Pdiffs=1
+testsuccess aptget update -o Acquire::Pdiffs=1
 msgmsg "File: Test with compressed indexes (update unchanged with pdiffs)"
 testrun "compressed"
 
-aptget update -qq -o Acquire::Pdiffs=0
+testsuccess aptget update -o Acquire::Pdiffs=0
 msgmsg "File: Test with compressed indexes (update unchanged without pdiffs)"
 testrun "compressed"
 
 rm rootdir/etc/apt/apt.conf.d/02compressindex
 changetowebserver
-aptget update -qq
+testsuccess aptget update
 GOODPOLICY="$(aptcache policy testpkg)"
 test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 http://' | wc -l) -eq 4
 testequal "$GOODPOLICY" aptcache policy testpkg
@@ -106,11 +106,11 @@ testequal "$GOODPOLICY" aptcache policy testpkg
 msgmsg "HTTP: Test with uncompressed indexes"
 testrun
 
-aptget update -qq -o Acquire::Pdiffs=1
+testsuccess aptget update -o Acquire::Pdiffs=1
 msgmsg "HTTP: Test with uncompressed indexes (update unchanged with pdiffs)"
 testrun
 
-aptget update -qq -o Acquire::Pdiffs=0
+testsuccess aptget update -o Acquire::Pdiffs=0
 msgmsg "HTTP: Test with uncompressed indexes (update unchanged without pdiffs)"
 testrun
 
@@ -118,14 +118,14 @@ rm -rf rootdir/var/lib/apt/lists
 echo 'Acquire::CompressionTypes::Order:: "gz";
 Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
 
-aptget update -qq
+testsuccess aptget update
 msgmsg "HTTP: Test with compressed indexes"
 testrun "compressed"
 
-aptget update -qq -o Acquire::Pdiffs=1
+testsuccess aptget update -o Acquire::Pdiffs=1
 msgmsg "HTTP: Test with compressed indexes (update unchanged with pdiffs)"
 testrun "compressed"
 
-aptget update -qq -o Acquire::Pdiffs=0
+testsuccess aptget update -o Acquire::Pdiffs=0
 msgmsg "HTTP: Test with compressed indexes (update unchanged without pdiffs)"
 testrun "compressed"

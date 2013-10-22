@@ -24,6 +24,8 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 
+#include <apt-private/private-cmndline.h>
+
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;
@@ -202,13 +204,13 @@ bool DoHold(CommandLine &CmdL)
    if (dpkgAssertMultiArch == 0)
    {
       std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
-	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --assert-multi-arch", chrootDir.c_str());
       // redirect everything to the ultimate sink as we only need the exit-status
       int const nullfd = open("/dev/null", O_RDONLY);
       dup2(nullfd, STDIN_FILENO);
       dup2(nullfd, STDOUT_FILENO);
       dup2(nullfd, STDERR_FILENO);
+      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
+	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --assert-multi-arch", chrootDir.c_str());
       execvp(Args[0], (char**) &Args[0]);
       _error->WarningE("dpkgGo", "Can't detect if dpkg supports multi-arch!");
       _exit(2);
@@ -277,7 +279,7 @@ bool DoHold(CommandLine &CmdL)
    {
       close(external[1]);
       std::string const chrootDir = _config->FindDir("DPkg::Chroot-Directory");
-      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+      if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
 	 _error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --set-selections", chrootDir.c_str());
       int const nullfd = open("/dev/null", O_RDONLY);
       dup2(external[0], STDIN_FILENO);
@@ -400,21 +402,6 @@ bool ShowHelp(CommandLine &CmdL)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Args Args[] = {
-      {'h',"help","help",0},
-      {0,"version","version",0},
-      {'q',"quiet","quiet",CommandLine::IntLevel},
-      {'q',"silent","quiet",CommandLine::IntLevel},
-      {'v',"verbose","APT::MarkAuto::Verbose",0},
-      {'s',"simulate","APT::Mark::Simulate",0},
-      {'s',"just-print","APT::Mark::Simulate",0},
-      {'s',"recon","APT::Mark::Simulate",0},
-      {'s',"dry-run","APT::Mark::Simulate",0},
-      {'s',"no-act","APT::Mark::Simulate",0},
-      {'f',"file","Dir::State::extended_states",CommandLine::HasArg},
-      {'c',"config-file",0,CommandLine::ConfigFile},
-      {'o',"option",0,CommandLine::ArbItem},
-      {0,0,0,0}};
    CommandLine::Dispatch Cmds[] = {{"help",&ShowHelp},
 				   {"auto",&DoAuto},
 				   {"manual",&DoAuto},
@@ -432,12 +419,14 @@ int main(int argc,const char *argv[])					/*{{{*/
 				   {"unmarkauto", &DoMarkAuto},
                                    {0,0}};
 
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-mark", CommandLine::GetCommand(Cmds, argc, argv));
+
    // Set up gettext support
    setlocale(LC_ALL,"");
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args,_config);
+   CommandLine CmdL(Args.data(),_config);
    if (pkgInitConfig(*_config) == false ||
        CmdL.Parse(argc,argv) == false ||
        pkgInitSystem(*_config,_system) == false)

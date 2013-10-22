@@ -1,0 +1,62 @@
+Package: libc6
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 10164
+Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: amd64
+Multi-Arch: same
+Source: eglibc (2.17-92)
+Version: 2.17-92+b1
+Replaces: libc6-amd64
+Provides: glibc-2.17-1
+Suggests: glibc-doc, debconf | debconf-2.0, locales
+Breaks: locales (<< 2.17), locales-all (<< 2.17), lsb-core (<= 3.2-27), nscd (<< 2.17)
+Conflicts: prelink (<= 0.0.20090311-1), tzdata (<< 2007k-1), tzdata-etch
+Conffiles:
+ /etc/ld.so.conf.d/x86_64-linux-gnu.conf 593ad12389ab2b6f952e7ede67b8fbbf
+Description: Embedded GNU C Library: Shared libraries
+ Contains the standard libraries that are used by nearly all programs on
+ the system. This package includes shared versions of the standard C library
+ and the standard math library, as well as many others.
+Homepage: http://www.eglibc.org
+
+Package: libnewt0.52
+Status: install ok installed
+Priority: important
+Section: libs
+Installed-Size: 820
+Maintainer: Alastair McKinstry <mckinstry@debian.org>
+Architecture: amd64
+Multi-Arch: same
+Source: newt
+Version: 0.52.15-3
+Recommends: libfribidi0
+Conffiles:
+ /etc/newt/palette.original d41d8cd98f00b204e9800998ecf8427e
+Description: Not Erik's Windowing Toolkit - text mode windowing with slang
+ Newt is a windowing toolkit for text mode built from the slang library.
+ It allows color text mode applications to easily use stackable windows,
+ push buttons, check boxes, radio buttons, lists, entry fields, labels,
+ and displayable text. Scrollbars are supported, and forms may be nested
+ to provide extra functionality. This package contains the shared library
+ for programs that have been built with newt.
+Homepage: https://fedorahosted.org/newt/
+
+Package: libgcc1
+Status: install ok installed
+Priority: required
+Section: libs
+Installed-Size: 128
+Maintainer: Debian GCC Maintainers <debian-gcc@lists.debian.org>
+Architecture: amd64
+Multi-Arch: same
+Source: gcc-4.8 (4.8.1-10)
+Version: 1:4.8.1-10
+Breaks: gcc-4.1, gcc-4.3 (<< 4.3.6-1), gcc-4.4 (<< 4.4.6-4), gcc-4.5 (<< 4.5.3-2)
+Description: GCC support library
+ Shared version of the support library, a library of internal subroutines
+ that GCC uses to overcome shortcomings of particular machines, or
+ special needs for some languages.
+Homepage: http://gcc.gnu.org/
+

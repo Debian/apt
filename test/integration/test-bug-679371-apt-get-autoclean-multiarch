@@ -14,10 +14,13 @@ setupaptarchive
 
 changetowebserver
 
-aptget update -qq
-aptget install pkgall pkgnative pkgforeign -y -qq > /dev/null
+testsuccess aptget update
+testsuccess aptget install pkgall pkgnative pkgforeign -y
 
-testdpkginstalled pkgall pkgnative pkgforeign
+# if we work with an old dpkg, pkgforeign will be listed differently,
+# so test with aptcache for install status instead
+testdpkginstalled pkgall pkgnative
+testsuccess aptcache show pkgforeign/installed
 
 testequal 'Reading package lists...
 Building dependency tree...

@@ -1,0 +1,136 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+buildsimplenativepackage 'toolkit' 'all' '1' 'stable' 'Multi-Arch: foreign'
+buildsimplenativepackage 'toolkit' 'amd64' '2' 'unstable' 'Multi-Arch: foreign'
+buildsimplenativepackage 'libsame' 'i386,amd64' '1' 'stable' 'Multi-Arch: same'
+buildsimplenativepackage 'libsame' 'i386,amd64' '2' 'unstable' 'Multi-Arch: same'
+buildsimplenativepackage 'stuff' 'i386,amd64' '1' 'stable' 'Depends: libsame (= 1), toolkit (= 1)'
+buildsimplenativepackage 'stuff' 'i386,amd64' '2' 'unstable' 'Depends: libsame (= 2), toolkit (= 2)'
+
+setupsimplenativepackage 'confpkg' 'amd64' '1' 'unstable'
+BUILDDIR='incoming/confpkg-1'
+echo 'foo "bar";' > ${BUILDDIR}/pkg.conf
+echo 'pkg.conf	/etc/pkg.conf' >> ${BUILDDIR}/debian/install
+buildpackage "$BUILDDIR" 'unstable' 'main' 'amd64'
+rm -rf "$BUILDDIR"
+
+setupaptarchive
+
+hook='pre-install-pkgs'
+
+enablehookversion() {
+	echo "#!/bin/sh
+FD=0
+echo -n > ${hook}-v${1}.list
+if [ -n \"${2}\" ]; then
+	FD=\$APT_HOOK_INFO_FD
+	if [ "\$FD" != \"${2}\" ]; then echo \"ERROR: Information is not on requested FD: \$FD != ${2}\" >> ${hook}-v${1}.list; fi
+fi
+while read </proc/\$\$/fd/\$FD line; do
+	if echo \"\$line\" | grep -Fq '**'; then
+		echo \"\$line\"
+	fi
+done >> ${hook}-v${1}.list" > ${hook}-v${1}.sh
+	chmod +x ${hook}-v${1}.sh
+	echo "dpkg::${hook}:: \"./${hook}-v${1}.sh --foo -bar\";
+DPkg::Tools::options::\"./${hook}-v${1}.sh\"::Version \"$1\";" > rootdir/etc/apt/apt.conf.d/hook-v$1
+	if [ -n "$2" ]; then
+		echo "DPkg::Tools::options::\"./${hook}-v${1}.sh\"::InfoFD \"${2}\";" >> rootdir/etc/apt/apt.conf.d/hook-v$1
+	fi
+}
+
+observehook() {
+	rm -f ${hook}-v2.list ${hook}-v3.list
+	msgtest 'Observe hooks while' "$*"
+	testsuccess --nomsg aptget "$@" -y --force-yes
+}
+
+testrun() {
+	observehook install stuff -t stable
+	testfileequal "${hook}-v2.list" 'libsame - < 1 **CONFIGURE**
+toolkit - < 1 **CONFIGURE**
+stuff - < 1 **CONFIGURE**'
+	testfileequal "${hook}-v3.list" 'libsame - - none < 1 amd64 same **CONFIGURE**
+toolkit - - none < 1 all foreign **CONFIGURE**
+stuff - - none < 1 amd64 none **CONFIGURE**'
+
+	observehook install stuff -t unstable
+	testfileequal "${hook}-v2.list" 'libsame 1 < 2 **CONFIGURE**
+toolkit 1 < 2 **CONFIGURE**
+stuff 1 < 2 **CONFIGURE**'
+	testfileequal "${hook}-v3.list" 'libsame 1 amd64 same < 2 amd64 same **CONFIGURE**
+toolkit 1 all foreign < 2 amd64 foreign **CONFIGURE**
+stuff 1 amd64 none < 2 amd64 none **CONFIGURE**'
+
+	observehook install stuff:i386 -t unstable
+	testfileequal "${hook}-v2.list" 'stuff 2 > - **REMOVE**
+libsame - < 2 **CONFIGURE**
+stuff - < 2 **CONFIGURE**'
+	testfileequal "${hook}-v3.list" 'stuff 2 amd64 none > - - none **REMOVE**
+libsame - - none < 2 i386 same **CONFIGURE**
+stuff - - none < 2 i386 none **CONFIGURE**'
+
+	observehook remove libsame
+	testfileequal "${hook}-v2.list" 'libsame 2 > - **REMOVE**'
+	testfileequal "${hook}-v3.list" 'libsame 2 amd64 same > - - none **REMOVE**'
+
+	observehook install stuff:i386/stable libsame:i386/stable toolkit/stable
+	testfileequal "${hook}-v2.list" 'libsame 2 > 1 **CONFIGURE**
+toolkit 2 > 1 **CONFIGURE**
+stuff 2 > 1 **CONFIGURE**'
+	testfileequal "${hook}-v3.list" 'libsame 2 i386 same > 1 i386 same **CONFIGURE**
+toolkit 2 amd64 foreign > 1 all foreign **CONFIGURE**
+stuff 2 i386 none > 1 i386 none **CONFIGURE**'
+
+	observehook install 'libsame:*'
+	testfileequal "${hook}-v2.list" 'libsame 1 < 2 **CONFIGURE**
+libsame - < 2 **CONFIGURE**
+toolkit 1 < 2 **CONFIGURE**
+stuff 1 < 2 **CONFIGURE**'
+	testfileequal "${hook}-v3.list" 'libsame 1 i386 same < 2 i386 same **CONFIGURE**
+libsame - - none < 2 amd64 same **CONFIGURE**
+toolkit 1 all foreign < 2 amd64 foreign **CONFIGURE**
+stuff 1 i386 none < 2 i386 none **CONFIGURE**'
+
+	observehook purge stuff:i386 'libsame:*' toolkit
+	testfileequal "${hook}-v2.list" 'libsame 2 > - **REMOVE**
+stuff 2 > - **REMOVE**
+libsame 2 > - **REMOVE**
+toolkit 2 > - **REMOVE**'
+	testfileequal "${hook}-v3.list" 'libsame 2 amd64 same > - - none **REMOVE**
+stuff 2 i386 none > - - none **REMOVE**
+libsame 2 i386 same > - - none **REMOVE**
+toolkit 2 amd64 foreign > - - none **REMOVE**'
+
+	observehook install confpkg
+	testfileequal "${hook}-v2.list" 'confpkg - < 1 **CONFIGURE**'
+	testfileequal "${hook}-v3.list" 'confpkg - - none < 1 amd64 none **CONFIGURE**'
+
+	observehook remove confpkg
+	testfileequal "${hook}-v2.list" 'confpkg 1 > - **REMOVE**'
+	testfileequal "${hook}-v3.list" 'confpkg 1 amd64 none > - - none **REMOVE**'
+
+	msgtest 'Conffiles of package remained after remove' 'confpkg'
+	dpkg -l confpkg | grep -q '^rc' && msgpass || msgfail
+
+	observehook purge confpkg
+	testfileequal "${hook}-v2.list" 'confpkg 1 > - **REMOVE**'
+	testfileequal "${hook}-v3.list" 'confpkg 1 amd64 none > - - none **REMOVE**'
+
+	msgtest 'Conffiles are gone after purge' 'confpkg'
+	dpkg -l confpkg 2>/dev/null | grep -q '^rc' && msgfail || msgpass
+}
+
+enablehookversion 2
+enablehookversion 3
+testrun
+
+enablehookversion 2 13
+enablehookversion 3 13
+testrun

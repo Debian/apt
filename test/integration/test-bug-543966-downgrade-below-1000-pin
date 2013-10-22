@@ -1,0 +1,81 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'base-files' 'all' '5.0.0'
+insertinstalledpackage 'base-files' 'all' '5.0.0-1'
+
+setupaptarchive
+
+STATUS=$(readlink -f rootdir/var/lib/dpkg/status)
+APTARCHIVE="$(readlink -f aptarchive)/"
+
+testequal "base-files:
+  Installed: 5.0.0-1
+  Candidate: 5.0.0-1
+  Version table:
+ *** 5.0.0-1 0
+        100 $STATUS
+     5.0.0 0
+        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=0
+
+echo 'Package: base-files
+Pin: release a=unstable
+Pin-Priority: 99' > rootdir/etc/apt/preferences
+
+testequal "base-files:
+  Installed: 5.0.0-1
+  Candidate: 5.0.0-1
+  Package pin: 5.0.0
+  Version table:
+ *** 5.0.0-1 99
+        100 $STATUS
+     5.0.0 99
+        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=99
+
+echo 'Package: base-files
+Pin: release a=unstable
+Pin-Priority: 100' > rootdir/etc/apt/preferences
+
+testequal "base-files:
+  Installed: 5.0.0-1
+  Candidate: 5.0.0-1
+  Package pin: 5.0.0
+  Version table:
+ *** 5.0.0-1 100
+        100 $STATUS
+     5.0.0 100
+        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=100
+
+echo 'Package: base-files
+Pin: release a=unstable
+Pin-Priority: 999' > rootdir/etc/apt/preferences
+
+testequal "base-files:
+  Installed: 5.0.0-1
+  Candidate: 5.0.0-1
+  Package pin: 5.0.0
+  Version table:
+ *** 5.0.0-1 999
+        100 $STATUS
+     5.0.0 999
+        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=999
+
+echo 'Package: base-files
+Pin: release a=unstable
+Pin-Priority: 1000' > rootdir/etc/apt/preferences
+
+testequal "base-files:
+  Installed: 5.0.0-1
+  Candidate: 5.0.0
+  Package pin: 5.0.0
+  Version table:
+ *** 5.0.0-1 1000
+        100 $STATUS
+     5.0.0 1000
+        500 file:${APTARCHIVE} unstable/main i386 Packages" aptcache policy base-files -o apt::pin=1000

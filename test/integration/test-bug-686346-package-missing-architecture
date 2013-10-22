@@ -58,13 +58,13 @@ Building dependency tree...
 # pkgd has no update with an architecture
 testdpkginstalled pkgd
 msgtest 'Test apt-get purge' 'pkgd'
-aptget purge pkgd -y >/dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg aptget purge pkgd -y
 testdpkgnotinstalled pkgd
 
 # there is a pkgb with an architecture
 testdpkginstalled pkgb
 msgtest 'Test apt-get purge' 'pkgb:none'
-aptget purge pkgb:none -y >/dev/null 2>&1 && msgpass || msgfail
+testsuccess --nomsg aptget purge pkgb:none -y
 testdpkgnotinstalled pkgb
 
 # check that dependencies are created after the none package exists in the cache
@@ -73,7 +73,7 @@ insertinstalledpackage 'pkgb' 'none' '1'
 insertinstalledpackage 'pkgf' 'none' '1' 'Conflicts: pkgb'
 insertinstalledpackage 'pkgg' 'amd64' '1' 'Conflicts: pkgb'
 insertinstalledpackage 'pkgb' 'amd64' '2'
-testequal "Reading package lists...
+testequalor2 "Reading package lists...
 Building dependency tree...
 Reading state information...
 You might want to run 'apt-get -f install' to correct these.
@@ -82,6 +82,17 @@ The following packages have unmet dependencies:
  pkgb:none : Conflicts: pkgb but 2 is installed
  pkgf:none : Conflicts: pkgb:none but 1 is installed
              Conflicts: pkgb but 2 is installed
+ pkgg : Conflicts: pkgb but 2 is installed
+        Conflicts: pkgb:none but 1 is installed
+E: Unmet dependencies. Try using -f." "Reading package lists...
+Building dependency tree...
+Reading state information...
+You might want to run 'apt-get -f install' to correct these.
+The following packages have unmet dependencies:
+ pkgb : Conflicts: pkgb:none but 1 is installed
+ pkgb:none : Conflicts: pkgb but 2 is installed
+ pkgf:none : Conflicts: pkgb but 2 is installed
+             Conflicts: pkgb:none but 1 is installed
  pkgg : Conflicts: pkgb but 2 is installed
         Conflicts: pkgb:none but 1 is installed
 E: Unmet dependencies. Try using -f." aptget check

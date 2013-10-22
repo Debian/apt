@@ -35,6 +35,11 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
 
+#include <apt-private/private-list.h>
+#include <apt-private/private-cmndline.h>
+#include <apt-private/private-show.h>
+#include <apt-private/private-cacheset.h>
+
 #include <cassert>
 #include <locale.h>
 #include <iostream>
@@ -50,29 +55,6 @@
 
 using namespace std;
 
-// CacheSetHelper saving virtual packages				/*{{{*/
-class CacheSetHelperVirtuals: public APT::CacheSetHelper {
-public:
-   APT::PackageSet virtualPkgs;
-
-   virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      return CacheSetHelper::canNotFindCandidateVer(Cache, Pkg);
-   }
-
-   virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      return CacheSetHelper::canNotFindNewestVer(Cache, Pkg);
-   }
-
-   virtual void canNotFindAllVer(APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      CacheSetHelper::canNotFindAllVer(vci, Cache, Pkg);
-   }
-
-   CacheSetHelperVirtuals(bool const ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
-};
-									/*}}}*/
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -396,42 +378,42 @@ bool Dump(CommandLine &Cmd)
    if (unlikely(Cache == NULL))
       return false;
 
-   cout << "Using Versioning System: " << Cache->VS->Label << endl;
+   std::cout << "Using Versioning System: " << Cache->VS->Label << std::endl;
    
    for (pkgCache::PkgIterator P = Cache->PkgBegin(); P.end() == false; ++P)
    {
-      cout << "Package: " << P.FullName(true) << endl;
+      std::cout << "Package: " << P.FullName(true) << std::endl;
       for (pkgCache::VerIterator V = P.VersionList(); V.end() == false; ++V)
       {
-	 cout << " Version: " << V.VerStr() << endl;
-	 cout << "     File: " << V.FileList().File().FileName() << endl;
+	 std::cout << " Version: " << V.VerStr() << std::endl;
+	 std::cout << "     File: " << V.FileList().File().FileName() << std::endl;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
-	    cout << "  Depends: " << D.TargetPkg().FullName(true) << ' ' << 
-	                     DeNull(D.TargetVer()) << endl;
+	    std::cout << "  Depends: " << D.TargetPkg().FullName(true) << ' ' << 
+	                     DeNull(D.TargetVer()) << std::endl;
 	 for (pkgCache::DescIterator D = V.DescriptionList(); D.end() == false; ++D)
 	 {
-	    cout << " Description Language: " << D.LanguageCode() << endl
-		 << "                 File: " << D.FileList().File().FileName() << endl
-		 << "                  MD5: " << D.md5() << endl;
+	    std::cout << " Description Language: " << D.LanguageCode() << std::endl
+		 << "                 File: " << D.FileList().File().FileName() << std::endl
+		 << "                  MD5: " << D.md5() << std::endl;
 	 } 
       }      
    }
 
    for (pkgCache::PkgFileIterator F = Cache->FileBegin(); F.end() == false; ++F)
    {
-      cout << "File: " << F.FileName() << endl;
-      cout << " Type: " << F.IndexType() << endl;
-      cout << " Size: " << F->Size << endl;
-      cout << " ID: " << F->ID << endl;
-      cout << " Flags: " << F->Flags << endl;
-      cout << " Time: " << TimeRFC1123(F->mtime) << endl;
-      cout << " Archive: " << DeNull(F.Archive()) << endl;
-      cout << " Component: " << DeNull(F.Component()) << endl;
-      cout << " Version: " << DeNull(F.Version()) << endl;
-      cout << " Origin: " << DeNull(F.Origin()) << endl;
-      cout << " Site: " << DeNull(F.Site()) << endl;
-      cout << " Label: " << DeNull(F.Label()) << endl;
-      cout << " Architecture: " << DeNull(F.Architecture()) << endl;
+      std::cout << "File: " << F.FileName() << std::endl;
+      std::cout << " Type: " << F.IndexType() << std::endl;
+      std::cout << " Size: " << F->Size << std::endl;
+      std::cout << " ID: " << F->ID << std::endl;
+      std::cout << " Flags: " << F->Flags << std::endl;
+      std::cout << " Time: " << TimeRFC1123(F->mtime) << std::endl;
+      std::cout << " Archive: " << DeNull(F.Archive()) << std::endl;
+      std::cout << " Component: " << DeNull(F.Component()) << std::endl;
+      std::cout << " Version: " << DeNull(F.Version()) << std::endl;
+      std::cout << " Origin: " << DeNull(F.Origin()) << std::endl;
+      std::cout << " Site: " << DeNull(F.Site()) << std::endl;
+      std::cout << " Label: " << DeNull(F.Label()) << std::endl;
+      std::cout << " Architecture: " << DeNull(F.Architecture()) << std::endl;
    }
 
    return true;
@@ -627,8 +609,7 @@ bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 	    case pkgCache::Dep::Depends: if (!ShowDepends) continue; break;
 	    case pkgCache::Dep::Recommends: if (!ShowRecommends) continue; break;
 	    case pkgCache::Dep::Suggests: if (!ShowSuggests) continue; break;
-	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;
-	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
+	    case pkgCache::Dep::Replaces: if (!ShowReplaces) continue; break;	    case pkgCache::Dep::Conflicts: if (!ShowConflicts) continue; break;
 	    case pkgCache::Dep::DpkgBreaks: if (!ShowBreaks) continue; break;
 	    case pkgCache::Dep::Enhances: if (!ShowEnhances) continue; break;
 	    }
@@ -1127,6 +1108,24 @@ bool Dotty(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* This displays the package record from the proper package index file. 
    It is not used by DumpAvail for performance reasons. */
+
+static unsigned char const* skipDescriptionFields(unsigned char const * DescP)
+{
+   char const * const TagName = "\nDescription";
+   size_t const TagLen = strlen(TagName);
+   while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
+   {
+      if (DescP[1] == ' ')
+	 DescP += 2;
+      else if (strncmp((char*)DescP, TagName, TagLen) == 0)
+	 DescP += TagLen;
+      else
+	 break;
+   }
+   if (DescP != NULL)
+      ++DescP;
+   return DescP;
+}
 bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 {
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1150,11 +1149,12 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
       return false;
 
-   // Read the record
-   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+1];
-   Buffer[V.FileList()->Size] = '\n';
-   if (PkgF.Seek(V.FileList()->Offset) == false ||
-       PkgF.Read(Buffer,V.FileList()->Size) == false)
+   // Read the record (and ensure that it ends with a newline and NUL)
+   unsigned char *Buffer = new unsigned char[Cache->HeaderP->MaxVerFileSize+2];
+   Buffer[Vf->Size] = '\n';
+   Buffer[Vf->Size+1] = '\0';
+   if (PkgF.Seek(Vf->Offset) == false ||
+       PkgF.Read(Buffer,Vf->Size) == false)
    {
       delete [] Buffer;
       return false;
@@ -1165,10 +1165,11 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
    if (DescP != NULL)
       ++DescP;
    else
-      DescP = Buffer + V.FileList()->Size;
+      DescP = Buffer + Vf->Size;
 
    // Write all but Description
-   if (fwrite(Buffer,1,DescP - Buffer,stdout) < (size_t)(DescP - Buffer))
+   size_t const length = DescP - Buffer;
+   if (length != 0 && FileFd::Write(STDOUT_FILENO, Buffer, length) == false)
    {
       delete [] Buffer;
       return false;
@@ -1184,39 +1185,40 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
       cout << std::endl << "Description-md5: " << Desc.md5() << std::endl;
 
       // Find the first field after the description (if there is any)
-      while ((DescP = (unsigned char*)strchr((char*)DescP, '\n')) != NULL)
-      {
-	 if (DescP[1] == ' ')
-	    DescP += 2;
-	 else if (strncmp((char*)DescP, "\nDescription", strlen("\nDescription")) == 0)
-	    DescP += strlen("\nDescription");
-	 else
-	    break;
-      }
-      if (DescP != NULL)
-	 ++DescP;
+      DescP = skipDescriptionFields(DescP);
    }
-   // if we have no translation, we found a lonely Description-md5, so don't skip it
+   // else we have no translation, so we found a lonely Description-md5 -> don't skip it
 
-   if (DescP != NULL)
+   // write the rest of the buffer, but skip mixed in Descriptions* fields
+   while (DescP != NULL)
    {
-      // write the rest of the buffer
-      const unsigned char *end=&Buffer[V.FileList()->Size];
-      if (fwrite(DescP,1,end-DescP,stdout) < (size_t)(end-DescP))
+      const unsigned char * const Start = DescP;
+      const unsigned char *End = (unsigned char*)strstr((char*)DescP, "\nDescription");
+      if (End == NULL)
+      {
+	 End = &Buffer[Vf->Size];
+	 DescP = NULL;
+      }
+      else
+      {
+	 ++End; // get the newline into the output
+	 DescP = skipDescriptionFields(End + strlen("Description"));
+      }
+      size_t const length = End - Start;
+      if (length != 0 && FileFd::Write(STDOUT_FILENO, Start, length) == false)
       {
 	 delete [] Buffer;
 	 return false;
       }
    }
 
-   // write a final newline (after the description)
+   // write a final newline after the last field
    cout<<endl;
-   delete [] Buffer;
 
+   delete [] Buffer;
    return true;
 }
 									/*}}}*/
-
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
@@ -1300,7 +1302,11 @@ bool Search(CommandLine &CmdL)
       pkgCache::VerIterator V = Plcy->GetCandidateVer(P);
       if (V.end() == false)
       {
-	 DFList[G->ID].Df = V.TranslatedDescription().FileList();
+	 pkgCache::DescIterator const D = V.TranslatedDescription();
+	 //FIXME: packages without a description can't be found
+	 if (D.end() == true)
+	    continue;
+	 DFList[G->ID].Df = D.FileList();
 	 DFList[G->ID].ID = G->ID;
       }
 
@@ -1315,7 +1321,11 @@ bool Search(CommandLine &CmdL)
 	    continue;
 
 	 unsigned long id = Prv.OwnerPkg().Group()->ID;
-	 DFList[id].Df = V.TranslatedDescription().FileList();
+	 pkgCache::DescIterator const D = V.TranslatedDescription();
+	 //FIXME: packages without a description can't be found
+	 if (D.end() == true)
+	    continue;
+	 DFList[id].Df = D.FileList();
 	 DFList[id].ID = id;
 
 	 size_t const PrvPatternOffset = id * NumPatterns;
@@ -1765,38 +1775,10 @@ bool ShowHelp(CommandLine &Cmd)
 									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
-   CommandLine::Args Args[] = {
-      {'h',"help","help",0},
-      {'v',"version","version",0},
-      {'p',"pkg-cache","Dir::Cache::pkgcache",CommandLine::HasArg},
-      {'s',"src-cache","Dir::Cache::srcpkgcache",CommandLine::HasArg},
-      {'q',"quiet","quiet",CommandLine::IntLevel},
-      {'i',"important","APT::Cache::Important",0},
-      {'f',"full","APT::Cache::ShowFull",0},
-      {'g',"generate","APT::Cache::Generate",0},
-      {'a',"all-versions","APT::Cache::AllVersions",0},
-      {'n',"names-only","APT::Cache::NamesOnly",0},
-      {0,"all-names","APT::Cache::AllNames",0},
-      {0,"recurse","APT::Cache::RecurseDepends",0},
-      {'t',"target-release","APT::Default-Release",CommandLine::HasArg},
-      {'t',"default-release","APT::Default-Release",CommandLine::HasArg},
-      {'c',"config-file",0,CommandLine::ConfigFile},
-      {'o',"option",0,CommandLine::ArbItem},
-      {0,"installed","APT::Cache::Installed",0},
-      {0,"pre-depends","APT::Cache::ShowPre-Depends",0},
-      {0,"depends","APT::Cache::ShowDepends",0},
-      {0,"recommends","APT::Cache::ShowRecommends",0},
-      {0,"suggests","APT::Cache::ShowSuggests",0},
-      {0,"replaces","APT::Cache::ShowReplaces",0},
-      {0,"breaks","APT::Cache::ShowBreaks",0},
-      {0,"conflicts","APT::Cache::ShowConflicts",0},
-      {0,"enhances","APT::Cache::ShowEnhances",0},
-      {0,0,0,0}};
-   CommandLine::Dispatch CmdsA[] = {{"help",&ShowHelp},
+   CommandLine::Dispatch Cmds[] =  {{"help",&ShowHelp},
                                     {"gencaches",&GenCaches},
                                     {"showsrc",&ShowSrcPackage},
-                                    {0,0}};
-   CommandLine::Dispatch CmdsB[] = {{"showpkg",&DumpPackage},
+                                    {"showpkg",&DumpPackage},
                                     {"stats",&Stats},
                                     {"dump",&Dump},
                                     {"dumpavail",&DumpAvail},
@@ -1813,12 +1795,14 @@ int main(int argc,const char *argv[])					/*{{{*/
                                     {"madison",&Madison},
                                     {0,0}};
 
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-cache", CommandLine::GetCommand(Cmds, argc, argv));
+
    // Set up gettext support
    setlocale(LC_ALL,"");
    textdomain(PACKAGE);
 
    // Parse the command line and initialize the package library
-   CommandLine CmdL(Args,_config);
+   CommandLine CmdL(Args.data(),_config);
    if (pkgInitConfig(*_config) == false ||
        CmdL.Parse(argc,argv) == false ||
        pkgInitSystem(*_config,_system) == false)
@@ -1842,8 +1826,8 @@ int main(int argc,const char *argv[])					/*{{{*/
    if (_config->Exists("APT::Cache::Generate") == true)
       _config->Set("pkgCacheFile::Generate", _config->FindB("APT::Cache::Generate", true));
 
-   if (CmdL.DispatchArg(CmdsA,false) == false && _error->PendingError() == false)
-      CmdL.DispatchArg(CmdsB);
+   // Match the operation
+   CmdL.DispatchArg(Cmds);
 
    // Print any errors or warnings found during parsing
    bool const Errors = _error->PendingError();

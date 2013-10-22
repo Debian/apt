@@ -41,6 +41,8 @@
 #include <dirent.h>
 #include <signal.h>
 #include <errno.h>
+#include <glob.h>
+
 #include <set>
 #include <algorithm>
 
@@ -244,17 +246,20 @@ int GetLock(string File,bool Errors)
    fl.l_len = 0;
    if (fcntl(FD,F_SETLK,&fl) == -1)
    {
+      // always close to not leak resources
+      int Tmp = errno;
+      close(FD);
+      errno = Tmp;
+
       if (errno == ENOLCK)
       {
 	 _error->Warning(_("Not using locking for nfs mounted lock file %s"),File.c_str());
 	 return dup(0);       // Need something for the caller to close	 
-      }      
+      }
+  
       if (Errors == true)
 	 _error->Errno("open",_("Could not get lock %s"),File.c_str());
       
-      int Tmp = errno;
-      close(FD);
-      errno = Tmp;
       return -1;
    }
 
@@ -651,9 +656,9 @@ string flNoLink(string File)
    while (1)
    {
       // Read the link
-      int Res;
+      ssize_t Res;
       if ((Res = readlink(NFile.c_str(),Buffer,sizeof(Buffer))) <= 0 || 
-	  (unsigned)Res >= sizeof(Buffer))
+	  (size_t)Res >= sizeof(Buffer))
 	  return File;
       
       // Append or replace the previous path
@@ -941,9 +946,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if ((Mode & Atomic) == Atomic)
    {
       Flags |= Replace;
-      char *name = strdup((FileName + ".XXXXXX").c_str());
-      TemporaryFileName = string(mktemp(name));
-      free(name);
    }
    else if ((Mode & (Exclusive | Create)) == (Exclusive | Create))
    {
@@ -966,11 +968,24 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if_FLAGGED_SET(Create, O_CREAT);
    if_FLAGGED_SET(Empty, O_TRUNC);
    if_FLAGGED_SET(Exclusive, O_EXCL);
-   else if_FLAGGED_SET(Atomic, O_EXCL);
    #undef if_FLAGGED_SET
 
-   if (TemporaryFileName.empty() == false)
-      iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
+   if ((Mode & Atomic) == Atomic)
+   {
+      char *name = strdup((FileName + ".XXXXXX").c_str());
+
+      if((iFd = mkstemp(name)) == -1)
+      {
+          free(name);
+          return FileFdErrno("mkstemp", "Could not create temporary file for %s", FileName.c_str());
+      }
+
+      TemporaryFileName = string(name);
+      free(name);
+
+      if(Perms != 600 && fchmod(iFd, Perms) == -1)
+          return FileFdErrno("fchmod", "Could not change permissions for temporary file %s", TemporaryFileName.c_str());
+   }
    else
       iFd = open(FileName.c_str(), fileflags, Perms);
 
@@ -1218,11 +1233,9 @@ FileFd::~FileFd()
 {
    Close();
    if (d != NULL)
-   {
       d->CloseDown(FileName);
-      delete d;
-      d = NULL;
-   }
+   delete d;
+   d = NULL;
 }
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
@@ -1231,7 +1244,7 @@ FileFd::~FileFd()
    gracefully. */
 bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    if (Actual != 0)
       *Actual = 0;
@@ -1331,7 +1344,7 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
 /* */
 bool FileFd::Write(const void *From,unsigned long long Size)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    do
    {
@@ -1385,7 +1398,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 }
 bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    do
    {
@@ -1458,14 +1471,14 @@ bool FileFd::Seek(unsigned long long To)
       d->seekpos = To;
       return true;
    }
-   int res;
+   off_t res;
 #ifdef HAVE_ZLIB
    if (d != NULL && d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
 #endif
       res = lseek(iFd,To,SEEK_SET);
-   if (res != (signed)To)
+   if (res != (off_t)To)
       return FileFdError("Unable to seek to %llu", To);
 
    if (d != NULL)
@@ -1496,7 +1509,7 @@ bool FileFd::Skip(unsigned long long Over)
       return true;
    }
 
-   int res;
+   off_t res;
 #ifdef HAVE_ZLIB
    if (d != NULL && d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);
@@ -1598,7 +1611,11 @@ unsigned long long FileFd::Size()
       char ignore[1000];
       unsigned long long read = 0;
       do {
-	 Read(ignore, sizeof(ignore), &read);
+	 if (Read(ignore, sizeof(ignore), &read) == false)
+	 {
+	    Seek(oldSeek);
+	    return 0;
+	 }
       } while(read != 0);
       size = Tell();
       Seek(oldSeek);
@@ -1615,10 +1632,16 @@ unsigned long long FileFd::Size()
 	* bits of the file */
        // FIXME: Size for gz-files is limited by 32bit… no largefile support
        if (lseek(iFd, -4, SEEK_END) < 0)
-	  return FileFdErrno("lseek","Unable to seek to end of gzipped file");
-       size = 0L;
+       {
+	  FileFdErrno("lseek","Unable to seek to end of gzipped file");
+	  return 0;
+       }
+       size = 0;
        if (read(iFd, &size, 4) != 4)
-	  return FileFdErrno("read","Unable to read original size of gzipped file");
+       {
+	  FileFdErrno("read","Unable to read original size of gzipped file");
+	  return 0;
+       }
 
 #ifdef WORDS_BIGENDIAN
        uint32_t tmp_size = size;
@@ -1628,7 +1651,10 @@ unsigned long long FileFd::Size()
 #endif
 
        if (lseek(iFd, oldPos, SEEK_SET) < 0)
-	  return FileFdErrno("lseek","Unable to seek in gzipped file");
+       {
+	  FileFdErrno("lseek","Unable to seek in gzipped file");
+	  return 0;
+       }
 
        return size;
    }
@@ -1752,3 +1778,33 @@ bool FileFd::FileFdError(const char *Description,...) {
 									/*}}}*/
 
 gzFile FileFd::gzFd() { return (gzFile) d->gz; }
+
+
+// Glob - wrapper around "glob()"                                      /*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::vector<std::string> Glob(std::string const &pattern, int flags)
+{
+   std::vector<std::string> result;
+   glob_t globbuf;
+   int glob_res;
+   unsigned int i;
+
+   glob_res = glob(pattern.c_str(),  flags, NULL, &globbuf);
+
+   if (glob_res != 0)
+   {
+      if(glob_res != GLOB_NOMATCH) {
+         _error->Errno("glob", "Problem with glob");
+         return result;
+      }
+   }
+
+   // append results
+   for(i=0;i<globbuf.gl_pathc;i++)
+      result.push_back(string(globbuf.gl_pathv[i]));
+
+   globfree(&globbuf);
+   return result;
+}
+									/*}}}*/

@@ -143,6 +143,32 @@ void pkgAcquire::Item::Rename(string From,string To)
    }   
 }
 									/*}}}*/
+bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const error)/*{{{*/
+{
+   if(FileExists(DestFile))
+      Rename(DestFile, DestFile + ".FAILED");
+
+   switch (error)
+   {
+      case HashSumMismatch:
+	 ErrorText = _("Hash Sum mismatch");
+	 Status = StatAuthError;
+	 ReportMirrorFailure("HashChecksumFailure");
+	 break;
+      case SizeMismatch:
+	 ErrorText = _("Size mismatch");
+	 Status = StatAuthError;
+	 ReportMirrorFailure("SizeFailure");
+	 break;
+      case InvalidFormat:
+	 ErrorText = _("Invalid file format");
+	 Status = StatError;
+	 // do not report as usually its not the mirrors fault, but Portal/Proxy
+	 break;
+   }
+   return false;
+}
+									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/
 // ---------------------------------------------------------------------
 void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
@@ -434,7 +460,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	 if (available_patches.empty() == false)
 	 {
 	    // patching with too many files is rather slow compared to a fast download
-	    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 0);
+	    unsigned long const fileLimit = _config->FindI("Acquire::PDiffs::FileLimit", 20);
 	    if (fileLimit != 0 && fileLimit < available_patches.size())
 	    {
 	       if (Debug)
@@ -595,9 +621,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 
       if(!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
       {
-	 Status = StatAuthError;
-	 ErrorText = _("MD5Sum mismatch");
-	 Rename(DestFile,DestFile + ".FAILED");
+	 RenameOnError(HashSumMismatch);
 	 Dequeue();
 	 return;
       }
@@ -866,10 +890,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 
       if (!ExpectedHash.empty() && ExpectedHash.toStr() != Hash)
       {
-         Status = StatAuthError;
-         ErrorText = _("Hash Sum mismatch");
-         Rename(DestFile,DestFile + ".FAILED");
-	 ReportMirrorFailure("HashChecksumFailure");
+	 RenameOnError(HashSumMismatch);
          return;
       }
 
@@ -878,22 +899,18 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
       if (Verify == true)
       {
 	 FileFd fd(DestFile, FileFd::ReadOnly);
-	 pkgTagSection sec;
-	 pkgTagFile tag(&fd);
+	 // Only test for correctness if the file is not empty (empty is ok)
+	 if (fd.FileSize() > 0)
+	 {
+	    pkgTagSection sec;
+	    pkgTagFile tag(&fd);
 
-         // Only test for correctness if the file is not empty (empty is ok)
-         if (fd.Size() > 0) {
-            if (_error->PendingError() || !tag.Step(sec)) {
-               Status = StatError;
-               _error->DumpErrors();
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            } else if (!sec.Exists("Package")) {
-               Status = StatError;
-               ErrorText = ("Encountered a section with no Package: header");
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            }
+	    // all our current indexes have a field 'Package' in each section
+	    if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
+	    {
+	       RenameOnError(InvalidFormat);
+	       return;
+	    }
          }
       }
        
@@ -984,6 +1001,8 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
    DestFile += ".decomp";
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
+
+   // FIXME: this points to a c++ string that goes out of scope
    Mode = decompProg.c_str();
 }
 									/*}}}*/
@@ -1067,8 +1086,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
       
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) == 0)
+   if (RealFileExists(Final) == true)
    {
       // File was already in place.  It needs to be re-downloaded/verified
       // because Release might have changed, we do give it a differnt
@@ -1080,6 +1098,19 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
    }
 
    QueueURI(Desc);
+}
+									/*}}}*/
+pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
+{
+   // if the file was never queued undo file-changes done in the constructor
+   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false &&
+	 LastGoodSig.empty() == false)
+   {
+      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
+	 Rename(LastGoodSig, Final);
+   }
+
 }
 									/*}}}*/
 // pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
@@ -1369,9 +1400,20 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
    {
       HashString ExpectedIndexHash;
       const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+      bool compressedAvailable = false;
       if (Record == NULL)
       {
-	 if (verify == true && (*Target)->IsOptional() == false)
+	 if ((*Target)->IsOptional() == true)
+	 {
+	    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+	    for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+	       if (MetaIndexParser->Exists(string((*Target)->MetaKey).append(".").append(*t)) == true)
+	       {
+		  compressedAvailable = true;
+		  break;
+	       }
+	 }
+	 else if (verify == true)
 	 {
 	    Status = StatAuthError;
 	    strprintf(ErrorText, _("Unable to find expected entry '%s' in Release file (Wrong sources.list entry or malformed file)"), (*Target)->MetaKey.c_str());
@@ -1400,7 +1442,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 if ((*Target)->IsSubIndex() == true)
 	    new pkgAcqSubIndex(Owner, (*Target)->URI, (*Target)->Description,
 				(*Target)->ShortDesc, ExpectedIndexHash);
-	 else if (transInRelease == false || MetaIndexParser->Exists((*Target)->MetaKey) == true)
+	 else if (transInRelease == false || Record != NULL || compressedAvailable == true)
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
 		MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true)
@@ -1584,11 +1626,22 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 
    // keep the old InRelease around in case of transistent network errors
    string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) == 0)
+   if (RealFileExists(Final) == true)
    {
       string const LastGoodSig = DestFile + ".reverify";
       Rename(Final,LastGoodSig);
+   }
+}
+									/*}}}*/
+pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
+{
+   // if the file was never queued undo file-changes done in the constructor
+   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false)
+   {
+      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+      string const LastGoodSig = DestFile + ".reverify";
+      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
+	 Rename(LastGoodSig, Final);
    }
 }
 									/*}}}*/
@@ -1683,34 +1736,40 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
    }
 
    // check if we have one trusted source for the package. if so, switch
-   // to "TrustedOnly" mode
+   // to "TrustedOnly" mode - but only if not in AllowUnauthenticated mode
+   bool const allowUnauth = _config->FindB("APT::Get::AllowUnauthenticated", false);
+   bool const debugAuth = _config->FindB("Debug::pkgAcquire::Auth", false);
+   bool seenUntrusted = false;
    for (pkgCache::VerFileIterator i = Version.FileList(); i.end() == false; ++i)
    {
       pkgIndexFile *Index;
       if (Sources->FindIndex(i.File(),Index) == false)
          continue;
-      if (_config->FindB("Debug::pkgAcquire::Auth", false))
-      {
+
+      if (debugAuth == true)
          std::cerr << "Checking index: " << Index->Describe()
-                   << "(Trusted=" << Index->IsTrusted() << ")\n";
-      }
-      if (Index->IsTrusted()) {
+                   << "(Trusted=" << Index->IsTrusted() << ")" << std::endl;
+
+      if (Index->IsTrusted() == true)
+      {
          Trusted = true;
-	 break;
+	 if (allowUnauth == false)
+	    break;
       }
+      else
+         seenUntrusted = true;
    }
 
    // "allow-unauthenticated" restores apts old fetching behaviour
    // that means that e.g. unauthenticated file:// uris are higher
    // priority than authenticated http:// uris
-   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+   if (allowUnauth == true && seenUntrusted == true)
       Trusted = false;
 
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error(_("I wasn't able to locate a file for the %s package. "
-		    "This might mean you need to manually fix this package."),
-		    Version.ParentPkg().Name());
+      _error->Error(_("Can't find a source to download version '%s' of '%s'"),
+		    Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
 }
 									/*}}}*/
 // AcqArchive::QueueNext - Queue the next file source			/*{{{*/
@@ -1864,18 +1923,14 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size,string CalcHash,
    // Check the size
    if (Size != Version->Size)
    {
-      Status = StatError;
-      ErrorText = _("Size mismatch");
+      RenameOnError(SizeMismatch);
       return;
    }
    
    // Check the hash
    if(ExpectedHash.toStr() != CalcHash)
    {
-      Status = StatError;
-      ErrorText = _("Hash Sum mismatch");
-      if(FileExists(DestFile))
-	 Rename(DestFile,DestFile + ".FAILED");
+      RenameOnError(HashSumMismatch);
       return;
    }
 
@@ -2015,9 +2070,7 @@ void pkgAcqFile::Done(string Message,unsigned long long Size,string CalcHash,
    // Check the hash
    if(!ExpectedHash.empty() && ExpectedHash.toStr() != CalcHash)
    {
-      Status = StatError;
-      ErrorText = _("Hash Sum mismatch");
-      Rename(DestFile,DestFile + ".FAILED");
+      RenameOnError(HashSumMismatch);
       return;
    }
    

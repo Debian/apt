@@ -14,7 +14,7 @@ SUBDIR=po
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-CATALOGS := $(addsuffix .gmo,$(shell cat LINGUAS))
+CATALOGS := $(addsuffix .gmo, $(shell sed -e '/^\#/ d' -e '/^$$/ d' LINGUAS | tr '\n' ' '))
 DOMAINS := $(notdir $(wildcard $(PO_DOMAINS)/*))
 POTFILES := $(addsuffix .pot,$(addprefix $(PO)/,$(DOMAINS)))
 
@@ -66,10 +66,10 @@ $(MOFILES) : $(PO_DOMAINS)/%.mo : $(PO_DOMAINS)/%.po
 	mkdir -p $(LOCALE)/$(notdir $*)/LC_MESSAGES/
 	cp $@ $(LOCALE)/$(notdir $*)/LC_MESSAGES/$(call GETDOMAIN,$*).mo
 
-stats:
+stats: all-linguas-enabled
 	for i in *.pot *.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
 
-binary: $(POTFILES) $(MOFILES)
+binary: $(POTFILES) $(MOFILES) all-linguas-enabled
 
 $(PACKAGE)-all.pot: $(POTFILES)
 	# we create our partial pot files without a header to avoid changing dates in *.mo files,
@@ -80,14 +80,24 @@ $(PACKAGE)-all.pot: $(POTFILES)
 	$(MSGCOMM) --more-than=0 $(PO)/$(PACKAGE)-dummy.pot $(POTFILES) --output=$(PACKAGE)-all.pot
 	rm -f $(PO)/$(PACKAGE)-dummy.pot
 
-.PHONY: update-po
-update-po: $(PACKAGE)-all.pot
+.PHONY: update-po all-linguas-enabled
+update-po: $(PACKAGE)-all.pot all-linguas-enabled
 	for lang in ${LINGUAS}; do \
 	echo "Updating $$lang.po"; \
 	$(MSGMERGE) $$lang.po $(PACKAGE)-all.pot -o $$lang.new.po; \
 	cmp $$lang.new.po $$lang.po || cp $$lang.new.po $$lang.po; \
 	rm -f $$lang.new.po; \
 	done
+
+all-linguas-enabled: LINGUAS
+ifdef NOISY
+	echo "Available Translations: $(shell ls *.po | cut -d'.' -f 1 | sort | tr '\n' ' ')"
+	echo "Mentioned Translations: $(shell sed -e '/^\#\#/ d' -e '/^$$/ d' -e 's/# //' LINGUAS | tr ' ' '\n' | sort | tr '\n' ' ')"
+	echo "Build Translations:     $(shell echo "$(LINGUAS)" | tr ' ' '\n' | sort | tr '\n' ' ')"
+endif
+	test "$(shell ls *.po | cut -d'.' -f 1 | sort | tr '\n' ' ')" = \
+	   "$(shell sed -e '/^\#\#/ d' -e '/^$$/ d' -e 's/# //' LINGUAS | tr ' ' '\n' | sort | tr '\n' ' ')" || \
+	   ( echo "ERROR: Not all available translations are mentioned in po/LINGUAS!"; exit 100)
 
 clean: clean/local
 clean/local:

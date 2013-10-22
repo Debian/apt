@@ -38,6 +38,42 @@ CommandLine::~CommandLine()
    delete [] FileList;
 }
 									/*}}}*/
+// CommandLine::GetCommand - return the first non-option word		/*{{{*/
+char const * CommandLine::GetCommand(Dispatch const * const Map,
+      unsigned int const argc, char const * const * const argv)
+{
+   // if there is a -- on the line there must be the word we search for around it
+   // as -- marks the end of the options, just not sure if the command can be
+   // considered an option or not, so accept both
+   for (size_t i = 1; i < argc; ++i)
+   {
+      if (strcmp(argv[i], "--") != 0)
+	 continue;
+      ++i;
+      if (i < argc)
+	 for (size_t j = 0; Map[j].Match != NULL; ++j)
+	    if (strcmp(argv[i], Map[j].Match) == 0)
+	       return Map[j].Match;
+      i -= 2;
+      if (i != 0)
+	 for (size_t j = 0; Map[j].Match != NULL; ++j)
+	    if (strcmp(argv[i], Map[j].Match) == 0)
+	       return Map[j].Match;
+      return NULL;
+   }
+   // no --, so search for the first word matching a command
+   // FIXME: How like is it that an option parameter will be also a valid Match ?
+   for (size_t i = 1; i < argc; ++i)
+   {
+      if (*(argv[i]) == '-')
+	 continue;
+      for (size_t j = 0; Map[j].Match != NULL; ++j)
+	 if (strcmp(argv[i], Map[j].Match) == 0)
+	    return Map[j].Match;
+   }
+   return NULL;
+}
+									/*}}}*/
 // CommandLine::Parse - Main action member				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -361,6 +397,7 @@ bool CommandLine::DispatchArg(Dispatch *Map,bool NoMatch)
 void CommandLine::SaveInConfig(unsigned int const &argc, char const * const * const argv)
 {
    char cmdline[100 + argc * 50];
+   memset(cmdline, 0, sizeof(cmdline));
    unsigned int length = 0;
    bool lastWasOption = false;
    bool closeQuote = false;
@@ -388,5 +425,17 @@ void CommandLine::SaveInConfig(unsigned int const &argc, char const * const * co
    }
    cmdline[--length] = '\0';
    _config->Set("CommandLine::AsString", cmdline);
+}
+									/*}}}*/
+CommandLine::Args CommandLine::MakeArgs(char ShortOpt, char const *LongOpt, char const *ConfName, unsigned long Flags)/*{{{*/
+{
+   /* In theory, this should be a constructor for CommandLine::Args instead,
+      but this breaks compatibility as gcc thinks this is a c++11 initializer_list */
+   CommandLine::Args arg;
+   arg.ShortOpt = ShortOpt;
+   arg.LongOpt = LongOpt;
+   arg.ConfName = ConfName;
+   arg.Flags = Flags;
+   return arg;
 }
 									/*}}}*/

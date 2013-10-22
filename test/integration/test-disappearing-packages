@@ -29,7 +29,7 @@ rm -rf "$BUILDDIR"
 
 setupaptarchive
 
-aptget install old-pkg=1.0 --trivial-only -qq 2>&1 > /dev/null
+testsuccess aptget install old-pkg=1.0 --trivial-only
 
 testmarkedauto # old-pkg is manual installed
 

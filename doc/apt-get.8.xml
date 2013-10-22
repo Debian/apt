@@ -389,6 +389,18 @@
      Configuration Item: <literal>APT::Ignore-Hold</literal>.</para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>--with-new-pkgs</option></term>
+     <listitem><para>Allow installing new packages when used in
+     conjunction with <literal>upgrade</literal>.  This is useful if
+     the update of a installed package requires new dependencies to be
+     installed. Instead of holding the package back <literal>upgrade</literal>
+     will upgrade the package and install the new dependencies. Note that
+     <literal>upgrade</literal> with this option will never remove packages,
+     only allow adding new ones.
+     Configuration Item:  <literal>APT::Get::Upgrade-Allow-New</literal>.
+     </para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>--no-upgrade</option></term>
      <listitem><para>Do not upgrade packages; when used in conjunction with <literal>install</literal>,
      <literal>no-upgrade</literal> will prevent packages on the command line
@@ -508,7 +520,15 @@
      This is useful for tools like pbuilder.
      Configuration Item: <literal>APT::Get::AllowUnauthenticated</literal>.</para></listitem>
      </varlistentry>
-     
+
+     <varlistentry><term><option>--show-progress</option></term>
+     <listitem><para>Show user friendly progress information in the
+     terminal window when packages are installed, upgraded or
+     removed. For a machine parsable version of this data see
+     README.progress-reporting in the apt doc directory.
+     <literal>DpkgPM::Progress</literal>.</para></listitem>
+     </varlistentry>
+    
 
      &apt-commonoptions;
      

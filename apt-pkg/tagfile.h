@@ -84,7 +84,7 @@ class pkgTagSection
       Stop = this->Stop;
    };
    
-   pkgTagSection() : Section(0), TagCount(0), Stop(0) {};
+   pkgTagSection();
    virtual ~pkgTagSection() {};
 };
 
@@ -95,6 +95,7 @@ class pkgTagFile
 
    bool Fill();
    bool Resize();
+   bool Resize(unsigned long long const newSize);
 
    public:
 

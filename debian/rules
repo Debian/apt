@@ -69,7 +69,7 @@ LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 # do not fail as we are just experimenting with symbol files for now
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
-build: build/build-stamp
+build-binary: build/build-binary-stamp
 build-debiandoc: build/build-debiandoc-stamp
 build-manpages: build/build-manpages-stamp
 
@@ -79,15 +79,15 @@ build-manpages: build/build-manpages-stamp
 build/environment.mak: build/configure-stamp
 	@true
 
-configure: configure.in
-build/configure-stamp: configure
+configure: configure.ac
+build/configure-stamp: configure buildlib/config.sub buildlib/config.guess
 	dh_testdir
 	-mkdir build
 	cp COPYING debian/copyright
 	cd build && CXXFLAGS="$(CXXFLAGS)" LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" ../configure $(confflags)
 	touch $@
 
-build/build-stamp: build/configure-stamp
+build/build-binary-stamp: build/configure-stamp
 	# Add here commands to compile the package.
 	$(MAKE) binary
 	# compat symlink for the locale split
@@ -118,12 +118,13 @@ clean:
 	[ ! -f Makefile ] || $(MAKE) clean distclean
 	rm -rf build
 	rm -f debian/$(LIBAPT_PKG).install debian/$(LIBAPT_INST).install \
-	      debian/libapt-pkg-dev.install
+	      debian/libapt-pkg-dev.install debian/apt.install
+	test ! -L buildlib/config.guess || rm -f buildlib/config.guess
+	test ! -L buildlib/config.sub || rm -f buildlib/config.sub
 
 debian/%.install: debian/%.install.in
 	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
 
-binary-indep: apt-doc libapt-pkg-doc
 # Build architecture-independent files here.
 libapt-pkg-doc: build-debiandoc
 	dh_testdir -p$@
@@ -175,9 +176,8 @@ apt-doc: build-debiandoc
 
 # Build architecture-dependent files here.
 
-binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
 apt_MANPAGES = apt apt-cache apt-cdrom apt-config apt-get apt-key apt-mark apt-secure apt apt.conf apt_preferences sources.list
-apt: build build-manpages
+apt: build-binary build-manpages debian/apt.install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -187,9 +187,9 @@ apt: build build-manpages
 #
 	cp debian/apt.conf.autoremove debian/$@/etc/apt/apt.conf.d/01autoremove
 	cp debian/apt.conf.changelog debian/$@/etc/apt/apt.conf.d/20changelog
+	cp share/ubuntu-archive.gpg debian/$@/usr/share/$@
 	cp debian/apt.auto-removal.sh debian/$@/etc/kernel/postinst.d/apt-auto-removal
 	chmod 755 debian/$@/etc/kernel/postinst.d/apt-auto-removal
-	cp share/ubuntu-archive.gpg debian/$@/usr/share/$@
 
 	# make rosetta happy and remove pot files in po/ (but leave stuff
 	# in po/domains/* untouched) and cp *.po into each domain dir
@@ -225,7 +225,7 @@ apt: build build-manpages
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-libapt-pkg-dev: build debian/libapt-pkg-dev.install
+libapt-pkg-dev: build-binary debian/libapt-pkg-dev.install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -245,7 +245,7 @@ libapt-pkg-dev: build debian/libapt-pkg-dev.install
 	dh_builddeb -p$@
 
 apt-utils_MANPAGES = apt-sortpkgs apt-ftparchive apt-extracttemplates
-apt-utils: build build-manpages
+apt-utils: build-binary build-manpages
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -274,7 +274,7 @@ apt-utils: build build-manpages
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-$(LIBAPT_PKG): build debian/$(LIBAPT_PKG).install
+$(LIBAPT_PKG): build-binary debian/$(LIBAPT_PKG).install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -293,7 +293,7 @@ $(LIBAPT_PKG): build debian/$(LIBAPT_PKG).install
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-$(LIBAPT_INST): build debian/$(LIBAPT_INST).install
+$(LIBAPT_INST): build-binary debian/$(LIBAPT_INST).install
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -312,7 +312,7 @@ $(LIBAPT_INST): build debian/$(LIBAPT_INST).install
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-apt-transport-https: build libapt-pkg-dev
+apt-transport-https: build-binary libapt-pkg-dev
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -335,13 +335,18 @@ apt-transport-https: build libapt-pkg-dev
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
+buildlib/config.guess buildlib/config.sub:
+	$(MAKE) "$@"
+
 configure:
 	$(MAKE) configure
 
-really-clean: clean
-	-find . -name Makefile.in -print0 | xargs --null --no-run-if-empty -- rm -f
-	find -name ChangeLog | xargs rm -f
-	rm -f l33ch-stamp
-
+# translate targets to targets required by debian-policy
+binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-transport-https
+binary-indep: apt-doc libapt-pkg-doc
 binary: binary-indep binary-arch
+build-arch: build-binary
+build-indep: build-manpages build-debiandoc
+build: build-indep build-arch
+
 .PHONY: build clean binary-indep binary-arch binary

@@ -50,21 +50,27 @@ public:
 /* */
 pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
 {
+   /* The size is increased by 4 because if we start with the Size of the
+      filename we need to try to read 1 char more to see an EOF faster, 1
+      char the end-pointer can be on and maybe 2 newlines need to be added
+      to the end of the file -> 4 extra chars */
+   Size += 4;
    d = new pkgTagFilePrivate(pFd, Size);
 
    if (d->Fd.IsOpen() == false)
-   {
       d->Start = d->End = d->Buffer = 0;
+   else
+      d->Buffer = (char*)malloc(sizeof(char) * Size);
+
+   if (d->Buffer == NULL)
       d->Done = true;
-      d->iOffset = 0;
-      return;
-   }
-   
-   d->Buffer = new char[Size];
+   else
+      d->Done = false;
+
    d->Start = d->End = d->Buffer;
-   d->Done = false;
    d->iOffset = 0;
-   Fill();
+   if (d->Done == false)
+      Fill();
 }
 									/*}}}*/
 // TagFile::~pkgTagFile - Destructor					/*{{{*/
@@ -72,11 +78,11 @@ pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
 /* */
 pkgTagFile::~pkgTagFile()
 {
-   delete [] d->Buffer;
+   free(d->Buffer);
    delete d;
 }
 									/*}}}*/
-// TagFile::Offset - Return the current offset in the buffer     	/*{{{*/
+// TagFile::Offset - Return the current offset in the buffer		/*{{{*/
 unsigned long pkgTagFile::Offset()
 {
    return d->iOffset;
@@ -89,19 +95,22 @@ unsigned long pkgTagFile::Offset()
  */
 bool pkgTagFile::Resize()
 {
-   char *tmp;
-   unsigned long long EndSize = d->End - d->Start;
-
    // fail is the buffer grows too big
    if(d->Size > 1024*1024+1)
       return false;
 
+   return Resize(d->Size * 2);
+}
+bool pkgTagFile::Resize(unsigned long long const newSize)
+{
+   unsigned long long const EndSize = d->End - d->Start;
+
    // get new buffer and use it
-   tmp = new char[2*d->Size];
-   memcpy(tmp, d->Buffer, d->Size);
-   d->Size = d->Size*2;
-   delete [] d->Buffer;
-   d->Buffer = tmp;
+   char* newBuffer = (char*)realloc(d->Buffer, sizeof(char) * newSize);
+   if (newBuffer == NULL)
+      return false;
+   d->Buffer = newBuffer;
+   d->Size = newSize;
 
    // update the start/end pointers to the new buffer
    d->Start = d->Buffer;
@@ -152,9 +161,10 @@ bool pkgTagFile::Fill()
    if (d->Done == false)
    {
       // See if only a bit of the file is left
-      if (d->Fd.Read(d->End, d->Size - (d->End - d->Buffer),&Actual) == false)
+      unsigned long long const dataSize = d->Size - ((d->End - d->Buffer) + 1);
+      if (d->Fd.Read(d->End, dataSize, &Actual) == false)
 	 return false;
-      if (Actual != d->Size - (d->End - d->Buffer))
+      if (Actual != dataSize)
 	 d->Done = true;
       d->End += Actual;
    }
@@ -171,8 +181,13 @@ bool pkgTagFile::Fill()
       for (const char *E = d->End - 1; E - d->End < 6 && (*E == '\n' || *E == '\r'); E--)
 	 if (*E == '\n')
 	    LineCount++;
-      for (; LineCount < 2; LineCount++)
-	 *d->End++ = '\n';
+      if (LineCount < 2)
+      {
+	 if ((unsigned)(d->End - d->Buffer) >= d->Size)
+	    Resize(d->Size + 3);
+	 for (; LineCount < 2; LineCount++)
+	    *d->End++ = '\n';
+      }
       
       return true;
    }
@@ -216,6 +231,16 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
       return _error->Error(_("Unable to parse package file %s (2)"),d->Fd.Name().c_str());
    
    return true;
+}
+									/*}}}*/
+// pkgTagSection::pkgTagSection - Constructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgTagSection::pkgTagSection()
+   : Section(0), TagCount(0), d(NULL), Stop(0)
+{
+   memset(&Indexes, 0, sizeof(Indexes));
+   memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
 }
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/

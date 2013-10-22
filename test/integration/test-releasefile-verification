@@ -11,20 +11,24 @@ buildaptarchive
 setupflataptarchive
 changetowebserver
 
+downloadfile "http://localhost:8080/_config/set/aptwebserver::support::range/false" '/dev/null' >/dev/null
+
 prepare() {
 	local DATE="${2:-now}"
-	if [ "$DATE" = 'now' -a "$1" = "${PKGFILE}-new" ]; then
-		DATE='now + 6 days'
+	if [ "$DATE" = 'now' ]; then
+		if [ "$1" = "${PKGFILE}-new" ]; then
+			DATE='now - 1 day'
+		else
+			DATE='now - 7 day'
+		fi
 	fi
 	for release in $(find rootdir/var/lib/apt/lists 2> /dev/null); do
-		touch -d 'now - 6 hours' $release
+		touch -d 'now - 1 year' $release
 	done
 	aptget clean
 	cp $1 aptarchive/Packages
 	find aptarchive -name 'Release' -delete
-	cat aptarchive/Packages | gzip > aptarchive/Packages.gz
-	cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
-	cat aptarchive/Packages | xz --format=lzma > aptarchive/Packages.lzma
+	compressfile 'aptarchive/Packages' "$DATE"
 	generatereleasefiles "$DATE"
 }
 
@@ -87,13 +91,34 @@ touch aptarchive/apt.deb
 
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
+updatesuccess() {
+	local LOG='update.log'
+	if aptget update >$LOG 2>&1 || grep -q -E '^(W|E): ' $LOG; then
+		msgpass
+	else
+		cat $LOG
+		msgfail
+	fi
+}
+
+updatefailure() {
+	local LOG='update.log'
+	aptget update >$LOG 2>&1 || true
+	if grep -q -E "$1" $LOG; then
+		msgpass
+	else
+		cat $LOG
+		msgfail
+	fi
+}
+
 runtest() {
 	prepare ${PKGFILE}
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Joe Sixpack'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	updatesuccess
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
@@ -102,18 +127,29 @@ runtest() {
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Good warm archive signed by' 'Joe Sixpack'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	updatesuccess
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	installaptnew
 
+	prepare ${PKGFILE}
+	rm -rf rootdir/var/lib/apt/lists
+	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	signreleasefiles 'Rex Expired'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Cold archive signed by' 'Rex Expired'
+	updatefailure '^W: .* KEYEXPIRED'
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	failaptold
+	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
 
 	prepare ${PKGFILE}
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Marvin Paranoid'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Marvin Paranoid'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgpass || msgfail
+	updatefailure '^W: .* NO_PUBKEY'
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt
 	failaptold
@@ -127,7 +163,7 @@ runtest() {
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Bad warm archive signed by' 'Joe Sixpack'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	updatesuccess
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	installaptnew
@@ -138,7 +174,7 @@ runtest() {
 	signreleasefiles 'Joe Sixpack'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Cold archive signed by' 'Joe Sixpack'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	updatesuccess
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
@@ -147,10 +183,30 @@ runtest() {
 	signreleasefiles 'Marvin Paranoid'
 	find aptarchive/ -name "$DELETEFILE" -delete
 	msgtest 'Good warm archive signed by' 'Marvin Paranoid'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgpass || msgfail
+	updatefailure '^W: .* NO_PUBKEY'
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt
 	installaptold
+
+	prepare ${PKGFILE}-new
+	cp keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+	signreleasefiles 'Rex Expired'
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Good warm archive signed by' 'Rex Expired'
+	updatefailure '^W: .* KEYEXPIRED'
+	testequal "$(cat ${PKGFILE})
+" aptcache show apt
+	installaptold
+	rm rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+
+	prepare ${PKGFILE}-new
+	signreleasefiles
+	find aptarchive/ -name "$DELETEFILE" -delete
+	msgtest 'Good warm archive signed by' 'Joe Sixpack'
+	updatesuccess
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt
+	installaptnew
 }
 
 runtest2() {
@@ -158,7 +214,7 @@ runtest2() {
 	rm -rf rootdir/var/lib/apt/lists
 	signreleasefiles 'Joe Sixpack'
 	msgtest 'Cold archive signed by' 'Joe Sixpack'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	updatesuccess
 
 	# New .deb but now an unsigned archive. For example MITM to circumvent
 	# package verification.
@@ -166,7 +222,7 @@ runtest2() {
 	find aptarchive/ -name InRelease -delete
 	find aptarchive/ -name Release.gpg -delete
 	msgtest 'Warm archive signed by' 'nobody'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	updatesuccess
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	failaptnew
@@ -174,7 +230,7 @@ runtest2() {
 	# Unsigned archive from the beginning must also be detected.
 	rm -rf rootdir/var/lib/apt/lists
 	msgtest 'Cold archive signed by' 'nobody'
-	aptget update 2>&1 | grep -E '^(W|E): ' > /dev/null && msgfail || msgpass
+	updatesuccess
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt
 	failaptnew

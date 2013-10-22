@@ -122,8 +122,9 @@ bool MountCdrom(string Path, string DeviceName)
    if (Child == 0)
    {
       // Make all the fds /dev/null
+      int null_fd = open("/dev/null",O_RDWR);
       for (int I = 0; I != 3; I++)
-	 dup2(open("/dev/null",O_RDWR),I);
+	 dup2(null_fd, I);
       
       if (_config->Exists("Acquire::cdrom::"+Path+"::Mount") == true)
       {

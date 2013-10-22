@@ -386,14 +386,24 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <para><literal>Acquire::http::AllowRedirect</literal> controls whether APT will follow
      redirects, which is enabled by default.</para>
 
-     <para>The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</literal>
-     which accepts integer values in kilobytes. The default value is 0 which deactivates
-     the limit and tries to use all available bandwidth (note that this option implicitly
-     disables downloading from multiple servers at the same time.)</para>
+     <para>The used bandwidth can be limited with
+     <literal>Acquire::http::Dl-Limit</literal> which accepts integer
+     values in kilobytes per second. The default value is 0 which
+     deactivates the limit and tries to use all available bandwidth.
+     Note that this option implicitly disables downloading from
+     multiple servers at the same time.</para>
 
      <para><literal>Acquire::http::User-Agent</literal> can be used to set a different
      User-Agent for the http download method as some proxies allow access for clients
      only if the client uses a known identifier.</para>
+
+     <para><literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to
+     specify a external command to discover the http proxy to use. Apt expects
+     the command to output the proxy on stdout in the style
+     <literal>http://proxy:port/</literal>. See the 
+     &squid-deb-proxy-client; package for a example implementation that
+     uses avahi.</para>
+
      </listitem>
      </varlistentry>
 
@@ -686,13 +696,28 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <literal>options</literal> this must be specified in list notation. The commands
      are invoked in order using <filename>/bin/sh</filename>; should any fail APT 
      will abort. APT will pass the filenames of all .deb files it is going to
-     install to the commands, one per line on standard input.</para>
+     install to the commands, one per line on the requested file descriptor, defaulting
+     to standard input.</para>
 
-     <para>Version 2 of this protocol dumps more information, including the 
+     <para>Version 2 of this protocol dumps more information, including the
      protocol version, the APT configuration space and the packages, files
-     and versions being changed. Version 2 is enabled by setting 
-     <literal>DPkg::Tools::options::cmd::Version</literal> to 2. <literal>cmd</literal> is a
-     command given to <literal>Pre-Install-Pkgs</literal>.</para></listitem>
+     and versions being changed. Version 3 adds the architecture and <literal>MultiArch</literal>
+     flag to each version being dumped.</para>
+
+     <para>The version of the protocol to be used for the command
+     <literal><replaceable>cmd</replaceable></literal> can be chosen by setting
+     <literal>DPkg::Tools::options::<replaceable>cmd</replaceable>::Version</literal>
+     accordingly, the default being version 1. If APT isn't supporting the requested
+     version it will send the information in the highest version it has support for instead.
+     </para>
+
+     <para>The file descriptor to be used to send the information can be requested with
+     <literal>DPkg::Tools::options::<replaceable>cmd</replaceable>::InfoFD</literal>
+     which defaults to <literal>0</literal> for standard input and is available since
+     version 0.9.11. Support for the option can be detected by looking for the environment
+     variable <envar>APT_HOOK_INFO_FD</envar> which contains the number of the used
+     file descriptor as a confirmation.</para>
+     </listitem>
      </varlistentry>
 
      <varlistentry><term><option>Run-Directory</option></term>

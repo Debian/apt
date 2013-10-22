@@ -1,0 +1,107 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+changetowebserver
+
+copysource() {
+	dd if="$1" bs=1 count="$2" of="$3" 2>/dev/null
+	touch -d "$(stat --format '%y' "${TESTFILE}")" "$3"
+}
+
+testdownloadfile() {
+	local DOWNLOG='download-testfile.log'
+	rm -f "$DOWNLOG"
+	msgtest "Testing download of file $2 with" "$1"
+	if ! downloadfile "$2" "$3" > "$DOWNLOG"; then
+		cat "$DOWNLOG"
+		msgfail
+	else
+		msgpass
+	fi
+	cat "$DOWNLOG" | while read field hash; do
+		local EXPECTED
+		case "$field" in
+		'MD5Sum-Hash:') EXPECTED="$(md5sum "$TESTFILE" | cut -d' ' -f 1)";;
+		'SHA1-Hash:') EXPECTED="$(sha1sum "$TESTFILE" | cut -d' ' -f 1)";;
+		'SHA256-Hash:') EXPECTED="$(sha256sum "$TESTFILE" | cut -d' ' -f 1)";;
+		'SHA512-Hash:') EXPECTED="$(sha512sum "$TESTFILE" | cut -d' ' -f 1)";;
+		*) continue;;
+		esac
+		if [ "$4" = '=' ]; then
+			msgtest 'Test downloaded file for correct' "$field"
+		else
+			msgtest 'Test downloaded file does not match in' "$field"
+		fi
+		if [ "$EXPECTED" "$4" "$hash" ]; then
+			msgpass
+		else
+			cat "$DOWNLOG"
+			msgfail "expected: $EXPECTED ; got: $hash"
+		fi
+	done
+}
+
+testwebserverlaststatuscode() {
+	STATUS="$(mktemp)"
+	addtrap "rm $STATUS;"
+	msgtest 'Test last status code from the webserver was' "$1"
+	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" >/dev/null
+	if [ "$(cat "$STATUS")" = "$1" ]; then
+		msgpass
+	else
+		cat download-testfile.log
+		msgfail "Status was $(cat "$STATUS")"
+	fi
+}
+
+
+TESTFILE='aptarchive/testfile'
+cp -a ${TESTDIR}/framework $TESTFILE
+
+testrun() {
+	downloadfile "$1/_config/set/aptwebserver::support::range/true" '/dev/null' >/dev/null
+	testwebserverlaststatuscode '200'
+
+	copysource $TESTFILE 0 ./testfile
+	testdownloadfile 'no data' "${1}/testfile" './testfile' '='
+	testwebserverlaststatuscode '200'
+
+	copysource $TESTFILE 20 ./testfile
+	testdownloadfile 'valid partial data' "${1}/testfile" './testfile' '='
+	testwebserverlaststatuscode '206'
+
+	copysource /dev/zero 20 ./testfile
+	testdownloadfile 'invalid partial data' "${1}/testfile" './testfile' '!='
+	testwebserverlaststatuscode '206'
+
+	copysource $TESTFILE 1M ./testfile
+	testdownloadfile 'completely downloaded file' "${1}/testfile" './testfile' '='
+	testwebserverlaststatuscode '416'
+
+	copysource /dev/zero 1M ./testfile
+	testdownloadfile 'too-big partial file' "${1}/testfile" './testfile' '='
+	testwebserverlaststatuscode '200'
+
+	copysource /dev/zero 20 ./testfile
+	touch ./testfile
+	testdownloadfile 'old data' "${1}/testfile" './testfile' '='
+	testwebserverlaststatuscode '200'
+
+	downloadfile "$1/_config/set/aptwebserver::support::range/false" '/dev/null' >/dev/null
+	testwebserverlaststatuscode '200'
+
+	copysource $TESTFILE 20 ./testfile
+	testdownloadfile 'no server support' "${1}/testfile" './testfile' '='
+	testwebserverlaststatuscode '200'
+}
+
+testrun 'http://localhost:8080'
+
+changetohttpswebserver
+
+testrun 'https://localhost:4433'

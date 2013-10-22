@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'apt' 'all' '1'
+insertpackage 'unstable' 'apt' 'all' '2'
+insertsource 'unstable' 'apt' 'all' '2'
+insertsource 'unstable' 'apt2' 'all' '1'
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+testequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 MD5Sum:" aptget upgrade -qq --print-uris
+testequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 MD5Sum:" aptget dist-upgrade -qq --print-uris
+testequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 MD5Sum:" aptget install apt -qq --print-uris
+testequal "'file://${APTARCHIVE}/pool/main/apt/apt_2_all.deb' apt_2_all.deb 0 MD5Sum:" aptget download apt -qq --print-uris
+testequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source apt -qq --print-uris
+testequal "'http://packages.debian.org/changelogs/pool/main/apt/apt_2/changelog'" aptget changelog apt -qq --print-uris
+
+testequal "'file://${APTARCHIVE}/apt_2.dsc' apt_2.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/apt_2.tar.gz' apt_2.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/apt2_1.dsc' apt2_1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/apt2_1.tar.gz' apt2_1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source apt apt2 -qq --print-uris

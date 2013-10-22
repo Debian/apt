@@ -238,6 +238,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			 (*Target)->ShortDesc, HashString());
       }
+      delete targets;
 
       // this is normally created in pkgAcqMetaSig, but if we run
       // in --print-uris mode, we add it here
@@ -373,10 +374,29 @@ class debSLTypeDebian : public pkgSourceList::Type
 			   string const &Dist, string const &Section,
 			   bool const &IsSrc, map<string, string> const &Options) const
    {
-      map<string, string>::const_iterator const arch = Options.find("arch");
-      vector<string> const Archs =
+      // parse arch=, arch+= and arch-= settings
+      map<string, string>::const_iterator arch = Options.find("arch");
+      vector<string> Archs =
 		(arch != Options.end()) ? VectorizeString(arch->second, ',') :
 				APT::Configuration::getArchitectures();
+      if ((arch = Options.find("arch+")) != Options.end())
+      {
+	 std::vector<std::string> const plusArch = VectorizeString(arch->second, ',');
+	 for (std::vector<std::string>::const_iterator plus = plusArch.begin(); plus != plusArch.end(); ++plus)
+	    if (std::find(Archs.begin(), Archs.end(), *plus) == Archs.end())
+	       Archs.push_back(*plus);
+      }
+      if ((arch = Options.find("arch-")) != Options.end())
+      {
+	 std::vector<std::string> const minusArch = VectorizeString(arch->second, ',');
+	 for (std::vector<std::string>::const_iterator minus = minusArch.begin(); minus != minusArch.end(); ++minus)
+	 {
+	    std::vector<std::string>::iterator kill = std::find(Archs.begin(), Archs.end(), *minus);
+	    if (kill != Archs.end())
+	       Archs.erase(kill);
+	 }
+      }
+
       map<string, string>::const_iterator const trusted = Options.find("trusted");
 
       for (vector<metaIndex *>::const_iterator I = List.begin();

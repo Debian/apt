@@ -36,6 +36,41 @@
 									/*}}}*/
 using namespace std;
 
+size_t
+HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+   size_t len = size * nmemb;
+   HttpsMethod *me = (HttpsMethod *)userp;
+   std::string line((char*) buffer, len);
+   for (--len; len > 0; --len)
+      if (isspace(line[len]) == 0)
+      {
+	 ++len;
+	 break;
+      }
+   line.erase(len);
+
+   if (line.empty() == true)
+   {
+      if (me->Server->Result != 416 && me->Server->StartPos != 0)
+	 ;
+      else if (me->Server->Result == 416 && me->Server->Size == me->File->FileSize())
+      {
+         me->Server->Result = 200;
+	 me->Server->StartPos = me->Server->Size;
+      }
+      else
+	 me->Server->StartPos = 0;
+
+      me->File->Truncate(me->Server->StartPos);
+      me->File->Seek(me->Server->StartPos);
+   }
+   else if (me->Server->HeaderLine(line) == false)
+      return 0;
+
+   return size*nmemb;
+}
+
 size_t 
 HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
@@ -58,6 +93,14 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
    }
    return 0;
 }
+
+// HttpsServerState::HttpsServerState - Constructor			/*{{{*/
+HttpsServerState::HttpsServerState(URI Srv,HttpsMethod *Owner) : ServerState(Srv, NULL)
+{
+   TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
+   Reset();
+}
+									/*}}}*/
 
 void HttpsMethod::SetupProxy()  					/*{{{*/
 {
@@ -121,7 +164,6 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    struct stat SBuf;
    struct curl_slist *headers=NULL;  
    char curl_errorstr[CURL_ERROR_SIZE];
-   long curl_responsecode;
    URI Uri = Itm->Uri;
    string remotehost = Uri.Host;
 
@@ -137,6 +179,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // callbacks
    curl_easy_setopt(curl, CURLOPT_URL, static_cast<string>(Uri).c_str());
+   curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, parse_header);
+   curl_easy_setopt(curl, CURLOPT_WRITEHEADER, this);
    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
@@ -277,7 +321,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
       char Buf[1000];
-      sprintf(Buf, "Range: bytes=%li-", (long) SBuf.st_size - 1);
+      sprintf(Buf, "Range: bytes=%li-", (long) SBuf.st_size);
       headers = curl_slist_append(headers, Buf);
       sprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
       headers = curl_slist_append(headers, Buf);
@@ -290,18 +334,13 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
 
    // go for it - if the file exists, append on it
    File = new FileFd(Itm->DestFile, FileFd::WriteAny);
-   if (File->Size() > 0)
-      File->Seek(File->Size() - 1);
-   
+   Server = new HttpsServerState(Itm->Uri, this);
+
    // keep apt updated
    Res.Filename = Itm->DestFile;
 
    // get it!
    CURLcode success = curl_easy_perform(curl);
-   curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &curl_responsecode);
-
-   long curl_servdate;
-   curl_easy_getinfo(curl, CURLINFO_FILETIME, &curl_servdate);
 
    // If the server returns 200 OK but the If-Modified-Since condition is not
    // met, CURLINFO_CONDITION_UNMET will be set to 1
@@ -309,57 +348,83 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_getinfo(curl, CURLINFO_CONDITION_UNMET, &curl_condition_unmet);
 
    File->Close();
+   curl_slist_free_all(headers);
 
    // cleanup
-   if(success != 0 || (curl_responsecode != 200 && curl_responsecode != 304))
+   if (success != 0)
    {
       _error->Error("%s", curl_errorstr);
+      unlink(File->Name().c_str());
+      return false;
+   }
+
+   // server says file not modified
+   if (Server->Result == 304 || curl_condition_unmet == 1)
+   {
+      unlink(File->Name().c_str());
+      Res.IMSHit = true;
+      Res.LastModified = Itm->LastModified;
+      Res.Size = 0;
+      URIDone(Res);
+      return true;
+   }
+   Res.IMSHit = false;
+
+   if (Server->Result != 200 && // OK
+	 Server->Result != 206 && // Partial
+	 Server->Result != 416) // invalid Range
+   {
+      char err[255];
+      snprintf(err, sizeof(err) - 1, "HttpError%i", Server->Result);
+      SetFailReason(err);
+      _error->Error("%s", err);
       // unlink, no need keep 401/404 page content in partial/
       unlink(File->Name().c_str());
-      Fail();
+      return false;
+   }
+
+   struct stat resultStat;
+   if (unlikely(stat(File->Name().c_str(), &resultStat) != 0))
+   {
+      _error->Errno("stat", "Unable to access file %s", File->Name().c_str());
+      return false;
+   }
+   Res.Size = resultStat.st_size;
+
+   // invalid range-request
+   if (Server->Result == 416)
+   {
+      unlink(File->Name().c_str());
+      Res.Size = 0;
+      delete File;
+      Redirect(Itm->Uri);
       return true;
    }
 
    // Timestamp
-   struct utimbuf UBuf;
-   if (curl_servdate != -1) {
-       UBuf.actime = curl_servdate;
-       UBuf.modtime = curl_servdate;
-       utime(File->Name().c_str(),&UBuf);
-   }
-
-   // check the downloaded result
-   struct stat Buf;
-   if (stat(File->Name().c_str(),&Buf) == 0)
+   curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
+   if (Res.LastModified != -1)
    {
-      Res.Filename = File->Name();
-      Res.LastModified = Buf.st_mtime;
-      Res.IMSHit = false;
-      if (curl_responsecode == 304 || curl_condition_unmet)
-      {
-	 unlink(File->Name().c_str());
-	 Res.IMSHit = true;
-	 Res.LastModified = Itm->LastModified;
-	 Res.Size = 0;
-	 URIDone(Res);
-	 return true;
-      }
-      Res.Size = Buf.st_size;
+      struct utimbuf UBuf;
+      UBuf.actime = Res.LastModified;
+      UBuf.modtime = Res.LastModified;
+      utime(File->Name().c_str(),&UBuf);
    }
+   else
+      Res.LastModified = resultStat.st_mtime;
 
    // take hashes
    Hashes Hash;
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
-   
+
    // keep apt updated
    URIDone(Res);
 
    // cleanup
    Res.Size = 0;
    delete File;
-   curl_slist_free_all(headers);
 
    return true;
 };
@@ -373,5 +438,4 @@ int main()
 
    return Mth.Run();
 }
-
 

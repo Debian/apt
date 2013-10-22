@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+mkdir -p usr/bin
+touch usr/bin/file-conflict
+
+buildsimplenativepackage 'foo1' 'amd64,i386' '0.8.15' 'stable' '' 'pkg with file conflicts' '' '' 'usr/'
+buildsimplenativepackage 'foo2' 'amd64,i386' '0.8.15' 'stable' '' 'pkg with file conflicts' '' '' 'usr/'
+
+setupaptarchive 
+
+exec 3> apt-progress.log
+testfailure aptget install foo1 foo2 -y -o APT::Status-Fd=3
+msgtest "Ensure correct error message"
+grep -q "aptarchive/pool/foo2_0.8.15_amd64.deb :40:trying to overwrite '/usr/bin/file-conflict', which is also in package foo1 0.8.15" apt-progress.log && msgpass || (cat apt-progress.log && msgfail)
+
