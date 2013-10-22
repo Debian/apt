@@ -555,16 +555,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
    {
       pkgname = APT::String::Strip(list[2]);
       action = APT::String::Strip(list[1]);
-
-      // this is what we support in the processing stage
-      if(action != "install" && action != "configure" &&
-         action != "remove" && action != "purge" && action != "purge")
-      {
-         if (Debug == true)
-            std::clog << "ignoring processing action: '" << action
-                      << "'" << std::endl;
-         return;
-      }
    }
    // "status" has the form: "status: pkg: state"
    // with state in ["half-installed", "unpacked", "half-configured", 
@@ -724,12 +714,13 @@ void pkgDPkgPM::ProcessDpkgStatusLine(int OutStatusFd, char *line)
 // DPkgPM::handleDisappearAction					/*{{{*/
 void pkgDPkgPM::handleDisappearAction(string const &pkgname)
 {
-   // record the package name for display and stuff later
-   disappearedPkgs.insert(pkgname);
-
    pkgCache::PkgIterator Pkg = Cache.FindPkg(pkgname);
    if (unlikely(Pkg.end() == true))
       return;
+
+   // record the package name for display and stuff later
+   disappearedPkgs.insert(Pkg.FullName(true));
+
    // the disappeared package was auto-installed - nothing to do
    if ((Cache[Pkg].Flags & pkgCache::Flag::Auto) == pkgCache::Flag::Auto)
       return;
@@ -1332,7 +1323,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 {
 	    if((*I).Pkg.end() == true)
 	       continue;
-	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.Name()) != disappearedPkgs.end())
+	    if (I->Op == Item::Configure && disappearedPkgs.find(I->Pkg.FullName(true)) != disappearedPkgs.end())
 	       continue;
 	    // We keep this here to allow "smooth" transitions from e.g. multiarch dpkg/ubuntu to dpkg/debian
 	    if (dpkgMultiArch == false && (I->Pkg.Arch() == nativeArch ||
