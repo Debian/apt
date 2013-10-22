@@ -1,8 +1,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
-
-#include <apt-private/private-progress.h>
+#include <apt-pkg/install-progress.h>
 
 #include <apti18n.h>
 

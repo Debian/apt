@@ -23,8 +23,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
-
-#include <apt-private/private-progress.h>
+#include <apt-pkg/install-progress.h>
 
 #include <set>
 #include <locale.h>

@@ -25,8 +25,7 @@
 
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
-
-#include <apt-private/private-progress.h>
+#include <apt-pkg/install-progress.h>
 
 #include <string>
 #include <iostream>

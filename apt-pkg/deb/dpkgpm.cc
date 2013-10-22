@@ -19,8 +19,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/packagemanager.h>
-
-#include <apt-private/private-progress.h>
+#include <apt-pkg/install-progress.h>
 
 #include <unistd.h>
 #include <stdlib.h>
