@@ -11,7 +11,7 @@ buildaptarchive
 setupflataptarchive
 changetowebserver
 
-downloadfile "http://localhost:8080/_config/set/aptwebserver::support::range/false" '/dev/null' >/dev/null
+webserverconfig 'aptwebserver::support::range' 'false'
 
 prepare() {
 	local DATE="${2:-now}"

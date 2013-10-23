@@ -546,7 +546,7 @@ void * handleClient(void * voidclient)					/*{{{*/
 	 {
 	    FileFd data(filename, FileFd::ReadOnly);
 	    std::string condition = LookupTag(*m, "If-Modified-Since", "");
-	    if (condition.empty() == false)
+	    if (_config->FindB("aptwebserver::support::modified-since", true) == true && condition.empty() == false)
 	    {
 	       time_t cache;
 	       if (RFC1123StrToTime(condition.c_str(), cache) == true &&

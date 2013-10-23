@@ -792,6 +792,22 @@ signreleasefiles() {
 	msgdone "info"
 }
 
+webserverconfig() {
+	msgtest "Set webserver config option '${1}' to" "$2"
+	downloadfile "http://localhost:8080/_config/set/${1}/${2}" '/dev/null' >/dev/null
+	local DOWNLOG='download-testfile.log'
+	rm -f "$DOWNLOG"
+	local STATUS="$(mktemp)"
+	addtrap "rm $STATUS;"
+	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
+	if [ "$(cat "$STATUS")" = '200' ]; then
+		msgpass
+	else
+		cat >&2 "$DOWNLOG"
+		msgfail "Statuscode was $(cat "$STATUS")"
+	fi
+}
+
 rewritesourceslist() {
 	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive")"
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
