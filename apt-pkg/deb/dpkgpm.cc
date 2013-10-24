@@ -1087,8 +1087,9 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	 dpkgMultiArch = true;
    }
 
-   // this loop is runs once per operation
-   for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
+   // go over each item
+   vector<Item>::const_iterator I = List.begin();
+   while (I != List.end())
    {
       // Do all actions with the same Op in one run
       vector<Item>::const_iterator J = I;
