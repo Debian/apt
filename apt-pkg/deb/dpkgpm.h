@@ -97,6 +97,9 @@ class pkgDPkgPM : public pkgPackageManager
    // dpkg log
    bool OpenLog();
    bool CloseLog();
+
+   // helper
+   void BuildPackagesProgressMap();
    
    // input processing
    void DoStdin(int master);

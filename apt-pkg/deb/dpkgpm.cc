@@ -132,6 +132,20 @@ ionice(int PID)
    return ExecWait(Process, "ionice");
 }
 
+static std::string getDpkgExecutable()
+{
+   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
+   string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
+   size_t dpkgChrootLen = dpkgChrootDir.length();
+   if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
+   {
+      if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
+         --dpkgChrootLen;
+      Tmp = Tmp.substr(dpkgChrootLen);
+   }
+   return Tmp;
+}
+
 // dpkgChrootDirectory - chrooting for dpkg if needed			/*{{{*/
 static void dpkgChrootDirectory()
 {
@@ -932,6 +946,60 @@ static int racy_pselect(int nfds, fd_set *readfds, fd_set *writefds,
    return retval;
 }
                                                                         /*}}}*/
+
+// DPkgPM::BuildPackagesProgressMap					/*{{{*/
+void pkgDPkgPM::BuildPackagesProgressMap()
+{
+   // map the dpkg states to the operations that are performed
+   // (this is sorted in the same way as Item::Ops)
+   static const struct DpkgState DpkgStatesOpMap[][7] = {
+      // Install operation
+      { 
+	 {"half-installed", N_("Preparing %s")}, 
+	 {"unpacked", N_("Unpacking %s") }, 
+	 {NULL, NULL}
+      },
+      // Configure operation
+      { 
+	 {"unpacked",N_("Preparing to configure %s") },
+	 {"half-configured", N_("Configuring %s") },
+	 { "installed", N_("Installed %s")},
+	 {NULL, NULL}
+      },
+      // Remove operation
+      { 
+	 {"half-configured", N_("Preparing for removal of %s")},
+	 {"half-installed", N_("Removing %s")},
+	 {"config-files",  N_("Removed %s")},
+	 {NULL, NULL}
+      },
+      // Purge operation
+      { 
+	 {"config-files", N_("Preparing to completely remove %s")},
+	 {"not-installed", N_("Completely removed %s")},
+	 {NULL, NULL}
+      },
+   };
+
+   // init the PackageOps map, go over the list of packages that
+   // that will be [installed|configured|removed|purged] and add
+   // them to the PackageOps map (the dpkg states it goes through)
+   // and the PackageOpsTranslations (human readable strings)
+   for (vector<Item>::const_iterator I = List.begin(); I != List.end(); ++I)
+   {
+      if((*I).Pkg.end() == true)
+	 continue;
+
+      string const name = (*I).Pkg.FullName();
+      PackageOpsDone[name] = 0;
+      for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL; ++i)
+      {
+	 PackageOps[name].push_back(DpkgStatesOpMap[(*I).Op][i]);
+	 PackagesTotal++;
+      }
+   }
+}
+                                                                        /*}}}*/
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
@@ -947,21 +1015,11 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    d->progress = progress;
 
    // Generate the base argument list for dpkg
-   std::vector<const char *> Args;
    unsigned long StartSize = 0;
-   string Tmp = _config->Find("Dir::Bin::dpkg","dpkg");
-   {
-      string const dpkgChrootDir = _config->FindDir("DPkg::Chroot-Directory", "/");
-      size_t dpkgChrootLen = dpkgChrootDir.length();
-      if (dpkgChrootDir != "/" && Tmp.find(dpkgChrootDir) == 0)
-      {
-	 if (dpkgChrootDir[dpkgChrootLen - 1] == '/')
-	    --dpkgChrootLen;
-	 Tmp = Tmp.substr(dpkgChrootLen);
-      }
-   }
-   Args.push_back(Tmp.c_str());
-   StartSize += Tmp.length();
+   std::vector<const char *> Args;
+   std::string DpkgExecutable = getDpkgExecutable();
+   Args.push_back(DpkgExecutable.c_str());
+   StartSize += DpkgExecutable.length();
 
    // Stick in any custom dpkg options
    Configuration::Item const *Opts = _config->Tree("DPkg::Options");
@@ -1018,54 +1076,8 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
    if (_config->FindB("DPkg::ConfigurePending", SmartConf) == true)
       List.push_back(Item(Item::ConfigurePending, PkgIterator()));
 
-   // map the dpkg states to the operations that are performed
-   // (this is sorted in the same way as Item::Ops)
-   static const struct DpkgState DpkgStatesOpMap[][7] = {
-      // Install operation
-      { 
-	 {"half-installed", N_("Preparing %s")}, 
-	 {"unpacked", N_("Unpacking %s") }, 
-	 {NULL, NULL}
-      },
-      // Configure operation
-      { 
-	 {"unpacked",N_("Preparing to configure %s") },
-	 {"half-configured", N_("Configuring %s") },
-	 { "installed", N_("Installed %s")},
-	 {NULL, NULL}
-      },
-      // Remove operation
-      { 
-	 {"half-configured", N_("Preparing for removal of %s")},
-	 {"half-installed", N_("Removing %s")},
-	 {"config-files",  N_("Removed %s")},
-	 {NULL, NULL}
-      },
-      // Purge operation
-      { 
-	 {"config-files", N_("Preparing to completely remove %s")},
-	 {"not-installed", N_("Completely removed %s")},
-	 {NULL, NULL}
-      },
-   };
-
-   // init the PackageOps map, go over the list of packages that
-   // that will be [installed|configured|removed|purged] and add
-   // them to the PackageOps map (the dpkg states it goes through)
-   // and the PackageOpsTranslations (human readable strings)
-   for (vector<Item>::const_iterator I = List.begin(); I != List.end(); ++I)
-   {
-      if((*I).Pkg.end() == true)
-	 continue;
-
-      string const name = (*I).Pkg.FullName();
-      PackageOpsDone[name] = 0;
-      for(int i=0; (DpkgStatesOpMap[(*I).Op][i]).state != NULL; ++i)
-      {
-	 PackageOps[name].push_back(DpkgStatesOpMap[(*I).Op][i]);
-	 PackagesTotal++;
-      }
-   }
+   // for the progress
+   BuildPackagesProgressMap();
 
    d->stdin_is_dev_null = false;
 
