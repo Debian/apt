@@ -107,6 +107,15 @@ class pkgDPkgPM : public pkgPackageManager
    void DoTerminalPty(int master);
    void DoDpkgStatusFd(int statusfd);
    void ProcessDpkgStatusLine(char *line);
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+   void DoDpkgStatusFd(int statusfd, int unused) {
+      DoDpkgStatusFd(statusfd);
+   }
+   void ProcessDpkgStatusLine(int unused, char *line) {
+      ProcessDpkgStatusLine(line);
+   }
+#endif
+
 
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,std::string File);
