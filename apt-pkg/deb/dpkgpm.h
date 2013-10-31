@@ -101,6 +101,8 @@ class pkgDPkgPM : public pkgPackageManager
 
    // helper
    void BuildPackagesProgressMap();
+   void StartPtyMagic();
+   void StopPtyMagic();
    
    // input processing
    void DoStdin(int master);
