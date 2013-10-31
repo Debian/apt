@@ -13,6 +13,28 @@
 namespace APT {
 namespace Progress {
 
+PackageManager* PackageManagerProgressFactory()
+{
+   // select the right progress
+   int status_fd = _config->FindI("APT::Status-Fd", -1);
+   int status_deb822_fd = _config->FindI("APT::Status-deb822-Fd", -1);
+
+   APT::Progress::PackageManager *progress = NULL;
+   if (status_deb822_fd > 0)
+      progress = new APT::Progress::PackageManagerProgressDeb822Fd(
+         status_deb822_fd);
+   else if (status_fd > 0)
+      progress = new APT::Progress::PackageManagerProgressFd(status_fd);
+   else if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
+      progress = new APT::Progress::PackageManagerFancy();
+   else if (_config->FindB("Dpkg::Progress", 
+                           _config->FindB("DpkgPM::Progress", false)) == true)
+      progress = new APT::Progress::PackageManagerText();
+   else
+      progress = new APT::Progress::PackageManager();
+   return progress;
+}
+
 bool PackageManager::StatusChanged(std::string PackageName, 
                                    unsigned int StepsDone,
                                    unsigned int TotalSteps,

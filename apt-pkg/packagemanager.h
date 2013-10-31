@@ -26,6 +26,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/install-progress.h>
+#include <apt-pkg/init.h>
 
 #include <string>
 #include <iostream>
@@ -87,7 +88,12 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual bool Install(PkgIterator /*Pkg*/,std::string /*File*/) {return false;};
    virtual bool Configure(PkgIterator /*Pkg*/) {return false;};
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    virtual bool Go(APT::Progress::PackageManager *progress) {return true;};
+#else
+   virtual bool Go(int StatusFd=-1) {return true;};
+#endif
+
    virtual void Reset() {};
 
    // the result of the operation
@@ -100,9 +106,13 @@ class pkgPackageManager : protected pkgCache::Namespace
 		    pkgRecords *Recs);
 
    // Do the installation 
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
    // compat
    __deprecated OrderResult DoInstall(int statusFd=-1);
+#else
+   OrderResult DoInstall(int statusFd=-1);
+#endif
 
    // stuff that needs to be done before the fork() of a library that
    // uses apt
@@ -110,11 +120,14 @@ class pkgPackageManager : protected pkgCache::Namespace
       Res = OrderInstall();
       return Res;
    };
-
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
    // compat
    __deprecated OrderResult DoInstallPostFork(int statusFd=-1);
+#else
+   OrderResult DoInstallPostFork(int statusFd=-1);
+#endif
 
    // ?
    bool FixMissing();

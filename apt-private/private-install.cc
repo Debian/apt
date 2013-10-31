@@ -24,6 +24,7 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/install-progress.h>
+#include <apt-pkg/init.h>
 
 #include <set>
 #include <locale.h>
@@ -105,12 +106,14 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    {
       pkgSimulate PM(Cache);
 
-      int status_fd = _config->FindI("APT::Status-Fd",-1);
-      APT::Progress::PackageManager *progress = NULL;
-      if (status_fd > 0)
-         progress = new APT::Progress::PackageManagerProgressFd(status_fd);
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+      APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
       delete progress;
+#else
+      int status_fd = _config->FindI("APT::Status-Fd",-1);
+      pkgPackageManager::OrderResult Res = PM.DoInstall(status_fd);
+#endif
 
       if (Res == pkgPackageManager::Failed)
 	 return false;
@@ -340,26 +343,14 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 
       _system->UnLock();
       
-      // FIXME: make this a factory
-      // select the right progress
-      int status_fd = _config->FindI("APT::Status-Fd", -1);
-      int status_deb822_fd = _config->FindI("APT::Status-deb822-Fd", -1);
-
-      APT::Progress::PackageManager *progress = NULL;
-      if (status_deb822_fd > 0)
-         progress = new APT::Progress::PackageManagerProgressDeb822Fd(
-            status_deb822_fd);
-      else if (status_fd > 0)
-         progress = new APT::Progress::PackageManagerProgressFd(status_fd);
-      else if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
-         progress = new APT::Progress::PackageManagerFancy();
-      else if (_config->FindB("Dpkg::Progress", 
-                _config->FindB("DpkgPM::Progress", false)) == true)
-         progress = new APT::Progress::PackageManagerText();
-      else
-         progress = new APT::Progress::PackageManager();
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+      APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
       pkgPackageManager::OrderResult Res = PM->DoInstall(progress);
       delete progress;
+#else
+      int status_fd = _config->FindI("APT::Status-Fd", -1);
+      pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
+#endif
 
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;

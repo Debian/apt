@@ -15,6 +15,7 @@
 #include <map>
 #include <stdio.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/init.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::vector;
@@ -112,7 +113,13 @@ class pkgDPkgPM : public pkgPackageManager
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge = false);
 
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    virtual bool Go(APT::Progress::PackageManager *progress);
+#else
+   virtual bool Go(int StatusFd=-1);
+   bool GoNoABIBreak(APT::Progress::PackageManager *progress);
+#endif
+
    virtual void Reset();
    
    public:

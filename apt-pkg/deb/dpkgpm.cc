@@ -1000,6 +1000,19 @@ void pkgDPkgPM::BuildPackagesProgressMap()
    }
 }
                                                                         /*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+bool pkgDPkgPM::Go(int StatusFd)
+{
+   APT::Progress::PackageManager *progress = NULL;
+   if (StatusFd == -1)
+      progress = APT::Progress::PackageManagerProgressFactory();
+   else
+      progress = new APT::Progress::PackageManagerProgressFd(StatusFd);
+   
+   return GoNoABIBreak(progress);
+}
+#endif
+
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
 /* This globs the operations and calls dpkg 
@@ -1009,7 +1022,11 @@ void pkgDPkgPM::BuildPackagesProgressMap()
  * through to human readable (and i10n-able)
  * names and calculates a percentage for each step.
  */
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
+#else
+bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
+#endif
 {
    pkgPackageManager::SigINTStop = false;
    d->progress = progress;

@@ -1030,15 +1030,16 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 // PM::DoInstallPostFork - compat /*{{{*/
 // ---------------------------------------------------------------------
 									/*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
 {
-      APT::Progress::PackageManager *progress = new
-         APT::Progress::PackageManagerProgressFd(statusFd);
-      pkgPackageManager::OrderResult res = DoInstallPostFork(progress);
-      delete progress;
-      return res;
-   }
+   APT::Progress::PackageManager *progress = new
+      APT::Progress::PackageManagerProgressFd(statusFd);
+   pkgPackageManager::OrderResult res = DoInstallPostFork(progress);
+   delete progress;
+   return res;
+}
 									/*}}}*/
 // PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
 // ---------------------------------------------------------------------
@@ -1051,10 +1052,22 @@ pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
    
    return Res;
 };
+#else
+pkgPackageManager::OrderResult
+pkgPackageManager::DoInstallPostFork(int statusFd)
+{
+   bool goResult = Go(statusFd);
+   if(goResult == false) 
+      return Failed;
+   
+   return Res;
+}
+#endif
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* compat */
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(int statusFd)
 {
@@ -1064,11 +1077,21 @@ pkgPackageManager::DoInstall(int statusFd)
     delete progress;
     return res;
  }
+#else
+pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
+{
+   if(DoInstallPreFork() == Failed)
+      return Failed;
+
+   return DoInstallPostFork(statusFd);
+}
+#endif
 									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
 /* This uses the filenames in FileNames and the information in the
    DepCache to perform the installation of packages.*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 pkgPackageManager::OrderResult 
 pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
 {
@@ -1077,4 +1100,5 @@ pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
    
    return DoInstallPostFork(progress);
 }
+#endif
 									/*}}}*/	      

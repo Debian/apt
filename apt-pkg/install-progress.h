@@ -8,6 +8,9 @@
 namespace APT {
 namespace Progress {
 
+ class PackageManager;
+ PackageManager* PackageManagerProgressFactory();
+
  class PackageManager
  {
  private:
