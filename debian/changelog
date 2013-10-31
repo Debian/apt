@@ -1,3 +1,27 @@
+apt (0.9.13~exp1) UNRELEASED; urgency=low
+
+  * Improve the API for APT::Upgrade::Upgrade()
+  * Re-add "Calculating upgrade..." message
+  * move upgrade releated code into upgrade.{cc,h}
+  * Move ListUpdate/AquireUpdate into update.{cc,h}
+  * Add new apt-pkg/install-progress.h with APT::Progress::PackageManager
+    progress reporting classes
+  * Move the status-fd progress reporting out of the pkgDPkgPM class
+    and into PackageManagerProgressFd
+  * Fix reading dpkg --status-fd on reinstalls
+  * Add new APT::Status-deb822-Fd progress output
+  * add Acquire::http::Proxy-Auto-Detect to the apt.conf.5 manpage
+    (closes: 726597)
+  * Fix detection when multiarch packages are reported by dpkg as
+    disappeared Packages
+  * test/integration/run-tests: output the failed test names
+  * Code Cleanup in pkgDPkgPM
+  * prepare next ABI via #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+  * add new pid_t ExecFork(std::set<int> KeepFDs)
+  * Avoid flickering when "apt-get -o DpkgPM::Progress-Fancy=1" is use
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 31 Oct 2013 23:25:59 +0100
+
 apt (0.9.12.1) unstable; urgency=low
 
   [ Michael Vogt ]
