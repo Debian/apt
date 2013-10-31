@@ -149,7 +149,7 @@ void PackageManagerProgressDeb822Fd::WriteToStatusFd(std::string s)
    FileFd::Write(OutStatusFd, s.c_str(), s.size());   
 }
 
-void PackageManagerProgressDeb822Fd::Start()
+void PackageManagerProgressDeb822Fd::StartDpkg()
 {
    // FIXME: use SetCloseExec here once it taught about throwing
    //        exceptions instead of doing _exit(100) on failure

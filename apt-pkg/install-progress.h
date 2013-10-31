@@ -97,7 +97,7 @@ namespace Progress {
  public:
     PackageManagerProgressDeb822Fd(int progress_fd);
 
-    virtual void Start();
+    virtual void StartDpkg();
     virtual void Stop();
 
     virtual bool StatusChanged(std::string PackageName, 
