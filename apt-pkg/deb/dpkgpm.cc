@@ -55,7 +55,7 @@ public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
 			term_out(NULL), history_out(NULL), 
                         last_reported_progress(0.0), nr_terminal_rows(0),
-                        fancy_progress_output(false)
+                        fancy_progress_output(false), master(-1), slave(-1)
    {
       dpkgbuf[0] = '\0';
       if(_config->FindB("Dpkg::Progress-Fancy", false) == true)
@@ -63,6 +63,7 @@ public:
          fancy_progress_output = true;
          _config->Set("DpkgPM::Progress", true);
       }
+
    }
    bool stdin_is_dev_null;
    // the buffer we use for the dpkg status-fd reading
@@ -75,6 +76,16 @@ public:
    float last_reported_progress;
    int nr_terminal_rows;
    bool fancy_progress_output;
+
+   // pty stuff
+   struct	termios tt;
+   int master;
+   int slave;
+
+   // signals
+   sigset_t sigmask;
+   sigset_t original_sigmask;
+
 };
 
 namespace
@@ -1055,6 +1066,61 @@ void pkgDPkgPM::CleanupTerminal()
    }
 }
 
+void pkgDPkgPM::StartPtyMagic()
+{
+   // setup the pty and stuff
+   struct	winsize win;
+
+   // if tcgetattr does not return zero there was a error
+   // and we do not do any pty magic
+   _error->PushToStack();
+   if (tcgetattr(STDOUT_FILENO, &d->tt) == 0)
+   {
+       ioctl(1, TIOCGWINSZ, (char *)&win);
+       d->nr_terminal_rows = win.ws_row;
+       if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
+       {
+           _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
+           d->master = d->slave = -1;
+        } else {
+	    struct termios rtt;
+	    rtt = d->tt;
+	    cfmakeraw(&rtt);
+	    rtt.c_lflag &= ~ECHO;
+	    rtt.c_lflag |= ISIG;
+	    // block SIGTTOU during tcsetattr to prevent a hang if
+	    // the process is a member of the background process group
+	    // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
+	    sigemptyset(&d->sigmask);
+	    sigaddset(&d->sigmask, SIGTTOU);
+	    sigprocmask(SIG_BLOCK,&d->sigmask, &d->original_sigmask);
+	    tcsetattr(0, TCSAFLUSH, &rtt);
+	    sigprocmask(SIG_SETMASK, &d->original_sigmask, 0);
+        }
+      }
+   // complain only if stdout is either a terminal (but still failed) or is an invalid
+      // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
+      else if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
+         _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
+
+      if (_error->PendingError() == true)
+	 _error->DumpErrors(std::cerr);
+      _error->RevertToStack();
+
+      // setup terminal
+      SetupTerminalScrollArea(d->nr_terminal_rows);
+}
+
+void pkgDPkgPM::StopPtyMagic()
+{
+   if(d->slave > 0)
+      close(d->slave);
+   if(d->master >= 0) 
+   {
+      tcsetattr(0, TCSAFLUSH, &d->tt);
+      close(d->master);
+   }
+}
 
 // DPkgPM::Go - Run the sequence					/*{{{*/
 // ---------------------------------------------------------------------
@@ -1121,8 +1187,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
    fd_set rfds;
    struct timespec tv;
-   sigset_t sigmask;
-   sigset_t original_sigmask;
 
    unsigned int const MaxArgs = _config->FindI("Dpkg::MaxArgs",8*1024);
    unsigned int const MaxArgBytes = _config->FindI("Dpkg::MaxArgBytes",32*1024);
@@ -1210,8 +1274,12 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	 dpkgMultiArch = true;
    }
 
-   // this loop is runs once per operation
-   for (vector<Item>::const_iterator I = List.begin(); I != List.end();)
+   // start pty magic before the loop
+   StartPtyMagic();
+
+   // this loop is runs once per dpkg operation
+   vector<Item>::const_iterator I = List.begin();
+   while (I != List.end())
    {
       // Do all actions with the same Op in one run
       vector<Item>::const_iterator J = I;
@@ -1402,47 +1470,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
 
-      struct	termios tt;
-      struct	winsize win;
-      int	master = -1;
-      int	slave = -1;
-
-      // if tcgetattr does not return zero there was a error
-      // and we do not do any pty magic
-      _error->PushToStack();
-      if (tcgetattr(STDOUT_FILENO, &tt) == 0)
-      {
-	 ioctl(1, TIOCGWINSZ, (char *)&win);
-         d->nr_terminal_rows = win.ws_row;
-	 if (openpty(&master, &slave, NULL, &tt, &win) < 0)
-	 {
-	    _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
-	    master = slave = -1;
-	 }  else {
-	    struct termios rtt;
-	    rtt = tt;
-	    cfmakeraw(&rtt);
-	    rtt.c_lflag &= ~ECHO;
-	    rtt.c_lflag |= ISIG;
-	    // block SIGTTOU during tcsetattr to prevent a hang if
-	    // the process is a member of the background process group
-	    // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
-	    sigemptyset(&sigmask);
-	    sigaddset(&sigmask, SIGTTOU);
-	    sigprocmask(SIG_BLOCK,&sigmask, &original_sigmask);
-	    tcsetattr(0, TCSAFLUSH, &rtt);
-	    sigprocmask(SIG_SETMASK, &original_sigmask, 0);
-	 }
-      }
-      // complain only if stdout is either a terminal (but still failed) or is an invalid
-      // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
-      else if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
-         _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
-
-      if (_error->PendingError() == true)
-	 _error->DumpErrors(std::cerr);
-      _error->RevertToStack();
-
        // Fork dpkg
       pid_t Child;
       _config->Set("APT::Keep-Fds::",fd[1]);
@@ -1461,15 +1488,15 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       if (Child == 0)
       {
 
-	 if(slave >= 0 && master >= 0) 
+	 if(d->slave >= 0 && d->master >= 0) 
 	 {
 	    setsid();
-	    ioctl(slave, TIOCSCTTY, 0);
-	    close(master);
-	    dup2(slave, 0);
-	    dup2(slave, 1);
-	    dup2(slave, 2);
-	    close(slave);
+	    ioctl(d->slave, TIOCSCTTY, 0);
+	    close(d->master);
+	    dup2(d->slave, 0);
+	    dup2(d->slave, 1);
+	    dup2(d->slave, 2);
+	    close(d->slave);
 	 }
 	 close(fd[0]); // close the read end of the pipe
 
@@ -1493,9 +1520,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 	    if (fcntl(STDIN_FILENO,F_SETFL,Flags & (~(long)O_NONBLOCK)) < 0)
 	       _exit(100);
 	 }
-         // setup terminal
-         SetupTerminalScrollArea(d->nr_terminal_rows);
-         SendTerminalProgress(PackagesDone/float(PackagesTotal)*100.0);
 
 	 /* No Job Control Stop Env is a magic dpkg var that prevents it
 	    from using sigstop */
@@ -1519,12 +1543,9 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       int const _dpkgin = fd[0];
       close(fd[1]);                        // close the write end of the pipe
 
-      if(slave > 0)
-	 close(slave);
-
       // setups fds
-      sigemptyset(&sigmask);
-      sigprocmask(SIG_BLOCK,&sigmask,&original_sigmask);
+      sigemptyset(&d->sigmask);
+      sigprocmask(SIG_BLOCK,&d->sigmask,&d->original_sigmask);
 
       /* free vectors (and therefore memory) as we don't need the included data anymore */
       for (std::vector<char *>::const_iterator p = Packages.begin();
@@ -1553,18 +1574,18 @@ bool pkgDPkgPM::Go(int OutStatusFd)
 
 	 // wait for input or output here
 	 FD_ZERO(&rfds);
-	 if (master >= 0 && !d->stdin_is_dev_null)
+	 if (d->master >= 0 && !d->stdin_is_dev_null)
 	    FD_SET(0, &rfds); 
 	 FD_SET(_dpkgin, &rfds);
-	 if(master >= 0)
-	    FD_SET(master, &rfds);
+	 if(d->master >= 0)
+	    FD_SET(d->master, &rfds);
 	 tv.tv_sec = 1;
 	 tv.tv_nsec = 0;
-	 select_ret = pselect(max(master, _dpkgin)+1, &rfds, NULL, NULL, 
-			      &tv, &original_sigmask);
+	 select_ret = pselect(max(d->master, _dpkgin)+1, &rfds, NULL, NULL, 
+			      &tv, &d->original_sigmask);
 	 if (select_ret < 0 && (errno == EINVAL || errno == ENOSYS))
-	    select_ret = racy_pselect(max(master, _dpkgin)+1, &rfds, NULL,
-				      NULL, &tv, &original_sigmask);
+	    select_ret = racy_pselect(max(d->master, _dpkgin)+1, &rfds, NULL,
+				      NULL, &tv, &d->original_sigmask);
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)
@@ -1575,10 +1596,10 @@ bool pkgDPkgPM::Go(int OutStatusFd)
   	    continue;
   	 } 
 	 
-	 if(master >= 0 && FD_ISSET(master, &rfds))
-	    DoTerminalPty(master);
-	 if(master >= 0 && FD_ISSET(0, &rfds))
-	    DoStdin(master);
+	 if(d->master >= 0 && FD_ISSET(d->master, &rfds))
+	    DoTerminalPty(d->master);
+	 if(d->master >= 0 && FD_ISSET(0, &rfds))
+	    DoStdin(d->master);
 	 if(FD_ISSET(_dpkgin, &rfds))
 	    DoDpkgStatusFd(_dpkgin, OutStatusFd);
       }
@@ -1589,13 +1610,6 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       signal(SIGINT,old_SIGINT);
       
       signal(SIGHUP,old_SIGHUP);
-
-      if(master >= 0) 
-      {
-	 tcsetattr(0, TCSAFLUSH, &tt);
-	 close(master);
-      }
-
       // Check for an error code.
       if (WIFEXITED(Status) == 0 || WEXITSTATUS(Status) != 0)
       {
@@ -1632,6 +1646,7 @@ bool pkgDPkgPM::Go(int OutStatusFd)
       SendTerminalProgress(100);
 
    CleanupTerminal();
+   StopPtyMagic();
 
    if (pkgPackageManager::SigINTStop)
        _error->Warning(_("Operation was interrupted before it could finish"));

@@ -95,6 +95,9 @@ class pkgDPkgPM : public pkgPackageManager
    // dpkg log
    bool OpenLog();
    bool CloseLog();
+
+   void StartPtyMagic();
+   void StopPtyMagic();
    
    // input processing
    void DoStdin(int master);
