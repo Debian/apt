@@ -27,8 +27,14 @@ namespace Progress {
        : percentage(0.0), last_reported_progress(-1) {};
     virtual ~PackageManager() {};
 
+    /* Global Start/Stop */
     virtual void Start() {};
     virtual void Stop() {};
+
+    /* When dpkg is invoked (may happen multiple times for each 
+     * install/remove block 
+    */
+    virtual void StartDpkg() {};
 
     virtual pid_t fork() {return fork(); };
 
@@ -62,7 +68,7 @@ namespace Progress {
  public:
     PackageManagerProgressFd(int progress_fd);
 
-    virtual void Start();
+    virtual void StartDpkg();
     virtual void Stop();
 
     virtual bool StatusChanged(std::string PackageName, 

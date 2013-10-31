@@ -26,6 +26,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #include <zlib.h>
 
@@ -182,6 +183,7 @@ void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);
 bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
 pid_t ExecFork();
+pid_t ExecFork(std::set<int> keep_fds);
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
 // File string manipulators

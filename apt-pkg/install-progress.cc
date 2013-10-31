@@ -63,7 +63,7 @@ void PackageManagerProgressFd::WriteToStatusFd(std::string s)
    FileFd::Write(OutStatusFd, s.c_str(), s.size());   
 }
 
-void PackageManagerProgressFd::Start()
+void PackageManagerProgressFd::StartDpkg()
 {
    if(OutStatusFd <= 0)
       return;
@@ -83,8 +83,6 @@ void PackageManagerProgressFd::Start()
 
 void PackageManagerProgressFd::Stop()
 {
-   // clear the Keep-Fd again
-   _config->Clear("APT::Keep-Fds", OutStatusFd);
 }
 
 void PackageManagerProgressFd::Error(std::string PackageName,
@@ -168,8 +166,6 @@ void PackageManagerProgressDeb822Fd::Start()
 
 void PackageManagerProgressDeb822Fd::Stop()
 {
-   // clear the Keep-Fd again
-   _config->Clear("APT::Keep-Fds", OutStatusFd);
 }
 
 void PackageManagerProgressDeb822Fd::Error(std::string PackageName,

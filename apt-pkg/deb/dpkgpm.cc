@@ -416,17 +416,20 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       unsigned int InfoFD = _config->FindI(OptSec + "::InfoFD", STDIN_FILENO);
       
       // Create the pipes
+      std::set<int> KeepFDs;
       int Pipes[2];
       if (pipe(Pipes) != 0)
 	 return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
       if (InfoFD != (unsigned)Pipes[0])
 	 SetCloseExec(Pipes[0],true);
       else
-	 _config->Set("APT::Keep-Fds::", Pipes[0]);
+         KeepFDs.insert(Pipes[0]);
+
+
       SetCloseExec(Pipes[1],true);
 
       // Purified Fork for running the script
-      pid_t Process = ExecFork();
+      pid_t Process = ExecFork(KeepFDs);
       if (Process == 0)
       {
 	 // Setup the FDs
@@ -448,8 +451,6 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 	 execv(Args[0],(char **)Args);
 	 _exit(100);
       }
-      if (InfoFD == (unsigned)Pipes[0])
-	 _config->Clear("APT::Keep-Fds", Pipes[0]);
       close(Pipes[0]);
       FILE *F = fdopen(Pipes[1],"w");
       if (F == 0)
@@ -1375,11 +1376,14 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
       // ignore SIGHUP as well (debian #463030)
       sighandler_t old_SIGHUP = signal(SIGHUP,SIG_IGN);
 
-      pid_t Child = ExecFork();
-      // This is the child
+      // now run dpkg
+      d->progress->StartDpkg();
+      std::set<int> KeepFDs;
+      KeepFDs.insert(fd[1]);
+      pid_t Child = ExecFork(KeepFDs);
       if (Child == 0)
       {
-
+         // This is the child
 	 if(d->slave >= 0 && d->master >= 0) 
 	 {
 	    setsid();
@@ -1425,9 +1429,6 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
       if (_config->FindB("DPkg::UseIoNice", false) == true)
 	 ionice(Child);
 
-      // clear the Keep-Fd again
-      _config->Clear("APT::Keep-Fds",fd[1]);
-
       // Wait for dpkg
       int Status = 0;
 
@@ -1471,13 +1472,14 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 	 FD_SET(_dpkgin, &rfds);
 	 if(d->master >= 0)
 	    FD_SET(d->master, &rfds);
-	 tv.tv_sec = 1;
-	 tv.tv_nsec = 0;
+         tv.tv_sec = 0;
+         tv.tv_nsec = d->progress->GetPulseInterval();
 	 select_ret = pselect(max(d->master, _dpkgin)+1, &rfds, NULL, NULL, 
 			      &tv, &d->original_sigmask);
 	 if (select_ret < 0 && (errno == EINVAL || errno == ENOSYS))
 	    select_ret = racy_pselect(max(d->master, _dpkgin)+1, &rfds, NULL,
 				      NULL, &tv, &d->original_sigmask);
+         d->progress->Pulse();
 	 if (select_ret == 0) 
   	    continue;
   	 else if (select_ret < 0 && errno == EINTR)

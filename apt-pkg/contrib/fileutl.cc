@@ -767,6 +767,25 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
    otherwise acts like normal fork. */
 pid_t ExecFork()
 {
+      set<int> KeepFDs;
+
+      Configuration::Item const *Opts = _config->Tree("APT::Keep-Fds");
+      if (Opts != 0 && Opts->Child != 0)
+      {
+	 Opts = Opts->Child;
+	 for (; Opts != 0; Opts = Opts->Next)
+	 {
+	    if (Opts->Value.empty() == true)
+	       continue;
+	    int fd = atoi(Opts->Value.c_str());
+	    KeepFDs.insert(fd);
+	 }
+      }
+      return ExecFork(KeepFDs);
+}
+
+pid_t ExecFork(std::set<int> KeepFDs)
+{
    // Fork off the process
    pid_t Process = fork();
    if (Process < 0)
@@ -785,20 +804,6 @@ pid_t ExecFork()
       signal(SIGWINCH,SIG_DFL);
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
-
-      set<int> KeepFDs;
-      Configuration::Item const *Opts = _config->Tree("APT::Keep-Fds");
-      if (Opts != 0 && Opts->Child != 0)
-      {
-	 Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-	 {
-	    if (Opts->Value.empty() == true)
-	       continue;
-	    int fd = atoi(Opts->Value.c_str());
-	    KeepFDs.insert(fd);
-	 }
-      }
 
       // Close all of our FDs - just in case
       for (int K = 3; K != 40; K++)
