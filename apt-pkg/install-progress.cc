@@ -235,6 +235,11 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
      static const char *move_cursor_up = "\033[1A";
      std::cout << move_cursor_up;
 
+     // setup env for (hopefully!) ncurses
+     string s;
+     strprintf(s, "%i", nr_rows);
+     setenv("LINES", s.c_str(), 1);
+
      std::flush(std::cout);
 }
 
