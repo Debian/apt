@@ -19,6 +19,7 @@ apt (0.9.13~exp1) experimental; urgency=low
   * prepare next ABI via #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
   * add new pid_t ExecFork(std::set<int> KeepFDs)
   * Avoid flickering when "apt-get -o DpkgPM::Progress-Fancy=1" is use
+  * use sysconf(_SC_OPEN_MAX) in ExecFork()
 
  -- Michael Vogt <mvo@debian.org>  Fri, 01 Nov 2013 10:03:06 +0100
 

@@ -40,11 +40,11 @@
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/acquire.h>
-// include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatiblity
 using std::ostream;
 #endif
 
 #ifndef APT_9_CLEANER_HEADERS
+// include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatiblity
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/update.h>
 #endif

@@ -769,6 +769,7 @@ pid_t ExecFork()
 {
       set<int> KeepFDs;
 
+      // FIXME: remove looking at APT::Keep-Fds eventually, its a hack
       Configuration::Item const *Opts = _config->Tree("APT::Keep-Fds");
       if (Opts != 0 && Opts->Child != 0)
       {
@@ -806,7 +807,7 @@ pid_t ExecFork(std::set<int> KeepFDs)
       signal(SIGTSTP,SIG_DFL);
 
       // Close all of our FDs - just in case
-      for (int K = 3; K != 40; K++)
+      for (int K = 3; K != sysconf(_SC_OPEN_MAX); K++)
       {
 	 if(KeepFDs.find(K) == KeepFDs.end())
 	    fcntl(K,F_SETFD,FD_CLOEXEC);

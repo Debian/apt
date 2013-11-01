@@ -13,6 +13,10 @@
 namespace APT {
 namespace Progress {
 
+
+/* Return a APT::Progress::PackageManager based on the global
+ * apt configuration (i.e. APT::Status-Fd and APT::Status-deb822-Fd)
+ */
 PackageManager* PackageManagerProgressFactory()
 {
    // select the right progress
