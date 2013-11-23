@@ -398,11 +398,17 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      only if the client uses a known identifier.</para>
 
      <para><literal>Acquire::http::Proxy-Auto-Detect</literal> can be used to
-     specify a external command to discover the http proxy to use. Apt expects
+     specify an external command to discover the http proxy to use. Apt expects
      the command to output the proxy on stdout in the style
-     <literal>http://proxy:port/</literal>. See the 
-     &squid-deb-proxy-client; package for a example implementation that
-     uses avahi.</para>
+     <literal>http://proxy:port/</literal>. This will override the
+     generic <literal>Acquire::http::Proxy</literal> but not any specific
+     host proxy configuration set via 
+     <literal>Acquire::http::Proxy::$HOST</literal>.
+
+     See the &squid-deb-proxy-client; package for an example implementation that
+     uses avahi. This option takes precedence over the legacy option name 
+     <literal>ProxyAutoDetect</literal>.
+     </para>
 
      </listitem>
      </varlistentry>

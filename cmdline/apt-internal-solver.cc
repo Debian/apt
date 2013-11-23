@@ -19,6 +19,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/upgrade.h>
 
 #include <unistd.h>
 #include <cstdio>

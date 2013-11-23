@@ -43,7 +43,12 @@
 using std::ostream;
 #endif
 
-class pkgAcquireStatus;
+#ifndef APT_9_CLEANER_HEADERS
+// include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatiblity
+#include <apt-pkg/upgrade.h>
+#include <apt-pkg/update.h>
+#endif
+
 
 class pkgSimulate : public pkgPackageManager				/*{{{*/
 {
@@ -85,6 +90,7 @@ private:
 									/*}}}*/
 class pkgProblemResolver						/*{{{*/
 {
+ private:
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
@@ -140,20 +146,10 @@ class pkgProblemResolver						/*{{{*/
    ~pkgProblemResolver();
 };
 									/*}}}*/
-bool pkgDistUpgrade(pkgDepCache &Cache);
 bool pkgApplyStatus(pkgDepCache &Cache);
 bool pkgFixBroken(pkgDepCache &Cache);
 
-bool pkgAllUpgrade(pkgDepCache &Cache);
-
-bool pkgAllUpgradeNoDelete(pkgDepCache &Cache);
-
-bool pkgMinimizeUpgrade(pkgDepCache &Cache);
-
 void pkgPrioSortList(pkgCache &Cache,pkgCache::Version **List);
 
-bool ListUpdate(pkgAcquireStatus &progress, pkgSourceList &List, int PulseInterval=0);
-bool AcquireUpdate(pkgAcquire &Fetcher, int const PulseInterval = 0,
-		   bool const RunUpdateScripts = true, bool const ListCleanup = true);
 
 #endif

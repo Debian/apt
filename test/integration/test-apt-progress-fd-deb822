@@ -1,0 +1,64 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+buildsimplenativepackage 'testing' 'amd64' '0.1' 'stable'
+buildsimplenativepackage 'testing' 'all' '0.8.15' 'stable'
+buildsimplenativepackage 'testing2' 'amd64,i386' '0.8.15' 'stable'
+setupaptarchive 
+
+# install native
+exec 3> apt-progress.log
+testsuccess aptget install testing=0.1 -y -o APT::Status-deb822-Fd=3
+
+testequal "Status: progress
+Percent: 0
+Message: Running dpkg
+
+Status: progress
+Package: testing:amd64
+Percent: 0
+Message: Installing testing (amd64)
+
+Status: progress
+Package: testing:amd64
+Percent: 20
+Message: Preparing testing (amd64)
+
+Status: progress
+Package: testing:amd64
+Percent: 40
+Message: Unpacking testing (amd64)
+
+Status: progress
+Package: testing:amd64
+Percent: 60
+Message: Preparing to configure testing (amd64)
+
+Status: progress
+Percent: 60
+Message: Running dpkg
+
+Status: progress
+Package: testing:amd64
+Percent: 60
+Message: Configuring testing (amd64)
+
+Status: progress
+Package: testing:amd64
+Percent: 80
+Message: Configuring testing (amd64)
+
+Status: progress
+Package: testing:amd64
+Percent: 100
+Message: Installed testing (amd64)
+" cat apt-progress.log
+
+
+rm -f apt-progress*.log

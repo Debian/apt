@@ -26,7 +26,6 @@
 #include <apt-pkg/sptr.h>
 
 #include <iostream>
-#include <fcntl.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1028,32 +1027,78 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	 
    return Completed;
 }
+// PM::DoInstallPostFork - compat /*{{{*/
+// ---------------------------------------------------------------------
+									/*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+pkgPackageManager::OrderResult
+pkgPackageManager::DoInstallPostFork(int statusFd)
+{
+   APT::Progress::PackageManager *progress = new
+      APT::Progress::PackageManagerProgressFd(statusFd);
+   pkgPackageManager::OrderResult res = DoInstallPostFork(progress);
+   delete progress;
+   return res;
+}
 									/*}}}*/
 // PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
 // ---------------------------------------------------------------------
 pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
+{
+   bool goResult = Go(progress);
+   if(goResult == false) 
+      return Failed;
+   
+   return Res;
+};
+#else
+pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
 {
-      if(statusFd > 0)
-         // FIXME: use SetCloseExec here once it taught about throwing
-	 //        exceptions instead of doing _exit(100) on failure
-	 fcntl(statusFd,F_SETFD,FD_CLOEXEC); 
-      bool goResult = Go(statusFd);
-      if(goResult == false) 
-	 return Failed;
-
-      return Res;
-};
-
+   bool goResult = Go(statusFd);
+   if(goResult == false) 
+      return Failed;
+   
+   return Res;
+}
+#endif
+									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
-/* This uses the filenames in FileNames and the information in the
-   DepCache to perform the installation of packages.*/
+/* compat */
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstall(int statusFd)
+{
+    APT::Progress::PackageManager *progress = new
+       APT::Progress::PackageManagerProgressFd(statusFd);
+    OrderResult res = DoInstall(progress);
+    delete progress;
+    return res;
+ }
+#else
 pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
 {
    if(DoInstallPreFork() == Failed)
       return Failed;
-   
+
    return DoInstallPostFork(statusFd);
 }
+#endif
+									/*}}}*/	
+// PM::DoInstall - Does the installation				/*{{{*/
+// ---------------------------------------------------------------------
+/* This uses the filenames in FileNames and the information in the
+   DepCache to perform the installation of packages.*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
+{
+   if(DoInstallPreFork() == Failed)
+      return Failed;
+   
+   return DoInstallPostFork(progress);
+}
+#endif
 									/*}}}*/	      

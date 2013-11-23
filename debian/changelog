@@ -1,4 +1,4 @@
-apt (0.9.12.1ubuntu1) trusty; urgency=low
+apt (0.9.13~exp1ubuntu1) trusty; urgency=low
 
   * merged from the debian/sid branch:
     - debian/gbp.conf: change build branch to ubuntu/master
@@ -13,7 +13,32 @@ apt (0.9.12.1ubuntu1) trusty; urgency=low
     - debian/apt.auto-removal.sh
       + Keep linux-tools packages matching installed kernels
   
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 22 Oct 2013 16:46:46 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Sat, 23 Nov 2013 09:13:14 +0100
+
+apt (0.9.13~exp1) experimental; urgency=low
+
+  * Improve the API for APT::Upgrade::Upgrade()
+  * Re-add "Calculating upgrade..." message
+  * move upgrade releated code into upgrade.{cc,h}
+  * Move ListUpdate/AquireUpdate into update.{cc,h}
+  * Add new apt-pkg/install-progress.h with APT::Progress::PackageManager
+    progress reporting classes
+  * Move the status-fd progress reporting out of the pkgDPkgPM class
+    and into PackageManagerProgressFd
+  * Fix reading dpkg --status-fd on reinstalls
+  * Add new APT::Status-deb822-Fd progress output
+  * add Acquire::http::Proxy-Auto-Detect to the apt.conf.5 manpage
+    (closes: 726597)
+  * Fix detection when multiarch packages are reported by dpkg as
+    disappeared Packages
+  * test/integration/run-tests: output the failed test names
+  * Code Cleanup in pkgDPkgPM
+  * prepare next ABI via #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+  * add new pid_t ExecFork(std::set<int> KeepFDs)
+  * Avoid flickering when "apt-get -o DpkgPM::Progress-Fancy=1" is use
+  * use sysconf(_SC_OPEN_MAX) in ExecFork()
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 01 Nov 2013 10:03:06 +0100
 
 apt (0.9.12.1) unstable; urgency=low
 
