@@ -197,11 +197,11 @@ check_size_constraints()
 		    delta=$(($now-$ctime))
 		fi
 		if [ $delta -le $MinAge ]; then
-		    debug_echo "skip remove by archive size:  $file, delta=$delta < $MinAgeSec"
+		    debug_echo "skip remove by archive size:  $file, delta=$delta < $MinAge"
 		    break
 		else
 		    # delete oldest file
-		    debug_echo "remove by archive size: $file, delta=$delta >= $MinAgeSec (sec), size=$size >= $MaxSize"
+		    debug_echo "remove by archive size: $file, delta=$delta >= $MinAge (sec), size=$size >= $MaxSize"
 		    rm -f $file
 		fi
 	    fi
