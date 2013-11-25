@@ -149,7 +149,7 @@ bool List(CommandLine &Cmd)
          output_map.insert(std::make_pair<std::string, std::string>(
             V.ParentPkg().Name(), outs.str()));
       } else {
-         ListSingleVersion(CacheFile, records, V, outs);
+         ListSingleVersion(CacheFile, records, V, outs, false);
          output_map.insert(std::make_pair<std::string, std::string>(
                            V.ParentPkg().Name(), outs.str()));
       }
