@@ -41,6 +41,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/hashes.h>
 
 #include <apti18n.h>
 
@@ -61,21 +62,21 @@
 // ---------------------------------------------------------------------
 bool EditSources(CommandLine &CmdL)
 {
-   // FIXME: suport CmdL.FileList to specify sources.list.d files
-
-   std::string sourceslist = _config->FindFile("Dir::Etc::sourcelist");
-
-   // FIXME: take hash before, 
-   //        when changed display message to apt update
    bool res;
    pkgSourceList sl;
+   std::string outs;
+
+   // FIXME: suport CmdL.FileList to specify sources.list.d files
+   std::string sourceslist = _config->FindFile("Dir::Etc::sourcelist");
+
+   HashString before;
+   before.FromFile(sourceslist);
 
    do {
       EditFileInSensibleEditor(sourceslist);
       _error->PushToStack();
       res = sl.Read(sourceslist);
       if (!res) {
-         std::string outs;
          strprintf(outs, _("Failed to parse %s. Edit again? "),
                    sourceslist.c_str());
          std::cout << outs;
@@ -83,6 +84,13 @@ bool EditSources(CommandLine &CmdL)
       }
       _error->RevertToStack();
    } while (res == false);
+
+   if (!before.VerifyFile(sourceslist)) {
+      strprintf(
+         outs, _("Your '%s' file changed, please run 'apt-get update'."),
+         sourceslist.c_str());
+      std::cout << outs << std::endl;
+   }
 
    return true;
 }
