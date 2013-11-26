@@ -67,9 +67,22 @@ bool EditSources(CommandLine &CmdL)
 
    // FIXME: take hash before, 
    //        when changed display message to apt update
-   //        do syntax check after save (like visudo)
+   bool res;
+   pkgSourceList sl;
 
-   EditFileInSensibleEditor(sourceslist);
+   do {
+      EditFileInSensibleEditor(sourceslist);
+      _error->PushToStack();
+      res = sl.Read(sourceslist);
+      if (!res) {
+         std::string outs;
+         strprintf(outs, _("Failed to parse %s. Edit again? "),
+                   sourceslist.c_str());
+         std::cout << outs;
+         res = !YnPrompt(true);
+      }
+      _error->RevertToStack();
+   } while (res == false);
 
    return true;
 }
