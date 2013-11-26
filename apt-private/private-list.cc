@@ -132,6 +132,8 @@ bool List(CommandLine &Cmd)
    std::map<std::string, std::string> output_map;
    std::map<std::string, std::string>::const_iterator K;
 
+   bool includeSummary = _config->FindB("APT::Cmd::List-Include-Summary");
+
    PackageNameMatcher matcher(patterns);
    LocalitySortedVersionSet bag;
    OpTextProgress progress;
@@ -149,7 +151,7 @@ bool List(CommandLine &Cmd)
          output_map.insert(std::make_pair<std::string, std::string>(
             V.ParentPkg().Name(), outs.str()));
       } else {
-         ListSingleVersion(CacheFile, records, V, outs, false);
+         ListSingleVersion(CacheFile, records, V, outs, includeSummary);
          output_map.insert(std::make_pair<std::string, std::string>(
                            V.ParentPkg().Name(), outs.str()));
       }
