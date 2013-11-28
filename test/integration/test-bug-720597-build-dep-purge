@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'build-essential' 'all' '11.5' 'Multi-Arch: foreign'
+insertinstalledpackage 'pkga' 'all' '1'
+buildsimplenativepackage 'pkgb' 'amd64' '1' 'stable' 'Conflicts: pkga'
+buildsimplenativepackage 'pkgc' 'amd64' '1' 'stable' 'Build-Depends: pkgb'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  pkga
+The following NEW packages will be installed:
+  pkgb
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv pkga [1]
+Inst pkgb (1 stable [amd64])
+Conf pkgb (1 stable [amd64])' aptget build-dep pkgc -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  pkga*
+The following NEW packages will be installed:
+  pkgb
+0 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Purg pkga [1]
+Inst pkgb (1 stable [amd64])
+Conf pkgb (1 stable [amd64])' aptget build-dep pkgc -s --purge
