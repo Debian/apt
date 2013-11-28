@@ -417,6 +417,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       
       // Create the pipes
       std::set<int> KeepFDs;
+      MergeKeepFdsFromConfiguration(KeepFDs);
       int Pipes[2];
       if (pipe(Pipes) != 0)
 	 return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
@@ -1380,6 +1381,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
       d->progress->StartDpkg();
       std::set<int> KeepFDs;
       KeepFDs.insert(fd[1]);
+      MergeKeepFdsFromConfiguration(KeepFDs);
       pid_t Child = ExecFork(KeepFDs);
       if (Child == 0)
       {
