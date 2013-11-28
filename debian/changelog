@@ -1,3 +1,37 @@
+apt (0.9.13.1) unstable; urgency=low
+
+  [ Colin Watson ]
+  * fix "apt-get  --purge build-dep" (closes: #720597)
+  * fix regression that APT::Keep-Fds is not honored (closes: #730490)
+  
+  [ Michael Vogt ]
+  * add "-f" option to "build-dep" as sbuild is using it to fix 
+    regression with cross-building (LP: #1255806)
+  * merge mvo/feature/short-list
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 28 Nov 2013 20:02:39 +0100
+
+apt (0.9.13) unstable; urgency=low
+
+  [ TJ Guthrie ]
+  * Changed MinAgeSec to MinAge in /etc/cron.daily/apt:200,204 
+    LP: #1206047
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 24 Nov 2013 10:56:22 +0100
+
+apt (0.9.13~exp1ubuntu3) trusty; urgency=low
+
+  * Fix "apt-get --purge build-dep" (closes: #720597).
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Tue, 26 Nov 2013 15:40:02 +0000
+
+apt (0.9.13~exp1ubuntu2) trusty; urgency=low
+
+  * Fix two subprocess calls to continue to honour APT::Keep-Fds
+    (LP: #1254696).
+
+ -- Colin Watson <cjwatson@ubuntu.com>  Mon, 25 Nov 2013 16:49:25 +0000
+
 apt (0.9.13~exp1ubuntu1) trusty; urgency=low
 
   * merged from the debian/sid branch:

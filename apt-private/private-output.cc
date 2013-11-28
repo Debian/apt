@@ -158,7 +158,8 @@ std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pk
 }
 									/*}}}*/
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
-                       pkgCache::VerIterator V, std::ostream &out)
+                       pkgCache::VerIterator V, std::ostream &out,
+                       bool include_summary)
 {
    pkgCache::PkgIterator P = V.ParentPkg();
 
@@ -224,9 +225,12 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
             out << GetVersion(CacheFile, V);
       }
       out << " " << GetArchitecture(CacheFile, P) << " ";
-      out << std::endl 
-                << "    " << GetShortDescription(CacheFile, records, P)
-                << std::endl;
+      if (include_summary)
+      {
+         out << std::endl 
+             << "    " << GetShortDescription(CacheFile, records, P)
+             << std::endl;
+      }
    }
 }
 									/*}}}*/
