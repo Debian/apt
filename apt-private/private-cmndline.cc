@@ -149,6 +149,7 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
    else if (CmdMatches("build-dep"))
    {
       addArg('a', "host-architecture", "APT::Get::Host-Architecture", CommandLine::HasArg);
+      addArg(0, "purge", "APT::Get::Purge", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
    }
    else if (CmdMatches("clean", "autoclean", "check", "download", "changelog") ||
