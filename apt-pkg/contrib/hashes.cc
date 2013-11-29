@@ -55,6 +55,26 @@ HashString::HashString(std::string StringedHash)			/*{{{*/
 									/*}}}*/
 bool HashString::VerifyFile(std::string filename) const			/*{{{*/
 {
+   std::string fileHash = GetHashForFile(filename);
+
+   if(_config->FindB("Debug::Hashes",false) == true)
+      std::clog << "HashString::VerifyFile: got: " << fileHash << " expected: " << toStr() << std::endl;
+
+   return (fileHash == Hash);
+}
+									/*}}}*/
+bool HashString::FromFile(std::string filename)          		/*{{{*/
+{
+   // pick the strongest hash
+   if (Type == "")
+      Type = _SupportedHashes[0];
+
+   Hash = GetHashForFile(filename);
+   return true;
+}
+									/*}}}*/
+std::string HashString::GetHashForFile(std::string filename) const      /*{{{*/
+{
    std::string fileHash;
 
    FileFd Fd(filename, FileFd::ReadOnly);
@@ -84,10 +104,7 @@ bool HashString::VerifyFile(std::string filename) const			/*{{{*/
    }
    Fd.Close();
 
-   if(_config->FindB("Debug::Hashes",false) == true)
-      std::clog << "HashString::VerifyFile: got: " << fileHash << " expected: " << toStr() << std::endl;
-
-   return (fileHash == Hash);
+   return fileHash;
 }
 									/*}}}*/
 const char** HashString::SupportedHashes()
