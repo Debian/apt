@@ -1,4 +1,4 @@
-apt (0.9.13.1ubuntu1) UNRELEASED; urgency=low
+apt (0.9.13.1ubuntu1) UNRELEASEDtrusty; urgency=low
 
   * Merged from debian/sid
 
@@ -21,6 +21,19 @@ apt (0.9.13.1) unstable; urgency=low
   * fix apport report writing (LP: #1254499)
 
  -- Michael Vogt <mvo@debian.org>  Fri, 29 Nov 2013 20:50:17 +0100
+
+apt (0.9.13.1~ubuntu1) trusty; urgency=low
+  
+    [ Colin Watson ]
+    * fix "apt-get  --purge build-dep" (closes: #720597)
+    * fix regression that APT::Keep-Fds is not honored (closes: #730490)
+    
+    [ Michael Vogt ]
+    * add "-f" option to "build-dep" as sbuild is using it to fix 
+      regression with cross-building (LP: #1255806)
+    * merge mvo/feature/short-list
+  
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 28 Nov 2013 21:17:43 +0100
 
 apt (0.9.13) unstable; urgency=low
 
