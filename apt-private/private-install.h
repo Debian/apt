@@ -95,6 +95,9 @@ struct TryToInstall {
 	 Cache->GetDepCache()->SetCandidateVersion(s->first);
 
       bool Success = true;
+      // the Changed list contains:
+      //   first: "new version" 
+      //   second: "what-caused the change" 
       std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > Changed;
       for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
 		s != start.end(); ++s)
