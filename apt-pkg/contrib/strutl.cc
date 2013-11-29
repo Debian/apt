@@ -49,6 +49,14 @@ std::string Strip(const std::string &s)
    size_t end = s.find_last_not_of(" \t\n");
    return s.substr(start, end-start+1);
 }
+
+bool Endswith(const std::string &s, const std::string &end)
+{
+   if (end.size() > s.size())
+      return false;
+   return (s.substr(s.size() - end.size(), s.size()) == end);
+}
+
 }
 }
 									/*}}}*/

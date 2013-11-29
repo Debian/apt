@@ -59,6 +59,7 @@
 #include <apt-private/private-update.h>
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-moo.h>
+#include <apt-private/private-utils.h>
 
 #include <apt-private/acqprogress.h>
 
@@ -1379,24 +1380,6 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
    pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
    string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
    return _error->Error("changelog for this version is not (yet) available; try https://launchpad.net/ubuntu/+source/%s/+changelog", srcpkg.c_str());
-}
-									/*}}}*/
-// DisplayFileInPager - Display File with pager        			/*{{{*/
-void DisplayFileInPager(string filename)
-{
-   pid_t Process = ExecFork();
-   if (Process == 0)
-   {
-      const char *Args[3];
-      Args[0] = "/usr/bin/sensible-pager";
-      Args[1] = filename.c_str();
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);
-      exit(100);
-   }
-         
-   // Wait for the subprocess
-   ExecWait(Process, "sensible-pager", false);
 }
 									/*}}}*/
 // DoChangelog - Get changelog from the command line			/*{{{*/

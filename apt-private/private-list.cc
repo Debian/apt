@@ -69,7 +69,7 @@ class PackageNameMatcher : public Matcher				/*{{{*/
             cachefilter = new APT::CacheFilter::PackageNameMatchesFnmatch(pattern);
 #else
          APT::CacheFilter::PackageMatcher *cachefilter = NULL;
-         if(_config->FindB("APT::Cmd::UseRegexp", false) == true)
+         if(_config->FindB("APT::Cmd::Use-Regexp", false) == true)
             cachefilter = new APT::CacheFilter::PackageNameMatchesRegEx(pattern);
          else
             cachefilter = new APT::CacheFilter::PackageNameMatchesFnmatch(pattern);
@@ -145,7 +145,7 @@ bool List(CommandLine &Cmd)
    for (LocalitySortedVersionSet::iterator V = bag.begin(); V != bag.end(); V++)
    {
       std::stringstream outs;
-      if(_config->FindB("APT::Cmd::AllVersions", false) == true)
+      if(_config->FindB("APT::Cmd::All-Versions", false) == true)
       {
          ListAllVersions(CacheFile, records, V.ParentPkg(), outs);
          output_map.insert(std::make_pair<std::string, std::string>(
