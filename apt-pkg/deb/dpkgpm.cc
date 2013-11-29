@@ -201,7 +201,7 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), PackagesDone(0), PackagesTotal(0)
+   : pkgPackageManager(Cache), pkgFailures(0), PackagesDone(0), PackagesTotal(0)
 {
    d = new pkgDPkgPMPrivate();
 }
