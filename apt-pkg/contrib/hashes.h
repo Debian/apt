@@ -36,7 +36,10 @@ class HashString
  protected:
    std::string Type;
    std::string Hash;
-   static const char * _SupportedHashes[10];
+   static const char* _SupportedHashes[10];
+
+   // internal helper
+   std::string GetHashForFile(std::string filename) const;
 
  public:
    HashString(std::string Type, std::string Hash);
@@ -48,6 +51,10 @@ class HashString
 
    // verify the given filename against the currently loaded hash
    bool VerifyFile(std::string filename) const;
+
+   // generate a hash string from the given filename
+   bool FromFile(std::string filename);
+
 
    // helper
    std::string toStr() const;                    // convert to str as "type:hash"
