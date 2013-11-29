@@ -1529,6 +1529,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 	 if(stopOnError) 
 	 {
 	    CloseLog();
+            StopPtyMagic();
             d->progress->Stop();
 	    return false;
 	 }
