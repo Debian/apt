@@ -36,4 +36,5 @@ aptget changelog apt -d -qq
 testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"
 rm apt.changelog aptarchive/pool/apt_1.0.changelog
 
-testequal 'E: changelog download failed' aptget changelog apt -qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'
+# note that this output is different on ubuntu and debian
+testequal 'E: changelog for this version is not (yet) available; try https://launchpad.net/ubuntu/+source/apt/+changelog' aptget changelog apt -qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'
