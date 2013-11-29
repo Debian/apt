@@ -21,10 +21,13 @@ bool EditSources(CommandLine &CmdL)
 
    std::string sourceslist;
    if (CmdL.FileList[1] != NULL)
-      sourceslist = _config->FindDir("Dir::Etc::sourceparts") + CmdL.FileList[1] + ".list";
-   else
+   {
+      sourceslist = _config->FindDir("Dir::Etc::sourceparts") + CmdL.FileList[1];
+      if (!APT::String::Endswith(sourceslist, ".list"))
+         sourceslist += ".list";
+   } else {
       sourceslist = _config->FindFile("Dir::Etc::sourcelist");
-
+   }
    HashString before;
    if (FileExists(sourceslist))
        before.FromFile(sourceslist);
@@ -38,6 +41,7 @@ bool EditSources(CommandLine &CmdL)
          strprintf(outs, _("Failed to parse %s. Edit again? "),
                    sourceslist.c_str());
          std::cout << outs;
+         // FIXME: should we add a "restore previous" option here?
          res = !YnPrompt(true);
       }
       _error->RevertToStack();
