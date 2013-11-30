@@ -44,16 +44,8 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.CndSet("APT::Install-Suggests", false);
    Cnf.CndSet("Dir","/");
    
-   // State   
+   // State
    Cnf.CndSet("Dir::State","var/lib/apt/");
-   
-   /* Just in case something goes horribly wrong, we can fall back to the
-      old /var/state paths.. */
-   struct stat St;   
-   if (stat("/var/lib/apt/.",&St) != 0 &&
-       stat("/var/state/apt/.",&St) == 0)
-      Cnf.CndSet("Dir::State","var/state/apt/");
-       
    Cnf.CndSet("Dir::State::lists","lists/");
    Cnf.CndSet("Dir::State::cdroms","cdroms.list");
    Cnf.CndSet("Dir::State::mirrors","mirrors/");
