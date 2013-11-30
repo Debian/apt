@@ -219,7 +219,7 @@ apt: build-binary build-manpages debian/apt.install
 	dh_fixperms -p$@
 	dh_installdeb -p$@
 	dh_shlibdeps -p$@
-	dh_gencontrol -p$@
+	dh_gencontrol -p$@ -- -Vapt:keyring="$(shell ./vendor/getinfo keyring-package)"
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
