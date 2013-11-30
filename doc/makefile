@@ -12,8 +12,9 @@ include $(DEBIANDOC_H)
 
 doc: manpages debiandoc
 
-examples/sources.list: examples/sources.list.in apt-verbatim.ent
-	sed -e 's#&stable-codename;#$(shell grep --max-count=1 '^<!ENTITY stable-codename "' apt-verbatim.ent | cut -d'"' -f 2)#g' examples/sources.list.in > examples/sources.list
+examples/sources.list: ../vendor/current/sources.list
+	ln -sf $(shell readlink -f $^) $@
+
 
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf
@@ -23,8 +24,8 @@ include $(COPY_H)
 
 .PHONY: clean clean/subdirs veryclean veryclean/subdirs manpages/subdirs debiandoc/subdirs all binary doc stats
 
-clean: clean/subdirs
-veryclean: veryclean/subdirs
+clean: clean/subdirs clean/examples
+veryclean: veryclean/subdirs clean/examples
 manpages: manpages/subdirs
 debiandoc: debiandoc/subdirs
 
@@ -40,6 +41,9 @@ debiandoc/subdirs manpages/subdirs clean/subdirs veryclean/subdirs:
 	for dir in en $(dir $(DOCDIRLIST)); do \
 		$(MAKE) -C $$dir $(patsubst %/subdirs,%,$@); \
 	done
+
+clean/examples:
+	rm -f examples/sources.list
 
 stats:
 	for i in po/*.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
