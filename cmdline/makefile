@@ -41,6 +41,14 @@ SOURCE = apt-cdrom.cc
 include $(PROGRAM_H)
 
 # The apt-key program
+apt-key: apt-key.in
+	sed -e "s#&keyring-filename;#$(shell ../vendor/getinfo keyring-filename)#" \
+		-e "s#&keyring-removed-filename;#$(shell ../vendor/getinfo keyring-removed-filename)#" \
+		-e "s#&keyring-master-filename;#$(shell ../vendor/getinfo keyring-master-filename)#" \
+		-e "s#&keyring-uri;#$(shell ../vendor/getinfo keyring-uri)#" \
+		-e "s#&keyring-package;#$(shell ../vendor/getinfo keyring-package)#" $< > $@
+	chmod 755 $@
+
 SOURCE=apt-key
 TO=$(BIN)
 TARGET=program
