@@ -8,6 +8,8 @@
 <!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent">
 %aptverbatiment;
 
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent">
+%aptvendor;
 ]>
 
 <refentry>
@@ -130,7 +132,7 @@
        Update the local keyring with the archive keyring and remove from
        the local keyring the archive keys which are no longer valid.
        The archive keyring is shipped in the <literal>archive-keyring</literal> package of your
-       distribution, e.g. the <literal>debian-archive-keyring</literal> package in Debian.
+       distribution, e.g. the &keyring-package; package in &keyring-distro;.
 
      </para>
 
@@ -180,12 +182,12 @@
      <listitem><para>Local trust database of archive keys.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term><filename>/usr/share/keyrings/debian-archive-keyring.gpg</filename></term>
-     <listitem><para>Keyring of Debian archive trusted keys.</para></listitem>
+     <varlistentry><term>&keyring-filename;</term>
+     <listitem><para>Keyring of &keyring-distro; archive trusted keys.</para></listitem>
      </varlistentry>
 
-     <varlistentry><term><filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename></term>
-     <listitem><para>Keyring of Debian archive removed trusted keys.</para></listitem>
+     <varlistentry><term>&keyring-removed-filename;</term>
+     <listitem><para>Keyring of &keyring-distro; archive removed trusted keys.</para></listitem>
      </varlistentry>
 
    </variablelist>

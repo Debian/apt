@@ -15,6 +15,8 @@ doc: manpages debiandoc
 examples/sources.list: ../vendor/current/sources.list
 	ln -sf $(shell readlink -f $^) $@
 
+apt-vendor.ent: ../vendor/current/apt-vendor.ent
+	ln -sf $(shell readlink -f $^) $@
 
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf
@@ -26,7 +28,7 @@ include $(COPY_H)
 
 clean: clean/subdirs clean/examples
 veryclean: veryclean/subdirs clean/examples
-manpages: manpages/subdirs
+manpages: manpages/subdirs apt-vendor.ent
 debiandoc: debiandoc/subdirs
 
 DOCUMENTATIONPO = $(patsubst %.po,%,$(notdir $(wildcard po/*.po)))
@@ -44,6 +46,7 @@ debiandoc/subdirs manpages/subdirs clean/subdirs veryclean/subdirs:
 
 clean/examples:
 	rm -f examples/sources.list
+	rm -f apt-vendor.ent
 
 stats:
 	for i in po/*.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done
