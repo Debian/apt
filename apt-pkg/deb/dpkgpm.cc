@@ -1622,16 +1622,47 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    }
 
    // do not report out-of-memory failures 
-   if(strstr(errormsg, strerror(ENOMEM)) != NULL) {
+   if(strstr(errormsg, strerror(ENOMEM)) != NULL ||
+      strstr(errormsg, "failed to allocate memory") != NULL) {
       std::clog << _("No apport report written because the error message indicates a out of memory error") << std::endl;
       return;
    }
 
-   // do not report dpkg I/O errors
-   // XXX - this message is localized, but this only matches the English version.  This is better than nothing.
-   if(strstr(errormsg, "short read in buffer_copy (")) {
-      std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
+   // do not report bugs regarding inaccessible local files
+   if(strstr(errormsg, strerror(ENOENT)) != NULL ||
+      strstr(errormsg, "cannot access archive") != NULL) {
+      std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
       return;
+   }
+
+   // do not report errors encountered when decompressing packages
+   if(strstr(errormsg, "--fsys-tarfile returned error exit status 2") != NULL) {
+      std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
+      return;
+   }
+
+   // do not report dpkg I/O errors, this is a format string, so we compare
+   // the prefix and the suffix of the error with the dpkg error message
+   vector<string> io_errors;
+   io_errors.push_back(string("failed to read on buffer copy for %s"));
+   io_errors.push_back(string("failed in write on buffer copy for %s"));
+   io_errors.push_back(string("short read on buffer copy for %s"));
+
+   for (vector<string>::iterator I = io_errors.begin(); I != io_errors.end(); I++)
+   {
+      vector<string> list = VectorizeString(dgettext("dpkg", (*I).c_str()), '%');
+      if (list.size() > 1) {
+         // we need to split %s, VectorizeString only allows char so we need
+         // to kill the "s" manually
+         if (list[1].size() > 1) {
+            list[1].erase(0, 1);
+            if(strstr(errormsg, list[0].c_str()) && 
+               strstr(errormsg, list[1].c_str())) {
+               std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
+               return;
+            }
+         }
+      }
    }
 
    // get the pkgname and reportfile
@@ -1721,6 +1752,24 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       if(log != NULL)
       {
 	 char buf[1024];
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+         fprintf(report, " \n");
+	 fclose(log);
+      }
+   }
+
+   // attach history log it if we have it
+   string histfile_name = _config->FindFile("Dir::Log::History");
+   if (!histfile_name.empty())
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "DpkgHistoryLog:\n");
+      log = fopen(histfile_name.c_str(),"r");
+      if(log != NULL)
+      {
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
 	 fclose(log);
