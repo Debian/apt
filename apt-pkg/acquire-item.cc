@@ -426,16 +426,18 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       SHA1.AddFD(fd);
       string const local_sha1 = SHA1.Result();
 
-      if(local_sha1 == ServerSha1) 
+      if(local_sha1 == ServerSha1)
       {
-	 // we have the same sha1 as the server
+	 // we have the same sha1 as the server so we are done here
 	 if(Debug)
 	    std::clog << "Package file is up-to-date" << std::endl;
-	 // set found to true, this will queue a pkgAcqIndexDiffs with
-	 // a empty availabe_patches
-	 found = true;
-      } 
-      else 
+	 // list cleanup needs to know that this file as well as the already
+	 // present index is ours, so we create an empty diff to save it for us
+	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
+	       ExpectedHash, ServerSha1, available_patches);
+	 return true;
+      }
+      else
       {
 	 if(Debug)
 	    std::clog << "SHA1-Current: " << ServerSha1 << " and we start at "<< fd.Name() << " " << fd.Size() << " " << local_sha1 << std::endl;
