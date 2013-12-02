@@ -22,6 +22,16 @@ testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
 
 
+# two sections (we support both "," and " " as seperator)
+echo "$BASE" | sed s/main/"main,contrib"/ > rootdir/etc/apt/sources.list
+
+testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+'http://ftp.debian.org/debian/dists/stable/contrib/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_contrib_binary-i386_Packages 0 :
+'http://ftp.debian.org/debian/dists/stable/contrib/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_contrib_i18n_Translation-en 0 :
+'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
+'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
+
+
 # Two entries
 echo "$BASE" > rootdir/etc/apt/sources.list
 echo "" >> rootdir/etc/apt/sources.list
