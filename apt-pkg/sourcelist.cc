@@ -273,7 +273,16 @@ bool pkgSourceList::ReadAppend(string File)
          for (unsigned int j=0; j < sizeof(option_str)/sizeof(char*); j++)
             if (Tags.Exists(option_str[j]))
                Options[option_str[j]] = Tags.FindS(option_str[j]);
-         Parse->CreateItem(SrcList, URI, Dist, Section, Options);
+
+         // now create one item per section
+         std::vector<std::string> list;
+         if (Section.find(","))
+             list = StringSplit(Section, ",");
+         else
+             list = StringSplit(Section, " ");
+         for (int i=0; i < list.size(); i++)
+            Parse->CreateItem(SrcList, URI, Dist, list[i], Options);
+
          i++;
       }
       // we are done
