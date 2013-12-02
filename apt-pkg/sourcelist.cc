@@ -17,6 +17,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/tagfile.h>
 
 #include <fstream>
 
@@ -242,16 +243,49 @@ bool pkgSourceList::Read(string File)
 /* */
 bool pkgSourceList::ReadAppend(string File)
 {
+   // try reading as deb822
+   // FIXME: proper error handling so that we do not error for good old-style
+   //        sources
+   FileFd Fd(File, FileFd::ReadOnly);
+   pkgTagFile Sources(&Fd);
+   if (_error->PendingError() == false)
+   {
+      pkgTagSection Tags;
+      map<string, string> Options;
+      int i=0;
+      while (Sources.Step(Tags) == true)
+      {
+         if(!Tags.Exists("Type")) 
+            continue;
+         string const type = Tags.FindS("Type");
+         Type *Parse = Type::GetType(type.c_str());
+         if (Parse == 0)
+            return _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,File.c_str());
+         
+         string URI = Tags.FindS("URL");
+         if (!Parse->FixupURI(URI))
+            return _error->Error(_("Malformed stanza %lu in source list %s (URI parse)"),i,File.c_str());
+         string const Dist = Tags.FindS("Dist");
+         string const Section = Tags.FindS("Section");
+         // check if there are any options we support
+         const char* option_str[] = { 
+            "arch", "arch+", "arch-", "trusted" };
+         for (unsigned int j=0; j < sizeof(option_str)/sizeof(char*); j++)
+            if (Tags.Exists(option_str[j]))
+               Options[option_str[j]] = Tags.FindS(option_str[j]);
+         Parse->CreateItem(SrcList, URI, Dist, Section, Options);
+         i++;
+      }
+      // we are done
+      if(i>0)
+         return true;
+   }
+
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
-   
-#if 0 // Now Reset() does this.
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
-      delete *I;
-   SrcList.erase(SrcList.begin(),SrcList.end());
-#endif
+
    // CNC:2003-12-10 - 300 is too short.
    char Buffer[1024];
 
