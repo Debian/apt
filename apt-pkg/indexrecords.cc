@@ -27,6 +27,11 @@ string indexRecords::GetDist() const
    return this->Dist;
 }
 
+string indexRecords::GetSuite() const
+{
+   return this->Suite;
+}
+
 bool indexRecords::CheckDist(const string MaybeDist) const
 {
    return (this->Dist == MaybeDist

@@ -50,6 +50,8 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/upgrade.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexrecords.h>
 
 #include <apt-private/private-download.h>
 #include <apt-private/private-install.h>
@@ -135,11 +137,12 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 /* */
 pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
-			       pkgDepCache &Cache)
+			       CacheFile &CacheFile)
 {
    string VerTag;
    string DefRel = _config->Find("APT::Default-Release");
    string TmpSrc = Name;
+   pkgDepCache *Cache = CacheFile.GetDepCache();
 
    // extract the version/release from the pkgname
    const size_t found = TmpSrc.find_last_of("/=");
@@ -155,7 +158,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       install a version and determine the source package name, then look
       in the archive for a source package of the same name. */
    bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
-   const pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+   const pkgCache::PkgIterator Pkg = Cache->FindPkg(TmpSrc);
    if (MatchSrcOnly == false && Pkg.end() == false) 
    {
       if(VerTag.empty() == false || DefRel.empty() == false) 
@@ -180,7 +183,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    }
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
-		(fuzzy == true || Cache.VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
+		(fuzzy == true || Cache->VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
 		(fuzzy == false || strncmp(VerTag.c_str(), Ver.VerStr(), VerTag.size()) != 0)) // fuzzy match
 	       continue;
 
@@ -217,22 +220,24 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    if (Src.empty() == false)
 	       break;
 	 }
+#if 0
 	 if (Src.empty() == true) 
 	 {
 	    // Sources files have no codename information
 	    if (VerTag.empty() == true && DefRel.empty() == false) 
 	    {
-	       _error->Error(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
-	       return 0;
+	       _error->Warning(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
+               return 0;
 	    }
 	 }
+#endif
       }
       if (Src.empty() == true)
       {
 	 // if we don't have found a fitting package yet so we will
 	 // choose a good candidate and proceed with that.
 	 // Maybe we will find a source later on with the right VerTag
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
 	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
@@ -262,6 +267,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    pkgSrcRecords::Parser *Last = 0;
    unsigned long Offset = 0;
    string Version;
+   string FoundRel;
 
    /* Iterate over all of the hits, which includes the resulting
       binary packages in the search */
@@ -273,26 +279,60 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       {
 	 const string Ver = Parse->Version();
 
+
+         // find release
+         const pkgIndexFile& SI = Parse->Index();
+         pkgSourceList *SrcList = CacheFile.GetSourceList();
+         for (pkgSourceList::const_iterator S = SrcList->begin(); 
+              S != SrcList->end(); ++S)
+         {
+            vector<pkgIndexFile *> *Indexes = (*S)->GetIndexFiles();
+            for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
+                 IF != Indexes->end(); ++IF)
+            {
+               if (&SI == (*IF))
+               {
+                  std::string dirname = _config->FindDir("Dir::State::lists");
+                  std::string path = dirname + URItoFileName((*S)->GetURI()) + "dists_" + (*S)->GetDist() + "_Release";
+                  indexRecords records;
+                  records.Load(path);
+                  if (records.GetSuite() == DefRel)
+                  {
+                     ioprintf(clog, "Selectied version '%s' (%s) for %s\n", 
+                              Ver.c_str(), DefRel.c_str(), Src.c_str());
+                     Last = Parse;
+                     Offset = Parse->Offset();
+                     Version = Ver;
+                     FoundRel = DefRel;
+                     break;
+                  }
+               }
+            }
+         }
+         if (DefRel.empty() == false && (DefRel == FoundRel))
+            break;
+
 	 // Ignore all versions which doesn't fit
 	 if (VerTag.empty() == false &&
-	     Cache.VS().CmpVersion(VerTag, Ver) != 0) // exact match
+	     Cache->VS().CmpVersion(VerTag, Ver) != 0) // exact match
 	    continue;
 
 	 // Newer version or an exact match? Save the hit
-	 if (Last == 0 || Cache.VS().CmpVersion(Version,Ver) < 0) {
+	 if (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0) {
 	    Last = Parse;
 	    Offset = Parse->Offset();
 	    Version = Ver;
 	 }
 
 	 // was the version check above an exact match? If so, we don't need to look further
-	 if (VerTag.empty() == false && VerTag.size() == Ver.size())
+         if (VerTag.empty() == false && (VerTag == Ver))
+         {
+            std::cerr << "meep" << std::endl;
 	    break;
+         }
       }
       if (Last != 0 || VerTag.empty() == true)
 	 break;
-      //if (VerTag.empty() == false && Last == 0)
-      _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
       return 0;
    }
 
@@ -628,7 +668,7 @@ bool DoSource(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       
       if (Last == 0) {
 	 delete[] Dsc;
@@ -925,7 +965,7 @@ bool DoBuildDep(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
             

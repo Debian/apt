@@ -48,7 +48,8 @@ class metaIndex
    virtual ~metaIndex() {
       if (Indexes == 0)
 	 return;
-      for (std::vector<pkgIndexFile *>::iterator I = (*Indexes).begin(); I != (*Indexes).end(); ++I)
+      for (std::vector<pkgIndexFile *>::iterator I = (*Indexes).begin();
+           I != (*Indexes).end(); ++I)
 	 delete *I;
       delete Indexes;
    }
