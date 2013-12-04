@@ -152,6 +152,29 @@ std::string MetaIndexFileName(metaIndex *metaindex)
       URItoFileName(r->MetaIndexURI("Release"));
 }
 
+std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
+                                      pkgSrcRecords::Parser *Parse)
+{
+   // try to find release
+   const pkgIndexFile& SI = Parse->Index();
+   for (pkgSourceList::const_iterator S = SrcList->begin(); 
+        S != SrcList->end(); ++S)
+   {
+      vector<pkgIndexFile *> *Indexes = (*S)->GetIndexFiles();
+      for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
+           IF != Indexes->end(); ++IF)
+      {
+         if (&SI == (*IF))
+         {
+            std::string path = MetaIndexFileName(*S);
+            indexRecords records;
+            records.Load(path);
+            return records.GetSuite();
+         }
+      }
+   }
+   return "";
+}
 
 
 // FindSrc - Find a source record					/*{{{*/
@@ -162,7 +185,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       CacheFile &CacheFile)
 {
    string VerTag;
-   string DefRel = _config->Find("APT::Default-Release");
+   string RelTag = _config->Find("APT::Default-Release");
    string TmpSrc = Name;
    pkgDepCache *Cache = CacheFile.GetDepCache();
 
@@ -170,7 +193,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    const size_t found = TmpSrc.find_last_of("/=");
    if (found != string::npos) {
       if (TmpSrc[found] == '/')
-	 DefRel = TmpSrc.substr(found+1);
+	 RelTag = TmpSrc.substr(found+1);
       else
 	 VerTag = TmpSrc.substr(found+1);
       TmpSrc = TmpSrc.substr(0,found);
@@ -183,7 +206,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    const pkgCache::PkgIterator Pkg = Cache->FindPkg(TmpSrc);
    if (MatchSrcOnly == false && Pkg.end() == false) 
    {
-      if(VerTag.empty() == false || DefRel.empty() == false) 
+      if(VerTag.empty() == false || RelTag.empty() == false) 
       {
 	 bool fuzzy = false;
 	 // we have a default release, try to locate the pkg. we do it like
@@ -223,8 +246,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
 	       // or we match against a release
 	       if(VerTag.empty() == false ||
-		  (VF.File().Archive() != 0 && VF.File().Archive() == DefRel) ||
-		  (VF.File().Codename() != 0 && VF.File().Codename() == DefRel)) 
+		  (VF.File().Archive() != 0 && VF.File().Archive() == RelTag) ||
+		  (VF.File().Codename() != 0 && VF.File().Codename() == RelTag)) 
 	       {
 		  pkgRecords::Parser &Parse = Recs.Lookup(VF);
 		  Src = Parse.SourcePkg();
@@ -242,23 +265,13 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    if (Src.empty() == false)
 	       break;
 	 }
-#if 0
-	 if (Src.empty() == true) 
-	 {
-	    // Sources files have no codename information
-	    if (VerTag.empty() == true && DefRel.empty() == false) 
-	    {
-	       _error->Warning(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
-               return 0;
-	    }
-	 }
-#endif
       }
       if (Src.empty() == true)
       {
 	 // if we don't have found a fitting package yet so we will
 	 // choose a good candidate and proceed with that.
 	 // Maybe we will find a source later on with the right VerTag
+         // or RelTag
 	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
@@ -271,7 +284,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    }
 
    if (Src.empty() == true)
+   {
       Src = TmpSrc;
+   }
    else 
    {
       /* if we have a source pkg name, make sure to only search
@@ -301,36 +316,20 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0) 
       {
 	 const string Ver = Parse->Version();
+         const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
 
-         // try to find release
-         const pkgIndexFile& SI = Parse->Index();
-
-         for (pkgSourceList::const_iterator S = SrcList->begin(); 
-              S != SrcList->end(); ++S)
+         if (RelTag != "" && Rel == RelTag)
          {
-            vector<pkgIndexFile *> *Indexes = (*S)->GetIndexFiles();
-            for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
-                 IF != Indexes->end(); ++IF)
-            {
-               if (&SI == (*IF))
-               {
-                  std::string path = MetaIndexFileName(*S);
-                  indexRecords records;
-                  records.Load(path);
-                  if (records.GetSuite() == DefRel)
-                  {
-                     ioprintf(clog, "Selectied version '%s' (%s) for %s\n", 
-                              Ver.c_str(), DefRel.c_str(), Src.c_str());
-                     Last = Parse;
-                     Offset = Parse->Offset();
-                     Version = Ver;
-                     FoundRel = DefRel;
-                     break;
-                  }
-               }
-            }
+            ioprintf(c1out, "Selectied version '%s' (%s) for %s\n", 
+                     Ver.c_str(), RelTag.c_str(), Src.c_str());
+            Last = Parse;
+            Offset = Parse->Offset();
+            Version = Ver;
+            FoundRel = RelTag;
+            break;
          }
-         if (DefRel.empty() == false && (DefRel == FoundRel))
+
+         if (RelTag.empty() == false && (RelTag == FoundRel))
             break;
 
 	 // Ignore all versions which doesn't fit

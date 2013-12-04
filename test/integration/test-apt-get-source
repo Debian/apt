@@ -26,20 +26,30 @@ setupaptarchive
 APTARCHIVE=$(readlink -f ./aptarchive)
 
 # normal operation gets highest version number
-testequal "'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -qq --print-uris foo
+HEADER="Reading package lists...
+Building dependency tree..."
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo
 
 # select by release
-testequal "Selectied version '1.0' (stable) for foo
+testequal "$HEADER
+Selectied version '1.0' (stable) for foo
+Need to get 0 B of source archives.
 'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -qq --print-uris foo/stable
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/stable
 
 # select by version
-testequal "'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -qq --print-uris foo=1.0
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo=1.0
 
 # select by release with no binary package (Bug#731102)
-testequal "Selectied version '0.1' (wheezy) for foo
+testequal "$HEADER
+Selectied version '0.1' (wheezy) for foo
+Need to get 0 B of source archives.
 'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
-'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -qq --print-uris foo/wheezy
+'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/wheezy
 
