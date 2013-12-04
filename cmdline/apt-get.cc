@@ -304,7 +304,6 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    pkgSrcRecords::Parser *Last = 0;
    unsigned long Offset = 0;
    string Version;
-   string FoundRel;
    pkgSourceList *SrcList = CacheFile.GetSourceList();
 
    /* Iterate over all of the hits, which includes the resulting
@@ -316,21 +315,21 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       while ((Parse = SrcRecs.Find(Src.c_str(), MatchSrcOnly)) != 0) 
       {
 	 const string Ver = Parse->Version();
-         const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
 
-         if (RelTag != "" && Rel == RelTag)
+         // See if we need to look for a specific release tag
+         if (RelTag != "")
          {
-            ioprintf(c1out, "Selectied version '%s' (%s) for %s\n", 
-                     Ver.c_str(), RelTag.c_str(), Src.c_str());
-            Last = Parse;
-            Offset = Parse->Offset();
-            Version = Ver;
-            FoundRel = RelTag;
-            break;
-         }
+            const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
 
-         if (RelTag.empty() == false && (RelTag == FoundRel))
-            break;
+            if (Rel == RelTag)
+            {
+               ioprintf(c1out, "Selectied version '%s' (%s) for %s\n", 
+                        Ver.c_str(), RelTag.c_str(), Src.c_str());
+               Last = Parse;
+               Offset = Parse->Offset();
+               break;
+            }
+         }
 
 	 // Ignore all versions which doesn't fit
 	 if (VerTag.empty() == false &&
@@ -344,14 +343,14 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    Version = Ver;
 	 }
 
-	 // was the version check above an exact match? If so, we don't need to look further
+	 // was the version check above an exact match?
+         // If so, we don't need to look further
          if (VerTag.empty() == false && (VerTag == Ver))
-         {
 	    break;
-         }
       }
       if (Last != 0 || VerTag.empty() == true)
 	 break;
+      _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
       return 0;
    }
 
