@@ -293,7 +293,10 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
                if (&SI == (*IF))
                {
                   std::string dirname = _config->FindDir("Dir::State::lists");
-                  std::string path = dirname + URItoFileName((*S)->GetURI()) + "dists_" + (*S)->GetDist() + "_Release";
+                  std::string path;
+                  path = dirname + URItoFileName((*S)->GetURI()) + "dists_" + (*S)->GetDist() + "_Release";
+                  if (!FileExists(path))
+                     path = dirname + URItoFileName((*S)->GetURI()) + "dists_" + (*S)->GetDist() + "_InRelease";
                   indexRecords records;
                   records.Load(path);
                   if (records.GetSuite() == DefRel)
@@ -327,7 +330,6 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 // was the version check above an exact match? If so, we don't need to look further
          if (VerTag.empty() == false && (VerTag == Ver))
          {
-            std::cerr << "meep" << std::endl;
 	    break;
          }
       }
