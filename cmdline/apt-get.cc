@@ -63,6 +63,8 @@
 #include <apt-private/private-moo.h>
 #include <apt-private/private-utils.h>
 
+#include <apt-pkg/debmetaindex.h>
+
 #include <apt-private/acqprogress.h>
 
 #include <set>
@@ -132,6 +134,26 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    return true;
 }
 									/*}}}*/
+
+// FIXME: move into more generic code (metaindex ?)
+std::string MetaIndexFileName(metaIndex *metaindex)
+{
+   // FIXME: this cast is the horror, the horror
+   debReleaseIndex *r = (debReleaseIndex*)metaindex;
+
+   // see if we have a InRelease file
+   std::string PathInRelease =  _config->FindDir("Dir::State::lists") +
+      URItoFileName(r->MetaIndexURI("InRelease"));
+   if (FileExists(PathInRelease))
+      return PathInRelease;
+
+   // and if not return the normal one
+   return _config->FindDir("Dir::State::lists") +
+      URItoFileName(r->MetaIndexURI("Release"));
+}
+
+
+
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -268,6 +290,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    unsigned long Offset = 0;
    string Version;
    string FoundRel;
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
 
    /* Iterate over all of the hits, which includes the resulting
       binary packages in the search */
@@ -279,10 +302,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       {
 	 const string Ver = Parse->Version();
 
-
-         // find release
+         // try to find release
          const pkgIndexFile& SI = Parse->Index();
-         pkgSourceList *SrcList = CacheFile.GetSourceList();
+
          for (pkgSourceList::const_iterator S = SrcList->begin(); 
               S != SrcList->end(); ++S)
          {
@@ -292,11 +314,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
             {
                if (&SI == (*IF))
                {
-                  std::string dirname = _config->FindDir("Dir::State::lists");
-                  std::string path;
-                  path = dirname + URItoFileName((*S)->GetURI()) + "dists_" + (*S)->GetDist() + "_Release";
-                  if (!FileExists(path))
-                     path = dirname + URItoFileName((*S)->GetURI()) + "dists_" + (*S)->GetDist() + "_InRelease";
+                  std::string path = MetaIndexFileName(*S);
                   indexRecords records;
                   records.Load(path);
                   if (records.GetSuite() == DefRel)
