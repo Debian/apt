@@ -135,14 +135,15 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 }
 									/*}}}*/
 
+
 // FIXME: move into more generic code (metaindex ?)
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-std::string MetaIndexFileName(metaIndex *metaindex)
+std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
 {
    // FIXME: this cast is the horror, the horror
    debReleaseIndex *r = (debReleaseIndex*)metaindex;
 #else
-std::string MetaIndexFileName(metaIndex *r)
+std::string MetaIndexFileNameOnDisk(metaIndex *r)
 {
 #endif
 
@@ -152,14 +153,22 @@ std::string MetaIndexFileName(metaIndex *r)
       return PathInRelease;
 
    // and if not return the normal one
-   return r->MetaIndexFile("Release");
+   if (FileExists(PathInRelease))
+      return r->MetaIndexFile("Release");
+
+   return "";
 }
 
+
+// GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
                                       pkgSrcRecords::Parser *Parse)
 {
    // try to find release
-   const pkgIndexFile& SI = Parse->Index();
+   const pkgIndexFile& CurrentIndexFile = Parse->Index();
+
    for (pkgSourceList::const_iterator S = SrcList->begin(); 
         S != SrcList->end(); ++S)
    {
@@ -167,19 +176,21 @@ std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
       for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
            IF != Indexes->end(); ++IF)
       {
-         if (&SI == (*IF))
+         if (&CurrentIndexFile == (*IF))
          {
-            std::string path = MetaIndexFileName(*S);
-            indexRecords records;
-            records.Load(path);
-            return records.GetSuite();
+            std::string path = MetaIndexFileNameOnDisk(*S);
+            if (path != "") 
+            {
+               indexRecords records;
+               records.Load(path);
+               return records.GetSuite();
+            }
          }
       }
    }
    return "";
 }
-
-
+									/*}}}*/
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
