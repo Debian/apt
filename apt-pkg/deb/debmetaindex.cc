@@ -1,4 +1,3 @@
-// ijones, walters
 #include <config.h>
 
 #include <apt-pkg/debmetaindex.h>
@@ -36,6 +35,7 @@ string debReleaseIndex::Info(const char *Type, string const &Section, string con
    return Info;
 }
 
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
 string debReleaseIndex::MetaIndexInfo(const char *Type) const
 {
    string Info = ::URI::SiteOnly(URI) + ' ';
@@ -71,6 +71,7 @@ string debReleaseIndex::MetaIndexURI(const char *Type) const
    Res += Type;
    return Res;
 }
+#endif
 
 string debReleaseIndex::IndexURISuffix(const char *Type, string const &Section, string const &Arch) const
 {

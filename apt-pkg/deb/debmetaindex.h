@@ -3,6 +3,7 @@
 #define PKGLIB_DEBMETAINDEX_H
 
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/init.h>
 
 #include <map>
 #include <string>
@@ -39,9 +40,13 @@ class debReleaseIndex : public metaIndex {
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
    std::vector <struct IndexTarget *>* ComputeIndexTargets() const;
    std::string Info(const char *Type, std::string const &Section, std::string const &Arch="") const;
+
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
    std::string MetaIndexInfo(const char *Type) const;
    std::string MetaIndexFile(const char *Types) const;
    std::string MetaIndexURI(const char *Type) const;
+#endif
+
    std::string IndexURI(const char *Type, std::string const &Section, std::string const &Arch="native") const;
    std::string IndexURISuffix(const char *Type, std::string const &Section, std::string const &Arch="native") const;
    std::string SourceIndexURI(const char *Type, const std::string &Section) const;

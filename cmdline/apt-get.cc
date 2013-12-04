@@ -136,10 +136,15 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 									/*}}}*/
 
 // FIXME: move into more generic code (metaindex ?)
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
 std::string MetaIndexFileName(metaIndex *metaindex)
 {
    // FIXME: this cast is the horror, the horror
    debReleaseIndex *r = (debReleaseIndex*)metaindex;
+#else
+std::string MetaIndexFileName(metaIndex *r)
+{
+#endif
 
    // see if we have a InRelease file
    std::string PathInRelease =  r->MetaIndexFile("InRelease");
