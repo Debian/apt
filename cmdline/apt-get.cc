@@ -142,14 +142,12 @@ std::string MetaIndexFileName(metaIndex *metaindex)
    debReleaseIndex *r = (debReleaseIndex*)metaindex;
 
    // see if we have a InRelease file
-   std::string PathInRelease =  _config->FindDir("Dir::State::lists") +
-      URItoFileName(r->MetaIndexURI("InRelease"));
+   std::string PathInRelease =  r->MetaIndexFile("InRelease");
    if (FileExists(PathInRelease))
       return PathInRelease;
 
    // and if not return the normal one
-   return _config->FindDir("Dir::State::lists") +
-      URItoFileName(r->MetaIndexURI("Release"));
+   return r->MetaIndexFile("Release");
 }
 
 std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
