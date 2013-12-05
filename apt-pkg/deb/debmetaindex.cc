@@ -35,7 +35,6 @@ string debReleaseIndex::Info(const char *Type, string const &Section, string con
    return Info;
 }
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
 string debReleaseIndex::MetaIndexInfo(const char *Type) const
 {
    string Info = ::URI::SiteOnly(URI) + ' ';
@@ -70,6 +69,21 @@ string debReleaseIndex::MetaIndexURI(const char *Type) const
    
    Res += Type;
    return Res;
+}
+
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+std::string debReleaseIndex::LocalFileName() const
+{
+   // see if we have a InRelease file
+   std::string PathInRelease =  MetaIndexFile("InRelease");
+   if (FileExists(PathInRelease))
+      return PathInRelease;
+
+   // and if not return the normal one
+   if (FileExists(PathInRelease))
+      return MetaIndexFile("Release");
+
+   return "";
 }
 #endif
 

@@ -45,6 +45,12 @@ class debReleaseIndex : public metaIndex {
    std::string MetaIndexInfo(const char *Type) const;
    std::string MetaIndexFile(const char *Types) const;
    std::string MetaIndexURI(const char *Type) const;
+#else
+   virtual std::string MetaIndexInfo(const char *Type) const;
+   virtual std::string MetaIndexFile(const char *Types) const;
+   virtual std::string MetaIndexURI(const char *Type) const;
+
+   virtual std::string LocalFileName() const;
 #endif
 
    std::string IndexURI(const char *Type, std::string const &Section, std::string const &Arch="native") const;

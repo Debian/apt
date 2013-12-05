@@ -41,7 +41,7 @@ SOURCE+= pkgcache.cc version.cc depcache.cc \
 	 pkgrecords.cc algorithms.cc acquire.cc\
 	 acquire-worker.cc acquire-method.cc init.cc clean.cc \
 	 srcrecords.cc cachefile.cc versionmatch.cc policy.cc \
-	 pkgsystem.cc indexfile.cc metaindex.cc pkgcachegen.cc acquire-item.cc \
+	 pkgsystem.cc indexfile.cc pkgcachegen.cc acquire-item.cc \
 	 indexrecords.cc vendor.cc vendorlist.cc cdrom.cc indexcopy.cc \
 	 aptconfiguration.cc cachefilter.cc cacheset.cc edsp.cc \
 	 install-progress.cc upgrade.cc update.cc

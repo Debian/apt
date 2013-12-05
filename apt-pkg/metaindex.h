@@ -34,17 +34,21 @@ class metaIndex
    virtual std::string GetDist() const {return Dist;}
    virtual const char* GetType() const {return Type;}
 
+   // interface to to query it
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+   virtual std::string MetaIndexInfo(const char *Type) const {return "";};
+   virtual std::string MetaIndexFile(const char *Types) const {return "";};
+   virtual std::string MetaIndexURI(const char *Type) const {return "";};
+
+   // returns the path of the local file (or "" if its not available)
+   virtual std::string LocalFileName() const {return "";};
+#endif
+
    // Interface for acquire
    virtual std::string ArchiveURI(std::string const& File) const = 0;
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const = 0;
    virtual std::vector<pkgIndexFile *> *GetIndexFiles() = 0; 
    virtual bool IsTrusted() const = 0;
-
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-   virtual std::string MetaIndexInfo(const char *Type) const;
-   virtual std::string MetaIndexFile(const char *Types) const;
-   virtual std::string MetaIndexURI(const char *Type) const;
-#endif
 
    metaIndex(std::string const &URI, std::string const &Dist, 
              char const * const Type) 
