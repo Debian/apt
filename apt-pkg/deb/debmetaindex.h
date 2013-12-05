@@ -41,15 +41,11 @@ class debReleaseIndex : public metaIndex {
    std::vector <struct IndexTarget *>* ComputeIndexTargets() const;
    std::string Info(const char *Type, std::string const &Section, std::string const &Arch="") const;
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
    std::string MetaIndexInfo(const char *Type) const;
    std::string MetaIndexFile(const char *Types) const;
    std::string MetaIndexURI(const char *Type) const;
-#else
-   virtual std::string MetaIndexInfo(const char *Type) const;
-   virtual std::string MetaIndexFile(const char *Types) const;
-   virtual std::string MetaIndexURI(const char *Type) const;
 
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    virtual std::string LocalFileName() const;
 #endif
 

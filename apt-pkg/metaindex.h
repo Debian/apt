@@ -36,10 +36,6 @@ class metaIndex
 
    // interface to to query it
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-   virtual std::string MetaIndexInfo(const char *Type) const {return "";};
-   virtual std::string MetaIndexFile(const char *Types) const {return "";};
-   virtual std::string MetaIndexURI(const char *Type) const {return "";};
-
    // returns the path of the local file (or "" if its not available)
    virtual std::string LocalFileName() const {return "";};
 #endif
