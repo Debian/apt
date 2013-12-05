@@ -5,6 +5,7 @@
 #include <string>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/init.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/srcrecords.h>
@@ -28,27 +29,36 @@ class metaIndex
 
    public:
 
-   
    // Various accessors
    virtual std::string GetURI() const {return URI;}
    virtual std::string GetDist() const {return Dist;}
    virtual const char* GetType() const {return Type;}
 
+   // interface to to query it
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+   // returns the path of the local file (or "" if its not available)
+   virtual std::string LocalFileName() const {return "";};
+#endif
+
    // Interface for acquire
-   virtual std::string ArchiveURI(std::string const& /*File*/) const = 0;
+   virtual std::string ArchiveURI(std::string const& File) const = 0;
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const = 0;
-   
    virtual std::vector<pkgIndexFile *> *GetIndexFiles() = 0; 
    virtual bool IsTrusted() const = 0;
 
-   metaIndex(std::string const &URI, std::string const &Dist, char const * const Type) :
-		Indexes(NULL), Type(Type), URI(URI), Dist(Dist) {
+   metaIndex(std::string const &URI, std::string const &Dist, 
+             char const * const Type) 
+      : Indexes(NULL), Type(Type), URI(URI), Dist(Dist)
+   {
+      /* nothing */
    }
 
-   virtual ~metaIndex() {
+   virtual ~metaIndex() 
+   {
       if (Indexes == 0)
 	 return;
-      for (std::vector<pkgIndexFile *>::iterator I = (*Indexes).begin(); I != (*Indexes).end(); ++I)
+      for (std::vector<pkgIndexFile *>::iterator I = (*Indexes).begin();
+           I != (*Indexes).end(); ++I)
 	 delete *I;
       delete Indexes;
    }
