@@ -11,7 +11,7 @@
 
 # generate a list of accepted man page translations
 SOURCE = $(patsubst %.xml,%,$(wildcard *.$(LC).?.xml))
-INCLUDES = apt.ent apt-verbatim.ent
+INCLUDES = apt.ent apt-verbatim.ent apt-vendor.ent
 
 manpages:
 
@@ -29,7 +29,10 @@ clean: clean/$(LOCAL)
 veryclean: veryclean/$(LOCAL)
 
 apt-verbatim.ent: ../apt-verbatim.ent
-	cp ../apt-verbatim.ent .
+	cp -a ../apt-verbatim.ent .
+
+apt-vendor.ent: ../apt-vendor.ent
+	cp -a ../apt-vendor.ent .
 
 manpage-style.xsl: ../manpage-style.xsl
 	sed "/<!-- LANGUAGE -->/ i\

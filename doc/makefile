@@ -12,8 +12,11 @@ include $(DEBIANDOC_H)
 
 doc: manpages debiandoc
 
-examples/sources.list: examples/sources.list.in apt-verbatim.ent
-	sed -e 's#&ubuntu-codename;#$(shell grep --max-count=1 '^<!ENTITY ubuntu-codename "' apt-verbatim.ent | cut -d'"' -f 2)#g' examples/sources.list.in > examples/sources.list
+examples/sources.list: ../vendor/current/sources.list
+	ln -sf $(shell readlink -f $^) $@
+
+apt-vendor.ent: ../vendor/current/apt-vendor.ent
+	ln -sf $(shell readlink -f $^) $@
 
 # Examples
 SOURCE = examples/apt.conf examples/sources.list examples/configure-index examples/apt-https-method-example.conf
@@ -23,9 +26,9 @@ include $(COPY_H)
 
 .PHONY: clean clean/subdirs veryclean veryclean/subdirs manpages/subdirs debiandoc/subdirs all binary doc stats
 
-clean: clean/subdirs
-veryclean: veryclean/subdirs
-manpages: manpages/subdirs
+clean: clean/subdirs clean/examples
+veryclean: veryclean/subdirs clean/examples
+manpages: manpages/subdirs apt-vendor.ent
 debiandoc: debiandoc/subdirs
 
 DOCUMENTATIONPO = $(patsubst %.po,%,$(notdir $(wildcard po/*.po)))
@@ -40,6 +43,10 @@ debiandoc/subdirs manpages/subdirs clean/subdirs veryclean/subdirs:
 	for dir in en $(dir $(DOCDIRLIST)); do \
 		$(MAKE) -C $$dir $(patsubst %/subdirs,%,$@); \
 	done
+
+clean/examples:
+	rm -f examples/sources.list
+	rm -f apt-vendor.ent
 
 stats:
 	for i in po/*.po; do echo -n "$$i: "; msgfmt --output-file=/dev/null --statistics $$i; done

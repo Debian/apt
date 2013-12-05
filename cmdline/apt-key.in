@@ -25,14 +25,13 @@ GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
 
 GPG="$GPG_CMD"
 
-# ubuntu keyrings
-MASTER_KEYRING=/usr/share/keyrings/ubuntu-master-keyring.gpg
+MASTER_KEYRING='&keyring-master-filename;'
 eval $(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)
-ARCHIVE_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
+ARCHIVE_KEYRING='&keyring-filename;'
 eval $(apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring)
-REMOVED_KEYS=/usr/share/keyrings/ubuntu-archive-removed-keys.gpg
+REMOVED_KEYS='&keyring-removed-filename;'
 eval $(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)
-ARCHIVE_KEYRING_URI=http://archive.ubuntu.com/ubuntu/project/ubuntu-archive-keyring.gpg
+ARCHIVE_KEYRING_URI='&keyring-uri;'
 eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
 TMP_KEYRING=/var/lib/apt/keyrings/maybe-import-keyring.gpg
 
@@ -143,7 +142,7 @@ net_update() {
 update() {
     if [ ! -f $ARCHIVE_KEYRING ]; then
 	echo >&2 "ERROR: Can't find the archive-keyring"
-	echo >&2 "Is the ubuntu-keyring package installed?"
+	echo >&2 "Is the &keyring-package; package installed?"
 	exit 1
     fi
     requires_root

@@ -192,6 +192,7 @@ setupenvironment() {
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
+	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
 	export LC_ALL=C
 	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
@@ -791,6 +792,22 @@ signreleasefiles() {
 	msgdone "info"
 }
 
+webserverconfig() {
+	msgtest "Set webserver config option '${1}' to" "$2"
+	downloadfile "http://localhost:8080/_config/set/${1}/${2}" '/dev/null' >/dev/null
+	local DOWNLOG='download-testfile.log'
+	rm -f "$DOWNLOG"
+	local STATUS="$(mktemp)"
+	addtrap "rm $STATUS;"
+	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
+	if [ "$(cat "$STATUS")" = '200' ]; then
+		msgpass
+	else
+		cat >&2 "$DOWNLOG"
+		msgfail "Statuscode was $(cat "$STATUS")"
+	fi
+}
+
 rewritesourceslist() {
 	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive")"
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
@@ -799,6 +816,11 @@ rewritesourceslist() {
 }
 
 changetowebserver() {
+	if [ "$1" != '--no-rewrite' ]; then
+		rewritesourceslist 'http://localhost:8080/'
+	else
+		shift
+	fi
 	local LOG='/dev/null'
 	if test -x ${BUILDDIRECTORY}/aptwebserver; then
 		cd aptarchive
@@ -812,9 +834,6 @@ changetowebserver() {
 	else
 		msgdie 'You have to build aptwerbserver or install a webserver'
 	fi
-	if [ "$1" != '--no-rewrite' ]; then
-		rewritesourceslist 'http://localhost:8080/'
-	fi
 }
 
 changetohttpswebserver() {
@@ -826,6 +845,7 @@ changetohttpswebserver() {
 	fi
 	echo "pid = ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid
 cert = ${TESTDIRECTORY}/apt.pem
+output = /dev/null
 
 [https]
 accept = 4433

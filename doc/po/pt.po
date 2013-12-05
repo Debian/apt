@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-07-02 17:09+0300\n"
+"POT-Creation-Date: 2013-06-13 13:46+0300\n"
 "PO-Revision-Date: 2012-09-03 01:53+0100\n"
 "Last-Translator: Américo Monteiro <a_monteiro@netcabo.pt>\n"
 "Language-Team: Portuguese <l10n@debianpt.org>\n"
@@ -809,9 +809,9 @@ msgid ""
 "installation or upgrading.  Each package is a package name, not a fully "
 "qualified filename (for instance, in a Debian system, <package>apt-utils</"
 "package> would be the argument provided, not <filename>apt-utils_&apt-"
-"product-version;_amd64.deb</filename>). All packages required by the package"
-"(s) specified for installation will also be retrieved and installed.  The "
-"<filename>/etc/apt/sources.list</filename> file is used to locate the "
+"product-version;_amd64.deb</filename>). All packages required by the "
+"package(s) specified for installation will also be retrieved and installed.  "
+"The <filename>/etc/apt/sources.list</filename> file is used to locate the "
 "desired packages. If a hyphen is appended to the package name (with no "
 "intervening space), the identified package will be removed if it is "
 "installed.  Similarly a plus sign can be used to designate a package to "
@@ -1572,7 +1572,7 @@ msgstr "Ficheiros"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:528 apt-cache.8.xml:350 apt-key.8.xml:195 apt-mark.8.xml:131
-#: apt-secure.8.xml:191 apt-cdrom.8.xml:152 apt-config.8.xml:109
+#: apt-secure.8.xml:191 apt-cdrom.8.xml:144 apt-config.8.xml:109
 #: apt.conf.5.xml:1173 apt_preferences.5.xml:705 sources.list.5.xml:252
 #: apt-extracttemplates.1.xml:70 apt-sortpkgs.1.xml:63
 #: apt-ftparchive.1.xml:607
@@ -1592,7 +1592,7 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:534 apt-cache.8.xml:355 apt-mark.8.xml:135
-#: apt-cdrom.8.xml:157 apt-config.8.xml:114 apt-extracttemplates.1.xml:74
+#: apt-cdrom.8.xml:149 apt-config.8.xml:114 apt-extracttemplates.1.xml:74
 #: apt-sortpkgs.1.xml:67 apt-ftparchive.1.xml:611
 msgid "Diagnostics"
 msgstr "Diagnóstico"
@@ -2276,24 +2276,17 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:130
-#, fuzzy
-#| msgid ""
-#| "Update the local keyring with the archive keyring and remove from the "
-#| "local keyring the archive keys which are no longer valid.  The archive "
-#| "keyring is shipped in the <literal>archive-keyring</literal> package of "
-#| "your distribution, e.g. the <literal>debian-archive-keyring</literal> "
-#| "package in Debian."
 msgid ""
 "Update the local keyring with the archive keyring and remove from the local "
 "keyring the archive keys which are no longer valid.  The archive keyring is "
 "shipped in the <literal>archive-keyring</literal> package of your "
-"distribution, e.g. the <literal>ubuntu-archive-keyring</literal> package in "
-"Ubuntu."
+"distribution, e.g. the &keyring-package; package in "
+"&keyring-distro;."
 msgstr ""
 "Actualiza o chaveiro local com o chaveiro do arquivo e remove do chaveiro "
 "local as chaves de arquivo que já não são válidas. O chaveiro do arquivo é "
 "submetido no pacote <literal>archive-keyring</literal> da sua distribuição, "
-"por exemplo o pacote <literal>debian-archive-keyring</literal> em Debian."
+"por exemplo o pacote &keyring-package; em &keyring-distro;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:144
@@ -2356,34 +2349,25 @@ msgstr "Base de dados local de confiança de chaves de arquivos."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml:183
-#, fuzzy
-#| msgid "<filename>/usr/share/keyrings/debian-archive-keyring.gpg</filename>"
-msgid "<filename>/usr/share/keyrings/ubuntu-archive-keyring.gpg</filename>"
-msgstr "<filename>/usr/share/keyrings/debian-archive-keyring.gpg</filename>"
+msgid "&keyring-filename;"
+msgstr "&keyring-filename;"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:184
-#, fuzzy
-#| msgid "Keyring of Debian archive trusted keys."
-msgid "Keyring of Ubuntu archive trusted keys."
-msgstr "Chaveiro das chaves de confiança dos arquivos Debian."
+msgid "Keyring of &keyring-distro; archive trusted keys."
+msgstr "Chaveiro das chaves de confiança dos arquivos &keyring-distro;."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><term>
 #: apt-key.8.xml:187
-#, fuzzy
-#| msgid ""
-#| "<filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>"
 msgid ""
-"<filename>/usr/share/keyrings/ubuntu-archive-removed-keys.gpg</filename>"
+"&keyring-removed-filename;"
 msgstr ""
-"<filename>/usr/share/keyrings/debian-archive-removed-keys.gpg</filename>"
+"&keyring-removed-filename;"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:188
-#, fuzzy
-#| msgid "Keyring of Debian archive removed trusted keys."
-msgid "Keyring of Ubuntu archive removed trusted keys."
-msgstr "Chaveiro das chaves de confiança removidas dos arquivos Debian."
+msgid "Keyring of &keyring-distro; archive removed trusted keys."
+msgstr "Chaveiro das chaves de confiança removidas dos arquivos &keyring-distro;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-key.8.xml:197
@@ -2625,20 +2609,19 @@ msgid ""
 "maintainer signature is stripped off, and checksums of the package are "
 "computed and put in the Packages file. The checksums of all of the Packages "
 "files are then computed and put into the Release file. The Release file is "
-"then signed by the archive key for this Debian release, and distributed "
-"alongside the packages and the Packages files on Debian mirrors. The keys "
-"are in the Debian archive keyring available in the <package>debian-archive-"
-"keyring</package> package."
+"then signed by the archive key for this &keyring-distro; release, and distributed "
+"alongside the packages and the Packages files on &keyring-distro; mirrors. The keys "
+"are in the &keyring-distro; archive keyring available in the &keyring-package; "
+"package."
 msgstr ""
 "Assim que o pacote submetido é verificado e incluído no arquivo, a "
 "assinatura do responsável é despojada, são computados sumários de "
 "verificação do pacote e colocado no ficheiro Packages. Os sumários de "
 "verificação de todos os ficheiros Packages são então computados e colocados "
 "no ficheiro Release. O ficheiro Release é então assinado pela chave de "
-"arquivo para este lançamento de Debian, e distribuído juntamente com os "
-"pacotes e os ficheiros Packages em mirrors de Debian. As chaves estão no "
-"chaveiro do arquivo Debian no pacote <package>debian-archive-keyring</"
-"package>."
+"arquivo para este lançamento de &keyring-distro;, e distribuído juntamente com os "
+"pacotes e os ficheiros Packages em mirrors de &keyring-distro;. As chaves estão no "
+"chaveiro do arquivo &keyring-distro; no pacote &keyring-package;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml:113
@@ -2903,23 +2886,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:85
-#, fuzzy
-#| msgid ""
-#| "Mount point; specify the location to mount the CD-ROM. This mount point "
-#| "must be listed in <filename>/etc/fstab</filename> and properly "
-#| "configured.  Configuration Item: <literal>Acquire::cdrom::mount</literal>."
-msgid ""
-"Do not try to auto-detect the CD-ROM path. Usually combined with the "
-"<option>--cdrom</option> option.  Configuration Item: <literal>Acquire::"
-"cdrom::AutoDetect</literal>."
-msgstr ""
-"Ponto de Montagem; especifica a localização para montar o cdrom. Este ponto "
-"de montagem deve estar listado em <filename>/etc/fstab</filename> e "
-"configurado apropriadamente. Item de configuração: <literal>Acquire::cdrom::"
-"mount</literal>."
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:93
 msgid ""
 "Mount point; specify the location to mount the CD-ROM. This mount point must "
 "be listed in <filename>/etc/fstab</filename> and properly configured.  "
@@ -2931,7 +2897,7 @@ msgstr ""
 "mount</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:102
+#: apt-cdrom.8.xml:94
 msgid ""
 "Rename a disc; change the label of a disc or override the disc's given "
 "label. This option will cause <command>apt-cdrom</command> to prompt for a "
@@ -2943,7 +2909,7 @@ msgstr ""
 "CDROM::Rename</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:111
+#: apt-cdrom.8.xml:103
 msgid ""
 "No mounting; prevent <command>apt-cdrom</command> from mounting and "
 "unmounting the mount point.  Configuration Item: <literal>APT::CDROM::"
@@ -2954,7 +2920,7 @@ msgstr ""
 "NoMount</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:119
+#: apt-cdrom.8.xml:111
 msgid ""
 "Fast Copy; Assume the package files are valid and do not check every "
 "package. This option should be used only if <command>apt-cdrom</command> has "
@@ -2967,7 +2933,7 @@ msgstr ""
 "configuração: <literal>APT::CDROM::Fast</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:129
+#: apt-cdrom.8.xml:121
 msgid ""
 "Thorough Package Scan; This option may be needed with some old Debian "
 "1.1/1.2 discs that have Package files in strange places. It takes much "
@@ -2978,7 +2944,7 @@ msgstr ""
 "estranhos. Demora muito mais tempo a sondar o CD mas irá apanhá-los a todos."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-cdrom.8.xml:140
+#: apt-cdrom.8.xml:132
 msgid ""
 "No Changes; Do not change the &sources-list; file and do not write index "
 "files. Everything is still checked however.  Configuration Item: "
@@ -2989,12 +2955,12 @@ msgstr ""
 "configuração: <literal>APT::CDROM::NoAct</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cdrom.8.xml:153
+#: apt-cdrom.8.xml:145
 msgid "&apt-conf;, &apt-get;, &sources-list;"
 msgstr "&apt-conf;, &apt-get;, &sources-list;"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt-cdrom.8.xml:158
+#: apt-cdrom.8.xml:150
 msgid ""
 "<command>apt-cdrom</command> returns zero on normal operation, decimal 100 "
 "on error."
@@ -3809,12 +3775,12 @@ msgid ""
 "be used."
 msgstr ""
 "<literal>http::Proxy</literal> define o proxy http predefinido a usar para "
-"URIs de HTTP. Está no formato standard de <literal>http://[[user][:pass]@]"
-"host[:port]/</literal>. Também podem ser especificados proxies por máquina "
-"ao usar o formato <literal>http::Proxy::&lt;host&gt;</literal> com a palavra "
-"chave especial <literal>DIRECT</literal> que significa não usar proxies. Se "
-"nenhuma das definições acima for especificada, será usada a variável de "
-"ambiente <envar>http_proxy</envar>."
+"URIs de HTTP. Está no formato standard de <literal>http://[[user][:"
+"pass]@]host[:port]/</literal>. Também podem ser especificados proxies por "
+"máquina ao usar o formato <literal>http::Proxy::&lt;host&gt;</literal> com a "
+"palavra chave especial <literal>DIRECT</literal> que significa não usar "
+"proxies. Se nenhuma das definições acima for especificada, será usada a "
+"variável de ambiente <envar>http_proxy</envar>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:366
@@ -3987,8 +3953,9 @@ msgstr ""
 "servidor proxy ao que se ligar. Por favor veja &configureindex; para um "
 "exemplo de como fazer isto. As variáveis de substituição que representam o "
 "componente URI correspondente são <literal>$(PROXY_USER)</literal> <literal>"
-"$(PROXY_PASS)</literal> <literal>$(SITE_USER)</literal> <literal>$(SITE_PASS)"
-"</literal> <literal>$(SITE)</literal> e <literal>$(SITE_PORT)</literal>."
+"$(PROXY_PASS)</literal> <literal>$(SITE_USER)</literal> <literal>"
+"$(SITE_PASS)</literal> <literal>$(SITE)</literal> e <literal>$(SITE_PORT)</"
+"literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:451
@@ -6616,13 +6583,13 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:92
 msgid ""
-"<literal>distribution</literal> may also contain a variable, <literal>$(ARCH)"
-"</literal> which expands to the Debian architecture (such as <literal>amd64</"
-"literal> or <literal>armel</literal>) used on the system. This permits "
-"architecture-independent <filename>sources.list</filename> files to be used. "
-"In general this is only of interest when specifying an exact path, "
-"<literal>APT</literal> will automatically generate a URI with the current "
-"architecture otherwise."
+"<literal>distribution</literal> may also contain a variable, <literal>"
+"$(ARCH)</literal> which expands to the Debian architecture (such as "
+"<literal>amd64</literal> or <literal>armel</literal>) used on the system. "
+"This permits architecture-independent <filename>sources.list</filename> "
+"files to be used. In general this is only of interest when specifying an "
+"exact path, <literal>APT</literal> will automatically generate a URI with "
+"the current architecture otherwise."
 msgstr ""
 "<literal>distribution</literal> também pode conter uma variável. <literal>"
 "$(ARCH)</literal> a qual se expande à arquitectura Debian (tal como "
@@ -8119,9 +8086,9 @@ msgstr "DESCRIÇÃO"
 #: apt.8:31
 msgid ""
 "APT is a management system for software packages. For normal day to day "
-"package management there are several frontends available, such as B<aptitude>"
-"(8)  for the command line or B<synaptic>(8)  for the X Window System. Some "
-"options are only implemented in B<apt-get>(8)  though."
+"package management there are several frontends available, such as "
+"B<aptitude>(8)  for the command line or B<synaptic>(8)  for the X Window "
+"System. Some options are only implemented in B<apt-get>(8)  though."
 msgstr ""
 "APT é um sistema de gestão para pacotes de software. Para a gestão de "
 "pacotes normal do dia-a-dia existem vários frontends disponíveis, como o "
@@ -8400,11 +8367,11 @@ msgid ""
 "instance,"
 msgstr ""
 "O primeira <footnote><p>se você está a usar um servidor proxy http você tem "
-"que definir a variável de ambiente http_proxy primeiro, veja sources.list(5)"
-"</p></footnote> coisa que deve ser feita antes de usar <prgn>apt-get</prgn> "
-"é obter as listas de pacotes a partir das <em>Sources</em> para que ele "
-"saiba que pacotes estão disponíveis. Isto é feito com <tt>apt-get update</"
-"tt>. Por exemplo,"
+"que definir a variável de ambiente http_proxy primeiro, veja sources."
+"list(5)</p></footnote> coisa que deve ser feita antes de usar <prgn>apt-get</"
+"prgn> é obter as listas de pacotes a partir das <em>Sources</em> para que "
+"ele saiba que pacotes estão disponíveis. Isto é feito com <tt>apt-get "
+"update</tt>. Por exemplo,"
 
 #. type: <example></example>
 #: guide.sgml:116
