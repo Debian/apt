@@ -28,7 +28,7 @@ include $(COPY_H)
 
 clean: clean/subdirs clean/examples
 veryclean: veryclean/subdirs clean/examples
-manpages: manpages/subdirs apt-vendor.ent
+manpages: apt-vendor.ent manpages/subdirs
 debiandoc: debiandoc/subdirs
 
 DOCUMENTATIONPO = $(patsubst %.po,%,$(notdir $(wildcard po/*.po)))
