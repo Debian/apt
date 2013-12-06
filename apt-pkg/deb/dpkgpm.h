@@ -89,7 +89,6 @@ class pkgDPkgPM : public pkgPackageManager
                                       const std::string &short_pkgname);
 
    // Terminal progress 
-   void SetupTerminalScrollArea(int nr_scrolled_rows);
    void SendTerminalProgress(float percentage);
 
    // apport integration

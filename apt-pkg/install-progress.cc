@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fcntl.h>
 
+
 namespace APT {
 namespace Progress {
 
@@ -221,6 +222,14 @@ bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName,
    return true;
 }
 
+int PackageManagerFancy::GetNumberTerminalRows()
+{
+   struct winsize win;
+   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&win) != 0)
+      return -1;
+   
+   return win.ws_row;
+}
 
 void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 {
@@ -248,23 +257,32 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 }
 
 PackageManagerFancy::PackageManagerFancy()
-   : nr_terminal_rows(-1)
 {
-   struct winsize win;
-   if(ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&win) == 0)
-   {
-      nr_terminal_rows = win.ws_row;
-   }
+   // setup terminal size
+   old_SIGWINCH = signal(SIGWINCH, HandleSIGWINCH);
+}
+
+PackageManagerFancy::~PackageManagerFancy()
+{
+   signal(SIGWINCH, old_SIGWINCH);
+}
+
+void PackageManagerFancy::HandleSIGWINCH(int)
+{
+   int nr_terminal_rows = GetNumberTerminalRows();
+   SetupTerminalScrollArea(nr_terminal_rows);
 }
 
 void PackageManagerFancy::Start()
 {
+   int nr_terminal_rows = GetNumberTerminalRows();
    if (nr_terminal_rows > 0)
       SetupTerminalScrollArea(nr_terminal_rows);
 }
 
 void PackageManagerFancy::Stop()
 {
+   int nr_terminal_rows = GetNumberTerminalRows();
    if (nr_terminal_rows > 0)
    {
       SetupTerminalScrollArea(nr_terminal_rows + 1);
@@ -284,7 +302,7 @@ bool PackageManagerFancy::StatusChanged(std::string PackageName,
           HumanReadableAction))
       return false;
 
-   int row = nr_terminal_rows;
+   int row = GetNumberTerminalRows();
 
    static string save_cursor = "\033[s";
    static string restore_cursor = "\033[u";
