@@ -498,14 +498,42 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       }
 
       // we have something, queue the next diff
-      if(found) 
+      if(found)
       {
 	 // queue the diffs
 	 string::size_type const last_space = Description.rfind(" ");
 	 if(last_space != string::npos)
 	    Description.erase(last_space, Description.size()-last_space);
-	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedHash, ServerSha1, available_patches);
+
+	 /* decide if we should download patches one by one or in one go:
+	    The first is good if the server merges patches, but many don't so client
+	    based merging can be attempt in which case the second is better.
+	    "bad things" will happen if patches are merged on the server,
+	    but client side merging is attempt as well */
+	 bool pdiff_merge = _config->FindB("Acquire::PDiffs::Merge", true);
+	 if (pdiff_merge == true)
+	 {
+	    // this perl script is provided by apt-file
+	    pdiff_merge = FileExists(_config->FindFile("Dir::Bin::rred", "/usr/bin/diffindex-rred"));
+	    if (pdiff_merge == true)
+	    {
+	       // reprepro adds this flag if it has merged patches on the server
+	       std::string const precedence = Tags.FindS("X-Patch-Precedence");
+	       pdiff_merge = (precedence != "merged");
+	    }
+	 }
+
+	 if (pdiff_merge == false)
+	    new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
+		  ExpectedHash, ServerSha1, available_patches);
+	 else
+	 {
+	    std::vector<pkgAcqIndexMergeDiffs*> *diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
+	    for(size_t i = 0; i < available_patches.size(); ++i)
+	       (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, RealURI, Description, Desc.ShortDesc, ExpectedHash,
+		     available_patches[i], diffs);
+	 }
+
 	 Complete = false;
 	 Status = StatDone;
 	 Dequeue();
@@ -751,6 +779,123 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
 	 return Finish();
       } else 
 	 return Finish(true);
+   }
+}
+									/*}}}*/
+// AcqIndexMergeDiffs::AcqIndexMergeDiffs - Constructor			/*{{{*/
+pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
+				   string const &URI, string const &URIDesc,
+				   string const &ShortDesc, HashString const &ExpectedHash,
+				   DiffInfo const &patch,
+				   std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
+   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash),
+     patch(patch),allPatches(allPatches), State(StateFetchDiff)
+{
+
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(URI);
+
+   Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
+
+   Description = URIDesc;
+   Desc.Owner = this;
+   Desc.ShortDesc = ShortDesc;
+
+   Desc.URI = string(RealURI) + ".diff/" + patch.file + ".gz";
+   Desc.Description = Description + " " + patch.file + string(".pdiff");
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(RealURI + ".diff/" + patch.file);
+
+   if(Debug)
+      std::clog << "pkgAcqIndexMergeDiffs: " << Desc.URI << std::endl;
+
+   QueueURI(Desc);
+}
+									/*}}}*/
+void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
+{
+   if(Debug)
+      std::clog << "pkgAcqIndexMergeDiffs failed: " << Desc.URI << " with " << Message << std::endl;
+   Complete = false;
+   Status = StatDone;
+   Dequeue();
+
+   // check if we are the first to fail, otherwise we are done here
+   State = StateDoneDiff;
+   for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
+	 I != allPatches->end(); ++I)
+      if ((*I)->State == StateErrorDiff)
+	 return;
+
+   // first failure means we should fallback
+   State = StateErrorDiff;
+   std::clog << "Falling back to normal index file aquire" << std::endl;
+   new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc,
+		   ExpectedHash);
+}
+									/*}}}*/
+void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,string Md5Hash,	/*{{{*/
+			    pkgAcquire::MethodConfig *Cnf)
+{
+   if(Debug)
+      std::clog << "pkgAcqIndexMergeDiffs::Done(): " << Desc.URI << std::endl;
+
+   Item::Done(Message,Size,Md5Hash,Cnf);
+
+   string const FinalFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+
+   if (State == StateFetchDiff)
+   {
+      // rred expects the patch as $FinalFile.ed.$patchname.gz
+      Rename(DestFile, FinalFile + ".ed." + patch.file + ".gz");
+
+      // check if this is the last completed diff
+      State = StateDoneDiff;
+      for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
+	    I != allPatches->end(); ++I)
+	 if ((*I)->State != StateDoneDiff)
+	 {
+	    if(Debug)
+	       std::clog << "Not the last done diff in the batch: " << Desc.URI << std::endl;
+	    return;
+	 }
+
+      // this is the last completed diff, so we are ready to apply now
+      State = StateApplyDiff;
+
+      if(Debug)
+	 std::clog << "Sending to rred method: " << FinalFile << std::endl;
+
+      Local = true;
+      Desc.URI = "rred:" + FinalFile;
+      QueueURI(Desc);
+      Mode = "rred";
+      return;
+   }
+   // success in download/apply all diffs, clean up
+   else if (State == StateApplyDiff)
+   {
+      // see if we really got the expected file
+      if(!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
+      {
+	 RenameOnError(HashSumMismatch);
+	 return;
+      }
+
+      // move the result into place
+      if(Debug)
+	 std::clog << "Moving patched file in place: " << std::endl
+		   << DestFile << " -> " << FinalFile << std::endl;
+      Rename(DestFile, FinalFile);
+      chmod(FinalFile.c_str(), 0644);
+
+      // otherwise lists cleanup will eat the file
+      DestFile = FinalFile;
+
+      // all set and done
+      Complete = true;
+      if(Debug)
+	 std::clog << "allDone: " << DestFile << "\n" << std::endl;
    }
 }
 									/*}}}*/

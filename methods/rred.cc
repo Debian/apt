@@ -11,6 +11,8 @@
 
 #include <sys/stat.h>
 #include <sys/uio.h>
+#include <sys/types.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <utime.h>
 #include <stdio.h>
@@ -465,50 +467,112 @@ bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
    } else
       URIStart(Res);
 
-   if (Debug == true) 
-      std::clog << "Patching " << Path << " with " << Path 
-         << ".ed and putting result into " << Itm->DestFile << std::endl;
-   // Open the source and destination files (the d'tor of FileFd will do 
-   // the cleanup/closing of the fds)
-   FileFd From(Path,FileFd::ReadOnly);
-   FileFd Patch(Path+".ed",FileFd::ReadOnly, FileFd::Gzip);
-   FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
-   To.EraseOnFailure();
-   if (_error->PendingError() == true)
-      return false;
-   
+   std::string lastPatchName;
    Hashes Hash;
-   // now do the actual patching
-   State const result = patchMMap(Patch, From, To, &Hash);
-   if (result == MMAP_FAILED) {
-      // retry with patchFile
-      Patch.Seek(0);
-      From.Seek(0);
-      To.Open(Itm->DestFile,FileFd::WriteAtomic);
-      if (_error->PendingError() == true)
-         return false;
-      if (patchFile(Patch, From, To, &Hash) != ED_OK) {
-	 return _error->WarningE("rred", _("Could not patch %s with mmap and with file operation usage - the patch seems to be corrupt."), Path.c_str());
-      } else if (Debug == true) {
-	 std::clog << "rred: finished file patching of " << Path  << " after mmap failed." << std::endl;
-      }
-   } else if (result != ED_OK) {
-      return _error->Errno("rred", _("Could not patch %s with mmap (but no mmap specific fail) - the patch seems to be corrupt."), Path.c_str());
-   } else if (Debug == true) {
-      std::clog << "rred: finished mmap patching of " << Path << std::endl;
-   }
 
-   // write out the result
-   From.Close();
-   Patch.Close();
-   To.Close();
+   // check for a single ed file
+   if (FileExists(Path+".ed") == true)
+   {
+      if (Debug == true)
+	 std::clog << "Patching " << Path << " with " << Path
+	    << ".ed and putting result into " << Itm->DestFile << std::endl;
+
+      // Open the source and destination files
+      lastPatchName = Path + ".ed";
+      FileFd From(Path,FileFd::ReadOnly);
+      FileFd To(Itm->DestFile,FileFd::WriteAtomic);
+      To.EraseOnFailure();
+      FileFd Patch(lastPatchName, FileFd::ReadOnly, FileFd::Gzip);
+      if (_error->PendingError() == true)
+	 return false;
+
+      // now do the actual patching
+      State const result = patchMMap(Patch, From, To, &Hash);
+      if (result == MMAP_FAILED) {
+	 // retry with patchFile
+	 Patch.Seek(0);
+	 From.Seek(0);
+	 To.Open(Itm->DestFile,FileFd::WriteAtomic);
+	 if (_error->PendingError() == true)
+	    return false;
+	 if (patchFile(Patch, From, To, &Hash) != ED_OK) {
+	    return _error->WarningE("rred", _("Could not patch %s with mmap and with file operation usage - the patch seems to be corrupt."), Path.c_str());
+	 } else if (Debug == true) {
+	    std::clog << "rred: finished file patching of " << Path  << " after mmap failed." << std::endl;
+	 }
+      } else if (result != ED_OK) {
+	 return _error->Errno("rred", _("Could not patch %s with mmap (but no mmap specific fail) - the patch seems to be corrupt."), Path.c_str());
+      } else if (Debug == true) {
+	 std::clog << "rred: finished mmap patching of " << Path << std::endl;
+      }
+
+      // write out the result
+      From.Close();
+      Patch.Close();
+      To.Close();
+   }
+   else
+   {
+      if (Debug == true)
+	 std::clog << "Patching " << Path << " with all " << Path << ".ed.*.gz files and "
+	    << "putting result into " << Itm->DestFile << std::endl;
+
+      int From = open(Path.c_str(), O_RDONLY);
+      unlink(Itm->DestFile.c_str());
+      int To = open(Itm->DestFile.c_str(), O_WRONLY | O_CREAT | O_EXCL, 0644);
+      SetCloseExec(From, false);
+      SetCloseExec(To, false);
+
+      _error->PushToStack();
+      std::vector<std::string> patches = GetListOfFilesInDir(flNotFile(Path), "gz", true, false);
+      _error->RevertToStack();
+
+      std::string externalrred = _config->Find("Dir::Bin::rred", "/usr/bin/diffindex-rred");
+      std::vector<const char *> Args;
+      Args.reserve(22);
+      Args.push_back(externalrred.c_str());
+
+      std::string const baseName = Path + ".ed.";
+      for (std::vector<std::string>::const_iterator p = patches.begin();
+	    p != patches.end(); ++p)
+	 if (p->compare(0, baseName.length(), baseName) == 0)
+	    Args.push_back(p->c_str());
+
+      Args.push_back(NULL);
+
+      pid_t Patcher = ExecFork();
+      if (Patcher == 0) {
+	 dup2(From, STDIN_FILENO);
+	 dup2(To, STDOUT_FILENO);
+
+	 execvp(Args[0], (char **) &Args[0]);
+	 std::cerr << "Failed to execute patcher " << Args[0] << "!" << std::endl;
+	 _exit(100);
+      }
+      // last is NULL, so the one before is the last patch
+      lastPatchName = Args[Args.size() - 2];
+
+      if (ExecWait(Patcher, "rred") == false)
+	 return _error->Errno("rred", "Patching via external rred failed");
+
+      close(From);
+      close(To);
+
+      struct stat Buf;
+      if (stat(Itm->DestFile.c_str(), &Buf) != 0)
+	 return _error->Errno("stat",_("Failed to stat"));
+
+      To = open(Path.c_str(), O_RDONLY);
+      Hash.AddFD(To, Buf.st_size);
+      close(To);
+   }
 
    /* Transfer the modification times from the patch file
       to be able to see in which state the file should be
       and use the access time from the "old" file */
    struct stat BufBase, BufPatch;
    if (stat(Path.c_str(),&BufBase) != 0 ||
-       stat(std::string(Path+".ed").c_str(),&BufPatch) != 0)
+	 stat(lastPatchName.c_str(), &BufPatch) != 0)
       return _error->Errno("stat",_("Failed to stat"));
 
    struct utimbuf TimeBuf;
