@@ -1,14 +1,17 @@
 #!/bin/sh
-
 set -e
+
+dpkg-checkbuilddeps -d 'libxml2-utils'
+
+if [ -n "${GBP_BUILD_DIR}" ]; then
+   cd "$GBP_BUILD_DIR"
+fi
 
 VERSION=$(dpkg-parsechangelog | sed -n -e '/^Version:/s/^Version: //p')
 DISTRIBUTION=$(dpkg-parsechangelog | sed -n -e '/^Distribution:/s/^Distribution: //p')
 
 LIBAPTPKGVERSION="$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/init.h | sed 's/\.$//')"
 LIBAPTINSTVERSION="$(egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)"
-
-dpkg-checkbuilddeps -d 'libxml2-utils'
 
 if [ "$1" = 'pre-export' ]; then
 	libraryversioncheck() {
@@ -59,9 +62,14 @@ elif [ "$1" = 'post-build' ]; then
 			echo >&2 "WARNING: original docbook manpages have errors with vendor ${DISTRO}!"
 		fi
 	done
-	# … but check the translations only with one vendor for translation-specific errors
-	if ! xmllint --nonet --valid --noout $(find doc/ -mindepth 2 -maxdepth 2 -name '*.xml'); then
-		echo >&2 "WARNING: translated docbook manpages have errors!"
+	# lets assume we will always have a german manpage translation
+	if [ -e 'doc/de/' ]; then
+		# … but check the translations only with one vendor for translation-specific errors
+		if ! xmllint --nonet --valid --noout $(find doc/ -mindepth 2 -maxdepth 2 -name '*.xml'); then
+			echo >&2 "WARNING: translated docbook manpages have errors!"
+		fi
+	else
+		echo >&2 "ERROR: translated manpages need to be build before they can be checked!"
 	fi
 	rm -f doc/apt-vendor.ent
 
