@@ -47,7 +47,7 @@ if [ "$1" = 'pre-export' ]; then
 	sed -i -e "s/^<!ENTITY apt-product-version \".*\">$/<!ENTITY apt-product-version \"${VERSION}\">/" doc/apt-verbatim.ent
 elif [ "$1" = 'post-build' ]; then
 	if [ "$DISTRIBUTION" != "UNRELEASED" ]; then
-		echo >&2 "REMEMBER: Tag this release with »bzr tag ${VERSION}« if you are satisfied"
+		echo >&2 "REMEMBER: Tag this release with »git tag ${VERSION}« if you are satisfied"
 	else
 		echo >&2 'REMEMBER: Change to a valid distribution before release'
 	fi
@@ -86,7 +86,7 @@ else
 \t$0 post-build
 \t$0 library
 
-If you use »bzr builddeb« you can leave this script alone as it will
+If you use »git buildpackage« you can leave this script alone as it will
 be run at the right places auto-magically. Otherwise you should use
 »pre-export« to update po and pot files as well as version numbering.
 »post-build« can be used to run some more or less useful checks later on.
