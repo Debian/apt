@@ -69,14 +69,14 @@ elif [ "$1" = 'library' ]; then
 	librarysymbols() {
 		echo "Checking $1 in version $2"
 		local tmpfile=$(mktemp)
-		dpkg-gensymbols -p${1}${2} -ebuild/bin/${1}.so.${2} -Idebian/${1}${2}.symbols -O/dev/null 2> /dev/null > $tmpfile
+		dpkg-gensymbols -p${1}${2} -ebuild/bin/${1}.so.${2} -Idebian/${1}${2}.symbols -O/dev/null 2> /dev/null > $tmpfile || true
 		echo '=== Missing symbols:'
-		grep '^+#MISSING' $tmpfile
+		grep '^+#MISSING' $tmpfile || true
 		echo '=== New symbols:'
 		grep '^+ ' $tmpfile | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
 			echo " (c++)\"${line}@Base\" $VERSION"
 		done | sort -u
-		rm $tmpfile
+		rm -f $tmpfile
 	}
 	librarysymbols 'libapt-pkg' "${LIBAPTPKGVERSION}"
 	echo
