@@ -1,8 +1,31 @@
-apt (0.9.13.1ubuntu1) trusty; urgency=low
+apt (0.9.14ubuntu1) trusty; urgency=low
 
   * Merged from debian/sid
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 29 Nov 2013 22:59:22 +0100
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Sat, 07 Dec 2013 17:53:59 +0100
+
+apt (0.9.14) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * merge ubuntus apport reporting changes to reduce diff
+  * enable NOISE for build logs to enable analyse
+  * introduce a vendor system to change sources.list
+  * add a vendor specific file to have configurable entities
+  * use a substvar to set the archive-keyring in debian/control
+  * cherry-pick ubuntus (disabled) net-update fixes
+  * generate apt-key script with vendor info about keys
+  * drop old /var/state to /var/lib transition artefacts
+
+  [ Steve Langasek ]
+  * prepare-release: declare the packages needed as source build deps.
+
+  [ Michael Vogt ]
+  * enable release based selection for deb-src (closes: 731102)
+  * document Dpkg::Progress-Fancy (closes: 726169), thanks to James McCoy
+  * vendor/makefile: fix build error for parallel builds
+  * Handle SIGWINCH in APT::Progress-Fancy=1
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 07 Dec 2013 14:54:31 +0100
 
 apt (0.9.13.1) unstable; urgency=low
 

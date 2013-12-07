@@ -12,8 +12,9 @@ doc: doc/subdirs
 clean: clean/subdirs
 veryclean: veryclean/subdirs
 dirs: dirs/subdirs
+manpages: manpages/subdirs
 
-all/subdirs binary/subdirs doc/subdirs dirs/subdirs:
+all/subdirs binary/subdirs doc/subdirs dirs/subdirs manpages/subdirs:
 	$(MAKE) -C current $(patsubst %/subdirs,%,$@)
 
 clean/subdirs veryclean/subdirs:

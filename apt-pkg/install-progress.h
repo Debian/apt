@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unistd.h>
-
+#include <signal.h>
 
 namespace APT {
 namespace Progress {
@@ -117,11 +117,14 @@ namespace Progress {
  class PackageManagerFancy : public PackageManager
  {
  protected:
-    int nr_terminal_rows;
-    void SetupTerminalScrollArea(int nr_rows);
+    static void SetupTerminalScrollArea(int nr_rows);
+    static int GetNumberTerminalRows();
+    static void HandleSIGWINCH(int);
+    sighandler_t old_SIGWINCH;
 
  public:
     PackageManagerFancy();
+    ~PackageManagerFancy();
     virtual void Start();
     virtual void Stop();
     virtual bool StatusChanged(std::string PackageName, 
