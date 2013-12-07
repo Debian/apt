@@ -51,11 +51,20 @@ elif [ "$1" = 'post-build' ]; then
 	else
 		echo >&2 'REMEMBER: Change to a valid distribution before release'
 	fi
-	if ! xmllint --nonet --valid --noout $(find doc/ -maxdepth 1 -name '*.xml'); then
-		echo >&2 'WARNING: original docbook manpages have errors!'
-	elif ! xmllint --nonet --valid --noout $(find doc/ -mindepth 2 -maxdepth 2 -name '*.xml'); then
-		echo >&2 'WARNING: translated docbook manpages have errors, but originals are okay!'
+
+	# check the manpages with each vendor for vendor-specific errors…
+	find vendor -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2 | while read DISTRO; do
+		ln -sf ../vendor/${DISTRO}/apt-vendor.ent doc
+		if ! xmllint --nonet --valid --noout $(find doc/ -maxdepth 1 -name '*.xml'); then
+			echo >&2 "WARNING: original docbook manpages have errors with vendor ${DISTRO}!"
+		fi
+	done
+	# … but check the translations only with one vendor for translation-specific errors
+	if ! xmllint --nonet --valid --noout $(find doc/ -mindepth 2 -maxdepth 2 -name '*.xml'); then
+		echo >&2 "WARNING: translated docbook manpages have errors!"
 	fi
+	rm -f doc/apt-vendor.ent
+
 elif [ "$1" = 'library' ]; then
 	librarysymbols() {
 		echo "Checking $1 in version $2"
