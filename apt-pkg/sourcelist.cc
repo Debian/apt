@@ -327,6 +327,7 @@ bool pkgSourceList::ParseFileDeb822(string File)
    {
       if(!Tags.Exists("Type")) 
          continue;
+
       string const type = Tags.FindS("Type");
       Type *Parse = Type::GetType(type.c_str());
       if (Parse == 0)
@@ -335,8 +336,10 @@ bool pkgSourceList::ParseFileDeb822(string File)
       string URI = Tags.FindS("URL");
       if (!Parse->FixupURI(URI))
          return _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
-      string const Dist = Tags.FindS("Dist");
-      string const Section = Tags.FindS("Section");
+
+      string Dist = Tags.FindS("Dist");
+      Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
+
       // check if there are any options we support
       const char* option_str[] = { 
          "arch", "arch+", "arch-", "trusted" };
@@ -345,6 +348,7 @@ bool pkgSourceList::ParseFileDeb822(string File)
             Options[option_str[j]] = Tags.FindS(option_str[j]);
 
       // now create one item per section
+      string const Section = Tags.FindS("Section");
       std::vector<std::string> list;
       if (Section.find(","))
          list = StringSplit(Section, ",");
