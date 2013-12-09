@@ -76,8 +76,8 @@ class pkgSourceList
 
    std::vector<metaIndex *> SrcList;
 
-   // FIXME: move int Type with the next ABI break
-   bool ParseFileDeb822(FileFd &Fd);
+   bool ParseFileDeb822(std::string File);
+   bool ParseFileOldStyle(std::string File);
 
    public:
 

@@ -160,7 +160,6 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
    return true;
 }
 									/*}}}*/
-
 // SourceList::pkgSourceList - Constructors				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -181,7 +180,6 @@ pkgSourceList::~pkgSourceList()
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
 }
-									/*}}}*/
 									/*}}}*/
 // SourceList::ReadMainList - Read the main source list from etc	/*{{{*/
 // ---------------------------------------------------------------------
@@ -217,7 +215,6 @@ bool pkgSourceList::ReadMainList()
    return Res;
 }
 									/*}}}*/
-// CNC:2003-03-03 - Needed to preserve backwards compatibility.
 // SourceList::Reset - Clear the sourcelist contents			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -228,7 +225,6 @@ void pkgSourceList::Reset()
    SrcList.erase(SrcList.begin(),SrcList.end());
 }
 									/*}}}*/
-// CNC:2003-03-03 - Function moved to ReadAppend() and Reset().
 // SourceList::Read - Parse the sourcelist file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -238,75 +234,21 @@ bool pkgSourceList::Read(string File)
    return ReadAppend(File);
 }
 									/*}}}*/
-
-// FIXME: move into pkgSourceList::Type::ParseFile()
-bool pkgSourceList::ParseFileDeb822(FileFd &Fd)
-{
-      pkgTagSection Tags;
-      map<string, string> Options;
-      unsigned int i=0;
-
-      pkgTagFile Sources(&Fd);
-      while (Sources.Step(Tags) == true)
-      {
-         if(!Tags.Exists("Type")) 
-            continue;
-         string const type = Tags.FindS("Type");
-         Type *Parse = Type::GetType(type.c_str());
-         if (Parse == 0)
-            return _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
-         
-         string URI = Tags.FindS("URL");
-         if (!Parse->FixupURI(URI))
-            return _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
-         string const Dist = Tags.FindS("Dist");
-         string const Section = Tags.FindS("Section");
-         // check if there are any options we support
-         const char* option_str[] = { 
-            "arch", "arch+", "arch-", "trusted" };
-         for (unsigned int j=0; j < sizeof(option_str)/sizeof(char*); j++)
-            if (Tags.Exists(option_str[j]))
-               Options[option_str[j]] = Tags.FindS(option_str[j]);
-
-         // now create one item per section
-         std::vector<std::string> list;
-         if (Section.find(","))
-             list = StringSplit(Section, ",");
-         else
-             list = StringSplit(Section, " ");
-         for (std::vector<std::string>::const_iterator I = list.begin();
-              I != list.end(); I++)
-            Parse->CreateItem(SrcList, URI, Dist, (*I), Options);
-
-         i++;
-      }
-
-      // we are done
-      if(i>0)
-         return true;
-
-      return false;
-}
-
-
 // SourceList::ReadAppend - Parse a sourcelist file			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 bool pkgSourceList::ReadAppend(string File)
 {
-   // *first* try reading as deb822
-   // FIXME: proper error handling so that we do not error for good old-style
-   //        sources
-   FileFd Fd(File, FileFd::ReadOnly);
-   if (_error->PendingError() == false)
-   {
-      if (ParseFileDeb822(Fd))
+   if (ParseFileDeb822(File))
          return true;
-   }
+   return ParseFileOldStyle(File);
+}
 
-
-   // *then* read as old-style sources.list
-
+// SourceList::ReadFileOldStyle - Read Traditional style sources.list 	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgSourceList::ParseFileOldStyle(string File)
+{
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
    if (!F != 0)
@@ -356,6 +298,65 @@ bool pkgSourceList::ReadAppend(string File)
 	 return false;
    }
    return true;
+}
+									/*}}}*/
+// SourceList::ParseFileDeb822 - Parse deb822 style sources.list 	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgSourceList::ParseFileDeb822(string File)
+{
+   // FIXME: proper error handling so that we do not error for good old-style
+   //        sources
+   FileFd Fd(File, FileFd::ReadOnly);
+   if (_error->PendingError() == true)
+   {
+      return false;
+   }
+
+   pkgTagSection Tags;
+   map<string, string> Options;
+   unsigned int i=0;
+   
+   pkgTagFile Sources(&Fd);
+   while (Sources.Step(Tags) == true)
+   {
+      if(!Tags.Exists("Type")) 
+         continue;
+      string const type = Tags.FindS("Type");
+      Type *Parse = Type::GetType(type.c_str());
+      if (Parse == 0)
+         return _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
+         
+      string URI = Tags.FindS("URL");
+      if (!Parse->FixupURI(URI))
+         return _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
+      string const Dist = Tags.FindS("Dist");
+      string const Section = Tags.FindS("Section");
+      // check if there are any options we support
+      const char* option_str[] = { 
+         "arch", "arch+", "arch-", "trusted" };
+      for (unsigned int j=0; j < sizeof(option_str)/sizeof(char*); j++)
+         if (Tags.Exists(option_str[j]))
+            Options[option_str[j]] = Tags.FindS(option_str[j]);
+
+      // now create one item per section
+      std::vector<std::string> list;
+      if (Section.find(","))
+         list = StringSplit(Section, ",");
+      else
+         list = StringSplit(Section, " ");
+      for (std::vector<std::string>::const_iterator I = list.begin();
+           I != list.end(); I++)
+         Parse->CreateItem(SrcList, URI, Dist, (*I), Options);
+
+      i++;
+   }
+
+   // we are done
+   if(i>0)
+      return true;
+
+   return false;
 }
 									/*}}}*/
 // SourceList::FindIndex - Get the index associated with a file		/*{{{*/
