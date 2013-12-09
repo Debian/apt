@@ -75,7 +75,10 @@ class pkgSourceList
    protected:
 
    std::vector<metaIndex *> SrcList;
-   
+
+   // FIXME: move int Type with the next ABI break
+   bool ParseFileDeb822(FileFd &Fd);
+
    public:
 
    bool ReadMainList();

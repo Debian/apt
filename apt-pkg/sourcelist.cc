@@ -238,21 +238,15 @@ bool pkgSourceList::Read(string File)
    return ReadAppend(File);
 }
 									/*}}}*/
-// SourceList::ReadAppend - Parse a sourcelist file			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool pkgSourceList::ReadAppend(string File)
+
+// FIXME: move into pkgSourceList::Type::ParseFile()
+bool pkgSourceList::ParseFileDeb822(FileFd &Fd)
 {
-   // try reading as deb822
-   // FIXME: proper error handling so that we do not error for good old-style
-   //        sources
-   FileFd Fd(File, FileFd::ReadOnly);
-   pkgTagFile Sources(&Fd);
-   if (_error->PendingError() == false)
-   {
       pkgTagSection Tags;
       map<string, string> Options;
-      int i=0;
+      unsigned int i=0;
+
+      pkgTagFile Sources(&Fd);
       while (Sources.Step(Tags) == true)
       {
          if(!Tags.Exists("Type")) 
@@ -260,11 +254,11 @@ bool pkgSourceList::ReadAppend(string File)
          string const type = Tags.FindS("Type");
          Type *Parse = Type::GetType(type.c_str());
          if (Parse == 0)
-            return _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,File.c_str());
+            return _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
          
          string URI = Tags.FindS("URL");
          if (!Parse->FixupURI(URI))
-            return _error->Error(_("Malformed stanza %lu in source list %s (URI parse)"),i,File.c_str());
+            return _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
          string const Dist = Tags.FindS("Dist");
          string const Section = Tags.FindS("Section");
          // check if there are any options we support
@@ -280,15 +274,38 @@ bool pkgSourceList::ReadAppend(string File)
              list = StringSplit(Section, ",");
          else
              list = StringSplit(Section, " ");
-         for (int i=0; i < list.size(); i++)
-            Parse->CreateItem(SrcList, URI, Dist, list[i], Options);
+         for (std::vector<std::string>::const_iterator I = list.begin();
+              I != list.end(); I++)
+            Parse->CreateItem(SrcList, URI, Dist, (*I), Options);
 
          i++;
       }
+
       // we are done
       if(i>0)
          return true;
+
+      return false;
+}
+
+
+// SourceList::ReadAppend - Parse a sourcelist file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgSourceList::ReadAppend(string File)
+{
+   // *first* try reading as deb822
+   // FIXME: proper error handling so that we do not error for good old-style
+   //        sources
+   FileFd Fd(File, FileFd::ReadOnly);
+   if (_error->PendingError() == false)
+   {
+      if (ParseFileDeb822(Fd))
+         return true;
    }
+
+
+   // *then* read as old-style sources.list
 
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
