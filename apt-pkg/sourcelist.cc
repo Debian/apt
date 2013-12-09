@@ -239,7 +239,8 @@ bool pkgSourceList::Read(string File)
 /* */
 bool pkgSourceList::ReadAppend(string File)
 {
-   if (ParseFileDeb822(File))
+   if (_config->FindB("APT::Sources::Use-Deb822", true) == true)
+      if (ParseFileDeb822(File))
          return true;
    return ParseFileOldStyle(File);
 }
@@ -305,19 +306,23 @@ bool pkgSourceList::ParseFileOldStyle(string File)
 /* */
 bool pkgSourceList::ParseFileDeb822(string File)
 {
-   // FIXME: proper error handling so that we do not error for good old-style
-   //        sources
-   FileFd Fd(File, FileFd::ReadOnly);
-   if (_error->PendingError() == true)
-   {
-      return false;
-   }
 
    pkgTagSection Tags;
    map<string, string> Options;
    unsigned int i=0;
-   
+
+   // see if we can read the file
+   _error->PushToStack();
+   FileFd Fd(File, FileFd::ReadOnly);
    pkgTagFile Sources(&Fd);
+   if (_error->PendingError() == true)
+   {
+      _error->RevertToStack();
+      return false;
+   }
+   _error->MergeWithStack();
+   
+   // read step by step
    while (Sources.Step(Tags) == true)
    {
       if(!Tags.Exists("Type")) 
