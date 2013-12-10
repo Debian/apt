@@ -15,13 +15,15 @@ insertpackage 'wheezy' 'unreleated-package' 'all' '1.0'
 insertpackage 'unstable' 'foo' 'all' '2.0'
 insertsource 'unstable' 'foo' 'all' '2.0'
 
-# its possible to have multiple src versions in the sources file, do not break
-# in this case (bts #731853)
+# its possible to have multiple src versions in the sources file, ensure
+# to pick the correct one in this case (bts #731853)
 insertsource 'stable' 'foo' 'all' '1.5'
+insertsource 'stable' 'foo' 'all' '0.5'
 insertpackage 'stable' 'foo' 'all' '1.0'
 insertsource 'stable' 'foo' 'all' '1.0'
 
-# this packages exists only as source
+# this packages exists only as sources, add two versions to ensure that
+# apt will pick the higher version number (bts #731853)
 insertsource 'wheezy' 'foo' 'all' '0.0.1'
 insertsource 'wheezy' 'foo' 'all' '0.1'
 
