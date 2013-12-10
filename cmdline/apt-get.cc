@@ -337,11 +337,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
             if (Rel == RelTag)
             {
-               ioprintf(c1out, "Selectied version '%s' (%s) for %s\n", 
-                        Ver.c_str(), RelTag.c_str(), Src.c_str());
                Last = Parse;
                Offset = Parse->Offset();
-               break;
+               Version = Ver;
             }
          }
 
@@ -362,6 +360,10 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
          if (VerTag.empty() == false && (VerTag == Ver))
 	    break;
       }
+      if (Version != "" && RelTag != "")
+         ioprintf(c1out, "Selectied version '%s' (%s) for %s\n", 
+                  Version.c_str(), RelTag.c_str(), Src.c_str());
+
       if (Last != 0 || VerTag.empty() == true)
 	 break;
       _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
