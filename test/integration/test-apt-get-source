@@ -65,3 +65,8 @@ testequal "$HEADER
 E: Ignore unavailable version '9.9-not-there' of package 'foo'
 E: Unable to find a source package for foo" aptget source -q --print-uris foo=9.9-not-there
 
+# version and release
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_0.0.1.dsc' foo_0.0.1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_0.0.1.tar.gz' foo_0.0.1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris -t unstable foo=0.0.1

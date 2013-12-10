@@ -198,7 +198,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       CacheFile &CacheFile)
 {
-   string VerTag;
+  string VerTag, UserRequestedVerTag;
    string RelTag = _config->Find("APT::Default-Release");
    string TmpSrc = Name;
    pkgDepCache *Cache = CacheFile.GetDepCache();
@@ -209,7 +209,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       if (TmpSrc[found] == '/')
 	 RelTag = TmpSrc.substr(found+1);
       else
-	 VerTag = TmpSrc.substr(found+1);
+	 VerTag = UserRequestedVerTag = TmpSrc.substr(found+1);
       TmpSrc = TmpSrc.substr(0,found);
    }
 
@@ -331,7 +331,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 const string Ver = Parse->Version();
 
          // See if we need to look for a specific release tag
-         if (RelTag != "")
+         if (RelTag != "" && UserRequestedVerTag == "")
          {
             const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
 
@@ -360,7 +360,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
          if (VerTag.empty() == false && (VerTag == Ver))
 	    break;
       }
-      if (Version != "" && RelTag != "")
+      if (UserRequestedVerTag == "" && Version != "" && RelTag != "")
          ioprintf(c1out, "Selected version '%s' (%s) for %s\n", 
                   Version.c_str(), RelTag.c_str(), Src.c_str());
 
