@@ -662,7 +662,12 @@ compressfile() {
 }
 
 # can be overridden by testcases for their pleasure
-getcodenamefromsuite() { echo -n "$1"; }
+getcodenamefromsuite() {
+	case "$1" in
+	unstable) echo 'sid';;
+	*) echo -n "$1";;
+	esac
+}
 getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
 
