@@ -361,7 +361,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    break;
       }
       if (Version != "" && RelTag != "")
-         ioprintf(c1out, "Selectied version '%s' (%s) for %s\n", 
+         ioprintf(c1out, "Selected version '%s' (%s) for %s\n", 
                   Version.c_str(), RelTag.c_str(), Src.c_str());
 
       if (Last != 0 || VerTag.empty() == true)
