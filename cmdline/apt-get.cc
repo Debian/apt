@@ -269,15 +269,15 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		  break;
 	    }
 
+            // ignore arches that are not for us
+            if (ArchTag != "" && Ver.Arch() != ArchTag)
+               continue;
+
             // pick highest version for the arch unless the user wants
             // something else
             if (ArchTag != "" && VerTag == "" && RelTag == "")
-            {
-               if(Ver.Arch() != ArchTag)
-                  continue;
                if(Cache->VS().CmpVersion(VerTag, Ver.VerStr()) < 0)
                   VerTag = Ver.VerStr();
-            }
 
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
@@ -319,6 +319,16 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	       break;
 	 }
       }
+
+      if (Src == "" && ArchTag != "")
+      {
+          _error->Error(_("Can not find a package '%s' with version '%s' and "
+                          "release '%s'"), Pkg.FullName().c_str(), 
+                                           VerTag.c_str(), RelTag.c_str());
+         Src = Name;
+         return 0;
+      }
+
 
       if (Src.empty() == true)
       {

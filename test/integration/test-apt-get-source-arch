@@ -58,3 +58,13 @@ Need to get 0 B of source archives.
 testequal "$HEADER
 E: Can not find a package for architecture 'not-a-available-arch'
 E: Unable to find a source package for foo:not-a-available-arch" aptget source -q --print-uris foo:not-a-available-arch
+
+# error on unavailable version for arch
+testequal "$HEADER
+E: Can not find a package 'foo:amd64' with version '2.0' and release ''
+E: Unable to find a source package for foo:amd64=2.0" aptget source -q --print-uris foo:amd64=2.0
+
+# error on unavailable release for arch 
+testequal "$HEADER
+E: Can not find a package 'foo:amd64' with version '' and release 'oldstable'
+E: Unable to find a source package for foo:amd64/oldstable" aptget source -q --print-uris foo:amd64/oldstable
