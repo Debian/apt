@@ -24,6 +24,21 @@ GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
 GPG="$GPG_CMD --keyring $TRUSTEDFILE"
 MASTER_KEYRING=/usr/share/keyrings/ubuntu-master-keyring.gpg
 
+# COPYIED from apt-key.in --------------
+
+# gpg needs a trustdb to function, but it can't be invalid (not even empty)
+# so we create a temporary directory to store our fresh readable trustdb in
+TRUSTDBDIR="$(mktemp -d)"
+CURRENTTRAP="${CURRENTTRAP} rm -rf '${TRUSTDBDIR}';"
+trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+chmod 700 "$TRUSTDBDIR"
+# We also don't use a secret keyring, of course, but gpg panics and
+# implodes if there isn't one available - and writeable for imports
+SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
+touch $SECRETKEYRING
+GPG_CMD="$GPG_CMD --secret-keyring $SECRETKEYRING"
+GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
+#----------------------------------------- END COPY
 
 msgtest "add_keys_with_verify_against_master_keyring"
 if [ ! -e $MASTER_KEYRING ]; then
