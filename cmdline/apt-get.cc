@@ -322,9 +322,12 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
       if (Src == "" && ArchTag != "")
       {
-          _error->Error(_("Can not find a package '%s' with version '%s' and "
-                          "release '%s'"), Pkg.FullName().c_str(), 
-                                           VerTag.c_str(), RelTag.c_str());
+         if (VerTag != "")
+            _error->Error(_("Can not find a package '%s' with version '%s'"),
+                          Pkg.FullName().c_str(), VerTag.c_str());
+         if (RelTag != "")
+            _error->Error(_("Can not find a package '%s' with release '%s'"),
+                          Pkg.FullName().c_str(), RelTag.c_str());
          Src = Name;
          return 0;
       }
