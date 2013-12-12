@@ -416,7 +416,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
       if (Last != 0 || VerTag.empty() == true)
 	 break;
-      _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
+      _error->Error(_("Can not find version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
       return 0;
    }
 
