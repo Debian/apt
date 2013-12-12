@@ -9,7 +9,7 @@
 #include <sys/ioctl.h>
 #include <sstream>
 #include <fcntl.h>
-
+#include <stdio.h>
 
 namespace APT {
 namespace Progress {

@@ -198,18 +198,31 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       CacheFile &CacheFile)
 {
-   string VerTag;
+   string VerTag, UserRequestedVerTag;
+   string ArchTag = "";
    string RelTag = _config->Find("APT::Default-Release");
    string TmpSrc = Name;
    pkgDepCache *Cache = CacheFile.GetDepCache();
 
-   // extract the version/release from the pkgname
-   const size_t found = TmpSrc.find_last_of("/=");
-   if (found != string::npos) {
-      if (TmpSrc[found] == '/')
-	 RelTag = TmpSrc.substr(found+1);
-      else
-	 VerTag = TmpSrc.substr(found+1);
+   // extract release
+   size_t found = TmpSrc.find_last_of("/");
+   if (found != string::npos) 
+   {
+      RelTag = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
+   }
+   // extract the version
+   found = TmpSrc.find_last_of("=");
+   if (found != string::npos) 
+   {
+      VerTag = UserRequestedVerTag = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
+   }
+   // extract arch 
+   found = TmpSrc.find_last_of(":");
+   if (found != string::npos) 
+   {
+      ArchTag = TmpSrc.substr(found+1);
       TmpSrc = TmpSrc.substr(0,found);
    }
 
@@ -217,10 +230,25 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       install a version and determine the source package name, then look
       in the archive for a source package of the same name. */
    bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
-   const pkgCache::PkgIterator Pkg = Cache->FindPkg(TmpSrc);
+   pkgCache::PkgIterator Pkg;
+   if (ArchTag != "")
+      Pkg = Cache->FindPkg(TmpSrc, ArchTag);
+   else
+      Pkg = Cache->FindPkg(TmpSrc);
+
+   // if we can't find a package but the user qualified with a arch,
+   // error out here
+   if (Pkg.end() && ArchTag != "")
+   {
+      Src = Name;
+      _error->Error(_("Can not find a package for architecture '%s'"),
+                    ArchTag.c_str());
+      return 0;
+   }
+
    if (MatchSrcOnly == false && Pkg.end() == false) 
    {
-      if(VerTag.empty() == false || RelTag.empty() == false) 
+      if(VerTag != "" || RelTag != "" || ArchTag != "")
       {
 	 bool fuzzy = false;
 	 // we have a default release, try to locate the pkg. we do it like
@@ -240,6 +268,17 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	       if (Ver.end() == true)
 		  break;
 	    }
+
+            // ignore arches that are not for us
+            if (ArchTag != "" && Ver.Arch() != ArchTag)
+               continue;
+
+            // pick highest version for the arch unless the user wants
+            // something else
+            if (ArchTag != "" && VerTag == "" && RelTag == "")
+               if(Cache->VS().CmpVersion(VerTag, Ver.VerStr()) < 0)
+                  VerTag = Ver.VerStr();
+
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
 		(fuzzy == true || Cache->VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
@@ -280,6 +319,20 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	       break;
 	 }
       }
+
+      if (Src == "" && ArchTag != "")
+      {
+         if (VerTag != "")
+            _error->Error(_("Can not find a package '%s' with version '%s'"),
+                          Pkg.FullName().c_str(), VerTag.c_str());
+         if (RelTag != "")
+            _error->Error(_("Can not find a package '%s' with release '%s'"),
+                          Pkg.FullName().c_str(), RelTag.c_str());
+         Src = Name;
+         return 0;
+      }
+
+
       if (Src.empty() == true)
       {
 	 // if we don't have found a fitting package yet so we will
@@ -331,17 +384,15 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 const string Ver = Parse->Version();
 
          // See if we need to look for a specific release tag
-         if (RelTag != "")
+         if (RelTag != "" && UserRequestedVerTag == "")
          {
             const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
 
             if (Rel == RelTag)
             {
-               ioprintf(c1out, "Selectied version '%s' (%s) for %s\n", 
-                        Ver.c_str(), RelTag.c_str(), Src.c_str());
                Last = Parse;
                Offset = Parse->Offset();
-               break;
+               Version = Ver;
             }
          }
 
@@ -362,9 +413,13 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
          if (VerTag.empty() == false && (VerTag == Ver))
 	    break;
       }
+      if (UserRequestedVerTag == "" && Version != "" && RelTag != "")
+         ioprintf(c1out, "Selected version '%s' (%s) for %s\n", 
+                  Version.c_str(), RelTag.c_str(), Src.c_str());
+
       if (Last != 0 || VerTag.empty() == true)
 	 break;
-      _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
+      _error->Error(_("Can not find version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
       return 0;
    }
 

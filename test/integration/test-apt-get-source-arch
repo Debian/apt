@@ -1,0 +1,70 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386" "amd64"
+
+
+# different version for the individual arches
+insertpackage 'stable' 'foo' 'amd64' '1.0'
+insertsource 'stable' 'foo' 'amd64' '1.0'
+
+insertpackage 'stable' 'foo' 'i386' '1.0'
+insertsource  'stable' 'foo' 'i386' '1.0'
+insertpackage 'stable' 'foo' 'i386' '2.0'
+insertsource  'stable' 'foo' 'i386' '2.0'
+
+insertpackage 'oldstable' 'foo' 'i386' '0.1'
+insertsource  'oldstable' 'foo' 'i386' '0.1'
+# just needed so that there is a release file entry for the test
+insertpackage 'oldstable' 'unreleated' 'amd64' '0.1'
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+HEADER="Reading package lists...
+Building dependency tree..."
+
+# pick :amd64
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:amd64
+
+# pick :i386
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:i386
+
+# pick :i386 by release
+testequal "$HEADER
+Selected version '0.1' (oldstable) for foo
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:i386/oldstable
+
+# pick :i386 by version
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo:i386=1.0
+
+# error on unknown arch
+testequal "$HEADER
+E: Can not find a package for architecture 'not-a-available-arch'
+E: Unable to find a source package for foo:not-a-available-arch" aptget source -q --print-uris foo:not-a-available-arch
+
+# error on unavailable version for arch
+testequal "$HEADER
+E: Can not find a package 'foo:amd64' with version '2.0'
+E: Unable to find a source package for foo:amd64=2.0" aptget source -q --print-uris foo:amd64=2.0
+
+# error on unavailable release for arch 
+testequal "$HEADER
+E: Can not find a package 'foo:amd64' with release 'oldstable'
+E: Unable to find a source package for foo:amd64/oldstable" aptget source -q --print-uris foo:amd64/oldstable

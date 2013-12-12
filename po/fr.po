@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-07 17:54+0100\n"
+"POT-Creation-Date: 2013-12-12 21:40+0100\n"
 "PO-Revision-Date: 2013-08-17 07:57+0200\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -157,7 +157,7 @@ msgid "  Version table:"
 msgstr " Table de version :"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:210 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1527 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
+#: cmdline/apt-get.cc:1582 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -303,32 +303,53 @@ msgstr ""
 "   -c=? Lit ce fichier de configuration\n"
 "   -o=? Spécifie une option de configuration, p. ex. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-get.cc:313
+#: cmdline/apt-get.cc:244
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr ""
+"Impossible de trouver de paquet correspondant à l'expression rationnelle "
+"« %s »"
+
+#: cmdline/apt-get.cc:326
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr ""
+"Impossible de trouver de paquet correspondant à l'expression rationnelle "
+"« %s »"
+
+#: cmdline/apt-get.cc:329
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr ""
+"Impossible de trouver de paquet correspondant à l'expression rationnelle "
+"« %s »"
+
+#: cmdline/apt-get.cc:366
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "Choix de « %s » comme paquet source à la place de « %s »\n"
 
-#: cmdline/apt-get.cc:367
-#, c-format
-msgid "Ignore unavailable version '%s' of package '%s'"
+#: cmdline/apt-get.cc:422
+#, fuzzy, c-format
+msgid "Can not find version '%s' of package '%s'"
 msgstr "La version « %s » indisponible du paquet « %s » est ignorée"
 
-#: cmdline/apt-get.cc:398
+#: cmdline/apt-get.cc:453
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Impossible de trouver le paquet %s"
 
-#: cmdline/apt-get.cc:403 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:458 cmdline/apt-mark.cc:70
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s passé en « installé manuellement ».\n"
 
-#: cmdline/apt-get.cc:405 cmdline/apt-mark.cc:72
+#: cmdline/apt-get.cc:460 cmdline/apt-mark.cc:72
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "%s passé en « installé automatiquement ».\n"
 
-#: cmdline/apt-get.cc:413 cmdline/apt-mark.cc:116
+#: cmdline/apt-get.cc:468 cmdline/apt-mark.cc:116
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
@@ -336,26 +357,26 @@ msgstr ""
 "Cette commande est obsolète. Veuillez utiliser « apt-mark auto » et « apt-"
 "mark manual »."
 
-#: cmdline/apt-get.cc:482 cmdline/apt-get.cc:490
+#: cmdline/apt-get.cc:537 cmdline/apt-get.cc:545
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 "Erreur interne, la tentative de résolution du problème a cassé certaines "
 "parties"
 
-#: cmdline/apt-get.cc:518 cmdline/apt-get.cc:555
+#: cmdline/apt-get.cc:573 cmdline/apt-get.cc:610
 msgid "Unable to lock the download directory"
 msgstr "Impossible de verrouiller le répertoire de téléchargement"
 
-#: cmdline/apt-get.cc:667
+#: cmdline/apt-get.cc:722
 msgid "Must specify at least one package to fetch source for"
 msgstr "Vous devez spécifier au moins un paquet source"
 
-#: cmdline/apt-get.cc:707 cmdline/apt-get.cc:1002
+#: cmdline/apt-get.cc:762 cmdline/apt-get.cc:1057
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Impossible de trouver une source de paquet pour %s"
 
-#: cmdline/apt-get.cc:724
+#: cmdline/apt-get.cc:779
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
@@ -365,7 +386,7 @@ msgstr ""
 "suivi de versions « %s » à l'adresse :\n"
 "%s\n"
 
-#: cmdline/apt-get.cc:729
+#: cmdline/apt-get.cc:784
 #, c-format
 msgid ""
 "Please use:\n"
@@ -377,80 +398,80 @@ msgstr ""
 "pour récupérer les dernières mises à jour (éventuellement non encore "
 "publiées) du paquet.\n"
 
-#: cmdline/apt-get.cc:782
+#: cmdline/apt-get.cc:837
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Saut du téléchargement du fichier « %s », déjà téléchargé\n"
 
-#: cmdline/apt-get.cc:805 cmdline/apt-get.cc:808
+#: cmdline/apt-get.cc:860 cmdline/apt-get.cc:863
 #: apt-private/private-install.cc:198 apt-private/private-install.cc:201
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Impossible de déterminer l'espace disponible sur %s"
 
-#: cmdline/apt-get.cc:819
+#: cmdline/apt-get.cc:874
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Pas assez d'espace disponible sur %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:828
+#: cmdline/apt-get.cc:883
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Nécessité de prendre %so/%so dans les sources.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:833
+#: cmdline/apt-get.cc:888
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Nécessité de prendre %so dans les sources.\n"
 
-#: cmdline/apt-get.cc:839
+#: cmdline/apt-get.cc:894
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Récupération des sources %s\n"
 
-#: cmdline/apt-get.cc:860
+#: cmdline/apt-get.cc:915
 msgid "Failed to fetch some archives."
 msgstr "Échec lors de la récupération de quelques archives."
 
-#: cmdline/apt-get.cc:865 apt-private/private-install.cc:325
+#: cmdline/apt-get.cc:920 apt-private/private-install.cc:325
 msgid "Download complete and in download only mode"
 msgstr "Téléchargement achevé et dans le mode téléchargement uniquement"
 
-#: cmdline/apt-get.cc:891
+#: cmdline/apt-get.cc:946
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Saut du décompactage des paquets sources déjà décompactés dans %s\n"
 
-#: cmdline/apt-get.cc:903
+#: cmdline/apt-get.cc:958
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "La commande de décompactage « %s » a échoué.\n"
 
-#: cmdline/apt-get.cc:904
+#: cmdline/apt-get.cc:959
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Veuillez vérifier si le paquet dpkg-dev est installé.\n"
 
-#: cmdline/apt-get.cc:926
+#: cmdline/apt-get.cc:981
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "La commande de construction « %s » a échoué.\n"
 
-#: cmdline/apt-get.cc:946
+#: cmdline/apt-get.cc:1001
 msgid "Child process failed"
 msgstr "Échec du processus fils"
 
-#: cmdline/apt-get.cc:965
+#: cmdline/apt-get.cc:1020
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Il faut spécifier au moins un paquet pour vérifier les dépendances de "
 "construction"
 
-#: cmdline/apt-get.cc:990
+#: cmdline/apt-get.cc:1045
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
@@ -460,17 +481,17 @@ msgstr ""
 "consulter la section à propos de APT::Architectures dans la page de manuel "
 "apt.conf(5)."
 
-#: cmdline/apt-get.cc:1014 cmdline/apt-get.cc:1017
+#: cmdline/apt-get.cc:1069 cmdline/apt-get.cc:1072
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Impossible d'obtenir les dépendances de construction pour %s"
 
-#: cmdline/apt-get.cc:1037
+#: cmdline/apt-get.cc:1092
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s n'a pas de dépendance de construction.\n"
 
-#: cmdline/apt-get.cc:1207
+#: cmdline/apt-get.cc:1262
 #, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -479,7 +500,7 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car %s n'est pas "
 "autorisé avec les paquets « %s »."
 
-#: cmdline/apt-get.cc:1225
+#: cmdline/apt-get.cc:1280
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -488,14 +509,14 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s ne "
 "peut être trouvé"
 
-#: cmdline/apt-get.cc:1248
+#: cmdline/apt-get.cc:1303
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Impossible de satisfaire la dépendance %s pour %s : le paquet installé %s "
 "est trop récent"
 
-#: cmdline/apt-get.cc:1287
+#: cmdline/apt-get.cc:1342
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -504,7 +525,7 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car aucune version "
 "disponible du paquet %s ne peut satisfaire les prérequis de version."
 
-#: cmdline/apt-get.cc:1293
+#: cmdline/apt-get.cc:1348
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -513,31 +534,31 @@ msgstr ""
 "La dépendance %s vis-à-vis de %s ne peut être satisfaite car le paquet %s "
 "n'a pas de version disponible."
 
-#: cmdline/apt-get.cc:1316
+#: cmdline/apt-get.cc:1371
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Impossible de satisfaire les dépendances %s pour %s : %s"
 
-#: cmdline/apt-get.cc:1331
+#: cmdline/apt-get.cc:1386
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr ""
 "Les dépendances de compilation pour %s ne peuvent pas être satisfaites."
 
-#: cmdline/apt-get.cc:1336
+#: cmdline/apt-get.cc:1391
 msgid "Failed to process build dependencies"
 msgstr "Impossible d'activer les dépendances de construction"
 
-#: cmdline/apt-get.cc:1429 cmdline/apt-get.cc:1441
+#: cmdline/apt-get.cc:1484 cmdline/apt-get.cc:1496
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Journal des modifications pour %s (%s)"
 
-#: cmdline/apt-get.cc:1532
+#: cmdline/apt-get.cc:1587
 msgid "Supported modules:"
 msgstr "Modules reconnus :"
 
-#: cmdline/apt-get.cc:1573
+#: cmdline/apt-get.cc:1628
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -654,7 +675,7 @@ msgstr "%s était déjà marqué comme non figé.\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
 #: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:223
-#: apt-pkg/deb/dpkgpm.cc:1173
+#: apt-pkg/deb/dpkgpm.cc:1177
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "A attendu %s mais il n'était pas présent"
@@ -3434,114 +3455,114 @@ msgstr ""
 "Le téléchargement de quelques fichiers d'index a échoué, ils ont été "
 "ignorés, ou les anciens ont été utilisés à la place."
 
-#: apt-pkg/deb/dpkgpm.cc:89
+#: apt-pkg/deb/dpkgpm.cc:90
 #, c-format
 msgid "Installing %s"
 msgstr "Installation de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:90 apt-pkg/deb/dpkgpm.cc:976
+#: apt-pkg/deb/dpkgpm.cc:91 apt-pkg/deb/dpkgpm.cc:977
 #, c-format
 msgid "Configuring %s"
 msgstr "Configuration de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:91 apt-pkg/deb/dpkgpm.cc:983
+#: apt-pkg/deb/dpkgpm.cc:92 apt-pkg/deb/dpkgpm.cc:984
 #, c-format
 msgid "Removing %s"
 msgstr "Suppression de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:92
+#: apt-pkg/deb/dpkgpm.cc:93
 #, c-format
 msgid "Completely removing %s"
 msgstr "Suppression complète de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:93
+#: apt-pkg/deb/dpkgpm.cc:94
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "Disparition de %s constatée"
 
-#: apt-pkg/deb/dpkgpm.cc:94
+#: apt-pkg/deb/dpkgpm.cc:95
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Exécution des actions différées (« trigger ») de %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:807
+#: apt-pkg/deb/dpkgpm.cc:808
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Répertoire %s inexistant"
 
-#: apt-pkg/deb/dpkgpm.cc:822 apt-pkg/deb/dpkgpm.cc:844
+#: apt-pkg/deb/dpkgpm.cc:823 apt-pkg/deb/dpkgpm.cc:845
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Impossible d'ouvrir le fichier « %s »"
 
-#: apt-pkg/deb/dpkgpm.cc:969
+#: apt-pkg/deb/dpkgpm.cc:970
 #, c-format
 msgid "Preparing %s"
 msgstr "Préparation de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:970
+#: apt-pkg/deb/dpkgpm.cc:971
 #, c-format
 msgid "Unpacking %s"
 msgstr "Décompression de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:975
+#: apt-pkg/deb/dpkgpm.cc:976
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Préparation de la configuration de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:977
+#: apt-pkg/deb/dpkgpm.cc:978
 #, c-format
 msgid "Installed %s"
 msgstr "%s installé"
 
-#: apt-pkg/deb/dpkgpm.cc:982
+#: apt-pkg/deb/dpkgpm.cc:983
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Préparation de la suppression de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:984
+#: apt-pkg/deb/dpkgpm.cc:985
 #, c-format
 msgid "Removed %s"
 msgstr "%s supprimé"
 
-#: apt-pkg/deb/dpkgpm.cc:989
+#: apt-pkg/deb/dpkgpm.cc:990
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Préparation de la suppression complète de %s"
 
-#: apt-pkg/deb/dpkgpm.cc:990
+#: apt-pkg/deb/dpkgpm.cc:991
 #, c-format
 msgid "Completely removed %s"
 msgstr "%s complètement supprimé"
 
-#: apt-pkg/deb/dpkgpm.cc:1040 apt-pkg/deb/dpkgpm.cc:1061
+#: apt-pkg/deb/dpkgpm.cc:1044 apt-pkg/deb/dpkgpm.cc:1065
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "Impossible d'écrire sur %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1040
+#: apt-pkg/deb/dpkgpm.cc:1044
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1061
+#: apt-pkg/deb/dpkgpm.cc:1065
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1544
+#: apt-pkg/deb/dpkgpm.cc:1548
 msgid "Operation was interrupted before it could finish"
 msgstr "L'opération a été interrompue avant de se terminer"
 
-#: apt-pkg/deb/dpkgpm.cc:1606
+#: apt-pkg/deb/dpkgpm.cc:1610
 msgid "No apport report written because MaxReports is reached already"
 msgstr "Aucun rapport « apport » écrit car MaxReports a déjà été atteint"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1611
+#: apt-pkg/deb/dpkgpm.cc:1615
 msgid "dependency problems - leaving unconfigured"
 msgstr "problème de dépendances : laissé non configuré"
 
-#: apt-pkg/deb/dpkgpm.cc:1613
+#: apt-pkg/deb/dpkgpm.cc:1617
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3549,14 +3570,14 @@ msgstr ""
 "Aucun rapport « apport » n'a été créé car le message d'erreur indique une "
 "erreur consécutive à un échec précédent."
 
-#: apt-pkg/deb/dpkgpm.cc:1619
+#: apt-pkg/deb/dpkgpm.cc:1623
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 "Aucun rapport « apport » n'a été créé car un disque plein a été signalé"
 
-#: apt-pkg/deb/dpkgpm.cc:1626
+#: apt-pkg/deb/dpkgpm.cc:1630
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3564,7 +3585,7 @@ msgstr ""
 "Aucun « apport » n'a été créé car une erreur de dépassement de capacité "
 "mémoire a été signalée"
 
-#: apt-pkg/deb/dpkgpm.cc:1633 apt-pkg/deb/dpkgpm.cc:1639
+#: apt-pkg/deb/dpkgpm.cc:1637 apt-pkg/deb/dpkgpm.cc:1643
 #, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
@@ -3572,7 +3593,7 @@ msgid ""
 msgstr ""
 "Aucun rapport « apport » n'a été créé car un disque plein a été signalé"
 
-#: apt-pkg/deb/dpkgpm.cc:1660
+#: apt-pkg/deb/dpkgpm.cc:1664
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
