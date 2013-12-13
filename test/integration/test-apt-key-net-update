@@ -6,6 +6,20 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture "i386"
+changetowebserver
+
+# setup env
+mkdir -p aptarchive/ubuntu/project var/lib/apt/keyrings
+echo 'APT::Key::ArchiveKeyringURI "http://localhost:8080/ubuntu/project/ubuntu-archive-keyring.gpg";' >> ./aptconfig.conf
+echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
+
+# signed thing
+echo "meep" > aptarchive/ubuntu/project/ubuntu-archive-keyring.gpg
+
+# test against the "real" webserver
+aptkey --fakeroot net-update
+
+exit 1
 
 # mock
 requires_root() {
