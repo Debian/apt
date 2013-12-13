@@ -111,9 +111,11 @@ OpProgress* pkgCdromTextStatus::GetOpProgress()
 };
 									/*}}}*/
 // SetupAutoDetect       						/*{{{*/
-bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i)
+bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i, bool &automounted)
 {
    bool Debug =  _config->FindB("Debug::Acquire::cdrom", false);
+
+   automounted = false;
 
    vector<struct CdromDevice> v = UdevCdroms.Scan();
    if (i >= v.size())
@@ -137,6 +139,8 @@ bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i)
 	 mkdir(AptMountPoint.c_str(), 0750);
       if(MountCdrom(AptMountPoint, v[i].DeviceName) == false)
 	 _error->Warning(_("Failed to mount '%s' to '%s'"), v[i].DeviceName.c_str(), AptMountPoint.c_str());
+      else
+	 automounted = true;
       _config->Set("Acquire::cdrom::mount", AptMountPoint);
       _config->Set("APT::CDROM::NoMount", true);
    }
@@ -160,17 +164,35 @@ bool DoAdd(CommandLine &)
 
    bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
    unsigned int count = 0;
+   string AptMountPoint = _config->FindDir("Dir::Media::MountPath");
+   bool automounted = false;
    if (AutoDetect && UdevCdroms.Dlopen())
-      while (AutoDetectCdrom(UdevCdroms, count))
-	 res &= cdrom.Add(&log);
-   if (count == 0) {
-      res = cdrom.Add(&log);
-      if (res == false) {
-         _error->Error("%s", _(W_NO_CDROM_FOUND));
-      }
-   }
+      while (AutoDetectCdrom(UdevCdroms, count, automounted)) {
+	 if (count == 1) {
+	    // begin loop with res false to detect any success using OR
+	    res = false;
+	 }
 
-   if(res)
+	 // dump any warnings/errors from autodetect
+	 if (_error->empty() == false)
+	    _error->DumpErrors();
+
+	 res |= cdrom.Add(&log);
+
+	 if (automounted)
+	    UnmountCdrom(AptMountPoint);
+
+	 // dump any warnings/errors from add/unmount
+	 if (_error->empty() == false)
+	    _error->DumpErrors();
+      }
+
+   if (count == 0)
+      res = cdrom.Add(&log);
+
+   if (res == false)
+      _error->Error("%s", _(W_NO_CDROM_FOUND));
+   else
       cout << _("Repeat this process for the rest of the CDs in your set.") << endl;
 
    return res;
@@ -187,18 +209,38 @@ bool DoIdent(CommandLine &)
    pkgCdrom cdrom;
    bool res = true;
 
-   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect");
+   bool AutoDetect = _config->FindB("Acquire::cdrom::AutoDetect", true);
 
    unsigned int count = 0;
+   string AptMountPoint = _config->FindDir("Dir::Media::MountPath");
+   bool automounted = false;
    if (AutoDetect && UdevCdroms.Dlopen())
-      while (AutoDetectCdrom(UdevCdroms, count))
-	 res &= cdrom.Ident(ident, &log);
-   if (count == 0) {
-      res = cdrom.Ident(ident, &log);
-      if (res == false) {
-         _error->Error("%s", _(W_NO_CDROM_FOUND));
+      while (AutoDetectCdrom(UdevCdroms, count, automounted)) {
+	 if (count == 1) {
+	    // begin loop with res false to detect any success using OR
+	    res = false;
+	 }
+
+	 // dump any warnings/errors from autodetect
+	 if (_error->empty() == false)
+	    _error->DumpErrors();
+
+	 res |= cdrom.Ident(ident, &log);
+
+	 if (automounted)
+	    UnmountCdrom(AptMountPoint);
+
+	 // dump any warnings/errors from add/unmount
+	 if (_error->empty() == false)
+	    _error->DumpErrors();
       }
-   }
+
+   if (count == 0)
+      res = cdrom.Ident(ident, &log);
+
+   if (res == false)
+      _error->Error("%s", _(W_NO_CDROM_FOUND));
+
    return res;
 }
 									/*}}}*/
