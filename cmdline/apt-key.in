@@ -130,7 +130,7 @@ net_update() {
     if [ ! -d ${APT_DIR}/var/lib/apt/keyrings ]; then
 	mkdir -p ${APT_DIR}/var/lib/apt/keyrings
     fi
-    keyring=${APT_DIR}/var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING)
+    keyring=${APT_DIR}/var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING_URI)
     old_mtime=0
     if [ -e $keyring ]; then
 	old_mtime=$(stat -c %Y $keyring)
