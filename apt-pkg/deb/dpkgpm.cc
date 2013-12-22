@@ -1182,7 +1182,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    StartPtyMagic();
 
    // Tell the progress that its starting and fork dpkg 
-   d->progress->Start();
+   d->progress->Start(d->master);
 
    // this loop is runs once per dpkg operation
    vector<Item>::const_iterator I = List.begin();
