@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
 #include<apt-pkg/configuration.h>
 #include<apt-pkg/error.h>
@@ -22,11 +23,15 @@
 static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
 {
    const char *tmpdir = getenv("TMPDIR");
+
 #ifdef P_tmpdir
    if (!tmpdir)
       tmpdir = P_tmpdir;
 #endif
-   if (!tmpdir)
+
+   // check that tmpdir is set and exists
+   struct stat st;
+   if (!tmpdir || stat(tmpdir, &st) != 0)
       tmpdir = "/tmp";
 
    std::string out;
