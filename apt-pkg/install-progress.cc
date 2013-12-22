@@ -273,11 +273,18 @@ void PackageManagerFancy::HandleSIGWINCH(int)
    SetupTerminalScrollArea(nr_terminal_rows);
 }
 
-void PackageManagerFancy::Start()
+void PackageManagerFancy::Start(int child_pty)
 {
    int nr_terminal_rows = GetNumberTerminalRows();
    if (nr_terminal_rows > 0)
+   {
       SetupTerminalScrollArea(nr_terminal_rows);
+      // *cough*
+      struct winsize win;
+      ioctl(child_pty, TIOCGWINSZ, (char *)&win);
+      win.ws_row = nr_terminal_rows - 1;
+      ioctl(child_pty, TIOCSWINSZ, (char *)&win);
+   }
 }
 
 void PackageManagerFancy::Stop()

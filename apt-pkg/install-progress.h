@@ -28,7 +28,7 @@ namespace Progress {
     virtual ~PackageManager() {};
 
     /* Global Start/Stop */
-    virtual void Start() {};
+    virtual void Start(int child_pty=-1) {};
     virtual void Stop() {};
 
     /* When dpkg is invoked (may happen multiple times for each 
@@ -125,7 +125,7 @@ namespace Progress {
  public:
     PackageManagerFancy();
     ~PackageManagerFancy();
-    virtual void Start();
+    virtual void Start(int child_pty=-1);
     virtual void Stop();
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,
