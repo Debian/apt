@@ -1827,3 +1827,20 @@ std::vector<std::string> Glob(std::string const &pattern, int flags)
    return result;
 }
 									/*}}}*/
+
+std::string GetTempDir()
+{
+   const char *tmpdir = getenv("TMPDIR");
+
+#ifdef P_tmpdir
+   if (!tmpdir)
+      tmpdir = P_tmpdir;
+#endif
+
+   // check that tmpdir is set and exists
+   struct stat st;
+   if (!tmpdir || stat(tmpdir, &st) != 0)
+      tmpdir = "/tmp";
+
+   return string(tmpdir);
+}
