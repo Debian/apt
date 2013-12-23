@@ -1839,7 +1839,7 @@ std::string GetTempDir()
 
    // check that tmpdir is set and exists
    struct stat st;
-   if (!tmpdir || stat(tmpdir, &st) != 0)
+   if (!tmpdir || strlen(tmpdir) == 0 || stat(tmpdir, &st) != 0)
       tmpdir = "/tmp";
 
    return string(tmpdir);
