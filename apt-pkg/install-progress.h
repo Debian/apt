@@ -116,11 +116,17 @@ namespace Progress {
 
  class PackageManagerFancy : public PackageManager
  {
+ private:
+    static void staticSIGWINCH(int);
+    static std::vector<PackageManagerFancy*> instances;
+
  protected:
-    static void SetupTerminalScrollArea(int nr_rows);
-    static int GetNumberTerminalRows();
-    static void HandleSIGWINCH(int);
+    void SetupTerminalScrollArea(int nr_rows);
+    void HandleSIGWINCH(int);
+
+    int GetNumberTerminalRows();
     sighandler_t old_SIGWINCH;
+    int child_pty;
 
  public:
     PackageManagerFancy();
