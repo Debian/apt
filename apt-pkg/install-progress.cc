@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fcntl.h>
 #include <algorithm>
+#include <stdio.h>
 
 namespace APT {
 namespace Progress {

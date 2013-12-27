@@ -1,0 +1,32 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertinstalledpackage 'bar' 'i386' '1.0'
+
+cat > rootdir/etc/apt/preferences << EOF
+# random test comment header
+
+# commented out by puppy^Wpuppet
+#Package: foo
+#Pin: origin "ftp.debian.org"
+#Pin: 800
+
+Package: bar
+Pin: version 1.0
+Pin-Priority: 700
+
+#Package: bar
+#Pin: version 1.0
+#Pin: 800
+EOF
+
+testequal "Reading package lists...
+Building dependency tree..." aptget check
+
+msgtest "Ensure policy is applied"
+aptcache policy bar|grep -q "*** 1.0 700" && msgpass || msgfail

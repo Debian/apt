@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_el\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-07 14:40+0100\n"
+"POT-Creation-Date: 2013-12-12 18:37+0100\n"
 "PO-Revision-Date: 2008-08-26 18:25+0300\n"
 "Last-Translator: Θανάσης Νάτσης <natsisthanasis@gmail.com>\n"
 "Language-Team: Greek <debian-l10n-greek@lists.debian.org>\n"
@@ -167,7 +167,7 @@ msgid "  Version table:"
 msgstr "  Πίνακας Έκδοσης:"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:210 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1524 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
+#: cmdline/apt-get.cc:1579 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
 #: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -308,66 +308,81 @@ msgstr ""
 "  -c=? Read this configuration file\n"
 "  -o=? Set an arbitrary configuration option, eg -o dir::cache=/tmp\n"
 
-#: cmdline/apt-get.cc:313
+#: cmdline/apt-get.cc:244
+#, fuzzy, c-format
+msgid "Can not find a package for architecture '%s'"
+msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: cmdline/apt-get.cc:326
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with version '%s'"
+msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: cmdline/apt-get.cc:329
+#, fuzzy, c-format
+msgid "Can not find a package '%s' with release '%s'"
+msgstr "Αδύνατη η εύρεση του πακέτου %s"
+
+#: cmdline/apt-get.cc:366
 #, c-format
 msgid "Picking '%s' as source package instead of '%s'\n"
 msgstr "Επιλογή του %s ώς λίστας πηγαίων πακέτων αντί της %s\n"
 
-#: cmdline/apt-get.cc:367
+#: cmdline/apt-get.cc:422
 #, c-format
-msgid "Ignore unavailable version '%s' of package '%s'"
+msgid "Can not find version '%s' of package '%s'"
 msgstr ""
 
-#: cmdline/apt-get.cc:398
+#: cmdline/apt-get.cc:453
 #, c-format
 msgid "Couldn't find package %s"
 msgstr "Αδύνατη η εύρεση του πακέτου %s"
 
-#: cmdline/apt-get.cc:403 cmdline/apt-mark.cc:70
+#: cmdline/apt-get.cc:458 cmdline/apt-mark.cc:70
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "το %s έχει εγκατασταθεί με το χέρι\n"
 
-#: cmdline/apt-get.cc:405 cmdline/apt-mark.cc:72
+#: cmdline/apt-get.cc:460 cmdline/apt-mark.cc:72
 #, c-format
 msgid "%s set to automatically installed.\n"
 msgstr "το %s έχει εγκατασταθεί αυτόματα\n"
 
-#: cmdline/apt-get.cc:413 cmdline/apt-mark.cc:116
+#: cmdline/apt-get.cc:468 cmdline/apt-mark.cc:116
 msgid ""
 "This command is deprecated. Please use 'apt-mark auto' and 'apt-mark manual' "
 "instead."
 msgstr ""
 
-#: cmdline/apt-get.cc:482 cmdline/apt-get.cc:490
+#: cmdline/apt-get.cc:537 cmdline/apt-get.cc:545
 msgid "Internal error, problem resolver broke stuff"
 msgstr ""
 "Εσωτερικό Σφάλμα, η προσπάθεια επίλυσης του προβλήματος \"έσπασε\" κάποιο "
 "υλικό"
 
-#: cmdline/apt-get.cc:518 cmdline/apt-get.cc:555
+#: cmdline/apt-get.cc:573 cmdline/apt-get.cc:610
 msgid "Unable to lock the download directory"
 msgstr "Αδύνατο το κλείδωμα του καταλόγου μεταφόρτωσης"
 
-#: cmdline/apt-get.cc:667
+#: cmdline/apt-get.cc:722
 msgid "Must specify at least one package to fetch source for"
 msgstr ""
 "Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για να μεταφορτώσετε τον "
 "κωδικάτου"
 
-#: cmdline/apt-get.cc:707 cmdline/apt-get.cc:1002
+#: cmdline/apt-get.cc:762 cmdline/apt-get.cc:1057
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Αδυναμία εντοπισμού του κώδικά του πακέτου %s"
 
-#: cmdline/apt-get.cc:724
+#: cmdline/apt-get.cc:779
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:729
+#: cmdline/apt-get.cc:784
 #, c-format
 msgid ""
 "Please use:\n"
@@ -375,96 +390,96 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:782
+#: cmdline/apt-get.cc:837
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Παράκαμψη του ήδη μεταφορτωμένου αρχείου `%s`\n"
 
-#: cmdline/apt-get.cc:805 cmdline/apt-get.cc:808
+#: cmdline/apt-get.cc:860 cmdline/apt-get.cc:863
 #: apt-private/private-install.cc:198 apt-private/private-install.cc:201
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Δεν μπόρεσα να προσδιορίσω τον ελεύθερο χώρο στο %s"
 
-#: cmdline/apt-get.cc:819
+#: cmdline/apt-get.cc:874
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Δεν διαθέτετε αρκετό ελεύθερο χώρο στο %s"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:828
+#: cmdline/apt-get.cc:883
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB/%sB πηγαίου κώδικα.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:833
+#: cmdline/apt-get.cc:888
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "Χρειάζεται να μεταφορτωθούν %sB πηγαίου κώδικα.\n"
 
-#: cmdline/apt-get.cc:839
+#: cmdline/apt-get.cc:894
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Μεταφόρτωση Κωδικα %s\n"
 
-#: cmdline/apt-get.cc:860
+#: cmdline/apt-get.cc:915
 msgid "Failed to fetch some archives."
 msgstr "Αποτυχία μεταφόρτωσης μερικών αρχειοθηκών."
 
-#: cmdline/apt-get.cc:865 apt-private/private-install.cc:325
+#: cmdline/apt-get.cc:920 apt-private/private-install.cc:325
 msgid "Download complete and in download only mode"
 msgstr "Ολοκληρώθηκε η μεταφόρτωση μόνο"
 
-#: cmdline/apt-get.cc:891
+#: cmdline/apt-get.cc:946
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Παράκαμψη της αποσυμπίεσης ήδη μεταφορτωμένου κώδικα στο %s\n"
 
-#: cmdline/apt-get.cc:903
+#: cmdline/apt-get.cc:958
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή αποσυμπίεσης %s\n"
 
-#: cmdline/apt-get.cc:904
+#: cmdline/apt-get.cc:959
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Ελέγξτε αν είναι εγκαταστημένο το πακέτο 'dpkg-dev'.\n"
 
-#: cmdline/apt-get.cc:926
+#: cmdline/apt-get.cc:981
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Απέτυχε η εντολή χτισίματος %s.\n"
 
-#: cmdline/apt-get.cc:946
+#: cmdline/apt-get.cc:1001
 msgid "Child process failed"
 msgstr "Η απογονική διεργασία απέτυχε"
 
-#: cmdline/apt-get.cc:965
+#: cmdline/apt-get.cc:1020
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "Θα πρέπει να καθορίσετε τουλάχιστον ένα πακέτο για έλεγχο των εξαρτήσεων του"
 
-#: cmdline/apt-get.cc:990
+#: cmdline/apt-get.cc:1045
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:1014 cmdline/apt-get.cc:1017
+#: cmdline/apt-get.cc:1069 cmdline/apt-get.cc:1072
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Αδύνατη η εύρεση πληροφοριών χτισίματος για το %s"
 
-#: cmdline/apt-get.cc:1037
+#: cmdline/apt-get.cc:1092
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "το %s δεν έχει εξαρτήσεις χτισίματος.\n"
 
-#: cmdline/apt-get.cc:1207
+#: cmdline/apt-get.cc:1262
 #, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -473,7 +488,7 @@ msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή το %s δεν επιτρέπεται στο "
 "πακέτο %s"
 
-#: cmdline/apt-get.cc:1225
+#: cmdline/apt-get.cc:1280
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -481,14 +496,14 @@ msgid ""
 msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή το πακέτο %s δεν βρέθηκε"
 
-#: cmdline/apt-get.cc:1248
+#: cmdline/apt-get.cc:1303
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Αποτυχία ικανοποίησης %s εξαρτήσεων για το %s: Το εγκατεστημένο πακέτο %s "
 "είναι νεώτερο"
 
-#: cmdline/apt-get.cc:1287
+#: cmdline/apt-get.cc:1342
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -497,7 +512,7 @@ msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή δεν υπάρχουν διαθέσιμες "
 "εκδόσεις του πακέτου %s που να ικανοποιούν τις απαιτήσεις της έκδοσης"
 
-#: cmdline/apt-get.cc:1293
+#: cmdline/apt-get.cc:1348
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -506,30 +521,30 @@ msgstr ""
 "%s εξαρτήσεις για το %s δεν ικανοποιούνται επειδή το πακέτο %s δεν έχει "
 "υποψήφιαέκδοση"
 
-#: cmdline/apt-get.cc:1316
+#: cmdline/apt-get.cc:1371
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Αποτυχία ικανοποίησης %s εξάρτησης για το %s: %s"
 
-#: cmdline/apt-get.cc:1331
+#: cmdline/apt-get.cc:1386
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Οι εξαρτήσεις χτισίματος για το %s δεν ικανοποιούνται."
 
-#: cmdline/apt-get.cc:1336
+#: cmdline/apt-get.cc:1391
 msgid "Failed to process build dependencies"
 msgstr "Αποτυχία επεξεργασίας εξαρτήσεων χτισίματος"
 
-#: cmdline/apt-get.cc:1429 cmdline/apt-get.cc:1441
+#: cmdline/apt-get.cc:1484 cmdline/apt-get.cc:1496
 #, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Changelog για %s (%s)"
 
-#: cmdline/apt-get.cc:1529
+#: cmdline/apt-get.cc:1584
 msgid "Supported modules:"
 msgstr "Υποστηριζόμενοι Οδηγοί:"
 
-#: cmdline/apt-get.cc:1570
+#: cmdline/apt-get.cc:1625
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -641,7 +656,7 @@ msgstr "το %s είναι ήδη η τελευταία έκδοση.\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
 #: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:223
-#: apt-pkg/deb/dpkgpm.cc:1174
+#: apt-pkg/deb/dpkgpm.cc:1178
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Αναμονή του %s, αλλά δε βρισκόταν εκεί"
@@ -3305,138 +3320,138 @@ msgstr ""
 "Μερικά αρχεία δεν μεταφορτώθηκαν, αγνοήθηκαν ή χρησιμοποιήθηκαν παλαιότερα "
 "στη θέση τους."
 
-#: apt-pkg/deb/dpkgpm.cc:90
+#: apt-pkg/deb/dpkgpm.cc:91
 #, c-format
 msgid "Installing %s"
 msgstr "Εγκατάσταση του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:91 apt-pkg/deb/dpkgpm.cc:977
+#: apt-pkg/deb/dpkgpm.cc:92 apt-pkg/deb/dpkgpm.cc:978
 #, c-format
 msgid "Configuring %s"
 msgstr "Ρύθμιση του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:92 apt-pkg/deb/dpkgpm.cc:984
+#: apt-pkg/deb/dpkgpm.cc:93 apt-pkg/deb/dpkgpm.cc:985
 #, c-format
 msgid "Removing %s"
 msgstr "Αφαιρώ το %s"
 
-#: apt-pkg/deb/dpkgpm.cc:93
+#: apt-pkg/deb/dpkgpm.cc:94
 #, fuzzy, c-format
 msgid "Completely removing %s"
 msgstr "Το %s διαγράφηκε πλήρως"
 
-#: apt-pkg/deb/dpkgpm.cc:94
+#: apt-pkg/deb/dpkgpm.cc:95
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:95
+#: apt-pkg/deb/dpkgpm.cc:96
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "Εκτέλεση του post-installation trigger %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:808
+#: apt-pkg/deb/dpkgpm.cc:809
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Ο φάκελος %s αγνοείται."
 
-#: apt-pkg/deb/dpkgpm.cc:823 apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:824 apt-pkg/deb/dpkgpm.cc:846
 #, fuzzy, c-format
 msgid "Could not open file '%s'"
 msgstr "Αδύνατο το άνοιγμα του αρχείου %s"
 
-#: apt-pkg/deb/dpkgpm.cc:970
+#: apt-pkg/deb/dpkgpm.cc:971
 #, c-format
 msgid "Preparing %s"
 msgstr "Προετοιμασία του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:971
+#: apt-pkg/deb/dpkgpm.cc:972
 #, c-format
 msgid "Unpacking %s"
 msgstr "Ξεπακετάρισμα του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:976
+#: apt-pkg/deb/dpkgpm.cc:977
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Προετοιμασία ρύθμισης του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:978
+#: apt-pkg/deb/dpkgpm.cc:979
 #, c-format
 msgid "Installed %s"
 msgstr "Έγινε εγκατάσταση του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:983
+#: apt-pkg/deb/dpkgpm.cc:984
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Προετοιμασία για την αφαίρεση του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:985
+#: apt-pkg/deb/dpkgpm.cc:986
 #, c-format
 msgid "Removed %s"
 msgstr "Αφαίρεσα το %s"
 
-#: apt-pkg/deb/dpkgpm.cc:990
+#: apt-pkg/deb/dpkgpm.cc:991
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Προετοιμασία πλήρης αφαίρεσης του %s"
 
-#: apt-pkg/deb/dpkgpm.cc:991
+#: apt-pkg/deb/dpkgpm.cc:992
 #, c-format
 msgid "Completely removed %s"
 msgstr "Το %s διαγράφηκε πλήρως"
 
-#: apt-pkg/deb/dpkgpm.cc:1041 apt-pkg/deb/dpkgpm.cc:1062
+#: apt-pkg/deb/dpkgpm.cc:1045 apt-pkg/deb/dpkgpm.cc:1066
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "Αδύνατη η εγγραφή στο %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1041
+#: apt-pkg/deb/dpkgpm.cc:1045
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1062
+#: apt-pkg/deb/dpkgpm.cc:1066
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1545
+#: apt-pkg/deb/dpkgpm.cc:1549
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1607
+#: apt-pkg/deb/dpkgpm.cc:1611
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1612
+#: apt-pkg/deb/dpkgpm.cc:1616
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1614
+#: apt-pkg/deb/dpkgpm.cc:1618
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1620
+#: apt-pkg/deb/dpkgpm.cc:1624
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1627
+#: apt-pkg/deb/dpkgpm.cc:1631
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1634 apt-pkg/deb/dpkgpm.cc:1640
+#: apt-pkg/deb/dpkgpm.cc:1638 apt-pkg/deb/dpkgpm.cc:1644
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1661
+#: apt-pkg/deb/dpkgpm.cc:1665
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

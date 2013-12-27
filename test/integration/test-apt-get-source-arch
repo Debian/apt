@@ -61,10 +61,10 @@ E: Unable to find a source package for foo:not-a-available-arch" aptget source -
 
 # error on unavailable version for arch
 testequal "$HEADER
-E: Can not find a package 'foo:amd64' with version '2.0' and release ''
+E: Can not find a package 'foo:amd64' with version '2.0'
 E: Unable to find a source package for foo:amd64=2.0" aptget source -q --print-uris foo:amd64=2.0
 
 # error on unavailable release for arch 
 testequal "$HEADER
-E: Can not find a package 'foo:amd64' with version '' and release 'oldstable'
+E: Can not find a package 'foo:amd64' with release 'oldstable'
 E: Unable to find a source package for foo:amd64/oldstable" aptget source -q --print-uris foo:amd64/oldstable

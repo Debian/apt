@@ -6,109 +6,38 @@ TESTDIR=$(readlink -f $(dirname $0))
 
 setupenvironment
 configarchitecture "i386"
+changetowebserver
 
-# mock
-requires_root() {
-    return 0
-}
+# setup env
+mkdir -p var/lib/apt/keyrings
+mkdir -p usr/share/keyrings
 
-# extract net_update() and import it
-func=$( sed -n -e '/^add_keys_with_verify_against_master_keyring/,/^}/p' ${BUILDDIRECTORY}/apt-key )
-eval "$func"
+# install the fake master keyring
+install -m0644 keys/test-master-keyring.pub usr/share/keyrings
+echo "APT::Key::MasterKeyring \"${TMPWORKINGDIRECTORY}/usr/share/keyrings/test-master-keyring.pub\";" >> ./aptconfig.conf
 
-mkdir -p ./etc/apt
-TRUSTEDFILE=./etc/apt/trusted.gpg
-mkdir -p ./var/lib/apt/keyrings
-TMP_KEYRING=./var/lib/apt/keyrings/maybe-import-keyring.gpg
-GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
+# setup archive-keyring 
+mkdir -p aptarchive/ubuntu/project
+install -m0644 keys/test-archive-keyring.pub aptarchive/ubuntu/project/
+echo 'APT::Key::ArchiveKeyringURI "http://localhost:8080/ubuntu/project/test-archive-keyring.pub";' >> ./aptconfig.conf
+echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
 
-# FIXME: instead of copying this use apt-key and the buildin apt webserver
-#        to do a real test
-
-# COPYIED from apt-key.in --------------
-
-# gpg needs a trustdb to function, but it can't be invalid (not even empty)
-# so we create a temporary directory to store our fresh readable trustdb in
-TRUSTDBDIR="$(mktemp -d)"
-CURRENTTRAP="${CURRENTTRAP} rm -rf '${TRUSTDBDIR}';"
-trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-chmod 700 "$TRUSTDBDIR"
-# We also don't use a secret keyring, of course, but gpg panics and
-# implodes if there isn't one available - and writeable for imports
-SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
-touch $SECRETKEYRING
-GPG_CMD="$GPG_CMD --secret-keyring $SECRETKEYRING"
-GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
-#----------------------------------------- END COPY
-
-GPG="$GPG_CMD --keyring $TRUSTEDFILE"
-MASTER_KEYRING=/usr/share/keyrings/ubuntu-master-keyring.gpg
-
-msgtest "add_keys_with_verify_against_master_keyring"
-if [ ! -e $MASTER_KEYRING ]; then
-    echo -n "No $MASTER_KEYRING found"
-    msgskip 
-    exit 0
-fi
-
-# test bad keyring and ensure its not added (LP: #857472)
-ADD_KEYRING=./keys/exploid-keyring-with-dupe-keys.pub
-if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
-    msgfail
-else
-    msgpass
-fi
-
-# ensure the keyring is still empty
-gpg_out=$($GPG --list-keys)
-msgtest "Test if keyring is empty"
-if [ -n "" ]; then
-    msgfail
-else
-    msgpass
-fi
+# test against the "real" webserver
+testequal 'Checking for new archive signing keys now
+gpg: key F68C85A3: public key "Test Automatic Archive Signing Key <ftpmaster@example.com>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)' aptkey --fakeroot net-update
 
 
-# test another possible attack vector using subkeys (LP: #1013128)
-msgtest "add_keys_with_verify_against_master_keyring with subkey attack"
-ADD_KEYRING=./keys/exploid-keyring-with-dupe-subkeys.pub
-if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
-    msgfail
-else
-    msgpass
-fi
+# now try a different one
+# setup archive-keyring 
+mkdir -p aptarchive/ubuntu/project
+install -m0644 keys/marvinparanoid.pub aptarchive/ubuntu/project/
+echo 'APT::Key::ArchiveKeyringURI "http://localhost:8080/ubuntu/project/marvinparanoid.pub";' >> ./aptconfig.conf
+echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
 
-# ensure the keyring is still empty
-gpg_out=$($GPG --list-keys)
-msgtest "Test if keyring is empty"
-if [ -n "" ]; then
-    msgfail
-else
-    msgpass
-fi
+# test against the "real" webserver
+testequal "Checking for new archive signing keys now
+Key 'E8525D47528144E2' not added. It is not signed with a master key" aptkey --fakeroot net-update
 
-
-# test good keyring and ensure we get no errors
-ADD_KEYRING=/usr/share/keyrings/ubuntu-archive-keyring.gpg
-if add_keys_with_verify_against_master_keyring $ADD_KEYRING $MASTER_KEYRING; then
-    msgpass
-else
-    msgfail
-fi
-
-testequal './etc/apt/trusted.gpg
----------------------
-pub   1024D/437D05B5 2004-09-12
-uid                  Ubuntu Archive Automatic Signing Key <ftpmaster@ubuntu.com>
-sub   2048g/79164387 2004-09-12
-
-pub   1024D/FBB75451 2004-12-30
-uid                  Ubuntu CD Image Automatic Signing Key <cdimage@ubuntu.com>
-
-pub   4096R/C0B21F32 2012-05-11
-uid                  Ubuntu Archive Automatic Signing Key (2012) <ftpmaster@ubuntu.com>
-
-pub   4096R/EFE21092 2012-05-11
-uid                  Ubuntu CD Image Automatic Signing Key (2012) <cdimage@ubuntu.com>
-' $GPG --list-keys
 

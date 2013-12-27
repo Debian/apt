@@ -25,6 +25,9 @@ GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
 
 GPG="$GPG_CMD"
 
+APT_DIR="/"
+eval $(apt-config shell APT_DIR Dir)
+
 MASTER_KEYRING='&keyring-master-filename;'
 eval $(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)
 ARCHIVE_KEYRING='&keyring-filename;'
@@ -33,7 +36,7 @@ REMOVED_KEYS='&keyring-removed-filename;'
 eval $(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)
 ARCHIVE_KEYRING_URI='&keyring-uri;'
 eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
-TMP_KEYRING=/var/lib/apt/keyrings/maybe-import-keyring.gpg
+TMP_KEYRING=${APT_DIR}/var/lib/apt/keyrings/maybe-import-keyring.gpg
 
 requires_root() {
 	if [ "$(id -u)" -ne 0 ]; then
@@ -107,7 +110,11 @@ add_keys_with_verify_against_master_keyring() {
 # (otherwise it does not make sense from a security POV)
 net_update() {
     # Disabled for now as code is insecure (LP: #1013639 (and 857472, 1013128))
-    exit 1
+    APT_KEY_NET_UPDATE_ENABLED=""
+    eval $(apt-config shell APT_KEY_NET_UPDATE_ENABLED APT::Key::Net-Update-Enabled)
+    if [ -z "$APT_KEY_NET_UPDATE_ENABLED" ]; then
+        exit 1
+    fi
 
     if [ -z "$ARCHIVE_KEYRING_URI" ]; then
 	echo >&2 "ERROR: Your distribution is not supported in net-update as no uri for the archive-keyring is set"
@@ -120,15 +127,15 @@ net_update() {
 	echo >&2 "ERROR: an installed wget is required for a network-based update"
 	exit 1
     fi
-    if [ ! -d /var/lib/apt/keyrings ]; then
-	mkdir -p /var/lib/apt/keyrings
+    if [ ! -d ${APT_DIR}/var/lib/apt/keyrings ]; then
+	mkdir -p ${APT_DIR}/var/lib/apt/keyrings
     fi
-    keyring=/var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING)
+    keyring=${APT_DIR}/var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING_URI)
     old_mtime=0
     if [ -e $keyring ]; then
 	old_mtime=$(stat -c %Y $keyring)
     fi
-    (cd  /var/lib/apt/keyrings; wget --timeout=90 -q -N $ARCHIVE_KEYRING_URI)
+    (cd  ${APT_DIR}/var/lib/apt/keyrings; wget --timeout=90 -q -N $ARCHIVE_KEYRING_URI)
     if [ ! -e $keyring ]; then
 	return
     fi

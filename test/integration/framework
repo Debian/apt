@@ -102,6 +102,9 @@ aptget() { runapt apt-get $*; }
 aptftparchive() { runapt apt-ftparchive $*; }
 aptkey() { runapt apt-key $*; }
 aptmark() { runapt apt-mark $*; }
+aptwebserver() {
+  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver $*;
+}
 dpkg() {
 	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
 }
@@ -154,8 +157,14 @@ setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
 	TESTDIRECTORY=$(readlink -f $(dirname $0))
 	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "
-	BUILDDIRECTORY="${TESTDIRECTORY}/../../build/bin"
+
+        # allow overriding the default BUILDDIR location
+	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
+        METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
+        APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
+        # -----
+
 	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive keys
@@ -181,7 +190,7 @@ setupenvironment() {
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
-	echo "Dir::Bin::Methods \"${BUILDDIRECTORY}/methods\";" >> aptconfig.conf
+	echo "Dir::Bin::Methods \"${METHODSDIR}\";" >> aptconfig.conf
 	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
 	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
@@ -822,9 +831,9 @@ changetowebserver() {
 		shift
 	fi
 	local LOG='/dev/null'
-	if test -x ${BUILDDIRECTORY}/aptwebserver; then
+	if test -x ${APTWEBSERVERBINDIR}/aptwebserver; then
 		cd aptarchive
-		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1
+		aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1
 		local PID="$(cat aptwebserver.pid)"
 		if [ -z "$PID" ]; then
 			msgdie 'Could not fork aptwebserver successfully'

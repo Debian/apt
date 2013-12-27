@@ -322,9 +322,12 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
       if (Src == "" && ArchTag != "")
       {
-          _error->Error(_("Can not find a package '%s' with version '%s' and "
-                          "release '%s'"), Pkg.FullName().c_str(), 
-                                           VerTag.c_str(), RelTag.c_str());
+         if (VerTag != "")
+            _error->Error(_("Can not find a package '%s' with version '%s'"),
+                          Pkg.FullName().c_str(), VerTag.c_str());
+         if (RelTag != "")
+            _error->Error(_("Can not find a package '%s' with release '%s'"),
+                          Pkg.FullName().c_str(), RelTag.c_str());
          Src = Name;
          return 0;
       }
@@ -1533,14 +1536,12 @@ bool DoChangelog(CommandLine &CmdL)
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 
    char tmpname[100];
-   char* tmpdir = NULL;
+   const char* tmpdir = NULL;
    if (downOnly == false)
    {
-      const char* const tmpDir = getenv("TMPDIR");
-      if (tmpDir != NULL && *tmpDir != '\0')
-	 snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", tmpDir);
-      else
-	 strncpy(tmpname, "/tmp/apt-changelog-XXXXXX", sizeof(tmpname));
+      std::string systemTemp = GetTempDir();
+      snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", 
+               systemTemp.c_str());
       tmpdir = mkdtemp(tmpname);
       if (tmpdir == NULL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");
