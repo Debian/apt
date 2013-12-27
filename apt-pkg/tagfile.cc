@@ -259,7 +259,12 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
    TagCount = 0;
    while (TagCount+1 < sizeof(Indexes)/sizeof(Indexes[0]) && Stop < End)
    {
-       TrimRecord(true,End);
+      TrimRecord(true,End);
+
+      // this can happen when TrimRecord trims away the entire Record
+      // (e.g. because it just contains comments)
+      if(Stop == End)
+         return true;
 
       // Start a new index and add it to the hash
       if (isspace(Stop[0]) == 0)
@@ -273,7 +278,9 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       if (Stop == 0)
 	 return false;
 
-      for (; Stop+1 < End && Stop[1] == '\r'; Stop++);
+      for (; Stop+1 < End && Stop[1] == '\r'; Stop++)
+         /* nothing */
+         ;
 
       // Double newline marks the end of the record
       if (Stop+1 < End && Stop[1] == '\n')
