@@ -300,9 +300,7 @@ void PackageManagerFancy::Start(int a_child_pty)
    child_pty = a_child_pty;
    int nr_terminal_rows = GetNumberTerminalRows();
    if (nr_terminal_rows > 0)
-   {
       SetupTerminalScrollArea(nr_terminal_rows);
-   }
 }
 
 void PackageManagerFancy::Stop()
