@@ -38,5 +38,18 @@ int main(int argc,char *argv[])
       return 1;
    }
 
+   // GetTempDir()
+   unsetenv("TMPDIR");
+   equals(GetTempDir(), "/tmp");
+
+   setenv("TMPDIR", "", 1);
+   equals(GetTempDir(), "/tmp");
+
+   setenv("TMPDIR", "/not-there-no-really-not", 1);
+   equals(GetTempDir(), "/tmp");
+
+   setenv("TMPDIR", "/usr", 1);
+   equals(GetTempDir(), "/usr");
+
    return 0;
 }

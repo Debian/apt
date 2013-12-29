@@ -22,20 +22,9 @@
 									/*}}}*/
 static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
 {
-   const char *tmpdir = getenv("TMPDIR");
-
-#ifdef P_tmpdir
-   if (!tmpdir)
-      tmpdir = P_tmpdir;
-#endif
-
-   // check that tmpdir is set and exists
-   struct stat st;
-   if (!tmpdir || stat(tmpdir, &st) != 0)
-      tmpdir = "/tmp";
-
    std::string out;
-   strprintf(out,  "%s/%s.XXXXXX", tmpdir, basename);
+   std::string tmpdir = GetTempDir();
+   strprintf(out,  "%s/%s.XXXXXX", tmpdir.c_str(), basename);
    return strdup(out.c_str());
 }
 									/*}}}*/

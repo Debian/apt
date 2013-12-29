@@ -9,6 +9,7 @@
 #include <sys/ioctl.h>
 #include <sstream>
 #include <fcntl.h>
+#include <algorithm>
 #include <stdio.h>
 
 namespace APT {
@@ -222,17 +223,47 @@ bool PackageManagerProgressDeb822Fd::StatusChanged(std::string PackageName,
    return true;
 }
 
+
+PackageManagerFancy::PackageManagerFancy()
+   : child_pty(-1)
+{
+   // setup terminal size
+   old_SIGWINCH = signal(SIGWINCH, PackageManagerFancy::staticSIGWINCH);
+   instances.push_back(this);
+}
+std::vector<PackageManagerFancy*> PackageManagerFancy::instances;
+
+PackageManagerFancy::~PackageManagerFancy()
+{
+   instances.erase(find(instances.begin(), instances.end(), this));
+   signal(SIGWINCH, old_SIGWINCH);
+}
+
+void PackageManagerFancy::staticSIGWINCH(int signum)
+{
+   std::vector<PackageManagerFancy *>::const_iterator I;
+   for(I = instances.begin(); I != instances.end(); I++)
+      (*I)->HandleSIGWINCH(signum);
+}
+
 int PackageManagerFancy::GetNumberTerminalRows()
 {
    struct winsize win;
+   // FIXME: get from "child_pty" instead?
    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&win) != 0)
       return -1;
+
+   if(_config->FindB("Debug::InstallProgress::Fancy", false) == true)
+      std::cerr << "GetNumberTerminalRows: " << win.ws_row << std::endl;
    
    return win.ws_row;
 }
 
 void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 {
+     if(_config->FindB("Debug::InstallProgress::Fancy", false) == true)
+        std::cerr << "SetupTerminalScrollArea: " << nr_rows << std::endl;
+
      // scroll down a bit to avoid visual glitch when the screen
      // area shrinks by one row
      std::cout << "\n";
@@ -241,30 +272,22 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
      std::cout << "\033[s";
          
      // set scroll region (this will place the cursor in the top left)
-     std::cout << "\033[1;" << nr_rows - 1 << "r";
+     std::cout << "\033[0;" << nr_rows - 1 << "r";
             
      // restore cursor but ensure its inside the scrolling area
      std::cout << "\033[u";
      static const char *move_cursor_up = "\033[1A";
      std::cout << move_cursor_up;
 
-     // setup env for (hopefully!) ncurses
-     string s;
-     strprintf(s, "%i", nr_rows);
-     setenv("LINES", s.c_str(), 1);
-
+     // ensure its flushed
      std::flush(std::cout);
-}
 
-PackageManagerFancy::PackageManagerFancy()
-{
-   // setup terminal size
-   old_SIGWINCH = signal(SIGWINCH, HandleSIGWINCH);
-}
-
-PackageManagerFancy::~PackageManagerFancy()
-{
-   signal(SIGWINCH, old_SIGWINCH);
+     // setup tty size to ensure xterm/linux console are working properly too
+     // see bug #731738
+     struct winsize win;
+     ioctl(child_pty, TIOCGWINSZ, (char *)&win);
+     win.ws_row = nr_rows - 1;
+     ioctl(child_pty, TIOCSWINSZ, (char *)&win);
 }
 
 void PackageManagerFancy::HandleSIGWINCH(int)
@@ -273,8 +296,9 @@ void PackageManagerFancy::HandleSIGWINCH(int)
    SetupTerminalScrollArea(nr_terminal_rows);
 }
 
-void PackageManagerFancy::Start()
+void PackageManagerFancy::Start(int a_child_pty)
 {
+   child_pty = a_child_pty;
    int nr_terminal_rows = GetNumberTerminalRows();
    if (nr_terminal_rows > 0)
       SetupTerminalScrollArea(nr_terminal_rows);
@@ -291,6 +315,7 @@ void PackageManagerFancy::Stop()
       static const char* clear_screen_below_cursor = "\033[J";
       std::cout << clear_screen_below_cursor;
    }
+   child_pty = -1;
 }
 
 bool PackageManagerFancy::StatusChanged(std::string PackageName, 
