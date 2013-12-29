@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.9.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-12 18:37+0100\n"
+"POT-Creation-Date: 2013-12-29 17:01+0100\n"
 "PO-Revision-Date: 2013-08-11 19:39+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
@@ -157,8 +157,8 @@ msgid "  Version table:"
 msgstr "  バージョンテーブル:"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:210 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1579 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
+#: cmdline/apt-get.cc:1577 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
+#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -538,11 +538,11 @@ msgstr "ビルド依存関係の処理に失敗しました"
 msgid "Changelog for %s (%s)"
 msgstr "%s (%s) の変更履歴"
 
-#: cmdline/apt-get.cc:1584
+#: cmdline/apt-get.cc:1582
 msgid "Supported modules:"
 msgstr "サポートされているモジュール:"
 
-#: cmdline/apt-get.cc:1625
+#: cmdline/apt-get.cc:1623
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -660,7 +660,7 @@ msgid "%s was already not hold.\n"
 msgstr "%s はすでに保留されていません。\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:217
 #: apt-pkg/deb/dpkgpm.cc:1178
 #, c-format
 msgid "Waited for %s but it wasn't there"
@@ -1730,12 +1730,12 @@ msgstr "が重要です。これを修正して「導入」を再度実行して
 msgid "Merging available information"
 msgstr "入手可能情報をマージしています"
 
-#: cmdline/apt-extracttemplates.cc:102
+#: cmdline/apt-extracttemplates.cc:100
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s は正しい DEB パッケージではありません。"
 
-#: cmdline/apt-extracttemplates.cc:236
+#: cmdline/apt-extracttemplates.cc:234
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1759,12 +1759,12 @@ msgstr ""
 "  -c=? 指定した設定ファイルを読み込む\n"
 "  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1388
+#: cmdline/apt-extracttemplates.cc:266 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s に書き込めません"
 
-#: cmdline/apt-extracttemplates.cc:313
+#: cmdline/apt-extracttemplates.cc:308
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr ""
 "debconf のバージョンを取得できません。debconf はインストールされていますか?"
@@ -2559,12 +2559,12 @@ msgstr "子プロセス %s がセグメンテーション違反を受け取り�
 msgid "Sub-process %s received signal %u."
 msgstr "子プロセス %s がシグナル %u を受け取りました。"
 
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:243
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:237
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "子プロセス %s がエラーコード (%u) を返しました"
 
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:236
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:230
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子プロセス %s が予期せず終了しました"
@@ -2617,7 +2617,7 @@ msgid "Problem syncing the file"
 msgstr "ファイルの同期中に問題が発生しました"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/contrib/gpgv.cc:76
+#: apt-pkg/contrib/gpgv.cc:70
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "%s にキーリングがインストールされていません。"
@@ -2950,19 +2950,19 @@ msgstr ""
 "APT::Default-Release の 値 '%s' は、そのようなリリースをソース中から利用でき"
 "ないため、無効です"
 
-#: apt-pkg/policy.cc:410
+#: apt-pkg/policy.cc:414
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr ""
 "不正なレコードがプリファレンスファイル %s に存在します。パッケージヘッダがあ"
 "りません"
 
-#: apt-pkg/policy.cc:432
+#: apt-pkg/policy.cc:436
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "pin タイプ %s を理解できませんでした"
 
-#: apt-pkg/policy.cc:440
+#: apt-pkg/policy.cc:444
 msgid "No priority (or zero) specified for pin"
 msgstr "pin で優先度 (または 0) が指定されていません"
 
@@ -3337,12 +3337,12 @@ msgstr "外部ソルバが適切なエラーメッセージなしに失敗しま
 msgid "Execute external solver"
 msgstr "外部ソルバを実行"
 
-#: apt-pkg/install-progress.cc:50
+#: apt-pkg/install-progress.cc:51
 #, c-format
 msgid "Progress: [%3i%%]"
 msgstr ""
 
-#: apt-pkg/install-progress.cc:84 apt-pkg/install-progress.cc:167
+#: apt-pkg/install-progress.cc:85 apt-pkg/install-progress.cc:168
 msgid "Running dpkg"
 msgstr "dpkg を実行しています"
 

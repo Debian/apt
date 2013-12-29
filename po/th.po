@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-12 18:37+0100\n"
+"POT-Creation-Date: 2013-12-29 17:01+0100\n"
 "PO-Revision-Date: 2012-10-27 22:44+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@linux.thai.net>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -156,8 +156,8 @@ msgid "  Version table:"
 msgstr "  ตารางรุ่น:"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:210 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1579 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
+#: cmdline/apt-get.cc:1577 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
+#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -517,11 +517,11 @@ msgstr "ติดตั้งสิ่งที่จำเป็นสำหร
 msgid "Changelog for %s (%s)"
 msgstr "ปูมการแก้ไขสำหรับ %s (%s)"
 
-#: cmdline/apt-get.cc:1584
+#: cmdline/apt-get.cc:1582
 msgid "Supported modules:"
 msgstr "มอดูลที่รองรับ:"
 
-#: cmdline/apt-get.cc:1625
+#: cmdline/apt-get.cc:1623
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -634,7 +634,7 @@ msgid "%s was already not hold.\n"
 msgstr "%s ไม่ได้คงรุ่นอยู่ก่อนแล้ว\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:217
 #: apt-pkg/deb/dpkgpm.cc:1178
 #, c-format
 msgid "Waited for %s but it wasn't there"
@@ -1682,12 +1682,12 @@ msgstr "กรุณาแก้ปัญหาเหล่านั้น แ�
 msgid "Merging available information"
 msgstr "กำลังผสานรายชื่อของแพกเกจที่มี"
 
-#: cmdline/apt-extracttemplates.cc:102
+#: cmdline/apt-extracttemplates.cc:100
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s ไม่ใช่แพกเกจ DEB ที่ใช้การได้"
 
-#: cmdline/apt-extracttemplates.cc:236
+#: cmdline/apt-extracttemplates.cc:234
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1711,12 +1711,12 @@ msgstr ""
 "  -c=?  อ่านแฟ้มค่าตั้งนี้\n"
 "  -o=?  กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1388
+#: cmdline/apt-extracttemplates.cc:266 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "ไม่สามารถเขียนลงแฟ้ม %s"
 
-#: cmdline/apt-extracttemplates.cc:313
+#: cmdline/apt-extracttemplates.cc:308
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "ไม่สามารถอ่านรุ่นของ debconf ได้ ได้ติดตั้ง debconf ไว้หรือไม่?"
 
@@ -2498,12 +2498,12 @@ msgstr "โพรเซสย่อย %s เกิดข้อผิดพล�
 msgid "Sub-process %s received signal %u."
 msgstr "โพรเซสย่อย %s ได้รับสัญญาณ %u"
 
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:243
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:237
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "โพรเซสย่อย %s คืนค่าข้อผิดพลาด (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:236
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:230
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "โพรเซสย่อย %s จบการทำงานกะทันหัน"
@@ -2556,7 +2556,7 @@ msgid "Problem syncing the file"
 msgstr "เกิดปัญหาขณะ sync แฟ้ม"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/contrib/gpgv.cc:76
+#: apt-pkg/contrib/gpgv.cc:70
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "ไม่มีพวงกุญแจติดตั้งไว้ใน %s"
@@ -2876,17 +2876,17 @@ msgid ""
 "available in the sources"
 msgstr "ค่า '%s' ไม่สามารถใช้กับ APT::Default-Release ได้ เนื่องจากรุ่นดังกล่าวไม่มีในแหล่ง"
 
-#: apt-pkg/policy.cc:410
+#: apt-pkg/policy.cc:414
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr "ระเบียนผิดรูปแบบในแฟ้มค่าปรับแต่ง %s: ไม่มีข้อมูลส่วนหัว 'Package'"
 
-#: apt-pkg/policy.cc:432
+#: apt-pkg/policy.cc:436
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "ไม่เข้าใจชนิดการตรึง %s"
 
-#: apt-pkg/policy.cc:440
+#: apt-pkg/policy.cc:444
 msgid "No priority (or zero) specified for pin"
 msgstr "ไม่ได้ระบุลำดับความสำคัญ (หรือค่าศูนย์) สำหรับการตรึง"
 
@@ -3247,12 +3247,12 @@ msgstr "กลไกการแก้ปัญหาภายนอกทำง
 msgid "Execute external solver"
 msgstr "เรียกกลไกการแก้ปัญหาภายนอก"
 
-#: apt-pkg/install-progress.cc:50
+#: apt-pkg/install-progress.cc:51
 #, c-format
 msgid "Progress: [%3i%%]"
 msgstr ""
 
-#: apt-pkg/install-progress.cc:84 apt-pkg/install-progress.cc:167
+#: apt-pkg/install-progress.cc:85 apt-pkg/install-progress.cc:168
 msgid "Running dpkg"
 msgstr "กำลังเรียก dpkg"
 
