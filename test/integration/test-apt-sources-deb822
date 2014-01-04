@@ -7,7 +7,17 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-BASE="Type: deb
+echo "deb http://ftp.debian.org/debian stable main" > rootdir/etc/apt/sources.list
+testequalwithmsg "Old style sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
+'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
+
+
+BASE="# some comment
+# that contains a : as well
+#Type: meep
+
+Type: deb
 URL: http://ftp.debian.org/debian
 Dist: stable
 Section: main
@@ -17,7 +27,7 @@ Comment: Some random string
 # simple case
 echo "$BASE" > rootdir/etc/apt/sources.list
 
-testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+testequalwithmsg "Simple deb822 sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
 
@@ -25,7 +35,7 @@ testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.
 # two sections (we support both "," and " " as seperator)
 echo "$BASE" | sed s/main/"main,contrib"/ > rootdir/etc/apt/sources.list
 
-testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+testequalwithmsg "Two sections deb822 sources.list work" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/contrib/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_contrib_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/contrib/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_contrib_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
@@ -37,7 +47,7 @@ echo "$BASE" > rootdir/etc/apt/sources.list
 echo "" >> rootdir/etc/apt/sources.list
 echo "$BASE" | sed  s/stable/unstable/ >> rootdir/etc/apt/sources.list
 
-testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+testequalwithmsg "Multiple entries in deb822 sources.list work" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_unstable_main_binary-i386_Packages 0 :
@@ -49,7 +59,8 @@ testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.
 echo "$BASE" > rootdir/etc/apt/sources.list
 echo "Arch: amd64,armel" >> rootdir/etc/apt/sources.list
 
-testequal "'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 :
+testequalwithmsg "Arch: option in deb822 sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
+

@@ -342,7 +342,8 @@ bool pkgSourceList::ParseFileDeb822(string File)
 
       // check if there are any options we support
       const char* option_str[] = { 
-         "arch", "arch+", "arch-", "trusted" };
+         "arch", "arch+", "arch-", "trusted",
+      };
       for (unsigned int j=0; j < sizeof(option_str)/sizeof(char*); j++)
          if (Tags.Exists(option_str[j]))
             Options[option_str[j]] = Tags.FindS(option_str[j]);
