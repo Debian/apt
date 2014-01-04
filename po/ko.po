@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-12 18:37+0100\n"
+"POT-Creation-Date: 2013-12-29 17:01+0100\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -153,8 +153,8 @@ msgid "  Version table:"
 msgstr "  버전 테이블:"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:210 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1579 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
+#: cmdline/apt-get.cc:1577 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
+#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -524,11 +524,11 @@ msgstr "빌드 의존성을 처리하는데 실패했습니다"
 msgid "Changelog for %s (%s)"
 msgstr "%s(%s)에 연결하는 중입니다"
 
-#: cmdline/apt-get.cc:1584
+#: cmdline/apt-get.cc:1582
 msgid "Supported modules:"
 msgstr "지원하는 모듈:"
 
-#: cmdline/apt-get.cc:1625
+#: cmdline/apt-get.cc:1623
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -642,7 +642,7 @@ msgid "%s was already not hold.\n"
 msgstr "%s 패키지는 이미 최신 버전입니다.\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:223
+#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:217
 #: apt-pkg/deb/dpkgpm.cc:1178
 #, c-format
 msgid "Waited for %s but it wasn't there"
@@ -1689,12 +1689,12 @@ msgstr "오류만 중요합니다. 이 오류를 고친 다음에 설치(I)를 �
 msgid "Merging available information"
 msgstr "이용 가능 패키지 정보를 합칩니다"
 
-#: cmdline/apt-extracttemplates.cc:102
+#: cmdline/apt-extracttemplates.cc:100
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s은(는) 올바른 DEB 패키지가 아닙니다."
 
-#: cmdline/apt-extracttemplates.cc:236
+#: cmdline/apt-extracttemplates.cc:234
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1718,12 +1718,12 @@ msgstr ""
 "  -c=? 설정 파일을 읽습니다\n"
 "  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1388
+#: cmdline/apt-extracttemplates.cc:266 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s에 쓸 수 없습니다"
 
-#: cmdline/apt-extracttemplates.cc:313
+#: cmdline/apt-extracttemplates.cc:308
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "debconf 버전을 알 수 없습니다. debconf가 설치되었습니까?"
 
@@ -2515,12 +2515,12 @@ msgstr "하위 프로세스 %s 프로세스가 세그멘테이션 오류를 받�
 msgid "Sub-process %s received signal %u."
 msgstr "하위 프로세스 %s 프로세스가 %u번 시그널을 받았습니다."
 
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:243
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:237
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "하위 프로세스 %s 프로세스가 오류 코드(%u)를 리턴했습니다"
 
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:236
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:230
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "하위 프로세스 %s 프로세스가 예상치 못하게 끝났습니다"
@@ -2573,7 +2573,7 @@ msgid "Problem syncing the file"
 msgstr "파일을 동기화하는데 문제가 있습니다"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/contrib/gpgv.cc:76
+#: apt-pkg/contrib/gpgv.cc:70
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "%s에 키 모음을 설치하지 않았습니다."
@@ -2896,17 +2896,17 @@ msgid ""
 "available in the sources"
 msgstr ""
 
-#: apt-pkg/policy.cc:410
+#: apt-pkg/policy.cc:414
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr "기본 설정 파일 %s에 잘못된 데이터가 있습니다. Package 헤더가 없습니다"
 
-#: apt-pkg/policy.cc:432
+#: apt-pkg/policy.cc:436
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "핀 타입 %s이(가) 무엇인지 이해할 수 없습니다"
 
-#: apt-pkg/policy.cc:440
+#: apt-pkg/policy.cc:444
 msgid "No priority (or zero) specified for pin"
 msgstr "핀에 우선순위(혹은 0)를 지정하지 않았습니다"
 
@@ -3267,12 +3267,12 @@ msgstr ""
 msgid "Execute external solver"
 msgstr ""
 
-#: apt-pkg/install-progress.cc:50
+#: apt-pkg/install-progress.cc:51
 #, c-format
 msgid "Progress: [%3i%%]"
 msgstr ""
 
-#: apt-pkg/install-progress.cc:84 apt-pkg/install-progress.cc:167
+#: apt-pkg/install-progress.cc:85 apt-pkg/install-progress.cc:168
 msgid "Running dpkg"
 msgstr "dpkg 실행하는 중입니다"
 
