@@ -76,7 +76,7 @@ class pkgSourceList
 
    std::vector<metaIndex *> SrcList;
 
-   bool ParseFileDeb822(std::string File);
+   int ParseFileDeb822(std::string File);
    bool ParseFileOldStyle(std::string File);
 
    public:

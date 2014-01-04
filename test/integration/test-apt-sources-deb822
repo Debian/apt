@@ -7,7 +7,9 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-echo "deb http://ftp.debian.org/debian stable main" > rootdir/etc/apt/sources.list
+SOURCES="rootdir/etc/apt/sources.list"
+
+echo "deb http://ftp.debian.org/debian stable main" > $SOURCES
 testequalwithmsg "Old style sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
@@ -25,7 +27,7 @@ Comment: Some random string
  that can be very long"
 
 # simple case
-echo "$BASE" > rootdir/etc/apt/sources.list
+echo "$BASE"  > $SOURCES
 
 testequalwithmsg "Simple deb822 sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
@@ -33,7 +35,7 @@ testequalwithmsg "Simple deb822 sources.list works" "'http://ftp.debian.org/debi
 
 
 # two sections (we support both "," and " " as seperator)
-echo "$BASE" | sed s/main/"main,contrib"/ > rootdir/etc/apt/sources.list
+echo "$BASE" | sed s/main/"main,contrib"/ > $SOURCES
 
 testequalwithmsg "Two sections deb822 sources.list work" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/contrib/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_contrib_binary-i386_Packages 0 :
@@ -43,9 +45,9 @@ testequalwithmsg "Two sections deb822 sources.list work" "'http://ftp.debian.org
 
 
 # Two entries
-echo "$BASE" > rootdir/etc/apt/sources.list
-echo "" >> rootdir/etc/apt/sources.list
-echo "$BASE" | sed  s/stable/unstable/ >> rootdir/etc/apt/sources.list
+echo "$BASE" > $SOURCES
+echo "" >> $SOURCES
+echo "$BASE" | sed  s/stable/unstable/  >> $SOURCES
 
 testequalwithmsg "Multiple entries in deb822 sources.list work" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
@@ -56,11 +58,23 @@ testequalwithmsg "Multiple entries in deb822 sources.list work" "'http://ftp.deb
 
 
 # ARCH option
-echo "$BASE" > rootdir/etc/apt/sources.list
-echo "Arch: amd64,armel" >> rootdir/etc/apt/sources.list
+echo "$BASE" > $SOURCES
+echo "Arch: amd64,armel" >> $SOURCES
 
 testequalwithmsg "Arch: option in deb822 sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
 
+# invalid sources.list file
+echo "deb http://ftp.debian.org" > $SOURCES
+
+testequalwithmsg "Invalid sources.list file gives proper error" "E: Malformed line 1 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (dist)
+E: The list of sources could not be read."  aptget update --print-uris
+
+echo "Type: deb
+Dist: stable
+" > $SOURCES
+
+testequalwithmsg "Invalid deb822 sources.list file gives proper error" "E: Malformed stanza 0 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (URI parse)
+E: The list of sources could not be read."  aptget update --print-uris

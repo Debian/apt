@@ -240,8 +240,14 @@ bool pkgSourceList::Read(string File)
 bool pkgSourceList::ReadAppend(string File)
 {
    if (_config->FindB("APT::Sources::Use-Deb822", true) == true)
-      if (ParseFileDeb822(File))
+   {
+      int lines_parsed =ParseFileDeb822(File);
+      if (lines_parsed < 0)
+         return false;
+      else if (lines_parsed > 0)
          return true;
+      // no lines parsed  ... fall through and use old style parser
+   }
    return ParseFileOldStyle(File);
 }
 
@@ -303,10 +309,9 @@ bool pkgSourceList::ParseFileOldStyle(string File)
 									/*}}}*/
 // SourceList::ParseFileDeb822 - Parse deb822 style sources.list 	/*{{{*/
 // ---------------------------------------------------------------------
-/* */
-bool pkgSourceList::ParseFileDeb822(string File)
+/* Returns: the number of stanzas parsed*/
+int pkgSourceList::ParseFileDeb822(string File)
 {
-
    pkgTagSection Tags;
    map<string, string> Options;
    unsigned int i=0;
@@ -318,7 +323,7 @@ bool pkgSourceList::ParseFileDeb822(string File)
    if (_error->PendingError() == true)
    {
       _error->RevertToStack();
-      return false;
+      return 0;
    }
    _error->MergeWithStack();
    
@@ -331,11 +336,19 @@ bool pkgSourceList::ParseFileDeb822(string File)
       string const type = Tags.FindS("Type");
       Type *Parse = Type::GetType(type.c_str());
       if (Parse == 0)
-         return _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
+      {
+         _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
+         // true means we do not retry with old-style sources.list
+         return -1;
+      }
          
       string URI = Tags.FindS("URL");
       if (!Parse->FixupURI(URI))
-         return _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
+      {
+         _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
+         // means we do not retry with old-style sources.list
+         return -1;
+      }
 
       string Dist = Tags.FindS("Dist");
       Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
@@ -362,11 +375,8 @@ bool pkgSourceList::ParseFileDeb822(string File)
       i++;
    }
 
-   // we are done
-   if(i>0)
-      return true;
-
-   return false;
+   // we are done, return the number of stanzas read
+   return i;
 }
 									/*}}}*/
 // SourceList::FindIndex - Get the index associated with a file		/*{{{*/
