@@ -44,6 +44,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <pty.h>
+#include <stdio.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -596,7 +597,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       errors look like this:
       'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
       and conffile-prompt like this
-      'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+      'status:/etc/compiz.conf/compiz.conf :  conffile-prompt: 'current-conffile' 'new-conffile' useredited distedited
    */
    if (prefix == "status")
    {
@@ -608,7 +609,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
          WriteApportReport(list[1].c_str(), list[3].c_str());
          return;
       }
-      else if(action == "conffile")
+      else if(action == "conffile-prompt")
       {
          d->progress->ConffilePrompt(list[1], PackagesDone, PackagesTotal,
                                      list[3]);
@@ -1036,7 +1037,10 @@ void pkgDPkgPM::StartPtyMagic()
    if (tcgetattr(STDOUT_FILENO, &d->tt) == 0)
    {
        ioctl(1, TIOCGWINSZ, (char *)&win);
-       if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
+       if (_config->FindB("Dpkg::Use-Pty", true) == false)
+       {
+           d->master = d->slave = -1;
+       } else if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
        {
            _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
            d->master = d->slave = -1;
@@ -1182,7 +1186,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    StartPtyMagic();
 
    // Tell the progress that its starting and fork dpkg 
-   d->progress->Start();
+   d->progress->Start(d->master);
 
    // this loop is runs once per dpkg operation
    vector<Item>::const_iterator I = List.begin();
