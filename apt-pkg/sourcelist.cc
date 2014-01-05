@@ -17,6 +17,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/tagfile.h>
 
 #include <fstream>
 
@@ -159,7 +160,6 @@ bool pkgSourceList::Type::ParseLine(vector<metaIndex *> &List,
    return true;
 }
 									/*}}}*/
-
 // SourceList::pkgSourceList - Constructors				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -180,7 +180,6 @@ pkgSourceList::~pkgSourceList()
    for (const_iterator I = SrcList.begin(); I != SrcList.end(); ++I)
       delete *I;
 }
-									/*}}}*/
 									/*}}}*/
 // SourceList::ReadMainList - Read the main source list from etc	/*{{{*/
 // ---------------------------------------------------------------------
@@ -216,7 +215,6 @@ bool pkgSourceList::ReadMainList()
    return Res;
 }
 									/*}}}*/
-// CNC:2003-03-03 - Needed to preserve backwards compatibility.
 // SourceList::Reset - Clear the sourcelist contents			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -227,7 +225,6 @@ void pkgSourceList::Reset()
    SrcList.erase(SrcList.begin(),SrcList.end());
 }
 									/*}}}*/
-// CNC:2003-03-03 - Function moved to ReadAppend() and Reset().
 // SourceList::Read - Parse the sourcelist file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -242,16 +239,28 @@ bool pkgSourceList::Read(string File)
 /* */
 bool pkgSourceList::ReadAppend(string File)
 {
+   if (_config->FindB("APT::Sources::Use-Deb822", true) == true)
+   {
+      int lines_parsed =ParseFileDeb822(File);
+      if (lines_parsed < 0)
+         return false;
+      else if (lines_parsed > 0)
+         return true;
+      // no lines parsed  ... fall through and use old style parser
+   }
+   return ParseFileOldStyle(File);
+}
+
+// SourceList::ReadFileOldStyle - Read Traditional style sources.list 	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgSourceList::ParseFileOldStyle(string File)
+{
    // Open the stream for reading
    ifstream F(File.c_str(),ios::in /*| ios::nocreate*/);
    if (!F != 0)
       return _error->Errno("ifstream::ifstream",_("Opening %s"),File.c_str());
-   
-#if 0 // Now Reset() does this.
-   for (const_iterator I = SrcList.begin(); I != SrcList.end(); I++)
-      delete *I;
-   SrcList.erase(SrcList.begin(),SrcList.end());
-#endif
+
    // CNC:2003-12-10 - 300 is too short.
    char Buffer[1024];
 
@@ -296,6 +305,78 @@ bool pkgSourceList::ReadAppend(string File)
 	 return false;
    }
    return true;
+}
+									/*}}}*/
+// SourceList::ParseFileDeb822 - Parse deb822 style sources.list 	/*{{{*/
+// ---------------------------------------------------------------------
+/* Returns: the number of stanzas parsed*/
+int pkgSourceList::ParseFileDeb822(string File)
+{
+   pkgTagSection Tags;
+   map<string, string> Options;
+   unsigned int i=0;
+
+   // see if we can read the file
+   _error->PushToStack();
+   FileFd Fd(File, FileFd::ReadOnly);
+   pkgTagFile Sources(&Fd);
+   if (_error->PendingError() == true)
+   {
+      _error->RevertToStack();
+      return 0;
+   }
+   _error->MergeWithStack();
+   
+   // read step by step
+   while (Sources.Step(Tags) == true)
+   {
+      if(!Tags.Exists("Type")) 
+         continue;
+
+      string const type = Tags.FindS("Type");
+      Type *Parse = Type::GetType(type.c_str());
+      if (Parse == 0)
+      {
+         _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
+         // true means we do not retry with old-style sources.list
+         return -1;
+      }
+         
+      string URI = Tags.FindS("URL");
+      if (!Parse->FixupURI(URI))
+      {
+         _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
+         // means we do not retry with old-style sources.list
+         return -1;
+      }
+
+      string Dist = Tags.FindS("Dist");
+      Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
+
+      // check if there are any options we support
+      const char* option_str[] = { 
+         "arch", "arch+", "arch-", "trusted",
+      };
+      for (unsigned int j=0; j < sizeof(option_str)/sizeof(char*); j++)
+         if (Tags.Exists(option_str[j]))
+            Options[option_str[j]] = Tags.FindS(option_str[j]);
+
+      // now create one item per section
+      string const Section = Tags.FindS("Section");
+      std::vector<std::string> list;
+      if (Section.find(","))
+         list = StringSplit(Section, ",");
+      else
+         list = StringSplit(Section, " ");
+      for (std::vector<std::string>::const_iterator I = list.begin();
+           I != list.end(); I++)
+         Parse->CreateItem(SrcList, URI, Dist, (*I), Options);
+
+      i++;
+   }
+
+   // we are done, return the number of stanzas read
+   return i;
 }
 									/*}}}*/
 // SourceList::FindIndex - Get the index associated with a file		/*{{{*/
