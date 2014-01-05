@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-29 17:01+0100\n"
+"POT-Creation-Date: 2014-01-05 10:10+0100\n"
 "PO-Revision-Date: 2012-06-29 15:45+0100\n"
 "Last-Translator: Miguel Figueiredo <elmig@debianpt.org>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
@@ -768,11 +768,11 @@ msgid "File not found"
 msgstr "Ficheiro não encontrado"
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/rred.cc:563 methods/rred.cc:576 methods/rred.cc:585
 msgid "Failed to stat"
 msgstr "Falhou o stat"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:582
 msgid "Failed to set modification time"
 msgstr "Falhou definir hora de modificação"
 
@@ -847,7 +847,7 @@ msgstr "Uma resposta sobrecarregou o buffer."
 msgid "Protocol corruption"
 msgstr "Corrupção de protocolo"
 
-#: methods/ftp.cc:458 methods/rred.cc:238 methods/rsh.cc:243
+#: methods/ftp.cc:458 methods/rred.cc:240 methods/rsh.cc:243
 #: apt-pkg/contrib/fileutl.cc:1388 apt-pkg/contrib/fileutl.cc:1397
 #: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1425
 msgid "Write error"
@@ -1635,8 +1635,8 @@ msgstr ""
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
-#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:207
+#: apt-pkg/sourcelist.cc:213 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
 #: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
@@ -1674,7 +1674,7 @@ msgstr "Não pode ler ficheiro de mirror '%s'"
 msgid "[Mirror: %s]"
 msgstr "[Mirror: %s]"
 
-#: methods/rred.cc:491
+#: methods/rred.cc:499
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
@@ -1683,7 +1683,7 @@ msgstr ""
 "Não foi possível aplicar o patch %s com mmap e com a utilização de operação "
 "de ficheiro - o patch parece estar corrompido."
 
-#: methods/rred.cc:496
+#: methods/rred.cc:504
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
@@ -2758,78 +2758,88 @@ msgstr "Não foi possível fazer parse ao ficheiro do pacote %s (1)"
 msgid "Unable to parse package file %s (2)"
 msgstr "Não foi possível fazer parse ao ficheiro de pacote %s (2)"
 
-#: apt-pkg/sourcelist.cc:96
+#: apt-pkg/sourcelist.cc:97
 #, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
 msgstr ""
 "Linha mal formada %lu na lista de fontes %s ([opção] não interpretável)"
 
-#: apt-pkg/sourcelist.cc:99
+#: apt-pkg/sourcelist.cc:100
 #, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr "Linha mal formada %lu na lista de fontes %s ([opção] demasiado curta)"
 
-#: apt-pkg/sourcelist.cc:110
+#: apt-pkg/sourcelist.cc:111
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
 msgstr ""
 "Linha mal formada %lu na lista de fontes %s ([%s] não é uma atribuição)"
 
-#: apt-pkg/sourcelist.cc:116
+#: apt-pkg/sourcelist.cc:117
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
 msgstr "Linha mal formada %lu na lista de fontes %s ([%s] não tem chave)"
 
-#: apt-pkg/sourcelist.cc:119
+#: apt-pkg/sourcelist.cc:120
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
 msgstr ""
 "Linha mal formada %lu na lista de fontes %s ([%s] chave %s não tem valor)"
 
-#: apt-pkg/sourcelist.cc:132
+#: apt-pkg/sourcelist.cc:133
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "Linha mal formada %lu na lista de fontes %s (URI)"
 
-#: apt-pkg/sourcelist.cc:134
+#: apt-pkg/sourcelist.cc:135
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "Linha mal formada %lu na lista de fontes %s (distribuição)"
 
-#: apt-pkg/sourcelist.cc:137
+#: apt-pkg/sourcelist.cc:138
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "Linha mal formada %lu na lista de fontes %s (parse de URI)"
 
-#: apt-pkg/sourcelist.cc:143
+#: apt-pkg/sourcelist.cc:144
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "Linha mal formada %lu na lista de fontes %s (distribuição absoluta)"
 
-#: apt-pkg/sourcelist.cc:150
+#: apt-pkg/sourcelist.cc:151
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Linha mal formada %lu na lista de fontes %s (dist parse)"
 
-#: apt-pkg/sourcelist.cc:248
+#: apt-pkg/sourcelist.cc:262
 #, c-format
 msgid "Opening %s"
 msgstr "A abrir %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:274 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Linha %u é demasiado longa na lista de fontes %s."
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:298
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Linha mal formada %u na lista de fontes %s (tipo)"
 
-#: apt-pkg/sourcelist.cc:293
+#: apt-pkg/sourcelist.cc:302
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "O tipo '%s' não é conhecido na linha %u na lista de fontes %s"
+
+#: apt-pkg/sourcelist.cc:340
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "O tipo '%s' não é conhecido na linha %u na lista de fontes %s"
+
+#: apt-pkg/sourcelist.cc:348
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Linha mal formada %lu na lista de fontes %s (parse de URI)"
 
 #: apt-pkg/packagemanager.cc:296 apt-pkg/packagemanager.cc:922
 #, c-format
@@ -3065,7 +3075,7 @@ msgstr "Tamanho incorrecto"
 msgid "Invalid file format"
 msgstr "Operação %s inválida"
 
-#: apt-pkg/acquire-item.cc:1419
+#: apt-pkg/acquire-item.cc:1566
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
@@ -3074,18 +3084,18 @@ msgstr ""
 "Incapaz de encontrar a entrada '%s' esperada no ficheiro Release (entrada "
 "errada em sources.list ou ficheiro malformado)"
 
-#: apt-pkg/acquire-item.cc:1435
+#: apt-pkg/acquire-item.cc:1582
 #, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Não foi possível encontrar hash sum para '%s' no ficheiro Release"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1624
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 "Não existe qualquer chave pública disponível para as seguintes IDs de "
 "chave:\n"
 
-#: apt-pkg/acquire-item.cc:1515
+#: apt-pkg/acquire-item.cc:1662
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
@@ -3094,12 +3104,12 @@ msgstr ""
 "O ficheiro Release para %s está expirado (inválido desde %s). Não serão "
 "aplicadas as actualizações para este repositório."
 
-#: apt-pkg/acquire-item.cc:1537
+#: apt-pkg/acquire-item.cc:1684
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Distribuição em conflito: %s (esperado %s mas obtido %s)"
 
-#: apt-pkg/acquire-item.cc:1567
+#: apt-pkg/acquire-item.cc:1714
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -3110,12 +3120,12 @@ msgstr ""
 "GPG: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1577 apt-pkg/acquire-item.cc:1582
+#: apt-pkg/acquire-item.cc:1724 apt-pkg/acquire-item.cc:1729
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "Erro GPG: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1852
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3125,12 +3135,12 @@ msgstr ""
 "significar que você precisa corrigir manualmente este pacote. (devido a "
 "arquitectura em falta)"
 
-#: apt-pkg/acquire-item.cc:1771
+#: apt-pkg/acquire-item.cc:1918
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Não conseguiu encontrar uma fonte para obter a versão '%s' de '%s'"
 
-#: apt-pkg/acquire-item.cc:1829
+#: apt-pkg/acquire-item.cc:1976
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-29 17:01+0100\n"
+"POT-Creation-Date: 2014-01-05 10:10+0100\n"
 "PO-Revision-Date: 2010-08-26 14:42+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -728,11 +728,11 @@ msgid "File not found"
 msgstr "无法找到该文件"
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/rred.cc:563 methods/rred.cc:576 methods/rred.cc:585
 msgid "Failed to stat"
 msgstr "无法读取状态"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:582
 msgid "Failed to set modification time"
 msgstr "无法设置文件的修改日期"
 
@@ -806,7 +806,7 @@ msgstr "回应超出了缓存区大小。"
 msgid "Protocol corruption"
 msgstr "协议有误"
 
-#: methods/ftp.cc:458 methods/rred.cc:238 methods/rsh.cc:243
+#: methods/ftp.cc:458 methods/rred.cc:240 methods/rsh.cc:243
 #: apt-pkg/contrib/fileutl.cc:1388 apt-pkg/contrib/fileutl.cc:1397
 #: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1425
 msgid "Write error"
@@ -1571,8 +1571,8 @@ msgstr ""
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
-#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:207
+#: apt-pkg/sourcelist.cc:213 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
 #: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
@@ -1610,14 +1610,14 @@ msgstr "没有找到镜像文件 %s"
 msgid "[Mirror: %s]"
 msgstr "[镜像：%s]"
 
-#: methods/rred.cc:491
+#: methods/rred.cc:499
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
 "to be corrupt."
 msgstr "无法连同 mmap 和文件操作用途为 %s 打补丁 - 补丁可能已损坏。"
 
-#: methods/rred.cc:496
+#: methods/rred.cc:504
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
@@ -2667,75 +2667,85 @@ msgstr "无法解析软件包文件 %s (1)"
 msgid "Unable to parse package file %s (2)"
 msgstr "无法解析软件包文件 %s (2)"
 
-#: apt-pkg/sourcelist.cc:96
+#: apt-pkg/sourcelist.cc:97
 #, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误([选项] 无法解析)"
 
-#: apt-pkg/sourcelist.cc:99
+#: apt-pkg/sourcelist.cc:100
 #, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误([选项] 太短)"
 
-#: apt-pkg/sourcelist.cc:110
+#: apt-pkg/sourcelist.cc:111
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误([%3$s] 不是一个任务)"
 
-#: apt-pkg/sourcelist.cc:116
+#: apt-pkg/sourcelist.cc:117
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误([%3$s] 没有键)"
 
-#: apt-pkg/sourcelist.cc:119
+#: apt-pkg/sourcelist.cc:120
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误([%3$s] 键 %4$s 没有值)"
 
-#: apt-pkg/sourcelist.cc:132
+#: apt-pkg/sourcelist.cc:133
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行的格式有误(URI)"
 
-#: apt-pkg/sourcelist.cc:134
+#: apt-pkg/sourcelist.cc:135
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(发行版)"
 
-#: apt-pkg/sourcelist.cc:137
+#: apt-pkg/sourcelist.cc:138
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(URI 解析)"
 
-#: apt-pkg/sourcelist.cc:143
+#: apt-pkg/sourcelist.cc:144
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(独立发行版)"
 
-#: apt-pkg/sourcelist.cc:150
+#: apt-pkg/sourcelist.cc:151
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(发行版解析)"
 
-#: apt-pkg/sourcelist.cc:248
+#: apt-pkg/sourcelist.cc:262
 #, c-format
 msgid "Opening %s"
 msgstr "正在打开 %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:274 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "源列表 %2$s 的第 %1$u 行太长了。"
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:298
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "在源列表 %2$s 中第 %1$u 行的格式有误(类型)"
 
-#: apt-pkg/sourcelist.cc:293
+#: apt-pkg/sourcelist.cc:302
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "无法识别在源列表 %3$s 里，第 %2$u 行中的软件包类别“%1$s”"
+
+#: apt-pkg/sourcelist.cc:340
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "无法识别在源列表 %3$s 里，第 %2$u 行中的软件包类别“%1$s”"
+
+#: apt-pkg/sourcelist.cc:348
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "安装源配置文件“%2$s”第 %1$lu 行有错误(URI 解析)"
 
 #: apt-pkg/packagemanager.cc:296 apt-pkg/packagemanager.cc:922
 #, c-format
@@ -2956,35 +2966,35 @@ msgstr "大小不符"
 msgid "Invalid file format"
 msgstr "无效的操作 %s"
 
-#: apt-pkg/acquire-item.cc:1419
+#: apt-pkg/acquire-item.cc:1566
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1435
+#: apt-pkg/acquire-item.cc:1582
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "无法解析软件包仓库 Release 文件 %s"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1624
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "以下 ID 的密钥没有可用的公钥：\n"
 
-#: apt-pkg/acquire-item.cc:1515
+#: apt-pkg/acquire-item.cc:1662
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1537
+#: apt-pkg/acquire-item.cc:1684
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "冲突的发行版：%s (期望 %s 但得到 %s)"
 
-#: apt-pkg/acquire-item.cc:1567
+#: apt-pkg/acquire-item.cc:1714
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -2993,12 +3003,12 @@ msgstr ""
 "校验签名出错。此仓库未被更新，仍然使用以前的索引文件。GPG 错误：%s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1577 apt-pkg/acquire-item.cc:1582
+#: apt-pkg/acquire-item.cc:1724 apt-pkg/acquire-item.cc:1729
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG 错误：%s: %s"
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1852
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3007,12 +3017,12 @@ msgstr ""
 "我无法找到一个对应 %s 软件包的文件。在这种情况下可能需要您手动修正这个软件"
 "包。(缘于架构缺失)"
 
-#: apt-pkg/acquire-item.cc:1771
+#: apt-pkg/acquire-item.cc:1918
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1829
+#: apt-pkg/acquire-item.cc:1976
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.21\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-29 17:01+0100\n"
+"POT-Creation-Date: 2014-01-05 10:10+0100\n"
 "PO-Revision-Date: 2012-06-25 17:23+0300\n"
 "Last-Translator: Damyan Ivanov <dmn@debian.org>\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -767,11 +767,11 @@ msgid "File not found"
 msgstr "Файлът не е намерен"
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/rred.cc:563 methods/rred.cc:576 methods/rred.cc:585
 msgid "Failed to stat"
 msgstr "Неуспех при получаването на атрибути"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:582
 msgid "Failed to set modification time"
 msgstr "Неуспех при задаването на време на промяна"
 
@@ -846,7 +846,7 @@ msgstr "Отговорът препълни буфера."
 msgid "Protocol corruption"
 msgstr "Развален протокол"
 
-#: methods/ftp.cc:458 methods/rred.cc:238 methods/rsh.cc:243
+#: methods/ftp.cc:458 methods/rred.cc:240 methods/rsh.cc:243
 #: apt-pkg/contrib/fileutl.cc:1388 apt-pkg/contrib/fileutl.cc:1397
 #: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1425
 msgid "Write error"
@@ -1638,8 +1638,8 @@ msgstr ""
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
-#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:207
+#: apt-pkg/sourcelist.cc:213 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
 #: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
@@ -1677,7 +1677,7 @@ msgstr "Грешка при четене файла „%s“ от огледал
 msgid "[Mirror: %s]"
 msgstr "[Огледален сървър: %s]"
 
-#: methods/rred.cc:491
+#: methods/rred.cc:499
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
@@ -1686,7 +1686,7 @@ msgstr ""
 "Неуспех при закърпване на %s с mmap и операции с файл – кръпката изглежда "
 "повредена."
 
-#: methods/rred.cc:496
+#: methods/rred.cc:504
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
@@ -2758,82 +2758,92 @@ msgstr "Неуспех при анализирането на пакетен ф�
 msgid "Unable to parse package file %s (2)"
 msgstr "Неуспех при анализирането на пакетен файл %s (2)"
 
-#: apt-pkg/sourcelist.cc:96
+#: apt-pkg/sourcelist.cc:97
 #, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
 msgstr ""
 "Лошо форматиран ред %lu в списъка с източници %s (неразбираема [опция])"
 
-#: apt-pkg/sourcelist.cc:99
+#: apt-pkg/sourcelist.cc:100
 #, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr ""
 "Лошо форматиран ред %lu в списъка с източници %s (твърде кратка [опция])"
 
-#: apt-pkg/sourcelist.cc:110
+#: apt-pkg/sourcelist.cc:111
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
 msgstr ""
 "Лошо форматиран ред %lu в списъка с източници %s ([%s] не е присвояване)"
 
-#: apt-pkg/sourcelist.cc:116
+#: apt-pkg/sourcelist.cc:117
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
 msgstr "Лошо форматиран ред %lu в списъка с източници %s (липсва ключ в [%s])"
 
-#: apt-pkg/sourcelist.cc:119
+#: apt-pkg/sourcelist.cc:120
 #, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
 msgstr ""
 "Лошо форматиран ред %lu в списъка с източници %s ([%s] ключът %s няма "
 "стойност)"
 
-#: apt-pkg/sourcelist.cc:132
+#: apt-pkg/sourcelist.cc:133
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "Лошо форматиран ред %lu в списъка с източници %s (адрес-URI)"
 
-#: apt-pkg/sourcelist.cc:134
+#: apt-pkg/sourcelist.cc:135
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "Лошо форматиран ред %lu в списъка с източници %s (дистрибуция)"
 
-#: apt-pkg/sourcelist.cc:137
+#: apt-pkg/sourcelist.cc:138
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "Лошо форматиран ред %lu в списъка с източници %s (анализ на адрес-URI)"
 
-#: apt-pkg/sourcelist.cc:143
+#: apt-pkg/sourcelist.cc:144
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr ""
 "Лошо форматиран ред %lu в списъка с източници %s (неограничена дистрибуция)"
 
-#: apt-pkg/sourcelist.cc:150
+#: apt-pkg/sourcelist.cc:151
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr ""
 "Лошо форматиран ред %lu в списъка с източници %s (анализ на дистрибуция)"
 
-#: apt-pkg/sourcelist.cc:248
+#: apt-pkg/sourcelist.cc:262
 #, c-format
 msgid "Opening %s"
 msgstr "Отваряне на %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:274 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Ред %u в списъка с източници %s е твърде дълъг."
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:298
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Лошо форматиран ред %u в списъка с източници %s (тип)"
 
-#: apt-pkg/sourcelist.cc:293
+#: apt-pkg/sourcelist.cc:302
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
+
+#: apt-pkg/sourcelist.cc:340
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Типът „%s“ на ред %u в списъка с източници %s е неизвестен."
+
+#: apt-pkg/sourcelist.cc:348
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Лошо форматиран ред %lu в списъка с източници %s (анализ на адрес-URI)"
 
 #: apt-pkg/packagemanager.cc:296 apt-pkg/packagemanager.cc:922
 #, c-format
@@ -3066,7 +3076,7 @@ msgstr "Несъответствие на размера"
 msgid "Invalid file format"
 msgstr "Невалидна операция %s"
 
-#: apt-pkg/acquire-item.cc:1419
+#: apt-pkg/acquire-item.cc:1566
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
@@ -3075,16 +3085,16 @@ msgstr ""
 "Не може да се открие елемент „%s“ във файла Release (объркан ред в sources."
 "list или повреден файл)"
 
-#: apt-pkg/acquire-item.cc:1435
+#: apt-pkg/acquire-item.cc:1582
 #, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Не е открита контролна сума за „%s“  във файла Release"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1624
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Няма налични публични ключове за следните идентификатори на ключове:\n"
 
-#: apt-pkg/acquire-item.cc:1515
+#: apt-pkg/acquire-item.cc:1662
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
@@ -3093,12 +3103,12 @@ msgstr ""
 "Файлът със служебна информация за „%s“ е остарял (валиден до %s). Няма да се "
 "прилагат обновявания от това хранилище."
 
-#: apt-pkg/acquire-item.cc:1537
+#: apt-pkg/acquire-item.cc:1684
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "Конфликт в дистрибуцията: %s (очаквана: %s, намерена: %s)"
 
-#: apt-pkg/acquire-item.cc:1567
+#: apt-pkg/acquire-item.cc:1714
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -3108,12 +3118,12 @@ msgstr ""
 "използват старите индексни файлове. Грешка от GPG: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1577 apt-pkg/acquire-item.cc:1582
+#: apt-pkg/acquire-item.cc:1724 apt-pkg/acquire-item.cc:1729
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "Грешка от GPG: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1852
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3122,12 +3132,12 @@ msgstr ""
 "Неуспех при намирането на файл за пакет %s. Това може да означава, че трябва "
 "ръчно да оправите този пакет (поради пропусната архитектура)."
 
-#: apt-pkg/acquire-item.cc:1771
+#: apt-pkg/acquire-item.cc:1918
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr "Не е открит източник, от който да се изтегли версия „%s“ на „%s“"
 
-#: apt-pkg/acquire-item.cc:1829
+#: apt-pkg/acquire-item.cc:1976
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."

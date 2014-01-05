@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_nn\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-29 17:01+0100\n"
+"POT-Creation-Date: 2014-01-05 10:10+0100\n"
 "PO-Revision-Date: 2005-02-14 23:30+0100\n"
 "Last-Translator: Havard Korsvoll <korsvoll@skulelinux.no>\n"
 "Language-Team: Norwegian nynorsk <i18n-nn@lister.ping.uio.no>\n"
@@ -732,11 +732,11 @@ msgid "File not found"
 msgstr "Fann ikkje fila"
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/rred.cc:563 methods/rred.cc:576 methods/rred.cc:585
 msgid "Failed to stat"
 msgstr "Klarte ikkje få status"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:582
 msgid "Failed to set modification time"
 msgstr "Klarte ikkje setja endringstidspunkt"
 
@@ -811,7 +811,7 @@ msgstr "Eit svar flaumde over bufferen."
 msgid "Protocol corruption"
 msgstr "Protokolløydeleggjing"
 
-#: methods/ftp.cc:458 methods/rred.cc:238 methods/rsh.cc:243
+#: methods/ftp.cc:458 methods/rred.cc:240 methods/rsh.cc:243
 #: apt-pkg/contrib/fileutl.cc:1388 apt-pkg/contrib/fileutl.cc:1397
 #: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1425
 msgid "Write error"
@@ -1585,8 +1585,8 @@ msgstr ""
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
-#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:207
+#: apt-pkg/sourcelist.cc:213 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
 #: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
@@ -1624,14 +1624,14 @@ msgstr "Klarte ikkje opna fila %s"
 msgid "[Mirror: %s]"
 msgstr ""
 
-#: methods/rred.cc:491
+#: methods/rred.cc:499
 #, c-format
 msgid ""
 "Could not patch %s with mmap and with file operation usage - the patch seems "
 "to be corrupt."
 msgstr ""
 
-#: methods/rred.cc:496
+#: methods/rred.cc:504
 #, c-format
 msgid ""
 "Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
@@ -2684,75 +2684,85 @@ msgstr "Klarte ikkje tolka pakkefila %s (1)"
 msgid "Unable to parse package file %s (2)"
 msgstr "Klarte ikkje tolka pakkefila %s (2)"
 
-#: apt-pkg/sourcelist.cc:96
+#: apt-pkg/sourcelist.cc:97
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
 msgstr "Misforma linje %lu i kjeldelista %s (dist-tolking)"
 
-#: apt-pkg/sourcelist.cc:99
+#: apt-pkg/sourcelist.cc:100
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr "Misforma linje %lu i kjeldelista %s (dist)"
 
-#: apt-pkg/sourcelist.cc:110
+#: apt-pkg/sourcelist.cc:111
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
 msgstr "Misforma linje %lu i kjeldelista %s (dist-tolking)"
 
-#: apt-pkg/sourcelist.cc:116
+#: apt-pkg/sourcelist.cc:117
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
 msgstr "Misforma linje %lu i kjeldelista %s (dist-tolking)"
 
-#: apt-pkg/sourcelist.cc:119
+#: apt-pkg/sourcelist.cc:120
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
 msgstr "Misforma linje %lu i kjeldelista %s (dist-tolking)"
 
-#: apt-pkg/sourcelist.cc:132
+#: apt-pkg/sourcelist.cc:133
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "Misforma linje %lu i kjeldelista %s (URI)"
 
-#: apt-pkg/sourcelist.cc:134
+#: apt-pkg/sourcelist.cc:135
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "Misforma linje %lu i kjeldelista %s (dist)"
 
-#: apt-pkg/sourcelist.cc:137
+#: apt-pkg/sourcelist.cc:138
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "Misforma linje %lu i kjeldelista %s (URI-tolking)"
 
-#: apt-pkg/sourcelist.cc:143
+#: apt-pkg/sourcelist.cc:144
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "Misforma linje %lu i kjeldelista %s (absolutt dist)"
 
-#: apt-pkg/sourcelist.cc:150
+#: apt-pkg/sourcelist.cc:151
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "Misforma linje %lu i kjeldelista %s (dist-tolking)"
 
-#: apt-pkg/sourcelist.cc:248
+#: apt-pkg/sourcelist.cc:262
 #, c-format
 msgid "Opening %s"
 msgstr "Opnar %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:274 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "Linja %u i kjeldelista %s er for lang."
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:298
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "Misforma linje %u i kjeldelista %s (type)"
 
-#: apt-pkg/sourcelist.cc:293
+#: apt-pkg/sourcelist.cc:302
 #, fuzzy, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
 msgstr "Typen «%s» er ukjend i linja %u i kjeldelista %s"
+
+#: apt-pkg/sourcelist.cc:340
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Typen «%s» er ukjend i linja %u i kjeldelista %s"
+
+#: apt-pkg/sourcelist.cc:348
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Misforma linje %lu i kjeldelista %s (URI-tolking)"
 
 #: apt-pkg/packagemanager.cc:296 apt-pkg/packagemanager.cc:922
 #, c-format
@@ -2977,35 +2987,35 @@ msgstr "Feil storleik"
 msgid "Invalid file format"
 msgstr "Ugyldig operasjon %s"
 
-#: apt-pkg/acquire-item.cc:1419
+#: apt-pkg/acquire-item.cc:1566
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1435
+#: apt-pkg/acquire-item.cc:1582
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Klarte ikkje tolka pakkefila %s (1)"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1624
 msgid "There is no public key available for the following key IDs:\n"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1515
+#: apt-pkg/acquire-item.cc:1662
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1537
+#: apt-pkg/acquire-item.cc:1684
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1567
+#: apt-pkg/acquire-item.cc:1714
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -3013,12 +3023,12 @@ msgid ""
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1577 apt-pkg/acquire-item.cc:1582
+#: apt-pkg/acquire-item.cc:1724 apt-pkg/acquire-item.cc:1729
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1852
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3027,12 +3037,12 @@ msgstr ""
 "Fann ikkje fila for pakken %s. Det kan henda du må fiksa denne pakken sjølv "
 "(fordi arkitekturen manglar)."
 
-#: apt-pkg/acquire-item.cc:1771
+#: apt-pkg/acquire-item.cc:1918
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1829
+#: apt-pkg/acquire-item.cc:1976
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
