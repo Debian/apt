@@ -76,11 +76,26 @@
    code in the same form as the <literal>deb</literal> type.
    A <literal>deb-src</literal> line is required to fetch source indexes.</para>
 
-
    <para>The format for a <filename>sources.list</filename> entry using the
    <literal>deb</literal> and <literal>deb-src</literal> types is:</para>
 
    <literallayout>deb [ options ] uri distribution [component1] [component2] [...]</literallayout>
+
+   <para>Alternatively a rfc822 style format is also supported:
+   <literallayout>
+     Type: deb
+     URI: http://example.com
+     Dist: stable
+     Section: component1 component2
+     [option1]: [option1-value]
+
+     Type: deb-src
+     URI: http://example.com
+     Dist: stable
+     Section: component1 component2
+     [option1]: [option1-value]
+   </literallayout>
+   </para>
 
    <para>The URI for the <literal>deb</literal> type must specify the base of the
    Debian distribution, from which APT will find the information it needs. 
