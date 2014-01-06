@@ -41,6 +41,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/hashes.h>
 
 #include <apti18n.h>
 
@@ -54,7 +55,11 @@
 #include <apt-private/private-upgrade.h>
 #include <apt-private/private-show.h>
 #include <apt-private/private-main.h>
+#include <apt-private/private-utils.h>
+#include <apt-private/private-sources.h>
 									/*}}}*/
+
+
 
 bool ShowHelp(CommandLine &CmdL)
 {
@@ -74,6 +79,8 @@ bool ShowHelp(CommandLine &CmdL)
       " update - update list of available packages\n"
       " install - install packages\n"
       " upgrade - upgrade the systems packages\n"
+      "\n"
+      " edit-sources - edit the source information file\n"
        );
    
    return true;
@@ -89,6 +96,8 @@ int main(int argc, const char *argv[])					/*{{{*/
                                    {"remove", &DoInstall},
                                    {"update",&DoUpdate},
                                    {"upgrade",&DoUpgradeWithAllowNewPackages},
+                                   // misc
+                                   {"edit-sources",&EditSources},
                                    // helper
                                    {"moo",&DoMoo},
                                    {"help",&ShowHelp},

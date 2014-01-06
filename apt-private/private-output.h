@@ -24,7 +24,8 @@ extern unsigned int ScreenWidth;
 
 bool InitOutput();
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records, 
-                       pkgCache::VerIterator V, std::ostream &out);
+                       pkgCache::VerIterator V, std::ostream &out,
+                       bool include_summary=true);
 
 
 

@@ -25,17 +25,18 @@ GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
 
 GPG="$GPG_CMD"
 
-MASTER_KEYRING=""
-#MASTER_KEYRING=/usr/share/keyrings/debian-master-keyring.gpg
-eval $(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)
-ARCHIVE_KEYRING_URI=""
-#ARCHIVE_KEYRING_URI=http://ftp.debian.org/debian/debian-archive-keyring.gpg
-eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
+APT_DIR="/"
+eval $(apt-config shell APT_DIR Dir)
 
-ARCHIVE_KEYRING=/usr/share/keyrings/debian-archive-keyring.gpg
+MASTER_KEYRING='&keyring-master-filename;'
+eval $(apt-config shell MASTER_KEYRING APT::Key::MasterKeyring)
+ARCHIVE_KEYRING='&keyring-filename;'
 eval $(apt-config shell ARCHIVE_KEYRING APT::Key::ArchiveKeyring)
-REMOVED_KEYS=/usr/share/keyrings/debian-archive-removed-keys.gpg
+REMOVED_KEYS='&keyring-removed-filename;'
 eval $(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)
+ARCHIVE_KEYRING_URI='&keyring-uri;'
+eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
+TMP_KEYRING=${APT_DIR}/var/lib/apt/keyrings/maybe-import-keyring.gpg
 
 requires_root() {
 	if [ "$(id -u)" -ne 0 ]; then
@@ -57,7 +58,7 @@ init_keyring() {
 add_keys_with_verify_against_master_keyring() {
     ADD_KEYRING=$1
     MASTER=$2
-    
+
     if [ ! -f "$ADD_KEYRING" ]; then
 	echo "ERROR: '$ADD_KEYRING' not found"
 	return
@@ -72,12 +73,28 @@ add_keys_with_verify_against_master_keyring() {
     #   all keys that are exported must have a valid signature
     #   from a key in the $distro-master-keyring
     add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
+    all_add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^[ps]ub | cut -d: -f5`
     master_keys=`$GPG_CMD --keyring $MASTER --with-colons --list-keys | grep ^pub | cut -d: -f5`
-    for add_key in $add_keys; do
-	ADDED=0
+
+    # ensure there are no colisions LP: #857472
+    for all_add_key in $all_add_keys; do
 	for master_key in $master_keys; do
-	    if $GPG_CMD --keyring $ADD_KEYRING --list-sigs --with-colons $add_key | grep ^sig | cut -d: -f5 | grep -q $master_key; then
-		$GPG_CMD --quiet --batch --keyring $ADD_KEYRING --export $add_key | $GPG --import
+            if [ "$all_add_key" = "$master_key" ]; then
+                echo >&2 "Keyid collision for '$all_add_key' detected, operation aborted"
+                return 1
+            fi
+        done
+    done
+    
+    for add_key in $add_keys; do
+        # export the add keyring one-by-one
+        rm -f $TMP_KEYRING
+        $GPG_CMD --keyring $ADD_KEYRING --output $TMP_KEYRING --export $add_key 
+        # check if signed with the master key and only add in this case
+        ADDED=0
+	for master_key in $master_keys; do
+	    if $GPG_CMD --keyring $MASTER --keyring $TMP_KEYRING --check-sigs --with-colons $add_key | grep '^sig:!:' | cut -d: -f5 | grep -q $master_key; then
+		$GPG --import $TMP_KEYRING
 		ADDED=1
 	    fi
 	done
@@ -85,12 +102,20 @@ add_keys_with_verify_against_master_keyring() {
 	    echo >&2 "Key '$add_key' not added. It is not signed with a master key"
 	fi
     done
+    rm -f $TMP_KEYRING
 }
 
 # update the current archive signing keyring from a network URI
 # the archive-keyring keys needs to be signed with the master key
 # (otherwise it does not make sense from a security POV)
 net_update() {
+    # Disabled for now as code is insecure (LP: #1013639 (and 857472, 1013128))
+    APT_KEY_NET_UPDATE_ENABLED=""
+    eval $(apt-config shell APT_KEY_NET_UPDATE_ENABLED APT::Key::Net-Update-Enabled)
+    if [ -z "$APT_KEY_NET_UPDATE_ENABLED" ]; then
+        exit 1
+    fi
+
     if [ -z "$ARCHIVE_KEYRING_URI" ]; then
 	echo >&2 "ERROR: Your distribution is not supported in net-update as no uri for the archive-keyring is set"
 	exit 1
@@ -102,15 +127,15 @@ net_update() {
 	echo >&2 "ERROR: an installed wget is required for a network-based update"
 	exit 1
     fi
-    if [ ! -d /var/lib/apt/keyrings ]; then
-	mkdir -p /var/lib/apt/keyrings
+    if [ ! -d ${APT_DIR}/var/lib/apt/keyrings ]; then
+	mkdir -p ${APT_DIR}/var/lib/apt/keyrings
     fi
-    keyring=/var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING)
+    keyring=${APT_DIR}/var/lib/apt/keyrings/$(basename $ARCHIVE_KEYRING_URI)
     old_mtime=0
     if [ -e $keyring ]; then
 	old_mtime=$(stat -c %Y $keyring)
     fi
-    (cd  /var/lib/apt/keyrings; wget -q -N $ARCHIVE_KEYRING_URI)
+    (cd  ${APT_DIR}/var/lib/apt/keyrings; wget --timeout=90 -q -N $ARCHIVE_KEYRING_URI)
     if [ ! -e $keyring ]; then
 	return
     fi
@@ -124,7 +149,7 @@ net_update() {
 update() {
     if [ ! -f $ARCHIVE_KEYRING ]; then
 	echo >&2 "ERROR: Can't find the archive-keyring"
-	echo >&2 "Is the debian-archive-keyring package installed?"
+	echo >&2 "Is the &keyring-package; package installed?"
 	exit 1
     fi
     requires_root

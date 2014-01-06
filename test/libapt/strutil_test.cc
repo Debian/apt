@@ -69,5 +69,23 @@ int main(int argc,char *argv[])
    result = StringSplit(input, "");
    equals(result.size(), 0);
 
+   // endswith
+   bool b;
+   input = "abcd";
+   b = APT::String::Endswith(input, "d");
+   equals(b, true);
+
+   b = APT::String::Endswith(input, "cd");
+   equals(b, true);
+
+   b = APT::String::Endswith(input, "abcd");
+   equals(b, true);
+
+   b = APT::String::Endswith(input, "x");
+   equals(b, false);
+
+   b = APT::String::Endswith(input, "abcndefg");
+   equals(b, false);
+
    return 0;
 }

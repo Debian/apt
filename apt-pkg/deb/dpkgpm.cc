@@ -44,6 +44,7 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <pty.h>
+#include <stdio.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -201,7 +202,7 @@ pkgCache::VerIterator FindNowVersion(const pkgCache::PkgIterator &Pkg)
 // ---------------------------------------------------------------------
 /* */
 pkgDPkgPM::pkgDPkgPM(pkgDepCache *Cache) 
-   : pkgPackageManager(Cache), PackagesDone(0), PackagesTotal(0)
+   : pkgPackageManager(Cache), pkgFailures(0), PackagesDone(0), PackagesTotal(0)
 {
    d = new pkgDPkgPMPrivate();
 }
@@ -417,6 +418,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       
       // Create the pipes
       std::set<int> KeepFDs;
+      MergeKeepFdsFromConfiguration(KeepFDs);
       int Pipes[2];
       if (pipe(Pipes) != 0)
 	 return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
@@ -595,7 +597,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       errors look like this:
       'status: /var/cache/apt/archives/krecipes_0.8.1-0ubuntu1_i386.deb : error : trying to overwrite `/usr/share/doc/kde/HTML/en/krecipes/krectip.png', which is also in package krecipes-data 
       and conffile-prompt like this
-      'status: conffile-prompt: conffile : 'current-conffile' 'new-conffile' useredited distedited
+      'status:/etc/compiz.conf/compiz.conf :  conffile-prompt: 'current-conffile' 'new-conffile' useredited distedited
    */
    if (prefix == "status")
    {
@@ -607,7 +609,7 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
          WriteApportReport(list[1].c_str(), list[3].c_str());
          return;
       }
-      else if(action == "conffile")
+      else if(action == "conffile-prompt")
       {
          d->progress->ConffilePrompt(list[1], PackagesDone, PackagesTotal,
                                      list[3]);
@@ -1035,7 +1037,10 @@ void pkgDPkgPM::StartPtyMagic()
    if (tcgetattr(STDOUT_FILENO, &d->tt) == 0)
    {
        ioctl(1, TIOCGWINSZ, (char *)&win);
-       if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
+       if (_config->FindB("Dpkg::Use-Pty", true) == false)
+       {
+           d->master = d->slave = -1;
+       } else if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
        {
            _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
            d->master = d->slave = -1;
@@ -1181,7 +1186,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    StartPtyMagic();
 
    // Tell the progress that its starting and fork dpkg 
-   d->progress->Start();
+   d->progress->Start(d->master);
 
    // this loop is runs once per dpkg operation
    vector<Item>::const_iterator I = List.begin();
@@ -1380,6 +1385,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
       d->progress->StartDpkg();
       std::set<int> KeepFDs;
       KeepFDs.insert(fd[1]);
+      MergeKeepFdsFromConfiguration(KeepFDs);
       pid_t Child = ExecFork(KeepFDs);
       if (Child == 0)
       {
@@ -1528,6 +1534,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 	 if(stopOnError) 
 	 {
 	    CloseLog();
+            StopPtyMagic();
             d->progress->Stop();
 	    return false;
 	 }
@@ -1619,16 +1626,47 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    }
 
    // do not report out-of-memory failures 
-   if(strstr(errormsg, strerror(ENOMEM)) != NULL) {
+   if(strstr(errormsg, strerror(ENOMEM)) != NULL ||
+      strstr(errormsg, "failed to allocate memory") != NULL) {
       std::clog << _("No apport report written because the error message indicates a out of memory error") << std::endl;
       return;
    }
 
-   // do not report dpkg I/O errors
-   // XXX - this message is localized, but this only matches the English version.  This is better than nothing.
-   if(strstr(errormsg, "short read in buffer_copy (")) {
-      std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
+   // do not report bugs regarding inaccessible local files
+   if(strstr(errormsg, strerror(ENOENT)) != NULL ||
+      strstr(errormsg, "cannot access archive") != NULL) {
+      std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
       return;
+   }
+
+   // do not report errors encountered when decompressing packages
+   if(strstr(errormsg, "--fsys-tarfile returned error exit status 2") != NULL) {
+      std::clog << _("No apport report written because the error message indicates an issue on the local system") << std::endl;
+      return;
+   }
+
+   // do not report dpkg I/O errors, this is a format string, so we compare
+   // the prefix and the suffix of the error with the dpkg error message
+   vector<string> io_errors;
+   io_errors.push_back(string("failed to read on buffer copy for %s"));
+   io_errors.push_back(string("failed in write on buffer copy for %s"));
+   io_errors.push_back(string("short read on buffer copy for %s"));
+
+   for (vector<string>::iterator I = io_errors.begin(); I != io_errors.end(); I++)
+   {
+      vector<string> list = VectorizeString(dgettext("dpkg", (*I).c_str()), '%');
+      if (list.size() > 1) {
+         // we need to split %s, VectorizeString only allows char so we need
+         // to kill the "s" manually
+         if (list[1].size() > 1) {
+            list[1].erase(0, 1);
+            if(strstr(errormsg, list[0].c_str()) && 
+               strstr(errormsg, list[1].c_str())) {
+               std::clog << _("No apport report written because the error message indicates a dpkg I/O error") << std::endl;
+               return;
+            }
+         }
+      }
    }
 
    // get the pkgname and reportfile
@@ -1718,6 +1756,24 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
       if(log != NULL)
       {
 	 char buf[1024];
+	 while( fgets(buf, sizeof(buf), log) != NULL)
+	    fprintf(report, " %s", buf);
+         fprintf(report, " \n");
+	 fclose(log);
+      }
+   }
+
+   // attach history log it if we have it
+   string histfile_name = _config->FindFile("Dir::Log::History");
+   if (!histfile_name.empty())
+   {
+      FILE *log = NULL;
+      char buf[1024];
+
+      fprintf(report, "DpkgHistoryLog:\n");
+      log = fopen(histfile_name.c_str(),"r");
+      if(log != NULL)
+      {
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
 	 fclose(log);

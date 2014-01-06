@@ -50,6 +50,8 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/upgrade.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexrecords.h>
 
 #include <apt-private/private-download.h>
 #include <apt-private/private-install.h>
@@ -59,6 +61,9 @@
 #include <apt-private/private-update.h>
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-moo.h>
+#include <apt-private/private-utils.h>
+
+#include <apt-pkg/debmetaindex.h>
 
 #include <apt-private/acqprogress.h>
 
@@ -129,24 +134,95 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    return true;
 }
 									/*}}}*/
+
+
+// helper that can go wit hthe next ABI break
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
+{
+   // FIXME: this cast is the horror, the horror
+   debReleaseIndex *r = (debReleaseIndex*)metaindex;
+
+   // see if we have a InRelease file
+   std::string PathInRelease =  r->MetaIndexFile("InRelease");
+   if (FileExists(PathInRelease))
+      return PathInRelease;
+
+   // and if not return the normal one
+   if (FileExists(PathInRelease))
+      return r->MetaIndexFile("Release");
+
+   return "";
+}
+#endif
+
+// GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
+                                      pkgSrcRecords::Parser *Parse)
+{
+   // try to find release
+   const pkgIndexFile& CurrentIndexFile = Parse->Index();
+
+   for (pkgSourceList::const_iterator S = SrcList->begin(); 
+        S != SrcList->end(); ++S)
+   {
+      vector<pkgIndexFile *> *Indexes = (*S)->GetIndexFiles();
+      for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
+           IF != Indexes->end(); ++IF)
+      {
+         if (&CurrentIndexFile == (*IF))
+         {
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+            std::string path = MetaIndexFileNameOnDisk(*S);
+#else
+            std::string path = (*S)->LocalFileName();
+#endif
+            if (path != "") 
+            {
+               indexRecords records;
+               records.Load(path);
+               return records.GetSuite();
+            }
+         }
+      }
+   }
+   return "";
+}
+									/*}}}*/
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
-			       pkgDepCache &Cache)
+			       CacheFile &CacheFile)
 {
-   string VerTag;
-   string DefRel = _config->Find("APT::Default-Release");
+   string VerTag, UserRequestedVerTag;
+   string ArchTag = "";
+   string RelTag = _config->Find("APT::Default-Release");
    string TmpSrc = Name;
+   pkgDepCache *Cache = CacheFile.GetDepCache();
 
-   // extract the version/release from the pkgname
-   const size_t found = TmpSrc.find_last_of("/=");
-   if (found != string::npos) {
-      if (TmpSrc[found] == '/')
-	 DefRel = TmpSrc.substr(found+1);
-      else
-	 VerTag = TmpSrc.substr(found+1);
+   // extract release
+   size_t found = TmpSrc.find_last_of("/");
+   if (found != string::npos) 
+   {
+      RelTag = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
+   }
+   // extract the version
+   found = TmpSrc.find_last_of("=");
+   if (found != string::npos) 
+   {
+      VerTag = UserRequestedVerTag = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
+   }
+   // extract arch 
+   found = TmpSrc.find_last_of(":");
+   if (found != string::npos) 
+   {
+      ArchTag = TmpSrc.substr(found+1);
       TmpSrc = TmpSrc.substr(0,found);
    }
 
@@ -154,10 +230,25 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       install a version and determine the source package name, then look
       in the archive for a source package of the same name. */
    bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
-   const pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+   pkgCache::PkgIterator Pkg;
+   if (ArchTag != "")
+      Pkg = Cache->FindPkg(TmpSrc, ArchTag);
+   else
+      Pkg = Cache->FindPkg(TmpSrc);
+
+   // if we can't find a package but the user qualified with a arch,
+   // error out here
+   if (Pkg.end() && ArchTag != "")
+   {
+      Src = Name;
+      _error->Error(_("Can not find a package for architecture '%s'"),
+                    ArchTag.c_str());
+      return 0;
+   }
+
    if (MatchSrcOnly == false && Pkg.end() == false) 
    {
-      if(VerTag.empty() == false || DefRel.empty() == false) 
+      if(VerTag != "" || RelTag != "" || ArchTag != "")
       {
 	 bool fuzzy = false;
 	 // we have a default release, try to locate the pkg. we do it like
@@ -177,9 +268,20 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	       if (Ver.end() == true)
 		  break;
 	    }
+
+            // ignore arches that are not for us
+            if (ArchTag != "" && Ver.Arch() != ArchTag)
+               continue;
+
+            // pick highest version for the arch unless the user wants
+            // something else
+            if (ArchTag != "" && VerTag == "" && RelTag == "")
+               if(Cache->VS().CmpVersion(VerTag, Ver.VerStr()) < 0)
+                  VerTag = Ver.VerStr();
+
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
-		(fuzzy == true || Cache.VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
+		(fuzzy == true || Cache->VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
 		(fuzzy == false || strncmp(VerTag.c_str(), Ver.VerStr(), VerTag.size()) != 0)) // fuzzy match
 	       continue;
 
@@ -197,8 +299,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
 	       // or we match against a release
 	       if(VerTag.empty() == false ||
-		  (VF.File().Archive() != 0 && VF.File().Archive() == DefRel) ||
-		  (VF.File().Codename() != 0 && VF.File().Codename() == DefRel)) 
+		  (VF.File().Archive() != 0 && VF.File().Archive() == RelTag) ||
+		  (VF.File().Codename() != 0 && VF.File().Codename() == RelTag)) 
 	       {
 		  pkgRecords::Parser &Parse = Recs.Lookup(VF);
 		  Src = Parse.SourcePkg();
@@ -216,22 +318,28 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    if (Src.empty() == false)
 	       break;
 	 }
-	 if (Src.empty() == true) 
-	 {
-	    // Sources files have no codename information
-	    if (VerTag.empty() == true && DefRel.empty() == false) 
-	    {
-	       _error->Error(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
-	       return 0;
-	    }
-	 }
       }
+
+      if (Src == "" && ArchTag != "")
+      {
+         if (VerTag != "")
+            _error->Error(_("Can not find a package '%s' with version '%s'"),
+                          Pkg.FullName().c_str(), VerTag.c_str());
+         if (RelTag != "")
+            _error->Error(_("Can not find a package '%s' with release '%s'"),
+                          Pkg.FullName().c_str(), RelTag.c_str());
+         Src = Name;
+         return 0;
+      }
+
+
       if (Src.empty() == true)
       {
 	 // if we don't have found a fitting package yet so we will
 	 // choose a good candidate and proceed with that.
 	 // Maybe we will find a source later on with the right VerTag
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+         // or RelTag
+	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
 	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
@@ -243,7 +351,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    }
 
    if (Src.empty() == true)
+   {
       Src = TmpSrc;
+   }
    else 
    {
       /* if we have a source pkg name, make sure to only search
@@ -261,6 +371,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    pkgSrcRecords::Parser *Last = 0;
    unsigned long Offset = 0;
    string Version;
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
 
    /* Iterate over all of the hits, which includes the resulting
       binary packages in the search */
@@ -272,26 +383,43 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       {
 	 const string Ver = Parse->Version();
 
+         // See if we need to look for a specific release tag
+         if (RelTag != "" && UserRequestedVerTag == "")
+         {
+            const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
+
+            if (Rel == RelTag)
+            {
+               Last = Parse;
+               Offset = Parse->Offset();
+               Version = Ver;
+            }
+         }
+
 	 // Ignore all versions which doesn't fit
 	 if (VerTag.empty() == false &&
-	     Cache.VS().CmpVersion(VerTag, Ver) != 0) // exact match
+	     Cache->VS().CmpVersion(VerTag, Ver) != 0) // exact match
 	    continue;
 
 	 // Newer version or an exact match? Save the hit
-	 if (Last == 0 || Cache.VS().CmpVersion(Version,Ver) < 0) {
+	 if (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0) {
 	    Last = Parse;
 	    Offset = Parse->Offset();
 	    Version = Ver;
 	 }
 
-	 // was the version check above an exact match? If so, we don't need to look further
-	 if (VerTag.empty() == false && VerTag.size() == Ver.size())
+	 // was the version check above an exact match?
+         // If so, we don't need to look further
+         if (VerTag.empty() == false && (VerTag == Ver))
 	    break;
       }
+      if (UserRequestedVerTag == "" && Version != "" && RelTag != "")
+         ioprintf(c1out, "Selected version '%s' (%s) for %s\n", 
+                  Version.c_str(), RelTag.c_str(), Src.c_str());
+
       if (Last != 0 || VerTag.empty() == true)
 	 break;
-      //if (VerTag.empty() == false && Last == 0)
-      _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
+      _error->Error(_("Can not find version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
       return 0;
    }
 
@@ -627,7 +755,7 @@ bool DoSource(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       
       if (Last == 0) {
 	 delete[] Dsc;
@@ -924,7 +1052,7 @@ bool DoBuildDep(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
             
@@ -1378,24 +1506,6 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
    return _error->Error("changelog download failed");
 }
 									/*}}}*/
-// DisplayFileInPager - Display File with pager        			/*{{{*/
-void DisplayFileInPager(string filename)
-{
-   pid_t Process = ExecFork();
-   if (Process == 0)
-   {
-      const char *Args[3];
-      Args[0] = "/usr/bin/sensible-pager";
-      Args[1] = filename.c_str();
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);
-      exit(100);
-   }
-         
-   // Wait for the subprocess
-   ExecWait(Process, "sensible-pager", false);
-}
-									/*}}}*/
 // DoChangelog - Get changelog from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 bool DoChangelog(CommandLine &CmdL)
@@ -1426,14 +1536,12 @@ bool DoChangelog(CommandLine &CmdL)
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 
    char tmpname[100];
-   char* tmpdir = NULL;
+   const char* tmpdir = NULL;
    if (downOnly == false)
    {
-      const char* const tmpDir = getenv("TMPDIR");
-      if (tmpDir != NULL && *tmpDir != '\0')
-	 snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", tmpDir);
-      else
-	 strncpy(tmpname, "/tmp/apt-changelog-XXXXXX", sizeof(tmpname));
+      std::string systemTemp = GetTempDir();
+      snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", 
+               systemTemp.c_str());
       tmpdir = mkdtemp(tmpname);
       if (tmpdir == NULL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");

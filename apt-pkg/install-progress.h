@@ -3,7 +3,8 @@
 
 #include <string>
 #include <unistd.h>
-
+#include <signal.h>
+#include <vector>
 
 namespace APT {
 namespace Progress {
@@ -28,7 +29,7 @@ namespace Progress {
     virtual ~PackageManager() {};
 
     /* Global Start/Stop */
-    virtual void Start() {};
+    virtual void Start(int child_pty=-1) {};
     virtual void Stop() {};
 
     /* When dpkg is invoked (may happen multiple times for each 
@@ -116,13 +117,22 @@ namespace Progress {
 
  class PackageManagerFancy : public PackageManager
  {
+ private:
+    static void staticSIGWINCH(int);
+    static std::vector<PackageManagerFancy*> instances;
+
  protected:
-    int nr_terminal_rows;
     void SetupTerminalScrollArea(int nr_rows);
+    void HandleSIGWINCH(int);
+
+    int GetNumberTerminalRows();
+    sighandler_t old_SIGWINCH;
+    int child_pty;
 
  public:
     PackageManagerFancy();
-    virtual void Start();
+    ~PackageManagerFancy();
+    virtual void Start(int child_pty=-1);
     virtual void Stop();
     virtual bool StatusChanged(std::string PackageName, 
                                unsigned int StepsDone,

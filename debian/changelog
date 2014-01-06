@@ -1,3 +1,95 @@
+apt (0.9.14.2) unstable; urgency=low
+
+  [ Joe Hansen ]
+  * Danish translation update. Closes: #732166
+  
+  [ Peter Green ]
+  * add apt-vendor for raspbian. Closes: #732749
+
+  [ Thomas Bechtold ]
+  * apt-pkg/contrib/gpgv.cc: use /tmp as fallback dir if the
+    directory from $TMPDIR  is not available (closes: #728500)
+  
+  [ Michael Vogt ]
+  * vendor/getinfo:
+    - fix ubuntu-codename
+  * vendor/steamos/*:
+    - add steamos support
+  * bugfix/bts731738-fancy-progess:
+    - fix terminal size issues with e.g. "less" when "APT::Progress-Fancy=1"
+      is used (closes: #731738)
+  * feature/policy-parser-bts732746:
+    - allow more flexibility in /etc/apt/preferences, e.g. comment only
+      sections (closes: #732746)
+  * move TMPDIR handling into GetTempDir() and use that instead of
+    getenv("TMPDIR")
+  * update apt-key net-update and add integration test with the buildin
+    apt webserver
+  * run autopkgtest against the installed apt
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 29 Dec 2013 16:41:16 +0100
+
+apt (0.9.14.1) unstable; urgency=medium
+
+  * fix apt-get source -t dist regression (closes: #731853)
+    and add testcase
+  * clarify error message when apt-get source=ver fails
+    (thans to David Kalnischkies)
+  * Fix conffile prompt regression (LP: #1260297)
+    and add testcase
+  * improve error message for apt-get source pkg:arch{=ver,/release}
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 12 Dec 2013 18:34:29 +0100
+
+apt (0.9.14) unstable; urgency=low
+
+  [ David Kalnischkies ]
+  * merge ubuntus apport reporting changes to reduce diff
+  * enable NOISE for build logs to enable analyse
+  * introduce a vendor system to change sources.list
+  * add a vendor specific file to have configurable entities
+  * use a substvar to set the archive-keyring in debian/control
+  * cherry-pick ubuntus (disabled) net-update fixes
+  * generate apt-key script with vendor info about keys
+  * drop old /var/state to /var/lib transition artefacts
+
+  [ Steve Langasek ]
+  * prepare-release: declare the packages needed as source build deps.
+
+  [ Michael Vogt ]
+  * enable release based selection for deb-src (closes: 731102)
+  * document Dpkg::Progress-Fancy (closes: 726169), thanks to James McCoy
+  * vendor/makefile: fix build error for parallel builds
+  * Handle SIGWINCH in APT::Progress-Fancy=1
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 07 Dec 2013 14:54:31 +0100
+
+apt (0.9.13.1) unstable; urgency=low
+
+  [ Colin Watson ]
+  * fix "apt-get  --purge build-dep" (closes: #720597)
+  * fix regression that APT::Keep-Fds is not honored (closes: #730490)
+  
+  [ Michael Vogt ]
+  * add "-f" option to "build-dep" as sbuild is using it to fix 
+    regression with cross-building (LP: #1255806)
+  * add autopkgtest support for the integration testsuite
+  * merge mvo/feature/short-list
+  * merge mvo/feature/edit-sources
+  * fix segfault in pkgDepCache::SetCandidateRelease() (closes: #709560)
+  * reset terminal on error (closes: #730795)
+  * fix apport report writing (LP: #1254499)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 29 Nov 2013 20:50:17 +0100
+
+apt (0.9.13) unstable; urgency=low
+
+  [ TJ Guthrie ]
+  * Changed MinAgeSec to MinAge in /etc/cron.daily/apt:200,204 
+    LP: #1206047
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 24 Nov 2013 10:56:22 +0100
+
 apt (0.9.13~exp1) experimental; urgency=low
 
   * Improve the API for APT::Upgrade::Upgrade()
