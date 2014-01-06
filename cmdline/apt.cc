@@ -72,8 +72,10 @@ bool ShowHelp(CommandLine &CmdL)
       " show - show package details\n"
       "\n"
       " update - update list of available packages\n"
-      " install - install packages\n"
       " upgrade - upgrade the systems packages\n"
+      "\n"
+      " install - install packages\n"
+      " remove - remove packages\n"
        );
    
    return true;

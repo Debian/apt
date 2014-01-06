@@ -13,7 +13,6 @@
 <refentry>
 
  <refentryinfo>
-   &apt-author.jgunthorpe;
    &apt-author.team;
    &apt-email;
    &apt-product;
@@ -42,11 +41,28 @@
    </para>
 
    <variablelist>
+     <varlistentry><term><option>list</option></term>
+     <listitem><para><literal>list</literal> is used to
+     display a list of packages. It supports shell pattern for matching
+     package names and the following options:
+       <option>--installed</option>
+       <option>--upgradable</option>
+       <option>--all-versions</option>
+     are supported.
+     </para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><option>search</option></term>
+     <listitem><para><literal>search</literal> searches for the given
+     term(s) and display matching packages.
+     </para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>update</option></term>
      <listitem><para><literal>update</literal> is used to
      resynchronize the package index files from their sources.
      </para></listitem>
-   </varlistentry>
+     </varlistentry>
      
      <varlistentry><term><option>upgrade</option></term>
      <listitem><para><literal>upgrade</literal> is used to install the
