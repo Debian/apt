@@ -76,11 +76,13 @@ bool ShowHelp(CommandLine &CmdL)
       " search - search in package descriptions\n"
       " show - show package details\n"
       "\n"
-      " update - update list of available packages\n"
       " install - install packages\n"
-      " upgrade - upgrade the systems packages\n"
+      " remove - remove packages\n"
       "\n"
       " edit-sources - edit the source information file\n"
+      "\n"
+      " update - update list of available packages\n"
+      " upgrade - upgrade the systems packages\n"
        );
    
    return true;
