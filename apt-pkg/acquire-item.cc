@@ -369,10 +369,10 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
       return;
    }
 
-   if(Debug) 
-      std::clog << "pkgAcqIndexDiffs::pkgAcqIndexDiffs(): " 
-		<< CurrentPackagesFile << std::endl;
-   
+   if(Debug)
+      std::clog << "pkgAcqDiffIndex::pkgAcqDiffIndex(): "
+	 << CurrentPackagesFile << std::endl;
+
    QueueURI(Desc);
 
 }
@@ -398,8 +398,8 @@ string pkgAcqDiffIndex::Custom600Headers()
 bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqIndexDiffs::ParseIndexDiff() " << IndexDiffFile 
-		<< std::endl;
+      std::clog << "pkgAcqDiffIndex::ParseIndexDiff() " << IndexDiffFile
+	 << std::endl;
 
    pkgTagSection Tags;
    string ServerSha1;
