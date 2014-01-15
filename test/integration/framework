@@ -948,22 +948,22 @@ testempty() {
 	test -z "$($* 2>&1)" && msgpass || msgfail
 }
 
-testequalwithmsg() {
-        local MSG="$1"
-        shift
+testequal() {
+	local MSG='Test of equality of'
+	if [ "$1" = '--nomsg' ]; then
+		MSG=''
+		shift
+	fi
+
 	local COMPAREFILE=$(mktemp)
 	addtrap "rm $COMPAREFILE;"
 	echo "$1" > $COMPAREFILE
 	shift
-	msgtest "$MSG"
-	$* 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
-}        
 
-testequal() { 
-       local EXPECTED="$1"
-       shift
-       local MSG="Test for equality of $*"
-       testequalwithmsg "$MSG" "$EXPECTED" $*
+	if [ -n "$MSG" ]; then
+		msgtest "$MSG" "$*"
+	fi
+	$* 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
 
 testequalor2() {

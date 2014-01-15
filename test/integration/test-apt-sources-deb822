@@ -5,17 +5,10 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 
-SOURCES="rootdir/etc/apt/sources.list"
-
-echo "deb http://ftp.debian.org/debian stable main" > $SOURCES
-testequalwithmsg "Old style sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
-'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
-'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
-
-
-BASE="# some comment
+SOURCES='rootdir/etc/apt/sources.list'
+BASE='# some comment
 # that contains a : as well
 #Type: meep
 
@@ -24,57 +17,72 @@ URL: http://ftp.debian.org/debian
 Dist: stable
 Section: main
 Comment: Some random string
- that can be very long"
+ that can be very long'
 
-# simple case
-echo "$BASE"  > $SOURCES
 
-testequalwithmsg "Simple deb822 sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+msgtest 'Test old-style sources.list'
+echo "deb http://ftp.debian.org/debian stable main" > $SOURCES
+testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
-'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
+'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
 
 
-# two sections (we support both "," and " " as seperator)
-echo "$BASE" | sed s/main/"main,contrib"/ > $SOURCES
+msgtest 'Test simple deb822 sources.list'
+echo "$BASE"  > $SOURCES
+testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
+'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
 
-testequalwithmsg "Two sections deb822 sources.list work" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+
+msgtest 'Test deb822 with two sections' 'seperated by comma'
+echo "$BASE" | sed 's/main/main,contrib/' > $SOURCES
+testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/contrib/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_contrib_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/contrib/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_contrib_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
-'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
+'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
 
 
-# Two entries
+# FIXME: Advertised, but not supported at the moment
+#msgtest 'Test deb822 with two sections' 'seperated by space'
+#echo "$BASE" | sed 's/main/main contrib/' > $SOURCES
+#testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+#'http://ftp.debian.org/debian/dists/stable/contrib/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_contrib_binary-i386_Packages 0 :
+#'http://ftp.debian.org/debian/dists/stable/contrib/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_contrib_i18n_Translation-en 0 :
+#'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
+#'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
+
+
+msgtest 'Test deb822 with' 'two entries'
 echo "$BASE" > $SOURCES
 echo "" >> $SOURCES
 echo "$BASE" | sed  s/stable/unstable/  >> $SOURCES
-
-testequalwithmsg "Multiple entries in deb822 sources.list work" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
 'http://ftp.debian.org/debian/dists/unstable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_unstable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/unstable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 :
-'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 "  aptget update --print-uris 
+'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 "  aptget update --print-uris
 
 
-# ARCH option
+msgtest 'Test deb822' 'architecture option'
 echo "$BASE" > $SOURCES
 echo "Arch: amd64,armel" >> $SOURCES
-
-testequalwithmsg "Arch: option in deb822 sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 :
+testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
 
-# invalid sources.list file
-echo "deb http://ftp.debian.org" > $SOURCES
 
-testequalwithmsg "Invalid sources.list file gives proper error" "E: Malformed line 1 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (dist)
+msgtest 'Test old-style sources.list file which has' 'malformed dist'
+echo "deb http://ftp.debian.org" > $SOURCES
+testequal --nomsg "E: Malformed line 1 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (dist)
 E: The list of sources could not be read."  aptget update --print-uris
 
+
+msgtest 'Test deb822 sources.list file which has' 'malformed URI'
 echo "Type: deb
 Dist: stable
 " > $SOURCES
-
-testequalwithmsg "Invalid deb822 sources.list file gives proper error" "E: Malformed stanza 0 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (URI parse)
+testequal --nomsg  "E: Malformed stanza 0 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (URI parse)
 E: The list of sources could not be read."  aptget update --print-uris
