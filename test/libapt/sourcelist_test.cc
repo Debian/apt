@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
       ;
 
    FileFd fd;
+   atexit(remove_tmpfile);
    tempfile = strdup("apt-test.XXXXXXXX");
    tempfile_fd = mkstemp(tempfile);
 
