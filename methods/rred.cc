@@ -407,13 +407,13 @@ class Patch {
 
    public:
 
-   void read_diff(FILE *f)
+   void read_diff(FileFd &f)
    {
       char buffer[BLOCK_SIZE];
       bool cmdwanted = true;
 
       Change ch(0);
-      while(fgets(buffer, sizeof(buffer), f))
+      while(f.ReadLine(buffer, sizeof(buffer)))
       {
 	 if (cmdwanted) {
 	    char *m, *c;
@@ -534,66 +534,11 @@ class Patch {
    }
 };
 
-bool LookupPatches(const std::string &Message, std::vector<std::string> &lines)
-{
-   const char *Tag = "Patches";
-   const size_t Length = strlen(Tag);
-
-   std::string::const_iterator I, J;
-
-   std::clog << "Looking for \"Patches:\" section in message:\n\n" << Message << "\n\n";
-   std::clog.flush();
-
-   for (I = Message.begin(); I + Length < Message.end(); ++I)
-   {
-      if (I[Length] == ':' && stringcasecmp(I, I+Length, Tag) == 0)
-      {
-	 // found the tag, now read the patches
-	 for(;;) {
-	    for (; I < Message.end() && *I != '\n'; ++I);
-	    if (I < Message.end()) I++;
-	    if (I == Message.end() || *I != ' ')
-	       break;
-	    while (I < Message.end() && isspace(*I)) I++;
-	    for (J = I; J < Message.end() && *J != '\n'; ++J)
-	       ;
-	    do
-	       J--;
-	    while (I < J && isspace(*J));
-	    if (I < J)
-	       lines.push_back(std::string(I,++J));
-	    else
-	       break;
-	    I = J;
-	 }
-	 std::clog << "Found " << lines.size() << " patches!\n";
-	 std::clog.flush();
-	 return true;
-      }
-   }
-   std::clog << "Found no patches! :(\n";
-   std::clog.flush();
-   return false;
-}
-
-
 class RredMethod : public pkgAcqMethod {
    private:
       bool Debug;
-      std::vector<std::string> patchpaths;
 
    protected:
-      virtual bool HandleMessage(int Number, std::string Message) {
-	 if (Number == 600)
-	 {
-	    patchpaths.clear();
-	    LookupPatches(Message, patchpaths);
-	    std::clog << "Ended up with " << patchpaths.size() << " patches!\n";
-	    std::clog.flush();
-	 }
-	 return pkgAcqMethod::HandleMessage(Number, Message);
-      }
-
       virtual bool Fetch(FetchItem *Itm) {
 	 Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
 	 URI Get = Itm->Uri;
@@ -601,17 +546,29 @@ class RredMethod : public pkgAcqMethod {
 
 	 FetchResult Res;
 	 Res.Filename = Itm->DestFile;
-	 if (Itm->Uri.empty()) {
+	 if (Itm->Uri.empty())
+	 {
 	    Path = Itm->DestFile;
 	    Itm->DestFile.append(".result");
 	 } else
 	    URIStart(Res);
 
+	 std::vector<std::string> patchpaths;
 	 Patch patch;
 
-	 if (patchpaths.empty())
-	 {
+	 if (FileExists(Path + ".ed") == true)
 	    patchpaths.push_back(Path + ".ed");
+	 else
+	 {
+	    _error->PushToStack();
+	    std::vector<std::string> patches = GetListOfFilesInDir(flNotFile(Path), "gz", true, false);
+	    _error->RevertToStack();
+
+	    std::string const baseName = Path + ".ed.";
+	    for (std::vector<std::string>::const_iterator p = patches.begin();
+		  p != patches.end(); ++p)
+	       if (p->compare(0, baseName.length(), baseName) == 0)
+		  patchpaths.push_back(*p);
 	 }
 
 	 std::string patch_name;
@@ -624,13 +581,15 @@ class RredMethod : public pkgAcqMethod {
 	       std::clog << "Patching " << Path << " with " << patch_name
 		  << std::endl;
 
-	    FILE *p = fopen(patch_name.c_str(), "r");
-	    if (p == NULL) {
-	       std::clog << "Could not open patch file " << patch_name << std::endl;
+	    FileFd p;
+	    // all patches are compressed, even if the name doesn't reflect it
+	    if (p.Open(patch_name, FileFd::ReadOnly, FileFd::Gzip) == false) {
+	       std::cerr << "Could not open patch file " << patch_name << std::endl;
+	       _error->DumpErrors(std::cerr);
 	       abort();
 	    }
 	    patch.read_diff(p);
-	    fclose(p);
+	    p.Close();
 	 }
 
 	 if (Debug == true)
@@ -697,10 +656,9 @@ int main(int argc, char **argv)
    }
 
    for (; i < argc; i++) {
-      FILE *p;
-      p = fopen(argv[i], "r");
-      if (!p) {
-	 perror(argv[i]);
+      FileFd p;
+      if (p.Open(argv[i], FileFd::ReadOnly) == false) {
+	 _error->DumpErrors(std::cerr);
 	 exit(1);
       }
       patch.read_diff(p);

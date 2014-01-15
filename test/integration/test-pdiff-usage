@@ -20,10 +20,19 @@ chmod +x extrred
 echo 'Dir::Bin::rred "./extrred";' > rootdir/etc/apt/apt.conf.d/99rred
 
 wasmergeused() {
-	testsuccess aptget update "$@"
+	msgtest 'Test for successful execution of' "$*"
+	local OUTPUT=$(mktemp)
+	addtrap "rm $OUTPUT;"
+	if aptget update "$@" >${OUTPUT} 2>&1; then
+		msgpass
+	else
+		echo
+		cat $OUTPUT
+		msgfail
+	fi
+
 	msgtest 'Check if the right pdiff merger was used'
-	if [ -e ./merge-was-used ]; then
-		rm -f ./merge-was-used
+	if grep -q '^pkgAcqIndexMergeDiffs::Done(): rred' $OUTPUT; then
 		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
 			msgpass
 		else
@@ -50,7 +59,7 @@ testrun() {
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt oldstuff
 
-	# apply with one patch
+	msgmsg 'Testcase: apply with one patch'
 	cp ${PKGFILE}-new aptarchive/Packages
 	compressfile 'aptarchive/Packages'
 	mkdir -p aptarchive/Packages.diff
@@ -73,13 +82,13 @@ SHA1-Patches:
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
-	# index is already up-to-date
+	msgmsg 'Testcase: index is already up-to-date'
 	find rootdir/var/lib/apt/lists -name '*.IndexDiff' -type f -delete
 	testsuccess aptget update "$@"
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
-	# apply with two patches
+	msgmsg 'Testcase: apply with two patches'
 	cp ${PKGFILE}-new aptarchive/Packages
 	echo '
 Package: futurestuff
@@ -120,7 +129,7 @@ SHA1-Patches:
 	testequal "$(cat Packages-future)
 " aptcache show apt newstuff futurestuff
 
-	# patch applying fails, but successful fallback
+	msgmsg 'Testcase: patch applying fails, but successful fallback'
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
 	cp ${PKGFILE}-new aptarchive/Packages

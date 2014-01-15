@@ -513,14 +513,9 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	 bool pdiff_merge = _config->FindB("Acquire::PDiffs::Merge", true);
 	 if (pdiff_merge == true)
 	 {
-	    // this perl script is provided by apt-file
-	    pdiff_merge = FileExists(_config->FindFile("Dir::Bin::rred", "/usr/bin/diffindex-rred"));
-	    if (pdiff_merge == true)
-	    {
-	       // reprepro adds this flag if it has merged patches on the server
-	       std::string const precedence = Tags.FindS("X-Patch-Precedence");
-	       pdiff_merge = (precedence != "merged");
-	    }
+	    // reprepro adds this flag if it has merged patches on the server
+	    std::string const precedence = Tags.FindS("X-Patch-Precedence");
+	    pdiff_merge = (precedence != "merged");
 	 }
 
 	 if (pdiff_merge == false)
