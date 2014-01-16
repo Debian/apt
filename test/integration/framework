@@ -835,10 +835,14 @@ changetowebserver() {
 	else
 		shift
 	fi
-	local LOG='/dev/null'
 	if test -x ${APTWEBSERVERBINDIR}/aptwebserver; then
 		cd aptarchive
-		aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1
+		local LOG="$(mktemp)"
+		addtrap "rm $LOG;"
+		if ! aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1 ; then
+			cat $LOG
+			false
+		fi
 		local PID="$(cat aptwebserver.pid)"
 		if [ -z "$PID" ]; then
 			msgdie 'Could not fork aptwebserver successfully'
