@@ -21,9 +21,9 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
 
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <utime.h>
 #include <unistd.h>
 #include <iostream>
 
@@ -234,14 +234,12 @@ bool MultiCompress::Finalize(unsigned long long &OutSize)
       else
       {
 	 // Update the mtime if necessary
-	 if (UpdateMTime > 0 && 
+	 if (UpdateMTime > 0 &&
 	     (Now - St.st_mtime > (signed)UpdateMTime || St.st_mtime > Now))
 	 {
-	    struct utimbuf Buf;
-	    Buf.actime = Buf.modtime = Now;
-	    utime(I->Output.c_str(),&Buf);
+	    utimensat(AT_FDCWD, I->Output.c_str(), NULL, AT_SYMLINK_NOFOLLOW);
 	    Changed = true;
-	 }	     
+	 }
       }
       
       // Force the file permissions

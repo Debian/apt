@@ -319,7 +319,7 @@ bool CreateDirectory(string const &Parent, string const &Path)
       return false;
 
    // we are not going to create directories "into the blue"
-   if (Path.find(Parent, 0) != 0)
+   if (Path.compare(0, Parent.length(), Parent) != 0)
       return false;
 
    vector<string> const dirs = VectorizeString(Path.substr(Parent.size()), '/');

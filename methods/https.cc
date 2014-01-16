@@ -21,7 +21,6 @@
 
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <utime.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
@@ -405,10 +404,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
    if (Res.LastModified != -1)
    {
-      struct utimbuf UBuf;
-      UBuf.actime = Res.LastModified;
-      UBuf.modtime = Res.LastModified;
-      utime(File->Name().c_str(),&UBuf);
+      struct timespec times[2];
+      times[0].tv_sec = Res.LastModified;
+      times[1].tv_sec = Res.LastModified;
+      times[0].tv_nsec = times[1].tv_nsec = 0;
+      futimens(File->Fd(), times);
    }
    else
       Res.LastModified = resultStat.st_mtime;

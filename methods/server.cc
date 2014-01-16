@@ -17,9 +17,9 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
 
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <utime.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
@@ -368,14 +368,14 @@ void ServerMethod::SigTerm(int)
 {
    if (FailFd == -1)
       _exit(100);
+
+   struct timespec times[2];
+   times[0].tv_sec = FailTime;
+   times[1].tv_sec = FailTime;
+   times[0].tv_nsec = times[1].tv_nsec = 0;
+   futimens(FailFd, times);
    close(FailFd);
-   
-   // Timestamp
-   struct utimbuf UBuf;
-   UBuf.actime = FailTime;
-   UBuf.modtime = FailTime;
-   utime(FailFile.c_str(),&UBuf);
-   
+
    _exit(100);
 }
 									/*}}}*/
@@ -539,11 +539,10 @@ int ServerMethod::Loop()
 	    File = 0;
 	    
 	    // Timestamp
-	    struct utimbuf UBuf;
-	    time(&UBuf.actime);
-	    UBuf.actime = Server->Date;
-	    UBuf.modtime = Server->Date;
-	    utime(Queue->DestFile.c_str(),&UBuf);
+	    struct timespec times[2];
+	    times[0].tv_sec = times[1].tv_sec = Server->Date;
+	    times[0].tv_nsec = times[1].tv_nsec = 0;
+	    utimensat(AT_FDCWD, Queue->DestFile.c_str(), times, AT_SYMLINK_NOFOLLOW);
 
 	    // Send status to APT
 	    if (Result == true)

@@ -18,7 +18,6 @@
 #include <apt-pkg/hashes.h>
 
 #include <sys/stat.h>
-#include <utime.h>
 #include <unistd.h>
 #include <apti18n.h>
 									/*}}}*/
@@ -71,18 +70,19 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    }
 
    From.Close();
-   To.Close();
-   
+
    // Transfer the modification times
-   struct utimbuf TimeBuf;
-   TimeBuf.actime = Buf.st_atime;
-   TimeBuf.modtime = Buf.st_mtime;
-   if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
+   struct timespec times[2];
+   times[0].tv_sec = Buf.st_atime;
+   times[1].tv_sec = Buf.st_mtime;
+   times[0].tv_nsec = times[1].tv_nsec = 0;
+   if (futimens(To.Fd(), times) != 0)
    {
       To.OpFail();
-      return _error->Errno("utime",_("Failed to set modification time"));
+      return _error->Errno("futimens",_("Failed to set modification time"));
    }
-   
+   To.Close();
+
    Hashes Hash;
    FileFd Fd(Res.Filename, FileFd::ReadOnly);
    Hash.AddFD(Fd);

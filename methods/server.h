@@ -137,7 +137,7 @@ class ServerMethod : public pkgAcqMethod
    virtual ServerState * CreateServerState(URI uri) = 0;
    virtual void RotateDNS() = 0;
 
-   ServerMethod(const char *Ver,unsigned long Flags = 0) : pkgAcqMethod(Ver, Flags), PipelineDepth(0), AllowRedirect(false), Debug(false) {};
+   ServerMethod(const char *Ver,unsigned long Flags = 0) : pkgAcqMethod(Ver, Flags), Server(NULL), File(NULL), PipelineDepth(0), AllowRedirect(false), Debug(false) {};
    virtual ~ServerMethod() {};
 };
 

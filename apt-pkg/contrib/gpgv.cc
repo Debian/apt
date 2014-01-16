@@ -260,8 +260,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 
    char *buf = NULL;
    size_t buf_size = 0;
-   ssize_t line_len = 0;
-   while ((line_len = getline(&buf, &buf_size, in)) != -1)
+   while (getline(&buf, &buf_size, in) != -1)
    {
       _strrstrip(buf);
       if (found_message_start == false)
@@ -355,7 +354,7 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
       return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
 
    _error->PushToStack();
-   bool const splitDone = SplitClearSignedFile(ClearSignedFileName.c_str(), &MessageFile, NULL, NULL);
+   bool const splitDone = SplitClearSignedFile(ClearSignedFileName, &MessageFile, NULL, NULL);
    bool const errorDone = _error->PendingError();
    _error->MergeWithStack();
    if (splitDone == false)
