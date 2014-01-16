@@ -363,11 +363,7 @@ int pkgSourceList::ParseFileDeb822(string File)
 
       // now create one item per section
       string const Section = Tags.FindS("Section");
-      std::vector<std::string> list;
-      if (Section.find(","))
-         list = StringSplit(Section, ",");
-      else
-         list = StringSplit(Section, " ");
+      std::vector<std::string> list = StringSplit(Section, " ");
       for (std::vector<std::string>::const_iterator I = list.begin();
            I != list.end(); I++)
          Parse->CreateItem(SrcList, URI, Dist, (*I), Options);
