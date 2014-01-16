@@ -124,6 +124,13 @@ gdb() {
 http() {
 	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
 }
+gpg() {
+	# see apt-key for the whole trickery. Setup is done in setupenvironment
+	command gpg --ignore-time-conflict --no-options --no-default-keyring \
+		--homedir "${TMPWORKINGDIRECTORY}/gnupghome" \
+		--no-auto-check-trustdb --trust-model always \
+		"$@"
+}
 
 exitwithstatus() {
         # error if we about to overflow, but ...
@@ -205,6 +212,20 @@ setupenvironment() {
 	export LC_ALL=C.UTF-8
 	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
+
+	# gpg needs a trustdb to function, but it can't be invalid (not even empty)
+	# see also apt-key where this trickery comes from:
+	local TRUSTDBDIR="${TMPWORKINGDIRECTORY}/gnupghome"
+	mkdir "$TRUSTDBDIR"
+	chmod 700 "$TRUSTDBDIR"
+	# We also don't use a secret keyring, of course, but gpg panics and
+	# implodes if there isn't one available - and writeable for imports
+	local SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
+	touch $SECRETKEYRING
+	# now create the trustdb with an (empty) dummy keyring
+	# newer gpg versions are fine without it, but play it safe for now
+	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
+
 	msgdone "info"
 }
 
@@ -390,7 +411,7 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
-#			gpg --yes --no-default-keyring --secret-keyring ./keys/joesixpack.sec \
+#			gpg --yes --secret-keyring ./keys/joesixpack.sec \
 #				--keyring ./keys/joesixpack.pub --default-key 'Joe Sixpack' \
 #				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
@@ -764,7 +785,7 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
-	local GPG="gpg --batch --yes --no-default-keyring --trustdb-name rootdir/etc/apt/trustdb.gpg"
+	local GPG="gpg --batch --yes"
 	msgninfo "\tSign archive with $SIGNER key… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
