@@ -45,6 +45,14 @@ testequalwithmsg "Multiple entries in deb822 sources.list work" "'http://ftp.deb
 'http://ftp.debian.org/debian/dists/unstable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 "  aptget update --print-uris 
 
+# two suite entries
+echo "$BASE"  | sed -e "s/stable/stable unstable/" > $SOURCES
+testequalwithmsg "Two Suite entries deb822 sources.list work" "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
+'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian/dists/unstable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_unstable_main_binary-i386_Packages 0 :
+'http://ftp.debian.org/debian/dists/unstable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_unstable_main_i18n_Translation-en 0 :
+'http://ftp.debian.org/debian/dists/unstable/InRelease' ftp.debian.org_debian_dists_unstable_InRelease 0 "  aptget update --print-uris 
 
 # ARCH option
 echo "$BASE" > $SOURCES

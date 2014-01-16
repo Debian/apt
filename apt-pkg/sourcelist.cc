@@ -85,9 +85,6 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
       return false;
    }
    
-   string Dist = Tags.FindS("Suite");
-   Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
-   
    // Define external/internal options
    const char* option_deb822[] = { 
       "Architectures", "Architectures-Add", "Architectures-Delete", "Trusted",
@@ -99,13 +96,25 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
       if (Tags.Exists(option_deb822[j]))
          Options[option_internal[j]] = Tags.FindS(option_deb822[j]);
    
-   // now create one item per section
+   // now create one item per suite/section
+   string Suite = Tags.FindS("Suite");
+   Suite = SubstVar(Suite,"$(ARCH)",_config->Find("APT::Architecture"));
    string const Section = Tags.FindS("Section");
-   std::vector<std::string> list = StringSplit(Section, " ");
-   for (std::vector<std::string>::const_iterator I = list.begin();
-        I != list.end(); I++)
-      return CreateItem(List, URI, Dist, (*I), Options);
-   
+
+   std::vector<std::string> list_dist = StringSplit(Suite, " ");
+   std::vector<std::string> list_section = StringSplit(Section, " ");
+   for (std::vector<std::string>::const_iterator I = list_dist.begin();
+        I != list_dist.end(); I++)
+   {
+      for (std::vector<std::string>::const_iterator J = list_section.begin();
+           J != list_section.end(); J++)
+         {
+            if (CreateItem(List, URI, (*I), (*J), Options) == false)
+            {
+               return false;
+            }
+         }
+   }
    return true;
 }
 
