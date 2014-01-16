@@ -31,6 +31,7 @@
 #include <vector>
 #include <map>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/tagfile.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/metaindex.h>
@@ -60,6 +61,10 @@ class pkgSourceList
       const char *Label;
 
       bool FixupURI(std::string &URI) const;
+      virtual bool ParseStanza(std::vector<metaIndex *> &List,
+                               pkgTagSection &Tags,
+                               int stanza_n,
+                               FileFd &Fd);
       virtual bool ParseLine(std::vector<metaIndex *> &List,
 			     const char *Buffer,
 			     unsigned long const &CurLine,std::string const &File) const;
