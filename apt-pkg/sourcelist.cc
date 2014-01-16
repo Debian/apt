@@ -78,7 +78,7 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
 {
    map<string, string> Options;
 
-   string URI = Tags.FindS("URL");
+   string URI = Tags.FindS("Uri");
    if (!FixupURI(URI))
    {
       _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
