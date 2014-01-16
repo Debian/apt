@@ -103,12 +103,12 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       }
    }
 
+   enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
    std::vector<std::string> dataHeader;
    char * sig = NULL;
    char * data = NULL;
 
-   // file with detached signature
-   if (FileGPG != File)
+   if (releaseSignature == DETACHED)
    {
       Args.push_back(FileGPG.c_str());
       Args.push_back(File.c_str());
@@ -181,7 +181,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       putenv((char *)"LC_MESSAGES=");
    }
 
-   if (FileGPG != File)
+   if (releaseSignature == DETACHED)
    {
       execvp(gpgvpath.c_str(), (char **) &Args[0]);
       ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());

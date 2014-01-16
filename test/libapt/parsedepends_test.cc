@@ -176,7 +176,7 @@ test:
 	equals("7.15.3~", Version);
 	equals(Null | pkgCache::Dep::Equals | pkgCache::Dep::Or, Op);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
 	if (StripMultiArch == true)
 		equals("overlord-dev", Package);
 	else
