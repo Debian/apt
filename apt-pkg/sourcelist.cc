@@ -71,6 +71,44 @@ bool pkgSourceList::Type::FixupURI(string &URI) const
    return true;
 }
 									/*}}}*/
+bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
+                                      pkgTagSection &Tags,
+                                      int i,
+                                      FileFd &Fd)
+{
+   map<string, string> Options;
+
+   string URI = Tags.FindS("URL");
+   if (!FixupURI(URI))
+   {
+      _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
+      return false;
+   }
+   
+   string Dist = Tags.FindS("Dist");
+   Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
+   
+   // Define external/internal options
+   const char* option_deb822[] = { 
+      "Architectures", "Architectures-Add", "Architectures-Delete", "Trusted",
+   };
+   const char* option_internal[] = { 
+      "arch", "arch+", "arch-", "trusted",
+   };
+   for (unsigned int j=0; j < sizeof(option_deb822)/sizeof(char*); j++)
+      if (Tags.Exists(option_deb822[j]))
+         Options[option_internal[j]] = Tags.FindS(option_deb822[j]);
+   
+   // now create one item per section
+   string const Section = Tags.FindS("Section");
+   std::vector<std::string> list = StringSplit(Section, " ");
+   for (std::vector<std::string>::const_iterator I = list.begin();
+        I != list.end(); I++)
+      return CreateItem(List, URI, Dist, (*I), Options);
+   
+   return true;
+}
+
 // Type::ParseLine - Parse a single line				/*{{{*/
 // ---------------------------------------------------------------------
 /* This is a generic one that is the 'usual' format for sources.list
@@ -313,7 +351,6 @@ bool pkgSourceList::ParseFileOldStyle(string File)
 int pkgSourceList::ParseFileDeb822(string File)
 {
    pkgTagSection Tags;
-   map<string, string> Options;
    unsigned int i=0;
 
    // see if we can read the file
@@ -338,35 +375,11 @@ int pkgSourceList::ParseFileDeb822(string File)
       if (Parse == 0)
       {
          _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
-         // true means we do not retry with old-style sources.list
          return -1;
       }
          
-      string URI = Tags.FindS("URL");
-      if (!Parse->FixupURI(URI))
-      {
-         _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
-         // means we do not retry with old-style sources.list
+      if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
          return -1;
-      }
-
-      string Dist = Tags.FindS("Dist");
-      Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
-
-      // check if there are any options we support
-      const char* option_str[] = { 
-         "arch", "arch+", "arch-", "trusted",
-      };
-      for (unsigned int j=0; j < sizeof(option_str)/sizeof(char*); j++)
-         if (Tags.Exists(option_str[j]))
-            Options[option_str[j]] = Tags.FindS(option_str[j]);
-
-      // now create one item per section
-      string const Section = Tags.FindS("Section");
-      std::vector<std::string> list = StringSplit(Section, " ");
-      for (std::vector<std::string>::const_iterator I = list.begin();
-           I != list.end(); I++)
-         Parse->CreateItem(SrcList, URI, Dist, (*I), Options);
 
       i++;
    }

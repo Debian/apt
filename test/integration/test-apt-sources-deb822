@@ -48,7 +48,7 @@ testequalwithmsg "Multiple entries in deb822 sources.list work" "'http://ftp.deb
 
 # ARCH option
 echo "$BASE" > $SOURCES
-echo "Arch: amd64,armel" >> $SOURCES
+echo "Architectures: amd64,armel" >> $SOURCES
 
 testequalwithmsg "Arch: option in deb822 sources.list works" "'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 :
