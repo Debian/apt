@@ -226,6 +226,7 @@ bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * const Cm
    {
       addArg(0,"installed","APT::Cmd::Installed",0);
       addArg(0,"upgradable","APT::Cmd::Upgradable",0);
+      addArg(0,"manual-installed","APT::Cmd::Manual-Installed",0);
       addArg('v', "verbose", "APT::Cmd::List-Include-Summary", 0);
       addArg('a', "all-versions", "APT::Cmd::All-Versions", 0);
    }
