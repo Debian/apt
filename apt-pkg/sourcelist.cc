@@ -85,7 +85,7 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
       return false;
    }
    
-   string Dist = Tags.FindS("Dist");
+   string Dist = Tags.FindS("Suite");
    Dist = SubstVar(Dist,"$(ARCH)",_config->Find("APT::Architecture"));
    
    // Define external/internal options
