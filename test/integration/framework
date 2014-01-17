@@ -87,39 +87,41 @@ msgdone() {
 
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
+	local CMD="$1"
+	shift
 	if [ -f ./aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	else
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	fi
 }
-aptconfig() { runapt apt-config $*; }
-aptcache() { runapt apt-cache $*; }
-aptcdrom() { runapt apt-cdrom $*; }
-aptget() { runapt apt-get $*; }
-aptftparchive() { runapt apt-ftparchive $*; }
-aptkey() { runapt apt-key $*; }
-aptmark() { runapt apt-mark $*; }
+aptconfig() { runapt apt-config "$@"; }
+aptcache() { runapt apt-cache "$@"; }
+aptcdrom() { runapt apt-cdrom "$@"; }
+aptget() { runapt apt-get "$@"; }
+aptftparchive() { runapt apt-ftparchive "$@"; }
+aptkey() { runapt apt-key "$@"; }
+aptmark() { runapt apt-mark "$@"; }
 aptwebserver() {
-  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver $*;
+  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver "$@";
 }
 dpkg() {
-	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
+	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
 }
 aptitude() {
 	if [ -f ./aptconfig.conf ]; then
-		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which aptitude) $*
+		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command aptitude "$@"
 	else
-		LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+		LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
 	fi
 }
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1 --args $*
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
 }
 http() {
 	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
@@ -203,7 +205,7 @@ setupenvironment() {
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
-	if ! $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
+	if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
 		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
@@ -267,7 +269,7 @@ configdpkg() {
 		fi
 	fi
 	rm -f rootdir/etc/apt/apt.conf.d/00foreigndpkg
-	if $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
+	if command dpkg --assert-multi-arch >/dev/null 2>&1 ; then
 		local ARCHS="$(getarchitectures)"
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
@@ -429,7 +431,12 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
-		dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. 2> /dev/null > /dev/null
+		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
+		if ! dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
+			cat $LOG
+			false
+		fi
+		rm $LOG
 		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	done
 
@@ -445,14 +452,19 @@ buildpackage() {
 	local RELEASE=$2
 	local SECTION=$3
 	local ARCH=$(getarchitecture $4)
-	msgninfo "Build package $(echo "$BUILDDIR" | grep -o '[^/]*$') for ${RELEASE} in ${SECTION}… "
+	local PKGNAME="$(echo "$BUILDDIR" | grep -o '[^/]*$')"
+	local BUILDLOG="$(readlink -f "${BUILDDIR}/../${PKGNAME}_${RELEASE}_${SECTION}.dpkg-bp.log")"
+	msgninfo "Build package ${PKGNAME} for ${RELEASE} in ${SECTION}… "
 	cd $BUILDDIR
 	if [ "$ARCH" = "all" ]; then
 		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
 	fi
-	local BUILT="$(dpkg-buildpackage -uc -us -a$ARCH 2> /dev/null)"
-	local PKGS="$( echo "$BUILT" | grep '^dpkg-deb: building package' | cut -d'/' -f 2 | sed -e "s#'\.##")"
-	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
+	if ! dpkg-buildpackage -uc -us -a$ARCH >$BUILDLOG 2>&1 ; then
+		cat $BUILDLOG
+		false
+	fi
+	local PKGS="$(grep '^dpkg-deb: building package' $BUILDLOG | cut -d'/' -f 2 | sed -e "s#'\.##")"
+	local SRCS="$(grep '^dpkg-source: info: building' $BUILDLOG | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
 		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist
@@ -465,9 +477,9 @@ buildpackage() {
 
 buildaptarchive() {
 	if [ -d incoming ]; then
-		buildaptarchivefromincoming $*
+		buildaptarchivefromincoming "$@"
 	else
-		buildaptarchivefromfiles $*
+		buildaptarchivefromfiles "$@"
 	fi
 }
 
@@ -952,7 +964,7 @@ Filename: ${2}
 }
 
 checkdiff() {
-	local DIFFTEXT="$($(which diff) -u $* | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
+	local DIFFTEXT="$(command diff -u "$@" | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
 		echo
 		echo "$DIFFTEXT"
@@ -1026,7 +1038,7 @@ N: No packages found"
 
 testnopackage() {
 	msgtest "Test for non-existent packages" "apt-cache show $*"
-	local SHOWPKG="$(aptcache show $* 2>&1 | grep '^Package: ')"
+	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
 		echo
 		echo "$SHOWPKG"
@@ -1038,10 +1050,10 @@ testnopackage() {
 
 testdpkginstalled() {
 	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* 2>/dev/null | grep '^i' | wc -l)"
+	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != $# ]; then
 		echo $PKGS
-		dpkg -l $* | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]'
 		msgfail
 		return 1
 	fi
@@ -1050,10 +1062,10 @@ testdpkginstalled() {
 
 testdpkgnotinstalled() {
 	msgtest "Test for correctly not-installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* 2> /dev/null | grep '^i' | wc -l)"
+	local PKGS="$(dpkg -l "$@" 2> /dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != 0 ]; then
 		echo
-		dpkg -l $* | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]'
 		msgfail
 		return 1
 	fi
