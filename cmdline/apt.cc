@@ -117,10 +117,9 @@ int main(int argc, const char *argv[])					/*{{{*/
    if(!isatty(1)) 
    {
       std::cerr << std::endl
-                << "WARNING WARNING "
-                << argv[0]
-                << " is *NOT* intended for scripts "
-                << "use at your own peril^Wrisk"
+                << "WARNING: " << argv[0] << " "
+                << "does not have a stable CLI interface yet. "
+                << "Use with caution in scripts."
                 << std::endl
                 << std::endl;
    }
