@@ -432,6 +432,8 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
+		# ensure the right permissions as dpkg-deb ensists
+		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
 		if ! dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
 			cat $LOG
 			false
