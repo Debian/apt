@@ -7,22 +7,33 @@ ALL=0
 
 FAILED_TESTS=""
 DIR=$(readlink -f $(dirname $0))
-if [ "$1" = "-q" ]; then
-	export MSGLEVEL=2
-elif [ "$1" = "-v" ]; then
-	export MSGLEVEL=4
-fi
+while [ -n "$1" ]; do
+	if [ "$1" = "-q" ]; then
+		export MSGLEVEL=2
+	elif [ "$1" = "-v" ]; then
+		export MSGLEVEL=4
+	elif [ "$1" = '--color=no' ]; then
+		export MSGCOLOR='NO'
+	else
+		echo >&2 "WARNING: Unknown parameter »$1« will be ignored"
+	fi
+	shift
+done
+export MSGLEVEL="${MSGLEVEL:-3}"
 
-if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+if [ "$MSGCOLOR" != 'NO' ]; then
+	if ! expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+		export MSGCOLOR='NO'
+	fi
+fi
+if [ "$MSGCOLOR" != 'NO' ]; then
 	CTEST='\033[1;32m'
 	CHIGH='\033[1;35m'
 	CRESET='\033[0m'
-elif [ -z "${MSGLEVEL}" ]; then
-	export MSGLEVEL=2
-fi
-
-if [ -z "$MSGLEVEL" ]; then
-	MSGLEVEL=5
+else
+	CTEST=''
+	CHIGH=''
+	CRESET=''
 fi
 
 for testcase in $(run-parts --list $DIR | grep '/test-'); do

@@ -3,18 +3,24 @@
 EXIT_CODE=0
 
 # we all like colorful messages
-if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
-   expr match "$(readlink -f /proc/$$/fd/2)" '/dev/pts/[0-9]\+' > /dev/null; then
-	CERROR="[1;31m" # red
-	CWARNING="[1;33m" # yellow
-	CMSG="[1;32m" # green
-	CINFO="[1;96m" # light blue
-	CDEBUG="[1;94m" # blue
-	CNORMAL="[0;39m" # default system console color
-	CDONE="[1;32m" # green
-	CPASS="[1;32m" # green
-	CFAIL="[1;31m" # red
-	CCMD="[1;35m" # pink
+if [ "$MSGCOLOR" != 'NO' ]; then
+	if ! expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+		export MSGCOLOR='NO'
+	fi
+fi
+
+
+if [ "$MSGCOLOR" != 'NO' ]; then
+	CERROR="\033[1;31m" # red
+	CWARNING="\033[1;33m" # yellow
+	CMSG="\033[1;32m" # green
+	CINFO="\033[1;96m" # light blue
+	CDEBUG="\033[1;94m" # blue
+	CNORMAL="\033[0;39m" # default system console color
+	CDONE="\033[1;32m" # green
+	CPASS="\033[1;32m" # green
+	CFAIL="\033[1;31m" # red
+	CCMD="\033[1;35m" # pink
 fi
 
 msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
