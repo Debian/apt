@@ -179,7 +179,7 @@ setupenvironment() {
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p var/cache var/lib var/log
+	mkdir -p var/cache var/lib var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
@@ -844,8 +844,7 @@ webserverconfig() {
 	downloadfile "http://localhost:8080/_config/set/${1}/${2}" '/dev/null' >/dev/null
 	local DOWNLOG='download-testfile.log'
 	rm -f "$DOWNLOG"
-	local STATUS="$(mktemp)"
-	addtrap "rm $STATUS;"
+	local STATUS="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverconfig.status"
 	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
 	if [ "$(cat "$STATUS")" = '200' ]; then
 		msgpass
@@ -853,6 +852,7 @@ webserverconfig() {
 		cat >&2 "$DOWNLOG"
 		msgfail "Statuscode was $(cat "$STATUS")"
 	fi
+	rm "$STATUS"
 }
 
 rewritesourceslist() {
@@ -870,9 +870,7 @@ changetowebserver() {
 	fi
 	if test -x ${APTWEBSERVERBINDIR}/aptwebserver; then
 		cd aptarchive
-		local LOG="$(mktemp)"
-		addtrap "rm $LOG;"
-		if ! aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1 ; then
+		if ! aptwebserver -o aptwebserver::fork=1 "$@" >webserver.log 2>&1 ; then
 			cat $LOG
 			false
 		fi
@@ -991,8 +989,7 @@ testempty() {
 }
 
 testequal() {
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.comparefile"
 	echo "$1" > $COMPAREFILE
 	shift
 	msgtest "Test for equality of" "$*"
@@ -1000,10 +997,9 @@ testequal() {
 }
 
 testequalor2() {
-	local COMPAREFILE1=$(mktemp)
-	local COMPAREFILE2=$(mktemp)
-	local COMPAREAGAINST=$(mktemp)
-	addtrap "rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST;"
+	local COMPAREFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile1"
+	local COMPAREFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile2"
+	local COMPAREAGAINST="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.compareagainst"
 	echo "$1" > $COMPAREFILE1
 	echo "$2" > $COMPAREFILE2
 	shift 2
@@ -1029,8 +1025,7 @@ N: Can't select versions from package '$1' as it is purely virtual"
 	msgtest "Test for virtual packages" "apt-cache show $PACKAGE"
 	VIRTUAL="${VIRTUAL}
 N: No packages found"
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testshowvirtual.comparefile"
 	local ARCH="$(getarchitecture 'native')"
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
@@ -1073,8 +1068,7 @@ testdpkgnotinstalled() {
 }
 
 testmarkedauto() {
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as auto-installed' "$*"
 		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
@@ -1091,8 +1085,7 @@ testsuccess() {
 	else
 		msgtest 'Test for successful execution of' "$*"
 	fi
-	local OUTPUT=$(mktemp)
-	addtrap "rm $OUTPUT;"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
 	if $@ >${OUTPUT} 2>&1; then
 		msgpass
 	else
@@ -1108,8 +1101,7 @@ testfailure() {
 	else
 		msgtest 'Test for failure in  execution of' "$*"
 	fi
-	local OUTPUT=$(mktemp)
-	addtrap "rm $OUTPUT;"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if $@ >${OUTPUT} 2>&1; then
 		echo
 		cat $OUTPUT
