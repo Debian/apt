@@ -101,11 +101,15 @@ private:
 									/*}}}*/
 void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
                      pkgCache::PkgIterator P,    
-                     std::ostream &outs)
+                     std::ostream &outs,
+                     bool include_summary=true)
 {
    for (pkgCache::VerIterator Ver = P.VersionList();
         Ver.end() == false; Ver++) 
-      ListSingleVersion(CacheFile, records, Ver, outs);
+   {
+      ListSingleVersion(CacheFile, records, Ver, outs, include_summary);
+      outs << "\n";
+   }
 }
 									/*}}}*/
 // list - list package based on criteria        			/*{{{*/
@@ -136,7 +140,7 @@ bool List(CommandLine &Cmd)
 
    PackageNameMatcher matcher(patterns);
    LocalitySortedVersionSet bag;
-   OpTextProgress progress;
+   OpTextProgress progress(*_config);
    progress.OverallProgress(0,
                             Cache->Head().PackageCount, 
                             Cache->Head().PackageCount,
@@ -147,7 +151,7 @@ bool List(CommandLine &Cmd)
       std::stringstream outs;
       if(_config->FindB("APT::Cmd::All-Versions", false) == true)
       {
-         ListAllVersions(CacheFile, records, V.ParentPkg(), outs);
+         ListAllVersions(CacheFile, records, V.ParentPkg(), outs, includeSummary);
          output_map.insert(std::make_pair<std::string, std::string>(
             V.ParentPkg().Name(), outs.str()));
       } else {

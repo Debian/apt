@@ -114,16 +114,6 @@ int main(int argc, const char *argv[])					/*{{{*/
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt", CommandLine::GetCommand(Cmds, argc, argv));
 
-   if(!isatty(1)) 
-   {
-      std::cerr << std::endl
-                << "WARNING: " << argv[0] << " "
-                << "does not have a stable CLI interface yet. "
-                << "Use with caution in scripts."
-                << std::endl
-                << std::endl;
-   }
-
    InitOutput();
 
    // Set up gettext support
@@ -148,6 +138,19 @@ int main(int argc, const char *argv[])					/*{{{*/
       _error->DumpErrors();
       return 100;
    }
+
+   if(!isatty(STDOUT_FILENO) && 
+      _config->FindB("Apt::Cmd::Disable-Script-Warning", false) == false)
+   {
+      std::cerr << std::endl
+                << "WARNING: " << argv[0] << " "
+                << "does not have a stable CLI interface yet. "
+                << "Use with caution in scripts."
+                << std::endl
+                << std::endl;
+   }
+   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
+      _config->Set("quiet","1");
 
    // See if the help should be shown
    if (_config->FindB("help") == true ||
