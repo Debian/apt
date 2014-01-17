@@ -19,7 +19,8 @@ testdownload() {
 		APT="${APT}/${3}"
 	fi
 	msgtest "Test download of package file $1 with" "$APT"
-	aptget -qq download ${APT} && test -f $1 && msgpass || msgfail
+	testsuccess --nomsg aptget download ${APT}
+	testsuccess test -f $1
 	rm $1
 }
 

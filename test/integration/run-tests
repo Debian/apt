@@ -2,6 +2,9 @@
 set -e
 
 FAIL=0
+PASS=0
+ALL=0
+
 FAILED_TESTS=""
 DIR=$(readlink -f $(dirname $0))
 if [ "$1" = "-q" ]; then
@@ -29,18 +32,23 @@ for testcase in $(run-parts --list $DIR | grep '/test-'); do
 		echo "${CTEST}Run Testcase ${CHIGH}$(basename ${testcase})${CRESET}"
 	fi
 	if ! ${testcase}; then
-                 FAIL=$((FAIL+1))
-                 FAILED_TESTS="$FAILED_TESTS $(basename $testcase)"
-                 echo "$(basename $testcase) ... FAIL"
-        fi
+		FAIL=$((FAIL+1))
+		FAILED_TESTS="$FAILED_TESTS $(basename $testcase)"
+		echo >&2 "$(basename $testcase) ... FAIL"
+	else
+		PASS=$((PASS+1))
+	fi
+	ALL=$((ALL+1))
 	if [ "$MSGLEVEL" -le 2 ]; then
 		echo
 	fi
 done
 
-echo "failures: $FAIL"
-if [ -n "$FAILED_TESTS" ]; then 
-    echo "Failed tests: $FAILED_TESTS";
+echo >&2 "Statistics: $ALL tests were run: $PASS successfully and $FAIL failed"
+if [ -n "$FAILED_TESTS" ]; then
+	echo >&2 "Failed tests: $FAILED_TESTS"
+else
+	echo >&2 'All tests seem to have been run successfully. What could possibly go wrong?'
 fi
 # ensure we don't overflow
 exit $((FAIL <= 255 ? FAIL : 255))
