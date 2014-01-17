@@ -71,13 +71,16 @@ bool ShowHelp(CommandLine &CmdL)
     _("Usage: apt [options] command\n"
       "\n"
       "CLI for apt.\n"
-      "Commands: \n"
+      "Basic commands: \n"
       " list - list packages based on package names\n"
       " search - search in package descriptions\n"
       " show - show package details\n"
       "\n"
       " update - update list of available packages\n"
+      "\n"
       " install - install packages\n"
+      " remove  - remove packages\n"
+      "\n"
       " upgrade - upgrade the systems packages\n"
       "\n"
       " edit-sources - edit the source information file\n"
@@ -103,6 +106,7 @@ int main(int argc, const char *argv[])					/*{{{*/
                                    // needs root
                                    {"install",&DoInstall},
                                    {"remove", &DoInstall},
+                                   {"purge", &DoInstall},
                                    {"update",&DoUpdate},
                                    {"upgrade",&DoAptUpgrade},
                                    // misc
