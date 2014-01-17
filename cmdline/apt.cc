@@ -86,6 +86,15 @@ bool ShowHelp(CommandLine &CmdL)
    return true;
 }
 
+// figure out what kind of upgrade the user wants
+bool DoAptUpgrade(CommandLine &CmdL)
+{
+   if (_config->FindB("Apt::Cmd::Dist-Upgrade"))
+      return DoDistUpgrade(CmdL);
+   else
+      return DoUpgradeWithAllowNewPackages(CmdL);
+}
+
 int main(int argc, const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {{"list",&List},
@@ -95,7 +104,7 @@ int main(int argc, const char *argv[])					/*{{{*/
                                    {"install",&DoInstall},
                                    {"remove", &DoInstall},
                                    {"update",&DoUpdate},
-                                   {"upgrade",&DoUpgradeWithAllowNewPackages},
+                                   {"upgrade",&DoAptUpgrade},
                                    // misc
                                    {"edit-sources",&EditSources},
                                    // helper
