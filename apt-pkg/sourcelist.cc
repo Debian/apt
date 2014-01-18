@@ -78,7 +78,7 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
 {
    map<string, string> Options;
 
-   string URI = Tags.FindS("Uri");
+   string URI = Tags.FindS("URI");
    if (!FixupURI(URI))
    {
       _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
@@ -87,7 +87,7 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
    
    // Define external/internal options
    const char* option_deb822[] = { 
-      "Architectures", "Architectures-Add", "Architectures-Delete", "Trusted",
+      "Architectures", "Architectures-Add", "Architectures-Remove", "Trusted",
    };
    const char* option_internal[] = { 
       "arch", "arch+", "arch-", "trusted",
