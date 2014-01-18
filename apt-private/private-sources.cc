@@ -32,6 +32,10 @@ bool EditSources(CommandLine &CmdL)
    if (FileExists(sourceslist))
        before.FromFile(sourceslist);
 
+   int lockfd = GetLock(sourceslist);
+   if (lockfd < 0)
+      return false;
+      
    do {
       EditFileInSensibleEditor(sourceslist);
       _error->PushToStack();
@@ -46,6 +50,7 @@ bool EditSources(CommandLine &CmdL)
       }
       _error->RevertToStack();
    } while (res == false);
+   close(lockfd);
 
    if (FileExists(sourceslist) && !before.VerifyFile(sourceslist)) {
       strprintf(
