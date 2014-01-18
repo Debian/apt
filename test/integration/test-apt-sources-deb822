@@ -14,8 +14,8 @@ BASE='# some comment
 
 Type: deb
 URI: http://ftp.debian.org/debian
-Suite: stable
-Section: main
+Suites: stable
+Sections: main
 Comment: Some random string
  that can be very long'
 
@@ -81,7 +81,7 @@ E: The list of sources could not be read."  aptget update --print-uris
 
 msgtest 'Test deb822 sources.list file which has' 'malformed URI'
 echo "Type: deb
-Suite: stable
+Suites: stable
 " > $SOURCES
 testequal --nomsg  "E: Malformed stanza 0 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (URI parse)
 E: The list of sources could not be read."  aptget update --print-uris
