@@ -1,3 +1,22 @@
+apt (0.9.14.3~exp2ubuntu1) UNRELEASED; urgency=low
+
+  * implement deb822 suggestions from donkult (thanks!):
+    - rename "Dist" to "Suites"
+    - rename "Section" to "Sections"
+    - rename "Architectures-Delete" to "Architectures-Remove"
+    - rename "Uri" to "URI"
+  * add "apt list --manual-installed"
+  * add "apt upgrade --dist"
+  * add "apt purge"
+  * flock() the file edited in "apt edit-sources"
+  * apt-private/private-show.cc: 
+    - do not show Description-lang: header
+  * reword apt !isatty() warning
+  * add missing integration test for "apt list" and fix bugs
+    found by it
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 18 Jan 2014 21:09:24 +0100
+
 apt (0.9.14.3~exp2) experimental; urgency=medium
 
   [ Julian Andres Klode ]
