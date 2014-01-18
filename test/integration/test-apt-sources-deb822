@@ -21,8 +21,8 @@ BASE="# some comment
 
 Type: deb
 URI: http://ftp.debian.org/debian
-Suite: stable
-Section: main
+Suites: stable
+Sections: main
 Comment: Some random string
  that can be very long"
 
@@ -70,7 +70,7 @@ testequalwithmsg "Invalid sources.list file gives proper error" "E: Malformed li
 E: The list of sources could not be read."  aptget update --print-uris
 
 echo "Type: deb
-Suite: stable
+Suites: stable
 " > $SOURCES
 
 testequalwithmsg "Invalid deb822 sources.list file gives proper error" "E: Malformed stanza 0 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (URI parse)

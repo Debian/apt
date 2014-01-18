@@ -97,9 +97,9 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
          Options[option_internal[j]] = Tags.FindS(option_deb822[j]);
    
    // now create one item per suite/section
-   string Suite = Tags.FindS("Suite");
+   string Suite = Tags.FindS("Suites");
    Suite = SubstVar(Suite,"$(ARCH)",_config->Find("APT::Architecture"));
-   string const Section = Tags.FindS("Section");
+   string const Section = Tags.FindS("Sections");
 
    std::vector<std::string> list_dist = StringSplit(Suite, " ");
    std::vector<std::string> list_section = StringSplit(Section, " ");
