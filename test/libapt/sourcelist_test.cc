@@ -23,14 +23,14 @@ int main(int argc, char *argv[])
 {
    const char contents[] = ""
       "Type: deb\n"
-      "URI: http://ftp.debian.org/debian\n"
+      "URIs: http://ftp.debian.org/debian\n"
       "Suites: stable\n"
       "Sections: main\n"
       "Description: short\n"
       " long description that can be very long\n"
       "\n"
       "Type: deb\n"
-      "URI: http://ftp.debian.org/debian\n"
+      "URIs: http://ftp.debian.org/debian\n"
       "Suite: unstable\n"
       "Section: main non-free\n"
       ;

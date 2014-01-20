@@ -20,7 +20,7 @@ BASE="# some comment
 #Type: meep
 
 Type: deb
-URI: http://ftp.debian.org/debian
+URIs: http://ftp.debian.org/debian
 Suites: stable
 Sections: main
 Description: summay
@@ -79,3 +79,12 @@ E: The list of sources could not be read."  aptget update --print-uris
 echo "$BASE"  > $SOURCES
 echo "Enabled: no" >> $SOURCES
 testempty aptget update --print-uris
+
+# multiple URIs
+echo "$BASE"  | sed -e 's#http://ftp.debian.org/debian#http://ftp.debian.org/debian http://ftp.de.debian.org/debian#' > $SOURCES
+testequalwithmsg "Multiple URIs work" "'http://ftp.de.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.de.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+'http://ftp.de.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.de.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
+'http://ftp.de.debian.org/debian/dists/stable/InRelease' ftp.de.debian.org_debian_dists_stable_InRelease 0 
+'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
+'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
+'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 

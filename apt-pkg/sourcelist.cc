@@ -78,13 +78,6 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
 {
    map<string, string> Options;
 
-   string URI = Tags.FindS("URI");
-   if (!FixupURI(URI))
-   {
-      _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
-      return false;
-   }
-
    string Enabled = Tags.FindS("Enabled");
    if (Enabled.size() > 0 && StringToBool(Enabled) == false)
       return true;
@@ -104,20 +97,34 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
    string Suite = Tags.FindS("Suites");
    Suite = SubstVar(Suite,"$(ARCH)",_config->Find("APT::Architecture"));
    string const Section = Tags.FindS("Sections");
+   string URIS = Tags.FindS("URIs");
 
+   std::vector<std::string> list_uris = StringSplit(URIS, " ");
    std::vector<std::string> list_dist = StringSplit(Suite, " ");
    std::vector<std::string> list_section = StringSplit(Section, " ");
-   for (std::vector<std::string>::const_iterator I = list_dist.begin();
-        I != list_dist.end(); I++)
+   
+   for (std::vector<std::string>::const_iterator U = list_uris.begin();
+        U != list_uris.end(); U++)
    {
-      for (std::vector<std::string>::const_iterator J = list_section.begin();
-           J != list_section.end(); J++)
+      std::string URI = (*U);
+      if (!FixupURI(URI))
+      {
+         _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
+         return false;
+      }
+
+      for (std::vector<std::string>::const_iterator I = list_dist.begin();
+           I != list_dist.end(); I++)
+      {
+         for (std::vector<std::string>::const_iterator J = list_section.begin();
+              J != list_section.end(); J++)
          {
             if (CreateItem(List, URI, (*I), (*J), Options) == false)
             {
                return false;
             }
          }
+      }
    }
    return true;
 }
