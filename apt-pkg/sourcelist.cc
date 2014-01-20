@@ -387,21 +387,26 @@ int pkgSourceList::ParseFileDeb822(string File)
    // read step by step
    while (Sources.Step(Tags) == true)
    {
-      if(!Tags.Exists("Type")) 
+      if(!Tags.Exists("Types")) 
          continue;
 
-      string const type = Tags.FindS("Type");
-      Type *Parse = Type::GetType(type.c_str());
-      if (Parse == 0)
+      string const types = Tags.FindS("Types");
+      std::vector<std::string> list_types = StringSplit(types, " ");
+      for (std::vector<std::string>::const_iterator I = list_types.begin();
+        I != list_types.end(); I++)
       {
-         _error->Error(_("Type '%s' is not known on stanza %u in source list %s"),type.c_str(),i,Fd.Name().c_str());
-         return -1;
-      }
+         Type *Parse = Type::GetType((*I).c_str());
+         if (Parse == 0)
+         {
+            _error->Error(_("Type '%s' is not known on stanza %u in source list %s"), (*I).c_str(),i,Fd.Name().c_str());
+            return -1;
+         }
          
-      if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
-         return -1;
+         if (!Parse->ParseStanza(SrcList, Tags, i, Fd))
+            return -1;
 
-      i++;
+         i++;
+      }
    }
 
    // we are done, return the number of stanzas read

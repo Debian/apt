@@ -22,17 +22,17 @@ void remove_tmpfile(void)
 int main(int argc, char *argv[])
 {
    const char contents[] = ""
-      "Type: deb\n"
+      "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"
       "Suites: stable\n"
       "Sections: main\n"
       "Description: short\n"
       " long description that can be very long\n"
       "\n"
-      "Type: deb\n"
+      "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"
-      "Suite: unstable\n"
-      "Section: main non-free\n"
+      "Suites: unstable\n"
+      "Sections: main non-free\n"
       ;
 
    FileFd fd;
