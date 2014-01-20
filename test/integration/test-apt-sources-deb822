@@ -75,3 +75,7 @@ Suites: stable
 testequalwithmsg "Invalid deb822 sources.list file gives proper error" "E: Malformed stanza 0 in source list $TMPWORKINGDIRECTORY/rootdir/etc/apt/sources.list (URI parse)
 E: The list of sources could not be read."  aptget update --print-uris
 
+# with Enabled: false
+echo "$BASE"  > $SOURCES
+echo "Enabled: no" >> $SOURCES
+testempty aptget update --print-uris

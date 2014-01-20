@@ -84,6 +84,10 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
       _error->Error(_("Malformed stanza %u in source list %s (URI parse)"),i,Fd.Name().c_str());
       return false;
    }
+
+   string Enabled = Tags.FindS("Enabled");
+   if (Enabled.size() > 0 && StringToBool(Enabled) == false)
+      return true;
    
    // Define external/internal options
    const char* option_deb822[] = { 
