@@ -351,14 +351,27 @@ class Patch {
    FileChanges filechanges;
    MemBlock add_text;
 
+   static bool retry_fwrite(char *b, size_t l, FILE *f, Hashes *hash)
+   {
+      size_t r = 1;
+      while (r > 0 && l > 0)
+      {
+         r = fwrite(b, 1, l, f);
+	 if (hash)
+	    hash->Add((unsigned char*)b, r);
+	 l -= r;
+	 b += r;
+      }
+      return l == 0;
+   }
+
    static void dump_rest(FILE *o, FILE *i, Hashes *hash)
    {
       char buffer[BLOCK_SIZE];
       size_t l;
       while (0 < (l = fread(buffer, 1, sizeof(buffer), i))) {
-	 fwrite(buffer, 1, l, o);
-	 if (hash)
-	    hash->Add((unsigned char*)buffer, l);
+	 if (!retry_fwrite(buffer, l, o, hash))
+	    break;
       }
    }
 
@@ -372,10 +385,7 @@ class Patch {
 	 l = strlen(buffer);
 	 if (l == 0 || buffer[l-1] == '\n')
 	    n--;
-	 fwrite(buffer, 1, l, o);
-
-	 if (hash)
-	    hash->Add((unsigned char*)buffer, l);
+	 retry_fwrite(buffer, l, o, hash);
       }
    }
 
@@ -392,17 +402,8 @@ class Patch {
       }
    }
 
-   static bool dump_mem(FILE *o, char *p, size_t s, Hashes *hash) {
-      size_t r;
-      while (s > 0) {
-	 r = fwrite(p, 1, s, o);
-	 if (hash)
-	    hash->Add((unsigned char*)p, s);
-	 s -= r;
-	 p += r;
-	 if (r == 0) return false;
-      }
-      return true;
+   static void dump_mem(FILE *o, char *p, size_t s, Hashes *hash) {
+      retry_fwrite(p, s, o, hash);
    }
 
    public:
@@ -455,7 +456,7 @@ class Patch {
 		  filechanges.add_change(ch);
 		  break;
 	    }
-	 } else { /* !cmdwaanted */
+	 } else { /* !cmdwanted */
 	    if (buffer[0] == '.' && buffer[1] == '\n') {
 	       cmdwanted = true;
 	       filechanges.add_change(ch);
