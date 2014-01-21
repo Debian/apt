@@ -74,13 +74,12 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
 
    // write the description
    pkgRecords Recs(*Cache);
+   // FIXME: show (optionally) all available translations(?)
    pkgCache::DescIterator Desc = V.TranslatedDescription();
    if (Desc.end() == false)
    {
       pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
-      if (strcmp(Desc.LanguageCode(),"") != 0)
-         out << "Description-lang: " << Desc.LanguageCode() << std::endl;
-      out << "Description" << P.LongDesc();
+      out << "Description: " << P.LongDesc();
    }
    
    // write a final newline (after the description)
