@@ -57,20 +57,32 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
       return false;
    pkgTagSection Tags;
    pkgTagFile TagF(&PkgF);
-   
+
+   if (TagF.Jump(Tags, V.FileList()->Offset) == false)
+      return _error->Error("Internal Error, Unable to parse a package record");
+
+   // make size nice
+   std::string installed_size;
+   if (Tags.FindI("Installed-Size") > 0)
+      installed_size = SizeToStr(Tags.FindI("Installed-Size")*1024);
+   else
+      installed_size = _("unknown");
+   std::string package_size;
+   if (Tags.FindI("Size") > 0)
+      package_size = SizeToStr(Tags.FindI("Size"));
+   else
+      package_size = _("unknown");
+
    TFRewriteData RW[] = {
       {"Conffiles",0},
       {"Description",0},
       {"Description-md5",0},
+      {"Installed-Size", installed_size.c_str(), 0},
+      {"Size", package_size.c_str(), "Download-Size"},
       {}
    };
-   const char *Zero = 0;
-   if (TagF.Jump(Tags, V.FileList()->Offset) == false ||
-       TFRewrite(stdout,Tags,&Zero,RW) == false)
-   {
-      _error->Error("Internal Error, Unable to parse a package record");
-      return false;
-   }
+   if(TFRewrite(stdout, Tags, NULL, RW) == false)
+      return _error->Error("Internal Error, Unable to parse a package record");
 
    // write the description
    pkgRecords Recs(*Cache);
