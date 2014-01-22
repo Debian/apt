@@ -103,10 +103,11 @@ int main(int argc, const char *argv[])					/*{{{*/
    CommandLine::Dispatch Cmds[] = {{"list",&List},
                                    {"search", &FullTextSearch},
                                    {"show", &APT::Cmd::ShowPackage},
-                                   // needs root
+                                   // package stuff
                                    {"install",&DoInstall},
                                    {"remove", &DoInstall},
                                    {"purge", &DoInstall},
+                                   // system wide stuff
                                    {"update",&DoUpdate},
                                    {"upgrade",&DoAptUpgrade},
                                    // misc

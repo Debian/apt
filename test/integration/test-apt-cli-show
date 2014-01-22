@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+DESCR='Some description 
+ That has multiple lines'
+insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+# note that we do not display Description-md5 with the "apt" cmd
+testequal "Package: foo
+Priority: optional
+Section: other
+Installed-Size: 42
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: all
+Version: 1.0
+Filename: pool/main/foo/foo_1.0_all.deb
+Description: Some description 
+ That has multiple lines
+" apt show foo
