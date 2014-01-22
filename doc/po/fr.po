@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-01-18 21:25+0100\n"
+"POT-Creation-Date: 2014-01-22 19:01+0100\n"
 "PO-Revision-Date: 2013-04-09 07:56+0200\n"
 "Last-Translator: Christian Perrier <bubulle@debian.org>\n"
 "Language-Team: French <debian-l10n-french@lists.debian.org>\n"
@@ -1567,7 +1567,7 @@ msgstr "Fichiers"
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:550 apt-cache.8.xml:352 apt-key.8.xml:197 apt-mark.8.xml:133
 #: apt-secure.8.xml:193 apt-cdrom.8.xml:154 apt-config.8.xml:111
-#: apt.conf.5.xml:1206 apt_preferences.5.xml:707 sources.list.5.xml:275
+#: apt.conf.5.xml:1206 apt_preferences.5.xml:707 sources.list.5.xml:280
 #: apt-extracttemplates.1.xml:72 apt-sortpkgs.1.xml:65
 #: apt-ftparchive.1.xml:609
 msgid "See Also"
@@ -5196,7 +5196,7 @@ msgstr ""
 "list</filename>."
 
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:1194 apt_preferences.5.xml:547 sources.list.5.xml:234
+#: apt.conf.5.xml:1194 apt_preferences.5.xml:547 sources.list.5.xml:239
 #: apt-ftparchive.1.xml:598
 msgid "Examples"
 msgstr "Exemples"
@@ -6685,16 +6685,21 @@ msgstr "deb [ options ] uri distribution [composant1] [composant2] [...]"
 #: sources.list.5.xml:86
 #, no-wrap
 msgid ""
-"     Type: deb\n"
-"     URI: http://example.com\n"
-"     Suites: stable\n"
+"     Types: deb deb-src\n"
+"     URIs: http://example.com\n"
+"     Suites: stable testing\n"
 "     Sections: component1 component2\n"
+"     Description: short\n"
+"      long long long\n"
 "     [option1]: [option1-value]\n"
 "\n"
-"     Type: deb-src\n"
-"     URI: http://example.com\n"
-"     Suites: stable\n"
+"     Types: deb\n"
+"     URIs: http://another.example.com\n"
+"     Suites: experimental\n"
 "     Sections: component1 component2\n"
+"     Enabled: no\n"
+"     Description: short\n"
+"      long long long\n"
 "     [option1]: [option1-value]\n"
 "   "
 msgstr ""
@@ -6707,7 +6712,7 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:100
+#: sources.list.5.xml:105
 #, fuzzy
 #| msgid ""
 #| "The URI for the <literal>deb</literal> type must specify the base of the "
@@ -6739,7 +6744,7 @@ msgstr ""
 "être présent."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:109
+#: sources.list.5.xml:114
 #, fuzzy
 #| msgid ""
 #| "<literal>distribution</literal> may also contain a variable, <literal>"
@@ -6767,7 +6772,7 @@ msgstr ""
 "literal> crée automatiquement un URI en fonction de l'architecture effective."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:117
+#: sources.list.5.xml:122
 #, fuzzy
 #| msgid ""
 #| "Since only one distribution can be specified per line it may be necessary "
@@ -6807,7 +6812,7 @@ msgstr ""
 "tirer plus efficacement parti des sites à faible bande passante."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:131
+#: sources.list.5.xml:136
 msgid ""
 "<literal>options</literal> is always optional and needs to be surrounded by "
 "square brackets. It can consist of multiple settings in the form "
@@ -6824,7 +6829,7 @@ msgstr ""
 "ignorés silencieusement) :"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: sources.list.5.xml:137
+#: sources.list.5.xml:142
 msgid ""
 "<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
 "replaceable>,…</literal> can be used to specify for which architectures "
@@ -6839,7 +6844,7 @@ msgstr ""
 "Architectures</literal> sera téléchargée."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: sources.list.5.xml:141
+#: sources.list.5.xml:146
 #, fuzzy
 #| msgid ""
 #| "<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
@@ -6860,7 +6865,7 @@ msgstr ""
 "Architectures</literal> sera téléchargée."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
-#: sources.list.5.xml:144
+#: sources.list.5.xml:149
 msgid ""
 "<literal>trusted=yes</literal> can be set to indicate that packages from "
 "this source are always authenticated even if the <filename>Release</"
@@ -6878,7 +6883,7 @@ msgstr ""
 "authentifiées comme non authentifiées."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:151
+#: sources.list.5.xml:156
 msgid ""
 "It is important to list sources in order of preference, with the most "
 "preferred source listed first. Typically this will result in sorting by "
@@ -6891,12 +6896,12 @@ msgstr ""
 "les hôtes distants."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:156
+#: sources.list.5.xml:161
 msgid "Some examples:"
 msgstr "Exemples :"
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:158
+#: sources.list.5.xml:163
 #, no-wrap
 msgid ""
 "deb http://ftp.debian.org/debian &stable-codename; main contrib non-free\n"
@@ -6908,17 +6913,17 @@ msgstr ""
 "   "
 
 #. type: Content of: <refentry><refsect1><title>
-#: sources.list.5.xml:164
+#: sources.list.5.xml:169
 msgid "URI specification"
 msgstr "Spécification des URI"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:166
+#: sources.list.5.xml:171
 msgid "The currently recognized URI types are:"
 msgstr "Les types d'URI actuellement reconnues sont :"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:170
+#: sources.list.5.xml:175
 msgid ""
 "The file scheme allows an arbitrary directory in the file system to be "
 "considered an archive. This is useful for NFS mounts and local mirrors or "
@@ -6929,7 +6934,7 @@ msgstr ""
 "avec les montages NFS, les miroirs et les archives locaux."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:177
+#: sources.list.5.xml:182
 msgid ""
 "The cdrom scheme allows APT to use a local CD-ROM drive with media swapping. "
 "Use the &apt-cdrom; program to create cdrom entries in the source list."
@@ -6939,7 +6944,7 @@ msgstr ""
 "pour créer des entrées dans la liste des sources."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:184
+#: sources.list.5.xml:189
 msgid ""
 "The http scheme specifies an HTTP server for the archive. If an environment "
 "variable <envar>http_proxy</envar> is set with the format http://server:"
@@ -6956,7 +6961,7 @@ msgstr ""
 "Notez qu'il s'agit d'une méthode d'authentification peu sûre."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:195
+#: sources.list.5.xml:200
 msgid ""
 "The ftp scheme specifies an FTP server for the archive. APT's FTP behavior "
 "is highly configurable; for more information see the &apt-conf; manual page. "
@@ -6978,7 +6983,7 @@ msgstr ""
 "configuration seront ignorés."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:207
+#: sources.list.5.xml:212
 msgid ""
 "The copy scheme is identical to the file scheme except that packages are "
 "copied into the cache directory instead of used directly at their location.  "
@@ -6992,7 +6997,7 @@ msgstr ""
 "des fichiers avec APT."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:214
+#: sources.list.5.xml:219
 msgid ""
 "The rsh/ssh method invokes RSH/SSH to connect to a remote host and access "
 "the files as a given user. Prior configuration of rhosts or RSA keys is "
@@ -7006,12 +7011,12 @@ msgstr ""
 "sont utilisées pour l'accès aux fichiers de la machine distante."
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><term>
-#: sources.list.5.xml:221
+#: sources.list.5.xml:226
 msgid "adding more recognizable URI types"
 msgstr "ajout de types d'URI supplémentaires reconnues"
 
 #. type: Content of: <refentry><refsect1><para><variablelist><varlistentry><listitem><para>
-#: sources.list.5.xml:223
+#: sources.list.5.xml:228
 msgid ""
 "APT can be extended with more methods shipped in other optional packages, "
 "which should follow the naming scheme <package>apt-transport-"
@@ -7030,7 +7035,7 @@ msgstr ""
 "disponibles (voir &apt-transport-debtorrent;)."
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:235
+#: sources.list.5.xml:240
 msgid ""
 "Uses the archive stored locally (or NFS mounted) at /home/jason/debian for "
 "stable/main, stable/contrib, and stable/non-free."
@@ -7039,37 +7044,37 @@ msgstr ""
 "debian pour stable/main, stable/contrib et stable/non-free."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:237
+#: sources.list.5.xml:242
 #, no-wrap
 msgid "deb file:/home/jason/debian stable main contrib non-free"
 msgstr "deb file:/home/jason/debian stable main contrib non-free"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:239
+#: sources.list.5.xml:244
 msgid "As above, except this uses the unstable (development) distribution."
 msgstr ""
 "Comme ci-dessus, excepté que cette ligne utilise la distribution "
 "« unstable » (développement)."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:240
+#: sources.list.5.xml:245
 #, no-wrap
 msgid "deb file:/home/jason/debian unstable main contrib non-free"
 msgstr "deb file:/home/jason/debian unstable main contrib non-free"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:242
+#: sources.list.5.xml:247
 msgid "Source line for the above"
 msgstr "La précédente ligne, mais pour les sources."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:243
+#: sources.list.5.xml:248
 #, no-wrap
 msgid "deb-src file:/home/jason/debian unstable main contrib non-free"
 msgstr "deb-src file:/home/jason/debian unstable main contrib non-free"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:245
+#: sources.list.5.xml:250
 msgid ""
 "The first line gets package information for the architectures in "
 "<literal>APT::Architectures</literal> while the second always retrieves "
@@ -7080,7 +7085,7 @@ msgstr ""
 "<literal>amd64</literal> et <literal>armel</literal>."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:247
+#: sources.list.5.xml:252
 #, no-wrap
 msgid ""
 "deb http://ftp.debian.org/debian &stable-codename; main\n"
@@ -7090,7 +7095,7 @@ msgstr ""
 "deb [ arch=amd64,armel ] http://ftp.debian.org/debian &stable-codename; main"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:250
+#: sources.list.5.xml:255
 msgid ""
 "Uses HTTP to access the archive at archive.debian.org, and uses only the "
 "hamm/main area."
@@ -7099,13 +7104,13 @@ msgstr ""
 "n'utiliser que la section hamm/main."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:252
+#: sources.list.5.xml:257
 #, no-wrap
 msgid "deb http://archive.debian.org/debian-archive hamm main"
 msgstr "deb http://archive.debian.org/debian-archive hamm main"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:254
+#: sources.list.5.xml:259
 msgid ""
 "Uses FTP to access the archive at ftp.debian.org, under the debian "
 "directory, and uses only the &stable-codename;/contrib area."
@@ -7114,13 +7119,13 @@ msgstr ""
 "répertoire debian, et n'utiliser que la section &stable-codename;/contrib."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:256
+#: sources.list.5.xml:261
 #, no-wrap
 msgid "deb ftp://ftp.debian.org/debian &stable-codename; contrib"
 msgstr "deb ftp://ftp.debian.org/debian &stable-codename; contrib"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:258
+#: sources.list.5.xml:263
 msgid ""
 "Uses FTP to access the archive at ftp.debian.org, under the debian "
 "directory, and uses only the unstable/contrib area. If this line appears as "
@@ -7133,19 +7138,19 @@ msgstr ""
 "apparaissent, une seule session FTP sera utilisée pour les deux lignes."
 
 #. type: Content of: <refentry><refsect1><literallayout>
-#: sources.list.5.xml:262
+#: sources.list.5.xml:267
 #, no-wrap
 msgid "deb ftp://ftp.debian.org/debian unstable contrib"
 msgstr "deb ftp://ftp.debian.org/debian unstable contrib"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
-#: sources.list.5.xml:271
+#: sources.list.5.xml:276
 #, no-wrap
 msgid "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
 msgstr "deb http://ftp.tlh.debian.org/universe unstable/binary-$(ARCH)/"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:264
+#: sources.list.5.xml:269
 msgid ""
 "Uses HTTP to access the archive at ftp.tlh.debian.org, under the universe "
 "directory, and uses only files found under <filename>unstable/binary-i386</"
@@ -7165,7 +7170,7 @@ msgstr ""
 "type=\"literallayout\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
-#: sources.list.5.xml:276
+#: sources.list.5.xml:281
 msgid "&apt-cache; &apt-conf;"
 msgstr "&apt-cache; &apt-conf;"
 
