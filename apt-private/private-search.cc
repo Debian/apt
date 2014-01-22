@@ -53,7 +53,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
    std::map<std::string, std::string>::const_iterator K;
 
    LocalitySortedVersionSet bag;
-   OpTextProgress progress;
+   OpTextProgress progress(*_config);
    progress.OverallProgress(0, 100, 50,  _("Sorting"));
    GetLocalitySortedVersionSet(CacheFile, bag, progress);
    LocalitySortedVersionSet::iterator V = bag.begin();
