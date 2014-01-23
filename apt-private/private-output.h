@@ -28,7 +28,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
                        bool include_summary=true);
 
 
-
+// helper to describe global state
 bool ShowList(std::ostream &out, std::string Title, std::string List,
               std::string VersionsList);
 void ShowBroken(std::ostream &out,CacheFile &Cache,bool Now);
@@ -42,6 +42,10 @@ bool ShowHold(std::ostream &out,CacheFile &Cache);
 bool ShowEssential(std::ostream &out,CacheFile &Cache);
 
 void Stats(std::ostream &out, pkgDepCache &Dep);
+
+// helpers to display single package data
+std::string
+GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver);
 
 // prompting
 bool YnPrompt(bool Default=true);

@@ -73,12 +73,14 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    else
       package_size = _("unknown");
 
+   std::string suite = GetArchiveSuite(CacheFile, V);
    TFRewriteData RW[] = {
       {"Conffiles",0},
       {"Description",0},
       {"Description-md5",0},
       {"Installed-Size", installed_size.c_str(), 0},
       {"Size", package_size.c_str(), "Download-Size"},
+      {"Archive-Origin", suite.c_str(), 0},
       {}
    };
    if(TFRewrite(stdout, Tags, NULL, RW) == false)
