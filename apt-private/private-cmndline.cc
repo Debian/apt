@@ -235,6 +235,10 @@ bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * const Cm
       // FIXME: find a better term
       addArg(0,"dist","APT::Cmd::Dist-Upgrade", CommandLine::Boolean);
    }
+   else if (CmdMatches("show"))
+   {
+      addArg('a', "all-versions", "APT::Cache::AllVersions", 0);
+   }
    else if (addArgumentsAPTGet(Args, Cmd) || addArgumentsAPTCache(Args, Cmd))
    {
        // we have no (supported) command-name overlaps so far, so we call

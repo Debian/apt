@@ -104,11 +104,19 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionList::Version const select = APT::VersionList::CANDIDATE;
+   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", false) ?
+			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver, c1out) == false)
 	 return false;
+
+   if (select == APT::VersionList::CANDIDATE)
+   {
+      APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::ALL, helper);
+      if (verset_all.size() > verset.size())
+         _error->Notice(ngettext("There is %lu additional record. Please use the '-a' switch to see it", "There are %lu additional records. Please use the '-a' switch to see them.", verset_all.size() - verset.size()), verset_all.size() - verset.size());
+   }
 
    for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();
 	Pkg != helper.virtualPkgs.end(); ++Pkg)
