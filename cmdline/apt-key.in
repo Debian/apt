@@ -202,24 +202,27 @@ remove_key_from_keyring() {
 remove_key() {
     requires_root
 
-    # if a --keyring was given, just remove from there
-    if [ -n "$FORCED_KEYRING" ]; then
-	remove_key_from_keyring "$FORCED_KEYRING" "$1"
-    else
-	# otherwise all known keyrings are up for inspection
-	local TRUSTEDFILE="/etc/apt/trusted.gpg"
-	eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
-	eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
-	remove_key_from_keyring "$TRUSTEDFILE" "$1"
-	TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
-	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
-	if [ -d "$TRUSTEDPARTS" ]; then
-	    for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
-		remove_key_from_keyring "$trusted" "$1"
-	    done
+    while [ -n "$1" ]; do
+	# if a --keyring was given, just remove from there
+	if [ -n "$FORCED_KEYRING" ]; then
+	    remove_key_from_keyring "$FORCED_KEYRING" "$1"
+	else
+	    # otherwise all known keyrings are up for inspection
+	    local TRUSTEDFILE="/etc/apt/trusted.gpg"
+	    eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
+	    eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
+	    remove_key_from_keyring "$TRUSTEDFILE" "$1"
+	    TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
+	    eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
+	    if [ -d "$TRUSTEDPARTS" ]; then
+		for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
+		    remove_key_from_keyring "$trusted" "$1"
+		done
+	    fi
 	fi
-    fi
-    aptkey_echo "OK"
+	aptkey_echo "OK"
+	shift
+    done
 }
 
 
@@ -320,11 +323,11 @@ fi
 case "$command" in
     add)
         requires_root
-        $GPG --quiet --batch --import "$1"
+        $GPG --quiet --batch --import "$@"
         aptkey_echo "OK"
         ;;
     del|rm|remove)
-	remove_key "$1"
+	remove_key "$@"
         ;;
     update)
 	update
@@ -333,20 +336,17 @@ case "$command" in
 	net_update
 	;;
     list)
-        $GPG --batch --list-keys
+        $GPG --batch --list-keys "$@"
         ;;
     finger*)
-        $GPG --batch --fingerprint
+        $GPG --batch --fingerprint "$@"
         ;;
-    export)
-        $GPG --armor --export "$1"
-        ;;
-    exportall)
-        $GPG --armor --export
+    export|exportall)
+        $GPG --armor --export "$@"
         ;;
     adv*)
         aptkey_echo "Executing: $GPG $*"
-        $GPG $*
+        $GPG "$@"
         ;;
     help)
         usage
