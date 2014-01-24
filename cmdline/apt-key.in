@@ -281,8 +281,8 @@ if [ -z "$TRUSTEDFILE" ]; then
    eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
    if [ -r "$TRUSTEDFILE" ]; then
       GPG="$GPG --keyring $TRUSTEDFILE"
+      GPG="$GPG --primary-keyring $TRUSTEDFILE"
    fi
-   GPG="$GPG --primary-keyring $TRUSTEDFILE"
    TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
    eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
    if [ -d "$TRUSTEDPARTS" ]; then
@@ -316,6 +316,8 @@ if [ "$command" != "help" ]; then
 	if [ -w "$(dirname "$TRUSTEDFILE")" ]; then
 	   touch -- "$TRUSTEDFILE"
 	   chmod 0644 -- "$TRUSTEDFILE"
+	   GPG="$GPG --keyring $TRUSTEDFILE"
+	   GPG="$GPG --primary-keyring $TRUSTEDFILE"
 	fi
     fi
 fi
