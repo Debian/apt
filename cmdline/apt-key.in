@@ -198,7 +198,6 @@ remove_key_from_keyring() {
 	REALTARGET="$(readlink -f "$1")"
 	mv -f "$1" "${1}.dpkg-tmp"
 	cp -a "$REALTARGET" "$1"
-	ls "$(dirname $1)"
     fi
     # delete the key from the keyring
     $GPG --batch --delete-key --yes "$2"
