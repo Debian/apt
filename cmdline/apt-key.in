@@ -39,6 +39,8 @@ ARCHIVE_KEYRING_URI='&keyring-uri;'
 eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
 TMP_KEYRING=${APT_DIR}/var/lib/apt/keyrings/maybe-import-keyring.gpg
 
+aptkey_echo() { echo "$@"; }
+
 requires_root() {
 	if [ "$(id -u)" -ne 0 ]; then
 		echo >&1 "ERROR: This command can only be used by root."
@@ -142,7 +144,7 @@ net_update() {
     fi
     new_mtime=$(stat -c %Y $keyring)
     if [ $new_mtime -ne $old_mtime ]; then
-	echo "Checking for new archive signing keys now"
+	aptkey_echo "Checking for new archive signing keys now"
 	add_keys_with_verify_against_master_keyring $keyring $MASTER_KEYRING
     fi
 }
@@ -227,7 +229,7 @@ remove_key() {
 	    done
 	fi
     fi
-    echo "OK"
+    aptkey_echo "OK"
 }
 
 
@@ -265,6 +267,10 @@ while [ -n "$1" ]; do
 	 ;;
       --fakeroot)
 	 requires_root() { true; }
+	 shift
+	 ;;
+      --quiet)
+	 aptkey_echo() { true; }
 	 shift
 	 ;;
       --*)
@@ -316,7 +322,7 @@ case "$command" in
         requires_root
         init_keyring "$TRUSTEDFILE"
         $GPG --quiet --batch --import "$1"
-        echo "OK"
+        aptkey_echo "OK"
         ;;
     del|rm|remove)
         init_keyring "$TRUSTEDFILE"
@@ -348,7 +354,7 @@ case "$command" in
         ;;
     adv*)
         init_keyring "$TRUSTEDFILE"
-        echo "Executing: $GPG $*"
+        aptkey_echo "Executing: $GPG $*"
         $GPG $*
         ;;
     help)
