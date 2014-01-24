@@ -951,11 +951,20 @@ testempty() {
 }
 
 testequal() {
+	local MSG='Test of equality of'
+	if [ "$1" = '--nomsg' ]; then
+		MSG=''
+		shift
+	fi
+
 	local COMPAREFILE=$(mktemp)
 	addtrap "rm $COMPAREFILE;"
 	echo "$1" > $COMPAREFILE
 	shift
-	msgtest "Test for equality of" "$*"
+
+	if [ -n "$MSG" ]; then
+		msgtest "$MSG" "$*"
+	fi
 	$* 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
 

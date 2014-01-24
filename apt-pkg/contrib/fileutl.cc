@@ -465,7 +465,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       const char *C = Ent->d_name;
       for (; *C != 0; ++C)
 	 if (isalpha(*C) == 0 && isdigit(*C) == 0
-	     && *C != '_' && *C != '-') {
+	     && *C != '_' && *C != '-' && *C != ':') {
 	    // no required extension -> dot is a bad character
 	    if (*C == '.' && Ext.empty() == false)
 	       continue;
