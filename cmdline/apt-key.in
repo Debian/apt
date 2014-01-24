@@ -48,16 +48,6 @@ requires_root() {
 	fi
 }
 
-# gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
-init_keyring() {
-    for path; do
-        if ! [ -e "$path" ]; then
-            touch -- "$path"
-            chmod 0644 -- "$path"
-        fi
-    done
-}
-
 add_keys_with_verify_against_master_keyring() {
     ADD_KEYRING=$1
     MASTER=$2
@@ -311,49 +301,50 @@ if [ -z "$command" ]; then
 fi
 shift
 
-if [ "$command" != "help" ] && ! which gpg >/dev/null 2>&1; then
-    echo >&2 "Warning: gnupg does not seem to be installed."
-    echo >&2 "Warning: apt-key requires gnupg for most operations."
-    echo >&2
+if [ "$command" != "help" ]; then
+    if ! which gpg >/dev/null 2>&1; then
+	echo >&2 "Warning: gnupg does not seem to be installed."
+	echo >&2 "Warning: apt-key requires gnupg for most operations."
+	echo >&2
+    fi
+
+    # gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
+    if ! [ -e "$TRUSTEDFILE" ]; then
+	if [ -w "$(dirname "$TRUSTEDFILE")" ]; then
+	   touch -- "$TRUSTEDFILE"
+	   chmod 0644 -- "$TRUSTEDFILE"
+	fi
+    fi
 fi
 
 case "$command" in
     add)
         requires_root
-        init_keyring "$TRUSTEDFILE"
         $GPG --quiet --batch --import "$1"
         aptkey_echo "OK"
         ;;
     del|rm|remove)
-        init_keyring "$TRUSTEDFILE"
 	remove_key "$1"
         ;;
     update)
-        init_keyring "$TRUSTEDFILE"
 	update
 	;;
     net-update)
-        init_keyring "$TRUSTEDFILE"
 	net_update
 	;;
     list)
-        init_keyring "$TRUSTEDFILE"
         $GPG --batch --list-keys
         ;;
     finger*)
-        init_keyring "$TRUSTEDFILE"
         $GPG --batch --fingerprint
         ;;
     export)
-        init_keyring "$TRUSTEDFILE"
         $GPG --armor --export "$1"
         ;;
     exportall)
-        init_keyring "$TRUSTEDFILE"
         $GPG --armor --export
         ;;
     adv*)
-        init_keyring "$TRUSTEDFILE"
         aptkey_echo "Executing: $GPG $*"
         $GPG $*
         ;;
