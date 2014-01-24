@@ -43,7 +43,7 @@ aptkey_echo() { echo "$@"; }
 
 requires_root() {
 	if [ "$(id -u)" -ne 0 ]; then
-		echo >&1 "ERROR: This command can only be used by root."
+		echo >&2 "ERROR: This command can only be used by root."
 		exit 1
 	fi
 }
@@ -63,11 +63,11 @@ add_keys_with_verify_against_master_keyring() {
     MASTER=$2
 
     if [ ! -f "$ADD_KEYRING" ]; then
-	echo "ERROR: '$ADD_KEYRING' not found"
+	echo >&2 "ERROR: '$ADD_KEYRING' not found"
 	return
-    fi 
+    fi
     if [ ! -f "$MASTER" ]; then
-	echo "ERROR: '$MASTER' not found"
+	echo >&2 "ERROR: '$MASTER' not found"
 	return
     fi
 
@@ -175,7 +175,7 @@ update() {
 	    fi
 	done
     else
-	echo "Warning: removed keys keyring  $REMOVED_KEYS missing or not readable" >&2
+	echo >&2 "Warning: removed keys keyring  $REMOVED_KEYS missing or not readable"
     fi
 }
 
