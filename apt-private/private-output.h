@@ -43,10 +43,6 @@ bool ShowEssential(std::ostream &out,CacheFile &Cache);
 
 void Stats(std::ostream &out, pkgDepCache &Dep);
 
-// helpers to display single package data
-std::string
-GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver);
-
 // prompting
 bool YnPrompt(bool Default=true);
 bool AnalPrompt(const char *Text);

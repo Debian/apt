@@ -54,6 +54,15 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    if (I.IsOk() == false)
       return _error->Error(_("Package file %s is out of sync."),I.FileName());
 
+   // find matching sources.list metaindex
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
+   pkgIndexFile *Index;
+   if (SrcList->FindIndex(I, Index) == false &&
+       _system->FindIndex(I, Index) == false)
+      return _error->Error("Can not find indexfile for Package %s (%s)", 
+                           V.ParentPkg().Name(), V.VerStr());
+   std::string source_index_file = Index->Describe(true);
+
    // Read the record
    FileFd PkgF;
    if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
@@ -83,15 +92,17 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
       manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
    else
       manual_installed = 0;
-   std::string suite = GetArchiveSuite(CacheFile, V);
    TFRewriteData RW[] = {
+      // delete
       {"Conffiles",0},
       {"Description",0},
       {"Description-md5",0},
+      // improve
       {"Installed-Size", installed_size.c_str(), 0},
       {"Size", package_size.c_str(), "Download-Size"},
-      {"Archive-Origin", suite.c_str(), 0},
-      {"Manual-Installed", manual_installed, 0},
+      // add
+      {"APT-Manual-Installed", manual_installed, 0},
+      {"APT-Sources", source_index_file.c_str(), 0},
       {}
    };
 
