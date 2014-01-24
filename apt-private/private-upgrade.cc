@@ -1,3 +1,4 @@
+
 // Includes								/*{{{*/
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/upgrade.h>
@@ -37,6 +38,14 @@ static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
 bool DoDistUpgrade(CommandLine &CmdL)
 {
    return UpgradeHelper(CmdL, 0);
+}
+									/*}}}*/
+bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
+{
+   if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
+      return DoUpgradeWithAllowNewPackages(CmdL);
+   else
+      return DoUpgradeNoNewPackages(CmdL);
 }
 									/*}}}*/
 // DoUpgradeNoNewPackages - Upgrade all packages			/*{{{*/

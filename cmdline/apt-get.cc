@@ -1679,14 +1679,6 @@ void SigWinch(int)
 #endif
 }
 									/*}}}*/
-bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
-{
-   if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
-      return DoUpgradeWithAllowNewPackages(CmdL);
-   else
-      return DoUpgradeNoNewPackages(CmdL);
-}
-									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
