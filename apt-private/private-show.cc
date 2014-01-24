@@ -37,6 +37,9 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    pkgCache *Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
       return false;
+   pkgDepCache *depCache = CacheFile.GetDepCache();
+   if (unlikely(depCache == NULL))
+      return false;
 
    // Find an appropriate file
    pkgCache::VerFileIterator Vf = V.FileList();
@@ -73,6 +76,13 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    else
       package_size = _("unknown");
 
+   pkgDepCache::StateCache &state = (*depCache)[V.ParentPkg()];
+   bool is_installed = V.ParentPkg().CurrentVer() == V;
+   const char *manual_installed;
+   if (is_installed)
+      manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
+   else
+      manual_installed = 0;
    std::string suite = GetArchiveSuite(CacheFile, V);
    TFRewriteData RW[] = {
       {"Conffiles",0},
@@ -81,8 +91,10 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
       {"Installed-Size", installed_size.c_str(), 0},
       {"Size", package_size.c_str(), "Download-Size"},
       {"Archive-Origin", suite.c_str(), 0},
+      {"Manual-Installed", manual_installed, 0},
       {}
    };
+
    if(TFRewrite(stdout, Tags, NULL, RW) == false)
       return _error->Error("Internal Error, Unable to parse a package record");
 

@@ -10,12 +10,14 @@ configarchitecture "i386"
 DESCR='Some description 
  That has multiple lines'
 insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
+insertinstalledpackage 'foo' 'all' '1.0'
 
 setupaptarchive
 
 APTARCHIVE=$(readlink -f ./aptarchive)
 
 # note that we do not display Description-md5 with the "apt" cmd
+# and also show some additional fields that are calculated
 testequal "Package: foo
 Priority: optional
 Section: other
@@ -25,7 +27,8 @@ Architecture: all
 Version: 1.0
 Filename: pool/main/foo/foo_1.0_all.deb
 Download-Size: unknown
-Archive-Origin: unstable
+Archive-Origin: unstable,now
+Manual-Installed: yes
 Description: Some description 
  That has multiple lines
 " apt show foo
