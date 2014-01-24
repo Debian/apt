@@ -37,6 +37,9 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    pkgCache *Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
       return false;
+   pkgDepCache *depCache = CacheFile.GetDepCache();
+   if (unlikely(depCache == NULL))
+      return false;
 
    // Find an appropriate file
    pkgCache::VerFileIterator Vf = V.FileList();
@@ -51,26 +54,69 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    if (I.IsOk() == false)
       return _error->Error(_("Package file %s is out of sync."),I.FileName());
 
+   // find matching sources.list metaindex
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
+   pkgIndexFile *Index;
+   if (SrcList->FindIndex(I, Index) == false &&
+       _system->FindIndex(I, Index) == false)
+      return _error->Error("Can not find indexfile for Package %s (%s)", 
+                           V.ParentPkg().Name(), V.VerStr());
+   std::string source_index_file = Index->Describe(true);
+
    // Read the record
    FileFd PkgF;
    if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
       return false;
    pkgTagSection Tags;
    pkgTagFile TagF(&PkgF);
-   
+
+   if (TagF.Jump(Tags, V.FileList()->Offset) == false)
+      return _error->Error("Internal Error, Unable to parse a package record");
+
+   // make size nice
+   std::string installed_size;
+   if (Tags.FindI("Installed-Size") > 0)
+      strprintf(installed_size, "%sB", SizeToStr(Tags.FindI("Installed-Size")*1024).c_str());
+   else
+      installed_size = _("unknown");
+   std::string package_size;
+   if (Tags.FindI("Size") > 0)
+      strprintf(package_size, "%sB", SizeToStr(Tags.FindI("Size")).c_str());
+   else
+      package_size = _("unknown");
+
+   pkgDepCache::StateCache &state = (*depCache)[V.ParentPkg()];
+   bool is_installed = V.ParentPkg().CurrentVer() == V;
+   const char *manual_installed;
+   if (is_installed)
+      manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
+   else
+      manual_installed = 0;
+
+   // FIXME: add verbose that does not do the removal of the tags?
    TFRewriteData RW[] = {
+      // delete, apt-cache show has this info and most users do not care
+      {"MD5sum", 0},
+      {"SHA1", 0},
+      {"SHA256", 0},
+      {"Filename", 0},
+      {"Multi-Arch", 0},
+      {"Architecture", 0},
       {"Conffiles",0},
+      // we use the translated description
       {"Description",0},
       {"Description-md5",0},
+      // improve
+      {"Installed-Size", installed_size.c_str(), 0},
+      {"Size", package_size.c_str(), "Download-Size"},
+      // add
+      {"APT-Manual-Installed", manual_installed, 0},
+      {"APT-Sources", source_index_file.c_str(), 0},
       {}
    };
-   const char *Zero = 0;
-   if (TagF.Jump(Tags, V.FileList()->Offset) == false ||
-       TFRewrite(stdout,Tags,&Zero,RW) == false)
-   {
-      _error->Error("Internal Error, Unable to parse a package record");
-      return false;
-   }
+
+   if(TFRewrite(stdout, Tags, NULL, RW) == false)
+      return _error->Error("Internal Error, Unable to parse a package record");
 
    // write the description
    pkgRecords Recs(*Cache);
@@ -92,11 +138,19 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionList::Version const select = APT::VersionList::CANDIDATE;
+   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", false) ?
+			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver, c1out) == false)
 	 return false;
+
+   if (select == APT::VersionList::CANDIDATE)
+   {
+      APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::ALL, helper);
+      if (verset_all.size() > verset.size())
+         _error->Notice(ngettext("There is %lu additional record. Please use the '-a' switch to see it", "There are %lu additional records. Please use the '-a' switch to see them.", verset_all.size() - verset.size()), verset_all.size() - verset.size());
+   }
 
    for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();
 	Pkg != helper.virtualPkgs.end(); ++Pkg)

@@ -230,6 +230,10 @@ bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * const Cm
       addArg('v', "verbose", "APT::Cmd::List-Include-Summary", 0);
       addArg('a', "all-versions", "APT::Cmd::All-Versions", 0);
    }
+   else if (CmdMatches("show"))
+   {
+      addArg('a', "all-versions", "APT::Cache::AllVersions", 0);
+   }
    else if (addArgumentsAPTGet(Args, Cmd) || addArgumentsAPTCache(Args, Cmd))
    {
        // we have no (supported) command-name overlaps so far, so we call
