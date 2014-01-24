@@ -21,6 +21,8 @@ void remove_tmpfile(void)
 
 int main(int argc, char *argv[])
 {
+  _config->Set("APT::Sources::Use-Deb822", true);
+
    const char contents[] = ""
       "Types: deb\n"
       "URIs: http://ftp.debian.org/debian\n"
