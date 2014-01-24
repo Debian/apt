@@ -32,50 +32,29 @@ static char * GenerateTemporaryFileTemplate(const char *basename)	/*{{{*/
 									/*}}}*/
 // ExecGPGV - returns the command needed for verify			/*{{{*/
 // ---------------------------------------------------------------------
-/* Generating the commandline for calling gpgv is somehow complicated as
+/* Generating the commandline for calling gpg is somehow complicated as
    we need to add multiple keyrings and user supplied options.
-   Also, as gpgv has no options to enforce a certain reduced style of
+   Also, as gpg has no options to enforce a certain reduced style of
    clear-signed files (=the complete content of the file is signed and
    the content isn't encoded) we do a divide and conquer approach here
-   and split up the clear-signed file in message and signature for gpgv
+   and split up the clear-signed file in message and signature for gpg.
+   And as a cherry on the cake, we use our apt-key wrapper to do part
+   of the lifting in regards to merging keyrings. Fun for the whole family.
 */
 void ExecGPGV(std::string const &File, std::string const &FileGPG,
              int const &statusfd, int fd[2])
 {
    #define EINTERNAL 111
-   std::string const gpgvpath = _config->Find("Dir::Bin::gpg", "/usr/bin/gpgv");
-   // FIXME: remove support for deprecated APT::GPGV setting
-   std::string const trustedFile = _config->Find("APT::GPGV::TrustedKeyring", _config->FindFile("Dir::Etc::Trusted"));
-   std::string const trustedPath = _config->FindDir("Dir::Etc::TrustedParts");
+   std::string const aptkey = _config->FindFile("Dir::Bin::apt-key", "/usr/bin/apt-key");
 
    bool const Debug = _config->FindB("Debug::Acquire::gpgv", false);
 
-   if (Debug == true)
-   {
-      std::clog << "gpgv path: " << gpgvpath << std::endl;
-      std::clog << "Keyring file: " << trustedFile << std::endl;
-      std::clog << "Keyring path: " << trustedPath << std::endl;
-   }
-
-   std::vector<std::string> keyrings;
-   if (DirectoryExists(trustedPath))
-     keyrings = GetListOfFilesInDir(trustedPath, "gpg", false, true);
-   if (RealFileExists(trustedFile) == true)
-     keyrings.push_back(trustedFile);
-
    std::vector<const char *> Args;
-   Args.reserve(30);
+   Args.reserve(10);
 
-   if (keyrings.empty() == true)
-   {
-      // TRANSLATOR: %s is the trusted keyring parts directory
-      ioprintf(std::cerr, _("No keyring installed in %s."),
-	    _config->FindDir("Dir::Etc::TrustedParts").c_str());
-      exit(EINTERNAL);
-   }
-
-   Args.push_back(gpgvpath.c_str());
-   Args.push_back("--ignore-time-conflict");
+   Args.push_back(aptkey.c_str());
+   Args.push_back("--quiet");
+   Args.push_back("adv");
 
    char statusfdstr[10];
    if (statusfd != -1)
@@ -83,13 +62,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       Args.push_back("--status-fd");
       snprintf(statusfdstr, sizeof(statusfdstr), "%i", statusfd);
       Args.push_back(statusfdstr);
-   }
-
-   for (std::vector<std::string>::const_iterator K = keyrings.begin();
-	K != keyrings.end(); ++K)
-   {
-      Args.push_back("--keyring");
-      Args.push_back(K->c_str());
    }
 
    Configuration::Item const *Opts;
@@ -104,6 +76,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 Args.push_back(Opts->Value.c_str());
       }
    }
+   Args.push_back("--verify");
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
    std::vector<std::string> dataHeader;
@@ -160,7 +133,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    if (Debug == true)
    {
-      std::clog << "Preparing to exec: " << gpgvpath;
+      std::clog << "Preparing to exec: ";
       for (std::vector<const char *>::const_iterator a = Args.begin(); *a != NULL; ++a)
 	 std::clog << " " << *a;
       std::clog << std::endl;
@@ -168,7 +141,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    if (statusfd != -1)
    {
-      int const nullfd = open("/dev/null", O_RDONLY);
+      int const nullfd = open("/dev/null", O_WRONLY);
       close(fd[0]);
       // Redirect output to /dev/null; we read from the status fd
       if (statusfd != STDOUT_FILENO)
@@ -185,7 +158,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    if (releaseSignature == DETACHED)
    {
-      execvp(gpgvpath.c_str(), (char **) &Args[0]);
+      execvp(Args[0], (char **) &Args[0]);
       ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
       exit(EINTERNAL);
    }
@@ -205,7 +178,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       {
 	 if (statusfd != -1)
 	    dup2(fd[1], statusfd);
-	 execvp(gpgvpath.c_str(), (char **) &Args[0]);
+	 execvp(Args[0], (char **) &Args[0]);
 	 ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
 	 UNLINK_EXIT(EINTERNAL);
       }
@@ -216,7 +189,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       {
 	 if (errno == EINTR)
 	    continue;
-	 ioprintf(std::cerr, _("Waited for %s but it wasn't there"), "gpgv");
+	 ioprintf(std::cerr, _("Waited for %s but it wasn't there"), "apt-key");
 	 UNLINK_EXIT(EINTERNAL);
       }
 #undef UNLINK_EXIT
@@ -229,14 +202,14 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       // check if it exit'ed normally …
       if (WIFEXITED(Status) == false)
       {
-	 ioprintf(std::cerr, _("Sub-process %s exited unexpectedly"), "gpgv");
+	 ioprintf(std::cerr, _("Sub-process %s exited unexpectedly"), "apt-key");
 	 exit(EINTERNAL);
       }
 
       // … and with a good exit code
       if (WEXITSTATUS(Status) != 0)
       {
-	 ioprintf(std::cerr, _("Sub-process %s returned an error code (%u)"), "gpgv", WEXITSTATUS(Status));
+	 ioprintf(std::cerr, _("Sub-process %s returned an error code (%u)"), "apt-key", WEXITSTATUS(Status));
 	 exit(WEXITSTATUS(Status));
       }
 

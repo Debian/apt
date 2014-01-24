@@ -29,7 +29,7 @@ aptcdromlog() {
 	test ! -e rootdir/media/cdrom || echo "CD-ROM is mounted, but shouldn't be!"
 	test -e rootdir/media/cdrom-unmounted || echo "Unmounted CD-ROM doesn't exist, but it should!"
 	aptcdrom "$@" -o quiet=1 >rootdir/tmp/apt-cdrom.log 2>&1 </dev/null
-	sed -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' rootdir/tmp/apt-cdrom.log
+	sed -e '/gpgv\?: Signature made/ d' -e '/gpgv\?: Good signature/ d' -e '/^Identifying/ d' -e '/Reading / d' rootdir/tmp/apt-cdrom.log
 	test ! -e rootdir/media/cdrom || echo "CD-ROM is mounted, but shouldn't be!"
 	test -e rootdir/media/cdrom-unmounted || echo "Unmounted CD-ROM doesn't exist, but it should!"
 }
