@@ -23,7 +23,6 @@ GPG_CMD="$GPG_CMD --homedir $GPGHOMEDIR"
 $GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING >/dev/null 2>&1
 # tell gpg that it shouldn't try to maintain a trustdb file
 GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
-
 GPG="$GPG_CMD"
 
 APT_DIR="/"
@@ -113,7 +112,6 @@ net_update() {
 	echo >&2 "ERROR: Your distribution is not supported in net-update as no uri for the archive-keyring is set"
 	exit 1
     fi
-    requires_root
     # in theory we would need to depend on wget for this, but this feature
     # isn't useable in debian anyway as we have no keyring uri nor a master key
     if ! which wget >/dev/null 2>&1; then
@@ -145,7 +143,6 @@ update() {
 	echo >&2 "Is the &keyring-package; package installed?"
 	exit 1
     fi
-    requires_root
 
     # add new keys from the package;
 
@@ -158,11 +155,8 @@ update() {
 
     if [ -r "$REMOVED_KEYS" ]; then
 	# remove no-longer supported/used keys
-	keys=`$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5`
-	for key in $keys; do
-	    if $GPG --list-keys --with-colons | grep ^pub | cut -d: -f5 | grep -q $key; then
-		$GPG --quiet --batch --delete-key --yes ${key}
-	    fi
+	$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5 | while read key; do
+	    foreach_keyring_do 'remove_key_from_keyring' "$key"
 	done
     else
 	echo >&2 "Warning: removed keys keyring  $REMOVED_KEYS missing or not readable"
@@ -172,12 +166,17 @@ update() {
 remove_key_from_keyring() {
     local KEYRINGFILE="$1"
     shift
+    # non-existent keyrings have by definition no keys
+    if [ ! -e "$KEYRINGFILE" ]; then
+       return
+    fi
+
     local GPG="$GPG_CMD --keyring $KEYRINGFILE"
     while [ -n "$1" ]; do
        local KEY="$1"
        shift
 	# check if the key is in this keyring: the key id is in the 5 column at the end
-	if ! $GPG --with-colons --list-keys 2>&1 | grep -q "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]\+${KEY}:"; then
+	if ! $GPG --with-colons --list-keys 2>&1 | grep -q "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]*${KEY}:"; then
 	    continue
 	fi
 	if [ ! -w "$KEYRINGFILE" ]; then
@@ -205,12 +204,6 @@ remove_key_from_keyring() {
     done
 }
 
-remove_key() {
-    requires_root
-    foreach_keyring_do 'remove_key_from_keyring' "$@"
-    aptkey_echo "OK"
- }
-
 foreach_keyring_do() {
    local ACTION="$1"
    shift
@@ -219,19 +212,61 @@ foreach_keyring_do() {
 	$ACTION "$FORCED_KEYRING" "$@"
    else
 	# otherwise all known keyrings are up for inspection
-	local TRUSTEDFILE="/etc/apt/trusted.gpg"
-	eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
-	eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
-	$ACTION "$TRUSTEDFILE" "$@"
+	if [ -s "$TRUSTEDFILE" ]; then
+	    $ACTION "$TRUSTEDFILE" "$@"
+	fi
 	local TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
 	eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
 	if [ -d "$TRUSTEDPARTS" ]; then
+	    # strip / suffix as gpg will double-slash in that case (#665411)
+	    local STRIPPED_TRUSTEDPARTS="${TRUSTEDPARTS%/}"
+	    if [ "${STRIPPED_TRUSTEDPARTS}/" = "$TRUSTEDPARTS" ]; then
+		TRUSTEDPARTS="$STRIPPED_TRUSTEDPARTS"
+	    fi
 	    for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
-		$ACTION "$trusted" "$@"
+		if [ -s "$trusted" ]; then
+		    $ACTION "$trusted" "$@"
+		fi
 	    done
 	fi
    fi
 }
+
+list_keys_from_keyring() {
+    local KEYRINGFILE="$1"
+    shift
+    # don't show the error message if this keyring doesn't include the key
+    $GPG_CMD --keyring "$KEYRINGFILE" --batch --list-keys "$@" 2>/dev/null || true
+}
+
+fingerprint_keys_from_keyring() {
+    local KEYRINGFILE="$1"
+    shift
+    # don't show the error message if this keyring doesn't include the fingerprint
+    $GPG_CMD --keyring "$KEYRINGFILE" --batch --fingerprint "$@" 2>/dev/null || true
+}
+
+import_keys_from_keyring() {
+    local IMPORT="$1"
+    local KEYRINGFILE="$2"
+    $GPG_CMD --keyring "$KEYRINGFILE" --batch --import "$IMPORT" >/dev/null 2>&1
+}
+
+setup_merged_keyring() {
+    local TRUSTEDFILE_BAK="$TRUSTEDFILE"
+    TRUSTEDFILE='/dev/null'
+    foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/trusted.gpg"
+    TRUSTEDFILE="$TRUSTEDFILE_BAK"
+    # mark it as non-writeable so users get errors if gnupg tries to modify it
+    if [ -s "${GPGHOMEDIR}/trusted.gpg" ]; then
+	chmod -w "${GPGHOMEDIR}/trusted.gpg"
+	GPG="$GPG --keyring ${GPGHOMEDIR}/trusted.gpg"
+    fi
+    if [ -r "$TRUSTEDFILE" ]; then
+	GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
+    fi
+}
+
 
 usage() {
     echo "Usage: apt-key [--keyring file] [command] [arguments]"
@@ -257,12 +292,6 @@ while [ -n "$1" ]; do
 	 shift
 	 TRUSTEDFILE="$1"
 	 FORCED_KEYRING="$1"
-	 if [ -r "$TRUSTEDFILE" ] || [ "$2" = 'add' ] || [ "$2" = 'adv' ]; then
-	    GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
-	 else
-	    echo >&2 "Error: The specified keyring »$TRUSTEDFILE« is missing or not readable"
-	    exit 1
-	 fi
 	 shift
 	 ;;
       --fakeroot)
@@ -286,22 +315,6 @@ if [ -z "$TRUSTEDFILE" ]; then
    TRUSTEDFILE="/etc/apt/trusted.gpg"
    eval $(apt-config shell TRUSTEDFILE Apt::GPGV::TrustedKeyring)
    eval $(apt-config shell TRUSTEDFILE Dir::Etc::Trusted/f)
-   if [ -r "$TRUSTEDFILE" ]; then
-      GPG="$GPG --keyring $TRUSTEDFILE"
-      GPG="$GPG --primary-keyring $TRUSTEDFILE"
-   fi
-   TRUSTEDPARTS="/etc/apt/trusted.gpg.d"
-   eval $(apt-config shell TRUSTEDPARTS Dir::Etc::TrustedParts/d)
-   if [ -d "$TRUSTEDPARTS" ]; then
-      # strip / suffix as gpg will double-slash in that case (#665411)
-      STRIPPED_TRUSTEDPARTS="${TRUSTEDPARTS%/}"
-      if [ "${STRIPPED_TRUSTEDPARTS}/" = "$TRUSTEDPARTS" ]; then
-	 TRUSTEDPARTS="$STRIPPED_TRUSTEDPARTS"
-      fi
-      for trusted in $(run-parts --list "$TRUSTEDPARTS" --regex '^.*\.gpg$'); do
-	 GPG="$GPG --keyring $trusted"
-      done
-   fi
 fi
 
 command="$1"
@@ -323,40 +336,47 @@ if [ "$command" != "help" ]; then
 	if [ -w "$(dirname "$TRUSTEDFILE")" ]; then
 	   touch -- "$TRUSTEDFILE"
 	   chmod 0644 -- "$TRUSTEDFILE"
-	   GPG="$GPG --keyring $TRUSTEDFILE"
-	   GPG="$GPG --primary-keyring $TRUSTEDFILE"
 	fi
     fi
 fi
 
 case "$command" in
     add)
-        requires_root
-        $GPG --quiet --batch --import "$@"
-        aptkey_echo "OK"
+	requires_root
+	setup_merged_keyring
+	$GPG --quiet --batch --import "$@"
+	aptkey_echo "OK"
         ;;
     del|rm|remove)
-	remove_key "$@"
+	requires_root
+	foreach_keyring_do 'remove_key_from_keyring' "$@"
+	aptkey_echo "OK"
         ;;
     update)
+	requires_root
+	setup_merged_keyring
 	update
 	;;
     net-update)
+	requires_root
+	setup_merged_keyring
 	net_update
 	;;
     list)
-        $GPG --batch --list-keys "$@"
-        ;;
+	foreach_keyring_do 'list_keys_from_keyring' "$@"
+	;;
     finger*)
-        $GPG --batch --fingerprint "$@"
-        ;;
+	foreach_keyring_do 'fingerprint_keys_from_keyring' "$@"
+	;;
     export|exportall)
-        $GPG --armor --export "$@"
-        ;;
+	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/trusted.gpg"
+	$GPG_CMD --keyring "${GPGHOMEDIR}/trusted.gpg" --armor --export "$@"
+	;;
     adv*)
-        aptkey_echo "Executing: $GPG $*"
-        $GPG "$@"
-        ;;
+	setup_merged_keyring
+	aptkey_echo "Executing: $GPG $*"
+	$GPG "$@"
+	;;
     help)
         usage
         ;;
