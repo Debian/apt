@@ -33,7 +33,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.10\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-01-22 19:02+0100\n"
+"POT-Creation-Date: 2014-01-24 23:15+0100\n"
 "PO-Revision-Date: 2011-01-24 11:47+0100\n"
 "Last-Translator: Javier Fernández-Sanguino Peña <jfs@debian.org>\n"
 "Language-Team: Debian Spanish <debian-l10n-spanish@lists.debian.org>\n"
@@ -147,7 +147,7 @@ msgid "Total space accounted for: "
 msgstr "Espacio registrado total: "
 
 #: cmdline/apt-cache.cc:497 cmdline/apt-cache.cc:1146
-#: apt-private/private-show.cc:52
+#: apt-private/private-show.cc:55
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "El archivo de paquetes %s está desincronizado."
@@ -155,7 +155,7 @@ msgstr "El archivo de paquetes %s está desincronizado."
 #: cmdline/apt-cache.cc:575 cmdline/apt-cache.cc:1432
 #: cmdline/apt-cache.cc:1434 cmdline/apt-cache.cc:1511 cmdline/apt-mark.cc:48
 #: cmdline/apt-mark.cc:95 cmdline/apt-mark.cc:221
-#: apt-private/private-show.cc:113 apt-private/private-show.cc:115
+#: apt-private/private-show.cc:167 apt-private/private-show.cc:169
 msgid "No packages found"
 msgstr "No se encontró ningún paquete"
 
@@ -684,8 +684,8 @@ msgstr ""
 "  -c=? Lee este archivo de configuración\n"
 "  -o=? Establece una opción de configuración arbitraria, p. ej. \n"
 "       -o dir::cache=/tmp\n"
-"Consulte las páginas del manual de apt-get(8), sources.list(5) y apt."
-"conf(5)\n"
+"Consulte las páginas del manual de apt-get(8), sources.list(5) y apt.conf"
+"(5)\n"
 "para más información y opciones.\n"
 "                       Este APT tiene poderes de Super Vaca.\n"
 
@@ -745,6 +745,11 @@ msgid ""
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
 "   manual - Mark the given packages as manually installed\n"
+"   hold - Mark a package as held back\n"
+"   unhold - Unset a package set as held back\n"
+"   showauto - Print the list of automatically installed packages\n"
+"   showmanual - Print the list of manually installed packages\n"
+"   showhold - Print the list of package on hold\n"
 "\n"
 "Options:\n"
 "  -h  This help text.\n"
@@ -772,7 +777,8 @@ msgid ""
 " install - install packages\n"
 " remove  - remove packages\n"
 "\n"
-" upgrade - upgrade the systems packages\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -808,11 +814,11 @@ msgid "File not found"
 msgstr "Fichero no encontrado"
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:617 methods/rred.cc:626
+#: methods/rred.cc:618 methods/rred.cc:627
 msgid "Failed to stat"
 msgstr "No pude leer"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:623
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:624
 msgid "Failed to set modification time"
 msgstr "No pude poner el tiempo de modificación"
 
@@ -901,7 +907,7 @@ msgstr "No pude crear un socket"
 msgid "Could not connect data socket, connection timed out"
 msgstr "No pude conectar el socket de datos, expiró el tiempo de conexión"
 
-#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:21
+#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:22
 msgid "Failed"
 msgstr "Falló"
 
@@ -1596,16 +1602,16 @@ msgstr ""
 msgid "The update command takes no arguments"
 msgstr "El comando de actualización no toma argumentos"
 
-#: apt-private/private-upgrade.cc:18
+#: apt-private/private-upgrade.cc:19
 msgid "Calculating upgrade... "
 msgstr "Calculando la actualización... "
 
-#: apt-private/private-upgrade.cc:23
+#: apt-private/private-upgrade.cc:24
 #, fuzzy
 msgid "Internal error, Upgrade broke stuff"
 msgstr "Error Interno, AllUpgrade rompió cosas"
 
-#: apt-private/private-upgrade.cc:25
+#: apt-private/private-upgrade.cc:26
 msgid "Done"
 msgstr "Listo"
 
@@ -1613,7 +1619,19 @@ msgstr "Listo"
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc:105
+#: apt-private/private-show.cc:81 apt-private/private-show.cc:86
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-show.cc:152
+#, c-format
+msgid "There is %lu additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %lu additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc:159
 msgid "not a real package (virtual)"
 msgstr ""
 
@@ -1760,8 +1778,8 @@ msgstr ""
 msgid ""
 "above this message are important. Please fix them and run [I]nstall again"
 msgstr ""
-"encima de este mensaje son importantes. Por favor, corríjalas y ejecute "
-"«[I]nstall» otra vez"
+"encima de este mensaje son importantes. Por favor, corríjalas y ejecute «[I]"
+"nstall» otra vez"
 
 #: dselect/update:30
 msgid "Merging available information"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.14.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-01-22 19:02+0100\n"
+"POT-Creation-Date: 2014-01-24 23:15+0100\n"
 "PO-Revision-Date: 2014-01-01 13:45+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -96,7 +96,7 @@ msgid "Total space accounted for: "
 msgstr "Tổng chỗ đã tính dành cho: "
 
 #: cmdline/apt-cache.cc:497 cmdline/apt-cache.cc:1146
-#: apt-private/private-show.cc:52
+#: apt-private/private-show.cc:55
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "Tập tin gói %s không đồng bộ được."
@@ -104,7 +104,7 @@ msgstr "Tập tin gói %s không đồng bộ được."
 #: cmdline/apt-cache.cc:575 cmdline/apt-cache.cc:1432
 #: cmdline/apt-cache.cc:1434 cmdline/apt-cache.cc:1511 cmdline/apt-mark.cc:48
 #: cmdline/apt-mark.cc:95 cmdline/apt-mark.cc:221
-#: apt-private/private-show.cc:113 apt-private/private-show.cc:115
+#: apt-private/private-show.cc:167 apt-private/private-show.cc:169
 msgid "No packages found"
 msgstr "Không tìm thấy gói"
 
@@ -691,6 +691,7 @@ msgstr ""
 "việc này"
 
 #: cmdline/apt-mark.cc:381
+#, fuzzy
 msgid ""
 "Usage: apt-mark [options] {auto|manual} pkg1 [pkg2 ...]\n"
 "\n"
@@ -700,6 +701,11 @@ msgid ""
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
 "   manual - Mark the given packages as manually installed\n"
+"   hold - Mark a package as held back\n"
+"   unhold - Unset a package set as held back\n"
+"   showauto - Print the list of automatically installed packages\n"
+"   showmanual - Print the list of manually installed packages\n"
+"   showhold - Print the list of package on hold\n"
 "\n"
 "Options:\n"
 "  -h  This help text.\n"
@@ -748,7 +754,8 @@ msgid ""
 " install - install packages\n"
 " remove  - remove packages\n"
 "\n"
-" upgrade - upgrade the systems packages\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -797,11 +804,11 @@ msgid "File not found"
 msgstr "Không tìm thấy tập tin"
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:617 methods/rred.cc:626
+#: methods/rred.cc:618 methods/rred.cc:627
 msgid "Failed to stat"
 msgstr "Gặp lỗi khi lấy thống kê"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:623
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:624
 msgid "Failed to set modification time"
 msgstr "Gặp lỗi khi đặt giờ sửa đổi"
 
@@ -890,7 +897,7 @@ msgstr "Không thể tạo ổ cắm"
 msgid "Could not connect data socket, connection timed out"
 msgstr "Không thể kết nối ổ cắm dữ liệu, kết nối đã quá giờ"
 
-#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:21
+#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:22
 msgid "Failed"
 msgstr "Gặp lỗi"
 
@@ -1573,15 +1580,15 @@ msgstr "Đang sắp xếp"
 msgid "The update command takes no arguments"
 msgstr "Lệnh cập nhật không chấp nhận đối số"
 
-#: apt-private/private-upgrade.cc:18
+#: apt-private/private-upgrade.cc:19
 msgid "Calculating upgrade... "
 msgstr "Đang tính toán nâng cấp... "
 
-#: apt-private/private-upgrade.cc:23
+#: apt-private/private-upgrade.cc:24
 msgid "Internal error, Upgrade broke stuff"
 msgstr "Lỗi nội bộ: Upgrade (Nâng cấp) đã làm hỏng thứ gì đó"
 
-#: apt-private/private-upgrade.cc:25
+#: apt-private/private-upgrade.cc:26
 msgid "Done"
 msgstr "Xong"
 
@@ -1589,7 +1596,18 @@ msgstr "Xong"
 msgid "Full Text Search"
 msgstr "Tìm kiếm toàn văn"
 
-#: apt-private/private-show.cc:105
+#: apt-private/private-show.cc:81 apt-private/private-show.cc:86
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-show.cc:152
+#, c-format
+msgid "There is %lu additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %lu additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+
+#: apt-private/private-show.cc:159
 msgid "not a real package (virtual)"
 msgstr "không là gói thật (ảo)"
 

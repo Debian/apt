@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-01-22 19:02+0100\n"
+"POT-Creation-Date: 2014-01-24 23:15+0100\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -94,7 +94,7 @@ msgid "Total space accounted for: "
 msgstr "को लागि कूल खाली ठाऊँ लेखांकन:"
 
 #: cmdline/apt-cache.cc:497 cmdline/apt-cache.cc:1146
-#: apt-private/private-show.cc:52
+#: apt-private/private-show.cc:55
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "प्याकेज फाइल %s sync भन्दा बाहिर छ ।"
@@ -102,7 +102,7 @@ msgstr "प्याकेज फाइल %s sync भन्दा बाहि�
 #: cmdline/apt-cache.cc:575 cmdline/apt-cache.cc:1432
 #: cmdline/apt-cache.cc:1434 cmdline/apt-cache.cc:1511 cmdline/apt-mark.cc:48
 #: cmdline/apt-mark.cc:95 cmdline/apt-mark.cc:221
-#: apt-private/private-show.cc:113 apt-private/private-show.cc:115
+#: apt-private/private-show.cc:167 apt-private/private-show.cc:169
 msgid "No packages found"
 msgstr "कुनै प्याकेजहरू फेला परेन"
 
@@ -663,6 +663,11 @@ msgid ""
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
 "   manual - Mark the given packages as manually installed\n"
+"   hold - Mark a package as held back\n"
+"   unhold - Unset a package set as held back\n"
+"   showauto - Print the list of automatically installed packages\n"
+"   showmanual - Print the list of manually installed packages\n"
+"   showhold - Print the list of package on hold\n"
 "\n"
 "Options:\n"
 "  -h  This help text.\n"
@@ -690,7 +695,8 @@ msgid ""
 " install - install packages\n"
 " remove  - remove packages\n"
 "\n"
-" upgrade - upgrade the systems packages\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -726,11 +732,11 @@ msgid "File not found"
 msgstr "फाइल फेला परेन "
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:617 methods/rred.cc:626
+#: methods/rred.cc:618 methods/rred.cc:627
 msgid "Failed to stat"
 msgstr "स्थिर गर्न असफल भयो"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:623
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:624
 msgid "Failed to set modification time"
 msgstr "परिमार्जन समय सेट असफल भयो"
 
@@ -819,7 +825,7 @@ msgstr "एउटा सकेट सिर्जना गर्न सके�
 msgid "Could not connect data socket, connection timed out"
 msgstr "डेटा सकेट जडान गर्न सकिएन, जडान समय सकियो"
 
-#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:21
+#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:22
 msgid "Failed"
 msgstr "असफल भयो"
 
@@ -1497,16 +1503,16 @@ msgstr ""
 msgid "The update command takes no arguments"
 msgstr "अद्यावधिक आदेशले कुनै तर्कहरू लिदैन"
 
-#: apt-private/private-upgrade.cc:18
+#: apt-private/private-upgrade.cc:19
 msgid "Calculating upgrade... "
 msgstr "स्तर वृद्धि गणना गरिदैछ..."
 
-#: apt-private/private-upgrade.cc:23
+#: apt-private/private-upgrade.cc:24
 #, fuzzy
 msgid "Internal error, Upgrade broke stuff"
 msgstr "आन्तरिक त्रुटि,सबै स्तरवृद्धिले उत्तम गुण नष्ट गर्दछ"
 
-#: apt-private/private-upgrade.cc:25
+#: apt-private/private-upgrade.cc:26
 msgid "Done"
 msgstr "काम भयो"
 
@@ -1514,7 +1520,19 @@ msgstr "काम भयो"
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc:105
+#: apt-private/private-show.cc:81 apt-private/private-show.cc:86
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-show.cc:152
+#, c-format
+msgid "There is %lu additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %lu additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc:159
 msgid "not a real package (virtual)"
 msgstr ""
 
