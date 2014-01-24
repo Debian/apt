@@ -1,14 +1,14 @@
 # Translation of apt-doc to German
 # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
 # This file is distributed under the same license as the apt-doc package.
-# Chris Leick <c.leick@vollbio.de>, 2009-2012.
+# Chris Leick <c.leick@vollbio.de>, 2009-2014.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 0.9.7\n"
+"Project-Id-Version: apt-doc 0.9.14.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-29 17:01+0100\n"
-"PO-Revision-Date: 2012-06-25 22:49+0100\n"
+"POT-Creation-Date: 2014-01-24 12:29+0100\n"
+"PO-Revision-Date: 2014-01-21 20:59+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
@@ -1334,6 +1334,14 @@ msgid ""
 "will never remove packages, only allow adding new ones.  Configuration Item: "
 "<literal>APT::Get::Upgrade-Allow-New</literal>."
 msgstr ""
+"erlaubt das Installieren neuer Pakete, wenn es zusammen mit "
+"<literal>upgrade</literal> benutzt wird. Dies ist nützlich, falls das "
+"Aktualisieren eines installierten Pakets zur Installation neue "
+"Abhängigkeiten hat. Anstatt das Paket zurückzuhalten, wird <literal>upgrade</"
+"literal> ein Upgrade des Pakets durchführen und die neuen Abhängigkeiten "
+"installieren. Beachten Sie, dass <literal>upgrade</literal> mit dieser "
+"Option niemals Pakete entfernen, sondern nur das Hinzufügen neuer gestatten "
+"wird.Konfigurationselement: <literal>APT::Get::Upgrade-Allow-New</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:407
@@ -1553,6 +1561,7 @@ msgstr ""
 "fragen. Dies ist für Werkzeuge wie pbuilder nützlich. Konfigurationselement: "
 "<literal>APT::Get::AllowUnauthenticated</literal>."
 
+# FIXME s/Item/Items/
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:527
 msgid ""
@@ -1562,6 +1571,12 @@ msgid ""
 "Item: <literal>DpkgPM::Progress</literal> and <literal>Dpkg::Progress-Fancy</"
 "literal>."
 msgstr ""
+"zeigt benutzerfreundliche Fortschrittsinformationen im Terminalfenster, wenn "
+"Pakete installiert beziehungsweise entfernt werden oder ein Upgrade "
+"durchgeführt wird. Informationen über eine maschinell auswertbare Version "
+"dieser Daten finden Sie in README.progress-reporting im Apt-doc-Verzeichnis. "
+"Konfigurationselemente: <literal>DpkgPM::Progress</literal> und "
+"<literal>Dpkg::Progress-Fancy</literal>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:540 apt-cache.8.xml:345 apt-key.8.xml:176 apt-mark.8.xml:127
@@ -2900,20 +2915,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:87
-#, fuzzy
-#| msgid ""
-#| "Mount point; specify the location to mount the CD-ROM. This mount point "
-#| "must be listed in <filename>/etc/fstab</filename> and properly "
-#| "configured.  Configuration Item: <literal>Acquire::cdrom::mount</literal>."
 msgid ""
 "Do not try to auto-detect the CD-ROM path. Usually combined with the "
 "<option>--cdrom</option> option.  Configuration Item: <literal>Acquire::"
 "cdrom::AutoDetect</literal>."
 msgstr ""
-"Einhängepunkt; gibt den Ort an, an dem die CD-ROM eingehängt wird. Dieser "
-"Einhängepunkt muss in <filename>/etc/fstab</filename> eingetragen und "
-"angemessen konfiguriert sein. Konfigurationselement: <literal>Acquire::"
-"cdrom::mount</literal>."
+"versucht nicht, den CD-ROM-Pfad automatisch zu bestimmen. Dies wird "
+"üblicherweise mit der Option <option>--cdrom</option> kombiniert. "
+"Konfigurationselement: <literal>Acquire::cdrom::AutoDetect</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:95
@@ -3894,13 +3903,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:391
-#, fuzzy
-#| msgid ""
-#| "The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</"
-#| "literal> which accepts integer values in kilobytes. The default value is "
-#| "0 which deactivates the limit and tries to use all available bandwidth "
-#| "(note that this option implicitly disables downloading from multiple "
-#| "servers at the same time.)"
 msgid ""
 "The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</"
 "literal> which accepts integer values in kilobytes per second. The default "
@@ -3909,11 +3911,11 @@ msgid ""
 "multiple servers at the same time."
 msgstr ""
 "Die benutzte Bandbreite kann durch <literal>Acquire::http::Dl-Limit</"
-"literal> eingeschränkt werden, was Ganzzahlwerte in Kilobyte akzeptiert. Der "
-"Vorgabewert ist 0, was die Beschränkung ausschaltet und versucht, sämtliche "
-"verfügbare Bandbreite zu benutzen. (Beachten Sie, dass diese Optionen "
-"implizit das Herunterladen von mehreren Servern zur gleichen Zeit "
-"deaktiviert.)"
+"literal> eingeschränkt werden, was Ganzzahlwerte in Kilobyte pro Sekunde "
+"akzeptiert. Der Vorgabewert ist 0, was die Beschränkung ausschaltet und "
+"versucht, sämtliche verfügbare Bandbreite zu benutzen. Beachten Sie, dass "
+"diese Optionen implizit das Herunterladen von mehreren Servern zur gleichen "
+"Zeit deaktiviert."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:398
@@ -3940,6 +3942,15 @@ msgid ""
 "takes precedence over the legacy option name <literal>ProxyAutoDetect</"
 "literal>."
 msgstr ""
+"<literal>Acquire::http::Proxy-Auto-Detect</literal> kann benutzt werden, um "
+"einen externen Befehl zum Auffinden des HTTP-Proxys anzugeben, der benutzt "
+"werden soll. APT erwartet den Befehl zum Ausgeben auf der Standardausgabe "
+"imStil <literal>http://proxy:port/</literal>. Dies wird das typische "
+"<literal>Acquire::http::Proxy</literal> außer Kraft setzen, aber keine "
+"spezielle per <literal>Acquire::http::Proxy::$HOST</literal> gesetzte Proxy-"
+"Rechnerkonfiguration. Eine Beispielimplementierung, die Avahi benutzt, "
+"finden Sie im Paket &squid-deb-proxy-client;. Diese Option hat Vorrang vor "
+"dem veralteten Optionsnamen <literal>ProxyAutoDetect</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:420
@@ -4330,12 +4341,12 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:576
 msgid "When downloading, force to use only the IPv4 protocol."
-msgstr ""
+msgstr "Beim Herunterladen wird die Verwendung des IPv4-Protokolls erzwungen."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:582
 msgid "When downloading, force to use only the IPv6 protocol."
-msgstr ""
+msgstr "Beim Herunterladen wird die Verwendung des IPv6-Protokolls erzwungen."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:589
@@ -4575,13 +4586,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:703
-#, fuzzy
-#| msgid ""
-#| "This is a list of shell commands to run before invoking &dpkg;. Like "
-#| "<literal>options</literal> this must be specified in list notation. The "
-#| "commands are invoked in order using <filename>/bin/sh</filename>; should "
-#| "any fail APT will abort. APT will pass the filenames of all .deb files it "
-#| "is going to install to the commands, one per line on standard input."
 msgid ""
 "This is a list of shell commands to run before invoking &dpkg;. Like "
 "<literal>options</literal> this must be specified in list notation. The "
@@ -4595,17 +4599,12 @@ msgstr ""
 "Listenschreibweise angegeben werden. Die Befehle werden der Reihenfolge nach "
 "mit <filename>/bin/sh</filename> aufgerufen, sollte einer fehlschlagen, wird "
 "APT abgebrochen. APT wird den Befehlen die Dateinamen aller .deb-Dateien, "
-"die es installieren wird, auf der Standardeingabe übergeben, einen pro Zeile."
+"die es installieren wird, einen pro Zeile, an den angeforderten "
+"standardmäßig auf die Standardeingabe verweisenden Dateideskriptor, "
+"übergeben."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:710
-#, fuzzy
-#| msgid ""
-#| "Version 2 of this protocol dumps more information, including the protocol "
-#| "version, the APT configuration space and the packages, files and versions "
-#| "being changed. Version 2 is enabled by setting <literal>DPkg::Tools::"
-#| "options::cmd::Version</literal> to 2. <literal>cmd</literal> is a command "
-#| "given to <literal>Pre-Install-Pkgs</literal>."
 msgid ""
 "Version 2 of this protocol dumps more information, including the protocol "
 "version, the APT configuration space and the packages, files and versions "
@@ -4614,10 +4613,8 @@ msgid ""
 msgstr ""
 "Version 2 dieses Protokolls gibt mehr Informationen aus, einschließlich der "
 "Protokollversion, dem APT-Konfigurationsraum und den Paketen, Dateien und "
-"den Versionen, die geändert werden. Version 2 wird durch Setzen von "
-"<literal>DPkg::Tools::options::cmd::Version</literal> auf 2 eingeschaltet. "
-"<literal>cmd</literal> ist ein Befehl, der an <literal>Pre-Install-Pkgs</"
-"literal> gegeben wird."
+"den Versionen, die geändert werden. Version 3 fügt jeder ausgegebenen "
+"Version die Architektur und den <literal>MultiArch</literal>-Schalter hinzu."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:715
@@ -4629,6 +4626,13 @@ msgid ""
 "the requested version it will send the information in the highest version it "
 "has support for instead."
 msgstr ""
+"Die Protokollversion, die für den Befehl <literal><replaceable>Befehl</"
+"replaceable></literal> benutzt werden soll, kann durch entsprechendes Setzen "
+"von <literal>DPkg::Tools::options::<replaceable>Befehl</replaceable>::"
+"Version</literal> ausgewählt werden, Voreinstellung ist Version 1. Falls APT "
+"die angefragte Version nicht unterstützt, wird es stattdessen die "
+"Informationen in der höchsten Version senden, für die es Unterstützung "
+"bietet."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:722
@@ -4640,6 +4644,13 @@ msgid ""
 "looking for the environment variable <envar>APT_HOOK_INFO_FD</envar> which "
 "contains the number of the used file descriptor as a confirmation."
 msgstr ""
+"Der Dateideskriptor, der zum Senden der Informationen benutzt wird, kann mit "
+"<literal>DPkg::Tools::options::<replaceable>Befehl</replaceable>::InfoFD</"
+"literal> abgefragt werden. Er ist standardmäßig <literal>0</literal> für die "
+"Standardeingabe und seit Version 0.9.11 verfügbar. Unterstützung für die "
+"Option können Sie finden, indem Sie in die Umgebungsvariable "
+"<envar>APT_HOOK_INFO_FD</envar> schauen. Sie enthält die Nummer des "
+"verwendeten Dateideskriptors als eine Bestätigung."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:732
@@ -6816,25 +6827,18 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:124
-#, fuzzy
-#| msgid ""
-#| "<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-#| "replaceable>,…</literal> can be used to specify for which architectures "
-#| "information should be downloaded. If this option is not set all "
-#| "architectures defined by the <literal>APT::Architectures</literal> option "
-#| "will be downloaded."
 msgid ""
 "<literal>arch+=<replaceable>arch1</replaceable>,<replaceable>arch2</"
 "replaceable>,…</literal> and <literal>arch-=<replaceable>arch1</replaceable>,"
 "<replaceable>arch2</replaceable>,…</literal> which can be used to add/remove "
 "architectures from the set which will be downloaded."
 msgstr ""
-"<literal>arch=<replaceable>Architektur1</replaceable>,"
-"<replaceable>Architektur2</replaceable>, …</literal> kann benutzt werden, um "
-"anzugeben, für welche Architekturen Paketinformationen heruntergeladen "
-"werden sollen. Falls diese Option nicht gesetzt ist, werden alle durch die "
-"Option <literal>APT::Architectures</literal> definierten Architekturen "
-"heruntergeladen."
+"<literal>arch+=<replaceable>Architektur1</replaceable>,"
+"<replaceable>Architektur2</replaceable>, …</literal> und <literal>arch-"
+"=<replaceable>Architektur1</replaceable>,<replaceable>Architektur2</"
+"replaceable>, …</literal>, die benutzt werden können, um der "
+"Zusammenstellung, die heruntergeladen werden soll, Architekturen "
+"hinzuzufügen oder zu entfernen."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:127
@@ -8685,18 +8689,9 @@ msgstr ""
 
 #. type: <p></p>
 #: guide.sgml:163
-#, fuzzy
-#| msgid ""
-#| "<prgn>apt-get</prgn> has several command line options that are detailed "
-#| "in its man page, <manref section=\"8\" name=\"apt-get\">. The most useful "
-#| "option is <tt>-d</tt> which does not install the fetched files. If the "
-#| "system has to download a large number of package it would be undesired to "
-#| "start installing them in case something goes wrong. When <tt>-d</tt> is "
-#| "used the downloaded archives can be installed by simply running the "
-#| "command that caused them to be downloaded again without <tt>-d</tt>."
 msgid ""
 "<prgn>apt-get</prgn> has several command line options that are detailed in "
-"its man page, <manref name=\"apt-get\" section=\"8\">. The most useful "
+"its man page, <manref section=\"8\" name=\"apt-get\">. The most useful "
 "option is <tt>-d</tt> which does not install the fetched files. If the "
 "system has to download a large number of package it would be undesired to "
 "start installing them in case something goes wrong. When <tt>-d</tt> is used "
