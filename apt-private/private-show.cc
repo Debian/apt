@@ -76,12 +76,12 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    // make size nice
    std::string installed_size;
    if (Tags.FindI("Installed-Size") > 0)
-      installed_size = SizeToStr(Tags.FindI("Installed-Size")*1024);
+      strprintf(installed_size, "%sB", SizeToStr(Tags.FindI("Installed-Size")*1024).c_str());
    else
       installed_size = _("unknown");
    std::string package_size;
    if (Tags.FindI("Size") > 0)
-      package_size = SizeToStr(Tags.FindI("Size"));
+      strprintf(package_size, "%sB", SizeToStr(Tags.FindI("Size")).c_str());
    else
       package_size = _("unknown");
 
@@ -92,9 +92,18 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
       manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
    else
       manual_installed = 0;
+
+   // FIXME: add verbose that does not do the removal of the tags?
    TFRewriteData RW[] = {
-      // delete
+      // delete, apt-cache show has this info and most users do not care
+      {"MD5sum", 0},
+      {"SHA1", 0},
+      {"SHA256", 0},
+      {"Filename", 0},
+      {"Multi-Arch", 0},
+      {"Architecture", 0},
       {"Conffiles",0},
+      // we use the translated description
       {"Description",0},
       {"Description-md5",0},
       // improve
