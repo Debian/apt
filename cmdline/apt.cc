@@ -107,17 +107,6 @@ int main(int argc, const char *argv[])					/*{{{*/
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt", CommandLine::GetCommand(Cmds, argc, argv));
 
-   if(!isatty(1)) 
-   {
-      std::cerr << std::endl
-                << "WARNING WARNING "
-                << argv[0]
-                << " is *NOT* intended for scripts "
-                << "use at your own peril^Wrisk"
-                << std::endl
-                << std::endl;
-   }
-
    InitOutput();
 
    // Set up gettext support
