@@ -81,7 +81,8 @@ bool ShowHelp(CommandLine &CmdL)
       " install - install packages\n"
       " remove  - remove packages\n"
       "\n"
-      " upgrade - upgrade the systems packages\n"
+      " upgrade - upgrade the system by installing/upgrading packages\n"
+      "full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
       "\n"
       " edit-sources - edit the source information file\n"
        );
@@ -89,29 +90,29 @@ bool ShowHelp(CommandLine &CmdL)
    return true;
 }
 
-// figure out what kind of upgrade the user wants
-bool DoAptUpgrade(CommandLine &CmdL)
-{
-   if (_config->FindB("Apt::Cmd::Dist-Upgrade"))
-      return DoDistUpgrade(CmdL);
-   else
-      return DoUpgradeWithAllowNewPackages(CmdL);
-}
-
 int main(int argc, const char *argv[])					/*{{{*/
 {
-   CommandLine::Dispatch Cmds[] = {{"list",&List},
+   CommandLine::Dispatch Cmds[] = {
+                                   // query
+                                   {"list",&List},
                                    {"search", &FullTextSearch},
                                    {"show", &APT::Cmd::ShowPackage},
+
                                    // package stuff
                                    {"install",&DoInstall},
                                    {"remove", &DoInstall},
                                    {"purge", &DoInstall},
+
                                    // system wide stuff
                                    {"update",&DoUpdate},
-                                   {"upgrade",&DoAptUpgrade},
+                                   {"upgrade",&DoUpgrade},
+                                   {"full-upgrade",&DoDistUpgrade},
+                                   // for compat with muscle memory
+                                   {"dist-upgrade",&DoDistUpgrade},
+
                                    // misc
                                    {"edit-sources",&EditSources},
+
                                    // helper
                                    {"moo",&DoMoo},
                                    {"help",&ShowHelp},
@@ -131,9 +132,10 @@ int main(int argc, const char *argv[])					/*{{{*/
         return 100;
     }
 
-   // FIXME: move into a new libprivate/private-install.cc:Install()
-   _config->Set("DPkgPM::Progress", "1");
-   _config->Set("Apt::Color", "1");
+    // some different defaults
+   _config->CndSet("DPkgPM::Progress", "1");
+   _config->CndSet("Apt::Color", "1");
+   _config->CndSet("APT::Get::Upgrade-Allow-New", true);
 
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args.data(), _config);
