@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-29 17:01+0100\n"
+"POT-Creation-Date: 2014-01-25 22:21+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -93,7 +93,7 @@ msgid "Total space accounted for: "
 msgstr "統計後的空間合計："
 
 #: cmdline/apt-cache.cc:497 cmdline/apt-cache.cc:1146
-#: apt-private/private-show.cc:52
+#: apt-private/private-show.cc:55
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "套件檔 %s 未同步。"
@@ -101,7 +101,7 @@ msgstr "套件檔 %s 未同步。"
 #: cmdline/apt-cache.cc:575 cmdline/apt-cache.cc:1432
 #: cmdline/apt-cache.cc:1434 cmdline/apt-cache.cc:1511 cmdline/apt-mark.cc:48
 #: cmdline/apt-mark.cc:95 cmdline/apt-mark.cc:221
-#: apt-private/private-show.cc:114 apt-private/private-show.cc:116
+#: apt-private/private-show.cc:167 apt-private/private-show.cc:169
 msgid "No packages found"
 msgstr "未找到套件"
 
@@ -632,7 +632,7 @@ msgstr "%s 已經是最新版本了。\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
 #: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:217
-#: apt-pkg/deb/dpkgpm.cc:1178
+#: apt-pkg/deb/dpkgpm.cc:1183
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "等待 %s 但是它並不存在"
@@ -661,6 +661,11 @@ msgid ""
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
 "   manual - Mark the given packages as manually installed\n"
+"   hold - Mark a package as held back\n"
+"   unhold - Unset a package set as held back\n"
+"   showauto - Print the list of automatically installed packages\n"
+"   showmanual - Print the list of manually installed packages\n"
+"   showhold - Print the list of package on hold\n"
 "\n"
 "Options:\n"
 "  -h  This help text.\n"
@@ -678,14 +683,18 @@ msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Commands: \n"
+"Basic commands: \n"
 " list - list packages based on package names\n"
 " search - search in package descriptions\n"
 " show - show package details\n"
 "\n"
 " update - update list of available packages\n"
+"\n"
 " install - install packages\n"
-" upgrade - upgrade the systems packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -720,11 +729,11 @@ msgid "File not found"
 msgstr "找不到檔案"
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/rred.cc:618 methods/rred.cc:627
 msgid "Failed to stat"
 msgstr "無法取得狀態"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:624
 msgid "Failed to set modification time"
 msgstr "無法設定修改時間"
 
@@ -798,9 +807,9 @@ msgstr "回應超過緩衝區長度。"
 msgid "Protocol corruption"
 msgstr "協定失敗"
 
-#: methods/ftp.cc:458 methods/rred.cc:238 methods/rsh.cc:243
-#: apt-pkg/contrib/fileutl.cc:1388 apt-pkg/contrib/fileutl.cc:1397
-#: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1425
+#: methods/ftp.cc:458 methods/rsh.cc:243 apt-pkg/contrib/fileutl.cc:1388
+#: apt-pkg/contrib/fileutl.cc:1397 apt-pkg/contrib/fileutl.cc:1400
+#: apt-pkg/contrib/fileutl.cc:1425
 msgid "Write error"
 msgstr "寫入錯誤"
 
@@ -812,7 +821,7 @@ msgstr "無法建立 Socket"
 msgid "Could not connect data socket, connection timed out"
 msgstr "無法和 data socket 連線，連線逾時"
 
-#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:21
+#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:22
 msgid "Failed"
 msgstr "失敗"
 
@@ -1055,7 +1064,7 @@ msgstr "連線失敗"
 msgid "Internal error"
 msgstr "內部錯誤"
 
-#: apt-private/private-list.cc:143
+#: apt-private/private-list.cc:147
 msgid "Listing"
 msgstr ""
 
@@ -1294,101 +1303,101 @@ msgstr "是否不經驗證就安裝這些套件？"
 msgid "Failed to fetch %s  %s\n"
 msgstr "無法取得 %s，%s\n"
 
-#: apt-private/private-output.cc:198
+#: apt-private/private-output.cc:200
 msgid "installed,upgradable to: "
 msgstr ""
 
-#: apt-private/private-output.cc:204
+#: apt-private/private-output.cc:206
 #, fuzzy
 msgid "[installed,local]"
 msgstr "【已安裝】"
 
-#: apt-private/private-output.cc:207
+#: apt-private/private-output.cc:209
 msgid "[installed,auto-removable]"
 msgstr ""
 
-#: apt-private/private-output.cc:209
+#: apt-private/private-output.cc:211
 #, fuzzy
 msgid "[installed,automatic]"
 msgstr "【已安裝】"
 
-#: apt-private/private-output.cc:211
+#: apt-private/private-output.cc:213
 #, fuzzy
 msgid "[installed]"
 msgstr "【已安裝】"
 
-#: apt-private/private-output.cc:217
+#: apt-private/private-output.cc:219
 msgid "[upgradable from: "
 msgstr ""
 
-#: apt-private/private-output.cc:223
+#: apt-private/private-output.cc:225
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:314
+#: apt-private/private-output.cc:316
 msgid "The following packages have unmet dependencies:"
 msgstr "下列的套件有未滿足的相依關係："
 
-#: apt-private/private-output.cc:404
+#: apt-private/private-output.cc:406
 #, c-format
 msgid "but %s is installed"
 msgstr "但 %s 卻已安裝"
 
-#: apt-private/private-output.cc:406
+#: apt-private/private-output.cc:408
 #, c-format
 msgid "but %s is to be installed"
 msgstr "但 %s 卻將被安裝"
 
-#: apt-private/private-output.cc:413
+#: apt-private/private-output.cc:415
 msgid "but it is not installable"
 msgstr "但它卻無法安裝"
 
-#: apt-private/private-output.cc:415
+#: apt-private/private-output.cc:417
 msgid "but it is a virtual package"
 msgstr "但它是虛擬套件"
 
-#: apt-private/private-output.cc:418
+#: apt-private/private-output.cc:420
 msgid "but it is not installed"
 msgstr "但它卻尚未安裝"
 
-#: apt-private/private-output.cc:418
+#: apt-private/private-output.cc:420
 msgid "but it is not going to be installed"
 msgstr "但它卻將不會被安裝"
 
-#: apt-private/private-output.cc:423
+#: apt-private/private-output.cc:425
 msgid " or"
 msgstr "或"
 
-#: apt-private/private-output.cc:452
+#: apt-private/private-output.cc:454
 msgid "The following NEW packages will be installed:"
 msgstr "下列【新】套件將會被安裝："
 
-#: apt-private/private-output.cc:478
+#: apt-private/private-output.cc:480
 msgid "The following packages will be REMOVED:"
 msgstr "下列套件將會被【移除】："
 
-#: apt-private/private-output.cc:500
+#: apt-private/private-output.cc:502
 msgid "The following packages have been kept back:"
 msgstr "下列套件將會維持其原有版本："
 
-#: apt-private/private-output.cc:521
+#: apt-private/private-output.cc:523
 msgid "The following packages will be upgraded:"
 msgstr "下列套件將會被升級："
 
-#: apt-private/private-output.cc:542
+#: apt-private/private-output.cc:544
 msgid "The following packages will be DOWNGRADED:"
 msgstr "下列套件將會被【降級】："
 
-#: apt-private/private-output.cc:562
+#: apt-private/private-output.cc:564
 msgid "The following held packages will be changed:"
 msgstr "下列被保留 (hold) 的套件將會被更改："
 
-#: apt-private/private-output.cc:617
+#: apt-private/private-output.cc:619
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s（因為 %s）"
 
-#: apt-private/private-output.cc:625
+#: apt-private/private-output.cc:627
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -1396,27 +1405,27 @@ msgstr ""
 "【警告】：下列的基本套件都將被移除。\n"
 "除非您很清楚您在做什麼，否則請勿輕易嘗試！"
 
-#: apt-private/private-output.cc:656
+#: apt-private/private-output.cc:658
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "升級 %lu 個，新安裝 %lu 個，"
 
-#: apt-private/private-output.cc:660
+#: apt-private/private-output.cc:662
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "重新安裝 %lu 個，"
 
-#: apt-private/private-output.cc:662
+#: apt-private/private-output.cc:664
 #, c-format
 msgid "%lu downgraded, "
 msgstr "降級 %lu 個，"
 
-#: apt-private/private-output.cc:664
+#: apt-private/private-output.cc:666
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "移除 %lu 個，有 %lu 個未被升級。\n"
 
-#: apt-private/private-output.cc:668
+#: apt-private/private-output.cc:670
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu 個沒有完整得安裝或移除。\n"
@@ -1425,7 +1434,7 @@ msgstr "%lu 個沒有完整得安裝或移除。\n"
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:690
+#: apt-private/private-output.cc:692
 msgid "[Y/n]"
 msgstr ""
 
@@ -1433,21 +1442,21 @@ msgstr ""
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:696
+#: apt-private/private-output.cc:698
 msgid "[y/N]"
 msgstr ""
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:707
+#: apt-private/private-output.cc:709
 msgid "Y"
 msgstr ""
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:713
+#: apt-private/private-output.cc:715
 msgid "N"
 msgstr ""
 
-#: apt-private/private-output.cc:735 apt-pkg/cachefilter.cc:33
+#: apt-private/private-output.cc:737 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "編譯正規表示式時發生錯誤 - %s"
@@ -1488,16 +1497,16 @@ msgstr ""
 msgid "The update command takes no arguments"
 msgstr "update 指令不需任何參數"
 
-#: apt-private/private-upgrade.cc:18
+#: apt-private/private-upgrade.cc:19
 msgid "Calculating upgrade... "
 msgstr "籌備升級中... "
 
-#: apt-private/private-upgrade.cc:23
+#: apt-private/private-upgrade.cc:24
 #, fuzzy
 msgid "Internal error, Upgrade broke stuff"
 msgstr "內部錯誤，AllUpgrade 造成了損壞"
 
-#: apt-private/private-upgrade.cc:25
+#: apt-private/private-upgrade.cc:26
 msgid "Done"
 msgstr "完成"
 
@@ -1505,7 +1514,19 @@ msgstr "完成"
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc:106
+#: apt-private/private-show.cc:81 apt-private/private-show.cc:86
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-show.cc:152
+#, c-format
+msgid "There is %lu additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %lu additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc:159
 msgid "not a real package (virtual)"
 msgstr ""
 
@@ -1517,12 +1538,12 @@ msgid ""
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
 
-#: apt-private/private-sources.cc:41
+#: apt-private/private-sources.cc:45
 #, fuzzy, c-format
 msgid "Failed to parse %s. Edit again? "
 msgstr "無法將 %s 更名為 %s"
 
-#: apt-private/private-sources.cc:52
+#: apt-private/private-sources.cc:57
 #, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
@@ -1568,8 +1589,8 @@ msgstr ""
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
-#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:271
+#: apt-pkg/sourcelist.cc:277 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
 #: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
@@ -1605,20 +1626,6 @@ msgstr "無法開啟檔案 %s"
 #: methods/mirror.cc:445
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
-
-#: methods/rred.cc:491
-#, c-format
-msgid ""
-"Could not patch %s with mmap and with file operation usage - the patch seems "
-"to be corrupt."
-msgstr ""
-
-#: methods/rred.cc:496
-#, c-format
-msgid ""
-"Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
-"to be corrupt."
 msgstr ""
 
 #: methods/rsh.cc:99 ftparchive/multicompress.cc:168
@@ -2666,74 +2673,84 @@ msgstr "無法辨識套件檔 %s (1)"
 msgid "Unable to parse package file %s (2)"
 msgstr "無法辨識套件檔 %s (2)"
 
-#: apt-pkg/sourcelist.cc:96
+#: apt-pkg/sourcelist.cc:118
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（URI 分析）"
+
+#: apt-pkg/sourcelist.cc:161
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（發行版分析）"
 
-#: apt-pkg/sourcelist.cc:99
+#: apt-pkg/sourcelist.cc:164
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（發行版）"
 
-#: apt-pkg/sourcelist.cc:110
+#: apt-pkg/sourcelist.cc:175
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（發行版分析）"
 
-#: apt-pkg/sourcelist.cc:116
+#: apt-pkg/sourcelist.cc:181
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（發行版分析）"
 
-#: apt-pkg/sourcelist.cc:119
+#: apt-pkg/sourcelist.cc:184
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（發行版分析）"
 
-#: apt-pkg/sourcelist.cc:132
+#: apt-pkg/sourcelist.cc:197
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤 (URI)"
 
-#: apt-pkg/sourcelist.cc:134
+#: apt-pkg/sourcelist.cc:199
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（發行版）"
 
-#: apt-pkg/sourcelist.cc:137
+#: apt-pkg/sourcelist.cc:202
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（URI 分析）"
 
-#: apt-pkg/sourcelist.cc:143
+#: apt-pkg/sourcelist.cc:208
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（絕對發行版）"
 
-#: apt-pkg/sourcelist.cc:150
+#: apt-pkg/sourcelist.cc:215
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "來源列表 %2$s 中的 %1$lu 行的格式錯誤（發行版分析）"
 
-#: apt-pkg/sourcelist.cc:248
+#: apt-pkg/sourcelist.cc:326
 #, c-format
 msgid "Opening %s"
 msgstr "正在開啟 %s"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:338 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "來源列表 %2$s 中的第 %1$u 行太長。"
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:362
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "來源列表 %2$s 中的第 %1$u 行的格式錯誤（類型）"
 
-#: apt-pkg/sourcelist.cc:293
+#: apt-pkg/sourcelist.cc:366
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "未知的類型 '%1$s'，位於在來源列表 %3$s 中的第 %2$u 行"
+
+#: apt-pkg/sourcelist.cc:407
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "未知的類型 '%1$s'，位於在來源列表 %3$s 中的第 %2$u 行"
 
 #: apt-pkg/packagemanager.cc:296 apt-pkg/packagemanager.cc:922
@@ -2950,35 +2967,35 @@ msgstr "大小不符"
 msgid "Invalid file format"
 msgstr "無效的操作 %s"
 
-#: apt-pkg/acquire-item.cc:1419
+#: apt-pkg/acquire-item.cc:1561
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1435
+#: apt-pkg/acquire-item.cc:1577
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "無法辨別 Release 檔 %s"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1619
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "無法取得以下的密鑰 ID 的公鑰：\n"
 
-#: apt-pkg/acquire-item.cc:1515
+#: apt-pkg/acquire-item.cc:1657
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1537
+#: apt-pkg/acquire-item.cc:1679
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "發行版本衝突：%s（應當是 %s 但卻得到 %s）"
 
-#: apt-pkg/acquire-item.cc:1567
+#: apt-pkg/acquire-item.cc:1709
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -2986,12 +3003,12 @@ msgid ""
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1577 apt-pkg/acquire-item.cc:1582
+#: apt-pkg/acquire-item.cc:1719 apt-pkg/acquire-item.cc:1724
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1847
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3000,12 +3017,12 @@ msgstr ""
 "找不到 %s 套件的某個檔案。這意味著您可能要手動修復這個套件。（因為找不到平"
 "台）"
 
-#: apt-pkg/acquire-item.cc:1771
+#: apt-pkg/acquire-item.cc:1913
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1829
+#: apt-pkg/acquire-item.cc:1971
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -3321,57 +3338,61 @@ msgstr "正在準備完整移除 %s"
 msgid "Completely removed %s"
 msgstr "已完整移除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1045 apt-pkg/deb/dpkgpm.cc:1066
+#: apt-pkg/deb/dpkgpm.cc:1047
+msgid "ioctl(TIOCGWINSZ) failed"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1050 apt-pkg/deb/dpkgpm.cc:1071
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "無法寫入 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1045
+#: apt-pkg/deb/dpkgpm.cc:1050
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1066
+#: apt-pkg/deb/dpkgpm.cc:1071
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1549
+#: apt-pkg/deb/dpkgpm.cc:1559
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1611
+#: apt-pkg/deb/dpkgpm.cc:1621
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1616
+#: apt-pkg/deb/dpkgpm.cc:1626
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1618
+#: apt-pkg/deb/dpkgpm.cc:1628
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1624
+#: apt-pkg/deb/dpkgpm.cc:1634
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1631
+#: apt-pkg/deb/dpkgpm.cc:1641
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1638 apt-pkg/deb/dpkgpm.cc:1644
+#: apt-pkg/deb/dpkgpm.cc:1648 apt-pkg/deb/dpkgpm.cc:1654
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1665
+#: apt-pkg/deb/dpkgpm.cc:1675
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

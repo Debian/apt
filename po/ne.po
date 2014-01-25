@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-29 17:01+0100\n"
+"POT-Creation-Date: 2014-01-25 22:21+0100\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -94,7 +94,7 @@ msgid "Total space accounted for: "
 msgstr "को लागि कूल खाली ठाऊँ लेखांकन:"
 
 #: cmdline/apt-cache.cc:497 cmdline/apt-cache.cc:1146
-#: apt-private/private-show.cc:52
+#: apt-private/private-show.cc:55
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "प्याकेज फाइल %s sync भन्दा बाहिर छ ।"
@@ -102,7 +102,7 @@ msgstr "प्याकेज फाइल %s sync भन्दा बाहि�
 #: cmdline/apt-cache.cc:575 cmdline/apt-cache.cc:1432
 #: cmdline/apt-cache.cc:1434 cmdline/apt-cache.cc:1511 cmdline/apt-mark.cc:48
 #: cmdline/apt-mark.cc:95 cmdline/apt-mark.cc:221
-#: apt-private/private-show.cc:114 apt-private/private-show.cc:116
+#: apt-private/private-show.cc:167 apt-private/private-show.cc:169
 msgid "No packages found"
 msgstr "कुनै प्याकेजहरू फेला परेन"
 
@@ -634,7 +634,7 @@ msgstr "%s पहिल्यै नयाँ संस्करण हो ।\n
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
 #: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:217
-#: apt-pkg/deb/dpkgpm.cc:1178
+#: apt-pkg/deb/dpkgpm.cc:1183
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr " %s को लागि पर्खिरहेको तर यो त्यहाँ छैन"
@@ -663,6 +663,11 @@ msgid ""
 "Commands:\n"
 "   auto - Mark the given packages as automatically installed\n"
 "   manual - Mark the given packages as manually installed\n"
+"   hold - Mark a package as held back\n"
+"   unhold - Unset a package set as held back\n"
+"   showauto - Print the list of automatically installed packages\n"
+"   showmanual - Print the list of manually installed packages\n"
+"   showhold - Print the list of package on hold\n"
 "\n"
 "Options:\n"
 "  -h  This help text.\n"
@@ -680,14 +685,18 @@ msgid ""
 "Usage: apt [options] command\n"
 "\n"
 "CLI for apt.\n"
-"Commands: \n"
+"Basic commands: \n"
 " list - list packages based on package names\n"
 " search - search in package descriptions\n"
 " show - show package details\n"
 "\n"
 " update - update list of available packages\n"
+"\n"
 " install - install packages\n"
-" upgrade - upgrade the systems packages\n"
+" remove  - remove packages\n"
+"\n"
+" upgrade - upgrade the system by installing/upgrading packages\n"
+"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -723,11 +732,11 @@ msgid "File not found"
 msgstr "फाइल फेला परेन "
 
 #: methods/copy.cc:46 methods/gzip.cc:105 methods/gzip.cc:114
-#: methods/rred.cc:512 methods/rred.cc:521
+#: methods/rred.cc:618 methods/rred.cc:627
 msgid "Failed to stat"
 msgstr "स्थिर गर्न असफल भयो"
 
-#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:518
+#: methods/copy.cc:83 methods/gzip.cc:111 methods/rred.cc:624
 msgid "Failed to set modification time"
 msgstr "परिमार्जन समय सेट असफल भयो"
 
@@ -802,9 +811,9 @@ msgstr "एउटा प्रतिक्रियाले बफर अधि
 msgid "Protocol corruption"
 msgstr "प्रोटोकल दूषित"
 
-#: methods/ftp.cc:458 methods/rred.cc:238 methods/rsh.cc:243
-#: apt-pkg/contrib/fileutl.cc:1388 apt-pkg/contrib/fileutl.cc:1397
-#: apt-pkg/contrib/fileutl.cc:1400 apt-pkg/contrib/fileutl.cc:1425
+#: methods/ftp.cc:458 methods/rsh.cc:243 apt-pkg/contrib/fileutl.cc:1388
+#: apt-pkg/contrib/fileutl.cc:1397 apt-pkg/contrib/fileutl.cc:1400
+#: apt-pkg/contrib/fileutl.cc:1425
 msgid "Write error"
 msgstr "त्रुटि लेख्नुहोस्"
 
@@ -816,7 +825,7 @@ msgstr "एउटा सकेट सिर्जना गर्न सके�
 msgid "Could not connect data socket, connection timed out"
 msgstr "डेटा सकेट जडान गर्न सकिएन, जडान समय सकियो"
 
-#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:21
+#: methods/ftp.cc:712 methods/connect.cc:116 apt-private/private-upgrade.cc:22
 msgid "Failed"
 msgstr "असफल भयो"
 
@@ -1059,7 +1068,7 @@ msgstr "जडान असफल भयो"
 msgid "Internal error"
 msgstr "आन्तरिक त्रुटि"
 
-#: apt-private/private-list.cc:143
+#: apt-private/private-list.cc:147
 msgid "Listing"
 msgstr ""
 
@@ -1300,101 +1309,101 @@ msgstr "यी प्याकेजहरू रूजू बिना स्�
 msgid "Failed to fetch %s  %s\n"
 msgstr "%s  %s तान्न असफल भयो\n"
 
-#: apt-private/private-output.cc:198
+#: apt-private/private-output.cc:200
 msgid "installed,upgradable to: "
 msgstr ""
 
-#: apt-private/private-output.cc:204
+#: apt-private/private-output.cc:206
 #, fuzzy
 msgid "[installed,local]"
 msgstr " [स्थापना भयो]"
 
-#: apt-private/private-output.cc:207
+#: apt-private/private-output.cc:209
 msgid "[installed,auto-removable]"
 msgstr ""
 
-#: apt-private/private-output.cc:209
+#: apt-private/private-output.cc:211
 #, fuzzy
 msgid "[installed,automatic]"
 msgstr " [स्थापना भयो]"
 
-#: apt-private/private-output.cc:211
+#: apt-private/private-output.cc:213
 #, fuzzy
 msgid "[installed]"
 msgstr " [स्थापना भयो]"
 
-#: apt-private/private-output.cc:217
+#: apt-private/private-output.cc:219
 msgid "[upgradable from: "
 msgstr ""
 
-#: apt-private/private-output.cc:223
+#: apt-private/private-output.cc:225
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:314
+#: apt-private/private-output.cc:316
 msgid "The following packages have unmet dependencies:"
 msgstr "निम्न प्याकेजहरुले निर्भरताहरू भेटेनन्:"
 
-#: apt-private/private-output.cc:404
+#: apt-private/private-output.cc:406
 #, c-format
 msgid "but %s is installed"
 msgstr "तर %s स्थापना भयो"
 
-#: apt-private/private-output.cc:406
+#: apt-private/private-output.cc:408
 #, c-format
 msgid "but %s is to be installed"
 msgstr "तर %s स्थापना हुनुपर्यो"
 
-#: apt-private/private-output.cc:413
+#: apt-private/private-output.cc:415
 msgid "but it is not installable"
 msgstr "तर यो स्थापनायोग्य छैन"
 
-#: apt-private/private-output.cc:415
+#: apt-private/private-output.cc:417
 msgid "but it is a virtual package"
 msgstr "तर यो अवास्तविक प्याकेज होइन"
 
-#: apt-private/private-output.cc:418
+#: apt-private/private-output.cc:420
 msgid "but it is not installed"
 msgstr "तर यो स्थापना भएन"
 
-#: apt-private/private-output.cc:418
+#: apt-private/private-output.cc:420
 msgid "but it is not going to be installed"
 msgstr "तर यो स्थापना हुन गइरहेको छैन"
 
-#: apt-private/private-output.cc:423
+#: apt-private/private-output.cc:425
 msgid " or"
 msgstr "वा"
 
-#: apt-private/private-output.cc:452
+#: apt-private/private-output.cc:454
 msgid "The following NEW packages will be installed:"
 msgstr "निम्न नयाँ प्याकेजहरू स्थापना हुनेछन्:"
 
-#: apt-private/private-output.cc:478
+#: apt-private/private-output.cc:480
 msgid "The following packages will be REMOVED:"
 msgstr "निम्न प्याकेजहरू हटाइनेछन्:"
 
-#: apt-private/private-output.cc:500
+#: apt-private/private-output.cc:502
 msgid "The following packages have been kept back:"
 msgstr "निम्न प्याकेजहरू पछाडि राखिनेछन्:"
 
-#: apt-private/private-output.cc:521
+#: apt-private/private-output.cc:523
 msgid "The following packages will be upgraded:"
 msgstr "निम्न प्याकेजहरू स्तर वृद्धि हुनेछन्:"
 
-#: apt-private/private-output.cc:542
+#: apt-private/private-output.cc:544
 msgid "The following packages will be DOWNGRADED:"
 msgstr "निम्न प्याकेजहरू स्तरकम गरिनेछन्:"
 
-#: apt-private/private-output.cc:562
+#: apt-private/private-output.cc:564
 msgid "The following held packages will be changed:"
 msgstr "निम्न भइरहेको प्याकेजहरू परिवर्तन हुनेछैन:"
 
-#: apt-private/private-output.cc:617
+#: apt-private/private-output.cc:619
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (%s कारणले) "
 
-#: apt-private/private-output.cc:625
+#: apt-private/private-output.cc:627
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -1402,27 +1411,27 @@ msgstr ""
 "चेतावनी: निम्न आवश्यक प्याकेजहरू हटाइनेछन् ।\n"
 "तपाईँ के गरिरहेको यकिन नभएसम्म यो काम गरिने छैन!"
 
-#: apt-private/private-output.cc:656
+#: apt-private/private-output.cc:658
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu स्तर वृद्धि गरियो, %lu नयाँ स्थापना भयो, "
 
-#: apt-private/private-output.cc:660
+#: apt-private/private-output.cc:662
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu पुन: स्थापना गरियो, "
 
-#: apt-private/private-output.cc:662
+#: apt-private/private-output.cc:664
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu स्तर कम गरियो, "
 
-#: apt-private/private-output.cc:664
+#: apt-private/private-output.cc:666
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu हटाउन र %lu स्तर वृद्धि गरिएन ।\n"
 
-#: apt-private/private-output.cc:668
+#: apt-private/private-output.cc:670
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu पूर्णरुपले स्थापना भएन र हटाइएन ।\n"
@@ -1431,7 +1440,7 @@ msgstr "%lu पूर्णरुपले स्थापना भएन र �
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:690
+#: apt-private/private-output.cc:692
 msgid "[Y/n]"
 msgstr ""
 
@@ -1439,21 +1448,21 @@ msgstr ""
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:696
+#: apt-private/private-output.cc:698
 msgid "[y/N]"
 msgstr ""
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:707
+#: apt-private/private-output.cc:709
 msgid "Y"
 msgstr ""
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:713
+#: apt-private/private-output.cc:715
 msgid "N"
 msgstr ""
 
-#: apt-private/private-output.cc:735 apt-pkg/cachefilter.cc:33
+#: apt-private/private-output.cc:737 apt-pkg/cachefilter.cc:33
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "संकलन त्रुटि रिजेक्स गर्नुहोस् - %s"
@@ -1494,16 +1503,16 @@ msgstr ""
 msgid "The update command takes no arguments"
 msgstr "अद्यावधिक आदेशले कुनै तर्कहरू लिदैन"
 
-#: apt-private/private-upgrade.cc:18
+#: apt-private/private-upgrade.cc:19
 msgid "Calculating upgrade... "
 msgstr "स्तर वृद्धि गणना गरिदैछ..."
 
-#: apt-private/private-upgrade.cc:23
+#: apt-private/private-upgrade.cc:24
 #, fuzzy
 msgid "Internal error, Upgrade broke stuff"
 msgstr "आन्तरिक त्रुटि,सबै स्तरवृद्धिले उत्तम गुण नष्ट गर्दछ"
 
-#: apt-private/private-upgrade.cc:25
+#: apt-private/private-upgrade.cc:26
 msgid "Done"
 msgstr "काम भयो"
 
@@ -1511,7 +1520,19 @@ msgstr "काम भयो"
 msgid "Full Text Search"
 msgstr ""
 
-#: apt-private/private-show.cc:106
+#: apt-private/private-show.cc:81 apt-private/private-show.cc:86
+msgid "unknown"
+msgstr ""
+
+#: apt-private/private-show.cc:152
+#, c-format
+msgid "There is %lu additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %lu additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+
+#: apt-private/private-show.cc:159
 msgid "not a real package (virtual)"
 msgstr ""
 
@@ -1523,12 +1544,12 @@ msgid ""
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
 
-#: apt-private/private-sources.cc:41
+#: apt-private/private-sources.cc:45
 #, fuzzy, c-format
 msgid "Failed to parse %s. Edit again? "
 msgstr " %s मा  %s  पुन:नामकरण असफल भयो"
 
-#: apt-private/private-sources.cc:52
+#: apt-private/private-sources.cc:57
 #, c-format
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
@@ -1574,8 +1595,8 @@ msgstr ""
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
-#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:271
+#: apt-pkg/sourcelist.cc:277 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
 #: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
@@ -1611,20 +1632,6 @@ msgstr "फाइल %s खोल्न सकिएन"
 #: methods/mirror.cc:445
 #, c-format
 msgid "[Mirror: %s]"
-msgstr ""
-
-#: methods/rred.cc:491
-#, c-format
-msgid ""
-"Could not patch %s with mmap and with file operation usage - the patch seems "
-"to be corrupt."
-msgstr ""
-
-#: methods/rred.cc:496
-#, c-format
-msgid ""
-"Could not patch %s with mmap (but no mmap specific fail) - the patch seems "
-"to be corrupt."
 msgstr ""
 
 #: methods/rsh.cc:99 ftparchive/multicompress.cc:168
@@ -2678,74 +2685,84 @@ msgstr "प्याकेज फाइल पद वर्णन गर्न �
 msgid "Unable to parse package file %s (2)"
 msgstr "प्याकेज फाइल पद वर्णन गर्न असक्षम %s (२)"
 
-#: apt-pkg/sourcelist.cc:96
+#: apt-pkg/sourcelist.cc:118
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI पद वर्णन)"
+
+#: apt-pkg/sourcelist.cc:161
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] unparseable)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
 
-#: apt-pkg/sourcelist.cc:99
+#: apt-pkg/sourcelist.cc:164
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([option] too short)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist)"
 
-#: apt-pkg/sourcelist.cc:110
+#: apt-pkg/sourcelist.cc:175
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
 
-#: apt-pkg/sourcelist.cc:116
+#: apt-pkg/sourcelist.cc:181
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] has no key)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
 
-#: apt-pkg/sourcelist.cc:119
+#: apt-pkg/sourcelist.cc:184
 #, fuzzy, c-format
 msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
 
-#: apt-pkg/sourcelist.cc:132
+#: apt-pkg/sourcelist.cc:197
 #, c-format
 msgid "Malformed line %lu in source list %s (URI)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI)"
 
-#: apt-pkg/sourcelist.cc:134
+#: apt-pkg/sourcelist.cc:199
 #, c-format
 msgid "Malformed line %lu in source list %s (dist)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist)"
 
-#: apt-pkg/sourcelist.cc:137
+#: apt-pkg/sourcelist.cc:202
 #, c-format
 msgid "Malformed line %lu in source list %s (URI parse)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (URI पद वर्णन)"
 
-#: apt-pkg/sourcelist.cc:143
+#: apt-pkg/sourcelist.cc:208
 #, c-format
 msgid "Malformed line %lu in source list %s (absolute dist)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (पूर्ण dist)"
 
-#: apt-pkg/sourcelist.cc:150
+#: apt-pkg/sourcelist.cc:215
 #, c-format
 msgid "Malformed line %lu in source list %s (dist parse)"
 msgstr "वैरुप्य लाइन %lu स्रोत सूचिमा %s (dist पद वर्णन )"
 
-#: apt-pkg/sourcelist.cc:248
+#: apt-pkg/sourcelist.cc:326
 #, c-format
 msgid "Opening %s"
 msgstr "%s खोलिदैछ"
 
-#: apt-pkg/sourcelist.cc:265 apt-pkg/cdrom.cc:495
+#: apt-pkg/sourcelist.cc:338 apt-pkg/cdrom.cc:495
 #, c-format
 msgid "Line %u too long in source list %s."
 msgstr "लाइन %u स्रोत सूचि %s मा अति लामो छ ।"
 
-#: apt-pkg/sourcelist.cc:289
+#: apt-pkg/sourcelist.cc:362
 #, c-format
 msgid "Malformed line %u in source list %s (type)"
 msgstr "वैरुप्य लाइन %u स्रोत सूचिमा %s (प्रकार)"
 
-#: apt-pkg/sourcelist.cc:293
+#: apt-pkg/sourcelist.cc:366
 #, c-format
 msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "स्रोत सूची %s भित्र %u लाइनमा टाइप '%s' ज्ञात छैन"
+
+#: apt-pkg/sourcelist.cc:407
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
 msgstr "स्रोत सूची %s भित्र %u लाइनमा टाइप '%s' ज्ञात छैन"
 
 #: apt-pkg/packagemanager.cc:296 apt-pkg/packagemanager.cc:922
@@ -2965,35 +2982,35 @@ msgstr "साइज मेल खाएन"
 msgid "Invalid file format"
 msgstr "अवैध सञ्चालन  %s"
 
-#: apt-pkg/acquire-item.cc:1419
+#: apt-pkg/acquire-item.cc:1561
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1435
+#: apt-pkg/acquire-item.cc:1577
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "प्याकेज फाइल पद वर्णन गर्न असक्षम %s (१)"
 
-#: apt-pkg/acquire-item.cc:1477
+#: apt-pkg/acquire-item.cc:1619
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "निम्न कुञ्जी IDs को लागि कुनै सार्वजनिक कुञ्जी उपलब्ध छैन:\n"
 
-#: apt-pkg/acquire-item.cc:1515
+#: apt-pkg/acquire-item.cc:1657
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1537
+#: apt-pkg/acquire-item.cc:1679
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1567
+#: apt-pkg/acquire-item.cc:1709
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -3001,12 +3018,12 @@ msgid ""
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1577 apt-pkg/acquire-item.cc:1582
+#: apt-pkg/acquire-item.cc:1719 apt-pkg/acquire-item.cc:1724
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1705
+#: apt-pkg/acquire-item.cc:1847
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -3015,12 +3032,12 @@ msgstr ""
 "%s प्याकेजको लागि मैले फाइल स्थित गर्न सकिन । यसको मतलब तपाईँले म्यानुल्ली यो प्याकेज "
 "निश्चित गर्नुहोस् । (arch हराएरहेको कारणले) "
 
-#: apt-pkg/acquire-item.cc:1771
+#: apt-pkg/acquire-item.cc:1913
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1829
+#: apt-pkg/acquire-item.cc:1971
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -3339,57 +3356,61 @@ msgstr " %s पूर्ण रुपले हटाउन तयार गर�
 msgid "Completely removed %s"
 msgstr " %s पूर्ण रुपले हट्यो"
 
-#: apt-pkg/deb/dpkgpm.cc:1045 apt-pkg/deb/dpkgpm.cc:1066
+#: apt-pkg/deb/dpkgpm.cc:1047
+msgid "ioctl(TIOCGWINSZ) failed"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1050 apt-pkg/deb/dpkgpm.cc:1071
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr " %s मा लेख्न असक्षम"
 
-#: apt-pkg/deb/dpkgpm.cc:1045
+#: apt-pkg/deb/dpkgpm.cc:1050
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1066
+#: apt-pkg/deb/dpkgpm.cc:1071
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1549
+#: apt-pkg/deb/dpkgpm.cc:1559
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1611
+#: apt-pkg/deb/dpkgpm.cc:1621
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1616
+#: apt-pkg/deb/dpkgpm.cc:1626
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1618
+#: apt-pkg/deb/dpkgpm.cc:1628
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1624
+#: apt-pkg/deb/dpkgpm.cc:1634
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1631
+#: apt-pkg/deb/dpkgpm.cc:1641
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1638 apt-pkg/deb/dpkgpm.cc:1644
+#: apt-pkg/deb/dpkgpm.cc:1648 apt-pkg/deb/dpkgpm.cc:1654
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1665
+#: apt-pkg/deb/dpkgpm.cc:1675
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

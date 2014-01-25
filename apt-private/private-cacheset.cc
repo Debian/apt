@@ -52,6 +52,15 @@ bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
              output_set.insert(policy->GetCandidateVer(P));
          }
       }
+      else if (_config->FindB("APT::Cmd::Manual-Installed") == true)
+      {
+         if (P.CurrentVer() && 
+             ((*DepCache)[P].Flags & pkgCache::Flag::Auto) == false)
+         {
+             pkgPolicy *policy = CacheFile.GetPolicy();
+             output_set.insert(policy->GetCandidateVer(P));
+         }
+      }
       else 
       {
          pkgPolicy *policy = CacheFile.GetPolicy();

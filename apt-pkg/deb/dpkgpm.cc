@@ -1027,6 +1027,12 @@ bool pkgDPkgPM::Go(int StatusFd)
 
 void pkgDPkgPM::StartPtyMagic()
 {
+   if (_config->FindB("Dpkg::Use-Pty", true) == false)
+   {
+      d->master = d->slave = -1;
+      return;
+   }
+
    // setup the pty and stuff
    struct	winsize win;
 
@@ -1035,10 +1041,9 @@ void pkgDPkgPM::StartPtyMagic()
    _error->PushToStack();
    if (tcgetattr(STDOUT_FILENO, &d->tt) == 0)
    {
-       ioctl(1, TIOCGWINSZ, (char *)&win);
-       if (_config->FindB("Dpkg::Use-Pty", true) == false)
+       if (ioctl(1, TIOCGWINSZ, (char *)&win) < 0)
        {
-           d->master = d->slave = -1;
+           _error->Errno("ioctl", _("ioctl(TIOCGWINSZ) failed"));
        } else if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
        {
            _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
@@ -1392,12 +1397,17 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 	 if(d->slave >= 0 && d->master >= 0) 
 	 {
 	    setsid();
-	    ioctl(d->slave, TIOCSCTTY, 0);
-	    close(d->master);
-	    dup2(d->slave, 0);
-	    dup2(d->slave, 1);
-	    dup2(d->slave, 2);
-	    close(d->slave);
+	    int res = ioctl(d->slave, TIOCSCTTY, 0);
+            if (res < 0) {
+               std::cerr << "ioctl(TIOCSCTTY) failed for fd: " 
+                         << d->slave << std::endl;
+            } else {
+               close(d->master);
+               dup2(d->slave, 0);
+               dup2(d->slave, 1);
+               dup2(d->slave, 2);
+               close(d->slave);
+            }
 	 }
 	 close(fd[0]); // close the read end of the pipe
 

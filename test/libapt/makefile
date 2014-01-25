@@ -111,3 +111,9 @@ SLIBS = -lapt-pkg
 SOURCE = tagfile_test.cc
 include $(PROGRAM_H)
 
+# test sourcelist
+PROGRAM = SourceList${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = sourcelist_test.cc
+include $(PROGRAM_H)
+
