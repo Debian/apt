@@ -1,3 +1,84 @@
+apt (0.9.14.3~exp5) experimental; urgency=medium
+
+  [ Anthony Towns ]
+  * methods/rred: minor robustness improvements
+
+  [ Michael Vogt ]
+  * make "apt-mark help" shows all commands
+  * make "apt show" output more user friendly
+  * add "apt full-upgrade" and tweak "apt upgrade"
+  * set APT::Sources::Use-Deb822=false until the format
+    is fully finalized
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 24 Jan 2014 23:21:04 +0100
+
+apt (0.9.14.3~exp4) experimental; urgency=medium
+
+  * implement deb822 suggestions by Anthony Towns and Julian Andres Klode:
+    - add Description tag for deb822 sources
+    - add support for Enabled: no in deb822 sources.list
+    - add support for multiple URIs in deb822 style sources.list
+    - add support for multipl types in one line
+  * add integration test for apt search and apt show
+  * do not ignore ioctl(TIOCSCTTY) errors
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 22 Jan 2014 18:59:07 +0100
+
+apt (0.9.14.3~exp3) experimental; urgency=low
+
+  * implement deb822 suggestions by donkult (thanks!):
+    - rename "Dist" to "Suites"
+    - rename "Section" to "Sections"
+    - rename "Architectures-Delete" to "Architectures-Remove"
+    - rename "Uri" to "URI"
+  * add "apt list --manual-installed"
+  * add "apt upgrade --dist"
+  * add "apt purge"
+  * flock() the file edited in "apt edit-sources"
+  * apt-private/private-show.cc: 
+    - do not show Description-lang: header
+  * reword apt !isatty() warning
+  * add missing integration test for "apt list" and fix bugs
+    found by it
+
+ -- Michael Vogt <mvo@debian.org>  Sat, 18 Jan 2014 21:09:24 +0100
+
+apt (0.9.14.3~exp2) experimental; urgency=medium
+
+  [ Julian Andres Klode ]
+  * debian/rules: Call dh_makeshlibs for 'apt'
+
+  [ Anthony Towns ]
+  * reimplement rred to allow applying all the diffs in a single pass
+  * correct IndexDiff vs DiffIndex in Debug output
+
+  [ David Kalnischkies ]
+  * reenable unlimited pdiff files download
+  * integrate Anthonys rred with POC for client-side merge
+
+  [ Michael Vogt ]
+  * document deb822 style sources.list in sources.list(5)
+  * rename "Dist:" in deb822 style sources.list to "Suite:"
+  * rename URL to Uri in deb822-sources
+  * support multiple "Suite:" entries in deb822 style sources.list:
+    "Suite: stable testing unstable"
+  
+ -- Michael Vogt <mvo@debian.org>  Thu, 16 Jan 2014 21:43:22 +0100
+
+apt (0.9.14.3~exp1) experimental; urgency=low
+
+  [ Michael Vogt ]
+  * add support for "deb822" style sources.list format and add
+    APT::Sources::Use-Deb822 to support disabling it
+
+  [ David Kalnischkies ]
+  * implement POC client-side merging of pdiffs via apt-file
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po(617t): Update Vietnamese translation
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 05 Jan 2014 15:13:32 +0100
+
 apt (0.9.14.2) unstable; urgency=low
 
   [ Joe Hansen ]

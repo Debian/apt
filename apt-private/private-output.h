@@ -28,7 +28,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
                        bool include_summary=true);
 
 
-
+// helper to describe global state
 bool ShowList(std::ostream &out, std::string Title, std::string List,
               std::string VersionsList);
 void ShowBroken(std::ostream &out,CacheFile &Cache,bool Now);

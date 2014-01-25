@@ -114,11 +114,13 @@ std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)/*{{{*/
    pkgCache::PkgIterator P = V.ParentPkg();
    if (V == P.CurrentVer())
    {
+      std::string inst_str = DeNull(V.VerStr());
+#if 0 // FIXME: do we want this or something like this?
       pkgDepCache *DepCache = CacheFile.GetDepCache();
       pkgDepCache::StateCache &state = (*DepCache)[P];
-      std::string inst_str = DeNull(V.VerStr());
       if (state.Upgradable())
          return "**"+inst_str;
+#endif
       return inst_str;
    }
 
@@ -224,11 +226,11 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
          else
             out << GetVersion(CacheFile, V);
       }
-      out << " " << GetArchitecture(CacheFile, P) << " ";
+      out << " " << GetArchitecture(CacheFile, P);
       if (include_summary)
       {
          out << std::endl 
-             << "    " << GetShortDescription(CacheFile, records, P)
+             << "  " << GetShortDescription(CacheFile, records, P)
              << std::endl;
       }
    }

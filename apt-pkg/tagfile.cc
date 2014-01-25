@@ -567,52 +567,54 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
    }
    
    // Write all all of the tags, in order.
-   for (unsigned int I = 0; Order[I] != 0; I++)
+   if (Order != NULL)
    {
-      bool Rewritten = false;
-      
-      // See if this is a field that needs to be rewritten
-      for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
+      for (unsigned int I = 0; Order[I] != 0; I++)
       {
-	 if (strcasecmp(Rewrite[J].Tag,Order[I]) == 0)
-	 {
-	    Visited[J] |= 2;
-	    if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
-	    {
-	       if (isspace(Rewrite[J].Rewrite[0]))
-		  fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-	       else
-		  fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-	    }
+         bool Rewritten = false;
+         
+         // See if this is a field that needs to be rewritten
+         for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
+         {
+            if (strcasecmp(Rewrite[J].Tag,Order[I]) == 0)
+            {
+               Visited[J] |= 2;
+               if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
+               {
+                  if (isspace(Rewrite[J].Rewrite[0]))
+                     fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
+                  else
+                     fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
+               }
+               Rewritten = true;
+               break;
+            }
+         }
 	    
-	    Rewritten = true;
-	    break;
-	 }
-      }      
-	    
-      // See if it is in the fragment
-      unsigned Pos;
-      if (Tags.Find(Order[I],Pos) == false)
-	 continue;
-      Visited[Pos] |= 1;
+         // See if it is in the fragment
+         unsigned Pos;
+         if (Tags.Find(Order[I],Pos) == false)
+            continue;
+         Visited[Pos] |= 1;
 
-      if (Rewritten == true)
-	 continue;
+         if (Rewritten == true)
+            continue;
       
-      /* Write out this element, taking a moment to rewrite the tag
-         in case of changes of case. */
-      const char *Start;
-      const char *Stop;
-      Tags.Get(Start,Stop,Pos);
+         /* Write out this element, taking a moment to rewrite the tag
+            in case of changes of case. */
+         const char *Start;
+         const char *Stop;
+         Tags.Get(Start,Stop,Pos);
       
-      if (fputs(Order[I],Output) < 0)
-	 return _error->Errno("fputs","IO Error to output");
-      Start += strlen(Order[I]);
-      if (fwrite(Start,Stop - Start,1,Output) != 1)
-	 return _error->Errno("fwrite","IO Error to output");
-      if (Stop[-1] != '\n')
-	 fprintf(Output,"\n");
-   }   
+         if (fputs(Order[I],Output) < 0)
+            return _error->Errno("fputs","IO Error to output");
+         Start += strlen(Order[I]);
+         if (fwrite(Start,Stop - Start,1,Output) != 1)
+            return _error->Errno("fwrite","IO Error to output");
+         if (Stop[-1] != '\n')
+            fprintf(Output,"\n");
+      }
+   }
 
    // Now write all the old tags that were missed.
    for (unsigned int I = 0; I != Tags.Count(); I++)

@@ -429,7 +429,105 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
 		   std::string ShortDesc, HashString ExpectedHash);
 };
 									/*}}}*/
-/** \brief An item that is responsible for fetching all the patches	{{{
+/** \brief An item that is responsible for fetching client-merge patches {{{
+ *  that need to be applied to a given package index file.
+ *
+ *  Instead of downloading and applying each patch one by one like its
+ *  sister #pkgAcqIndexDiffs this class will download all patches at once
+ *  and call rred with all the patches downloaded once. Rred will then
+ *  merge and apply them in one go, which should be a lot faster – but is
+ *  incompatible with server-based merges of patches like reprepro can do.
+ *
+ *  \sa pkgAcqDiffIndex, pkgAcqIndex
+ */
+class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
+{
+   protected:
+
+   /** \brief If \b true, debugging output will be written to
+    *  std::clog.
+    */
+   bool Debug;
+
+   /** \brief description of the item that is currently being
+    *  downloaded.
+    */
+   pkgAcquire::ItemDesc Desc;
+
+   /** \brief URI of the package index file that is being
+    *  reconstructed.
+    */
+   std::string RealURI;
+
+   /** \brief HashSum of the package index file that is being
+    *  reconstructed.
+    */
+   HashString ExpectedHash;
+
+   /** \brief description of the file being downloaded. */
+   std::string Description;
+
+   /** \brief information about the current patch */
+   struct DiffInfo const patch;
+
+   /** \brief list of all download items for the patches */
+   std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches;
+
+   /** The current status of this patch. */
+   enum DiffState
+   {
+      /** \brief The diff is currently being fetched. */
+      StateFetchDiff,
+
+      /** \brief The diff is currently being applied. */
+      StateApplyDiff,
+
+      /** \brief the work with this diff is done */
+      StateDoneDiff,
+
+      /** \brief something bad happened and fallback was triggered */
+      StateErrorDiff
+   } State;
+
+   public:
+   /** \brief Called when the patch file failed to be downloaded.
+    *
+    *  This method will fall back to downloading the whole index file
+    *  outright; its arguments are ignored.
+    */
+   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
+
+   virtual void Done(std::string Message,unsigned long long Size,std::string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual std::string DescURI() {return RealURI + "Index";};
+
+   /** \brief Create an index merge-diff item.
+    *
+    *  \param Owner The pkgAcquire object that owns this item.
+    *
+    *  \param URI The URI of the package index file being
+    *  reconstructed.
+    *
+    *  \param URIDesc A long description of this item.
+    *
+    *  \param ShortDesc A brief description of this item.
+    *
+    *  \param ExpectedHash The expected md5sum of the completely
+    *  reconstructed package index file; the index file will be tested
+    *  against this value when it is entirely reconstructed.
+    *
+    *  \param patch contains infos about the patch this item is supposed
+    *  to download which were read from the index
+    *
+    *  \param allPatches contains all related items so that each item can
+    *  check if it was the last one to complete the download step
+    */
+   pkgAcqIndexMergeDiffs(pkgAcquire *Owner,std::string const &URI,std::string const &URIDesc,
+		    std::string const &ShortDesc, HashString const &ExpectedHash,
+		    DiffInfo const &patch, std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
+};
+									/*}}}*/
+/** \brief An item that is responsible for fetching server-merge patches {{{
  *  that need to be applied to a given package index file.
  *
  *  After downloading and applying a single patch, this item will
