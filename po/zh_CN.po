@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-12 21:40+0100\n"
+"POT-Creation-Date: 2013-12-29 17:01+0100\n"
 "PO-Revision-Date: 2010-08-26 14:42+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -157,8 +157,8 @@ msgid "  Version table:"
 msgstr "  版本列表："
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:210 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1582 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
+#: cmdline/apt-get.cc:1577 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
+#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -520,11 +520,11 @@ msgstr "无法处理构建依赖关系"
 msgid "Changelog for %s (%s)"
 msgstr "正在连接 %s (%s)"
 
-#: cmdline/apt-get.cc:1587
+#: cmdline/apt-get.cc:1582
 msgid "Supported modules:"
 msgstr "支持的模块："
 
-#: cmdline/apt-get.cc:1628
+#: cmdline/apt-get.cc:1623
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -638,8 +638,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s 已经是最新的版本了。\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:223
-#: apt-pkg/deb/dpkgpm.cc:1177
+#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:217
+#: apt-pkg/deb/dpkgpm.cc:1178
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "等待子进程 %s 的退出，但是它并不存在"
@@ -1572,8 +1572,8 @@ msgstr ""
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
 #: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:101
-#: apt-pkg/init.cc:109 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
+#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
 msgstr "无法读取 %s"
@@ -1666,12 +1666,12 @@ msgstr "这个提示之前的错误消息才值得您注意。请更正它们，
 msgid "Merging available information"
 msgstr "正在合并可用信息"
 
-#: cmdline/apt-extracttemplates.cc:102
+#: cmdline/apt-extracttemplates.cc:100
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s 不是一个有效的 DEB 软件包。"
 
-#: cmdline/apt-extracttemplates.cc:236
+#: cmdline/apt-extracttemplates.cc:234
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1695,12 +1695,12 @@ msgstr ""
 "  -c=? 读指定的配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1388
+#: cmdline/apt-extracttemplates.cc:266 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "无法写入 %s"
 
-#: cmdline/apt-extracttemplates.cc:313
+#: cmdline/apt-extracttemplates.cc:308
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "无法获得 debconf 的版本。您安装了 debconf 吗？"
 
@@ -2486,12 +2486,12 @@ msgstr "子进程 %s 发生了段错误"
 msgid "Sub-process %s received signal %u."
 msgstr "子进程 %s 收到信号 %u。"
 
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:243
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:237
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "子进程 %s 返回了一个错误号 (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:236
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:230
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "子进程 %s 异常退出"
@@ -2544,7 +2544,7 @@ msgid "Problem syncing the file"
 msgstr "同步文件出错"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/contrib/gpgv.cc:76
+#: apt-pkg/contrib/gpgv.cc:70
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "%s 中没有安装密钥环。"
@@ -2829,12 +2829,12 @@ msgstr "获取软件包的渠道 %s 所需的驱动程序没有正常启动。"
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "请把标有“%s”的盘片插入驱动器“%s”再按回车键。"
 
-#: apt-pkg/init.cc:144
+#: apt-pkg/init.cc:143
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "不支持“%s”打包系统"
 
-#: apt-pkg/init.cc:160
+#: apt-pkg/init.cc:159
 msgid "Unable to determine a suitable packaging system type"
 msgstr "无法确定适合的打包系统类型"
 
@@ -2866,17 +2866,17 @@ msgid ""
 "available in the sources"
 msgstr ""
 
-#: apt-pkg/policy.cc:410
+#: apt-pkg/policy.cc:414
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr "首选项文件 %s 中发现有无效的记录，无 Package 字段头"
 
-#: apt-pkg/policy.cc:432
+#: apt-pkg/policy.cc:436
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "无法识别锁定的类型 %s"
 
-#: apt-pkg/policy.cc:440
+#: apt-pkg/policy.cc:444
 msgid "No priority (or zero) specified for pin"
 msgstr "没有为版本锁定指定优先级(或为零)"
 
@@ -3235,12 +3235,12 @@ msgstr ""
 msgid "Execute external solver"
 msgstr ""
 
-#: apt-pkg/install-progress.cc:50
+#: apt-pkg/install-progress.cc:51
 #, c-format
 msgid "Progress: [%3i%%]"
 msgstr ""
 
-#: apt-pkg/install-progress.cc:84 apt-pkg/install-progress.cc:167
+#: apt-pkg/install-progress.cc:85 apt-pkg/install-progress.cc:168
 msgid "Running dpkg"
 msgstr "正在运行 dpkg"
 
@@ -3252,139 +3252,139 @@ msgid ""
 msgstr ""
 "有一些索引文件不能下载，它们可能被忽略了，也可能转而使用了旧的索引文件。"
 
-#: apt-pkg/deb/dpkgpm.cc:90
+#: apt-pkg/deb/dpkgpm.cc:91
 #, c-format
 msgid "Installing %s"
 msgstr "正在安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:91 apt-pkg/deb/dpkgpm.cc:977
+#: apt-pkg/deb/dpkgpm.cc:92 apt-pkg/deb/dpkgpm.cc:978
 #, c-format
 msgid "Configuring %s"
 msgstr "正在配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:92 apt-pkg/deb/dpkgpm.cc:984
+#: apt-pkg/deb/dpkgpm.cc:93 apt-pkg/deb/dpkgpm.cc:985
 #, c-format
 msgid "Removing %s"
 msgstr "正在删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:93
+#: apt-pkg/deb/dpkgpm.cc:94
 #, c-format
 msgid "Completely removing %s"
 msgstr "完全删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:94
+#: apt-pkg/deb/dpkgpm.cc:95
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "注意到 %s 已经消失"
 
-#: apt-pkg/deb/dpkgpm.cc:95
+#: apt-pkg/deb/dpkgpm.cc:96
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "执行安装后执行的触发器 %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:808
+#: apt-pkg/deb/dpkgpm.cc:809
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "目录 %s 缺失"
 
-#: apt-pkg/deb/dpkgpm.cc:823 apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:824 apt-pkg/deb/dpkgpm.cc:846
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "无法打开文件 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:970
+#: apt-pkg/deb/dpkgpm.cc:971
 #, c-format
 msgid "Preparing %s"
 msgstr "正在准备 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:971
+#: apt-pkg/deb/dpkgpm.cc:972
 #, c-format
 msgid "Unpacking %s"
 msgstr "正在解压缩 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:976
+#: apt-pkg/deb/dpkgpm.cc:977
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "正在准备配置 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:978
+#: apt-pkg/deb/dpkgpm.cc:979
 #, c-format
 msgid "Installed %s"
 msgstr "已安装 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:983
+#: apt-pkg/deb/dpkgpm.cc:984
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "正在准备 %s 的删除操作"
 
-#: apt-pkg/deb/dpkgpm.cc:985
+#: apt-pkg/deb/dpkgpm.cc:986
 #, c-format
 msgid "Removed %s"
 msgstr "已删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:990
+#: apt-pkg/deb/dpkgpm.cc:991
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "正在准备完全删除 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:991
+#: apt-pkg/deb/dpkgpm.cc:992
 #, c-format
 msgid "Completely removed %s"
 msgstr "完全删除了 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1044 apt-pkg/deb/dpkgpm.cc:1065
+#: apt-pkg/deb/dpkgpm.cc:1045 apt-pkg/deb/dpkgpm.cc:1066
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "无法写入 %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1044
+#: apt-pkg/deb/dpkgpm.cc:1045
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1065
+#: apt-pkg/deb/dpkgpm.cc:1066
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1548
+#: apt-pkg/deb/dpkgpm.cc:1549
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1610
+#: apt-pkg/deb/dpkgpm.cc:1611
 msgid "No apport report written because MaxReports is reached already"
 msgstr "由于已经达到 MaxReports 限制，没有写入 apport 报告。"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1615
+#: apt-pkg/deb/dpkgpm.cc:1616
 msgid "dependency problems - leaving unconfigured"
 msgstr "依赖问题 - 保持未配置"
 
-#: apt-pkg/deb/dpkgpm.cc:1617
+#: apt-pkg/deb/dpkgpm.cc:1618
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr "因为错误消息指示这是由于上一个问题导致的错误，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1623
+#: apt-pkg/deb/dpkgpm.cc:1624
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr "因为错误消息指示这是由于磁盘已满，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1630
+#: apt-pkg/deb/dpkgpm.cc:1631
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr "因为错误消息指示这是由于内存不足，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1637 apt-pkg/deb/dpkgpm.cc:1643
+#: apt-pkg/deb/dpkgpm.cc:1638 apt-pkg/deb/dpkgpm.cc:1644
 #, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr "因为错误消息指示这是由于磁盘已满，没有写入 apport 报告。"
 
-#: apt-pkg/deb/dpkgpm.cc:1664
+#: apt-pkg/deb/dpkgpm.cc:1665
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr "因为错误消息指示这是一个 dpkg I/O 错误，没有写入 apport 报告。"

@@ -1539,14 +1539,12 @@ bool DoChangelog(CommandLine &CmdL)
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 
    char tmpname[100];
-   char* tmpdir = NULL;
+   const char* tmpdir = NULL;
    if (downOnly == false)
    {
-      const char* const tmpDir = getenv("TMPDIR");
-      if (tmpDir != NULL && *tmpDir != '\0')
-	 snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", tmpDir);
-      else
-	 strncpy(tmpname, "/tmp/apt-changelog-XXXXXX", sizeof(tmpname));
+      std::string systemTemp = GetTempDir();
+      snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", 
+               systemTemp.c_str());
       tmpdir = mkdtemp(tmpname);
       if (tmpdir == NULL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");

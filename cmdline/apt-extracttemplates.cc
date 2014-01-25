@@ -47,8 +47,6 @@
 
 using namespace std;
 
-#define TMPDIR		"/tmp"
-
 pkgCache *DebFile::Cache = 0;
 
 // DebFile::DebFile - Construct the DebFile object			/*{{{*/
@@ -253,14 +251,11 @@ string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
-	const char *tempdir = NULL;
 
-        tempdir = getenv("TMPDIR");
-        if (tempdir == NULL)
-             tempdir = TMPDIR;
-
+        std::string tempdir = GetTempDir();
 	snprintf(fn, sizeof(fn), "%s/%s.%s.%u%d",
-                 _config->Find("APT::ExtractTemplates::TempDir", tempdir).c_str(),
+                 _config->Find("APT::ExtractTemplates::TempDir", 
+                               tempdir.c_str()).c_str(),
                  package, prefix, getpid(), i++);
 	FileFd f;
 	if (data == NULL)

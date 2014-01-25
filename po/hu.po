@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt trunk\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2013-12-12 21:40+0100\n"
+"POT-Creation-Date: 2013-12-29 17:01+0100\n"
 "PO-Revision-Date: 2012-06-25 17:09+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
@@ -160,8 +160,8 @@ msgid "  Version table:"
 msgstr "  Verziótáblázat:"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:210 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1582 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:229 ftparchive/apt-ftparchive.cc:591
+#: cmdline/apt-get.cc:1577 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
+#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -536,11 +536,11 @@ msgstr "Nem sikerült az építési függőségeket feldolgozni"
 msgid "Changelog for %s (%s)"
 msgstr "Változási napló ehhez: %s (%s)"
 
-#: cmdline/apt-get.cc:1587
+#: cmdline/apt-get.cc:1582
 msgid "Supported modules:"
 msgstr "Támogatott modulok:"
 
-#: cmdline/apt-get.cc:1628
+#: cmdline/apt-get.cc:1623
 msgid ""
 "Usage: apt-get [options] command\n"
 "       apt-get [options] install|remove pkg1 [pkg2 ...]\n"
@@ -655,8 +655,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s eddig sem volt visszafogva.\n"
 
 #: cmdline/apt-mark.cc:247 cmdline/apt-mark.cc:328
-#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:223
-#: apt-pkg/deb/dpkgpm.cc:1177
+#: apt-pkg/contrib/fileutl.cc:850 apt-pkg/contrib/gpgv.cc:217
+#: apt-pkg/deb/dpkgpm.cc:1178
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Nem található a(z) %s, a várakozás után sem"
@@ -1633,8 +1633,8 @@ msgstr ""
 #: methods/mirror.cc:95 apt-inst/extract.cc:464
 #: apt-pkg/contrib/cdromutl.cc:184 apt-pkg/contrib/fileutl.cc:406
 #: apt-pkg/contrib/fileutl.cc:519 apt-pkg/sourcelist.cc:208
-#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:101
-#: apt-pkg/init.cc:109 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
+#: apt-pkg/sourcelist.cc:214 apt-pkg/acquire.cc:485 apt-pkg/init.cc:100
+#: apt-pkg/init.cc:108 apt-pkg/clean.cc:36 apt-pkg/policy.cc:373
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s nem olvasható"
@@ -1733,12 +1733,12 @@ msgstr "előtti hibák fontosak. Javítsa azokat, és futtassa az [I]nstallt új
 msgid "Merging available information"
 msgstr "Elérhető információk egyesítése"
 
-#: cmdline/apt-extracttemplates.cc:102
+#: cmdline/apt-extracttemplates.cc:100
 #, c-format
 msgid "%s not a valid DEB package."
 msgstr "%s nem egy érvényes DEB csomag."
 
-#: cmdline/apt-extracttemplates.cc:236
+#: cmdline/apt-extracttemplates.cc:234
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1763,12 +1763,12 @@ msgstr ""
 "  -c=? Ezt a konfigurációs fájlt olvassa be\n"
 "  -o=? Beállít egy tetszőleges konfigurációs opciót, pl -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:271 apt-pkg/pkgcachegen.cc:1388
+#: cmdline/apt-extracttemplates.cc:266 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Nem lehet írni ebbe: %s"
 
-#: cmdline/apt-extracttemplates.cc:313
+#: cmdline/apt-extracttemplates.cc:308
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Nem lehet megállapítani a debconf verziót. A debconf telepítve van?"
 
@@ -2570,12 +2570,12 @@ msgstr "%s alfolyamat szegmentálási hibát okozott."
 msgid "Sub-process %s received signal %u."
 msgstr "A(z) %s alfolyamat %u számú szignált kapott."
 
-#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:243
+#: apt-pkg/contrib/fileutl.cc:868 apt-pkg/contrib/gpgv.cc:237
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "%s alfolyamat hibakóddal tért vissza (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:236
+#: apt-pkg/contrib/fileutl.cc:870 apt-pkg/contrib/gpgv.cc:230
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "%s alfolyamat váratlanul kilépett"
@@ -2628,7 +2628,7 @@ msgid "Problem syncing the file"
 msgstr "Hiba a fájl szinkronizálásakor"
 
 #. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/contrib/gpgv.cc:76
+#: apt-pkg/contrib/gpgv.cc:70
 #, c-format
 msgid "No keyring installed in %s."
 msgstr "Nincs kulcstartó telepítve ide: %s."
@@ -2923,12 +2923,12 @@ msgstr ""
 "Helyezze be a(z) „%s” címkéjű lemezt a(z) „%s” meghajtóba, és nyomja meg az "
 "Entert."
 
-#: apt-pkg/init.cc:144
+#: apt-pkg/init.cc:143
 #, c-format
 msgid "Packaging system '%s' is not supported"
 msgstr "A(z) „%s” csomagrendszer nem támogatott"
 
-#: apt-pkg/init.cc:160
+#: apt-pkg/init.cc:159
 msgid "Unable to determine a suitable packaging system type"
 msgstr "A megfelelő csomagrendszertípus nem határozható meg"
 
@@ -2964,17 +2964,17 @@ msgstr ""
 "A(z) „%s” érték érvénytelen az APT::Default-Release beállításhoz, mert nincs "
 "ilyen kiadás a forrásokban"
 
-#: apt-pkg/policy.cc:410
+#: apt-pkg/policy.cc:414
 #, c-format
 msgid "Invalid record in the preferences file %s, no Package header"
 msgstr "Érvénytelen rekord a(z) %s beállításfájlban, nincs Package fejléc"
 
-#: apt-pkg/policy.cc:432
+#: apt-pkg/policy.cc:436
 #, c-format
 msgid "Did not understand pin type %s"
 msgstr "A(z) %s rögzítéstípus nem értelmezhető"
 
-#: apt-pkg/policy.cc:440
+#: apt-pkg/policy.cc:444
 msgid "No priority (or zero) specified for pin"
 msgstr "Nincs prioritás (vagy nulla) megadva a rögzítéshez"
 
@@ -3347,12 +3347,12 @@ msgstr "A külső solver megfelelő hibaüzenet nélkül hibázott"
 msgid "Execute external solver"
 msgstr "Külső solver végrehajtása"
 
-#: apt-pkg/install-progress.cc:50
+#: apt-pkg/install-progress.cc:51
 #, c-format
 msgid "Progress: [%3i%%]"
 msgstr ""
 
-#: apt-pkg/install-progress.cc:84 apt-pkg/install-progress.cc:167
+#: apt-pkg/install-progress.cc:85 apt-pkg/install-progress.cc:168
 msgid "Running dpkg"
 msgstr "A dpkg futtatása"
 
@@ -3364,114 +3364,114 @@ msgstr ""
 "Néhány indexfájlt nem sikerült letölteni. Figyelmen kívül lettek hagyva, "
 "vagy régebbiek lettek felhasználva."
 
-#: apt-pkg/deb/dpkgpm.cc:90
+#: apt-pkg/deb/dpkgpm.cc:91
 #, c-format
 msgid "Installing %s"
 msgstr "%s telepítése"
 
-#: apt-pkg/deb/dpkgpm.cc:91 apt-pkg/deb/dpkgpm.cc:977
+#: apt-pkg/deb/dpkgpm.cc:92 apt-pkg/deb/dpkgpm.cc:978
 #, c-format
 msgid "Configuring %s"
 msgstr "%s konfigurálása"
 
-#: apt-pkg/deb/dpkgpm.cc:92 apt-pkg/deb/dpkgpm.cc:984
+#: apt-pkg/deb/dpkgpm.cc:93 apt-pkg/deb/dpkgpm.cc:985
 #, c-format
 msgid "Removing %s"
 msgstr "%s eltávolítása"
 
-#: apt-pkg/deb/dpkgpm.cc:93
+#: apt-pkg/deb/dpkgpm.cc:94
 #, c-format
 msgid "Completely removing %s"
 msgstr "%s teljes eltávolítása"
 
-#: apt-pkg/deb/dpkgpm.cc:94
+#: apt-pkg/deb/dpkgpm.cc:95
 #, c-format
 msgid "Noting disappearance of %s"
 msgstr "„%s” eltűnése feljegyezve"
 
-#: apt-pkg/deb/dpkgpm.cc:95
+#: apt-pkg/deb/dpkgpm.cc:96
 #, c-format
 msgid "Running post-installation trigger %s"
 msgstr "A(z) %s telepítés utáni trigger futtatása"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:808
+#: apt-pkg/deb/dpkgpm.cc:809
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "A(z) „%s” könyvtár hiányzik"
 
-#: apt-pkg/deb/dpkgpm.cc:823 apt-pkg/deb/dpkgpm.cc:845
+#: apt-pkg/deb/dpkgpm.cc:824 apt-pkg/deb/dpkgpm.cc:846
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "A(z) „%s” fájl megnyitása sikertelen"
 
-#: apt-pkg/deb/dpkgpm.cc:970
+#: apt-pkg/deb/dpkgpm.cc:971
 #, c-format
 msgid "Preparing %s"
 msgstr "%s előkészítése"
 
-#: apt-pkg/deb/dpkgpm.cc:971
+#: apt-pkg/deb/dpkgpm.cc:972
 #, c-format
 msgid "Unpacking %s"
 msgstr "%s kicsomagolása"
 
-#: apt-pkg/deb/dpkgpm.cc:976
+#: apt-pkg/deb/dpkgpm.cc:977
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "%s konfigurálásának előkészítése"
 
-#: apt-pkg/deb/dpkgpm.cc:978
+#: apt-pkg/deb/dpkgpm.cc:979
 #, c-format
 msgid "Installed %s"
 msgstr "%s telepítve"
 
-#: apt-pkg/deb/dpkgpm.cc:983
+#: apt-pkg/deb/dpkgpm.cc:984
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "%s eltávolításának előkészítése"
 
-#: apt-pkg/deb/dpkgpm.cc:985
+#: apt-pkg/deb/dpkgpm.cc:986
 #, c-format
 msgid "Removed %s"
 msgstr "%s eltávolítva"
 
-#: apt-pkg/deb/dpkgpm.cc:990
+#: apt-pkg/deb/dpkgpm.cc:991
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "%s teljes eltávolításának előkészítése"
 
-#: apt-pkg/deb/dpkgpm.cc:991
+#: apt-pkg/deb/dpkgpm.cc:992
 #, c-format
 msgid "Completely removed %s"
 msgstr "%s teljesen eltávolítva"
 
-#: apt-pkg/deb/dpkgpm.cc:1044 apt-pkg/deb/dpkgpm.cc:1065
+#: apt-pkg/deb/dpkgpm.cc:1045 apt-pkg/deb/dpkgpm.cc:1066
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "Nem lehet írni ebbe: %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1044
+#: apt-pkg/deb/dpkgpm.cc:1045
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1065
+#: apt-pkg/deb/dpkgpm.cc:1066
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1548
+#: apt-pkg/deb/dpkgpm.cc:1549
 msgid "Operation was interrupted before it could finish"
 msgstr "A művelet megszakadt, mielőtt befejeződhetett volna"
 
-#: apt-pkg/deb/dpkgpm.cc:1610
+#: apt-pkg/deb/dpkgpm.cc:1611
 msgid "No apport report written because MaxReports is reached already"
 msgstr "Nem került írásra apport jelentés, mivel a MaxReports már elérve"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1615
+#: apt-pkg/deb/dpkgpm.cc:1616
 msgid "dependency problems - leaving unconfigured"
 msgstr "függőségi hibák - a csomag beállítatlan maradt"
 
-#: apt-pkg/deb/dpkgpm.cc:1617
+#: apt-pkg/deb/dpkgpm.cc:1618
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3479,7 +3479,7 @@ msgstr ""
 "Nem került kiírásra apport jelentés, mivel a hibaüzenet szerint ez a hiba "
 "egy korábbi hiba következménye."
 
-#: apt-pkg/deb/dpkgpm.cc:1623
+#: apt-pkg/deb/dpkgpm.cc:1624
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3487,7 +3487,7 @@ msgstr ""
 "Nem került kiírásra apport jelentés, mivel a hibaüzenet szerint megtelt a "
 "lemez"
 
-#: apt-pkg/deb/dpkgpm.cc:1630
+#: apt-pkg/deb/dpkgpm.cc:1631
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3495,7 +3495,7 @@ msgstr ""
 "Nem került kiírásra apport jelentés, mivel a hibaüzenet memóriaelfogyási "
 "hibát jelez"
 
-#: apt-pkg/deb/dpkgpm.cc:1637 apt-pkg/deb/dpkgpm.cc:1643
+#: apt-pkg/deb/dpkgpm.cc:1638 apt-pkg/deb/dpkgpm.cc:1644
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
@@ -3503,7 +3503,7 @@ msgstr ""
 "Nem került kiírásra apport jelentés, mert a hibaüzenet a helyi rendszeren "
 "lévő hibát jelez"
 
-#: apt-pkg/deb/dpkgpm.cc:1664
+#: apt-pkg/deb/dpkgpm.cc:1665
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

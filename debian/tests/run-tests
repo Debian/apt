@@ -2,6 +2,17 @@
 
 set -e
 
-make
-make test
-test/integration/run-tests
+# auto-package-test is very unhappy if stuff it writen to stderr
+exec 2> apt-stderr.log
+
+# we need the buildin webserver for the tests
+if [ ! -e environment.mak ]; then
+    ./configure
+fi
+make -C test/interactive-helper/
+
+# run against the installed apt
+APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR=$(pwd)/build/bin \
+APT_INTEGRATION_TESTS_METHODS_DIR=/usr/lib/apt/methods \
+APT_INTEGRATION_TESTS_BUILD_DIR=/usr/bin \
+./test/integration/run-tests

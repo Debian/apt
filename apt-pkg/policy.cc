@@ -405,6 +405,10 @@ bool ReadPinFile(pkgPolicy &Plcy,string File)
    PreferenceSection Tags;
    while (TF.Step(Tags) == true)
    {
+      // can happen when there are only comments in a record
+      if (Tags.Count() == 0)
+         continue;
+
       string Name = Tags.FindS("Package");
       if (Name.empty() == true)
 	 return _error->Error(_("Invalid record in the preferences file %s, no Package header"), File.c_str());

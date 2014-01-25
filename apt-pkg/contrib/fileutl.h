@@ -165,6 +165,8 @@ bool DirectoryExists(std::string const &Path) __attrib_const;
 bool CreateDirectory(std::string const &Parent, std::string const &Path);
 time_t GetModificationTime(std::string const &Path);
 
+std::string GetTempDir();
+
 /** \brief Ensure the existence of the given Path
  *
  *  \param Parent directory of the Path directory - a trailing

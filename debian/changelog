@@ -1,3 +1,34 @@
+apt (0.9.14.2) unstable; urgency=low
+
+  [ Joe Hansen ]
+  * Danish translation update. Closes: #732166
+  
+  [ Peter Green ]
+  * add apt-vendor for raspbian. Closes: #732749
+
+  [ Thomas Bechtold ]
+  * apt-pkg/contrib/gpgv.cc: use /tmp as fallback dir if the
+    directory from $TMPDIR  is not available (closes: #728500)
+  
+  [ Michael Vogt ]
+  * vendor/getinfo:
+    - fix ubuntu-codename
+  * vendor/steamos/*:
+    - add steamos support
+  * bugfix/bts731738-fancy-progess:
+    - fix terminal size issues with e.g. "less" when "APT::Progress-Fancy=1"
+      is used (closes: #731738)
+  * feature/policy-parser-bts732746:
+    - allow more flexibility in /etc/apt/preferences, e.g. comment only
+      sections (closes: #732746)
+  * move TMPDIR handling into GetTempDir() and use that instead of
+    getenv("TMPDIR")
+  * update apt-key net-update and add integration test with the buildin
+    apt webserver
+  * run autopkgtest against the installed apt
+
+ -- Michael Vogt <mvo@debian.org>  Sun, 29 Dec 2013 16:41:16 +0100
+
 apt (0.9.14.1ubuntu2) trusty; urgency=medium
 
   * Install the apt binary.

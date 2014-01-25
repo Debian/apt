@@ -1,0 +1,392 @@
+<!-- -*- mode: xml; mode: fold -*- -->
+
+<!-- Some common paths.. -->
+<!ENTITY docdir "/usr/share/doc/apt/">
+<!ENTITY guidesdir "/usr/share/doc/apt-doc/">
+<!ENTITY configureindex "<filename>&docdir;examples/configure-index.gz</filename>">
+<!ENTITY aptconfdir "<filename>/etc/apt.conf</filename>">
+<!ENTITY statedir "/var/lib/apt">
+<!ENTITY cachedir "/var/cache/apt">
+
+<!-- Cross references to other man pages -->
+<!ENTITY apt-conf "<citerefentry>
+    <refentrytitle><filename>apt.conf</filename></refentrytitle>
+    <manvolnum>5</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-get "<citerefentry>
+    <refentrytitle><command>apt-get</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-config "<citerefentry>
+    <refentrytitle><command>apt-config</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-cdrom "<citerefentry>
+    <refentrytitle><command>apt-cdrom</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-cache "<citerefentry>
+    <refentrytitle><command>apt-cache</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-preferences "<citerefentry>
+    <refentrytitle><command>apt_preferences</command></refentrytitle>
+    <manvolnum>5</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-key "<citerefentry>
+    <refentrytitle><command>apt-key</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-secure "<citerefentry>
+    <refentrytitle>apt-secure</refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-ftparchive "<citerefentry>
+    <refentrytitle><filename>apt-ftparchive</filename></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+
+<!ENTITY sources-list "<citerefentry>
+    <refentrytitle><filename>sources.list</filename></refentrytitle>
+    <manvolnum>5</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY reportbug "<citerefentry>
+    <refentrytitle><command>reportbug</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY dpkg "<citerefentry>
+    <refentrytitle><command>dpkg</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY dpkg-buildpackage "<citerefentry>
+    <refentrytitle><command>dpkg-buildpackage</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY gzip "<citerefentry>
+    <refentrytitle><command>gzip</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY dpkg-scanpackages "<citerefentry>
+    <refentrytitle><command>dpkg-scanpackages</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY dpkg-scansources "<citerefentry>
+    <refentrytitle><command>dpkg-scansources</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY dselect "<citerefentry>
+    <refentrytitle><command>dselect</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY aptitude "<citerefentry>
+    <refentrytitle><command>aptitude</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY synaptic "<citerefentry>
+    <refentrytitle><command>synaptic</command></refentrytitle>
+    <manvolnum>8</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY squid-deb-proxy-client "<citerefentry>
+    <refentrytitle><command>squid-deb-proxy-client</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY debsign "<citerefentry>
+    <refentrytitle><command>debsign</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY debsig-verify "<citerefentry>
+    <refentrytitle><command>debsig-verify</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY gpg "<citerefentry>
+    <refentrytitle><command>gpg</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY wajig "<citerefentry>
+    <refentrytitle><command>wajig</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY wget "<citerefentry>
+    <refentrytitle><command>wget</command></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY apt-transport-debtorrent "<citerefentry>
+    <refentrytitle><package>apt-transport-debtorrent</package></refentrytitle>
+    <manvolnum>1</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY regex "<citerefentry>
+     <refentrytitle><abbrev>regex</abbrev></refentrytitle>
+     <manvolnum>7</manvolnum>
+  </citerefentry>"
+>
+
+<!ENTITY glob "<citerefentry>
+     <refentrytitle><abbrev>glob</abbrev></refentrytitle>
+     <manvolnum>7</manvolnum>
+  </citerefentry>"
+>
+
+<!-- Boiler plate docinfo section -->
+<!ENTITY apt-email "
+   <address>
+    <email>apt@packages.debian.org</email>
+   </address>
+">
+
+<!ENTITY apt-author.jgunthorpe "
+   <author>
+    <firstname>Jason</firstname>
+    <surname>Gunthorpe</surname>
+    <contrib></contrib>
+   </author>
+">
+
+<!ENTITY apt-author.moconnor "
+   <author>
+    <firstname>Mike</firstname>
+    <surname>O'Connor</surname>
+    <contrib></contrib>
+   </author>
+">
+
+<!ENTITY apt-name.dburrows "
+     <firstname>Daniel</firstname>
+     <surname>Burrows</surname>
+">
+
+<!ENTITY apt-copyright "
+    <copyright>
+     <holder>Jason Gunthorpe</holder>
+     <year>1998-2001</year>
+    </copyright>
+">
+
+<!ENTITY apt-product "
+   <productname>APT</productname>
+   <releaseinfo role='version'>&apt-product-version;</releaseinfo>
+">
+
+<!-- this will be updated by 'prepare-release' -->
+<!ENTITY apt-product-version "0.9.14.1ubuntu1">
+
+<!-- (Code)names for various things used all over the place -->
+<!ENTITY oldstable-codename "squeeze">
+<!ENTITY stable-codename "wheezy">
+<!ENTITY testing-codename "jessie">
+<!ENTITY stable-version "7">
+<!ENTITY ubuntu-codename "trusty">
+
+<!-- good and bad just refers to matching and not matching a pattern…
+     It is not a remark about the specific perl version.
+     There is no way perl could be clasified "good" (or "bad") in any version… -->
+<!ENTITY good-perl "5.10">
+<!ENTITY bad-perl "5.14">
+
+<!-- Arguments -->
+<!ENTITY synopsis-arg-option "<arg><option>-o=<replaceable>&synopsis-config-string;</replaceable></option></arg>">
+<!ENTITY synopsis-arg-config "<arg><option>-c=<filename><replaceable>&synopsis-config-file;</replaceable></filename></option></arg>">
+<!ENTITY synopsis-arg-target-release "<arg><option>-t=<replaceable>&synopsis-target-release;</replaceable></option></arg>">
+<!ENTITY synopsis-arg-architecture "<arg><option>-a=<replaceable>&synopsis-architecture;</replaceable></option></arg>">
+<!ENTITY synopsis-arg-pkgver "<arg choice='plain' rep='repeat'><replaceable>&synopsis-pkg;</replaceable><arg><group choice='req'>
+	<arg choice='plain'>=<replaceable>&synopsis-pkg-ver-number;</replaceable></arg>
+	<arg choice='plain'>/<replaceable>&synopsis-target-release;</replaceable></arg>
+</group></arg></arg>">
+<!ENTITY synopsis-arg-pkg "<arg choice='plain' rep='repeat'><replaceable>&synopsis-pkg;</replaceable></arg>">
+<!ENTITY synopsis-param-filename "<filename><replaceable>&synopsis-filename;</replaceable></filename>">
+<!ENTITY synopsis-help "<arg choice='plain'><group choice='req'><arg choice='plain'>-v</arg><arg choice='plain'>--version</arg></group></arg>
+	<arg choice='plain'><group choice='req'><arg choice='plain'>-h</arg><arg choice='plain'>--help</arg></group></arg>">
+<!ENTITY synopsis-command-apt-get "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-get</command>
+	<arg><option>-asqdyfmubV</option></arg>
+	&synopsis-arg-option;
+	&synopsis-arg-config;
+	&synopsis-arg-target-release;
+	&synopsis-arg-architecture;
+	<group choice='req'>
+		<arg choice='plain'>update</arg>
+		<arg choice='plain'>upgrade</arg>
+		<arg choice='plain'>dselect-upgrade</arg>
+		<arg choice='plain'>dist-upgrade</arg>
+		<arg choice='plain'>install &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>remove &synopsis-arg-pkg;</arg>
+		<arg choice='plain'>purge &synopsis-arg-pkg;</arg>
+		<arg choice='plain'>source &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>build-dep &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>download &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>check</arg>
+		<arg choice='plain'>clean</arg>
+		<arg choice='plain'>autoclean</arg>
+		<arg choice='plain'>autoremove</arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
+<!ENTITY synopsis-command-apt-cache "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-cache</command>
+	<arg><option>-agipns</option></arg>
+	&synopsis-arg-option;
+	&synopsis-arg-config;
+	<group choice='req'>
+		<arg choice='plain'>gencaches</arg>
+		<arg choice='plain'>showpkg &synopsis-arg-pkg;</arg>
+		<arg choice='plain'>showsrc &synopsis-arg-pkg;</arg>
+		<arg choice='plain'>stats</arg>
+		<arg choice='plain'>dump</arg>
+		<arg choice='plain'>dumpavail</arg>
+		<arg choice='plain'>unmet</arg>
+		<arg choice='plain'>search <arg choice='plain' rep='repeat'><replaceable>&synopsis-regex;</replaceable></arg></arg>
+		<arg choice='plain'>show &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>depends &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>rdepends &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>pkgnames <arg><replaceable>&synopsis-prefix;</replaceable></arg></arg>
+		<arg choice='plain'>dotty &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>xvcg &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>policy <arg rep='repeat'><replaceable>&synopsis-pkg;</replaceable></arg></arg>
+		<arg choice='plain'>madison &synopsis-arg-pkg;</arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
+<!ENTITY synopsis-command-apt-cdrom "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-cdrom</command>
+	<arg><option>-rmfan</option></arg>
+	<arg><option>-d=<replaceable>&synopsis-cdrom-mount;</replaceable></option></arg>
+	&synopsis-arg-option;
+	&synopsis-arg-config;
+	<group choice='req'>
+		<arg choice='plain'>add</arg>
+		<arg choice='plain'>ident</arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
+<!--<arg><option>- -format '<replaceable>&#37;f \"&#37;v\";&#37;n</replaceable>'</option></arg>-->
+<!ENTITY synopsis-command-apt-config "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-config</command>
+	<arg><option>--empty</option></arg>
+	<arg><option>--format '<replaceable>&percnt;f &#x0022;&percnt;v&#x0022;;&percnt;n</replaceable>'</option></arg>
+	&synopsis-arg-option;
+	&synopsis-arg-config;
+	<group choice='req'>
+		<arg choice='plain'>shell</arg>
+		<arg choice='plain'>dump</arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
+<!ENTITY synopsis-command-apt-extracttemplates "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-extracttemplates</command>
+	<arg><option>-t=<replaceable>&synopsis-tmp-directory;</replaceable></option></arg>
+	<arg choice='plain' rep='repeat'>&synopsis-param-filename;</arg>
+	&synopsis-help;
+</cmdsynopsis></refsynopsisdiv>">
+<!ENTITY synopsis-arg-ftparchive "<arg choice='plain' rep='repeat'><replaceable>&synopsis-path;</replaceable></arg><arg><filename><replaceable>&synopsis-override;</replaceable></filename><arg><replaceable>&synopsis-pathprefix;</replaceable></arg></arg>">
+<!ENTITY synopsis-command-apt-ftparchive "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-ftparchive</command>
+	<arg><option>-dsq</option></arg>
+	<arg><option>--md5</option></arg>
+	<arg><option>--delink</option></arg>
+	<arg><option>--readonly</option></arg>
+	<arg><option>--contents</option></arg>
+	<arg><option>--arch <replaceable>architecture</replaceable></option></arg>
+	&synopsis-arg-option;
+	&synopsis-arg-config;
+	<group choice='req'>
+		<arg choice='plain'>packages &synopsis-arg-ftparchive;</arg>
+		<arg choice='plain'>sources &synopsis-arg-ftparchive;</arg>
+		<arg choice='plain'>contents <arg choice='plain'><replaceable>&synopsis-path;</replaceable></arg></arg>
+		<arg choice='plain'>release <arg choice='plain'><replaceable>&synopsis-path;</replaceable></arg></arg>
+		<arg choice='plain'>generate <arg choice='plain'><replaceable>&synopsis-config-file;</replaceable></arg> <arg choice='plain' rep='repeat'><replaceable>&synopsis-section;</replaceable></arg></arg>
+		<arg choice='plain'>clean <arg choice='plain'><replaceable>&synopsis-config-file;</replaceable></arg></arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
+<!ENTITY synopsis-param-keyid "<replaceable>&synopsis-keyid;</replaceable>">
+<!ENTITY synopsis-command-apt-key "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-key</command>
+	<arg><option>--keyring &synopsis-param-filename;</option></arg>
+	<group choice='req'>
+		<arg choice='plain'>add &synopsis-param-filename;</arg>
+		<arg choice='plain'>del &synopsis-param-keyid;</arg>
+		<arg choice='plain'>export &synopsis-param-keyid;</arg>
+		<arg choice='plain'>exportall</arg>
+		<arg choice='plain'>list</arg>
+		<arg choice='plain'>finger</arg>
+		<arg choice='plain'>adv</arg>
+		<arg choice='plain'>update</arg>
+		<arg choice='plain'>net-update</arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
+<!ENTITY synopsis-command-apt-mark "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-mark</command>
+	<arg><option>-f=&synopsis-param-filename;</option></arg>
+	<group choice='plain'>
+		<arg choice='plain'>
+			<group choice='req'>
+				<arg choice='plain'>auto</arg>
+				<arg choice='plain'>manual</arg>
+				<arg choice='plain'>showauto</arg>
+				<arg choice='plain'>showmanual</arg>
+			</group>
+			&synopsis-arg-pkg;
+		</arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
+<!ENTITY synopsis-command-apt-sortpkgs "<refsynopsisdiv><cmdsynopsis>
+	<command>apt-sortpkgs</command>
+	<arg><option>-s</option></arg>
+	&synopsis-arg-option;
+	&synopsis-arg-config;
+	<arg choice='plain' rep='repeat'>&synopsis-param-filename;</arg>
+	&synopsis-help;
+</cmdsynopsis></refsynopsisdiv>">

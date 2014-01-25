@@ -219,6 +219,7 @@ apt: build-binary build-manpages debian/apt.install
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
+	dh_makeshlibs -p$@
 	dh_installdeb -p$@
 	dh_shlibdeps -p$@
 	dh_gencontrol -p$@ -- -Vapt:keyring="$(shell ./vendor/getinfo keyring-package)"
