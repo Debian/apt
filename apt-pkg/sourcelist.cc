@@ -20,6 +20,7 @@
 #include <apt-pkg/tagfile.h>
 
 #include <fstream>
+#include <algorithm>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -94,7 +95,12 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
    };
    for (unsigned int j=0; j < sizeof(option_deb822)/sizeof(char*); j++)
       if (Tags.Exists(option_deb822[j]))
-         Options[option_internal[j]] = Tags.FindS(option_deb822[j]);
+      {
+         // for deb822 the " " is the delimiter, but the backend expects ","
+         std::string option = Tags.FindS(option_deb822[j]);
+         std::replace(option.begin(), option.end(), ' ', ',');
+         Options[option_internal[j]] = option;
+      }
    
    // now create one item per suite/section
    string Suite = Tags.FindS("Suites");

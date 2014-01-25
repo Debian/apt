@@ -66,7 +66,7 @@ testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/P
 
 msgtest 'Test deb822' 'architecture option'
 echo "$BASE" > $SOURCES
-echo "Architectures: amd64,armel" >> $SOURCES
+echo "Architectures: amd64 armel" >> $SOURCES
 testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-amd64/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-amd64_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/binary-armel/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-armel_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
