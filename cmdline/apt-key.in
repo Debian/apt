@@ -303,13 +303,22 @@ fi
 shift
 
 if [ "$command" != "help" ]; then
-    if ! which gpg >/dev/null 2>&1; then
-	echo >&2 "Warning: gnupg does not seem to be installed."
-	echo >&2 "Warning: apt-key requires gnupg for most operations."
+    eval $(apt-config shell GPG_EXE Apt::Key::gpgcommand)
+
+    if [ -n "$GPG_EXE" ] && which "$GPG_EXE" >/dev/null 2>&1; then
+	true
+    elif which gpg >/dev/null 2>&1; then
+	GPG_EXE="gpg"
+    elif which gpg2 >/dev/null 2>&1; then
+	GPG_EXE="gpg2"
+    else
+	echo >&2 "Error: gnupg or gnupg2 do not seem to be installed,"
+	echo >&2 "Error: but apt-key requires gnupg or gnupg2 for operation."
 	echo >&2
+	exit 255
     fi
 
-    GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
+    GPG_CMD="$GPG_EXE --ignore-time-conflict --no-options --no-default-keyring"
 
     # gpg needs (in different versions more or less) files to function correctly,
     # so we give it its own homedir and generate some valid content for it
