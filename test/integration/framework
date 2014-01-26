@@ -133,13 +133,6 @@ gdb() {
 	shift
 	runapt command gdb --quiet -ex run "${BUILDDIRECTORY}/$CMD" --args "${BUILDDIRECTORY}/$CMD" "$@"
 }
-gpg() {
-	# see apt-key for the whole trickery. Setup is done in setupenvironment
-	command gpg --ignore-time-conflict --no-options --no-default-keyring \
-		--homedir "${TMPWORKINGDIRECTORY}/gnupghome" \
-		--no-auto-check-trustdb --trust-model always \
-		"$@"
-}
 
 exitwithstatus() {
         # error if we about to overflow, but ...
@@ -238,19 +231,6 @@ setupenvironment() {
 	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
         echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
-
-	# gpg needs a trustdb to function, but it can't be invalid (not even empty)
-	# see also apt-key where this trickery comes from:
-	local TRUSTDBDIR="${TMPWORKINGDIRECTORY}/gnupghome"
-	mkdir "$TRUSTDBDIR"
-	chmod 700 "$TRUSTDBDIR"
-	# We also don't use a secret keyring, of course, but gpg panics and
-	# implodes if there isn't one available - and writeable for imports
-	local SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
-	touch $SECRETKEYRING
-	# now create the trustdb with an (empty) dummy keyring
-	# newer gpg versions are fine without it, but play it safe for now
-	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
 
 	# cleanup the environment a bit
         # prefer our apt binaries over the system apt binaries
@@ -449,8 +429,8 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
-#			gpg --yes --secret-keyring ./keys/joesixpack.sec \
-#				--keyring ./keys/joesixpack.pub --default-key 'Joe Sixpack' \
+#			aptkey --keyring ./keys/joesixpack.pub --quiet adv --yes \
+#				--secret-keyring ./keys/joesixpack.sec --default-key 'Joe Sixpack' \
 #				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #		fi
@@ -835,8 +815,9 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
-	local GPG="gpg --batch --yes"
-	msgninfo "\tSign archive with $SIGNER key… "
+	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
+	local GPG="aptkey --quiet --keyring ${KEY}.pub adv --batch --yes --secret-keyring ${KEY}.sec"
+	msgninfo "\tSign archive with $SIGNER key $KEY… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
 	local PUBEXPIREBAK="${REXKEY}.pub.bak"
@@ -852,17 +833,14 @@ signreleasefiles() {
 			cp $SECUNEXPIRED ${REXKEY}.sec
 			cp $PUBUNEXPIRED ${REXKEY}.pub
 		else
-			printf "expire\n1w\nsave\n" | $GPG --keyring ${REXKEY}.pub --secret-keyring ${REXKEY}.sec --command-fd 0 --edit-key "${SIGNER}" >/dev/null 2>&1 || true
+			if ! printf "expire\n1w\nsave\n" | $GPG --default-key "$SIGNER" --command-fd 0 --edit-key "${SIGNER}" >setexpire.gpg 2>&1; then
+				cat setexpire.gpg
+				exit 1
+			fi
 			cp ${REXKEY}.sec $SECUNEXPIRED
 			cp ${REXKEY}.pub $PUBUNEXPIRED
 		fi
 	fi
-	for KEY in $(find keys/ -name '*.sec'); do
-		GPG="$GPG --secret-keyring $KEY"
-	done
-	for KEY in $(find keys/ -name '*.pub'); do
-		GPG="$GPG --keyring $KEY"
-	done
 	for RELEASE in $(find aptarchive/ -name Release); do
 		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output ${RELEASE}.gpg ${RELEASE}
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
