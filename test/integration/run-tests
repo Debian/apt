@@ -2,24 +2,38 @@
 set -e
 
 FAIL=0
+PASS=0
+ALL=0
+
 FAILED_TESTS=""
 DIR=$(readlink -f $(dirname $0))
-if [ "$1" = "-q" ]; then
-	export MSGLEVEL=2
-elif [ "$1" = "-v" ]; then
-	export MSGLEVEL=4
-fi
+while [ -n "$1" ]; do
+	if [ "$1" = "-q" ]; then
+		export MSGLEVEL=2
+	elif [ "$1" = "-v" ]; then
+		export MSGLEVEL=4
+	elif [ "$1" = '--color=no' ]; then
+		export MSGCOLOR='NO'
+	else
+		echo >&2 "WARNING: Unknown parameter »$1« will be ignored"
+	fi
+	shift
+done
+export MSGLEVEL="${MSGLEVEL:-3}"
 
-if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+if [ "$MSGCOLOR" != 'NO' ]; then
+	if ! expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+		export MSGCOLOR='NO'
+	fi
+fi
+if [ "$MSGCOLOR" != 'NO' ]; then
 	CTEST='\033[1;32m'
 	CHIGH='\033[1;35m'
 	CRESET='\033[0m'
-elif [ -z "${MSGLEVEL}" ]; then
-	export MSGLEVEL=2
-fi
-
-if [ -z "$MSGLEVEL" ]; then
-	MSGLEVEL=5
+else
+	CTEST=''
+	CHIGH=''
+	CRESET=''
 fi
 
 for testcase in $(run-parts --list $DIR | grep '/test-'); do
@@ -29,18 +43,23 @@ for testcase in $(run-parts --list $DIR | grep '/test-'); do
 		echo "${CTEST}Run Testcase ${CHIGH}$(basename ${testcase})${CRESET}"
 	fi
 	if ! ${testcase}; then
-                 FAIL=$((FAIL+1))
-                 FAILED_TESTS="$FAILED_TESTS $(basename $testcase)"
-                 echo "$(basename $testcase) ... FAIL"
-        fi
+		FAIL=$((FAIL+1))
+		FAILED_TESTS="$FAILED_TESTS $(basename $testcase)"
+		echo >&2 "$(basename $testcase) ... FAIL"
+	else
+		PASS=$((PASS+1))
+	fi
+	ALL=$((ALL+1))
 	if [ "$MSGLEVEL" -le 2 ]; then
 		echo
 	fi
 done
 
-echo "failures: $FAIL"
-if [ -n "$FAILED_TESTS" ]; then 
-    echo "Failed tests: $FAILED_TESTS";
+echo >&2 "Statistics: $ALL tests were run: $PASS successfully and $FAIL failed"
+if [ -n "$FAILED_TESTS" ]; then
+	echo >&2 "Failed tests: $FAILED_TESTS"
+else
+	echo >&2 'All tests seem to have been run successfully. What could possibly go wrong?'
 fi
 # ensure we don't overflow
 exit $((FAIL <= 255 ? FAIL : 255))

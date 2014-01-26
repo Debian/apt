@@ -61,18 +61,18 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
    progress.OverallProgress(50, 100, 50,  _("Full Text Search"));
    progress.SubProgress(bag.size());
    int Done = 0;
-   for ( ;V != bag.end(); V++)
+   for ( ;V != bag.end(); ++V)
    {
       if (Done%500 == 0)
          progress.Progress(Done);
-      Done++;
+      ++Done;
       
       int i;
       pkgCache::DescIterator Desc = V.TranslatedDescription();
       pkgRecords::Parser &parser = records.Lookup(Desc.FileList());
      
       bool all_found = true;
-      for(i=0; patterns[i] != NULL; i++) 
+      for(i=0; patterns[i] != NULL; ++i)
       {
          // FIXME: use regexp instead of simple find()
          const char *pattern = patterns[i];
@@ -93,7 +93,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 
    // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)
    // output the sorted map
-   for (K = output_map.begin(); K != output_map.end(); K++)
+   for (K = output_map.begin(); K != output_map.end(); ++K)
       std::cout << (*K).second << std::endl;
 
    return true;

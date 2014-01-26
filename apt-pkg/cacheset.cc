@@ -73,6 +73,8 @@ bool PackageContainerInterface::FromTask(PackageContainerInterface * const pci, 
 		const char *start, *end;
 		parser.GetRec(start,end);
 		unsigned int const length = end - start;
+		if (unlikely(length == 0))
+		   continue;
 		char buf[length];
 		strncpy(buf, start, length);
 		buf[length-1] = '\0';

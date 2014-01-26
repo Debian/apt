@@ -103,12 +103,12 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       }
    }
 
+   enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
    std::vector<std::string> dataHeader;
    char * sig = NULL;
    char * data = NULL;
 
-   // file with detached signature
-   if (FileGPG != File)
+   if (releaseSignature == DETACHED)
    {
       Args.push_back(FileGPG.c_str());
       Args.push_back(File.c_str());
@@ -181,7 +181,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
       putenv((char *)"LC_MESSAGES=");
    }
 
-   if (FileGPG != File)
+   if (releaseSignature == DETACHED)
    {
       execvp(gpgvpath.c_str(), (char **) &Args[0]);
       ioprintf(std::cerr, "Couldn't execute %s to check %s", Args[0], File.c_str());
@@ -260,8 +260,7 @@ bool SplitClearSignedFile(std::string const &InFile, FileFd * const ContentFile,
 
    char *buf = NULL;
    size_t buf_size = 0;
-   ssize_t line_len = 0;
-   while ((line_len = getline(&buf, &buf_size, in)) != -1)
+   while (getline(&buf, &buf_size, in) != -1)
    {
       _strrstrip(buf);
       if (found_message_start == false)
@@ -355,7 +354,7 @@ bool OpenMaybeClearSignedFile(std::string const &ClearSignedFileName, FileFd &Me
       return _error->Error("Couldn't open temporary file to work with %s", ClearSignedFileName.c_str());
 
    _error->PushToStack();
-   bool const splitDone = SplitClearSignedFile(ClearSignedFileName.c_str(), &MessageFile, NULL, NULL);
+   bool const splitDone = SplitClearSignedFile(ClearSignedFileName, &MessageFile, NULL, NULL);
    bool const errorDone = _error->PendingError();
    _error->MergeWithStack();
    if (splitDone == false)

@@ -61,7 +61,7 @@ class PackageNameMatcher : public Matcher				/*{{{*/
   public:
    PackageNameMatcher(const char **patterns)
    {
-      for(int i=0; patterns[i] != NULL; i++)
+      for(int i=0; patterns[i] != NULL; ++i)
       {
          std::string pattern = patterns[i];
 #ifdef PACKAGE_MATCHER_ABI_COMPAT
@@ -79,12 +79,12 @@ class PackageNameMatcher : public Matcher				/*{{{*/
    }
    virtual ~PackageNameMatcher()
    {
-      for(J=filters.begin(); J != filters.end(); J++)
+      for(J=filters.begin(); J != filters.end(); ++J)
          delete *J;
    }
    virtual bool operator () (const pkgCache::PkgIterator &P) 
    {
-      for(J=filters.begin(); J != filters.end(); J++)
+      for(J=filters.begin(); J != filters.end(); ++J)
       {
          APT::CacheFilter::PackageMatcher *cachefilter = *J;
          if((*cachefilter)(P)) 
@@ -105,7 +105,7 @@ void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
                      bool include_summary=true)
 {
    for (pkgCache::VerIterator Ver = P.VersionList();
-        Ver.end() == false; Ver++) 
+        Ver.end() == false; ++Ver)
    {
       ListSingleVersion(CacheFile, records, Ver, outs, include_summary);
       outs << "\n";
@@ -146,7 +146,7 @@ bool List(CommandLine &Cmd)
                             Cache->Head().PackageCount,
                             _("Listing"));
    GetLocalitySortedVersionSet(CacheFile, bag, matcher, progress);
-   for (LocalitySortedVersionSet::iterator V = bag.begin(); V != bag.end(); V++)
+   for (LocalitySortedVersionSet::iterator V = bag.begin(); V != bag.end(); ++V)
    {
       std::stringstream outs;
       if(_config->FindB("APT::Cmd::All-Versions", false) == true)
@@ -163,7 +163,7 @@ bool List(CommandLine &Cmd)
 
    // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)
    // output the sorted map
-   for (K = output_map.begin(); K != output_map.end(); K++)
+   for (K = output_map.begin(); K != output_map.end(); ++K)
       std::cout << (*K).second << std::endl;
 
 

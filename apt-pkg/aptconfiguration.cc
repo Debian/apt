@@ -141,7 +141,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// so they will be all included in the Cache.
 	std::vector<string> builtin;
 	DIR *D = opendir(_config->FindDir("Dir::State::lists").c_str());
-	if (D != 0) {
+	if (D != NULL) {
 		builtin.push_back("none");
 		for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
 			string const name = SubstVar(Ent->d_name, "%5f", "_");
@@ -166,8 +166,8 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 				continue;
 			builtin.push_back(c);
 		}
+		closedir(D);
 	}
-	closedir(D);
 
 	// FIXME: Remove support for the old APT::Acquire::Translation
 	// it was undocumented and so it should be not very widthly used

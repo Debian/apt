@@ -568,7 +568,6 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    std::string prefix = APT::String::Strip(list[0]);
    std::string pkgname;
    std::string action;
-   ostringstream status;
 
    // "processing" has the form "processing: action: pkg or trigger"
    // with action = ["install", "configure", "remove", "purge", "disappear",
@@ -1662,7 +1661,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    io_errors.push_back(string("failed in write on buffer copy for %s"));
    io_errors.push_back(string("short read on buffer copy for %s"));
 
-   for (vector<string>::iterator I = io_errors.begin(); I != io_errors.end(); I++)
+   for (vector<string>::iterator I = io_errors.begin(); I != io_errors.end(); ++I)
    {
       vector<string> list = VectorizeString(dgettext("dpkg", (*I).c_str()), '%');
       if (list.size() > 1) {
@@ -1777,13 +1776,11 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    string histfile_name = _config->FindFile("Dir::Log::History");
    if (!histfile_name.empty())
    {
-      FILE *log = NULL;
-      char buf[1024];
-
       fprintf(report, "DpkgHistoryLog:\n");
-      log = fopen(histfile_name.c_str(),"r");
+      FILE* log = fopen(histfile_name.c_str(),"r");
       if(log != NULL)
       {
+	 char buf[1024];
 	 while( fgets(buf, sizeof(buf), log) != NULL)
 	    fprintf(report, " %s", buf);
 	 fclose(log);

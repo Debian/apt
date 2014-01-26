@@ -114,7 +114,7 @@ bool MirrorMethod::Clean(string Dir)
       for(I=list.begin(); I != list.end(); ++I)
       {
 	 string uri = (*I)->GetURI();
-	 if(uri.find("mirror://") != 0)
+	 if(uri.compare(0, strlen("mirror://"), "mirror://") != 0)
 	    continue;
 	 string BaseUri = uri.substr(0,uri.size()-1);
 	 if (URItoFileName(BaseUri) == Dir->d_name)
@@ -198,9 +198,9 @@ bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
    // "stable" on the same machine. this is to avoid running into out-of-sync
    // issues (i.e. Release/Release.gpg different on each mirror)
    struct utsname buf;
-   int seed=1, i;
+   int seed=1;
    if(uname(&buf) == 0) {
-      for(i=0,seed=1; buf.nodename[i] != 0; i++) {
+      for(int i=0,seed=1; buf.nodename[i] != 0; ++i) {
          seed = seed * 31 + buf.nodename[i];
       }
    }
@@ -306,7 +306,7 @@ bool MirrorMethod::InitMirrors()
       if (s.size() == 0)
          continue;
       // ignore non http lines
-      if (s.find("http://") != 0)
+      if (s.compare(0, strlen("http://"), "http://") != 0)
          continue;
 
       AllMirrors.push_back(s);
