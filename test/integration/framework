@@ -880,7 +880,8 @@ changetowebserver() {
 	fi
 	if test -x ${APTWEBSERVERBINDIR}/aptwebserver; then
 		cd aptarchive
-		if ! aptwebserver -o aptwebserver::fork=1 "$@" >webserver.log 2>&1 ; then
+		local LOG="webserver.log"
+		if ! aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1 ; then
 			cat $LOG
 			false
 		fi
@@ -1006,7 +1007,6 @@ testequal() {
 	fi
 
 	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.comparefile"
-	addtrap "rm $COMPAREFILE;"
 	echo "$1" > $COMPAREFILE
 	shift
 
