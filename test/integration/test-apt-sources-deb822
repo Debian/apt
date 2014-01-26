@@ -7,6 +7,8 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture 'i386'
 
+echo 'APT::Sources::Use-Deb822 "true";' > rootdir/etc/apt/apt.conf.d/00enabledeb822
+
 SOURCES='rootdir/etc/apt/sources.list'
 BASE='# some comment
 # that contains a : as well
@@ -19,13 +21,13 @@ Sections: main
 Description: summay
  and the long part'
 
-msgtest 'Test old-style sources.list'
+msgtest 'Test sources.list' 'old style'
 echo "deb http://ftp.debian.org/debian stable main" > $SOURCES
 testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris
 
-msgtest 'Test simple deb822 sources.list'
+msgtest 'Test sources.list' 'simple deb822'
 echo "$BASE"  > $SOURCES
 testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
