@@ -3,28 +3,6 @@
 set -e
 unset GREP_OPTIONS
 
-GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
-
-# gpg needs (in different versions more or less) files to function correctly,
-# so we give it its own homedir and generate some valid content for it
-GPGHOMEDIR="$(mktemp -d)"
-CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"
-trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-chmod 700 "$GPGHOMEDIR"
-# We don't use a secret keyring, of course, but gpg panics and
-# implodes if there isn't one available - and writeable for imports
-SECRETKEYRING="${GPGHOMEDIR}/secring.gpg"
-touch $SECRETKEYRING
-GPG_CMD="$GPG_CMD --homedir $GPGHOMEDIR"
-# create the trustdb with an (empty) dummy keyring
-# older gpgs required it, newer gpgs even warn that it isn't needed,
-# but require it nonetheless for some commands, so we just play safe
-# here for the foreseeable future and create a dummy one
-$GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING >/dev/null 2>&1
-# tell gpg that it shouldn't try to maintain a trustdb file
-GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
-GPG="$GPG_CMD"
-
 APT_DIR="/"
 eval $(apt-config shell APT_DIR Dir)
 
@@ -330,6 +308,28 @@ if [ "$command" != "help" ]; then
 	echo >&2 "Warning: apt-key requires gnupg for most operations."
 	echo >&2
     fi
+
+    GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
+
+    # gpg needs (in different versions more or less) files to function correctly,
+    # so we give it its own homedir and generate some valid content for it
+    GPGHOMEDIR="$(mktemp -d)"
+    CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"
+    trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+    chmod 700 "$GPGHOMEDIR"
+    # We don't use a secret keyring, of course, but gpg panics and
+    # implodes if there isn't one available - and writeable for imports
+    SECRETKEYRING="${GPGHOMEDIR}/secring.gpg"
+    touch $SECRETKEYRING
+    GPG_CMD="$GPG_CMD --homedir $GPGHOMEDIR"
+    # create the trustdb with an (empty) dummy keyring
+    # older gpgs required it, newer gpgs even warn that it isn't needed,
+    # but require it nonetheless for some commands, so we just play safe
+    # here for the foreseeable future and create a dummy one
+    $GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING >/dev/null 2>&1
+    # tell gpg that it shouldn't try to maintain a trustdb file
+    GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
+    GPG="$GPG_CMD"
 
     # gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
     if ! [ -e "$TRUSTEDFILE" ]; then
