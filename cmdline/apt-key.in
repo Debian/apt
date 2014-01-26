@@ -231,14 +231,16 @@ import_keys_from_keyring() {
 }
 
 setup_merged_keyring() {
-    local TRUSTEDFILE_BAK="$TRUSTEDFILE"
-    TRUSTEDFILE='/dev/null'
-    foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/trusted.gpg"
-    TRUSTEDFILE="$TRUSTEDFILE_BAK"
-    # mark it as non-writeable so users get errors if gnupg tries to modify it
-    if [ -s "${GPGHOMEDIR}/trusted.gpg" ]; then
-	chmod -w "${GPGHOMEDIR}/trusted.gpg"
-	GPG="$GPG --keyring ${GPGHOMEDIR}/trusted.gpg"
+    if [ -z "$FORCED_KEYRING" ]; then
+	local TRUSTEDFILE_BAK="$TRUSTEDFILE"
+	TRUSTEDFILE='/dev/null'
+	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
+	TRUSTEDFILE="$TRUSTEDFILE_BAK"
+	# mark it as non-writeable so users get errors if gnupg tries to modify it
+	if [ -s "${GPGHOMEDIR}/pubring.gpg" ]; then
+	    chmod -w "${GPGHOMEDIR}/pubring.gpg"
+	    GPG="$GPG --keyring ${GPGHOMEDIR}/pubring.gpg"
+	fi
     fi
     if [ -r "$TRUSTEDFILE" ]; then
 	GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
