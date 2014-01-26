@@ -1,29 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Translation of apt-doc to German
+# Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
+# This file is distributed under the same license as the apt-doc package.
+# Chris Leick <c.leick@vollbio.de>, 2009-2014.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2014-01-26 08:14+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: 8bit\n"
-
-#~ # Translation of apt-doc to German
-#~ # Copyright (C) 1997, 1998, 1999 Jason Gunthorpe and others.
-#~ # This file is distributed under the same license as the apt-doc package.
-#~ # Chris Leick <c.leick@vollbio.de>, 2009-2014.
-#~ #
-#~ msgid ""
-#~ msgstr ""
-#~ "Project-Id-Version: apt-doc 0.9.14.2\n"
-#~ "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
+"Project-Id-Version: apt-doc 0.9.14.2\n"
+"Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-01-24 12:29+0100\n"
-"PO-Revision-Date: 2014-01-21 20:59+0100\n"
+"PO-Revision-Date: 2014-01-26 15:26+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
@@ -6733,10 +6718,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:82
-#, fuzzy, no-wrap
-#| msgid "deb [ options ] uri distribution [component1] [component2] [...]"
+#, no-wrap
 msgid "deb [ options ] uri suite [component1] [component2] [...]"
-msgstr "deb [ Optionen ] URI Distribution [Komponente1] [Komponente2] […]"
+msgstr "deb [ Optionen ] URI Suite [Komponente1] [Komponente2] […]"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml:86
@@ -6760,6 +6744,23 @@ msgid ""
 "     [option1]: [option1-value]\n"
 "   "
 msgstr ""
+"     Types: deb deb-src\n"
+"     URIs: http://example.com\n"
+"     Suites: stable testing\n"
+"     Sections: Komponente1 Komponente2\n"
+"     Description: short\n"
+"      long long long\n"
+"     [Option1]: [Option1-Wert]\n"
+"\n"
+"     Types: deb\n"
+"     URIs: http://another.example.com\n"
+"     Suites: experimental\n"
+"     Sections: Komponente1 Komponente2\n"
+"     Enabled: no\n"
+"     Description: short\n"
+"      long long long\n"
+"     [Option1]: [Option1-Wert]\n"
+"   "
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:84
@@ -6767,19 +6768,11 @@ msgid ""
 "Alternatively a rfc822 style format is also supported: <placeholder type="
 "\"literallayout\" id=\"0\"/>"
 msgstr ""
+"Alternativ wird auch ein Format im Stil von RFC822 unterstützt: <placeholder "
+"type=\"literallayout\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:105
-#, fuzzy
-#| msgid ""
-#| "The URI for the <literal>deb</literal> type must specify the base of the "
-#| "Debian distribution, from which APT will find the information it needs.  "
-#| "<literal>distribution</literal> can specify an exact path, in which case "
-#| "the components must be omitted and <literal>distribution</literal> must "
-#| "end with a slash (<literal>/</literal>). This is useful for the case when "
-#| "only a particular sub-section of the archive denoted by the URI is of "
-#| "interest.  If <literal>distribution</literal> does not specify an exact "
-#| "path, at least one <literal>component</literal> must be present."
 msgid ""
 "The URI for the <literal>deb</literal> type must specify the base of the "
 "Debian distribution, from which APT will find the information it needs.  "
@@ -6792,25 +6785,15 @@ msgid ""
 msgstr ""
 "Die URI für den <literal>deb</literal>-Typ muss die Basis der Debian-"
 "Distribution angeben, wo APT die Informationen findet, die es benötigt. "
-"<literal>Distribution</literal> kann einen genauen Pfad angeben. In diesem "
-"Fall müssen die Komponenten weggelassen werden und <literal>Distribution</"
-"literal> muss mit einem Schrägstrich (<literal>/</literal>) enden. Dies ist "
-"nützlich, wenn nur ein bestimmter Unterabschnitt des von der URI angegebenen "
-"Archivs von Interesse ist. Wenn <literal>Distribution</literal> keinen "
-"genauen Pfad angibt, muss mindestens eine <literal>Komponente</literal> "
-"angegeben sein."
+"<literal>Suite</literal> kann einen genauen Pfad angeben. In diesem Fall "
+"müssen die Komponenten weggelassen werden und <literal>Suite</literal> muss "
+"mit einem Schrägstrich (<literal>/</literal>) enden. Dies ist nützlich, wenn "
+"nur ein bestimmter Unterabschnitt des von der URI angegebenen Archivs von "
+"Interesse ist. Wenn <literal>Suite</literal> keinen genauen Pfad angibt, muss "
+"mindestens eine <literal>Komponente</literal> angegeben sein."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:114
-#, fuzzy
-#| msgid ""
-#| "<literal>distribution</literal> may also contain a variable, <literal>"
-#| "$(ARCH)</literal> which expands to the Debian architecture (such as "
-#| "<literal>amd64</literal> or <literal>armel</literal>) used on the system. "
-#| "This permits architecture-independent <filename>sources.list</filename> "
-#| "files to be used. In general this is only of interest when specifying an "
-#| "exact path, <literal>APT</literal> will automatically generate a URI with "
-#| "the current architecture otherwise."
 msgid ""
 "<literal>suite</literal> may also contain a variable, <literal>$(ARCH)</"
 "literal> which expands to the Debian architecture (such as <literal>amd64</"
@@ -6820,8 +6803,8 @@ msgid ""
 "<literal>APT</literal> will automatically generate a URI with the current "
 "architecture otherwise."
 msgstr ""
-"<literal>distribution</literal> könnte außerdem eine Variable, <literal>"
-"$(ARCH)</literal>, enthalten, die zur Debian-Architektur (wie "
+"<literal>Suite</literal> könnte außerdem eine Variable, "
+"<literal>$(ARCH)</literal>, enthalten, die zur Debian-Architektur (wie "
 "<literal>amd64</literal> oder <literal>armel</literal>) expandiert wird, die "
 "auf dem System benutzt wird. Dies erlaubt es, architekturunabhängige "
 "<filename>sources.list</filename>-Dateien zu benutzen. Im Allgemeinen ist "
@@ -6831,19 +6814,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:122
-#, fuzzy
-#| msgid ""
-#| "Since only one distribution can be specified per line it may be necessary "
-#| "to have multiple lines for the same URI, if a subset of all available "
-#| "distributions or components at that location is desired.  APT will sort "
-#| "the URI list after it has generated a complete set internally, and will "
-#| "collapse multiple references to the same Internet host, for instance, "
-#| "into a single connection, so that it does not inefficiently establish an "
-#| "FTP connection, close it, do something else, and then re-establish a "
-#| "connection to that same host. This feature is useful for accessing busy "
-#| "FTP sites with limits on the number of simultaneous anonymous users. APT "
-#| "also parallelizes connections to different hosts to more effectively deal "
-#| "with sites with low bandwidth."
 msgid ""
 "In the traditional style sources.list format since only one distribution can "
 "be specified per line it may be necessary to have multiple lines for the "
@@ -6857,18 +6827,19 @@ msgid ""
 "users. APT also parallelizes connections to different hosts to more "
 "effectively deal with sites with low bandwidth."
 msgstr ""
-"Da pro Zeile nur eine Distribution angegeben werden kann, könnte es nötig "
-"sein, mehrere Zeilen für die gleiche URI zu haben, falls eine Untermenge "
-"aller verfügbarer Distributionen oder Komponenten von diesem Ort gewünscht "
-"wird. APT wird die URI-Liste sortieren, nachdem es intern eine komplette "
-"Zusammenstellung generiert hat und es wird mehrere Bezüge zum gleichen "
-"Internet-Rechner zusammenfassen, zum Beispiel zu einer einzigen Verbindung, "
-"so dass es nicht ineffizient FTP-Verbindungen herstellt, sie schließt, sonst "
-"etwas tut und dann erneut eine Verbindung zum gleichen Rechner herstellt. "
-"Diese Funktion ist nützlich für den Zugriff auf ausgelastete FTP-Sites mit "
-"Begrenzungen der Anzahl gleichzeitiger anonymer Anwender. APT parallelisiert "
-"außerdem Verbindungen zu verschiedenen Rechnern, um effektiver mit Orten "
-"niedriger Bandbreite hauszuhalten."
+"In der Sources.list im herkömmlichen Formatstil könnte es nötig sein, da pro "
+"Zeile nur eine Distribution angegeben werden kann, mehrere Zeilen für die "
+"gleiche URI zu haben, falls eine Untermenge aller verfügbarer Distributionen "
+"oder Komponenten von diesem Ort gewünscht wird. APT wird die URI-Liste "
+"sortieren, nachdem es intern eine komplette Zusammenstellung generiert hat "
+"und es wird mehrere Bezüge zum gleichen Internet-Rechner zusammenfassen, zum "
+"Beispiel zu einer einzigen Verbindung, so dass es nicht ineffizient "
+"FTP-Verbindungen herstellt, sie schließt, sonst etwas tut und dann erneut "
+"eine Verbindung zum gleichen Rechner herstellt. Diese Funktion ist nützlich "
+"für den Zugriff auf ausgelastete FTP-Sites mit Begrenzungen der Anzahl "
+"gleichzeitiger anonymer Anwender. APT parallelisiert außerdem Verbindungen zu "
+"verschiedenen Rechnern, um effektiver mit Orten niedriger Bandbreite "
+"hauszuhalten."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:136
