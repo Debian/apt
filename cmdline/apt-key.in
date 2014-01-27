@@ -380,8 +380,8 @@ case "$command" in
 	foreach_keyring_do 'fingerprint_keys_from_keyring' "$@"
 	;;
     export|exportall)
-	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/trusted.gpg"
-	$GPG_CMD --keyring "${GPGHOMEDIR}/trusted.gpg" --armor --export "$@"
+	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
+	$GPG_CMD --keyring "${GPGHOMEDIR}/pubring.gpg" --armor --export "$@"
 	;;
     adv*)
 	setup_merged_keyring

@@ -42,6 +42,13 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 	testfileequal ./aptkey.list 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
 pub   2048R/DBAC8DAE 2010-08-18'
 
+	msgtest 'Check that Sixpack key can be' 'exported'
+	aptkey export 'Sixpack' > aptkey.export
+	aptkey --keyring rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg exportall > aptkey.exportall
+	testsuccess --nomsg cmp aptkey.export aptkey.exportall
+	testsuccess test -s aptkey.export
+	testsuccess test -s aptkey.exportall
+
 	msgtest 'Execute update again to trigger removal of' 'Rex Expired key'
 	testsuccess --nomsg aptkey --fakeroot update
 
