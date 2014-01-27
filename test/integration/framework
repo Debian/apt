@@ -429,8 +429,8 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
-#			aptkey --keyring ./keys/joesixpack.pub --quiet adv --yes \
-#				--secret-keyring ./keys/joesixpack.sec --default-key 'Joe Sixpack' \
+#			aptkey --keyring ./keys/joesixpack.pub --secret-keyring ./keys/joesixpack.sec --quiet \
+#				adv --yes --default-key 'Joe Sixpack' \
 #				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #		fi
@@ -816,7 +816,7 @@ setupaptarchive() {
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
 	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
-	local GPG="aptkey --quiet --keyring ${KEY}.pub adv --batch --yes --secret-keyring ${KEY}.sec"
+	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec adv --batch --yes"
 	msgninfo "\tSign archive with $SIGNER key $KEY… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"

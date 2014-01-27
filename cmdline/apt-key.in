@@ -287,6 +287,11 @@ while [ -n "$1" ]; do
 	 FORCED_KEYRING="$1"
 	 shift
 	 ;;
+      --secret-keyring)
+	 shift
+	 FORCED_SECRET_KEYRING="$1"
+	 shift
+	 ;;
       --fakeroot)
 	 requires_root() { true; }
 	 shift
@@ -354,6 +359,12 @@ if [ "$command" != "help" ]; then
     # tell gpg that it shouldn't try to maintain a trustdb file
     GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
     GPG="$GPG_CMD"
+
+    # for advanced operations, we might really need a secret keyring after all
+    if [ -n "$FORCED_SECRET_KEYRING" ] && [ -r "$FORCED_SECRET_KEYRING" ]; then
+	rm -f "$SECRETKEYRING"
+	cp -a "$FORCED_SECRET_KEYRING" "$SECRETKEYRING"
+    fi
 
     # gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
     if ! [ -e "$TRUSTEDFILE" ]; then
