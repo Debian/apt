@@ -41,7 +41,7 @@ echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
 
 # test against the "real" webserver
 testequal "Checking for new archive signing keys now
-Key 'E8525D47528144E2' not added. It is not signed with a master key" aptkey --fakeroot net-update
+Key 'DE66AECA9151AFA1877EC31DE8525D47528144E2' not added. It is not signed with a master key" aptkey --fakeroot net-update
 
 aptkey list | grep '^pub' > aptkey.list
 testfileequal ./aptkey.list 'pub   1024R/F68C85A3 2013-12-19

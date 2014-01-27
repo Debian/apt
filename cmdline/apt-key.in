@@ -25,6 +25,19 @@ requires_root() {
 	fi
 }
 
+get_fingerprints_of_keyring() {
+    $GPG_CMD --keyring "$1" --with-colons --fingerprint | while read publine; do
+	# search for a public key
+	if [ "${publine%%:*}" != 'pub' ]; then continue; fi
+	# search for the associated fingerprint (should be the very next line)
+	while read fprline; do
+	   if [ "${fprline%%:*}" = 'sub' ]; then break; # should never happen
+	   elif [ "${fprline%%:*}" != 'fpr' ]; then continue; fi
+	   echo "$fprline" | cut -d':' -f 10
+	done
+    done
+}
+
 add_keys_with_verify_against_master_keyring() {
     ADD_KEYRING=$1
     MASTER=$2
@@ -42,7 +55,7 @@ add_keys_with_verify_against_master_keyring() {
     # is honored. so:
     #   all keys that are exported must have a valid signature
     #   from a key in the $distro-master-keyring
-    add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^pub | cut -d: -f5`
+    add_keys="$(get_fingerprints_of_keyring "$ADD_KEYRING")"
     all_add_keys=`$GPG_CMD --keyring $ADD_KEYRING --with-colons --list-keys | grep ^[ps]ub | cut -d: -f5`
     master_keys=`$GPG_CMD --keyring $MASTER --with-colons --list-keys | grep ^pub | cut -d: -f5`
 
@@ -133,7 +146,7 @@ update() {
 
     if [ -r "$REMOVED_KEYS" ]; then
 	# remove no-longer supported/used keys
-	$GPG_CMD --keyring $REMOVED_KEYS --with-colons --list-keys | grep ^pub | cut -d: -f5 | while read key; do
+	get_fingerprints_of_keyring "$REMOVED_KEYS" | while read key; do
 	    foreach_keyring_do 'remove_key_from_keyring' "$key"
 	done
     else
@@ -154,7 +167,7 @@ remove_key_from_keyring() {
        local KEY="$1"
        shift
 	# check if the key is in this keyring: the key id is in the 5 column at the end
-	if ! $GPG --with-colons --list-keys 2>&1 | grep -q "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]*${KEY}:"; then
+	if ! get_fingerprints_of_keyring "$KEYRINGFILE" | grep -q "^[0-9A-F]*${KEY}$"; then
 	    continue
 	fi
 	if [ ! -w "$KEYRINGFILE" ]; then
@@ -162,7 +175,7 @@ remove_key_from_keyring() {
 	    continue
 	fi
 	# check if it is the only key in the keyring and if so remove the keyring altogether
-	if [ '1' = "$($GPG --with-colons --list-keys | grep "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]\+:" | wc -l)" ]; then
+	if [ '1' = "$(get_fingerprints_of_keyring "$KEYRINGFILE" | wc -l)" ]; then
 	    mv -f "$KEYRINGFILE" "${KEYRINGFILE}~" # behave like gpg
 	    return
 	fi
