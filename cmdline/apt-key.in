@@ -14,7 +14,6 @@ REMOVED_KEYS='&keyring-removed-filename;'
 eval $(apt-config shell REMOVED_KEYS APT::Key::RemovedKeys)
 ARCHIVE_KEYRING_URI='&keyring-uri;'
 eval $(apt-config shell ARCHIVE_KEYRING_URI APT::Key::ArchiveKeyringURI)
-TMP_KEYRING=${APT_DIR}/var/lib/apt/keyrings/maybe-import-keyring.gpg
 
 aptkey_echo() { echo "$@"; }
 
@@ -68,24 +67,28 @@ add_keys_with_verify_against_master_keyring() {
             fi
         done
     done
-    
+
     for add_key in $add_keys; do
         # export the add keyring one-by-one
-        rm -f $TMP_KEYRING
-        $GPG_CMD --keyring $ADD_KEYRING --output $TMP_KEYRING --export $add_key 
-        # check if signed with the master key and only add in this case
-        ADDED=0
+	local TMP_KEYRING="${GPGHOMEDIR}/tmp-keyring.gpg"
+	$GPG_CMD --batch --yes --keyring "$ADD_KEYRING" --output "$TMP_KEYRING" --export "$add_key"
+	if ! $GPG_CMD --batch --yes --keyring "$TMP_KEYRING" --import "$MASTER" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+	    cat "${GPGHOMEDIR}/gpgoutput.log"
+	    false
+	fi
+	# check if signed with the master key and only add in this case
+	ADDED=0
 	for master_key in $master_keys; do
-	    if $GPG_CMD --keyring $MASTER --keyring $TMP_KEYRING --check-sigs --with-colons $add_key | grep '^sig:!:' | cut -d: -f5 | grep -q $master_key; then
-		$GPG --import $TMP_KEYRING
+	    if $GPG_CMD --keyring $TMP_KEYRING --check-sigs --with-colons $add_key | grep '^sig:!:' | cut -d: -f5 | grep -q $master_key; then
+		$GPG_CMD --batch --yes --keyring "$ADD_KEYRING" --export "$add_key" | $GPG --batch --yes --import
 		ADDED=1
 	    fi
 	done
 	if [ $ADDED = 0 ]; then
 	    echo >&2 "Key '$add_key' not added. It is not signed with a master key"
 	fi
+	rm -f "${TMP_KEYRING}"
     done
-    rm -f $TMP_KEYRING
 }
 
 # update the current archive signing keyring from a network URI
@@ -240,26 +243,75 @@ fingerprint_keys_from_keyring() {
 import_keys_from_keyring() {
     local IMPORT="$1"
     local KEYRINGFILE="$2"
-    $GPG_CMD --keyring "$KEYRINGFILE" --batch --import "$IMPORT" >/dev/null 2>&1
+    if ! $GPG_CMD --keyring "$KEYRINGFILE" --batch --import "$IMPORT" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+	cat "${GPGHOMEDIR}/gpgoutput.log"
+	false
+    fi
+}
+
+merge_keys_into_keyrings() {
+    local KEYRINGFILE="$1"
+    local IMPORT="$2"
+    if ! $GPG_CMD --keyring "$KEYRINGFILE" --batch --import --import-options 'merge-only' "$IMPORT" > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+	cat "${GPGHOMEDIR}/gpgoutput.log"
+	false
+    fi
+}
+
+merge_back_changes() {
+    if [ -n "$FORCED_KEYRING" ]; then
+	# if the keyring was forced merge is already done
+	return
+    fi
+    if [ -s "${GPGHOMEDIR}/pubring.gpg" ]; then
+	# merge all updated keys
+	foreach_keyring_do 'merge_keys_into_keyrings' "${GPGHOMEDIR}/pubring.gpg"
+    fi
+    # no look for keys which were added or removed
+    get_fingerprints_of_keyring "${GPGHOMEDIR}/pubring.orig.gpg" > "${GPGHOMEDIR}/pubring.orig.keylst"
+    get_fingerprints_of_keyring "${GPGHOMEDIR}/pubring.gpg" > "${GPGHOMEDIR}/pubring.keylst"
+    #echo >&2 "MERGE BACK"
+    sort "${GPGHOMEDIR}/pubring.keylst" "${GPGHOMEDIR}/pubring.orig.keylst" | uniq --unique | while read key; do
+	if grep -q "^${key}$" "${GPGHOMEDIR}/pubring.orig.keylst"; then
+	    # key isn't part of new keyring, so remove
+	    foreach_keyring_do 'remove_key_from_keyring' "$key"
+	elif grep -q "^${key}$" "${GPGHOMEDIR}/pubring.keylst"; then
+	    # key is part of new keyring, so we need to import it
+	    create_new_keyring "$TRUSTEDFILE"
+	    if ! $GPG --batch --yes --export "$key" | $GPG_CMD --keyring "$TRUSTEDFILE" --batch --yes --import > "${GPGHOMEDIR}/gpgoutput.log" 2>&1; then
+	       cat "${GPGHOMEDIR}/gpgoutput.log"
+	       false
+	    fi
+	else
+	    echo >&2 "Errror: Key ${key} (dis)appeared out of nowhere"
+	fi
+    done
 }
 
 setup_merged_keyring() {
     if [ -z "$FORCED_KEYRING" ]; then
-	local TRUSTEDFILE_BAK="$TRUSTEDFILE"
-	TRUSTEDFILE='/dev/null'
 	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
-	TRUSTEDFILE="$TRUSTEDFILE_BAK"
-	# mark it as non-writeable so users get errors if gnupg tries to modify it
-	if [ -s "${GPGHOMEDIR}/pubring.gpg" ]; then
-	    chmod -w "${GPGHOMEDIR}/pubring.gpg"
-	    GPG="$GPG --keyring ${GPGHOMEDIR}/pubring.gpg"
+	if [ -r "${GPGHOMEDIR}/pubring.gpg" ]; then
+	    cp -a "${GPGHOMEDIR}/pubring.gpg" "${GPGHOMEDIR}/pubring.orig.gpg"
+	else
+	   touch "${GPGHOMEDIR}/pubring.gpg" "${GPGHOMEDIR}/pubring.orig.gpg"
 	fi
-    fi
-    if [ -r "$TRUSTEDFILE" ]; then
-	GPG="$GPG --keyring $TRUSTEDFILE --primary-keyring $TRUSTEDFILE"
+	GPG="$GPG --keyring ${GPGHOMEDIR}/pubring.gpg"
+    else
+	GPG="$GPG --keyring $TRUSTEDFILE"
+	create_new_keyring "$TRUSTEDFILE"
     fi
 }
 
+create_new_keyring() {
+    # gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
+    if ! [ -e "$TRUSTEDFILE" ]; then
+	if [ -w "$(dirname "$TRUSTEDFILE")" ]; then
+	    touch -- "$TRUSTEDFILE"
+	    chmod 0644 -- "$TRUSTEDFILE"
+	fi
+    fi
+}
 
 usage() {
     echo "Usage: apt-key [--keyring file] [command] [arguments]"
@@ -365,14 +417,6 @@ if [ "$command" != "help" ]; then
 	rm -f "$SECRETKEYRING"
 	cp -a "$FORCED_SECRET_KEYRING" "$SECRETKEYRING"
     fi
-
-    # gpg defaults to mode 0600 for new keyrings. Create one with 0644 instead.
-    if ! [ -e "$TRUSTEDFILE" ]; then
-	if [ -w "$(dirname "$TRUSTEDFILE")" ]; then
-	   touch -- "$TRUSTEDFILE"
-	   chmod 0644 -- "$TRUSTEDFILE"
-	fi
-    fi
 fi
 
 case "$command" in
@@ -380,22 +424,26 @@ case "$command" in
 	requires_root
 	setup_merged_keyring
 	$GPG --quiet --batch --import "$@"
+	merge_back_changes
 	aptkey_echo "OK"
         ;;
     del|rm|remove)
 	requires_root
 	foreach_keyring_do 'remove_key_from_keyring' "$@"
+	merge_back_changes
 	aptkey_echo "OK"
         ;;
     update)
 	requires_root
 	setup_merged_keyring
 	update
+	merge_back_changes
 	;;
     net-update)
 	requires_root
 	setup_merged_keyring
 	net_update
+	merge_back_changes
 	;;
     list)
 	foreach_keyring_do 'list_keys_from_keyring' "$@"
@@ -411,6 +459,7 @@ case "$command" in
 	setup_merged_keyring
 	aptkey_echo "Executing: $GPG $*"
 	$GPG "$@"
+	merge_back_changes
 	;;
     help)
         usage

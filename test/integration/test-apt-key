@@ -13,6 +13,13 @@ cleanplate() {
 	mkdir rootdir/etc/apt/trusted.gpg.d/
 }
 
+testaptkeys() {
+	if ! aptkey list | grep '^pub' > aptkey.list; then
+		echo -n > aptkey.list
+	fi
+	testequal "$1" cat ./aptkey.list
+}
+
 echo 'APT::Key::ArchiveKeyring "./keys/joesixpack.pub";
 APT::Key::RemovedKeys "./keys/rexexpired.pub";' > rootdir/etc/apt/apt.conf.d/aptkey.conf
 
@@ -26,20 +33,17 @@ testrun() {
 	msgtest 'Check that paths in finger output are not' 'double-slashed'
 	aptkey finger 2>&1 | grep -q '//' && msgfail || msgpass
 
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
 	testequal 'gpg: key DBAC8DAE: "Joe Sixpack (APT Testcases Dummy) <joe@example.org>" not changed
 gpg: Total number processed: 1
 gpg:              unchanged: 1' aptkey --fakeroot update
 
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
 	testsuccess aptkey --fakeroot add ./keys/rexexpired.pub
 
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
+	testaptkeys 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
 pub   2048R/DBAC8DAE 2010-08-18'
 
 	msgtest 'Check that Sixpack key can be' 'exported'
@@ -52,14 +56,12 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	msgtest 'Execute update again to trigger removal of' 'Rex Expired key'
 	testsuccess --nomsg aptkey --fakeroot update
 
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
 	msgtest "Try to remove a key which exists, but isn't in the" 'forced keyring'
 	testsuccess --nomsg aptkey --fakeroot --keyring rootdir/etc/apt/trusted.gpg del DBAC8DAE
 
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
 	testsuccess aptkey --fakeroot del DBAC8DAE
 	testempty aptkey list
@@ -91,8 +93,7 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	cleanplate
 	testsuccess aptkey --fakeroot add ./keys/joesixpack.pub
 	testsuccess aptkey --fakeroot add ./keys/marvinparanoid.pub
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18
+	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18
 pub   2048R/528144E2 2011-01-16'
 	cp -a rootdir/etc/apt/trusted.gpg keys/testcase-multikey.pub # store for reuse
 
@@ -100,16 +101,14 @@ pub   2048R/528144E2 2011-01-16'
 	cleanplate
 	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'pub   2048R/528144E2 2011-01-16'
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
 
 	msgtest 'Test key removal with' 'multi key in softlink'
 	cleanplate
 	ln -s $(readlink -f ./keys/testcase-multikey.pub) rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'pub   2048R/528144E2 2011-01-16'
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
 	testsuccess test ! -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess test -L rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
@@ -119,11 +118,33 @@ pub   2048R/528144E2 2011-01-16'
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
 	testsuccess --nomsg aptkey --fakeroot del DBAC8DAE
-	aptkey list | grep '^pub' > aptkey.list
-	testfileequal ./aptkey.list 'pub   2048R/528144E2 2011-01-16'
+	testaptkeys 'pub   2048R/528144E2 2011-01-16'
 	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 	testsuccess cmp keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg~
+
+	cleanplate
+	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	cp -a keys/testcase-multikey.pub rootdir/etc/apt/trusted.gpg.d/multikey.gpg
+	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18
+pub   2048R/DBAC8DAE 2010-08-18
+pub   2048R/528144E2 2011-01-16'
+	msgtest 'Test merge-back of' 'added keys'
+	testsuccess --nomsg aptkey adv --batch --yes --import keys/rexexpired.pub
+	testaptkeys 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
+pub   2048R/DBAC8DAE 2010-08-18
+pub   2048R/DBAC8DAE 2010-08-18
+pub   2048R/528144E2 2011-01-16'
+
+	msgtest 'Test merge-back of' 'removed keys'
+	testsuccess --nomsg aptkey adv --batch --yes --delete-keys 27CE74F9
+	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18
+pub   2048R/DBAC8DAE 2010-08-18
+pub   2048R/528144E2 2011-01-16'
+
+	msgtest 'Test merge-back of' 'removed duplicate keys'
+	testsuccess --nomsg aptkey adv --batch --yes --delete-keys DBAC8DAE
+	testaptkeys 'pub   2048R/528144E2 2011-01-16'
 }
 
 setupgpgcommand() {
