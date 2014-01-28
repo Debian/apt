@@ -97,8 +97,6 @@ void CircleBuf::Reset()
    is non-blocking.. */
 bool CircleBuf::Read(int Fd)
 {
-   unsigned long long BwReadMax;
-
    while (1)
    {
       // Woops, buffer is full
@@ -106,7 +104,7 @@ bool CircleBuf::Read(int Fd)
 	 return true;
 
       // what's left to read in this tick
-      BwReadMax = CircleBuf::BwReadLimit/BW_HZ;
+      unsigned long long const BwReadMax = CircleBuf::BwReadLimit/BW_HZ;
 
       if(CircleBuf::BwReadLimit) {
 	 struct timeval now;

@@ -3,40 +3,46 @@
 EXIT_CODE=0
 
 # we all like colorful messages
-if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
-   expr match "$(readlink -f /proc/$$/fd/2)" '/dev/pts/[0-9]\+' > /dev/null; then
-	CERROR="[1;31m" # red
-	CWARNING="[1;33m" # yellow
-	CMSG="[1;32m" # green
-	CINFO="[1;96m" # light blue
-	CDEBUG="[1;94m" # blue
-	CNORMAL="[0;39m" # default system console color
-	CDONE="[1;32m" # green
-	CPASS="[1;32m" # green
-	CFAIL="[1;31m" # red
-	CCMD="[1;35m" # pink
+if [ "$MSGCOLOR" != 'NO' ]; then
+	if ! expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+		export MSGCOLOR='NO'
+	fi
+fi
+
+
+if [ "$MSGCOLOR" != 'NO' ]; then
+	CERROR="\033[1;31m" # red
+	CWARNING="\033[1;33m" # yellow
+	CMSG="\033[1;32m" # green
+	CINFO="\033[1;96m" # light blue
+	CDEBUG="\033[1;94m" # blue
+	CNORMAL="\033[0;39m" # default system console color
+	CDONE="\033[1;32m" # green
+	CPASS="\033[1;32m" # green
+	CFAIL="\033[1;31m" # red
+	CCMD="\033[1;35m" # pink
 fi
 
 msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
 msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgmsg() { echo "${CMSG}$1${CNORMAL}" >&2; }
-msginfo() { echo "${CINFO}I: $1${CNORMAL}" >&2; }
-msgdebug() { echo "${CDEBUG}D: $1${CNORMAL}" >&2; }
-msgdone() { echo "${CDONE}DONE${CNORMAL}" >&2; }
+msgmsg() { echo "${CMSG}$1${CNORMAL}"; }
+msginfo() { echo "${CINFO}I: $1${CNORMAL}"; }
+msgdebug() { echo "${CDEBUG}D: $1${CNORMAL}"; }
+msgdone() { echo "${CDONE}DONE${CNORMAL}"; }
 msgnwarn() { echo -n "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgnmsg() { echo -n "${CMSG}$1${CNORMAL}" >&2; }
-msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}" >&2; }
-msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}" >&2; }
+msgnmsg() { echo -n "${CMSG}$1${CNORMAL}"; }
+msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}"; }
+msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}"; }
 msgtest() {
 	while [ -n "$1" ]; do
-		echo -n "${CINFO}$1${CCMD} " >&2;
-		echo -n "$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} " >&2;
+		echo -n "${CINFO}$1${CCMD} "
+		echo -n "$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} "
 		shift
 		if [ -n "$1" ]; then shift; else break; fi
 	done
-	echo -n "…${CNORMAL} " >&2;
+	echo -n "…${CNORMAL} "
 }
-msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
+msgpass() { echo "${CPASS}PASS${CNORMAL}"; }
 msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
 msgfail() {
 	if [ $# -gt 0 ]; then echo "${CFAIL}FAIL: $*${CNORMAL}" >&2;
@@ -57,7 +63,7 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgmsg() { true; }
 	msgnmsg() { true; }
 	msgtest() { true; }
-	msgpass() { echo -n " ${CPASS}P${CNORMAL}" >&2; }
+	msgpass() { echo -n " ${CPASS}P${CNORMAL}"; }
 	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
 	if [ -n "$CFAIL" ]; then
 		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
@@ -81,49 +87,58 @@ msgdone() {
 	   [ "$1" = "die" -a $MSGLEVEL -le 0 ]; then
 		true;
 	else
-		echo "${CDONE}DONE${CNORMAL}" >&2;
+		echo "${CDONE}DONE${CNORMAL}";
 	fi
 }
 
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
+	local CMD="$1"
+	shift
 	if [ -f ./aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	else
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	fi
 }
-aptconfig() { runapt apt-config $*; }
-aptcache() { runapt apt-cache $*; }
-aptcdrom() { runapt apt-cdrom $*; }
-aptget() { runapt apt-get $*; }
-apt() { runapt apt $*; }
-aptftparchive() { runapt apt-ftparchive $*; }
-aptkey() { runapt apt-key $*; }
-aptmark() { runapt apt-mark $*; }
+aptconfig() { runapt apt-config "$@"; }
+aptcache() { runapt apt-cache "$@"; }
+aptcdrom() { runapt apt-cdrom "$@"; }
+aptget() { runapt apt-get "$@"; }
+aptftparchive() { runapt apt-ftparchive "$@"; }
+aptkey() { runapt apt-key "$@"; }
+aptmark() { runapt apt-mark "$@"; }
+apt() { runapt apt "$@"; }
 aptwebserver() {
-  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver $*;
+  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver "$@";
 }
 dpkg() {
-	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
+	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
 }
 aptitude() {
 	if [ -f ./aptconfig.conf ]; then
-		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which aptitude) $*
+		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command aptitude "$@"
 	else
-		LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+		LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
 	fi
 }
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1 --args $*
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
 }
 http() {
 	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
+}
+gpg() {
+	# see apt-key for the whole trickery. Setup is done in setupenvironment
+	command gpg --ignore-time-conflict --no-options --no-default-keyring \
+		--homedir "${TMPWORKINGDIRECTORY}/gnupghome" \
+		--no-auto-check-trustdb --trust-model always \
+		"$@"
 }
 
 exitwithstatus() {
@@ -171,7 +186,7 @@ setupenvironment() {
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p var/cache var/lib var/log
+	mkdir -p var/cache var/lib var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
@@ -197,16 +212,30 @@ setupenvironment() {
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
-	if ! $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
+	if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
 		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
         echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
-	export LC_ALL=C
+	export LC_ALL=C.UTF-8
 	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
+
+	# gpg needs a trustdb to function, but it can't be invalid (not even empty)
+	# see also apt-key where this trickery comes from:
+	local TRUSTDBDIR="${TMPWORKINGDIRECTORY}/gnupghome"
+	mkdir "$TRUSTDBDIR"
+	chmod 700 "$TRUSTDBDIR"
+	# We also don't use a secret keyring, of course, but gpg panics and
+	# implodes if there isn't one available - and writeable for imports
+	local SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
+	touch $SECRETKEYRING
+	# now create the trustdb with an (empty) dummy keyring
+	# newer gpg versions are fine without it, but play it safe for now
+	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
+
 	msgdone "info"
 }
 
@@ -248,7 +277,7 @@ configdpkg() {
 		fi
 	fi
 	rm -f rootdir/etc/apt/apt.conf.d/00foreigndpkg
-	if $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
+	if command dpkg --assert-multi-arch >/dev/null 2>&1 ; then
 		local ARCHS="$(getarchitectures)"
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
@@ -392,7 +421,7 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
-#			gpg --yes --no-default-keyring --secret-keyring ./keys/joesixpack.sec \
+#			gpg --yes --secret-keyring ./keys/joesixpack.sec \
 #				--keyring ./keys/joesixpack.pub --default-key 'Joe Sixpack' \
 #				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
@@ -410,7 +439,14 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
-		dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. 2> /dev/null > /dev/null
+		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
+		# ensure the right permissions as dpkg-deb ensists
+		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
+		if ! dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
+			cat $LOG
+			false
+		fi
+		rm $LOG
 		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	done
 
@@ -426,14 +462,19 @@ buildpackage() {
 	local RELEASE=$2
 	local SECTION=$3
 	local ARCH=$(getarchitecture $4)
-	msgninfo "Build package $(echo "$BUILDDIR" | grep -o '[^/]*$') for ${RELEASE} in ${SECTION}… "
+	local PKGNAME="$(echo "$BUILDDIR" | grep -o '[^/]*$')"
+	local BUILDLOG="$(readlink -f "${BUILDDIR}/../${PKGNAME}_${RELEASE}_${SECTION}.dpkg-bp.log")"
+	msgninfo "Build package ${PKGNAME} for ${RELEASE} in ${SECTION}… "
 	cd $BUILDDIR
 	if [ "$ARCH" = "all" ]; then
 		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
 	fi
-	local BUILT="$(dpkg-buildpackage -uc -us -a$ARCH 2> /dev/null)"
-	local PKGS="$( echo "$BUILT" | grep '^dpkg-deb: building package' | cut -d'/' -f 2 | sed -e "s#'\.##")"
-	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
+	if ! dpkg-buildpackage -uc -us -a$ARCH >$BUILDLOG 2>&1 ; then
+		cat $BUILDLOG
+		false
+	fi
+	local PKGS="$(grep '^dpkg-deb: building package' $BUILDLOG | cut -d'/' -f 2 | sed -e "s#'\.##")"
+	local SRCS="$(grep '^dpkg-source: info: building' $BUILDLOG | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
 		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist
@@ -446,9 +487,9 @@ buildpackage() {
 
 buildaptarchive() {
 	if [ -d incoming ]; then
-		buildaptarchivefromincoming $*
+		buildaptarchivefromincoming "$@"
 	else
-		buildaptarchivefromfiles $*
+		buildaptarchivefromfiles "$@"
 	fi
 }
 
@@ -664,7 +705,12 @@ compressfile() {
 }
 
 # can be overridden by testcases for their pleasure
-getcodenamefromsuite() { echo -n "$1"; }
+getcodenamefromsuite() {
+	case "$1" in
+	unstable) echo 'sid';;
+	*) echo -n "$1";;
+	esac
+}
 getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
 
@@ -761,7 +807,7 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
-	local GPG="gpg --batch --yes --no-default-keyring --trustdb-name rootdir/etc/apt/trustdb.gpg"
+	local GPG="gpg --batch --yes"
 	msgninfo "\tSign archive with $SIGNER key… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
@@ -808,8 +854,7 @@ webserverconfig() {
 	downloadfile "http://localhost:8080/_config/set/${1}/${2}" '/dev/null' >/dev/null
 	local DOWNLOG='download-testfile.log'
 	rm -f "$DOWNLOG"
-	local STATUS="$(mktemp)"
-	addtrap "rm $STATUS;"
+	local STATUS="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverconfig.status"
 	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
 	if [ "$(cat "$STATUS")" = '200' ]; then
 		msgpass
@@ -817,6 +862,7 @@ webserverconfig() {
 		cat >&2 "$DOWNLOG"
 		msgfail "Statuscode was $(cat "$STATUS")"
 	fi
+	rm "$STATUS"
 }
 
 rewritesourceslist() {
@@ -832,10 +878,13 @@ changetowebserver() {
 	else
 		shift
 	fi
-	local LOG='/dev/null'
 	if test -x ${APTWEBSERVERBINDIR}/aptwebserver; then
 		cd aptarchive
-		aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1
+		local LOG="webserver.log"
+		if ! aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1 ; then
+			cat $LOG
+			false
+		fi
 		local PID="$(cat aptwebserver.pid)"
 		if [ -z "$PID" ]; then
 			msgdie 'Could not fork aptwebserver successfully'
@@ -924,7 +973,7 @@ Filename: ${2}
 }
 
 checkdiff() {
-	local DIFFTEXT="$($(which diff) -u $* | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
+	local DIFFTEXT="$(command diff -u "$@" | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
 		echo
 		echo "$DIFFTEXT"
@@ -957,8 +1006,7 @@ testequal() {
 		shift
 	fi
 
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.comparefile"
 	echo "$1" > $COMPAREFILE
 	shift
 
@@ -969,10 +1017,9 @@ testequal() {
 }
 
 testequalor2() {
-	local COMPAREFILE1=$(mktemp)
-	local COMPAREFILE2=$(mktemp)
-	local COMPAREAGAINST=$(mktemp)
-	addtrap "rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST;"
+	local COMPAREFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile1"
+	local COMPAREFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile2"
+	local COMPAREAGAINST="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.compareagainst"
 	echo "$1" > $COMPAREFILE1
 	echo "$2" > $COMPAREFILE2
 	shift 2
@@ -998,8 +1045,7 @@ N: Can't select versions from package '$1' as it is purely virtual"
 	msgtest "Test for virtual packages" "apt-cache show $PACKAGE"
 	VIRTUAL="${VIRTUAL}
 N: No packages found"
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testshowvirtual.comparefile"
 	local ARCH="$(getarchitecture 'native')"
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
@@ -1007,7 +1053,7 @@ N: No packages found"
 
 testnopackage() {
 	msgtest "Test for non-existent packages" "apt-cache show $*"
-	local SHOWPKG="$(aptcache show $* 2>&1 | grep '^Package: ')"
+	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
 		echo
 		echo "$SHOWPKG"
@@ -1019,10 +1065,10 @@ testnopackage() {
 
 testdpkginstalled() {
 	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* 2>/dev/null | grep '^i' | wc -l)"
+	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != $# ]; then
 		echo $PKGS
-		dpkg -l $* | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]'
 		msgfail
 		return 1
 	fi
@@ -1031,10 +1077,10 @@ testdpkginstalled() {
 
 testdpkgnotinstalled() {
 	msgtest "Test for correctly not-installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* 2> /dev/null | grep '^i' | wc -l)"
+	local PKGS="$(dpkg -l "$@" 2> /dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != 0 ]; then
 		echo
-		dpkg -l $* | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]'
 		msgfail
 		return 1
 	fi
@@ -1042,8 +1088,7 @@ testdpkgnotinstalled() {
 }
 
 testmarkedauto() {
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as auto-installed' "$*"
 		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
@@ -1060,8 +1105,7 @@ testsuccess() {
 	else
 		msgtest 'Test for successful execution of' "$*"
 	fi
-	local OUTPUT=$(mktemp)
-	addtrap "rm $OUTPUT;"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
 	if $@ >${OUTPUT} 2>&1; then
 		msgpass
 	else
@@ -1077,8 +1121,7 @@ testfailure() {
 	else
 		msgtest 'Test for failure in  execution of' "$*"
 	fi
-	local OUTPUT=$(mktemp)
-	addtrap "rm $OUTPUT;"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if $@ >${OUTPUT} 2>&1; then
 		echo
 		cat $OUTPUT

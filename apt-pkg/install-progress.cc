@@ -242,7 +242,7 @@ PackageManagerFancy::~PackageManagerFancy()
 void PackageManagerFancy::staticSIGWINCH(int signum)
 {
    std::vector<PackageManagerFancy *>::const_iterator I;
-   for(I = instances.begin(); I != instances.end(); I++)
+   for(I = instances.begin(); I != instances.end(); ++I)
       (*I)->HandleSIGWINCH(signum);
 }
 
