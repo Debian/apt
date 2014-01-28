@@ -99,3 +99,14 @@ testequal --nomsg "'http://ftp.debian.org/debian/dists/stable/main/source/Source
 'http://ftp.debian.org/debian/dists/stable/main/binary-i386/Packages.bz2' ftp.debian.org_debian_dists_stable_main_binary-i386_Packages 0 :
 'http://ftp.debian.org/debian/dists/stable/main/i18n/Translation-en.bz2' ftp.debian.org_debian_dists_stable_main_i18n_Translation-en 0 :
 'http://ftp.debian.org/debian/dists/stable/InRelease' ftp.debian.org_debian_dists_stable_InRelease 0 "  aptget update --print-uris 
+
+# a Suite
+msgtest 'Test deb822 sources.list file which has' 'a exact path and no sections'
+cat > $SOURCES <<EOF
+Types: deb
+URIs: http://emacs.naquadah.org
+Suites: stable/
+EOF
+testequal --nomsg "'http://emacs.naquadah.org/stable/Packages.bz2' emacs.naquadah.org_stable_Packages 0 :
+'http://emacs.naquadah.org/stable/en.bz2' emacs.naquadah.org_stable_en 0 :
+'http://emacs.naquadah.org/stable/InRelease' emacs.naquadah.org_stable_InRelease 0 "  aptget update --print-uris 
