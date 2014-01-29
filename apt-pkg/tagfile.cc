@@ -207,7 +207,11 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
       unsigned long long Dist = Offset - d->iOffset;
       d->Start += Dist;
       d->iOffset += Dist;
-      return Step(Tag);
+      // if we have seen the end, don't ask for more
+      if (d->Done == true)
+	 return Tag.Scan(d->Start, d->End - d->Start);
+      else
+	 return Step(Tag);
    }
 
    // Reposition and reload..
