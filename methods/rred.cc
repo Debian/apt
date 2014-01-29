@@ -20,12 +20,12 @@
 #include <vector>
 #include <iterator>
 
+#include <fcntl.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <utime.h>
 
 #include <apti18n.h>
 
@@ -37,11 +37,9 @@ class MemBlock {
    char *free;
    struct MemBlock *next;
 
-   MemBlock(size_t size)
+   MemBlock(size_t size) : size(size), next(NULL)
    {
       free = start = new char[size];
-      size = size;
-      next = NULL;
    }
 
    size_t avail(void) { return size - (free - start); }
@@ -157,7 +155,7 @@ class FileChanges {
 #ifdef POSDEBUG
       size_t cpos = 0;
       std::list<struct Change>::iterator x;
-      for (x = changes.begin(); x != where; x++) {
+      for (x = changes.begin(); x != where; ++x) {
 	 assert(x != changes.end());
 	 cpos += x->offset + x->add_cnt;
       }
@@ -208,7 +206,7 @@ class FileChanges {
 	 left();
       }
       std::list<struct Change>::iterator next = where;
-      next++;
+      ++next;
 
       while (next != changes.end() && next->offset == 0) {
 	 where->del_cnt += next->del_cnt;
@@ -221,7 +219,7 @@ class FileChanges {
 	    where->add_cnt = next->add_cnt;
 	    next = changes.erase(next);
 	 } else {
-	    next++;
+	    ++next;
 	 }
       }
    }
@@ -261,7 +259,7 @@ class FileChanges {
       if (where != changes.end())
 	 where->offset -= offset;
       changes.insert(where, Change(offset));
-      where--;
+      --where;
       assert(pos_is_okay());
    }
 
@@ -284,24 +282,8 @@ class FileChanges {
       before.add_len -= where->add_len;
 
       changes.insert(where, before);
-      where--;
+      --where;
       assert(pos_is_okay());
-   }
-
-   size_t check_next_offset(size_t max)
-   {
-      assert(pos_is_okay());
-      if (max > 0)
-      {
-	 where++;
-	 if (where != changes.end()) {
-	    if (where->offset < max)
-	       max = where->offset;
-	 }
-	 where--;
-	 assert(pos_is_okay());
-      }
-      return max;
    }
 
    void delete_lines(size_t cnt)
@@ -317,7 +299,7 @@ class FileChanges {
 	 x->skip_lines(del);
 	 cnt -= del;
 
-	 x++;
+	 ++x;
 	 if (x == changes.end()) {
 	    del = cnt;
 	 } else {
@@ -334,7 +316,7 @@ class FileChanges {
 
    void left(void) {
       assert(pos_is_okay());
-      where--;
+      --where;
       pos -= where->offset + where->add_cnt;
       assert(pos_is_okay());
    }
@@ -342,7 +324,7 @@ class FileChanges {
    void right(void) {
       assert(pos_is_okay());
       pos += where->offset + where->add_cnt;
-      where++;
+      ++where;
       assert(pos_is_okay());
    }
 };
@@ -378,11 +360,10 @@ class Patch {
    static void dump_lines(FILE *o, FILE *i, size_t n, Hashes *hash)
    {
       char buffer[BLOCK_SIZE];
-      size_t l;
       while (n > 0) {
 	 if (fgets(buffer, sizeof(buffer), i) == 0)
 	    buffer[0] = '\0';
-	 l = strlen(buffer);
+	 size_t const l = strlen(buffer);
 	 if (l == 0 || buffer[l-1] == '\n')
 	    n--;
 	 retry_fwrite(buffer, l, o, hash);
@@ -392,11 +373,10 @@ class Patch {
    static void skip_lines(FILE *i, int n)
    {
       char buffer[BLOCK_SIZE];
-      size_t l;
       while (n > 0) {
 	 if (fgets(buffer, sizeof(buffer), i) == 0)
 	    buffer[0] = '\0';
-	 l = strlen(buffer);
+	 size_t const l = strlen(buffer);
 	 if (l == 0 || buffer[l-1] == '\n')
 	    n--;
       }
@@ -490,14 +470,14 @@ class Patch {
    {
       size_t line = 0;
       std::list<struct Change>::reverse_iterator ch;
-      for (ch = filechanges.rbegin(); ch != filechanges.rend(); ch++) {
+      for (ch = filechanges.rbegin(); ch != filechanges.rend(); ++ch) {
 	 line += ch->offset + ch->del_cnt;
       }
 
-      for (ch = filechanges.rbegin(); ch != filechanges.rend(); ch++) {
+      for (ch = filechanges.rbegin(); ch != filechanges.rend(); ++ch) {
 	 std::list<struct Change>::reverse_iterator mg_i, mg_e = ch;
 	 while (ch->del_cnt == 0 && ch->offset == 0)
-	    ch++;
+	    ++ch;
 	 line -= ch->del_cnt;
 	 if (ch->add_cnt > 0) {
 	    if (ch->del_cnt == 0) {
@@ -526,7 +506,7 @@ class Patch {
    void apply_against_file(FILE *out, FILE *in, Hashes *hash = NULL)
    {
       std::list<struct Change>::iterator ch;
-      for (ch = filechanges.begin(); ch != filechanges.end(); ch++) {
+      for (ch = filechanges.begin(); ch != filechanges.end(); ++ch) {
 	 dump_lines(out, in, ch->offset, hash);
 	 skip_lines(in, ch->del_cnt);
 	 dump_mem(out, ch->add, ch->add_len, hash);
@@ -575,7 +555,7 @@ class RredMethod : public pkgAcqMethod {
 	 std::string patch_name;
 	 for (std::vector<std::string>::iterator I = patchpaths.begin();
 	       I != patchpaths.end();
-	       I++)
+	       ++I)
 	 {
 	    patch_name = *I;
 	    if (Debug == true)
@@ -617,11 +597,12 @@ class RredMethod : public pkgAcqMethod {
 	       stat(patch_name.c_str(), &bufpatch) != 0)
 	    return _error->Errno("stat", _("Failed to stat"));
 
-	 struct utimbuf timebuf;
-	 timebuf.actime = bufbase.st_atime;
-	 timebuf.modtime = bufpatch.st_mtime;
-	 if (utime(Itm->DestFile.c_str(), &timebuf) != 0)
-	    return _error->Errno("utime", _("Failed to set modification time"));
+	 struct timespec times[2];
+	 times[0].tv_sec = bufbase.st_atime;
+	 times[1].tv_sec = bufpatch.st_mtime;
+	 times[0].tv_nsec = times[1].tv_nsec = 0;
+	 if (utimensat(AT_FDCWD, Itm->DestFile.c_str(), times, 0) != 0)
+	    return _error->Errno("utimensat",_("Failed to set modification time"));
 
 	 if (stat(Itm->DestFile.c_str(), &bufbase) != 0)
 	    return _error->Errno("stat", _("Failed to stat"));
@@ -635,7 +616,7 @@ class RredMethod : public pkgAcqMethod {
       }
 
    public:
-      RredMethod() : pkgAcqMethod("2.0",SingleInstance | SendConfig) {}
+      RredMethod() : pkgAcqMethod("2.0",SingleInstance | SendConfig), Debug(false) {}
 };
 
 int main(int argc, char **argv)
