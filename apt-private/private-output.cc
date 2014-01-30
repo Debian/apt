@@ -68,8 +68,10 @@ std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) 
       pkgCache::VerFileIterator VF = ver.FileList();
       for (; VF.end() == false ; ++VF)
       {
-         // XXX: how to figure out the relevant suite? if its in multiple ones?
-         suite = suite + "," + VF.File().Archive();
+         if(VF.File() == NULL || VF.File().Archive() == NULL)
+            suite = suite + "," + _("unknown");
+         else
+            suite = suite + "," + VF.File().Archive();
          //suite = VF.File().Archive();
       }
       suite = suite.erase(0, 1);
