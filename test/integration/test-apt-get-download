@@ -24,6 +24,7 @@ testdownload() {
 	rm $1
 }
 
+# normal case(es)
 testdownload apt_1.0_all.deb apt stable
 testdownload apt_2.0_all.deb apt
 
@@ -32,3 +33,9 @@ testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) SHA512:$(sh
 
 # deb:677887
 testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms
+
+# deb:736962 - apt-get download foo && 
+aptget download apt
+aptget download apt
+testsuccess test -s apt_2.0_all.deb
+rm -f apt_1.0_all.deb

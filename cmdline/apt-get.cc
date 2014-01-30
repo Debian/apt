@@ -678,14 +678,17 @@ bool DoDownload(CommandLine &CmdL)
 
    // copy files in local sources to the current directory
    for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
-      if ((*I)->Local == true && (*I)->Status == pkgAcquire::Item::StatDone)
+   {
+      std::string const filename = cwd + flNotDir((*I)->DestFile);
+      if ((*I)->Local == true &&
+          filename != (*I)->DestFile &&
+          (*I)->Status == pkgAcquire::Item::StatDone)
       {
-	 std::string const filename = cwd + flNotDir((*I)->DestFile);
 	 std::ifstream src((*I)->DestFile.c_str(), std::ios::binary);
 	 std::ofstream dst(filename.c_str(), std::ios::binary);
 	 dst << src.rdbuf();
       }
-
+   }
    return Failed == false;
 }
 									/*}}}*/
