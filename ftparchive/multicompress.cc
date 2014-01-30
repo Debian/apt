@@ -365,7 +365,7 @@ bool MultiCompress::Child(int const &FD)
    for (Files *I = Outputs; I != 0; I = I->Next)
    {
       // Set the correct file modes
-      fchmod(I->TmpFile.Fd(),Permissions);
+      chmod(I->TmpFile.Name().c_str(),Permissions);
       
       if (rename(I->TmpFile.Name().c_str(),I->Output.c_str()) != 0)
 	 _error->Errno("rename",_("Failed to rename %s to %s"),
