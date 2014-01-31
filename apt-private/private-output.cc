@@ -190,45 +190,44 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       // raring/linux-kernel version [upradable: new-version]
       //    description
       pkgPolicy *policy = CacheFile.GetPolicy();
+      std::string VersionStr = GetVersion(CacheFile, V);
+      std::string CandidateVerStr = GetCandidateVersion(CacheFile, P);
+      std::string InstalledVerStr = GetInstalledVersion(CacheFile, P);
+      std::string StatusStr;
+      if(P.CurrentVer() == V && state.Upgradable()) {
+         strprintf(StatusStr, _("[installed,upgradable to: %s]"),
+                   CandidateVerStr.c_str());
+      } else if (P.CurrentVer() == V) {
+         if(!V.Downloadable())
+            StatusStr = _("[installed,local]");
+         else
+            if(V.Automatic() && state.Garbage)
+               StatusStr = _("[installed,auto-removable]");
+            else if (state.Flags & pkgCache::Flag::Auto)
+               StatusStr = _("[installed,automatic]");
+            else
+               StatusStr = _("[installed]");
+      } else if (P.CurrentVer() && 
+                 policy->GetCandidateVer(P) == V && 
+                 state.Upgradable()) {
+            strprintf(StatusStr, _("[upgradable from: %s]"),
+                      InstalledVerStr.c_str());
+      } else {
+         if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
+            StatusStr = _("[residual-config]");
+         else
+            StatusStr = "";
+      }
       out << std::setiosflags(std::ios::left)
           << _config->Find("APT::Color::Highlight", "")
           << name_str 
           << _config->Find("APT::Color::Neutral", "")
           << "/" << suite
-          << " ";
-      if(P.CurrentVer() == V && state.Upgradable()) {
-         out << GetVersion(CacheFile, V)
-             << " "
-             << "[" << _("installed,upgradable to: ")
-             << GetCandidateVersion(CacheFile, P) << "]";
-      } else if (P.CurrentVer() == V) {
-         out << GetVersion(CacheFile, V)
-             << " ";
-         if(!V.Downloadable())
-            out << _("[installed,local]");
-         else
-            if(V.Automatic() && state.Garbage)
-                  out << _("[installed,auto-removable]");
-            else if (state.Flags & pkgCache::Flag::Auto)
-               out << _("[installed,automatic]");
-            else
-               out << _("[installed]");
-      } else if (P.CurrentVer() && 
-                 policy->GetCandidateVer(P) == V && 
-                 state.Upgradable()) {
-         out << GetVersion(CacheFile, V)
-             << " "
-             << _("[upgradable from: ")
-             << GetInstalledVersion(CacheFile, P) << "]";
-      } else {
-         if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
-            out << GetVersion(CacheFile, V) 
-                << " "
-                << _("[residual-config]");
-         else
-            out << GetVersion(CacheFile, V);
-      }
-      out << " " << GetArchitecture(CacheFile, P);
+          << " "
+          << VersionStr << " " 
+          << GetArchitecture(CacheFile, P);
+      if (StatusStr != "") 
+         out << " " << StatusStr;
       if (include_summary)
       {
          out << std::endl 
