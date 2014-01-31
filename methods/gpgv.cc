@@ -8,7 +8,6 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/gpgv.h>
 
-#include <utime.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include <errno.h>
