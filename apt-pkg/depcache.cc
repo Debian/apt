@@ -1253,6 +1253,11 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    if (PkgState[Pkg->ID].InstallVer == 0)
 	       continue;
 
+            /* Ignore negative dependencies that we are not going to 
+               get installed */
+            if (PkgState[Pkg->ID].InstallVer != *I)
+               continue;
+
 	    if ((Start->Version != 0 || TrgPkg != Pkg) &&
 		PkgState[Pkg->ID].CandidateVer != PkgState[Pkg->ID].InstallVer &&
 		PkgState[Pkg->ID].CandidateVer != *I &&
