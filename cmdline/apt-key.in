@@ -166,9 +166,7 @@ remove_key_from_keyring() {
     fi
 
     local GPG="$GPG_CMD --keyring $KEYRINGFILE"
-    while [ -n "$1" ]; do
-       local KEY="$1"
-       shift
+    for KEY in "$@"; do
 	# check if the key is in this keyring: the key id is in the 5 column at the end
 	if ! get_fingerprints_of_keyring "$KEYRINGFILE" | grep -q "^[0-9A-F]*${KEY}$"; then
 	    continue
@@ -226,18 +224,11 @@ foreach_keyring_do() {
    fi
 }
 
-list_keys_from_keyring() {
+run_cmd_on_keyring() {
     local KEYRINGFILE="$1"
     shift
-    # don't show the error message if this keyring doesn't include the key
-    $GPG_CMD --keyring "$KEYRINGFILE" --batch --list-keys "$@" 2>/dev/null || true
-}
-
-fingerprint_keys_from_keyring() {
-    local KEYRINGFILE="$1"
-    shift
-    # don't show the error message if this keyring doesn't include the fingerprint
-    $GPG_CMD --keyring "$KEYRINGFILE" --batch --fingerprint "$@" 2>/dev/null || true
+    # fingerprint and co will fail if key isn't in this keyring
+    $GPG_CMD --keyring "$KEYRINGFILE" --batch "$@" 2>/dev/null || true
 }
 
 import_keys_from_keyring() {
@@ -267,10 +258,9 @@ merge_back_changes() {
 	# merge all updated keys
 	foreach_keyring_do 'merge_keys_into_keyrings' "${GPGHOMEDIR}/pubring.gpg"
     fi
-    # no look for keys which were added or removed
+    # look for keys which were added or removed
     get_fingerprints_of_keyring "${GPGHOMEDIR}/pubring.orig.gpg" > "${GPGHOMEDIR}/pubring.orig.keylst"
     get_fingerprints_of_keyring "${GPGHOMEDIR}/pubring.gpg" > "${GPGHOMEDIR}/pubring.keylst"
-    #echo >&2 "MERGE BACK"
     sort "${GPGHOMEDIR}/pubring.keylst" "${GPGHOMEDIR}/pubring.orig.keylst" | uniq --unique | while read key; do
 	if grep -q "^${key}$" "${GPGHOMEDIR}/pubring.orig.keylst"; then
 	    # key isn't part of new keyring, so remove
@@ -445,10 +435,10 @@ case "$command" in
 	merge_back_changes
 	;;
     list)
-	foreach_keyring_do 'list_keys_from_keyring' "$@"
+	foreach_keyring_do 'run_cmd_on_keyring' --list-keys "$@"
 	;;
     finger*)
-	foreach_keyring_do 'fingerprint_keys_from_keyring' "$@"
+	foreach_keyring_do 'run_cmd_on_keyring' --fingerprint "$@"
 	;;
     export|exportall)
 	foreach_keyring_do 'import_keys_from_keyring' "${GPGHOMEDIR}/pubring.gpg"
