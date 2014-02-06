@@ -54,6 +54,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 
    Args.push_back(aptkey.c_str());
    Args.push_back("--quiet");
+   Args.push_back("--readonly");
    Args.push_back("adv");
 
    char statusfdstr[10];

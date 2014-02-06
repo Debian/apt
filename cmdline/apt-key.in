@@ -337,20 +337,19 @@ while [ -n "$1" ]; do
 	 shift
 	 TRUSTEDFILE="$1"
 	 FORCED_KEYRING="$1"
-	 shift
 	 ;;
       --secret-keyring)
 	 shift
 	 FORCED_SECRET_KEYRING="$1"
-	 shift
+	 ;;
+      --readonly)
+	 merge_back_changes() { true; }
 	 ;;
       --fakeroot)
 	 requires_root() { true; }
-	 shift
 	 ;;
       --quiet)
 	 aptkey_echo() { true; }
-	 shift
 	 ;;
       --*)
 	 echo >&2 "Unknown option: $1"
@@ -359,6 +358,7 @@ while [ -n "$1" ]; do
       *)
 	 break;;
    esac
+   shift
 done
 
 if [ -z "$TRUSTEDFILE" ]; then
@@ -430,7 +430,6 @@ case "$command" in
     del|rm|remove)
 	requires_root
 	foreach_keyring_do 'remove_key_from_keyring' "$@"
-	merge_back_changes
 	aptkey_echo "OK"
         ;;
     update)
