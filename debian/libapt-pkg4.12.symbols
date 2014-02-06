@@ -1459,7 +1459,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"APT::Progress::PackageManagerFancy::~PackageManagerFancy()@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::PackageManagerFancy()@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::SetupTerminalScrollArea(int)@Base" 0.9.13~exp1
- (c++)"APT::Progress::PackageManagerFancy::Start()@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::StatusChanged(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, unsigned int, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::Stop()@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManager::fork()@Base" 0.9.13~exp1
@@ -1483,7 +1482,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"APT::Progress::PackageManagerProgressFd::Stop()@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerProgressFd::WriteToStatusFd(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManager::Pulse()@Base" 0.9.13~exp1
- (c++)"APT::Progress::PackageManager::Start()@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManager::StartDpkg()@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManager::StatusChanged(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int, unsigned int, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManager::Stop()@Base" 0.9.13~exp1
@@ -1512,6 +1510,23 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"vtable for APT::Progress::PackageManagerProgressDeb822Fd@Base" 0.9.13~exp1
  (c++)"vtable for APT::Progress::PackageManagerProgressFd@Base" 0.9.13~exp1
  (c++)"vtable for APT::Progress::PackageManagerText@Base" 0.9.13~exp1
+ (c++)"APT::Progress::PackageManagerFancy::instances@Base" 0.9.14.2
+ (c++)"APT::Progress::PackageManagerFancy::Start(int)@Base" 0.9.14.2
+ (c++)"APT::Progress::PackageManagerFancy::staticSIGWINCH(int)@Base" 0.9.14.2
+ (c++)"APT::Progress::PackageManager::Start(int)@Base" 0.9.14.2
+### client-side merged pdiffs
+ (c++)"pkgAcqIndexMergeDiffs::DescURI()@Base" 0.9.14.3~exp1
+ (c++)"pkgAcqIndexMergeDiffs::Done(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned long long, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, pkgAcquire::MethodConfig*)@Base" 0.9.14.3~exp1
+ (c++)"pkgAcqIndexMergeDiffs::Failed(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, pkgAcquire::MethodConfig*)@Base" 0.9.14.3~exp1
+ (c++)"pkgAcqIndexMergeDiffs::~pkgAcqIndexMergeDiffs()@Base" 0.9.14.3~exp1
+ (c++)"pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, HashString const&, DiffInfo const&, std::vector<pkgAcqIndexMergeDiffs*, std::allocator<pkgAcqIndexMergeDiffs*> > const*)@Base" 0.9.14.3~exp1
+ (c++)"typeinfo for pkgAcqIndexMergeDiffs@Base" 0.9.14.3~exp1
+ (c++)"typeinfo name for pkgAcqIndexMergeDiffs@Base" 0.9.14.3~exp1
+ (c++)"vtable for pkgAcqIndexMergeDiffs@Base" 0.9.14.3~exp1
+### deb822 sources.list format
+ (c++)"pkgSourceList::ParseFileDeb822(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.9.14.3~exp1
+ (c++)"pkgSourceList::ParseFileOldStyle(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.9.14.3~exp1
+ (c++)"pkgSourceList::Type::ParseStanza(std::vector<metaIndex*, std::allocator<metaIndex*> >&, pkgTagSection&, int, FileFd&)@Base" 0.9.14.3~exp1
 ### mixed stuff
  (c++)"GetListOfFilesInDir(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool)@Base" 0.8.16~exp13
  (c++)"pkgCache::DepIterator::IsIgnorable(pkgCache::PkgIterator const&) const@Base" 0.8.16~exp10
@@ -1570,6 +1585,7 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"HashString::FromFile(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.9.13.1
  (c++)"HashString::GetHashForFile(std::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@Base" 0.9.13.1
  (c++)"indexRecords::GetSuite() const@Base" 0.9.13.2
+ (c++)"GetTempDir()@Base" 0.9.14.2
 ### demangle strangeness - buildd report it as MISSING and as new…
  (c++)"pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<IndexTarget*, std::allocator<IndexTarget*> > const*, indexRecords*)@Base" 0.8.0
 ### gcc artefacts
