@@ -1,8 +1,34 @@
-apt (0.9.15ubuntu1) UNRELEASED; urgency=low
+apt (0.9.15.1ubuntu1) UNRELEASED; urgency=low
 
   * merged from debian/sid
 
  -- Michael Vogt <michael.vogt@ubuntu.com>  Sat, 25 Jan 2014 22:40:15 +0100
+
+apt (0.9.15.1) unstable; urgency=medium
+
+  [ David Kalnischkies ]
+  * use gpg --homedir instead of explicit file placement
+  * use svg in doxygen and ensure dot is around for it
+  * pkgTagFile: if we have seen the end, do not try to see more
+  * restart debSrcRecordParsers only if needed
+  * discard impossible candidates in MarkInstall (Closes: #735967)
+
+  [ Chris Leick ]
+  * update german manpage translation
+  * Trivian unfuzzies of the German po4a translation
+
+  [ Michael Vogt ]
+  * fix apt-get download truncation (closes: #736962)
+  * do not crash if VF.File()/VF.File().Archive() is NULL
+  * show "status" in apt list last to be more awk friendly
+    (thanks to Axel Beckert)
+  * Fix multiarch package upgrade issue
+  * add test for Suite with path
+
+  [ Colin Watson ]
+  * multicompress with externals sets wrong file modes (Closes: 737130)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 06 Feb 2014 18:09:19 +0100
 
 apt (0.9.15) unstable; urgency=low
 

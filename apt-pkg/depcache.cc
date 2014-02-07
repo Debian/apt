@@ -1134,8 +1134,13 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    std::clog << OutputInDepth(Depth) << Start << " can't be satisfied!" << std::endl;
 	 if (Start.IsCritical() == false)
 	    continue;
-	 // if the dependency was critical, we can't install it, so remove it again
-	 MarkDelete(Pkg,false,Depth + 1, false);
+	 // if the dependency was critical, we have absolutely no chance to install it,
+	 // so if it wasn't installed remove it again. If it was, discard the candidate
+	 // as the problemresolver will trip over it otherwise trying to install it (#735967)
+	 if (Pkg->CurrentVer == 0)
+	    MarkDelete(Pkg,false,Depth + 1, false);
+	 else
+	    SetCandidateVersion(Pkg.CurrentVer());
 	 return false;
       }
 
@@ -1252,6 +1257,11 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       even providers which are not installed, so skip them. */
 	    if (PkgState[Pkg->ID].InstallVer == 0)
 	       continue;
+
+            /* Ignore negative dependencies that we are not going to 
+               get installed */
+            if (PkgState[Pkg->ID].InstallVer != *I)
+               continue;
 
 	    if ((Start->Version != 0 || TrgPkg != Pkg) &&
 		PkgState[Pkg->ID].CandidateVer != PkgState[Pkg->ID].InstallVer &&
