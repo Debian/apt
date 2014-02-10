@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <iostream>
 
@@ -237,7 +238,7 @@ bool MultiCompress::Finalize(unsigned long long &OutSize)
 	 if (UpdateMTime > 0 &&
 	     (Now - St.st_mtime > (signed)UpdateMTime || St.st_mtime > Now))
 	 {
-	    utimensat(AT_FDCWD, I->Output.c_str(), NULL, AT_SYMLINK_NOFOLLOW);
+	    utimes(I->Output.c_str(), NULL);
 	    Changed = true;
 	 }
       }

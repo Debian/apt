@@ -396,11 +396,11 @@ void RSHMethod::SigTerm(int sig)
       _exit(100);
 
    // Transfer the modification times
-   struct timespec times[2];
+   struct timeval times[2];
    times[0].tv_sec = FailTime;
    times[1].tv_sec = FailTime;
-   times[0].tv_nsec = times[1].tv_nsec = 0;
-   futimens(FailFd, times);
+   times[0].tv_usec = times[1].tv_usec = 0;
+   utimes(FailFile.c_str(), times);
    close(FailFd);
 
    _exit(100);
@@ -488,11 +488,11 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 	 Fd.Close();
 
 	 // Timestamp
-	 struct timespec times[2];
+	 struct timeval times[2];
 	 times[0].tv_sec = FailTime;
 	 times[1].tv_sec = FailTime;
-	 times[0].tv_nsec = times[1].tv_nsec = 0;
-	 futimens(FailFd, times);
+	 times[0].tv_usec = times[1].tv_usec = 0;
+	 utimes(FailFile.c_str(), times);
 
 	 // If the file is missing we hard fail otherwise transient fail
 	 if (Missing == true)
@@ -502,11 +502,11 @@ bool RSHMethod::Fetch(FetchItem *Itm)
       }
 
       Res.Size = Fd.Size();
-      struct timespec times[2];
+      struct timeval times[2];
       times[0].tv_sec = FailTime;
       times[1].tv_sec = FailTime;
-      times[0].tv_nsec = times[1].tv_nsec = 0;
-      futimens(Fd.Fd(), times);
+      times[0].tv_usec = times[1].tv_usec = 0;
+      utimes(Fd.Name().c_str(), times);
       FailFd = -1;
    }
 
