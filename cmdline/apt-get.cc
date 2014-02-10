@@ -630,8 +630,8 @@ bool DoDownload(CommandLine &CmdL)
       return false;
 
    APT::CacheSetHelper helper(c0out);
-   APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
 
    if (verset.empty() == true)
       return false;
@@ -650,7 +650,7 @@ bool DoDownload(CommandLine &CmdL)
    std::string const cwd = SafeGetCWD();
    _config->Set("Dir::Cache::Archives", cwd);
    int i = 0;
-   for (APT::VersionList::const_iterator Ver = verset.begin();
+   for (APT::VersionSet::const_iterator Ver = verset.begin();
 	 Ver != verset.end(); ++Ver, ++i)
    {
       pkgAcquire::Item *I = new pkgAcqArchive(&Fetcher, SrcList, &Recs, *Ver, storefile[i]);
