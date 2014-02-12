@@ -561,25 +561,23 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    return true;
 }
 									/*}}}*/
-bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
+bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, std::string &ident, pkgCdromStatus * const log)/*{{{*/
 {
-   stringstream msg;
-
    // Startup
-   string CDROM = _config->FindDir("Acquire::cdrom::mount");
+   CDROM = _config->FindDir("Acquire::cdrom::mount");
    if (CDROM[0] == '.')
       CDROM= SafeGetCWD() + '/' + CDROM;
 
    if (log != NULL)
    {
-      msg.str("");
-      ioprintf(msg, _("Using CD-ROM mount point %s\nMounting CD-ROM\n"),
-		      CDROM.c_str());
-      log->Update(msg.str());
+      string msg;
+      log->SetTotal(STEP_LAST);
+      strprintf(msg, _("Using CD-ROM mount point %s\n"), CDROM.c_str());
+      log->Update(msg, STEP_PREPARE);
    }
 
    // Unmount the CD and get the user to put in the one they want
-   if (_config->FindB("APT::CDROM::NoMount",false) == false)
+   if (_config->FindB("APT::CDROM::NoMount", false) == false)
    {
       if(log != NULL)
 	 log->Update(_("Unmounting CD-ROM\n"), STEP_UNMOUNT);
@@ -604,24 +602,24 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
 
    // Hash the CD to get an ID
    if (log != NULL)
-      log->Update(_("Identifying.. "));
-   
+      log->Update(_("Identifying.. "), STEP_IDENT);
 
    if (IdentCdrom(CDROM,ident) == false)
    {
       ident = "";
+      if (log != NULL)
+	 log->Update("\n");
       return false;
    }
 
    if (log != NULL)
    {
-      msg.str("");
-      ioprintf(msg, "[%s]\n",ident.c_str());
-      log->Update(msg.str());
+      string msg;
+      strprintf(msg, "[%s]\n", ident.c_str());
+      log->Update(msg);
    }
 
    // Read the database
-   Configuration Database;
    string DFile = _config->FindFile("Dir::State::cdroms");
    if (FileExists(DFile) == true)
    {
@@ -629,12 +627,22 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
 	 return _error->Error("Unable to read the cdrom database %s",
 			      DFile.c_str());
    }
+   return true;
+}
+									/*}}}*/
+bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
+{
+   Configuration Database;
+   std::string CDROM;
+   if (MountAndIdentCDROM(Database, CDROM, ident, log) == false)
+      return false;
+
    if (log != NULL)
    {
-      msg.str("");
-      ioprintf(msg, _("Stored label: %s\n"),
-      Database.Find("CD::"+ident).c_str());
-      log->Update(msg.str());
+      string msg;
+      strprintf(msg, _("Stored label: %s\n"),
+	    Database.Find("CD::"+ident).c_str());
+      log->Update(msg);
    }
 
    // Unmount and finish
@@ -650,70 +658,13 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
 									/*}}}*/
 bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 {
-   stringstream msg;
-
-   // Startup
-   string CDROM = _config->FindDir("Acquire::cdrom::mount");
-   if (CDROM[0] == '.')
-      CDROM= SafeGetCWD() + '/' + CDROM;
-   
-   if(log != NULL)
-   {
-      log->SetTotal(STEP_LAST);
-      msg.str("");
-      ioprintf(msg, _("Using CD-ROM mount point %s\n"), CDROM.c_str());
-      log->Update(msg.str(), STEP_PREPARE);
-   }
-
-   // Read the database
    Configuration Database;
-   string DFile = _config->FindFile("Dir::State::cdroms");
-   if (FileExists(DFile) == true)
-   {
-      if (ReadConfigFile(Database,DFile) == false) 
-	 return _error->Error("Unable to read the cdrom database %s",
-			      DFile.c_str());
-   }
-   
-   // Unmount the CD and get the user to put in the one they want
-   if (_config->FindB("APT::CDROM::NoMount",false) == false)
-   {
-      if(log != NULL)
-	 log->Update(_("Unmounting CD-ROM\n"), STEP_UNMOUNT);
-      UnmountCdrom(CDROM);
-
-      if(log != NULL)
-      {
-	 log->Update(_("Waiting for disc...\n"), STEP_WAIT);
-	 if(!log->ChangeCdrom()) {
-	    // user aborted
-	    return false; 
-	 }
-      }
-
-      // Mount the new CDROM
-      if(log != NULL)
-	 log->Update(_("Mounting CD-ROM...\n"), STEP_MOUNT);
-
-      if (MountCdrom(CDROM) == false)
-	 return _error->Error("Failed to mount the cdrom.");
-   }
-   
-   // Hash the CD to get an ID
-   if(log != NULL)
-      log->Update(_("Identifying.. "), STEP_IDENT);
-   string ID;
-   if (IdentCdrom(CDROM,ID) == false)
-   {
-      if (log != NULL)
-	 log->Update("\n");
+   std::string ID, CDROM;
+   if (MountAndIdentCDROM(Database, CDROM, ID, log) == false)
       return false;
-   }
+
    if(log != NULL)
-   {
-      log->Update("["+ID+"]\n");
       log->Update(_("Scanning disc for index files..\n"),STEP_SCAN);
-   }
 
    // Get the CD structure
    vector<string> List;
@@ -762,12 +713,12 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    if (_config->FindB("APT::CDROM::DropTranslation", true) == true)
       DropTranslation(TransList);
    if(log != NULL) {
-      msg.str("");
-      ioprintf(msg, _("Found %zu package indexes, %zu source indexes, "
+      string msg;
+      strprintf(msg, _("Found %zu package indexes, %zu source indexes, "
 		      "%zu translation indexes and %zu signatures\n"), 
 	       List.size(), SourceList.size(), TransList.size(),
 	       SigList.size());
-      log->Update(msg.str(), STEP_SCAN);
+      log->Update(msg, STEP_SCAN);
    }
 
    if (List.empty() == true && SourceList.empty() == true) 
@@ -800,9 +751,9 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 	    
 	    if(log != NULL)
 	    {
-	       msg.str("");
-	       ioprintf(msg, _("Found label '%s'\n"), Name.c_str());
-	       log->Update(msg.str());
+	       string msg;
+	       strprintf(msg, _("Found label '%s'\n"), Name.c_str());
+	       log->Update(msg);
 	    }
 	    Database.Set("CD::" + ID + "::Label",Name);
 	 }	 
@@ -846,9 +797,9 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    Database.Set("CD::" + ID,Name);
    if(log != NULL)
    {
-      msg.str("");
-      ioprintf(msg, _("This disc is called: \n'%s'\n"), Name.c_str());
-      log->Update(msg.str());
+      string msg;
+      strprintf(msg, _("This disc is called: \n'%s'\n"), Name.c_str());
+      log->Update(msg);
       log->Update(_("Copying package lists..."), STEP_COPY);
    }
 
@@ -906,7 +857,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 
       if(log != NULL)
       {
-	 msg.str("");
+	 stringstream msg;
 	 msg << "deb cdrom:[" << Name << "]/" << string(*I,0,Space) << 
 	    " " << string(*I,Space+1) << endl;
 	 log->Update(msg.str());
@@ -924,7 +875,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       }
 
       if(log != NULL) {
-	 msg.str("");
+	 stringstream msg;
 	 msg << "deb-src cdrom:[" << Name << "]/" << string(*I,0,Space) << 
 	    " " << string(*I,Space+1) << endl;
 	 log->Update(msg.str());
