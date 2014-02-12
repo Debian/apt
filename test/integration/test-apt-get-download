@@ -39,3 +39,8 @@ aptget download apt
 aptget download apt
 testsuccess test -s apt_2.0_all.deb
 rm -f apt_1.0_all.deb
+
+# deb:738103 - apt-get download foo foo fails
+rm -f apt_*.deb
+aptget download apt apt
+testsuccess test -s apt_2.0_all.deb
