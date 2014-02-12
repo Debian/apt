@@ -30,6 +30,9 @@ unsigned int ScreenWidth = 80 - 1; /* - 1 for the cursor */
 
 bool InitOutput()							/*{{{*/
 {
+   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
+      _config->Set("quiet","1");
+
    c0out.rdbuf(cout.rdbuf());
    c1out.rdbuf(cout.rdbuf());
    c2out.rdbuf(cout.rdbuf());
