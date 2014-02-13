@@ -75,6 +75,8 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    HttpsMethod *me = (HttpsMethod *)userp;
 
+   if (me->Res.Size == 0)
+      me->URIStart(me->Res);
    if(me->File->Write(buffer, size*nmemb) != true)
       return false;
 
@@ -88,7 +90,6 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
    HttpsMethod *me = (HttpsMethod *)clientp;
    if(dltotal > 0 && me->Res.Size == 0) {
       me->Res.Size = (unsigned long long)dltotal;
-      me->URIStart(me->Res);
    }
    return 0;
 }

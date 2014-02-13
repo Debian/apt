@@ -197,9 +197,14 @@ void sendRedirect(int const client, int const httpcode, std::string const &uri,/
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
    std::string location("Location: ");
-   if (strncmp(uri.c_str(), "http://", 7) != 0)
+   if (strncmp(uri.c_str(), "http://", 7) != 0 && strncmp(uri.c_str(), "https://", 8) != 0)
    {
-      location.append("http://").append(LookupTag(request, "Host")).append("/");
+      std::string const host = LookupTag(request, "Host");
+      if (host.find(":4433") != std::string::npos)
+	 location.append("https://");
+      else
+	 location.append("http://");
+      location.append(host).append("/");
       if (strncmp("/home/", uri.c_str(), strlen("/home/")) == 0 && uri.find("/public_html/") != std::string::npos)
       {
 	 std::string homeuri = SubstVar(uri, "/home/", "~");
@@ -507,7 +512,8 @@ void * handleClient(void * voidclient)					/*{{{*/
 	    std::string redirect = "/" + filename;
 	    for (::Configuration::Item *I = Replaces->Child; I != NULL; I = I->Next)
 	       redirect = SubstVar(redirect, I->Tag, I->Value);
-	    redirect.erase(0,1);
+	    if (redirect.empty() == false && redirect[0] == '/')
+	       redirect.erase(0,1);
 	    if (redirect != filename)
 	    {
 	       sendRedirect(client, 301, redirect, *m, sendContent);
@@ -542,7 +548,13 @@ void * handleClient(void * voidclient)					/*{{{*/
 	 }
 
 	 // deal with the request
-	 if (RealFileExists(filename) == true)
+	 if (_config->FindB("aptwebserver::support::http", true) == false &&
+	       LookupTag(*m, "Host").find(":4433") == std::string::npos)
+	 {
+	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS");
+	    continue;
+	 }
+	 else if (RealFileExists(filename) == true)
 	 {
 	    FileFd data(filename, FileFd::ReadOnly);
 	    std::string condition = LookupTag(*m, "If-Modified-Since", "");
