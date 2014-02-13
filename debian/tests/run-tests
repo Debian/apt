@@ -2,12 +2,9 @@
 
 set -e
 
-# auto-package-test is very unhappy if stuff it writen to stderr
-exec 2> apt-stderr.log
-
 # we need the buildin webserver for the tests
 if [ ! -e environment.mak ]; then
-    ./configure
+    make startup
 fi
 make -C test/interactive-helper/
 
