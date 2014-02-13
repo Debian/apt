@@ -404,11 +404,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_getinfo(curl, CURLINFO_FILETIME, &Res.LastModified);
    if (Res.LastModified != -1)
    {
-      struct timespec times[2];
+      struct timeval times[2];
       times[0].tv_sec = Res.LastModified;
       times[1].tv_sec = Res.LastModified;
-      times[0].tv_nsec = times[1].tv_nsec = 0;
-      futimens(File->Fd(), times);
+      times[0].tv_usec = times[1].tv_usec = 0;
+      utimes(File->Name().c_str(), times);
    }
    else
       Res.LastModified = resultStat.st_mtime;

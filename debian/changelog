@@ -1,3 +1,27 @@
+apt (0.9.15.2) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * move isatty() check into InitOutput()
+  * Use a APT::VersionSet instead of a VersionList
+    (closes: #738103)
+
+  [ David Kalnischkies ]
+  * simplify code to make compilers happy
+  * update libapt-pkg.symbols file
+  * bump Standards-Version to 3.9.5 (no changes needed)
+  * do not use an empty APT_CONFIG environment variable
+  * always cleanup patchfiles at the end of rred call
+  * use VersionSet in download to handle repeats (Closes: 738103)
+  * use utimes instead of utimensat/futimens (Closes: 738567)
+
+  [ John Ogness ]
+  * apt-cdrom should succeed if any drive succeeds (Closes: 728153)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (621t): Update and review
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 13 Feb 2014 09:50:04 +0100
+
 apt (0.9.15.1ubuntu1) trusty; urgency=low
 
   * merged from debian/sid

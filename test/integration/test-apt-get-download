@@ -34,8 +34,14 @@ testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) SHA512:$(sh
 # deb:677887
 testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms
 
-# deb:736962 - apt-get download foo && 
-aptget download apt
-aptget download apt
+# deb:736962
+testsuccess aptget download apt
+testsuccess aptget download apt
 testsuccess test -s apt_2.0_all.deb
-rm -f apt_1.0_all.deb
+
+rm -f apt_1.0_all.deb apt_2.0_all.deb
+
+# deb:738103
+testsuccess aptget download apt apt apt/unstable apt=2.0
+testsuccess test -s apt_2.0_all.deb
+

@@ -156,8 +156,6 @@ int main(int argc, const char *argv[])					/*{{{*/
                 << std::endl
                 << std::endl;
    }
-   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
-      _config->Set("quiet","1");
 
    // See if the help should be shown
    if (_config->FindB("help") == true ||

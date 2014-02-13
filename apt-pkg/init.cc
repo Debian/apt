@@ -93,7 +93,7 @@ bool pkgInitConfig(Configuration &Cnf)
    
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
-   if (Cfg != 0)
+   if (Cfg != 0 && strlen(Cfg) != 0)
    {
       if (RealFileExists(Cfg) == true)
 	 Res &= ReadConfigFile(Cnf,Cfg);

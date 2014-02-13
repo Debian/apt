@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/time.h>
 #include <errno.h>
 #include <unistd.h>
 #include <apti18n.h>
@@ -95,11 +96,11 @@ bool pkgDirStream::FinishedFile(Item &Itm,int Fd)
 
    /* Set the modification times. The only way it can fail is if someone
       has futzed with our file, which is intolerable :> */
-   struct timespec times[2];
+   struct timeval times[2];
    times[0].tv_sec = times[1].tv_sec = Itm.MTime;
-   times[0].tv_nsec = times[1].tv_nsec = 0;
-   if (futimens(Fd, times) != 0)
-      _error->Errno("futimens", "Failed to set modification time for %s",Itm.Name);
+   times[0].tv_usec = times[1].tv_usec = 0;
+   if (utimes(Itm.Name, times) != 0)
+      _error->Errno("utimes", "Failed to set modification time for %s",Itm.Name);
 
    if (close(Fd) != 0)
       return _error->Errno("close",_("Failed to close file %s"),Itm.Name);

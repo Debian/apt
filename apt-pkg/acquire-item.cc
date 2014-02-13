@@ -757,6 +757,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
    {
       // remove the just applied patch
       available_patches.erase(available_patches.begin());
+      unlink((FinalFile + ".ed").c_str());
 
       // move into place
       if(Debug) 
@@ -886,6 +887,14 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,string M
 
       // otherwise lists cleanup will eat the file
       DestFile = FinalFile;
+
+      // ensure the ed's are gone regardless of list-cleanup
+      for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
+	    I != allPatches->end(); ++I)
+      {
+	    std::string patch = FinalFile + ".ed." + (*I)->patch.file + ".gz";
+	    unlink(patch.c_str());
+      }
 
       // all set and done
       Complete = true;

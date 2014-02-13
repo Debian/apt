@@ -369,11 +369,11 @@ void ServerMethod::SigTerm(int)
    if (FailFd == -1)
       _exit(100);
 
-   struct timespec times[2];
+   struct timeval times[2];
    times[0].tv_sec = FailTime;
    times[1].tv_sec = FailTime;
-   times[0].tv_nsec = times[1].tv_nsec = 0;
-   futimens(FailFd, times);
+   times[0].tv_usec = times[1].tv_usec = 0;
+   utimes(FailFile.c_str(), times);
    close(FailFd);
 
    _exit(100);
@@ -539,10 +539,10 @@ int ServerMethod::Loop()
 	    File = 0;
 	    
 	    // Timestamp
-	    struct timespec times[2];
+	    struct timeval times[2];
 	    times[0].tv_sec = times[1].tv_sec = Server->Date;
-	    times[0].tv_nsec = times[1].tv_nsec = 0;
-	    utimensat(AT_FDCWD, Queue->DestFile.c_str(), times, AT_SYMLINK_NOFOLLOW);
+	    times[0].tv_usec = times[1].tv_usec = 0;
+	    utimes(Queue->DestFile.c_str(), times);
 
 	    // Send status to APT
 	    if (Result == true)

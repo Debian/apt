@@ -18,6 +18,7 @@
 #include <apt-pkg/hashes.h>
 
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
@@ -93,6 +94,8 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    }
    
    From.Close();
+   Res.Size = To.FileSize();
+   To.Close();
 
    if (Failed == true)
       return false;
@@ -102,23 +105,14 @@ bool GzipMethod::Fetch(FetchItem *Itm)
    if (stat(Path.c_str(),&Buf) != 0)
       return _error->Errno("stat",_("Failed to stat"));
 
-   struct timespec times[2];
+   struct timeval times[2];
    times[0].tv_sec = Buf.st_atime;
-   times[1].tv_sec = Buf.st_mtime;
-   times[0].tv_nsec = times[1].tv_nsec = 0;
-   if (futimens(To.Fd(), times) != 0)
-   {
-      To.OpFail();
-      return _error->Errno("futimens",_("Failed to set modification time"));
-   }
-   Res.Size = To.FileSize();
-   To.Close();
-
-   if (stat(Itm->DestFile.c_str(),&Buf) != 0)
-      return _error->Errno("stat",_("Failed to stat"));
+   Res.LastModified = times[1].tv_sec = Buf.st_mtime;
+   times[0].tv_usec = times[1].tv_usec = 0;
+   if (utimes(Itm->DestFile.c_str(), times) != 0)
+      return _error->Errno("utimes",_("Failed to set modification time"));
 
    // Return a Done response
-   Res.LastModified = Buf.st_mtime;
    Res.TakeHashes(Hash);
 
    URIDone(Res);

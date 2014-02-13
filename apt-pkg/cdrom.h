@@ -69,6 +69,10 @@ class pkgCdrom								/*{{{*/
  public:
    bool Ident(std::string &ident, pkgCdromStatus *log);
    bool Add(pkgCdromStatus *log);
+
+ private:
+   bool MountAndIdentCDROM(Configuration &Database, std::string &CDROM,
+	 std::string &ident, pkgCdromStatus * const log);
 };
 									/*}}}*/
 

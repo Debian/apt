@@ -31,6 +31,16 @@ wasmergeused() {
 		msgfail
 	fi
 
+	msgtest 'No intermediate patch files' 'still exist'
+	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
+	if [ -z "$EDS" ]; then
+		msgpass
+	else
+		echo
+		echo "$EDS"
+		msgfail
+	fi
+
 	msgtest 'Check if the right pdiff merger was used'
 	if grep -q '^pkgAcqIndexMergeDiffs::Done(): rred' $OUTPUT; then
 		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
@@ -46,7 +56,7 @@ wasmergeused() {
 }
 
 testrun() {
-	# setup the base
+	msgmsg "Testcase: setup the base with: $*"
 	find aptarchive -name 'Packages*' -type f -delete
 	cp ${PKGFILE} aptarchive/Packages
 	compressfile 'aptarchive/Packages'
@@ -59,7 +69,7 @@ testrun() {
 	testequal "$(cat ${PKGFILE})
 " aptcache show apt oldstuff
 
-	msgmsg 'Testcase: apply with one patch'
+	msgmsg "Testcase: apply with one patch: $*"
 	cp ${PKGFILE}-new aptarchive/Packages
 	compressfile 'aptarchive/Packages'
 	mkdir -p aptarchive/Packages.diff
@@ -82,13 +92,13 @@ SHA1-Patches:
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
-	msgmsg 'Testcase: index is already up-to-date'
+	msgmsg "Testcase: index is already up-to-date: $*"
 	find rootdir/var/lib/apt/lists -name '*.IndexDiff' -type f -delete
 	testsuccess aptget update "$@"
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 
-	msgmsg 'Testcase: apply with two patches'
+	msgmsg "Testcase: apply with two patches: $*"
 	cp ${PKGFILE}-new aptarchive/Packages
 	echo '
 Package: futurestuff
@@ -129,7 +139,7 @@ SHA1-Patches:
 	testequal "$(cat Packages-future)
 " aptcache show apt newstuff futurestuff
 
-	msgmsg 'Testcase: patch applying fails, but successful fallback'
+	msgmsg "Testcase: patch applying fails, but successful fallback: $*"
 	rm -rf rootdir/var/lib/apt/lists
 	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
 	cp ${PKGFILE}-new aptarchive/Packages
@@ -154,6 +164,10 @@ SHA1-Patches:
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
 }
+echo 'Debug::pkgAcquire::Diffs "true";
+Debug::pkgAcquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
 
-testrun -o Debug::pkgAcquire::Diffs=1 -o Debug::pkgAcquire::rred=1 -o Acquire::PDiffs::Merge=0
-testrun -o Debug::pkgAcquire::Diffs=1 -o Debug::pkgAcquire::rred=1 -o Acquire::PDiffs::Merge=1
+testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1
+testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1
+testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=0
+testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0
