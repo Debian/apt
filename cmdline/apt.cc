@@ -82,7 +82,7 @@ bool ShowHelp(CommandLine &CmdL)
       " remove  - remove packages\n"
       "\n"
       " upgrade - upgrade the system by installing/upgrading packages\n"
-      "full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
+      " full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
       "\n"
       " edit-sources - edit the source information file\n"
        );
