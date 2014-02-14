@@ -30,10 +30,13 @@ using namespace std;
 // AcqTextStatus::AcqTextStatus - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int Quiet) :
-    ScreenWidth(ScreenWidth), ID(0), Quiet(Quiet)
+AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet) :
+    pkgAcquireStatus(), ScreenWidth(ScreenWidth), ID(0), Quiet(Quiet)
 {
    BlankLine[0] = 0;
+   // testcases use it to disable pulses without disabling other user messages
+   if (_config->FindB("quiet::NoUpdate", false) == true)
+      this->Quiet = 1;
 }
 									/*}}}*/
 // AcqTextStatus::Start - Downloading has started			/*{{{*/

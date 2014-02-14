@@ -48,5 +48,6 @@ rm https
 cd - >/dev/null
 echo "Dir::Bin::Methods \"${COPYMETHODS}\";" >> aptconfig.conf
 
-aptget download apt
+testequal "E: The method driver $(pwd)/rootdir/usr/lib/apt/methods/https could not be found.
+N: Is the package apt-transport-https installed?" aptget download apt -q=0
 testsuccess test ! -e apt_1.0_all.deb
