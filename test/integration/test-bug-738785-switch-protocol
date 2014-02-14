@@ -12,6 +12,7 @@ buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
 # setup http redirecting to https
 setupaptarchive --no-update
 changetowebserver -o 'aptwebserver::redirect::replace::/redirectme/=https://localhost:4433/' \
+	-o 'aptwebserver::redirect::replace::/downgrademe/=http://localhost:8080/' \
 	-o 'aptwebserver::support::http=false'
 changetohttpswebserver
 sed -i -e 's#:4433/#:8080/redirectme#' -e 's# https:# http:#' rootdir/etc/apt/sources.list.d/*
@@ -38,7 +39,7 @@ testdpkginstalled 'apt'
 # create a copy of all methods, expect https
 eval `aptconfig shell METHODS Dir::Bin::Methods/d`
 COPYMETHODS='usr/lib/apt/methods'
-rm rootdir/$COPYMETHODS
+mv rootdir/${COPYMETHODS} rootdir/${COPYMETHODS}.bak
 mkdir -p rootdir/$COPYMETHODS
 cd rootdir/$COPYMETHODS
 find $METHODS \! -type d | while read meth; do
@@ -51,3 +52,12 @@ echo "Dir::Bin::Methods \"${COPYMETHODS}\";" >> aptconfig.conf
 testequal "E: The method driver $(pwd)/rootdir/usr/lib/apt/methods/https could not be found.
 N: Is the package apt-transport-https installed?" aptget download apt -q=0
 testsuccess test ! -e apt_1.0_all.deb
+
+# revert to all methods
+rm -rf rootdir/$COPYMETHODS
+mv rootdir/${COPYMETHODS}.bak rootdir/${COPYMETHODS}
+
+# check that downgrades from https to http are not allowed
+webserverconfig 'aptwebserver::support::http' 'true'
+sed -i -e 's#:8080/redirectme#:4433/downgrademe#' -e 's# http:# https:#' rootdir/etc/apt/sources.list.d/*
+testfailure aptget update

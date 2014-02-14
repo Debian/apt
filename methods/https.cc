@@ -188,7 +188,8 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // options
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
-   // only allow redirects to https
+   // only allow curl to handle https, not the other stuff it supports
+   curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
    curl_easy_setopt(curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
 
    // SSL parameters are set by default to the common (non mirror-specific) value
