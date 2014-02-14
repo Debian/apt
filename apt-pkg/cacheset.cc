@@ -312,7 +312,6 @@ bool PackageContainerInterface::FromString(PackageContainerInterface * const pci
 
 	if (FromGroup(pci, Cache, str, helper) == false &&
 		 FromTask(pci, Cache, str, helper) == false &&
-		 FromFnmatch(pci, Cache, str, helper) == false &&
 		 FromRegEx(pci, Cache, str, helper) == false)
 	{
 		helper.canNotFindPackage(pci, Cache, str);
