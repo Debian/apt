@@ -1588,18 +1588,15 @@ unsigned long long FileFd::Tell()
    return Res;
 }
 									/*}}}*/
-// FileFd::FileSize - Return the size of the file			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-unsigned long long FileFd::FileSize()
+static bool StatFileFd(char const * const msg, int const iFd, std::string const &FileName, struct stat &Buf, FileFdPrivate * const d) /*{{{*/
 {
-   struct stat Buf;
-
    bool ispipe = (d != NULL && d->pipe == true);
    if (ispipe == false)
    {
       if (fstat(iFd,&Buf) != 0)
-	 return FileFdErrno("fstat","Unable to determine the file size");
+	 // higher-level code will generate more meaningful messages,
+	 // even translated this would be meaningless for users
+	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
       ispipe = S_ISFIFO(Buf.st_mode);
    }
 
@@ -1611,10 +1608,33 @@ unsigned long long FileFd::FileSize()
       if (d != NULL)
 	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
-	 return FileFdErrno("stat","Unable to determine the file size");
+	 return _error->Errno("fstat", "Unable to determine %s for file %s", msg, FileName.c_str());
    }
-
+   return true;
+}
+									/*}}}*/
+// FileFd::FileSize - Return the size of the file			/*{{{*/
+unsigned long long FileFd::FileSize()
+{
+   struct stat Buf;
+   if (StatFileFd("file size", iFd, FileName, Buf, d) == false)
+   {
+      Flags |= Fail;
+      return 0;
+   }
    return Buf.st_size;
+}
+									/*}}}*/
+// FileFd::ModificationTime - Return the time of last touch		/*{{{*/
+time_t FileFd::ModificationTime()
+{
+   struct stat Buf;
+   if (StatFileFd("modification time", iFd, FileName, Buf, d) == false)
+   {
+      Flags |= Fail;
+      return 0;
+   }
+   return Buf.st_mtime;
 }
 									/*}}}*/
 // FileFd::Size - Return the size of the content in the file		/*{{{*/
@@ -1686,35 +1706,6 @@ unsigned long long FileFd::Size()
 #endif
 
    return size;
-}
-									/*}}}*/
-// FileFd::ModificationTime - Return the time of last touch		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-time_t FileFd::ModificationTime()
-{
-   struct stat Buf;
-   if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
-   {
-      FileFdErrno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
-      return 0;
-   }
-
-   // for compressor pipes st_size is undefined and at 'best' zero
-   if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
-   {
-      // we set it here, too, as we get the info here for free
-      // in theory the Open-methods should take care of it already
-      if (d != NULL)
-	 d->pipe = true;
-      if (stat(FileName.c_str(), &Buf) != 0)
-      {
-	 FileFdErrno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
-	 return 0;
-      }
-   }
-
-   return Buf.st_mtime;
 }
 									/*}}}*/
 // FileFd::Close - Close the file if the close flag is set		/*{{{*/
