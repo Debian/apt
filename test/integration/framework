@@ -901,7 +901,7 @@ changetohttpswebserver() {
 		msgdie 'You need to install stunnel4 for https testcases'
 	fi
 	if [ ! -e "${TMPWORKINGDIRECTORY}/aptarchive/aptwebserver.pid" ]; then
-		changetowebserver --no-rewrite
+		changetowebserver --no-rewrite "$@"
 	fi
 	echo "pid = ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid
 cert = ${TESTDIRECTORY}/apt.pem
