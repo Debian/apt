@@ -15,7 +15,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"ReadPinFile(pkgPolicy&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
  (c++)"RegexChoice(RxChoiceList*, char const**, char const**)@Base" 0.8.0
  (c++)"SetNonBlock(int, bool)@Base" 0.8.0
- (c++)"TimeRFC1123(long)@Base" 0.8.0
  (c++)"flExtension(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
  (c++)"Base64Encode(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.0
  (c++)"ReadMessages(int, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&)@Base" 0.8.0
@@ -50,8 +49,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"DirectoryExists(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.0
  (c++)"VectorizeString(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const&)@Base" 0.8.0
  (c++)"pkgPrioSortList(pkgCache&, pkgCache::Version**)@Base" 0.8.0
- (c++)"FTPMDTMStrToTime(char const*, long&)@Base" 0.8.0
- (c++)"RFC1123StrToTime(char const*, long&)@Base" 0.8.0
  (c++)"pkgMakeStatusCache(pkgSourceList&, OpProgress&, MMap**, bool)@Base" 0.8.0
  (c++)"pkgMinimizeUpgrade(pkgDepCache&)@Base" 0.8.0
  (c++)"GetListOfFilesInDir(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, bool const&)@Base" 0.8.0
@@ -72,7 +69,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"IsMounted(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&)@Base" 0.8.0
  (c++)"LookupTag(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, char const*)@Base" 0.8.0
  (c++)"SizeToStr(double)@Base" 0.8.0
- (c++)"StrToTime(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long&)@Base" 0.8.0
  (c++)"TFRewrite(_IO_FILE*, pkgTagSection const&, char const**, TFRewriteData*)@Base" 0.8.0
  (c++)"TimeToStr(unsigned long)@Base" 0.8.0
  (c++)"_strstrip(char*)@Base" 0.8.0
@@ -91,7 +87,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"guard variable for pkgCacheGenerator::Dynamic<pkgCache::PkgFileIterator>::toReMap@Base" 0.8.0
  (c++)"HashString::SupportedHashes()@Base" 0.8.0
  (c++)"HashString::_SupportedHashes@Base" 0.8.0
- (c++)"HashString::HashString(HashString const&)@Base" 0.8.0
  (c++)"HashString::HashString(std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
  (c++)"HashString::HashString(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
  (c++)"HashString::HashString()@Base" 0.8.0
@@ -1125,31 +1120,42 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  pkgVersion@Base 0.8.0
 ### architecture specific: va_list
  (arch=armel armhf|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, std::__va_list&) const@Base" 0.8.15~exp1
- (arch=i386 hurd-i386 kfreebsd-i386|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@Base" 0.8.15~exp1
+ (arch=i386 hurd-i386 kfreebsd-i386 ppc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, char*&) const@Base" 0.8.15~exp1
  (arch=hppa ia64 mips mipsel sparc sparc64|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, void*&) const@Base" 0.8.15~exp1
- (arch=amd64 kfreebsd-amd64 powerpc powerpcspe s390|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag (&) [1]) const@Base" 0.8.15~exp1
+ (arch=amd64 kfreebsd-amd64 powerpc powerpcspe s390 s390x x32|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag (&) [1]) const@Base" 0.8.15~exp1
  (arch=sh4|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __builtin_va_list&) const@Base" 0.8.15~exp1
  (arch=alpha|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag&) const@Base" 0.8.15~exp1
 ### architecture specific: va_list & size_t
  (arch=i386 hurd-i386 kfreebsd-i386|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@Base" 0.8.11.4
  (arch=armel armhf|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@Base" 0.8.11.4
  (arch=alpha|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag&, unsigned long&)@Base" 0.8.11.4
- (arch=powerpc powerpcspe|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned int&)@Base" 0.8.11.4
- (arch=amd64 kfreebsd-amd64 s390|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@Base" 0.8.11.4
+ (arch=powerpc powerpcspe x32|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned int&)@Base" 0.8.11.4
+ (arch=amd64 kfreebsd-amd64 s390 s390x|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@Base" 0.8.11.4
  (arch=hppa mips mipsel sparc|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned int&)@Base" 0.8.11.4
  (arch=ia64 sparc64|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@Base" 0.8.11.4
  (arch=sh4|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __builtin_va_list&, unsigned int&)@Base" 0.8.11.4
+ (arch=ppc64|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned long&)@Base" 0.8.11.4
  (arch=i386 hurd-i386 kfreebsd-i386|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned int&)@Base" 0.8.11.4
  (arch=armel armhf|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned int&)@Base" 0.8.11.4
  (arch=alpha|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag&, int, unsigned long&)@Base" 0.8.11.4
- (arch=powerpc powerpcspe|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned int&)@Base" 0.8.11.4
- (arch=amd64 kfreebsd-amd64 s390|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@Base" 0.8.11.4
+ (arch=powerpc powerpcspe x32|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned int&)@Base" 0.8.11.4
+ (arch=amd64 kfreebsd-amd64 s390 s390x|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@Base" 0.8.11.4
  (arch=hppa mips mipsel sparc|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned int&)@Base" 0.8.11.4
  (arch=ia64 sparc64|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@Base" 0.8.11.4 1
  (arch=sh4|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __builtin_va_list&, int, unsigned int&)@Base" 0.8.11.4
+ (arch=ppc64|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned long&)@Base" 0.8.11.4
 ### architecture specific: size_t
- (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mips mipsel powerpc powerpcspe sh4 sparc|c++)"_strtabexpand(char*, unsigned int)@Base" 0.8.0
- (arch=alpha amd64 ia64 kfreebsd-amd64 s390 sparc64|c++)"_strtabexpand(char*, unsigned long)@Base" 0.8.0
+ (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mips mipsel powerpc powerpcspe sh4 sparc x32|c++)"_strtabexpand(char*, unsigned int)@Base" 0.8.0
+ (arch=alpha amd64 ia64 kfreebsd-amd64 s390 s390x sparc64 ppc64|c++)"_strtabexpand(char*, unsigned long)@Base" 0.8.0
+### architecture specific: time_t
+ (arch=!x32|c++)"TimeRFC1123(long)@Base" 0.8.0
+ (arch=x32|c++)"TimeRFC1123(long long)@Base" 0.8.0
+ (arch=!x32|c++)"FTPMDTMStrToTime(char const*, long&)@Base" 0.8.0
+ (arch=x32|c++)"FTPMDTMStrToTime(char const*, long long&)@Base" 0.8.0
+ (arch=!x32|c++)"StrToTime(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long&)@Base" 0.8.0
+ (arch=x32|c++)"StrToTime(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long long&)@Base" 0.8.0
+ (arch=!x32|c++)"RFC1123StrToTime(char const*, long&)@Base" 0.8.0
+ (arch=x32|c++)"RFC1123StrToTime(char const*, long long&)@Base" 0.8.0
 ###
  (c++)"Configuration::MatchAgainstConfig::clearPatterns()@Base" 0.8.1
  (c++)"CreateAPTDirectoryIfNeeded(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.2
@@ -1589,13 +1595,19 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++|optional=private)"pkgCdrom::MountAndIdentCDROM(Configuration&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, pkgCdromStatus*)@Base" 0.9.15.2
 ### demangle strangeness - buildd report it as MISSING and as new…
  (c++)"pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<IndexTarget*, std::allocator<IndexTarget*> > const*, indexRecords*)@Base" 0.8.0
-### gcc artefacts
+### gcc-4.6 artefacts
+ (c++|optional=implicit)"HashString::operator=(HashString const&)@Base" 0.8.0
+ (c++|optional=implicit)"HashString::HashString(HashString const&)@Base" 0.8.0
+ (c++|optional=inline)"APT::VersionContainer<std::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::iterator std::max_element<APT::VersionContainer<std::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::iterator, CompareProviders>(APT::VersionContainer<std::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::iterator, APT::VersionContainer<std::list<pkgCache::VerIterator, std::allocator<pkgCache::VerIterator> > >::iterator, CompareProviders)@Base" 0.8.0
+ (c++|optional=inline)"pkgCache::VerIterator::ParentPkg() const@Base" 0.8.0
+### std library artefacts
  (c++|regex|optional=std)"^std::vector<DiffInfo, .+@Base$" 0.8.0
  (c++|regex|optional=std)"^std::vector<.+ >::(vector|push_back|erase|_[^ ]+)\(.+\)( const|)@Base$" 0.8.0
  (c++|optional=std)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<__gnu_cxx::__normal_iterator<char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(__gnu_cxx::__normal_iterator<char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, __gnu_cxx::__normal_iterator<char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0.8.0
  (c++|optional=std)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<__gnu_cxx::__normal_iterator<char*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(__gnu_cxx::__normal_iterator<char*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, __gnu_cxx::__normal_iterator<char*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0.8.0
  (c++|optional=std)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<char const*>(char const*, char const*, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0.8.0
  (c++|optional=std)"char* std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_construct<char*>(char*, char*, std::allocator<char> const&, std::forward_iterator_tag)@Base" 0.8.0
+ (c++|optional=std)"std::basic_string<char, std::char_traits<char>, std::allocator<char> >& std::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace_dispatch<unsigned char*>(__gnu_cxx::__normal_iterator<char*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, __gnu_cxx::__normal_iterator<char*, std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, unsigned char*, unsigned char*, std::__false_type)@Base" 0.8.0
 ### try to ignore std:: template instances
  (c++|regex|optional=std)"^(void |)std::[^ ]+<.+ >::(_|~).+\(.*\)@Base$" 0.8.0
  (c++|regex|optional=std)"^std::[^ ]+<.+ >::(append|insert|reserve|operator[^ ]+)\(.*\)@Base$" 0.8.0
@@ -1603,6 +1615,7 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++|regex|optional=std)"^(bool|void) std::(operator|sort_heap|make_heap)[^ ]+<.+ >\(.+\)@Base$" 0.8.0
  (c++|regex|optional=std)"^std::reverse_iterator<.+ > std::__.+@Base$" 0.8.0
  (c++|regex|optional=std)"^std::basic_string<.+ >\(.+\)@Base$" 0.8.0
+ (c++|regex|optional=std)"^std::basic_string<.+ >::basic_string<.+>\(.+\)@Base$" 0.8.0
  (c++|regex|optional=std)"^__gnu_cxx::__[^ ]+<.*@Base$" 0.8.0
  (c++|regex|optional=std)"^typeinfo name for std::iterator<.*>@Base$" 0.8.0
  (c++|regex|optional=std)"^typeinfo for std::iterator<.*>@Base$" 0.8.0

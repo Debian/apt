@@ -35,7 +35,7 @@ AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet)
 {
    BlankLine[0] = 0;
    // testcases use it to disable pulses without disabling other user messages
-   if (_config->FindB("quiet::NoUpdate", false) == true)
+   if (Quiet == 0 && _config->FindB("quiet::NoUpdate", false) == true)
       this->Quiet = 1;
 }
 									/*}}}*/
