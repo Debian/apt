@@ -394,8 +394,18 @@ void pkgProblemResolver::MakeScores()
    };
    int PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
    int PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
-   int PrioDepends = _config->FindI("pkgProblemResolver::Scores::Depends",1);
-   int PrioRecommends = _config->FindI("pkgProblemResolver::Scores::Recommends",1);
+   int DepMap[] = {
+      0,
+      _config->FindI("pkgProblemResolver::Scores::Depends",1),
+      _config->FindI("pkgProblemResolver::Scores::PreDepends",1),
+      _config->FindI("pkgProblemResolver::Scores::Suggests",0),
+      _config->FindI("pkgProblemResolver::Scores::Recommends",1),
+      _config->FindI("pkgProblemResolver::Scores::Conflicts",-1),
+      _config->FindI("pkgProblemResolver::Scores::Replaces",0),
+      _config->FindI("pkgProblemResolver::Scores::Obsoletes",0),
+      _config->FindI("pkgProblemResolver::Scores::Breaks",-1),
+      _config->FindI("pkgProblemResolver::Scores::Enhances",0)
+   };
    int AddProtected = _config->FindI("pkgProblemResolver::Scores::AddProtected",10000);
    int AddEssential = _config->FindI("pkgProblemResolver::Scores::AddEssential",5000);
 
@@ -408,8 +418,15 @@ void pkgProblemResolver::MakeScores()
          << "  Extra => " << PrioMap[pkgCache::State::Extra] << endl
          << "  Essentials => " << PrioEssentials << endl
          << "  InstalledAndNotObsolete => " << PrioInstalledAndNotObsolete << endl
-         << "  Depends => " << PrioDepends << endl
-         << "  Recommends => " << PrioRecommends << endl
+         << "  Pre-Depends => " << DepMap[pkgCache::Dep::PreDepends] << endl
+         << "  Depends => " << DepMap[pkgCache::Dep::Depends] << endl
+         << "  Recommends => " << DepMap[pkgCache::Dep::Recommends] << endl
+         << "  Suggests => " << DepMap[pkgCache::Dep::Suggests] << endl
+         << "  Conflicts => " << DepMap[pkgCache::Dep::Conflicts] << endl
+         << "  Breaks => " << DepMap[pkgCache::Dep::DpkgBreaks] << endl
+         << "  Replaces => " << DepMap[pkgCache::Dep::Replaces] << endl
+         << "  Obsoletes => " << DepMap[pkgCache::Dep::Obsoletes] << endl
+         << "  Enhances => " << DepMap[pkgCache::Dep::Enhances] << endl
          << "  AddProtected => " << AddProtected << endl
          << "  AddEssential => " << AddEssential << endl;
 
@@ -446,17 +463,11 @@ void pkgProblemResolver::MakeScores()
    {
       if (Cache[I].InstallVer == 0)
 	 continue;
-      
+
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; ++D)
-      {
-	 if (D->Type == pkgCache::Dep::Depends || 
-	     D->Type == pkgCache::Dep::PreDepends)
-	    Scores[D.TargetPkg()->ID] += PrioDepends;
-	 else if (D->Type == pkgCache::Dep::Recommends)
-	    Scores[D.TargetPkg()->ID] += PrioRecommends;
-      }
-   }   
-   
+	 Scores[D.TargetPkg()->ID] += DepMap[D->Type];
+   }
+
    // Copy the scores to advoid additive looping
    SPtrArray<int> OldScores = new int[Size];
    memcpy(OldScores,Scores,sizeof(*Scores)*Size);

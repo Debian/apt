@@ -1,0 +1,47 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'libdb-dev' 'amd64' '5.1.7' 'Depends: libdb5.1-dev'
+insertinstalledpackage 'libdb5.1-dev' 'amd64' '5.1.29-7'
+
+insertpackage 'unstable' 'libdb-dev' 'amd64' '5.3.0' 'Depends: libdb5.3-dev
+Conflicts: libdb5.1-dev'
+insertpackage 'unstable' 'libdb5.1-dev' 'amd64' '5.1.29-7'
+insertpackage 'unstable' 'libdb5.3-dev' 'amd64' '5.3.28-3' 'Conflicts: libdb5.1-dev'
+
+insertpackage 'unstable' 'foo' 'amd64' '1'
+insertpackage 'unstable' 'bar' 'amd64' '1'
+insertpackage 'unstable' 'foo' 'amd64' '2' 'Conflicts: bar'
+insertpackage 'unstable' 'bar' 'amd64' '2' 'Conflicts: foo'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libdb5.1-dev
+The following NEW packages will be installed:
+  libdb5.3-dev
+The following packages will be upgraded:
+  libdb-dev
+1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libdb5.1-dev [5.1.29-7] [libdb-dev:amd64 ]
+Inst libdb-dev [5.1.7] (5.3.0 unstable [amd64]) []
+Inst libdb5.3-dev (5.3.28-3 unstable [amd64])
+Conf libdb5.3-dev (5.3.28-3 unstable [amd64])
+Conf libdb-dev (5.3.0 unstable [amd64])' aptget dist-upgrade -s
+
+rm rootdir/var/lib/dpkg/status
+insertinstalledpackage 'foo' 'amd64' '1'
+insertinstalledpackage 'bar' 'amd64' '1'
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  bar foo
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.' aptget dist-upgrade -s
