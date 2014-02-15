@@ -456,14 +456,8 @@ void pkgProblemResolver::MakeScores()
       */
       if (I->CurrentVer != 0 && Cache[I].CandidateVer != 0 && Cache[I].CandidateVerIter(Cache).Downloadable())
 	 Score += PrioInstalledAndNotObsolete;
-   }
 
-   // Now that we have the base scores we go and propagate dependencies
-   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
-   {
-      if (Cache[I].InstallVer == 0)
-	 continue;
-
+      // propagate score points along dependencies
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; ++D)
 	 Scores[D.TargetPkg()->ID] += DepMap[D->Type];
    }
