@@ -111,6 +111,12 @@ bool ExtractTar::Done(bool Force)
    gzip will efficiently ignore the extra bits. */
 bool ExtractTar::StartGzip()
 {
+   if (DecompressProg.empty())
+   {
+      InFd.OpenDescriptor(File.Fd(), FileFd::ReadOnly, FileFd::None, false);
+      return true;
+   }
+
    int Pipes[2];
    if (pipe(Pipes) != 0)
       return _error->Errno("pipe",_("Failed to create pipes"));
