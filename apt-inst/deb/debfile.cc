@@ -42,12 +42,15 @@ debDebFile::debDebFile(FileFd &File) : File(File), AR(File)
       return;
    }
 
-   if (!CheckMember("control.tar.gz")) {
-      _error->Error(_("This is not a valid DEB archive, missing '%s' member"), "control.tar.gz");
+   if (!CheckMember("control.tar") &&
+       !CheckMember("control.tar.gz") &&
+       !CheckMember("control.tar.xz")) {
+      _error->Error(_("This is not a valid DEB archive, missing '%s' member"), "control.tar");
       return;
    }
 
-   if (!CheckMember("data.tar.gz") &&
+   if (!CheckMember("data.tar") &&
+       !CheckMember("data.tar.gz") &&
        !CheckMember("data.tar.bz2") &&
        !CheckMember("data.tar.lzma") &&
        !CheckMember("data.tar.xz")) {
@@ -107,6 +110,9 @@ bool debDebFile::ExtractTarMember(pkgDirStream &Stream,const char *Name)
       Compressor = c->Binary;
       break;
    }
+
+   if (Member == NULL)
+      Member = AR.FindMember(std::string(Name).c_str());
 
    if (Member == NULL)
    {
@@ -201,14 +207,7 @@ bool debDebFile::MemControlExtract::Process(Item &Itm,const unsigned char *Data,
    it parses it into a tag section parser. */
 bool debDebFile::MemControlExtract::Read(debDebFile &Deb)
 {
-   // Get the archive member and positition the file 
-   const ARArchive::Member *Member = Deb.GotoMember("control.tar.gz");
-   if (Member == 0)
-      return false;
-
-   // Extract it.
-   ExtractTar Tar(Deb.GetFile(),Member->Size,"gzip");
-   if (Tar.Go(*this) == false)
+   if (Deb.ExtractTarMember(*this, "control.tar") == false)
       return false;
 
    if (Control == 0)
