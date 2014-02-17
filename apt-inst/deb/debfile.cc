@@ -88,21 +88,20 @@ const ARArchive::Member *debDebFile::GotoMember(const char *Name)
    return Member;
 }
 									/*}}}*/
-// DebFile::ExtractArchive - Extract the archive data itself		/*{{{*/
+// DebFile::ExtractTarMember - Extract the contents of a tar member	/*{{{*/
 // ---------------------------------------------------------------------
 /* Simple wrapper around tar.. */
-bool debDebFile::ExtractArchive(pkgDirStream &Stream)
+bool debDebFile::ExtractTarMember(pkgDirStream &Stream,const char *Name)
 {
    // Get the archive member
    const ARArchive::Member *Member = NULL;
    std::string Compressor;
 
-   std::string const data = "data.tar";
    std::vector<APT::Configuration::Compressor> compressor = APT::Configuration::getCompressors();
    for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	c != compressor.end(); ++c)
    {
-      Member = AR.FindMember(std::string(data).append(c->Extension).c_str());
+      Member = AR.FindMember(std::string(Name).append(c->Extension).c_str());
       if (Member == NULL)
 	 continue;
       Compressor = c->Binary;
@@ -111,7 +110,7 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
 
    if (Member == NULL)
    {
-      std::string ext = "data.tar.{";
+      std::string ext = std::string(Name) + ".{";
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	   c != compressor.end(); ++c)
 	 ext.append(c->Extension.substr(1));
@@ -127,6 +126,14 @@ bool debDebFile::ExtractArchive(pkgDirStream &Stream)
    if (_error->PendingError() == true)
       return false;
    return Tar.Go(Stream);
+}
+									/*}}}*/
+// DebFile::ExtractArchive - Extract the archive data itself		/*{{{*/
+// ---------------------------------------------------------------------
+/* Simple wrapper around DebFile::ExtractTarMember. */
+bool debDebFile::ExtractArchive(pkgDirStream &Stream)
+{
+   return ExtractTarMember(Stream, "data.tar");
 }
 									/*}}}*/
 

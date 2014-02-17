@@ -48,6 +48,7 @@ class debDebFile
    class ControlExtract;
    class MemControlExtract;
 
+   bool ExtractTarMember(pkgDirStream &Stream, const char *Name);
    bool ExtractArchive(pkgDirStream &Stream);
    const ARArchive::Member *GotoMember(const char *Name);
    inline FileFd &GetFile() {return File;};
