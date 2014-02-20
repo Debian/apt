@@ -291,11 +291,15 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       }
       else
       {
-         NextURI = DeQuoteString(Server->Location);
-         URI tmpURI = NextURI;
-         // Do not allow a redirection to switch protocol
-         if (tmpURI.Access == "http")
-            return TRY_AGAIN_OR_REDIRECT;
+	 NextURI = DeQuoteString(Server->Location);
+	 URI tmpURI = NextURI;
+	 URI Uri = Queue->Uri;
+	 // same protocol redirects are okay
+	 if (tmpURI.Access == Uri.Access)
+	    return TRY_AGAIN_OR_REDIRECT;
+	 // as well as http to https
+	 else if (Uri.Access == "http" && tmpURI.Access == "https")
+	    return TRY_AGAIN_OR_REDIRECT;
       }
       /* else pass through for error message */
    }

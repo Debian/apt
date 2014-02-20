@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-02-13 10:19+0100\n"
+"POT-Creation-Date: 2014-02-20 14:43+0100\n"
 "PO-Revision-Date: 2012-06-28 20:49+0100\n"
 "Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -116,7 +116,7 @@ msgstr ""
 "Tento príkaz je zavrhovaný. Prosím, použite namiesto neho „apt-mark "
 "showauto“."
 
-#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:576
+#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:586
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Nedá sa nájsť balík %s"
@@ -733,7 +733,8 @@ msgid ""
 " remove  - remove packages\n"
 "\n"
 " upgrade - upgrade the system by installing/upgrading packages\n"
-"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -908,7 +909,7 @@ msgstr "Uplynulo spojenie dátového socketu"
 msgid "Unable to accept connection"
 msgstr "Spojenie sa nedá prijať"
 
-#: methods/ftp.cc:872 methods/server.cc:353 methods/rsh.cc:312
+#: methods/ftp.cc:872 methods/server.cc:357 methods/rsh.cc:312
 msgid "Problem hashing file"
 msgstr "Problém s hašovaním súboru"
 
@@ -1094,15 +1095,15 @@ msgstr "Tento HTTP server má poškodenú podporu rozsahov"
 msgid "Unknown date format"
 msgstr "Neznámy formát dátumu"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "Zlé dátové záhlavie"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "Spojenie zlyhalo"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "Vnútorná chyba"
 
@@ -1615,33 +1616,33 @@ msgstr "Premenovanie %s na %s zlyhalo"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
-#: apt-private/acqprogress.cc:60
+#: apt-private/acqprogress.cc:63
 msgid "Hit "
 msgstr "Už existuje "
 
-#: apt-private/acqprogress.cc:84
+#: apt-private/acqprogress.cc:87
 msgid "Get:"
 msgstr "Získava sa:"
 
-#: apt-private/acqprogress.cc:115
+#: apt-private/acqprogress.cc:118
 msgid "Ign "
 msgstr "Ign "
 
-#: apt-private/acqprogress.cc:119
+#: apt-private/acqprogress.cc:122
 msgid "Err "
 msgstr "Chyba "
 
-#: apt-private/acqprogress.cc:140
+#: apt-private/acqprogress.cc:143
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "%sB sa stiahlo za %s (%sB/s)\n"
 
-#: apt-private/acqprogress.cc:230
+#: apt-private/acqprogress.cc:233
 #, c-format
 msgid " [Working]"
 msgstr " [Prebieha spracovanie]"
 
-#: apt-private/acqprogress.cc:291
+#: apt-private/acqprogress.cc:294
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -2610,22 +2611,22 @@ msgstr "čítanie, treba prečítať ešte %llu, ale už nič neostáva"
 msgid "write, still have %llu to write but couldn't"
 msgstr "zápis, treba zapísať ešte %llu, no nedá sa to"
 
-#: apt-pkg/contrib/fileutl.cc:1732
+#: apt-pkg/contrib/fileutl.cc:1723
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Problém pri zatváraní súboru %s"
 
-#: apt-pkg/contrib/fileutl.cc:1744
+#: apt-pkg/contrib/fileutl.cc:1735
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Problém pri synchronizovaní súboru %s na %s"
 
-#: apt-pkg/contrib/fileutl.cc:1755
+#: apt-pkg/contrib/fileutl.cc:1746
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Problém pri odstraňovaní súboru %s"
 
-#: apt-pkg/contrib/fileutl.cc:1768
+#: apt-pkg/contrib/fileutl.cc:1759
 msgid "Problem syncing the file"
 msgstr "Problém pri synchronizovaní súboru"
 
@@ -2908,17 +2909,22 @@ msgstr "Sťahuje sa %li. súbor z %li (zostáva %s)"
 msgid "Retrieving file %li of %li"
 msgstr "Sťahuje sa %li. súbor z %li"
 
-#: apt-pkg/acquire-worker.cc:112
+#: apt-pkg/acquire-worker.cc:113
 #, c-format
 msgid "The method driver %s could not be found."
 msgstr "Nedá sa nájsť ovládač spôsobu %s."
 
-#: apt-pkg/acquire-worker.cc:161
+#: apt-pkg/acquire-worker.cc:115
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "Skontrolujte, či je nainštalovaný balík „dpkg-dev“.\n"
+
+#: apt-pkg/acquire-worker.cc:166
 #, c-format
 msgid "Method %s did not start correctly"
 msgstr "Spôsob %s nebol správne spustený"
 
-#: apt-pkg/acquire-worker.cc:447
+#: apt-pkg/acquire-worker.cc:452
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Vložte disk nazvaný „%s“ do mechaniky „%s“ a stlačte Enter."
@@ -3262,32 +3268,37 @@ msgstr "Nebolo možné nájsť autentifikačný záznam pre: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Nezhoda kontrolných haš súčtov: %s"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:479
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Nebolo nájdené vydanie „%s“ pre „%s“"
 
-#: apt-pkg/cacheset.cc:472
+#: apt-pkg/cacheset.cc:482
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Nebola nájdená verzia „%s“ pre „%s“"
 
-#: apt-pkg/cacheset.cc:583
+#: apt-pkg/cacheset.cc:593
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Nebolo možné nájsť úlohu „%s“"
 
-#: apt-pkg/cacheset.cc:589
+#: apt-pkg/cacheset.cc:599
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
 
-#: apt-pkg/cacheset.cc:600
+#: apt-pkg/cacheset.cc:605
+#, fuzzy, c-format
+msgid "Couldn't find any package by glob '%s'"
+msgstr "Nebol nájdený žiaden balík zodpovedajúci regulárnemu výrazu „%s“"
+
+#: apt-pkg/cacheset.cc:616
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr "Nie je možné vybrať verzie z balíka „%s“, pretože je čisto virtuálny"
 
-#: apt-pkg/cacheset.cc:607 apt-pkg/cacheset.cc:614
+#: apt-pkg/cacheset.cc:623 apt-pkg/cacheset.cc:630
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3296,20 +3307,20 @@ msgstr ""
 "Nie je možné vybrať nainštalované ani kandidátske verzie z balíka „%s“, "
 "pretože nemá žiadnu z nich"
 
-#: apt-pkg/cacheset.cc:621
+#: apt-pkg/cacheset.cc:637
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Nie je možné vybrať najnovšiu verziu z balíka „%s“, pretože je čisto "
 "virtuálny"
 
-#: apt-pkg/cacheset.cc:629
+#: apt-pkg/cacheset.cc:645
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "Nie je možné vybrať kandidátsku verziu z balíka „%s“, pretože nemá kandidáta"
 
-#: apt-pkg/cacheset.cc:637
+#: apt-pkg/cacheset.cc:653
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""

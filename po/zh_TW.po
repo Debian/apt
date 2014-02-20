@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.5.4\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-02-13 10:19+0100\n"
+"POT-Creation-Date: 2014-02-20 14:43+0100\n"
 "PO-Revision-Date: 2009-01-28 10:41+0800\n"
 "Last-Translator: Tetralet <tetralet@gmail.com>\n"
 "Language-Team: Debian-user in Chinese [Big5] <debian-chinese-big5@lists."
@@ -114,7 +114,7 @@ msgstr "您必須明確得給定一個樣式"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:576
+#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:586
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "找不到套件 %s"
@@ -694,7 +694,8 @@ msgid ""
 " remove  - remove packages\n"
 "\n"
 " upgrade - upgrade the system by installing/upgrading packages\n"
-"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -867,7 +868,7 @@ msgstr "Data socket 連線逾時"
 msgid "Unable to accept connection"
 msgstr "無法接受連線"
 
-#: methods/ftp.cc:872 methods/server.cc:353 methods/rsh.cc:312
+#: methods/ftp.cc:872 methods/server.cc:357 methods/rsh.cc:312
 msgid "Problem hashing file"
 msgstr "有問題的雜湊檔"
 
@@ -1052,15 +1053,15 @@ msgstr "這個 HTTP 伺服器的範圍支援有問題"
 msgid "Unknown date format"
 msgstr "未知的資料格式"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "錯誤的標頭資料"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "連線失敗"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "內部錯誤"
 
@@ -1551,33 +1552,33 @@ msgstr "無法將 %s 更名為 %s"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
-#: apt-private/acqprogress.cc:60
+#: apt-private/acqprogress.cc:63
 msgid "Hit "
 msgstr "已有 "
 
-#: apt-private/acqprogress.cc:84
+#: apt-private/acqprogress.cc:87
 msgid "Get:"
 msgstr "下載:"
 
-#: apt-private/acqprogress.cc:115
+#: apt-private/acqprogress.cc:118
 msgid "Ign "
 msgstr "略過 "
 
-#: apt-private/acqprogress.cc:119
+#: apt-private/acqprogress.cc:122
 msgid "Err "
 msgstr "錯誤 "
 
-#: apt-private/acqprogress.cc:140
+#: apt-private/acqprogress.cc:143
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "取得 %sB 用了 %s (%sB/s)\n"
 
-#: apt-private/acqprogress.cc:230
+#: apt-private/acqprogress.cc:233
 #, c-format
 msgid " [Working]"
 msgstr " [工作中]"
 
-#: apt-private/acqprogress.cc:291
+#: apt-private/acqprogress.cc:294
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -2540,22 +2541,22 @@ msgstr "讀取，仍有 %lu 未讀但已無空間"
 msgid "write, still have %llu to write but couldn't"
 msgstr "寫入，仍有 %lu 待寫入但已沒辨法"
 
-#: apt-pkg/contrib/fileutl.cc:1732
+#: apt-pkg/contrib/fileutl.cc:1723
 #, fuzzy, c-format
 msgid "Problem closing the file %s"
 msgstr "在關閉檔案時發生問題"
 
-#: apt-pkg/contrib/fileutl.cc:1744
+#: apt-pkg/contrib/fileutl.cc:1735
 #, fuzzy, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "在同步檔案時發生問題"
 
-#: apt-pkg/contrib/fileutl.cc:1755
+#: apt-pkg/contrib/fileutl.cc:1746
 #, fuzzy, c-format
 msgid "Problem unlinking the file %s"
 msgstr "在刪除檔案時發生問題"
 
-#: apt-pkg/contrib/fileutl.cc:1768
+#: apt-pkg/contrib/fileutl.cc:1759
 msgid "Problem syncing the file"
 msgstr "在同步檔案時發生問題"
 
@@ -2835,17 +2836,22 @@ msgstr "正在取得檔案 %li/%li（還有 %s）"
 msgid "Retrieving file %li of %li"
 msgstr "正在取得檔案 %li/%li"
 
-#: apt-pkg/acquire-worker.cc:112
+#: apt-pkg/acquire-worker.cc:113
 #, c-format
 msgid "The method driver %s could not be found."
 msgstr "找不到安裝方式的驅動程式 %s。"
 
-#: apt-pkg/acquire-worker.cc:161
+#: apt-pkg/acquire-worker.cc:115
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "請檢查是否已安裝了 'dpkg-dev' 套件。\n"
+
+#: apt-pkg/acquire-worker.cc:166
 #, c-format
 msgid "Method %s did not start correctly"
 msgstr "安裝方式 %s 沒有正確啟動"
 
-#: apt-pkg/acquire-worker.cc:447
+#: apt-pkg/acquire-worker.cc:452
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "請把標籤為 '%s' 的光碟放入 '%s' 裝置中，然後按下 [Enter] 鍵。"
@@ -3175,49 +3181,54 @@ msgstr ""
 msgid "Hash mismatch for: %s"
 msgstr "Hash Sum 不符"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:479
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "找不到 '%2$s' 的 '%1$s' 發行版"
 
-#: apt-pkg/cacheset.cc:472
+#: apt-pkg/cacheset.cc:482
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "找不到 '%s' 版的 '%s'"
 
-#: apt-pkg/cacheset.cc:583
+#: apt-pkg/cacheset.cc:593
 #, fuzzy, c-format
 msgid "Couldn't find task '%s'"
 msgstr "無法找到主題 %s"
 
-#: apt-pkg/cacheset.cc:589
+#: apt-pkg/cacheset.cc:599
 #, fuzzy, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "無法找到套件 %s"
 
-#: apt-pkg/cacheset.cc:600
+#: apt-pkg/cacheset.cc:605
+#, fuzzy, c-format
+msgid "Couldn't find any package by glob '%s'"
+msgstr "無法找到套件 %s"
+
+#: apt-pkg/cacheset.cc:616
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:607 apt-pkg/cacheset.cc:614
+#: apt-pkg/cacheset.cc:623 apt-pkg/cacheset.cc:630
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
 "neither of them"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:621
+#: apt-pkg/cacheset.cc:637
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:629
+#: apt-pkg/cacheset.cc:645
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 
-#: apt-pkg/cacheset.cc:637
+#: apt-pkg/cacheset.cc:653
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""

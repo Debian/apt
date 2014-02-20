@@ -9,11 +9,11 @@ configarchitecture "i386"
 
 buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
 
-setupaptarchive
+setupaptarchive --no-update
 changetowebserver
-aptget update -qq
+testsuccess aptget update
 
-echo 'Apt::Changelogs::Server "http://localhost:8080/";' >> ./aptconfig.conf
+echo 'Apt::Changelogs::Server "http://localhost:8080/";' > rootdir/etc/apt/apt.conf.d/changelog.conf
 
 testequal "'http://localhost:8080//pool/apt_1.0/changelog'" aptget changelog apt --print-uris
 
@@ -24,7 +24,7 @@ aptget changelog apt -qq > apt.changelog
 testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0/changelog)"
 rm apt.changelog
 
-aptget changelog apt -d -qq
+testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat  aptarchive/pool/apt_1.0/changelog)"
 rm apt.changelog aptarchive/pool/apt_1.0/changelog
 
@@ -32,7 +32,7 @@ aptget changelog apt -qq -o APT::Changelogs::Server='http://not-on-the-main-serv
 testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"
 rm apt.changelog
 
-aptget changelog apt -d -qq
+testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"
 rm apt.changelog aptarchive/pool/apt_1.0.changelog
 

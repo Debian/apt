@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po_gl\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-02-13 10:19+0100\n"
+"POT-Creation-Date: 2014-02-20 14:43+0100\n"
 "PO-Revision-Date: 2011-05-12 15:28+0100\n"
 "Last-Translator: Miguel Anxo Bouzada <mbouzada@gmail.com>\n"
 "Language-Team: galician <proxecto@trasno.net>\n"
@@ -116,7 +116,7 @@ msgstr "Debe fornecer cando menos un patrón de busca"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:576
+#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:586
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Non foi posíbel atopar o paquete %s"
@@ -723,7 +723,8 @@ msgid ""
 " remove  - remove packages\n"
 "\n"
 " upgrade - upgrade the system by installing/upgrading packages\n"
-"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -899,7 +900,7 @@ msgstr "A conexión do socket de datos esgotou o tempo"
 msgid "Unable to accept connection"
 msgstr "Non é posíbel aceptar a conexión"
 
-#: methods/ftp.cc:872 methods/server.cc:353 methods/rsh.cc:312
+#: methods/ftp.cc:872 methods/server.cc:357 methods/rsh.cc:312
 msgid "Problem hashing file"
 msgstr "Xurdiu un problema ao calcular o hash do ficheiro"
 
@@ -1091,15 +1092,15 @@ msgstr "Este servidor HTTP ten a compatibilidade de rangos estragada"
 msgid "Unknown date format"
 msgstr "Formato de datos descoñecido"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "Datos da cabeceira incorrectos"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "Produciuse un fallo na conexión"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "Produciuse un erro interno"
 
@@ -1611,33 +1612,33 @@ msgstr "Non foi posíbel cambiar o nome de %s a %s"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
-#: apt-private/acqprogress.cc:60
+#: apt-private/acqprogress.cc:63
 msgid "Hit "
 msgstr "Teño "
 
-#: apt-private/acqprogress.cc:84
+#: apt-private/acqprogress.cc:87
 msgid "Get:"
 msgstr "Rcb:"
 
-#: apt-private/acqprogress.cc:115
+#: apt-private/acqprogress.cc:118
 msgid "Ign "
 msgstr "Ign "
 
-#: apt-private/acqprogress.cc:119
+#: apt-private/acqprogress.cc:122
 msgid "Err "
 msgstr "Err "
 
-#: apt-private/acqprogress.cc:140
+#: apt-private/acqprogress.cc:143
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "Obtivéronse %sB en %s (%sB/s)\n"
 
-#: apt-private/acqprogress.cc:230
+#: apt-private/acqprogress.cc:233
 #, c-format
 msgid " [Working]"
 msgstr " [Traballando]"
 
-#: apt-private/acqprogress.cc:291
+#: apt-private/acqprogress.cc:294
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -2620,22 +2621,22 @@ msgstr "lectura, aínda hai %lu para ler pero non queda ningún"
 msgid "write, still have %llu to write but couldn't"
 msgstr "escritura, aínda hai %lu para escribir pero non se puido"
 
-#: apt-pkg/contrib/fileutl.cc:1732
+#: apt-pkg/contrib/fileutl.cc:1723
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Produciuse un problema ao pechar o ficheiro %s"
 
-#: apt-pkg/contrib/fileutl.cc:1744
+#: apt-pkg/contrib/fileutl.cc:1735
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Produciuse un problema ao renomear o ficheiro %s a %s"
 
-#: apt-pkg/contrib/fileutl.cc:1755
+#: apt-pkg/contrib/fileutl.cc:1746
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Produciuse un problema ao desligar o ficheiro %s"
 
-#: apt-pkg/contrib/fileutl.cc:1768
+#: apt-pkg/contrib/fileutl.cc:1759
 msgid "Problem syncing the file"
 msgstr "Produciuse un problema ao sincronizar o ficheiro"
 
@@ -2924,17 +2925,22 @@ msgstr "Obtendo o ficheiro %li de %li (restan %s)"
 msgid "Retrieving file %li of %li"
 msgstr "Obtendo o ficheiro %li de %li"
 
-#: apt-pkg/acquire-worker.cc:112
+#: apt-pkg/acquire-worker.cc:113
 #, c-format
 msgid "The method driver %s could not be found."
 msgstr "Non foi posíbel atopar o controlador de métodos %s."
 
-#: apt-pkg/acquire-worker.cc:161
+#: apt-pkg/acquire-worker.cc:115
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "Comprobe que o paquete «dpkg-dev» estea instalado.\n"
+
+#: apt-pkg/acquire-worker.cc:166
 #, c-format
 msgid "Method %s did not start correctly"
 msgstr "O método %s non se iniciou correctamente"
 
-#: apt-pkg/acquire-worker.cc:447
+#: apt-pkg/acquire-worker.cc:452
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Insira o disco etiquetado: «%s» na unidade «%s» e prema Intro."
@@ -3285,34 +3291,39 @@ msgstr "Non é posíbel atopar un rexistro de autenticación para: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Valor de hash non coincidente para: %s"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:479
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Non se atopou a publicación «%s» de «%s»"
 
-#: apt-pkg/cacheset.cc:472
+#: apt-pkg/cacheset.cc:482
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Non se atopou a versión «%s» de «%s»"
 
-#: apt-pkg/cacheset.cc:583
+#: apt-pkg/cacheset.cc:593
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Non foi posíbel atopar a tarefa «%s»"
 
-#: apt-pkg/cacheset.cc:589
+#: apt-pkg/cacheset.cc:599
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "Non foi posíbel atopar ningún paquete pola expresión de rexistro «%s»"
 
-#: apt-pkg/cacheset.cc:600
+#: apt-pkg/cacheset.cc:605
+#, fuzzy, c-format
+msgid "Couldn't find any package by glob '%s'"
+msgstr "Non foi posíbel atopar ningún paquete pola expresión de rexistro «%s»"
+
+#: apt-pkg/cacheset.cc:616
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr ""
 "Non é posíbel seleccionar distintas versións do paquete «%s» xa que é "
 "puramente virtual"
 
-#: apt-pkg/cacheset.cc:607 apt-pkg/cacheset.cc:614
+#: apt-pkg/cacheset.cc:623 apt-pkg/cacheset.cc:630
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3321,21 +3332,21 @@ msgstr ""
 "Non é posíbel seleccionar nin a versión instalada nin a candidata do paquete "
 "«%s» xa que non ten ningunha delas"
 
-#: apt-pkg/cacheset.cc:621
+#: apt-pkg/cacheset.cc:637
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Non é posíbel seleccionar a versión máis recente do paquete «%s» xa que é "
 "puramente virtual"
 
-#: apt-pkg/cacheset.cc:629
+#: apt-pkg/cacheset.cc:645
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr ""
 "Non é posíbel seleccionar a versión candidata do paquete %s xa que non ten "
 "candidata"
 
-#: apt-pkg/cacheset.cc:637
+#: apt-pkg/cacheset.cc:653
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr ""

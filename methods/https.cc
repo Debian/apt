@@ -75,6 +75,8 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    HttpsMethod *me = (HttpsMethod *)userp;
 
+   if (me->Res.Size == 0)
+      me->URIStart(me->Res);
    if(me->File->Write(buffer, size*nmemb) != true)
       return false;
 
@@ -88,7 +90,6 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
    HttpsMethod *me = (HttpsMethod *)clientp;
    if(dltotal > 0 && me->Res.Size == 0) {
       me->Res.Size = (unsigned long long)dltotal;
-      me->URIStart(me->Res);
    }
    return 0;
 }
@@ -184,8 +185,12 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progress_callback);
    curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
+   // options
    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, false);
    curl_easy_setopt(curl, CURLOPT_FILETIME, true);
+   // only allow curl to handle https, not the other stuff it supports
+   curl_easy_setopt(curl, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+   curl_easy_setopt(curl, CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTPS);
 
    // SSL parameters are set by default to the common (non mirror-specific) value
    // if available (or a default one) and gets overload by mirror-specific ones.

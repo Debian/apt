@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-02-13 10:19+0100\n"
+"POT-Creation-Date: 2014-02-20 14:43+0100\n"
 "PO-Revision-Date: 2012-06-27 21:29+0000\n"
 "Last-Translator: Andrej Znidarsic <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -114,7 +114,7 @@ msgstr "Podati morate vsaj en iskalni vzorec"
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr "Ta ukaz je zastarel. Namesto njega uporabite 'apt-mark showauto'."
 
-#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:576
+#: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:586
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "Ni mogoče najti paketa %s"
@@ -728,7 +728,8 @@ msgid ""
 " remove  - remove packages\n"
 "\n"
 " upgrade - upgrade the system by installing/upgrading packages\n"
-"full-upgrade - upgrade the system by removing/installing/upgrading packages\n"
+" full-upgrade - upgrade the system by removing/installing/upgrading "
+"packages\n"
 "\n"
 " edit-sources - edit the source information file\n"
 msgstr ""
@@ -903,7 +904,7 @@ msgstr "Povezava podatkovne vtičnice je zakasnela"
 msgid "Unable to accept connection"
 msgstr "Ni mogoče sprejeti povezave"
 
-#: methods/ftp.cc:872 methods/server.cc:353 methods/rsh.cc:312
+#: methods/ftp.cc:872 methods/server.cc:357 methods/rsh.cc:312
 msgid "Problem hashing file"
 msgstr "Težava med razprševanjem datoteke"
 
@@ -1089,15 +1090,15 @@ msgstr "Ta strežnik HTTP ima pokvarjen obseg podpore"
 msgid "Unknown date format"
 msgstr "Neznana oblika datuma"
 
-#: methods/server.cc:490
+#: methods/server.cc:494
 msgid "Bad header data"
 msgstr "Napačni podatki glave"
 
-#: methods/server.cc:507 methods/server.cc:563
+#: methods/server.cc:511 methods/server.cc:567
 msgid "Connection failed"
 msgstr "Povezava ni uspela"
 
-#: methods/server.cc:655
+#: methods/server.cc:659
 msgid "Internal error"
 msgstr "Notranja napaka"
 
@@ -1615,33 +1616,33 @@ msgstr "Ni mogoče preimenovati %s v %s"
 msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
-#: apt-private/acqprogress.cc:60
+#: apt-private/acqprogress.cc:63
 msgid "Hit "
 msgstr "Zadetek "
 
-#: apt-private/acqprogress.cc:84
+#: apt-private/acqprogress.cc:87
 msgid "Get:"
 msgstr "Dobi:"
 
-#: apt-private/acqprogress.cc:115
+#: apt-private/acqprogress.cc:118
 msgid "Ign "
 msgstr "Prezr "
 
-#: apt-private/acqprogress.cc:119
+#: apt-private/acqprogress.cc:122
 msgid "Err "
 msgstr "Nap "
 
-#: apt-private/acqprogress.cc:140
+#: apt-private/acqprogress.cc:143
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "Pridobljenih %sB v %s (%sB/s)\n"
 
-#: apt-private/acqprogress.cc:230
+#: apt-private/acqprogress.cc:233
 #, c-format
 msgid " [Working]"
 msgstr " [Delo]"
 
-#: apt-private/acqprogress.cc:291
+#: apt-private/acqprogress.cc:294
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -2612,22 +2613,22 @@ msgstr "Prebrano, še vedno je treba prebrati %llu bajtov, vendar ni nič ostalo
 msgid "write, still have %llu to write but couldn't"
 msgstr "pisanje, preostalo je še %llu za pisanje, vendar ni bilo mogoče pisati"
 
-#: apt-pkg/contrib/fileutl.cc:1732
+#: apt-pkg/contrib/fileutl.cc:1723
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Težava med zapiranjem datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:1744
+#: apt-pkg/contrib/fileutl.cc:1735
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Težava med preimenovanje datoteke %s v %s"
 
-#: apt-pkg/contrib/fileutl.cc:1755
+#: apt-pkg/contrib/fileutl.cc:1746
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Težava med razvezovanjem datoteke %s"
 
-#: apt-pkg/contrib/fileutl.cc:1768
+#: apt-pkg/contrib/fileutl.cc:1759
 msgid "Problem syncing the file"
 msgstr "Težava med usklajevanjem datoteke"
 
@@ -2915,17 +2916,22 @@ msgstr "Pridobivanje datoteke %li od %li (%s preostalo)"
 msgid "Retrieving file %li of %li"
 msgstr "Pridobivanje datoteke %li od %li"
 
-#: apt-pkg/acquire-worker.cc:112
+#: apt-pkg/acquire-worker.cc:113
 #, c-format
 msgid "The method driver %s could not be found."
 msgstr "Gonilnika načinov %s ni mogoče najti."
 
-#: apt-pkg/acquire-worker.cc:161
+#: apt-pkg/acquire-worker.cc:115
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "Izberite, če je paket 'dpkg-dev' nameščen.\n"
+
+#: apt-pkg/acquire-worker.cc:166
 #, c-format
 msgid "Method %s did not start correctly"
 msgstr "Način %s se ni začel pravilno"
 
-#: apt-pkg/acquire-worker.cc:447
+#: apt-pkg/acquire-worker.cc:452
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr "Vstavite disk z oznako '%s' v pogon '%s' in pritisnite vnosno tipko."
@@ -3271,32 +3277,37 @@ msgstr "Ni mogoče najti zapisa overitve za: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Neujemanje razpršila za: %s"
 
-#: apt-pkg/cacheset.cc:469
+#: apt-pkg/cacheset.cc:479
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "Izdaje '%s' za '%s' ni mogoče najti"
 
-#: apt-pkg/cacheset.cc:472
+#: apt-pkg/cacheset.cc:482
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "Različice '%s' za '%s' ni mogoče najti"
 
-#: apt-pkg/cacheset.cc:583
+#: apt-pkg/cacheset.cc:593
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "Ni mogoče najti naloge '%s'"
 
-#: apt-pkg/cacheset.cc:589
+#: apt-pkg/cacheset.cc:599
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
 
-#: apt-pkg/cacheset.cc:600
+#: apt-pkg/cacheset.cc:605
+#, fuzzy, c-format
+msgid "Couldn't find any package by glob '%s'"
+msgstr "Z logičnim izrazom '%s' ni mogoče najti nobenega paketa"
+
+#: apt-pkg/cacheset.cc:616
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr "Ni mogoče izbrati različic in paketa '%s', saj je popolnoma navidezen"
 
-#: apt-pkg/cacheset.cc:607 apt-pkg/cacheset.cc:614
+#: apt-pkg/cacheset.cc:623 apt-pkg/cacheset.cc:630
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -3305,19 +3316,19 @@ msgstr ""
 "Ni mogoče izbrati nameščene različice ali različice kandidata iz paketa "
 "'%s', saj nima nobenega od njiju"
 
-#: apt-pkg/cacheset.cc:621
+#: apt-pkg/cacheset.cc:637
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr ""
 "Ni mogoče izbrati najnovejše različice iz paketa '%s', saj je popolnoma "
 "navidezen"
 
-#: apt-pkg/cacheset.cc:629
+#: apt-pkg/cacheset.cc:645
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr "Ni mogoče izbrati različice kandidata iz paketa %s, ker nima kandidata"
 
-#: apt-pkg/cacheset.cc:637
+#: apt-pkg/cacheset.cc:653
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr "Ni mogoče izbrati nameščene različice iz paketa %s, saj ni nameščen"

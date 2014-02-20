@@ -190,7 +190,7 @@ setupenvironment() {
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
-	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
+	ln -s ${METHODSDIR} usr/lib/apt/methods
 	cd ..
 	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
 	if [ -f "${TESTDIRECTORY}/${PACKAGESFILE}" ]; then
@@ -901,7 +901,7 @@ changetohttpswebserver() {
 		msgdie 'You need to install stunnel4 for https testcases'
 	fi
 	if [ ! -e "${TMPWORKINGDIRECTORY}/aptarchive/aptwebserver.pid" ]; then
-		changetowebserver --no-rewrite
+		changetowebserver --no-rewrite "$@"
 	fi
 	echo "pid = ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid
 cert = ${TESTDIRECTORY}/apt.pem
@@ -1119,7 +1119,7 @@ testfailure() {
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
-		msgtest 'Test for failure in  execution of' "$*"
+		msgtest 'Test for failure in execution of' "$*"
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if $@ >${OUTPUT} 2>&1; then

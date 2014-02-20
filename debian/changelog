@@ -1,3 +1,32 @@
+apt (0.9.15.3ubuntu1) UNRELEASEDtrusty; urgency=low
+
+  * merge with debian/sid
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 20 Feb 2014 16:16:57 +0100
+
+apt (0.9.15.3) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * disable https->http redirects in libcurl, thanks to Julien Cristau
+  * ADT: use "Restrictions: allow-stderr and avoid apt-stderr.log in 
+    debian/tests/run-tests
+  * test/integration/test-bug-723705-tagfile-truncates-fields: 
+    - fix autopkgtest failure
+  * add missing canNotFindFnmatch/showFnmatchSelection
+    (for the next ABI break)
+  * disable fnmatch() matching from the commandline
+  * merge testcase for the autoremove feature from the ubuntu branch
+
+  [ David Kalnischkies ]
+  * do not recommend dselect in apt-get manpage (Closes: 617625)
+  * report https download start only if we really get it
+  * allow http protocol to switch to https
+  * do not compress .xhtml files and remove junk files (Closes: 738933)
+  * simplify code some more to make reddit happy
+  * update symbols file with hints from the buildlogs
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 20 Feb 2014 14:42:39 +0100
+
 apt (0.9.15.2ubuntu1) trusty; urgency=low
 
   * merge with debian/sid

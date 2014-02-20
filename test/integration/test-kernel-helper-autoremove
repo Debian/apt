@@ -30,22 +30,22 @@ msgtest 'Check that kernel autoremoval list is correctly created'
 test -e $TMPDIR/apt.conf.d/01autoremove-kernels && msgpass || msgfail
 
 msgtest 'Check that most recent kernel is saved from autoremoval'
-apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic\.\*" && msgpass || msgfail
+apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic" && msgpass || msgfail
 
 # ... and also that the running kernel is excluded
 msgtest 'Check that running kernel is saved from autoremoval'
-apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)\.\*" && msgpass || msgfail
+apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)" && msgpass || msgfail
 
 # and that the old kernel is *not* excluded from autoremoval
 msgtest 'Check that older kernels are not excluded from autoremoval'
-apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic\.\*" && msgfail || msgpass
+apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic" && msgfail || msgpass
 
 msgtest "Check that the older kernel is retained when it's being installed"
 sh ${TESTDIR}/../../debian/apt.auto-removal.sh 1.0.01-2-generic
 test -e $TMPDIR/apt.conf.d/01autoremove-kernels
-if ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic\.\*" \
-   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)\.\*" \
-   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic\.\*"
+if ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic" \
+   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)" \
+   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic"
 then
 	msgfail
 else

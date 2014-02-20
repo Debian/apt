@@ -1,0 +1,63 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+
+# setup http redirecting to https
+setupaptarchive --no-update
+changetowebserver -o 'aptwebserver::redirect::replace::/redirectme/=https://localhost:4433/' \
+	-o 'aptwebserver::redirect::replace::/downgrademe/=http://localhost:8080/' \
+	-o 'aptwebserver::support::http=false'
+changetohttpswebserver
+sed -i -e 's#:4433/#:8080/redirectme#' -e 's# https:# http:#' rootdir/etc/apt/sources.list.d/*
+
+testsuccess aptget update -o Debug::Acquire::http=1 -o Debug::Acquire::https=1 -o Debug::pkgAcquire::Worker=1
+
+msgtest 'Test that the webserver does not answer' 'http requests'
+downloadfile 'http://localhost:8080/pool/apt_1.0/changelog' changelog >/dev/null 2>&1 && msgfail || msgpass
+
+echo 'Apt::Changelogs::Server "http://localhost:8080/redirectme";' > rootdir/etc/apt/apt.conf.d/changelog.conf
+testequal "'http://localhost:8080/redirectme/pool/apt_1.0/changelog'" aptget changelog apt --print-uris
+
+testsuccess aptget changelog apt -d
+testsuccess test -s apt.changelog
+rm -f apt.changelog
+
+testsuccess aptget download apt
+testsuccess test -s apt_1.0_all.deb
+rm apt_1.0_all.deb
+
+testsuccess aptget install apt -y
+testdpkginstalled 'apt'
+
+# create a copy of all methods, expect https
+eval `aptconfig shell METHODS Dir::Bin::Methods/d`
+COPYMETHODS='usr/lib/apt/methods'
+mv rootdir/${COPYMETHODS} rootdir/${COPYMETHODS}.bak
+mkdir -p rootdir/$COPYMETHODS
+cd rootdir/$COPYMETHODS
+find $METHODS \! -type d | while read meth; do
+	ln -s $meth
+done
+rm https
+cd - >/dev/null
+echo "Dir::Bin::Methods \"${COPYMETHODS}\";" >> aptconfig.conf
+
+testequal "E: The method driver $(pwd)/rootdir/usr/lib/apt/methods/https could not be found.
+N: Is the package apt-transport-https installed?" aptget download apt -q=0
+testsuccess test ! -e apt_1.0_all.deb
+
+# revert to all methods
+rm -rf rootdir/$COPYMETHODS
+mv rootdir/${COPYMETHODS}.bak rootdir/${COPYMETHODS}
+
+# check that downgrades from https to http are not allowed
+webserverconfig 'aptwebserver::support::http' 'true'
+sed -i -e 's#:8080/redirectme#:4433/downgrademe#' -e 's# http:# https:#' rootdir/etc/apt/sources.list.d/*
+testfailure aptget update
