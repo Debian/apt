@@ -7,6 +7,13 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
+if [ ! -x ${BUILDDIRECTORY}/apt ]; then
+    msgmsg "No ${BUILDDIRECTORY}/apt"
+    msgskip 
+    exit 0
+fi
+
+
 insertpackage 'unstable' 'foo' 'all' '2.0' 'Depends: foo-new-dependency'
 insertpackage 'unstable' 'foo-new-dependency' 'all' '2.0'
 insertinstalledpackage 'foo' 'all' '1.0'

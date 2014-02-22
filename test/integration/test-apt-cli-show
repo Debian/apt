@@ -7,6 +7,12 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
+if [ ! -x ${BUILDDIRECTORY}/apt ]; then
+    msgmsg "No ${BUILDDIRECTORY}/apt"
+    msgskip 
+    exit 0
+fi
+
 DESCR='Some description 
  That has multiple lines'
 insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
