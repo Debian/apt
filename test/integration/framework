@@ -935,6 +935,10 @@ changetocdrom() {
 
 downloadfile() {
 	PROTO="$(echo "$1" | cut -d':' -f 1)"
+        if [ ! -x "${METHODSDIR}/${PROTO}" ]; then
+            msgwarn "can not find ${METHODSDIR}/${PROTO}"
+            return 1
+        fi
 	local DOWNLOG="${TMPWORKINGDIRECTORY}/download.log"
 	rm -f "$DOWNLOG"
 	touch "$DOWNLOG"
@@ -963,7 +967,7 @@ Filename: ${2}
 				break
 			fi
 		done
-	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/${PROTO} 2>&1 | tee "$DOWNLOG"
+	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${METHODSDIR}/${PROTO} 2>&1 | tee "$DOWNLOG"
 	rm "$DOWNLOG"
 	# only if the file exists the download was successful
 	if [ -e "$2" ]; then
