@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-02-20 14:43+0100\n"
+"POT-Creation-Date: 2014-02-23 00:29+0100\n"
 "PO-Revision-Date: 2012-10-27 22:44+0700\n"
 "Last-Translator: Theppitak Karoonboonyanan <thep@linux.thai.net>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
@@ -157,7 +157,7 @@ msgstr "  ตารางรุ่น:"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:252 cmdline/apt-config.cc:83
 #: cmdline/apt-get.cc:1580 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:591
+#: cmdline/apt-extracttemplates.cc:217 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -1692,12 +1692,7 @@ msgstr "กรุณาแก้ปัญหาเหล่านั้น แ�
 msgid "Merging available information"
 msgstr "กำลังผสานรายชื่อของแพกเกจที่มี"
 
-#: cmdline/apt-extracttemplates.cc:100
-#, c-format
-msgid "%s not a valid DEB package."
-msgstr "%s ไม่ใช่แพกเกจ DEB ที่ใช้การได้"
-
-#: cmdline/apt-extracttemplates.cc:234
+#: cmdline/apt-extracttemplates.cc:224
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1721,12 +1716,12 @@ msgstr ""
 "  -c=?  อ่านแฟ้มค่าตั้งนี้\n"
 "  -o=?  กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:266 apt-pkg/pkgcachegen.cc:1388
+#: cmdline/apt-extracttemplates.cc:256 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "ไม่สามารถเขียนลงแฟ้ม %s"
 
-#: cmdline/apt-extracttemplates.cc:308
+#: cmdline/apt-extracttemplates.cc:298
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "ไม่สามารถอ่านรุ่นของ debconf ได้ ได้ติดตั้ง debconf ไว้หรือไม่?"
 
@@ -2094,23 +2089,23 @@ msgstr ""
 "  -c=? อ่านแฟ้มค่าตั้งนี้\n"
 "  -o=? กำหนดตัวเลือกค่าตั้งเป็นรายตัว เช่น -o dir::cache=/tmp\n"
 
-#: apt-inst/contrib/extracttar.cc:116
+#: apt-inst/contrib/extracttar.cc:122
 msgid "Failed to create pipes"
 msgstr "สร้างไปป์ไม่สำเร็จ"
 
-#: apt-inst/contrib/extracttar.cc:143
+#: apt-inst/contrib/extracttar.cc:149
 msgid "Failed to exec gzip "
 msgstr "เรียก gzip ไม่สำเร็จ"
 
-#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:210
+#: apt-inst/contrib/extracttar.cc:186 apt-inst/contrib/extracttar.cc:216
 msgid "Corrupted archive"
 msgstr "แฟ้มจัดเก็บเสียหาย"
 
-#: apt-inst/contrib/extracttar.cc:195
+#: apt-inst/contrib/extracttar.cc:201
 msgid "Tar checksum failed, archive corrupted"
 msgstr "checksum ของแฟ้ม tar ผิดพลาด แฟ้มจัดเก็บเสียหาย"
 
-#: apt-inst/contrib/extracttar.cc:300
+#: apt-inst/contrib/extracttar.cc:306
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "พบชนิด %u ของข้อมูลส่วนหัว TAR ที่ไม่รู้จัก ที่สมาชิก %s"
@@ -2233,18 +2228,18 @@ msgstr "แฟ้ม %s/%s เขียนทับแฟ้มในแพก�
 msgid "Unable to stat %s"
 msgstr "ไม่สามารถ stat %s"
 
-#: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:46
-#: apt-inst/deb/debfile.cc:54
+#: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:48
+#: apt-inst/deb/debfile.cc:57
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "แฟ้มนี้ไม่ใช่แพกเกจ DEB ที่ใช้การได้ ขาดสมาชิก '%s'"
 
-#: apt-inst/deb/debfile.cc:119
+#: apt-inst/deb/debfile.cc:124
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr "ข้อผิดพลาดภายใน: ไม่พบสมาชิก %s"
 
-#: apt-inst/deb/debfile.cc:213
+#: apt-inst/deb/debfile.cc:219
 msgid "Unparsable control file"
 msgstr "ไม่สามารถแจงแฟ้มควบคุมได้"
 
@@ -3456,6 +3451,9 @@ msgstr "dpkg ถูกขัดจังหวะ คุณต้องเรี
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "ไม่ได้ล็อคอยู่"
+
+#~ msgid "%s not a valid DEB package."
+#~ msgstr "%s ไม่ใช่แพกเกจ DEB ที่ใช้การได้"
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"
