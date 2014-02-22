@@ -10,12 +10,12 @@
    
    Binary index files 
    Binary translation files 
-   Bianry index files decribing the local system
+   Binary index files describing the local system
    Source index files
    
    They are all bundled together here, and the interfaces for 
    sources.list, acquire, cache gen and record parsing all use this class
-   to acess the underlying representation.
+   to access the underlying representation.
    
    ##################################################################### */
 									/*}}}*/

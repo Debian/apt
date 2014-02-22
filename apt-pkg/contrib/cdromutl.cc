@@ -47,8 +47,8 @@ bool IsMounted(string &Path)
    if (Path[Path.length() - 1] != '/')
       Path += '/';
    
-   /* First we check if the path is actualy mounted, we do this by
-      stating the path and the previous directory (carefull of links!)
+   /* First we check if the path is actually mounted, we do this by
+      stating the path and the previous directory (careful of links!)
       and comparing their device fields. */
    struct stat Buf,Buf2;
    if (stat(Path.c_str(),&Buf) != 0 || 

@@ -789,7 +789,7 @@ bool pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
       // - this makes sense as default when all Garbage dependencies
       //   are automatically marked for removal (as aptitude does).
       //   setting a package for keep then makes it no longer autoinstalled
-      //   for all other use-case this action is rather suprising
+      //   for all other use-case this action is rather surprising
    if(FromUser && !P.Marked)
      P.Flags &= ~Flag::Auto;
 #endif
@@ -1195,7 +1195,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 }
       }
 
-      /* This bit is for processing the possibilty of an install/upgrade
+      /* This bit is for processing the possibility of an install/upgrade
          fixing the problem for "positive" dependencies */
       if (Start.IsNegative() == false && (DepState[Start->ID] & DepCVer) == DepCVer)
       {
@@ -1315,7 +1315,7 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
       // (simple string-compare as stuff like '1' == '0:1-0' can't happen here)
       if (P->CurrentVer == 0 || strcmp(Pkg.CandVersion(), P.CandVersion()) == 0)
 	 continue;
-      // packages loosing M-A:same can be out-of-sync
+      // packages losing M-A:same can be out-of-sync
       VerIterator CV = PkgState[P->ID].CandidateVerIter(*this);
       if (unlikely(CV.end() == true) ||
 	    (CV->MultiArch & pkgCache::Version::Same) != pkgCache::Version::Same)

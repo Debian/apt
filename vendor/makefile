@@ -32,9 +32,11 @@ current:
 	# if we haven't found a specific, look for a deriving in hardcoded order
 	test -e $@ || \
 		(dpkg-vendor --derives-from ubuntu && cp ln -s ubuntu $@ ) || \
+		(dpkg-vendor --derives-from tanglu && cp ln -s tanglu $@ ) || \
 		ln -s debian $@
 
 .PHONY: clean veryclean all binary vendor
+.NOPARALLEL:
 
 clean: clean/current
 

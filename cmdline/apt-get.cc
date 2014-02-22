@@ -15,7 +15,7 @@
       upgrade - Smart-Download the newest versions of all packages
       dselect-upgrade - Follows dselect's changes to the Status: field
                        and installes new and removes old packages
-      dist-upgrade - Powerfull upgrader designed to handle the issues with
+      dist-upgrade - Powerful upgrader designed to handle the issues with
                     a new distribution.
       install - Download and install a given package (by name, not by .deb)
       check - Update the package cache and check for broken packages
@@ -513,7 +513,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    }
 
    /* Resolve any problems that dselect created, allupgrade cannot handle
-      such things. We do so quite agressively too.. */
+      such things. We do so quite aggressively too.. */
    if (Cache->BrokenCount() != 0)
    {      
       pkgProblemResolver Fix(Cache);

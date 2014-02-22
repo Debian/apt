@@ -6,7 +6,7 @@
    Extract a Tar - Tar Extractor
 
    Some performance measurements showed that zlib performed quite poorly
-   in comparision to a forked gzip process. This tar extractor makes use
+   in comparison to a forked gzip process. This tar extractor makes use
    of the fact that dup'd file descriptors have the same seek pointer
    and that gzip will not read past the end of a compressed stream, 
    even if there is more data. We use the dup property to track extraction
@@ -111,6 +111,12 @@ bool ExtractTar::Done(bool Force)
    gzip will efficiently ignore the extra bits. */
 bool ExtractTar::StartGzip()
 {
+   if (DecompressProg.empty())
+   {
+      InFd.OpenDescriptor(File.Fd(), FileFd::ReadOnly, FileFd::None, false);
+      return true;
+   }
+
    int Pipes[2];
    if (pipe(Pipes) != 0)
       return _error->Errno("pipe",_("Failed to create pipes"));

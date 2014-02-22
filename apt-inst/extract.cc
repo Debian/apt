@@ -10,7 +10,7 @@
    object is unpacked to '.dpkg.new' then the original is hardlinked to
    '.dpkg.tmp' and finally the new object is renamed to overwrite the old
    one. From an external perspective the file never ceased to exist.
-   After the archive has been sucessfully unpacked the .dpkg.tmp files 
+   After the archive has been successfully unpacked the .dpkg.tmp files
    are erased. A failure causes all the .dpkg.tmp files to be restored.
    
    Decisions about unpacking go like this:
@@ -22,7 +22,7 @@
         [Note, this is reduced to only check if a file was expected to be
          there]
       - If the existing link/file is not a directory then it is replaced
-        irregardless
+        regardless
       - If the existing link/directory is being replaced by a directory then
         absolutely nothing happens.
       - If the existing link/directory is being replaced by a link then

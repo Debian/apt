@@ -10,7 +10,7 @@
    see all of the effects of an upgrade run.
 
    pkgDistUpgrade computes an upgrade that causes as many packages as
-   possible to move to the newest verison.
+   possible to move to the newest version.
    
    pkgApplyStatus sets the target state based on the content of the status
    field in the status file. It is important to get proper crash recovery.
@@ -44,7 +44,7 @@ using std::ostream;
 #endif
 
 #ifndef APT_9_CLEANER_HEADERS
-// include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatiblity
+// include pkg{DistUpgrade,AllUpgrade,MiniizeUpgrade} here for compatibility
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/update.h>
 #endif

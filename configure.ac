@@ -5,7 +5,7 @@ dnl linux architectures and configurations, it is not used to make the
 dnl code more portable
 
 dnl You MUST have an environment that has all the POSIX functions and
-dnl some of the more populare bsd/sysv ones (like select). You'll also
+dnl some of the more popular bsd/sysv ones (like select). You'll also
 dnl need a C++ compiler that is semi-standard conformant, exceptions are 
 dnl not used but STL is.
 
@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 PACKAGE="apt"
-PACKAGE_VERSION="0.9.15.3"
+PACKAGE_VERSION="0.9.15.4"
 PACKAGE_MAIL="APT Development Team <deity@lists.debian.org>"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION")

@@ -4,7 +4,7 @@
 
 # Input
 # $(MESSAGE) - The message to show
-# $(PROGRAM) - The program/libary/whatever.
+# $(PROGRAM) - The program/library/whatever.
 
 # See defaults.mak for information about LOCAL
 

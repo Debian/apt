@@ -5,9 +5,9 @@
 
    Acquire - File Acquiration
 
-   The core element for the schedual system is the concept of a named
+   The core element for the schedule system is the concept of a named
    queue. Each queue is unique and each queue has a name derived from the
-   URI. The degree of paralization can be controled by how the queue
+   URI. The degree of paralization can be controlled by how the queue
    name is derived from the URI.
    
    ##################################################################### */
@@ -175,7 +175,7 @@ void pkgAcquire::Add(Worker *Work)
 // ---------------------------------------------------------------------
 /* A worker has died. This can not be done while the select loop is running
    as it would require that RunFds could handling a changing list state and
-   it cant.. */
+   it can't.. */
 void pkgAcquire::Remove(Worker *Work)
 {
    if (Running == true)

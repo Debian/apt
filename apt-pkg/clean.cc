@@ -105,7 +105,7 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
 	       break;
 	    }
 	    
-	    // See if this verison matches the file
+	    // See if this version matches the file
 	    if (IsFetchable == true && Ver == V.VerStr())
 	       break;
 	 }

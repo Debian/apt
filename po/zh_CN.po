@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.8.0~pre1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-02-20 14:43+0100\n"
+"POT-Creation-Date: 2014-02-23 00:29+0100\n"
 "PO-Revision-Date: 2010-08-26 14:42+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -158,7 +158,7 @@ msgstr "  版本列表："
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:252 cmdline/apt-config.cc:83
 #: cmdline/apt-get.cc:1580 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:227 ftparchive/apt-ftparchive.cc:591
+#: cmdline/apt-extracttemplates.cc:217 ftparchive/apt-ftparchive.cc:591
 #: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -1676,12 +1676,7 @@ msgstr "这个提示之前的错误消息才值得您注意。请更正它们，
 msgid "Merging available information"
 msgstr "正在合并可用信息"
 
-#: cmdline/apt-extracttemplates.cc:100
-#, c-format
-msgid "%s not a valid DEB package."
-msgstr "%s 不是一个有效的 DEB 软件包。"
-
-#: cmdline/apt-extracttemplates.cc:234
+#: cmdline/apt-extracttemplates.cc:224
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1705,12 +1700,12 @@ msgstr ""
 "  -c=? 读指定的配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:266 apt-pkg/pkgcachegen.cc:1388
+#: cmdline/apt-extracttemplates.cc:256 apt-pkg/pkgcachegen.cc:1388
 #, c-format
 msgid "Unable to write to %s"
 msgstr "无法写入 %s"
 
-#: cmdline/apt-extracttemplates.cc:308
+#: cmdline/apt-extracttemplates.cc:298
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "无法获得 debconf 的版本。您安装了 debconf 吗？"
 
@@ -2082,23 +2077,23 @@ msgstr ""
 "  -c=? 读取指定配置文件\n"
 "  -o=? 设置任意指定的配置选项，例如 -o dir::cache=/tmp\n"
 
-#: apt-inst/contrib/extracttar.cc:116
+#: apt-inst/contrib/extracttar.cc:122
 msgid "Failed to create pipes"
 msgstr "无法创建管道"
 
-#: apt-inst/contrib/extracttar.cc:143
+#: apt-inst/contrib/extracttar.cc:149
 msgid "Failed to exec gzip "
 msgstr "无法执行 gzip"
 
-#: apt-inst/contrib/extracttar.cc:180 apt-inst/contrib/extracttar.cc:210
+#: apt-inst/contrib/extracttar.cc:186 apt-inst/contrib/extracttar.cc:216
 msgid "Corrupted archive"
 msgstr "包文件已被损坏"
 
-#: apt-inst/contrib/extracttar.cc:195
+#: apt-inst/contrib/extracttar.cc:201
 msgid "Tar checksum failed, archive corrupted"
 msgstr "Tar 的校验和不符，文件已损坏"
 
-#: apt-inst/contrib/extracttar.cc:300
+#: apt-inst/contrib/extracttar.cc:306
 #, c-format
 msgid "Unknown TAR header type %u, member %s"
 msgstr "未知的 TAR 数据头类型 %u，成员 %s"
@@ -2221,18 +2216,18 @@ msgstr "文件 %s/%s 会覆盖属于软件包 %s 中的同名文件"
 msgid "Unable to stat %s"
 msgstr "无法读取 %s 的状态"
 
-#: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:46
-#: apt-inst/deb/debfile.cc:54
+#: apt-inst/deb/debfile.cc:41 apt-inst/deb/debfile.cc:48
+#: apt-inst/deb/debfile.cc:57
 #, c-format
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "这不是一个有效的 DEB 包文件，其包内遗漏了“%s”"
 
-#: apt-inst/deb/debfile.cc:119
+#: apt-inst/deb/debfile.cc:124
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr "内部错误，无法定位包内文件 %s"
 
-#: apt-inst/deb/debfile.cc:213
+#: apt-inst/deb/debfile.cc:219
 msgid "Unparsable control file"
 msgstr "不能解析的主控文件"
 
@@ -3444,6 +3439,9 @@ msgstr "dpkg 被中断，您必须手工运行 %s 解决此问题。"
 #: apt-pkg/deb/debsystem.cc:121
 msgid "Not locked"
 msgstr "未锁定"
+
+#~ msgid "%s not a valid DEB package."
+#~ msgstr "%s 不是一个有效的 DEB 软件包。"
 
 #~ msgid ""
 #~ "Using CD-ROM mount point %s\n"

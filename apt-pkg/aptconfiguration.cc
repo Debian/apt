@@ -27,9 +27,9 @@
 #include <vector>
 									/*}}}*/
 namespace APT {
-// getCompressionTypes - Return Vector of usbale compressiontypes	/*{{{*/
+// getCompressionTypes - Return Vector of usable compressiontypes	/*{{{*/
 // ---------------------------------------------------------------------
-/* return a vector of compression types in the prefered order. */
+/* return a vector of compression types in the preferred order. */
 std::vector<std::string>
 const Configuration::getCompressionTypes(bool const &Cached) {
 	static std::vector<std::string> types;
@@ -109,7 +109,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 									/*}}}*/
 // GetLanguages - Return Vector of Language Codes			/*{{{*/
 // ---------------------------------------------------------------------
-/* return a vector of language codes in the prefered order.
+/* return a vector of language codes in the preferred order.
    the special word "environment" will be replaced with the long and the short
    code of the local settings and it will be insured that this will not add
    duplicates. So in an german local the setting "environment, de_DE, en, de"
@@ -330,7 +330,7 @@ bool const Configuration::checkLanguage(std::string Lang, bool const All) {
 	return (std::find(langs.begin(), langs.end(), Lang) != langs.end());
 }
 									/*}}}*/
-// getArchitectures - Return Vector of prefered Architectures		/*{{{*/
+// getArchitectures - Return Vector of preferred Architectures		/*{{{*/
 std::vector<std::string> const Configuration::getArchitectures(bool const &Cached) {
 	using std::string;
 

@@ -129,7 +129,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long long Size,string Hash,
 									/*}}}*/
 // Acquire::Item::Rename - Rename a file				/*{{{*/
 // ---------------------------------------------------------------------
-/* This helper function is used by alot of item methods as thier final
+/* This helper function is used by a lot of item methods as their final
    step */
 void pkgAcquire::Item::Rename(string From,string To)
 {
@@ -299,7 +299,7 @@ void pkgAcqSubIndex::Done(string Message,unsigned long long Size,string Md5Hash,
       return;
    }
 
-   // sucess in downloading the index
+   // success in downloading the index
    // rename the index
    if(Debug)
       std::clog << "Renaming: " << DestFile << " -> " << FinalFile << std::endl;
@@ -327,7 +327,7 @@ bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
 									/*}}}*/
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
-/* Get the DiffIndex file first and see if there are patches availabe 
+/* Get the DiffIndex file first and see if there are patches available
  * If so, create a pkgAcqIndexDiffs fetcher that will get and apply the
  * patches. If anything goes wrong in that process, it will fall back to
  * the original packages file
@@ -548,7 +548,7 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{
 {
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << std::endl
-		<< "Falling back to normal index file aquire" << std::endl;
+		<< "Falling back to normal index file acquire" << std::endl;
 
    new pkgAcqIndex(Owner, RealURI, Description, Desc.ShortDesc, 
 		   ExpectedHash);
@@ -569,7 +569,7 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,string Md5Hash
    string FinalFile;
    FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
 
-   // sucess in downloading the index
+   // success in downloading the index
    // rename the index
    FinalFile += string(".IndexDiff");
    if(Debug)
@@ -628,7 +628,7 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{
 {
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
-		<< "Falling back to normal index file aquire" << std::endl;
+		<< "Falling back to normal index file acquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
 		   ExpectedHash);
    Finish();
@@ -733,7 +733,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
    string FinalFile;
    FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
 
-   // sucess in downloading a diff, enter ApplyDiff state
+   // success in downloading a diff, enter ApplyDiff state
    if(State == StateFetchDiff)
    {
 
@@ -825,7 +825,7 @@ void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 
    // first failure means we should fallback
    State = StateErrorDiff;
-   std::clog << "Falling back to normal index file aquire" << std::endl;
+   std::clog << "Falling back to normal index file acquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc,
 		   ExpectedHash);
 }
@@ -1240,7 +1240,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
    if (RealFileExists(Final) == true)
    {
       // File was already in place.  It needs to be re-downloaded/verified
-      // because Release might have changed, we do give it a differnt
+      // because Release might have changed, we do give it a different
       // name than DestFile because otherwise the http method will
       // send If-Range requests and there are too many broken servers
       // out there that do not understand them
@@ -2021,7 +2021,7 @@ bool pkgAcqArchive::QueueNext()
 	    return true;
 	 }
 	 
-	 /* Hmm, we have a file and its size does not match, this shouldnt
+	 /* Hmm, we have a file and its size does not match, this shouldn't
 	    happen.. */
 	 unlink(FinalFile.c_str());
       }

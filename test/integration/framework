@@ -377,6 +377,7 @@ buildsimplenativepackage() {
 	local SECTION="${7:-others}"
 	local PRIORITY="${8:-optional}"
         local FILE_TREE="$9"
+        local COMPRESS_TYPE="${10:-gzip}"
 	local DISTSECTION
 	if [ "$SECTION" = "$(echo "$SECTION" | cut -d'/' -f 2)" ]; then
 		DISTSECTION="main"
@@ -442,7 +443,7 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
 		# ensure the right permissions as dpkg-deb ensists
 		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
-		if ! dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
+		if ! dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
 			cat $LOG
 			false
 		fi
@@ -934,6 +935,10 @@ changetocdrom() {
 
 downloadfile() {
 	PROTO="$(echo "$1" | cut -d':' -f 1)"
+        if [ ! -x "${METHODSDIR}/${PROTO}" ]; then
+            msgwarn "can not find ${METHODSDIR}/${PROTO}"
+            return 1
+        fi
 	local DOWNLOG="${TMPWORKINGDIRECTORY}/download.log"
 	rm -f "$DOWNLOG"
 	touch "$DOWNLOG"
@@ -947,7 +952,7 @@ URI: $1
 Filename: ${2}
 "
 		# simple worker keeping stdin open until we are done (201) or error (400)
-		# and requesting new URIs on try-agains/redirects inbetween
+		# and requesting new URIs on try-agains/redirects in-between
 		{ tail -n 999 -f "$DOWNLOG" & echo "TAILPID: $!"; } | while read f1 f2; do
 			if [ "$f1" = 'TAILPID:' ]; then
 				TAILPID="$f2"
@@ -962,7 +967,7 @@ Filename: ${2}
 				break
 			fi
 		done
-	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/${PROTO} 2>&1 | tee "$DOWNLOG"
+	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${METHODSDIR}/${PROTO} 2>&1 | tee "$DOWNLOG"
 	rm "$DOWNLOG"
 	# only if the file exists the download was successful
 	if [ -e "$2" ]; then

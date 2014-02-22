@@ -9,7 +9,7 @@ Ver - A version
 Indenting, Comments, Etc
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Would make Linus cry :P However it is what I prefer. 3 space indent,
-8 space tab all braces on seperate lines, function return on the same line 
+8 space tab all braces on separate lines, function return on the same line
 as the function, cases aligned with their code. The 'indent' options for 
 this style are:
    indent -bl -bli0 -di1 -i3 -nsc -ts8 -npcs -npsl
@@ -60,13 +60,13 @@ almost always designates a change in ownership rules).
   * Pass by non-const reference may be used to indicate a OUT type variable
   * Pass by pointer (except in the case where the pointer is really an array)
     should be used when the object will be retained or ownership will be
-    transfered. Ownership transference should be rare and noted by a comment.
+    transferred. Ownership transference should be rare and noted by a comment.
   * Standard C things (FILE * etc) should be left as is.
   
   * Return by references should indicate a borrowed object
   * Return by pointer (except arrays) should indicate ownership is 
-    transfered. Return by pointer should not be used unless ownership is 
-    transfered.
+    transferred. Return by pointer should not be used unless ownership is
+    transferred.
   * Return by pointer to variable indicates ownership transfer unless the
     pointer is an 'input' parameter (designated generally by an =0, 
     indicating a default of 'none')

@@ -193,7 +193,7 @@ bool debSystem::Initialize(Configuration &Cnf)
 									/*}}}*/
 // System::ArchiveSupported - Is a file format supported		/*{{{*/
 // ---------------------------------------------------------------------
-/* The standard name for a deb is 'deb'.. There are no seperate versions
+/* The standard name for a deb is 'deb'.. There are no separate versions
    of .deb to worry about.. */
 bool debSystem::ArchiveSupported(const char *Type)
 {

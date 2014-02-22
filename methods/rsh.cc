@@ -255,7 +255,7 @@ bool RSHConn::WriteMsg(std::string &Text,bool Sync,const char *Fmt,...)
 									/*}}}*/
 // RSHConn::Size - Return the size of the file				/*{{{*/
 // ---------------------------------------------------------------------
-/* Right now for successfull transfer the file size must be known in 
+/* Right now for successful transfer the file size must be known in
    advance. */
 bool RSHConn::Size(const char *Path,unsigned long long &Size)
 {

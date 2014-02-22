@@ -7,7 +7,7 @@
    
    Instances of this class can be thought of as factories or meta-classes
    for a variety of more specialized classes. Together this class and 
-   it's speciallized offspring completely define the environment and how
+   it's specialized offspring completely define the environment and how
    to access resources for a specific system. There are several sub
    areas that are all orthogonal - each system has a unique combination of
    these sub areas:
@@ -23,7 +23,7 @@
        - Selection of local 'status' indexes that make up the pkgCache.
       
    It is important to note that the handling of index files is not a 
-   function of the system. Index files are handled through a seperate 
+   function of the system. Index files are handled through a separate
    abstraction - the only requirement is that the index files have the
    same idea of versioning as the target system.
    

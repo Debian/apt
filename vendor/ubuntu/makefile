@@ -9,3 +9,8 @@ doc binary manpages: sources.list
 
 sources.list: sources.list.in ../../doc/apt-verbatim.ent
 	sed -e 's#&ubuntu-codename;#$(shell ../getinfo ubuntu-codename)#g' $< > $@
+
+clean: clean/sources.list
+
+clean/sources.list:
+	rm -f sources.list

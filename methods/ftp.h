@@ -3,7 +3,7 @@
 // $Id: ftp.h,v 1.4 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
-   FTP Aquire Method - This is the FTP aquire method for APT.
+   FTP Acquire Method - This is the FTP acquire method for APT.
 
    ##################################################################### */
 									/*}}}*/

@@ -222,7 +222,7 @@ int GetLock(string File,bool Errors)
    int FD = open(File.c_str(),O_RDWR | O_CREAT | O_NOFOLLOW,0640);
    if (FD < 0)
    {
-      // Read only .. cant have locking problems there.
+      // Read only .. can't have locking problems there.
       if (errno == EROFS)
       {
 	 _error->Warning(_("Not using locking for read only lock file %s"),File.c_str());
@@ -238,7 +238,7 @@ int GetLock(string File,bool Errors)
    }
    SetCloseExec(FD,true);
       
-   // Aquire a write lock
+   // Acquire a write lock
    struct flock fl;
    fl.l_type = F_WRLCK;
    fl.l_whence = SEEK_SET;
@@ -1256,7 +1256,7 @@ FileFd::~FileFd()
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
 // ---------------------------------------------------------------------
-/* We are carefull to handle interruption by a signal while reading 
+/* We are careful to handle interruption by a signal while reading
    gracefully. */
 bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
