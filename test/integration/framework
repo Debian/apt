@@ -947,7 +947,7 @@ URI: $1
 Filename: ${2}
 "
 		# simple worker keeping stdin open until we are done (201) or error (400)
-		# and requesting new URIs on try-agains/redirects inbetween
+		# and requesting new URIs on try-agains/redirects in-between
 		{ tail -n 999 -f "$DOWNLOG" & echo "TAILPID: $!"; } | while read f1 f2; do
 			if [ "$f1" = 'TAILPID:' ]; then
 				TAILPID="$f2"

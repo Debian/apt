@@ -29,7 +29,7 @@
  * for reading. Use #OpenMaybeClearSignedFile to access the message
  * instead to ensure you are only reading signed data.
  *
- * The method does not return, but has some noteable exit-codes:
+ * The method does not return, but has some notable exit-codes:
  * 111 signals an internal error like the inability to execute gpgv,
  * 112 indicates a clear-signed file which doesn't include a message,
  *  which can happen if APT is run while on a network requiring

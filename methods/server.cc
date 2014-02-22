@@ -86,7 +86,7 @@ ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File)
       if (Result == 100)
 	 continue;
       
-      // Tidy up the connection persistance state.
+      // Tidy up the connection persistence state.
       if (Encoding == Closes && HaveContent == true)
 	 Persistent = false;
       
@@ -146,7 +146,7 @@ bool ServerState::HeaderLine(string Line)
 	    return _error->Error(_("The HTTP server sent an invalid reply header"));
       }
 
-      /* Check the HTTP response header to get the default persistance
+      /* Check the HTTP response header to get the default persistence
          state. */
       if (Major < 1)
 	 Persistent = false;
@@ -366,7 +366,7 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
 									/*}}}*/
 // ServerMethod::SigTerm - Handle a fatal signal			/*{{{*/
 // ---------------------------------------------------------------------
-/* This closes and timestamps the open file. This is neccessary to get
+/* This closes and timestamps the open file. This is necessary to get
    resume behavoir on user abort */
 void ServerMethod::SigTerm(int)
 {

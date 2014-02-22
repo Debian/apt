@@ -6,7 +6,7 @@
    MMap Class - Provides 'real' mmap or a faked mmap using read().
 
    The purpose of this code is to provide a generic way for clients to
-   access the mmap function. In enviroments that do not support mmap
+   access the mmap function. In environments that do not support mmap
    from file fd's this function will use read and normal allocated 
    memory.
    
@@ -15,7 +15,7 @@
 
    The DynamicMMap class is used to help the on-disk data structure 
    generators. It provides a large allocated workspace and members
-   to allocate space from the workspace in an effecient fashion.
+   to allocate space from the workspace in an efficient fashion.
    
    This source is placed in the Public Domain, do with it what you will
    It was originally written by Jason Gunthorpe.

@@ -6,7 +6,7 @@
    Extract a Tar - Tar Extractor
 
    Some performance measurements showed that zlib performed quite poorly
-   in comparision to a forked gzip process. This tar extractor makes use
+   in comparison to a forked gzip process. This tar extractor makes use
    of the fact that dup'd file descriptors have the same seek pointer
    and that gzip will not read past the end of a compressed stream, 
    even if there is more data. We use the dup property to track extraction

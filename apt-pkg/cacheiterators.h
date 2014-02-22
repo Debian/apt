@@ -46,7 +46,7 @@ template<typename Str, typename Itr> class pkgCache::Iterator :
 	 *  The implementation of this method should be pretty short
 	 *  as it will only return the Pointer into the mmap stored
 	 *  in the owner but the name of this pointer is different for
-	 *  each stucture and we want to abstract here at least for the
+	 *  each structure and we want to abstract here at least for the
 	 *  basic methods from the actual structure.
 	 *  \return Pointer to the first structure of this type
 	 */
@@ -198,7 +198,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	/** \brief compares two version and returns if they are similar
 
 	    This method should be used to identify if two pseudo versions are
-	    refering to the same "real" version */
+	    referring to the same "real" version */
 	inline bool SimilarVer(const VerIterator &B) const {
 		return (B.end() == false && S->Hash == B->Hash && strcmp(VerStr(), B.VerStr()) == 0);
 	};
@@ -419,7 +419,7 @@ class pkgCache::DescFileIterator : public Iterator<DescFile, DescFileIterator> {
 	inline DescFileIterator(pkgCache &Owner,DescFile *Trg) : Iterator<DescFile, DescFileIterator>(Owner, Trg) {};
 };
 									/*}}}*/
-// Inlined Begin functions cant be in the class because of order problems /*{{{*/
+// Inlined Begin functions can't be in the class because of order problems /*{{{*/
 inline pkgCache::PkgIterator pkgCache::GrpIterator::PackageList() const
        {return PkgIterator(*Owner,Owner->PkgP + S->FirstPackage);};
 inline pkgCache::VerIterator pkgCache::PkgIterator::VersionList() const

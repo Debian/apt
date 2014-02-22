@@ -88,7 +88,7 @@ struct CdromDevice							/*{{{*/
 class pkgUdevCdromDevices						/*{{{*/
 {
  protected:
-   // libudev dlopen stucture
+   // libudev dlopen structure
    void *libudev_handle;
    struct udev* (*udev_new)(void);
    int (*udev_enumerate_add_match_property)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);

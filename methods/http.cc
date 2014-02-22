@@ -3,7 +3,7 @@
 // $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   HTTP Acquire Method - This is the HTTP aquire method for APT.
+   HTTP Acquire Method - This is the HTTP acquire method for APT.
    
    It uses HTTP/1.1 and many of the fancy options there-in, such as
    pipelining, range, if-range and so on. 
@@ -732,7 +732,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    }
 
    // If we ask for uncompressed files servers might respond with content-
-   // negotation which lets us end up with compressed files we do not support,
+   // negotiation which lets us end up with compressed files we do not support,
    // see 657029, 657560 and co, so if we have no extension on the request
    // ask for text only. As a sidenote: If there is nothing to negotate servers
    // seem to be nice and ignore it.

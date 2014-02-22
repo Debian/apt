@@ -293,7 +293,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
    // Look for an argument.
    while (1)
    {
-      // Look at preceeding text
+      // Look at preceding text
       char Buffer[300];
       if (Argument == 0)
       {

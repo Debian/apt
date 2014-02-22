@@ -3,7 +3,7 @@
 // $Id: mirror.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   Mirror Aquire Method - This is the Mirror aquire method for APT.
+   Mirror Acquire Method - This is the Mirror acquire method for APT.
    
    ##################################################################### */
 									/*}}}*/
@@ -49,7 +49,7 @@ using namespace std;
  *   of the failure that is also send to LP
  * 
  * TODO: 
- * - deal with runing as non-root because we can't write to the lists 
+ * - deal with running as non-root because we can't write to the lists
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
  *   and better error handling there!
@@ -290,7 +290,7 @@ bool MirrorMethod::InitMirrors()
    // FIXME: make the mirror selection more clever, do not 
    //        just use the first one!
    // BUT: we can not make this random, the mirror has to be
-   //      stable accross session, because otherwise we can
+   //      stable across session, because otherwise we can
    //      get into sync issues (got indexfiles from mirror A,
    //      but packages from mirror B - one might be out of date etc)
    ifstream in(MirrorFile.c_str());

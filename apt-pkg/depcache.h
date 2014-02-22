@@ -15,7 +15,7 @@
    
    This structure is important to support the readonly status of the cache 
    file. When the data is saved the cache will be refereshed from our 
-   internal rep and written to disk. Then the actual persistant data 
+   internal rep and written to disk. Then the actual persistent data
    files will be put on the disk.
 
    Each dependency is compared against 3 target versions to produce to

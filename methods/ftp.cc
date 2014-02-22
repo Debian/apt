@@ -3,7 +3,7 @@
 // $Id: ftp.cc,v 1.31.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
-   FTP Aquire Method - This is the FTP aquire method for APT.
+   FTP Acquire Method - This is the FTP acquire method for APT.
 
    This is a very simple implementation that does not try to optimize
    at all. Commands are sent syncronously with the FTP server (as the
@@ -946,7 +946,7 @@ FtpMethod::FtpMethod() : pkgAcqMethod("1.0",SendConfig)
 									/*}}}*/
 // FtpMethod::SigTerm - Handle a fatal signal				/*{{{*/
 // ---------------------------------------------------------------------
-/* This closes and timestamps the open file. This is neccessary to get 
+/* This closes and timestamps the open file. This is necessary to get
    resume behavoir on user abort */
 void FtpMethod::SigTerm(int)
 {

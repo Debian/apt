@@ -6,7 +6,7 @@
    AR File - Handle an 'AR' archive
    
    AR Archives have plain text headers at the start of each file
-   section. The headers are aligned on a 2 byte boundry.
+   section. The headers are aligned on a 2 byte boundary.
    
    Information about the structure of AR files can be found in ar(5)
    on a BSD system, or in the binutils source.

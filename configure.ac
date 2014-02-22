@@ -5,7 +5,7 @@ dnl linux architectures and configurations, it is not used to make the
 dnl code more portable
 
 dnl You MUST have an environment that has all the POSIX functions and
-dnl some of the more populare bsd/sysv ones (like select). You'll also
+dnl some of the more popular bsd/sysv ones (like select). You'll also
 dnl need a C++ compiler that is semi-standard conformant, exceptions are 
 dnl not used but STL is.
 

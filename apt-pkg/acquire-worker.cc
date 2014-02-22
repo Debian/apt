@@ -568,7 +568,7 @@ bool pkgAcquire::Worker::InFdReady()
 									/*}}}*/
 // Worker::MethodFailure - Called when the method fails			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is called when the method is belived to have failed, probably because
+/* This is called when the method is believed to have failed, probably because
    read returned -1. */
 bool pkgAcquire::Worker::MethodFailure()
 {

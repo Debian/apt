@@ -3,7 +3,7 @@
 // $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   HTTPS Acquire Method - This is the HTTPS aquire method for APT.
+   HTTPS Acquire Method - This is the HTTPS acquire method for APT.
    
    It uses libcurl
 
@@ -309,7 +309,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, curl_errorstr);
 
    // If we ask for uncompressed files servers might respond with content-
-   // negotation which lets us end up with compressed files we do not support,
+   // negotiation which lets us end up with compressed files we do not support,
    // see 657029, 657560 and co, so if we have no extension on the request
    // ask for text only. As a sidenote: If there is nothing to negotate servers
    // seem to be nice and ignore it.

@@ -424,7 +424,7 @@ void pkgProblemResolver::MakeScores()
       /* This is arbitrary, it should be high enough to elevate an
          essantial package above most other packages but low enough
 	 to allow an obsolete essential packages to be removed by
-	 a conflicts on a powerfull normal package (ie libc6) */
+	 a conflicts on a powerful normal package (ie libc6) */
       if ((I->Flags & pkgCache::Flag::Essential) == pkgCache::Flag::Essential
 	  || (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Score += PrioEssentials;
@@ -441,7 +441,7 @@ void pkgProblemResolver::MakeScores()
 	 Score += PrioInstalledAndNotObsolete;
    }
 
-   // Now that we have the base scores we go and propogate dependencies
+   // Now that we have the base scores we go and propagate dependencies
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
    {
       if (Cache[I].InstallVer == 0)
@@ -485,7 +485,7 @@ void pkgProblemResolver::MakeScores()
       }      
    }
 
-   /* Now we propogate along provides. This makes the packages that 
+   /* Now we propagate along provides. This makes the packages that
       provide important packages extremely important */
    for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
    {
@@ -640,7 +640,7 @@ bool pkgProblemResolver::Resolve(bool BrokenFix)
    adjusting the package will inflict. 
       
    It goes from highest score to lowest and corrects all of the breaks by 
-   keeping or removing the dependant packages. If that fails then it removes
+   keeping or removing the dependent packages. If that fails then it removes
    the package itself and goes on. The routine should be able to intelligently
    go from any broken state to a fixed state. 
  
@@ -830,7 +830,7 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
 
 	    /* Look across the version list. If there are no possible
 	       targets then we keep the package and bail. This is necessary
-	       if a package has a dep on another package that cant be found */
+	       if a package has a dep on another package that can't be found */
 	    SPtrArray<pkgCache::Version *> VList = Start.AllTargets();
 	    if (*VList == 0 && (Flags[I->ID] & Protected) != Protected &&
 		Start.IsNegative() == false &&
@@ -1183,7 +1183,7 @@ bool pkgProblemResolver::ResolveByKeepInternal()
          continue;
 
       /* Keep the package. If this works then great, otherwise we have
-       	 to be significantly more agressive and manipulate its dependencies */
+	 to be significantly more aggressive and manipulate its dependencies */
       if ((Flags[I->ID] & Protected) == 0)
       {
 	 if (Debug == true)

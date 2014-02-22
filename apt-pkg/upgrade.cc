@@ -225,7 +225,7 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 	    Cache.MarkInstall(I, false, 0, false);
 	 else
 	 {
-	    // If keep didnt actually do anything then there was no change..
+	    // If keep didn't actually do anything then there was no change..
 	    if (Cache[I].Upgrade() == false)
 	       Change = true;
 	 }	 

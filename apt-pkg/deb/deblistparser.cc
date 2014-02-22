@@ -758,7 +758,7 @@ bool debListParser::GrabWord(string Word,WordList *List,unsigned char &Out)
 									/*}}}*/
 // ListParser::Step - Move to the next section in the file		/*{{{*/
 // ---------------------------------------------------------------------
-/* This has to be carefull to only process the correct architecture */
+/* This has to be careful to only process the correct architecture */
 bool debListParser::Step()
 {
    iOffset = Tags.Offset();

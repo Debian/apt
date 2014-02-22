@@ -18,7 +18,7 @@ touch $SECRETKEYRING
 GPG_CMD="$GPG_CMD --homedir $GPGHOMEDIR"
 # create the trustdb with an (empty) dummy keyring
 # older gpgs required it, newer gpgs even warn that it isn't needed,
-# but require it nontheless for some commands, so we just play safe
+# but require it nonetheless for some commands, so we just play safe
 # here for the foreseeable future and create a dummy one
 $GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING >/dev/null 2>&1
 # tell gpg that it shouldn't try to maintain a trustdb file
@@ -187,7 +187,7 @@ remove_key_from_keyring() {
 	echo >&2 "Key ${2} is in keyring ${1}, but can't be removed as it is read only."
 	return
     fi
-    # check if it is the only key in the keyring and if so remove the keyring alltogether
+    # check if it is the only key in the keyring and if so remove the keyring altogether
     if [ '1' = "$($GPG --with-colons --list-keys | grep "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]\+:" | wc -l)" ]; then
 	mv -f "$1" "${1}~" # behave like gpg
 	return

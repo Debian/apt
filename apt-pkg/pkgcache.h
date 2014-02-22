@@ -354,7 +354,7 @@ struct pkgCache::Group
     the hash index of the name in the pkgCache::Header::PkgHashTable
 
     A package can be created for every architecture so package names are
-    not unique, but it is garanteed that packages with the same name
+    not unique, but it is guaranteed that packages with the same name
     are sequencel ordered in the list. Packages with the same name can be
     accessed with the Group.
 */

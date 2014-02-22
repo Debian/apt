@@ -229,7 +229,7 @@ public:									/*{{{*/
 	/** \brief is the list empty?
 	 *
 	 *  The default checks if the list is empty or contains only notices,
-	 *  if you want to check if also no notices happend set the parameter
+	 *  if you want to check if also no notices happened set the parameter
 	 *  flag to \b false.
 	 *
 	 *  \param WithoutNotice does notices count, default is \b true, so no

@@ -3,7 +3,7 @@
 // $Id: http.h,v 1.12 2002/04/18 05:09:38 jgg Exp $
 /* ######################################################################
 
-   HTTP Acquire Method - This is the HTTP aquire method for APT.
+   HTTP Acquire Method - This is the HTTP acquire method for APT.
 
    ##################################################################### */
 									/*}}}*/

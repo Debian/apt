@@ -864,7 +864,7 @@ bool Generate(CommandLine &CmdL)
    unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",UINT_MAX)*1024;
    for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
    {
-      // This record is not relevent
+      // This record is not relevant
       if (I->ContentsDone == true ||
 	  I->Contents.empty() == true)
 	 continue;

@@ -426,7 +426,7 @@ string TimeToStr(unsigned long Sec)
 									/*}}}*/
 // SubstVar - Substitute a string for another string			/*{{{*/
 // ---------------------------------------------------------------------
-/* This replaces all occurances of Subst with Contents in Str. */
+/* This replaces all occurrences of Subst with Contents in Str. */
 string SubstVar(const string &Str,const string &Subst,const string &Contents)
 {
    string::size_type Pos = 0;
@@ -926,7 +926,7 @@ bool FTPMDTMStrToTime(const char* const str,time_t &time)
 									/*}}}*/
 // StrToTime - Converts a string into a time_t				/*{{{*/
 // ---------------------------------------------------------------------
-/* This handles all 3 populare time formats including RFC 1123, RFC 1036
+/* This handles all 3 popular time formats including RFC 1123, RFC 1036
    and the C library asctime format. It requires the GNU library function
    'timegm' to convert a struct tm in UTC to a time_t. For some bizzar
    reason the C library does not provide any such function :< This also
@@ -1313,7 +1313,7 @@ string StripEpoch(const string &VerStr)
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
 /* This little function is the most called method we have and tries
-   therefore to do the absolut minimum - and is noteable faster than
+   therefore to do the absolut minimum - and is notable faster than
    standard tolower/toupper and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
 int tolower_ascii(int const c)
@@ -1324,9 +1324,9 @@ int tolower_ascii(int const c)
 }
 									/*}}}*/
 
-// CheckDomainList - See if Host is in a , seperate list		/*{{{*/
+// CheckDomainList - See if Host is in a , separate list		/*{{{*/
 // ---------------------------------------------------------------------
-/* The domain list is a comma seperate list of domains that are suffix
+/* The domain list is a comma separate list of domains that are suffix
    matched against the argument */
 bool CheckDomainList(const string &Host,const string &List)
 {
