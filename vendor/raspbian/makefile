@@ -10,5 +10,7 @@ doc binary manpages: sources.list
 sources.list: sources.list.in ../../doc/apt-verbatim.ent
 	sed -e 's#&stable-codename;#$(shell ../getinfo debian-stable-codename)#g' $< > $@
 
-clean:
+clean: clean/sources.list
+
+clean/sources.list:
 	rm -f sources.list
