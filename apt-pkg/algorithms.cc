@@ -459,7 +459,18 @@ void pkgProblemResolver::MakeScores()
 
       // propagate score points along dependencies
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; ++D)
-	 Scores[D.TargetPkg()->ID] += DepMap[D->Type];
+      {
+	 if (DepMap[D->Type] == 0)
+	    continue;
+	 pkgCache::PkgIterator const T = D.TargetPkg();
+	 if (D->Version != 0)
+	 {
+	    pkgCache::VerIterator const IV = Cache[T].InstVerIter(Cache);
+	    if (IV.end() == true || D.IsSatisfied(IV) != D.IsNegative())
+	       continue;
+	 }
+	 Scores[T->ID] += DepMap[D->Type];
+      }
    }
 
    // Copy the scores to advoid additive looping
