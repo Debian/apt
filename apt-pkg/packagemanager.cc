@@ -743,7 +743,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       // See if the current version is conflicting
 	       if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
 	       {
-		  clog << OutputInDepth(Depth) << Pkg.FullName() << " conflicts with " << ConflictPkg.FullName() << endl;
+		  if (Debug)
+		     clog << OutputInDepth(Depth) << Pkg.FullName() << " conflicts with " << ConflictPkg.FullName() << endl;
 		  /* If a loop is not present or has not yet been detected, attempt to unpack packages
 		     to resolve this conflict. If there is a loop present, remove packages to resolve this conflict */
 		  if (List->IsFlag(ConflictPkg,pkgOrderList::Loop) == false)
