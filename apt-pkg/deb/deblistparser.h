@@ -72,11 +72,20 @@ class debListParser : public pkgCacheGenerator::ListParser
    
    bool LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,FileFd &File,
 			std::string section);
-   
+
    static const char *ParseDepends(const char *Start,const char *Stop,
-			    std::string &Package,std::string &Ver,unsigned int &Op,
-			    bool const &ParseArchFlags = false,
-			    bool const &StripMultiArch = true);
+	 std::string &Package,std::string &Ver,unsigned int &Op);
+   static const char *ParseDepends(const char *Start,const char *Stop,
+	 std::string &Package,std::string &Ver,unsigned int &Op,
+	 bool const &ParseArchFlags);
+   static const char *ParseDepends(const char *Start,const char *Stop,
+	 std::string &Package,std::string &Ver,unsigned int &Op,
+	 bool const &ParseArchFlags, bool const &StripMultiArch);
+   static const char *ParseDepends(const char *Start,const char *Stop,
+	 std::string &Package,std::string &Ver,unsigned int &Op,
+	 bool const &ParseArchFlags, bool const &StripMultiArch,
+	 bool const &ParseRestrictionsList);
+
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
    debListParser(FileFd *File, std::string const &Arch = "");

@@ -90,7 +90,7 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
       while (1)
       {
          Start = debListParser::ParseDepends(Start, Stop, 
-		     rec.Package,rec.Version,rec.Op,true, StripMultiArch);
+		     rec.Package,rec.Version,rec.Op,true,StripMultiArch,true);
 	 
          if (Start == 0) 
             return _error->Error("Problem parsing dependency: %s", fields[I]);
