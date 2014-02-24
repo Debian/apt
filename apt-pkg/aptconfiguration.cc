@@ -49,11 +49,6 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 	setDefaultConfigurationForCompressors();
 	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();
 
-	// accept non-list order as override setting for config settings on commandline
-	std::string const overrideOrder = _config->Find("Acquire::CompressionTypes::Order","");
-	if (overrideOrder.empty() == false)
-		types.push_back(overrideOrder);
-
 	// load the order setting into our vector
 	std::vector<std::string> const order = _config->FindVector("Acquire::CompressionTypes::Order");
 	for (std::vector<std::string>::const_iterator o = order.begin();
@@ -227,61 +222,11 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			}
 		}
 	} else {
+		// cornercase: LANG=C, so we use only "en" Translation
 		environment.push_back("en");
 	}
 
-	// Support settings like Acquire::Languages=none on the command line to
-	// override the configuration settings vector of languages.
-	string const forceLang = _config->Find("Acquire::Languages","");
-	if (forceLang.empty() == false) {
-		if (forceLang == "none") {
-			codes.clear();
-			allCodes.clear();
-			allCodes.push_back("none");
-		} else {
-			if (forceLang == "environment")
-				codes = environment;
-			else
-				codes.push_back(forceLang);
-			allCodes = codes;
-			for (std::vector<string>::const_iterator b = builtin.begin();
-			     b != builtin.end(); ++b)
-				if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-					allCodes.push_back(*b);
-		}
-		if (All == true)
-			return allCodes;
-		else
-			return codes;
-	}
-
-	// cornercase: LANG=C, so we use only "en" Translation
-	if (envShort == "C") {
-		allCodes = codes = environment;
-		allCodes.insert(allCodes.end(), builtin.begin(), builtin.end());
-		if (All == true)
-			return allCodes;
-		else
-			return codes;
-	}
-
-	std::vector<string> const lang = _config->FindVector("Acquire::Languages");
-	// the default setting -> "environment, en"
-	if (lang.empty() == true) {
-		codes = environment;
-		if (envShort != "en")
-			codes.push_back("en");
-		allCodes = codes;
-		for (std::vector<string>::const_iterator b = builtin.begin();
-		     b != builtin.end(); ++b)
-			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-				allCodes.push_back(*b);
-		if (All == true)
-			return allCodes;
-		else
-			return codes;
-	}
-
+	std::vector<string> const lang = _config->FindVector("Acquire::Languages", "environment,en");
 	// the configs define the order, so add the environment
 	// then needed and ensure the codes are not listed twice.
 	bool noneSeen = false;
@@ -308,10 +253,15 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		allCodes.push_back(*l);
 	}
 
-	for (std::vector<string>::const_iterator b = builtin.begin();
-	     b != builtin.end(); ++b)
-		if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-			allCodes.push_back(*b);
+	if (allCodes.empty() == false) {
+		for (std::vector<string>::const_iterator b = builtin.begin();
+		     b != builtin.end(); ++b)
+			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+				allCodes.push_back(*b);
+	} else {
+		// "none" was forced
+		allCodes.push_back("none");
+	}
 
 	if (All == true)
 		return allCodes;

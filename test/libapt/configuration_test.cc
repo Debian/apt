@@ -98,9 +98,37 @@ int main(int argc,const char *argv[]) {
 	equals(Cnf.FindDir("Dir::State"), "/rootdir/dev/null");
 	equals(Cnf.FindDir("Dir::State::lists"), "/rootdir/dev/null");
 
-        Cnf.Set("Moo::Bar", "1");
-        Cnf.Clear();
-        equals(Cnf.Find("Moo::Bar"), "");
+	Cnf.Set("Moo::Bar", "1");
+	Cnf.Clear();
+	equals(Cnf.Find("Moo::Bar"), "");
+
+	std::vector<std::string> vec = Cnf.FindVector("Test::Vector", "");
+	equals(vec.size(), 0);
+	vec = Cnf.FindVector("Test::Vector", "foo");
+	equals(vec.size(), 1);
+	equals(vec[0], "foo");
+	vec = Cnf.FindVector("Test::Vector", "foo,bar");
+	equals(vec.size(), 2);
+	equals(vec[0], "foo");
+	equals(vec[1], "bar");
+	Cnf.Set("Test::Vector::", "baz");
+	Cnf.Set("Test::Vector::", "bob");
+	Cnf.Set("Test::Vector::", "dob");
+	vec = Cnf.FindVector("Test::Vector");
+	equals(vec.size(), 3);
+	equals(vec[0], "baz");
+	equals(vec[1], "bob");
+	equals(vec[2], "dob");
+	vec = Cnf.FindVector("Test::Vector", "foo,bar");
+	equals(vec.size(), 3);
+	equals(vec[0], "baz");
+	equals(vec[1], "bob");
+	equals(vec[2], "dob");
+	Cnf.Set("Test::Vector", "abel,bravo");
+	vec = Cnf.FindVector("Test::Vector", "foo,bar");
+	equals(vec.size(), 2);
+	equals(vec[0], "abel");
+	equals(vec[1], "bravo");
 
 	//FIXME: Test for configuration file parsing;
 	// currently only integration/ tests test them implicitly

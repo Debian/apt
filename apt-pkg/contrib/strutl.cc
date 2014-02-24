@@ -1130,9 +1130,11 @@ bool TokSplitString(char Tok,char *Input,char **List,
    also, but the advantage is that we have an iteratable vector */
 vector<string> VectorizeString(string const &haystack, char const &split)
 {
+   vector<string> exploded;
+   if (haystack.empty() == true)
+      return exploded;
    string::const_iterator start = haystack.begin();
    string::const_iterator end = start;
-   vector<string> exploded;
    do {
       for (; end != haystack.end() && *end != split; ++end);
       exploded.push_back(string(start, end));

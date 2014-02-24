@@ -1,6 +1,7 @@
 #!/bin/sh
 set -e
 
+cd "$(readlink -f $(dirname $0))"
 dpkg-checkbuilddeps -d 'libxml2-utils'
 
 if [ -n "${GBP_BUILD_DIR}" ]; then
