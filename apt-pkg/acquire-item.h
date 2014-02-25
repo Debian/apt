@@ -64,7 +64,7 @@ class pkgAcquire::Item : public WeakPointable
 
    /** \brief Insert this item into its owner's queue.
     *
-    *  \param ItemDesc Metadata about this item (its URI and
+    *  \param Item Metadata about this item (its URI and
     *  description).
     */
    inline void QueueURI(ItemDesc &Item)
@@ -79,7 +79,7 @@ class pkgAcquire::Item : public WeakPointable
     *
     *  \param From The file to be renamed.
     *
-    *  \param To The new name of #From.  If #To exists it will be
+    *  \param To The new name of \a From.  If \a To exists it will be
     *  overwritten.
     */
    void Rename(std::string From,std::string To);
@@ -115,7 +115,7 @@ class pkgAcquire::Item : public WeakPointable
      } Status;
 
    /** \brief Contains a textual description of the error encountered
-    *  if #Status is #StatError or #StatAuthError.
+    *  if #ItemState is #StatError or #StatAuthError.
     */
    std::string ErrorText;
 
@@ -293,7 +293,6 @@ class pkgAcquire::Item : public WeakPointable
    /** \brief Rename failed file and set error
     *
     * \param state respresenting the error we encountered
-    * \param errorMsg a message describing the error
     */
    bool RenameOnError(RenameOnErrorState const state);
 };
@@ -636,7 +635,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
    /** \brief Create an index diff item.
     *
     *  After filling in its basic fields, this invokes Finish(true) if
-    *  #diffs is empty, or QueueNextDiff() otherwise.
+    *  \a diffs is empty, or QueueNextDiff() otherwise.
     *
     *  \param Owner The pkgAcquire object that owns this item.
     *
@@ -650,6 +649,8 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *  \param ExpectedHash The expected md5sum of the completely
     *  reconstructed package index file; the index file will be tested
     *  against this value when it is entirely reconstructed.
+    *
+    *  \param ServerSha1 is the sha1sum of the current file on the server
     *
     *  \param diffs The remaining diffs from the index of diffs.  They
     *  should be ordered so that each diff appears before any diff
@@ -1162,8 +1163,8 @@ class pkgAcqFile : public pkgAcquire::Item
     *  \param IsIndexFile The file is considered a IndexFile and cache-control
     *                     headers like "cache-control: max-age=0" are send
     *
-    * If DestFilename is empty, download to DestDir/<basename> if
-    * DestDir is non-empty, $CWD/<basename> otherwise.  If
+    * If DestFilename is empty, download to DestDir/\<basename\> if
+    * DestDir is non-empty, $CWD/\<basename\> otherwise.  If
     * DestFilename is NOT empty, DestDir is ignored and DestFilename
     * is the absolute name to which the file should be downloaded.
     */

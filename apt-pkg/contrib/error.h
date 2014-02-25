@@ -232,11 +232,11 @@ public:									/*{{{*/
 	 *  if you want to check if also no notices happened set the parameter
 	 *  flag to \b false.
 	 *
-	 *  \param WithoutNotice does notices count, default is \b true, so no
+	 *  \param threshold minimim level considered
 	 *
 	 *  \return \b true if an the list is empty, \b false otherwise
 	 */
-	bool empty(MsgType const &trashhold = WARNING) const;
+	bool empty(MsgType const &threshold = WARNING) const;
 
 	/** \brief returns and removes the first (or last) message in the list
 	 *

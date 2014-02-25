@@ -282,13 +282,13 @@ class pkgAcquire
     */
    void Shutdown();
    
-   /** \brief Get the first #Worker object.
+   /** \brief Get the first Worker object.
     *
     *  \return the first active worker in this download process.
     */
    inline Worker *WorkersBegin() {return Workers;};
 
-   /** \brief Advance to the next #Worker object.
+   /** \brief Advance to the next Worker object.
     *
     *  \return the worker immediately following I, or \b NULL if none
     *  exists.

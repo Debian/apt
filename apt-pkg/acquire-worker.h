@@ -136,8 +136,8 @@ class pkgAcquire::Worker : public WeakPointable
    
    /** \brief Retrieve any available messages from the subprocess.
     *
-    *  The messages are retrieved as in ::ReadMessages(), and
-    *  MessageFailure() is invoked if an error occurs; in particular,
+    *  The messages are retrieved as in \link strutl.h ReadMessages()\endlink, and
+    *  #MethodFailure() is invoked if an error occurs; in particular,
     *  if the pipe to the subprocess dies unexpectedly while a message
     *  is being read.
     *

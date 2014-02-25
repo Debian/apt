@@ -479,14 +479,16 @@ protected:								/*{{{*/
 	/** \brief returns the candidate version of the package
 
 	    \param Cache to be used to query for information
-	    \param Pkg we want the candidate version from this package */
+	    \param Pkg we want the candidate version from this package
+	    \param helper used in this container instance */
 	static pkgCache::VerIterator getCandidateVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, CacheSetHelper &helper);
 
 	/** \brief returns the installed version of the package
 
 	    \param Cache to be used to query for information
-	    \param Pkg we want the installed version from this package */
+	    \param Pkg we want the installed version from this package
+	    \param helper used in this container instance */
 	static pkgCache::VerIterator getInstalledVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg, CacheSetHelper &helper);
 									/*}}}*/
@@ -558,6 +560,7 @@ public:									/*{{{*/
 	    non specifically requested  and executes regex's if needed on names.
 	    \param Cache the packages and versions are in
 	    \param cmdline Command line the versions should be extracted from
+	    \param fallback version specification
 	    \param helper responsible for error and message handling */
 	static VersionContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
 			Version const &fallback, CacheSetHelper &helper) {

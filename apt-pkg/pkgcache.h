@@ -451,7 +451,7 @@ struct pkgCache::PackageFile
    /** \brief Modification time for the file */
    time_t mtime;
 
-   /* @TODO document PackageFile::Flags */
+   /** @TODO document PackageFile::Flags */
    unsigned long Flags;
 
    // Linked list
@@ -474,7 +474,7 @@ struct pkgCache::VerFile
    map_ptrloc NextFile;       // PkgVerFile
    /** \brief position in the package file */
    map_ptrloc Offset;         // File offset
-   /* @TODO document pkgCache::VerFile::Size */
+   /** @TODO document pkgCache::VerFile::Size */
    unsigned long Size;
 };
 									/*}}}*/
@@ -488,7 +488,7 @@ struct pkgCache::DescFile
    map_ptrloc NextFile;       // PkgVerFile
    /** \brief position in the file */
    map_ptrloc Offset;         // File offset
-   /* @TODO document pkgCache::DescFile::Size */
+   /** @TODO document pkgCache::DescFile::Size */
    unsigned long Size;
 };
 									/*}}}*/
@@ -571,7 +571,7 @@ struct pkgCache::Description
        and to check that the Translation is up-to-date. */
    map_ptrloc md5sum;            // StringItem
 
-   /* @TODO document pkgCache::Description::FileList */
+   /** @TODO document pkgCache::Description::FileList */
    map_ptrloc FileList;          // DescFile
    /** \brief next translation for this description */
    map_ptrloc NextDesc;          // Description

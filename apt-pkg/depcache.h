@@ -381,8 +381,8 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \brief Update the Marked and Garbage fields of all packages.
     *
     *  This routine is implicitly invoked after all state manipulators
-    *  and when an ActionGroup is destroyed.  It invokes #MarkRequired
-    *  and #Sweep to do its dirty work.
+    *  and when an ActionGroup is destroyed.  It invokes the private
+    *  MarkRequired() and Sweep() to do its dirty work.
     *
     *  \param rootFunc A predicate that returns \b true for packages
     *  that should be added to the root set.
@@ -465,7 +465,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *
     *  The parameters are the same as in the calling MarkDelete:
     *  \param Pkg       the package that MarkDelete wants to remove.
-    *  \param Purge     should we purge instead of "only" remove?
+    *  \param MarkPurge should we purge instead of "only" remove?
     *  \param Depth     recursive deep of this Marker call
     *  \param FromUser  was the remove requested by the user?
     */
