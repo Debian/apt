@@ -141,6 +141,7 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
    {
       addArg('b', "compile", "APT::Get::Compile", 0);
       addArg('b', "build", "APT::Get::Compile", 0);
+      addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
       addArg(0, "diff-only", "APT::Get::Diff-Only", 0);
       addArg(0, "debian-only", "APT::Get::Diff-Only", 0);
       addArg(0, "tar-only", "APT::Get::Tar-Only", 0);
@@ -149,6 +150,7 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
    else if (CmdMatches("build-dep"))
    {
       addArg('a', "host-architecture", "APT::Get::Host-Architecture", CommandLine::HasArg);
+      addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
       addArg(0, "purge", "APT::Get::Purge", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
       // this has no effect *but* sbuild is using it (see LP: #1255806)

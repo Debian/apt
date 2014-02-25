@@ -155,6 +155,11 @@ int main(int argc,const char *argv[])					/*{{{*/
 	 _config->Set(comp + "UncompressArg::", *a);
    }
 
+   std::vector<std::string> const profiles = APT::Configuration::getBuildProfiles();
+   _config->Clear("APT::Build-Profiles");
+   for (std::vector<std::string>::const_iterator p = profiles.begin(); p != profiles.end(); ++p)
+      _config->Set("APT::Build-Profiles::", *p);
+
    // Match the operation
    CmdL.DispatchArg(Cmds);
    

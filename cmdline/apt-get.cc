@@ -970,6 +970,12 @@ bool DoSource(CommandLine &CmdL)
 	    string buildopts = _config->Find("APT::Get::Host-Architecture");
 	    if (buildopts.empty() == false)
 	       buildopts = "-a" + buildopts + " ";
+
+	    // get all active build profiles
+	    std::string const profiles = APT::Configuration::getBuildProfilesString();
+	    if (profiles.empty() == false)
+	       buildopts.append(" -P").append(profiles).append(" ");
+
 	    buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
 
 	    // Call dpkg-buildpackage

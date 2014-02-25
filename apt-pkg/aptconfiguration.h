@@ -117,6 +117,11 @@ public:									/*{{{*/
 
 	/** \brief Return a vector of extensions supported for data.tar's */
 	std::vector<std::string> static const getCompressorExtensions();
+
+	/** \return Return a vector of enabled build profile specifications */
+	std::vector<std::string> static const getBuildProfiles();
+	/** \return Return a comma-separated list of enabled build profile specifications */
+	std::string static const getBuildProfilesString();
 									/*}}}*/
 	private:							/*{{{*/
 	void static setDefaultConfigurationForCompressors();

@@ -625,7 +625,7 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 	 if (unlikely(I == Stop))
 	    return 0;
 
-	 std::vector<string> const profiles = _config->FindVector("APT::Build-Profiles");
+	 std::vector<string> const profiles = APT::Configuration::getBuildProfiles();
 
 	 const char *End = I;
 	 bool Found = false;

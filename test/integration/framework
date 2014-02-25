@@ -120,6 +120,9 @@ aptwebserver() {
 dpkg() {
 	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
 }
+dpkgcheckbuilddeps() {
+	command dpkg-checkbuilddeps --admindir=${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg "$@"
+}
 aptitude() {
 	if [ -f ./aptconfig.conf ]; then
 		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
@@ -239,6 +242,9 @@ setupenvironment() {
 	# now create the trustdb with an (empty) dummy keyring
 	# newer gpg versions are fine without it, but play it safe for now
 	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
+
+	# cleanup the environment a bit
+	unset GREP_OPTIONS DEB_BUILD_PROFILES
 
 	msgdone "info"
 }

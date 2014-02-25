@@ -1,0 +1,147 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386' 'armel'
+
+insertinstalledpackage 'build-essential' 'all' '0' 'Multi-Arch: foreign'
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+insertpackage 'unstable' 'bar' 'all' '1.0'
+
+insertsource 'unstable' 'buildprofiles' 'any' '1' 'Build-Depends: foo (>= 1.0) [i386 arm] <!profile.stage1 !profile.cross>, bar'
+
+# table from https://wiki.debian.org/BuildProfileSpec
+insertsource 'unstable' 'spec-1' 'any' '1' 'Build-Depends: foo <!profile.stage1>'
+insertsource 'unstable' 'spec-2' 'any' '1' 'Build-Depends: foo <profile.stage1>'
+insertsource 'unstable' 'spec-3' 'any' '1' 'Build-Depends: foo <!profile.stage1 !profile.notest>'
+insertsource 'unstable' 'spec-4' 'any' '1' 'Build-Depends: foo <profile.stage1 profile.notest>'
+insertsource 'unstable' 'spec-5' 'any' '1' 'Build-Depends: foo <!profile.stage1 profile.notest>'
+insertsource 'unstable' 'spec-6' 'any' '1' 'Build-Depends: foo <profile.stage1 !profile.notest>'
+# multiple stanzas not supported: error out
+insertsource 'unstable' 'spec-7' 'any' '1' 'Build-Depends: foo <profile.stage1><!profile.notest>'
+insertsource 'unstable' 'spec-8' 'any' '1' 'Build-Depends: foo <profile.stage1> <!profile.notest>'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [all])
+Conf bar (1.0 unstable [all])' aptget build-dep buildprofiles -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar foo
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [all])
+Inst foo (1.0 unstable [all])
+Conf bar (1.0 unstable [all])
+Conf foo (1.0 unstable [all])' aptget build-dep buildprofiles -s -o APT::Architecture=i386
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [all])
+Conf bar (1.0 unstable [all])' aptget build-dep buildprofiles -s -o APT::Architecture=armel
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  bar
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst bar (1.0 unstable [all])
+Conf bar (1.0 unstable [all])' aptget build-dep buildprofiles -s -o APT::Architecture=i386 -P stage1
+
+KEEP='Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  foo
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst foo (1.0 unstable [all])
+Conf foo (1.0 unstable [all])'
+DROP='Reading package lists...
+Building dependency tree...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.'
+
+msgtest 'Check if version of installed dpkg is high enough for' 'build profiles support'
+if dpkg --compare-versions "$(command dpkg-query --showformat='${Version}' --show dpkg)" 'ge' '1.17.2'; then
+	msgpass
+	testwithdpkg() {
+		msgtest "Test with" "dpkg-checkbuilddeps -d '$1' -P '$2'"
+		local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testwithdpkg.output"
+		if dpkgcheckbuilddeps -d "$1" -P "$2" /dev/null >$OUTPUT 2>&1; then
+			if [ "$3" = "$DROP" ]; then
+				msgpass
+			else
+				cat $OUTPUT
+				msgfail
+			fi
+		else
+			if [ "$3" = "$KEEP" ]; then
+				msgpass
+			else
+				cat $OUTPUT
+				msgfail
+			fi
+		fi
+	}
+else
+	msgskip
+	testwithdpkg() {
+		msgtest "Test with" "dpkg-checkbuilddeps -d '$1' -P '$2'"
+		msgskip
+	}
+fi
+
+testprofile() {
+	if [ -n "$3" ]; then
+		testequal "$4" aptget build-dep "$1" -s -P "$3"
+		export DEB_BUILD_PROFILES="$(echo "$3" | tr ',' ' ')"
+		testequal "$4" aptget build-dep "$1" -s -o with::environment=1
+		unset DEB_BUILD_PROFILES
+	else
+		testequal "$4" aptget build-dep "$1" -s
+	fi
+	testwithdpkg "$2" "$3" "$4"
+}
+
+testprofile 'spec-1' 'foo <!profile.stage1>' '' "$KEEP"
+testprofile 'spec-1' 'foo <!profile.stage1>' 'stage1' "$DROP"
+testprofile 'spec-1' 'foo <!profile.stage1>' 'notest' "$KEEP"
+testprofile 'spec-1' 'foo <!profile.stage1>' 'stage1,notest' "$DROP"
+
+testprofile 'spec-2' 'foo <profile.stage1>' '' "$DROP"
+testprofile 'spec-2' 'foo <profile.stage1>' 'stage1' "$KEEP"
+testprofile 'spec-2' 'foo <profile.stage1>' 'notest' "$DROP"
+testprofile 'spec-2' 'foo <profile.stage1>' 'stage1,notest' "$KEEP"
+
+testprofile 'spec-3' 'foo <!profile.stage1 !profile.notest>' '' "$KEEP"
+testprofile 'spec-3' 'foo <!profile.stage1 !profile.notest>' 'stage1' "$DROP"
+testprofile 'spec-3' 'foo <!profile.stage1 !profile.notest>' 'notest' "$DROP"
+testprofile 'spec-3' 'foo <!profile.stage1 !profile.notest>' 'stage1,notest' "$DROP"
+
+testprofile 'spec-4' 'foo <profile.stage1 profile.notest>' '' "$DROP"
+testprofile 'spec-4' 'foo <profile.stage1 profile.notest>' 'stage1' "$KEEP"
+testprofile 'spec-4' 'foo <profile.stage1 profile.notest>' 'notest' "$KEEP"
+testprofile 'spec-4' 'foo <profile.stage1 profile.notest>' 'stage1,notest' "$KEEP"
+
+testprofile 'spec-5' 'foo <!profile.stage1 profile.notest>' '' "$KEEP"
+testprofile 'spec-5' 'foo <!profile.stage1 profile.notest>' 'stage1' "$DROP"
+testprofile 'spec-5' 'foo <!profile.stage1 profile.notest>' 'notest' "$KEEP"
+testprofile 'spec-5' 'foo <!profile.stage1 profile.notest>' 'stage1,notest' "$DROP"
+
+testprofile 'spec-6' 'foo <profile.stage1 !profile.notest>' '' "$KEEP"
+testprofile 'spec-6' 'foo <profile.stage1 !profile.notest>' 'stage1' "$KEEP"
+testprofile 'spec-6' 'foo <profile.stage1 !profile.notest>' 'notest' "$DROP"
+testprofile 'spec-6' 'foo <profile.stage1 !profile.notest>' 'stage1,notest' "$KEEP"
+
+testfailure aptget build-dep spec-7 -s
+testfailure aptget build-dep spec-8 -s

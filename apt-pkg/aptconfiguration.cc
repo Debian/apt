@@ -426,7 +426,7 @@ void Configuration::setDefaultConfigurationForCompressors() {
 	}
 }
 									/*}}}*/
-// getCompressors - Return Vector of usbale compressors			/*{{{*/
+// getCompressors - Return Vector of usealbe compressors		/*{{{*/
 // ---------------------------------------------------------------------
 /* return a vector of compressors used by apt-ftparchive in the
    multicompress functionality or to detect data.tar files */
@@ -506,6 +506,30 @@ Configuration::Compressor::Compressor(char const *name, char const *extension,
 		UncompressArgs = _config->FindVector(uncompConf);
 	else if (uncompressArg != NULL)
 		UncompressArgs.push_back(uncompressArg);
+}
+									/*}}}*/
+// getBuildProfiles - return a vector of enabled build profiles		/*{{{*/
+std::vector<std::string> const Configuration::getBuildProfiles() {
+	// order is: override value (~= commandline), environment variable, list (~= config file)
+	std::string profiles_env = getenv("DEB_BUILD_PROFILES") == 0 ? "" : getenv("DEB_BUILD_PROFILES");
+	if (profiles_env.empty() == false) {
+		profiles_env = SubstVar(profiles_env, " ", ",");
+		std::string const bp = _config->Find("APT::Build-Profiles");
+		_config->Clear("APT::Build-Profiles");
+		if (bp.empty() == false)
+			_config->Set("APT::Build-Profiles", bp);
+	}
+	return _config->FindVector("APT::Build-Profiles", profiles_env);
+}
+std::string const Configuration::getBuildProfilesString() {
+	std::vector<std::string> profiles = getBuildProfiles();
+	if (profiles.empty() == true)
+		return "";
+	std::vector<std::string>::const_iterator p = profiles.begin();
+	std::string list = *p;
+	for (; p != profiles.end(); ++p)
+	   list.append(",").append(*p);
+	return list;
 }
 									/*}}}*/
 }
