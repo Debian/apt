@@ -148,8 +148,9 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
    if (select == APT::VersionList::CANDIDATE)
    {
       APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::ALL, helper);
-      if (verset_all.size() > verset.size())
-         _error->Notice(ngettext("There is %lu additional record. Please use the '-a' switch to see it", "There are %lu additional records. Please use the '-a' switch to see them.", verset_all.size() - verset.size()), verset_all.size() - verset.size());
+      int const records = verset_all.size() - verset.size();
+      if (records > 0)
+         _error->Notice(P_("There is %i additional record. Please use the '-a' switch to see it", "There are %i additional records. Please use the '-a' switch to see them.", records), records);
    }
 
    for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();

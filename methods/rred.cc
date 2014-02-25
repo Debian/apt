@@ -469,7 +469,7 @@ class Patch {
 
    void write_diff(FILE *f)
    {
-      size_t line = 0;
+      unsigned long long line = 0;
       std::list<struct Change>::reverse_iterator ch;
       for (ch = filechanges.rbegin(); ch != filechanges.rend(); ++ch) {
 	 line += ch->offset + ch->del_cnt;
@@ -482,11 +482,11 @@ class Patch {
 	 line -= ch->del_cnt;
 	 if (ch->add_cnt > 0) {
 	    if (ch->del_cnt == 0) {
-	       fprintf(f, "%lua\n", line);
+	       fprintf(f, "%llua\n", line);
 	    } else if (ch->del_cnt == 1) {
-	       fprintf(f, "%luc\n", line+1);
+	       fprintf(f, "%lluc\n", line+1);
 	    } else {
-	       fprintf(f, "%lu,%luc\n", line+1, line+ch->del_cnt);
+	       fprintf(f, "%llu,%lluc\n", line+1, line+ch->del_cnt);
 	    }
 
 	    mg_i = ch;
@@ -496,9 +496,9 @@ class Patch {
 
 	    fprintf(f, ".\n");
 	 } else if (ch->del_cnt == 1) {
-	    fprintf(f, "%lud\n", line+1);
+	    fprintf(f, "%llud\n", line+1);
 	 } else if (ch->del_cnt > 1) {
-	    fprintf(f, "%lu,%lud\n", line+1, line+ch->del_cnt);
+	    fprintf(f, "%llu,%llud\n", line+1, line+ch->del_cnt);
 	 }
 	 line -= ch->offset;
       }
