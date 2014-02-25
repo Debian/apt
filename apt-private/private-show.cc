@@ -96,23 +96,23 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    // FIXME: add verbose that does not do the removal of the tags?
    TFRewriteData RW[] = {
       // delete, apt-cache show has this info and most users do not care
-      {"MD5sum", 0},
-      {"SHA1", 0},
-      {"SHA256", 0},
-      {"Filename", 0},
-      {"Multi-Arch", 0},
-      {"Architecture", 0},
-      {"Conffiles",0},
+      {"MD5sum", NULL, NULL},
+      {"SHA1", NULL, NULL},
+      {"SHA256", NULL, NULL},
+      {"Filename", NULL, NULL},
+      {"Multi-Arch", NULL, NULL},
+      {"Architecture", NULL, NULL},
+      {"Conffiles", NULL, NULL},
       // we use the translated description
-      {"Description",0},
-      {"Description-md5",0},
+      {"Description", NULL, NULL},
+      {"Description-md5", NULL, NULL},
       // improve
-      {"Installed-Size", installed_size.c_str(), 0},
+      {"Installed-Size", installed_size.c_str(), NULL},
       {"Size", package_size.c_str(), "Download-Size"},
       // add
-      {"APT-Manual-Installed", manual_installed, 0},
-      {"APT-Sources", source_index_file.c_str(), 0},
-      {}
+      {"APT-Manual-Installed", manual_installed, NULL},
+      {"APT-Sources", source_index_file.c_str(), NULL},
+      {NULL, NULL, NULL}
    };
 
    if(TFRewrite(stdout, Tags, NULL, RW) == false)

@@ -484,7 +484,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	 struct SubstVar const Vars[] = {{"$(DIST)",&Dist},
 					 {"$(SECTION)",&Section},
 					 {"$(ARCH)",&Arch},
-					 {}};
+					 {NULL, NULL}};
 	 mode_t const Perms = Block.FindI("FileMode", Permissions);
 	 bool const LongDesc = Block.FindB("LongDescription", LongDescription);
 	 TranslationWriter *TransWriter;

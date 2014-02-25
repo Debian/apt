@@ -436,8 +436,8 @@ bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 /* */
 bool PackageCopy::RewriteEntry(FILE *Target,string File)
 {
-   TFRewriteData Changes[] = {{"Filename",File.c_str()},
-                              {}};
+   TFRewriteData Changes[] = {{ "Filename", File.c_str(), NULL },
+                              { NULL, NULL, NULL }};
    
    if (TFRewrite(Target,*Section,TFRewritePackageOrder,Changes) == false)
       return false;
@@ -482,8 +482,8 @@ bool SourceCopy::GetFile(string &File,unsigned long long &Size)
 bool SourceCopy::RewriteEntry(FILE *Target,string File)
 {
    string Dir(File,0,File.rfind('/'));
-   TFRewriteData Changes[] = {{"Directory",Dir.c_str()},
-                              {}};
+   TFRewriteData Changes[] = {{ "Directory", Dir.c_str(), NULL },
+                              { NULL, NULL, NULL }};
    
    if (TFRewrite(Target,*Section,TFRewriteSourceOrder,Changes) == false)
       return false;

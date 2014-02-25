@@ -34,7 +34,7 @@ static debListParser::WordList PrioList[] = {
    {"standard",pkgCache::State::Standard},
    {"optional",pkgCache::State::Optional},
    {"extra",pkgCache::State::Extra},
-   {}};
+   {NULL, 0}};
 
 // ListParser::debListParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -354,7 +354,7 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                           {"hold",pkgCache::State::Hold},
                           {"deinstall",pkgCache::State::DeInstall},
                           {"purge",pkgCache::State::Purge},
-                          {}};
+                          {NULL, 0}};
    if (GrabWord(string(Start,I-Start),WantList,Pkg->SelectedState) == false)
       return _error->Error("Malformed 1st word in the Status line");
 
@@ -370,7 +370,7 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                           {"reinstreq",pkgCache::State::ReInstReq},
                           {"hold",pkgCache::State::HoldInst},
                           {"hold-reinstreq",pkgCache::State::HoldReInstReq},
-                          {}};
+                          {NULL, 0}};
    if (GrabWord(string(Start,I-Start),FlagList,Pkg->InstState) == false)
       return _error->Error("Malformed 2nd word in the Status line");
 
@@ -392,7 +392,7 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                             {"triggers-pending",pkgCache::State::TriggersPending},
                             {"post-inst-failed",pkgCache::State::HalfConfigured},
                             {"removal-failed",pkgCache::State::HalfInstalled},
-                            {}};
+                            {NULL, 0}};
    if (GrabWord(string(Start,I-Start),StatusList,Pkg->CurrentState) == false)
       return _error->Error("Malformed 3rd word in the Status line");
 

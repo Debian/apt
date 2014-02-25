@@ -532,7 +532,7 @@ bool DumpAvail(CommandLine &Cmd)
 	 if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	 {
 	    pkgTagSection Tags;
-	    TFRewriteData RW[] = {{"Status",0},{"Config-Version",0},{}};
+	    TFRewriteData RW[] = {{"Status", NULL, NULL},{"Config-Version", NULL, NULL},{NULL, NULL, NULL}};
 	    const char *Zero = 0;
 	    if (Tags.Scan(Buffer+Jitter,VF.Size+1) == false ||
 		TFRewrite(stdout,Tags,&Zero,RW) == false)
