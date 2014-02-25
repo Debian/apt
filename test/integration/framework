@@ -226,8 +226,6 @@ setupenvironment() {
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
         echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
-	export LC_ALL=C.UTF-8
-	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 
 	# gpg needs a trustdb to function, but it can't be invalid (not even empty)
@@ -244,6 +242,9 @@ setupenvironment() {
 	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
 
 	# cleanup the environment a bit
+	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
+	export LC_ALL=C.UTF-8
+	unset LANGUAGE
 	unset GREP_OPTIONS DEB_BUILD_PROFILES
 
 	msgdone "info"
