@@ -102,16 +102,16 @@ bool DoMoo2(CommandLine &CmdL)						/*{{{*/
    else
    {
       c1out <<
-	 OutputInDepth(depth, " ") << "         \e[1;97m(\e[0;33m__\e[1;97m)\e[0m\n" <<
-	 OutputInDepth(depth, " ") << " \e[31m_______\e[33m~(\e[1;34m..\e[0;33m)~\e[0m\n" <<
-	 OutputInDepth(depth, " ") << "   \e[33m,----\e[31m\\\e[33m(\e[1;4;35moo\e[0;33m)\e[0m\n" <<
-	 OutputInDepth(depth, " ") << "  \e[33m/|____|,'\e[0m\n" <<
-	 OutputInDepth(depth, " ") << " \e[1;5;97m*\e[0;33m /\\  /\\\e[0m\n" <<
-	 "\e[32m";
+	 OutputInDepth(depth, " ") << "         \033[1;97m(\033[0;33m__\033[1;97m)\033[0m\n" <<
+	 OutputInDepth(depth, " ") << " \033[31m_______\033[33m~(\033[1;34m..\033[0;33m)~\033[0m\n" <<
+	 OutputInDepth(depth, " ") << "   \033[33m,----\033[31m\\\033[33m(\033[1;4;35moo\033[0;33m)\033[0m\n" <<
+	 OutputInDepth(depth, " ") << "  \033[33m/|____|,'\033[0m\n" <<
+	 OutputInDepth(depth, " ") << " \033[1;5;97m*\033[0;33m /\\  /\\\033[0m\n" <<
+	 "\033[32m";
       for (size_t i = moo.length()/2; i > 1; --i)
 	 c1out << "wW";
 
-      c1out << "w\e[0m\n" << moo;
+      c1out << "w\033[0m\n" << moo;
    }
 
    return true;
