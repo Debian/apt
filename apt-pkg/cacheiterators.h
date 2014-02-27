@@ -79,7 +79,7 @@ template<typename Str, typename Itr> class pkgCache::Iterator :
 	void ReMap(void const * const oldMap, void const * const newMap) {
 		if (Owner == 0 || S == 0)
 			return;
-		S += (Str*)(newMap) - (Str*)(oldMap);
+		S += (Str const * const)(newMap) - (Str const * const)(oldMap);
 	}
 
 	// Constructors - look out for the variable assigning

@@ -1400,7 +1400,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 	 return FileFdErrno("write",_("Write error"));
       }
       
-      From = (char *)From + Res;
+      From = (char const *)From + Res;
       Size -= Res;
       if (d != NULL)
 	 d->seekpos += Res;
@@ -1424,7 +1424,7 @@ bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
       if (Res < 0)
 	 return _error->Errno("write",_("Write error"));
 
-      From = (char *)From + Res;
+      From = (char const *)From + Res;
       Size -= Res;
    }
    while (Res > 0 && Size > 0);

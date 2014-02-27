@@ -118,11 +118,11 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
 
    Cache.ReMap(false);
 
-   CurrentFile += (pkgCache::PackageFile*) newMap - (pkgCache::PackageFile*) oldMap;
+   CurrentFile += (pkgCache::PackageFile const * const) newMap - (pkgCache::PackageFile const * const) oldMap;
 
    for (size_t i = 0; i < _count(UniqHash); ++i)
       if (UniqHash[i] != 0)
-	 UniqHash[i] += (pkgCache::StringItem*) newMap - (pkgCache::StringItem*) oldMap;
+	 UniqHash[i] += (pkgCache::StringItem const * const) newMap - (pkgCache::StringItem const * const) oldMap;
 
    for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
@@ -398,7 +398,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 			   Pkg.Name(), "NewVersion", 1);
 
    if (oldMap != Map.Data())
-	 LastVer += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+	 LastVer += (map_ptrloc const * const) Map.Data() - (map_ptrloc const * const) oldMap;
    *LastVer = verindex;
 
    if (unlikely(List.NewVersion(Ver) == false))
@@ -909,7 +909,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
 	 if (unlikely(index == 0))
 	    return false;
 	 if (OldDepLast != 0 && oldMap != Map.Data())
-	    OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+	    OldDepLast += (map_ptrloc const * const) Map.Data() - (map_ptrloc const * const) oldMap;
       }
    }
    return NewDepends(Pkg, Ver, index, Op, Type, OldDepLast);
@@ -948,7 +948,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false; ++D)
 	 OldDepLast = &D->NextDepends;
    } else if (oldMap != Map.Data())
-      OldDepLast += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
+      OldDepLast += (map_ptrloc const * const) Map.Data() - (map_ptrloc const * const) oldMap;
 
    Dep->NextDepends = *OldDepLast;
    *OldDepLast = Dep.Index();
@@ -1125,8 +1125,8 @@ unsigned long pkgCacheGenerator::WriteUniqString(const char *S,
    if (unlikely(idxString == 0))
       return 0;
    if (oldMap != Map.Data()) {
-      Last += (map_ptrloc*) Map.Data() - (map_ptrloc*) oldMap;
-      I += (pkgCache::StringItem*) Map.Data() - (pkgCache::StringItem*) oldMap;
+      Last += (map_ptrloc const * const) Map.Data() - (map_ptrloc const * const) oldMap;
+      I += (pkgCache::StringItem const * const) Map.Data() - (pkgCache::StringItem const * const) oldMap;
    }
    *Last = Item;
 
