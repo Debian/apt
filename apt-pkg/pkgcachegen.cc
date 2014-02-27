@@ -1249,10 +1249,10 @@ static bool CheckValidity(const string &CacheFile,
 static unsigned long ComputeSize(FileIterator Start,FileIterator End)
 {
    unsigned long TotalSize = 0;
-   for (; Start != End; ++Start)
+   for (; Start < End; ++Start)
    {
       if ((*Start)->HasPackages() == false)
-	 continue;      
+	 continue;
       TotalSize += (*Start)->Size();
    }
    return TotalSize;

@@ -1184,7 +1184,7 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
       R->Hit = false;
 
    unsigned long Hits = 0;
-   for (; ListBegin != ListEnd; ListBegin++)
+   for (; ListBegin < ListEnd; ++ListBegin)
    {
       // Check if the name is a regex
       const char *I;
