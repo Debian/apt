@@ -1,0 +1,50 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'native'
+
+# old conffile
+setupsimplenativepackage 'compiz-core' 'native' '1.0' 'unstable'
+BUILDDIR='incoming/compiz-core-1.0'
+mkdir -p ${BUILDDIR}/debian/compiz-core/etc
+echo 'foo=bar;' > ${BUILDDIR}/compiz.conf
+echo 'compiz.conf	/etc/compiz.conf' >> ${BUILDDIR}/debian/install
+buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+rm -rf "$BUILDDIR"
+
+# new conffile
+setupsimplenativepackage 'compiz-core' 'native' '2.0' 'unstable'
+BUILDDIR='incoming/compiz-core-2.0'
+mkdir -p ${BUILDDIR}/debian/compiz-core/etc
+echo 'foo2=bar2;' > ${BUILDDIR}/compiz.conf
+echo 'compiz.conf	/etc/compiz.conf' >> ${BUILDDIR}/debian/install
+buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+rm -rf "$BUILDDIR"
+
+setupaptarchive
+
+testsuccess aptget install compiz-core=1.0
+
+# fake conffile change
+echo "meep" >> rootdir/etc/compiz.conf/compiz.conf
+
+# FIXME: Is there really no way to see if dpkg actually prompts?
+msgtest 'Test for successful execution of' 'apt-get install compiz-core=2.0'
+OUTPUT=$(mktemp)
+addtrap "rm $OUTPUT;"
+exec 3> apt-progress.log
+if aptget install compiz-core=2.0 -o APT::Status-Fd=3 -o Dpkg::Use-Pty=false -o dpkg::options::='--force-confold' >${OUTPUT} 2>&1; then
+	msgpass
+else
+	echo
+	cat $OUTPUT
+	msgfail
+fi
+
+# and ensure there is a conffile message in the file
+msgtest 'Test status fd for an included' 'pmconffile msg'
+grep -q "pmconffile:/etc/compiz.conf/compiz.conf" apt-progress.log && msgpass || (cat apt-progress.log && msgfail)

@@ -42,10 +42,30 @@ testsuccess aptget autoremove -y
 testdpkgnotinstalled 'po-debconf'
 testmarkedauto
 
-sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d'
-testfileequal 'rootdir/var/log/apt/history.log' '
-Install: unrelated:i386 (1), debhelper:i386 (8.0.0), po-debconf:i386 (1.0.16, automatic)
-
+sed rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d' -e 's#), #)\nInstall: #g' | sort -u > apt-history.log
+testfileequal 'apt-history.log' '
+Install: debhelper:i386 (8.0.0)
+Install: po-debconf:i386 (1.0.16, automatic)
+Install: unrelated:i386 (1)
 Remove: debhelper:i386 (8.0.0)
-
 Remove: po-debconf:i386 (1.0.16)'
+
+testsuccess aptget install debhelper -y
+testdpkginstalled 'unrelated' 'debhelper' 'po-debconf'
+testsuccess aptmark auto debhelper
+
+testmarkedauto 'debhelper' 'po-debconf'
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  debhelper po-debconf
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Remv debhelper [8.0.0]
+Remv po-debconf [1.0.16]' aptget autoremove -s
+
+testsuccess aptmark hold debhelper
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget autoremove -s

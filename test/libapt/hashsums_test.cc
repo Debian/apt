@@ -3,6 +3,7 @@
 #include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/fileutl.h>
 #include <iostream>
 
 #include <stdio.h>
@@ -108,55 +109,54 @@ int main(int argc, char** argv)
    Test<SHA512Summation>("The quick brown fox jumps over the lazy dog.", "91ea1245f20d46ae9a037a989f54f1f790f0a47607eeb8a14d12890cea77a1bb"
 									 "c6c7ed9cf205e67b7f2b8fd4c7dfd3a7a8617e45f3c463d481c7e586c39ac1ed");
 
-   FILE* fd = fopen(argv[1], "r");
-   if (fd == NULL) {
+   FileFd fd(argv[1], FileFd::ReadOnly);
+   if (fd.IsOpen() == false) {
       std::cerr << "Can't open file for 1. testing: " << argv[1] << std::endl;
       return 1;
    }
    {
    Hashes hashes;
-   hashes.AddFD(fileno(fd));
+   hashes.AddFD(fd.Fd());
    equals(argv[2], hashes.MD5.Result().Value());
    equals(argv[3], hashes.SHA1.Result().Value());
    equals(argv[4], hashes.SHA256.Result().Value());
    equals(argv[5], hashes.SHA512.Result().Value());
    }
-   fseek(fd, 0L, SEEK_END);
-   unsigned long sz = ftell(fd);
-   fseek(fd, 0L, SEEK_SET);
+   unsigned long sz = fd.FileSize();
+   fd.Seek(0);
    {
    Hashes hashes;
-   hashes.AddFD(fileno(fd), sz);
+   hashes.AddFD(fd.Fd(), sz);
    equals(argv[2], hashes.MD5.Result().Value());
    equals(argv[3], hashes.SHA1.Result().Value());
    equals(argv[4], hashes.SHA256.Result().Value());
    equals(argv[5], hashes.SHA512.Result().Value());
    }
-   fseek(fd, 0L, SEEK_SET);
+   fd.Seek(0);
    {
    MD5Summation md5;
-   md5.AddFD(fileno(fd));
+   md5.AddFD(fd.Fd());
    equals(argv[2], md5.Result().Value());
    }
-   fseek(fd, 0L, SEEK_SET);
+   fd.Seek(0);
    {
    SHA1Summation sha1;
-   sha1.AddFD(fileno(fd));
+   sha1.AddFD(fd.Fd());
    equals(argv[3], sha1.Result().Value());
    }
-   fseek(fd, 0L, SEEK_SET);
+   fd.Seek(0);
    {
    SHA256Summation sha2;
-   sha2.AddFD(fileno(fd));
+   sha2.AddFD(fd.Fd());
    equals(argv[4], sha2.Result().Value());
    }
-   fseek(fd, 0L, SEEK_SET);
+   fd.Seek(0);
    {
    SHA512Summation sha2;
-   sha2.AddFD(fileno(fd));
+   sha2.AddFD(fd.Fd());
    equals(argv[5], sha2.Result().Value());
    }
-   fclose(fd);
+   fd.Close();
 
    // test HashString code
    {

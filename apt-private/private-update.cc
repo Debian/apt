@@ -23,6 +23,7 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/update.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>

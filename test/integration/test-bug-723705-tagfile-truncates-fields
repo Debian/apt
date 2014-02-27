@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+setupaptarchive
+
+aptget install --print-uris -y cdebconf-newt-terminal cdebconf-gtk-terminal 2>&1 | sed "s#file://${TMPWORKINGDIRECTORY}#file:///tmp#g" > filename.log
+
+testfileequal filename.log "Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  cdebconf-gtk-udeb cdebconf-newt-udeb cdebconf-udeb libc6-udeb
+  libglib2.0-udeb libgtk2.0-0-udeb libvte9-udeb
+The following NEW packages will be installed:
+  cdebconf-gtk-terminal cdebconf-gtk-udeb cdebconf-newt-terminal
+  cdebconf-newt-udeb cdebconf-udeb libc6-udeb libglib2.0-udeb libgtk2.0-0-udeb
+  libvte9-udeb
+0 upgraded, 9 newly installed, 0 to remove and 0 not upgraded.
+Need to get 0 B/4774 kB of archives.
+After this operation, 19.8 MB of additional disk space will be used.
+'file:///tmp/aptarchive/pool/main/c/cdebconf/cdebconf-udeb_0.185_amd64.udeb' cdebconf-udeb_0.185_amd64.udeb 77376 MD5Sum:e3883706fdbf54c2e5ea959c92b2d37f
+'file:///tmp/aptarchive/pool/main/c/cdebconf/cdebconf-gtk-udeb_0.185_amd64.udeb' cdebconf-gtk-udeb_0.185_amd64.udeb 27278 MD5Sum:a1bbbc1d4fb8e0615b5621abac021924
+'file:///tmp/aptarchive/pool/main/c/cdebconf/cdebconf-newt-udeb_0.185_amd64.udeb' cdebconf-newt-udeb_0.185_amd64.udeb 19192 MD5Sum:de27807f56dae2f2403b3322d5fe6bd2
+'file:///tmp/aptarchive/pool/main/g/glib2.0/libglib2.0-udeb_2.36.4-1_amd64.udeb' libglib2.0-udeb_2.36.4-1_amd64.udeb 1714604 MD5Sum:72da029f1bbb36057d874f1f82a5d00a
+'file:///tmp/aptarchive/pool/main/e/eglibc/libc6-udeb_2.17-92+b1_amd64.udeb' libc6-udeb_2.17-92+b1_amd64.udeb 1056000 MD5Sum:7fd7032eeeecf7f76eff79a0543fbd72
+'file:///tmp/aptarchive/pool/main/g/gtk+2.0/libgtk2.0-0-udeb_2.24.20-1_amd64.udeb' libgtk2.0-0-udeb_2.24.20-1_amd64.udeb 1643046 MD5Sum:25513478eb2e02e5766c0eea0b411ca9
+'file:///tmp/aptarchive/pool/main/v/vte/libvte9-udeb_0.28.2-5_amd64.udeb' libvte9-udeb_1%3a0.28.2-5_amd64.udeb 216968 MD5Sum:7da7201effaf5ced19abd9d0b45aa2c6
+'file:///tmp/aptarchive/pool/main/c/cdebconf-terminal/cdebconf-gtk-terminal_0.22_amd64.udeb' cdebconf-gtk-terminal_0.22_amd64.udeb 14734 MD5Sum:f9c3a7354560cb88e0396e2b7ba54363
+'file:///tmp/aptarchive/pool/main/c/cdebconf-terminal/cdebconf-newt-terminal_0.22_amd64.udeb' cdebconf-newt-terminal_0.22_amd64.udeb 4538 MD5Sum:20db6152fce5081fcbf49c7c08f21246"

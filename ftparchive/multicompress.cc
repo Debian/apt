@@ -21,9 +21,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/md5.h>
 
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <utime.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <iostream>
 
@@ -234,14 +235,12 @@ bool MultiCompress::Finalize(unsigned long long &OutSize)
       else
       {
 	 // Update the mtime if necessary
-	 if (UpdateMTime > 0 && 
+	 if (UpdateMTime > 0 &&
 	     (Now - St.st_mtime > (signed)UpdateMTime || St.st_mtime > Now))
 	 {
-	    struct utimbuf Buf;
-	    Buf.actime = Buf.modtime = Now;
-	    utime(I->Output.c_str(),&Buf);
+	    utimes(I->Output.c_str(), NULL);
 	    Changed = true;
-	 }	     
+	 }
       }
       
       // Force the file permissions
@@ -367,7 +366,7 @@ bool MultiCompress::Child(int const &FD)
    for (Files *I = Outputs; I != 0; I = I->Next)
    {
       // Set the correct file modes
-      fchmod(I->TmpFile.Fd(),Permissions);
+      chmod(I->TmpFile.Name().c_str(),Permissions);
       
       if (rename(I->TmpFile.Name().c_str(),I->Output.c_str()) != 0)
 	 _error->Errno("rename",_("Failed to rename %s to %s"),

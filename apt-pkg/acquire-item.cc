@@ -129,7 +129,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long long Size,string Hash,
 									/*}}}*/
 // Acquire::Item::Rename - Rename a file				/*{{{*/
 // ---------------------------------------------------------------------
-/* This helper function is used by alot of item methods as thier final
+/* This helper function is used by a lot of item methods as their final
    step */
 void pkgAcquire::Item::Rename(string From,string To)
 {
@@ -141,6 +141,32 @@ void pkgAcquire::Item::Rename(string From,string To)
       Status = StatError;
       ErrorText = S;
    }   
+}
+									/*}}}*/
+bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const error)/*{{{*/
+{
+   if(FileExists(DestFile))
+      Rename(DestFile, DestFile + ".FAILED");
+
+   switch (error)
+   {
+      case HashSumMismatch:
+	 ErrorText = _("Hash Sum mismatch");
+	 Status = StatAuthError;
+	 ReportMirrorFailure("HashChecksumFailure");
+	 break;
+      case SizeMismatch:
+	 ErrorText = _("Size mismatch");
+	 Status = StatAuthError;
+	 ReportMirrorFailure("SizeFailure");
+	 break;
+      case InvalidFormat:
+	 ErrorText = _("Invalid file format");
+	 Status = StatError;
+	 // do not report as usually its not the mirrors fault, but Portal/Proxy
+	 break;
+   }
+   return false;
 }
 									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/
@@ -273,7 +299,7 @@ void pkgAcqSubIndex::Done(string Message,unsigned long long Size,string Md5Hash,
       return;
    }
 
-   // sucess in downloading the index
+   // success in downloading the index
    // rename the index
    if(Debug)
       std::clog << "Renaming: " << DestFile << " -> " << FinalFile << std::endl;
@@ -301,7 +327,7 @@ bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
 									/*}}}*/
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
-/* Get the DiffIndex file first and see if there are patches availabe 
+/* Get the DiffIndex file first and see if there are patches available
  * If so, create a pkgAcqIndexDiffs fetcher that will get and apply the
  * patches. If anything goes wrong in that process, it will fall back to
  * the original packages file
@@ -343,10 +369,10 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
       return;
    }
 
-   if(Debug) 
-      std::clog << "pkgAcqIndexDiffs::pkgAcqIndexDiffs(): " 
-		<< CurrentPackagesFile << std::endl;
-   
+   if(Debug)
+      std::clog << "pkgAcqDiffIndex::pkgAcqDiffIndex(): "
+	 << CurrentPackagesFile << std::endl;
+
    QueueURI(Desc);
 
 }
@@ -372,8 +398,8 @@ string pkgAcqDiffIndex::Custom600Headers()
 bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqIndexDiffs::ParseIndexDiff() " << IndexDiffFile 
-		<< std::endl;
+      std::clog << "pkgAcqDiffIndex::ParseIndexDiff() " << IndexDiffFile
+	 << std::endl;
 
    pkgTagSection Tags;
    string ServerSha1;
@@ -400,16 +426,18 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       SHA1.AddFD(fd);
       string const local_sha1 = SHA1.Result();
 
-      if(local_sha1 == ServerSha1) 
+      if(local_sha1 == ServerSha1)
       {
-	 // we have the same sha1 as the server
+	 // we have the same sha1 as the server so we are done here
 	 if(Debug)
 	    std::clog << "Package file is up-to-date" << std::endl;
-	 // set found to true, this will queue a pkgAcqIndexDiffs with
-	 // a empty availabe_patches
-	 found = true;
-      } 
-      else 
+	 // list cleanup needs to know that this file as well as the already
+	 // present index is ours, so we create an empty diff to save it for us
+	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
+	       ExpectedHash, ServerSha1, available_patches);
+	 return true;
+      }
+      else
       {
 	 if(Debug)
 	    std::clog << "SHA1-Current: " << ServerSha1 << " and we start at "<< fd.Name() << " " << fd.Size() << " " << local_sha1 << std::endl;
@@ -470,14 +498,37 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       }
 
       // we have something, queue the next diff
-      if(found) 
+      if(found)
       {
 	 // queue the diffs
 	 string::size_type const last_space = Description.rfind(" ");
 	 if(last_space != string::npos)
 	    Description.erase(last_space, Description.size()-last_space);
-	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedHash, ServerSha1, available_patches);
+
+	 /* decide if we should download patches one by one or in one go:
+	    The first is good if the server merges patches, but many don't so client
+	    based merging can be attempt in which case the second is better.
+	    "bad things" will happen if patches are merged on the server,
+	    but client side merging is attempt as well */
+	 bool pdiff_merge = _config->FindB("Acquire::PDiffs::Merge", true);
+	 if (pdiff_merge == true)
+	 {
+	    // reprepro adds this flag if it has merged patches on the server
+	    std::string const precedence = Tags.FindS("X-Patch-Precedence");
+	    pdiff_merge = (precedence != "merged");
+	 }
+
+	 if (pdiff_merge == false)
+	    new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
+		  ExpectedHash, ServerSha1, available_patches);
+	 else
+	 {
+	    std::vector<pkgAcqIndexMergeDiffs*> *diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
+	    for(size_t i = 0; i < available_patches.size(); ++i)
+	       (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, RealURI, Description, Desc.ShortDesc, ExpectedHash,
+		     available_patches[i], diffs);
+	 }
+
 	 Complete = false;
 	 Status = StatDone;
 	 Dequeue();
@@ -497,7 +548,7 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{
 {
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << std::endl
-		<< "Falling back to normal index file aquire" << std::endl;
+		<< "Falling back to normal index file acquire" << std::endl;
 
    new pkgAcqIndex(Owner, RealURI, Description, Desc.ShortDesc, 
 		   ExpectedHash);
@@ -518,7 +569,7 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,string Md5Hash
    string FinalFile;
    FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
 
-   // sucess in downloading the index
+   // success in downloading the index
    // rename the index
    FinalFile += string(".IndexDiff");
    if(Debug)
@@ -577,7 +628,7 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{
 {
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
-		<< "Falling back to normal index file aquire" << std::endl;
+		<< "Falling back to normal index file acquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
 		   ExpectedHash);
    Finish();
@@ -595,9 +646,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 
       if(!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
       {
-	 Status = StatAuthError;
-	 ErrorText = _("MD5Sum mismatch");
-	 Rename(DestFile,DestFile + ".FAILED");
+	 RenameOnError(HashSumMismatch);
 	 Dequeue();
 	 return;
       }
@@ -684,7 +733,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
    string FinalFile;
    FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
 
-   // sucess in downloading a diff, enter ApplyDiff state
+   // success in downloading a diff, enter ApplyDiff state
    if(State == StateFetchDiff)
    {
 
@@ -708,6 +757,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
    {
       // remove the just applied patch
       available_patches.erase(available_patches.begin());
+      unlink((FinalFile + ".ed").c_str());
 
       // move into place
       if(Debug) 
@@ -725,6 +775,131 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
 	 return Finish();
       } else 
 	 return Finish(true);
+   }
+}
+									/*}}}*/
+// AcqIndexMergeDiffs::AcqIndexMergeDiffs - Constructor			/*{{{*/
+pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
+				   string const &URI, string const &URIDesc,
+				   string const &ShortDesc, HashString const &ExpectedHash,
+				   DiffInfo const &patch,
+				   std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
+   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash),
+     patch(patch),allPatches(allPatches), State(StateFetchDiff)
+{
+
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(URI);
+
+   Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
+
+   Description = URIDesc;
+   Desc.Owner = this;
+   Desc.ShortDesc = ShortDesc;
+
+   Desc.URI = string(RealURI) + ".diff/" + patch.file + ".gz";
+   Desc.Description = Description + " " + patch.file + string(".pdiff");
+   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(RealURI + ".diff/" + patch.file);
+
+   if(Debug)
+      std::clog << "pkgAcqIndexMergeDiffs: " << Desc.URI << std::endl;
+
+   QueueURI(Desc);
+}
+									/*}}}*/
+void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
+{
+   if(Debug)
+      std::clog << "pkgAcqIndexMergeDiffs failed: " << Desc.URI << " with " << Message << std::endl;
+   Complete = false;
+   Status = StatDone;
+   Dequeue();
+
+   // check if we are the first to fail, otherwise we are done here
+   State = StateDoneDiff;
+   for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
+	 I != allPatches->end(); ++I)
+      if ((*I)->State == StateErrorDiff)
+	 return;
+
+   // first failure means we should fallback
+   State = StateErrorDiff;
+   std::clog << "Falling back to normal index file acquire" << std::endl;
+   new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc,
+		   ExpectedHash);
+}
+									/*}}}*/
+void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,string Md5Hash,	/*{{{*/
+			    pkgAcquire::MethodConfig *Cnf)
+{
+   if(Debug)
+      std::clog << "pkgAcqIndexMergeDiffs::Done(): " << Desc.URI << std::endl;
+
+   Item::Done(Message,Size,Md5Hash,Cnf);
+
+   string const FinalFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+
+   if (State == StateFetchDiff)
+   {
+      // rred expects the patch as $FinalFile.ed.$patchname.gz
+      Rename(DestFile, FinalFile + ".ed." + patch.file + ".gz");
+
+      // check if this is the last completed diff
+      State = StateDoneDiff;
+      for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
+	    I != allPatches->end(); ++I)
+	 if ((*I)->State != StateDoneDiff)
+	 {
+	    if(Debug)
+	       std::clog << "Not the last done diff in the batch: " << Desc.URI << std::endl;
+	    return;
+	 }
+
+      // this is the last completed diff, so we are ready to apply now
+      State = StateApplyDiff;
+
+      if(Debug)
+	 std::clog << "Sending to rred method: " << FinalFile << std::endl;
+
+      Local = true;
+      Desc.URI = "rred:" + FinalFile;
+      QueueURI(Desc);
+      Mode = "rred";
+      return;
+   }
+   // success in download/apply all diffs, clean up
+   else if (State == StateApplyDiff)
+   {
+      // see if we really got the expected file
+      if(!ExpectedHash.empty() && !ExpectedHash.VerifyFile(DestFile))
+      {
+	 RenameOnError(HashSumMismatch);
+	 return;
+      }
+
+      // move the result into place
+      if(Debug)
+	 std::clog << "Moving patched file in place: " << std::endl
+		   << DestFile << " -> " << FinalFile << std::endl;
+      Rename(DestFile, FinalFile);
+      chmod(FinalFile.c_str(), 0644);
+
+      // otherwise lists cleanup will eat the file
+      DestFile = FinalFile;
+
+      // ensure the ed's are gone regardless of list-cleanup
+      for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
+	    I != allPatches->end(); ++I)
+      {
+	    std::string patch = FinalFile + ".ed." + (*I)->patch.file + ".gz";
+	    unlink(patch.c_str());
+      }
+
+      // all set and done
+      Complete = true;
+      if(Debug)
+	 std::clog << "allDone: " << DestFile << "\n" << std::endl;
    }
 }
 									/*}}}*/
@@ -866,10 +1041,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
 
       if (!ExpectedHash.empty() && ExpectedHash.toStr() != Hash)
       {
-         Status = StatAuthError;
-         ErrorText = _("Hash Sum mismatch");
-         Rename(DestFile,DestFile + ".FAILED");
-	 ReportMirrorFailure("HashChecksumFailure");
+	 RenameOnError(HashSumMismatch);
          return;
       }
 
@@ -878,22 +1050,18 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
       if (Verify == true)
       {
 	 FileFd fd(DestFile, FileFd::ReadOnly);
-	 pkgTagSection sec;
-	 pkgTagFile tag(&fd);
+	 // Only test for correctness if the file is not empty (empty is ok)
+	 if (fd.FileSize() > 0)
+	 {
+	    pkgTagSection sec;
+	    pkgTagFile tag(&fd);
 
-         // Only test for correctness if the file is not empty (empty is ok)
-         if (fd.Size() > 0) {
-            if (_error->PendingError() || !tag.Step(sec)) {
-               Status = StatError;
-               _error->DumpErrors();
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            } else if (!sec.Exists("Package")) {
-               Status = StatError;
-               ErrorText = ("Encountered a section with no Package: header");
-               Rename(DestFile,DestFile + ".FAILED");
-               return;
-            }
+	    // all our current indexes have a field 'Package' in each section
+	    if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
+	    {
+	       RenameOnError(InvalidFormat);
+	       return;
+	    }
          }
       }
        
@@ -984,6 +1152,8 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
    DestFile += ".decomp";
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
+
+   // FIXME: this points to a c++ string that goes out of scope
    Mode = decompProg.c_str();
 }
 									/*}}}*/
@@ -1070,7 +1240,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
    if (RealFileExists(Final) == true)
    {
       // File was already in place.  It needs to be re-downloaded/verified
-      // because Release might have changed, we do give it a differnt
+      // because Release might have changed, we do give it a different
       // name than DestFile because otherwise the http method will
       // send If-Range requests and there are too many broken servers
       // out there that do not understand them
@@ -1728,34 +1898,40 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
    }
 
    // check if we have one trusted source for the package. if so, switch
-   // to "TrustedOnly" mode
+   // to "TrustedOnly" mode - but only if not in AllowUnauthenticated mode
+   bool const allowUnauth = _config->FindB("APT::Get::AllowUnauthenticated", false);
+   bool const debugAuth = _config->FindB("Debug::pkgAcquire::Auth", false);
+   bool seenUntrusted = false;
    for (pkgCache::VerFileIterator i = Version.FileList(); i.end() == false; ++i)
    {
       pkgIndexFile *Index;
       if (Sources->FindIndex(i.File(),Index) == false)
          continue;
-      if (_config->FindB("Debug::pkgAcquire::Auth", false))
-      {
+
+      if (debugAuth == true)
          std::cerr << "Checking index: " << Index->Describe()
-                   << "(Trusted=" << Index->IsTrusted() << ")\n";
-      }
-      if (Index->IsTrusted()) {
+                   << "(Trusted=" << Index->IsTrusted() << ")" << std::endl;
+
+      if (Index->IsTrusted() == true)
+      {
          Trusted = true;
-	 break;
+	 if (allowUnauth == false)
+	    break;
       }
+      else
+         seenUntrusted = true;
    }
 
    // "allow-unauthenticated" restores apts old fetching behaviour
    // that means that e.g. unauthenticated file:// uris are higher
    // priority than authenticated http:// uris
-   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
+   if (allowUnauth == true && seenUntrusted == true)
       Trusted = false;
 
    // Select a source
    if (QueueNext() == false && _error->PendingError() == false)
-      _error->Error(_("I wasn't able to locate a file for the %s package. "
-		    "This might mean you need to manually fix this package."),
-		    Version.ParentPkg().Name());
+      _error->Error(_("Can't find a source to download version '%s' of '%s'"),
+		    Version.VerStr(), Version.ParentPkg().FullName(false).c_str());
 }
 									/*}}}*/
 // AcqArchive::QueueNext - Queue the next file source			/*{{{*/
@@ -1856,7 +2032,7 @@ bool pkgAcqArchive::QueueNext()
 	    return true;
 	 }
 	 
-	 /* Hmm, we have a file and its size does not match, this shouldnt
+	 /* Hmm, we have a file and its size does not match, this shouldn't
 	    happen.. */
 	 unlink(FinalFile.c_str());
       }
@@ -1909,18 +2085,14 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size,string CalcHash,
    // Check the size
    if (Size != Version->Size)
    {
-      Status = StatError;
-      ErrorText = _("Size mismatch");
+      RenameOnError(SizeMismatch);
       return;
    }
    
    // Check the hash
    if(ExpectedHash.toStr() != CalcHash)
    {
-      Status = StatError;
-      ErrorText = _("Hash Sum mismatch");
-      if(FileExists(DestFile))
-	 Rename(DestFile,DestFile + ".FAILED");
+      RenameOnError(HashSumMismatch);
       return;
    }
 
@@ -2060,9 +2232,7 @@ void pkgAcqFile::Done(string Message,unsigned long long Size,string CalcHash,
    // Check the hash
    if(!ExpectedHash.empty() && ExpectedHash.toStr() != CalcHash)
    {
-      Status = StatError;
-      ErrorText = _("Hash Sum mismatch");
-      Rename(DestFile,DestFile + ".FAILED");
+      RenameOnError(HashSumMismatch);
       return;
    }
    

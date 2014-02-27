@@ -32,7 +32,7 @@ class AcqTextStatus : public pkgAcquireStatus
    
    bool Pulse(pkgAcquire *Owner);
 
-   AcqTextStatus(unsigned int &ScreenWidth,unsigned int Quiet);
+   AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet);
 };
 
 #endif

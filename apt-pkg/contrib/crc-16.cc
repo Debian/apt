@@ -10,7 +10,7 @@
    Al Longyear <longyear@netcom.com>
    
    Modified by Jason Gunthorpe <jgg@debian.org> to fit the local coding
-   style, this code is belived to be in the Public Domain.
+   style, this code is believed to be in the Public Domain.
    
    ##################################################################### */
 									/*}}}*/

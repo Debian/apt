@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+changetowebserver
+
+# setup env
+mkdir -p var/lib/apt/keyrings
+mkdir -p usr/share/keyrings
+
+# install the fake master keyring
+install -m0644 keys/test-master-keyring.pub usr/share/keyrings
+echo "APT::Key::MasterKeyring \"${TMPWORKINGDIRECTORY}/usr/share/keyrings/test-master-keyring.pub\";" >> ./aptconfig.conf
+
+# setup archive-keyring 
+mkdir -p aptarchive/ubuntu/project
+install -m0644 keys/test-archive-keyring.pub aptarchive/ubuntu/project/
+echo 'APT::Key::ArchiveKeyringURI "http://localhost:8080/ubuntu/project/test-archive-keyring.pub";' >> ./aptconfig.conf
+echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
+
+# test against the "real" webserver
+testequal 'Checking for new archive signing keys now
+gpg: key F68C85A3: public key "Test Automatic Archive Signing Key <ftpmaster@example.com>" imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)' aptkey --fakeroot net-update
+
+
+# now try a different one
+# setup archive-keyring 
+mkdir -p aptarchive/ubuntu/project
+install -m0644 keys/marvinparanoid.pub aptarchive/ubuntu/project/
+echo 'APT::Key::ArchiveKeyringURI "http://localhost:8080/ubuntu/project/marvinparanoid.pub";' >> ./aptconfig.conf
+echo 'APT::Key::Net-Update-Enabled "1";' >> ./aptconfig.conf
+
+# test against the "real" webserver
+testequal "Checking for new archive signing keys now
+Key 'E8525D47528144E2' not added. It is not signed with a master key" aptkey --fakeroot net-update
+
+

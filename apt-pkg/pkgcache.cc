@@ -8,7 +8,7 @@
    Please see doc/apt-pkg/cache.sgml for a more detailed description of 
    this format. Also be sure to keep that file up-to-date!!
    
-   This is the general utility functions for cache managment. They provide
+   This is the general utility functions for cache management. They provide
    a complete set of accessor functions for the cache. The cacheiterators
    header contains the STL-like iterators that can be used to easially
    navigate the cache as well as seemlessly dereference the mmap'd 
@@ -499,7 +499,7 @@ pkgCache::PkgIterator::CurVersion() const
 // ostream operator to handle string representation of a package	/*{{{*/
 // ---------------------------------------------------------------------
 /* Output name < cur.rent.version -> candid.ate.version | new.est.version > (section)
-   Note that the characters <|>() are all literal above. Versions will be ommited
+   Note that the characters <|>() are all literal above. Versions will be omitted
    if they provide no new information (e.g. there is no newer version than candidate)
    If no version and/or section can be found "none" is used. */
 std::ostream& 

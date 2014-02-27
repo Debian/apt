@@ -24,8 +24,7 @@
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/version.h>
 #include <apt-pkg/tagfile.h>
-#include <apt-pkg/extracttar.h>
-#include <apt-pkg/arfile.h>
+#include <apt-pkg/debfile.h>
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
@@ -46,8 +45,6 @@
 									/*}}}*/
 
 using namespace std;
-
-#define TMPDIR		"/tmp"
 
 pkgCache *DebFile::Cache = 0;
 
@@ -93,18 +90,9 @@ string DebFile::GetInstalledVer(const string &package)
 /* */
 bool DebFile::Go()
 {
-	ARArchive AR(File);
-	if (_error->PendingError() == true)
-		return false;
-		
-	const ARArchive::Member *Member = AR.FindMember("control.tar.gz");
-	if (Member == 0)
-		return _error->Error(_("%s not a valid DEB package."),File.Name().c_str());
-	
-	if (File.Seek(Member->Start) == false)
-		return false;
-	ExtractTar Tar(File, Member->Size,"gzip");
-	return Tar.Go(*this);
+	debDebFile Deb(File);
+
+	return Deb.ExtractTarMember(*this, "control.tar");
 }
 									/*}}}*/
 // DebFile::DoItem examine element in package and mark			/*{{{*/
@@ -253,14 +241,11 @@ string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
-	const char *tempdir = NULL;
 
-        tempdir = getenv("TMPDIR");
-        if (tempdir == NULL)
-             tempdir = TMPDIR;
-
+        std::string tempdir = GetTempDir();
 	snprintf(fn, sizeof(fn), "%s/%s.%s.%u%d",
-                 _config->Find("APT::ExtractTemplates::TempDir", tempdir).c_str(),
+                 _config->Find("APT::ExtractTemplates::TempDir", 
+                               tempdir.c_str()).c_str(),
                  package, prefix, getpid(), i++);
 	FileFd f;
 	if (data == NULL)

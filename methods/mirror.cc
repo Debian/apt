@@ -3,7 +3,7 @@
 // $Id: mirror.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   Mirror Aquire Method - This is the Mirror aquire method for APT.
+   Mirror Acquire Method - This is the Mirror acquire method for APT.
    
    ##################################################################### */
 									/*}}}*/
@@ -49,7 +49,7 @@ using namespace std;
  *   of the failure that is also send to LP
  * 
  * TODO: 
- * - deal with runing as non-root because we can't write to the lists 
+ * - deal with running as non-root because we can't write to the lists
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
  *   and better error handling there!
@@ -114,7 +114,7 @@ bool MirrorMethod::Clean(string Dir)
       for(I=list.begin(); I != list.end(); ++I)
       {
 	 string uri = (*I)->GetURI();
-	 if(uri.find("mirror://") != 0)
+	 if(uri.compare(0, strlen("mirror://"), "mirror://") != 0)
 	    continue;
 	 string BaseUri = uri.substr(0,uri.size()-1);
 	 if (URItoFileName(BaseUri) == Dir->d_name)
@@ -198,9 +198,9 @@ bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
    // "stable" on the same machine. this is to avoid running into out-of-sync
    // issues (i.e. Release/Release.gpg different on each mirror)
    struct utsname buf;
-   int seed=1, i;
+   int seed=1;
    if(uname(&buf) == 0) {
-      for(i=0,seed=1; buf.nodename[i] != 0; i++) {
+      for(int i=0,seed=1; buf.nodename[i] != 0; ++i) {
          seed = seed * 31 + buf.nodename[i];
       }
    }
@@ -290,7 +290,7 @@ bool MirrorMethod::InitMirrors()
    // FIXME: make the mirror selection more clever, do not 
    //        just use the first one!
    // BUT: we can not make this random, the mirror has to be
-   //      stable accross session, because otherwise we can
+   //      stable across session, because otherwise we can
    //      get into sync issues (got indexfiles from mirror A,
    //      but packages from mirror B - one might be out of date etc)
    ifstream in(MirrorFile.c_str());
@@ -306,7 +306,7 @@ bool MirrorMethod::InitMirrors()
       if (s.size() == 0)
          continue;
       // ignore non http lines
-      if (s.find("http://") != 0)
+      if (s.compare(0, strlen("http://"), "http://") != 0)
          continue;
 
       AllMirrors.push_back(s);

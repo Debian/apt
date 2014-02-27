@@ -1,0 +1,55 @@
+#!/bin/sh
+
+set -e
+
+# setup testdir
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+TMPDIR=$(mktemp -d)
+cd $TMPDIR
+addtrap "cd /; rm -rf $TMPDIR"
+
+# create mock environment
+mkdir apt.conf.d
+cat > aptconfig.conf <<EOF
+Dir::Etc::parts "$TMPDIR/apt.conf.d";
+Dir::bin::dpkg "$TMPDIR/fake-dpkg";
+EOF
+APT_CONFIG=aptconfig.conf
+export APT_CONFIG
+
+# install fake-dpkg into it
+install -m755 $TESTDIR/test-kernel-helper-autoremove.fake-dpkg $TMPDIR/fake-dpkg
+
+# run the helper
+sh ${TESTDIR}/../../debian/apt.auto-removal.sh
+
+msgtest 'Check that kernel autoremoval list is correctly created'
+# and ensure its there, valid and version 10.0.0-1 is there too
+test -e $TMPDIR/apt.conf.d/01autoremove-kernels && msgpass || msgfail
+
+msgtest 'Check that most recent kernel is saved from autoremoval'
+apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic" && msgpass || msgfail
+
+# ... and also that the running kernel is excluded
+msgtest 'Check that running kernel is saved from autoremoval'
+apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)" && msgpass || msgfail
+
+# and that the old kernel is *not* excluded from autoremoval
+msgtest 'Check that older kernels are not excluded from autoremoval'
+apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic" && msgfail || msgpass
+
+msgtest "Check that the older kernel is retained when it's being installed"
+sh ${TESTDIR}/../../debian/apt.auto-removal.sh 1.0.01-2-generic
+test -e $TMPDIR/apt.conf.d/01autoremove-kernels
+if ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic" \
+   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)" \
+   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic"
+then
+	msgfail
+else
+	msgpass
+fi
+
+# done

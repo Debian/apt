@@ -8,6 +8,8 @@
 <!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent">
 %aptverbatiment;
 
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent">
+%aptvendor;
 ]>
 
 <refentry>
@@ -18,7 +20,7 @@
    &apt-email;
    &apt-product;
    <!-- The last update date -->
-   <date>2012-06-09T00:00:00Z</date>
+   <date>2014-01-18T00:00:00Z</date>
  </refentryinfo>
  
  <refmeta>
@@ -74,22 +76,42 @@
    code in the same form as the <literal>deb</literal> type.
    A <literal>deb-src</literal> line is required to fetch source indexes.</para>
 
-
    <para>The format for a <filename>sources.list</filename> entry using the
    <literal>deb</literal> and <literal>deb-src</literal> types is:</para>
 
-   <literallayout>deb [ options ] uri distribution [component1] [component2] [...]</literallayout>
+   <literallayout>deb [ options ] uri suite [component1] [component2] [...]</literallayout>
+
+   <para>Alternatively a rfc822 style format is also supported:
+   <literallayout>
+     Types: deb deb-src
+     URIs: http://example.com
+     Suites: stable testing
+     Sections: component1 component2
+     Description: short
+      long long long
+     [option1]: [option1-value]
+
+     Types: deb
+     URIs: http://another.example.com
+     Suites: experimental
+     Sections: component1 component2
+     Enabled: no
+     Description: short
+      long long long
+     [option1]: [option1-value]
+   </literallayout>
+   </para>
 
    <para>The URI for the <literal>deb</literal> type must specify the base of the
    Debian distribution, from which APT will find the information it needs. 
-   <literal>distribution</literal> can specify an exact path, in which case the 
-   components must be omitted and <literal>distribution</literal> must end with
+   <literal>suite</literal> can specify an exact path, in which case the 
+   components must be omitted and <literal>suite</literal> must end with
    a slash (<literal>/</literal>). This is useful for the case when only a
    particular sub-section of the archive denoted by the URI is of interest.
-   If <literal>distribution</literal> does not specify an exact path, at least
+   If <literal>suite</literal> does not specify an exact path, at least
    one <literal>component</literal> must be present.</para>
 
-   <para><literal>distribution</literal> may also contain a variable, 
+   <para><literal>suite</literal> may also contain a variable, 
    <literal>$(ARCH)</literal>
    which expands to the Debian architecture (such as <literal>amd64</literal> or
    <literal>armel</literal>) used on the system. This permits architecture-independent
@@ -97,17 +119,19 @@
    of interest when specifying an exact path, <literal>APT</literal> will
    automatically generate a URI with the current architecture otherwise.</para>
 
-   <para>Since only one distribution can be specified per line it may be necessary
-   to have multiple lines for the same URI, if a subset of all available
-   distributions or components at that location is desired.
-   APT will sort the URI list after it has generated a complete set 
-   internally, and will collapse multiple references to the same Internet 
-   host, for instance, into a single connection, so that it does not 
-   inefficiently establish an FTP connection, close it, do something else, 
-   and then re-establish a connection to that same host. This feature is 
-   useful for accessing busy FTP sites with limits on the number of 
-   simultaneous anonymous users. APT also parallelizes connections to 
-   different hosts to more effectively deal with sites with low bandwidth.</para>
+   <para>In the traditional style sources.list format since only one
+   distribution can be specified per line it may be necessary to have
+   multiple lines for the same URI, if a subset of all available
+   distributions or components at that location is desired.  APT will
+   sort the URI list after it has generated a complete set internally,
+   and will collapse multiple references to the same Internet host,
+   for instance, into a single connection, so that it does not
+   inefficiently establish an FTP connection, close it, do something
+   else, and then re-establish a connection to that same host. This
+   feature is useful for accessing busy FTP sites with limits on the
+   number of simultaneous anonymous users. APT also parallelizes
+   connections to different hosts to more effectively deal with sites
+   with low bandwidth.</para>
 
    <para><literal>options</literal> is always optional and needs to be surrounded by
    square brackets. It can consist of multiple settings in the form

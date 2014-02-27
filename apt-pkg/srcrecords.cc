@@ -70,8 +70,9 @@ bool pkgSrcRecords::Restart()
    Current = Files.begin();
    for (std::vector<Parser*>::iterator I = Files.begin();
         I != Files.end(); ++I)
-      (*I)->Restart();
-   
+      if ((*I)->Offset() != 0)
+	 (*I)->Restart();
+
    return true;
 }
 									/*}}}*/

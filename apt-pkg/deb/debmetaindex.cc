@@ -1,4 +1,3 @@
-// ijones, walters
 #include <config.h>
 
 #include <apt-pkg/debmetaindex.h>
@@ -71,6 +70,22 @@ string debReleaseIndex::MetaIndexURI(const char *Type) const
    Res += Type;
    return Res;
 }
+
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+std::string debReleaseIndex::LocalFileName() const
+{
+   // see if we have a InRelease file
+   std::string PathInRelease =  MetaIndexFile("InRelease");
+   if (FileExists(PathInRelease))
+      return PathInRelease;
+
+   // and if not return the normal one
+   if (FileExists(PathInRelease))
+      return MetaIndexFile("Release");
+
+   return "";
+}
+#endif
 
 string debReleaseIndex::IndexURISuffix(const char *Type, string const &Section, string const &Arch) const
 {

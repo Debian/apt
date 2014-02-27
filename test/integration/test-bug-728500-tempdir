@@ -1,0 +1,29 @@
+#!/bin/sh
+
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'coolstuff' 'all' '1.0'
+
+setupaptarchive
+changetowebserver
+
+msgtest 'Test apt-get update with incorrect' 'TMPDIR'
+
+OUTPUT=$(mktemp)
+addtrap "rm $OUTPUT;"
+export TMPDIR=/does-not-exists
+if aptget update >${OUTPUT} 2>&1; then
+	msgpass
+else
+	echo
+	cat $OUTPUT
+	msgfail
+fi
+unset TMPDIR
+
+testequal 'coolstuff' aptcache pkgnames

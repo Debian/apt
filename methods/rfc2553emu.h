@@ -75,7 +75,7 @@
   #endif
 
   /* If we don't have getaddrinfo then we probably don't have 
-     sockaddr_storage either (same RFC) so we definately will not be
+     sockaddr_storage either (same RFC) so we definitely will not be
      doing any IPv6 stuff. Do not use the members of this structure to
      retain portability, cast to a sockaddr. */
   #define sockaddr_storage sockaddr_in

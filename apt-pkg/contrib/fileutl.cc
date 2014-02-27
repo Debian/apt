@@ -222,7 +222,7 @@ int GetLock(string File,bool Errors)
    int FD = open(File.c_str(),O_RDWR | O_CREAT | O_NOFOLLOW,0640);
    if (FD < 0)
    {
-      // Read only .. cant have locking problems there.
+      // Read only .. can't have locking problems there.
       if (errno == EROFS)
       {
 	 _error->Warning(_("Not using locking for read only lock file %s"),File.c_str());
@@ -238,7 +238,7 @@ int GetLock(string File,bool Errors)
    }
    SetCloseExec(FD,true);
       
-   // Aquire a write lock
+   // Acquire a write lock
    struct flock fl;
    fl.l_type = F_WRLCK;
    fl.l_whence = SEEK_SET;
@@ -319,7 +319,7 @@ bool CreateDirectory(string const &Parent, string const &Path)
       return false;
 
    // we are not going to create directories "into the blue"
-   if (Path.find(Parent, 0) != 0)
+   if (Path.compare(0, Parent.length(), Parent) != 0)
       return false;
 
    vector<string> const dirs = VectorizeString(Path.substr(Parent.size()), '/');
@@ -465,7 +465,7 @@ std::vector<string> GetListOfFilesInDir(string const &Dir, std::vector<string> c
       const char *C = Ent->d_name;
       for (; *C != 0; ++C)
 	 if (isalpha(*C) == 0 && isdigit(*C) == 0
-	     && *C != '_' && *C != '-') {
+	     && *C != '_' && *C != '-' && *C != ':') {
 	    // no required extension -> dot is a bad character
 	    if (*C == '.' && Ext.empty() == false)
 	       continue;
@@ -656,9 +656,9 @@ string flNoLink(string File)
    while (1)
    {
       // Read the link
-      int Res;
+      ssize_t Res;
       if ((Res = readlink(NFile.c_str(),Buffer,sizeof(Buffer))) <= 0 || 
-	  (unsigned)Res >= sizeof(Buffer))
+	  (size_t)Res >= sizeof(Buffer))
 	  return File;
       
       // Append or replace the previous path
@@ -760,12 +760,42 @@ bool WaitFd(int Fd,bool write,unsigned long timeout)
    return true;
 }
 									/*}}}*/
+// MergeKeepFdsFromConfiguration - Merge APT::Keep-Fds configuration	/*{{{*/
+// ---------------------------------------------------------------------
+/* This is used to merge the APT::Keep-Fds with the provided KeepFDs
+ * set.
+ */
+void MergeKeepFdsFromConfiguration(std::set<int> &KeepFDs)
+{
+      Configuration::Item const *Opts = _config->Tree("APT::Keep-Fds");
+      if (Opts != 0 && Opts->Child != 0)
+      {
+	 Opts = Opts->Child;
+	 for (; Opts != 0; Opts = Opts->Next)
+	 {
+	    if (Opts->Value.empty() == true)
+	       continue;
+	    int fd = atoi(Opts->Value.c_str());
+	    KeepFDs.insert(fd);
+	 }
+      }
+}
+									/*}}}*/
 // ExecFork - Magical fork that sanitizes the context before execing	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is used if you want to cleanse the environment for the forked 
    child, it fixes up the important signals and nukes all of the fds,
    otherwise acts like normal fork. */
 pid_t ExecFork()
+{
+      set<int> KeepFDs;
+      // we need to merge the Keep-Fds as external tools like 
+      // debconf-apt-progress use it
+      MergeKeepFdsFromConfiguration(KeepFDs);
+      return ExecFork(KeepFDs);
+}
+
+pid_t ExecFork(std::set<int> KeepFDs)
 {
    // Fork off the process
    pid_t Process = fork();
@@ -786,22 +816,8 @@ pid_t ExecFork()
       signal(SIGCONT,SIG_DFL);
       signal(SIGTSTP,SIG_DFL);
 
-      set<int> KeepFDs;
-      Configuration::Item const *Opts = _config->Tree("APT::Keep-Fds");
-      if (Opts != 0 && Opts->Child != 0)
-      {
-	 Opts = Opts->Child;
-	 for (; Opts != 0; Opts = Opts->Next)
-	 {
-	    if (Opts->Value.empty() == true)
-	       continue;
-	    int fd = atoi(Opts->Value.c_str());
-	    KeepFDs.insert(fd);
-	 }
-      }
-
       // Close all of our FDs - just in case
-      for (int K = 3; K != 40; K++)
+      for (int K = 3; K != sysconf(_SC_OPEN_MAX); K++)
       {
 	 if(KeepFDs.find(K) == KeepFDs.end())
 	    fcntl(K,F_SETFD,FD_CLOEXEC);
@@ -966,9 +982,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if ((Mode & Atomic) == Atomic)
    {
       Flags |= Replace;
-      char *name = strdup((FileName + ".XXXXXX").c_str());
-      TemporaryFileName = string(mktemp(name));
-      free(name);
    }
    else if ((Mode & (Exclusive | Create)) == (Exclusive | Create))
    {
@@ -991,11 +1004,24 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if_FLAGGED_SET(Create, O_CREAT);
    if_FLAGGED_SET(Empty, O_TRUNC);
    if_FLAGGED_SET(Exclusive, O_EXCL);
-   else if_FLAGGED_SET(Atomic, O_EXCL);
    #undef if_FLAGGED_SET
 
-   if (TemporaryFileName.empty() == false)
-      iFd = open(TemporaryFileName.c_str(), fileflags, Perms);
+   if ((Mode & Atomic) == Atomic)
+   {
+      char *name = strdup((FileName + ".XXXXXX").c_str());
+
+      if((iFd = mkstemp(name)) == -1)
+      {
+          free(name);
+          return FileFdErrno("mkstemp", "Could not create temporary file for %s", FileName.c_str());
+      }
+
+      TemporaryFileName = string(name);
+      free(name);
+
+      if(Perms != 600 && fchmod(iFd, Perms) == -1)
+          return FileFdErrno("fchmod", "Could not change permissions for temporary file %s", TemporaryFileName.c_str());
+   }
    else
       iFd = open(FileName.c_str(), fileflags, Perms);
 
@@ -1250,11 +1276,11 @@ FileFd::~FileFd()
 									/*}}}*/
 // FileFd::Read - Read a bit of the file				/*{{{*/
 // ---------------------------------------------------------------------
-/* We are carefull to handle interruption by a signal while reading 
+/* We are careful to handle interruption by a signal while reading
    gracefully. */
 bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    if (Actual != 0)
       *Actual = 0;
@@ -1354,7 +1380,7 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
 /* */
 bool FileFd::Write(const void *From,unsigned long long Size)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    do
    {
@@ -1408,7 +1434,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 }
 bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    do
    {
@@ -1481,14 +1507,14 @@ bool FileFd::Seek(unsigned long long To)
       d->seekpos = To;
       return true;
    }
-   int res;
+   off_t res;
 #ifdef HAVE_ZLIB
    if (d != NULL && d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
 #endif
       res = lseek(iFd,To,SEEK_SET);
-   if (res != (signed)To)
+   if (res != (off_t)To)
       return FileFdError("Unable to seek to %llu", To);
 
    if (d != NULL)
@@ -1519,7 +1545,7 @@ bool FileFd::Skip(unsigned long long Over)
       return true;
    }
 
-   int res;
+   off_t res;
 #ifdef HAVE_ZLIB
    if (d != NULL && d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);
@@ -1539,6 +1565,9 @@ bool FileFd::Skip(unsigned long long Over)
 /* */
 bool FileFd::Truncate(unsigned long long To)
 {
+   // truncating /dev/null is always successful - as we get an error otherwise
+   if (To == 0 && FileName == "/dev/null")
+      return true;
 #if defined HAVE_ZLIB || defined HAVE_BZ2
    if (d != NULL && (d->gz != NULL || d->bz2 != NULL))
       return FileFdError("Truncating compressed files is not implemented (%s)", FileName.c_str());
@@ -1579,27 +1608,53 @@ unsigned long long FileFd::Tell()
    return Res;
 }
 									/*}}}*/
-// FileFd::FileSize - Return the size of the file			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-unsigned long long FileFd::FileSize()
+static bool StatFileFd(char const * const msg, int const iFd, std::string const &FileName, struct stat &Buf, FileFdPrivate * const d) /*{{{*/
 {
-   struct stat Buf;
-   if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
-      return FileFdErrno("fstat","Unable to determine the file size");
+   bool ispipe = (d != NULL && d->pipe == true);
+   if (ispipe == false)
+   {
+      if (fstat(iFd,&Buf) != 0)
+	 // higher-level code will generate more meaningful messages,
+	 // even translated this would be meaningless for users
+	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
+      ispipe = S_ISFIFO(Buf.st_mode);
+   }
 
    // for compressor pipes st_size is undefined and at 'best' zero
-   if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
+   if (ispipe == true)
    {
       // we set it here, too, as we get the info here for free
       // in theory the Open-methods should take care of it already
       if (d != NULL)
 	 d->pipe = true;
       if (stat(FileName.c_str(), &Buf) != 0)
-	 return FileFdErrno("stat","Unable to determine the file size");
+	 return _error->Errno("fstat", "Unable to determine %s for file %s", msg, FileName.c_str());
    }
-
+   return true;
+}
+									/*}}}*/
+// FileFd::FileSize - Return the size of the file			/*{{{*/
+unsigned long long FileFd::FileSize()
+{
+   struct stat Buf;
+   if (StatFileFd("file size", iFd, FileName, Buf, d) == false)
+   {
+      Flags |= Fail;
+      return 0;
+   }
    return Buf.st_size;
+}
+									/*}}}*/
+// FileFd::ModificationTime - Return the time of last touch		/*{{{*/
+time_t FileFd::ModificationTime()
+{
+   struct stat Buf;
+   if (StatFileFd("modification time", iFd, FileName, Buf, d) == false)
+   {
+      Flags |= Fail;
+      return 0;
+   }
+   return Buf.st_mtime;
 }
 									/*}}}*/
 // FileFd::Size - Return the size of the content in the file		/*{{{*/
@@ -1671,35 +1726,6 @@ unsigned long long FileFd::Size()
 #endif
 
    return size;
-}
-									/*}}}*/
-// FileFd::ModificationTime - Return the time of last touch		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-time_t FileFd::ModificationTime()
-{
-   struct stat Buf;
-   if ((d == NULL || d->pipe == false) && fstat(iFd,&Buf) != 0)
-   {
-      FileFdErrno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
-      return 0;
-   }
-
-   // for compressor pipes st_size is undefined and at 'best' zero
-   if ((d != NULL && d->pipe == true) || S_ISFIFO(Buf.st_mode))
-   {
-      // we set it here, too, as we get the info here for free
-      // in theory the Open-methods should take care of it already
-      if (d != NULL)
-	 d->pipe = true;
-      if (stat(FileName.c_str(), &Buf) != 0)
-      {
-	 FileFdErrno("fstat","Unable to determine the modification time of file %s", FileName.c_str());
-	 return 0;
-      }
-   }
-
-   return Buf.st_mtime;
 }
 									/*}}}*/
 // FileFd::Close - Close the file if the close flag is set		/*{{{*/
@@ -1797,7 +1823,8 @@ std::vector<std::string> Glob(std::string const &pattern, int flags)
 {
    std::vector<std::string> result;
    glob_t globbuf;
-   int glob_res, i;
+   int glob_res;
+   unsigned int i;
 
    glob_res = glob(pattern.c_str(),  flags, NULL, &globbuf);
 
@@ -1817,3 +1844,20 @@ std::vector<std::string> Glob(std::string const &pattern, int flags)
    return result;
 }
 									/*}}}*/
+
+std::string GetTempDir()
+{
+   const char *tmpdir = getenv("TMPDIR");
+
+#ifdef P_tmpdir
+   if (!tmpdir)
+      tmpdir = P_tmpdir;
+#endif
+
+   // check that tmpdir is set and exists
+   struct stat st;
+   if (!tmpdir || strlen(tmpdir) == 0 || stat(tmpdir, &st) != 0)
+      tmpdir = "/tmp";
+
+   return string(tmpdir);
+}

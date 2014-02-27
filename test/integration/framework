@@ -3,40 +3,46 @@
 EXIT_CODE=0
 
 # we all like colorful messages
-if expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null && \
-   expr match "$(readlink -f /proc/$$/fd/2)" '/dev/pts/[0-9]\+' > /dev/null; then
-	CERROR="[1;31m" # red
-	CWARNING="[1;33m" # yellow
-	CMSG="[1;32m" # green
-	CINFO="[1;96m" # light blue
-	CDEBUG="[1;94m" # blue
-	CNORMAL="[0;39m" # default system console color
-	CDONE="[1;32m" # green
-	CPASS="[1;32m" # green
-	CFAIL="[1;31m" # red
-	CCMD="[1;35m" # pink
+if [ "$MSGCOLOR" != 'NO' ]; then
+	if ! expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+		export MSGCOLOR='NO'
+	fi
+fi
+
+
+if [ "$MSGCOLOR" != 'NO' ]; then
+	CERROR="\033[1;31m" # red
+	CWARNING="\033[1;33m" # yellow
+	CMSG="\033[1;32m" # green
+	CINFO="\033[1;96m" # light blue
+	CDEBUG="\033[1;94m" # blue
+	CNORMAL="\033[0;39m" # default system console color
+	CDONE="\033[1;32m" # green
+	CPASS="\033[1;32m" # green
+	CFAIL="\033[1;31m" # red
+	CCMD="\033[1;35m" # pink
 fi
 
 msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
 msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgmsg() { echo "${CMSG}$1${CNORMAL}" >&2; }
-msginfo() { echo "${CINFO}I: $1${CNORMAL}" >&2; }
-msgdebug() { echo "${CDEBUG}D: $1${CNORMAL}" >&2; }
-msgdone() { echo "${CDONE}DONE${CNORMAL}" >&2; }
+msgmsg() { echo "${CMSG}$1${CNORMAL}"; }
+msginfo() { echo "${CINFO}I: $1${CNORMAL}"; }
+msgdebug() { echo "${CDEBUG}D: $1${CNORMAL}"; }
+msgdone() { echo "${CDONE}DONE${CNORMAL}"; }
 msgnwarn() { echo -n "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgnmsg() { echo -n "${CMSG}$1${CNORMAL}" >&2; }
-msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}" >&2; }
-msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}" >&2; }
+msgnmsg() { echo -n "${CMSG}$1${CNORMAL}"; }
+msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}"; }
+msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}"; }
 msgtest() {
 	while [ -n "$1" ]; do
-		echo -n "${CINFO}$1${CCMD} " >&2;
-		echo -n "$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} " >&2;
+		echo -n "${CINFO}$1${CCMD} "
+		echo -n "$(echo "$2" | sed -e 's/^aptc/apt-c/' -e 's/^aptg/apt-g/' -e 's/^aptf/apt-f/')${CINFO} "
 		shift
 		if [ -n "$1" ]; then shift; else break; fi
 	done
-	echo -n "…${CNORMAL} " >&2;
+	echo -n "…${CNORMAL} "
 }
-msgpass() { echo "${CPASS}PASS${CNORMAL}" >&2; }
+msgpass() { echo "${CPASS}PASS${CNORMAL}"; }
 msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
 msgfail() {
 	if [ $# -gt 0 ]; then echo "${CFAIL}FAIL: $*${CNORMAL}" >&2;
@@ -57,7 +63,7 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgmsg() { true; }
 	msgnmsg() { true; }
 	msgtest() { true; }
-	msgpass() { echo -n " ${CPASS}P${CNORMAL}" >&2; }
+	msgpass() { echo -n " ${CPASS}P${CNORMAL}"; }
 	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
 	if [ -n "$CFAIL" ]; then
 		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
@@ -81,45 +87,58 @@ msgdone() {
 	   [ "$1" = "die" -a $MSGLEVEL -le 0 ]; then
 		true;
 	else
-		echo "${CDONE}DONE${CNORMAL}" >&2;
+		echo "${CDONE}DONE${CNORMAL}";
 	fi
 }
 
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
+	local CMD="$1"
+	shift
 	if [ -f ./aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	else
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$*
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 	fi
 }
-aptconfig() { runapt apt-config $*; }
-aptcache() { runapt apt-cache $*; }
-aptcdrom() { runapt apt-cdrom $*; }
-aptget() { runapt apt-get $*; }
-aptftparchive() { runapt apt-ftparchive $*; }
-aptkey() { runapt apt-key $*; }
-aptmark() { runapt apt-mark $*; }
+aptconfig() { runapt apt-config "$@"; }
+aptcache() { runapt apt-cache "$@"; }
+aptcdrom() { runapt apt-cdrom "$@"; }
+aptget() { runapt apt-get "$@"; }
+aptftparchive() { runapt apt-ftparchive "$@"; }
+aptkey() { runapt apt-key "$@"; }
+aptmark() { runapt apt-mark "$@"; }
+apt() { runapt apt "$@"; }
+aptwebserver() {
+  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver "$@";
+}
 dpkg() {
-	$(which dpkg) --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log $*
+	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
 }
 aptitude() {
 	if [ -f ./aptconfig.conf ]; then
-		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which aptitude) $*
+		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command aptitude "$@"
 	else
-		LD_LIBRARY_PATH=${BUILDDIRECTORY}  $(which aptitude) $*
+		LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
 	fi
 }
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $(which gdb) ${BUILDDIRECTORY}/$1
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
 }
 http() {
 	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
+}
+gpg() {
+	# see apt-key for the whole trickery. Setup is done in setupenvironment
+	command gpg --ignore-time-conflict --no-options --no-default-keyring \
+		--homedir "${TMPWORKINGDIRECTORY}/gnupghome" \
+		--no-auto-check-trustdb --trust-model always \
+		"$@"
 }
 
 exitwithstatus() {
@@ -154,18 +173,24 @@ setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
 	TESTDIRECTORY=$(readlink -f $(dirname $0))
 	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "
-	BUILDDIRECTORY="${TESTDIRECTORY}/../../build/bin"
+
+        # allow overriding the default BUILDDIR location
+	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
+        METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
+        APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
+        # -----
+
 	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p var/cache var/lib var/log
+	mkdir -p var/cache var/lib var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
-	ln -s ${BUILDDIRECTORY}/methods usr/lib/apt/methods
+	ln -s ${METHODSDIR} usr/lib/apt/methods
 	cd ..
 	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
 	if [ -f "${TESTDIRECTORY}/${PACKAGESFILE}" ]; then
@@ -181,19 +206,36 @@ setupenvironment() {
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
-	echo "Dir::Bin::Methods \"${BUILDDIRECTORY}/methods\";" >> aptconfig.conf
+	echo "Dir::Bin::Methods \"${METHODSDIR}\";" >> aptconfig.conf
 	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
 	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-not-root\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--force-bad-path\";" >> aptconfig.conf
-	if ! $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
+	if ! command dpkg --assert-multi-arch >/dev/null 2>&1; then
 		echo "DPKG::options:: \"--force-architecture\";" >> aptconfig.conf # Added to test multiarch before dpkg is ready for it…
 	fi
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
-	export LC_ALL=C
+	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
+        echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
+	export LC_ALL=C.UTF-8
 	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
+	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
+
+	# gpg needs a trustdb to function, but it can't be invalid (not even empty)
+	# see also apt-key where this trickery comes from:
+	local TRUSTDBDIR="${TMPWORKINGDIRECTORY}/gnupghome"
+	mkdir "$TRUSTDBDIR"
+	chmod 700 "$TRUSTDBDIR"
+	# We also don't use a secret keyring, of course, but gpg panics and
+	# implodes if there isn't one available - and writeable for imports
+	local SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
+	touch $SECRETKEYRING
+	# now create the trustdb with an (empty) dummy keyring
+	# newer gpg versions are fine without it, but play it safe for now
+	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
+
 	msgdone "info"
 }
 
@@ -215,14 +257,13 @@ getarchitectures() {
 }
 
 configarchitecture() {
-	local CONFFILE=rootdir/etc/apt/apt.conf.d/01multiarch.conf
-	rm -f $CONFFILE
-	echo "APT::Architecture \"$(getarchitecture $1)\";" > $CONFFILE
-	shift
-	while [ -n "$1" ]; do
-		echo "APT::Architectures:: \"$(getarchitecture $1)\";" >> $CONFFILE
-		shift
-	done
+	{
+		echo "APT::Architecture \"$(getarchitecture $1)\";"
+		while [ -n "$1" ]; do
+			echo "APT::Architectures:: \"$(getarchitecture $1)\";"
+			shift
+		done
+	} >rootdir/etc/apt/apt.conf.d/01multiarch.conf
 	configdpkg
 }
 
@@ -235,12 +276,19 @@ configdpkg() {
 			echo -n > rootdir/var/lib/dpkg/status
 		fi
 	fi
-	if $(which dpkg) --assert-multi-arch >/dev/null 2>&1; then
+	rm -f rootdir/etc/apt/apt.conf.d/00foreigndpkg
+	if command dpkg --assert-multi-arch >/dev/null 2>&1 ; then
 		local ARCHS="$(getarchitectures)"
 		if echo "$ARCHS" | grep -E -q '[^ ]+ [^ ]+'; then
 			DPKGARCH="$(dpkg --print-architecture)"
 			for ARCH in ${ARCHS}; do
-				if [ "${ARCH}" != "${DPKGARCH}" ]; then dpkg --add-architecture ${ARCH}; fi
+				if [ "${ARCH}" != "${DPKGARCH}" ]; then
+					if ! dpkg --add-architecture ${ARCH} >/dev/null 2>&1; then
+						# old-style used e.g. in Ubuntu-P – and as it seems travis
+						echo "DPKG::options:: \"--foreign-architecture\";" >> rootdir/etc/apt/apt.conf.d/00foreigndpkg
+						echo "DPKG::options:: \"${ARCH}\";"  >> rootdir/etc/apt/apt.conf.d/00foreigndpkg
+					fi
+				fi
 			done
 			if [ "0" = "$(dpkg -l dpkg 2> /dev/null | grep '^i' | wc -l)" ]; then
 				# dpkg doesn't really check the version as long as it is fully installed,
@@ -251,13 +299,31 @@ configdpkg() {
 	fi
 }
 
+configcompression() {
+	while [ -n "$1" ]; do
+		case "$1" in
+		'.') echo ".\t.\tcat";;
+		'gz') echo "gzip\tgz\tgzip";;
+		'bz2') echo "bzip2\tbz2\tbzip2";;
+		'lzma') echo "lzma\tlzma\txz --format=lzma";;
+		'xz') echo "xz\txz\txz";;
+		*) echo "$1\t$1\t$1";;
+		esac
+		shift
+	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf
+}
+
 setupsimplenativepackage() {
 	local NAME="$1"
 	local ARCH="$2"
 	local VERSION="$3"
 	local RELEASE="${4:-unstable}"
 	local DEPENDENCIES="$5"
-	local DESCRIPTION="$6"
+	local DESCRIPTION="${6:-"an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
+ If you find such a package installed on your system,
+ something went horribly wrong! They are autogenerated
+ und used only by testcases and surf no other propose…"}"
+
 	local SECTION="${7:-others}"
 	local DISTSECTION
 	if [ "$SECTION" = "$(echo "$SECTION" | cut -d'/' -f 2)" ]; then
@@ -289,14 +355,8 @@ Package: $NAME" > debian/control
 		echo "Architecture: any" >> debian/control
 	fi
 	test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> debian/control
-	if [ -z "$DESCRIPTION" ]; then
-		echo "Description: an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
- If you find such a package installed on your system,
- YOU did something horribly wrong! They are autogenerated
- und used only by testcases for APT and surf no other propose…" >> debian/control
-	else
-		echo "Description: $DESCRIPTION" >> debian/control
-	fi
+	echo "Description: $DESCRIPTION" >> debian/control
+
 	test -e debian/compat || echo "7" > debian/compat
 	test -e debian/source/format || echo "3.0 (native)" > debian/source/format
 	test -e debian/rules || cp /usr/share/doc/debhelper/examples/rules.tiny debian/rules
@@ -309,9 +369,15 @@ buildsimplenativepackage() {
 	local VERSION="$3"
 	local RELEASE="${4:-unstable}"
 	local DEPENDENCIES="$5"
-	local DESCRIPTION="$6"
+	local DESCRIPTION="${6:-"an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
+ If you find such a package installed on your system,
+ something went horribly wrong! They are autogenerated
+ und used only by testcases and surf no other propose…"}"
+
 	local SECTION="${7:-others}"
 	local PRIORITY="${8:-optional}"
+        local FILE_TREE="$9"
+        local COMPRESS_TYPE="${10:-gzip}"
 	local DISTSECTION
 	if [ "$SECTION" = "$(echo "$SECTION" | cut -d'/' -f 2)" ]; then
 		DISTSECTION="main"
@@ -349,21 +415,14 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 	fi
 	local DEPS="$(echo "$DEPENDENCIES" | grep -v '^Build-')"
 	test -z "$DEPS" || echo "$DEPS" >> ${BUILDDIR}/debian/control
-	if [ -z "$DESCRIPTION" ]; then
-		echo "Description: an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
- If you find such a package installed on your system,
- YOU did something horribly wrong! They are autogenerated
- und used only by testcases for APT and surf no other propose…" >> ${BUILDDIR}/debian/control
-	else
-		echo "Description: $DESCRIPTION" >> ${BUILDDIR}/debian/control
-	fi
+	echo "Description: $DESCRIPTION" >> ${BUILDDIR}/debian/control
 
 	echo '3.0 (native)' > ${BUILDDIR}/debian/source/format
 	(cd ${BUILDDIR}/..; dpkg-source -b ${NAME}-${VERSION} 2>&1) | sed -n 's#^dpkg-source: info: building [^ ]\+ in ##p' \
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
-#			gpg --yes --no-default-keyring --secret-keyring ./keys/joesixpack.sec \
+#			gpg --yes --secret-keyring ./keys/joesixpack.sec \
 #				--keyring ./keys/joesixpack.pub --default-key 'Joe Sixpack' \
 #				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
@@ -375,10 +434,20 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		mkdir -p ${BUILDDIR}/debian/tmp/DEBIAN ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME} ${BUILDDIR}/debian/tmp/usr/bin
 		cp ${BUILDDIR}/debian/copyright ${BUILDDIR}/debian/changelog ${BUILDDIR}/FEATURES ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}
 		cp ${BUILDDIR}/${NAME} ${BUILDDIR}/debian/tmp/usr/bin/${NAME}-${arch}
+                if [ -n "$FILE_TREE" ]; then
+                    cp -ar "$FILE_TREE" ${BUILDDIR}/debian/tmp
+                fi
+
 		(cd ${BUILDDIR}; dpkg-gencontrol -DArchitecture=$arch)
 		(cd ${BUILDDIR}/debian/tmp; md5sum $(find usr/ -type f) > DEBIAN/md5sums)
-
-		dpkg-deb --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. 2> /dev/null > /dev/null
+		local LOG="${BUILDDIR}/../${NAME}_${VERSION}_${arch}.dpkg-deb.log"
+		# ensure the right permissions as dpkg-deb ensists
+		chmod 755 ${BUILDDIR}/debian/tmp/DEBIAN
+		if ! dpkg-deb -Z${COMPRESS_TYPE} --build ${BUILDDIR}/debian/tmp ${BUILDDIR}/.. >$LOG 2>&1; then
+			cat $LOG
+			false
+		fi
+		rm $LOG
 		echo "pool/${NAME}_${VERSION}_${arch}.deb" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.pkglist
 	done
 
@@ -394,14 +463,19 @@ buildpackage() {
 	local RELEASE=$2
 	local SECTION=$3
 	local ARCH=$(getarchitecture $4)
-	msgninfo "Build package $(echo "$BUILDDIR" | grep -o '[^/]*$') for ${RELEASE} in ${SECTION}… "
+	local PKGNAME="$(echo "$BUILDDIR" | grep -o '[^/]*$')"
+	local BUILDLOG="$(readlink -f "${BUILDDIR}/../${PKGNAME}_${RELEASE}_${SECTION}.dpkg-bp.log")"
+	msgninfo "Build package ${PKGNAME} for ${RELEASE} in ${SECTION}… "
 	cd $BUILDDIR
 	if [ "$ARCH" = "all" ]; then
 		ARCH="$(dpkg-architecture -qDEB_HOST_ARCH 2> /dev/null)"
 	fi
-	local BUILT="$(dpkg-buildpackage -uc -us -a$ARCH 2> /dev/null)"
-	local PKGS="$( echo "$BUILT" | grep '^dpkg-deb: building package' | cut -d'/' -f 2 | sed -e "s#'\.##")"
-	local SRCS="$( echo "$BUILT" | grep '^dpkg-source: info: building' | grep -o '[a-z0-9._+~-]*$')"
+	if ! dpkg-buildpackage -uc -us -a$ARCH >$BUILDLOG 2>&1 ; then
+		cat $BUILDLOG
+		false
+	fi
+	local PKGS="$(grep '^dpkg-deb: building package' $BUILDLOG | cut -d'/' -f 2 | sed -e "s#'\.##")"
+	local SRCS="$(grep '^dpkg-source: info: building' $BUILDLOG | grep -o '[a-z0-9._+~-]*$')"
 	cd - > /dev/null
 	for PKG in $PKGS; do
 		echo "pool/${PKG}" >> ${TMPWORKINGDIRECTORY}/incoming/${RELEASE}.${SECTION}.pkglist
@@ -414,13 +488,15 @@ buildpackage() {
 
 buildaptarchive() {
 	if [ -d incoming ]; then
-		buildaptarchivefromincoming $*
+		buildaptarchivefromincoming "$@"
 	else
-		buildaptarchivefromfiles $*
+		buildaptarchivefromfiles "$@"
 	fi
 }
 
 createaptftparchiveconfig() {
+	local COMPRESSORS="$(cut -d'	' -f 1 ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | tr '\n' ' ')"
+	COMPRESSORS="${COMPRESSORS%* }"
 	local ARCHS="$(find pool/ -name '*.deb' | grep -oE '_[a-z0-9-]+\.deb$' | sort | uniq | sed -e '/^_all.deb$/ d' -e 's#^_\([a-z0-9-]*\)\.deb$#\1#' | tr '\n' ' ')"
 	if [ -z "$ARCHS" ]; then
 		# the pool is empty, so we will operate on faked packages - let us use the configured archs
@@ -438,10 +514,10 @@ createaptftparchiveconfig() {
 	echo -n '";
 };
 Default {
-	Packages::Compress ". gzip bzip2 lzma xz";
-	Sources::Compress ". gzip bzip2 lzma xz";
-	Contents::Compress ". gzip bzip2 lzma xz";
-	Translation::Compress ". gzip bzip2 lzma xz";
+	Packages::Compress "'"$COMPRESSORS"'";
+	Sources::Compress "'"$COMPRESSORS"'";
+	Contents::Compress "'"$COMPRESSORS"'";
+	Translation::Compress "'"$COMPRESSORS"'";
 	LongDescription "false";
 };
 TreeDefault {
@@ -503,7 +579,10 @@ insertpackage() {
 	local VERSION="$4"
 	local DEPENDENCIES="$5"
 	local PRIORITY="${6:-optional}"
-	local DESCRIPTION="${7}"
+	local DESCRIPTION="${7:-"an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
+ If you find such a package installed on your system,
+ something went horribly wrong! They are autogenerated
+ und used only by testcases and surf no other propose…"}"
 	local ARCHS=""
 	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
 		if [ "$arch" = 'all' -o "$arch" = 'none' ]; then
@@ -525,15 +604,7 @@ Maintainer: Joe Sixpack <joe@example.org>" >> $FILE
 			echo "Version: $VERSION
 Filename: pool/main/${NAME}/${NAME}_${VERSION}_${arch}.deb" >> $FILE
 			test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
-			echo -n 'Description: ' >> $FILE
-			if [ -z "$DESCRIPTION" ]; then
-				echo "an autogenerated dummy ${NAME}=${VERSION}/${RELEASE}
- If you find such a package installed on your system,
- YOU did something horribly wrong! They are autogenerated
- und used only by testcases for APT and surf no other propose…" >> $FILE
-			else
-				echo "$DESCRIPTION" >> $FILE
-			fi
+			echo "Description: $DESCRIPTION" >> $FILE
 			echo >> $FILE
 		done
 	done
@@ -568,6 +639,11 @@ insertinstalledpackage() {
 	local DEPENDENCIES="$4"
 	local PRIORITY="${5:-optional}"
 	local STATUS="${6:-install ok installed}"
+	local DESCRIPTION="${7:-"an autogenerated dummy ${NAME}=${VERSION}/installed
+ If you find such a package installed on your system,
+ something went horribly wrong! They are autogenerated
+ und used only by testcases and surf no other propose…"}"
+
 	local FILE='rootdir/var/lib/dpkg/status'
 	local INFO='rootdir/var/lib/dpkg/info'
 	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
@@ -580,11 +656,8 @@ Maintainer: Joe Sixpack <joe@example.org>
 Version: $VERSION" >> $FILE
 		test "$arch" = 'none' || echo "Architecture: $arch" >> $FILE
 		test -z "$DEPENDENCIES" || echo "$DEPENDENCIES" >> $FILE
-		echo "Description: an autogenerated dummy ${NAME}=${VERSION}/installed
- If you find such a package installed on your system,
- YOU did something horribly wrong! They are autogenerated
- und used only by testcases for APT and surf no other propose…
-" >> $FILE
+		echo "Description: $DESCRIPTION" >> $FILE
+		echo >> $FILE
 		if [ "$(dpkg-query -W --showformat='${Multi-Arch}')" = 'same' ]; then
 			echo -n > ${INFO}/${NAME}:${arch}.list
 		else
@@ -611,20 +684,34 @@ buildaptarchivefromfiles() {
 	msginfo "Build APT archive for ${CCMD}$(basename $0)${CINFO} based on prebuild files…"
 	find aptarchive -name 'Packages' -o -name 'Sources' | while read line; do
 		msgninfo "\t${line} file… "
-		cat ${line} | gzip > ${line}.gz
-		cat ${line} | bzip2 > ${line}.bz2
-		cat ${line} | xz --format=lzma > ${line}.lzma
-		cat ${line} | xz > ${line}.xz
-		if [ -n "$1" ]; then
-			touch -d "$1" ${line}.gz ${line}.bz2 ${line}.lzma ${line}.xz
-		fi
+		compressfile "$line" "$1"
 		msgdone "info"
 	done
 	generatereleasefiles "$@"
 }
 
+compressfile() {
+	cat ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf | while read compressor extension command; do
+		if [ "$compressor" = '.' ]; then
+			if [ -n "$2" ]; then
+				touch -d "$2" "$1"
+			fi
+			continue
+		fi
+		cat "$1" | $command > "${1}.${extension}"
+		if [ -n "$2" ]; then
+			touch -d "$2" "${1}.${extension}"
+		fi
+	done
+}
+
 # can be overridden by testcases for their pleasure
-getcodenamefromsuite() { echo -n "$1"; }
+getcodenamefromsuite() {
+	case "$1" in
+	unstable) echo 'sid';;
+	*) echo -n "$1";;
+	esac
+}
 getreleaseversionfromsuite() { true; }
 getlabelfromsuite() { true; }
 
@@ -721,7 +808,7 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
-	local GPG="gpg --batch --yes --no-default-keyring --trustdb-name rootdir/etc/apt/trustdb.gpg"
+	local GPG="gpg --batch --yes"
 	msgninfo "\tSign archive with $SIGNER key… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
@@ -763,42 +850,72 @@ signreleasefiles() {
 	msgdone "info"
 }
 
+webserverconfig() {
+	msgtest "Set webserver config option '${1}' to" "$2"
+	downloadfile "http://localhost:8080/_config/set/${1}/${2}" '/dev/null' >/dev/null
+	local DOWNLOG='download-testfile.log'
+	rm -f "$DOWNLOG"
+	local STATUS="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverconfig.status"
+	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
+	if [ "$(cat "$STATUS")" = '200' ]; then
+		msgpass
+	else
+		cat >&2 "$DOWNLOG"
+		msgfail "Statuscode was $(cat "$STATUS")"
+	fi
+	rm "$STATUS"
+}
+
+rewritesourceslist() {
+	local APTARCHIVE="file://$(readlink -f "${TMPWORKINGDIRECTORY}/aptarchive")"
+	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
+		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:8080/#${1}#" -e "s#http://localhost:4433/#${1}#"
+	done
+}
+
 changetowebserver() {
-	local LOG='/dev/null'
-	if test -x ${BUILDDIRECTORY}/aptwebserver; then
+	if [ "$1" != '--no-rewrite' ]; then
+		rewritesourceslist 'http://localhost:8080/'
+	else
+		shift
+	fi
+	if test -x ${APTWEBSERVERBINDIR}/aptwebserver; then
 		cd aptarchive
-		LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1
+		local LOG="webserver.log"
+		if ! aptwebserver -o aptwebserver::fork=1 "$@" >$LOG 2>&1 ; then
+			cat $LOG
+			false
+		fi
 		local PID="$(cat aptwebserver.pid)"
 		if [ -z "$PID" ]; then
 			msgdie 'Could not fork aptwebserver successfully'
 		fi
 		addtrap "kill $PID;"
 		cd - > /dev/null
-	elif [ $# -gt 0 ]; then
-		msgdie 'Need the aptwebserver when passing arguments for the webserver'
-	elif which weborf > /dev/null; then
-		weborf -xb aptarchive/ >$LOG 2>&1 &
-		addtrap "kill $!;"
-	elif which gatling > /dev/null; then
-		cd aptarchive
-		gatling -p 8080 -F -S >$LOG 2>&1 &
-		addtrap "kill $!;"
-		cd - > /dev/null
-	elif which lighttpd > /dev/null; then
-		echo "server.document-root = \"$(readlink -f ./aptarchive)\"
-server.port = 8080
-server.stat-cache-engine = \"disable\"" > lighttpd.conf
-		lighttpd -t -f lighttpd.conf >/dev/null || msgdie 'Can not change to webserver: our lighttpd config is invalid'
-		lighttpd -D -f lighttpd.conf >$LOG 2>&1 &
-		addtrap "kill $!;"
 	else
 		msgdie 'You have to build aptwerbserver or install a webserver'
 	fi
-	local APTARCHIVE="file://$(readlink -f ./aptarchive)"
-	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
-		sed -i $LIST -e "s#$APTARCHIVE#http://localhost:8080/#"
-	done
-	return 0
+}
+
+changetohttpswebserver() {
+	if ! which stunnel4 >/dev/null; then
+		msgdie 'You need to install stunnel4 for https testcases'
+	fi
+	if [ ! -e "${TMPWORKINGDIRECTORY}/aptarchive/aptwebserver.pid" ]; then
+		changetowebserver --no-rewrite "$@"
+	fi
+	echo "pid = ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid
+cert = ${TESTDIRECTORY}/apt.pem
+output = /dev/null
+
+[https]
+accept = 4433
+connect = 8080
+" > ${TMPWORKINGDIRECTORY}/stunnel.conf
+	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
+	local PID="$(cat ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid)"
+	addtrap 'prefix' "kill ${PID};"
+	rewritesourceslist 'https://localhost:4433/'
 }
 
 changetocdrom() {
@@ -816,8 +933,52 @@ changetocdrom() {
 	find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list' -delete
 }
 
+downloadfile() {
+	PROTO="$(echo "$1" | cut -d':' -f 1)"
+        if [ ! -x "${METHODSDIR}/${PROTO}" ]; then
+            msgwarn "can not find ${METHODSDIR}/${PROTO}"
+            return 1
+        fi
+	local DOWNLOG="${TMPWORKINGDIRECTORY}/download.log"
+	rm -f "$DOWNLOG"
+	touch "$DOWNLOG"
+	{
+		echo "601 Configuration
+Config-Item: Acquire::https::CaInfo=${TESTDIR}/apt.pem
+Config-Item: Debug::Acquire::${PROTO}=1
+
+600 Acquire URI
+URI: $1
+Filename: ${2}
+"
+		# simple worker keeping stdin open until we are done (201) or error (400)
+		# and requesting new URIs on try-agains/redirects in-between
+		{ tail -n 999 -f "$DOWNLOG" & echo "TAILPID: $!"; } | while read f1 f2; do
+			if [ "$f1" = 'TAILPID:' ]; then
+				TAILPID="$f2"
+			elif [ "$f1" = 'New-URI:' ]; then
+				echo "600 Acquire URI
+URI: $f2
+Filename: ${2}
+"
+			elif [ "$f1" = '201' ] || [ "$f1" = '400' ]; then
+				# tail would only die on next read – which never happens
+				test -z "$TAILPID" || kill -s HUP "$TAILPID"
+				break
+			fi
+		done
+	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${METHODSDIR}/${PROTO} 2>&1 | tee "$DOWNLOG"
+	rm "$DOWNLOG"
+	# only if the file exists the download was successful
+	if [ -e "$2" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 checkdiff() {
-	local DIFFTEXT="$($(which diff) -u $* | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
+	local DIFFTEXT="$(command diff -u "$@" | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
 		echo
 		echo "$DIFFTEXT"
@@ -844,24 +1005,31 @@ testempty() {
 }
 
 testequal() {
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local MSG='Test of equality of'
+	if [ "$1" = '--nomsg' ]; then
+		MSG=''
+		shift
+	fi
+
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequal.comparefile"
 	echo "$1" > $COMPAREFILE
 	shift
-	msgtest "Test for equality of" "$*"
+
+	if [ -n "$MSG" ]; then
+		msgtest "$MSG" "$*"
+	fi
 	$* 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
 }
 
 testequalor2() {
-	local COMPAREFILE1=$(mktemp)
-	local COMPAREFILE2=$(mktemp)
-	local COMPAREAGAINST=$(mktemp)
-	addtrap "rm $COMPAREFILE1 $COMPAREFILE2 $COMPAREAGAINST;"
+	local COMPAREFILE1="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile1"
+	local COMPAREFILE2="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.comparefile2"
+	local COMPAREAGAINST="${TMPWORKINGDIRECTORY}/rootdir/tmp/testequalor2.compareagainst"
 	echo "$1" > $COMPAREFILE1
 	echo "$2" > $COMPAREFILE2
 	shift 2
 	msgtest "Test for equality OR of" "$*"
-	$* >$COMPAREAGAINST 2>&1
+	$* >$COMPAREAGAINST 2>&1 || true
 	(checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
 		checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
 		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(checkdiff $COMPAREFILE1 $COMPAREAGAINST)" \
@@ -882,8 +1050,7 @@ N: Can't select versions from package '$1' as it is purely virtual"
 	msgtest "Test for virtual packages" "apt-cache show $PACKAGE"
 	VIRTUAL="${VIRTUAL}
 N: No packages found"
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testshowvirtual.comparefile"
 	local ARCH="$(getarchitecture 'native')"
 	echo "$VIRTUAL" | sed -e "s/:$ARCH//" -e 's/:all//' > $COMPAREFILE
 	aptcache show -q=0 $PACKAGE 2>&1 | checkdiff $COMPAREFILE - && msgpass || msgfail
@@ -891,7 +1058,7 @@ N: No packages found"
 
 testnopackage() {
 	msgtest "Test for non-existent packages" "apt-cache show $*"
-	local SHOWPKG="$(aptcache show $* 2>&1 | grep '^Package: ')"
+	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
 		echo
 		echo "$SHOWPKG"
@@ -903,10 +1070,10 @@ testnopackage() {
 
 testdpkginstalled() {
 	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* 2>/dev/null | grep '^i' | wc -l)"
+	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != $# ]; then
 		echo $PKGS
-		dpkg -l $* | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]'
 		msgfail
 		return 1
 	fi
@@ -915,10 +1082,10 @@ testdpkginstalled() {
 
 testdpkgnotinstalled() {
 	msgtest "Test for correctly not-installed package(s) with" "dpkg -l $*"
-	local PKGS="$(dpkg -l $* 2> /dev/null | grep '^i' | wc -l)"
+	local PKGS="$(dpkg -l "$@" 2> /dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != 0 ]; then
 		echo
-		dpkg -l $* | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]'
 		msgfail
 		return 1
 	fi
@@ -926,8 +1093,7 @@ testdpkgnotinstalled() {
 }
 
 testmarkedauto() {
-	local COMPAREFILE=$(mktemp)
-	addtrap "rm $COMPAREFILE;"
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testmarkedauto.comparefile"
 	if [ -n "$1" ]; then
 		msgtest 'Test for correctly marked as auto-installed' "$*"
 		while [ -n "$1" ]; do echo "$1"; shift; done | sort > $COMPAREFILE
@@ -944,8 +1110,7 @@ testsuccess() {
 	else
 		msgtest 'Test for successful execution of' "$*"
 	fi
-	local OUTPUT=$(mktemp)
-	addtrap "rm $OUTPUT;"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
 	if $@ >${OUTPUT} 2>&1; then
 		msgpass
 	else
@@ -959,10 +1124,9 @@ testfailure() {
 	if [ "$1" = '--nomsg' ]; then
 		shift
 	else
-		msgtest 'Test for failure in  execution of' "$*"
+		msgtest 'Test for failure in execution of' "$*"
 	fi
-	local OUTPUT=$(mktemp)
-	addtrap "rm $OUTPUT;"
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if $@ >${OUTPUT} 2>&1; then
 		echo
 		cat $OUTPUT

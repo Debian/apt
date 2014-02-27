@@ -8,7 +8,7 @@
    This program will parse a config file and then do something with it.
    
    Commands:
-     shell - Shell mode. After this a series of word pairs should occure.
+     shell - Shell mode. After this a series of word pairs should occur.
              The first is the environment var to set and the second is
              the key to set it from. Use like: 
  eval `apt-config shell QMode apt::QMode`

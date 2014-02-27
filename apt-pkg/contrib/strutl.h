@@ -17,7 +17,7 @@
 #define STRUTL_H
 
 
-
+#include <limits>
 #include <stdlib.h>
 #include <string>
 #include <cstring>
@@ -32,6 +32,14 @@ using std::string;
 using std::vector;
 using std::ostream;
 #endif
+
+namespace APT {
+   namespace String {
+      std::string Strip(const std::string &s);
+      bool Endswith(const std::string &s, const std::string &ending);
+   };
+};
+
 
 bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
 char *_strstrip(char *String);
@@ -62,9 +70,32 @@ bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0)
 bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base = 0);
 bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len);
 bool Hex2Num(const std::string &Str,unsigned char *Num,unsigned int Length);
+
+// input changing string split
 bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
+
+// split a given string by a char
 std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) __attrib_const;
+
+/* \brief Return a vector of strings from string "input" where "sep"
+ * is used as the delimiter string.
+ *
+ * \param input The input string.
+ *
+ * \param sep The seperator to use.
+ *
+ * \param maxsplit (optional) The maximum amount of splitting that
+ * should be done .
+ * 
+ * The optional "maxsplit" argument can be used to limit the splitting,
+ * if used the string is only split on maxsplit places and the last
+ * item in the vector contains the remainder string.
+ */
+std::vector<std::string> StringSplit(std::string const &input, 
+                                     std::string const &sep, 
+                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) __attrib_const;
+
 void ioprintf(std::ostream &out,const char *format,...) __like_printf(2);
 void strprintf(std::string &out,const char *format,...) __like_printf(2);
 char *safe_snprintf(char *Buffer,char *End,const char *Format,...) __like_printf(3);

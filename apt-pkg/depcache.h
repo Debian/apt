@@ -15,7 +15,7 @@
    
    This structure is important to support the readonly status of the cache 
    file. When the data is saved the cache will be refereshed from our 
-   internal rep and written to disk. Then the actual persistant data 
+   internal rep and written to disk. Then the actual persistent data
    files will be put on the disk.
 
    Each dependency is compared against 3 target versions to produce to
@@ -128,7 +128,7 @@ class pkgDepCache : protected pkgCache::Namespace
    enum InternalFlags {AutoKept = (1 << 0), Purge = (1 << 1), ReInstall = (1 << 2), Protected = (1 << 3)};
       
    enum VersionTypes {NowVersion, InstallVersion, CandidateVersion};
-   enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2};
+   enum ModeList {ModeDelete = 0, ModeKeep = 1, ModeInstall = 2, ModeGarbage = 3};
 
    /** \brief Represents an active action group.
     *

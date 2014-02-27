@@ -164,7 +164,7 @@ bool pkgTagFile::Fill()
       unsigned long long const dataSize = d->Size - ((d->End - d->Buffer) + 1);
       if (d->Fd.Read(d->End, dataSize, &Actual) == false)
 	 return false;
-      if (Actual != dataSize || d->Fd.Eof() == true)
+      if (Actual != dataSize)
 	 d->Done = true;
       d->End += Actual;
    }
@@ -207,7 +207,11 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
       unsigned long long Dist = Offset - d->iOffset;
       d->Start += Dist;
       d->iOffset += Dist;
-      return Step(Tag);
+      // if we have seen the end, don't ask for more
+      if (d->Done == true)
+	 return Tag.Scan(d->Start, d->End - d->Start);
+      else
+	 return Step(Tag);
    }
 
    // Reposition and reload..
@@ -233,6 +237,16 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
    return true;
 }
 									/*}}}*/
+// pkgTagSection::pkgTagSection - Constructor				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgTagSection::pkgTagSection()
+   : Section(0), TagCount(0), d(NULL), Stop(0)
+{
+   memset(&Indexes, 0, sizeof(Indexes));
+   memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
+}
+									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
 // ---------------------------------------------------------------------
 /* This looks for the first double new line in the data stream.
@@ -249,7 +263,12 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
    TagCount = 0;
    while (TagCount+1 < sizeof(Indexes)/sizeof(Indexes[0]) && Stop < End)
    {
-       TrimRecord(true,End);
+      TrimRecord(true,End);
+
+      // this can happen when TrimRecord trims away the entire Record
+      // (e.g. because it just contains comments)
+      if(Stop == End)
+         return true;
 
       // Start a new index and add it to the hash
       if (isspace(Stop[0]) == 0)
@@ -263,7 +282,9 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       if (Stop == 0)
 	 return false;
 
-      for (; Stop+1 < End && Stop[1] == '\r'; Stop++);
+      for (; Stop+1 < End && Stop[1] == '\r'; Stop++)
+         /* nothing */
+         ;
 
       // Double newline marks the end of the record
       if (Stop+1 < End && Stop[1] == '\n')
@@ -550,52 +571,54 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
    }
    
    // Write all all of the tags, in order.
-   for (unsigned int I = 0; Order[I] != 0; I++)
+   if (Order != NULL)
    {
-      bool Rewritten = false;
-      
-      // See if this is a field that needs to be rewritten
-      for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
+      for (unsigned int I = 0; Order[I] != 0; I++)
       {
-	 if (strcasecmp(Rewrite[J].Tag,Order[I]) == 0)
-	 {
-	    Visited[J] |= 2;
-	    if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
-	    {
-	       if (isspace(Rewrite[J].Rewrite[0]))
-		  fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-	       else
-		  fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
-	    }
+         bool Rewritten = false;
+         
+         // See if this is a field that needs to be rewritten
+         for (unsigned int J = 0; Rewrite != 0 && Rewrite[J].Tag != 0; J++)
+         {
+            if (strcasecmp(Rewrite[J].Tag,Order[I]) == 0)
+            {
+               Visited[J] |= 2;
+               if (Rewrite[J].Rewrite != 0 && Rewrite[J].Rewrite[0] != 0)
+               {
+                  if (isspace(Rewrite[J].Rewrite[0]))
+                     fprintf(Output,"%s:%s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
+                  else
+                     fprintf(Output,"%s: %s\n",Rewrite[J].NewTag,Rewrite[J].Rewrite);
+               }
+               Rewritten = true;
+               break;
+            }
+         }
 	    
-	    Rewritten = true;
-	    break;
-	 }
-      }      
-	    
-      // See if it is in the fragment
-      unsigned Pos;
-      if (Tags.Find(Order[I],Pos) == false)
-	 continue;
-      Visited[Pos] |= 1;
+         // See if it is in the fragment
+         unsigned Pos;
+         if (Tags.Find(Order[I],Pos) == false)
+            continue;
+         Visited[Pos] |= 1;
 
-      if (Rewritten == true)
-	 continue;
+         if (Rewritten == true)
+            continue;
       
-      /* Write out this element, taking a moment to rewrite the tag
-         in case of changes of case. */
-      const char *Start;
-      const char *Stop;
-      Tags.Get(Start,Stop,Pos);
+         /* Write out this element, taking a moment to rewrite the tag
+            in case of changes of case. */
+         const char *Start;
+         const char *Stop;
+         Tags.Get(Start,Stop,Pos);
       
-      if (fputs(Order[I],Output) < 0)
-	 return _error->Errno("fputs","IO Error to output");
-      Start += strlen(Order[I]);
-      if (fwrite(Start,Stop - Start,1,Output) != 1)
-	 return _error->Errno("fwrite","IO Error to output");
-      if (Stop[-1] != '\n')
-	 fprintf(Output,"\n");
-   }   
+         if (fputs(Order[I],Output) < 0)
+            return _error->Errno("fputs","IO Error to output");
+         Start += strlen(Order[I]);
+         if (fwrite(Start,Stop - Start,1,Output) != 1)
+            return _error->Errno("fwrite","IO Error to output");
+         if (Stop[-1] != '\n')
+            fprintf(Output,"\n");
+      }
+   }
 
    // Now write all the old tags that were missed.
    for (unsigned int I = 0; I != Tags.Count(); I++)

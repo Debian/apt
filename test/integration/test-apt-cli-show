@@ -1,0 +1,38 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+if [ ! -x ${BUILDDIRECTORY}/apt ]; then
+    msgmsg "No ${BUILDDIRECTORY}/apt"
+    msgskip 
+    exit 0
+fi
+
+DESCR='Some description 
+ That has multiple lines'
+insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
+insertinstalledpackage 'foo' 'all' '1.0'
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+# note that we do not display Description-md5 with the "apt" cmd
+# and also show some additional fields that are calculated
+testequal "Package: foo
+Priority: optional
+Section: other
+Installed-Size: 43.0 kB
+Maintainer: Joe Sixpack <joe@example.org>
+Version: 1.0
+Download-Size: unknown
+APT-Manual-Installed: yes
+APT-Sources: file:$APTARCHIVE/ unstable/main i386 Packages
+Description: Some description 
+ That has multiple lines
+" apt show foo

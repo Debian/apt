@@ -27,9 +27,9 @@
 #include <vector>
 									/*}}}*/
 namespace APT {
-// getCompressionTypes - Return Vector of usbale compressiontypes	/*{{{*/
+// getCompressionTypes - Return Vector of usable compressiontypes	/*{{{*/
 // ---------------------------------------------------------------------
-/* return a vector of compression types in the prefered order. */
+/* return a vector of compression types in the preferred order. */
 std::vector<std::string>
 const Configuration::getCompressionTypes(bool const &Cached) {
 	static std::vector<std::string> types;
@@ -109,7 +109,7 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 									/*}}}*/
 // GetLanguages - Return Vector of Language Codes			/*{{{*/
 // ---------------------------------------------------------------------
-/* return a vector of language codes in the prefered order.
+/* return a vector of language codes in the preferred order.
    the special word "environment" will be replaced with the long and the short
    code of the local settings and it will be insured that this will not add
    duplicates. So in an german local the setting "environment, de_DE, en, de"
@@ -141,7 +141,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 	// so they will be all included in the Cache.
 	std::vector<string> builtin;
 	DIR *D = opendir(_config->FindDir("Dir::State::lists").c_str());
-	if (D != 0) {
+	if (D != NULL) {
 		builtin.push_back("none");
 		for (struct dirent *Ent = readdir(D); Ent != 0; Ent = readdir(D)) {
 			string const name = SubstVar(Ent->d_name, "%5f", "_");
@@ -166,8 +166,8 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 				continue;
 			builtin.push_back(c);
 		}
+		closedir(D);
 	}
-	closedir(D);
 
 	// FIXME: Remove support for the old APT::Acquire::Translation
 	// it was undocumented and so it should be not very widthly used
@@ -330,7 +330,7 @@ bool const Configuration::checkLanguage(std::string Lang, bool const All) {
 	return (std::find(langs.begin(), langs.end(), Lang) != langs.end());
 }
 									/*}}}*/
-// getArchitectures - Return Vector of prefered Architectures		/*{{{*/
+// getArchitectures - Return Vector of preferred Architectures		/*{{{*/
 std::vector<std::string> const Configuration::getArchitectures(bool const &Cached) {
 	using std::string;
 
@@ -392,7 +392,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 			dup2(nullfd, STDIN_FILENO);
 			dup2(external[1], STDOUT_FILENO);
 			dup2(nullfd, STDERR_FILENO);
-			if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0)
+			if (chrootDir != "/" && chroot(chrootDir.c_str()) != 0 && chdir("/") != 0)
 				_error->WarningE("getArchitecture", "Couldn't chroot into %s for dpkg --print-foreign-architectures", chrootDir.c_str());
 			execvp(Args[0], (char**) &Args[0]);
 			_error->WarningE("getArchitecture", "Can't detect foreign architectures supported by dpkg!");
@@ -453,7 +453,7 @@ void Configuration::setDefaultConfigurationForCompressors() {
 	_config->CndSet("Dir::Bin::bzip2", "/bin/bzip2");
 	_config->CndSet("Dir::Bin::xz", "/usr/bin/xz");
 	if (FileExists(_config->FindFile("Dir::Bin::xz")) == true) {
-		_config->Clear("Dir::Bin::lzma");
+		_config->Set("Dir::Bin::lzma", _config->FindFile("Dir::Bin::xz"));
 		_config->Set("APT::Compressor::lzma::Binary", "xz");
 		if (_config->Exists("APT::Compressor::lzma::CompressArg") == false) {
 			_config->Set("APT::Compressor::lzma::CompressArg::", "--format=lzma");

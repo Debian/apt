@@ -3,7 +3,7 @@
 // $Id: ftp.cc,v 1.31.2.1 2004/01/16 18:58:50 mdz Exp $
 /* ######################################################################
 
-   FTP Aquire Method - This is the FTP aquire method for APT.
+   FTP Acquire Method - This is the FTP acquire method for APT.
 
    This is a very simple implementation that does not try to optimize
    at all. Commands are sent syncronously with the FTP server (as the
@@ -26,7 +26,6 @@
 
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <utime.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
@@ -947,20 +946,22 @@ FtpMethod::FtpMethod() : pkgAcqMethod("1.0",SendConfig)
 									/*}}}*/
 // FtpMethod::SigTerm - Handle a fatal signal				/*{{{*/
 // ---------------------------------------------------------------------
-/* This closes and timestamps the open file. This is neccessary to get 
+/* This closes and timestamps the open file. This is necessary to get
    resume behavoir on user abort */
 void FtpMethod::SigTerm(int)
 {
    if (FailFd == -1)
       _exit(100);
-   close(FailFd);
-   
+
    // Timestamp
-   struct utimbuf UBuf;
-   UBuf.actime = FailTime;
-   UBuf.modtime = FailTime;
-   utime(FailFile.c_str(),&UBuf);
-   
+   struct timeval times[2];
+   times[0].tv_sec = FailTime;
+   times[1].tv_sec = FailTime;
+   times[0].tv_usec = times[1].tv_usec = 0;
+   utimes(FailFile.c_str(), times);
+
+   close(FailFd);
+
    _exit(100);
 }
 									/*}}}*/
@@ -1059,13 +1060,14 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing) == false)
       {
 	 Fd.Close();
-	 
+
 	 // Timestamp
-	 struct utimbuf UBuf;
-	 UBuf.actime = FailTime;
-	 UBuf.modtime = FailTime;
-	 utime(FailFile.c_str(),&UBuf);
-	 
+	 struct timeval times[2];
+	 times[0].tv_sec = FailTime;
+	 times[1].tv_sec = FailTime;
+	 times[0].tv_usec = times[1].tv_usec = 0;
+	 utimes(FailFile.c_str(), times);
+
 	 // If the file is missing we hard fail and delete the destfile
 	 // otherwise transient fail
 	 if (Missing == true) {
@@ -1077,20 +1079,21 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       }
 
       Res.Size = Fd.Size();
+
+      // Timestamp
+      struct timeval times[2];
+      times[0].tv_sec = FailTime;
+      times[1].tv_sec = FailTime;
+      times[0].tv_usec = times[1].tv_usec = 0;
+      utimes(Fd.Name().c_str(), times);
+      FailFd = -1;
    }
-   
+
    Res.LastModified = FailTime;
    Res.TakeHashes(Hash);
-   
-   // Timestamp
-   struct utimbuf UBuf;
-   UBuf.actime = FailTime;
-   UBuf.modtime = FailTime;
-   utime(Queue->DestFile.c_str(),&UBuf);
-   FailFd = -1;
 
    URIDone(Res);
-   
+
    return true;
 }
 									/*}}}*/

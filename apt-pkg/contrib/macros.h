@@ -44,7 +44,7 @@
 #define _boundv(a,b,c) b = _bound(a,b,c)
 #define ABS(a) (((a) < (0)) ?-(a) : (a))
 
-/* Usefull count macro, use on an array of things and it will return the
+/* Useful count macro, use on an array of things and it will return the
    number of items in the array */
 #define _count(a) (sizeof(a)/sizeof(a[0]))
 

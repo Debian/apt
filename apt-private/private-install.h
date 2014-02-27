@@ -14,6 +14,9 @@
 
 bool DoInstall(CommandLine &Cmd);
 
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
+                                        std::map<unsigned short, APT::VersionSet> &verset);
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache);
 
 bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
                         bool Safety = true);
@@ -92,6 +95,9 @@ struct TryToInstall {
 	 Cache->GetDepCache()->SetCandidateVersion(s->first);
 
       bool Success = true;
+      // the Changed list contains:
+      //   first: "new version" 
+      //   second: "what-caused the change" 
       std::list<std::pair<pkgCache::VerIterator, pkgCache::VerIterator> > Changed;
       for (std::list<std::pair<pkgCache::VerIterator, std::string> >::const_iterator s = start.begin();
 		s != start.end(); ++s)

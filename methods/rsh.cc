@@ -20,7 +20,6 @@
 
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <utime.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
@@ -256,7 +255,7 @@ bool RSHConn::WriteMsg(std::string &Text,bool Sync,const char *Fmt,...)
 									/*}}}*/
 // RSHConn::Size - Return the size of the file				/*{{{*/
 // ---------------------------------------------------------------------
-/* Right now for successfull transfer the file size must be known in 
+/* Right now for successful transfer the file size must be known in
    advance. */
 bool RSHConn::Size(const char *Path,unsigned long long &Size)
 {
@@ -395,13 +394,14 @@ void RSHMethod::SigTerm(int sig)
 {
    if (FailFd == -1)
       _exit(100);
-   close(FailFd);
 
-   // Timestamp
-   struct utimbuf UBuf;
-   UBuf.actime = FailTime;
-   UBuf.modtime = FailTime;
-   utime(FailFile.c_str(),&UBuf);
+   // Transfer the modification times
+   struct timeval times[2];
+   times[0].tv_sec = FailTime;
+   times[1].tv_sec = FailTime;
+   times[0].tv_usec = times[1].tv_usec = 0;
+   utimes(FailFile.c_str(), times);
+   close(FailFd);
 
    _exit(100);
 }
@@ -488,10 +488,11 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 	 Fd.Close();
 
 	 // Timestamp
-	 struct utimbuf UBuf;
-	 UBuf.actime = FailTime;
-	 UBuf.modtime = FailTime;
-	 utime(FailFile.c_str(),&UBuf);
+	 struct timeval times[2];
+	 times[0].tv_sec = FailTime;
+	 times[1].tv_sec = FailTime;
+	 times[0].tv_usec = times[1].tv_usec = 0;
+	 utimes(FailFile.c_str(), times);
 
 	 // If the file is missing we hard fail otherwise transient fail
 	 if (Missing == true)
@@ -501,17 +502,16 @@ bool RSHMethod::Fetch(FetchItem *Itm)
       }
 
       Res.Size = Fd.Size();
+      struct timeval times[2];
+      times[0].tv_sec = FailTime;
+      times[1].tv_sec = FailTime;
+      times[0].tv_usec = times[1].tv_usec = 0;
+      utimes(Fd.Name().c_str(), times);
+      FailFd = -1;
    }
 
    Res.LastModified = FailTime;
    Res.TakeHashes(Hash);
-
-   // Timestamp
-   struct utimbuf UBuf;
-   UBuf.actime = FailTime;
-   UBuf.modtime = FailTime;
-   utime(Queue->DestFile.c_str(),&UBuf);
-   FailFd = -1;
 
    URIDone(Res);
 

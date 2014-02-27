@@ -36,7 +36,30 @@
 
 using namespace std;
 									/*}}}*/
+// Strip - Remove white space from the front and back of a string       /*{{{*/
+// ---------------------------------------------------------------------
+namespace APT {
+   namespace String {
+std::string Strip(const std::string &s)
+{
+   size_t start = s.find_first_not_of(" \t\n");
+   // only whitespace
+   if (start == string::npos)
+      return "";
+   size_t end = s.find_last_not_of(" \t\n");
+   return s.substr(start, end-start+1);
+}
 
+bool Endswith(const std::string &s, const std::string &end)
+{
+   if (end.size() > s.size())
+      return false;
+   return (s.substr(s.size() - end.size(), s.size()) == end);
+}
+
+}
+}
+									/*}}}*/
 // UTF8ToCodeset - Convert some UTF-8 string for some codeset   	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is handy to use before display some information for enduser  */
@@ -403,7 +426,7 @@ string TimeToStr(unsigned long Sec)
 									/*}}}*/
 // SubstVar - Substitute a string for another string			/*{{{*/
 // ---------------------------------------------------------------------
-/* This replaces all occurances of Subst with Contents in Str. */
+/* This replaces all occurrences of Subst with Contents in Str. */
 string SubstVar(const string &Str,const string &Subst,const string &Contents)
 {
    string::size_type Pos = 0;
@@ -903,7 +926,7 @@ bool FTPMDTMStrToTime(const char* const str,time_t &time)
 									/*}}}*/
 // StrToTime - Converts a string into a time_t				/*{{{*/
 // ---------------------------------------------------------------------
-/* This handles all 3 populare time formats including RFC 1123, RFC 1036
+/* This handles all 3 popular time formats including RFC 1123, RFC 1036
    and the C library asctime format. It requires the GNU library function
    'timegm' to convert a struct tm in UTC to a time_t. For some bizzar
    reason the C library does not provide any such function :< This also
@@ -943,6 +966,8 @@ bool StrToTime(const string &Val,time_t &Result)
    Tm.tm_isdst = 0;
    if (Month[0] != 0)
       Tm.tm_mon = MonthConv(Month);
+   else
+      Tm.tm_mon = 0; // we don't have a month, so pick something
    Tm.tm_year -= 1900;
    
    // Convert to local time and then to GMT
@@ -1116,6 +1141,37 @@ vector<string> VectorizeString(string const &haystack, char const &split)
    return exploded;
 }
 									/*}}}*/
+// StringSplit - split a string into a string vector by token		/*{{{*/
+// ---------------------------------------------------------------------
+/* See header for details.
+ */
+vector<string> StringSplit(std::string const &s, std::string const &sep,
+                           unsigned int maxsplit)
+{
+   vector<string> split;
+   size_t start, pos;
+
+   // no seperator given, this is bogus
+   if(sep.size() == 0)
+      return split;
+
+   start = pos = 0;
+   while (pos != string::npos)
+   {
+      pos = s.find(sep, start);
+      split.push_back(s.substr(start, pos-start));
+      
+      // if maxsplit is reached, the remaining string is the last item
+      if(split.size() >= maxsplit)
+      {
+         split[split.size()-1] = s.substr(start);
+         break;
+      }
+      start = pos+sep.size();
+   }
+   return split;
+}
+									/*}}}*/
 // RegexChoice - Simple regex list/list matcher				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -1257,7 +1313,7 @@ string StripEpoch(const string &VerStr)
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
 /* This little function is the most called method we have and tries
-   therefore to do the absolut minimum - and is noteable faster than
+   therefore to do the absolut minimum - and is notable faster than
    standard tolower/toupper and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
 int tolower_ascii(int const c)
@@ -1268,9 +1324,9 @@ int tolower_ascii(int const c)
 }
 									/*}}}*/
 
-// CheckDomainList - See if Host is in a , seperate list		/*{{{*/
+// CheckDomainList - See if Host is in a , separate list		/*{{{*/
 // ---------------------------------------------------------------------
-/* The domain list is a comma seperate list of domains that are suffix
+/* The domain list is a comma separate list of domains that are suffix
    matched against the argument */
 bool CheckDomainList(const string &Host,const string &List)
 {

@@ -101,6 +101,11 @@ public:
 				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
+        virtual void showFnmatchSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) {
+		ioprintf(out, _("Note, selecting '%s' for glob '%s'\n"),
+				Pkg.FullName(true).c_str(), pattern.c_str());
+		explicitlyNamed = false;
+	}
 	virtual void showRegExSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) {
 		ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
 				Pkg.FullName(true).c_str(), pattern.c_str());

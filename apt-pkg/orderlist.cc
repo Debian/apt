@@ -566,10 +566,10 @@ bool pkgOrderList::VisitProvides(DepIterator D,bool Critical)
 // ---------------------------------------------------------------------
 /* This is the core ordering routine. It calls the set dependency
    consideration functions which then potentialy call this again. Finite
-   depth is achived through the colouring mechinism. */
+   depth is achieved through the colouring mechinism. */
 bool pkgOrderList::VisitNode(PkgIterator Pkg, char const* from)
 {
-   // Looping or irrelevent.
+   // Looping or irrelevant.
    // This should probably trancend not installed packages
    if (Pkg.end() == true || IsFlag(Pkg,Added) == true || 
        IsFlag(Pkg,AddPending) == true || IsFlag(Pkg,InList) == false)
@@ -824,7 +824,7 @@ bool pkgOrderList::DepUnPackPre(DepIterator D)
    The forwards depends loop is designed to bring the packages dependents
    close to the package. This helps reduce deconfigure time. 
    
-   Loops are irrelevent to this. */
+   Loops are irrelevant to this. */
 bool pkgOrderList::DepUnPackDep(DepIterator D)
 {
    
@@ -840,7 +840,7 @@ bool pkgOrderList::DepUnPackDep(DepIterator D)
 		D.ParentPkg().CurrentVer() != D.ParentVer())
 	       continue;
 
-	    // The dep will not break so it is irrelevent.
+	    // The dep will not break so it is irrelevant.
 	    if (CheckDep(D) == true)
 	       continue;
 	    

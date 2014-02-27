@@ -19,6 +19,7 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/upgrade.h>
 
 #include <unistd.h>
 #include <cstdio>
@@ -159,16 +160,16 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	if (upgrade == true) {
 		if (pkgAllUpgrade(CacheFile) == false) {
-			EDSP::WriteError("ERR_UNSOLVABLE_UPGRADE", "An upgrade error occured", output);
+			EDSP::WriteError("ERR_UNSOLVABLE_UPGRADE", "An upgrade error occurred", output);
 			return 0;
 		}
 	} else if (distUpgrade == true) {
 		if (pkgDistUpgrade(CacheFile) == false) {
-			EDSP::WriteError("ERR_UNSOLVABLE_DIST_UPGRADE", "An dist-upgrade error occured", output);
+			EDSP::WriteError("ERR_UNSOLVABLE_DIST_UPGRADE", "An dist-upgrade error occurred", output);
 			return 0;
 		}
 	} else if (Fix.Resolve() == false) {
-		EDSP::WriteError("ERR_UNSOLVABLE", "An error occured", output);
+		EDSP::WriteError("ERR_UNSOLVABLE", "An error occurred", output);
 		return 0;
 	}
 

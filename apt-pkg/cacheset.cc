@@ -73,6 +73,8 @@ bool PackageContainerInterface::FromTask(PackageContainerInterface * const pci, 
 		const char *start, *end;
 		parser.GetRec(start,end);
 		unsigned int const length = end - start;
+		if (unlikely(length == 0))
+		   continue;
 		char buf[length];
 		strncpy(buf, start, length);
 		buf[length-1] = '\0';
@@ -202,12 +204,20 @@ PackageContainerInterface::FromFnmatch(PackageContainerInterface * const pci,
 		}
 
 		pci->insert(Pkg);
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+		helper.showFnmatchSelection(Pkg, pattern);
+#else
 		helper.showRegExSelection(Pkg, pattern);
+#endif
 		found = true;
 	}
 
 	if (found == false) {
-		helper.canNotFindRegEx(pci, Cache, pattern);
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+		helper.canNotFindFnmatch(pci, Cache, pattern);
+#else
+                helper.canNotFindRegEx(pci, Cache, pattern);
+#endif
 		pci->setConstructor(UNKNOWN);
 		return false;
 	}
@@ -302,7 +312,9 @@ bool PackageContainerInterface::FromString(PackageContainerInterface * const pci
 
 	if (FromGroup(pci, Cache, str, helper) == false &&
 		 FromTask(pci, Cache, str, helper) == false &&
-		 FromFnmatch(pci, Cache, str, helper) == false &&
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+		 FromFnmatch(pci, Cache, str, helper) == false)
+#endif
 		 FromRegEx(pci, Cache, str, helper) == false)
 	{
 		helper.canNotFindPackage(pci, Cache, str);
@@ -586,7 +598,13 @@ void CacheSetHelper::canNotFindRegEx(PackageContainerInterface * const pci, pkgC
 	if (ShowError == true)
 		_error->Insert(ErrorType, _("Couldn't find any package by regex '%s'"), pattern.c_str());
 }
-									/*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+// canNotFindFnmatch - handle the case no package is found by a fnmatch	/*{{{*/
+void CacheSetHelper::canNotFindFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern) {
+	if (ShowError == true)
+		_error->Insert(ErrorType, _("Couldn't find any package by glob '%s'"), pattern.c_str());
+}
+#endif									/*}}}*/
 // canNotFindPackage - handle the case no package is found from a string/*{{{*/
 void CacheSetHelper::canNotFindPackage(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str) {
 }
@@ -646,6 +664,13 @@ void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &pkg,
 					std::string const &pattern) {
 }
 									/*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+// showFnmatchSelection							/*{{{*/
+void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &pkg,
+                                          std::string const &pattern) {
+}
+									/*}}}*/
+#endif
 // showSelectedVersion							/*{{{*/
 void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &Pkg,
 					 pkgCache::VerIterator const Ver,

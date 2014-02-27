@@ -24,10 +24,11 @@ extern unsigned int ScreenWidth;
 
 bool InitOutput();
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records, 
-                       pkgCache::VerIterator V, std::ostream &out);
+                       pkgCache::VerIterator V, std::ostream &out,
+                       bool include_summary=true);
 
 
-
+// helper to describe global state
 bool ShowList(std::ostream &out, std::string Title, std::string List,
               std::string VersionsList);
 void ShowBroken(std::ostream &out,CacheFile &Cache,bool Now);

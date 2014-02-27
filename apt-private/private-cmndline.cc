@@ -62,8 +62,12 @@ bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char const * con
    {
       addArg(0, "all-names", "APT::Cache::AllNames", 0);
    }
+   else if (CmdMatches("unmet"))
+   {
+      addArg('i', "important", "APT::Cache::Important", 0);
+   }
    else if (CmdMatches("gencaches", "showsrc", "showpkg", "stats", "dump",
-	    "dumpavail", "unmet", "showauto", "policy", "madison"))
+	    "dumpavail", "showauto", "policy", "madison"))
       ;
    else
       return false;
@@ -114,9 +118,9 @@ bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char const * co
 bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
-	    "deselect-upgrade", "autoremove"))
+	    "dselect-upgrade", "autoremove"))
    {
-      addArg(0, "dpkg-progress", "DpkgPM::Progress", 0);
+      addArg(0, "show-progress", "DpkgPM::Progress", 0);
       addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
       addArg(0, "purge", "APT::Get::Purge", 0);
       addArg('V',"verbose-versions","APT::Get::Show-Versions",0);
@@ -125,7 +129,8 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
       if (CmdMatches("upgrade"))
       {
-	 addArg(0, "allow-new", "APT::Get::UpgradeAllowNew", 0);
+         addArg(0, "new-pkgs", "APT::Get::Upgrade-Allow-New", 
+                CommandLine::Boolean);
       }
    }
    else if (CmdMatches("update"))
@@ -144,7 +149,11 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
    else if (CmdMatches("build-dep"))
    {
       addArg('a', "host-architecture", "APT::Get::Host-Architecture", CommandLine::HasArg);
+      addArg(0, "purge", "APT::Get::Purge", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
+      // this has no effect *but* sbuild is using it (see LP: #1255806)
+      // once sbuild is fixed, this option can be removed
+      addArg('f', "fix-broken", "APT::Get::Fix-Broken", 0);
    }
    else if (CmdMatches("clean", "autoclean", "check", "download", "changelog") ||
 	    CmdMatches("markauto", "unmarkauto")) // deprecated commands
@@ -217,7 +226,13 @@ bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * const Cm
    {
       addArg(0,"installed","APT::Cmd::Installed",0);
       addArg(0,"upgradable","APT::Cmd::Upgradable",0);
-      addArg('a', "all-versions", "APT::Cmd::AllVersions", 0);
+      addArg(0,"manual-installed","APT::Cmd::Manual-Installed",0);
+      addArg('v', "verbose", "APT::Cmd::List-Include-Summary", 0);
+      addArg('a', "all-versions", "APT::Cmd::All-Versions", 0);
+   }
+   else if (CmdMatches("show"))
+   {
+      addArg('a', "all-versions", "APT::Cache::AllVersions", 0);
    }
    else if (addArgumentsAPTGet(Args, Cmd) || addArgumentsAPTCache(Args, Cmd))
    {

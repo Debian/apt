@@ -233,7 +233,7 @@ void GenContents::Add(const char *Dir,const char *Package)
    
    // The final component if it does not have a trailing /
    if (I - Start >= 1)
-      Root = Grab(Root,Start,Package);
+      Grab(Root,Start,Package);
 }
 									/*}}}*/
 // GenContents::WriteSpace - Write a given number of white space chars	/*{{{*/

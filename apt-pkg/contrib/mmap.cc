@@ -352,6 +352,12 @@ unsigned long DynamicMMap::RawAllocate(unsigned long long Size,unsigned long Aln
    size in the file. */
 unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
 {
+   if (unlikely(ItemSize == 0))
+   {
+      _error->Fatal("Can't allocate an item of size zero");
+      return 0;
+   }
+
    // Look for a matching pool entry
    Pool *I;
    Pool *Empty = 0;
@@ -412,7 +418,7 @@ unsigned long DynamicMMap::WriteString(const char *String,
 
    unsigned long const Result = RawAllocate(Len+1,0);
 
-   if (Result == 0 && _error->PendingError())
+   if (Base == NULL || (Result == 0 && _error->PendingError()))
       return 0;
 
    memcpy((char *)Base + Result,String,Len);

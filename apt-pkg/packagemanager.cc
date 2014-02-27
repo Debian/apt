@@ -26,7 +26,6 @@
 #include <apt-pkg/sptr.h>
 
 #include <iostream>
-#include <fcntl.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -216,7 +215,7 @@ bool pkgPackageManager::CreateOrderList()
    return true;
 }
 									/*}}}*/
-// PM::DepAlwaysTrue - Returns true if this dep is irrelevent		/*{{{*/
+// PM::DepAlwaysTrue - Returns true if this dep is irrelevant		/*{{{*/
 // ---------------------------------------------------------------------
 /* The restriction on provides is to eliminate the case when provides
    are transitioning between valid states [ie exim to smail] */
@@ -244,11 +243,11 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 	  D->Type != pkgCache::Dep::Obsoletes)
 	 continue;
 
-      // The package hasnt been changed
+      // The package hasn't been changed
       if (List->IsNow(Pkg) == false)
 	 continue;
       
-      // Ignore self conflicts, ignore conflicts from irrelevent versions
+      // Ignore self conflicts, ignore conflicts from irrelevant versions
       if (D.IsIgnorable(Pkg) || D.ParentVer() != D.ParentPkg().CurrentVer())
 	 continue;
       
@@ -315,7 +314,7 @@ bool pkgPackageManager::ConfigureAll()
    
    Note on failure: This method can fail, without causing any problems. 
    This can happen when using Immediate-Configure-All, SmartUnPack may call
-   SmartConfigure, it may fail because of a complex dependancy situation, but
+   SmartConfigure, it may fail because of a complex dependency situation, but
    a error will only be reported if ConfigureAll fails. This is why some of the
    messages this function reports on failure (return false;) as just warnings
    only shown when debuging*/
@@ -597,7 +596,7 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 									/*}}}*/
 // PM::SmartUnPack - Install helper					/*{{{*/
 // ---------------------------------------------------------------------
-/* This puts the system in a state where it can Unpack Pkg, if Pkg is allready
+/* This puts the system in a state where it can Unpack Pkg, if Pkg is already
    unpacked, or when it has been unpacked, if Immediate==true it configures it. */
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 {
@@ -624,7 +623,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
    /* PreUnpack Checks: This loop checks and attempts to rectify and problems that would prevent the package being unpacked.
       It addresses: PreDepends, Conflicts, Obsoletes and Breaks (DpkgBreaks). Any resolutions that do not require it should
       avoid configuration (calling SmartUnpack with Immediate=true), this is because when unpacking some packages with
-      complex dependancy structures, trying to configure some packages while breaking the loops can complicate things .
+      complex dependency structures, trying to configure some packages while breaking the loops can complicate things .
       This will be either dealt with if the package is configured as a dependency of Pkg (if and when Pkg is configured),
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
@@ -791,7 +790,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       {
 		  if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop)
 		  {
-		     // This dependancy has already been dealt with by another SmartUnPack on Pkg
+		     // This dependency has already been dealt with by another SmartUnPack on Pkg
 		     break;
 		  }
 		  else
@@ -1004,7 +1003,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       DoneSomething = true;
       
       if (ImmConfigureAll) {
-         /* ConfigureAll here to pick up and packages left unconfigured becuase they were unpacked in the 
+         /* ConfigureAll here to pick up and packages left unconfigured because they were unpacked in the
             "PreUnpack Checks" section */
          if (!ConfigureAll())
             return Failed; 
@@ -1028,32 +1027,78 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
 	 
    return Completed;
 }
+// PM::DoInstallPostFork - compat /*{{{*/
+// ---------------------------------------------------------------------
+									/*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+pkgPackageManager::OrderResult
+pkgPackageManager::DoInstallPostFork(int statusFd)
+{
+   APT::Progress::PackageManager *progress = new
+      APT::Progress::PackageManagerProgressFd(statusFd);
+   pkgPackageManager::OrderResult res = DoInstallPostFork(progress);
+   delete progress;
+   return res;
+}
 									/*}}}*/
 // PM::DoInstallPostFork - Does install part that happens after the fork /*{{{*/
 // ---------------------------------------------------------------------
 pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
+{
+   bool goResult = Go(progress);
+   if(goResult == false) 
+      return Failed;
+   
+   return Res;
+};
+#else
+pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
 {
-      if(statusFd > 0)
-         // FIXME: use SetCloseExec here once it taught about throwing
-	 //        exceptions instead of doing _exit(100) on failure
-	 fcntl(statusFd,F_SETFD,FD_CLOEXEC); 
-      bool goResult = Go(statusFd);
-      if(goResult == false) 
-	 return Failed;
-
-      return Res;
-};
-
+   bool goResult = Go(statusFd);
+   if(goResult == false) 
+      return Failed;
+   
+   return Res;
+}
+#endif
+									/*}}}*/	
 // PM::DoInstall - Does the installation				/*{{{*/
 // ---------------------------------------------------------------------
-/* This uses the filenames in FileNames and the information in the
-   DepCache to perform the installation of packages.*/
+/* compat */
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstall(int statusFd)
+{
+    APT::Progress::PackageManager *progress = new
+       APT::Progress::PackageManagerProgressFd(statusFd);
+    OrderResult res = DoInstall(progress);
+    delete progress;
+    return res;
+ }
+#else
 pkgPackageManager::OrderResult pkgPackageManager::DoInstall(int statusFd)
 {
    if(DoInstallPreFork() == Failed)
       return Failed;
-   
+
    return DoInstallPostFork(statusFd);
 }
+#endif
+									/*}}}*/	
+// PM::DoInstall - Does the installation				/*{{{*/
+// ---------------------------------------------------------------------
+/* This uses the filenames in FileNames and the information in the
+   DepCache to perform the installation of packages.*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+pkgPackageManager::OrderResult 
+pkgPackageManager::DoInstall(APT::Progress::PackageManager *progress)
+{
+   if(DoInstallPreFork() == Failed)
+      return Failed;
+   
+   return DoInstallPostFork(progress);
+}
+#endif
 									/*}}}*/	      

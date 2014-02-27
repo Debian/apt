@@ -5,14 +5,14 @@
 
    File Listing - Manages a Cache of File -> Package names.
 
-   Diversions add some signficant complexity to the system. To keep 
+   Diversions add some significant complexity to the system. To keep
    storage space down in the very special case of a diverted file no
    extra bytes are allocated in the Node structure. Instead a diversion
    is inserted directly into the hash table and its flag bit set. Every
    lookup for that filename will always return the diversion.
    
    The hash buckets are stored in sorted form, with diversions having 
-   the higest sort order. Identical files are assigned the same file
+   the highest sort order. Identical files are assigned the same file
    pointer, thus after a search all of the nodes owning that file can be
    found by iterating down the bucket.
    

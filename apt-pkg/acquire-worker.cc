@@ -109,7 +109,12 @@ bool pkgAcquire::Worker::Start()
    // Get the method path
    string Method = _config->FindDir("Dir::Bin::Methods") + Access;
    if (FileExists(Method) == false)
-      return _error->Error(_("The method driver %s could not be found."),Method.c_str());
+   {
+      _error->Error(_("The method driver %s could not be found."),Method.c_str());
+      if (Access == "https")
+	 _error->Notice(_("Is the package %s installed?"), "apt-transport-https");
+      return false;
+   }
 
    if (Debug == true)
       clog << "Starting method '" << Method << '\'' << endl;
@@ -563,7 +568,7 @@ bool pkgAcquire::Worker::InFdReady()
 									/*}}}*/
 // Worker::MethodFailure - Called when the method fails			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is called when the method is belived to have failed, probably because
+/* This is called when the method is believed to have failed, probably because
    read returned -1. */
 bool pkgAcquire::Worker::MethodFailure()
 {

@@ -1,0 +1,36 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'experimental' 'foo' 'all' '2.0' 'Depends: foo-dep (= 2.1)'
+insertpackage 'experimental' 'foo-dep' 'all' '2.1'
+
+
+(
+cat <<EOF
+Package: *
+Pin: release a=experimental
+Pin-Priority: -10
+EOF
+) > rootdir/etc/apt/preferences
+
+
+setupaptarchive
+
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2.0' (experimental [all]) for 'foo'
+Selected version '2.1' (experimental [all]) for 'foo-dep' because of 'foo'
+The following extra packages will be installed:
+  foo-dep
+The following NEW packages will be installed:
+  foo foo-dep
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst foo-dep (2.1 experimental [all])
+Inst foo (2.0 experimental [all])
+Conf foo-dep (2.1 experimental [all])
+Conf foo (2.0 experimental [all])" aptget install -q0 -s foo/experimental

@@ -40,12 +40,6 @@ LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-cdrom.cc 
 include $(PROGRAM_H)
 
-# The apt-key program
-SOURCE=apt-key
-TO=$(BIN)
-TARGET=program
-include $(COPY_H)
-
 # The apt-mark program
 PROGRAM=apt-mark
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
@@ -91,3 +85,22 @@ SLIBS = -lapt-pkg $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-dump-solver.cc
 include $(PROGRAM_H)
+
+# The apt-key program
+apt-key: apt-key.in
+	sed -e "s#&keyring-filename;#$(shell ../vendor/getinfo keyring-filename)#" \
+		-e "s#&keyring-removed-filename;#$(shell ../vendor/getinfo keyring-removed-filename)#" \
+		-e "s#&keyring-master-filename;#$(shell ../vendor/getinfo keyring-master-filename)#" \
+		-e "s#&keyring-uri;#$(shell ../vendor/getinfo keyring-uri)#" \
+		-e "s#&keyring-package;#$(shell ../vendor/getinfo keyring-package)#" $< > $@
+	chmod 755 $@
+
+SOURCE=apt-key
+TO=$(BIN)
+TARGET=program
+include $(COPY_H)
+
+clean: clean/apt-key
+
+clean/apt-key:
+	rm -f apt-key

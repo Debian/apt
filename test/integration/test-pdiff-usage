@@ -5,41 +5,169 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 
 buildaptarchive
 setupflataptarchive
 changetowebserver
-signreleasefiles
-testsuccess aptget update
 
-testnopackage newstuff
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
-testequal "$(cat ${PKGFILE})
+
+echo '#!/bin/sh
+touch merge-was-used
+/usr/bin/diffindex-rred "$@"' > extrred
+chmod +x extrred
+echo 'Dir::Bin::rred "./extrred";' > rootdir/etc/apt/apt.conf.d/99rred
+
+wasmergeused() {
+	msgtest 'Test for successful execution of' "$*"
+	local OUTPUT=$(mktemp)
+	addtrap "rm $OUTPUT;"
+	if aptget update "$@" >${OUTPUT} 2>&1; then
+		msgpass
+	else
+		echo
+		cat $OUTPUT
+		msgfail
+	fi
+
+	msgtest 'No intermediate patch files' 'still exist'
+	local EDS="$(find rootdir/var/lib/apt/lists -name '*.ed' -o -name '*.ed.*')"
+	if [ -z "$EDS" ]; then
+		msgpass
+	else
+		echo
+		echo "$EDS"
+		msgfail
+	fi
+
+	msgtest 'Check if the right pdiff merger was used'
+	if grep -q '^pkgAcqIndexMergeDiffs::Done(): rred' $OUTPUT; then
+		if echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
+			msgpass
+		else
+			msgfail "Merge shouldn't have been used, but was"
+		fi
+	elif echo "$*" | grep -q -- '-o Acquire::PDiffs::Merge=1'; then
+		msgfail "Merge should have been used, but wasn't"
+	else
+		msgpass
+	fi
+}
+
+testrun() {
+	msgmsg "Testcase: setup the base with: $*"
+	find aptarchive -name 'Packages*' -type f -delete
+	cp ${PKGFILE} aptarchive/Packages
+	compressfile 'aptarchive/Packages'
+	generatereleasefiles
+	signreleasefiles
+	rm -rf aptarchive/Packages.diff rootdir/var/lib/apt/lists
+	testsuccess aptget update "$@"
+	cp -a rootdir/var/lib/apt/lists rootdir/var/lib/apt/lists-bak
+	testnopackage newstuff
+	testequal "$(cat ${PKGFILE})
 " aptcache show apt oldstuff
 
-cp ${PKGFILE}-new aptarchive/Packages
-cat aptarchive/Packages | gzip > aptarchive/Packages.gz
-cat aptarchive/Packages | bzip2 > aptarchive/Packages.bz2
-cat aptarchive/Packages | xz --format=lzma > aptarchive/Packages.lzma
-rm -rf aptarchive/Packages.diff
-mkdir -p aptarchive/Packages.diff
-PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
-diff -e ${PKGFILE} ${PKGFILE}-new > ${PATCHFILE} || true
-cat $PATCHFILE | gzip > ${PATCHFILE}.gz
-PATCHINDEX="aptarchive/Packages.diff/Index"
-echo "SHA1-Current: $(sha1sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new)
+	msgmsg "Testcase: apply with one patch: $*"
+	cp ${PKGFILE}-new aptarchive/Packages
+	compressfile 'aptarchive/Packages'
+	mkdir -p aptarchive/Packages.diff
+	PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
+	diff -e ${PKGFILE} ${PKGFILE}-new > ${PATCHFILE} || true
+	cat $PATCHFILE | gzip > ${PATCHFILE}.gz
+	PATCHINDEX='aptarchive/Packages.diff/Index'
+	echo "SHA1-Current: $(sha1sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new)
 SHA1-History:
  9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
  $(sha1sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
 SHA1-Patches:
  7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
  $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
-generatereleasefiles '+1hour'
-signreleasefiles
-find aptarchive -name 'Packages*' -type f -delete
-testsuccess aptget update
-
-testnopackage oldstuff
-testequal "$(cat ${PKGFILE}-new)
+	generatereleasefiles '+1hour'
+	signreleasefiles
+	find aptarchive -name 'Packages*' -type f -delete
+	wasmergeused "$@"
+	testnopackage oldstuff
+	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
+
+	msgmsg "Testcase: index is already up-to-date: $*"
+	find rootdir/var/lib/apt/lists -name '*.IndexDiff' -type f -delete
+	testsuccess aptget update "$@"
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt newstuff
+
+	msgmsg "Testcase: apply with two patches: $*"
+	cp ${PKGFILE}-new aptarchive/Packages
+	echo '
+Package: futurestuff
+Version: 1.0
+Architecture: i386
+Maintainer: Joe Sixpack <joe@example.org>
+Installed-Size: 202
+Filename: pool/futurestuff_1.0_i386.deb
+Size: 202200
+MD5sum: 311aeeaaae5ba33aff1ceaf3e1f76671
+SHA1: 3c695e028f7a1ae324deeaae5ba332desa81088c
+SHA256: b46fd154615edaae5ba33c56a5cc0e7deaef23e2da3e4f129727fd660f28f050
+Description: some cool and shiny future stuff
+ This package will appear in the next next mirror update
+Description-md5: d5f89fbbc2ce34c455dfee9b67d82b6b' >> aptarchive/Packages
+
+	compressfile 'aptarchive/Packages'
+	PATCHFILE2="aptarchive/Packages.diff/$(date -d 'now + 1hour' '+%Y-%m-%d-%H%M.%S')"
+	diff -e ${PKGFILE}-new aptarchive/Packages > ${PATCHFILE2} || true
+	cat $PATCHFILE2 | gzip > ${PATCHFILE2}.gz
+	echo "SHA1-Current: $(sha1sum aptarchive/Packages | cut -d' ' -f 1) $(stat -c%s aptarchive/Packages)
+SHA1-History:
+ 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
+ $(sha1sum ${PKGFILE} | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}) $(basename ${PATCHFILE})
+ $(sha1sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new) $(basename ${PATCHFILE2})
+SHA1-Patches:
+ 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
+ $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)
+ $(sha1sum ${PATCHFILE2} | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE2}) $(basename ${PATCHFILE2})" > $PATCHINDEX
+	generatereleasefiles '+2hour'
+	signreleasefiles
+	cp -a aptarchive/Packages Packages-future
+	find aptarchive -name 'Packages*' -type f -delete
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	wasmergeused "$@"
+	testnopackage oldstuff
+	testequal "$(cat Packages-future)
+" aptcache show apt newstuff futurestuff
+
+	msgmsg "Testcase: patch applying fails, but successful fallback: $*"
+	rm -rf rootdir/var/lib/apt/lists
+	cp -a rootdir/var/lib/apt/lists-bak rootdir/var/lib/apt/lists
+	cp ${PKGFILE}-new aptarchive/Packages
+	compressfile 'aptarchive/Packages'
+	mkdir -p aptarchive/Packages.diff
+	PATCHFILE="aptarchive/Packages.diff/$(date +%Y-%m-%d-%H%M.%S)"
+	diff -e ${PKGFILE} ${PKGFILE}-new > ${PATCHFILE} || true
+	PATCHINDEX='aptarchive/Packages.diff/Index'
+	echo "SHA1-Current: $(sha1sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new)
+SHA1-History:
+ 9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
+ $(sha1sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
+SHA1-Patches:
+ 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
+ $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
+	echo 'I am Mallory and I change files' >> $PATCHFILE
+	cat $PATCHFILE | gzip > ${PATCHFILE}.gz
+	generatereleasefiles '+1hour'
+	signreleasefiles
+	testsuccess aptget update "$@"
+	testnopackage oldstuff
+	testequal "$(cat ${PKGFILE}-new)
+" aptcache show apt newstuff
+}
+echo 'Debug::pkgAcquire::Diffs "true";
+Debug::pkgAcquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
+
+testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1
+testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1
+testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=0
+testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0

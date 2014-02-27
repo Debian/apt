@@ -11,6 +11,7 @@ default: startup all
 
 .PHONY: headers library clean veryclean all binary program doc test update-po
 all headers library clean veryclean binary program doc manpages debiandoc test update-po startup dirs:
+	$(MAKE) -C vendor $@
 	$(MAKE) -C apt-pkg $@
 	$(MAKE) -C apt-inst $@
 	$(MAKE) -C apt-private $@
@@ -20,7 +21,7 @@ all headers library clean veryclean binary program doc manpages debiandoc test u
 	$(MAKE) -C dselect $@
 	$(MAKE) -C doc $@
 	$(MAKE) -C po $@
-	$(MAKE) -C test $@ 
+	$(MAKE) -C test $@
 
 all headers library clean veryclean binary program doc manpages debiandoc test update-po: startup dirs
 

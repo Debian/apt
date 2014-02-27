@@ -1,0 +1,35 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+mkdir aptarchive/testpkg
+cd aptarchive/testpkg
+
+for i in $(seq 98 102); do
+	touch "$(printf "%0${i}d" "$i")"
+done
+tar zcf data.tar.gz 00*
+
+echo 'Package: testpkg
+Version: 1-1
+Architecture: all
+Maintainer: Joe Sixpack <joe@example.org>
+Description: Package for test
+Section: debug
+Priority: extra' > control
+tar zcf control.tar.gz control
+
+echo '2.0' > debian-binary
+ar cr ../testpkg.deb debian-binary control.tar.gz data.tar.gz
+
+cd - > /dev/null
+
+testequal '000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000102 testpkg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000101 testpkg
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100 testpkg
+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000099 testpkg
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000098 testpkg' aptftparchive contents aptarchive/

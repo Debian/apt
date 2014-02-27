@@ -26,6 +26,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 
 #include <zlib.h>
 
@@ -164,6 +165,8 @@ bool DirectoryExists(std::string const &Path) __attrib_const;
 bool CreateDirectory(std::string const &Parent, std::string const &Path);
 time_t GetModificationTime(std::string const &Path);
 
+std::string GetTempDir();
+
 /** \brief Ensure the existence of the given Path
  *
  *  \param Parent directory of the Path directory - a trailing
@@ -182,6 +185,8 @@ void SetCloseExec(int Fd,bool Close);
 void SetNonBlock(int Fd,bool Block);
 bool WaitFd(int Fd,bool write = false,unsigned long timeout = 0);
 pid_t ExecFork();
+pid_t ExecFork(std::set<int> keep_fds);
+void MergeKeepFdsFromConfiguration(std::set<int> &keep_fds);
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
 // check if the given file starts with a PGP cleartext signature

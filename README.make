@@ -25,7 +25,7 @@ of these parameters will have an immediate effect. The use of makefile.in
 and configure substitutions across build makefiles is not used at all.
 
 Furthermore, the make system runs with a current directory equal to the
-source directory irregardless of the destination directory. This means
+source directory regardless of the destination directory. This means
 #include "" and #include <> work as expected and more importantly
 running 'make' in the source directory will work as expected. The
 environment variable or make parameter 'BUILD' sets the build directory.

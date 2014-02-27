@@ -7,7 +7,7 @@
    
    This class allows lengthy operations to communicate their progress 
    to the GUI. The progress model is simple and is not designed to handle
-   the complex case of the multi-activity aquire class.
+   the complex case of the multi-activity acquire class.
    
    The model is based on the concept of an overall operation consisting
    of a series of small sub operations. Each sub operation has it's own

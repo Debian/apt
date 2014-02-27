@@ -42,5 +42,50 @@ int main(int argc,char *argv[])
    output = DeEscapeString(input);
    equals(output, expected);
 
+   // Split
+   input = "status: libnet1:amd64: unpacked";
+   vector<std::string> result = StringSplit(input, ": ");
+   equals(result[0], "status");
+   equals(result[1], "libnet1:amd64");
+   equals(result[2], "unpacked");
+   equals(result.size(), 3);
+
+   input = "status: libnet1:amd64: unpacked";
+   result = StringSplit(input, "xxx");
+   equals(result[0], input);
+   equals(result.size(), 1);
+
+   input = "status: libnet1:amd64: unpacked";
+   result = StringSplit(input, "");
+   equals(result.size(), 0);
+
+   input = "x:y:z";
+   result = StringSplit(input, ":", 2);
+   equals(result.size(), 2);
+   equals(result[0], "x");
+   equals(result[1], "y:z");
+
+   input = "abc";
+   result = StringSplit(input, "");
+   equals(result.size(), 0);
+
+   // endswith
+   bool b;
+   input = "abcd";
+   b = APT::String::Endswith(input, "d");
+   equals(b, true);
+
+   b = APT::String::Endswith(input, "cd");
+   equals(b, true);
+
+   b = APT::String::Endswith(input, "abcd");
+   equals(b, true);
+
+   b = APT::String::Endswith(input, "x");
+   equals(b, false);
+
+   b = APT::String::Endswith(input, "abcndefg");
+   equals(b, false);
+
    return 0;
 }

@@ -46,6 +46,7 @@ class indexRecords
 
    virtual bool Load(std::string Filename);
    std::string GetDist() const;
+   std::string GetSuite() const;
    time_t GetValidUntil() const;
    virtual bool CheckDist(const std::string MaybeDist) const;
    std::string GetExpectedDist() const;

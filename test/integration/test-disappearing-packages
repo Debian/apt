@@ -40,7 +40,7 @@ echo "The following package disappeared from your system as
 all files have been overwritten by other packages:
   old-pkg
 Note: This is done automatically and on purpose by dpkg." > $COMPAREFILE
-$CMD 2>&1 | tail -n 4 | diff $COMPAREFILE - && msgpass || msgfail
+$CMD 2>&1 | tail -n 4 | diff -u $COMPAREFILE - && msgpass || msgfail
 rm $COMPAREFILE
 
 sed -i rootdir/var/log/apt/history.log -e '/^Commandline: / d' -e '/^Start-Date: / d' -e '/^End-Date: / d' -e "s#:$(getarchitecture 'native') #:native #"

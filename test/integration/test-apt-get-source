@@ -1,0 +1,84 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# we need to insert a package into "unstable" so that a Release file is
+# create for the test
+insertpackage 'wheezy' 'unreleated-package' 'all' '1.0'
+
+# a "normal" package with source and binary
+insertpackage 'unstable' 'foo' 'all' '2.0'
+insertsource 'unstable' 'foo' 'all' '2.0'
+
+# its possible to have multiple src versions in the sources file, ensure
+# to pick the correct one in this case (bts #731853)
+insertsource 'stable' 'foo' 'all' '1.5'
+insertsource 'stable' 'foo' 'all' '0.5'
+insertpackage 'stable' 'foo' 'all' '1.0'
+insertsource 'stable' 'foo' 'all' '1.0'
+
+# this packages exists only as sources, add two versions to ensure that
+# apt will pick the higher version number (bts #731853)
+insertsource 'wheezy' 'foo' 'all' '0.0.1'
+insertsource 'wheezy' 'foo' 'all' '0.1'
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+# normal operation gets highest version number
+HEADER="Reading package lists...
+Building dependency tree..."
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo
+
+# select by release: suite
+testequal "$HEADER
+Selected version '1.0' (stable) for foo
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/stable
+testequal "$HEADER
+Selected version '2.0' (unstable) for foo
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/unstable
+
+# select by release: codename
+testequal "$HEADER
+Selected version '2.0' (sid) for foo
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/sid
+
+# select by version
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo=1.0
+
+# select by release with no binary package (Bug#731102) but ensure to get
+# highest version
+testequal "$HEADER
+Selected version '0.1' (wheezy) for foo
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_0.1.dsc' foo_0.1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_0.1.tar.gz' foo_0.1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/wheezy
+
+# unavailable one
+testequal "$HEADER
+E: Can not find version '9.9-not-there' of package 'foo'
+E: Unable to find a source package for foo" aptget source -q --print-uris foo=9.9-not-there
+
+# version and release
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_0.0.1.dsc' foo_0.0.1.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_0.0.1.tar.gz' foo_0.0.1.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris -t unstable foo=0.0.1

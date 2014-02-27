@@ -22,7 +22,7 @@ Config-Item: Acquire::http::DependOnSTDIN=0
 600 Acquire URI
 URI: http://localhost:8080/holygrail
 Filename: knights-talking
-' | http >/dev/null 2>&1 && msgpass || msgfail
+' | ${METHODSDIR}/http >/dev/null 2>&1 && msgpass || msgfail
 testfileequal knights-talking 'ni ni ni'
 
 ensure_n_canary_strings_in_dir() {

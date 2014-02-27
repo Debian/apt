@@ -23,6 +23,8 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/install-progress.h>
+#include <apt-pkg/init.h>
 
 #include <set>
 #include <locale.h>
@@ -42,6 +44,7 @@
 #include <sstream>
 
 #include "private-install.h"
+#include "private-download.h"
 #include "private-cachefile.h"
 #include "private-output.h"
 #include "private-cacheset.h"
@@ -49,52 +52,6 @@
 
 #include <apti18n.h>
 									/*}}}*/
-
-// CheckAuth - check if each download comes form a trusted source	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool CheckAuth(pkgAcquire& Fetcher)
-{
-   std::string UntrustedList;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd(); ++I)
-   {
-      if (!(*I)->IsTrusted())
-      {
-          UntrustedList += std::string((*I)->ShortDesc()) + " ";
-      }
-   }
-
-   if (UntrustedList == "")
-   {
-      return true;
-   }
-        
-   ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"),UntrustedList,"");
-
-   if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
-   {
-      c2out << _("Authentication warning overridden.\n");
-      return true;
-   }
-
-   if (_config->FindI("quiet",0) < 2
-       && _config->FindB("APT::Get::Assume-Yes",false) == false)
-   {
-      c2out << _("Install these packages without verification?") << std::flush;
-      if (!YnPrompt(false))
-         return _error->Error(_("Some packages could not be authenticated"));
-
-      return true;
-   }
-   else if (_config->FindB("APT::Get::Force-Yes",false) == true)
-   {
-      return true;
-   }
-
-   return _error->Error(_("There are problems and -y was used without --force-yes"));
-}
-									/*}}}*/
-
 
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
@@ -148,8 +105,16 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (_config->FindB("APT::Get::Simulate") == true)
    {
       pkgSimulate PM(Cache);
+
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+      APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
+      pkgPackageManager::OrderResult Res = PM.DoInstall(progress);
+      delete progress;
+#else
       int status_fd = _config->FindI("APT::Status-Fd",-1);
       pkgPackageManager::OrderResult Res = PM.DoInstall(status_fd);
+#endif
+
       if (Res == pkgPackageManager::Failed)
 	 return false;
       if (Res != pkgPackageManager::Completed)
@@ -301,12 +266,12 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 c1out << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	 std::cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << std::endl;
       return true;
    }
 
-   if (!CheckAuth(Fetcher))
+   if (!CheckAuth(Fetcher, true))
       return false;
 
    /* Unlock the dpkg lock if we are not going to be doing an install
@@ -338,29 +303,10 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
 	    I = Fetcher.ItemsBegin();
 	 }	 
       }
-      
-      if (Fetcher.Run() == pkgAcquire::Failed)
-	 return false;
-      
-      // Print out errors
-      bool Failed = false;
-      for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
-      {
-	 if ((*I)->Status == pkgAcquire::Item::StatDone &&
-	     (*I)->Complete == true)
-	    continue;
-	 
-	 if ((*I)->Status == pkgAcquire::Item::StatIdle)
-	 {
-	    Transient = true;
-	    // Failed = true;
-	    continue;
-	 }
 
-	 fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
-		 (*I)->ErrorText.c_str());
-	 Failed = true;
-      }
+      bool Failed = false;
+      if (AcquireRun(Fetcher, 0, &Failed, &Transient) == false)
+	 return false;
 
       /* If we are in no download mode and missing files and there were
          'failures' then the user must specify -m. Furthermore, there 
@@ -396,8 +342,16 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       }
 
       _system->UnLock();
-      int status_fd = _config->FindI("APT::Status-Fd",-1);
+      
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+      APT::Progress::PackageManager *progress = APT::Progress::PackageManagerProgressFactory();
+      pkgPackageManager::OrderResult Res = PM->DoInstall(progress);
+      delete progress;
+#else
+      int status_fd = _config->FindI("APT::Status-Fd", -1);
       pkgPackageManager::OrderResult Res = PM->DoInstall(status_fd);
+#endif
+
       if (Res == pkgPackageManager::Failed || _error->PendingError() == true)
 	 return false;
       if (Res == pkgPackageManager::Completed)
@@ -429,8 +383,6 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    return true;
 }
 									/*}}}*/
-
-
 // DoAutomaticRemove - Remove all automatic unused packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* Remove unused automatic packages */
@@ -504,15 +456,15 @@ bool DoAutomaticRemove(CacheFile &Cache)
       do {
 	 Changed = false;
 	 for (APT::PackageSet::const_iterator Pkg = tooMuch.begin();
-	      Pkg != tooMuch.end() && Changed == false; ++Pkg)
+	      Pkg != tooMuch.end(); ++Pkg)
 	 {
 	    APT::PackageSet too;
 	    too.insert(*Pkg);
 	    for (pkgCache::PrvIterator Prv = Cache[Pkg].CandidateVerIter(Cache).ProvidesList();
 		 Prv.end() == false; ++Prv)
 	       too.insert(Prv.ParentPkg());
-	    for (APT::PackageSet::const_iterator P = too.begin();
-		 P != too.end() && Changed == false; ++P) {
+	    for (APT::PackageSet::const_iterator P = too.begin(); P != too.end(); ++P)
+	    {
 	       for (pkgCache::DepIterator R = P.RevDependsList();
 		    R.end() == false; ++R)
 	       {
@@ -531,7 +483,11 @@ bool DoAutomaticRemove(CacheFile &Cache)
 		 Changed = true;
 		 break;
 	       }
+	       if (Changed == true)
+		  break;
 	    }
+	    if (Changed == true)
+	       break;
 	 }
       } while (Changed == true);
    }
@@ -576,31 +532,27 @@ bool DoAutomaticRemove(CacheFile &Cache)
    return true;
 }
 									/*}}}*/
+// DoCacheManipulationFromCommandLine					/*{{{*/
+static const unsigned short MOD_REMOVE = 1;
+static const unsigned short MOD_INSTALL = 2;
 
-
-
-
-// DoInstall - Install packages from the command line			/*{{{*/
-// ---------------------------------------------------------------------
-/* Install named packages */
-bool DoInstall(CommandLine &CmdL)
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache)
 {
-   CacheFile Cache;
-   if (Cache.OpenForInstall() == false || 
-       Cache.CheckDeps(CmdL.FileSize() != 1) == false)
-      return false;
-   
+   std::map<unsigned short, APT::VersionSet> verset;
+   return DoCacheManipulationFromCommandLine(CmdL, Cache, verset);
+}
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
+                                        std::map<unsigned short, APT::VersionSet> &verset)
+{
+
    // Enter the special broken fixing mode if the user specified arguments
    bool BrokenFix = false;
    if (Cache->BrokenCount() != 0)
       BrokenFix = true;
 
-   pkgProblemResolver* Fix = NULL;
+   SPtr<pkgProblemResolver> Fix;
    if (_config->FindB("APT::Get::CallResolver", true) == true)
       Fix = new pkgProblemResolver(Cache);
-
-   static const unsigned short MOD_REMOVE = 1;
-   static const unsigned short MOD_INSTALL = 2;
 
    unsigned short fallback = MOD_INSTALL;
    if (strcasecmp(CmdL.FileList[0],"remove") == 0)
@@ -622,14 +574,12 @@ bool DoInstall(CommandLine &CmdL)
    mods.push_back(APT::VersionSet::Modifier(MOD_REMOVE, "-",
 		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::NEWEST));
    CacheSetHelperAPTGet helper(c0out);
-   std::map<unsigned short, APT::VersionSet> verset = APT::VersionSet::GroupedFromCommandLine(Cache,
+   verset = APT::VersionSet::GroupedFromCommandLine(Cache,
 		CmdL.FileList + 1, mods, fallback, helper);
 
    if (_error->PendingError() == true)
    {
       helper.showVirtualPackageErrors(Cache);
-      if (Fix != NULL)
-	 delete Fix;
       return false;
    }
 
@@ -663,8 +613,6 @@ bool DoInstall(CommandLine &CmdL)
 
       if (_error->PendingError() == true)
       {
-	 if (Fix != NULL)
-	    delete Fix;
 	 return false;
       }
 
@@ -675,8 +623,6 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 c1out << _("You might want to run 'apt-get -f install' to correct these:") << std::endl;
 	 ShowBroken(c1out,Cache,false);
-	 if (Fix != NULL)
-	    delete Fix;
 	 return _error->Error(_("Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a solution)."));
       }
 
@@ -684,7 +630,6 @@ bool DoInstall(CommandLine &CmdL)
       {
 	 // Call the scored problem resolver
 	 Fix->Resolve(true);
-	 delete Fix;
       }
 
       // Now we check the state of the packages,
@@ -716,6 +661,33 @@ bool DoInstall(CommandLine &CmdL)
       }
    }
    if (!DoAutomaticRemove(Cache)) 
+      return false;
+
+   // if nothing changed in the cache, but only the automark information
+   // we write the StateFile here, otherwise it will be written in 
+   // cache.commit()
+   if (InstallAction.AutoMarkChanged > 0 &&
+       Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
+       Cache->BadCount() == 0 &&
+       _config->FindB("APT::Get::Simulate",false) == false)
+      Cache->writeStateFile(NULL);
+
+   return true;
+}
+									/*}}}*/
+// DoInstall - Install packages from the command line			/*{{{*/
+// ---------------------------------------------------------------------
+/* Install named packages */
+bool DoInstall(CommandLine &CmdL)
+{
+   CacheFile Cache;
+   if (Cache.OpenForInstall() == false || 
+       Cache.CheckDeps(CmdL.FileSize() != 1) == false)
+      return false;
+
+   std::map<unsigned short, APT::VersionSet> verset;
+
+   if(!DoCacheManipulationFromCommandLine(CmdL, Cache, verset))
       return false;
 
    /* Print out a list of packages that are going to be installed extra
@@ -832,15 +804,6 @@ bool DoInstall(CommandLine &CmdL)
       ShowList(c1out,_("Recommended packages:"),RecommendsList,RecommendsVersions);
 
    }
-
-   // if nothing changed in the cache, but only the automark information
-   // we write the StateFile here, otherwise it will be written in 
-   // cache.commit()
-   if (InstallAction.AutoMarkChanged > 0 &&
-       Cache->DelCount() == 0 && Cache->InstCount() == 0 &&
-       Cache->BadCount() == 0 &&
-       _config->FindB("APT::Get::Simulate",false) == false)
-      Cache->writeStateFile(NULL);
 
    // See if we need to prompt
    // FIXME: check if really the packages in the set are going to be installed

@@ -41,7 +41,7 @@ include $(PROGRAM_H)
 
 # very simple webserver for APT testing
 PROGRAM=aptwebserver
-SLIBS = -lapt-pkg
+SLIBS = -lapt-pkg -lpthread
 LIB_MAKES = apt-pkg/makefile
 SOURCE = aptwebserver.cc
 include $(PROGRAM_H)

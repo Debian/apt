@@ -25,6 +25,7 @@ Inst unrelated [1] (2 unstable [all])
 Conf unrelated (2 unstable [all])' aptget install unrelated -s
 	testsuccess aptget install unrelated -y
 	testdpkginstalled unrelated
+	rm -rf rootdir/var/cache/apt/*.bin
 	cp -a rootdir/var/lib/dpkg/status-backup-noact rootdir/var/lib/dpkg/status
 }
 

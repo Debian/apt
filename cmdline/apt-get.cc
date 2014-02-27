@@ -15,7 +15,7 @@
       upgrade - Smart-Download the newest versions of all packages
       dselect-upgrade - Follows dselect's changes to the Status: field
                        and installes new and removes old packages
-      dist-upgrade - Powerfull upgrader designed to handle the issues with
+      dist-upgrade - Powerful upgrader designed to handle the issues with
                     a new distribution.
       install - Download and install a given package (by name, not by .deb)
       check - Update the package cache and check for broken packages
@@ -49,8 +49,11 @@
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/upgrade.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexrecords.h>
 
-
+#include <apt-private/private-download.h>
 #include <apt-private/private-install.h>
 #include <apt-private/private-upgrade.h>
 #include <apt-private/private-output.h>
@@ -58,13 +61,18 @@
 #include <apt-private/private-update.h>
 #include <apt-private/private-cmndline.h>
 #include <apt-private/private-moo.h>
+#include <apt-private/private-utils.h>
+
+#include <apt-pkg/debmetaindex.h>
 
 #include <apt-private/acqprogress.h>
 
 #include <set>
+#include <fstream>
+#include <sstream>
+
 #include <locale.h>
 #include <langinfo.h>
-#include <fstream>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -76,7 +84,6 @@
 #include <errno.h>
 #include <regex.h>
 #include <sys/wait.h>
-#include <sstream>
 
 #include <apt-private/private-output.h>
 #include <apt-private/private-main.h>
@@ -84,10 +91,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-
 using namespace std;
-
-
 
 // TryToInstallBuildDep - Try to install a single package		/*{{{*/
 // ---------------------------------------------------------------------
@@ -130,24 +134,95 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
    return true;
 }
 									/*}}}*/
+
+
+// helper that can go wit hthe next ABI break
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
+{
+   // FIXME: this cast is the horror, the horror
+   debReleaseIndex *r = (debReleaseIndex*)metaindex;
+
+   // see if we have a InRelease file
+   std::string PathInRelease =  r->MetaIndexFile("InRelease");
+   if (FileExists(PathInRelease))
+      return PathInRelease;
+
+   // and if not return the normal one
+   if (FileExists(PathInRelease))
+      return r->MetaIndexFile("Release");
+
+   return "";
+}
+#endif
+
+// GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
+                                      pkgSrcRecords::Parser *Parse)
+{
+   // try to find release
+   const pkgIndexFile& CurrentIndexFile = Parse->Index();
+
+   for (pkgSourceList::const_iterator S = SrcList->begin(); 
+        S != SrcList->end(); ++S)
+   {
+      vector<pkgIndexFile *> *Indexes = (*S)->GetIndexFiles();
+      for (vector<pkgIndexFile *>::const_iterator IF = Indexes->begin();
+           IF != Indexes->end(); ++IF)
+      {
+         if (&CurrentIndexFile == (*IF))
+         {
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
+            std::string path = MetaIndexFileNameOnDisk(*S);
+#else
+            std::string path = (*S)->LocalFileName();
+#endif
+            if (path != "") 
+            {
+               indexRecords records;
+               records.Load(path);
+               return records.GetSuite();
+            }
+         }
+      }
+   }
+   return "";
+}
+									/*}}}*/
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
-			       pkgDepCache &Cache)
+			       CacheFile &CacheFile)
 {
-   string VerTag;
-   string DefRel = _config->Find("APT::Default-Release");
+   string VerTag, UserRequestedVerTag;
+   string ArchTag = "";
+   string RelTag = _config->Find("APT::Default-Release");
    string TmpSrc = Name;
+   pkgDepCache *Cache = CacheFile.GetDepCache();
 
-   // extract the version/release from the pkgname
-   const size_t found = TmpSrc.find_last_of("/=");
-   if (found != string::npos) {
-      if (TmpSrc[found] == '/')
-	 DefRel = TmpSrc.substr(found+1);
-      else
-	 VerTag = TmpSrc.substr(found+1);
+   // extract release
+   size_t found = TmpSrc.find_last_of("/");
+   if (found != string::npos) 
+   {
+      RelTag = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
+   }
+   // extract the version
+   found = TmpSrc.find_last_of("=");
+   if (found != string::npos) 
+   {
+      VerTag = UserRequestedVerTag = TmpSrc.substr(found+1);
+      TmpSrc = TmpSrc.substr(0,found);
+   }
+   // extract arch 
+   found = TmpSrc.find_last_of(":");
+   if (found != string::npos) 
+   {
+      ArchTag = TmpSrc.substr(found+1);
       TmpSrc = TmpSrc.substr(0,found);
    }
 
@@ -155,10 +230,25 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       install a version and determine the source package name, then look
       in the archive for a source package of the same name. */
    bool MatchSrcOnly = _config->FindB("APT::Get::Only-Source");
-   const pkgCache::PkgIterator Pkg = Cache.FindPkg(TmpSrc);
+   pkgCache::PkgIterator Pkg;
+   if (ArchTag != "")
+      Pkg = Cache->FindPkg(TmpSrc, ArchTag);
+   else
+      Pkg = Cache->FindPkg(TmpSrc);
+
+   // if we can't find a package but the user qualified with a arch,
+   // error out here
+   if (Pkg.end() && ArchTag != "")
+   {
+      Src = Name;
+      _error->Error(_("Can not find a package for architecture '%s'"),
+                    ArchTag.c_str());
+      return 0;
+   }
+
    if (MatchSrcOnly == false && Pkg.end() == false) 
    {
-      if(VerTag.empty() == false || DefRel.empty() == false) 
+      if(VerTag != "" || RelTag != "" || ArchTag != "")
       {
 	 bool fuzzy = false;
 	 // we have a default release, try to locate the pkg. we do it like
@@ -178,9 +268,20 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	       if (Ver.end() == true)
 		  break;
 	    }
+
+            // ignore arches that are not for us
+            if (ArchTag != "" && Ver.Arch() != ArchTag)
+               continue;
+
+            // pick highest version for the arch unless the user wants
+            // something else
+            if (ArchTag != "" && VerTag == "" && RelTag == "")
+               if(Cache->VS().CmpVersion(VerTag, Ver.VerStr()) < 0)
+                  VerTag = Ver.VerStr();
+
 	    // We match against a concrete version (or a part of this version)
 	    if (VerTag.empty() == false &&
-		(fuzzy == true || Cache.VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
+		(fuzzy == true || Cache->VS().CmpVersion(VerTag, Ver.VerStr()) != 0) && // exact match
 		(fuzzy == false || strncmp(VerTag.c_str(), Ver.VerStr(), VerTag.size()) != 0)) // fuzzy match
 	       continue;
 
@@ -198,8 +299,8 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 
 	       // or we match against a release
 	       if(VerTag.empty() == false ||
-		  (VF.File().Archive() != 0 && VF.File().Archive() == DefRel) ||
-		  (VF.File().Codename() != 0 && VF.File().Codename() == DefRel)) 
+		  (VF.File().Archive() != 0 && VF.File().Archive() == RelTag) ||
+		  (VF.File().Codename() != 0 && VF.File().Codename() == RelTag)) 
 	       {
 		  pkgRecords::Parser &Parse = Recs.Lookup(VF);
 		  Src = Parse.SourcePkg();
@@ -217,22 +318,28 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	    if (Src.empty() == false)
 	       break;
 	 }
-	 if (Src.empty() == true) 
-	 {
-	    // Sources files have no codename information
-	    if (VerTag.empty() == true && DefRel.empty() == false) 
-	    {
-	       _error->Error(_("Ignore unavailable target release '%s' of package '%s'"), DefRel.c_str(), TmpSrc.c_str());
-	       return 0;
-	    }
-	 }
       }
+
+      if (Src == "" && ArchTag != "")
+      {
+         if (VerTag != "")
+            _error->Error(_("Can not find a package '%s' with version '%s'"),
+                          Pkg.FullName().c_str(), VerTag.c_str());
+         if (RelTag != "")
+            _error->Error(_("Can not find a package '%s' with release '%s'"),
+                          Pkg.FullName().c_str(), RelTag.c_str());
+         Src = Name;
+         return 0;
+      }
+
+
       if (Src.empty() == true)
       {
 	 // if we don't have found a fitting package yet so we will
 	 // choose a good candidate and proceed with that.
 	 // Maybe we will find a source later on with the right VerTag
-	 pkgCache::VerIterator Ver = Cache.GetCandidateVer(Pkg);
+         // or RelTag
+	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
 	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
@@ -244,7 +351,9 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    }
 
    if (Src.empty() == true)
+   {
       Src = TmpSrc;
+   }
    else 
    {
       /* if we have a source pkg name, make sure to only search
@@ -262,6 +371,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
    pkgSrcRecords::Parser *Last = 0;
    unsigned long Offset = 0;
    string Version;
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
 
    /* Iterate over all of the hits, which includes the resulting
       binary packages in the search */
@@ -273,26 +383,43 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
       {
 	 const string Ver = Parse->Version();
 
+         // See if we need to look for a specific release tag
+         if (RelTag != "" && UserRequestedVerTag == "")
+         {
+            const string Rel = GetReleaseForSourceRecord(SrcList, Parse);
+
+            if (Rel == RelTag)
+            {
+               Last = Parse;
+               Offset = Parse->Offset();
+               Version = Ver;
+            }
+         }
+
 	 // Ignore all versions which doesn't fit
 	 if (VerTag.empty() == false &&
-	     Cache.VS().CmpVersion(VerTag, Ver) != 0) // exact match
+	     Cache->VS().CmpVersion(VerTag, Ver) != 0) // exact match
 	    continue;
 
 	 // Newer version or an exact match? Save the hit
-	 if (Last == 0 || Cache.VS().CmpVersion(Version,Ver) < 0) {
+	 if (Last == 0 || Cache->VS().CmpVersion(Version,Ver) < 0) {
 	    Last = Parse;
 	    Offset = Parse->Offset();
 	    Version = Ver;
 	 }
 
-	 // was the version check above an exact match? If so, we don't need to look further
-	 if (VerTag.empty() == false && VerTag.size() == Ver.size())
+	 // was the version check above an exact match?
+         // If so, we don't need to look further
+         if (VerTag.empty() == false && (VerTag == Ver))
 	    break;
       }
+      if (UserRequestedVerTag == "" && Version != "" && RelTag != "")
+         ioprintf(c1out, "Selected version '%s' (%s) for %s\n", 
+                  Version.c_str(), RelTag.c_str(), Src.c_str());
+
       if (Last != 0 || VerTag.empty() == true)
 	 break;
-      //if (VerTag.empty() == false && Last == 0)
-      _error->Error(_("Ignore unavailable version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
+      _error->Error(_("Can not find version '%s' of package '%s'"), VerTag.c_str(), TmpSrc.c_str());
       return 0;
    }
 
@@ -345,31 +472,6 @@ bool DoMarkAuto(CommandLine &CmdL)
    return false;
 }
 									/*}}}*/
-// DoDistUpgrade - Automatic smart upgrader				/*{{{*/
-// ---------------------------------------------------------------------
-/* Intelligent upgrader that will install and remove packages at will */
-bool DoDistUpgrade(CommandLine &CmdL)
-{
-   if (CmdL.FileSize() != 1)
-      return _error->Error(_("The dist-upgrade command takes no arguments"));
-
-   CacheFile Cache;
-   if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
-      return false;
-
-   c0out << _("Calculating upgrade... ") << flush;
-   if (pkgDistUpgrade(*Cache) == false)
-   {
-      c0out << _("Failed") << endl;
-      ShowBroken(c1out,Cache,false);
-      return false;
-   }
-   
-   c0out << _("Done") << endl;
-   
-   return InstallPackages(Cache,true);
-}
-									/*}}}*/
 // DoDSelectUpgrade - Do an upgrade by following dselects selections	/*{{{*/
 // ---------------------------------------------------------------------
 /* Follows dselect's selections */
@@ -411,7 +513,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
    }
 
    /* Resolve any problems that dselect created, allupgrade cannot handle
-      such things. We do so quite agressively too.. */
+      such things. We do so quite aggressively too.. */
    if (Cache->BrokenCount() != 0)
    {      
       pkgProblemResolver Fix(Cache);
@@ -526,75 +628,68 @@ bool DoDownload(CommandLine &CmdL)
    CacheFile Cache;
    if (Cache.ReadOnlyOpen() == false)
       return false;
-   
+
    APT::CacheSetHelper helper(c0out);
-   APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
+   APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
+		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
 
    if (verset.empty() == true)
       return false;
 
+   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet", 0));
    pkgAcquire Fetcher;
-   AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   if (_config->FindB("APT::Get::Print-URIs") == false)
-      Fetcher.Setup(&Stat);
+   if (Fetcher.Setup(&Stat) == false)
+      return false;
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
-   bool gotAll = true;
 
-   for (APT::VersionList::const_iterator Ver = verset.begin(); 
-        Ver != verset.end(); 
-        ++Ver) 
+   // reuse the usual acquire methods for deb files, but don't drop them into
+   // the usual directories - keep everything in the current directory
+   std::vector<std::string> storefile(verset.size());
+   std::string const cwd = SafeGetCWD();
+   _config->Set("Dir::Cache::Archives", cwd);
+   int i = 0;
+   for (APT::VersionSet::const_iterator Ver = verset.begin();
+	 Ver != verset.end(); ++Ver, ++i)
    {
-      string descr;
-      // get the right version
-      pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-      pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
-      pkgCache::VerFileIterator Vf = Ver.FileList();
-      if (Vf.end() == true)
-      {
-	 _error->Error("Can not find VerFile for %s in version %s", Pkg.FullName().c_str(), Ver.VerStr());
-	 gotAll = false;
-	 continue;
-      }
-      pkgCache::PkgFileIterator F = Vf.File();
-      pkgIndexFile *index;
-      if(SrcList->FindIndex(F, index) == false)
-      {
-	 _error->Error(_("Can't find a source to download version '%s' of '%s'"), Ver.VerStr(), Pkg.FullName().c_str());
-	 gotAll = false;
-	 continue;
-      }
-      string uri = index->ArchiveURI(rec.FileName());
-      strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
-      // get the most appropriate hash
-      HashString hash;
-      if (rec.SHA512Hash() != "")
-         hash = HashString("sha512", rec.SHA512Hash());
-      else if (rec.SHA256Hash() != "")
-         hash = HashString("sha256", rec.SHA256Hash());
-      else if (rec.SHA1Hash() != "")
-         hash = HashString("sha1", rec.SHA1Hash());
-      else if (rec.MD5Hash() != "")
-         hash = HashString("md5", rec.MD5Hash());
-      // get the file
-      new pkgAcqFile(&Fetcher, uri, hash.toStr(), (*Ver)->Size, descr, Pkg.Name(), ".");
+      pkgAcquire::Item *I = new pkgAcqArchive(&Fetcher, SrcList, &Recs, *Ver, storefile[i]);
+      std::string const filename = cwd + flNotDir(storefile[i]);
+      storefile[i].assign(filename);
+      I->DestFile.assign(filename);
    }
-   if (gotAll == false)
-      return false;
 
    // Just print out the uris and exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
 
-   return (Fetcher.Run() == pkgAcquire::Continue);
+   if (_error->PendingError() == true || CheckAuth(Fetcher, false) == false)
+      return false;
+
+   bool Failed = false;
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false)
+      return false;
+
+   // copy files in local sources to the current directory
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
+   {
+      std::string const filename = cwd + flNotDir((*I)->DestFile);
+      if ((*I)->Local == true &&
+          filename != (*I)->DestFile &&
+          (*I)->Status == pkgAcquire::Item::StatDone)
+      {
+	 std::ifstream src((*I)->DestFile.c_str(), std::ios::binary);
+	 std::ofstream dst(filename.c_str(), std::ios::binary);
+	 dst << src.rdbuf();
+      }
+   }
+   return Failed == false;
 }
 									/*}}}*/
 // DoCheck - Perform the check operation				/*{{{*/
@@ -663,7 +758,7 @@ bool DoSource(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       
       if (Last == 0) {
 	 delete[] Dsc;
@@ -811,27 +906,10 @@ bool DoSource(CommandLine &CmdL)
       delete[] Dsc;
       return true;
    }
-   
-   // Run it
-   if (Fetcher.Run() == pkgAcquire::Failed)
-   {
-      delete[] Dsc;
-      return false;
-   }
 
-   // Print error messages
+   // Run it
    bool Failed = false;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I != Fetcher.ItemsEnd(); ++I)
-   {
-      if ((*I)->Status == pkgAcquire::Item::StatDone &&
-	  (*I)->Complete == true)
-	 continue;
-      
-      fprintf(stderr,_("Failed to fetch %s  %s\n"),(*I)->DescURI().c_str(),
-	      (*I)->ErrorText.c_str());
-      Failed = true;
-   }
-   if (Failed == true)
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
    {
       delete[] Dsc;
       return _error->Error(_("Failed to fetch some archives."));
@@ -974,7 +1052,7 @@ bool DoBuildDep(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,*Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
             
@@ -1428,24 +1506,6 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
    return _error->Error("changelog download failed");
 }
 									/*}}}*/
-// DisplayFileInPager - Display File with pager        			/*{{{*/
-void DisplayFileInPager(string filename)
-{
-   pid_t Process = ExecFork();
-   if (Process == 0)
-   {
-      const char *Args[3];
-      Args[0] = "/usr/bin/sensible-pager";
-      Args[1] = filename.c_str();
-      Args[2] = 0;
-      execvp(Args[0],(char **)Args);
-      exit(100);
-   }
-         
-   // Wait for the subprocess
-   ExecWait(Process, "sensible-pager", false);
-}
-									/*}}}*/
 // DoChangelog - Get changelog from the command line			/*{{{*/
 // ---------------------------------------------------------------------
 bool DoChangelog(CommandLine &CmdL)
@@ -1476,14 +1536,12 @@ bool DoChangelog(CommandLine &CmdL)
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 
    char tmpname[100];
-   char* tmpdir = NULL;
+   const char* tmpdir = NULL;
    if (downOnly == false)
    {
-      const char* const tmpDir = getenv("TMPDIR");
-      if (tmpDir != NULL && *tmpDir != '\0')
-	 snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", tmpDir);
-      else
-	 strncpy(tmpname, "/tmp/apt-changelog-XXXXXX", sizeof(tmpname));
+      std::string systemTemp = GetTempDir();
+      snprintf(tmpname, sizeof(tmpname), "%s/apt-changelog-XXXXXX", 
+               systemTemp.c_str());
       tmpdir = mkdtemp(tmpname);
       if (tmpdir == NULL)
 	 return _error->Errno("mkdtemp", "mkdtemp failed");
@@ -1621,15 +1679,6 @@ void SigWinch(int)
 #endif
 }
 									/*}}}*/
-
-bool DoUpgrade(CommandLine &CmdL)
-{
-   if (_config->FindB("APT::Get::UpgradeAllowNew", false) == true)
-      return DoUpgradeWithAllowNewPackages(CmdL);
-   else
-      return DoUpgradeNoNewPackages(CmdL);
-}
-
 int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
@@ -1683,10 +1732,6 @@ int main(int argc,const char *argv[])					/*{{{*/
 
    // see if we are in simulate mode
    CheckSimulateMode(CmdL);
-
-   // Deal with stdout not being a tty
-   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
-      _config->Set("quiet","1");
 
    // Setup the output streams
    InitOutput();

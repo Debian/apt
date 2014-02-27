@@ -789,7 +789,7 @@ bool pkgDepCache::MarkKeep(PkgIterator const &Pkg, bool Soft, bool FromUser,
       // - this makes sense as default when all Garbage dependencies
       //   are automatically marked for removal (as aptitude does).
       //   setting a package for keep then makes it no longer autoinstalled
-      //   for all other use-case this action is rather suprising
+      //   for all other use-case this action is rather surprising
    if(FromUser && !P.Marked)
      P.Flags &= ~Flag::Auto;
 #endif
@@ -896,6 +896,7 @@ char const* PrintMode(char const mode)
 	 case pkgDepCache::ModeInstall: return "Install";
 	 case pkgDepCache::ModeKeep: return "Keep";
 	 case pkgDepCache::ModeDelete: return "Delete";
+	 case pkgDepCache::ModeGarbage: return "Garbage";
 	 default: return "UNKNOWN";
 	 }
 }
@@ -1133,8 +1134,13 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    std::clog << OutputInDepth(Depth) << Start << " can't be satisfied!" << std::endl;
 	 if (Start.IsCritical() == false)
 	    continue;
-	 // if the dependency was critical, we can't install it, so remove it again
-	 MarkDelete(Pkg,false,Depth + 1, false);
+	 // if the dependency was critical, we have absolutely no chance to install it,
+	 // so if it wasn't installed remove it again. If it was, discard the candidate
+	 // as the problemresolver will trip over it otherwise trying to install it (#735967)
+	 if (Pkg->CurrentVer == 0)
+	    MarkDelete(Pkg,false,Depth + 1, false);
+	 else
+	    SetCandidateVersion(Pkg.CurrentVer());
 	 return false;
       }
 
@@ -1189,7 +1195,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 }
       }
 
-      /* This bit is for processing the possibilty of an install/upgrade
+      /* This bit is for processing the possibility of an install/upgrade
          fixing the problem for "positive" dependencies */
       if (Start.IsNegative() == false && (DepState[Start->ID] & DepCVer) == DepCVer)
       {
@@ -1252,6 +1258,11 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	    if (PkgState[Pkg->ID].InstallVer == 0)
 	       continue;
 
+            /* Ignore negative dependencies that we are not going to 
+               get installed */
+            if (PkgState[Pkg->ID].InstallVer != *I)
+               continue;
+
 	    if ((Start->Version != 0 || TrgPkg != Pkg) &&
 		PkgState[Pkg->ID].CandidateVer != PkgState[Pkg->ID].InstallVer &&
 		PkgState[Pkg->ID].CandidateVer != *I &&
@@ -1304,7 +1315,7 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
       // (simple string-compare as stuff like '1' == '0:1-0' can't happen here)
       if (P->CurrentVer == 0 || strcmp(Pkg.CandVersion(), P.CandVersion()) == 0)
 	 continue;
-      // packages loosing M-A:same can be out-of-sync
+      // packages losing M-A:same can be out-of-sync
       VerIterator CV = PkgState[P->ID].CandidateVerIter(*this);
       if (unlikely(CV.end() == true) ||
 	    (CV->MultiArch & pkgCache::Version::Same) != pkgCache::Version::Same)
@@ -1521,7 +1532,7 @@ bool pkgDepCache::SetCandidateRelease(pkgCache::VerIterator TargetVer,
 	 if (itsFine == false)
 	 {
 	    // change the candidate
-	    Changed.push_back(make_pair(oldCand, TargetVer));
+	    Changed.push_back(make_pair(V, TargetVer));
 	    if (SetCandidateRelease(V, TargetRel, Changed) == false)
 	    {
 	       if (stillOr == false)
@@ -1726,8 +1737,6 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
    follow_recommends = MarkFollowsRecommends();
    follow_suggests   = MarkFollowsSuggests();
 
-
-
    // do the mark part, this is the core bit of the algorithm
    for(PkgIterator p = PkgBegin(); !p.end(); ++p)
    {
@@ -1738,7 +1747,9 @@ bool pkgDepCache::MarkRequired(InRootSetFunc &userFunc)
 	  // be nice even then a required package violates the policy (#583517)
 	  // and do the full mark process also for required packages
 	  (p.CurrentVer().end() != true &&
-	   p.CurrentVer()->Priority == pkgCache::State::Required))
+	   p.CurrentVer()->Priority == pkgCache::State::Required) ||
+	  // packages which can't be changed (like holds) can't be garbage
+	  (IsModeChangeOk(ModeGarbage, p, 0, false) == false))
       {
 	 // the package is installed (and set to keep)
 	 if(PkgState[p->ID].Keep() && !p.CurrentVer().end())

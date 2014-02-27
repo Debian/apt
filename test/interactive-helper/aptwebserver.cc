@@ -100,14 +100,19 @@ bool sendHead(int const client, int const httpcode, std::list<std::string> &head
    std::string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
    headers.push_front(response);
+   _config->Set("APTWebserver::Last-Status-Code", httpcode);
 
-   headers.push_back("Server: APT webserver");
+   std::stringstream buffer;
+   _config->Dump(buffer, "aptwebserver::response-header", "%t: %v%n", false);
+   std::vector<std::string> addheaders = VectorizeString(buffer.str(), '\n');
+   for (std::vector<std::string>::const_iterator h = addheaders.begin(); h != addheaders.end(); ++h)
+      headers.push_back(*h);
 
    std::string date("Date: ");
    date.append(TimeRFC1123(time(NULL)));
    headers.push_back(date);
 
-   std::clog << ">>> RESPONSE >>>" << std::endl;
+   std::clog << ">>> RESPONSE to " << client << " >>>" << std::endl;
    bool Success = true;
    for (std::list<std::string>::const_iterator h = headers.begin();
 	Success == true && h != headers.end(); ++h)
@@ -132,21 +137,21 @@ bool sendFile(int const client, FileFd &data)				/*{{{*/
    {
       if (actual == 0)
 	 break;
-      if (Success == true)
-	 Success &= FileFd::Write(client, buffer, actual);
+      Success &= FileFd::Write(client, buffer, actual);
    }
-   if (Success == true)
-      Success &= FileFd::Write(client, "\r\n", 2);
+   if (Success == false)
+      std::cerr << "SENDFILE: READ/WRITE ERROR to " << client << std::endl;
    return Success;
 }
 									/*}}}*/
 bool sendData(int const client, std::string const &data)		/*{{{*/
 {
-   bool Success = true;
-   Success &= FileFd::Write(client, data.c_str(), data.size());
-   if (Success == true)
-      Success &= FileFd::Write(client, "\r\n", 2);
-   return Success;
+   if (FileFd::Write(client, data.c_str(), data.size()) == false)
+   {
+      std::cerr << "SENDDATA: WRITE ERROR to " << client << std::endl;
+      return false;
+   }
+   return true;
 }
 									/*}}}*/
 void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
@@ -156,14 +161,28 @@ void sendError(int const client, int const httpcode, std::string const &request,
    std::string response("<html><head><title>");
    response.append(httpcodeToStr(httpcode)).append("</title></head>");
    response.append("<body><h1>").append(httpcodeToStr(httpcode)).append("</h1>");
-   if (error.empty() == false)
-      response.append("<p><em>Error</em>: ").append(error).append("</p>");
-   response.append("This error is a result of the request: <pre>");
+   if (httpcode != 200)
+   {
+      if (error.empty() == false)
+	 response.append("<p><em>Error</em>: ").append(error).append("</p>");
+      response.append("This error is a result of the request: <pre>");
+   }
+   else
+   {
+      if (error.empty() == false)
+	 response.append("<p><em>Success</em>: ").append(error).append("</p>");
+      response.append("The successfully executed operation was requested by: <pre>");
+   }
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
    sendHead(client, httpcode, headers);
    if (content == true)
       sendData(client, response);
+}
+void sendSuccess(int const client, std::string const &request,
+	       bool content, std::string const &error = "")
+{
+   sendError(client, 200, request, content, error);
 }
 									/*}}}*/
 void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
@@ -178,8 +197,23 @@ void sendRedirect(int const client, int const httpcode, std::string const &uri,/
    response.append(request).append("</pre></body></html>");
    addDataHeaders(headers, response);
    std::string location("Location: ");
-   if (strncmp(uri.c_str(), "http://", 7) != 0)
-      location.append("http://").append(LookupTag(request, "Host")).append("/").append(uri);
+   if (strncmp(uri.c_str(), "http://", 7) != 0 && strncmp(uri.c_str(), "https://", 8) != 0)
+   {
+      std::string const host = LookupTag(request, "Host");
+      if (host.find(":4433") != std::string::npos)
+	 location.append("https://");
+      else
+	 location.append("http://");
+      location.append(host).append("/");
+      if (strncmp("/home/", uri.c_str(), strlen("/home/")) == 0 && uri.find("/public_html/") != std::string::npos)
+      {
+	 std::string homeuri = SubstVar(uri, "/home/", "~");
+	 homeuri = SubstVar(homeuri, "/public_html/", "/");
+	 location.append(homeuri);
+      }
+      else
+	 location.append(uri);
+   }
    else
       location.append(uri);
    headers.push_back(location);
@@ -248,7 +282,7 @@ void sendDirectoryListing(int const client, std::string const &dir,	/*{{{*/
 	   << "</head>" << std::endl
 	   << "<body><h1>Index of " << dir << "</h1>" << std::endl
 	   << "<table><tr><th>#</th><th>Name</th><th>Size</th><th>Last-Modified</th></tr>" << std::endl;
-   if (dir != ".")
+   if (dir != "./")
       listing << "<tr><td>d</td><td><a href=\"..\">Parent Directory</a></td><td>-</td><td>-</td></tr>";
    for (int i = 0; i < counter; ++i) {
       struct stat fs;
@@ -279,7 +313,7 @@ void sendDirectoryListing(int const client, std::string const &dir,	/*{{{*/
 }
 									/*}}}*/
 bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
-		    std::string &filename, bool &sendContent,
+		    std::string &filename, std::string &params, bool &sendContent,
 		    bool &closeConnection)
 {
    if (strncmp(request.c_str(), "HEAD ", 5) == 0)
@@ -346,6 +380,14 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
       sendError(client, 400, request, sendContent, "Request is absolutePath, but configured to not accept that");
       return false;
    }
+
+   size_t paramspos = filename.find('?');
+   if (paramspos != std::string::npos)
+   {
+      params = filename.substr(paramspos + 1);
+      filename.erase(paramspos);
+   }
+
    filename = DeQuoteString(filename);
 
    // this is not a secure server, but at least prevent the obvious …
@@ -361,10 +403,252 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
    // nuke the first character which is a / as we assured above
    filename.erase(0, 1);
    if (filename.empty() == true)
-      filename = ".";
+      filename = "./";
+   // support ~user/ uris to refer to /home/user/public_html/ as a kind-of special directory
+   else if (filename[0] == '~')
+   {
+      // /home/user is actually not entirely correct, but good enough for now
+      size_t dashpos = filename.find('/');
+      if (dashpos != std::string::npos)
+      {
+	 std::string home = filename.substr(1, filename.find('/') - 1);
+	 std::string pubhtml = filename.substr(filename.find('/') + 1);
+	 filename = "/home/" + home + "/public_html/" + pubhtml;
+      }
+      else
+	 filename = "/home/" + filename.substr(1) + "/public_html/";
+   }
+
+   // if no filename is given, but a valid directory see if we can use an index or
+   // have to resort to a autogenerated directory listing later on
+   if (DirectoryExists(filename) == true)
+   {
+      std::string const directoryIndex = _config->Find("aptwebserver::directoryindex");
+      if (directoryIndex.empty() == false && directoryIndex == flNotDir(directoryIndex) &&
+	    RealFileExists(filename + directoryIndex) == true)
+	 filename += directoryIndex;
+   }
+
    return true;
 }
 									/*}}}*/
+bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+{
+   size_t const pcount = parts.size();
+   if (pcount == 4 && parts[1] == "set")
+   {
+      _config->Set(parts[2], parts[3]);
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was set to '" + parts[3] + "'!");
+      return true;
+   }
+   else if (pcount == 4 && parts[1] == "find")
+   {
+      std::list<std::string> headers;
+      std::string response = _config->Find(parts[2], parts[3]);
+      addDataHeaders(headers, response);
+      sendHead(client, 200, headers);
+      sendData(client, response);
+      return true;
+   }
+   else if (pcount == 3 && parts[1] == "find")
+   {
+      std::list<std::string> headers;
+      if (_config->Exists(parts[2]) == true)
+      {
+	 std::string response = _config->Find(parts[2]);
+	 addDataHeaders(headers, response);
+	 sendHead(client, 200, headers);
+	 sendData(client, response);
+	 return true;
+      }
+      sendError(client, 404, request, "Requested Configuration option doesn't exist.");
+      return false;
+   }
+   else if (pcount == 3 && parts[1] == "clear")
+   {
+      _config->Clear(parts[2]);
+      sendSuccess(client, request, true, "Option '" + parts[2] + "' was cleared.");
+      return true;
+   }
+
+   sendError(client, 400, request, true, "Unknown on-the-fly configuration request");
+   return false;
+}
+									/*}}}*/
+void * handleClient(void * voidclient)					/*{{{*/
+{
+   int client = *((int*)(voidclient));
+   std::clog << "ACCEPT client " << client << std::endl;
+   std::vector<std::string> messages;
+   while (ReadMessages(client, messages))
+   {
+      bool closeConnection = false;
+      for (std::vector<std::string>::const_iterator m = messages.begin();
+	    m != messages.end() && closeConnection == false; ++m) {
+	 std::clog << ">>> REQUEST from " << client << " >>>" << std::endl << *m
+	    << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
+	 std::list<std::string> headers;
+	 std::string filename;
+	 std::string params;
+	 bool sendContent = true;
+	 if (parseFirstLine(client, *m, filename, params, sendContent, closeConnection) == false)
+	    continue;
+
+	 // special webserver command request
+	 if (filename.length() > 1 && filename[0] == '_')
+	 {
+	    std::vector<std::string> parts = VectorizeString(filename, '/');
+	    if (parts[0] == "_config")
+	    {
+	       handleOnTheFlyReconfiguration(client, *m, parts);
+	       continue;
+	    }
+	 }
+
+	 // string replacements in the requested filename
+	 ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
+	 if (Replaces != NULL)
+	 {
+	    std::string redirect = "/" + filename;
+	    for (::Configuration::Item *I = Replaces->Child; I != NULL; I = I->Next)
+	       redirect = SubstVar(redirect, I->Tag, I->Value);
+	    if (redirect.empty() == false && redirect[0] == '/')
+	       redirect.erase(0,1);
+	    if (redirect != filename)
+	    {
+	       sendRedirect(client, 301, redirect, *m, sendContent);
+	       continue;
+	    }
+	 }
+
+	 ::Configuration::Item const *Overwrite = _config->Tree("aptwebserver::overwrite");
+	 if (Overwrite != NULL)
+	 {
+	    for (::Configuration::Item *I = Overwrite->Child; I != NULL; I = I->Next)
+	    {
+	       regex_t *pattern = new regex_t;
+	       int const res = regcomp(pattern, I->Tag.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
+	       if (res != 0)
+	       {
+		  char error[300];
+		  regerror(res, pattern, error, sizeof(error));
+		  sendError(client, 500, *m, sendContent, error);
+		  continue;
+	       }
+	       if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
+	       {
+		  filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", filename);
+		  if (filename[0] == '/')
+		     filename.erase(0,1);
+		  regfree(pattern);
+		  break;
+	       }
+	       regfree(pattern);
+	    }
+	 }
+
+	 // deal with the request
+	 if (_config->FindB("aptwebserver::support::http", true) == false &&
+	       LookupTag(*m, "Host").find(":4433") == std::string::npos)
+	 {
+	    sendError(client, 400, *m, sendContent, "HTTP disabled, all requests must be HTTPS");
+	    continue;
+	 }
+	 else if (RealFileExists(filename) == true)
+	 {
+	    FileFd data(filename, FileFd::ReadOnly);
+	    std::string condition = LookupTag(*m, "If-Modified-Since", "");
+	    if (_config->FindB("aptwebserver::support::modified-since", true) == true && condition.empty() == false)
+	    {
+	       time_t cache;
+	       if (RFC1123StrToTime(condition.c_str(), cache) == true &&
+		     cache >= data.ModificationTime())
+	       {
+		  sendHead(client, 304, headers);
+		  continue;
+	       }
+	    }
+
+	    if (_config->FindB("aptwebserver::support::range", true) == true)
+	       condition = LookupTag(*m, "Range", "");
+	    else
+	       condition.clear();
+	    if (condition.empty() == false && strncmp(condition.c_str(), "bytes=", 6) == 0)
+	    {
+	       time_t cache;
+	       std::string ifrange;
+	       if (_config->FindB("aptwebserver::support::if-range", true) == true)
+		  ifrange = LookupTag(*m, "If-Range", "");
+	       bool validrange = (ifrange.empty() == true ||
+		     (RFC1123StrToTime(ifrange.c_str(), cache) == true &&
+		      cache <= data.ModificationTime()));
+
+	       // FIXME: support multiple byte-ranges (APT clients do not do this)
+	       if (condition.find(',') == std::string::npos)
+	       {
+		  size_t start = 6;
+		  unsigned long long filestart = strtoull(condition.c_str() + start, NULL, 10);
+		  // FIXME: no support for last-byte-pos being not the end of the file (APT clients do not do this)
+		  size_t dash = condition.find('-') + 1;
+		  unsigned long long fileend = strtoull(condition.c_str() + dash, NULL, 10);
+		  unsigned long long filesize = data.FileSize();
+		  if ((fileend == 0 || (fileend == filesize && fileend >= filestart)) &&
+			validrange == true)
+		  {
+		     if (filesize > filestart)
+		     {
+			data.Skip(filestart);
+			std::ostringstream contentlength;
+			contentlength << "Content-Length: " << (filesize - filestart);
+			headers.push_back(contentlength.str());
+			std::ostringstream contentrange;
+			contentrange << "Content-Range: bytes " << filestart << "-"
+			   << filesize - 1 << "/" << filesize;
+			headers.push_back(contentrange.str());
+			sendHead(client, 206, headers);
+			if (sendContent == true)
+			   sendFile(client, data);
+			continue;
+		     }
+		     else
+		     {
+			headers.push_back("Content-Length: 0");
+			std::ostringstream contentrange;
+			contentrange << "Content-Range: bytes */" << filesize;
+			headers.push_back(contentrange.str());
+			sendHead(client, 416, headers);
+			continue;
+		     }
+		  }
+	       }
+	    }
+
+	    addFileHeaders(headers, data);
+	    sendHead(client, 200, headers);
+	    if (sendContent == true)
+	       sendFile(client, data);
+	 }
+	 else if (DirectoryExists(filename) == true)
+	 {
+	    if (filename[filename.length()-1] == '/')
+	       sendDirectoryListing(client, filename, *m, sendContent);
+	    else
+	       sendRedirect(client, 301, filename.append("/"), *m, sendContent);
+	 }
+	 else
+	    sendError(client, 404, *m, sendContent);
+      }
+      _error->DumpErrors(std::cerr);
+      messages.clear();
+      if (closeConnection == true)
+	 break;
+   }
+   close(client);
+   std::clog << "CLOSE client " << client << std::endl;
+   return NULL;
+}
+									/*}}}*/
+
 int main(int const argc, const char * argv[])
 {
    CommandLine::Args Args[] = {
@@ -385,6 +669,9 @@ int main(int const argc, const char * argv[])
    // create socket, bind and listen to it {{{
    // ignore SIGPIPE, this can happen on write() if the socket closes connection
    signal(SIGPIPE, SIG_IGN);
+   // we don't care for our slaves, so ignore their death
+   signal(SIGCHLD, SIG_IGN);
+
    int sock = socket(AF_INET6, SOCK_STREAM, 0);
    if(sock < 0)
    {
@@ -452,110 +739,47 @@ int main(int const argc, const char * argv[])
 
    std::clog << "Serving ANY file on port: " << port << std::endl;
 
-   listen(sock, 1);
+   int const slaves = _config->FindB("aptwebserver::slaves", SOMAXCONN);
+   listen(sock, slaves);
    /*}}}*/
 
-   std::vector<std::string> messages;
-   int client;
-   while ((client = accept(sock, NULL, NULL)) != -1)
+   _config->CndSet("aptwebserver::response-header::Server", "APT webserver");
+   _config->CndSet("aptwebserver::response-header::Accept-Ranges", "bytes");
+   _config->CndSet("aptwebserver::directoryindex", "index.html");
+
+   std::list<int> accepted_clients;
+
+   while (true)
    {
-      std::clog << "ACCEPT client " << client
-		<< " on socket " << sock << std::endl;
-
-      while (ReadMessages(client, messages))
+      int client = accept(sock, NULL, NULL);
+      if (client == -1)
       {
-	 bool closeConnection = false;
-	 for (std::vector<std::string>::const_iterator m = messages.begin();
-	      m != messages.end() && closeConnection == false; ++m) {
-	    std::clog << ">>> REQUEST >>>>" << std::endl << *m
-		      << std::endl << "<<<<<<<<<<<<<<<<" << std::endl;
-	    std::list<std::string> headers;
-	    std::string filename;
-	    bool sendContent = true;
-	    if (parseFirstLine(client, *m, filename, sendContent, closeConnection) == false)
-	       continue;
-
-	    // string replacements in the requested filename
-	    ::Configuration::Item const *Replaces = _config->Tree("aptwebserver::redirect::replace");
-	    if (Replaces != NULL)
-	    {
-	       std::string redirect = "/" + filename;
-	       for (::Configuration::Item *I = Replaces->Child; I != NULL; I = I->Next)
-		  redirect = SubstVar(redirect, I->Tag, I->Value);
-	       redirect.erase(0,1);
-	       if (redirect != filename)
-	       {
-		  sendRedirect(client, 301, redirect, *m, sendContent);
-		  continue;
-	       }
-	    }
-
-	    ::Configuration::Item const *Overwrite = _config->Tree("aptwebserver::overwrite");
-	    if (Overwrite != NULL)
-	    {
-	       for (::Configuration::Item *I = Overwrite->Child; I != NULL; I = I->Next)
-	       {
-		  regex_t *pattern = new regex_t;
-		  int const res = regcomp(pattern, I->Tag.c_str(), REG_EXTENDED | REG_ICASE | REG_NOSUB);
-		  if (res != 0)
-		  {
-		     char error[300];
-		     regerror(res, pattern, error, sizeof(error));
-		     sendError(client, 500, *m, sendContent, error);
-		     continue;
-		  }
-		  if (regexec(pattern, filename.c_str(), 0, 0, 0) == 0)
-		  {
-		      filename = _config->Find("aptwebserver::overwrite::" + I->Tag + "::filename", filename);
-		      if (filename[0] == '/')
-			 filename.erase(0,1);
-		      regfree(pattern);
-		      break;
-		  }
-		  regfree(pattern);
-	       }
-	    }
-
-	    // deal with the request
-	    if (RealFileExists(filename) == true)
-	    {
-	       FileFd data(filename, FileFd::ReadOnly);
-	       std::string condition = LookupTag(*m, "If-Modified-Since", "");
-	       if (condition.empty() == false)
-	       {
-		  time_t cache;
-		  if (RFC1123StrToTime(condition.c_str(), cache) == true &&
-			cache >= data.ModificationTime())
-		  {
-		     sendHead(client, 304, headers);
-		     continue;
-		  }
-	       }
-
-	       addFileHeaders(headers, data);
-	       sendHead(client, 200, headers);
-	       if (sendContent == true)
-		  sendFile(client, data);
-	    }
-	    else if (DirectoryExists(filename) == true)
-	    {
-	       if (filename == "." || filename[filename.length()-1] == '/')
-		  sendDirectoryListing(client, filename, *m, sendContent);
-	       else
-		  sendRedirect(client, 301, filename.append("/"), *m, sendContent);
-	    }
-	    else
-	       sendError(client, 404, *m, sendContent);
-	 }
+	 if (errno == EINTR)
+	    continue;
+	 _error->Errno("accept", "Couldn't accept client on socket %d", sock);
 	 _error->DumpErrors(std::cerr);
-	 messages.clear();
-	 if (closeConnection == true)
-	    break;
+	 return 6;
       }
 
-      std::clog << "CLOSE client " << client
-		<< " on socket " << sock << std::endl;
-      close(client);
+      pthread_attr_t attr;
+      if (pthread_attr_init(&attr) != 0 || pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) != 0)
+      {
+	 _error->Errno("pthread_attr", "Couldn't set detach attribute for a fresh thread to handle client %d on socket %d", client, sock);
+	 _error->DumpErrors(std::cerr);
+	 close(client);
+	 continue;
+      }
+
+      pthread_t tid;
+      // thats rather dirty, but we need to store the client socket somewhere safe
+      accepted_clients.push_front(client);
+      if (pthread_create(&tid, &attr, &handleClient, &(*accepted_clients.begin())) != 0)
+      {
+	 _error->Errno("pthread_create", "Couldn't create a fresh thread to handle client %d on socket %d", client, sock);
+	 _error->DumpErrors(std::cerr);
+	 close(client);
+	 continue;
+      }
    }
    pidfile.Close();
 

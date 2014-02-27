@@ -3,7 +3,7 @@ people need to be aware of.. Many of this changes are done so that most old
 source will continue to function, but perhaps at reduced functionality.
 
 * pkgDepCache is no longer self initilizing, you have to call the Init
-  method seperately after constructing it. Users of pkgCacheFile do not
+  method separately after constructing it. Users of pkgCacheFile do not
   need to worry about this
 * GetCandidateVer/etc is gone from the pkgCache. It exists only in the 
   DepCache and is just an inline around the new Policy class
@@ -55,7 +55,7 @@ source will continue to function, but perhaps at reduced functionality.
   (should be transparent largely)
 * Locking is handled differently, there is no dpkg lock class, the _system
   class provides Lock/UnLock methods
-* pkgDepCache is not a subclass of pkgCache, it agregates it now. Some 
+* pkgDepCache is not a subclass of pkgCache, it aggregates it now. Some
   compatibility functions are provided that make this transition fairly 
   easy.
 * The following functions have had minor argument changes:

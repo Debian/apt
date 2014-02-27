@@ -1,0 +1,63 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+buildsimplenativepackage 'cool' 'i386' '1.0' 'unstable'
+
+setupaptarchive --no-update
+
+testfileexists() {
+	msgtest 'Test for existence of file' "$1"
+	test -e "$1" && msgpass || msgfail
+	rm -f "$1"
+}
+
+testfilemissing() {
+	msgtest 'Test for non-existance of file' "$1"
+	test -e "$1" && msgfail || msgpass
+	rm -f "$1"
+}
+
+testrun() {
+	rm -rf rootdir/var/lib/apt
+	testsuccess aptget update
+
+	if [ "$1" = 'trusted' ]; then
+		testsuccess aptget download cool
+		testfileexists 'cool_1.0_i386.deb'
+
+		testsuccess aptget download cool --allow-unauthenticated
+		testfileexists 'cool_1.0_i386.deb'
+	else
+		testfailure aptget download cool
+		testfilemissing 'cool_1.0_i386.deb'
+
+		testsuccess aptget download cool --allow-unauthenticated
+		testfileexists 'cool_1.0_i386.deb'
+	fi
+
+	mv aptarchive/pool/cool_1.0_i386.deb aptarchive/pool/cool_1.0_i386.deb.bak
+	echo 'this is not a good package' > aptarchive/pool/cool_1.0_i386.deb
+	testfailure aptget download cool
+	testfilemissing cool_1.0_i386.deb
+
+	testfailure aptget download cool --allow-unauthenticated  # unauthenticated doesn't mean unchecked
+	testfilemissing cool_1.0_i386.deb
+
+	rm -f aptarchive/pool/cool_1.0_i386.deb
+	mv aptarchive/pool/cool_1.0_i386.deb.bak aptarchive/pool/cool_1.0_i386.deb
+	testsuccess aptget download cool --allow-unauthenticated
+	testfileexists 'cool_1.0_i386.deb'
+}
+
+testrun 'trusted'
+
+find aptarchive/ \( -name 'Release.gpg' -o -name 'InRelease' \) -delete
+testrun 'untrusted'
+
+changetowebserver
+testrun 'untrusted'
