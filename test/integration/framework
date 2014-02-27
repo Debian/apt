@@ -90,18 +90,18 @@ msgdone() {
 		echo "${CDONE}DONE${CNORMAL}";
 	fi
 }
-
+getaptconfig() {
+	if [ -f ./aptconfig.conf ]; then
+            echo "./aptconfig.conf"
+	elif [ -f ../aptconfig.conf ]; then
+            echo "../aptconfig.conf"
+        fi
+}
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
 	local CMD="$1"
 	shift
-	if [ -f ./aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
-	elif [ -f ../aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
-	else
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
-	fi
+	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
 }
 aptconfig() { runapt apt-config "$@"; }
 aptcache() { runapt apt-cache "$@"; }
@@ -111,6 +111,9 @@ aptftparchive() { runapt apt-ftparchive "$@"; }
 aptkey() { runapt apt-key "$@"; }
 aptmark() { runapt apt-mark "$@"; }
 apt() { runapt apt "$@"; }
+apthelper() { 
+  APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${APTHELPERBINDIR} ${APTHELPERBINDIR}/apt-helper "$@";
+}
 aptwebserver() {
   LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver "$@";
 }
@@ -118,17 +121,11 @@ dpkg() {
 	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
 }
 aptitude() {
-	if [ -f ./aptconfig.conf ]; then
-		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
-	elif [ -f ../aptconfig.conf ]; then
-		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command aptitude "$@"
-	else
-		LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
-	fi
+	APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
 }
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
+	APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${BUILDDIRECTORY} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
 }
 http() {
 	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
@@ -177,6 +174,7 @@ setupenvironment() {
         # allow overriding the default BUILDDIR location
 	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
         METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
+        APTHELPERBINDIR=${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}
         APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
@@ -934,41 +932,10 @@ changetocdrom() {
 }
 
 downloadfile() {
-	PROTO="$(echo "$1" | cut -d':' -f 1)"
-        if [ ! -x "${METHODSDIR}/${PROTO}" ]; then
-            msgwarn "can not find ${METHODSDIR}/${PROTO}"
-            return 1
-        fi
-	local DOWNLOG="${TMPWORKINGDIRECTORY}/download.log"
-	rm -f "$DOWNLOG"
-	touch "$DOWNLOG"
-	{
-		echo "601 Configuration
-Config-Item: Acquire::https::CaInfo=${TESTDIR}/apt.pem
-Config-Item: Debug::Acquire::${PROTO}=1
-
-600 Acquire URI
-URI: $1
-Filename: ${2}
-"
-		# simple worker keeping stdin open until we are done (201) or error (400)
-		# and requesting new URIs on try-agains/redirects in-between
-		{ tail -n 999 -f "$DOWNLOG" & echo "TAILPID: $!"; } | while read f1 f2; do
-			if [ "$f1" = 'TAILPID:' ]; then
-				TAILPID="$f2"
-			elif [ "$f1" = 'New-URI:' ]; then
-				echo "600 Acquire URI
-URI: $f2
-Filename: ${2}
-"
-			elif [ "$f1" = '201' ] || [ "$f1" = '400' ]; then
-				# tail would only die on next read – which never happens
-				test -z "$TAILPID" || kill -s HUP "$TAILPID"
-				break
-			fi
-		done
-	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${METHODSDIR}/${PROTO} 2>&1 | tee "$DOWNLOG"
-	rm "$DOWNLOG"
+        PROTO="$(echo "$1" | cut -d':' -f 1)"
+        apthelper -o Acquire::https::CaInfo=${TESTDIR}/apt.pem \
+                  -o Debug::Acquire::${PROTO}=1 \
+                  download-file "$1" "$2" 2>&1
 	# only if the file exists the download was successful
 	if [ -e "$2" ]; then
 		return 0
