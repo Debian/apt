@@ -484,13 +484,8 @@ bool HttpServerState::InitHashes(FileFd &File)				/*{{{*/
    In.Hash = new Hashes;
 
    // Set the expected size and read file for the hashes
-   if (StartPos >= 0)
-   {
-      File.Truncate(StartPos);
-
-      return In.Hash->AddFD(File, StartPos);
-   }
-   return true;
+   File.Truncate(StartPos);
+   return In.Hash->AddFD(File, StartPos);
 }
 									/*}}}*/
 Hashes * HttpServerState::GetHashes()					/*{{{*/
