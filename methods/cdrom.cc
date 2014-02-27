@@ -62,7 +62,7 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
                                           MountedByApt(false)
 {
    UdevCdroms.Dlopen();
-};
+}
 									/*}}}*/
 // CDROMMethod::Exit - Unmount the disc if necessary			/*{{{*/
 // ---------------------------------------------------------------------

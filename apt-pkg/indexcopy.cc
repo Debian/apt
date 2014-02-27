@@ -646,12 +646,12 @@ bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
       int const &statusfd, int fd[2]) {
    ExecGPGV(File, FileOut, statusfd, fd);
    return false;
-};
+}
 bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
       int const &statusfd) {
    ExecGPGV(File, FileOut, statusfd);
    return false;
-};
+}
 									/*}}}*/
 bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 				vector<string> &List, pkgCdromStatus *log)

@@ -414,7 +414,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 // GrpIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical group in the hash table. */
-void pkgCache::GrpIterator::operator ++(int) 
+void pkgCache::GrpIterator::operator ++(int)
 {
    // Follow the current links
    if (S != Owner->GrpP)
@@ -426,12 +426,12 @@ void pkgCache::GrpIterator::operator ++(int)
       HashIndex++;
       S = Owner->GrpP + Owner->HeaderP->GrpHashTable[HashIndex];
    }
-};
+}
 									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
-void pkgCache::PkgIterator::operator ++(int) 
+void pkgCache::PkgIterator::operator ++(int)
 {
    // Follow the current links
    if (S != Owner->PkgP)
@@ -443,7 +443,7 @@ void pkgCache::PkgIterator::operator ++(int)
       HashIndex++;
       S = Owner->PkgP + Owner->HeaderP->PkgHashTable[HashIndex];
    }
-};
+}
 									/*}}}*/
 // PkgIterator::State - Check the State of the package			/*{{{*/
 // ---------------------------------------------------------------------
@@ -475,26 +475,26 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 // ---------------------------------------------------------------------
 /* Return string representing of the candidate version. */
 const char *
-pkgCache::PkgIterator::CandVersion() const 
+pkgCache::PkgIterator::CandVersion() const
 {
   //TargetVer is empty, so don't use it.
   VerIterator version = pkgPolicy(Owner).GetCandidateVer(*this);
   if (version.IsGood())
     return version.VerStr();
   return 0;
-};
+}
 									/*}}}*/
 // PkgIterator::CurVersion - Returns the current version string		/*{{{*/
 // ---------------------------------------------------------------------
 /* Return string representing of the current version. */
 const char *
-pkgCache::PkgIterator::CurVersion() const 
+pkgCache::PkgIterator::CurVersion() const
 {
   VerIterator version = CurrentVer();
   if (version.IsGood())
     return CurrentVer().VerStr();
   return 0;
-};
+}
 									/*}}}*/
 // ostream operator to handle string representation of a package	/*{{{*/
 // ---------------------------------------------------------------------
@@ -978,7 +978,7 @@ string pkgCache::PkgFileIterator::RelStr()
 									/*}}}*/
 // VerIterator::TranslatedDescription - Return the a DescIter for locale/*{{{*/
 // ---------------------------------------------------------------------
-/* return a DescIter for the current locale or the default if none is 
+/* return a DescIter for the current locale or the default if none is
  * found
  */
 pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
@@ -1012,7 +1012,7 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
       if (strcmp(Desc.LanguageCode(), "") == 0)
 	 return Desc;
    return DescriptionList();
-};
+}
 
 									/*}}}*/
 // PrvIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/

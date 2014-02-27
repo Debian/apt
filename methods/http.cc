@@ -61,7 +61,7 @@ unsigned long long CircleBuf::BwReadLimit=0;
 unsigned long long CircleBuf::BwTickReadData=0;
 struct timeval CircleBuf::BwReadTick={0,0};
 const unsigned int CircleBuf::BW_HZ=10;
- 
+
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -87,8 +87,8 @@ void CircleBuf::Reset()
    {
       delete Hash;
       Hash = new Hashes;
-   }   
-};
+   }
+}
 									/*}}}*/
 // CircleBuf::Read - Read from a FD into the circular buffer		/*{{{*/
 // ---------------------------------------------------------------------

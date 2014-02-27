@@ -62,7 +62,7 @@ struct ServerState
       /** \brief IO error while retrieving */
       RUN_HEADERS_IO_ERROR,
       /** \brief Parse error after retrieving */
-      RUN_HEADERS_PARSE_ERROR,
+      RUN_HEADERS_PARSE_ERROR
    };
    /** \brief Get the headers before the data */
    RunHeadersResult RunHeaders(FileFd * const File);

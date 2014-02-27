@@ -368,7 +368,7 @@ RSHMethod::RSHMethod() : pkgAcqMethod("1.0",SendConfig)
    signal(SIGINT,SigTerm);
    Server = 0;
    FailFd = -1;
-};
+}
 									/*}}}*/
 // RSHMethod::Configuration - Handle a configuration message		/*{{{*/
 // ---------------------------------------------------------------------

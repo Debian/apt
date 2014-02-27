@@ -24,7 +24,7 @@ namespace Progress {
     int last_reported_progress;
 
  public:
-    PackageManager() 
+    PackageManager()
        : percentage(0.0), last_reported_progress(-1) {};
     virtual ~PackageManager() {};
 
@@ -32,8 +32,8 @@ namespace Progress {
     virtual void Start(int child_pty=-1) {};
     virtual void Stop() {};
 
-    /* When dpkg is invoked (may happen multiple times for each 
-     * install/remove block 
+    /* When dpkg is invoked (may happen multiple times for each
+     * install/remove block
     */
     virtual void StartDpkg() {};
 
@@ -44,18 +44,18 @@ namespace Progress {
          return 500000;
     };
 
-    virtual bool StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
-                               std::string HumanReadableAction) ;
-    virtual void Error(std::string PackageName,                                
+                               std::string HumanReadableAction);
+    virtual void Error(std::string PackageName,
                        unsigned int StepsDone,
                        unsigned int TotalSteps,
-                       std::string ErrorMessage) {};
+                       std::string ErrorMessage) {}
     virtual void ConffilePrompt(std::string PackageName,
                                 unsigned int StepsDone,
                                 unsigned int TotalSteps,
-                                std::string ConfMessage) {};
+                                std::string ConfMessage) {}
  };
 
  class PackageManagerProgressFd : public PackageManager
@@ -72,11 +72,11 @@ namespace Progress {
     virtual void StartDpkg();
     virtual void Stop();
 
-    virtual bool StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
                                std::string HumanReadableAction);
-    virtual void Error(std::string PackageName,                                
+    virtual void Error(std::string PackageName,
                        unsigned int StepsDone,
                        unsigned int TotalSteps,
                           std::string ErrorMessage);
@@ -101,11 +101,11 @@ namespace Progress {
     virtual void StartDpkg();
     virtual void Stop();
 
-    virtual bool StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
                                std::string HumanReadableAction);
-    virtual void Error(std::string PackageName,                                
+    virtual void Error(std::string PackageName,
                        unsigned int StepsDone,
                        unsigned int TotalSteps,
                           std::string ErrorMessage);
@@ -134,7 +134,7 @@ namespace Progress {
     ~PackageManagerFancy();
     virtual void Start(int child_pty=-1);
     virtual void Stop();
-    virtual bool StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
                                std::string HumanReadableAction);
@@ -143,14 +143,14 @@ namespace Progress {
  class PackageManagerText : public PackageManager
  {
  public:
-    virtual bool StatusChanged(std::string PackageName, 
+    virtual bool StatusChanged(std::string PackageName,
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
                                std::string HumanReadableAction);
  };
 
 
-}; // namespace Progress
-}; // namespace APT
+} // namespace Progress
+} // namespace APT
 
 #endif

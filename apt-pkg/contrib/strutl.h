@@ -37,8 +37,8 @@ namespace APT {
    namespace String {
       std::string Strip(const std::string &s);
       bool Endswith(const std::string &s, const std::string &ending);
-   };
-};
+   }
+}
 
 
 bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
@@ -104,17 +104,17 @@ int tolower_ascii(int const c) __attrib_const __hot;
 std::string StripEpoch(const std::string &VerStr);
 
 #define APT_MKSTRCMP(name,func) \
-inline int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));}; \
-inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
-inline int name(const std::string& A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));}; \
-inline int name(const std::string& A,const std::string& B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());}; \
-inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);};
+inline int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));} \
+inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
+inline int name(const std::string& A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));} \
+inline int name(const std::string& A,const std::string& B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());} \
+inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);}
 
 #define APT_MKSTRCMP2(name,func) \
-inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
-inline int name(const std::string& A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));}; \
-inline int name(const std::string& A,const std::string& B) {return func(A.begin(),A.end(),B.begin(),B.end());}; \
-inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);};
+inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
+inline int name(const std::string& A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));} \
+inline int name(const std::string& A,const std::string& B) {return func(A.begin(),A.end(),B.begin(),B.end());} \
+inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}
 
 int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
@@ -132,18 +132,18 @@ int stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd
 int stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
                   std::string::const_iterator B,std::string::const_iterator BEnd);
 
-inline int stringcmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcmp(A,Aend,B,B+strlen(B));};
-inline int stringcasecmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcasecmp(A,Aend,B,B+strlen(B));};
+inline int stringcmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcmp(A,Aend,B,B+strlen(B));}
+inline int stringcasecmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcasecmp(A,Aend,B,B+strlen(B));}
 #endif
 
-APT_MKSTRCMP2(stringcmp,stringcmp);
-APT_MKSTRCMP2(stringcasecmp,stringcasecmp);
+APT_MKSTRCMP2(stringcmp,stringcmp)
+APT_MKSTRCMP2(stringcasecmp,stringcasecmp)
 
 // Return the length of a NULL-terminated string array
 size_t strv_length(const char **str_array);
 
 
-inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);};
+inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);}
 
 class URI
 {
@@ -159,13 +159,13 @@ class URI
    unsigned int Port;
    
    operator std::string();
-   inline void operator =(const std::string &From) {CopyFrom(From);};
+   inline void operator =(const std::string &From) {CopyFrom(From);}
    inline bool empty() {return Access.empty();};
    static std::string SiteOnly(const std::string &URI);
    static std::string NoUserPassword(const std::string &URI);
    
-   URI(std::string Path) {CopyFrom(Path);};
-   URI() : Port(0) {};
+   URI(std::string Path) {CopyFrom(Path);}
+   URI() : Port(0) {}
 };
 
 struct SubstVar

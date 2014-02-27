@@ -933,10 +933,10 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
 // convenience interface, this will just call ScanForRemovable
 vector<CdromDevice>
 pkgUdevCdromDevices::Scan()
-{ 
+{
    bool CdromOnly = _config->FindB("APT::cdrom::CdromOnly", true);
-   return ScanForRemovable(CdromOnly); 
-};
+   return ScanForRemovable(CdromOnly);
+}
 									/*}}}*/
                                                                         /*{{{*/
 vector<CdromDevice>

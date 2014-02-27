@@ -60,7 +60,7 @@ using namespace std;
 MirrorMethod::MirrorMethod()
    : HttpMethod(), DownloadedMirrorFile(false), Debug(false)
 {
-};
+}
 
 // HttpMethod::Configuration - Handle a configuration message		/*{{{*/
 // ---------------------------------------------------------------------
@@ -90,17 +90,17 @@ bool MirrorMethod::Clean(string Dir)
    pkgSourceList list;
    list.ReadMainList();
 
-   DIR *D = opendir(Dir.c_str());   
+   DIR *D = opendir(Dir.c_str());
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
-   
+
    string StartDir = SafeGetCWD();
    if (chdir(Dir.c_str()) != 0)
    {
       closedir(D);
       return _error->Errno("chdir",_("Unable to change to %s"),Dir.c_str());
    }
-   
+
    for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
    {
       // Skip some files..
@@ -123,23 +123,23 @@ bool MirrorMethod::Clean(string Dir)
       // nothing found, nuke it
       if (I == list.end())
 	 unlink(Dir->d_name);
-   };
+   }
 
    closedir(D);
    if (chdir(StartDir.c_str()) != 0)
       return _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
-   return true;   
+   return true;
 }
 
 
 bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
 {
-   // not that great to use pkgAcquire here, but we do not have 
+   // not that great to use pkgAcquire here, but we do not have
    // any other way right now
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
-#if 0 // no need for this, the getArchitectures() will also include the main 
+#if 0 // no need for this, the getArchitectures() will also include the main
       // arch
    // append main architecture
    fetch += "?arch=" + _config->Find("Apt::Architecture");
@@ -173,7 +173,7 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
 
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile() success: " << res << endl;
-   
+
    return res;
 }
 
@@ -187,13 +187,13 @@ bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
    if (!FileExists(mirror_file))
       return false;
 
-   // read 
+   // read
    ifstream in(mirror_file.c_str());
    while ( !in.eof() ) {
       getline(in, line);
       content.push_back(line);
    }
-   
+
    // we want the file to be random for each different machine, but also
    // "stable" on the same machine. this is to avoid running into out-of-sync
    // issues (i.e. Release/Release.gpg different on each mirror)
@@ -422,10 +422,10 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 
    if(Debug)
       clog << "Fetch: " << Itm->Uri << endl << endl;
-   
+
    // now run the real fetcher
    return HttpMethod::Fetch(Itm);
-};
+}
 
 void MirrorMethod::Fail(string Err,bool Transient)
 {
@@ -437,7 +437,7 @@ void MirrorMethod::Fail(string Err,bool Transient)
 
    // try the next mirror on fail (if its not a expected failure,
    // e.g. translations are ok to ignore)
-   if (!Queue->FailIgnore && TryNextMirror()) 
+   if (!Queue->FailIgnore && TryNextMirror())
       return;
 
    // all mirrors failed, so bail out

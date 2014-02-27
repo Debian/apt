@@ -45,7 +45,7 @@ inline void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd = -1) {
    int fd[2];
    ExecGPGV(File, FileSig, statusfd, fd);
-};
+}
 
 #undef APT_noreturn
 

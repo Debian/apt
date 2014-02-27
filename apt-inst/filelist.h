@@ -42,25 +42,25 @@ class pkgFLCache
    struct Package;
    struct Diversion;
    struct ConfFile;
-   
+
    class NodeIterator;
    class DirIterator;
    class PkgIterator;
    class DiverIterator;
-   
+
    protected:
    std::string CacheFile;
    DynamicMMap &Map;
    map_ptrloc LastTreeLookup;
    unsigned long LastLookupSize;
-   
+
    // Helpers for the addition algorithms
    map_ptrloc TreeLookup(map_ptrloc *Base,const char *Text,const char *TextEnd,
 			 unsigned long Size,unsigned int *Count = 0,
 			 bool Insert = false);
-   
+
    public:
-   
+
    // Pointers to the arrays of items
    Header *HeaderP;
    Node *NodeP;
@@ -70,10 +70,10 @@ class pkgFLCache
    ConfFile *ConfP;
    char *StrP;
    unsigned char *AnyP;
-   
+
    // Quick accessors
    Node *FileHash;
-   
+
    // Accessors
    Header &Head() {return *HeaderP;};
    void PrintTree(map_ptrloc Base,unsigned long Size);
@@ -89,7 +89,7 @@ class pkgFLCache
    void DropNode(map_ptrloc Node);
 
    inline DiverIterator DiverBegin();
-   
+
    // Diversion control
    void BeginDiverLoad();
    void FinishDiverLoad();
@@ -97,7 +97,7 @@ class pkgFLCache
 		     const char *To);
    bool AddConfFile(const char *Name,const char *NameEnd,
 		    PkgIterator const &Owner,const unsigned char *Sum);
-			     
+
    pkgFLCache(DynamicMMap &Map);
 //   ~pkgFLCache();
 };
@@ -109,7 +109,7 @@ struct pkgFLCache::Header
    short MajorVersion;
    short MinorVersion;
    bool Dirty;
-   
+
    // Size of structure values
    unsigned HeaderSz;
    unsigned NodeSz;
@@ -117,7 +117,7 @@ struct pkgFLCache::Header
    unsigned PackageSz;
    unsigned DiversionSz;
    unsigned ConfFileSz;
-   
+
    // Structure Counts;
    unsigned int NodeCount;
    unsigned int DirCount;
@@ -126,13 +126,13 @@ struct pkgFLCache::Header
    unsigned int ConfFileCount;
    unsigned int HashSize;
    unsigned long UniqNodes;
-      
+
    // Offsets
    map_ptrloc FileHash;
    map_ptrloc DirTree;
    map_ptrloc Packages;
    map_ptrloc Diversions;
-      
+
    /* Allocation pools, there should be one of these for each structure
       excluding the header */
    DynamicMMap::Pool Pools[5];
@@ -177,7 +177,7 @@ struct pkgFLCache::Diversion
    map_ptrloc OwnerPkg;       // Package
    map_ptrloc DivertFrom;     // Node
    map_ptrloc DivertTo;       // String
-   
+
    map_ptrloc Next;           // Diversion
    unsigned long Flags;
 
@@ -194,120 +194,120 @@ class pkgFLCache::PkgIterator
 {
    Package *Pkg;
    pkgFLCache *Owner;
-   
-   public:
-   
-   inline bool end() const {return Owner == 0 || Pkg == Owner->PkgP?true:false;}
-   
-   // Accessors
-   inline Package *operator ->() {return Pkg;};
-   inline Package const *operator ->() const {return Pkg;};
-   inline Package const &operator *() const {return *Pkg;};
-   inline operator Package *() {return Pkg == Owner->PkgP?0:Pkg;};
-   inline operator Package const *() const {return Pkg == Owner->PkgP?0:Pkg;};
 
-   inline unsigned long Offset() const {return Pkg - Owner->PkgP;};
-   inline const char *Name() const {return Pkg->Name == 0?0:Owner->StrP + Pkg->Name;};
+   public:
+
+   inline bool end() const {return Owner == 0 || Pkg == Owner->PkgP?true:false;}
+
+   // Accessors
+   inline Package *operator ->() {return Pkg;}
+   inline Package const *operator ->() const {return Pkg;}
+   inline Package const &operator *() const {return *Pkg;}
+   inline operator Package *() {return Pkg == Owner->PkgP?0:Pkg;}
+   inline operator Package const *() const {return Pkg == Owner->PkgP?0:Pkg;}
+
+   inline unsigned long Offset() const {return Pkg - Owner->PkgP;}
+   inline const char *Name() const {return Pkg->Name == 0?0:Owner->StrP + Pkg->Name;}
    inline pkgFLCache::NodeIterator Files() const;
 
-   PkgIterator() : Pkg(0), Owner(0) {};
-   PkgIterator(pkgFLCache &Owner,Package *Trg) : Pkg(Trg), Owner(&Owner) {};
+   PkgIterator() : Pkg(0), Owner(0) {}
+   PkgIterator(pkgFLCache &Owner,Package *Trg) : Pkg(Trg), Owner(&Owner) {}
 };
 
 class pkgFLCache::DirIterator
 {
    Directory *Dir;
    pkgFLCache *Owner;
-   
+
    public:
-   
+
    // Accessors
-   inline Directory *operator ->() {return Dir;};
-   inline Directory const *operator ->() const {return Dir;};
-   inline Directory const &operator *() const {return *Dir;};
-   inline operator Directory *() {return Dir == Owner->DirP?0:Dir;};
-   inline operator Directory const *() const {return Dir == Owner->DirP?0:Dir;};
+   inline Directory *operator ->() {return Dir;}
+   inline Directory const *operator ->() const {return Dir;}
+   inline Directory const &operator *() const {return *Dir;}
+   inline operator Directory *() {return Dir == Owner->DirP?0:Dir;}
+   inline operator Directory const *() const {return Dir == Owner->DirP?0:Dir;}
 
-   inline const char *Name() const {return Dir->Name == 0?0:Owner->StrP + Dir->Name;};
+   inline const char *Name() const {return Dir->Name == 0?0:Owner->StrP + Dir->Name;}
 
-   DirIterator() : Dir(0), Owner(0) {};
-   DirIterator(pkgFLCache &Owner,Directory *Trg) : Dir(Trg), Owner(&Owner) {};
+   DirIterator() : Dir(0), Owner(0) {}
+   DirIterator(pkgFLCache &Owner,Directory *Trg) : Dir(Trg), Owner(&Owner) {}
 };
 
 class pkgFLCache::DiverIterator
 {
    Diversion *Diver;
    pkgFLCache *Owner;
-   
+
    public:
 
    // Iteration
-   void operator ++(int) {if (Diver != Owner->DiverP) Diver = Owner->DiverP + Diver->Next;};
-   inline void operator ++() {operator ++(0);};
-   inline bool end() const {return Owner == 0 || Diver == Owner->DiverP;};
+   void operator ++(int) {if (Diver != Owner->DiverP) Diver = Owner->DiverP + Diver->Next;}
+   inline void operator ++() {operator ++(0);}
+   inline bool end() const {return Owner == 0 || Diver == Owner->DiverP;}
 
    // Accessors
-   inline Diversion *operator ->() {return Diver;};
-   inline Diversion const *operator ->() const {return Diver;};
-   inline Diversion const &operator *() const {return *Diver;};
-   inline operator Diversion *() {return Diver == Owner->DiverP?0:Diver;};
-   inline operator Diversion const *() const {return Diver == Owner->DiverP?0:Diver;};
+   inline Diversion *operator ->() {return Diver;}
+   inline Diversion const *operator ->() const {return Diver;}
+   inline Diversion const &operator *() const {return *Diver;}
+   inline operator Diversion *() {return Diver == Owner->DiverP?0:Diver;}
+   inline operator Diversion const *() const {return Diver == Owner->DiverP?0:Diver;}
 
-   inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Diver->OwnerPkg);};
+   inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Diver->OwnerPkg);}
    inline NodeIterator DivertFrom() const;
    inline NodeIterator DivertTo() const;
 
    DiverIterator() : Diver(0), Owner(0) {};
-   DiverIterator(pkgFLCache &Owner,Diversion *Trg) : Diver(Trg), Owner(&Owner) {};
+   DiverIterator(pkgFLCache &Owner,Diversion *Trg) : Diver(Trg), Owner(&Owner) {}
 };
 
 class pkgFLCache::NodeIterator
 {
    Node *Nde;
-   enum {NdePkg, NdeHash} Type;   
+   enum {NdePkg, NdeHash} Type;
    pkgFLCache *Owner;
-   
+
    public:
-   
+
    // Iteration
-   void operator ++(int) {if (Nde != Owner->NodeP) Nde = Owner->NodeP + 
-	 (Type == NdePkg?Nde->NextPkg:Nde->Next);};
-   inline void operator ++() {operator ++(0);};
-   inline bool end() const {return Owner == 0 || Nde == Owner->NodeP;};
+   void operator ++(int) {if (Nde != Owner->NodeP) Nde = Owner->NodeP +
+	 (Type == NdePkg?Nde->NextPkg:Nde->Next);}
+   inline void operator ++() {operator ++(0);}
+   inline bool end() const {return Owner == 0 || Nde == Owner->NodeP;}
 
    // Accessors
-   inline Node *operator ->() {return Nde;};
-   inline Node const *operator ->() const {return Nde;};
-   inline Node const &operator *() const {return *Nde;};
-   inline operator Node *() {return Nde == Owner->NodeP?0:Nde;};
-   inline operator Node const *() const {return Nde == Owner->NodeP?0:Nde;};
-   inline unsigned long Offset() const {return Nde - Owner->NodeP;};
-   inline DirIterator Dir() const {return DirIterator(*Owner,Owner->DirP + Nde->Dir);};
-   inline DiverIterator Diversion() const {return DiverIterator(*Owner,Owner->DiverP + Nde->Pointer);};
-   inline const char *File() const {return Nde->File == 0?0:Owner->StrP + Nde->File;};
-   inline const char *DirN() const {return Owner->StrP + Owner->DirP[Nde->Dir].Name;};
+   inline Node *operator ->() {return Nde;}
+   inline Node const *operator ->() const {return Nde;}
+   inline Node const &operator *() const {return *Nde;}
+   inline operator Node *() {return Nde == Owner->NodeP?0:Nde;}
+   inline operator Node const *() const {return Nde == Owner->NodeP?0:Nde;}
+   inline unsigned long Offset() const {return Nde - Owner->NodeP;}
+   inline DirIterator Dir() const {return DirIterator(*Owner,Owner->DirP + Nde->Dir);}
+   inline DiverIterator Diversion() const {return DiverIterator(*Owner,Owner->DiverP + Nde->Pointer);}
+   inline const char *File() const {return Nde->File == 0?0:Owner->StrP + Nde->File;}
+   inline const char *DirN() const {return Owner->StrP + Owner->DirP[Nde->Dir].Name;}
    Package *RealPackage() const;
-   
+
    NodeIterator() : Nde(0), Type(NdeHash), Owner(0) {};
-   NodeIterator(pkgFLCache &Owner) : Nde(Owner.NodeP), Type(NdeHash), Owner(&Owner) {};
-   NodeIterator(pkgFLCache &Owner,Node *Trg) : Nde(Trg), Type(NdeHash), Owner(&Owner) {};
-   NodeIterator(pkgFLCache &Owner,Node *Trg,Package *) : Nde(Trg), Type(NdePkg), Owner(&Owner) {};
+   NodeIterator(pkgFLCache &Owner) : Nde(Owner.NodeP), Type(NdeHash), Owner(&Owner) {}
+   NodeIterator(pkgFLCache &Owner,Node *Trg) : Nde(Trg), Type(NdeHash), Owner(&Owner) {}
+   NodeIterator(pkgFLCache &Owner,Node *Trg,Package *) : Nde(Trg), Type(NdePkg), Owner(&Owner) {}
 };
 
 /* Inlines with forward references that cannot be included directly in their
    respsective classes */
-inline pkgFLCache::NodeIterator pkgFLCache::DiverIterator::DivertFrom() const 
-   {return NodeIterator(*Owner,Owner->NodeP + Diver->DivertFrom);};
+inline pkgFLCache::NodeIterator pkgFLCache::DiverIterator::DivertFrom() const
+   {return NodeIterator(*Owner,Owner->NodeP + Diver->DivertFrom);}
 inline pkgFLCache::NodeIterator pkgFLCache::DiverIterator::DivertTo() const
-   {return NodeIterator(*Owner,Owner->NodeP + Diver->DivertTo);};
+   {return NodeIterator(*Owner,Owner->NodeP + Diver->DivertTo);}
 
 inline pkgFLCache::NodeIterator pkgFLCache::PkgIterator::Files() const
-   {return NodeIterator(*Owner,Owner->NodeP + Pkg->Files,Pkg);};
+   {return NodeIterator(*Owner,Owner->NodeP + Pkg->Files,Pkg);}
 
 inline pkgFLCache::DiverIterator pkgFLCache::DiverBegin()
-   {return DiverIterator(*this,DiverP + HeaderP->Diversions);};
+   {return DiverIterator(*this,DiverP + HeaderP->Diversions);}
 
-inline pkgFLCache::PkgIterator pkgFLCache::GetPkg(const char *Name,bool Insert) 
-   {return GetPkg(Name,Name+strlen(Name),Insert);};
+inline pkgFLCache::PkgIterator pkgFLCache::GetPkg(const char *Name,bool Insert)
+   {return GetPkg(Name,Name+strlen(Name),Insert);}
 
 #endif

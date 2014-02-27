@@ -371,5 +371,5 @@ bool PackageManagerText::StatusChanged(std::string PackageName,
 
 
 
-}; // namespace progress
-}; // namespace apt
+} // namespace progress
+} // namespace apt

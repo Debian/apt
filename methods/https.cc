@@ -432,7 +432,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    delete File;
 
    return true;
-};
+}
 
 int main()
 {

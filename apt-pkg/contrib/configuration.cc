@@ -43,8 +43,7 @@ Configuration::Configuration() : ToFree(true)
 }
 Configuration::Configuration(const Item *Root) : Root((Item *)Root), ToFree(false)
 {
-};
-
+}
 									/*}}}*/
 // Configuration::~Configuration - Destructor				/*{{{*/
 // ---------------------------------------------------------------------

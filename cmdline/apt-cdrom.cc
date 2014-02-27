@@ -54,7 +54,7 @@ class pkgCdromTextStatus : public pkgCdromStatus			/*{{{*/
 {
 protected:
    OpTextProgress Progress;
-   void Prompt(const char *Text); 
+   void Prompt(const char *Text);
    string PromptLine(const char *Text);
    bool AskCdromName(string &name);
 
@@ -64,12 +64,12 @@ public:
    virtual OpProgress* GetOpProgress();
 };
 
-void pkgCdromTextStatus::Prompt(const char *Text) 
+void pkgCdromTextStatus::Prompt(const char *Text)
 {
    char C;
    cout << Text << ' ' << flush;
    if (read(STDIN_FILENO,&C,1) < 0)
-      _error->Errno("pkgCdromTextStatus::Prompt", 
+      _error->Errno("pkgCdromTextStatus::Prompt",
                     "Failed to read from standard input (not a terminal?)");
    if (C != '\n')
       cout << endl;
@@ -78,37 +78,37 @@ void pkgCdromTextStatus::Prompt(const char *Text)
 string pkgCdromTextStatus::PromptLine(const char *Text)
 {
    cout << Text << ':' << endl;
-   
+
    string Res;
    getline(cin,Res);
    return Res;
 }
 
-bool pkgCdromTextStatus::AskCdromName(string &name) 
+bool pkgCdromTextStatus::AskCdromName(string &name)
 {
    cout << _("Please provide a name for this Disc, such as 'Debian 5.0.3 Disk 1'") << flush;
    name = PromptLine("");
-	 
+
    return true;
 }
-   
 
-void pkgCdromTextStatus::Update(string text, int current) 
+
+void pkgCdromTextStatus::Update(string text, int current)
 {
    if(text.size() > 0)
       cout << text << flush;
 }
 
-bool pkgCdromTextStatus::ChangeCdrom() 
+bool pkgCdromTextStatus::ChangeCdrom()
 {
    Prompt(_("Please insert a Disc in the drive and press enter"));
    return true;
 }
 
-OpProgress* pkgCdromTextStatus::GetOpProgress() 
-{ 
-   return &Progress; 
-};
+OpProgress* pkgCdromTextStatus::GetOpProgress()
+{
+   return &Progress;
+}
 									/*}}}*/
 // SetupAutoDetect       						/*{{{*/
 bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i, bool &automounted)

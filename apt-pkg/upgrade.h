@@ -15,7 +15,7 @@ namespace APT {
       // FIXME: make this "enum class UpgradeMode {" once we enable c++11
       enum UpgradeMode {
          FORBID_REMOVE_PACKAGES = 1,
-         FORBID_INSTALL_NEW_PACKAGES = 2,
+         FORBID_INSTALL_NEW_PACKAGES = 2
       };
       bool Upgrade(pkgDepCache &Cache, int UpgradeMode);
    }

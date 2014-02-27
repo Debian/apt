@@ -201,7 +201,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &Source)
 }
 									/*}}}*/
 
-// Override::GetItem - Get a architecture specific item 	/*{{{*/
+// Override::GetItem - Get a architecture specific item			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns a override item for the given package and the given architecture.
  * Treats "all" special
@@ -232,10 +232,10 @@ Override::Item* Override::GetItem(string const &Package, string const &Architect
          {
 	    result->FieldOverride[foI->first] = foI->second;
 	 }
-      } 
-   } 
+      }
+   }
    return result;
-};
+}
 
 
 // Override::Item::SwapMaint - Swap the maintainer field if necessary	/*{{{*/

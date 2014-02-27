@@ -176,13 +176,13 @@ class pkgCache								/*{{{*/
    char *StrP;
 
    virtual bool ReMap(bool const &Errorchecks = true);
-   inline bool Sync() {return Map.Sync();};
-   inline MMap &GetMap() {return Map;};
-   inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();};
+   inline bool Sync() {return Map.Sync();}
+   inline MMap &GetMap() {return Map;}
+   inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();}
       
    // String hashing function (512 range)
-   inline unsigned long Hash(const std::string &S) const {return sHash(S);};
-   inline unsigned long Hash(const char *S) const {return sHash(S);};
+   inline unsigned long Hash(const std::string &S) const {return sHash(S);}
+   inline unsigned long Hash(const char *S) const {return sHash(S);}
 
    // Useful transformation things
    const char *Priority(unsigned char Priority);
@@ -192,7 +192,7 @@ class pkgCache								/*{{{*/
    PkgIterator FindPkg(const std::string &Name);
    PkgIterator FindPkg(const std::string &Name, const std::string &Arch);
 
-   Header &Head() {return *HeaderP;};
+   Header &Head() {return *HeaderP;}
    inline GrpIterator GrpBegin();
    inline GrpIterator GrpEnd();
    inline PkgIterator PkgBegin();
@@ -200,7 +200,7 @@ class pkgCache								/*{{{*/
    inline PkgFileIterator FileBegin();
    inline PkgFileIterator FileEnd();
 
-   inline bool MultiArchCache() const { return MultiArchEnabled; };
+   inline bool MultiArchCache() const { return MultiArchEnabled; }
    inline char const * const NativeArch() const;
 
    // Make me a function
@@ -212,7 +212,7 @@ class pkgCache								/*{{{*/
    static const char *DepType(unsigned char Dep);
    
    pkgCache(MMap *Map,bool DoMap = true);
-   virtual ~pkgCache() {};
+   virtual ~pkgCache() {}
 
 private:
    bool MultiArchEnabled;
@@ -662,26 +662,26 @@ struct pkgCache::StringItem
 
 
 inline char const * const pkgCache::NativeArch() const
-	{ return StrP + HeaderP->Architecture; };
+	{ return StrP + HeaderP->Architecture; }
 
 #include <apt-pkg/cacheiterators.h>
 
-inline pkgCache::GrpIterator pkgCache::GrpBegin() 
-       {return GrpIterator(*this);};
-inline pkgCache::GrpIterator pkgCache::GrpEnd() 
-       {return GrpIterator(*this,GrpP);};
-inline pkgCache::PkgIterator pkgCache::PkgBegin() 
-       {return PkgIterator(*this);};
-inline pkgCache::PkgIterator pkgCache::PkgEnd() 
-       {return PkgIterator(*this,PkgP);};
+inline pkgCache::GrpIterator pkgCache::GrpBegin()
+       {return GrpIterator(*this);}
+inline pkgCache::GrpIterator pkgCache::GrpEnd()
+       {return GrpIterator(*this,GrpP);}
+inline pkgCache::PkgIterator pkgCache::PkgBegin()
+       {return PkgIterator(*this);}
+inline pkgCache::PkgIterator pkgCache::PkgEnd()
+       {return PkgIterator(*this,PkgP);}
 inline pkgCache::PkgFileIterator pkgCache::FileBegin()
-       {return PkgFileIterator(*this,PkgFileP + HeaderP->FileList);};
+       {return PkgFileIterator(*this,PkgFileP + HeaderP->FileList);}
 inline pkgCache::PkgFileIterator pkgCache::FileEnd()
-       {return PkgFileIterator(*this,PkgFileP);};
+       {return PkgFileIterator(*this,PkgFileP);}
 
 // Oh I wish for Real Name Space Support
 class pkgCache::Namespace						/*{{{*/
-{   
+{
    public:
    typedef pkgCache::GrpIterator GrpIterator;
    typedef pkgCache::PkgIterator PkgIterator;
@@ -690,7 +690,7 @@ class pkgCache::Namespace						/*{{{*/
    typedef pkgCache::DepIterator DepIterator;
    typedef pkgCache::PrvIterator PrvIterator;
    typedef pkgCache::PkgFileIterator PkgFileIterator;
-   typedef pkgCache::VerFileIterator VerFileIterator;   
+   typedef pkgCache::VerFileIterator VerFileIterator;
    typedef pkgCache::Version Version;
    typedef pkgCache::Description Description;
    typedef pkgCache::Package Package;
