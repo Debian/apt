@@ -22,7 +22,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-std::string getMooLine() {						/*{{{*/
+static std::string getMooLine() {					/*{{{*/
    time_t const timenow = time(NULL);
    struct tm special;
    localtime_r(&timenow, &special);
@@ -60,7 +60,7 @@ std::string getMooLine() {						/*{{{*/
    return out.str();
 }
 									/*}}}*/
-bool printMooLine() {							/*{{{*/
+static bool printMooLine() {						/*{{{*/
    std::cerr << getMooLine() << std::endl;
    return true;
 }

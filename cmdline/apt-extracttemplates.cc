@@ -212,7 +212,7 @@ bool DebFile::ParseInfo()
 // ShowHelp - show a short help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp(void)
+static int ShowHelp(void)
 {
    	ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
@@ -237,7 +237,7 @@ int ShowHelp(void)
 // WriteFile - write the contents of the passed string to a file	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string WriteFile(const char *package, const char *prefix, const char *data)
+static string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
 	static int i;
@@ -265,7 +265,7 @@ string WriteFile(const char *package, const char *prefix, const char *data)
 // WriteConfig - write out the config data from a debian package file	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void WriteConfig(const DebFile &file)
+static void WriteConfig(const DebFile &file)
 {
 	string templatefile = WriteFile(file.Package.c_str(), "template", file.Template);
 	string configscript = WriteFile(file.Package.c_str(), "config", file.Config);
@@ -279,7 +279,7 @@ void WriteConfig(const DebFile &file)
 // InitCache - initialize the package cache				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Go(CommandLine &CmdL)
+static bool Go(CommandLine &CmdL)
 {	
 	// Initialize the apt cache
 	MMap *Map = 0;

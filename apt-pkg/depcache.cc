@@ -889,7 +889,7 @@ bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
    and prevents mode changes for packages on hold for example.
    If you want to check Mode specific stuff you can use the virtual public
    Is<Mode>Ok methods instead */
-char const* PrintMode(char const mode)
+static char const* PrintMode(char const mode)
 {
 	 switch (mode)
 	 {

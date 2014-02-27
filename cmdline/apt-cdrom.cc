@@ -111,7 +111,7 @@ OpProgress* pkgCdromTextStatus::GetOpProgress()
 }
 									/*}}}*/
 // SetupAutoDetect       						/*{{{*/
-bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i, bool &automounted)
+static bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i, bool &automounted)
 {
    bool Debug =  _config->FindB("Debug::Acquire::cdrom", false);
 
@@ -155,7 +155,7 @@ bool AutoDetectCdrom(pkgUdevCdromDevices &UdevCdroms, unsigned int &i, bool &aut
    sequence is to mount/umount the CD, Ident it then scan it for package 
    files and reduce that list. Then we copy over the package files and
    verify them. Then rewrite the database files */
-bool DoAdd(CommandLine &)
+static bool DoAdd(CommandLine &)
 {
    pkgUdevCdromDevices UdevCdroms;
    pkgCdromTextStatus log;
@@ -201,7 +201,7 @@ bool DoAdd(CommandLine &)
 // DoIdent - Ident a CDROM						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoIdent(CommandLine &)
+static bool DoIdent(CommandLine &)
 {
    pkgUdevCdromDevices UdevCdroms;
    string ident;
@@ -247,7 +247,7 @@ bool DoIdent(CommandLine &)
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

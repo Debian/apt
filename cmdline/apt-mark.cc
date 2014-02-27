@@ -35,7 +35,7 @@ ostream c1out(0);
 ostream c2out(0);
 ofstream devnull("/dev/null");
 /* DoAuto - mark packages as automatically/manually installed		{{{*/
-bool DoAuto(CommandLine &CmdL)
+static bool DoAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -82,7 +82,7 @@ bool DoAuto(CommandLine &CmdL)
 /* DoMarkAuto - mark packages as automatically/manually installed	{{{*/
 /* Does the same as DoAuto but tries to do it exactly the same why as
    the python implementation did it so it can be a drop-in replacement */
-bool DoMarkAuto(CommandLine &CmdL)
+static bool DoMarkAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -119,7 +119,7 @@ bool DoMarkAuto(CommandLine &CmdL)
 }
 									/*}}}*/
 /* ShowAuto - show automatically installed packages (sorted)		{{{*/
-bool ShowAuto(CommandLine &CmdL)
+static bool ShowAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -159,7 +159,7 @@ bool ShowAuto(CommandLine &CmdL)
 }
 									/*}}}*/
 /* DoHold - mark packages as hold by dpkg				{{{*/
-bool DoHold(CommandLine &CmdL)
+static bool DoHold(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -335,7 +335,7 @@ bool DoHold(CommandLine &CmdL)
 }
 									/*}}}*/
 /* ShowHold - show packages set on hold in dpkg status			{{{*/
-bool ShowHold(CommandLine &CmdL)
+static bool ShowHold(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -372,7 +372,7 @@ bool ShowHold(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &CmdL)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

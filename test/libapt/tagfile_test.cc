@@ -9,7 +9,7 @@
 char *tempfile = NULL;
 int tempfile_fd = -1;
 
-void remove_tmpfile(void)
+static void remove_tmpfile(void)
 {
    if (tempfile_fd > 0)
       close(tempfile_fd);

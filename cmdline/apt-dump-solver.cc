@@ -18,7 +18,7 @@
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp() {
+static bool ShowHelp() {
 
 	std::cout <<
 		PACKAGE " " PACKAGE_VERSION " for " COMMON_ARCH " compiled on " __DATE__ " " __TIME__ << std::endl <<

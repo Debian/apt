@@ -23,7 +23,7 @@
 #include <dirent.h>
 #include <signal.h>
 
-char const * const httpcodeToStr(int const httpcode)			/*{{{*/
+static char const * const httpcodeToStr(int const httpcode)		/*{{{*/
 {
    switch (httpcode)
    {
@@ -77,7 +77,7 @@ char const * const httpcodeToStr(int const httpcode)			/*{{{*/
    return NULL;
 }
 									/*}}}*/
-void addFileHeaders(std::list<std::string> &headers, FileFd &data)	/*{{{*/
+static void addFileHeaders(std::list<std::string> &headers, FileFd &data)/*{{{*/
 {
    std::ostringstream contentlength;
    contentlength << "Content-Length: " << data.FileSize();
@@ -88,14 +88,14 @@ void addFileHeaders(std::list<std::string> &headers, FileFd &data)	/*{{{*/
    headers.push_back(lastmodified);
 }
 									/*}}}*/
-void addDataHeaders(std::list<std::string> &headers, std::string &data)	/*{{{*/
+static void addDataHeaders(std::list<std::string> &headers, std::string &data)/*{{{*/
 {
    std::ostringstream contentlength;
    contentlength << "Content-Length: " << data.size();
    headers.push_back(contentlength.str());
 }
 									/*}}}*/
-bool sendHead(int const client, int const httpcode, std::list<std::string> &headers)/*{{{*/
+static bool sendHead(int const client, int const httpcode, std::list<std::string> &headers)/*{{{*/
 {
    std::string response("HTTP/1.1 ");
    response.append(httpcodeToStr(httpcode));
@@ -128,7 +128,7 @@ bool sendHead(int const client, int const httpcode, std::list<std::string> &head
    return Success;
 }
 									/*}}}*/
-bool sendFile(int const client, FileFd &data)				/*{{{*/
+static bool sendFile(int const client, FileFd &data)			/*{{{*/
 {
    bool Success = true;
    char buffer[500];
@@ -144,7 +144,7 @@ bool sendFile(int const client, FileFd &data)				/*{{{*/
    return Success;
 }
 									/*}}}*/
-bool sendData(int const client, std::string const &data)		/*{{{*/
+static bool sendData(int const client, std::string const &data)		/*{{{*/
 {
    if (FileFd::Write(client, data.c_str(), data.size()) == false)
    {
@@ -154,7 +154,7 @@ bool sendData(int const client, std::string const &data)		/*{{{*/
    return true;
 }
 									/*}}}*/
-void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
+static void sendError(int const client, int const httpcode, std::string const &request,/*{{{*/
 	       bool content, std::string const &error = "")
 {
    std::list<std::string> headers;
@@ -179,13 +179,13 @@ void sendError(int const client, int const httpcode, std::string const &request,
    if (content == true)
       sendData(client, response);
 }
-void sendSuccess(int const client, std::string const &request,
+static void sendSuccess(int const client, std::string const &request,
 	       bool content, std::string const &error = "")
 {
    sendError(client, 200, request, content, error);
 }
 									/*}}}*/
-void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
+static void sendRedirect(int const client, int const httpcode, std::string const &uri,/*{{{*/
 		  std::string const &request, bool content)
 {
    std::list<std::string> headers;
@@ -222,7 +222,7 @@ void sendRedirect(int const client, int const httpcode, std::string const &uri,/
       sendData(client, response);
 }
 									/*}}}*/
-int filter_hidden_files(const struct dirent *a)				/*{{{*/
+static int filter_hidden_files(const struct dirent *a)			/*{{{*/
 {
    if (a->d_name[0] == '.')
       return 0;
@@ -236,7 +236,7 @@ int filter_hidden_files(const struct dirent *a)				/*{{{*/
 #endif
    return 1;
 }
-int grouped_alpha_case_sort(const struct dirent **a, const struct dirent **b) {
+static int grouped_alpha_case_sort(const struct dirent **a, const struct dirent **b) {
 #ifdef _DIRENT_HAVE_D_TYPE
    if ((*a)->d_type == DT_DIR && (*b)->d_type == DT_DIR);
    else if ((*a)->d_type == DT_DIR && (*b)->d_type == DT_REG)
@@ -260,7 +260,7 @@ int grouped_alpha_case_sort(const struct dirent **a, const struct dirent **b) {
    return strcasecmp((*a)->d_name, (*b)->d_name);
 }
 									/*}}}*/
-void sendDirectoryListing(int const client, std::string const &dir,	/*{{{*/
+static void sendDirectoryListing(int const client, std::string const &dir,/*{{{*/
 			  std::string const &request, bool content)
 {
    std::list<std::string> headers;
@@ -312,7 +312,7 @@ void sendDirectoryListing(int const client, std::string const &dir,	/*{{{*/
       sendData(client, response);
 }
 									/*}}}*/
-bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
+static bool parseFirstLine(int const client, std::string const &request,/*{{{*/
 		    std::string &filename, std::string &params, bool &sendContent,
 		    bool &closeConnection)
 {
@@ -432,7 +432,7 @@ bool parseFirstLine(int const client, std::string const &request,	/*{{{*/
    return true;
 }
 									/*}}}*/
-bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
+static bool handleOnTheFlyReconfiguration(int const client, std::string const &request, std::vector<std::string> const &parts)/*{{{*/
 {
    size_t const pcount = parts.size();
    if (pcount == 4 && parts[1] == "set")
@@ -475,7 +475,7 @@ bool handleOnTheFlyReconfiguration(int const client, std::string const &request,
    return false;
 }
 									/*}}}*/
-void * handleClient(void * voidclient)					/*{{{*/
+static void * handleClient(void * voidclient)				/*{{{*/
 {
    int client = *((int*)(voidclient));
    std::clog << "ACCEPT client " << client << std::endl;

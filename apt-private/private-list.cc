@@ -99,7 +99,7 @@ private:
    #undef PackageMatcher
 };
 									/*}}}*/
-void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
+static void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,/*{{{*/
                      pkgCache::PkgIterator P,    
                      std::ostream &outs,
                      bool include_summary=true)

@@ -31,6 +31,7 @@
 
 #include "private-cachefile.h"
 #include "private-output.h"
+#include "private-update.h"
 #include "acqprogress.h"
 
 #include <apti18n.h>

@@ -40,7 +40,7 @@ using namespace std;
 // DoShell - Handle the shell command					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoShell(CommandLine &CmdL)
+static bool DoShell(CommandLine &CmdL)
 {
    for (const char **I = CmdL.FileList + 1; *I != 0; I += 2)
    {
@@ -63,7 +63,7 @@ bool DoShell(CommandLine &CmdL)
 // DoDump - Dump the configuration space				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoDump(CommandLine &CmdL)
+static bool DoDump(CommandLine &CmdL)
 {
    bool const empty = _config->FindB("APT::Config::Dump::EmptyValue", true);
    std::string const format = _config->Find("APT::Config::Dump::Format", "%f \"%v\";\n");
@@ -78,7 +78,7 @@ bool DoDump(CommandLine &CmdL)
 // ShowHelp - Show the help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &CmdL)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

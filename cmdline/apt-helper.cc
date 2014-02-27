@@ -33,7 +33,7 @@
 									/*}}}*/
 using namespace std;
 
-bool DoDownloadFile(CommandLine &CmdL)
+static bool DoDownloadFile(CommandLine &CmdL)
 {
    if (CmdL.FileSize() <= 2)
       return _error->Error(_("Must specify at least one pair url/filename"));
@@ -55,7 +55,7 @@ bool DoDownloadFile(CommandLine &CmdL)
    return true;
 }
 
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &CmdL)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

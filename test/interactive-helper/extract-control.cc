@@ -7,7 +7,7 @@
 
 using namespace std;
 
-bool ExtractMember(const char *File,const char *Member)
+static bool ExtractMember(const char *File,const char *Member)
 {
    FileFd Fd(File,FileFd::ReadOnly);
    debDebFile Deb(Fd);

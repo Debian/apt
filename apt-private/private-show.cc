@@ -24,6 +24,7 @@
 
 #include "private-output.h"
 #include "private-cacheset.h"
+#include "private-show.h"
 									/*}}}*/
 
 namespace APT {
@@ -31,7 +32,7 @@ namespace APT {
 
 // DisplayRecord - Displays the complete record for the package		/*{{{*/
 // ---------------------------------------------------------------------
-bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
+static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
                    ostream &out)
 {
    pkgCache *Cache = CacheFile.GetPkgCache();

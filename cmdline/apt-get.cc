@@ -97,7 +97,7 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* This used to be inlined in DoInstall, but with the advent of regex package
    name matching it was split out.. */
-bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
+static bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
 		  bool AllowFail = true)
 {
@@ -138,7 +138,7 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 
 // helper that can go wit hthe next ABI break
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
+static std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
 {
    // FIXME: this cast is the horror, the horror
    debReleaseIndex *r = (debReleaseIndex*)metaindex;
@@ -159,7 +159,7 @@ std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
 // GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
+static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
                                       pkgSrcRecords::Parser *Parse)
 {
    // try to find release
@@ -194,7 +194,7 @@ std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
+static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       CacheFile &CacheFile)
 {
@@ -430,7 +430,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 }
 									/*}}}*/
 /* mark packages as automatically/manually installed.			{{{*/
-bool DoMarkAuto(CommandLine &CmdL)
+static bool DoMarkAuto(CommandLine &CmdL)
 {
    bool Action = true;
    int AutoMarkChanged = 0;
@@ -475,7 +475,7 @@ bool DoMarkAuto(CommandLine &CmdL)
 // DoDSelectUpgrade - Do an upgrade by following dselects selections	/*{{{*/
 // ---------------------------------------------------------------------
 /* Follows dselect's selections */
-bool DoDSelectUpgrade(CommandLine &CmdL)
+static bool DoDSelectUpgrade(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
@@ -551,7 +551,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 // DoClean - Remove download archives					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoClean(CommandLine &CmdL)
+static bool DoClean(CommandLine &CmdL)
 {
    std::string const archivedir = _config->FindDir("Dir::Cache::archives");
    std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
@@ -599,7 +599,7 @@ class LogCleaner : public pkgArchiveCleaner
    };
 };
 
-bool DoAutoClean(CommandLine &CmdL)
+static bool DoAutoClean(CommandLine &CmdL)
 {
    // Lock the archive directory
    FileFd Lock;
@@ -623,7 +623,7 @@ bool DoAutoClean(CommandLine &CmdL)
 									/*}}}*/
 // DoDownload - download a binary					/*{{{*/
 // ---------------------------------------------------------------------
-bool DoDownload(CommandLine &CmdL)
+static bool DoDownload(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.ReadOnlyOpen() == false)
@@ -696,7 +696,7 @@ bool DoDownload(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* Opening automatically checks the system, this command is mostly used
    for debugging */
-bool DoCheck(CommandLine &CmdL)
+static bool DoCheck(CommandLine &CmdL)
 {
    CacheFile Cache;
    Cache.Open();
@@ -715,7 +715,7 @@ struct DscFile
    string Dsc;
 };
 
-bool DoSource(CommandLine &CmdL)
+static bool DoSource(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.Open(false) == false)
@@ -1016,7 +1016,7 @@ bool DoSource(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* This function will look at the build depends list of the given source 
    package and install the necessary packages to make it true, or fail. */
-bool DoBuildDep(CommandLine &CmdL)
+static bool DoBuildDep(CommandLine &CmdL)
 {
    CacheFile Cache;
 
@@ -1410,7 +1410,7 @@ bool DoBuildDep(CommandLine &CmdL)
  * pool/ next to the deb itself)
  * Example return: "pool/main/a/apt/apt_0.8.8ubuntu3" 
  */
-string GetChangelogPath(CacheFile &Cache, 
+static string GetChangelogPath(CacheFile &Cache, 
                         pkgCache::PkgIterator Pkg,
                         pkgCache::VerIterator Ver)
 {
@@ -1437,7 +1437,7 @@ string GetChangelogPath(CacheFile &Cache,
  * apt-get changelog mplayer-doc:
  *  http://packages.medibuntu.org/pool/non-free/m/mplayer/mplayer_1.0~rc4~try1.dsfg1-1ubuntu1+medibuntu1.changelog
  */
-bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
+static bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
                                  pkgCache::PkgIterator Pkg,
                                  pkgCache::VerIterator Ver,
                                  string &out_uri)
@@ -1462,7 +1462,7 @@ bool GuessThirdPartyChangelogUri(CacheFile &Cache,
 									/*}}}*/
 // DownloadChangelog - Download the changelog 			        /*{{{*/
 // ---------------------------------------------------------------------
-bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
+static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
                        pkgCache::VerIterator Ver, string targetfile)
 /* Download a changelog file for the given package version to
  * targetfile. This will first try the server from Apt::Changelogs::Server
@@ -1517,7 +1517,7 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
 									/*}}}*/
 // DoChangelog - Get changelog from the command line			/*{{{*/
 // ---------------------------------------------------------------------
-bool DoChangelog(CommandLine &CmdL)
+static bool DoChangelog(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.ReadOnlyOpen() == false)
@@ -1581,7 +1581,7 @@ bool DoChangelog(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &CmdL)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
@@ -1677,7 +1677,7 @@ bool ShowHelp(CommandLine &CmdL)
 // SigWinch - Window size change signal handler				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void SigWinch(int)
+static void SigWinch(int)
 {
    // Riped from GNU ls
 #ifdef TIOCGWINSZ

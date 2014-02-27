@@ -9,7 +9,7 @@ class NullStream : public pkgDirStream
    virtual bool DoItem(Item &Itm,int &Fd) {return true;};
 };
 
-bool Test(const char *File)
+static bool Test(const char *File)
 {
    FileFd Fd(File,FileFd::ReadOnly);
    debDebFile Deb(Fd);

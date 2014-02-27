@@ -8,6 +8,7 @@
 #include <apt-pkg/strutl.h>
 
 #include "private-output.h"
+#include "private-download.h"
 
 #include <locale.h>
 

@@ -1,6 +1,11 @@
 #include <iostream>
 #include <cstdlib>
 
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#endif
+
 #define equals(x,y) assertEquals(y, x, __LINE__)
 #define equalsNot(x,y) assertEqualsNot(y, x, __LINE__)
 
@@ -111,3 +116,7 @@ void dumpVector(X vec) {
 	     v != vec.end(); ++v)
 		std::cout << *v << std::endl;
 }
+
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
