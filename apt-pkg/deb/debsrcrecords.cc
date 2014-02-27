@@ -57,7 +57,7 @@ const char **debSrcRecordParser::Binaries()
    } while (*bin != '\0');
    StaticBinList.push_back(NULL);
 
-   return (const char **) &StaticBinList[0];
+   return &StaticBinList[0];
 }
 									/*}}}*/
 // SrcRecordParser::BuildDepends - Return the Build-Depends information	/*{{{*/

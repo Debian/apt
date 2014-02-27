@@ -891,7 +891,7 @@ bool FileFd::Open(string FileName,unsigned int const Mode,CompressMode Compress,
    {
       for (; compressor != compressors.end(); ++compressor)
       {
-	 std::string file = std::string(FileName).append(compressor->Extension);
+	 std::string file = FileName + compressor->Extension;
 	 if (FileExists(file) == false)
 	    continue;
 	 FileName = file;
@@ -1793,7 +1793,7 @@ bool FileFd::FileFdError(const char *Description,...) {
 }
 									/*}}}*/
 
-gzFile FileFd::gzFd() { return (gzFile) d->gz; }
+gzFile FileFd::gzFd() { return d->gz; }
 
 
 // Glob - wrapper around "glob()"                                      /*{{{*/

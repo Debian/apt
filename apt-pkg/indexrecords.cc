@@ -129,10 +129,10 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    // get the user settings for this archive and use what expires earlier
    int MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
    if (Label.empty() == false)
-      MaxAge = _config->FindI(string("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
+      MaxAge = _config->FindI(("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
    int MinAge = _config->FindI("Acquire::Min-ValidTime", 0);
    if (Label.empty() == false)
-      MinAge = _config->FindI(string("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
+      MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
 
    if(MaxAge == 0 &&
       (MinAge == 0 || ValidUntil == 0)) // No user settings, use the one from the Release file

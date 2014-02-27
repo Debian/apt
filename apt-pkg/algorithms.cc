@@ -885,8 +885,8 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
                }
 
 	       if (Debug == true)
-		  clog << "  Considering " << Pkg.FullName(false) << ' ' << (int)Scores[Pkg->ID] <<
-		  " as a solution to " << I.FullName(false) << ' ' << (int)Scores[I->ID] << endl;
+		  clog << "  Considering " << Pkg.FullName(false) << ' ' << Scores[Pkg->ID] <<
+		  " as a solution to " << I.FullName(false) << ' ' << Scores[I->ID] << endl;
 
 	       /* Try to fix the package under consideration rather than
 	          fiddle with the VList package */

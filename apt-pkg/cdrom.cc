@@ -440,7 +440,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    Out.close();
 
    if (FileExists(DFile) == true)
-      rename(DFile.c_str(), string(DFile + '~').c_str());
+      rename(DFile.c_str(), (DFile + '~').c_str());
    if (rename(NewFile.c_str(),DFile.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   DFile.c_str(),DFile.c_str());
@@ -553,7 +553,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    
    Out.close();
 
-   rename(File.c_str(),string(File + '~').c_str());
+   rename(File.c_str(), (File + '~').c_str());
    if (rename(NewFile.c_str(),File.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   File.c_str(),File.c_str());
@@ -737,7 +737,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       if (InfoDir.empty() == false &&
 	  FileExists(InfoDir + "/info") == true)
       {
-	 ifstream F(string(InfoDir + "/info").c_str());
+	 ifstream F((InfoDir + "/info").c_str());
 	 if (!F == 0)
 	    getline(F,Name);
 
@@ -981,7 +981,7 @@ pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
       cdrom.DeviceName = string(devnode);
       if (mountpath != "") {
 	 cdrom.MountPath = mountpath;
-	 string s = string(mountpath);
+	 string s = mountpath;
 	 cdrom.Mounted = IsMounted(s);
       } else {
 	 cdrom.Mounted = false;

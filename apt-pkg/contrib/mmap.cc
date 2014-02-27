@@ -198,7 +198,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       {
 #ifdef _POSIX_SYNCHRONIZED_IO
 	 unsigned long long const PSize = sysconf(_SC_PAGESIZE);
-	 if (msync((char *)Base+(unsigned long long)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
+	 if (msync((char *)Base+(Start/PSize)*PSize, Stop - Start, MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
 #endif
       }

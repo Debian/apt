@@ -65,7 +65,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	   c != compressor.end(); ++c)
       {
-	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	 if (stat((file + c->Extension).c_str(), &Buf) != 0)
 	    continue;
 	 found = true;
 	 break;
@@ -160,7 +160,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	    
 	    // Get the size
 	    struct stat Buf;
-	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0 || 
+	    if (stat((CDROM + Prefix + File).c_str(),&Buf) != 0 || 
 		Buf.st_size == 0)
 	    {
 	       bool Mangled = false;
@@ -175,7 +175,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	       }
 	       
 	       if (Mangled == false ||
-		   stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0)
+		   stat((CDROM + Prefix + File).c_str(),&Buf) != 0)
 	       {
 		  if (Debug == true)
 		     clog << "Missed(2): " << OrigFile << endl;
@@ -286,7 +286,7 @@ bool IndexCopy::ReconstructPrefix(string &Prefix,string OrigPath,string CD,
    while (1)
    {
       struct stat Buf;
-      if (stat(string(CD + MyPrefix + File).c_str(),&Buf) != 0)
+      if (stat((CD + MyPrefix + File).c_str(),&Buf) != 0)
       {
 	 if (Debug == true)
 	    cout << "Failed, " << CD + MyPrefix + File << endl;
@@ -315,7 +315,7 @@ bool IndexCopy::ReconstructChop(unsigned long &Chop,string Dir,string File)
    while (1)
    {
       struct stat Buf;
-      if (stat(string(Dir + File).c_str(),&Buf) != 0)
+      if (stat((Dir + File).c_str(),&Buf) != 0)
       {
 	 File = ChopDirs(File,1);
 	 Depth++;
@@ -676,7 +676,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	   c != compressor.end(); ++c)
       {
-	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	 if (stat((file + c->Extension).c_str(), &Buf) != 0)
 	    continue;
 	 found = true;
 	 break;

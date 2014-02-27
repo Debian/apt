@@ -709,7 +709,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    }
 
    // queue the right diff
-   Desc.URI = string(RealURI) + ".diff/" + available_patches[0].file + ".gz";
+   Desc.URI = RealURI + ".diff/" + available_patches[0].file + ".gz";
    Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI + ".diff/" + available_patches[0].file);
@@ -797,7 +797,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
 
-   Desc.URI = string(RealURI) + ".diff/" + patch.file + ".gz";
+   Desc.URI = RealURI + ".diff/" + patch.file + ".gz";
    Desc.Description = Description + " " + patch.file + string(".pdiff");
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI + ".diff/" + patch.file);
@@ -1558,7 +1558,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 {
 	    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
 	    for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
-	       if (MetaIndexParser->Exists(string((*Target)->MetaKey).append(".").append(*t)) == true)
+	       if (MetaIndexParser->Exists((*Target)->MetaKey + "." + *t) == true)
 	       {
 		  compressedAvailable = true;
 		  break;
@@ -1596,7 +1596,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 else if (transInRelease == false || Record != NULL || compressedAvailable == true)
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
-		MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true)
+		MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true)
 	       new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 				   (*Target)->ShortDesc, ExpectedIndexHash);
 	    else
@@ -1610,7 +1610,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
          in the Meta-Index file. Ideal would be if pkgAcqDiffIndex would test this
          instead, but passing the required info to it is to much hassle */
       if(_config->FindB("Acquire::PDiffs",true) == true && (verify == false ||
-	  MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true))
+	  MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true))
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 			     (*Target)->ShortDesc, ExpectedIndexHash);
       else
@@ -1635,7 +1635,7 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
       missingkeys += (Fingerprint);
    }
    if(!missingkeys.empty())
-      _error->Warning("%s", string(msg+missingkeys).c_str());
+      _error->Warning("%s", (msg + missingkeys).c_str());
 
    string Transformed = MetaIndexParser->GetExpectedDist();
 

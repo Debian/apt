@@ -104,7 +104,7 @@ class SummationImplementation
    inline bool Add(const unsigned char *Data)
    { return Add(Data, strlen((const char *)Data)); }
    inline bool Add(const char *Data)
-   { return Add((const unsigned char *)Data, strlen((const char *)Data)); }
+   { return Add((const unsigned char *)Data, strlen(Data)); }
 
    inline bool Add(const unsigned char *Beg, const unsigned char *End)
    { return Add(Beg, End - Beg); }
