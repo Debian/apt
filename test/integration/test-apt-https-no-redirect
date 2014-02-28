@@ -19,6 +19,6 @@ msgtest 'normal https download works'
 downloadfile 'https://localhost:4433/pool/apt_1.0/changelog' changelog >/dev/null 2>/dev/null && msgpass || msgfail
 
 msgtest 'redirecting https to http does not work'
-downloadfile 'https://localhost:4433/redirectme/pool/apt_1.0/changelog' changelog3 2>&1 | grep "Protocol http not supported or disabled in libcurl" > /dev/null && msgpass
+downloadfile 'https://localhost:4433/redirectme/pool/apt_1.0/changelog' changelog3 2>&1 | grep "Protocol http not supported or disabled in libcurl" > /dev/null && msgpass || msgfail
 
 

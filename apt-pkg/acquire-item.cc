@@ -2201,7 +2201,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
    if (stat(DestFile.c_str(),&Buf) == 0)
    {
       // Hmm, the partial file is too big, erase it
-      if ((unsigned long long)Buf.st_size > Size)
+      if ((Size > 0) && (unsigned long long)Buf.st_size > Size)
 	 unlink(DestFile.c_str());
       else
 	 PartialSize = Buf.st_size;
