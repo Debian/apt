@@ -109,10 +109,10 @@ class pkgDPkgPM : public pkgPackageManager
    void DoDpkgStatusFd(int statusfd);
    void ProcessDpkgStatusLine(char *line);
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-   void DoDpkgStatusFd(int statusfd, int unused) {
+   void DoDpkgStatusFd(int statusfd, int /*unused*/) {
       DoDpkgStatusFd(statusfd);
    }
-   void ProcessDpkgStatusLine(int unused, char *line) {
+   void ProcessDpkgStatusLine(int /*unused*/, char *line) {
       ProcessDpkgStatusLine(line);
    }
 #endif

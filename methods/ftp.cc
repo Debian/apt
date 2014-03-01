@@ -1098,7 +1098,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main(int argc,const char *argv[])
+int main(int, const char *argv[])
 { 
    setlocale(LC_ALL, "");
 

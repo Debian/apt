@@ -47,7 +47,7 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator Ver) const
+std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator /*Ver*/) const
 {
    return std::string();
 }
@@ -63,8 +63,8 @@ pkgCache::PkgFileIterator pkgIndexFile::FindInCache(pkgCache &Cache) const
 // IndexFile::SourceIndex - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &Record,
-				pkgSrcRecords::File const &File) const
+std::string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &/*Record*/,
+				pkgSrcRecords::File const &/*File*/) const
 {
    return std::string();
 }

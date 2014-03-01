@@ -2,7 +2,7 @@
 
 #include "assert.h"
 
-int main(int argc,char *argv[])
+int main()
 {
    std::string input, output, expected;
 

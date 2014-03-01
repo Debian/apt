@@ -63,7 +63,7 @@ bool InitOutput()							/*{{{*/
    return true;
 }
 									/*}}}*/
-static std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) /*{{{*/
+static std::string GetArchiveSuite(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator ver) /*{{{*/
 {
    std::string suite = "";
    if (ver && ver.FileList() && ver.FileList())
@@ -107,14 +107,14 @@ static std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIte
    return cand ? cand.VerStr() : "(none)";
 }
 									/*}}}*/
-static std::string GetInstalledVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetInstalledVersion(pkgCacheFile &/*CacheFile*/, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgCache::VerIterator inst = P.CurrentVer();
 
    return inst ? inst.VerStr() : "(none)";
 }
 									/*}}}*/
-static std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)/*{{{*/
+static std::string GetVersion(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator V)/*{{{*/
 {
    pkgCache::PkgIterator P = V.ParentPkg();
    if (V == P.CurrentVer())

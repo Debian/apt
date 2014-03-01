@@ -120,7 +120,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main(int argc, char *argv[])
+int main(int, char *argv[])
 {
    setlocale(LC_ALL, "");
 

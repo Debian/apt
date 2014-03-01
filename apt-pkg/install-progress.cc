@@ -41,10 +41,10 @@ PackageManager* PackageManagerProgressFactory()
    return progress;
 }
 
-bool PackageManager::StatusChanged(std::string PackageName, 
+bool PackageManager::StatusChanged(std::string /*PackageName*/,
                                    unsigned int StepsDone,
                                    unsigned int TotalSteps,
-                                   std::string HumanReadableAction)
+                                   std::string /*HumanReadableAction*/)
 {
    int reporting_steps = _config->FindI("DpkgPM::Reporting-Steps", 1);
    percentage = StepsDone/(float)TotalSteps * 100.0;

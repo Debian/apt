@@ -19,7 +19,7 @@ static void remove_tmpfile(void)
    }
 }
 
-int main(int argc, char *argv[])
+int main()
 {
    FileFd fd;
    const char contents[] = "FieldA-12345678: the value of the field";

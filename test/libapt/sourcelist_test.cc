@@ -19,7 +19,7 @@ static void remove_tmpfile(void)
    }
 }
 
-int main(int argc, char *argv[])
+int main()
 {
   _config->Set("APT::Sources::Use-Deb822", true);
 

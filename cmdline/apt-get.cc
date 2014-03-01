@@ -475,7 +475,7 @@ static bool DoMarkAuto(CommandLine &CmdL)
 // DoDSelectUpgrade - Do an upgrade by following dselects selections	/*{{{*/
 // ---------------------------------------------------------------------
 /* Follows dselect's selections */
-static bool DoDSelectUpgrade(CommandLine &CmdL)
+static bool DoDSelectUpgrade(CommandLine &)
 {
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
@@ -551,7 +551,7 @@ static bool DoDSelectUpgrade(CommandLine &CmdL)
 // DoClean - Remove download archives					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool DoClean(CommandLine &CmdL)
+static bool DoClean(CommandLine &)
 {
    std::string const archivedir = _config->FindDir("Dir::Cache::archives");
    std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
@@ -599,7 +599,7 @@ class LogCleaner : public pkgArchiveCleaner
    };
 };
 
-static bool DoAutoClean(CommandLine &CmdL)
+static bool DoAutoClean(CommandLine &)
 {
    // Lock the archive directory
    FileFd Lock;
@@ -696,7 +696,7 @@ static bool DoDownload(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* Opening automatically checks the system, this command is mostly used
    for debugging */
-static bool DoCheck(CommandLine &CmdL)
+static bool DoCheck(CommandLine &)
 {
    CacheFile Cache;
    Cache.Open();
@@ -1581,7 +1581,7 @@ static bool DoChangelog(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

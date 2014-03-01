@@ -695,7 +695,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
 // ---------------------------------------------------------------------
 /* Deps like self-conflicts should be ignored as well as implicit conflicts
    on virtual packages. */
-bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &Pkg) const
+bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &/*Pkg*/) const
 {
    if (IsNegative() == false)
       return false;

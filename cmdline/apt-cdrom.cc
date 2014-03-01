@@ -93,7 +93,7 @@ bool pkgCdromTextStatus::AskCdromName(string &name)
 }
 
 
-void pkgCdromTextStatus::Update(string text, int current)
+void pkgCdromTextStatus::Update(string text, int /*current*/)
 {
    if(text.size() > 0)
       cout << text << flush;

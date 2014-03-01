@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 
-int main(int argc,char *argv[])
+int main()
 {
    std::vector<std::string> files;
 

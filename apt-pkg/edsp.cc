@@ -44,7 +44,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver, ++p)
       {
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 WriteScenarioDependency(Cache, output, Pkg, Ver);
+	 WriteScenarioDependency(output, Ver);
 	 fprintf(output, "\n");
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
@@ -64,7 +64,7 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       {
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 WriteScenarioLimitedDependency(Cache, output, Pkg, Ver, pkgset);
+	 WriteScenarioLimitedDependency(output, Ver, pkgset);
 	 fprintf(output, "\n");
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
@@ -111,8 +111,7 @@ void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgI
 }
 									/*}}}*/
 // EDSP::WriteScenarioDependency					/*{{{*/
-void EDSP::WriteScenarioDependency(pkgDepCache &Cache, FILE* output, pkgCache::PkgIterator const &Pkg,
-				pkgCache::VerIterator const &Ver)
+void EDSP::WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &Ver)
 {
    std::string dependencies[pkgCache::Dep::Enhances + 1];
    bool orGroup = false;
@@ -148,8 +147,7 @@ void EDSP::WriteScenarioDependency(pkgDepCache &Cache, FILE* output, pkgCache::P
 }
 									/*}}}*/
 // EDSP::WriteScenarioLimitedDependency					/*{{{*/
-void EDSP::WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
-					  pkgCache::PkgIterator const &Pkg,
+void EDSP::WriteScenarioLimitedDependency(FILE* output,
 					  pkgCache::VerIterator const &Ver,
 					  APT::PackageSet const &pkgset)
 {

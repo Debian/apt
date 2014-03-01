@@ -15,7 +15,7 @@ public:
    }
 };
 
-int main(int argc, char const *argv[]) {
+int main() {
    Cdrom cd;
    std::vector<std::string> List;
    std::string CD("/media/cdrom/");

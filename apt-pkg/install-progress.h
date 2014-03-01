@@ -29,7 +29,7 @@ namespace Progress {
     virtual ~PackageManager() {};
 
     /* Global Start/Stop */
-    virtual void Start(int child_pty=-1) {};
+    virtual void Start(int /*child_pty*/=-1) {};
     virtual void Stop() {};
 
     /* When dpkg is invoked (may happen multiple times for each
@@ -48,14 +48,14 @@ namespace Progress {
                                unsigned int StepsDone,
                                unsigned int TotalSteps,
                                std::string HumanReadableAction);
-    virtual void Error(std::string PackageName,
-                       unsigned int StepsDone,
-                       unsigned int TotalSteps,
-                       std::string ErrorMessage) {}
-    virtual void ConffilePrompt(std::string PackageName,
-                                unsigned int StepsDone,
-                                unsigned int TotalSteps,
-                                std::string ConfMessage) {}
+    virtual void Error(std::string /*PackageName*/,
+                       unsigned int /*StepsDone*/,
+                       unsigned int /*TotalSteps*/,
+                       std::string /*ErrorMessage*/) {}
+    virtual void ConffilePrompt(std::string /*PackageName*/,
+                                unsigned int /*StepsDone*/,
+                                unsigned int /*TotalSteps*/,
+                                std::string /*ConfMessage*/) {}
  };
 
  class PackageManagerProgressFd : public PackageManager

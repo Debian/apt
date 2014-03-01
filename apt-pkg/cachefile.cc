@@ -99,7 +99,7 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 // CacheFile::BuildSourceList - Open and build all relevant sources.list/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheFile::BuildSourceList(OpProgress *Progress)
+bool pkgCacheFile::BuildSourceList(OpProgress * /*Progress*/)
 {
    if (SrcList != NULL)
       return true;
@@ -113,7 +113,7 @@ bool pkgCacheFile::BuildSourceList(OpProgress *Progress)
 // CacheFile::BuildPolicy - Open and build all relevant preferences	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheFile::BuildPolicy(OpProgress *Progress)
+bool pkgCacheFile::BuildPolicy(OpProgress * /*Progress*/)
 {
    if (Policy != NULL)
       return true;

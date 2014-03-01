@@ -110,7 +110,7 @@ bool pkgDirStream::FinishedFile(Item &Itm,int Fd)
 // DirStream::Fail - Failed processing a file				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgDirStream::Fail(Item &Itm,int Fd)
+bool pkgDirStream::Fail(Item &/*Itm*/, int Fd)
 {
    if (Fd < 0)
       return true;

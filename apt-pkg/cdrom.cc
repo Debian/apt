@@ -369,7 +369,7 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 // ---------------------------------------------------------------------
 /* This takes the list of source list expressed entires and collects
    similar ones to form a single entry for each dist */
-void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
+void pkgCdrom::ReduceSourcelist(string /*CD*/,vector<string> &List)
 {
    sort(List.begin(),List.end());
    

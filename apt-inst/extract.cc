@@ -79,7 +79,7 @@ pkgExtract::pkgExtract(pkgFLCache &FLCache,pkgCache::VerIterator Ver) :
 // Extract::DoItem - Handle a single item from the stream		/*{{{*/
 // ---------------------------------------------------------------------
 /* This performs the setup for the extraction.. */
-bool pkgExtract::DoItem(Item &Itm,int &Fd)
+bool pkgExtract::DoItem(Item &Itm, int &/*Fd*/)
 {
    /* Strip any leading/trailing /s from the filename, then copy it to the
       temp buffer and re-apply the leading / We use a class variable

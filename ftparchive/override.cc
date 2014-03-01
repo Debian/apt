@@ -129,7 +129,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
 // Override::ReadExtraOverride - Read the extra override file		/*{{{*/
 // ---------------------------------------------------------------------
 /* This parses the extra override file and reads it into the map */
-bool Override::ReadExtraOverride(string const &File,bool const &Source)
+bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 {
    if (File.empty() == true)
       return true;

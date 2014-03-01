@@ -316,7 +316,7 @@ bool ContentsExtract::Read(debDebFile &Deb)
 // ContentsExtract::DoItem - Extract an item				/*{{{*/
 // ---------------------------------------------------------------------
 /* This just tacks the name onto the end of our memory buffer */
-bool ContentsExtract::DoItem(Item &Itm,int &Fd)
+bool ContentsExtract::DoItem(Item &Itm, int &/*Fd*/)
 {
    unsigned long Len = strlen(Itm.Name);
    

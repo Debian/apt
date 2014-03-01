@@ -6,7 +6,7 @@
 class NullStream : public pkgDirStream
 {
    public:
-   virtual bool DoItem(Item &Itm,int &Fd) {return true;};
+   virtual bool DoItem(Item &/*Itm*/, int &/*Fd*/) {return true;};
 };
 
 static bool Test(const char *File)
@@ -33,6 +33,11 @@ static bool Test(const char *File)
 
 int main(int argc, const char *argv[])
 {
+   if (argc != 2) {
+      std::cout << "One parameter expected - given " << argc << std::endl;
+      return 100;
+   }
+
    Test(argv[1]);
    _error->DumpErrors();
    return 0;

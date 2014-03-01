@@ -5,7 +5,7 @@
 
 #include "assert.h"
 
-int main(int argc,const char *argv[]) {
+int main() {
 	Configuration Cnf;
 	std::vector<std::string> fds;
 

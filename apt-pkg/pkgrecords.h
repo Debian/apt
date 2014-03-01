@@ -70,7 +70,7 @@ class pkgRecords::Parser						/*{{{*/
    virtual std::string Homepage() {return std::string();}
 
    // An arbitrary custom field
-   virtual std::string RecordField(const char *fieldName) { return std::string();};
+   virtual std::string RecordField(const char * /*fieldName*/) { return std::string();};
 
    // The record in binary form
    virtual void GetRec(const char *&Start,const char *&Stop) {Start = Stop = 0;};

@@ -1581,7 +1581,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    return true;
 }
 
-void SigINT(int sig) {
+void SigINT(int /*sig*/) {
    pkgPackageManager::SigINTStop = true;
 }
 									/*}}}*/

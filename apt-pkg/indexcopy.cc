@@ -551,7 +551,7 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 }
 									/*}}}*/
 bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	/*{{{*/
-			      vector<string> PkgList,vector<string> SrcList)
+			      vector<string> /*PkgList*/,vector<string> /*SrcList*/)
 {
    if (SigList.empty() == true)
       return true;

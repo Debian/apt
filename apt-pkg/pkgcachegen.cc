@@ -1580,7 +1580,7 @@ static bool IsDuplicateDescription(pkgCache::DescIterator Desc,
 }
 									/*}}}*/
 // CacheGenerator::FinishCache						/*{{{*/
-bool pkgCacheGenerator::FinishCache(OpProgress *Progress)
+bool pkgCacheGenerator::FinishCache(OpProgress * /*Progress*/)
 {
    return true;
 }

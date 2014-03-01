@@ -3,7 +3,7 @@
 
 #include "assert.h"
 
-int main(int argc,char *argv[]) {
+int main() {
 	std::string Package;
 	std::string Version;
 	unsigned int Op = 5;

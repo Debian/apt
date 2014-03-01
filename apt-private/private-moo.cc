@@ -65,7 +65,7 @@ static bool printMooLine() {						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMoo1(CommandLine &CmdL)						/*{{{*/
+bool DoMoo1(CommandLine &)						/*{{{*/
 {
    // our trustworthy super cow since 2001
    if (_config->FindI("quiet") >= 2)
@@ -83,7 +83,7 @@ bool DoMoo1(CommandLine &CmdL)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMoo2(CommandLine &CmdL)						/*{{{*/
+bool DoMoo2(CommandLine &)						/*{{{*/
 {
    // by Fernando Ribeiro in lp:56125
    if (_config->FindI("quiet") >= 2)
@@ -117,7 +117,7 @@ bool DoMoo2(CommandLine &CmdL)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMoo3(CommandLine &CmdL)						/*{{{*/
+bool DoMoo3(CommandLine &)						/*{{{*/
 {
    // by Robert Millan in deb:134156
    if (_config->FindI("quiet") >= 2)
@@ -134,7 +134,7 @@ bool DoMoo3(CommandLine &CmdL)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMooApril(CommandLine &CmdL)					/*{{{*/
+bool DoMooApril(CommandLine &)						/*{{{*/
 {
    // by Christopher Allan Webber and proposed by Paul Tagliamonte
    // in a "Community outreach": https://lists.debian.org/debian-devel/2013/04/msg00045.html

@@ -108,8 +108,8 @@ void pkgAcquire::Item::Start(string /*Message*/,unsigned long long Size)
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Item::Done(string Message,unsigned long long Size,string Hash,
-			    pkgAcquire::MethodConfig *Cnf)
+void pkgAcquire::Item::Done(string Message,unsigned long long Size,string /*Hash*/,
+			    pkgAcquire::MethodConfig * /*Cnf*/)
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
@@ -253,10 +253,10 @@ string pkgAcqSubIndex::Custom600Headers()
    return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqSubIndex failed: " << Desc.URI << std::endl;
+      std::clog << "pkgAcqSubIndex failed: " << Desc.URI << " with " << Message << std::endl;
 
    Complete = false;
    Status = StatDone;
@@ -544,10 +544,10 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
    return false;
 }
 									/*}}}*/
-void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << std::endl
+      std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
 
    new pkgAcqIndex(Owner, RealURI, Description, Desc.ShortDesc, 
@@ -624,10 +624,10 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    }
 }
 									/*}}}*/
-void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
+      std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
 		   ExpectedHash);
@@ -808,7 +808,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
    QueueURI(Desc);
 }
 									/*}}}*/
-void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
+void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs failed: " << Desc.URI << " with " << Message << std::endl;
@@ -1698,7 +1698,7 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 // pkgAcqMetaIndex::Failed - no Release file present or no signature file present	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)
 {
    if (AuthPass == true)
    {

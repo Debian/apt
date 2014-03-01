@@ -132,7 +132,7 @@ bool MirrorMethod::Clean(string Dir)
 }
 
 
-bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
+bool MirrorMethod::DownloadMirrorFile(string /*mirror_uri_str*/)
 {
    // not that great to use pkgAcquire here, but we do not have
    // any other way right now

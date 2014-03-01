@@ -349,7 +349,7 @@ signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
    all over the place rather than forcing a special format */
 class PreferenceSection : public pkgTagSection
 {
-   void TrimRecord(bool BeforeRecord, const char* &End)
+   void TrimRecord(bool /*BeforeRecord*/, const char* &End)
    {
       for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
 	 if (Stop[0] == '#')

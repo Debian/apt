@@ -25,23 +25,23 @@ class FileFd;
 class HttpsServerState : public ServerState
 {
    protected:
-   virtual bool ReadHeaderLines(std::string &Data) { return false; }
-   virtual bool LoadNextResponse(bool const ToFile, FileFd * const File) { return false; }
+   virtual bool ReadHeaderLines(std::string &/*Data*/) { return false; }
+   virtual bool LoadNextResponse(bool const /*ToFile*/, FileFd * const /*File*/) { return false; }
 
    public:
-   virtual bool WriteResponse(std::string const &Data) { return false; }
+   virtual bool WriteResponse(std::string const &/*Data*/) { return false; }
 
    /** \brief Transfer the data from the socket */
-   virtual bool RunData(FileFd * const File) { return false; }
+   virtual bool RunData(FileFd * const /*File*/) { return false; }
 
    virtual bool Open() { return false; }
    virtual bool IsOpen() { return false; }
    virtual bool Close() { return false; }
-   virtual bool InitHashes(FileFd &File) { return false; }
+   virtual bool InitHashes(FileFd &/*File*/) { return false; }
    virtual Hashes * GetHashes() { return NULL; }
-   virtual bool Die(FileFd &File) { return false; }
-   virtual bool Flush(FileFd * const File) { return false; }
-   virtual bool Go(bool ToFile, FileFd * const File) { return false; }
+   virtual bool Die(FileFd &/*File*/) { return false; }
+   virtual bool Flush(FileFd * const /*File*/) { return false; }
+   virtual bool Go(bool /*ToFile*/, FileFd * const /*File*/) { return false; }
 
    HttpsServerState(URI Srv, HttpsMethod *Owner);
    virtual ~HttpsServerState() {Close();};

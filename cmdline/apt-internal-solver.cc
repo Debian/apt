@@ -30,7 +30,7 @@
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &CmdL) {
+static bool ShowHelp(CommandLine &) {
 	ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 		 COMMON_ARCH,__DATE__,__TIME__);
 

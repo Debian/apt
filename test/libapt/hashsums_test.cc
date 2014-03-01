@@ -43,6 +43,11 @@ template <class T> void TestMill(const char *Out)
 
 int main(int argc, char** argv)
 {
+   if (argc != 6) {
+      std::cout << "Five parameter expected - given " << argc << std::endl;
+      return 100;
+   }
+
    // test HashSumValue which doesn't calculate but just stores sums
    {
    string md5sum = argv[2];

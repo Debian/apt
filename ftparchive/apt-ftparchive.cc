@@ -586,7 +586,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 // ShowHelp - Show the help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

@@ -33,7 +33,7 @@ class debStatusIndex : public pkgIndexFile
    virtual const Type *GetType() const;
    
    // Interface for acquire
-   virtual std::string Describe(bool Short) const {return File;};
+   virtual std::string Describe(bool /*Short*/) const {return File;};
    
    // Interface for the Cache Generator
    virtual bool Exists() const;

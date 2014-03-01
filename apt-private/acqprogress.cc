@@ -93,7 +93,7 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
 // AcqTextStatus::Done - Completed a download				/*{{{*/
 // ---------------------------------------------------------------------
 /* We don't display anything... */
-void AcqTextStatus::Done(pkgAcquire::ItemDesc &Itm)
+void AcqTextStatus::Done(pkgAcquire::ItemDesc &/*Itm*/)
 {
    Update = true;
 }

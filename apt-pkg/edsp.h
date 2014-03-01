@@ -35,11 +35,9 @@ class EDSP								/*{{{*/
 	void static WriteScenarioVersion(pkgDepCache &Cache, FILE* output,
 					 pkgCache::PkgIterator const &Pkg,
 					 pkgCache::VerIterator const &Ver);
-	void static WriteScenarioDependency(pkgDepCache &Cache, FILE* output,
-					    pkgCache::PkgIterator const &Pkg,
+	void static WriteScenarioDependency(FILE* output,
 					    pkgCache::VerIterator const &Ver);
-	void static WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
-						   pkgCache::PkgIterator const &Pkg,
+	void static WriteScenarioLimitedDependency(FILE* output,
 						   pkgCache::VerIterator const &Ver,
 						   APT::PackageSet const &pkgset);
 public:

@@ -42,8 +42,8 @@ typedef APT::VersionContainer<
 
 class Matcher {
 public:
-    virtual bool operator () (const pkgCache::PkgIterator &P) {
-        return true;};
+    virtual bool operator () (const pkgCache::PkgIterator &/*P*/) {
+        return true;}
 };
 
 // FIXME: add default argument for OpProgress (or overloaded function)
@@ -111,8 +111,8 @@ public:
 				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
-	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
-				 std::string const &ver, bool const verIsRel) {
+	virtual void showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/, pkgCache::VerIterator const Ver,
+				 std::string const &ver, bool const /*verIsRel*/) {
 		if (ver == Ver.VerStr())
 			return;
 		selectedByRelease.push_back(make_pair(Ver, ver));

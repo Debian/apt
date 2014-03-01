@@ -5,7 +5,7 @@
 #include <errno.h>
 #include <string.h>
 
-int main(int argc,char *argv[])
+int main()
 {
 	std::string const textOfErrnoZero(strerror(0));
 

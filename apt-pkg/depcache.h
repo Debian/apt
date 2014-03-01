@@ -61,7 +61,7 @@ class pkgDepCache : protected pkgCache::Namespace
    class InRootSetFunc
    {
    public:
-     virtual bool InRootSet(const pkgCache::PkgIterator &pkg) {return false;};
+     virtual bool InRootSet(const pkgCache::PkgIterator &/*pkg*/) {return false;};
      virtual ~InRootSetFunc() {};
    };
 

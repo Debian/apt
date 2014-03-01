@@ -72,9 +72,9 @@ FTWScanner::FTWScanner(string const &Arch): Arch(Arch)
 									/*}}}*/
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
 // ---------------------------------------------------------------------
-/* This is the FTW scanner, it processes each directory element in the 
+/* This is the FTW scanner, it processes each directory element in the
    directory tree. */
-int FTWScanner::ScannerFTW(const char *File,const struct stat *sb,int Flag)
+int FTWScanner::ScannerFTW(const char *File,const struct stat * /*sb*/,int Flag)
 {
    if (Flag == FTW_DNR)
    {
@@ -951,7 +951,7 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
 // ReleaseWriter::ReleaseWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ReleaseWriter::ReleaseWriter(string const &DB)
+ReleaseWriter::ReleaseWriter(string const &/*DB*/)
 {
    if (_config->FindB("APT::FTPArchive::Release::Default-Patterns", true) == true)
    {

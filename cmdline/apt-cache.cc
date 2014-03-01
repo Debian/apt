@@ -258,7 +258,7 @@ static bool DumpPackage(CommandLine &CmdL)
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool Stats(CommandLine &Cmd)
+static bool Stats(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -371,7 +371,7 @@ static bool Stats(CommandLine &Cmd)
 // Dump - show everything						/*{{{*/
 // ---------------------------------------------------------------------
 /* This is worthless except fer debugging things */
-static bool Dump(CommandLine &Cmd)
+static bool Dump(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -423,7 +423,7 @@ static bool Dump(CommandLine &Cmd)
 // ---------------------------------------------------------------------
 /* This is needed to make dpkg --merge happy.. I spent a bit of time to 
    make this run really fast, perhaps I went a little overboard.. */
-static bool DumpAvail(CommandLine &Cmd)
+static bool DumpAvail(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1388,7 +1388,7 @@ static bool Search(CommandLine &CmdL)
 }
 									/*}}}*/
 /* ShowAuto - show automatically installed packages (sorted)		{{{*/
-static bool ShowAuto(CommandLine &CmdL)
+static bool ShowAuto(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1717,7 +1717,7 @@ static bool Madison(CommandLine &CmdL)
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool GenCaches(CommandLine &Cmd)
+static bool GenCaches(CommandLine &)
 {
    OpTextProgress Progress(*_config);
 
@@ -1728,7 +1728,7 @@ static bool GenCaches(CommandLine &Cmd)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static bool ShowHelp(CommandLine &Cmd)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

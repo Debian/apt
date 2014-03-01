@@ -63,7 +63,7 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
 class edspIFType: public pkgIndexFile::Type
 {
    public:
-   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator File) const
+   virtual pkgRecords::Parser *CreatePkgParser(pkgCache::PkgFileIterator) const
    {
       // we don't have a record parser for this type as the file is not presistent
       return NULL;

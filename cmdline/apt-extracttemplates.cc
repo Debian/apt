@@ -137,7 +137,7 @@ bool DebFile::DoItem(Item &I, int &Fd)
 // DebFile::Process examine element in package and copy			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DebFile::Process(Item &I, const unsigned char *data, 
+bool DebFile::Process(Item &/*I*/, const unsigned char *data,
 		unsigned long size, unsigned long pos)
 {
 	switch (Which)

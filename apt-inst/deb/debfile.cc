@@ -194,7 +194,7 @@ bool debDebFile::MemControlExtract::DoItem(Item &Itm,int &Fd)
 // ---------------------------------------------------------------------
 /* Just memcopy the block from the tar extractor and put it in the right
    place in the pre-allocated memory block. */
-bool debDebFile::MemControlExtract::Process(Item &Itm,const unsigned char *Data,
+bool debDebFile::MemControlExtract::Process(Item &/*Itm*/,const unsigned char *Data,
 			     unsigned long Size,unsigned long Pos)
 {
    memcpy(Control + Pos, Data,Size);

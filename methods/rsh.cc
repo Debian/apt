@@ -390,7 +390,7 @@ bool RSHMethod::Configuration(std::string Message)
 // RSHMethod::SigTerm - Clean up and timestamp the files on exit	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void RSHMethod::SigTerm(int sig)
+void RSHMethod::SigTerm(int)
 {
    if (FailFd == -1)
       _exit(100);
@@ -519,7 +519,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main(int argc, const char *argv[])
+int main(int, const char *argv[])
 {
    setlocale(LC_ALL, "");
 

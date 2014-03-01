@@ -170,8 +170,8 @@ class pkgCacheGenerator::ListParser
    virtual bool Step() = 0;
    
    inline bool HasFileDeps() {return FoundFileDeps;};
-   virtual bool CollectFileProvides(pkgCache &Cache,
-				    pkgCache::VerIterator &Ver) {return true;};
+   virtual bool CollectFileProvides(pkgCache &/*Cache*/,
+				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
    ListParser() : FoundFileDeps(false) {};
    virtual ~ListParser() {};
