@@ -270,7 +270,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 }
 									/*}}}*/
 // checkLanguage - are we interested in the given Language?		/*{{{*/
-bool const Configuration::checkLanguage(std::string Lang, bool const All) {
+bool Configuration::checkLanguage(std::string Lang, bool const All) {
 	// the empty Language is always interesting as it is the original
 	if (Lang.empty() == true)
 		return true;
@@ -390,7 +390,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 }
 									/*}}}*/
 // checkArchitecture - are we interested in the given Architecture?	/*{{{*/
-bool const Configuration::checkArchitecture(std::string const &Arch) {
+bool Configuration::checkArchitecture(std::string const &Arch) {
 	if (Arch == "all")
 		return true;
 	std::vector<std::string> const archs = getArchitectures(true);

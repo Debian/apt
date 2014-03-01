@@ -23,7 +23,7 @@
 #include <dirent.h>
 #include <signal.h>
 
-static char const * const httpcodeToStr(int const httpcode)		/*{{{*/
+static char const * httpcodeToStr(int const httpcode)		/*{{{*/
 {
    switch (httpcode)
    {

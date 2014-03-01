@@ -201,7 +201,7 @@ class pkgCache								/*{{{*/
    inline PkgFileIterator FileEnd();
 
    inline bool MultiArchCache() const { return MultiArchEnabled; }
-   inline char const * const NativeArch() const;
+   inline char const * NativeArch();
 
    // Make me a function
    pkgVersioningSystem *VS;
@@ -661,7 +661,7 @@ struct pkgCache::StringItem
 									/*}}}*/
 
 
-inline char const * const pkgCache::NativeArch() const
+inline char const * pkgCache::NativeArch()
 	{ return StrP + HeaderP->Architecture; }
 
 #include <apt-pkg/cacheiterators.h>
