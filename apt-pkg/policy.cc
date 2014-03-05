@@ -333,7 +333,7 @@ pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator const &Pkg)
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
+APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
 {
    if (Pins[Pkg->ID].Type != pkgVersionMatch::None)
    {
@@ -345,7 +345,7 @@ signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
    
    return 0;
 }
-signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
+APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
 {
    return PFPriority[File->ID];
 }

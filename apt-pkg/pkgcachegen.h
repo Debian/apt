@@ -104,7 +104,7 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-   bool FinishCache(OpProgress *Progress) APT_DEPRECATED;
+   bool FinishCache(OpProgress *Progress) APT_DEPRECATED APT_CONST;
 
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);

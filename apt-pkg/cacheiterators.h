@@ -30,6 +30,7 @@
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
 #include<apt-pkg/pkgcache.h>
+#include<apt-pkg/macros.h>
 
 #include<iterator>
 #include <iosfwd>
@@ -163,15 +164,15 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	inline bool Purge() const {return S->CurrentState == pkgCache::State::Purge ||
 		(S->CurrentVer == 0 && S->CurrentState == pkgCache::State::NotInstalled);}
 	inline const char *Arch() const {return S->Arch == 0?0:Owner->StrP + S->Arch;}
-	inline GrpIterator Group() const { return GrpIterator(*Owner, Owner->GrpP + S->Group);}
+	inline APT_PURE GrpIterator Group() const { return GrpIterator(*Owner, Owner->GrpP + S->Group);}
 
-	inline VerIterator VersionList() const;
-	inline VerIterator CurrentVer() const;
-	inline DepIterator RevDependsList() const;
-	inline PrvIterator ProvidesList() const;
-	OkState State() const;
-	const char *CandVersion() const;
-	const char *CurVersion() const;
+	inline VerIterator VersionList() const APT_PURE;
+	inline VerIterator CurrentVer() const APT_PURE;
+	inline DepIterator RevDependsList() const APT_PURE;
+	inline PrvIterator ProvidesList() const APT_PURE;
+	OkState State() const APT_PURE;
+	const char *CandVersion() const APT_PURE;
+	const char *CurVersion() const APT_PURE;
 
 	//Nice printable representation
 	friend std::ostream& operator <<(std::ostream& out, PkgIterator i);
@@ -224,7 +225,7 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	inline VerFileIterator FileList() const;
 	bool Downloadable() const;
 	inline const char *PriorityType() const {return Owner->Priority(S->Priority);}
-	const char *MultiArchType() const;
+	const char *MultiArchType() const APT_PURE;
 	std::string RelStr() const;
 
 	bool Automatic() const;
@@ -286,13 +287,13 @@ class pkgCache::DepIterator : public Iterator<Dependency, DepIterator> {
 	inline VerIterator ParentVer() const {return VerIterator(*Owner,Owner->VerP + S->ParentVer);}
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->ParentVer].ParentPkg);}
 	inline bool Reverse() const {return Type == DepRev;}
-	bool IsCritical() const;
-	bool IsNegative() const;
-	bool IsIgnorable(PrvIterator const &Prv) const;
-	bool IsIgnorable(PkgIterator const &Pkg) const;
-	bool IsMultiArchImplicit() const;
-	bool IsSatisfied(VerIterator const &Ver) const;
-	bool IsSatisfied(PrvIterator const &Prv) const;
+	bool IsCritical() const APT_PURE;
+	bool IsNegative() const APT_PURE;
+	bool IsIgnorable(PrvIterator const &Prv) const APT_PURE;
+	bool IsIgnorable(PkgIterator const &Pkg) const APT_PURE;
+	bool IsMultiArchImplicit() const APT_PURE;
+	bool IsSatisfied(VerIterator const &Ver) const APT_PURE;
+	bool IsSatisfied(PrvIterator const &Prv) const APT_PURE;
 	void GlobOr(DepIterator &Start,DepIterator &End);
 	Version **AllTargets() const;
 	bool SmartTargetPkg(PkgIterator &Result) const;
@@ -337,7 +338,7 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	inline VerIterator OwnerVer() const {return VerIterator(*Owner,Owner->VerP + S->Version);}
 	inline PkgIterator OwnerPkg() const {return PkgIterator(*Owner,Owner->PkgP + Owner->VerP[S->Version].ParentPkg);}
 
-	bool IsMultiArchImplicit() const;
+	bool IsMultiArchImplicit() const APT_PURE;
 
 	inline PrvIterator() : Iterator<Provides, PrvIterator>(), Type(PrvVer) {}
 	inline PrvIterator(pkgCache &Owner, Provides *Trg, Version*) :

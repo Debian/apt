@@ -614,7 +614,7 @@ void CacheSetHelper::canNotFindFnmatch(PackageContainerInterface * const pci, pk
 }
 #endif									/*}}}*/
 // canNotFindPackage - handle the case no package is found from a string/*{{{*/
-void CacheSetHelper::canNotFindPackage(PackageContainerInterface * const /*pci*/, pkgCacheFile &/*Cache*/, std::string const &/*str*/) {
+APT_CONST void CacheSetHelper::canNotFindPackage(PackageContainerInterface * const /*pci*/, pkgCacheFile &/*Cache*/, std::string const &/*str*/) {
 }
 									/*}}}*/
 // canNotFindAllVer							/*{{{*/
@@ -663,24 +663,24 @@ pkgCache::VerIterator CacheSetHelper::canNotFindInstalledVer(pkgCacheFile &Cache
 }
 									/*}}}*/
 // showTaskSelection							/*{{{*/
-void CacheSetHelper::showTaskSelection(pkgCache::PkgIterator const &/*pkg*/,
+APT_CONST void CacheSetHelper::showTaskSelection(pkgCache::PkgIterator const &/*pkg*/,
 				       std::string const &/*pattern*/) {
 }
 									/*}}}*/
 // showRegExSelection							/*{{{*/
-void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &/*pkg*/,
+APT_CONST void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &/*pkg*/,
 					std::string const &/*pattern*/) {
 }
 									/*}}}*/
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 // showFnmatchSelection							/*{{{*/
-void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &pkg,
+APT_CONST void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &pkg,
                                           std::string const &pattern) {
 }
 									/*}}}*/
 #endif
 // showSelectedVersion							/*{{{*/
-void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/,
+APT_CONST void CacheSetHelper::showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/,
 					 pkgCache::VerIterator const /*Ver*/,
 					 std::string const &/*ver*/,
 					 bool const /*verIsRel*/) {

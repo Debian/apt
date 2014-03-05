@@ -35,7 +35,7 @@ const std::string Vendor::LookupFingerprint(std::string Print) const
       return (*Elt).second;
 }
 
-bool Vendor::CheckDist(std::string /*Dist*/)
+APT_CONST bool Vendor::CheckDist(std::string /*Dist*/)
 {
    return true;
 }

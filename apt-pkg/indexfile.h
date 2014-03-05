@@ -54,7 +54,7 @@ class pkgIndexFile
       // Global list of Items supported
       static Type **GlobalList;
       static unsigned long GlobalListLen;
-      static Type *GetType(const char *Type);
+      static Type *GetType(const char *Type) APT_PURE;
 
       const char *Label;
 

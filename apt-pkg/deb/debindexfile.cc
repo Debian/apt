@@ -660,7 +660,7 @@ pkgCache::PkgFileIterator debStatusIndex::FindInCache(pkgCache &Cache) const
 // StatusIndex::Exists - Check if the index is available		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool debStatusIndex::Exists() const
+APT_CONST bool debStatusIndex::Exists() const
 {
    // Abort if the file does not exist.
    return true;

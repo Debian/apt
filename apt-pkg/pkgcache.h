@@ -74,9 +74,11 @@
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
 
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/macros.h>
+
 #include <string>
 #include <time.h>
-#include <apt-pkg/mmap.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
@@ -156,8 +158,8 @@ class pkgCache								/*{{{*/
    std::string CacheFile;
    MMap &Map;
 
-   unsigned long sHash(const std::string &S) const;
-   unsigned long sHash(const char *S) const;
+   unsigned long sHash(const std::string &S) const APT_PURE;
+   unsigned long sHash(const char *S) const APT_PURE;
    
    public:
    
@@ -207,8 +209,8 @@ class pkgCache								/*{{{*/
    pkgVersioningSystem *VS;
    
    // Converters
-   static const char *CompTypeDeb(unsigned char Comp);
-   static const char *CompType(unsigned char Comp);
+   static const char *CompTypeDeb(unsigned char Comp) APT_CONST;
+   static const char *CompType(unsigned char Comp) APT_CONST;
    static const char *DepType(unsigned char Dep);
    
    pkgCache(MMap *Map,bool DoMap = true);
@@ -318,7 +320,7 @@ struct pkgCache::Header
    /** \brief Size of the complete cache file */
    unsigned long  CacheFileSize;
 
-   bool CheckSizes(Header &Against) const;
+   bool CheckSizes(Header &Against) const APT_PURE;
    Header();
 };
 									/*}}}*/

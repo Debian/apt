@@ -45,7 +45,7 @@ using std::string;
 #endif
 
 class pkgVersionMatch
-{   
+{
    // Version Matching
    std::string VerStr;
    bool VerPrefixMatch;
@@ -61,20 +61,20 @@ class pkgVersionMatch
    std::string RelComponent;
    std::string RelArchitecture;
    bool MatchAll;
-   
+
    // Origin Matching
    std::string OrSite;
-   
+
    public:
-   
+
    enum MatchType {None = 0,Version,Release,Origin} Type;
-   
-   bool MatchVer(const char *A,std::string B,bool Prefix);
+
+   bool MatchVer(const char *A,std::string B,bool Prefix) APT_PURE;
    bool ExpressionMatches(const char *pattern, const char *string);
    bool ExpressionMatches(const std::string& pattern, const char *string);
    bool FileMatch(pkgCache::PkgFileIterator File);
    pkgCache::VerIterator Find(pkgCache::PkgIterator Pkg);
-			       
+
    pkgVersionMatch(std::string Data,MatchType Type);
 };
 

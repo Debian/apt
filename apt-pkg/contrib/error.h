@@ -141,7 +141,7 @@ public:									/*{{{*/
 	 */
 	bool InsertErrno(MsgType type, const char* Function,
 			 const char* Description, va_list &args,
-			 int const errsv, size_t &msgSize);
+			 int const errsv, size_t &msgSize) APT_COLD;
 
 	/** \brief add an fatal error message to the list
 	 *
@@ -225,7 +225,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b true if an error is included in the list, \b false otherwise
 	 */
-	inline bool PendingError() const {return PendingFlag;};
+	inline bool PendingError() const APT_PURE {return PendingFlag;};
 
 	/** \brief is the list empty?
 	 *
@@ -237,7 +237,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b true if an the list is empty, \b false otherwise
 	 */
-	bool empty(MsgType const &threshold = WARNING) const;
+	bool empty(MsgType const &threshold = WARNING) const APT_PURE;
 
 	/** \brief returns and removes the first (or last) message in the list
 	 *
@@ -303,7 +303,7 @@ public:									/*{{{*/
 	void MergeWithStack();
 
 	/** \brief return the deep of the stack */
-	size_t StackCount() const {
+	size_t StackCount() const APT_PURE {
 		return Stacks.size();
 	}
 

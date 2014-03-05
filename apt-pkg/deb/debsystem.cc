@@ -202,7 +202,7 @@ bool debSystem::Initialize(Configuration &Cnf)
 // ---------------------------------------------------------------------
 /* The standard name for a deb is 'deb'.. There are no separate versions
    of .deb to worry about.. */
-bool debSystem::ArchiveSupported(const char *Type)
+APT_PURE bool debSystem::ArchiveSupported(const char *Type)
 {
    if (strcmp(Type,"deb") == 0)
       return true;

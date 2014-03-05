@@ -129,7 +129,7 @@ class ServerMethod : public pkgAcqMethod
    static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
-   static void SigTerm(int);
+   static APT_NORETURN void SigTerm(int);
 
    virtual bool Configuration(std::string Message);
    virtual bool Flush() { return Server->Flush(File); };

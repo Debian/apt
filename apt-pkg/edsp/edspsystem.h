@@ -31,11 +31,11 @@ class edspSystem : public pkgSystem
 
    public:
 
-   virtual bool Lock();
-   virtual bool UnLock(bool NoErrors = false);
-   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const;
+   virtual bool Lock() APT_CONST;
+   virtual bool UnLock(bool NoErrors = false) APT_CONST;
+   virtual pkgPackageManager *CreatePM(pkgDepCache *Cache) const APT_CONST;
    virtual bool Initialize(Configuration &Cnf);
-   virtual bool ArchiveSupported(const char *Type);
+   virtual bool ArchiveSupported(const char *Type) APT_CONST;
    virtual signed Score(Configuration const &Cnf);
    virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List);
    virtual bool FindIndex(pkgCache::PkgFileIterator File,

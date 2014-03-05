@@ -2162,7 +2162,7 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 									/*}}}*/
 // AcqArchive::IsTrusted - Determine whether this archive comes from a trusted source /*{{{*/
 // ---------------------------------------------------------------------
-bool pkgAcqArchive::IsTrusted()
+APT_PURE bool pkgAcqArchive::IsTrusted()
 {
    return Trusted;
 }

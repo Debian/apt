@@ -298,7 +298,7 @@ class pkgAcquire
     *  \return the worker immediately following I, or \b NULL if none
     *  exists.
     */
-   Worker *WorkerStep(Worker *I);
+   Worker *WorkerStep(Worker *I) APT_PURE;
 
    /** \brief Get the head of the list of items. */
    inline ItemIterator ItemsBegin() {return Items.begin();};
@@ -481,7 +481,7 @@ class pkgAcquire::Queue
     *  \return the first item in the queue whose URI is #URI and that
     *  is being downloaded by #Owner.
     */
-   QItem *FindItem(std::string URI,pkgAcquire::Worker *Owner);
+   QItem *FindItem(std::string URI,pkgAcquire::Worker *Owner) APT_PURE;
 
    /** Presumably this should start downloading an item?
     *

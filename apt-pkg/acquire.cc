@@ -526,7 +526,7 @@ bool pkgAcquire::Clean(string Dir)
 // Acquire::TotalNeeded - Number of bytes to fetch			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the total number of bytes needed */
-unsigned long long pkgAcquire::TotalNeeded()
+APT_PURE unsigned long long pkgAcquire::TotalNeeded()
 {
    unsigned long long Total = 0;
    for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
@@ -537,7 +537,7 @@ unsigned long long pkgAcquire::TotalNeeded()
 // Acquire::FetchNeeded - Number of bytes needed to get			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the number of bytes that is not local */
-unsigned long long pkgAcquire::FetchNeeded()
+APT_PURE unsigned long long pkgAcquire::FetchNeeded()
 {
    unsigned long long Total = 0;
    for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)
@@ -549,7 +549,7 @@ unsigned long long pkgAcquire::FetchNeeded()
 // Acquire::PartialPresent - Number of partial bytes we already have	/*{{{*/
 // ---------------------------------------------------------------------
 /* This is the number of bytes that is not local */
-unsigned long long pkgAcquire::PartialPresent()
+APT_PURE unsigned long long pkgAcquire::PartialPresent()
 {
   unsigned long long Total = 0;
    for (ItemCIterator I = ItemsBegin(); I != ItemsEnd(); ++I)

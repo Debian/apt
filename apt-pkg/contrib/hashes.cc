@@ -116,7 +116,7 @@ const char** HashString::SupportedHashes()
    return _SupportedHashes;
 }
 
-bool HashString::empty() const
+APT_PURE bool HashString::empty() const
 {
    return (Type.empty() || Hash.empty());
 }

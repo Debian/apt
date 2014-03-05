@@ -12,7 +12,7 @@
 #include <apti18n.h>
 									/*}}}*/
 
-static bool strcmp_match_in_list(char const * const Cmd, ...)		/*{{{*/
+APT_SENTINEL static bool strcmp_match_in_list(char const * const Cmd, ...)		/*{{{*/
 {
    va_list args;
    bool found = false;

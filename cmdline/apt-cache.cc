@@ -1118,7 +1118,7 @@ static bool Dotty(CommandLine &CmdL)
 /* This displays the package record from the proper package index file. 
    It is not used by DumpAvail for performance reasons. */
 
-static unsigned char const* skipDescriptionFields(unsigned char const * DescP)
+static APT_PURE unsigned char const* skipDescriptionFields(unsigned char const * DescP)
 {
    char const * const TagName = "\nDescription";
    size_t const TagLen = strlen(TagName);

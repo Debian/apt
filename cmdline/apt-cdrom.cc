@@ -98,7 +98,7 @@ bool pkgCdromTextStatus::ChangeCdrom()
    return true;
 }
 
-OpProgress* pkgCdromTextStatus::GetOpProgress()
+APT_CONST OpProgress* pkgCdromTextStatus::GetOpProgress()
 {
    return &Progress;
 }

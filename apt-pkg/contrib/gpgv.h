@@ -41,7 +41,7 @@ class FileFd;
  */
 void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd, int fd[2]) APT_NORETURN;
-inline void ExecGPGV(std::string const &File, std::string const &FileSig,
+inline APT_NORETURN void ExecGPGV(std::string const &File, std::string const &FileSig,
       int const &statusfd = -1) {
    int fd[2];
    ExecGPGV(File, FileSig, statusfd, fd);

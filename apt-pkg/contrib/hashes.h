@@ -66,7 +66,7 @@ class HashString
    bool empty() const;
 
    // return the list of hashes we support
-   static const char** SupportedHashes();
+   static APT_CONST const char** SupportedHashes();
 };
 
 class Hashes

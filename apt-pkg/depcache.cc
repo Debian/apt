@@ -1691,9 +1691,9 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
 }
 									/*}}}*/
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
-signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &/*Pkg*/)
+APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &/*Pkg*/)
 { return 0; }
-signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &/*File*/)
+APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &/*File*/)
 { return 0; }
 									/*}}}*/
 pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/

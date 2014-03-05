@@ -107,43 +107,43 @@ int tolower_ascii(int const c) APT_CONST APT_HOT;
 std::string StripEpoch(const std::string &VerStr);
 
 #define APT_MKSTRCMP(name,func) \
-inline int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));} \
-inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
-inline int name(const std::string& A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));} \
-inline int name(const std::string& A,const std::string& B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());} \
-inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);}
+inline APT_PURE int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));} \
+inline APT_PURE int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const std::string& B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());} \
+inline APT_PURE int name(const std::string& A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);}
 
 #define APT_MKSTRCMP2(name,func) \
-inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
-inline int name(const std::string& A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));} \
-inline int name(const std::string& A,const std::string& B) {return func(A.begin(),A.end(),B.begin(),B.end());} \
-inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}
+inline APT_PURE int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const std::string& B) {return func(A.begin(),A.end(),B.begin(),B.end());} \
+inline APT_PURE int name(const std::string& A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}
 
-int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
-int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+int APT_PURE stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+int APT_PURE stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 
 /* We assume that GCC 3 indicates that libstdc++3 is in use too. In that
    case the definition of string::const_iterator is not the same as
    const char * and we need these extra functions */
 #if __GNUC__ >= 3
-int stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
 	      const char *B,const char *BEnd);
-int stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
 	      std::string::const_iterator B,std::string::const_iterator BEnd);
-int stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
 		  const char *B,const char *BEnd);
-int stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
                   std::string::const_iterator B,std::string::const_iterator BEnd);
 
-inline int stringcmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcmp(A,Aend,B,B+strlen(B));}
-inline int stringcasecmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcasecmp(A,Aend,B,B+strlen(B));}
+inline APT_PURE int stringcmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcmp(A,Aend,B,B+strlen(B));}
+inline APT_PURE int stringcasecmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcasecmp(A,Aend,B,B+strlen(B));}
 #endif
 
 APT_MKSTRCMP2(stringcmp,stringcmp)
 APT_MKSTRCMP2(stringcasecmp,stringcasecmp)
 
 // Return the length of a NULL-terminated string array
-size_t strv_length(const char **str_array);
+size_t APT_PURE strv_length(const char **str_array);
 
 
 inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);}

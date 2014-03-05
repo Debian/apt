@@ -75,7 +75,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    bool CreateOrderList();
    
    // Analysis helpers
-   bool DepAlwaysTrue(DepIterator D);
+   bool DepAlwaysTrue(DepIterator D) APT_PURE;
    
    // Install helpers
    bool ConfigureAll();

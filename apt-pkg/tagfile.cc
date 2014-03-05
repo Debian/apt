@@ -85,7 +85,7 @@ pkgTagFile::~pkgTagFile()
 }
 									/*}}}*/
 // TagFile::Offset - Return the current offset in the buffer		/*{{{*/
-unsigned long pkgTagFile::Offset()
+APT_PURE unsigned long pkgTagFile::Offset()
 {
    return d->iOffset;
 }

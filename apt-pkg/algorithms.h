@@ -114,7 +114,7 @@ class pkgProblemResolver						/*{{{*/
    
    // Sort stuff
    static pkgProblemResolver *This;
-   static int ScoreSort(const void *a,const void *b);
+   static int ScoreSort(const void *a,const void *b) APT_PURE;
 
    struct PackageKill
    {

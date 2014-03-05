@@ -38,7 +38,7 @@ class debStatusIndex : public pkgIndexFile
 
    public:
 
-   virtual const Type *GetType() const;
+   virtual const Type *GetType() const APT_CONST;
    
    // Interface for acquire
    virtual std::string Describe(bool /*Short*/) const {return File;};
@@ -71,7 +71,7 @@ class debPackagesIndex : public pkgIndexFile
    
    public:
    
-   virtual const Type *GetType() const;
+   virtual const Type *GetType() const APT_CONST;
 
    // Stuff for accessing files on remote items
    virtual std::string ArchiveInfo(pkgCache::VerIterator Ver) const;
@@ -110,7 +110,7 @@ class debTranslationsIndex : public pkgIndexFile
 
    public:
    
-   virtual const Type *GetType() const;
+   virtual const Type *GetType() const APT_CONST;
 
    // Interface for acquire
    virtual std::string Describe(bool Short) const;   
@@ -142,7 +142,7 @@ class debSourcesIndex : public pkgIndexFile
    
    public:
 
-   virtual const Type *GetType() const;
+   virtual const Type *GetType() const APT_CONST;
 
    // Stuff for accessing files on remote items
    virtual std::string SourceInfo(pkgSrcRecords::Parser const &Record,

@@ -13,7 +13,7 @@
 class CacheFile : public pkgCacheFile
 {
    static pkgCache *SortCache;
-   static int NameComp(const void *a,const void *b);
+   static int NameComp(const void *a,const void *b) APT_PURE;
    
    public:
    pkgCache::Package **List;

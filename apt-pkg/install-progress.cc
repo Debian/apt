@@ -93,7 +93,7 @@ void PackageManagerProgressFd::StartDpkg()
    WriteToStatusFd(status.str());
 }
 
-void PackageManagerProgressFd::Stop()
+APT_CONST void PackageManagerProgressFd::Stop()
 {
 }
 
@@ -176,7 +176,7 @@ void PackageManagerProgressDeb822Fd::StartDpkg()
    WriteToStatusFd(status.str());
 }
 
-void PackageManagerProgressDeb822Fd::Stop()
+APT_CONST void PackageManagerProgressDeb822Fd::Stop()
 {
 }
 

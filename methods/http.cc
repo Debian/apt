@@ -470,7 +470,7 @@ bool HttpServerState::WriteResponse(const std::string &Data)		/*{{{*/
    return Out.Read(Data);
 }
 									/*}}}*/
-bool HttpServerState::IsOpen()						/*{{{*/
+APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
 {
    return (ServerFd != -1);
 }
@@ -485,7 +485,7 @@ bool HttpServerState::InitHashes(FileFd &File)				/*{{{*/
    return In.Hash->AddFD(File, StartPos);
 }
 									/*}}}*/
-Hashes * HttpServerState::GetHashes()					/*{{{*/
+APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 {
    return In.Hash;
 }

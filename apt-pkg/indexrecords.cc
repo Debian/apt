@@ -27,33 +27,33 @@
 
 using std::string;
 
-string indexRecords::GetDist() const
+APT_PURE string indexRecords::GetDist() const
 {
    return this->Dist;
 }
 
-string indexRecords::GetSuite() const
+APT_PURE string indexRecords::GetSuite() const
 {
    return this->Suite;
 }
 
-bool indexRecords::CheckDist(const string MaybeDist) const
+APT_PURE bool indexRecords::CheckDist(const string MaybeDist) const
 {
    return (this->Dist == MaybeDist
 	   || this->Suite == MaybeDist);
 }
 
-string indexRecords::GetExpectedDist() const
+APT_PURE string indexRecords::GetExpectedDist() const
 {
    return this->ExpectedDist;
 }
 
-time_t indexRecords::GetValidUntil() const
+APT_PURE time_t indexRecords::GetValidUntil() const
 {
    return this->ValidUntil;
 }
 
-const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
+APT_PURE const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
    std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
    if (sum == Entries.end())
@@ -61,7 +61,7 @@ const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
    return sum->second;
 }
 
-bool indexRecords::Exists(string const &MetaKey) const
+APT_PURE bool indexRecords::Exists(string const &MetaKey) const
 {
    return Entries.count(MetaKey) == 1;
 }

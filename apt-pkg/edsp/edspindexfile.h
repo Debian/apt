@@ -25,7 +25,7 @@ class edspIndex : public debStatusIndex
 
    public:
 
-   virtual const Type *GetType() const;
+   virtual const Type *GetType() const APT_CONST;
 
    virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
 

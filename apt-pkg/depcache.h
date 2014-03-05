@@ -41,6 +41,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
 
 #include <stddef.h>
 
@@ -239,7 +240,7 @@ class pkgDepCache : protected pkgCache::Namespace
       unsigned char DepState;          // DepState Flags
 
       // Update of candidate version
-      const char *StripEpoch(const char *Ver);
+      const char *StripEpoch(const char *Ver) APT_PURE;
       void Update(PkgIterator Pkg,pkgCache &Cache);
       
       // Various test members for the current status of the package
