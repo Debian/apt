@@ -18,20 +18,26 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/macros.h>
-#include <apt-pkg/tagfile.h>
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/hashsum_template.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <stddef.h>
+#include <string.h>
+#include <iostream>
+#include <string>
 #include <vector>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <errno.h>
-#include <stdio.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1333,7 +1339,7 @@ DynamicMMap* pkgCacheGenerator::CreateDynamicMMap(FileFd *CacheF, unsigned long 
    the cache will be stored there. This is pretty much mandetory if you
    are using AllowMem. AllowMem lets the function be run as non-root
    where it builds the cache 'fast' into a memory buffer. */
-__deprecated bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
+APT_DEPRECATED bool pkgMakeStatusCache(pkgSourceList &List,OpProgress &Progress,
 			MMap **OutMap, bool AllowMem)
    { return pkgCacheGenerator::MakeStatusCache(List, &Progress, OutMap, AllowMem); }
 bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
@@ -1534,7 +1540,7 @@ bool pkgCacheGenerator::MakeStatusCache(pkgSourceList &List,OpProgress *Progress
 // CacheGenerator::MakeOnlyStatusCache - Build only a status files cache/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-__deprecated bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
+APT_DEPRECATED bool pkgMakeOnlyStatusCache(OpProgress &Progress,DynamicMMap **OutMap)
    { return pkgCacheGenerator::MakeOnlyStatusCache(&Progress, OutMap); }
 bool pkgCacheGenerator::MakeOnlyStatusCache(OpProgress *Progress,DynamicMMap **OutMap)
 {

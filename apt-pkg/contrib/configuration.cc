@@ -21,11 +21,18 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/init.h>
+#include <apt-pkg/macros.h>
 
+#include <ctype.h>
+#include <regex.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <string>
 #include <vector>
 #include <fstream>
-#include <iostream>
 
 #include <apti18n.h>
 

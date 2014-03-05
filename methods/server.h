@@ -12,7 +12,10 @@
 #define APT_SERVER_H
 
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/acquire-method.h>
 
+#include <time.h>
+#include <iostream>
 #include <string>
 
 using std::cout;

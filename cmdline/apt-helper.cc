@@ -7,6 +7,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
@@ -20,14 +21,9 @@
 #include <apt-private/private-output.h>
 #include <apt-private/private-cmndline.h>
 
-#include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-
-
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

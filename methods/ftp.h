@@ -12,6 +12,8 @@
 
 #include <apt-pkg/strutl.h>
 
+#include <sys/types.h>
+#include <time.h>
 #include <string>
 
 class FTPConn

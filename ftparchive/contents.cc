@@ -36,13 +36,12 @@
 #include <config.h>
 
 #include <apt-pkg/debfile.h>
-#include <apt-pkg/extracttar.h>
+#include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
 
 #include "contents.h"
 

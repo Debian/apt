@@ -33,24 +33,21 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <sys/select.h>
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <signal.h>
 #include <stdio.h>
 #include <errno.h>
-#include <string.h>
-#include <climits>
 #include <iostream>
-#include <map>
-
-// Internet stuff
-#include <netdb.h>
 
 #include "config.h"
 #include "connect.h"
-#include "rfc2553emu.h"
 #include "http.h"
 
 #include <apti18n.h>

@@ -1,16 +1,31 @@
 #ifndef APT_PRIVATE_CACHESET_H
 #define APT_PRIVATE_CACHESET_H
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
 
 #include <algorithm>
 #include <vector>
+#include <string.h>
+#include <list>
+#include <ostream>
+#include <set>
+#include <string>
+#include <utility>
 
 #include "private-output.h"
 
 #include <apti18n.h>
+
+class OpProgress;
 
 struct VersionSortDescriptionLocality
 {

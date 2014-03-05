@@ -22,6 +22,9 @@
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/weakptr.h>
 
+#include <sys/types.h>
+#include <string>
+#include <vector>
 
 /** \brief A fetch subprocess.
  *

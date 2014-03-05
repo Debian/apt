@@ -16,8 +16,13 @@
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/macros.h>
+
+#include <string.h>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

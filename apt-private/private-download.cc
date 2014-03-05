@@ -7,10 +7,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
-#include "private-output.h"
-#include "private-download.h"
-
-#include <locale.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-download.h>
 
 #include <fstream>
 #include <string>

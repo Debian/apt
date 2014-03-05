@@ -1,10 +1,15 @@
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/tagfile.h>
+#include <config.h>
 
-#include "assert.h"
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/fileutl.h>
+
+#include <string>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include "assert.h"
 
 char *tempfile = NULL;
 int tempfile_fd = -1;

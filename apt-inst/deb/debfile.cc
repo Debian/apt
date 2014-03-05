@@ -21,11 +21,17 @@
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/arfile.h>
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/tagfile.h>
 
+#include <string.h>
+#include <string>
+#include <vector>
 #include <sys/stat.h>
-#include <unistd.h>
+
 #include <apti18n.h>
 									/*}}}*/
 

@@ -1,17 +1,14 @@
 #ifndef APT_PRIVATE_OUTPUT_H
 #define APT_PRIVATE_OUTPUT_H
 
+#include <apt-pkg/pkgcache.h>
 
-#include <iostream>
 #include <fstream>
 #include <string>
-
-#include "private-cachefile.h"
 
 // forward declaration
 class pkgCacheFile;
 class CacheFile;
-class pkgCache;
 class pkgDepCache;
 class pkgRecords;
 

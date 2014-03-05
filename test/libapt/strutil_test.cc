@@ -1,4 +1,9 @@
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
+
+#include <string>
+#include <vector>
 
 #include "assert.h"
 
@@ -44,7 +49,7 @@ int main()
 
    // Split
    input = "status: libnet1:amd64: unpacked";
-   vector<std::string> result = StringSplit(input, ": ");
+   std::vector<std::string> result = StringSplit(input, ": ");
    equals(result[0], "status");
    equals(result[1], "libnet1:amd64");
    equals(result[2], "unpacked");

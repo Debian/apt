@@ -11,14 +11,19 @@
 #ifndef APT_HTTPS_H
 #define APT_HTTPS_H
 
-#include <iostream>
+#include <apt-pkg/acquire-method.h>
+
 #include <curl/curl.h>
+#include <iostream>
+#include <stddef.h>
+#include <string>
 
 #include "server.h"
 
 using std::cout;
 using std::endl;
 
+class Hashes;
 class HttpsMethod;
 class FileFd;
 

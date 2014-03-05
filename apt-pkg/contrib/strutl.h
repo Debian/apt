@@ -18,15 +18,18 @@
 
 
 #include <limits>
-#include <stdlib.h>
 #include <string>
 #include <cstring>
 #include <vector>
 #include <iostream>
 #include <time.h>
+#include <stddef.h>
 
 #include "macros.h"
 
+#ifndef APT_10_CLEANER_HEADERS
+#include <stdlib.h>
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 using std::vector;
@@ -60,9 +63,9 @@ std::string Base64Encode(const std::string &Str);
 std::string OutputInDepth(const unsigned long Depth, const char* Separator="  ");
 std::string URItoFileName(const std::string &URI);
 std::string TimeRFC1123(time_t Date);
-bool RFC1123StrToTime(const char* const str,time_t &time) __must_check;
-bool FTPMDTMStrToTime(const char* const str,time_t &time) __must_check;
-__deprecated bool StrToTime(const std::string &Val,time_t &Result);
+bool RFC1123StrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
+bool FTPMDTMStrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
+APT_DEPRECATED bool StrToTime(const std::string &Val,time_t &Result);
 std::string LookupTag(const std::string &Message,const char *Tag,const char *Default = 0);
 int StringToBool(const std::string &Text,int Default = -1);
 bool ReadMessages(int Fd, std::vector<std::string> &List);
@@ -76,7 +79,7 @@ bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 
 // split a given string by a char
-std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) __attrib_const;
+std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) APT_CONST;
 
 /* \brief Return a vector of strings from string "input" where "sep"
  * is used as the delimiter string.
@@ -94,13 +97,13 @@ std::vector<std::string> VectorizeString(std::string const &haystack, char const
  */
 std::vector<std::string> StringSplit(std::string const &input, 
                                      std::string const &sep, 
-                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) __attrib_const;
+                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_CONST;
 
-void ioprintf(std::ostream &out,const char *format,...) __like_printf(2);
-void strprintf(std::string &out,const char *format,...) __like_printf(2);
-char *safe_snprintf(char *Buffer,char *End,const char *Format,...) __like_printf(3);
+void ioprintf(std::ostream &out,const char *format,...) APT_PRINTF(2);
+void strprintf(std::string &out,const char *format,...) APT_PRINTF(2);
+char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_PRINTF(3);
 bool CheckDomainList(const std::string &Host, const std::string &List);
-int tolower_ascii(int const c) __attrib_const __hot;
+int tolower_ascii(int const c) APT_CONST APT_HOT;
 std::string StripEpoch(const std::string &VerStr);
 
 #define APT_MKSTRCMP(name,func) \

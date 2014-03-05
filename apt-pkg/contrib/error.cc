@@ -17,12 +17,14 @@
 
 #include <apt-pkg/error.h>
 
+#include <stdarg.h>
+#include <stddef.h>
+#include <list>
 #include <iostream>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <string>
 #include <cstring>
 

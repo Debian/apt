@@ -17,8 +17,9 @@
 #ifndef PKGLIB_PKGRECORDS_H
 #define PKGLIB_PKGRECORDS_H
 
-
 #include <apt-pkg/pkgcache.h>
+
+#include <string>
 #include <vector>
 
 class pkgRecords							/*{{{*/

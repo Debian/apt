@@ -1,27 +1,29 @@
 #include <config.h>
 
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/init.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 
-#include <vector>
-#include <string>
-#include <list>
-#include <sstream>
-
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <errno.h>
-#include <time.h>
-#include <stdlib.h>
 #include <dirent.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <pthread.h>
+#include <regex.h>
 #include <signal.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <unistd.h>
+#include <iostream>
+#include <sstream>
+#include <list>
+#include <string>
+#include <vector>
 
 static char const * httpcodeToStr(int const httpcode)		/*{{{*/
 {

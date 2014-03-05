@@ -14,6 +14,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 
+#include <sys/time.h>
+#include <string>
 #include <iostream>
 #include <stdio.h>
 #include <cstring>

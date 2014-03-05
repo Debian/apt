@@ -33,6 +33,7 @@
  */
 #include <config.h>
 
+#include <endian.h>
 #include <string.h>	/* memcpy()/memset() or bcopy()/bzero() */
 #include <assert.h>	/* assert() */
 #include "sha2_internal.h"

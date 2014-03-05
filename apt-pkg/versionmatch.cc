@@ -16,11 +16,16 @@
 #include <apt-pkg/versionmatch.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <string>
 #include <stdio.h>
 #include <ctype.h>
 #include <fnmatch.h>
-#include <sys/types.h>
 #include <regex.h>
 									/*}}}*/
 

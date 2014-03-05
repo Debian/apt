@@ -44,6 +44,7 @@
 
 #ifdef SHA2_USE_INTTYPES_H
 
+#include <stddef.h>
 #include <inttypes.h>
 
 #endif /* SHA2_USE_INTTYPES_H */

@@ -46,6 +46,7 @@
 #include <list>
 #include <string>
 
+#include <stddef.h>
 #include <stdarg.h>
 
 class GlobalError							/*{{{*/
@@ -73,7 +74,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool FatalE(const char *Function,const char *Description,...) __like_printf(3) __cold;
+	bool FatalE(const char *Function,const char *Description,...) APT_PRINTF(3) APT_COLD;
 
 	/** \brief add an Error message with errno to the list
 	 *
@@ -82,7 +83,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool Errno(const char *Function,const char *Description,...) __like_printf(3) __cold;
+	bool Errno(const char *Function,const char *Description,...) APT_PRINTF(3) APT_COLD;
 
 	/** \brief add a warning message with errno to the list
 	 *
@@ -94,7 +95,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool WarningE(const char *Function,const char *Description,...) __like_printf(3) __cold;
+	bool WarningE(const char *Function,const char *Description,...) APT_PRINTF(3) APT_COLD;
 
 	/** \brief add a notice message with errno to the list
 	 *
@@ -103,7 +104,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool NoticeE(const char *Function,const char *Description,...) __like_printf(3) __cold;
+	bool NoticeE(const char *Function,const char *Description,...) APT_PRINTF(3) APT_COLD;
 
 	/** \brief add a debug message with errno to the list
 	 *
@@ -112,7 +113,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool DebugE(const char *Function,const char *Description,...) __like_printf(3) __cold;
+	bool DebugE(const char *Function,const char *Description,...) APT_PRINTF(3) APT_COLD;
 
 	/** \brief adds an errno message with the given type
 	 *
@@ -121,7 +122,7 @@ public:									/*{{{*/
 	 * \param Description of the error
 	 */
 	bool InsertErrno(MsgType const &type, const char* Function,
-			 const char* Description,...) __like_printf(4) __cold;
+			 const char* Description,...) APT_PRINTF(4) APT_COLD;
 
 	/** \brief adds an errno message with the given type
 	 *
@@ -155,7 +156,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool Fatal(const char *Description,...) __like_printf(2) __cold;
+	bool Fatal(const char *Description,...) APT_PRINTF(2) APT_COLD;
 
 	/** \brief add an Error message to the list
 	 *
@@ -163,7 +164,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool Error(const char *Description,...) __like_printf(2) __cold;
+	bool Error(const char *Description,...) APT_PRINTF(2) APT_COLD;
 
 	/** \brief add a warning message to the list
 	 *
@@ -174,7 +175,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool Warning(const char *Description,...) __like_printf(2) __cold;
+	bool Warning(const char *Description,...) APT_PRINTF(2) APT_COLD;
 
 	/** \brief add a notice message to the list
 	 *
@@ -187,7 +188,7 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool Notice(const char *Description,...) __like_printf(2) __cold;
+	bool Notice(const char *Description,...) APT_PRINTF(2) APT_COLD;
 
 	/** \brief add a debug message to the list
 	 *
@@ -195,14 +196,14 @@ public:									/*{{{*/
 	 *
 	 *  \return \b false
 	 */
-	bool Debug(const char *Description,...) __like_printf(2) __cold;
+	bool Debug(const char *Description,...) APT_PRINTF(2) APT_COLD;
 
 	/** \brief adds an error message with the given type
 	 *
 	 * \param type of the error message
 	 * \param Description of the error
 	 */
-	bool Insert(MsgType const &type, const char* Description,...) __like_printf(3) __cold;
+	bool Insert(MsgType const &type, const char* Description,...) APT_PRINTF(3) APT_COLD;
 
 	/** \brief adds an error message with the given type
 	 *
@@ -218,7 +219,7 @@ public:									/*{{{*/
 	 * should call this method again in that case
 	 */
 	bool Insert(MsgType type, const char* Description,
-			 va_list &args, size_t &msgSize) __cold;
+			 va_list &args, size_t &msgSize) APT_COLD;
 
 	/** \brief is an error in the list?
 	 *

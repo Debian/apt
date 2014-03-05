@@ -20,17 +20,17 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/indexrecords.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/cdrom.h>
+#include <apt-pkg/gpgv.h>
+#include <apt-pkg/hashes.h>
 
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "indexcopy.h"
 #include <apti18n.h>

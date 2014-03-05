@@ -11,8 +11,17 @@
 #define PKGLIB_EDSPSYSTEM_H
 
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgcache.h>
 
+#include <vector>
+
+class Configuration;
+class pkgDepCache;
+class pkgIndexFile;
+class pkgPackageManager;
 class edspIndex;
+
 class edspSystem : public pkgSystem
 {
    /** \brief dpointer placeholder (for later in case we need it) */

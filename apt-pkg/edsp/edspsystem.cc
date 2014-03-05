@@ -11,16 +11,17 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/edspsystem.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/edspindexfile.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/error.h>
+#include <apt-pkg/edspsystem.h>
 #include <apt-pkg/fileutl.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <errno.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+
+#include <stddef.h>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -11,20 +11,31 @@
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/fileutl.h>
-
-#include <algorithm>
-#include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <fcntl.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <apt-private/private-cmndline.h>
+
+#include <errno.h>
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -26,16 +26,22 @@
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
 
+#include <ctype.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <sys/select.h>
+#include <time.h>
+#include <string>
+#include <vector>
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
-
 #include <iostream>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <dirent.h>

@@ -19,7 +19,10 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
-#include <sys/wait.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <string>
 #include <sys/statvfs.h>
 #include <dirent.h>
 #include <fcntl.h>

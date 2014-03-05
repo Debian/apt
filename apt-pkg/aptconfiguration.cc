@@ -17,14 +17,19 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
 
-#include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <fcntl.h>
-
+#include <ctype.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <algorithm>
 #include <string>
 #include <vector>
+
+#include <apti18n.h>
 									/*}}}*/
 namespace APT {
 // getCompressionTypes - Return Vector of usable compressiontypes	/*{{{*/

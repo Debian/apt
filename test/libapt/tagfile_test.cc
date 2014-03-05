@@ -1,10 +1,14 @@
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/tagfile.h>
 
-#include "assert.h"
+#include <string>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include "assert.h"
 
 char *tempfile = NULL;
 int tempfile_fd = -1;

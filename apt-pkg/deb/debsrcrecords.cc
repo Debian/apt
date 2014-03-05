@@ -15,12 +15,19 @@
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/tagfile.h>
 
-using std::max;
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <string>
+#include <vector>
 									/*}}}*/
 
+using std::max;
 using std::string;
 
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/

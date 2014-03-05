@@ -1,11 +1,12 @@
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 
-#include "assert.h"
 #include <string>
 #include <vector>
-
-#include <stdio.h>
 #include <iostream>
+
+#include "assert.h"
 
 #define P(x)	std::string(argv[1]).append("/").append(x)
 

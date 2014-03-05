@@ -8,19 +8,18 @@
 #include <config.h>
 
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
 
+#include <stddef.h>
+#include <iostream>
 #include <string>
 #include <list>
 #include <vector>
-#include <iterator>
 
-#include <fcntl.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -16,6 +16,9 @@
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <utility>
 
 #include "override.h"
 

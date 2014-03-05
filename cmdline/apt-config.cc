@@ -26,10 +26,10 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/pkgsystem.h>
 
-#include <locale.h>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <string.h>
 
 #include <apt-private/private-cmndline.h>
 

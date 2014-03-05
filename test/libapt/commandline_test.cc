@@ -1,4 +1,7 @@
+#include <config.h>
+
 #include <apt-pkg/cmndline.h>
+#include <apt-pkg/configuration.h>
 
 #include "assert.h"
 

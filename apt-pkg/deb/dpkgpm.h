@@ -11,11 +11,20 @@
 #define PKGLIB_DPKGPM_H
 
 #include <apt-pkg/packagemanager.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/macros.h>
+
 #include <vector>
 #include <map>
 #include <stdio.h>
-#include <apt-pkg/macros.h>
+#include <string>
+
+#ifndef APT_10_CLEANER_HEADERS
 #include <apt-pkg/init.h>
+#endif
+
+class pkgDepCache;
+namespace APT { namespace Progress { class PackageManager; } }
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::vector;
@@ -82,7 +91,7 @@ class pkgDPkgPM : public pkgPackageManager
 
    // Helpers
    bool RunScriptsWithPkgs(const char *Cnf);
-   __deprecated bool SendV2Pkgs(FILE *F);
+   APT_DEPRECATED bool SendV2Pkgs(FILE *F);
    bool SendPkgsInfo(FILE * const F, unsigned int const &Version);
    void WriteHistoryTag(std::string const &tag, std::string value);
    std::string ExpandShortPackageName(pkgDepCache &Cache,

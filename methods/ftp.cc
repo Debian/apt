@@ -23,7 +23,11 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/strutl.h>
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -42,6 +46,7 @@
 #include "rfc2553emu.h"
 #include "connect.h"
 #include "ftp.h"
+
 #include <apti18n.h>
 									/*}}}*/
 

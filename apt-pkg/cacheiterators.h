@@ -29,7 +29,11 @@
 									/*}}}*/
 #ifndef PKGLIB_CACHEITERATORS_H
 #define PKGLIB_CACHEITERATORS_H
+#include<apt-pkg/pkgcache.h>
+
 #include<iterator>
+#include <iosfwd>
+#include <string>
 
 #include<string.h>
 

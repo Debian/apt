@@ -11,6 +11,8 @@
 #define APT_RSH_H
 
 #include <string>
+#include <time.h>
+
 #include <apt-pkg/strutl.h>
 
 class Hashes;

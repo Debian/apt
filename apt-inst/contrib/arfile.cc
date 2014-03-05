@@ -21,7 +21,9 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
-#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <string>
 
 #include <apti18n.h>
 									/*}}}*/

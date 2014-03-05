@@ -27,66 +27,67 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/cmndline.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/clean.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
+#include <apt-pkg/algorithms.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/md5.h>
-#include <apt-pkg/versionmatch.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/upgrade.h>
-#include <apt-pkg/metaindex.h>
-#include <apt-pkg/indexrecords.h>
-
-#include <apt-private/private-download.h>
-#include <apt-private/private-install.h>
-#include <apt-private/private-upgrade.h>
-#include <apt-private/private-output.h>
-#include <apt-private/private-cacheset.h>
-#include <apt-private/private-update.h>
-#include <apt-private/private-cmndline.h>
-#include <apt-private/private-moo.h>
-#include <apt-private/private-utils.h>
-
+#include <apt-pkg/clean.h>
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/debmetaindex.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/version.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/upgrade.h>
 
 #include <apt-private/acqprogress.h>
+#include <apt-private/private-cacheset.h>
+#include <apt-private/private-cachefile.h>
+#include <apt-private/private-cmndline.h>
+#include <apt-private/private-download.h>
+#include <apt-private/private-install.h>
+#include <apt-private/private-main.h>
+#include <apt-private/private-moo.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-update.h>
+#include <apt-private/private-upgrade.h>
+#include <apt-private/private-utils.h>
 
-#include <set>
-#include <fstream>
-#include <sstream>
-
-#include <locale.h>
-#include <langinfo.h>
-#include <termios.h>
+#include <errno.h>
+#include <signal.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
 #include <sys/statvfs.h>
-#include <signal.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-#include <regex.h>
 #include <sys/wait.h>
-
-#include <apt-private/private-output.h>
-#include <apt-private/private-main.h>
+#include <unistd.h>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <set>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

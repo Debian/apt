@@ -23,9 +23,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/fileutl.h>
 
-#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <string>
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>

@@ -1,9 +1,8 @@
 #ifndef APT_PRIVATE_MAIN_H
 #define APT_PRIVATE_MAIN_H
 
-#include <apt-pkg/cmndline.h>
+class CommandLine;
 
 void CheckSimulateMode(CommandLine &CmdL);
-
 
 #endif

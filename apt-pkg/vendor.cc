@@ -1,9 +1,13 @@
 #include<config.h>
 
-#include <iostream>
-#include <apt-pkg/error.h>
 #include <apt-pkg/vendor.h>
 #include <apt-pkg/configuration.h>
+
+#include <iostream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 Vendor::Vendor(std::string VendorID,
                std::string Origin,

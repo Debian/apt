@@ -21,6 +21,7 @@
 #define PKGLIB_ACQUIRE_METHOD_H
 
 #include <stdarg.h>
+#include <time.h>
 
 #include <string>
 #include <vector>

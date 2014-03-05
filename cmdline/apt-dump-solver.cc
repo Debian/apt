@@ -9,10 +9,12 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/edsp.h>
 
-#include <config.h>
-
+#include <string.h>
+#include <unistd.h>
 #include <cstdio>
 #include <iostream>
+
+#include <config.h>
 									/*}}}*/
 
 // ShowHelp - Show a help screen					/*{{{*/

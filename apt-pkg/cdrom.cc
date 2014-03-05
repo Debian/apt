@@ -1,27 +1,29 @@
 /*
  */
-#include<config.h>
+#include <config.h>
 
-#include<apt-pkg/init.h>
-#include<apt-pkg/error.h>
-#include<apt-pkg/cdromutl.h>
-#include<apt-pkg/strutl.h>
-#include<apt-pkg/cdrom.h>
-#include<apt-pkg/aptconfiguration.h>
-#include<apt-pkg/configuration.h>
-#include<apt-pkg/fileutl.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/cdromutl.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/cdrom.h>
+#include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexcopy.h>
 
-#include<sstream>
-#include<fstream>
+
+#include <string.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <fstream>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <dirent.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <algorithm>
 #include <dlfcn.h>
-
-#include "indexcopy.h"
 
 #include<apti18n.h>
 

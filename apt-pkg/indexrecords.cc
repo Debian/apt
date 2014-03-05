@@ -14,8 +14,13 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/gpgv.h>
 
-#include <sys/stat.h>
+#include <stdlib.h>
+#include <time.h>
 #include <clocale>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

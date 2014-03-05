@@ -18,8 +18,8 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/version.h>
@@ -30,14 +30,13 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/mmap.h>
 
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <locale.h>
-
-#include <fstream>
 
 #include "apt-extracttemplates.h"
 

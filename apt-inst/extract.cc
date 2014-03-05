@@ -50,13 +50,20 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/filelist.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <string.h>
+#include <string>
 #include <sys/stat.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <errno.h>
 #include <dirent.h>
 #include <iostream>
+
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;

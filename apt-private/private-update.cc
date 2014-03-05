@@ -1,38 +1,23 @@
 // Include files							/*{{{*/
 #include<config.h>
 
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/cmndline.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/clean.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cacheset.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/md5.h>
-#include <apt-pkg/versionmatch.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/indexfile.h>
+#include <apt-pkg/cmndline.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/update.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/configuration.h>
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <apt-private/acqprogress.h>
+#include <apt-private/private-cachefile.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-update.h>
 
-#include "private-cachefile.h"
-#include "private-output.h"
-#include "private-update.h"
-#include "acqprogress.h"
+#include <ostream>
+#include <string>
 
 #include <apti18n.h>
 									/*}}}*/

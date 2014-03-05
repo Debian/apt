@@ -23,14 +23,15 @@
 #ifndef APTPKG_MD5_H
 #define APTPKG_MD5_H
 
-
-#include <string>
-#include <cstring>
-#include <algorithm>
 #include <stdint.h>
 
 #include "hashsum_template.h"
 
+#ifndef APT_10_CLEANER_HEADERS
+#include <string>
+#include <cstring>
+#include <algorithm>
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 using std::min;

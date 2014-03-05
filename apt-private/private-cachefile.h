@@ -3,6 +3,8 @@
 
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgcache.h>
 
 
 // class CacheFile - Cover class for some dependency cache functions	/*{{{*/

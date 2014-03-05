@@ -40,18 +40,26 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
-#include <vector>
+#include <stddef.h>
+
 #include <memory>
-#include <set>
 #include <list>
+#include <string>
+#include <utility>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/progress.h>
 #include <apt-pkg/error.h>
 #endif
+#ifndef APT_10_CLEANER_HEADERS
+#include <set>
+#include <vector>
+#endif
 
 class OpProgress;
+class pkgVersioningSystem;
 
 class pkgDepCache : protected pkgCache::Namespace
 {

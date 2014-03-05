@@ -16,17 +16,16 @@
    
    ##################################################################### */
 									/*}}}*/
-#include <apt-pkg/macros.h>
+#include <config.h>
+
 #include <apt-pkg/error.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/fileutl.h>
-#include <iostream>
-#include <fstream>
 
+#include <fstream>
+#include <string>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 
 using namespace std;

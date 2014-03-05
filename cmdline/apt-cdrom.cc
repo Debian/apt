@@ -20,22 +20,15 @@
 #include <apt-pkg/progress.h>
 #include <apt-pkg/cdromutl.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/acquire.h>
-#include <apt-pkg/acquire-item.h>
 #include <apt-pkg/cdrom.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgsystem.h>
 
-#include <locale.h>
 #include <iostream>
-#include <fstream>
 #include <vector>
-#include <algorithm>
+#include <string>
 #include <sys/stat.h>
-#include <fcntl.h>
-#include <dirent.h>
 #include <unistd.h>
-#include <stdio.h>
 
 #include <apt-private/private-cmndline.h>
 

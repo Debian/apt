@@ -10,6 +10,8 @@
 #ifndef PKGLIB_UPGRADE_H
 #define PKGLIB_UPGRADE_H
 
+class pkgDepCache;
+
 namespace APT {
    namespace Upgrade {
       // FIXME: make this "enum class UpgradeMode {" once we enable c++11

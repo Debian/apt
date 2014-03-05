@@ -1,14 +1,13 @@
+#include <config.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 
-#include "assert.h"
 #include <string>
 #include <vector>
-
-#include <stdio.h>
-#include <iostream>
 #include <stdlib.h>
 
+#include "assert.h"
 
 int main()
 {

@@ -13,11 +13,15 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
 
-#include <strings.h>
-#include <sstream>
+#include <apt-private/private-moo.h>
+#include <apt-private/private-output.h>
 
-#include "private-moo.h"
-#include "private-output.h"
+#include <stddef.h>
+#include <string.h>
+#include <time.h>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 #include <apti18n.h>
 									/*}}}*/

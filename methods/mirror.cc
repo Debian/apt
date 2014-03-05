@@ -16,18 +16,18 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/hashes.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/strutl.h>
 
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <algorithm>
-#include <fstream>
 #include <iostream>
-
-#include <stdarg.h>
+#include <fstream>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/utsname.h>
 #include <dirent.h>
 

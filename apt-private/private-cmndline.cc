@@ -2,14 +2,12 @@
 #include <config.h>
 
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/configuration.h>
+
+#include <apt-private/private-cmndline.h>
 
 #include <vector>
-
 #include <stdarg.h>
 #include <string.h>
-
-#include "private-cmndline.h"
 
 #include <apti18n.h>
 									/*}}}*/

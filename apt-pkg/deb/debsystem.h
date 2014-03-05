@@ -12,10 +12,18 @@
 
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <vector>
+class Configuration;
+class pkgIndexFile;
+class pkgPackageManager;
 class debSystemPrivate;
-class debStatusIndex;
 class pkgDepCache;
+
+#ifndef APT_10_CLEANER_HEADERS
+class debStatusIndex;
+#endif
 
 class debSystem : public pkgSystem
 {

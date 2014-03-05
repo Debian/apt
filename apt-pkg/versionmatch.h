@@ -35,9 +35,10 @@
 #ifndef PKGLIB_VERSIONMATCH_H
 #define PKGLIB_VERSIONMATCH_H
 
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
 #include <string>
-#include <apt-pkg/pkgcache.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;

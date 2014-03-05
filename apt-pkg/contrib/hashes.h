@@ -17,17 +17,22 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha2.h>
-#include <apt-pkg/fileutl.h>
 
-#include <algorithm>
-#include <vector>
 #include <cstring>
-
+#include <string>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::min;
 using std::vector;
 #endif
+#ifndef APT_10_CLEANER_HEADERS
+#include <apt-pkg/fileutl.h>
+#include <algorithm>
+#include <vector>
+#endif
+
+
+class FileFd;
 
 // helper class that contains hash function name
 // and hash

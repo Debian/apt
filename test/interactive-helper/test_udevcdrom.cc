@@ -1,7 +1,10 @@
-#include <apt-pkg/cdrom.h>
-#include <stdio.h>
-#include <assert.h>
+#include <config.h>
 
+#include <apt-pkg/cdrom.h>
+
+#include <stddef.h>
+#include <string>
+#include <assert.h>
 #include <vector>
 #include <iostream>
 
@@ -17,5 +20,4 @@ int main()
       std::cerr << l[i].DeviceName << " " 
 		<< l[i].Mounted << " " 
 		<< l[i].MountPath << std::endl;
-   
 }

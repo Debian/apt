@@ -1,9 +1,13 @@
+#include <config.h>
+
 #include <apt-pkg/error.h>
 
-#include "assert.h"
+#include <stddef.h>
 #include <string>
 #include <errno.h>
 #include <string.h>
+
+#include "assert.h"
 
 int main()
 {

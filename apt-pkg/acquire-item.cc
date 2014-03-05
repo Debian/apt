@@ -22,12 +22,21 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/indexrecords.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgrecords.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <vector>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>

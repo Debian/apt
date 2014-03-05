@@ -16,9 +16,17 @@
 #ifndef PKGLIB_DEBINDEXFILE_H
 #define PKGLIB_DEBINDEXFILE_H
 
-
-
 #include <apt-pkg/indexfile.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/srcrecords.h>
+
+#include <string>
+
+class OpProgress;
+class pkgAcquire;
+class pkgCacheGenerator;
+
 
 class debStatusIndex : public pkgIndexFile
 {

@@ -20,7 +20,15 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/upgrade.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <string.h>
+#include <iostream>
+#include <list>
+#include <string>
 #include <unistd.h>
 #include <cstdio>
 

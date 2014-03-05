@@ -1,40 +1,30 @@
 // Includes								/*{{{*/
-#include <apt-pkg/error.h>
+#include <config.h>
+
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/policy.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/algorithms.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
-#include <sstream>
-#include <utility>
-#include <cassert>
-#include <locale.h>
+#include <apt-private/private-cacheset.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-search.h>
+
+#include <string.h>
 #include <iostream>
-#include <unistd.h>
-#include <errno.h>
-#include <regex.h>
-#include <stdio.h>
-#include <iomanip>
-#include <algorithm>
+#include <sstream>
 #include <map>
+#include <string>
+#include <utility>
 
-#include "private-search.h"
-#include "private-cacheset.h"
+#include <apti18n.h>
 									/*}}}*/
 
 bool FullTextSearch(CommandLine &CmdL)					/*{{{*/

@@ -17,7 +17,11 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/acquire-method.h>
+#include <apt-pkg/strutl.h>
 
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>

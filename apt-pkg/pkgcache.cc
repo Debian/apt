@@ -29,12 +29,15 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/mmap.h>
 #include <apt-pkg/macros.h>
 
+#include <stddef.h>
+#include <string.h>
+#include <ostream>
+#include <vector>
 #include <string>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <ctype.h>
 
 #include <apti18n.h>
 									/*}}}*/

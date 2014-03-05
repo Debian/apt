@@ -11,7 +11,7 @@ using std::string;
 #endif
 
 // A class representing a particular software provider.
-class __deprecated Vendor
+class APT_DEPRECATED Vendor
 {
    public:
    struct Fingerprint

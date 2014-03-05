@@ -21,9 +21,16 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/acquire-item.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+
+#include <string.h>
+#include <unistd.h>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

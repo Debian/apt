@@ -21,6 +21,11 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string>
+#include <vector>
 #include <ctype.h>
 #include <string.h>
 #include <sstream>
@@ -33,9 +38,9 @@
 #include <iconv.h>
 
 #include <apti18n.h>
-
-using namespace std;
 									/*}}}*/
+using namespace std;
+
 // Strip - Remove white space from the front and back of a string       /*{{{*/
 // ---------------------------------------------------------------------
 namespace APT {

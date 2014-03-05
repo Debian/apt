@@ -1,16 +1,22 @@
+#include <config.h>
+
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/install-progress.h>
 
-#include <apti18n.h>
-
-#include <termios.h>
+#include <signal.h>
+#include <unistd.h>
+#include <iostream>
+#include <string>
+#include <vector>
 #include <sys/ioctl.h>
 #include <sstream>
 #include <fcntl.h>
 #include <algorithm>
 #include <stdio.h>
+
+#include <apti18n.h>
 
 namespace APT {
 namespace Progress {
@@ -329,15 +335,15 @@ bool PackageManagerFancy::StatusChanged(std::string PackageName,
 
    int row = GetNumberTerminalRows();
 
-   static string save_cursor = "\033[s";
-   static string restore_cursor = "\033[u";
-   
-   static string set_bg_color = "\033[42m"; // green
-   static string set_fg_color = "\033[30m"; // black
-   
-   static string restore_bg =  "\033[49m";
-   static string restore_fg = "\033[39m";
-   
+   static std::string save_cursor = "\033[s";
+   static std::string restore_cursor = "\033[u";
+
+   static std::string set_bg_color = "\033[42m"; // green
+   static std::string set_fg_color = "\033[30m"; // black
+
+   static std::string restore_bg =  "\033[49m";
+   static std::string restore_fg = "\033[39m";
+
    std::cout << save_cursor
       // move cursor position to last row
              << "\033[" << row << ";0f" 

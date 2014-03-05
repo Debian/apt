@@ -12,12 +12,12 @@
 #ifndef PKGLIB_DEBVERSION_H
 #define PKGLIB_DEBVERSION_H
 
-
-
 #include <apt-pkg/version.h>
-    
+
+#include <string>
+
 class debVersioningSystem : public pkgVersioningSystem
-{     
+{
    public:
    
    static int CmpFragment(const char *A, const char *AEnd, const char *B,

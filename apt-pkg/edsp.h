@@ -9,8 +9,11 @@
 #ifndef PKGLIB_EDSP_H
 #define PKGLIB_EDSP_H
 
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+
+#include <stdio.h>
 
 #include <list>
 #include <string>

@@ -72,8 +72,13 @@
 #include <vector>
 #include <string>
 
+#include <stddef.h>
 #include <sys/time.h>
+#include <sys/select.h>
+
+#ifndef APT_10_CLEANER_HEADERS
 #include <unistd.h>
+#endif
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::vector;
@@ -353,7 +358,7 @@ class pkgAcquire
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
    /** \brief Construct a new pkgAcquire. */
-   pkgAcquire(pkgAcquireStatus *Log) __deprecated;
+   pkgAcquire(pkgAcquireStatus *Log) APT_DEPRECATED;
    pkgAcquire();
 
    /** \brief Destroy this pkgAcquire object.

@@ -39,8 +39,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <iostream>
 #include <apti18n.h>

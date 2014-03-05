@@ -19,19 +19,18 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
-#include <apt-pkg/acquire-item.h>
 #include <apt-pkg/edsp.h>
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/packagemanager.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
-#include <sys/types.h>
+#include <string.h>
+#include <string>
 #include <cstdlib>
-#include <algorithm>
 #include <iostream>
-#include <stdio.h>
 
 #include <apti18n.h>
 									/*}}}*/

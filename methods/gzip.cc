@@ -11,17 +11,19 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
-#include <apt-pkg/strutl.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/aptconfiguration.h>
 
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
+#include <string>
+#include <vector>
+
 #include <apti18n.h>
 									/*}}}*/
 

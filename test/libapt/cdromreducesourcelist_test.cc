@@ -1,7 +1,7 @@
-#include <apt-pkg/cdrom.h>
-#include <apt-pkg/error.h>
+#include <config.h>
 
-#include <algorithm>
+#include <apt-pkg/cdrom.h>
+
 #include <string>
 #include <vector>
 

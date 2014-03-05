@@ -19,16 +19,18 @@
 #ifndef PKGLIB_PKGCACHEGEN_H
 #define PKGLIB_PKGCACHEGEN_H
 
-
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 
 #include <vector>
+#include <string>
 
+class FileFd;
 class pkgSourceList;
 class OpProgress;
-class MMap;
 class pkgIndexFile;
 
 class pkgCacheGenerator							/*{{{*/
@@ -80,7 +82,7 @@ class pkgCacheGenerator							/*{{{*/
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   map_ptrloc const Version, unsigned int const &Op,
 		   unsigned int const &Type, map_ptrloc* &OldDepLast);
-   __deprecated unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next)
+   unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next) APT_DEPRECATED
    { return NewVersion(Ver, VerStr, 0, 0, Next); }
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,
 			    map_ptrloc const ParentPkg, unsigned long const Hash,
@@ -102,7 +104,7 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-   __deprecated bool FinishCache(OpProgress *Progress);
+   bool FinishCache(OpProgress *Progress) APT_DEPRECATED;
 
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);

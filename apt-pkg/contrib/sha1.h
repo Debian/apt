@@ -14,12 +14,13 @@
 #ifndef APTPKG_SHA1_H
 #define APTPKG_SHA1_H
 
+#include "hashsum_template.h"
+
+#ifndef APT_10_CLEANER_HEADERS
 #include <string>
 #include <cstring>
 #include <algorithm>
-
-#include "hashsum_template.h"
-
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 using std::min;

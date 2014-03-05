@@ -1,8 +1,11 @@
+#include <config.h>
+
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/indexcopy.h>
 
 #include <string>
+#include <stdio.h>
 
 #include "assert.h"
 
@@ -12,14 +15,14 @@ public:
       IndexCopy::ConvertToSourceList(CD, Path);
       return Path;
    }
-   bool GetFile(std::string &Filename,unsigned long long &Size) { return false; }
-   bool RewriteEntry(FILE *Target,std::string File) { return false; }
+   bool GetFile(std::string &/*Filename*/, unsigned long long &/*Size*/) { return false; }
+   bool RewriteEntry(FILE * /*Target*/, std::string /*File*/) { return false; }
    const char *GetFileName() { return NULL; }
    const char *Type() { return NULL; }
 
 };
 
-int main(int argc, char const *argv[]) {
+int main() {
    NoCopy ic;
    std::string const CD("/media/cdrom/");
 

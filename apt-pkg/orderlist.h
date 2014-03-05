@@ -16,9 +16,11 @@
 #ifndef PKGLIB_ORDERLIST_H
 #define PKGLIB_ORDERLIST_H
 
-
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
+
+#include <string>
 
 class pkgDepCache;
 class pkgOrderList : protected pkgCache::Namespace
@@ -46,7 +48,7 @@ class pkgOrderList : protected pkgCache::Namespace
    bool Debug;
    
    // Main visit function
-   __deprecated bool VisitNode(PkgIterator Pkg) { return VisitNode(Pkg, "UNKNOWN"); };
+   APT_DEPRECATED bool VisitNode(PkgIterator Pkg) { return VisitNode(Pkg, "UNKNOWN"); };
    bool VisitNode(PkgIterator Pkg, char const* from);
    bool VisitDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRDeps(DepFunc F,PkgIterator Pkg);

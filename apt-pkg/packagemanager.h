@@ -23,15 +23,17 @@
 #ifndef PKGLIB_PACKAGEMANAGER_H
 #define PKGLIB_PACKAGEMANAGER_H
 
-#include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
-#include <apt-pkg/install-progress.h>
 #include <apt-pkg/init.h>
+#include <apt-pkg/macros.h>
 
 #include <string>
-#include <iostream>
 #include <set>
 
+#ifndef APT_10_CLEANER_HEADERS
+#include <apt-pkg/install-progress.h>
+#include <iostream>
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/depcache.h>
 using std::string;
@@ -109,7 +111,7 @@ class pkgPackageManager : protected pkgCache::Namespace
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    OrderResult DoInstall(APT::Progress::PackageManager *progress);
    // compat
-   __deprecated OrderResult DoInstall(int statusFd=-1);
+   APT_DEPRECATED OrderResult DoInstall(int statusFd=-1);
 #else
    OrderResult DoInstall(int statusFd=-1);
 #endif
@@ -124,7 +126,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    // stuff that needs to be done after the fork
    OrderResult DoInstallPostFork(APT::Progress::PackageManager *progress);
    // compat
-   __deprecated OrderResult DoInstallPostFork(int statusFd=-1);
+   APT_DEPRECATED OrderResult DoInstallPostFork(int statusFd=-1);
 #else
    OrderResult DoInstallPostFork(int statusFd=-1);
 #endif

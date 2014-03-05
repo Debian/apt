@@ -9,7 +9,6 @@
 #ifndef APT_CACHESET_H
 #define APT_CACHESET_H
 // Include Files							/*{{{*/
-#include <iostream>
 #include <fstream>
 #include <map>
 #include <set>
@@ -17,11 +16,17 @@
 #include <string>
 #include <iterator>
 
+#include <stddef.h>
+
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/cachefile.h>
+#endif
+#ifndef APT_10_CLEANER_HEADERS
+#include <iostream>
 #endif
 									/*}}}*/
 

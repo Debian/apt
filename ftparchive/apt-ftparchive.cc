@@ -17,14 +17,23 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/init.h>
-#include <algorithm>
+#include <apt-pkg/fileutl.h>
 
+#include <algorithm>
 #include <climits>
 #include <sys/time.h>
-#include <regex.h>
+#include <locale.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <functional>
+#include <iostream>
+#include <string>
+#include <vector>
 
+#include "cachedb.h"
+#include "override.h"
 #include "apt-ftparchive.h"
-#include "contents.h"
 #include "multicompress.h"
 #include "writer.h"
 

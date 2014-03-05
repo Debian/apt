@@ -1,12 +1,15 @@
+#include <config.h>
+
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha2.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
-#include <iostream>
 
-#include <stdio.h>
+#include <iostream>
+#include <stdlib.h>
+#include <string>
 
 #include "assert.h"
 
@@ -50,22 +53,22 @@ int main(int argc, char** argv)
 
    // test HashSumValue which doesn't calculate but just stores sums
    {
-   string md5sum = argv[2];
+   std::string md5sum = argv[2];
    MD5SumValue md5(md5sum);
    equals(md5.Value(), md5sum);
    }
    {
-   string sha1sum = argv[3];
+   std::string sha1sum = argv[3];
    SHA1SumValue sha1(sha1sum);
    equals(sha1.Value(), sha1sum);
    }
    {
-   string sha2sum = argv[4];
+   std::string sha2sum = argv[4];
    SHA256SumValue sha2(sha2sum);
    equals(sha2.Value(), sha2sum);
    }
    {
-   string sha2sum = argv[5];
+   std::string sha2sum = argv[5];
    SHA512SumValue sha2(sha2sum);
    equals(sha2.Value(), sha2sum);
    }

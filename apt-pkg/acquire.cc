@@ -23,12 +23,18 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 
+#include <string>
+#include <vector>
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include <dirent.h>
 #include <sys/time.h>
+#include <sys/select.h>
 #include <errno.h>
 
 #include <apti18n.h>
