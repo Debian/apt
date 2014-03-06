@@ -7,9 +7,13 @@ PACKAGE_MAIL = @PACKAGE_MAIL@
 
 # C++ compiler options
 CC = @CC@
-CPPFLAGS+= @CPPFLAGS@ @DEFS@ -D_REENTRANT -Wall
+CPPFLAGS+= @CPPFLAGS@ @DEFS@ -D_REENTRANT -D_FORTIFY_SOURCE=2
 CXX = @CXX@
-CXXFLAGS+= @CXXFLAGS@
+CXXFLAGS+= @CXXFLAGS@ -Wall -Wextra
+CXXFLAGS+= -Wcast-align -Wlogical-op -Wredundant-decls -Wmissing-declarations -Wunsafe-loop-optimizations
+CXXFLAGS+= -Wsuggest-attribute=pure -Wsuggest-attribute=const -Wsuggest-attribute=noreturn
+# a bit too pedantic to be run by default
+#CXXFLAGS+= -Wpedantic -Wno-long-long -Wno-vla -Wno-variadic-macros
 NUM_PROCS = @NUM_PROCS@
 
 # Linker stuff
@@ -68,4 +72,3 @@ else
    # Do not know how to create shared libraries here.
    ONLYSTATICLIBS = yes
 endif
-	
