@@ -741,7 +741,7 @@ static bool DoSource(CommandLine &CmdL)
    pkgAcquire Fetcher;
    Fetcher.SetLog(&Stat);
 
-   DscFile *Dsc = new DscFile[CmdL.FileSize()];
+   SPtrArray<DscFile> Dsc = new DscFile[CmdL.FileSize()];
    
    // insert all downloaded uris into this set to avoid downloading them
    // twice
@@ -762,7 +762,6 @@ static bool DoSource(CommandLine &CmdL)
       pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       
       if (Last == 0) {
-	 delete[] Dsc;
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }
       
@@ -796,7 +795,6 @@ static bool DoSource(CommandLine &CmdL)
       // Back track
       vector<pkgSrcRecords::File> Lst;
       if (Last->Files(Lst) == false) {
-	 delete[] Dsc;
 	 return false;
       }
 
@@ -859,7 +857,6 @@ static bool DoSource(CommandLine &CmdL)
    struct statvfs Buf;
    string OutputDir = ".";
    if (statvfs(OutputDir.c_str(),&Buf) != 0) {
-      delete[] Dsc;
       if (errno == EOVERFLOW)
 	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
 				OutputDir.c_str());
@@ -874,7 +871,6 @@ static bool DoSource(CommandLine &CmdL)
            || unsigned(Stat.f_type) != RAMFS_MAGIC
 #endif
            )  {
-	 delete[] Dsc;
           return _error->Error(_("You don't have enough free space in %s"),
               OutputDir.c_str());
        }
@@ -896,7 +892,6 @@ static bool DoSource(CommandLine &CmdL)
    {
       for (unsigned I = 0; I != J; I++)
 	 ioprintf(cout,_("Fetch source %s\n"),Dsc[I].Package.c_str());
-      delete[] Dsc;
       return true;
    }
    
@@ -907,7 +902,6 @@ static bool DoSource(CommandLine &CmdL)
       for (; I != Fetcher.UriEnd(); ++I)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
-      delete[] Dsc;
       return true;
    }
 
@@ -915,14 +909,12 @@ static bool DoSource(CommandLine &CmdL)
    bool Failed = false;
    if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
    {
-      delete[] Dsc;
       return _error->Error(_("Failed to fetch some archives."));
    }
 
    if (_config->FindB("APT::Get::Download-only",false) == true)
    {
       c1out << _("Download complete and in download only mode") << endl;
-      delete[] Dsc;
       return true;
    }
 
@@ -996,7 +988,6 @@ static bool DoSource(CommandLine &CmdL)
       
       _exit(0);
    }
-   delete[] Dsc;
 
    // Wait for the subprocess
    int Status = 0;
