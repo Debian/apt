@@ -1010,11 +1010,15 @@ testequalor2() {
 	shift 2
 	msgtest "Test for equality OR of" "$*"
 	$* >$COMPAREAGAINST 2>&1 || true
-	(checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
-		checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
-		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(checkdiff $COMPAREFILE1 $COMPAREAGAINST)" \
-		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(checkdiff $COMPAREFILE2 $COMPAREAGAINST)" &&
-		  msgfail )
+	if checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null || checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null; then
+		msgpass
+	else
+		echo -n "\n${CINFO}Diff against OR 1${CNORMAL}"
+		checkdiff $COMPAREFILE1 $COMPAREAGAINST || true
+		echo -n "${CINFO}Diff against OR 2${CNORMAL}"
+		checkdiff $COMPAREFILE2 $COMPAREAGAINST || true
+		msgfail
+	fi
 }
 
 testshowvirtual() {

@@ -622,6 +622,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
         clog << " (replace version " << Pkg.CurrentVer().VerStr() << " with " << InstallVer.VerStr() << ")";
       if (PkgLoop)
         clog << " (Only Perform PreUnpack Checks)";
+      if (Immediate)
+	 clog << " immediately";
       clog << endl;
    }
 
@@ -963,21 +965,14 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); ++I)
    {
       PkgIterator Pkg(Cache,*I);
-      
+
       if (List->IsNow(Pkg) == false)
       {
-         if (!List->IsFlag(Pkg,pkgOrderList::Configured) && !NoImmConfigure) {
-            if (SmartConfigure(Pkg, 0) == false && Debug)
-               _error->Warning("Internal Error, Could not configure %s",Pkg.FullName().c_str());
-            // FIXME: The above warning message might need changing
-         } else {
-	    if (Debug == true)
-	       clog << "Skipping already done " << Pkg.FullName() << endl;
-	 }
+	 if (Debug == true)
+	    clog << "Skipping already done " << Pkg.FullName() << endl;
 	 continue;
-	 
       }
-      
+
       if (List->IsMissing(Pkg) == true)
       {
 	 if (Debug == true)
