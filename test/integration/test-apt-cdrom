@@ -24,9 +24,13 @@ cd - > /dev/null
 addtrap 'prefix' "chmod -R +w $PWD/rootdir/media/cdrom/dists/;"
 chmod -R -w rootdir/media/cdrom/dists
 
-aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
-sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
-testfileequal apt-cdrom.log "Scanning disc for index files..
+aptcdromlog() {
+	rm -f rootdir/tmp/apt-cdrom.log
+	aptcdrom "$@" -o quiet=1 >rootdir/tmp/apt-cdrom.log 2>&1
+	sed -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' rootdir/tmp/apt-cdrom.log
+}
+
+testequal "Scanning disc for index files..
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
 Found label 'Debian APT Testdisk 0.8.15'
 This disc is called: 
@@ -35,7 +39,9 @@ Writing new source list
 Source list entries for this disc are:
 deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
 deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set."
+Repeat this process for the rest of the CDs in your set." aptcdromlog add -m
+
+testequal 'Stored label: Debian APT Testdisk 0.8.15' aptcdromlog ident -m
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -54,9 +60,7 @@ Inst testing:i386 (0.8.15 stable [i386])
 Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
 
 # check Idempotence of apt-cdrom (and disabling of Translation dropping)
-aptcdrom add -m -o quiet=1 -o APT::CDROM::DropTranslation=0 > apt-cdrom.log 2>&1
-sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
-testfileequal apt-cdrom.log "Scanning disc for index files..
+testequal "Scanning disc for index files..
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
 This disc is called: 
 'Debian APT Testdisk 0.8.15'
@@ -64,12 +68,10 @@ Writing new source list
 Source list entries for this disc are:
 deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
 deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set."
+Repeat this process for the rest of the CDs in your set." aptcdromlog add -m -o APT::CDROM::DropTranslation=0
 
 # take Translations from previous runs as needed
-aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
-sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
-testfileequal apt-cdrom.log "Scanning disc for index files..
+testequal "Scanning disc for index files..
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
 This disc is called: 
 'Debian APT Testdisk 0.8.15'
@@ -77,14 +79,12 @@ Writing new source list
 Source list entries for this disc are:
 deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
 deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set."
+Repeat this process for the rest of the CDs in your set." aptcdromlog add -m
 msgtest 'Test for the german description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=de | grep -q '^Description-de: ' && msgpass || msgfail
 rm -rf rootdir/var/lib/apt/lists
 mkdir -p rootdir/var/lib/apt/lists/partial
-aptcdrom add -m -o quiet=1 > apt-cdrom.log 2>&1
-sed -i -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' apt-cdrom.log
-testfileequal apt-cdrom.log "Scanning disc for index files..
+testequal "Scanning disc for index files..
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
 This disc is called: 
 'Debian APT Testdisk 0.8.15'
@@ -92,7 +92,7 @@ Writing new source list
 Source list entries for this disc are:
 deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
 deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set."
+Repeat this process for the rest of the CDs in your set." aptcdromlog add -m
 msgtest 'Test for the english description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && msgpass || msgfail
 
