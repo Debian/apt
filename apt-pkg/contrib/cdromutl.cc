@@ -74,7 +74,13 @@ bool IsMounted(string &Path)
    leave /etc/mtab inconsitant. We drop all messages this produces. */
 bool UnmountCdrom(string Path)
 {
-   if (IsMounted(Path) == false)
+   // do not generate errors, even if the mountpoint does not exist
+   // the mountpoint might be auto-created by the mount command
+   // and a non-existing mountpoint is surely not mounted
+   _error->PushToStack();
+   bool const mounted = IsMounted(Path);
+   _error->RevertToStack();
+   if (mounted == false)
       return true;
 
    for (int i=0;i<3;i++)
@@ -86,8 +92,9 @@ bool UnmountCdrom(string Path)
       if (Child == 0)
       {
 	 // Make all the fds /dev/null
-	 for (int I = 0; I != 3; I++)
-	    dup2(open("/dev/null",O_RDWR),I);
+	 int const null_fd = open("/dev/null",O_RDWR);
+	 for (int I = 0; I != 3; ++I)
+	    dup2(null_fd, I);
 
 	 if (_config->Exists("Acquire::cdrom::"+Path+"::UMount") == true)
 	 {
@@ -121,19 +128,24 @@ bool UnmountCdrom(string Path)
 /* We fork mount and drop all messages */
 bool MountCdrom(string Path, string DeviceName)
 {
-   if (IsMounted(Path) == true)
+   // do not generate errors, even if the mountpoint does not exist
+   // the mountpoint might be auto-created by the mount command
+   _error->PushToStack();
+   bool const mounted = IsMounted(Path);
+   _error->RevertToStack();
+   if (mounted == true)
       return true;
-   
+
    int Child = ExecFork();
 
    // The child
    if (Child == 0)
    {
       // Make all the fds /dev/null
-      int null_fd = open("/dev/null",O_RDWR);
-      for (int I = 0; I != 3; I++)
+      int const null_fd = open("/dev/null",O_RDWR);
+      for (int I = 0; I != 3; ++I)
 	 dup2(null_fd, I);
-      
+
       if (_config->Exists("Acquire::cdrom::"+Path+"::Mount") == true)
       {
 	 if (system(_config->Find("Acquire::cdrom::"+Path+"::Mount").c_str()) != 0)
