@@ -74,7 +74,7 @@ class pkgCdrom								/*{{{*/
 
  private:
    bool MountAndIdentCDROM(Configuration &Database, std::string &CDROM,
-	 std::string &ident, pkgCdromStatus * const log);
+	 std::string &ident, pkgCdromStatus * const log, bool const interactive);
 };
 									/*}}}*/
 

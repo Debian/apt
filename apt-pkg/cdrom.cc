@@ -563,7 +563,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    return true;
 }
 									/*}}}*/
-bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, std::string &ident, pkgCdromStatus * const log)/*{{{*/
+bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, std::string &ident, pkgCdromStatus * const log, bool const interactive)/*{{{*/
 {
    // Startup
    CDROM = _config->FindDir("Acquire::cdrom::mount");
@@ -581,16 +581,19 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
    // Unmount the CD and get the user to put in the one they want
    if (_config->FindB("APT::CDROM::NoMount", false) == false)
    {
-      if(log != NULL)
-	 log->Update(_("Unmounting CD-ROM\n"), STEP_UNMOUNT);
-      UnmountCdrom(CDROM);
-
-      if(log != NULL)
+      if (interactive == true)
       {
-	 log->Update(_("Waiting for disc...\n"), STEP_WAIT);
-	 if(!log->ChangeCdrom()) {
-	    // user aborted
-	    return false;
+	 if(log != NULL)
+	    log->Update(_("Unmounting CD-ROM\n"), STEP_UNMOUNT);
+	 UnmountCdrom(CDROM);
+
+	 if(log != NULL)
+	 {
+	    log->Update(_("Waiting for disc...\n"), STEP_WAIT);
+	    if(!log->ChangeCdrom()) {
+	       // user aborted
+	       return false;
+	    }
 	 }
       }
 
@@ -636,7 +639,7 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
 {
    Configuration Database;
    std::string CDROM;
-   if (MountAndIdentCDROM(Database, CDROM, ident, log) == false)
+   if (MountAndIdentCDROM(Database, CDROM, ident, log, false) == false)
       return false;
 
    if (log != NULL)
@@ -662,7 +665,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 {
    Configuration Database;
    std::string ID, CDROM;
-   if (MountAndIdentCDROM(Database, CDROM, ID, log) == false)
+   if (MountAndIdentCDROM(Database, CDROM, ID, log, true) == false)
       return false;
 
    if(log != NULL)
