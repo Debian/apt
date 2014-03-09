@@ -45,11 +45,16 @@ bool IsMounted(string &Path)
 {
    if (Path.empty() == true)
       return false;
-   
+
    // Need that trailing slash for directories
    if (Path[Path.length() - 1] != '/')
       Path += '/';
-   
+
+   // if the path has a ".disk" directory we treat it as mounted
+   // this way even extracted copies of disks are recognized
+   if (DirectoryExists(Path + ".disk/") == true)
+      return true;
+
    /* First we check if the path is actually mounted, we do this by
       stating the path and the previous directory (careful of links!)
       and comparing their device fields. */
