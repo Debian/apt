@@ -12,36 +12,59 @@ setupaptarchive --no-update
 changetocdrom 'Debian APT Testdisk 0.8.15'
 
 # -de is not in the Release file, but picked up anyway for compatibility
-cd rootdir/media/cdrom/dists/stable/main/i18n
+cd rootdir/media/cdrom-unmounted/dists/stable/main/i18n
+chmod +w .
 sed -e '/^Description-en:/ d' -e '/^ / d' -e '/^$/ d' Translation-en > Translation-de
 echo 'Description-de: automatisch generiertes Testpaket testing=0.8.15/stable
  Diese Pakete sind nur für das testen von APT gedacht,
  sie erfüllen keinen Zweck auf einem normalen System…
 ' >> Translation-de
 compressfile Translation-de
-rm Translation-en Translation-de
+rm -f Translation-en Translation-de
+chmod -R -w .
 cd - > /dev/null
-addtrap 'prefix' "chmod -R +w $PWD/rootdir/media/cdrom/dists/;"
-chmod -R -w rootdir/media/cdrom/dists
 
 aptcdromlog() {
 	rm -f rootdir/tmp/apt-cdrom.log
-	aptcdrom "$@" -o quiet=1 >rootdir/tmp/apt-cdrom.log 2>&1
-	sed -e '/^Using CD-ROM/ d' -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' rootdir/tmp/apt-cdrom.log
+	test ! -e rootdir/media/cdrom || echo "CD-ROM is mounted, but shouldn't be!"
+	test -e rootdir/media/cdrom-unmounted || echo "Unmounted CD-ROM doesn't exist, but it should!"
+	aptcdrom "$@" -o quiet=1 >rootdir/tmp/apt-cdrom.log 2>&1 </dev/null
+	sed -e '/gpgv/ d' -e '/^Identifying/ d' -e '/Reading / d' rootdir/tmp/apt-cdrom.log
+	test ! -e rootdir/media/cdrom || echo "CD-ROM is mounted, but shouldn't be!"
+	test -e rootdir/media/cdrom-unmounted || echo "Unmounted CD-ROM doesn't exist, but it should!"
 }
 
-testequal "Scanning disc for index files..
-Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
-Found label 'Debian APT Testdisk 0.8.15'
-This disc is called: 
+CDROM_PRE="Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
+Unmounting CD-ROM
+Waiting for disc...
+Please insert a Disc in the drive and press enter 
+Mounting CD-ROM...
+Scanning disc for index files.."
+CDROM_POST="This disc is called: 
 'Debian APT Testdisk 0.8.15'
 Writing new source list
 Source list entries for this disc are:
 deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
 deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set." aptcdromlog add -m
+Unmounting CD-ROM...
+Repeat this process for the rest of the CDs in your set."
 
-testequal 'Stored label: Debian APT Testdisk 0.8.15' aptcdromlog ident -m
+testequal "$CDROM_PRE
+Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
+Found label 'Debian APT Testdisk 0.8.15'
+$CDROM_POST" aptcdromlog add
+
+testequal "Using CD-ROM mount point $(readlink -f ./rootdir/media)/cdrom/
+Mounting CD-ROM...
+Stored label: Debian APT Testdisk 0.8.15
+Unmounting CD-ROM..." aptcdromlog ident
+
+# apt-setup uses these commands (expect the tr in the id) to find id and label
+ident="$(LC_ALL=C aptcdrom ident 2>&1 )"
+CD_ID="$(echo "$ident" | grep "^Identifying" | head -n1 | cut -d" " -f2 | tr --delete '[]')"
+CD_LABEL="$(echo "$ident" | grep "^Stored label:" | head -n1 | sed "s/^[^:]*: //")"
+testequal "CD::${CD_ID} \"${CD_LABEL}\";
+CD::${CD_ID}::Label \"${CD_LABEL}\";" cat rootdir/var/lib/apt/cdroms.list
 
 testequal 'Reading package lists...
 Building dependency tree...
@@ -60,42 +83,23 @@ Inst testing:i386 (0.8.15 stable [i386])
 Conf testing:i386 (0.8.15 stable [i386])' aptget install testing:i386 -s
 
 # check Idempotence of apt-cdrom (and disabling of Translation dropping)
-testequal "Scanning disc for index files..
+testequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
-This disc is called: 
-'Debian APT Testdisk 0.8.15'
-Writing new source list
-Source list entries for this disc are:
-deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set." aptcdromlog add -m -o APT::CDROM::DropTranslation=0
+$CDROM_POST" aptcdromlog add -o APT::CDROM::DropTranslation=0
 
 # take Translations from previous runs as needed
-testequal "Scanning disc for index files..
+testequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 2 translation indexes and 1 signatures
-This disc is called: 
-'Debian APT Testdisk 0.8.15'
-Writing new source list
-Source list entries for this disc are:
-deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set." aptcdromlog add -m
+$CDROM_POST" aptcdromlog add
 msgtest 'Test for the german description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=de | grep -q '^Description-de: ' && msgpass || msgfail
 rm -rf rootdir/var/lib/apt/lists
 mkdir -p rootdir/var/lib/apt/lists/partial
-testequal "Scanning disc for index files..
+testequal "$CDROM_PRE
 Found 2 package indexes, 1 source indexes, 1 translation indexes and 1 signatures
-This disc is called: 
-'Debian APT Testdisk 0.8.15'
-Writing new source list
-Source list entries for this disc are:
-deb cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-deb-src cdrom:[Debian APT Testdisk 0.8.15]/ stable main
-Repeat this process for the rest of the CDs in your set." aptcdromlog add -m
+$CDROM_POST" aptcdromlog add
 msgtest 'Test for the english description translation of' 'testing'
 aptcache show testing -o Acquire::Languages=en | grep -q '^Description-en: ' && msgpass || msgfail
-
 
 # check that we really can install from a 'cdrom'
 testdpkgnotinstalled testing
