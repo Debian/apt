@@ -23,6 +23,7 @@
 #include <string.h>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <sys/statvfs.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -262,37 +263,34 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    return true;   
 }
 									/*}}}*/
-
 // FindMountPointForDevice - Find mountpoint for the given device	/*{{{*/
 string FindMountPointForDevice(const char *devnode)
 {
-   char buf[255];
-   char *out[10];
-   int i=0;
-
    // this is the order that mount uses as well
-   const char *mount[] = { "/etc/mtab", 
-                           "/proc/mount", 
-                           NULL };
+   std::vector<std::string> const mounts = _config->FindVector("Dir::state::MountPoints", "/etc/mtab,/proc/mount");
 
-   for (i=0; mount[i] != NULL; i++) {
-      if (FileExists(mount[i])) {
-         FILE *f=fopen(mount[i], "r");
-         while ( fgets(buf, sizeof(buf), f) != NULL) {
-            if (strncmp(buf, devnode, strlen(devnode)) == 0) {
-               if(TokSplitString(' ', buf, out, 10))
-               {
-                  fclose(f);
-                  // unescape the \0XXX chars in the path
-                  string mount_point = out[1];
-                  return DeEscapeString(mount_point);
-               }
-            }
-         }
-         fclose(f);
+   for (std::vector<std::string>::const_iterator m = mounts.begin(); m != mounts.end(); ++m)
+      if (FileExists(*m) == true)
+      {
+	 char * line = NULL;
+	 size_t line_len = 0;
+	 FILE * f = fopen(m->c_str(), "r");
+	 while(getline(&line, &line_len, f) != -1)
+	 {
+	    char * out[] = { NULL, NULL, NULL };
+	    TokSplitString(' ', line, out, 3);
+	    if (out[2] != NULL || out[1] == NULL || out[0] == NULL)
+	       continue;
+	    if (strcmp(out[0], devnode) != 0)
+	       continue;
+	    fclose(f);
+	    // unescape the \0XXX chars in the path
+	    string mount_point = out[1];
+	    return DeEscapeString(mount_point);
+	 }
+	 fclose(f);
       }
-   }
-   
+
    return string();
 }
 									/*}}}*/

@@ -108,6 +108,14 @@ do
 			"${tmppath}/dists/unstable/InRelease" \
 			"${tmppath}/dists/broken/Release.gpg"
 		ln -s "${tmppath}/dists/unstable" "${tmppath}/dists/sid"
+	elif [ $name = "CdromFindMountPointForDevice${EXT}" ]; then
+		tmppath=$(mktemp)
+		echo 'rootfs / rootfs rw 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+sysfs0 /sys0 sysfs rw,nosuid,nodev,noexec,relatime 0 0
+/dev/disk/by-uuid/fadcbc52-6284-4874-aaaa-dcee1f05fe21 / ext4 rw,relatime,errors=remount-ro,data=ordered 0 0
+/dev/sda1 /boot/efi vfat rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,relatime 0 0' > $tmppath
 	fi
 
 	echo -n "Testing with ${NAME} "
