@@ -93,14 +93,15 @@ msgdone() {
 
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
-	local CMD="$1"
+	local CMD="${BUILDDIRECTORY}/$1"
+	if [ "$1" = 'sh' ]; then CMD='sh'; fi
 	shift
 	if [ -f ./aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"
 	else
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"
 	fi
 }
 aptconfig() { runapt apt-config "$@"; }
@@ -198,6 +199,7 @@ setupenvironment() {
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${METHODSDIR} usr/lib/apt/methods
+	ln -s ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove etc/apt/apt.conf.d/01autoremove
 	cd ..
 	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
 	if [ -f "${TESTDIRECTORY}/${PACKAGESFILE}" ]; then

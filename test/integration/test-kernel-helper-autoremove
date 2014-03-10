@@ -1,55 +1,68 @@
 #!/bin/sh
-
 set -e
 
-# setup testdir
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
+setupenvironment
+configarchitecture 'native'
 
-TMPDIR=$(mktemp -d)
-cd $TMPDIR
-addtrap "cd /; rm -rf $TMPDIR"
-
-# create mock environment
-mkdir apt.conf.d
-cat > aptconfig.conf <<EOF
-Dir::Etc::parts "$TMPDIR/apt.conf.d";
-Dir::bin::dpkg "$TMPDIR/fake-dpkg";
-EOF
-APT_CONFIG=aptconfig.conf
-export APT_CONFIG
-
-# install fake-dpkg into it
-install -m755 $TESTDIR/test-kernel-helper-autoremove.fake-dpkg $TMPDIR/fake-dpkg
-
-# run the helper
-sh ${TESTDIR}/../../debian/apt.auto-removal.sh
-
-msgtest 'Check that kernel autoremoval list is correctly created'
-# and ensure its there, valid and version 10.0.0-1 is there too
-test -e $TMPDIR/apt.conf.d/01autoremove-kernels && msgpass || msgfail
-
-msgtest 'Check that most recent kernel is saved from autoremoval'
-apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic" && msgpass || msgfail
-
-# ... and also that the running kernel is excluded
-msgtest 'Check that running kernel is saved from autoremoval'
-apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)" && msgpass || msgfail
-
-# and that the old kernel is *not* excluded from autoremoval
-msgtest 'Check that older kernels are not excluded from autoremoval'
-apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic" && msgfail || msgpass
-
-msgtest "Check that the older kernel is retained when it's being installed"
-sh ${TESTDIR}/../../debian/apt.auto-removal.sh 1.0.01-2-generic
-test -e $TMPDIR/apt.conf.d/01autoremove-kernels
-if ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-10.0.0-1-generic" \
-   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-$(uname -r)" \
-   || ! apt-config -c ${APT_CONFIG} dump|grep -q "APT::NeverAutoRemove::.*\^linux-image-1\.0\.01-2-generic"
-then
-	msgfail
-else
+# the executed script would use the installed apt-config,
+# which is outside of our control
+msgtest 'Check that the installed apt-config supports' '--no-empty'
+if apt-config dump --no-empty >/dev/null 2>&1; then
 	msgpass
+else
+	msgskip
+	exit 0
 fi
 
-# done
+# install fake-dpkg into it
+cat > ./fake-dpkg <<EOF
+#!/bin/sh
+set -e
+if [ "\$1" = "-l" ]; then
+    echo "ii  linux-image-1.0.0-2-generic  1.0.0-2  amd64"
+    echo "ii  linux-image-\$(uname -r)  not-used  amd64"
+    echo "ii linux-image-100.0.0-1-generic  100.0.0.1-1  amd64"
+else
+    dpkg "\$@"
+fi
+EOF
+chmod +x ./fake-dpkg
+echo 'Dir::Bin::dpkg "./fake-dpkg";' > rootdir/etc/apt/apt.conf.d/99fakedpkg
+
+catfail() {
+	echo >&2
+	echo >&2 '### List of protected kernels:'
+	cat >&2 protected.list
+	msgfail
+}
+
+testprotected() {
+	rm -f rootdir/etc/apt/apt.conf.d/01autoremove-kernels protected.list
+
+	testsuccess runapt sh ${TESTDIR}/../../debian/apt.auto-removal.sh "$@"
+
+	msgtest 'Check kernel autoremoval protection list' 'is created'
+	test -e rootdir/etc/apt/apt.conf.d/01autoremove-kernels && msgpass || msgfail
+
+	msgtest 'Check kernel autoremoval protection list' 'can be dumped'
+	aptconfig dump --no-empty --format '%v%n' 'APT::NeverAutoRemove' >protected.list 2>&1 && msgpass || catfail
+
+	msgtest 'Check kernel autoremoval protection list' 'can be parsed'
+	grep -q '^[A-Z]: ' protected.list && catfail || msgpass
+
+	msgtest 'Check kernel autoremoval protection list includes' 'most recent kernel'
+	grep -q '^\^linux-image-100\.0\.0-1-generic\$$' protected.list && msgpass || catfail
+
+	msgtest 'Check kernel autoremoval protection list includes' 'running kernel'
+	grep -q "^\\^linux-image-$(uname -r)\\\$\$" protected.list && msgpass || catfail
+}
+
+testprotected
+msgtest 'Check kernel autoremoval protection list does not include' 'old kernel'
+grep -q '^\^linux-image-1\.0\.0-2-generic\$$' protected.list && catfail || msgpass
+
+testprotected 1.0.0-2-generic
+msgtest 'Check kernel autoremoval protection list includes' 'installed kernel'
+grep -q '^\^linux-image-1\.0\.0-2-generic\$$' protected.list && msgpass || catfail
