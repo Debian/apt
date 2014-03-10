@@ -63,13 +63,10 @@ then
 	previous_version=
 fi
 
-kernels=$(sort -u <<EOF
-$latest_version
+kernels="$(echo "$latest_version
 $installed_version
 $running_version
-$previous_version
-EOF
-)
+$previous_version" | sort -u | sed -e 's#\.#\\.#g' )"
 
 generateconfig() {
 	cat <<EOF

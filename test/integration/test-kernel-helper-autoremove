@@ -20,8 +20,10 @@ CURRENTKERNEL="linux-image-$(uname -r)"
 insertinstalledpackage "$CURRENTKERNEL" 'amd64' '1'
 insertinstalledpackage 'linux-image-1.0.0-2-generic' 'amd64' '1.0.0-2'
 insertinstalledpackage 'linux-image-100.0.0-1-generic' 'amd64' '100.0.0-1'
+# ensure that the '.' is really a dot and not a wildcard
+insertinstalledpackage 'linux-headers-1000000-1-generic' 'amd64' '100.0.0-1'
 
-testsuccess aptmark auto "$CURRENTKERNEL" 'linux-image-1.0.0-2-generic' 'linux-image-100.0.0-1-generic'
+testsuccess aptmark auto "$CURRENTKERNEL" 'linux-image-1.0.0-2-generic' 'linux-image-100.0.0-1-generic' 'linux-headers-1000000-1-generic'
 
 cat > ./fake-dpkg <<EOF
 #!/bin/sh
@@ -53,40 +55,46 @@ testprotected() {
 	grep -q '^[A-Z]: ' protected.list && catfail || msgpass
 
 	msgtest 'Check kernel autoremoval protection list includes' 'most recent kernel'
-	grep -q '^\^linux-image-100\.0\.0-1-generic\$$' protected.list && msgpass || catfail
+	grep -q '^\^linux-image-100\\\.0\\\.0-1-generic\$$' protected.list && msgpass || catfail
 
 	msgtest 'Check kernel autoremoval protection list includes' 'running kernel'
-	grep -q "^\\^linux-image-$(uname -r)\\\$\$" protected.list && msgpass || catfail
+	grep -q "^\\^linux-image-$(uname -r | sed -e 's#\.#\\\\.#g')\\\$\$" protected.list && msgpass || catfail
 }
 
 testequal "Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
+   linux-headers-1000000-1-generic (100.0.0-1)
    linux-image-1.0.0-2-generic (1.0.0-2)
    linux-image-100.0.0-1-generic (100.0.0-1)
    $CURRENTKERNEL (1)
-0 upgraded, 0 newly installed, 3 to remove and 0 not upgraded.
+0 upgraded, 0 newly installed, 4 to remove and 0 not upgraded.
+Remv linux-headers-1000000-1-generic [100.0.0-1]
 Remv linux-image-1.0.0-2-generic [1.0.0-2]
 Remv linux-image-100.0.0-1-generic [100.0.0-1]
 Remv $CURRENTKERNEL [1]" aptget autoremove -sV
 
 testprotected
 msgtest 'Check kernel autoremoval protection list does not include' 'old kernel'
-grep -q '^\^linux-image-1\.0\.0-2-generic\$$' protected.list && catfail || msgpass
+grep -q '^\^linux-image-1\\\.0\\\.0-2-generic\$$' protected.list && catfail || msgpass
 
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
 The following packages will be REMOVED:
-  linux-image-1.0.0-2-generic
-0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+  linux-headers-1000000-1-generic linux-image-1.0.0-2-generic
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Remv linux-headers-1000000-1-generic [100.0.0-1]
 Remv linux-image-1.0.0-2-generic [1.0.0-2]' aptget autoremove -s
 
 testprotected 1.0.0-2-generic
 msgtest 'Check kernel autoremoval protection list includes' 'installed kernel'
-grep -q '^\^linux-image-1\.0\.0-2-generic\$$' protected.list && msgpass || catfail
+grep -q '^\^linux-image-1\\\.0\\\.0-2-generic\$$' protected.list && msgpass || catfail
 testequal 'Reading package lists...
 Building dependency tree...
 Reading state information...
-0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.' aptget autoremove -s
+The following packages will be REMOVED:
+  linux-headers-1000000-1-generic
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv linux-headers-1000000-1-generic [100.0.0-1]' aptget autoremove -s
