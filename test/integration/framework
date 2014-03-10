@@ -863,18 +863,16 @@ signreleasefiles() {
 
 webserverconfig() {
 	msgtest "Set webserver config option '${1}' to" "$2"
-	downloadfile "http://localhost:8080/_config/set/${1}/${2}" '/dev/null' >/dev/null
-	local DOWNLOG='download-testfile.log'
-	rm -f "$DOWNLOG"
-	local STATUS="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverconfig.status"
-	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
-	if [ "$(cat "$STATUS")" = '200' ]; then
+	local DOWNLOG='rootdir/tmp/download-testfile.log'
+	local STATUS='rootdir/tmp/webserverconfig.status'
+	rm -f "$STATUS" "$DOWNLOG"
+	if downloadfile "http://localhost:8080/_config/set/${1}/${2}" "$STATUS" > "$DOWNLOG"; then
 		msgpass
 	else
-		cat >&2 "$DOWNLOG"
-		msgfail "Statuscode was $(cat "$STATUS")"
+		cat "$DOWNLOG" "$STATUS"
+		msgfail
 	fi
-	rm "$STATUS"
+	testwebserverlaststatuscode '200'
 }
 
 rewritesourceslist() {
@@ -952,10 +950,10 @@ acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
 }
 
 downloadfile() {
-        PROTO="$(echo "$1" | cut -d':' -f 1)"
-        apthelper -o Acquire::https::CaInfo=${TESTDIR}/apt.pem \
-                  -o Debug::Acquire::${PROTO}=1 \
-                  download-file "$1" "$2" 2>&1
+	local PROTO="$(echo "$1" | cut -d':' -f 1 )"
+	apthelper -o Acquire::https::CaInfo=${TESTDIR}/apt.pem \
+		-o Debug::Acquire::${PROTO}=1 \
+		download-file "$1" "$2" 2>&1 || true
 	# only if the file exists the download was successful
 	if [ -e "$2" ]; then
 		return 0
@@ -967,8 +965,8 @@ downloadfile() {
 checkdiff() {
 	local DIFFTEXT="$(command diff -u "$@" | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
-		echo
-		echo "$DIFFTEXT"
+		echo >&2
+		echo >&2 "$DIFFTEXT"
 		return 1
 	else
 		return 0
@@ -1017,7 +1015,9 @@ testequalor2() {
 	shift 2
 	msgtest "Test for equality OR of" "$*"
 	$* >$COMPAREAGAINST 2>&1 || true
-	if checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null || checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null; then
+	if checkdiff $COMPAREFILE1 $COMPAREAGAINST >/dev/null 2>&1 || \
+		checkdiff $COMPAREFILE2 $COMPAREAGAINST >/dev/null 2>&1
+	then
 		msgpass
 	else
 		echo -n "\n${CINFO}Diff against OR 1${CNORMAL}"
@@ -1051,24 +1051,24 @@ testnopackage() {
 	msgtest "Test for non-existent packages" "apt-cache show $*"
 	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
-		echo
-		echo "$SHOWPKG"
+		echo >&2
+		echo >&2 "$SHOWPKG"
 		msgfail
-		return 1
+	else
+		msgpass
 	fi
-	msgpass
 }
 
 testdpkginstalled() {
 	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
 	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != $# ]; then
-		echo $PKGS
-		dpkg -l "$@" | grep '^[a-z]'
+		echo >&2 $PKGS
+		dpkg -l "$@" | grep '^[a-z]' >&2
 		msgfail
-		return 1
+	else
+		msgpass
 	fi
-	msgpass
 }
 
 testdpkgnotinstalled() {
@@ -1076,11 +1076,11 @@ testdpkgnotinstalled() {
 	local PKGS="$(dpkg -l "$@" 2> /dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != 0 ]; then
 		echo
-		dpkg -l "$@" | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]' >&2
 		msgfail
-		return 1
+	else
+		msgpass
 	fi
-	msgpass
 }
 
 testmarkedauto() {
@@ -1105,8 +1105,8 @@ testsuccess() {
 	if $@ >${OUTPUT} 2>&1; then
 		msgpass
 	else
-		echo
-		cat $OUTPUT
+		echo >&2
+		cat >&2 $OUTPUT
 		msgfail
 	fi
 }
@@ -1119,11 +1119,32 @@ testfailure() {
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if $@ >${OUTPUT} 2>&1; then
-		echo
-		cat $OUTPUT
+		echo >&2
+		cat >&2 $OUTPUT
 		msgfail
 	else
 		msgpass
+	fi
+}
+
+testwebserverlaststatuscode() {
+	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
+	local STATUS='rootdir/tmp/webserverstatus-statusfile.log'
+	rm -f "$DOWNLOG" "$STATUS"
+	msgtest 'Test last status code from the webserver was' "$1"
+	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
+	if [ "$(cat "$STATUS")" = "$1" ]; then
+		msgpass
+	else
+		echo >&2
+		if [ -n "$2" ]; then
+			shift
+			echo >&2 '#### Additionally provided output files contain:'
+			cat >&2 "$@"
+		fi
+		echo >&2 '#### Download log of the status code:'
+		cat >&2 "$DOWNLOG"
+		msgfail "Status was $(cat "$STATUS")"
 	fi
 }
 

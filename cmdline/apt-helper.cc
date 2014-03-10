@@ -19,6 +19,7 @@
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-download.h>
 #include <apt-private/private-cmndline.h>
 
 #include <iostream>
@@ -27,7 +28,6 @@
 
 #include <apti18n.h>
 									/*}}}*/
-using namespace std;
 
 static bool DoDownloadFile(CommandLine &CmdL)
 {
@@ -43,23 +43,22 @@ static bool DoDownloadFile(CommandLine &CmdL)
    new pkgAcqFile(&Fetcher, download_uri, "", 0, "desc", "short-desc", 
                   "dest-dir-ignored", targetfile);
    Fetcher.Run();
-   if (!FileExists(targetfile))
-   {
-      _error->Error(_("Download Failed"));
-      return false;
-   }
+   bool Failed = false;
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == false ||
+	 FileExists(targetfile) == false)
+      return _error->Error(_("Download Failed"));
    return true;
 }
 
 static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
+   ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
 
    if (_config->FindB("version") == true)
      return true;
 
-   cout << 
+   std::cout <<
     _("Usage: apt-helper [options] command\n"
       "       apt-helper [options] download-file uri target-path\n"
       "\n"
