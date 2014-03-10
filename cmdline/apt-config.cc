@@ -108,7 +108,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 				   {"help",&ShowHelp},
                                    {0,0}};
 
-   std::vector<CommandLine::Args> Args = getCommandArgs("apt-cdrom", CommandLine::GetCommand(Cmds, argc, argv));
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-config", CommandLine::GetCommand(Cmds, argc, argv));
 
    // Set up gettext support
    setlocale(LC_ALL,"");
