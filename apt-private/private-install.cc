@@ -144,7 +144,7 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
    if (DebBytes != Cache->DebSize())
    {
       c0out << DebBytes << ',' << Cache->DebSize() << std::endl;
-      c0out << _("How odd.. The sizes didn't match, email apt@packages.debian.org") << std::endl;
+      c0out << _("How odd... The sizes didn't match, email apt@packages.debian.org") << std::endl;
    }
    
    // Number of bytes

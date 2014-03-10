@@ -584,7 +584,7 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
       if (interactive == true)
       {
 	 if(log != NULL)
-	    log->Update(_("Unmounting CD-ROM\n"), STEP_UNMOUNT);
+	    log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
 	 UnmountCdrom(CDROM);
 
 	 if(log != NULL)
@@ -607,7 +607,7 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
 
    // Hash the CD to get an ID
    if (log != NULL)
-      log->Update(_("Identifying.. "), STEP_IDENT);
+      log->Update(_("Identifying... "), STEP_IDENT);
 
    if (IdentCdrom(CDROM,ident) == false)
    {
@@ -669,7 +669,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       return false;
 
    if(log != NULL)
-      log->Update(_("Scanning disc for index files..\n"),STEP_SCAN);
+      log->Update(_("Scanning disc for index files...\n"),STEP_SCAN);
 
    // Get the CD structure
    vector<string> List;
