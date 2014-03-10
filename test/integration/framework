@@ -93,15 +93,18 @@ msgdone() {
 
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
-	local CMD="${BUILDDIRECTORY}/$1"
-	if [ "$1" = 'sh' ]; then CMD='sh'; fi
+	local CMD="$1"
 	shift
+	case $CMD in
+	sh|aptitude|*/*) ;;
+	*) CMD="${BUILDDIRECTORY}/$CMD";;
+	esac
 	if [ -f ./aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${LIBRARYPATH} $CMD "$@"
 	elif [ -f ../aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${LIBRARYPATH} $CMD "$@"
 	else
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"
+		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${LIBRARYPATH} $CMD "$@"
 	fi
 }
 aptconfig() { runapt apt-config "$@"; }
@@ -112,33 +115,19 @@ aptftparchive() { runapt apt-ftparchive "$@"; }
 aptkey() { runapt apt-key "$@"; }
 aptmark() { runapt apt-mark "$@"; }
 apt() { runapt apt "$@"; }
-apthelper() { 
-  LD_LIBRARY_PATH=${APTHELPERBINDIR} ${APTHELPERBINDIR}/apt-helper "$@";
-}
-aptwebserver() {
-  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver "$@";
-}
+apthelper() { runapt "${APTHELPERBINDIR}/apt-helper" "$@"; }
+aptwebserver() { runapt "${APTWEBSERVERBINDIR}/aptwebserver" "$@"; }
+aptitude() { runapt aptitude "$@"; }
+
 dpkg() {
 	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
 }
 dpkgcheckbuilddeps() {
 	command dpkg-checkbuilddeps --admindir=${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg "$@"
 }
-aptitude() {
-	if [ -f ./aptconfig.conf ]; then
-		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
-	elif [ -f ../aptconfig.conf ]; then
-		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command aptitude "$@"
-	else
-		LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
-	fi
-}
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
-}
-http() {
-	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${LIBRARYPATH} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
 }
 gpg() {
 	# see apt-key for the whole trickery. Setup is done in setupenvironment
@@ -183,6 +172,7 @@ setupenvironment() {
 
         # allow overriding the default BUILDDIR location
 	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
+	LIBRARYPATH=${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}
         METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
         APTHELPERBINDIR=${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}
         APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
@@ -246,7 +236,7 @@ setupenvironment() {
 	# cleanup the environment a bit
 	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	export LC_ALL=C.UTF-8
-	unset LANGUAGE
+	unset LANGUAGE APT_CONFIG
 	unset GREP_OPTIONS DEB_BUILD_PROFILES
 
 	msgdone "info"
