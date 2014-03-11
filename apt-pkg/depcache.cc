@@ -1059,10 +1059,9 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       return true;
    }
 
-   // check if we are allowed to install the package (if we haven't already)
-   if (P.Mode != ModeInstall || P.InstallVer != P.CandidateVer)
-      if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
-	 return false;
+   // check if we are allowed to install the package
+   if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
+      return false;
 
    ActionGroup group(*this);
    P.iFlags &= ~AutoKept;
@@ -1306,6 +1305,11 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
       bool const /*AutoInst*/, unsigned long const Depth, bool const FromUser)
 {
    if (FromUser == true) // as always: user is always right
+      return true;
+
+   // if we have checked before and it was okay, it will still be okay
+   if (PkgState[Pkg->ID].Mode == ModeInstall &&
+	 PkgState[Pkg->ID].InstallVer == PkgState[Pkg->ID].CandidateVer)
       return true;
 
    // ignore packages with none-M-A:same candidates
