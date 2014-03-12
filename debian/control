@@ -21,7 +21,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, ${apt:keyring}, gnupg
 Replaces: manpages-pl (<< 20060617-3~), manpages-it (<< 2.80-4~)
 Breaks: manpages-pl (<< 20060617-3~), manpages-it (<< 2.80-4~)
 Conflicts: python-apt (<< 0.7.93.2~)
-Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, xz-utils, python-apt
+Suggests: aptitude | synaptic | wajig, dpkg-dev, apt-doc, python-apt
 Description: commandline package manager
  This package provides commandline tools for searching and
  managing as well as querying information about packages
@@ -41,7 +41,7 @@ Package: libapt-pkg4.12
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, xz-utils
 Breaks: apt (<< 0.9.4~), libapt-inst1.5 (<< 0.9.9~)
 Section: libs
 Description: package management runtime library
