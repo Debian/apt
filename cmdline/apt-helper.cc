@@ -56,13 +56,14 @@ bool DoDownloadFile(CommandLine &CmdL)
       return false;
    }
    if(hash.empty() == false)
+   {
       if(hash.VerifyFile(targetfile) == false)
       {
          _error->Error(_("HashSum Failed"));
          Rename(targetfile, targetfile+".failed");
          return false;
       }
-
+   }
    return true;
 }
 

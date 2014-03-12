@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.9.15.1\n"
+"Project-Id-Version: apt 0.9.15.5\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-02-23 00:29+0100\n"
-"PO-Revision-Date: 2014-02-10 07:50+0700\n"
+"POT-Creation-Date: 2014-02-28 10:56+0100\n"
+"PO-Revision-Date: 2014-03-03 15:40+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
 "Language: vi\n"
@@ -25,7 +25,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:140
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
-msgstr "Gói %s phiên bản %s chưa thỏa mãn quan hệ phụ thuộc:\n"
+msgstr "Gói %s phiên bản %s có phần phụ thuộc chưa thỏa mãn:\n"
 
 #: cmdline/apt-cache.cc:268
 msgid "Total package names: "
@@ -120,7 +120,7 @@ msgstr ""
 #: cmdline/apt-cache.cc:1506 apt-pkg/cacheset.cc:586
 #, c-format
 msgid "Unable to locate package %s"
-msgstr "Không thể xác định vị trí của gói %s"
+msgstr "Không thể định vị gói %s"
 
 #: cmdline/apt-cache.cc:1536
 msgid "Package files:"
@@ -162,9 +162,10 @@ msgid "  Version table:"
 msgstr "  Bảng phiên bản:"
 
 #: cmdline/apt-cache.cc:1733 cmdline/apt-cdrom.cc:252 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1580 cmdline/apt-mark.cc:377 cmdline/apt.cc:66
-#: cmdline/apt-extracttemplates.cc:217 ftparchive/apt-ftparchive.cc:591
-#: cmdline/apt-internal-solver.cc:34 cmdline/apt-sortpkgs.cc:147
+#: cmdline/apt-get.cc:1580 cmdline/apt-helper.cc:60 cmdline/apt-mark.cc:377
+#: cmdline/apt.cc:66 cmdline/apt-extracttemplates.cc:217
+#: ftparchive/apt-ftparchive.cc:591 cmdline/apt-internal-solver.cc:34
+#: cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s-%s được biên dịch cho %s vào lúc “%s %s”\n"
@@ -642,6 +643,36 @@ msgstr ""
 "       apt-get(8), sources.list(5) và apt.conf(5).\n"
 "                  Trình APT này có năng lực của siêu bò.\n"
 
+#: cmdline/apt-helper.cc:39
+msgid "Must specify at least one pair url/filename"
+msgstr "Phải chỉ định ít nhất một cặp url/tên-tập-tin"
+
+#: cmdline/apt-helper.cc:52
+msgid "Download Failed"
+msgstr "Gặp lỗi khi tải về"
+
+#: cmdline/apt-helper.cc:67
+msgid ""
+"Usage: apt-helper [options] command\n"
+"       apt-helper [options] download-file uri target-path\n"
+"\n"
+"apt-helper is a internal helper for apt\n"
+"\n"
+"Commands:\n"
+"   download-file - download the given uri to the target-path\n"
+"\n"
+"                       This APT helper has Super Meep Powers.\n"
+msgstr ""
+"Cách dùng: apt-helper [các-tùy-chọn] lệnh\n"
+"           apt-helper [các-tùy-chọn] download-file uri đường-dẫn-đích\n"
+"\n"
+"apt-helper là phần trợ giúp dành cho apt\n"
+"\n"
+"Các lệnh:\n"
+"   download-file - tải về uri đã cho về đường-dẫn-đích\n"
+"\n"
+"     Lệnh trợ giúp APT này có Sức Mạnh của Siêu “Meep”.\n"
+
 #: cmdline/apt-mark.cc:57
 #, c-format
 msgid "%s can not be marked as it is not installed.\n"
@@ -743,7 +774,6 @@ msgstr ""
 "                          apt-mark(8) và apt.conf(5)"
 
 #: cmdline/apt.cc:71
-#, fuzzy
 msgid ""
 "Usage: apt [options] command\n"
 "\n"
@@ -767,7 +797,7 @@ msgstr ""
 "Cách dùng: apt [các tùy chọn] lệnh\n"
 "\n"
 "CLI (giao diện dòng lệnh) dành cho apt.\n"
-"Lệnh: \n"
+"Các lệnh cơ bản:\n"
 " list - liệt kê các gói dựa trên cơ sở là tên gói\n"
 " search - tìm trong phần mô tả của gói\n"
 " show - hiển thị thông tin chi tiết về gói\n"
@@ -2246,11 +2276,11 @@ msgstr "DropNode (thả điểm nút) được gọi với điểm nút còn li�
 
 #: apt-inst/filelist.cc:414
 msgid "Failed to locate the hash element!"
-msgstr "Gặp lỗi xác định vị trí phần tử băm!"
+msgstr "Gặp lỗi khi định vị phần tử băm!"
 
 #: apt-inst/filelist.cc:461
 msgid "Failed to allocate diversion"
-msgstr "Gặp lỗi khi xác định vị trí trệch đi"
+msgstr "Gặp lỗi khi định vị trệch đi"
 
 #: apt-inst/filelist.cc:466
 msgid "Internal error in AddDiversion"
@@ -2312,7 +2342,7 @@ msgstr "Thư mục %s đang được thay thế do một cái không phải là 
 
 #: apt-inst/extract.cc:282
 msgid "Failed to locate node in its hash bucket"
-msgstr "Gặp lỗi khi xác định vị trí điểm nút trong hộp băm nó bị lỗi"
+msgstr "Gặp lỗi định vị điểm nút trong hộp băm nó bị lỗi"
 
 #: apt-inst/extract.cc:286
 msgid "The path is too long"
@@ -2342,7 +2372,7 @@ msgstr "Đây không phải là một kho DEB hợp lệ vì còn thiếu thành
 #: apt-inst/deb/debfile.cc:124
 #, c-format
 msgid "Internal error, could not locate member %s"
-msgstr "Gặp lỗi nội bộ, không thể xác định vị trí thành viên %s"
+msgstr "Gặp lỗi nội bộ, không thể định vị thành viên %s"
 
 #: apt-inst/deb/debfile.cc:219
 msgid "Unparsable control file"
@@ -2512,7 +2542,7 @@ msgstr "%c%s... %u%%"
 #: apt-pkg/contrib/cmndline.cc:116
 #, c-format
 msgid "Command line option '%c' [from %s] is not known."
-msgstr "Không rõ tùy chọn dòng lệnh “%c” [từ %s]."
+msgstr "Không hiểu tùy chọn dòng lệnh “%c” [từ %s]."
 
 #: apt-pkg/contrib/cmndline.cc:141 apt-pkg/contrib/cmndline.cc:150
 #: apt-pkg/contrib/cmndline.cc:158
@@ -2975,9 +3005,9 @@ msgid "The method driver %s could not be found."
 msgstr "Không tìm thấy trình điều khiển phương thức %s."
 
 #: apt-pkg/acquire-worker.cc:115
-#, fuzzy, c-format
+#, c-format
 msgid "Is the package %s installed?"
-msgstr "Hãy kiểm tra xem gói “dpkg-dev” đã được cài đặt chưa.\n"
+msgstr "Gói “%s” đã được cài đặt chưa?"
 
 #: apt-pkg/acquire-worker.cc:166
 #, c-format
@@ -3111,7 +3141,7 @@ msgstr "gặp lỗi khi đổi tên, %s (%s → %s)."
 
 #: apt-pkg/acquire-item.cc:154
 msgid "Hash Sum mismatch"
-msgstr "Mã băm tổng kiểm tra (hash sum) không khớp"
+msgstr "Mã băm tổng kiểm tra không khớp"
 
 #: apt-pkg/acquire-item.cc:159
 msgid "Size mismatch"
@@ -3357,9 +3387,9 @@ msgid "Couldn't find any package by regex '%s'"
 msgstr "Không tìm thấy gói nào theo biểu thức chính quy “%s”"
 
 #: apt-pkg/cacheset.cc:605
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find any package by glob '%s'"
-msgstr "Không tìm thấy gói nào theo biểu thức chính quy “%s”"
+msgstr "Không tìm thấy gói nào theo đường dẫn “%s”"
 
 #: apt-pkg/cacheset.cc:616
 #, c-format
