@@ -104,6 +104,41 @@ string debListParser::Version()
    return Section.FindS("Version");
 }
 									/*}}}*/
+unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
+{
+   unsigned char MA;
+   string const MultiArch = Section.FindS("Multi-Arch");
+   if (MultiArch.empty() == true)
+      MA = pkgCache::Version::None;
+   else if (MultiArch == "same") {
+      if (ArchitectureAll() == true)
+      {
+	 if (showErrors == true)
+	    _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
+		  Section.FindS("Package").c_str());
+	 MA = pkgCache::Version::None;
+      }
+      else
+	 MA = pkgCache::Version::Same;
+   }
+   else if (MultiArch == "foreign")
+      MA = pkgCache::Version::Foreign;
+   else if (MultiArch == "allowed")
+      MA = pkgCache::Version::Allowed;
+   else
+   {
+      if (showErrors == true)
+	 _error->Warning("Unknown Multi-Arch type '%s' for package '%s'",
+	       MultiArch.c_str(), Section.FindS("Package").c_str());
+      MA = pkgCache::Version::None;
+   }
+
+   if (ArchitectureAll() == true)
+      MA |= pkgCache::Version::All;
+
+   return MA;
+}
+									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -111,37 +146,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
    Ver->Section = UniqFindTagWrite("Section");
-
-   // Parse multi-arch
-   string const MultiArch = Section.FindS("Multi-Arch");
-   if (MultiArch.empty() == true)
-      Ver->MultiArch = pkgCache::Version::None;
-   else if (MultiArch == "same") {
-      // Parse multi-arch
-      if (ArchitectureAll() == true)
-      {
-	 /* Arch all packages can't be Multi-Arch: same */
-	 _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
-			Section.FindS("Package").c_str());
-	 Ver->MultiArch = pkgCache::Version::None;
-      }
-      else
-	 Ver->MultiArch = pkgCache::Version::Same;
-   }
-   else if (MultiArch == "foreign")
-      Ver->MultiArch = pkgCache::Version::Foreign;
-   else if (MultiArch == "allowed")
-      Ver->MultiArch = pkgCache::Version::Allowed;
-   else
-   {
-      _error->Warning("Unknown Multi-Arch type '%s' for package '%s'",
-			MultiArch.c_str(), Section.FindS("Package").c_str());
-      Ver->MultiArch = pkgCache::Version::None;
-   }
-
-   if (ArchitectureAll() == true)
-      Ver->MultiArch |= pkgCache::Version::All;
-
+   Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL("Size");
    // Unpacked Size (in K)

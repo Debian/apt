@@ -97,6 +97,9 @@ class debListParser : public pkgCacheGenerator::ListParser
 
    debListParser(FileFd *File, std::string const &Arch = "");
    virtual ~debListParser() {};
+
+   private:
+   unsigned char ParseMultiArch(bool const showErrors);
 };
 
 #endif
