@@ -1841,3 +1841,14 @@ std::string GetTempDir()
 
    return string(tmpdir);
 }
+
+bool Rename(std::string From, std::string To)
+{
+   if (rename(From.c_str(),To.c_str()) != 0)
+   {
+      _error->Error(_("rename failed, %s (%s -> %s)."),strerror(errno),
+                    From.c_str(),To.c_str());
+      return false;
+   }   
+   return true;
+}

@@ -164,6 +164,7 @@ bool RealFileExists(std::string File);
 bool DirectoryExists(std::string const &Path) __attrib_const;
 bool CreateDirectory(std::string const &Parent, std::string const &Path);
 time_t GetModificationTime(std::string const &Path);
+bool Rename(std::string From, std::string To);
 
 std::string GetTempDir();
 

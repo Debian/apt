@@ -44,6 +44,9 @@ bool DoDownloadFile(CommandLine &CmdL)
    Fetcher.Setup(&Stat);
    std::string download_uri = CmdL.FileList[1];
    std::string targetfile = CmdL.FileList[2];
+   HashString hash;
+   if (CmdL.FileSize() > 3)
+      hash = HashString(CmdL.FileList[3]);
    new pkgAcqFile(&Fetcher, download_uri, "", 0, "desc", "short-desc", 
                   "dest-dir-ignored", targetfile);
    Fetcher.Run();
@@ -52,6 +55,14 @@ bool DoDownloadFile(CommandLine &CmdL)
       _error->Error(_("Download Failed"));
       return false;
    }
+   if(hash.empty() == false)
+      if(hash.VerifyFile(targetfile) == false)
+      {
+         _error->Error(_("HashSum Failed"));
+         Rename(targetfile, targetfile+".failed");
+         return false;
+      }
+
    return true;
 }
 
