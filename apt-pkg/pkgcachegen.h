@@ -164,6 +164,15 @@ class pkgCacheGenerator::ListParser
    virtual std::string DescriptionLanguage() = 0;
    virtual MD5SumValue Description_md5() = 0;
    virtual unsigned short VersionHash() = 0;
+   /** compare currently parsed version with given version
+    *
+    * \param Hash of the currently parsed version
+    * \param Ver to compare with
+    */
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+   virtual
+#endif
+      APT_PURE bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
 			   pkgCache::VerIterator &Ver) = 0;
    virtual unsigned long Offset() = 0;

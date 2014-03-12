@@ -938,3 +938,24 @@ unsigned char debListParser::GetPrio(string Str)
    return Out;
 }
 									/*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
+      pkgCache::VerIterator const &Ver)
+{
+   if (pkgCacheGenerator::ListParser::SameVersion(Hash, Ver) == false)
+      return false;
+   // status file has no (Download)Size, but all others are fair game
+   // status file is parsed last, so the first version we encounter is
+   // probably also the version we have downloaded
+   unsigned long long const Size = Section.FindULL("Size");
+   if (Size != 0 && Size != Ver->Size)
+      return false;
+   // available everywhere, but easier to check here than to include in VersionHash
+   unsigned char MultiArch = ParseMultiArch(false);
+   if (MultiArch != Ver->MultiArch)
+      return false;
+   // for all practical proposes (we can check): same version
+   return true;
+}
+									/*}}}*/
+#endif

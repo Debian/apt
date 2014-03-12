@@ -356,7 +356,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
    map_ptrloc *LastVer = &Pkg->VersionList;
    void const * oldMap = Map.Data();
 
-   unsigned long const Hash = List.VersionHash();
+   unsigned short const Hash = List.VersionHash();
    if (Ver.end() == false)
    {
       /* We know the list is sorted so we use that fact in the search.
@@ -369,7 +369,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
 	 if (Res > 0)
 	    break;
 	 // Versionstrings are equal - is hash also equal?
-	 if (Res == 0 && Ver->Hash == Hash)
+	 if (Res == 0 && List.SameVersion(Hash, Ver) == true)
 	    break;
 	 // proceed with the next till we have either the right
 	 // or we found another version (which will be lower)
@@ -558,12 +558,12 @@ bool pkgCacheGenerator::MergeFileProvides(ListParser &List)
       if (Counter % 100 == 0 && Progress != 0)
 	 Progress->Progress(List.Offset());
 
-      unsigned long Hash = List.VersionHash();
+      unsigned short Hash = List.VersionHash();
       pkgCache::VerIterator Ver = Pkg.VersionList();
       Dynamic<pkgCache::VerIterator> DynVer(Ver);
       for (; Ver.end() == false; ++Ver)
       {
-	 if (Ver->Hash == Hash && Version == Ver.VerStr())
+	 if (List.SameVersion(Hash, Ver) == true && Version == Ver.VerStr())
 	 {
 	    if (List.CollectFileProvides(Cache,Ver) == false)
 	       return _error->Error(_("Error occurred while processing %s (%s%d)"),
@@ -1049,6 +1049,12 @@ bool pkgCacheGenerator::ListParser::NewProvides(pkgCache::VerIterator &Ver,
    Pkg->ProvidesList = Prv.Index();
    
    return true;
+}
+									/*}}}*/
+bool pkgCacheGenerator::ListParser::SameVersion(unsigned short const Hash,/*{{{*/
+      pkgCache::VerIterator const &Ver)
+{
+   return Hash == Ver->Hash;
 }
 									/*}}}*/
 // CacheGenerator::SelectFile - Select the current file being parsed	/*{{{*/
