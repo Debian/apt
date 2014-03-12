@@ -58,6 +58,9 @@
 #ifdef HAVE_BZ2
 	#include <bzlib.h>
 #endif
+#ifdef HAVE_LZMA
+	#include <lzma.h>
+#endif
 
 #ifdef WORDS_BIGENDIAN
 #include <inttypes.h>
@@ -72,13 +75,47 @@ class FileFdPrivate {
 	public:
 #ifdef HAVE_ZLIB
 	gzFile gz;
-#else
-	void* gz;
 #endif
 #ifdef HAVE_BZ2
 	BZFILE* bz2;
-#else
-	void* bz2;
+#endif
+#ifdef HAVE_LZMA
+	struct LZMAFILE {
+	   FILE* file;
+	   uint8_t buffer[4096];
+	   lzma_stream stream;
+	   lzma_ret err;
+	   bool eof;
+	   bool compressing;
+
+	   LZMAFILE() : file(NULL), eof(false), compressing(false) {}
+	   ~LZMAFILE() {
+	      if (compressing == true)
+	      {
+		for (;;) {
+			stream.avail_out = sizeof(buffer)/sizeof(buffer[0]);
+			stream.next_out = buffer;
+			err = lzma_code(&stream, LZMA_FINISH);
+			if (err != LZMA_OK && err != LZMA_STREAM_END)
+			{
+				_error->Error("~LZMAFILE: Compress finalisation failed");
+				break;
+			}
+			size_t const n =  sizeof(buffer)/sizeof(buffer[0]) - stream.avail_out;
+			if (n && fwrite(buffer, 1, n, file) != n)
+			{
+				_error->Errno("~LZMAFILE",_("Write error"));
+				break;
+			}
+			if (err == LZMA_STREAM_END)
+				break;
+		}
+	      }
+	      lzma_end(&stream);
+	      fclose(file);
+	   }
+	};
+	LZMAFILE* lzma;
 #endif
 	int compressed_fd;
 	pid_t compressor_pid;
@@ -86,7 +123,16 @@ class FileFdPrivate {
 	APT::Configuration::Compressor compressor;
 	unsigned int openmode;
 	unsigned long long seekpos;
-	FileFdPrivate() : gz(NULL), bz2(NULL),
+	FileFdPrivate() :
+#ifdef HAVE_ZLIB
+			  gz(NULL),
+#endif
+#ifdef HAVE_BZ2
+			  bz2(NULL),
+#endif
+#ifdef HAVE_LZMA
+			  lzma(NULL),
+#endif
 			  compressed_fd(-1), compressor_pid(-1), pipe(false),
 			  openmode(0), seekpos(0) {};
 	bool CloseDown(std::string const &FileName)
@@ -105,6 +151,12 @@ class FileFdPrivate {
 	   if (bz2 != NULL) {
 	      BZ2_bzclose(bz2);
 	      bz2 = NULL;
+	   }
+#endif
+#ifdef HAVE_LZMA
+	   if (lzma != NULL) {
+	      delete lzma;
+	      lzma = NULL;
 	   }
 #endif
 	   if (compressor_pid > 0)
@@ -1089,12 +1141,14 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
    if (compressor.Name == "." || compressor.Binary.empty() == true)
       return true;
 
-#if defined HAVE_ZLIB || defined HAVE_BZ2
+#if defined HAVE_ZLIB || defined HAVE_BZ2 || defined HAVE_LZMA
    // the API to open files is similar, so setup to avoid code duplicates later
    // and while at it ensure that we close before opening (if its a reopen)
    void* (*compress_open)(int, const char *) = NULL;
+   if (false)
+      /* dummy so that the rest can be 'else if's */;
 #define APT_COMPRESS_INIT(NAME,OPEN,CLOSE,STRUCT) \
-   if (compressor.Name == NAME) \
+   else if (compressor.Name == NAME) \
    { \
       compress_open = (void*(*)(int, const char *)) OPEN; \
       if (d != NULL && STRUCT != NULL) { CLOSE(STRUCT); STRUCT = NULL; } \
@@ -1105,6 +1159,17 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 #ifdef HAVE_BZ2
    APT_COMPRESS_INIT("bzip2", BZ2_bzdopen, BZ2_bzclose, d->bz2)
 #endif
+#ifdef HAVE_LZMA
+   else if (compressor.Name == "xz" || compressor.Name == "lzma")
+   {
+      compress_open = (void*(*)(int, const char*)) fdopen;
+      if (d != NULL && d->lzma != NULL)
+      {
+	 delete d->lzma;
+	 d->lzma = NULL;
+      }
+   }
+#endif
 #undef APT_COMPRESS_INIT
 #endif
 
@@ -1113,7 +1178,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       d = new FileFdPrivate();
       d->openmode = Mode;
       d->compressor = compressor;
-#if defined HAVE_ZLIB || defined HAVE_BZ2
+#if defined HAVE_ZLIB || defined HAVE_BZ2 || defined HAVE_LZMA
       if (AutoClose == false && compress_open != NULL)
       {
 	 // Need to duplicate fd here or gz/bz2 close for cleanup will close the fd as well
@@ -1125,7 +1190,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 #endif
    }
 
-#if defined HAVE_ZLIB || defined HAVE_BZ2
+#if defined HAVE_ZLIB || defined HAVE_BZ2 || defined HAVE_LZMA
    if (compress_open != NULL)
    {
       void* compress_struct = NULL;
@@ -1138,13 +1203,60 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       if (compress_struct == NULL)
 	 return false;
 
+      if (false)
+	 /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_ZLIB
-      if (compressor.Name == "gzip")
+      else if (compressor.Name == "gzip")
 	 d->gz = (gzFile) compress_struct;
 #endif
 #ifdef HAVE_BZ2
-      if (compressor.Name == "bzip2")
+      else if (compressor.Name == "bzip2")
 	 d->bz2 = (BZFILE*) compress_struct;
+#endif
+#ifdef HAVE_LZMA
+      else if (compressor.Name == "xz" || compressor.Name == "lzma")
+      {
+	 uint32_t const xzlevel = 6;
+	 uint64_t const memlimit = UINT64_MAX;
+	 if (d->lzma == NULL)
+	    d->lzma = new FileFdPrivate::LZMAFILE;
+	 d->lzma->file = (FILE*) compress_struct;
+	 d->lzma->stream = LZMA_STREAM_INIT;
+
+	 if ((Mode & ReadWrite) == ReadWrite)
+	    return FileFdError("ReadWrite mode is not supported for file %s", FileName.c_str());
+
+	 if ((Mode & WriteOnly) == WriteOnly)
+	 {
+	    if (compressor.Name == "xz")
+	    {
+	       if (lzma_easy_encoder(&d->lzma->stream, xzlevel, LZMA_CHECK_CRC32) != LZMA_OK)
+		  return false;
+	    }
+	    else
+	    {
+	       lzma_options_lzma options;
+	       lzma_lzma_preset(&options, xzlevel);
+	       if (lzma_alone_encoder(&d->lzma->stream, &options) != LZMA_OK)
+		  return false;
+	    }
+	    d->lzma->compressing = true;
+	 }
+	 else
+	 {
+	    if (compressor.Name == "xz")
+	    {
+	       if (lzma_auto_decoder(&d->lzma->stream, memlimit, 0) != LZMA_OK)
+		  return false;
+	    }
+	    else
+	    {
+	       if (lzma_alone_decoder(&d->lzma->stream, memlimit) != LZMA_OK)
+		  return false;
+	    }
+	    d->lzma->compressing = false;
+	 }
+      }
 #endif
       Flags |= Compressed;
       return true;
@@ -1202,7 +1314,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       }
       else
       {
-	 if (FileName.empty() == true)
+	 if (d->compressed_fd != -1)
 	    dup2(d->compressed_fd,STDIN_FILENO);
 	 dup2(Pipe[1],STDOUT_FILENO);
       }
@@ -1271,24 +1383,55 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
    *((char *)To) = '\0';
    do
    {
+      if (false)
+	 /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_ZLIB
-      if (d != NULL && d->gz != NULL)
+      else if (d != NULL && d->gz != NULL)
 	 Res = gzread(d->gz,To,Size);
-      else
 #endif
 #ifdef HAVE_BZ2
-      if (d != NULL && d->bz2 != NULL)
+      else if (d != NULL && d->bz2 != NULL)
 	 Res = BZ2_bzread(d->bz2,To,Size);
-      else
 #endif
+#ifdef HAVE_LZMA
+      else if (d != NULL && d->lzma != NULL)
+      {
+	 if (d->lzma->eof == true)
+	    break;
+
+	 d->lzma->stream.next_out = (uint8_t *) To;
+	 d->lzma->stream.avail_out = Size;
+	 if (d->lzma->stream.avail_in == 0)
+	 {
+	    d->lzma->stream.next_in = d->lzma->buffer;
+	    d->lzma->stream.avail_in = fread(d->lzma->buffer, 1, sizeof(d->lzma->buffer)/sizeof(d->lzma->buffer[0]), d->lzma->file);
+	 }
+	 d->lzma->err = lzma_code(&d->lzma->stream, LZMA_RUN);
+	 if (d->lzma->err == LZMA_STREAM_END)
+	 {
+	    d->lzma->eof = true;
+	    Res = Size - d->lzma->stream.avail_out;
+	 }
+	 else if (d->lzma->err != LZMA_OK)
+	 {
+	    Res = -1;
+	    errno = 0;
+	 }
+	 else
+	    Res = Size - d->lzma->stream.avail_out;
+      }
+#endif
+      else
          Res = read(iFd,To,Size);
 
       if (Res < 0)
       {
 	 if (errno == EINTR)
 	    continue;
+	 if (false)
+	    /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_ZLIB
-	 if (d != NULL && d->gz != NULL)
+	 else if (d != NULL && d->gz != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = gzerror(d->gz, &err);
@@ -1297,13 +1440,17 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	 }
 #endif
 #ifdef HAVE_BZ2
-	 if (d != NULL && d->bz2 != NULL)
+	 else if (d != NULL && d->bz2 != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
 	    if (err != BZ_IO_ERROR)
 	       return FileFdError("BZ2_bzread: %s (%d: %s)", _("Read error"), err, errmsg);
 	 }
+#endif
+#ifdef HAVE_LZMA
+	 else if (d != NULL && d->lzma != NULL)
+	    return FileFdError("lzma_read: %s (%d)", _("Read error"), d->lzma->err);
 #endif
 	 return FileFdErrno("read",_("Read error"));
       }
@@ -1368,23 +1515,45 @@ bool FileFd::Write(const void *From,unsigned long long Size)
    errno = 0;
    do
    {
+      if (false)
+	 /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_ZLIB
-      if (d != NULL && d->gz != NULL)
-         Res = gzwrite(d->gz,From,Size);
-      else
+      else if (d != NULL && d->gz != NULL)
+	 Res = gzwrite(d->gz,From,Size);
 #endif
 #ifdef HAVE_BZ2
-      if (d != NULL && d->bz2 != NULL)
-         Res = BZ2_bzwrite(d->bz2,(void*)From,Size);
-      else
+      else if (d != NULL && d->bz2 != NULL)
+	 Res = BZ2_bzwrite(d->bz2,(void*)From,Size);
 #endif
-         Res = write(iFd,From,Size);
+#ifdef HAVE_LZMA
+      else if (d != NULL && d->lzma != NULL)
+      {
+	 d->lzma->stream.next_in = (uint8_t *)From;
+	 d->lzma->stream.avail_in = Size;
+	 d->lzma->stream.next_out = d->lzma->buffer;
+	 d->lzma->stream.avail_out = sizeof(d->lzma->buffer)/sizeof(d->lzma->buffer[0]);
+	 d->lzma->err = lzma_code(&d->lzma->stream, LZMA_RUN);
+	 if (d->lzma->err != LZMA_OK)
+	    return false;
+	 size_t const n = sizeof(d->lzma->buffer)/sizeof(d->lzma->buffer[0]) - d->lzma->stream.avail_out;
+	 size_t const m = (n == 0) ? 0 : fwrite(d->lzma->buffer, 1, n, d->lzma->file);
+	 if (m != n)
+	    Res = -1;
+	 else
+	    Res = Size - d->lzma->stream.avail_in;
+      }
+#endif
+      else
+	 Res = write(iFd,From,Size);
+
       if (Res < 0 && errno == EINTR)
 	 continue;
       if (Res < 0)
       {
+	 if (false)
+	    /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_ZLIB
-	 if (d != NULL && d->gz != NULL)
+	 else if (d != NULL && d->gz != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = gzerror(d->gz, &err);
@@ -1393,13 +1562,17 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 	 }
 #endif
 #ifdef HAVE_BZ2
-	 if (d != NULL && d->bz2 != NULL)
+	 else if (d != NULL && d->bz2 != NULL)
 	 {
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
 	    if (err != BZ_IO_ERROR)
 	       return FileFdError("BZ2_bzwrite: %s (%d: %s)", _("Write error"), err, errmsg);
 	 }
+#endif
+#ifdef HAVE_LZMA
+	 else if (d != NULL && d->lzma != NULL)
+	    return FileFdErrno("lzma_fwrite", _("Write error"));
 #endif
 	 return FileFdErrno("write",_("Write error"));
       }
@@ -1448,6 +1621,9 @@ bool FileFd::Seek(unsigned long long To)
 #ifdef HAVE_BZ2
 			|| d->bz2 != NULL
 #endif
+#ifdef HAVE_LZMA
+			|| d->lzma != NULL
+#endif
 	))
    {
       // Our poor man seeking in pipes is costly, so try to avoid it
@@ -1459,12 +1635,21 @@ bool FileFd::Seek(unsigned long long To)
 
       if ((d->openmode & ReadOnly) != ReadOnly)
 	 return FileFdError("Reopen is only implemented for read-only files!");
+      if (false)
+	 /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_BZ2
-     if (d->bz2 != NULL) 
-     {
-	BZ2_bzclose(d->bz2);
-	d->bz2 = NULL;
-     }
+      else if (d->bz2 != NULL)
+      {
+	 BZ2_bzclose(d->bz2);
+	 d->bz2 = NULL;
+      }
+#endif
+#ifdef HAVE_LZMA
+      else if (d->lzma != NULL)
+      {
+	 delete d->lzma;
+	 d->lzma = NULL;
+      }
 #endif
       if (iFd != -1)
 	 close(iFd);
@@ -1515,6 +1700,9 @@ bool FileFd::Skip(unsigned long long Over)
 #ifdef HAVE_BZ2
 			|| d->bz2 != NULL
 #endif
+#ifdef HAVE_LZMA
+			|| d->lzma != NULL
+#endif
 	))
    {
       d->seekpos += Over;
@@ -1552,8 +1740,18 @@ bool FileFd::Truncate(unsigned long long To)
    // truncating /dev/null is always successful - as we get an error otherwise
    if (To == 0 && FileName == "/dev/null")
       return true;
-#if defined HAVE_ZLIB || defined HAVE_BZ2
-   if (d != NULL && (d->gz != NULL || d->bz2 != NULL))
+#if defined HAVE_ZLIB || defined HAVE_BZ2 || defined HAVE_LZMA
+   if (d != NULL && (
+#ifdef HAVE_ZLIB
+	    d->gz != NULL ||
+#endif
+#ifdef HAVE_BZ2
+	    d->bz2 != NULL ||
+#endif
+#ifdef HAVE_LZMA
+	    d->lzma != NULL ||
+#endif
+	    false))
       return FileFdError("Truncating compressed files is not implemented (%s)", FileName.c_str());
 #endif
    if (ftruncate(iFd,To) != 0)
@@ -1574,6 +1772,9 @@ unsigned long long FileFd::Tell()
    if (d != NULL && (d->pipe == true
 #ifdef HAVE_BZ2
 			|| d->bz2 != NULL
+#endif
+#ifdef HAVE_LZMA
+			|| d->lzma != NULL
 #endif
 	))
       return d->seekpos;
@@ -1653,6 +1854,9 @@ unsigned long long FileFd::Size()
    if (d != NULL && (d->pipe == true
 #ifdef HAVE_BZ2
 			|| (d->bz2 && size > 0)
+#endif
+#ifdef HAVE_LZMA
+			|| (d->lzma && size > 0)
 #endif
 	))
    {
@@ -1797,7 +2001,13 @@ bool FileFd::FileFdError(const char *Description,...) {
 }
 									/*}}}*/
 
-gzFile FileFd::gzFd() { return d->gz; }
+APT_DEPRECATED gzFile FileFd::gzFd() {
+#ifdef HAVE_ZLIB
+   return d->gz;
+#else
+   return NULL;
+#endif
+}
 
 
 // Glob - wrapper around "glob()"                                      /*{{{*/

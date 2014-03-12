@@ -462,8 +462,16 @@ const Configuration::getCompressors(bool const Cached) {
 #endif
 	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)
 		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",4));
+#ifdef HAVE_LZMA
+	else
+		compressors.push_back(Compressor("xz",".xz","false", NULL, NULL, 4));
+#endif
 	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
 		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",5));
+#ifdef HAVE_LZMA
+	else
+		compressors.push_back(Compressor("lzma",".lzma","false", NULL, NULL, 5));
+#endif
 
 	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
 	for (std::vector<std::string>::const_iterator c = comp.begin();

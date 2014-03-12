@@ -107,6 +107,13 @@ if test "x$HAVE_BZ2" = "xyes"; then
 	AC_DEFINE(HAVE_BZ2)
 fi
 
+HAVE_LZMA=no
+AC_CHECK_LIB(lzma, lzma_easy_encoder,[AC_CHECK_HEADER(lzma.h, [HAVE_LZMA=yes], [])], [])
+AC_SUBST(HAVE_LZMA)
+if test "x$HAVE_LZMA" = "xyes"; then
+	AC_DEFINE(HAVE_LZMA)
+fi
+
 dnl Converts the ARCH to be something singular for this general CPU family
 dnl This is often the dpkg architecture string.
 dnl First check against the full canonical canoncial-system-type in $target
