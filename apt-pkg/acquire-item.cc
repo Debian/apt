@@ -1856,7 +1856,7 @@ pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
       _error->Error(_("I wasn't able to locate a file for the %s package. "
 		      "This might mean you need to manually fix this package. "
 		      "(due to missing arch)"),
-		    Version.ParentPkg().Name());
+		    Version.ParentPkg().FullName().c_str());
       return;
    }
    
@@ -1984,7 +1984,7 @@ bool pkgAcqArchive::QueueNext()
       Desc.URI = Index->ArchiveURI(PkgFile);
       Desc.Description = Index->ArchiveInfo(Version);
       Desc.Owner = this;
-      Desc.ShortDesc = Version.ParentPkg().Name();
+      Desc.ShortDesc = Version.ParentPkg().FullName(true);
 
       // See if we already have the file. (Legacy filenames)
       FileSize = Version->Size;
@@ -2051,10 +2051,6 @@ bool pkgAcqArchive::QueueNext()
 
       // Create the item
       Local = false;
-      Desc.URI = Index->ArchiveURI(PkgFile);
-      Desc.Description = Index->ArchiveInfo(Version);
-      Desc.Owner = this;
-      Desc.ShortDesc = Version.ParentPkg().Name();
       QueueURI(Desc);
 
       ++Vf;
