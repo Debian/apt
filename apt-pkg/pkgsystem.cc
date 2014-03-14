@@ -13,7 +13,8 @@
 #include<config.h>
 
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/policy.h>
+#include <apt-pkg/macros.h>
+
 #include <cassert>
 #include <cstring>
 									/*}}}*/
@@ -36,7 +37,7 @@ pkgSystem::pkgSystem() : Label(NULL), VS(NULL)
 // System::GetSystem - Get the named system				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgSystem *pkgSystem::GetSystem(const char *Label)
+APT_PURE pkgSystem *pkgSystem::GetSystem(const char *Label)
 {
    for (unsigned I = 0; I != GlobalListLen; I++)
       if (strcmp(SysList[I]->Label,Label) == 0)

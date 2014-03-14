@@ -16,8 +16,12 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/sha1.h>
+#include <apt-pkg/sha2.h>
 
+#include <stddef.h>
+#include <algorithm>
 #include <unistd.h>
 #include <string>
 #include <iostream>
@@ -112,7 +116,7 @@ const char** HashString::SupportedHashes()
    return _SupportedHashes;
 }
 
-bool HashString::empty() const
+APT_PURE bool HashString::empty() const
 {
    return (Type.empty() || Hash.empty());
 }

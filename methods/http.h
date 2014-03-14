@@ -12,14 +12,18 @@
 #define APT_HTTP_H
 
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/acquire-method.h>
 
 #include <string>
+#include <sys/time.h>
+#include <iostream>
 
 #include "server.h"
 
 using std::cout;
 using std::endl;
 
+class FileFd;
 class HttpMethod;
 class Hashes;
 

@@ -13,28 +13,37 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/md5.h>
-#include <apt-pkg/hashes.h>
 #include <apt-pkg/deblistparser.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/gpgv.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/debfile.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/sha1.h>
+#include <apt-pkg/sha2.h>
+#include <apt-pkg/tagfile.h>
 
+#include <ctype.h>
+#include <fnmatch.h>
+#include <ftw.h>
+#include <locale.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <ctime>
-#include <ftw.h>
-#include <fnmatch.h>
 #include <iostream>
 #include <sstream>
 #include <memory>
+#include <utility>
 
+#include "apt-ftparchive.h"
 #include "writer.h"
 #include "cachedb.h"
-#include "apt-ftparchive.h"
 #include "multicompress.h"
 
 #include <apti18n.h>
@@ -72,9 +81,9 @@ FTWScanner::FTWScanner(string const &Arch): Arch(Arch)
 									/*}}}*/
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
 // ---------------------------------------------------------------------
-/* This is the FTW scanner, it processes each directory element in the 
+/* This is the FTW scanner, it processes each directory element in the
    directory tree. */
-int FTWScanner::ScannerFTW(const char *File,const struct stat *sb,int Flag)
+int FTWScanner::ScannerFTW(const char *File,const struct stat * /*sb*/,int Flag)
 {
    if (Flag == FTW_DNR)
    {
@@ -951,7 +960,7 @@ bool ContentsWriter::ReadFromPkgs(string const &PkgFile,string const &PkgCompres
 // ReleaseWriter::ReleaseWriter - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ReleaseWriter::ReleaseWriter(string const &DB)
+ReleaseWriter::ReleaseWriter(string const &/*DB*/)
 {
    if (_config->FindB("APT::FTPArchive::Release::Default-Patterns", true) == true)
    {

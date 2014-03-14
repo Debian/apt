@@ -18,7 +18,16 @@
 #include <apt-pkg/metaindex.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <ctype.h>
+#include <stddef.h>
+#include <time.h>
+#include <cstring>
+#include <map>
+#include <string>
+#include <vector>
 #include <fstream>
 #include <algorithm>
 

@@ -17,11 +17,12 @@
 #ifndef PKGLIB_EXTRACT_H
 #define PKGLIB_EXTRACT_H
 
-
-
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/filelist.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+
+#include <string>
 
 class pkgExtract : public pkgDirStream
 {

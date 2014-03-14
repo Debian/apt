@@ -9,8 +9,11 @@
 #ifndef PKGLIB_EDSP_H
 #define PKGLIB_EDSP_H
 
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+
+#include <stdio.h>
 
 #include <list>
 #include <string>
@@ -35,11 +38,9 @@ class EDSP								/*{{{*/
 	void static WriteScenarioVersion(pkgDepCache &Cache, FILE* output,
 					 pkgCache::PkgIterator const &Pkg,
 					 pkgCache::VerIterator const &Ver);
-	void static WriteScenarioDependency(pkgDepCache &Cache, FILE* output,
-					    pkgCache::PkgIterator const &Pkg,
+	void static WriteScenarioDependency(FILE* output,
 					    pkgCache::VerIterator const &Ver);
-	void static WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
-						   pkgCache::PkgIterator const &Pkg,
+	void static WriteScenarioLimitedDependency(FILE* output,
 						   pkgCache::VerIterator const &Ver,
 						   APT::PackageSet const &pkgset);
 public:

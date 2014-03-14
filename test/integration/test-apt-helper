@@ -33,5 +33,7 @@ if ! apthelper -qq download-file http://localhost:8080/foo foo5 MD5Sum:aabbcc 2>
 else
    msgfail
 fi
-testfileequal download.stderr 'E: HashSum Failed'
-testfileequal foo5.failed 'foo'
+testfileequal download.stderr 'E: Failed to fetch http://localhost:8080/foo  Hash Sum mismatch
+
+E: Download Failed'
+testfileequal foo5.FAILED 'foo'

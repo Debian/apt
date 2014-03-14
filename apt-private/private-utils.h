@@ -6,6 +6,4 @@
 void DisplayFileInPager(std::string filename);
 void EditFileInSensibleEditor(std::string filename);
 
-
-
 #endif

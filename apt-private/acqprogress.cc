@@ -10,18 +10,21 @@
 // Include files							/*{{{*/
 #include<config.h>
 
+#include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 
+#include <apt-private/acqprogress.h>
+
+#include <string.h>
 #include <stdio.h>
 #include <signal.h>
 #include <iostream>
 #include <unistd.h>
 
-#include "acqprogress.h"
 #include <apti18n.h>
 									/*}}}*/
 
@@ -42,12 +45,12 @@ AcqTextStatus::AcqTextStatus(unsigned int &ScreenWidth,unsigned int const Quiet)
 // AcqTextStatus::Start - Downloading has started			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void AcqTextStatus::Start() 
+void AcqTextStatus::Start()
 {
-   pkgAcquireStatus::Start(); 
+   pkgAcquireStatus::Start();
    BlankLine[0] = 0;
    ID = 1;
-};
+}
 									/*}}}*/
 // AcqTextStatus::IMSHit - Called when an item got a HIT response	/*{{{*/
 // ---------------------------------------------------------------------
@@ -58,14 +61,14 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
       return;
 
    if (Quiet <= 0)
-      cout << '\r' << BlankLine << '\r';   
-   
+      cout << '\r' << BlankLine << '\r';
+
    cout << _("Hit ") << Itm.Description;
    if (Itm.Owner->FileSize != 0)
       cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    cout << endl;
    Update = true;
-};
+}
 									/*}}}*/
 // AcqTextStatus::Fetch - An item has started to download		/*{{{*/
 // ---------------------------------------------------------------------
@@ -75,28 +78,28 @@ void AcqTextStatus::Fetch(pkgAcquire::ItemDesc &Itm)
    Update = true;
    if (Itm.Owner->Complete == true)
       return;
-   
+
    Itm.Owner->ID = ID++;
-   
+
    if (Quiet > 1)
       return;
 
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
-   
+
    cout << _("Get:") << Itm.Owner->ID << ' ' << Itm.Description;
    if (Itm.Owner->FileSize != 0)
       cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    cout << endl;
-};
+}
 									/*}}}*/
 // AcqTextStatus::Done - Completed a download				/*{{{*/
 // ---------------------------------------------------------------------
 /* We don't display anything... */
-void AcqTextStatus::Done(pkgAcquire::ItemDesc &Itm)
+void AcqTextStatus::Done(pkgAcquire::ItemDesc &/*Itm*/)
 {
    Update = true;
-};
+}
 									/*}}}*/
 // AcqTextStatus::Fail - Called when an item fails to download		/*{{{*/
 // ---------------------------------------------------------------------
@@ -109,10 +112,10 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    // Ignore certain kinds of transient failures (bad code)
    if (Itm.Owner->Status == pkgAcquire::Item::StatIdle)
       return;
-      
+
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r';
-   
+
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
    {
       cout << _("Ign ") << Itm.Description << endl;
@@ -122,9 +125,9 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
       cout << _("Err ") << Itm.Description << endl;
       cout << "  " << Itm.Owner->ErrorText << endl;
    }
-   
+
    Update = true;
-};
+}
 									/*}}}*/
 // AcqTextStatus::Stop - Finished downloading				/*{{{*/
 // ---------------------------------------------------------------------
@@ -154,12 +157,12 @@ void AcqTextStatus::Stop()
 bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 {
    pkgAcquireStatus::Pulse(Owner);
-   
+
    if (Quiet > 0)
       return true;
-   
+
    enum {Long = 0,Medium,Short} Mode = Medium;
-   
+
    char Buffer[sizeof(BlankLine)];
    char *End = Buffer + sizeof(Buffer);
    char *S = Buffer;
@@ -174,8 +177,8 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	I = Owner->WorkerStep(I))
    {
       S += strlen(S);
-      
-      // There is no item running 
+
+      // There is no item running
       if (I->CurrentItem == 0)
       {
 	 if (I->Status.empty() == false)
@@ -183,12 +186,12 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	    snprintf(S,End-S," [%s]",I->Status.c_str());
 	    Shown = true;
 	 }
-	 
+
 	 continue;
       }
 
       Shown = true;
-      
+
       // Add in the short description
       if (I->CurrentItem->Owner->ID != 0)
 	 snprintf(S,End-S," [%lu %s",I->CurrentItem->Owner->ID,
@@ -203,7 +206,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	 snprintf(S,End-S," %s",I->CurrentItem->Owner->Mode);
 	 S += strlen(S);
       }
-            
+
       // Add the current progress
       if (Mode == Long)
 	 snprintf(S,End-S," %llu",I->CurrentSize);
@@ -213,7 +216,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	    snprintf(S,End-S," %sB",SizeToStr(I->CurrentSize).c_str());
       }
       S += strlen(S);
-      
+
       // Add the total size and percent
       if (I->TotalSize > 0 && I->CurrentItem->Owner->Complete == false)
       {
@@ -223,7 +226,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 	 else
 	    snprintf(S,End-S,"/%sB %.0f%%",SizeToStr(I->TotalSize).c_str(),
 		     (I->CurrentSize*100.0)/I->TotalSize);
-      }      
+      }
       S += strlen(S);
       snprintf(S,End-S,"]");
    }
@@ -231,26 +234,26 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
    // Show something..
    if (Shown == false)
       snprintf(S,End-S,_(" [Working]"));
-      
+
    /* Put in the ETA and cps meter, block off signals to prevent strangeness
       during resizing */
    sigset_t Sigs,OldSigs;
    sigemptyset(&Sigs);
    sigaddset(&Sigs,SIGWINCH);
    sigprocmask(SIG_BLOCK,&Sigs,&OldSigs);
-   
+
    if (CurrentCPS != 0)
-   {      
+   {
       char Tmp[300];
       unsigned long long ETA = (TotalBytes - CurrentBytes)/CurrentCPS;
       sprintf(Tmp," %sB/s %s",SizeToStr(CurrentCPS).c_str(),TimeToStr(ETA).c_str());
       unsigned int Len = strlen(Buffer);
       unsigned int LenT = strlen(Tmp);
       if (Len + LenT < ScreenWidth)
-      {	 
+      {
 	 memset(Buffer + Len,' ',ScreenWidth - Len);
 	 strcpy(Buffer + ScreenWidth - LenT,Tmp);
-      }      
+      }
    }
    Buffer[ScreenWidth] = 0;
    BlankLine[ScreenWidth] = 0;
@@ -268,7 +271,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
 
    memset(BlankLine,' ',strlen(Buffer));
    BlankLine[strlen(Buffer)] = 0;
-   
+
    Update = false;
 
    return true;

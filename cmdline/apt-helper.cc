@@ -7,6 +7,7 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/init.h>
@@ -18,22 +19,17 @@
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-output.h>
+#include <apt-private/private-download.h>
 #include <apt-private/private-cmndline.h>
 
-#include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-
-
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
-using namespace std;
 
-bool DoDownloadFile(CommandLine &CmdL)
+static bool DoDownloadFile(CommandLine &CmdL)
 {
    if (CmdL.FileSize() <= 2)
       return _error->Error(_("Must specify at least one pair url/filename"));
@@ -44,38 +40,28 @@ bool DoDownloadFile(CommandLine &CmdL)
    Fetcher.Setup(&Stat);
    std::string download_uri = CmdL.FileList[1];
    std::string targetfile = CmdL.FileList[2];
-   HashString hash;
+   std::string hash;
    if (CmdL.FileSize() > 3)
-      hash = HashString(CmdL.FileList[3]);
-   new pkgAcqFile(&Fetcher, download_uri, "", 0, "desc", "short-desc", 
+      hash = CmdL.FileList[3];
+   new pkgAcqFile(&Fetcher, download_uri, hash, 0, "desc", "short-desc", 
                   "dest-dir-ignored", targetfile);
    Fetcher.Run();
-   if (!FileExists(targetfile))
-   {
-      _error->Error(_("Download Failed"));
-      return false;
-   }
-   if(hash.empty() == false)
-   {
-      if(hash.VerifyFile(targetfile) == false)
-      {
-         _error->Error(_("HashSum Failed"));
-         Rename(targetfile, targetfile+".failed");
-         return false;
-      }
-   }
+   bool Failed = false;
+   if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true ||
+	 FileExists(targetfile) == false)
+      return _error->Error(_("Download Failed"));
    return true;
 }
 
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &)
 {
-   ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
+   ioprintf(std::cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
 
    if (_config->FindB("version") == true)
      return true;
 
-   cout << 
+   std::cout <<
     _("Usage: apt-helper [options] command\n"
       "       apt-helper [options] download-file uri target-path\n"
       "\n"

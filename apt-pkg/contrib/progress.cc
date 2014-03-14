@@ -14,6 +14,8 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
 
+#include <sys/time.h>
+#include <string>
 #include <iostream>
 #include <stdio.h>
 #include <cstring>
@@ -125,14 +127,14 @@ bool OpProgress::CheckChange(float Interval)
 // OpTextProgress::OpTextProgress - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-OpTextProgress::OpTextProgress(Configuration &Config) : 
-                               NoUpdate(false), NoDisplay(false), LastLen(0) 
+OpTextProgress::OpTextProgress(Configuration &Config) :
+                               NoUpdate(false), NoDisplay(false), LastLen(0)
 {
    if (Config.FindI("quiet",0) >= 1 || Config.FindB("quiet::NoUpdate", false) == true)
       NoUpdate = true;
    if (Config.FindI("quiet",0) >= 2)
       NoDisplay = true;
-};
+}
 									/*}}}*/
 // OpTextProgress::Done - Clean up the display				/*{{{*/
 // ---------------------------------------------------------------------
@@ -150,12 +152,12 @@ void OpTextProgress::Done()
       cout << endl;
       OldOp = string();
    }
-   
+
    if (NoUpdate == true && NoDisplay == false && OldOp.empty() == false)
    {
       OldOp = string();
-      cout << endl;   
-   }   
+      cout << endl;
+   }
 }
 									/*}}}*/
 // OpTextProgress::Update - Simple text spinner				/*{{{*/

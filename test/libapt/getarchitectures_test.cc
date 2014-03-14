@@ -1,13 +1,14 @@
+#include <config.h>
+
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 
-#include "assert.h"
 #include <string>
 #include <vector>
 
-#include <iostream>
+#include "assert.h"
 
-int main(int argc,char *argv[])
+int main()
 {
 	std::vector<std::string> vec;
 

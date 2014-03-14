@@ -10,41 +10,45 @@
 // Includes								/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/dpkgpm.h>
-#include <apt-pkg/error.h>
+#include <apt-pkg/cachefile.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/dpkgpm.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/install-progress.h>
+#include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/cachefile.h>
-#include <apt-pkg/packagemanager.h>
-#include <apt-pkg/install-progress.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
-#include <unistd.h>
-#include <stdlib.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <grp.h>
+#include <pty.h>
+#include <pwd.h>
+#include <signal.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
 #include <sys/select.h>
 #include <sys/stat.h>
-#include <sys/types.h>
+#include <sys/time.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include <errno.h>
-#include <string.h>
-#include <stdio.h>
-#include <string.h>
-#include <algorithm>
-#include <sstream>
-#include <map>
-#include <pwd.h>
-#include <grp.h>
-#include <iomanip>
-
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
-#include <pty.h>
-#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+#include <map>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1581,7 +1585,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    return true;
 }
 
-void SigINT(int sig) {
+void SigINT(int /*sig*/) {
    pkgPackageManager::SigINTStop = true;
 }
 									/*}}}*/

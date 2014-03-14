@@ -16,9 +16,11 @@
 #ifndef PKGLIB_ORDERLIST_H
 #define PKGLIB_ORDERLIST_H
 
-
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
+
+#include <string>
 
 class pkgDepCache;
 class pkgOrderList : protected pkgCache::Namespace
@@ -46,7 +48,7 @@ class pkgOrderList : protected pkgCache::Namespace
    bool Debug;
    
    // Main visit function
-   __deprecated bool VisitNode(PkgIterator Pkg) { return VisitNode(Pkg, "UNKNOWN"); };
+   APT_DEPRECATED bool VisitNode(PkgIterator Pkg) { return VisitNode(Pkg, "UNKNOWN"); };
    bool VisitNode(PkgIterator Pkg, char const* from);
    bool VisitDeps(DepFunc F,PkgIterator Pkg);
    bool VisitRDeps(DepFunc F,PkgIterator Pkg);
@@ -68,9 +70,9 @@ class pkgOrderList : protected pkgCache::Namespace
    
    // For pre sorting
    static pkgOrderList *Me;
-   static int OrderCompareA(const void *a, const void *b);
-   static int OrderCompareB(const void *a, const void *b);
-   int FileCmp(PkgIterator A,PkgIterator B);
+   static int OrderCompareA(const void *a, const void *b) APT_PURE;
+   static int OrderCompareB(const void *a, const void *b) APT_PURE;
+   int FileCmp(PkgIterator A,PkgIterator B) APT_PURE;
    
    public:
 
@@ -100,7 +102,7 @@ class pkgOrderList : protected pkgCache::Namespace
    inline void RmFlag(Package *Pkg,unsigned long F) {Flags[Pkg->ID] &= ~F;};
    // IsNow will return true if the Pkg has been not been either configured or unpacked
    inline bool IsNow(PkgIterator Pkg) {return (Flags[Pkg->ID] & (States & (~Removed))) == 0;};
-   bool IsMissing(PkgIterator Pkg);
+   bool IsMissing(PkgIterator Pkg) APT_PURE;
    void WipeFlags(unsigned long F);
    void SetFileList(std::string *FileList) {this->FileList = FileList;};
 

@@ -1,7 +1,7 @@
 #ifndef APT_PRIVATE_LIST_H
 #define APT_PRIVATE_LIST_H
 
-#include <apt-pkg/cmndline.h>
+class CommandLine;
 
 bool List(CommandLine &Cmd);
 

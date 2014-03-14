@@ -33,7 +33,15 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/versionmatch.h>
 
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+#include <string>
+#include <vector>
 #include <iostream>
 #include <sstream>
 
@@ -325,7 +333,7 @@ pkgCache::VerIterator pkgPolicy::GetMatch(pkgCache::PkgIterator const &Pkg)
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
+APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
 {
    if (Pins[Pkg->ID].Type != pkgVersionMatch::None)
    {
@@ -337,7 +345,7 @@ signed short pkgPolicy::GetPriority(pkgCache::PkgIterator const &Pkg)
    
    return 0;
 }
-signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
+APT_PURE signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
 {
    return PFPriority[File->ID];
 }
@@ -349,7 +357,7 @@ signed short pkgPolicy::GetPriority(pkgCache::PkgFileIterator const &File)
    all over the place rather than forcing a special format */
 class PreferenceSection : public pkgTagSection
 {
-   void TrimRecord(bool BeforeRecord, const char* &End)
+   void TrimRecord(bool /*BeforeRecord*/, const char* &End)
    {
       for (; Stop < End && (Stop[0] == '\n' || Stop[0] == '\r' || Stop[0] == '#'); Stop++)
 	 if (Stop[0] == '#')

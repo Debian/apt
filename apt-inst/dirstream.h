@@ -49,8 +49,8 @@ class pkgDirStream
    virtual bool DoItem(Item &Itm,int &Fd);
    virtual bool Fail(Item &Itm,int Fd);
    virtual bool FinishedFile(Item &Itm,int Fd);
-   virtual bool Process(Item &Itm,const unsigned char *Data,
-			unsigned long Size,unsigned long Pos) {return true;};
+   virtual bool Process(Item &/*Itm*/,const unsigned char * /*Data*/,
+			unsigned long /*Size*/,unsigned long /*Pos*/) {return true;};
       
    virtual ~pkgDirStream() {};   
 };

@@ -12,7 +12,10 @@
 #define APT_SERVER_H
 
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/acquire-method.h>
 
+#include <time.h>
+#include <iostream>
 #include <string>
 
 using std::cout;
@@ -32,7 +35,7 @@ struct ServerState
 
    // These are some statistics from the last parsed header lines
    unsigned long long Size;
-   signed long long StartPos;
+   unsigned long long StartPos;
    time_t Date;
    bool HaveContent;
    enum {Chunked,Stream,Closes} Encoding;
@@ -62,7 +65,7 @@ struct ServerState
       /** \brief IO error while retrieving */
       RUN_HEADERS_IO_ERROR,
       /** \brief Parse error after retrieving */
-      RUN_HEADERS_PARSE_ERROR,
+      RUN_HEADERS_PARSE_ERROR
    };
    /** \brief Get the headers before the data */
    RunHeadersResult RunHeaders(FileFd * const File);
@@ -126,7 +129,7 @@ class ServerMethod : public pkgAcqMethod
    static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
-   static void SigTerm(int);
+   static APT_NORETURN void SigTerm(int);
 
    virtual bool Configuration(std::string Message);
    virtual bool Flush() { return Server->Flush(File); };

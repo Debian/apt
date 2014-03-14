@@ -17,9 +17,10 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 
+#include <string>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <unistd.h>
+
 #include <apti18n.h>
 									/*}}}*/
 

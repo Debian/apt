@@ -11,6 +11,8 @@
 #define APT_RSH_H
 
 #include <string>
+#include <time.h>
+
 #include <apt-pkg/strutl.h>
 
 class Hashes;
@@ -62,7 +64,7 @@ class RSHMethod : public pkgAcqMethod
    static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
-   static void SigTerm(int);
+   static APT_NORETURN void SigTerm(int);
 
    public:
 

@@ -11,17 +11,20 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/acquire-method.h>
-#include <apt-pkg/strutl.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/aptconfiguration.h>
 
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
+#include <string>
+#include <vector>
+
 #include <apti18n.h>
 									/*}}}*/
 
@@ -58,17 +61,25 @@ bool GzipMethod::Fetch(FetchItem *Itm)
       return _error->Error("Extraction of file %s requires unknown compressor %s", Path.c_str(), Prog);
 
    // Open the source and destination files
-   FileFd From;
-   From.Open(Path, FileFd::ReadOnly, *compressor);
-
-   if(From.FileSize() == 0)
-      return _error->Error(_("Empty files can't be valid archives"));
-
-   FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
+   FileFd From, To;
+   if (_config->FindB("Method::Compress", false) == false)
+   {
+      From.Open(Path, FileFd::ReadOnly, *compressor);
+      if(From.FileSize() == 0)
+	 return _error->Error(_("Empty files can't be valid archives"));
+      To.Open(Itm->DestFile, FileFd::WriteAtomic);
+   }
+   else
+   {
+      From.Open(Path, FileFd::ReadOnly);
+      To.Open(Itm->DestFile, FileFd::WriteOnly | FileFd::Create | FileFd::Empty, *compressor);
+   }
    To.EraseOnFailure();
-   if (_error->PendingError() == true)
+
+   if (From.IsOpen() == false || From.Failed() == true ||
+	 To.IsOpen() == false || To.Failed() == true)
       return false;
-   
+
    // Read data from source, generate checksums and write
    Hashes Hash;
    bool Failed = false;
@@ -120,7 +131,7 @@ bool GzipMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main(int argc, char *argv[])
+int main(int, char *argv[])
 {
    setlocale(LC_ALL, "");
 

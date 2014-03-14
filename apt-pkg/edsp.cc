@@ -11,16 +11,25 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/strutl.h>
 
-#include <limits>
+#include <ctype.h>
+#include <stddef.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
 #include <stdio.h>
-
+#include <iostream>
+#include <vector>
+#include <limits>
 #include <string>
+#include <list>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -44,7 +53,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver, ++p)
       {
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 WriteScenarioDependency(Cache, output, Pkg, Ver);
+	 WriteScenarioDependency(output, Ver);
 	 fprintf(output, "\n");
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
@@ -64,7 +73,7 @@ bool EDSP::WriteLimitedScenario(pkgDepCache &Cache, FILE* output,
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver)
       {
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
-	 WriteScenarioLimitedDependency(Cache, output, Pkg, Ver, pkgset);
+	 WriteScenarioLimitedDependency(output, Ver, pkgset);
 	 fprintf(output, "\n");
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
@@ -111,8 +120,7 @@ void EDSP::WriteScenarioVersion(pkgDepCache &Cache, FILE* output, pkgCache::PkgI
 }
 									/*}}}*/
 // EDSP::WriteScenarioDependency					/*{{{*/
-void EDSP::WriteScenarioDependency(pkgDepCache &Cache, FILE* output, pkgCache::PkgIterator const &Pkg,
-				pkgCache::VerIterator const &Ver)
+void EDSP::WriteScenarioDependency( FILE* output, pkgCache::VerIterator const &Ver)
 {
    std::string dependencies[pkgCache::Dep::Enhances + 1];
    bool orGroup = false;
@@ -148,8 +156,7 @@ void EDSP::WriteScenarioDependency(pkgDepCache &Cache, FILE* output, pkgCache::P
 }
 									/*}}}*/
 // EDSP::WriteScenarioLimitedDependency					/*{{{*/
-void EDSP::WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
-					  pkgCache::PkgIterator const &Pkg,
+void EDSP::WriteScenarioLimitedDependency(FILE* output,
 					  pkgCache::VerIterator const &Ver,
 					  APT::PackageSet const &pkgset)
 {

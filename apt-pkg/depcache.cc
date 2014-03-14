@@ -11,20 +11,26 @@
 #include<config.h>
 
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
-#include <apt-pkg/algorithms.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
 
+#include <stdio.h>
+#include <string.h>
+#include <list>
+#include <string>
+#include <utility>
+#include <vector>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -222,7 +228,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
+bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{{*/
 {
    bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
    
@@ -868,7 +874,7 @@ bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
    return IsDeleteOkProtectInstallRequests(Pkg, rPurge, Depth, FromUser);
 }
 bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
-      bool const rPurge, unsigned long const Depth, bool const FromUser)
+      bool const /*rPurge*/, unsigned long const Depth, bool const FromUser)
 {
    if (FromUser == false && Pkg->CurrentVer == 0)
    {
@@ -889,7 +895,7 @@ bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
    and prevents mode changes for packages on hold for example.
    If you want to check Mode specific stuff you can use the virtual public
    Is<Mode>Ok methods instead */
-char const* PrintMode(char const mode)
+static char const* PrintMode(char const mode)
 {
 	 switch (mode)
 	 {
@@ -1297,7 +1303,7 @@ bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
    return IsInstallOkMultiArchSameVersionSynced(Pkg,AutoInst, Depth, FromUser);
 }
 bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
-      bool const AutoInst, unsigned long const Depth, bool const FromUser)
+      bool const /*AutoInst*/, unsigned long const Depth, bool const FromUser)
 {
    if (FromUser == true) // as always: user is always right
       return true;
@@ -1685,10 +1691,10 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
 }
 									/*}}}*/
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
-signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &Pkg)
-{ return 0; };
-signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &File)
-{ return 0; };
+APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &/*Pkg*/)
+{ return 0; }
+APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &/*File*/)
+{ return 0; }
 									/*}}}*/
 pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
 {

@@ -3,6 +3,8 @@
 
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgcache.h>
 
 
 // class CacheFile - Cover class for some dependency cache functions	/*{{{*/
@@ -11,7 +13,7 @@
 class CacheFile : public pkgCacheFile
 {
    static pkgCache *SortCache;
-   static int NameComp(const void *a,const void *b);
+   static int NameComp(const void *a,const void *b) APT_PURE;
    
    public:
    pkgCache::Package **List;

@@ -19,9 +19,9 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
 
+#include <string>
+#include <vector>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <dlfcn.h>
 
 #include <iostream>
 #include <apti18n.h>
@@ -62,7 +62,7 @@ CDROMMethod::CDROMMethod() : pkgAcqMethod("1.0",SingleInstance | LocalOnly |
                                           MountedByApt(false)
 {
    UdevCdroms.Dlopen();
-};
+}
 									/*}}}*/
 // CDROMMethod::Exit - Unmount the disc if necessary			/*{{{*/
 // ---------------------------------------------------------------------

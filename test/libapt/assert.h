@@ -1,11 +1,18 @@
 #include <iostream>
 #include <cstdlib>
 
+#include <apt-pkg/macros.h>
+
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wmissing-declarations"
+#endif
+
 #define equals(x,y) assertEquals(y, x, __LINE__)
 #define equalsNot(x,y) assertEqualsNot(y, x, __LINE__)
 
 template < typename X, typename Y >
-void OutputAssertEqual(X expect, char const* compare, Y get, unsigned long const &line) {
+APT_NORETURN void OutputAssertEqual(X expect, char const* compare, Y get, unsigned long const &line) {
 	std::cerr << "Test FAILED: »" << expect << "« " << compare << " »" << get << "« at line " << line << std::endl;
 	std::exit(EXIT_FAILURE);
 }
@@ -111,3 +118,7 @@ void dumpVector(X vec) {
 	     v != vec.end(); ++v)
 		std::cout << *v << std::endl;
 }
+
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif

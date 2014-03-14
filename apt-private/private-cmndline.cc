@@ -2,19 +2,17 @@
 #include <config.h>
 
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/configuration.h>
+
+#include <apt-private/private-cmndline.h>
 
 #include <vector>
-
 #include <stdarg.h>
 #include <string.h>
-
-#include "private-cmndline.h"
 
 #include <apti18n.h>
 									/*}}}*/
 
-bool strcmp_match_in_list(char const * const Cmd, ...)			/*{{{*/
+APT_SENTINEL static bool strcmp_match_in_list(char const * const Cmd, ...)		/*{{{*/
 {
    va_list args;
    bool found = false;
@@ -33,7 +31,7 @@ bool strcmp_match_in_list(char const * const Cmd, ...)			/*{{{*/
 									/*}}}*/
 #define addArg(w,x,y,z) Args.push_back(CommandLine::MakeArgs(w,x,y,z))
 #define CmdMatches(...) strcmp_match_in_list(Cmd, __VA_ARGS__, NULL)
-bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
+static bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("depends", "rdepends", "xvcg", "dotty"))
    {
@@ -82,7 +80,7 @@ bool addArgumentsAPTCache(std::vector<CommandLine::Args> &Args, char const * con
    return true;
 }
 									/*}}}*/
-bool addArgumentsAPTCDROM(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
+static bool addArgumentsAPTCDROM(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("add", "ident") == false)
       return false;
@@ -100,7 +98,7 @@ bool addArgumentsAPTCDROM(std::vector<CommandLine::Args> &Args, char const * con
    return true;
 }
 									/*}}}*/
-bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
+static bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("dump"))
    {
@@ -115,7 +113,7 @@ bool addArgumentsAPTConfig(std::vector<CommandLine::Args> &Args, char const * co
    return true;
 }
 									/*}}}*/
-bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
+static bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("install", "remove", "purge", "upgrade", "dist-upgrade",
 	    "dselect-upgrade", "autoremove"))
@@ -141,6 +139,7 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
    {
       addArg('b', "compile", "APT::Get::Compile", 0);
       addArg('b', "build", "APT::Get::Compile", 0);
+      addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
       addArg(0, "diff-only", "APT::Get::Diff-Only", 0);
       addArg(0, "debian-only", "APT::Get::Diff-Only", 0);
       addArg(0, "tar-only", "APT::Get::Tar-Only", 0);
@@ -149,6 +148,7 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
    else if (CmdMatches("build-dep"))
    {
       addArg('a', "host-architecture", "APT::Get::Host-Architecture", CommandLine::HasArg);
+      addArg('P', "build-profiles", "APT::Build-Profiles", CommandLine::HasArg);
       addArg(0, "purge", "APT::Get::Purge", 0);
       addArg(0, "solver", "APT::Solver", CommandLine::HasArg);
       // this has no effect *but* sbuild is using it (see LP: #1255806)
@@ -200,7 +200,7 @@ bool addArgumentsAPTGet(std::vector<CommandLine::Args> &Args, char const * const
    return true;
 }
 									/*}}}*/
-bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
+static bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("auto", "manual", "hold", "unhold", "showauto",
 	    "showmanual", "showhold", "showholds", "install",
@@ -220,7 +220,7 @@ bool addArgumentsAPTMark(std::vector<CommandLine::Args> &Args, char const * cons
    return true;
 }
 									/*}}}*/
-bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
+static bool addArgumentsAPT(std::vector<CommandLine::Args> &Args, char const * const Cmd)/*{{{*/
 {
    if (CmdMatches("list"))
    {

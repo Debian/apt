@@ -1,15 +1,22 @@
+#include <config.h>
+
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/extracttar.h>
+#include <apt-pkg/arfile.h>
+#include <apt-pkg/fileutl.h>
+
+#include <iostream>
+#include <string>
 
 class NullStream : public pkgDirStream
 {
    public:
-   virtual bool DoItem(Item &Itm,int &Fd) {return true;};
+   virtual bool DoItem(Item &/*Itm*/, int &/*Fd*/) {return true;};
 };
 
-bool Test(const char *File)
+static bool Test(const char *File)
 {
    FileFd Fd(File,FileFd::ReadOnly);
    debDebFile Deb(Fd);
@@ -33,6 +40,11 @@ bool Test(const char *File)
 
 int main(int argc, const char *argv[])
 {
+   if (argc != 2) {
+      std::cout << "One parameter expected - given " << argc << std::endl;
+      return 100;
+   }
+
    Test(argv[1]);
    _error->DumpErrors();
    return 0;

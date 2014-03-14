@@ -68,10 +68,14 @@
 #include <apt-pkg/orderlist.h>
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgcache.h>
 
+#include <stdlib.h>
+#include <string.h>
+#include <string>
 #include <iostream>
 									/*}}}*/
 

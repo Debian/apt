@@ -12,26 +12,26 @@
 #ifndef PKGLIB_DEBVERSION_H
 #define PKGLIB_DEBVERSION_H
 
-
-
 #include <apt-pkg/version.h>
-    
+
+#include <string>
+
 class debVersioningSystem : public pkgVersioningSystem
-{     
+{
    public:
-   
+
    static int CmpFragment(const char *A, const char *AEnd, const char *B,
-			  const char *BEnd);
-   
+			  const char *BEnd) APT_PURE;
+
    // Compare versions..
    virtual int DoCmpVersion(const char *A,const char *Aend,
-			  const char *B,const char *Bend);
-   virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer);
-   virtual int DoCmpReleaseVer(const char *A,const char *Aend,
+			  const char *B,const char *Bend) APT_PURE;
+   virtual bool CheckDep(const char *PkgVer,int Op,const char *DepVer) APT_PURE;
+   virtual APT_PURE int DoCmpReleaseVer(const char *A,const char *Aend,
 			     const char *B,const char *Bend)
    {
       return DoCmpVersion(A,Aend,B,Bend);
-   }   
+   }
    virtual std::string UpstreamVersion(const char *A);
 
    debVersioningSystem();

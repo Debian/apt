@@ -17,7 +17,11 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/acquire-method.h>
+#include <apt-pkg/strutl.h>
 
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -368,7 +372,7 @@ RSHMethod::RSHMethod() : pkgAcqMethod("1.0",SendConfig)
    signal(SIGINT,SigTerm);
    Server = 0;
    FailFd = -1;
-};
+}
 									/*}}}*/
 // RSHMethod::Configuration - Handle a configuration message		/*{{{*/
 // ---------------------------------------------------------------------
@@ -390,7 +394,7 @@ bool RSHMethod::Configuration(std::string Message)
 // RSHMethod::SigTerm - Clean up and timestamp the files on exit	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void RSHMethod::SigTerm(int sig)
+void RSHMethod::SigTerm(int)
 {
    if (FailFd == -1)
       _exit(100);
@@ -519,7 +523,7 @@ bool RSHMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main(int argc, const char *argv[])
+int main(int, const char *argv[])
 {
    setlocale(LC_ALL, "");
 
