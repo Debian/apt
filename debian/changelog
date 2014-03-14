@@ -1,3 +1,40 @@
+apt (0.9.16) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * add hashsum support in apt-helper download-file and 
+    add more tests
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (624t): Update Vietnamese translation
+
+  [ David Kalnischkies ]
+  * propagate a negative score point along breaks/conflicts
+  * check version before adding scores in resolver
+  * autogenerate makefile for vendor system
+  * add default and override handling for Cnf::FindVector
+  * support DEB_BUILD_PROFILES and -P for build profiles
+  * do not configure already unpacked packages needlessly (Closes: 740843)
+  * if mountpoint has a ".disk" directory it is mounted
+  * no error for non-existing mountpoints in MountCdrom
+  * apt-cdrom ident shouldn't be interactive (Closes: 740673)
+  * support very long mtab entries in mountpoint discovery
+  * msgstr with elipses need three dots
+  * cmdline parsing: apt-config is not apt-cdrom
+  * use a configurable list of versioned kernel packages
+  * support kfreebsd and hurd in the kernel hook
+  * add ".*-{kernel,modules}-$KERVER" matcher for hook
+  * ensure that a dot is a dot in the hook
+  * use liblzma-dev to provide xz/lzma support
+  * use the pretty fullname of a pkg as download desciption
+
+  [ Johannes Schauer ]
+  * implement BuildProfileSpec support as dpkg has in 1.17.2 (Closes: 661537)
+
+  [ Wojciech Górski ]
+  * fix polish --install-suggests text in apt-get manpage (Closes: 741056)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 14 Mar 2014 09:45:05 +0100
+
 apt (0.9.15.5) unstable; urgency=medium
 
   [ Michael Vogt ]
