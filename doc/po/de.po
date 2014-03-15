@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 0.9.14.2\n"
+"Project-Id-Version: apt-doc 0.9.16\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-03-14 09:13+0100\n"
-"PO-Revision-Date: 2014-01-26 15:26+0100\n"
+"PO-Revision-Date: 2014-03-15 12:26+0100\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
@@ -643,12 +643,6 @@ msgstr "Beschreibung"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:41
-#, fuzzy
-#| msgid ""
-#| "<command>apt-get</command> is the command-line tool for handling "
-#| "packages, and may be considered the user's \"back-end\" to other tools "
-#| "using the APT library.  Several \"front-end\" interfaces exist, such as "
-#| "&dselect;, &aptitude;, &synaptic; and &wajig;."
 msgid ""
 "<command>apt-get</command> is the command-line tool for handling packages, "
 "and may be considered the user's \"back-end\" to other tools using the APT "
@@ -658,7 +652,7 @@ msgstr ""
 "<command>apt-get</command> ist ein Befehlszeilenwerkzeug zur Handhabung von "
 "Paketen und könnte als »Backend« anderer Werkzeugen betrachtet werden, die "
 "die APT-Bibliothek benutzen. Es existieren mehrere "
-"Oberflächenschnittstellen, wie &dselect;, &aptitude;, &synaptic; und &wajig;."
+"Oberflächenschnittstellen, wie &aptitude;, &synaptic; und &wajig;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:46 apt-cache.8.xml:46 apt-cdrom.8.xml:53 apt-config.8.xml:46
@@ -984,7 +978,7 @@ msgid ""
 "option> option instead."
 msgstr ""
 "<literal>build-dep</literal> veranlasst apt-get, Pakete zu installieren/"
-"entfernen, um zu versuchen, die Bau-Abhängigkeiten eines Quellpakets zu "
+"entfernen, um zu versuchen, die Bauabhängigkeiten eines Quellpakets zu "
 "erfüllen. Standardmäßig werden die Abhängigkeiten erfüllt, um das Paket auf "
 "native Art zu bauen. Falls gewünscht, kann stattdessen eine "
 "Rechnerarchitektur mit der Option <option>--host-architecture</option> "
@@ -1010,15 +1004,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:217
-#, fuzzy
-#| msgid ""
-#| "<literal>clean</literal> clears out the local repository of retrieved "
-#| "package files. It removes everything but the lock file from "
-#| "<filename>&cachedir;/archives/</filename> and <filename>&cachedir;/"
-#| "archives/partial/</filename>. When APT is used as a &dselect; method, "
-#| "<literal>clean</literal> is run automatically.  Those who do not use "
-#| "dselect will likely want to run <literal>apt-get clean</literal> from "
-#| "time to time to free up disk space."
 msgid ""
 "<literal>clean</literal> clears out the local repository of retrieved "
 "package files. It removes everything but the lock file from "
@@ -1028,10 +1013,7 @@ msgstr ""
 "<literal>clean</literal> bereinigt das lokale Depot von heruntergeladenen "
 "Paketdateien. Es entfernt alles außer der Sperrdatei aus "
 "<filename>&cachedir;/archives/</filename> und <filename>&cachedir;/archives/"
-"partial/</filename>. Wenn APT als eine &dselect;-Methode benutzt wird, wird "
-"<literal>clean</literal> automatisch ausgeführt. Diejenigen, die Dselect "
-"nicht benutzen, werden <literal>apt-get clean</literal> wahrscheinlich von "
-"Zeit zu Zeit ausführen, um Plattenplatz freizugeben."
+"partial/</filename>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:224
@@ -1124,19 +1106,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:277
-#, fuzzy
-#| msgid ""
-#| "Fix; attempt to correct a system with broken dependencies in place. This "
-#| "option, when used with install/remove, can omit any packages to permit "
-#| "APT to deduce a likely solution. If packages are specified, these have to "
-#| "completely correct the problem. The option is sometimes necessary when "
-#| "running APT for the first time; APT itself does not allow broken package "
-#| "dependencies to exist on a system. It is possible that a system's "
-#| "dependency structure can be so corrupt as to require manual intervention "
-#| "(which usually means using &dselect; or <command>dpkg --remove</command> "
-#| "to eliminate some of the offending packages). Use of this option together "
-#| "with <option>-m</option> may produce an error in some situations.  "
-#| "Configuration Item: <literal>APT::Get::Fix-Broken</literal>."
 msgid ""
 "Fix; attempt to correct a system with broken dependencies in place. This "
 "option, when used with install/remove, can omit any packages to permit APT "
@@ -1158,11 +1127,11 @@ msgstr ""
 "Mal ausgeführt wird. APT selbst erlaubt es nicht, dass auf einen System "
 "beschädigte Paketabhängigkeiten existieren. Es ist möglich, dass eine "
 "Abhängigkeitsstruktur eines Systems so fehlerhaft ist, dass ein manuelles "
-"Eingreifen erforderlich ist (was normalerweise bedeutet, dass &dselect; oder "
-"<command>dpkg --remove</command> benutzt wird, um einige der fehlerhaften "
-"Pakete zu beseitigen). Wenn Sie die Option zusammen mit <option>-m</option> "
-"benutzen, könnte das in einigen Situationen zu Fehlern führen. "
-"Konfigurationselement: <literal>APT::Get::Fix-Broken</literal>."
+"Eingreifen erforderlich ist (was normalerweise bedeutet, dass <command>dpkg "
+"--remove</command> benutzt wird, um einige der fehlerhaften Pakete zu "
+"beseitigen). Wenn Sie die Option zusammen mit <option>-m</option> benutzen, "
+"könnte das in einigen Situationen zu Fehlern führen. Konfigurationselement: "
+"<literal>APT::Get::Fix-Broken</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:292
@@ -1310,14 +1279,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:370
-#, fuzzy
-#| msgid ""
-#| "This option controls the architecture packages are built for by "
-#| "<command>apt-get source --compile</command> and how cross-"
-#| "builddependencies are satisfied. By default is it not set which means "
-#| "that the host architecture is the same as the build architecture (which "
-#| "is defined by <literal>APT::Architecture</literal>).  Configuration Item: "
-#| "<literal>APT::Get::Host-Architecture</literal>"
 msgid ""
 "This option controls the architecture packages are built for by <command>apt-"
 "get source --compile</command> and how cross-builddependencies are "
@@ -1327,22 +1288,14 @@ msgid ""
 "Architecture</literal>."
 msgstr ""
 "Diese Option steuert, wie die Architekturpakete durch <command>apt-get "
-"source --compile</command> gebaut und wie Cross-Bau-Abhängigkeiten erfüllt "
+"source --compile</command> gebaut und wie Cross-Bauabhängigkeiten erfüllt "
 "werden. Standardmäßig ist sie nicht gesetze, was bedeutet, dass die "
-"Rechnerarchitektur die gleiche wie die Bau-Architektur ist (die durch "
+"Rechnerarchitektur die gleiche wie die Bauarchitektur ist (die durch "
 "<literal>APT::Architecture</literal>) definiert wird). "
-"Konfigurationselement: <literal>APT::Get::Host-Architecture</literal>"
+"Konfigurationselement: <literal>APT::Get::Host-Architecture</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:380
-#, fuzzy
-#| msgid ""
-#| "This option controls the architecture packages are built for by "
-#| "<command>apt-get source --compile</command> and how cross-"
-#| "builddependencies are satisfied. By default is it not set which means "
-#| "that the host architecture is the same as the build architecture (which "
-#| "is defined by <literal>APT::Architecture</literal>).  Configuration Item: "
-#| "<literal>APT::Get::Host-Architecture</literal>"
 msgid ""
 "This option controls the activated build profiles for which a source package "
 "is built by <command>apt-get source --compile</command> and how build "
@@ -1350,12 +1303,12 @@ msgid ""
 "than one build profile can be activated at a time by concatenating them with "
 "a comma.  Configuration Item: <literal>APT::Build-Profiles</literal>."
 msgstr ""
-"Diese Option steuert, wie die Architekturpakete durch <command>apt-get "
-"source --compile</command> gebaut und wie Cross-Bau-Abhängigkeiten erfüllt "
-"werden. Standardmäßig ist sie nicht gesetze, was bedeutet, dass die "
-"Rechnerarchitektur die gleiche wie die Bau-Architektur ist (die durch "
-"<literal>APT::Architecture</literal>) definiert wird). "
-"Konfigurationselement: <literal>APT::Get::Host-Architecture</literal>"
+"Diese Option steuert die aktivierten Bauprofile für die ein Quellpaket durch "
+"<command>apt-get source --compile</command> gebaut und wie "
+"Cross-Bauabhängigkeiten erfüllt werden. Standardmäßig ist kein Bauprofil "
+"aktiv. Ein weiteres Bauprofil kann gleichzeitig aktiviert werden, indem es "
+"durch ein Komma getrennt angehängt wird. Konfigurationselement: "
+"<literal>APT::Build-Profiles</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:391
@@ -1652,19 +1605,14 @@ msgstr "Siehe auch"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:559
-#, fuzzy
-#| msgid ""
-#| "&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
-#| "&apt-config;, &apt-secure;, The APT User's guide in &guidesdir;, &apt-"
-#| "preferences;, the APT Howto."
 msgid ""
 "&apt-cache;, &apt-cdrom;, &dpkg;, &sources-list;, &apt-conf;, &apt-config;, "
 "&apt-secure;, The APT User's guide in &guidesdir;, &apt-preferences;, the "
 "APT Howto."
 msgstr ""
-"&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
-"&apt-config;, &apt-secure;, die APT-Benutzeranleitung in &guidesdir;, &apt-"
-"preferences;, das APT-Howto."
+"&apt-cache;, &apt-cdrom;, &dpkg;, &sources-list;, &apt-conf;, &apt-config;, "
+"&apt-secure;, die APT-Benutzeranleitung in &guidesdir;, &apt-preferences;, "
+"das APT-Howto."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:564 apt-cache.8.xml:357 apt-mark.8.xml:137
@@ -3543,6 +3491,11 @@ msgid ""
 "is empty. The <envar>DEB_BUILD_PROFILES</envar> as used by &dpkg-"
 "buildpackage; overrides the list notation."
 msgstr ""
+"Liste aller Bauprofile ohne das Namensraum-Präfix "
+"»<literal>profile.</literal>«, die für die Auflösung der Bauabhängigkeiten "
+"aktiviert sind. Standardmäßig ist diese Liste leer. "
+"<envar>DEB_BUILD_PROFILES</envar> setzt so, wie es durch &dpkg-buildpackage; "
+"benutzt wird, die Listenschreibweise außer Kraft."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:190
@@ -8810,15 +8763,6 @@ msgstr ""
 
 #. type: <p></p>
 #: guide.sgml:163
-#, fuzzy
-#| msgid ""
-#| "<prgn>apt-get</prgn> has several command line options that are detailed "
-#| "in its man page, <manref section=\"8\" name=\"apt-get\">. The most useful "
-#| "option is <tt>-d</tt> which does not install the fetched files. If the "
-#| "system has to download a large number of package it would be undesired to "
-#| "start installing them in case something goes wrong. When <tt>-d</tt> is "
-#| "used the downloaded archives can be installed by simply running the "
-#| "command that caused them to be downloaded again without <tt>-d</tt>."
 msgid ""
 "<prgn>apt-get</prgn> has several command line options that are detailed in "
 "its man page, <manref name=\"apt-get\" section=\"8\">. The most useful "
@@ -8829,7 +8773,7 @@ msgid ""
 "caused them to be downloaded again without <tt>-d</tt>."
 msgstr ""
 "<prgn>apt-get</prgn> hat mehrere Befehlszeilenoptionen, die sich detailliert "
-"in dessen Handbuchseite, <manref section=\"8\" name=\"apt-get\"> finden. Die "
+"in dessen Handbuchseite, <manref name=\"apt-get\" section=\"8\"> finden. Die "
 "nützlichste Option ist <tt>-d</tt>, die die heruntergeladenen Dateien nicht "
 "installiert. Falls das System eine große Anzahl Pakete herunterladen soll, "
 "würde es nicht erwünscht sein, wenn die Installation in dem Fall gestartet "
