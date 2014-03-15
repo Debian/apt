@@ -1191,7 +1191,7 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
       d->openmode = Mode;
       d->compressor = compressor;
 #if defined HAVE_ZLIB || defined HAVE_BZ2 || defined HAVE_LZMA
-      if (AutoClose == false && compress_open != NULL)
+      if ((Flags & AutoClose) != AutoClose && compress_open != NULL)
       {
 	 // Need to duplicate fd here or gz/bz2 close for cleanup will close the fd as well
 	 int const internFd = dup(iFd);
