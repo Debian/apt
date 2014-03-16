@@ -2006,12 +2006,13 @@ bool FileFd::Close()
    {
       if ((Flags & Compressed) != Compressed && iFd > 0 && close(iFd) != 0)
 	 Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
-      if (d != NULL)
-      {
-	 Res &= d->CloseDown(FileName);
-	 delete d;
-	 d = NULL;
-      }
+   }
+
+   if (d != NULL)
+   {
+      Res &= d->CloseDown(FileName);
+      delete d;
+      d = NULL;
    }
 
    if ((Flags & Replace) == Replace) {
