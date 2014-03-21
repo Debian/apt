@@ -94,8 +94,12 @@
 
 #if APT_GCC_VERSION >= 0x0400
 	#define APT_SENTINEL	__attribute__((sentinel))
+	#define APT_PUBLIC __attribute__ ((visibility ("default")))
+	#define APT_HIDDEN __attribute__ ((visibility ("hidden")))
 #else
 	#define APT_SENTINEL
+	#define APT_PUBLIC
+	#define APT_HIDDEN
 #endif
 
 // cold functions are unlikely() to be called
