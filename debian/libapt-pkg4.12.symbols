@@ -184,9 +184,7 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"pkgRecords::Parser::~Parser()@Base" 0.8.0
  (c++)"pkgRecords::pkgRecords(pkgCache&)@Base" 0.8.0
  (c++)"pkgRecords::~pkgRecords()@Base" 0.8.0
- (c++)"pkgTagFile::Fill()@Base" 0.8.0
  (c++)"pkgTagFile::Step(pkgTagSection&)@Base" 0.8.0
- (c++)"pkgTagFile::Resize()@Base" 0.8.0
  (c++)"pkgTagFile::~pkgTagFile()@Base" 0.8.0
  (c++)"CdromDevice::~CdromDevice()@Base" 0.8.0
  (c++)"CommandLine::DispatchArg(CommandLine::Dispatch*, bool)@Base" 0.8.0
@@ -517,11 +515,8 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"pkgCacheGenerator::SelectFile(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, pkgIndexFile const&, unsigned long)@Base" 0.8.0
  (c++)"pkgCacheGenerator::FinishCache(OpProgress*)@Base" 0.8.0
  (c++)"pkgCacheGenerator::NewFileDesc(pkgCache::DescIterator&, pkgCacheGenerator::ListParser&)@Base" 0.8.0
- (c++)"pkgCacheGenerator::AllocateInMap(unsigned long const&)@Base" 0.8.0
  (c++)"pkgCacheGenerator::MakeStatusCache(pkgSourceList&, OpProgress*, MMap**, bool)@Base" 0.8.0
  (c++)"pkgCacheGenerator::WriteUniqString(char const*, unsigned int)@Base" 0.8.0
- (c++)"pkgCacheGenerator::WriteStringInMap(char const*)@Base" 0.8.0
- (c++)"pkgCacheGenerator::WriteStringInMap(char const*, unsigned long const&)@Base" 0.8.0
  (c++)"pkgCacheGenerator::CreateDynamicMMap(FileFd*, unsigned long)@Base" 0.8.0
  (c++)"pkgCacheGenerator::MergeFileProvides(pkgCacheGenerator::ListParser&)@Base" 0.8.0
  (c++)"pkgCacheGenerator::MakeOnlyStatusCache(OpProgress*, DynamicMMap**)@Base" 0.8.0
@@ -1126,24 +1121,24 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (arch=sh4|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __builtin_va_list&) const@Base" 0.8.15~exp1
  (arch=alpha|c++)"pkgAcqMethod::PrintStatus(char const*, char const*, __va_list_tag&) const@Base" 0.8.15~exp1
 ### architecture specific: va_list & size_t
- (arch=i386 hurd-i386 kfreebsd-i386|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@Base" 0.8.11.4
- (arch=armel armhf|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@Base" 0.8.11.4
- (arch=alpha|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag&, unsigned long&)@Base" 0.8.11.4
- (arch=powerpc powerpcspe x32|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned int&)@Base" 0.8.11.4
- (arch=amd64 kfreebsd-amd64 s390 s390x|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@Base" 0.8.11.4
- (arch=hppa mips mipsel sparc|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned int&)@Base" 0.8.11.4
- (arch=ia64 sparc64|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@Base" 0.8.11.4
- (arch=sh4|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, __builtin_va_list&, unsigned int&)@Base" 0.8.11.4
- (arch=ppc64|c++|optional=private)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned long&)@Base" 0.8.11.4
- (arch=i386 hurd-i386 kfreebsd-i386|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned int&)@Base" 0.8.11.4
- (arch=armel armhf|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned int&)@Base" 0.8.11.4
- (arch=alpha|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag&, int, unsigned long&)@Base" 0.8.11.4
- (arch=powerpc powerpcspe x32|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned int&)@Base" 0.8.11.4
- (arch=amd64 kfreebsd-amd64 s390 s390x|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@Base" 0.8.11.4
- (arch=hppa mips mipsel sparc|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned int&)@Base" 0.8.11.4
- (arch=ia64 sparc64|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@Base" 0.8.11.4 1
- (arch=sh4|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __builtin_va_list&, int, unsigned int&)@Base" 0.8.11.4
- (arch=ppc64|c++|optional=private)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned long&)@Base" 0.8.11.4
+ (arch=i386 hurd-i386 kfreebsd-i386|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned int&)@Base" 0.8.11.4
+ (arch=armel armhf|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, std::__va_list&, unsigned int&)@Base" 0.8.11.4
+ (arch=alpha|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag&, unsigned long&)@Base" 0.8.11.4
+ (arch=powerpc powerpcspe x32|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned int&)@Base" 0.8.11.4
+ (arch=amd64 kfreebsd-amd64 s390 s390x|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __va_list_tag (&) [1], unsigned long&)@Base" 0.8.11.4
+ (arch=hppa mips mipsel sparc|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned int&)@Base" 0.8.11.4
+ (arch=ia64 sparc64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, void*&, unsigned long&)@Base" 0.8.11.4
+ (arch=sh4|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, __builtin_va_list&, unsigned int&)@Base" 0.8.11.4
+ (arch=ppc64|c++)"GlobalError::Insert(GlobalError::MsgType, char const*, char*&, unsigned long&)@Base" 0.8.11.4
+ (arch=i386 hurd-i386 kfreebsd-i386|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned int&)@Base" 0.8.11.4
+ (arch=armel armhf|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, std::__va_list&, int, unsigned int&)@Base" 0.8.11.4
+ (arch=alpha|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag&, int, unsigned long&)@Base" 0.8.11.4
+ (arch=powerpc powerpcspe x32|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned int&)@Base" 0.8.11.4
+ (arch=amd64 kfreebsd-amd64 s390 s390x|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __va_list_tag (&) [1], int, unsigned long&)@Base" 0.8.11.4
+ (arch=hppa mips mipsel sparc|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned int&)@Base" 0.8.11.4
+ (arch=ia64 sparc64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, void*&, int, unsigned long&)@Base" 0.8.11.4 1
+ (arch=sh4|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, __builtin_va_list&, int, unsigned int&)@Base" 0.8.11.4
+ (arch=ppc64|c++)"GlobalError::InsertErrno(GlobalError::MsgType, char const*, char const*, char*&, int, unsigned long&)@Base" 0.8.11.4
 ### architecture specific: size_t
  (arch=i386 armel armhf hppa hurd-i386 kfreebsd-i386 mips mipsel powerpc powerpcspe sh4 sparc x32|c++)"_strtabexpand(char*, unsigned int)@Base" 0.8.0
  (arch=alpha amd64 ia64 kfreebsd-amd64 s390 s390x sparc64 ppc64|c++)"_strtabexpand(char*, unsigned long)@Base" 0.8.0
@@ -1196,7 +1191,7 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"APT::Configuration::getCompressorExtensions()@Base" 0.8.12
  (c++)"APT::Configuration::setDefaultConfigurationForCompressors()@Base" 0.8.12
  (c++)"pkgAcqMetaClearSig::Custom600Headers()@Base" 0.8.13
- (c++|optional=private)"debListParser::NewProvidesAllArch(pkgCache::VerIterator&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.13.2
+ (c++)"debListParser::NewProvidesAllArch(pkgCache::VerIterator&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.13.2
  (c++)"pkgDepCache::IsModeChangeOk(pkgDepCache::ModeList, pkgCache::PkgIterator const&, unsigned long, bool)@Base" 0.8.13.2
  (c++)"pkgCache::DepIterator::IsNegative() const@Base" 0.8.15~exp1
  (c++)"Configuration::CndSet(char const*, int)@Base" 0.8.15.3
@@ -1237,18 +1232,14 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"EDSP::ReadRequest(int, std::list<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::list<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, bool&, bool&, bool&)@Base" 0.8.16~exp2
  (c++)"EDSP::ApplyRequest(std::list<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, std::list<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, pkgDepCache&)@Base" 0.8.16~exp2
  (c++)"EDSP::ReadResponse(int, pkgDepCache&, OpProgress*)@Base" 0.8.16~exp2
- (c++)"EDSP::StringToBool(char const*, bool)@Base" 0.8.16~exp2
  (c++)"EDSP::WriteRequest(pkgDepCache&, _IO_FILE*, bool, bool, bool, OpProgress*)@Base" 0.8.16~exp2
  (c++)"EDSP::ExecuteSolver(char const*, int*, int*)@Base" 0.8.16~exp2
  (c++)"EDSP::WriteProgress(unsigned short, char const*, _IO_FILE*)@Base" 0.8.16~exp2
  (c++)"EDSP::WriteScenario(pkgDepCache&, _IO_FILE*, OpProgress*)@Base" 0.8.16~exp2
  (c++)"EDSP::WriteSolution(pkgDepCache&, _IO_FILE*)@Base" 0.8.16~exp2
  (c++)"EDSP::ResolveExternal(char const*, pkgDepCache&, bool, bool, bool, OpProgress*)@Base" 0.8.16~exp2
- (c++)"EDSP::WriteScenarioVersion(pkgDepCache&, _IO_FILE*, pkgCache::PkgIterator const&, pkgCache::VerIterator const&)@Base" 0.8.16~exp2
- (c++)"EDSP::WriteScenarioDependency(pkgDepCache&, _IO_FILE*, pkgCache::PkgIterator const&, pkgCache::VerIterator const&)@Base" 0.8.16~exp2
  (c++)"EDSP::DepMap@Base" 0.8.16~exp2
  (c++)"EDSP::PrioMap@Base" 0.8.16~exp2
- (c++)"EDSP::ReadLine(int, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&)@Base" 0.8.16~exp2
  (c++)"pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const&)@Base" 0.8.16~exp6
  (c++)"pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const&)@Base" 0.8.16~exp6
  (c++)"typeinfo for edspIFType@Base" 0.8.16~exp2
@@ -1385,7 +1376,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"SummationImplementation::AddFD(FileFd&, unsigned long long)@Base" 0.8.16~exp9
  (c++)"Hashes::AddFD(FileFd&, unsigned long long, bool, bool, bool, bool)@Base" 0.8.16~exp9
  (c++|optional=deprecated,previous-inline)"FileFd::gzFd()@Base" 0.8.0
- (c++|optional=private)"FileFd::OpenInternDescriptor(unsigned int, APT::Configuration::Compressor const&)@Base" 0.8.16~exp9
 ### CacheSet rework: making them real containers breaks bigtime the API (for the CacheSetHelper)
  (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::const_iterator::getPkg() const@Base" 0.8.16~exp9
  (c++)"APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::getConstructor() const@Base" 0.8.16~exp9
@@ -1425,7 +1415,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"APT::VersionContainerInterface::getInstalledVer(pkgCacheFile&, pkgCache::PkgIterator const&, APT::CacheSetHelper&)@Base" 0.8.16~exp9
  (c++)"APT::VersionContainerInterface::FromModifierCommandLine(unsigned short&, APT::VersionContainerInterface*, pkgCacheFile&, char const*, std::list<APT::VersionContainerInterface::Modifier, std::allocator<APT::VersionContainerInterface::Modifier> > const&, APT::CacheSetHelper&)@Base" 0.8.16~exp9
  (c++)"EDSP::WriteLimitedScenario(pkgDepCache&, _IO_FILE*, APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > > const&, OpProgress*)@Base" 0.8.16~exp9
- (c++)"EDSP::WriteScenarioLimitedDependency(pkgDepCache&, _IO_FILE*, pkgCache::PkgIterator const&, pkgCache::VerIterator const&, APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > > const&)@Base" 0.8.16~exp9
  (c++)"typeinfo for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::const_iterator@Base" 0.8.16~exp9
  (c++)"typeinfo for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >@Base" 0.8.16~exp9
  (c++)"typeinfo for APT::PackageContainer<std::list<pkgCache::PkgIterator, std::allocator<pkgCache::PkgIterator> > >::const_iterator@Base" 0.8.16~exp9
@@ -1537,11 +1526,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"pkgCache::DepIterator::IsIgnorable(pkgCache::PkgIterator const&) const@Base" 0.8.16~exp10
  (c++)"pkgCache::DepIterator::IsIgnorable(pkgCache::PrvIterator const&) const@Base" 0.8.16~exp10
  (c++)"FileFd::Write(int, void const*, unsigned long long)@Base" 0.8.16~exp14
- (c++|optional=private)"pkgCacheGenerator::MergeListGroup(pkgCacheGenerator::ListParser&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.16~exp7
- (c++|optional=private)"pkgCacheGenerator::MergeListPackage(pkgCacheGenerator::ListParser&, pkgCache::PkgIterator&)@Base" 0.8.16~exp7
- (c++|optional=private)"pkgCacheGenerator::MergeListVersion(pkgCacheGenerator::ListParser&, pkgCache::PkgIterator&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, pkgCache::VerIterator*&)@Base" 0.8.16~exp7
- (c++|optional=private)"pkgCacheGenerator::AddImplicitDepends(pkgCache::GrpIterator&, pkgCache::PkgIterator&, pkgCache::VerIterator&)@Base" 0.8.16~exp7
- (c++|optional=private)"pkgCacheGenerator::AddImplicitDepends(pkgCache::VerIterator&, pkgCache::PkgIterator&)@Base" 0.8.16~exp7
  (c++)"pkgTagSection::Exists(char const*)@Base" 0.9.7.9~exp1
  (c++)"_strrstrip(char*)@Base" 0.9.7.9~exp2
  (c++)"SplitClearSignedFile(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, FileFd*, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*, FileFd*)@Base" 0.9.7.9~exp2
@@ -1550,7 +1534,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"SigVerify::RunGPGV(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int const&)@Base" 0.9.7.9~exp2
  (c++)"Configuration::Dump(std::basic_ostream<char, std::char_traits<char> >&, char const*, char const*, bool)@Base" 0.9.3
  (c++)"AcquireUpdate(pkgAcquire&, int, bool, bool)@Base" 0.9.3
- (c++|optional=private)"pkgAcqMethod::Dequeue()@Base" 0.9.4
  (c++)"pkgCache::DepIterator::IsMultiArchImplicit() const@Base" 0.9.6
  (c++)"pkgCache::PrvIterator::IsMultiArchImplicit() const@Base" 0.9.6
  (c++)"APT::PackageContainerInterface::FromGroup(APT::PackageContainerInterface*, pkgCacheFile&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::CacheSetHelper&)@Base" 0.9.7
@@ -1565,8 +1548,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"pkgCache::DepIterator::IsSatisfied(pkgCache::VerIterator const&) const@Base" 0.9.8
  (c++)"pkgCacheGenerator::NewDepends(pkgCache::PkgIterator&, pkgCache::VerIterator&, unsigned int, unsigned int const&, unsigned int const&, unsigned int*&)@Base" 0.9.8
  (c++)"pkgCacheGenerator::NewVersion(pkgCache::VerIterator&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int, unsigned long, unsigned long)@Base" 0.9.8
- (c++)"FileFd::FileFdErrno(char const*, char const*, ...)@Base" 0.9.9
- (c++)"FileFd::FileFdError(char const*, ...)@Base" 0.9.9
  (c++)"operator<<(std::basic_ostream<char, std::char_traits<char> >&, GlobalError::Item)@Base" 0.9.9
  (c++)"pkgDepCache::IsDeleteOkProtectInstallRequests(pkgCache::PkgIterator const&, bool, unsigned long, bool)@Base" 0.9.9.1
  (c++)"pkgDepCache::IsInstallOkMultiArchSameVersionSynced(pkgCache::PkgIterator const&, bool, unsigned long, bool)@Base" 0.9.9.1
@@ -1579,7 +1560,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"APT::CacheFilter::PackageNameMatchesFnmatch::operator()(pkgCache::GrpIterator const&)@Base" 0.9.11
  (c++)"APT::CacheFilter::PackageNameMatchesFnmatch::operator()(pkgCache::PkgIterator const&)@Base" 0.9.11
  (c++)"APT::PackageContainerInterface::FromFnmatch(APT::PackageContainerInterface*, pkgCacheFile&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, APT::CacheSetHelper&)@Base" 0.9.11
- (c++|optional=private)"pkgTagFile::Resize(unsigned long long)@Base" 0.9.11
  (c++)"pkgTagSection::pkgTagSection()@Base" 0.9.11
  (c++)"strv_length(char const**)@Base" 0.9.11
  (c++)"StringSplit(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)@Base" 0.9.11.3
@@ -1591,7 +1571,6 @@ libapt-pkg.so.4.12 libapt-pkg4.12 #MINVER#
  (c++)"HashString::GetHashForFile(std::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@Base" 0.9.13.1
  (c++)"indexRecords::GetSuite() const@Base" 0.9.13.2
  (c++)"GetTempDir()@Base" 0.9.14.2
- (c++|optional=private)"pkgCdrom::MountAndIdentCDROM(Configuration&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, pkgCdromStatus*)@Base" 0.9.15.2
 ### demangle strangeness - buildd report it as MISSING and as new…
  (c++)"pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<IndexTarget*, std::allocator<IndexTarget*> > const*, indexRecords*)@Base" 0.8.0
 ### gcc-4.6 artefacts
