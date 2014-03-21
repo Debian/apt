@@ -1430,7 +1430,15 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	    errno = 0;
 	 }
 	 else
+	 {
 	    Res = Size - d->lzma->stream.avail_out;
+	    if (Res == 0)
+	    {
+	       // lzma run was okay, but produced no output…
+	       Res = -1;
+	       errno = EINTR;
+	    }
+	 }
       }
 #endif
       else
@@ -1439,7 +1447,12 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
       if (Res < 0)
       {
 	 if (errno == EINTR)
+	 {
+	    // trick the while-loop into running again
+	    Res = 1;
+	    errno = 0;
 	    continue;
+	 }
 	 if (false)
 	    /* dummy so that the rest can be 'else if's */;
 #ifdef HAVE_ZLIB
