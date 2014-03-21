@@ -5,14 +5,13 @@
 # Eugenia Franzoni, 2000
 # Hugh Hartmann, 2000-2012
 # Gabriele Stilli, 2012
-# Beatrice Torracca, 2012
-# Beatrice Torracca <beatricet@libero.it>, 2012.
+# Beatrice Torracca <beatricet@libero.it>, 2012, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-03-14 09:13+0100\n"
-"PO-Revision-Date: 2012-12-23 18:04+0200\n"
+"POT-Creation-Date: 2014-03-14 09:57+0100\n"
+"PO-Revision-Date: 2014-03-15 23:29+0200\n"
 "Last-Translator: Beatrice Torracca <beatricet@libero.it>\n"
 "Language-Team: Italian <debian-l10n-italian@lists.debian.org>\n"
 "Language: it\n"
@@ -692,7 +691,6 @@ msgstr "Descrizione"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:41
-#, fuzzy
 #| msgid ""
 #| "<command>apt-get</command> is the command-line tool for handling "
 #| "packages, and may be considered the user's \"back-end\" to other tools "
@@ -707,7 +705,7 @@ msgstr ""
 "<command>apt-get</command> è lo strumento a riga di comando per gestire "
 "pacchetti e può essere considerato il «backend» dell'utente per altri "
 "strumenti che usano la libreria APT. Esistono diversi «frontend» per "
-"interfaccia, come &dselect;, &aptitude;, &synaptic; e &wajig;."
+"interfaccia, come &aptitude;, &synaptic; e &wajig;."
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:46 apt-cache.8.xml:46 apt-cdrom.8.xml:53 apt-config.8.xml:46
@@ -1056,7 +1054,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:217
-#, fuzzy
 #| msgid ""
 #| "<literal>clean</literal> clears out the local repository of retrieved "
 #| "package files. It removes everything but the lock file from "
@@ -1072,12 +1069,9 @@ msgid ""
 "partial/</filename>."
 msgstr ""
 "<literal>clean</literal> ripulisce il repository locale dei file di "
-"pacchetto recuperati. Rimuove tutto da <filename>&cachedir;/archives/</"
-"filename> e <filename>&cachedir;/archives/partial/</filename>,  tranne il "
-"file di lock. Quando APT viene usato come metodo per &dselect;, "
-"<literal>clean</literal> viene eseguito automaticamente. Chi non usa dselect "
-"probabilmente è bene che usi <literal>apt-get clean</literal> di quando in "
-"quando per liberare spazio su disco."
+"pacchetto recuperati. Rimuove tutto da "
+"<filename>&cachedir;/archives/</filename> e "
+"<filename>&cachedir;/archives/partial/</filename>,  tranne il file di lock."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:224
@@ -1170,7 +1164,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:277
-#, fuzzy
 #| msgid ""
 #| "Fix; attempt to correct a system with broken dependencies in place. This "
 #| "option, when used with install/remove, can omit any packages to permit "
@@ -1204,10 +1197,10 @@ msgstr ""
 "volta; APT stesso non permette l'esistenza di pacchetti con dipendenze non "
 "soddisfatte in un sistema. È possibile che la struttura di dipendenze di un "
 "sistema sia corrotta a tal punto da richiedere un intervento manuale (il che "
-"di solito significa usare &dselect; o <command>dpkg --remove</command> per "
-"eliminare alcuni dei pacchetti che creano problemi). L'uso di questa opzione "
-"insieme a <option>-m</option> può in alcune situazioni produrre un errore. "
-"Voce di configurazione: <literal>APT::Get::Fix-Broken</literal>."
+"di solito significa usare <command>dpkg --remove</command> per eliminare "
+"alcuni dei pacchetti che creano problemi). L'uso di questa opzione insieme a "
+"<option>-m</option> può in alcune situazioni produrre un errore. Voce di "
+"configurazione: <literal>APT::Get::Fix-Broken</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:292
@@ -1353,7 +1346,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:370
-#, fuzzy
 #| msgid ""
 #| "This option controls the architecture packages are built for by "
 #| "<command>apt-get source --compile</command> and how cross-"
@@ -1378,7 +1370,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:380
-#, fuzzy
 #| msgid ""
 #| "This option controls the architecture packages are built for by "
 #| "<command>apt-get source --compile</command> and how cross-"
@@ -1393,12 +1384,12 @@ msgid ""
 "than one build profile can be activated at a time by concatenating them with "
 "a comma.  Configuration Item: <literal>APT::Build-Profiles</literal>."
 msgstr ""
-"Questa opzione controlla l'architettura per la quale <command>apt-get source "
-"--compile</command> compila i pacchetti e come le dipendenze di compilazione "
-"incrociata sono soddisfatte. In modo predefinito non è impostata, il che "
-"significa che l'architettura ospite è la stessa dell'architettura di "
-"compilazione (che è definita da <literal>APT::Architecture</literal>). Voce "
-"di configurazione: <literal>APT::Get::Host-Architecture</literal>."
+"Questa opzione controlla i profili di compilazione attivi per i quali "
+"<command>apt-get source --compile</command> compila un pacchetto sorgente e "
+"come le dipendenze di compilazione sono soddisfatte. In modo predefinito non "
+"è attivo alcun profilo di compilazione. Più profili di compilazione possono "
+"essere attivati contemporaneamente concatenandoli con una virgola. Voce di "
+"configurazione: <literal>APT::Build-Profiles</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:391
@@ -1433,6 +1424,13 @@ msgid ""
 "will never remove packages, only allow adding new ones.  Configuration Item: "
 "<literal>APT::Get::Upgrade-Allow-New</literal>."
 msgstr ""
+"Permette l'installazione di nuovi pacchetti quando usato insieme a "
+"<literal>upgrade</literal>. Ciò è utile se l'aggiornamento di un pacchetto "
+"installato richiede l'installazione di nuove dipendenze. Invece di bloccare "
+"il pacchetto <literal>upgrade</literal> aggiornerà il pacchetto e installerà "
+"le nuove dipendenze. Notare che <literal>upgrade</literal> con questa "
+"opzione non rimuoverà mai pacchetti, permetterà solo l'aggiunta di nuovi. "
+"Voce di configurazione: <literal>APT::Get::Upgrade-Allow-New</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:415
@@ -1658,6 +1656,12 @@ msgid ""
 "Item: <literal>DpkgPM::Progress</literal> and <literal>Dpkg::Progress-Fancy</"
 "literal>."
 msgstr ""
+"Mostra informazioni sul progresso facili da leggere nella finestra del "
+"terminale quando i pacchetti sono installati, aggiornati o rimossi. Per una "
+"versione analizzabile da macchina di questi dati, vedere README.progress-"
+"reporting nella directory della documentazione di apt. Voce di "
+"configurazione: <literal>DpkgPM::Progress</literal> e <literal>Dpkg"
+"::Progress-Fancy</literal>."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:548 apt-cache.8.xml:345 apt-key.8.xml:176 apt-mark.8.xml:127
@@ -1676,7 +1680,6 @@ msgstr "Vedere anche"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:559
-#, fuzzy
 #| msgid ""
 #| "&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
 #| "&apt-config;, &apt-secure;, The APT User's guide in &guidesdir;, &apt-"
@@ -1686,9 +1689,9 @@ msgid ""
 "&apt-secure;, The APT User's guide in &guidesdir;, &apt-preferences;, the "
 "APT Howto."
 msgstr ""
-"&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
-"&apt-config;, &apt-secure;, la Guida dell'utente di APT in &guidesdir;, &apt-"
-"preferences;, l'APT Howto."
+"&apt-cache;, &apt-cdrom;, &dpkg;, &sources-list;, &apt-conf;, &apt-config;, "
+"&apt-secure;, la guida dell'utente di APT in &guidesdir;, &apt-preferences;, "
+"l'APT Howto."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:564 apt-cache.8.xml:357 apt-mark.8.xml:137
@@ -2993,7 +2996,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:87
-#, fuzzy
 #| msgid ""
 #| "Mount point; specify the location to mount the CD-ROM. This mount point "
 #| "must be listed in <filename>/etc/fstab</filename> and properly "
@@ -3003,10 +3005,9 @@ msgid ""
 "<option>--cdrom</option> option.  Configuration Item: <literal>Acquire::"
 "cdrom::AutoDetect</literal>."
 msgstr ""
-"Punto di mount; specifica la posizione in cui montare il CD-ROM. Questo "
-"punto di mount deve essere elencato nel file <filename>/etc/fstab</filename> "
-"e configurato correttamente. Voce di configurazione: <literal>Acquire::"
-"cdrom::mount</literal>."
+"Non cercare di rilevare automaticamente il percorso del CD-ROM. Solitamente "
+"usato insieme all'opzione <option>--cdrom</option>. Voce di configurazione: "
+"<literal>Acquire::cdrom::AutoDetect</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:95
@@ -3558,6 +3559,11 @@ msgid ""
 "is empty. The <envar>DEB_BUILD_PROFILES</envar> as used by &dpkg-"
 "buildpackage; overrides the list notation."
 msgstr ""
+"Elenco dei profili di compilazione abilitati per la risoluzione delle "
+"dipendenze di compilazione, senza il prefisso dello spazio dei nomi "
+"«<literal>profile.</literal>». In modo predefinito questa lista è vuota. "
+"<envar>DEB_BUILD_PROFILES</envar>, come usata da &dpkg-buildpackage; ha la "
+"precedenza sulla notazione della lista."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:190
@@ -3987,7 +3993,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:400
-#, fuzzy
 #| msgid ""
 #| "The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</"
 #| "literal> which accepts integer values in kilobytes. The default value is "
@@ -4001,11 +4006,11 @@ msgid ""
 "bandwidth.  Note that this option implicitly disables downloading from "
 "multiple servers at the same time."
 msgstr ""
-"La quantità di banda utilizzata può essere limitata con <literal>Acquire::"
-"http::Dl-Limit</literal> che accetta valori interi in kilobyte. Il valore "
-"predefinito è 0 che disattiva il limite e cerca di usare tutta la banda "
-"disponibile (notare che questa opzione implicitamente disabilita lo "
-"scaricamento da più server contemporaneamente)."
+"La quantità di banda utilizzata può essere limitata con "
+"<literal>Acquire::http::Dl-Limit</literal> che accetta valori interi in "
+"kilobyte al secondo. Il valore predefinito è 0 che disattiva il limite e "
+"cerca di usare tutta la banda disponibile. Notare che questa opzione "
+"implicitamente disabilita lo scaricamento da più server contemporaneamente."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:407
@@ -4032,6 +4037,16 @@ msgid ""
 "takes precedence over the legacy option name <literal>ProxyAutoDetect</"
 "literal>."
 msgstr ""
+"<literal>Acquire::http::Proxy-Auto-Detect</literal> può essere usato per "
+"specificare un comando esterno per rilevare il proxy http da usare. Apt si "
+"aspetta che il comando produca in output il proxy sullo stdout nello stile "
+"<literal>http://proxy:porta/</literal>. Questo avrà la precedenza sul "
+"generico <literal>Acquire::http::Proxy</literal>, ma non su qualsiasi "
+"configurazione specifica di host proxy impostata con "
+"<literal>Acquire::http::Proxy::$HOST</literal>. Vedere il pacchetto &squid-"
+"deb-proxy-client; per un esempio di implementazione che usa avahi. Questa "
+"opzione ha la precedenza sull'opzione col nome obsoleto "
+"<literal>ProxyAutoDetect</literal>."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:429
@@ -4415,12 +4430,12 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:585
 msgid "When downloading, force to use only the IPv4 protocol."
-msgstr ""
+msgstr "Durante gli scaricamenti, forza l'uso del solo protocollo IPv4."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:591
 msgid "When downloading, force to use only the IPv6 protocol."
-msgstr ""
+msgstr "Durante gli scaricamenti, forza l'uso del solo protocollo IPv6."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:598
@@ -4659,7 +4674,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:712
-#, fuzzy
 #| msgid ""
 #| "This is a list of shell commands to run before invoking &dpkg;. Like "
 #| "<literal>options</literal> this must be specified in list notation. The "
@@ -4676,14 +4690,14 @@ msgid ""
 msgstr ""
 "Questa è una lista di comandi di shell da eseguire prima di invocare &dpkg;. "
 "Come <literal>options</literal> deve essere specificata con la notazione per "
-"le liste. I comandi sono invocati in ordine usando <filename>/bin/sh</"
-"filename>; se qualcuno dei comandi fallisce APT terminerà annullando. APT "
-"passa i nomi di file di tutti i file .deb che sta per installare ai comandi, "
-"uno per riga, sullo standard input."
+"le liste. I comandi sono invocati in ordine usando "
+"<filename>/bin/sh</filename>; se qualcuno dei comandi fallisce APT terminerà "
+"annullando. APT passa i nomi di file di tutti i file .deb che sta per "
+"installare ai comandi, uno per riga sul descrittore di file richiesto, "
+"usando in modo predefinito lo standard input."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:719
-#, fuzzy
 #| msgid ""
 #| "Version 2 of this protocol dumps more information, including the protocol "
 #| "version, the APT configuration space and the packages, files and versions "
@@ -4698,10 +4712,9 @@ msgid ""
 msgstr ""
 "La versione 2 di questo protocollo fa il dump di più informazioni, inclusi "
 "la versione del protocollo, lo spazio di configurazione di APT, e i "
-"pacchetti, file e versioni che vengono modificati. La versione 2 viene "
-"abilitata impostando <literal>DPkg::Tools::options::cmd::Version</literal> a "
-"2. <literal>cmd</literal> è un comando passato a <literal>Pre-Install-Pkgs</"
-"literal>."
+"pacchetti, file e versioni che vengono modificati. La versione 3 aggiunge "
+"l'architettura e il contrassegno <literal>MultiArch</literal> per ciascuna "
+"versione di cui viene fatto il dump."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:724
@@ -4713,6 +4726,12 @@ msgid ""
 "the requested version it will send the information in the highest version it "
 "has support for instead."
 msgstr ""
+"La versione del protocollo da usare per il comando "
+"<literal><replaceable>cmd</replaceable></literal> può essere scelta "
+"impostando in modo appropriato <literal>DPkg::Tools::options::<replaceable>cm"
+"d</replaceable>::Version</literal>, il cui valore predefinito è la versione "
+"1. Se APT non supporta la versione richiesta invierà invece l'informazione "
+"nella versione più alta per cui ha il supporto."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:731
@@ -4724,6 +4743,13 @@ msgid ""
 "looking for the environment variable <envar>APT_HOOK_INFO_FD</envar> which "
 "contains the number of the used file descriptor as a confirmation."
 msgstr ""
+"Il descrittore di file da usare per inviare le informazioni può essere "
+"richiesto con <literal>DPkg::Tools::options::<replaceable>cmd</replaceable>::"
+"InfoFD</literal> che è in modo predefinito <literal>0</literal> per lo "
+"standard input ed è disponibile a partire dalla versione 0.9.11. Il supporto "
+"per l'opzione può essere controllato guardando la variabile d'ambiente "
+"<envar>APT_HOOK_INFO_FD</envar> che contiene il numero del descrittore di "
+"file usato per conferma."
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:741
@@ -6784,10 +6810,10 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:82
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "deb [ options ] uri distribution [component1] [component2] [...]"
 msgid "deb [ options ] uri suite [component1] [component2] [...]"
-msgstr "deb [ opzioni ] uri distribuzione [componente1] [componente2] [...]"
+msgstr "deb [ opzioni ] uri suite [componente1] [componente2] [...]"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml:86
@@ -6811,6 +6837,23 @@ msgid ""
 "     [option1]: [option1-value]\n"
 "   "
 msgstr ""
+"     Types: deb deb-src\n"
+"     URIs: http://example.com\n"
+"     Suites: stable testing\n"
+"     Sections: componente1 componente2\n"
+"     Description: breve\n"
+"      lunga lunga lunga\n"
+"     [opzione1]: [valore-opzione1]\n"
+"\n"
+"     Types: deb\n"
+"     URIs: http://another.example.com\n"
+"     Suites: experimental\n"
+"     Sections: componente1 componente2\n"
+"     Enabled: no\n"
+"     Description:breve\n"
+"      lunga lunga lunga\n"
+"     [opzione1]: [valore-opzione1]\n"
+"   "
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:84
@@ -6818,10 +6861,11 @@ msgid ""
 "Alternatively a rfc822 style format is also supported: <placeholder type="
 "\"literallayout\" id=\"0\"/>"
 msgstr ""
+"In alternativa è gestito anche un formato in stile rfc822: <placeholder type="
+"\"literallayout\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:105
-#, fuzzy
 #| msgid ""
 #| "The URI for the <literal>deb</literal> type must specify the base of the "
 #| "Debian distribution, from which APT will find the information it needs.  "
@@ -6842,18 +6886,16 @@ msgid ""
 "<literal>component</literal> must be present."
 msgstr ""
 "L'URI per il tipo <literal>deb</literal> deve specificare la base della "
-"distribuzione Debian, dalla quale APT troverà le informazioni necessarie. "
-"<literal>distribuzione</literal> può specificare un percorso esatto, nel "
-"qual caso le componenti devono essere omesse e <literal>distribuzione</"
-"literal> deve terminare con una sbarra (<literal>/</literal>). Questo è "
-"utile nel caso in cui si è interessati solo a una particolare sottosezione "
-"dell'archivio indicata dall'URI. Se <literal>distribuzione</literal> non "
-"specifica un percorso esatto, deve essere presente almeno una "
-"<literal>componente</literal>."
+"distribuzione Debian, dalla quale APT troverà le informazioni di cui ha "
+"bisogno. <literal>suite</literal> può specificare un percorso esatto, nel "
+"qual caso le componenti devono essere omesse e <literal>suite</literal> deve "
+"terminare con una sbarra (<literal>/</literal>). Questo è utile nel caso in "
+"cui si è interessati solo a una particolare sottosezione dell'archivio "
+"indicata dall'URI. Se <literal>suite</literal> non specifica un percorso "
+"esatto, deve essere presente almeno una <literal>componente</literal>."
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:114
-#, fuzzy
 #| msgid ""
 #| "<literal>distribution</literal> may also contain a variable, <literal>"
 #| "$(ARCH)</literal> which expands to the Debian architecture (such as "
@@ -6871,8 +6913,8 @@ msgid ""
 "<literal>APT</literal> will automatically generate a URI with the current "
 "architecture otherwise."
 msgstr ""
-"<literal>distribuzione</literal> può anche contenere una variabile <literal>"
-"$(ARCH)</literal> che viene espansa nell'architettura Debian (come "
+"<literal>suite</literal> può anche contenere una variabile "
+"<literal>$(ARCH)</literal> che viene espansa nell'architettura Debian (come "
 "<literal>amd64</literal> o <literal>armel</literal>) usata nel sistema. Ciò "
 "consente di utilizzare file <filename>sources.list</filename> indipendenti "
 "dall'architettura. In generale questo è interessante solo quando viene "
@@ -6881,7 +6923,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:122
-#, fuzzy
 #| msgid ""
 #| "Since only one distribution can be specified per line it may be necessary "
 #| "to have multiple lines for the same URI, if a subset of all available "
@@ -6907,17 +6948,18 @@ msgid ""
 "users. APT also parallelizes connections to different hosts to more "
 "effectively deal with sites with low bandwidth."
 msgstr ""
-"Dato che può essere specificata solo una distribuzione per riga, può essere "
-"necessario avere più righe per lo stesso URI, se si desidera un sottoinsieme "
-"di tutte le distribuzioni o componenti disponibili in quella posizione. APT "
-"ordinerà la lista degli URI dopo aver generato internamente un insieme "
-"completo, e riunirà i riferimenti multipli, per esempio al medesimo host "
-"Internet in una singola connessione; in questo modo non stabilisce in modo "
-"inefficiente una connessione FTP per poi chiuderla, fare qualcos'altro e "
-"quindi ristabilire una connessione con il medesimo host. Questa funzionalità "
-"è utile per accedere a siti FTP molto impegnati con un limite al numero di "
-"accessi anonimi contemporanei. APT inoltre parallelizza le connessioni a "
-"host differenti, per gestire in maniera più efficiente i siti con scarsa "
+"Dato che, nel formato di sources.list in stile tradizionale, può essere "
+"specificata solo una distribuzione per riga, può essere necessario avere più "
+"righe per lo stesso URI, se si desidera un sottoinsieme di tutte le "
+"distribuzioni o componenti disponibili in quella posizione. APT ordinerà la "
+"lista degli URI dopo aver generato internamente un insieme completo, e "
+"riunirà i riferimenti multipli, per esempio al medesimo host Internet in una "
+"singola connessione; in questo modo non stabilisce in modo inefficiente una "
+"connessione FTP per poi chiuderla, fare qualcos'altro e quindi ristabilire "
+"una connessione con il medesimo host. Questa funzionalità è utile per "
+"accedere a siti FTP molto impegnati con un limite al numero di accessi "
+"anonimi contemporanei. APT inoltre parallelizza le connessioni a host "
+"differenti, per gestire in maniera più efficiente i siti con scarsa "
 "larghezza di banda."
 
 #. type: Content of: <refentry><refsect1><para>
@@ -6954,7 +6996,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:146
-#, fuzzy
 #| msgid ""
 #| "<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
 #| "replaceable>,…</literal> can be used to specify for which architectures "
@@ -6967,11 +7008,10 @@ msgid ""
 "<replaceable>arch2</replaceable>,…</literal> which can be used to add/remove "
 "architectures from the set which will be downloaded."
 msgstr ""
-"<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-"replaceable>,…</literal> può essere usato per specificare le architetture "
-"per le quali scaricare le informazioni. Se questa opzione non è impostata "
-"verranno scaricate tutte le architetture definite dall'opzione <literal>APT::"
-"Architectures</literal>."
+"<literal>arch+=<replaceable>arch1</replaceable>,<replaceable>arch2</replaceab"
+"le>,…</literal> e <literal>arch-=<replaceable>arch1</replaceable>,<replaceabl"
+"e>arch2</replaceable>,…</literal> possono essere usati per aggiungere e "
+"rimuovere architetture dall'insieme di quelle che verranno scaricate."
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:149
@@ -8796,7 +8836,6 @@ msgstr ""
 
 #. type: <p></p>
 #: guide.sgml:163
-#, fuzzy
 #| msgid ""
 #| "<prgn>apt-get</prgn> has several command line options that are detailed "
 #| "in its man page, <manref section=\"8\" name=\"apt-get\">. The most useful "
@@ -8807,7 +8846,7 @@ msgstr ""
 #| "command that caused them to be downloaded again without <tt>-d</tt>."
 msgid ""
 "<prgn>apt-get</prgn> has several command line options that are detailed in "
-"its man page, <manref name=\"apt-get\" section=\"8\">. The most useful "
+"its man page, <manref section=\"8\" name=\"apt-get\">. The most useful "
 "option is <tt>-d</tt> which does not install the fetched files. If the "
 "system has to download a large number of package it would be undesired to "
 "start installing them in case something goes wrong. When <tt>-d</tt> is used "
@@ -8815,13 +8854,13 @@ msgid ""
 "caused them to be downloaded again without <tt>-d</tt>."
 msgstr ""
 "<prgn>apt-get</prgn> ha diverse opzioni per la riga di comando, che sono "
-"documentate dettagliatamente nella sua pagina di manuale, <manref section="
-"\"8\" name=\"apt-get\">. L'opzione più utile è <tt>-d</tt>, che non installa "
-"i file scaricati; se il sistema deve scaricare un gran numero di pacchetti, "
+"documentate dettagliatamente nella sua pagina di manuale, <manref section=\""
+"8\" name=\"apt-get\">. L'opzione più utile è <tt>-d</tt>, che non installa i "
+"file scaricati; se il sistema deve scaricare un gran numero di pacchetti, "
 "non è bene iniziare ad installarli nel caso qualcosa dovesse andare storto. "
 "Quando si usa <tt>-d</tt>, gli archivi scaricati possono essere installati "
-"semplicemente eseguendo di nuovo lo stesso comando senza l'opzione <tt>-d</"
-"tt>."
+"semplicemente eseguendo di nuovo lo stesso comando senza l'opzione "
+"<tt>-d</tt>."
 
 #. type: <heading></heading>
 #: guide.sgml:168
