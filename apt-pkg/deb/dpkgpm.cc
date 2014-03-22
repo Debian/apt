@@ -1525,28 +1525,18 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 	 // here but keep the loop going and just report it as a error
 	 // for later
 	 bool const stopOnError = _config->FindB("Dpkg::StopOnError",true);
-	 
-	 if(stopOnError)
-	    RunScripts("DPkg::Post-Invoke");
 
-	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV) 
+	 if (WIFSIGNALED(Status) != 0 && WTERMSIG(Status) == SIGSEGV)
 	    strprintf(d->dpkg_error, "Sub-process %s received a segmentation fault.",Args[0]);
 	 else if (WIFEXITED(Status) != 0)
 	    strprintf(d->dpkg_error, "Sub-process %s returned an error code (%u)",Args[0],WEXITSTATUS(Status));
-	 else 
+	 else
 	    strprintf(d->dpkg_error, "Sub-process %s exited unexpectedly",Args[0]);
+	 _error->Error("%s", d->dpkg_error.c_str());
 
-	 if(d->dpkg_error.size() > 0)
-	    _error->Error("%s", d->dpkg_error.c_str());
-
-	 if(stopOnError) 
-	 {
-	    CloseLog();
-            StopPtyMagic();
-            d->progress->Stop();
-	    return false;
-	 }
-      }      
+	 if(stopOnError)
+	    break;
+      }
    }
    // dpkg is done at this point
    d->progress->Stop();
@@ -1577,7 +1567,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    }
 
    Cache.writeStateFile(NULL);
-   return true;
+   return d->dpkg_error.empty();
 }
 
 void SigINT(int sig) {
