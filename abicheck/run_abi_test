@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# ensure we are in the abibreak subdirectory
+cd "$(readlink -f $(dirname $0))"
+
 if [ ! -d ../build ]; then
 	echo "../build missing, did you run make?"
 	exit 1
@@ -10,7 +13,7 @@ if [ ! -x "$(which abi-compliance-checker 2>/dev/null )" ]; then
 	exit 1
 fi
 
-LIBPATH=$(find /usr/lib/ -type f  -name "libapt-*.so.*" -printf %p\\\\n)
+LIBPATH=$(find /usr/lib/$(dpkg-architecture -qDEB_HOST_MULTIARCH) -type f -regex '.*/libapt-\(pkg\|inst\)\.so\..*' -printf %p\\\\n)
 sed s#@installed_libapt@#$LIBPATH# apt_installed.xml.in > apt_installed.xml
 
 BUILDPATH=$(readlink -f ../build)
