@@ -124,8 +124,10 @@ bool debDebFile::ExtractTarMember(pkgDirStream &Stream,const char *Name)
    {
       std::string ext = std::string(Name) + ".{";
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
-	   c != compressor.end(); ++c)
-	 ext.append(c->Extension.substr(1));
+	   c != compressor.end(); ++c) {
+	 if (!c->Extension.empty())
+	    ext.append(c->Extension.substr(1));
+      }
       ext.append("}");
       return _error->Error(_("Internal error, could not locate member %s"), ext.c_str());
    }

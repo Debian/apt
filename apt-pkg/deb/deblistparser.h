@@ -15,6 +15,7 @@
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/md5.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/macros.h>
 
 #include <string>
 #include <vector>
@@ -102,7 +103,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    virtual ~debListParser() {};
 
    private:
-   unsigned char ParseMultiArch(bool const showErrors);
+   APT_HIDDEN unsigned char ParseMultiArch(bool const showErrors);
 };
 
 #endif

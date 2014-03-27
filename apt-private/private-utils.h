@@ -1,9 +1,11 @@
 #ifndef APT_PRIVATE_UTILS_H
 #define APT_PRIVATE_UTILS_H
 
-#include<string>
+#include <apt-pkg/macros.h>
 
-void DisplayFileInPager(std::string filename);
-void EditFileInSensibleEditor(std::string filename);
+#include <string>
+
+APT_PUBLIC void DisplayFileInPager(std::string filename);
+APT_PUBLIC void EditFileInSensibleEditor(std::string filename);
 
 #endif

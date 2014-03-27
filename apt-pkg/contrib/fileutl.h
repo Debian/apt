@@ -150,11 +150,11 @@ class FileFd
 
    private:
    FileFdPrivate* d;
-   bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
+   APT_HIDDEN bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
 
    // private helpers to set Fail flag and call _error->Error
-   bool FileFdErrno(const char* Function, const char* Description,...) APT_PRINTF(3) APT_COLD;
-   bool FileFdError(const char* Description,...) APT_PRINTF(2) APT_COLD;
+   APT_HIDDEN bool FileFdErrno(const char* Function, const char* Description,...) APT_PRINTF(3) APT_COLD;
+   APT_HIDDEN bool FileFdError(const char* Description,...) APT_PRINTF(2) APT_COLD;
 };
 
 bool RunScripts(const char *Cnf);

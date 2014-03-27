@@ -38,10 +38,10 @@ class pkgCacheGenerator							/*{{{*/
    private:
 
    pkgCache::StringItem *UniqHash[26];
-   map_ptrloc WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
-   map_ptrloc WriteStringInMap(const char *String);
-   map_ptrloc WriteStringInMap(const char *String, const unsigned long &Len);
-   map_ptrloc AllocateInMap(const unsigned long &size);
+   APT_HIDDEN map_ptrloc WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
+   APT_HIDDEN map_ptrloc WriteStringInMap(const char *String);
+   APT_HIDDEN map_ptrloc WriteStringInMap(const char *String, const unsigned long &Len);
+   APT_HIDDEN map_ptrloc AllocateInMap(const unsigned long &size);
 
    public:
    
@@ -117,14 +117,14 @@ class pkgCacheGenerator							/*{{{*/
    ~pkgCacheGenerator();
 
    private:
-   bool MergeListGroup(ListParser &List, std::string const &GrpName);
-   bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
-   bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
+   APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
+   APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
+   APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
 			 std::string const &Version, pkgCache::VerIterator* &OutVer);
 
-   bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
+   APT_HIDDEN bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
 			   pkgCache::VerIterator &V);
-   bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
+   APT_HIDDEN bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/

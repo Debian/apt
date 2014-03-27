@@ -1,9 +1,11 @@
 #ifndef APT_PRIVATE_LIST_H
 #define APT_PRIVATE_LIST_H
 
+#include <apt-pkg/macros.h>
+
 class CommandLine;
 
-bool List(CommandLine &Cmd);
+APT_PUBLIC bool List(CommandLine &Cmd);
 
 
 #endif
