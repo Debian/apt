@@ -123,3 +123,9 @@ SLIBS = -lapt-pkg
 SOURCE = sourcelist_test.cc
 include $(PROGRAM_H)
 
+# test install-progress
+PROGRAM = InstallProgress${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = install_progress_test.cc
+include $(PROGRAM_H)
+
