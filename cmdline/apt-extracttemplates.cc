@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "apt-extracttemplates.h"
 
@@ -239,23 +240,25 @@ static int ShowHelp(void)
 static string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
-	static int i;
 
         std::string tempdir = GetTempDir();
-	snprintf(fn, sizeof(fn), "%s/%s.%s.%u%d",
+	snprintf(fn, sizeof(fn), "%s/%s.%s.XXXXXX",
                  _config->Find("APT::ExtractTemplates::TempDir", 
                                tempdir.c_str()).c_str(),
-                 package, prefix, getpid(), i++);
+                 package, prefix);
 	FileFd f;
 	if (data == NULL)
 		data = "";
-
-	if (!f.Open(fn, FileFd::WriteTemp, 0600))
+        int fd = mkstemp(fn);
+        if (fd < 0) {
+		_error->Errno("ofstream::ofstream",_("Unable to mkstemp %s"),fn);
+                return string();
+        }
+	if (!f.OpenDescriptor(fd, FileFd::WriteOnly, FileFd::None, true))
 	{
 		_error->Errno("ofstream::ofstream",_("Unable to write to %s"),fn);
 		return string();
 	}
-
 	f.Write(data, strlen(data));
 	f.Close();
 	return fn;

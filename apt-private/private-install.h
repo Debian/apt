@@ -9,6 +9,9 @@
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/algorithms.h>
+#include <apt-pkg/macros.h>
+
+#include <apt-private/private-output.h>
 
 #include <stddef.h>
 #include <iosfwd>
@@ -17,7 +20,6 @@
 #include <string>
 #include <utility>
 
-#include "private-output.h"
 
 #include <apti18n.h>
 
@@ -26,13 +28,13 @@ class CommandLine;
 
 #define RAMFS_MAGIC     0x858458f6
 
-bool DoInstall(CommandLine &Cmd);
+APT_PUBLIC bool DoInstall(CommandLine &Cmd);
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
                                         std::map<unsigned short, APT::VersionSet> &verset);
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache);
 
-bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+APT_PUBLIC bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
                         bool Safety = true);
 
 

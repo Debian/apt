@@ -2,6 +2,7 @@
 #define APT_PRIVATE_OUTPUT_H
 
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/macros.h>
 
 #include <fstream>
 #include <string>
@@ -13,22 +14,24 @@ class pkgDepCache;
 class pkgRecords;
 
 
-extern std::ostream c0out;
-extern std::ostream c1out;
-extern std::ostream c2out;
-extern std::ofstream devnull;
-extern unsigned int ScreenWidth;
+APT_PUBLIC extern std::ostream c0out;
+APT_PUBLIC extern std::ostream c1out;
+APT_PUBLIC extern std::ostream c2out;
+APT_PUBLIC extern std::ofstream devnull;
+APT_PUBLIC extern unsigned int ScreenWidth;
 
-bool InitOutput();
-void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records, 
+APT_PUBLIC bool InitOutput();
+
+void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
                        pkgCache::VerIterator V, std::ostream &out,
                        bool include_summary=true);
 
 
 // helper to describe global state
-bool ShowList(std::ostream &out, std::string Title, std::string List,
+APT_PUBLIC void ShowBroken(std::ostream &out,CacheFile &Cache,bool Now);
+
+APT_PUBLIC bool ShowList(std::ostream &out, std::string Title, std::string List,
               std::string VersionsList);
-void ShowBroken(std::ostream &out,CacheFile &Cache,bool Now);
 void ShowNew(std::ostream &out,CacheFile &Cache);
 void ShowDel(std::ostream &out,CacheFile &Cache);
 void ShowKept(std::ostream &out,CacheFile &Cache);

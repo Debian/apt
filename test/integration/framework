@@ -118,6 +118,7 @@ apt() { runapt apt "$@"; }
 apthelper() { runapt "${APTHELPERBINDIR}/apt-helper" "$@"; }
 aptwebserver() { runapt "${APTWEBSERVERBINDIR}/aptwebserver" "$@"; }
 aptitude() { runapt aptitude "$@"; }
+aptextracttemplates() { runapt apt-extracttemplates "$@"; }
 
 dpkg() {
 	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"

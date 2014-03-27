@@ -20,6 +20,8 @@
 #ifndef PKGLIB_TAGFILE_H
 #define PKGLIB_TAGFILE_H
 
+#include <apt-pkg/macros.h>
+
 #include <stdio.h>
 
 #include <string>
@@ -93,9 +95,9 @@ class pkgTagFile
 {
    pkgTagFilePrivate *d;
 
-   bool Fill();
-   bool Resize();
-   bool Resize(unsigned long long const newSize);
+   APT_HIDDEN bool Fill();
+   APT_HIDDEN bool Resize();
+   APT_HIDDEN bool Resize(unsigned long long const newSize);
 
    public:
 

@@ -506,6 +506,8 @@ class pkgDepCache : protected pkgCache::Namespace
    // methods call by IsInstallOk
    bool IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
 	 bool const AutoInst, unsigned long const Depth, bool const FromUser);
+   bool IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator const &Pkg,
+      bool const AutoInst, unsigned long const Depth, bool const FromUser);
 
    // methods call by IsDeleteOk
    bool IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
