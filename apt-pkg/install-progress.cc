@@ -338,8 +338,12 @@ bool PackageManagerFancy::StatusChanged(std::string PackageName,
    static std::string save_cursor = "\033[s";
    static std::string restore_cursor = "\033[u";
 
-   static std::string set_bg_color = "\033[42m"; // green
-   static std::string set_fg_color = "\033[30m"; // black
+   // green
+   static std::string set_bg_color = DeQuoteString(
+      _config->Find("Dpkg::Progress-Fancy::Progress-fg", "%1b[42m"));
+   // black
+   static std::string set_fg_color = DeQuoteString(
+      _config->Find("Dpkg::Progress-Fancy::Progress-bg", "%1b[30m"));
 
    static std::string restore_bg =  "\033[49m";
    static std::string restore_fg = "\033[39m";
