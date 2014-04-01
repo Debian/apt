@@ -1,0 +1,55 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'foo-driver' 'amd64' '1' 'Depends: libfoo (= 1)
+Recommends: libgl1-foo-glx (= 1)
+Breaks: libgl1-foo-glx (<< 1), libgl1-foo-glx (>> 1)'
+insertinstalledpackage 'libgl1-foo-glx' 'amd64,i386' '1' 'Depends: libfoo (= 1)
+Multi-Arch: same'
+insertinstalledpackage 'libfoo' 'amd64,i386' '1' 'Multi-Arch: same'
+
+buildsimplenativepackage 'foo-driver' 'amd64' '2' 'stable' 'Depends: libfoo (= 2)
+Recommends: libgl1-foo-glx (= 2)
+Breaks: libgl1-foo-glx (<< 2), libgl1-foo-glx (>> 2)'
+buildsimplenativepackage 'libgl1-foo-glx' 'amd64,i386' '2' 'stable' 'Depends: libfoo (= 2)
+Multi-Arch: same'
+buildsimplenativepackage 'libfoo' 'amd64,i386' '2' 'stable' 'Multi-Arch: same'
+
+setupaptarchive
+
+testequalor2 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  foo-driver libfoo libfoo:i386 libgl1-foo-glx libgl1-foo-glx:i386
+5 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libgl1-foo-glx [1] (2 stable [amd64]) [libgl1-foo-glx:amd64 on libgl1-foo-glx:i386] [libgl1-foo-glx:i386 on libgl1-foo-glx:amd64] [foo-driver:amd64 on libgl1-foo-glx:amd64] [libgl1-foo-glx:i386 foo-driver:amd64 ]
+Inst libgl1-foo-glx:i386 [1] (2 stable [i386]) [foo-driver:amd64 on libgl1-foo-glx:amd64] [foo-driver:amd64 on libgl1-foo-glx:i386] [foo-driver:amd64 ]
+Inst foo-driver [1] (2 stable [amd64]) []
+Inst libfoo:i386 [1] (2 stable [i386]) [libfoo:amd64 on libfoo:i386] [libfoo:i386 on libfoo:amd64] [libfoo:amd64 ]
+Inst libfoo [1] (2 stable [amd64])
+Conf libfoo:i386 (2 stable [i386])
+Conf libfoo (2 stable [amd64])
+Conf libgl1-foo-glx:i386 (2 stable [i386])
+Conf libgl1-foo-glx (2 stable [amd64])
+Conf foo-driver (2 stable [amd64])' 'Reading package lists...
+Building dependency tree...
+The following packages will be upgraded:
+  foo-driver libfoo libfoo:i386 libgl1-foo-glx libgl1-foo-glx:i386
+5 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libgl1-foo-glx [1] (2 stable [amd64]) [foo-driver:amd64 on libgl1-foo-glx:amd64] [libgl1-foo-glx:amd64 on libgl1-foo-glx:i386] [libgl1-foo-glx:i386 on libgl1-foo-glx:amd64] [foo-driver:amd64 libgl1-foo-glx:i386 ]
+Inst libgl1-foo-glx:i386 [1] (2 stable [i386]) [foo-driver:amd64 on libgl1-foo-glx:amd64] [foo-driver:amd64 on libgl1-foo-glx:i386] [foo-driver:amd64 ]
+Inst foo-driver [1] (2 stable [amd64]) []
+Inst libfoo:i386 [1] (2 stable [i386]) [libfoo:amd64 on libfoo:i386] [libfoo:i386 on libfoo:amd64] [libfoo:amd64 ]
+Inst libfoo [1] (2 stable [amd64])
+Conf libfoo:i386 (2 stable [i386])
+Conf libfoo (2 stable [amd64])
+Conf libgl1-foo-glx:i386 (2 stable [i386])
+Conf libgl1-foo-glx (2 stable [amd64])
+Conf foo-driver (2 stable [amd64])' aptget dist-upgrade -s
+
+testsuccess aptget dist-upgrade -y -o Debug::pkgPackageManager=1 -o Debug::pkgOrderList=1

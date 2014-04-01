@@ -1,0 +1,144 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unversioned' 'libdb-dev' 'amd64' '5.3.0' 'Depends: libdb5.3-dev
+Conflicts: libdb5.1-dev'
+insertpackage 'unversioned' 'libdb5.1-dev' 'amd64' '5.1.29-7'
+insertpackage 'unversioned' 'libdb5.3-dev' 'amd64' '5.3.28-3' 'Conflicts: libdb5.1-dev'
+
+insertpackage 'unversioned' 'foo' 'amd64' '1'
+insertpackage 'unversioned' 'bar' 'amd64' '1'
+insertpackage 'unversioned' 'foo' 'amd64' '2' 'Conflicts: bar'
+insertpackage 'unversioned' 'bar' 'amd64' '2' 'Conflicts: foo'
+insertpackage 'unversioned' 'baz' 'amd64' '2' 'Depends: bar | foo'
+
+insertpackage 'versioned' 'libdb-dev' 'amd64' '5.3.0' 'Depends: libdb5.3-dev
+Conflicts: libdb5.1-dev (<< 5.2)'
+insertpackage 'versioned' 'libdb5.3-dev' 'amd64' '5.3.28-3' 'Conflicts: libdb5.1-dev (<< 5.2)'
+
+insertpackage 'versioned' 'foo' 'amd64' '2' 'Conflicts: bar (<= 2)'
+insertpackage 'versioned' 'bar' 'amd64' '2' 'Conflicts: foo (<= 2)'
+insertpackage 'versioned' 'baz' 'amd64' '2' 'Depends: bar (>= 2) | foo (>= 2)'
+
+insertpackage 'multipleno' 'foo' 'amd64' '2.1' 'Conflicts: bar (<= 3)'
+insertpackage 'multipleno' 'bar' 'amd64' '2.1' 'Conflicts: foo (<= 3), foo (<= 1)'
+
+insertpackage 'multipleyes' 'foo' 'amd64' '2.2' 'Conflicts: bar (<= 3)'
+# having foo multiple times as conflict is a non-advisable hack in general
+insertpackage 'multipleyes' 'bar' 'amd64' '2.2' 'Conflicts: foo (<= 3), foo (<= 3)'
+
+cp rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status-backup
+setupaptarchive
+
+insertinstalledpackage 'libdb-dev' 'amd64' '5.1.7' 'Depends: libdb5.1-dev'
+insertinstalledpackage 'libdb5.1-dev' 'amd64' '5.1.29-7'
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libdb5.1-dev
+The following NEW packages will be installed:
+  libdb5.3-dev
+The following packages will be upgraded:
+  libdb-dev
+1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libdb5.1-dev [5.1.29-7] [libdb-dev:amd64 ]
+Inst libdb-dev [5.1.7] (5.3.0 unversioned [amd64]) []
+Inst libdb5.3-dev (5.3.28-3 unversioned [amd64])
+Conf libdb5.3-dev (5.3.28-3 unversioned [amd64])
+Conf libdb-dev (5.3.0 unversioned [amd64])' aptget dist-upgrade -st unversioned
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  libdb5.1-dev
+The following NEW packages will be installed:
+  libdb5.3-dev
+The following packages will be upgraded:
+  libdb-dev
+1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv libdb5.1-dev [5.1.29-7] [libdb-dev:amd64 ]
+Inst libdb-dev [5.1.7] (5.3.0 versioned [amd64]) []
+Inst libdb5.3-dev (5.3.28-3 versioned [amd64])
+Conf libdb5.3-dev (5.3.28-3 versioned [amd64])
+Conf libdb-dev (5.3.0 versioned [amd64])' aptget dist-upgrade -st versioned
+
+cp -f rootdir/var/lib/dpkg/status-backup rootdir/var/lib/dpkg/status
+insertinstalledpackage 'foo' 'amd64' '1'
+insertinstalledpackage 'bar' 'amd64' '1'
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  bar foo
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.' aptget dist-upgrade -st unversioned
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  bar foo
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.' aptget dist-upgrade -st versioned
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages have been kept back:
+  bar foo
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.' aptget dist-upgrade -st multipleno
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  foo
+The following packages will be upgraded:
+  bar
+1 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv foo [1]
+Inst bar [1] (2.2 multipleyes [amd64])
+Conf bar (2.2 multipleyes [amd64])' aptget dist-upgrade -st multipleyes
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  baz
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst baz (2 unversioned [amd64])
+Conf baz (2 unversioned [amd64])' aptget install baz -st unversioned
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following packages will be REMOVED:
+  bar
+The following NEW packages will be installed:
+  baz
+The following packages will be upgraded:
+  foo
+1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv bar [1]
+Inst foo [1] (2 versioned [amd64])
+Inst baz (2 versioned [amd64])
+Conf foo (2 versioned [amd64])
+Conf baz (2 versioned [amd64])' aptget install baz -st versioned
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  baz
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst baz (2 unversioned [amd64])
+Conf baz (2 unversioned [amd64])' aptget install baz -st unversioned
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  foo
+The following packages will be REMOVED:
+  bar
+The following NEW packages will be installed:
+  baz
+The following packages will be upgraded:
+  foo
+1 upgraded, 1 newly installed, 1 to remove and 0 not upgraded.
+Remv bar [1]
+Inst foo [1] (2 versioned [amd64])
+Inst baz (2 versioned [amd64])
+Conf foo (2 versioned [amd64])
+Conf baz (2 versioned [amd64])' aptget install baz -st versioned

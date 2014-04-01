@@ -16,22 +16,21 @@
    
    ##################################################################### */
 									/*}}}*/
-#include <apt-pkg/macros.h>
+#include <config.h>
+
 #include <apt-pkg/error.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/fileutl.h>
-#include <iostream>
-#include <fstream>
 
+#include <fstream>
+#include <string>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 
 using namespace std;
 
-bool callDPkg(const char *val, const char *ref, const char &op) {
+static bool callDPkg(const char *val, const char *ref, const char &op) {
    pid_t Process = ExecFork();
    if (Process == 0)
    {
@@ -50,7 +49,7 @@ bool callDPkg(const char *val, const char *ref, const char &op) {
    return WIFEXITED(Ret) == true && WEXITSTATUS(Ret) == 0;
 }
 
-void assertVersion(int const &CurLine, string const &A, string const &B, int const &Expected) {
+static void assertVersion(int const &CurLine, string const &A, string const &B, int const &Expected) {
    int Res = debVS.CmpVersion(A.c_str(), B.c_str());
    bool const dpkg = callDPkg(A.c_str(),B.c_str(), Expected);
    Res = (Res < 0) ? -1 : ( (Res > 0) ? 1 : Res);
@@ -61,7 +60,7 @@ void assertVersion(int const &CurLine, string const &A, string const &B, int con
       _error->Error("DPkg differ with line: %u. '%s' '%s' '%s' == false",CurLine,A.c_str(),((Expected == 1) ? "<<" : ( (Expected == 0) ? "=" : ">>")),B.c_str());
 }
 
-bool RunTest(const char *File)
+static bool RunTest(const char *File)
 {
    if (FileExists(File) == false)
       return _error->Error("Versiontestfile %s doesn't exist!", File);

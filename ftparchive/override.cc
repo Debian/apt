@@ -16,6 +16,9 @@
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <utility>
 
 #include "override.h"
 
@@ -129,7 +132,7 @@ bool Override::ReadOverride(string const &File,bool const &Source)
 // Override::ReadExtraOverride - Read the extra override file		/*{{{*/
 // ---------------------------------------------------------------------
 /* This parses the extra override file and reads it into the map */
-bool Override::ReadExtraOverride(string const &File,bool const &Source)
+bool Override::ReadExtraOverride(string const &File,bool const &/*Source*/)
 {
    if (File.empty() == true)
       return true;
@@ -201,7 +204,7 @@ bool Override::ReadExtraOverride(string const &File,bool const &Source)
 }
 									/*}}}*/
 
-// Override::GetItem - Get a architecture specific item 	/*{{{*/
+// Override::GetItem - Get a architecture specific item			/*{{{*/
 // ---------------------------------------------------------------------
 /* Returns a override item for the given package and the given architecture.
  * Treats "all" special
@@ -232,10 +235,10 @@ Override::Item* Override::GetItem(string const &Package, string const &Architect
          {
 	    result->FieldOverride[foI->first] = foI->second;
 	 }
-      } 
-   } 
+      }
+   }
    return result;
-};
+}
 
 
 // Override::Item::SwapMaint - Swap the maintainer field if necessary	/*{{{*/

@@ -23,7 +23,11 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/strutl.h>
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -42,6 +46,7 @@
 #include "rfc2553emu.h"
 #include "connect.h"
 #include "ftp.h"
+
 #include <apti18n.h>
 									/*}}}*/
 
@@ -56,9 +61,9 @@ struct AFMap
 };
 
 #ifndef AF_INET6
-struct AFMap AFMap[] = {{AF_INET,1},{}};
+struct AFMap AFMap[] = {{AF_INET,1},{0, 0}};
 #else
-struct AFMap AFMap[] = {{AF_INET,1},{AF_INET6,2},{}};
+struct AFMap AFMap[] = {{AF_INET,1},{AF_INET6,2},{0, 0}};
 #endif
 
 unsigned long TimeOut = 120;
@@ -1098,7 +1103,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
 }
 									/*}}}*/
 
-int main(int argc,const char *argv[])
+int main(int, const char *argv[])
 { 
    setlocale(LC_ALL, "");
 

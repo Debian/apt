@@ -20,6 +20,8 @@
 #ifndef PKGLIB_TAGFILE_H
 #define PKGLIB_TAGFILE_H
 
+#include <apt-pkg/macros.h>
+
 #include <stdio.h>
 
 #include <string>
@@ -65,7 +67,7 @@ class pkgTagSection
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
-   bool static const FindFlag(unsigned long &Flags, unsigned long Flag,
+   bool static FindFlag(unsigned long &Flags, unsigned long Flag,
 				const char* Start, const char* Stop);
    bool Scan(const char *Start,unsigned long MaxLength);
    inline unsigned long size() const {return Stop - Section;};
@@ -93,9 +95,9 @@ class pkgTagFile
 {
    pkgTagFilePrivate *d;
 
-   bool Fill();
-   bool Resize();
-   bool Resize(unsigned long long const newSize);
+   APT_HIDDEN bool Fill();
+   APT_HIDDEN bool Resize();
+   APT_HIDDEN bool Resize(unsigned long long const newSize);
 
    public:
 

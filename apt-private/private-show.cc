@@ -1,29 +1,32 @@
 // Includes								/*{{{*/
-#include <apt-pkg/error.h>
+#include <config.h>
+
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/strutl.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/algorithms.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/indexfile.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+
+#include <apt-private/private-cacheset.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-show.h>
+
+#include <stdio.h>
+#include <ostream>
+#include <string>
 
 #include <apti18n.h>
-
-#include "private-output.h"
-#include "private-cacheset.h"
 									/*}}}*/
 
 namespace APT {
@@ -31,8 +34,8 @@ namespace APT {
 
 // DisplayRecord - Displays the complete record for the package		/*{{{*/
 // ---------------------------------------------------------------------
-bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
-                   ostream &out)
+static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
+                   std::ostream &out)
 {
    pkgCache *Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
@@ -96,23 +99,23 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    // FIXME: add verbose that does not do the removal of the tags?
    TFRewriteData RW[] = {
       // delete, apt-cache show has this info and most users do not care
-      {"MD5sum", 0},
-      {"SHA1", 0},
-      {"SHA256", 0},
-      {"Filename", 0},
-      {"Multi-Arch", 0},
-      {"Architecture", 0},
-      {"Conffiles",0},
+      {"MD5sum", NULL, NULL},
+      {"SHA1", NULL, NULL},
+      {"SHA256", NULL, NULL},
+      {"Filename", NULL, NULL},
+      {"Multi-Arch", NULL, NULL},
+      {"Architecture", NULL, NULL},
+      {"Conffiles", NULL, NULL},
       // we use the translated description
-      {"Description",0},
-      {"Description-md5",0},
+      {"Description", NULL, NULL},
+      {"Description-md5", NULL, NULL},
       // improve
-      {"Installed-Size", installed_size.c_str(), 0},
+      {"Installed-Size", installed_size.c_str(), NULL},
       {"Size", package_size.c_str(), "Download-Size"},
       // add
-      {"APT-Manual-Installed", manual_installed, 0},
-      {"APT-Sources", source_index_file.c_str(), 0},
-      {}
+      {"APT-Manual-Installed", manual_installed, NULL},
+      {"APT-Sources", source_index_file.c_str(), NULL},
+      {NULL, NULL, NULL}
    };
 
    if(TFRewrite(stdout, Tags, NULL, RW) == false)
@@ -148,8 +151,9 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
    if (select == APT::VersionList::CANDIDATE)
    {
       APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::ALL, helper);
-      if (verset_all.size() > verset.size())
-         _error->Notice(ngettext("There is %lu additional record. Please use the '-a' switch to see it", "There are %lu additional records. Please use the '-a' switch to see them.", verset_all.size() - verset.size()), verset_all.size() - verset.size());
+      int const records = verset_all.size() - verset.size();
+      if (records > 0)
+         _error->Notice(P_("There is %i additional record. Please use the '-a' switch to see it", "There are %i additional records. Please use the '-a' switch to see them.", records), records);
    }
 
    for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();

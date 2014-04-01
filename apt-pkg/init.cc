@@ -15,9 +15,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
 
+#include <string.h>
+#include <string>
 #include <cstdlib>
-#include <sys/stat.h>
 
 #include <apti18n.h>
 									/*}}}*/

@@ -22,18 +22,21 @@
 #ifndef PKGLIB_INDEXFILE_H
 #define PKGLIB_INDEXFILE_H
 
-
-#include <string>
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
+
+#include <string>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 #endif
-
+#ifndef APT_10_CLEANER_HEADERS
 class pkgAcquire;
+#endif
+
 class pkgCacheGenerator;
 class OpProgress;
 
@@ -51,7 +54,7 @@ class pkgIndexFile
       // Global list of Items supported
       static Type **GlobalList;
       static unsigned long GlobalListLen;
-      static Type *GetType(const char *Type);
+      static Type *GetType(const char *Type) APT_PURE;
 
       const char *Label;
 
@@ -78,11 +81,11 @@ class pkgIndexFile
    virtual bool Exists() const = 0;
    virtual bool HasPackages() const = 0;
    virtual unsigned long Size() const = 0;
-   virtual bool Merge(pkgCacheGenerator &Gen, OpProgress* Prog) const { return false; };
-   __deprecated virtual bool Merge(pkgCacheGenerator &Gen, OpProgress &Prog) const
+   virtual bool Merge(pkgCacheGenerator &/*Gen*/, OpProgress* /*Prog*/) const { return false; };
+   APT_DEPRECATED virtual bool Merge(pkgCacheGenerator &Gen, OpProgress &Prog) const
       { return Merge(Gen, &Prog); };
-   virtual bool MergeFileProvides(pkgCacheGenerator &Gen,OpProgress* Prog) const {return true;};
-   __deprecated virtual bool MergeFileProvides(pkgCacheGenerator &Gen, OpProgress &Prog) const
+   virtual bool MergeFileProvides(pkgCacheGenerator &/*Gen*/,OpProgress* /*Prog*/) const {return true;};
+   APT_DEPRECATED virtual bool MergeFileProvides(pkgCacheGenerator &Gen, OpProgress &Prog) const
       {return MergeFileProvides(Gen, &Prog);};
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 

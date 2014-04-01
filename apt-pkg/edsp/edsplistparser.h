@@ -12,6 +12,10 @@
 #define PKGLIB_EDSPLISTPARSER_H
 
 #include <apt-pkg/deblistparser.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/pkgcache.h>
+
+#include <string>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/pkgcachegen.h>

@@ -19,16 +19,18 @@
 #ifndef PKGLIB_PKGCACHEGEN_H
 #define PKGLIB_PKGCACHEGEN_H
 
-
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/macros.h>
 
 #include <vector>
+#include <string>
 
+class FileFd;
 class pkgSourceList;
 class OpProgress;
-class MMap;
 class pkgIndexFile;
 
 class pkgCacheGenerator							/*{{{*/
@@ -36,10 +38,10 @@ class pkgCacheGenerator							/*{{{*/
    private:
 
    pkgCache::StringItem *UniqHash[26];
-   map_ptrloc WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
-   map_ptrloc WriteStringInMap(const char *String);
-   map_ptrloc WriteStringInMap(const char *String, const unsigned long &Len);
-   map_ptrloc AllocateInMap(const unsigned long &size);
+   APT_HIDDEN map_ptrloc WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
+   APT_HIDDEN map_ptrloc WriteStringInMap(const char *String);
+   APT_HIDDEN map_ptrloc WriteStringInMap(const char *String, const unsigned long &Len);
+   APT_HIDDEN map_ptrloc AllocateInMap(const unsigned long &size);
 
    public:
    
@@ -80,7 +82,7 @@ class pkgCacheGenerator							/*{{{*/
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   map_ptrloc const Version, unsigned int const &Op,
 		   unsigned int const &Type, map_ptrloc* &OldDepLast);
-   __deprecated unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next)
+   unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next) APT_DEPRECATED
    { return NewVersion(Ver, VerStr, 0, 0, Next); }
    unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,
 			    map_ptrloc const ParentPkg, unsigned long const Hash,
@@ -102,7 +104,7 @@ class pkgCacheGenerator							/*{{{*/
 
    bool HasFileDeps() {return FoundFileDeps;};
    bool MergeFileProvides(ListParser &List);
-   __deprecated bool FinishCache(OpProgress *Progress);
+   bool FinishCache(OpProgress *Progress) APT_DEPRECATED APT_CONST;
 
    static bool MakeStatusCache(pkgSourceList &List,OpProgress *Progress,
 			MMap **OutMap = 0,bool AllowMem = false);
@@ -115,14 +117,14 @@ class pkgCacheGenerator							/*{{{*/
    ~pkgCacheGenerator();
 
    private:
-   bool MergeListGroup(ListParser &List, std::string const &GrpName);
-   bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
-   bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
+   APT_HIDDEN bool MergeListGroup(ListParser &List, std::string const &GrpName);
+   APT_HIDDEN bool MergeListPackage(ListParser &List, pkgCache::PkgIterator &Pkg);
+   APT_HIDDEN bool MergeListVersion(ListParser &List, pkgCache::PkgIterator &Pkg,
 			 std::string const &Version, pkgCache::VerIterator* &OutVer);
 
-   bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
+   APT_HIDDEN bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
 			   pkgCache::VerIterator &V);
-   bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
+   APT_HIDDEN bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
@@ -162,6 +164,15 @@ class pkgCacheGenerator::ListParser
    virtual std::string DescriptionLanguage() = 0;
    virtual MD5SumValue Description_md5() = 0;
    virtual unsigned short VersionHash() = 0;
+   /** compare currently parsed version with given version
+    *
+    * \param Hash of the currently parsed version
+    * \param Ver to compare with
+    */
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+   virtual
+#endif
+      APT_PURE bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
 			   pkgCache::VerIterator &Ver) = 0;
    virtual unsigned long Offset() = 0;
@@ -170,8 +181,8 @@ class pkgCacheGenerator::ListParser
    virtual bool Step() = 0;
    
    inline bool HasFileDeps() {return FoundFileDeps;};
-   virtual bool CollectFileProvides(pkgCache &Cache,
-				    pkgCache::VerIterator &Ver) {return true;};
+   virtual bool CollectFileProvides(pkgCache &/*Cache*/,
+				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
    ListParser() : FoundFileDeps(false) {};
    virtual ~ListParser() {};

@@ -219,14 +219,13 @@
 ">
 
 <!-- this will be updated by 'prepare-release' -->
-<!ENTITY apt-product-version "0.9.15.5">
+<!ENTITY apt-product-version "0.9.16.1">
 
 <!-- (Code)names for various things used all over the place -->
 <!ENTITY oldstable-codename "squeeze">
 <!ENTITY stable-codename "wheezy">
 <!ENTITY testing-codename "jessie">
 <!ENTITY stable-version "7">
-<!ENTITY tanglu-codename "bartholomea">
 <!ENTITY ubuntu-codename "trusty">
 
 <!-- good and bad just refers to matching and not matching a pattern…
@@ -248,6 +247,24 @@
 <!ENTITY synopsis-param-filename "<filename><replaceable>&synopsis-filename;</replaceable></filename>">
 <!ENTITY synopsis-help "<arg choice='plain'><group choice='req'><arg choice='plain'>-v</arg><arg choice='plain'>--version</arg></group></arg>
 	<arg choice='plain'><group choice='req'><arg choice='plain'>-h</arg><arg choice='plain'>--help</arg></group></arg>">
+<!ENTITY synopsis-command-apt "<refsynopsisdiv><cmdsynopsis>
+	<command>apt</command>
+	<arg><option>-h</option></arg>
+	&synopsis-arg-option;
+	&synopsis-arg-config;
+	&synopsis-arg-target-release;
+	&synopsis-arg-architecture;
+	<group choice='req'>
+		<arg choice='plain'>list</arg>
+		<arg choice='plain'>search</arg>
+		<arg choice='plain'>show</arg>
+		<arg choice='plain'>update</arg>
+		<arg choice='plain'>upgrade</arg>
+		<arg choice='plain'>install &synopsis-arg-pkgver;</arg>
+		<arg choice='plain'>remove &synopsis-arg-pkg;</arg>
+		&synopsis-help;
+	</group>
+</cmdsynopsis></refsynopsisdiv>">
 <!ENTITY synopsis-command-apt-get "<refsynopsisdiv><cmdsynopsis>
 	<command>apt-get</command>
 	<arg><option>-asqdyfmubV</option></arg>

@@ -1,11 +1,15 @@
+#include <config.h>
+
 #include <apt-pkg/error.h>
 
-#include "assert.h"
+#include <stddef.h>
 #include <string>
 #include <errno.h>
 #include <string.h>
 
-int main(int argc,char *argv[])
+#include "assert.h"
+
+int main()
 {
 	std::string const textOfErrnoZero(strerror(0));
 

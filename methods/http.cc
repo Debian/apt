@@ -33,24 +33,21 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <sys/select.h>
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <signal.h>
 #include <stdio.h>
 #include <errno.h>
-#include <string.h>
-#include <climits>
 #include <iostream>
-#include <map>
-
-// Internet stuff
-#include <netdb.h>
 
 #include "config.h"
 #include "connect.h"
-#include "rfc2553emu.h"
 #include "http.h"
 
 #include <apti18n.h>
@@ -61,7 +58,7 @@ unsigned long long CircleBuf::BwReadLimit=0;
 unsigned long long CircleBuf::BwTickReadData=0;
 struct timeval CircleBuf::BwReadTick={0,0};
 const unsigned int CircleBuf::BW_HZ=10;
- 
+
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -87,8 +84,8 @@ void CircleBuf::Reset()
    {
       delete Hash;
       Hash = new Hashes;
-   }   
-};
+   }
+}
 									/*}}}*/
 // CircleBuf::Read - Read from a FD into the circular buffer		/*{{{*/
 // ---------------------------------------------------------------------
@@ -473,7 +470,7 @@ bool HttpServerState::WriteResponse(const std::string &Data)		/*{{{*/
    return Out.Read(Data);
 }
 									/*}}}*/
-bool HttpServerState::IsOpen()						/*{{{*/
+APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
 {
    return (ServerFd != -1);
 }
@@ -484,16 +481,11 @@ bool HttpServerState::InitHashes(FileFd &File)				/*{{{*/
    In.Hash = new Hashes;
 
    // Set the expected size and read file for the hashes
-   if (StartPos >= 0)
-   {
-      File.Truncate(StartPos);
-
-      return In.Hash->AddFD(File, StartPos);
-   }
-   return true;
+   File.Truncate(StartPos);
+   return In.Hash->AddFD(File, StartPos);
 }
 									/*}}}*/
-Hashes * HttpServerState::GetHashes()					/*{{{*/
+APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 {
    return In.Hash;
 }

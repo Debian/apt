@@ -14,20 +14,23 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/hashes.h>
 
+#include <string>
+#include <vector>
 #include <iostream>
 #include <sstream>
-#include <fstream>
 
 #include <sys/stat.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>

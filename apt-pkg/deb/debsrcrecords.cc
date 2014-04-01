@@ -15,12 +15,19 @@
 #include <apt-pkg/debsrcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/tagfile.h>
 
-using std::max;
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <string>
+#include <vector>
 									/*}}}*/
 
+using std::max;
 using std::string;
 
 // SrcRecordParser::Binaries - Return the binaries field		/*{{{*/
@@ -57,7 +64,7 @@ const char **debSrcRecordParser::Binaries()
    } while (*bin != '\0');
    StaticBinList.push_back(NULL);
 
-   return (const char **) &StaticBinList[0];
+   return &StaticBinList[0];
 }
 									/*}}}*/
 // SrcRecordParser::BuildDepends - Return the Build-Depends information	/*{{{*/
@@ -90,7 +97,7 @@ bool debSrcRecordParser::BuildDepends(std::vector<pkgSrcRecords::Parser::BuildDe
       while (1)
       {
          Start = debListParser::ParseDepends(Start, Stop, 
-		     rec.Package,rec.Version,rec.Op,true, StripMultiArch);
+		     rec.Package,rec.Version,rec.Op,true,StripMultiArch,true);
 	 
          if (Start == 0) 
             return _error->Error("Problem parsing dependency: %s", fields[I]);

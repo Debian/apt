@@ -36,13 +36,12 @@
 #include <config.h>
 
 #include <apt-pkg/debfile.h>
-#include <apt-pkg/extracttar.h>
+#include <apt-pkg/dirstream.h>
 #include <apt-pkg/error.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
 
 #include "contents.h"
 
@@ -316,7 +315,7 @@ bool ContentsExtract::Read(debDebFile &Deb)
 // ContentsExtract::DoItem - Extract an item				/*{{{*/
 // ---------------------------------------------------------------------
 /* This just tacks the name onto the end of our memory buffer */
-bool ContentsExtract::DoItem(Item &Itm,int &Fd)
+bool ContentsExtract::DoItem(Item &Itm, int &/*Fd*/)
 {
    unsigned long Len = strlen(Itm.Name);
    

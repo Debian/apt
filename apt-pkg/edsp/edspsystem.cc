@@ -11,16 +11,17 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/edspsystem.h>
+#include <apt-pkg/configuration.h>
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/edspindexfile.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/error.h>
+#include <apt-pkg/edspsystem.h>
 #include <apt-pkg/fileutl.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <dirent.h>
-#include <errno.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+
+#include <stddef.h>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -49,7 +50,7 @@ bool edspSystem::Lock()
 }
 									/*}}}*/
 // System::UnLock - Drop a lock						/*{{{*/
-bool edspSystem::UnLock(bool NoErrors)
+bool edspSystem::UnLock(bool /*NoErrors*/)
 {
    return true;
 }
@@ -58,7 +59,7 @@ bool edspSystem::UnLock(bool NoErrors)
 // ---------------------------------------------------------------------
 /* we can't use edsp input as input for real installations - just a
    simulation can work, but everything else will fail bigtime */
-pkgPackageManager *edspSystem::CreatePM(pkgDepCache *Cache) const
+pkgPackageManager *edspSystem::CreatePM(pkgDepCache * /*Cache*/) const
 {
    return NULL;
 }
@@ -81,7 +82,7 @@ bool edspSystem::Initialize(Configuration &Cnf)
 }
 									/*}}}*/
 // System::ArchiveSupported - Is a file format supported		/*{{{*/
-bool edspSystem::ArchiveSupported(const char *Type)
+bool edspSystem::ArchiveSupported(const char * /*Type*/)
 {
    return false;
 }

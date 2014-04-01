@@ -1,10 +1,23 @@
+#include <config.h>
 
 #include <apt-pkg/hashes.h>
-#include <apti18n.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/cmndline.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 
-#include "private-output.h"
-#include "private-sources.h"
-#include "private-utils.h"
+#include <apt-private/private-output.h>
+#include <apt-private/private-sources.h>
+#include <apt-private/private-utils.h>
+
+#include <stddef.h>
+#include <unistd.h>
+#include <iostream>
+#include <string>
+
+#include <apti18n.h>
 
 /* Interface discussion with donkult (for the future):
   apt [add-{archive,release,component}|edit|change-release|disable]-sources 

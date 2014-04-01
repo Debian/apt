@@ -27,7 +27,7 @@ using std::vector;
 class Vendor;
 class Configuration;
 
-class __deprecated pkgVendorList
+class APT_DEPRECATED pkgVendorList
 {
    protected:
    std::vector<Vendor const *> VendorList;

@@ -13,7 +13,13 @@
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/macros.h>
 
+#include <string>
+#include <vector>
 #include <clocale>
 #include <cstring>
 									/*}}}*/
@@ -47,7 +53,7 @@ pkgIndexFile::Type *pkgIndexFile::Type::GetType(const char *Type)
 // IndexFile::ArchiveInfo - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator Ver) const
+std::string pkgIndexFile::ArchiveInfo(pkgCache::VerIterator /*Ver*/) const
 {
    return std::string();
 }
@@ -63,8 +69,8 @@ pkgCache::PkgFileIterator pkgIndexFile::FindInCache(pkgCache &Cache) const
 // IndexFile::SourceIndex - Stub					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &Record,
-				pkgSrcRecords::File const &File) const
+std::string pkgIndexFile::SourceInfo(pkgSrcRecords::Parser const &/*Record*/,
+				pkgSrcRecords::File const &/*File*/) const
 {
    return std::string();
 }
@@ -82,7 +88,7 @@ bool pkgIndexFile::TranslationsAvailable() {
    is already done in getLanguages(). Note also that this check is
    rather bad (doesn't take three character like ast into account).
    TODO: Remove method with next API break */
-__attribute__ ((deprecated)) bool pkgIndexFile::CheckLanguageCode(const char *Lang)
+APT_DEPRECATED bool pkgIndexFile::CheckLanguageCode(const char *Lang)
 {
   if (strlen(Lang) == 2 || (strlen(Lang) == 5 && Lang[2] == '_'))
     return true;
@@ -98,7 +104,7 @@ __attribute__ ((deprecated)) bool pkgIndexFile::CheckLanguageCode(const char *La
 /* As we have now possibly more than one LanguageCode this method is
    supersided by a) private classmembers or b) getLanguages().
    TODO: Remove method with next API break */
-__attribute__ ((deprecated)) std::string pkgIndexFile::LanguageCode() {
+APT_DEPRECATED std::string pkgIndexFile::LanguageCode() {
 	if (TranslationsAvailable() == false)
 		return "";
 	return APT::Configuration::getLanguages()[0];

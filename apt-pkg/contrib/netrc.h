@@ -16,6 +16,8 @@
 
 #include <string>
 
+#include <apt-pkg/macros.h>
+
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/strutl.h>
 #endif
@@ -25,9 +27,9 @@
 
 class URI;
 
-// kill this export on the next ABI break - strongly doubt its in use anyway
+// FIXME: kill this export on the next ABI break - strongly doubt its in use anyway
 // outside of the apt itself, its really a internal interface
-__deprecated int parsenetrc (char *host, char *login, char *password, char *filename);
+APT_DEPRECATED int parsenetrc (char *host, char *login, char *password, char *filename);
 
 void maybe_add_auth (URI &Uri, std::string NetRCFile);
 #endif

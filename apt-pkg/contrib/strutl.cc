@@ -21,6 +21,11 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string>
+#include <vector>
 #include <ctype.h>
 #include <string.h>
 #include <sstream>
@@ -33,9 +38,9 @@
 #include <iconv.h>
 
 #include <apti18n.h>
-
-using namespace std;
 									/*}}}*/
+using namespace std;
+
 // Strip - Remove white space from the front and back of a string       /*{{{*/
 // ---------------------------------------------------------------------
 namespace APT {
@@ -153,7 +158,7 @@ char *_strrstrip(char *String)
    End++;
    *End = 0;
    return String;
-};
+}
 									/*}}}*/
 // strtabexpand - Converts tabs into 8 spaces				/*{{{*/
 // ---------------------------------------------------------------------
@@ -1130,9 +1135,11 @@ bool TokSplitString(char Tok,char *Input,char **List,
    also, but the advantage is that we have an iteratable vector */
 vector<string> VectorizeString(string const &haystack, char const &split)
 {
+   vector<string> exploded;
+   if (haystack.empty() == true)
+      return exploded;
    string::const_iterator start = haystack.begin();
    string::const_iterator end = start;
-   vector<string> exploded;
    do {
       for (; end != haystack.end() && *end != split; ++end);
       exploded.push_back(string(start, end));
@@ -1182,7 +1189,7 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
       R->Hit = false;
 
    unsigned long Hits = 0;
-   for (; ListBegin != ListEnd; ListBegin++)
+   for (; ListBegin < ListEnd; ++ListBegin)
    {
       // Check if the name is a regex
       const char *I;

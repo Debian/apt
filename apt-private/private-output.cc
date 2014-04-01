@@ -7,15 +7,21 @@
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/policy.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <apt-private/private-output.h>
+#include <apt-private/private-cachefile.h>
+
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <iomanip>
 #include <iostream>
-#include <locale.h>
 #include <langinfo.h>
 #include <unistd.h>
-
-#include "private-output.h"
-#include "private-cachefile.h"
 
 #include <apti18n.h>
 									/*}}}*/
@@ -63,7 +69,7 @@ bool InitOutput()							/*{{{*/
    return true;
 }
 									/*}}}*/
-std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) /*{{{*/
+static std::string GetArchiveSuite(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator ver) /*{{{*/
 {
    std::string suite = "";
    if (ver && ver.FileList() && ver.FileList())
@@ -82,7 +88,7 @@ std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) 
    return suite;
 }
 									/*}}}*/
-std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgDepCache *DepCache = CacheFile.GetDepCache();
    pkgDepCache::StateCache &state = (*DepCache)[P];
@@ -99,7 +105,7 @@ std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
    return flags_str;
 }
 									/*}}}*/
-std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
    pkgCache::VerIterator cand = policy->GetCandidateVer(P);
@@ -107,14 +113,14 @@ std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P
    return cand ? cand.VerStr() : "(none)";
 }
 									/*}}}*/
-std::string GetInstalledVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetInstalledVersion(pkgCacheFile &/*CacheFile*/, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgCache::VerIterator inst = P.CurrentVer();
 
    return inst ? inst.VerStr() : "(none)";
 }
 									/*}}}*/
-std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)/*{{{*/
+static std::string GetVersion(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator V)/*{{{*/
 {
    pkgCache::PkgIterator P = V.ParentPkg();
    if (V == P.CurrentVer())
@@ -134,16 +140,16 @@ std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)/*{{{*/
    return "(none)";
 }
 									/*}}}*/
-std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
    pkgCache::VerIterator inst = P.CurrentVer();
    pkgCache::VerIterator cand = policy->GetCandidateVer(P);
-   
+
    return inst ? inst.Arch() : cand.Arch();
 }
 									/*}}}*/
-std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
 

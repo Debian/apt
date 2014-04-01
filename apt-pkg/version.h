@@ -33,7 +33,7 @@ class pkgVersioningSystem
    // Global list of VS's
    static pkgVersioningSystem **GlobalList;
    static unsigned long GlobalListLen;
-   static pkgVersioningSystem *GetVS(const char *Label);
+   static pkgVersioningSystem *GetVS(const char *Label) APT_PURE;
    
    const char *Label;
    

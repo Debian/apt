@@ -9,10 +9,12 @@
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/macros.h>
 
 #include <string>
-
+#include <string.h>
 #include <regex.h>
 #include <fnmatch.h>
 
