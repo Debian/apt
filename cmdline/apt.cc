@@ -109,7 +109,7 @@ int main(int argc, const char *argv[])					/*{{{*/
     }
 
     // some different defaults
-   _config->CndSet("DPkgPM::Progress", "1");
+   _config->CndSet("DPkg::Progress-Fancy", "1");
    _config->CndSet("Apt::Color", "1");
    _config->CndSet("APT::Get::Upgrade-Allow-New", true);
 

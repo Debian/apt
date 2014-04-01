@@ -252,17 +252,22 @@ void PackageManagerFancy::staticSIGWINCH(int signum)
       (*I)->HandleSIGWINCH(signum);
 }
 
-int PackageManagerFancy::GetNumberTerminalRows()
+PackageManagerFancy::TermSize
+PackageManagerFancy::GetTerminalSize()
 {
    struct winsize win;
+   PackageManagerFancy::TermSize s;
+
    // FIXME: get from "child_pty" instead?
    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&win) != 0)
-      return -1;
+      return s;
 
    if(_config->FindB("Debug::InstallProgress::Fancy", false) == true)
-      std::cerr << "GetNumberTerminalRows: " << win.ws_row << std::endl;
-   
-   return win.ws_row;
+      std::cerr << "GetTerminalSize: " << win.ws_row << std::endl;
+
+   s.rows = win.ws_row;
+   s.columns = win.ws_col;
+   return s;
 }
 
 void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
@@ -298,21 +303,21 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 
 void PackageManagerFancy::HandleSIGWINCH(int)
 {
-   int nr_terminal_rows = GetNumberTerminalRows();
+   int nr_terminal_rows = GetTerminalSize().rows;
    SetupTerminalScrollArea(nr_terminal_rows);
 }
 
 void PackageManagerFancy::Start(int a_child_pty)
 {
    child_pty = a_child_pty;
-   int nr_terminal_rows = GetNumberTerminalRows();
+   int nr_terminal_rows = GetTerminalSize().rows;
    if (nr_terminal_rows > 0)
       SetupTerminalScrollArea(nr_terminal_rows);
 }
 
 void PackageManagerFancy::Stop()
 {
-   int nr_terminal_rows = GetNumberTerminalRows();
+   int nr_terminal_rows = GetTerminalSize().rows;
    if (nr_terminal_rows > 0)
    {
       SetupTerminalScrollArea(nr_terminal_rows + 1);
@@ -324,6 +329,26 @@ void PackageManagerFancy::Stop()
    child_pty = -1;
 }
 
+std::string 
+PackageManagerFancy::GetTextProgressStr(float Percent, int OutputSize)
+{
+   std::string output;
+   int i;
+   
+   // should we raise a exception here instead?
+   if (Percent < 0.0 || Percent > 1.0 || OutputSize < 3)
+      return output;
+   
+   int BarSize = OutputSize - 2; // bar without the leading "[" and trailing "]"
+   output += "[";
+   for(i=0; i < BarSize*Percent; i++)
+      output += "#";
+   for (/*nothing*/; i < BarSize; i++)
+      output += ".";
+   output += "]";
+   return output;
+}
+
 bool PackageManagerFancy::StatusChanged(std::string PackageName, 
                                         unsigned int StepsDone,
                                         unsigned int TotalSteps,
@@ -333,27 +358,47 @@ bool PackageManagerFancy::StatusChanged(std::string PackageName,
           HumanReadableAction))
       return false;
 
-   int row = GetNumberTerminalRows();
+   PackageManagerFancy::TermSize size = GetTerminalSize();
 
    static std::string save_cursor = "\033[s";
    static std::string restore_cursor = "\033[u";
 
-   static std::string set_bg_color = "\033[42m"; // green
-   static std::string set_fg_color = "\033[30m"; // black
+   // green
+   static std::string set_bg_color = DeQuoteString(
+      _config->Find("Dpkg::Progress-Fancy::Progress-fg", "%1b[42m"));
+   // black
+   static std::string set_fg_color = DeQuoteString(
+      _config->Find("Dpkg::Progress-Fancy::Progress-bg", "%1b[30m"));
 
    static std::string restore_bg =  "\033[49m";
    static std::string restore_fg = "\033[39m";
 
    std::cout << save_cursor
       // move cursor position to last row
-             << "\033[" << row << ";0f" 
+             << "\033[" << size.rows << ";0f" 
              << set_bg_color
              << set_fg_color
              << progress_str
-             << restore_cursor
              << restore_bg
              << restore_fg;
    std::flush(std::cout);
+
+   // draw text progress bar
+   if (_config->FindB("Dpkg::Progress-Fancy::Progress-Bar", true))
+   {
+      int padding = 4;
+      float progressbar_size = size.columns - padding - progress_str.size();
+      float current_percent = (float)StepsDone/(float)TotalSteps;
+      std::cout << " " 
+                << GetTextProgressStr(current_percent, progressbar_size)
+                << " ";
+      std::flush(std::cout);
+   }
+
+   // restore
+   std::cout << restore_cursor;
+   std::flush(std::cout);
+
    last_reported_progress = percentage;
 
    return true;
