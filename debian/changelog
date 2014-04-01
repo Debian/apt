@@ -1,8 +1,55 @@
-apt (0.9.16.1ubuntu1) trusty; urgency=low
+apt (1.0ubuntu1) trusty; urgency=low
 
   * merge with debian/sid
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 01 Apr 2014 13:49:21 +0200
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 01 Apr 2014 17:48:58 +0200
+
+apt (1.0) unstable; urgency=low
+
+  The "Happy birthday and 10000b years in the making" release
+
+  [ Julian Andres Klode ]
+  * apt-inst: Do not try to create a substring of an empty string in 
+    error reporting (LP: #1288718)
+
+  [ Beatrice Torracca ]
+  * Italian manpages translation update (Closes: 741867)
+
+  [ Kenshi Muto ]
+  * Japanese programs translation update (Closes: 742255)
+
+  [ David Kalnischkies ]
+  * continue reading in xz even if it outputs nothing
+  * only consider versioned kernel packages in autoremove (Closes: 741962)
+  * correct some reported typos in /etc/cron.daily/apt (Closes: 702016)
+  * ensure proper teardown in dpkg error cases (Closes: 738969)
+  * update symbols file to include new symbols from 0.9.16
+  * do IsInstallOk call in MarkInstall unconditionally
+  * discard candidates via IsInstallOk to allow override (Closes: 740750)
+
+  [ Michael Vogt ]
+  * install apt binary
+  * add apt.8.xml manpage
+  * make fancy-progress fg/bg color configurable via something like
+    Dpkg::Progress-Fancy::Progress-{bg,fg}="%1b[30m"
+    (thanks to Tim Wasser for the suggestion)
+  * Add progressbar to "Dpkg::Progress-Fancy"
+  * fix documentation for APT::Periodic::MaxSize "0" (closes: #740551)
+  * Use mkstemp() in apt-extracttemplaes (closes: #741627)
+  * Add new Debug::RunScripts debug option
+  * do not crash on SIGPIPE in pkgDPkgPM::RunScriptsWithPkgs()
+  * enable DPkg::Progress-Fancy by default when "apt" is used
+  * refresh po/pot and unfuzzy apt-extracttemplate manpage change
+  * remove no longer needed apt.7 page
+  * install "apt" binary by default
+  * add sun-java{5,6}-jdk to breaks/replaces as they provided a 
+    "apt" binary as well
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (623t): Update Vietnamese translation
+  * debian: Add default compress option to xz
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 01 Apr 2014 15:48:46 +0200
 
 apt (0.9.16.1) unstable; urgency=medium
 
