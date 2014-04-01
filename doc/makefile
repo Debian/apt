@@ -66,9 +66,9 @@ update-po:
 
 manpages/subdirs: $(MANPAGEPOLIST)
 $(MANPAGEPOLIST) :: manpages-translation-% : %/makefile po4a.conf
-	# first line is for apt.8 (see Bug#696923)
+	# first line is for apt.7 (see Bug#696923)
 	po4a --previous --no-backups --translate-only $(dir $<)apt.ent \
-		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.8,%.$(subst /,,$(dir $<)).8,$(wildcard *.8))) \
+		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.7,%.$(subst /,,$(dir $<)).7,$(wildcard *.7))) \
 		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.1.xml,%.$(subst /,,$(dir $<)).1.xml,$(wildcard *.1.xml))) \
 		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.2.xml,%.$(subst /,,$(dir $<)).2.xml,$(wildcard *.2.xml))) \
 		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.3.xml,%.$(subst /,,$(dir $<)).3.xml,$(wildcard *.3.xml))) \
