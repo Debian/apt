@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.7.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-03-15 18:13+0100\n"
+"POT-Creation-Date: 2014-04-01 13:58+0200\n"
 "PO-Revision-Date: 2012-10-19 13:30+0200\n"
 "Last-Translator: Jordi Mallach <jordi@debian.org>\n"
 "Language-Team: Catalan <debian-l10n-catalan@lists.debian.org>\n"
@@ -159,7 +159,7 @@ msgstr "  Taula de versió:"
 
 #: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
 #: cmdline/apt-get.cc:1578 cmdline/apt-helper.cc:58 cmdline/apt-mark.cc:388
-#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:216
+#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:600 cmdline/apt-internal-solver.cc:42
 #: cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -685,8 +685,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s ja estava no retingut.\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
-#: apt-pkg/contrib/fileutl.cc:811 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1186
+#: apt-pkg/contrib/fileutl.cc:815 apt-pkg/contrib/gpgv.cc:219
+#: apt-pkg/deb/dpkgpm.cc:1201
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "Esperava %s però no hi era"
@@ -851,9 +851,9 @@ msgstr "Temps de connexió finalitzat"
 msgid "Server closed the connection"
 msgstr "El servidor ha tancat la connexió"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1451
-#: apt-pkg/contrib/fileutl.cc:1460 apt-pkg/contrib/fileutl.cc:1465
-#: apt-pkg/contrib/fileutl.cc:1467
+#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1468
+#: apt-pkg/contrib/fileutl.cc:1477 apt-pkg/contrib/fileutl.cc:1482
+#: apt-pkg/contrib/fileutl.cc:1484
 msgid "Read error"
 msgstr "Error de lectura"
 
@@ -865,10 +865,10 @@ msgstr "Una resposta ha desbordat la memòria intermèdia."
 msgid "Protocol corruption"
 msgstr "Protocol corromput"
 
-#: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:871
-#: apt-pkg/contrib/fileutl.cc:1573 apt-pkg/contrib/fileutl.cc:1582
-#: apt-pkg/contrib/fileutl.cc:1587 apt-pkg/contrib/fileutl.cc:1589
-#: apt-pkg/contrib/fileutl.cc:1614
+#: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:875
+#: apt-pkg/contrib/fileutl.cc:1590 apt-pkg/contrib/fileutl.cc:1599
+#: apt-pkg/contrib/fileutl.cc:1604 apt-pkg/contrib/fileutl.cc:1606
+#: apt-pkg/contrib/fileutl.cc:1631
 msgid "Write error"
 msgstr "Error d'escriptura"
 
@@ -1675,8 +1675,8 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:471
-#: apt-pkg/contrib/cdromutl.cc:205 apt-pkg/contrib/fileutl.cc:367
-#: apt-pkg/contrib/fileutl.cc:480 apt-pkg/sourcelist.cc:280
+#: apt-pkg/contrib/cdromutl.cc:205 apt-pkg/contrib/fileutl.cc:371
+#: apt-pkg/contrib/fileutl.cc:484 apt-pkg/sourcelist.cc:280
 #: apt-pkg/sourcelist.cc:286 apt-pkg/acquire.cc:491 apt-pkg/init.cc:102
 #: apt-pkg/init.cc:110 apt-pkg/clean.cc:40 apt-pkg/policy.cc:381
 #, c-format
@@ -1762,7 +1762,7 @@ msgstr ""
 msgid "Merging available information"
 msgstr "S'està fusionant la informació disponible"
 
-#: cmdline/apt-extracttemplates.cc:223
+#: cmdline/apt-extracttemplates.cc:224
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1786,12 +1786,17 @@ msgstr ""
 "  -c=? Llegeix aquest fitxer de configuració\n"
 "  -o=? Estableix una opció de conf arbitrària, p.e. -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:255 apt-pkg/pkgcachegen.cc:1400
+#: cmdline/apt-extracttemplates.cc:254
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "No es pot veure l'estat de %s"
+
+#: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1400
 #, c-format
 msgid "Unable to write to %s"
 msgstr "No es pot escriure en %s"
 
-#: cmdline/apt-extracttemplates.cc:297
+#: cmdline/apt-extracttemplates.cc:300
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "No es pot determinar la versió de debconf. Està instaŀlat debconf?"
 
@@ -2310,12 +2315,12 @@ msgstr "No es pot veure l'estat de %s"
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Aquest no és un arxiu DEB vàlid, falta el membre «%s»"
 
-#: apt-inst/deb/debfile.cc:130
+#: apt-inst/deb/debfile.cc:132
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr "Error intern, no s'ha pogut localitzar al membre %s"
 
-#: apt-inst/deb/debfile.cc:225
+#: apt-inst/deb/debfile.cc:227
 msgid "Unparsable control file"
 msgstr "El fitxer de control no es pot analitzar"
 
@@ -2536,45 +2541,45 @@ msgstr "No es pot obtenir informació del punt de muntatge %s"
 msgid "Failed to stat the cdrom"
 msgstr "No s'ha pogut fer «stat» del cdrom"
 
-#: apt-pkg/contrib/fileutl.cc:189
+#: apt-pkg/contrib/fileutl.cc:193
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr ""
 "No s'empren blocats per a llegir el fitxer de blocat de sols lectura %s"
 
-#: apt-pkg/contrib/fileutl.cc:194
+#: apt-pkg/contrib/fileutl.cc:198
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "No es pot resoldre el fitxer de blocat %s"
 
-#: apt-pkg/contrib/fileutl.cc:217
+#: apt-pkg/contrib/fileutl.cc:221
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "No s'empren blocats per al fitxer de blocat %s de muntar nfs"
 
-#: apt-pkg/contrib/fileutl.cc:222
+#: apt-pkg/contrib/fileutl.cc:226
 #, c-format
 msgid "Could not get lock %s"
 msgstr "No s'ha pogut blocar %s"
 
-#: apt-pkg/contrib/fileutl.cc:359 apt-pkg/contrib/fileutl.cc:473
+#: apt-pkg/contrib/fileutl.cc:363 apt-pkg/contrib/fileutl.cc:477
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr "No es pot crear la llista de fitxers perquè «%s» no és un directori"
 
-#: apt-pkg/contrib/fileutl.cc:393
+#: apt-pkg/contrib/fileutl.cc:397
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr "S'està descartant «%s» al directori «%s» perquè no és un fitxer normal"
 
-#: apt-pkg/contrib/fileutl.cc:411
+#: apt-pkg/contrib/fileutl.cc:415
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr ""
 "S'està descartant «%s» al directori «%s» perquè no té extensió del nom de "
 "fitxer"
 
-#: apt-pkg/contrib/fileutl.cc:420
+#: apt-pkg/contrib/fileutl.cc:424
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
@@ -2582,79 +2587,79 @@ msgstr ""
 "S'està descartant «%s» al directori «%s» perquè té una extensió del nom de "
 "fitxer invàlida"
 
-#: apt-pkg/contrib/fileutl.cc:823
+#: apt-pkg/contrib/fileutl.cc:827
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "El sub-procés %s ha rebut una violació de segment."
 
-#: apt-pkg/contrib/fileutl.cc:825
+#: apt-pkg/contrib/fileutl.cc:829
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "El sub-procés %s ha rebut un senyal %u."
 
-#: apt-pkg/contrib/fileutl.cc:829 apt-pkg/contrib/gpgv.cc:239
+#: apt-pkg/contrib/fileutl.cc:833 apt-pkg/contrib/gpgv.cc:239
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "El sub-procés %s ha retornat un codi d'error (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:831 apt-pkg/contrib/gpgv.cc:232
+#: apt-pkg/contrib/fileutl.cc:835 apt-pkg/contrib/gpgv.cc:232
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "El sub-procés %s ha sortit inesperadament"
 
-#: apt-pkg/contrib/fileutl.cc:912
+#: apt-pkg/contrib/fileutl.cc:916
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Ha hagut un problema en tancar el fitxer gzip %s"
 
-#: apt-pkg/contrib/fileutl.cc:1093
+#: apt-pkg/contrib/fileutl.cc:1097
 #, c-format
 msgid "Could not open file %s"
 msgstr "No s'ha pogut obrir el fitxer %s"
 
-#: apt-pkg/contrib/fileutl.cc:1152 apt-pkg/contrib/fileutl.cc:1199
+#: apt-pkg/contrib/fileutl.cc:1156 apt-pkg/contrib/fileutl.cc:1203
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "No s'ha pogut obrir el descriptor del fitxer %d"
 
-#: apt-pkg/contrib/fileutl.cc:1306
+#: apt-pkg/contrib/fileutl.cc:1310
 msgid "Failed to create subprocess IPC"
 msgstr "No s'ha pogut crear el subprocés IPC"
 
-#: apt-pkg/contrib/fileutl.cc:1361
+#: apt-pkg/contrib/fileutl.cc:1365
 msgid "Failed to exec compressor "
 msgstr "No s'ha pogut executar el compressor "
 
-#: apt-pkg/contrib/fileutl.cc:1489
+#: apt-pkg/contrib/fileutl.cc:1506
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "llegits, falten %llu per llegir, però no queda res"
 
-#: apt-pkg/contrib/fileutl.cc:1602 apt-pkg/contrib/fileutl.cc:1624
+#: apt-pkg/contrib/fileutl.cc:1619 apt-pkg/contrib/fileutl.cc:1641
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "escrits, falten %llu per escriure però no s'ha pogut"
 
-#: apt-pkg/contrib/fileutl.cc:1894
+#: apt-pkg/contrib/fileutl.cc:1911
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Ha hagut un problema en tancar el fitxer %s"
 
-#: apt-pkg/contrib/fileutl.cc:1906
+#: apt-pkg/contrib/fileutl.cc:1923
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Ha hagut un problema en reanomenar el fitxer %s a %s"
 
-#: apt-pkg/contrib/fileutl.cc:1917
+#: apt-pkg/contrib/fileutl.cc:1934
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Ha hagut un problema en desenllaçar el fitxer %s"
 
-#: apt-pkg/contrib/fileutl.cc:1930
+#: apt-pkg/contrib/fileutl.cc:1947
 msgid "Problem syncing the file"
 msgstr "Ha hagut un problema en sincronitzar el fitxer"
 
-#: apt-pkg/contrib/fileutl.cc:2026 apt-pkg/acquire-item.cc:148
+#: apt-pkg/contrib/fileutl.cc:2043 apt-pkg/acquire-item.cc:148
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "no s'ha pogut canviar el nom, %s (%s -> %s)."
@@ -3411,12 +3416,12 @@ msgstr ""
 msgid "Installing %s"
 msgstr "S'està instaŀlant %s"
 
-#: apt-pkg/deb/dpkgpm.cc:96 apt-pkg/deb/dpkgpm.cc:981
+#: apt-pkg/deb/dpkgpm.cc:96 apt-pkg/deb/dpkgpm.cc:996
 #, c-format
 msgid "Configuring %s"
 msgstr "S'està configurant el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:97 apt-pkg/deb/dpkgpm.cc:988
+#: apt-pkg/deb/dpkgpm.cc:97 apt-pkg/deb/dpkgpm.cc:1003
 #, c-format
 msgid "Removing %s"
 msgstr "S'està suprimint el paquet %s"
@@ -3437,87 +3442,87 @@ msgid "Running post-installation trigger %s"
 msgstr "S'està executant l'activador de postinstaŀlació %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:812
+#: apt-pkg/deb/dpkgpm.cc:827
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Manca el directori «%s»"
 
-#: apt-pkg/deb/dpkgpm.cc:827 apt-pkg/deb/dpkgpm.cc:849
+#: apt-pkg/deb/dpkgpm.cc:842 apt-pkg/deb/dpkgpm.cc:864
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "No s'ha pogut obrir el fitxer «%s»"
 
-#: apt-pkg/deb/dpkgpm.cc:974
+#: apt-pkg/deb/dpkgpm.cc:989
 #, c-format
 msgid "Preparing %s"
 msgstr "S'està preparant el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:975
+#: apt-pkg/deb/dpkgpm.cc:990
 #, c-format
 msgid "Unpacking %s"
 msgstr "S'està desempaquetant %s"
 
-#: apt-pkg/deb/dpkgpm.cc:980
+#: apt-pkg/deb/dpkgpm.cc:995
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "S'està preparant per a configurar el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:982
+#: apt-pkg/deb/dpkgpm.cc:997
 #, c-format
 msgid "Installed %s"
 msgstr "S'ha instaŀlat el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:987
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "S'està preparant per a la supressió del paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:989
+#: apt-pkg/deb/dpkgpm.cc:1004
 #, c-format
 msgid "Removed %s"
 msgstr "S'ha suprimit el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:994
+#: apt-pkg/deb/dpkgpm.cc:1009
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "S'està preparant per a suprimir completament el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:995
+#: apt-pkg/deb/dpkgpm.cc:1010
 #, c-format
 msgid "Completely removed %s"
 msgstr "S'ha suprimit completament el paquet %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1050
+#: apt-pkg/deb/dpkgpm.cc:1065
 msgid "ioctl(TIOCGWINSZ) failed"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1053 apt-pkg/deb/dpkgpm.cc:1074
+#: apt-pkg/deb/dpkgpm.cc:1068 apt-pkg/deb/dpkgpm.cc:1089
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "No es pot escriure en %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1053
+#: apt-pkg/deb/dpkgpm.cc:1068
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1074
+#: apt-pkg/deb/dpkgpm.cc:1089
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1562
+#: apt-pkg/deb/dpkgpm.cc:1567
 msgid "Operation was interrupted before it could finish"
 msgstr "S'ha interromput l'operació abans que pogués finalitzar"
 
-#: apt-pkg/deb/dpkgpm.cc:1624
+#: apt-pkg/deb/dpkgpm.cc:1629
 msgid "No apport report written because MaxReports is reached already"
 msgstr "No s'ha escrit cap informe perquè ja s'ha superat MaxReports"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1629
+#: apt-pkg/deb/dpkgpm.cc:1634
 msgid "dependency problems - leaving unconfigured"
 msgstr "S'han produït problemes de depències, es deixa sense configurar"
 
-#: apt-pkg/deb/dpkgpm.cc:1631
+#: apt-pkg/deb/dpkgpm.cc:1636
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3525,7 +3530,7 @@ msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica que és un error "
 "consequent de una fallida anterior."
 
-#: apt-pkg/deb/dpkgpm.cc:1637
+#: apt-pkg/deb/dpkgpm.cc:1642
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3533,7 +3538,7 @@ msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica una fallida per "
 "disc ple"
 
-#: apt-pkg/deb/dpkgpm.cc:1644
+#: apt-pkg/deb/dpkgpm.cc:1649
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3541,7 +3546,7 @@ msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica una fallida per "
 "falta de memòria"
 
-#: apt-pkg/deb/dpkgpm.cc:1651 apt-pkg/deb/dpkgpm.cc:1657
+#: apt-pkg/deb/dpkgpm.cc:1656 apt-pkg/deb/dpkgpm.cc:1662
 #, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
@@ -3550,7 +3555,7 @@ msgstr ""
 "No s'ha escrit cap informe perquè el missatge d'error indica una fallida per "
 "disc ple"
 
-#: apt-pkg/deb/dpkgpm.cc:1678
+#: apt-pkg/deb/dpkgpm.cc:1683
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
