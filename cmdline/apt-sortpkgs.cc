@@ -25,9 +25,9 @@
 
 #include <vector>
 #include <algorithm>
-
-#include <locale.h>
-#include <unistd.h>
+#include <stdio.h>
+#include <iostream>
+#include <string>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -62,7 +62,7 @@ struct PkgName								/*{{{*/
 // DoIt - Sort a single file						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoIt(string InFile)
+static bool DoIt(string InFile)
 {
    FileFd Fd(InFile,FileFd::ReadOnly);
    pkgTagFile Tags(&Fd);
@@ -142,7 +142,7 @@ bool DoIt(string InFile)
 // ShowHelp - Show the help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp()
+static int ShowHelp()
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

@@ -13,7 +13,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/orderlist.h>
@@ -24,7 +24,14 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <list>
+#include <string>
 #include <iostream>
 
 #include <apti18n.h>
@@ -215,7 +222,7 @@ bool pkgPackageManager::CreateOrderList()
    return true;
 }
 									/*}}}*/
-// PM::DepAlwaysTrue - Returns true if this dep is irrelevent		/*{{{*/
+// PM::DepAlwaysTrue - Returns true if this dep is irrelevant		/*{{{*/
 // ---------------------------------------------------------------------
 /* The restriction on provides is to eliminate the case when provides
    are transitioning between valid states [ie exim to smail] */
@@ -243,11 +250,11 @@ bool pkgPackageManager::CheckRConflicts(PkgIterator Pkg,DepIterator D,
 	  D->Type != pkgCache::Dep::Obsoletes)
 	 continue;
 
-      // The package hasnt been changed
+      // The package hasn't been changed
       if (List->IsNow(Pkg) == false)
 	 continue;
       
-      // Ignore self conflicts, ignore conflicts from irrelevent versions
+      // Ignore self conflicts, ignore conflicts from irrelevant versions
       if (D.IsIgnorable(Pkg) || D.ParentVer() != D.ParentPkg().CurrentVer())
 	 continue;
       
@@ -314,7 +321,7 @@ bool pkgPackageManager::ConfigureAll()
    
    Note on failure: This method can fail, without causing any problems. 
    This can happen when using Immediate-Configure-All, SmartUnPack may call
-   SmartConfigure, it may fail because of a complex dependancy situation, but
+   SmartConfigure, it may fail because of a complex dependency situation, but
    a error will only be reported if ConfigureAll fails. This is why some of the
    messages this function reports on failure (return false;) as just warnings
    only shown when debuging*/
@@ -596,7 +603,7 @@ bool pkgPackageManager::SmartRemove(PkgIterator Pkg)
 									/*}}}*/
 // PM::SmartUnPack - Install helper					/*{{{*/
 // ---------------------------------------------------------------------
-/* This puts the system in a state where it can Unpack Pkg, if Pkg is allready
+/* This puts the system in a state where it can Unpack Pkg, if Pkg is already
    unpacked, or when it has been unpacked, if Immediate==true it configures it. */
 bool pkgPackageManager::SmartUnPack(PkgIterator Pkg)
 {
@@ -615,6 +622,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
         clog << " (replace version " << Pkg.CurrentVer().VerStr() << " with " << InstallVer.VerStr() << ")";
       if (PkgLoop)
         clog << " (Only Perform PreUnpack Checks)";
+      if (Immediate)
+	 clog << " immediately";
       clog << endl;
    }
 
@@ -623,7 +632,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
    /* PreUnpack Checks: This loop checks and attempts to rectify and problems that would prevent the package being unpacked.
       It addresses: PreDepends, Conflicts, Obsoletes and Breaks (DpkgBreaks). Any resolutions that do not require it should
       avoid configuration (calling SmartUnpack with Immediate=true), this is because when unpacking some packages with
-      complex dependancy structures, trying to configure some packages while breaking the loops can complicate things .
+      complex dependency structures, trying to configure some packages while breaking the loops can complicate things .
       This will be either dealt with if the package is configured as a dependency of Pkg (if and when Pkg is configured),
       or by the ConfigureAll call at the end of the for loop in OrderInstall. */
    bool Changed = false;
@@ -741,7 +750,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       // See if the current version is conflicting
 	       if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
 	       {
-		  clog << OutputInDepth(Depth) << Pkg.FullName() << " conflicts with " << ConflictPkg.FullName() << endl;
+		  if (Debug)
+		     clog << OutputInDepth(Depth) << Pkg.FullName() << " conflicts with " << ConflictPkg.FullName() << endl;
 		  /* If a loop is not present or has not yet been detected, attempt to unpack packages
 		     to resolve this conflict. If there is a loop present, remove packages to resolve this conflict */
 		  if (List->IsFlag(ConflictPkg,pkgOrderList::Loop) == false)
@@ -790,7 +800,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       {
 		  if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) && PkgLoop)
 		  {
-		     // This dependancy has already been dealt with by another SmartUnPack on Pkg
+		     // This dependency has already been dealt with by another SmartUnPack on Pkg
 		     break;
 		  }
 		  else
@@ -955,21 +965,14 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); ++I)
    {
       PkgIterator Pkg(Cache,*I);
-      
+
       if (List->IsNow(Pkg) == false)
       {
-         if (!List->IsFlag(Pkg,pkgOrderList::Configured) && !NoImmConfigure) {
-            if (SmartConfigure(Pkg, 0) == false && Debug)
-               _error->Warning("Internal Error, Could not configure %s",Pkg.FullName().c_str());
-            // FIXME: The above warning message might need changing
-         } else {
-	    if (Debug == true)
-	       clog << "Skipping already done " << Pkg.FullName() << endl;
-	 }
+	 if (Debug == true)
+	    clog << "Skipping already done " << Pkg.FullName() << endl;
 	 continue;
-	 
       }
-      
+
       if (List->IsMissing(Pkg) == true)
       {
 	 if (Debug == true)
@@ -1003,7 +1006,7 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
       DoneSomething = true;
       
       if (ImmConfigureAll) {
-         /* ConfigureAll here to pick up and packages left unconfigured becuase they were unpacked in the 
+         /* ConfigureAll here to pick up and packages left unconfigured because they were unpacked in the
             "PreUnpack Checks" section */
          if (!ConfigureAll())
             return Failed; 

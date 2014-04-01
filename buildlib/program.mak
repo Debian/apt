@@ -6,7 +6,7 @@
 # $(SOURCE) - The source code to use
 # $(PROGRAM) - The name of the program
 # $(SLIBS) - Shared libs to link against
-# $(LIB_MAKES) - Shared libary make files to depend on - to ensure we get
+# $(LIB_MAKES) - Shared library make files to depend on - to ensure we get
 # remade when the shared library version increases.
 
 # See defaults.mak for information about LOCAL

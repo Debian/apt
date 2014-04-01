@@ -3,7 +3,7 @@
 // $Id: http.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   HTTP Acquire Method - This is the HTTP aquire method for APT.
+   HTTP Acquire Method - This is the HTTP acquire method for APT.
    
    It uses HTTP/1.1 and many of the fancy options there-in, such as
    pipelining, range, if-range and so on. 
@@ -33,25 +33,21 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
+#include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <sys/select.h>
+#include <cstring>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <utime.h>
 #include <unistd.h>
-#include <signal.h>
 #include <stdio.h>
 #include <errno.h>
-#include <string.h>
-#include <climits>
 #include <iostream>
-#include <map>
-
-// Internet stuff
-#include <netdb.h>
 
 #include "config.h"
 #include "connect.h"
-#include "rfc2553emu.h"
 #include "http.h"
 
 #include <apti18n.h>
@@ -62,7 +58,7 @@ unsigned long long CircleBuf::BwReadLimit=0;
 unsigned long long CircleBuf::BwTickReadData=0;
 struct timeval CircleBuf::BwReadTick={0,0};
 const unsigned int CircleBuf::BW_HZ=10;
- 
+
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -88,8 +84,8 @@ void CircleBuf::Reset()
    {
       delete Hash;
       Hash = new Hashes;
-   }   
-};
+   }
+}
 									/*}}}*/
 // CircleBuf::Read - Read from a FD into the circular buffer		/*{{{*/
 // ---------------------------------------------------------------------
@@ -97,8 +93,6 @@ void CircleBuf::Reset()
    is non-blocking.. */
 bool CircleBuf::Read(int Fd)
 {
-   unsigned long long BwReadMax;
-
    while (1)
    {
       // Woops, buffer is full
@@ -106,7 +100,7 @@ bool CircleBuf::Read(int Fd)
 	 return true;
 
       // what's left to read in this tick
-      BwReadMax = CircleBuf::BwReadLimit/BW_HZ;
+      unsigned long long const BwReadMax = CircleBuf::BwReadLimit/BW_HZ;
 
       if(CircleBuf::BwReadLimit) {
 	 struct timeval now;
@@ -476,7 +470,7 @@ bool HttpServerState::WriteResponse(const std::string &Data)		/*{{{*/
    return Out.Read(Data);
 }
 									/*}}}*/
-bool HttpServerState::IsOpen()						/*{{{*/
+APT_PURE bool HttpServerState::IsOpen()					/*{{{*/
 {
    return (ServerFd != -1);
 }
@@ -487,16 +481,11 @@ bool HttpServerState::InitHashes(FileFd &File)				/*{{{*/
    In.Hash = new Hashes;
 
    // Set the expected size and read file for the hashes
-   if (StartPos >= 0)
-   {
-      File.Truncate(StartPos);
-
-      return In.Hash->AddFD(File, StartPos);
-   }
-   return true;
+   File.Truncate(StartPos);
+   return In.Hash->AddFD(File, StartPos);
 }
 									/*}}}*/
-Hashes * HttpServerState::GetHashes()					/*{{{*/
+APT_PURE Hashes * HttpServerState::GetHashes()				/*{{{*/
 {
    return In.Hash;
 }
@@ -735,7 +724,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    }
 
    // If we ask for uncompressed files servers might respond with content-
-   // negotation which lets us end up with compressed files we do not support,
+   // negotiation which lets us end up with compressed files we do not support,
    // see 657029, 657560 and co, so if we have no extension on the request
    // ask for text only. As a sidenote: If there is nothing to negotate servers
    // seem to be nice and ignore it.

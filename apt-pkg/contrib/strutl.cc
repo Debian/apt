@@ -21,6 +21,11 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/error.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string>
+#include <vector>
 #include <ctype.h>
 #include <string.h>
 #include <sstream>
@@ -33,9 +38,9 @@
 #include <iconv.h>
 
 #include <apti18n.h>
-
-using namespace std;
 									/*}}}*/
+using namespace std;
+
 // Strip - Remove white space from the front and back of a string       /*{{{*/
 // ---------------------------------------------------------------------
 namespace APT {
@@ -153,7 +158,7 @@ char *_strrstrip(char *String)
    End++;
    *End = 0;
    return String;
-};
+}
 									/*}}}*/
 // strtabexpand - Converts tabs into 8 spaces				/*{{{*/
 // ---------------------------------------------------------------------
@@ -426,7 +431,7 @@ string TimeToStr(unsigned long Sec)
 									/*}}}*/
 // SubstVar - Substitute a string for another string			/*{{{*/
 // ---------------------------------------------------------------------
-/* This replaces all occurances of Subst with Contents in Str. */
+/* This replaces all occurrences of Subst with Contents in Str. */
 string SubstVar(const string &Str,const string &Subst,const string &Contents)
 {
    string::size_type Pos = 0;
@@ -926,7 +931,7 @@ bool FTPMDTMStrToTime(const char* const str,time_t &time)
 									/*}}}*/
 // StrToTime - Converts a string into a time_t				/*{{{*/
 // ---------------------------------------------------------------------
-/* This handles all 3 populare time formats including RFC 1123, RFC 1036
+/* This handles all 3 popular time formats including RFC 1123, RFC 1036
    and the C library asctime format. It requires the GNU library function
    'timegm' to convert a struct tm in UTC to a time_t. For some bizzar
    reason the C library does not provide any such function :< This also
@@ -1130,9 +1135,11 @@ bool TokSplitString(char Tok,char *Input,char **List,
    also, but the advantage is that we have an iteratable vector */
 vector<string> VectorizeString(string const &haystack, char const &split)
 {
+   vector<string> exploded;
+   if (haystack.empty() == true)
+      return exploded;
    string::const_iterator start = haystack.begin();
    string::const_iterator end = start;
-   vector<string> exploded;
    do {
       for (; end != haystack.end() && *end != split; ++end);
       exploded.push_back(string(start, end));
@@ -1182,7 +1189,7 @@ unsigned long RegexChoice(RxChoiceList *Rxs,const char **ListBegin,
       R->Hit = false;
 
    unsigned long Hits = 0;
-   for (; ListBegin != ListEnd; ListBegin++)
+   for (; ListBegin < ListEnd; ++ListBegin)
    {
       // Check if the name is a regex
       const char *I;
@@ -1313,7 +1320,7 @@ string StripEpoch(const string &VerStr)
 // tolower_ascii - tolower() function that ignores the locale		/*{{{*/
 // ---------------------------------------------------------------------
 /* This little function is the most called method we have and tries
-   therefore to do the absolut minimum - and is noteable faster than
+   therefore to do the absolut minimum - and is notable faster than
    standard tolower/toupper and as a bonus avoids problems with different
    locales - we only operate on ascii chars anyway. */
 int tolower_ascii(int const c)
@@ -1324,9 +1331,9 @@ int tolower_ascii(int const c)
 }
 									/*}}}*/
 
-// CheckDomainList - See if Host is in a , seperate list		/*{{{*/
+// CheckDomainList - See if Host is in a , separate list		/*{{{*/
 // ---------------------------------------------------------------------
-/* The domain list is a comma seperate list of domains that are suffix
+/* The domain list is a comma separate list of domains that are suffix
    matched against the argument */
 bool CheckDomainList(const string &Host,const string &List)
 {

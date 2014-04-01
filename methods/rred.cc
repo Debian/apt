@@ -1,571 +1,659 @@
-// Includes									/*{{{*/
+// Copyright (c) 2014 Anthony Towns
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+
 #include <config.h>
 
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/configuration.h>
 
-#include <sys/stat.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <utime.h>
+#include <stddef.h>
+#include <iostream>
+#include <string>
+#include <list>
+#include <vector>
+
+#include <assert.h>
 #include <stdio.h>
-#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+
 #include <apti18n.h>
-										/*}}}*/
-/** \brief RredMethod - ed-style incremential patch method			{{{
- *
- *  This method implements a patch functionality similar to "patch --ed" that is
- *  used by the "tiffany" incremental packages download stuff. It differs from
- *  "ed" insofar that it is way more restricted (and therefore secure).
- *  The currently supported ed commands are "<em>c</em>hange", "<em>a</em>dd" and
- *  "<em>d</em>elete" (diff doesn't output any other).
- *  Additionally the records must be reverse sorted by line number and
- *  may not overlap (diff *seems* to produce this kind of output).
- * */
-class RredMethod : public pkgAcqMethod {
-	bool Debug;
-	// the size of this doesn't really matter (except for performance)
-	const static int BUF_SIZE = 1024;
-	// the supported ed commands
-	enum Mode {MODE_CHANGED='c', MODE_DELETED='d', MODE_ADDED='a'};
-	// return values
-	enum State {ED_OK, ED_ORDERING, ED_PARSER, ED_FAILURE, MMAP_FAILED};
 
-	State applyFile(FileFd &ed_cmds, FileFd &in_file, FileFd &out_file,
-	             unsigned long &line, char *buffer, Hashes *hash) const;
-	void ignoreLineInFile(FileFd &fin, char *buffer) const;
-	void copyLinesFromFileToFile(FileFd &fin, FileFd &fout, unsigned int lines,
-	                            Hashes *hash, char *buffer) const;
+#define BLOCK_SIZE (512*1024)
 
-	State patchFile(FileFd &Patch, FileFd &From, FileFd &out_file, Hashes *hash) const;
-	State patchMMap(FileFd &Patch, FileFd &From, FileFd &out_file, Hashes *hash) const;
+class MemBlock {
+   char *start;
+   size_t size;
+   char *free;
+   struct MemBlock *next;
 
-protected:
-	// the methods main method
-	virtual bool Fetch(FetchItem *Itm);
+   MemBlock(size_t size) : size(size), next(NULL)
+   {
+      free = start = new char[size];
+   }
 
-public:
-	RredMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig), Debug(false) {};
+   size_t avail(void) { return size - (free - start); }
+
+   public:
+
+   MemBlock(void) {
+      free = start = new char[BLOCK_SIZE];
+      size = BLOCK_SIZE;
+      next = NULL;
+   }
+
+   ~MemBlock() {
+      delete [] start;
+      delete next;
+   }
+
+   void clear(void) {
+      free = start;
+      if (next)
+	 next->clear();
+   }
+
+   char *add_easy(char *src, size_t len, char *last)
+   {
+      if (last) {
+	 for (MemBlock *k = this; k; k = k->next) {
+	    if (k->free == last) {
+	       if (len <= k->avail()) {
+		  char *n = k->add(src, len);
+		  assert(last == n);
+		  if (last == n)
+		     return NULL;
+		  return n;
+	       } else {
+		  break;
+	       }
+	    } else if (last >= start && last < free) {
+	       break;
+	    }
+	 }
+      }
+      return add(src, len);
+   }
+
+   char *add(char *src, size_t len) {
+      if (len > avail()) {
+	 if (!next) {
+	    if (len > BLOCK_SIZE)  {
+	       next = new MemBlock(len);
+	    } else {
+	       next = new MemBlock;
+	    }
+	 }
+	 return next->add(src, len);
+      }
+      char *dst = free;
+      free += len;
+      memcpy(dst, src, len);
+      return dst;
+   }
 };
-										/*}}}*/
-/** \brief applyFile - in reverse order with a tail recursion			{{{
- *
- *  As it is expected that the commands are in reversed order in the patch file
- *  we check in the first half if the command is valid, but doesn't execute it
- *  and move a step deeper. After reaching the end of the file we apply the
- *  patches in the correct order: last found command first.
- *
- *  \param ed_cmds patch file to apply
- *  \param in_file base file we want to patch
- *  \param out_file file to write the patched result to
- *  \param line of command operation
- *  \param buffer internal used read/write buffer
- *  \param hash the created file for correctness
- *  \return the success State of the ed command executor
- */
-RredMethod::State RredMethod::applyFile(FileFd &ed_cmds, FileFd &in_file, FileFd &out_file,
-			unsigned long &line, char *buffer, Hashes *hash) const {
-	// get the current command and parse it
-	if (ed_cmds.ReadLine(buffer, BUF_SIZE) == NULL) {
-		if (Debug == true)
-			std::clog << "rred: encounter end of file - we can start patching now." << std::endl;
-		line = 0;
-		return ED_OK;
-	}
 
-	// parse in the effected linenumbers
-	char* idx;
-	errno=0;
-	unsigned long const startline = strtol(buffer, &idx, 10);
-	if (errno == ERANGE || errno == EINVAL) {
-		_error->Errno("rred", "startline is an invalid number");
-		return ED_PARSER;
-	}
-	if (startline > line) {
-		_error->Error("rred: The start line (%lu) of the next command is higher than the last line (%lu). This is not allowed.", startline, line);
-		return ED_ORDERING;
-	}
-	unsigned long stopline;
-	if (*idx == ',') {
-		idx++;
-		errno=0;
-		stopline = strtol(idx, &idx, 10);
-		if (errno == ERANGE || errno == EINVAL) {
-			_error->Errno("rred", "stopline is an invalid number");
-			return ED_PARSER;
-		}
-	}
-	else {
-		stopline = startline;
-	}
-	line = startline;
+struct Change {
+   /* Ordering:
+    *
+    *   1. write out <offset> lines unchanged
+    *   2. skip <del_cnt> lines from source
+    *   3. write out <add_cnt> lines (<add>/<add_len>)
+    */
+   size_t offset;
+   size_t del_cnt;
+   size_t add_cnt; /* lines */
+   size_t add_len; /* bytes */
+   char *add;
 
-	// which command to execute on this line(s)?
-	switch (*idx) {
-		case MODE_CHANGED:
-			if (Debug == true)
-				std::clog << "Change from line " << startline << " to " << stopline << std::endl;
-			break;
-		case MODE_ADDED:
-			if (Debug == true)
-				std::clog << "Insert after line " << startline << std::endl;
-			break;
-		case MODE_DELETED:
-			if (Debug == true)
-				std::clog << "Delete from line " << startline << " to " << stopline << std::endl;
-			break;
-		default:
-			_error->Error("rred: Unknown ed command '%c'. Abort.", *idx);
-			return ED_PARSER;
-	}
-	unsigned char mode = *idx;
+   Change(int off)
+   {
+      offset = off;
+      del_cnt = add_cnt = add_len = 0;
+      add = NULL;
+   }
 
-	// save the current position
-	unsigned const long long pos = ed_cmds.Tell();
-
-	// if this is add or change then go to the next full stop
-	unsigned int data_length = 0;
-	if (mode == MODE_CHANGED || mode == MODE_ADDED) {
-		do {
-			ignoreLineInFile(ed_cmds, buffer);
-			data_length++;
-		}
-		while (strncmp(buffer, ".", 1) != 0);
-		data_length--; // the dot should not be copied
-	}
-
-	// do the recursive call - the last command is the one we need to execute at first
-	const State child = applyFile(ed_cmds, in_file, out_file, line, buffer, hash);
-	if (child != ED_OK) {
-		return child;
-	}
-
-	// change and delete are working on "line" - add is done after "line"
-	if (mode != MODE_ADDED)
-		line++;
-
-	// first wind to the current position and copy over all unchanged lines
-	if (line < startline) {
-		copyLinesFromFileToFile(in_file, out_file, (startline - line), hash, buffer);
-		line = startline;
-	}
-
-	if (mode != MODE_ADDED)
-		line--;
-
-	// include data from ed script
-	if (mode == MODE_CHANGED || mode == MODE_ADDED) {
-		ed_cmds.Seek(pos);
-		copyLinesFromFileToFile(ed_cmds, out_file, data_length, hash, buffer);
-	}
-
-	// ignore the corresponding number of lines from input
-	if (mode == MODE_CHANGED || mode == MODE_DELETED) {
-		while (line < stopline) {
-			ignoreLineInFile(in_file, buffer);
-			line++;
-		}
-	}
-	return ED_OK;
-}
-										/*}}}*/
-void RredMethod::copyLinesFromFileToFile(FileFd &fin, FileFd &fout, unsigned int lines,/*{{{*/
-					Hashes *hash, char *buffer) const {
-	while (0 < lines--) {
-		do {
-			fin.ReadLine(buffer, BUF_SIZE);
-			unsigned long long const towrite = strlen(buffer);
-			fout.Write(buffer, towrite);
-			hash->Add((unsigned char*)buffer, towrite);
-		} while (strlen(buffer) == (BUF_SIZE - 1) &&
-		       buffer[BUF_SIZE - 2] != '\n');
-	}
-}
-										/*}}}*/
-void RredMethod::ignoreLineInFile(FileFd &fin, char *buffer) const {		/*{{{*/
-	fin.ReadLine(buffer, BUF_SIZE);
-	while (strlen(buffer) == (BUF_SIZE - 1) &&
-	       buffer[BUF_SIZE - 2] != '\n') {
-		fin.ReadLine(buffer, BUF_SIZE);
-		buffer[0] = ' ';
-	}
-}
-										/*}}}*/
-RredMethod::State RredMethod::patchFile(FileFd &Patch, FileFd &From,		/*{{{*/
-					FileFd &out_file, Hashes *hash) const {
-   char buffer[BUF_SIZE];
-
-   /* we do a tail recursion to read the commands in the right order */
-   unsigned long line = -1; // assign highest possible value
-   State const result = applyFile(Patch, From, out_file, line, buffer, hash);
-   
-   /* read the rest from infile */
-   if (result == ED_OK) {
-      while (From.ReadLine(buffer, BUF_SIZE) != NULL) {
-	 unsigned long long const towrite = strlen(buffer);
-	 out_file.Write(buffer, towrite);
-	 hash->Add((unsigned char*)buffer, towrite);
+   /* actually, don't write <lines> lines from <add> */
+   void skip_lines(size_t lines)
+   {
+      while (lines > 0) {
+	 char *s = (char*) memchr(add, '\n', add_len);
+	 assert(s != NULL);
+	 s++;
+	 add_len -= (s - add);
+	 add_cnt--;
+	 lines--;
+	 if (add_len == 0) {
+	    add = NULL;
+	    assert(add_cnt == 0);
+	    assert(lines == 0);
+	 } else {
+	    add = s;
+	    assert(add_cnt > 0);
+	 }
       }
    }
-   return result;
-}
-										/*}}}*/
-/* struct EdCommand								{{{*/
-#ifdef _POSIX_MAPPED_FILES
-struct EdCommand {
-  size_t data_start;
-  size_t data_end;
-  size_t data_lines;
-  size_t first_line;
-  size_t last_line;
-  char type;
 };
-#define IOV_COUNT 1024 /* Don't really want IOV_MAX since it can be arbitrarily large */
-static ssize_t retry_writev(int fd, const struct iovec *iov, int iovcnt) {
-	ssize_t Res;
-	errno = 0;
-	ssize_t i = 0;
-	do {
-		Res = writev(fd, iov + i, iovcnt);
-		if (Res < 0 && errno == EINTR)
-			continue;
-		if (Res < 0)
-			return _error->Errno("writev",_("Write error"));
-		iovcnt -= Res;
-		i += Res;
-	} while (Res > 0 && iovcnt > 0);
-	return i;
-}
-#endif
-										/*}}}*/
-RredMethod::State RredMethod::patchMMap(FileFd &Patch, FileFd &From,		/*{{{*/
-					FileFd &out_file, Hashes *hash) const {
-#ifdef _POSIX_MAPPED_FILES
-	MMap ed_cmds(Patch, MMap::ReadOnly);
-	MMap in_file(From, MMap::ReadOnly);
 
-	unsigned long long const ed_size = ed_cmds.Size();
-	unsigned long long const in_size = in_file.Size();
-	if (ed_size == 0 || in_size == 0)
-		return MMAP_FAILED;
+class FileChanges {
+   std::list<struct Change> changes;
+   std::list<struct Change>::iterator where;
+   size_t pos; // line number is as far left of iterator as possible
 
-	EdCommand* commands = 0;
-	size_t command_count = 0;
-	size_t command_alloc = 0;
-
-	const char* begin = (char*) ed_cmds.Data();
-	const char* end = begin;
-	const char* ed_end = (char*) ed_cmds.Data() + ed_size;
-
-	const char* input = (char*) in_file.Data();
-	const char* input_end = (char*) in_file.Data() + in_size;
-
-	size_t i;
-
-	/* 1. Parse entire script.  It is executed in reverse order, so we cather it
-	 *    in the `commands' buffer first
-	 */
-
-	for(;;) {
-		EdCommand cmd;
-		cmd.data_start = 0;
-		cmd.data_end = 0;
-
-		while(begin != ed_end && *begin == '\n')
-			++begin;
-		while(end != ed_end && *end != '\n')
-			++end;
-		if(end == ed_end && begin == end)
-			break;
-
-		/* Determine command range */
-		const char* tmp = begin;
-
-		for(;;) {
-			/* atoll is safe despite lacking NUL-termination; we know there's an
-			 * alphabetic character at end[-1]
-			 */
-			if(tmp == end) {
-				cmd.first_line = atol(begin);
-				cmd.last_line = cmd.first_line;
-				break;
-			}
-			if(*tmp == ',') {
-				cmd.first_line = atol(begin);
-				cmd.last_line = atol(tmp + 1);
-				break;
-			}
-			++tmp;
-		}
-
-		// which command to execute on this line(s)?
-		switch (end[-1]) {
-			case MODE_CHANGED:
-				if (Debug == true)
-					std::clog << "Change from line " << cmd.first_line << " to " << cmd.last_line << std::endl;
-				break;
-			case MODE_ADDED:
-				if (Debug == true)
-					std::clog << "Insert after line " << cmd.first_line << std::endl;
-				break;
-			case MODE_DELETED:
-				if (Debug == true)
-					std::clog << "Delete from line " << cmd.first_line << " to " << cmd.last_line << std::endl;
-				break;
-			default:
-				_error->Error("rred: Unknown ed command '%c'. Abort.", end[-1]);
-				free(commands);
-				return ED_PARSER;
-		}
-		cmd.type = end[-1];
-
-		/* Determine the size of the inserted text, so we don't have to scan this
-		 * text again later.
-		 */
-		begin = end + 1;
-		end = begin;
-		cmd.data_lines = 0;
-
-		if(cmd.type == MODE_ADDED || cmd.type == MODE_CHANGED) {
-			cmd.data_start = begin - (char*) ed_cmds.Data();
-			while(end != ed_end) {
-				if(*end == '\n') {
-					if(end[-1] == '.' && end[-2] == '\n')
-						break;
-					++cmd.data_lines;
-				}
-				++end;
-			}
-			cmd.data_end = end - (char*) ed_cmds.Data() - 1;
-			begin = end + 1;
-			end = begin;
-		}
-		if(command_count == command_alloc) {
-			command_alloc = (command_alloc + 64) * 3 / 2;
-			EdCommand* newCommands = (EdCommand*) realloc(commands, command_alloc * sizeof(EdCommand));
-			if (newCommands == NULL) {
-				free(commands);
-				return MMAP_FAILED;
-			}
-			commands = newCommands;
-		}
-		commands[command_count++] = cmd;
-	}
-
-	struct iovec* iov = new struct iovec[IOV_COUNT];
-	size_t iov_size = 0;
-
-	size_t amount, remaining;
-	size_t line = 1;
-	EdCommand* cmd;
-
-	/* 2. Execute script.  We gather writes in a `struct iov' array, and flush
-	 *    using writev to minimize the number of system calls.  Data is read
-	 *    directly from the memory mappings of the input file and the script.
-	 */
-
-	for(i = command_count; i-- > 0; ) {
-		cmd = &commands[i];
-		if(cmd->type == MODE_ADDED)
-			amount = cmd->first_line + 1;
-		else
-			amount = cmd->first_line;
-
-		if(line < amount) {
-			begin = input;
-			while(line != amount) {
-				input = (const char*) memchr(input, '\n', input_end - input);
-				if(!input)
-					break;
-				++line;
-				++input;
-			}
-
-			iov[iov_size].iov_base = (void*) begin;
-			iov[iov_size].iov_len = input - begin;
-			hash->Add((const unsigned char*) begin, input - begin);
-
-			if(++iov_size == IOV_COUNT) {
-				retry_writev(out_file.Fd(), iov, IOV_COUNT);
-				iov_size = 0;
-			}
-		}
-
-		if(cmd->type == MODE_DELETED || cmd->type == MODE_CHANGED) {
-			remaining = (cmd->last_line - cmd->first_line) + 1;
-			line += remaining;
-			while(remaining) {
-				input = (const char*) memchr(input, '\n', input_end - input);
-				if(!input)
-					break;
-				--remaining;
-				++input;
-			}
-		}
-
-		if(cmd->type == MODE_CHANGED || cmd->type == MODE_ADDED) {
-			if(cmd->data_end != cmd->data_start) {
-				iov[iov_size].iov_base = (void*) ((char*)ed_cmds.Data() + cmd->data_start);
-				iov[iov_size].iov_len = cmd->data_end - cmd->data_start;
-				hash->Add((const unsigned char*) ((char*)ed_cmds.Data() + cmd->data_start),
-				iov[iov_size].iov_len);
-
-				if(++iov_size == IOV_COUNT) {
-					retry_writev(out_file.Fd(), iov, IOV_COUNT);
-					iov_size = 0;
-				}
-			}
-		}
-	}
-
-	if(input != input_end) {
-		iov[iov_size].iov_base = (void*) input;
-		iov[iov_size].iov_len = input_end - input;
-		hash->Add((const unsigned char*) input, input_end - input);
-		++iov_size;
-	}
-
-	if(iov_size) {
-		retry_writev(out_file.Fd(), iov, iov_size);
-		iov_size = 0;
-	}
-
-	for(i = 0; i < iov_size; i += IOV_COUNT) {
-		if(iov_size - i < IOV_COUNT)
-			retry_writev(out_file.Fd(), iov + i, iov_size - i);
-		else
-			retry_writev(out_file.Fd(), iov + i, IOV_COUNT);
-	}
-
-	delete [] iov;
-	free(commands);
-
-	return ED_OK;
+   bool pos_is_okay(void)
+   {
+#ifdef POSDEBUG
+      size_t cpos = 0;
+      std::list<struct Change>::iterator x;
+      for (x = changes.begin(); x != where; ++x) {
+	 assert(x != changes.end());
+	 cpos += x->offset + x->add_cnt;
+      }
+      return cpos == pos;
 #else
-	return MMAP_FAILED;
+      return true;
 #endif
-}
-										/*}}}*/
-bool RredMethod::Fetch(FetchItem *Itm)						/*{{{*/
-{
-   Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
-   URI Get = Itm->Uri;
-   std::string Path = Get.Host + Get.Path; // To account for relative paths
-
-   FetchResult Res;
-   Res.Filename = Itm->DestFile;
-   if (Itm->Uri.empty() == true) {
-      Path = Itm->DestFile;
-      Itm->DestFile.append(".result");
-   } else
-      URIStart(Res);
-
-   if (Debug == true) 
-      std::clog << "Patching " << Path << " with " << Path 
-         << ".ed and putting result into " << Itm->DestFile << std::endl;
-   // Open the source and destination files (the d'tor of FileFd will do 
-   // the cleanup/closing of the fds)
-   FileFd From(Path,FileFd::ReadOnly);
-   FileFd Patch(Path+".ed",FileFd::ReadOnly, FileFd::Gzip);
-   FileFd To(Itm->DestFile,FileFd::WriteAtomic);   
-   To.EraseOnFailure();
-   if (_error->PendingError() == true)
-      return false;
-   
-   Hashes Hash;
-   // now do the actual patching
-   State const result = patchMMap(Patch, From, To, &Hash);
-   if (result == MMAP_FAILED) {
-      // retry with patchFile
-      Patch.Seek(0);
-      From.Seek(0);
-      To.Open(Itm->DestFile,FileFd::WriteAtomic);
-      if (_error->PendingError() == true)
-         return false;
-      if (patchFile(Patch, From, To, &Hash) != ED_OK) {
-	 return _error->WarningE("rred", _("Could not patch %s with mmap and with file operation usage - the patch seems to be corrupt."), Path.c_str());
-      } else if (Debug == true) {
-	 std::clog << "rred: finished file patching of " << Path  << " after mmap failed." << std::endl;
-      }
-   } else if (result != ED_OK) {
-      return _error->Errno("rred", _("Could not patch %s with mmap (but no mmap specific fail) - the patch seems to be corrupt."), Path.c_str());
-   } else if (Debug == true) {
-      std::clog << "rred: finished mmap patching of " << Path << std::endl;
    }
 
-   // write out the result
-   From.Close();
-   Patch.Close();
-   To.Close();
+   public:
+   FileChanges() {
+      where = changes.end();
+      pos = 0;
+   }
 
-   /* Transfer the modification times from the patch file
-      to be able to see in which state the file should be
-      and use the access time from the "old" file */
-   struct stat BufBase, BufPatch;
-   if (stat(Path.c_str(),&BufBase) != 0 ||
-       stat(std::string(Path+".ed").c_str(),&BufPatch) != 0)
-      return _error->Errno("stat",_("Failed to stat"));
+   std::list<struct Change>::iterator begin(void) { return changes.begin(); }
+   std::list<struct Change>::iterator end(void) { return changes.end(); }
 
-   struct utimbuf TimeBuf;
-   TimeBuf.actime = BufBase.st_atime;
-   TimeBuf.modtime = BufPatch.st_mtime;
-   if (utime(Itm->DestFile.c_str(),&TimeBuf) != 0)
-      return _error->Errno("utime",_("Failed to set modification time"));
+   std::list<struct Change>::reverse_iterator rbegin(void) { return changes.rbegin(); }
+   std::list<struct Change>::reverse_iterator rend(void) { return changes.rend(); }
 
-   if (stat(Itm->DestFile.c_str(),&BufBase) != 0)
-      return _error->Errno("stat",_("Failed to stat"));
+   void add_change(Change c) {
+      assert(pos_is_okay());
+      go_to_change_for(c.offset);
+      assert(pos + where->offset == c.offset);
+      if (c.del_cnt > 0)
+	 delete_lines(c.del_cnt);
+      assert(pos + where->offset == c.offset);
+      if (c.add_len > 0) {
+	 assert(pos_is_okay());
+	 if (where->add_len > 0)
+	    new_change();
+	 assert(where->add_len == 0 && where->add_cnt == 0);
 
-   // return done
-   Res.LastModified = BufBase.st_mtime;
-   Res.Size = BufBase.st_size;
-   Res.TakeHashes(Hash);
-   URIDone(Res);
+	 where->add_len = c.add_len;
+	 where->add_cnt = c.add_cnt;
+	 where->add = c.add;
+      }
+      assert(pos_is_okay());
+      merge();
+      assert(pos_is_okay());
+   }
 
-   return true;
-}
-										/*}}}*/
-/** \brief Wrapper class for testing rred */					/*{{{*/
-class TestRredMethod : public RredMethod {
-public:
-	/** \brief Run rred in debug test mode
-	 *
-	 *  This method can be used to run the rred method outside
-	 *  of the "normal" acquire environment for easier testing.
-	 *
-	 *  \param base basename of all files involved in this rred test
-	 */
-	bool Run(char const *base) {
-		_config->CndSet("Debug::pkgAcquire::RRed", "true");
-		FetchItem *test = new FetchItem;
-		test->DestFile = base;
-		return Fetch(test);
-	}
+   private:
+   void merge(void)
+   {
+      while (where->offset == 0 && where != changes.begin()) {
+	 left();
+      }
+      std::list<struct Change>::iterator next = where;
+      ++next;
+
+      while (next != changes.end() && next->offset == 0) {
+	 where->del_cnt += next->del_cnt;
+	 next->del_cnt = 0;
+	 if (next->add == NULL) {
+	    next = changes.erase(next);
+	 } else if (where->add == NULL) {
+	    where->add = next->add;
+	    where->add_len = next->add_len;
+	    where->add_cnt = next->add_cnt;
+	    next = changes.erase(next);
+	 } else {
+	    ++next;
+	 }
+      }
+   }
+
+   void go_to_change_for(size_t line)
+   {
+      while(where != changes.end()) {
+	 if (line < pos) {
+	    left();
+	    continue;
+	 }
+	 if (pos + where->offset + where->add_cnt <= line) {
+	    right();
+	    continue;
+	 }
+	 // line is somewhere in this slot
+	 if (line < pos + where->offset) {
+	    break;
+	 } else if (line == pos + where->offset) {
+	    return;
+	 } else {
+	    split(line - pos);
+	    right();
+	    return;
+	 }
+      }
+      /* it goes before this patch */
+      insert(line-pos);
+   }
+
+   void new_change(void) { insert(where->offset); }
+
+   void insert(size_t offset)
+   {
+      assert(pos_is_okay());
+      assert(where == changes.end() || offset <= where->offset);
+      if (where != changes.end())
+	 where->offset -= offset;
+      changes.insert(where, Change(offset));
+      --where;
+      assert(pos_is_okay());
+   }
+
+   void split(size_t offset)
+   {
+      assert(pos_is_okay());
+
+      assert(where->offset < offset);
+      assert(offset < where->offset + where->add_cnt);
+
+      size_t keep_lines = offset - where->offset;
+
+      Change before(*where);
+
+      where->del_cnt = 0;
+      where->offset = 0;
+      where->skip_lines(keep_lines);
+
+      before.add_cnt = keep_lines;
+      before.add_len -= where->add_len;
+
+      changes.insert(where, before);
+      --where;
+      assert(pos_is_okay());
+   }
+
+   void delete_lines(size_t cnt)
+   {
+      std::list<struct Change>::iterator x = where;
+      assert(pos_is_okay());
+      while (cnt > 0)
+      {
+	 size_t del;
+	 del = x->add_cnt;
+	 if (del > cnt)
+	    del = cnt;
+	 x->skip_lines(del);
+	 cnt -= del;
+
+	 ++x;
+	 if (x == changes.end()) {
+	    del = cnt;
+	 } else {
+	    del = x->offset;
+	    if (del > cnt)
+	       del = cnt;
+	    x->offset -= del;
+	 }
+	 where->del_cnt += del;
+	 cnt -= del;
+      }
+      assert(pos_is_okay());
+   }
+
+   void left(void) {
+      assert(pos_is_okay());
+      --where;
+      pos -= where->offset + where->add_cnt;
+      assert(pos_is_okay());
+   }
+
+   void right(void) {
+      assert(pos_is_okay());
+      pos += where->offset + where->add_cnt;
+      ++where;
+      assert(pos_is_okay());
+   }
 };
-										/*}}}*/
-/** \brief Starter for the rred method (or its test method)			{{{
- *
- *  Used without parameters is the normal behavior for methods for
- *  the APT acquire system. While this works great for the acquire system
- *  it is very hard to test the method and therefore the method also
- *  accepts one parameter which will switch it directly to debug test mode:
- *  The test mode expects that if "Testfile" is given as parameter
- *  the file "Testfile" should be ed-style patched with "Testfile.ed"
- *  and will write the result to "Testfile.result".
- */
-int main(int argc, char *argv[]) {
-	if (argc <= 1) {
-		RredMethod Mth;
-		return Mth.Run();
-	} else {
-		TestRredMethod Mth;
-		bool result = Mth.Run(argv[1]);
-		_error->DumpErrors();
-		return result;
-	}
+
+class Patch {
+   FileChanges filechanges;
+   MemBlock add_text;
+
+   static bool retry_fwrite(char *b, size_t l, FILE *f, Hashes *hash)
+   {
+      size_t r = 1;
+      while (r > 0 && l > 0)
+      {
+         r = fwrite(b, 1, l, f);
+	 if (hash)
+	    hash->Add((unsigned char*)b, r);
+	 l -= r;
+	 b += r;
+      }
+      return l == 0;
+   }
+
+   static void dump_rest(FILE *o, FILE *i, Hashes *hash)
+   {
+      char buffer[BLOCK_SIZE];
+      size_t l;
+      while (0 < (l = fread(buffer, 1, sizeof(buffer), i))) {
+	 if (!retry_fwrite(buffer, l, o, hash))
+	    break;
+      }
+   }
+
+   static void dump_lines(FILE *o, FILE *i, size_t n, Hashes *hash)
+   {
+      char buffer[BLOCK_SIZE];
+      while (n > 0) {
+	 if (fgets(buffer, sizeof(buffer), i) == 0)
+	    buffer[0] = '\0';
+	 size_t const l = strlen(buffer);
+	 if (l == 0 || buffer[l-1] == '\n')
+	    n--;
+	 retry_fwrite(buffer, l, o, hash);
+      }
+   }
+
+   static void skip_lines(FILE *i, int n)
+   {
+      char buffer[BLOCK_SIZE];
+      while (n > 0) {
+	 if (fgets(buffer, sizeof(buffer), i) == 0)
+	    buffer[0] = '\0';
+	 size_t const l = strlen(buffer);
+	 if (l == 0 || buffer[l-1] == '\n')
+	    n--;
+      }
+   }
+
+   static void dump_mem(FILE *o, char *p, size_t s, Hashes *hash) {
+      retry_fwrite(p, s, o, hash);
+   }
+
+   public:
+
+   void read_diff(FileFd &f)
+   {
+      char buffer[BLOCK_SIZE];
+      bool cmdwanted = true;
+
+      Change ch(0);
+      while(f.ReadLine(buffer, sizeof(buffer)))
+      {
+	 if (cmdwanted) {
+	    char *m, *c;
+	    size_t s, e;
+	    s = strtol(buffer, &m, 10);
+	    if (m == buffer) {
+	       s = e = ch.offset + ch.add_cnt;
+	       c = buffer;
+	    } else if (*m == ',') {
+	       m++;
+	       e = strtol(m, &c, 10);
+	    } else {
+	       e = s;
+	       c = m;
+	    }
+	    switch(*c) {
+	       case 'a':
+		  cmdwanted = false;
+		  ch.add = NULL;
+		  ch.add_cnt = 0;
+		  ch.add_len = 0;
+		  ch.offset = s;
+		  ch.del_cnt = 0;
+		  break;
+	       case 'c':
+		  cmdwanted = false;
+		  ch.add = NULL;
+		  ch.add_cnt = 0;
+		  ch.add_len = 0;
+		  ch.offset = s - 1;
+		  ch.del_cnt = e - s + 1;
+		  break;
+	       case 'd':
+		  ch.offset = s - 1;
+		  ch.del_cnt = e - s + 1;
+		  ch.add = NULL;
+		  ch.add_cnt = 0;
+		  ch.add_len = 0;
+		  filechanges.add_change(ch);
+		  break;
+	    }
+	 } else { /* !cmdwanted */
+	    if (buffer[0] == '.' && buffer[1] == '\n') {
+	       cmdwanted = true;
+	       filechanges.add_change(ch);
+	    } else {
+	       char *last = NULL;
+	       char *add;
+	       size_t l;
+	       if (ch.add)
+		  last = ch.add + ch.add_len;
+	       l = strlen(buffer);
+	       add = add_text.add_easy(buffer, l, last);
+	       if (!add) {
+		  ch.add_len += l;
+		  ch.add_cnt++;
+	       } else {
+		  if (ch.add) {
+		     filechanges.add_change(ch);
+		     ch.del_cnt = 0;
+		  }
+		  ch.offset += ch.add_cnt;
+		  ch.add = add;
+		  ch.add_len = l;
+		  ch.add_cnt = 1;
+	       }
+	    }
+	 }
+      }
+   }
+
+   void write_diff(FILE *f)
+   {
+      unsigned long long line = 0;
+      std::list<struct Change>::reverse_iterator ch;
+      for (ch = filechanges.rbegin(); ch != filechanges.rend(); ++ch) {
+	 line += ch->offset + ch->del_cnt;
+      }
+
+      for (ch = filechanges.rbegin(); ch != filechanges.rend(); ++ch) {
+	 std::list<struct Change>::reverse_iterator mg_i, mg_e = ch;
+	 while (ch->del_cnt == 0 && ch->offset == 0)
+	    ++ch;
+	 line -= ch->del_cnt;
+	 if (ch->add_cnt > 0) {
+	    if (ch->del_cnt == 0) {
+	       fprintf(f, "%llua\n", line);
+	    } else if (ch->del_cnt == 1) {
+	       fprintf(f, "%lluc\n", line+1);
+	    } else {
+	       fprintf(f, "%llu,%lluc\n", line+1, line+ch->del_cnt);
+	    }
+
+	    mg_i = ch;
+	    do {
+	       dump_mem(f, mg_i->add, mg_i->add_len, NULL);
+	    } while (mg_i-- != mg_e);
+
+	    fprintf(f, ".\n");
+	 } else if (ch->del_cnt == 1) {
+	    fprintf(f, "%llud\n", line+1);
+	 } else if (ch->del_cnt > 1) {
+	    fprintf(f, "%llu,%llud\n", line+1, line+ch->del_cnt);
+	 }
+	 line -= ch->offset;
+      }
+   }
+
+   void apply_against_file(FILE *out, FILE *in, Hashes *hash = NULL)
+   {
+      std::list<struct Change>::iterator ch;
+      for (ch = filechanges.begin(); ch != filechanges.end(); ++ch) {
+	 dump_lines(out, in, ch->offset, hash);
+	 skip_lines(in, ch->del_cnt);
+	 dump_mem(out, ch->add, ch->add_len, hash);
+      }
+      dump_rest(out, in, hash);
+   }
+};
+
+class RredMethod : public pkgAcqMethod {
+   private:
+      bool Debug;
+
+   protected:
+      virtual bool Fetch(FetchItem *Itm) {
+	 Debug = _config->FindB("Debug::pkgAcquire::RRed", false);
+	 URI Get = Itm->Uri;
+	 std::string Path = Get.Host + Get.Path; // rred:/path - no host
+
+	 FetchResult Res;
+	 Res.Filename = Itm->DestFile;
+	 if (Itm->Uri.empty())
+	 {
+	    Path = Itm->DestFile;
+	    Itm->DestFile.append(".result");
+	 } else
+	    URIStart(Res);
+
+	 std::vector<std::string> patchpaths;
+	 Patch patch;
+
+	 if (FileExists(Path + ".ed") == true)
+	    patchpaths.push_back(Path + ".ed");
+	 else
+	 {
+	    _error->PushToStack();
+	    std::vector<std::string> patches = GetListOfFilesInDir(flNotFile(Path), "gz", true, false);
+	    _error->RevertToStack();
+
+	    std::string const baseName = Path + ".ed.";
+	    for (std::vector<std::string>::const_iterator p = patches.begin();
+		  p != patches.end(); ++p)
+	       if (p->compare(0, baseName.length(), baseName) == 0)
+		  patchpaths.push_back(*p);
+	 }
+
+	 std::string patch_name;
+	 for (std::vector<std::string>::iterator I = patchpaths.begin();
+	       I != patchpaths.end();
+	       ++I)
+	 {
+	    patch_name = *I;
+	    if (Debug == true)
+	       std::clog << "Patching " << Path << " with " << patch_name
+		  << std::endl;
+
+	    FileFd p;
+	    // all patches are compressed, even if the name doesn't reflect it
+	    if (p.Open(patch_name, FileFd::ReadOnly, FileFd::Gzip) == false) {
+	       std::cerr << "Could not open patch file " << patch_name << std::endl;
+	       _error->DumpErrors(std::cerr);
+	       abort();
+	    }
+	    patch.read_diff(p);
+	    p.Close();
+	 }
+
+	 if (Debug == true)
+	    std::clog << "Applying patches against " << Path
+	       << " and writing results to " << Itm->DestFile
+	       << std::endl;
+
+	 FILE *inp = fopen(Path.c_str(), "r");
+	 FILE *out = fopen(Itm->DestFile.c_str(), "w");
+
+	 Hashes hash;
+
+	 patch.apply_against_file(out, inp, &hash);
+
+	 fclose(out);
+	 fclose(inp);
+
+	 if (Debug == true) {
+	    std::clog << "rred: finished file patching of " << Path  << "." << std::endl;
+	 }
+
+	 struct stat bufbase, bufpatch;
+	 if (stat(Path.c_str(), &bufbase) != 0 ||
+	       stat(patch_name.c_str(), &bufpatch) != 0)
+	    return _error->Errno("stat", _("Failed to stat"));
+
+	 struct timeval times[2];
+	 times[0].tv_sec = bufbase.st_atime;
+	 times[1].tv_sec = bufpatch.st_mtime;
+	 times[0].tv_usec = times[1].tv_usec = 0;
+	 if (utimes(Itm->DestFile.c_str(), times) != 0)
+	    return _error->Errno("utimes",_("Failed to set modification time"));
+
+	 if (stat(Itm->DestFile.c_str(), &bufbase) != 0)
+	    return _error->Errno("stat", _("Failed to stat"));
+
+	 Res.LastModified = bufbase.st_mtime;
+	 Res.Size = bufbase.st_size;
+	 Res.TakeHashes(hash);
+	 URIDone(Res);
+
+	 return true;
+      }
+
+   public:
+      RredMethod() : pkgAcqMethod("2.0",SingleInstance | SendConfig), Debug(false) {}
+};
+
+int main(int argc, char **argv)
+{
+   int i;
+   bool just_diff = true;
+   Patch patch;
+
+   if (argc <= 1) {
+      RredMethod Mth;
+      return Mth.Run();
+   }
+
+   if (argc > 1 && strcmp(argv[1], "-f") == 0) {
+      just_diff = false;
+      i = 2;
+   } else {
+      i = 1;
+   }
+
+   for (; i < argc; i++) {
+      FileFd p;
+      if (p.Open(argv[i], FileFd::ReadOnly) == false) {
+	 _error->DumpErrors(std::cerr);
+	 exit(1);
+      }
+      patch.read_diff(p);
+   }
+
+   if (just_diff) {
+      patch.write_diff(stdout);
+   } else {
+      FILE *out, *inp;
+      out = stdout;
+      inp = stdin;
+
+      patch.apply_against_file(out, inp);
+   }
+   return 0;
 }
-										/*}}}*/

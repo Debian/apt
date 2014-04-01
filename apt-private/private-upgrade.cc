@@ -1,11 +1,18 @@
 // Includes								/*{{{*/
-#include <apt-pkg/algorithms.h>
+#include <config.h>
+
 #include <apt-pkg/upgrade.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
+
+#include <apt-private/private-install.h>
+#include <apt-private/private-cachefile.h>
+#include <apt-private/private-upgrade.h>
+#include <apt-private/private-output.h>
+
 #include <iostream>
-#include "private-install.h"
-#include "private-cachefile.h"
-#include "private-upgrade.h"
-#include "private-output.h"
+
+#include <apti18n.h>
 									/*}}}*/
 
 // this is actually performing the various upgrade operations 
@@ -37,6 +44,14 @@ static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
 bool DoDistUpgrade(CommandLine &CmdL)
 {
    return UpgradeHelper(CmdL, 0);
+}
+									/*}}}*/
+bool DoUpgrade(CommandLine &CmdL)					/*{{{*/
+{
+   if (_config->FindB("APT::Get::Upgrade-Allow-New", false) == true)
+      return DoUpgradeWithAllowNewPackages(CmdL);
+   else
+      return DoUpgradeNoNewPackages(CmdL);
 }
 									/*}}}*/
 // DoUpgradeNoNewPackages - Upgrade all packages			/*{{{*/

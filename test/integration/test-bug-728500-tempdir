@@ -7,12 +7,23 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture 'i386'
 
-buildsimplenativepackage 'coolstuff' 'all' '1.0' 'unstable'
+insertpackage 'unstable' 'coolstuff' 'all' '1.0'
 
 setupaptarchive
 changetowebserver
 
-msgtest 'Test with incorect TMPDIR'
+msgtest 'Test apt-get update with incorrect' 'TMPDIR'
+
+OUTPUT=$(mktemp)
+addtrap "rm $OUTPUT;"
 export TMPDIR=/does-not-exists
-aptget update && msgpass || msgfail
+if aptget update >${OUTPUT} 2>&1; then
+	msgpass
+else
+	echo
+	cat $OUTPUT
+	msgfail
+fi
 unset TMPDIR
+
+testequal 'coolstuff' aptcache pkgnames

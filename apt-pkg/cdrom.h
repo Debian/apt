@@ -1,8 +1,12 @@
 #ifndef PKGLIB_CDROM_H
 #define PKGLIB_CDROM_H
 
+#include <apt-pkg/macros.h>
+
 #include<string>
 #include<vector>
+
+#include <stddef.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/init.h>
@@ -69,6 +73,10 @@ class pkgCdrom								/*{{{*/
  public:
    bool Ident(std::string &ident, pkgCdromStatus *log);
    bool Add(pkgCdromStatus *log);
+
+ private:
+   APT_HIDDEN bool MountAndIdentCDROM(Configuration &Database, std::string &CDROM,
+	 std::string &ident, pkgCdromStatus * const log, bool const interactive);
 };
 									/*}}}*/
 
@@ -84,7 +92,7 @@ struct CdromDevice							/*{{{*/
 class pkgUdevCdromDevices						/*{{{*/
 {
  protected:
-   // libudev dlopen stucture
+   // libudev dlopen structure
    void *libudev_handle;
    struct udev* (*udev_new)(void);
    int (*udev_enumerate_add_match_property)(struct udev_enumerate *udev_enumerate, const char *property, const char *value);

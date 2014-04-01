@@ -1,0 +1,101 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+# the executed script would use the installed apt-config,
+# which is outside of our control
+msgtest 'Check that the installed apt-config supports' '--no-empty'
+if apt-config dump --no-empty >/dev/null 2>&1; then
+	msgpass
+else
+	msgskip
+	exit 0
+fi
+
+CURRENTKERNEL="linux-image-$(uname -r)"
+insertinstalledpackage "$CURRENTKERNEL" 'amd64' '1'
+insertinstalledpackage 'linux-image-1.0.0-2-generic' 'amd64' '1.0.0-2'
+insertinstalledpackage 'linux-image-100.0.0-1-generic' 'amd64' '100.0.0-1'
+insertinstalledpackage 'linux-image-amd64' 'amd64' '100.0.0-1'
+# ensure that the '.' is really a dot and not a wildcard
+insertinstalledpackage 'linux-headers-1000000-1-generic' 'amd64' '100.0.0-1'
+
+testsuccess aptmark auto "$CURRENTKERNEL" 'linux-image-1.0.0-2-generic' 'linux-image-100.0.0-1-generic' 'linux-headers-1000000-1-generic'
+
+cat > ./fake-dpkg <<EOF
+#!/bin/sh
+exec $(aptconfig dump --no-empty --format='%v ' 'DPKG::options') "\$@"
+EOF
+chmod +x ./fake-dpkg
+echo 'Dir::Bin::dpkg "./fake-dpkg";' > rootdir/etc/apt/apt.conf.d/99fakedpkg
+
+# install fake-dpkg into it
+catfail() {
+	echo >&2
+	echo >&2 '### List of protected kernels:'
+	cat >&2 protected.list
+	msgfail
+}
+
+testprotected() {
+	rm -f rootdir/etc/apt/apt.conf.d/01autoremove-kernels protected.list
+
+	testsuccess runapt sh ${TESTDIR}/../../debian/apt.auto-removal.sh "$@"
+
+	msgtest 'Check kernel autoremoval protection list' 'is created'
+	test -e rootdir/etc/apt/apt.conf.d/01autoremove-kernels && msgpass || msgfail
+
+	msgtest 'Check kernel autoremoval protection list' 'can be dumped'
+	aptconfig dump --no-empty --format '%v%n' 'APT::NeverAutoRemove' >protected.list 2>&1 && msgpass || catfail
+
+	msgtest 'Check kernel autoremoval protection list' 'can be parsed'
+	grep -q '^[A-Z]: ' protected.list && catfail || msgpass
+
+	msgtest 'Check kernel autoremoval protection list includes' 'most recent kernel'
+	grep -q '^\^linux-image-100\\\.0\\\.0-1-generic\$$' protected.list && msgpass || catfail
+
+	msgtest 'Check kernel autoremoval protection list includes' 'running kernel'
+	grep -q "^\\^linux-image-$(uname -r | sed -e 's#\.#\\\\.#g')\\\$\$" protected.list && msgpass || catfail
+}
+
+testequal "Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+   linux-headers-1000000-1-generic (100.0.0-1)
+   linux-image-1.0.0-2-generic (1.0.0-2)
+   linux-image-100.0.0-1-generic (100.0.0-1)
+   $CURRENTKERNEL (1)
+0 upgraded, 0 newly installed, 4 to remove and 0 not upgraded.
+Remv linux-headers-1000000-1-generic [100.0.0-1]
+Remv linux-image-1.0.0-2-generic [1.0.0-2]
+Remv linux-image-100.0.0-1-generic [100.0.0-1]
+Remv $CURRENTKERNEL [1]" aptget autoremove -sV
+
+testprotected
+msgtest 'Check kernel autoremoval protection list does not include' 'old kernel'
+grep -q '^\^linux-image-1\\\.0\\\.0-2-generic\$$' protected.list && catfail || msgpass
+
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  linux-headers-1000000-1-generic linux-image-1.0.0-2-generic
+0 upgraded, 0 newly installed, 2 to remove and 0 not upgraded.
+Remv linux-headers-1000000-1-generic [100.0.0-1]
+Remv linux-image-1.0.0-2-generic [1.0.0-2]' aptget autoremove -s
+
+testprotected 1.0.0-2-generic
+msgtest 'Check kernel autoremoval protection list includes' 'installed kernel'
+grep -q '^\^linux-image-1\\\.0\\\.0-2-generic\$$' protected.list && msgpass || catfail
+testequal 'Reading package lists...
+Building dependency tree...
+Reading state information...
+The following packages will be REMOVED:
+  linux-headers-1000000-1-generic
+0 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv linux-headers-1000000-1-generic [100.0.0-1]' aptget autoremove -s

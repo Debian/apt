@@ -1,12 +1,19 @@
 #ifndef PKGLIB_METAINDEX_H
 #define PKGLIB_METAINDEX_H
 
-
-#include <string>
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/indexfile.h>
 #include <apt-pkg/init.h>
 
+#include <stddef.h>
+
+#include <string>
+#include <vector>
+
+#ifndef APT_10_CLEANER_HEADERS
+#include <apt-pkg/pkgcache.h>
+class pkgCacheGenerator;
+class OpProgress;
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/pkgrecords.h>
@@ -15,8 +22,6 @@ using std::string;
 #endif
 
 class pkgAcquire;
-class pkgCacheGenerator;
-class OpProgress;
 
 class metaIndex
 {

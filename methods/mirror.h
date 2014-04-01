@@ -3,13 +3,15 @@
 // $Id: http.h,v 1.12 2002/04/18 05:09:38 jgg Exp $
 /* ######################################################################
 
-   MIRROR Aquire Method - This is the MIRROR aquire method for APT.
+   MIRROR Acquire Method - This is the MIRROR acquire method for APT.
 
    ##################################################################### */
 									/*}}}*/
 
 #ifndef APT_MIRROR_H
 #define APT_MIRROR_H
+
+#include <apt-pkg/acquire-method.h>
 
 #include <iostream>
 #include <string>

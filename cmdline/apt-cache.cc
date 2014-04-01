@@ -15,40 +15,49 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
-#include <apt-pkg/error.h>
+#include <apt-pkg/algorithms.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/cmndline.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexfile.h>
 #include <apt-pkg/init.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/policy.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/cmndline.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/algorithms.h>
 #include <apt-pkg/sptr.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
+#include <apt-pkg/version.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
 
-#include <apt-private/private-list.h>
-#include <apt-private/private-cmndline.h>
-#include <apt-private/private-show.h>
 #include <apt-private/private-cacheset.h>
+#include <apt-private/private-cmndline.h>
 
-#include <cassert>
-#include <locale.h>
-#include <iostream>
-#include <unistd.h>
-#include <errno.h>
 #include <regex.h>
+#include <stddef.h>
 #include <stdio.h>
-#include <iomanip>
+#include <stdlib.h>
+#include <unistd.h>
 #include <algorithm>
+#include <cstring>
+#include <iomanip>
+#include <iostream>
+#include <list>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -58,7 +67,7 @@ using namespace std;
 // LocalitySort - Sort a version list by package file locality		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int LocalityCompare(const void *a, const void *b)
+static int LocalityCompare(const void *a, const void *b)
 {
    pkgCache::VerFile *A = *(pkgCache::VerFile **)a;
    pkgCache::VerFile *B = *(pkgCache::VerFile **)b;
@@ -75,13 +84,13 @@ int LocalityCompare(const void *a, const void *b)
    return A->File - B->File;
 }
 
-void LocalitySort(pkgCache::VerFile **begin,
+static void LocalitySort(pkgCache::VerFile **begin,
 		  unsigned long Count,size_t Size)
 {   
    qsort(begin,Count,Size,LocalityCompare);
 }
 
-void LocalitySort(pkgCache::DescFile **begin,
+static void LocalitySort(pkgCache::DescFile **begin,
 		  unsigned long Count,size_t Size)
 {   
    qsort(begin,Count,Size,LocalityCompare);
@@ -90,7 +99,7 @@ void LocalitySort(pkgCache::DescFile **begin,
 // UnMet - Show unmet dependencies					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
+static bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 {
 	 bool Header = false;
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false;)
@@ -163,7 +172,7 @@ bool ShowUnMet(pkgCache::VerIterator const &V, bool const Important)
 	 }
    return true;
 }
-bool UnMet(CommandLine &CmdL)
+static bool UnMet(CommandLine &CmdL)
 {
    bool const Important = _config->FindB("APT::Cache::Important",false);
 
@@ -193,7 +202,7 @@ bool UnMet(CommandLine &CmdL)
 // DumpPackage - Show a dump of a package record			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DumpPackage(CommandLine &CmdL)
+static bool DumpPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    APT::CacheSetHelper helper(true, GlobalError::NOTICE);
@@ -258,7 +267,7 @@ bool DumpPackage(CommandLine &CmdL)
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Stats(CommandLine &Cmd)
+static bool Stats(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -371,7 +380,7 @@ bool Stats(CommandLine &Cmd)
 // Dump - show everything						/*{{{*/
 // ---------------------------------------------------------------------
 /* This is worthless except fer debugging things */
-bool Dump(CommandLine &Cmd)
+static bool Dump(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -423,7 +432,7 @@ bool Dump(CommandLine &Cmd)
 // ---------------------------------------------------------------------
 /* This is needed to make dpkg --merge happy.. I spent a bit of time to 
    make this run really fast, perhaps I went a little overboard.. */
-bool DumpAvail(CommandLine &Cmd)
+static bool DumpAvail(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -532,7 +541,7 @@ bool DumpAvail(CommandLine &Cmd)
 	 if ((File->Flags & pkgCache::Flag::NotSource) == pkgCache::Flag::NotSource)
 	 {
 	    pkgTagSection Tags;
-	    TFRewriteData RW[] = {{"Status",0},{"Config-Version",0},{}};
+	    TFRewriteData RW[] = {{"Status", NULL, NULL},{"Config-Version", NULL, NULL},{NULL, NULL, NULL}};
 	    const char *Zero = 0;
 	    if (Tags.Scan(Buffer+Jitter,VF.Size+1) == false ||
 		TFRewrite(stdout,Tags,&Zero,RW) == false)
@@ -562,7 +571,7 @@ bool DumpAvail(CommandLine &Cmd)
 }
 									/*}}}*/
 // ShowDepends - Helper for printing out a dependency tree		/*{{{*/
-bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
+static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -676,7 +685,7 @@ bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 // Depends - Print out a dependency tree				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Depends(CommandLine &CmdL)
+static bool Depends(CommandLine &CmdL)
 {
    return ShowDepends(CmdL, false);
 }
@@ -684,7 +693,7 @@ bool Depends(CommandLine &CmdL)
 // RDepends - Print out a reverse dependency tree			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool RDepends(CommandLine &CmdL)
+static bool RDepends(CommandLine &CmdL)
 {
    return ShowDepends(CmdL, true);
 }
@@ -693,7 +702,7 @@ bool RDepends(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 // Code contributed from Junichi Uekawa <dancer@debian.org> on 20 June 2002.
 
-bool XVcg(CommandLine &CmdL)
+static bool XVcg(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -905,7 +914,7 @@ bool XVcg(CommandLine &CmdL)
 /* Dotty is the graphvis program for generating graphs. It is a fairly
    simple queuing algorithm that just writes dependencies and nodes. 
    http://www.research.att.com/sw/tools/graphviz/ */
-bool Dotty(CommandLine &CmdL)
+static bool Dotty(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1109,7 +1118,7 @@ bool Dotty(CommandLine &CmdL)
 /* This displays the package record from the proper package index file. 
    It is not used by DumpAvail for performance reasons. */
 
-static unsigned char const* skipDescriptionFields(unsigned char const * DescP)
+static APT_PURE unsigned char const* skipDescriptionFields(unsigned char const * DescP)
 {
    char const * const TagName = "\nDescription";
    size_t const TagLen = strlen(TagName);
@@ -1126,7 +1135,7 @@ static unsigned char const* skipDescriptionFields(unsigned char const * DescP)
       ++DescP;
    return DescP;
 }
-bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
+static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 {
    pkgCache *Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
@@ -1228,7 +1237,7 @@ struct ExDescFile
 // Search - Perform a search						/*{{{*/
 // ---------------------------------------------------------------------
 /* This searches the package names and package descriptions for a pattern */
-bool Search(CommandLine &CmdL)
+static bool Search(CommandLine &CmdL)
 {
    bool const ShowFull = _config->FindB("APT::Cache::ShowFull",false);
    bool const NamesOnly = _config->FindB("APT::Cache::NamesOnly",false);
@@ -1388,7 +1397,7 @@ bool Search(CommandLine &CmdL)
 }
 									/*}}}*/
 /* ShowAuto - show automatically installed packages (sorted)		{{{*/
-bool ShowAuto(CommandLine &CmdL)
+static bool ShowAuto(CommandLine &)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1415,7 +1424,7 @@ bool ShowAuto(CommandLine &CmdL)
 // ShowPackage - Dump the package record to the screen			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowPackage(CommandLine &CmdL)
+static bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
@@ -1439,7 +1448,7 @@ bool ShowPackage(CommandLine &CmdL)
 // ShowPkgNames - Show package names					/*{{{*/
 // ---------------------------------------------------------------------
 /* This does a prefix match on the first argument */
-bool ShowPkgNames(CommandLine &CmdL)
+static bool ShowPkgNames(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    if (unlikely(CacheFile.BuildCaches(NULL, false) == false))
@@ -1478,7 +1487,7 @@ bool ShowPkgNames(CommandLine &CmdL)
 // ShowSrcPackage - Show source package records				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowSrcPackage(CommandLine &CmdL)
+static bool ShowSrcPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgSourceList *List = CacheFile.GetSourceList();
@@ -1515,7 +1524,7 @@ bool ShowSrcPackage(CommandLine &CmdL)
 // Policy - Show the results of the preferences file			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Policy(CommandLine &CmdL)
+static bool Policy(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -1644,7 +1653,7 @@ bool Policy(CommandLine &CmdL)
 // Madison - Look a bit like katie's madison				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Madison(CommandLine &CmdL)
+static bool Madison(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgSourceList *SrcList = CacheFile.GetSourceList();
@@ -1717,7 +1726,7 @@ bool Madison(CommandLine &CmdL)
 // GenCaches - Call the main cache generator				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool GenCaches(CommandLine &Cmd)
+static bool GenCaches(CommandLine &)
 {
    OpTextProgress Progress(*_config);
 
@@ -1728,7 +1737,7 @@ bool GenCaches(CommandLine &Cmd)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &Cmd)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);

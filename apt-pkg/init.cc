@@ -15,9 +15,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
 
+#include <string.h>
+#include <string>
 #include <cstdlib>
-#include <sys/stat.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -92,7 +94,7 @@ bool pkgInitConfig(Configuration &Cnf)
    
    // Read an alternate config file
    const char *Cfg = getenv("APT_CONFIG");
-   if (Cfg != 0)
+   if (Cfg != 0 && strlen(Cfg) != 0)
    {
       if (RealFileExists(Cfg) == true)
 	 Res &= ReadConfigFile(Cnf,Cfg);

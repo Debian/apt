@@ -17,12 +17,14 @@
 
 #include <apt-pkg/error.h>
 
+#include <stdarg.h>
+#include <stddef.h>
+#include <list>
 #include <iostream>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
 #include <string>
 #include <cstring>
 
@@ -223,7 +225,7 @@ void GlobalError::DumpErrors(std::ostream &out, MsgType const &threshold,
 void GlobalError::Discard() {
 	Messages.clear();
 	PendingFlag = false;
-};
+}
 									/*}}}*/
 // GlobalError::empty - does our error list include anything?		/*{{{*/
 bool GlobalError::empty(MsgType const &trashhold) const {

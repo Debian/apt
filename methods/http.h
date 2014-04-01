@@ -3,7 +3,7 @@
 // $Id: http.h,v 1.12 2002/04/18 05:09:38 jgg Exp $
 /* ######################################################################
 
-   HTTP Acquire Method - This is the HTTP aquire method for APT.
+   HTTP Acquire Method - This is the HTTP acquire method for APT.
 
    ##################################################################### */
 									/*}}}*/
@@ -12,14 +12,18 @@
 #define APT_HTTP_H
 
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/acquire-method.h>
 
 #include <string>
+#include <sys/time.h>
+#include <iostream>
 
 #include "server.h"
 
 using std::cout;
 using std::endl;
 
+class FileFd;
 class HttpMethod;
 class Hashes;
 

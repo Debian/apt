@@ -1,6 +1,7 @@
 #!/bin/sh
 set -e
 
+cd "$(readlink -f $(dirname $0))"
 dpkg-checkbuilddeps -d 'libxml2-utils'
 
 if [ -n "${GBP_BUILD_DIR}" ]; then
@@ -10,8 +11,20 @@ fi
 VERSION=$(dpkg-parsechangelog | sed -n -e '/^Version:/s/^Version: //p')
 DISTRIBUTION=$(dpkg-parsechangelog | sed -n -e '/^Distribution:/s/^Distribution: //p')
 
-LIBAPTPKGVERSION="$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/init.h | sed 's/\.$//')"
+LIBAPTPKGVERSION="$(awk -v ORS='.' '/^\#define APT_PKG_M/ {print $3}' apt-pkg/contrib/macros.h | sed 's/\.$//')"
 LIBAPTINSTVERSION="$(egrep '^MAJOR=' apt-inst/makefile |cut -d '=' -f 2)"
+
+librarysymbolsfromfile() {
+	local MISSING="$(grep '^+#MISSING' "$1")"
+	echo '=== Missing optional symbols:'
+	echo -n "$MISSING" | grep '|optional=' || true
+	echo '=== Missing required symbols:'
+	echo -n "$MISSING" | grep -v '|optional=' || true
+	echo '=== New symbols:'
+	grep '^+ ' "$1" | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
+		echo " (c++)\"${line}@Base\" $VERSION"
+	done | sort -u
+}
 
 if [ "$1" = 'pre-export' ]; then
 	libraryversioncheck() {
@@ -78,17 +91,17 @@ elif [ "$1" = 'library' ]; then
 		echo "Checking $1 in version $2"
 		local tmpfile=$(mktemp)
 		dpkg-gensymbols -p${1}${2} -ebuild/bin/${1}.so.${2} -Idebian/${1}${2}.symbols -O/dev/null 2> /dev/null > $tmpfile || true
-		echo '=== Missing symbols:'
-		grep '^+#MISSING' $tmpfile || true
-		echo '=== New symbols:'
-		grep '^+ ' $tmpfile | cut -d' ' -f 2 | cut -d'@' -f 1 | c++filt | while read line; do
-			echo " (c++)\"${line}@Base\" $VERSION"
-		done | sort -u
+		librarysymbolsfromfile "$tmpfile"
 		rm -f $tmpfile
 	}
 	librarysymbols 'libapt-pkg' "${LIBAPTPKGVERSION}"
 	echo
 	librarysymbols 'libapt-inst' "${LIBAPTINSTVERSION}"
+elif [ "$1" = 'buildlog' ]; then
+	while [ -n "$2" ]; do
+		librarysymbolsfromfile "$2"
+		shift
+	done
 else
 	echo >&1 "Usage:\t$0 pre-export
 \t$0 post-build

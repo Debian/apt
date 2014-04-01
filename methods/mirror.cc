@@ -3,7 +3,7 @@
 // $Id: mirror.cc,v 1.59 2004/05/08 19:42:35 mdz Exp $
 /* ######################################################################
 
-   Mirror Aquire Method - This is the Mirror aquire method for APT.
+   Mirror Acquire Method - This is the Mirror acquire method for APT.
    
    ##################################################################### */
 									/*}}}*/
@@ -16,18 +16,18 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/hashes.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/strutl.h>
 
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <algorithm>
-#include <fstream>
 #include <iostream>
-
-#include <stdarg.h>
+#include <fstream>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/utsname.h>
 #include <dirent.h>
 
@@ -49,7 +49,7 @@ using namespace std;
  *   of the failure that is also send to LP
  * 
  * TODO: 
- * - deal with runing as non-root because we can't write to the lists 
+ * - deal with running as non-root because we can't write to the lists
      dir then -> use the cached mirror file
  * - better method to download than having a pkgAcquire interface here
  *   and better error handling there!
@@ -60,7 +60,7 @@ using namespace std;
 MirrorMethod::MirrorMethod()
    : HttpMethod(), DownloadedMirrorFile(false), Debug(false)
 {
-};
+}
 
 // HttpMethod::Configuration - Handle a configuration message		/*{{{*/
 // ---------------------------------------------------------------------
@@ -90,17 +90,17 @@ bool MirrorMethod::Clean(string Dir)
    pkgSourceList list;
    list.ReadMainList();
 
-   DIR *D = opendir(Dir.c_str());   
+   DIR *D = opendir(Dir.c_str());
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());
-   
+
    string StartDir = SafeGetCWD();
    if (chdir(Dir.c_str()) != 0)
    {
       closedir(D);
       return _error->Errno("chdir",_("Unable to change to %s"),Dir.c_str());
    }
-   
+
    for (struct dirent *Dir = readdir(D); Dir != 0; Dir = readdir(D))
    {
       // Skip some files..
@@ -114,7 +114,7 @@ bool MirrorMethod::Clean(string Dir)
       for(I=list.begin(); I != list.end(); ++I)
       {
 	 string uri = (*I)->GetURI();
-	 if(uri.find("mirror://") != 0)
+	 if(uri.compare(0, strlen("mirror://"), "mirror://") != 0)
 	    continue;
 	 string BaseUri = uri.substr(0,uri.size()-1);
 	 if (URItoFileName(BaseUri) == Dir->d_name)
@@ -123,23 +123,23 @@ bool MirrorMethod::Clean(string Dir)
       // nothing found, nuke it
       if (I == list.end())
 	 unlink(Dir->d_name);
-   };
+   }
 
    closedir(D);
    if (chdir(StartDir.c_str()) != 0)
       return _error->Errno("chdir",_("Unable to change to %s"),StartDir.c_str());
-   return true;   
+   return true;
 }
 
 
-bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
+bool MirrorMethod::DownloadMirrorFile(string /*mirror_uri_str*/)
 {
-   // not that great to use pkgAcquire here, but we do not have 
+   // not that great to use pkgAcquire here, but we do not have
    // any other way right now
    string fetch = BaseUri;
    fetch.replace(0,strlen("mirror://"),"http://");
 
-#if 0 // no need for this, the getArchitectures() will also include the main 
+#if 0 // no need for this, the getArchitectures() will also include the main
       // arch
    // append main architecture
    fetch += "?arch=" + _config->Find("Apt::Architecture");
@@ -173,7 +173,7 @@ bool MirrorMethod::DownloadMirrorFile(string mirror_uri_str)
 
    if(Debug)
       clog << "MirrorMethod::DownloadMirrorFile() success: " << res << endl;
-   
+
    return res;
 }
 
@@ -187,20 +187,20 @@ bool MirrorMethod::RandomizeMirrorFile(string mirror_file)
    if (!FileExists(mirror_file))
       return false;
 
-   // read 
+   // read
    ifstream in(mirror_file.c_str());
    while ( !in.eof() ) {
       getline(in, line);
       content.push_back(line);
    }
-   
+
    // we want the file to be random for each different machine, but also
    // "stable" on the same machine. this is to avoid running into out-of-sync
    // issues (i.e. Release/Release.gpg different on each mirror)
    struct utsname buf;
-   int seed=1, i;
+   int seed=1;
    if(uname(&buf) == 0) {
-      for(i=0,seed=1; buf.nodename[i] != 0; i++) {
+      for(int i=0,seed=1; buf.nodename[i] != 0; ++i) {
          seed = seed * 31 + buf.nodename[i];
       }
    }
@@ -290,7 +290,7 @@ bool MirrorMethod::InitMirrors()
    // FIXME: make the mirror selection more clever, do not 
    //        just use the first one!
    // BUT: we can not make this random, the mirror has to be
-   //      stable accross session, because otherwise we can
+   //      stable across session, because otherwise we can
    //      get into sync issues (got indexfiles from mirror A,
    //      but packages from mirror B - one might be out of date etc)
    ifstream in(MirrorFile.c_str());
@@ -306,7 +306,7 @@ bool MirrorMethod::InitMirrors()
       if (s.size() == 0)
          continue;
       // ignore non http lines
-      if (s.find("http://") != 0)
+      if (s.compare(0, strlen("http://"), "http://") != 0)
          continue;
 
       AllMirrors.push_back(s);
@@ -422,10 +422,10 @@ bool MirrorMethod::Fetch(FetchItem *Itm)
 
    if(Debug)
       clog << "Fetch: " << Itm->Uri << endl << endl;
-   
+
    // now run the real fetcher
    return HttpMethod::Fetch(Itm);
-};
+}
 
 void MirrorMethod::Fail(string Err,bool Transient)
 {
@@ -437,7 +437,7 @@ void MirrorMethod::Fail(string Err,bool Transient)
 
    // try the next mirror on fail (if its not a expected failure,
    // e.g. translations are ok to ignore)
-   if (!Queue->FailIgnore && TryNextMirror()) 
+   if (!Queue->FailIgnore && TryNextMirror())
       return;
 
    // all mirrors failed, so bail out

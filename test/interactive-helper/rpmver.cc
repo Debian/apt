@@ -1,7 +1,10 @@
+#include <config.h>
+
 #include <apt-pkg/debversion.h>
 #include <rpm/rpmio.h>
 #include <rpm/misc.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <ctype.h>
 
 #define xisdigit(x) isdigit(x)
@@ -12,10 +15,8 @@ using namespace std;
 
 int rpmvercmp(const char * a, const char * b)
 {
-    char oldch1, oldch2;
     char * str1, * str2;
     char * one, * two;
-    int rc;
     int isnum;
 
     /* easy comparison to see if versions are identical */
@@ -53,9 +54,9 @@ int rpmvercmp(const char * a, const char * b)
 
 	/* save character at the end of the alpha or numeric segment */
 	/* so that they can be restored after the comparison */
-	oldch1 = *str1;
+	char oldch1 = *str1;
 	*str1 = '\0';
-	oldch2 = *str2;
+	char oldch2 = *str2;
 	*str2 = '\0';
 
 	/* take care of the case where the two version segments are */
@@ -81,7 +82,7 @@ int rpmvercmp(const char * a, const char * b)
 	/* segments are alpha or if they are numeric.  don't return  */
 	/* if they are equal because there might be more segments to */
 	/* compare */
-	rc = strcmp(one, two);
+	int rc = strcmp(one, two);
 	if (rc) return rc;
 
 	/* restore character that was replaced by null above */

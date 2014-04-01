@@ -19,7 +19,11 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/strutl.h>
 
-#include <sys/wait.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <string>
+#include <vector>
 #include <sys/statvfs.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -42,13 +46,18 @@ bool IsMounted(string &Path)
 {
    if (Path.empty() == true)
       return false;
-   
+
    // Need that trailing slash for directories
    if (Path[Path.length() - 1] != '/')
       Path += '/';
-   
-   /* First we check if the path is actualy mounted, we do this by
-      stating the path and the previous directory (carefull of links!)
+
+   // if the path has a ".disk" directory we treat it as mounted
+   // this way even extracted copies of disks are recognized
+   if (DirectoryExists(Path + ".disk/") == true)
+      return true;
+
+   /* First we check if the path is actually mounted, we do this by
+      stating the path and the previous directory (careful of links!)
       and comparing their device fields. */
    struct stat Buf,Buf2;
    if (stat(Path.c_str(),&Buf) != 0 || 
@@ -66,7 +75,13 @@ bool IsMounted(string &Path)
    leave /etc/mtab inconsitant. We drop all messages this produces. */
 bool UnmountCdrom(string Path)
 {
-   if (IsMounted(Path) == false)
+   // do not generate errors, even if the mountpoint does not exist
+   // the mountpoint might be auto-created by the mount command
+   // and a non-existing mountpoint is surely not mounted
+   _error->PushToStack();
+   bool const mounted = IsMounted(Path);
+   _error->RevertToStack();
+   if (mounted == false)
       return true;
 
    for (int i=0;i<3;i++)
@@ -78,8 +93,9 @@ bool UnmountCdrom(string Path)
       if (Child == 0)
       {
 	 // Make all the fds /dev/null
-	 for (int I = 0; I != 3; I++)
-	    dup2(open("/dev/null",O_RDWR),I);
+	 int const null_fd = open("/dev/null",O_RDWR);
+	 for (int I = 0; I != 3; ++I)
+	    dup2(null_fd, I);
 
 	 if (_config->Exists("Acquire::cdrom::"+Path+"::UMount") == true)
 	 {
@@ -113,19 +129,24 @@ bool UnmountCdrom(string Path)
 /* We fork mount and drop all messages */
 bool MountCdrom(string Path, string DeviceName)
 {
-   if (IsMounted(Path) == true)
+   // do not generate errors, even if the mountpoint does not exist
+   // the mountpoint might be auto-created by the mount command
+   _error->PushToStack();
+   bool const mounted = IsMounted(Path);
+   _error->RevertToStack();
+   if (mounted == true)
       return true;
-   
+
    int Child = ExecFork();
 
    // The child
    if (Child == 0)
    {
       // Make all the fds /dev/null
-      int null_fd = open("/dev/null",O_RDWR);
-      for (int I = 0; I != 3; I++)
+      int const null_fd = open("/dev/null",O_RDWR);
+      for (int I = 0; I != 3; ++I)
 	 dup2(null_fd, I);
-      
+
       if (_config->Exists("Acquire::cdrom::"+Path+"::Mount") == true)
       {
 	 if (system(_config->Find("Acquire::cdrom::"+Path+"::Mount").c_str()) != 0)
@@ -242,37 +263,34 @@ bool IdentCdrom(string CD,string &Res,unsigned int Version)
    return true;   
 }
 									/*}}}*/
-
 // FindMountPointForDevice - Find mountpoint for the given device	/*{{{*/
 string FindMountPointForDevice(const char *devnode)
 {
-   char buf[255];
-   char *out[10];
-   int i=0;
-
    // this is the order that mount uses as well
-   const char *mount[] = { "/etc/mtab", 
-                           "/proc/mount", 
-                           NULL };
+   std::vector<std::string> const mounts = _config->FindVector("Dir::state::MountPoints", "/etc/mtab,/proc/mount");
 
-   for (i=0; mount[i] != NULL; i++) {
-      if (FileExists(mount[i])) {
-         FILE *f=fopen(mount[i], "r");
-         while ( fgets(buf, sizeof(buf), f) != NULL) {
-            if (strncmp(buf, devnode, strlen(devnode)) == 0) {
-               if(TokSplitString(' ', buf, out, 10))
-               {
-                  fclose(f);
-                  // unescape the \0XXX chars in the path
-                  string mount_point = out[1];
-                  return DeEscapeString(mount_point);
-               }
-            }
-         }
-         fclose(f);
+   for (std::vector<std::string>::const_iterator m = mounts.begin(); m != mounts.end(); ++m)
+      if (FileExists(*m) == true)
+      {
+	 char * line = NULL;
+	 size_t line_len = 0;
+	 FILE * f = fopen(m->c_str(), "r");
+	 while(getline(&line, &line_len, f) != -1)
+	 {
+	    char * out[] = { NULL, NULL, NULL };
+	    TokSplitString(' ', line, out, 3);
+	    if (out[2] != NULL || out[1] == NULL || out[0] == NULL)
+	       continue;
+	    if (strcmp(out[0], devnode) != 0)
+	       continue;
+	    fclose(f);
+	    // unescape the \0XXX chars in the path
+	    string mount_point = out[1];
+	    return DeEscapeString(mount_point);
+	 }
+	 fclose(f);
       }
-   }
-   
+
    return string();
 }
 									/*}}}*/

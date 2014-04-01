@@ -16,8 +16,12 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/sha1.h>
+#include <apt-pkg/sha2.h>
 
+#include <stddef.h>
+#include <algorithm>
 #include <unistd.h>
 #include <string>
 #include <iostream>
@@ -112,7 +116,7 @@ const char** HashString::SupportedHashes()
    return _SupportedHashes;
 }
 
-bool HashString::empty() const
+APT_PURE bool HashString::empty() const
 {
    return (Type.empty() || Hash.empty());
 }
@@ -129,13 +133,12 @@ bool Hashes::AddFD(int const Fd,unsigned long long Size, bool const addMD5,
 		   bool const addSHA1, bool const addSHA256, bool const addSHA512)
 {
    unsigned char Buf[64*64];
-   ssize_t Res = 0;
-   int ToEOF = (Size == 0);
+   bool const ToEOF = (Size == 0);
    while (Size != 0 || ToEOF)
    {
       unsigned long long n = sizeof(Buf);
       if (!ToEOF) n = std::min(Size, n);
-      Res = read(Fd,Buf,n);
+      ssize_t const Res = read(Fd,Buf,n);
       if (Res < 0 || (!ToEOF && Res != (ssize_t) n)) // error, or short read
 	 return false;
       if (ToEOF && Res == 0) // EOF

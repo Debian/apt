@@ -15,6 +15,8 @@
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/pkgcache.h>
 
+#include <string.h>
+#include <string>
 #include <stdlib.h>
 #include <ctype.h>
 									/*}}}*/
@@ -116,7 +118,7 @@ int debVersioningSystem::CmpFragment(const char *A,const char *AEnd,
       return 1;
    }
 
-   // Shouldnt happen
+   // Shouldn't happen
    return 1;
 }
 									/*}}}*/
@@ -221,7 +223,7 @@ bool debVersioningSystem::CheckDep(const char *PkgVer,
    if (PkgVer == DepVer)
       return Op == pkgCache::Dep::Equals || Op == pkgCache::Dep::LessEq || Op == pkgCache::Dep::GreaterEq;
 
-   // Perform the actual comparision.
+   // Perform the actual comparison.
    int const Res = CmpVersion(PkgVer, DepVer);
    switch (Op)
    {

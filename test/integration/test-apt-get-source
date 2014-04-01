@@ -39,12 +39,24 @@ Need to get 0 B of source archives.
 'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
 'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo
 
-# select by release
+# select by release: suite
 testequal "$HEADER
 Selected version '1.0' (stable) for foo
 Need to get 0 B of source archives.
 'file://${APTARCHIVE}/foo_1.0.dsc' foo_1.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
 'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/stable
+testequal "$HEADER
+Selected version '2.0' (unstable) for foo
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/unstable
+
+# select by release: codename
+testequal "$HEADER
+Selected version '2.0' (sid) for foo
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/foo_2.0.dsc' foo_2.0.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/foo_2.0.tar.gz' foo_2.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo/sid
 
 # select by version
 testequal "$HEADER
@@ -53,7 +65,7 @@ Need to get 0 B of source archives.
 'file://${APTARCHIVE}/foo_1.0.tar.gz' foo_1.0.tar.gz 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -q --print-uris foo=1.0
 
 # select by release with no binary package (Bug#731102) but ensure to get
-# higest version
+# highest version
 testequal "$HEADER
 Selected version '0.1' (wheezy) for foo
 Need to get 0 B of source archives.

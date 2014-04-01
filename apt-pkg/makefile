@@ -21,6 +21,9 @@ endif
 ifeq ($(HAVE_BZ2),yes)
 SLIBS+= -lbz2
 endif
+ifeq ($(HAVE_LZMA),yes)
+SLIBS+= -llzma
+endif
 APT_DOMAIN:=libapt-pkg$(LIBAPTPKG_MAJOR)
 
 # Source code for the contributed non-core things

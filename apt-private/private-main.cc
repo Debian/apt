@@ -1,9 +1,13 @@
+#include <config.h>
 
-#include<unistd.h>
-#include<cstring>
-
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
-#include "private-main.h"
+
+#include <apt-private/private-main.h>
+
+#include <iostream>
+#include <string.h>
+#include <unistd.h>
 
 #include <apti18n.h>
 

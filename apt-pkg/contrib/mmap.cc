@@ -22,11 +22,11 @@
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/macros.h>
 
+#include <string>
 #include <sys/mman.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <cstring>
@@ -198,7 +198,7 @@ bool MMap::Sync(unsigned long Start,unsigned long Stop)
       {
 #ifdef _POSIX_SYNCHRONIZED_IO
 	 unsigned long long const PSize = sysconf(_SC_PAGESIZE);
-	 if (msync((char *)Base+(unsigned long long)(Start/PSize)*PSize,Stop - Start,MS_SYNC) < 0)
+	 if (msync((char *)Base+(Start/PSize)*PSize, Stop - Start, MS_SYNC) < 0)
 	    return _error->Errno("msync", _("Unable to synchronize mmap"));
 #endif
       }
@@ -352,6 +352,12 @@ unsigned long DynamicMMap::RawAllocate(unsigned long long Size,unsigned long Aln
    size in the file. */
 unsigned long DynamicMMap::Allocate(unsigned long ItemSize)
 {
+   if (unlikely(ItemSize == 0))
+   {
+      _error->Fatal("Can't allocate an item of size zero");
+      return 0;
+   }
+
    // Look for a matching pool entry
    Pool *I;
    Pool *Empty = 0;
@@ -412,7 +418,7 @@ unsigned long DynamicMMap::WriteString(const char *String,
 
    unsigned long const Result = RawAllocate(Len+1,0);
 
-   if (Result == 0 && _error->PendingError())
+   if (Base == NULL || (Result == 0 && _error->PendingError()))
       return 0;
 
    memcpy((char *)Base + Result,String,Len);

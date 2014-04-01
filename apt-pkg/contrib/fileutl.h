@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <time.h>
 
 #include <zlib.h>
 
@@ -94,7 +95,7 @@ class FileFd
       And as the auto-conversation converts a 'unsigned long *' to a 'bool'
       instead of 'unsigned long long *' we need to provide this explicitely -
       otherwise applications magically start to fail… */
-   __deprecated bool Read(void *To,unsigned long long Size,unsigned long *Actual)
+   bool Read(void *To,unsigned long long Size,unsigned long *Actual) APT_DEPRECATED
    {
 	unsigned long long R;
 	bool const T = Read(To, Size, &R);
@@ -118,7 +119,7 @@ class FileFd
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) { OpenDescriptor(fd, ReadWrite);};
-   __deprecated gzFile gzFd();
+   gzFile gzFd() APT_DEPRECATED APT_PURE;
 
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
@@ -149,11 +150,11 @@ class FileFd
 
    private:
    FileFdPrivate* d;
-   bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
+   APT_HIDDEN bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
 
    // private helpers to set Fail flag and call _error->Error
-   bool FileFdErrno(const char* Function, const char* Description,...) __like_printf(3) __cold;
-   bool FileFdError(const char* Description,...) __like_printf(2) __cold;
+   APT_HIDDEN bool FileFdErrno(const char* Function, const char* Description,...) APT_PRINTF(3) APT_COLD;
+   APT_HIDDEN bool FileFdError(const char* Description,...) APT_PRINTF(2) APT_COLD;
 };
 
 bool RunScripts(const char *Cnf);
@@ -161,9 +162,10 @@ bool CopyFile(FileFd &From,FileFd &To);
 int GetLock(std::string File,bool Errors = true);
 bool FileExists(std::string File);
 bool RealFileExists(std::string File);
-bool DirectoryExists(std::string const &Path) __attrib_const;
+bool DirectoryExists(std::string const &Path) APT_CONST;
 bool CreateDirectory(std::string const &Parent, std::string const &Path);
 time_t GetModificationTime(std::string const &Path);
+bool Rename(std::string From, std::string To);
 
 std::string GetTempDir();
 

@@ -10,7 +10,7 @@
    store a MD5Sum in 16 bytes of memory.
    
    A MD5Sum is used to generate a (hopefully) unique 16 byte number for a
-   block of data. This can be used to gaurd against corruption of a file.
+   block of data. This can be used to guard against corruption of a file.
    MD5 should not be used for tamper protection, use SHA or something more
    secure.
    
@@ -23,14 +23,15 @@
 #ifndef APTPKG_MD5_H
 #define APTPKG_MD5_H
 
-
-#include <string>
-#include <cstring>
-#include <algorithm>
 #include <stdint.h>
 
 #include "hashsum_template.h"
 
+#ifndef APT_10_CLEANER_HEADERS
+#include <string>
+#include <cstring>
+#include <algorithm>
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 using std::min;

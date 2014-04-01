@@ -1,4 +1,8 @@
+#include <config.h>
+
 #include <apt-pkg/strutl.h>
+
+#include <string>
 
 #include "assert.h"
 

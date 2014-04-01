@@ -18,6 +18,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <string>
+
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;
@@ -293,7 +298,7 @@ bool CommandLine::HandleOpt(int &I,int argc,const char *argv[],
    // Look for an argument.
    while (1)
    {
-      // Look at preceeding text
+      // Look at preceding text
       char Buffer[300];
       if (Argument == 0)
       {

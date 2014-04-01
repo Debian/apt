@@ -74,9 +74,11 @@
 #ifndef PKGLIB_PKGCACHE_H
 #define PKGLIB_PKGCACHE_H
 
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/macros.h>
+
 #include <string>
 #include <time.h>
-#include <apt-pkg/mmap.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
@@ -156,8 +158,8 @@ class pkgCache								/*{{{*/
    std::string CacheFile;
    MMap &Map;
 
-   unsigned long sHash(const std::string &S) const;
-   unsigned long sHash(const char *S) const;
+   unsigned long sHash(const std::string &S) const APT_PURE;
+   unsigned long sHash(const char *S) const APT_PURE;
    
    public:
    
@@ -176,13 +178,13 @@ class pkgCache								/*{{{*/
    char *StrP;
 
    virtual bool ReMap(bool const &Errorchecks = true);
-   inline bool Sync() {return Map.Sync();};
-   inline MMap &GetMap() {return Map;};
-   inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();};
+   inline bool Sync() {return Map.Sync();}
+   inline MMap &GetMap() {return Map;}
+   inline void *DataEnd() {return ((unsigned char *)Map.Data()) + Map.Size();}
       
    // String hashing function (512 range)
-   inline unsigned long Hash(const std::string &S) const {return sHash(S);};
-   inline unsigned long Hash(const char *S) const {return sHash(S);};
+   inline unsigned long Hash(const std::string &S) const {return sHash(S);}
+   inline unsigned long Hash(const char *S) const {return sHash(S);}
 
    // Useful transformation things
    const char *Priority(unsigned char Priority);
@@ -192,7 +194,7 @@ class pkgCache								/*{{{*/
    PkgIterator FindPkg(const std::string &Name);
    PkgIterator FindPkg(const std::string &Name, const std::string &Arch);
 
-   Header &Head() {return *HeaderP;};
+   Header &Head() {return *HeaderP;}
    inline GrpIterator GrpBegin();
    inline GrpIterator GrpEnd();
    inline PkgIterator PkgBegin();
@@ -200,19 +202,19 @@ class pkgCache								/*{{{*/
    inline PkgFileIterator FileBegin();
    inline PkgFileIterator FileEnd();
 
-   inline bool MultiArchCache() const { return MultiArchEnabled; };
-   inline char const * const NativeArch() const;
+   inline bool MultiArchCache() const { return MultiArchEnabled; }
+   inline char const * NativeArch();
 
    // Make me a function
    pkgVersioningSystem *VS;
    
    // Converters
-   static const char *CompTypeDeb(unsigned char Comp);
-   static const char *CompType(unsigned char Comp);
+   static const char *CompTypeDeb(unsigned char Comp) APT_CONST;
+   static const char *CompType(unsigned char Comp) APT_CONST;
    static const char *DepType(unsigned char Dep);
    
    pkgCache(MMap *Map,bool DoMap = true);
-   virtual ~pkgCache() {};
+   virtual ~pkgCache() {}
 
 private:
    bool MultiArchEnabled;
@@ -318,7 +320,7 @@ struct pkgCache::Header
    /** \brief Size of the complete cache file */
    unsigned long  CacheFileSize;
 
-   bool CheckSizes(Header &Against) const;
+   bool CheckSizes(Header &Against) const APT_PURE;
    Header();
 };
 									/*}}}*/
@@ -354,7 +356,7 @@ struct pkgCache::Group
     the hash index of the name in the pkgCache::Header::PkgHashTable
 
     A package can be created for every architecture so package names are
-    not unique, but it is garanteed that packages with the same name
+    not unique, but it is guaranteed that packages with the same name
     are sequencel ordered in the list. Packages with the same name can be
     accessed with the Group.
 */
@@ -451,7 +453,7 @@ struct pkgCache::PackageFile
    /** \brief Modification time for the file */
    time_t mtime;
 
-   /* @TODO document PackageFile::Flags */
+   /** @TODO document PackageFile::Flags */
    unsigned long Flags;
 
    // Linked list
@@ -474,7 +476,7 @@ struct pkgCache::VerFile
    map_ptrloc NextFile;       // PkgVerFile
    /** \brief position in the package file */
    map_ptrloc Offset;         // File offset
-   /* @TODO document pkgCache::VerFile::Size */
+   /** @TODO document pkgCache::VerFile::Size */
    unsigned long Size;
 };
 									/*}}}*/
@@ -488,7 +490,7 @@ struct pkgCache::DescFile
    map_ptrloc NextFile;       // PkgVerFile
    /** \brief position in the file */
    map_ptrloc Offset;         // File offset
-   /* @TODO document pkgCache::DescFile::Size */
+   /** @TODO document pkgCache::DescFile::Size */
    unsigned long Size;
 };
 									/*}}}*/
@@ -571,7 +573,7 @@ struct pkgCache::Description
        and to check that the Translation is up-to-date. */
    map_ptrloc md5sum;            // StringItem
 
-   /* @TODO document pkgCache::Description::FileList */
+   /** @TODO document pkgCache::Description::FileList */
    map_ptrloc FileList;          // DescFile
    /** \brief next translation for this description */
    map_ptrloc NextDesc;          // Description
@@ -661,27 +663,27 @@ struct pkgCache::StringItem
 									/*}}}*/
 
 
-inline char const * const pkgCache::NativeArch() const
-	{ return StrP + HeaderP->Architecture; };
+inline char const * pkgCache::NativeArch()
+	{ return StrP + HeaderP->Architecture; }
 
 #include <apt-pkg/cacheiterators.h>
 
-inline pkgCache::GrpIterator pkgCache::GrpBegin() 
-       {return GrpIterator(*this);};
-inline pkgCache::GrpIterator pkgCache::GrpEnd() 
-       {return GrpIterator(*this,GrpP);};
-inline pkgCache::PkgIterator pkgCache::PkgBegin() 
-       {return PkgIterator(*this);};
-inline pkgCache::PkgIterator pkgCache::PkgEnd() 
-       {return PkgIterator(*this,PkgP);};
+inline pkgCache::GrpIterator pkgCache::GrpBegin()
+       {return GrpIterator(*this);}
+inline pkgCache::GrpIterator pkgCache::GrpEnd()
+       {return GrpIterator(*this,GrpP);}
+inline pkgCache::PkgIterator pkgCache::PkgBegin()
+       {return PkgIterator(*this);}
+inline pkgCache::PkgIterator pkgCache::PkgEnd()
+       {return PkgIterator(*this,PkgP);}
 inline pkgCache::PkgFileIterator pkgCache::FileBegin()
-       {return PkgFileIterator(*this,PkgFileP + HeaderP->FileList);};
+       {return PkgFileIterator(*this,PkgFileP + HeaderP->FileList);}
 inline pkgCache::PkgFileIterator pkgCache::FileEnd()
-       {return PkgFileIterator(*this,PkgFileP);};
+       {return PkgFileIterator(*this,PkgFileP);}
 
 // Oh I wish for Real Name Space Support
 class pkgCache::Namespace						/*{{{*/
-{   
+{
    public:
    typedef pkgCache::GrpIterator GrpIterator;
    typedef pkgCache::PkgIterator PkgIterator;
@@ -690,7 +692,7 @@ class pkgCache::Namespace						/*{{{*/
    typedef pkgCache::DepIterator DepIterator;
    typedef pkgCache::PrvIterator PrvIterator;
    typedef pkgCache::PkgFileIterator PkgFileIterator;
-   typedef pkgCache::VerFileIterator VerFileIterator;   
+   typedef pkgCache::VerFileIterator VerFileIterator;
    typedef pkgCache::Version Version;
    typedef pkgCache::Description Description;
    typedef pkgCache::Package Package;

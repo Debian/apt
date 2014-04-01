@@ -2,15 +2,19 @@
 /** Description \file edsp.h						{{{
    ######################################################################
    Set of methods to help writing and reading everything needed for EDSP
-   with the noteable exception of reading a scenario for conversion into
+   with the notable exception of reading a scenario for conversion into
    a Cache as this is handled by edsp interface for listparser and friends
    ##################################################################### */
 									/*}}}*/
 #ifndef PKGLIB_EDSP_H
 #define PKGLIB_EDSP_H
 
-#include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
+
+#include <stdio.h>
 
 #include <list>
 #include <string>
@@ -29,17 +33,15 @@ class EDSP								/*{{{*/
 	static const char * const PrioMap[];
 	static const char * const DepMap[];
 
-	bool static ReadLine(int const input, std::string &line);
-	bool static StringToBool(char const *answer, bool const defValue);
+	APT_HIDDEN bool static ReadLine(int const input, std::string &line);
+	APT_HIDDEN bool static StringToBool(char const *answer, bool const defValue);
 
-	void static WriteScenarioVersion(pkgDepCache &Cache, FILE* output,
+	APT_HIDDEN void static WriteScenarioVersion(pkgDepCache &Cache, FILE* output,
 					 pkgCache::PkgIterator const &Pkg,
 					 pkgCache::VerIterator const &Ver);
-	void static WriteScenarioDependency(pkgDepCache &Cache, FILE* output,
-					    pkgCache::PkgIterator const &Pkg,
+	APT_HIDDEN void static WriteScenarioDependency(FILE* output,
 					    pkgCache::VerIterator const &Ver);
-	void static WriteScenarioLimitedDependency(pkgDepCache &Cache, FILE* output,
-						   pkgCache::PkgIterator const &Pkg,
+	APT_HIDDEN void static WriteScenarioLimitedDependency(FILE* output,
 						   pkgCache::VerIterator const &Ver,
 						   APT::PackageSet const &pkgset);
 public:
@@ -182,13 +184,13 @@ public:
 	 *  they were unable to calculate a solution for a given task.
 	 *  Obviously they can't send a solution through, so this
 	 *  methods deals with formatting an error message correctly
-	 *  so that the front-ends can recieve and display it.
+	 *  so that the front-ends can receive and display it.
 	 *
 	 *  The first line of the message should be a short description
 	 *  of the error so it can be used for dialog titles or alike
 	 *
 	 *  \param uuid of this error message
-	 *  \param message is free form text to discribe the error
+	 *  \param message is free form text to describe the error
 	 *  \param output the front-end listens for error messages
 	 */
 	bool static WriteError(char const * const uuid, std::string const &message, FILE* output);

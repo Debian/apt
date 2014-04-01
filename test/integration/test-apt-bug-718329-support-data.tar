@@ -1,0 +1,34 @@
+#!/bin/sh
+set -e
+
+test_process_package_with_compression() {
+    COMPRESSOR="$1"
+    DATA_TAR="$2"
+
+    msgtest "Testing apt-ftparchive with compression type: $COMPRESSOR"
+
+    buildsimplenativepackage 'pkg' 'all' '1.0' '' '' 'some descr' '' '' '' "$COMPRESSOR"
+    testequal "debian-binary
+control.tar.gz
+$DATA_TAR" ar t incoming/pkg_1.0_all.deb
+
+    testequal "Package: pkg" echo "$(aptftparchive packages incoming/|grep ^Package)"
+
+    testequal "usr/bin/pkg-all						    pkg
+usr/share/doc/pkg/FEATURES				    pkg
+usr/share/doc/pkg/changelog				    pkg
+usr/share/doc/pkg/copyright				    pkg" aptftparchive contents incoming/
+
+    rm -rf incoming/*
+}
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+test_process_package_with_compression "gzip" "data.tar.gz"
+test_process_package_with_compression "none" "data.tar"
+test_process_package_with_compression "xz" "data.tar.xz"
+
+
+

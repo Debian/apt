@@ -7,15 +7,21 @@
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/policy.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <apt-private/private-output.h>
+#include <apt-private/private-cachefile.h>
+
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <iomanip>
 #include <iostream>
-#include <locale.h>
 #include <langinfo.h>
 #include <unistd.h>
-
-#include "private-output.h"
-#include "private-cachefile.h"
 
 #include <apti18n.h>
 									/*}}}*/
@@ -30,6 +36,9 @@ unsigned int ScreenWidth = 80 - 1; /* - 1 for the cursor */
 
 bool InitOutput()							/*{{{*/
 {
+   if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
+      _config->Set("quiet","1");
+
    c0out.rdbuf(cout.rdbuf());
    c1out.rdbuf(cout.rdbuf());
    c2out.rdbuf(cout.rdbuf());
@@ -60,7 +69,7 @@ bool InitOutput()							/*{{{*/
    return true;
 }
 									/*}}}*/
-std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) /*{{{*/
+static std::string GetArchiveSuite(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator ver) /*{{{*/
 {
    std::string suite = "";
    if (ver && ver.FileList() && ver.FileList())
@@ -68,8 +77,10 @@ std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) 
       pkgCache::VerFileIterator VF = ver.FileList();
       for (; VF.end() == false ; ++VF)
       {
-         // XXX: how to figure out the relevant suite? if its in multiple ones?
-         suite = suite + "," + VF.File().Archive();
+         if(VF.File() == NULL || VF.File().Archive() == NULL)
+            suite = suite + "," + _("unknown");
+         else
+            suite = suite + "," + VF.File().Archive();
          //suite = VF.File().Archive();
       }
       suite = suite.erase(0, 1);
@@ -77,7 +88,7 @@ std::string GetArchiveSuite(pkgCacheFile &CacheFile, pkgCache::VerIterator ver) 
    return suite;
 }
 									/*}}}*/
-std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgDepCache *DepCache = CacheFile.GetDepCache();
    pkgDepCache::StateCache &state = (*DepCache)[P];
@@ -94,7 +105,7 @@ std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
    return flags_str;
 }
 									/*}}}*/
-std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
    pkgCache::VerIterator cand = policy->GetCandidateVer(P);
@@ -102,23 +113,25 @@ std::string GetCandidateVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P
    return cand ? cand.VerStr() : "(none)";
 }
 									/*}}}*/
-std::string GetInstalledVersion(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetInstalledVersion(pkgCacheFile &/*CacheFile*/, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgCache::VerIterator inst = P.CurrentVer();
 
    return inst ? inst.VerStr() : "(none)";
 }
 									/*}}}*/
-std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)/*{{{*/
+static std::string GetVersion(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator V)/*{{{*/
 {
    pkgCache::PkgIterator P = V.ParentPkg();
    if (V == P.CurrentVer())
    {
+      std::string inst_str = DeNull(V.VerStr());
+#if 0 // FIXME: do we want this or something like this?
       pkgDepCache *DepCache = CacheFile.GetDepCache();
       pkgDepCache::StateCache &state = (*DepCache)[P];
-      std::string inst_str = DeNull(V.VerStr());
       if (state.Upgradable())
          return "**"+inst_str;
+#endif
       return inst_str;
    }
 
@@ -127,16 +140,16 @@ std::string GetVersion(pkgCacheFile &CacheFile, pkgCache::VerIterator V)/*{{{*/
    return "(none)";
 }
 									/*}}}*/
-std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
    pkgCache::VerIterator inst = P.CurrentVer();
    pkgCache::VerIterator cand = policy->GetCandidateVer(P);
-   
+
    return inst ? inst.Arch() : cand.Arch();
 }
 									/*}}}*/
-std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
+static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
 {
    pkgPolicy *policy = CacheFile.GetPolicy();
 
@@ -186,49 +199,48 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       // raring/linux-kernel version [upradable: new-version]
       //    description
       pkgPolicy *policy = CacheFile.GetPolicy();
+      std::string VersionStr = GetVersion(CacheFile, V);
+      std::string CandidateVerStr = GetCandidateVersion(CacheFile, P);
+      std::string InstalledVerStr = GetInstalledVersion(CacheFile, P);
+      std::string StatusStr;
+      if(P.CurrentVer() == V && state.Upgradable()) {
+         strprintf(StatusStr, _("[installed,upgradable to: %s]"),
+                   CandidateVerStr.c_str());
+      } else if (P.CurrentVer() == V) {
+         if(!V.Downloadable())
+            StatusStr = _("[installed,local]");
+         else
+            if(V.Automatic() && state.Garbage)
+               StatusStr = _("[installed,auto-removable]");
+            else if (state.Flags & pkgCache::Flag::Auto)
+               StatusStr = _("[installed,automatic]");
+            else
+               StatusStr = _("[installed]");
+      } else if (P.CurrentVer() && 
+                 policy->GetCandidateVer(P) == V && 
+                 state.Upgradable()) {
+            strprintf(StatusStr, _("[upgradable from: %s]"),
+                      InstalledVerStr.c_str());
+      } else {
+         if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
+            StatusStr = _("[residual-config]");
+         else
+            StatusStr = "";
+      }
       out << std::setiosflags(std::ios::left)
           << _config->Find("APT::Color::Highlight", "")
           << name_str 
           << _config->Find("APT::Color::Neutral", "")
           << "/" << suite
-          << " ";
-      if(P.CurrentVer() == V && state.Upgradable()) {
-         out << GetVersion(CacheFile, V)
-             << " "
-             << "[" << _("installed,upgradable to: ")
-             << GetCandidateVersion(CacheFile, P) << "]";
-      } else if (P.CurrentVer() == V) {
-         out << GetVersion(CacheFile, V)
-             << " ";
-         if(!V.Downloadable())
-            out << _("[installed,local]");
-         else
-            if(V.Automatic() && state.Garbage)
-                  out << _("[installed,auto-removable]");
-            else if (state.Flags & pkgCache::Flag::Auto)
-               out << _("[installed,automatic]");
-            else
-               out << _("[installed]");
-      } else if (P.CurrentVer() && 
-                 policy->GetCandidateVer(P) == V && 
-                 state.Upgradable()) {
-         out << GetVersion(CacheFile, V)
-             << " "
-             << _("[upgradable from: ")
-             << GetInstalledVersion(CacheFile, P) << "]";
-      } else {
-         if (V.ParentPkg()->CurrentState == pkgCache::State::ConfigFiles)
-            out << GetVersion(CacheFile, V) 
-                << " "
-                << _("[residual-config]");
-         else
-            out << GetVersion(CacheFile, V);
-      }
-      out << " " << GetArchitecture(CacheFile, P) << " ";
+          << " "
+          << VersionStr << " " 
+          << GetArchitecture(CacheFile, P);
+      if (StatusStr != "") 
+         out << " " << StatusStr;
       if (include_summary)
       {
          out << std::endl 
-             << "    " << GetShortDescription(CacheFile, records, P)
+             << "  " << GetShortDescription(CacheFile, records, P)
              << std::endl;
       }
    }

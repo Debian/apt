@@ -1,3 +1,5 @@
+#include <config.h>
+
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/configuration.h>
 
@@ -105,6 +107,14 @@ int main(int argc,char *argv[])
 	vec = APT::Configuration::getLanguages(false, false, env);
 	equals(vec.size(), 1);
 	equals(vec[0], "fr");
+
+	_config->Set("Acquire::Languages", "environment,en");
+	env[0] = "de_DE.UTF-8";
+	vec = APT::Configuration::getLanguages(false, false, env);
+	equals(vec.size(), 3);
+	equals(vec[0], "de_DE");
+	equals(vec[1], "de");
+	equals(vec[2], "en");
 	_config->Set("Acquire::Languages", "");
 
 	_config->Set("Acquire::Languages::1", "environment");

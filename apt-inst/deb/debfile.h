@@ -27,10 +27,14 @@
 #include <apt-pkg/arfile.h>
 #include <apt-pkg/dirstream.h>
 #include <apt-pkg/tagfile.h>
-#include <apt-pkg/pkgcache.h>
+
+#include <string>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/md5.h>
+#endif
+#ifndef APT_10_CLEANER_HEADERS
+#include <apt-pkg/pkgcache.h>
 #endif
 
 class FileFd;
@@ -48,6 +52,7 @@ class debDebFile
    class ControlExtract;
    class MemControlExtract;
 
+   bool ExtractTarMember(pkgDirStream &Stream, const char *Name);
    bool ExtractArchive(pkgDirStream &Stream);
    const ARArchive::Member *GotoMember(const char *Name);
    inline FileFd &GetFile() {return File;};

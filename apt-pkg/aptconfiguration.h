@@ -37,14 +37,14 @@ public:									/*{{{*/
 	 *  \param Cached saves the result so we need to calculated it only once
 	 *                this parameter should ony be used for testing purposes.
 	 *
-	 *  \return a vector of the compression types in the prefered usage order
+	 *  \return a vector of the compression types in the preferred usage order
 	 */
 	std::vector<std::string> static const getCompressionTypes(bool const &Cached = true);
 
 	/** \brief Returns a vector of Language Codes
 	 *
 	 *  Languages can be defined with their two or five chars long code.
-	 *  This methods handles the various ways to set the prefered codes,
+	 *  This methods handles the various ways to set the preferred codes,
 	 *  honors the environment and ensures that the codes are not listed twice.
 	 *
 	 *  The special word "environment" will be replaced with the long and the short
@@ -52,7 +52,7 @@ public:									/*{{{*/
 	 *  duplicates. So in an german local the setting "environment, de_DE, en, de"
 	 *  will result in "de_DE, de, en".
 	 *
-	 *  Another special word is "none" which separates the prefered from all codes
+	 *  Another special word is "none" which separates the preferred from all codes
 	 *  in this setting. So setting and method can be used to get codes the user want
 	 *  to see or to get all language codes APT (should) have Translations available.
 	 *
@@ -62,7 +62,7 @@ public:									/*{{{*/
 	 *  \param Locale don't get the locale from the system but use this one instead
 	 *                this parameter should ony be used for testing purposes.
 	 *
-	 *  \return a vector of (all) Language Codes in the prefered usage order
+	 *  \return a vector of (all) Language Codes in the preferred usage order
 	 */
 	std::vector<std::string> static const getLanguages(bool const &All = false,
 			bool const &Cached = true, char const ** const Locale = 0);
@@ -73,14 +73,14 @@ public:									/*{{{*/
 	 *  \param All defines if we check against all codes or only against used codes
 	 *  \return true if we are interested, false otherwise
 	 */
-	bool static const checkLanguage(std::string Lang, bool const All = false);
+	bool static checkLanguage(std::string Lang, bool const All = false);
 
 	/** \brief Returns a vector of Architectures we support
 	 *
 	 *  \param Cached saves the result so we need to calculated it only once
 	 *                this parameter should ony be used for testing purposes.
 	 *
-	 *  \return a vector of Architectures in prefered order
+	 *  \return a vector of Architectures in preferred order
 	 */
 	std::vector<std::string> static const getArchitectures(bool const &Cached = true);
 
@@ -89,7 +89,7 @@ public:									/*{{{*/
 	 *  \param Arch we want to check
 	 *  \return true if we are interested, false otherwise
 	 */
-	bool static const checkArchitecture(std::string const &Arch);
+	bool static checkArchitecture(std::string const &Arch);
 
 	/** \brief Representation of supported compressors */
 	struct Compressor {
@@ -117,6 +117,11 @@ public:									/*{{{*/
 
 	/** \brief Return a vector of extensions supported for data.tar's */
 	std::vector<std::string> static const getCompressorExtensions();
+
+	/** \return Return a vector of enabled build profile specifications */
+	std::vector<std::string> static const getBuildProfiles();
+	/** \return Return a comma-separated list of enabled build profile specifications */
+	std::string static const getBuildProfilesString();
 									/*}}}*/
 	private:							/*{{{*/
 	void static setDefaultConfigurationForCompressors();

@@ -1,9 +1,13 @@
+#include <config.h>
+
 #include <apt-pkg/cdrom.h>
 #include <apt-pkg/error.h>
 
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <stddef.h>
+#include <iostream>
 
 #include "assert.h"
 

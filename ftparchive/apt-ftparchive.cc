@@ -17,14 +17,23 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/init.h>
-#include <algorithm>
+#include <apt-pkg/fileutl.h>
 
+#include <algorithm>
 #include <climits>
 #include <sys/time.h>
-#include <regex.h>
+#include <locale.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <functional>
+#include <iostream>
+#include <string>
+#include <vector>
 
+#include "cachedb.h"
+#include "override.h"
 #include "apt-ftparchive.h"
-#include "contents.h"
 #include "multicompress.h"
 #include "writer.h"
 
@@ -438,7 +447,7 @@ bool PackageMap::GenContents(Configuration &Setup,
 // ---------------------------------------------------------------------
 /* This populates the PkgList with all the possible permutations of the
    section/arch lists. */
-void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
+static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 {   
    // Load the defaults
    string DDir = Setup.Find("TreeDefault::Directory",
@@ -484,7 +493,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	 struct SubstVar const Vars[] = {{"$(DIST)",&Dist},
 					 {"$(SECTION)",&Section},
 					 {"$(ARCH)",&Arch},
-					 {}};
+					 {NULL, NULL}};
 	 mode_t const Perms = Block.FindI("FileMode", Permissions);
 	 bool const LongDesc = Block.FindB("LongDescription", LongDescription);
 	 TranslationWriter *TransWriter;
@@ -550,7 +559,7 @@ void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 // LoadBinDir - Load a 'bindirectory' section from the Generate Config	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
+static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 {
    mode_t const Permissions = Setup.FindI("Default::FileMode",0644);
 
@@ -586,7 +595,7 @@ void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
 // ShowHelp - Show the help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
@@ -639,7 +648,7 @@ bool ShowHelp(CommandLine &CmdL)
 // SimpleGenPackages - Generate a Packages file for a directory tree	/*{{{*/
 // ---------------------------------------------------------------------
 /* This emulates dpkg-scanpackages's command line interface. 'mostly' */
-bool SimpleGenPackages(CommandLine &CmdL)
+static bool SimpleGenPackages(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
       return ShowHelp(CmdL);
@@ -667,7 +676,7 @@ bool SimpleGenPackages(CommandLine &CmdL)
 // SimpleGenContents - Generate a Contents listing			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool SimpleGenContents(CommandLine &CmdL)
+static bool SimpleGenContents(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
       return ShowHelp(CmdL);
@@ -689,7 +698,7 @@ bool SimpleGenContents(CommandLine &CmdL)
 // SimpleGenSources - Generate a Sources file for a directory tree	/*{{{*/
 // ---------------------------------------------------------------------
 /* This emulates dpkg-scanpackages's command line interface. 'mostly' */
-bool SimpleGenSources(CommandLine &CmdL)
+static bool SimpleGenSources(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
       return ShowHelp(CmdL);
@@ -722,7 +731,7 @@ bool SimpleGenSources(CommandLine &CmdL)
 									/*}}}*/
 // SimpleGenRelease - Generate a Release file for a directory tree	/*{{{*/
 // ---------------------------------------------------------------------
-bool SimpleGenRelease(CommandLine &CmdL)
+static bool SimpleGenRelease(CommandLine &CmdL)
 {
    if (CmdL.FileSize() < 2)
       return ShowHelp(CmdL);
@@ -747,7 +756,7 @@ bool SimpleGenRelease(CommandLine &CmdL)
 // Generate - Full generate, using a config file			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Generate(CommandLine &CmdL)
+static bool Generate(CommandLine &CmdL)
 {
    struct CacheDB::Stats SrcStats;
    if (CmdL.FileSize() < 2)
@@ -864,7 +873,7 @@ bool Generate(CommandLine &CmdL)
    unsigned long MaxContentsChange = Setup.FindI("Default::MaxContentsChange",UINT_MAX)*1024;
    for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
    {
-      // This record is not relevent
+      // This record is not relevant
       if (I->ContentsDone == true ||
 	  I->Contents.empty() == true)
 	 continue;
@@ -911,7 +920,7 @@ bool Generate(CommandLine &CmdL)
 // Clean - Clean out the databases					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Clean(CommandLine &CmdL)
+static bool Clean(CommandLine &CmdL)
 {
    if (CmdL.FileSize() != 2)
       return ShowHelp(CmdL);

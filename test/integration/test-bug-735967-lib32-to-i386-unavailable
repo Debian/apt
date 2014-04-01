@@ -1,0 +1,89 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'i386' 'amd64'
+
+insertpackage 'unstable' 'lib32nss-mdns' 'amd64' '0.10-6' 'Depends: libnss-mdns-i386 (= 0.10-6)'
+insertpackage 'unstable' 'libnss-mdns' 'amd64,i386' '0.10-6' 'Multi-Arch: same
+Breaks: lib32nss-mdns (<< 0.10-6)'
+insertpackage 'unstable' 'libnss-mdns-i386' 'i386' '0.10-6' 'Multi-Arch: foreign
+Depends: libnss-mdns'
+# introduce some dummies so that there are versions, but none works
+insertpackage 'unstable' 'libnss-mdns-i386' 'amd64' '0.1-6'
+insertpackage 'experimental' 'libnss-mdns-amd64' 'i386,amd64' '0.10-6' 'Provides: libnss-mdns-i386'
+
+insertpackage 'unstable' 'foo' 'amd64' '1' 'Depends: libfoo'
+insertpackage 'unstable' 'libfoo' 'amd64' '1' 'Depends: libfoo-bin'
+insertpackage 'unstable' 'libfoo-bin' 'i386' '0.10-6' 'Multi-Arch: foreign'
+
+insertinstalledpackage 'lib32nss-mdns' 'amd64' '0.9-1'
+insertinstalledpackage 'libnss-mdns' 'amd64' '0.9-1'
+
+insertinstalledpackage 'i-make-packages-important' 'all' '1' 'Depends: libnss-mdns'
+
+setupaptarchive --no-update
+
+# make libnss-mdns-i386 unavailable
+configarchitecture 'amd64'
+testsuccess aptget update
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following packages will be REMOVED:
+  lib32nss-mdns
+The following packages will be upgraded:
+  libnss-mdns
+1 upgraded, 0 newly installed, 1 to remove and 0 not upgraded.
+Remv lib32nss-mdns [0.9-1]
+Inst libnss-mdns [0.9-1] (0.10-6 unstable [amd64])
+Conf libnss-mdns (0.10-6 unstable [amd64])' aptget dist-upgrade -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ foo : Depends: libfoo but it is not going to be installed
+E: Unable to correct problems, you have held broken packages.' aptget install foo -s
+
+# activate multiarch
+configarchitecture 'amd64' 'i386'
+testsuccess aptget update
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  libnss-mdns:i386 libnss-mdns-i386:i386
+The following packages will be upgraded:
+  lib32nss-mdns libnss-mdns
+2 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst lib32nss-mdns [0.9-1] (0.10-6 unstable [amd64]) []
+Inst libnss-mdns [0.9-1] (0.10-6 unstable [amd64]) []
+Inst libnss-mdns:i386 (0.10-6 unstable [i386]) []
+Inst libnss-mdns-i386:i386 (0.10-6 unstable [i386])
+Conf libnss-mdns:i386 (0.10-6 unstable [i386])
+Conf libnss-mdns (0.10-6 unstable [amd64])
+Conf libnss-mdns-i386:i386 (0.10-6 unstable [i386])
+Conf lib32nss-mdns (0.10-6 unstable [amd64])' aptget dist-upgrade -s
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libfoo libfoo-bin:i386
+The following NEW packages will be installed:
+  foo libfoo libfoo-bin:i386
+0 upgraded, 3 newly installed, 0 to remove and 2 not upgraded.
+Inst libfoo-bin:i386 (0.10-6 unstable [i386])
+Inst libfoo (1 unstable [amd64])
+Inst foo (1 unstable [amd64])
+Conf libfoo-bin:i386 (0.10-6 unstable [i386])
+Conf libfoo (1 unstable [amd64])
+Conf foo (1 unstable [amd64])' aptget install foo -s

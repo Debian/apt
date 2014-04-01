@@ -11,10 +11,15 @@
 #ifndef PKGLIB_DEBSRCRECORDS_H
 #define PKGLIB_DEBSRCRECORDS_H
 
-
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
+
+#include <stddef.h>
+#include <string>
+#include <vector>
+
+class pkgIndexFile;
 
 class debSrcRecordParser : public pkgSrcRecords::Parser
 {
@@ -30,7 +35,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    
    public:
 
-   virtual bool Restart() {return Tags.Jump(Sect,0);};
+   virtual bool Restart() {return Jump(0);};
    virtual bool Step() {iOffset = Tags.Offset(); return Tags.Step(Sect);};
    virtual bool Jump(unsigned long const &Off) {iOffset = Off; return Tags.Jump(Sect,Off);};
 
@@ -50,8 +55,8 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    virtual bool Files(std::vector<pkgSrcRecords::File> &F);
 
    debSrcRecordParser(std::string const &File,pkgIndexFile const *Index) 
-      : Parser(Index), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400), 
-        Buffer(NULL) {}
+      : Parser(Index), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400),
+        iOffset(0), Buffer(NULL) {}
    virtual ~debSrcRecordParser();
 };
 

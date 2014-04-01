@@ -1,16 +1,31 @@
 #ifndef APT_PRIVATE_CACHESET_H
 #define APT_PRIVATE_CACHESET_H
 
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
 
 #include <algorithm>
 #include <vector>
+#include <string.h>
+#include <list>
+#include <ostream>
+#include <set>
+#include <string>
+#include <utility>
 
 #include "private-output.h"
 
 #include <apti18n.h>
+
+class OpProgress;
 
 struct VersionSortDescriptionLocality
 {
@@ -42,8 +57,8 @@ typedef APT::VersionContainer<
 
 class Matcher {
 public:
-    virtual bool operator () (const pkgCache::PkgIterator &P) {
-        return true;};
+    virtual bool operator () (const pkgCache::PkgIterator &/*P*/) {
+        return true;}
 };
 
 // FIXME: add default argument for OpProgress (or overloaded function)
@@ -101,13 +116,18 @@ public:
 				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
+        virtual void showFnmatchSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) {
+		ioprintf(out, _("Note, selecting '%s' for glob '%s'\n"),
+				Pkg.FullName(true).c_str(), pattern.c_str());
+		explicitlyNamed = false;
+	}
 	virtual void showRegExSelection(pkgCache::PkgIterator const &Pkg, std::string const &pattern) {
 		ioprintf(out, _("Note, selecting '%s' for regex '%s'\n"),
 				Pkg.FullName(true).c_str(), pattern.c_str());
 		explicitlyNamed = false;
 	}
-	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
-				 std::string const &ver, bool const verIsRel) {
+	virtual void showSelectedVersion(pkgCache::PkgIterator const &/*Pkg*/, pkgCache::VerIterator const Ver,
+				 std::string const &ver, bool const /*verIsRel*/) {
 		if (ver == Ver.VerStr())
 			return;
 		selectedByRelease.push_back(make_pair(Ver, ver));

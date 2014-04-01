@@ -32,12 +32,19 @@ testsuccess aptget install compiz-core=1.0
 # fake conffile change
 echo "meep" >> rootdir/etc/compiz.conf/compiz.conf
 
-# install
+# FIXME: Is there really no way to see if dpkg actually prompts?
+msgtest 'Test for successful execution of' 'apt-get install compiz-core=2.0'
+OUTPUT=$(mktemp)
+addtrap "rm $OUTPUT;"
 exec 3> apt-progress.log
-echo n | aptget install compiz-core=2.0  -o APT::Status-Fd=3 -o Dpkg::Use-Pty=false
+if aptget install compiz-core=2.0 -o APT::Status-Fd=3 -o Dpkg::Use-Pty=false -o dpkg::options::='--force-confold' >${OUTPUT} 2>&1; then
+	msgpass
+else
+	echo
+	cat $OUTPUT
+	msgfail
+fi
 
 # and ensure there is a conffile message in the file
-msgtest "Conffile prompt in apt-progress.log"
+msgtest 'Test status fd for an included' 'pmconffile msg'
 grep -q "pmconffile:/etc/compiz.conf/compiz.conf" apt-progress.log && msgpass || (cat apt-progress.log && msgfail)
-
-cat apt-progress.log

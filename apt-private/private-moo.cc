@@ -13,16 +13,20 @@
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
 
-#include <strings.h>
-#include <sstream>
+#include <apt-private/private-moo.h>
+#include <apt-private/private-output.h>
 
-#include "private-moo.h"
-#include "private-output.h"
+#include <stddef.h>
+#include <string.h>
+#include <time.h>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 #include <apti18n.h>
 									/*}}}*/
 
-std::string getMooLine() {						/*{{{*/
+static std::string getMooLine() {					/*{{{*/
    time_t const timenow = time(NULL);
    struct tm special;
    localtime_r(&timenow, &special);
@@ -60,12 +64,12 @@ std::string getMooLine() {						/*{{{*/
    return out.str();
 }
 									/*}}}*/
-bool printMooLine() {							/*{{{*/
+static bool printMooLine() {						/*{{{*/
    std::cerr << getMooLine() << std::endl;
    return true;
 }
 									/*}}}*/
-bool DoMoo1(CommandLine &CmdL)						/*{{{*/
+bool DoMoo1(CommandLine &)						/*{{{*/
 {
    // our trustworthy super cow since 2001
    if (_config->FindI("quiet") >= 2)
@@ -83,7 +87,7 @@ bool DoMoo1(CommandLine &CmdL)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMoo2(CommandLine &CmdL)						/*{{{*/
+bool DoMoo2(CommandLine &)						/*{{{*/
 {
    // by Fernando Ribeiro in lp:56125
    if (_config->FindI("quiet") >= 2)
@@ -102,22 +106,22 @@ bool DoMoo2(CommandLine &CmdL)						/*{{{*/
    else
    {
       c1out <<
-	 OutputInDepth(depth, " ") << "         \e[1;97m(\e[0;33m__\e[1;97m)\e[0m\n" <<
-	 OutputInDepth(depth, " ") << " \e[31m_______\e[33m~(\e[1;34m..\e[0;33m)~\e[0m\n" <<
-	 OutputInDepth(depth, " ") << "   \e[33m,----\e[31m\\\e[33m(\e[1;4;35moo\e[0;33m)\e[0m\n" <<
-	 OutputInDepth(depth, " ") << "  \e[33m/|____|,'\e[0m\n" <<
-	 OutputInDepth(depth, " ") << " \e[1;5;97m*\e[0;33m /\\  /\\\e[0m\n" <<
-	 "\e[32m";
+	 OutputInDepth(depth, " ") << "         \033[1;97m(\033[0;33m__\033[1;97m)\033[0m\n" <<
+	 OutputInDepth(depth, " ") << " \033[31m_______\033[33m~(\033[1;34m..\033[0;33m)~\033[0m\n" <<
+	 OutputInDepth(depth, " ") << "   \033[33m,----\033[31m\\\033[33m(\033[1;4;35moo\033[0;33m)\033[0m\n" <<
+	 OutputInDepth(depth, " ") << "  \033[33m/|____|,'\033[0m\n" <<
+	 OutputInDepth(depth, " ") << " \033[1;5;97m*\033[0;33m /\\  /\\\033[0m\n" <<
+	 "\033[32m";
       for (size_t i = moo.length()/2; i > 1; --i)
 	 c1out << "wW";
 
-      c1out << "w\e[0m\n" << moo;
+      c1out << "w\033[0m\n" << moo;
    }
 
    return true;
 }
 									/*}}}*/
-bool DoMoo3(CommandLine &CmdL)						/*{{{*/
+bool DoMoo3(CommandLine &)						/*{{{*/
 {
    // by Robert Millan in deb:134156
    if (_config->FindI("quiet") >= 2)
@@ -134,7 +138,7 @@ bool DoMoo3(CommandLine &CmdL)						/*{{{*/
    return true;
 }
 									/*}}}*/
-bool DoMooApril(CommandLine &CmdL)					/*{{{*/
+bool DoMooApril(CommandLine &)						/*{{{*/
 {
    // by Christopher Allan Webber and proposed by Paul Tagliamonte
    // in a "Community outreach": https://lists.debian.org/debian-devel/2013/04/msg00045.html

@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'armhf'
+
+insertsource 'unstable' 'adduser' 'all' '3.113+nmu3'
+insertsource 'stable' 'python-fll' 'all' '0.9.11'
+
+insertpackage 'unstable' 'adduser' 'all' '3.113+nmu3'
+insertpackage 'stable' 'python-fll' 'all' '0.9.11'
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+HEADER="Reading package lists...
+Building dependency tree..."
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/adduser_3.113+nmu3.dsc' adduser_3.113+nmu3.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/python-fll_0.9.11.dsc' python-fll_0.9.11.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e" aptget source -qdy --print-uris --dsc-only adduser=3.113 python-fll=0.9.11
+
+testequal "$HEADER
+Need to get 0 B of source archives.
+'file://${APTARCHIVE}/python-fll_0.9.11.dsc' python-fll_0.9.11.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e
+'file://${APTARCHIVE}/adduser_3.113+nmu3.dsc' adduser_3.113+nmu3.dsc 0 MD5Sum:d41d8cd98f00b204e9800998ecf8427e"  aptget source -qdy --print-uris --dsc-only python-fll=0.9.11 adduser=3.113

@@ -14,20 +14,23 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
+#include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-worker.h>
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/hashes.h>
 
+#include <string>
+#include <vector>
 #include <iostream>
 #include <sstream>
-#include <fstream>
 
 #include <sys/stat.h>
+#include <stdlib.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <errno.h>
@@ -109,7 +112,12 @@ bool pkgAcquire::Worker::Start()
    // Get the method path
    string Method = _config->FindDir("Dir::Bin::Methods") + Access;
    if (FileExists(Method) == false)
-      return _error->Error(_("The method driver %s could not be found."),Method.c_str());
+   {
+      _error->Error(_("The method driver %s could not be found."),Method.c_str());
+      if (Access == "https")
+	 _error->Notice(_("Is the package %s installed?"), "apt-transport-https");
+      return false;
+   }
 
    if (Debug == true)
       clog << "Starting method '" << Method << '\'' << endl;
@@ -563,7 +571,7 @@ bool pkgAcquire::Worker::InFdReady()
 									/*}}}*/
 // Worker::MethodFailure - Called when the method fails			/*{{{*/
 // ---------------------------------------------------------------------
-/* This is called when the method is belived to have failed, probably because
+/* This is called when the method is believed to have failed, probably because
    read returned -1. */
 bool pkgAcquire::Worker::MethodFailure()
 {

@@ -5,7 +5,7 @@ dnl linux architectures and configurations, it is not used to make the
 dnl code more portable
 
 dnl You MUST have an environment that has all the POSIX functions and
-dnl some of the more populare bsd/sysv ones (like select). You'll also
+dnl some of the more popular bsd/sysv ones (like select). You'll also
 dnl need a C++ compiler that is semi-standard conformant, exceptions are 
 dnl not used but STL is.
 
@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 PACKAGE="apt"
-PACKAGE_VERSION="0.9.14.2"
+PACKAGE_VERSION="0.9.16.1"
 PACKAGE_MAIL="APT Development Team <deity@lists.debian.org>"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION")
@@ -105,6 +105,13 @@ AC_CHECK_LIB(bz2, BZ2_bzopen,[AC_CHECK_HEADER(bzlib.h, [HAVE_BZ2=yes], [])], [])
 AC_SUBST(HAVE_BZ2)
 if test "x$HAVE_BZ2" = "xyes"; then
 	AC_DEFINE(HAVE_BZ2)
+fi
+
+HAVE_LZMA=no
+AC_CHECK_LIB(lzma, lzma_easy_encoder,[AC_CHECK_HEADER(lzma.h, [HAVE_LZMA=yes], [])], [])
+AC_SUBST(HAVE_LZMA)
+if test "x$HAVE_LZMA" = "xyes"; then
+	AC_DEFINE(HAVE_LZMA)
 fi
 
 dnl Converts the ARCH to be something singular for this general CPU family

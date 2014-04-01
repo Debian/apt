@@ -134,6 +134,7 @@ libapt-pkg-doc: build-debiandoc
 #
 # libapt-pkg-doc install
 #
+	rm -f $(BLD)/doc/doxygen/html/*.map $(BLD)/doc/doxygen/html/*.md5
 	dh_installdocs -p$@ $(BLD)/docs/design* \
 			    $(BLD)/docs/dpkg-tech* \
 			    $(BLD)/docs/files* \
@@ -145,7 +146,7 @@ libapt-pkg-doc: build-debiandoc
 
 	dh_installchangelogs -p$@
 	dh_strip -p$@
-	dh_compress -p$@
+	dh_compress -p$@ -X.xhtml
 	dh_fixperms -p$@
 	dh_installdeb -p$@
 	dh_gencontrol -p$@
@@ -206,6 +207,9 @@ apt: build-binary build-manpages debian/apt.install
 	#mv debian/$@/usr/bin/apt-report-mirror-failure \
 	#   debian/$@/usr/lib/apt/apt-report-mirror-failure \
 
+	# move the apt-helper in place
+	mv debian/$@/usr/bin/apt-helper debian/$@/usr/lib/apt/apt-helper 
+
 	dh_bugfiles -p$@
 	dh_lintian -p$@
 	dh_installexamples -p$@ $(BLD)/docs/examples/*
@@ -217,6 +221,7 @@ apt: build-binary build-manpages debian/apt.install
 	dh_strip -p$@
 	dh_compress -p$@
 	dh_fixperms -p$@
+	dh_makeshlibs -p$@
 	dh_installdeb -p$@
 	dh_shlibdeps -p$@
 	dh_gencontrol -p$@ -- -Vapt:keyring="$(shell ./vendor/getinfo keyring-package)"

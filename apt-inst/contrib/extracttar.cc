@@ -6,7 +6,7 @@
    Extract a Tar - Tar Extractor
 
    Some performance measurements showed that zlib performed quite poorly
-   in comparision to a forked gzip process. This tar extractor makes use
+   in comparison to a forked gzip process. This tar extractor makes use
    of the fact that dup'd file descriptors have the same seek pointer
    and that gzip will not read past the end of a compressed stream, 
    even if there is more data. We use the dup property to track extraction
@@ -23,9 +23,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/fileutl.h>
 
-#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <string>
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -111,10 +113,16 @@ bool ExtractTar::Done(bool Force)
    gzip will efficiently ignore the extra bits. */
 bool ExtractTar::StartGzip()
 {
+   if (DecompressProg.empty())
+   {
+      InFd.OpenDescriptor(File.Fd(), FileFd::ReadOnly, FileFd::None, false);
+      return true;
+   }
+
    int Pipes[2];
    if (pipe(Pipes) != 0)
       return _error->Errno("pipe",_("Failed to create pipes"));
-   
+
    // Fork off the process
    GZPid = ExecFork();
 
@@ -130,9 +138,9 @@ bool ExtractTar::StartGzip()
       dup2(Fd,STDERR_FILENO);
       close(Fd);
       SetCloseExec(STDOUT_FILENO,false);
-      SetCloseExec(STDIN_FILENO,false);      
+      SetCloseExec(STDIN_FILENO,false);
       SetCloseExec(STDERR_FILENO,false);
-      
+
       const char *Args[3];
       string confvar = string("dir::bin::") + DecompressProg;
       string argv0 = _config->Find(confvar.c_str(),DecompressProg.c_str());

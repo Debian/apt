@@ -8,7 +8,7 @@ configarchitecture 'amd64'
 
 setupaptarchive
 
-aptget install --print-uris -y cdebconf-newt-terminal cdebconf-gtk-terminal 2>&1 | sed 's#file:///tmp/tmp.[^/]\+#file:///tmp#g' > filename.log
+aptget install --print-uris -y cdebconf-newt-terminal cdebconf-gtk-terminal 2>&1 | sed "s#file://${TMPWORKINGDIRECTORY}#file:///tmp#g" > filename.log
 
 testfileequal filename.log "Reading package lists...
 Building dependency tree...

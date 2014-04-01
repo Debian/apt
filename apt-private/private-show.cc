@@ -1,29 +1,32 @@
 // Includes								/*{{{*/
-#include <apt-pkg/error.h>
+#include <config.h>
+
 #include <apt-pkg/cachefile.h>
-#include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/strutl.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/algorithms.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/indexfile.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/tagfile.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+
+#include <apt-private/private-cacheset.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-show.h>
+
+#include <stdio.h>
+#include <ostream>
+#include <string>
 
 #include <apti18n.h>
-
-#include "private-output.h"
-#include "private-cacheset.h"
 									/*}}}*/
 
 namespace APT {
@@ -31,11 +34,14 @@ namespace APT {
 
 // DisplayRecord - Displays the complete record for the package		/*{{{*/
 // ---------------------------------------------------------------------
-bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
-                   ostream &out)
+static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
+                   std::ostream &out)
 {
    pkgCache *Cache = CacheFile.GetPkgCache();
    if (unlikely(Cache == NULL))
+      return false;
+   pkgDepCache *depCache = CacheFile.GetDepCache();
+   if (unlikely(depCache == NULL))
       return false;
 
    // Find an appropriate file
@@ -51,36 +57,78 @@ bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V,
    if (I.IsOk() == false)
       return _error->Error(_("Package file %s is out of sync."),I.FileName());
 
+   // find matching sources.list metaindex
+   pkgSourceList *SrcList = CacheFile.GetSourceList();
+   pkgIndexFile *Index;
+   if (SrcList->FindIndex(I, Index) == false &&
+       _system->FindIndex(I, Index) == false)
+      return _error->Error("Can not find indexfile for Package %s (%s)", 
+                           V.ParentPkg().Name(), V.VerStr());
+   std::string source_index_file = Index->Describe(true);
+
    // Read the record
    FileFd PkgF;
    if (PkgF.Open(I.FileName(), FileFd::ReadOnly, FileFd::Extension) == false)
       return false;
    pkgTagSection Tags;
    pkgTagFile TagF(&PkgF);
-   
+
+   if (TagF.Jump(Tags, V.FileList()->Offset) == false)
+      return _error->Error("Internal Error, Unable to parse a package record");
+
+   // make size nice
+   std::string installed_size;
+   if (Tags.FindI("Installed-Size") > 0)
+      strprintf(installed_size, "%sB", SizeToStr(Tags.FindI("Installed-Size")*1024).c_str());
+   else
+      installed_size = _("unknown");
+   std::string package_size;
+   if (Tags.FindI("Size") > 0)
+      strprintf(package_size, "%sB", SizeToStr(Tags.FindI("Size")).c_str());
+   else
+      package_size = _("unknown");
+
+   pkgDepCache::StateCache &state = (*depCache)[V.ParentPkg()];
+   bool is_installed = V.ParentPkg().CurrentVer() == V;
+   const char *manual_installed;
+   if (is_installed)
+      manual_installed = !(state.Flags & pkgCache::Flag::Auto) ? "yes" : "no";
+   else
+      manual_installed = 0;
+
+   // FIXME: add verbose that does not do the removal of the tags?
    TFRewriteData RW[] = {
-      {"Conffiles",0},
-      {"Description",0},
-      {"Description-md5",0},
-      {}
+      // delete, apt-cache show has this info and most users do not care
+      {"MD5sum", NULL, NULL},
+      {"SHA1", NULL, NULL},
+      {"SHA256", NULL, NULL},
+      {"Filename", NULL, NULL},
+      {"Multi-Arch", NULL, NULL},
+      {"Architecture", NULL, NULL},
+      {"Conffiles", NULL, NULL},
+      // we use the translated description
+      {"Description", NULL, NULL},
+      {"Description-md5", NULL, NULL},
+      // improve
+      {"Installed-Size", installed_size.c_str(), NULL},
+      {"Size", package_size.c_str(), "Download-Size"},
+      // add
+      {"APT-Manual-Installed", manual_installed, NULL},
+      {"APT-Sources", source_index_file.c_str(), NULL},
+      {NULL, NULL, NULL}
    };
-   const char *Zero = 0;
-   if (TagF.Jump(Tags, V.FileList()->Offset) == false ||
-       TFRewrite(stdout,Tags,&Zero,RW) == false)
-   {
-      _error->Error("Internal Error, Unable to parse a package record");
-      return false;
-   }
+
+   if(TFRewrite(stdout, Tags, NULL, RW) == false)
+      return _error->Error("Internal Error, Unable to parse a package record");
 
    // write the description
    pkgRecords Recs(*Cache);
+   // FIXME: show (optionally) all available translations(?)
    pkgCache::DescIterator Desc = V.TranslatedDescription();
    if (Desc.end() == false)
    {
       pkgRecords::Parser &P = Recs.Lookup(Desc.FileList());
-      if (strcmp(Desc.LanguageCode(),"") != 0)
-         out << "Description-lang: " << Desc.LanguageCode() << std::endl;
-      out << "Description" << P.LongDesc();
+      out << "Description: " << P.LongDesc();
    }
    
    // write a final newline (after the description)
@@ -93,11 +141,20 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionList::Version const select = APT::VersionList::CANDIDATE;
+   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", false) ?
+			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver, c1out) == false)
 	 return false;
+
+   if (select == APT::VersionList::CANDIDATE)
+   {
+      APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::ALL, helper);
+      int const records = verset_all.size() - verset.size();
+      if (records > 0)
+         _error->Notice(P_("There is %i additional record. Please use the '-a' switch to see it", "There are %i additional records. Please use the '-a' switch to see them.", records), records);
+   }
 
    for (APT::PackageSet::const_iterator Pkg = helper.virtualPkgs.begin();
 	Pkg != helper.virtualPkgs.end(); ++Pkg)

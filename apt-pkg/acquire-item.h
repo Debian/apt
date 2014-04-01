@@ -24,6 +24,10 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/weakptr.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+
+#include <string>
+#include <vector>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/indexfile.h>
@@ -64,7 +68,7 @@ class pkgAcquire::Item : public WeakPointable
 
    /** \brief Insert this item into its owner's queue.
     *
-    *  \param ItemDesc Metadata about this item (its URI and
+    *  \param Item Metadata about this item (its URI and
     *  description).
     */
    inline void QueueURI(ItemDesc &Item)
@@ -79,7 +83,7 @@ class pkgAcquire::Item : public WeakPointable
     *
     *  \param From The file to be renamed.
     *
-    *  \param To The new name of #From.  If #To exists it will be
+    *  \param To The new name of \a From.  If \a To exists it will be
     *  overwritten.
     */
    void Rename(std::string From,std::string To);
@@ -115,7 +119,7 @@ class pkgAcquire::Item : public WeakPointable
      } Status;
 
    /** \brief Contains a textual description of the error encountered
-    *  if #Status is #StatError or #StatAuthError.
+    *  if #ItemState is #StatError or #StatAuthError.
     */
    std::string ErrorText;
 
@@ -293,7 +297,6 @@ class pkgAcquire::Item : public WeakPointable
    /** \brief Rename failed file and set error
     *
     * \param state respresenting the error we encountered
-    * \param errorMsg a message describing the error
     */
    bool RenameOnError(RenameOnErrorState const state);
 };
@@ -429,7 +432,105 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
 		   std::string ShortDesc, HashString ExpectedHash);
 };
 									/*}}}*/
-/** \brief An item that is responsible for fetching all the patches	{{{
+/** \brief An item that is responsible for fetching client-merge patches {{{
+ *  that need to be applied to a given package index file.
+ *
+ *  Instead of downloading and applying each patch one by one like its
+ *  sister #pkgAcqIndexDiffs this class will download all patches at once
+ *  and call rred with all the patches downloaded once. Rred will then
+ *  merge and apply them in one go, which should be a lot faster – but is
+ *  incompatible with server-based merges of patches like reprepro can do.
+ *
+ *  \sa pkgAcqDiffIndex, pkgAcqIndex
+ */
+class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
+{
+   protected:
+
+   /** \brief If \b true, debugging output will be written to
+    *  std::clog.
+    */
+   bool Debug;
+
+   /** \brief description of the item that is currently being
+    *  downloaded.
+    */
+   pkgAcquire::ItemDesc Desc;
+
+   /** \brief URI of the package index file that is being
+    *  reconstructed.
+    */
+   std::string RealURI;
+
+   /** \brief HashSum of the package index file that is being
+    *  reconstructed.
+    */
+   HashString ExpectedHash;
+
+   /** \brief description of the file being downloaded. */
+   std::string Description;
+
+   /** \brief information about the current patch */
+   struct DiffInfo const patch;
+
+   /** \brief list of all download items for the patches */
+   std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches;
+
+   /** The current status of this patch. */
+   enum DiffState
+   {
+      /** \brief The diff is currently being fetched. */
+      StateFetchDiff,
+
+      /** \brief The diff is currently being applied. */
+      StateApplyDiff,
+
+      /** \brief the work with this diff is done */
+      StateDoneDiff,
+
+      /** \brief something bad happened and fallback was triggered */
+      StateErrorDiff
+   } State;
+
+   public:
+   /** \brief Called when the patch file failed to be downloaded.
+    *
+    *  This method will fall back to downloading the whole index file
+    *  outright; its arguments are ignored.
+    */
+   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
+
+   virtual void Done(std::string Message,unsigned long long Size,std::string Md5Hash,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual std::string DescURI() {return RealURI + "Index";};
+
+   /** \brief Create an index merge-diff item.
+    *
+    *  \param Owner The pkgAcquire object that owns this item.
+    *
+    *  \param URI The URI of the package index file being
+    *  reconstructed.
+    *
+    *  \param URIDesc A long description of this item.
+    *
+    *  \param ShortDesc A brief description of this item.
+    *
+    *  \param ExpectedHash The expected md5sum of the completely
+    *  reconstructed package index file; the index file will be tested
+    *  against this value when it is entirely reconstructed.
+    *
+    *  \param patch contains infos about the patch this item is supposed
+    *  to download which were read from the index
+    *
+    *  \param allPatches contains all related items so that each item can
+    *  check if it was the last one to complete the download step
+    */
+   pkgAcqIndexMergeDiffs(pkgAcquire *Owner,std::string const &URI,std::string const &URIDesc,
+		    std::string const &ShortDesc, HashString const &ExpectedHash,
+		    DiffInfo const &patch, std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
+};
+									/*}}}*/
+/** \brief An item that is responsible for fetching server-merge patches {{{
  *  that need to be applied to a given package index file.
  *
  *  After downloading and applying a single patch, this item will
@@ -538,7 +639,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
    /** \brief Create an index diff item.
     *
     *  After filling in its basic fields, this invokes Finish(true) if
-    *  #diffs is empty, or QueueNextDiff() otherwise.
+    *  \a diffs is empty, or QueueNextDiff() otherwise.
     *
     *  \param Owner The pkgAcquire object that owns this item.
     *
@@ -552,6 +653,8 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *  \param ExpectedHash The expected md5sum of the completely
     *  reconstructed package index file; the index file will be tested
     *  against this value when it is entirely reconstructed.
+    *
+    *  \param ServerSha1 is the sha1sum of the current file on the server
     *
     *  \param diffs The remaining diffs from the index of diffs.  They
     *  should be ordered so that each diff appears before any diff
@@ -1064,8 +1167,8 @@ class pkgAcqFile : public pkgAcquire::Item
     *  \param IsIndexFile The file is considered a IndexFile and cache-control
     *                     headers like "cache-control: max-age=0" are send
     *
-    * If DestFilename is empty, download to DestDir/<basename> if
-    * DestDir is non-empty, $CWD/<basename> otherwise.  If
+    * If DestFilename is empty, download to DestDir/\<basename\> if
+    * DestDir is non-empty, $CWD/\<basename\> otherwise.  If
     * DestFilename is NOT empty, DestDir is ignored and DestFilename
     * is the absolute name to which the file should be downloaded.
     */

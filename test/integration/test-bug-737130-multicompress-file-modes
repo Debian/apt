@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+cat >aptarchive/ftparchive.conf <<EOF
+Dir { ArchiveDir "$(pwd)/aptarchive"; CacheDir "$(pwd)/aptarchive"; };
+Default { Translation::Compress ". gzip bzip2 xz"; FileMode 0644; };
+tree "dists/sid" {
+	Sections "main";
+	Architectures "i386";
+	LongDescription "false";
+};
+EOF
+mkdir -p aptarchive/dists/sid/main/binary-i386
+mkdir -p aptarchive/dists/sid/main/i18n
+testsuccess aptftparchive generate aptarchive/ftparchive.conf
+i18n=aptarchive/dists/sid/main/i18n
+for comp in '' .gz .bz2 .xz; do
+	msgtest 'Test apt-ftparchive file mode is 644 for' "Translation-en$comp"
+	FILEMODE="$(stat --format %a "$i18n/Translation-en$comp")"
+	if [ "$FILEMODE" != '644' ]; then
+		msgfail "Mode was '$FILEMODE'!"
+	else
+		msgpass
+	fi
+done

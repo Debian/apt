@@ -16,8 +16,13 @@
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/metaindex.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/macros.h>
+
+#include <string.h>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -70,8 +75,9 @@ bool pkgSrcRecords::Restart()
    Current = Files.begin();
    for (std::vector<Parser*>::iterator I = Files.begin();
         I != Files.end(); ++I)
-      (*I)->Restart();
-   
+      if ((*I)->Offset() != 0)
+	 (*I)->Restart();
+
    return true;
 }
 									/*}}}*/

@@ -3,7 +3,7 @@
 // $Id: ftp.h,v 1.4 2001/03/06 07:15:29 jgg Exp $
 /* ######################################################################
 
-   FTP Aquire Method - This is the FTP aquire method for APT.
+   FTP Acquire Method - This is the FTP acquire method for APT.
 
    ##################################################################### */
 									/*}}}*/
@@ -12,6 +12,8 @@
 
 #include <apt-pkg/strutl.h>
 
+#include <sys/types.h>
+#include <time.h>
 #include <string>
 
 class FTPConn
@@ -76,7 +78,7 @@ class FtpMethod : public pkgAcqMethod
    static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
-   static void SigTerm(int);
+   static APT_NORETURN void SigTerm(int);
    
    public:
    

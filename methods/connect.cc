@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sstream>
-
+#include <string.h>
 #include<set>
 #include<string>
 
@@ -142,9 +142,9 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
    // Convert the port name/number
    char ServStr[300];
    if (Port != 0)
-      snprintf(ServStr,sizeof(ServStr),"%u",Port);
+      snprintf(ServStr,sizeof(ServStr),"%i", Port);
    else
-      snprintf(ServStr,sizeof(ServStr),"%s",Service);
+      snprintf(ServStr,sizeof(ServStr),"%s", Service);
    
    /* We used a cached address record.. Yes this is against the spec but
       the way we have setup our rotating dns suggests that this is more
@@ -190,7 +190,7 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
 	    {
 	       if (DefPort != 0)
 	       {
-		  snprintf(ServStr,sizeof(ServStr),"%u",DefPort);
+		  snprintf(ServStr, sizeof(ServStr), "%i", DefPort);
 		  DefPort = 0;
 		  continue;
 	       }

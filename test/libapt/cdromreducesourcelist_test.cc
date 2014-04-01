@@ -1,7 +1,7 @@
-#include <apt-pkg/cdrom.h>
-#include <apt-pkg/error.h>
+#include <config.h>
 
-#include <algorithm>
+#include <apt-pkg/cdrom.h>
+
 #include <string>
 #include <vector>
 
@@ -15,7 +15,7 @@ public:
    }
 };
 
-int main(int argc, char const *argv[]) {
+int main() {
    Cdrom cd;
    std::vector<std::string> List;
    std::string CD("/media/cdrom/");

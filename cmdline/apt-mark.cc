@@ -11,20 +11,31 @@
 #include <apt-pkg/cacheset.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/fileutl.h>
-
-#include <algorithm>
-#include <errno.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <fcntl.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
 #include <apt-private/private-cmndline.h>
+
+#include <errno.h>
+#include <fcntl.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -35,7 +46,7 @@ ostream c1out(0);
 ostream c2out(0);
 ofstream devnull("/dev/null");
 /* DoAuto - mark packages as automatically/manually installed		{{{*/
-bool DoAuto(CommandLine &CmdL)
+static bool DoAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -82,7 +93,7 @@ bool DoAuto(CommandLine &CmdL)
 /* DoMarkAuto - mark packages as automatically/manually installed	{{{*/
 /* Does the same as DoAuto but tries to do it exactly the same why as
    the python implementation did it so it can be a drop-in replacement */
-bool DoMarkAuto(CommandLine &CmdL)
+static bool DoMarkAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -119,7 +130,7 @@ bool DoMarkAuto(CommandLine &CmdL)
 }
 									/*}}}*/
 /* ShowAuto - show automatically installed packages (sorted)		{{{*/
-bool ShowAuto(CommandLine &CmdL)
+static bool ShowAuto(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -159,7 +170,7 @@ bool ShowAuto(CommandLine &CmdL)
 }
 									/*}}}*/
 /* DoHold - mark packages as hold by dpkg				{{{*/
-bool DoHold(CommandLine &CmdL)
+static bool DoHold(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -335,7 +346,7 @@ bool DoHold(CommandLine &CmdL)
 }
 									/*}}}*/
 /* ShowHold - show packages set on hold in dpkg status			{{{*/
-bool ShowHold(CommandLine &CmdL)
+static bool ShowHold(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
@@ -372,7 +383,7 @@ bool ShowHold(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
@@ -386,6 +397,11 @@ bool ShowHelp(CommandLine &CmdL)
       "Commands:\n"
       "   auto - Mark the given packages as automatically installed\n"
       "   manual - Mark the given packages as manually installed\n"
+      "   hold - Mark a package as held back\n"
+      "   unhold - Unset a package set as held back\n"
+      "   showauto - Print the list of automatically installed packages\n"
+      "   showmanual - Print the list of manually installed packages\n"
+      "   showhold - Print the list of package on hold\n"
       "\n"
       "Options:\n"
       "  -h  This help text.\n"

@@ -5,7 +5,7 @@
 
    File URI method for APT
    
-   This simply checks that the file specified exists, if so the relevent
+   This simply checks that the file specified exists, if so the relevant
    information is returned. If a .gz filename is specified then the file
    name with .gz removed will also be checked and information about it
    will be returned in Alt-*
@@ -21,8 +21,9 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
+#include <string>
 #include <sys/stat.h>
-#include <unistd.h>
+
 #include <apti18n.h>
 									/*}}}*/
 

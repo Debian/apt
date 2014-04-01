@@ -5,6 +5,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
+configcompression '.' 'gz' # only gz is supported for this, so ensure it is used
 configarchitecture "i386"
 
 buildsimplenativepackage "testpkg" "i386" "1.0"

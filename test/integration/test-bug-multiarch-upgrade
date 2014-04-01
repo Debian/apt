@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'libcups2' 'amd64' '1' 'Multi-Arch: same'
+insertinstalledpackage 'libcups2' 'i386' '1' 'Multi-Arch: same'
+
+insertpackage 'unstable' 'libcups2' 'amd64' '0' 'Multi-Arch: same'
+insertpackage 'unstable' 'libcups2' 'amd64' '2' 'Multi-Arch: same'
+insertpackage 'unstable' 'libcups2' 'i386' '0' 'Multi-Arch: same'
+insertpackage 'unstable' 'libcups2' 'i386' '2' 'Multi-Arch: same'
+
+setupaptarchive
+
+testequal 'Reading package lists...
+Building dependency tree...
+The following extra packages will be installed:
+  libcups2
+The following packages will be upgraded:
+  libcups2 libcups2:i386
+2 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst libcups2 [1] (2 unstable [amd64]) [libcups2:amd64 on libcups2:i386] [libcups2:i386 on libcups2:amd64] [libcups2:i386 ]
+Inst libcups2:i386 [1] (2 unstable [i386])
+Conf libcups2:i386 (2 unstable [i386])
+Conf libcups2 (2 unstable [amd64])' aptget install -s libcups2:i386

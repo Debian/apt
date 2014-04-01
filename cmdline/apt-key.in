@@ -5,22 +5,23 @@ unset GREP_OPTIONS
 
 GPG_CMD="gpg --ignore-time-conflict --no-options --no-default-keyring"
 
-# gpg needs a trustdb to function, but it can't be invalid (not even empty)
-# so we create a temporary directory to store our fresh readable trustdb in
-TRUSTDBDIR="$(mktemp -d)"
-CURRENTTRAP="${CURRENTTRAP} rm -rf '${TRUSTDBDIR}';"
+# gpg needs (in different versions more or less) files to function correctly,
+# so we give it its own homedir and generate some valid content for it
+GPGHOMEDIR="$(mktemp -d)"
+CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"
 trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-chmod 700 "$TRUSTDBDIR"
-# We also don't use a secret keyring, of course, but gpg panics and
+chmod 700 "$GPGHOMEDIR"
+# We don't use a secret keyring, of course, but gpg panics and
 # implodes if there isn't one available - and writeable for imports
-SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
+SECRETKEYRING="${GPGHOMEDIR}/secring.gpg"
 touch $SECRETKEYRING
-GPG_CMD="$GPG_CMD --secret-keyring $SECRETKEYRING"
-GPG_CMD="$GPG_CMD --trustdb-name ${TRUSTDBDIR}/trustdb.gpg"
-
-# now create the trustdb with an (empty) dummy keyring
-$GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING
-# and make sure that gpg isn't trying to update the file
+GPG_CMD="$GPG_CMD --homedir $GPGHOMEDIR"
+# create the trustdb with an (empty) dummy keyring
+# older gpgs required it, newer gpgs even warn that it isn't needed,
+# but require it nonetheless for some commands, so we just play safe
+# here for the foreseeable future and create a dummy one
+$GPG_CMD --quiet --check-trustdb --keyring $SECRETKEYRING >/dev/null 2>&1
+# tell gpg that it shouldn't try to maintain a trustdb file
 GPG_CMD="$GPG_CMD --no-auto-check-trustdb --trust-model always"
 
 GPG="$GPG_CMD"
@@ -186,7 +187,7 @@ remove_key_from_keyring() {
 	echo >&2 "Key ${2} is in keyring ${1}, but can't be removed as it is read only."
 	return
     fi
-    # check if it is the only key in the keyring and if so remove the keyring alltogether
+    # check if it is the only key in the keyring and if so remove the keyring altogether
     if [ '1' = "$($GPG --with-colons --list-keys | grep "^pub:[^:]*:[^:]*:[^:]*:[0-9A-F]\+:" | wc -l)" ]; then
 	mv -f "$1" "${1}~" # behave like gpg
 	return
