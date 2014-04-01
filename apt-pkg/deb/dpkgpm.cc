@@ -399,10 +399,14 @@ bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
    that are due to be installed. */
 bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 {
+   bool result = true;
+
    Configuration::Item const *Opts = _config->Tree(Cnf);
    if (Opts == 0 || Opts->Child == 0)
       return true;
    Opts = Opts->Child;
+
+   sighandler_t old_sigpipe = signal(SIGPIPE, SIG_IGN);
    
    unsigned int Count = 1;
    for (; Opts != 0; Opts = Opts->Next, Count++)
@@ -428,8 +432,10 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       std::set<int> KeepFDs;
       MergeKeepFdsFromConfiguration(KeepFDs);
       int Pipes[2];
-      if (pipe(Pipes) != 0)
-	 return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
+      if (pipe(Pipes) != 0) {
+         result = _error->Errno("pipe","Failed to create IPC pipe to subprocess");
+         break;
+      }
       if (InfoFD != (unsigned)Pipes[0])
 	 SetCloseExec(Pipes[0],true);
       else
@@ -463,8 +469,10 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       }
       close(Pipes[0]);
       FILE *F = fdopen(Pipes[1],"w");
-      if (F == 0)
-	 return _error->Errno("fdopen","Faild to open new FD");
+      if (F == 0) {
+         result = _error->Errno("fdopen","Faild to open new FD");
+         break;
+      }
       
       // Feed it the filenames.
       if (Version <= 1)
@@ -492,11 +500,14 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       fclose(F);
       
       // Clean up the sub process
-      if (ExecWait(Process,Opts->Value.c_str()) == false)
-	 return _error->Error("Failure running script %s",Opts->Value.c_str());
+      if (ExecWait(Process,Opts->Value.c_str()) == false) {
+	 result = _error->Error("Failure running script %s",Opts->Value.c_str());
+         break;
+      }
    }
+   signal(SIGPIPE, old_sigpipe);
 
-   return true;
+   return result;
 }
 									/*}}}*/
 // DPkgPM::DoStdin - Read stdin and pass to slave pty			/*{{{*/
