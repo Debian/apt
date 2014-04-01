@@ -410,6 +410,10 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       if (Opts->Value.empty() == true)
          continue;
 
+      if(_config->FindB("Debug::RunScripts", false) == true)
+         std::clog << "Running external script with list of all .deb file: '"
+                   << Opts->Value << "'" << std::endl;
+
       // Determine the protocol version
       string OptSec = Opts->Value;
       string::size_type Pos;

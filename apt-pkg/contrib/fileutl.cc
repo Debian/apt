@@ -104,7 +104,11 @@ bool RunScripts(const char *Cnf)
       {
 	 if (Opts->Value.empty() == true)
 	    continue;
-	 
+
+         if(_config->FindB("Debug::RunScripts", false) == true)
+            std::clog << "Running external script: '"
+                      << Opts->Value << "'" << std::endl;
+
 	 if (system(Opts->Value.c_str()) != 0)
 	    _exit(100+Count);
       }
