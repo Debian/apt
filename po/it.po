@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-03-15 18:13+0100\n"
+"POT-Creation-Date: 2014-04-01 14:24+0200\n"
 "PO-Revision-Date: 2013-08-27 22:06+0200\n"
 "Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -161,7 +161,7 @@ msgstr "  Tabella versione:"
 
 #: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
 #: cmdline/apt-get.cc:1578 cmdline/apt-helper.cc:58 cmdline/apt-mark.cc:388
-#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:216
+#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:600 cmdline/apt-internal-solver.cc:42
 #: cmdline/apt-sortpkgs.cc:147
 #, c-format
@@ -693,8 +693,8 @@ msgid "%s was already not hold.\n"
 msgstr "%s era già non bloccato.\n"
 
 #: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
-#: apt-pkg/contrib/fileutl.cc:811 apt-pkg/contrib/gpgv.cc:219
-#: apt-pkg/deb/dpkgpm.cc:1186
+#: apt-pkg/contrib/fileutl.cc:815 apt-pkg/contrib/gpgv.cc:219
+#: apt-pkg/deb/dpkgpm.cc:1201
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "In attesa di %s ma non era presente"
@@ -882,9 +882,9 @@ msgstr "Connessione scaduta"
 msgid "Server closed the connection"
 msgstr "Il server ha chiuso la connessione"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1451
-#: apt-pkg/contrib/fileutl.cc:1460 apt-pkg/contrib/fileutl.cc:1465
-#: apt-pkg/contrib/fileutl.cc:1467
+#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1468
+#: apt-pkg/contrib/fileutl.cc:1477 apt-pkg/contrib/fileutl.cc:1482
+#: apt-pkg/contrib/fileutl.cc:1484
 msgid "Read error"
 msgstr "Errore di lettura"
 
@@ -896,10 +896,10 @@ msgstr "Una risposta ha superato le dimensioni del buffer."
 msgid "Protocol corruption"
 msgstr "Protocollo danneggiato"
 
-#: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:871
-#: apt-pkg/contrib/fileutl.cc:1573 apt-pkg/contrib/fileutl.cc:1582
-#: apt-pkg/contrib/fileutl.cc:1587 apt-pkg/contrib/fileutl.cc:1589
-#: apt-pkg/contrib/fileutl.cc:1614
+#: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:875
+#: apt-pkg/contrib/fileutl.cc:1590 apt-pkg/contrib/fileutl.cc:1599
+#: apt-pkg/contrib/fileutl.cc:1604 apt-pkg/contrib/fileutl.cc:1606
+#: apt-pkg/contrib/fileutl.cc:1631
 msgid "Write error"
 msgstr "Errore di scrittura"
 
@@ -1714,8 +1714,8 @@ msgstr ""
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
 #: methods/mirror.cc:95 apt-inst/extract.cc:471
-#: apt-pkg/contrib/cdromutl.cc:205 apt-pkg/contrib/fileutl.cc:367
-#: apt-pkg/contrib/fileutl.cc:480 apt-pkg/sourcelist.cc:280
+#: apt-pkg/contrib/cdromutl.cc:205 apt-pkg/contrib/fileutl.cc:371
+#: apt-pkg/contrib/fileutl.cc:484 apt-pkg/sourcelist.cc:280
 #: apt-pkg/sourcelist.cc:286 apt-pkg/acquire.cc:491 apt-pkg/init.cc:102
 #: apt-pkg/init.cc:110 apt-pkg/clean.cc:40 apt-pkg/policy.cc:381
 #, c-format
@@ -1803,7 +1803,7 @@ msgstr ""
 msgid "Merging available information"
 msgstr "Unione delle informazioni disponibili"
 
-#: cmdline/apt-extracttemplates.cc:223
+#: cmdline/apt-extracttemplates.cc:224
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -1827,12 +1827,17 @@ msgstr ""
 "  -c=? Legge come configurazione il file specificato\n"
 "  -o=? Imposta un'opzione di configurazione, come -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:255 apt-pkg/pkgcachegen.cc:1400
+#: cmdline/apt-extracttemplates.cc:254
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "Impossibile eseguire stat su %s"
+
+#: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1400
 #, c-format
 msgid "Unable to write to %s"
 msgstr "Impossibile scrivere in %s"
 
-#: cmdline/apt-extracttemplates.cc:297
+#: cmdline/apt-extracttemplates.cc:300
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Impossibile trovare la versione di debconf. È installato?"
 
@@ -2354,12 +2359,12 @@ msgstr "Impossibile eseguire stat su %s"
 msgid "This is not a valid DEB archive, missing '%s' member"
 msgstr "Questo non è un archivio DEB valido: membro \"%s\" mancante"
 
-#: apt-inst/deb/debfile.cc:130
+#: apt-inst/deb/debfile.cc:132
 #, c-format
 msgid "Internal error, could not locate member %s"
 msgstr "Errore interno, impossibile trovare il membro %s"
 
-#: apt-inst/deb/debfile.cc:225
+#: apt-inst/deb/debfile.cc:227
 msgid "Unparsable control file"
 msgstr "File \"control\" non analizzabile"
 
@@ -2586,46 +2591,46 @@ msgstr "Impossibile eseguire stat sul punto di mount %s"
 msgid "Failed to stat the cdrom"
 msgstr "Esecuzione di stat sul CD-ROM non riuscita"
 
-#: apt-pkg/contrib/fileutl.cc:189
+#: apt-pkg/contrib/fileutl.cc:193
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "Blocco disabilitato per il file di blocco in sola lettura %s"
 
-#: apt-pkg/contrib/fileutl.cc:194
+#: apt-pkg/contrib/fileutl.cc:198
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "Impossibile aprire il file di blocco %s"
 
-#: apt-pkg/contrib/fileutl.cc:217
+#: apt-pkg/contrib/fileutl.cc:221
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "Blocco disabilitato per il file di blocco %s montato via nfs"
 
-#: apt-pkg/contrib/fileutl.cc:222
+#: apt-pkg/contrib/fileutl.cc:226
 #, c-format
 msgid "Could not get lock %s"
 msgstr "Impossibile impostare il blocco %s"
 
-#: apt-pkg/contrib/fileutl.cc:359 apt-pkg/contrib/fileutl.cc:473
+#: apt-pkg/contrib/fileutl.cc:363 apt-pkg/contrib/fileutl.cc:477
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr ""
 "L'elenco dei file non può essere creato poiché \"%s\" non è una directory"
 
-#: apt-pkg/contrib/fileutl.cc:393
+#: apt-pkg/contrib/fileutl.cc:397
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr ""
 "Viene ignorato \"%s\" nella directory \"%s\" poiché non è un file regolare"
 
-#: apt-pkg/contrib/fileutl.cc:411
+#: apt-pkg/contrib/fileutl.cc:415
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr ""
 "Viene ignorato il file \"%s\" nella directory \"%s\" poiché non ha "
 "un'estensione"
 
-#: apt-pkg/contrib/fileutl.cc:420
+#: apt-pkg/contrib/fileutl.cc:424
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
@@ -2633,79 +2638,79 @@ msgstr ""
 "Viene ignorato il file \"%s\" nella directory \"%s\" poiché ha un'estensione "
 "non valida"
 
-#: apt-pkg/contrib/fileutl.cc:823
+#: apt-pkg/contrib/fileutl.cc:827
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "Il sottoprocesso %s ha ricevuto un segmentation fault."
 
-#: apt-pkg/contrib/fileutl.cc:825
+#: apt-pkg/contrib/fileutl.cc:829
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "Il sottoprocesso %s ha ricevuto il segnale %u."
 
-#: apt-pkg/contrib/fileutl.cc:829 apt-pkg/contrib/gpgv.cc:239
+#: apt-pkg/contrib/fileutl.cc:833 apt-pkg/contrib/gpgv.cc:239
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "Il sottoprocesso %s ha restituito un codice d'errore (%u)"
 
-#: apt-pkg/contrib/fileutl.cc:831 apt-pkg/contrib/gpgv.cc:232
+#: apt-pkg/contrib/fileutl.cc:835 apt-pkg/contrib/gpgv.cc:232
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "Il sottoprocesso %s è uscito inaspettatamente"
 
-#: apt-pkg/contrib/fileutl.cc:912
+#: apt-pkg/contrib/fileutl.cc:916
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "Si è verificato un problema nel chiudere il file gzip %s"
 
-#: apt-pkg/contrib/fileutl.cc:1093
+#: apt-pkg/contrib/fileutl.cc:1097
 #, c-format
 msgid "Could not open file %s"
 msgstr "Impossibile aprire il file %s"
 
-#: apt-pkg/contrib/fileutl.cc:1152 apt-pkg/contrib/fileutl.cc:1199
+#: apt-pkg/contrib/fileutl.cc:1156 apt-pkg/contrib/fileutl.cc:1203
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Impossibile aprire il descrittore del file %d"
 
-#: apt-pkg/contrib/fileutl.cc:1306
+#: apt-pkg/contrib/fileutl.cc:1310
 msgid "Failed to create subprocess IPC"
 msgstr "Creazione di un sottoprocesso IPC non riuscita"
 
-#: apt-pkg/contrib/fileutl.cc:1361
+#: apt-pkg/contrib/fileutl.cc:1365
 msgid "Failed to exec compressor "
 msgstr "Esecuzione non riuscita del compressore "
 
-#: apt-pkg/contrib/fileutl.cc:1489
+#: apt-pkg/contrib/fileutl.cc:1506
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "lettura, ancora %llu da leggere, ma non è stato trovato nulla"
 
-#: apt-pkg/contrib/fileutl.cc:1602 apt-pkg/contrib/fileutl.cc:1624
+#: apt-pkg/contrib/fileutl.cc:1619 apt-pkg/contrib/fileutl.cc:1641
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "scrittura, ancora %llu da scrivere, ma non è possibile"
 
-#: apt-pkg/contrib/fileutl.cc:1894
+#: apt-pkg/contrib/fileutl.cc:1911
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Si è verificato un problema nel chiudere il file %s"
 
-#: apt-pkg/contrib/fileutl.cc:1906
+#: apt-pkg/contrib/fileutl.cc:1923
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Si è verificato un problema nel rinominare il file %s in %s"
 
-#: apt-pkg/contrib/fileutl.cc:1917
+#: apt-pkg/contrib/fileutl.cc:1934
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Si è verificato un problema nell'eseguire l'unlink del file %s"
 
-#: apt-pkg/contrib/fileutl.cc:1930
+#: apt-pkg/contrib/fileutl.cc:1947
 msgid "Problem syncing the file"
 msgstr "Si è verificato un problema nel sincronizzare il file"
 
-#: apt-pkg/contrib/fileutl.cc:2026 apt-pkg/acquire-item.cc:148
+#: apt-pkg/contrib/fileutl.cc:2043 apt-pkg/acquire-item.cc:148
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "rename() non riuscita: %s (%s -> %s)."
@@ -3476,12 +3481,12 @@ msgstr ""
 msgid "Installing %s"
 msgstr "Installazione di %s"
 
-#: apt-pkg/deb/dpkgpm.cc:96 apt-pkg/deb/dpkgpm.cc:981
+#: apt-pkg/deb/dpkgpm.cc:96 apt-pkg/deb/dpkgpm.cc:996
 #, c-format
 msgid "Configuring %s"
 msgstr "Configurazione di %s"
 
-#: apt-pkg/deb/dpkgpm.cc:97 apt-pkg/deb/dpkgpm.cc:988
+#: apt-pkg/deb/dpkgpm.cc:97 apt-pkg/deb/dpkgpm.cc:1003
 #, c-format
 msgid "Removing %s"
 msgstr "Rimozione di %s"
@@ -3502,89 +3507,89 @@ msgid "Running post-installation trigger %s"
 msgstr "Esecuzione comando di post installazione %s"
 
 #. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:812
+#: apt-pkg/deb/dpkgpm.cc:827
 #, c-format
 msgid "Directory '%s' missing"
 msgstr "Directory \"%s\" mancante"
 
-#: apt-pkg/deb/dpkgpm.cc:827 apt-pkg/deb/dpkgpm.cc:849
+#: apt-pkg/deb/dpkgpm.cc:842 apt-pkg/deb/dpkgpm.cc:864
 #, c-format
 msgid "Could not open file '%s'"
 msgstr "Impossibile aprire il file \"%s\""
 
-#: apt-pkg/deb/dpkgpm.cc:974
+#: apt-pkg/deb/dpkgpm.cc:989
 #, c-format
 msgid "Preparing %s"
 msgstr "Preparazione di %s"
 
-#: apt-pkg/deb/dpkgpm.cc:975
+#: apt-pkg/deb/dpkgpm.cc:990
 #, c-format
 msgid "Unpacking %s"
 msgstr "Estrazione di %s"
 
-#: apt-pkg/deb/dpkgpm.cc:980
+#: apt-pkg/deb/dpkgpm.cc:995
 #, c-format
 msgid "Preparing to configure %s"
 msgstr "Preparazione alla configurazione di %s"
 
-#: apt-pkg/deb/dpkgpm.cc:982
+#: apt-pkg/deb/dpkgpm.cc:997
 #, c-format
 msgid "Installed %s"
 msgstr "Pacchetto %s installato"
 
-#: apt-pkg/deb/dpkgpm.cc:987
+#: apt-pkg/deb/dpkgpm.cc:1002
 #, c-format
 msgid "Preparing for removal of %s"
 msgstr "Preparazione alla rimozione di %s"
 
-#: apt-pkg/deb/dpkgpm.cc:989
+#: apt-pkg/deb/dpkgpm.cc:1004
 #, c-format
 msgid "Removed %s"
 msgstr "Pacchetto %s rimosso"
 
-#: apt-pkg/deb/dpkgpm.cc:994
+#: apt-pkg/deb/dpkgpm.cc:1009
 #, c-format
 msgid "Preparing to completely remove %s"
 msgstr "Preparazione alla rimozione completa di %s"
 
-#: apt-pkg/deb/dpkgpm.cc:995
+#: apt-pkg/deb/dpkgpm.cc:1010
 #, c-format
 msgid "Completely removed %s"
 msgstr "Pacchetto %s rimosso completamente"
 
-#: apt-pkg/deb/dpkgpm.cc:1050
+#: apt-pkg/deb/dpkgpm.cc:1065
 msgid "ioctl(TIOCGWINSZ) failed"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1053 apt-pkg/deb/dpkgpm.cc:1074
+#: apt-pkg/deb/dpkgpm.cc:1068 apt-pkg/deb/dpkgpm.cc:1089
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "Impossibile scrivere in %s"
 
-#: apt-pkg/deb/dpkgpm.cc:1053
+#: apt-pkg/deb/dpkgpm.cc:1068
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1074
+#: apt-pkg/deb/dpkgpm.cc:1089
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1562
+#: apt-pkg/deb/dpkgpm.cc:1567
 msgid "Operation was interrupted before it could finish"
 msgstr "L'operazione è stata interrotta prima di essere completata"
 
-#: apt-pkg/deb/dpkgpm.cc:1624
+#: apt-pkg/deb/dpkgpm.cc:1629
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 "Segnalazione apport non scritta poiché è stato raggiunto il valore massimo "
 "di MaxReports"
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1629
+#: apt-pkg/deb/dpkgpm.cc:1634
 msgid "dependency problems - leaving unconfigured"
 msgstr "Problemi con le dipendenze - Viene lasciato non configurato"
 
-#: apt-pkg/deb/dpkgpm.cc:1631
+#: apt-pkg/deb/dpkgpm.cc:1636
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -3592,7 +3597,7 @@ msgstr ""
 "Segnalazione apport non scritta poiché il messaggio di errore indica la "
 "presenza di un fallimento precedente."
 
-#: apt-pkg/deb/dpkgpm.cc:1637
+#: apt-pkg/deb/dpkgpm.cc:1642
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
@@ -3600,7 +3605,7 @@ msgstr ""
 "Segnalazione apport non scritta poiché il messaggio di errore indica un "
 "errore per disco pieno."
 
-#: apt-pkg/deb/dpkgpm.cc:1644
+#: apt-pkg/deb/dpkgpm.cc:1649
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
@@ -3608,7 +3613,7 @@ msgstr ""
 "Segnalazione apport non scritta poiché il messaggio di errore indica un "
 "errore di memoria esaurita"
 
-#: apt-pkg/deb/dpkgpm.cc:1651 apt-pkg/deb/dpkgpm.cc:1657
+#: apt-pkg/deb/dpkgpm.cc:1656 apt-pkg/deb/dpkgpm.cc:1662
 #, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
@@ -3617,7 +3622,7 @@ msgstr ""
 "Segnalazione apport non scritta poiché il messaggio di errore indica un "
 "errore per disco pieno."
 
-#: apt-pkg/deb/dpkgpm.cc:1678
+#: apt-pkg/deb/dpkgpm.cc:1683
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""

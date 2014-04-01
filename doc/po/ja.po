@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.7.25.3\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-03-14 09:13+0100\n"
-"PO-Revision-Date: 2012-08-08 07:58+0900\n"
+"POT-Creation-Date: 2014-04-01 14:24+0200\n"
+"PO-Revision-Date: 2014-04-01 14:00+0200\n"
 "Last-Translator: KURASAWA Nozomu <nabetaro@debian.or.jp>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "Language: \n"
@@ -657,31 +657,261 @@ msgstr ""
 "473041FA --> <!ENTITY synopsis-keyid \"キーID\">"
 
 #. type: Content of: <refentry><refmeta><manvolnum>
-#: apt-get.8.xml:28 apt-cache.8.xml:28 apt-key.8.xml:27 apt-mark.8.xml:28
-#: apt-secure.8.xml:27 apt-cdrom.8.xml:27 apt-config.8.xml:28
+#: apt.8.xml:25 apt-get.8.xml:28 apt-cache.8.xml:28 apt-key.8.xml:27
+#: apt-mark.8.xml:28 apt-secure.8.xml:27 apt-cdrom.8.xml:27
+#: apt-config.8.xml:28
 msgid "8"
 msgstr "8"
 
 #. type: Content of: <refentry><refmeta><refmiscinfo>
-#: apt-get.8.xml:29 apt-cache.8.xml:29 apt-key.8.xml:28 apt-mark.8.xml:29
-#: apt-secure.8.xml:28 apt-cdrom.8.xml:28 apt-config.8.xml:29
-#: apt.conf.5.xml:34 apt_preferences.5.xml:28 sources.list.5.xml:29
-#: apt-extracttemplates.1.xml:29 apt-sortpkgs.1.xml:29 apt-ftparchive.1.xml:29
+#: apt.8.xml:26 apt-get.8.xml:29 apt-cache.8.xml:29 apt-key.8.xml:28
+#: apt-mark.8.xml:29 apt-secure.8.xml:28 apt-cdrom.8.xml:28
+#: apt-config.8.xml:29 apt.conf.5.xml:34 apt_preferences.5.xml:28
+#: sources.list.5.xml:29 apt-extracttemplates.1.xml:29 apt-sortpkgs.1.xml:29
+#: apt-ftparchive.1.xml:29
 msgid "APT"
 msgstr "APT"
+
+#. type: Content of: <refentry><refnamediv><refpurpose>
+#: apt.8.xml:32
+msgid "command-line interface"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt.8.xml:37 apt-get.8.xml:40 apt-cache.8.xml:40 apt-key.8.xml:39
+#: apt-mark.8.xml:40 apt-secure.8.xml:52 apt-cdrom.8.xml:39
+#: apt-config.8.xml:40 apt.conf.5.xml:43 apt_preferences.5.xml:38
+#: sources.list.5.xml:38 apt-extracttemplates.1.xml:40 apt-sortpkgs.1.xml:40
+#: apt-ftparchive.1.xml:40
+msgid "Description"
+msgstr "説明"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.8.xml:38
+msgid ""
+"<command>apt</command> (Advanced Package Tool) is the command-line tool for "
+"handling packages. It provides a commandline interface for the package "
+"management of the system.  See also &apt-get; and &apt-cache; for more low-"
+"level command options."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:47
+msgid ""
+"<literal>list</literal> is used to display a list of packages. It supports "
+"shell pattern for matching package names and the following options: "
+"<option>--installed</option>, <option>--upgradable</option>, <option>--all-"
+"versions</option> are supported."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:58
+msgid ""
+"<literal>search</literal> searches for the given term(s) and display "
+"matching packages."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:64
+#, fuzzy
+#| msgid ""
+#| "<literal>rdepends</literal> shows a listing of each reverse dependency a "
+#| "package has."
+msgid ""
+"<literal>show</literal> shows the package information for the given "
+"package(s)."
+msgstr ""
+"<literal>rdepends</literal> は、パッケージが持つ被依存関係を一覧表示します。"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:71
+msgid ""
+"<literal>install</literal> is followed by one or more package names desired "
+"for installation or upgrading."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:75 apt-get.8.xml:118
+msgid ""
+"A specific version of a package can be selected for installation by "
+"following the package name with an equals and the version of the package to "
+"select. This will cause that version to be located and selected for install. "
+"Alternatively a specific distribution can be selected by following the "
+"package name with a slash and the version of the distribution or the Archive "
+"name (stable, testing, unstable)."
+msgstr ""
+"パッケージにイコール記号とバージョンを続けることで、選択したバージョンのパッ"
+"ケージをインストールすることができます。つまり、指定のバージョンのパッケージ"
+"をインストールするように選択する、ということです。別の方法としては、ディスト"
+"リビューションを特定するのに、パッケージ名に続けて、スラッシュとディストリ"
+"ビューションのバージョンやアーカイブ名 (stable, testing, unstable) を記述でき"
+"ます。"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:85 apt-get.8.xml:153
+msgid ""
+"<literal>remove</literal> is identical to <literal>install</literal> except "
+"that packages are removed instead of installed. Note that removing a package "
+"leaves its configuration files on the system. If a plus sign is appended to "
+"the package name (with no intervening space), the identified package will be "
+"installed instead of removed."
+msgstr ""
+"<literal>remove</literal> は、パッケージが削除されることを除き、"
+"<literal>install</literal> と同様です。削除されたパッケージの設定ファイルは、"
+"システムに残ったままになることに注意してください。プラス記号がパッケージ名に "
+"(間に空白を含まずに) 付加されると、識別されたパッケージを、削除ではなくインス"
+"トールします。"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:93
+msgid ""
+"<literal>edit-sources</literal> lets you edit your sources.list file and "
+"provides basic sanity checks."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:99
+#, fuzzy
+#| msgid ""
+#| "<literal>showhold</literal> is used to print a list of packages on hold "
+#| "in the same way as for the other show commands."
+msgid ""
+"<literal>update</literal> is used to resynchronize the package index files "
+"from their sources."
+msgstr ""
+"<literal>showhold</literal> は、他の show コマンドと同様に、保留されている"
+"パッケージを出力します。"
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:105
+msgid ""
+"<literal>upgrade</literal> is used to install the newest versions of all "
+"packages currently installed on the system from the sources enumerated in "
+"<filename>/etc/apt/sources.list</filename>. New package will be installed, "
+"but existing package will never removed."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.8.xml:114
+msgid ""
+"<literal>full-upgrade</literal> performs the function of upgrade but may "
+"also remove installed packages if that is required in order to resolve a "
+"package conflict."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt.8.xml:124 apt-get.8.xml:257 apt-cache.8.xml:250 apt-mark.8.xml:110
+#: apt-config.8.xml:86 apt-extracttemplates.1.xml:54 apt-sortpkgs.1.xml:50
+#: apt-ftparchive.1.xml:506
+msgid "options"
+msgstr "オプション"
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt.8.xml:134
+msgid "Script usage"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.8.xml:136
+msgid ""
+"The &apt; commandline is designed as a end-user tool and it may change the "
+"output between versions. While it tries to not break backward compatibility "
+"there is no guarantee for it either.  All features of &apt; are available in "
+"&apt-cache; and &apt-get; via APT options. Please prefer using these "
+"commands in your scripts."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt.8.xml:144
+msgid "Differences to &apt-get;"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.8.xml:145
+msgid ""
+"The <command>apt</command> command is meant to be pleasant for end users and "
+"does not need to be backward compatilbe like &apt-get;. Therefore some "
+"options are different:"
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: apt.8.xml:151
+#, fuzzy
+#| msgid "the <literal>Package:</literal> line"
+msgid "The option <literal>DPkgPM::Progress-Fancy</literal> is enabled."
+msgstr "<literal>Package:</literal> 行"
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: apt.8.xml:155
+#, fuzzy
+#| msgid "the <literal>Component:</literal> line"
+msgid "The option <literal>APT::Color</literal> is enabled."
+msgstr "<literal>Component:</literal> 行"
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: apt.8.xml:159
+msgid ""
+"A new <literal>list</literal> command is available similar to <literal>dpkg "
+"--list</literal>."
+msgstr ""
+
+#. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
+#: apt.8.xml:164
+#, fuzzy
+#| msgid "the <literal>Archive:</literal> or <literal>Suite:</literal> line"
+msgid ""
+"The option <literal>upgrade</literal> has <literal>--with-new-pkgs</literal> "
+"enabled by default."
+msgstr "<literal>Archive:</literal> 行や <literal>Suite:</literal> 行"
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt.8.xml:174 apt-get.8.xml:558 apt-cache.8.xml:352 apt-key.8.xml:197
+#: apt-mark.8.xml:133 apt-secure.8.xml:193 apt-cdrom.8.xml:154
+#: apt-config.8.xml:111 apt.conf.5.xml:1227 apt_preferences.5.xml:707
+#: sources.list.5.xml:280 apt-extracttemplates.1.xml:72 apt-sortpkgs.1.xml:65
+#: apt-ftparchive.1.xml:609
+msgid "See Also"
+msgstr "関連項目"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.8.xml:175
+#, fuzzy
+#| msgid ""
+#| "&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
+#| "&apt-config;, &apt-secure;, The APT User's guide in &guidesdir;, &apt-"
+#| "preferences;, the APT Howto."
+msgid ""
+"&apt-get;, &apt-cache;, &sources-list;, &apt-conf;, &apt-config;, The APT "
+"User's guide in &guidesdir;, &apt-preferences;, the APT Howto."
+msgstr ""
+"&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
+"&apt-config;, &apt-secure;, &guidesdir; にある APT ユーザガイド, &apt-"
+"preferences;, APT Howto"
+
+#. type: Content of: <refentry><refsect1><title>
+#: apt.8.xml:180 apt-get.8.xml:564 apt-cache.8.xml:357 apt-mark.8.xml:137
+#: apt-cdrom.8.xml:159 apt-config.8.xml:116 apt-extracttemplates.1.xml:76
+#: apt-sortpkgs.1.xml:69 apt-ftparchive.1.xml:613
+msgid "Diagnostics"
+msgstr "診断メッセージ"
+
+#. type: Content of: <refentry><refsect1><para>
+#: apt.8.xml:181
+#, fuzzy
+#| msgid ""
+#| "<command>apt-get</command> returns zero on normal operation, decimal 100 "
+#| "on error."
+msgid ""
+"<command>apt</command> returns zero on normal operation, decimal 100 on "
+"error."
+msgstr ""
+"<command>apt-get</command> は正常終了時に 0 を返します。エラー時には十進の "
+"100 を返します。"
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-get.8.xml:35
 msgid "APT package handling utility -- command-line interface"
 msgstr "APT パッケージ操作ユーティリティ -- コマンドラインインターフェース"
-
-#. type: Content of: <refentry><refsect1><title>
-#: apt-get.8.xml:40 apt-cache.8.xml:40 apt-key.8.xml:39 apt-mark.8.xml:40
-#: apt-secure.8.xml:52 apt-cdrom.8.xml:39 apt-config.8.xml:40
-#: apt.conf.5.xml:43 apt_preferences.5.xml:38 sources.list.5.xml:38
-#: apt-extracttemplates.1.xml:40 apt-sortpkgs.1.xml:40 apt-ftparchive.1.xml:40
-msgid "Description"
-msgstr "説明"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:41
@@ -828,23 +1058,6 @@ msgstr ""
 "断を上書きするのに利用される可能性があります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-get.8.xml:118
-msgid ""
-"A specific version of a package can be selected for installation by "
-"following the package name with an equals and the version of the package to "
-"select. This will cause that version to be located and selected for install. "
-"Alternatively a specific distribution can be selected by following the "
-"package name with a slash and the version of the distribution or the Archive "
-"name (stable, testing, unstable)."
-msgstr ""
-"パッケージにイコール記号とバージョンを続けることで、選択したバージョンのパッ"
-"ケージをインストールすることができます。つまり、指定のバージョンのパッケージ"
-"をインストールするように選択する、ということです。別の方法としては、ディスト"
-"リビューションを特定するのに、パッケージ名に続けて、スラッシュとディストリ"
-"ビューションのバージョンやアーカイブ名 (stable, testing, unstable) を記述でき"
-"ます。"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:125
 msgid ""
 "Both of the version selection mechanisms can downgrade packages and must be "
@@ -897,21 +1110,6 @@ msgstr ""
 "たパッケージすべてがインストール(もしくは削除)されます。'lo.*' のような文字列"
 "は、'how-lo' や 'lowest' にマッチすることに注意してください。そうしたくなけれ"
 "ば、'^' や '$' を付けるか、もっと詳しい正規表現を指定してください。"
-
-#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
-#: apt-get.8.xml:153
-msgid ""
-"<literal>remove</literal> is identical to <literal>install</literal> except "
-"that packages are removed instead of installed. Note that removing a package "
-"leaves its configuration files on the system. If a plus sign is appended to "
-"the package name (with no intervening space), the identified package will be "
-"installed instead of removed."
-msgstr ""
-"<literal>remove</literal> は、パッケージが削除されることを除き、"
-"<literal>install</literal> と同様です。削除されたパッケージの設定ファイルは、"
-"システムに残ったままになることに注意してください。プラス記号がパッケージ名に "
-"(間に空白を含まずに) 付加されると、識別されたパッケージを、削除ではなくインス"
-"トールします。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:161
@@ -1103,13 +1301,6 @@ msgstr ""
 "changelogs\">changelogs.ubuntu.com/changelogs</ulink>)。デフォルトでは、イン"
 "ストールされるバージョンの changelog を表示しますが、<option>install</"
 "option> コマンドと同じオプションを使用できます。"
-
-#. type: Content of: <refentry><refsect1><title>
-#: apt-get.8.xml:257 apt-cache.8.xml:250 apt-mark.8.xml:110
-#: apt-config.8.xml:86 apt-extracttemplates.1.xml:54 apt-sortpkgs.1.xml:50
-#: apt-ftparchive.1.xml:506
-msgid "options"
-msgstr "オプション"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:262
@@ -1608,18 +1799,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:548 apt-cache.8.xml:345 apt-key.8.xml:176 apt-mark.8.xml:127
-#: apt.conf.5.xml:1209 apt_preferences.5.xml:700
+#: apt.conf.5.xml:1221 apt_preferences.5.xml:700
 msgid "Files"
 msgstr "ファイル"
-
-#. type: Content of: <refentry><refsect1><title>
-#: apt-get.8.xml:558 apt-cache.8.xml:352 apt-key.8.xml:197 apt-mark.8.xml:133
-#: apt-secure.8.xml:193 apt-cdrom.8.xml:154 apt-config.8.xml:111
-#: apt.conf.5.xml:1215 apt_preferences.5.xml:707 sources.list.5.xml:280
-#: apt-extracttemplates.1.xml:72 apt-sortpkgs.1.xml:65
-#: apt-ftparchive.1.xml:609
-msgid "See Also"
-msgstr "関連項目"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:559
@@ -1636,13 +1818,6 @@ msgstr ""
 "&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
 "&apt-config;, &apt-secure;, &guidesdir; にある APT ユーザガイド, &apt-"
 "preferences;, APT Howto"
-
-#. type: Content of: <refentry><refsect1><title>
-#: apt-get.8.xml:564 apt-cache.8.xml:357 apt-mark.8.xml:137
-#: apt-cdrom.8.xml:159 apt-config.8.xml:116 apt-extracttemplates.1.xml:76
-#: apt-sortpkgs.1.xml:69 apt-ftparchive.1.xml:613
-msgid "Diagnostics"
-msgstr "診断メッセージ"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:565
@@ -5047,14 +5222,22 @@ msgstr ""
 "<filename>/etc/apt/vendors.list</filename> から読み込んだ、ベンダの情報を出力"
 "します。"
 
+#. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
+#: apt.conf.5.xml:1191
+msgid ""
+"Display the external commands that are called by apt hooks.  This includes e."
+"g. the config options <literal>DPkg::{Pre,Post}-Invoke</literal> or "
+"<literal>APT::Update::{Pre,Post}-Invoke</literal>."
+msgstr ""
+
 #. type: Content of: <refentry><refsect1><title>
-#: apt.conf.5.xml:1203 apt_preferences.5.xml:547 sources.list.5.xml:239
+#: apt.conf.5.xml:1215 apt_preferences.5.xml:547 sources.list.5.xml:239
 #: apt-ftparchive.1.xml:598
 msgid "Examples"
 msgstr "サンプル"
 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:1204
+#: apt.conf.5.xml:1216
 msgid ""
 "&configureindex; is a configuration file showing example values for all "
 "possible options."
@@ -5064,7 +5247,7 @@ msgstr ""
 
 #.  ? reading apt.conf 
 #. type: Content of: <refentry><refsect1><para>
-#: apt.conf.5.xml:1216
+#: apt.conf.5.xml:1228
 msgid "&apt-cache;, &apt-config;, &apt-preferences;."
 msgstr "&apt-cache;, &apt-config;, &apt-preferences;."
 
@@ -7011,14 +7194,14 @@ msgid ""
 "template-file and config-script are written to the temporary directory "
 "specified by the <option>-t</option> or <option>--tempdir</option> "
 "(<literal>APT::ExtractTemplates::TempDir</literal>) directory, with "
-"filenames of the form <filename>package.template.XXXX</filename> and "
-"<filename>package.config.XXXX</filename>"
+"filenames of the form <filename>package.template.XXXXXX</filename> and "
+"<filename>package.config.XXXXXX</filename>"
 msgstr ""
 "テンプレートファイルや、設定スクリプトは、<option>-t</option> や <option>--"
 "tempdir</option> で指定した一時ディレクトリ (<literal>APT::ExtractTemplates::"
 "TempDir</literal>) に書き出され、ファイル名は、<filename>package.template."
-"XXXX</filename> や <filename>package.config.XXXX</filename> といった形になり"
-"ます。"
+"XXXXXX</filename> や <filename>package.config.XXXXXX</filename> といった形に"
+"なります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-extracttemplates.1.xml:60
@@ -8010,125 +8193,6 @@ msgid ""
 msgstr ""
 "<command>apt-ftparchive</command> は正常終了時に 0 を返します。エラー時には十"
 "進の 100 を返します。"
-
-#. type: TH
-#: apt.8:17
-#, no-wrap
-msgid "apt"
-msgstr "apt"
-
-#. type: TH
-#: apt.8:17
-#, no-wrap
-msgid "16 June 1998"
-msgstr "16 June 1998"
-
-#. type: TH
-#: apt.8:17
-#, no-wrap
-msgid "Debian"
-msgstr "Debian"
-
-#. type: SH
-#: apt.8:18
-#, no-wrap
-msgid "NAME"
-msgstr "名前"
-
-#. type: Plain text
-#: apt.8:20
-msgid "apt - Advanced Package Tool"
-msgstr "apt - 高度パッケージツール"
-
-#. type: SH
-#: apt.8:20
-#, no-wrap
-msgid "SYNOPSIS"
-msgstr "書式"
-
-#. type: Plain text
-#: apt.8:22
-msgid "B<apt>"
-msgstr "B<apt>"
-
-#. type: SH
-#: apt.8:22
-#, no-wrap
-msgid "DESCRIPTION"
-msgstr "説明"
-
-#. type: Plain text
-#: apt.8:31
-msgid ""
-"APT is a management system for software packages. For normal day to day "
-"package management there are several frontends available, such as "
-"B<aptitude>(8)  for the command line or B<synaptic>(8)  for the X Window "
-"System. Some options are only implemented in B<apt-get>(8)  though."
-msgstr ""
-"APT はソフトウェアパッケージの管理システムです。日々のパッケージ管理のため"
-"に、コマンドライン用の B<aptitude>(8) や、X Window System 用の "
-"B<synaptic>(8) といった、いくつかのフロントエンドが用意されています。いくつか"
-"のオプションは B<apt-get>(8) にしか実装されていません。"
-
-#. type: SH
-#: apt.8:31
-#, no-wrap
-msgid "SEE ALSO"
-msgstr "関連項目"
-
-#. type: Plain text
-#: apt.8:38
-msgid ""
-"B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources.list>(5), "
-"B<apt_preferences>(5), B<apt-secure>(8)"
-msgstr ""
-"B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources.list>(5), "
-"B<apt_preferences>(5), B<apt-secure>(8)"
-
-#. type: SH
-#: apt.8:38
-#, no-wrap
-msgid "DIAGNOSTICS"
-msgstr "診断メッセージ"
-
-#. type: Plain text
-#: apt.8:40
-msgid "apt returns zero on normal operation, decimal 100 on error."
-msgstr "apt は正常終了時に 0 を返します。エラー時には十進の 100 を返します。"
-
-#. type: SH
-#: apt.8:40
-#, no-wrap
-msgid "BUGS"
-msgstr "バグ"
-
-#. type: Plain text
-#: apt.8:42
-msgid "This manpage isn't even started."
-msgstr "このマニュアルページは、始まってさえいません。"
-
-#. type: Plain text
-#: apt.8:51
-msgid ""
-"See E<lt>http://bugs.debian.org/aptE<gt>.  If you wish to report a bug in "
-"B<apt>, please see I</usr/share/doc/debian/bug-reporting.txt> or the "
-"B<reportbug>(1)  command."
-msgstr ""
-"E<lt>http://bugs.debian.org/aptE<gt> をご覧ください。B<apt> のバグを報告する"
-"場合は、I</usr/share/doc/debian/bug-reporting.txt> や B<reportbug>(1) コマン"
-"ドをご覧ください。"
-
-#. type: SH
-#: apt.8:51
-#, no-wrap
-msgid "AUTHOR"
-msgstr "著者"
-
-#. type: Plain text
-#: apt.8:52
-msgid "apt was written by the APT team E<lt>apt@packages.debian.orgE<gt>."
-msgstr ""
-"apt は APT チーム E<lt>apt@packages.debian.orgE<gt> によって書かれました。"
 
 #. type: <title></title>
 #: guide.sgml:4
@@ -9312,6 +9376,90 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade"
 #: offline.sgml:234
 msgid "Which will use the already fetched archives on the disc."
 msgstr "これで、disc にある取得済みのアーカイブを使用するようになります。"
+
+#~ msgid "apt"
+#~ msgstr "apt"
+
+#~ msgid "16 June 1998"
+#~ msgstr "16 June 1998"
+
+#~ msgid "Debian"
+#~ msgstr "Debian"
+
+#~ msgid "NAME"
+#~ msgstr "名前"
+
+#~ msgid "apt - Advanced Package Tool"
+#~ msgstr "apt - 高度パッケージツール"
+
+#~ msgid "SYNOPSIS"
+#~ msgstr "書式"
+
+#~ msgid "B<apt>"
+#~ msgstr "B<apt>"
+
+#~ msgid "DESCRIPTION"
+#~ msgstr "説明"
+
+#, fuzzy
+#~| msgid ""
+#~| "APT is a management system for software packages. For normal day to day "
+#~| "package management there are several frontends available, such as "
+#~| "B<aptitude>(8)  for the command line or B<synaptic>(8)  for the X Window "
+#~| "System. Some options are only implemented in B<apt-get>(8)  though."
+#~ msgid ""
+#~ "For normal day to day package management there are several frontends "
+#~ "available, such as B<aptitude>(8)  for the command line or "
+#~ "B<synaptic>(8)  for the X Window System. Some options are only "
+#~ "implemented in B<apt-get>(8)  though."
+#~ msgstr ""
+#~ "APT はソフトウェアパッケージの管理システムです。日々のパッケージ管理のため"
+#~ "に、コマンドライン用の B<aptitude>(8) や、X Window System 用の "
+#~ "B<synaptic>(8) といった、いくつかのフロントエンドが用意されています。いく"
+#~ "つかのオプションは B<apt-get>(8) にしか実装されていません。"
+
+#~ msgid "SEE ALSO"
+#~ msgstr "関連項目"
+
+#, fuzzy
+#~| msgid ""
+#~| "B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources.list>(5), "
+#~| "B<apt_preferences>(5), B<apt-secure>(8)"
+#~ msgid ""
+#~ "B<apt>(8), B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources."
+#~ "list>(5), B<apt_preferences>(5), B<apt-secure>(8)"
+#~ msgstr ""
+#~ "B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources.list>(5), "
+#~ "B<apt_preferences>(5), B<apt-secure>(8)"
+
+#~ msgid "DIAGNOSTICS"
+#~ msgstr "診断メッセージ"
+
+#~ msgid "apt returns zero on normal operation, decimal 100 on error."
+#~ msgstr ""
+#~ "apt は正常終了時に 0 を返します。エラー時には十進の 100 を返します。"
+
+#~ msgid "BUGS"
+#~ msgstr "バグ"
+
+#~ msgid "This manpage isn't even started."
+#~ msgstr "このマニュアルページは、始まってさえいません。"
+
+#~ msgid ""
+#~ "See E<lt>http://bugs.debian.org/aptE<gt>.  If you wish to report a bug in "
+#~ "B<apt>, please see I</usr/share/doc/debian/bug-reporting.txt> or the "
+#~ "B<reportbug>(1)  command."
+#~ msgstr ""
+#~ "E<lt>http://bugs.debian.org/aptE<gt> をご覧ください。B<apt> のバグを報告す"
+#~ "る場合は、I</usr/share/doc/debian/bug-reporting.txt> や B<reportbug>(1) コ"
+#~ "マンドをご覧ください。"
+
+#~ msgid "AUTHOR"
+#~ msgstr "著者"
+
+#~ msgid "apt was written by the APT team E<lt>apt@packages.debian.orgE<gt>."
+#~ msgstr ""
+#~ "apt は APT チーム E<lt>apt@packages.debian.orgE<gt> によって書かれました。"
 
 #~ msgid "Debian GNU/Linux"
 #~ msgstr "Debian GNU/Linux"
