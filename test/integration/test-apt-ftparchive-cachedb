@@ -91,3 +91,10 @@ ensure_correct_contents_file
 testequal " Misses in Cache: 0
  dists/test/Contents-i386: New 402 B  Misses in Cache: 0" grep Misses stats-out.txt
 
+# and clean
+rm -rf aptarchive/pool/main/*
+testequal "packages-main-i386.db" aptftparchive clean ftparchive.conf
+aptftparchive clean ftparchive.conf -o Debug::APT::FTPArchive::Clean=1 > clean-out.txt 2>&1 
+testequal "0	Number of unique keys in the tree" grep unique clean-out.txt
+testequal "packages-main-i386.db" grep packages-main-i386.db clean-out.txt
+

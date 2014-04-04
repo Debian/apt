@@ -264,10 +264,11 @@ bool CacheDB::LoadSource()
       // Lookup the control information
       InitQuery("cs");
       if (Get() == true && Dsc.TakeDsc(Data.data, Data.size) == true)
+      {
 	    return true;
+      }
       CurStat.Flags &= ~FlSource;
    }
-   
    if (OpenFile() == false)
       return false;
 
@@ -551,16 +552,24 @@ bool CacheDB::Clean()
       {
          if (stringcmp(Colon + 1, (char *)Key.data+Key.size,"st") == 0 ||
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cl") == 0 ||
+             stringcmp(Colon + 1, (char *)Key.data+Key.size,"cs") == 0 ||
              stringcmp(Colon + 1, (char *)Key.data+Key.size,"cn") == 0)
 	 {
-            if (FileExists(std::string((const char *)Key.data,Colon)) == true)
-		continue;	     
+            std::string FileName = std::string((const char *)Key.data,Colon);
+            if (FileExists(FileName) == true) {
+		continue;
+            }
 	 }
       }
-      
       Cursor->c_del(Cursor,0);
    }
-   Dbp->compact(Dbp, NULL, NULL, NULL, NULL, DB_FREE_SPACE, NULL);
+   int res = Dbp->compact(Dbp, NULL, NULL, NULL, NULL, DB_FREE_SPACE, NULL);
+   if (res < 0)
+      _error->Warning("compact failed with result %i", res);
+
+   if(_config->FindB("Debug::APT::FTPArchive::Clean", false) == true)
+      Dbp->stat_print(Dbp, 0);
+
 
    return true;
 }

@@ -159,4 +159,10 @@ dd if=/dev/zero of="aptarchive/pool/invalid/toobig_1.0.dsc" bs=1k count=129 2>/d
 testequal "
 E: DSC file 'aptarchive/pool/invalid/toobig_1.0.dsc' is too large!" aptftparchive sources aptarchive/pool/invalid
 
+# ensure clean works
+rm -f aptarchive/pool/main/*
+aptftparchive clean apt-ftparchive.conf -o Debug::APT::FTPArchive::Clean=1 > clean-out.txt 2>&1 
+testequal "0	Number of unique keys in the tree" grep unique clean-out.txt
+testequal "sources-main.db" grep sources-main.db clean-out.txt
+
 
