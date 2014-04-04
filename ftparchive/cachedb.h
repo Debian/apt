@@ -41,7 +41,7 @@ class CacheDB
    std::string DBFile;
 
    // Generate a key for the DB of a given type
-   inline void InitQuery(const char *Type)
+   void _InitQuery(const char *Type)
    {
       memset(&Key,0,sizeof(Key));
       memset(&Data,0,sizeof(Data));
@@ -49,6 +49,19 @@ class CacheDB
       Key.size = snprintf(TmpKey,sizeof(TmpKey),"%s:%s",FileName.c_str(), Type);
    }
    
+   void InitQueryStats() {
+      _InitQuery("st");
+   }
+   void InitQuerySource() {
+      _InitQuery("cs");
+   }
+   void InitQueryControl() {
+      _InitQuery("cl");
+   }
+   void InitQueryContent() {
+      _InitQuery("cn");
+   }
+
    inline bool Get() 
    {
       return Dbp->get(Dbp,0,&Key,&Data,0) == 0;

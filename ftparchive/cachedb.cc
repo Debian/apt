@@ -199,7 +199,7 @@ bool CacheDB::GetCurStat()
          in the database */
       
       /* Get the flags (and mtime) */
-      InitQuery("st");
+      InitQueryStats();
       // Ensure alignment of the returned structure
       Data.data = &CurStat;
       Data.ulen = sizeof(CurStat);
@@ -262,7 +262,7 @@ bool CacheDB::LoadSource()
    if ((CurStat.Flags & FlSource) == FlSource)
    {
       // Lookup the control information
-      InitQuery("cs");
+      InitQuerySource();
       if (Get() == true && Dsc.TakeDsc(Data.data, Data.size) == true)
       {
 	    return true;
@@ -280,7 +280,7 @@ bool CacheDB::LoadSource()
       return _error->Error(_("Failed to read .dsc"));
    
    // Write back the control information
-   InitQuery("cs");
+   InitQuerySource();
    if (Put(Dsc.Data, Dsc.Length) == true)
       CurStat.Flags |= FlSource;
 
@@ -296,7 +296,7 @@ bool CacheDB::LoadControl()
    if ((CurStat.Flags & FlControl) == FlControl)
    {
       // Lookup the control information
-      InitQuery("cl");
+      InitQueryControl();
       if (Get() == true && Control.TakeControl(Data.data,Data.size) == true)
 	    return true;
       CurStat.Flags &= ~FlControl;
@@ -313,7 +313,7 @@ bool CacheDB::LoadControl()
       return _error->Error(_("Archive has no control record"));
    
    // Write back the control information
-   InitQuery("cl");
+   InitQueryControl();
    if (Put(Control.Control,Control.Length) == true)
       CurStat.Flags |= FlControl;
    return true;
@@ -331,7 +331,7 @@ bool CacheDB::LoadContents(bool const &GenOnly)
 	 return true;
       
       // Lookup the contents information
-      InitQuery("cn");
+      InitQueryContent();
       if (Get() == true)
       {
 	 if (Contents.TakeContents(Data.data,Data.size) == true)
@@ -349,7 +349,7 @@ bool CacheDB::LoadContents(bool const &GenOnly)
       return false;	    
    
    // Write back the control information
-   InitQuery("cn");
+   InitQueryContent();
    if (Put(Contents.Data,Contents.CurSize) == true)
       CurStat.Flags |= FlContents;
    return true;
@@ -519,7 +519,7 @@ bool CacheDB::Finish()
    // Write the stat information
    CurStat.Flags = htonl(CurStat.Flags);
    CurStat.FileSize = htonl(CurStat.FileSize);
-   InitQuery("st");
+   InitQueryStats();
    Put(&CurStat,sizeof(CurStat));
    CurStat.Flags = ntohl(CurStat.Flags);
    CurStat.FileSize = ntohl(CurStat.FileSize);
