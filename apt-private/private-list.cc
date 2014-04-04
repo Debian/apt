@@ -99,14 +99,13 @@ static void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,/*{{{*/
 									/*}}}*/
 // list - list package based on criteria        			/*{{{*/
 // ---------------------------------------------------------------------
-bool List(CommandLine &Cmd)
+bool DoList(CommandLine &Cmd)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
-   pkgRecords records(CacheFile);
-
    if (unlikely(Cache == NULL))
       return false;
+   pkgRecords records(CacheFile);
 
    const char **patterns;
    const char *all_pattern[] = { "*", NULL};

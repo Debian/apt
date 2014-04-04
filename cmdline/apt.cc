@@ -70,7 +70,7 @@ int main(int argc, const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {
                                    // query
-                                   {"list",&List},
+                                   {"list",&DoList},
                                    {"search", &FullTextSearch},
                                    {"show", &APT::Cmd::ShowPackage},
 
