@@ -62,6 +62,7 @@ struct PackageMap
    // Stuff for the Package File
    string PkgFile;
    string BinCacheDB;
+   string SrcCacheDB;
    string BinOverride;
    string ExtraOverride;
 
@@ -106,6 +107,12 @@ struct PackageMap
       inline bool operator() (const PackageMap &x,const PackageMap &y)
       {return x.BinCacheDB < y.BinCacheDB;};
    };  
+
+   struct SrcDBCompare : public binary_function<PackageMap,PackageMap,bool>
+   {
+      inline bool operator() (const PackageMap &x,const PackageMap &y)
+      {return x.SrcCacheDB < y.SrcCacheDB;};
+   };
    
    void GetGeneral(Configuration &Setup,Configuration &Block);
    bool GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats);
@@ -232,11 +239,14 @@ bool PackageMap::GenPackages(Configuration &Setup,struct CacheDB::Stats &Stats)
    gettimeofday(&NewTime,0);
    double Delta = NewTime.tv_sec - StartTime.tv_sec + 
                   (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
-   
+
    c0out << Packages.Stats.Packages << " files " <<
 /*      SizeToStr(Packages.Stats.MD5Bytes) << "B/" << */
       SizeToStr(Packages.Stats.Bytes) << "B " <<
       TimeToStr((long)Delta) << endl;
+
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Packages.Stats.Misses<< endl;
    
    Stats.Add(Packages.Stats);
    Stats.DeLinkBytes = Packages.Stats.DeLinkBytes;
@@ -263,7 +273,7 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    SrcDone = true;
    
    // Create a package writer object.
-   SourcesWriter Sources(_config->Find("APT::FTPArchive::DB"),
+   SourcesWriter Sources(flCombine(CacheDir, SrcCacheDB),
 			 flCombine(OverrideDir,BinOverride),
 			 flCombine(OverrideDir,SrcOverride),
 			 flCombine(OverrideDir,SrcExtraOverride));
@@ -322,6 +332,9 @@ bool PackageMap::GenSources(Configuration &Setup,struct CacheDB::Stats &Stats)
    
    c0out << Sources.Stats.Packages << " pkgs in " <<
       TimeToStr((long)Delta) << endl;
+
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Sources.Stats.Misses << endl;
 
    Stats.Add(Sources.Stats);
    Stats.DeLinkBytes = Sources.Stats.DeLinkBytes;
@@ -435,6 +448,9 @@ bool PackageMap::GenContents(Configuration &Setup,
    double Delta = NewTime.tv_sec - StartTime.tv_sec + 
                   (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
    
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Contents.Stats.Misses<< endl;
+
    c0out << Contents.Stats.Packages << " files " <<
       SizeToStr(Contents.Stats.Bytes) << "B " <<
       TimeToStr((long)Delta) << endl;
@@ -465,6 +481,8 @@ static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
    string DContentsH = Setup.Find("TreeDefault::Contents::Header","");
    string DBCache = Setup.Find("TreeDefault::BinCacheDB",
 			       "packages-$(ARCH).db");
+   string SrcDBCache = Setup.Find("TreeDefault::SrcCacheDB",
+			       "sources-$(SECTION).db");
    string DSources = Setup.Find("TreeDefault::Sources",
 				"$(DIST)/$(SECTION)/source/Sources");
    string DFLFile = Setup.Find("TreeDefault::FileList", "");
@@ -524,6 +542,7 @@ static void LoadTree(vector<PackageMap> &PkgList,Configuration &Setup)
 	       Itm.Tag = SubstVar("$(DIST)/$(SECTION)/source",Vars);
 	       Itm.FLFile = SubstVar(Block.Find("SourceFileList",DSFLFile.c_str()),Vars);
 	       Itm.SrcExtraOverride = SubstVar(Block.Find("SrcExtraOverride"),Vars);
+	       Itm.SrcCacheDB = SubstVar(Block.Find("SrcCacheDB",SrcDBCache.c_str()),Vars);
 	    }
 	    else
 	    {
@@ -573,6 +592,7 @@ static void LoadBinDir(vector<PackageMap> &PkgList,Configuration &Setup)
       Itm.PkgFile = Block.Find("Packages");
       Itm.SrcFile = Block.Find("Sources");
       Itm.BinCacheDB = Block.Find("BinCacheDB");
+      Itm.SrcCacheDB = Block.Find("SrcCacheDB");
       Itm.BinOverride = Block.Find("BinOverride");
       Itm.ExtraOverride = Block.Find("ExtraOverride");
       Itm.SrcExtraOverride = Block.Find("SrcExtraOverride");
@@ -777,6 +797,7 @@ static bool Generate(CommandLine &CmdL)
 
    // Sort by cache DB to improve IO locality.
    stable_sort(PkgList.begin(),PkgList.end(),PackageMap::DBCompare());
+   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::SrcDBCompare());
 		
    // Generate packages
    if (CmdL.FileSize() <= 2)
@@ -947,8 +968,11 @@ static bool Clean(CommandLine &CmdL)
 	 _error->DumpErrors();
       
       string CacheDB = I->BinCacheDB;
-      for (; I != PkgList.end() && I->BinCacheDB == CacheDB; ++I);
+      for (; I != PkgList.end() && I->BinCacheDB == CacheDB; ++I)
+         ;
    }
+
+   // FIXME: clean for the SourcesDB
    
    return true;
 }

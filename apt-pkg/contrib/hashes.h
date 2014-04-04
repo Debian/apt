@@ -78,6 +78,8 @@ class Hashes
    SHA256Summation SHA256;
    SHA512Summation SHA512;
    
+   static const int UntilEOF = 0;
+
    inline bool Add(const unsigned char *Data,unsigned long long Size)
    {
       return MD5.Add(Data,Size) && SHA1.Add(Data,Size) && SHA256.Add(Data,Size) && SHA512.Add(Data,Size);

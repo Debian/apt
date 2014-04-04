@@ -12,7 +12,7 @@ PROGRAM=apt-ftparchive
 SLIBS = -lapt-pkg -lapt-inst $(BDBLIB) $(INTLLIBS)
 LIB_MAKES = apt-pkg/makefile apt-inst/makefile
 SOURCE = apt-ftparchive.cc cachedb.cc writer.cc contents.cc override.cc \
-         multicompress.cc
+         multicompress.cc sources.cc
 include $(PROGRAM_H)
 else
 PROGRAM=apt-ftparchive

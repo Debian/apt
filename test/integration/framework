@@ -128,7 +128,10 @@ dpkgcheckbuilddeps() {
 }
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${LIBRARYPATH} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
+	CMD="$1"
+	shift
+
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${LIBRARYPATH} command gdb ${BUILDDIRECTORY}/$CMD --args ${BUILDDIRECTORY}/$CMD "$@"
 }
 gpg() {
 	# see apt-key for the whole trickery. Setup is done in setupenvironment
