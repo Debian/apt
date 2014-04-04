@@ -125,9 +125,7 @@ TreeDefault {
  Directory  "pool/$(SECTION)";
  SrcDirectory "pool/$(SECTION)";
 
- Packages   "$(DIST)/$(SECTION)/binary-$(ARCH)/Packages";
  Sources    "$(DIST)/$(SECTION)/source/Sources";
- Contents    "$(DIST)/Contents-$(ARCH)";
 };
 
 Tree "dists/test" {
@@ -138,7 +136,7 @@ Tree "dists/test" {
 EOF
 
 
-# generate (no cachedb)
+# generate (empty cachedb)
 aptftparchive generate apt-ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
 testequal " Misses in Cache: 2" grep Misses stats-out.txt
 assert_correct_sources_file
