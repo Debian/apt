@@ -1,3 +1,23 @@
+apt (0.9.15.4ubuntu3) UNRELEASED; urgency=medium
+
+  [ Michael Vogt ]
+  * add sun-java{5,6}-jdk to breaks/replaces as that provided a "apt" 
+    binary as well
+
+  [ David Kalnischkies ]
+  * ensure proper teardown in dpkg error cases (Closes: 738969)
+  * use the pretty fullname of a pkg as download desciption
+  * cmdline parsing: apt-config is not apt-cdrom
+  * do not configure already unpacked packages needlessly (Closes: 740843)
+    LP: #1286161
+
+  [ Julian Andres Klode ]
+  * Promote xz-utils from apt Suggests to libapt-pkg Depends
+  * apt-inst: Do not try to create a substring of an empty string in error 
+    reporting
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 04 Apr 2014 08:23:15 +0200
+
 apt (0.9.15.4ubuntu2) trusty; urgency=medium
 
   * debian/tests/control: Add missing build-essential, fakeroot, and wget test
