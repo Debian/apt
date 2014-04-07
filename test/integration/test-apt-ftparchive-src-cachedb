@@ -105,6 +105,30 @@ mkdir -p aptarchive/dists/test/main/source/
 
 mkdir aptarchive-overrides
 mkdir aptarchive-cache
+
+
+
+# generate with --db option
+(cd aptarchive && aptftparchive --db ./test.db sources pool/main/ \
+    -o APT::FTPArchive::ShowCacheMisses=1  \
+    > dists/test/main/source/Sources \
+    2> stats-out.txt
+    testequal " Misses in Cache: 2" grep Misses stats-out.txt
+)
+assert_correct_sources_file
+
+# generate with --db option (again to ensure its in the cache)
+(cd aptarchive && aptftparchive --db ./test.db sources pool/main/ \
+    -o APT::FTPArchive::ShowCacheMisses=1  \
+    > dists/test/main/source/Sources \
+    2> stats-out.txt  
+    testequal " Misses in Cache: 0" grep Misses stats-out.txt
+)
+assert_correct_sources_file
+
+
+
+# get ready for the "apt-ftparchive generate" command
 cat > apt-ftparchive.conf <<"EOF"
 Dir {
   ArchiveDir "./aptarchive";
@@ -135,7 +159,6 @@ Tree "dists/test" {
 };
 EOF
 
-
 # generate (empty cachedb)
 aptftparchive generate apt-ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
 testequal " Misses in Cache: 2" grep Misses stats-out.txt
@@ -147,6 +170,8 @@ rm -f ./aptarchive/dists/test/main/source/Sources
 aptftparchive generate apt-ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1  2> stats-out.txt
 testequal " Misses in Cache: 0" grep Misses stats-out.txt
 assert_correct_sources_file
+
+
 
 # generate invalid files
 mkdir aptarchive/pool/invalid

@@ -515,7 +515,7 @@ bool CacheDB::Finish()
    if (CurStat.Flags == OldStat.Flags &&
        CurStat.mtime == OldStat.mtime)
       return true;
-   
+
    // Write the stat information
    CurStat.Flags = htonl(CurStat.Flags);
    CurStat.FileSize = htonl(CurStat.FileSize);

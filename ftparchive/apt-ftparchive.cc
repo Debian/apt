@@ -690,6 +690,10 @@ static bool SimpleGenPackages(CommandLine &CmdL)
    if (Packages.RecursiveScan(CmdL.FileList[1]) == false)
       return false;
 
+   // Give some stats if asked for
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Packages.Stats.Misses<< endl;
+
    return true;
 }
 									/*}}}*/
@@ -745,6 +749,10 @@ static bool SimpleGenSources(CommandLine &CmdL)
    // Do recursive directory searching
    if (Sources.RecursiveScan(CmdL.FileList[1]) == false)
       return false;
+
+   // Give some stats if asked for
+   if(_config->FindB("APT::FTPArchive::ShowCacheMisses", false) == true)
+     c0out << " Misses in Cache: " << Sources.Stats.Misses<< endl;
 
    return true;
 }
