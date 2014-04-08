@@ -68,8 +68,12 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
          const char *pattern = patterns[i];
          all_found &=  (
             strstr(V.ParentPkg().Name(), pattern) != NULL ||
-            parser.ShortDesc().find(pattern) != std::string::npos ||
-            parser.LongDesc().find(pattern) != std::string::npos);
+            strcasestr(parser.ShortDesc().c_str(), pattern) != NULL ||
+            strcasestr(parser.LongDesc().c_str(), pattern) != NULL);
+         // search patterns are AND by default so we can skip looking further
+         // on the first mismatch
+         if(all_found == false)
+            break;
       }
       if (all_found)
       {
