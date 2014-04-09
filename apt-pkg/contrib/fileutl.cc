@@ -1067,6 +1067,10 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if_FLAGGED_SET(Exclusive, O_EXCL);
    #undef if_FLAGGED_SET
 
+   // there is no getumask() so we read it by setting it and reset
+   mode_t current_umask = umask(0);
+   umask(current_umask);
+
    if ((Mode & Atomic) == Atomic)
    {
       char *name = strdup((FileName + ".XXXXXX").c_str());
@@ -1080,11 +1084,11 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
       TemporaryFileName = string(name);
       free(name);
 
-      if(Perms != 600 && fchmod(iFd, Perms) == -1)
+      if(Perms != 600 && fchmod(iFd, Perms & ~current_umask) == -1)
           return FileFdErrno("fchmod", "Could not change permissions for temporary file %s", TemporaryFileName.c_str());
    }
    else
-      iFd = open(FileName.c_str(), fileflags, Perms);
+      iFd = open(FileName.c_str(), fileflags, Perms & ~current_umask);
 
    this->FileName = FileName;
    if (iFd == -1 || OpenInternDescriptor(Mode, compressor) == false)
