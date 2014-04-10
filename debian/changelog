@@ -1,3 +1,24 @@
+apt (1.0.1) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * Fix crash in "apt list" when a sources.list file is unreable
+    (Closes: 743413)
+  * make apt search case-insensitive by default
+  * Fix possible race when stunnel/aptwebserver create their PID files
+    in the tests
+  * Fix insecure file permissions when using FileFd with OpenMode::Atomic
+    (LP: #1304657)
+
+  [ Julian Andres Klode ]
+  * Version the Breaks/Replaces for sun-java{5,6}-jdk (LP: #1302736)
+    (Closes: #743616)
+  * Add versioned openjdk-6-jdk breaks
+
+  [ Josef Vitu ]
+  * apt: Minor typo in 'apt' man page (closes: #743657)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Apr 2014 09:48:56 +0200
+
 apt (1.0) unstable; urgency=low
 
   The "Happy birthday and 10000b years in the making" release
