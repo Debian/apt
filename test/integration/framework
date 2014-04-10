@@ -879,6 +879,20 @@ rewritesourceslist() {
 	done
 }
 
+# wait for up to 10s for a pid file to appear to avoid possible race
+# when a helper is started and dosn't write the PID quick enough
+waitforpidfile() {
+        local PIDFILE="$1"
+        for i in $(seq 10); do
+                if test -s "$PIDFILE"; then
+                        return 0
+                fi
+                sleep 1
+        done
+        msgdie "waiting for $PIDFILE failed"
+        return 1
+}
+
 changetowebserver() {
 	if [ "$1" != '--no-rewrite' ]; then
 		rewritesourceslist 'http://localhost:8080/'
@@ -892,6 +906,7 @@ changetowebserver() {
 			cat $LOG
 			false
 		fi
+                waitforpidfile aptwebserver.pid
 		local PID="$(cat aptwebserver.pid)"
 		if [ -z "$PID" ]; then
 			msgdie 'Could not fork aptwebserver successfully'
@@ -919,7 +934,11 @@ accept = 4433
 connect = 8080
 " > ${TMPWORKINGDIRECTORY}/stunnel.conf
 	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
+        waitforpidfile "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid"
 	local PID="$(cat ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid)"
+        if [ -z "$PID" ]; then
+		msgdie 'Could not fork stunnel4 successfully'
+	fi
 	addtrap 'prefix' "kill ${PID};"
 	rewritesourceslist 'https://localhost:4433/'
 }
