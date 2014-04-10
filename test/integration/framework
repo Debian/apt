@@ -190,7 +190,13 @@ setupenvironment() {
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${METHODSDIR} usr/lib/apt/methods
-	ln -s ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove etc/apt/apt.conf.d/01autoremove
+        # use the autoremove from the BUILDDIRECTORY if its there, otherwise
+        # system
+        if [ -e ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove ]; then
+	    ln -s ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove etc/apt/apt.conf.d/01autoremove
+        else
+	    ln -s /etc/apt/apt.conf.d/01autoremove etc/apt/apt.conf.d/01autoremove
+        fi
 	cd ..
 	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
 	if [ -f "${TESTDIRECTORY}/${PACKAGESFILE}" ]; then
