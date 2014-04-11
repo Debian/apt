@@ -445,19 +445,22 @@ void pkgProblemResolver::MakeScores()
 	  || (I->Flags & pkgCache::Flag::Important) == pkgCache::Flag::Important)
 	 Score += PrioEssentials;
 
-      // We transform the priority
-      if (Cache[I].InstVerIter(Cache)->Priority <= 5)
-	 Score += PrioMap[Cache[I].InstVerIter(Cache)->Priority];
-      
+      pkgCache::VerIterator const InstVer = Cache[I].InstVerIter(Cache);
+      // We apply priorities only to downloadable packages, all others are prio:extra
+      // as an obsolete prio:standard package can't be that standard anymore…
+      if (InstVer->Priority <= pkgCache::State::Extra && InstVer.Downloadable() == true)
+	 Score += PrioMap[InstVer->Priority];
+      else
+	 Score += PrioMap[pkgCache::State::Extra];
+
       /* This helps to fix oddball problems with conflicting packages
-         on the same level. We enhance the score of installed packages 
-	 if those are not obsolete
-      */
+	 on the same level. We enhance the score of installed packages
+	 if those are not obsolete */
       if (I->CurrentVer != 0 && Cache[I].CandidateVer != 0 && Cache[I].CandidateVerIter(Cache).Downloadable())
 	 Score += PrioInstalledAndNotObsolete;
 
       // propagate score points along dependencies
-      for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; ++D)
+      for (pkgCache::DepIterator D = InstVer.DependsList(); D.end() == false; ++D)
       {
 	 if (DepMap[D->Type] == 0)
 	    continue;
