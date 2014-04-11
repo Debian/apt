@@ -1712,7 +1712,6 @@ bool FileFd::Skip(unsigned long long Over)
 {
    if (d != NULL && (d->pipe == true || d->InternalStream() == true))
    {
-      d->seekpos += Over;
       char buffer[1024];
       while (Over != 0)
       {
