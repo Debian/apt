@@ -55,7 +55,7 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
    Args.push_back(aptkey.c_str());
    Args.push_back("--quiet");
    Args.push_back("--readonly");
-   Args.push_back("adv");
+   Args.push_back("verify");
 
    char statusfdstr[10];
    if (statusfd != -1)
@@ -77,7 +77,6 @@ void ExecGPGV(std::string const &File, std::string const &FileGPG,
 	 Args.push_back(Opts->Value.c_str());
       }
    }
-   Args.push_back("--verify");
 
    enum  { DETACHED, CLEARSIGNED } releaseSignature = (FileGPG != File) ? DETACHED : CLEARSIGNED;
    std::vector<std::string> dataHeader;

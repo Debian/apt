@@ -450,6 +450,14 @@ case "$command" in
 	$GPG "$@"
 	merge_back_changes
 	;;
+    verify)
+	setup_merged_keyring
+	if which gpgv >/dev/null 2>&1; then
+	    gpgv --homedir "${GPGHOMEDIR}" --keyring "${GPGHOMEDIR}/pubring.gpg" --ignore-time-conflict "$@"
+	else
+	    $GPG --verify "$@"
+	fi
+	;;
     help)
         usage
         ;;
