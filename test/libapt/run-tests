@@ -116,6 +116,8 @@ sysfs0 /sys0 sysfs rw,nosuid,nodev,noexec,relatime 0 0
 /dev/disk/by-uuid/fadcbc52-6284-4874-aaaa-dcee1f05fe21 / ext4 rw,relatime,errors=remount-ro,data=ordered 0 0
 /dev/sda1 /boot/efi vfat rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro,rw,nosuid,nodev,noexec,relatime,fmask=0000,dmask=0000,allow_utime=0022,codepage=437,iocharset=utf8,shortname=lower,quiet,utf8,errors=remount-ro 0 0
 tmpfs /tmp tmpfs rw,nosuid,nodev,relatime 0 0' > $tmppath
+	elif [ $name = "FileUtl${EXT}" ]; then
+		tmppath="$(mktemp -d)"
 	fi
 
 	echo -n "Testing with ${NAME} "

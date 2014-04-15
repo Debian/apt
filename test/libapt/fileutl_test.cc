@@ -24,7 +24,9 @@ TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission, unsigned i
 {
    FileFd f;
    struct stat buf;
-   static const char* fname = "test.txt";
+   static const char* fname = "apt-filefd-test.txt";
+   if (FileExists(fname) == true)
+      equals(unlink(fname), 0);
 
    umask(a_umask);
    equals(f.Open(fname, filemode, compressor), true);
@@ -32,7 +34,7 @@ TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission, unsigned i
    equals(f.Failed(), false);
    equals(umask(a_umask), a_umask);
 
-   std::string test = "This is a test!";
+   std::string test = "This is a test!\n";
    equals(f.Write(test.c_str(), test.size()), true);
    equals(f.IsOpen(), true);
    equals(f.Failed(), false);
@@ -42,12 +44,21 @@ TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission, unsigned i
    equals(f.Failed(), false);
 
    equals(f.Open(fname, FileFd::ReadOnly, compressor), true);
-   equalsNot(f.FileSize(), 0);
    equals(f.IsOpen(), true);
    equals(f.Failed(), false);
+   equals(f.Eof(), false);
+   equalsNot(f.FileSize(), 0);
+   equals(f.Failed(), false);
+   equalsNot(f.ModificationTime(), 0);
+   equals(f.Failed(), false);
 
-   char readback[20];
+   // ensure the memory is as predictably messed up
+# define APT_INIT_READBACK \
+   char readback[20]; \
+   memset(readback, 'D', sizeof(readback)/sizeof(readback[0])); \
+   readback[19] = '\0';
    {
+      APT_INIT_READBACK
       char const * const expect = "This";
       equals(f.Read(readback, strlen(expect)), true);
       equals(f.Failed(), false);
@@ -56,7 +67,8 @@ TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission, unsigned i
       equals(strlen(expect), f.Tell());
    }
    {
-      char const * const expect = "test!";
+      APT_INIT_READBACK
+      char const * const expect = "test!\n";
       equals(f.Skip((test.size() - f.Tell()) - strlen(expect)), true);
       equals(f.Read(readback, strlen(expect)), true);
       equals(f.Failed(), false);
@@ -64,22 +76,60 @@ TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission, unsigned i
       strequals(expect, readback);
       equals(test.size(), f.Tell());
    }
-
-   equals(f.Seek(0), true);
-   equals(f.Read(readback, 20, true), true);
-   equals(f.Failed(), false);
-   equals(f.Eof(), true);
-   equals(test, readback);
-   equals(test.size(), strlen(readback));
-   equals(f.Size(), f.Tell());
-
-   equals(f.Seek(0), true);
-   f.ReadLine(readback, 20);
-   equals(f.Failed(), false);
-   equals(f.Eof(), true);
-   equals(test, readback);
-   equals(test.size(), strlen(readback));
-   equals(f.Size(), f.Tell());
+   {
+      APT_INIT_READBACK
+      equals(f.Seek(0), true);
+      equals(f.Eof(), false);
+      equals(f.Read(readback, 20, true), true);
+      equals(f.Failed(), false);
+      equals(f.Eof(), true);
+      strequals(test.c_str(), readback);
+      equals(f.Size(), f.Tell());
+   }
+   {
+      APT_INIT_READBACK
+      equals(f.Seek(0), true);
+      equals(f.Eof(), false);
+      equals(f.Read(readback, test.size(), true), true);
+      equals(f.Failed(), false);
+      equals(f.Eof(), false);
+      strequals(test.c_str(), readback);
+      equals(f.Size(), f.Tell());
+   }
+   {
+      APT_INIT_READBACK
+      equals(f.Seek(0), true);
+      equals(f.Eof(), false);
+      unsigned long long actual;
+      equals(f.Read(readback, 20, &actual), true);
+      equals(f.Failed(), false);
+      equals(f.Eof(), true);
+      equals(test.size(), actual);
+      strequals(test.c_str(), readback);
+      equals(f.Size(), f.Tell());
+   }
+   {
+      APT_INIT_READBACK
+      equals(f.Seek(0), true);
+      equals(f.Eof(), false);
+      f.ReadLine(readback, 20);
+      equals(f.Failed(), false);
+      equals(f.Eof(), false);
+      equals(test, readback);
+      equals(f.Size(), f.Tell());
+   }
+   {
+      APT_INIT_READBACK
+      equals(f.Seek(0), true);
+      equals(f.Eof(), false);
+      char const * const expect = "This";
+      f.ReadLine(readback, strlen(expect) + 1);
+      equals(f.Failed(), false);
+      equals(f.Eof(), false);
+      strequals(expect, readback);
+      equals(strlen(expect), f.Tell());
+   }
+#undef APT_INIT_READBACK
 
    f.Close();
    equals(f.IsOpen(), false);
@@ -91,14 +141,19 @@ TestFileFd(mode_t const a_umask, mode_t const ExpectedFilePermission, unsigned i
       _error->Errno("stat", "failed to stat");
       return false;
    }
-   unlink(fname);
+   equals(unlink(fname), 0);
    equals(buf.st_mode & 0777, ExpectedFilePermission);
    return true;
 }
 
 static bool TestFileFd(unsigned int const filemode)
 {
-   std::vector<APT::Configuration::Compressor> const compressors = APT::Configuration::getCompressors();
+   std::vector<APT::Configuration::Compressor> compressors = APT::Configuration::getCompressors();
+
+   // testing the (un)compress via pipe, as the 'real' compressors are usually built in via libraries
+   compressors.push_back(APT::Configuration::Compressor("rev", ".reversed", "rev", NULL, NULL, 42));
+   //compressors.push_back(APT::Configuration::Compressor("cat", ".ident", "cat", NULL, NULL, 42));
+
    for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressors.begin(); c != compressors.end(); ++c)
    {
       if ((filemode & FileFd::ReadWrite) == FileFd::ReadWrite &&
@@ -116,8 +171,13 @@ static bool TestFileFd(unsigned int const filemode)
    return true;
 }
 
-int main()
+int main(int const argc, char const * const * const argv)
 {
+   std::string startdir;
+   if (argc > 1 && DirectoryExists(argv[1]) == true) {
+      startdir = SafeGetCWD();
+      equals(chdir(argv[1]), 0);
+   }
    if (TestFileFd(FileFd::WriteOnly | FileFd::Create) == false ||
 	 TestFileFd(FileFd::WriteOnly | FileFd::Create | FileFd::Empty) == false ||
 	 TestFileFd(FileFd::WriteOnly | FileFd::Create | FileFd::Exclusive) == false ||
@@ -131,6 +191,8 @@ int main()
    {
       return 1;
    }
+   if (startdir.empty() == false)
+      equals(chdir(startdir.c_str()), 0);
 
    std::vector<std::string> files;
    // normal match

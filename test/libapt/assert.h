@@ -2,6 +2,7 @@
 #include <cstdlib>
 
 #include <apt-pkg/macros.h>
+#include <apt-pkg/error.h>
 
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic push
@@ -14,6 +15,7 @@
 template < typename X, typename Y >
 APT_NORETURN void OutputAssertEqual(X expect, char const* compare, Y get, unsigned long const &line) {
 	std::cerr << "Test FAILED: »" << expect << "« " << compare << " »" << get << "« at line " << line << std::endl;
+	_error->DumpErrors(std::cerr);
 	std::exit(EXIT_FAILURE);
 }
 
