@@ -846,6 +846,7 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    unsigned long long ResumeSize = 0;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
 	I = Owner->WorkerStep(I))
+   {
       if (I->CurrentItem != 0 && I->CurrentItem->Owner->Complete == false)
       {
 	 CurrentBytes += I->CurrentSize;
@@ -856,7 +857,14 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	     I->CurrentItem->Owner->Complete == false)
 	    TotalBytes += I->CurrentSize;
       }
+   }
    
+   // debug
+   if (_config->FindB("Debug::acquire::progress", false) == true)
+      std::clog << " Bytes: " 
+                << SizeToStr(CurrentBytes) << " / " << SizeToStr(TotalBytes) 
+                << std::endl;
+
    // Normalize the figures and account for unknown size downloads
    if (TotalBytes <= 0)
       TotalBytes = 1;

@@ -963,6 +963,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    else
      Verify = true;
 
+   // FIXME: use the appropriate compression Extension
    // load the filesize
    indexRecords::checkSum *Record = MetaIndexParser->Lookup(string(Target->MetaKey));
    if(Record)
