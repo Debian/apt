@@ -963,12 +963,10 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    else
      Verify = true;
 
-   // FIXME: use the appropriate compression Extension
-   // load the filesize
-   indexRecords::checkSum *Record = MetaIndexParser->Lookup(string(Target->MetaKey));
-   if(Record)
-      FileSize = Record->Size;
-   
+   // we need this in Init()
+   this->Target = Target;
+   this->MetaIndexParser = MetaIndexParser;
+
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
 									/*}}}*/
@@ -981,10 +979,22 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
    DestFile += URItoFileName(URI);
 
    std::string const comprExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
+   std::string MetaKey;
    if (comprExt == "uncompressed")
+   {
       Desc.URI = URI;
+      MetaKey = string(Target->MetaKey);
+   }
    else
+   {
       Desc.URI = URI + '.' + comprExt;
+      MetaKey = string(Target->MetaKey) + '.' + comprExt;
+   }
+
+   // load the filesize
+   indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+   if(Record)
+      FileSize = Record->Size;
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
@@ -1086,7 +1096,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
       FinalFile += URItoFileName(RealURI);
       Rename(DestFile,FinalFile);
       chmod(FinalFile.c_str(),0644);
-      
+
       /* We restore the original name to DestFile so that the clean operation
          will work OK */
       DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -1095,6 +1105,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
       // Remove the compressed version.
       if (Erase == true)
 	 unlink(DestFile.c_str());
+
       return;
    }
 
