@@ -55,7 +55,8 @@ using namespace std;
 /* */
 pkgAcquire::Item::Item(pkgAcquire *Owner) : Owner(Owner), FileSize(0),
                        PartialSize(0), Mode(0), ID(0), Complete(false), 
-                       Local(false), QueueCounter(0)
+                       Local(false), QueueCounter(0), 
+                       ExpectedAdditionalItems(0)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -1257,6 +1258,9 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
       Rename(Final,LastGoodSig);
    }
 
+   // we expect the indextargets + one additional Release file
+   ExpectedAdditionalItems = IndexTargets->size() + 1;
+
    QueueURI(Desc);
 }
 									/*}}}*/
@@ -1309,6 +1313,9 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,string MD5,
 
    Complete = true;
 
+   // at this point pkgAcqMetaIndex takes over
+   ExpectedAdditionalItems = 0;
+
    // put the last known good file back on i-m-s hit (it will
    // be re-verified again)
    // Else do nothing, we have the new file in DestFile then
@@ -1325,6 +1332,9 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,string MD5,
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+
+   // at this point pkgAcqMetaIndex takes over
+   ExpectedAdditionalItems = 0;
 
    // if we get a network error we fail gracefully
    if(Status == StatTransientNetworkError)
@@ -1375,6 +1385,9 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
    Desc.URI = URI;
+
+   // we expect more item
+   ExpectedAdditionalItems = IndexTargets->size();
 
    QueueURI(Desc);
 }
@@ -1553,6 +1566,9 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	    break;
 	 }
    }
+
+   // at this point the real Items are loaded in the fetcher
+   ExpectedAdditionalItems = 0;
 
    for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
@@ -1784,6 +1800,10 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 {
    SigFile = DestFile;
 
+   // index targets + (worst case:) Release/Release.gpg
+   ExpectedAdditionalItems = IndexTargets->size() + 2;
+
+
    // keep the old InRelease around in case of transistent network errors
    string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    if (RealFileExists(Final) == true)
@@ -1826,6 +1846,9 @@ string pkgAcqMetaClearSig::Custom600Headers()
 									/*}}}*/
 void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
 {
+   // we failed, we will not get additional items from this method
+   ExpectedAdditionalItems = 0;
+
    if (AuthPass == false)
    {
       // Remove the 'old' InRelease file if we try Release.gpg now as otherwise

@@ -832,6 +832,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       if ((*I)->Local == true)
 	 continue;
 
+      // see if the method tells us to expect more
+      TotalItems += (*I)->ExpectedAdditionalItems;
+
       TotalBytes += (*I)->FileSize;
       if ((*I)->Complete == true)
 	 CurrentBytes += (*I)->FileSize;
@@ -901,12 +904,17 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
 	 
 
-
+      // calculate the percentage, if we have too little data assume 0%
+      int Percent;
+      if (TotalBytes < 1*1024)
+         Percent = 0;
+      else
+         Percent = (CurrentBytes/float(TotalBytes)*100.0);
       // build the status str
       status << "dlstatus:" << i
-	     << ":"  << (CurrentBytes/float(TotalBytes)*100.0) 
-	     << ":" << msg 
-	     << endl;
+             << ":"  << Percent
+             << ":" << msg 
+             << endl;
 
       std::string const dlstatus = status.str();
       FileFd::Write(fd, dlstatus.c_str(), dlstatus.size());

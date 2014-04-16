@@ -166,6 +166,16 @@ class pkgAcquire::Item : public WeakPointable
     *  \sa pkgAcquire
     */
    unsigned int QueueCounter;
+
+   /** \brief The number of additional fetch items that are expected
+    *  once this item is done.
+    *
+    *  Some items like pkgAcqMeta{Index,Sig} will queue additional
+    *  items. This variable can be set by the methods if it knows
+    *  in advance how many items to expect to get a more accurate
+    *  progress.
+    */
+   unsigned int ExpectedAdditionalItems;
    
    /** \brief The name of the file into which the retrieved object
     *  will be written.
