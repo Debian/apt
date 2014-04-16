@@ -756,7 +756,7 @@ class pkgAcqIndex : public pkgAcquire::Item
 	       std::string ShortDesc, HashString ExpectedHash, 
 	       std::string compressExt="");
    pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
-			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
+			 HashString const &ExpectedHash, indexRecords *MetaIndexParser);
    void Init(std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc);
 };
 									/*}}}*/
@@ -788,7 +788,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
    pkgAcqIndexTrans(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 		    std::string ShortDesc);
    pkgAcqIndexTrans(pkgAcquire *Owner, struct IndexTarget const * const Target,
-		    HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
+		    HashString const &ExpectedHash, indexRecords *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/

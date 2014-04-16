@@ -905,8 +905,11 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 	 
 
       // calculate the percentage, if we have too little data assume 0%
+      // FIXME: the 5k is totally arbitrary 
+      // FIXME2: instead, use a algorithm where 50% is based on total bytes
+      //         and the other 50% on total files
       int Percent;
-      if (TotalBytes < 1*1024)
+      if (TotalBytes < 5*1024)
          Percent = 0;
       else
          Percent = (CurrentBytes/float(TotalBytes)*100.0);

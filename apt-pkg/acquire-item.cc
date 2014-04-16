@@ -936,7 +936,7 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    Init(URI, URIDesc, ShortDesc);
 }
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
-			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser)
+			 HashString const &ExpectedHash, indexRecords *MetaIndexParser)
    : Item(Owner), RealURI(Target->URI), ExpectedHash(ExpectedHash)
 {
    // autoselect the compression method
@@ -963,6 +963,11 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    else
      Verify = true;
 
+   // load the filesize
+   indexRecords::checkSum *Record = MetaIndexParser->Lookup(string(Target->MetaKey));
+   if(Record)
+      FileSize = Record->Size;
+   
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
 									/*}}}*/
@@ -1176,9 +1181,13 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 {
 }
 pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const *Target,
-			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser)
+			 HashString const &ExpectedHash, indexRecords *MetaIndexParser)
   : pkgAcqIndex(Owner, Target, ExpectedHash, MetaIndexParser)
 {
+   // load the filesize
+   indexRecords::checkSum *Record = MetaIndexParser->Lookup(string(Target->MetaKey));
+   if(Record)
+      FileSize = Record->Size;
 }
 									/*}}}*/
 // AcqIndexTrans::Custom600Headers - Insert custom request headers	/*{{{*/
@@ -1575,7 +1584,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
         ++Target)
    {
       HashString ExpectedIndexHash;
-      const indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
+      indexRecords::checkSum *Record = MetaIndexParser->Lookup((*Target)->MetaKey);
       bool compressedAvailable = false;
       if (Record == NULL)
       {
