@@ -723,6 +723,11 @@ class pkgAcqIndex : public pkgAcquire::Item
     */
    std::string CompressionExtension;
 
+   /** \brief Pointer to the IndexTarget data
+    */
+   const struct IndexTarget * Target;
+   indexRecords *MetaIndexParser;
+
    public:
    
    // Specialized action members

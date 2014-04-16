@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <iomanip>
 
 #include <dirent.h>
 #include <sys/time.h>
@@ -859,12 +860,6 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       }
    }
    
-   // debug
-   if (_config->FindB("Debug::acquire::progress", false) == true)
-      std::clog << " Bytes: " 
-                << SizeToStr(CurrentBytes) << " / " << SizeToStr(TotalBytes) 
-                << std::endl;
-
    // Normalize the figures and account for unknown size downloads
    if (TotalBytes <= 0)
       TotalBytes = 1;
@@ -874,6 +869,12 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    // Wha?! Is not supposed to happen.
    if (CurrentBytes > TotalBytes)
       CurrentBytes = TotalBytes;
+
+   // debug
+   if (_config->FindB("Debug::acquire::progress", false) == true)
+      std::clog << " Bytes: " 
+                << SizeToStr(CurrentBytes) << " / " << SizeToStr(TotalBytes) 
+                << std::endl;
    
    // Compute the CPS
    struct timeval NewTime;
@@ -894,6 +895,15 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       Time = NewTime;
    }
 
+   // calculate the percentage, if we have too little data assume 0%
+   // FIXME: the 5k is totally arbitrary 
+   if (TotalBytes < 5*1024)
+      Percent = 0;
+   else 
+      // use both files and bytes because bytes can be unreliable
+      Percent = (0.8 * (CurrentBytes/float(TotalBytes)*100.0) + 
+                 0.2 * (CurrentItems/float(TotalItems)*100.0));
+
    int fd = _config->FindI("APT::Status-Fd",-1);
    if(fd > 0) 
    {
@@ -911,19 +921,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       else
 	 snprintf(msg,sizeof(msg), _("Retrieving file %li of %li"), i, TotalItems);
 	 
-
-      // calculate the percentage, if we have too little data assume 0%
-      // FIXME: the 5k is totally arbitrary 
-      // FIXME2: instead, use a algorithm where 50% is based on total bytes
-      //         and the other 50% on total files
-      int Percent;
-      if (TotalBytes < 5*1024)
-         Percent = 0;
-      else
-         Percent = (CurrentBytes/float(TotalBytes)*100.0);
       // build the status str
       status << "dlstatus:" << i
-             << ":"  << Percent
+             << ":"  << std::setprecision(3) << Percent
              << ":" << msg 
              << endl;
 
