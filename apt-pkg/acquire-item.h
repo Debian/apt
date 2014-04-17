@@ -405,6 +405,11 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     */
    std::string Description;
 
+   /** \brief Pointer to the IndexTarget data
+    */
+   const struct IndexTarget * Target;
+   indexRecords *MetaIndexParser;
+
  public:
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
@@ -438,8 +443,10 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     *
     *  \param ExpectedHash The list file's MD5 signature.
     */
-   pkgAcqDiffIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
-		   std::string ShortDesc, HashString ExpectedHash);
+   pkgAcqDiffIndex(pkgAcquire *Owner,
+                   struct IndexTarget const * const Target,
+                   HashString ExpectedHash,
+                   indexRecords *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching client-merge patches {{{

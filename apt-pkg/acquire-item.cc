@@ -343,21 +343,24 @@ bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
  * the original packages file
  */
 pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
-				 string URI,string URIDesc,string ShortDesc,
-				 HashString ExpectedHash)
-   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash),
-     Description(URIDesc)
+                                 IndexTarget const *Target,
+				 HashString ExpectedHash,
+                                 indexRecords *MetaIndexParser)
+   : Item(Owner), ExpectedHash(ExpectedHash), Target(Target),
+     MetaIndexParser(MetaIndexParser)
+     
 {
    
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   Desc.Description = URIDesc + "/DiffIndex";
+   RealURI = Target->URI;
    Desc.Owner = this;
-   Desc.ShortDesc = ShortDesc;
-   Desc.URI = URI + ".diff/Index";
+   Desc.Description = Target->Description + "/DiffIndex";
+   Desc.ShortDesc = Target->ShortDesc;
+   Desc.URI = Target->URI + ".diff/Index";
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(URI) + string(".DiffIndex");
+   DestFile += URItoFileName(Target->URI) + string(".DiffIndex");
 
    if(Debug)
       std::clog << "pkgAcqDiffIndex: " << Desc.URI << std::endl;
@@ -560,8 +563,7 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
 
-   new pkgAcqIndex(Owner, RealURI, Description, Desc.ShortDesc, 
-		   ExpectedHash);
+   new pkgAcqIndex(Owner, Target, ExpectedHash, MetaIndexParser);
 
    Complete = false;
    Status = StatDone;
@@ -920,7 +922,8 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,string M
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
 			 HashString ExpectedHash, string comprExt)
-   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash)
+   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), Target(0),
+     MetaIndexParser(0)
 {
    if(comprExt.empty() == true)
    {
@@ -983,18 +986,23 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
    if (comprExt == "uncompressed")
    {
       Desc.URI = URI;
-      MetaKey = string(Target->MetaKey);
+      if(Target)
+         MetaKey = string(Target->MetaKey);
    }
    else
    {
       Desc.URI = URI + '.' + comprExt;
-      MetaKey = string(Target->MetaKey) + '.' + comprExt;
+      if(Target)
+         MetaKey = string(Target->MetaKey) + '.' + comprExt;
    }
 
    // load the filesize
-   indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
-   if(Record)
-      FileSize = Record->Size;
+   if(MetaIndexParser)
+   {
+      indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+      if(Record)
+         FileSize = Record->Size;
+   }
 
    Desc.Description = URIDesc;
    Desc.Owner = this;
@@ -1643,8 +1651,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
 		MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true)
-	       new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
-				   (*Target)->ShortDesc, ExpectedIndexHash);
+	       new pkgAcqDiffIndex(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
 	    else
 	       new pkgAcqIndexTrans(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
 	 }
@@ -1657,8 +1664,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
          instead, but passing the required info to it is to much hassle */
       if(_config->FindB("Acquire::PDiffs",true) == true && (verify == false ||
 	  MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true))
-	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
-			     (*Target)->ShortDesc, ExpectedIndexHash);
+	 new pkgAcqDiffIndex(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
       else
 	 new pkgAcqIndex(Owner, *Target, ExpectedIndexHash, MetaIndexParser);
    }
