@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.9.16.1\n"
+"Project-Id-Version: apt 1.0.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-04-01 15:51+0200\n"
-"PO-Revision-Date: 2014-03-28 14:49+0700\n"
+"POT-Creation-Date: 2014-04-10 10:18+0200\n"
+"PO-Revision-Date: 2014-04-11 09:08+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
 "Language: vi\n"
@@ -217,7 +217,7 @@ msgstr ""
 "thông tin từ các tập tin bộ nhớ tạm nhị phân của APT.\n"
 "\n"
 "Lệnh:\n"
-"   gencaches - Xây dựng (tạo ra) bộ nhớ tạm cho cả gói lẫn nguồn\n"
+"   gencaches - Tạo bộ nhớ tạm cho cả gói lẫn nguồn\n"
 "   showpkg - Hiện thông tin chung về một gói riêng lẻ\n"
 "   showsrc - Hiện các bản ghi cho gói nguồn\n"
 "   stats - Hiện phần thống kê cơ bản\n"
@@ -616,7 +616,7 @@ msgstr ""
 "   autoremove - Tự động gỡ bỏ tất cả các gói không dùng\n"
 "   purge - Gỡ bỏ và tẩy xóa gói\n"
 "   source - Tải về kho nguồn\n"
-"   build-dep - Định cấu hình quan hệ phụ thuộc khi biên dịch, cho gói nguồn\n"
+"   build-dep - Cấu hình quan hệ phụ thuộc khi biên dịch, cho gói nguồn\n"
 "   dist-upgrade - Nâng cấp hệ điều hành lên phiên bản mới hơn, hãy xem apt-"
 "get(8)\n"
 "   dselect-upgrade - Cho phép chọn dselect\n"
@@ -911,9 +911,9 @@ msgstr "Thời hạn kết nối"
 msgid "Server closed the connection"
 msgstr "Máy phục vụ đã đóng kết nối"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1468
-#: apt-pkg/contrib/fileutl.cc:1477 apt-pkg/contrib/fileutl.cc:1482
-#: apt-pkg/contrib/fileutl.cc:1484
+#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1475
+#: apt-pkg/contrib/fileutl.cc:1484 apt-pkg/contrib/fileutl.cc:1489
+#: apt-pkg/contrib/fileutl.cc:1491
 msgid "Read error"
 msgstr "Lỗi đọc"
 
@@ -926,9 +926,9 @@ msgid "Protocol corruption"
 msgstr "Giao thức bị hỏng"
 
 #: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:875
-#: apt-pkg/contrib/fileutl.cc:1590 apt-pkg/contrib/fileutl.cc:1599
-#: apt-pkg/contrib/fileutl.cc:1604 apt-pkg/contrib/fileutl.cc:1606
-#: apt-pkg/contrib/fileutl.cc:1631
+#: apt-pkg/contrib/fileutl.cc:1597 apt-pkg/contrib/fileutl.cc:1606
+#: apt-pkg/contrib/fileutl.cc:1611 apt-pkg/contrib/fileutl.cc:1613
+#: apt-pkg/contrib/fileutl.cc:1638
 msgid "Write error"
 msgstr "Lỗi ghi"
 
@@ -954,7 +954,7 @@ msgstr "getaddrinfo (lấy thông tin địa chỉ) không thể lấy ổ cắm
 
 #: methods/ftp.cc:749
 msgid "Could not bind a socket"
-msgstr "Không thể đóng kết ổ cắm"
+msgstr "Không thể ràng buộc ổ cắm"
 
 #: methods/ftp.cc:753
 msgid "Could not listen on the socket"
@@ -1190,7 +1190,7 @@ msgstr "Kết nối bị lỗi"
 msgid "Internal error"
 msgstr "Gặp lỗi nội bộ"
 
-#: apt-private/private-list.cc:132
+#: apt-private/private-list.cc:131
 msgid "Listing"
 msgstr "Đang liệt kê"
 
@@ -1200,7 +1200,7 @@ msgstr "Lỗi nội bộ: InstallPackages (cài đặt gói) được gọi vớ
 
 #: apt-private/private-install.cc:90
 msgid "Packages need to be removed but remove is disabled."
-msgstr "Cần phải gỡ bỏ một số gói, nhưng mà khả năng Gỡ bỏ (Remove) đã bị tắt."
+msgstr "Cần phải gỡ bỏ một số gói, nhưng mà tính năng Gỡ bỏ (Remove) đã bị tắt."
 
 #: apt-private/private-install.cc:109
 msgid "Internal error, Ordering didn't finish"
@@ -1413,7 +1413,7 @@ msgstr "Gói khuyến khích:"
 
 #: apt-private/private-download.cc:31
 msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "CẢNH BÁO: Không thể xác thực những gói theo đây!"
+msgstr "CẢNH BÁO: Không thể xác thực những gói sau đây!"
 
 #: apt-private/private-download.cc:35
 msgid "Authentication warning overridden.\n"
@@ -1636,7 +1636,7 @@ msgstr "Đang tính toán nâng cấp... "
 
 #: apt-private/private-upgrade.cc:30
 msgid "Internal error, Upgrade broke stuff"
-msgstr "Lỗi nội bộ: Upgrade (Nâng cấp) đã làm hỏng thứ gì đó"
+msgstr "Lỗi nội bộ: Lệnh nâng cấp đã làm hỏng thứ gì đó"
 
 #: apt-private/private-upgrade.cc:32
 msgid "Done"
@@ -1667,7 +1667,7 @@ msgstr ""
 "CHÚ Ý: đây chỉ là mô phỏng!\n"
 "       apt-get yêu cầu quyền root để thực hiện thật.\n"
 "       Cần nhớ rằng chức năng khóa đã bị tắt,\n"
-"       nên có thể nó không chính xác như những gì làm thật!"
+"       nên có thể nó không chính xác như khi làm thật!"
 
 #: apt-private/private-sources.cc:58
 #, c-format
@@ -1761,7 +1761,7 @@ msgstr "[Bản sao: %s]"
 
 #: methods/rsh.cc:102 ftparchive/multicompress.cc:171
 msgid "Failed to create IPC pipe to subprocess"
-msgstr "Việc tạo ống IPC đến tiến trình con bị lỗi"
+msgstr "Gặp lỗi khi tạo ống IPC đến tiến trình con"
 
 #: methods/rsh.cc:343
 msgid "Connection closed prematurely"
@@ -1832,9 +1832,9 @@ msgstr ""
 "  -o=? Đặt một tùy chọn cấu hình tùy ý, v.d. “-o dir::cache=/tmp”\n"
 
 #: cmdline/apt-extracttemplates.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to mkstemp %s"
-msgstr "Không thể lấy thông tin thống kê %s"
+msgstr "Không thể tạo tập tin tạm (hàm mkstemp) %s"
 
 #: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1400
 #, c-format
@@ -2672,54 +2672,54 @@ msgstr "Tiến trình con %s đã thoát bất thường"
 msgid "Problem closing the gzip file %s"
 msgstr "Gặp vấn đề khi đóng tập tin gzip %s"
 
-#: apt-pkg/contrib/fileutl.cc:1097
+#: apt-pkg/contrib/fileutl.cc:1104
 #, c-format
 msgid "Could not open file %s"
 msgstr "Không thể mở tập tin %s"
 
-#: apt-pkg/contrib/fileutl.cc:1156 apt-pkg/contrib/fileutl.cc:1203
+#: apt-pkg/contrib/fileutl.cc:1163 apt-pkg/contrib/fileutl.cc:1210
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "Không thể mở bộ mô tả tập tin %d"
 
-#: apt-pkg/contrib/fileutl.cc:1310
+#: apt-pkg/contrib/fileutl.cc:1317
 msgid "Failed to create subprocess IPC"
 msgstr "Việc tạo tiến trình con IPC bị lỗi"
 
-#: apt-pkg/contrib/fileutl.cc:1365
+#: apt-pkg/contrib/fileutl.cc:1372
 msgid "Failed to exec compressor "
 msgstr "Gặp lỗi khi thực hiện nén "
 
-#: apt-pkg/contrib/fileutl.cc:1506
+#: apt-pkg/contrib/fileutl.cc:1513
 #, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "đọc, còn cần đọc %llu nhưng mà không có gì còn lại cả"
 
-#: apt-pkg/contrib/fileutl.cc:1619 apt-pkg/contrib/fileutl.cc:1641
+#: apt-pkg/contrib/fileutl.cc:1626 apt-pkg/contrib/fileutl.cc:1648
 #, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "ghi, còn cần ghi %llu nhưng mà không thể"
 
-#: apt-pkg/contrib/fileutl.cc:1911
+#: apt-pkg/contrib/fileutl.cc:1918
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "Gặp vấn đề khi đóng tập tin %s"
 
-#: apt-pkg/contrib/fileutl.cc:1923
+#: apt-pkg/contrib/fileutl.cc:1930
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Gặp vấn đề khi đổi tên tập tin %s thành %s"
 
-#: apt-pkg/contrib/fileutl.cc:1934
+#: apt-pkg/contrib/fileutl.cc:1941
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Gặp vấn đề khi bỏ liên kết tập tin %s"
 
-#: apt-pkg/contrib/fileutl.cc:1947
+#: apt-pkg/contrib/fileutl.cc:1954
 msgid "Problem syncing the file"
 msgstr "Gặp vấn đề khi đồng bộ hóa tập tin"
 
-#: apt-pkg/contrib/fileutl.cc:2043 apt-pkg/acquire-item.cc:148
+#: apt-pkg/contrib/fileutl.cc:2050 apt-pkg/acquire-item.cc:148
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "gặp lỗi khi đổi tên, %s (%s → %s)."

@@ -476,7 +476,7 @@ const Configuration::getCompressors(bool const Cached) {
 	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
 	for (std::vector<std::string>::const_iterator c = comp.begin();
 	     c != comp.end(); ++c) {
-		if (*c == "." || *c == "gzip" || *c == "bzip2" || *c == "lzma" || *c == "xz")
+		if (c->empty() || *c == "." || *c == "gzip" || *c == "bzip2" || *c == "lzma" || *c == "xz")
 			continue;
 		compressors.push_back(Compressor(c->c_str(), std::string(".").append(*c).c_str(), c->c_str(), "-9", "-d", 100));
 	}
