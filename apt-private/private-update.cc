@@ -75,6 +75,24 @@ bool DoUpdate(CommandLine &CmdL)
 	 return false;
    }
 
+   // show basic stats (if the user whishes)
+   if (_config->FindB("APT::Cmd::Show-Update-Stats", false) == true)
+   {
+      int upgradable = 0;
+      Cache.Open();
+      for (pkgCache::PkgIterator I = Cache->PkgBegin(); I.end() != true; ++I)
+      {
+         pkgDepCache::StateCache &state = Cache[I];
+         if (I->CurrentVer != 0 && state.Upgradable())
+            upgradable++;
+      }
+      const char *msg = ngettext(
+         "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n",
+         "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n",
+         upgradable);
+      ioprintf(c1out, msg, upgradable);
+   }
+
    return true;
 }
 									/*}}}*/
