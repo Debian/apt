@@ -57,6 +57,9 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/upgrade.h>
 
+// FIXME: direct include of deb specific header
+#include <apt-pkg/debsrcrecords.h>
+
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-cachefile.h>
@@ -1053,12 +1056,23 @@ static bool DoBuildDep(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+      pkgSrcRecords::Parser *Last = 0;
+      vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
+
+      // support local .dsc files
+      if (FileExists(*I) && flExtension(*I) == "dsc")
+      {
+         // FIXME: add a layer of abstraction
+         Last = new debDscRecordParser(*I);
+         Src = *I;
+      } else {
+         Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+      }
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
             
       // Process the build-dependencies
-      vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
+
       // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
       if (hostArch.empty() == false)
       {
@@ -1071,7 +1085,7 @@ static bool DoBuildDep(CommandLine &CmdL)
       }
       else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
 	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
-   
+
       // Also ensure that build-essential packages are present
       Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
       if (Opts) 

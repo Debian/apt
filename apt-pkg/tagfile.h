@@ -105,6 +105,8 @@ class pkgTagFile
    unsigned long Offset();
    bool Jump(pkgTagSection &Tag,unsigned long long Offset);
 
+   void Init(FileFd *F,unsigned long long Size = 32*1024);
+
    pkgTagFile(FileFd *F,unsigned long long Size = 32*1024);
    virtual ~pkgTagFile();
 };

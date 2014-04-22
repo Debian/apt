@@ -51,12 +51,23 @@ public:
 // ---------------------------------------------------------------------
 /* */
 pkgTagFile::pkgTagFile(FileFd *pFd,unsigned long long Size)
+   : d(NULL)
+{
+   Init(pFd, Size);
+}
+
+void pkgTagFile::Init(FileFd *pFd,unsigned long long Size)
 {
    /* The size is increased by 4 because if we start with the Size of the
       filename we need to try to read 1 char more to see an EOF faster, 1
       char the end-pointer can be on and maybe 2 newlines need to be added
       to the end of the file -> 4 extra chars */
    Size += 4;
+   if(d != NULL)
+   {
+      free(d->Buffer);
+      delete d;
+   }
    d = new pkgTagFilePrivate(pFd, Size);
 
    if (d->Fd.IsOpen() == false)

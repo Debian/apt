@@ -18,6 +18,7 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/srcrecords.h>
 #include <apt-pkg/tagfile.h>
+#include <apt-pkg/gpgv.h>
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -189,3 +190,21 @@ debSrcRecordParser::~debSrcRecordParser()
    delete[] Buffer;
 }
 									/*}}}*/
+
+
+debDscRecordParser::debDscRecordParser(std::string const &DscFile)
+   : debSrcRecordParser(DscFile, NULL)
+{
+   // support clear signed files
+   if (OpenMaybeClearSignedFile(DscFile, Fd) == false)
+   {
+      _error->Error("Failed to open %s", DscFile.c_str());
+      return;
+   }
+
+   // re-init to ensure the updated Fd is used
+   Tags.Init(&Fd);
+   // read the first (and only) record
+   Step();
+
+}
