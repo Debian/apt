@@ -2,7 +2,6 @@
 set -e
 
 cd "$(readlink -f $(dirname $0))"
-dpkg-checkbuilddeps -d 'libxml2-utils'
 
 if [ -n "${GBP_BUILD_DIR}" ]; then
    cd "$GBP_BUILD_DIR"
@@ -68,6 +67,8 @@ elif [ "$1" = 'post-build' ]; then
 		echo >&2 'REMEMBER: Change to a valid distribution before release'
 	fi
 
+	dpkg-checkbuilddeps -d 'libxml2-utils'
+
 	# check the manpages with each vendor for vendor-specific errors…
 	find vendor -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2 | while read DISTRO; do
 		ln -sf ../vendor/${DISTRO}/apt-vendor.ent doc
@@ -102,6 +103,8 @@ elif [ "$1" = 'buildlog' ]; then
 		librarysymbolsfromfile "$2"
 		shift
 	done
+elif [ "$1" = 'travis-ci' ]; then
+	apt-get install -q --no-install-recommends $(sed -n -e '/^Build-Depends: /,/^Build-Depends-Indep: / {p}' debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\)\?: ##' | tr -d ',')
 else
 	echo >&1 "Usage:\t$0 pre-export
 \t$0 post-build

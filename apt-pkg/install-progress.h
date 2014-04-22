@@ -1,6 +1,8 @@
 #ifndef PKGLIB_IPROGRESS_H
 #define PKGLIB_IPROGRESS_H
 
+#include <apt-pkg/macros.h>
+
 #include <string>
 #include <unistd.h>
 #include <signal.h>
@@ -120,6 +122,7 @@ namespace Progress {
  private:
     static void staticSIGWINCH(int);
     static std::vector<PackageManagerFancy*> instances;
+    APT_HIDDEN bool DrawStatusLine();
 
  protected:
     void SetupTerminalScrollArea(int nr_rows);

@@ -1360,7 +1360,10 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 Args.push_back(a->c_str());
       if (Comp == false && FileName.empty() == false)
       {
-	 Args.push_back("--stdout");
+	 // commands not needing arguments, do not need to be told about using standard output
+	 // in reality, only testcases with tools like cat, rev, rot13, … are able to trigger this
+	 if (compressor.CompressArgs.empty() == false && compressor.UncompressArgs.empty() == false)
+	    Args.push_back("--stdout");
 	 if (TemporaryFileName.empty() == false)
 	    Args.push_back(TemporaryFileName.c_str());
 	 else
@@ -1653,6 +1656,8 @@ bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 /* */
 bool FileFd::Seek(unsigned long long To)
 {
+   Flags &= ~HitEof;
+
    if (d != NULL && (d->pipe == true || d->InternalStream() == true))
    {
       // Our poor man seeking in pipes is costly, so try to avoid it
