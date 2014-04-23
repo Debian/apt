@@ -64,7 +64,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
 class debDscRecordParser : public debSrcRecordParser
 {
  public:
-   debDscRecordParser(std::string const &DscFile);
+   debDscRecordParser(std::string const &DscFile, pkgIndexFile const *Index);
 };
 
 #endif

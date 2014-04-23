@@ -57,9 +57,6 @@
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/upgrade.h>
 
-// FIXME: direct include of deb specific header
-#include <apt-pkg/debsrcrecords.h>
-
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-cacheset.h>
 #include <apt-private/private-cachefile.h>
@@ -1057,22 +1054,25 @@ static bool DoBuildDep(CommandLine &CmdL)
    {
       string Src;
       pkgSrcRecords::Parser *Last = 0;
-      vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
 
-      // support local .dsc files
-      if (FileExists(*I) && flExtension(*I) == "dsc")
+      // if its a local file (e.g. .dsc) use this
+      if (FileExists(*I))
       {
-         // FIXME: add a layer of abstraction
-         Last = new debDscRecordParser(*I);
-         Src = *I;
+         // see if we can get a parser for this pkgIndexFile type
+         string TypeName = flExtension(*I) + " File Source Index";
+         pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
+         if(Type != NULL)
+            Last = Type->CreateSrcPkgParser(*I);
       } else {
+         // normal case, search the cache for the source file
          Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       }
+
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
             
       // Process the build-dependencies
-
+      vector<pkgSrcRecords::Parser::BuildDepRec> BuildDeps;
       // FIXME: Can't specify architecture to use for [wildcard] matching, so switch default arch temporary
       if (hostArch.empty() == false)
       {

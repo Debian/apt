@@ -667,6 +667,42 @@ APT_CONST bool debStatusIndex::Exists() const
 }
 									/*}}}*/
 
+
+// debDscFileIndex stuff
+debDscFileIndex::debDscFileIndex(std::string &DscFile) 
+   : pkgIndexFile(true), DscFile(DscFile)
+{
+}
+
+bool debDscFileIndex::Exists() const
+{
+   return FileExists(DscFile);
+}
+
+unsigned long debDscFileIndex::Size() const
+{
+   struct stat buf;
+   if(stat(DscFile.c_str(), &buf) == 0)
+      return buf.st_size;
+   return 0;
+}
+
+// DscFileIndex::CreateSrcParser - Get a parser for the .dsc file	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
+{
+   if (!FileExists(DscFile))
+      return NULL;
+
+   return new debDscRecordParser(DscFile,this);
+}
+									/*}}}*/
+
+
+
+
+// ---------------------------------------------------------------------
 // Index File types for Debian						/*{{{*/
 class debIFTypeSrc : public pkgIndexFile::Type
 {
@@ -699,10 +735,22 @@ class debIFTypeStatus : public pkgIndexFile::Type
    };
    debIFTypeStatus() {Label = "Debian dpkg status file";};
 };
+class debIFTypeDscFile : public pkgIndexFile::Type
+{
+   public:
+   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string DscFile) const
+   {
+      return new debDscRecordParser(DscFile, NULL);
+   };
+   debIFTypeDscFile() {Label = "dsc File Source Index";};
+};
+
 static debIFTypeSrc _apt_Src;
 static debIFTypePkg _apt_Pkg;
 static debIFTypeTrans _apt_Trans;
 static debIFTypeStatus _apt_Status;
+// file based pseudo indexes
+static debIFTypeDscFile _apt_DscFile;
 
 const pkgIndexFile::Type *debSourcesIndex::GetType() const
 {
@@ -719,6 +767,10 @@ const pkgIndexFile::Type *debTranslationsIndex::GetType() const
 const pkgIndexFile::Type *debStatusIndex::GetType() const
 {
    return &_apt_Status;
+}
+const pkgIndexFile::Type *debDscFileIndex::GetType() const
+{
+   return &_apt_DscFile;
 }
 
 									/*}}}*/

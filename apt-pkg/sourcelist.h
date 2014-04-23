@@ -86,7 +86,7 @@ class pkgSourceList
    
    typedef std::vector<metaIndex *>::const_iterator const_iterator;
    
-   protected:
+   public:
 
    std::vector<metaIndex *> SrcList;
 

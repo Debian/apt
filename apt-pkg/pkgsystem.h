@@ -85,10 +85,12 @@ class pkgSystem
    virtual bool AddStatusFiles(std::vector<pkgIndexFile *> &List) = 0;   
    virtual bool FindIndex(pkgCache::PkgFileIterator File,
 			  pkgIndexFile *&Found) const = 0;
-   
+
    /* Evauluate how 'right' we are for this system based on the filesystem
       etc.. */
-   virtual signed Score(Configuration const &/*Cnf*/) {return 0;};
+   virtual signed Score(Configuration const &/*Cnf*/) {
+      return 0;
+   };
    
    pkgSystem();
    virtual ~pkgSystem() {};

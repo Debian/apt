@@ -164,4 +164,22 @@ class debSourcesIndex : public pkgIndexFile
    virtual ~debSourcesIndex() {};
 };
 
+class debDscFileIndex : public pkgIndexFile
+{
+ private:
+   std::string DscFile;
+ public:
+   virtual const Type *GetType() const APT_CONST;
+   virtual pkgSrcRecords::Parser *CreateSrcParser() const;
+   virtual bool Exists() const;
+   virtual bool HasPackages() const {return false;};
+   virtual unsigned long Size() const;
+   virtual std::string Describe(bool /*Short*/) const {
+      return DscFile;
+   };
+
+   debDscFileIndex(std::string &DscFile);
+   virtual ~debDscFileIndex() {};
+};
+
 #endif

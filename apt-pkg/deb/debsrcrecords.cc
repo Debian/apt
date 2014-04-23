@@ -192,8 +192,8 @@ debSrcRecordParser::~debSrcRecordParser()
 									/*}}}*/
 
 
-debDscRecordParser::debDscRecordParser(std::string const &DscFile)
-   : debSrcRecordParser(DscFile, NULL)
+debDscRecordParser::debDscRecordParser(std::string const &DscFile, pkgIndexFile const *Index)
+   : debSrcRecordParser(DscFile, Index)
 {
    // support clear signed files
    if (OpenMaybeClearSignedFile(DscFile, Fd) == false)
