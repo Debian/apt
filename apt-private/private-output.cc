@@ -146,6 +146,10 @@ static std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterato
    pkgCache::VerIterator inst = P.CurrentVer();
    pkgCache::VerIterator cand = policy->GetCandidateVer(P);
 
+   // this may happen for packages in dpkg "deinstall ok config-file" state
+   if (inst.IsGood() == false && cand.IsGood() == false)
+      return P.VersionList().Arch();
+
    return inst ? inst.Arch() : cand.Arch();
 }
 									/*}}}*/

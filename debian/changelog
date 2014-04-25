@@ -1,3 +1,40 @@
+apt (1.0.2ubuntu1) UNRELEASED; urgency=low
+
+  * merged with debian/sid
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Fri, 25 Apr 2014 13:50:20 +0200
+
+apt (1.0.2) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * fix apt list output for pkgs in dpkg ^rc state
+  * Notice the user about "apt list -a" when only a single hit if found
+  * fix test-failure in adt
+  * apt-private/acqprogress.cc: fix output when ctrl-c is hit during 
+    apt update (LP: #1310548, closes: #744297)
+  * Fix option name DPkg::Progress-Fancy in apt.8 manpage
+    (LP: #1310506)
+
+  [ David Kalnischkies ]
+  * don't double-count seeks in FileFd::Skip for bzip/xz
+  * deal with umask only if we really need to for mkstemp
+  * consider priorities only for downloadable pkgs in resolver
+  * force fancy progressbar redraw on window size change
+  * clear HitEof flag in FileFd::Seek
+  * use Google C++ Testing Framework for libapt tests
+  * support dist-upgrade options in full-upgrade
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (624t): Update translation
+
+  [ Theppitak Karoonboonyanan ]
+  * Updated Thai program translation (closes: #745120)
+
+  [ James McCoy ]
+  * Consistently use Dpkg::Progress* in documentation (Closes: 745452)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 25 Apr 2014 13:15:03 +0200
+
 apt (1.0.1ubuntu2) trusty; urgency=low
 
   * fix symlink of etc/apt/apt.conf.d/01autoremove when runnning in

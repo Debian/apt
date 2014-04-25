@@ -8,124 +8,66 @@ APT_DOMAIN=none
 include ../../buildlib/defaults.mak
 
 .PHONY: test
-test:
-	./run-tests
+test: $(BIN)/gtest$(BASENAME)
+	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=$(LIB) $(BIN)/gtest$(BASENAME)
 
-# Program for testing getLanguageCode
-PROGRAM = getLanguages${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = getlanguages_test.cc
+$(BIN)/gtest$(BASENAME): $(LIB)/gtest.a
+
+PROGRAM = gtest${BASENAME}
+SLIBS = -lapt-pkg -pthread $(LIB)/gtest.a
+LIB_MAKES = apt-pkg/makefile
+SOURCE = gtest_runner.cc $(wildcard *-helpers.cc *_test.cc)
 include $(PROGRAM_H)
 
-PROGRAM = getArchitectures${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = getarchitectures_test.cc
-include $(PROGRAM_H)
 
-# Program for testing ParseDepends
-PROGRAM = ParseDepends${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = parsedepends_test.cc
-include $(PROGRAM_H)
+MKDIRS += $(OBJ) $(LIB)
+LOCAL=gtest
+SOURCE=gtest-all
+gtest-OBJS := $(addprefix $(OBJ)/,$(addsuffix .o,$(SOURCE)))
 
-# Program for testing GetListOfFilesInDir
-PROGRAM = GetListOfFilesInDir${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = getlistoffilesindir_test.cc
-include $(PROGRAM_H)
+# The rest of the file is based on the example found in
+# /usr/share/doc/libgtest-dev/examples/make/Makefile
+GTEST_DIR = /usr/src/gtest
 
-# Program for testing CommandLine reconstruction
-PROGRAM = Commandline${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = commandline_test.cc
-include $(PROGRAM_H)
+# Flags passed to the preprocessor.
+# Set Google Test's header directory as a system directory, such that
+# the compiler doesn't generate warnings in Google Test headers.
+CPPFLAGS += -isystem $(GTEST_DIR)/include
 
-# Program for testing CommandLine reconstruction
-PROGRAM = CommandlineAsString${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = commandlineasstring_test.cc
-include $(PROGRAM_H)
+# Flags passed to the C++ compiler.
+CXXFLAGS += -pthread
+# disable some flags for gtest again
+CXXFLAGS+= -Wno-missing-declarations
+CXXFLAGS+= -Wno-missing-field-initializers
+CXXFLAGS+= -Wno-suggest-attribute=pure -Wno-suggest-attribute=const -Wno-suggest-attribute=noreturn
 
-# Program for testing debians version comparing
-PROGRAM = CompareVersion${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = compareversion_test.cc
-include $(PROGRAM_H)
+# All Google Test headers.  Usually you shouldn't change this definition.
+GTEST_HEADERS = /usr/include/gtest/*.h \
+                /usr/include/gtest/internal/*.h
 
-# test the GlobalError stack class
-PROGRAM = GlobalError${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = globalerror_test.cc
-include $(PROGRAM_H)
+# House-keeping build targets.
+.PHONY: clean/gtest veryclean/gtest
+clean: clean/gtest
+clean/gtest:
+	rm -f $(gtest-OBJS)
+veryclean: veryclean/gtest
+veryclean/gtest: clean/gtest
+	rm -f $(LIB)/gtest.a
 
-# test the different Hashsum classes
-PROGRAM = HashSums${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = hashsums_test.cc
-include $(PROGRAM_H)
+# Usually you shouldn't tweak such internal variables, indicated by a
+# trailing _.
+GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 
-# test the strutils stuff
-PROGRAM = StrUtil${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = strutil_test.cc
-include $(PROGRAM_H)
+# Builds gtest.a
+# For simplicity and to avoid depending on Google Test's
+# implementation details, the dependencies specified below are
+# conservative and not optimized.  This is fine as Google Test
+# compiles fast and for ordinary users its source rarely changes.
+$(gtest-OBJS): $(GTEST_SRCS_)
+	echo Compiling $@
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c -o $@ $(GTEST_DIR)/src/$(notdir $(basename $@)).cc
 
-# test the URI parsing stuff
-PROGRAM = URI${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = uri_test.cc
-include $(PROGRAM_H)
-
-# test the Configuration class
-PROGRAM = Configuration${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = configuration_test.cc
-include $(PROGRAM_H)
-
-# test cdroms core FindPackages
-PROGRAM = CdromFindPackages${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = cdromfindpackages_test.cc
-include $(PROGRAM_H)
-
-# test cdroms index reduction for source.list
-PROGRAM = CdromReduceSourceList${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = cdromreducesourcelist_test.cc
-include $(PROGRAM_H)
-
-# test cdroms FindMountPointForDevice for udev autodetection
-PROGRAM = CdromFindMountPointForDevice${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = cdromfindmountpointfordevice_test.cc
-include $(PROGRAM_H)
-
-# test IndexCopy::ConvertToSourceList
-PROGRAM = IndexCopyToSourceList${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = indexcopytosourcelist_test.cc
-
-# test fileutls
-PROGRAM = FileUtl${BASENAME}
-SLIBS = -lapt-pkg 
-SOURCE = fileutl_test.cc
-include $(PROGRAM_H)
-
-# test tagfile
-PROGRAM = PkgTagFile${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = tagfile_test.cc
-include $(PROGRAM_H)
-
-# test sourcelist
-PROGRAM = SourceList${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = sourcelist_test.cc
-include $(PROGRAM_H)
-
-# test install-progress
-PROGRAM = InstallProgress${BASENAME}
-SLIBS = -lapt-pkg
-SOURCE = install_progress_test.cc
-include $(PROGRAM_H)
-
+$(LIB)/gtest.a: $(OBJ)/gtest-all.o
+	echo Building static library $@
+	-rm -f $@
+	$(AR) $(ARFLAGS) $@ $^

@@ -256,14 +256,14 @@ PackageManagerFancy::TermSize
 PackageManagerFancy::GetTerminalSize()
 {
    struct winsize win;
-   PackageManagerFancy::TermSize s;
+   PackageManagerFancy::TermSize s = { 0, 0 };
 
    // FIXME: get from "child_pty" instead?
    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&win) != 0)
       return s;
 
    if(_config->FindB("Debug::InstallProgress::Fancy", false) == true)
-      std::cerr << "GetTerminalSize: " << win.ws_row << std::endl;
+      std::cerr << "GetTerminalSize: " << win.ws_row << " x " << win.ws_col << std::endl;
 
    s.rows = win.ws_row;
    s.columns = win.ws_col;
@@ -274,6 +274,9 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
 {
      if(_config->FindB("Debug::InstallProgress::Fancy", false) == true)
         std::cerr << "SetupTerminalScrollArea: " << nr_rows << std::endl;
+
+     if (unlikely(nr_rows <= 1))
+	return;
 
      // scroll down a bit to avoid visual glitch when the screen
      // area shrinks by one row
@@ -296,28 +299,30 @@ void PackageManagerFancy::SetupTerminalScrollArea(int nr_rows)
      // setup tty size to ensure xterm/linux console are working properly too
      // see bug #731738
      struct winsize win;
-     ioctl(child_pty, TIOCGWINSZ, (char *)&win);
-     win.ws_row = nr_rows - 1;
-     ioctl(child_pty, TIOCSWINSZ, (char *)&win);
+     if (ioctl(child_pty, TIOCGWINSZ, (char *)&win) != -1)
+     {
+	win.ws_row = nr_rows - 1;
+	ioctl(child_pty, TIOCSWINSZ, (char *)&win);
+     }
 }
 
 void PackageManagerFancy::HandleSIGWINCH(int)
 {
-   int nr_terminal_rows = GetTerminalSize().rows;
+   int const nr_terminal_rows = GetTerminalSize().rows;
    SetupTerminalScrollArea(nr_terminal_rows);
+   DrawStatusLine();
 }
 
 void PackageManagerFancy::Start(int a_child_pty)
 {
    child_pty = a_child_pty;
-   int nr_terminal_rows = GetTerminalSize().rows;
-   if (nr_terminal_rows > 0)
-      SetupTerminalScrollArea(nr_terminal_rows);
+   int const nr_terminal_rows = GetTerminalSize().rows;
+   SetupTerminalScrollArea(nr_terminal_rows);
 }
 
 void PackageManagerFancy::Stop()
 {
-   int nr_terminal_rows = GetTerminalSize().rows;
+   int const nr_terminal_rows = GetTerminalSize().rows;
    if (nr_terminal_rows > 0)
    {
       SetupTerminalScrollArea(nr_terminal_rows + 1);
@@ -358,7 +363,13 @@ bool PackageManagerFancy::StatusChanged(std::string PackageName,
           HumanReadableAction))
       return false;
 
-   PackageManagerFancy::TermSize size = GetTerminalSize();
+   return DrawStatusLine();
+}
+bool PackageManagerFancy::DrawStatusLine()
+{
+   PackageManagerFancy::TermSize const size = GetTerminalSize();
+   if (unlikely(size.rows < 1 || size.columns < 1))
+      return false;
 
    static std::string save_cursor = "\033[s";
    static std::string restore_cursor = "\033[u";
@@ -388,7 +399,7 @@ bool PackageManagerFancy::StatusChanged(std::string PackageName,
    {
       int padding = 4;
       float progressbar_size = size.columns - padding - progress_str.size();
-      float current_percent = (float)StepsDone/(float)TotalSteps;
+      float current_percent = percentage / 100.0;
       std::cout << " " 
                 << GetTextProgressStr(current_percent, progressbar_size)
                 << " ";

@@ -1067,13 +1067,6 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
    if_FLAGGED_SET(Exclusive, O_EXCL);
    #undef if_FLAGGED_SET
 
-   // umask() will always set the umask and return the previous value, so
-   // we first set the umask and then reset it to the old value
-   mode_t CurrentUmask = umask(0);
-   umask(CurrentUmask);
-   // calculate the actual file permissions (just like open/creat)
-   mode_t FilePermissions = (AccessMode & ~CurrentUmask);
-
    if ((Mode & Atomic) == Atomic)
    {
       char *name = strdup((FileName + ".XXXXXX").c_str());
@@ -1087,11 +1080,18 @@ bool FileFd::Open(string FileName,unsigned int const Mode,APT::Configuration::Co
       TemporaryFileName = string(name);
       free(name);
 
-      if(FilePermissions != 600 && fchmod(iFd, FilePermissions) == -1)
+      // umask() will always set the umask and return the previous value, so
+      // we first set the umask and then reset it to the old value
+      mode_t const CurrentUmask = umask(0);
+      umask(CurrentUmask);
+      // calculate the actual file permissions (just like open/creat)
+      mode_t const FilePermissions = (AccessMode & ~CurrentUmask);
+
+      if(fchmod(iFd, FilePermissions) == -1)
           return FileFdErrno("fchmod", "Could not change permissions for temporary file %s", TemporaryFileName.c_str());
    }
    else
-      iFd = open(FileName.c_str(), fileflags, FilePermissions);
+      iFd = open(FileName.c_str(), fileflags, AccessMode);
 
    this->FileName = FileName;
    if (iFd == -1 || OpenInternDescriptor(Mode, compressor) == false)
@@ -1360,7 +1360,10 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 Args.push_back(a->c_str());
       if (Comp == false && FileName.empty() == false)
       {
-	 Args.push_back("--stdout");
+	 // commands not needing arguments, do not need to be told about using standard output
+	 // in reality, only testcases with tools like cat, rev, rot13, … are able to trigger this
+	 if (compressor.CompressArgs.empty() == false && compressor.UncompressArgs.empty() == false)
+	    Args.push_back("--stdout");
 	 if (TemporaryFileName.empty() == false)
 	    Args.push_back(TemporaryFileName.c_str());
 	 else
@@ -1653,6 +1656,8 @@ bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 /* */
 bool FileFd::Seek(unsigned long long To)
 {
+   Flags &= ~HitEof;
+
    if (d != NULL && (d->pipe == true || d->InternalStream() == true))
    {
       // Our poor man seeking in pipes is costly, so try to avoid it

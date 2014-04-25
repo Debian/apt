@@ -20,15 +20,7 @@ SLIBS=$(PTHREADLIB) -lapt-pkg
 APT_DOMAIN:=libapt-inst$(MAJOR)
 LIBRARYDEPENDS=$(LIB)/libapt-pkg.so
 
-# Source code for the contributed non-core things
-SOURCE = contrib/extracttar.cc contrib/arfile.cc
+SOURCE = $(wildcard *.cc */*.cc)
+HEADERS = $(addprefix apt-pkg/,$(notdir $(wildcard *.h */*.h)))
 
-# Source code for the main library
-SOURCE+= filelist.cc dirstream.cc extract.cc deb/debfile.cc
-
-# Public header files
-HEADERS = extracttar.h arfile.h filelist.h extract.h \
-          dirstream.h debfile.h
-
-HEADERS := $(addprefix apt-pkg/,$(HEADERS))
 include $(LIBRARY_H)
