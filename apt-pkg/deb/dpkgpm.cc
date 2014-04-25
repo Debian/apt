@@ -1617,7 +1617,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    string::size_type pos;
    FILE *report;
 
-   if (_config->FindB("Dpkg::ApportFailureReport", false) == false)
+   if (_config->FindB("Dpkg::ApportFailureReport", true) == false)
    {
       std::clog << "configured to not write apport reports" << std::endl;
       return;
