@@ -744,6 +744,15 @@ class debIFTypeDscFile : public pkgIndexFile::Type
    };
    debIFTypeDscFile() {Label = "dsc File Source Index";};
 };
+class debIFTypeDebianSourceDir : public pkgIndexFile::Type
+{
+   public:
+   virtual pkgSrcRecords::Parser *CreateSrcPkgParser(std::string SourceDir) const
+   {
+      return new debDscRecordParser(SourceDir + string("/debian/control"), NULL);
+   };
+   debIFTypeDebianSourceDir() {Label = "debian/control File Source Index";};
+};
 
 static debIFTypeSrc _apt_Src;
 static debIFTypePkg _apt_Pkg;
@@ -751,6 +760,7 @@ static debIFTypeTrans _apt_Trans;
 static debIFTypeStatus _apt_Status;
 // file based pseudo indexes
 static debIFTypeDscFile _apt_DscFile;
+static debIFTypeDebianSourceDir _apt_DebianSourceDir;
 
 const pkgIndexFile::Type *debSourcesIndex::GetType() const
 {
@@ -771,6 +781,10 @@ const pkgIndexFile::Type *debStatusIndex::GetType() const
 const pkgIndexFile::Type *debDscFileIndex::GetType() const
 {
    return &_apt_DscFile;
+}
+const pkgIndexFile::Type *debDebianSourceDirIndex::GetType() const
+{
+   return &_apt_DebianSourceDir;
 }
 
 									/*}}}*/

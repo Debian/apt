@@ -1055,8 +1055,17 @@ static bool DoBuildDep(CommandLine &CmdL)
       string Src;
       pkgSrcRecords::Parser *Last = 0;
 
+      // a unpacked debian source tree
+      if (DirectoryExists(*I))
+      {
+         // FIXME: how can we make this more elegant?
+         std::string TypeName = "debian/control File Source Index";
+         pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
+         if(Type != NULL)
+            Last = Type->CreateSrcPkgParser(*I);
+      }
       // if its a local file (e.g. .dsc) use this
-      if (FileExists(*I))
+      else if (FileExists(*I))
       {
          // see if we can get a parser for this pkgIndexFile type
          string TypeName = flExtension(*I) + " File Source Index";

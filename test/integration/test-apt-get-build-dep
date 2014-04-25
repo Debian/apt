@@ -83,3 +83,44 @@ Inst build-essential (1 stable [i386])
 Inst debhelper (7 stable [i386])
 Conf build-essential (1 stable [i386])
 Conf debhelper (7 stable [i386])" aptget build-dep --simulate 2vcard_0.5-3.dsc
+
+
+# unpacked source dir
+mkdir -p foo-1.0/debian
+cat > foo-1.0/debian/control <<'EOF'
+Source: apturl
+Section: admin
+Priority: optional
+Maintainer: Michael Vogt <mvo@ubuntu.com>
+Build-Depends: debhelper (>= 7)
+X-Python3-Version: >= 3.2
+Standards-Version: 3.9.3
+
+Package: apturl-common
+Architecture: any
+Depends: ${python3:Depends},
+ ${shlibs:Depends},
+ ${misc:Depends},
+ python3-apt,
+ python3-update-manager
+Replaces: apturl (<< 0.3.6ubuntu2)
+Description: install packages using the apt protocol - common data
+ AptUrl is a simple graphical application that takes an URL (which follows the
+ apt-protocol) as a command line option, parses it and carries out the
+ operations that the URL describes (that is, it asks the user if he wants the
+ indicated packages to be installed and if the answer is positive does so for
+ him).
+ .
+ This package contains the common data shared between the frontends.
+
+EOF
+
+testequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  build-essential debhelper
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst build-essential (1 stable [i386])
+Inst debhelper (7 stable [i386])
+Conf build-essential (1 stable [i386])
+Conf debhelper (7 stable [i386])" aptget build-dep --simulate ./foo-1.0

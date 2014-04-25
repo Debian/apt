@@ -182,4 +182,9 @@ class debDscFileIndex : public pkgIndexFile
    virtual ~debDscFileIndex() {};
 };
 
+class debDebianSourceDirIndex : public debDscFileIndex
+{
+   virtual const Type *GetType() const APT_CONST;
+};
+
 #endif
