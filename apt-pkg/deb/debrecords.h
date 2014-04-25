@@ -29,17 +29,16 @@ class debRecordParser : public pkgRecords::Parser
 {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
-
+   
+ protected:
    FileFd File;
    pkgTagFile Tags;
    pkgTagSection Section;
    
-   protected:
-   
    virtual bool Jump(pkgCache::VerFileIterator const &Ver);
    virtual bool Jump(pkgCache::DescFileIterator const &Desc);
    
-   public:
+ public:
 
    // These refer to the archive file for the Version
    virtual std::string FileName();
@@ -64,6 +63,17 @@ class debRecordParser : public pkgRecords::Parser
    
    debRecordParser(std::string FileName,pkgCache &Cache);
    virtual ~debRecordParser() {};
+};
+
+// custom record parser that reads deb files directly
+class debDebFileRecordParser : public debRecordParser
+{
+ public:
+   virtual std::string FileName() {
+      return File.Name();
+   }
+   debDebFileRecordParser(std::string FileName,pkgCache &Cache)
+      : debRecordParser(FileName, Cache) {};
 };
 
 #endif

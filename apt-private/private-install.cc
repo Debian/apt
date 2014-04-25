@@ -19,6 +19,10 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/sourcelist.h>
+
+// FIXME: include of deb specific header
+#include <apt-pkg/debmetaindex.h>
 
 #include <errno.h>
 #include <stdlib.h>
@@ -669,10 +673,23 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
+   // first check for local pkgs and add them to the cache
+   for (const char **I = CmdL.FileList; *I != 0; I++)
+   {
+      if(FileExists(*I))
+      {
+         // FIMXE: direct usage of .deb specific stuff
+         metaIndex *mi = new debDebFileMetaIndex(*I);
+         pkgSourceList *sources = Cache.GetSourceList();
+         sources->Add(mi);
+      }
+   }
+
+   // then open the cache
    if (Cache.OpenForInstall() == false || 
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
       return false;
-
+   
    std::map<unsigned short, APT::VersionSet> verset;
 
    if(!DoCacheManipulationFromCommandLine(CmdL, Cache, verset))

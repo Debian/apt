@@ -116,6 +116,11 @@ class pkgSourceList
    // query last-modified time
    time_t GetLastModifiedTime();
 
+   // Add custom metaIndex (e.g. local files)
+   void Add(metaIndex *mi) {
+      SrcList.push_back(mi);
+   }
+
    pkgSourceList();
    pkgSourceList(std::string File);
    ~pkgSourceList();      

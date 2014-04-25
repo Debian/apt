@@ -164,4 +164,35 @@ class debSourcesIndex : public pkgIndexFile
    virtual ~debSourcesIndex() {};
 };
 
+class debDebPkgFileIndex : public pkgIndexFile
+{
+ private:
+   void *d;
+   std::string DebFile;
+   std::string DebFileFullPath;
+
+ public:
+   virtual const Type *GetType() const APT_CONST;
+
+   virtual std::string Describe(bool /*Short*/) const {
+      return DebFile;
+   }
+
+   // Interface for the Cache Generator
+   virtual bool Exists() const;
+   virtual bool HasPackages() const {
+      return true;
+   };
+   virtual unsigned long Size() const;
+   virtual bool Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const;
+   virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
+
+   // Interface for acquire
+   virtual std::string ArchiveURI(std::string /*File*/) const;
+
+   debDebPkgFileIndex(std::string DebFile);
+   virtual ~debDebPkgFileIndex() {};
+   
+};
+
 #endif

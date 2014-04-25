@@ -1920,7 +1920,6 @@ bool FileFd::Close()
    {
       if ((Flags & Compressed) != Compressed && iFd > 0 && close(iFd) != 0)
 	 Res &= _error->Errno("close",_("Problem closing the file %s"), FileName.c_str());
-
       if (d != NULL)
       {
 	 Res &= d->CloseDown(FileName);
@@ -2045,6 +2044,31 @@ std::string GetTempDir()
       tmpdir = "/tmp";
 
    return string(tmpdir);
+}
+
+FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink)
+{
+   char fn[512];
+   FileFd *Fd = new FileFd();
+
+   std::string tempdir = GetTempDir();
+   snprintf(fn, sizeof(fn), "%s/%s.XXXXXX", 
+            tempdir.c_str(), Prefix.c_str());
+   int fd = mkstemp(fn);
+   if(ImmediateUnlink)
+      unlink(fn);
+   if (fd < 0) 
+   {
+      _error->Errno("GetTempFile",_("Unable to mkstemp %s"), fn);
+      return NULL;
+   }
+   if (!Fd->OpenDescriptor(fd, FileFd::WriteOnly, FileFd::None, true))
+   {
+      _error->Errno("GetTempFile",_("Unable to write to %s"),fn);
+      return NULL;
+   }
+
+   return Fd;
 }
 
 bool Rename(std::string From, std::string To)

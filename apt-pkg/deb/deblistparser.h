@@ -56,7 +56,8 @@ class debListParser : public pkgCacheGenerator::ListParser
    bool ParseProvides(pkgCache::VerIterator &Ver);
    bool NewProvidesAllArch(pkgCache::VerIterator &Ver, std::string const &Package, std::string const &Version);
    static bool GrabWord(std::string Word,WordList *List,unsigned char &Out);
-   
+   APT_HIDDEN unsigned char ParseMultiArch(bool const showErrors);
+
    public:
 
    static unsigned char GetPrio(std::string Str);
@@ -101,9 +102,17 @@ class debListParser : public pkgCacheGenerator::ListParser
 
    debListParser(FileFd *File, std::string const &Arch = "");
    virtual ~debListParser() {};
+};
 
-   private:
-   APT_HIDDEN unsigned char ParseMultiArch(bool const showErrors);
+class debDebFileParser : public debListParser
+{
+ private:
+   std::string DebFile;
+
+ public:
+   debDebFileParser(FileFd *File, std::string const &DebFile);
+   virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
+			   pkgCache::VerIterator &Ver);
 };
 
 #endif

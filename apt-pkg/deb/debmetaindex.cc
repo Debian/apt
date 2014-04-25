@@ -471,6 +471,15 @@ class debSLTypeDebian : public pkgSourceList::Type
    }
 };
 
+debDebFileMetaIndex::debDebFileMetaIndex(std::string const &DebFile)
+   : metaIndex(DebFile, "local-uri", "deb-dist"), DebFile(DebFile)
+{
+   DebIndex = new debDebPkgFileIndex(DebFile);
+   Indexes = new vector<pkgIndexFile *>();
+   Indexes->push_back(DebIndex);
+}
+
+
 class debSLTypeDeb : public debSLTypeDebian
 {
    public:

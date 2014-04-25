@@ -168,6 +168,8 @@ time_t GetModificationTime(std::string const &Path);
 bool Rename(std::string From, std::string To);
 
 std::string GetTempDir();
+FileFd* GetTempFile(std::string const &Prefix = "", 
+                    bool ImmediateUnlink = true);
 
 /** \brief Ensure the existence of the given Path
  *

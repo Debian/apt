@@ -2084,7 +2084,8 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size,string CalcHash,
    }
    
    // Check the hash
-   if(ExpectedHash.toStr() != CalcHash)
+   // FIXME: could this empty() check impose *any* sort of security issue?
+   if(ExpectedHash.empty() == false && ExpectedHash.toStr() != CalcHash)
    {
       RenameOnError(HashSumMismatch);
       return;

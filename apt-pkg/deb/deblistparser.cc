@@ -959,3 +959,23 @@ bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
 }
 									/*}}}*/
 #endif
+
+
+debDebFileParser::debDebFileParser(FileFd *File, std::string const &DebFile)
+   : debListParser(File, ""), DebFile(DebFile)
+{
+}
+
+bool debDebFileParser::UsePackage(pkgCache::PkgIterator &Pkg,
+                                  pkgCache::VerIterator &Ver)
+{
+   bool res = debListParser::UsePackage(Pkg, Ver);
+   // we use the full file path as a provides so that the file is found
+   // by its name
+   if(NewProvidesAllArch(Ver, DebFile, Ver.VerStr()) == false)
+      return false;
+   return res;
+}
+
+
+
