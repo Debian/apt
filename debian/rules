@@ -56,9 +56,6 @@ endif
 # APT Programs in apt-utils
 APT_UTILS=ftparchive sortpkgs extracttemplates
 
-# get distro
-APT_VENDOR_CONF := $(shell lsb_release -i -s)
-
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
@@ -194,10 +191,8 @@ apt: build-binary build-manpages debian/apt.install
 	chmod 755 debian/$@/etc/kernel/postinst.d/apt-auto-removal
 	# install bash completion
 	cp share/bash-completions/* debian/$@/usr/share/bash-completion/completions/
-	# install distro specific apt conf
-	if [ -e debian/apt.conf.${APT_VENDOR_CONF} ]; then \
-		cp debian/apt.conf.${APT_VENDOR_CONF} debian/$@/etc/apt/apt.conf.d/01-vendor-${APT_VENDOR_CONF}; \
-	fi
+	# install vendor specific apt confs
+	find -L vendor/current -name 'apt.conf-*' | while read conf; do cp "$${conf}" "debian/$@/etc/apt/apt.conf.d/$${conf#*-}"; done
 
 	# make rosetta happy and remove pot files in po/ (but leave stuff
 	# in po/domains/* untouched) and cp *.po into each domain dir
