@@ -65,19 +65,31 @@ static inline TFRewriteData SetTFRewriteData(const char *tag,
    return tfrd;
 }
 									/*}}}*/
+// ConfigToDoHashes - which hashes to generate				/*{{{*/
+static void SingleConfigToDoHashes(unsigned int &DoHashes, std::string const &Conf, unsigned int const Flag)
+{
+   if (_config->FindB(Conf, true) == true)
+      DoHashes |= Flag;
+   else
+      DoHashes &= ~Flag;
+}
+static void ConfigToDoHashes(unsigned int &DoHashes, std::string const &Conf)
+{
+   SingleConfigToDoHashes(DoHashes, Conf + "::MD5", Hashes::MD5SUM);
+   SingleConfigToDoHashes(DoHashes, Conf + "::SHA1", Hashes::SHA1SUM);
+   SingleConfigToDoHashes(DoHashes, Conf + "::SHA256", Hashes::SHA256SUM);
+   SingleConfigToDoHashes(DoHashes, Conf + "::SHA512", Hashes::SHA512SUM);
+}
+									/*}}}*/
 
 // FTWScanner::FTWScanner - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-FTWScanner::FTWScanner(string const &Arch): Arch(Arch)
+FTWScanner::FTWScanner(string const &Arch): Arch(Arch), DoHashes(~0)
 {
    ErrorPrinted = false;
    NoLinkAct = !_config->FindB("APT::FTPArchive::DeLinkAct",true);
-
-   DoMD5 = _config->FindB("APT::FTPArchive::MD5",true);
-   DoSHA1 = _config->FindB("APT::FTPArchive::SHA1",true);
-   DoSHA256 = _config->FindB("APT::FTPArchive::SHA256",true);
-   DoSHA512 = _config->FindB("APT::FTPArchive::SHA512",true);
+   ConfigToDoHashes(DoHashes, "APT::FTPArchive");
 }
 									/*}}}*/
 // FTWScanner::Scanner - FTW Scanner					/*{{{*/
@@ -328,10 +340,7 @@ PackagesWriter::PackagesWriter(string const &DB,string const &Overrides,string c
    DeLinkLimit = 0;
 
    // Process the command line options
-   DoMD5 = _config->FindB("APT::FTPArchive::Packages::MD5",DoMD5);
-   DoSHA1 = _config->FindB("APT::FTPArchive::Packages::SHA1",DoSHA1);
-   DoSHA256 = _config->FindB("APT::FTPArchive::Packages::SHA256",DoSHA256);
-   DoSHA512 = _config->FindB("APT::FTPArchive::Packages::SHA512",DoSHA512);
+   ConfigToDoHashes(DoHashes, "APT::FTPArchive::Packages");
    DoAlwaysStat = _config->FindB("APT::FTPArchive::AlwaysStat", false);
    DoContents = _config->FindB("APT::FTPArchive::Contents",true);
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
@@ -386,12 +395,12 @@ bool FTWScanner::SetExts(string const &Vals)
 bool PackagesWriter::DoPackage(string FileName)
 {      
    // Pull all the data we need form the DB
-   if (Db.GetFileInfo(FileName, 
-                      true,   /* DoControl */
-                      DoContents, 
-                      true,   /* GenContentsOnly */
-                      false,  /* DoSource */
-                      DoMD5, DoSHA1, DoSHA256, DoSHA512, DoAlwaysStat) == false)
+   if (Db.GetFileInfo(FileName,
+	    true, /* DoControl */
+	    DoContents,
+	    true, /* GenContentsOnly */
+	    false, /* DoSource */
+	    DoHashes, DoAlwaysStat) == false)
    {
      return false;
    }
@@ -458,14 +467,13 @@ bool PackagesWriter::DoPackage(string FileName)
    std::vector<TFRewriteData> Changes;
 
    Changes.push_back(SetTFRewriteData("Size", Size));
-   if (DoMD5 == true)
-      Changes.push_back(SetTFRewriteData("MD5sum", Db.MD5Res.c_str()));
-   if (DoSHA1 == true)
-      Changes.push_back(SetTFRewriteData("SHA1", Db.SHA1Res.c_str()));
-   if (DoSHA256 == true)
-      Changes.push_back(SetTFRewriteData("SHA256", Db.SHA256Res.c_str()));
-   if (DoSHA512 == true)
-      Changes.push_back(SetTFRewriteData("SHA512", Db.SHA512Res.c_str()));
+   for (HashStringList::const_iterator hs = Db.HashesList.begin(); hs != Db.HashesList.end(); ++hs)
+   {
+      if (hs->HashType() == "MD5Sum")
+	 Changes.push_back(SetTFRewriteData("MD5sum", hs->HashValue().c_str()));
+      else
+	 Changes.push_back(SetTFRewriteData(hs->HashType().c_str(), hs->HashValue().c_str()));
+   }
    Changes.push_back(SetTFRewriteData("Filename", NewFileName.c_str()));
    Changes.push_back(SetTFRewriteData("Priority", OverItem->Priority.c_str()));
    Changes.push_back(SetTFRewriteData("Status", 0));
@@ -588,10 +596,7 @@ SourcesWriter::SourcesWriter(string const &DB, string const &BOverrides,string c
    BufSize = 0;
    
    // Process the command line options
-   DoMD5 = _config->FindB("APT::FTPArchive::Sources::MD5",DoMD5);
-   DoSHA1 = _config->FindB("APT::FTPArchive::Sources::SHA1",DoSHA1);
-   DoSHA256 = _config->FindB("APT::FTPArchive::Sources::SHA256",DoSHA256);
-   DoSHA512 = _config->FindB("APT::FTPArchive::Sources::SHA512",DoSHA512);
+   ConfigToDoHashes(DoHashes, "APT::FTPArchive::Sources");
    NoOverride = _config->FindB("APT::FTPArchive::NoOverrideMsg",false);
    DoAlwaysStat = _config->FindB("APT::FTPArchive::AlwaysStat", false);
 
@@ -613,17 +618,25 @@ SourcesWriter::SourcesWriter(string const &DB, string const &BOverrides,string c
 }
 									/*}}}*/
 // SourcesWriter::DoPackage - Process a single package			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+static std::ostream& addDscHash(std::ostream &out, unsigned int const DoHashes,
+      Hashes::SupportedHashes const DoIt, pkgTagSection &Tags, char const * const FieldName,
+      HashString const * const Hash, unsigned long long Size, std::string FileName)
+{
+   if ((DoHashes & DoIt) != DoIt || Tags.Exists(FieldName) == false || Hash == NULL)
+      return out;
+   out << "\n " << Hash->HashValue() << " " << Size << " " << FileName
+      << "\n " << Tags.FindS(FieldName);
+   return out;
+}
 bool SourcesWriter::DoPackage(string FileName)
 {
    // Pull all the data we need form the DB
    if (Db.GetFileInfo(FileName,
-                      false,  /* DoControl */
-                      false,  /* DoContents */
-                      false,  /* GenContentsOnly */
-                      true,   /* DoSource */
-                      DoMD5, DoSHA1, DoSHA256, DoSHA512, DoAlwaysStat) == false)
+	    false, /* DoControl */
+	    false, /* DoContents */
+	    false, /* GenContentsOnly */
+	    true, /* DoSource */
+	    DoHashes, DoAlwaysStat) == false)
    {
       return false;
    }
@@ -711,29 +724,19 @@ bool SourcesWriter::DoPackage(string FileName)
 	 *SOverItem = *OverItem;
       }
    }
-   
+
    // Add the dsc to the files hash list
    string const strippedName = flNotDir(FileName);
    std::ostringstream ostreamFiles;
-   if (DoMD5 == true && Tags.Exists("Files"))
-      ostreamFiles << "\n " << Db.MD5Res.c_str() << " " << St.st_size << " "
-		   << strippedName << "\n " << Tags.FindS("Files");
+   addDscHash(ostreamFiles, DoHashes, Hashes::MD5SUM, Tags, "Files", Db.HashesList.find("MD5Sum"), St.st_size, strippedName);
    string const Files = ostreamFiles.str();
 
    std::ostringstream ostreamSha1;
-   if (DoSHA1 == true && Tags.Exists("Checksums-Sha1"))
-      ostreamSha1 << "\n " << string(Db.SHA1Res.c_str()) << " " << St.st_size << " "
-		   << strippedName << "\n " << Tags.FindS("Checksums-Sha1");
-
+   addDscHash(ostreamSha1, DoHashes, Hashes::SHA1SUM, Tags, "Checksums-Sha1", Db.HashesList.find("SHA1"), St.st_size, strippedName);
    std::ostringstream ostreamSha256;
-   if (DoSHA256 == true && Tags.Exists("Checksums-Sha256"))
-      ostreamSha256 << "\n " << string(Db.SHA256Res.c_str()) << " " << St.st_size << " "
-		   << strippedName << "\n " << Tags.FindS("Checksums-Sha256");
-
+   addDscHash(ostreamSha256, DoHashes, Hashes::SHA256SUM, Tags, "Checksums-Sha256", Db.HashesList.find("SHA256"), St.st_size, strippedName);
    std::ostringstream ostreamSha512;
-   if (DoSHA512 == true && Tags.Exists("Checksums-Sha512"))
-      ostreamSha512 << "\n " << string(Db.SHA512Res.c_str()) << " " << St.st_size << " "
-		   << strippedName << "\n " << Tags.FindS("Checksums-Sha512");
+   addDscHash(ostreamSha512, DoHashes, Hashes::SHA512SUM, Tags, "Checksums-Sha512", Db.HashesList.find("SHA512"), St.st_size, strippedName);
 
    // Strip the DirStrip prefix from the FileName and add the PathPrefix
    string NewFileName;
@@ -765,35 +768,54 @@ bool SourcesWriter::DoPackage(string FileName)
       string OriginalPath = Directory + ParseJnk;
 
       // Add missing hashes to source files
-      if ((DoSHA1 == true && !Tags.Exists("Checksums-Sha1")) ||
-          (DoSHA256 == true && !Tags.Exists("Checksums-Sha256")) ||
-          (DoSHA512 == true && !Tags.Exists("Checksums-Sha512")))
+      if (((DoHashes & Hashes::SHA1SUM) == Hashes::SHA1SUM && !Tags.Exists("Checksums-Sha1")) ||
+          ((DoHashes & Hashes::SHA256SUM) == Hashes::SHA256SUM && !Tags.Exists("Checksums-Sha256")) ||
+          ((DoHashes & Hashes::SHA512SUM) == Hashes::SHA512SUM && !Tags.Exists("Checksums-Sha512")))
       {
-         if (Db.GetFileInfo(OriginalPath, 
+         if (Db.GetFileInfo(OriginalPath,
                             false, /* DoControl */
                             false, /* DoContents */
                             false, /* GenContentsOnly */
                             false, /* DoSource */
-                            DoMD5, DoSHA1, DoSHA256, DoSHA512,
+                            DoHashes,
                             DoAlwaysStat) == false)
          {
             return _error->Error("Error getting file info");
          }
 
-         if (DoSHA1 == true && !Tags.Exists("Checksums-Sha1"))
-            ostreamSha1 << "\n " << string(Db.SHA1Res) << " "
-               << Db.GetFileSize() << " " << ParseJnk;
+         for (HashStringList::const_iterator hs = Db.HashesList.begin(); hs != Db.HashesList.end(); ++hs)
+	 {
+	    if (hs->HashType() == "MD5Sum")
+	       continue;
+	    char const * fieldname;
+	    std::ostream * out;
+	    if (hs->HashType() == "SHA1")
+	    {
+	       fieldname = "Checksums-Sha1";
+	       out = &ostreamSha1;
+	    }
+	    else if (hs->HashType() == "SHA256")
+	    {
+	       fieldname = "Checksums-Sha256";
+	       out = &ostreamSha256;
+	    }
+	    else if (hs->HashType() == "SHA512")
+	    {
+	       fieldname = "Checksums-Sha512";
+	       out = &ostreamSha512;
+	    }
+	    else
+	    {
+	       _error->Warning("Ignoring unknown Checksumtype %s in SourcesWriter::DoPackages", hs->HashType().c_str());
+	       continue;
+	    }
+	    if (Tags.Exists(fieldname) == true)
+	       continue;
+	    (*out) << "\n " << hs->HashValue() << " " << Db.GetFileSize() << " " << ParseJnk;
+	 }
 
-         if (DoSHA256 == true && !Tags.Exists("Checksums-Sha256"))
-            ostreamSha256 << "\n " << string(Db.SHA256Res) << " "
-               << Db.GetFileSize() << " " << ParseJnk;
-
-         if (DoSHA512 == true && !Tags.Exists("Checksums-Sha512"))
-            ostreamSha512 << "\n " << string(Db.SHA512Res) << " "
-               << Db.GetFileSize() << " " << ParseJnk;
-
-         // write back the GetFileInfo() stats data 
-         Db.Finish();
+	 // write back the GetFileInfo() stats data 
+	 Db.Finish();
       }
 
       // Perform the delinking operation
@@ -884,15 +906,13 @@ ContentsWriter::ContentsWriter(string const &DB, string const &Arch) :
    determine what the package name is. */
 bool ContentsWriter::DoPackage(string FileName, string Package)
 {
-   if (!Db.GetFileInfo(FileName, 
-                       Package.empty(), /* DoControl */
-                       true,            /* DoContents */
-                       false,           /* GenContentsOnly */
-                       false,           /* DoSource */
-                       false,           /* DoMD5 */
-                       false,           /* DoSHA1 */
-                       false,           /* DoSHA256 */
-                       false))          /* DoSHA512 */
+   if (!Db.GetFileInfo(FileName,
+	    Package.empty(), /* DoControl */
+	    true, /* DoContents */
+	    false, /* GenContentsOnly */
+	    false, /* DoSource */
+	    0, /* DoHashes */
+	    false /* checkMtime */))
    {
       return false;
    }
@@ -1028,9 +1048,7 @@ ReleaseWriter::ReleaseWriter(string const &/*DB*/)
       fprintf(Output, "%s: %s\n", (*I).first.c_str(), Value.c_str());
    }
 
-   DoMD5 = _config->FindB("APT::FTPArchive::Release::MD5",DoMD5);
-   DoSHA1 = _config->FindB("APT::FTPArchive::Release::SHA1",DoSHA1);
-   DoSHA256 = _config->FindB("APT::FTPArchive::Release::SHA256",DoSHA256);
+   ConfigToDoHashes(DoHashes, "APT::FTPArchive::Release");
 }
 									/*}}}*/
 // ReleaseWriter::DoPackage - Process a single package			/*{{{*/
@@ -1064,15 +1082,8 @@ bool ReleaseWriter::DoPackage(string FileName)
    CheckSums[NewFileName].size = fd.Size();
 
    Hashes hs;
-   hs.AddFD(fd, 0, DoMD5, DoSHA1, DoSHA256, DoSHA512);
-   if (DoMD5 == true)
-      CheckSums[NewFileName].MD5 = hs.MD5.Result();
-   if (DoSHA1 == true)
-      CheckSums[NewFileName].SHA1 = hs.SHA1.Result();
-   if (DoSHA256 == true)
-      CheckSums[NewFileName].SHA256 = hs.SHA256.Result();
-   if (DoSHA512 == true)
-      CheckSums[NewFileName].SHA512 = hs.SHA512.Result();
+   hs.AddFD(fd, 0, DoHashes);
+   CheckSums[NewFileName].Hashes = hs.GetHashStringList();
    fd.Close();
 
    return true;
@@ -1081,54 +1092,29 @@ bool ReleaseWriter::DoPackage(string FileName)
 									/*}}}*/
 // ReleaseWriter::Finish - Output the checksums				/*{{{*/
 // ---------------------------------------------------------------------
+static void printChecksumTypeRecord(FILE * const Output, char const * const Type, map<string, ReleaseWriter::CheckSum> const &CheckSums)
+{
+      fprintf(Output, "%s:\n", Type);
+      for(map<string,ReleaseWriter::CheckSum>::const_iterator I = CheckSums.begin();
+	  I != CheckSums.end(); ++I)
+      {
+	 HashString const * const hs = I->second.Hashes.find(Type);
+	 if (hs == NULL)
+	    continue;
+	 fprintf(Output, " %s %16llu %s\n",
+		 hs->HashValue().c_str(),
+		 (*I).second.size,
+		 (*I).first.c_str());
+      }
+}
 void ReleaseWriter::Finish()
 {
-   if (DoMD5 == true)
-   {
-      fprintf(Output, "MD5Sum:\n");
-      for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
-	  I != CheckSums.end(); ++I)
-      {
-	 fprintf(Output, " %s %16llu %s\n",
-		 (*I).second.MD5.c_str(),
-		 (*I).second.size,
-		 (*I).first.c_str());
-      }
-   }
-   if (DoSHA1 == true)
-   {
-      fprintf(Output, "SHA1:\n");
-      for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
-	  I != CheckSums.end(); ++I)
-      {
-	 fprintf(Output, " %s %16llu %s\n",
-		 (*I).second.SHA1.c_str(),
-		 (*I).second.size,
-		 (*I).first.c_str());
-      }
-   }
-   if (DoSHA256 == true)
-   {
-      fprintf(Output, "SHA256:\n");
-      for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
-	  I != CheckSums.end(); ++I)
-      {
-	 fprintf(Output, " %s %16llu %s\n",
-		 (*I).second.SHA256.c_str(),
-		 (*I).second.size,
-		 (*I).first.c_str());
-      }
-   }
-
-   fprintf(Output, "SHA512:\n");
-   for(map<string,struct CheckSum>::const_iterator I = CheckSums.begin();
-       I != CheckSums.end();
-       ++I)
-   {
-      fprintf(Output, " %s %16llu %s\n",
-              (*I).second.SHA512.c_str(),
-              (*I).second.size,
-              (*I).first.c_str());
-   }
-
+   if ((DoHashes & Hashes::MD5SUM) == Hashes::MD5SUM)
+      printChecksumTypeRecord(Output, "MD5Sum", CheckSums);
+   if ((DoHashes & Hashes::SHA1SUM) == Hashes::SHA1SUM)
+      printChecksumTypeRecord(Output, "SHA1", CheckSums);
+   if ((DoHashes & Hashes::SHA256SUM) == Hashes::SHA256SUM)
+      printChecksumTypeRecord(Output, "SHA256", CheckSums);
+   if ((DoHashes & Hashes::SHA512SUM) == Hashes::SHA512SUM)
+      printChecksumTypeRecord(Output, "SHA512", CheckSums);
 }

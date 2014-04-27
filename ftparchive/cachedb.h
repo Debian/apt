@@ -12,6 +12,7 @@
 #ifndef CACHEDB_H
 #define CACHEDB_H
 
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/debfile.h>
 
 #include <db.h>
@@ -90,11 +91,8 @@ class CacheDB
    bool LoadControl();
    bool LoadContents(bool const &GenOnly);
    bool LoadSource();
-   bool GetMD5(bool const &GenOnly);
-   bool GetSHA1(bool const &GenOnly);
-   bool GetSHA256(bool const &GenOnly);
-   bool GetSHA512(bool const &GenOnly);
-   
+   bool GetHashes(bool const GenOnly, unsigned int const DoHashes);
+
    // Stat info stored in the DB, Fixed types since it is written to disk.
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2),
                   FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5), 
@@ -124,12 +122,8 @@ class CacheDB
    debDebFile::MemControlExtract Control;
    ContentsExtract Contents;
    DscExtract Dsc;
+   HashStringList HashesList;
 
-   std::string MD5Res;
-   std::string SHA1Res;
-   std::string SHA256Res;
-   std::string SHA512Res;
-   
    // Runtime statistics
    struct Stats
    {
@@ -165,16 +159,13 @@ class CacheDB
    bool SetFile(std::string const &FileName,struct stat St,FileFd *Fd);
 
    // terrible old overloaded interface
-   bool GetFileInfo(std::string const &FileName, 
-                    bool const &DoControl, 
-                    bool const &DoContents, 
-                    bool const &GenContentsOnly, 
-                    bool const &DoSource,
-		    bool const &DoMD5, 
-                    bool const &DoSHA1, 
-                    bool const &DoSHA256, 
-                    bool const &DoSHA512, 
-                    bool const &checkMtime = false);
+   bool GetFileInfo(std::string const &FileName,
+	 bool const &DoControl,
+	 bool const &DoContents,
+	 bool const &GenContentsOnly,
+	 bool const DoSource,
+	 unsigned int const DoHashes,
+	 bool const &checkMtime = false);
 
    bool Finish();   
    
