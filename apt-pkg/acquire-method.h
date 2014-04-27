@@ -47,6 +47,7 @@ class pkgAcqMethod
       time_t LastModified;
       bool IndexFile;
       bool FailIgnore;
+      HashStringList ExpectedHashes;
    };
    
    struct FetchResult

@@ -530,6 +530,9 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    Message.reserve(300);
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
+   HashStringList const hsl = Item->Owner->HashSums();
+   for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
+      Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
    Message += Item->Owner->Custom600Headers();
    Message += "\n\n";
    

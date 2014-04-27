@@ -351,6 +351,15 @@ int pkgAcqMethod::Run(bool Single)
 	       Tmp->LastModified = 0;
 	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
 	    Tmp->FailIgnore = StringToBool(LookupTag(Message,"Fail-Ignore"),false);
+	    Tmp->ExpectedHashes = HashStringList();
+	    for (char const * const * t = HashString::SupportedHashes(); *t != NULL; ++t)
+	    {
+	       std::string tag = "Expected-";
+	       tag.append(*t);
+	       std::string const hash = LookupTag(Message, tag.c_str());
+	       if (hash.empty() == false)
+		  Tmp->ExpectedHashes.push_back(HashString(*t, hash));
+	    }
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list
