@@ -46,6 +46,7 @@
 class indexRecords;
 class pkgRecords;
 class pkgSourceList;
+class IndexTarget;
 
 /** \brief Represents the process by which a pkgAcquire object should	{{{
  *  retrieve a file or a collection of files.
@@ -259,7 +260,7 @@ class pkgAcquire::Item : public WeakPointable
     *  \return the HashSums of this object, if applicable; otherwise, an
     *  empty list.
     */
-   virtual HashStringList HashSums() const {return HashStringList();};
+   HashStringList HashSums() const {return ExpectedHashes;};
    std::string HashSum() const {HashStringList const hashes = HashSums(); HashString const * const hs = hashes.find(NULL); return hs != NULL ? hs->toStr() : ""; };
 
    /** \return the acquire process with which this item is associated. */
@@ -285,12 +286,10 @@ class pkgAcquire::Item : public WeakPointable
     *  process, but does not place it into any fetch queues (you must
     *  manually invoke QueueURI() to do so).
     *
-    *  Initializes all fields of the item other than Owner to 0,
-    *  false, or the empty string.
-    *
     *  \param Owner The new owner of this item.
+    *  \param ExpectedHashes of the file represented by this item
     */
-   Item(pkgAcquire *Owner);
+   Item(pkgAcquire *Owner, HashStringList const &ExpectedHashes);
 
    /** \brief Remove this item from its owner's queue by invoking
     *  pkgAcquire::Remove.
@@ -310,6 +309,12 @@ class pkgAcquire::Item : public WeakPointable
     * \param state respresenting the error we encountered
     */
    bool RenameOnError(RenameOnErrorState const state);
+
+   /** \brief The HashSums of the item is supposed to have than done */
+   HashStringList ExpectedHashes;
+
+   /** \brief The item that is currently being downloaded. */
+   pkgAcquire::ItemDesc Desc;
 };
 									/*}}}*/
 /** \brief Information about an index patch (aka diff). */		/*{{{*/
@@ -335,13 +340,6 @@ class pkgAcqSubIndex : public pkgAcquire::Item
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
    bool Debug;
-
-   /** \brief The item that is currently being downloaded. */
-   pkgAcquire::ItemDesc Desc;
-
-   /** \brief The Hashes that this file should have after download
-    */
-   HashStringList ExpectedHashes;
 
  public:
    // Specialized action members
@@ -383,18 +381,10 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
    /** \brief If \b true, debugging information will be written to std::clog. */
    bool Debug;
 
-   /** \brief The item that is currently being downloaded. */
-   pkgAcquire::ItemDesc Desc;
-
    /** \brief The URI of the index file to recreate at our end (either
     *  by downloading it or by applying partial patches).
     */
    std::string RealURI;
-
-   /** \brief The Hashes that the real index file should have after
-    *  all patches have been applied.
-    */
-   HashStringList ExpectedHashes;
 
    /** \brief The index file which will be patched to generate the new
     *  file.
@@ -470,20 +460,10 @@ class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
     */
    bool Debug;
 
-   /** \brief description of the item that is currently being
-    *  downloaded.
-    */
-   pkgAcquire::ItemDesc Desc;
-
    /** \brief URI of the package index file that is being
     *  reconstructed.
     */
    std::string RealURI;
-
-   /** \brief The Hashes that the real index file should have after
-    *  all patches have been applied.
-    */
-   HashStringList ExpectedHashes;
 
    /** \brief description of the file being downloaded. */
    std::string Description;
@@ -593,20 +573,10 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     */
    bool Debug;
 
-   /** \brief A description of the item that is currently being
-    *  downloaded.
-    */
-   pkgAcquire::ItemDesc Desc;
-
    /** \brief The URI of the package index file that is being
     *  reconstructed.
     */
    std::string RealURI;
-
-   /** \brief The HashSums of the package index file that is being
-    *  reconstructed.
-    */
-   HashStringList ExpectedHashes;
 
    /** A description of the file being downloaded. */
    std::string Description;
@@ -712,18 +682,10 @@ class pkgAcqIndex : public pkgAcquire::Item
    //        the downloaded file contains the expected tag
    bool Verify;
 
-   /** \brief The download request that is currently being
-    *   processed.
-    */
-   pkgAcquire::ItemDesc Desc;
-
    /** \brief The object that is actually being fetched (minus any
     *  compression-related extensions).
     */
    std::string RealURI;
-
-   /** \brief The expected hashsum of the decompressed index file. */
-   HashStringList ExpectedHashes;
 
    /** \brief The compression-related file extensions that are being
     *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
@@ -743,7 +705,6 @@ class pkgAcqIndex : public pkgAcquire::Item
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
    virtual std::string DescURI() const {return Desc.URI;};
-   virtual HashStringList HashSums() const {return ExpectedHashes; };
 
    /** \brief Create a pkgAcqIndex.
     *
@@ -767,7 +728,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcqIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 	       std::string ShortDesc, HashStringList const &ExpectedHashes,
 	       std::string compressExt="");
-   pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
+   pkgAcqIndex(pkgAcquire *Owner, IndexTarget const * const Target,
 			 HashStringList const &ExpectedHashes, indexRecords *MetaIndexParser);
    void Init(std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc);
 };
@@ -799,7 +760,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
     */
    pkgAcqIndexTrans(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 		    std::string ShortDesc);
-   pkgAcqIndexTrans(pkgAcquire *Owner, struct IndexTarget const * const Target,
+   pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const * const Target,
 		    HashStringList const &ExpectedHashes, indexRecords *MetaIndexParser);
 };
 									/*}}}*/
@@ -868,9 +829,6 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    /** \brief The last good signature file */
    std::string LastGoodSig;
 
-   /** \brief The fetch request that is currently being processed. */
-   pkgAcquire::ItemDesc Desc;
-
    /** \brief The URI of the signature file.  Unlike Desc.URI, this is
     *  never modified; it is used to determine the file that is being
     *  downloaded.
@@ -898,7 +856,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
     *
     *  \todo Why a list of pointers instead of a list of structs?
     */
-   const std::vector<struct IndexTarget*>* IndexTargets;
+   const std::vector<IndexTarget*>* IndexTargets;
 
    public:
    
@@ -912,7 +870,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire *Owner,std::string URI,std::string URIDesc, std::string ShortDesc,
 		 std::string MetaIndexURI, std::string MetaIndexURIDesc, std::string MetaIndexShortDesc,
-		 const std::vector<struct IndexTarget*>* IndexTargets,
+		 const std::vector<IndexTarget*>* IndexTargets,
 		 indexRecords* MetaIndexParser);
    virtual ~pkgAcqMetaSig();
 };
@@ -930,9 +888,6 @@ class pkgAcqMetaSig : public pkgAcquire::Item
 class pkgAcqMetaIndex : public pkgAcquire::Item
 {
    protected:
-   /** \brief The fetch command that is currently being processed. */
-   pkgAcquire::ItemDesc Desc;
-
    /** \brief The URI that is actually being downloaded; never
     *  modified by pkgAcqMetaIndex.
     */
@@ -946,7 +901,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    std::string SigFile;
 
    /** \brief The index files to download. */
-   const std::vector<struct IndexTarget*>* IndexTargets;
+   const std::vector<IndexTarget*>* IndexTargets;
 
    /** \brief The parser for the meta-index file. */
    indexRecords* MetaIndexParser;
@@ -1009,7 +964,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    pkgAcqMetaIndex(pkgAcquire *Owner,
 		   std::string URI,std::string URIDesc, std::string ShortDesc,
 		   std::string SigFile,
-		   const std::vector<struct IndexTarget*>* IndexTargets,
+		   const std::vector<IndexTarget*>* IndexTargets,
 		   indexRecords* MetaIndexParser);
 };
 									/*}}}*/
@@ -1043,7 +998,7 @@ public:
 		std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc,
 		std::string const &MetaIndexURI, std::string const &MetaIndexURIDesc, std::string const &MetaIndexShortDesc,
 		std::string const &MetaSigURI, std::string const &MetaSigURIDesc, std::string const &MetaSigShortDesc,
-		const std::vector<struct IndexTarget*>* IndexTargets,
+		const std::vector<IndexTarget*>* IndexTargets,
 		indexRecords* MetaIndexParser);
    virtual ~pkgAcqMetaClearSig();
 };
@@ -1059,9 +1014,6 @@ class pkgAcqArchive : public pkgAcquire::Item
    /** \brief The package version being fetched. */
    pkgCache::VerIterator Version;
 
-   /** \brief The fetch command that is currently being processed. */
-   pkgAcquire::ItemDesc Desc;
-
    /** \brief The list of sources from which to pick archives to
     *  download this package from.
     */
@@ -1071,9 +1023,6 @@ class pkgAcqArchive : public pkgAcquire::Item
     *  corresponding to each version of the package.
     */
    pkgRecords *Recs;
-
-   /** \brief The hashsum of this package. */
-   HashStringList ExpectedHashes;
 
    /** \brief A location in which the actual filename of the package
     *  should be stored.
@@ -1106,7 +1055,6 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual std::string DescURI() const {return Desc.URI;};
    virtual std::string ShortDesc() const {return Desc.ShortDesc;};
    virtual void Finished();
-   virtual HashStringList HashSums() const {return ExpectedHashes; };
    virtual bool IsTrusted() const;
    
    /** \brief Create a new pkgAcqArchive.
@@ -1140,12 +1088,6 @@ class pkgAcqArchive : public pkgAcquire::Item
  */
 class pkgAcqFile : public pkgAcquire::Item
 {
-   /** \brief The currently active download process. */
-   pkgAcquire::ItemDesc Desc;
-
-   /** \brief The hashsum of the file to download, if it is known. */
-   HashStringList ExpectedHashes;
-
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.
     */
@@ -1161,7 +1103,6 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &CalcHashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string DescURI() const {return Desc.URI;};
-   virtual HashStringList HashSums() const { return ExpectedHashes; };
    virtual std::string Custom600Headers() const;
 
    /** \brief Create a new pkgAcqFile object.

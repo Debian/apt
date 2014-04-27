@@ -64,12 +64,10 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-pkgAcquire::Item::Item(pkgAcquire *Owner) : Owner(Owner), FileSize(0),
-                       PartialSize(0), Mode(0), ID(0), Complete(false), 
-                       Local(false), QueueCounter(0), 
-                       ExpectedAdditionalItems(0)
+pkgAcquire::Item::Item(pkgAcquire *Owner, HashStringList const &ExpectedHashes) :
+   Owner(Owner), FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false),
+   Local(false), QueueCounter(0), ExpectedAdditionalItems(0),
+   ExpectedHashes(ExpectedHashes)
 {
    Owner->Add(this);
    Status = StatIdle;
@@ -243,7 +241,7 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
 pkgAcqSubIndex::pkgAcqSubIndex(pkgAcquire *Owner, string const &URI,
 				 string const &URIDesc, string const &ShortDesc,
 				 HashStringList const &ExpectedHashes)
-   : Item(Owner), ExpectedHashes(ExpectedHashes)
+   : Item(Owner, ExpectedHashes)
 {
    /* XXX: Beware: Currently this class does nothing (of value) anymore ! */
    Debug = _config->FindB("Debug::pkgAcquire::SubIndex",false);
@@ -356,10 +354,10 @@ bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
  * the original packages file
  */
 pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
-      struct IndexTarget const * const Target,
+      IndexTarget const * const Target,
       HashStringList const &ExpectedHashes,
       indexRecords *MetaIndexParser)
-   : Item(Owner), ExpectedHashes(ExpectedHashes), Target(Target),
+   : Item(Owner, ExpectedHashes), Target(Target),
      MetaIndexParser(MetaIndexParser)
 {
    
@@ -622,7 +620,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 				   HashStringList const &ExpectedHashes,
 				   string ServerSha1,
 				   vector<DiffInfo> diffs)
-   : Item(Owner), RealURI(URI), ExpectedHashes(ExpectedHashes),
+   : Item(Owner, ExpectedHashes), RealURI(URI),
      available_patches(diffs), ServerSha1(ServerSha1)
 {
    
@@ -653,8 +651,7 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
-   new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
-		   ExpectedHashes);
+   new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, HashSums());
    Finish();
 }
 									/*}}}*/
@@ -668,7 +665,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI);
 
-      if(ExpectedHashes.usable() && !ExpectedHashes.VerifyFile(DestFile))
+      if(HashSums().usable() && !HashSums().VerifyFile(DestFile))
       {
 	 RenameOnError(HashSumMismatch);
 	 Dequeue();
@@ -795,7 +792,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
       // see if there is more to download
       if(available_patches.empty() == false) {
 	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedHashes, ServerSha1, available_patches);
+			      HashSums(), ServerSha1, available_patches);
 	 return Finish();
       } else 
 	 return Finish(true);
@@ -808,7 +805,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
 				   string const &ShortDesc, HashStringList const &ExpectedHashes,
 				   DiffInfo const &patch,
 				   std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-   : Item(Owner), RealURI(URI), ExpectedHashes(ExpectedHashes),
+   : Item(Owner, ExpectedHashes), RealURI(URI),
      patch(patch),allPatches(allPatches), State(StateFetchDiff)
 {
 
@@ -934,7 +931,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
 			 HashStringList const &ExpectedHashes, string comprExt)
-   : Item(Owner), RealURI(URI), ExpectedHashes(ExpectedHashes), Target(0),
+   : Item(Owner, ExpectedHashes), RealURI(URI), Target(0),
      MetaIndexParser(0)
 {
    if(comprExt.empty() == true)
@@ -952,9 +949,9 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 
    Init(URI, URIDesc, ShortDesc);
 }
-pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
+pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const * const Target,
 			 HashStringList const &ExpectedHashes, indexRecords *MetaIndexParser)
-   : Item(Owner), RealURI(Target->URI), ExpectedHashes(ExpectedHashes)
+   : Item(Owner, ExpectedHashes), RealURI(Target->URI)
 {
    // autoselect the compression method
    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
@@ -1209,7 +1206,7 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
   : pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, HashStringList(), "")
 {
 }
-pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, struct IndexTarget const * const Target,
+pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const * const Target,
 			 HashStringList const &ExpectedHashes, indexRecords *MetaIndexParser)
   : pkgAcqIndex(Owner, Target, ExpectedHashes, MetaIndexParser)
 {
@@ -1265,7 +1262,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
 			     string MetaIndexShortDesc,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
-   Item(Owner), RealURI(URI), MetaIndexURI(MetaIndexURI),
+   Item(Owner, HashStringList()), RealURI(URI), MetaIndexURI(MetaIndexURI),
    MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
    MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets)
 {
@@ -1410,9 +1407,9 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
 				 string URI,string URIDesc,string ShortDesc,
 				 string SigFile,
-				 const vector<struct IndexTarget*>* IndexTargets,
+				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-   Item(Owner), RealURI(URI), SigFile(SigFile), IndexTargets(IndexTargets),
+   Item(Owner, HashStringList()), RealURI(URI), SigFile(SigFile), IndexTargets(IndexTargets),
    MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -1619,7 +1616,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
 
-   for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
+   for (vector <IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         ++Target)
    {
@@ -1841,7 +1838,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 		string const &URI, string const &URIDesc, string const &ShortDesc,
 		string const &MetaIndexURI, string const &MetaIndexURIDesc, string const &MetaIndexShortDesc,
 		string const &MetaSigURI, string const &MetaSigURIDesc, string const &MetaSigShortDesc,
-		const vector<struct IndexTarget*>* IndexTargets,
+		const vector<IndexTarget*>* IndexTargets,
 		indexRecords* MetaIndexParser) :
 	pkgAcqMetaIndex(Owner, URI, URIDesc, ShortDesc, "", IndexTargets, MetaIndexParser),
 	MetaIndexURI(MetaIndexURI), MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
@@ -1926,7 +1923,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
 pkgAcqArchive::pkgAcqArchive(pkgAcquire *Owner,pkgSourceList *Sources,
 			     pkgRecords *Recs,pkgCache::VerIterator const &Version,
 			     string &StoreFilename) :
-               Item(Owner), Version(Version), Sources(Sources), Recs(Recs), 
+               Item(Owner, HashStringList()), Version(Version), Sources(Sources), Recs(Recs), 
                StoreFilename(StoreFilename), Vf(Version.FileList()), 
 	       Trusted(false)
 {
@@ -2232,7 +2229,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI, HashStringList const &Hashe
 		       unsigned long long Size,string Dsc,string ShortDesc,
 		       const string &DestDir, const string &DestFilename,
                        bool IsIndexFile) :
-                       Item(Owner), ExpectedHashes(Hashes), IsIndexFile(IsIndexFile)
+                       Item(Owner, Hashes), IsIndexFile(IsIndexFile)
 {
    Retries = _config->FindI("Acquire::Retries",0);
    
