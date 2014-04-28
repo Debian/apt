@@ -4,8 +4,12 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 setupaptarchive
 
 aptget install $(for i in $(seq 0 1000); do echo -n 'a'; done) 2> longpackagename.log > /dev/null || true
 testfileequal 'longpackagename.log' "E: Unable to locate package $(for i in $(seq 0 1000); do echo -n 'a'; done)"
+
+# … and the opposite of long:
+aptget install "" -s >longpackagename.log 2>&1 || true
+testfileequal 'longpackagename.log' "$(aptget install -s)"

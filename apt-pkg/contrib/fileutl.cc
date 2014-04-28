@@ -58,13 +58,10 @@
 	#include <bzlib.h>
 #endif
 #ifdef HAVE_LZMA
-	#include <stdint.h>
 	#include <lzma.h>
 #endif
-
-#ifdef WORDS_BIGENDIAN
-#include <inttypes.h>
-#endif
+#include <endian.h>
+#include <stdint.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -1880,19 +1877,13 @@ unsigned long long FileFd::Size()
 	  FileFdErrno("lseek","Unable to seek to end of gzipped file");
 	  return 0;
        }
-       size = 0;
+       uint32_t size = 0;
        if (read(iFd, &size, 4) != 4)
        {
 	  FileFdErrno("read","Unable to read original size of gzipped file");
 	  return 0;
        }
-
-#ifdef WORDS_BIGENDIAN
-       uint32_t tmp_size = size;
-       uint8_t const * const p = (uint8_t const * const) &tmp_size;
-       tmp_size = (p[3] << 24) | (p[2] << 16) | (p[1] << 8) | p[0];
-       size = tmp_size;
-#endif
+       size = le32toh(size);
 
        if (lseek(iFd, oldPos, SEEK_SET) < 0)
        {
