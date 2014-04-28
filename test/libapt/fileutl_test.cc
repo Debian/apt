@@ -273,8 +273,12 @@ TEST(FileUtlTest, Popen)
 }
 TEST(FileUtlTest, flAbsPath)
 {
+   std::string cwd = SafeGetCWD();
    int res = chdir("/bin/");
    EXPECT_EQ(res, 0);
    std::string p = flAbsPath("ls");
    EXPECT_EQ(p, "/bin/ls");
+
+   res = chdir(cwd.c_str());
+   EXPECT_EQ(res, 0);
 }
