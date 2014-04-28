@@ -390,9 +390,9 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      <para>The setting <literal>Acquire::http::Pipeline-Depth</literal> can be used to
      enable HTTP pipelining (RFC 2616 section 8.1.2.2) which can be beneficial e.g. on
      high-latency connections. It specifies how many requests are sent in a pipeline.
-     Previous APT versions had a default of 10 for this setting, but the default value
-     is now 0 (= disabled) to avoid problems with the ever-growing amount of webservers
-     and proxies which choose to not conform to the HTTP/1.1 specification.</para>
+     APT tries to detect and workaround misbehaving webservers and proxies at runtime, but
+     if you know that yours does not conform to the HTTP/1.1 specification pipelining can
+     be disabled by setting the value to 0. It is enabled by default with the value 10.</para>
 
      <para><literal>Acquire::http::AllowRedirect</literal> controls whether APT will follow
      redirects, which is enabled by default.</para>
