@@ -224,3 +224,10 @@ TEST(FileUtlTest, GetTempDir)
    if (old_tmpdir.empty() == false)
       setenv("TMPDIR", old_tmpdir.c_str(), 1);
 }
+TEST(FileUtlTest, flAbsPath)
+{
+   int res = chdir("/bin/");
+   EXPECT_EQ(res, 0);
+   std::string p = flAbsPath("ls");
+   EXPECT_EQ(p, "/bin/ls");
+}

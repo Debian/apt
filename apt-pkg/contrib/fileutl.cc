@@ -659,6 +659,22 @@ string flCombine(string Dir,string File)
    return Dir + '/' + File;
 }
 									/*}}}*/
+// flAbsPath - Return the absolute path of the filename			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+string flAbsPath(string File)
+{
+   char *p = realpath(File.c_str(), NULL);
+   if (p == NULL)
+   {
+      _error->Errno("realpath", "flAbsPath failed");
+      return "";
+   }
+   std::string AbsPath(p);
+   free(p);
+   return AbsPath;
+}
+									/*}}}*/
 // SetCloseExec - Set the close on exec flag				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
