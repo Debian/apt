@@ -224,7 +224,6 @@ TEST(FileUtlTest, GetTempDir)
    if (old_tmpdir.empty() == false)
       setenv("TMPDIR", old_tmpdir.c_str(), 1);
 }
-
 TEST(FileUtlTest, Popen)
 {
    FileFd Fd;
@@ -271,4 +270,11 @@ TEST(FileUtlTest, Popen)
    Fd.Write(s.c_str(), s.size());
    Fd.Close();
    ExecWait(Child, "PopenWrite");
+}
+TEST(FileUtlTest, flAbsPath)
+{
+   int res = chdir("/bin/");
+   EXPECT_EQ(res, 0);
+   std::string p = flAbsPath("ls");
+   EXPECT_EQ(p, "/bin/ls");
 }
