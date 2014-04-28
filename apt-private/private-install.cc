@@ -21,9 +21,6 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/sourcelist.h>
 
-// FIXME: include of deb specific header
-#include <apt-pkg/debmetaindex.h>
-
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,6 +30,7 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include <map>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-install.h>
@@ -678,10 +676,19 @@ bool DoInstall(CommandLine &CmdL)
    {
       if(FileExists(*I))
       {
-         // FIMXE: direct usage of .deb specific stuff
-         metaIndex *mi = new debDebFileMetaIndex(*I);
-         pkgSourceList *sources = Cache.GetSourceList();
-         sources->Add(mi);
+         // FIXME: make this more elegant
+         std::string TypeStr = flExtension(*I) + "-file";
+         pkgSourceList::Type *Type = pkgSourceList::Type::GetType(TypeStr.c_str());
+         if(Type != 0)
+         {
+            std::vector<metaIndex *> List;
+            std::map<std::string, std::string> Options;
+            if(Type->CreateItem(List, *I, "", "", Options))
+            {
+               pkgSourceList *sources = Cache.GetSourceList();
+               sources->Add(List[0]);
+            }
+         }
       }
    }
 
