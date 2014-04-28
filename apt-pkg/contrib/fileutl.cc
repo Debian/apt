@@ -2081,3 +2081,58 @@ bool Rename(std::string From, std::string To)
    }   
    return true;
 }
+
+bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
+{
+   int fd;
+   if (Mode != FileFd::ReadOnly && Mode != FileFd::WriteOnly)
+      return _error->Error("Popen supports ReadOnly (x)or WriteOnly mode only");
+
+   int Pipe[2] = {-1, -1};
+   if(pipe(Pipe) != 0)
+   {
+      return _error->Errno("pipe", _("Failed to create subprocess IPC"));
+      return NULL;
+   }
+   std::set<int> keep_fds;
+   keep_fds.insert(Pipe[0]);
+   keep_fds.insert(Pipe[1]);
+   Child = ExecFork(keep_fds);
+   if(Child < 0)
+      return _error->Errno("fork", "Failed to fork");
+   if(Child == 0)
+   {
+      if(Mode == FileFd::ReadOnly)
+      {
+         close(Pipe[0]);
+         fd = Pipe[1];
+      }
+      else if(Mode == FileFd::WriteOnly)
+      {
+         close(Pipe[1]);
+         fd = Pipe[0];
+      }
+
+      if(Mode == FileFd::ReadOnly)
+      {
+         dup2(fd, 1);
+         dup2(fd, 2);
+      } else if(Mode == FileFd::WriteOnly)
+         dup2(fd, 0);
+
+      execv(Args[0], (char**)Args);
+      _exit(100);
+   }
+   if(Mode == FileFd::ReadOnly)
+   {
+      close(Pipe[1]);
+      fd = Pipe[0];
+   } else if(Mode == FileFd::WriteOnly)
+   {
+      close(Pipe[0]);
+      fd = Pipe[1];
+   }
+   Fd.OpenDescriptor(fd, Mode, FileFd::None, true);
+
+   return true;
+}
