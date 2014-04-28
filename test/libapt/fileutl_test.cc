@@ -224,3 +224,51 @@ TEST(FileUtlTest, GetTempDir)
    if (old_tmpdir.empty() == false)
       setenv("TMPDIR", old_tmpdir.c_str(), 1);
 }
+
+TEST(FileUtlTest, Popen)
+{
+   FileFd Fd;
+   pid_t Child;
+   char buf[1024];
+   std::string s;
+   unsigned long long n = 0;
+   std::vector<std::string> OpenFds;
+
+   // count Fds to ensure we don't have a resource leak
+   if(FileExists("/proc/self/fd"))
+      OpenFds = Glob("/proc/self/fd/*");
+
+   // output something
+   const char* Args[10] = {"/bin/echo", "meepmeep", NULL};
+   bool res = Popen(Args, Fd, Child, FileFd::ReadOnly);
+   Fd.Read(buf, sizeof(buf)-1, &n);
+   buf[n] = 0;
+   EXPECT_NE(n, 0);
+   EXPECT_EQ(res, true);
+   EXPECT_STREQ(buf, "meepmeep\n");
+
+   // wait for the child to exit and cleanup
+   ExecWait(Child, "PopenRead");
+   Fd.Close();
+
+   // ensure that after a close all is good again
+   if(FileExists("/proc/self/fd"))
+      EXPECT_EQ(Glob("/proc/self/fd/*").size(), OpenFds.size());
+
+
+   // ReadWrite is not supported
+   res = Popen(Args, Fd, Child, FileFd::ReadWrite);
+   EXPECT_EQ(res, false);
+   _error->Discard();
+
+   // write something
+   Args[0] = "/bin/bash";
+   Args[1] = "-c";
+   Args[2] = "read";
+   Args[3] = NULL;
+   res = Popen(Args, Fd, Child, FileFd::WriteOnly);
+   s = "\n";
+   Fd.Write(s.c_str(), s.size());
+   Fd.Close();
+   ExecWait(Child, "PopenWrite");
+}
