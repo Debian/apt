@@ -673,8 +673,7 @@ APT_CONST bool debStatusIndex::Exists() const
 debDebPkgFileIndex::debDebPkgFileIndex(std::string DebFile)
    : pkgIndexFile(true), DebFile(DebFile)
 {
-   // FIXME: we need to os.normpath(DebFile) here, this is a lame workaround
-   DebFileFullPath = SafeGetCWD() + DebFile;
+   DebFileFullPath = flAbsPath(DebFile);
 }
 
 std::string debDebPkgFileIndex::ArchiveURI(std::string /*File*/) const
