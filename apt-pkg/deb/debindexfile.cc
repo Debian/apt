@@ -693,18 +693,21 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 
    // get the control data out of the deb file vid dpkg -I
    // ... can I haz libdpkg?
-   string cmd;
-   // FIXME: shell injection
-   strprintf(cmd, "dpkg -I %s control", DebFile.c_str());
-   FILE *p = popen(cmd.c_str(), "r");
-   if (p == NULL)
-      return _error->Error("popen failed");
+   const char *Args[5] = {"/usr/bin/dpkg",
+                          "-I",
+                          DebFile.c_str(),
+                          "control",
+                          NULL};
+   FileFd PipeFd;
+   pid_t Child;
+   if(Popen(Args, PipeFd, Child, FileFd::ReadOnly) == false)
+      return _error->Error("Popen failed");
    // FIXME: static buffer
    char buf[8*1024];
-   size_t n = fread(buf, 1, sizeof(buf)-1, p);
-   if (n == 0)
-      return _error->Errno("popen", "Failed to read dpkg pipe");
-   pclose(p);
+   unsigned long long n = 0;
+   if(PipeFd.Read(buf, sizeof(buf)-1, &n) == false)
+      return _error->Errno("read", "Failed to read dpkg pipe");
+   ExecWait(Child, "Popen");
 
    // now write the control data to a tempfile
    SPtr<FileFd> DebControl = GetTempFile("deb-file-" + DebFile);
