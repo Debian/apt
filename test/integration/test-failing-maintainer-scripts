@@ -86,7 +86,7 @@ testmyfailure() {
 	testfailure "$@" -o APT::Status-Fd=3
 	msgtest 'Test for failure message of maintainerscript in' 'console log'
 	local TEST='rootdir/tmp/testfailure.output'
-	if grep -q 'exit status 29$' "$TEST"; then
+	if grep -q 'exit status 29' "$TEST"; then
 		msgpass
 	else
 		cat $TEST
