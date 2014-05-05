@@ -1669,20 +1669,6 @@ static bool ShowHelp(CommandLine &)
    return true;
 }
 									/*}}}*/
-// SigWinch - Window size change signal handler				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static void SigWinch(int)
-{
-   // Riped from GNU ls
-#ifdef TIOCGWINSZ
-   struct winsize ws;
-  
-   if (ioctl(1, TIOCGWINSZ, &ws) != -1 && ws.ws_col >= 5)
-      ScreenWidth = ws.ws_col - 1;
-#endif
-}
-									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
@@ -1737,13 +1723,11 @@ int main(int argc,const char *argv[])					/*{{{*/
    // see if we are in simulate mode
    CheckSimulateMode(CmdL);
 
+   // Init the signals
+   InitSignals();
+
    // Setup the output streams
    InitOutput();
-
-   // Setup the signals
-   signal(SIGPIPE,SIG_IGN);
-   signal(SIGWINCH,SigWinch);
-   SigWinch(0);
 
    // Match the operation
    CmdL.DispatchArg(Cmds);

@@ -191,8 +191,6 @@ apt: build-binary build-manpages debian/apt.install
 	cp share/ubuntu-archive.gpg debian/$@/usr/share/$@
 	cp debian/apt.auto-removal.sh debian/$@/etc/kernel/postinst.d/apt-auto-removal
 	chmod 755 debian/$@/etc/kernel/postinst.d/apt-auto-removal
-	# install bash completion
-	cp share/bash-completions/* debian/$@/usr/share/bash-completion/completions/
 	# install vendor specific apt confs
 	find -L vendor/current -name 'apt.conf-*' | while read conf; do cp "$${conf}" "debian/$@/etc/apt/apt.conf.d/$${conf#*-}"; done
 

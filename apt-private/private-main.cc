@@ -8,8 +8,17 @@
 #include <iostream>
 #include <string.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include <apti18n.h>
+
+
+void InitSignals()
+{
+   // Setup the signals
+   signal(SIGPIPE,SIG_IGN);
+}
+
 
 void CheckSimulateMode(CommandLine &CmdL)
 {

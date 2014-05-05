@@ -1,3 +1,53 @@
+apt (1.0.3ubuntu1) UNRELEASED; urgency=low
+
+  * Merged from debian/sid, remaining changes:
+    - patch for apt cross-building, see http://bugs.debian.org/666772
+    - ubuntu changelog download handling
+    - apt-key net-update/apt-xapian-index
+    - git-buildpackage config adjustments
+    - ubuntu keyring
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Mon, 05 May 2014 16:56:22 +0200
+
+apt (1.0.3) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * reduce delta to ubuntu
+  * provide support for vendor specific config files
+  * debian/apt-doc.docs: remove README.MultiArch
+  * Fix missing ScreenWidth check in apt.cc
+  * Only do openpty() if both stdin/stdout are terminals (Closes: 746434)
+
+  [ David Kalnischkies ]
+  * add a README for vendor information
+  * remove outdated README.MultiArch
+  * build http request in a stringstream
+  * enforce LFS for partial files in https range requests
+  * handle pkgnames shorter than modifiers (Closes: 744940)
+  * allow vendors to install configuration files
+
+  [ John Ogness ]
+  * properly undo CD-ROM mount in all error cases
+
+  [ Mahyuddin Ramli ]
+  * add vendor information for BlankOn (Closes: 743595)
+
+  [ Adam Conrad ]
+  * fix FileFd::Size bitswap on big-endian architectures (Closes: 745866)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po: Update one new string
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 05 May 2014 14:03:15 +0200
+
+apt (1.0.2ubuntu2) utopic; urgency=medium
+
+  * apt-pkg/contrib/fileutl.cc: When checking gzip filesizes, cast
+    size to uint32_t before setting it, so we don't end up playing
+    with the wrong half of a uint64_t on big-endian architectures.
+
+ -- Adam Conrad <adconrad@ubuntu.com>  Fri, 25 Apr 2014 19:34:04 -0600
+
 apt (1.0.2ubuntu1) utopic; urgency=low
 
   * merged with debian/sid, remaining changes:

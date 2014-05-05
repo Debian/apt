@@ -6,5 +6,6 @@
 class CommandLine;
 
 APT_PUBLIC void CheckSimulateMode(CommandLine &CmdL);
+APT_PUBLIC void InitSignals();
 
 #endif
