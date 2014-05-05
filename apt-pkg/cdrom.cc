@@ -563,6 +563,15 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    return true;
 }
 									/*}}}*/
+bool pkgCdrom::UnmountCDROM(std::string const &CDROM, pkgCdromStatus * const log)/*{{{*/
+{
+   if (_config->FindB("APT::CDROM::NoMount",false) == true)
+      return true;
+   if (log != NULL)
+      log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
+   return UnmountCdrom(CDROM);
+}
+									/*}}}*/
 bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, std::string &ident, pkgCdromStatus * const log, bool const interactive)/*{{{*/
 {
    // Startup
@@ -583,9 +592,7 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
    {
       if (interactive == true)
       {
-	 if(log != NULL)
-	    log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
-	 UnmountCdrom(CDROM);
+	 UnmountCDROM(CDROM, log);
 
 	 if(log != NULL)
 	 {
@@ -605,6 +612,9 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
 	 return _error->Error("Failed to mount the cdrom.");
    }
 
+   if (IsMounted(CDROM) == false)
+      return _error->Error("Failed to mount the cdrom.");
+
    // Hash the CD to get an ID
    if (log != NULL)
       log->Update(_("Identifying... "), STEP_IDENT);
@@ -614,6 +624,7 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
       ident = "";
       if (log != NULL)
 	 log->Update("\n");
+      UnmountCDROM(CDROM, NULL);
       return false;
    }
 
@@ -629,8 +640,11 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
    if (FileExists(DFile) == true)
    {
       if (ReadConfigFile(Database,DFile) == false)
+      {
+	 UnmountCDROM(CDROM, NULL);
 	 return _error->Error("Unable to read the cdrom database %s",
 			      DFile.c_str());
+      }
    }
    return true;
 }
@@ -651,13 +665,7 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
    }
 
    // Unmount and finish
-   if (_config->FindB("APT::CDROM::NoMount",false) == false)
-   {
-      if (log != NULL)
-	 log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
-      UnmountCdrom(CDROM);
-   }
-
+   UnmountCDROM(CDROM, log);
    return true;
 }
 									/*}}}*/
@@ -682,11 +690,15 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    {
       if (log != NULL)
 	 log->Update("\n");
+      UnmountCDROM(CDROM, NULL);
       return false;
    }
 
    if (chdir(StartDir.c_str()) != 0)
+   {
+      UnmountCDROM(CDROM, NULL);
       return _error->Errno("chdir","Unable to change to %s", StartDir.c_str());
+   }
 
    if (_config->FindB("Debug::aptcdrom",false) == true)
    {
@@ -728,8 +740,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 
    if (List.empty() == true && SourceList.empty() == true) 
    {
-      if (_config->FindB("APT::CDROM::NoMount",false) == false) 
-	 UnmountCdrom(CDROM);
+      UnmountCDROM(CDROM, NULL);
       return _error->Error(_("Unable to locate any package files, perhaps this is not a Debian Disc or the wrong architecture?"));
    }
 
@@ -769,14 +780,14 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       {
 	 if(log == NULL) 
          {
-	    if (_config->FindB("APT::CDROM::NoMount",false) == false) 
-	       UnmountCdrom(CDROM);
+	    UnmountCDROM(CDROM, NULL);
 	    return _error->Error("No disc name found and no way to ask for it");
 	 }
 
 	 while(true) {
 	    if(!log->AskCdromName(Name)) {
 	       // user canceld
+	       UnmountCDROM(CDROM, NULL);
 	       return false; 
 	    }
 	    cout << "Name: '" << Name << "'" << endl;
@@ -813,7 +824,10 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    string const partialListDir = listDir + "partial/";
    if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
        CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
+   {
+      UnmountCDROM(CDROM, NULL);
       return _error->Errno("cdrom", _("List directory %spartial is missing."), listDir.c_str());
+   }
 
    // take care of the signatures and copy them if they are ok
    // (we do this before PackageCopy as it modifies "List" and "SourceList")
@@ -827,7 +841,10 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    if (Copy.CopyPackages(CDROM,Name,List, log) == false ||
        SrcCopy.CopyPackages(CDROM,Name,SourceList, log) == false ||
        TransCopy.CopyTranslations(CDROM,Name,TransList, log) == false)
+   {
+      UnmountCDROM(CDROM, NULL);
       return false;
+   }
 
    // reduce the List so that it takes less space in sources.list
    ReduceSourcelist(CDROM,List);
@@ -837,13 +854,19 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    if (_config->FindB("APT::cdrom::NoAct",false) == false)
    {
       if (WriteDatabase(Database) == false)
+      {
+	 UnmountCDROM(CDROM, NULL);
 	 return false;
-      
+      }
+
       if(log != NULL)
 	 log->Update(_("Writing new source list\n"), STEP_WRITE);
       if (WriteSourceList(Name,List,false) == false ||
 	  WriteSourceList(Name,SourceList,true) == false)
+      {
+	 UnmountCDROM(CDROM, NULL);
 	 return false;
+      }
    }
 
    // Print the sourcelist entries
@@ -855,8 +878,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
       {
-	 if (_config->FindB("APT::CDROM::NoMount",false) == false) 
-	    UnmountCdrom(CDROM);
+	 UnmountCDROM(CDROM, NULL);
 	 return _error->Error("Internal error");
       }
 
@@ -874,8 +896,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       string::size_type Space = (*I).find(' ');
       if (Space == string::npos)
       {
-	 if (_config->FindB("APT::CDROM::NoMount",false) == false) 
-	    UnmountCdrom(CDROM);
+	 UnmountCDROM(CDROM, NULL);
 	 return _error->Error("Internal error");
       }
 
@@ -888,12 +909,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
    }
 
    // Unmount and finish
-   if (_config->FindB("APT::CDROM::NoMount",false) == false) {
-      if (log != NULL)
-	 log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
-      UnmountCdrom(CDROM);
-   }
-
+   UnmountCDROM(CDROM, log);
    return true;
 }
 									/*}}}*/

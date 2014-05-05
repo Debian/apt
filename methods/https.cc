@@ -325,11 +325,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // if we have the file send an if-range query with a range header
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
-      char Buf[1000];
-      sprintf(Buf, "Range: bytes=%li-", (long) SBuf.st_size);
-      headers = curl_slist_append(headers, Buf);
-      sprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
-      headers = curl_slist_append(headers, Buf);
+      std::string Buf;
+      strprintf(Buf, "Range: bytes=%lli-", (long long) SBuf.st_size);
+      headers = curl_slist_append(headers, Buf.c_str());
+      strprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
+      headers = curl_slist_append(headers, Buf.c_str());
    }
    else if(Itm->LastModified > 0)
    {

@@ -391,6 +391,8 @@ bool VersionContainerInterface::FromModifierCommandLine(unsigned short &modID,
 							CacheSetHelper &helper) {
 	Version select = NEWEST;
 	std::string str = cmdline;
+	if (unlikely(str.empty() == true))
+		return false;
 	bool modifierPresent = false;
 	unsigned short fallback = modID;
 	for (std::list<Modifier>::const_iterator mod = mods.begin();
@@ -400,8 +402,8 @@ bool VersionContainerInterface::FromModifierCommandLine(unsigned short &modID,
 		size_t const alength = strlen(mod->Alias);
 		switch(mod->Pos) {
 		case Modifier::POSTFIX:
-			if (str.compare(str.length() - alength, alength,
-					mod->Alias, 0, alength) != 0)
+			if (str.length() <= alength ||
+			      str.compare(str.length() - alength, alength, mod->Alias, 0, alength) != 0)
 				continue;
 			str.erase(str.length() - alength);
 			modID = mod->ID;
