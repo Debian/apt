@@ -321,7 +321,8 @@ bool PackageContainerInterface::FromString(PackageContainerInterface * const pci
 	if (FromGroup(pci, Cache, str, helper) == false &&
 		 FromTask(pci, Cache, str, helper) == false &&
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-		 FromFnmatch(pci, Cache, str, helper) == false)
+                 // FIXME: hm, hm, regexp/fnmatch incompatible?
+		 FromFnmatch(pci, Cache, str, helper) == false &&
 #endif
 		 FromRegEx(pci, Cache, str, helper) == false)
 	{
@@ -610,7 +611,7 @@ void CacheSetHelper::canNotFindRegEx(PackageContainerInterface * const /*pci*/, 
 }
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 // canNotFindFnmatch - handle the case no package is found by a fnmatch	/*{{{*/
-void CacheSetHelper::canNotFindFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern) {
+   void CacheSetHelper::canNotFindFnmatch(PackageContainerInterface * const /*pci*/, pkgCacheFile &/*Cache*/, std::string pattern) {
 	if (ShowError == true)
 		_error->Insert(ErrorType, _("Couldn't find any package by glob '%s'"), pattern.c_str());
 }
@@ -676,8 +677,8 @@ APT_CONST void CacheSetHelper::showRegExSelection(pkgCache::PkgIterator const &/
 									/*}}}*/
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
 // showFnmatchSelection							/*{{{*/
-APT_CONST void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &pkg,
-                                          std::string const &pattern) {
+APT_CONST void CacheSetHelper::showFnmatchSelection(pkgCache::PkgIterator const &/*pkg*/,
+                                         std::string const &/*pattern*/) {
 }
 									/*}}}*/
 #endif

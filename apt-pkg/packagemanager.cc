@@ -28,6 +28,7 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/install-progress.h>
 
 #include <stddef.h>
 #include <list>

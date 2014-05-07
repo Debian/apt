@@ -20,6 +20,7 @@
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/sourcelist.h>
+#include <apt-pkg/install-progress.h>
 
 #include <errno.h>
 #include <stdlib.h>
