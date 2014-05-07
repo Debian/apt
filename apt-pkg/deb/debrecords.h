@@ -17,6 +17,9 @@
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/pkgcache.h>
+
+#include <string>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/indexfile.h>

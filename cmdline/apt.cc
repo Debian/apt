@@ -11,39 +11,12 @@
 // Include Files							/*{{{*/
 #include<config.h>
 
-#include <cassert>
-#include <locale.h>
-#include <iostream>
-#include <unistd.h>
-#include <errno.h>
-#include <regex.h>
-#include <stdio.h>
-#include <iomanip>
-#include <algorithm>
-
-
-#include <apt-pkg/error.h>
-#include <apt-pkg/cachefile.h>
-#include <apt-pkg/cacheset.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/algorithms.h>
-#include <apt-pkg/sptr.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/init.h>
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/metaindex.h>
-#include <apt-pkg/hashes.h>
-
-#include <apti18n.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
 
 #include <apt-private/private-list.h>
 #include <apt-private/private-search.h>
@@ -55,13 +28,16 @@
 #include <apt-private/private-upgrade.h>
 #include <apt-private/private-show.h>
 #include <apt-private/private-main.h>
-#include <apt-private/private-utils.h>
 #include <apt-private/private-sources.h>
+
+#include <unistd.h>
+#include <iostream>
+#include <vector>
+
+#include <apti18n.h>
 									/*}}}*/
 
-
-
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(c1out,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
@@ -94,7 +70,7 @@ int main(int argc, const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {
                                    // query
-                                   {"list",&List},
+                                   {"list",&DoList},
                                    {"search", &FullTextSearch},
                                    {"show", &APT::Cmd::ShowPackage},
 
@@ -120,6 +96,10 @@ int main(int argc, const char *argv[])					/*{{{*/
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt", CommandLine::GetCommand(Cmds, argc, argv));
 
+   // Init the signals
+   InitSignals();
+
+   // Init the output
    InitOutput();
 
    // Set up gettext support
@@ -133,7 +113,7 @@ int main(int argc, const char *argv[])					/*{{{*/
     }
 
     // some different defaults
-   _config->CndSet("DPkgPM::Progress", "1");
+   _config->CndSet("DPkg::Progress-Fancy", "1");
    _config->CndSet("Apt::Color", "1");
    _config->CndSet("APT::Get::Upgrade-Allow-New", true);
 

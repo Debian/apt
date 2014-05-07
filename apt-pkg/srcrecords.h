@@ -13,6 +13,7 @@
 #ifndef PKGLIB_SRCRECORDS_H
 #define PKGLIB_SRCRECORDS_H
 
+#include <apt-pkg/macros.h>
 
 #include <string>
 #include <vector>
@@ -74,7 +75,7 @@ class pkgSrcRecords
 
       //FIXME: Add a parameter to specify which architecture to use for [wildcard] matching
       virtual bool BuildDepends(std::vector<BuildDepRec> &BuildDeps, bool const &ArchOnly, bool const &StripMultiArch = true) = 0;
-      static const char *BuildDepType(unsigned char const &Type);
+      static const char *BuildDepType(unsigned char const &Type) APT_PURE;
 
       virtual bool Files(std::vector<pkgSrcRecords::File> &F) = 0;
       

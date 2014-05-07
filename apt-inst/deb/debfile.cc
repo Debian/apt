@@ -21,11 +21,17 @@
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/arfile.h>
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/tagfile.h>
 
+#include <string.h>
+#include <string>
+#include <vector>
 #include <sys/stat.h>
-#include <unistd.h>
+
 #include <apti18n.h>
 									/*}}}*/
 
@@ -118,8 +124,10 @@ bool debDebFile::ExtractTarMember(pkgDirStream &Stream,const char *Name)
    {
       std::string ext = std::string(Name) + ".{";
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
-	   c != compressor.end(); ++c)
-	 ext.append(c->Extension.substr(1));
+	   c != compressor.end(); ++c) {
+	 if (!c->Extension.empty())
+	    ext.append(c->Extension.substr(1));
+      }
       ext.append("}");
       return _error->Error(_("Internal error, could not locate member %s"), ext.c_str());
    }
@@ -194,7 +202,7 @@ bool debDebFile::MemControlExtract::DoItem(Item &Itm,int &Fd)
 // ---------------------------------------------------------------------
 /* Just memcopy the block from the tar extractor and put it in the right
    place in the pre-allocated memory block. */
-bool debDebFile::MemControlExtract::Process(Item &Itm,const unsigned char *Data,
+bool debDebFile::MemControlExtract::Process(Item &/*Itm*/,const unsigned char *Data,
 			     unsigned long Size,unsigned long Pos)
 {
    memcpy(Control + Pos, Data,Size);

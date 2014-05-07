@@ -371,7 +371,18 @@
      by <command>apt-get source --compile</command> and how cross-builddependencies
      are satisfied. By default is it not set which means that the host architecture
      is the same as the build architecture (which is defined by <literal>APT::Architecture</literal>).
-     Configuration Item: <literal>APT::Get::Host-Architecture</literal>
+     Configuration Item: <literal>APT::Get::Host-Architecture</literal>.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>-P</option></term>
+                   <term><option>--build-profiles</option></term>
+     <listitem><para>This option controls the activated build profiles for which
+     a source package is built by <command>apt-get source --compile</command> and
+     how build dependencies are satisfied. By default no build profile is active.
+     More than one build profile can be activated at a time by concatenating them
+     with a comma.
+     Configuration Item: <literal>APT::Build-Profiles</literal>.
      </para></listitem>
      </varlistentry>
 
@@ -525,7 +536,7 @@
      terminal window when packages are installed, upgraded or
      removed. For a machine parsable version of this data see
      README.progress-reporting in the apt doc directory.
-     Configuration Item: <literal>DpkgPM::Progress</literal> and <literal>Dpkg::Progress-Fancy</literal>.</para></listitem>
+     Configuration Item: <literal>Dpkg::Progress</literal> and <literal>Dpkg::Progress-Fancy</literal>.</para></listitem>
      </varlistentry>
     
 

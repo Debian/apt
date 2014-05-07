@@ -18,19 +18,20 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/netrc.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/strutl.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <signal.h>
 #include <stdio.h>
-#include <errno.h>
-#include <string.h>
 #include <iostream>
 #include <sstream>
+#include <ctype.h>
+#include <stdlib.h>
 
-#include "config.h"
 #include "https.h"
+
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;
@@ -83,9 +84,9 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
    return size*nmemb;
 }
 
-int 
-HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow, 
-			      double ultotal, double ulnow)
+int
+HttpsMethod::progress_callback(void *clientp, double dltotal, double /*dlnow*/,
+			      double /*ultotal*/, double /*ulnow*/)
 {
    HttpsMethod *me = (HttpsMethod *)clientp;
    if(dltotal > 0 && me->Res.Size == 0) {
@@ -95,7 +96,7 @@ HttpsMethod::progress_callback(void *clientp, double dltotal, double dlnow,
 }
 
 // HttpsServerState::HttpsServerState - Constructor			/*{{{*/
-HttpsServerState::HttpsServerState(URI Srv,HttpsMethod *Owner) : ServerState(Srv, NULL)
+HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * /*Owner*/) : ServerState(Srv, NULL)
 {
    TimeOut = _config->FindI("Acquire::https::Timeout",TimeOut);
    Reset();
@@ -324,11 +325,11 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    // if we have the file send an if-range query with a range header
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
    {
-      char Buf[1000];
-      sprintf(Buf, "Range: bytes=%li-", (long) SBuf.st_size);
-      headers = curl_slist_append(headers, Buf);
-      sprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
-      headers = curl_slist_append(headers, Buf);
+      std::string Buf;
+      strprintf(Buf, "Range: bytes=%lli-", (long long) SBuf.st_size);
+      headers = curl_slist_append(headers, Buf.c_str());
+      strprintf(Buf, "If-Range: %s", TimeRFC1123(SBuf.st_mtime).c_str());
+      headers = curl_slist_append(headers, Buf.c_str());
    }
    else if(Itm->LastModified > 0)
    {
@@ -432,7 +433,7 @@ bool HttpsMethod::Fetch(FetchItem *Itm)
    delete File;
 
    return true;
-};
+}
 
 int main()
 {

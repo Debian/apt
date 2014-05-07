@@ -1,9 +1,13 @@
 #include<config.h>
 
-#include <iostream>
-#include <apt-pkg/error.h>
 #include <apt-pkg/vendor.h>
 #include <apt-pkg/configuration.h>
+
+#include <iostream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 Vendor::Vendor(std::string VendorID,
                std::string Origin,
@@ -31,7 +35,7 @@ const std::string Vendor::LookupFingerprint(std::string Print) const
       return (*Elt).second;
 }
 
-bool Vendor::CheckDist(std::string Dist)
+APT_CONST bool Vendor::CheckDist(std::string /*Dist*/)
 {
    return true;
 }

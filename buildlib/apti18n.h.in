@@ -8,7 +8,8 @@
 
 #ifdef USE_NLS
 // apt will use the gettext implementation of the C library
-# include <libintl.h>
+#include <libintl.h>
+#include <locale.h>
 # ifdef APT_DOMAIN
 #   define _(x) dgettext(APT_DOMAIN,x)
 #   define P_(msg,plural,n) dngettext(APT_DOMAIN,msg,plural,n)

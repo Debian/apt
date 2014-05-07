@@ -13,14 +13,16 @@
 #ifndef WRITER_H
 #define WRITER_H
 
-
 #include <string>
 #include <stdio.h>
 #include <iostream>
 #include <vector>
 #include <map>
 #include <set>
+#include <stdlib.h>
+#include <sys/types.h>
 
+#include "contents.h"
 #include "cachedb.h"
 #include "override.h"
 #include "apt-ftparchive.h"

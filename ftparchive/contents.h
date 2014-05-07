@@ -9,10 +9,12 @@
 									/*}}}*/
 #ifndef CONTENTS_H
 #define CONTENTS_H
-    
-#include <stdlib.h>
-#include <stdio.h>
+
 #include <apt-pkg/dirstream.h>
+
+#include <stddef.h>
+#include <stdio.h>
+#include <string>
 
 class debDebFile;
 

@@ -27,66 +27,67 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/cmndline.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/depcache.h>
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/algorithms.h>
 #include <apt-pkg/acquire-item.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/clean.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
+#include <apt-pkg/algorithms.h>
+#include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/md5.h>
-#include <apt-pkg/versionmatch.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/upgrade.h>
-#include <apt-pkg/metaindex.h>
-#include <apt-pkg/indexrecords.h>
-
-#include <apt-private/private-download.h>
-#include <apt-private/private-install.h>
-#include <apt-private/private-upgrade.h>
-#include <apt-private/private-output.h>
-#include <apt-private/private-cacheset.h>
-#include <apt-private/private-update.h>
-#include <apt-private/private-cmndline.h>
-#include <apt-private/private-moo.h>
-#include <apt-private/private-utils.h>
-
+#include <apt-pkg/clean.h>
+#include <apt-pkg/cmndline.h>
 #include <apt-pkg/debmetaindex.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/indexrecords.h>
+#include <apt-pkg/init.h>
+#include <apt-pkg/md5.h>
+#include <apt-pkg/metaindex.h>
+#include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/srcrecords.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/version.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/upgrade.h>
 
 #include <apt-private/acqprogress.h>
+#include <apt-private/private-cacheset.h>
+#include <apt-private/private-cachefile.h>
+#include <apt-private/private-cmndline.h>
+#include <apt-private/private-download.h>
+#include <apt-private/private-install.h>
+#include <apt-private/private-main.h>
+#include <apt-private/private-moo.h>
+#include <apt-private/private-output.h>
+#include <apt-private/private-update.h>
+#include <apt-private/private-upgrade.h>
+#include <apt-private/private-utils.h>
 
-#include <set>
-#include <fstream>
-#include <sstream>
-
-#include <locale.h>
-#include <langinfo.h>
-#include <termios.h>
+#include <errno.h>
+#include <signal.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
 #include <sys/statvfs.h>
-#include <signal.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <errno.h>
-#include <regex.h>
 #include <sys/wait.h>
-
-#include <apt-private/private-output.h>
-#include <apt-private/private-main.h>
+#include <unistd.h>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <set>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -97,7 +98,7 @@ using namespace std;
 // ---------------------------------------------------------------------
 /* This used to be inlined in DoInstall, but with the advent of regex package
    name matching it was split out.. */
-bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
+static bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 		  pkgProblemResolver &Fix,bool Remove,bool BrokenFix,
 		  bool AllowFail = true)
 {
@@ -138,7 +139,7 @@ bool TryToInstallBuildDep(pkgCache::PkgIterator Pkg,pkgCacheFile &Cache,
 
 // helper that can go wit hthe next ABI break
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
+static std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
 {
    // FIXME: this cast is the horror, the horror
    debReleaseIndex *r = (debReleaseIndex*)metaindex;
@@ -159,7 +160,7 @@ std::string MetaIndexFileNameOnDisk(metaIndex *metaindex)
 // GetReleaseForSourceRecord - Return Suite for the given srcrecord	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
+static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
                                       pkgSrcRecords::Parser *Parse)
 {
    // try to find release
@@ -194,7 +195,7 @@ std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
+static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       CacheFile &CacheFile)
 {
@@ -430,7 +431,7 @@ pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 }
 									/*}}}*/
 /* mark packages as automatically/manually installed.			{{{*/
-bool DoMarkAuto(CommandLine &CmdL)
+static bool DoMarkAuto(CommandLine &CmdL)
 {
    bool Action = true;
    int AutoMarkChanged = 0;
@@ -475,7 +476,7 @@ bool DoMarkAuto(CommandLine &CmdL)
 // DoDSelectUpgrade - Do an upgrade by following dselects selections	/*{{{*/
 // ---------------------------------------------------------------------
 /* Follows dselect's selections */
-bool DoDSelectUpgrade(CommandLine &CmdL)
+static bool DoDSelectUpgrade(CommandLine &)
 {
    CacheFile Cache;
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
@@ -551,7 +552,7 @@ bool DoDSelectUpgrade(CommandLine &CmdL)
 // DoClean - Remove download archives					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DoClean(CommandLine &CmdL)
+static bool DoClean(CommandLine &)
 {
    std::string const archivedir = _config->FindDir("Dir::Cache::archives");
    std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
@@ -599,7 +600,7 @@ class LogCleaner : public pkgArchiveCleaner
    };
 };
 
-bool DoAutoClean(CommandLine &CmdL)
+static bool DoAutoClean(CommandLine &)
 {
    // Lock the archive directory
    FileFd Lock;
@@ -623,7 +624,7 @@ bool DoAutoClean(CommandLine &CmdL)
 									/*}}}*/
 // DoDownload - download a binary					/*{{{*/
 // ---------------------------------------------------------------------
-bool DoDownload(CommandLine &CmdL)
+static bool DoDownload(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.ReadOnlyOpen() == false)
@@ -696,7 +697,7 @@ bool DoDownload(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* Opening automatically checks the system, this command is mostly used
    for debugging */
-bool DoCheck(CommandLine &CmdL)
+static bool DoCheck(CommandLine &)
 {
    CacheFile Cache;
    Cache.Open();
@@ -715,7 +716,7 @@ struct DscFile
    string Dsc;
 };
 
-bool DoSource(CommandLine &CmdL)
+static bool DoSource(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.Open(false) == false)
@@ -740,7 +741,7 @@ bool DoSource(CommandLine &CmdL)
    pkgAcquire Fetcher;
    Fetcher.SetLog(&Stat);
 
-   DscFile *Dsc = new DscFile[CmdL.FileSize()];
+   SPtrArray<DscFile> Dsc = new DscFile[CmdL.FileSize()];
    
    // insert all downloaded uris into this set to avoid downloading them
    // twice
@@ -761,7 +762,6 @@ bool DoSource(CommandLine &CmdL)
       pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
       
       if (Last == 0) {
-	 delete[] Dsc;
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }
       
@@ -795,7 +795,6 @@ bool DoSource(CommandLine &CmdL)
       // Back track
       vector<pkgSrcRecords::File> Lst;
       if (Last->Files(Lst) == false) {
-	 delete[] Dsc;
 	 return false;
       }
 
@@ -855,7 +854,6 @@ bool DoSource(CommandLine &CmdL)
    struct statvfs Buf;
    string OutputDir = ".";
    if (statvfs(OutputDir.c_str(),&Buf) != 0) {
-      delete[] Dsc;
       if (errno == EOVERFLOW)
 	 return _error->WarningE("statvfs",_("Couldn't determine free space in %s"),
 				OutputDir.c_str());
@@ -870,7 +868,6 @@ bool DoSource(CommandLine &CmdL)
            || unsigned(Stat.f_type) != RAMFS_MAGIC
 #endif
            )  {
-	 delete[] Dsc;
           return _error->Error(_("You don't have enough free space in %s"),
               OutputDir.c_str());
        }
@@ -892,7 +889,6 @@ bool DoSource(CommandLine &CmdL)
    {
       for (unsigned I = 0; I != J; I++)
 	 ioprintf(cout,_("Fetch source %s\n"),Dsc[I].Package.c_str());
-      delete[] Dsc;
       return true;
    }
    
@@ -903,7 +899,6 @@ bool DoSource(CommandLine &CmdL)
       for (; I != Fetcher.UriEnd(); ++I)
 	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' << 
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
-      delete[] Dsc;
       return true;
    }
 
@@ -911,14 +906,12 @@ bool DoSource(CommandLine &CmdL)
    bool Failed = false;
    if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true)
    {
-      delete[] Dsc;
       return _error->Error(_("Failed to fetch some archives."));
    }
 
    if (_config->FindB("APT::Get::Download-only",false) == true)
    {
       c1out << _("Download complete and in download only mode") << endl;
-      delete[] Dsc;
       return true;
    }
 
@@ -967,6 +960,12 @@ bool DoSource(CommandLine &CmdL)
 	    string buildopts = _config->Find("APT::Get::Host-Architecture");
 	    if (buildopts.empty() == false)
 	       buildopts = "-a" + buildopts + " ";
+
+	    // get all active build profiles
+	    std::string const profiles = APT::Configuration::getBuildProfilesString();
+	    if (profiles.empty() == false)
+	       buildopts.append(" -P").append(profiles).append(" ");
+
 	    buildopts.append(_config->Find("DPkg::Build-Options","-b -uc"));
 
 	    // Call dpkg-buildpackage
@@ -986,7 +985,6 @@ bool DoSource(CommandLine &CmdL)
       
       _exit(0);
    }
-   delete[] Dsc;
 
    // Wait for the subprocess
    int Status = 0;
@@ -1007,7 +1005,7 @@ bool DoSource(CommandLine &CmdL)
 // ---------------------------------------------------------------------
 /* This function will look at the build depends list of the given source 
    package and install the necessary packages to make it true, or fail. */
-bool DoBuildDep(CommandLine &CmdL)
+static bool DoBuildDep(CommandLine &CmdL)
 {
    CacheFile Cache;
 
@@ -1401,7 +1399,7 @@ bool DoBuildDep(CommandLine &CmdL)
  * pool/ next to the deb itself)
  * Example return: "pool/main/a/apt/apt_0.8.8ubuntu3" 
  */
-string GetChangelogPath(CacheFile &Cache, 
+static string GetChangelogPath(CacheFile &Cache, 
                         pkgCache::PkgIterator Pkg,
                         pkgCache::VerIterator Ver)
 {
@@ -1428,7 +1426,7 @@ string GetChangelogPath(CacheFile &Cache,
  * apt-get changelog mplayer-doc:
  *  http://packages.medibuntu.org/pool/non-free/m/mplayer/mplayer_1.0~rc4~try1.dsfg1-1ubuntu1+medibuntu1.changelog
  */
-bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
+static bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
                                  pkgCache::PkgIterator Pkg,
                                  pkgCache::VerIterator Ver,
                                  string &out_uri)
@@ -1453,7 +1451,7 @@ bool GuessThirdPartyChangelogUri(CacheFile &Cache,
 									/*}}}*/
 // DownloadChangelog - Download the changelog 			        /*{{{*/
 // ---------------------------------------------------------------------
-bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
+static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher, 
                        pkgCache::VerIterator Ver, string targetfile)
 /* Download a changelog file for the given package version to
  * targetfile. This will first try the server from Apt::Changelogs::Server
@@ -1508,7 +1506,7 @@ bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
 									/*}}}*/
 // DoChangelog - Get changelog from the command line			/*{{{*/
 // ---------------------------------------------------------------------
-bool DoChangelog(CommandLine &CmdL)
+static bool DoChangelog(CommandLine &CmdL)
 {
    CacheFile Cache;
    if (Cache.ReadOnlyOpen() == false)
@@ -1572,7 +1570,7 @@ bool DoChangelog(CommandLine &CmdL)
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp(CommandLine &CmdL)
+static bool ShowHelp(CommandLine &)
 {
    ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
@@ -1665,20 +1663,6 @@ bool ShowHelp(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
-// SigWinch - Window size change signal handler				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void SigWinch(int)
-{
-   // Riped from GNU ls
-#ifdef TIOCGWINSZ
-   struct winsize ws;
-  
-   if (ioctl(1, TIOCGWINSZ, &ws) != -1 && ws.ws_col >= 5)
-      ScreenWidth = ws.ws_col - 1;
-#endif
-}
-									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {{"update",&DoUpdate},
@@ -1733,13 +1717,11 @@ int main(int argc,const char *argv[])					/*{{{*/
    // see if we are in simulate mode
    CheckSimulateMode(CmdL);
 
+   // Init the signals
+   InitSignals();
+
    // Setup the output streams
    InitOutput();
-
-   // Setup the signals
-   signal(SIGPIPE,SIG_IGN);
-   signal(SIGWINCH,SigWinch);
-   SigWinch(0);
 
    // Match the operation
    CmdL.DispatchArg(Cmds);

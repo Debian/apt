@@ -1,9 +1,11 @@
 #ifndef APT_PRIVATE_SEARCH_H
 #define APT_PRIVATE_SEARCH_H
 
-#include <apt-pkg/cmndline.h>
+#include <apt-pkg/macros.h>
 
-bool FullTextSearch(CommandLine &CmdL);
+class CommandLine;
+
+APT_PUBLIC bool FullTextSearch(CommandLine &CmdL);
 
 
 #endif

@@ -1,4 +1,4 @@
-apt (0.9.16~exp1) UNRELEASED; urgency=low
+apt (1.1~exp1) UNRELEASED; urgency=low
 
   [ Michael Vogt ]
   * lp:~mvo/apt/webserver-simulate-broken-with-fix346386:
@@ -9,7 +9,196 @@ apt (0.9.16~exp1) UNRELEASED; urgency=low
     - use sha{512,256,1} for deb-src when available LP: #1098738
   * [ABI-Break] remove the PACKAGE_MATCHER_ABI_COMPAT defines
 
- -- Michael Vogt <mvo@debian.org>  Thu, 27 Feb 2014 22:44:26 +0100
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 07 May 2014 17:48:24 +0200
+
+apt (1.0.3) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * reduce delta to ubuntu
+  * provide support for vendor specific config files
+  * debian/apt-doc.docs: remove README.MultiArch
+  * Fix missing ScreenWidth check in apt.cc
+  * Only do openpty() if both stdin/stdout are terminals (Closes: 746434)
+
+  [ David Kalnischkies ]
+  * add a README for vendor information
+  * remove outdated README.MultiArch
+  * build http request in a stringstream
+  * enforce LFS for partial files in https range requests
+  * handle pkgnames shorter than modifiers (Closes: 744940)
+  * allow vendors to install configuration files
+
+  [ John Ogness ]
+  * properly undo CD-ROM mount in all error cases
+
+  [ Mahyuddin Ramli ]
+  * add vendor information for BlankOn (Closes: 743595)
+
+  [ Adam Conrad ]
+  * fix FileFd::Size bitswap on big-endian architectures (Closes: 745866)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po: Update one new string
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 05 May 2014 14:03:15 +0200
+
+apt (1.0.2) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * fix apt list output for pkgs in dpkg ^rc state
+  * Notice the user about "apt list -a" when only a single hit if found
+  * fix test-failure in adt
+  * apt-private/acqprogress.cc: fix output when ctrl-c is hit during 
+    apt update (LP: #1310548, closes: #744297)
+  * Fix option name DPkg::Progress-Fancy in apt.8 manpage
+    (LP: #1310506)
+
+  [ David Kalnischkies ]
+  * don't double-count seeks in FileFd::Skip for bzip/xz
+  * deal with umask only if we really need to for mkstemp
+  * consider priorities only for downloadable pkgs in resolver
+  * force fancy progressbar redraw on window size change
+  * clear HitEof flag in FileFd::Seek
+  * use Google C++ Testing Framework for libapt tests
+  * support dist-upgrade options in full-upgrade
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (624t): Update translation
+
+  [ Theppitak Karoonboonyanan ]
+  * Updated Thai program translation (closes: #745120)
+
+  [ James McCoy ]
+  * Consistently use Dpkg::Progress* in documentation (Closes: 745452)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 25 Apr 2014 13:15:03 +0200
+
+apt (1.0.1) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * Fix crash in "apt list" when a sources.list file is unreable
+    (Closes: 743413)
+  * make apt search case-insensitive by default
+  * Fix possible race when stunnel/aptwebserver create their PID files
+    in the tests
+  * Fix insecure file permissions when using FileFd with OpenMode::Atomic
+    (LP: #1304657)
+
+  [ Julian Andres Klode ]
+  * Version the Breaks/Replaces for sun-java{5,6}-jdk (LP: #1302736)
+    (Closes: #743616)
+  * Add versioned openjdk-6-jdk breaks
+
+  [ Josef Vitu ]
+  * apt: Minor typo in 'apt' man page (closes: #743657)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Apr 2014 09:48:56 +0200
+
+apt (1.0) unstable; urgency=low
+
+  The "Happy birthday and 10000b years in the making" release
+
+  [ Julian Andres Klode ]
+  * apt-inst: Do not try to create a substring of an empty string in 
+    error reporting (LP: #1288718)
+
+  [ Beatrice Torracca ]
+  * Italian manpages translation update (Closes: 741867)
+
+  [ Kenshi Muto ]
+  * Japanese programs translation update (Closes: 742255)
+
+  [ David Kalnischkies ]
+  * continue reading in xz even if it outputs nothing
+  * only consider versioned kernel packages in autoremove (Closes: 741962)
+  * correct some reported typos in /etc/cron.daily/apt (Closes: 702016)
+  * ensure proper teardown in dpkg error cases (Closes: 738969)
+  * update symbols file to include new symbols from 0.9.16
+  * do IsInstallOk call in MarkInstall unconditionally
+  * discard candidates via IsInstallOk to allow override (Closes: 740750)
+
+  [ Michael Vogt ]
+  * install apt binary
+  * add apt.8.xml manpage
+  * make fancy-progress fg/bg color configurable via something like
+    Dpkg::Progress-Fancy::Progress-{bg,fg}="%1b[30m"
+    (thanks to Tim Wasser for the suggestion)
+  * Add progressbar to "Dpkg::Progress-Fancy"
+  * fix documentation for APT::Periodic::MaxSize "0" (closes: #740551)
+  * Use mkstemp() in apt-extracttemplaes (closes: #741627)
+  * Add new Debug::RunScripts debug option
+  * do not crash on SIGPIPE in pkgDPkgPM::RunScriptsWithPkgs()
+  * enable DPkg::Progress-Fancy by default when "apt" is used
+  * refresh po/pot and unfuzzy apt-extracttemplate manpage change
+  * remove no longer needed apt.7 page
+  * install "apt" binary by default
+  * add sun-java{5,6}-jdk to breaks/replaces as they provided a 
+    "apt" binary as well
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (623t): Update Vietnamese translation
+  * debian: Add default compress option to xz
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 01 Apr 2014 15:48:46 +0200
+
+apt (0.9.16.1) unstable; urgency=medium
+
+  [ Chris Leick ]
+  * Updated German doc translation
+
+  [ Julian Andres Klode ]
+  * Fix handling of autoclosing for compressed files (Closes: #741685)
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 15 Mar 2014 18:05:25 +0100
+
+apt (0.9.16) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * add hashsum support in apt-helper download-file and 
+    add more tests
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (624t): Update Vietnamese translation
+
+  [ David Kalnischkies ]
+  * propagate a negative score point along breaks/conflicts
+  * check version before adding scores in resolver
+  * autogenerate makefile for vendor system
+  * add default and override handling for Cnf::FindVector
+  * support DEB_BUILD_PROFILES and -P for build profiles
+  * do not configure already unpacked packages needlessly (Closes: 740843)
+  * if mountpoint has a ".disk" directory it is mounted
+  * no error for non-existing mountpoints in MountCdrom
+  * apt-cdrom ident shouldn't be interactive (Closes: 740673)
+  * support very long mtab entries in mountpoint discovery
+  * msgstr with elipses need three dots
+  * cmdline parsing: apt-config is not apt-cdrom
+  * use a configurable list of versioned kernel packages
+  * support kfreebsd and hurd in the kernel hook
+  * add ".*-{kernel,modules}-$KERVER" matcher for hook
+  * ensure that a dot is a dot in the hook
+  * use liblzma-dev to provide xz/lzma support
+  * use the pretty fullname of a pkg as download desciption
+
+  [ Johannes Schauer ]
+  * implement BuildProfileSpec support as dpkg has in 1.17.2 (Closes: 661537)
+
+  [ Wojciech Górski ]
+  * fix polish --install-suggests text in apt-get manpage (Closes: 741056)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 14 Mar 2014 09:45:05 +0100
+
+apt (0.9.15.5) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * vendor/tanglu/makefile: add missing clean/sources.list
+  * run the acquire tests with the new apt-helper binary, this
+    fixes the autopkgtest failures
+
+  [ Martin Pitt ]
+  * Fix autopkgtest missing dependencies and locale (closes: #739988)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 28 Feb 2014 08:44:25 +0100
 
 apt (0.9.15.4) unstable; urgency=low
 

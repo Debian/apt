@@ -40,18 +40,27 @@
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
 
-#include <vector>
+#include <stddef.h>
+
 #include <memory>
-#include <set>
 #include <list>
+#include <string>
+#include <utility>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/progress.h>
 #include <apt-pkg/error.h>
 #endif
+#ifndef APT_10_CLEANER_HEADERS
+#include <set>
+#include <vector>
+#endif
 
 class OpProgress;
+class pkgVersioningSystem;
 
 class pkgDepCache : protected pkgCache::Namespace
 {
@@ -61,7 +70,7 @@ class pkgDepCache : protected pkgCache::Namespace
    class InRootSetFunc
    {
    public:
-     virtual bool InRootSet(const pkgCache::PkgIterator &pkg) {return false;};
+     virtual bool InRootSet(const pkgCache::PkgIterator &/*pkg*/) {return false;};
      virtual ~InRootSetFunc() {};
    };
 
@@ -231,7 +240,7 @@ class pkgDepCache : protected pkgCache::Namespace
       unsigned char DepState;          // DepState Flags
 
       // Update of candidate version
-      const char *StripEpoch(const char *Ver);
+      const char *StripEpoch(const char *Ver) APT_PURE;
       void Update(PkgIterator Pkg,pkgCache &Cache);
       
       // Various test members for the current status of the package
@@ -381,8 +390,8 @@ class pkgDepCache : protected pkgCache::Namespace
    /** \brief Update the Marked and Garbage fields of all packages.
     *
     *  This routine is implicitly invoked after all state manipulators
-    *  and when an ActionGroup is destroyed.  It invokes #MarkRequired
-    *  and #Sweep to do its dirty work.
+    *  and when an ActionGroup is destroyed.  It invokes the private
+    *  MarkRequired() and Sweep() to do its dirty work.
     *
     *  \param rootFunc A predicate that returns \b true for packages
     *  that should be added to the root set.
@@ -465,7 +474,7 @@ class pkgDepCache : protected pkgCache::Namespace
     *
     *  The parameters are the same as in the calling MarkDelete:
     *  \param Pkg       the package that MarkDelete wants to remove.
-    *  \param Purge     should we purge instead of "only" remove?
+    *  \param MarkPurge should we purge instead of "only" remove?
     *  \param Depth     recursive deep of this Marker call
     *  \param FromUser  was the remove requested by the user?
     */
@@ -497,6 +506,8 @@ class pkgDepCache : protected pkgCache::Namespace
    // methods call by IsInstallOk
    bool IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
 	 bool const AutoInst, unsigned long const Depth, bool const FromUser);
+   bool IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator const &Pkg,
+      bool const AutoInst, unsigned long const Depth, bool const FromUser);
 
    // methods call by IsDeleteOk
    bool IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,

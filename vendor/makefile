@@ -14,11 +14,9 @@ veryclean: veryclean/subdirs
 dirs: dirs/subdirs
 manpages: manpages/subdirs
 
-all/subdirs binary/subdirs doc/subdirs dirs/subdirs manpages/subdirs:
-	$(MAKE) -C current $(patsubst %/subdirs,%,$@)
-
-clean/subdirs veryclean/subdirs:
-	test ! -e current || $(MAKE) -C current $(patsubst %/subdirs,%,$@)
+all/subdirs binary/subdirs doc/subdirs dirs/subdirs manpages/subdirs clean/subdirs veryclean/subdirs:
+	test ! -e current/makefile || $(MAKE) -C current $(patsubst %/subdirs,%,$@)
+	test ! -e current/makefile.auto || $(MAKE) -C current -f makefile.auto $(patsubst %/subdirs,%,$@)
 
 current:
 	rm -f $@
@@ -29,17 +27,29 @@ current:
 			break; \
 		fi; \
 	done
-	# if we haven't found a specific, look for a deriving in hardcoded order
-	test -e $@ || \
-		(dpkg-vendor --derives-from ubuntu && cp ln -s ubuntu $@ ) || \
-		(dpkg-vendor --derives-from tanglu && cp ln -s tanglu $@ ) || \
-		ln -s debian $@
+	# if we haven't found a specific, look for a deriving
+	# we do ubuntu and debian last as those are the biggest families
+	# and would therefore potentially 'shadow' smaller families
+	# (especially debian as it sorts quiet early)
+	if ! test -e $@; then \
+		find -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2 | while read DISTRO; do \
+			if [ "$$DISTRO" = 'debian' -o "$$DISTRO" = 'ubuntu' ]; then continue; fi; \
+			if dpkg-vendor --derives-from $$DISTRO; then \
+				ln -s $$DISTRO $@; \
+				break; \
+			fi; \
+		done; \
+		test -e $@ || \
+			(dpkg-vendor --derives-from ubuntu && cp ln -s ubuntu $@ ) || \
+			ln -s debian $@; \
+	fi
+	if test ! -e current/makefile; then \
+		sed "s#@@VENDOR@@#$(notdir $(shell readlink -f current))#" vendor.makefile > current/makefile.auto; \
+	fi
 
 .PHONY: clean veryclean all binary vendor
-.NOPARALLEL:
 
 clean: clean/current
 
-clean/current:
-	test ! -e current || $(MAKE) -C current clean
-	rm -f current
+clean/current: clean/subdirs
+	rm -f current/makefile.auto current

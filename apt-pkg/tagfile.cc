@@ -21,6 +21,8 @@
 #include <string>
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -83,7 +85,7 @@ pkgTagFile::~pkgTagFile()
 }
 									/*}}}*/
 // TagFile::Offset - Return the current offset in the buffer		/*{{{*/
-unsigned long pkgTagFile::Offset()
+APT_PURE unsigned long pkgTagFile::Offset()
 {
    return d->iOffset;
 }
@@ -471,7 +473,7 @@ bool pkgTagSection::FindFlag(const char *Tag,unsigned long &Flags,
       return true;
    return FindFlag(Flags, Flag, Start, Stop);
 }
-bool const pkgTagSection::FindFlag(unsigned long &Flags, unsigned long Flag,
+bool pkgTagSection::FindFlag(unsigned long &Flags, unsigned long Flag,
 					char const* Start, char const* Stop)
 {
    switch (StringToBool(string(Start, Stop)))

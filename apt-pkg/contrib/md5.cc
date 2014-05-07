@@ -38,13 +38,9 @@
 #include <config.h>
 
 #include <apt-pkg/md5.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/macros.h>
 
+#include <stdint.h>
 #include <string.h>
-#include <unistd.h>
-#include <netinet/in.h>                          // For htonl
-#include <inttypes.h>
 									/*}}}*/
 
 // byteSwap - Swap bytes in a buffer					/*{{{*/

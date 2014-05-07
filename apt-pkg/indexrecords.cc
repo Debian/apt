@@ -14,41 +14,46 @@
 #include <apt-pkg/hashes.h>
 #include <apt-pkg/gpgv.h>
 
-#include <sys/stat.h>
+#include <stdlib.h>
+#include <time.h>
 #include <clocale>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
 
 using std::string;
 
-string indexRecords::GetDist() const
+APT_PURE string indexRecords::GetDist() const
 {
    return this->Dist;
 }
 
-string indexRecords::GetSuite() const
+APT_PURE string indexRecords::GetSuite() const
 {
    return this->Suite;
 }
 
-bool indexRecords::CheckDist(const string MaybeDist) const
+APT_PURE bool indexRecords::CheckDist(const string MaybeDist) const
 {
    return (this->Dist == MaybeDist
 	   || this->Suite == MaybeDist);
 }
 
-string indexRecords::GetExpectedDist() const
+APT_PURE string indexRecords::GetExpectedDist() const
 {
    return this->ExpectedDist;
 }
 
-time_t indexRecords::GetValidUntil() const
+APT_PURE time_t indexRecords::GetValidUntil() const
 {
    return this->ValidUntil;
 }
 
-const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
+APT_PURE const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
    std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
    if (sum == Entries.end())
@@ -56,7 +61,7 @@ const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
    return sum->second;
 }
 
-bool indexRecords::Exists(string const &MetaKey) const
+APT_PURE bool indexRecords::Exists(string const &MetaKey) const
 {
    return Entries.count(MetaKey) == 1;
 }
@@ -129,10 +134,10 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    // get the user settings for this archive and use what expires earlier
    int MaxAge = _config->FindI("Acquire::Max-ValidTime", 0);
    if (Label.empty() == false)
-      MaxAge = _config->FindI(string("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
+      MaxAge = _config->FindI(("Acquire::Max-ValidTime::" + Label).c_str(), MaxAge);
    int MinAge = _config->FindI("Acquire::Min-ValidTime", 0);
    if (Label.empty() == false)
-      MinAge = _config->FindI(string("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
+      MinAge = _config->FindI(("Acquire::Min-ValidTime::" + Label).c_str(), MinAge);
 
    if(MaxAge == 0 &&
       (MinAge == 0 || ValidUntil == 0)) // No user settings, use the one from the Release file

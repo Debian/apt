@@ -17,8 +17,12 @@
 #ifndef PKGLIB_CACHEFILE_H
 #define PKGLIB_CACHEFILE_H
 
+#include <stddef.h>
+
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/acquire.h>
@@ -26,6 +30,7 @@
 #include <apt-pkg/sourcelist.h>
 #endif
 
+class MMap;
 class pkgPolicy;
 class pkgSourceList;
 class OpProgress;
@@ -60,13 +65,13 @@ class pkgCacheFile
    inline unsigned char &operator [](pkgCache::DepIterator const &I) {return (*DCache)[I];};
 
    bool BuildCaches(OpProgress *Progress = NULL,bool WithLock = true);
-   __deprecated bool BuildCaches(OpProgress &Progress,bool const &WithLock = true) { return BuildCaches(&Progress, WithLock); };
+   APT_DEPRECATED bool BuildCaches(OpProgress &Progress,bool const &WithLock = true) { return BuildCaches(&Progress, WithLock); };
    bool BuildSourceList(OpProgress *Progress = NULL);
    bool BuildPolicy(OpProgress *Progress = NULL);
    bool BuildDepCache(OpProgress *Progress = NULL);
    bool Open(OpProgress *Progress = NULL, bool WithLock = true);
    inline bool ReadOnlyOpen(OpProgress *Progress = NULL) { return Open(Progress, false); };
-   __deprecated bool Open(OpProgress &Progress,bool const &WithLock = true) { return Open(&Progress, WithLock); };
+   APT_DEPRECATED bool Open(OpProgress &Progress,bool const &WithLock = true) { return Open(&Progress, WithLock); };
    static void RemoveCaches();
    void Close();
 

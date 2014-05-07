@@ -90,18 +90,22 @@ msgdone() {
 		echo "${CDONE}DONE${CNORMAL}";
 	fi
 }
-
+getaptconfig() {
+	if [ -f ./aptconfig.conf ]; then
+            echo "./aptconfig.conf"
+	elif [ -f ../aptconfig.conf ]; then
+            echo "../aptconfig.conf"
+        fi
+}
 runapt() {
 	msgdebug "Executing: ${CCMD}$*${CDEBUG} "
 	local CMD="$1"
 	shift
-	if [ -f ./aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
-	elif [ -f ../aptconfig.conf ]; then
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
-	else
-		MALLOC_PERTURB_=21 MALLOC_CHECK_=2 LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/$CMD "$@"
-	fi
+	case $CMD in
+	sh|aptitude|*/*) ;;
+	*) CMD="${BUILDDIRECTORY}/$CMD";;
+	esac
+	MALLOC_PERTURB_=21 MALLOC_CHECK_=2 APT_CONFIG="$(getaptconfig)" LD_LIBRARY_PATH=${BUILDDIRECTORY} $CMD "$@"
 }
 aptconfig() { runapt apt-config "$@"; }
 aptcache() { runapt apt-cache "$@"; }
@@ -111,27 +115,20 @@ aptftparchive() { runapt apt-ftparchive "$@"; }
 aptkey() { runapt apt-key "$@"; }
 aptmark() { runapt apt-mark "$@"; }
 apt() { runapt apt "$@"; }
-aptwebserver() {
-  LD_LIBRARY_PATH=${APTWEBSERVERBINDIR} ${APTWEBSERVERBINDIR}/aptwebserver "$@";
-}
+apthelper() { runapt "${APTHELPERBINDIR}/apt-helper" "$@"; }
+aptwebserver() { runapt "${APTWEBSERVERBINDIR}/aptwebserver" "$@"; }
+aptitude() { runapt aptitude "$@"; }
+aptextracttemplates() { runapt apt-extracttemplates "$@"; }
+
 dpkg() {
 	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
 }
-aptitude() {
-	if [ -f ./aptconfig.conf ]; then
-		APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
-	elif [ -f ../aptconfig.conf ]; then
-		APT_CONFIG=../aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command aptitude "$@"
-	else
-		LD_LIBRARY_PATH=${BUILDDIRECTORY}  command aptitude "$@"
-	fi
+dpkgcheckbuilddeps() {
+	command dpkg-checkbuilddeps --admindir=${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg "$@"
 }
 gdb() {
 	echo "gdb: run »$*«"
-	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${BUILDDIRECTORY} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
-}
-http() {
-	LD_LIBRARY_PATH=${BUILDDIRECTORY} ${BUILDDIRECTORY}/methods/http
+	APT_CONFIG=aptconfig.conf LD_LIBRARY_PATH=${LIBRARYPATH} command gdb ${BUILDDIRECTORY}/$1 --args "$@"
 }
 gpg() {
 	# see apt-key for the whole trickery. Setup is done in setupenvironment
@@ -176,7 +173,9 @@ setupenvironment() {
 
         # allow overriding the default BUILDDIR location
 	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
+	LIBRARYPATH=${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}
         METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
+        APTHELPERBINDIR=${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}
         APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
@@ -186,11 +185,18 @@ setupenvironment() {
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p var/cache var/lib var/log tmp
+	mkdir -p var/cache var/lib/apt var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${METHODSDIR} usr/lib/apt/methods
+        # use the autoremove from the BUILDDIRECTORY if its there, otherwise
+        # system
+        if [ -e ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove ]; then
+	    ln -s ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove etc/apt/apt.conf.d/01autoremove
+        else
+	    ln -s /etc/apt/apt.conf.d/01autoremove etc/apt/apt.conf.d/01autoremove
+        fi
 	cd ..
 	local PACKAGESFILE=$(echo "$(basename $0)" | sed -e 's/^test-/Packages-/' -e 's/^skip-/Packages-/')
 	if [ -f "${TESTDIRECTORY}/${PACKAGESFILE}" ]; then
@@ -219,8 +225,6 @@ setupenvironment() {
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
         echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
-	export LC_ALL=C.UTF-8
-	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 
 	# gpg needs a trustdb to function, but it can't be invalid (not even empty)
@@ -235,6 +239,12 @@ setupenvironment() {
 	# now create the trustdb with an (empty) dummy keyring
 	# newer gpg versions are fine without it, but play it safe for now
 	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
+
+	# cleanup the environment a bit
+	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
+	export LC_ALL=C.UTF-8
+	unset LANGUAGE APT_CONFIG
+	unset GREP_OPTIONS DEB_BUILD_PROFILES
 
 	msgdone "info"
 }
@@ -254,6 +264,10 @@ getarchitecture() {
 
 getarchitectures() {
 	echo "$(aptconfig dump | grep APT::Architecture | cut -d'"' -f 2 | sed '/^$/ d' | sort | uniq | tr '\n' ' ')"
+}
+
+getarchitecturesfromcommalist() {
+	echo "$1" | sed -e 's#,#\n#g' | sed -e "s/^native\$/$(getarchitecture 'native')/"
 }
 
 configarchitecture() {
@@ -429,7 +443,7 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 #		fi
 	done
 
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
+	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
 		rm -rf ${BUILDDIR}/debian/tmp
 		mkdir -p ${BUILDDIR}/debian/tmp/DEBIAN ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME} ${BUILDDIR}/debian/tmp/usr/bin
 		cp ${BUILDDIR}/debian/copyright ${BUILDDIR}/debian/changelog ${BUILDDIR}/FEATURES ${BUILDDIR}/debian/tmp/usr/share/doc/${NAME}
@@ -584,7 +598,7 @@ insertpackage() {
  something went horribly wrong! They are autogenerated
  und used only by testcases and surf no other propose…"}"
 	local ARCHS=""
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
+	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
 		if [ "$arch" = 'all' -o "$arch" = 'none' ]; then
 			ARCHS="$(getarchitectures)"
 		else
@@ -646,7 +660,7 @@ insertinstalledpackage() {
 
 	local FILE='rootdir/var/lib/dpkg/status'
 	local INFO='rootdir/var/lib/dpkg/info'
-	for arch in $(echo "$ARCH" | sed -e 's#,#\n#g' | sed -e "s#^native\$#$(getarchitecture 'native')#"); do
+	for arch in $(getarchitecturesfromcommalist "$ARCH"); do
 		echo "Package: $NAME
 Status: $STATUS
 Priority: $PRIORITY
@@ -852,18 +866,16 @@ signreleasefiles() {
 
 webserverconfig() {
 	msgtest "Set webserver config option '${1}' to" "$2"
-	downloadfile "http://localhost:8080/_config/set/${1}/${2}" '/dev/null' >/dev/null
-	local DOWNLOG='download-testfile.log'
-	rm -f "$DOWNLOG"
-	local STATUS="${TMPWORKINGDIRECTORY}/rootdir/tmp/webserverconfig.status"
-	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
-	if [ "$(cat "$STATUS")" = '200' ]; then
+	local DOWNLOG='rootdir/tmp/download-testfile.log'
+	local STATUS='rootdir/tmp/webserverconfig.status'
+	rm -f "$STATUS" "$DOWNLOG"
+	if downloadfile "http://localhost:8080/_config/set/${1}/${2}" "$STATUS" > "$DOWNLOG"; then
 		msgpass
 	else
-		cat >&2 "$DOWNLOG"
-		msgfail "Statuscode was $(cat "$STATUS")"
+		cat "$DOWNLOG" "$STATUS"
+		msgfail
 	fi
-	rm "$STATUS"
+	testwebserverlaststatuscode '200'
 }
 
 rewritesourceslist() {
@@ -871,6 +883,20 @@ rewritesourceslist() {
 	for LIST in $(find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list'); do
 		sed -i $LIST -e "s#$APTARCHIVE#${1}#" -e "s#http://localhost:8080/#${1}#" -e "s#http://localhost:4433/#${1}#"
 	done
+}
+
+# wait for up to 10s for a pid file to appear to avoid possible race
+# when a helper is started and dosn't write the PID quick enough
+waitforpidfile() {
+        local PIDFILE="$1"
+        for i in $(seq 10); do
+                if test -s "$PIDFILE"; then
+                        return 0
+                fi
+                sleep 1
+        done
+        msgdie "waiting for $PIDFILE failed"
+        return 1
 }
 
 changetowebserver() {
@@ -886,6 +912,7 @@ changetowebserver() {
 			cat $LOG
 			false
 		fi
+                waitforpidfile aptwebserver.pid
 		local PID="$(cat aptwebserver.pid)"
 		if [ -z "$PID" ]; then
 			msgdie 'Could not fork aptwebserver successfully'
@@ -913,7 +940,11 @@ accept = 4433
 connect = 8080
 " > ${TMPWORKINGDIRECTORY}/stunnel.conf
 	stunnel4 "${TMPWORKINGDIRECTORY}/stunnel.conf"
+        waitforpidfile "${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid"
 	local PID="$(cat ${TMPWORKINGDIRECTORY}/aptarchive/stunnel.pid)"
+        if [ -z "$PID" ]; then
+		msgdie 'Could not fork stunnel4 successfully'
+	fi
 	addtrap 'prefix' "kill ${PID};"
 	rewritesourceslist 'https://localhost:4433/'
 }
@@ -921,54 +952,29 @@ connect = 8080
 changetocdrom() {
 	mkdir -p rootdir/media/cdrom/.disk
 	local CD="$(readlink -f rootdir/media/cdrom)"
-	echo "acquire::cdrom::mount \"${CD}\";" > rootdir/etc/apt/apt.conf.d/00cdrom
-	echo 'acquire::cdrom::autodetect 0;' >> rootdir/etc/apt/apt.conf.d/00cdrom
+	echo "acquire::cdrom::mount \"${CD}\";
+acquire::cdrom::${CD}/::mount \"mv ${CD}-unmounted ${CD}\";
+acquire::cdrom::${CD}/::umount \"mv ${CD} ${CD}-unmounted\";
+acquire::cdrom::autodetect 0;" > rootdir/etc/apt/apt.conf.d/00cdrom
 	echo -n "$1" > ${CD}/.disk/info
 	if [ ! -d aptarchive/dists ]; then
 		msgdie 'Flat file archive cdroms can not be created currently'
 		return 1
 	fi
-	mv aptarchive/dists $CD
+	mv aptarchive/dists "$CD"
 	ln -s "$(readlink -f ./incoming)" $CD/pool
 	find rootdir/etc/apt/sources.list.d/ -name 'apt-test-*.list' -delete
+	# start with an unmounted disk
+	mv "${CD}" "${CD}-unmounted"
+	# we don't want the disk to be modifiable
+	addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/media/cdrom/dists/ $PWD/rootdir/media/cdrom-unmounted/dists/ || true;"
+	chmod -R -w rootdir/media/cdrom-unmounted/dists
 }
 
 downloadfile() {
-	PROTO="$(echo "$1" | cut -d':' -f 1)"
-        if [ ! -x "${METHODSDIR}/${PROTO}" ]; then
-            msgwarn "can not find ${METHODSDIR}/${PROTO}"
-            return 1
-        fi
-	local DOWNLOG="${TMPWORKINGDIRECTORY}/download.log"
-	rm -f "$DOWNLOG"
-	touch "$DOWNLOG"
-	{
-		echo "601 Configuration
-Config-Item: Acquire::https::CaInfo=${TESTDIR}/apt.pem
-Config-Item: Debug::Acquire::${PROTO}=1
-
-600 Acquire URI
-URI: $1
-Filename: ${2}
-"
-		# simple worker keeping stdin open until we are done (201) or error (400)
-		# and requesting new URIs on try-agains/redirects in-between
-		{ tail -n 999 -f "$DOWNLOG" & echo "TAILPID: $!"; } | while read f1 f2; do
-			if [ "$f1" = 'TAILPID:' ]; then
-				TAILPID="$f2"
-			elif [ "$f1" = 'New-URI:' ]; then
-				echo "600 Acquire URI
-URI: $f2
-Filename: ${2}
-"
-			elif [ "$f1" = '201' ] || [ "$f1" = '400' ]; then
-				# tail would only die on next read – which never happens
-				test -z "$TAILPID" || kill -s HUP "$TAILPID"
-				break
-			fi
-		done
-	} | LD_LIBRARY_PATH=${BUILDDIRECTORY} ${METHODSDIR}/${PROTO} 2>&1 | tee "$DOWNLOG"
-	rm "$DOWNLOG"
+	local PROTO="$(echo "$1" | cut -d':' -f 1 )"
+	apthelper -o Debug::Acquire::${PROTO}=1 \
+		download-file "$1" "$2" 2>&1 || true
 	# only if the file exists the download was successful
 	if [ -e "$2" ]; then
 		return 0
@@ -980,8 +986,8 @@ Filename: ${2}
 checkdiff() {
 	local DIFFTEXT="$(command diff -u "$@" | sed -e '/^---/ d' -e '/^+++/ d' -e '/^@@/ d')"
 	if [ -n "$DIFFTEXT" ]; then
-		echo
-		echo "$DIFFTEXT"
+		echo >&2
+		echo >&2 "$DIFFTEXT"
 		return 1
 	else
 		return 0
@@ -1030,11 +1036,17 @@ testequalor2() {
 	shift 2
 	msgtest "Test for equality OR of" "$*"
 	$* >$COMPAREAGAINST 2>&1 || true
-	(checkdiff $COMPAREFILE1 $COMPAREAGAINST 1> /dev/null ||
-		checkdiff $COMPAREFILE2 $COMPAREAGAINST 1> /dev/null) && msgpass ||
-		( echo "\n${CINFO}Diff against OR 1${CNORMAL}" "$(checkdiff $COMPAREFILE1 $COMPAREAGAINST)" \
-		       "\n${CINFO}Diff against OR 2${CNORMAL}" "$(checkdiff $COMPAREFILE2 $COMPAREAGAINST)" &&
-		  msgfail )
+	if checkdiff $COMPAREFILE1 $COMPAREAGAINST >/dev/null 2>&1 || \
+		checkdiff $COMPAREFILE2 $COMPAREAGAINST >/dev/null 2>&1
+	then
+		msgpass
+	else
+		echo -n "\n${CINFO}Diff against OR 1${CNORMAL}"
+		checkdiff $COMPAREFILE1 $COMPAREAGAINST || true
+		echo -n "${CINFO}Diff against OR 2${CNORMAL}"
+		checkdiff $COMPAREFILE2 $COMPAREAGAINST || true
+		msgfail
+	fi
 }
 
 testshowvirtual() {
@@ -1060,24 +1072,24 @@ testnopackage() {
 	msgtest "Test for non-existent packages" "apt-cache show $*"
 	local SHOWPKG="$(aptcache show "$@" 2>&1 | grep '^Package: ')"
 	if [ -n "$SHOWPKG" ]; then
-		echo
-		echo "$SHOWPKG"
+		echo >&2
+		echo >&2 "$SHOWPKG"
 		msgfail
-		return 1
+	else
+		msgpass
 	fi
-	msgpass
 }
 
 testdpkginstalled() {
 	msgtest "Test for correctly installed package(s) with" "dpkg -l $*"
 	local PKGS="$(dpkg -l "$@" 2>/dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != $# ]; then
-		echo $PKGS
-		dpkg -l "$@" | grep '^[a-z]'
+		echo >&2 $PKGS
+		dpkg -l "$@" | grep '^[a-z]' >&2
 		msgfail
-		return 1
+	else
+		msgpass
 	fi
-	msgpass
 }
 
 testdpkgnotinstalled() {
@@ -1085,11 +1097,11 @@ testdpkgnotinstalled() {
 	local PKGS="$(dpkg -l "$@" 2> /dev/null | grep '^i' | wc -l)"
 	if [ "$PKGS" != 0 ]; then
 		echo
-		dpkg -l "$@" | grep '^[a-z]'
+		dpkg -l "$@" | grep '^[a-z]' >&2
 		msgfail
-		return 1
+	else
+		msgpass
 	fi
-	msgpass
 }
 
 testmarkedauto() {
@@ -1114,8 +1126,8 @@ testsuccess() {
 	if $@ >${OUTPUT} 2>&1; then
 		msgpass
 	else
-		echo
-		cat $OUTPUT
+		echo >&2
+		cat >&2 $OUTPUT
 		msgfail
 	fi
 }
@@ -1128,11 +1140,32 @@ testfailure() {
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if $@ >${OUTPUT} 2>&1; then
-		echo
-		cat $OUTPUT
+		echo >&2
+		cat >&2 $OUTPUT
 		msgfail
 	else
 		msgpass
+	fi
+}
+
+testwebserverlaststatuscode() {
+	local DOWNLOG='rootdir/tmp/webserverstatus-testfile.log'
+	local STATUS='rootdir/tmp/webserverstatus-statusfile.log'
+	rm -f "$DOWNLOG" "$STATUS"
+	msgtest 'Test last status code from the webserver was' "$1"
+	downloadfile "http://localhost:8080/_config/find/aptwebserver::last-status-code" "$STATUS" > "$DOWNLOG"
+	if [ "$(cat "$STATUS")" = "$1" ]; then
+		msgpass
+	else
+		echo >&2
+		if [ -n "$2" ]; then
+			shift
+			echo >&2 '#### Additionally provided output files contain:'
+			cat >&2 "$@"
+		fi
+		echo >&2 '#### Download log of the status code:'
+		cat >&2 "$DOWNLOG"
+		msgfail "Status was $(cat "$STATUS")"
 	fi
 }
 

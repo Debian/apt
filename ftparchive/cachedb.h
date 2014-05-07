@@ -12,16 +12,18 @@
 #ifndef CACHEDB_H
 #define CACHEDB_H
 
-
 #include <apt-pkg/debfile.h>
 
 #include <db.h>
-#include <inttypes.h>
-#include <sys/stat.h>
 #include <errno.h>
 #include <string>
+#include <string.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #include "contents.h"
+
+class FileFd;
 
 class CacheDB
 {

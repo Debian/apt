@@ -3,7 +3,7 @@
 #define PKGLIB_DEBMETAINDEX_H
 
 #include <apt-pkg/metaindex.h>
-#include <apt-pkg/init.h>
+#include <apt-pkg/macros.h>
 
 #include <map>
 #include <string>
@@ -12,6 +12,12 @@
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/sourcelist.h>
 #endif
+#ifndef APT_10_CLEANER_HEADERS
+#include <apt-pkg/init.h>
+#endif
+
+class pkgAcquire;
+class pkgIndexFile;
 
 class debReleaseIndex : public metaIndex {
    public:

@@ -21,9 +21,16 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/policy.h>
 #include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/acquire-item.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+
+#include <string.h>
+#include <unistd.h>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -99,7 +106,7 @@ bool pkgCacheFile::BuildCaches(OpProgress *Progress, bool WithLock)
 // CacheFile::BuildSourceList - Open and build all relevant sources.list/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheFile::BuildSourceList(OpProgress *Progress)
+bool pkgCacheFile::BuildSourceList(OpProgress * /*Progress*/)
 {
    if (SrcList != NULL)
       return true;
@@ -113,7 +120,7 @@ bool pkgCacheFile::BuildSourceList(OpProgress *Progress)
 // CacheFile::BuildPolicy - Open and build all relevant preferences	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCacheFile::BuildPolicy(OpProgress *Progress)
+bool pkgCacheFile::BuildPolicy(OpProgress * /*Progress*/)
 {
    if (Policy != NULL)
       return true;

@@ -1,112 +1,135 @@
+#include <config.h>
+
 #include <apt-pkg/error.h>
 
-#include "assert.h"
+#include <stddef.h>
 #include <string>
 #include <errno.h>
 #include <string.h>
 
-int main(int argc,char *argv[])
+#include <gtest/gtest.h>
+
+TEST(GlobalErrorTest,BasicDiscard)
 {
-	std::string const textOfErrnoZero(strerror(0));
+   GlobalError e;
+   EXPECT_TRUE(e.empty());
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_FALSE(e.Notice("%s Notice", "A"));
+   EXPECT_TRUE(e.empty());
+   EXPECT_FALSE(e.empty(GlobalError::DEBUG));
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_FALSE(e.Error("%s horrible %s %d times", "Something", "happened", 2));
+   EXPECT_TRUE(e.PendingError());
 
-	equals(_error->empty(), true);
-	equals(_error->PendingError(), false);
-	equals(_error->Notice("%s Notice", "A"), false);
-	equals(_error->empty(), true);
-	equals(_error->empty(GlobalError::DEBUG), false);
-	equals(_error->PendingError(), false);
-	equals(_error->Error("%s horrible %s %d times", "Something", "happened", 2), false);
-	equals(_error->PendingError(), true);
-	std::string text;
-	equals(_error->PopMessage(text), false);
-	equals(_error->PendingError(), true);
-	equals(text, "A Notice");
-	equals(_error->PopMessage(text), true);
-	equals(text, "Something horrible happened 2 times");
-	equals(_error->empty(GlobalError::DEBUG), true);
-	equals(_error->PendingError(), false);
-	equals(_error->Error("%s horrible %s %d times", "Something", "happened", 2), false);
-	equals(_error->PendingError(), true);
-	equals(_error->empty(GlobalError::FATAL), false);
-	_error->Discard();
+   std::string text;
+   EXPECT_FALSE(e.PopMessage(text));
+   EXPECT_TRUE(e.PendingError());
+   EXPECT_EQ("A Notice", text);
+   EXPECT_TRUE(e.PopMessage(text));
+   EXPECT_EQ("Something horrible happened 2 times", text);
+   EXPECT_TRUE(e.empty(GlobalError::DEBUG));
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_FALSE(e.Error("%s horrible %s %d times", "Something", "happened", 2));
+   EXPECT_TRUE(e.PendingError());
+   EXPECT_FALSE(e.empty(GlobalError::FATAL));
+   e.Discard();
 
-	equals(_error->empty(), true);
-	equals(_error->PendingError(), false);
-	equals(_error->Notice("%s Notice", "A"), false);
-	equals(_error->Error("%s horrible %s %d times", "Something", "happened", 2), false);
-	equals(_error->PendingError(), true);
-	equals(_error->empty(GlobalError::NOTICE), false);
-	_error->PushToStack();
-	equals(_error->empty(GlobalError::NOTICE), true);
-	equals(_error->PendingError(), false);
-	equals(_error->Warning("%s Warning", "A"), false);
-	equals(_error->empty(GlobalError::ERROR), true);
-	equals(_error->PendingError(), false);
-	_error->RevertToStack();
-	equals(_error->empty(GlobalError::ERROR), false);
-	equals(_error->PendingError(), true);
-	equals(_error->PopMessage(text), false);
-	equals(_error->PendingError(), true);
-	equals(text, "A Notice");
-	equals(_error->PopMessage(text), true);
-	equals(text, "Something horrible happened 2 times");
-	equals(_error->PendingError(), false);
-	equals(_error->empty(), true);
+   EXPECT_TRUE(e.empty());
+   EXPECT_FALSE(e.PendingError());
+}
+TEST(GlobalErrorTest,StackPushing)
+{
+   GlobalError e;
+   EXPECT_FALSE(e.Notice("%s Notice", "A"));
+   EXPECT_FALSE(e.Error("%s horrible %s %d times", "Something", "happened", 2));
+   EXPECT_TRUE(e.PendingError());
+   EXPECT_FALSE(e.empty(GlobalError::NOTICE));
+   e.PushToStack();
+   EXPECT_TRUE(e.empty(GlobalError::NOTICE));
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_FALSE(e.Warning("%s Warning", "A"));
+   EXPECT_TRUE(e.empty(GlobalError::ERROR));
+   EXPECT_FALSE(e.PendingError());
+   e.RevertToStack();
+   EXPECT_FALSE(e.empty(GlobalError::ERROR));
+   EXPECT_TRUE(e.PendingError());
 
-	equals(_error->Notice("%s Notice", "A"), false);
-	equals(_error->Error("%s horrible %s %d times", "Something", "happened", 2), false);
-	equals(_error->PendingError(), true);
-	equals(_error->empty(GlobalError::NOTICE), false);
-	_error->PushToStack();
-	equals(_error->empty(GlobalError::NOTICE), true);
-	equals(_error->PendingError(), false);
-	equals(_error->Warning("%s Warning", "A"), false);
-	equals(_error->empty(GlobalError::ERROR), true);
-	equals(_error->PendingError(), false);
-	_error->MergeWithStack();
-	equals(_error->empty(GlobalError::ERROR), false);
-	equals(_error->PendingError(), true);
-	equals(_error->PopMessage(text), false);
-	equals(_error->PendingError(), true);
-	equals(text, "A Notice");
-	equals(_error->PopMessage(text), true);
-	equals(text, "Something horrible happened 2 times");
-	equals(_error->PendingError(), false);
-	equals(_error->empty(), false);
-	equals(_error->PopMessage(text), false);
-	equals(text, "A Warning");
-	equals(_error->empty(), true);
+   std::string text;
+   EXPECT_FALSE(e.PopMessage(text));
+   EXPECT_TRUE(e.PendingError());
+   EXPECT_EQ("A Notice", text);
+   EXPECT_TRUE(e.PopMessage(text));
+   EXPECT_EQ("Something horrible happened 2 times", text);
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_TRUE(e.empty());
 
-	errno = 0;
-	equals(_error->Errno("errno", "%s horrible %s %d times", "Something", "happened", 2), false);
-	equals(_error->empty(), false);
-	equals(_error->PendingError(), true);
-	equals(_error->PopMessage(text), true);
-	equals(_error->PendingError(), false);
-	equals(text, std::string("Something horrible happened 2 times - errno (0: ").append(textOfErrnoZero).append(")"));
-	equals(_error->empty(), true);
+   EXPECT_FALSE(e.Notice("%s Notice", "A"));
+   EXPECT_FALSE(e.Error("%s horrible %s %d times", "Something", "happened", 2));
+   EXPECT_TRUE(e.PendingError());
+   EXPECT_FALSE(e.empty(GlobalError::NOTICE));
+   e.PushToStack();
+   EXPECT_TRUE(e.empty(GlobalError::NOTICE));
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_FALSE(e.Warning("%s Warning", "A"));
+   EXPECT_TRUE(e.empty(GlobalError::ERROR));
+   EXPECT_FALSE(e.PendingError());
+   e.MergeWithStack();
+   EXPECT_FALSE(e.empty(GlobalError::ERROR));
+   EXPECT_TRUE(e.PendingError());
+   EXPECT_FALSE(e.PopMessage(text));
+   EXPECT_TRUE(e.PendingError());
+   EXPECT_EQ("A Notice", text);
+   EXPECT_TRUE(e.PopMessage(text));
+   EXPECT_EQ("Something horrible happened 2 times", text);
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_FALSE(e.empty());
+   EXPECT_FALSE(e.PopMessage(text));
+   EXPECT_EQ("A Warning", text);
+   EXPECT_TRUE(e.empty());
+}
+TEST(GlobalErrorTest,Errno)
+{
+   GlobalError e;
+   std::string const textOfErrnoZero(strerror(0));
+   errno = 0;
+   EXPECT_FALSE(e.Errno("errno", "%s horrible %s %d times", "Something", "happened", 2));
+   EXPECT_FALSE(e.empty());
+   EXPECT_TRUE(e.PendingError());
+   std::string text;
+   EXPECT_TRUE(e.PopMessage(text));
+   EXPECT_FALSE(e.PendingError());
+   EXPECT_EQ(std::string("Something horrible happened 2 times - errno (0: ").append(textOfErrnoZero).append(")"), text);
+   EXPECT_TRUE(e.empty());
+}
+TEST(GlobalErrorTest,LongMessage)
+{
+   GlobalError e;
+   std::string const textOfErrnoZero(strerror(0));
+   errno = 0;
+   std::string text, longText;
+   for (size_t i = 0; i < 500; ++i)
+      longText.append("a");
+   EXPECT_FALSE(e.Error("%s horrible %s %d times", longText.c_str(), "happened", 2));
+   EXPECT_TRUE(e.PopMessage(text));
+   EXPECT_EQ(std::string(longText).append(" horrible happened 2 times"), text);
 
-	std::string longText;
-	for (size_t i = 0; i < 500; ++i)
-		longText.append("a");
-	equals(_error->Error("%s horrible %s %d times", longText.c_str(), "happened", 2), false);
-	equals(_error->PopMessage(text), true);
-	equals(text, std::string(longText).append(" horrible happened 2 times"));
+   EXPECT_FALSE(e.Errno("errno", "%s horrible %s %d times", longText.c_str(), "happened", 2));
+   EXPECT_TRUE(e.PopMessage(text));
+   EXPECT_EQ(std::string(longText).append(" horrible happened 2 times - errno (0: ").append(textOfErrnoZero).append(")"), text);
+}
+TEST(GlobalErrorTest,UTF8Message)
+{
+   GlobalError e;
+   std::string text;
 
-	equals(_error->Errno("errno", "%s horrible %s %d times", longText.c_str(), "happened", 2), false);
-	equals(_error->PopMessage(text), true);
-	equals(text, std::string(longText).append(" horrible happened 2 times - errno (0: ").append(textOfErrnoZero).append(")"));
+   EXPECT_FALSE(e.Warning("Репозиторий не обновлён и будут %d %s", 4, "test"));
+   EXPECT_FALSE(e.PopMessage(text));
+   EXPECT_EQ("Репозиторий не обновлён и будут 4 test", text);
 
-	equals(_error->Warning("Репозиторий не обновлён и будут %d %s", 4, "test"), false);
-	equals(_error->PopMessage(text), false);
-	equals(text, "Репозиторий не обновлён и будут 4 test");
-
-	longText.clear();
-	for (size_t i = 0; i < 50; ++i)
-		longText.append("РезийбёбAZ");
-	equals(_error->Warning("%s", longText.c_str()), false);
-	equals(_error->PopMessage(text), false);
-	equals(text, longText);
-
-	return 0;
+   std::string longText;
+   for (size_t i = 0; i < 50; ++i)
+      longText.append("РезийбёбAZ");
+   EXPECT_FALSE(e.Warning("%s", longText.c_str()));
+   EXPECT_FALSE(e.PopMessage(text));
+   EXPECT_EQ(longText, text);
 }

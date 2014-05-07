@@ -18,8 +18,8 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/progress.h>
 #include <apt-pkg/sourcelist.h>
 #include <apt-pkg/pkgcachegen.h>
 #include <apt-pkg/version.h>
@@ -30,14 +30,14 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/mmap.h>
 
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <unistd.h>
-#include <locale.h>
-
-#include <fstream>
+#include <stdlib.h>
 
 #include "apt-extracttemplates.h"
 
@@ -137,7 +137,7 @@ bool DebFile::DoItem(Item &I, int &Fd)
 // DebFile::Process examine element in package and copy			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool DebFile::Process(Item &I, const unsigned char *data, 
+bool DebFile::Process(Item &/*I*/, const unsigned char *data,
 		unsigned long size, unsigned long pos)
 {
 	switch (Which)
@@ -212,7 +212,7 @@ bool DebFile::ParseInfo()
 // ShowHelp - show a short help text					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-int ShowHelp(void)
+static int ShowHelp(void)
 {
    	ioprintf(cout,_("%s %s for %s compiled on %s %s\n"),PACKAGE,PACKAGE_VERSION,
 	    COMMON_ARCH,__DATE__,__TIME__);
@@ -237,26 +237,28 @@ int ShowHelp(void)
 // WriteFile - write the contents of the passed string to a file	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string WriteFile(const char *package, const char *prefix, const char *data)
+static string WriteFile(const char *package, const char *prefix, const char *data)
 {
 	char fn[512];
-	static int i;
 
         std::string tempdir = GetTempDir();
-	snprintf(fn, sizeof(fn), "%s/%s.%s.%u%d",
+	snprintf(fn, sizeof(fn), "%s/%s.%s.XXXXXX",
                  _config->Find("APT::ExtractTemplates::TempDir", 
                                tempdir.c_str()).c_str(),
-                 package, prefix, getpid(), i++);
+                 package, prefix);
 	FileFd f;
 	if (data == NULL)
 		data = "";
-
-	if (!f.Open(fn, FileFd::WriteTemp, 0600))
+        int fd = mkstemp(fn);
+        if (fd < 0) {
+		_error->Errno("ofstream::ofstream",_("Unable to mkstemp %s"),fn);
+                return string();
+        }
+	if (!f.OpenDescriptor(fd, FileFd::WriteOnly, FileFd::None, true))
 	{
 		_error->Errno("ofstream::ofstream",_("Unable to write to %s"),fn);
 		return string();
 	}
-
 	f.Write(data, strlen(data));
 	f.Close();
 	return fn;
@@ -265,7 +267,7 @@ string WriteFile(const char *package, const char *prefix, const char *data)
 // WriteConfig - write out the config data from a debian package file	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void WriteConfig(const DebFile &file)
+static void WriteConfig(const DebFile &file)
 {
 	string templatefile = WriteFile(file.Package.c_str(), "template", file.Template);
 	string configscript = WriteFile(file.Package.c_str(), "config", file.Config);
@@ -279,7 +281,7 @@ void WriteConfig(const DebFile &file)
 // InitCache - initialize the package cache				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool Go(CommandLine &CmdL)
+static bool Go(CommandLine &CmdL)
 {	
 	// Initialize the apt cache
 	MMap *Map = 0;

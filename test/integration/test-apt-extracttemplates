@@ -1,0 +1,45 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+# apt-extracttemplates needs this
+insertinstalledpackage 'debconf' 'amd64' '1.5'
+insertinstalledpackage 'pkg-with-template' 'amd64' '1.0'
+
+# build a simple package that contains a config and a tempalte
+mkdir -p DEBIAN
+TEMPLATE_STR="Template: foo/bar
+Type: string
+Description: Some bar var
+"
+echo "$TEMPLATE_STR" > DEBIAN/templates
+
+CONFIG_STR="#!/bin/sh
+random shell stuff
+"
+echo "$CONFIG_STR" > DEBIAN/config
+
+buildsimplenativepackage 'pkg-with-template' 'amd64' '0.8.15' 'stable' '' 'pkg with template' '' '' './DEBIAN' 
+
+# ensure we get the right stuff out of the file
+mkdir extracttemplates-out
+OUT="$(aptextracttemplates -t ./extracttemplates-out incoming/pkg-with-template*.deb)"
+
+PKG=$(printf "$OUT" | cut -f1 -d' ')
+INSTALLED_VER=$(printf "$OUT" | cut -f2 -d' ')
+TEMPLATE=$(printf "$OUT" | cut -f3 -d' ')
+CONFIG=$(printf "$OUT" | cut -f4 -d' ')
+
+testequal "$CONFIG_STR" cat $CONFIG
+testequal "$TEMPLATE_STR" cat $TEMPLATE
+
+# ensure that the format of the output string has the right number of dots
+for s in "$CONFIG" "$TEMPLATE"; do
+    NR_DOTS=$(basename "$s" | tr -c -d .)
+    testequal ".." echo $NR_DOTS
+done

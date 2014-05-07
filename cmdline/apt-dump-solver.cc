@@ -9,16 +9,18 @@
 // Include Files							/*{{{*/
 #include <apt-pkg/edsp.h>
 
-#include <config.h>
-
+#include <string.h>
+#include <unistd.h>
 #include <cstdio>
 #include <iostream>
+
+#include <config.h>
 									/*}}}*/
 
 // ShowHelp - Show a help screen					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool ShowHelp() {
+static bool ShowHelp() {
 
 	std::cout <<
 		PACKAGE " " PACKAGE_VERSION " for " COMMON_ARCH " compiled on " __DATE__ " " __TIME__ << std::endl <<

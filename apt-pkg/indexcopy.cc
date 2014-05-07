@@ -20,17 +20,17 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/indexrecords.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/cdrom.h>
+#include <apt-pkg/gpgv.h>
+#include <apt-pkg/hashes.h>
 
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "indexcopy.h"
 #include <apti18n.h>
@@ -65,7 +65,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	   c != compressor.end(); ++c)
       {
-	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	 if (stat((file + c->Extension).c_str(), &Buf) != 0)
 	    continue;
 	 found = true;
 	 break;
@@ -160,7 +160,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	    
 	    // Get the size
 	    struct stat Buf;
-	    if (stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0 || 
+	    if (stat((CDROM + Prefix + File).c_str(),&Buf) != 0 || 
 		Buf.st_size == 0)
 	    {
 	       bool Mangled = false;
@@ -175,7 +175,7 @@ bool IndexCopy::CopyPackages(string CDROM,string Name,vector<string> &List,
 	       }
 	       
 	       if (Mangled == false ||
-		   stat(string(CDROM + Prefix + File).c_str(),&Buf) != 0)
+		   stat((CDROM + Prefix + File).c_str(),&Buf) != 0)
 	       {
 		  if (Debug == true)
 		     clog << "Missed(2): " << OrigFile << endl;
@@ -286,7 +286,7 @@ bool IndexCopy::ReconstructPrefix(string &Prefix,string OrigPath,string CD,
    while (1)
    {
       struct stat Buf;
-      if (stat(string(CD + MyPrefix + File).c_str(),&Buf) != 0)
+      if (stat((CD + MyPrefix + File).c_str(),&Buf) != 0)
       {
 	 if (Debug == true)
 	    cout << "Failed, " << CD + MyPrefix + File << endl;
@@ -315,7 +315,7 @@ bool IndexCopy::ReconstructChop(unsigned long &Chop,string Dir,string File)
    while (1)
    {
       struct stat Buf;
-      if (stat(string(Dir + File).c_str(),&Buf) != 0)
+      if (stat((Dir + File).c_str(),&Buf) != 0)
       {
 	 File = ChopDirs(File,1);
 	 Depth++;
@@ -436,8 +436,8 @@ bool PackageCopy::GetFile(string &File,unsigned long long &Size)
 /* */
 bool PackageCopy::RewriteEntry(FILE *Target,string File)
 {
-   TFRewriteData Changes[] = {{"Filename",File.c_str()},
-                              {}};
+   TFRewriteData Changes[] = {{ "Filename", File.c_str(), NULL },
+                              { NULL, NULL, NULL }};
    
    if (TFRewrite(Target,*Section,TFRewritePackageOrder,Changes) == false)
       return false;
@@ -482,8 +482,8 @@ bool SourceCopy::GetFile(string &File,unsigned long long &Size)
 bool SourceCopy::RewriteEntry(FILE *Target,string File)
 {
    string Dir(File,0,File.rfind('/'));
-   TFRewriteData Changes[] = {{"Directory",Dir.c_str()},
-                              {}};
+   TFRewriteData Changes[] = {{ "Directory", Dir.c_str(), NULL },
+                              { NULL, NULL, NULL }};
    
    if (TFRewrite(Target,*Section,TFRewriteSourceOrder,Changes) == false)
       return false;
@@ -551,7 +551,7 @@ bool SigVerify::CopyMetaIndex(string CDROM, string CDName,		/*{{{*/
 }
 									/*}}}*/
 bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	/*{{{*/
-			      vector<string> PkgList,vector<string> SrcList)
+			      vector<string> /*PkgList*/,vector<string> /*SrcList*/)
 {
    if (SigList.empty() == true)
       return true;
@@ -642,16 +642,14 @@ bool SigVerify::CopyAndVerify(string CDROM,string Name,vector<string> &SigList,	
 }
 									/*}}}*/
 // SigVerify::RunGPGV - deprecated wrapper calling ExecGPGV		/*{{{*/
-bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
+APT_NORETURN bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
       int const &statusfd, int fd[2]) {
    ExecGPGV(File, FileOut, statusfd, fd);
-   return false;
-};
-bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
+}
+APT_NORETURN bool SigVerify::RunGPGV(std::string const &File, std::string const &FileOut,
       int const &statusfd) {
    ExecGPGV(File, FileOut, statusfd);
-   return false;
-};
+}
 									/*}}}*/
 bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 				vector<string> &List, pkgCdromStatus *log)
@@ -676,7 +674,7 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
       for (std::vector<APT::Configuration::Compressor>::const_iterator c = compressor.begin();
 	   c != compressor.end(); ++c)
       {
-	 if (stat(std::string(file + c->Extension).c_str(), &Buf) != 0)
+	 if (stat((file + c->Extension).c_str(), &Buf) != 0)
 	    continue;
 	 found = true;
 	 break;

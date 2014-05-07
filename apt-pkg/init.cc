@@ -15,9 +15,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
 
+#include <string.h>
+#include <string>
 #include <cstdlib>
-#include <sys/stat.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -84,6 +86,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.save$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.orig$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
 
    // Default cdrom mount point
    Cnf.CndSet("Acquire::cdrom::mount", "/media/cdrom/");

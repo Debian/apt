@@ -18,15 +18,18 @@
 
 
 #include <limits>
-#include <stdlib.h>
 #include <string>
 #include <cstring>
 #include <vector>
 #include <iostream>
 #include <time.h>
+#include <stddef.h>
 
 #include "macros.h"
 
+#ifndef APT_10_CLEANER_HEADERS
+#include <stdlib.h>
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 using std::vector;
@@ -37,8 +40,8 @@ namespace APT {
    namespace String {
       std::string Strip(const std::string &s);
       bool Endswith(const std::string &s, const std::string &ending);
-   };
-};
+   }
+}
 
 
 bool UTF8ToCodeset(const char *codeset, const std::string &orig, std::string *dest);
@@ -60,9 +63,9 @@ std::string Base64Encode(const std::string &Str);
 std::string OutputInDepth(const unsigned long Depth, const char* Separator="  ");
 std::string URItoFileName(const std::string &URI);
 std::string TimeRFC1123(time_t Date);
-bool RFC1123StrToTime(const char* const str,time_t &time) __must_check;
-bool FTPMDTMStrToTime(const char* const str,time_t &time) __must_check;
-__deprecated bool StrToTime(const std::string &Val,time_t &Result);
+bool RFC1123StrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
+bool FTPMDTMStrToTime(const char* const str,time_t &time) APT_MUSTCHECK;
+APT_DEPRECATED bool StrToTime(const std::string &Val,time_t &Result);
 std::string LookupTag(const std::string &Message,const char *Tag,const char *Default = 0);
 int StringToBool(const std::string &Text,int Default = -1);
 bool ReadMessages(int Fd, std::vector<std::string> &List);
@@ -76,7 +79,7 @@ bool TokSplitString(char Tok,char *Input,char **List,
 		    unsigned long ListMax);
 
 // split a given string by a char
-std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) __attrib_const;
+std::vector<std::string> VectorizeString(std::string const &haystack, char const &split) APT_CONST;
 
 /* \brief Return a vector of strings from string "input" where "sep"
  * is used as the delimiter string.
@@ -94,56 +97,56 @@ std::vector<std::string> VectorizeString(std::string const &haystack, char const
  */
 std::vector<std::string> StringSplit(std::string const &input, 
                                      std::string const &sep, 
-                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) __attrib_const;
+                                     unsigned int maxsplit=std::numeric_limits<unsigned int>::max()) APT_CONST;
 
-void ioprintf(std::ostream &out,const char *format,...) __like_printf(2);
-void strprintf(std::string &out,const char *format,...) __like_printf(2);
-char *safe_snprintf(char *Buffer,char *End,const char *Format,...) __like_printf(3);
+void ioprintf(std::ostream &out,const char *format,...) APT_PRINTF(2);
+void strprintf(std::string &out,const char *format,...) APT_PRINTF(2);
+char *safe_snprintf(char *Buffer,char *End,const char *Format,...) APT_PRINTF(3);
 bool CheckDomainList(const std::string &Host, const std::string &List);
-int tolower_ascii(int const c) __attrib_const __hot;
+int tolower_ascii(int const c) APT_CONST APT_HOT;
 std::string StripEpoch(const std::string &VerStr);
 
 #define APT_MKSTRCMP(name,func) \
-inline int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));}; \
-inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
-inline int name(const std::string& A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));}; \
-inline int name(const std::string& A,const std::string& B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());}; \
-inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);};
+inline APT_PURE int name(const char *A,const char *B) {return func(A,A+strlen(A),B,B+strlen(B));} \
+inline APT_PURE int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const char *B) {return func(A.c_str(),A.c_str()+A.length(),B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const std::string& B) {return func(A.c_str(),A.c_str()+A.length(),B.c_str(),B.c_str()+B.length());} \
+inline APT_PURE int name(const std::string& A,const char *B,const char *BEnd) {return func(A.c_str(),A.c_str()+A.length(),B,BEnd);}
 
 #define APT_MKSTRCMP2(name,func) \
-inline int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));}; \
-inline int name(const std::string& A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));}; \
-inline int name(const std::string& A,const std::string& B) {return func(A.begin(),A.end(),B.begin(),B.end());}; \
-inline int name(const std::string& A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);};
+inline APT_PURE int name(const char *A,const char *AEnd,const char *B) {return func(A,AEnd,B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const char *B) {return func(A.begin(),A.end(),B,B+strlen(B));} \
+inline APT_PURE int name(const std::string& A,const std::string& B) {return func(A.begin(),A.end(),B.begin(),B.end());} \
+inline APT_PURE int name(const std::string& A,const char *B,const char *BEnd) {return func(A.begin(),A.end(),B,BEnd);}
 
-int stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
-int stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+int APT_PURE stringcmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
+int APT_PURE stringcasecmp(const char *A,const char *AEnd,const char *B,const char *BEnd);
 
 /* We assume that GCC 3 indicates that libstdc++3 is in use too. In that
    case the definition of string::const_iterator is not the same as
    const char * and we need these extra functions */
 #if __GNUC__ >= 3
-int stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
 	      const char *B,const char *BEnd);
-int stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcmp(std::string::const_iterator A,std::string::const_iterator AEnd,
 	      std::string::const_iterator B,std::string::const_iterator BEnd);
-int stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
 		  const char *B,const char *BEnd);
-int stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
+int APT_PURE stringcasecmp(std::string::const_iterator A,std::string::const_iterator AEnd,
                   std::string::const_iterator B,std::string::const_iterator BEnd);
 
-inline int stringcmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcmp(A,Aend,B,B+strlen(B));};
-inline int stringcasecmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcasecmp(A,Aend,B,B+strlen(B));};
+inline APT_PURE int stringcmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcmp(A,Aend,B,B+strlen(B));}
+inline APT_PURE int stringcasecmp(std::string::const_iterator A,std::string::const_iterator Aend,const char *B) {return stringcasecmp(A,Aend,B,B+strlen(B));}
 #endif
 
-APT_MKSTRCMP2(stringcmp,stringcmp);
-APT_MKSTRCMP2(stringcasecmp,stringcasecmp);
+APT_MKSTRCMP2(stringcmp,stringcmp)
+APT_MKSTRCMP2(stringcasecmp,stringcasecmp)
 
 // Return the length of a NULL-terminated string array
-size_t strv_length(const char **str_array);
+size_t APT_PURE strv_length(const char **str_array);
 
 
-inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);};
+inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);}
 
 class URI
 {
@@ -159,13 +162,13 @@ class URI
    unsigned int Port;
    
    operator std::string();
-   inline void operator =(const std::string &From) {CopyFrom(From);};
+   inline void operator =(const std::string &From) {CopyFrom(From);}
    inline bool empty() {return Access.empty();};
    static std::string SiteOnly(const std::string &URI);
    static std::string NoUserPassword(const std::string &URI);
    
-   URI(std::string Path) {CopyFrom(Path);};
-   URI() : Port(0) {};
+   URI(std::string Path) {CopyFrom(Path);}
+   URI() : Port(0) {}
 };
 
 struct SubstVar

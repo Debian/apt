@@ -7,6 +7,7 @@
 #define APT_CACHEFILTER_H
 // Include Files							/*{{{*/
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
 #include <string>
 
@@ -17,9 +18,12 @@ namespace CacheFilter {
 
 class PackageMatcher {
  public:
-   virtual bool operator() (pkgCache::PkgIterator const &Pkg) { return false; };
-   virtual bool operator() (pkgCache::GrpIterator const &Grp) { return false; };
-   virtual bool operator() (pkgCache::VerIterator const &Ver) { return false; };
+   virtual bool operator() (pkgCache::PkgIterator const &/*Pkg*/) { 
+      return false; };
+   virtual bool operator() (pkgCache::GrpIterator const &/*Grp*/) { 
+      return false; };
+   virtual bool operator() (pkgCache::VerIterator const &/*Ver*/) {
+      return false; };
    
    virtual ~PackageMatcher() {};
 };

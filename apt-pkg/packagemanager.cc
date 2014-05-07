@@ -13,7 +13,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/orderlist.h>
@@ -24,7 +24,14 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <list>
+#include <string>
 #include <iostream>
 
 #include <apti18n.h>
@@ -615,6 +622,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
         clog << " (replace version " << Pkg.CurrentVer().VerStr() << " with " << InstallVer.VerStr() << ")";
       if (PkgLoop)
         clog << " (Only Perform PreUnpack Checks)";
+      if (Immediate)
+	 clog << " immediately";
       clog << endl;
    }
 
@@ -741,7 +750,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       // See if the current version is conflicting
 	       if (ConflictPkg.CurrentVer() == Ver && List->IsNow(ConflictPkg))
 	       {
-		  clog << OutputInDepth(Depth) << Pkg.FullName() << " conflicts with " << ConflictPkg.FullName() << endl;
+		  if (Debug)
+		     clog << OutputInDepth(Depth) << Pkg.FullName() << " conflicts with " << ConflictPkg.FullName() << endl;
 		  /* If a loop is not present or has not yet been detected, attempt to unpack packages
 		     to resolve this conflict. If there is a loop present, remove packages to resolve this conflict */
 		  if (List->IsFlag(ConflictPkg,pkgOrderList::Loop) == false)
@@ -955,21 +965,14 @@ pkgPackageManager::OrderResult pkgPackageManager::OrderInstall()
    for (pkgOrderList::iterator I = List->begin(); I != List->end(); ++I)
    {
       PkgIterator Pkg(Cache,*I);
-      
+
       if (List->IsNow(Pkg) == false)
       {
-         if (!List->IsFlag(Pkg,pkgOrderList::Configured) && !NoImmConfigure) {
-            if (SmartConfigure(Pkg, 0) == false && Debug)
-               _error->Warning("Internal Error, Could not configure %s",Pkg.FullName().c_str());
-            // FIXME: The above warning message might need changing
-         } else {
-	    if (Debug == true)
-	       clog << "Skipping already done " << Pkg.FullName() << endl;
-	 }
+	 if (Debug == true)
+	    clog << "Skipping already done " << Pkg.FullName() << endl;
 	 continue;
-	 
       }
-      
+
       if (List->IsMissing(Pkg) == true)
       {
 	 if (Debug == true)

@@ -12,6 +12,9 @@ insertpackage 'unstable' 'libnss-mdns' 'amd64,i386' '0.10-6' 'Multi-Arch: same
 Breaks: lib32nss-mdns (<< 0.10-6)'
 insertpackage 'unstable' 'libnss-mdns-i386' 'i386' '0.10-6' 'Multi-Arch: foreign
 Depends: libnss-mdns'
+# introduce some dummies so that there are versions, but none works
+insertpackage 'unstable' 'libnss-mdns-i386' 'amd64' '0.1-6'
+insertpackage 'experimental' 'libnss-mdns-amd64' 'i386,amd64' '0.10-6' 'Provides: libnss-mdns-i386'
 
 insertpackage 'unstable' 'foo' 'amd64' '1' 'Depends: libfoo'
 insertpackage 'unstable' 'libfoo' 'amd64' '1' 'Depends: libfoo-bin'

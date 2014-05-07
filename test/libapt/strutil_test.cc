@@ -1,91 +1,72 @@
+#include <config.h>
 #include <apt-pkg/strutl.h>
+#include <string>
+#include <vector>
 
-#include "assert.h"
+#include <gtest/gtest.h>
 
-int main(int argc,char *argv[])
+TEST(StrUtilTest,DeEscapeString)
 {
-   std::string input, output, expected;
-
-   // no input
-   input = "foobar";
-   expected = "foobar";
-   output = DeEscapeString(input);
-   equals(output, expected);
-
+   // nothing special
+   EXPECT_EQ("", DeEscapeString(""));
+   EXPECT_EQ("foobar", DeEscapeString("foobar"));
    // hex and octal
-   input = "foo\\040bar\\x0abaz";
-   expected = "foo bar\nbaz";
-   output = DeEscapeString(input);
-   equals(output, expected);
+   EXPECT_EQ("foo bar\nbaz", DeEscapeString("foo\\040bar\\x0abaz"));
+   EXPECT_EQ("foo ", DeEscapeString("foo\\040"));
+   EXPECT_EQ("\nbaz", DeEscapeString("\\x0abaz"));
+   EXPECT_EQ("/media/Ubuntu 11.04 amd64", DeEscapeString("/media/Ubuntu\\04011.04\\040amd64"));
+   // double slashes
+   EXPECT_EQ("foo\\ x", DeEscapeString("foo\\\\ x"));
+   EXPECT_EQ("\\foo\\", DeEscapeString("\\\\foo\\\\"));
+}
+TEST(StrUtilTest,StringSplitBasic)
+{
+   std::vector<std::string> result = StringSplit("", "");
+   EXPECT_EQ(result.size(), 0);
 
-   // at the end
-   input = "foo\\040";
-   expected = "foo ";
-   output = DeEscapeString(input);
-   equals(output, expected);
+   result = StringSplit("abc", "");
+   EXPECT_EQ(result.size(), 0);
 
-   // double escape
-   input = "foo\\\\ x";
-   expected = "foo\\ x";
-   output = DeEscapeString(input);
-   equals(output, expected);
+   result = StringSplit("", "abc");
+   EXPECT_EQ(result.size(), 1);
 
-   // double escape at the end
-   input = "\\\\foo\\\\";
-   expected = "\\foo\\";
-   output = DeEscapeString(input);
-   equals(output, expected);
+   result = StringSplit("abc", "b");
+   ASSERT_EQ(result.size(), 2);
+   EXPECT_EQ(result[0], "a");
+   EXPECT_EQ(result[1], "c");
 
-   // the string that we actually need it for
-   input = "/media/Ubuntu\\04011.04\\040amd64";
-   expected = "/media/Ubuntu 11.04 amd64";
-   output = DeEscapeString(input);
-   equals(output, expected);
+   result = StringSplit("abc", "abc");
+   ASSERT_EQ(result.size(), 2);
+   EXPECT_EQ(result[0], "");
+   EXPECT_EQ(result[1], "");
+}
+TEST(StrUtilTest,StringSplitDpkgStatus)
+{
+   std::string const input = "status: libnet1:amd64: unpacked";
+   std::vector<std::string> result = StringSplit(input, "xxx");
+   ASSERT_EQ(result.size(), 1);
+   EXPECT_EQ(result[0], input);
 
-   // Split
-   input = "status: libnet1:amd64: unpacked";
-   vector<std::string> result = StringSplit(input, ": ");
-   equals(result[0], "status");
-   equals(result[1], "libnet1:amd64");
-   equals(result[2], "unpacked");
-   equals(result.size(), 3);
-
-   input = "status: libnet1:amd64: unpacked";
-   result = StringSplit(input, "xxx");
-   equals(result[0], input);
-   equals(result.size(), 1);
-
-   input = "status: libnet1:amd64: unpacked";
    result = StringSplit(input, "");
-   equals(result.size(), 0);
+   EXPECT_EQ(result.size(), 0);
 
-   input = "x:y:z";
-   result = StringSplit(input, ":", 2);
-   equals(result.size(), 2);
-   equals(result[0], "x");
-   equals(result[1], "y:z");
+   result = StringSplit(input, ": ");
+   ASSERT_EQ(result.size(), 3);
+   EXPECT_EQ(result[0], "status");
+   EXPECT_EQ(result[1], "libnet1:amd64");
+   EXPECT_EQ(result[2], "unpacked");
 
-   input = "abc";
-   result = StringSplit(input, "");
-   equals(result.size(), 0);
-
-   // endswith
-   bool b;
-   input = "abcd";
-   b = APT::String::Endswith(input, "d");
-   equals(b, true);
-
-   b = APT::String::Endswith(input, "cd");
-   equals(b, true);
-
-   b = APT::String::Endswith(input, "abcd");
-   equals(b, true);
-
-   b = APT::String::Endswith(input, "x");
-   equals(b, false);
-
-   b = APT::String::Endswith(input, "abcndefg");
-   equals(b, false);
-
-   return 0;
+   result = StringSplit("x:y:z", ":", 2);
+   ASSERT_EQ(result.size(), 2);
+   EXPECT_EQ(result[0], "x");
+   EXPECT_EQ(result[1], "y:z");
+}
+TEST(StrUtilTest,EndsWith)
+{
+   using APT::String::Endswith;
+   EXPECT_TRUE(Endswith("abcd", "d"));
+   EXPECT_TRUE(Endswith("abcd", "cd"));
+   EXPECT_TRUE(Endswith("abcd", "abcd"));
+   EXPECT_FALSE(Endswith("abcd", "x"));
+   EXPECT_FALSE(Endswith("abcd", "abcndefg"));
 }

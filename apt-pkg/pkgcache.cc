@@ -29,12 +29,15 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/mmap.h>
 #include <apt-pkg/macros.h>
 
+#include <stddef.h>
+#include <string.h>
+#include <ostream>
+#include <vector>
 #include <string>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <ctype.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -52,7 +55,11 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    MajorVersion = 9;
-   MinorVersion = 0;
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+   MinorVersion = 2;
+#else
+   MinorVersion = 1;
+#endif
    Dirty = false;
    
    HeaderSz = sizeof(pkgCache::Header);
@@ -414,7 +421,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 // GrpIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical group in the hash table. */
-void pkgCache::GrpIterator::operator ++(int) 
+void pkgCache::GrpIterator::operator ++(int)
 {
    // Follow the current links
    if (S != Owner->GrpP)
@@ -426,12 +433,12 @@ void pkgCache::GrpIterator::operator ++(int)
       HashIndex++;
       S = Owner->GrpP + Owner->HeaderP->GrpHashTable[HashIndex];
    }
-};
+}
 									/*}}}*/
 // PkgIterator::operator ++ - Postfix incr				/*{{{*/
 // ---------------------------------------------------------------------
 /* This will advance to the next logical package in the hash table. */
-void pkgCache::PkgIterator::operator ++(int) 
+void pkgCache::PkgIterator::operator ++(int)
 {
    // Follow the current links
    if (S != Owner->PkgP)
@@ -443,7 +450,7 @@ void pkgCache::PkgIterator::operator ++(int)
       HashIndex++;
       S = Owner->PkgP + Owner->HeaderP->PkgHashTable[HashIndex];
    }
-};
+}
 									/*}}}*/
 // PkgIterator::State - Check the State of the package			/*{{{*/
 // ---------------------------------------------------------------------
@@ -475,26 +482,26 @@ pkgCache::PkgIterator::OkState pkgCache::PkgIterator::State() const
 // ---------------------------------------------------------------------
 /* Return string representing of the candidate version. */
 const char *
-pkgCache::PkgIterator::CandVersion() const 
+pkgCache::PkgIterator::CandVersion() const
 {
   //TargetVer is empty, so don't use it.
   VerIterator version = pkgPolicy(Owner).GetCandidateVer(*this);
   if (version.IsGood())
     return version.VerStr();
   return 0;
-};
+}
 									/*}}}*/
 // PkgIterator::CurVersion - Returns the current version string		/*{{{*/
 // ---------------------------------------------------------------------
 /* Return string representing of the current version. */
 const char *
-pkgCache::PkgIterator::CurVersion() const 
+pkgCache::PkgIterator::CurVersion() const
 {
   VerIterator version = CurrentVer();
   if (version.IsGood())
     return CurrentVer().VerStr();
   return 0;
-};
+}
 									/*}}}*/
 // ostream operator to handle string representation of a package	/*{{{*/
 // ---------------------------------------------------------------------
@@ -695,7 +702,7 @@ void pkgCache::DepIterator::GlobOr(DepIterator &Start,DepIterator &End)
 // ---------------------------------------------------------------------
 /* Deps like self-conflicts should be ignored as well as implicit conflicts
    on virtual packages. */
-bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &Pkg) const
+bool pkgCache::DepIterator::IsIgnorable(PkgIterator const &/*Pkg*/) const
 {
    if (IsNegative() == false)
       return false;
@@ -978,7 +985,7 @@ string pkgCache::PkgFileIterator::RelStr()
 									/*}}}*/
 // VerIterator::TranslatedDescription - Return the a DescIter for locale/*{{{*/
 // ---------------------------------------------------------------------
-/* return a DescIter for the current locale or the default if none is 
+/* return a DescIter for the current locale or the default if none is
  * found
  */
 pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
@@ -1012,7 +1019,7 @@ pkgCache::DescIterator pkgCache::VerIterator::TranslatedDescription() const
       if (strcmp(Desc.LanguageCode(), "") == 0)
 	 return Desc;
    return DescriptionList();
-};
+}
 
 									/*}}}*/
 // PrvIterator::IsMultiArchImplicit - added by the cache generation	/*{{{*/

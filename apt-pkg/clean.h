@@ -10,8 +10,13 @@
 #ifndef APTPKG_CLEAN_H
 #define APTPKG_CLEAN_H
 
-
+#ifndef APT_10_CLEANER_HEADERS
 #include <apt-pkg/pkgcache.h>
+#endif
+
+#include <string>
+
+class pkgCache;
 
 class pkgArchiveCleaner
 {

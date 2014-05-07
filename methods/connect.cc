@@ -23,7 +23,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sstream>
-
+#include <string.h>
 #include<set>
 #include<string>
 

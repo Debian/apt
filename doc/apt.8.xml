@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+
+<!ENTITY % aptent SYSTEM "apt.ent">
+%aptent;
+
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent">
+%aptverbatiment;
+
+]>
+
+<refentry>
+
+ <refentryinfo>
+   &apt-author.team;
+   &apt-email;
+   &apt-product;
+   <!-- The last update date -->
+   <date>2013-11-25T00:00:00Z</date>
+ </refentryinfo>
+ 
+ <refmeta>
+   <refentrytitle>apt</refentrytitle>
+   <manvolnum>8</manvolnum>
+   <refmiscinfo class="manual">APT</refmiscinfo>
+ </refmeta>
+ 
+ <!-- Man page title -->
+ <refnamediv>
+    <refname>apt</refname>
+    <refpurpose>command-line interface</refpurpose>
+ </refnamediv>
+
+ &synopsis-command-apt;
+
+ <refsect1><title>Description</title>
+   <para><command>apt</command> (Advanced Package Tool) is the
+   command-line tool for handling packages. It provides a commandline
+   interface for the package management of the system.
+
+   See also &apt-get; and &apt-cache; for more low-level command options.
+   </para>
+
+   <variablelist>
+     <varlistentry><term><option>list</option></term>
+     <listitem><para><literal>list</literal> is used to
+     display a list of packages. It supports shell pattern for matching 
+     package names and the following options:
+       <option>--installed</option>, 
+       <option>--upgradable</option>, 
+       <option>--all-versions</option>
+     are supported.
+     </para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><option>search</option></term>
+     <listitem><para><literal>search</literal> searches for the given
+     term(s) and display matching packages.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>show</option></term>
+     <listitem><para><literal>show</literal> shows the package information
+     for the given package(s).
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>install</option></term>
+     <listitem>
+	 <para><literal>install</literal> is followed by one or more 
+	 package names desired for installation or upgrading. 
+	 </para>
+
+     <para>A specific version of a package can be selected for installation by 
+     following the package name with an equals and the version of the package 
+     to select. This will cause that version to be located and selected for
+     install. Alternatively a specific distribution can be selected by 
+     following the package name with a slash and the version of the 
+     distribution or the Archive name (stable, testing, unstable).</para>
+     </listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>remove</option></term>
+     <listitem><para><literal>remove</literal> is identical to <literal>install</literal> except that packages are 
+	 removed instead of installed. Note that removing a package leaves its
+	 configuration files on the system. If a plus sign is appended to the package 
+     name (with no intervening space), the identified package will be 
+     installed instead of removed.</para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>edit-sources</option></term>
+     <listitem><para><literal>edit-sources</literal> lets you edit
+     your sources.list file and provides basic sanity checks.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>update</option></term>
+     <listitem><para><literal>update</literal> is used to
+     resynchronize the package index files from their sources.
+     </para></listitem>
+     </varlistentry>
+     
+     <varlistentry><term><option>upgrade</option></term>
+     <listitem><para><literal>upgrade</literal> is used to install the
+     newest versions of all packages currently installed on the system
+     from the sources enumerated in
+     <filename>/etc/apt/sources.list</filename>. New package will be
+     installed, but existing package will never removed.
+     </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>full-upgrade</option></term>
+     <listitem><para><literal>full-upgrade</literal> performs the
+     function of upgrade but may also remove installed packages
+     if that is required in order to resolve a package conflict.
+     </para></listitem>
+     </varlistentry>
+
+
+   </variablelist>
+ </refsect1>
+ 
+ <refsect1><title>options</title>
+   &apt-cmdblurb;
+
+   <variablelist>
+
+     &apt-commonoptions;
+     
+   </variablelist>
+ </refsect1>
+
+ <refsect1><title>Script usage</title>
+  <para>
+   The &apt; commandline is designed as a end-user tool and it may
+   change the output between versions. While it tries to not break
+   backward compatibility there is no guarantee for it either.
+   All features of &apt; are available in  &apt-cache; and &apt-get;
+   via APT options. Please prefer using these commands in your scripts.
+  </para>
+ </refsect1>
+
+ <refsect1><title>Differences to &apt-get;</title>
+ <para>The <command>apt</command> command is meant to be pleasant for
+ end users and does not need to be backward compatible like
+ &apt-get;. Therefore some options are different:
+ 
+ <itemizedlist>
+   <listitem>
+     <para>The option <literal>DPkg::Progress-Fancy</literal> is enabled.
+     </para>
+   </listitem>
+   <listitem>
+     <para>The option <literal>APT::Color</literal> is enabled.
+     </para>
+   </listitem>
+   <listitem>
+     <para>A new <literal>list</literal> command is available
+     similar to <literal>dpkg --list</literal>.
+     </para>
+   </listitem>
+   <listitem>
+     <para>The option <literal>upgrade</literal> has
+     <literal>--with-new-pkgs</literal> enabled by default.
+     </para>
+   </listitem>
+
+ </itemizedlist>
+ </para>
+
+ </refsect1>
+
+ <refsect1><title>See Also</title>
+   <para>&apt-get;, &apt-cache;, &sources-list;,
+   &apt-conf;, &apt-config;, 
+   The APT User's guide in &guidesdir;, &apt-preferences;, the APT Howto.</para>
+ </refsect1>
+
+ <refsect1><title>Diagnostics</title>
+   <para><command>apt</command> returns zero on normal operation, decimal 100 on error.</para>
+ </refsect1>
+ &manbugs;
+</refentry>

@@ -12,11 +12,13 @@
 #include <config.h>
 
 #include <apt-pkg/edsplistparser.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/strutl.h>
 #include <apt-pkg/md5.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/deblistparser.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/tagfile.h>
+
+#include <string>
 									/*}}}*/
 
 // ListParser::edspListParser - Constructor				/*{{{*/
@@ -84,8 +86,8 @@ bool edspListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 }
 									/*}}}*/
 // ListParser::LoadReleaseInfo - Load the release information		/*{{{*/
-bool edspListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
-				    FileFd &File, std::string component)
+APT_CONST bool edspListParser::LoadReleaseInfo(pkgCache::PkgFileIterator & /*FileI*/,
+				    FileFd & /*File*/, std::string /*component*/)
 {
    return true;
 }

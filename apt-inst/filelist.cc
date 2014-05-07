@@ -39,8 +39,6 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <iostream>
 #include <apti18n.h>
@@ -87,7 +85,7 @@ pkgFLCache::Header::Header()
 // FLCache::Header::CheckSizes - Check if the two headers have same *sz	/*{{{*/
 // ---------------------------------------------------------------------
 /* Compare to make sure we are matching versions */
-bool pkgFLCache::Header::CheckSizes(Header &Against) const
+APT_PURE bool pkgFLCache::Header::CheckSizes(Header &Against) const
 {
    if (HeaderSz == Against.HeaderSz &&
        NodeSz == Against.NodeSz &&
@@ -355,7 +353,7 @@ pkgFLCache::NodeIterator pkgFLCache::GetNode(const char *Name,
 // ---------------------------------------------------------------------
 /* This is one of two hashing functions. The other is inlined into the
    GetNode routine. */
-pkgFLCache::Node *pkgFLCache::HashNode(NodeIterator const &Nde)
+APT_PURE pkgFLCache::Node *pkgFLCache::HashNode(NodeIterator const &Nde)
 {
    // Hash the node
    unsigned long HashPos = 0;
@@ -572,7 +570,7 @@ bool pkgFLCache::AddConfFile(const char *Name,const char *NameEnd,
 // ---------------------------------------------------------------------
 /* Since the package pointer is indirected in all sorts of interesting ways
    this is used to get a pointer to the owning package */
-pkgFLCache::Package *pkgFLCache::NodeIterator::RealPackage() const
+APT_PURE pkgFLCache::Package *pkgFLCache::NodeIterator::RealPackage() const
 {
    if (Nde->Pointer == 0)
       return 0;

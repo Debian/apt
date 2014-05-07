@@ -1,58 +1,36 @@
+#include <config.h>
+
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/tagfile.h>
 
-#include "assert.h"
+#include <string>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-char *tempfile = NULL;
-int tempfile_fd = -1;
+#include <gtest/gtest.h>
 
-void remove_tmpfile(void)
-{
-   if (tempfile_fd > 0)
-      close(tempfile_fd);
-   if (tempfile != NULL) {
-      unlink(tempfile);
-      free(tempfile);
-   }
-}
+#include "file-helpers.h"
 
-int main(int argc, char *argv[])
+TEST(TagFileTest,SingleField)
 {
    FileFd fd;
-   const char contents[] = "FieldA-12345678: the value of the field";
-   atexit(remove_tmpfile);
-   tempfile = strdup("apt-test.XXXXXXXX");
-   tempfile_fd = mkstemp(tempfile);
-
-   /* (Re-)Open (as FileFd), write and seek to start of the temp file */
-   equals(fd.OpenDescriptor(tempfile_fd, FileFd::ReadWrite), true);
-   equals(fd.Write(contents, strlen(contents)), true);
-   equals(fd.Seek(0), true);
+   createTemporaryFile("singlefield", fd, NULL, "FieldA-12345678: the value of the field");
 
    pkgTagFile tfile(&fd);
    pkgTagSection section;
-   equals(tfile.Step(section), true);
-  
-   /* It has one field */
-   equals(section.Count(), 1);
+   ASSERT_TRUE(tfile.Step(section));
 
-   /* ... and it is called FieldA-12345678 */
-   equals(section.Exists("FieldA-12345678"), true);
-
-   /* its value is correct */
-   equals(section.FindS("FieldA-12345678"), std::string("the value of the field"));
-   /* A non-existent field has an empty string as value */
-   equals(section.FindS("FieldB-12345678"), std::string());
-
-   /* ... and Exists does not lie about missing fields... */
-   equalsNot(section.Exists("FieldB-12345678"), true); 
-
-   /* There is only one section in this tag file */
-   equals(tfile.Step(section), false);
-
-   /* clean up handled by atexit handler, so just return here */
-   return 0;
+   // It has one field
+   EXPECT_EQ(1, section.Count());
+   // ... and it is called FieldA-12345678
+   EXPECT_TRUE(section.Exists("FieldA-12345678"));
+   // its value is correct
+   EXPECT_EQ("the value of the field", section.FindS("FieldA-12345678"));
+   // A non-existent field has an empty string as value
+   EXPECT_EQ("", section.FindS("FieldB-12345678"));
+   // ... and Exists does not lie about missing fields...
+   EXPECT_FALSE(section.Exists("FieldB-12345678"));
+   // There is only one section in this tag file
+   EXPECT_FALSE(tfile.Step(section));
 }

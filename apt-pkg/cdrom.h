@@ -1,8 +1,12 @@
 #ifndef PKGLIB_CDROM_H
 #define PKGLIB_CDROM_H
 
+#include <apt-pkg/macros.h>
+
 #include<string>
 #include<vector>
+
+#include <stddef.h>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/init.h>
@@ -71,8 +75,9 @@ class pkgCdrom								/*{{{*/
    bool Add(pkgCdromStatus *log);
 
  private:
-   bool MountAndIdentCDROM(Configuration &Database, std::string &CDROM,
-	 std::string &ident, pkgCdromStatus * const log);
+   APT_HIDDEN bool MountAndIdentCDROM(Configuration &Database, std::string &CDROM,
+	 std::string &ident, pkgCdromStatus * const log, bool const interactive);
+   APT_HIDDEN bool UnmountCDROM(std::string const &CDROM, pkgCdromStatus * const log);
 };
 									/*}}}*/
 

@@ -1,0 +1,132 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'native'
+
+# create a bunch of failures
+createfailure() {
+	setupsimplenativepackage "failure-$1" 'native' '1.0' 'unstable' 'Depends: dependee'
+	BUILDDIR="incoming/failure-$1-1.0"
+	echo '#!/bin/sh
+exit 29' > ${BUILDDIR}/debian/$1
+	buildpackage "$BUILDDIR" 'unstable' 'main' 'native'
+	rm -rf "$BUILDDIR"
+}
+
+buildsimplenativepackage 'dependee' 'native' '1.0' 'unstable'
+createfailure 'preinst'
+createfailure 'postinst'
+createfailure 'prerm'
+createfailure 'postrm'
+
+setupaptarchive
+
+# create a library to noop chroot() and rewrite maintainer script executions
+# via execvp() as used by dpkg as we don't want our rootdir to be a fullblown
+# chroot directory dpkg could chroot into to execute the maintainer scripts
+cat << EOF > noopchroot.c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <dlfcn.h>
+
+static char * chrootdir = NULL;
+
+int chroot(const char *path) {
+	printf("WARNING: CHROOTing to %s was ignored!\n", path);
+	free(chrootdir);
+	chrootdir = strdup(path);
+	return 0;
+}
+int execvp(const char *file, char *const argv[]) {
+	static int (*func_execvp) (const char *, char * const []) = NULL;
+	if (func_execvp == NULL)
+		func_execvp = (int (*) (const char *, char * const [])) dlsym(RTLD_NEXT, "execvp");
+	if (chrootdir == NULL || strncmp(file, "/var/lib/dpkg/", strlen("/var/lib/dpkg/")) != 0)
+		return func_execvp(file, argv);
+	printf("REWRITE execvp call %s into %s\n", file, chrootdir);
+	char newfile[strlen(chrootdir) + strlen(file)];
+	strcpy(newfile, chrootdir);
+	strcat(newfile, file);
+	return func_execvp(newfile, argv);
+}
+EOF
+testsuccess gcc -fPIC -shared -o noopchroot.so noopchroot.c -ldl
+
+mkdir -p "${TMPWORKINGDIRECTORY}/rootdir/usr/bin/"
+DPKG="${TMPWORKINGDIRECTORY}/rootdir/usr/bin/dpkg"
+echo "#!/bin/sh
+if [ -n \"\$LD_PRELOAD\" ]; then
+	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so \${LD_PRELOAD}\"
+else
+	export LD_PRELOAD=\"${TMPWORKINGDIRECTORY}/noopchroot.so\"
+fi
+dpkg \"\$@\"" > $DPKG
+chmod +x $DPKG
+sed -ie "s|^DPKG::options:: \"dpkg\";\$|DPKG::options:: \"$DPKG\";|" aptconfig.conf
+
+# setup some pre- and post- invokes to check the output isn't garbled later
+APTHOOK="${TMPWORKINGDIRECTORY}/rootdir/usr/bin/apthook"
+echo '#!/bin/sh
+echo "$1: START"
+echo "$1: MaiN"
+echo "$1: ENd"' > $APTHOOK
+chmod +x $APTHOOK
+echo "DPKG::Pre-Invoke:: \"${APTHOOK} PRE\";
+DPKG::Post-Invoke:: \"${APTHOOK} POST\";" > rootdir/etc/apt/apt.conf.d/99apthooks
+
+testmyfailure() {
+	local PROGRESS='rootdir/tmp/progress.log'
+	exec 3> $PROGRESS
+	testfailure "$@" -o APT::Status-Fd=3
+	msgtest 'Test for failure message of maintainerscript in' 'console log'
+	local TEST='rootdir/tmp/testfailure.output'
+	if grep -q 'exit status 29' "$TEST"; then
+		msgpass
+	else
+		cat $TEST
+		msgfail
+	fi
+	msgtest 'Test for proper execution of invoke scripts in' 'console log'
+	if grep -q '^PRE: START$' $TEST &&
+		grep -q '^PRE: MaiN$' $TEST &&
+		grep -q '^PRE: ENd$' $TEST &&
+		grep -q '^POST: START$' $TEST &&
+		grep -q '^POST: MaiN$' $TEST &&
+		grep -q '^POST: ENd$' $TEST; then
+		msgpass
+	else
+		cat $TEST
+		msgfail
+	fi
+	msgtest 'Test for failure message of maintainerscript in' 'progress log'
+	if grep -q '^pmerror:.\+exit status 29$' "$PROGRESS"; then
+		msgpass
+	else
+		cat $PROGRESS
+		msgfail
+	fi
+	testmarkedauto 'dependee'
+}
+
+cp -a rootdir/var/lib/dpkg/status rootdir/var/lib/dpkg/status.backup
+testmyfailure aptget install failure-preinst -y
+cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+testmyfailure aptget install failure-postinst -y
+cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+testsuccess aptget install failure-prerm -y
+testdpkginstalled failure-prerm
+testmyfailure aptget purge failure-prerm -y
+cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+testsuccess aptget install failure-postrm -y
+testdpkginstalled failure-postrm
+testmyfailure aptget purge failure-postrm -y
+
+# FIXME: test with output going to a PTY as it usually does
+#cp -a rootdir/var/lib/dpkg/status.backup rootdir/var/lib/dpkg/status
+#aptget install failure-preinst -y

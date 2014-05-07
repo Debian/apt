@@ -16,6 +16,8 @@
 
 #include <string>
 
+#include <apt-pkg/macros.h>
+
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/strutl.h>
 #endif

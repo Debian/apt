@@ -33,8 +33,11 @@
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
 #include <iostream>
+#include <string>
 
 #include <apt-pkg/macros.h>
 
@@ -111,7 +114,7 @@ class pkgProblemResolver						/*{{{*/
    
    // Sort stuff
    static pkgProblemResolver *This;
-   static int ScoreSort(const void *a,const void *b);
+   static int ScoreSort(const void *a,const void *b) APT_PURE;
 
    struct PackageKill
    {
@@ -140,7 +143,7 @@ class pkgProblemResolver						/*{{{*/
    // Try to resolve problems only by using keep
    bool ResolveByKeep();
 
-   __deprecated void InstallProtect();
+   APT_DEPRECATED void InstallProtect();
 
    pkgProblemResolver(pkgDepCache *Cache);
    ~pkgProblemResolver();
