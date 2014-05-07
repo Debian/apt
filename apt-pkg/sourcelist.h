@@ -52,7 +52,15 @@ class pkgAcquire;
 class pkgIndexFile;
 class metaIndex;
 
-class pkgSourceList
+class pkgSource
+{
+   protected:
+
+   std::vector<metaIndex *> SrcList;
+
+};
+
+class pkgSourceList : public pkgSource
 {
    public:
    
@@ -115,11 +123,6 @@ class pkgSourceList
    
    // query last-modified time
    time_t GetLastModifiedTime();
-
-   // Add custom metaIndex (e.g. local files)
-   void AddMetaIndex(metaIndex *mi) {
-      SrcList.push_back(mi);
-   }
 
    pkgSourceList();
    pkgSourceList(std::string File);

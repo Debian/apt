@@ -685,7 +685,9 @@ bool DoInstall(CommandLine &CmdL)
             std::map<std::string, std::string> Options;
             if(Type->CreateItem(List, *I, "", "", Options))
             {
-               pkgSourceList *sources = Cache.GetSourceList();
+               // we have our own CacheFile that gives us a SourceList
+               // with superpowerz
+               SourceList *sources = (SourceList*)Cache.GetSourceList();
                sources->AddMetaIndex(List[0]);
             }
          }
