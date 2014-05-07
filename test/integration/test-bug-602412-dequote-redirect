@@ -20,11 +20,14 @@ testrun() {
 	testsuccess --nomsg aptget update
 
 	# check that I-M-S header is kept in redirections
+        local LOG='update.log'
+        # strip away the [ 304 B ] info
+        aptget update 2>&1 | sed -e 's/\ \[.*//' > $LOG
 	testequal "Hit $1 unstable InRelease
 Hit $1 unstable/main Sources
 Hit $1 unstable/main amd64 Packages
 Hit $1 unstable/main Translation-en
-Reading package lists..." aptget update
+Reading package lists..." cat $LOG
 
 	msgtest 'Test redirection works in' 'package download'
 	testsuccess --nomsg aptget install unrelated --download-only -y
