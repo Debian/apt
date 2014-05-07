@@ -52,7 +52,15 @@ class pkgAcquire;
 class pkgIndexFile;
 class metaIndex;
 
-class pkgSourceList
+class pkgSource
+{
+   protected:
+
+   std::vector<metaIndex *> SrcList;
+
+};
+
+class pkgSourceList : public pkgSource
 {
    public:
    

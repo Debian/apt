@@ -18,6 +18,7 @@
 
 class pkgAcquire;
 class pkgIndexFile;
+class debDebPkgFileIndex;
 
 class debReleaseIndex : public metaIndex {
    public:
@@ -69,6 +70,29 @@ class debReleaseIndex : public metaIndex {
    void PushSectionEntry(std::vector<std::string> const &Archs, const debSectionEntry *Entry);
    void PushSectionEntry(std::string const &Arch, const debSectionEntry *Entry);
    void PushSectionEntry(const debSectionEntry *Entry);
+};
+
+class debDebFileMetaIndex : public metaIndex
+{
+ private:
+   std::string DebFile;
+   debDebPkgFileIndex *DebIndex;
+ public:
+   virtual std::string ArchiveURI(std::string const& /*File*/) const {
+      return DebFile;
+   }
+   virtual bool GetIndexes(pkgAcquire* /*Owner*/, const bool& /*GetAll=false*/) const {
+      return true;
+   }
+   virtual std::vector<pkgIndexFile *> *GetIndexFiles() {
+      return Indexes;
+   }
+   virtual bool IsTrusted() const {
+      return true;
+   }
+   debDebFileMetaIndex(std::string const &DebFile);
+   virtual ~debDebFileMetaIndex() {};
+
 };
 
 #endif

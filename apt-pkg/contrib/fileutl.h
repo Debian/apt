@@ -168,6 +168,8 @@ time_t GetModificationTime(std::string const &Path);
 bool Rename(std::string From, std::string To);
 
 std::string GetTempDir();
+FileFd* GetTempFile(std::string const &Prefix = "", 
+                    bool ImmediateUnlink = true);
 
 /** \brief Ensure the existence of the given Path
  *
@@ -201,7 +203,23 @@ std::string flNoLink(std::string File);
 std::string flExtension(std::string File);
 std::string flCombine(std::string Dir,std::string File);
 
+/** \brief Takes a file path and returns the absolute path
+ */
+std::string flAbsPath(std::string File);
+
 // simple c++ glob
 std::vector<std::string> Glob(std::string const &pattern, int flags=0);
+
+/** \brief Popen() implementation that execv() instead of using a shell
+ *
+ * \param Args the execv style command to run
+ * \param FileFd is a referenz to the FileFd to use for input or output
+ * \param Child a reference to the integer that stores the child pid
+ *        Note that you must call ExecWait() or similar to cleanup
+ * \param Mode is either FileFd::ReadOnly or FileFd::WriteOnly
+ * \return true on success, false on failure with _error set
+ */
+bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode);
+
 
 #endif

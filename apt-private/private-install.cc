@@ -19,6 +19,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/sourcelist.h>
 
 #include <errno.h>
 #include <stdlib.h>
@@ -29,6 +30,7 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include <map>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-install.h>
@@ -669,10 +671,34 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 bool DoInstall(CommandLine &CmdL)
 {
    CacheFile Cache;
+   // first check for local pkgs and add them to the cache
+   for (const char **I = CmdL.FileList; *I != 0; I++)
+   {
+      if(FileExists(*I))
+      {
+         // FIXME: make this more elegant
+         std::string TypeStr = flExtension(*I) + "-file";
+         pkgSourceList::Type *Type = pkgSourceList::Type::GetType(TypeStr.c_str());
+         if(Type != 0)
+         {
+            std::vector<metaIndex *> List;
+            std::map<std::string, std::string> Options;
+            if(Type->CreateItem(List, *I, "", "", Options))
+            {
+               // we have our own CacheFile that gives us a SourceList
+               // with superpowerz
+               SourceList *sources = (SourceList*)Cache.GetSourceList();
+               sources->AddMetaIndex(List[0]);
+            }
+         }
+      }
+   }
+
+   // then open the cache
    if (Cache.OpenForInstall() == false || 
        Cache.CheckDeps(CmdL.FileSize() != 1) == false)
       return false;
-
+   
    std::map<unsigned short, APT::VersionSet> verset;
 
    if(!DoCacheManipulationFromCommandLine(CmdL, Cache, verset))
