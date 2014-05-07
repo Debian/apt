@@ -166,6 +166,16 @@ class pkgAcquire::Item : public WeakPointable
     *  \sa pkgAcquire
     */
    unsigned int QueueCounter;
+
+   /** \brief The number of additional fetch items that are expected
+    *  once this item is done.
+    *
+    *  Some items like pkgAcqMeta{Index,Sig} will queue additional
+    *  items. This variable can be set by the methods if it knows
+    *  in advance how many items to expect to get a more accurate
+    *  progress.
+    */
+   unsigned int ExpectedAdditionalItems;
    
    /** \brief The name of the file into which the retrieved object
     *  will be written.
@@ -395,6 +405,11 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     */
    std::string Description;
 
+   /** \brief Pointer to the IndexTarget data
+    */
+   const struct IndexTarget * Target;
+   indexRecords *MetaIndexParser;
+
  public:
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
@@ -428,8 +443,10 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     *
     *  \param ExpectedHash The list file's MD5 signature.
     */
-   pkgAcqDiffIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
-		   std::string ShortDesc, HashString ExpectedHash);
+   pkgAcqDiffIndex(pkgAcquire *Owner,
+                   struct IndexTarget const * const Target,
+                   HashString ExpectedHash,
+                   indexRecords *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching client-merge patches {{{
@@ -713,6 +730,11 @@ class pkgAcqIndex : public pkgAcquire::Item
     */
    std::string CompressionExtension;
 
+   /** \brief Pointer to the IndexTarget data
+    */
+   const struct IndexTarget * Target;
+   indexRecords *MetaIndexParser;
+
    public:
    
    // Specialized action members
@@ -746,7 +768,7 @@ class pkgAcqIndex : public pkgAcquire::Item
 	       std::string ShortDesc, HashString ExpectedHash, 
 	       std::string compressExt="");
    pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
-			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
+			 HashString const &ExpectedHash, indexRecords *MetaIndexParser);
    void Init(std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc);
 };
 									/*}}}*/
@@ -778,7 +800,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
    pkgAcqIndexTrans(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 		    std::string ShortDesc);
    pkgAcqIndexTrans(pkgAcquire *Owner, struct IndexTarget const * const Target,
-		    HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
+		    HashString const &ExpectedHash, indexRecords *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/

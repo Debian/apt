@@ -714,6 +714,10 @@ class pkgAcquireStatus
    /** \brief The number of items that have been successfully downloaded. */
    unsigned long CurrentItems;
    
+   /** \brief The estimated percentage of the download (0-100)
+    */
+   double Percent;
+
    public:
 
    /** \brief If \b true, the download scheduler should call Pulse()

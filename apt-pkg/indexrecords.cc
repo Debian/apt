@@ -53,7 +53,7 @@ APT_PURE time_t indexRecords::GetValidUntil() const
    return this->ValidUntil;
 }
 
-APT_PURE const indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
+APT_PURE indexRecords::checkSum *indexRecords::Lookup(const string MetaKey)
 {
    std::map<std::string, indexRecords::checkSum* >::const_iterator sum = Entries.find(MetaKey);
    if (sum == Entries.end())

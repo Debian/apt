@@ -41,7 +41,7 @@ class indexRecords
    indexRecords(const std::string ExpectedDist);
 
    // Lookup function
-   virtual const checkSum *Lookup(const std::string MetaKey);
+   virtual checkSum *Lookup(const std::string MetaKey);
    /** \brief tests if a checksum for this file is available */
    bool Exists(std::string const &MetaKey) const;
    std::vector<std::string> MetaKeys();

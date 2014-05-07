@@ -170,7 +170,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
       ScreenWidth = sizeof(Buffer)-1;
 
    // Put in the percent done
-   sprintf(S,"%.0f%%",((CurrentBytes + CurrentItems)*100.0)/(TotalBytes+TotalItems));
+   sprintf(S,"%.0f%%", Percent);
 
    bool Shown = false;
    for (pkgAcquire::Worker *I = Owner->WorkersBegin(); I != 0;
