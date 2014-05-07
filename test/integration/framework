@@ -253,7 +253,8 @@ setupenvironment() {
 	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
 
 	# cleanup the environment a bit
-	export PATH="${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
+        # prefer our apt binaries over the system apt binaries
+	export PATH="${BUILDDIRECTORY}:${PATH}:/usr/local/sbin:/usr/sbin:/sbin"
 	export LC_ALL=C.UTF-8
 	unset LANGUAGE APT_CONFIG
 	unset GREP_OPTIONS DEB_BUILD_PROFILES
