@@ -117,7 +117,7 @@ class pkgSourceList
    time_t GetLastModifiedTime();
 
    // Add custom metaIndex (e.g. local files)
-   void Add(metaIndex *mi) {
+   void AddMetaIndex(metaIndex *mi) {
       SrcList.push_back(mi);
    }
 

@@ -686,7 +686,7 @@ bool DoInstall(CommandLine &CmdL)
             if(Type->CreateItem(List, *I, "", "", Options))
             {
                pkgSourceList *sources = Cache.GetSourceList();
-               sources->Add(List[0]);
+               sources->AddMetaIndex(List[0]);
             }
          }
       }
