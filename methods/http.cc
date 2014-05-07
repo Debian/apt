@@ -45,6 +45,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <iostream>
+#include <sstream>
 
 #include "config.h"
 #include "connect.h"
@@ -667,22 +668,13 @@ void HttpMethod::SendReq(FetchItem *Itm)
    URI Uri = Itm->Uri;
 
    // The HTTP server expects a hostname with a trailing :port
-   char Buf[1000];
+   std::stringstream Req;
    string ProperHost;
 
    if (Uri.Host.find(':') != string::npos)
       ProperHost = '[' + Uri.Host + ']';
    else
       ProperHost = Uri.Host;
-   if (Uri.Port != 0)
-   {
-      sprintf(Buf,":%u",Uri.Port);
-      ProperHost += Buf;
-   }   
-      
-   // Just in case.
-   if (Itm->Uri.length() >= sizeof(Buf))
-       abort();
 
    /* RFC 2616 §5.1.2 requires absolute URIs for requests to proxies,
       but while its a must for all servers to accept absolute URIs,
@@ -701,27 +693,20 @@ void HttpMethod::SendReq(FetchItem *Itm)
       in 1.1, can cause problems with proxies, and we are an HTTP/1.1
       client anyway.
       C.f. https://tools.ietf.org/wg/httpbis/trac/ticket/158 */
-   sprintf(Buf,"GET %s HTTP/1.1\r\nHost: %s\r\n",
-	   requesturi.c_str(),ProperHost.c_str());
+   Req << "GET " << requesturi << " HTTP/1.1\r\n";
+   if (Uri.Port != 0)
+      Req << "Host: " << ProperHost << ":" << Uri.Port << "\r\n";
+   else
+      Req << "Host: " << ProperHost << "\r\n";
 
    // generate a cache control header (if needed)
-   if (_config->FindB("Acquire::http::No-Cache",false) == true) 
-   {
-      strcat(Buf,"Cache-Control: no-cache\r\nPragma: no-cache\r\n");
-   }
-   else
-   {
-      if (Itm->IndexFile == true) 
-      {
-	 sprintf(Buf+strlen(Buf),"Cache-Control: max-age=%u\r\n",
-		 _config->FindI("Acquire::http::Max-Age",0));
-      }
-      else
-      {
-	 if (_config->FindB("Acquire::http::No-Store",false) == true)
-	    strcat(Buf,"Cache-Control: no-store\r\n");
-      }
-   }
+   if (_config->FindB("Acquire::http::No-Cache",false) == true)
+      Req << "Cache-Control: no-cache\r\n"
+	 << "Pragma: no-cache\r\n";
+   else if (Itm->IndexFile == true)
+      Req << "Cache-Control: max-age=" << _config->FindI("Acquire::http::Max-Age",0) << "\r\n";
+   else if (_config->FindB("Acquire::http::No-Store",false) == true)
+      Req << "Cache-Control: no-store\r\n";
 
    // If we ask for uncompressed files servers might respond with content-
    // negotiation which lets us end up with compressed files we do not support,
@@ -733,46 +718,35 @@ void HttpMethod::SendReq(FetchItem *Itm)
       size_t const filepos = Itm->Uri.find_last_of('/');
       string const file = Itm->Uri.substr(filepos + 1);
       if (flExtension(file) == file)
-	 strcat(Buf,"Accept: text/*\r\n");
+	 Req << "Accept: text/*\r\n";
    }
 
-   string Req = Buf;
-
-   // Check for a partial file
+   // Check for a partial file and send if-queries accordingly
    struct stat SBuf;
    if (stat(Itm->DestFile.c_str(),&SBuf) >= 0 && SBuf.st_size > 0)
-   {
-      // In this case we send an if-range query with a range header
-      sprintf(Buf,"Range: bytes=%lli-\r\nIf-Range: %s\r\n",(long long)SBuf.st_size,
-	      TimeRFC1123(SBuf.st_mtime).c_str());
-      Req += Buf;
-   }
-   else
-   {
-      if (Itm->LastModified != 0)
-      {
-	 sprintf(Buf,"If-Modified-Since: %s\r\n",TimeRFC1123(Itm->LastModified).c_str());
-	 Req += Buf;
-      }
-   }
+      Req << "Range: bytes=" << SBuf.st_size << "-\r\n"
+	 << "If-Range: " << TimeRFC1123(SBuf.st_mtime) << "\r\n";
+   else if (Itm->LastModified != 0)
+      Req << "If-Modified-Since: " << TimeRFC1123(Itm->LastModified).c_str() << "\r\n";
 
    if (Server->Proxy.User.empty() == false || Server->Proxy.Password.empty() == false)
-      Req += string("Proxy-Authorization: Basic ") + 
-          Base64Encode(Server->Proxy.User + ":" + Server->Proxy.Password) + "\r\n";
+      Req << "Proxy-Authorization: Basic "
+	 << Base64Encode(Server->Proxy.User + ":" + Server->Proxy.Password) << "\r\n";
 
    maybe_add_auth (Uri, _config->FindFile("Dir::Etc::netrc"));
    if (Uri.User.empty() == false || Uri.Password.empty() == false)
-   {
-      Req += string("Authorization: Basic ") + 
-          Base64Encode(Uri.User + ":" + Uri.Password) + "\r\n";
-   }
-   Req += "User-Agent: " + _config->Find("Acquire::http::User-Agent",
-		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") + "\r\n\r\n";
-   
+      Req << "Authorization: Basic "
+	 << Base64Encode(Uri.User + ":" + Uri.Password) << "\r\n";
+
+   Req << "User-Agent: " << _config->Find("Acquire::http::User-Agent",
+		"Debian APT-HTTP/1.3 (" PACKAGE_VERSION ")") << "\r\n";
+
+   Req << "\r\n";
+
    if (Debug == true)
       cerr << Req << endl;
 
-   Server->WriteResponse(Req);
+   Server->WriteResponse(Req.str());
 }
 									/*}}}*/
 // HttpMethod::Configuration - Handle a configuration message		/*{{{*/

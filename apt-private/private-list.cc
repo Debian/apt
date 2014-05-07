@@ -130,10 +130,11 @@ bool DoList(CommandLine &Cmd)
                             Cache->Head().PackageCount,
                             _("Listing"));
    GetLocalitySortedVersionSet(CacheFile, bag, matcher, progress);
+   bool ShowAllVersions = _config->FindB("APT::Cmd::All-Versions", false);
    for (LocalitySortedVersionSet::iterator V = bag.begin(); V != bag.end(); ++V)
    {
       std::stringstream outs;
-      if(_config->FindB("APT::Cmd::All-Versions", false) == true)
+      if(ShowAllVersions == true)
       {
          ListAllVersions(CacheFile, records, V.ParentPkg(), outs, includeSummary);
          output_map.insert(std::make_pair<std::string, std::string>(
@@ -150,6 +151,18 @@ bool DoList(CommandLine &Cmd)
    for (K = output_map.begin(); K != output_map.end(); ++K)
       std::cout << (*K).second << std::endl;
 
+
+   // be nice and tell the user if there is more to see
+   if (bag.size() == 1 && ShowAllVersions == false)
+   {
+      // start with -1 as we already displayed one version
+      int versions = -1;
+      pkgCache::VerIterator Ver = *bag.begin();
+      for ( ; Ver.end() == false; Ver++)
+         versions++;
+      if (versions > 0)
+         _error->Notice(P_("There is %i additional version. Please use the '-a' switch to see it", "There are %i additional versions. Please use the '-a' switch to see them.", versions), versions);
+   }
 
    return true;
 }

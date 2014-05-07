@@ -96,6 +96,10 @@ int main(int argc, const char *argv[])					/*{{{*/
 
    std::vector<CommandLine::Args> Args = getCommandArgs("apt", CommandLine::GetCommand(Cmds, argc, argv));
 
+   // Init the signals
+   InitSignals();
+
+   // Init the output
    InitOutput();
 
    // Set up gettext support

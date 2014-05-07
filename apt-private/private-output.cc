@@ -22,6 +22,7 @@
 #include <iostream>
 #include <langinfo.h>
 #include <unistd.h>
+#include <signal.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -32,8 +33,24 @@ std::ostream c0out(0);
 std::ostream c1out(0);
 std::ostream c2out(0);
 std::ofstream devnull("/dev/null");
+
+
 unsigned int ScreenWidth = 80 - 1; /* - 1 for the cursor */
 
+// SigWinch - Window size change signal handler				/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+static void SigWinch(int)
+{
+   // Riped from GNU ls
+#ifdef TIOCGWINSZ
+   struct winsize ws;
+  
+   if (ioctl(1, TIOCGWINSZ, &ws) != -1 && ws.ws_col >= 5)
+      ScreenWidth = ws.ws_col - 1;
+#endif
+}
+									/*}}}*/
 bool InitOutput()							/*{{{*/
 {
    if (!isatty(STDOUT_FILENO) && _config->FindI("quiet", -1) == -1)
@@ -46,6 +63,10 @@ bool InitOutput()							/*{{{*/
       c0out.rdbuf(devnull.rdbuf());
    if (_config->FindI("quiet",0) > 1)
       c1out.rdbuf(devnull.rdbuf());
+
+   // deal with window size changes
+   signal(SIGWINCH,SigWinch);
+   SigWinch(0);
 
    if(!isatty(1))
    {
@@ -145,6 +166,10 @@ static std::string GetArchitecture(pkgCacheFile &CacheFile, pkgCache::PkgIterato
    pkgPolicy *policy = CacheFile.GetPolicy();
    pkgCache::VerIterator inst = P.CurrentVer();
    pkgCache::VerIterator cand = policy->GetCandidateVer(P);
+
+   // this may happen for packages in dpkg "deinstall ok config-file" state
+   if (inst.IsGood() == false && cand.IsGood() == false)
+      return P.VersionList().Arch();
 
    return inst ? inst.Arch() : cand.Arch();
 }

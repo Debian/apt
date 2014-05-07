@@ -1053,14 +1053,15 @@ void pkgDPkgPM::StartPtyMagic()
    }
 
    // setup the pty and stuff
-   struct	winsize win;
+   struct winsize win;
 
-   // if tcgetattr does not return zero there was a error
-   // and we do not do any pty magic
+   // if tcgetattr for both stdin/stdout returns 0 (no error)
+   // we do the pty magic
    _error->PushToStack();
-   if (tcgetattr(STDOUT_FILENO, &d->tt) == 0)
+   if (tcgetattr(STDIN_FILENO, &d->tt) == 0 &&
+       tcgetattr(STDOUT_FILENO, &d->tt) == 0)
    {
-       if (ioctl(1, TIOCGWINSZ, (char *)&win) < 0)
+       if (ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&win) < 0)
        {
            _error->Errno("ioctl", _("ioctl(TIOCGWINSZ) failed"));
        } else if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
@@ -1617,7 +1618,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    string::size_type pos;
    FILE *report;
 
-   if (_config->FindB("Dpkg::ApportFailureReport", false) == false)
+   if (_config->FindB("Dpkg::ApportFailureReport", true) == false)
    {
       std::clog << "configured to not write apport reports" << std::endl;
       return;

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-04-01 15:51+0200\n"
+"POT-Creation-Date: 2014-04-25 13:17+0200\n"
 "PO-Revision-Date: 2012-07-08 13:46+0200\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
 "Language-Team: Czech <debian-l10n-czech@lists.debian.org>\n"
@@ -849,9 +849,9 @@ msgstr "Čas spojení vypršel"
 msgid "Server closed the connection"
 msgstr "Server uzavřel spojení"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1468
-#: apt-pkg/contrib/fileutl.cc:1477 apt-pkg/contrib/fileutl.cc:1482
-#: apt-pkg/contrib/fileutl.cc:1484
+#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1478
+#: apt-pkg/contrib/fileutl.cc:1487 apt-pkg/contrib/fileutl.cc:1492
+#: apt-pkg/contrib/fileutl.cc:1494
 msgid "Read error"
 msgstr "Chyba čtení"
 
@@ -864,9 +864,9 @@ msgid "Protocol corruption"
 msgstr "Porušení protokolu"
 
 #: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:875
-#: apt-pkg/contrib/fileutl.cc:1590 apt-pkg/contrib/fileutl.cc:1599
-#: apt-pkg/contrib/fileutl.cc:1604 apt-pkg/contrib/fileutl.cc:1606
-#: apt-pkg/contrib/fileutl.cc:1631
+#: apt-pkg/contrib/fileutl.cc:1600 apt-pkg/contrib/fileutl.cc:1609
+#: apt-pkg/contrib/fileutl.cc:1614 apt-pkg/contrib/fileutl.cc:1616
+#: apt-pkg/contrib/fileutl.cc:1641
 msgid "Write error"
 msgstr "Chyba zápisu"
 
@@ -1122,9 +1122,99 @@ msgstr "Spojení selhalo"
 msgid "Internal error"
 msgstr "Vnitřní chyba"
 
-#: apt-private/private-list.cc:132
-msgid "Listing"
+#: apt-private/acqprogress.cc:66
+msgid "Hit "
+msgstr "Cíl "
+
+#: apt-private/acqprogress.cc:90
+msgid "Get:"
+msgstr "Mám:"
+
+#: apt-private/acqprogress.cc:121
+msgid "Ign "
+msgstr "Ign "
+
+#: apt-private/acqprogress.cc:125
+msgid "Err "
+msgstr "Err "
+
+#: apt-private/acqprogress.cc:146
+#, c-format
+msgid "Fetched %sB in %s (%sB/s)\n"
+msgstr "Staženo %sB za %s (%sB/s)\n"
+
+#: apt-private/acqprogress.cc:236
+#, c-format
+msgid " [Working]"
+msgstr " [Pracuji]"
+
+#: apt-private/acqprogress.cc:297
+#, c-format
+msgid ""
+"Media change: please insert the disc labeled\n"
+" '%s'\n"
+"in the drive '%s' and press enter\n"
 msgstr ""
+"Výměna média: Vložte disk nazvaný\n"
+" „%s“\n"
+"do mechaniky „%s“ a stiskněte enter\n"
+
+#: apt-private/private-cachefile.cc:93
+msgid "Correcting dependencies..."
+msgstr "Opravuji závislosti…"
+
+#: apt-private/private-cachefile.cc:96
+msgid " failed."
+msgstr " selhalo."
+
+#: apt-private/private-cachefile.cc:99
+msgid "Unable to correct dependencies"
+msgstr "Nelze opravit závislosti"
+
+#: apt-private/private-cachefile.cc:102
+msgid "Unable to minimize the upgrade set"
+msgstr "Nelze minimalizovat sadu pro aktualizaci"
+
+#: apt-private/private-cachefile.cc:104
+msgid " Done"
+msgstr " Hotovo"
+
+#: apt-private/private-cachefile.cc:108
+msgid "You might want to run 'apt-get -f install' to correct these."
+msgstr "Pro opravení můžete spustit „apt-get -f install“."
+
+#: apt-private/private-cachefile.cc:111
+msgid "Unmet dependencies. Try using -f."
+msgstr "Nesplněné závislosti. Zkuste použít -f."
+
+#: apt-private/private-cacheset.cc:35 apt-private/private-search.cc:47
+msgid "Sorting"
+msgstr ""
+
+#: apt-private/private-download.cc:31
+msgid "WARNING: The following packages cannot be authenticated!"
+msgstr "VAROVÁNÍ: Následující balíky nemohou být autentizovány!"
+
+#: apt-private/private-download.cc:35
+msgid "Authentication warning overridden.\n"
+msgstr "Autentizační varování potlačeno.\n"
+
+#: apt-private/private-download.cc:40 apt-private/private-download.cc:47
+msgid "Some packages could not be authenticated"
+msgstr "Některé balíky nemohly být autentizovány"
+
+#: apt-private/private-download.cc:45
+msgid "Install these packages without verification?"
+msgstr "Instalovat tyto balíky bez ověření?"
+
+#: apt-private/private-download.cc:54 apt-private/private-install.cc:209
+msgid "There are problems and -y was used without --force-yes"
+msgstr "Vyskytly se problémy a -y bylo použito bez --force-yes"
+
+#: apt-private/private-download.cc:86 apt-pkg/update.cc:77
+#, c-format
+msgid "Failed to fetch %s  %s\n"
+msgstr "Selhalo stažení %s  %s\n"
 
 #: apt-private/private-install.cc:81
 msgid "Internal error, InstallPackages was called with broken packages!"
@@ -1175,10 +1265,6 @@ msgstr "Po této operaci bude na disku uvolněno %sB.\n"
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "V %s nemáte dostatek volného místa."
-
-#: apt-private/private-install.cc:209 apt-private/private-download.cc:54
-msgid "There are problems and -y was used without --force-yes"
-msgstr "Vyskytly se problémy a -y bylo použito bez --force-yes"
 
 #: apt-private/private-install.cc:215 apt-private/private-install.cc:237
 msgid "Trivial Only specified but this is not a trivial operation."
@@ -1351,129 +1437,133 @@ msgstr "Navrhované balíky:"
 msgid "Recommended packages:"
 msgstr "Doporučované balíky:"
 
-#: apt-private/private-download.cc:31
-msgid "WARNING: The following packages cannot be authenticated!"
-msgstr "VAROVÁNÍ: Následující balíky nemohou být autentizovány!"
+#: apt-private/private-list.cc:131
+msgid "Listing"
+msgstr ""
 
-#: apt-private/private-download.cc:35
-msgid "Authentication warning overridden.\n"
-msgstr "Autentizační varování potlačeno.\n"
-
-#: apt-private/private-download.cc:40 apt-private/private-download.cc:47
-msgid "Some packages could not be authenticated"
-msgstr "Některé balíky nemohly být autentizovány"
-
-#: apt-private/private-download.cc:45
-msgid "Install these packages without verification?"
-msgstr "Instalovat tyto balíky bez ověření?"
-
-#: apt-private/private-download.cc:86 apt-pkg/update.cc:77
+#: apt-private/private-list.cc:164
 #, c-format
-msgid "Failed to fetch %s  %s\n"
-msgstr "Selhalo stažení %s  %s\n"
+msgid "There is %i additional version. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional versions. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: apt-private/private-main.cc:23
+msgid ""
+"NOTE: This is only a simulation!\n"
+"      apt-get needs root privileges for real execution.\n"
+"      Keep also in mind that locking is deactivated,\n"
+"      so don't depend on the relevance to the real current situation!"
+msgstr ""
+"INFO: Toto je pouze simulace!\n"
+"      apt-get vyžaduje pro skutečný běh rootovská oprávnění.\n"
+"      Mějte také na paměti, že je vypnuto zamykání, tudíž\n"
+"      tyto výsledky nemusí mít s realitou nic společného!"
 
 #: apt-private/private-output.cc:81 apt-private/private-show.cc:84
 #: apt-private/private-show.cc:89
 msgid "unknown"
 msgstr ""
 
-#: apt-private/private-output.cc:207
+#: apt-private/private-output.cc:211
 #, fuzzy, c-format
 msgid "[installed,upgradable to: %s]"
 msgstr "[Instalovaný]"
 
-#: apt-private/private-output.cc:211
+#: apt-private/private-output.cc:215
 #, fuzzy
 msgid "[installed,local]"
 msgstr "[Instalovaný]"
 
-#: apt-private/private-output.cc:214
+#: apt-private/private-output.cc:218
 msgid "[installed,auto-removable]"
 msgstr ""
 
-#: apt-private/private-output.cc:216
+#: apt-private/private-output.cc:220
 #, fuzzy
 msgid "[installed,automatic]"
 msgstr "[Instalovaný]"
 
-#: apt-private/private-output.cc:218
+#: apt-private/private-output.cc:222
 #, fuzzy
 msgid "[installed]"
 msgstr "[Instalovaný]"
 
-#: apt-private/private-output.cc:222
+#: apt-private/private-output.cc:226
 #, c-format
 msgid "[upgradable from: %s]"
 msgstr ""
 
-#: apt-private/private-output.cc:226
+#: apt-private/private-output.cc:230
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:326
+#: apt-private/private-output.cc:330
 msgid "The following packages have unmet dependencies:"
 msgstr "Následující balíky mají nesplněné závislosti:"
 
-#: apt-private/private-output.cc:416
+#: apt-private/private-output.cc:420
 #, c-format
 msgid "but %s is installed"
 msgstr "ale %s je nainstalován"
 
-#: apt-private/private-output.cc:418
+#: apt-private/private-output.cc:422
 #, c-format
 msgid "but %s is to be installed"
 msgstr "ale %s se bude instalovat"
 
-#: apt-private/private-output.cc:425
+#: apt-private/private-output.cc:429
 msgid "but it is not installable"
 msgstr "ale nedá se nainstalovat"
 
-#: apt-private/private-output.cc:427
+#: apt-private/private-output.cc:431
 msgid "but it is a virtual package"
 msgstr "ale je to virtuální balík"
 
-#: apt-private/private-output.cc:430
+#: apt-private/private-output.cc:434
 msgid "but it is not installed"
 msgstr "ale není nainstalovaný"
 
-#: apt-private/private-output.cc:430
+#: apt-private/private-output.cc:434
 msgid "but it is not going to be installed"
 msgstr "ale nebude se instalovat"
 
-#: apt-private/private-output.cc:435
+#: apt-private/private-output.cc:439
 msgid " or"
 msgstr " nebo"
 
-#: apt-private/private-output.cc:464
+#: apt-private/private-output.cc:468
 msgid "The following NEW packages will be installed:"
 msgstr "Následující NOVÉ balíky budou nainstalovány:"
 
-#: apt-private/private-output.cc:490
+#: apt-private/private-output.cc:494
 msgid "The following packages will be REMOVED:"
 msgstr "Následující balíky budou ODSTRANĚNY:"
 
-#: apt-private/private-output.cc:512
+#: apt-private/private-output.cc:516
 msgid "The following packages have been kept back:"
 msgstr "Následující balíky jsou podrženy v aktuální verzi:"
 
-#: apt-private/private-output.cc:533
+#: apt-private/private-output.cc:537
 msgid "The following packages will be upgraded:"
 msgstr "Následující balíky budou aktualizovány:"
 
-#: apt-private/private-output.cc:554
+#: apt-private/private-output.cc:558
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Následující balíky budou DEGRADOVÁNY:"
 
-#: apt-private/private-output.cc:574
+#: apt-private/private-output.cc:578
 msgid "The following held packages will be changed:"
 msgstr "Následující podržené balíky budou změněny:"
 
-#: apt-private/private-output.cc:629
+#: apt-private/private-output.cc:633
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (kvůli %s) "
 
-#: apt-private/private-output.cc:637
+#: apt-private/private-output.cc:641
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -1481,27 +1571,27 @@ msgstr ""
 "VAROVÁNÍ: Následující nezbytné balíky budou odstraněny.\n"
 "Pokud přesně nevíte, co děláte, NEDĚLEJTE to!"
 
-#: apt-private/private-output.cc:668
+#: apt-private/private-output.cc:672
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu aktualizováno, %lu nově instalováno, "
 
-#: apt-private/private-output.cc:672
+#: apt-private/private-output.cc:676
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu přeinstalováno, "
 
-#: apt-private/private-output.cc:674
+#: apt-private/private-output.cc:678
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu degradováno, "
 
-#: apt-private/private-output.cc:676
+#: apt-private/private-output.cc:680
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu k odstranění a %lu neaktualizováno.\n"
 
-#: apt-private/private-output.cc:680
+#: apt-private/private-output.cc:684
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu instalováno nebo odstraněno pouze částečně.\n"
@@ -1510,7 +1600,7 @@ msgstr "%lu instalováno nebo odstraněno pouze částečně.\n"
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:702
+#: apt-private/private-output.cc:706
 msgid "[Y/n]"
 msgstr "[Y/n]"
 
@@ -1518,55 +1608,50 @@ msgstr "[Y/n]"
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:708
+#: apt-private/private-output.cc:712
 msgid "[y/N]"
 msgstr "[y/N]"
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:719
+#: apt-private/private-output.cc:723
 msgid "Y"
 msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:725
+#: apt-private/private-output.cc:729
 msgid "N"
 msgstr "N"
 
-#: apt-private/private-output.cc:747 apt-pkg/cachefilter.cc:35
+#: apt-private/private-output.cc:751 apt-pkg/cachefilter.cc:35
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Chyba při kompilaci regulárního výrazu - %s"
 
-#: apt-private/private-cachefile.cc:93
-msgid "Correcting dependencies..."
-msgstr "Opravuji závislosti…"
+#: apt-private/private-search.cc:51
+msgid "Full Text Search"
+msgstr ""
 
-#: apt-private/private-cachefile.cc:96
-msgid " failed."
-msgstr " selhalo."
+#: apt-private/private-show.cc:156
+#, c-format
+msgid "There is %i additional record. Please use the '-a' switch to see it"
+msgid_plural ""
+"There are %i additional records. Please use the '-a' switch to see them."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
 
-#: apt-private/private-cachefile.cc:99
-msgid "Unable to correct dependencies"
-msgstr "Nelze opravit závislosti"
+#: apt-private/private-show.cc:163
+msgid "not a real package (virtual)"
+msgstr ""
 
-#: apt-private/private-cachefile.cc:102
-msgid "Unable to minimize the upgrade set"
-msgstr "Nelze minimalizovat sadu pro aktualizaci"
+#: apt-private/private-sources.cc:58
+#, fuzzy, c-format
+msgid "Failed to parse %s. Edit again? "
+msgstr "Selhalo přejmenování %s na %s"
 
-#: apt-private/private-cachefile.cc:104
-msgid " Done"
-msgstr " Hotovo"
-
-#: apt-private/private-cachefile.cc:108
-msgid "You might want to run 'apt-get -f install' to correct these."
-msgstr "Pro opravení můžete spustit „apt-get -f install“."
-
-#: apt-private/private-cachefile.cc:111
-msgid "Unmet dependencies. Try using -f."
-msgstr "Nesplněné závislosti. Zkuste použít -f."
-
-#: apt-private/private-cacheset.cc:35 apt-private/private-search.cc:47
-msgid "Sorting"
+#: apt-private/private-sources.cc:70
+#, c-format
+msgid "Your '%s' file changed, please run 'apt-get update'."
 msgstr ""
 
 #: apt-private/private-update.cc:31
@@ -1586,97 +1671,21 @@ msgstr "Vnitřní chyba, AllUpgrade pokazil věci"
 msgid "Done"
 msgstr "Hotovo"
 
-#: apt-private/private-search.cc:51
-msgid "Full Text Search"
-msgstr ""
-
-#: apt-private/private-show.cc:156
-#, c-format
-msgid "There is %i additional record. Please use the '-a' switch to see it"
-msgid_plural ""
-"There are %i additional records. Please use the '-a' switch to see them."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-
-#: apt-private/private-show.cc:163
-msgid "not a real package (virtual)"
-msgstr ""
-
-#: apt-private/private-main.cc:23
-msgid ""
-"NOTE: This is only a simulation!\n"
-"      apt-get needs root privileges for real execution.\n"
-"      Keep also in mind that locking is deactivated,\n"
-"      so don't depend on the relevance to the real current situation!"
-msgstr ""
-"INFO: Toto je pouze simulace!\n"
-"      apt-get vyžaduje pro skutečný běh rootovská oprávnění.\n"
-"      Mějte také na paměti, že je vypnuto zamykání, tudíž\n"
-"      tyto výsledky nemusí mít s realitou nic společného!"
-
-#: apt-private/private-sources.cc:58
-#, fuzzy, c-format
-msgid "Failed to parse %s. Edit again? "
-msgstr "Selhalo přejmenování %s na %s"
-
-#: apt-private/private-sources.cc:70
-#, c-format
-msgid "Your '%s' file changed, please run 'apt-get update'."
-msgstr ""
-
-#: apt-private/acqprogress.cc:66
-msgid "Hit "
-msgstr "Cíl "
-
-#: apt-private/acqprogress.cc:90
-msgid "Get:"
-msgstr "Mám:"
-
-#: apt-private/acqprogress.cc:121
-msgid "Ign "
-msgstr "Ign "
-
-#: apt-private/acqprogress.cc:125
-msgid "Err "
-msgstr "Err "
-
-#: apt-private/acqprogress.cc:146
-#, c-format
-msgid "Fetched %sB in %s (%sB/s)\n"
-msgstr "Staženo %sB za %s (%sB/s)\n"
-
-#: apt-private/acqprogress.cc:236
-#, c-format
-msgid " [Working]"
-msgstr " [Pracuji]"
-
-#: apt-private/acqprogress.cc:297
-#, c-format
-msgid ""
-"Media change: please insert the disc labeled\n"
-" '%s'\n"
-"in the drive '%s' and press enter\n"
-msgstr ""
-"Výměna média: Vložte disk nazvaný\n"
-" „%s“\n"
-"do mechaniky „%s“ a stiskněte enter\n"
-
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:471
+#: methods/mirror.cc:95 apt-inst/extract.cc:471 apt-pkg/acquire.cc:491
+#: apt-pkg/clean.cc:40 apt-pkg/init.cc:102 apt-pkg/init.cc:110
+#: apt-pkg/policy.cc:381 apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
 #: apt-pkg/contrib/cdromutl.cc:205 apt-pkg/contrib/fileutl.cc:371
-#: apt-pkg/contrib/fileutl.cc:484 apt-pkg/sourcelist.cc:280
-#: apt-pkg/sourcelist.cc:286 apt-pkg/acquire.cc:491 apt-pkg/init.cc:102
-#: apt-pkg/init.cc:110 apt-pkg/clean.cc:40 apt-pkg/policy.cc:381
+#: apt-pkg/contrib/fileutl.cc:484
 #, c-format
 msgid "Unable to read %s"
 msgstr "Nelze číst %s"
 
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/contrib/cdromutl.cc:201
-#: apt-pkg/contrib/cdromutl.cc:235 apt-pkg/acquire.cc:497
+#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/acquire.cc:497
 #: apt-pkg/acquire.cc:522 apt-pkg/clean.cc:46 apt-pkg/clean.cc:64
-#: apt-pkg/clean.cc:127
+#: apt-pkg/clean.cc:127 apt-pkg/contrib/cdromutl.cc:201
+#: apt-pkg/contrib/cdromutl.cc:235
 #, c-format
 msgid "Unable to change to %s"
 msgstr "Nelze přejít do %s"
@@ -2152,83 +2161,6 @@ msgstr ""
 "  -c=? Načte tento konfigurační soubor\n"
 "  -o=? Nastaví libovolnou volbu, např. -o dir::cache=/tmp\n"
 
-#: apt-inst/contrib/extracttar.cc:124
-msgid "Failed to create pipes"
-msgstr "Selhalo vytvoření roury"
-
-#: apt-inst/contrib/extracttar.cc:151
-msgid "Failed to exec gzip "
-msgstr "Selhalo spuštění gzipu "
-
-#: apt-inst/contrib/extracttar.cc:188 apt-inst/contrib/extracttar.cc:218
-msgid "Corrupted archive"
-msgstr "Porušený archiv"
-
-#: apt-inst/contrib/extracttar.cc:203
-msgid "Tar checksum failed, archive corrupted"
-msgstr "Kontrolní součet taru selhal, archiv je poškozený"
-
-#: apt-inst/contrib/extracttar.cc:308
-#, c-format
-msgid "Unknown TAR header type %u, member %s"
-msgstr "Neznámá hlavička TARu typ %u, člen %s"
-
-#: apt-inst/contrib/arfile.cc:76
-msgid "Invalid archive signature"
-msgstr "Neplatný podpis archivu"
-
-#: apt-inst/contrib/arfile.cc:84
-msgid "Error reading archive member header"
-msgstr "Chyba při čtení záhlaví prvku archivu"
-
-#: apt-inst/contrib/arfile.cc:96
-#, c-format
-msgid "Invalid archive member header %s"
-msgstr "Neplatné záhlaví prvku archivu %s"
-
-#: apt-inst/contrib/arfile.cc:108
-msgid "Invalid archive member header"
-msgstr "Neplatné záhlaví prvku archivu"
-
-#: apt-inst/contrib/arfile.cc:137
-msgid "Archive is too short"
-msgstr "Archiv je příliš krátký"
-
-#: apt-inst/contrib/arfile.cc:141
-msgid "Failed to read the archive headers"
-msgstr "Chyba při čtení hlaviček archivu"
-
-#: apt-inst/filelist.cc:380
-msgid "DropNode called on still linked node"
-msgstr "Pokus o uvolnění uzlu (DropNode) na stále propojeném uzlu"
-
-#: apt-inst/filelist.cc:412
-msgid "Failed to locate the hash element!"
-msgstr "Nelze lokalizovat hashovací prvek!"
-
-#: apt-inst/filelist.cc:459
-msgid "Failed to allocate diversion"
-msgstr "Nelze alokovat diverzi"
-
-#: apt-inst/filelist.cc:464
-msgid "Internal error in AddDiversion"
-msgstr "Vnitřní chyba při AddDiversion"
-
-#: apt-inst/filelist.cc:477
-#, c-format
-msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
-msgstr "Pokus o přepsání diverze, %s -> %s a %s/%s"
-
-#: apt-inst/filelist.cc:506
-#, c-format
-msgid "Double add of diversion %s -> %s"
-msgstr "Dvojí přidání diverze %s -> %s"
-
-#: apt-inst/filelist.cc:549
-#, c-format
-msgid "Duplicate conf file %s/%s"
-msgstr "Duplicitní konfigurační soubor %s/%s"
-
 #: apt-inst/dirstream.cc:42 apt-inst/dirstream.cc:49 apt-inst/dirstream.cc:54
 #, c-format
 msgid "Failed to write file %s"
@@ -2291,6 +2223,83 @@ msgstr "Soubor %s/%s přepisuje ten z balíku %s"
 msgid "Unable to stat %s"
 msgstr "Nelze vyhodnotit %s"
 
+#: apt-inst/filelist.cc:380
+msgid "DropNode called on still linked node"
+msgstr "Pokus o uvolnění uzlu (DropNode) na stále propojeném uzlu"
+
+#: apt-inst/filelist.cc:412
+msgid "Failed to locate the hash element!"
+msgstr "Nelze lokalizovat hashovací prvek!"
+
+#: apt-inst/filelist.cc:459
+msgid "Failed to allocate diversion"
+msgstr "Nelze alokovat diverzi"
+
+#: apt-inst/filelist.cc:464
+msgid "Internal error in AddDiversion"
+msgstr "Vnitřní chyba při AddDiversion"
+
+#: apt-inst/filelist.cc:477
+#, c-format
+msgid "Trying to overwrite a diversion, %s -> %s and %s/%s"
+msgstr "Pokus o přepsání diverze, %s -> %s a %s/%s"
+
+#: apt-inst/filelist.cc:506
+#, c-format
+msgid "Double add of diversion %s -> %s"
+msgstr "Dvojí přidání diverze %s -> %s"
+
+#: apt-inst/filelist.cc:549
+#, c-format
+msgid "Duplicate conf file %s/%s"
+msgstr "Duplicitní konfigurační soubor %s/%s"
+
+#: apt-inst/contrib/arfile.cc:76
+msgid "Invalid archive signature"
+msgstr "Neplatný podpis archivu"
+
+#: apt-inst/contrib/arfile.cc:84
+msgid "Error reading archive member header"
+msgstr "Chyba při čtení záhlaví prvku archivu"
+
+#: apt-inst/contrib/arfile.cc:96
+#, c-format
+msgid "Invalid archive member header %s"
+msgstr "Neplatné záhlaví prvku archivu %s"
+
+#: apt-inst/contrib/arfile.cc:108
+msgid "Invalid archive member header"
+msgstr "Neplatné záhlaví prvku archivu"
+
+#: apt-inst/contrib/arfile.cc:137
+msgid "Archive is too short"
+msgstr "Archiv je příliš krátký"
+
+#: apt-inst/contrib/arfile.cc:141
+msgid "Failed to read the archive headers"
+msgstr "Chyba při čtení hlaviček archivu"
+
+#: apt-inst/contrib/extracttar.cc:124
+msgid "Failed to create pipes"
+msgstr "Selhalo vytvoření roury"
+
+#: apt-inst/contrib/extracttar.cc:151
+msgid "Failed to exec gzip "
+msgstr "Selhalo spuštění gzipu "
+
+#: apt-inst/contrib/extracttar.cc:188 apt-inst/contrib/extracttar.cc:218
+msgid "Corrupted archive"
+msgstr "Porušený archiv"
+
+#: apt-inst/contrib/extracttar.cc:203
+msgid "Tar checksum failed, archive corrupted"
+msgstr "Kontrolní součet taru selhal, archiv je poškozený"
+
+#: apt-inst/contrib/extracttar.cc:308
+#, c-format
+msgid "Unknown TAR header type %u, member %s"
+msgstr "Neznámá hlavička TARu typ %u, člen %s"
+
 #: apt-inst/deb/debfile.cc:47 apt-inst/deb/debfile.cc:54
 #: apt-inst/deb/debfile.cc:63
 #, c-format
@@ -2305,591 +2314,6 @@ msgstr "Vnitřní chyba, nemohu najít část %s"
 #: apt-inst/deb/debfile.cc:227
 msgid "Unparsable control file"
 msgstr "Nezpracovatelný kontrolní soubor"
-
-#: apt-pkg/contrib/mmap.cc:79
-msgid "Can't mmap an empty file"
-msgstr "Nelze provést mmap prázdného souboru"
-
-#: apt-pkg/contrib/mmap.cc:111
-#, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "Nelze duplikovat popisovač souboru %i"
-
-#: apt-pkg/contrib/mmap.cc:119
-#, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "Nešlo mmapovat %llu bajtů"
-
-#: apt-pkg/contrib/mmap.cc:146
-msgid "Unable to close mmap"
-msgstr "Nelze zavřít mmap"
-
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
-msgid "Unable to synchronize mmap"
-msgstr "Nelze synchronizovat mmap"
-
-#: apt-pkg/contrib/mmap.cc:290
-#, c-format
-msgid "Couldn't make mmap of %lu bytes"
-msgstr "Nešlo mmapovat %lu bajtů"
-
-#: apt-pkg/contrib/mmap.cc:322
-msgid "Failed to truncate file"
-msgstr "Nelze zmenšit soubor"
-
-#: apt-pkg/contrib/mmap.cc:341
-#, c-format
-msgid ""
-"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
-"Current value: %lu. (man 5 apt.conf)"
-msgstr ""
-"Dynamickému MMapu došlo místo. Zvyšte prosím hodnotu APT::Cache-Start. "
-"Současná hodnota: %lu. (man 5 apt.conf)"
-
-#: apt-pkg/contrib/mmap.cc:446
-#, c-format
-msgid ""
-"Unable to increase the size of the MMap as the limit of %lu bytes is already "
-"reached."
-msgstr "Nelze zvýšit velikost MMapu, protože limit %lu bajtů již byl dosažen."
-
-#: apt-pkg/contrib/mmap.cc:449
-msgid ""
-"Unable to increase size of the MMap as automatic growing is disabled by user."
-msgstr ""
-"Nelze zvýšit velikost MMapu, protože automatické zvětšování bylo uživatelem "
-"zakázáno."
-
-#. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:406
-#, c-format
-msgid "%lid %lih %limin %lis"
-msgstr "%lid %lih %limin %lis"
-
-#. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:413
-#, c-format
-msgid "%lih %limin %lis"
-msgstr "%lih %limin %lis"
-
-#. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:420
-#, c-format
-msgid "%limin %lis"
-msgstr "%limin %lis"
-
-#. s means seconds
-#: apt-pkg/contrib/strutl.cc:425
-#, c-format
-msgid "%lis"
-msgstr "%lis"
-
-#: apt-pkg/contrib/strutl.cc:1236
-#, c-format
-msgid "Selection %s not found"
-msgstr "Výběr %s nenalezen"
-
-#: apt-pkg/contrib/configuration.cc:519
-#, c-format
-msgid "Unrecognized type abbreviation: '%c'"
-msgstr "Nerozpoznaná zkratka typu: „%c“"
-
-#: apt-pkg/contrib/configuration.cc:633
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "Otevírám konfigurační soubor %s"
-
-#: apt-pkg/contrib/configuration.cc:801
-#, c-format
-msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "Syntaktická chyba %s:%u: Blok nezačíná jménem."
-
-#: apt-pkg/contrib/configuration.cc:820
-#, c-format
-msgid "Syntax error %s:%u: Malformed tag"
-msgstr "Syntaktická chyba %s:%u: Zkomolená značka"
-
-#: apt-pkg/contrib/configuration.cc:837
-#, c-format
-msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "Syntaktická chyba %s:%u: Za hodnotou následuje zbytečné smetí"
-
-#: apt-pkg/contrib/configuration.cc:877
-#, c-format
-msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr ""
-"Syntaktická chyba %s:%u: Direktivy je možné provádět pouze na nejvyšší úrovni"
-
-#: apt-pkg/contrib/configuration.cc:884
-#, c-format
-msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "Syntaktická chyba %s:%u: Příliš mnoho vnořených propojení (include)"
-
-#: apt-pkg/contrib/configuration.cc:888 apt-pkg/contrib/configuration.cc:893
-#, c-format
-msgid "Syntax error %s:%u: Included from here"
-msgstr "Syntaktická chyba %s:%u: Zahrnuto odtud"
-
-#: apt-pkg/contrib/configuration.cc:897
-#, c-format
-msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "Syntaktická chyba %s:%u: Nepodporovaná direktiva „%s“"
-
-#: apt-pkg/contrib/configuration.cc:900
-#, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr ""
-"Syntaktická chyba %s:%u: Direktiva clear vyžaduje jako argument strom "
-"možností"
-
-#: apt-pkg/contrib/configuration.cc:950
-#, c-format
-msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "Syntaktická chyba %s:%u: Na konci souboru je zbytečné smetí"
-
-#: apt-pkg/contrib/progress.cc:148
-#, c-format
-msgid "%c%s... Error!"
-msgstr "%c%s… Chyba!"
-
-#: apt-pkg/contrib/progress.cc:150
-#, c-format
-msgid "%c%s... Done"
-msgstr "%c%s… Hotovo"
-
-#: apt-pkg/contrib/progress.cc:181
-msgid "..."
-msgstr "…"
-
-#. Print the spinner
-#: apt-pkg/contrib/progress.cc:197
-#, c-format
-msgid "%c%s... %u%%"
-msgstr "%c%s… %u%%"
-
-#: apt-pkg/contrib/cmndline.cc:121
-#, c-format
-msgid "Command line option '%c' [from %s] is not known."
-msgstr "Parametr příkazové řádky „%c“ [z %s] je neznámý"
-
-#: apt-pkg/contrib/cmndline.cc:146 apt-pkg/contrib/cmndline.cc:155
-#: apt-pkg/contrib/cmndline.cc:163
-#, c-format
-msgid "Command line option %s is not understood"
-msgstr "Nerozumím parametru %s příkazové řádky"
-
-#: apt-pkg/contrib/cmndline.cc:168
-#, c-format
-msgid "Command line option %s is not boolean"
-msgstr "Parametr příkazové řádky %s není pravdivostní hodnota"
-
-#: apt-pkg/contrib/cmndline.cc:209 apt-pkg/contrib/cmndline.cc:230
-#, c-format
-msgid "Option %s requires an argument."
-msgstr "Volba %s vyžaduje argument."
-
-#: apt-pkg/contrib/cmndline.cc:243 apt-pkg/contrib/cmndline.cc:249
-#, c-format
-msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "Parametr %s: Zadání konfigurační položky musí obsahovat =<hodn>."
-
-#: apt-pkg/contrib/cmndline.cc:278
-#, c-format
-msgid "Option %s requires an integer argument, not '%s'"
-msgstr "Volba %s vyžaduje jako argument celé číslo (integer), ne „%s“"
-
-#: apt-pkg/contrib/cmndline.cc:309
-#, c-format
-msgid "Option '%s' is too long"
-msgstr "Volba „%s“ je příliš dlouhá"
-
-#: apt-pkg/contrib/cmndline.cc:341
-#, c-format
-msgid "Sense %s is not understood, try true or false."
-msgstr "Nechápu význam %s, zkuste true nebo false."
-
-#: apt-pkg/contrib/cmndline.cc:391
-#, c-format
-msgid "Invalid operation %s"
-msgstr "Neplatná operace %s"
-
-#: apt-pkg/contrib/cdromutl.cc:65
-#, c-format
-msgid "Unable to stat the mount point %s"
-msgstr "Nelze vyhodnotit přípojný bod %s"
-
-#: apt-pkg/contrib/cdromutl.cc:246
-msgid "Failed to stat the cdrom"
-msgstr "Nezdařilo se vyhodnotit cdrom"
-
-#: apt-pkg/contrib/fileutl.cc:193
-#, c-format
-msgid "Not using locking for read only lock file %s"
-msgstr "Nepoužívám zamykání pro zámkový soubor %s, který je pouze pro čtení"
-
-#: apt-pkg/contrib/fileutl.cc:198
-#, c-format
-msgid "Could not open lock file %s"
-msgstr "Nešlo otevřít zámkový soubor %s"
-
-#: apt-pkg/contrib/fileutl.cc:221
-#, c-format
-msgid "Not using locking for nfs mounted lock file %s"
-msgstr "Nepoužívám zamykání pro zámkový soubor %s připojený přes nfs"
-
-#: apt-pkg/contrib/fileutl.cc:226
-#, c-format
-msgid "Could not get lock %s"
-msgstr "Nelze získat zámek %s"
-
-#: apt-pkg/contrib/fileutl.cc:363 apt-pkg/contrib/fileutl.cc:477
-#, c-format
-msgid "List of files can't be created as '%s' is not a directory"
-msgstr "Seznam souborů nelze vytvořit, jelikož „%s“ není adresář"
-
-#: apt-pkg/contrib/fileutl.cc:397
-#, c-format
-msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr "Ignoruji „%s“ v adresáři „%s“, jelikož to není obyčejný soubor"
-
-#: apt-pkg/contrib/fileutl.cc:415
-#, c-format
-msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr "Ignoruji soubor „%s“ v adresáři „%s“, jelikož nemá příponu"
-
-#: apt-pkg/contrib/fileutl.cc:424
-#, c-format
-msgid ""
-"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
-msgstr "Ignoruji soubor „%s“ v adresáři „%s“, jelikož má neplatnou příponu"
-
-#: apt-pkg/contrib/fileutl.cc:827
-#, c-format
-msgid "Sub-process %s received a segmentation fault."
-msgstr "Podproces %s obdržel chybu segmentace."
-
-#: apt-pkg/contrib/fileutl.cc:829
-#, c-format
-msgid "Sub-process %s received signal %u."
-msgstr "Podproces %s obdržel signál %u."
-
-#: apt-pkg/contrib/fileutl.cc:833 apt-pkg/contrib/gpgv.cc:239
-#, c-format
-msgid "Sub-process %s returned an error code (%u)"
-msgstr "Podproces %s vrátil chybový kód (%u)"
-
-#: apt-pkg/contrib/fileutl.cc:835 apt-pkg/contrib/gpgv.cc:232
-#, c-format
-msgid "Sub-process %s exited unexpectedly"
-msgstr "Podproces %s neočekávaně skončil"
-
-#: apt-pkg/contrib/fileutl.cc:916
-#, c-format
-msgid "Problem closing the gzip file %s"
-msgstr "Problém při zavírání gzip souboru %s"
-
-#: apt-pkg/contrib/fileutl.cc:1097
-#, c-format
-msgid "Could not open file %s"
-msgstr "Nelze otevřít soubor %s"
-
-#: apt-pkg/contrib/fileutl.cc:1156 apt-pkg/contrib/fileutl.cc:1203
-#, c-format
-msgid "Could not open file descriptor %d"
-msgstr "Nelze otevřít popisovač souboru %d"
-
-#: apt-pkg/contrib/fileutl.cc:1310
-msgid "Failed to create subprocess IPC"
-msgstr "Nelze vytvořit podproces IPC"
-
-#: apt-pkg/contrib/fileutl.cc:1365
-msgid "Failed to exec compressor "
-msgstr "Nezdařilo se spustit kompresor "
-
-#: apt-pkg/contrib/fileutl.cc:1506
-#, c-format
-msgid "read, still have %llu to read but none left"
-msgstr "čtení, stále mám k přečtení %llu, ale už nic nezbývá"
-
-#: apt-pkg/contrib/fileutl.cc:1619 apt-pkg/contrib/fileutl.cc:1641
-#, c-format
-msgid "write, still have %llu to write but couldn't"
-msgstr "zápis, stále mám %llu k zápisu, ale nejde to"
-
-#: apt-pkg/contrib/fileutl.cc:1911
-#, c-format
-msgid "Problem closing the file %s"
-msgstr "Problém při zavírání souboru %s"
-
-#: apt-pkg/contrib/fileutl.cc:1923
-#, c-format
-msgid "Problem renaming the file %s to %s"
-msgstr "Problém při přejmenování souboru %s na %s"
-
-#: apt-pkg/contrib/fileutl.cc:1934
-#, c-format
-msgid "Problem unlinking the file %s"
-msgstr "Problém při odstraňování souboru %s"
-
-#: apt-pkg/contrib/fileutl.cc:1947
-msgid "Problem syncing the file"
-msgstr "Problém při synchronizování souboru"
-
-#: apt-pkg/contrib/fileutl.cc:2043 apt-pkg/acquire-item.cc:148
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "přejmenování selhalo, %s (%s -> %s)."
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/contrib/gpgv.cc:72
-#, c-format
-msgid "No keyring installed in %s."
-msgstr "V %s není nainstalována žádná klíčenka."
-
-#: apt-pkg/pkgcache.cc:155
-msgid "Empty package cache"
-msgstr "Cache balíků je prázdná"
-
-#: apt-pkg/pkgcache.cc:161
-msgid "The package cache file is corrupted"
-msgstr "Cache soubor balíků je poškozen"
-
-#: apt-pkg/pkgcache.cc:166
-msgid "The package cache file is an incompatible version"
-msgstr "Cache soubor balíků má nekompatibilní verzi"
-
-#: apt-pkg/pkgcache.cc:169
-msgid "The package cache file is corrupted, it is too small"
-msgstr "Cache soubor balíků je poškozen, je příliš malý"
-
-#: apt-pkg/pkgcache.cc:174
-#, c-format
-msgid "This APT does not support the versioning system '%s'"
-msgstr "Tato APT nepodporuje systém pro správu verzí „%s“"
-
-#: apt-pkg/pkgcache.cc:179
-msgid "The package cache was built for a different architecture"
-msgstr "Cache balíků byla vytvořena pro jinou architekturu"
-
-#: apt-pkg/pkgcache.cc:321
-msgid "Depends"
-msgstr "Závisí na"
-
-#: apt-pkg/pkgcache.cc:321
-msgid "PreDepends"
-msgstr "Předzávisí na"
-
-#: apt-pkg/pkgcache.cc:321
-msgid "Suggests"
-msgstr "Navrhuje"
-
-#: apt-pkg/pkgcache.cc:322
-msgid "Recommends"
-msgstr "Doporučuje"
-
-#: apt-pkg/pkgcache.cc:322
-msgid "Conflicts"
-msgstr "Koliduje s"
-
-#: apt-pkg/pkgcache.cc:322
-msgid "Replaces"
-msgstr "Nahrazuje"
-
-#: apt-pkg/pkgcache.cc:323
-msgid "Obsoletes"
-msgstr "Zastarává"
-
-#: apt-pkg/pkgcache.cc:323
-msgid "Breaks"
-msgstr "Porušuje"
-
-#: apt-pkg/pkgcache.cc:323
-msgid "Enhances"
-msgstr "Rozšiřuje"
-
-#: apt-pkg/pkgcache.cc:334
-msgid "important"
-msgstr "důležitý"
-
-#: apt-pkg/pkgcache.cc:334
-msgid "required"
-msgstr "vyžadovaný"
-
-#: apt-pkg/pkgcache.cc:334
-msgid "standard"
-msgstr "standardní"
-
-#: apt-pkg/pkgcache.cc:335
-msgid "optional"
-msgstr "volitelný"
-
-#: apt-pkg/pkgcache.cc:335
-msgid "extra"
-msgstr "extra"
-
-#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
-msgstr "Vytváří se strom závislostí"
-
-#: apt-pkg/depcache.cc:139
-msgid "Candidate versions"
-msgstr "Kandidátské verze"
-
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr "Generování závislostí"
-
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-msgid "Reading state information"
-msgstr "Čtu stavové informace"
-
-#: apt-pkg/depcache.cc:250
-#, c-format
-msgid "Failed to open StateFile %s"
-msgstr "Nelze otevřít stavový soubor %s"
-
-#: apt-pkg/depcache.cc:256
-#, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "Nelze zapsat dočasný stavový soubor %s"
-
-#: apt-pkg/tagfile.cc:140
-#, c-format
-msgid "Unable to parse package file %s (1)"
-msgstr "Nelze zpracovat soubor %s (1)"
-
-#: apt-pkg/tagfile.cc:237
-#, c-format
-msgid "Unable to parse package file %s (2)"
-msgstr "Nelze zpracovat soubor %s (2)"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování URI)"
-
-#: apt-pkg/sourcelist.cc:170
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (nezpracovatelná [volba])"
-
-#: apt-pkg/sourcelist.cc:173
-#, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (příliš krátká [volba])"
-
-#: apt-pkg/sourcelist.cc:184
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] není přiřazení)"
-
-#: apt-pkg/sourcelist.cc:190
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] nemá klíč)"
-
-#: apt-pkg/sourcelist.cc:193
-#, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] klíč %s nemá hodnotu)"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (URI)"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (dist)"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování URI)"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (Absolutní dist)"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování dist)"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "Otevírám %s"
-
-#: apt-pkg/sourcelist.cc:347 apt-pkg/cdrom.cc:497
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "Řádek %u v seznamu zdrojů %s je příliš dlouhý."
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "Typ „%s“ na řádce %u v seznamu zdrojů %s není známý"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "Typ „%s“ na řádce %u v seznamu zdrojů %s není známý"
-
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:932
-#, c-format
-msgid ""
-"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
-"under APT::Immediate-Configure for details. (%d)"
-msgstr ""
-"Nelze spustit okamžitou konfiguraci balíku „%s“. Podrobnosti naleznete v man "
-"5 apt.conf v části APT::Immediate-Configure. (%d)"
-
-#: apt-pkg/packagemanager.cc:504 apt-pkg/packagemanager.cc:535
-#, c-format
-msgid "Could not configure '%s'. "
-msgstr "Nelze nastavit „%s“."
-
-#: apt-pkg/packagemanager.cc:577
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"Tento běh instalace si vyžádá dočasné odstranění klíčového balíku %s kvůli "
-"smyčce v Conflicts/Pre-Depends. To je často špatné, ale pokud to skutečně "
-"chcete udělat, aktivujte možnost APT::Force-LoopBreak."
-
-#: apt-pkg/pkgrecords.cc:38
-#, c-format
-msgid "Index file type '%s' is not supported"
-msgstr "Indexový typ souboru „%s“ není podporován"
-
-#: apt-pkg/algorithms.cc:265
-#, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr "Balík %s je potřeba přeinstalovat, ale nemohu pro něj nalézt archiv."
-
-#: apt-pkg/algorithms.cc:1083
-msgid ""
-"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
-"held packages."
-msgstr ""
-"Chyba, pkgProblemResolver::Resolve vytváří poruchy, to může být způsobeno "
-"podrženými balíky."
-
-#: apt-pkg/algorithms.cc:1085
-msgid "Unable to correct problems, you have held broken packages."
-msgstr "Nelze opravit problémy, některé balíky držíte v porouchaném stavu."
 
 #: apt-pkg/acquire.cc:87 apt-pkg/cdrom.cc:816
 #, c-format
@@ -2918,137 +2342,10 @@ msgstr "Stahuji soubor %li z %li (%s zbývá)"
 msgid "Retrieving file %li of %li"
 msgstr "Stahuji soubor %li z %li"
 
-#: apt-pkg/acquire-worker.cc:116
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2054
 #, c-format
-msgid "The method driver %s could not be found."
-msgstr "Ovladač metody %s nemohl být nalezen."
-
-#: apt-pkg/acquire-worker.cc:118
-#, fuzzy, c-format
-msgid "Is the package %s installed?"
-msgstr "Zkontrolujte, zda je nainstalován balíček „dpkg-dev“.\n"
-
-#: apt-pkg/acquire-worker.cc:169
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "Metoda %s nebyla spuštěna správně"
-
-#: apt-pkg/acquire-worker.cc:455
-#, c-format
-msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr "Vložte prosím disk nazvaný „%s“ do mechaniky „%s“ a stiskněte enter."
-
-#: apt-pkg/init.cc:145
-#, c-format
-msgid "Packaging system '%s' is not supported"
-msgstr "Balíčkovací systém „%s“ není podporován"
-
-#: apt-pkg/init.cc:161
-msgid "Unable to determine a suitable packaging system type"
-msgstr "Nebylo možno určit vhodný typ balíčkovacího systému"
-
-#: apt-pkg/clean.cc:61
-#, c-format
-msgid "Unable to stat %s."
-msgstr "Nebylo možno vyhodnotit %s."
-
-#: apt-pkg/srcrecords.cc:52
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr "Do sources.list musíte zadat „zdrojové“ URI"
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr ""
-"Seznamy balíků nebo stavový soubor nemohly být zpracovány nebo otevřeny."
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "Pro nápravu těchto problémů můžete zkusit spustit apt-get update"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "Nelze přečíst seznam zdrojů."
-
-#: apt-pkg/policy.cc:83
-#, c-format
-msgid ""
-"The value '%s' is invalid for APT::Default-Release as such a release is not "
-"available in the sources"
-msgstr ""
-"Hodnota „%s“ není v APT::Default-Release platná, protože toto vydání není "
-"dostupné v sources.list"
-
-#: apt-pkg/policy.cc:422
-#, c-format
-msgid "Invalid record in the preferences file %s, no Package header"
-msgstr "Neplatný záznam v souboru preferencí %s, chybí hlavička Package"
-
-#: apt-pkg/policy.cc:444
-#, c-format
-msgid "Did not understand pin type %s"
-msgstr "Nerozumím vypíchnutí typu %s"
-
-#: apt-pkg/policy.cc:452
-msgid "No priority (or zero) specified for pin"
-msgstr "Pro vypíchnutí nebyla zadána žádná (nebo nulová) priorita"
-
-#: apt-pkg/pkgcachegen.cc:93
-msgid "Cache has an incompatible versioning system"
-msgstr "Cache má nekompatibilní systém správy verzí"
-
-#. TRANSLATOR: The first placeholder is a package name,
-#. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:224 apt-pkg/pkgcachegen.cc:234
-#: apt-pkg/pkgcachegen.cc:300 apt-pkg/pkgcachegen.cc:327
-#: apt-pkg/pkgcachegen.cc:340 apt-pkg/pkgcachegen.cc:382
-#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:403
-#: apt-pkg/pkgcachegen.cc:411 apt-pkg/pkgcachegen.cc:415
-#: apt-pkg/pkgcachegen.cc:419 apt-pkg/pkgcachegen.cc:440
-#: apt-pkg/pkgcachegen.cc:479 apt-pkg/pkgcachegen.cc:517
-#: apt-pkg/pkgcachegen.cc:524 apt-pkg/pkgcachegen.cc:555
-#: apt-pkg/pkgcachegen.cc:569
-#, c-format
-msgid "Error occurred while processing %s (%s%d)"
-msgstr "Chyba při zpracování %s (%s%d)"
-
-#: apt-pkg/pkgcachegen.cc:257
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "Wow, překročili jste počet jmen balíků, které tato APT umí zpracovat."
-
-#: apt-pkg/pkgcachegen.cc:260
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "Wow, překročili jste počet verzí, které tato APT umí zpracovat."
-
-#: apt-pkg/pkgcachegen.cc:263
-msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "Wow, překročili jste počet popisů, které tato APT umí zpracovat."
-
-#: apt-pkg/pkgcachegen.cc:266
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "Wow, překročili jste počet závislostí, které tato APT umí zpracovat."
-
-#: apt-pkg/pkgcachegen.cc:576
-#, c-format
-msgid "Package %s %s was not found while processing file dependencies"
-msgstr "Při zpracování závislostí nebyl nalezen balík %s %s"
-
-#: apt-pkg/pkgcachegen.cc:1211
-#, c-format
-msgid "Couldn't stat source package list %s"
-msgstr "Nešlo vyhodnotit seznam zdrojových balíků %s"
-
-#: apt-pkg/pkgcachegen.cc:1299 apt-pkg/pkgcachegen.cc:1403
-#: apt-pkg/pkgcachegen.cc:1409 apt-pkg/pkgcachegen.cc:1566
-msgid "Reading package lists"
-msgstr "Čtu seznamy balíků"
-
-#: apt-pkg/pkgcachegen.cc:1316
-msgid "Collecting File Provides"
-msgstr "Collecting File poskytuje"
-
-#: apt-pkg/pkgcachegen.cc:1508 apt-pkg/pkgcachegen.cc:1515
-msgid "IO Error saving source cache"
-msgstr "Chyba IO při ukládání zdrojové cache"
+msgid "rename failed, %s (%s -> %s)."
+msgstr "přejmenování selhalo, %s (%s -> %s)."
 
 #: apt-pkg/acquire-item.cc:163
 msgid "Hash Sum mismatch"
@@ -3131,35 +2428,115 @@ msgid ""
 msgstr ""
 "Indexové soubory balíku jsou narušeny. Chybí pole Filename: u balíku %s."
 
-#: apt-pkg/indexrecords.cc:78
+#: apt-pkg/acquire-worker.cc:116
 #, c-format
-msgid "Unable to parse Release file %s"
-msgstr "Nelze zpracovat Release soubor %s"
+msgid "The method driver %s could not be found."
+msgstr "Ovladač metody %s nemohl být nalezen."
 
-#: apt-pkg/indexrecords.cc:86
-#, c-format
-msgid "No sections in Release file %s"
-msgstr "Release soubor %s neobsahuje žádné sekce"
+#: apt-pkg/acquire-worker.cc:118
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "Zkontrolujte, zda je nainstalován balíček „dpkg-dev“.\n"
 
-#: apt-pkg/indexrecords.cc:117
+#: apt-pkg/acquire-worker.cc:169
 #, c-format
-msgid "No Hash entry in Release file %s"
-msgstr "Release soubor %s neobsahuje Hash záznam"
+msgid "Method %s did not start correctly"
+msgstr "Metoda %s nebyla spuštěna správně"
 
-#: apt-pkg/indexrecords.cc:130
+#: apt-pkg/acquire-worker.cc:455
 #, c-format
-msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "Neplatná položka „Valid-Until“ v Release souboru %s"
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgstr "Vložte prosím disk nazvaný „%s“ do mechaniky „%s“ a stiskněte enter."
 
-#: apt-pkg/indexrecords.cc:149
+#: apt-pkg/algorithms.cc:265
 #, c-format
-msgid "Invalid 'Date' entry in Release file %s"
-msgstr "Neplatná položka „Date“ v Release souboru %s"
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr "Balík %s je potřeba přeinstalovat, ale nemohu pro něj nalézt archiv."
 
-#: apt-pkg/vendorlist.cc:85
+#: apt-pkg/algorithms.cc:1086
+msgid ""
+"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
+"held packages."
+msgstr ""
+"Chyba, pkgProblemResolver::Resolve vytváří poruchy, to může být způsobeno "
+"podrženými balíky."
+
+#: apt-pkg/algorithms.cc:1088
+msgid "Unable to correct problems, you have held broken packages."
+msgstr "Nelze opravit problémy, některé balíky držíte v porouchaném stavu."
+
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr ""
+"Seznamy balíků nebo stavový soubor nemohly být zpracovány nebo otevřeny."
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "Pro nápravu těchto problémů můžete zkusit spustit apt-get update"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "Nelze přečíst seznam zdrojů."
+
+#: apt-pkg/cacheset.cc:487
 #, c-format
-msgid "Vendor block %s contains no fingerprint"
-msgstr "Blok výrobce %s neobsahuje otisk klíče"
+msgid "Release '%s' for '%s' was not found"
+msgstr "Vydání „%s“ pro „%s“ nebylo nalezeno"
+
+#: apt-pkg/cacheset.cc:490
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "Verze „%s“ pro „%s“ nebyla nalezena"
+
+#: apt-pkg/cacheset.cc:601
+#, c-format
+msgid "Couldn't find task '%s'"
+msgstr "Nelze najít úlohu „%s“"
+
+#: apt-pkg/cacheset.cc:607
+#, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "Nelze najít balík vyhovující regulárnímu výrazu „%s“"
+
+#: apt-pkg/cacheset.cc:613
+#, fuzzy, c-format
+msgid "Couldn't find any package by glob '%s'"
+msgstr "Nelze najít balík vyhovující regulárnímu výrazu „%s“"
+
+#: apt-pkg/cacheset.cc:624
+#, c-format
+msgid "Can't select versions from package '%s' as it is purely virtual"
+msgstr "Nelze vybrat verze balíku „%s“, protože je čistě virtuální"
+
+#: apt-pkg/cacheset.cc:631 apt-pkg/cacheset.cc:638
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+"Nelze vybrat nainstalovanou ani kandidátskou verzi balíku „%s“, protože "
+"žádné takové verze nemá"
+
+#: apt-pkg/cacheset.cc:645
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr "Nelze vybrat nejnovější verzi balíku „%s“, protože je čistě virtuální"
+
+#: apt-pkg/cacheset.cc:653
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr "Nelze vybrat kandidátskou verzi balíku %s, protože žádnou nemá"
+
+#: apt-pkg/cacheset.cc:661
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr "Nelze vybrat nainstalované verze balíku %s, protože není nainstalován"
+
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "Řádek %u v seznamu zdrojů %s je příliš dlouhý."
 
 #: apt-pkg/cdrom.cc:577
 #, c-format
@@ -3238,6 +2615,57 @@ msgstr "Zapisuji nový seznam balíků\n"
 msgid "Source list entries for this disc are:\n"
 msgstr "Seznamy zdrojů na tomto disku jsou:\n"
 
+#: apt-pkg/clean.cc:61
+#, c-format
+msgid "Unable to stat %s."
+msgstr "Nebylo možno vyhodnotit %s."
+
+#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
+msgstr "Vytváří se strom závislostí"
+
+#: apt-pkg/depcache.cc:139
+msgid "Candidate versions"
+msgstr "Kandidátské verze"
+
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
+msgstr "Generování závislostí"
+
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+msgid "Reading state information"
+msgstr "Čtu stavové informace"
+
+#: apt-pkg/depcache.cc:250
+#, c-format
+msgid "Failed to open StateFile %s"
+msgstr "Nelze otevřít stavový soubor %s"
+
+#: apt-pkg/depcache.cc:256
+#, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "Nelze zapsat dočasný stavový soubor %s"
+
+#: apt-pkg/edsp.cc:50 apt-pkg/edsp.cc:70
+msgid "Send scenario to solver"
+msgstr "Scénář odeslán řešiteli"
+
+#: apt-pkg/edsp.cc:216
+msgid "Send request to solver"
+msgstr "Požadavek odeslán řešiteli"
+
+#: apt-pkg/edsp.cc:286
+msgid "Prepare for receiving solution"
+msgstr "Příprava na obdržení řešení"
+
+#: apt-pkg/edsp.cc:293
+msgid "External solver failed without a proper error message"
+msgstr "Externí řešitel selhal, aniž by zanechal rozumnou chybovou hlášku"
+
+#: apt-pkg/edsp.cc:563 apt-pkg/edsp.cc:566 apt-pkg/edsp.cc:571
+msgid "Execute external solver"
+msgstr "Spuštění externího řešitele"
+
 #: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:773
 #, c-format
 msgid "Wrote %i records.\n"
@@ -3268,79 +2696,39 @@ msgstr "Nelze najít autentizační záznam pro: %s"
 msgid "Hash mismatch for: %s"
 msgstr "Neshoda kontrolních součtů pro: %s"
 
-#: apt-pkg/cacheset.cc:487
+#: apt-pkg/indexrecords.cc:78
 #, c-format
-msgid "Release '%s' for '%s' was not found"
-msgstr "Vydání „%s“ pro „%s“ nebylo nalezeno"
+msgid "Unable to parse Release file %s"
+msgstr "Nelze zpracovat Release soubor %s"
 
-#: apt-pkg/cacheset.cc:490
+#: apt-pkg/indexrecords.cc:86
 #, c-format
-msgid "Version '%s' for '%s' was not found"
-msgstr "Verze „%s“ pro „%s“ nebyla nalezena"
+msgid "No sections in Release file %s"
+msgstr "Release soubor %s neobsahuje žádné sekce"
 
-#: apt-pkg/cacheset.cc:601
+#: apt-pkg/indexrecords.cc:117
 #, c-format
-msgid "Couldn't find task '%s'"
-msgstr "Nelze najít úlohu „%s“"
+msgid "No Hash entry in Release file %s"
+msgstr "Release soubor %s neobsahuje Hash záznam"
 
-#: apt-pkg/cacheset.cc:607
+#: apt-pkg/indexrecords.cc:130
 #, c-format
-msgid "Couldn't find any package by regex '%s'"
-msgstr "Nelze najít balík vyhovující regulárnímu výrazu „%s“"
+msgid "Invalid 'Valid-Until' entry in Release file %s"
+msgstr "Neplatná položka „Valid-Until“ v Release souboru %s"
 
-#: apt-pkg/cacheset.cc:613
-#, fuzzy, c-format
-msgid "Couldn't find any package by glob '%s'"
-msgstr "Nelze najít balík vyhovující regulárnímu výrazu „%s“"
-
-#: apt-pkg/cacheset.cc:624
+#: apt-pkg/indexrecords.cc:149
 #, c-format
-msgid "Can't select versions from package '%s' as it is purely virtual"
-msgstr "Nelze vybrat verze balíku „%s“, protože je čistě virtuální"
+msgid "Invalid 'Date' entry in Release file %s"
+msgstr "Neplatná položka „Date“ v Release souboru %s"
 
-#: apt-pkg/cacheset.cc:631 apt-pkg/cacheset.cc:638
+#: apt-pkg/init.cc:145
 #, c-format
-msgid ""
-"Can't select installed nor candidate version from package '%s' as it has "
-"neither of them"
-msgstr ""
-"Nelze vybrat nainstalovanou ani kandidátskou verzi balíku „%s“, protože "
-"žádné takové verze nemá"
+msgid "Packaging system '%s' is not supported"
+msgstr "Balíčkovací systém „%s“ není podporován"
 
-#: apt-pkg/cacheset.cc:645
-#, c-format
-msgid "Can't select newest version from package '%s' as it is purely virtual"
-msgstr "Nelze vybrat nejnovější verzi balíku „%s“, protože je čistě virtuální"
-
-#: apt-pkg/cacheset.cc:653
-#, c-format
-msgid "Can't select candidate version from package %s as it has no candidate"
-msgstr "Nelze vybrat kandidátskou verzi balíku %s, protože žádnou nemá"
-
-#: apt-pkg/cacheset.cc:661
-#, c-format
-msgid "Can't select installed version from package %s as it is not installed"
-msgstr "Nelze vybrat nainstalované verze balíku %s, protože není nainstalován"
-
-#: apt-pkg/edsp.cc:50 apt-pkg/edsp.cc:70
-msgid "Send scenario to solver"
-msgstr "Scénář odeslán řešiteli"
-
-#: apt-pkg/edsp.cc:216
-msgid "Send request to solver"
-msgstr "Požadavek odeslán řešiteli"
-
-#: apt-pkg/edsp.cc:286
-msgid "Prepare for receiving solution"
-msgstr "Příprava na obdržení řešení"
-
-#: apt-pkg/edsp.cc:293
-msgid "External solver failed without a proper error message"
-msgstr "Externí řešitel selhal, aniž by zanechal rozumnou chybovou hlášku"
-
-#: apt-pkg/edsp.cc:563 apt-pkg/edsp.cc:566 apt-pkg/edsp.cc:571
-msgid "Execute external solver"
-msgstr "Spuštění externího řešitele"
+#: apt-pkg/init.cc:161
+msgid "Unable to determine a suitable packaging system type"
+msgstr "Nebylo možno určit vhodný typ balíčkovacího systému"
 
 #: apt-pkg/install-progress.cc:57
 #, c-format
@@ -3351,6 +2739,287 @@ msgstr ""
 msgid "Running dpkg"
 msgstr "Spouštím dpkg"
 
+#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:932
+#, c-format
+msgid ""
+"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
+"under APT::Immediate-Configure for details. (%d)"
+msgstr ""
+"Nelze spustit okamžitou konfiguraci balíku „%s“. Podrobnosti naleznete v man "
+"5 apt.conf v části APT::Immediate-Configure. (%d)"
+
+#: apt-pkg/packagemanager.cc:504 apt-pkg/packagemanager.cc:535
+#, c-format
+msgid "Could not configure '%s'. "
+msgstr "Nelze nastavit „%s“."
+
+#: apt-pkg/packagemanager.cc:577
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"Tento běh instalace si vyžádá dočasné odstranění klíčového balíku %s kvůli "
+"smyčce v Conflicts/Pre-Depends. To je často špatné, ale pokud to skutečně "
+"chcete udělat, aktivujte možnost APT::Force-LoopBreak."
+
+#: apt-pkg/pkgcache.cc:155
+msgid "Empty package cache"
+msgstr "Cache balíků je prázdná"
+
+#: apt-pkg/pkgcache.cc:161
+msgid "The package cache file is corrupted"
+msgstr "Cache soubor balíků je poškozen"
+
+#: apt-pkg/pkgcache.cc:166
+msgid "The package cache file is an incompatible version"
+msgstr "Cache soubor balíků má nekompatibilní verzi"
+
+#: apt-pkg/pkgcache.cc:169
+msgid "The package cache file is corrupted, it is too small"
+msgstr "Cache soubor balíků je poškozen, je příliš malý"
+
+#: apt-pkg/pkgcache.cc:174
+#, c-format
+msgid "This APT does not support the versioning system '%s'"
+msgstr "Tato APT nepodporuje systém pro správu verzí „%s“"
+
+#: apt-pkg/pkgcache.cc:179
+msgid "The package cache was built for a different architecture"
+msgstr "Cache balíků byla vytvořena pro jinou architekturu"
+
+#: apt-pkg/pkgcache.cc:321
+msgid "Depends"
+msgstr "Závisí na"
+
+#: apt-pkg/pkgcache.cc:321
+msgid "PreDepends"
+msgstr "Předzávisí na"
+
+#: apt-pkg/pkgcache.cc:321
+msgid "Suggests"
+msgstr "Navrhuje"
+
+#: apt-pkg/pkgcache.cc:322
+msgid "Recommends"
+msgstr "Doporučuje"
+
+#: apt-pkg/pkgcache.cc:322
+msgid "Conflicts"
+msgstr "Koliduje s"
+
+#: apt-pkg/pkgcache.cc:322
+msgid "Replaces"
+msgstr "Nahrazuje"
+
+#: apt-pkg/pkgcache.cc:323
+msgid "Obsoletes"
+msgstr "Zastarává"
+
+#: apt-pkg/pkgcache.cc:323
+msgid "Breaks"
+msgstr "Porušuje"
+
+#: apt-pkg/pkgcache.cc:323
+msgid "Enhances"
+msgstr "Rozšiřuje"
+
+#: apt-pkg/pkgcache.cc:334
+msgid "important"
+msgstr "důležitý"
+
+#: apt-pkg/pkgcache.cc:334
+msgid "required"
+msgstr "vyžadovaný"
+
+#: apt-pkg/pkgcache.cc:334
+msgid "standard"
+msgstr "standardní"
+
+#: apt-pkg/pkgcache.cc:335
+msgid "optional"
+msgstr "volitelný"
+
+#: apt-pkg/pkgcache.cc:335
+msgid "extra"
+msgstr "extra"
+
+#: apt-pkg/pkgcachegen.cc:93
+msgid "Cache has an incompatible versioning system"
+msgstr "Cache má nekompatibilní systém správy verzí"
+
+#. TRANSLATOR: The first placeholder is a package name,
+#. the other two should be copied verbatim as they include debug info
+#: apt-pkg/pkgcachegen.cc:224 apt-pkg/pkgcachegen.cc:234
+#: apt-pkg/pkgcachegen.cc:300 apt-pkg/pkgcachegen.cc:327
+#: apt-pkg/pkgcachegen.cc:340 apt-pkg/pkgcachegen.cc:382
+#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:403
+#: apt-pkg/pkgcachegen.cc:411 apt-pkg/pkgcachegen.cc:415
+#: apt-pkg/pkgcachegen.cc:419 apt-pkg/pkgcachegen.cc:440
+#: apt-pkg/pkgcachegen.cc:479 apt-pkg/pkgcachegen.cc:517
+#: apt-pkg/pkgcachegen.cc:524 apt-pkg/pkgcachegen.cc:555
+#: apt-pkg/pkgcachegen.cc:569
+#, c-format
+msgid "Error occurred while processing %s (%s%d)"
+msgstr "Chyba při zpracování %s (%s%d)"
+
+#: apt-pkg/pkgcachegen.cc:257
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr "Wow, překročili jste počet jmen balíků, které tato APT umí zpracovat."
+
+#: apt-pkg/pkgcachegen.cc:260
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr "Wow, překročili jste počet verzí, které tato APT umí zpracovat."
+
+#: apt-pkg/pkgcachegen.cc:263
+msgid "Wow, you exceeded the number of descriptions this APT is capable of."
+msgstr "Wow, překročili jste počet popisů, které tato APT umí zpracovat."
+
+#: apt-pkg/pkgcachegen.cc:266
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr "Wow, překročili jste počet závislostí, které tato APT umí zpracovat."
+
+#: apt-pkg/pkgcachegen.cc:576
+#, c-format
+msgid "Package %s %s was not found while processing file dependencies"
+msgstr "Při zpracování závislostí nebyl nalezen balík %s %s"
+
+#: apt-pkg/pkgcachegen.cc:1211
+#, c-format
+msgid "Couldn't stat source package list %s"
+msgstr "Nešlo vyhodnotit seznam zdrojových balíků %s"
+
+#: apt-pkg/pkgcachegen.cc:1299 apt-pkg/pkgcachegen.cc:1403
+#: apt-pkg/pkgcachegen.cc:1409 apt-pkg/pkgcachegen.cc:1566
+msgid "Reading package lists"
+msgstr "Čtu seznamy balíků"
+
+#: apt-pkg/pkgcachegen.cc:1316
+msgid "Collecting File Provides"
+msgstr "Collecting File poskytuje"
+
+#: apt-pkg/pkgcachegen.cc:1508 apt-pkg/pkgcachegen.cc:1515
+msgid "IO Error saving source cache"
+msgstr "Chyba IO při ukládání zdrojové cache"
+
+#: apt-pkg/pkgrecords.cc:38
+#, c-format
+msgid "Index file type '%s' is not supported"
+msgstr "Indexový typ souboru „%s“ není podporován"
+
+#: apt-pkg/policy.cc:83
+#, c-format
+msgid ""
+"The value '%s' is invalid for APT::Default-Release as such a release is not "
+"available in the sources"
+msgstr ""
+"Hodnota „%s“ není v APT::Default-Release platná, protože toto vydání není "
+"dostupné v sources.list"
+
+#: apt-pkg/policy.cc:422
+#, c-format
+msgid "Invalid record in the preferences file %s, no Package header"
+msgstr "Neplatný záznam v souboru preferencí %s, chybí hlavička Package"
+
+#: apt-pkg/policy.cc:444
+#, c-format
+msgid "Did not understand pin type %s"
+msgstr "Nerozumím vypíchnutí typu %s"
+
+#: apt-pkg/policy.cc:452
+msgid "No priority (or zero) specified for pin"
+msgstr "Pro vypíchnutí nebyla zadána žádná (nebo nulová) priorita"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování URI)"
+
+#: apt-pkg/sourcelist.cc:170
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (nezpracovatelná [volba])"
+
+#: apt-pkg/sourcelist.cc:173
+#, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (příliš krátká [volba])"
+
+#: apt-pkg/sourcelist.cc:184
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] není přiřazení)"
+
+#: apt-pkg/sourcelist.cc:190
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] nemá klíč)"
+
+#: apt-pkg/sourcelist.cc:193
+#, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s ([%s] klíč %s nemá hodnotu)"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (URI)"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (dist)"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování URI)"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (Absolutní dist)"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "Zkomolený řádek %lu v seznamu zdrojů %s (zpracování dist)"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "Otevírám %s"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "Zkomolený řádek %u v seznamu zdrojů %s (typ)"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "Typ „%s“ na řádce %u v seznamu zdrojů %s není známý"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "Typ „%s“ na řádce %u v seznamu zdrojů %s není známý"
+
+#: apt-pkg/srcrecords.cc:52
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr "Do sources.list musíte zadat „zdrojové“ URI"
+
+#: apt-pkg/tagfile.cc:140
+#, c-format
+msgid "Unable to parse package file %s (1)"
+msgstr "Nelze zpracovat soubor %s (1)"
+
+#: apt-pkg/tagfile.cc:237
+#, c-format
+msgid "Unable to parse package file %s (2)"
+msgstr "Nelze zpracovat soubor %s (2)"
+
 #: apt-pkg/update.cc:103 apt-pkg/update.cc:105
 msgid ""
 "Some index files failed to download. They have been ignored, or old ones "
@@ -3358,6 +3027,370 @@ msgid ""
 msgstr ""
 "Některé indexové soubory se nepodařilo stáhnout. Jsou ignorovány, nebo jsou "
 "použity starší verze."
+
+#: apt-pkg/vendorlist.cc:85
+#, c-format
+msgid "Vendor block %s contains no fingerprint"
+msgstr "Blok výrobce %s neobsahuje otisk klíče"
+
+#: apt-pkg/contrib/cdromutl.cc:65
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "Nelze vyhodnotit přípojný bod %s"
+
+#: apt-pkg/contrib/cdromutl.cc:246
+msgid "Failed to stat the cdrom"
+msgstr "Nezdařilo se vyhodnotit cdrom"
+
+#: apt-pkg/contrib/cmndline.cc:121
+#, c-format
+msgid "Command line option '%c' [from %s] is not known."
+msgstr "Parametr příkazové řádky „%c“ [z %s] je neznámý"
+
+#: apt-pkg/contrib/cmndline.cc:146 apt-pkg/contrib/cmndline.cc:155
+#: apt-pkg/contrib/cmndline.cc:163
+#, c-format
+msgid "Command line option %s is not understood"
+msgstr "Nerozumím parametru %s příkazové řádky"
+
+#: apt-pkg/contrib/cmndline.cc:168
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "Parametr příkazové řádky %s není pravdivostní hodnota"
+
+#: apt-pkg/contrib/cmndline.cc:209 apt-pkg/contrib/cmndline.cc:230
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "Volba %s vyžaduje argument."
+
+#: apt-pkg/contrib/cmndline.cc:243 apt-pkg/contrib/cmndline.cc:249
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr "Parametr %s: Zadání konfigurační položky musí obsahovat =<hodn>."
+
+#: apt-pkg/contrib/cmndline.cc:278
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "Volba %s vyžaduje jako argument celé číslo (integer), ne „%s“"
+
+#: apt-pkg/contrib/cmndline.cc:309
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "Volba „%s“ je příliš dlouhá"
+
+#: apt-pkg/contrib/cmndline.cc:341
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "Nechápu význam %s, zkuste true nebo false."
+
+#: apt-pkg/contrib/cmndline.cc:391
+#, c-format
+msgid "Invalid operation %s"
+msgstr "Neplatná operace %s"
+
+#: apt-pkg/contrib/configuration.cc:519
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "Nerozpoznaná zkratka typu: „%c“"
+
+#: apt-pkg/contrib/configuration.cc:633
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "Otevírám konfigurační soubor %s"
+
+#: apt-pkg/contrib/configuration.cc:801
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "Syntaktická chyba %s:%u: Blok nezačíná jménem."
+
+#: apt-pkg/contrib/configuration.cc:820
+#, c-format
+msgid "Syntax error %s:%u: Malformed tag"
+msgstr "Syntaktická chyba %s:%u: Zkomolená značka"
+
+#: apt-pkg/contrib/configuration.cc:837
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "Syntaktická chyba %s:%u: Za hodnotou následuje zbytečné smetí"
+
+#: apt-pkg/contrib/configuration.cc:877
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr ""
+"Syntaktická chyba %s:%u: Direktivy je možné provádět pouze na nejvyšší úrovni"
+
+#: apt-pkg/contrib/configuration.cc:884
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "Syntaktická chyba %s:%u: Příliš mnoho vnořených propojení (include)"
+
+#: apt-pkg/contrib/configuration.cc:888 apt-pkg/contrib/configuration.cc:893
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "Syntaktická chyba %s:%u: Zahrnuto odtud"
+
+#: apt-pkg/contrib/configuration.cc:897
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "Syntaktická chyba %s:%u: Nepodporovaná direktiva „%s“"
+
+#: apt-pkg/contrib/configuration.cc:900
+#, c-format
+msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgstr ""
+"Syntaktická chyba %s:%u: Direktiva clear vyžaduje jako argument strom "
+"možností"
+
+#: apt-pkg/contrib/configuration.cc:950
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "Syntaktická chyba %s:%u: Na konci souboru je zbytečné smetí"
+
+#: apt-pkg/contrib/fileutl.cc:193
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr "Nepoužívám zamykání pro zámkový soubor %s, který je pouze pro čtení"
+
+#: apt-pkg/contrib/fileutl.cc:198
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "Nešlo otevřít zámkový soubor %s"
+
+#: apt-pkg/contrib/fileutl.cc:221
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr "Nepoužívám zamykání pro zámkový soubor %s připojený přes nfs"
+
+#: apt-pkg/contrib/fileutl.cc:226
+#, c-format
+msgid "Could not get lock %s"
+msgstr "Nelze získat zámek %s"
+
+#: apt-pkg/contrib/fileutl.cc:363 apt-pkg/contrib/fileutl.cc:477
+#, c-format
+msgid "List of files can't be created as '%s' is not a directory"
+msgstr "Seznam souborů nelze vytvořit, jelikož „%s“ není adresář"
+
+#: apt-pkg/contrib/fileutl.cc:397
+#, c-format
+msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
+msgstr "Ignoruji „%s“ v adresáři „%s“, jelikož to není obyčejný soubor"
+
+#: apt-pkg/contrib/fileutl.cc:415
+#, c-format
+msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
+msgstr "Ignoruji soubor „%s“ v adresáři „%s“, jelikož nemá příponu"
+
+#: apt-pkg/contrib/fileutl.cc:424
+#, c-format
+msgid ""
+"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
+msgstr "Ignoruji soubor „%s“ v adresáři „%s“, jelikož má neplatnou příponu"
+
+#: apt-pkg/contrib/fileutl.cc:827
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr "Podproces %s obdržel chybu segmentace."
+
+#: apt-pkg/contrib/fileutl.cc:829
+#, c-format
+msgid "Sub-process %s received signal %u."
+msgstr "Podproces %s obdržel signál %u."
+
+#: apt-pkg/contrib/fileutl.cc:833 apt-pkg/contrib/gpgv.cc:239
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "Podproces %s vrátil chybový kód (%u)"
+
+#: apt-pkg/contrib/fileutl.cc:835 apt-pkg/contrib/gpgv.cc:232
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "Podproces %s neočekávaně skončil"
+
+#: apt-pkg/contrib/fileutl.cc:916
+#, c-format
+msgid "Problem closing the gzip file %s"
+msgstr "Problém při zavírání gzip souboru %s"
+
+#: apt-pkg/contrib/fileutl.cc:1104
+#, c-format
+msgid "Could not open file %s"
+msgstr "Nelze otevřít soubor %s"
+
+#: apt-pkg/contrib/fileutl.cc:1163 apt-pkg/contrib/fileutl.cc:1210
+#, c-format
+msgid "Could not open file descriptor %d"
+msgstr "Nelze otevřít popisovač souboru %d"
+
+#: apt-pkg/contrib/fileutl.cc:1317
+msgid "Failed to create subprocess IPC"
+msgstr "Nelze vytvořit podproces IPC"
+
+#: apt-pkg/contrib/fileutl.cc:1375
+msgid "Failed to exec compressor "
+msgstr "Nezdařilo se spustit kompresor "
+
+#: apt-pkg/contrib/fileutl.cc:1516
+#, c-format
+msgid "read, still have %llu to read but none left"
+msgstr "čtení, stále mám k přečtení %llu, ale už nic nezbývá"
+
+#: apt-pkg/contrib/fileutl.cc:1629 apt-pkg/contrib/fileutl.cc:1651
+#, c-format
+msgid "write, still have %llu to write but couldn't"
+msgstr "zápis, stále mám %llu k zápisu, ale nejde to"
+
+#: apt-pkg/contrib/fileutl.cc:1922
+#, c-format
+msgid "Problem closing the file %s"
+msgstr "Problém při zavírání souboru %s"
+
+#: apt-pkg/contrib/fileutl.cc:1934
+#, c-format
+msgid "Problem renaming the file %s to %s"
+msgstr "Problém při přejmenování souboru %s na %s"
+
+#: apt-pkg/contrib/fileutl.cc:1945
+#, c-format
+msgid "Problem unlinking the file %s"
+msgstr "Problém při odstraňování souboru %s"
+
+#: apt-pkg/contrib/fileutl.cc:1958
+msgid "Problem syncing the file"
+msgstr "Problém při synchronizování souboru"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:72
+#, c-format
+msgid "No keyring installed in %s."
+msgstr "V %s není nainstalována žádná klíčenka."
+
+#: apt-pkg/contrib/mmap.cc:79
+msgid "Can't mmap an empty file"
+msgstr "Nelze provést mmap prázdného souboru"
+
+#: apt-pkg/contrib/mmap.cc:111
+#, c-format
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "Nelze duplikovat popisovač souboru %i"
+
+#: apt-pkg/contrib/mmap.cc:119
+#, c-format
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "Nešlo mmapovat %llu bajtů"
+
+#: apt-pkg/contrib/mmap.cc:146
+msgid "Unable to close mmap"
+msgstr "Nelze zavřít mmap"
+
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+msgid "Unable to synchronize mmap"
+msgstr "Nelze synchronizovat mmap"
+
+#: apt-pkg/contrib/mmap.cc:290
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "Nešlo mmapovat %lu bajtů"
+
+#: apt-pkg/contrib/mmap.cc:322
+msgid "Failed to truncate file"
+msgstr "Nelze zmenšit soubor"
+
+#: apt-pkg/contrib/mmap.cc:341
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+"Dynamickému MMapu došlo místo. Zvyšte prosím hodnotu APT::Cache-Start. "
+"Současná hodnota: %lu. (man 5 apt.conf)"
+
+#: apt-pkg/contrib/mmap.cc:446
+#, c-format
+msgid ""
+"Unable to increase the size of the MMap as the limit of %lu bytes is already "
+"reached."
+msgstr "Nelze zvýšit velikost MMapu, protože limit %lu bajtů již byl dosažen."
+
+#: apt-pkg/contrib/mmap.cc:449
+msgid ""
+"Unable to increase size of the MMap as automatic growing is disabled by user."
+msgstr ""
+"Nelze zvýšit velikost MMapu, protože automatické zvětšování bylo uživatelem "
+"zakázáno."
+
+#: apt-pkg/contrib/progress.cc:148
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s… Chyba!"
+
+#: apt-pkg/contrib/progress.cc:150
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s… Hotovo"
+
+#: apt-pkg/contrib/progress.cc:181
+msgid "..."
+msgstr "…"
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:197
+#, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s… %u%%"
+
+#. d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:406
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr "%lid %lih %limin %lis"
+
+#. h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:413
+#, c-format
+msgid "%lih %limin %lis"
+msgstr "%lih %limin %lis"
+
+#. min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:420
+#, c-format
+msgid "%limin %lis"
+msgstr "%limin %lis"
+
+#. s means seconds
+#: apt-pkg/contrib/strutl.cc:425
+#, c-format
+msgid "%lis"
+msgstr "%lis"
+
+#: apt-pkg/contrib/strutl.cc:1236
+#, c-format
+msgid "Selection %s not found"
+msgstr "Výběr %s nenalezen"
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr "Nelze uzamknout administrační adresář (%s). Používá jej jiný proces?"
+
+#: apt-pkg/deb/debsystem.cc:94
+#, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "Nelze uzamknout administrační adresář (%s). Jste root?"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr "dpkg byl přerušen, pro nápravu problému musíte ručně spustit „%s“."
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr "Není uzamčen"
 
 #: apt-pkg/deb/dpkgpm.cc:95
 #, c-format
@@ -3510,30 +3543,6 @@ msgid ""
 msgstr ""
 "Žádné apport hlášení nebylo vytvořeno, protože chybová hláška naznačuje "
 "chybu V/V dpkg."
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr "Nelze uzamknout administrační adresář (%s). Používá jej jiný proces?"
-
-#: apt-pkg/deb/debsystem.cc:94
-#, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "Nelze uzamknout administrační adresář (%s). Jste root?"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr "dpkg byl přerušen, pro nápravu problému musíte ručně spustit „%s“."
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr "Není uzamčen"
 
 #~ msgid "%s not a valid DEB package."
 #~ msgstr "%s není platný DEB balík."

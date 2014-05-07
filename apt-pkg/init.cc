@@ -86,6 +86,7 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.dpkg-[a-z]+$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.save$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.orig$");
+   Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
 
    // Default cdrom mount point
    Cnf.CndSet("Acquire::cdrom::mount", "/media/cdrom/");

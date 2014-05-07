@@ -267,7 +267,7 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
    else
       cout << '\r' << BlankLine << '\r' << Buffer << flush;
    if (_config->FindB("Apt::Color", false) == true)
-      cout << _config->Find("APT::Color::Neutral");
+      cout << _config->Find("APT::Color::Neutral") << flush;
 
    memset(BlankLine,' ',strlen(Buffer));
    BlankLine[strlen(Buffer)] = 0;

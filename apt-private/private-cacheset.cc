@@ -73,7 +73,13 @@ bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
       else 
       {
          pkgPolicy *policy = CacheFile.GetPolicy();
-         output_set.insert(policy->GetCandidateVer(P));
+         if (policy->GetCandidateVer(P).IsGood())
+            output_set.insert(policy->GetCandidateVer(P));
+         else 
+            // no candidate, this may happen for packages in 
+            // dpkg "deinstall ok config-file" state - we pick the first ver
+            // (which should be the only one)
+            output_set.insert(P.VersionList());
       }
    }
    progress.Done();
