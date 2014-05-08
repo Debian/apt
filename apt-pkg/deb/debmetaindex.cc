@@ -521,8 +521,8 @@ class debSLTypeDebFile : public pkgSourceList::Type
    public:
 
    bool CreateItem(vector<metaIndex *> &List, string const &URI,
-		   string const &Dist, string const &Section,
-		   std::map<string, string> const &Options) const
+		   string const &/*Dist*/, string const &/*Section*/,
+		   std::map<string, string> const &/*Options*/) const
    {
       metaIndex *mi = new debDebFileMetaIndex(URI);
       List.push_back(mi);

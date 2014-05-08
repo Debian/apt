@@ -26,6 +26,7 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
+ protected:
    FileFd Fd;
    pkgTagFile Tags;
    pkgTagSection Sect;
@@ -58,6 +59,12 @@ class debSrcRecordParser : public pkgSrcRecords::Parser
       : Parser(Index), Fd(File,FileFd::ReadOnly, FileFd::Extension), Tags(&Fd,102400),
         iOffset(0), Buffer(NULL) {}
    virtual ~debSrcRecordParser();
+};
+
+class debDscRecordParser : public debSrcRecordParser
+{
+ public:
+   debDscRecordParser(std::string const &DscFile, pkgIndexFile const *Index);
 };
 
 #endif

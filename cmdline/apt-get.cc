@@ -1050,7 +1050,30 @@ static bool DoBuildDep(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+      pkgSrcRecords::Parser *Last = 0;
+
+      // a unpacked debian source tree
+      if (DirectoryExists(*I))
+      {
+         // FIXME: how can we make this more elegant?
+         std::string TypeName = "debian/control File Source Index";
+         pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
+         if(Type != NULL)
+            Last = Type->CreateSrcPkgParser(*I);
+      }
+      // if its a local file (e.g. .dsc) use this
+      else if (FileExists(*I))
+      {
+         // see if we can get a parser for this pkgIndexFile type
+         string TypeName = flExtension(*I) + " File Source Index";
+         pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
+         if(Type != NULL)
+            Last = Type->CreateSrcPkgParser(*I);
+      } else {
+         // normal case, search the cache for the source file
+         Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+      }
+
       if (Last == 0)
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
             
@@ -1068,7 +1091,7 @@ static bool DoBuildDep(CommandLine &CmdL)
       }
       else if (Last->BuildDepends(BuildDeps, _config->FindB("APT::Get::Arch-Only", false), StripMultiArch) == false)
 	    return _error->Error(_("Unable to get build-dependency information for %s"),Src.c_str());
-   
+
       // Also ensure that build-essential packages are present
       Configuration::Item const *Opts = _config->Tree("APT::Build-Essential");
       if (Opts) 

@@ -1,0 +1,126 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage 'debhelper' 'i386' '7' 'stable'
+buildsimplenativepackage 'build-essential' 'i386' '1' 'stable'
+
+setupaptarchive
+cat > 2vcard_0.5-3.dsc <<EOF
+Format: 1.0
+Source: 2vcard
+Binary: 2vcard
+Architecture: all
+Version: 0.5-3
+Maintainer: Martin Albisetti <argentina@gmail.com>
+Uploaders: Marcela Tiznado <mlt@debian.org>
+Standards-Version: 3.8.0
+Build-Depends: debhelper (>= 5.0.37)
+Checksums-Sha1: 
+ b7f1ce31ec856414a3f0f1090689f91aa7456d56 9398 2vcard_0.5.orig.tar.gz
+ 5f9acd07ebda6ab00fa6b4fe3198c13e94090862 2036 2vcard_0.5-3.diff.gz
+Checksums-Sha256: 
+ efdc22859ac2f8f030d038dc4faa9020082ebae34212498c288968ffd45c9764 9398 2vcard_0.5.orig.tar.gz
+ 82673ff3456af571094066c89bcea87b25c23c87cf1d0050b731e5222563626b 2036 2vcard_0.5-3.diff.gz
+Files: 
+ f73a69c170f772f3f6e75f2d11bbb792 9398 2vcard_0.5.orig.tar.gz
+ 1e806d32233af87437258d86b1561f57 2036 2vcard_0.5-3.diff.gz
+EOF
+
+testequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  build-essential debhelper
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst build-essential (1 stable [i386])
+Inst debhelper (7 stable [i386])
+Conf build-essential (1 stable [i386])
+Conf debhelper (7 stable [i386])" aptget build-dep -s 2vcard_0.5-3.dsc
+
+cat > 2vcard_0.5-3.dsc <<EOF
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+Format: 1.0
+Source: 2vcard
+Binary: 2vcard
+Architecture: all
+Version: 0.5-3
+Maintainer: Martin Albisetti <argentina@gmail.com>
+Uploaders: Marcela Tiznado <mlt@debian.org>
+Standards-Version: 3.8.0
+Build-Depends: debhelper (>= 5.0.37)
+Checksums-Sha1: 
+ b7f1ce31ec856414a3f0f1090689f91aa7456d56 9398 2vcard_0.5.orig.tar.gz
+ 5f9acd07ebda6ab00fa6b4fe3198c13e94090862 2036 2vcard_0.5-3.diff.gz
+Checksums-Sha256: 
+ efdc22859ac2f8f030d038dc4faa9020082ebae34212498c288968ffd45c9764 9398 2vcard_0.5.orig.tar.gz
+ 82673ff3456af571094066c89bcea87b25c23c87cf1d0050b731e5222563626b 2036 2vcard_0.5-3.diff.gz
+Files: 
+ f73a69c170f772f3f6e75f2d11bbb792 9398 2vcard_0.5.orig.tar.gz
+ 1e806d32233af87437258d86b1561f57 2036 2vcard_0.5-3.diff.gz
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+iEYEARECAAYFAkijKhsACgkQsrBfRdYmq7aA2gCfaOW9riTYVQMx5ajKQVAcctlC
+z2UAn1oXgTai6opwhVfkxrlmJ+iRxzuc
+=4eRd
+-----END PGP SIGNATURE-----
+EOF
+
+testequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  build-essential debhelper
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst build-essential (1 stable [i386])
+Inst debhelper (7 stable [i386])
+Conf build-essential (1 stable [i386])
+Conf debhelper (7 stable [i386])" aptget build-dep --simulate 2vcard_0.5-3.dsc
+
+
+# unpacked source dir
+mkdir -p foo-1.0/debian
+cat > foo-1.0/debian/control <<'EOF'
+Source: apturl
+Section: admin
+Priority: optional
+Maintainer: Michael Vogt <mvo@ubuntu.com>
+Build-Depends: debhelper (>= 7)
+X-Python3-Version: >= 3.2
+Standards-Version: 3.9.3
+
+Package: apturl-common
+Architecture: any
+Depends: ${python3:Depends},
+ ${shlibs:Depends},
+ ${misc:Depends},
+ python3-apt,
+ python3-update-manager
+Replaces: apturl (<< 0.3.6ubuntu2)
+Description: install packages using the apt protocol - common data
+ AptUrl is a simple graphical application that takes an URL (which follows the
+ apt-protocol) as a command line option, parses it and carries out the
+ operations that the URL describes (that is, it asks the user if he wants the
+ indicated packages to be installed and if the answer is positive does so for
+ him).
+ .
+ This package contains the common data shared between the frontends.
+
+EOF
+
+testequal "Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  build-essential debhelper
+0 upgraded, 2 newly installed, 0 to remove and 0 not upgraded.
+Inst build-essential (1 stable [i386])
+Inst debhelper (7 stable [i386])
+Conf build-essential (1 stable [i386])
+Conf debhelper (7 stable [i386])" aptget build-dep --simulate ./foo-1.0
