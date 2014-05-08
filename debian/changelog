@@ -1,3 +1,34 @@
+apt (1.0.3) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * reduce delta to ubuntu
+  * provide support for vendor specific config files
+  * debian/apt-doc.docs: remove README.MultiArch
+  * Fix missing ScreenWidth check in apt.cc
+  * Only do openpty() if both stdin/stdout are terminals (Closes: 746434)
+
+  [ David Kalnischkies ]
+  * add a README for vendor information
+  * remove outdated README.MultiArch
+  * build http request in a stringstream
+  * enforce LFS for partial files in https range requests
+  * handle pkgnames shorter than modifiers (Closes: 744940)
+  * allow vendors to install configuration files
+
+  [ John Ogness ]
+  * properly undo CD-ROM mount in all error cases
+
+  [ Mahyuddin Ramli ]
+  * add vendor information for BlankOn (Closes: 743595)
+
+  [ Adam Conrad ]
+  * fix FileFd::Size bitswap on big-endian architectures (Closes: 745866)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po: Update one new string
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 05 May 2014 14:03:15 +0200
+
 apt (1.0.2) unstable; urgency=medium
 
   [ Michael Vogt ]

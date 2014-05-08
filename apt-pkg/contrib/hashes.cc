@@ -133,7 +133,7 @@ bool Hashes::AddFD(int const Fd,unsigned long long Size, bool const addMD5,
 		   bool const addSHA1, bool const addSHA256, bool const addSHA512)
 {
    unsigned char Buf[64*64];
-   bool const ToEOF = (Size == 0);
+   bool const ToEOF = (Size == UntilEOF);
    while (Size != 0 || ToEOF)
    {
       unsigned long long n = sizeof(Buf);

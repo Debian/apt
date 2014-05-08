@@ -936,6 +936,8 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    }
    CompressionExtension = comprExt;
 
+   Verify = true;
+
    Init(URI, URIDesc, ShortDesc);
 }
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
