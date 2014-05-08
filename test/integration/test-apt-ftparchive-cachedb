@@ -5,7 +5,7 @@ ensure_correct_packages_file() {
     testequal "Package: foo
 Priority: optional
 Section: others
-Installed-Size: 29
+$(dpkg-deb -I ./aptarchive/pool/main/foo_1_i386.deb | grep 'Installed-Size:' | sed 's#^ ##')
 Maintainer: Joe Sixpack <joe@example.org>
 Architecture: i386
 Version: 1
@@ -25,7 +25,7 @@ usr/share/doc/foo/copyright				    others/foo" cat ./aptarchive/dists/test/Conte
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 setupenvironment
-configarchitecture "i386"
+configarchitecture 'i386'
 
 mkdir -p aptarchive/dists/test/main/i18n/
 mkdir -p aptarchive/dists/test/main/source/
