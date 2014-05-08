@@ -64,8 +64,6 @@ void AcqTextStatus::IMSHit(pkgAcquire::ItemDesc &Itm)
       cout << '\r' << BlankLine << '\r';
 
    cout << _("Hit ") << Itm.Description;
-   if (Itm.Owner->FileSize != 0)
-      cout << " [" << SizeToStr(Itm.Owner->FileSize) << "B]";
    cout << endl;
    Update = true;
 }
