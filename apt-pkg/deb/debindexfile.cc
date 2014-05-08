@@ -692,7 +692,8 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 
    // get the control data out of the deb file vid dpkg -I
    // ... can I haz libdpkg?
-   const char *Args[5] = {"/usr/bin/dpkg",
+   std::string dpkg = _config->Find("Dir::Bin::dpkg","dpkg");
+   const char *Args[5] = {dpkg.c_str(),
                           "-I",
                           DebFile.c_str(),
                           "control",
