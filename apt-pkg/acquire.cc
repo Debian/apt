@@ -822,7 +822,9 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
    // Compute the total number of bytes to fetch
    unsigned int Unknown = 0;
    unsigned int Count = 0;
-   for (pkgAcquire::ItemCIterator I = Owner->ItemsBegin(); I != Owner->ItemsEnd();
+   bool UnfetchedReleaseFiles = false;
+   for (pkgAcquire::ItemCIterator I = Owner->ItemsBegin(); 
+        I != Owner->ItemsEnd();
 	++I, ++Count)
    {
       TotalItems++;
@@ -835,6 +837,10 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
 
       // see if the method tells us to expect more
       TotalItems += (*I)->ExpectedAdditionalItems;
+
+      // check if there are unfetched Release files
+      if ((*I)->Complete == false && (*I)->ExpectedAdditionalItems > 0)
+         UnfetchedReleaseFiles = true;
 
       TotalBytes += (*I)->FileSize;
       if ((*I)->Complete == true)
@@ -895,9 +901,8 @@ bool pkgAcquireStatus::Pulse(pkgAcquire *Owner)
       Time = NewTime;
    }
 
-   // calculate the percentage, if we have too little data assume 0%
-   // FIXME: the 5k is totally arbitrary 
-   if (TotalBytes < 5*1024)
+   // calculate the percentage, if we have too little data assume 1%
+   if (TotalBytes > 0 && UnfetchedReleaseFiles)
       Percent = 0;
    else 
       // use both files and bytes because bytes can be unreliable
