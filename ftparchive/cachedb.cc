@@ -97,13 +97,8 @@ bool CacheDB::ReadyDB(std::string const &DB)
 /* */
 bool CacheDB::OpenFile()
 {
-   // its open already
-   if(Fd && Fd->Name() == this->FileName)
-      return true;
-
-   // a different file is open, close it first
-   if(Fd && Fd->Name() != this->FileName)
-      CloseFile();
+   // always close existing file first
+   CloseFile();
 
    // open a new file
    Fd = new FileFd(FileName,FileFd::ReadOnly);
@@ -128,13 +123,8 @@ void CacheDB::CloseFile()
 // CacheDB::OpenDebFile - Open a debfile				/*{{{*/
 bool CacheDB::OpenDebFile()
 {
-   // debfile is already open
-   if(DebFile && &DebFile->GetFile() == Fd)
-      return true;
-
-   // a different debfile is open, close it first
-   if(DebFile && &DebFile->GetFile() != Fd)
-      CloseDebFile();
+   // always close existing file first
+   CloseDebFile();
 
    // first open the fd, then pass it to the debDebFile
    if(OpenFile() == false)
