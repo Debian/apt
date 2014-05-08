@@ -54,14 +54,15 @@ FTWScanner *FTWScanner::Owner;
 // SetTFRewriteData - Helper for setting rewrite lists			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline void SetTFRewriteData(struct TFRewriteData &tfrd,
-			     const char *tag,
+static inline TFRewriteData SetTFRewriteData(const char *tag,
 			     const char *rewrite,
 			     const char *newtag = 0)
 {
-    tfrd.Tag = tag;
-    tfrd.Rewrite = rewrite;
-    tfrd.NewTag = newtag;
+   TFRewriteData tfrd;
+   tfrd.Tag = tag;
+   tfrd.Rewrite = rewrite;
+   tfrd.NewTag = newtag;
+   return tfrd;
 }
 									/*}}}*/
 
@@ -454,30 +455,28 @@ bool PackagesWriter::DoPackage(string FileName)
    }
 
    // This lists all the changes to the fields we are going to make.
-   // (7 hardcoded + maintainer + suggests + end marker)
-   TFRewriteData Changes[6+2+OverItem->FieldOverride.size()+1+1];
+   std::vector<TFRewriteData> Changes;
 
-   unsigned int End = 0;
-   SetTFRewriteData(Changes[End++], "Size", Size);
+   Changes.push_back(SetTFRewriteData("Size", Size));
    if (DoMD5 == true)
-      SetTFRewriteData(Changes[End++], "MD5sum", Db.MD5Res.c_str());
+      Changes.push_back(SetTFRewriteData("MD5sum", Db.MD5Res.c_str()));
    if (DoSHA1 == true)
-      SetTFRewriteData(Changes[End++], "SHA1", Db.SHA1Res.c_str());
+      Changes.push_back(SetTFRewriteData("SHA1", Db.SHA1Res.c_str()));
    if (DoSHA256 == true)
-      SetTFRewriteData(Changes[End++], "SHA256", Db.SHA256Res.c_str());
+      Changes.push_back(SetTFRewriteData("SHA256", Db.SHA256Res.c_str()));
    if (DoSHA512 == true)
-      SetTFRewriteData(Changes[End++], "SHA512", Db.SHA512Res.c_str());
-   SetTFRewriteData(Changes[End++], "Filename", NewFileName.c_str());
-   SetTFRewriteData(Changes[End++], "Priority", OverItem->Priority.c_str());
-   SetTFRewriteData(Changes[End++], "Status", 0);
-   SetTFRewriteData(Changes[End++], "Optional", 0);
+      Changes.push_back(SetTFRewriteData("SHA512", Db.SHA512Res.c_str()));
+   Changes.push_back(SetTFRewriteData("Filename", NewFileName.c_str()));
+   Changes.push_back(SetTFRewriteData("Priority", OverItem->Priority.c_str()));
+   Changes.push_back(SetTFRewriteData("Status", 0));
+   Changes.push_back(SetTFRewriteData("Optional", 0));
 
    string DescriptionMd5;
    if (LongDescription == false) {
       MD5Summation descmd5;
       descmd5.Add(desc.c_str());
       DescriptionMd5 = descmd5.Result().Value();
-      SetTFRewriteData(Changes[End++], "Description-md5", DescriptionMd5.c_str());
+      Changes.push_back(SetTFRewriteData("Description-md5", DescriptionMd5.c_str()));
       if (TransWriter != NULL)
 	 TransWriter->DoPackage(Package, desc, DescriptionMd5);
    }
@@ -492,12 +491,12 @@ bool PackagesWriter::DoPackage(string FileName)
 	 NewLine(1);
 	 ioprintf(c1out, _("  %s maintainer is %s not %s\n"),
 	       Package.c_str(), Tags.FindS("Maintainer").c_str(), OverItem->OldMaint.c_str());
-      }      
+      }
    }
-   
+
    if (NewMaint.empty() == false)
-      SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
-   
+      Changes.push_back(SetTFRewriteData("Maintainer", NewMaint.c_str()));
+
    /* Get rid of the Optional tag. This is an ugly, ugly, ugly hack that
       dpkg-scanpackages does. Well sort of. dpkg-scanpackages just does renaming
       but dpkg does this append bit. So we do the append bit, at least that way the
@@ -508,17 +507,17 @@ bool PackagesWriter::DoPackage(string FileName)
    {
       if (Tags.FindS("Suggests").empty() == false)
 	 OptionalStr = Tags.FindS("Suggests") + ", " + OptionalStr;
-      SetTFRewriteData(Changes[End++], "Suggests", OptionalStr.c_str());
+      Changes.push_back(SetTFRewriteData("Suggests", OptionalStr.c_str()));
    }
 
-   for (map<string,string>::const_iterator I = OverItem->FieldOverride.begin(); 
+   for (map<string,string>::const_iterator I = OverItem->FieldOverride.begin();
         I != OverItem->FieldOverride.end(); ++I)
-      SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
+      Changes.push_back(SetTFRewriteData(I->first.c_str(),I->second.c_str()));
 
-   SetTFRewriteData(Changes[End++], 0, 0);
+   Changes.push_back(SetTFRewriteData( 0, 0));
 
    // Rewrite and store the fields.
-   if (TFRewrite(Output,Tags,TFRewritePackageOrder,Changes) == false)
+   if (TFRewrite(Output,Tags,TFRewritePackageOrder,Changes.data()) == false)
       return false;
    fprintf(Output,"\n");
 
@@ -820,22 +819,21 @@ bool SourcesWriter::DoPackage(string FileName)
 
    // This lists all the changes to the fields we are going to make.
    // (5 hardcoded + checksums + maintainer + end marker)
-   TFRewriteData Changes[5+2+1+SOverItem->FieldOverride.size()+1];
+   std::vector<TFRewriteData> Changes;
 
-   unsigned int End = 0;
-   SetTFRewriteData(Changes[End++],"Source",Package.c_str(),"Package");
+   Changes.push_back(SetTFRewriteData("Source",Package.c_str(),"Package"));
    if (Files.empty() == false)
-      SetTFRewriteData(Changes[End++],"Files",Files.c_str());
+      Changes.push_back(SetTFRewriteData("Files",Files.c_str()));
    if (ChecksumsSha1.empty() == false)
-      SetTFRewriteData(Changes[End++],"Checksums-Sha1",ChecksumsSha1.c_str());
+      Changes.push_back(SetTFRewriteData("Checksums-Sha1",ChecksumsSha1.c_str()));
    if (ChecksumsSha256.empty() == false)
-      SetTFRewriteData(Changes[End++],"Checksums-Sha256",ChecksumsSha256.c_str());
+      Changes.push_back(SetTFRewriteData("Checksums-Sha256",ChecksumsSha256.c_str()));
    if (ChecksumsSha512.empty() == false)
-      SetTFRewriteData(Changes[End++],"Checksums-Sha512",ChecksumsSha512.c_str());
+      Changes.push_back(SetTFRewriteData("Checksums-Sha512",ChecksumsSha512.c_str()));
    if (Directory != "./")
-      SetTFRewriteData(Changes[End++],"Directory",Directory.c_str());
-   SetTFRewriteData(Changes[End++],"Priority",BestPrio.c_str());
-   SetTFRewriteData(Changes[End++],"Status",0);
+      Changes.push_back(SetTFRewriteData("Directory",Directory.c_str()));
+   Changes.push_back(SetTFRewriteData("Priority",BestPrio.c_str()));
+   Changes.push_back(SetTFRewriteData("Status",0));
 
    // Rewrite the maintainer field if necessary
    bool MaintFailed;
@@ -850,16 +848,16 @@ bool SourcesWriter::DoPackage(string FileName)
       }      
    }
    if (NewMaint.empty() == false)
-      SetTFRewriteData(Changes[End++], "Maintainer", NewMaint.c_str());
+      Changes.push_back(SetTFRewriteData("Maintainer", NewMaint.c_str()));
    
    for (map<string,string>::const_iterator I = SOverItem->FieldOverride.begin(); 
         I != SOverItem->FieldOverride.end(); ++I)
-      SetTFRewriteData(Changes[End++],I->first.c_str(),I->second.c_str());
+      Changes.push_back(SetTFRewriteData(I->first.c_str(),I->second.c_str()));
 
-   SetTFRewriteData(Changes[End++], 0, 0);
+   Changes.push_back(SetTFRewriteData(0, 0));
       
    // Rewrite and store the fields.
-   if (TFRewrite(Output,Tags,TFRewriteSourceOrder,Changes) == false)
+   if (TFRewrite(Output,Tags,TFRewriteSourceOrder,Changes.data()) == false)
       return false;
    fprintf(Output,"\n");
 
