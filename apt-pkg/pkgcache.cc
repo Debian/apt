@@ -822,7 +822,7 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
 // VerIterator::Downloadable - Checks if the version is downloadable	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCache::VerIterator::Downloadable() const
+APT_PURE bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
@@ -835,7 +835,7 @@ bool pkgCache::VerIterator::Downloadable() const
 // ---------------------------------------------------------------------
 /* This checks to see if any of the versions files are not NotAutomatic. 
    True if this version is selectable for automatic installation. */
-bool pkgCache::VerIterator::Automatic() const
+APT_PURE bool pkgCache::VerIterator::Automatic() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
