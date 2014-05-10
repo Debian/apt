@@ -540,7 +540,7 @@ std::string const Configuration::getBuildProfilesString() {
 		return "";
 	std::vector<std::string>::const_iterator p = profiles.begin();
 	std::string list = *p;
-	for (; p != profiles.end(); ++p)
+	for (++p; p != profiles.end(); ++p)
 	   list.append(",").append(*p);
 	return list;
 }

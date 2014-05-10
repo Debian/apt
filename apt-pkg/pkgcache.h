@@ -286,8 +286,10 @@ struct pkgCache::Header
    map_ptrloc StringList;
    /** \brief String representing the version system used */
    map_ptrloc VerSysName;
-   /** \brief Architecture(s) the cache was built against */
+   /** \brief native architecture the cache was built against */
    map_ptrloc Architecture;
+   /** \brief all architectures the cache was built against */
+   map_ptrloc Architectures;
    /** \brief The maximum size of a raw entry from the original Package file */
    unsigned long MaxVerFileSize;
    /** \brief The maximum size of a raw entry from the original Translation file */

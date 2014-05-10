@@ -74,13 +74,31 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       // Starting header
       *Cache.HeaderP = pkgCache::Header();
       map_ptrloc const idxVerSysName = WriteStringInMap(_system->VS->Label);
+      if (unlikely(idxVerSysName == 0))
+	 return;
       Cache.HeaderP->VerSysName = idxVerSysName;
       // this pointer is set in ReMap, but we need it now for WriteUniqString
       Cache.StringItemP = (pkgCache::StringItem *)Map.Data();
       map_ptrloc const idxArchitecture = WriteUniqString(_config->Find("APT::Architecture"));
-      Cache.HeaderP->Architecture = idxArchitecture;
-      if (unlikely(idxVerSysName == 0 || idxArchitecture == 0))
+      if (unlikely(idxArchitecture == 0))
 	 return;
+      Cache.HeaderP->Architecture = idxArchitecture;
+
+      std::vector<std::string> archs = APT::Configuration::getArchitectures();
+      if (archs.size() > 1)
+      {
+	 std::vector<std::string>::const_iterator a = archs.begin();
+	 std::string list = *a;
+	 for (++a; a != archs.end(); ++a)
+	    list.append(",").append(*a);
+	 map_ptrloc const idxArchitectures = WriteStringInMap(list);
+	 if (unlikely(idxArchitectures == 0))
+	    return;
+	 Cache.HeaderP->Architectures = idxArchitectures;
+      }
+      else
+	 Cache.HeaderP->Architectures = idxArchitecture;
+
       Cache.ReMap();
    }
    else
