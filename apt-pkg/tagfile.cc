@@ -47,6 +47,22 @@ public:
    unsigned long long Size;
 };
 
+static unsigned long AlphaHash(const char *Text, size_t Length)		/*{{{*/
+{
+   /* This very simple hash function for the last 8 letters gives
+      very good performance on the debian package files */
+   if (Length > 8)
+   {
+    Text += (Length - 8);
+    Length = 8;
+   }
+   unsigned long Res = 0;
+   for (size_t i = 0; i < Length; ++i)
+      Res = ((unsigned long)(Text[i]) & 0xDF) ^ (Res << 1);
+   return Res & 0xFF;
+}
+									/*}}}*/
+
 // TagFile::pkgTagFile - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -139,18 +155,23 @@ bool pkgTagFile::Resize(unsigned long long const newSize)
  */
 bool pkgTagFile::Step(pkgTagSection &Tag)
 {
-   while (Tag.Scan(d->Start,d->End - d->Start) == false)
+   if(Tag.Scan(d->Start,d->End - d->Start) == false)
    {
-      if (Fill() == false)
-	 return false;
-      
-      if(Tag.Scan(d->Start,d->End - d->Start))
-	 break;
+      do
+      {
+	 if (Fill() == false)
+	    return false;
 
-      if (Resize() == false)
-	 return _error->Error(_("Unable to parse package file %s (1)"),
-                              d->Fd.Name().c_str());
+	 if(Tag.Scan(d->Start,d->End - d->Start, false))
+	    break;
+
+	 if (Resize() == false)
+	    return _error->Error(_("Unable to parse package file %s (1)"),
+		  d->Fd.Name().c_str());
+
+      } while (Tag.Scan(d->Start,d->End - d->Start, false) == false);
    }
+
    d->Start += Tag.size();
    d->iOffset += Tag.size();
 
@@ -244,7 +265,7 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
    if (Fill() == false)
       return false;
    
-   if (Tag.Scan(d->Start, d->End - d->Start) == false)
+   if (Tag.Scan(d->Start, d->End - d->Start, false) == false)
       return _error->Error(_("Unable to parse package file %s (2)"),d->Fd.Name().c_str());
    
    return true;
@@ -254,27 +275,46 @@ bool pkgTagFile::Jump(pkgTagSection &Tag,unsigned long long Offset)
 // ---------------------------------------------------------------------
 /* */
 pkgTagSection::pkgTagSection()
-   : Section(0), TagCount(0), d(NULL), Stop(0)
+   : Section(0), d(NULL), Stop(0)
 {
-   memset(&Indexes, 0, sizeof(Indexes));
-   memset(&AlphaIndexes, 0, sizeof(AlphaIndexes));
+   memset(&LookupTable, 0, sizeof(LookupTable));
 }
 									/*}}}*/
 // TagSection::Scan - Scan for the end of the header information	/*{{{*/
-// ---------------------------------------------------------------------
-/* This looks for the first double new line in the data stream.
-   It also indexes the tags in the section. */
-bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
+bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength, bool const Restart)
 {
+   Section = Start;
    const char *End = Start + MaxLength;
-   Stop = Section = Start;
-   memset(AlphaIndexes,0,sizeof(AlphaIndexes));
+
+   if (Restart == false && Tags.empty() == false)
+   {
+      Stop = Section + Tags.back().StartTag;
+      if (End <= Stop)
+	 return false;
+      Stop = (const char *)memchr(Stop,'\n',End - Stop);
+      if (Stop == NULL)
+	 return false;
+      ++Stop;
+   }
+   else
+   {
+      Stop = Section;
+      if (Tags.empty() == false)
+      {
+	 memset(&LookupTable, 0, sizeof(LookupTable));
+	 Tags.clear();
+      }
+      Tags.reserve(0x100);
+   }
+   size_t TagCount = Tags.size();
 
    if (Stop == 0)
       return false;
 
-   TagCount = 0;
-   while (TagCount+1 < sizeof(Indexes)/sizeof(Indexes[0]) && Stop < End)
+   TagData lastTagData(0);
+   lastTagData.EndTag = 0;
+   unsigned long lastTagHash = 0;
+   while (Stop < End)
    {
       TrimRecord(true,End);
 
@@ -286,12 +326,39 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       // Start a new index and add it to the hash
       if (isspace(Stop[0]) == 0)
       {
-	 Indexes[TagCount++] = Stop - Section;
-	 AlphaIndexes[AlphaHash(Stop,End)] = TagCount;
+	 // store the last found tag
+	 if (lastTagData.EndTag != 0)
+	 {
+	    if (LookupTable[lastTagHash] != 0)
+	       lastTagData.NextInBucket = LookupTable[lastTagHash];
+	    LookupTable[lastTagHash] = TagCount;
+	    Tags.push_back(lastTagData);
+	 }
+
+	 ++TagCount;
+	 lastTagData = TagData(Stop - Section);
+	 // find the colon separating tag and value
+	 char const * Colon = (char const *) memchr(Stop, ':', End - Stop);
+	 if (Colon == NULL)
+	    return false;
+	 // find the end of the tag (which might or might not be the colon)
+	 char const * EndTag = Colon;
+	 --EndTag;
+	 for (; EndTag > Stop && isspace(*EndTag) != 0; --EndTag)
+	    ;
+	 ++EndTag;
+	 lastTagData.EndTag = EndTag - Section;
+	 lastTagHash = AlphaHash(Stop, EndTag - Stop);
+	 // find the beginning of the value
+	 Stop = Colon + 1;
+	 for (; isspace(*Stop) != 0; ++Stop);
+	 if (Stop >= End)
+	    return false;
+	 lastTagData.StartValue = Stop - Section;
       }
 
       Stop = (const char *)memchr(Stop,'\n',End - Stop);
-      
+
       if (Stop == 0)
 	 return false;
 
@@ -302,7 +369,16 @@ bool pkgTagSection::Scan(const char *Start,unsigned long MaxLength)
       // Double newline marks the end of the record
       if (Stop+1 < End && Stop[1] == '\n')
       {
-	 Indexes[TagCount] = Stop - Section;
+	 if (lastTagData.EndTag != 0)
+	 {
+	    if (LookupTable[lastTagHash] != 0)
+	       lastTagData.NextInBucket = LookupTable[lastTagHash];
+	    LookupTable[lastTagHash] = TagCount;
+	    Tags.push_back(lastTagData);
+	 }
+
+	 TagData const td(Stop - Section);
+	 Tags.push_back(td);
 	 TrimRecord(false,End);
 	 return true;
       }
@@ -331,8 +407,8 @@ void pkgTagSection::Trim()
    for (; Stop > Section + 2 && (Stop[-2] == '\n' || Stop[-2] == '\r'); Stop--);
 }
 									/*}}}*/
-// TagSection::Exists - return True if a tag exists                	/*{{{*/
-bool pkgTagSection::Exists(const char* const Tag)
+// TagSection::Exists - return True if a tag exists			/*{{{*/
+bool pkgTagSection::Exists(const char* const Tag) const
 {
    unsigned int tmp;
    return Find(Tag, tmp);
@@ -343,73 +419,43 @@ bool pkgTagSection::Exists(const char* const Tag)
 /* This searches the section for a tag that matches the given string. */
 bool pkgTagSection::Find(const char *Tag,unsigned int &Pos) const
 {
-   unsigned int Length = strlen(Tag);
-   unsigned int I = AlphaIndexes[AlphaHash(Tag)];
-   if (I == 0)
+   size_t const Length = strlen(Tag);
+   unsigned int Bucket = LookupTable[AlphaHash(Tag, Length)];
+   if (Bucket == 0)
       return false;
-   I--;
-   
-   for (unsigned int Counter = 0; Counter != TagCount; Counter++, 
-	I = (I+1)%TagCount)
+
+   for (; Bucket != 0; Bucket = Tags[Bucket - 1].NextInBucket)
    {
-      const char *St;
-      St = Section + Indexes[I];
+      if ((Tags[Bucket - 1].EndTag - Tags[Bucket - 1].StartTag) != Length)
+	 continue;
+
+      char const * const St = Section + Tags[Bucket - 1].StartTag;
       if (strncasecmp(Tag,St,Length) != 0)
 	 continue;
 
-      // Make sure the colon is in the right place
-      const char *C = St + Length;
-      for (; isspace(*C) != 0; C++);
-      if (*C != ':')
-	 continue;
-      Pos = I;
+      Pos = Bucket - 1;
       return true;
    }
 
    Pos = 0;
    return false;
 }
-									/*}}}*/
-// TagSection::Find - Locate a tag					/*{{{*/
-// ---------------------------------------------------------------------
-/* This searches the section for a tag that matches the given string. */
 bool pkgTagSection::Find(const char *Tag,const char *&Start,
 		         const char *&End) const
 {
-   unsigned int Length = strlen(Tag);
-   unsigned int I = AlphaIndexes[AlphaHash(Tag)];
-   if (I == 0)
+   unsigned int Pos;
+   if (Find(Tag, Pos) == false)
       return false;
-   I--;
-   
-   for (unsigned int Counter = 0; Counter != TagCount; Counter++, 
-	I = (I+1)%TagCount)
-   {
-      const char *St;
-      St = Section + Indexes[I];
-      if (strncasecmp(Tag,St,Length) != 0)
-	 continue;
-      
-      // Make sure the colon is in the right place
-      const char *C = St + Length;
-      for (; isspace(*C) != 0; C++);
-      if (*C != ':')
-	 continue;
 
-      // Strip off the gunk from the start end
-      Start = C;
-      End = Section + Indexes[I+1];
-      if (Start >= End)
-	 return _error->Error("Internal parsing error");
-      
-      for (; (isspace(*Start) != 0 || *Start == ':') && Start < End; Start++);
-      for (; isspace(End[-1]) != 0 && End > Start; End--);
-      
-      return true;
-   }
-   
-   Start = End = 0;
-   return false;
+   Start = Section + Tags[Pos].StartValue;
+   // Strip off the gunk from the end
+   End = Section + Tags[Pos + 1].StartTag;
+   if (unlikely(Start > End))
+      return _error->Error("Internal parsing error");
+
+   for (; isspace(End[-1]) != 0 && End > Start; --End);
+
+   return true;
 }
 									/*}}}*/
 // TagSection::FindS - Find a string					/*{{{*/
@@ -502,6 +548,13 @@ bool pkgTagSection::FindFlag(unsigned long &Flags, unsigned long Flag,
       return true;
    }
    return true;
+}
+									/*}}}*/
+APT_PURE unsigned int pkgTagSection::Count() const {			/*{{{*/
+   if (Tags.empty() == true)
+      return 0;
+   // the last element is just marking the end and isn't a real one
+   return Tags.size() - 1;
 }
 									/*}}}*/
 // TFRewrite - Rewrite a control record					/*{{{*/

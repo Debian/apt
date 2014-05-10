@@ -103,10 +103,12 @@ bool DebFile::DoItem(Item &I, int &Fd)
 	if (strcmp(I.Name, "control") == 0)
 	{
 		delete [] Control;
-		Control = new char[I.Size+1];
-		Control[I.Size] = 0;
+		Control = new char[I.Size+3];
+		Control[I.Size] = '\n';
+		Control[I.Size + 1] = '\n';
+		Control[I.Size + 2] = '\0';
 		Which = IsControl;
-		ControlLen = I.Size;
+		ControlLen = I.Size + 3;
 		// make it call the Process method below. this is so evil
 		Fd = -2;
 	}
@@ -162,9 +164,10 @@ bool DebFile::Process(Item &/*I*/, const unsigned char *data,
 bool DebFile::ParseInfo()
 {
 	if (Control == NULL) return false;
-	
+
 	pkgTagSection Section;
-	Section.Scan(Control, ControlLen);
+	if (Section.Scan(Control, ControlLen) == false)
+		return false;
 
 	Package = Section.FindS("Package");
 	Version = GetInstalledVer(Package);

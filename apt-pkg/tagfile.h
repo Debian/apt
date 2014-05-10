@@ -25,6 +25,8 @@
 #include <stdio.h>
 
 #include <string>
+#include <vector>
+#include <list>
 
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/fileutl.h>
@@ -35,22 +37,19 @@ class FileFd;
 class pkgTagSection
 {
    const char *Section;
-   // We have a limit of 256 tags per section.
-   unsigned int Indexes[256];
-   unsigned int AlphaIndexes[0x100];
-   unsigned int TagCount;
+   struct TagData {
+      unsigned int StartTag;
+      unsigned int EndTag;
+      unsigned int StartValue;
+      unsigned int NextInBucket;
+
+      TagData(unsigned int const StartTag) : StartTag(StartTag), NextInBucket(0) {}
+   };
+   std::vector<TagData> Tags;
+   unsigned int LookupTable[0x100];
+
    // dpointer placeholder (for later in case we need it)
    void *d;
-
-   /* This very simple hash function for the last 8 letters gives
-      very good performance on the debian package files */
-   inline static unsigned long AlphaHash(const char *Text, const char *End = 0)
-   {
-      unsigned long Res = 0;
-      for (; Text != End && *Text != ':' && *Text != 0; Text++)
-	 Res = ((unsigned long)(*Text) & 0xDF) ^ (Res << 1);
-      return Res & 0xFF;
-   }
 
    protected:
    const char *Stop;
@@ -69,17 +68,39 @@ class pkgTagSection
 		 unsigned long Flag) const;
    bool static FindFlag(unsigned long &Flags, unsigned long Flag,
 				const char* Start, const char* Stop);
-   bool Scan(const char *Start,unsigned long MaxLength);
+
+   /** \brief searches the boundaries of the current section
+    *
+    * While parameter Start marks the beginning of the section, this method
+    * will search for the first double newline in the data stream which marks
+    * the end of the section. It also does a first pass over the content of
+    * the section parsing it as encountered for processing later on by Find
+    *
+    * @param Start is the beginning of the section
+    * @param MaxLength is the size of valid data in the stream pointed to by Start
+    * @param Restart if enabled internal state will be cleared, otherwise it is
+    *  assumed that now more data is available in the stream and the parsing will
+    *  start were it encountered insufficent data the last time.
+    *
+    * @return \b true if section end was found, \b false otherwise.
+    *  Beware that internal state will be inconsistent if \b false is returned!
+    */
+   APT_MUSTCHECK bool Scan(const char *Start, unsigned long MaxLength, bool const Restart = true);
    inline unsigned long size() const {return Stop - Section;};
    void Trim();
    virtual void TrimRecord(bool BeforeRecord, const char* &End);
-   
-   inline unsigned int Count() const {return TagCount;};
-   bool Exists(const char* const Tag);
- 
+
+   /** \brief amount of Tags in the current section
+    *
+    * Note: if a Tag is mentioned repeatly it will be counted multiple
+    * times, but only the last occurance is available via Find methods.
+    */
+   unsigned int Count() const;
+   bool Exists(const char* const Tag) const;
+
    inline void Get(const char *&Start,const char *&Stop,unsigned int I) const
-                   {Start = Section + Indexes[I]; Stop = Section + Indexes[I+1];}
-	    
+                   {Start = Section + Tags[I].StartTag; Stop = Section + Tags[I+1].StartTag;}
+
    inline void GetSection(const char *&Start,const char *&Stop) const
    {
       Start = Section;

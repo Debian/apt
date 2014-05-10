@@ -177,6 +177,11 @@ assert_correct_sources_file
 mkdir aptarchive/pool/invalid
 printf "meep" > aptarchive/pool/invalid/invalid_1.0.dsc
 testequal "
+E: Could not find a record in the DSC 'aptarchive/pool/invalid/invalid_1.0.dsc'" aptftparchive sources aptarchive/pool/invalid
+rm -f aptarchive/pool/invalid/invalid_1.0.dsc
+
+printf "meep: yes" > aptarchive/pool/invalid/invalid_1.0.dsc
+testequal "
 E: Could not find a Source entry in the DSC 'aptarchive/pool/invalid/invalid_1.0.dsc'" aptftparchive sources aptarchive/pool/invalid
 rm -f aptarchive/pool/invalid/invalid_1.0.dsc
 
