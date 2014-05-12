@@ -6,6 +6,21 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture 'amd64' 'sparc' 'armel'
 
+msgtest 'Check that dpkg supports' 'arch-specific dependencies'
+set +e
+# this fails always, the question is just how it fails
+dpkg-checkbuilddeps -d 'foobar:barfoo' /dev/null 2>/dev/null >/dev/null
+RETURNCODE=$?
+set -e
+if [ "$RETURNCODE" != '1' ]; then
+	dpkg-checkbuilddeps -d 'foobar:barfoo' /dev/null || true
+	echo "Command had returncode: $RETURNCODE"
+	msgskip
+	exit 0
+else
+	msgpass
+fi
+
 buildsimplenativepackage 'libc6' 'amd64,sparc,armel' '1' 'stable' 'Multi-Arch: same'
 buildsimplenativepackage 'libc6-i386' 'amd64' '1' 'stable' 'Conflicts: libc6:sparc'
 
