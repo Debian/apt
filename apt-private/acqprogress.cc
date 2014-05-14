@@ -140,6 +140,9 @@ void AcqTextStatus::Stop()
    if (Quiet <= 0)
       cout << '\r' << BlankLine << '\r' << flush;
 
+   if (_config->FindB("quiet::NoStatistic", false) == true)
+      return;
+
    if (FetchedBytes != 0 && _error->PendingError() == false)
       ioprintf(cout,_("Fetched %sB in %s (%sB/s)\n"),
 	       SizeToStr(FetchedBytes).c_str(),

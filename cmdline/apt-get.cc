@@ -828,20 +828,25 @@ static bool DoSource(CommandLine &CmdL)
 	 queued.insert(Last->Index().ArchiveURI(I->Path));
 
 	 // check if we have a file with that md5 sum already localy
-	 if(!I->Hash.empty() && FileExists(flNotDir(I->Path)))  
-	 {
-            HashString hash_string = HashString(I->Hash);
-            if(hash_string.VerifyFile(flNotDir(I->Path)))
+	 std::string localFile = flNotDir(I->Path);
+	 if (FileExists(localFile) == true)
+	    if(I->Hashes.VerifyFile(localFile) == true)
 	    {
 	       ioprintf(c1out,_("Skipping already downloaded file '%s'\n"),
-			flNotDir(I->Path).c_str());
+			localFile.c_str());
 	       continue;
 	    }
+
+	 // see if we have a hash (Acquire::ForceHash is the only way to have none)
+	 if (I->Hashes.usable() == false && _config->FindB("APT::Get::AllowUnauthenticated",false) == false)
+	 {
+	    ioprintf(c1out, "Skipping download of file '%s' as requested hashsum is not available for authentication\n",
+		     localFile.c_str());
+	    continue;
 	 }
 
 	 new pkgAcqFile(&Fetcher,Last->Index().ArchiveURI(I->Path),
-			I->Hash,I->Size,
-			Last->Index().SourceInfo(*Last,*I),Src);
+			I->Hashes, I->Size, Last->Index().SourceInfo(*Last,*I), Src);
       }
    }
    

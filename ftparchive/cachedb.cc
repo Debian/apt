@@ -21,11 +21,13 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/gpgv.h>
+#include <apt-pkg/hashes.h>
 
 #include <netinet/in.h>       // htonl, etc
 #include <ctype.h>
 #include <stddef.h>
 #include <sys/stat.h>
+#include <strings.h>
 
 #include "cachedb.h"
 
@@ -206,15 +208,10 @@ bool CacheDB::GetCurStat()
 									/*}}}*/
 // CacheDB::GetFileInfo - Get all the info about the file		/*{{{*/
 // ---------------------------------------------------------------------
-bool CacheDB::GetFileInfo(std::string const &FileName, bool const &DoControl, 
-                          bool const &DoContents,
-                          bool const &GenContentsOnly, 
-                          bool const &DoSource,
-                          bool const &DoMD5, bool const &DoSHA1,
-                          bool const &DoSHA256, bool const &DoSHA512, 
+bool CacheDB::GetFileInfo(std::string const &FileName, bool const &DoControl, bool const &DoContents,
+				bool const &GenContentsOnly, bool const DoSource, unsigned int const DoHashes,
                           bool const &checkMtime)
 {
-   bool result = true;
    this->FileName = FileName;
 
    if (GetCurStat() == false)
@@ -222,31 +219,28 @@ bool CacheDB::GetFileInfo(std::string const &FileName, bool const &DoControl,
    OldStat = CurStat;
 
    if (GetFileStat(checkMtime) == false)
-      return false;	
+      return false;
 
    /* if mtime changed, update CurStat from disk */
    if (checkMtime == true && OldStat.mtime != CurStat.mtime)
       CurStat.Flags = FlSize;
 
    Stats.Bytes += CurStat.FileSize;
-   Stats.Packages++;
+   ++Stats.Packages;
 
    if ((DoControl && LoadControl() == false)
-       || (DoContents && LoadContents(GenContentsOnly) == false)
-       || (DoSource && LoadSource() == false)
-       || (DoMD5 && GetMD5(false) == false)
-       || (DoSHA1 && GetSHA1(false) == false)
-       || (DoSHA256 && GetSHA256(false) == false)
-       || (DoSHA512 && GetSHA512(false) == false) )
+	 || (DoContents && LoadContents(GenContentsOnly) == false)
+	 || (DoSource && LoadSource() == false)
+	 || (DoHashes != 0 && GetHashes(false, DoHashes) == false)
+      )
    {
-      result = false;
+      return false;
    }
-    
-   return result;
+
+   return true;
 }
 									/*}}}*/
-
-bool CacheDB::LoadSource()
+bool CacheDB::LoadSource()						/*{{{*/
 {
    // Try to read the control information out of the DB.
    if ((CurStat.Flags & FlSource) == FlSource)
@@ -276,7 +270,7 @@ bool CacheDB::LoadSource()
 
    return true;
 }
-
+									/*}}}*/
 // CacheDB::LoadControl - Load Control information			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -345,7 +339,7 @@ bool CacheDB::LoadContents(bool const &GenOnly)
    return true;
 }
 									/*}}}*/
-
+// CacheDB::GetHashes - Get the hashs					/*{{{*/
 static std::string bytes2hex(uint8_t *bytes, size_t length) {
    char buf[3];
    std::string space;
@@ -375,125 +369,59 @@ static void hex2bytes(uint8_t *bytes, const char *hex, int length) {
       bytes++;
    } 
 }
-
-// CacheDB::GetMD5 - Get the MD5 hash					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool CacheDB::GetMD5(bool const &GenOnly)
+bool CacheDB::GetHashes(bool const GenOnly, unsigned int const DoHashes)
 {
-   // Try to read the control information out of the DB.
-   if ((CurStat.Flags & FlMD5) == FlMD5)
+   unsigned int FlHashes = DoHashes & (Hashes::MD5SUM | Hashes::SHA1SUM | Hashes::SHA256SUM | Hashes::SHA512SUM);
+   HashesList.clear();
+
+   if (FlHashes != 0)
    {
-      if (GenOnly == true)
-	 return true;
-      
-      MD5Res = bytes2hex(CurStat.MD5, sizeof(CurStat.MD5));
-	 return true;
+      if (OpenFile() == false)
+	 return false;
+
+      Hashes hashes;
+      if (Fd->Seek(0) == false || hashes.AddFD(*Fd, CurStat.FileSize, FlHashes) == false)
+	 return false;
+
+      HashStringList hl = hashes.GetHashStringList();
+      for (HashStringList::const_iterator hs = hl.begin(); hs != hl.end(); ++hs)
+      {
+	 HashesList.push_back(*hs);
+	 if (strcasecmp(hs->HashType().c_str(), "SHA512") == 0)
+	 {
+	    Stats.SHA512Bytes += CurStat.FileSize;
+	    hex2bytes(CurStat.SHA512, hs->HashValue().data(), sizeof(CurStat.SHA512));
+	    CurStat.Flags |= FlSHA512;
+	 }
+	 else if (strcasecmp(hs->HashType().c_str(), "SHA256") == 0)
+	 {
+	    Stats.SHA256Bytes += CurStat.FileSize;
+	    hex2bytes(CurStat.SHA256, hs->HashValue().data(), sizeof(CurStat.SHA256));
+	    CurStat.Flags |= FlSHA256;
+	 }
+	 else if (strcasecmp(hs->HashType().c_str(), "SHA1") == 0)
+	 {
+	    Stats.SHA1Bytes += CurStat.FileSize;
+	    hex2bytes(CurStat.SHA1, hs->HashValue().data(), sizeof(CurStat.SHA1));
+	    CurStat.Flags |= FlSHA1;
+	 }
+	 else if (strcasecmp(hs->HashType().c_str(), "MD5Sum") == 0)
+	 {
+	    Stats.MD5Bytes += CurStat.FileSize;
+	    hex2bytes(CurStat.MD5, hs->HashValue().data(), sizeof(CurStat.MD5));
+	    CurStat.Flags |= FlMD5;
+	 }
+	 else
+	    return _error->Error("Got unknown unrequested hashtype %s", hs->HashType().c_str());
+      }
    }
-   
-   Stats.MD5Bytes += CurStat.FileSize;
-	 
-   if (OpenFile() == false)
-      return false;
-
-   MD5Summation MD5;
-   if (Fd->Seek(0) == false || MD5.AddFD(*Fd, CurStat.FileSize) == false)
-      return false;
-   
-   MD5Res = MD5.Result();
-   hex2bytes(CurStat.MD5, MD5Res.data(), sizeof(CurStat.MD5));
-      CurStat.Flags |= FlMD5;
-   return true;
-}
-									/*}}}*/
-// CacheDB::GetSHA1 - Get the SHA1 hash					/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool CacheDB::GetSHA1(bool const &GenOnly)
-{
-   // Try to read the control information out of the DB.
-   if ((CurStat.Flags & FlSHA1) == FlSHA1)
-   {
-      if (GenOnly == true)
-	 return true;
-
-      SHA1Res = bytes2hex(CurStat.SHA1, sizeof(CurStat.SHA1));
+   if (GenOnly == true)
       return true;
-   }
-   
-   Stats.SHA1Bytes += CurStat.FileSize;
-	 
-   if (OpenFile() == false)
-      return false;
 
-   SHA1Summation SHA1;
-   if (Fd->Seek(0) == false || SHA1.AddFD(*Fd, CurStat.FileSize) == false)
-      return false;
-   
-   SHA1Res = SHA1.Result();
-   hex2bytes(CurStat.SHA1, SHA1Res.data(), sizeof(CurStat.SHA1));
-   CurStat.Flags |= FlSHA1;
-   return true;
-}
-									/*}}}*/
-// CacheDB::GetSHA256 - Get the SHA256 hash				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool CacheDB::GetSHA256(bool const &GenOnly)
-{
-   // Try to read the control information out of the DB.
-   if ((CurStat.Flags & FlSHA256) == FlSHA256)
-   {
-      if (GenOnly == true)
-	 return true;
-
-      SHA256Res = bytes2hex(CurStat.SHA256, sizeof(CurStat.SHA256));
-      return true;
-   }
-   
-   Stats.SHA256Bytes += CurStat.FileSize;
-	 
-   if (OpenFile() == false)
-      return false;
-
-   SHA256Summation SHA256;
-   if (Fd->Seek(0) == false || SHA256.AddFD(*Fd, CurStat.FileSize) == false)
-      return false;
-   
-   SHA256Res = SHA256.Result();
-   hex2bytes(CurStat.SHA256, SHA256Res.data(), sizeof(CurStat.SHA256));
-   CurStat.Flags |= FlSHA256;
-   return true;
-}
-									/*}}}*/
-// CacheDB::GetSHA256 - Get the SHA256 hash				/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-bool CacheDB::GetSHA512(bool const &GenOnly)
-{
-   // Try to read the control information out of the DB.
-   if ((CurStat.Flags & FlSHA512) == FlSHA512)
-   {
-      if (GenOnly == true)
-	 return true;
-
-      SHA512Res = bytes2hex(CurStat.SHA512, sizeof(CurStat.SHA512));
-      return true;
-   }
-   
-   Stats.SHA512Bytes += CurStat.FileSize;
-	 
-   if (OpenFile() == false)
-      return false;
-
-   SHA512Summation SHA512;
-   if (Fd->Seek(0) == false || SHA512.AddFD(*Fd, CurStat.FileSize) == false)
-      return false;
-   
-   SHA512Res = SHA512.Result();
-   hex2bytes(CurStat.SHA512, SHA512Res.data(), sizeof(CurStat.SHA512));
-   CurStat.Flags |= FlSHA512;
-   return true;
+   return HashesList.push_back(HashString("MD5Sum", bytes2hex(CurStat.MD5, sizeof(CurStat.MD5)))) &&
+      HashesList.push_back(HashString("SHA1", bytes2hex(CurStat.SHA1, sizeof(CurStat.SHA1)))) &&
+      HashesList.push_back(HashString("SHA256", bytes2hex(CurStat.SHA256, sizeof(CurStat.SHA256)))) &&
+      HashesList.push_back(HashString("SHA512", bytes2hex(CurStat.SHA512, sizeof(CurStat.SHA512))));
 }
 									/*}}}*/
 // CacheDB::Finish - Write back the cache structure			/*{{{*/

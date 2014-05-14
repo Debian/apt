@@ -326,25 +326,30 @@ bool pkgAcquire::Worker::RunMessages()
 			       Owner->DestFile.c_str(), LookupTag(Message,"Size","0").c_str(),TotalSize);
 
 	    // see if there is a hash to verify
-	    string RecivedHash;
-	    HashString expectedHash(Owner->HashSum());
-	    if(!expectedHash.empty()) 
+	    HashStringList RecivedHashes;
+	    HashStringList expectedHashes = Owner->HashSums();
+	    for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
 	    {
-	       string hashTag = expectedHash.HashType()+"-Hash";
-	       string hashSum = LookupTag(Message, hashTag.c_str());
-	       if(!hashSum.empty())
-		  RecivedHash = expectedHash.HashType() + ":" + hashSum;
-	       if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
-	       {
-		  clog << "201 URI Done: " << Owner->DescURI() << endl
-		       << "RecivedHash: " << RecivedHash << endl
-		       << "ExpectedHash: " << expectedHash.toStr() 
-		       << endl << endl;
-	       }
+	       std::string const tagname = hs->HashType() + "-Hash";
+	       std::string const hashsum = LookupTag(Message, tagname.c_str());
+	       if (hashsum.empty() == false)
+		  RecivedHashes.push_back(HashString(hs->HashType(), hashsum));
 	    }
-	    Owner->Done(Message, ServerSize, RecivedHash.c_str(), Config);
+
+	    if(_config->FindB("Debug::pkgAcquire::Auth", false) == true)
+	    {
+	       std::clog << "201 URI Done: " << Owner->DescURI() << endl
+		  << "RecivedHash:" << endl;
+	       for (HashStringList::const_iterator hs = RecivedHashes.begin(); hs != RecivedHashes.end(); ++hs)
+		  std::clog <<  "\t- " << hs->toStr() << std::endl;
+	       std::clog << "ExpectedHash:" << endl;
+	       for (HashStringList::const_iterator hs = expectedHashes.begin(); hs != expectedHashes.end(); ++hs)
+		  std::clog <<  "\t- " << hs->toStr() << std::endl;
+	       std::clog << endl;
+	    }
+	    Owner->Done(Message, ServerSize, RecivedHashes, Config);
 	    ItemDone();
-	    
+
 	    // Log that we are done
 	    if (Log != 0)
 	    {
@@ -525,6 +530,9 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    Message.reserve(300);
    Message += "URI: " + Item->URI;
    Message += "\nFilename: " + Item->Owner->DestFile;
+   HashStringList const hsl = Item->Owner->HashSums();
+   for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
+      Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
    Message += Item->Owner->Custom600Headers();
    Message += "\n\n";
    

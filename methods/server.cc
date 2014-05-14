@@ -392,9 +392,16 @@ bool ServerMethod::Fetch(FetchItem *)
    for (FetchItem *I = Queue; I != 0 && Depth < (signed)PipelineDepth; 
 	I = I->Next, Depth++)
    {
-      // If pipelining is disabled, we only queue 1 request
-      if (Server->Pipeline == false && Depth >= 0)
-	 break;
+      if (Depth >= 0)
+      {
+	 // If pipelining is disabled, we only queue 1 request
+	 if (Server->Pipeline == false)
+	    break;
+	 // if we have no hashes, do at most one such request
+	 // as we can't fixup pipeling misbehaviors otherwise
+	 else if (I->ExpectedHashes.usable() == false)
+	    break;
+      }
       
       // Make sure we stick with the same server
       if (Server->Comp(I->Uri) == false)
@@ -546,7 +553,38 @@ int ServerMethod::Loop()
 	    // Send status to APT
 	    if (Result == true)
 	    {
-	       Res.TakeHashes(*Server->GetHashes());
+	       Hashes * const resultHashes = Server->GetHashes();
+	       HashStringList const hashList = resultHashes->GetHashStringList();
+	       if (PipelineDepth != 0 && Queue->ExpectedHashes.usable() == true && Queue->ExpectedHashes != hashList)
+	       {
+		  // we did not get the expected hash… mhhh:
+		  // could it be that server/proxy messed up pipelining?
+		  FetchItem * BeforeI = Queue;
+		  for (FetchItem *I = Queue->Next; I != 0 && I != QueueBack; I = I->Next)
+		  {
+		     if (I->ExpectedHashes.usable() == true && I->ExpectedHashes == hashList)
+		     {
+			// yes, he did! Disable pipelining and rewrite queue
+			if (Server->Pipeline == true)
+			{
+			   // FIXME: fake a warning message as we have no proper way of communicating here
+			   std::string out;
+			   strprintf(out, _("Automatically disabled %s due to incorrect response from server/proxy. (man 5 apt.conf)"), "Acquire::http::PipelineDepth");
+			   std::cerr << "W: " << out << std::endl;
+			   Server->Pipeline = false;
+			   // we keep the PipelineDepth value so that the rest of the queue can be fixed up as well
+			}
+			Rename(Res.Filename, I->DestFile);
+			Res.Filename = I->DestFile;
+			BeforeI->Next = I->Next;
+			I->Next = Queue;
+			Queue = I;
+			break;
+		     }
+		     BeforeI = I;
+		  }
+	       }
+	       Res.TakeHashes(*resultHashes);
 	       URIDone(Res);
 	    }
 	    else

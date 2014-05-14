@@ -147,6 +147,16 @@ void pkgAcqMethod::URIStart(FetchResult &Res)
 // AcqMethod::URIDone - A URI is finished				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
+static void printHashStringList(HashStringList const * const list)
+{
+      for (HashStringList::const_iterator hash = list->begin(); hash != list->end(); ++hash)
+      {
+	 // very old compatibility name for MD5Sum
+	 if (hash->HashType() == "MD5Sum")
+	    std::cout << "MD5-Hash: " << hash->HashValue() << "\n";
+	 std::cout << hash->HashType() << "-Hash: " << hash->HashValue() << "\n";
+      }
+}
 void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
 {
    if (Queue == 0)
@@ -164,15 +174,8 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
    if (Res.LastModified != 0)
       std::cout << "Last-Modified: " << TimeRFC1123(Res.LastModified) << "\n";
 
-   if (Res.MD5Sum.empty() == false)
-      std::cout << "MD5-Hash: " << Res.MD5Sum << "\n"
-		<< "MD5Sum-Hash: " << Res.MD5Sum << "\n";
-   if (Res.SHA1Sum.empty() == false)
-      std::cout << "SHA1-Hash: " << Res.SHA1Sum << "\n";
-   if (Res.SHA256Sum.empty() == false)
-      std::cout << "SHA256-Hash: " << Res.SHA256Sum << "\n";
-   if (Res.SHA512Sum.empty() == false)
-      std::cout << "SHA512-Hash: " << Res.SHA512Sum << "\n";
+   printHashStringList(&Res.Hashes);
+
    if (UsedMirror.empty() == false)
       std::cout << "UsedMirror: " << UsedMirror << "\n";
    if (Res.GPGVOutput.empty() == false)
@@ -200,15 +203,8 @@ void pkgAcqMethod::URIDone(FetchResult &Res, FetchResult *Alt)
       if (Alt->LastModified != 0)
 	 std::cout << "Alt-Last-Modified: " << TimeRFC1123(Alt->LastModified) << "\n";
 
-      if (Alt->MD5Sum.empty() == false)
-	 std::cout << "Alt-MD5-Hash: " << Alt->MD5Sum << "\n";
-      if (Alt->SHA1Sum.empty() == false)
-	 std::cout << "Alt-SHA1-Hash: " << Alt->SHA1Sum << "\n";
-      if (Alt->SHA256Sum.empty() == false)
-	 std::cout << "Alt-SHA256-Hash: " << Alt->SHA256Sum << "\n";
-      if (Alt->SHA512Sum.empty() == false)
-         std::cout << "Alt-SHA512-Hash: " << Alt->SHA512Sum << "\n";
-     
+      printHashStringList(&Alt->Hashes);
+
       if (Alt->IMSHit == true)
 	 std::cout << "Alt-IMS-Hit: true\n";
    }
@@ -355,6 +351,15 @@ int pkgAcqMethod::Run(bool Single)
 	       Tmp->LastModified = 0;
 	    Tmp->IndexFile = StringToBool(LookupTag(Message,"Index-File"),false);
 	    Tmp->FailIgnore = StringToBool(LookupTag(Message,"Fail-Ignore"),false);
+	    Tmp->ExpectedHashes = HashStringList();
+	    for (char const * const * t = HashString::SupportedHashes(); *t != NULL; ++t)
+	    {
+	       std::string tag = "Expected-";
+	       tag.append(*t);
+	       std::string const hash = LookupTag(Message, tag.c_str());
+	       if (hash.empty() == false)
+		  Tmp->ExpectedHashes.push_back(HashString(*t, hash));
+	    }
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list
@@ -442,12 +447,9 @@ pkgAcqMethod::FetchResult::FetchResult() : LastModified(0),
 // ---------------------------------------------------------------------
 /* This hides the number of hashes we are supporting from the caller. 
    It just deals with the hash class. */
-void pkgAcqMethod::FetchResult::TakeHashes(Hashes &Hash)
+void pkgAcqMethod::FetchResult::TakeHashes(class Hashes &Hash)
 {
-   MD5Sum = Hash.MD5.Result();
-   SHA1Sum = Hash.SHA1.Result();
-   SHA256Sum = Hash.SHA256.Result();
-   SHA512Sum = Hash.SHA512.Result();
+   Hashes = Hash.GetHashStringList();
 }
 									/*}}}*/
 void pkgAcqMethod::Dequeue() {						/*{{{*/

@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+buildsimplenativepackage 'pkga' 'all' '1.0' 'stable'
+buildsimplenativepackage 'pkgb' 'all' '1.0' 'stable'
+buildsimplenativepackage 'pkgc' 'all' '1.0' 'stable'
+buildsimplenativepackage 'pkgd' 'all' '1.0' 'stable'
+
+setupaptarchive --no-update
+
+# simulate (and be a predictable) pipeline mess-up by the server/proxy
+changetowebserver \
+	-o 'aptwebserver::overwrite::.*pkga.*::filename=/pool/pkgd_1.0_all.deb' \
+	-o 'aptwebserver::overwrite::.*pkgc.*::filename=/pool/pkgb_1.0_all.deb' \
+	-o 'aptwebserver::overwrite::.*pkgb.*::filename=/pool/pkgc_1.0_all.deb' \
+	-o 'aptwebserver::overwrite::.*pkgd.*::filename=/pool/pkga_1.0_all.deb'
+
+testsuccess aptget update -o Debug::Acquire::http=1 -o Debug::pkgAcquire::Worker=1
+
+# messup is bigger than pipeline: checks if fixup isn't trying to hard
+testfailure aptget download pkga pkgb pkgc pkgd "$@" -o Acquire::http::Pipeline-Depth=2
+testfailure test -f pkga_1.0_all.deb
+
+# ensure that pipeling is enabled for rest of this test
+echo 'Acquire::http::Pipeline-Depth 10;' > rootdir/etc/apt/apt.conf.d/99enable-pipeline
+
+# the output is a bit strange: it looks like it has downloaded pkga 4 times
+testsuccess aptget download pkga pkgb pkgc pkgd -o Debug::Acquire::http=1 -o Debug::pkgAcquire::Worker=1
+for pkg in 'pkga' 'pkgb' 'pkgc' 'pkgd'; do
+	testsuccess test -f ${pkg}_1.0_all.deb
+	testsuccess cmp incoming/${pkg}_1.0_all.deb ${pkg}_1.0_all.deb
+	rm -f ${pkg}_1.0_all.deb
+done
+
+# while hashes will pass (as none are available), sizes will not match, so failure
+# checks that no hashes means that pipeline depth is ignored as we can't fixup
+testfailure aptget download pkga pkgb pkgc pkgd "$@" --allow-unauthenticated -o Acquire::ForceHash=ROT26

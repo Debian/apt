@@ -168,15 +168,23 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    if (Map.Size() < HeaderP->CacheFileSize)
       return _error->Error(_("The package cache file is corrupted, it is too small"));
 
+   if (HeaderP->VerSysName == 0 || HeaderP->Architecture == 0 || HeaderP->Architectures == 0)
+      return _error->Error(_("The package cache file is corrupted"));
+
    // Locate our VS..
-   if (HeaderP->VerSysName == 0 ||
-       (VS = pkgVersioningSystem::GetVS(StrP + HeaderP->VerSysName)) == 0)
+   if ((VS = pkgVersioningSystem::GetVS(StrP + HeaderP->VerSysName)) == 0)
       return _error->Error(_("This APT does not support the versioning system '%s'"),StrP + HeaderP->VerSysName);
 
-   // Chcek the arhcitecture
-   if (HeaderP->Architecture == 0 ||
-       _config->Find("APT::Architecture") != StrP + HeaderP->Architecture)
-      return _error->Error(_("The package cache was built for a different architecture"));
+   // Check the architecture
+   std::vector<std::string> archs = APT::Configuration::getArchitectures();
+   std::vector<std::string>::const_iterator a = archs.begin();
+   std::string list = *a;
+   for (++a; a != archs.end(); ++a)
+      list.append(",").append(*a);
+   if (_config->Find("APT::Architecture") != StrP + HeaderP->Architecture ||
+	 list != StrP + HeaderP->Architectures)
+      return _error->Error(_("The package cache was built for different architectures: %s vs %s"), StrP + HeaderP->Architectures, list.c_str());
+
    return true;
 }
 									/*}}}*/
@@ -822,7 +830,7 @@ int pkgCache::VerIterator::CompareVer(const VerIterator &B) const
 // VerIterator::Downloadable - Checks if the version is downloadable	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgCache::VerIterator::Downloadable() const
+APT_PURE bool pkgCache::VerIterator::Downloadable() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)
@@ -835,7 +843,7 @@ bool pkgCache::VerIterator::Downloadable() const
 // ---------------------------------------------------------------------
 /* This checks to see if any of the versions files are not NotAutomatic. 
    True if this version is selectable for automatic installation. */
-bool pkgCache::VerIterator::Automatic() const
+APT_PURE bool pkgCache::VerIterator::Automatic() const
 {
    VerFileIterator Files = FileList();
    for (; Files.end() == false; ++Files)

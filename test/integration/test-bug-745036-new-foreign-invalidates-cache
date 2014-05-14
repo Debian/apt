@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'cool-foo' 'amd64' '1.0' 'Depends: foo'
+insertpackage 'unstable' 'foo' 'amd64' '1.0' 'Multi-Arch: foreign'
+insertinstalledpackage 'cool-foo' 'amd64' '1.0' 'Depends: foo'
+insertinstalledpackage 'foo' 'amd64' '1.0' 'Multi-Arch: foreign'
+
+setupaptarchive
+
+testsuccess aptget check -s
+
+configarchitecture 'amd64' 'i386'
+testequal 'E: The package cache was built for different architectures: amd64 vs amd64,i386' aptget check -s -o pkgCacheFile::Generate=false
+
+testsuccess aptget check -s
+
+insertinstalledpackage 'awesome-foo' 'i386' '1.0' 'Depends: foo'
+
+testsuccess aptget check -s
+
+testsuccess aptget update --no-download
+
+testsuccess aptget check -s

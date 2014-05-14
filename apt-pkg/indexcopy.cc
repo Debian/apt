@@ -516,7 +516,7 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
       return false;
    }
 
-   if (!Record->Hash.VerifyFile(prefix+file))
+   if (!Record->Hashes.VerifyFile(prefix+file))
    {
       _error->Warning(_("Hash mismatch for: %s"),file.c_str());
       return false;
@@ -524,8 +524,10 @@ bool SigVerify::Verify(string prefix, string file, indexRecords *MetaIndex)
 
    if(Debug == true)
    {
-      cout << "File: " << prefix+file << endl;
-      cout << "Expected Hash " << Record->Hash.toStr() << endl;
+      cout << "File: " << prefix+file << endl
+	 << "Expected Hash " << endl;
+      for (HashStringList::const_iterator hs = Record->Hashes.begin(); hs != Record->Hashes.end(); ++hs)
+	 std::cout <<  "\t- " << hs->toStr() << std::endl;
    }
 
    return true;

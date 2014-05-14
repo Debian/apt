@@ -13,12 +13,6 @@ changetowebserver
 
 PKGFILE="${TESTDIR}/$(echo "$(basename $0)" | sed 's#^test-#Packages-#')"
 
-echo '#!/bin/sh
-touch merge-was-used
-/usr/bin/diffindex-rred "$@"' > extrred
-chmod +x extrred
-echo 'Dir::Bin::rred "./extrred";' > rootdir/etc/apt/apt.conf.d/99rred
-
 wasmergeused() {
 	msgtest 'Test for successful execution of' "$*"
 	local OUTPUT=$(mktemp)

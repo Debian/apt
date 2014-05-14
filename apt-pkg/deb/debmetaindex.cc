@@ -258,7 +258,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
       vector <struct IndexTarget *> *targets = ComputeIndexTargets();
       for (vector <struct IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target) {
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
-			 (*Target)->ShortDesc, HashString());
+			 (*Target)->ShortDesc, HashStringList());
       }
       delete targets;
 

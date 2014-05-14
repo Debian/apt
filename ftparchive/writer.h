@@ -13,6 +13,8 @@
 #ifndef WRITER_H
 #define WRITER_H
 
+#include <apt-pkg/hashes.h>
+
 #include <string>
 #include <stdio.h>
 #include <iostream>
@@ -61,10 +63,7 @@ class FTWScanner
    }
    
    public:
-   bool DoMD5;
-   bool DoSHA1;
-   bool DoSHA256;
-   bool DoSHA512;
+   unsigned int DoHashes;
 
    unsigned long DeLinkLimit;
    string InternalPrefix;
@@ -195,17 +194,14 @@ public:
    string PathPrefix;
    string DirStrip;
 
-protected:
    struct CheckSum
    {
-      string MD5;
-      string SHA1;
-      string SHA256;
-      string SHA512;
+      HashStringList Hashes;
       // Limited by FileFd::Size()
       unsigned long long size;
       ~CheckSum() {};
    };
+protected:
    map<string,struct CheckSum> CheckSums;
 };
 

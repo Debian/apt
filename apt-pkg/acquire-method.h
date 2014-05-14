@@ -20,6 +20,7 @@
 #ifndef PKGLIB_ACQUIRE_METHOD_H
 #define PKGLIB_ACQUIRE_METHOD_H
 
+#include <apt-pkg/hashes.h>
 #include <apt-pkg/macros.h>
 
 #include <stdarg.h>
@@ -33,7 +34,6 @@
 #include <apt-pkg/strutl.h>
 #endif
 
-class Hashes;
 class pkgAcqMethod
 {
    protected:
@@ -47,14 +47,12 @@ class pkgAcqMethod
       time_t LastModified;
       bool IndexFile;
       bool FailIgnore;
+      HashStringList ExpectedHashes;
    };
    
    struct FetchResult
    {
-      std::string MD5Sum;
-      std::string SHA1Sum;
-      std::string SHA256Sum;
-      std::string SHA512Sum;
+      HashStringList Hashes;
       std::vector<std::string> GPGVOutput;
       time_t LastModified;
       bool IMSHit;
@@ -62,7 +60,7 @@ class pkgAcqMethod
       unsigned long long Size;
       unsigned long long ResumePoint;
       
-      void TakeHashes(Hashes &Hash);
+      void TakeHashes(class Hashes &Hash);
       FetchResult();
    };
 

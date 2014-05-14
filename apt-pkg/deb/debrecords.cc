@@ -73,36 +73,17 @@ string debRecordParser::Homepage()
    return Section.FindS("Homepage");
 }
 									/*}}}*/
-// RecordParser::MD5Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::MD5Hash()
+// RecordParser::Hashes - return the available archive hashes		/*{{{*/
+HashStringList debRecordParser::Hashes() const
 {
-   return Section.FindS("MD5Sum");
-}
-									/*}}}*/
-// RecordParser::SHA1Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SHA1Hash()
-{
-   return Section.FindS("SHA1");
-}
-									/*}}}*/
-// RecordParser::SHA256Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SHA256Hash()
-{
-   return Section.FindS("SHA256");
-}
-									/*}}}*/
-// RecordParser::SHA512Hash - Return the archive hash			/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-string debRecordParser::SHA512Hash()
-{
-   return Section.FindS("SHA512");
+   HashStringList hashes;
+   for (char const * const * type = HashString::SupportedHashes(); *type != NULL; ++type)
+   {
+      std::string const hash = Section.FindS(*type);
+      if (hash.empty() == false)
+	 hashes.push_back(HashString(*type, hash));
+   }
+   return hashes;
 }
 									/*}}}*/
 // RecordParser::Maintainer - Return the maintainer email		/*{{{*/
@@ -125,10 +106,12 @@ string debRecordParser::RecordField(const char *fieldName)
 // RecordParser::ShortDesc - Return a 1 line description		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string debRecordParser::ShortDesc()
+string debRecordParser::ShortDesc(std::string const &lang)
 {
-   string Res = LongDesc();
-   string::size_type Pos = Res.find('\n');
+   string const Res = LongDesc(lang);
+   if (Res.empty() == true)
+      return "";
+   string::size_type const Pos = Res.find('\n');
    if (Pos == string::npos)
       return Res;
    return string(Res,0,Pos);
@@ -137,26 +120,44 @@ string debRecordParser::ShortDesc()
 // RecordParser::LongDesc - Return a longer description			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-string debRecordParser::LongDesc()
+string debRecordParser::LongDesc(std::string const &lang)
 {
-  string orig, dest;
+   string orig;
+   if (lang.empty() == true)
+   {
+      std::vector<string> const lang = APT::Configuration::getLanguages();
+      for (std::vector<string>::const_iterator l = lang.begin();
+	    l != lang.end(); ++l)
+      {
+	 std::string const tagname = "Description-" + *l;
+	 orig = Section.FindS(tagname.c_str());
+	 if (orig.empty() == false)
+	    break;
+	 else if (*l == "en")
+	 {
+	    orig = Section.FindS("Description");
+	    if (orig.empty() == false)
+	       break;
+	 }
+      }
+      if (orig.empty() == true)
+	 orig = Section.FindS("Description");
+   }
+   else
+   {
+      std::string const tagname = "Description-" + lang;
+      orig = Section.FindS(tagname.c_str());
+      if (orig.empty() == true && lang == "en")
+	 orig = Section.FindS("Description");
+   }
 
-  if (!Section.FindS("Description").empty())
-     orig = Section.FindS("Description").c_str();
-  else
-  {
-     std::vector<string> const lang = APT::Configuration::getLanguages();
-     for (std::vector<string>::const_iterator l = lang.begin();
-	  orig.empty() && l != lang.end(); ++l)
-	orig = Section.FindS(string("Description-").append(*l).c_str());
-  }
+   char const * const codeset = nl_langinfo(CODESET);
+   if (strcmp(codeset,"UTF-8") != 0) {
+      string dest;
+      UTF8ToCodeset(codeset, orig, &dest);
+      return dest;
+   }
 
-  char const * const codeset = nl_langinfo(CODESET);
-  if (strcmp(codeset,"UTF-8") != 0) {
-     UTF8ToCodeset(codeset, orig, &dest);
-     orig = dest;
-   }    
-  
    return orig;
 }
 									/*}}}*/

@@ -125,6 +125,9 @@ class pkgCacheGenerator							/*{{{*/
    APT_HIDDEN bool AddImplicitDepends(pkgCache::GrpIterator &G, pkgCache::PkgIterator &P,
 			   pkgCache::VerIterator &V);
    APT_HIDDEN bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
+
+   APT_HIDDEN bool AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver,
+	 std::string const &lang, MD5SumValue const &CurMd5, map_ptrloc &md5idx);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
@@ -160,8 +163,8 @@ class pkgCacheGenerator::ListParser
    virtual bool ArchitectureAll() = 0;
    virtual std::string Version() = 0;
    virtual bool NewVersion(pkgCache::VerIterator &Ver) = 0;
-   virtual std::string Description() = 0;
-   virtual std::string DescriptionLanguage() = 0;
+   virtual std::string Description(std::string const &lang) = 0;
+   virtual std::vector<std::string> AvailableDescriptionLanguages() = 0;
    virtual MD5SumValue Description_md5() = 0;
    virtual unsigned short VersionHash() = 0;
    /** compare currently parsed version with given version
