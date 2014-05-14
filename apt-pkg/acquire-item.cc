@@ -346,9 +346,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
                                  IndexTarget const *Target,
 				 HashString ExpectedHash,
                                  indexRecords *MetaIndexParser)
-   : Item(Owner), ExpectedHash(ExpectedHash), Target(Target),
-     MetaIndexParser(MetaIndexParser)
-     
+   : pkgAcqBaseIndex(Owner, Target, ExpectedHash, MetaIndexParser)
 {
    
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
@@ -616,9 +614,8 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
                                    indexRecords *MetaIndexParser,
 				   string ServerSha1,
 				   vector<DiffInfo> diffs)
-   : Item(Owner), ExpectedHash(ExpectedHash),
-     available_patches(diffs), ServerSha1(ServerSha1), 
-     Target(Target), MetaIndexParser(MetaIndexParser)
+   : pkgAcqBaseIndex(Owner, Target, ExpectedHash, MetaIndexParser),
+     available_patches(diffs), ServerSha1(ServerSha1)
 {
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -805,9 +802,8 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
                                              indexRecords *MetaIndexParser,
                                              DiffInfo const &patch,
                                              std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-   : Item(Owner), ExpectedHash(ExpectedHash), patch(patch),
-     allPatches(allPatches), State(StateFetchDiff), 
-     Target(Target), MetaIndexParser(MetaIndexParser)
+   : pkgAcqBaseIndex(Owner, Target, ExpectedHash, MetaIndexParser),
+     patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -932,8 +928,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,string M
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
 			 HashString ExpectedHash, string comprExt)
-   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), Target(0),
-     MetaIndexParser(0)
+   : pkgAcqBaseIndex(Owner, NULL, ExpectedHash, NULL), RealURI(URI)
 {
    if(comprExt.empty() == true)
    {
@@ -952,7 +947,8 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 }
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
 			 HashString const &ExpectedHash, indexRecords *MetaIndexParser)
-   : Item(Owner), RealURI(Target->URI), ExpectedHash(ExpectedHash)
+   : pkgAcqBaseIndex(Owner, Target, ExpectedHash, MetaIndexParser), 
+     RealURI(Target->URI)
 {
    // autoselect the compression method
    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
@@ -977,10 +973,6 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
      Verify = false;
    else
      Verify = true;
-
-   // we need this in Init()
-   this->Target = Target;
-   this->MetaIndexParser = MetaIndexParser;
 
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }

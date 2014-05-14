@@ -368,6 +368,9 @@ class pkgAcqSubIndex : public pkgAcquire::Item
 };
 									/*}}}*/
 
+/** \brief Common base class for all classes that deal with fetching 	{{{
+           indexes
+ */
 class pkgAcqBaseIndex : public pkgAcquire::Item
 {
  protected:
@@ -376,9 +379,18 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
    const struct IndexTarget * Target;
    indexRecords *MetaIndexParser;
 
+   /** \brief The Hash that this file should have after download
+    */
+   HashString ExpectedHash;
 
+   pkgAcqBaseIndex(pkgAcquire *Owner,
+                   struct IndexTarget const * const Target,
+                   HashString ExpectedHash,
+                   indexRecords *MetaIndexParser)
+      : Item(Owner), Target(Target), MetaIndexParser(MetaIndexParser),
+        ExpectedHash(ExpectedHash) {};
 };
-
+									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
  *  package list diffs and starting the package list's download.
  *
@@ -388,7 +400,7 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
  *
  *  \sa pkgAcqIndexDiffs, pkgAcqIndex
  */
-class pkgAcqDiffIndex : public pkgAcquire::Item
+class pkgAcqDiffIndex : public pkgAcqBaseIndex
 {
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
@@ -402,11 +414,6 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     */
    std::string RealURI;
 
-   /** \brief The Hash that the real index file should have after
-    *  all patches have been applied.
-    */
-   HashString ExpectedHash;
-
    /** \brief The index file which will be patched to generate the new
     *  file.
     */
@@ -416,11 +423,6 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
     *  pkgAcquire::ItemDesc::Description).
     */
    std::string Description;
-
-   /** \brief Pointer to the IndexTarget data
-    */
-   const struct IndexTarget * Target;
-   indexRecords *MetaIndexParser;
 
  public:
    // Specialized action members
@@ -472,7 +474,7 @@ class pkgAcqDiffIndex : public pkgAcquire::Item
  *
  *  \sa pkgAcqDiffIndex, pkgAcqIndex
  */
-class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
+class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
 {
    protected:
 
@@ -490,11 +492,6 @@ class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
     *  reconstructed.
     */
    std::string RealURI;
-
-   /** \brief HashSum of the package index file that is being
-    *  reconstructed.
-    */
-   HashString ExpectedHash;
 
    /** \brief description of the file being downloaded. */
    std::string Description;
@@ -520,11 +517,6 @@ class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
       /** \brief something bad happened and fallback was triggered */
       StateErrorDiff
    } State;
-
-   /** \brief Pointer to the IndexTarget data
-    */
-   const struct IndexTarget * Target;
-   indexRecords *MetaIndexParser;
 
    public:
    /** \brief Called when the patch file failed to be downloaded.
@@ -578,7 +570,7 @@ class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
  *
  *  \sa pkgAcqDiffIndex, pkgAcqIndex
  */
-class pkgAcqIndexDiffs : public pkgAcquire::Item
+class pkgAcqIndexDiffs : public pkgAcqBaseIndex
 {
    private:
 
@@ -623,11 +615,6 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     */
    std::string RealURI;
 
-   /** \brief The HashSum of the package index file that is being
-    *  reconstructed.
-    */
-   HashString ExpectedHash;
-
    /** A description of the file being downloaded. */
    std::string Description;
 
@@ -659,11 +646,6 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
 	 /** \brief The diff is currently being applied. */
 	 StateApplyDiff
    } State;
-
-   /** \brief Pointer to the IndexTarget data
-    */
-   const struct IndexTarget * Target;
-   indexRecords *MetaIndexParser;
 
    public:
    
@@ -717,7 +699,7 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
  *
  *  \todo Why does pkgAcqIndex have protected members?
  */
-class pkgAcqIndex : public pkgAcquire::Item
+class pkgAcqIndex : public pkgAcqBaseIndex
 {
    protected:
 
@@ -749,18 +731,10 @@ class pkgAcqIndex : public pkgAcquire::Item
     */
    std::string RealURI;
 
-   /** \brief The expected hashsum of the decompressed index file. */
-   HashString ExpectedHash;
-
    /** \brief The compression-related file extensions that are being
     *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
     */
    std::string CompressionExtension;
-
-   /** \brief Pointer to the IndexTarget data
-    */
-   const struct IndexTarget * Target;
-   indexRecords *MetaIndexParser;
 
    public:
    
@@ -798,7 +772,8 @@ class pkgAcqIndex : public pkgAcquire::Item
                struct IndexTarget const * const Target,
                HashString const &ExpectedHash,
                indexRecords *MetaIndexParser);
-   void Init(std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc);
+   void Init(std::string const &URI, std::string const &URIDesc,
+             std::string const &ShortDesc);
 };
 									/*}}}*/
 /** \brief An acquire item that is responsible for fetching a		{{{
