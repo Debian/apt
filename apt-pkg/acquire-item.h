@@ -367,6 +367,18 @@ class pkgAcqSubIndex : public pkgAcquire::Item
 		   std::string const &ShortDesc, HashString const &ExpectedHash);
 };
 									/*}}}*/
+
+class pkgAcqBaseIndex : public pkgAcquire::Item
+{
+ protected:
+   /** \brief Pointer to the IndexTarget data
+    */
+   const struct IndexTarget * Target;
+   indexRecords *MetaIndexParser;
+
+
+};
+
 /** \brief An item that is responsible for fetching an index file of	{{{
  *  package list diffs and starting the package list's download.
  *
@@ -509,6 +521,11 @@ class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
       StateErrorDiff
    } State;
 
+   /** \brief Pointer to the IndexTarget data
+    */
+   const struct IndexTarget * Target;
+   indexRecords *MetaIndexParser;
+
    public:
    /** \brief Called when the patch file failed to be downloaded.
     *
@@ -542,9 +559,12 @@ class pkgAcqIndexMergeDiffs : public pkgAcquire::Item
     *  \param allPatches contains all related items so that each item can
     *  check if it was the last one to complete the download step
     */
-   pkgAcqIndexMergeDiffs(pkgAcquire *Owner,std::string const &URI,std::string const &URIDesc,
-		    std::string const &ShortDesc, HashString const &ExpectedHash,
-		    DiffInfo const &patch, std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
+   pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
+                         struct IndexTarget const * const Target,
+                         HashString ExpectedHash,
+                         indexRecords *MetaIndexParser,
+                         DiffInfo const &patch, 
+                         std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches);
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching server-merge patches {{{
@@ -640,6 +660,11 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
 	 StateApplyDiff
    } State;
 
+   /** \brief Pointer to the IndexTarget data
+    */
+   const struct IndexTarget * Target;
+   indexRecords *MetaIndexParser;
+
    public:
    
    /** \brief Called when the patch file failed to be downloaded.
@@ -677,8 +702,10 @@ class pkgAcqIndexDiffs : public pkgAcquire::Item
     *  should be ordered so that each diff appears before any diff
     *  that depends on it.
     */
-   pkgAcqIndexDiffs(pkgAcquire *Owner,std::string URI,std::string URIDesc,
-		    std::string ShortDesc, HashString ExpectedHash,
+   pkgAcqIndexDiffs(pkgAcquire *Owner,
+                    struct IndexTarget const * const Target,
+                    HashString ExpectedHash,
+                    indexRecords *MetaIndexParser,
 		    std::string ServerSha1,
 		    std::vector<DiffInfo> diffs=std::vector<DiffInfo>());
 };
@@ -767,8 +794,10 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcqIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 	       std::string ShortDesc, HashString ExpectedHash, 
 	       std::string compressExt="");
-   pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
-			 HashString const &ExpectedHash, indexRecords *MetaIndexParser);
+   pkgAcqIndex(pkgAcquire *Owner,
+               struct IndexTarget const * const Target,
+               HashString const &ExpectedHash,
+               indexRecords *MetaIndexParser);
    void Init(std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc);
 };
 									/*}}}*/

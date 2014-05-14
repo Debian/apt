@@ -446,8 +446,8 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	    std::clog << "Package file is up-to-date" << std::endl;
 	 // list cleanup needs to know that this file as well as the already
 	 // present index is ours, so we create an empty diff to save it for us
-	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-	       ExpectedHash, ServerSha1, available_patches);
+	 new pkgAcqIndexDiffs(Owner, Target, ExpectedHash, MetaIndexParser, 
+                              ServerSha1, available_patches);
 	 return true;
       }
       else
@@ -532,14 +532,19 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	 }
 
 	 if (pdiff_merge == false)
-	    new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-		  ExpectedHash, ServerSha1, available_patches);
-	 else
+         {
+	    new pkgAcqIndexDiffs(Owner, Target, ExpectedHash, MetaIndexParser,
+                                 ServerSha1, available_patches);
+         }
+         else
 	 {
 	    std::vector<pkgAcqIndexMergeDiffs*> *diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
 	    for(size_t i = 0; i < available_patches.size(); ++i)
-	       (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, RealURI, Description, Desc.ShortDesc, ExpectedHash,
-		     available_patches[i], diffs);
+	       (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner, Target,
+                                                       ExpectedHash,
+                                                       MetaIndexParser,
+                                                       available_patches[i],
+                                                       diffs);
 	 }
 
 	 Complete = false;
@@ -606,22 +611,25 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,string Md5Hash
  * for each diff and the index
  */
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
-				   string URI,string URIDesc,string ShortDesc,
-				   HashString ExpectedHash, 
+                                   struct IndexTarget const * const Target,
+                                   HashString ExpectedHash,
+                                   indexRecords *MetaIndexParser,
 				   string ServerSha1,
 				   vector<DiffInfo> diffs)
-   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash), 
-     available_patches(diffs), ServerSha1(ServerSha1)
+   : Item(Owner), ExpectedHash(ExpectedHash),
+     available_patches(diffs), ServerSha1(ServerSha1), 
+     Target(Target), MetaIndexParser(MetaIndexParser)
 {
    
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(URI);
+   DestFile += URItoFileName(Target->URI);
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   Description = URIDesc;
+   RealURI = Target->URI;
    Desc.Owner = this;
-   Desc.ShortDesc = ShortDesc;
+   Description = Target->Description;
+   Desc.ShortDesc = Target->ShortDesc;
 
    if(available_patches.empty() == true)
    {
@@ -641,8 +649,7 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
-   new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
-		   ExpectedHash);
+   new pkgAcqIndex(Owner, Target, ExpectedHash, MetaIndexParser);
    Finish();
 }
 									/*}}}*/
@@ -782,8 +789,9 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
 
       // see if there is more to download
       if(available_patches.empty() == false) {
-	 new pkgAcqIndexDiffs(Owner, RealURI, Description, Desc.ShortDesc,
-			      ExpectedHash, ServerSha1, available_patches);
+	 new pkgAcqIndexDiffs(Owner, Target,
+			      ExpectedHash, MetaIndexParser,
+                              ServerSha1, available_patches);
 	 return Finish();
       } else 
 	 return Finish(true);
@@ -792,22 +800,25 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size,string Md5Has
 									/*}}}*/
 // AcqIndexMergeDiffs::AcqIndexMergeDiffs - Constructor			/*{{{*/
 pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
-				   string const &URI, string const &URIDesc,
-				   string const &ShortDesc, HashString const &ExpectedHash,
-				   DiffInfo const &patch,
-				   std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-   : Item(Owner), RealURI(URI), ExpectedHash(ExpectedHash),
-     patch(patch),allPatches(allPatches), State(StateFetchDiff)
+                                             struct IndexTarget const * const Target,
+                                             HashString ExpectedHash,
+                                             indexRecords *MetaIndexParser,
+                                             DiffInfo const &patch,
+                                             std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
+   : Item(Owner), ExpectedHash(ExpectedHash), patch(patch),
+     allPatches(allPatches), State(StateFetchDiff), 
+     Target(Target), MetaIndexParser(MetaIndexParser)
 {
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(URI);
+   DestFile += URItoFileName(Target->URI);
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   Description = URIDesc;
+   RealURI = Target->URI;
    Desc.Owner = this;
-   Desc.ShortDesc = ShortDesc;
+   Description = Target->Description;
+   Desc.ShortDesc = Target->ShortDesc;
 
    Desc.URI = RealURI + ".diff/" + patch.file + ".gz";
    Desc.Description = Description + " " + patch.file + string(".pdiff");
@@ -838,8 +849,7 @@ void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*C
    // first failure means we should fallback
    State = StateErrorDiff;
    std::clog << "Falling back to normal index file acquire" << std::endl;
-   new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc,
-		   ExpectedHash);
+   new pkgAcqIndex(Owner, Target, ExpectedHash, MetaIndexParser);
 }
 									/*}}}*/
 void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,string Md5Hash,	/*{{{*/
