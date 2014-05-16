@@ -396,12 +396,11 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 		     clog << OutputInDepth(Depth) << "Unpacking " << DepPkg.FullName() << " to avoid loop " << Cur << endl;
 		  if (PkgLoop == false)
 		     List->Flag(Pkg,pkgOrderList::Loop);
-		  if (SmartUnPack(DepPkg, true, Depth + 1) == true)
-		  {
-		     Bad = false;
-		     if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
-		        Changed = true;
-		  }
+		  if (SmartUnPack(DepPkg, true, Depth + 1) == false)
+		     return false;
+		  Bad = false;
+		  if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
+		     Changed = true;
 		  if (PkgLoop == false)
 		     List->RmFlag(Pkg,pkgOrderList::Loop);
 		  if (Bad == false)
@@ -469,17 +468,14 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 		       package and it will remove the loop flag */
 		  if (PkgLoop == false)
 		     List->Flag(Pkg,pkgOrderList::Loop);
-		  if (SmartConfigure(DepPkg, Depth + 1) == true)
-		  {
-		     Bad = false;
-		     if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
-			Changed = true;
-		  }
+		  if (SmartConfigure(DepPkg, Depth + 1) == false)
+		     return false;
+		  Bad = false;
+		  if (List->IsFlag(DepPkg,pkgOrderList::Loop) == false)
+		     Changed = true;
 		  if (PkgLoop == false)
 		    List->RmFlag(Pkg,pkgOrderList::Loop);
-		  // If SmartConfigure was succesfull, Bad is false, so break
-		  if (Bad == false)
-		     break;
+		  break;
 	       }
 	       else if (List->IsFlag(DepPkg,pkgOrderList::Configured))
 	       {
@@ -499,11 +495,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          return _error->Error("Internal error: MaxLoopCount reached in SmartUnPack (2) for %s, aborting", Pkg.FullName().c_str());
    } while (Changed == true);
    
-   if (Bad) {
-      if (Debug)
-         _error->Warning(_("Could not configure '%s'. "),Pkg.FullName().c_str());
-      return false;
-   }
+   if (Bad == true)
+      return _error->Error(_("Could not configure '%s'. "),Pkg.FullName().c_str());
    
    if (PkgLoop) return true;
 
@@ -527,7 +520,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	     Cache[P].InstallVer == 0 || (P.CurrentVer() == Cache[P].InstallVer &&
 	      (Cache[Pkg].iFlags & pkgDepCache::ReInstall) != pkgDepCache::ReInstall))
 	    continue;
-	 SmartConfigure(P, (Depth +1));
+	 if (SmartConfigure(P, (Depth +1)) == false)
+	    return false;
       }
 
    // Sanity Check
@@ -702,25 +696,23 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     if (Debug)
 			clog << OutputInDepth(Depth) << "Trying to SmartUnpack " << Pkg.FullName() << endl;
 		     // SmartUnpack with the ImmediateFlag to ensure its really ready
-		     if (SmartUnPack(Pkg, true, Depth + 1) == true)
-		     {
-			Bad = false;
-			if (List->IsFlag(Pkg,pkgOrderList::Loop) == false)
-			   Changed = true;
-			break;
-		     }
+		     if (SmartUnPack(Pkg, true, Depth + 1) == false)
+			return false;
+		     Bad = false;
+		     if (List->IsFlag(Pkg,pkgOrderList::Loop) == false)
+			Changed = true;
+		     break;
 		  }
 		  else
 		  {
 		     if (Debug)
 			clog << OutputInDepth(Depth) << "Trying to SmartConfigure " << Pkg.FullName() << endl;
-		     if (SmartConfigure(Pkg, Depth + 1) == true)
-		     {
-			Bad = false;
-			if (List->IsFlag(Pkg,pkgOrderList::Loop) == false)
-			   Changed = true;
-			break;
-		     }
+		     if (SmartConfigure(Pkg, Depth + 1) == false)
+			return false;
+		     Bad = false;
+		     if (List->IsFlag(Pkg,pkgOrderList::Loop) == false)
+			Changed = true;
+		     break;
 		  }
 	       }
 	    }
@@ -759,11 +751,12 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		     if (Cache[ConflictPkg].Keep() == 0 && Cache[ConflictPkg].InstallVer != 0)
 		     {
 			if (Debug)
-			   clog << OutputInDepth(Depth) << OutputInDepth(Depth) << "Unpacking " << ConflictPkg.FullName() << " to prevent conflict" << endl;
+			   clog << OutputInDepth(Depth) << "Unpacking " << ConflictPkg.FullName() << " to prevent conflict" << endl;
 			List->Flag(Pkg,pkgOrderList::Loop);
-			if (SmartUnPack(ConflictPkg,false, Depth + 1) == true)
-			   if (List->IsFlag(ConflictPkg,pkgOrderList::Loop) == false)
-			      Changed = true;
+			if (SmartUnPack(ConflictPkg,false, Depth + 1) == false)
+			   return false;
+			if (List->IsFlag(ConflictPkg,pkgOrderList::Loop) == false)
+			   Changed = true;
 			// Remove loop to allow it to be used later if needed
 			List->RmFlag(Pkg,pkgOrderList::Loop);
 		     }
@@ -773,7 +766,7 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 		  else if (List->IsFlag(ConflictPkg,pkgOrderList::Removed) == false)
 		  {
 		     if (Debug)
-			clog << OutputInDepth(Depth) << "Because of conficts knot, removing " << ConflictPkg.FullName() << " to conflict violation" << endl;
+			clog << OutputInDepth(Depth) << "Because of conflict knot, removing " << ConflictPkg.FullName() << " temporarily" << endl;
 		     if (EarlyRemove(ConflictPkg) == false)
 			return _error->Error("Internal Error, Could not early remove %s (2)",ConflictPkg.FullName().c_str());
 		  }
@@ -845,11 +838,10 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 			}
 			if (PkgLoop == false)
 			   List->Flag(Pkg,pkgOrderList::Loop);
-			if (SmartUnPack(BrokenPkg, false, Depth + 1) == true)
-			{
-			   if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) == false)
-			      Changed = true;
-			}
+			if (SmartUnPack(BrokenPkg, false, Depth + 1) == false)
+			   return false;
+			if (List->IsFlag(BrokenPkg,pkgOrderList::Loop) == false)
+			   Changed = true;
 			if (PkgLoop == false)
 			   List->RmFlag(Pkg,pkgOrderList::Loop);
 		     }
@@ -860,7 +852,8 @@ bool pkgPackageManager::SmartUnPack(PkgIterator Pkg, bool const Immediate, int c
 	       {
 		  if (Debug)
 		     clog << OutputInDepth(Depth) << "  Removing " << BrokenPkg.FullName() << " to avoid " << End << endl;
-		  SmartRemove(BrokenPkg);
+		  if (SmartRemove(BrokenPkg) == false)
+		     return false;
 	       }
 	    }
 	 }
