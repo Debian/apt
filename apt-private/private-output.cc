@@ -23,6 +23,7 @@
 #include <langinfo.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/ioctl.h>
 
 #include <apti18n.h>
 									/*}}}*/
