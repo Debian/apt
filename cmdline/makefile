@@ -49,7 +49,7 @@ include $(PROGRAM_H)
 
 # The apt-helper
 PROGRAM=apt-helper
-SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS) -lresolv
 LIB_MAKES = apt-pkg/makefile
 SOURCE = apt-helper.cc
 include $(PROGRAM_H)
