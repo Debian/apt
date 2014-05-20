@@ -21,8 +21,9 @@ class SrvRec
    u_int16_t weight;
    u_int16_t port;
 
-   // see rfc-2782
-   //int random;
+   bool operator<(SrvRec const &other) const { 
+      return this->priority < other.priority; 
+   }
 };
 
 bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result);

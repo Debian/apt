@@ -12,6 +12,8 @@
 #include <arpa/nameser.h>
 #include <resolv.h>
 
+#include <algorithm>
+
 #include <apt-pkg/error.h>
 #include "srvrec.h"
 
@@ -88,6 +90,11 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
       rec.target = buf;
       Result.push_back(rec);
    }
+
+   // sort them
+   std::stable_sort(Result.begin(), Result.end());
+
+   // FIXME: implement weight selection as specified in RFC-2782
 
    return true;
 }
