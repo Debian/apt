@@ -26,6 +26,12 @@ class SrvRec
    }
 };
 
+/** \brief Get SRV records from host/port (builds the query string internally) 
+ */
 bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result);
+
+/** \brief Get SRV records for query string like: _http._tcp.example.com
+ */
+bool GetSrvRecords(std::string host, int port, std::vector<SrvRec> &Result);
 
 #endif

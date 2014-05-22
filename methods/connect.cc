@@ -18,6 +18,7 @@
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/srvrec.h>
 
 #include <stdio.h>
 #include <errno.h>
@@ -42,6 +43,9 @@ static std::string LastHost;
 static int LastPort = 0;
 static struct addrinfo *LastHostAddr = 0;
 static struct addrinfo *LastUsed = 0;
+
+static std::vector<SrvRec> SrvRecords;
+static int LastSrvRecord = 0;
 
 // Set of IP/hostnames that we timed out before or couldn't resolve
 static std::set<std::string> bad_addr;
@@ -151,6 +155,15 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
       sensible */
    if (LastHost != Host || LastPort != Port)
    {
+      // FIXME: NOT READY FOR MERGING IN THIS FORM 
+      //        we need to first check SRV, then round-robin DNS
+      //        this code will only ever use the first srv record
+
+      // FIXME: ensure we cycle over the SrvRecords first before 
+      //        we do round-robin IP
+      if(GetSrvRecords(Host, Port, SrvRecords) && SrvRecords.size() > 0)
+         Host = SrvRecords[0].target;
+
       Owner->Status(_("Connecting to %s"),Host.c_str());
 
       // Free the old address structure

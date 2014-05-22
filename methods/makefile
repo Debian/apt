@@ -46,21 +46,21 @@ include $(PROGRAM_H)
 
 # The http method
 PROGRAM=http
-SLIBS = -lapt-pkg $(SOCKETLIBS) $(INTLLIBS)
+SLIBS = -lapt-pkg $(SOCKETLIBS) $(INTLLIBS) -lresolv
 LIB_MAKES = apt-pkg/makefile
 SOURCE = http.cc http_main.cc rfc2553emu.cc connect.cc server.cc
 include $(PROGRAM_H)
 
 # The https method
 PROGRAM=https
-SLIBS = -lapt-pkg -lcurl $(INTLLIBS)
+SLIBS = -lapt-pkg -lcurl $(INTLLIBS) -lresolv
 LIB_MAKES = apt-pkg/makefile
 SOURCE = https.cc server.cc
 include $(PROGRAM_H)
 
 # The ftp method
 PROGRAM=ftp
-SLIBS = -lapt-pkg $(SOCKETLIBS) $(INTLLIBS)
+SLIBS = -lapt-pkg $(SOCKETLIBS) $(INTLLIBS) -lresolv
 LIB_MAKES = apt-pkg/makefile
 SOURCE = ftp.cc rfc2553emu.cc connect.cc
 include $(PROGRAM_H)
@@ -81,7 +81,7 @@ include $(PROGRAM_H)
 
 # The mirror method
 PROGRAM=mirror
-SLIBS = -lapt-pkg $(SOCKETLIBS)
+SLIBS = -lapt-pkg $(SOCKETLIBS) -lresolv
 LIB_MAKES = apt-pkg/makefile
 SOURCE = mirror.cc http.cc rfc2553emu.cc connect.cc server.cc
 include $(PROGRAM_H)

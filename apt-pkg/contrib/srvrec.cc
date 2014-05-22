@@ -8,14 +8,28 @@
 									/*}}}*/
 #include <config.h>
 
+#include <netdb.h>
+
 #include <netinet/in.h>
 #include <arpa/nameser.h>
 #include <resolv.h>
 
 #include <algorithm>
 
+#include <apt-pkg/strutl.h>
 #include <apt-pkg/error.h>
 #include "srvrec.h"
+
+bool GetSrvRecords(std::string host, int port, std::vector<SrvRec> &Result)
+{
+   std::string target;
+   struct servent *s_ent = getservbyport(htons(port), "tcp");
+   if (s_ent == NULL)
+      return false;
+
+   strprintf(target, "_%s._tcp.%s", s_ent->s_name, host.c_str());
+   return GetSrvRecords(target, Result);
+}
 
 bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
 {
