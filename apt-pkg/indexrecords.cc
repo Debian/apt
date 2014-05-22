@@ -90,8 +90,8 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
    Suite = Section.FindS("Suite");
    Dist = Section.FindS("Codename");
 
-   int i;
-   for (i=0;HashString::SupportedHashes()[i] != NULL; i++)
+   bool FoundHashSum = false;
+   for (int i=0;HashString::SupportedHashes()[i] != NULL; i++)
    {
       if (!Section.Find(HashString::SupportedHashes()[i], Start, End))
 	 continue;
@@ -103,16 +103,20 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       {
 	 if (!parseSumData(Start, End, Name, Hash, Size))
 	    return false;
-	 indexRecords::checkSum *Sum = new indexRecords::checkSum;
-	 Sum->MetaKeyFilename = Name;
-	 Sum->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
-	 Sum->Size = Size;
-	 Entries[Name] = Sum;
+
+         if (Entries.find(Name) == Entries.end())
+         {
+            indexRecords::checkSum *Sum = new indexRecords::checkSum;
+            Sum->MetaKeyFilename = Name;
+            Sum->Size = Size;
+            Entries[Name] = Sum;
+         }
+         Entries[Name]->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
+         FoundHashSum = true;
       }
-      break;
    }
 
-   if(HashString::SupportedHashes()[i] == NULL)
+   if(FoundHashSum == false)
    {
       strprintf(ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
       return false;

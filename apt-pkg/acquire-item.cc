@@ -1020,6 +1020,27 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
          FileSize = Record->Size;
    }
 
+   // do the request by-hash
+   if(_config->FindB("APT::Acquire::By-Hash", false) == true &&
+      MetaIndexParser)
+   {
+      indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+      if(Record)
+      {
+         // FIXME: make the hash used a config option or read from release file
+         const HashString *TargetHash = Record->Hashes.find("SHA256");
+         std::string ByHash = "/by-hash/" + TargetHash->HashValue();
+         size_t trailing_slash = Desc.URI.find_last_of("/");
+         Desc.URI = Desc.URI.replace(trailing_slash,
+                                     Desc.URI.substr(trailing_slash+1).size()+1,
+                                     ByHash);
+         std::cerr << Desc.URI << std::endl;
+      } else {
+         _error->Warning("By-Hash requested but can not find record for %s",
+                         MetaKey.c_str());
+      }
+   }
+
    Desc.Description = URIDesc;
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;

@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive --no-update
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+# make Packages *only* accessable by-hash for this test
+mkdir -p aptarchive/dists/unstable/main/binary-i386/by-hash
+(cd  aptarchive/dists/unstable/main/binary-i386/by-hash && 
+     mv ../Packages* . &&
+     ln -s Packages.gz  $(sha256sum Packages.gz|cut -f1 -d' ') )
+
+# add sources
+mkdir -p aptarchive/dists/unstable/main/source/by-hash
+(cd  aptarchive/dists/unstable/main/source/by-hash && 
+     ln -s ../Sources.gz  $(sha256sum ../Sources.gz|cut -f1 -d' ') 
+)
+
+
+# ensure we do not know about "foo"
+testequal "Reading package lists...
+Building dependency tree...
+E: Unable to locate package foo" aptget install -q -s foo
+
+# ensure we can apt-get update by hash
+testsuccess aptget update -o APT::Acquire::By-Hash=1
+
+# ensure it keeps working
+testequal "Inst foo (1.0 unstable [all])
+Conf foo (1.0 unstable [all])" aptget install -qq -s foo
