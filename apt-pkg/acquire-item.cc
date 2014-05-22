@@ -1018,32 +1018,8 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
       indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
       if(Record)
          FileSize = Record->Size;
-
-      // TODO:
-      //  - (maybe?) add support for by-hash into the sources.list as flag
-      //  - make apt-ftparchive generate the hashes (and expire?)
-      // do the request by-hash
-      std::string HostKnob = "APT::Acquire::" + ::URI(URI).Host + "::By-Hash";
-      if(_config->FindB("APT::Acquire::By-Hash", false) == true ||
-         _config->FindB(HostKnob, false) == true ||
-         MetaIndexParser->GetSupportsAcquireByHash())
-      {
-         indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
-         if(Record)
-         {
-            // FIXME: should we really use the best hash here? or a fixed one?
-            const HashString *TargetHash = Record->Hashes.find("");
-            std::string ByHash = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
-            size_t trailing_slash = Desc.URI.find_last_of("/");
-            Desc.URI = Desc.URI.replace(
-               trailing_slash,
-               Desc.URI.substr(trailing_slash+1).size()+1,
-               ByHash);
-         } else {
-            _error->Warning("By-Hash requested but can not find record for %s",
-                            MetaKey.c_str());
-         }
-      }
+      
+      InitByHashIfNeeded(MetaKey);
    }
 
    Desc.Description = URIDesc;
@@ -1051,6 +1027,38 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
    Desc.ShortDesc = ShortDesc;
 
    QueueURI(Desc);
+}
+									/*}}}*/
+// AcqIndex::AdjustForByHash - modify URI for by-hash support		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqIndex::InitByHashIfNeeded(const std::string MetaKey)
+{
+   // TODO:
+   //  - (maybe?) add support for by-hash into the sources.list as flag
+   //  - make apt-ftparchive generate the hashes (and expire?)
+   std::string HostKnob = "APT::Acquire::" + ::URI(Desc.URI).Host + "::By-Hash";
+   if(_config->FindB("APT::Acquire::By-Hash", false) == true ||
+      _config->FindB(HostKnob, false) == true ||
+      MetaIndexParser->GetSupportsAcquireByHash())
+   {
+      indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+      if(Record)
+      {
+         // FIXME: should we really use the best hash here? or a fixed one?
+         const HashString *TargetHash = Record->Hashes.find("");
+         std::string ByHash = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
+         size_t trailing_slash = Desc.URI.find_last_of("/");
+         Desc.URI = Desc.URI.replace(
+            trailing_slash,
+            Desc.URI.substr(trailing_slash+1).size()+1,
+            ByHash);
+      } else {
+         _error->Warning(
+            "Fetching ByHash requested but can not find record for %s",
+            MetaKey.c_str());
+      }
+   }
 }
 									/*}}}*/
 // AcqIndex::Custom600Headers - Insert custom request headers		/*{{{*/
