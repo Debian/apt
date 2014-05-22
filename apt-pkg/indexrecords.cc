@@ -37,6 +37,11 @@ APT_PURE string indexRecords::GetSuite() const
    return this->Suite;
 }
 
+APT_PURE bool indexRecords::GetSupportsAcquireByHash() const
+{
+   return this->SupportsAcquireByHash;
+}
+
 APT_PURE bool indexRecords::CheckDist(const string MaybeDist) const
 {
    return (this->Dist == MaybeDist
@@ -86,6 +91,8 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
       return false;
    }
+   // FIXME: find better tag name
+   SupportsAcquireByHash = Section.FindB("Acquire-By-Hash", false);
 
    Suite = Section.FindS("Suite");
    Dist = Section.FindS("Codename");
@@ -243,6 +250,6 @@ indexRecords::indexRecords()
 }
 
 indexRecords::indexRecords(const string ExpectedDist) :
-   ExpectedDist(ExpectedDist), ValidUntil(0)
+   ExpectedDist(ExpectedDist), ValidUntil(0), SupportsAcquireByHash(false)
 {
 }

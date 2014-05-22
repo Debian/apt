@@ -1018,31 +1018,31 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
       indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
       if(Record)
          FileSize = Record->Size;
-   }
 
-   // do the request by-hash
-   // TODO:
-   //  - add Support-By-Hash hashtype into Release time so that we
-   //    know we can use it
-   //  - (maybe?) add support for by-hash into the sources.list as flag
-   //  - make apt-ftparchive generate the hashes (and expire?)
-   if(_config->FindB("APT::Acquire::By-Hash", false) == true &&
-      MetaIndexParser)
-   {
-      indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
-      if(Record)
+      // TODO:
+      //  - (maybe?) add support for by-hash into the sources.list as flag
+      //  - make apt-ftparchive generate the hashes (and expire?)
+      // do the request by-hash
+      std::string HostKnob = "APT::Acquire::" + ::URI(URI).Host + "::By-Hash";
+      if(_config->FindB("APT::Acquire::By-Hash", false) == true ||
+         _config->FindB(HostKnob, false) == true ||
+         MetaIndexParser->GetSupportsAcquireByHash())
       {
-         // FIXME: make the hash used a config option or read from release file
-         const HashString *TargetHash = Record->Hashes.find("SHA256");
-         std::string ByHash = "/by-hash/" + TargetHash->HashValue();
-         size_t trailing_slash = Desc.URI.find_last_of("/");
-         Desc.URI = Desc.URI.replace(trailing_slash,
-                                     Desc.URI.substr(trailing_slash+1).size()+1,
-                                     ByHash);
-         std::cerr << Desc.URI << std::endl;
-      } else {
-         _error->Warning("By-Hash requested but can not find record for %s",
-                         MetaKey.c_str());
+         indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+         if(Record)
+         {
+            // FIXME: should we really use the best hash here? or a fixed one?
+            const HashString *TargetHash = Record->Hashes.find("");
+            std::string ByHash = "/by-hash/" + TargetHash->HashType() + "/" + TargetHash->HashValue();
+            size_t trailing_slash = Desc.URI.find_last_of("/");
+            Desc.URI = Desc.URI.replace(
+               trailing_slash,
+               Desc.URI.substr(trailing_slash+1).size()+1,
+               ByHash);
+         } else {
+            _error->Warning("By-Hash requested but can not find record for %s",
+                            MetaKey.c_str());
+         }
       }
    }
 
