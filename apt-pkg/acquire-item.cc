@@ -1021,6 +1021,11 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
    }
 
    // do the request by-hash
+   // TODO:
+   //  - add Support-By-Hash hashtype into Release time so that we
+   //    know we can use it
+   //  - (maybe?) add support for by-hash into the sources.list as flag
+   //  - make apt-ftparchive generate the hashes (and expire?)
    if(_config->FindB("APT::Acquire::By-Hash", false) == true &&
       MetaIndexParser)
    {
