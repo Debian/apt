@@ -21,6 +21,11 @@ class SrvRec
    u_int16_t weight;
    u_int16_t port;
 
+   // each server is assigned a interval [start, end] in the space of [0, max]
+   int random_number_range_start;
+   int random_number_range_end;
+   int random_number_range_max;
+
    bool operator<(SrvRec const &other) const { 
       return this->priority < other.priority; 
    }

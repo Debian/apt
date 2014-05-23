@@ -105,10 +105,37 @@ bool GetSrvRecords(std::string name, std::vector<SrvRec> &Result)
       Result.push_back(rec);
    }
 
-   // sort them
+   // implement load balancing as specified in RFC-2782
+
+   // sort them by priority
    std::stable_sort(Result.begin(), Result.end());
 
-   // FIXME: implement weight selection as specified in RFC-2782
+   // assign random number ranges
+   int prev_weight = 0;
+   int prev_priority = 0;
+   for(std::vector<SrvRec>::iterator I = Result.begin();
+      I != Result.end(); ++I)
+   {
+      if(prev_priority != I->priority)
+         prev_weight = 0;
+      I->random_number_range_start = prev_weight;
+      I->random_number_range_end = prev_weight + I->weight;
+      prev_weight = I->random_number_range_end;
+      prev_priority = I->priority;
+   }
+
+   // go over the code in reverse order and note the max random range
+   int max = 0;
+   prev_priority = 0;
+   for(std::vector<SrvRec>::iterator I = Result.end();
+      I != Result.begin(); --I)
+   {
+      if(prev_priority != I->priority)
+         max = I->random_number_range_end;
+      I->random_number_range_max = max;
+   }
+
+   // now shuffle 
 
    return true;
 }
