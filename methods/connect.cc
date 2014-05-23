@@ -134,15 +134,12 @@ static bool DoConnect(struct addrinfo *Addr,std::string Host,
    return true;
 }
 									/*}}}*/
-// Connect - Connect to a server					/*{{{*/
-// ---------------------------------------------------------------------
-/* Performs a connection to the server */
-bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
-	     unsigned long TimeOut,pkgAcqMethod *Owner)
-{
-   if (_error->PendingError() == true)
-      return false;
 
+// Connect to a given Hostname 
+bool ConnectAfterSrvRecords(std::string Host,int Port,const char *Service,
+                            int DefPort,int &Fd,
+                            unsigned long TimeOut,pkgAcqMethod *Owner)
+{
    // Convert the port name/number
    char ServStr[300];
    if (Port != 0)
@@ -155,15 +152,6 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
       sensible */
    if (LastHost != Host || LastPort != Port)
    {
-      // FIXME: NOT READY FOR MERGING IN THIS FORM 
-      //        we need to first check SRV, then round-robin DNS
-      //        this code will only ever use the first srv record
-
-      // FIXME: ensure we cycle over the SrvRecords first before 
-      //        we do round-robin IP
-      if(GetSrvRecords(Host, Port, SrvRecords) && SrvRecords.size() > 0)
-         Host = SrvRecords[0].target;
-
       Owner->Status(_("Connecting to %s"),Host.c_str());
 
       // Free the old address structure
@@ -271,3 +259,38 @@ bool Connect(std::string Host,int Port,const char *Service,int DefPort,int &Fd,
    return _error->Error(_("Unable to connect to %s:%s:"),Host.c_str(),ServStr);
 }
 									/*}}}*/
+// Connect - Connect to a server					/*{{{*/
+// ---------------------------------------------------------------------
+/* Performs a connection to the server */
+bool Connect(std::string Host,int Port,const char *Service,
+                            int DefPort,int &Fd,
+                            unsigned long TimeOut,pkgAcqMethod *Owner)
+{
+#if 0
+   if (_error->PendingError() == true)
+      return false;
+#endif
+
+   if(LastHost != Host || LastPort != Port)
+   {
+      SrvRecords.clear();
+      bool res = GetSrvRecords(Host, DefPort, SrvRecords);
+   }
+   if(SrvRecords.size() == 0)
+      return ConnectAfterSrvRecords(Host, Port, Service, DefPort, Fd, 
+                                    TimeOut, Owner);
+
+   bool connected = false;
+   while(SrvRecords.size() > 0)
+   {
+      Host = SrvRecords[0].target;
+      connected = ConnectAfterSrvRecords(Host, Port, Service, DefPort, Fd, 
+                                         TimeOut, Owner);
+      if(connected == true)
+         return true;
+
+      // we couldn't connect to this one, use the next
+      SrvRecords.erase(SrvRecords.begin());
+   } 
+   return false;
+}

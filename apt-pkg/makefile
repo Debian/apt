@@ -15,7 +15,7 @@ include ../buildlib/libversion.mak
 LIBRARY=apt-pkg
 MAJOR=$(LIBAPTPKG_MAJOR)
 MINOR=$(LIBAPTPKG_RELEASE)
-SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl
+SLIBS=$(PTHREADLIB) $(INTLLIBS) -lutil -ldl -lresolv
 ifeq ($(HAVE_ZLIB),yes)
 SLIBS+= -lz
 endif
