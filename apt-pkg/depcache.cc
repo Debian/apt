@@ -1678,7 +1678,7 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pk
 {
    /* Not source/not automatic versions cannot be a candidate version 
       unless they are already installed */
-   VerIterator Last(*(pkgCache *)this,0);
+   VerIterator Last;
    
    for (VerIterator I = Pkg.VersionList(); I.end() == false; ++I)
    {
