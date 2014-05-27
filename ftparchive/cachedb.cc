@@ -32,6 +32,19 @@
 #include <apti18n.h>
 									/*}}}*/
 
+CacheDB::CacheDB(std::string const &DB) 
+   : Dbp(0), Fd(NULL), DebFile(0)
+{
+   TmpKey[0]='\0';
+   ReadyDB(DB);
+};
+
+CacheDB::~CacheDB()
+{
+   ReadyDB();
+   delete DebFile;
+};
+
 // CacheDB::ReadyDB - Ready the DB2					/*{{{*/
 // ---------------------------------------------------------------------
 /* This opens the DB2 file for caching package information */
