@@ -186,8 +186,8 @@ debReleaseIndex::~debReleaseIndex() {
 			delete *S;
 }
 
-vector <struct IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
-	vector <struct IndexTarget *>* IndexTargets = new vector <IndexTarget *>;
+vector <IndexTarget *>* debReleaseIndex::ComputeIndexTargets() const {
+	vector <IndexTarget *>* IndexTargets = new vector <IndexTarget *>;
 
 	map<string, vector<debSectionEntry const*> >::const_iterator const src = ArchEntries.find("source");
 	if (src != ArchEntries.end()) {
@@ -255,8 +255,8 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 
    // special case for --print-uris
    if (GetAll) {
-      vector <struct IndexTarget *> *targets = ComputeIndexTargets();
-      for (vector <struct IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target) {
+      vector <IndexTarget *> *targets = ComputeIndexTargets();
+      for (vector <IndexTarget*>::const_iterator Target = targets->begin(); Target != targets->end(); ++Target) {
 	 new pkgAcqIndex(Owner, (*Target)->URI, (*Target)->Description,
 			 (*Target)->ShortDesc, HashStringList());
       }

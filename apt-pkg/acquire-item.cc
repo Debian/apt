@@ -1620,7 +1620,6 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 
    // at this point the real Items are loaded in the fetcher
    ExpectedAdditionalItems = 0;
-
    for (vector <IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         ++Target)

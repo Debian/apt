@@ -19,6 +19,7 @@
 class pkgAcquire;
 class pkgIndexFile;
 class debDebPkgFileIndex;
+class IndexTarget;
 
 class debReleaseIndex : public metaIndex {
    public:
@@ -45,7 +46,7 @@ class debReleaseIndex : public metaIndex {
 
    virtual std::string ArchiveURI(std::string const &File) const {return URI + File;};
    virtual bool GetIndexes(pkgAcquire *Owner, bool const &GetAll=false) const;
-   std::vector <struct IndexTarget *>* ComputeIndexTargets() const;
+   std::vector <IndexTarget *>* ComputeIndexTargets() const;
    std::string Info(const char *Type, std::string const &Section, std::string const &Arch="") const;
 
    std::string MetaIndexInfo(const char *Type) const;

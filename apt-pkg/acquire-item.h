@@ -745,7 +745,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
 	       std::string ShortDesc, HashStringList const &ExpectedHashes,
 	       std::string compressExt="");
    pkgAcqIndex(pkgAcquire *Owner,
-               struct IndexTarget const * const Target,
+               IndexTarget const * const Target,
                HashStringList const &ExpectedHash,
                indexRecords *MetaIndexParser);
    void Init(std::string const &URI, std::string const &URIDesc,
