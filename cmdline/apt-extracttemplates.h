@@ -20,7 +20,6 @@ class pkgCache;
 class DebFile : public pkgDirStream
 {
 	FileFd File;
-	unsigned long Size;
 	char *Control;
 	unsigned long ControlLen;
 	
