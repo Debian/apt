@@ -1364,7 +1364,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
 				 string URI,string URIDesc,string ShortDesc,
 				 string SigFile,
-				 const vector<struct IndexTarget*>* IndexTargets,
+				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
    Item(Owner), RealURI(URI), SigFile(SigFile), IndexTargets(IndexTargets),
    MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false)
@@ -1556,7 +1556,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 }
    }
 
-   for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
+   for (vector <IndexTarget*>::const_iterator Target = IndexTargets->begin();
         Target != IndexTargets->end();
         ++Target)
    {
@@ -1778,7 +1778,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 		string const &URI, string const &URIDesc, string const &ShortDesc,
 		string const &MetaIndexURI, string const &MetaIndexURIDesc, string const &MetaIndexShortDesc,
 		string const &MetaSigURI, string const &MetaSigURIDesc, string const &MetaSigShortDesc,
-		const vector<struct IndexTarget*>* IndexTargets,
+		const vector<IndexTarget*>* IndexTargets,
 		indexRecords* MetaIndexParser) :
 	pkgAcqMetaIndex(Owner, URI, URIDesc, ShortDesc, "", IndexTargets, MetaIndexParser),
 	MetaIndexURI(MetaIndexURI), MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),

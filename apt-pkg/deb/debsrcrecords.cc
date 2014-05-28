@@ -55,12 +55,13 @@ const char **debSrcRecordParser::Binaries()
       char* binStartNext = strchrnul(bin, ',');
       char* binEnd = binStartNext - 1;
       for (; isspace(*binEnd) != 0; --binEnd)
-	 binEnd = '\0';
+	 binEnd = 0;
       StaticBinList.push_back(bin);
       if (*binStartNext != ',')
 	 break;
       *binStartNext = '\0';
-      for (bin = binStartNext + 1; isspace(*bin) != 0; ++bin);
+      for (bin = binStartNext + 1; isspace(*bin) != 0; ++bin)
+         ;
    } while (*bin != '\0');
    StaticBinList.push_back(NULL);
 

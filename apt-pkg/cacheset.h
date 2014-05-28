@@ -584,7 +584,7 @@ public:									/*{{{*/
 
 	static VersionContainer FromString(pkgCacheFile &Cache, std::string const &pkg,
 			Version const &fallback, CacheSetHelper &helper,
-			bool const onlyFromName = false) {
+                                           bool const /*onlyFromName = false*/) {
 		VersionContainer vercon;
 		VersionContainerInterface::FromString(&vercon, Cache, pkg, fallback, helper);
 		return vercon;

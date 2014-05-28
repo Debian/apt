@@ -46,6 +46,7 @@
 class indexRecords;
 class pkgRecords;
 class pkgSourceList;
+class IndexTarget;
 
 /** \brief Represents the process by which a pkgAcquire object should	{{{
  *  retrieve a file or a collection of files.
@@ -745,7 +746,7 @@ class pkgAcqIndex : public pkgAcquire::Item
    pkgAcqIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 	       std::string ShortDesc, HashString ExpectedHash, 
 	       std::string compressExt="");
-   pkgAcqIndex(pkgAcquire *Owner, struct IndexTarget const * const Target,
+   pkgAcqIndex(pkgAcquire *Owner, IndexTarget const * const Target,
 			 HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
    void Init(std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc);
 };
@@ -777,7 +778,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
     */
    pkgAcqIndexTrans(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 		    std::string ShortDesc);
-   pkgAcqIndexTrans(pkgAcquire *Owner, struct IndexTarget const * const Target,
+   pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const * const Target,
 		    HashString const &ExpectedHash, indexRecords const *MetaIndexParser);
 };
 									/*}}}*/
@@ -876,7 +877,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
     *
     *  \todo Why a list of pointers instead of a list of structs?
     */
-   const std::vector<struct IndexTarget*>* IndexTargets;
+   const std::vector<IndexTarget*>* IndexTargets;
 
    public:
    
@@ -890,7 +891,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire *Owner,std::string URI,std::string URIDesc, std::string ShortDesc,
 		 std::string MetaIndexURI, std::string MetaIndexURIDesc, std::string MetaIndexShortDesc,
-		 const std::vector<struct IndexTarget*>* IndexTargets,
+		 const std::vector<IndexTarget*>* IndexTargets,
 		 indexRecords* MetaIndexParser);
    virtual ~pkgAcqMetaSig();
 };
@@ -924,7 +925,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    std::string SigFile;
 
    /** \brief The index files to download. */
-   const std::vector<struct IndexTarget*>* IndexTargets;
+   const std::vector<IndexTarget*>* IndexTargets;
 
    /** \brief The parser for the meta-index file. */
    indexRecords* MetaIndexParser;
@@ -987,7 +988,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    pkgAcqMetaIndex(pkgAcquire *Owner,
 		   std::string URI,std::string URIDesc, std::string ShortDesc,
 		   std::string SigFile,
-		   const std::vector<struct IndexTarget*>* IndexTargets,
+		   const std::vector<IndexTarget*>* IndexTargets,
 		   indexRecords* MetaIndexParser);
 };
 									/*}}}*/
@@ -1021,7 +1022,7 @@ public:
 		std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc,
 		std::string const &MetaIndexURI, std::string const &MetaIndexURIDesc, std::string const &MetaIndexShortDesc,
 		std::string const &MetaSigURI, std::string const &MetaSigURIDesc, std::string const &MetaSigShortDesc,
-		const std::vector<struct IndexTarget*>* IndexTargets,
+		const std::vector<IndexTarget*>* IndexTargets,
 		indexRecords* MetaIndexParser);
    virtual ~pkgAcqMetaClearSig();
 };
