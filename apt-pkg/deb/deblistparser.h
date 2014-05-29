@@ -115,4 +115,15 @@ class debDebFileParser : public debListParser
 			   pkgCache::VerIterator &Ver);
 };
 
+class debTranslationsParser : public debListParser
+{
+ public:
+   // a translation can never be a real package
+   virtual std::string Architecture() { return ""; }
+   virtual std::string Version() { return ""; }
+
+   debTranslationsParser(FileFd *File, std::string const &Arch = "")
+      : debListParser(File, Arch) {};
+};
+
 #endif

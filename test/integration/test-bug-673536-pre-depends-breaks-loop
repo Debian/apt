@@ -6,18 +6,32 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture 'native'
 
-buildsimplenativepackage 'basic' 'native' '1' 'stable'
+buildsimplenativepackage 'advanced' 'native' '1' 'stable'
+buildsimplenativepackage 'advanced' 'native' '2' 'unstable' 'Pre-Depends: basic'
 buildsimplenativepackage 'basic' 'native' '2' 'unstable' 'Pre-Depends: common'
-buildsimplenativepackage 'common' 'native' '2' 'unstable' 'Breaks: basic (<= 1)'
+
+buildsimplenativepackage 'common' 'native' '2~conflict' 'unstable-conflict' 'Conflicts: advanced (<= 1)'
+buildsimplenativepackage 'common' 'native' '2~break' 'unstable-break' 'Conflicts: advanced (<= 1)'
 
 setupaptarchive
 
 # we check with 'real' packages here as the simulation reports a 'Conf broken'
 # which is technical correct for the simulation, but testing errormsg is ugly
 
-testsuccess aptget install basic=1 -y
-testdpkginstalled basic
-testdpkgnotinstalled common
+cp -a rootdir/var/lib/dpkg/status dpkg.status.backup
 
-testsuccess aptget dist-upgrade -y
-testdpkginstalled basic common
+testloopbreak() {
+	cp -a dpkg.status.backup rootdir/var/lib/dpkg/status
+	rm -f rootdir/var/lib/apt/extended_states
+
+
+	testsuccess aptget install advanced=1 -y -t "$1" -o Debug::pkgPackageManager=1
+	testdpkginstalled advanced
+	testdpkgnotinstalled basic common
+
+	testsuccess aptget dist-upgrade -y -t "$1" -o Debug::pkgPackageManager=1
+	testdpkginstalled advanced basic common
+}
+
+testloopbreak 'unstable-break'
+testloopbreak 'unstable-conflict'

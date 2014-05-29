@@ -526,7 +526,7 @@ bool debTranslationsIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    if (FileExists(TranslationFile))
    {
      FileFd Trans(TranslationFile,FileFd::ReadOnly, FileFd::Extension);
-     debListParser TransParser(&Trans);
+     debTranslationsParser TransParser(&Trans);
      if (_error->PendingError() == true)
        return false;
      

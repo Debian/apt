@@ -16,22 +16,23 @@ buildsimplenativepackage 'apt' 'i386' '2' 'unstable' 'Depends: libsame (= 2)' ''
 buildsimplenativepackage 'apt2' 'amd64' '2' 'unstable' 'Depends: libsame (= 2)' '' 'required'
 
 setupaptarchive
-aptget dist-upgrade -s >output.apt 2>&1
+testsuccess aptget dist-upgrade -s -o Debug::pkgPackageManager=1
 
 # order in switch libsame:{amd64,i386} are unpacked is irrelevant, as both are installed - but we need to do it together
-LS_U_AMD="$(grep -o -n '^Inst libsame ' output.apt | cut -d: -f1)"
-LS_U_INT="$(grep -o -n '^Inst libsame:i386 ' output.apt | cut -d: -f1)"
-LS_C_AMD="$(grep -o -n '^Conf libsame ' output.apt | cut -d: -f1)"
-LS_C_INT="$(grep -o -n '^Conf libsame:i386 ' output.apt | cut -d: -f1)"
+OUTPUT=rootdir/tmp/testsuccess.output
+LS_U_AMD="$(grep -o -n '^Inst libsame ' $OUTPUT | cut -d: -f1)"
+LS_U_INT="$(grep -o -n '^Inst libsame:i386 ' $OUTPUT | cut -d: -f1)"
+LS_C_AMD="$(grep -o -n '^Conf libsame ' $OUTPUT | cut -d: -f1)"
+LS_C_INT="$(grep -o -n '^Conf libsame:i386 ' $OUTPUT | cut -d: -f1)"
 
-msgtest 'Test if libsame:amd64 unpack before configure'
+msgtest 'Test if' 'libsame:amd64 unpack before configure'
 test "$LS_U_AMD" -lt "$LS_C_AMD" && msgpass || msgfail
 
-msgtest 'Test if libsame:i386 unpack before configure'
+msgtest 'Test if' 'libsame:i386 unpack before configure'
 test "$LS_U_INT" -lt "$LS_C_INT" && msgpass || msgfail
 
-msgtest 'Test if libsame:amd64 unpack is before libsame:i386 configure'
+msgtest 'Test if' 'libsame:amd64 unpack is before libsame:i386 configure'
 test "$LS_U_AMD" -lt "$LS_C_INT" && msgpass || msgfail
 
-msgtest 'Test if libsame:i386 unpack is before libsame:amd64 configure'
+msgtest 'Test if' 'libsame:i386 unpack is before libsame:amd64 configure'
 test "$LS_U_INT" -lt "$LS_C_AMD" && msgpass || msgfail
