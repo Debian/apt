@@ -314,8 +314,8 @@ struct pkgCache::Header
        these packages are stored as a sequence in the list.
 
        Beware: The Hashmethod assumes that the hash table sizes are equal */
-   map_ptrloc PkgHashTable[2*1048];
-   map_ptrloc GrpHashTable[2*1048];
+   map_ptrloc PkgHashTable[64*1048];
+   map_ptrloc GrpHashTable[64*1048];
 
    /** \brief Size of the complete cache file */
    unsigned long  CacheFileSize;
