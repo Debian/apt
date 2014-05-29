@@ -91,7 +91,7 @@ TEST(CDROMTest,ReduceSourcelist)
 }
 TEST(CDROMTest, FindMountPointForDevice)
 {
-   char * tempfile;
+   char * tempfile = NULL;
    FileFd fd;
    createTemporaryFile("mountpoints", fd, &tempfile,
 	 "rootfs / rootfs rw 0 0\n"

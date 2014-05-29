@@ -1241,7 +1241,8 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 if (d->lzma == NULL)
 	    d->lzma = new FileFdPrivate::LZMAFILE;
 	 d->lzma->file = (FILE*) compress_struct;
-	 d->lzma->stream = LZMA_STREAM_INIT;
+         lzma_stream tmp_stream = LZMA_STREAM_INIT;
+	 d->lzma->stream = tmp_stream;
 
 	 if ((Mode & ReadWrite) == ReadWrite)
 	    return FileFdError("ReadWrite mode is not supported for file %s", FileName.c_str());

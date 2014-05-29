@@ -156,7 +156,7 @@ class CacheDB
 		SHA512Bytes(0),Packages(0), Misses(0), DeLinkBytes(0) {};
    } Stats;
    
-   bool ReadyDB(std::string const &DB);
+   bool ReadyDB(std::string const &DB = "");
    inline bool DBFailed() {return Dbp != 0 && DBLoaded == false;};
    inline bool Loaded() {return DBLoaded == true;};
    
@@ -180,8 +180,8 @@ class CacheDB
    
    bool Clean();
    
-   CacheDB(std::string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {TmpKey[0]='\0'; ReadyDB(DB);};
-   ~CacheDB() {ReadyDB(std::string()); delete DebFile;};
+   CacheDB(std::string const &DB);
+   ~CacheDB();
 };
     
 #endif

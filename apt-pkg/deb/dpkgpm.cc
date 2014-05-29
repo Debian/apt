@@ -1438,7 +1438,8 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
 
 	 if (_config->FindB("DPkg::FlushSTDIN",true) == true && isatty(STDIN_FILENO))
 	 {
-	    int Flags,dummy;
+	    int Flags;
+            int dummy = 0;
 	    if ((Flags = fcntl(STDIN_FILENO,F_GETFL,dummy)) < 0)
 	       _exit(100);
 	    
