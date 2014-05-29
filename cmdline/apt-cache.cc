@@ -373,7 +373,63 @@ static bool Stats(CommandLine &)
            Cache->Head().VerFileCount*Cache->Head().VerFileSz +
            Cache->Head().ProvidesCount*Cache->Head().ProvidesSz;
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
-   
+
+   // get the hash collisions average
+   long NumBuckets = sizeof(Cache->HeaderP->PkgHashTable)/sizeof(map_ptrloc);
+   long UsedBuckets = 0;
+   long UnusedBuckets = 0;
+   long LongestBucket = 0;
+   long ShortestBucket = NumBuckets;
+   for (unsigned int i=0; i < NumBuckets; ++i)
+   {
+      pkgCache::Package *Pkg = Cache->PkgP + Cache->HeaderP->PkgHashTable[i];
+      if(Pkg == 0 || Pkg == Cache->PkgP)
+      {
+         UnusedBuckets++;
+         continue;
+      }
+      long ThisBucketSize = 0;
+      for (; Pkg != Cache->PkgP; Pkg = Cache->PkgP + Pkg->NextPackage)
+         ThisBucketSize++;
+      LongestBucket = std::max(ThisBucketSize, LongestBucket);
+      ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
+      UsedBuckets += ThisBucketSize;
+   }
+   cout << _("Pkg Hashtable stats:") << endl;
+   cout << _("Number of buckets: ") << SizeToStr(NumBuckets) << endl;
+   cout << _("Unused buckets: ") << SizeToStr(UnusedBuckets) << endl;
+   cout << _("Used buckets: ") << UsedBuckets << endl;
+   cout << _("Average num entries per bucket : ") << UsedBuckets/(double)NumBuckets << endl;
+   cout << _("Longest / Shortest bucket: ") << LongestBucket << " / " << ShortestBucket << endl;
+
+   // get the hash collisions average
+   NumBuckets = sizeof(Cache->HeaderP->GrpHashTable)/sizeof(map_ptrloc);
+   UsedBuckets = 0;
+   UnusedBuckets = 0;
+   LongestBucket = 0;
+   ShortestBucket = NumBuckets;
+   for (unsigned int i=0; i < NumBuckets; ++i)
+   {
+      pkgCache::Group *Grp = Cache->GrpP + Cache->HeaderP->GrpHashTable[i];
+      if(Grp == 0 || Grp == Cache->GrpP)
+      {
+         UnusedBuckets++;
+         continue;
+      }
+      long ThisBucketSize = 0;
+      for (; Grp != Cache->GrpP; Grp = Cache->GrpP + Grp->Next)
+         ThisBucketSize++;
+      LongestBucket = std::max(ThisBucketSize, LongestBucket);
+      ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
+      UsedBuckets += ThisBucketSize;
+   }
+   cout << _("Grp Hashtable stats:") << endl;
+   cout << _("Number of buckets: ") << SizeToStr(NumBuckets) << endl;
+   cout << _("Unused buckets: ") << SizeToStr(UnusedBuckets) << endl;
+   cout << _("Used buckets: ") << UsedBuckets << endl;
+   cout << _("Average num entries per bucket : ") << UsedBuckets/(double)NumBuckets << endl;
+   cout << _("Longest / Shortest bucket: ") << LongestBucket << " / " << ShortestBucket << endl;
+
    return true;
 }
 									/*}}}*/
