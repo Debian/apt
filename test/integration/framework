@@ -194,6 +194,12 @@ setupenvironment() {
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${METHODSDIR} usr/lib/apt/methods
+	if [ "$BUILDDIRECTORY" = "$LIBRARYPATH" ]; then
+		mkdir -p usr/lib/apt/solvers
+		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/solvers/dump
+		ln -s "${BUILDDIRECTORY}/apt-internal-solver" usr/lib/apt/solvers/apt
+		echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" > etc/apt/apt.conf.d/externalsolver.conf
+	fi
         # use the autoremove from the BUILDDIRECTORY if its there, otherwise
         # system
         if [ -e ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove ]; then

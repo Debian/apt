@@ -438,6 +438,13 @@ bool EDSP::ReadRequest(int const input, std::list<std::string> &install,
 	    distUpgrade = EDSP::StringToBool(line.c_str() + 14, false);
 	 else if (line.compare(0, 11, "Autoremove:") == 0)
 	    autoRemove = EDSP::StringToBool(line.c_str() + 12, false);
+	 else if (line.compare(0, 13, "Architecture:") == 0)
+	    _config->Set("APT::Architecture", line.c_str() + 14);
+	 else if (line.compare(0, 14, "Architectures:") == 0)
+	 {
+	    std::string const archs = line.c_str() + 15;
+	    _config->Set("APT::Architectures", SubstVar(archs, " ", ","));
+	 }
 	 else
 	    _error->Warning("Unknown line in EDSP Request stanza: %s", line.c_str());
 
