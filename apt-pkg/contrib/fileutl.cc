@@ -1798,7 +1798,8 @@ static bool StatFileFd(char const * const msg, int const iFd, std::string const 
 	 // higher-level code will generate more meaningful messages,
 	 // even translated this would be meaningless for users
 	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
-      ispipe = S_ISFIFO(Buf.st_mode);
+      if (FileName.empty() == false)
+	 ispipe = S_ISFIFO(Buf.st_mode);
    }
 
    // for compressor pipes st_size is undefined and at 'best' zero
