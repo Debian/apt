@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Regression test for debian bug #749795. Ensure that we fail with
+# a error if apt-get source foo will download a source that comes
+# from a unauthenticated repository
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# a "normal" package with source and binary
+buildsimplenativepackage 'foo' 'all' '2.0'
+
+setupaptarchive --no-update
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+rm -f $APTARCHIVE/dists/unstable/*Release*
+
+# update without authenticated InRelease file
+testsuccess aptget update
+
+# this all should fail
+testfailure aptget install -y foo
+testfailure aptget source foo
+
+# allow overriding the warning
+testsuccess aptget source --allow-unauthenticated foo
