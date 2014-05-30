@@ -617,7 +617,8 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
       if (Fix != NULL)
       {
 	 // Call the scored problem resolver
-	 Fix->Resolve(true);
+	 if (Fix->Resolve(true) == false && Cache->BrokenCount() == 0)
+	    return false;
       }
 
       // Now we check the state of the packages,
