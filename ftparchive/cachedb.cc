@@ -99,7 +99,7 @@ bool CacheDB::ReadyDB(std::string const &DB)
           return _error->Error(_("Unable to open DB file %s: %s"),DB.c_str(), db_strerror(err));
       }
    }
-   
+
    DBFile = DB;
    DBLoaded = true;
    return true;
@@ -188,6 +188,45 @@ bool CacheDB::GetFileStat(bool const &doStat)
    return true;
 }
 									/*}}}*/
+// CacheDB::GetCurStatCompatOldFormat           			/*{{{*/
+// ---------------------------------------------------------------------
+/* Read the old (32bit FileSize) StateStore format from disk */
+bool CacheDB::GetCurStatCompatOldFormat()
+{
+   InitQueryStats();
+   Data.data = &CurStatOldFormat;
+   Data.flags = DB_DBT_USERMEM;
+   Data.ulen = sizeof(CurStatOldFormat);
+   if (Get() == false)
+   {
+      CurStat.Flags = 0;
+   } else {
+      CurStat.Flags = CurStatOldFormat.Flags;
+      CurStat.mtime = CurStatOldFormat.mtime;
+      CurStat.FileSize = CurStatOldFormat.FileSize;
+      memcpy(CurStat.MD5, CurStatOldFormat.MD5, sizeof(CurStat.MD5));
+      memcpy(CurStat.SHA1, CurStatOldFormat.SHA1, sizeof(CurStat.SHA1));
+      memcpy(CurStat.SHA256, CurStatOldFormat.SHA256, sizeof(CurStat.SHA256));
+   }
+   return true;
+}
+									/*}}}*/
+// CacheDB::GetCurStatCompatOldFormat           			/*{{{*/
+// ---------------------------------------------------------------------
+/* Read the new (64bit FileSize) StateStore format from disk */
+bool CacheDB::GetCurStatCompatNewFormat()
+{
+   InitQueryStats();
+   Data.data = &CurStat;
+   Data.flags = DB_DBT_USERMEM;
+   Data.ulen = sizeof(CurStat);
+   if (Get() == false)
+   {
+      CurStat.Flags = 0;
+   }
+   return true;
+}
+									/*}}}*/
 // CacheDB::GetCurStat - Set the CurStat variable.			/*{{{*/
 // ---------------------------------------------------------------------
 /* Sets the CurStat variable.  Either to 0 if no database is used
@@ -198,19 +237,29 @@ bool CacheDB::GetCurStat()
    
    if (DBLoaded)
    {
-      /* First see if there is anything about it
-         in the database */
-      
-      /* Get the flags (and mtime) */
+      // do a first query to just get the size of the data on disk
       InitQueryStats();
-      // Ensure alignment of the returned structure
       Data.data = &CurStat;
-      Data.ulen = sizeof(CurStat);
       Data.flags = DB_DBT_USERMEM;
-      if (Get() == false)
+      Data.ulen = 0;
+      Get();
+
+      if (Data.size == 0)
       {
-	 CurStat.Flags = 0;
-      }      
+         // nothing needs to be done, we just have not data for this deb
+      }
+      // check if the record is written in the old format (32bit filesize)
+      else if(Data.size == sizeof(CurStatOldFormat))
+      {
+         GetCurStatCompatOldFormat();
+      }
+      else if(Data.size == sizeof(CurStat))
+      {
+         GetCurStatCompatNewFormat();
+      } else {
+         return _error->Error("Cache record size mismatch (%ul)", Data.size);
+      }
+
       CurStat.Flags = ntohl(CurStat.Flags);
       CurStat.FileSize = ntohl(CurStat.FileSize);
    }      
