@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+insertinstalledpackage 'gedit' 'amd64' '1'
+
+insertpackage 'unstable' 'gedit' 'amd64' '1'
+insertpackage 'experimental' 'gedit' 'amd64' '2' 'Depends: common (>= 2)'
+
+setupaptarchive
+
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2' (experimental [amd64]) for 'gedit'
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ gedit : Depends: common (>= 2) but it is not installable
+E: Unable to correct problems, you have held broken packages." aptget install gedit/experimental -sq=0
+
+insertinstalledpackage 'common' 'amd64' '2'
+
+testequal "Reading package lists...
+Building dependency tree...
+Selected version '2' (experimental [amd64]) for 'gedit'
+The following packages will be upgraded:
+  gedit
+1 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
+Inst gedit [1] (2 experimental [amd64])
+Conf gedit (2 experimental [amd64])" aptget install gedit/experimental -sq=0
