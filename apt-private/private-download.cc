@@ -28,6 +28,11 @@ bool CheckAuth(pkgAcquire& Fetcher, bool const PromptUser)
    if (UntrustedList == "")
       return true;
 
+   return AuthPrompt(UntrustedList, PromptUser);
+}
+
+bool AuthPrompt(std::string UntrustedList, bool const PromptUser)
+{
    ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"),UntrustedList,"");
 
    if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
