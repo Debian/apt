@@ -1,3 +1,44 @@
+apt (1.0.4) UNRELEASED; urgency=medium
+
+  [ Michael Vogt ]
+  * Implement CacheDB for source packages in apt-ftparchive
+  * apt-private/acqprogress.cc: reset color in apt update
+  * Show progress in run-tests
+  * Never parse Version/Architecture tags in a Translation-$lang file
+  * Show upgradable packages after apt update (Closes: 748389)
+  * Fix various errors found by clang -fsanitize=address
+  * Fix various errors foudn by clang scan-build
+  * Show unauthenticated warning for source packages as well (Closes: #749795)
+  * Add compat mode for old (32bit FileSize) CacheDB (LP: #1274466)
+  * cmdline/apt-helper.cc: use less generic description/short-description 
+    in apt-helper download
+  * add pkgSrcRecords::Next() to step through all the pkgSrcRecords
+    (thanks to Helmut Grohne)
+
+  [ David Kalnischkies ]
+  * initialize Verify in second pkgAcqIndex constructor
+  * consistently fail if Smart* packagemanager actions fail
+  * fix tight loop detection and temporary removes
+  * if Resolver fails, do not continue even if not broken
+  * check exit status of external solvers
+  * do not revert candidate for protected packages (Closes: 745046)
+  * support Acquire::GzipIndexes in dumpavail (Closes: 742835)
+
+  [ Stefano Zacchiroli ]
+  * EDSP doc: fix typo in Request stanza description
+  * EDSP: bump protocol version to 0.5
+  * EDSP: add Architecture(s) multi-arch fields to the Request stanza
+  * EDSP: add Source field to Package stanzas
+  * EDSP: add APT-Release field to Package stanzas
+
+  [ Sebastian Schmidt ]
+  * fix screen width detection for apt/apt-get lists (Closes: 748430, 747942)
+
+  [ Milo Casagrande ]
+  * Italian program translation update (Closes: 750009)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 10 Jun 2014 14:55:05 +0200
+
 apt (1.0.3) unstable; urgency=medium
 
   [ Michael Vogt ]
