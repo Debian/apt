@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.5.26\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-05-05 16:26+0200\n"
+"POT-Creation-Date: 2014-06-10 15:59+0200\n"
 "PO-Revision-Date: 2008-12-11 14:52+0200\n"
 "Last-Translator: Tapio Lehtonen <tale@debian.org>\n"
 "Language-Team: Finnish <debian-l10n-finnish@lists.debian.org>\n"
@@ -158,9 +158,9 @@ msgid "  Version table:"
 msgstr "  Versiotaulukko:"
 
 #: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1578 cmdline/apt-helper.cc:58 cmdline/apt-mark.cc:388
+#: cmdline/apt-get.cc:1586 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
-#: ftparchive/apt-ftparchive.cc:600 cmdline/apt-internal-solver.cc:42
+#: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:43
 #: cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -327,6 +327,7 @@ msgid "Couldn't find package %s"
 msgstr "Pakettia %s ei löytynyt"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
+#: apt-private/private-install.cc:855
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s on merkitty käyttäjän toimesta asennetuksi.\n"
@@ -354,19 +355,19 @@ msgstr "Noutokansiota ei saatu lukittua"
 msgid "Must specify at least one package to fetch source for"
 msgstr "On annettava ainakin yksi paketti jonka lähdekoodi noudetaan"
 
-#: cmdline/apt-get.cc:765 cmdline/apt-get.cc:1058
+#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:1066
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "Paketin %s lähdekoodipakettia ei löytynyt"
 
-#: cmdline/apt-get.cc:782
+#: cmdline/apt-get.cc:786
 #, c-format
 msgid ""
 "NOTICE: '%s' packaging is maintained in the '%s' version control system at:\n"
 "%s\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:787
+#: cmdline/apt-get.cc:791
 #, c-format
 msgid ""
 "Please use:\n"
@@ -374,96 +375,96 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:839
+#: cmdline/apt-get.cc:843
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "Ohitetaan jo noudettu tiedosto \"%s\"\n"
 
-#: cmdline/apt-get.cc:861 cmdline/apt-get.cc:864
+#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:872
 #: apt-private/private-install.cc:186 apt-private/private-install.cc:189
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Kansion %s vapaan tilan määrä ei selvinnyt"
 
-#: cmdline/apt-get.cc:874
+#: cmdline/apt-get.cc:882
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "Kansiossa %s ei ole riittävästi vapaata tilaa"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:883
+#: cmdline/apt-get.cc:891
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "On noudettava %st/%st lähdekoodiarkistoja.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:888
+#: cmdline/apt-get.cc:896
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "On noudettava %st lähdekoodiarkistoja.\n"
 
-#: cmdline/apt-get.cc:894
+#: cmdline/apt-get.cc:902
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "Nouda lähdekoodi %s\n"
 
-#: cmdline/apt-get.cc:912
+#: cmdline/apt-get.cc:920
 msgid "Failed to fetch some archives."
 msgstr "Joidenkin arkistojen noutaminen ei onnistunut."
 
-#: cmdline/apt-get.cc:917 apt-private/private-install.cc:313
+#: cmdline/apt-get.cc:925 apt-private/private-install.cc:313
 msgid "Download complete and in download only mode"
 msgstr "Nouto on valmis ja määrätty vain nouto"
 
-#: cmdline/apt-get.cc:942
+#: cmdline/apt-get.cc:950
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "Ohitetaan purku jo puretun lähdekoodin %s kohdalla\n"
 
-#: cmdline/apt-get.cc:954
+#: cmdline/apt-get.cc:962
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "Purkukomento \"%s\" ei onnistunut.\n"
 
-#: cmdline/apt-get.cc:955
+#: cmdline/apt-get.cc:963
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "Tarkista onko paketti \"dpkg-dev\" asennettu.\n"
 
-#: cmdline/apt-get.cc:983
+#: cmdline/apt-get.cc:991
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "Paketointikomento \"%s\" ei onnistunut.\n"
 
-#: cmdline/apt-get.cc:1002
+#: cmdline/apt-get.cc:1010
 msgid "Child process failed"
 msgstr "Lapsiprosessi kaatui"
 
-#: cmdline/apt-get.cc:1021
+#: cmdline/apt-get.cc:1029
 msgid "Must specify at least one package to check builddeps for"
 msgstr ""
 "On annettava ainakin yksi paketti jonka paketointiriippuvuudet tarkistetaan"
 
-#: cmdline/apt-get.cc:1046
+#: cmdline/apt-get.cc:1054
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:1070 cmdline/apt-get.cc:1073
+#: cmdline/apt-get.cc:1078 cmdline/apt-get.cc:1081
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "Paketille %s ei ole saatavilla riippuvuustietoja"
 
-#: cmdline/apt-get.cc:1093
+#: cmdline/apt-get.cc:1101
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "Paketille %s ei ole määritetty paketointiriippuvuuksia.\n"
 
-#: cmdline/apt-get.cc:1263
+#: cmdline/apt-get.cc:1271
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -471,7 +472,7 @@ msgid ""
 msgstr ""
 "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
 
-#: cmdline/apt-get.cc:1281
+#: cmdline/apt-get.cc:1289
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -479,14 +480,14 @@ msgid ""
 msgstr ""
 "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
 
-#: cmdline/apt-get.cc:1304
+#: cmdline/apt-get.cc:1312
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "Riippuvutta %s paketille %s ei voi tyydyttää: Asennettu paketti %s on liian "
 "uusi"
 
-#: cmdline/apt-get.cc:1343
+#: cmdline/apt-get.cc:1351
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -495,7 +496,7 @@ msgstr ""
 "%s riippuvuutta paketille %s ei voi tyydyttää koska mikään paketin %s versio "
 "ei vastaa versioriippuvuuksia"
 
-#: cmdline/apt-get.cc:1349
+#: cmdline/apt-get.cc:1357
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -503,30 +504,30 @@ msgid ""
 msgstr ""
 "riippuvuutta %s paketille %s ei voi tyydyttää koska pakettia %s ei löydy"
 
-#: cmdline/apt-get.cc:1372
+#: cmdline/apt-get.cc:1380
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "Riippuvuutta %s paketille %s ei voi tyydyttää: %s"
 
-#: cmdline/apt-get.cc:1387
+#: cmdline/apt-get.cc:1395
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "Paketointiriippuvuuksia paketille %s ei voi tyydyttää."
 
-#: cmdline/apt-get.cc:1392
+#: cmdline/apt-get.cc:1400
 msgid "Failed to process build dependencies"
 msgstr "Paketointiriippuvuuksien käsittely ei onnistunut"
 
-#: cmdline/apt-get.cc:1485 cmdline/apt-get.cc:1497
+#: cmdline/apt-get.cc:1493 cmdline/apt-get.cc:1505
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "Avataan yhteys %s (%s)"
 
-#: cmdline/apt-get.cc:1583
+#: cmdline/apt-get.cc:1591
 msgid "Supported modules:"
 msgstr "Tuetut moduulit:"
 
-#: cmdline/apt-get.cc:1624
+#: cmdline/apt-get.cc:1632
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -617,11 +618,11 @@ msgstr ""
 msgid "Must specify at least one pair url/filename"
 msgstr "On annettava ainakin yksi paketti jonka lähdekoodi noudetaan"
 
-#: cmdline/apt-helper.cc:52
+#: cmdline/apt-helper.cc:53
 msgid "Download Failed"
 msgstr ""
 
-#: cmdline/apt-helper.cc:65
+#: cmdline/apt-helper.cc:66
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -825,9 +826,9 @@ msgstr "Yhteys aikakatkaistiin"
 msgid "Server closed the connection"
 msgstr "Palvelin sulki yhteyden"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1475
-#: apt-pkg/contrib/fileutl.cc:1484 apt-pkg/contrib/fileutl.cc:1489
-#: apt-pkg/contrib/fileutl.cc:1491
+#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1476
+#: apt-pkg/contrib/fileutl.cc:1485 apt-pkg/contrib/fileutl.cc:1490
+#: apt-pkg/contrib/fileutl.cc:1492
 msgid "Read error"
 msgstr "Lukuvirhe"
 
@@ -840,9 +841,9 @@ msgid "Protocol corruption"
 msgstr "Yhteyskäytäntö on turmeltunut"
 
 #: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:872
-#: apt-pkg/contrib/fileutl.cc:1597 apt-pkg/contrib/fileutl.cc:1606
-#: apt-pkg/contrib/fileutl.cc:1611 apt-pkg/contrib/fileutl.cc:1613
-#: apt-pkg/contrib/fileutl.cc:1638
+#: apt-pkg/contrib/fileutl.cc:1598 apt-pkg/contrib/fileutl.cc:1607
+#: apt-pkg/contrib/fileutl.cc:1612 apt-pkg/contrib/fileutl.cc:1614
+#: apt-pkg/contrib/fileutl.cc:1639
 msgid "Write error"
 msgstr "Virhe kirjoitettaessa"
 
@@ -1158,108 +1159,108 @@ msgstr "Halunnet suorittaa \"apt-get -f install\" korjaamaan nämä."
 msgid "Unmet dependencies. Try using -f."
 msgstr "Tyydyttämättömiä riippuvuuksia. Koita käyttää -f."
 
-#: apt-private/private-output.cc:102 apt-private/private-show.cc:84
+#: apt-private/private-output.cc:103 apt-private/private-show.cc:84
 #: apt-private/private-show.cc:89
 msgid "unknown"
 msgstr ""
 
-#: apt-private/private-output.cc:232
+#: apt-private/private-output.cc:233
 #, fuzzy, c-format
 msgid "[installed,upgradable to: %s]"
 msgstr " [Asennettu]"
 
-#: apt-private/private-output.cc:236
+#: apt-private/private-output.cc:237
 #, fuzzy
 msgid "[installed,local]"
 msgstr " [Asennettu]"
 
-#: apt-private/private-output.cc:239
+#: apt-private/private-output.cc:240
 msgid "[installed,auto-removable]"
 msgstr ""
 
-#: apt-private/private-output.cc:241
+#: apt-private/private-output.cc:242
 #, fuzzy
 msgid "[installed,automatic]"
 msgstr " [Asennettu]"
 
-#: apt-private/private-output.cc:243
+#: apt-private/private-output.cc:244
 #, fuzzy
 msgid "[installed]"
 msgstr " [Asennettu]"
 
-#: apt-private/private-output.cc:247
+#: apt-private/private-output.cc:248
 #, c-format
 msgid "[upgradable from: %s]"
 msgstr ""
 
-#: apt-private/private-output.cc:251
+#: apt-private/private-output.cc:252
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:351
+#: apt-private/private-output.cc:352
 msgid "The following packages have unmet dependencies:"
 msgstr "Näillä paketeilla on tyydyttämättömiä riippuvuuksia:"
 
-#: apt-private/private-output.cc:441
+#: apt-private/private-output.cc:442
 #, c-format
 msgid "but %s is installed"
 msgstr "mutta %s on asennettu"
 
-#: apt-private/private-output.cc:443
+#: apt-private/private-output.cc:444
 #, c-format
 msgid "but %s is to be installed"
 msgstr "mutta %s on merkitty asennettavaksi"
 
-#: apt-private/private-output.cc:450
+#: apt-private/private-output.cc:451
 msgid "but it is not installable"
 msgstr "mutta ei ole asennuskelpoinen"
 
-#: apt-private/private-output.cc:452
+#: apt-private/private-output.cc:453
 msgid "but it is a virtual package"
 msgstr "mutta on näennäispaketti"
 
-#: apt-private/private-output.cc:455
+#: apt-private/private-output.cc:456
 msgid "but it is not installed"
 msgstr "mutta ei ole asennettu"
 
-#: apt-private/private-output.cc:455
+#: apt-private/private-output.cc:456
 msgid "but it is not going to be installed"
 msgstr "mutta ei ole merkitty asennettavaksi"
 
-#: apt-private/private-output.cc:460
+#: apt-private/private-output.cc:461
 msgid " or"
 msgstr " tai"
 
-#: apt-private/private-output.cc:489
+#: apt-private/private-output.cc:490
 msgid "The following NEW packages will be installed:"
 msgstr "Seuraavat UUDET paketit asennetaan:"
 
-#: apt-private/private-output.cc:515
+#: apt-private/private-output.cc:516
 msgid "The following packages will be REMOVED:"
 msgstr "Seuraavat paketit POISTETAAN:"
 
-#: apt-private/private-output.cc:537
+#: apt-private/private-output.cc:538
 msgid "The following packages have been kept back:"
 msgstr "Nämä paketit on jätetty odottamaan:"
 
-#: apt-private/private-output.cc:558
+#: apt-private/private-output.cc:559
 msgid "The following packages will be upgraded:"
 msgstr "Nämä paketit päivitetään:"
 
-#: apt-private/private-output.cc:579
+#: apt-private/private-output.cc:580
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Nämä paketit VARHENNETAAN:"
 
-#: apt-private/private-output.cc:599
+#: apt-private/private-output.cc:600
 msgid "The following held packages will be changed:"
 msgstr "Seuraavat pysytetyt paketit muutetaan:"
 
-#: apt-private/private-output.cc:654
+#: apt-private/private-output.cc:655
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (syynä %s) "
 
-#: apt-private/private-output.cc:662
+#: apt-private/private-output.cc:663
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -1267,27 +1268,27 @@ msgstr ""
 "VAROITUS: Seuraavat välttämättömät paketit poistetaan.\n"
 "Näin EI PITÄISI tehdä jos ei aivan tarkkaan tiedä mitä tekee!"
 
-#: apt-private/private-output.cc:693
+#: apt-private/private-output.cc:694
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu päivitetty, %lu uutta asennusta, "
 
-#: apt-private/private-output.cc:697
+#: apt-private/private-output.cc:698
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu uudelleen asennettua, "
 
-#: apt-private/private-output.cc:699
+#: apt-private/private-output.cc:700
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu varhennettua, "
 
-#: apt-private/private-output.cc:701
+#: apt-private/private-output.cc:702
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu poistettavaa ja %lu päivittämätöntä.\n"
 
-#: apt-private/private-output.cc:705
+#: apt-private/private-output.cc:706
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu ei asennettu kokonaan tai poistettiin.\n"
@@ -1296,7 +1297,7 @@ msgstr "%lu ei asennettu kokonaan tai poistettiin.\n"
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:727
+#: apt-private/private-output.cc:728
 msgid "[Y/n]"
 msgstr "[K/e]"
 
@@ -1304,21 +1305,21 @@ msgstr "[K/e]"
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:733
+#: apt-private/private-output.cc:734
 msgid "[y/N]"
 msgstr ""
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:744
+#: apt-private/private-output.cc:745
 msgid "Y"
 msgstr "K"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:750
+#: apt-private/private-output.cc:751
 msgid "N"
 msgstr ""
 
-#: apt-private/private-output.cc:772 apt-pkg/cachefilter.cc:35
+#: apt-private/private-output.cc:773 apt-pkg/cachefilter.cc:35
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Käännösvirhe lausekkeessa - %s"
@@ -1326,6 +1327,14 @@ msgstr "Käännösvirhe lausekkeessa - %s"
 #: apt-private/private-update.cc:31
 msgid "The update command takes no arguments"
 msgstr "Komento update ei käytä parametreja"
+
+#: apt-private/private-update.cc:90
+#, c-format
+msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
+msgid_plural ""
+"%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
+msgstr[0] ""
+msgstr[1] ""
 
 #: apt-private/private-show.cc:156
 #, c-format
@@ -1389,7 +1398,7 @@ msgstr "Toiminnon jälkeen vapautuu %s t levytilaa.\n"
 msgid "You don't have enough free space in %s."
 msgstr "Kansiossa %s ei ole riittävästi vapaata tilaa."
 
-#: apt-private/private-install.cc:209 apt-private/private-download.cc:54
+#: apt-private/private-install.cc:209 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Oli pulmia ja -y käytettiin ilman valitsinta --force-yes"
 
@@ -1484,7 +1493,7 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:501 apt-private/private-install.cc:642
+#: apt-private/private-install.cc:501 apt-private/private-install.cc:643
 msgid "The following information may help to resolve the situation:"
 msgstr "Seuraavista tiedoista voi olla hyötyä selvitettäessä tilannetta:"
 
@@ -1537,7 +1546,7 @@ msgstr ""
 "Kaikkia riippuvuuksia ei ole tyydytetty. Kokeile \"apt-get -f install\" "
 "ilmanpaketteja (tai ratkaise itse)."
 
-#: apt-private/private-install.cc:627
+#: apt-private/private-install.cc:628
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1548,21 +1557,62 @@ msgstr ""
 "jos käytetään epävakaata jakelua, joitain vaadittuja paketteja ei ole\n"
 "vielä luotu tai siirretty Incoming-kansiosta."
 
-#: apt-private/private-install.cc:648
+#: apt-private/private-install.cc:649
 msgid "Broken packages"
 msgstr "Rikkinäiset paketit"
 
-#: apt-private/private-install.cc:701
+#: apt-private/private-install.cc:702
 msgid "The following extra packages will be installed:"
 msgstr "Seuraavat ylimääräiset paketit on merkitty asennettaviksi:"
 
-#: apt-private/private-install.cc:791
+#: apt-private/private-install.cc:792
 msgid "Suggested packages:"
 msgstr "Ehdotetut paketit:"
 
-#: apt-private/private-install.cc:792
+#: apt-private/private-install.cc:793
 msgid "Recommended packages:"
 msgstr "Suositellut paketit:"
+
+#: apt-private/private-install.cc:815
+#, c-format
+msgid "Skipping %s, it is already installed and upgrade is not set.\n"
+msgstr "Ohitetaan %s, se on jo asennettu eikä ole komennettu päivitystä.\n"
+
+#: apt-private/private-install.cc:819
+#, fuzzy, c-format
+msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
+msgstr "Ohitetaan %s, se on jo asennettu eikä ole komennettu päivitystä.\n"
+
+#: apt-private/private-install.cc:831
+#, c-format
+msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
+msgstr "Paketin %s uudelleenasennus ei ole mahdollista, sitä ei voi noutaa.\n"
+
+#: apt-private/private-install.cc:836
+#, c-format
+msgid "%s is already the newest version.\n"
+msgstr "%s on jo uusin versio.\n"
+
+#: apt-private/private-install.cc:884
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s'\n"
+msgstr "Valittiin versio %s (%s) paketille %s\n"
+
+#: apt-private/private-install.cc:889
+#, fuzzy, c-format
+msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
+msgstr "Valittiin versio %s (%s) paketille %s\n"
+
+#. TRANSLATORS: Note, this is not an interactive question
+#: apt-private/private-install.cc:931
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
+msgstr "Pakettia %s ei ole asennettu, niinpä sitä ei poisteta\n"
+
+#: apt-private/private-install.cc:937
+#, fuzzy, c-format
+msgid "Package '%s' is not installed, so not removed\n"
+msgstr "Pakettia %s ei ole asennettu, niinpä sitä ei poisteta\n"
 
 #: apt-private/private-main.cc:32
 msgid ""
@@ -1572,23 +1622,23 @@ msgid ""
 "      so don't depend on the relevance to the real current situation!"
 msgstr ""
 
-#: apt-private/private-download.cc:31
+#: apt-private/private-download.cc:36
 msgid "WARNING: The following packages cannot be authenticated!"
 msgstr "VAROITUS: Seuraavian pakettien alkuperää ei voi varmistaa!"
 
-#: apt-private/private-download.cc:35
+#: apt-private/private-download.cc:40
 msgid "Authentication warning overridden.\n"
 msgstr "Varoitus varmistamisesta on ohitettu.\n"
 
-#: apt-private/private-download.cc:40 apt-private/private-download.cc:47
+#: apt-private/private-download.cc:45 apt-private/private-download.cc:52
 msgid "Some packages could not be authenticated"
 msgstr "Joidenkin pakettien alkuperästä ei voitu varmistua"
 
-#: apt-private/private-download.cc:45
+#: apt-private/private-download.cc:50
 msgid "Install these packages without verification?"
 msgstr "Asennetaanko nämä paketit ilman todennusta?"
 
-#: apt-private/private-download.cc:86 apt-pkg/update.cc:77
+#: apt-private/private-download.cc:91 apt-pkg/update.cc:77
 #, c-format
 msgid "Failed to fetch %s  %s\n"
 msgstr "Tiedoston %s nouto ei onnistunut  %s\n"
@@ -1790,7 +1840,7 @@ msgid "The diversion path is too long"
 msgstr "Korvautuspolku on liian pitkä"
 
 #: apt-inst/extract.cc:186 apt-inst/extract.cc:199 apt-inst/extract.cc:216
-#: ftparchive/cachedb.cc:131
+#: ftparchive/cachedb.cc:182
 #, c-format
 msgid "Failed to stat %s"
 msgstr "Tiedostolle %s ei toimi stat"
@@ -2138,27 +2188,27 @@ msgstr "Tiedostoon %s kirjoittaminen ei onnistu"
 msgid "IO Error saving source cache"
 msgstr "Syöttö/Tulostus -virhe tallennettaessa pakettivarastoa"
 
-#: apt-pkg/edsp.cc:50 apt-pkg/edsp.cc:70
+#: apt-pkg/edsp.cc:51 apt-pkg/edsp.cc:71
 msgid "Send scenario to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:216
+#: apt-pkg/edsp.cc:234
 msgid "Send request to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:286
+#: apt-pkg/edsp.cc:313
 msgid "Prepare for receiving solution"
 msgstr ""
 
-#: apt-pkg/edsp.cc:293
+#: apt-pkg/edsp.cc:320
 msgid "External solver failed without a proper error message"
 msgstr ""
 
-#: apt-pkg/edsp.cc:563 apt-pkg/edsp.cc:566 apt-pkg/edsp.cc:571
+#: apt-pkg/edsp.cc:612 apt-pkg/edsp.cc:615 apt-pkg/edsp.cc:620
 msgid "Execute external solver"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2045
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2047
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "nimen vaihto ei onnistunut, %s (%s -> %s)."
@@ -2176,35 +2226,35 @@ msgstr "Koko ei täsmää"
 msgid "Invalid file format"
 msgstr "Virheellinen toiminto %s"
 
-#: apt-pkg/acquire-item.cc:1579
+#: apt-pkg/acquire-item.cc:1581
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1595
+#: apt-pkg/acquire-item.cc:1597
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Pakettitiedostoa %s (1) ei voi jäsentää"
 
-#: apt-pkg/acquire-item.cc:1637
+#: apt-pkg/acquire-item.cc:1639
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "Julkisia avaimia ei ole saatavilla, avainten ID:t ovat:\n"
 
-#: apt-pkg/acquire-item.cc:1675
+#: apt-pkg/acquire-item.cc:1677
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1697
+#: apt-pkg/acquire-item.cc:1699
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1727
+#: apt-pkg/acquire-item.cc:1729
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -2212,12 +2262,12 @@ msgid ""
 msgstr ""
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1737 apt-pkg/acquire-item.cc:1742
+#: apt-pkg/acquire-item.cc:1739 apt-pkg/acquire-item.cc:1744
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1865
+#: apt-pkg/acquire-item.cc:1867
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -2226,12 +2276,12 @@ msgstr ""
 "En löytänyt pakettia %s vastaavaa tiedostoa. Voit ehkä joutua korjaamaan "
 "tämän paketin itse (puuttuvan arkkitehtuurin vuoksi)"
 
-#: apt-pkg/acquire-item.cc:1931
+#: apt-pkg/acquire-item.cc:1933
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1989
+#: apt-pkg/acquire-item.cc:1991
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -2305,19 +2355,19 @@ msgstr "Tunnistetyyppi %s on tuntematon"
 msgid "No priority (or zero) specified for pin"
 msgstr "Tärkeysjärjestystä ei määritetty tunnisteelle (tai se on nolla)"
 
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:932
+#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:910
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
 "under APT::Immediate-Configure for details. (%d)"
 msgstr ""
 
-#: apt-pkg/packagemanager.cc:504 apt-pkg/packagemanager.cc:535
+#: apt-pkg/packagemanager.cc:503 apt-pkg/packagemanager.cc:533
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "Tiedostoa %s ei voitu avata"
 
-#: apt-pkg/packagemanager.cc:577
+#: apt-pkg/packagemanager.cc:583
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -2712,44 +2762,44 @@ msgstr ""
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1568
+#: apt-pkg/deb/dpkgpm.cc:1569
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1630
+#: apt-pkg/deb/dpkgpm.cc:1631
 msgid "No apport report written because MaxReports is reached already"
 msgstr ""
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1635
+#: apt-pkg/deb/dpkgpm.cc:1636
 msgid "dependency problems - leaving unconfigured"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1637
+#: apt-pkg/deb/dpkgpm.cc:1638
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1643
+#: apt-pkg/deb/dpkgpm.cc:1644
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1650
+#: apt-pkg/deb/dpkgpm.cc:1651
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1657 apt-pkg/deb/dpkgpm.cc:1663
+#: apt-pkg/deb/dpkgpm.cc:1658 apt-pkg/deb/dpkgpm.cc:1664
 msgid ""
 "No apport report written because the error message indicates an issue on the "
 "local system"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1684
+#: apt-pkg/deb/dpkgpm.cc:1685
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
@@ -2883,40 +2933,40 @@ msgstr "Tiedostoa %s ei voitu avata"
 msgid "Could not open file descriptor %d"
 msgstr "Putkea %s ei voitu avata"
 
-#: apt-pkg/contrib/fileutl.cc:1314
+#: apt-pkg/contrib/fileutl.cc:1315
 msgid "Failed to create subprocess IPC"
 msgstr "Prosessien välistä kommunikaatiota aliprosessiin ei saatu luotua"
 
-#: apt-pkg/contrib/fileutl.cc:1372
+#: apt-pkg/contrib/fileutl.cc:1373
 msgid "Failed to exec compressor "
 msgstr "Pakkaajan käynnistäminen ei onnistunut"
 
-#: apt-pkg/contrib/fileutl.cc:1513
+#: apt-pkg/contrib/fileutl.cc:1514
 #, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "read, vielä %lu lukematta mutta tiedosto loppui"
 
-#: apt-pkg/contrib/fileutl.cc:1626 apt-pkg/contrib/fileutl.cc:1648
+#: apt-pkg/contrib/fileutl.cc:1627 apt-pkg/contrib/fileutl.cc:1649
 #, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "write, vielä %lu kirjoittamatta mutta epäonnistui"
 
-#: apt-pkg/contrib/fileutl.cc:1913
+#: apt-pkg/contrib/fileutl.cc:1915
 #, fuzzy, c-format
 msgid "Problem closing the file %s"
 msgstr "Pulmia tiedoston sulkemisessa"
 
-#: apt-pkg/contrib/fileutl.cc:1925
+#: apt-pkg/contrib/fileutl.cc:1927
 #, fuzzy, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "Pulmia tehtäessä tiedostolle sync"
 
-#: apt-pkg/contrib/fileutl.cc:1936
+#: apt-pkg/contrib/fileutl.cc:1938
 #, fuzzy, c-format
 msgid "Problem unlinking the file %s"
 msgstr "Pulmia tehtäessä tiedostolle unlink"
 
-#: apt-pkg/contrib/fileutl.cc:1949
+#: apt-pkg/contrib/fileutl.cc:1951
 msgid "Problem syncing the file"
 msgstr "Pulmia tehtäessä tiedostolle sync"
 
@@ -3141,32 +3191,32 @@ msgstr "Tiedostolle %s ei toimi stat"
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "Ohjelman debconf versiota ei saa selvitettyä. Onko debconf asennettu?"
 
-#: ftparchive/apt-ftparchive.cc:180 ftparchive/apt-ftparchive.cc:358
+#: ftparchive/apt-ftparchive.cc:187 ftparchive/apt-ftparchive.cc:371
 msgid "Package extension list is too long"
 msgstr "Paketin laajennuslista on liian pitkä"
 
-#: ftparchive/apt-ftparchive.cc:182 ftparchive/apt-ftparchive.cc:199
-#: ftparchive/apt-ftparchive.cc:222 ftparchive/apt-ftparchive.cc:273
-#: ftparchive/apt-ftparchive.cc:287 ftparchive/apt-ftparchive.cc:309
+#: ftparchive/apt-ftparchive.cc:189 ftparchive/apt-ftparchive.cc:206
+#: ftparchive/apt-ftparchive.cc:229 ftparchive/apt-ftparchive.cc:283
+#: ftparchive/apt-ftparchive.cc:297 ftparchive/apt-ftparchive.cc:319
 #, c-format
 msgid "Error processing directory %s"
 msgstr "Tapahtui virhe käsiteltäessa kansiota %s"
 
-#: ftparchive/apt-ftparchive.cc:271
+#: ftparchive/apt-ftparchive.cc:281
 msgid "Source extension list is too long"
 msgstr "Lähteiden laajennuslista on liian pitkä"
 
-#: ftparchive/apt-ftparchive.cc:388
+#: ftparchive/apt-ftparchive.cc:401
 msgid "Error writing header to contents file"
 msgstr ""
 "Tapahtui virhe kirjoitettaessa otsikkotietoa sisällysluettelotiedostoon"
 
-#: ftparchive/apt-ftparchive.cc:418
+#: ftparchive/apt-ftparchive.cc:431
 #, c-format
 msgid "Error processing contents %s"
 msgstr "Tapahtui virhe käsiteltäessä sisällysluetteloa %s"
 
-#: ftparchive/apt-ftparchive.cc:606
+#: ftparchive/apt-ftparchive.cc:626
 msgid ""
 "Usage: apt-ftparchive [options] command\n"
 "Commands: packages binarypath [overridefile [pathprefix]]\n"
@@ -3248,26 +3298,26 @@ msgstr ""
 "  -c=?  Lue tämä asetustiedosto\n"
 "  -o=?  Aseta mikä asetusvalitsin tahansa"
 
-#: ftparchive/apt-ftparchive.cc:812
+#: ftparchive/apt-ftparchive.cc:841
 msgid "No selections matched"
 msgstr "Mitkään valinnat eivät täsmänneet"
 
-#: ftparchive/apt-ftparchive.cc:890
+#: ftparchive/apt-ftparchive.cc:919
 #, c-format
 msgid "Some files are missing in the package file group `%s'"
 msgstr "Pakettitiedostojen ryhmästä \"%s\" puuttuu joitain tiedostoja"
 
-#: ftparchive/cachedb.cc:51
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "Tietokanta on turmeltunut, tiedosto nimetty %s.old"
 
-#: ftparchive/cachedb.cc:69
+#: ftparchive/cachedb.cc:83
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "Tietokanta on vanha, yritetään päivittää %s"
 
-#: ftparchive/cachedb.cc:80
+#: ftparchive/cachedb.cc:94
 #, fuzzy
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
@@ -3276,16 +3326,21 @@ msgstr ""
 "Tietokannan muoto ei kelpaa. Jos tehtiin päivitys vanhasta apt:n versiosta, "
 "on tietokanta poistettava ja luotava uudelleen."
 
-#: ftparchive/cachedb.cc:85
+#: ftparchive/cachedb.cc:99
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "Tietokantatiedostoa %s ei saatu avattua: %s"
 
-#: ftparchive/cachedb.cc:253
+#: ftparchive/cachedb.cc:332
+#, fuzzy
+msgid "Failed to read .dsc"
+msgstr "readlink %s ei onnistunut"
+
+#: ftparchive/cachedb.cc:365
 msgid "Archive has no control record"
 msgstr "Arkistolla ei ole ohjaustietuetta"
 
-#: ftparchive/cachedb.cc:494
+#: ftparchive/cachedb.cc:594
 msgid "Unable to get a cursor"
 msgstr "Kohdistinta ei saada"
 
@@ -3350,31 +3405,31 @@ msgstr "*** Linkin %s -> %s luonti ei onnistunut"
 msgid " DeLink limit of %sB hit.\n"
 msgstr " DeLinkin yläraja %st saavutettu.\n"
 
-#: ftparchive/writer.cc:413
+#: ftparchive/writer.cc:417
 msgid "Archive had no package field"
 msgstr "Arkistossa ei ollut pakettikenttää"
 
-#: ftparchive/writer.cc:421 ftparchive/writer.cc:711
+#: ftparchive/writer.cc:425 ftparchive/writer.cc:692
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s:llä ei ole poikkeustietuetta\n"
 
-#: ftparchive/writer.cc:489 ftparchive/writer.cc:855
+#: ftparchive/writer.cc:493 ftparchive/writer.cc:848
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s ylläpitäjä on %s eikä %s\n"
 
-#: ftparchive/writer.cc:721
+#: ftparchive/writer.cc:706
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s:llä ei ole poikkeustietuetta\n"
 
-#: ftparchive/writer.cc:725
+#: ftparchive/writer.cc:710
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s:llä ei  ole binääristäkään poikkeustietuetta\n"
 
-#: ftparchive/contents.cc:340 ftparchive/contents.cc:371
+#: ftparchive/contents.cc:351 ftparchive/contents.cc:382
 msgid "realloc - Failed to allocate memory"
 msgstr "realloc - Muistin varaaminen ei onnistunut"
 
@@ -3450,7 +3505,7 @@ msgstr "Lukeminen ei onnistunut laskettaessa MD5:ttä"
 msgid "Problem unlinking %s"
 msgstr "Ilmeni pulmia poistettaessa tiedosto %s"
 
-#: cmdline/apt-internal-solver.cc:46
+#: cmdline/apt-internal-solver.cc:47
 #, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
@@ -3548,38 +3603,8 @@ msgstr ""
 #~ msgstr "Paketilla %s ei ole asennettavaa valintaa"
 
 #, fuzzy
-#~ msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-#~ msgstr "Pakettia %s ei ole asennettu, niinpä sitä ei poisteta\n"
-
-#, fuzzy
-#~ msgid "Package '%s' is not installed, so not removed\n"
-#~ msgstr "Pakettia %s ei ole asennettu, niinpä sitä ei poisteta\n"
-
-#, fuzzy
 #~ msgid "Note, selecting '%s' instead of '%s'\n"
 #~ msgstr "Huomautus, valitaan %s eikä %s\n"
-
-#~ msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-#~ msgstr "Ohitetaan %s, se on jo asennettu eikä ole komennettu päivitystä.\n"
-
-#, fuzzy
-#~ msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-#~ msgstr "Ohitetaan %s, se on jo asennettu eikä ole komennettu päivitystä.\n"
-
-#~ msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-#~ msgstr ""
-#~ "Paketin %s uudelleenasennus ei ole mahdollista, sitä ei voi noutaa.\n"
-
-#~ msgid "%s is already the newest version.\n"
-#~ msgstr "%s on jo uusin versio.\n"
-
-#, fuzzy
-#~ msgid "Selected version '%s' (%s) for '%s'\n"
-#~ msgstr "Valittiin versio %s (%s) paketille %s\n"
-
-#, fuzzy
-#~ msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-#~ msgstr "Valittiin versio %s (%s) paketille %s\n"
 
 #~ msgid "This is not a valid DEB archive, it has no '%s', '%s' or '%s' member"
 #~ msgstr ""

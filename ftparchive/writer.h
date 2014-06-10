@@ -127,8 +127,10 @@ class PackagesWriter : public FTWScanner
       {return Over.ReadExtraOverride(File);};
    virtual bool DoPackage(string FileName);
 
-   PackagesWriter(string const &DB,string const &Overrides,string const &ExtOverrides=string(),
-		  string const &Arch=string());
+   PackagesWriter(string const &DB,
+                  string const &Overrides,
+                  string const &ExtOverrides = "",
+		  string const &Arch = "");
    virtual ~PackagesWriter() {};
 };
 
@@ -174,7 +176,7 @@ class SourcesWriter : public FTWScanner
    string PathPrefix;
    string DirStrip;
    FILE *Output;
-   struct CacheDB::Stats Stats;
+   struct CacheDB::Stats &Stats;
 
    virtual bool DoPackage(string FileName);
 

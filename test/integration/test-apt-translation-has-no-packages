@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Due to corruption (local or network) a user might end up with a
+# Translation-$lang file on disk that is actually a Packages file. In this
+# case apt used to generate invalid package versions out of the
+# Translation-$lang file (i.e. apt-cache policy foo) would show a version
+# comming out of a Translation file. Downloading this versions fails as
+# there is no acquire method available for the package
+#
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "amd64"
+
+if [ ! -x ${BUILDDIRECTORY}/apt ]; then
+    msgmsg "No ${BUILDDIRECTORY}/apt"
+    msgskip 
+    exit 0
+fi
+
+buildsimplenativepackage 'foo' 'all' '1.0'
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+# corrupt the Translation-en file to look like a regular Packages file
+rm rootdir/var/cache/apt/*.bin
+cp $APTARCHIVE/dists/unstable/main/binary-amd64/Packages \
+   rootdir/var/lib/apt/lists/*Translation-en
+
+# ensure that there is no Version for the package foo generated out of
+# the corrupted Translation-en file
+testequal "foo:
+  Installed: (none)
+  Candidate: 1.0
+  Version table:
+     1.0 0
+        500 file:$APTARCHIVE/ unstable/main amd64 Packages" aptcache policy foo

@@ -756,6 +756,7 @@ static bool DoSource(CommandLine &CmdL)
 
    // Load the requestd sources into the fetcher
    unsigned J = 0;
+   std::string UntrustedList;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
@@ -764,6 +765,9 @@ static bool DoSource(CommandLine &CmdL)
       if (Last == 0) {
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }
+
+      if (Last->Index().IsTrusted() == false)
+         UntrustedList += Src + " ";
       
       string srec = Last->AsStr();
       string::size_type pos = srec.find("\nVcs-");
@@ -847,6 +851,10 @@ static bool DoSource(CommandLine &CmdL)
 			Last->Index().SourceInfo(*Last,*I),Src);
       }
    }
+
+   // check authentication status of the source as well
+   if (UntrustedList != "" && !AuthPrompt(UntrustedList, false))
+      return false;
    
    // Display statistics
    unsigned long long FetchBytes = Fetcher.FetchNeeded();

@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'foo' 'all' '2.0'
+insertinstalledpackage 'foo' 'all' '1.0'
+
+setupaptarchive
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+testequal "1 package can be upgraded. Run 'apt list --upgradable' to see it." apt update -q

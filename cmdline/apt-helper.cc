@@ -43,7 +43,8 @@ static bool DoDownloadFile(CommandLine &CmdL)
    std::string hash;
    if (CmdL.FileSize() > 3)
       hash = CmdL.FileList[3];
-   new pkgAcqFile(&Fetcher, download_uri, hash, 0, "desc", "short-desc", 
+   // we use download_uri as descr and targetfile as short-descr
+   new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile, 
                   "dest-dir-ignored", targetfile);
    Fetcher.Run();
    bool Failed = false;

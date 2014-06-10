@@ -1,0 +1,100 @@
+#!/bin/sh
+set -e
+
+ensure_correct_packages_file() {
+    testequal "Package: foo
+Priority: optional
+Section: others
+$(dpkg-deb -I ./aptarchive/pool/main/foo_1_i386.deb | grep 'Installed-Size:' | sed 's#^ ##')
+Maintainer: Joe Sixpack <joe@example.org>
+Architecture: i386
+Version: 1
+Filename: pool/main/foo_1_i386.deb" head -n8 ./aptarchive/dists/test/main/binary-i386/Packages 
+}
+
+ensure_correct_contents_file() {
+    testequal "usr/bin/foo-i386					    others/foo
+usr/share/doc/foo/FEATURES				    others/foo
+usr/share/doc/foo/changelog				    others/foo
+usr/share/doc/foo/copyright				    others/foo" cat ./aptarchive/dists/test/Contents-i386
+}
+
+#
+# main()
+#
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+mkdir -p aptarchive/dists/test/main/i18n/
+mkdir -p aptarchive/dists/test/main/source/
+mkdir -p aptarchive/dists/test/main/binary-i386
+mkdir -p aptarchive/pool/main
+
+mkdir aptarchive-overrides
+mkdir aptarchive-cache
+cat > ftparchive.conf <<"EOF"
+Dir {
+  ArchiveDir "./aptarchive";
+  OverrideDir "./aptarchive-overrides";
+  CacheDir "./aptarchive-cache";
+};
+
+Default {
+ Packages::Compress ". gzip bzip2";
+ Contents::Compress ". gzip bzip2";
+ LongDescription "false";
+};
+
+TreeDefault {
+ BinCacheDB "packages-$(SECTION)-$(ARCH).db";
+
+ Directory  "pool/$(SECTION)";
+ SrcDirectory "pool/$(SECTION)";
+
+ Packages   "$(DIST)/$(SECTION)/binary-$(ARCH)/Packages";
+ Contents    "$(DIST)/Contents-$(ARCH)";
+};
+
+Tree "dists/test" {
+  Sections "main";
+  Architectures "i386";
+
+};
+EOF
+
+# build one pacakge
+buildsimplenativepackage 'foo' 'i386' '1' 'test'
+mv incoming/* aptarchive/pool/main/
+
+# generate (empty cachedb)
+aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
+ensure_correct_packages_file
+ensure_correct_contents_file
+testequal " Misses in Cache: 2
+ dists/test/Contents-i386: New 402 B  Misses in Cache: 0" grep Misses stats-out.txt
+
+# generate again
+aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
+ensure_correct_packages_file
+ensure_correct_contents_file
+testequal " Misses in Cache: 0
+ dists/test/Contents-i386:  Misses in Cache: 0" grep Misses stats-out.txt
+
+# and again (with removing the Packages file)
+rm -f ./aptarchive/dists/test/main/binary-i386/*
+rm -f ./aptarchive/dists/test/Contents-i386
+aptftparchive generate ftparchive.conf -o APT::FTPArchive::ShowCacheMisses=1 2> stats-out.txt
+ensure_correct_packages_file
+ensure_correct_contents_file
+testequal " Misses in Cache: 0
+ dists/test/Contents-i386: New 402 B  Misses in Cache: 0" grep Misses stats-out.txt
+
+# and clean
+rm -rf aptarchive/pool/main/*
+testequal "packages-main-i386.db" aptftparchive clean ftparchive.conf
+aptftparchive clean ftparchive.conf -o Debug::APT::FTPArchive::Clean=1 > clean-out.txt 2>&1 
+testequal "0	Number of unique keys in the tree" grep unique clean-out.txt
+testequal "packages-main-i386.db" grep packages-main-i386.db clean-out.txt
+

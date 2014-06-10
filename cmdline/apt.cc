@@ -116,6 +116,7 @@ int main(int argc, const char *argv[])					/*{{{*/
    _config->CndSet("DPkg::Progress-Fancy", "1");
    _config->CndSet("Apt::Color", "1");
    _config->CndSet("APT::Get::Upgrade-Allow-New", true);
+   _config->CndSet("APT::Cmd::Show-Update-Stats", true);
 
    // Parse the command line and initialize the package library
    CommandLine CmdL(Args.data(), _config);

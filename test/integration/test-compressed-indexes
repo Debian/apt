@@ -67,6 +67,8 @@ testrun() {
 	msgtest "\tdsc file is present"; testsuccess --nomsg test -f testpkg_1.0.dsc
 	msgtest "\tdirectory is present"; testsuccess --nomsg test -d testpkg-1.0
 	rm -rf testpkg-1.0
+	testequal "$(aptcache show testpkg -o Acquire::Languages=none)
+" aptcache dumpavail
 }
 
 echo 'Acquire::GzipIndexes "false";' > rootdir/etc/apt/apt.conf.d/02compressindex

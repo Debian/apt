@@ -507,7 +507,7 @@ static bool DumpAvail(CommandLine &)
 	 break;
       }
 
-      FileFd PkgF(File.FileName(),FileFd::ReadOnly);
+      FileFd PkgF(File.FileName(),FileFd::ReadOnly, FileFd::Extension);
       if (_error->PendingError() == true)
 	 break;
       

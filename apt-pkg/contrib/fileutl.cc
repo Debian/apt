@@ -1241,7 +1241,8 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 if (d->lzma == NULL)
 	    d->lzma = new FileFdPrivate::LZMAFILE;
 	 d->lzma->file = (FILE*) compress_struct;
-	 d->lzma->stream = LZMA_STREAM_INIT;
+         lzma_stream tmp_stream = LZMA_STREAM_INIT;
+	 d->lzma->stream = tmp_stream;
 
 	 if ((Mode & ReadWrite) == ReadWrite)
 	    return FileFdError("ReadWrite mode is not supported for file %s", FileName.c_str());
@@ -1797,7 +1798,8 @@ static bool StatFileFd(char const * const msg, int const iFd, std::string const 
 	 // higher-level code will generate more meaningful messages,
 	 // even translated this would be meaningless for users
 	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
-      ispipe = S_ISFIFO(Buf.st_mode);
+      if (FileName.empty() == false)
+	 ispipe = S_ISFIFO(Buf.st_mode);
    }
 
    // for compressor pipes st_size is undefined and at 'best' zero

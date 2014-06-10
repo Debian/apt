@@ -36,11 +36,12 @@ else
 	CRESET=''
 fi
 
+TOTAL="$(run-parts --list $DIR | grep '/test-' | wc -l)"
 for testcase in $(run-parts --list $DIR | grep '/test-'); do
 	if [ "$MSGLEVEL" -le 2 ]; then
-		echo -n "${CTEST}Testcase ${CHIGH}$(basename ${testcase})${CRESET}: "
+		echo -n "($(($ALL+1))/${TOTAL}) ${CTEST}Testcase ${CHIGH}$(basename ${testcase})${CRESET}: "
 	else
-		echo "${CTEST}Run Testcase ${CHIGH}$(basename ${testcase})${CRESET}"
+		echo "${CTEST}Run Testcase ($(($ALL+1))/${TOTAL}) ${CHIGH}$(basename ${testcase})${CRESET}"
 	fi
 	if ! ${testcase}; then
 		FAIL=$((FAIL+1))
