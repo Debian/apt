@@ -97,7 +97,7 @@ class pkgSrcRecords
 
    // Step to the next SourcePackage and return pointer to the 
    // next SourceRecord. The pointer is owned by libapt.
-   const Parser* Next();
+   const Parser* Step();
 
    // Locate a package by name and return pointer to the Parser.
    // The pointer is owned by libapt.

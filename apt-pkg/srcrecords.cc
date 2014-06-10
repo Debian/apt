@@ -81,10 +81,10 @@ bool pkgSrcRecords::Restart()
    return true;
 }
 									/*}}}*/
-// SrcRecords::Next - Step to the next Source Record			/*{{{*/
+// SrcRecords::Step - Step to the next Source Record			/*{{{*/
 // ---------------------------------------------------------------------
 /* Step to the next source package record */
-const pkgSrcRecords::Parser* pkgSrcRecords::Next()
+const pkgSrcRecords::Parser* pkgSrcRecords::Step()
 {
    if (Current == Files.end())
       return 0;
@@ -111,7 +111,7 @@ pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool const &SrcOn
 {
    while (true)
    {
-      if(Next() == 0)
+      if(Step() == 0)
          return 0;
 
       // IO error somehow
