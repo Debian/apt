@@ -95,8 +95,13 @@ class pkgSrcRecords
    // Reset the search
    bool Restart();
 
-   // Locate a package by name
-   Parser *Find(const char *Package,bool const &SrcOnly = false);
+   // Step to the next SourcePackage and return pointer to the 
+   // next SourceRecord. The pointer is owned by libapt.
+   const Parser* Next();
+
+   // Locate a package by name and return pointer to the Parser.
+   // The pointer is owned by libapt.
+   Parser* Find(const char *Package,bool const &SrcOnly = false);
    
    pkgSrcRecords(pkgSourceList &List);
    virtual ~pkgSrcRecords();
