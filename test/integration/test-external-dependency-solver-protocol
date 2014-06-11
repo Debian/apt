@@ -53,7 +53,7 @@ testsuccess test -s /tmp/dump.edsp
 
 configarchitecture 'armel'
 msgtest 'Test direct calling is okay for' 'apt-internal-solver'
-cat /tmp/dump.edsp | runapt apt-internal-solver > solver.result 2>&1 || true
+cat /tmp/dump.edsp | aptinternalsolver > solver.result 2>&1 || true
 if [ "$(tail -n2 solver.result | head -n1 )" = "Message: Done" ]; then
 	msgpass
 else
