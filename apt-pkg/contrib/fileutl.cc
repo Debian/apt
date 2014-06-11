@@ -47,6 +47,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <glob.h>
+#include <pwd.h>
 
 #include <set>
 #include <algorithm>
@@ -2048,5 +2049,21 @@ bool Rename(std::string From, std::string To)
                     From.c_str(),To.c_str());
       return false;
    }   
+   return true;
+}
+
+bool DropPrivs()
+{
+   if (getuid() != 0)
+      return true;
+
+   const std::string nobody = _config->Find("APT::User::Nobody", "nobody");
+   struct passwd *pw = getpwnam(nobody.c_str());
+   if (pw == NULL)
+      return _error->Warning("No user %s, can not drop rights", nobody.c_str());
+   if (setgid(pw->pw_gid) != 0)
+      return _error->Errno("setgid", "Failed to setgid");
+   if (setuid(pw->pw_uid) != 0)
+      return _error->Errno("setuid", "Failed to setuid");
    return true;
 }

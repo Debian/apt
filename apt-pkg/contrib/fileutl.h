@@ -191,6 +191,9 @@ pid_t ExecFork(std::set<int> keep_fds);
 void MergeKeepFdsFromConfiguration(std::set<int> &keep_fds);
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
+// process releated
+bool DropPrivs();
+
 // File string manipulators
 std::string flNotDir(std::string File);
 std::string flNotFile(std::string File);

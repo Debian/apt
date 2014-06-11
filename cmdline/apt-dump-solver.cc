@@ -40,6 +40,8 @@ int main(int argc,const char *argv[])					/*{{{*/
 		ShowHelp();
 		return 0;
 	}
+        // we really don't need anything
+        DropPrivs();
 
 	FILE* input = fdopen(STDIN_FILENO, "r");
 	FILE* output = fopen("/tmp/dump.edsp", "w");

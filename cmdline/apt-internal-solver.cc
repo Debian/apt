@@ -74,6 +74,9 @@ int main(int argc,const char *argv[])					/*{{{*/
 		{'o',"option",0,CommandLine::ArbItem},
 		{0,0,0,0}};
 
+        // we really don't need anything
+        DropPrivs();
+
 	CommandLine CmdL(Args,_config);
 	if (pkgInitConfig(*_config) == false ||
 	    CmdL.Parse(argc,argv) == false) {
