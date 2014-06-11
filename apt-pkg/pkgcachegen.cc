@@ -73,6 +73,11 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 
       // Starting header
       *Cache.HeaderP = pkgCache::Header();
+
+      // make room for the hashtables for packages and groups
+      if (Map.RawAllocate(2 * (Cache.HeaderP->HashTableSize * sizeof(map_ptrloc))) == 0)
+	 return;
+
       map_ptrloc const idxVerSysName = WriteStringInMap(_system->VS->Label);
       if (unlikely(idxVerSysName == 0))
 	 return;
@@ -110,9 +115,9 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       {
 	 _error->Error(_("Cache has an incompatible versioning system"));
 	 return;
-      }      
+      }
    }
-   
+
    Cache.HeaderP->Dirty = true;
    Map.Sync(0,sizeof(pkgCache::Header));
 }
@@ -618,7 +623,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
 
    // Insert it into the hash table
    unsigned long const Hash = Cache.Hash(Name);
-   map_ptrloc *insertAt = &Cache.HeaderP->GrpHashTable[Hash];
+   map_ptrloc *insertAt = &Cache.HeaderP->GrpHashTable()[Hash];
    while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.GrpP + *insertAt)->Name) > 0)
       insertAt = &(Cache.GrpP + *insertAt)->Next;
    Grp->Next = *insertAt;
@@ -654,7 +659,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       Grp->FirstPackage = Package;
       // Insert it into the hash table
       unsigned long const Hash = Cache.Hash(Name);
-      map_ptrloc *insertAt = &Cache.HeaderP->PkgHashTable[Hash];
+      map_ptrloc *insertAt = &Cache.HeaderP->PkgHashTable()[Hash];
       while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.PkgP + *insertAt)->Name) > 0)
 	 insertAt = &(Cache.PkgP + *insertAt)->Next;
       Pkg->Next = *insertAt;

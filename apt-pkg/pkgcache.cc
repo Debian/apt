@@ -54,8 +54,8 @@ pkgCache::Header::Header()
    
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
-   MajorVersion = 9;
-   MinorVersion = 2;
+   MajorVersion = 10;
+   MinorVersion = 0;
    Dirty = false;
    
    HeaderSz = sizeof(pkgCache::Header);
@@ -85,8 +85,7 @@ pkgCache::Header::Header()
    StringList = 0;
    VerSysName = 0;
    Architecture = 0;
-   memset(PkgHashTable,0,sizeof(PkgHashTable));
-   memset(GrpHashTable,0,sizeof(GrpHashTable));
+   HashTableSize = _config->FindI("APT::Cache-HashTableSize", 10 * 1048);
    memset(Pools,0,sizeof(Pools));
 
    CacheFileSize = 0;
@@ -194,7 +193,7 @@ unsigned long pkgCache::sHash(const string &Str) const
    unsigned long Hash = 0;
    for (string::const_iterator I = Str.begin(); I != Str.end(); ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
-   return Hash % _count(HeaderP->PkgHashTable);
+   return Hash % HeaderP->HashTableSize;
 }
 
 unsigned long pkgCache::sHash(const char *Str) const
@@ -202,7 +201,7 @@ unsigned long pkgCache::sHash(const char *Str) const
    unsigned long Hash = tolower_ascii(*Str);
    for (const char *I = Str + 1; *I != 0; ++I)
       Hash = 41 * Hash + tolower_ascii(*I);
-   return Hash % _count(HeaderP->PkgHashTable);
+   return Hash % HeaderP->HashTableSize;
 }
 									/*}}}*/
 // Cache::SingleArchFindPkg - Locate a package by name			/*{{{*/
@@ -213,7 +212,7 @@ unsigned long pkgCache::sHash(const char *Str) const
 pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 {
    // Look at the hash bucket
-   Package *Pkg = PkgP + HeaderP->PkgHashTable[Hash(Name)];
+   Package *Pkg = PkgP + HeaderP->PkgHashTable()[Hash(Name)];
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->Next)
    {
       if (unlikely(Pkg->Name == 0))
@@ -278,7 +277,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
 		return GrpIterator(*this,0);
 
 	// Look at the hash bucket for the group
-	Group *Grp = GrpP + HeaderP->GrpHashTable[sHash(Name)];
+	Group *Grp = GrpP + HeaderP->GrpHashTable()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
 		if (unlikely(Grp->Name == 0))
 		   continue;
@@ -432,10 +431,10 @@ void pkgCache::GrpIterator::operator ++(int)
       S = Owner->GrpP + S->Next;
 
    // Follow the hash table
-   while (S == Owner->GrpP && (HashIndex+1) < (signed)_count(Owner->HeaderP->GrpHashTable))
+   while (S == Owner->GrpP && (HashIndex+1) < (signed)Owner->HeaderP->HashTableSize)
    {
       HashIndex++;
-      S = Owner->GrpP + Owner->HeaderP->GrpHashTable[HashIndex];
+      S = Owner->GrpP + Owner->HeaderP->GrpHashTable()[HashIndex];
    }
 }
 									/*}}}*/
@@ -449,10 +448,10 @@ void pkgCache::PkgIterator::operator ++(int)
       S = Owner->PkgP + S->Next;
 
    // Follow the hash table
-   while (S == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->PkgHashTable))
+   while (S == Owner->PkgP && (HashIndex+1) < (signed)Owner->HeaderP->HashTableSize)
    {
       HashIndex++;
-      S = Owner->PkgP + Owner->HeaderP->PkgHashTable[HashIndex];
+      S = Owner->PkgP + Owner->HeaderP->PkgHashTable()[HashIndex];
    }
 }
 									/*}}}*/

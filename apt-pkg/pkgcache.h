@@ -304,20 +304,20 @@ struct pkgCache::Header
        stores this information so future additions can make use of any unused pool
        blocks. */
    DynamicMMap::Pool Pools[9];
-   
+
    /** \brief hash tables providing rapid group/package name lookup
 
-       Each group/package name is inserted into the hash table using pkgCache::Hash(const &string)
+       Each group/package name is inserted into a hash table using pkgCache::Hash(const &string)
        By iterating over each entry in the hash table it is possible to iterate over
        the entire list of packages. Hash Collisions are handled with a singly linked
        list of packages based at the hash item. The linked list contains only
        packages that match the hashing function.
        In the PkgHashTable is it possible that multiple packages have the same name -
        these packages are stored as a sequence in the list.
-
-       Beware: The Hashmethod assumes that the hash table sizes are equal */
-   map_ptrloc PkgHashTable[64*1048];
-   map_ptrloc GrpHashTable[64*1048];
+       The size of both tables is the same. */
+   unsigned int HashTableSize;
+   map_ptrloc * PkgHashTable() const { return (map_ptrloc*) (this + 1); }
+   map_ptrloc * GrpHashTable() const { return PkgHashTable() + HashTableSize; }
 
    /** \brief Size of the complete cache file */
    unsigned long  CacheFileSize;
