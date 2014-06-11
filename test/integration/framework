@@ -120,6 +120,7 @@ apthelper() { runapt "${APTHELPERBINDIR}/apt-helper" "$@"; }
 aptwebserver() { runapt "${APTWEBSERVERBINDIR}/aptwebserver" "$@"; }
 aptitude() { runapt aptitude "$@"; }
 aptextracttemplates() { runapt apt-extracttemplates "$@"; }
+aptinternalsolver() { runapt "${APTINTERNALSOLVERBINDIR}/apt-internal-solver" "$@"; }
 
 dpkg() {
 	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
@@ -181,6 +182,7 @@ setupenvironment() {
         METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
         APTHELPERBINDIR=${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}
         APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
+        APTINTERNALSOLVERBINDIR=${APT_INTEGRATION_TESTS_INTERNAL_SOLVER_DIR:-"${BUILDDIRECTORY}"}
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
