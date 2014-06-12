@@ -61,7 +61,7 @@ debListParser::debListParser(FileFd *File, string const &Arch) : Tags(File),
 // ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-unsigned long debListParser::UniqFindTagWrite(const char *Tag)
+map_stringitem_t debListParser::UniqFindTagWrite(const char *Tag)
 {
    const char *Start;
    const char *Stop;
@@ -893,7 +893,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 {
    // apt-secure does no longer download individual (per-section) Release
    // file. to provide Component pinning we use the section name now
-   map_ptrloc const storage = WriteUniqString(component);
+   map_stringitem_t const storage = WriteUniqString(component);
    FileI->Component = storage;
 
    pkgTagFile TagFile(&File, File.Size());
@@ -906,7 +906,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    data = Section.FindS(TAG); \
    if (data.empty() == false) \
    { \
-      map_ptrloc const storage = WriteUniqString(data); \
+      map_stringitem_t const storage = WriteUniqString(data); \
       STORE = storage; \
    }
    APT_INRELEASE("Suite", FileI->Archive)

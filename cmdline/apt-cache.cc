@@ -1275,7 +1275,7 @@ static bool DisplayRecord(pkgCacheFile &CacheFile, pkgCache::VerIterator V)
 struct ExDescFile
 {
    pkgCache::DescFile *Df;
-   map_ptrloc ID;
+   map_id_t ID;
 };
 
 // Search - Perform a search						/*{{{*/
