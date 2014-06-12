@@ -35,7 +35,7 @@ The following packages will be upgraded:
   sysvinit
 1 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
 E: This installation run will require temporarily removing the essential package sysvinit:$(getarchitecture 'native') due to a Conflicts/Pre-Depends loop. This is often bad, but if you really want to do it, activate the APT::Force-LoopBreak option.
-E: Internal Error, Could not early remove sysvinit:amd64 (2)" aptget install systemd-sysv -t "$1" -s
+E: Internal Error, Could not early remove sysvinit:$(dpkg --print-architecture) (2)" aptget install systemd-sysv -t "$1" -s
 	# ensure that really nothing happens
 	testfailure aptget install systemd-sysv -y -t "$1" -o Debug::pkgPackageManager=1
 	testdpkginstalled 'sysvinit'
