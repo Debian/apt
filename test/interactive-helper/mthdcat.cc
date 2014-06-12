@@ -2,6 +2,8 @@
    All this does is cat a file into the method without closing the FD when
    the file ends */
 
+#include <config.h>
+
 #include <unistd.h>
 
 int main()

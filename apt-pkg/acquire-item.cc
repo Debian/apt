@@ -22,12 +22,21 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/indexrecords.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/indexfile.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/pkgrecords.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <iostream>
+#include <vector>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
@@ -108,8 +117,8 @@ void pkgAcquire::Item::Start(string /*Message*/,unsigned long long Size)
 // Acquire::Item::Done - Item downloaded OK				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcquire::Item::Done(string Message,unsigned long long Size,string Hash,
-			    pkgAcquire::MethodConfig *Cnf)
+void pkgAcquire::Item::Done(string Message,unsigned long long Size,string /*Hash*/,
+			    pkgAcquire::MethodConfig * /*Cnf*/)
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
@@ -253,10 +262,10 @@ string pkgAcqSubIndex::Custom600Headers()
    return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqSubIndex failed: " << Desc.URI << std::endl;
+      std::clog << "pkgAcqSubIndex failed: " << Desc.URI << " with " << Message << std::endl;
 
    Complete = false;
    Status = StatDone;
@@ -544,10 +553,10 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
    return false;
 }
 									/*}}}*/
-void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << std::endl
+      std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
 
    new pkgAcqIndex(Owner, RealURI, Description, Desc.ShortDesc, 
@@ -624,10 +633,10 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    }
 }
 									/*}}}*/
-void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
-      std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << std::endl
+      std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
    new pkgAcqIndex(Owner, RealURI, Description,Desc.ShortDesc, 
 		   ExpectedHash);
@@ -709,7 +718,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    }
 
    // queue the right diff
-   Desc.URI = string(RealURI) + ".diff/" + available_patches[0].file + ".gz";
+   Desc.URI = RealURI + ".diff/" + available_patches[0].file + ".gz";
    Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI + ".diff/" + available_patches[0].file);
@@ -797,7 +806,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
 
-   Desc.URI = string(RealURI) + ".diff/" + patch.file + ".gz";
+   Desc.URI = RealURI + ".diff/" + patch.file + ".gz";
    Desc.Description = Description + " " + patch.file + string(".pdiff");
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI + ".diff/" + patch.file);
@@ -808,7 +817,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
    QueueURI(Desc);
 }
 									/*}}}*/
-void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
+void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
 {
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs failed: " << Desc.URI << " with " << Message << std::endl;
@@ -1558,7 +1567,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 {
 	    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
 	    for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
-	       if (MetaIndexParser->Exists(string((*Target)->MetaKey).append(".").append(*t)) == true)
+	       if (MetaIndexParser->Exists((*Target)->MetaKey + "." + *t) == true)
 	       {
 		  compressedAvailable = true;
 		  break;
@@ -1596,7 +1605,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 else if (transInRelease == false || Record != NULL || compressedAvailable == true)
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
-		MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true)
+		MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true)
 	       new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 				   (*Target)->ShortDesc, ExpectedIndexHash);
 	    else
@@ -1610,7 +1619,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
          in the Meta-Index file. Ideal would be if pkgAcqDiffIndex would test this
          instead, but passing the required info to it is to much hassle */
       if(_config->FindB("Acquire::PDiffs",true) == true && (verify == false ||
-	  MetaIndexParser->Exists(string((*Target)->MetaKey).append(".diff/Index")) == true))
+	  MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true))
 	 new pkgAcqDiffIndex(Owner, (*Target)->URI, (*Target)->Description,
 			     (*Target)->ShortDesc, ExpectedIndexHash);
       else
@@ -1635,7 +1644,7 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
       missingkeys += (Fingerprint);
    }
    if(!missingkeys.empty())
-      _error->Warning("%s", string(msg+missingkeys).c_str());
+      _error->Warning("%s", (msg + missingkeys).c_str());
 
    string Transformed = MetaIndexParser->GetExpectedDist();
 
@@ -1698,7 +1707,7 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 // pkgAcqMetaIndex::Failed - no Release file present or no signature file present	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
+void pkgAcqMetaIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)
 {
    if (AuthPass == true)
    {
@@ -2149,7 +2158,7 @@ void pkgAcqArchive::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 									/*}}}*/
 // AcqArchive::IsTrusted - Determine whether this archive comes from a trusted source /*{{{*/
 // ---------------------------------------------------------------------
-bool pkgAcqArchive::IsTrusted()
+APT_PURE bool pkgAcqArchive::IsTrusted()
 {
    return Trusted;
 }
@@ -2197,7 +2206,7 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI,string Hash,
    if (stat(DestFile.c_str(),&Buf) == 0)
    {
       // Hmm, the partial file is too big, erase it
-      if ((unsigned long long)Buf.st_size > Size)
+      if ((Size > 0) && (unsigned long long)Buf.st_size > Size)
 	 unlink(DestFile.c_str());
       else
 	 PartialSize = Buf.st_size;

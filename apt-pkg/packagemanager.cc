@@ -13,7 +13,7 @@
    ##################################################################### */
 									/*}}}*/
 // Include Files							/*{{{*/
-#include<config.h>
+#include <config.h>
 
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/orderlist.h>
@@ -24,7 +24,14 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/sptr.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <list>
+#include <string>
 #include <iostream>
 
 #include <apti18n.h>

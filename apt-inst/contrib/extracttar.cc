@@ -23,9 +23,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/macros.h>
+#include <apt-pkg/fileutl.h>
 
-#include <stdlib.h>
+#include <string.h>
+#include <algorithm>
+#include <string>
 #include <unistd.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -120,7 +122,7 @@ bool ExtractTar::StartGzip()
    int Pipes[2];
    if (pipe(Pipes) != 0)
       return _error->Errno("pipe",_("Failed to create pipes"));
-   
+
    // Fork off the process
    GZPid = ExecFork();
 
@@ -136,9 +138,9 @@ bool ExtractTar::StartGzip()
       dup2(Fd,STDERR_FILENO);
       close(Fd);
       SetCloseExec(STDOUT_FILENO,false);
-      SetCloseExec(STDIN_FILENO,false);      
+      SetCloseExec(STDIN_FILENO,false);
       SetCloseExec(STDERR_FILENO,false);
-      
+
       const char *Args[3];
       string confvar = string("dir::bin::") + DecompressProg;
       string argv0 = _config->Find(confvar.c_str(),DecompressProg.c_str());

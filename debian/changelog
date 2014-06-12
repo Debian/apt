@@ -1,38 +1,143 @@
-apt (0.9.15.4ubuntu4) trusty; urgency=low
+apt (1.0.1ubuntu2) trusty; urgency=low
 
-  Cherry pick fixes from the apt 1.0 branch:
-  
+  * fix symlink of etc/apt/apt.conf.d/01autoremove when runnning in
+    the auto-pkg-test environment
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Thu, 10 Apr 2014 14:24:25 +0200
+
+apt (1.0.1ubuntu1) trusty; urgency=low
+
+  * merge with the debian/sid 1.0.1 version
+    (LP: #1302033)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 01 Apr 2014 17:48:58 +0200
+
+apt (1.0.1) unstable; urgency=medium
+
   [ Michael Vogt ]
-  * add sun-java{5,6}-jdk to breaks/replaces as that provided a "apt" 
-    binary as well
-
-  [ David Kalnischkies ]
-  * ensure proper teardown in dpkg error cases (Closes: 738969)
-  * use the pretty fullname of a pkg as download desciption
-  * cmdline parsing: apt-config is not apt-cdrom
-  * do not configure already unpacked packages needlessly (Closes: 740843)
-    LP: #1286161
+  * Fix crash in "apt list" when a sources.list file is unreable
+    (Closes: 743413)
+  * make apt search case-insensitive by default
+  * Fix possible race when stunnel/aptwebserver create their PID files
+    in the tests
+  * Fix insecure file permissions when using FileFd with OpenMode::Atomic
+    (LP: #1304657)
 
   [ Julian Andres Klode ]
-  * Promote xz-utils from apt Suggests to libapt-pkg Depends
+  * Version the Breaks/Replaces for sun-java{5,6}-jdk (LP: #1302736)
+    (Closes: #743616)
+  * Add versioned openjdk-6-jdk breaks
 
- -- Michael Vogt <mvo@ubuntu.com>  Fri, 04 Apr 2014 09:08:51 +0200
+  [ Josef Vitu ]
+  * apt: Minor typo in 'apt' man page (closes: #743657)
 
-apt (0.9.15.4ubuntu3) trusty; urgency=low
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Apr 2014 09:48:56 +0200
 
-  * cherry pick git commit b68ce88357daf36 to fix crash in
-    apt-extracttemplates (LP: #1288718)
+apt (1.0) unstable; urgency=low
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 02 Apr 2014 15:00:11 +0200
+  The "Happy birthday and 10000b years in the making" release
 
-apt (0.9.15.4ubuntu2) trusty; urgency=medium
+  [ Julian Andres Klode ]
+  * apt-inst: Do not try to create a substring of an empty string in 
+    error reporting (LP: #1288718)
 
-  * debian/tests/control: Add missing build-essential, fakeroot, and wget test
-    dependencies.
-  * debian/tests/run-tests: Pin locale to C to avoid test failures in other
-    locales.
+  [ Beatrice Torracca ]
+  * Italian manpages translation update (Closes: 741867)
 
- -- Martin Pitt <martin.pitt@ubuntu.com>  Mon, 24 Feb 2014 18:26:13 +0100
+  [ Kenshi Muto ]
+  * Japanese programs translation update (Closes: 742255)
+
+  [ David Kalnischkies ]
+  * continue reading in xz even if it outputs nothing
+  * only consider versioned kernel packages in autoremove (Closes: 741962)
+  * correct some reported typos in /etc/cron.daily/apt (Closes: 702016)
+  * ensure proper teardown in dpkg error cases (Closes: 738969)
+  * update symbols file to include new symbols from 0.9.16
+  * do IsInstallOk call in MarkInstall unconditionally
+  * discard candidates via IsInstallOk to allow override (Closes: 740750)
+
+  [ Michael Vogt ]
+  * install apt binary
+  * add apt.8.xml manpage
+  * make fancy-progress fg/bg color configurable via something like
+    Dpkg::Progress-Fancy::Progress-{bg,fg}="%1b[30m"
+    (thanks to Tim Wasser for the suggestion)
+  * Add progressbar to "Dpkg::Progress-Fancy"
+  * fix documentation for APT::Periodic::MaxSize "0" (closes: #740551)
+  * Use mkstemp() in apt-extracttemplaes (closes: #741627)
+  * Add new Debug::RunScripts debug option
+  * do not crash on SIGPIPE in pkgDPkgPM::RunScriptsWithPkgs()
+  * enable DPkg::Progress-Fancy by default when "apt" is used
+  * refresh po/pot and unfuzzy apt-extracttemplate manpage change
+  * remove no longer needed apt.7 page
+  * install "apt" binary by default
+  * add sun-java{5,6}-jdk to breaks/replaces as they provided a 
+    "apt" binary as well
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (623t): Update Vietnamese translation
+  * debian: Add default compress option to xz
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 01 Apr 2014 15:48:46 +0200
+
+apt (0.9.16.1) unstable; urgency=medium
+
+  [ Chris Leick ]
+  * Updated German doc translation
+
+  [ Julian Andres Klode ]
+  * Fix handling of autoclosing for compressed files (Closes: #741685)
+
+ -- Julian Andres Klode <jak@debian.org>  Sat, 15 Mar 2014 18:05:25 +0100
+
+apt (0.9.16) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * add hashsum support in apt-helper download-file and 
+    add more tests
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (624t): Update Vietnamese translation
+
+  [ David Kalnischkies ]
+  * propagate a negative score point along breaks/conflicts
+  * check version before adding scores in resolver
+  * autogenerate makefile for vendor system
+  * add default and override handling for Cnf::FindVector
+  * support DEB_BUILD_PROFILES and -P for build profiles
+  * do not configure already unpacked packages needlessly (Closes: 740843)
+  * if mountpoint has a ".disk" directory it is mounted
+  * no error for non-existing mountpoints in MountCdrom
+  * apt-cdrom ident shouldn't be interactive (Closes: 740673)
+  * support very long mtab entries in mountpoint discovery
+  * msgstr with elipses need three dots
+  * cmdline parsing: apt-config is not apt-cdrom
+  * use a configurable list of versioned kernel packages
+  * support kfreebsd and hurd in the kernel hook
+  * add ".*-{kernel,modules}-$KERVER" matcher for hook
+  * ensure that a dot is a dot in the hook
+  * use liblzma-dev to provide xz/lzma support
+  * use the pretty fullname of a pkg as download desciption
+
+  [ Johannes Schauer ]
+  * implement BuildProfileSpec support as dpkg has in 1.17.2 (Closes: 661537)
+
+  [ Wojciech Górski ]
+  * fix polish --install-suggests text in apt-get manpage (Closes: 741056)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 14 Mar 2014 09:45:05 +0100
+
+apt (0.9.15.5) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * vendor/tanglu/makefile: add missing clean/sources.list
+  * run the acquire tests with the new apt-helper binary, this
+    fixes the autopkgtest failures
+
+  [ Martin Pitt ]
+  * Fix autopkgtest missing dependencies and locale (closes: #739988)
+
+ -- Michael Vogt <mvo@debian.org>  Fri, 28 Feb 2014 08:44:25 +0100
 
 apt (0.9.15.4ubuntu1) trusty; urgency=low
 

@@ -1,27 +1,29 @@
 /*
  */
-#include<config.h>
+#include <config.h>
 
-#include<apt-pkg/init.h>
-#include<apt-pkg/error.h>
-#include<apt-pkg/cdromutl.h>
-#include<apt-pkg/strutl.h>
-#include<apt-pkg/cdrom.h>
-#include<apt-pkg/aptconfiguration.h>
-#include<apt-pkg/configuration.h>
-#include<apt-pkg/fileutl.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/cdromutl.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/cdrom.h>
+#include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/indexcopy.h>
 
-#include<sstream>
-#include<fstream>
+
+#include <string.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <fstream>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include <dirent.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <algorithm>
 #include <dlfcn.h>
-
-#include "indexcopy.h"
 
 #include<apti18n.h>
 
@@ -369,7 +371,7 @@ bool pkgCdrom::DropRepeats(vector<string> &List,const char *Name)
 // ---------------------------------------------------------------------
 /* This takes the list of source list expressed entires and collects
    similar ones to form a single entry for each dist */
-void pkgCdrom::ReduceSourcelist(string CD,vector<string> &List)
+void pkgCdrom::ReduceSourcelist(string /*CD*/,vector<string> &List)
 {
    sort(List.begin(),List.end());
    
@@ -440,7 +442,7 @@ bool pkgCdrom::WriteDatabase(Configuration &Cnf)
    Out.close();
 
    if (FileExists(DFile) == true)
-      rename(DFile.c_str(), string(DFile + '~').c_str());
+      rename(DFile.c_str(), (DFile + '~').c_str());
    if (rename(NewFile.c_str(),DFile.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   DFile.c_str(),DFile.c_str());
@@ -553,7 +555,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    
    Out.close();
 
-   rename(File.c_str(),string(File + '~').c_str());
+   rename(File.c_str(), (File + '~').c_str());
    if (rename(NewFile.c_str(),File.c_str()) != 0)
       return _error->Errno("rename","Failed to rename %s.new to %s",
 			   File.c_str(),File.c_str());
@@ -561,7 +563,7 @@ bool pkgCdrom::WriteSourceList(string Name,vector<string> &List,bool Source)
    return true;
 }
 									/*}}}*/
-bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, std::string &ident, pkgCdromStatus * const log)/*{{{*/
+bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, std::string &ident, pkgCdromStatus * const log, bool const interactive)/*{{{*/
 {
    // Startup
    CDROM = _config->FindDir("Acquire::cdrom::mount");
@@ -579,16 +581,19 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
    // Unmount the CD and get the user to put in the one they want
    if (_config->FindB("APT::CDROM::NoMount", false) == false)
    {
-      if(log != NULL)
-	 log->Update(_("Unmounting CD-ROM\n"), STEP_UNMOUNT);
-      UnmountCdrom(CDROM);
-
-      if(log != NULL)
+      if (interactive == true)
       {
-	 log->Update(_("Waiting for disc...\n"), STEP_WAIT);
-	 if(!log->ChangeCdrom()) {
-	    // user aborted
-	    return false;
+	 if(log != NULL)
+	    log->Update(_("Unmounting CD-ROM...\n"), STEP_LAST);
+	 UnmountCdrom(CDROM);
+
+	 if(log != NULL)
+	 {
+	    log->Update(_("Waiting for disc...\n"), STEP_WAIT);
+	    if(!log->ChangeCdrom()) {
+	       // user aborted
+	       return false;
+	    }
 	 }
       }
 
@@ -602,7 +607,7 @@ bool pkgCdrom::MountAndIdentCDROM(Configuration &Database, std::string &CDROM, s
 
    // Hash the CD to get an ID
    if (log != NULL)
-      log->Update(_("Identifying.. "), STEP_IDENT);
+      log->Update(_("Identifying... "), STEP_IDENT);
 
    if (IdentCdrom(CDROM,ident) == false)
    {
@@ -634,7 +639,7 @@ bool pkgCdrom::Ident(string &ident, pkgCdromStatus *log)		/*{{{*/
 {
    Configuration Database;
    std::string CDROM;
-   if (MountAndIdentCDROM(Database, CDROM, ident, log) == false)
+   if (MountAndIdentCDROM(Database, CDROM, ident, log, false) == false)
       return false;
 
    if (log != NULL)
@@ -660,11 +665,11 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
 {
    Configuration Database;
    std::string ID, CDROM;
-   if (MountAndIdentCDROM(Database, CDROM, ID, log) == false)
+   if (MountAndIdentCDROM(Database, CDROM, ID, log, true) == false)
       return false;
 
    if(log != NULL)
-      log->Update(_("Scanning disc for index files..\n"),STEP_SCAN);
+      log->Update(_("Scanning disc for index files...\n"),STEP_SCAN);
 
    // Get the CD structure
    vector<string> List;
@@ -737,7 +742,7 @@ bool pkgCdrom::Add(pkgCdromStatus *log)					/*{{{*/
       if (InfoDir.empty() == false &&
 	  FileExists(InfoDir + "/info") == true)
       {
-	 ifstream F(string(InfoDir + "/info").c_str());
+	 ifstream F((InfoDir + "/info").c_str());
 	 if (!F == 0)
 	    getline(F,Name);
 
@@ -933,10 +938,10 @@ pkgUdevCdromDevices::Dlopen()                     		        /*{{{*/
 // convenience interface, this will just call ScanForRemovable
 vector<CdromDevice>
 pkgUdevCdromDevices::Scan()
-{ 
+{
    bool CdromOnly = _config->FindB("APT::cdrom::CdromOnly", true);
-   return ScanForRemovable(CdromOnly); 
-};
+   return ScanForRemovable(CdromOnly);
+}
 									/*}}}*/
                                                                         /*{{{*/
 vector<CdromDevice>
@@ -981,7 +986,7 @@ pkgUdevCdromDevices::ScanForRemovable(bool CdromOnly)
       cdrom.DeviceName = string(devnode);
       if (mountpath != "") {
 	 cdrom.MountPath = mountpath;
-	 string s = string(mountpath);
+	 string s = mountpath;
 	 cdrom.Mounted = IsMounted(s);
       } else {
 	 cdrom.Mounted = false;

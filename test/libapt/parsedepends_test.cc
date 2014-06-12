@@ -1,16 +1,24 @@
+#include <config.h>
+
 #include <apt-pkg/deblistparser.h>
 #include <apt-pkg/configuration.h>
+#include <apt-pkg/pkgcache.h>
+
+#include <string.h>
+#include <string>
 
 #include "assert.h"
 
-int main(int argc,char *argv[]) {
+int main() {
 	std::string Package;
 	std::string Version;
 	unsigned int Op = 5;
 	unsigned int Null = 0;
 	bool StripMultiArch = true;
 	bool ParseArchFlags = false;
+	bool ParseRestrictionsList = false;
 	_config->Set("APT::Architecture","amd64");
+	_config->Set("APT::Build-Profiles","stage1");
 
 	const char* Depends =
 		"debhelper:any (>= 5.0), "
@@ -27,6 +35,9 @@ int main(int argc,char *argv[]) {
 		"os-for-me [ linux-any ], "
 		"cpu-not-for-me [ any-armel ], "
 		"os-not-for-me [ kfreebsd-any ], "
+		"not-in-stage1 <!profile.stage1>, "
+		"not-in-stage1-or-nodoc <!profile.nodoc !profile.stage1>, "
+		"only-in-stage1 <unknown.unknown profile.stage1>, "
 		"overlord-dev:any (= 7.15.3~) | overlord-dev:native (>> 7.15.5), "
 	;
 
@@ -39,7 +50,7 @@ test:
 	const char* Start = Depends;
 	const char* End = Depends + strlen(Depends);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	if (StripMultiArch == true)
 		equals("debhelper", Package);
 	else
@@ -47,7 +58,7 @@ test:
 	equals("5.0", Version);
 	equals(Null | pkgCache::Dep::GreaterEq, Op);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	if (StripMultiArch == true)
 		equals("libdb-dev", Package);
 	else
@@ -55,7 +66,7 @@ test:
 	equals("", Version);
 	equals(Null | pkgCache::Dep::NoOp, Op);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	if (StripMultiArch == true)
 		equals("gettext", Package);
 	else
@@ -63,7 +74,7 @@ test:
 	equals("0.12", Version);
 	equals(Null | pkgCache::Dep::LessEq, Op);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	if (StripMultiArch == true)
 		equals("libcurl4-gnutls-dev", Package);
 	else
@@ -71,104 +82,131 @@ test:
 	equals("", Version);
 	equals(Null | pkgCache::Dep::Or, Op);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	equals("libcurl3-gnutls-dev", Package);
 	equals("7.15.5", Version);
 	equals(Null | pkgCache::Dep::Greater, Op);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	equals("debiandoc-sgml", Package);
 	equals("", Version);
 	equals(Null | pkgCache::Dep::NoOp, Op);
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	equals("apt", Package);
 	equals("0.7.25", Version);
 	equals(Null | pkgCache::Dep::GreaterEq, Op);
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("", Package); // not-for-me
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("only-for-me", Package);
 		equals("", Version);
 		equals(Null | pkgCache::Dep::NoOp, Op);
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("any-for-me", Package);
 		equals("", Version);
 		equals(Null | pkgCache::Dep::NoOp, Op);
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("not-for-darwin", Package);
 		equals("", Version);
 		equals(Null | pkgCache::Dep::NoOp, Op);
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("cpu-for-me", Package);
 		equals("", Version);
 		equals(Null | pkgCache::Dep::NoOp, Op);
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("os-for-me", Package);
 		equals("", Version);
 		equals(Null | pkgCache::Dep::NoOp, Op);
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("", Package); // cpu-not-for-me
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
 	if (ParseArchFlags == true) {
-		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 		equals("", Package); // os-not-for-me
 	} else {
-		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch));
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
 		Start = strstr(Start, ",");
 		Start++;
 	}
 
-	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	if (ParseRestrictionsList == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+		equals("", Package); // not-in-stage1
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseRestrictionsList == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+		equals("", Package); // not-in-stage1-or-in-nodoc
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	if (ParseRestrictionsList == true) {
+		Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+		equals("only-in-stage1", Package);
+	} else {
+		equals(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+		Start = strstr(Start, ",");
+		Start++;
+	}
+
+	Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	if (StripMultiArch == true)
 		equals("overlord-dev", Package);
 	else
@@ -176,7 +214,7 @@ test:
 	equals("7.15.3~", Version);
 	equals(Null | pkgCache::Dep::Equals | pkgCache::Dep::Or, Op);
 
-	debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch);
+	debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
 	if (StripMultiArch == true)
 		equals("overlord-dev", Package);
 	else
@@ -185,11 +223,13 @@ test:
 	equals(Null | pkgCache::Dep::Greater, Op);
 
 	if (StripMultiArch == false)
-		ParseArchFlags = true;
+		if (ParseArchFlags == false)
+			ParseRestrictionsList = !ParseRestrictionsList;
+		ParseArchFlags = !ParseArchFlags;
 	StripMultiArch = !StripMultiArch;
 
 	runner++;
-	if (runner < 4)
+	if (runner < 8)
 		goto test; // this is the prove: tests are really evil ;)
 
 	return 0;

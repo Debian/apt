@@ -10,32 +10,27 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/hashes.h>
-#include <apt-pkg/netrc.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/strutl.h>
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <unistd.h>
+#include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <climits>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
 #include <iostream>
+#include <limits>
 #include <map>
+#include <string>
+#include <vector>
 
-// Internet stuff
-#include <netdb.h>
-
-#include "config.h"
-#include "connect.h"
-#include "rfc2553emu.h"
-#include "http.h"
+#include "server.h"
 
 #include <apti18n.h>
 									/*}}}*/
@@ -119,10 +114,10 @@ bool ServerState::HeaderLine(string Line)
    string::size_type Pos2 = Pos;
    while (Pos2 < Line.length() && isspace(Line[Pos2]) != 0)
       Pos2++;
-      
+
    string Tag = string(Line,0,Pos);
    string Val = string(Line,Pos2);
-   
+
    if (stringcasecmp(Tag.c_str(),Tag.c_str()+4,"HTTP") == 0)
    {
       // Evil servers return no version
@@ -159,14 +154,14 @@ bool ServerState::HeaderLine(string Line)
       }
 
       return true;
-   }      
-      
+   }
+
    if (stringcasecmp(Tag,"Content-Length:") == 0)
    {
       if (Encoding == Closes)
 	 Encoding = Stream;
       HaveContent = true;
-      
+
       // The length is already set from the Content-Range header
       if (StartPos != 0)
 	 return true;
@@ -184,7 +179,7 @@ bool ServerState::HeaderLine(string Line)
       HaveContent = true;
       return true;
    }
-   
+
    if (stringcasecmp(Tag,"Content-Range:") == 0)
    {
       HaveContent = true;
@@ -201,12 +196,12 @@ bool ServerState::HeaderLine(string Line)
 	 return _error->Error(_("This HTTP server has broken range support"));
       return true;
    }
-   
+
    if (stringcasecmp(Tag,"Transfer-Encoding:") == 0)
    {
       HaveContent = true;
       if (stringcasecmp(Val,"chunked") == 0)
-	 Encoding = Chunked;      
+	 Encoding = Chunked;
       return true;
    }
 
@@ -218,7 +213,7 @@ bool ServerState::HeaderLine(string Line)
 	 Persistent = true;
       return true;
    }
-   
+
    if (stringcasecmp(Tag,"Last-Modified:") == 0)
    {
       if (RFC1123StrToTime(Val.c_str(), Date) == false)
@@ -413,7 +408,7 @@ bool ServerMethod::Fetch(FetchItem *)
    }
    
    return true;
-};
+}
 									/*}}}*/
 // ServerMethod::Loop - Main loop					/*{{{*/
 int ServerMethod::Loop()

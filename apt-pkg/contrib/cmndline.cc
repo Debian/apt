@@ -18,6 +18,11 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/strutl.h>
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <string>
+
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;

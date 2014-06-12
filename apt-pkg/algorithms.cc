@@ -19,19 +19,18 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/configuration.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/sptr.h>
-#include <apt-pkg/acquire-item.h>
 #include <apt-pkg/edsp.h>
-#include <apt-pkg/sourcelist.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/progress.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/packagemanager.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
-#include <sys/types.h>
+#include <string.h>
+#include <string>
 #include <cstdlib>
-#include <algorithm>
 #include <iostream>
-#include <stdio.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -394,8 +393,18 @@ void pkgProblemResolver::MakeScores()
    };
    int PrioEssentials = _config->FindI("pkgProblemResolver::Scores::Essentials",100);
    int PrioInstalledAndNotObsolete = _config->FindI("pkgProblemResolver::Scores::NotObsolete",1);
-   int PrioDepends = _config->FindI("pkgProblemResolver::Scores::Depends",1);
-   int PrioRecommends = _config->FindI("pkgProblemResolver::Scores::Recommends",1);
+   int DepMap[] = {
+      0,
+      _config->FindI("pkgProblemResolver::Scores::Depends",1),
+      _config->FindI("pkgProblemResolver::Scores::PreDepends",1),
+      _config->FindI("pkgProblemResolver::Scores::Suggests",0),
+      _config->FindI("pkgProblemResolver::Scores::Recommends",1),
+      _config->FindI("pkgProblemResolver::Scores::Conflicts",-1),
+      _config->FindI("pkgProblemResolver::Scores::Replaces",0),
+      _config->FindI("pkgProblemResolver::Scores::Obsoletes",0),
+      _config->FindI("pkgProblemResolver::Scores::Breaks",-1),
+      _config->FindI("pkgProblemResolver::Scores::Enhances",0)
+   };
    int AddProtected = _config->FindI("pkgProblemResolver::Scores::AddProtected",10000);
    int AddEssential = _config->FindI("pkgProblemResolver::Scores::AddEssential",5000);
 
@@ -408,8 +417,15 @@ void pkgProblemResolver::MakeScores()
          << "  Extra => " << PrioMap[pkgCache::State::Extra] << endl
          << "  Essentials => " << PrioEssentials << endl
          << "  InstalledAndNotObsolete => " << PrioInstalledAndNotObsolete << endl
-         << "  Depends => " << PrioDepends << endl
-         << "  Recommends => " << PrioRecommends << endl
+         << "  Pre-Depends => " << DepMap[pkgCache::Dep::PreDepends] << endl
+         << "  Depends => " << DepMap[pkgCache::Dep::Depends] << endl
+         << "  Recommends => " << DepMap[pkgCache::Dep::Recommends] << endl
+         << "  Suggests => " << DepMap[pkgCache::Dep::Suggests] << endl
+         << "  Conflicts => " << DepMap[pkgCache::Dep::Conflicts] << endl
+         << "  Breaks => " << DepMap[pkgCache::Dep::DpkgBreaks] << endl
+         << "  Replaces => " << DepMap[pkgCache::Dep::Replaces] << endl
+         << "  Obsoletes => " << DepMap[pkgCache::Dep::Obsoletes] << endl
+         << "  Enhances => " << DepMap[pkgCache::Dep::Enhances] << endl
          << "  AddProtected => " << AddProtected << endl
          << "  AddEssential => " << AddEssential << endl;
 
@@ -439,24 +455,23 @@ void pkgProblemResolver::MakeScores()
       */
       if (I->CurrentVer != 0 && Cache[I].CandidateVer != 0 && Cache[I].CandidateVerIter(Cache).Downloadable())
 	 Score += PrioInstalledAndNotObsolete;
-   }
 
-   // Now that we have the base scores we go and propagate dependencies
-   for (pkgCache::PkgIterator I = Cache.PkgBegin(); I.end() == false; ++I)
-   {
-      if (Cache[I].InstallVer == 0)
-	 continue;
-      
+      // propagate score points along dependencies
       for (pkgCache::DepIterator D = Cache[I].InstVerIter(Cache).DependsList(); D.end() == false; ++D)
       {
-	 if (D->Type == pkgCache::Dep::Depends || 
-	     D->Type == pkgCache::Dep::PreDepends)
-	    Scores[D.TargetPkg()->ID] += PrioDepends;
-	 else if (D->Type == pkgCache::Dep::Recommends)
-	    Scores[D.TargetPkg()->ID] += PrioRecommends;
+	 if (DepMap[D->Type] == 0)
+	    continue;
+	 pkgCache::PkgIterator const T = D.TargetPkg();
+	 if (D->Version != 0)
+	 {
+	    pkgCache::VerIterator const IV = Cache[T].InstVerIter(Cache);
+	    if (IV.end() == true || D.IsSatisfied(IV) != D.IsNegative())
+	       continue;
+	 }
+	 Scores[T->ID] += DepMap[D->Type];
       }
-   }   
-   
+   }
+
    // Copy the scores to advoid additive looping
    SPtrArray<int> OldScores = new int[Size];
    memcpy(OldScores,Scores,sizeof(*Scores)*Size);
@@ -869,8 +884,8 @@ bool pkgProblemResolver::ResolveInternal(bool const BrokenFix)
                }
 
 	       if (Debug == true)
-		  clog << "  Considering " << Pkg.FullName(false) << ' ' << (int)Scores[Pkg->ID] <<
-		  " as a solution to " << I.FullName(false) << ' ' << (int)Scores[I->ID] << endl;
+		  clog << "  Considering " << Pkg.FullName(false) << ' ' << Scores[Pkg->ID] <<
+		  " as a solution to " << I.FullName(false) << ' ' << Scores[I->ID] << endl;
 
 	       /* Try to fix the package under consideration rather than
 	          fiddle with the VList package */

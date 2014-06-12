@@ -10,40 +10,45 @@
 // Includes								/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/dpkgpm.h>
-#include <apt-pkg/error.h>
+#include <apt-pkg/cachefile.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/depcache.h>
+#include <apt-pkg/dpkgpm.h>
+#include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/install-progress.h>
+#include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
-#include <apt-pkg/cachefile.h>
-#include <apt-pkg/packagemanager.h>
-#include <apt-pkg/install-progress.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
 
-#include <unistd.h>
-#include <stdlib.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <grp.h>
+#include <pty.h>
+#include <pwd.h>
+#include <signal.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
 #include <sys/select.h>
 #include <sys/stat.h>
-#include <sys/types.h>
+#include <sys/time.h>
 #include <sys/wait.h>
-#include <signal.h>
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
-#include <algorithm>
-#include <sstream>
-#include <map>
-#include <pwd.h>
-#include <grp.h>
-#include <iomanip>
-
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
-#include <pty.h>
-#include <stdio.h>
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+#include <map>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -394,16 +399,24 @@ bool pkgDPkgPM::SendPkgsInfo(FILE * const F, unsigned int const &Version)
    that are due to be installed. */
 bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
 {
+   bool result = true;
+
    Configuration::Item const *Opts = _config->Tree(Cnf);
    if (Opts == 0 || Opts->Child == 0)
       return true;
    Opts = Opts->Child;
+
+   sighandler_t old_sigpipe = signal(SIGPIPE, SIG_IGN);
    
    unsigned int Count = 1;
    for (; Opts != 0; Opts = Opts->Next, Count++)
    {
       if (Opts->Value.empty() == true)
          continue;
+
+      if(_config->FindB("Debug::RunScripts", false) == true)
+         std::clog << "Running external script with list of all .deb file: '"
+                   << Opts->Value << "'" << std::endl;
 
       // Determine the protocol version
       string OptSec = Opts->Value;
@@ -419,8 +432,10 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       std::set<int> KeepFDs;
       MergeKeepFdsFromConfiguration(KeepFDs);
       int Pipes[2];
-      if (pipe(Pipes) != 0)
-	 return _error->Errno("pipe","Failed to create IPC pipe to subprocess");
+      if (pipe(Pipes) != 0) {
+         result = _error->Errno("pipe","Failed to create IPC pipe to subprocess");
+         break;
+      }
       if (InfoFD != (unsigned)Pipes[0])
 	 SetCloseExec(Pipes[0],true);
       else
@@ -454,8 +469,10 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       }
       close(Pipes[0]);
       FILE *F = fdopen(Pipes[1],"w");
-      if (F == 0)
-	 return _error->Errno("fdopen","Faild to open new FD");
+      if (F == 0) {
+         result = _error->Errno("fdopen","Faild to open new FD");
+         break;
+      }
       
       // Feed it the filenames.
       if (Version <= 1)
@@ -483,11 +500,14 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
       fclose(F);
       
       // Clean up the sub process
-      if (ExecWait(Process,Opts->Value.c_str()) == false)
-	 return _error->Error("Failure running script %s",Opts->Value.c_str());
+      if (ExecWait(Process,Opts->Value.c_str()) == false) {
+	 result = _error->Error("Failure running script %s",Opts->Value.c_str());
+         break;
+      }
    }
+   signal(SIGPIPE, old_sigpipe);
 
-   return true;
+   return result;
 }
 									/*}}}*/
 // DPkgPM::DoStdin - Read stdin and pass to slave pty			/*{{{*/
@@ -1570,7 +1590,7 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
    return d->dpkg_error.empty();
 }
 
-void SigINT(int sig) {
+void SigINT(int /*sig*/) {
    pkgPackageManager::SigINTStop = true;
 }
 									/*}}}*/

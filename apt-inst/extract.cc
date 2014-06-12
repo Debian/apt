@@ -50,13 +50,20 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/debversion.h>
 #include <apt-pkg/fileutl.h>
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/filelist.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <string.h>
+#include <string>
 #include <sys/stat.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <errno.h>
 #include <dirent.h>
 #include <iostream>
+
 #include <apti18n.h>
 									/*}}}*/
 using namespace std;
@@ -79,7 +86,7 @@ pkgExtract::pkgExtract(pkgFLCache &FLCache,pkgCache::VerIterator Ver) :
 // Extract::DoItem - Handle a single item from the stream		/*{{{*/
 // ---------------------------------------------------------------------
 /* This performs the setup for the extraction.. */
-bool pkgExtract::DoItem(Item &Itm,int &Fd)
+bool pkgExtract::DoItem(Item &Itm, int &/*Fd*/)
 {
    /* Strip any leading/trailing /s from the filename, then copy it to the
       temp buffer and re-apply the leading / We use a class variable
@@ -253,7 +260,7 @@ bool pkgExtract::DoItem(Item &Itm,int &Fd)
 // Extract::Finished - Sequence finished, erase the temp files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgExtract::Finished()
+APT_CONST bool pkgExtract::Finished()
 {
    return true;
 }

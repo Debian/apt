@@ -94,6 +94,12 @@ SLIBS = -lapt-pkg
 SOURCE = cdromreducesourcelist_test.cc
 include $(PROGRAM_H)
 
+# test cdroms FindMountPointForDevice for udev autodetection
+PROGRAM = CdromFindMountPointForDevice${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = cdromfindmountpointfordevice_test.cc
+include $(PROGRAM_H)
+
 # test IndexCopy::ConvertToSourceList
 PROGRAM = IndexCopyToSourceList${BASENAME}
 SLIBS = -lapt-pkg
@@ -115,5 +121,11 @@ include $(PROGRAM_H)
 PROGRAM = SourceList${BASENAME}
 SLIBS = -lapt-pkg
 SOURCE = sourcelist_test.cc
+include $(PROGRAM_H)
+
+# test install-progress
+PROGRAM = InstallProgress${BASENAME}
+SLIBS = -lapt-pkg
+SOURCE = install_progress_test.cc
 include $(PROGRAM_H)
 

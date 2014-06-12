@@ -72,8 +72,13 @@
 #include <vector>
 #include <string>
 
+#include <stddef.h>
 #include <sys/time.h>
+#include <sys/select.h>
+
+#ifndef APT_10_CLEANER_HEADERS
 #include <unistd.h>
+#endif
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::vector;
@@ -282,18 +287,18 @@ class pkgAcquire
     */
    void Shutdown();
    
-   /** \brief Get the first #Worker object.
+   /** \brief Get the first Worker object.
     *
     *  \return the first active worker in this download process.
     */
    inline Worker *WorkersBegin() {return Workers;};
 
-   /** \brief Advance to the next #Worker object.
+   /** \brief Advance to the next Worker object.
     *
     *  \return the worker immediately following I, or \b NULL if none
     *  exists.
     */
-   Worker *WorkerStep(Worker *I);
+   Worker *WorkerStep(Worker *I) APT_PURE;
 
    /** \brief Get the head of the list of items. */
    inline ItemIterator ItemsBegin() {return Items.begin();};
@@ -353,7 +358,7 @@ class pkgAcquire
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
    /** \brief Construct a new pkgAcquire. */
-   pkgAcquire(pkgAcquireStatus *Log) __deprecated;
+   pkgAcquire(pkgAcquireStatus *Log) APT_DEPRECATED;
    pkgAcquire();
 
    /** \brief Destroy this pkgAcquire object.
@@ -476,7 +481,7 @@ class pkgAcquire::Queue
     *  \return the first item in the queue whose URI is #URI and that
     *  is being downloaded by #Owner.
     */
-   QItem *FindItem(std::string URI,pkgAcquire::Worker *Owner);
+   QItem *FindItem(std::string URI,pkgAcquire::Worker *Owner) APT_PURE;
 
    /** Presumably this should start downloading an item?
     *

@@ -22,7 +22,8 @@
 #include <string>
 #include <stdio.h>
 #include <sys/types.h>
-    
+#include <time.h>
+
 class MultiCompress
 {
    // An output file

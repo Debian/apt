@@ -27,18 +27,27 @@
 #ifndef PKGLIB_SOURCELIST_H
 #define PKGLIB_SOURCELIST_H
 
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
+
+#include <time.h>
+
 #include <string>
 #include <vector>
 #include <map>
-#include <apt-pkg/pkgcache.h>
-#include <apt-pkg/tagfile.h>
 
+#ifndef APT_8_CLEANER_HEADERS
+#include <apt-pkg/tagfile.h>
+#endif
 #ifndef APT_8_CLEANER_HEADERS
 #include <apt-pkg/metaindex.h>
 using std::string;
 using std::vector;
 #endif
 
+class FileFd;
+class pkgTagSection;
 class pkgAcquire;
 class pkgIndexFile;
 class metaIndex;
@@ -55,7 +64,7 @@ class pkgSourceList
       // Global list of Items supported
       static Type **GlobalList;
       static unsigned long GlobalListLen;
-      static Type *GetType(const char *Type);
+      static Type *GetType(const char *Type) APT_PURE;
 
       const char *Name;
       const char *Label;

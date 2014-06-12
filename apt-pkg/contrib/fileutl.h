@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <time.h>
 
 #include <zlib.h>
 
@@ -94,7 +95,7 @@ class FileFd
       And as the auto-conversation converts a 'unsigned long *' to a 'bool'
       instead of 'unsigned long long *' we need to provide this explicitely -
       otherwise applications magically start to fail… */
-   __deprecated bool Read(void *To,unsigned long long Size,unsigned long *Actual)
+   bool Read(void *To,unsigned long long Size,unsigned long *Actual) APT_DEPRECATED
    {
 	unsigned long long R;
 	bool const T = Read(To, Size, &R);
@@ -102,10 +103,10 @@ class FileFd
 	return T;
    }
 
-   bool Open(std::string FileName,unsigned int const Mode,CompressMode Compress,unsigned long const Perms = 0666);
-   bool Open(std::string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor,unsigned long const Perms = 0666);
-   inline bool Open(std::string const &FileName,unsigned int const Mode, unsigned long const Perms = 0666) {
-      return Open(FileName, Mode, None, Perms);
+   bool Open(std::string FileName,unsigned int const Mode,CompressMode Compress,unsigned long const AccessMode = 0666);
+   bool Open(std::string FileName,unsigned int const Mode,APT::Configuration::Compressor const &compressor,unsigned long const AccessMode = 0666);
+   inline bool Open(std::string const &FileName,unsigned int const Mode, unsigned long const AccessMode = 0666) {
+      return Open(FileName, Mode, None, AccessMode);
    };
    bool OpenDescriptor(int Fd, unsigned int const Mode, CompressMode Compress, bool AutoClose=false);
    bool OpenDescriptor(int Fd, unsigned int const Mode, APT::Configuration::Compressor const &compressor, bool AutoClose=false);
@@ -118,7 +119,7 @@ class FileFd
    // Simple manipulators
    inline int Fd() {return iFd;};
    inline void Fd(int fd) { OpenDescriptor(fd, ReadWrite);};
-   __deprecated gzFile gzFd();
+   gzFile gzFd() APT_DEPRECATED APT_PURE;
 
    inline bool IsOpen() {return iFd >= 0;};
    inline bool Failed() {return (Flags & Fail) == Fail;};
@@ -128,13 +129,13 @@ class FileFd
    inline bool IsCompressed() {return (Flags & Compressed) == Compressed;};
    inline std::string &Name() {return FileName;};
    
-   FileFd(std::string FileName,unsigned int const Mode,unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
+   FileFd(std::string FileName,unsigned int const Mode,unsigned long AccessMode = 0666) : iFd(-1), Flags(0), d(NULL)
    {
-      Open(FileName,Mode, None, Perms);
+      Open(FileName,Mode, None, AccessMode);
    };
-   FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long Perms = 0666) : iFd(-1), Flags(0), d(NULL)
+   FileFd(std::string FileName,unsigned int const Mode, CompressMode Compress, unsigned long AccessMode = 0666) : iFd(-1), Flags(0), d(NULL)
    {
-      Open(FileName,Mode, Compress, Perms);
+      Open(FileName,Mode, Compress, AccessMode);
    };
    FileFd() : iFd(-1), Flags(AutoClose), d(NULL) {};
    FileFd(int const Fd, unsigned int const Mode = ReadWrite, CompressMode Compress = None) : iFd(-1), Flags(0), d(NULL)
@@ -149,11 +150,11 @@ class FileFd
 
    private:
    FileFdPrivate* d;
-   bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
+   APT_HIDDEN bool OpenInternDescriptor(unsigned int const Mode, APT::Configuration::Compressor const &compressor);
 
    // private helpers to set Fail flag and call _error->Error
-   bool FileFdErrno(const char* Function, const char* Description,...) __like_printf(3) __cold;
-   bool FileFdError(const char* Description,...) __like_printf(2) __cold;
+   APT_HIDDEN bool FileFdErrno(const char* Function, const char* Description,...) APT_PRINTF(3) APT_COLD;
+   APT_HIDDEN bool FileFdError(const char* Description,...) APT_PRINTF(2) APT_COLD;
 };
 
 bool RunScripts(const char *Cnf);
@@ -161,9 +162,10 @@ bool CopyFile(FileFd &From,FileFd &To);
 int GetLock(std::string File,bool Errors = true);
 bool FileExists(std::string File);
 bool RealFileExists(std::string File);
-bool DirectoryExists(std::string const &Path) __attrib_const;
+bool DirectoryExists(std::string const &Path) APT_CONST;
 bool CreateDirectory(std::string const &Parent, std::string const &Path);
 time_t GetModificationTime(std::string const &Path);
+bool Rename(std::string From, std::string To);
 
 std::string GetTempDir();
 

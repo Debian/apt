@@ -11,6 +11,8 @@
 #ifndef APT_MIRROR_H
 #define APT_MIRROR_H
 
+#include <apt-pkg/acquire-method.h>
+
 #include <iostream>
 #include <string>
 #include <vector>

@@ -43,6 +43,15 @@ testpass 'apt config' 'armel'
 rm $CONFFILE
 
 echo '#clear APT::Architectures;' >> $CONFFILE
+echo 'APT::Architectures "i386,amd64";' >> $CONFFILE
+
+testpass 'apt config' 'i386'
+testpass 'apt config' 'amd64'
+testfail 'apt config' 'armel'
+
+rm $CONFFILE
+
+echo '#clear APT::Architectures;' >> $CONFFILE
 echo 'Dir::Bin::dpkg "./dpkg-printer";' >> $CONFFILE
 
 echo '#! /bin/sh

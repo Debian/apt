@@ -177,6 +177,15 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
      </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>Build-Profiles</option></term>
+     <listitem><para>
+     List of all build profiles enabled for build-dependency resolution,
+     without the "<literal>profile.</literal>" namespace prefix.
+     By default this list is empty. The <envar>DEB_BUILD_PROFILES</envar>
+     as used by &dpkg-buildpackage; overrides the list notation.
+     </para></listitem>
+     </varlistentry>
+
      <varlistentry><term><option>Default-Release</option></term>
      <listitem><para>Default release to install packages from if more than one
      version is available. Contains release name, codename or release version. Examples: 'stable', 'testing',
@@ -1172,6 +1181,18 @@ DPkg::TriggersPending "true";</literallayout></para>
 	   Print information about the vendors read from
 	   <filename>/etc/apt/vendors.list</filename>.
 	 </para>
+       </listitem>
+     </varlistentry>
+
+     <varlistentry>
+       <term><option>Debug::RunScripts</option></term>
+       <listitem>
+        <para>
+          Display the external commands that are called by apt hooks.
+          This includes e.g. the config options
+          <literal>DPkg::{Pre,Post}-Invoke</literal> or
+          <literal>APT::Update::{Pre,Post}-Invoke</literal>.
+        </para>
        </listitem>
      </varlistentry>
 

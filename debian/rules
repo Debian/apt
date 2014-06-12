@@ -209,6 +209,9 @@ apt: build-binary build-manpages debian/apt.install
 	#mv debian/$@/usr/bin/apt-report-mirror-failure \
 	#   debian/$@/usr/lib/apt/apt-report-mirror-failure \
 
+	# move the apt-helper in place
+	mv debian/$@/usr/bin/apt-helper debian/$@/usr/lib/apt/apt-helper 
+
 	dh_bugfiles -p$@
 	dh_lintian -p$@
 	dh_installexamples -p$@ $(BLD)/docs/examples/*

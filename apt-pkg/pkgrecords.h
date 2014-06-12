@@ -17,8 +17,9 @@
 #ifndef PKGLIB_PKGRECORDS_H
 #define PKGLIB_PKGRECORDS_H
 
-
 #include <apt-pkg/pkgcache.h>
+
+#include <string>
 #include <vector>
 
 class pkgRecords							/*{{{*/
@@ -70,7 +71,7 @@ class pkgRecords::Parser						/*{{{*/
    virtual std::string Homepage() {return std::string();}
 
    // An arbitrary custom field
-   virtual std::string RecordField(const char *fieldName) { return std::string();};
+   virtual std::string RecordField(const char * /*fieldName*/) { return std::string();};
 
    // The record in binary form
    virtual void GetRec(const char *&Start,const char *&Stop) {Start = Stop = 0;};

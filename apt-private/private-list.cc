@@ -1,43 +1,28 @@
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/error.h>
 #include <apt-pkg/cachefile.h>
 #include <apt-pkg/cachefilter.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/init.h>
-#include <apt-pkg/progress.h>
-#include <apt-pkg/sourcelist.h>
 #include <apt-pkg/cmndline.h>
-#include <apt-pkg/strutl.h>
-#include <apt-pkg/fileutl.h>
 #include <apt-pkg/pkgrecords.h>
-#include <apt-pkg/srcrecords.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/policy.h>
-#include <apt-pkg/tagfile.h>
-#include <apt-pkg/algorithms.h>
-#include <apt-pkg/sptr.h>
-#include <apt-pkg/pkgsystem.h>
-#include <apt-pkg/indexfile.h>
-#include <apt-pkg/metaindex.h>
+#include <apt-pkg/progress.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
-#include <sstream>
-#include <vector>
-#include <utility>
-#include <cassert>
-#include <locale.h>
+#include <apt-private/private-cacheset.h>
+#include <apt-private/private-list.h>
+#include <apt-private/private-output.h>
+
 #include <iostream>
-#include <unistd.h>
-#include <errno.h>
-#include <regex.h>
-#include <stdio.h>
-#include <algorithm>
-
-#include "private-cmndline.h"
-#include "private-list.h"
-#include "private-output.h"
-#include "private-cacheset.h"
+#include <sstream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -99,7 +84,7 @@ private:
    #undef PackageMatcher
 };
 									/*}}}*/
-void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
+static void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,/*{{{*/
                      pkgCache::PkgIterator P,    
                      std::ostream &outs,
                      bool include_summary=true)
@@ -114,14 +99,13 @@ void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
 									/*}}}*/
 // list - list package based on criteria        			/*{{{*/
 // ---------------------------------------------------------------------
-bool List(CommandLine &Cmd)
+bool DoList(CommandLine &Cmd)
 {
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
-   pkgRecords records(CacheFile);
-
    if (unlikely(Cache == NULL))
       return false;
+   pkgRecords records(CacheFile);
 
    const char **patterns;
    const char *all_pattern[] = { "*", NULL};

@@ -4,11 +4,17 @@
 #include <apt-pkg/algorithms.h>
 #include <apt-pkg/upgrade.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 
+#include <apt-private/private-output.h>
+#include <apt-private/private-cachefile.h>
+
+#include <string.h>
+#include <ostream>
 #include <cstdlib>
-
-#include "private-output.h"
-#include "private-cachefile.h"
 
 #include <apti18n.h>
 									/*}}}*/

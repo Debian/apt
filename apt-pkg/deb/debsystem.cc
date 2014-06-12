@@ -19,7 +19,14 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <sys/types.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+#include <string>
+#include <vector>
 #include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
@@ -195,7 +202,7 @@ bool debSystem::Initialize(Configuration &Cnf)
 // ---------------------------------------------------------------------
 /* The standard name for a deb is 'deb'.. There are no separate versions
    of .deb to worry about.. */
-bool debSystem::ArchiveSupported(const char *Type)
+APT_PURE bool debSystem::ArchiveSupported(const char *Type)
 {
    if (strcmp(Type,"deb") == 0)
       return true;

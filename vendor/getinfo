@@ -3,6 +3,7 @@
 
 BASEDIR="$(readlink -f "$(dirname $0)")"
 INFO="$(readlink -f "${BASEDIR}/current/apt-vendor.ent")"
+VERBATIM="${BASEDIR}/../doc/apt-verbatim.ent"
 
 if [ -z "$INFO" ] || [ ! -e "$INFO" ]; then
 	echo >&2 'The current vendor is not valid or not chosen by the buildsystem yet.'
@@ -20,17 +21,20 @@ getfield() {
 }
 
 case "$1" in
-debian-stable-codename)
-	getrawfield 'stable-codename' "${BASEDIR}/../doc/apt-verbatim.ent"
-	;;
-tanglu-codename)
-	getrawfield 'tanglu-codename' "${BASEDIR}/../doc/apt-verbatim.ent"
+debian-stable-codename|debian-oldstable-codename|debian-testing-codename)
+	getrawfield "${1#*-}" "$VERBATIM"
 	;;
 ubuntu-codename)
-	getrawfield 'ubuntu-codename' "${BASEDIR}/../doc/apt-verbatim.ent"
+	getrawfield "$1" "$VERBATIM"
 	;;
-keyring-package|keyring-filename|keyring-master-filename|keyring-removed-filename|keyring-uri|current-distro-codename)
-	getfield "$1"
+keyring-package|keyring-filename|keyring-master-filename|keyring-removed-filename|keyring-uri|current-codename)
+	exec $0 'vendor' "$@"
+	;;
+vendor)
+	getfield "$2"
+	;;
+verbatim)
+	getfield "$2" "$VERBATIM"
 	;;
 *)
 	echo >&2 "Unknown data field $1 requested"

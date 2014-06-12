@@ -1,9 +1,12 @@
-#include <cstdlib>
+#include <config.h>
 
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/fileutl.h>
-#include "private-utils.h"
 
+#include <apt-private/private-utils.h>
+
+#include <cstdlib>
+#include <unistd.h>
 
 // DisplayFileInPager - Display File with pager        			/*{{{*/
 void DisplayFileInPager(std::string filename)
@@ -26,7 +29,6 @@ void DisplayFileInPager(std::string filename)
    ExecWait(Process, "sensible-pager", false);
 }
 									/*}}}*/
-
 // EditFileInSensibleEditor - Edit File with editor    			/*{{{*/
 void EditFileInSensibleEditor(std::string filename)
 {

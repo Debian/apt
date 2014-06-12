@@ -11,20 +11,26 @@
 #include<config.h>
 
 #include <apt-pkg/depcache.h>
-#include <apt-pkg/version.h>
 #include <apt-pkg/versionmatch.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/sptr.h>
-#include <apt-pkg/algorithms.h>
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/aptconfiguration.h>
-#include <apt-pkg/pkgsystem.h>
 #include <apt-pkg/tagfile.h>
 #include <apt-pkg/progress.h>
 #include <apt-pkg/cacheset.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/macros.h>
 
+#include <stdio.h>
+#include <string.h>
+#include <list>
+#include <string>
+#include <utility>
+#include <vector>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -222,7 +228,7 @@ bool pkgDepCache::readStateFile(OpProgress *Prog)			/*{{{*/
    return true;
 }
 									/*}}}*/
-bool pkgDepCache::writeStateFile(OpProgress *prog, bool InstalledOnly)	/*{{{*/
+bool pkgDepCache::writeStateFile(OpProgress * /*prog*/, bool InstalledOnly)	/*{{{*/
 {
    bool const debug_autoremove = _config->FindB("Debug::pkgAutoRemove",false);
    
@@ -868,7 +874,7 @@ bool pkgDepCache::IsDeleteOk(PkgIterator const &Pkg,bool rPurge,
    return IsDeleteOkProtectInstallRequests(Pkg, rPurge, Depth, FromUser);
 }
 bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
-      bool const rPurge, unsigned long const Depth, bool const FromUser)
+      bool const /*rPurge*/, unsigned long const Depth, bool const FromUser)
 {
    if (FromUser == false && Pkg->CurrentVer == 0)
    {
@@ -889,7 +895,7 @@ bool pkgDepCache::IsDeleteOkProtectInstallRequests(PkgIterator const &Pkg,
    and prevents mode changes for packages on hold for example.
    If you want to check Mode specific stuff you can use the virtual public
    Is<Mode>Ok methods instead */
-char const* PrintMode(char const mode)
+static char const* PrintMode(char const mode)
 {
 	 switch (mode)
 	 {
@@ -1053,10 +1059,9 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
       return true;
    }
 
-   // check if we are allowed to install the package (if we haven't already)
-   if (P.Mode != ModeInstall || P.InstallVer != P.CandidateVer)
-      if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
-	 return false;
+   // check if we are allowed to install the package
+   if (IsInstallOk(Pkg,AutoInst,Depth,FromUser) == false)
+      return false;
 
    ActionGroup group(*this);
    P.iFlags &= ~AutoKept;
@@ -1117,32 +1122,22 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	 continue;
 
       /* Check if this dep should be consider for install. If it is a user
-         defined important dep and we are installed a new package then 
+         defined important dep and we are installed a new package then
 	 it will be installed. Otherwise we only check for important
-         deps that have changed from the installed version
-      */
+         deps that have changed from the installed version */
       if (IsImportantDep(Start) == false)
 	 continue;
 
-      /* If we are in an or group locate the first or that can 
-         succeed. We have already cached this.. */
+      /* If we are in an or group locate the first or that can
+         succeed. We have already cached this… */
       for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; --Ors)
 	 ++Start;
+
+      /* unsatisfiable dependency: IsInstallOkDependenciesSatisfiableByCandidates
+         would have prevented us to get here if not overridden, so just skip
+	 over the problem here as the frontend will know what it is doing */
       if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer && Start.IsNegative() == false)
-      {
-	 if(DebugAutoInstall == true)
-	    std::clog << OutputInDepth(Depth) << Start << " can't be satisfied!" << std::endl;
-	 if (Start.IsCritical() == false)
-	    continue;
-	 // if the dependency was critical, we have absolutely no chance to install it,
-	 // so if it wasn't installed remove it again. If it was, discard the candidate
-	 // as the problemresolver will trip over it otherwise trying to install it (#735967)
-	 if (Pkg->CurrentVer == 0)
-	    MarkDelete(Pkg,false,Depth + 1, false);
-	 else
-	    SetCandidateVersion(Pkg.CurrentVer());
-	 return false;
-      }
+	 continue;
 
       /* Check if any ImportantDep() (but not Critical) were added
        * since we installed the package.  Also check for deps that
@@ -1294,12 +1289,18 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 bool pkgDepCache::IsInstallOk(PkgIterator const &Pkg,bool AutoInst,
 			      unsigned long Depth, bool FromUser)
 {
-   return IsInstallOkMultiArchSameVersionSynced(Pkg,AutoInst, Depth, FromUser);
+   return IsInstallOkMultiArchSameVersionSynced(Pkg,AutoInst, Depth, FromUser) &&
+      IsInstallOkDependenciesSatisfiableByCandidates(Pkg,AutoInst, Depth, FromUser);
 }
 bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
-      bool const AutoInst, unsigned long const Depth, bool const FromUser)
+      bool const /*AutoInst*/, unsigned long const Depth, bool const FromUser)
 {
    if (FromUser == true) // as always: user is always right
+      return true;
+
+   // if we have checked before and it was okay, it will still be okay
+   if (PkgState[Pkg->ID].Mode == ModeInstall &&
+	 PkgState[Pkg->ID].InstallVer == PkgState[Pkg->ID].CandidateVer)
       return true;
 
    // ignore packages with none-M-A:same candidates
@@ -1330,6 +1331,53 @@ bool pkgDepCache::IsInstallOkMultiArchSameVersionSynced(PkgIterator const &Pkg,
 	 std::clog << OutputInDepth(Depth) << "Ignore MarkInstall of " << Pkg
 	    << " as its M-A:same siblings are not version-synced" << std::endl;
       return false;
+   }
+
+   return true;
+}
+bool pkgDepCache::IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator const &Pkg,
+      bool const AutoInst, unsigned long const Depth, bool const /*FromUser*/)
+{
+   if (AutoInst == false)
+      return true;
+
+   VerIterator const CandVer = PkgState[Pkg->ID].CandidateVerIter(*this);
+   if (unlikely(CandVer.end() == true) || CandVer == Pkg.CurrentVer())
+      return true;
+
+   for (DepIterator Dep = CandVer.DependsList(); Dep.end() != true;)
+   {
+      // Grok or groups
+      DepIterator Start = Dep;
+      bool Result = true;
+      unsigned Ors = 0;
+      for (bool LastOR = true; Dep.end() == false && LastOR == true; ++Dep, ++Ors)
+      {
+	 LastOR = (Dep->CompareOp & Dep::Or) == Dep::Or;
+
+	 if ((DepState[Dep->ID] & DepInstall) == DepInstall)
+	    Result = false;
+      }
+
+      if (Start.IsCritical() == false || Start.IsNegative() == true || Result == false)
+	 continue;
+
+      /* If we are in an or group locate the first or that can succeed.
+         We have already cached this… */
+      for (; Ors > 1 && (DepState[Start->ID] & DepCVer) != DepCVer; --Ors)
+	 ++Start;
+
+      if (Ors == 1 && (DepState[Start->ID] &DepCVer) != DepCVer)
+      {
+	 if (DebugAutoInstall == true)
+	    std::clog << OutputInDepth(Depth) << Start << " can't be satisfied!" << std::endl;
+
+	 // the dependency is critical, but can't be installed, so discard the candidate
+	 // as the problemresolver will trip over it otherwise trying to install it (#735967)
+	 if (Pkg->CurrentVer != 0)
+	    SetCandidateVersion(Pkg.CurrentVer());
+	 return false;
+      }
    }
 
    return true;
@@ -1685,10 +1733,10 @@ bool pkgDepCache::Policy::IsImportantDep(DepIterator const &Dep)
 }
 									/*}}}*/
 // Policy::GetPriority - Get the priority of the package pin		/*{{{*/
-signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &Pkg)
-{ return 0; };
-signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &File)
-{ return 0; };
+APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgIterator const &/*Pkg*/)
+{ return 0; }
+APT_CONST signed short pkgDepCache::Policy::GetPriority(pkgCache::PkgFileIterator const &/*File*/)
+{ return 0; }
 									/*}}}*/
 pkgDepCache::InRootSetFunc *pkgDepCache::GetRootSetFunc()		/*{{{*/
 {

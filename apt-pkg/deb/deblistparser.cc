@@ -21,8 +21,17 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/crc-16.h>
 #include <apt-pkg/md5.h>
+#include <apt-pkg/mmap.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
+#include <apt-pkg/tagfile.h>
 #include <apt-pkg/macros.h>
 
+#include <stddef.h>
+#include <string.h>
+#include <algorithm>
+#include <string>
+#include <vector>
 #include <ctype.h>
 									/*}}}*/
 
@@ -34,7 +43,7 @@ static debListParser::WordList PrioList[] = {
    {"standard",pkgCache::State::Standard},
    {"optional",pkgCache::State::Optional},
    {"extra",pkgCache::State::Extra},
-   {}};
+   {NULL, 0}};
 
 // ListParser::debListParser - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
@@ -95,6 +104,41 @@ string debListParser::Version()
    return Section.FindS("Version");
 }
 									/*}}}*/
+unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
+{
+   unsigned char MA;
+   string const MultiArch = Section.FindS("Multi-Arch");
+   if (MultiArch.empty() == true)
+      MA = pkgCache::Version::None;
+   else if (MultiArch == "same") {
+      if (ArchitectureAll() == true)
+      {
+	 if (showErrors == true)
+	    _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
+		  Section.FindS("Package").c_str());
+	 MA = pkgCache::Version::None;
+      }
+      else
+	 MA = pkgCache::Version::Same;
+   }
+   else if (MultiArch == "foreign")
+      MA = pkgCache::Version::Foreign;
+   else if (MultiArch == "allowed")
+      MA = pkgCache::Version::Allowed;
+   else
+   {
+      if (showErrors == true)
+	 _error->Warning("Unknown Multi-Arch type '%s' for package '%s'",
+	       MultiArch.c_str(), Section.FindS("Package").c_str());
+      MA = pkgCache::Version::None;
+   }
+
+   if (ArchitectureAll() == true)
+      MA |= pkgCache::Version::All;
+
+   return MA;
+}
+									/*}}}*/
 // ListParser::NewVersion - Fill in the version structure		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -102,37 +146,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
    Ver->Section = UniqFindTagWrite("Section");
-
-   // Parse multi-arch
-   string const MultiArch = Section.FindS("Multi-Arch");
-   if (MultiArch.empty() == true)
-      Ver->MultiArch = pkgCache::Version::None;
-   else if (MultiArch == "same") {
-      // Parse multi-arch
-      if (ArchitectureAll() == true)
-      {
-	 /* Arch all packages can't be Multi-Arch: same */
-	 _error->Warning("Architecture: all package '%s' can't be Multi-Arch: same",
-			Section.FindS("Package").c_str());
-	 Ver->MultiArch = pkgCache::Version::None;
-      }
-      else
-	 Ver->MultiArch = pkgCache::Version::Same;
-   }
-   else if (MultiArch == "foreign")
-      Ver->MultiArch = pkgCache::Version::Foreign;
-   else if (MultiArch == "allowed")
-      Ver->MultiArch = pkgCache::Version::Allowed;
-   else
-   {
-      _error->Warning("Unknown Multi-Arch type '%s' for package '%s'",
-			MultiArch.c_str(), Section.FindS("Package").c_str());
-      Ver->MultiArch = pkgCache::Version::None;
-   }
-
-   if (ArchitectureAll() == true)
-      Ver->MultiArch |= pkgCache::Version::All;
-
+   Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL("Size");
    // Unpacked Size (in K)
@@ -354,7 +368,7 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                           {"hold",pkgCache::State::Hold},
                           {"deinstall",pkgCache::State::DeInstall},
                           {"purge",pkgCache::State::Purge},
-                          {}};
+                          {NULL, 0}};
    if (GrabWord(string(Start,I-Start),WantList,Pkg->SelectedState) == false)
       return _error->Error("Malformed 1st word in the Status line");
 
@@ -370,7 +384,7 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                           {"reinstreq",pkgCache::State::ReInstReq},
                           {"hold",pkgCache::State::HoldInst},
                           {"hold-reinstreq",pkgCache::State::HoldReInstReq},
-                          {}};
+                          {NULL, 0}};
    if (GrabWord(string(Start,I-Start),FlagList,Pkg->InstState) == false)
       return _error->Error("Malformed 2nd word in the Status line");
 
@@ -392,7 +406,7 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
                             {"triggers-pending",pkgCache::State::TriggersPending},
                             {"post-inst-failed",pkgCache::State::HalfConfigured},
                             {"removal-failed",pkgCache::State::HalfInstalled},
-                            {}};
+                            {NULL, 0}};
    if (GrabWord(string(Start,I-Start),StatusList,Pkg->CurrentState) == false)
       return _error->Error("Malformed 3rd word in the Status line");
 
@@ -475,17 +489,30 @@ const char *debListParser::ConvertRelation(const char *I,unsigned int &Op)
 /* This parses the dependency elements out of a standard string in place,
    bit by bit. */
 const char *debListParser::ParseDepends(const char *Start,const char *Stop,
+               std::string &Package,std::string &Ver,unsigned int &Op)
+   { return ParseDepends(Start, Stop, Package, Ver, Op, false, true, false); }
+const char *debListParser::ParseDepends(const char *Start,const char *Stop,
+               std::string &Package,std::string &Ver,unsigned int &Op,
+               bool const &ParseArchFlags)
+   { return ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags, true, false); }
+const char *debListParser::ParseDepends(const char *Start,const char *Stop,
+               std::string &Package,std::string &Ver,unsigned int &Op,
+               bool const &ParseArchFlags, bool const &StripMultiArch)
+   { return ParseDepends(Start, Stop, Package, Ver, Op, ParseArchFlags, StripMultiArch, false); }
+const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 					string &Package,string &Ver,
 					unsigned int &Op, bool const &ParseArchFlags,
-					bool const &StripMultiArch)
+					bool const &StripMultiArch,
+					bool const &ParseRestrictionsList)
 {
    // Strip off leading space
-   for (;Start != Stop && isspace(*Start) != 0; Start++);
+   for (;Start != Stop && isspace(*Start) != 0; ++Start);
    
    // Parse off the package name
    const char *I = Start;
    for (;I != Stop && isspace(*I) == 0 && *I != '(' && *I != ')' &&
-	*I != ',' && *I != '|' && *I != '[' && *I != ']'; I++);
+	*I != ',' && *I != '|' && *I != '[' && *I != ']' &&
+	*I != '<' && *I != '>'; ++I);
    
    // Malformed, no '('
    if (I != Stop && *I == ')')
@@ -602,6 +629,76 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
       for (;I != Stop && isspace(*I) != 0; I++);
    }
 
+   if (ParseRestrictionsList == true)
+   {
+      // Parse a restrictions list
+      if (I != Stop && *I == '<')
+      {
+	 ++I;
+	 // malformed
+	 if (unlikely(I == Stop))
+	    return 0;
+
+	 std::vector<string> const profiles = APT::Configuration::getBuildProfiles();
+
+	 const char *End = I;
+	 bool Found = false;
+	 bool NegRestriction = false;
+	 while (I != Stop)
+	 {
+	    // look for whitespace or ending '>'
+	    for (;End != Stop && !isspace(*End) && *End != '>'; ++End);
+
+	    if (unlikely(End == Stop))
+	       return 0;
+
+	    if (*I == '!')
+	    {
+	       NegRestriction = true;
+	       ++I;
+	    }
+
+	    std::string restriction(I, End);
+
+	    std::string prefix = "profile.";
+	    // only support for "profile" prefix, ignore others
+	    if (restriction.size() > prefix.size() &&
+		  restriction.substr(0, prefix.size()) == prefix)
+	    {
+	       // get the name of the profile
+	       restriction = restriction.substr(prefix.size());
+
+	       if (restriction.empty() == false && profiles.empty() == false &&
+		     std::find(profiles.begin(), profiles.end(), restriction) != profiles.end())
+	       {
+		  Found = true;
+		  if (I[-1] != '!')
+		     NegRestriction = false;
+		  // we found a match, so fast-forward to the end of the wildcards
+		  for (; End != Stop && *End != '>'; ++End);
+	       }
+	    }
+
+	    if (*End++ == '>') {
+	       I = End;
+	       break;
+	    }
+
+	    I = End;
+	    for (;I != Stop && isspace(*I) != 0; I++);
+	 }
+
+	 if (NegRestriction == true)
+	    Found = !Found;
+
+	 if (Found == false)
+	    Package = ""; /* not for this restriction */
+      }
+
+      // Skip whitespace
+      for (;I != Stop && isspace(*I) != 0; I++);
+   }
+
    if (I != Stop && *I == '|')
       Op |= pkgCache::Dep::Or;
    
@@ -635,7 +732,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       string Version;
       unsigned int Op;
 
-      Start = ParseDepends(Start, Stop, Package, Version, Op, false, false);
+      Start = ParseDepends(Start, Stop, Package, Version, Op, false, false, false);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
       size_t const found = Package.rfind(':');
@@ -841,3 +938,24 @@ unsigned char debListParser::GetPrio(string Str)
    return Out;
 }
 									/*}}}*/
+#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
+bool debListParser::SameVersion(unsigned short const Hash,		/*{{{*/
+      pkgCache::VerIterator const &Ver)
+{
+   if (pkgCacheGenerator::ListParser::SameVersion(Hash, Ver) == false)
+      return false;
+   // status file has no (Download)Size, but all others are fair game
+   // status file is parsed last, so the first version we encounter is
+   // probably also the version we have downloaded
+   unsigned long long const Size = Section.FindULL("Size");
+   if (Size != 0 && Size != Ver->Size)
+      return false;
+   // available everywhere, but easier to check here than to include in VersionHash
+   unsigned char MultiArch = ParseMultiArch(false);
+   if (MultiArch != Ver->MultiArch)
+      return false;
+   // for all practical proposes (we can check): same version
+   return true;
+}
+									/*}}}*/
+#endif

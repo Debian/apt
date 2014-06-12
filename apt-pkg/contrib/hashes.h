@@ -17,17 +17,22 @@
 #include <apt-pkg/md5.h>
 #include <apt-pkg/sha1.h>
 #include <apt-pkg/sha2.h>
-#include <apt-pkg/fileutl.h>
 
-#include <algorithm>
-#include <vector>
 #include <cstring>
-
+#include <string>
 
 #ifndef APT_8_CLEANER_HEADERS
 using std::min;
 using std::vector;
 #endif
+#ifndef APT_10_CLEANER_HEADERS
+#include <apt-pkg/fileutl.h>
+#include <algorithm>
+#include <vector>
+#endif
+
+
+class FileFd;
 
 // helper class that contains hash function name
 // and hash
@@ -61,7 +66,7 @@ class HashString
    bool empty() const;
 
    // return the list of hashes we support
-   static const char** SupportedHashes();
+   static APT_CONST const char** SupportedHashes();
 };
 
 class Hashes
@@ -77,7 +82,7 @@ class Hashes
    {
       return MD5.Add(Data,Size) && SHA1.Add(Data,Size) && SHA256.Add(Data,Size) && SHA512.Add(Data,Size);
    };
-   inline bool Add(const char *Data) {return Add((unsigned char *)Data,strlen(Data));};
+   inline bool Add(const char *Data) {return Add((unsigned char const *)Data,strlen(Data));};
    inline bool AddFD(int const Fd,unsigned long long Size = 0)
    { return AddFD(Fd, Size, true, true, true, true); };
    bool AddFD(int const Fd, unsigned long long Size, bool const addMD5,

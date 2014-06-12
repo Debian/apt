@@ -1,24 +1,17 @@
-
 // Include Files							/*{{{*/
 #include <config.h>
 
-#include <apt-pkg/algorithms.h>
-#include <apt-pkg/update.h>
-#include <apt-pkg/error.h>
-#include <apt-pkg/configuration.h>
-#include <apt-pkg/version.h>
-#include <apt-pkg/sptr.h>
 #include <apt-pkg/acquire-item.h>
-#include <apt-pkg/edsp.h>
-#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
-#include <apt-pkg/progress.h>
+#include <apt-pkg/sourcelist.h>
+#include <apt-pkg/acquire.h>
+#include <apt-pkg/strutl.h>
+#include <apt-pkg/update.h>
 
-#include <sys/types.h>
-#include <cstdlib>
-#include <algorithm>
-#include <iostream>
-#include <stdio.h>
+#include <string>
+#include <vector>
 
 #include <apti18n.h>
 									/*}}}*/

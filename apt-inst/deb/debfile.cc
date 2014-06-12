@@ -21,11 +21,17 @@
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/extracttar.h>
 #include <apt-pkg/error.h>
-#include <apt-pkg/deblistparser.h>
 #include <apt-pkg/aptconfiguration.h>
+#include <apt-pkg/arfile.h>
+#include <apt-pkg/dirstream.h>
+#include <apt-pkg/fileutl.h>
+#include <apt-pkg/tagfile.h>
 
+#include <string.h>
+#include <string>
+#include <vector>
 #include <sys/stat.h>
-#include <unistd.h>
+
 #include <apti18n.h>
 									/*}}}*/
 
@@ -196,7 +202,7 @@ bool debDebFile::MemControlExtract::DoItem(Item &Itm,int &Fd)
 // ---------------------------------------------------------------------
 /* Just memcopy the block from the tar extractor and put it in the right
    place in the pre-allocated memory block. */
-bool debDebFile::MemControlExtract::Process(Item &Itm,const unsigned char *Data,
+bool debDebFile::MemControlExtract::Process(Item &/*Itm*/,const unsigned char *Data,
 			     unsigned long Size,unsigned long Pos)
 {
    memcpy(Control + Pos, Data,Size);

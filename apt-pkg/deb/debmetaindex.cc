@@ -9,8 +9,15 @@
 #include <apt-pkg/aptconfiguration.h>
 #include <apt-pkg/indexrecords.h>
 #include <apt-pkg/sourcelist.h>
-#include <apt-pkg/error.h>
+#include <apt-pkg/hashes.h>
+#include <apt-pkg/macros.h>
+#include <apt-pkg/metaindex.h>
 
+#include <string.h>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 #include <set>
 #include <algorithm>
 

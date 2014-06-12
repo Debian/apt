@@ -1,13 +1,16 @@
+#include <config.h>
+
 #include <apt-pkg/debfile.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/fileutl.h>
 
+#include <string>
 #include <iostream>
 #include <unistd.h>
 
 using namespace std;
 
-bool ExtractMember(const char *File,const char *Member)
+static bool ExtractMember(const char *File,const char *Member)
 {
    FileFd Fd(File,FileFd::ReadOnly);
    debDebFile Deb(Fd);

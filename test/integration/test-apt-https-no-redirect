@@ -7,18 +7,24 @@ TESTDIR=$(readlink -f $(dirname $0))
 setupenvironment
 configarchitecture "i386"
 
-buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
+insertpackage 'stable' 'apt' 'all' '1'
 setupaptarchive --no-update
 
+echo 'alright' > aptarchive/working
 changetohttpswebserver  -o 'aptwebserver::redirect::replace::/redirectme/=http://localhost:8080/'
 
-msgtest 'normal http download works'
-downloadfile 'http://localhost:8080/pool/apt_1.0/changelog' changelog2 >/dev/null 2>/dev/null && msgpass || msgfail
+msgtest 'download of a file works via' 'http'
+downloadfile 'http://localhost:8080/working' httpfile >/dev/null 2>&1 && msgpass || msgfail
+testfileequal httpfile 'alright'
 
-msgtest 'normal https download works'
-downloadfile 'https://localhost:4433/pool/apt_1.0/changelog' changelog >/dev/null 2>/dev/null && msgpass || msgfail
+msgtest 'download of a file works via' 'https'
+downloadfile 'https://localhost:4433/working' httpsfile >/dev/null 2>&1 && msgpass || msgfail
+testfileequal httpsfile 'alright'
 
-msgtest 'redirecting https to http does not work'
-downloadfile 'https://localhost:4433/redirectme/pool/apt_1.0/changelog' changelog3 2>&1 | grep "Protocol http not supported or disabled in libcurl" > /dev/null && msgpass
+msgtest 'download of a file does not work if' 'https redirected to http'
+downloadfile 'https://localhost:4433/redirectme/working' redirectfile >curloutput 2>&1 && msgfail || msgpass
+
+msgtest 'libcurl has forbidden access in last request to' 'http resource'
+grep -q -- 'Protocol http not supported or disabled in libcurl' curloutput && msgpass || msgfail
 
 

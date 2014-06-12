@@ -12,6 +12,8 @@
 
 #include <apt-pkg/strutl.h>
 
+#include <sys/types.h>
+#include <time.h>
 #include <string>
 
 class FTPConn
@@ -76,7 +78,7 @@ class FtpMethod : public pkgAcqMethod
    static std::string FailFile;
    static int FailFd;
    static time_t FailTime;
-   static void SigTerm(int);
+   static APT_NORETURN void SigTerm(int);
    
    public:
    

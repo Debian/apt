@@ -17,14 +17,19 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
 
-#include <sys/types.h>
 #include <dirent.h>
 #include <stdio.h>
 #include <fcntl.h>
-
+#include <ctype.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <algorithm>
 #include <string>
 #include <vector>
+
+#include <apti18n.h>
 									/*}}}*/
 namespace APT {
 // getCompressionTypes - Return Vector of usable compressiontypes	/*{{{*/
@@ -48,11 +53,6 @@ const Configuration::getCompressionTypes(bool const &Cached) {
 
 	setDefaultConfigurationForCompressors();
 	std::vector<APT::Configuration::Compressor> const compressors = getCompressors();
-
-	// accept non-list order as override setting for config settings on commandline
-	std::string const overrideOrder = _config->Find("Acquire::CompressionTypes::Order","");
-	if (overrideOrder.empty() == false)
-		types.push_back(overrideOrder);
 
 	// load the order setting into our vector
 	std::vector<std::string> const order = _config->FindVector("Acquire::CompressionTypes::Order");
@@ -227,61 +227,11 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 			}
 		}
 	} else {
+		// cornercase: LANG=C, so we use only "en" Translation
 		environment.push_back("en");
 	}
 
-	// Support settings like Acquire::Languages=none on the command line to
-	// override the configuration settings vector of languages.
-	string const forceLang = _config->Find("Acquire::Languages","");
-	if (forceLang.empty() == false) {
-		if (forceLang == "none") {
-			codes.clear();
-			allCodes.clear();
-			allCodes.push_back("none");
-		} else {
-			if (forceLang == "environment")
-				codes = environment;
-			else
-				codes.push_back(forceLang);
-			allCodes = codes;
-			for (std::vector<string>::const_iterator b = builtin.begin();
-			     b != builtin.end(); ++b)
-				if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-					allCodes.push_back(*b);
-		}
-		if (All == true)
-			return allCodes;
-		else
-			return codes;
-	}
-
-	// cornercase: LANG=C, so we use only "en" Translation
-	if (envShort == "C") {
-		allCodes = codes = environment;
-		allCodes.insert(allCodes.end(), builtin.begin(), builtin.end());
-		if (All == true)
-			return allCodes;
-		else
-			return codes;
-	}
-
-	std::vector<string> const lang = _config->FindVector("Acquire::Languages");
-	// the default setting -> "environment, en"
-	if (lang.empty() == true) {
-		codes = environment;
-		if (envShort != "en")
-			codes.push_back("en");
-		allCodes = codes;
-		for (std::vector<string>::const_iterator b = builtin.begin();
-		     b != builtin.end(); ++b)
-			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-				allCodes.push_back(*b);
-		if (All == true)
-			return allCodes;
-		else
-			return codes;
-	}
-
+	std::vector<string> const lang = _config->FindVector("Acquire::Languages", "environment,en");
 	// the configs define the order, so add the environment
 	// then needed and ensure the codes are not listed twice.
 	bool noneSeen = false;
@@ -308,10 +258,15 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 		allCodes.push_back(*l);
 	}
 
-	for (std::vector<string>::const_iterator b = builtin.begin();
-	     b != builtin.end(); ++b)
-		if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
-			allCodes.push_back(*b);
+	if (allCodes.empty() == false) {
+		for (std::vector<string>::const_iterator b = builtin.begin();
+		     b != builtin.end(); ++b)
+			if (std::find(allCodes.begin(), allCodes.end(), *b) == allCodes.end())
+				allCodes.push_back(*b);
+	} else {
+		// "none" was forced
+		allCodes.push_back("none");
+	}
 
 	if (All == true)
 		return allCodes;
@@ -320,7 +275,7 @@ std::vector<std::string> const Configuration::getLanguages(bool const &All,
 }
 									/*}}}*/
 // checkLanguage - are we interested in the given Language?		/*{{{*/
-bool const Configuration::checkLanguage(std::string Lang, bool const All) {
+bool Configuration::checkLanguage(std::string Lang, bool const All) {
 	// the empty Language is always interesting as it is the original
 	if (Lang.empty() == true)
 		return true;
@@ -440,7 +395,7 @@ std::vector<std::string> const Configuration::getArchitectures(bool const &Cache
 }
 									/*}}}*/
 // checkArchitecture - are we interested in the given Architecture?	/*{{{*/
-bool const Configuration::checkArchitecture(std::string const &Arch) {
+bool Configuration::checkArchitecture(std::string const &Arch) {
 	if (Arch == "all")
 		return true;
 	std::vector<std::string> const archs = getArchitectures(true);
@@ -476,7 +431,7 @@ void Configuration::setDefaultConfigurationForCompressors() {
 	}
 }
 									/*}}}*/
-// getCompressors - Return Vector of usbale compressors			/*{{{*/
+// getCompressors - Return Vector of usealbe compressors		/*{{{*/
 // ---------------------------------------------------------------------
 /* return a vector of compressors used by apt-ftparchive in the
    multicompress functionality or to detect data.tar files */
@@ -507,8 +462,16 @@ const Configuration::getCompressors(bool const Cached) {
 #endif
 	if (_config->Exists("Dir::Bin::xz") == false || FileExists(_config->FindFile("Dir::Bin::xz")) == true)
 		compressors.push_back(Compressor("xz",".xz","xz","-6","-d",4));
+#ifdef HAVE_LZMA
+	else
+		compressors.push_back(Compressor("xz",".xz","false", NULL, NULL, 4));
+#endif
 	if (_config->Exists("Dir::Bin::lzma") == false || FileExists(_config->FindFile("Dir::Bin::lzma")) == true)
 		compressors.push_back(Compressor("lzma",".lzma","lzma","-9","-d",5));
+#ifdef HAVE_LZMA
+	else
+		compressors.push_back(Compressor("lzma",".lzma","false", NULL, NULL, 5));
+#endif
 
 	std::vector<std::string> const comp = _config->FindVector("APT::Compressor");
 	for (std::vector<std::string>::const_iterator c = comp.begin();
@@ -556,6 +519,30 @@ Configuration::Compressor::Compressor(char const *name, char const *extension,
 		UncompressArgs = _config->FindVector(uncompConf);
 	else if (uncompressArg != NULL)
 		UncompressArgs.push_back(uncompressArg);
+}
+									/*}}}*/
+// getBuildProfiles - return a vector of enabled build profiles		/*{{{*/
+std::vector<std::string> const Configuration::getBuildProfiles() {
+	// order is: override value (~= commandline), environment variable, list (~= config file)
+	std::string profiles_env = getenv("DEB_BUILD_PROFILES") == 0 ? "" : getenv("DEB_BUILD_PROFILES");
+	if (profiles_env.empty() == false) {
+		profiles_env = SubstVar(profiles_env, " ", ",");
+		std::string const bp = _config->Find("APT::Build-Profiles");
+		_config->Clear("APT::Build-Profiles");
+		if (bp.empty() == false)
+			_config->Set("APT::Build-Profiles", bp);
+	}
+	return _config->FindVector("APT::Build-Profiles", profiles_env);
+}
+std::string const Configuration::getBuildProfilesString() {
+	std::vector<std::string> profiles = getBuildProfiles();
+	if (profiles.empty() == true)
+		return "";
+	std::vector<std::string>::const_iterator p = profiles.begin();
+	std::string list = *p;
+	for (; p != profiles.end(); ++p)
+	   list.append(",").append(*p);
+	return list;
 }
 									/*}}}*/
 }

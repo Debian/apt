@@ -1,6 +1,9 @@
 // Cryptographic API Base
 #include <config.h>
 
+#include <apt-pkg/fileutl.h>
+
+#include <algorithm>
 #include <unistd.h>
 #include "hashsum_template.h"
 

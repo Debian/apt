@@ -1,24 +1,40 @@
 #ifndef APT_PRIVATE_INSTALL_H
 #define APT_PRIVATE_INSTALL_H
 
+#include <apt-pkg/cachefile.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/depcache.h>
+#include <apt-pkg/pkgcache.h>
+#include <apt-pkg/cacheiterators.h>
 #include <apt-pkg/cacheset.h>
-#include <apt-pkg/cmndline.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/algorithms.h>
+#include <apt-pkg/macros.h>
 
-#include "private-cachefile.h"
-#include "private-output.h"
+#include <apt-private/private-output.h>
+
+#include <stddef.h>
+#include <iosfwd>
+#include <list>
+#include <map>
+#include <string>
+#include <utility>
+
 
 #include <apti18n.h>
 
+class CacheFile;
+class CommandLine;
+
 #define RAMFS_MAGIC     0x858458f6
 
-bool DoInstall(CommandLine &Cmd);
+APT_PUBLIC bool DoInstall(CommandLine &Cmd);
 
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
                                         std::map<unsigned short, APT::VersionSet> &verset);
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache);
 
-bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
+APT_PUBLIC bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask = true,
                         bool Safety = true);
 
 
