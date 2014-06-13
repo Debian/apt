@@ -527,7 +527,10 @@ operator<<(std::ostream& out, pkgCache::PkgIterator Pkg)
       out << " -> " << candidate;
    if ( newest != "none" && candidate != newest)
       out << " | " << newest;
-   out << " > ( " << string(Pkg.Section()==0?"none":Pkg.Section()) << " )";
+   if (Pkg->VersionList == 0)
+      out << " > ( none )";
+   else
+      out << " > ( " << string(Pkg.VersionList().Section()==0?"unknown":Pkg.VersionList().Section()) << " )";
    return out;
 }
 									/*}}}*/
@@ -1037,5 +1040,11 @@ bool pkgCache::PrvIterator::IsMultiArchImplicit() const
    if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner->Name == Parent->Name)
       return true;
    return false;
+}
+									/*}}}*/
+APT_DEPRECATED APT_PURE const char * pkgCache::PkgIterator::Section() const {/*{{{*/
+   if (S->VersionList == 0)
+      return 0;
+   return VersionList().Section();
 }
 									/*}}}*/

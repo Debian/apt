@@ -392,11 +392,6 @@ struct pkgCache::Package
    map_pointer_t VersionList;       // Version
    /** \brief index to the installed version */
    map_pointer_t CurrentVer;        // Version
-   /** \brief indicates the deduced section
-
-       Should be the index to the string "Unknown" or to the section
-       of the last parsed item. */
-   map_stringitem_t Section;
    /** \brief index of the group this package belongs to */
    map_pointer_t Group;             // Group the Package belongs to
 

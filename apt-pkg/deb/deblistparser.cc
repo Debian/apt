@@ -255,9 +255,6 @@ MD5SumValue debListParser::Description_md5()
 bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
 			       pkgCache::VerIterator &Ver)
 {
-   if (Pkg->Section == 0)
-      Pkg->Section = UniqFindTagWrite("Section");
-
    string const static myArch = _config->Find("APT::Architecture");
    // Possible values are: "all", "native", "installed" and "none"
    // The "installed" mode is handled by ParseStatus(), See #544481 and friends.
