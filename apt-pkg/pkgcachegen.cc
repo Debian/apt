@@ -770,7 +770,7 @@ bool pkgCacheGenerator::NewFileVer(pkgCache::VerIterator &Ver,
    // Get a structure
    map_pointer_t const VerFile = AllocateInMap(sizeof(pkgCache::VerFile));
    if (VerFile == 0)
-      return 0;
+      return false;
    
    pkgCache::VerFileIterator VF(Cache,Cache.VerFileP + VerFile);
    VF->File = CurrentFile - Cache.PkgFileP;

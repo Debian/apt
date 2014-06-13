@@ -270,34 +270,36 @@ static bool DumpPackage(CommandLine &CmdL)
 template<class T>
 static void ShowHashTableStats(std::string Type,
                                T *StartP,
-                               map_ptrloc *Hashtable,
+                               map_pointer_t *Hashtable,
                                unsigned long Size)
 {
    // hashtable stats for the HashTable
-   long NumBuckets = Size;
-   long UsedBuckets = 0;
-   long UnusedBuckets = 0;
-   long LongestBucket = 0;
-   long ShortestBucket = NumBuckets;
+   unsigned long NumBuckets = Size;
+   unsigned long UsedBuckets = 0;
+   unsigned long UnusedBuckets = 0;
+   unsigned long LongestBucket = 0;
+   unsigned long ShortestBucket = NumBuckets;
+   unsigned long Entries = 0;
    for (unsigned int i=0; i < NumBuckets; ++i)
    {
       T *P = StartP + Hashtable[i];
       if(P == 0 || P == StartP)
       {
-         UnusedBuckets++;
+         ++UnusedBuckets;
          continue;
       }
-      long ThisBucketSize = 0;
+      ++UsedBuckets;
+      unsigned long ThisBucketSize = 0;
       for (; P != StartP; P = StartP + P->Next)
-         ThisBucketSize++;
+         ++ThisBucketSize;
+      Entries += ThisBucketSize;
       LongestBucket = std::max(ThisBucketSize, LongestBucket);
       ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
-      UsedBuckets += ThisBucketSize;
    }
-   cout << "Total buckets " << Type << ": " << SizeToStr(NumBuckets) << std::endl;
-   cout << "  Unused: " << SizeToStr(UnusedBuckets) << std::endl;
+   cout << "Total buckets in " << Type << ": " << NumBuckets << std::endl;
+   cout << "  Unused: " << UnusedBuckets << std::endl;
    cout << "  Used: " << UsedBuckets  << std::endl;
-   cout << "  Average entries: " << UsedBuckets/(double)NumBuckets << std::endl;
+   cout << "  Average entries: " << Entries/(double)NumBuckets << std::endl;
    cout << "  Longest: " << LongestBucket << std::endl;
    cout << "  Shortest: " << ShortestBucket << std::endl;
 }
@@ -398,25 +400,31 @@ static bool Stats(CommandLine &)
       }
    }
    cout << _("Total dependency version space: ") << SizeToStr(DepVerSize) << endl;
-   
+
    unsigned long Slack = 0;
    for (int I = 0; I != 7; I++)
       Slack += Cache->Head().Pools[I].ItemSize*Cache->Head().Pools[I].Count;
    cout << _("Total slack space: ") << SizeToStr(Slack) << endl;
-   
+
    unsigned long Total = 0;
-   Total = Slack + Size + Cache->Head().DependsCount*Cache->Head().DependencySz + 
-           Cache->Head().VersionCount*Cache->Head().VersionSz +
-           Cache->Head().PackageCount*Cache->Head().PackageSz + 
-           Cache->Head().VerFileCount*Cache->Head().VerFileSz +
-           Cache->Head().ProvidesCount*Cache->Head().ProvidesSz;
+#define APT_CACHESIZE(X,Y) (Cache->Head().X * Cache->Head().Y)
+   Total = Slack + Size +
+      APT_CACHESIZE(GroupCount, GroupSz) +
+      APT_CACHESIZE(PackageCount, PackageSz) +
+      APT_CACHESIZE(VersionCount, VersionSz) +
+      APT_CACHESIZE(DescriptionCount, DescriptionSz) +
+      APT_CACHESIZE(DependsCount, DependencySz) +
+      APT_CACHESIZE(PackageFileCount, PackageFileSz) +
+      APT_CACHESIZE(VerFileCount, VerFileSz) +
+      APT_CACHESIZE(DescFileCount, DescFileSz) +
+      APT_CACHESIZE(ProvidesCount, ProvidesSz) +
+      (2 * Cache->Head().HashTableSize * sizeof(map_id_t));
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
+#undef APT_CACHESIZE
 
    // hashtable stats
-   int HashTableSize = sizeof(Cache->HeaderP->PkgHashTable)/sizeof(map_ptrloc);
-   ShowHashTableStats<pkgCache::Package>("PkgHashTable", Cache->PkgP, Cache->HeaderP->PkgHashTable, HashTableSize);
-   HashTableSize = sizeof(Cache->HeaderP->GrpHashTable)/sizeof(map_ptrloc);
-   ShowHashTableStats<pkgCache::Group>("GrpHashTable", Cache->GrpP, Cache->HeaderP->GrpHashTable, HashTableSize);
+   ShowHashTableStats<pkgCache::Package>("PkgHashTable", Cache->PkgP, Cache->Head().PkgHashTable(), Cache->Head().HashTableSize);
+   ShowHashTableStats<pkgCache::Group>("GrpHashTable", Cache->GrpP, Cache->Head().GrpHashTable(), Cache->Head().HashTableSize);
 
    return true;
 }
