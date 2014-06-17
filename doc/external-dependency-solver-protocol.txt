@@ -5,6 +5,14 @@ external dependency solvers. The protocol is called APT EDSP, for "APT
 External Dependency Solver Protocol".
 
 
+## Terminology
+
+In the following we use the term **architecture qualified package name**
+(or *arch-qualified package names* for short) to refer to package
+identifiers of the form "arch:package" where "arch" is a dpkg
+architecture and "package" a dpkg package name.
+
+
 ## Components
 
 - **APT**: we know this one.
@@ -132,9 +140,9 @@ The following **configuration fields** are supported in request stanzas:
 The following **action fields** are supported in request stanzas:
 
 - **Install:** (optional, defaults to the empty string) A space
-  separated list of package names, with *no version attached*, to
-  install. This field denotes a list of packages that the user wants to
-  install, usually via an APT `install` request.
+  separated list of arch-qualified package names, with *no version
+  attached*, to install. This field denotes a list of packages that the
+  user wants to install, usually via an APT `install` request.
 
 - **Remove:** (optional, defaults to the empty string) Same syntax of
   Install. This field denotes a list of packages that the user wants to
@@ -201,7 +209,7 @@ field. The following fields are supported in package stanzas:
 - **APT-Candidate:** (optional, defaults to `no`). Allowed values:
   `yes`, `no`. When set to `yes`, the corresponding package is the APT
   candidate for installation among all available packages with the same
-  name.
+  name and with the same architecture.
 
 - **APT-Automatic:** (optional, defaults to `no`). Allowed values:
   `yes`, `no`. When set to `yes`, the corresponding package is marked by
