@@ -434,23 +434,30 @@ string TimeToStr(unsigned long Sec)
 /* This replaces all occurrences of Subst with Contents in Str. */
 string SubstVar(const string &Str,const string &Subst,const string &Contents)
 {
+   if (Subst.empty() == true)
+      return Str;
+
    string::size_type Pos = 0;
    string::size_type OldPos = 0;
    string Temp;
-   
-   while (OldPos < Str.length() && 
+
+   while (OldPos < Str.length() &&
 	  (Pos = Str.find(Subst,OldPos)) != string::npos)
    {
-      Temp += string(Str,OldPos,Pos) + Contents;
-      OldPos = Pos + Subst.length();      
+      if (OldPos != Pos)
+	 Temp.append(Str, OldPos, Pos - OldPos);
+      if (Contents.empty() == false)
+	 Temp.append(Contents);
+      OldPos = Pos + Subst.length();
    }
-   
+
    if (OldPos == 0)
       return Str;
-   
+
+   if (OldPos >= Str.length())
+      return Temp;
    return Temp + string(Str,OldPos);
 }
-
 string SubstVar(string Str,const struct SubstVar *Vars)
 {
    for (; Vars->Subst != 0; Vars++)

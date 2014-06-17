@@ -70,3 +70,38 @@ TEST(StrUtilTest,EndsWith)
    EXPECT_FALSE(Endswith("abcd", "x"));
    EXPECT_FALSE(Endswith("abcd", "abcndefg"));
 }
+TEST(StrUtilTest,SubstVar)
+{
+   EXPECT_EQ("", SubstVar("", "fails", "passes"));
+   EXPECT_EQ("test ", SubstVar("test fails", "fails", ""));
+   EXPECT_EQ("test passes", SubstVar("test passes", "", "fails"));
+
+   EXPECT_EQ("test passes", SubstVar("test passes", "fails", "passes"));
+   EXPECT_EQ("test passes", SubstVar("test fails", "fails", "passes"));
+
+   EXPECT_EQ("starts with", SubstVar("beginnt with", "beginnt", "starts"));
+   EXPECT_EQ("beginnt with", SubstVar("starts with", "starts", "beginnt"));
+   EXPECT_EQ("is in middle", SubstVar("is in der middle", "in der", "in"));
+   EXPECT_EQ("is in der middle", SubstVar("is in middle", "in", "in der"));
+   EXPECT_EQ("does end", SubstVar("does enden", "enden", "end"));
+   EXPECT_EQ("does enden", SubstVar("does end", "end", "enden"));
+
+   EXPECT_EQ("abc", SubstVar("abc", "d", "a"));
+   EXPECT_EQ("abc", SubstVar("abd", "d", "c"));
+   EXPECT_EQ("abc", SubstVar("adc", "d", "b"));
+   EXPECT_EQ("abc", SubstVar("dbc", "d", "a"));
+
+   EXPECT_EQ("b", SubstVar("b", "aa", "a"));
+   EXPECT_EQ("bb", SubstVar("bb", "aa", "a"));
+   EXPECT_EQ("bbb", SubstVar("bbb", "aa", "a"));
+
+   EXPECT_EQ("aa", SubstVar("aaaa", "aa", "a"));
+   EXPECT_EQ("aaaa", SubstVar("aa", "a", "aa"));
+   EXPECT_EQ("aaaa", SubstVar("aaaa", "a", "a"));
+   EXPECT_EQ("a a a a ", SubstVar("aaaa", "a", "a "));
+
+   EXPECT_EQ(" bb bb bb bb ", SubstVar(" a a a a ", "a", "bb"));
+   EXPECT_EQ(" bb bb bb bb ", SubstVar(" aaa aaa aaa aaa ", "aaa", "bb"));
+   EXPECT_EQ(" bb a bb a bb a bb ", SubstVar(" aaa a aaa a aaa a aaa ", "aaa", "bb"));
+
+}
