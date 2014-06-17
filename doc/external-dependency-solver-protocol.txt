@@ -9,8 +9,8 @@ External Dependency Solver Protocol".
 
 In the following we use the term **architecture qualified package name**
 (or *arch-qualified package names* for short) to refer to package
-identifiers of the form "arch:package" where "arch" is a dpkg
-architecture and "package" a dpkg package name.
+identifiers of the form "package:arch" where "package" is a package name
+and "arch" a dpkg architecture.
 
 
 ## Components
@@ -210,7 +210,7 @@ field. The following fields are supported in package stanzas:
 - **APT-Candidate:** (optional, defaults to `no`). Allowed values:
   `yes`, `no`. When set to `yes`, the corresponding package is the APT
   candidate for installation among all available packages with the same
-  name and with the same architecture.
+  name and architecture.
 
 - **APT-Automatic:** (optional, defaults to `no`). Allowed values:
   `yes`, `no`. When set to `yes`, the corresponding package is marked by
@@ -236,11 +236,11 @@ An answer from the external solver to APT is either a *solution* or an
 The following invariant on **exit codes** must hold true. When the
 external solver is *able to find a solution*, it will write the solution
 to standard output and then exit with an exit code of 0. When the
-external solver is *unable to find a solution* (and s aware of that), it
-will write an error to standard output and then exit with an exit code
-of 0. An exit code other than 0 will be interpreted as a solver crash
-with no meaningful error about dependency resolution to convey to the
-user.
+external solver is *unable to find a solution* (and is aware of that),
+it will write an error to standard output and then exit with an exit
+code of 0. An exit code other than 0 will be interpreted as a solver
+crash with no meaningful error about dependency resolution to convey to
+the user.
 
 
 #### Solution
