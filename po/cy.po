@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: APT\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-06-10 15:59+0200\n"
+"POT-Creation-Date: 2014-06-18 14:12+0200\n"
 "PO-Revision-Date: 2005-06-06 13:46+0100\n"
 "Last-Translator: Dafydd Harries <daf@muse.19inch.net>\n"
 "Language-Team: Welsh <cy@pengwyn.linux.org.uk>\n"
@@ -176,7 +176,7 @@ msgstr "  Tabl Fersiynnau:"
 #: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
 #: cmdline/apt-get.cc:1586 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
-#: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:43
+#: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
 #, fuzzy, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -348,7 +348,7 @@ msgid "Couldn't find package %s"
 msgstr "Methwyd canfod pecyn %s"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
-#: apt-private/private-install.cc:855
+#: apt-private/private-install.cc:865
 #, fuzzy, c-format
 msgid "%s set to manually installed.\n"
 msgstr "ond mae %s yn mynd i gael ei sefydlu"
@@ -403,7 +403,7 @@ msgid "Skipping already downloaded file '%s'\n"
 msgstr "Yn hepgor dadbacio y ffynhonell wedi ei dadbacio eisioes yn %s\n"
 
 #: cmdline/apt-get.cc:869 cmdline/apt-get.cc:872
-#: apt-private/private-install.cc:186 apt-private/private-install.cc:189
+#: apt-private/private-install.cc:187 apt-private/private-install.cc:190
 #, fuzzy, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Does dim digon o le rhydd yn %s gennych"
@@ -436,7 +436,7 @@ msgstr "Cyrchu Ffynhonell %s\n"
 msgid "Failed to fetch some archives."
 msgstr "Methwyd cyrchu rhai archifau."
 
-#: cmdline/apt-get.cc:925 apt-private/private-install.cc:313
+#: cmdline/apt-get.cc:925 apt-private/private-install.cc:314
 msgid "Download complete and in download only mode"
 msgstr "Lawrlwytho yn gyflawn ac yn y modd lawrlwytho'n unig"
 
@@ -888,7 +888,7 @@ msgstr "Methwyd creu soced"
 msgid "Could not connect data socket, connection timed out"
 msgstr "Methwyd cysylltu soced data, goramserodd y cyslltiad"
 
-#: methods/ftp.cc:716 methods/connect.cc:116 apt-private/private-upgrade.cc:28
+#: methods/ftp.cc:716 methods/connect.cc:116
 msgid "Failed"
 msgstr "Methwyd"
 
@@ -1145,12 +1145,7 @@ msgstr "Gwall mewnol"
 msgid "Calculating upgrade... "
 msgstr "Yn Cyfrifo'r Uwchraddiad... "
 
-#: apt-private/private-upgrade.cc:30
-#, fuzzy
-msgid "Internal error, Upgrade broke stuff"
-msgstr "Gwall Mewnol, torrodd AllUpgrade bethau"
-
-#: apt-private/private-upgrade.cc:32
+#: apt-private/private-upgrade.cc:28
 msgid "Done"
 msgstr "Wedi Gorffen"
 
@@ -1236,73 +1231,73 @@ msgstr ""
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:352
-msgid "The following packages have unmet dependencies:"
-msgstr "Mae gan y pecynnau canlynol ddibyniaethau heb eu bodloni:"
-
-#: apt-private/private-output.cc:442
+#: apt-private/private-output.cc:434
 #, c-format
 msgid "but %s is installed"
 msgstr "ond mae %s wedi ei sefydlu"
 
-#: apt-private/private-output.cc:444
+#: apt-private/private-output.cc:436
 #, c-format
 msgid "but %s is to be installed"
 msgstr "ond mae %s yn mynd i gael ei sefydlu"
 
-#: apt-private/private-output.cc:451
+#: apt-private/private-output.cc:443
 msgid "but it is not installable"
 msgstr "ond ni ellir ei sefydlu"
 
-#: apt-private/private-output.cc:453
+#: apt-private/private-output.cc:445
 msgid "but it is a virtual package"
 msgstr "ond mae'n becyn rhithwir"
 
-#: apt-private/private-output.cc:456
+#: apt-private/private-output.cc:448
 msgid "but it is not installed"
 msgstr "ond nid yw wedi ei sefydlu"
 
-#: apt-private/private-output.cc:456
+#: apt-private/private-output.cc:448
 msgid "but it is not going to be installed"
 msgstr "ond nid yw'n mynd i gael ei sefydlu"
 
-#: apt-private/private-output.cc:461
+#: apt-private/private-output.cc:453
 msgid " or"
 msgstr " neu"
 
-#: apt-private/private-output.cc:490
+#: apt-private/private-output.cc:467 apt-private/private-output.cc:479
+msgid "The following packages have unmet dependencies:"
+msgstr "Mae gan y pecynnau canlynol ddibyniaethau heb eu bodloni:"
+
+#: apt-private/private-output.cc:502
 msgid "The following NEW packages will be installed:"
 msgstr "Caiff y pecynnau NEWYDD canlynol eu sefydlu:"
 
-#: apt-private/private-output.cc:516
+#: apt-private/private-output.cc:528
 msgid "The following packages will be REMOVED:"
 msgstr "Caiff y pecynnau canlynol eu TYNNU:"
 
-#: apt-private/private-output.cc:538
+#: apt-private/private-output.cc:550
 #, fuzzy
 msgid "The following packages have been kept back:"
 msgstr "Mae'r pecynnau canlynol wedi eu dal yn ôl"
 
-#: apt-private/private-output.cc:559
+#: apt-private/private-output.cc:571
 #, fuzzy
 msgid "The following packages will be upgraded:"
 msgstr "Caiff y pecynnau canlynol eu uwchraddio"
 
-#: apt-private/private-output.cc:580
+#: apt-private/private-output.cc:592
 #, fuzzy
 msgid "The following packages will be DOWNGRADED:"
 msgstr "Caiff y pecynnau canlynol eu ISRADDIO"
 
-#: apt-private/private-output.cc:600
+#: apt-private/private-output.cc:612
 msgid "The following held packages will be changed:"
 msgstr "Caiff y pecynnau wedi eu dal canlynol eu newid:"
 
-#: apt-private/private-output.cc:655
+#: apt-private/private-output.cc:667
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (oherwydd %s) "
 
-#: apt-private/private-output.cc:663
+#: apt-private/private-output.cc:675
 #, fuzzy
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
@@ -1312,27 +1307,27 @@ msgstr ""
 "NI DDYLIR gwneud hyn os nad ydych chi'n gwybod yn union beth rydych chi'n\n"
 "ei wneud!"
 
-#: apt-private/private-output.cc:694
+#: apt-private/private-output.cc:706
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu wedi uwchraddio, %lu newydd eu sefydlu, "
 
-#: apt-private/private-output.cc:698
+#: apt-private/private-output.cc:710
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu wedi ailsefydlu, "
 
-#: apt-private/private-output.cc:700
+#: apt-private/private-output.cc:712
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu wedi eu israddio, "
 
-#: apt-private/private-output.cc:702
+#: apt-private/private-output.cc:714
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu i'w tynnu a %lu heb eu uwchraddio.\n"
 
-#: apt-private/private-output.cc:706
+#: apt-private/private-output.cc:718
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu  heb eu sefydlu na tynnu'n gyflawn.\n"
@@ -1341,7 +1336,7 @@ msgstr "%lu  heb eu sefydlu na tynnu'n gyflawn.\n"
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:728
+#: apt-private/private-output.cc:740
 msgid "[Y/n]"
 msgstr ""
 
@@ -1349,21 +1344,21 @@ msgstr ""
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:734
+#: apt-private/private-output.cc:746
 msgid "[y/N]"
 msgstr ""
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:745
+#: apt-private/private-output.cc:757
 msgid "Y"
 msgstr "I"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:751
+#: apt-private/private-output.cc:763
 msgid "N"
 msgstr ""
 
-#: apt-private/private-output.cc:773 apt-pkg/cachefilter.cc:35
+#: apt-private/private-output.cc:785 apt-pkg/cachefilter.cc:35
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Gwall crynhoi patrwm - %s"
@@ -1380,6 +1375,10 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#: apt-private/private-update.cc:94
+msgid "All packages are up to date."
+msgstr ""
+
 #: apt-private/private-show.cc:156
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -1392,72 +1391,72 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-install.cc:81
+#: apt-private/private-install.cc:82
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 
-#: apt-private/private-install.cc:90
+#: apt-private/private-install.cc:91
 #, fuzzy
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Rhaid tynnu pecynnau on mae Tynnu wedi ei analluogi."
 
-#: apt-private/private-install.cc:109
+#: apt-private/private-install.cc:110
 #, fuzzy
 msgid "Internal error, Ordering didn't finish"
 msgstr "Gwall Mewnol wrth ychwanegu dargyfeiriad"
 
-#: apt-private/private-install.cc:147
+#: apt-private/private-install.cc:148
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:154
+#: apt-private/private-install.cc:155
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Mae angeyn cyrchu %sB/%sB o archifau.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:159
+#: apt-private/private-install.cc:160
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Mae angen cyrchu %sB o archifau.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:166
+#: apt-private/private-install.cc:167
 #, fuzzy, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Ar ôl dadbacio defnyddir %sB o ofod disg ychwanegol.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:171
+#: apt-private/private-install.cc:172
 #, fuzzy, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Ar ôl dadbactio caiff %sB o ofod disg ei rhyddhau.\n"
 
-#: apt-private/private-install.cc:199
+#: apt-private/private-install.cc:200
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Does dim digon o le rhydd gennych yn %s."
 
-#: apt-private/private-install.cc:209 apt-private/private-download.cc:59
+#: apt-private/private-install.cc:210 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Mae problemau a defnyddwyd -y heb --force-yes"
 
-#: apt-private/private-install.cc:215 apt-private/private-install.cc:237
+#: apt-private/private-install.cc:216 apt-private/private-install.cc:238
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "Penodwyd Syml Yn Unig ond nid yw hyn yn weithred syml."
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:219
+#: apt-private/private-install.cc:220
 msgid "Yes, do as I say!"
 msgstr "Ie, gwna fel rydw i'n dweud!"
 
-#: apt-private/private-install.cc:221
+#: apt-private/private-install.cc:222
 #, fuzzy, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -1468,19 +1467,19 @@ msgstr ""
 "Er mwyn mynd ymlaen, teipiwch y frawddeg '%s'\n"
 " ?]"
 
-#: apt-private/private-install.cc:227 apt-private/private-install.cc:245
+#: apt-private/private-install.cc:228 apt-private/private-install.cc:246
 msgid "Abort."
 msgstr "Erthylu."
 
-#: apt-private/private-install.cc:242
+#: apt-private/private-install.cc:243
 msgid "Do you want to continue?"
 msgstr "Ydych chi eisiau mynd ymlaen?"
 
-#: apt-private/private-install.cc:312
+#: apt-private/private-install.cc:313
 msgid "Some files failed to download"
 msgstr "Methodd rhai ffeiliau lawrlwytho"
 
-#: apt-private/private-install.cc:319
+#: apt-private/private-install.cc:320
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -1488,20 +1487,20 @@ msgstr ""
 "Ni ellir cyrchu rhai archifau, efallai dylwch rhedeg apt-get update, neu "
 "geidio defnyddio --fix-missing?"
 
-#: apt-private/private-install.cc:323
+#: apt-private/private-install.cc:324
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "Ni chynhelir cyfnewid cyfrwng efo --fix-missing ar hyn o bryd"
 
-#: apt-private/private-install.cc:328
+#: apt-private/private-install.cc:329
 msgid "Unable to correct missing packages."
 msgstr "Ni ellir cywiro pecynnau ar goll."
 
-#: apt-private/private-install.cc:329
+#: apt-private/private-install.cc:330
 #, fuzzy
 msgid "Aborting install."
 msgstr "Yn Erthylu'r Sefydliad."
 
-#: apt-private/private-install.cc:365
+#: apt-private/private-install.cc:366
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1511,15 +1510,15 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: apt-private/private-install.cc:369
+#: apt-private/private-install.cc:370
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr ""
 
-#: apt-private/private-install.cc:390
+#: apt-private/private-install.cc:391
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: apt-private/private-install.cc:498
+#: apt-private/private-install.cc:499
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1535,16 +1534,16 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:501 apt-private/private-install.cc:643
+#: apt-private/private-install.cc:502 apt-private/private-install.cc:653
 msgid "The following information may help to resolve the situation:"
 msgstr "Gall y wybodaeth canlynol gynorthwyo'n datrys y sefyllfa:"
 
-#: apt-private/private-install.cc:505
+#: apt-private/private-install.cc:506
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Gwall Mewnol, torrodd AllUpgrade bethau"
 
-#: apt-private/private-install.cc:512
+#: apt-private/private-install.cc:513
 #, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
@@ -1554,7 +1553,7 @@ msgid_plural ""
 msgstr[0] "Caiff y pecynnau NEWYDD canlynol eu sefydlu:"
 msgstr[1] "Caiff y pecynnau NEWYDD canlynol eu sefydlu:"
 
-#: apt-private/private-install.cc:516
+#: apt-private/private-install.cc:517
 #, fuzzy, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -1562,7 +1561,7 @@ msgid_plural ""
 msgstr[0] "Caiff y pecynnau NEWYDD canlynol eu sefydlu:"
 msgstr[1] "Caiff y pecynnau NEWYDD canlynol eu sefydlu:"
 
-#: apt-private/private-install.cc:518
+#: apt-private/private-install.cc:519
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] ""
@@ -1582,7 +1581,7 @@ msgstr ""
 "pecyn (neu penodwch ddatrys)"
 
 # FIXME: needs commas
-#: apt-private/private-install.cc:628
+#: apt-private/private-install.cc:638
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1594,59 +1593,59 @@ msgstr ""
 "ansefydlog, fod rhai pecynnau angenrheidiol heb gael eu creu eto neu\n"
 "heb gael eu symud allan o Incoming."
 
-#: apt-private/private-install.cc:649
+#: apt-private/private-install.cc:659
 msgid "Broken packages"
 msgstr "Pecynnau wedi torri"
 
-#: apt-private/private-install.cc:702
+#: apt-private/private-install.cc:712
 msgid "The following extra packages will be installed:"
 msgstr "Caiff y pecynnau canlynol ychwanegol eu sefydlu:"
 
-#: apt-private/private-install.cc:792
+#: apt-private/private-install.cc:802
 msgid "Suggested packages:"
 msgstr "Pecynnau a awgrymmir:"
 
-#: apt-private/private-install.cc:793
+#: apt-private/private-install.cc:803
 msgid "Recommended packages:"
 msgstr "Pecynnau a argymhellir:"
 
-#: apt-private/private-install.cc:815
+#: apt-private/private-install.cc:825
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "Yn hepgor %s, mae wedi ei sefydlu a nid yw uwchraddio wedi ei osod.\n"
 
-#: apt-private/private-install.cc:819
+#: apt-private/private-install.cc:829
 #, fuzzy, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr "Yn hepgor %s, mae wedi ei sefydlu a nid yw uwchraddio wedi ei osod.\n"
 
-#: apt-private/private-install.cc:831
+#: apt-private/private-install.cc:841
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "Nid yw ailsefydlu %s yn bosib, gan ni ellir ei lawrlwytho.\n"
 
-#: apt-private/private-install.cc:836
+#: apt-private/private-install.cc:846
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "Mae %s y fersiwn mwyaf newydd eisioes.\n"
 
-#: apt-private/private-install.cc:884
+#: apt-private/private-install.cc:894
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Dewiswyd fersiwn %s (%s) ar gyfer %s\n"
 
-#: apt-private/private-install.cc:889
+#: apt-private/private-install.cc:899
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Dewiswyd fersiwn %s (%s) ar gyfer %s\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-install.cc:931
+#: apt-private/private-install.cc:941
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr "Nid yw'r pecyn %s wedi ei sefydlu, felly ni chaif ei dynnu\n"
 
-#: apt-private/private-install.cc:937
+#: apt-private/private-install.cc:947
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Nid yw'r pecyn %s wedi ei sefydlu, felly ni chaif ei dynnu\n"
@@ -2238,23 +2237,23 @@ msgstr "Ni ellir ysgrifennu i %s"
 msgid "IO Error saving source cache"
 msgstr "Gwall M/A wrth gadw'r storfa ffynhonell"
 
-#: apt-pkg/edsp.cc:51 apt-pkg/edsp.cc:71
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
 msgid "Send scenario to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:234
+#: apt-pkg/edsp.cc:241
 msgid "Send request to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:313
+#: apt-pkg/edsp.cc:320
 msgid "Prepare for receiving solution"
 msgstr ""
 
-#: apt-pkg/edsp.cc:320
+#: apt-pkg/edsp.cc:327
 msgid "External solver failed without a proper error message"
 msgstr ""
 
-#: apt-pkg/edsp.cc:612 apt-pkg/edsp.cc:615 apt-pkg/edsp.cc:620
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
 msgid "Execute external solver"
 msgstr ""
 
@@ -2923,7 +2922,7 @@ msgstr ""
 msgid "%lis"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1236
+#: apt-pkg/contrib/strutl.cc:1243
 #, c-format
 msgid "Selection %s not found"
 msgstr "Ni chanfuwyd y dewis %s"
@@ -3587,7 +3586,7 @@ msgid "Problem unlinking %s"
 msgstr "Gwall wrth datgysylltu %s"
 
 # FIXME: "debian"
-#: cmdline/apt-internal-solver.cc:47
+#: cmdline/apt-internal-solver.cc:49
 #, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
@@ -3640,6 +3639,10 @@ msgstr ""
 "  -s   Defnyddio trefnu ffeil ffynhonell\n"
 "  -c=? Darllen y ffeil cyfluniad hwn\n"
 "  -o=? Gosod opsiwn cyfluniad mympwyol, ee -o dir::cache=/tmp\n"
+
+#, fuzzy
+#~ msgid "Internal error, Upgrade broke stuff"
+#~ msgstr "Gwall Mewnol, torrodd AllUpgrade bethau"
 
 #~ msgid "%s not a valid DEB package."
 #~ msgstr "Nid yw %s yn becyn DEB dilys."
