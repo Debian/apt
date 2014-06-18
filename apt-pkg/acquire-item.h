@@ -289,7 +289,8 @@ class pkgAcquire::Item : public WeakPointable
     *  \param Owner The new owner of this item.
     *  \param ExpectedHashes of the file represented by this item
     */
-   Item(pkgAcquire *Owner, HashStringList const &ExpectedHashes);
+   Item(pkgAcquire *Owner,
+        HashStringList const &ExpectedHashes=HashStringList());
 
    /** \brief Remove this item from its owner's queue by invoking
     *  pkgAcquire::Remove.
