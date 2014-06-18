@@ -639,16 +639,16 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       unsigned long const Hash = Cache.Hash(Name);
       map_ptrloc *insertAt = &Cache.HeaderP->PkgHashTable[Hash];
       while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.PkgP + *insertAt)->Name) > 0)
-	 insertAt = &(Cache.PkgP + *insertAt)->NextPackage;
-      Pkg->NextPackage = *insertAt;
+	 insertAt = &(Cache.PkgP + *insertAt)->Next;
+      Pkg->Next = *insertAt;
       *insertAt = Package;
    }
    else // Group the Packages together
    {
       // this package is the new last package
       pkgCache::PkgIterator LastPkg(Cache, Cache.PkgP + Grp->LastPackage);
-      Pkg->NextPackage = LastPkg->NextPackage;
-      LastPkg->NextPackage = Package;
+      Pkg->Next = LastPkg->Next;
+      LastPkg->Next = Package;
    }
    Grp->LastPackage = Package;
 

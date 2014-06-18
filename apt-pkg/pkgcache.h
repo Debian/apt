@@ -388,7 +388,7 @@ struct pkgCache::Package
 
    // Linked list
    /** \brief Link to the next package in the same bucket */
-   map_ptrloc NextPackage;       // Package
+   map_ptrloc Next;       // Package
    /** \brief List of all dependencies on this package */
    map_ptrloc RevDepends;        // Dependency
    /** \brief List of all "packages" this package provide */
