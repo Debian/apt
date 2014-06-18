@@ -1374,7 +1374,7 @@ bool pkgDepCache::IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator con
 
 	 // the dependency is critical, but can't be installed, so discard the candidate
 	 // as the problemresolver will trip over it otherwise trying to install it (#735967)
-	 if (Pkg->CurrentVer != 0)
+	 if (Pkg->CurrentVer != 0 && (PkgState[Pkg->ID].iFlags & Protected) != Protected)
 	    SetCandidateVersion(Pkg.CurrentVer());
 	 return false;
       }
@@ -1678,7 +1678,7 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pk
 {
    /* Not source/not automatic versions cannot be a candidate version 
       unless they are already installed */
-   VerIterator Last(*(pkgCache *)this,0);
+   VerIterator Last;
    
    for (VerIterator I = Pkg.VersionList(); I.end() == false; ++I)
    {

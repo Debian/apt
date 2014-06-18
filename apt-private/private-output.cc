@@ -94,7 +94,7 @@ bool InitOutput()							/*{{{*/
 static std::string GetArchiveSuite(pkgCacheFile &/*CacheFile*/, pkgCache::VerIterator ver) /*{{{*/
 {
    std::string suite = "";
-   if (ver && ver.FileList() && ver.FileList())
+   if (ver && ver.FileList())
    {
       pkgCache::VerFileIterator VF = ver.FileList();
       for (; VF.end() == false ; ++VF)

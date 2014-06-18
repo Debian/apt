@@ -302,7 +302,18 @@ void GenContents::DoPrint(FILE *Out,GenContents::Node *Top, char *Buf)
    DoPrint(Out,Top->BTreeRight,Buf);  
 }
 									/*}}}*/
-
+// ContentsExtract Constructor           				/*{{{*/
+ContentsExtract::ContentsExtract()
+   : Data(0), MaxSize(0), CurSize(0) 
+{
+};
+									/*}}}*/
+// ContentsExtract Destructor           				/*{{{*/
+ContentsExtract::~ContentsExtract()
+{
+   free(Data);
+};
+									/*}}}*/
 // ContentsExtract::Read - Read the archive				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
