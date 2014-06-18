@@ -264,6 +264,44 @@ static bool DumpPackage(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// ShowHashTableStats - Show stats about a hashtable			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+template<class T>
+static void ShowHashTableStats(std::string Type,
+                               T *StartP,
+                               map_ptrloc *Hashtable,
+                               unsigned long Size)
+{
+   // hashtable stats for the HashTable
+   long NumBuckets = Size;
+   long UsedBuckets = 0;
+   long UnusedBuckets = 0;
+   long LongestBucket = 0;
+   long ShortestBucket = NumBuckets;
+   for (unsigned int i=0; i < NumBuckets; ++i)
+   {
+      T *P = StartP + Hashtable[i];
+      if(P == 0 || P == StartP)
+      {
+         UnusedBuckets++;
+         continue;
+      }
+      long ThisBucketSize = 0;
+      for (; P != StartP; P = StartP + P->Next)
+         ThisBucketSize++;
+      LongestBucket = std::max(ThisBucketSize, LongestBucket);
+      ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
+      UsedBuckets += ThisBucketSize;
+   }
+   cout << "Total buckets " << Type << ": " << SizeToStr(NumBuckets) << std::endl;
+   cout << "  Unused: " << SizeToStr(UnusedBuckets) << std::endl;
+   cout << "  Used: " << UsedBuckets  << std::endl;
+   cout << "  Average entries: " << UsedBuckets/(double)NumBuckets << std::endl;
+   cout << "  Longest: " << LongestBucket << std::endl;
+   cout << "  Shortest: " << ShortestBucket << std::endl;
+}
+									/*}}}*/
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -373,7 +411,13 @@ static bool Stats(CommandLine &)
            Cache->Head().VerFileCount*Cache->Head().VerFileSz +
            Cache->Head().ProvidesCount*Cache->Head().ProvidesSz;
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
-   
+
+   // hashtable stats
+   int HashTableSize = sizeof(Cache->HeaderP->PkgHashTable)/sizeof(map_ptrloc);
+   ShowHashTableStats<pkgCache::Package>("PkgHashTable", Cache->PkgP, Cache->HeaderP->PkgHashTable, HashTableSize);
+   HashTableSize = sizeof(Cache->HeaderP->GrpHashTable)/sizeof(map_ptrloc);
+   ShowHashTableStats<pkgCache::Group>("GrpHashTable", Cache->GrpP, Cache->HeaderP->GrpHashTable, HashTableSize);
+
    return true;
 }
 									/*}}}*/

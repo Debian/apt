@@ -55,11 +55,7 @@ pkgCache::Header::Header()
    /* Whenever the structures change the major version should be bumped,
       whenever the generator changes the minor version should be bumped. */
    MajorVersion = 9;
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    MinorVersion = 2;
-#else
-   MinorVersion = 1;
-#endif
    Dirty = false;
    
    HeaderSz = sizeof(pkgCache::Header);
@@ -218,7 +214,7 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
 {
    // Look at the hash bucket
    Package *Pkg = PkgP + HeaderP->PkgHashTable[Hash(Name)];
-   for (; Pkg != PkgP; Pkg = PkgP + Pkg->NextPackage)
+   for (; Pkg != PkgP; Pkg = PkgP + Pkg->Next)
    {
       if (unlikely(Pkg->Name == 0))
 	 continue;
@@ -374,7 +370,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	   (= different packages with same calculated hash),
 	   so we need to check the name also */
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
-	     Pkg = Owner->PkgP + Pkg->NextPackage) {
+	     Pkg = Owner->PkgP + Pkg->Next) {
 		if (S->Name == Pkg->Name &&
 		    stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
@@ -423,7 +419,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::NextPkg(pkgCache::PkgIterator const
 	if (S->LastPackage == LastPkg.Index())
 		return PkgIterator(*Owner, 0);
 
-	return PkgIterator(*Owner, Owner->PkgP + LastPkg->NextPackage);
+	return PkgIterator(*Owner, Owner->PkgP + LastPkg->Next);
 }
 									/*}}}*/
 // GrpIterator::operator ++ - Postfix incr				/*{{{*/
@@ -450,7 +446,7 @@ void pkgCache::PkgIterator::operator ++(int)
 {
    // Follow the current links
    if (S != Owner->PkgP)
-      S = Owner->PkgP + S->NextPackage;
+      S = Owner->PkgP + S->Next;
 
    // Follow the hash table
    while (S == Owner->PkgP && (HashIndex+1) < (signed)_count(Owner->HeaderP->PkgHashTable))
