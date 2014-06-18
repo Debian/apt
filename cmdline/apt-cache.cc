@@ -264,6 +264,44 @@ static bool DumpPackage(CommandLine &CmdL)
    return true;
 }
 									/*}}}*/
+// ShowHashTableStats - Show stats about a hashtable			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+template<class T>
+static void ShowHashTableStats(std::string Type,
+                               T *StartP,
+                               map_ptrloc *Hashtable,
+                               unsigned long Size)
+{
+   // hashtable stats for the HashTable
+   long NumBuckets = Size;
+   long UsedBuckets = 0;
+   long UnusedBuckets = 0;
+   long LongestBucket = 0;
+   long ShortestBucket = NumBuckets;
+   for (unsigned int i=0; i < NumBuckets; ++i)
+   {
+      T *P = StartP + Hashtable[i];
+      if(P == 0 || P == StartP)
+      {
+         UnusedBuckets++;
+         continue;
+      }
+      long ThisBucketSize = 0;
+      for (; P != StartP; P = StartP + P->Next)
+         ThisBucketSize++;
+      LongestBucket = std::max(ThisBucketSize, LongestBucket);
+      ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
+      UsedBuckets += ThisBucketSize;
+   }
+   cout << "Total buckets " << Type << ": " << SizeToStr(NumBuckets) << std::endl;
+   cout << "  Unused: " << SizeToStr(UnusedBuckets) << std::endl;
+   cout << "  Used: " << UsedBuckets  << std::endl;
+   cout << "  Average entries: " << UsedBuckets/(double)NumBuckets << std::endl;
+   cout << "  Longest: " << LongestBucket << std::endl;
+   cout << "  Shortest: " << ShortestBucket << std::endl;
+}
+									/*}}}*/
 // Stats - Dump some nice statistics					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
@@ -374,61 +412,11 @@ static bool Stats(CommandLine &)
            Cache->Head().ProvidesCount*Cache->Head().ProvidesSz;
    cout << _("Total space accounted for: ") << SizeToStr(Total) << endl;
 
-   // hashtable stats for the PkgHashTable
-   long NumBuckets = sizeof(Cache->HeaderP->PkgHashTable)/sizeof(map_ptrloc);
-   long UsedBuckets = 0;
-   long UnusedBuckets = 0;
-   long LongestBucket = 0;
-   long ShortestBucket = NumBuckets;
-   for (unsigned int i=0; i < NumBuckets; ++i)
-   {
-      pkgCache::Package *Pkg = Cache->PkgP + Cache->HeaderP->PkgHashTable[i];
-      if(Pkg == 0 || Pkg == Cache->PkgP)
-      {
-         UnusedBuckets++;
-         continue;
-      }
-      long ThisBucketSize = 0;
-      for (; Pkg != Cache->PkgP; Pkg = Cache->PkgP + Pkg->NextPackage)
-         ThisBucketSize++;
-      LongestBucket = std::max(ThisBucketSize, LongestBucket);
-      ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
-      UsedBuckets += ThisBucketSize;
-   }
-   cout << "Total PkgHashTable buckets: " << SizeToStr(NumBuckets) << std::endl;
-   cout << "  Unused: " << SizeToStr(UnusedBuckets) << std::endl;
-   cout << "  Used: " << UsedBuckets  << std::endl;
-   cout << "  Average entries: " << UsedBuckets/(double)NumBuckets << std::endl;
-   cout << "  Longest: " << LongestBucket << std::endl;
-   cout << "  Shortest: " << ShortestBucket << std::endl;
-
-   // hashtable stats for the GrpHashTable
-   NumBuckets = sizeof(Cache->HeaderP->GrpHashTable)/sizeof(map_ptrloc);
-   UsedBuckets = 0;
-   UnusedBuckets = 0;
-   LongestBucket = 0;
-   ShortestBucket = NumBuckets;
-   for (unsigned int i=0; i < NumBuckets; ++i)
-   {
-      pkgCache::Group *Grp = Cache->GrpP + Cache->HeaderP->GrpHashTable[i];
-      if(Grp == 0 || Grp == Cache->GrpP)
-      {
-         UnusedBuckets++;
-         continue;
-      }
-      long ThisBucketSize = 0;
-      for (; Grp != Cache->GrpP; Grp = Cache->GrpP + Grp->Next)
-         ThisBucketSize++;
-      LongestBucket = std::max(ThisBucketSize, LongestBucket);
-      ShortestBucket = std::min(ThisBucketSize, ShortestBucket);
-      UsedBuckets += ThisBucketSize;
-   }
-   cout << "Total GrpHashTable buckets: " << SizeToStr(NumBuckets) << std::endl;
-   cout << "  Unused: " << SizeToStr(UnusedBuckets) << std::endl;
-   cout << "  Used: " << UsedBuckets  << std::endl;
-   cout << "  Average entries: " << UsedBuckets/(double)NumBuckets << std::endl;
-   cout << "  Longest: " << LongestBucket << std::endl;
-   cout << "  Shortest: " << ShortestBucket << std::endl;
+   // hashtable stats
+   int HashTableSize = sizeof(Cache->HeaderP->PkgHashTable)/sizeof(map_ptrloc);
+   ShowHashTableStats<pkgCache::Package>("PkgHashTable", Cache->PkgP, Cache->HeaderP->PkgHashTable, HashTableSize);
+   HashTableSize = sizeof(Cache->HeaderP->GrpHashTable)/sizeof(map_ptrloc);
+   ShowHashTableStats<pkgCache::Group>("GrpHashTable", Cache->GrpP, Cache->HeaderP->GrpHashTable, HashTableSize);
 
    return true;
 }
