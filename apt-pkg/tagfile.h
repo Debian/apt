@@ -62,7 +62,8 @@ class pkgTagSection
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
    bool Find(const char *Tag,unsigned int &Pos) const;
    std::string FindS(const char *Tag) const;
-   signed int FindI(const char *Tag,signed long Default = 0) const ;
+   signed int FindI(const char *Tag,signed long Default = 0) const;
+   bool FindB(const char *Tag, bool const &Default = false) const;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;

@@ -37,6 +37,11 @@ APT_PURE string indexRecords::GetSuite() const
    return this->Suite;
 }
 
+APT_PURE bool indexRecords::GetSupportsAcquireByHash() const
+{
+   return this->SupportsAcquireByHash;
+}
+
 APT_PURE bool indexRecords::CheckDist(const string MaybeDist) const
 {
    return (this->Dist == MaybeDist
@@ -86,12 +91,14 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       strprintf(ErrorText, _("No sections in Release file %s"), Filename.c_str());
       return false;
    }
+   // FIXME: find better tag name
+   SupportsAcquireByHash = Section.FindB("Acquire-By-Hash", false);
 
    Suite = Section.FindS("Suite");
    Dist = Section.FindS("Codename");
 
-   int i;
-   for (i=0;HashString::SupportedHashes()[i] != NULL; i++)
+   bool FoundHashSum = false;
+   for (int i=0;HashString::SupportedHashes()[i] != NULL; i++)
    {
       if (!Section.Find(HashString::SupportedHashes()[i], Start, End))
 	 continue;
@@ -103,16 +110,20 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
       {
 	 if (!parseSumData(Start, End, Name, Hash, Size))
 	    return false;
-	 indexRecords::checkSum *Sum = new indexRecords::checkSum;
-	 Sum->MetaKeyFilename = Name;
-	 Sum->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
-	 Sum->Size = Size;
-	 Entries[Name] = Sum;
+
+         if (Entries.find(Name) == Entries.end())
+         {
+            indexRecords::checkSum *Sum = new indexRecords::checkSum;
+            Sum->MetaKeyFilename = Name;
+            Sum->Size = Size;
+            Entries[Name] = Sum;
+         }
+         Entries[Name]->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
+         FoundHashSum = true;
       }
-      break;
    }
 
-   if(HashString::SupportedHashes()[i] == NULL)
+   if(FoundHashSum == false)
    {
       strprintf(ErrorText, _("No Hash entry in Release file %s"), Filename.c_str());
       return false;
@@ -239,6 +250,6 @@ indexRecords::indexRecords()
 }
 
 indexRecords::indexRecords(const string ExpectedDist) :
-   ExpectedDist(ExpectedDist), ValidUntil(0)
+   ExpectedDist(ExpectedDist), ValidUntil(0), SupportsAcquireByHash(false)
 {
 }
