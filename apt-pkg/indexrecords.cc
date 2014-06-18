@@ -116,6 +116,14 @@ bool indexRecords::Load(const string Filename)				/*{{{*/
             indexRecords::checkSum *Sum = new indexRecords::checkSum;
             Sum->MetaKeyFilename = Name;
             Sum->Size = Size;
+#if __GNUC__ >= 4
+       #pragma GCC diagnostic push
+       #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+            Sum->Hash = HashString(HashString::SupportedHashes()[i],Hash);
+#if __GNUC__ >= 4
+       #pragma GCC diagnostic pop
+#endif
             Entries[Name] = Sum;
          }
          Entries[Name]->Hashes.push_back(HashString(HashString::SupportedHashes()[i],Hash));
