@@ -26,6 +26,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <algorithm>
 #include <iostream>
 #include <vector>
 #include <limits>
@@ -50,7 +51,12 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
    if (Progress != NULL)
       Progress->SubProgress(Cache.Head().VersionCount, _("Send scenario to solver"));
    unsigned long p = 0;
+   std::vector<std::string> archs = APT::Configuration::getArchitectures();
    for (pkgCache::PkgIterator Pkg = Cache.PkgBegin(); Pkg.end() == false; ++Pkg)
+   {
+      std::string const arch = Pkg.Arch();
+      if (std::find(archs.begin(), archs.end(), arch) == archs.end())
+	 continue;
       for (pkgCache::VerIterator Ver = Pkg.VersionList(); Ver.end() == false; ++Ver, ++p)
       {
 	 WriteScenarioVersion(Cache, output, Pkg, Ver);
@@ -59,6 +65,7 @@ bool EDSP::WriteScenario(pkgDepCache &Cache, FILE* output, OpProgress *Progress)
 	 if (Progress != NULL && p % 100 == 0)
 	    Progress->Progress(p);
       }
+   }
    return true;
 }
 									/*}}}*/

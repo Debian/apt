@@ -23,18 +23,10 @@ static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
       return false;
 
    c0out << _("Calculating upgrade... ") << std::flush;
-   if (APT::Upgrade::Upgrade(Cache, UpgradeFlags) == false)
-   {
-      c0out << _("Failed") << std::endl;
-      ShowBroken(c1out,Cache,false);
-      return _error->Error(_("Internal error, Upgrade broke stuff"));
-   }
+   if(!DoCacheManipulationFromCommandLine(CmdL, Cache, UpgradeFlags))
+      return false;
    c0out << _("Done") << std::endl;
 
-   // parse additional cmdline pkg manipulation switches
-   if(!DoCacheManipulationFromCommandLine(CmdL, Cache))
-      return false;
-   
    return InstallPackages(Cache,true);
 }
 

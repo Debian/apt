@@ -24,9 +24,11 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-private/private-output.h>
 
 #include <string.h>
 #include <iostream>
+#include <sstream>
 #include <list>
 #include <string>
 #include <unistd.h>
@@ -171,18 +173,20 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(60, "Call problemresolver on current scenario…", output);
 
+	std::string failure;
 	if (upgrade == true) {
-		if (pkgAllUpgrade(CacheFile) == false) {
-			EDSP::WriteError("ERR_UNSOLVABLE_UPGRADE", "An upgrade error occurred", output);
-			return 0;
-		}
+		if (pkgAllUpgrade(CacheFile) == false)
+			failure = "ERR_UNSOLVABLE_UPGRADE";
 	} else if (distUpgrade == true) {
-		if (pkgDistUpgrade(CacheFile) == false) {
-			EDSP::WriteError("ERR_UNSOLVABLE_DIST_UPGRADE", "An dist-upgrade error occurred", output);
-			return 0;
-		}
-	} else if (Fix.Resolve() == false) {
-		EDSP::WriteError("ERR_UNSOLVABLE", "An error occurred", output);
+		if (pkgDistUpgrade(CacheFile) == false)
+			failure = "ERR_UNSOLVABLE_DIST_UPGRADE";
+	} else if (Fix.Resolve() == false)
+		failure = "ERR_UNSOLVABLE";
+
+	if (failure.empty() == false) {
+		std::ostringstream broken;
+		ShowBroken(broken, CacheFile, false);
+		EDSP::WriteError(failure.c_str(), broken.str(), output);
 		return 0;
 	}
 
