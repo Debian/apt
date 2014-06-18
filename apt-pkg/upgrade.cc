@@ -143,6 +143,12 @@ static bool pkgAllUpgradeNoNewPackages(pkgDepCache &Cache)
  */
 static bool pkgAllUpgradeWithNewPackages(pkgDepCache &Cache)
 {
+   std::string const solver = _config->Find("APT::Solver", "internal");
+   if (solver != "internal") {
+      OpTextProgress Prog(*_config);
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);
+   }
+
    pkgDepCache::ActionGroup group(Cache);
 
    pkgProblemResolver Fix(&Cache);

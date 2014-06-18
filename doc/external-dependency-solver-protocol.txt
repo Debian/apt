@@ -5,6 +5,14 @@ external dependency solvers. The protocol is called APT EDSP, for "APT
 External Dependency Solver Protocol".
 
 
+## Terminology
+
+In the following we use the term **architecture qualified package name**
+(or *arch-qualified package names* for short) to refer to package
+identifiers of the form "package:arch" where "package" is a package name
+and "arch" a dpkg architecture.
+
+
 ## Components
 
 - **APT**: we know this one.
@@ -61,6 +69,7 @@ configuration documentation for more, and more up to date, information.
 
 - **Dir::Bin::Solvers**: absolute path of the directory where to look for
   external solvers. Defaults to `/usr/lib/apt/solvers`.
+
 
 ## Protocol
 
@@ -132,9 +141,9 @@ The following **configuration fields** are supported in request stanzas:
 The following **action fields** are supported in request stanzas:
 
 - **Install:** (optional, defaults to the empty string) A space
-  separated list of package names, with *no version attached*, to
-  install. This field denotes a list of packages that the user wants to
-  install, usually via an APT `install` request.
+  separated list of arch-qualified package names, with *no version
+  attached*, to install. This field denotes a list of packages that the
+  user wants to install, usually via an APT `install` request.
 
 - **Remove:** (optional, defaults to the empty string) Same syntax of
   Install. This field denotes a list of packages that the user wants to
@@ -201,7 +210,7 @@ field. The following fields are supported in package stanzas:
 - **APT-Candidate:** (optional, defaults to `no`). Allowed values:
   `yes`, `no`. When set to `yes`, the corresponding package is the APT
   candidate for installation among all available packages with the same
-  name.
+  name and architecture.
 
 - **APT-Automatic:** (optional, defaults to `no`). Allowed values:
   `yes`, `no`. When set to `yes`, the corresponding package is marked by
@@ -218,6 +227,7 @@ field. The following fields are supported in package stanzas:
   Release file entry (Origin, Label, Codename, etc.) in the format of
   APT_PREFERENCES(5).
 
+
 ### Answer
 
 An answer from the external solver to APT is either a *solution* or an
@@ -226,11 +236,11 @@ An answer from the external solver to APT is either a *solution* or an
 The following invariant on **exit codes** must hold true. When the
 external solver is *able to find a solution*, it will write the solution
 to standard output and then exit with an exit code of 0. When the
-external solver is *unable to find a solution* (and s aware of that), it
-will write an error to standard output and then exit with an exit code
-of 0. An exit code other than 0 will be interpreted as a solver crash
-with no meaningful error about dependency resolution to convey to the
-user.
+external solver is *unable to find a solution* (and is aware of that),
+it will write an error to standard output and then exit with an exit
+code of 0. An exit code other than 0 will be interpreted as a solver
+crash with no meaningful error about dependency resolution to convey to
+the user.
 
 
 #### Solution

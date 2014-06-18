@@ -344,7 +344,122 @@ bool ShowList(ostream &out,string Title,string List,string VersionsList)
            Depends: libldap2 (>= 2.0.2-2) but it is not going to be installed
            Depends: libsasl7 but it is not going to be installed   
  */
-void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
+static void ShowBrokenPackage(ostream &out, pkgCacheFile * const Cache, pkgCache::PkgIterator const &Pkg, bool const Now)
+{
+   if (Now == true)
+   {
+      if ((*Cache)[Pkg].NowBroken() == false)
+	 return;
+   }
+   else
+   {
+      if ((*Cache)[Pkg].InstBroken() == false)
+	 return;
+   }
+
+   // Print out each package and the failed dependencies
+   out << " " << Pkg.FullName(true) << " :";
+   unsigned const Indent = Pkg.FullName(true).size() + 3;
+   bool First = true;
+   pkgCache::VerIterator Ver;
+
+   if (Now == true)
+      Ver = Pkg.CurrentVer();
+   else
+      Ver = (*Cache)[Pkg].InstVerIter(*Cache);
+
+   if (Ver.end() == true)
+   {
+      out << endl;
+      return;
+   }
+
+   for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
+   {
+      // Compute a single dependency element (glob or)
+      pkgCache::DepIterator Start;
+      pkgCache::DepIterator End;
+      D.GlobOr(Start,End); // advances D
+
+      if ((*Cache)->IsImportantDep(End) == false)
+	 continue;
+
+      if (Now == true)
+      {
+	 if (((*Cache)[End] & pkgDepCache::DepGNow) == pkgDepCache::DepGNow)
+	    continue;
+      }
+      else
+      {
+	 if (((*Cache)[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
+	    continue;
+      }
+
+      bool FirstOr = true;
+      while (1)
+      {
+	 if (First == false)
+	    for (unsigned J = 0; J != Indent; J++)
+	       out << ' ';
+	 First = false;
+
+	 if (FirstOr == false)
+	 {
+	    for (unsigned J = 0; J != strlen(End.DepType()) + 3; J++)
+	       out << ' ';
+	 }
+	 else
+	    out << ' ' << End.DepType() << ": ";
+	 FirstOr = false;
+
+	 out << Start.TargetPkg().FullName(true);
+
+	 // Show a quick summary of the version requirements
+	 if (Start.TargetVer() != 0)
+	    out << " (" << Start.CompType() << " " << Start.TargetVer() << ")";
+
+	 /* Show a summary of the target package if possible. In the case
+	    of virtual packages we show nothing */
+	 pkgCache::PkgIterator Targ = Start.TargetPkg();
+	 if (Targ->ProvidesList == 0)
+	 {
+	    out << ' ';
+	    pkgCache::VerIterator Ver = (*Cache)[Targ].InstVerIter(*Cache);
+	    if (Now == true)
+	       Ver = Targ.CurrentVer();
+
+	    if (Ver.end() == false)
+	    {
+	       if (Now == true)
+		  ioprintf(out,_("but %s is installed"),Ver.VerStr());
+	       else
+		  ioprintf(out,_("but %s is to be installed"),Ver.VerStr());
+	    }
+	    else
+	    {
+	       if ((*Cache)[Targ].CandidateVerIter(*Cache).end() == true)
+	       {
+		  if (Targ->ProvidesList == 0)
+		     out << _("but it is not installable");
+		  else
+		     out << _("but it is a virtual package");
+	       }
+	       else
+		  out << (Now?_("but it is not installed"):_("but it is not going to be installed"));
+	    }
+	 }
+
+	 if (Start != End)
+	    out << _(" or");
+	 out << endl;
+
+	 if (Start == End)
+	    break;
+	 ++Start;
+      }
+   }
+}
+void ShowBroken(ostream &out, CacheFile &Cache, bool const Now)
 {
    if (Cache->BrokenCount() == 0)
       return;
@@ -352,121 +467,18 @@ void ShowBroken(ostream &out,CacheFile &Cache,bool Now)
    out << _("The following packages have unmet dependencies:") << endl;
    for (unsigned J = 0; J < Cache->Head().PackageCount; J++)
    {
-      pkgCache::PkgIterator I(Cache,Cache.List[J]);
-      
-      if (Now == true)
-      {
-	 if (Cache[I].NowBroken() == false)
-	    continue;
-      }
-      else
-      {
-	 if (Cache[I].InstBroken() == false)
-	    continue;
-      }
-      
-      // Print out each package and the failed dependencies
-      out << " " << I.FullName(true) << " :";
-      unsigned const Indent = I.FullName(true).size() + 3;
-      bool First = true;
-      pkgCache::VerIterator Ver;
-      
-      if (Now == true)
-	 Ver = I.CurrentVer();
-      else
-	 Ver = Cache[I].InstVerIter(Cache);
-      
-      if (Ver.end() == true)
-      {
-	 out << endl;
-	 continue;
-      }
-      
-      for (pkgCache::DepIterator D = Ver.DependsList(); D.end() == false;)
-      {
-	 // Compute a single dependency element (glob or)
-	 pkgCache::DepIterator Start;
-	 pkgCache::DepIterator End;
-	 D.GlobOr(Start,End); // advances D
+      pkgCache::PkgIterator const I(Cache,Cache.List[J]);
+      ShowBrokenPackage(out, &Cache, I, Now);
+   }
+}
+void ShowBroken(ostream &out, pkgCacheFile &Cache, bool const Now)
+{
+   if (Cache->BrokenCount() == 0)
+      return;
 
-	 if (Cache->IsImportantDep(End) == false)
-	    continue;
-	 
-	 if (Now == true)
-	 {
-	    if ((Cache[End] & pkgDepCache::DepGNow) == pkgDepCache::DepGNow)
-	       continue;
-	 }
-	 else
-	 {
-	    if ((Cache[End] & pkgDepCache::DepGInstall) == pkgDepCache::DepGInstall)
-	       continue;
-	 }
-	 
-	 bool FirstOr = true;
-	 while (1)
-	 {
-	    if (First == false)
-	       for (unsigned J = 0; J != Indent; J++)
-		  out << ' ';
-	    First = false;
-
-	    if (FirstOr == false)
-	    {
-	       for (unsigned J = 0; J != strlen(End.DepType()) + 3; J++)
-		  out << ' ';
-	    }
-	    else
-	       out << ' ' << End.DepType() << ": ";
-	    FirstOr = false;
-	    
-	    out << Start.TargetPkg().FullName(true);
-	 
-	    // Show a quick summary of the version requirements
-	    if (Start.TargetVer() != 0)
-	       out << " (" << Start.CompType() << " " << Start.TargetVer() << ")";
-	    
-	    /* Show a summary of the target package if possible. In the case
-	       of virtual packages we show nothing */	 
-	    pkgCache::PkgIterator Targ = Start.TargetPkg();
-	    if (Targ->ProvidesList == 0)
-	    {
-	       out << ' ';
-	       pkgCache::VerIterator Ver = Cache[Targ].InstVerIter(Cache);
-	       if (Now == true)
-		  Ver = Targ.CurrentVer();
-	       	    
-	       if (Ver.end() == false)
-	       {
-		  if (Now == true)
-		     ioprintf(out,_("but %s is installed"),Ver.VerStr());
-		  else
-		     ioprintf(out,_("but %s is to be installed"),Ver.VerStr());
-	       }	       
-	       else
-	       {
-		  if (Cache[Targ].CandidateVerIter(Cache).end() == true)
-		  {
-		     if (Targ->ProvidesList == 0)
-			out << _("but it is not installable");
-		     else
-			out << _("but it is a virtual package");
-		  }		  
-		  else
-		     out << (Now?_("but it is not installed"):_("but it is not going to be installed"));
-	       }	       
-	    }
-	    
-	    if (Start != End)
-	       out << _(" or");
-	    out << endl;
-	    
-	    if (Start == End)
-	       break;
-	    ++Start;
-	 }	 
-      }	    
-   }   
+   out << _("The following packages have unmet dependencies:") << endl;
+   for (pkgCache::PkgIterator Pkg = Cache->PkgBegin(); Pkg.end() == false; ++Pkg)
+      ShowBrokenPackage(out, &Cache, Pkg, Now);
 }
 									/*}}}*/
 // ShowNew - Show packages to newly install				/*{{{*/

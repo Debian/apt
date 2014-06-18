@@ -8,49 +8,49 @@ include ../buildlib/defaults.mak
 # The apt program
 PROGRAM=apt
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt.cc
 include $(PROGRAM_H)
 
 # The apt-cache program
 PROGRAM=apt-cache
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-cache.cc
 include $(PROGRAM_H)
 
 # The apt-get program
 PROGRAM=apt-get
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-get.cc 
 include $(PROGRAM_H)
 
 # The apt-config program
 PROGRAM=apt-config
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-config.cc
 include $(PROGRAM_H)
 
 # The apt-cdrom program
 PROGRAM=apt-cdrom
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-cdrom.cc 
 include $(PROGRAM_H)
 
 # The apt-mark program
 PROGRAM=apt-mark
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-mark.cc
 include $(PROGRAM_H)
 
 # The apt-helper
 PROGRAM=apt-helper
 SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-helper.cc
 include $(PROGRAM_H)
 
@@ -75,14 +75,14 @@ include $(PROGRAM_H)
 # The apt-extracttemplates program
 PROGRAM=apt-extracttemplates
 SLIBS = -lapt-pkg -lapt-inst $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+LIB_MAKES = apt-pkg/makefile apt-inst/makefile
 SOURCE = apt-extracttemplates.cc 
 include $(PROGRAM_H)
 
 # The internal solver acting as an external
 PROGRAM=apt-internal-solver
-SLIBS = -lapt-pkg $(INTLLIBS)
-LIB_MAKES = apt-pkg/makefile
+SLIBS = -lapt-pkg -lapt-private $(INTLLIBS)
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = apt-internal-solver.cc
 include $(PROGRAM_H)
 

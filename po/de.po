@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt 0.9.2\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-06-10 15:59+0200\n"
+"POT-Creation-Date: 2014-06-18 14:12+0200\n"
 "PO-Revision-Date: 2012-06-27 10:55+0200\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
@@ -164,7 +164,7 @@ msgstr "  Versionstabelle:"
 #: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
 #: cmdline/apt-get.cc:1586 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
-#: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:43
+#: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -335,7 +335,7 @@ msgid "Couldn't find package %s"
 msgstr "Paket %s konnte nicht gefunden werden"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
-#: apt-private/private-install.cc:855
+#: apt-private/private-install.cc:865
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s wurde als manuell installiert festgelegt.\n"
@@ -400,7 +400,7 @@ msgid "Skipping already downloaded file '%s'\n"
 msgstr "Bereits heruntergeladene Datei »%s« wird übersprungen.\n"
 
 #: cmdline/apt-get.cc:869 cmdline/apt-get.cc:872
-#: apt-private/private-install.cc:186 apt-private/private-install.cc:189
+#: apt-private/private-install.cc:187 apt-private/private-install.cc:190
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "Freier Platz in %s konnte nicht bestimmt werden."
@@ -433,7 +433,7 @@ msgstr "Quelle %s wird heruntergeladen.\n"
 msgid "Failed to fetch some archives."
 msgstr "Einige Archive konnten nicht heruntergeladen werden."
 
-#: cmdline/apt-get.cc:925 apt-private/private-install.cc:313
+#: cmdline/apt-get.cc:925 apt-private/private-install.cc:314
 msgid "Download complete and in download only mode"
 msgstr "Herunterladen abgeschlossen; Nur-Herunterladen-Modus aktiv"
 
@@ -918,7 +918,7 @@ msgstr "Socket konnte nicht erzeugt werden."
 msgid "Could not connect data socket, connection timed out"
 msgstr "Daten-Socket konnte wegen Zeitüberschreitung nicht verbunden werden."
 
-#: methods/ftp.cc:716 methods/connect.cc:116 apt-private/private-upgrade.cc:28
+#: methods/ftp.cc:716 methods/connect.cc:116
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
@@ -1180,12 +1180,7 @@ msgstr "Interner Fehler"
 msgid "Calculating upgrade... "
 msgstr "Paketaktualisierung (Upgrade) wird berechnet... "
 
-#: apt-private/private-upgrade.cc:30
-#, fuzzy
-msgid "Internal error, Upgrade broke stuff"
-msgstr "Interner Fehler, AllUpgrade hat etwas beschädigt."
-
-#: apt-private/private-upgrade.cc:32
+#: apt-private/private-upgrade.cc:28
 msgid "Done"
 msgstr "Fertig"
 
@@ -1271,71 +1266,71 @@ msgstr ""
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:352
-msgid "The following packages have unmet dependencies:"
-msgstr "Die folgenden Pakete haben unerfüllte Abhängigkeiten:"
-
-#: apt-private/private-output.cc:442
+#: apt-private/private-output.cc:434
 #, c-format
 msgid "but %s is installed"
 msgstr "aber %s ist installiert"
 
-#: apt-private/private-output.cc:444
+#: apt-private/private-output.cc:436
 #, c-format
 msgid "but %s is to be installed"
 msgstr "aber %s soll installiert werden"
 
-#: apt-private/private-output.cc:451
+#: apt-private/private-output.cc:443
 msgid "but it is not installable"
 msgstr "ist aber nicht installierbar"
 
-#: apt-private/private-output.cc:453
+#: apt-private/private-output.cc:445
 msgid "but it is a virtual package"
 msgstr "ist aber ein virtuelles Paket"
 
-#: apt-private/private-output.cc:456
+#: apt-private/private-output.cc:448
 msgid "but it is not installed"
 msgstr "ist aber nicht installiert"
 
-#: apt-private/private-output.cc:456
+#: apt-private/private-output.cc:448
 msgid "but it is not going to be installed"
 msgstr "soll aber nicht installiert werden"
 
-#: apt-private/private-output.cc:461
+#: apt-private/private-output.cc:453
 msgid " or"
 msgstr " oder"
 
-#: apt-private/private-output.cc:490
+#: apt-private/private-output.cc:467 apt-private/private-output.cc:479
+msgid "The following packages have unmet dependencies:"
+msgstr "Die folgenden Pakete haben unerfüllte Abhängigkeiten:"
+
+#: apt-private/private-output.cc:502
 msgid "The following NEW packages will be installed:"
 msgstr "Die folgenden NEUEN Pakete werden installiert:"
 
-#: apt-private/private-output.cc:516
+#: apt-private/private-output.cc:528
 msgid "The following packages will be REMOVED:"
 msgstr "Die folgenden Pakete werden ENTFERNT:"
 
-#: apt-private/private-output.cc:538
+#: apt-private/private-output.cc:550
 msgid "The following packages have been kept back:"
 msgstr "Die folgenden Pakete sind zurückgehalten worden:"
 
-#: apt-private/private-output.cc:559
+#: apt-private/private-output.cc:571
 msgid "The following packages will be upgraded:"
 msgstr "Die folgenden Pakete werden aktualisiert (Upgrade):"
 
-#: apt-private/private-output.cc:580
+#: apt-private/private-output.cc:592
 msgid "The following packages will be DOWNGRADED:"
 msgstr ""
 "Die folgenden Pakete werden durch eine ÄLTERE VERSION ERSETZT (Downgrade):"
 
-#: apt-private/private-output.cc:600
+#: apt-private/private-output.cc:612
 msgid "The following held packages will be changed:"
 msgstr "Die folgenden zurückgehaltenen Pakete werden verändert:"
 
-#: apt-private/private-output.cc:655
+#: apt-private/private-output.cc:667
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (wegen %s) "
 
-#: apt-private/private-output.cc:663
+#: apt-private/private-output.cc:675
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -1343,27 +1338,27 @@ msgstr ""
 "WARNUNG: Die folgenden essentiellen Pakete werden entfernt.\n"
 "Dies sollte NICHT geschehen, außer Sie wissen genau, was Sie tun!"
 
-#: apt-private/private-output.cc:694
+#: apt-private/private-output.cc:706
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu aktualisiert, %lu neu installiert, "
 
-#: apt-private/private-output.cc:698
+#: apt-private/private-output.cc:710
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu erneut installiert, "
 
-#: apt-private/private-output.cc:700
+#: apt-private/private-output.cc:712
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu durch eine ältere Version ersetzt, "
 
-#: apt-private/private-output.cc:702
+#: apt-private/private-output.cc:714
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu zu entfernen und %lu nicht aktualisiert.\n"
 
-#: apt-private/private-output.cc:706
+#: apt-private/private-output.cc:718
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu nicht vollständig installiert oder entfernt.\n"
@@ -1372,7 +1367,7 @@ msgstr "%lu nicht vollständig installiert oder entfernt.\n"
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:728
+#: apt-private/private-output.cc:740
 msgid "[Y/n]"
 msgstr "[J/n]"
 
@@ -1380,21 +1375,21 @@ msgstr "[J/n]"
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:734
+#: apt-private/private-output.cc:746
 msgid "[y/N]"
 msgstr "[j/N]"
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:745
+#: apt-private/private-output.cc:757
 msgid "Y"
 msgstr "J"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:751
+#: apt-private/private-output.cc:763
 msgid "N"
 msgstr "N"
 
-#: apt-private/private-output.cc:773 apt-pkg/cachefilter.cc:35
+#: apt-private/private-output.cc:785 apt-pkg/cachefilter.cc:35
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "Fehler beim Kompilieren eines regulären Ausdrucks - %s"
@@ -1411,6 +1406,10 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#: apt-private/private-update.cc:94
+msgid "All packages are up to date."
+msgstr ""
+
 #: apt-private/private-show.cc:156
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -1423,19 +1422,19 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-install.cc:81
+#: apt-private/private-install.cc:82
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "Interner Fehler, InstallPackages mit defekten Paketen aufgerufen!"
 
-#: apt-private/private-install.cc:90
+#: apt-private/private-install.cc:91
 msgid "Packages need to be removed but remove is disabled."
 msgstr "Pakete müssen entfernt werden, aber Entfernen ist abgeschaltet."
 
-#: apt-private/private-install.cc:109
+#: apt-private/private-install.cc:110
 msgid "Internal error, Ordering didn't finish"
 msgstr "Interner Fehler, Anordnung beendete nicht"
 
-#: apt-private/private-install.cc:147
+#: apt-private/private-install.cc:148
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "Wie merkwürdig ... die Größen haben nicht übereingestimmt; schreiben Sie "
@@ -1443,52 +1442,52 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:154
+#: apt-private/private-install.cc:155
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "Es müssen noch %sB von %sB an Archiven heruntergeladen werden.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:159
+#: apt-private/private-install.cc:160
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "Es müssen %sB an Archiven heruntergeladen werden.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:166
+#: apt-private/private-install.cc:167
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "Nach dieser Operation werden %sB Plattenplatz zusätzlich benutzt.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:171
+#: apt-private/private-install.cc:172
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "Nach dieser Operation werden %sB Plattenplatz freigegeben.\n"
 
-#: apt-private/private-install.cc:199
+#: apt-private/private-install.cc:200
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "Sie haben nicht genug Platz in %s."
 
-#: apt-private/private-install.cc:209 apt-private/private-download.cc:59
+#: apt-private/private-install.cc:210 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "Es gab Probleme und -y wurde ohne --force-yes verwendet."
 
-#: apt-private/private-install.cc:215 apt-private/private-install.cc:237
+#: apt-private/private-install.cc:216 apt-private/private-install.cc:238
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "»Nur triviale« angegeben, aber dies ist keine triviale Operation."
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:219
+#: apt-private/private-install.cc:220
 msgid "Yes, do as I say!"
 msgstr "Ja, tue was ich sage!"
 
-#: apt-private/private-install.cc:221
+#: apt-private/private-install.cc:222
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -1499,19 +1498,19 @@ msgstr ""
 "Zum Fortfahren geben Sie bitte »%s« ein.\n"
 " ?] "
 
-#: apt-private/private-install.cc:227 apt-private/private-install.cc:245
+#: apt-private/private-install.cc:228 apt-private/private-install.cc:246
 msgid "Abort."
 msgstr "Abbruch."
 
-#: apt-private/private-install.cc:242
+#: apt-private/private-install.cc:243
 msgid "Do you want to continue?"
 msgstr "Möchten Sie fortfahren?"
 
-#: apt-private/private-install.cc:312
+#: apt-private/private-install.cc:313
 msgid "Some files failed to download"
 msgstr "Einige Dateien konnten nicht heruntergeladen werden."
 
-#: apt-private/private-install.cc:319
+#: apt-private/private-install.cc:320
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -1519,19 +1518,19 @@ msgstr ""
 "Einige Archive konnten nicht heruntergeladen werden; vielleicht »apt-get "
 "update« ausführen oder mit »--fix-missing« probieren?"
 
-#: apt-private/private-install.cc:323
+#: apt-private/private-install.cc:324
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing und Wechselmedien werden derzeit nicht unterstützt."
 
-#: apt-private/private-install.cc:328
+#: apt-private/private-install.cc:329
 msgid "Unable to correct missing packages."
 msgstr "Fehlende Pakete konnten nicht korrigiert werden."
 
-#: apt-private/private-install.cc:329
+#: apt-private/private-install.cc:330
 msgid "Aborting install."
 msgstr "Installation abgebrochen."
 
-#: apt-private/private-install.cc:365
+#: apt-private/private-install.cc:366
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1545,16 +1544,16 @@ msgstr[1] ""
 "Die folgenden Pakete verschwanden von Ihrem System, da alle\n"
 "Dateien von anderen Paketen überschrieben wurden:"
 
-#: apt-private/private-install.cc:369
+#: apt-private/private-install.cc:370
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "Hinweis: Dies wird automatisch und absichtlich von dpkg durchgeführt."
 
-#: apt-private/private-install.cc:390
+#: apt-private/private-install.cc:391
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 "Es soll nichts gelöscht werden, AutoRemover kann nicht gestartet werden."
 
-#: apt-private/private-install.cc:498
+#: apt-private/private-install.cc:499
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1573,16 +1572,16 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:501 apt-private/private-install.cc:643
+#: apt-private/private-install.cc:502 apt-private/private-install.cc:653
 msgid "The following information may help to resolve the situation:"
 msgstr ""
 "Die folgenden Informationen helfen Ihnen vielleicht, die Situation zu lösen:"
 
-#: apt-private/private-install.cc:505
+#: apt-private/private-install.cc:506
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "Interner Fehler, AutoRemover hat etwas beschädigt."
 
-#: apt-private/private-install.cc:512
+#: apt-private/private-install.cc:513
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -1595,7 +1594,7 @@ msgstr[1] ""
 "Die folgenden Pakete wurden automatisch installiert und werden nicht mehr "
 "benötigt:"
 
-#: apt-private/private-install.cc:516
+#: apt-private/private-install.cc:517
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -1605,7 +1604,7 @@ msgstr[0] ""
 msgstr[1] ""
 "%lu Pakete wurden automatisch installiert und werden nicht mehr benötigt.\n"
 
-#: apt-private/private-install.cc:518
+#: apt-private/private-install.cc:519
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "Verwenden Sie »apt-get autoremove«, um es zu entfernen."
@@ -1623,7 +1622,7 @@ msgstr ""
 "Unerfüllte Abhängigkeiten. Versuchen Sie »apt-get -f install« ohne Angabe "
 "eines Pakets (oder geben Sie eine Lösung an)."
 
-#: apt-private/private-install.cc:628
+#: apt-private/private-install.cc:638
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1635,67 +1634,67 @@ msgstr ""
 "Unstable-Distribution verwenden, dass einige erforderliche Pakete noch\n"
 "nicht erstellt wurden oder Incoming noch nicht verlassen haben."
 
-#: apt-private/private-install.cc:649
+#: apt-private/private-install.cc:659
 msgid "Broken packages"
 msgstr "Beschädigte Pakete"
 
-#: apt-private/private-install.cc:702
+#: apt-private/private-install.cc:712
 msgid "The following extra packages will be installed:"
 msgstr "Die folgenden zusätzlichen Pakete werden installiert:"
 
-#: apt-private/private-install.cc:792
+#: apt-private/private-install.cc:802
 msgid "Suggested packages:"
 msgstr "Vorgeschlagene Pakete:"
 
-#: apt-private/private-install.cc:793
+#: apt-private/private-install.cc:803
 msgid "Recommended packages:"
 msgstr "Empfohlene Pakete:"
 
-#: apt-private/private-install.cc:815
+#: apt-private/private-install.cc:825
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "%s wird übersprungen; es ist schon installiert und ein Upgrade ist nicht "
 "angefordert.\n"
 
-#: apt-private/private-install.cc:819
+#: apt-private/private-install.cc:829
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "%s wird übersprungen; es ist nicht installiert und lediglich Upgrades sind "
 "angefordert.\n"
 
-#: apt-private/private-install.cc:831
+#: apt-private/private-install.cc:841
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr ""
 "Erneute Installation von %s ist nicht möglich,\n"
 "es kann nicht heruntergeladen werden.\n"
 
-#: apt-private/private-install.cc:836
+#: apt-private/private-install.cc:846
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s ist schon die neueste Version.\n"
 
-#: apt-private/private-install.cc:884
+#: apt-private/private-install.cc:894
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "Version »%s« (%s) für »%s« gewählt.\n"
 
-#: apt-private/private-install.cc:889
+#: apt-private/private-install.cc:899
 #, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "Version »%s« (%s) für »%s« gewählt aufgrund von »%s«.\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-install.cc:931
+#: apt-private/private-install.cc:941
 #, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr ""
 "Paket »%s« ist nicht installiert, wird also auch nicht entfernt. Meinten Sie "
 "»%s«?\n"
 
-#: apt-private/private-install.cc:937
+#: apt-private/private-install.cc:947
 #, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "Paket »%s« ist nicht installiert, wird also auch nicht entfernt.\n"
@@ -2290,24 +2289,24 @@ msgstr "Schreiben nach %s nicht möglich"
 msgid "IO Error saving source cache"
 msgstr "E/A-Fehler beim Speichern des Quell-Zwischenspeichers"
 
-#: apt-pkg/edsp.cc:51 apt-pkg/edsp.cc:71
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
 msgid "Send scenario to solver"
 msgstr "Szenario an Problemlöser senden"
 
-#: apt-pkg/edsp.cc:234
+#: apt-pkg/edsp.cc:241
 msgid "Send request to solver"
 msgstr "Anfrage an Problemlöser senden"
 
-#: apt-pkg/edsp.cc:313
+#: apt-pkg/edsp.cc:320
 msgid "Prepare for receiving solution"
 msgstr "Vorbereiten, eine Lösung zu erhalten"
 
-#: apt-pkg/edsp.cc:320
+#: apt-pkg/edsp.cc:327
 msgid "External solver failed without a proper error message"
 msgstr ""
 "Externer Problemlöser ist ohne ordnungsgemäße Fehlermeldung fehlgeschlagen."
 
-#: apt-pkg/edsp.cc:612 apt-pkg/edsp.cc:615 apt-pkg/edsp.cc:620
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
 msgid "Execute external solver"
 msgstr "Externen Problemlöser ausführen"
 
@@ -3007,7 +3006,7 @@ msgstr "%li min %li s"
 msgid "%lis"
 msgstr "%li s"
 
-#: apt-pkg/contrib/strutl.cc:1236
+#: apt-pkg/contrib/strutl.cc:1243
 #, c-format
 msgid "Selection %s not found"
 msgstr "Auswahl %s nicht gefunden"
@@ -3681,7 +3680,7 @@ msgstr "Lesevorgang während der MD5-Berechnung fehlgeschlagen"
 msgid "Problem unlinking %s"
 msgstr "Problem beim Entfernen (unlink) von %s"
 
-#: cmdline/apt-internal-solver.cc:47
+#: cmdline/apt-internal-solver.cc:49
 msgid ""
 "Usage: apt-internal-solver\n"
 "\n"
@@ -3734,6 +3733,10 @@ msgstr ""
 "  -s   Quelldateisortierung benutzen\n"
 "  -c=? Diese Konfigurationsdatei lesen\n"
 "  -o=? Eine beliebige Konfigurationsoption setzen, z.B. -o dir::cache=/tmp\n"
+
+#, fuzzy
+#~ msgid "Internal error, Upgrade broke stuff"
+#~ msgstr "Interner Fehler, AllUpgrade hat etwas beschädigt."
 
 #~ msgid "%s not a valid DEB package."
 #~ msgstr "%s ist kein gültiges DEB-Paket."

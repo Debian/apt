@@ -86,7 +86,7 @@ bool DoUpdate(CommandLine &CmdL)
          if (I->CurrentVer != 0 && state.Upgradable())
             upgradable++;
       }
-      const char *msg = ngettext(
+      const char *msg = P_(
          "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n",
          "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n",
          upgradable);

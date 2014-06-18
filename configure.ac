@@ -6,10 +6,10 @@ dnl code more portable
 
 dnl You MUST have an environment that has all the POSIX functions and
 dnl some of the more popular bsd/sysv ones (like select). You'll also
-dnl need a C++ compiler that is semi-standard conformant, exceptions are 
+dnl need a C++ compiler that is semi-standard conformant, exceptions are
 dnl not used but STL is.
 
-dnl 'make -f Makefile startup' will generate the configure file from 
+dnl 'make -f Makefile startup' will generate the configure file from
 dnl configure.ac correctly and can be run at any time
 
 AC_PREREQ(2.50)
@@ -18,7 +18,7 @@ AC_CONFIG_AUX_DIR(buildlib)
 AC_CONFIG_HEADER(include/config.h:buildlib/config.h.in include/apti18n.h:buildlib/apti18n.h.in)
 
 PACKAGE="apt"
-PACKAGE_VERSION="1.0.4"
+PACKAGE_VERSION="1.0.5"
 PACKAGE_MAIL="APT Development Team <deity@lists.debian.org>"
 AC_DEFINE_UNQUOTED(PACKAGE,"$PACKAGE")
 AC_DEFINE_UNQUOTED(PACKAGE_VERSION,"$PACKAGE_VERSION")
@@ -53,7 +53,7 @@ AC_SEARCH_LIBS(connect,socket)
 SOCKETLIBS="$LIBS"
 AC_SUBST(SOCKETLIBS)
 LIBS="$SAVE_LIBS"
- 
+
 dnl Checks for pthread -- disabled due to glibc bugs jgg
 dnl AC_CHECK_LIB(pthread, pthread_create,[AC_DEFINE(HAVE_PTHREAD) PTHREADLIB="-lpthread"])
 AC_SUBST(PTHREADLIB)
@@ -88,6 +88,13 @@ AC_CHECK_LIB(curl, curl_easy_init,
         curl_ok=no)],
      AC_MSG_ERROR([failed: I need CURL due https support]),
 )
+
+AC_LANG_PUSH([C++])
+AC_CHECK_HEADER(gtest/gtest.h,,
+     AC_MSG_ERROR([failed: I need gtest to build tests]),
+)
+AC_LANG_POP([C++])
+
 
 AC_SUBST(BDBLIB)
 
@@ -160,7 +167,7 @@ dnl HP-UX needs -d_XOPEN_SOURCE_EXTENDED for h_errno
 AC_MSG_CHECKING(for h_errno)
 AC_EGREP_HEADER(h_errno, netdb.h, [AC_MSG_RESULT(normal)],
    [CPPFLAGS="$CPPFLAGS -D_XOPEN_SOURCE_EXTENDED"
-    AC_EGREP_HEADER(h_errno, netdb.h, 
+    AC_EGREP_HEADER(h_errno, netdb.h,
        [AC_MSG_RESULT(needs _XOPEN_SOURCE_EXTENDED)],
        [AC_MSG_ERROR("not found.")])
    ])
