@@ -1,3 +1,35 @@
+apt (1.0.5) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * fix autopkgtest tests
+  * fix test-apt-ftparchive-cachedb-lp1274466 and apt-internal-solver tests
+  * test/integration/test-essential-force-loopbreak: fix on non-amd64 systems
+  * Tell the user if no updates are available after apt update (Closes: #751388)
+
+  [ Michele Orrù ]
+  * Check for gtest's header before building.
+
+  [ Chris Leick ]
+  * Updated translation of german documentation
+
+  [ Konstantin Manna ]
+  * fix two german manpage spelling mistakes (Closes: 751635)
+  * add missing comma in SEE ALSO of apt-secure manpage (Closes: 748506)
+
+  [ Fredrik Fornwall ]
+  * use P_ instead of ngettext to compiling with --disable-nls (Closes: 751857)
+
+  [ David Kalnischkies ]
+  * don't send pkg from an unknown architecture via EDSP
+  * fix SubstVar to be usable as a replace_all method
+  * show our broken packages message in 'apt' solver
+  * do not call resolver twice on (dist-)upgrade
+
+  [ Stefano Zacchiroli ]
+  * EDSP doc: clarify that Install/Remove packages are arch-qualified
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 18 Jun 2014 13:35:13 +0200
+
 apt (1.0.4) unstable; urgency=low
 
   [ Michael Vogt ]

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-06-10 15:59+0200\n"
+"POT-Creation-Date: 2014-06-18 14:12+0200\n"
 "PO-Revision-Date: 2006-06-12 14:35+0545\n"
 "Last-Translator: Shiva Pokharel <pokharelshiva@hotmail.com>\n"
 "Language-Team: Nepali <info@mpp.org.np>\n"
@@ -161,7 +161,7 @@ msgstr "  संस्करण तालिका:"
 #: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
 #: cmdline/apt-get.cc:1586 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
 #: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
-#: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:43
+#: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
 #, fuzzy, c-format
 msgid "%s %s for %s compiled on %s %s\n"
@@ -330,7 +330,7 @@ msgid "Couldn't find package %s"
 msgstr "प्याकेज फेला पार्न सकिएन  %s"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
-#: apt-private/private-install.cc:855
+#: apt-private/private-install.cc:865
 #, fuzzy, c-format
 msgid "%s set to manually installed.\n"
 msgstr "तर %s स्थापना हुनुपर्यो"
@@ -384,7 +384,7 @@ msgid "Skipping already downloaded file '%s'\n"
 msgstr "पहिल्यै डाउनलोड भएका फाइलहरु फड्काइदैछ '%s'\n"
 
 #: cmdline/apt-get.cc:869 cmdline/apt-get.cc:872
-#: apt-private/private-install.cc:186 apt-private/private-install.cc:189
+#: apt-private/private-install.cc:187 apt-private/private-install.cc:190
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr " %s मा खाली ठाऊँ निर्धारण गर्न सकिएन"
@@ -417,7 +417,7 @@ msgstr "स्रोत फड्काउनुहोस् %s\n"
 msgid "Failed to fetch some archives."
 msgstr "केही संग्रह फड्काउन असफल भयो ।"
 
-#: cmdline/apt-get.cc:925 apt-private/private-install.cc:313
+#: cmdline/apt-get.cc:925 apt-private/private-install.cc:314
 msgid "Download complete and in download only mode"
 msgstr "डाउनलोड समाप्त भयो र डाउनलोडमा मोड मात्रै छ"
 
@@ -851,7 +851,7 @@ msgstr "एउटा सकेट सिर्जना गर्न सके�
 msgid "Could not connect data socket, connection timed out"
 msgstr "डेटा सकेट जडान गर्न सकिएन, जडान समय सकियो"
 
-#: methods/ftp.cc:716 methods/connect.cc:116 apt-private/private-upgrade.cc:28
+#: methods/ftp.cc:716 methods/connect.cc:116
 msgid "Failed"
 msgstr "असफल भयो"
 
@@ -1098,12 +1098,7 @@ msgstr "आन्तरिक त्रुटि"
 msgid "Calculating upgrade... "
 msgstr "स्तर वृद्धि गणना गरिदैछ..."
 
-#: apt-private/private-upgrade.cc:30
-#, fuzzy
-msgid "Internal error, Upgrade broke stuff"
-msgstr "आन्तरिक त्रुटि,सबै स्तरवृद्धिले उत्तम गुण नष्ट गर्दछ"
-
-#: apt-private/private-upgrade.cc:32
+#: apt-private/private-upgrade.cc:28
 msgid "Done"
 msgstr "काम भयो"
 
@@ -1189,70 +1184,70 @@ msgstr ""
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:352
-msgid "The following packages have unmet dependencies:"
-msgstr "निम्न प्याकेजहरुले निर्भरताहरू भेटेनन्:"
-
-#: apt-private/private-output.cc:442
+#: apt-private/private-output.cc:434
 #, c-format
 msgid "but %s is installed"
 msgstr "तर %s स्थापना भयो"
 
-#: apt-private/private-output.cc:444
+#: apt-private/private-output.cc:436
 #, c-format
 msgid "but %s is to be installed"
 msgstr "तर %s स्थापना हुनुपर्यो"
 
-#: apt-private/private-output.cc:451
+#: apt-private/private-output.cc:443
 msgid "but it is not installable"
 msgstr "तर यो स्थापनायोग्य छैन"
 
-#: apt-private/private-output.cc:453
+#: apt-private/private-output.cc:445
 msgid "but it is a virtual package"
 msgstr "तर यो अवास्तविक प्याकेज होइन"
 
-#: apt-private/private-output.cc:456
+#: apt-private/private-output.cc:448
 msgid "but it is not installed"
 msgstr "तर यो स्थापना भएन"
 
-#: apt-private/private-output.cc:456
+#: apt-private/private-output.cc:448
 msgid "but it is not going to be installed"
 msgstr "तर यो स्थापना हुन गइरहेको छैन"
 
-#: apt-private/private-output.cc:461
+#: apt-private/private-output.cc:453
 msgid " or"
 msgstr "वा"
 
-#: apt-private/private-output.cc:490
+#: apt-private/private-output.cc:467 apt-private/private-output.cc:479
+msgid "The following packages have unmet dependencies:"
+msgstr "निम्न प्याकेजहरुले निर्भरताहरू भेटेनन्:"
+
+#: apt-private/private-output.cc:502
 msgid "The following NEW packages will be installed:"
 msgstr "निम्न नयाँ प्याकेजहरू स्थापना हुनेछन्:"
 
-#: apt-private/private-output.cc:516
+#: apt-private/private-output.cc:528
 msgid "The following packages will be REMOVED:"
 msgstr "निम्न प्याकेजहरू हटाइनेछन्:"
 
-#: apt-private/private-output.cc:538
+#: apt-private/private-output.cc:550
 msgid "The following packages have been kept back:"
 msgstr "निम्न प्याकेजहरू पछाडि राखिनेछन्:"
 
-#: apt-private/private-output.cc:559
+#: apt-private/private-output.cc:571
 msgid "The following packages will be upgraded:"
 msgstr "निम्न प्याकेजहरू स्तर वृद्धि हुनेछन्:"
 
-#: apt-private/private-output.cc:580
+#: apt-private/private-output.cc:592
 msgid "The following packages will be DOWNGRADED:"
 msgstr "निम्न प्याकेजहरू स्तरकम गरिनेछन्:"
 
-#: apt-private/private-output.cc:600
+#: apt-private/private-output.cc:612
 msgid "The following held packages will be changed:"
 msgstr "निम्न भइरहेको प्याकेजहरू परिवर्तन हुनेछैन:"
 
-#: apt-private/private-output.cc:655
+#: apt-private/private-output.cc:667
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (%s कारणले) "
 
-#: apt-private/private-output.cc:663
+#: apt-private/private-output.cc:675
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -1260,27 +1255,27 @@ msgstr ""
 "चेतावनी: निम्न आवश्यक प्याकेजहरू हटाइनेछन् ।\n"
 "तपाईँ के गरिरहेको यकिन नभएसम्म यो काम गरिने छैन!"
 
-#: apt-private/private-output.cc:694
+#: apt-private/private-output.cc:706
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu स्तर वृद्धि गरियो, %lu नयाँ स्थापना भयो, "
 
-#: apt-private/private-output.cc:698
+#: apt-private/private-output.cc:710
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu पुन: स्थापना गरियो, "
 
-#: apt-private/private-output.cc:700
+#: apt-private/private-output.cc:712
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu स्तर कम गरियो, "
 
-#: apt-private/private-output.cc:702
+#: apt-private/private-output.cc:714
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu हटाउन र %lu स्तर वृद्धि गरिएन ।\n"
 
-#: apt-private/private-output.cc:706
+#: apt-private/private-output.cc:718
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu पूर्णरुपले स्थापना भएन र हटाइएन ।\n"
@@ -1289,7 +1284,7 @@ msgstr "%lu पूर्णरुपले स्थापना भएन र �
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:728
+#: apt-private/private-output.cc:740
 msgid "[Y/n]"
 msgstr ""
 
@@ -1297,21 +1292,21 @@ msgstr ""
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:734
+#: apt-private/private-output.cc:746
 msgid "[y/N]"
 msgstr ""
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:745
+#: apt-private/private-output.cc:757
 msgid "Y"
 msgstr ""
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:751
+#: apt-private/private-output.cc:763
 msgid "N"
 msgstr ""
 
-#: apt-private/private-output.cc:773 apt-pkg/cachefilter.cc:35
+#: apt-private/private-output.cc:785 apt-pkg/cachefilter.cc:35
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "संकलन त्रुटि रिजेक्स गर्नुहोस् - %s"
@@ -1328,6 +1323,10 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
+#: apt-private/private-update.cc:94
+msgid "All packages are up to date."
+msgstr ""
+
 #: apt-private/private-show.cc:156
 #, c-format
 msgid "There is %i additional record. Please use the '-a' switch to see it"
@@ -1340,70 +1339,70 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-install.cc:81
+#: apt-private/private-install.cc:82
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "आन्तरिक त्रुटि, स्थापना प्याकेजहरुलाई भाँचिएको प्याकेज भनिन्थ्यो!"
 
-#: apt-private/private-install.cc:90
+#: apt-private/private-install.cc:91
 msgid "Packages need to be removed but remove is disabled."
 msgstr "प्याकेजहरू हट्न चाहदैछन् तर हटाई अक्षम भइरहेछ ।"
 
-#: apt-private/private-install.cc:109
+#: apt-private/private-install.cc:110
 msgid "Internal error, Ordering didn't finish"
 msgstr "आन्तरिक त्रुटि, आदेश समाप्त भएको छैन"
 
-#: apt-private/private-install.cc:147
+#: apt-private/private-install.cc:148
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr "कस्तो नमिलेको.. साइजहरू मेल खाएन, apt@packages.debian.org इमेल गर्नुहोस्"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:154
+#: apt-private/private-install.cc:155
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "संग्रहहरुको %sB/%sB प्राप्त गर्न आवश्यक ।\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:159
+#: apt-private/private-install.cc:160
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "संग्रहहरुको %sB प्राप्त गर्न आवश्यक ।\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:166
+#: apt-private/private-install.cc:167
 #, fuzzy, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "अनप्याक गरिसके पछि थप डिस्क खाली ठाउँको %sB प्रयोग हुनेछ ।\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:171
+#: apt-private/private-install.cc:172
 #, fuzzy, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "%sB अनप्याक गरिसके पछि डिस्क खाली ठाउँ खाली हुनेछ ।\n"
 
-#: apt-private/private-install.cc:199
+#: apt-private/private-install.cc:200
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "तपाईँ संग %s मा पर्याप्त खाली ठाऊँ छैन ।"
 
-#: apt-private/private-install.cc:209 apt-private/private-download.cc:59
+#: apt-private/private-install.cc:210 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "त्यहाँ समस्याहरू छन् र हुन्छलाई जोड नगरिकन -y को प्रयोग भयो"
 
-#: apt-private/private-install.cc:215 apt-private/private-install.cc:237
+#: apt-private/private-install.cc:216 apt-private/private-install.cc:238
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "त्रिभियल मात्र निर्दिष्ट गरिएको छ तर यो त्रिभियल सञ्चालन होइन ।"
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:219
+#: apt-private/private-install.cc:220
 msgid "Yes, do as I say!"
 msgstr "हो,मैले भने जस्तै गर्नुहोस्!"
 
-#: apt-private/private-install.cc:221
+#: apt-private/private-install.cc:222
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -1414,20 +1413,20 @@ msgstr ""
 "निरन्तरता दिन '%s' वाक्यांशमा टाइप गर्नुहोस् \n"
 " ?] "
 
-#: apt-private/private-install.cc:227 apt-private/private-install.cc:245
+#: apt-private/private-install.cc:228 apt-private/private-install.cc:246
 msgid "Abort."
 msgstr "परित्याग गर्नुहोस् ।"
 
-#: apt-private/private-install.cc:242
+#: apt-private/private-install.cc:243
 #, fuzzy
 msgid "Do you want to continue?"
 msgstr "के तपाईँ निरन्तरता दिन चाहनुहुन्छ [Y/n]? "
 
-#: apt-private/private-install.cc:312
+#: apt-private/private-install.cc:313
 msgid "Some files failed to download"
 msgstr "केही फाइलहरू डाउनलोड गर्न असफल भयो"
 
-#: apt-private/private-install.cc:319
+#: apt-private/private-install.cc:320
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -1435,19 +1434,19 @@ msgstr ""
 "केही संग्रहहरू तान्न असक्षम भयो,apt-get अद्यावधिक चलिरहेछ वा हराइरहेको --fix-संगै प्रयास "
 "गर्नुहुन्छ ?"
 
-#: apt-private/private-install.cc:323
+#: apt-private/private-install.cc:324
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "हराइरहेको --fix-र स्वाप भइरहेको मेडिया हाल समर्थित भइरहेको छैन"
 
-#: apt-private/private-install.cc:328
+#: apt-private/private-install.cc:329
 msgid "Unable to correct missing packages."
 msgstr "हराइरहेको प्याकेजहरू सुधार्न असक्षम भयो ।"
 
-#: apt-private/private-install.cc:329
+#: apt-private/private-install.cc:330
 msgid "Aborting install."
 msgstr "स्थापना परित्याग गरिदैछ ।"
 
-#: apt-private/private-install.cc:365
+#: apt-private/private-install.cc:366
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1457,15 +1456,15 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: apt-private/private-install.cc:369
+#: apt-private/private-install.cc:370
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr ""
 
-#: apt-private/private-install.cc:390
+#: apt-private/private-install.cc:391
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: apt-private/private-install.cc:498
+#: apt-private/private-install.cc:499
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1481,16 +1480,16 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:501 apt-private/private-install.cc:643
+#: apt-private/private-install.cc:502 apt-private/private-install.cc:653
 msgid "The following information may help to resolve the situation:"
 msgstr "निम्न सूचनाले अवस्थालाई हल गर्न मद्दत गर्नेछ: "
 
-#: apt-private/private-install.cc:505
+#: apt-private/private-install.cc:506
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "आन्तरिक त्रुटि,समस्या हलकर्ताले उत्तम गुण भाँच्यो "
 
-#: apt-private/private-install.cc:512
+#: apt-private/private-install.cc:513
 #, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
@@ -1500,7 +1499,7 @@ msgid_plural ""
 msgstr[0] "निम्न नयाँ प्याकेजहरू स्थापना हुनेछन्:"
 msgstr[1] "निम्न नयाँ प्याकेजहरू स्थापना हुनेछन्:"
 
-#: apt-private/private-install.cc:516
+#: apt-private/private-install.cc:517
 #, fuzzy, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -1508,7 +1507,7 @@ msgid_plural ""
 msgstr[0] "निम्न नयाँ प्याकेजहरू स्थापना हुनेछन्:"
 msgstr[1] "निम्न नयाँ प्याकेजहरू स्थापना हुनेछन्:"
 
-#: apt-private/private-install.cc:518
+#: apt-private/private-install.cc:519
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] ""
@@ -1526,7 +1525,7 @@ msgstr ""
 "नभेटिएका निर्भरताहरू । प्याकेजहरू बिना 'apt-get -f install' प्रयास गर्नुहोस् ( वा "
 "समाधान निर्दिष्ट गर्नुहोस्) ।"
 
-#: apt-private/private-install.cc:628
+#: apt-private/private-install.cc:638
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1539,59 +1538,59 @@ msgstr ""
 " वितरण अहिले सम्म सिर्जना\n"
 " भएको छैन वा आवगमन विनानै सर्यो ।"
 
-#: apt-private/private-install.cc:649
+#: apt-private/private-install.cc:659
 msgid "Broken packages"
 msgstr "भाँचिएका प्याकेजहरू"
 
-#: apt-private/private-install.cc:702
+#: apt-private/private-install.cc:712
 msgid "The following extra packages will be installed:"
 msgstr "निम्न अतिरिक्त प्याकेजहरू स्थापना हुनेछन्:"
 
-#: apt-private/private-install.cc:792
+#: apt-private/private-install.cc:802
 msgid "Suggested packages:"
 msgstr "सुझाव दिएका प्याकेजहरू:"
 
-#: apt-private/private-install.cc:793
+#: apt-private/private-install.cc:803
 msgid "Recommended packages:"
 msgstr "सिफारिस गरिएका प्याकेजहरू:"
 
-#: apt-private/private-install.cc:815
+#: apt-private/private-install.cc:825
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr "%s फड्किदैछ, यो पहिल्यै स्थापना भयो र स्तरवृद्धि सेट भएको छैन ।\n"
 
-#: apt-private/private-install.cc:819
+#: apt-private/private-install.cc:829
 #, fuzzy, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr "%s फड्किदैछ, यो पहिल्यै स्थापना भयो र स्तरवृद्धि सेट भएको छैन ।\n"
 
-#: apt-private/private-install.cc:831
+#: apt-private/private-install.cc:841
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr " %s को पुन: स्थापना सम्भव छैन, यो डाउनलोड हुन सक्दैन ।\n"
 
-#: apt-private/private-install.cc:836
+#: apt-private/private-install.cc:846
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s पहिल्यै नयाँ संस्करण हो ।\n"
 
-#: apt-private/private-install.cc:884
+#: apt-private/private-install.cc:894
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "%s को लागि चयन भएको संस्करण %s (%s)\n"
 
-#: apt-private/private-install.cc:889
+#: apt-private/private-install.cc:899
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "%s को लागि चयन भएको संस्करण %s (%s)\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-install.cc:931
+#: apt-private/private-install.cc:941
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr "प्याकेज %s स्थापना भएन, त्यसैले हटेन\n"
 
-#: apt-private/private-install.cc:937
+#: apt-private/private-install.cc:947
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "प्याकेज %s स्थापना भएन, त्यसैले हटेन\n"
@@ -2167,23 +2166,23 @@ msgstr " %s मा लेख्न असक्षम"
 msgid "IO Error saving source cache"
 msgstr "स्रोत क्यास बचत गर्दा IO त्रुटि"
 
-#: apt-pkg/edsp.cc:51 apt-pkg/edsp.cc:71
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
 msgid "Send scenario to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:234
+#: apt-pkg/edsp.cc:241
 msgid "Send request to solver"
 msgstr ""
 
-#: apt-pkg/edsp.cc:313
+#: apt-pkg/edsp.cc:320
 msgid "Prepare for receiving solution"
 msgstr ""
 
-#: apt-pkg/edsp.cc:320
+#: apt-pkg/edsp.cc:327
 msgid "External solver failed without a proper error message"
 msgstr ""
 
-#: apt-pkg/edsp.cc:612 apt-pkg/edsp.cc:615 apt-pkg/edsp.cc:620
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
 msgid "Execute external solver"
 msgstr ""
 
@@ -2830,7 +2829,7 @@ msgstr ""
 msgid "%lis"
 msgstr ""
 
-#: apt-pkg/contrib/strutl.cc:1236
+#: apt-pkg/contrib/strutl.cc:1243
 #, c-format
 msgid "Selection %s not found"
 msgstr "चयन %s फेला पार्न सकिएन"
@@ -3481,7 +3480,7 @@ msgstr "MD5 गणना गर्दा पढ्न असफल भयो"
 msgid "Problem unlinking %s"
 msgstr "समस्या अनलिङ्क भइरहेछ %s"
 
-#: cmdline/apt-internal-solver.cc:47
+#: cmdline/apt-internal-solver.cc:49
 #, fuzzy
 msgid ""
 "Usage: apt-internal-solver\n"
@@ -3533,6 +3532,10 @@ msgstr ""
 "  -s   क्रमबद्ध स्रोत फाइल प्रयोग गर्नुहोस्\n"
 "  -c=? यो कनफिगरेसन फाइल पढ्नुहोस्\n"
 "  -o=? एउटा स्वेच्छाचारी कनफिगरेसन विकल्प सेट गर्नुहोस्, जस्तै -o dir::cache=/tmp\n"
+
+#, fuzzy
+#~ msgid "Internal error, Upgrade broke stuff"
+#~ msgstr "आन्तरिक त्रुटि,सबै स्तरवृद्धिले उत्तम गुण नष्ट गर्दछ"
 
 #~ msgid "%s not a valid DEB package."
 #~ msgstr "%s वैध DEB प्याकेज होइन"
