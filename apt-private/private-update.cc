@@ -90,7 +90,10 @@ bool DoUpdate(CommandLine &CmdL)
          "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n",
          "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n",
          upgradable);
-      ioprintf(c1out, msg, upgradable);
+      if (upgradable == 0)
+         c1out << _("All packages are up to date.") << std::endl;
+      else
+         ioprintf(c1out, msg, upgradable);
    }
 
    return true;
