@@ -193,8 +193,12 @@ pid_t ExecFork(std::set<int> keep_fds);
 void MergeKeepFdsFromConfiguration(std::set<int> &keep_fds);
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
+
 // check if the given file starts with a PGP cleartext signature
 bool StartsWithGPGClearTextSignature(std::string const &FileName);
+
+// process releated
+bool DropPrivs();
 
 // File string manipulators
 std::string flNotDir(std::string File);
