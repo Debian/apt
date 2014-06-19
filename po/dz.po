@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt_po.pot\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-06-18 14:12+0200\n"
+"POT-Creation-Date: 2014-06-19 12:24+0200\n"
 "PO-Revision-Date: 2006-09-19 09:49+0530\n"
 "Last-Translator: Kinley Tshering <gasepkuenden2k3@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -19,158 +19,1426 @@ msgstr ""
 "X-Poedit-Country: Bhutan\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
+#. Only warn if there are no sources.list.d.
+#. Only warn if there is no sources.list file.
+#: apt-pkg/clean.cc:40 apt-pkg/init.cc:103 apt-pkg/init.cc:111
+#: apt-pkg/acquire.cc:492 apt-pkg/policy.cc:381 apt-pkg/sourcelist.cc:280
+#: apt-pkg/sourcelist.cc:286 apt-pkg/contrib/fileutl.cc:369
+#: apt-pkg/contrib/fileutl.cc:482 apt-pkg/contrib/cdromutl.cc:205
+#: methods/mirror.cc:95 apt-inst/extract.cc:471
+#, c-format
+msgid "Unable to read %s"
+msgstr "%s་འདི་ལུ་ལྷག་མ་ཚུགས།"
+
+#: apt-pkg/clean.cc:46 apt-pkg/clean.cc:64 apt-pkg/clean.cc:127
+#: apt-pkg/acquire.cc:498 apt-pkg/acquire.cc:523
+#: apt-pkg/contrib/cdromutl.cc:201 apt-pkg/contrib/cdromutl.cc:235
+#: methods/mirror.cc:101 methods/mirror.cc:130
+#, c-format
+msgid "Unable to change to %s"
+msgstr "%s་ལུ་བསྒྱུར་བཅོས་འབད་མ་ཚུགས།"
+
+#: apt-pkg/clean.cc:61
+#, c-format
+msgid "Unable to stat %s."
+msgstr "%s་ ངོ་བཤུས་འབད་མ་ཚུགས།"
+
+#: apt-pkg/install-progress.cc:57
+#, c-format
+msgid "Progress: [%3i%%]"
+msgstr ""
+
+#: apt-pkg/install-progress.cc:91 apt-pkg/install-progress.cc:174
+msgid "Running dpkg"
+msgstr ""
+
+#: apt-pkg/init.cc:146
+#, c-format
+msgid "Packaging system '%s' is not supported"
+msgstr "སྦུང་ཚན་བཟོ་ནིའི་རིམ་ལུགས་ '%s' འདི་ལུ་རྒྱབ་སྐྱོར་མ་འབད་བས།"
+
+#: apt-pkg/init.cc:162
+msgid "Unable to determine a suitable packaging system type"
+msgstr "འོས་འབབ་དང་ལྡན་པའི་སྦུང་ཚན་རིམ་ལུགས་ཀྱི་དབྱེ་བ་ཅིག་གཏན་འབེབས་བཟོ་མི་ཚུགས་པས།"
+
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:775
+#, c-format
+msgid "Wrote %i records.\n"
+msgstr "%i་དྲན་མཐོ་དེ་ཚུ་བྲིས་ཡོད།\n"
+
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:777
+#, c-format
+msgid "Wrote %i records with %i missing files.\n"
+msgstr "%i བྱིག་འགྱོ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་དང་གཅིག་ཁར་ %i དྲན་ཐོ་འདི་ཚུ་བྲིས་ཡོད།\n"
+
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:780
+#, c-format
+msgid "Wrote %i records with %i mismatched files\n"
+msgstr "%i་མཐུན་སྒྲིག་མེདཔ་པའི་ཡིག་སྣོད་ཚུ་དང་གཅིག་ཁར་ %i་དྲན་ཐོ་ཚུ་བྲིས་བཞག་ཡོདཔ་ཨིན།\n"
+
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:783
+#, c-format
+msgid "Wrote %i records with %i missing files and %i mismatched files\n"
+msgstr ""
+"%i བྱིག་འགྱོ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་དང་ %iམཐུན་སྒྲིག་མེད་པའི་ཡིག་སྣོད་ཚུ་དང་གཅིག་ཁར་ %i དྲན་ཐོ་འདི་ཚུ་བྲིས་"
+"ཡོདཔ་ཨིན།\n"
+
+#: apt-pkg/indexcopy.cc:515
+#, c-format
+msgid "Can't find authentication record for: %s"
+msgstr ""
+
+#: apt-pkg/indexcopy.cc:521
+#, fuzzy, c-format
+msgid "Hash mismatch for: %s"
+msgstr "ཨེམ་ཌི་༥་ ཁྱོན་བསྡོམས་མ་མཐུན་པ།"
+
+#: apt-pkg/acquire-worker.cc:116
+#, c-format
+msgid "The method driver %s could not be found."
+msgstr "ཐབས་ལམ་འདྲེན་བྱེད་%s་འདི་མ་འཐོབ།"
+
+#: apt-pkg/acquire-worker.cc:118
+#, fuzzy, c-format
+msgid "Is the package %s installed?"
+msgstr "'dpkg-dev'་ཐུམ་སྒྲིལ་དེ་གཞི་བཙུགས་འབད་ཡོད་པ་ཅིན་ཨེབ་གཏང་འབད།\n"
+
+#: apt-pkg/acquire-worker.cc:169
+#, c-format
+msgid "Method %s did not start correctly"
+msgstr "ཐབས་ལམ་ %s འདི་ངེས་བདེན་སྦེ་འགོ་མ་བཙུགས་འབད།"
+
+#: apt-pkg/acquire-worker.cc:460
+#, c-format
+msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
+msgstr "ཁ་ཡིག་བཀོད་ཡོད་པའི་ ཌིསི་འདི་བཙུགས་གནང་། '%s'འདྲེན་འཕྲུལ་ནང་'%s' དང་ལོག་ལྡེ་འདི་ཨེབ།་"
+
+#: apt-pkg/cachefile.cc:94
+msgid "The package lists or status file could not be parsed or opened."
+msgstr "ཐུམ་སྒྲིལ་གྱི་ཐོ་ཡིག་ཡང་ན་གནས་ཚད་ཡིག་སྣོད་ཚུ་ མིང་དཔྱད་ཡང་ན་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/cachefile.cc:98
+msgid "You may want to run apt-get update to correct these problems"
+msgstr "འ་ནི་དཀའ་ངལ་འདི་ཚུ་སེལ་ནིའི་ལུ་ ཁྱོད་ཀྱི་ apt-get update་དེ་གཡོག་བཀོལ་དགོཔ་འོང་།"
+
+#: apt-pkg/cachefile.cc:116
+msgid "The list of sources could not be read."
+msgstr "འབྱུང་ཁུངས་ཚུ་ཀྱི་ཐོ་ཡིག་དེ་ལྷག་མི་ཚུགས་པས།"
+
+#: apt-pkg/pkgcache.cc:150
+msgid "Empty package cache"
+msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་སྟོངམ།"
+
+#: apt-pkg/pkgcache.cc:156 apt-pkg/pkgcache.cc:167
+msgid "The package cache file is corrupted"
+msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་ཡིག་སྣོད་འདི་ངན་ཅན་ཨིན་པས།"
+
+#: apt-pkg/pkgcache.cc:161
+msgid "The package cache file is an incompatible version"
+msgstr "ཐུམ་སྒྲིས་འདྲ་མཛོད་ཡིག་སྣོད་འདི་ མི་མཐུན་པའི་འཐོན་རིམ་ཅིག་ཨིན་པས།"
+
+#: apt-pkg/pkgcache.cc:164
+#, fuzzy
+msgid "The package cache file is corrupted, it is too small"
+msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་ཡིག་སྣོད་འདི་ངན་ཅན་ཨིན་པས།"
+
+#: apt-pkg/pkgcache.cc:171
+#, c-format
+msgid "This APT does not support the versioning system '%s'"
+msgstr "འ་ནི་ཨེ་པི་ཊི་ འདི་གིས་ '%s'འཐོན་རིམ་བཟོ་ནིའི་རིམ་ལུགས་དེ་ལུ་རྒྱབ་སྐྱོར་མི་འབད་བས།"
+
+#: apt-pkg/pkgcache.cc:181
+#, fuzzy, c-format
+msgid "The package cache was built for different architectures: %s vs %s"
+msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་འདི་བཟོ་བཀོད་སོ་སོ་ཅིག་གི་དོན་ལུ་བཟོ་བརྩིགས་འབད་འབདཝ་ཨིནཔས།"
+
+#: apt-pkg/pkgcache.cc:324
+msgid "Depends"
+msgstr "རྟེནམ་ཨིན།"
+
+#: apt-pkg/pkgcache.cc:324
+msgid "PreDepends"
+msgstr "སྔོན་གོང་མ་རྟེནམ་ཨིན།"
+
+#: apt-pkg/pkgcache.cc:324
+msgid "Suggests"
+msgstr "བསམ་འཆར་བཀོདཔ་ཨིན།"
+
+#: apt-pkg/pkgcache.cc:325
+msgid "Recommends"
+msgstr "འོས་སྦྱོར་འབདཝ་ཨིན།"
+
+#: apt-pkg/pkgcache.cc:325
+msgid "Conflicts"
+msgstr "མི་མཐུནམ་ཨིན།"
+
+#: apt-pkg/pkgcache.cc:325
+msgid "Replaces"
+msgstr "ཚབ་བཙུགསཔ་ཨིན།"
+
+#: apt-pkg/pkgcache.cc:326
+msgid "Obsoletes"
+msgstr "ཕན་མེདཔ་བཟོཝ་ཨིན།"
+
+#: apt-pkg/pkgcache.cc:326
+msgid "Breaks"
+msgstr ""
+
+#: apt-pkg/pkgcache.cc:326
+msgid "Enhances"
+msgstr ""
+
+#: apt-pkg/pkgcache.cc:337
+msgid "important"
+msgstr "གལ་ཅན།"
+
+#: apt-pkg/pkgcache.cc:337
+msgid "required"
+msgstr "དགོས་མཁོ་ཡོདཔ།"
+
+#: apt-pkg/pkgcache.cc:337
+msgid "standard"
+msgstr "ཚད་ལྡན།"
+
+#: apt-pkg/pkgcache.cc:338
+msgid "optional"
+msgstr "གདམ་ཁ་ཅན།"
+
+#: apt-pkg/pkgcache.cc:338
+msgid "extra"
+msgstr "ཐེབས།"
+
+#: apt-pkg/pkgrecords.cc:38
+#, c-format
+msgid "Index file type '%s' is not supported"
+msgstr "ཟུར་ཐོ་ཡིག་སྣོད་ཀྱི་དབྱེ་བ་ '%s' འདི་རྒྱབ་སྐྱོར་མ་འབད་བས།"
+
+#: apt-pkg/cachefilter.cc:35 apt-private/private-output.cc:785
+#, c-format
+msgid "Regex compilation error - %s"
+msgstr "རི་ཇེགསི་ཕྱོགས་སྒྲིག་འཛོལ་བ་- %s"
+
+#: apt-pkg/pkgcachegen.cc:116
+msgid "Cache has an incompatible versioning system"
+msgstr "འདྲ་མཛོད་ལུ་མཐུན་འགྱུར་མེན་པའི་འཐོན་རིམ་བཟོ་ནིའི་རིམ་ལུགས་ཅིག་འདུག"
+
+#. TRANSLATOR: The first placeholder is a package name,
+#. the other two should be copied verbatim as they include debug info
+#: apt-pkg/pkgcachegen.cc:247 apt-pkg/pkgcachegen.cc:257
+#: apt-pkg/pkgcachegen.cc:323 apt-pkg/pkgcachegen.cc:389
+#: apt-pkg/pkgcachegen.cc:393 apt-pkg/pkgcachegen.cc:410
+#: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:422
+#: apt-pkg/pkgcachegen.cc:426 apt-pkg/pkgcachegen.cc:447
+#: apt-pkg/pkgcachegen.cc:486 apt-pkg/pkgcachegen.cc:532
+#: apt-pkg/pkgcachegen.cc:546 apt-pkg/pkgcachegen.cc:577
+#: apt-pkg/pkgcachegen.cc:591
+#, fuzzy, c-format
+msgid "Error occurred while processing %s (%s%d)"
+msgstr "%s (པི་ཀེ་ཇི་འཚོལ་ནི)དེ་བཟོ་སྦྱོར་འབད་བའི་བསྒང་འཛོལ་བ་ཅིག་བྱུང་ནུག"
+
+#: apt-pkg/pkgcachegen.cc:280
+msgid "Wow, you exceeded the number of package names this APT is capable of."
+msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་ཐུམ་སྒྲིལ་ཨང་གྲངས་ལས་ལྷག་ནུག"
+
+#: apt-pkg/pkgcachegen.cc:283
+msgid "Wow, you exceeded the number of versions this APT is capable of."
+msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་ཐོན་རིམ་ཨང་གྲངས་ལས་ལྷག་ནུག"
+
+#: apt-pkg/pkgcachegen.cc:286
+#, fuzzy
+msgid "Wow, you exceeded the number of descriptions this APT is capable of."
+msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་ཐོན་རིམ་ཨང་གྲངས་ལས་ལྷག་ནུག"
+
+#: apt-pkg/pkgcachegen.cc:289
+msgid "Wow, you exceeded the number of dependencies this APT is capable of."
+msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་བརྟེན་པའི་ཨང་གྲངས་ལས་ལྷག་ནུག"
+
+#: apt-pkg/pkgcachegen.cc:598
+#, c-format
+msgid "Package %s %s was not found while processing file dependencies"
+msgstr "ཡིག་སྣོད་རྟེན་འབྲེལ་འདི་ཚུ་བཟོ་སྦྱོར་འབད་བའི་བསྒང་ཐུམ་སྒྲིལ་ %s %s ་འདི་མ་ཐོབ་པས།"
+
+#: apt-pkg/pkgcachegen.cc:1233
+#, c-format
+msgid "Couldn't stat source package list %s"
+msgstr "འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་གྱི་ཐོ་ཡིག་%s་དེ་ངོ་བཤུས་འབད་མ་ཚུགས།"
+
+#: apt-pkg/pkgcachegen.cc:1321 apt-pkg/pkgcachegen.cc:1425
+#: apt-pkg/pkgcachegen.cc:1431 apt-pkg/pkgcachegen.cc:1588
+msgid "Reading package lists"
+msgstr "ཐུམ་སྒྲིལ་ཐོ་ཡིག་ཚུ་ལྷག་དོ།"
+
+#: apt-pkg/pkgcachegen.cc:1338
+msgid "Collecting File Provides"
+msgstr "ཡིག་སྣོད་བྱིན་མི་ཚུ་བསྡུ་ལེན་འབད་དོ།"
+
+#: apt-pkg/pkgcachegen.cc:1422 apt-pkg/contrib/fileutl.cc:2098
+#: cmdline/apt-extracttemplates.cc:262
+#, c-format
+msgid "Unable to write to %s"
+msgstr " %sལུ་འབྲི་མ་ཚུགས།"
+
+#: apt-pkg/pkgcachegen.cc:1530 apt-pkg/pkgcachegen.cc:1537
+msgid "IO Error saving source cache"
+msgstr "IO འཛོལ་བ་འབྱུང་ཁུངས་འདྲ་མཛོད་སྲུང་བཞག་འབད་དོ།"
+
+#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
+msgid "Send scenario to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:241
+msgid "Send request to solver"
+msgstr ""
+
+#: apt-pkg/edsp.cc:320
+msgid "Prepare for receiving solution"
+msgstr ""
+
+#: apt-pkg/edsp.cc:327
+msgid "External solver failed without a proper error message"
+msgstr ""
+
+#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
+msgid "Execute external solver"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:160 apt-pkg/contrib/fileutl.cc:2109
+#, c-format
+msgid "rename failed, %s (%s -> %s)."
+msgstr "%s (%s -> %s)བསྐྱར་མིང་བཏགས་ནི་འདི་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན།"
+
+#: apt-pkg/acquire-item.cc:175
+#, fuzzy
+msgid "Hash Sum mismatch"
+msgstr "ཨེམ་ཌི་༥་ ཁྱོན་བསྡོམས་མ་མཐུན་པ།"
+
+#: apt-pkg/acquire-item.cc:180
+msgid "Size mismatch"
+msgstr "ཚད་མ་མཐུན།"
+
+#: apt-pkg/acquire-item.cc:185
+#, fuzzy
+msgid "Invalid file format"
+msgstr "ནུས་མེད་བཀོལ་སྤྱོད་%s"
+
+#: apt-pkg/acquire-item.cc:1679
+#, c-format
+msgid ""
+"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
+"or malformed file)"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:1697
+#, fuzzy, c-format
+msgid "Unable to find hash sum for '%s' in Release file"
+msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
+
+#: apt-pkg/acquire-item.cc:1737
+msgid "There is no public key available for the following key IDs:\n"
+msgstr "འོག་གི་ ཨའི་ཌི་་ ལྡེ་མིག་ཚུ་གི་དོན་ལུ་མི་དམང་གི་ལྡེ་མིག་འདི་འཐོབ་མི་ཚུགས་པས:\n"
+
+#: apt-pkg/acquire-item.cc:1775
+#, c-format
+msgid ""
+"Release file for %s is expired (invalid since %s). Updates for this "
+"repository will not be applied."
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:1797
+#, c-format
+msgid "Conflicting distribution: %s (expected %s but got %s)"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:1827
+#, c-format
+msgid ""
+"An error occurred during the signature verification. The repository is not "
+"updated and the previous index files will be used. GPG error: %s: %s\n"
+msgstr ""
+
+#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
+#: apt-pkg/acquire-item.cc:1837 apt-pkg/acquire-item.cc:1842
+#, c-format
+msgid "GPG error: %s: %s"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:1972
+#, c-format
+msgid ""
+"I wasn't able to locate a file for the %s package. This might mean you need "
+"to manually fix this package. (due to missing arch)"
+msgstr ""
+" %s་ཐུམ་སྒྲིལ་གི་དོན་ལུ་ང་་གི་ཡིག་སྣོད་ཅིག་ག་ཡོད་འཚོལ་མི་འཐོབ་པས། འདི་འབདཝ་ལས་ཁྱོད་ཀྱི་ལག་ཐོག་ལས་ "
+"འ་ནི་ཐུམ་སྒྲིལ་འདི་གི་དཀའ་ངལ་སེལ་དགོཔ་འདུག (arch འདི་བྱིག་སོངམ་ལས་བརྟེན།)"
+
+#: apt-pkg/acquire-item.cc:2038
+#, c-format
+msgid "Can't find a source to download version '%s' of '%s'"
+msgstr ""
+
+#: apt-pkg/acquire-item.cc:2074
+#, c-format
+msgid ""
+"The package index files are corrupted. No Filename: field for package %s."
+msgstr ""
+"ཐུམ་སྒྲིལ་ ཟུར་ཐོ་ཡིག་སྣོད་ཚུ་ངན་ཅན་འགྱོ་ནུག  ཡིག་སྣོད་ཀྱི་མིང་མིན་འདུག: %s་ཐུམ་སྒྲིལ་གྱི་དོན་ལུ་ས་སྒོ།"
+
+#: apt-pkg/vendorlist.cc:85
+#, c-format
+msgid "Vendor block %s contains no fingerprint"
+msgstr "%sསིལ་ཚོང་པ་སྡེབ་ཚན་གྱི་ནང་ན་མཛུབ་རྗེས་མིན་འདུག"
+
+#: apt-pkg/acquire.cc:88 apt-pkg/cdrom.cc:829
+#, fuzzy, c-format
+msgid "List directory %spartial is missing."
+msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
+
+#: apt-pkg/acquire.cc:92
+#, fuzzy, c-format
+msgid "Archives directory %spartial is missing."
+msgstr "ཡིག་མཛོད་སྣོད་ཐོ་ %s་ ཆ་ཤས་འདི་བརླག་སྟོར་ཞུགས་ཏེ་འདུག"
+
+#: apt-pkg/acquire.cc:100
+#, fuzzy, c-format
+msgid "Unable to lock directory %s"
+msgstr "ཐོ་བཀོད་འབད་ཡོད་པའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབ་མ་ཚུགས།"
+
+#. only show the ETA if it makes sense
+#. two days
+#: apt-pkg/acquire.cc:925
+#, c-format
+msgid "Retrieving file %li of %li (%s remaining)"
+msgstr "%li་ གི་བརླག་སྟོར་ཞུགས་པའི་ཡིག་སྣོད་%li (%s ལྷག་ལུས་དོ།)"
+
+#: apt-pkg/acquire.cc:927
+#, c-format
+msgid "Retrieving file %li of %li"
+msgstr " %li་གི་བརླག་སྟོར་ཟུགསཔའི་ཡིག་སྣོད་ %li"
+
+#: apt-pkg/update.cc:77 apt-private/private-download.cc:91
+#, c-format
+msgid "Failed to fetch %s  %s\n"
+msgstr "%s  %s་ ལེན་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།\n"
+
+#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
+#, fuzzy
+msgid ""
+"Some index files failed to download. They have been ignored, or old ones "
+"used instead."
+msgstr ""
+"ཟུར་ཐོ་ཡིག་སྣོད་ལ་ལུ་ཅིག་ཕབ་ལེན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ནུག་  འདི་ཚུ་སྣང་མེད་སྦེ་བཞགཔ་མ་ཚད་ ཚབ་ལུ་"
+"རྙིངམ་འདི་ཚུ་ལག་ལེན་འཐབ་ནུག"
+
+#: apt-pkg/srcrecords.cc:52
+msgid "You must put some 'source' URIs in your sources.list"
+msgstr ""
+"ཁྱོད་རའི་sources.listགི་ཐོ་ཡིག་ནང་ལུ་ཁྱོད་ཀྱི་ 'འབྱུང་ཁུངས་' ཡུ་ཨར་ཨའི་ཚུ་་ལ་ལུ་ཅིག་བཙུགས་དགོ"
+
+#: apt-pkg/policy.cc:83
+#, c-format
+msgid ""
+"The value '%s' is invalid for APT::Default-Release as such a release is not "
+"available in the sources"
+msgstr ""
+
+#: apt-pkg/policy.cc:422
+#, fuzzy, c-format
+msgid "Invalid record in the preferences file %s, no Package header"
+msgstr "དགའ་གདམ་ཡིག་སྣོད་ནང་ལུ་ནུས་མེད་ཀྱི་དྲན་ཐོ་  ཐུམ་སྒྲིལ་མགོ་ཡིག་མིན་འདུག"
+
+#: apt-pkg/policy.cc:444
+#, c-format
+msgid "Did not understand pin type %s"
+msgstr "ངོ་རྟགས་ཨང་གི་དབྱེ་བ་ %s འདི་ཧ་གོ་མ་ཚུགས།"
+
+#: apt-pkg/policy.cc:452
+msgid "No priority (or zero) specified for pin"
+msgstr "གོ་རྟགས་ཨང་གི་དོན་ལུ་ གཙོ་རིམ་(ཡང་ན་ ཀླད་ཀོར་)ཚུ་གསལ་བཀོད་མ་འབད་བས།"
+
+#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:911
+#, c-format
+msgid ""
+"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
+"under APT::Immediate-Configure for details. (%d)"
+msgstr ""
+
+#: apt-pkg/packagemanager.cc:504 apt-pkg/packagemanager.cc:534
+#, fuzzy, c-format
+msgid "Could not configure '%s'. "
+msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/packagemanager.cc:584
+#, c-format
+msgid ""
+"This installation run will require temporarily removing the essential "
+"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
+"you really want to do it, activate the APT::Force-LoopBreak option."
+msgstr ""
+"མི་མཐུན་/སྔོན་རྟེན་འཕྲལ་བཀོལ་ལས་བརྟེན་ འ་ནི་གཞི་བཙུགས་གཡོག་བཀོལ་འདི་ལུ་ མེད་དུ་མི་རུང་བའི་%sཐུམ་"
+"སྒྲིལ་  གནས་སྐབས་ཀྱི་རྩ་བསྐྲད་གཏང་ནི་འདི་དགོས་མཁོ་ཡོདཔ་ཨིན། འདི་འཕྲལ་འཕྲལ་རང་བྱང་ཉེས་ཅིག་ཨིན་པས་ "
+"འདི་འབདཝ་ད་ཁྱོད་ཀྱི་ཐད་རི་འབའ་རི་འབད་དགོཔ་ཨིན་པ་ཅིན་ APT::Force-LoopBreak གདམ་ཁ་འདི་ཤུགས་"
+"ལྡན་བཟོ།"
+
+#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
+#, c-format
+msgid "Line %u too long in source list %s."
+msgstr "གྲལ་ཐིག་%u་འདི་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་ནང་ལུ་གནམ་མེད་ས་མེད་རིངམོ་འདུག"
+
+#: apt-pkg/cdrom.cc:571
+#, fuzzy
+msgid "Unmounting CD-ROM...\n"
+msgstr "སི་ཌི་-རོམ་སྦྱར་བརྩེགས་མ་འབད་བར་བཞག་དོ..."
+
+#: apt-pkg/cdrom.cc:586
+#, c-format
+msgid "Using CD-ROM mount point %s\n"
+msgstr " %s སི་ཌི-རོམ་སྦྱར་བརྩེགས་ཀྱི་ས་ཚིགས་ལག་ལེན་འཐབ་དོ།\n"
+
+#: apt-pkg/cdrom.cc:599
+msgid "Waiting for disc...\n"
+msgstr "ཌིསིཀ་གི་དོན་ལུ་བསྒུག་དོ...\n"
+
+#: apt-pkg/cdrom.cc:609
+msgid "Mounting CD-ROM...\n"
+msgstr "སི་ཌི་-རོམ་སྦྱར་བརྩེགས་འབད་དོ...\n"
+
+#: apt-pkg/cdrom.cc:620
+msgid "Identifying... "
+msgstr "ངོས་འཛིན་འབད་དོ..."
+
+#: apt-pkg/cdrom.cc:662
+#, c-format
+msgid "Stored label: %s\n"
+msgstr "གསོག་འཇོག་འབད་ཡོད་པའི་ཁ་ཡིག:%s \n"
+
+#: apt-pkg/cdrom.cc:680
+msgid "Scanning disc for index files...\n"
+msgstr "ཟུར་ཐོ་ཡིག་སྣོད་ཚུ་གི་དོན་ལུ་ ཌིསིཀ་ཞིབ་ལྟ་འབད་དོ...\n"
+
+#: apt-pkg/cdrom.cc:734
+#, fuzzy, c-format
+msgid ""
+"Found %zu package indexes, %zu source indexes, %zu translation indexes and "
+"%zu signatures\n"
+msgstr "%i་ཐུམ་སྒྲིལ་གྱི་ཟུར་ཐོ་ཚུ་ཐོབ་ཅི་  %i་འབྱུང་ཁུངས་ཟུར་ཐོ་ཚུ་དང་ %iམིང་རྟགས་ཚུ།\n"
+
+#: apt-pkg/cdrom.cc:744
+msgid ""
+"Unable to locate any package files, perhaps this is not a Debian Disc or the "
+"wrong architecture?"
+msgstr ""
+
+#: apt-pkg/cdrom.cc:771
+#, fuzzy, c-format
+msgid "Found label '%s'\n"
+msgstr "གསོག་འཇོག་འབད་ཡོད་པའི་ཁ་ཡིག:%s \n"
+
+#: apt-pkg/cdrom.cc:800
+msgid "That is not a valid name, try again.\n"
+msgstr "དེ་ནུས་ཅན་གྱི་མིང་ཅིག་མེན་པས་ ལོག་སྟེ་རང་འབད་རྩོལ་བསྐྱེད།\n"
+
+#: apt-pkg/cdrom.cc:817
+#, c-format
+msgid ""
+"This disc is called: \n"
+"'%s'\n"
+msgstr ""
+"ཌིསིཀ་འདི་བོད་བརྡ་འབད་དོ་ཡོདཔ་ཨིན།\n"
+"'%s'\n"
+
+#: apt-pkg/cdrom.cc:819
+msgid "Copying package lists..."
+msgstr "ཐུམ་སྒྲིལ་གྱིཐོ་ཡིག་ཚུ་འདྲ་བཤུས་རྐྱབ་དོ..."
+
+#: apt-pkg/cdrom.cc:863
+msgid "Writing new source list\n"
+msgstr "འབྱུང་ཁུངས་ཀྱི་ཐོ་ཡིག་གསརཔ་ཅིག་འབྲི་དོ།\n"
+
+#: apt-pkg/cdrom.cc:874
+msgid "Source list entries for this disc are:\n"
+msgstr "འ་ནི་ ཌིསིཀ་གི་དོན་ལུ་ འབྱུང་ཁུངས་ཧྲིལ་བུ་ཚུ་:\n"
+
+#: apt-pkg/algorithms.cc:265
+#, c-format
+msgid ""
+"The package %s needs to be reinstalled, but I can't find an archive for it."
+msgstr ""
+"ཐུམ་སྒྲིལ་%s་འདི་ལོག་འདི་རང་གཞི་བཙུགས་འབད་དགོཔ་འདུག་ འདི་འབདཝ་ད་འདི་གི་དོན་ལུ་ཡིག་མཛོད་ཅིག་འཚོལ་"
+"མ་ཐོབ།"
+
+#: apt-pkg/algorithms.cc:1086
+msgid ""
+"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
+"held packages."
+msgstr ""
+"འཛོལ་བ་ pkgProblemResolver::གིས་བཟོ་བཏོན་འབད་ཡོད་པའི་མཚམས་དེ་ཚུ་མོས་མཐུན་བཟོཝ་ཨིན འ་ནི་ཐུམ་"
+"སྒྲིལ་ཚུ་འཛིན་པའི་རྒྱུ་རྐྱེན་ལས་བརྟེན་ཨིན་པས།"
+
+#: apt-pkg/algorithms.cc:1088
+msgid "Unable to correct problems, you have held broken packages."
+msgstr "དཀའ་ངལ་འདི་ནོར་བཅོས་འབད་མ་ཚུགས་ ཁྱོད་ཀྱི་ཐུམ་སྒྲིལ་ཆད་པ་ཚུ་འཆང་འདི་འདུག"
+
+#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
+msgid "Building dependency tree"
+msgstr "རྟེན་འབྲེལ་གྱི་རྩ་འབྲེལ་བཟོ་བརྩིགས་འབད་དོ།"
+
+#: apt-pkg/depcache.cc:139
+msgid "Candidate versions"
+msgstr "མི་ངོ་འཐོན་རིམཚུ།"
+
+#: apt-pkg/depcache.cc:168
+msgid "Dependency generation"
+msgstr "བརྟེན་པའི་བཟོ་བཏོན།"
+
+#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
+#, fuzzy
+msgid "Reading state information"
+msgstr "འཐོབ་ཚུགས་པའི་བརྡ་དོན་མཉམ་བསྡོམས་འབད་དོ།"
+
+#: apt-pkg/depcache.cc:250
+#, fuzzy, c-format
+msgid "Failed to open StateFile %s"
+msgstr "%s་ག་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
+
+#: apt-pkg/depcache.cc:256
+#, fuzzy, c-format
+msgid "Failed to write temporary StateFile %s"
+msgstr "%s་ཡིག་སྣོད་འདི་འབྲི་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
+#: apt-pkg/tagfile.cc:169
+#, c-format
+msgid "Unable to parse package file %s (1)"
+msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
+
+#: apt-pkg/tagfile.cc:269
+#, c-format
+msgid "Unable to parse package file %s (2)"
+msgstr "%s (༢་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
+
+#: apt-pkg/cacheset.cc:490
+#, c-format
+msgid "Release '%s' for '%s' was not found"
+msgstr "%sགི་དོན་ལུ་འཛིན་གྲོལ་'%s'་དེ་མ་འཐོབ་པས།"
+
+#: apt-pkg/cacheset.cc:493
+#, c-format
+msgid "Version '%s' for '%s' was not found"
+msgstr "'%s'་གི་དོན་ལུ་འཐོན་རིམ་'%s'་དེ་མ་འཐོབ་པས།"
+
+#: apt-pkg/cacheset.cc:597 cmdline/apt-cache.cc:1567
+#, c-format
+msgid "Unable to locate package %s"
+msgstr "%sཐུམ་སྒྲིལ་འདི་ག་ཡོད་ཟཚོལ་མ་ཐོབ།"
+
+#: apt-pkg/cacheset.cc:604
+#, fuzzy, c-format
+msgid "Couldn't find task '%s'"
+msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
+
+#: apt-pkg/cacheset.cc:610
+#, fuzzy, c-format
+msgid "Couldn't find any package by regex '%s'"
+msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
+
+#: apt-pkg/cacheset.cc:616
+#, fuzzy, c-format
+msgid "Couldn't find any package by glob '%s'"
+msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
+
+#: apt-pkg/cacheset.cc:627
+#, c-format
+msgid "Can't select versions from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:634 apt-pkg/cacheset.cc:641
+#, c-format
+msgid ""
+"Can't select installed nor candidate version from package '%s' as it has "
+"neither of them"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:648
+#, c-format
+msgid "Can't select newest version from package '%s' as it is purely virtual"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:656
+#, c-format
+msgid "Can't select candidate version from package %s as it has no candidate"
+msgstr ""
+
+#: apt-pkg/cacheset.cc:664
+#, c-format
+msgid "Can't select installed version from package %s as it is not installed"
+msgstr ""
+
+#: apt-pkg/indexrecords.cc:83
+#, fuzzy, c-format
+msgid "Unable to parse Release file %s"
+msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
+
+#: apt-pkg/indexrecords.cc:91
+#, fuzzy, c-format
+msgid "No sections in Release file %s"
+msgstr "%s་གི་ཚབ་ལུ་%s་སེལ་འཐུ་འབད་ནི་སེམས་ཁར་བཞག\n"
+
+#: apt-pkg/indexrecords.cc:136
+#, c-format
+msgid "No Hash entry in Release file %s"
+msgstr ""
+
+#: apt-pkg/indexrecords.cc:149
+#, fuzzy, c-format
+msgid "Invalid 'Valid-Until' entry in Release file %s"
+msgstr "%s་ཁ་ཕྱོགས་ཡིག་སྣོད་ནང་ནུས་མེད་གྲལ་ཐིག"
+
+#: apt-pkg/indexrecords.cc:168
+#, fuzzy, c-format
+msgid "Invalid 'Date' entry in Release file %s"
+msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
+
+#: apt-pkg/sourcelist.cc:127
+#, fuzzy, c-format
+msgid "Malformed stanza %u in source list %s (URI parse)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་ འབྱུང་ཐོ་ཡིག་ %s(ཡུ་ཨར་ཨའི་ མིང་དཔྱད་འབད་ནི)གི་ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:170
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([option] unparseable)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:173
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([option] too short)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་ %lu་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s (dist)གི་ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:184
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:190
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] has no key)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:193
+#, fuzzy, c-format
+msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:206
+#, c-format
+msgid "Malformed line %lu in source list %s (URI)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་ %lu འབྱུང་ཁུངས་ཐོ་ཡིག་ %s (ཡུ་ཨར་ཨའི་)གི་ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:208
+#, c-format
+msgid "Malformed line %lu in source list %s (dist)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་ %lu་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s (dist)གི་ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:211
+#, c-format
+msgid "Malformed line %lu in source list %s (URI parse)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་ འབྱུང་ཐོ་ཡིག་ %s(ཡུ་ཨར་ཨའི་ མིང་དཔྱད་འབད་ནི)གི་ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:217
+#, c-format
+msgid "Malformed line %lu in source list %s (absolute dist)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s(ཡང་དག་ dist)གི་ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:224
+#, c-format
+msgid "Malformed line %lu in source list %s (dist parse)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:335
+#, c-format
+msgid "Opening %s"
+msgstr "%s་ཁ་ཕྱེ་དོ།"
+
+#: apt-pkg/sourcelist.cc:371
+#, c-format
+msgid "Malformed line %u in source list %s (type)"
+msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%u་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s (དབྱེ་བ)་ནང་ན།"
+
+#: apt-pkg/sourcelist.cc:375
+#, c-format
+msgid "Type '%s' is not known on line %u in source list %s"
+msgstr "དབྱེ་བ་'%s'་འདི་གྲལ་ཐིག་%u་གུར་ལུ་ཡོདཔ་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་གི་ནང་ན་མ་ཤེས་པས།"
+
+#: apt-pkg/sourcelist.cc:416
+#, fuzzy, c-format
+msgid "Type '%s' is not known on stanza %u in source list %s"
+msgstr "དབྱེ་བ་'%s'་འདི་གྲལ་ཐིག་%u་གུར་ལུ་ཡོདཔ་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་གི་ནང་ན་མ་ཤེས་པས།"
+
+#: apt-pkg/deb/dpkgpm.cc:95
+#, fuzzy, c-format
+msgid "Installing %s"
+msgstr "གཞི་བཙུགས་འབད་ཡོད་པའི་%s།"
+
+#: apt-pkg/deb/dpkgpm.cc:96 apt-pkg/deb/dpkgpm.cc:996
+#, c-format
+msgid "Configuring %s"
+msgstr "%s་རིམ་སྒྲིག་འབད་དོ།"
+
+#: apt-pkg/deb/dpkgpm.cc:97 apt-pkg/deb/dpkgpm.cc:1003
+#, c-format
+msgid "Removing %s"
+msgstr "%s་རྩ་བསྐྲད་གཏང་དོ།"
+
+#: apt-pkg/deb/dpkgpm.cc:98
+#, fuzzy, c-format
+msgid "Completely removing %s"
+msgstr "%s མཇུག་བསྡུཝ་སྦེ་རང་རྩ་བསྐྲད་བཏང་ཡོད།"
+
+#: apt-pkg/deb/dpkgpm.cc:99
+#, c-format
+msgid "Noting disappearance of %s"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:100
+#, c-format
+msgid "Running post-installation trigger %s"
+msgstr ""
+
+#. FIXME: use a better string after freeze
+#: apt-pkg/deb/dpkgpm.cc:827
+#, fuzzy, c-format
+msgid "Directory '%s' missing"
+msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
+
+#: apt-pkg/deb/dpkgpm.cc:842 apt-pkg/deb/dpkgpm.cc:864
+#, fuzzy, c-format
+msgid "Could not open file '%s'"
+msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/deb/dpkgpm.cc:989
+#, c-format
+msgid "Preparing %s"
+msgstr "%s་ གྲ་སྒྲིག་འབད་དོ།"
+
+#: apt-pkg/deb/dpkgpm.cc:990
+#, c-format
+msgid "Unpacking %s"
+msgstr " %s་ གི་སྦུང་ཚན་བཟོ་བཤོལ་འབད་དོ།"
+
+#: apt-pkg/deb/dpkgpm.cc:995
+#, c-format
+msgid "Preparing to configure %s"
+msgstr "%s་ རིམ་སྒྲིག་ལུ་གྲ་སྒྲིག་འབད་དོ།"
+
+#: apt-pkg/deb/dpkgpm.cc:997
+#, c-format
+msgid "Installed %s"
+msgstr "གཞི་བཙུགས་འབད་ཡོད་པའི་%s།"
+
+#: apt-pkg/deb/dpkgpm.cc:1002
+#, c-format
+msgid "Preparing for removal of %s"
+msgstr "%s་ རྩ་བསྐྲད་གཏང་ནིའི་དོན་ལུ་གྲ་སྒྲིག་འབད་དོ།"
+
+#: apt-pkg/deb/dpkgpm.cc:1004
+#, c-format
+msgid "Removed %s"
+msgstr "རྩ་བསྐྲད་བཏང་ཡོད་པའི་%s"
+
+#: apt-pkg/deb/dpkgpm.cc:1009
+#, c-format
+msgid "Preparing to completely remove %s"
+msgstr "%s མཇུག་བསྡུཝ་སྦེ་རང་རྩ་བསྐྲད་གཏང་ནིའི་དོན་ལུ་གྲ་སྒྲིག་འབད་དོ།"
+
+#: apt-pkg/deb/dpkgpm.cc:1010
+#, c-format
+msgid "Completely removed %s"
+msgstr "%s མཇུག་བསྡུཝ་སྦེ་རང་རྩ་བསྐྲད་བཏང་ཡོད།"
+
+#: apt-pkg/deb/dpkgpm.cc:1064
+msgid "ioctl(TIOCGWINSZ) failed"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1067 apt-pkg/deb/dpkgpm.cc:1088
+#, fuzzy, c-format
+msgid "Can not write log (%s)"
+msgstr " %sལུ་འབྲི་མ་ཚུགས།"
+
+#: apt-pkg/deb/dpkgpm.cc:1067
+msgid "Is /dev/pts mounted?"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1088
+msgid "Is stdout a terminal?"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1196 apt-pkg/contrib/fileutl.cc:829
+#: apt-pkg/contrib/gpgv.cc:219 cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
+#, c-format
+msgid "Waited for %s but it wasn't there"
+msgstr "%s་གི་དོན་ལུ་བསྒུག་སྡོད་ཅི་ འདི་འབདཝ་ད་ཕར་མིན་འདུག"
+
+#: apt-pkg/deb/dpkgpm.cc:1563
+msgid "Operation was interrupted before it could finish"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1625
+msgid "No apport report written because MaxReports is reached already"
+msgstr ""
+
+#. check if its not a follow up error
+#: apt-pkg/deb/dpkgpm.cc:1630
+msgid "dependency problems - leaving unconfigured"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1632
+msgid ""
+"No apport report written because the error message indicates its a followup "
+"error from a previous failure."
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1638
+msgid ""
+"No apport report written because the error message indicates a disk full "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1645
+msgid ""
+"No apport report written because the error message indicates a out of memory "
+"error"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1652 apt-pkg/deb/dpkgpm.cc:1658
+msgid ""
+"No apport report written because the error message indicates an issue on the "
+"local system"
+msgstr ""
+
+#: apt-pkg/deb/dpkgpm.cc:1679
+msgid ""
+"No apport report written because the error message indicates a dpkg I/O error"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:91
+#, c-format
+msgid ""
+"Unable to lock the administration directory (%s), is another process using "
+"it?"
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:94
+#, fuzzy, c-format
+msgid "Unable to lock the administration directory (%s), are you root?"
+msgstr "ཐོ་བཀོད་འབད་ཡོད་པའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབ་མ་ཚུགས།"
+
+#. TRANSLATORS: the %s contains the recovery command, usually
+#. dpkg --configure -a
+#: apt-pkg/deb/debsystem.cc:110
+#, c-format
+msgid ""
+"dpkg was interrupted, you must manually run '%s' to correct the problem. "
+msgstr ""
+
+#: apt-pkg/deb/debsystem.cc:128
+msgid "Not locked"
+msgstr ""
+
+#. d means days, h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:406
+#, c-format
+msgid "%lid %lih %limin %lis"
+msgstr ""
+
+#. h means hours, min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:413
+#, c-format
+msgid "%lih %limin %lis"
+msgstr ""
+
+#. min means minutes, s means seconds
+#: apt-pkg/contrib/strutl.cc:420
+#, c-format
+msgid "%limin %lis"
+msgstr ""
+
+#. s means seconds
+#: apt-pkg/contrib/strutl.cc:425
+#, c-format
+msgid "%lis"
+msgstr ""
+
+#: apt-pkg/contrib/strutl.cc:1243
+#, c-format
+msgid "Selection %s not found"
+msgstr "སེལ་འཐུ་%s ་མ་འཐོབ།"
+
+#: apt-pkg/contrib/fileutl.cc:191
+#, c-format
+msgid "Not using locking for read only lock file %s"
+msgstr "%s ལྷག་ནི་རྐྱངམ་ཅིག་འབད་མི་ལྡེ་མིག་ཡིག་སྣོད་འདི་གི་དོན་ལུ་ལྡེ་མིག་རྐྱབ་ནི་ལག་ལེན་མི་འཐབ་པས།"
+
+#: apt-pkg/contrib/fileutl.cc:196
+#, c-format
+msgid "Could not open lock file %s"
+msgstr "ལྡེ་མིག་རྐྱབས་ཡོད་པའི་ཡིག་སྣོད་%s་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/contrib/fileutl.cc:219
+#, c-format
+msgid "Not using locking for nfs mounted lock file %s"
+msgstr ""
+"ཨེན་ཨེཕ་ཨེསི་ %s སྦྱར་བརྩེགས་འབད་ཡོད་པའི་ལྡེ་མིག་ཡིག་སྣོད་ཀྱི་དོན་ལུ་ལྡེ་མིག་རྐྱབ་ནི་ལག་ལེན་མི་འཐབ་པས།"
+
+#: apt-pkg/contrib/fileutl.cc:224
+#, c-format
+msgid "Could not get lock %s"
+msgstr "%sལྡེ་མིག་རྐྱབ་ནི་ལེན་མ་ཚུགས།"
+
+#: apt-pkg/contrib/fileutl.cc:361 apt-pkg/contrib/fileutl.cc:475
+#, c-format
+msgid "List of files can't be created as '%s' is not a directory"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:395
+#, c-format
+msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:413
+#, c-format
+msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:422
+#, c-format
+msgid ""
+"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
+msgstr ""
+
+#: apt-pkg/contrib/fileutl.cc:841
+#, c-format
+msgid "Sub-process %s received a segmentation fault."
+msgstr "ཡན་ལག་ལས་སྦྱོར་%s་ལུ་ཆ་བགོས་ཀྱི་སྐྱོན་ཅིག་ཐོབ་ཡོདཔ་ཨིན།"
+
+#: apt-pkg/contrib/fileutl.cc:843
+#, fuzzy, c-format
+msgid "Sub-process %s received signal %u."
+msgstr "ཡན་ལག་ལས་སྦྱོར་%s་ལུ་ཆ་བགོས་ཀྱི་སྐྱོན་ཅིག་ཐོབ་ཡོདཔ་ཨིན།"
+
+#: apt-pkg/contrib/fileutl.cc:847 apt-pkg/contrib/gpgv.cc:239
+#, c-format
+msgid "Sub-process %s returned an error code (%u)"
+msgstr "ཡན་ལག་ལས་སྦྱོར་%s་གིས་འཛོལ་བའི་ཨང་རྟགས་(%u)ཅིག་སླར་ལོག་འབད་ཡོདཔ་ཨིན།"
+
+#: apt-pkg/contrib/fileutl.cc:849 apt-pkg/contrib/gpgv.cc:232
+#, c-format
+msgid "Sub-process %s exited unexpectedly"
+msgstr "ཡན་ལག་ལས་སྦྱོར་་%s་གིས་རེ་བ་མེད་པར་ཕྱིར་ཐོན་ཡོདཔ་ཨིན།"
+
+#: apt-pkg/contrib/fileutl.cc:910 apt-pkg/contrib/fileutl.cc:1636
+#: apt-pkg/contrib/fileutl.cc:1645 apt-pkg/contrib/fileutl.cc:1650
+#: apt-pkg/contrib/fileutl.cc:1652 apt-pkg/contrib/fileutl.cc:1677
+#: methods/ftp.cc:462 methods/rsh.cc:246
+msgid "Write error"
+msgstr "འཛོལ་བ་འབྲི།"
+
+#: apt-pkg/contrib/fileutl.cc:951
+#, fuzzy, c-format
+msgid "Problem closing the gzip file %s"
+msgstr "ཡིག་སྣོད་འདི་ཁ་བསྡམས་པའི་བསྒང་དཀའ་ངལ།"
+
+#: apt-pkg/contrib/fileutl.cc:1139
+#, c-format
+msgid "Could not open file %s"
+msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/contrib/fileutl.cc:1198 apt-pkg/contrib/fileutl.cc:1245
+#, fuzzy, c-format
+msgid "Could not open file descriptor %d"
+msgstr "%s་གི་དོན་ལུ་རྒྱུད་དུང་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/contrib/fileutl.cc:1353 apt-pkg/contrib/fileutl.cc:2125
+msgid "Failed to create subprocess IPC"
+msgstr "ཡན་ལག་ལས་སྦྱོར་ ཨའི་པི་སི་ གསར་བསྐྲུན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
+#: apt-pkg/contrib/fileutl.cc:1411
+msgid "Failed to exec compressor "
+msgstr "ཨེབ་འཕྲུལ་ལག་ལེན་འཐབ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
+#: apt-pkg/contrib/fileutl.cc:1514 apt-pkg/contrib/fileutl.cc:1523
+#: apt-pkg/contrib/fileutl.cc:1528 apt-pkg/contrib/fileutl.cc:1530
+#: methods/ftp.cc:353 methods/rsh.cc:202
+msgid "Read error"
+msgstr "འཛོལ་བ་ལྷབ།"
+
+#: apt-pkg/contrib/fileutl.cc:1552
+#, fuzzy, c-format
+msgid "read, still have %llu to read but none left"
+msgstr "ལྷག་  ད་ལྟོ་ཡང་ལྷག་ནི་ལུ་%lu་ཡོད་འདི་འབདཝ་ད་ཅི་ཡང་ལྷག་ལུས་མིན་འདུག"
+
+#: apt-pkg/contrib/fileutl.cc:1665 apt-pkg/contrib/fileutl.cc:1687
+#, fuzzy, c-format
+msgid "write, still have %llu to write but couldn't"
+msgstr "འབྲི་  ད་ལྟོ་ཡང་འབྲི་ནི་ལུ་%lu་ཡོད་འདི་འདབཝ་ད་འབད་མ་ཚུགས།"
+
+#: apt-pkg/contrib/fileutl.cc:1953
+#, fuzzy, c-format
+msgid "Problem closing the file %s"
+msgstr "ཡིག་སྣོད་འདི་ཁ་བསྡམས་པའི་བསྒང་དཀའ་ངལ།"
+
+#: apt-pkg/contrib/fileutl.cc:1964
+#, fuzzy, c-format
+msgid "Problem renaming the file %s to %s"
+msgstr "ཡིག་སྣོད་མཉམ་བྱུང་འབདཝ་ད་དཀའ་ངལ།"
+
+#: apt-pkg/contrib/fileutl.cc:1975
+#, fuzzy, c-format
+msgid "Problem unlinking the file %s"
+msgstr "ཡིག་སྣོད་འདི་འབྲེལལམ་མེདཔ་བཟོ་བའི་བསྒང་དཀའ་ངལ།"
+
+#: apt-pkg/contrib/fileutl.cc:1988
+msgid "Problem syncing the file"
+msgstr "ཡིག་སྣོད་མཉམ་བྱུང་འབདཝ་ད་དཀའ་ངལ།"
+
+#: apt-pkg/contrib/fileutl.cc:2093 cmdline/apt-extracttemplates.cc:257
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "%s་འདི་ལུ་ངོ་བཤུས་འབད་མ་ཚུགས།"
+
+#: apt-pkg/contrib/progress.cc:148
+#, c-format
+msgid "%c%s... Error!"
+msgstr "%c%s... འཛོལ་བ་!"
+
+#: apt-pkg/contrib/progress.cc:150
+#, c-format
+msgid "%c%s... Done"
+msgstr "%c%s... འབད་ཚར་ཡོད།"
+
+#: apt-pkg/contrib/progress.cc:181
+msgid "..."
+msgstr ""
+
+#. Print the spinner
+#: apt-pkg/contrib/progress.cc:197
+#, fuzzy, c-format
+msgid "%c%s... %u%%"
+msgstr "%c%s... འབད་ཚར་ཡོད།"
+
+#: apt-pkg/contrib/mmap.cc:79
+msgid "Can't mmap an empty file"
+msgstr "ཡིག་སྣོད་སྟོངམ་འདི་mmap་འབད་མ་ཚུགས།"
+
+#: apt-pkg/contrib/mmap.cc:111
+#, fuzzy, c-format
+msgid "Couldn't duplicate file descriptor %i"
+msgstr "%s་གི་དོན་ལུ་རྒྱུད་དུང་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/contrib/mmap.cc:119
+#, fuzzy, c-format
+msgid "Couldn't make mmap of %llu bytes"
+msgstr "%lu་བཱའིཊིསི་གི་mmap་བཟོ་མ་ཚུགས།"
+
+#: apt-pkg/contrib/mmap.cc:146
+#, fuzzy
+msgid "Unable to close mmap"
+msgstr "%s་ཁ་ཕྱེ་མ་ཚུགས།"
+
+#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
+#, fuzzy
+msgid "Unable to synchronize mmap"
+msgstr "ལས་བཀོལ་འབད་མ་ཚུགས།"
+
+#: apt-pkg/contrib/mmap.cc:290
+#, c-format
+msgid "Couldn't make mmap of %lu bytes"
+msgstr "%lu་བཱའིཊིསི་གི་mmap་བཟོ་མ་ཚུགས།"
+
+#: apt-pkg/contrib/mmap.cc:322
+#, fuzzy
+msgid "Failed to truncate file"
+msgstr "%s་ཡིག་སྣོད་འདི་འབྲི་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
+#: apt-pkg/contrib/mmap.cc:341
+#, c-format
+msgid ""
+"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
+"Current value: %lu. (man 5 apt.conf)"
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:446
+#, c-format
+msgid ""
+"Unable to increase the size of the MMap as the limit of %lu bytes is already "
+"reached."
+msgstr ""
+
+#: apt-pkg/contrib/mmap.cc:449
+msgid ""
+"Unable to increase size of the MMap as automatic growing is disabled by user."
+msgstr ""
+
+#: apt-pkg/contrib/cdromutl.cc:65
+#, c-format
+msgid "Unable to stat the mount point %s"
+msgstr "སྦྱར་བརྩེགས་ས་ཚིགས་%s་འདི་ངོ་བཤུས་འབད་མ་ཚུགས།"
+
+#: apt-pkg/contrib/cdromutl.cc:246
+msgid "Failed to stat the cdrom"
+msgstr "སི་ཌི་རོམ་འདི་ངོ་བཤུས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
+
+#: apt-pkg/contrib/configuration.cc:521
+#, c-format
+msgid "Unrecognized type abbreviation: '%c'"
+msgstr "ངོ་མ་ཤེས་པའི་སྡུད་ཚིག་གི་དབྱེ་བ:'%c'"
+
+#: apt-pkg/contrib/configuration.cc:635
+#, c-format
+msgid "Opening configuration file %s"
+msgstr "རིམ་སྒྲིག་ཡིག་སྣོད་%s་འདི་ཁ་ཕྱེ་དོ།"
+
+#: apt-pkg/contrib/configuration.cc:803
+#, c-format
+msgid "Syntax error %s:%u: Block starts with no name."
+msgstr "་ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:  སྡེབ་ཚན་གྱིས་མིང་མེད་མི་དང་གཅིག་ཁར་འགོ་བཙུགསཔ་ཨིན"
+
+#: apt-pkg/contrib/configuration.cc:822
+#, c-format
+msgid "Syntax error %s:%u: Malformed tag"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:བཟོ་ཉེས་འགྱུར་བའི་ངོ་རྟགས།"
+
+#: apt-pkg/contrib/configuration.cc:839
+#, c-format
+msgid "Syntax error %s:%u: Extra junk after value"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:གནས་གོང་གི་ཤུལ་ལས་མཁོ་མེད་ཐེབས།"
+
+#: apt-pkg/contrib/configuration.cc:879
+#, c-format
+msgid "Syntax error %s:%u: Directives can only be done at the top level"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:བཀོད་རྒྱ་ཚུ་ཆེ་རིམ་ནང་རྐྱངམ་ཅིག་བྱིན་ཚུགས།"
+
+#: apt-pkg/contrib/configuration.cc:886
+#, c-format
+msgid "Syntax error %s:%u: Too many nested includes"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:འདུ་འཛོམས་འབད་འབདཝ་ལེ་ཤཱ་གྲངས་སུ་བཙུགསཔ་ཨིན།"
+
+#: apt-pkg/contrib/configuration.cc:890 apt-pkg/contrib/configuration.cc:895
+#, c-format
+msgid "Syntax error %s:%u: Included from here"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u: ནཱ་ལས་རང་འགོ་བཙུགས་གྲངས་སུ་བཙུགས་ཏེ་ཡོད།"
+
+#: apt-pkg/contrib/configuration.cc:899
+#, c-format
+msgid "Syntax error %s:%u: Unsupported directive '%s'"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u: རྒྱབ་སྐྱོར་མ་འབད་བར་ཡོད་པའི་'%s'བཀོད་རྒྱ།"
+
+#: apt-pkg/contrib/configuration.cc:902
+#, fuzzy, c-format
+msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:བཀོད་རྒྱ་ཚུ་ཆེ་རིམ་ནང་རྐྱངམ་ཅིག་བྱིན་ཚུགས།"
+
+#: apt-pkg/contrib/configuration.cc:952
+#, c-format
+msgid "Syntax error %s:%u: Extra junk at end of file"
+msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u: ཡིག་སྣོད་ཀྱི་མཇུག་ལུ་མཁོ་མེད་ཐེབས།"
+
+#. TRANSLATOR: %s is the trusted keyring parts directory
+#: apt-pkg/contrib/gpgv.cc:72
+#, fuzzy, c-format
+msgid "No keyring installed in %s."
+msgstr "གཞི་བཙུགས་བར་བཤོལ་འབད་དོ།"
+
+#: apt-pkg/contrib/cmndline.cc:121
+#, c-format
+msgid "Command line option '%c' [from %s] is not known."
+msgstr "བརྡ་བཀོད་གྲལ་ཐིག་གྱི་གདམ་ཁ་'%c'[%s་ནང་ལས་]འདི་མ་ཤེས་པས།"
+
+#: apt-pkg/contrib/cmndline.cc:146 apt-pkg/contrib/cmndline.cc:155
+#: apt-pkg/contrib/cmndline.cc:163
+#, c-format
+msgid "Command line option %s is not understood"
+msgstr "བ་རྡ་བཀོད་གྲལ་ཐིག་གི་གདམ་ཁ་%s་འདི་ཧ་མ་གོ་བས།"
+
+#: apt-pkg/contrib/cmndline.cc:168
+#, c-format
+msgid "Command line option %s is not boolean"
+msgstr "བརྡ་བཀོད་གྲལ་ཐིག་གི་གདམ་ཁ་%s་འདི་བུ་ལིན་མེན་པས།"
+
+#: apt-pkg/contrib/cmndline.cc:209 apt-pkg/contrib/cmndline.cc:230
+#, c-format
+msgid "Option %s requires an argument."
+msgstr "གདམ་ཁ་%s་ལུ་སྒྲུབ་རྟགས་ཅིག་དགོ་པས།"
+
+#: apt-pkg/contrib/cmndline.cc:243 apt-pkg/contrib/cmndline.cc:249
+#, c-format
+msgid "Option %s: Configuration item specification must have an =<val>."
+msgstr "གདམ་ཁ་%s:རིམ་སྒྲིག་གི་རྣམ་གྲངས་གསལ་བཀོད་ལུ་ =<val> ་ཅིག་དགོཔ་ཨིན།"
+
+#: apt-pkg/contrib/cmndline.cc:278
+#, c-format
+msgid "Option %s requires an integer argument, not '%s'"
+msgstr "གདམ་ཁ་ %s ་ལུ་'%s'་མེན་པར་ ཧྲིལ་ཨང་སྒྲུབ་རྟགས་ཅིག་དགོས་མཁོ་ཡོདཔ་ཨིན"
+
+#: apt-pkg/contrib/cmndline.cc:309
+#, c-format
+msgid "Option '%s' is too long"
+msgstr "གདམ་ཁ་'%s'འདི་གནམ་མེད་ས་མེད་རིངམ་འདུག"
+
+#: apt-pkg/contrib/cmndline.cc:341
+#, c-format
+msgid "Sense %s is not understood, try true or false."
+msgstr "དྲན་ཤེས་ %s་འདི་ཧ་གོ་མ་ཚུགས་པས་  བདེན་པ་ཡང་ན་རྫུན་པ་ལུ་འབད་རྩོལ་བསྐྱེདཔ།"
+
+#: apt-pkg/contrib/cmndline.cc:391
+#, c-format
+msgid "Invalid operation %s"
+msgstr "ནུས་མེད་བཀོལ་སྤྱོད་%s"
+
 #: cmdline/apt-cache.cc:149
 #, c-format
 msgid "Package %s version %s has an unmet dep:\n"
 msgstr "ཐུམ་སྒྲིལ་ %s ཐོན་རིམ་ %s ལུ་ ཌེཔ་མ་ཚང་ཅིག་འདུག:\n"
 
-#: cmdline/apt-cache.cc:277
+#: cmdline/apt-cache.cc:317
 msgid "Total package names: "
 msgstr "ཐུམ་སྒྲིལ་བསྡོམས་ཀྱི་མིང་ཚུ:"
 
-#: cmdline/apt-cache.cc:279
+#: cmdline/apt-cache.cc:319
 #, fuzzy
 msgid "Total package structures: "
 msgstr "ཐུམ་སྒྲིལ་བསྡོམས་ཀྱི་མིང་ཚུ:"
 
-#: cmdline/apt-cache.cc:319
+#: cmdline/apt-cache.cc:359
 msgid "  Normal packages: "
 msgstr "སྤྱིར་བཏང་ཐུམ་སྒྲིལ་ཚུ།"
 
-#: cmdline/apt-cache.cc:320
+#: cmdline/apt-cache.cc:360
 msgid "  Pure virtual packages: "
 msgstr "བར་ཅུ་ཡལ་ཐུམ་སྒྲིལ་གཙང་མ་ཚུ:"
 
-#: cmdline/apt-cache.cc:321
+#: cmdline/apt-cache.cc:361
 msgid "  Single virtual packages: "
 msgstr "བར་ཅུ་ཡལ་ཐུམ་སྒྲིལ་རྐྱང་པ་ཚུ:"
 
-#: cmdline/apt-cache.cc:322
+#: cmdline/apt-cache.cc:362
 msgid "  Mixed virtual packages: "
 msgstr "བར་ཅུ་ཡལ་ཐུམ་སྒྲིལ་སླ་བསྲེ་ཡོད་མི་ཚུ:"
 
-#: cmdline/apt-cache.cc:323
+#: cmdline/apt-cache.cc:363
 msgid "  Missing: "
 msgstr "བརླག་སྟོར་ཞུགས་པ:"
 
-#: cmdline/apt-cache.cc:325
+#: cmdline/apt-cache.cc:365
 msgid "Total distinct versions: "
 msgstr "ཁྱད་རྟགས་ཅན་གྱི་ཐོན་རིམ་ཚུ་གི་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:327
+#: cmdline/apt-cache.cc:367
 #, fuzzy
 msgid "Total distinct descriptions: "
 msgstr "ཁྱད་རྟགས་ཅན་གྱི་ཐོན་རིམ་ཚུ་གི་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:329
+#: cmdline/apt-cache.cc:369
 msgid "Total dependencies: "
 msgstr "རྟེན་འབྲེལ་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:332
+#: cmdline/apt-cache.cc:372
 msgid "Total ver/file relations: "
 msgstr "ཐེན་རིམ་/ཡིག་སྣོད་ མཐུན་འབྲེལ་གྱི་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:334
+#: cmdline/apt-cache.cc:374
 #, fuzzy
 msgid "Total Desc/File relations: "
 msgstr "ཐེན་རིམ་/ཡིག་སྣོད་ མཐུན་འབྲེལ་གྱི་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:336
+#: cmdline/apt-cache.cc:376
 msgid "Total Provides mappings: "
 msgstr "ཡོངས་བསྡོམས་ཀྱིས་ས་ཁྲ་བཟོ་བ་ཚུ་བྱིནམ་ཨིན:"
 
-#: cmdline/apt-cache.cc:348
+#: cmdline/apt-cache.cc:388
 msgid "Total globbed strings: "
 msgstr "སྤུངས་ཡོད་པའི་ཡིག་རྒྱུན་གྱི་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:362
+#: cmdline/apt-cache.cc:402
 msgid "Total dependency version space: "
 msgstr "རྟེན་འབྲེལ་ཐོན་རིམ་བར་སྟོང་གྱི་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:367
+#: cmdline/apt-cache.cc:407
 msgid "Total slack space: "
 msgstr "བར་སྟོང་ལྷུག་ལྷུག་གི་བསྡོམས:"
 
-#: cmdline/apt-cache.cc:375
+#: cmdline/apt-cache.cc:422
 msgid "Total space accounted for: "
 msgstr "གི་དོན་ལུ་རྩིས་ཐོ་བཏོན་ཡོད་པའི་བར་སྟོང:"
 
-#: cmdline/apt-cache.cc:506 cmdline/apt-cache.cc:1155
+#: cmdline/apt-cache.cc:558 cmdline/apt-cache.cc:1207
 #: apt-private/private-show.cc:58
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "ཐུམ་སྒྲིལ་ཡིག་སྣོད་ %sའདི་མཉམ་འབྱུང་གི་ཕྱི་ཁར་ཨིན་པས།"
 
-#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1441
-#: cmdline/apt-cache.cc:1443 cmdline/apt-cache.cc:1520 cmdline/apt-mark.cc:59
+#: cmdline/apt-cache.cc:636 cmdline/apt-cache.cc:1493
+#: cmdline/apt-cache.cc:1495 cmdline/apt-cache.cc:1572 cmdline/apt-mark.cc:59
 #: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
 #: apt-private/private-show.cc:171 apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "ཐུམ་སྒྲིལ་ཚུ་མ་ཐོབ།"
 
-#: cmdline/apt-cache.cc:1254
+#: cmdline/apt-cache.cc:1306
 #, fuzzy
 msgid "You must give at least one search pattern"
 msgstr "ཁྱོད་ཀྱིས་ཏག་ཏག་སྦེ་དཔེ་གཞི་གཅིག་བྱིན་དགོ"
 
-#: cmdline/apt-cache.cc:1420
+#: cmdline/apt-cache.cc:1472
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1515 apt-pkg/cacheset.cc:596
-#, c-format
-msgid "Unable to locate package %s"
-msgstr "%sཐུམ་སྒྲིལ་འདི་ག་ཡོད་ཟཚོལ་མ་ཐོབ།"
-
-#: cmdline/apt-cache.cc:1545
+#: cmdline/apt-cache.cc:1597
 msgid "Package files:"
 msgstr "ཐུམ་སྒྲིལ་གྱི་ཡིག་སྣོད:"
 
-#: cmdline/apt-cache.cc:1552 cmdline/apt-cache.cc:1643
+#: cmdline/apt-cache.cc:1604 cmdline/apt-cache.cc:1695
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr ""
 "འདྲ་མཛོད་འདི་མཉམ་བྱུང་གི་ཕྱི་ཁར་ཨིན་པས་  ཐུམ་སྒྲིལ་ཡིག་སྣོད་ཅིག་ལུ་ ཨེགསི་-རེཕ་འབད་མི་ཚུགས་པས།"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1566
+#: cmdline/apt-cache.cc:1618
 msgid "Pinned packages:"
 msgstr "ཁབ་གཟེར་བཏབ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
 
-#: cmdline/apt-cache.cc:1578 cmdline/apt-cache.cc:1623
+#: cmdline/apt-cache.cc:1630 cmdline/apt-cache.cc:1675
 msgid "(not found)"
 msgstr "(མ་ཐོབ།)"
 
-#: cmdline/apt-cache.cc:1586
+#: cmdline/apt-cache.cc:1638
 msgid "  Installed: "
 msgstr "གཞི་བཙུགས་འབད་ཡོདཔ།"
 
-#: cmdline/apt-cache.cc:1587
+#: cmdline/apt-cache.cc:1639
 msgid "  Candidate: "
 msgstr "མི་ངོ:"
 
-#: cmdline/apt-cache.cc:1605 cmdline/apt-cache.cc:1613
+#: cmdline/apt-cache.cc:1657 cmdline/apt-cache.cc:1665
 msgid "(none)"
 msgstr "(ཅི་མེད།)"
 
-#: cmdline/apt-cache.cc:1620
+#: cmdline/apt-cache.cc:1672
 msgid "  Package pin: "
 msgstr "ཐུམ་སྒྲིལ་གྱི་ཁབ་གཟེར:"
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1629
+#: cmdline/apt-cache.cc:1681
 msgid "  Version table:"
 msgstr "ཐོན་རིམ་ཐིག་ཁྲམ།:"
 
-#: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1586 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
-#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
+#: cmdline/apt-cache.cc:1794 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
+#: cmdline/apt-get.cc:1611 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
+#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:220
 #: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
 #, fuzzy, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s་གི་དོན་ལུ་%s %sགུར་ཕྱོགས་སྒྲིག་འབད་ཡོད་པའི་%s %s\n"
 
-#: cmdline/apt-cache.cc:1749
+#: cmdline/apt-cache.cc:1801
 #, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
@@ -334,7 +1602,7 @@ msgid "Couldn't find package %s"
 msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
-#: apt-private/private-install.cc:865
+#: apt-private/private-install.cc:891
 #, fuzzy, c-format
 msgid "%s set to manually installed.\n"
 msgstr "འདི་འབདཝ་ད་%sའདི་གཞི་བཙུགས་འབད་ནི་ཨིན།"
@@ -362,7 +1630,7 @@ msgstr "ཕབ་ལེན་འབད་ནིའི་སྣོད་ཡིག
 msgid "Must specify at least one package to fetch source for"
 msgstr "གི་དོན་ལུ་འབྱུང་ཁུངས་ལེན་ནི་ལུ་ཉུང་མཐའ་རང་ཐུམ་སྒྲིལ་གཅིག་ལེན་དགོ"
 
-#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:1066
+#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:1091
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "%s་གི་དོན་ལུ་འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་ཅིག་འཚོལ་མ་འཐོབ"
@@ -382,116 +1650,116 @@ msgid ""
 "to retrieve the latest (possibly unreleased) updates to the package.\n"
 msgstr ""
 
-#: cmdline/apt-get.cc:843
+#: cmdline/apt-get.cc:839
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "གོམ་འགྱོ་གིས་ཧེ་མ་ལས་རང་'%s'་ཡིག་སྣོད་དེ་ཕབ་ལེན་འབད་ནུག\n"
 
-#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:872
-#: apt-private/private-install.cc:187 apt-private/private-install.cc:190
+#: cmdline/apt-get.cc:871 cmdline/apt-get.cc:874
+#: apt-private/private-install.cc:189 apt-private/private-install.cc:192
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "%s་ནང་བར་སྟོང་"
 
-#: cmdline/apt-get.cc:882
+#: cmdline/apt-get.cc:884
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr " %s་ནང་ཁྱོད་ལུ་བར་སྟོང་ཚུ་ལངམ་སྦེ་མིན་འདུག་"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:891
+#: cmdline/apt-get.cc:893
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "%sB་ལེན་དགོཔ་འདུག་  འབྱུང་ཁུངས་ཡིག་མཛོད་ཀྱི་%sB།\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:896
+#: cmdline/apt-get.cc:898
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "འབྱུང་ཁུངས་ཡིག་མཛོད་ཚུ་ཀྱི་%sB་ལེན་དགོ་པསས།\n"
 
-#: cmdline/apt-get.cc:902
+#: cmdline/apt-get.cc:904
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "%s་འབྱུང་ཁུངས་ལེན།\n"
 
-#: cmdline/apt-get.cc:920
+#: cmdline/apt-get.cc:922
 msgid "Failed to fetch some archives."
 msgstr "ཡིག་མཛོད་ལ་ལུ་ཅིག་ལེན་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: cmdline/apt-get.cc:925 apt-private/private-install.cc:314
+#: cmdline/apt-get.cc:927 apt-private/private-install.cc:316
 msgid "Download complete and in download only mode"
 msgstr "ཕབ་ལེན་ཐབས་ལམ་རྐྱངམ་གཅིག་ནང་མཇུག་བསྡུཝ་སྦེ་རང་ཕབ་ལེན་འབད།"
 
-#: cmdline/apt-get.cc:950
+#: cmdline/apt-get.cc:952
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "%s་ནང་ཧེ་མ་ལས་སྦུང་ཚན་བཟོ་བཤོལ་ཨིན་མའི་སྦུང་ཚན་བཟོ་བཤོལ་གོམ་འགྱོ་འབད་དོ།\n"
 
-#: cmdline/apt-get.cc:962
+#: cmdline/apt-get.cc:964
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "'%s'སྦུང་ཚན་བཟོ་བཤོལ་འཐུས་ཤོར་བྱུང་ཡོད།\n"
 
-#: cmdline/apt-get.cc:963
+#: cmdline/apt-get.cc:965
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "'dpkg-dev'་ཐུམ་སྒྲིལ་དེ་གཞི་བཙུགས་འབད་ཡོད་པ་ཅིན་ཨེབ་གཏང་འབད།\n"
 
-#: cmdline/apt-get.cc:991
+#: cmdline/apt-get.cc:993
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "'%s'་བཟོ་བརྩིགས་བརྡ་བཀོད་འཐུས་ཤོར་བྱུང་ཡོད།\n"
 
-#: cmdline/apt-get.cc:1010
+#: cmdline/apt-get.cc:1012
 msgid "Child process failed"
 msgstr "ཆ་ལག་ལས་སྦྱོར་དེ་འཐུས་ཤོར་བྱུང་ནུག"
 
-#: cmdline/apt-get.cc:1029
+#: cmdline/apt-get.cc:1031
 msgid "Must specify at least one package to check builddeps for"
 msgstr "builddeps ཞིབ་དཔྱད་འབད་ནིའི་དོན་ལུ་ཉུང་མཐའ་རང་ཐུམ་སྒྲིལ་གཅིག་གསལ་བཀོད་འབད་དགོ"
 
-#: cmdline/apt-get.cc:1054
+#: cmdline/apt-get.cc:1056
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:1078 cmdline/apt-get.cc:1081
+#: cmdline/apt-get.cc:1103 cmdline/apt-get.cc:1106
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "%s་གི་དོན་ལུ་བཟོ་བརྩིགས་-རྟེན་འབྲེལ་བརྡ་དོན་དེ་ལེན་མ་ཚུགས།"
 
-#: cmdline/apt-get.cc:1101
+#: cmdline/apt-get.cc:1126
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s ལུ་བཟོ་བརྩིགས་རྟེན་འབྲེལ་མིན་འདུག\n"
 
-#: cmdline/apt-get.cc:1271
+#: cmdline/apt-get.cc:1296
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
 "packages"
 msgstr "%sཐུམ་སྒྲིལ་འདི་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་ %sགི་དོན་ལུ་%s རྟེན་འབྲེལ་དེ་ངལ་རང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:1289
+#: cmdline/apt-get.cc:1314
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
 "found"
 msgstr "%sཐུམ་སྒྲིལ་འདི་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་ %sགི་དོན་ལུ་%s རྟེན་འབྲེལ་དེ་ངལ་རང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:1312
+#: cmdline/apt-get.cc:1337
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "%s:གི་དོན་ལུ་%s་རྟེན་འབྲེལ་དེ་གི་རེ་བ་སྐོང་ནི་འདི་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན་  གཞི་བཙུགས་འབད་ཡོད་པའི་ཐུམ་"
 "སྒྲིལ་%s་དེ་གནམ་མེད་ས་མེད་གསརཔ་ཨིན་པས།"
 
-#: cmdline/apt-get.cc:1351
+#: cmdline/apt-get.cc:1376
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -500,37 +1768,37 @@ msgstr ""
 "%s གི་དོན་ལུ་%s་རྟེན་འབྲེལ་འདི་གི་རེ་བ་སྐོང་མི་ཚུགས་ནུག་ག་ཅི་འབད་ཟེར་བ་ཅིན་ཐུམ་སྒརིལ་%s་གི་འཐོན་རིམ་"
 "ཚུ་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་འཐོན་རིམ་དགོས་མཁོ་ཚུ་གི་རེ་བ་དོ་སྐོང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:1357
+#: cmdline/apt-get.cc:1382
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
 "version"
 msgstr "%sཐུམ་སྒྲིལ་འདི་འཐོབ་མ་ཚུགསཔ་ལས་བརྟེན་ %sགི་དོན་ལུ་%s རྟེན་འབྲེལ་དེ་ངལ་རང་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:1380
+#: cmdline/apt-get.cc:1405
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "%s: %s་གི་དོན་ལུ་་%s་རྟེན་འབྲེལ་འདི་ངལ་རངས་འབད་ནི་འཐུས་ཤོར་བྱུང་ནུག"
 
-#: cmdline/apt-get.cc:1395
+#: cmdline/apt-get.cc:1420
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr " %s་གི་དོན་ལུ་བཟོ་བརྩིགས་-རྟེན་འབྲེལ་འདི་ངལ་རངས་མ་ཚུགས་པས།"
 
-#: cmdline/apt-get.cc:1400
+#: cmdline/apt-get.cc:1425
 msgid "Failed to process build dependencies"
 msgstr "བཟོ་བརྩིགས་རྟེན་འབྲེལ་འདི་ལས་སྦྱོར་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན།"
 
-#: cmdline/apt-get.cc:1493 cmdline/apt-get.cc:1505
+#: cmdline/apt-get.cc:1518 cmdline/apt-get.cc:1530
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "%s (%s)་ལུ་མཐུད་དོ།"
 
-#: cmdline/apt-get.cc:1591
+#: cmdline/apt-get.cc:1616
 msgid "Supported modules:"
 msgstr "རྒྱབ་སྐྱོར་འབད་ཡོད་པའི་ཚད་གཞི་ཚུ:"
 
-#: cmdline/apt-get.cc:1632
+#: cmdline/apt-get.cc:1657
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -665,12 +1933,6 @@ msgstr "%s ་འདི་ཧེ་མ་ལས་རང་འཐོན་རི
 #, fuzzy, c-format
 msgid "%s was already not hold.\n"
 msgstr "%s ་འདི་ཧེ་མ་ལས་རང་འཐོན་རིམ་གསར་ཤོས་ཅིག་ཨིན།\n"
-
-#: cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339 apt-pkg/deb/dpkgpm.cc:1202
-#: apt-pkg/contrib/fileutl.cc:812 apt-pkg/contrib/gpgv.cc:219
-#, c-format
-msgid "Waited for %s but it wasn't there"
-msgstr "%s་གི་དོན་ལུ་བསྒུག་སྡོད་ཅི་ འདི་འབདཝ་ད་ཕར་མིན་འདུག"
 
 #: cmdline/apt-mark.cc:273 cmdline/apt-mark.cc:322
 #, fuzzy, c-format
@@ -833,12 +2095,6 @@ msgstr "མཐུད་ལམ་ངལ་མཚམས"
 msgid "Server closed the connection"
 msgstr "སར་བར་གྱིས་མཐུད་ལམ་འདི་ཁ་བསྡམས་ཏེ་ཡོདཔ་ཨིན།"
 
-#: methods/ftp.cc:353 methods/rsh.cc:202 apt-pkg/contrib/fileutl.cc:1476
-#: apt-pkg/contrib/fileutl.cc:1485 apt-pkg/contrib/fileutl.cc:1490
-#: apt-pkg/contrib/fileutl.cc:1492
-msgid "Read error"
-msgstr "འཛོལ་བ་ལྷབ།"
-
 #: methods/ftp.cc:360 methods/rsh.cc:209
 msgid "A response overflowed the buffer."
 msgstr "ལན་གྱིས་ གནད་ཁོངས་གུར་ལས་ ལུད་སོང་སྟེ་ཡོདཔ་ཨིན།"
@@ -846,13 +2102,6 @@ msgstr "ལན་གྱིས་ གནད་ཁོངས་གུར་ལས�
 #: methods/ftp.cc:377 methods/ftp.cc:389
 msgid "Protocol corruption"
 msgstr "གནད་སྤེལ་ལམ་ལུགས་ ངན་ཅན།"
-
-#: methods/ftp.cc:462 methods/rsh.cc:246 apt-pkg/contrib/fileutl.cc:872
-#: apt-pkg/contrib/fileutl.cc:1598 apt-pkg/contrib/fileutl.cc:1607
-#: apt-pkg/contrib/fileutl.cc:1612 apt-pkg/contrib/fileutl.cc:1614
-#: apt-pkg/contrib/fileutl.cc:1639
-msgid "Write error"
-msgstr "འཛོལ་བ་འབྲི།"
 
 #: methods/ftp.cc:701 methods/ftp.cc:707 methods/ftp.cc:742
 msgid "Could not create a socket"
@@ -1097,15 +2346,22 @@ msgstr "འ་ནི་ ཨེཆི་ཊི་ཊི་པི་ སར་བ�
 msgid "Unknown date format"
 msgstr "མ་ཤེས་པའི་ཚེས་རྩ་སྒྲིག"
 
-#: methods/server.cc:489
+#: methods/server.cc:496
 msgid "Bad header data"
 msgstr "མགོ་ཡིག་གནད་སྡུད་བྱང་ཉེས།"
 
-#: methods/server.cc:506 methods/server.cc:562
+#: methods/server.cc:513 methods/server.cc:600
 msgid "Connection failed"
 msgstr "བཐུད་ལམ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: methods/server.cc:654
+#: methods/server.cc:572
+#, c-format
+msgid ""
+"Automatically disabled %s due to incorrect response from server/proxy. (man "
+"5 apt.conf)"
+msgstr ""
+
+#: methods/server.cc:692
 msgid "Internal error"
 msgstr "ནང་འཁོད་འཛོལ་བ།"
 
@@ -1121,11 +2377,11 @@ msgstr "འབད་ཚར་ཡི།"
 msgid "Sorting"
 msgstr ""
 
-#: apt-private/private-list.cc:131
+#: apt-private/private-list.cc:123
 msgid "Listing"
 msgstr ""
 
-#: apt-private/private-list.cc:164
+#: apt-private/private-list.cc:156
 #, c-format
 msgid "There is %i additional version. Please use the '-a' switch to see it"
 msgid_plural ""
@@ -1321,11 +2577,6 @@ msgstr "ཝའི།"
 msgid "N"
 msgstr ""
 
-#: apt-private/private-output.cc:785 apt-pkg/cachefilter.cc:35
-#, c-format
-msgid "Regex compilation error - %s"
-msgstr "རི་ཇེགསི་ཕྱོགས་སྒྲིག་འཛོལ་བ་- %s"
-
 #: apt-private/private-update.cc:31
 msgid "The update command takes no arguments"
 msgstr "དུས་མཐུན་བཟོ་བའི་བརྡ་བཀོད་འདི་གིས་སྒྲུབ་རྟགས་ཚུ་མི་འབག་འབད།"
@@ -1354,21 +2605,21 @@ msgstr[1] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-install.cc:82
+#: apt-private/private-install.cc:84
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr ""
 "ནང་འཁོད་ཀྱི་འཛོལ་བ་  གཞི་བཙུགས་ཐུམ་སྒྲིལ་ཚུ་ ཆད་པ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ་དང་གཅིག་ཁར་བོད་བརྡ་འབད་འདི་"
 "ཡོད!"
 
-#: apt-private/private-install.cc:91
+#: apt-private/private-install.cc:93
 msgid "Packages need to be removed but remove is disabled."
 msgstr "ཐུམ་སྒྲིལ་ཚུ་རྩ་བསྐྲད་བཏང་དགོཔ་འདུག་འདི་འབདགཝ་ད་རྩ་བསྐྲད་གཏང་ནི་འདི་ལྕོགས་མིན་ཐལ་ཏེ་འདུག"
 
-#: apt-private/private-install.cc:110
+#: apt-private/private-install.cc:112
 msgid "Internal error, Ordering didn't finish"
 msgstr "ནང་འཁོད་འཛོལ་བ་  གོ་རིམ་བཟོ་ནི་ཚུ་མཇུག་མ་བསྡུ་བས།"
 
-#: apt-private/private-install.cc:148
+#: apt-private/private-install.cc:150
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "ག་ཅི་གི་ཡ་མཚན་ཆེ་མི་ཆེ་  ཚད་འདི་གིས་ email apt@packages.debian.org་ལུ་མཐུན་སྒྲིག་མི་འབད་"
@@ -1376,52 +2627,52 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:155
+#: apt-private/private-install.cc:157
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "%sBལེན་ནི་ལུ་དགོཔ་པས། ཡིག་མཛོད་ཚི་གི་%sB་\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:160
+#: apt-private/private-install.cc:162
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "ཡིག་མཛོད་ཀྱི་%sB་འདི་ལེན་དགོ་པས།\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:167
+#: apt-private/private-install.cc:169
 #, fuzzy, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "ཁ་སྐོང་གི་%sB་འདི་བཤུབ་པའི་ཤུལ་ལས་ཌིཀསི་གི་བར་སྟོང་དེ་ལག་ལེན་འཐབ་འོང་།\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:172
+#: apt-private/private-install.cc:174
 #, fuzzy, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "%sB་འདི་ཤུབ་པའི་ཤུལ་ལས་ཀྱི་བར་སྟོང་དེ་དལཝ་སྦེ་ལུས་འོང་།\n"
 
-#: apt-private/private-install.cc:200
+#: apt-private/private-install.cc:202
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "%s ནང་ཁྱོད་ལུ་བར་སྟོང་དལཝ་ལངམ་སྦེ་མིན་འདུག"
 
-#: apt-private/private-install.cc:210 apt-private/private-download.cc:59
+#: apt-private/private-install.cc:212 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "དཀའ་ངལ་ཚུ་ཡོདཔ་ལས་-y ་འདི་ --force-yes་མེདཐོག་ལས་ལག་ལེན་འཐབ་སྟེ་ཡོད།"
 
-#: apt-private/private-install.cc:216 apt-private/private-install.cc:238
+#: apt-private/private-install.cc:218 apt-private/private-install.cc:240
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr "གལ་ཆུང་རྐྱངམ་ཅིག་ཁསལ་བཀོད་འབད་ནུག་ འདི་འབདཝ་ད་འ་ནི་འདི་གལ་ཆུང་གི་བཀོལ་སྤྱོད་མེན།"
 
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:220
+#: apt-private/private-install.cc:222
 msgid "Yes, do as I say!"
 msgstr "ཨིན་ ང་གིས་སླབ་དོ་བཟུམ་སྦེ་རང་འབད!"
 
-#: apt-private/private-install.cc:222
+#: apt-private/private-install.cc:224
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -1432,20 +2683,20 @@ msgstr ""
 "འཕྲོ་མཐུད་འབད་ནིའི་དོན་ལུ་'%s'ཚིག་ཚན་ནང་ལུ་ཡིག་དཔར་རྐྱབས།\n"
 " ?] "
 
-#: apt-private/private-install.cc:228 apt-private/private-install.cc:246
+#: apt-private/private-install.cc:230 apt-private/private-install.cc:248
 msgid "Abort."
 msgstr "བར་བཤོལ་འབད།"
 
-#: apt-private/private-install.cc:243
+#: apt-private/private-install.cc:245
 #, fuzzy
 msgid "Do you want to continue?"
 msgstr "ཁྱོན་ཀྱི་འཕྲོ་མཐུད་ནི་འབད་ནི་ཨིན་ན་"
 
-#: apt-private/private-install.cc:313
+#: apt-private/private-install.cc:315
 msgid "Some files failed to download"
 msgstr "ཡིག་སྣོད་ལ་ལུ་ཅིག་ཕབ་ལེན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
 
-#: apt-private/private-install.cc:320
+#: apt-private/private-install.cc:322
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -1453,19 +2704,19 @@ msgstr ""
 "ཡིག་མཛོད་ལ་ལུ་ཅིག་ལེན་མི་ཚུགས་པས་  apt-get་དུས་མཐུན་བཟོ་ནི་གཡོག་བཀོལ་ནི་ཨིན་ན་ཡང་ན་--fix-"
 "missing་དང་གཅིག་ཁར་འབད་རྩོལ་བསྐྱེད་ནི་ཨིན་ན་?"
 
-#: apt-private/private-install.cc:324
+#: apt-private/private-install.cc:326
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing་དང་བརྡ་ལམ་བརྗེ་སོར་འབད་ནི་འདི་ད་ལྟོ་ལས་རང་རྒྱབ་སྐྱོར་མི་འབད་བས།"
 
-#: apt-private/private-install.cc:329
+#: apt-private/private-install.cc:331
 msgid "Unable to correct missing packages."
 msgstr "བརླག་སྟོར་ཞུགས་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ་ནོར་བཅོས་འབད་མི་ཚུགས་པས།"
 
-#: apt-private/private-install.cc:330
+#: apt-private/private-install.cc:332
 msgid "Aborting install."
 msgstr "གཞི་བཙུགས་བར་བཤོལ་འབད་དོ།"
 
-#: apt-private/private-install.cc:366
+#: apt-private/private-install.cc:368
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -1475,15 +2726,15 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: apt-private/private-install.cc:370
+#: apt-private/private-install.cc:372
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr ""
 
-#: apt-private/private-install.cc:391
+#: apt-private/private-install.cc:393
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr ""
 
-#: apt-private/private-install.cc:499
+#: apt-private/private-install.cc:501
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -1499,16 +2750,16 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:502 apt-private/private-install.cc:653
+#: apt-private/private-install.cc:504 apt-private/private-install.cc:655
 msgid "The following information may help to resolve the situation:"
 msgstr "འོག་གི་བརྡ་དོན་དེ་གིས་དུས་སྐབས་འདི་མོས་མཐུན་བཟོ་ནི་ལུ་གྲོགས་རམ་འབད་འོང་:"
 
-#: apt-private/private-install.cc:506
+#: apt-private/private-install.cc:508
 #, fuzzy
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "ནང་འཁོད་འཛོལ་བ་ དཀའ་ངལ་མོས་མཐུན་འབད་མི་ཅ་ཆས་ཚུ་མེདཔ་ཐལ་ཡོད།"
 
-#: apt-private/private-install.cc:513
+#: apt-private/private-install.cc:515
 #, fuzzy
 msgid ""
 "The following package was automatically installed and is no longer required:"
@@ -1518,7 +2769,7 @@ msgid_plural ""
 msgstr[0] "འོག་གི་ཐུམ་སྒྲིས་གསརཔ་འདི་ཚུ་ཁཞི་བཙུགས་འབད་འོང་:"
 msgstr[1] "འོག་གི་ཐུམ་སྒྲིས་གསརཔ་འདི་ཚུ་ཁཞི་བཙུགས་འབད་འོང་:"
 
-#: apt-private/private-install.cc:517
+#: apt-private/private-install.cc:519
 #, fuzzy, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
@@ -1526,17 +2777,17 @@ msgid_plural ""
 msgstr[0] "འོག་གི་ཐུམ་སྒྲིས་གསརཔ་འདི་ཚུ་ཁཞི་བཙུགས་འབད་འོང་:"
 msgstr[1] "འོག་གི་ཐུམ་སྒྲིས་གསརཔ་འདི་ཚུ་ཁཞི་བཙུགས་འབད་འོང་:"
 
-#: apt-private/private-install.cc:519
+#: apt-private/private-install.cc:521
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] ""
 msgstr[1] ""
 
-#: apt-private/private-install.cc:612
+#: apt-private/private-install.cc:614
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "འདི་ཚུ་ནོར་བཅོས་འབད་ནིའི་དོན་ལུ་ཁྱོད་ཀྱི་'apt-get -f install'དེ་གཡོག་བཀོལ་དགོཔ་འོང་:"
 
-#: apt-private/private-install.cc:614
+#: apt-private/private-install.cc:616
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -1544,7 +2795,7 @@ msgstr ""
 "མ་ཚང་བའི་རྟེན་འབྲེལ་  ཐུས་སྒྲིལ་མེད་མི་ཚུ་དང་གཅིག་ཁར་ 'apt-get -f install'དེ་འབཐ་རྩོལ་བསྐྱེདཔ།"
 "(ཡང་ན་ཐབས་ཤེས་ཅིག་གསལ་བཀོད་འབད།)"
 
-#: apt-private/private-install.cc:638
+#: apt-private/private-install.cc:640
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -1555,63 +2806,63 @@ msgstr ""
 "འབད་འབདཝ་འོང་ནི་མས་ ཡང་ན་ད་ལྟོ་ཡང་གསར་བསྐྲུན་མ་འབད་བར་ཡོད་པའི་ཐུམ་སྒྲིལ་ལ་ལུ་ཅིག་ཡང་ན་ནང་"
 "འབྱོར་གྱི་ཕྱི་ཁར་རྩ་བསྐྲད་བཏང་ཡོད་པའི་རྩ་བརྟན་མེད་པའི་བགོ་འགྲེམ་ཚུ་ལག་ལེན་འཐབ་དོ་ཡོདཔ་འོང་ནི་ཨིན་པས།"
 
-#: apt-private/private-install.cc:659
+#: apt-private/private-install.cc:661
 msgid "Broken packages"
 msgstr "ཆད་པ་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ།"
 
-#: apt-private/private-install.cc:712
+#: apt-private/private-install.cc:738
 msgid "The following extra packages will be installed:"
 msgstr "འོག་གི་ཐུམ་སྒྲིལ་ཐེབས་ཚུ་གཞི་བཙུགས་འབད་འོང་:"
 
-#: apt-private/private-install.cc:802
+#: apt-private/private-install.cc:828
 msgid "Suggested packages:"
 msgstr "བསམ་འཆར་བཀོད་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
 
-#: apt-private/private-install.cc:803
+#: apt-private/private-install.cc:829
 msgid "Recommended packages:"
 msgstr "འོས་སྦྱོར་འབད་ཡོད་པའི་ཐུམ་སྒྲིལ་ཚུ:"
 
-#: apt-private/private-install.cc:825
+#: apt-private/private-install.cc:851
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "%s་གོམ་འགྱོ་འབད་དོ་  འདི་ཧེ་མ་ལས་རང་གཞི་བཙུགས་འབད་འོདཔ་དང་དུས་ཡར་བསྐྱེད་འབད་ནི་འདི་གཞི་སྒྲིག་མ་"
 "འབད་བས།\n"
 
-#: apt-private/private-install.cc:829
+#: apt-private/private-install.cc:855
 #, fuzzy, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr ""
 "%s་གོམ་འགྱོ་འབད་དོ་  འདི་ཧེ་མ་ལས་རང་གཞི་བཙུགས་འབད་འོདཔ་དང་དུས་ཡར་བསྐྱེད་འབད་ནི་འདི་གཞི་སྒྲིག་མ་"
 "འབད་བས།\n"
 
-#: apt-private/private-install.cc:841
+#: apt-private/private-install.cc:867
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "%s ་ལོག་གཞི་བཙུགས་འབད་ནི་འདི་མི་སྲིད་པ་ཅིག་ཨིན་པས་ འདི་ཕབ་ལེན་འབད་མི་བཏུབ་པས།\n"
 
-#: apt-private/private-install.cc:846
+#: apt-private/private-install.cc:872
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s ་འདི་ཧེ་མ་ལས་རང་འཐོན་རིམ་གསར་ཤོས་ཅིག་ཨིན།\n"
 
-#: apt-private/private-install.cc:894
+#: apt-private/private-install.cc:920
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "(%s)གི་དོན་ལུ་སེལ་འཐུ་འབད་ཡོད་པའི་འཐོན་རིམ་'%s'(%s)\n"
 
-#: apt-private/private-install.cc:899
+#: apt-private/private-install.cc:925
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "(%s)གི་དོན་ལུ་སེལ་འཐུ་འབད་ཡོད་པའི་འཐོན་རིམ་'%s'(%s)\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-install.cc:941
+#: apt-private/private-install.cc:967
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr "ཐུམ་སྒྲིལ་%s་འདི་གཞི་བཙུགས་མ་འབད་བས་  འདི་འབད་ནི་དི་གིས་རྩ་བསྐྲད་མ་གཏང་པས།་\n"
 
-#: apt-private/private-install.cc:947
+#: apt-private/private-install.cc:973
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "ཐུམ་སྒྲིལ་%s་འདི་གཞི་བཙུགས་མ་འབད་བས་  འདི་འབད་ནི་དི་གིས་རྩ་བསྐྲད་མ་གཏང་པས།་\n"
@@ -1641,11 +2892,6 @@ msgstr "ཐུམ་སྒྲིལ་ལ་ལུ་ཅིག་བདེན་
 msgid "Install these packages without verification?"
 msgstr "བདེན་སྦྱོར་མ་འབད་བར་འ་ནི་ཐུམ་སྒྲིལ་འདི་ཚུ་གཞི་བཙུགས་འབད་ནི་ཨིན་ན་"
 
-#: apt-private/private-download.cc:91 apt-pkg/update.cc:77
-#, c-format
-msgid "Failed to fetch %s  %s\n"
-msgstr "%s  %s་ ལེན་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།\n"
-
 #: apt-private/private-sources.cc:58
 #, fuzzy, c-format
 msgid "Failed to parse %s. Edit again? "
@@ -1664,29 +2910,29 @@ msgstr ""
 msgid "Hit "
 msgstr "ཨེབ།"
 
-#: apt-private/acqprogress.cc:90
+#: apt-private/acqprogress.cc:88
 msgid "Get:"
 msgstr "ལེན:"
 
-#: apt-private/acqprogress.cc:121
+#: apt-private/acqprogress.cc:119
 msgid "Ign "
 msgstr "ཨེལ་ཇི་ཨེན:"
 
-#: apt-private/acqprogress.cc:125
+#: apt-private/acqprogress.cc:123
 msgid "Err "
 msgstr "ཨི་ཨར་ཨར།"
 
-#: apt-private/acqprogress.cc:146
+#: apt-private/acqprogress.cc:147
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "%s (%sB/s)་ནང་ལུ་%sB་དེ་ལེན་ཡོདཔ་ཨིན།\n"
 
-#: apt-private/acqprogress.cc:236
+#: apt-private/acqprogress.cc:237
 #, c-format
 msgid " [Working]"
 msgstr " [ལཱ་འབད་དོ།]"
 
-#: apt-private/acqprogress.cc:297
+#: apt-private/acqprogress.cc:298
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -1696,25 +2942,6 @@ msgstr ""
 "བརྡ་ལམ་བསྒྱུར་བཅོས:ཁ་ཡིག་བཀོད་ཡོད་པའི་ཌིསིཀ་འདི་\n"
 " '%s'\n"
 "འདྲེན་འཕྲུལ་'%s'ནང་བཙུགས་བཞིནམ་ལས་ལོག་ལྡེ་འདི་ཨེབ།\n"
-
-#. Only warn if there are no sources.list.d.
-#. Only warn if there is no sources.list file.
-#: methods/mirror.cc:95 apt-inst/extract.cc:471 apt-pkg/clean.cc:40
-#: apt-pkg/init.cc:103 apt-pkg/init.cc:111 apt-pkg/acquire.cc:491
-#: apt-pkg/policy.cc:381 apt-pkg/sourcelist.cc:280 apt-pkg/sourcelist.cc:286
-#: apt-pkg/contrib/fileutl.cc:368 apt-pkg/contrib/fileutl.cc:481
-#: apt-pkg/contrib/cdromutl.cc:205
-#, c-format
-msgid "Unable to read %s"
-msgstr "%s་འདི་ལུ་ལྷག་མ་ཚུགས།"
-
-#: methods/mirror.cc:101 methods/mirror.cc:130 apt-pkg/clean.cc:46
-#: apt-pkg/clean.cc:64 apt-pkg/clean.cc:127 apt-pkg/acquire.cc:497
-#: apt-pkg/acquire.cc:522 apt-pkg/contrib/cdromutl.cc:201
-#: apt-pkg/contrib/cdromutl.cc:235
-#, c-format
-msgid "Unable to change to %s"
-msgstr "%s་ལུ་བསྒྱུར་བཅོས་འབད་མ་ཚུགས།"
 
 #. FIXME: fallback to a default mirror here instead
 #. and provide a config option to define that default
@@ -1844,7 +3071,7 @@ msgid "The diversion path is too long"
 msgstr "ཁ་སྒྱུར་འགྲུལ་ལམ་འདི་གནམ་མེད་ས་མེད་རིངམ་ཨིན་པས།"
 
 #: apt-inst/extract.cc:186 apt-inst/extract.cc:199 apt-inst/extract.cc:216
-#: ftparchive/cachedb.cc:182
+#: ftparchive/cachedb.cc:184
 #, c-format
 msgid "Failed to stat %s"
 msgstr "%s་སིཊེཊི་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
@@ -1953,1221 +3180,7 @@ msgstr "ཊར་ཅེག་སམ་དེ་འཐུས་ཤོར་བྱ
 msgid "Unknown TAR header type %u, member %s"
 msgstr "མ་ཤེས་པའི་ ཊཱར་་མགོ་ཡིག་་དབྱེ་བ་ %u་ འཐུས་མི་ %s།"
 
-#: apt-pkg/clean.cc:61
-#, c-format
-msgid "Unable to stat %s."
-msgstr "%s་ ངོ་བཤུས་འབད་མ་ཚུགས།"
-
-#: apt-pkg/install-progress.cc:57
-#, c-format
-msgid "Progress: [%3i%%]"
-msgstr ""
-
-#: apt-pkg/install-progress.cc:91 apt-pkg/install-progress.cc:174
-msgid "Running dpkg"
-msgstr ""
-
-#: apt-pkg/init.cc:146
-#, c-format
-msgid "Packaging system '%s' is not supported"
-msgstr "སྦུང་ཚན་བཟོ་ནིའི་རིམ་ལུགས་ '%s' འདི་ལུ་རྒྱབ་སྐྱོར་མ་འབད་བས།"
-
-#: apt-pkg/init.cc:162
-msgid "Unable to determine a suitable packaging system type"
-msgstr "འོས་འབབ་དང་ལྡན་པའི་སྦུང་ཚན་རིམ་ལུགས་ཀྱི་དབྱེ་བ་ཅིག་གཏན་འབེབས་བཟོ་མི་ཚུགས་པས།"
-
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:773
-#, c-format
-msgid "Wrote %i records.\n"
-msgstr "%i་དྲན་མཐོ་དེ་ཚུ་བྲིས་ཡོད།\n"
-
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:775
-#, c-format
-msgid "Wrote %i records with %i missing files.\n"
-msgstr "%i བྱིག་འགྱོ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་དང་གཅིག་ཁར་ %i དྲན་ཐོ་འདི་ཚུ་བྲིས་ཡོད།\n"
-
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:778
-#, c-format
-msgid "Wrote %i records with %i mismatched files\n"
-msgstr "%i་མཐུན་སྒྲིག་མེདཔ་པའི་ཡིག་སྣོད་ཚུ་དང་གཅིག་ཁར་ %i་དྲན་ཐོ་ཚུ་བྲིས་བཞག་ཡོདཔ་ཨིན།\n"
-
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:781
-#, c-format
-msgid "Wrote %i records with %i missing files and %i mismatched files\n"
-msgstr ""
-"%i བྱིག་འགྱོ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་དང་ %iམཐུན་སྒྲིག་མེད་པའི་ཡིག་སྣོད་ཚུ་དང་གཅིག་ཁར་ %i དྲན་ཐོ་འདི་ཚུ་བྲིས་"
-"ཡོདཔ་ཨིན།\n"
-
-#: apt-pkg/indexcopy.cc:515
-#, c-format
-msgid "Can't find authentication record for: %s"
-msgstr ""
-
-#: apt-pkg/indexcopy.cc:521
-#, fuzzy, c-format
-msgid "Hash mismatch for: %s"
-msgstr "ཨེམ་ཌི་༥་ ཁྱོན་བསྡོམས་མ་མཐུན་པ།"
-
-#: apt-pkg/acquire-worker.cc:116
-#, c-format
-msgid "The method driver %s could not be found."
-msgstr "ཐབས་ལམ་འདྲེན་བྱེད་%s་འདི་མ་འཐོབ།"
-
-#: apt-pkg/acquire-worker.cc:118
-#, fuzzy, c-format
-msgid "Is the package %s installed?"
-msgstr "'dpkg-dev'་ཐུམ་སྒྲིལ་དེ་གཞི་བཙུགས་འབད་ཡོད་པ་ཅིན་ཨེབ་གཏང་འབད།\n"
-
-#: apt-pkg/acquire-worker.cc:169
-#, c-format
-msgid "Method %s did not start correctly"
-msgstr "ཐབས་ལམ་ %s འདི་ངེས་བདེན་སྦེ་འགོ་མ་བཙུགས་འབད།"
-
-#: apt-pkg/acquire-worker.cc:455
-#, c-format
-msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
-msgstr "ཁ་ཡིག་བཀོད་ཡོད་པའི་ ཌིསི་འདི་བཙུགས་གནང་། '%s'འདྲེན་འཕྲུལ་ནང་'%s' དང་ལོག་ལྡེ་འདི་ཨེབ།་"
-
-#: apt-pkg/cachefile.cc:94
-msgid "The package lists or status file could not be parsed or opened."
-msgstr "ཐུམ་སྒྲིལ་གྱི་ཐོ་ཡིག་ཡང་ན་གནས་ཚད་ཡིག་སྣོད་ཚུ་ མིང་དཔྱད་ཡང་ན་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/cachefile.cc:98
-msgid "You may want to run apt-get update to correct these problems"
-msgstr "འ་ནི་དཀའ་ངལ་འདི་ཚུ་སེལ་ནིའི་ལུ་ ཁྱོད་ཀྱི་ apt-get update་དེ་གཡོག་བཀོལ་དགོཔ་འོང་།"
-
-#: apt-pkg/cachefile.cc:116
-msgid "The list of sources could not be read."
-msgstr "འབྱུང་ཁུངས་ཚུ་ཀྱི་ཐོ་ཡིག་དེ་ལྷག་མི་ཚུགས་པས།"
-
-#: apt-pkg/pkgcache.cc:155
-msgid "Empty package cache"
-msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་སྟོངམ།"
-
-#: apt-pkg/pkgcache.cc:161
-msgid "The package cache file is corrupted"
-msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་ཡིག་སྣོད་འདི་ངན་ཅན་ཨིན་པས།"
-
-#: apt-pkg/pkgcache.cc:166
-msgid "The package cache file is an incompatible version"
-msgstr "ཐུམ་སྒྲིས་འདྲ་མཛོད་ཡིག་སྣོད་འདི་ མི་མཐུན་པའི་འཐོན་རིམ་ཅིག་ཨིན་པས།"
-
-#: apt-pkg/pkgcache.cc:169
-#, fuzzy
-msgid "The package cache file is corrupted, it is too small"
-msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་ཡིག་སྣོད་འདི་ངན་ཅན་ཨིན་པས།"
-
-#: apt-pkg/pkgcache.cc:174
-#, c-format
-msgid "This APT does not support the versioning system '%s'"
-msgstr "འ་ནི་ཨེ་པི་ཊི་ འདི་གིས་ '%s'འཐོན་རིམ་བཟོ་ནིའི་རིམ་ལུགས་དེ་ལུ་རྒྱབ་སྐྱོར་མི་འབད་བས།"
-
-#: apt-pkg/pkgcache.cc:179
-msgid "The package cache was built for a different architecture"
-msgstr "ཐུམ་སྒྲིལ་འདྲ་མཛོད་འདི་བཟོ་བཀོད་སོ་སོ་ཅིག་གི་དོན་ལུ་བཟོ་བརྩིགས་འབད་འབདཝ་ཨིནཔས།"
-
-#: apt-pkg/pkgcache.cc:321
-msgid "Depends"
-msgstr "རྟེནམ་ཨིན།"
-
-#: apt-pkg/pkgcache.cc:321
-msgid "PreDepends"
-msgstr "སྔོན་གོང་མ་རྟེནམ་ཨིན།"
-
-#: apt-pkg/pkgcache.cc:321
-msgid "Suggests"
-msgstr "བསམ་འཆར་བཀོདཔ་ཨིན།"
-
-#: apt-pkg/pkgcache.cc:322
-msgid "Recommends"
-msgstr "འོས་སྦྱོར་འབདཝ་ཨིན།"
-
-#: apt-pkg/pkgcache.cc:322
-msgid "Conflicts"
-msgstr "མི་མཐུནམ་ཨིན།"
-
-#: apt-pkg/pkgcache.cc:322
-msgid "Replaces"
-msgstr "ཚབ་བཙུགསཔ་ཨིན།"
-
-#: apt-pkg/pkgcache.cc:323
-msgid "Obsoletes"
-msgstr "ཕན་མེདཔ་བཟོཝ་ཨིན།"
-
-#: apt-pkg/pkgcache.cc:323
-msgid "Breaks"
-msgstr ""
-
-#: apt-pkg/pkgcache.cc:323
-msgid "Enhances"
-msgstr ""
-
-#: apt-pkg/pkgcache.cc:334
-msgid "important"
-msgstr "གལ་ཅན།"
-
-#: apt-pkg/pkgcache.cc:334
-msgid "required"
-msgstr "དགོས་མཁོ་ཡོདཔ།"
-
-#: apt-pkg/pkgcache.cc:334
-msgid "standard"
-msgstr "ཚད་ལྡན།"
-
-#: apt-pkg/pkgcache.cc:335
-msgid "optional"
-msgstr "གདམ་ཁ་ཅན།"
-
-#: apt-pkg/pkgcache.cc:335
-msgid "extra"
-msgstr "ཐེབས།"
-
-#: apt-pkg/pkgrecords.cc:38
-#, c-format
-msgid "Index file type '%s' is not supported"
-msgstr "ཟུར་ཐོ་ཡིག་སྣོད་ཀྱི་དབྱེ་བ་ '%s' འདི་རྒྱབ་སྐྱོར་མ་འབད་བས།"
-
-#: apt-pkg/pkgcachegen.cc:93
-msgid "Cache has an incompatible versioning system"
-msgstr "འདྲ་མཛོད་ལུ་མཐུན་འགྱུར་མེན་པའི་འཐོན་རིམ་བཟོ་ནིའི་རིམ་ལུགས་ཅིག་འདུག"
-
-#. TRANSLATOR: The first placeholder is a package name,
-#. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:224 apt-pkg/pkgcachegen.cc:234
-#: apt-pkg/pkgcachegen.cc:300 apt-pkg/pkgcachegen.cc:327
-#: apt-pkg/pkgcachegen.cc:340 apt-pkg/pkgcachegen.cc:382
-#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:403
-#: apt-pkg/pkgcachegen.cc:411 apt-pkg/pkgcachegen.cc:415
-#: apt-pkg/pkgcachegen.cc:419 apt-pkg/pkgcachegen.cc:440
-#: apt-pkg/pkgcachegen.cc:479 apt-pkg/pkgcachegen.cc:517
-#: apt-pkg/pkgcachegen.cc:524 apt-pkg/pkgcachegen.cc:555
-#: apt-pkg/pkgcachegen.cc:569
-#, fuzzy, c-format
-msgid "Error occurred while processing %s (%s%d)"
-msgstr "%s (པི་ཀེ་ཇི་འཚོལ་ནི)དེ་བཟོ་སྦྱོར་འབད་བའི་བསྒང་འཛོལ་བ་ཅིག་བྱུང་ནུག"
-
-#: apt-pkg/pkgcachegen.cc:257
-msgid "Wow, you exceeded the number of package names this APT is capable of."
-msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་ཐུམ་སྒྲིལ་ཨང་གྲངས་ལས་ལྷག་ནུག"
-
-#: apt-pkg/pkgcachegen.cc:260
-msgid "Wow, you exceeded the number of versions this APT is capable of."
-msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་ཐོན་རིམ་ཨང་གྲངས་ལས་ལྷག་ནུག"
-
-#: apt-pkg/pkgcachegen.cc:263
-#, fuzzy
-msgid "Wow, you exceeded the number of descriptions this APT is capable of."
-msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་ཐོན་རིམ་ཨང་གྲངས་ལས་ལྷག་ནུག"
-
-#: apt-pkg/pkgcachegen.cc:266
-msgid "Wow, you exceeded the number of dependencies this APT is capable of."
-msgstr "པའོ་་་ཁྱོད་ཀྱིས་ ཨེ་པི་ཊི་འདི་གིས་བཟོད་ཐུབ་པའི་བརྟེན་པའི་ཨང་གྲངས་ལས་ལྷག་ནུག"
-
-#: apt-pkg/pkgcachegen.cc:576
-#, c-format
-msgid "Package %s %s was not found while processing file dependencies"
-msgstr "ཡིག་སྣོད་རྟེན་འབྲེལ་འདི་ཚུ་བཟོ་སྦྱོར་འབད་བའི་བསྒང་ཐུམ་སྒྲིལ་ %s %s ་འདི་མ་ཐོབ་པས།"
-
-#: apt-pkg/pkgcachegen.cc:1211
-#, c-format
-msgid "Couldn't stat source package list %s"
-msgstr "འབྱུང་ཁུངས་ཐུམ་སྒྲིལ་གྱི་ཐོ་ཡིག་%s་དེ་ངོ་བཤུས་འབད་མ་ཚུགས།"
-
-#: apt-pkg/pkgcachegen.cc:1299 apt-pkg/pkgcachegen.cc:1403
-#: apt-pkg/pkgcachegen.cc:1409 apt-pkg/pkgcachegen.cc:1566
-msgid "Reading package lists"
-msgstr "ཐུམ་སྒྲིལ་ཐོ་ཡིག་ཚུ་ལྷག་དོ།"
-
-#: apt-pkg/pkgcachegen.cc:1316
-msgid "Collecting File Provides"
-msgstr "ཡིག་སྣོད་བྱིན་མི་ཚུ་བསྡུ་ལེན་འབད་དོ།"
-
-#: apt-pkg/pkgcachegen.cc:1400 cmdline/apt-extracttemplates.cc:259
-#, c-format
-msgid "Unable to write to %s"
-msgstr " %sལུ་འབྲི་མ་ཚུགས།"
-
-#: apt-pkg/pkgcachegen.cc:1508 apt-pkg/pkgcachegen.cc:1515
-msgid "IO Error saving source cache"
-msgstr "IO འཛོལ་བ་འབྱུང་ཁུངས་འདྲ་མཛོད་སྲུང་བཞག་འབད་དོ།"
-
-#: apt-pkg/edsp.cc:52 apt-pkg/edsp.cc:78
-msgid "Send scenario to solver"
-msgstr ""
-
-#: apt-pkg/edsp.cc:241
-msgid "Send request to solver"
-msgstr ""
-
-#: apt-pkg/edsp.cc:320
-msgid "Prepare for receiving solution"
-msgstr ""
-
-#: apt-pkg/edsp.cc:327
-msgid "External solver failed without a proper error message"
-msgstr ""
-
-#: apt-pkg/edsp.cc:619 apt-pkg/edsp.cc:622 apt-pkg/edsp.cc:627
-msgid "Execute external solver"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2047
-#, c-format
-msgid "rename failed, %s (%s -> %s)."
-msgstr "%s (%s -> %s)བསྐྱར་མིང་བཏགས་ནི་འདི་འཐུས་ཤོར་བྱུང་ཡོདཔ་ཨིན།"
-
-#: apt-pkg/acquire-item.cc:163
-#, fuzzy
-msgid "Hash Sum mismatch"
-msgstr "ཨེམ་ཌི་༥་ ཁྱོན་བསྡོམས་མ་མཐུན་པ།"
-
-#: apt-pkg/acquire-item.cc:168
-msgid "Size mismatch"
-msgstr "ཚད་མ་མཐུན།"
-
-#: apt-pkg/acquire-item.cc:173
-#, fuzzy
-msgid "Invalid file format"
-msgstr "ནུས་མེད་བཀོལ་སྤྱོད་%s"
-
-#: apt-pkg/acquire-item.cc:1581
-#, c-format
-msgid ""
-"Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
-"or malformed file)"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc:1597
-#, fuzzy, c-format
-msgid "Unable to find hash sum for '%s' in Release file"
-msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
-
-#: apt-pkg/acquire-item.cc:1639
-msgid "There is no public key available for the following key IDs:\n"
-msgstr "འོག་གི་ ཨའི་ཌི་་ ལྡེ་མིག་ཚུ་གི་དོན་ལུ་མི་དམང་གི་ལྡེ་མིག་འདི་འཐོབ་མི་ཚུགས་པས:\n"
-
-#: apt-pkg/acquire-item.cc:1677
-#, c-format
-msgid ""
-"Release file for %s is expired (invalid since %s). Updates for this "
-"repository will not be applied."
-msgstr ""
-
-#: apt-pkg/acquire-item.cc:1699
-#, c-format
-msgid "Conflicting distribution: %s (expected %s but got %s)"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc:1729
-#, c-format
-msgid ""
-"An error occurred during the signature verification. The repository is not "
-"updated and the previous index files will be used. GPG error: %s: %s\n"
-msgstr ""
-
-#. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1739 apt-pkg/acquire-item.cc:1744
-#, c-format
-msgid "GPG error: %s: %s"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc:1867
-#, c-format
-msgid ""
-"I wasn't able to locate a file for the %s package. This might mean you need "
-"to manually fix this package. (due to missing arch)"
-msgstr ""
-" %s་ཐུམ་སྒྲིལ་གི་དོན་ལུ་ང་་གི་ཡིག་སྣོད་ཅིག་ག་ཡོད་འཚོལ་མི་འཐོབ་པས། འདི་འབདཝ་ལས་ཁྱོད་ཀྱི་ལག་ཐོག་ལས་ "
-"འ་ནི་ཐུམ་སྒྲིལ་འདི་གི་དཀའ་ངལ་སེལ་དགོཔ་འདུག (arch འདི་བྱིག་སོངམ་ལས་བརྟེན།)"
-
-#: apt-pkg/acquire-item.cc:1933
-#, c-format
-msgid "Can't find a source to download version '%s' of '%s'"
-msgstr ""
-
-#: apt-pkg/acquire-item.cc:1991
-#, c-format
-msgid ""
-"The package index files are corrupted. No Filename: field for package %s."
-msgstr ""
-"ཐུམ་སྒྲིལ་ ཟུར་ཐོ་ཡིག་སྣོད་ཚུ་ངན་ཅན་འགྱོ་ནུག  ཡིག་སྣོད་ཀྱི་མིང་མིན་འདུག: %s་ཐུམ་སྒྲིལ་གྱི་དོན་ལུ་ས་སྒོ།"
-
-#: apt-pkg/vendorlist.cc:85
-#, c-format
-msgid "Vendor block %s contains no fingerprint"
-msgstr "%sསིལ་ཚོང་པ་སྡེབ་ཚན་གྱི་ནང་ན་མཛུབ་རྗེས་མིན་འདུག"
-
-#: apt-pkg/acquire.cc:87 apt-pkg/cdrom.cc:829
-#, fuzzy, c-format
-msgid "List directory %spartial is missing."
-msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
-
-#: apt-pkg/acquire.cc:91
-#, fuzzy, c-format
-msgid "Archives directory %spartial is missing."
-msgstr "ཡིག་མཛོད་སྣོད་ཐོ་ %s་ ཆ་ཤས་འདི་བརླག་སྟོར་ཞུགས་ཏེ་འདུག"
-
-#: apt-pkg/acquire.cc:99
-#, fuzzy, c-format
-msgid "Unable to lock directory %s"
-msgstr "ཐོ་བཀོད་འབད་ཡོད་པའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབ་མ་ཚུགས།"
-
-#. only show the ETA if it makes sense
-#. two days
-#: apt-pkg/acquire.cc:899
-#, c-format
-msgid "Retrieving file %li of %li (%s remaining)"
-msgstr "%li་ གི་བརླག་སྟོར་ཞུགས་པའི་ཡིག་སྣོད་%li (%s ལྷག་ལུས་དོ།)"
-
-#: apt-pkg/acquire.cc:901
-#, c-format
-msgid "Retrieving file %li of %li"
-msgstr " %li་གི་བརླག་སྟོར་ཟུགསཔའི་ཡིག་སྣོད་ %li"
-
-#: apt-pkg/update.cc:103 apt-pkg/update.cc:105
-#, fuzzy
-msgid ""
-"Some index files failed to download. They have been ignored, or old ones "
-"used instead."
-msgstr ""
-"ཟུར་ཐོ་ཡིག་སྣོད་ལ་ལུ་ཅིག་ཕབ་ལེན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ནུག་  འདི་ཚུ་སྣང་མེད་སྦེ་བཞགཔ་མ་ཚད་ ཚབ་ལུ་"
-"རྙིངམ་འདི་ཚུ་ལག་ལེན་འཐབ་ནུག"
-
-#: apt-pkg/srcrecords.cc:52
-msgid "You must put some 'source' URIs in your sources.list"
-msgstr ""
-"ཁྱོད་རའི་sources.listགི་ཐོ་ཡིག་ནང་ལུ་ཁྱོད་ཀྱི་ 'འབྱུང་ཁུངས་' ཡུ་ཨར་ཨའི་ཚུ་་ལ་ལུ་ཅིག་བཙུགས་དགོ"
-
-#: apt-pkg/policy.cc:83
-#, c-format
-msgid ""
-"The value '%s' is invalid for APT::Default-Release as such a release is not "
-"available in the sources"
-msgstr ""
-
-#: apt-pkg/policy.cc:422
-#, fuzzy, c-format
-msgid "Invalid record in the preferences file %s, no Package header"
-msgstr "དགའ་གདམ་ཡིག་སྣོད་ནང་ལུ་ནུས་མེད་ཀྱི་དྲན་ཐོ་  ཐུམ་སྒྲིལ་མགོ་ཡིག་མིན་འདུག"
-
-#: apt-pkg/policy.cc:444
-#, c-format
-msgid "Did not understand pin type %s"
-msgstr "ངོ་རྟགས་ཨང་གི་དབྱེ་བ་ %s འདི་ཧ་གོ་མ་ཚུགས།"
-
-#: apt-pkg/policy.cc:452
-msgid "No priority (or zero) specified for pin"
-msgstr "གོ་རྟགས་ཨང་གི་དོན་ལུ་ གཙོ་རིམ་(ཡང་ན་ ཀླད་ཀོར་)ཚུ་གསལ་བཀོད་མ་འབད་བས།"
-
-#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:910
-#, c-format
-msgid ""
-"Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
-"under APT::Immediate-Configure for details. (%d)"
-msgstr ""
-
-#: apt-pkg/packagemanager.cc:503 apt-pkg/packagemanager.cc:533
-#, fuzzy, c-format
-msgid "Could not configure '%s'. "
-msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/packagemanager.cc:583
-#, c-format
-msgid ""
-"This installation run will require temporarily removing the essential "
-"package %s due to a Conflicts/Pre-Depends loop. This is often bad, but if "
-"you really want to do it, activate the APT::Force-LoopBreak option."
-msgstr ""
-"མི་མཐུན་/སྔོན་རྟེན་འཕྲལ་བཀོལ་ལས་བརྟེན་ འ་ནི་གཞི་བཙུགས་གཡོག་བཀོལ་འདི་ལུ་ མེད་དུ་མི་རུང་བའི་%sཐུམ་"
-"སྒྲིལ་  གནས་སྐབས་ཀྱི་རྩ་བསྐྲད་གཏང་ནི་འདི་དགོས་མཁོ་ཡོདཔ་ཨིན། འདི་འཕྲལ་འཕྲལ་རང་བྱང་ཉེས་ཅིག་ཨིན་པས་ "
-"འདི་འབདཝ་ད་ཁྱོད་ཀྱི་ཐད་རི་འབའ་རི་འབད་དགོཔ་ཨིན་པ་ཅིན་ APT::Force-LoopBreak གདམ་ཁ་འདི་ཤུགས་"
-"ལྡན་བཟོ།"
-
-#: apt-pkg/cdrom.cc:497 apt-pkg/sourcelist.cc:347
-#, c-format
-msgid "Line %u too long in source list %s."
-msgstr "གྲལ་ཐིག་%u་འདི་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་ནང་ལུ་གནམ་མེད་ས་མེད་རིངམོ་འདུག"
-
-#: apt-pkg/cdrom.cc:571
-#, fuzzy
-msgid "Unmounting CD-ROM...\n"
-msgstr "སི་ཌི་-རོམ་སྦྱར་བརྩེགས་མ་འབད་བར་བཞག་དོ..."
-
-#: apt-pkg/cdrom.cc:586
-#, c-format
-msgid "Using CD-ROM mount point %s\n"
-msgstr " %s སི་ཌི-རོམ་སྦྱར་བརྩེགས་ཀྱི་ས་ཚིགས་ལག་ལེན་འཐབ་དོ།\n"
-
-#: apt-pkg/cdrom.cc:599
-msgid "Waiting for disc...\n"
-msgstr "ཌིསིཀ་གི་དོན་ལུ་བསྒུག་དོ...\n"
-
-#: apt-pkg/cdrom.cc:609
-msgid "Mounting CD-ROM...\n"
-msgstr "སི་ཌི་-རོམ་སྦྱར་བརྩེགས་འབད་དོ...\n"
-
-#: apt-pkg/cdrom.cc:620
-msgid "Identifying... "
-msgstr "ངོས་འཛིན་འབད་དོ..."
-
-#: apt-pkg/cdrom.cc:662
-#, c-format
-msgid "Stored label: %s\n"
-msgstr "གསོག་འཇོག་འབད་ཡོད་པའི་ཁ་ཡིག:%s \n"
-
-#: apt-pkg/cdrom.cc:680
-msgid "Scanning disc for index files...\n"
-msgstr "ཟུར་ཐོ་ཡིག་སྣོད་ཚུ་གི་དོན་ལུ་ ཌིསིཀ་ཞིབ་ལྟ་འབད་དོ...\n"
-
-#: apt-pkg/cdrom.cc:734
-#, fuzzy, c-format
-msgid ""
-"Found %zu package indexes, %zu source indexes, %zu translation indexes and "
-"%zu signatures\n"
-msgstr "%i་ཐུམ་སྒྲིལ་གྱི་ཟུར་ཐོ་ཚུ་ཐོབ་ཅི་  %i་འབྱུང་ཁུངས་ཟུར་ཐོ་ཚུ་དང་ %iམིང་རྟགས་ཚུ།\n"
-
-#: apt-pkg/cdrom.cc:744
-msgid ""
-"Unable to locate any package files, perhaps this is not a Debian Disc or the "
-"wrong architecture?"
-msgstr ""
-
-#: apt-pkg/cdrom.cc:771
-#, fuzzy, c-format
-msgid "Found label '%s'\n"
-msgstr "གསོག་འཇོག་འབད་ཡོད་པའི་ཁ་ཡིག:%s \n"
-
-#: apt-pkg/cdrom.cc:800
-msgid "That is not a valid name, try again.\n"
-msgstr "དེ་ནུས་ཅན་གྱི་མིང་ཅིག་མེན་པས་ ལོག་སྟེ་རང་འབད་རྩོལ་བསྐྱེད།\n"
-
-#: apt-pkg/cdrom.cc:817
-#, c-format
-msgid ""
-"This disc is called: \n"
-"'%s'\n"
-msgstr ""
-"ཌིསིཀ་འདི་བོད་བརྡ་འབད་དོ་ཡོདཔ་ཨིན།\n"
-"'%s'\n"
-
-#: apt-pkg/cdrom.cc:819
-msgid "Copying package lists..."
-msgstr "ཐུམ་སྒྲིལ་གྱིཐོ་ཡིག་ཚུ་འདྲ་བཤུས་རྐྱབ་དོ..."
-
-#: apt-pkg/cdrom.cc:863
-msgid "Writing new source list\n"
-msgstr "འབྱུང་ཁུངས་ཀྱི་ཐོ་ཡིག་གསརཔ་ཅིག་འབྲི་དོ།\n"
-
-#: apt-pkg/cdrom.cc:874
-msgid "Source list entries for this disc are:\n"
-msgstr "འ་ནི་ ཌིསིཀ་གི་དོན་ལུ་ འབྱུང་ཁུངས་ཧྲིལ་བུ་ཚུ་:\n"
-
-#: apt-pkg/algorithms.cc:265
-#, c-format
-msgid ""
-"The package %s needs to be reinstalled, but I can't find an archive for it."
-msgstr ""
-"ཐུམ་སྒྲིལ་%s་འདི་ལོག་འདི་རང་གཞི་བཙུགས་འབད་དགོཔ་འདུག་ འདི་འབདཝ་ད་འདི་གི་དོན་ལུ་ཡིག་མཛོད་ཅིག་འཚོལ་"
-"མ་ཐོབ།"
-
-#: apt-pkg/algorithms.cc:1086
-msgid ""
-"Error, pkgProblemResolver::Resolve generated breaks, this may be caused by "
-"held packages."
-msgstr ""
-"འཛོལ་བ་ pkgProblemResolver::གིས་བཟོ་བཏོན་འབད་ཡོད་པའི་མཚམས་དེ་ཚུ་མོས་མཐུན་བཟོཝ་ཨིན འ་ནི་ཐུམ་"
-"སྒྲིལ་ཚུ་འཛིན་པའི་རྒྱུ་རྐྱེན་ལས་བརྟེན་ཨིན་པས།"
-
-#: apt-pkg/algorithms.cc:1088
-msgid "Unable to correct problems, you have held broken packages."
-msgstr "དཀའ་ངལ་འདི་ནོར་བཅོས་འབད་མ་ཚུགས་ ཁྱོད་ཀྱི་ཐུམ་སྒྲིལ་ཆད་པ་ཚུ་འཆང་འདི་འདུག"
-
-#: apt-pkg/depcache.cc:138 apt-pkg/depcache.cc:167
-msgid "Building dependency tree"
-msgstr "རྟེན་འབྲེལ་གྱི་རྩ་འབྲེལ་བཟོ་བརྩིགས་འབད་དོ།"
-
-#: apt-pkg/depcache.cc:139
-msgid "Candidate versions"
-msgstr "མི་ངོ་འཐོན་རིམཚུ།"
-
-#: apt-pkg/depcache.cc:168
-msgid "Dependency generation"
-msgstr "བརྟེན་པའི་བཟོ་བཏོན།"
-
-#: apt-pkg/depcache.cc:188 apt-pkg/depcache.cc:221 apt-pkg/depcache.cc:225
-#, fuzzy
-msgid "Reading state information"
-msgstr "འཐོབ་ཚུགས་པའི་བརྡ་དོན་མཉམ་བསྡོམས་འབད་དོ།"
-
-#: apt-pkg/depcache.cc:250
-#, fuzzy, c-format
-msgid "Failed to open StateFile %s"
-msgstr "%s་ག་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
-
-#: apt-pkg/depcache.cc:256
-#, fuzzy, c-format
-msgid "Failed to write temporary StateFile %s"
-msgstr "%s་ཡིག་སྣོད་འདི་འབྲི་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
-
-#: apt-pkg/tagfile.cc:140
-#, c-format
-msgid "Unable to parse package file %s (1)"
-msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
-
-#: apt-pkg/tagfile.cc:237
-#, c-format
-msgid "Unable to parse package file %s (2)"
-msgstr "%s (༢་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
-
-#: apt-pkg/cacheset.cc:489
-#, c-format
-msgid "Release '%s' for '%s' was not found"
-msgstr "%sགི་དོན་ལུ་འཛིན་གྲོལ་'%s'་དེ་མ་འཐོབ་པས།"
-
-#: apt-pkg/cacheset.cc:492
-#, c-format
-msgid "Version '%s' for '%s' was not found"
-msgstr "'%s'་གི་དོན་ལུ་འཐོན་རིམ་'%s'་དེ་མ་འཐོབ་པས།"
-
-#: apt-pkg/cacheset.cc:603
-#, fuzzy, c-format
-msgid "Couldn't find task '%s'"
-msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
-
-#: apt-pkg/cacheset.cc:609
-#, fuzzy, c-format
-msgid "Couldn't find any package by regex '%s'"
-msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
-
-#: apt-pkg/cacheset.cc:615
-#, fuzzy, c-format
-msgid "Couldn't find any package by glob '%s'"
-msgstr "%s་ཐུམ་སྒྲིལ་འཚོལ་མ་ཐོབ།"
-
-#: apt-pkg/cacheset.cc:626
-#, c-format
-msgid "Can't select versions from package '%s' as it is purely virtual"
-msgstr ""
-
-#: apt-pkg/cacheset.cc:633 apt-pkg/cacheset.cc:640
-#, c-format
-msgid ""
-"Can't select installed nor candidate version from package '%s' as it has "
-"neither of them"
-msgstr ""
-
-#: apt-pkg/cacheset.cc:647
-#, c-format
-msgid "Can't select newest version from package '%s' as it is purely virtual"
-msgstr ""
-
-#: apt-pkg/cacheset.cc:655
-#, c-format
-msgid "Can't select candidate version from package %s as it has no candidate"
-msgstr ""
-
-#: apt-pkg/cacheset.cc:663
-#, c-format
-msgid "Can't select installed version from package %s as it is not installed"
-msgstr ""
-
-#: apt-pkg/indexrecords.cc:78
-#, fuzzy, c-format
-msgid "Unable to parse Release file %s"
-msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
-
-#: apt-pkg/indexrecords.cc:86
-#, fuzzy, c-format
-msgid "No sections in Release file %s"
-msgstr "%s་གི་ཚབ་ལུ་%s་སེལ་འཐུ་འབད་ནི་སེམས་ཁར་བཞག\n"
-
-#: apt-pkg/indexrecords.cc:117
-#, c-format
-msgid "No Hash entry in Release file %s"
-msgstr ""
-
-#: apt-pkg/indexrecords.cc:130
-#, fuzzy, c-format
-msgid "Invalid 'Valid-Until' entry in Release file %s"
-msgstr "%s་ཁ་ཕྱོགས་ཡིག་སྣོད་ནང་ནུས་མེད་གྲལ་ཐིག"
-
-#: apt-pkg/indexrecords.cc:149
-#, fuzzy, c-format
-msgid "Invalid 'Date' entry in Release file %s"
-msgstr "%s (༡་)་ཐུམ་སྒྲིལ་ཡིག་སྣོད་འདི་མིང་དཔྱད་འབད་མ་ཚུགས།"
-
-#: apt-pkg/sourcelist.cc:127
-#, fuzzy, c-format
-msgid "Malformed stanza %u in source list %s (URI parse)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་ འབྱུང་ཐོ་ཡིག་ %s(ཡུ་ཨར་ཨའི་ མིང་དཔྱད་འབད་ནི)གི་ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:170
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([option] unparseable)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:173
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([option] too short)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་ %lu་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s (dist)གི་ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:184
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] is not an assignment)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:190
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] has no key)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:193
-#, fuzzy, c-format
-msgid "Malformed line %lu in source list %s ([%s] key %s has no value)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:206
-#, c-format
-msgid "Malformed line %lu in source list %s (URI)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་ %lu འབྱུང་ཁུངས་ཐོ་ཡིག་ %s (ཡུ་ཨར་ཨའི་)གི་ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:208
-#, c-format
-msgid "Malformed line %lu in source list %s (dist)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་ %lu་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s (dist)གི་ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:211
-#, c-format
-msgid "Malformed line %lu in source list %s (URI parse)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་ འབྱུང་ཐོ་ཡིག་ %s(ཡུ་ཨར་ཨའི་ མིང་དཔྱད་འབད་ནི)གི་ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:217
-#, c-format
-msgid "Malformed line %lu in source list %s (absolute dist)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s(ཡང་དག་ dist)གི་ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:224
-#, c-format
-msgid "Malformed line %lu in source list %s (dist parse)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%lu་  འབྱུང་ཁུངས་ཐོ་ཡིག་%s(dist མིང་དཔྱད་འབད་ནི་)ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:335
-#, c-format
-msgid "Opening %s"
-msgstr "%s་ཁ་ཕྱེ་དོ།"
-
-#: apt-pkg/sourcelist.cc:371
-#, c-format
-msgid "Malformed line %u in source list %s (type)"
-msgstr "བཟོ་ཉེས་འགྱུར་བའི་གྲལ་ཐིག་%u་ འབྱུང་ཁུངས་ཐོ་ཡིག་%s (དབྱེ་བ)་ནང་ན།"
-
-#: apt-pkg/sourcelist.cc:375
-#, c-format
-msgid "Type '%s' is not known on line %u in source list %s"
-msgstr "དབྱེ་བ་'%s'་འདི་གྲལ་ཐིག་%u་གུར་ལུ་ཡོདཔ་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་གི་ནང་ན་མ་ཤེས་པས།"
-
-#: apt-pkg/sourcelist.cc:416
-#, fuzzy, c-format
-msgid "Type '%s' is not known on stanza %u in source list %s"
-msgstr "དབྱེ་བ་'%s'་འདི་གྲལ་ཐིག་%u་གུར་ལུ་ཡོདཔ་འབྱུང་ཁུངས་ཐོ་ཡིག་%s་གི་ནང་ན་མ་ཤེས་པས།"
-
-#: apt-pkg/deb/dpkgpm.cc:95
-#, fuzzy, c-format
-msgid "Installing %s"
-msgstr "གཞི་བཙུགས་འབད་ཡོད་པའི་%s།"
-
-#: apt-pkg/deb/dpkgpm.cc:96 apt-pkg/deb/dpkgpm.cc:996
-#, c-format
-msgid "Configuring %s"
-msgstr "%s་རིམ་སྒྲིག་འབད་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc:97 apt-pkg/deb/dpkgpm.cc:1003
-#, c-format
-msgid "Removing %s"
-msgstr "%s་རྩ་བསྐྲད་གཏང་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc:98
-#, fuzzy, c-format
-msgid "Completely removing %s"
-msgstr "%s མཇུག་བསྡུཝ་སྦེ་རང་རྩ་བསྐྲད་བཏང་ཡོད།"
-
-#: apt-pkg/deb/dpkgpm.cc:99
-#, c-format
-msgid "Noting disappearance of %s"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:100
-#, c-format
-msgid "Running post-installation trigger %s"
-msgstr ""
-
-#. FIXME: use a better string after freeze
-#: apt-pkg/deb/dpkgpm.cc:827
-#, fuzzy, c-format
-msgid "Directory '%s' missing"
-msgstr "ཐོ་བཀོད་འབད་མི་སྣོད་ཐོ་%s་ཆ་ཤས་འདི་བརླག་སྟོར་ཟུགས་ཏེ་འདུག"
-
-#: apt-pkg/deb/dpkgpm.cc:842 apt-pkg/deb/dpkgpm.cc:864
-#, fuzzy, c-format
-msgid "Could not open file '%s'"
-msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/deb/dpkgpm.cc:989
-#, c-format
-msgid "Preparing %s"
-msgstr "%s་ གྲ་སྒྲིག་འབད་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc:990
-#, c-format
-msgid "Unpacking %s"
-msgstr " %s་ གི་སྦུང་ཚན་བཟོ་བཤོལ་འབད་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc:995
-#, c-format
-msgid "Preparing to configure %s"
-msgstr "%s་ རིམ་སྒྲིག་ལུ་གྲ་སྒྲིག་འབད་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc:997
-#, c-format
-msgid "Installed %s"
-msgstr "གཞི་བཙུགས་འབད་ཡོད་པའི་%s།"
-
-#: apt-pkg/deb/dpkgpm.cc:1002
-#, c-format
-msgid "Preparing for removal of %s"
-msgstr "%s་ རྩ་བསྐྲད་གཏང་ནིའི་དོན་ལུ་གྲ་སྒྲིག་འབད་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc:1004
-#, c-format
-msgid "Removed %s"
-msgstr "རྩ་བསྐྲད་བཏང་ཡོད་པའི་%s"
-
-#: apt-pkg/deb/dpkgpm.cc:1009
-#, c-format
-msgid "Preparing to completely remove %s"
-msgstr "%s མཇུག་བསྡུཝ་སྦེ་རང་རྩ་བསྐྲད་གཏང་ནིའི་དོན་ལུ་གྲ་སྒྲིག་འབད་དོ།"
-
-#: apt-pkg/deb/dpkgpm.cc:1010
-#, c-format
-msgid "Completely removed %s"
-msgstr "%s མཇུག་བསྡུཝ་སྦེ་རང་རྩ་བསྐྲད་བཏང་ཡོད།"
-
-#: apt-pkg/deb/dpkgpm.cc:1066
-msgid "ioctl(TIOCGWINSZ) failed"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1069 apt-pkg/deb/dpkgpm.cc:1090
-#, fuzzy, c-format
-msgid "Can not write log (%s)"
-msgstr " %sལུ་འབྲི་མ་ཚུགས།"
-
-#: apt-pkg/deb/dpkgpm.cc:1069
-msgid "Is /dev/pts mounted?"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1090
-msgid "Is stdout a terminal?"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1569
-msgid "Operation was interrupted before it could finish"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1631
-msgid "No apport report written because MaxReports is reached already"
-msgstr ""
-
-#. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1636
-msgid "dependency problems - leaving unconfigured"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1638
-msgid ""
-"No apport report written because the error message indicates its a followup "
-"error from a previous failure."
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1644
-msgid ""
-"No apport report written because the error message indicates a disk full "
-"error"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1651
-msgid ""
-"No apport report written because the error message indicates a out of memory "
-"error"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1658 apt-pkg/deb/dpkgpm.cc:1664
-msgid ""
-"No apport report written because the error message indicates an issue on the "
-"local system"
-msgstr ""
-
-#: apt-pkg/deb/dpkgpm.cc:1685
-msgid ""
-"No apport report written because the error message indicates a dpkg I/O error"
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:91
-#, c-format
-msgid ""
-"Unable to lock the administration directory (%s), is another process using "
-"it?"
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:94
-#, fuzzy, c-format
-msgid "Unable to lock the administration directory (%s), are you root?"
-msgstr "ཐོ་བཀོད་འབད་ཡོད་པའི་སྣོད་ཡིག་འདི་ལྡེ་མིག་རྐྱབ་མ་ཚུགས།"
-
-#. TRANSLATORS: the %s contains the recovery command, usually
-#. dpkg --configure -a
-#: apt-pkg/deb/debsystem.cc:110
-#, c-format
-msgid ""
-"dpkg was interrupted, you must manually run '%s' to correct the problem. "
-msgstr ""
-
-#: apt-pkg/deb/debsystem.cc:128
-msgid "Not locked"
-msgstr ""
-
-#. d means days, h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:406
-#, c-format
-msgid "%lid %lih %limin %lis"
-msgstr ""
-
-#. h means hours, min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:413
-#, c-format
-msgid "%lih %limin %lis"
-msgstr ""
-
-#. min means minutes, s means seconds
-#: apt-pkg/contrib/strutl.cc:420
-#, c-format
-msgid "%limin %lis"
-msgstr ""
-
-#. s means seconds
-#: apt-pkg/contrib/strutl.cc:425
-#, c-format
-msgid "%lis"
-msgstr ""
-
-#: apt-pkg/contrib/strutl.cc:1243
-#, c-format
-msgid "Selection %s not found"
-msgstr "སེལ་འཐུ་%s ་མ་འཐོབ།"
-
-#: apt-pkg/contrib/fileutl.cc:190
-#, c-format
-msgid "Not using locking for read only lock file %s"
-msgstr "%s ལྷག་ནི་རྐྱངམ་ཅིག་འབད་མི་ལྡེ་མིག་ཡིག་སྣོད་འདི་གི་དོན་ལུ་ལྡེ་མིག་རྐྱབ་ནི་ལག་ལེན་མི་འཐབ་པས།"
-
-#: apt-pkg/contrib/fileutl.cc:195
-#, c-format
-msgid "Could not open lock file %s"
-msgstr "ལྡེ་མིག་རྐྱབས་ཡོད་པའི་ཡིག་སྣོད་%s་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/contrib/fileutl.cc:218
-#, c-format
-msgid "Not using locking for nfs mounted lock file %s"
-msgstr ""
-"ཨེན་ཨེཕ་ཨེསི་ %s སྦྱར་བརྩེགས་འབད་ཡོད་པའི་ལྡེ་མིག་ཡིག་སྣོད་ཀྱི་དོན་ལུ་ལྡེ་མིག་རྐྱབ་ནི་ལག་ལེན་མི་འཐབ་པས།"
-
-#: apt-pkg/contrib/fileutl.cc:223
-#, c-format
-msgid "Could not get lock %s"
-msgstr "%sལྡེ་མིག་རྐྱབ་ནི་ལེན་མ་ཚུགས།"
-
-#: apt-pkg/contrib/fileutl.cc:360 apt-pkg/contrib/fileutl.cc:474
-#, c-format
-msgid "List of files can't be created as '%s' is not a directory"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:394
-#, c-format
-msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:412
-#, c-format
-msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:421
-#, c-format
-msgid ""
-"Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
-msgstr ""
-
-#: apt-pkg/contrib/fileutl.cc:824
-#, c-format
-msgid "Sub-process %s received a segmentation fault."
-msgstr "ཡན་ལག་ལས་སྦྱོར་%s་ལུ་ཆ་བགོས་ཀྱི་སྐྱོན་ཅིག་ཐོབ་ཡོདཔ་ཨིན།"
-
-#: apt-pkg/contrib/fileutl.cc:826
-#, fuzzy, c-format
-msgid "Sub-process %s received signal %u."
-msgstr "ཡན་ལག་ལས་སྦྱོར་%s་ལུ་ཆ་བགོས་ཀྱི་སྐྱོན་ཅིག་ཐོབ་ཡོདཔ་ཨིན།"
-
-#: apt-pkg/contrib/fileutl.cc:830 apt-pkg/contrib/gpgv.cc:239
-#, c-format
-msgid "Sub-process %s returned an error code (%u)"
-msgstr "ཡན་ལག་ལས་སྦྱོར་%s་གིས་འཛོལ་བའི་ཨང་རྟགས་(%u)ཅིག་སླར་ལོག་འབད་ཡོདཔ་ཨིན།"
-
-#: apt-pkg/contrib/fileutl.cc:832 apt-pkg/contrib/gpgv.cc:232
-#, c-format
-msgid "Sub-process %s exited unexpectedly"
-msgstr "ཡན་ལག་ལས་སྦྱོར་་%s་གིས་རེ་བ་མེད་པར་ཕྱིར་ཐོན་ཡོདཔ་ཨིན།"
-
-#: apt-pkg/contrib/fileutl.cc:913
-#, fuzzy, c-format
-msgid "Problem closing the gzip file %s"
-msgstr "ཡིག་སྣོད་འདི་ཁ་བསྡམས་པའི་བསྒང་དཀའ་ངལ།"
-
-#: apt-pkg/contrib/fileutl.cc:1101
-#, c-format
-msgid "Could not open file %s"
-msgstr "%s་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/contrib/fileutl.cc:1160 apt-pkg/contrib/fileutl.cc:1207
-#, fuzzy, c-format
-msgid "Could not open file descriptor %d"
-msgstr "%s་གི་དོན་ལུ་རྒྱུད་དུང་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/contrib/fileutl.cc:1315
-msgid "Failed to create subprocess IPC"
-msgstr "ཡན་ལག་ལས་སྦྱོར་ ཨའི་པི་སི་ གསར་བསྐྲུན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
-
-#: apt-pkg/contrib/fileutl.cc:1373
-msgid "Failed to exec compressor "
-msgstr "ཨེབ་འཕྲུལ་ལག་ལེན་འཐབ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
-
-#: apt-pkg/contrib/fileutl.cc:1514
-#, fuzzy, c-format
-msgid "read, still have %llu to read but none left"
-msgstr "ལྷག་  ད་ལྟོ་ཡང་ལྷག་ནི་ལུ་%lu་ཡོད་འདི་འབདཝ་ད་ཅི་ཡང་ལྷག་ལུས་མིན་འདུག"
-
-#: apt-pkg/contrib/fileutl.cc:1627 apt-pkg/contrib/fileutl.cc:1649
-#, fuzzy, c-format
-msgid "write, still have %llu to write but couldn't"
-msgstr "འབྲི་  ད་ལྟོ་ཡང་འབྲི་ནི་ལུ་%lu་ཡོད་འདི་འདབཝ་ད་འབད་མ་ཚུགས།"
-
-#: apt-pkg/contrib/fileutl.cc:1915
-#, fuzzy, c-format
-msgid "Problem closing the file %s"
-msgstr "ཡིག་སྣོད་འདི་ཁ་བསྡམས་པའི་བསྒང་དཀའ་ངལ།"
-
-#: apt-pkg/contrib/fileutl.cc:1927
-#, fuzzy, c-format
-msgid "Problem renaming the file %s to %s"
-msgstr "ཡིག་སྣོད་མཉམ་བྱུང་འབདཝ་ད་དཀའ་ངལ།"
-
-#: apt-pkg/contrib/fileutl.cc:1938
-#, fuzzy, c-format
-msgid "Problem unlinking the file %s"
-msgstr "ཡིག་སྣོད་འདི་འབྲེལལམ་མེདཔ་བཟོ་བའི་བསྒང་དཀའ་ངལ།"
-
-#: apt-pkg/contrib/fileutl.cc:1951
-msgid "Problem syncing the file"
-msgstr "ཡིག་སྣོད་མཉམ་བྱུང་འབདཝ་ད་དཀའ་ངལ།"
-
-#: apt-pkg/contrib/progress.cc:148
-#, c-format
-msgid "%c%s... Error!"
-msgstr "%c%s... འཛོལ་བ་!"
-
-#: apt-pkg/contrib/progress.cc:150
-#, c-format
-msgid "%c%s... Done"
-msgstr "%c%s... འབད་ཚར་ཡོད།"
-
-#: apt-pkg/contrib/progress.cc:181
-msgid "..."
-msgstr ""
-
-#. Print the spinner
-#: apt-pkg/contrib/progress.cc:197
-#, fuzzy, c-format
-msgid "%c%s... %u%%"
-msgstr "%c%s... འབད་ཚར་ཡོད།"
-
-#: apt-pkg/contrib/mmap.cc:79
-msgid "Can't mmap an empty file"
-msgstr "ཡིག་སྣོད་སྟོངམ་འདི་mmap་འབད་མ་ཚུགས།"
-
-#: apt-pkg/contrib/mmap.cc:111
-#, fuzzy, c-format
-msgid "Couldn't duplicate file descriptor %i"
-msgstr "%s་གི་དོན་ལུ་རྒྱུད་དུང་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/contrib/mmap.cc:119
-#, fuzzy, c-format
-msgid "Couldn't make mmap of %llu bytes"
-msgstr "%lu་བཱའིཊིསི་གི་mmap་བཟོ་མ་ཚུགས།"
-
-#: apt-pkg/contrib/mmap.cc:146
-#, fuzzy
-msgid "Unable to close mmap"
-msgstr "%s་ཁ་ཕྱེ་མ་ཚུགས།"
-
-#: apt-pkg/contrib/mmap.cc:174 apt-pkg/contrib/mmap.cc:202
-#, fuzzy
-msgid "Unable to synchronize mmap"
-msgstr "ལས་བཀོལ་འབད་མ་ཚུགས།"
-
-#: apt-pkg/contrib/mmap.cc:290
-#, c-format
-msgid "Couldn't make mmap of %lu bytes"
-msgstr "%lu་བཱའིཊིསི་གི་mmap་བཟོ་མ་ཚུགས།"
-
-#: apt-pkg/contrib/mmap.cc:322
-#, fuzzy
-msgid "Failed to truncate file"
-msgstr "%s་ཡིག་སྣོད་འདི་འབྲི་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
-
-#: apt-pkg/contrib/mmap.cc:341
-#, c-format
-msgid ""
-"Dynamic MMap ran out of room. Please increase the size of APT::Cache-Start. "
-"Current value: %lu. (man 5 apt.conf)"
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:446
-#, c-format
-msgid ""
-"Unable to increase the size of the MMap as the limit of %lu bytes is already "
-"reached."
-msgstr ""
-
-#: apt-pkg/contrib/mmap.cc:449
-msgid ""
-"Unable to increase size of the MMap as automatic growing is disabled by user."
-msgstr ""
-
-#: apt-pkg/contrib/cdromutl.cc:65
-#, c-format
-msgid "Unable to stat the mount point %s"
-msgstr "སྦྱར་བརྩེགས་ས་ཚིགས་%s་འདི་ངོ་བཤུས་འབད་མ་ཚུགས།"
-
-#: apt-pkg/contrib/cdromutl.cc:246
-msgid "Failed to stat the cdrom"
-msgstr "སི་ཌི་རོམ་འདི་ངོ་བཤུས་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོད།"
-
-#: apt-pkg/contrib/configuration.cc:519
-#, c-format
-msgid "Unrecognized type abbreviation: '%c'"
-msgstr "ངོ་མ་ཤེས་པའི་སྡུད་ཚིག་གི་དབྱེ་བ:'%c'"
-
-#: apt-pkg/contrib/configuration.cc:633
-#, c-format
-msgid "Opening configuration file %s"
-msgstr "རིམ་སྒྲིག་ཡིག་སྣོད་%s་འདི་ཁ་ཕྱེ་དོ།"
-
-#: apt-pkg/contrib/configuration.cc:801
-#, c-format
-msgid "Syntax error %s:%u: Block starts with no name."
-msgstr "་ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:  སྡེབ་ཚན་གྱིས་མིང་མེད་མི་དང་གཅིག་ཁར་འགོ་བཙུགསཔ་ཨིན"
-
-#: apt-pkg/contrib/configuration.cc:820
-#, c-format
-msgid "Syntax error %s:%u: Malformed tag"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:བཟོ་ཉེས་འགྱུར་བའི་ངོ་རྟགས།"
-
-#: apt-pkg/contrib/configuration.cc:837
-#, c-format
-msgid "Syntax error %s:%u: Extra junk after value"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:གནས་གོང་གི་ཤུལ་ལས་མཁོ་མེད་ཐེབས།"
-
-#: apt-pkg/contrib/configuration.cc:877
-#, c-format
-msgid "Syntax error %s:%u: Directives can only be done at the top level"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:བཀོད་རྒྱ་ཚུ་ཆེ་རིམ་ནང་རྐྱངམ་ཅིག་བྱིན་ཚུགས།"
-
-#: apt-pkg/contrib/configuration.cc:884
-#, c-format
-msgid "Syntax error %s:%u: Too many nested includes"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:འདུ་འཛོམས་འབད་འབདཝ་ལེ་ཤཱ་གྲངས་སུ་བཙུགསཔ་ཨིན།"
-
-#: apt-pkg/contrib/configuration.cc:888 apt-pkg/contrib/configuration.cc:893
-#, c-format
-msgid "Syntax error %s:%u: Included from here"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u: ནཱ་ལས་རང་འགོ་བཙུགས་གྲངས་སུ་བཙུགས་ཏེ་ཡོད།"
-
-#: apt-pkg/contrib/configuration.cc:897
-#, c-format
-msgid "Syntax error %s:%u: Unsupported directive '%s'"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u: རྒྱབ་སྐྱོར་མ་འབད་བར་ཡོད་པའི་'%s'བཀོད་རྒྱ།"
-
-#: apt-pkg/contrib/configuration.cc:900
-#, fuzzy, c-format
-msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u:བཀོད་རྒྱ་ཚུ་ཆེ་རིམ་ནང་རྐྱངམ་ཅིག་བྱིན་ཚུགས།"
-
-#: apt-pkg/contrib/configuration.cc:950
-#, c-format
-msgid "Syntax error %s:%u: Extra junk at end of file"
-msgstr "ཚིག་སྦྱོར་འཛོལ་བ་%s:%u: ཡིག་སྣོད་ཀྱི་མཇུག་ལུ་མཁོ་མེད་ཐེབས།"
-
-#. TRANSLATOR: %s is the trusted keyring parts directory
-#: apt-pkg/contrib/gpgv.cc:72
-#, fuzzy, c-format
-msgid "No keyring installed in %s."
-msgstr "གཞི་བཙུགས་བར་བཤོལ་འབད་དོ།"
-
-#: apt-pkg/contrib/cmndline.cc:121
-#, c-format
-msgid "Command line option '%c' [from %s] is not known."
-msgstr "བརྡ་བཀོད་གྲལ་ཐིག་གྱི་གདམ་ཁ་'%c'[%s་ནང་ལས་]འདི་མ་ཤེས་པས།"
-
-#: apt-pkg/contrib/cmndline.cc:146 apt-pkg/contrib/cmndline.cc:155
-#: apt-pkg/contrib/cmndline.cc:163
-#, c-format
-msgid "Command line option %s is not understood"
-msgstr "བ་རྡ་བཀོད་གྲལ་ཐིག་གི་གདམ་ཁ་%s་འདི་ཧ་མ་གོ་བས།"
-
-#: apt-pkg/contrib/cmndline.cc:168
-#, c-format
-msgid "Command line option %s is not boolean"
-msgstr "བརྡ་བཀོད་གྲལ་ཐིག་གི་གདམ་ཁ་%s་འདི་བུ་ལིན་མེན་པས།"
-
-#: apt-pkg/contrib/cmndline.cc:209 apt-pkg/contrib/cmndline.cc:230
-#, c-format
-msgid "Option %s requires an argument."
-msgstr "གདམ་ཁ་%s་ལུ་སྒྲུབ་རྟགས་ཅིག་དགོ་པས།"
-
-#: apt-pkg/contrib/cmndline.cc:243 apt-pkg/contrib/cmndline.cc:249
-#, c-format
-msgid "Option %s: Configuration item specification must have an =<val>."
-msgstr "གདམ་ཁ་%s:རིམ་སྒྲིག་གི་རྣམ་གྲངས་གསལ་བཀོད་ལུ་ =<val> ་ཅིག་དགོཔ་ཨིན།"
-
-#: apt-pkg/contrib/cmndline.cc:278
-#, c-format
-msgid "Option %s requires an integer argument, not '%s'"
-msgstr "གདམ་ཁ་ %s ་ལུ་'%s'་མེན་པར་ ཧྲིལ་ཨང་སྒྲུབ་རྟགས་ཅིག་དགོས་མཁོ་ཡོདཔ་ཨིན"
-
-#: apt-pkg/contrib/cmndline.cc:309
-#, c-format
-msgid "Option '%s' is too long"
-msgstr "གདམ་ཁ་'%s'འདི་གནམ་མེད་ས་མེད་རིངམ་འདུག"
-
-#: apt-pkg/contrib/cmndline.cc:341
-#, c-format
-msgid "Sense %s is not understood, try true or false."
-msgstr "དྲན་ཤེས་ %s་འདི་ཧ་གོ་མ་ཚུགས་པས་  བདེན་པ་ཡང་ན་རྫུན་པ་ལུ་འབད་རྩོལ་བསྐྱེདཔ།"
-
-#: apt-pkg/contrib/cmndline.cc:391
-#, c-format
-msgid "Invalid operation %s"
-msgstr "ནུས་མེད་བཀོལ་སྤྱོད་%s"
-
-#: cmdline/apt-extracttemplates.cc:224
+#: cmdline/apt-extracttemplates.cc:227
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -3191,12 +3204,7 @@ msgstr ""
 "  -o=? འདི་གིས་མཐུན་སྒྲིག་རིམ་སྒྲིག་གདམ་ཁ་ཅིག་གཞི་སྒྲིག་འབདཝ་ཨིན་  དཔེར་ན་-o dir::cache=/tmp་"
 "བཟུམ།\n"
 
-#: cmdline/apt-extracttemplates.cc:254
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "%s་འདི་ལུ་ངོ་བཤུས་འབད་མ་ཚུགས།"
-
-#: cmdline/apt-extracttemplates.cc:300
+#: cmdline/apt-extracttemplates.cc:303
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "debconf ་་འཐོན་རིམ་འདི་ལེན་མ་ཚུགས། debconf འདི་གཞི་བཙུགས་འབད་ཡི་ག་?"
 
@@ -3317,17 +3325,17 @@ msgstr "སེལ་འཐུ་ཚུ་མཐུན་སྒྲིག་མི
 msgid "Some files are missing in the package file group `%s'"
 msgstr "ཡིག་སྣོད་ལ་ལུ་ཅིག་ཐུམ་སྒྲིལ་ཡིག་སྣོད་སྡེ་ཚན་`%s'ནང་བརླག་སྟོར་ཞུགས་ནུག"
 
-#: ftparchive/cachedb.cc:65
+#: ftparchive/cachedb.cc:67
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "ཌི་བི་ངན་ཅན་བྱུང་ནུག་   %s.རྒསཔ་ལུ་ཡིག་སྣོད་འདི་བསྐྱར་མིང་བཏགས་ཡི།"
 
-#: ftparchive/cachedb.cc:83
+#: ftparchive/cachedb.cc:85
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "ཌི་བི་འདི་རྙིངམ་ཨིན་པས་  %s་ཡར་བསྐྱེད་འབད་ནིའི་དོན་ལུ་དཔའ་བཅམ་དོ།"
 
-#: ftparchive/cachedb.cc:94
+#: ftparchive/cachedb.cc:96
 #, fuzzy
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
@@ -3336,105 +3344,105 @@ msgstr ""
 "ཌི་བི་རྩ་སྒྲིག་འདི་ ནུས་མེད་ཨིན་པས།  ཁྱོད་ཀྱི་ apt་ གྱི་འཐོན་རིམ་རྙིངམ་ཅིག་ནང་ལས་  ཡར་བསྐྱེད་འབད་ཡོད་"
 "པ་ཅིན་  རྩ་བསྐྲད་གཏང་ཞིནམ་ལས་  གནད་སྡུད་གཞི་རྟེན་འདི་ ལོག་དེ་གསར་བསྐྲུན་འབད། "
 
-#: ftparchive/cachedb.cc:99
+#: ftparchive/cachedb.cc:101
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "%s: %s་ཌི་བི་ཡིག་སྣོད་འདི་ཁ་ཕྱེ་མ་ཚུགས།"
 
-#: ftparchive/cachedb.cc:332
+#: ftparchive/cachedb.cc:326
 #, fuzzy
 msgid "Failed to read .dsc"
 msgstr "%s་འབྲེལ་ལམ་ལྷག་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
-#: ftparchive/cachedb.cc:365
+#: ftparchive/cachedb.cc:359
 msgid "Archive has no control record"
 msgstr "ཡིག་མཛོད་འདི་ལུ་ཚད་འཛིན་དྲན་ཐོ་མིན་འདུག"
 
-#: ftparchive/cachedb.cc:594
+#: ftparchive/cachedb.cc:522
 msgid "Unable to get a cursor"
 msgstr "འོད་རྟགས་ལེན་མ་ཚུགས།"
 
-#: ftparchive/writer.cc:91
+#: ftparchive/writer.cc:104
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "ཌབ་ལུ:%sསྣོད་ཐོ་འདི་ལྷག་མ་ཚུགས།\n"
 
-#: ftparchive/writer.cc:96
+#: ftparchive/writer.cc:109
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "ཌབ་ལུ་ %s སིཊེཊི་འབད་མ་ཚུགས།\n"
 
-#: ftparchive/writer.cc:152
+#: ftparchive/writer.cc:165
 msgid "E: "
 msgstr "ཨི:"
 
-#: ftparchive/writer.cc:154
+#: ftparchive/writer.cc:167
 msgid "W: "
 msgstr "ཌབ་ལུ:"
 
-#: ftparchive/writer.cc:161
+#: ftparchive/writer.cc:174
 msgid "E: Errors apply to file "
 msgstr "ཨི:འཛོལ་བ་ཚུ་ཡིག་སྣོད་ལུ་འཇུག་སྤྱོད་འབད།"
 
-#: ftparchive/writer.cc:179 ftparchive/writer.cc:211
+#: ftparchive/writer.cc:192 ftparchive/writer.cc:224
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "%s་མོས་མཐུན་འབད་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
-#: ftparchive/writer.cc:192
+#: ftparchive/writer.cc:205
 msgid "Tree walking failed"
 msgstr "རྩ་འབྲེལ་ཕྱིར་བགྲོད་འབད་ནི་ལུ་འཐུ་ཤོར་བྱུང་ཡོདཔ།"
 
-#: ftparchive/writer.cc:219
+#: ftparchive/writer.cc:232
 #, c-format
 msgid "Failed to open %s"
 msgstr "%s་ག་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
-#: ftparchive/writer.cc:278
+#: ftparchive/writer.cc:291
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " DeLink %s [%s]\n"
 
-#: ftparchive/writer.cc:286
+#: ftparchive/writer.cc:299
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s་འབྲེལ་ལམ་ལྷག་ནི་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
-#: ftparchive/writer.cc:290
+#: ftparchive/writer.cc:303
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "%s་འབྲེལ་ལམ་མེད་ལུ་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
-#: ftparchive/writer.cc:298
+#: ftparchive/writer.cc:311
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** %s་ལས་%sལུ་འབྲེལ་འཐུད་འབད་ནི་འཐུས་ཤོར་བྱུང་ཡོདཔ།"
 
-#: ftparchive/writer.cc:308
+#: ftparchive/writer.cc:321
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr "%sB་ཧེང་བཀལ་བཀྲམ་ནིའི་འབྲེལ་མེད་བཅད་མཚམས།\n"
 
-#: ftparchive/writer.cc:417
+#: ftparchive/writer.cc:427
 msgid "Archive had no package field"
 msgstr "ཡིག་མཛོད་ལུ་ཐུམ་སྒྲིལ་ཅི་ཡང་འཐུས་ཤོར་མ་བྱུང་།"
 
-#: ftparchive/writer.cc:425 ftparchive/writer.cc:692
+#: ftparchive/writer.cc:435 ftparchive/writer.cc:704
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %sལུ་ཟུར་བཞག་ཐོ་བཀོད་མེད།\n"
 
-#: ftparchive/writer.cc:493 ftparchive/writer.cc:848
+#: ftparchive/writer.cc:500 ftparchive/writer.cc:868
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s ་རྒྱུན་སྐྱོང་པ་འདི་  %s ཨིན་   %s མེན།\n"
 
-#: ftparchive/writer.cc:706
+#: ftparchive/writer.cc:718
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s ལུ་འབྱུང་ཁུངས་མེདཔ་གཏང་ནིའི་ཐོ་བཀོད་འདི་མེད།\n"
 
-#: ftparchive/writer.cc:710
+#: ftparchive/writer.cc:722
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %sལུ་ཟུང་ལྡན་མེདཔ་གཏང་ནིའི་་ཐོ་བཀོད་གང་རུང་ཡང་མིན་འདུག།\n"
