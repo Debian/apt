@@ -159,7 +159,7 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	enum OkState {NeedsNothing,NeedsUnpack,NeedsConfigure};
 
 	// Accessors
-	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;}
+	inline const char *Name() const { return Group().Name(); }
 	// Versions have sections - and packages can have different versions with different sections
 	// so this interface is broken by design. It used to return the section of the "first parsed
 	// package stanza", but as this can potentially be anything it now returns the section of the
@@ -336,7 +336,7 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	inline void operator ++() {operator ++(0);}
 
 	// Accessors
-	inline const char *Name() const {return Owner->StrP + Owner->PkgP[S->ParentPkg].Name;}
+	inline const char *Name() const {return ParentPkg().Name();}
 	inline const char *ProvideVersion() const {return S->ProvideVersion == 0?0:Owner->StrP + S->ProvideVersion;}
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);}
 	inline VerIterator OwnerVer() const {return VerIterator(*Owner,Owner->VerP + S->Version);}

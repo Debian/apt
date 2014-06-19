@@ -376,8 +376,11 @@ struct pkgCache::Group
 */
 struct pkgCache::Package
 {
-   /** \brief Name of the package */
-   map_stringitem_t Name;
+   /** \brief Name of the package
+    * Note that the access method Name() will remain. It is just this data member
+    * deprecated as this information is already stored and available via the
+    * associated Group – so it is wasting precious binary cache space */
+   APT_DEPRECATED map_stringitem_t Name;
    /** \brief Architecture of the package */
    map_stringitem_t Arch;
    /** \brief Base of a singly linked list of versions

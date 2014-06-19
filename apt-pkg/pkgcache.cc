@@ -215,10 +215,7 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
    Package *Pkg = PkgP + HeaderP->PkgHashTable()[Hash(Name)];
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->Next)
    {
-      if (unlikely(Pkg->Name == 0))
-	 continue;
-
-      int const cmp = strcasecmp(Name.c_str(), StrP + Pkg->Name);
+      int const cmp = strcasecmp(Name.c_str(), StrP + (GrpP + Pkg->Group)->Name);
       if (cmp == 0)
 	 return PkgIterator(*this, Pkg);
       else if (cmp < 0)
@@ -370,7 +367,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	   so we need to check the name also */
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
 	     Pkg = Owner->PkgP + Pkg->Next) {
-		if (S->Name == Pkg->Name &&
+		if (S->Name == (Owner->GrpP + Pkg->Group)->Name &&
 		    stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
@@ -1037,7 +1034,7 @@ bool pkgCache::PrvIterator::IsMultiArchImplicit() const
 {
    pkgCache::PkgIterator const Owner = OwnerPkg();
    pkgCache::PkgIterator const Parent = ParentPkg();
-   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner->Name == Parent->Name)
+   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner.Group()->Name == Parent.Group()->Name)
       return true;
    return false;
 }

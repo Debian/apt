@@ -660,7 +660,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
       // Insert it into the hash table
       map_id_t const Hash = Cache.Hash(Name);
       map_pointer_t *insertAt = &Cache.HeaderP->PkgHashTable()[Hash];
-      while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.PkgP + *insertAt)->Name) > 0)
+      while (*insertAt != 0 && strcasecmp(Name.c_str(), Cache.StrP + (Cache.GrpP + (Cache.PkgP + *insertAt)->Group)->Name) > 0)
 	 insertAt = &(Cache.PkgP + *insertAt)->Next;
       Pkg->Next = *insertAt;
       *insertAt = Package;
@@ -675,7 +675,14 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
    Grp->LastPackage = Package;
 
    // Set the name, arch and the ID
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
    Pkg->Name = Grp->Name;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
    Pkg->Group = Grp.Index();
    // all is mapped to the native architecture
    map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : WriteUniqString(Arch.c_str());
