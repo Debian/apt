@@ -215,7 +215,7 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
    Package *Pkg = PkgP + HeaderP->PkgHashTable()[Hash(Name)];
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->Next)
    {
-      int const cmp = strcasecmp(Name.c_str(), StrP + (GrpP + Pkg->Group)->Name);
+      int const cmp = strcmp(Name.c_str(), StrP + (GrpP + Pkg->Group)->Name);
       if (cmp == 0)
 	 return PkgIterator(*this, Pkg);
       else if (cmp < 0)
@@ -279,7 +279,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
 		if (unlikely(Grp->Name == 0))
 		   continue;
 
-		int const cmp = strcasecmp(Name.c_str(), StrP + Grp->Name);
+		int const cmp = strcmp(Name.c_str(), StrP + Grp->Name);
 		if (cmp == 0)
 			return GrpIterator(*this, Grp);
 		else if (cmp < 0)
@@ -356,7 +356,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	   last one we check, so we do it now. */
 	if (Arch == "native" || Arch == myArch || Arch == "all") {
 		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
-		if (strcasecmp(myArch, Owner->StrP + Pkg->Arch) == 0)
+		if (strcmp(myArch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		Arch = myArch;
 	}
@@ -368,7 +368,7 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
 	     Pkg = Owner->PkgP + Pkg->Next) {
 		if (S->Name == (Owner->GrpP + Pkg->Group)->Name &&
-		    stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+		    stringcmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
 			break;
