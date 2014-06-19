@@ -1,15 +1,58 @@
 apt (1.1~exp1) UNRELEASED; urgency=low
 
+  [ David Kalnischkies ]
+  * [API Break] change "std::string pkgAcquire::Item::DescURI()" to
+                       "std::string pkgAcquire::Item::DescURI() const"
+  * [ABI-Break] increase hashtable size for packages/groups by factor 5
+  * [ABI-Break] cleanup datatypes mix used in binary cache
+  * [internal API-Break] remove the Section member from package struct
+  * use 'best' hash for source authentication (LP: 1098738)
+  * use HashStringList in the acquire system
+  * deal with hashes in ftparchive more dynamic as well
+  * reenable pipelining via hashsum reordering support
+  * parse and retrieve multiple Descriptions in one record
+  * improve pkgTagSection scanning and parsing
+  * invalid cache if architecture set doesn't match (Closes: 745036)
+
   [ Michael Vogt ]
+  * add support for "apt-get build-dep foo.dsc"
+  * add support for "apt-get build-dep unpacked-source-dir"
+  * add support for "apt-get install foo_1.0_all.deb"
+  * make "apt-get update" progress much more accurate by loading the
+    sizes of the targets into the fetcher early
+  * Implement simple by-hash for apt update to improve reliability of
+    the update. Apt will try to fetch the Packages file via
+    /by-hash/$hash_type/$hash_value if the repo supports that.
+    - add APT::Acquire::$(host)::By-Hash=1 knob
+    - add Acquire-By-Hash=1 to Release file
+  * add Debug::Acquire::Progress debug option
+  * [ABI-Break] lp:~mvo/apt/source-hashes:
+    - use sha{512,256,1} for deb-src when available LP: #1098738
+  * [ABI-Break] stop exporting the accidently exported parsenetrc() symbol
+  * [ABI-Break] remove the PACKAGE_MATCHER_ABI_COMPAT defines
+  * [ABI BREAK] apt-pkg/pkgcache.h:
+    - adjust pkgCache::State::VerPriority enum, to match reality
+  * test/integration/test-debsrc-hashes:
+    - add integration test, thanks to Daniel Hartwig
+  * [ABI-Break] remove the PACKAGE_MATCHER_ABI_COMPAT defines
+  * [ABI-Break] Pass struct IndexTarget/indexRecords to
+    pkgAcqIndex{,Merge}Diffs
+  * [internal API-Break] rename pkgCache::Package::NextPackage to
+    pkgCache::Package::Next
+  * Calculate Percent as part of pkgAcquireStatus to provide a weighted
+    percent for both items and bytes
+  * apt-pkg/contrib/macros.h: bump library version to 4.13
+  * apt-private/acqprogress.cc: do not show file size on IMSHit, it wasn't
+    fetched
+  * Fix warnings from clang -Wall/clang -fsanitize=address
+  * add DropPrivs() and drop privileges to nobody when running the
+    the buildin apt and dump solvers
   * lp:~mvo/apt/webserver-simulate-broken-with-fix346386:
     - fix invalid InRelease file download checking and add regression
       test to server broken files to the buildin test webserver
-  * stop exporting the accidently exported parsenetrc() symbol
-  * [ABI-Break] lp:~mvo/apt/source-hashes:
-    - use sha{512,256,1} for deb-src when available LP: #1098738
-  * [ABI-Break] remove the PACKAGE_MATCHER_ABI_COMPAT defines
+    - add regression test for LP: #34638
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 07 May 2014 17:48:24 +0200
+ -- Michael Vogt <mvo@debian.org>  Wed, 07 May 2014 17:48:24 +0200
 
 apt (1.0.5) unstable; urgency=low
 
