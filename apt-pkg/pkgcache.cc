@@ -276,9 +276,6 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
 	// Look at the hash bucket for the group
 	Group *Grp = GrpP + HeaderP->GrpHashTable()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
-		if (unlikely(Grp->Name == 0))
-		   continue;
-
 		int const cmp = strcmp(Name.c_str(), StrP + Grp->Name);
 		if (cmp == 0)
 			return GrpIterator(*this, Grp);
@@ -361,14 +358,10 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 		Arch = myArch;
 	}
 
-	/* Iterate over the list to find the matching arch
-	   unfortunately this list includes "package noise"
-	   (= different packages with same calculated hash),
-	   so we need to check the name also */
+	// Iterate over the list to find the matching arch
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
 	     Pkg = Owner->PkgP + Pkg->Next) {
-		if (S->Name == (Owner->GrpP + Pkg->Group)->Name &&
-		    stringcmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+		if (stringcmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
 			break;
