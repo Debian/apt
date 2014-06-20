@@ -141,6 +141,57 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
       map_stringitem_t const idx = StoreString(pkgCacheGenerator::SECTION, Start, Stop - Start);
       Ver->Section = idx;
    }
+   // Parse the source package name
+   pkgCache::GrpIterator const G = Ver.ParentPkg().Group();
+   Ver->SourcePkgName = G->Name;
+   Ver->SourceVerStr = Ver->VerStr;
+   if (Section.Find("Source",Start,Stop) == true)
+   {
+      const char * const Space = (const char * const) memchr(Start, ' ', Stop - Start);
+      pkgCache::VerIterator V;
+
+      if (Space != NULL)
+      {
+	 Stop = Space;
+	 const char * const Open = (const char * const) memchr(Space, '(', Stop - Space);
+	 if (likely(Open != NULL))
+	 {
+	    const char * const Close = (const char * const) memchr(Open, ')', Stop - Open);
+	    if (likely(Close != NULL))
+	    {
+	       std::string const version(Open + 1, (Close - Open) - 1);
+	       if (version != Ver.VerStr())
+	       {
+		  map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSION, version);
+		  Ver->SourceVerStr = idx;
+	       }
+	    }
+	 }
+      }
+
+      std::string const pkgname(Start, Stop - Start);
+      if (pkgname != G.Name())
+      {
+	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() == false; P = G.NextPkg(P))
+	 {
+	    for (V = P.VersionList(); V.end() == false; ++V)
+	    {
+	       if (pkgname == V.SourcePkgName())
+	       {
+		  Ver->SourcePkgName = V->SourcePkgName;
+		  break;
+	       }
+	    }
+	    if (V.end() == false)
+	       break;
+	 }
+	 if (V.end() == true)
+	 {
+	    map_stringitem_t const idx = StoreString(pkgCacheGenerator::PKGNAME, pkgname);
+	    Ver->SourcePkgName = idx;
+	 }
+      }
+   }
 
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size

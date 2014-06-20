@@ -215,6 +215,12 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	// Accessors
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;}
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;}
+	/** \brief source package name this version comes from
+	   Always contains the name, even if it is the same as the binary name */
+	inline const char *SourcePkgName() const {return Owner->StrP + S->SourcePkgName;}
+	/** \brief source version this version comes from
+	   Always contains the version string, even if it is the same as the binary version */
+	inline const char *SourceVerStr() const {return Owner->StrP + S->SourceVerStr;}
 	inline const char *Arch() const {
 		if ((S->MultiArch & pkgCache::Version::All) == pkgCache::Version::All)
 			return "all";

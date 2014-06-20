@@ -1754,11 +1754,6 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    if (Ver.end() == true)
       return;
    pkgver = Ver.VerStr() == NULL ? "unknown" : Ver.VerStr();
-   pkgRecords Recs(Cache);
-   pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-   srcpkgname = Parse.SourcePkg();
-   if(srcpkgname.empty())
-      srcpkgname = pkgname;
 
    // if the file exists already, we check:
    // - if it was reported already (touched by apport). 
@@ -1809,7 +1804,7 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    time_t now = time(NULL);
    fprintf(report, "Date: %s" , ctime(&now));
    fprintf(report, "Package: %s %s\n", pkgname.c_str(), pkgver.c_str());
-   fprintf(report, "SourcePackage: %s\n", srcpkgname.c_str());
+   fprintf(report, "SourcePackage: %s\n", Ver.SourcePkgName());
    fprintf(report, "ErrorMessage:\n %s\n", errormsg);
 
    // ensure that the log is flushed

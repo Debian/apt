@@ -510,6 +510,12 @@ struct pkgCache::Version
    map_stringitem_t VerStr;
    /** \brief section this version is filled in */
    map_stringitem_t Section;
+   /** \brief source package name this version comes from
+      Always contains the name, even if it is the same as the binary name */
+   map_stringitem_t SourcePkgName;
+   /** \brief source version this version comes from
+      Always contains the version string, even if it is the same as the binary version */
+   map_stringitem_t SourceVerStr;
 
    /** \brief Multi-Arch capabilities of a package version */
    enum VerMultiArch { None = 0, /*!< is the default and doesn't trigger special behaviour */

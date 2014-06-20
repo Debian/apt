@@ -389,6 +389,8 @@ static bool Stats(CommandLine &)
 	    stritems.insert(V->VerStr);
 	 if (V->Section != 0)
 	    stritems.insert(V->Section);
+	 stritems.insert(V->SourcePkgName);
+	 stritems.insert(V->SourceVerStr);
 	 for (pkgCache::DepIterator D = V.DependsList(); D.end() == false; ++D)
 	 {
 	    if (D->Version != 0)
