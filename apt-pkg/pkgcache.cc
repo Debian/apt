@@ -82,7 +82,6 @@ pkgCache::Header::Header()
    MaxDescFileSize = 0;
    
    FileList = 0;
-   StringList = 0;
    VerSysName = 0;
    Architecture = 0;
    HashTableSize = _config->FindI("APT::Cache-HashTableSize", 10 * 1048);
@@ -140,7 +139,6 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    DescP = (Description *)Map.Data();
    ProvideP = (Provides *)Map.Data();
    DepP = (Dependency *)Map.Data();
-   StringItemP = (StringItem *)Map.Data();
    StrP = (char *)Map.Data();
 
    if (Errorchecks == false)

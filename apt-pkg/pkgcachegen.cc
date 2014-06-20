@@ -57,8 +57,7 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
 		    FoundFileDeps(0)
 {
    CurrentFile = 0;
-   memset(UniqHash,0,sizeof(UniqHash));
-   
+
    if (_error->PendingError() == true)
       return;
 
@@ -82,9 +81,7 @@ pkgCacheGenerator::pkgCacheGenerator(DynamicMMap *pMap,OpProgress *Prog) :
       if (unlikely(idxVerSysName == 0))
 	 return;
       Cache.HeaderP->VerSysName = idxVerSysName;
-      // this pointer is set in ReMap, but we need it now for WriteUniqString
-      Cache.StringItemP = (pkgCache::StringItem *)Map.Data();
-      map_stringitem_t const idxArchitecture = WriteUniqString(_config->Find("APT::Architecture"));
+      map_stringitem_t const idxArchitecture = StoreString(MIXED, _config->Find("APT::Architecture"));
       if (unlikely(idxArchitecture == 0))
 	 return;
       Cache.HeaderP->Architecture = idxArchitecture;
@@ -148,10 +145,6 @@ void pkgCacheGenerator::ReMap(void const * const oldMap, void const * const newM
    Cache.ReMap(false);
 
    CurrentFile += (pkgCache::PackageFile const * const) newMap - (pkgCache::PackageFile const * const) oldMap;
-
-   for (size_t i = 0; i < _count(UniqHash); ++i)
-      if (UniqHash[i] != 0)
-	 UniqHash[i] += (pkgCache::StringItem const * const) newMap - (pkgCache::StringItem const * const) oldMap;
 
    for (std::vector<pkgCache::GrpIterator*>::const_iterator i = Dynamic<pkgCache::GrpIterator>::toReMap.begin();
 	i != Dynamic<pkgCache::GrpIterator>::toReMap.end(); ++i)
@@ -685,7 +678,7 @@ bool pkgCacheGenerator::NewPackage(pkgCache::PkgIterator &Pkg,const string &Name
 #endif
    Pkg->Group = Grp.Index();
    // all is mapped to the native architecture
-   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : WriteUniqString(Arch.c_str());
+   map_stringitem_t const idxArch = (Arch == "all") ? Cache.HeaderP->Architecture : StoreString(MIXED, Arch);
    if (unlikely(idxArch == 0))
       return false;
    Pkg->Arch = idxArch;
@@ -900,7 +893,7 @@ map_pointer_t pkgCacheGenerator::NewDescription(pkgCache::DescIterator &Desc,
    // Fill it in
    Desc = pkgCache::DescIterator(Cache,Cache.DescP + Description);
    Desc->ID = Cache.HeaderP->DescriptionCount++;
-   map_stringitem_t const idxlanguage_code = WriteUniqString(Lang);
+   map_stringitem_t const idxlanguage_code = StoreString(MIXED, Lang);
    if (unlikely(idxlanguage_code == 0))
       return 0;
    Desc->language_code = idxlanguage_code;
@@ -1102,7 +1095,7 @@ bool pkgCacheGenerator::SelectFile(const string &File,const string &Site,
 
    // Fill it in
    map_stringitem_t const idxFileName = WriteStringInMap(File);
-   map_stringitem_t const idxSite = WriteUniqString(Site);
+   map_stringitem_t const idxSite = StoreString(MIXED, Site);
    if (unlikely(idxFileName == 0 || idxSite == 0))
       return false;
    CurrentFile->FileName = idxFileName;
@@ -1110,7 +1103,7 @@ bool pkgCacheGenerator::SelectFile(const string &File,const string &Site,
    CurrentFile->NextFile = Cache.HeaderP->FileList;
    CurrentFile->Flags = Flags;
    CurrentFile->ID = Cache.HeaderP->PackageFileCount;
-   map_stringitem_t const idxIndexType = WriteUniqString(Index.GetType()->Label);
+   map_stringitem_t const idxIndexType = StoreString(MIXED, Index.GetType()->Label);
    if (unlikely(idxIndexType == 0))
       return false;
    CurrentFile->IndexType = idxIndexType;
@@ -1127,57 +1120,27 @@ bool pkgCacheGenerator::SelectFile(const string &File,const string &Site,
 // ---------------------------------------------------------------------
 /* This is used to create handles to strings. Given the same text it
    always returns the same number */
-map_stringitem_t pkgCacheGenerator::WriteUniqString(const char *S,
+map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, const char *S,
 						 unsigned int Size)
 {
-   /* We use a very small transient hash table here, this speeds up generation
-      by a fair amount on slower machines */
-   pkgCache::StringItem *&Bucket = UniqHash[(S[0]*5 + S[1]) % _count(UniqHash)];
-   if (Bucket != 0 && 
-       stringcmp(S,S+Size,Cache.StrP + Bucket->String) == 0)
-      return Bucket->String;
-   
-   // Search for an insertion point
-   pkgCache::StringItem *I = Cache.StringItemP + Cache.HeaderP->StringList;
-   int Res = 1;
-   map_stringitem_t *Last = &Cache.HeaderP->StringList;
-   for (; I != Cache.StringItemP; Last = &I->NextItem, 
-        I = Cache.StringItemP + I->NextItem)
-   {
-      Res = stringcmp(S,S+Size,Cache.StrP + I->String);
-      if (Res >= 0)
-	 break;
+   std::string const key(S, Size);
+
+   std::map<std::string,map_stringitem_t> * strings;
+   switch(type) {
+      case MIXED: strings = &strMixed; break;
+      case PKGNAME: strings = &strPkgNames; break;
+      case VERSION: strings = &strVersions; break;
+      case SECTION: strings = &strSections; break;
+      default: _error->Fatal("Unknown enum type used for string storage of '%s'", key.c_str()); return 0;
    }
-   
-   // Match
-   if (Res == 0)
-   {
-      Bucket = I;
-      return I->String;
-   }
-   
-   // Get a structure
-   void const * const oldMap = Map.Data();
-   map_pointer_t const Item = AllocateInMap(sizeof(pkgCache::StringItem));
-   if (Item == 0)
-      return 0;
+
+   std::map<std::string,map_stringitem_t>::const_iterator const item = strings->find(key);
+   if (item != strings->end())
+      return item->second;
 
    map_stringitem_t const idxString = WriteStringInMap(S,Size);
-   if (unlikely(idxString == 0))
-      return 0;
-   if (oldMap != Map.Data()) {
-      Last += (map_pointer_t const * const) Map.Data() - (map_pointer_t const * const) oldMap;
-      I += (pkgCache::StringItem const * const) Map.Data() - (pkgCache::StringItem const * const) oldMap;
-   }
-   *Last = Item;
-
-   // Fill in the structure
-   pkgCache::StringItem *ItemP = Cache.StringItemP + Item;
-   ItemP->NextItem = I - Cache.StringItemP;
-   ItemP->String = idxString;
-
-   Bucket = ItemP;
-   return ItemP->String;
+   strings->insert(std::make_pair(key, idxString));
+   return idxString;
 }
 									/*}}}*/
 // CheckValidity - Check that a cache is up-to-date			/*{{{*/

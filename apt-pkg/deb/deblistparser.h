@@ -49,7 +49,6 @@ class debListParser : public pkgCacheGenerator::ListParser
    std::vector<std::string> Architectures;
    bool MultiArchEnabled;
 
-   map_stringitem_t UniqFindTagWrite(const char *Tag);
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);

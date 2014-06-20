@@ -56,7 +56,7 @@ bool edspIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
    CFile->Size = Pkg.FileSize();
    CFile->mtime = Pkg.ModificationTime();
-   map_stringitem_t const storage = Gen.WriteUniqString("edsp::scenario");
+   map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::MIXED, "edsp::scenario");
    CFile->Archive = storage;
 
    if (Gen.MergeList(Parser) == false)
