@@ -744,7 +744,7 @@ void HttpMethod::SendReq(FetchItem *Itm)
    Req << "\r\n";
 
    if (Debug == true)
-      cerr << Req << endl;
+      cerr << Req.str() << endl;
 
    Server->WriteResponse(Req.str());
 }
