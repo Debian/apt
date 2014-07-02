@@ -140,7 +140,7 @@ bool DebFile::DoItem(Item &I, int &Fd)
 // ---------------------------------------------------------------------
 /* */
 bool DebFile::Process(Item &/*I*/, const unsigned char *data,
-		unsigned long size, unsigned long pos)
+		unsigned long long size, unsigned long long pos)
 {
 	switch (Which)
 	{

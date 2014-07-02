@@ -61,7 +61,7 @@ struct ARArchive::Member
    unsigned long long Size;
    
    // Location of the data.
-   unsigned long Start;
+   unsigned long long Start;
    Member *Next;
    
    Member() : Start(0), Next(0) {};
