@@ -1046,7 +1046,7 @@ bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base
 // ---------------------------------------------------------------------
 /* This is used in decoding the 256bit encoded fixed length fields in
    tar files */
-bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
+bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len)
 {
    if ((Str[0] & 0x80) == 0)
       return false;
@@ -1057,6 +1057,23 @@ bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
          Res = (Res<<8) + Str[i];
       return true;
    }
+}
+									/*}}}*/
+// Base256ToNum - Convert a fixed length binary to a number             /*{{{*/
+// ---------------------------------------------------------------------
+/* This is used in decoding the 256bit encoded fixed length fields in
+   tar files */
+bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
+{
+   unsigned long long Num;
+   bool rc;
+
+   rc = Base256ToNum(Str, Num, Len);
+   Res = Num;
+   if (Res != Num)
+      return false;
+
+   return rc;
 }
 									/*}}}*/
 // HexDigit - Convert a hex character into an integer			/*{{{*/

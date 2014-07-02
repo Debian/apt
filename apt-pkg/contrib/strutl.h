@@ -72,6 +72,7 @@ bool ReadMessages(int Fd, std::vector<std::string> &List);
 bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0);
 bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base = 0);
 bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len);
+bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len);
 bool Hex2Num(const std::string &Str,unsigned char *Num,unsigned int Length);
 
 // input changing string split
