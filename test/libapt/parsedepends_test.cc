@@ -23,7 +23,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
       "libdb-dev:any, "
       "gettext:native (<= 0.12), "
       "libcurl4-gnutls-dev:native | libcurl3-gnutls-dev (>> 7.15.5), "
-      "debiandoc-sgml, "
+      "docbook-xml, "
       "apt (>= 0.7.25), "
       "not-for-me [ !amd64 ], "
       "only-for-me [ amd64 ], "
@@ -82,7 +82,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
    EXPECT_EQ(Null | pkgCache::Dep::Greater, Op);
 
    Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
-   EXPECT_EQ("debiandoc-sgml", Package);
+   EXPECT_EQ("docbook-xml", Package);
    EXPECT_EQ("", Version);
    EXPECT_EQ(Null | pkgCache::Dep::NoOp, Op);
 

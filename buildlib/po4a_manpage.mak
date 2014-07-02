@@ -15,6 +15,9 @@ INCLUDES = apt.ent apt-verbatim.ent apt-vendor.ent
 
 manpages:
 
+%.xsl: ../%.xsl
+	cp -a $< .
+
 # Do not use XMLTO, build the manpages directly with XSLTPROC
 ifdef XSLTPROC
 
@@ -33,9 +36,6 @@ apt-verbatim.ent: ../apt-verbatim.ent
 
 apt-vendor.ent: ../apt-vendor.ent
 	cp -a ../apt-vendor.ent .
-
-manpage-style.xsl: ../manpage-style.xsl
-	cp -a $< .
 
 $($(LOCAL)-LIST) :: % : %.xml $(STYLESHEET) $(INCLUDES)
 	echo Creating man page $@
@@ -70,7 +70,6 @@ ifneq ($(words $(SOURCE)),0)
 include $(MANPAGE_H)
 endif
 
-# Debian Doc SGML Documents
-SOURCE := $(wildcard *.$(LC).sgml)
-DEBIANDOC_HTML_OPTIONS=-l $(LC).UTF-8
-include $(DEBIANDOC_H)
+# DocBook XML Documents
+SOURCE := $(wildcard *.$(LC).dbk)
+include $(DOCBOOK_H)

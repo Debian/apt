@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+  <xsl:import href="/usr/share/xml/docbook/stylesheet/docbook-xsl/xhtml-1_1/docbook.xsl" />
+
+  <!-- Parameters for optimal text output. -->
+  <xsl:param name="callout.graphics" select="0"/>
+  <xsl:param name="callout.unicode" select="0"/>
+  <xsl:param name="section.autolabel" select="1"/>
+  <xsl:param name="section.label.includes.component.label" select="1"/>
+
+  <!-- Centering and aligning title elements. -->
+  <xsl:template match="/*/title[position()=1]" mode="titlepage.mode">
+    <br/>
+    <center>
+      <xsl:apply-imports/>
+    </center>
+    <br/>
+    <hr/> <!-- No underline, but at least something. -->
+  </xsl:template>
+  <xsl:template match="author|editor" mode="titlepage.mode">
+    <center>
+      <xsl:apply-imports/>
+    </center>
+  </xsl:template>
+
+  <xsl:template match="releaseinfo" mode="titlepage.mode">
+    <center>
+      <xsl:apply-imports/>
+    </center>
+    <hr/>
+  </xsl:template>
+
+  <!-- Dirty hack to get a left margin for paragraphs etc. -->
+  <xsl:template match="legalnotice/*
+        |chapter/*[not(name(.)='section') and not(name(.)='title')]
+        |section/*[not(name(.)='section') and not(name(.)='title')]
+        |appendix/*[not(name(.)='section') and not(name(.)='title')]
+        |footnote/*">
+    <xsl:copy><table><tr><td>&#xa0;&#xa0;&#xa0;</td><td>
+    <xsl:apply-imports/>
+    </td></tr></table></xsl:copy>
+  </xsl:template>
+
+  <!-- Skip URLs if it has something to print. -->
+  <xsl:template match="ulink[.!='']">
+    <xsl:copy-of select="."/>
+  </xsl:template>
+  <!-- Print URLs if nothing to print. -->
+  <xsl:template match="ulink[.='']">
+    <xsl:value-of select="@url"/>
+  </xsl:template>
+
+  <!-- Make clear where notes etc. begin and end. -->
+  <xsl:template match="caution|important|note|tip|warning">
+    <table width="80%" border="1">
+      <colgroup>
+        <col align="justify"/>
+      </colgroup>
+      <tbody>
+        <tr>
+          <td align="justify">
+            <xsl:apply-imports/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </xsl:template>
+
+</xsl:stylesheet>

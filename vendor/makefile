@@ -5,7 +5,7 @@ SUBDIR=vendor
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-all headers library binary program doc manpages debiandoc test update-po startup dirs: current
+all headers library binary program doc manpages docbook test update-po startup dirs: current
 all: all/subdirs
 binary: binary/subdirs
 doc: doc/subdirs

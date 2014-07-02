@@ -7,7 +7,7 @@ ifndef NOISY
 endif
 
 .PHONY: startup headers library clean veryclean all binary program doc test update-po
-startup all clean veryclean binary program dirs test update-po manpages debiandoc:
+startup all clean veryclean binary program dirs test update-po manpages docbook:
 	$(MAKE) -C libapt $@
 	$(MAKE) -C interactive-helper $@
 

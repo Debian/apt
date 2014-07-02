@@ -5,12 +5,12 @@ SUBDIR=doc
 # Bring in the default rules
 include ../buildlib/defaults.mak
 
-# Debian Doc SGML Documents
-SOURCE = $(wildcard *.sgml)
-DEBIANDOC_HTML_OPTIONS=-l en.UTF-8
-include $(DEBIANDOC_H)
+# DocBook XML Documents
+SOURCE = $(wildcard *.dbk)
+LC = en
+include $(DOCBOOK_H)
 
-doc: manpages debiandoc
+doc: manpages docbook
 
 examples/sources.list: ../vendor/current/sources.list
 	ln -sf $(shell readlink -f $^) $@
@@ -24,12 +24,12 @@ TO = $(DOC)
 TARGET = binary
 include $(COPY_H)
 
-.PHONY: clean clean/subdirs veryclean veryclean/subdirs manpages/subdirs debiandoc/subdirs all binary doc stats
+.PHONY: clean clean/subdirs veryclean veryclean/subdirs manpages/subdirs docbook/subdirs all binary doc stats
 
 clean: clean/subdirs clean/examples
 veryclean: veryclean/subdirs clean/examples
 manpages: apt-vendor.ent manpages/subdirs
-debiandoc: debiandoc/subdirs
+docbook: docbook/subdirs
 
 DOCUMENTATIONPO = $(patsubst %.po,%,$(notdir $(wildcard po/*.po)))
 DOCDIRLIST = $(addsuffix /makefile,$(DOCUMENTATIONPO))
@@ -39,7 +39,7 @@ $(DOCDIRLIST) :: %/makefile : lang.makefile
 	test -d $(dir $@) || mkdir $(dir $@)
 	sed "s#@@LANG@@#$(subst /,,$(dir $@))#" $< > $@
 
-debiandoc/subdirs manpages/subdirs clean/subdirs veryclean/subdirs:
+docbook/subdirs manpages/subdirs clean/subdirs veryclean/subdirs:
 	for dir in en $(dir $(DOCDIRLIST)); do \
 		$(MAKE) -C $$dir $(patsubst %/subdirs,%,$@); \
 	done
@@ -53,11 +53,11 @@ stats:
 
 ifdef PO4A
 MANPAGEPOLIST = $(addprefix manpages-translation-,$(DOCUMENTATIONPO))
-DEBIANDOCPOLIST = $(addprefix debiandoc-translation-,$(DOCUMENTATIONPO))
+DOCBOOKPOLIST = $(addprefix docbook-translation-,$(DOCUMENTATIONPO))
 
-.PHONY: update-po po4a $(MANPAGEPOLIST) $(DEBIANDOCPOLIST) $(DOCDIRLIST)
+.PHONY: update-po po4a $(MANPAGEPOLIST) $(DOCBOOKPOLIST) $(DOCDIRLIST)
 
-po4a: manpages/subdirs debiandoc/subdirs
+po4a: manpages/subdirs docbook/subdirs
 
 update-po:
 	po4a --previous --no-backups --force --no-translations \
@@ -78,10 +78,10 @@ $(MANPAGEPOLIST) :: manpages-translation-% : %/makefile po4a.conf
 		--package-name='$(PACKAGE)-doc' --package-version='$(PACKAGE_VERSION)' \
 		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 
-debiandoc/subdirs: $(DEBIANDOCPOLIST)
-$(DEBIANDOCPOLIST) :: debiandoc-translation-% : %/makefile po4a.conf
+docbook/subdirs: $(DOCBOOKPOLIST)
+$(DOCBOOKPOLIST) :: docbook-translation-% : %/makefile po4a.conf
 	po4a --previous --no-backups --translate-only $(dir $<)apt.ent \
-		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.sgml,%.$(subst /,,$(dir $<)).sgml,$(wildcard *.sgml))) \
+		$(patsubst %,--translate-only $(dir $<)%,$(patsubst %.dbk,%.$(subst /,,$(dir $<)).dbk,$(wildcard *.dbk))) \
 		--package-name='$(PACKAGE)-doc' --package-version='$(PACKAGE_VERSION)' \
 		--msgid-bugs-address='$(PACKAGE_MAIL)' po4a.conf
 endif
@@ -101,5 +101,5 @@ $(BUILD)/doc/doxygen-stamp: $(DOXYGEN_SOURCES) $(BUILD)/doc/Doxyfile
 	$(DOXYGEN) $(BUILD)/doc/Doxyfile
 	touch $(BUILD)/doc/doxygen-stamp
 
-debiandoc: $(BUILD)/doc/doxygen-stamp
+docbook: $(BUILD)/doc/doxygen-stamp
 endif

@@ -70,7 +70,7 @@ LIBAPT_INST=libapt-inst$(LIBAPTINST_MAJOR)
 export DPKG_GENSYMBOLS_CHECK_LEVEL=0
 
 build-binary: build/build-binary-stamp
-build-debiandoc: build/build-debiandoc-stamp
+build-docbook: build/build-docbook-stamp
 build-manpages: build/build-manpages-stamp
 
 # Note that this is unconditionally done first as part of loading environment.mak
@@ -101,9 +101,9 @@ else
 endif
 	touch $@
 
-build/build-debiandoc-stamp: build/configure-stamp
+build/build-docbook-stamp: build/configure-stamp
 	# Add here commands to compile the package.
-	$(MAKE) debiandoc
+	$(MAKE) docbook
 	touch $@
 
 build/build-manpages-stamp: build/configure-stamp
@@ -126,7 +126,7 @@ debian/%.install: debian/%.install.in
 	sed 's/@DEB_HOST_MULTIARCH@/$(DEB_HOST_MULTIARCH)/g' $< > $@
 
 # Build architecture-independent files here.
-libapt-pkg-doc: build-debiandoc
+libapt-pkg-doc: build-docbook
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -153,7 +153,7 @@ libapt-pkg-doc: build-debiandoc
 	dh_md5sums -p$@
 	dh_builddeb -p$@
 
-apt-doc: build-debiandoc
+apt-doc: build-docbook
 	dh_testdir -p$@
 	dh_testroot -p$@
 	dh_prep -p$@
@@ -351,7 +351,7 @@ binary-arch: $(LIBAPT_PKG) $(LIBAPT_INST) apt libapt-pkg-dev apt-utils apt-trans
 binary-indep: apt-doc libapt-pkg-doc
 binary: binary-indep binary-arch
 build-arch: build-binary
-build-indep: build-manpages build-debiandoc
+build-indep: build-manpages build-docbook
 build: build-indep build-arch
 
 .PHONY: build clean binary-indep binary-arch binary
