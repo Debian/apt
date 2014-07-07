@@ -32,7 +32,7 @@ echo '#! /bin/sh
 if echo "$*" | grep -q -- "--assert-multi-arch"; then
 	echo >&2 'dpkg: Fehler: unbekannte Option --assert-multi-arch'
 	echo >&1 'dpkg: Info: unbekannte Option --assert-multi-arch'
-	return 2;
+	exit 2;
 fi
 return $*' > ./dpkg-wrapper
 chmod +x ./dpkg-wrapper
@@ -68,9 +68,10 @@ touch rootdir/var/lib/dpkg/status
 echo 'Dir::Bin::dpkg "./dpkg-wrapper";' > rootdir/etc/apt/apt.conf.d/99dpkgwrapper
 echo '#! /bin/sh
 if echo "$*" | grep -q -- "--assert-multi-arch"; then
-	return 0;
-fi
-return $*' > ./dpkg-wrapper
+    exit 0
+else
+    exit 1
+fi' > ./dpkg-wrapper
 
 testqualifier 'native-pkg' 'native-pkg:amd64'
 testqualifier 'native-pkg:amd64' 'native-pkg:amd64'
