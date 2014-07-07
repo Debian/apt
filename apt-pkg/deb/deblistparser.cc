@@ -145,7 +145,8 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
-   Ver->Section = UniqFindTagWrite("Section");
+   unsigned long const idxSection = UniqFindTagWrite("Section");
+   Ver->Section = idxSection;
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL("Size");
@@ -260,7 +261,10 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
 			       pkgCache::VerIterator &Ver)
 {
    if (Pkg->Section == 0)
-      Pkg->Section = UniqFindTagWrite("Section");
+   {
+      unsigned long const idxSection = UniqFindTagWrite("Section");
+      Pkg->Section = idxSection;
+   }
 
    string const static myArch = _config->Find("APT::Architecture");
    // Possible values are: "all", "native", "installed" and "none"
