@@ -70,6 +70,15 @@ TEST(StrUtilTest,EndsWith)
    EXPECT_FALSE(Endswith("abcd", "x"));
    EXPECT_FALSE(Endswith("abcd", "abcndefg"));
 }
+TEST(StrUtilTest,StartWith)
+{
+   using APT::String::Startswith;
+   EXPECT_TRUE(Startswith("abcd", "a"));
+   EXPECT_TRUE(Startswith("abcd", "ab"));
+   EXPECT_TRUE(Startswith("abcd", "abcd"));
+   EXPECT_FALSE(Startswith("abcd", "x"));
+   EXPECT_FALSE(Startswith("abcd", "abcndefg"));
+}
 TEST(StrUtilTest,SubstVar)
 {
    EXPECT_EQ("", SubstVar("", "fails", "passes"));

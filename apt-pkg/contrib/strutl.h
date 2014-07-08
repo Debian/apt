@@ -40,6 +40,7 @@ namespace APT {
    namespace String {
       std::string Strip(const std::string &s);
       bool Endswith(const std::string &s, const std::string &ending);
+      bool Startswith(const std::string &s, const std::string &starting);
    }
 }
 

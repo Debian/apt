@@ -1065,9 +1065,12 @@ static bool DoBuildDep(CommandLine &CmdL)
       string Src;
       pkgSrcRecords::Parser *Last = 0;
 
-      // a unpacked debian source tree
-      if (DirectoryExists(*I))
+      // an unpacked debian source tree
+      using APT::String::Startswith;
+      if ((Startswith(*I, "./") || Startswith(*I, "/")) &&
+          DirectoryExists(*I))
       {
+         ioprintf(c1out, _("Note, using directory '%s' to get the build dependencies\n"), *I);
          // FIXME: how can we make this more elegant?
          std::string TypeName = "debian/control File Source Index";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());
@@ -1077,6 +1080,8 @@ static bool DoBuildDep(CommandLine &CmdL)
       // if its a local file (e.g. .dsc) use this
       else if (FileExists(*I))
       {
+         ioprintf(c1out, _("Note, using file '%s' to get the build dependencies\n"), *I);
+
          // see if we can get a parser for this pkgIndexFile type
          string TypeName = flExtension(*I) + " File Source Index";
          pkgIndexFile::Type *Type = pkgIndexFile::Type::GetType(TypeName.c_str());

@@ -62,6 +62,13 @@ bool Endswith(const std::string &s, const std::string &end)
    return (s.substr(s.size() - end.size(), s.size()) == end);
 }
 
+bool Startswith(const std::string &s, const std::string &start)
+{
+   if (start.size() > s.size())
+      return false;
+   return (s.substr(0, start.size()) == start);
+}
+
 }
 }
 									/*}}}*/
