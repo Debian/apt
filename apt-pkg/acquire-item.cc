@@ -952,8 +952,6 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    }
    CompressionExtension = comprExt;
 
-   Verify = true;
-
    Init(URI, URIDesc, ShortDesc);
 }
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
@@ -978,13 +976,6 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
    }
    if (CompressionExtension.empty() == false)
       CompressionExtension.erase(CompressionExtension.end()-1);
-
-   // only verify non-optional targets, see acquire-item.h for a FIXME
-   // to make this more flexible
-   if (Target->IsOptional())
-     Verify = false;
-   else
-     Verify = true;
 
    Init(Target->URI, Target->Description, Target->ShortDesc);
 }
@@ -1124,23 +1115,24 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
          return;
       }
 
-      /* Verify the index file for correctness (all indexes must
-       * have a Package field) (LP: #346386) (Closes: #627642) */
-      if (Verify == true)
+      // FIXME: this can go away once we only ever download stuff that
+      //        has a valid hash and we never do GET based probing
+      //
+      /* Always verify the index file for correctness (all indexes must
+       * have a Package field) (LP: #346386) (Closes: #627642) 
+       */
+      FileFd fd(DestFile, FileFd::ReadOnly);
+      // Only test for correctness if the file is not empty (empty is ok)
+      if (fd.FileSize() > 0)
       {
-	 FileFd fd(DestFile, FileFd::ReadOnly);
-	 // Only test for correctness if the file is not empty (empty is ok)
-	 if (fd.FileSize() > 0)
-	 {
-	    pkgTagSection sec;
-	    pkgTagFile tag(&fd);
-
-	    // all our current indexes have a field 'Package' in each section
-	    if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
-	    {
-	       RenameOnError(InvalidFormat);
-	       return;
-	    }
+         pkgTagSection sec;
+         pkgTagFile tag(&fd);
+         
+         // all our current indexes have a field 'Package' in each section
+         if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
+         {
+            RenameOnError(InvalidFormat);
+            return;
          }
       }
        

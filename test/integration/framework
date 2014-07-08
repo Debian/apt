@@ -23,30 +23,30 @@ if [ "$MSGCOLOR" != 'NO' ]; then
 	CCMD="\033[1;35m" # pink
 fi
 
-msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
-msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgmsg() { echo "${CMSG}$1${CNORMAL}"; }
-msginfo() { echo "${CINFO}I: $1${CNORMAL}"; }
-msgdebug() { echo "${CDEBUG}D: $1${CNORMAL}"; }
-msgdone() { echo "${CDONE}DONE${CNORMAL}"; }
-msgnwarn() { echo -n "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgnmsg() { echo -n "${CMSG}$1${CNORMAL}"; }
-msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}"; }
-msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}"; }
+msgdie() { printf "${CERROR}E: $1${CNORMAL}\n" >&2; exit 1; }
+msgwarn() { printf "${CWARNING}W: $1${CNORMAL}\n" >&2; }
+msgmsg() { printf "${CMSG}$1${CNORMAL}\n"; }
+msginfo() { printf "${CINFO}I: $1${CNORMAL}\n"; }
+msgdebug() { printf "${CDEBUG}D: $1${CNORMAL}\n"; }
+msgdone() { printf "${CDONE}DONE${CNORMAL}\n"; }
+msgnwarn() { printf "${CWARNING}W: $1${CNORMAL}" >&2; }
+msgnmsg() { printf "${CMSG}$1${CNORMAL}"; }
+msgninfo() { printf "${CINFO}I: $1${CNORMAL}"; }
+msgndebug() { printf "${CDEBUG}D: $1${CNORMAL}"; }
 msgtest() {
 	while [ -n "$1" ]; do
-		echo -n "${CINFO}$1${CCMD} "
-		echo -n "$(echo "$2" | sed -e 's#^apt\([cgfs]\)#apt-\1#')${CINFO} "
+		printf "${CINFO}$1${CCMD} "
+		printf -- "$(echo "$2" | sed -e 's#^apt\([cgfs]\)#apt-\1#')${CINFO} "
 		shift
 		if [ -n "$1" ]; then shift; else break; fi
 	done
-	echo -n "…${CNORMAL} "
+	printf "…${CNORMAL} "
 }
-msgpass() { echo "${CPASS}PASS${CNORMAL}"; }
-msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
+msgpass() { printf "${CPASS}PASS${CNORMAL}\n"; }
+msgskip() { printf "${CWARNING}SKIP${CNORMAL}\n" >&2; }
 msgfail() {
-	if [ $# -gt 0 ]; then echo "${CFAIL}FAIL: $*${CNORMAL}" >&2;
-	else echo "${CFAIL}FAIL${CNORMAL}" >&2; fi
+	if [ $# -gt 0 ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
+	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
 	EXIT_CODE=$((EXIT_CODE+1));
 }
 
@@ -63,12 +63,12 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgmsg() { true; }
 	msgnmsg() { true; }
 	msgtest() { true; }
-	msgpass() { echo -n " ${CPASS}P${CNORMAL}"; }
-	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
+	msgpass() { printf " ${CPASS}P${CNORMAL}"; }
+	msgskip() { printf " ${CWARNING}S${CNORMAL}" >&2; }
 	if [ -n "$CFAIL" ]; then
-		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
+		msgfail() { printf " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
 	else
-		msgfail() { echo -n " ###FAILED###" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
+		msgfail() { printf " ###FAILED###" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
 	fi
 fi
 if [ $MSGLEVEL -le 3 ]; then
@@ -87,7 +87,7 @@ msgdone() {
 	   [ "$1" = "die" -a $MSGLEVEL -le 0 ]; then
 		true;
 	else
-		echo "${CDONE}DONE${CNORMAL}";
+		printf "${CDONE}DONE${CNORMAL}\n";
 	fi
 }
 getaptconfig() {
@@ -153,7 +153,7 @@ exitwithstatus() {
 shellsetedetector() {
 	local exit_status=$?
 	if [ "$exit_status" != '0' ]; then
-		echo >&2 "${CERROR}E: Looks like the testcases ended prematurely with exitcode: ${exit_status}${CNORMAL}"
+		printf >&2 "${CERROR}E: Looks like the testcases ended prematurely with exitcode: ${exit_status}${CNORMAL}\n"
 		if [ "$EXIT_CODE" = '0' ]; then
 			EXIT_CODE="$exit_status"
 		fi
@@ -328,12 +328,12 @@ configdpkg() {
 configcompression() {
 	while [ -n "$1" ]; do
 		case "$1" in
-		'.') echo ".\t.\tcat";;
-		'gz') echo "gzip\tgz\tgzip";;
-		'bz2') echo "bzip2\tbz2\tbzip2";;
-		'lzma') echo "lzma\tlzma\txz --format=lzma";;
-		'xz') echo "xz\txz\txz";;
-		*) echo "$1\t$1\t$1";;
+		'.') printf ".\t.\tcat\n";;
+		'gz') printf "gzip\tgz\tgzip\n";;
+		'bz2') printf "bzip2\tbz2\tbzip2\n";;
+		'lzma') printf "lzma\tlzma\txz --format=lzma\n";;
+		'xz') printf "xz\txz\txz\n";;
+		*) printf "$1\t$1\t$1\n";;
 		esac
 		shift
 	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf

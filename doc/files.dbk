@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- -*- DocBook -*- -->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+]>
+
+<book lang="en">
+
+<title>APT Files</title>
+
+<bookinfo>
+
+<authorgroup>
+  <author>
+    <personname>Jason Gunthorpe</personname><email>jgg@debian.org</email>
+  </author>
+</authorgroup>
+
+<releaseinfo>Version &apt-product-version;</releaseinfo>
+
+<abstract>
+<para>
+This document describes the complete implementation and format of the installed
+APT directory structure. It also serves as guide to how APT views the Debian
+archive.
+</para>
+</abstract>
+
+<copyright><year>1998-1999</year><holder>Jason Gunthorpe</holder></copyright>
+
+<legalnotice>
+<title>License Notice</title>
+<para>
+"APT" and this document are free software; you can redistribute them and/or
+modify them under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+</para>
+<para>
+For more details, on Debian systems, see the file
+/usr/share/common-licenses/GPL for the full license.
+</para>
+</legalnotice>
+
+</bookinfo>
+
+<chapter id="ch1"><title>Introduction</title>
+
+<section id="s1.1"><title>General</title>
+<para>
+This document serves two purposes. The first is to document the installed
+directory structure and the format and purpose of each file. The second
+purpose is to document how APT views the Debian archive and deals with multiple
+package files.
+</para>
+<para>
+The var directory structure is as follows:
+</para>
+<screen>
+  /var/lib/apt/
+		lists/
+		       partial/
+		periodic/
+		extended_states
+		cdroms.list
+  /var/cache/apt/
+		  archives/
+		          partial/
+		  pkgcache.bin
+		  srcpkgcache.bin
+  /etc/apt/
+	    sources.list.d/
+	    apt.conf.d/
+	    preferences.d/
+	    trusted.gpg.d/
+	    sources.list
+	    apt.conf
+	    apt_preferences
+	    trusted.gpg
+  /usr/lib/apt/
+	        methods/
+			 bzip2
+			 cdrom
+			 copy
+			 file
+			 ftp
+			 gpgv
+			 gzip
+			 http
+			 https
+			 lzma
+			 rred
+			 rsh
+			 ssh
+</screen>
+<para>
+As is specified in the FHS 2.1 /var/lib/apt is used for application data that
+is not expected to be user modified. /var/cache/apt is used for regeneratable
+data and is where the package cache and downloaded .debs go. /etc/apt is the
+place where configuration should happen and /usr/lib/apt is the place where the
+apt and other packages can place binaries which can be used by the acquire
+system of APT.
+</para>
+</section>
+
+</chapter>
+
+<chapter id="ch2"><title>Files</title>
+
+<section id="s2.1"><title>Files and fragment directories in /etc/apt</title>
+<para>
+All files in /etc/apt are used to modify specific aspects of APT. To enable
+other packages to ship needed configuration herself all these files have a
+fragment directory packages can place their files in instead of mangling with
+the main files. The main files are therefore considered to be only used by the
+user and not by a package. The documentation omits this directories most of
+the time to be easier readable, so every time the documentation includes a
+reference to a main file it really means the file or the fragment directories.
+</para>
+</section>
+
+<section id="s2.2"><title>Distribution Source list (sources.list)</title>
+<para>
+The distribution source list is used to locate archives of the debian
+distribution. It is designed to support any number of active sources and to
+support a mix of source media. The file lists one source per line, with the
+fastest source listed first. The format of each line is:
+</para>
+<para>
+<replaceable>type uri args</replaceable>
+</para>
+<para>
+The first item, <replaceable>type</replaceable>, indicates the format for the
+remainder of the line. It is designed to indicate the structure of the
+distribution the line is talking about. Currently the only defined values are
+<emphasis>deb</emphasis> and <emphasis>deb-src</emphasis> which indicate a
+standard debian (source) archive with a dists directory. More about these
+types and the URI specification can be found in the sources.list manpage.
+</para>
+
+<section id="s2.2.1"><title>Hashing the URI</title>
+<para>
+All permanent information acquired from any of the sources is stored in the
+lists directory. Thus, there must be a way to relate the filename in the lists
+directory to a line in the sourcelist. To simplify things this is done by
+quoting the URI and treating _'s as quoteable characters and converting /
+to _. The URI spec says this is done by converting a sensitive character
+into %xx where xx is the hexadecimal representation from the ASCII character
+set. Examples:
+</para>
+<screen>
+http://www.debian.org/archive/dists/stable/binary-i386/Packages
+/var/lib/apt/lists/www.debian.org_archive_dists_stable_binary-i386_Packages
+
+cdrom:Debian 1.3/debian/Packages
+/var/lib/apt/info/Debian%201.3_debian_Packages
+</screen>
+<para>
+The other alternative that was considered was to use a deep directory structure
+but this poses two problems, it makes it very difficult to prune directories
+back when sources are no longer used and complicates the handling of the
+partial directory. This gives a very simple way to deal with all of the
+situations that can arise. Also note that the same rules described in the
+<emphasis>Archive Directory</emphasis> section regarding the partial sub dir
+apply here as well.
+</para>
+</section>
+
+</section>
+
+<section id="s2.3"><title>Extended States File (extended_states)</title>
+<para>
+The extended_states file serves the same purpose as the normal dpkg status
+file (/var/lib/dpkg/status) except that it stores information unique to
+apt. This includes currently only the autoflag but is open to store more
+unique data that come up over time. It duplicates nothing from the normal
+dpkg status file. Please see other APT documentation for a discussion of
+the exact internal behavior of these fields. The Package and the Architecture
+field are placed directly before the new fields to indicate which package
+they apply to. The new fields are as follows:
+</para>
+<variablelist>
+<varlistentry>
+<term>Auto-Installed</term>
+<listitem>
+<para>
+The Auto flag can be 1 (Yes) or 0 (No) and controls whether the package was
+automatical installed to satisfy a dependency or if the user requested the
+installation
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+
+<section id="s2.4"><title>Binary Package Cache (srcpkgcache.bin and pkgcache.bin)</title>
+<para>
+Please see cache.sgml for a complete description of what this file
+is. The cache file is updated whenever the contents of the lists
+directory changes. If the cache is erased, corrupted or of a non-matching
+version it will be automatically rebuilt by all of the tools that need
+it. <emphasis>srcpkgcache.bin</emphasis> contains a cache of all of the
+package files in the source list. This allows regeneration of the cache
+when the status files change to use a prebuilt version for greater speed.
+</para>
+</section>
+
+<section id="s2.5"><title>Downloads Directory (archives)</title>
+<para>
+The archives directory is where all downloaded .deb archives go. When the file
+transfer is initiated the deb is placed in partial. Once the file is fully
+downloaded and its MD5 hash and size are verified it is moved from partial
+into archives/. Any files found in archives/ can be assumed to be verified.
+</para>
+<para>
+No directory structure is transferred from the receiving site and all .deb file
+names conform to debian conventions. No short (msdos) filename should be
+placed in archives. If the need arises .debs should be unpacked, scanned and
+renamed to their correct internal names. This is mostly to prevent file name
+conflicts but other programs may depend on this if convenient. A conforming
+.deb is one of the form, name_version_arch.deb. Our archive scripts do not
+handle epochs, but they are necessary and should be re-inserted. If necessary
+_'s and :'s in the fields should be quoted using the % convention. It must be
+possible to extract all 3 fields by examining the file name. Downloaded .debs
+must be found in one of the package lists with an exact name + version match..
+</para>
+</section>
+
+<section id="s2.6"><title>The Methods Directory (/usr/lib/apt/methods)</title>
+<para>
+The Methods directory is more fully described in the APT Methods interface
+document.
+</para>
+</section>
+
+<section id="s2.7"><title>The Configuration File (/etc/apt/apt.conf)</title>
+<para>
+The configuration file (and the associated fragments directory
+/etc/apt/apt.conf.d/) is described in the apt.conf manpage.
+</para>
+</section>
+
+<section id="s2.8"><title>The trusted.gpg File (/etc/apt/trusted.gpg)</title>
+<para>
+The trusted.gpg file (and the files in the associated fragments directory
+/etc/apt/trusted.gpg.d/) is a binary file including the keyring used by apt to
+validate that the information (e.g. the Release file) it downloads are really
+from the distributor it clams to be and is unmodified and is therefore the last
+step in the chain of trust between the archive and the end user. This security
+system is described in the apt-secure manpage.
+</para>
+</section>
+
+<section id="s2.9"><title>The Release File</title>
+<para>
+This file plays an important role in how APT presents the archive to the
+user. Its main purpose is to present a descriptive name for the source of
+each version of each package. It also is used to detect when new versions
+of debian are released. It augments the package file it is associated with
+by providing meta information about the entire archive which the Packages
+file describes.
+</para>
+<para>
+The full name of the distribution for presentation to the user is formed as
+'label version archive', with a possible extended name being 'label version
+archive component'.
+</para>
+<para>
+The file is formed as the package file (RFC-822) with the following tags
+defined:
+</para>
+<variablelist>
+<varlistentry>
+<term>Archive</term>
+<listitem>
+<para>
+This is the common name we give our archives, such as
+<emphasis>stable</emphasis> or <emphasis>unstable</emphasis>.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Component</term>
+<listitem>
+<para>
+Refers to the sub-component of the archive, <emphasis>main</emphasis>,
+<emphasis>contrib</emphasis> etc. Component may be omitted if there are no
+components for this archive.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Version</term>
+<listitem>
+<para>
+This is a version string with the same properties as in the Packages file. It
+represents the release level of the archive.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Origin</term>
+<listitem>
+<para>
+This specifies who is providing this archive. In the case of Debian the string
+will read 'Debian'. Other providers may use their own string
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Label</term>
+<listitem>
+<para>
+This carries the encompassing name of the distribution. For Debian proper this
+field reads 'Debian'. For derived distributions it should contain their proper
+name.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Architecture</term>
+<listitem>
+<para>
+When the archive has packages for a single architecture then the Architecture
+is listed here. If a mixed set of systems are represented then this should
+contain the keyword <emphasis>mixed</emphasis>.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>NotAutomatic</term>
+<listitem>
+<para>
+A Yes/No flag indicating that the archive is extremely unstable and its
+version's should never be automatically selected. This is to be used by
+experimental.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Description</term>
+<listitem>
+<para>
+Description is used to describe the release. For instance experimental would
+contain a warning that the packages have problems.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para>
+The location of the Release file in the archive is very important, it must be
+located in the same location as the packages file so that it can be located in
+all situations. The following is an example for the current stable release,
+1.3.1r6
+</para>
+<screen>
+Archive: stable
+Component: main
+Version: 1.3.1r6
+Origin: Debian
+Label: Debian
+Architecture: i386
+</screen>
+<para>
+This is an example of experimental,
+</para>
+<screen>
+Archive: experimental
+Version: 0
+Origin: Debian
+Label: Debian
+Architecture: mixed
+NotAutomatic: Yes
+</screen>
+<para>
+And unstable,
+</para>
+<screen>
+Archive: unstable
+Component: main
+Version: 2.1
+Origin: Debian
+Label: Debian
+Architecture: i386
+</screen>
+</section>
+
+</chapter>
+
+
+</book>

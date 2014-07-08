@@ -1,0 +1,895 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- -*- DocBook -*- -->
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+]>
+
+<book lang="en">
+
+<title>dpkg technical manual</title>
+
+<bookinfo>
+
+<authorgroup>
+  <author>
+    <personname>Tom Lees</personname><email>tom@lpsg.demon.co.uk</email>
+  </author>
+</authorgroup>
+
+<releaseinfo>Version &apt-product-version;</releaseinfo>
+
+<abstract>
+<para>
+This document describes the minimum necessary workings for the APT dselect
+replacement. It gives an overall specification of what its external interface
+must look like for compatibility, and also gives details of some internal
+quirks.
+</para>
+</abstract>
+
+<copyright><year>1997</year><holder>Tom Lees</holder></copyright>
+
+<legalnotice>
+<title>License Notice</title>
+<para>
+APT and this document are free software; you can redistribute them and/or
+modify them under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+</para>
+<para>
+For more details, on Debian systems, see the file
+/usr/share/common-licenses/GPL for the full license.
+</para>
+</legalnotice>
+
+</bookinfo>
+
+<chapter id="ch1"><title>Quick summary of dpkg's external interface</title>
+
+<section id="control"><title>Control files</title>
+<para>
+The basic dpkg package control file supports the following major features:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+5 types of dependencies:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+Pre-Depends, which must be satisfied before a package may be unpacked
+</para>
+</listitem>
+<listitem>
+<para>
+Depends, which must be satisfied before a package may be configured
+</para>
+</listitem>
+<listitem>
+<para>
+Recommends, to specify a package which if not installed may severely limit the
+usefulness of the package
+</para>
+</listitem>
+<listitem>
+<para>
+Suggests, to specify a package which may increase the productivity of the
+package
+</para>
+</listitem>
+<listitem>
+<para>
+Conflicts, to specify a package which must NOT be installed in order for the
+package to be configured
+</para>
+</listitem>
+<listitem>
+<para>
+Breaks, to specify a package which is broken by the package and which should
+therefore not be configured while broken
+</para>
+</listitem>
+</itemizedlist>
+<para>
+Each of these dependencies can specify a version and a depedency on that
+version, for example "&lt;= 0.5-1", "== 2.7.2-1", etc. The comparators
+available are:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+"&lt;&lt;" - less than
+</para>
+</listitem>
+<listitem>
+<para>
+"&lt;=" - less than or equal to
+</para>
+</listitem>
+<listitem>
+<para>
+"&gt;&gt;" - greater than
+</para>
+</listitem>
+<listitem>
+<para>
+"&gt;=" - greater than or equal to
+</para>
+</listitem>
+<listitem>
+<para>
+"==" - equal to
+</para>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<para>
+The concept of "virtual packages", which many other packages may provide,
+using the Provides mechanism. An example of this is the "httpd" virtual
+package, which all web servers should provide. Virtual package names may be
+used in dependency headers. However, current policy is that virtual packages
+do not support version numbers, so dependencies on virtual packages with
+versions will always fail.
+</para>
+</listitem>
+<listitem>
+<para>
+Several other control fields, such as Package, Version, Description, Section,
+Priority, etc., which are mainly for classification purposes. The package
+name must consist entirely of lowercase characters, plus the characters '+',
+'-', and '.'. Fields can extend across multiple lines - on the second and
+subsequent lines, there is a space at the beginning instead of a field name
+and a ':'. Empty lines must consist of the text " .", which will be ignored,
+as will the initial space for other continuation lines. This feature is
+usually only used in the Description field.
+</para>
+</listitem>
+</itemizedlist>
+</section>
+
+<section id="s1.2"><title>The dpkg status area</title>
+<para>
+The "dpkg status area" is the term used to refer to the directory where dpkg
+keeps its various status files (GNU would have you call it the dpkg shared
+state directory). This is always, on Debian systems, /var/lib/dpkg. However,
+the default directory name should not be hard-coded, but #define'd, so that
+alteration is possible (it is available via configure in dpkg 1.4.0.9 and
+above). Of course, in a library, code should be allowed to override the
+default directory, but the default should be part of the library (so that
+the user may change the dpkg admin dir simply by replacing the library).
+</para>
+<para>
+Dpkg keeps a variety of files in its status area. These are discussed later
+on in this document, but a quick summary of the files is here:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+available - this file contains a concatenation of control information from all
+the packages which dpkg knows about. This is updated using the dpkg commands
+"--update-avail &lt;file&gt;", "--merge-avail &lt;file&gt;", and
+"--clear-avail".
+</para>
+</listitem>
+<listitem>
+<para>
+status - this file contains information on the following things for every
+package:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+Whether it is installed, not installed, unpacked, removed, failed
+configuration, or half-installed (deconfigured in favour of another package).
+</para>
+</listitem>
+<listitem>
+<para>
+Whether it is selected as install, hold, remove, or purge.
+</para>
+</listitem>
+<listitem>
+<para>
+If it is "ok" (no installation problems), or "not-ok".
+</para>
+</listitem>
+<listitem>
+<para>
+It usually also contains the section and priority (so that dselect may classify
+packages not in available)
+</para>
+</listitem>
+<listitem>
+<para>
+For packages which did not initially appear in the "available" file when they
+were installed, the other control information for them.
+</para>
+</listitem>
+</itemizedlist>
+<para>
+The exact format for the "Status:" field is:
+</para>
+<screen>
+      Status: Want Flag Status
+</screen>
+<para>
+Where <replaceable>Want</replaceable> may be one of
+<emphasis>unknown</emphasis>, <emphasis>install</emphasis>,
+<emphasis>hold</emphasis>, <emphasis>deinstall</emphasis>,
+<emphasis>purge</emphasis>. <replaceable>Flag</replaceable> may
+be one of <emphasis>ok</emphasis>, <emphasis>reinstreq</emphasis>,
+<emphasis>hold</emphasis>,
+<emphasis>hold-reinstreq</emphasis>. <replaceable>Status</replaceable> may
+be one of <emphasis>not-installed</emphasis>, <emphasis>unpacked</emphasis>,
+<emphasis>half-configured</emphasis>, <emphasis>installed</emphasis>,
+<emphasis>half-installed</emphasis> <emphasis>config-files</emphasis>,
+<emphasis>post-inst-failed</emphasis>, <emphasis>removal-failed</emphasis>.
+The states are as follows:-
+</para>
+<variablelist>
+<varlistentry>
+<term>not-installed</term>
+<listitem>
+<para>
+No files are installed from the package, it has no config files left, it
+uninstalled cleanly if it ever was installed.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>unpacked</term>
+<listitem>
+<para>
+The basic files have been unpacked (and are listed in
+/var/lib/dpkg/info/[package].list. There are config files present, but the
+postinst script has _NOT_ been run.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>half-configured</term>
+<listitem>
+<para>
+The package was installed and unpacked, but the postinst script failed in some
+way.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>installed</term>
+<listitem>
+<para>
+All files for the package are installed, and the configuration was also
+successful.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>half-installed</term>
+<listitem>
+<para>
+An attempt was made to remove the packagem but there was a failure in the
+prerm script.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>config-files</term>
+<listitem>
+<para>
+The package was "removed", not "purged". The config files are left, but
+nothing else.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>post-inst-failed</term>
+<listitem>
+<para>
+Old name for half-configured. Do not use.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>removal-failed</term>
+<listitem>
+<para>
+Old name for half-installed. Do not use.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para>
+The two last items are only left in dpkg for compatibility - they are
+understood by it, but never written out in this form.
+</para>
+<para>
+Please see the dpkg source code, <literal>lib/parshelp.c</literal>,
+<emphasis>statusinfos</emphasis>, <emphasis>eflaginfos</emphasis> and
+<emphasis>wantinfos</emphasis> for more details.
+</para>
+</listitem>
+<listitem>
+<para>
+info - this directory contains files from the control archive of every
+package currently installed. They are installed with a prefix of
+"&lt;packagename&gt;.". In addition to this, it also contains a file
+called &lt;package&gt;.list for every package, which contains a list
+of files. Note also that the control file is not copied into here; it
+is instead found as part of status or available.
+</para>
+</listitem>
+<listitem>
+<para>
+methods - this directory is reserved for "method"-specific files - each
+"method" has a subdirectory underneath this directory (or at least,
+it can have). In addition, there is another subdirectory "mnt", where
+misc. filesystems (floppies, CD-ROMs, etc.) are mounted.
+</para>
+</listitem>
+<listitem>
+<para>
+alternatives - directory used by the "update-alternatives" program. It
+contains one file for each "alternatives" interface, which contains
+information about all the needed symlinked files for each alternative.
+</para>
+</listitem>
+<listitem>
+<para>
+diversions - file used by the "dpkg-divert" program. Each diversion takes
+three lines. The first is the package name (or ":" for user diversion), the
+second the original filename, and the third the diverted filename.
+</para>
+</listitem>
+<listitem>
+<para>
+updates - directory used internally by dpkg. This is discussed later, in the
+section <xref linkend="updates"/>.
+</para>
+</listitem>
+<listitem>
+<para>
+parts - temporary directory used by dpkg-split
+</para>
+</listitem>
+</itemizedlist>
+</section>
+
+<section id="s1.3"><title>The dpkg library files</title>
+<para>
+These files are installed under /usr/lib/dpkg (usually), but
+/usr/local/lib/dpkg is also a possibility (as Debian policy dictates). Under
+this directory, there is a "methods" subdirectory. The methods subdirectory in
+turn contains any number of subdirectories for each general method processor
+(note that one set of method scripts can, and is, used for more than one of
+the methods listed under dselect).
+</para>
+<para>
+The following files may be found in each of these subdirectories:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+names - One line per method, two-digit priority to appear on menu at
+beginning, followed by a space, the name, and then another space and
+the short description.
+</para>
+</listitem>
+<listitem>
+<para>
+desc.&lt;name&gt; - Contains the long description displayed by dselect
+when the cursor is put over the &lt;name&gt; method.
+</para>
+</listitem>
+<listitem>
+<para>
+setup - Script or program which sets up the initial values to be used
+by this method. Called with first argument as the status area directory
+(/var/lib/dpkg), second argument as the name of the method (as in the
+directory name), and the third argument as the option (as in the names file).
+</para>
+</listitem>
+<listitem>
+<para>
+install - Script/program called when the "install" option of dselect is run
+with this method. Same arguments as for setup.
+</para>
+</listitem>
+<listitem>
+<para>
+update - Script/program called when the "update" option of dselect is
+run. Same arguments as for setup/install.
+</para>
+</listitem>
+</itemizedlist>
+</section>
+
+<section id="s1.4"><title>The "dpkg" command-line utility</title>
+
+<section id="s1.4.1"><title>"Documented" command-line interfaces</title>
+<para>
+As yet unwritten. You can refer to the other manuals for now. See
+<citerefentry><refentrytitle>dpkg</refentrytitle><manvolnum>8</manvolnum></citerefentry>.
+</para>
+</section>
+
+<section id="s1.4.2"><title>Environment variables which dpkg responds to</title>
+<itemizedlist>
+<listitem>
+<para>
+DPKG_NO_TSTP - if set to a non-null value, this variable causes dpkg to run a
+child shell process instead of sending itself a SIGTSTP, when the user selects
+to background the dpkg process when it asks about conffiles.
+</para>
+</listitem>
+<listitem>
+<para>
+SHELL - used to determine which shell to run in the case when DPKG_NO_TSTP
+is set.
+</para>
+</listitem>
+<listitem>
+<para>
+CC - used as the C compiler to call to determine the target architecture. The
+default is "gcc".
+</para>
+</listitem>
+<listitem>
+<para>
+PATH - dpkg checks that it can find at least the following files in the path
+when it wants to run package installation scripts, and gives an error if it
+cannot find all of them:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+ldconfig
+</para>
+</listitem>
+<listitem>
+<para>
+start-stop-daemon
+</para>
+</listitem>
+<listitem>
+<para>
+install-info
+</para>
+</listitem>
+<listitem>
+<para>
+update-rc.d
+</para>
+</listitem>
+</itemizedlist>
+</listitem>
+</itemizedlist>
+</section>
+
+<section id="s1.4.3"><title>Assertions</title>
+<para>
+The dpkg utility itself is required for quite a number of packages, even if
+they have been installed with a tool totally separate from dpkg. The reason
+for this is that some packages, in their pre-installation scripts, check that
+your version of dpkg supports certain features. This was broken from the
+start, and it should have actually been a control file header "Dpkg-requires",
+or similar. What happens is that the configuration scripts will abort or
+continue according to the exit code of a call to dpkg, which will stop them
+from being wrongly configured.
+</para>
+<para>
+These special command-line options, which simply return as true or false are
+all prefixed with "--assert-". Here is a list of them (without the prefix):-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+support-predepends - Returns success or failure according to whether a version
+of dpkg which supports predepends properly (1.1.0 or above) is installed,
+according to the database.
+</para>
+</listitem>
+<listitem>
+<para>
+working-epoch - Return success or failure according to whether a version of
+dpkg which supports epochs in version properly (1.4.0.7 or above) is installed,
+according to the database.
+</para>
+</listitem>
+</itemizedlist>
+<para>
+Both these options check the status database to see what version of the
+"dpkg" package is installed, and check it against a known working version.
+</para>
+</section>
+
+<section id="s1.4.4"><title>--predep-package</title>
+<para>
+This strange option is described as follows in the source code:
+</para>
+<screen>
+/* Print a single package which:
+ *  (a) is the target of one or more relevant predependencies.
+ *  (b) has itself no unsatisfied pre-dependencies.
+ * If such a package is present output is the Packages file entry,
+ *  which can be massaged as appropriate.
+ * Exit status:
+ *  0 = a package printed, OK
+ *  1 = no suitable package available
+ *  2 = error
+ */
+</screen>
+<para>
+On further inspection of the source code, it appears that what is does is
+this:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+Looks at the packages in the database which are selected as "install",
+and are installed.
+</para>
+</listitem>
+<listitem>
+<para>
+It then looks at the Pre-Depends information for each of these packages
+from the available file. When it find a package for which any of the
+pre-dependencies are not satisfied, it breaks from the loop through the
+packages.
+</para>
+</listitem>
+<listitem>
+<para>
+It then looks through the unsatisfied pre-dependencies, and looks for
+packages which would satisfy this pre-dependency, stopping on the first
+it finds. If it finds none, it bombs out with an error.
+</para>
+</listitem>
+<listitem>
+<para>
+It then continues this for every dependency of the initial package.
+</para>
+</listitem>
+</itemizedlist>
+<para>
+Eventually, it writes out the record of all the packages to satisfy the
+pre-dependencies. This is used by the disk method to make sure that its
+dependency ordering is correct. What happens is that all pre-depending
+packages are first installed, then it runs dpkg -iGROEB on the directory,
+which installs in the order package files are found. Since pre-dependencies
+mean that a package may not even be unpacked unless they are satisfied, it
+is necessary to do this (usually, since all the package files are unpacked
+in one phase, the configured in another, this is not needed).
+</para>
+</section>
+
+</section>
+
+</chapter>
+
+<chapter id="ch2"><title>dpkg-deb and .deb file internals</title>
+<para>
+This chapter describes the internals to the "dpkg-deb" tool, which is used by
+"dpkg" as a back-end. dpkg-deb has its own tar extraction functions, which is
+the source of many problems, as it does not support long filenames, using
+extension blocks.
+</para>
+
+<section id="s2.1"><title>The .deb archive format</title>
+<para>
+The main principal of the new-format Debian archive (I won't describe the old
+format - for that have a look at deb-old.5), is that the archive really is an
+archive - as used by "ar" and friends. However, dpkg-deb uses this format
+internally, rather than calling "ar". Inside this archive, there are usually
+the following members:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+debian-binary
+</para>
+</listitem>
+<listitem>
+<para>
+control.tar.gz
+</para>
+</listitem>
+<listitem>
+<para>
+data.tar.gz
+</para>
+</listitem>
+</itemizedlist>
+<para>
+The debian-binary member consists simply of the string "2.0", indicating
+the format version. control.tar.gz contains the control files (and scripts),
+and the data.tar.gz contains the actual files to populate the filesystem
+with. Both tarfiles extract straight into the current directory. Information
+on the tar formats can be found in the GNU tar info page. Since dpkg-deb
+calls "tar -cf" to build packages, the Debian packages use the GNU extensions.
+</para>
+</section>
+
+<section id="s2.2"><title>The dpkg-deb command-line</title>
+<para>
+dpkg-deb documents itself thoroughly with its '--help' command-line
+option. However, I am including a reference to these for
+completeness. dpkg-deb supports the following options:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+--build (-b) &lt;dir&gt; - builds a .deb archive, takes a directory which
+contains all the files as an argument. Note that the directory
+&lt;dir&gt;/DEBIAN will be packed separately into the control archive.
+</para>
+</listitem>
+<listitem>
+<para>
+--contents (-c) &lt;debfile&gt; - Lists the contents of the "data.tar.gz"
+member.
+</para>
+</listitem>
+<listitem>
+<para>
+--control (-e) &lt;debfile&gt; - Extracts the control archive into a directory
+called DEBIAN. Alternatively, with another argument, it will extract it into a
+different directory.
+</para>
+</listitem>
+<listitem>
+<para>
+--info (-I) &lt;debfile&gt; - Prints the contents of the "control" file in the
+control archive to stdout. Alternatively, giving it other arguments will cause
+it to print the contents of those files instead.
+</para>
+</listitem>
+<listitem>
+<para>
+--field (-f) &lt;debfile&gt; &lt;field&gt; ... - Prints any number of fields
+from the "control" file. Giving it extra arguments limits the fields it prints
+to only those specified. With no command-line arguments other than a filename,
+it is equivalent to -I and just the .deb filename.
+</para>
+</listitem>
+<listitem>
+<para>
+--extract (-x) &lt;debfile&gt; &lt;dir&gt; - Extracts the data archive of a
+debian package under the directory &lt;dir&gt;.
+</para>
+</listitem>
+<listitem>
+<para>
+--vextract (-X) &lt;debfile&gt; &lt;dir&gt; - Same as --extract, except it
+is equivalent of giving tar the '-v' option - it prints the filenames as it
+extracts them.
+</para>
+</listitem>
+<listitem>
+<para>
+--fsys-tarfile &lt;debfile&gt; - This option outputs a gunzip'd version of
+data.tar.gz to stdout.
+</para>
+</listitem>
+<listitem>
+<para>
+--new - sets the archive format to be used to the new Debian format
+</para>
+</listitem>
+<listitem>
+<para>
+--old - sets the archive format to be used to the old Debian format
+</para>
+</listitem>
+<listitem>
+<para>
+--debug - Tells dpkg-deb to produce debugging output
+</para>
+</listitem>
+<listitem>
+<para>
+--nocheck - Tells dpkg-deb not to check the sanity of the control file
+</para>
+</listitem>
+<listitem>
+<para>
+--help (-h) - Gives a help message
+</para>
+</listitem>
+<listitem>
+<para>
+--version - Shows the version number
+</para>
+</listitem>
+<listitem>
+<para>
+--licence/--license (UK/US spellings) - Shows a brief outline of the GPL
+</para>
+</listitem>
+</itemizedlist>
+
+<section id="s2.2.1"><title>Internal checks used by dpkg-deb when building packages</title>
+<para>
+Here is a list of the internal checks used by dpkg-deb when building
+packages. It is in the order they are done.
+</para>
+<itemizedlist>
+<listitem>
+<para>
+First, the output Debian archive argument, if it is given, is checked using
+stat. If it is a directory, an internal flag is set. This check is only made
+if the archive name is specified explicitly on the command-line. If the
+argument was not given, the default is the directory name, with ".deb"
+appended.
+</para>
+</listitem>
+<listitem>
+<para>
+Next, the control file is checked, unless the --nocheck flag was specified on
+the command-line. dpkg-deb will bomb out if the second argument to --build was
+a directory, and --nocheck was specified. Note that dpkg-deb will not be able
+to determine the name of the package in this case. In the control file, the
+following things are checked:-
+</para>
+<itemizedlist>
+<listitem>
+<para>
+The package name is checked to see if it contains any invalid characters (see
+<xref linkend="control"/> for this).
+</para>
+</listitem>
+<listitem>
+<para>
+The priority field is checked to see if it uses standard values, and
+user-defined values are warned against. However, note that this check is now
+redundant, since the control file no longer contains the priority - the
+changes file now does this.
+</para>
+</listitem>
+<listitem>
+<para>
+The control file fields are then checked against the standard list of fields
+which appear in control files, and any "user-defined" fields are reported as
+warnings.
+</para>
+</listitem>
+<listitem>
+<para>
+dpkg-deb then checks that the control file contains a valid version number.
+</para>
+</listitem>
+</itemizedlist>
+</listitem>
+<listitem>
+<para>
+After this, in the case where a directory was specified to build the .deb file
+in, the filename is created as "directory/pkg_ver.deb" or
+"directory/pkg_ver_arch.deb", depending on whether the control file contains
+an architecture field.
+</para>
+</listitem>
+<listitem>
+<para>
+Next, dpkg-deb checks for the &lt;dir&gt;/DEBIAN directory. It complains if it
+doesn't exist, or if it has permissions &lt; 0755, or &gt; 0775.
+</para>
+</listitem>
+<listitem>
+<para>
+It then checks that all the files in this subdir are either symlinks or plain
+files, and have permissions between 0555 and 0775.
+</para>
+</listitem>
+<listitem>
+<para>
+The conffiles file is then checked to see if the filenames are too
+long. Warnings are produced for each that is. After this, it checks
+that the package provides initial copies of each of these conffiles,
+and that they are all plain files.
+</para>
+</listitem>
+</itemizedlist>
+</section>
+
+</section>
+
+</chapter>
+
+<chapter id="ch3"><title>dpkg internals</title>
+<para>
+This chapter describes the internals of dpkg itself. Although the low-level
+formats are quite simple, what dpkg does in certain cases often does not make
+sense.
+</para>
+
+<section id="updates"><title>Updates</title>
+<para>
+This describes the /var/lib/dpkg/updates directory. The function of this
+directory is somewhat strange, and seems only to be used internally. A
+function called cleanupdates is called whenever the database is scanned. This
+function in turn uses
+<citerefentry><refentrytitle>scandir</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
+to sort the files in this directory. Files who names do not consist entirely
+of digits are discarded. dpkg also causes a fatal error if any of the
+filenames are different lengths.
+</para>
+<para>
+After having scanned the directory, dpkg in turn parses each file the same way
+it parses the status file (they are sorted by the scandir to be in numerical
+order). After having done this, it then writes the status information back to
+the "status" file, and removes all the "updates" files.
+</para>
+<para>
+These files are created internally by dpkg's "checkpoint" function, and are
+cleaned up when dpkg exits cleanly.
+</para>
+<para>
+Juding by the use of the updates directory I would call it a Journal. Inorder
+to efficiently ensure the complete integrity of the status file dpkg will
+"checkpoint" or journal all of it's activities in the updates directory. By
+merging the contents of the updates directory (in order!!) against the original
+status file it can get the precise current state of the system, even in the
+event of a system failure while dpkg is running.
+</para>
+<para>
+The other option would be to sync-rewrite the status file after each operation,
+which would kill performance.
+</para>
+<para>
+It is very important that any program that uses the status file abort if the
+updates directory is not empty!  The user should be informed to run dpkg
+manually (what options though??) to correct the situation.
+</para>
+</section>
+
+<section id="s3.2"><title>What happens when dpkg reads the database</title>
+<para>
+First, the status file is read. This gives dpkg an initial idea of the
+packages that are there. Next, the updates files are read in, overriding the
+status file, and if necessary, the status file is re-written, and updates files
+are removed. Finally, the available file is read. The available file is read
+with flags which preclude dpkg from updating any status information from it,
+though - installed version, etc., and is also told to record that the packages
+it reads this time are available, not installed.
+</para>
+<para>
+More information on updates is given above.
+</para>
+</section>
+
+<section id="s3.3"><title>How dpkg compares version numbers</title>
+<para>
+Version numbers consist of three parts: the epoch, the upstream version, and
+the Debian revision. Dpkg compares these parts in that order. If the epochs
+are different, it returns immediately, and so on.
+</para>
+<para>
+However, the important part is how it compares the versions which are
+essentially stored as just strings. These are compared in two distinct
+parts: those consisting of numerical characters (which are evaluated, and
+then compared), and those consisting of other characters. When comparing
+non-numerical parts, they are compared as the character values (ASCII),
+but non-alphabetical characters are considered "greater than" alphabetical
+ones. Also note that longer strings (after excluding differences where
+numerical values are equal) are considered "greater than" shorter ones.
+</para>
+<para>
+Here are a few examples of how these rules apply:-
+</para>
+<screen>
+15 &gt; 10
+0010 == 10
+
+d.r &gt; dsr
+32.d.r == 0032.d.r
+d.rnr &lt; d.rnrn
+</screen>
+</section>
+
+</chapter>
+
+</book>

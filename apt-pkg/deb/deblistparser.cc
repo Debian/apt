@@ -145,7 +145,8 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
-   Ver->Section = UniqFindTagWrite("Section");
+   unsigned long const idxSection = UniqFindTagWrite("Section");
+   Ver->Section = idxSection;
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL("Size");

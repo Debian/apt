@@ -172,15 +172,12 @@ AC_EGREP_HEADER(h_errno, netdb.h, [AC_MSG_RESULT(normal)],
        [AC_MSG_ERROR("not found.")])
    ])
 
-dnl Check for debiandoc
-AC_PATH_PROG(DEBIANDOC_HTML,debiandoc2html)
-AC_PATH_PROG(DEBIANDOC_TEXT,debiandoc2text)
-
 dnl Check for doxygen
 AC_PATH_PROG(DOXYGEN, doxygen)
 
 dnl Check for the XSLTProc tool needed to build man pages together with po4a
 AC_PATH_PROG(XSLTPROC,xsltproc)
+AC_PATH_PROG(W3M, w3m)
 
 dnl Check for the po4a tool needed to build man pages
 AC_PATH_PROG(PO4A,po4a)
