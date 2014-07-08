@@ -608,10 +608,11 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
    information, such as the two package caches <literal>srcpkgcache</literal> and 
    <literal>pkgcache</literal> as well as the location to place downloaded archives, 
    <literal>Dir::Cache::archives</literal>. Generation of caches can be turned off
-   by setting their names to the empty string. This will slow down startup but
-   save disk space. It is probably preferable to turn off the pkgcache rather
-   than the srcpkgcache. Like <literal>Dir::State</literal> the default
-   directory is contained in <literal>Dir::Cache</literal></para>
+   by setting <literal>pkgcache</literal> or <literal>srcpkgcache</literal> to
+   <literal>""</literal>.  This will slow down startup but save disk space. It
+   is probably preferable to turn off the pkgcache rather than the srcpkgcache.
+   Like <literal>Dir::State</literal> the default directory is contained in
+   <literal>Dir::Cache</literal></para>
 
    <para><literal>Dir::Etc</literal> contains the location of configuration files, 
    <literal>sourcelist</literal> gives the location of the sourcelist and 
