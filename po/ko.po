@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
-"POT-Creation-Date: 2014-06-19 12:24+0200\n"
+"POT-Creation-Date: 2014-07-10 10:53+0200\n"
 "PO-Revision-Date: 2010-08-30 02:31+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: Korean <debian-l10n-korean@lists.debian.org>\n"
@@ -15,26 +15,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: apt-pkg/clean.cc:39 apt-pkg/acquire.cc:490
+#, fuzzy, c-format
+msgid "Clean of %s is not supported"
+msgstr "인덱스 파일 타입 '%s' 타입은 지원하지 않습니다"
+
 #. Only warn if there are no sources.list.d.
 #. Only warn if there is no sources.list file.
-#: apt-pkg/clean.cc:40 apt-pkg/init.cc:103 apt-pkg/init.cc:111
-#: apt-pkg/acquire.cc:492 apt-pkg/policy.cc:381 apt-pkg/sourcelist.cc:280
-#: apt-pkg/sourcelist.cc:286 apt-pkg/contrib/fileutl.cc:369
-#: apt-pkg/contrib/fileutl.cc:482 apt-pkg/contrib/cdromutl.cc:205
+#: apt-pkg/clean.cc:43 apt-pkg/init.cc:103 apt-pkg/init.cc:111
+#: apt-pkg/acquire.cc:494 apt-pkg/policy.cc:381 apt-pkg/sourcelist.cc:280
+#: apt-pkg/sourcelist.cc:286 apt-pkg/contrib/fileutl.cc:368
+#: apt-pkg/contrib/fileutl.cc:481 apt-pkg/contrib/cdromutl.cc:205
 #: methods/mirror.cc:95 apt-inst/extract.cc:471
 #, c-format
 msgid "Unable to read %s"
 msgstr "%s을(를) 읽을 수 없습니다"
 
-#: apt-pkg/clean.cc:46 apt-pkg/clean.cc:64 apt-pkg/clean.cc:127
-#: apt-pkg/acquire.cc:498 apt-pkg/acquire.cc:523
+#: apt-pkg/clean.cc:49 apt-pkg/clean.cc:67 apt-pkg/clean.cc:130
+#: apt-pkg/acquire.cc:500 apt-pkg/acquire.cc:525
 #: apt-pkg/contrib/cdromutl.cc:201 apt-pkg/contrib/cdromutl.cc:235
 #: methods/mirror.cc:101 methods/mirror.cc:130
 #, c-format
 msgid "Unable to change to %s"
 msgstr "%s 디렉토리로 이동할 수 없습니다"
 
-#: apt-pkg/clean.cc:61
+#: apt-pkg/clean.cc:64
 #, c-format
 msgid "Unable to stat %s."
 msgstr "%s의 정보를 읽을 수 없습니다."
@@ -57,22 +62,22 @@ msgstr "'%s' 패키지 시스템을 지원하지 않습니다"
 msgid "Unable to determine a suitable packaging system type"
 msgstr "올바른 패키지 시스템 타입을 알아낼 수 없습니다"
 
-#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:775
+#: apt-pkg/indexcopy.cc:236 apt-pkg/indexcopy.cc:773
 #, c-format
 msgid "Wrote %i records.\n"
 msgstr "레코드 %i개를 썼습니다.\n"
 
-#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:777
+#: apt-pkg/indexcopy.cc:238 apt-pkg/indexcopy.cc:775
 #, c-format
 msgid "Wrote %i records with %i missing files.\n"
 msgstr "레코드 %i개를 파일 %i개가 빠진 상태로 썼습니다.\n"
 
-#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:780
+#: apt-pkg/indexcopy.cc:241 apt-pkg/indexcopy.cc:778
 #, c-format
 msgid "Wrote %i records with %i mismatched files\n"
 msgstr "레코드 %i개를 파일 %i개가 맞지 않은 상태로 썼습니다\n"
 
-#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:783
+#: apt-pkg/indexcopy.cc:244 apt-pkg/indexcopy.cc:781
 #, c-format
 msgid "Wrote %i records with %i missing files and %i mismatched files\n"
 msgstr "레코드 %i개를 파일 %i개가 빠지고 %i개가 맞지 않은 상태로 썼습니다\n"
@@ -102,7 +107,7 @@ msgstr "'dpkg-dev' 패키지가 설치되었는지를 확인하십시오.\n"
 msgid "Method %s did not start correctly"
 msgstr "설치 방법 %s이(가) 올바르게 시작하지 않았습니다"
 
-#: apt-pkg/acquire-worker.cc:460
+#: apt-pkg/acquire-worker.cc:455
 #, c-format
 msgid "Please insert the disc labeled: '%s' in the drive '%s' and press enter."
 msgstr ""
@@ -120,86 +125,85 @@ msgstr "apt-get update를 실행하면 이 문제를 바로잡을 수도 있습�
 msgid "The list of sources could not be read."
 msgstr "소스 목록을 읽을 수 없습니다."
 
-#: apt-pkg/pkgcache.cc:150
+#: apt-pkg/pkgcache.cc:155
 msgid "Empty package cache"
 msgstr "패키지 캐시가 비어 있습니다"
 
-#: apt-pkg/pkgcache.cc:156 apt-pkg/pkgcache.cc:167
+#: apt-pkg/pkgcache.cc:161
 msgid "The package cache file is corrupted"
 msgstr "패키지 캐시 파일이 손상되었습니다"
 
-#: apt-pkg/pkgcache.cc:161
+#: apt-pkg/pkgcache.cc:166
 msgid "The package cache file is an incompatible version"
 msgstr "패키지 캐시 파일이 호환되지 않는 버전입니다"
 
-#: apt-pkg/pkgcache.cc:164
+#: apt-pkg/pkgcache.cc:169
 #, fuzzy
 msgid "The package cache file is corrupted, it is too small"
 msgstr "패키지 캐시 파일이 손상되었습니다"
 
-#: apt-pkg/pkgcache.cc:171
+#: apt-pkg/pkgcache.cc:174
 #, c-format
 msgid "This APT does not support the versioning system '%s'"
 msgstr "이 APT는 '%s' 버전 시스템을 지원하지 않습니다"
 
-#: apt-pkg/pkgcache.cc:181
-#, fuzzy, c-format
-msgid "The package cache was built for different architectures: %s vs %s"
+#: apt-pkg/pkgcache.cc:179
+msgid "The package cache was built for a different architecture"
 msgstr "패키지 캐시가 다른 아키텍쳐용입니다."
 
-#: apt-pkg/pkgcache.cc:324
+#: apt-pkg/pkgcache.cc:321
 msgid "Depends"
 msgstr "의존"
 
-#: apt-pkg/pkgcache.cc:324
+#: apt-pkg/pkgcache.cc:321
 msgid "PreDepends"
 msgstr "미리의존"
 
-#: apt-pkg/pkgcache.cc:324
+#: apt-pkg/pkgcache.cc:321
 msgid "Suggests"
 msgstr "제안"
 
-#: apt-pkg/pkgcache.cc:325
+#: apt-pkg/pkgcache.cc:322
 msgid "Recommends"
 msgstr "추천"
 
-#: apt-pkg/pkgcache.cc:325
+#: apt-pkg/pkgcache.cc:322
 msgid "Conflicts"
 msgstr "충돌"
 
-#: apt-pkg/pkgcache.cc:325
+#: apt-pkg/pkgcache.cc:322
 msgid "Replaces"
 msgstr "대체"
 
-#: apt-pkg/pkgcache.cc:326
+#: apt-pkg/pkgcache.cc:323
 msgid "Obsoletes"
 msgstr "없앰"
 
-#: apt-pkg/pkgcache.cc:326
+#: apt-pkg/pkgcache.cc:323
 msgid "Breaks"
 msgstr "망가뜨림"
 
-#: apt-pkg/pkgcache.cc:326
+#: apt-pkg/pkgcache.cc:323
 msgid "Enhances"
 msgstr "향상"
 
-#: apt-pkg/pkgcache.cc:337
+#: apt-pkg/pkgcache.cc:334
 msgid "important"
 msgstr "중요"
 
-#: apt-pkg/pkgcache.cc:337
+#: apt-pkg/pkgcache.cc:334
 msgid "required"
 msgstr "필수"
 
-#: apt-pkg/pkgcache.cc:337
+#: apt-pkg/pkgcache.cc:334
 msgid "standard"
 msgstr "표준"
 
-#: apt-pkg/pkgcache.cc:338
+#: apt-pkg/pkgcache.cc:335
 msgid "optional"
 msgstr "옵션"
 
-#: apt-pkg/pkgcache.cc:338
+#: apt-pkg/pkgcache.cc:335
 msgid "extra"
 msgstr "별도"
 
@@ -208,71 +212,71 @@ msgstr "별도"
 msgid "Index file type '%s' is not supported"
 msgstr "인덱스 파일 타입 '%s' 타입은 지원하지 않습니다"
 
-#: apt-pkg/cachefilter.cc:35 apt-private/private-output.cc:785
+#: apt-pkg/cachefilter.cc:35 apt-private/private-output.cc:786
 #, c-format
 msgid "Regex compilation error - %s"
 msgstr "정규식 컴파일 오류 - %s"
 
-#: apt-pkg/pkgcachegen.cc:116
+#: apt-pkg/pkgcachegen.cc:93
 msgid "Cache has an incompatible versioning system"
 msgstr "캐시의 버전 시스템이 호환되지 않습니다"
 
 #. TRANSLATOR: The first placeholder is a package name,
 #. the other two should be copied verbatim as they include debug info
-#: apt-pkg/pkgcachegen.cc:247 apt-pkg/pkgcachegen.cc:257
-#: apt-pkg/pkgcachegen.cc:323 apt-pkg/pkgcachegen.cc:389
-#: apt-pkg/pkgcachegen.cc:393 apt-pkg/pkgcachegen.cc:410
-#: apt-pkg/pkgcachegen.cc:418 apt-pkg/pkgcachegen.cc:422
-#: apt-pkg/pkgcachegen.cc:426 apt-pkg/pkgcachegen.cc:447
-#: apt-pkg/pkgcachegen.cc:486 apt-pkg/pkgcachegen.cc:532
-#: apt-pkg/pkgcachegen.cc:546 apt-pkg/pkgcachegen.cc:577
-#: apt-pkg/pkgcachegen.cc:591
+#: apt-pkg/pkgcachegen.cc:224 apt-pkg/pkgcachegen.cc:234
+#: apt-pkg/pkgcachegen.cc:300 apt-pkg/pkgcachegen.cc:327
+#: apt-pkg/pkgcachegen.cc:340 apt-pkg/pkgcachegen.cc:382
+#: apt-pkg/pkgcachegen.cc:386 apt-pkg/pkgcachegen.cc:403
+#: apt-pkg/pkgcachegen.cc:411 apt-pkg/pkgcachegen.cc:415
+#: apt-pkg/pkgcachegen.cc:419 apt-pkg/pkgcachegen.cc:440
+#: apt-pkg/pkgcachegen.cc:479 apt-pkg/pkgcachegen.cc:517
+#: apt-pkg/pkgcachegen.cc:524 apt-pkg/pkgcachegen.cc:555
+#: apt-pkg/pkgcachegen.cc:569
 #, fuzzy, c-format
 msgid "Error occurred while processing %s (%s%d)"
 msgstr "%s 처리 중에 오류가 발생했습니다 (FindPkg)"
 
-#: apt-pkg/pkgcachegen.cc:280
+#: apt-pkg/pkgcachegen.cc:257
 msgid "Wow, you exceeded the number of package names this APT is capable of."
 msgstr "우와, 이 APT가 처리할 수 있는 패키지 이름 개수를 넘어갔습니다."
 
-#: apt-pkg/pkgcachegen.cc:283
+#: apt-pkg/pkgcachegen.cc:260
 msgid "Wow, you exceeded the number of versions this APT is capable of."
 msgstr "우와, 이 APT가 처리할 수 있는 버전 개수를 넘어갔습니다."
 
-#: apt-pkg/pkgcachegen.cc:286
+#: apt-pkg/pkgcachegen.cc:263
 msgid "Wow, you exceeded the number of descriptions this APT is capable of."
 msgstr "우와, 이 APT가 처리할 수 있는 설명 개수를 넘어갔습니다."
 
-#: apt-pkg/pkgcachegen.cc:289
+#: apt-pkg/pkgcachegen.cc:266
 msgid "Wow, you exceeded the number of dependencies this APT is capable of."
 msgstr "우와, 이 APT가 처리할 수 있는 의존성 개수를 넘어갔습니다."
 
-#: apt-pkg/pkgcachegen.cc:598
+#: apt-pkg/pkgcachegen.cc:576
 #, c-format
 msgid "Package %s %s was not found while processing file dependencies"
 msgstr "파일 의존성을 처리하는 데, %s %s 패키지가 없습니다"
 
-#: apt-pkg/pkgcachegen.cc:1233
+#: apt-pkg/pkgcachegen.cc:1211
 #, c-format
 msgid "Couldn't stat source package list %s"
 msgstr "소스 패키지 목록 %s의 정보를 읽을 수 없습니다"
 
-#: apt-pkg/pkgcachegen.cc:1321 apt-pkg/pkgcachegen.cc:1425
-#: apt-pkg/pkgcachegen.cc:1431 apt-pkg/pkgcachegen.cc:1588
+#: apt-pkg/pkgcachegen.cc:1299 apt-pkg/pkgcachegen.cc:1403
+#: apt-pkg/pkgcachegen.cc:1409 apt-pkg/pkgcachegen.cc:1566
 msgid "Reading package lists"
 msgstr "패키지 목록을 읽는 중입니다"
 
-#: apt-pkg/pkgcachegen.cc:1338
+#: apt-pkg/pkgcachegen.cc:1316
 msgid "Collecting File Provides"
 msgstr "파일에서 제공하는 것을 모으는 중입니다"
 
-#: apt-pkg/pkgcachegen.cc:1422 apt-pkg/contrib/fileutl.cc:2098
-#: cmdline/apt-extracttemplates.cc:262
+#: apt-pkg/pkgcachegen.cc:1400 cmdline/apt-extracttemplates.cc:259
 #, c-format
 msgid "Unable to write to %s"
 msgstr "%s에 쓸 수 없습니다"
 
-#: apt-pkg/pkgcachegen.cc:1530 apt-pkg/pkgcachegen.cc:1537
+#: apt-pkg/pkgcachegen.cc:1508 apt-pkg/pkgcachegen.cc:1515
 msgid "IO Error saving source cache"
 msgstr "소스 캐시를 저장하는데 입출력 오류가 발생했습니다"
 
@@ -296,53 +300,53 @@ msgstr ""
 msgid "Execute external solver"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:160 apt-pkg/contrib/fileutl.cc:2109
+#: apt-pkg/acquire-item.cc:148 apt-pkg/contrib/fileutl.cc:2047
 #, c-format
 msgid "rename failed, %s (%s -> %s)."
 msgstr "이름 바꾸기가 실패했습니다. %s (%s -> %s)."
 
-#: apt-pkg/acquire-item.cc:175
+#: apt-pkg/acquire-item.cc:163
 msgid "Hash Sum mismatch"
 msgstr "해시 합이 맞지 않습니다"
 
-#: apt-pkg/acquire-item.cc:180
+#: apt-pkg/acquire-item.cc:168
 msgid "Size mismatch"
 msgstr "크기가 맞지 않습니다"
 
-#: apt-pkg/acquire-item.cc:185
+#: apt-pkg/acquire-item.cc:173
 #, fuzzy
 msgid "Invalid file format"
 msgstr "잘못된 작업 %s"
 
-#: apt-pkg/acquire-item.cc:1679
+#: apt-pkg/acquire-item.cc:1573
 #, c-format
 msgid ""
 "Unable to find expected entry '%s' in Release file (Wrong sources.list entry "
 "or malformed file)"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1697
+#: apt-pkg/acquire-item.cc:1589
 #, fuzzy, c-format
 msgid "Unable to find hash sum for '%s' in Release file"
 msgstr "Release 파일 %s 파일을 파싱할 수 없습니다"
 
-#: apt-pkg/acquire-item.cc:1737
+#: apt-pkg/acquire-item.cc:1631
 msgid "There is no public key available for the following key IDs:\n"
 msgstr "다음 키 ID의 공개키가 없습니다:\n"
 
-#: apt-pkg/acquire-item.cc:1775
+#: apt-pkg/acquire-item.cc:1669
 #, c-format
 msgid ""
 "Release file for %s is expired (invalid since %s). Updates for this "
 "repository will not be applied."
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:1797
+#: apt-pkg/acquire-item.cc:1691
 #, c-format
 msgid "Conflicting distribution: %s (expected %s but got %s)"
 msgstr "배포판 충돌: %s (예상값 %s, 실제값 %s)"
 
-#: apt-pkg/acquire-item.cc:1827
+#: apt-pkg/acquire-item.cc:1721
 #, c-format
 msgid ""
 "An error occurred during the signature verification. The repository is not "
@@ -352,12 +356,12 @@ msgstr ""
 "예전의 인덱스 파일을 사용합니다. GPG 오류: %s: %s\n"
 
 #. Invalid signature file, reject (LP: #346386) (Closes: #627642)
-#: apt-pkg/acquire-item.cc:1837 apt-pkg/acquire-item.cc:1842
+#: apt-pkg/acquire-item.cc:1731 apt-pkg/acquire-item.cc:1736
 #, c-format
 msgid "GPG error: %s: %s"
 msgstr "GPG 오류: %s: %s"
 
-#: apt-pkg/acquire-item.cc:1972
+#: apt-pkg/acquire-item.cc:1859
 #, c-format
 msgid ""
 "I wasn't able to locate a file for the %s package. This might mean you need "
@@ -366,12 +370,12 @@ msgstr ""
 "%s 패키지의 파일을 찾을 수 없습니다. 수동으로 이 패키지를 고쳐야 할 수도 있습"
 "니다. (아키텍쳐가 빠졌기 때문입니다)"
 
-#: apt-pkg/acquire-item.cc:2038
+#: apt-pkg/acquire-item.cc:1925
 #, c-format
 msgid "Can't find a source to download version '%s' of '%s'"
 msgstr ""
 
-#: apt-pkg/acquire-item.cc:2074
+#: apt-pkg/acquire-item.cc:1983
 #, c-format
 msgid ""
 "The package index files are corrupted. No Filename: field for package %s."
@@ -383,29 +387,29 @@ msgstr ""
 msgid "Vendor block %s contains no fingerprint"
 msgstr "벤더 블럭 %s의 핑거프린트가 없습니다"
 
-#: apt-pkg/acquire.cc:88 apt-pkg/cdrom.cc:829
+#: apt-pkg/acquire.cc:87 apt-pkg/cdrom.cc:829
 #, c-format
 msgid "List directory %spartial is missing."
 msgstr "목록 디렉터리 %spartial이 빠졌습니다."
 
-#: apt-pkg/acquire.cc:92
+#: apt-pkg/acquire.cc:91
 #, c-format
 msgid "Archives directory %spartial is missing."
 msgstr "아카이브 디렉터리 %spartial이 빠졌습니다."
 
-#: apt-pkg/acquire.cc:100
+#: apt-pkg/acquire.cc:99
 #, c-format
 msgid "Unable to lock directory %s"
 msgstr "%s 디렉터리를 잠글 수 없습니다"
 
 #. only show the ETA if it makes sense
 #. two days
-#: apt-pkg/acquire.cc:925
+#: apt-pkg/acquire.cc:902
 #, c-format
 msgid "Retrieving file %li of %li (%s remaining)"
 msgstr "파일 받아오는 중: %2$li 중 %1$li (%3$s 남았음)"
 
-#: apt-pkg/acquire.cc:927
+#: apt-pkg/acquire.cc:904
 #, c-format
 msgid "Retrieving file %li of %li"
 msgstr "파일 받아오는 중: %2$li 중 %1$li"
@@ -449,7 +453,7 @@ msgstr "핀 타입 %s이(가) 무엇인지 이해할 수 없습니다"
 msgid "No priority (or zero) specified for pin"
 msgstr "핀에 우선순위(혹은 0)를 지정하지 않았습니다"
 
-#: apt-pkg/packagemanager.cc:304 apt-pkg/packagemanager.cc:911
+#: apt-pkg/packagemanager.cc:303 apt-pkg/packagemanager.cc:910
 #, c-format
 msgid ""
 "Could not perform immediate configuration on '%s'. Please see man 5 apt.conf "
@@ -458,12 +462,12 @@ msgstr ""
 "'%s'에 대해 즉시 설정을 할 수 없습니다. 자세한 설명은 man 5 apt.conf 페이지에"
 "서 APT::Immediate-Configure 항목을 보십시오. (%d)"
 
-#: apt-pkg/packagemanager.cc:504 apt-pkg/packagemanager.cc:534
+#: apt-pkg/packagemanager.cc:503 apt-pkg/packagemanager.cc:533
 #, fuzzy, c-format
 msgid "Could not configure '%s'. "
 msgstr "'%s' 파일을 열 수 없습니다"
 
-#: apt-pkg/packagemanager.cc:584
+#: apt-pkg/packagemanager.cc:583
 #, c-format
 msgid ""
 "This installation run will require temporarily removing the essential "
@@ -599,52 +603,52 @@ msgstr "상태파일 %s 여는데 실패했습니다"
 msgid "Failed to write temporary StateFile %s"
 msgstr "임시 상태파일 %s 쓰는데 실패했습니다"
 
-#: apt-pkg/tagfile.cc:169
+#: apt-pkg/tagfile.cc:140
 #, c-format
 msgid "Unable to parse package file %s (1)"
 msgstr "패키지 파일 %s 파일을 파싱할 수 없습니다 (1)"
 
-#: apt-pkg/tagfile.cc:269
+#: apt-pkg/tagfile.cc:237
 #, c-format
 msgid "Unable to parse package file %s (2)"
 msgstr "패키지 파일 %s 파일을 파싱할 수 없습니다 (2)"
 
-#: apt-pkg/cacheset.cc:490
+#: apt-pkg/cacheset.cc:489
 #, c-format
 msgid "Release '%s' for '%s' was not found"
 msgstr "%2$s 패키지의 '%1$s' 릴리즈를 찾을 수 없습니다"
 
-#: apt-pkg/cacheset.cc:493
+#: apt-pkg/cacheset.cc:492
 #, c-format
 msgid "Version '%s' for '%s' was not found"
 msgstr "%2$s 패키지의 '%1$s' 버전을 찾을 수 없습니다"
 
-#: apt-pkg/cacheset.cc:597 cmdline/apt-cache.cc:1567
+#: apt-pkg/cacheset.cc:596 cmdline/apt-cache.cc:1515
 #, c-format
 msgid "Unable to locate package %s"
 msgstr "%s 패키지를 찾을 수 없습니다"
 
-#: apt-pkg/cacheset.cc:604
+#: apt-pkg/cacheset.cc:603
 #, c-format
 msgid "Couldn't find task '%s'"
 msgstr "'%s' 작업을 찾을 수 없습니다"
 
-#: apt-pkg/cacheset.cc:610
+#: apt-pkg/cacheset.cc:609
 #, c-format
 msgid "Couldn't find any package by regex '%s'"
 msgstr "'%s' 정규식에 해당하는 패키지가 없습니다"
 
-#: apt-pkg/cacheset.cc:616
+#: apt-pkg/cacheset.cc:615
 #, fuzzy, c-format
 msgid "Couldn't find any package by glob '%s'"
 msgstr "'%s' 정규식에 해당하는 패키지가 없습니다"
 
-#: apt-pkg/cacheset.cc:627
+#: apt-pkg/cacheset.cc:626
 #, c-format
 msgid "Can't select versions from package '%s' as it is purely virtual"
 msgstr "'%s' 패키지는 가상 패키지이므로 버전을 선택할 수 없습니다"
 
-#: apt-pkg/cacheset.cc:634 apt-pkg/cacheset.cc:641
+#: apt-pkg/cacheset.cc:633 apt-pkg/cacheset.cc:640
 #, c-format
 msgid ""
 "Can't select installed nor candidate version from package '%s' as it has "
@@ -653,42 +657,42 @@ msgstr ""
 "'%s' 패키지에서 설치한 버전이나 후보 버전을 선택할 수 없습니다. 둘 다 아닙니"
 "다."
 
-#: apt-pkg/cacheset.cc:648
+#: apt-pkg/cacheset.cc:647
 #, c-format
 msgid "Can't select newest version from package '%s' as it is purely virtual"
 msgstr "'%s' 패키지에서 최신 버전을 선택할 수 없습니다. 가상 패키지입니다."
 
-#: apt-pkg/cacheset.cc:656
+#: apt-pkg/cacheset.cc:655
 #, c-format
 msgid "Can't select candidate version from package %s as it has no candidate"
 msgstr "'%s' 패키지에서 후보 버전을 선택할 수 없습니다. 후보가 없습니다."
 
-#: apt-pkg/cacheset.cc:664
+#: apt-pkg/cacheset.cc:663
 #, c-format
 msgid "Can't select installed version from package %s as it is not installed"
 msgstr "'%s' 패키지에서 설치한 버전을 선택할 수 없습니다. 설치하지 않았습니다."
 
-#: apt-pkg/indexrecords.cc:83
+#: apt-pkg/indexrecords.cc:78
 #, c-format
 msgid "Unable to parse Release file %s"
 msgstr "Release 파일 %s 파일을 파싱할 수 없습니다"
 
-#: apt-pkg/indexrecords.cc:91
+#: apt-pkg/indexrecords.cc:86
 #, c-format
 msgid "No sections in Release file %s"
 msgstr "Release 파일 %s에 섹션이 없습니다"
 
-#: apt-pkg/indexrecords.cc:136
+#: apt-pkg/indexrecords.cc:117
 #, c-format
 msgid "No Hash entry in Release file %s"
 msgstr "Release 파일 %s에 Hash 항목이 없습니다"
 
-#: apt-pkg/indexrecords.cc:149
+#: apt-pkg/indexrecords.cc:130
 #, c-format
 msgid "Invalid 'Valid-Until' entry in Release file %s"
 msgstr "Release 파일 %s에 'Valid-Until' 항목이 잘못되었습니다"
 
-#: apt-pkg/indexrecords.cc:168
+#: apt-pkg/indexrecords.cc:149
 #, c-format
 msgid "Invalid 'Date' entry in Release file %s"
 msgstr "Release 파일 %s에 'Date' 항목이 잘못되었습니다"
@@ -850,43 +854,43 @@ msgstr "%s 패키지를 완전히 지울 준비를 하는 중입니다"
 msgid "Completely removed %s"
 msgstr "%s 패키지를 완전히 지웠습니다"
 
-#: apt-pkg/deb/dpkgpm.cc:1064
+#: apt-pkg/deb/dpkgpm.cc:1066
 msgid "ioctl(TIOCGWINSZ) failed"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1067 apt-pkg/deb/dpkgpm.cc:1088
+#: apt-pkg/deb/dpkgpm.cc:1069 apt-pkg/deb/dpkgpm.cc:1090
 #, fuzzy, c-format
 msgid "Can not write log (%s)"
 msgstr "%s에 쓸 수 없습니다"
 
-#: apt-pkg/deb/dpkgpm.cc:1067
+#: apt-pkg/deb/dpkgpm.cc:1069
 msgid "Is /dev/pts mounted?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1088
+#: apt-pkg/deb/dpkgpm.cc:1090
 msgid "Is stdout a terminal?"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1196 apt-pkg/contrib/fileutl.cc:829
+#: apt-pkg/deb/dpkgpm.cc:1202 apt-pkg/contrib/fileutl.cc:812
 #: apt-pkg/contrib/gpgv.cc:219 cmdline/apt-mark.cc:258 cmdline/apt-mark.cc:339
 #, c-format
 msgid "Waited for %s but it wasn't there"
 msgstr "%s 프로세스를 기다렸지만 해당 프로세스가 없습니다"
 
-#: apt-pkg/deb/dpkgpm.cc:1563
+#: apt-pkg/deb/dpkgpm.cc:1569
 msgid "Operation was interrupted before it could finish"
 msgstr ""
 
-#: apt-pkg/deb/dpkgpm.cc:1625
+#: apt-pkg/deb/dpkgpm.cc:1631
 msgid "No apport report written because MaxReports is reached already"
 msgstr "보고서를 작성하지 않습니다. 이미 MaxReports 값에 도달했습니다."
 
 #. check if its not a follow up error
-#: apt-pkg/deb/dpkgpm.cc:1630
+#: apt-pkg/deb/dpkgpm.cc:1636
 msgid "dependency problems - leaving unconfigured"
 msgstr "의존성 문제 - 설정하지 않은 상태로 남겨둡니다"
 
-#: apt-pkg/deb/dpkgpm.cc:1632
+#: apt-pkg/deb/dpkgpm.cc:1638
 msgid ""
 "No apport report written because the error message indicates its a followup "
 "error from a previous failure."
@@ -894,20 +898,20 @@ msgstr ""
 "보고서를 작성하지 않습니다. 오류 메시지에 따르면 예전의 실패 때문에 생긴 부수"
 "적인 오류입니다."
 
-#: apt-pkg/deb/dpkgpm.cc:1638
+#: apt-pkg/deb/dpkgpm.cc:1644
 msgid ""
 "No apport report written because the error message indicates a disk full "
 "error"
 msgstr ""
 "보고서를 작성하지 않습니다. 오류 메시지에 따르면 디스크가 가득 찼습니다."
 
-#: apt-pkg/deb/dpkgpm.cc:1645
+#: apt-pkg/deb/dpkgpm.cc:1651
 msgid ""
 "No apport report written because the error message indicates a out of memory "
 "error"
 msgstr "보고서를 작성하지 않습니다. 오류 메시지에 따르면 메모리가 부족합니다."
 
-#: apt-pkg/deb/dpkgpm.cc:1652 apt-pkg/deb/dpkgpm.cc:1658
+#: apt-pkg/deb/dpkgpm.cc:1658 apt-pkg/deb/dpkgpm.cc:1664
 #, fuzzy
 msgid ""
 "No apport report written because the error message indicates an issue on the "
@@ -915,7 +919,7 @@ msgid ""
 msgstr ""
 "보고서를 작성하지 않습니다. 오류 메시지에 따르면 디스크가 가득 찼습니다."
 
-#: apt-pkg/deb/dpkgpm.cc:1679
+#: apt-pkg/deb/dpkgpm.cc:1685
 msgid ""
 "No apport report written because the error message indicates a dpkg I/O error"
 msgstr ""
@@ -977,136 +981,131 @@ msgstr "%li초"
 msgid "Selection %s not found"
 msgstr "선택한 %s이(가) 없습니다"
 
-#: apt-pkg/contrib/fileutl.cc:191
+#: apt-pkg/contrib/fileutl.cc:190
 #, c-format
 msgid "Not using locking for read only lock file %s"
 msgstr "읽기 전용 잠금 파일 %s에 대해 잠금을 사용하지 않습니다"
 
-#: apt-pkg/contrib/fileutl.cc:196
+#: apt-pkg/contrib/fileutl.cc:195
 #, c-format
 msgid "Could not open lock file %s"
 msgstr "잠금 파일 %s 파일을 열 수 없습니다"
 
-#: apt-pkg/contrib/fileutl.cc:219
+#: apt-pkg/contrib/fileutl.cc:218
 #, c-format
 msgid "Not using locking for nfs mounted lock file %s"
 msgstr "NFS로 마운트된 잠금 파일 %s에 대해 잠금을 사용하지 않습니다"
 
-#: apt-pkg/contrib/fileutl.cc:224
+#: apt-pkg/contrib/fileutl.cc:223
 #, c-format
 msgid "Could not get lock %s"
 msgstr "%s 잠금 파일을 얻을 수 없습니다"
 
-#: apt-pkg/contrib/fileutl.cc:361 apt-pkg/contrib/fileutl.cc:475
+#: apt-pkg/contrib/fileutl.cc:360 apt-pkg/contrib/fileutl.cc:474
 #, c-format
 msgid "List of files can't be created as '%s' is not a directory"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:395
+#: apt-pkg/contrib/fileutl.cc:394
 #, c-format
 msgid "Ignoring '%s' in directory '%s' as it is not a regular file"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:413
+#: apt-pkg/contrib/fileutl.cc:412
 #, c-format
 msgid "Ignoring file '%s' in directory '%s' as it has no filename extension"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:422
+#: apt-pkg/contrib/fileutl.cc:421
 #, c-format
 msgid ""
 "Ignoring file '%s' in directory '%s' as it has an invalid filename extension"
 msgstr ""
 
-#: apt-pkg/contrib/fileutl.cc:841
+#: apt-pkg/contrib/fileutl.cc:824
 #, c-format
 msgid "Sub-process %s received a segmentation fault."
 msgstr "하위 프로세스 %s 프로세스가 세그멘테이션 오류를 받았습니다."
 
-#: apt-pkg/contrib/fileutl.cc:843
+#: apt-pkg/contrib/fileutl.cc:826
 #, c-format
 msgid "Sub-process %s received signal %u."
 msgstr "하위 프로세스 %s 프로세스가 %u번 시그널을 받았습니다."
 
-#: apt-pkg/contrib/fileutl.cc:847 apt-pkg/contrib/gpgv.cc:239
+#: apt-pkg/contrib/fileutl.cc:830 apt-pkg/contrib/gpgv.cc:239
 #, c-format
 msgid "Sub-process %s returned an error code (%u)"
 msgstr "하위 프로세스 %s 프로세스가 오류 코드(%u)를 리턴했습니다"
 
-#: apt-pkg/contrib/fileutl.cc:849 apt-pkg/contrib/gpgv.cc:232
+#: apt-pkg/contrib/fileutl.cc:832 apt-pkg/contrib/gpgv.cc:232
 #, c-format
 msgid "Sub-process %s exited unexpectedly"
 msgstr "하위 프로세스 %s 프로세스가 예상치 못하게 끝났습니다"
 
-#: apt-pkg/contrib/fileutl.cc:910 apt-pkg/contrib/fileutl.cc:1636
-#: apt-pkg/contrib/fileutl.cc:1645 apt-pkg/contrib/fileutl.cc:1650
-#: apt-pkg/contrib/fileutl.cc:1652 apt-pkg/contrib/fileutl.cc:1677
+#: apt-pkg/contrib/fileutl.cc:872 apt-pkg/contrib/fileutl.cc:1598
+#: apt-pkg/contrib/fileutl.cc:1607 apt-pkg/contrib/fileutl.cc:1612
+#: apt-pkg/contrib/fileutl.cc:1614 apt-pkg/contrib/fileutl.cc:1639
 #: methods/ftp.cc:462 methods/rsh.cc:246
 msgid "Write error"
 msgstr "쓰기 오류"
 
-#: apt-pkg/contrib/fileutl.cc:951
+#: apt-pkg/contrib/fileutl.cc:913
 #, c-format
 msgid "Problem closing the gzip file %s"
 msgstr "%s gzip 파일을 닫는데 문제가 있습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1139
+#: apt-pkg/contrib/fileutl.cc:1101
 #, c-format
 msgid "Could not open file %s"
 msgstr "%s 파일을 열 수 없습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1198 apt-pkg/contrib/fileutl.cc:1245
+#: apt-pkg/contrib/fileutl.cc:1160 apt-pkg/contrib/fileutl.cc:1207
 #, c-format
 msgid "Could not open file descriptor %d"
 msgstr "%d 파일 디스크립터를 열 수 없습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1353 apt-pkg/contrib/fileutl.cc:2125
+#: apt-pkg/contrib/fileutl.cc:1315
 msgid "Failed to create subprocess IPC"
 msgstr "하위 프로세스 IPC를 만드는데 실패했습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1411
+#: apt-pkg/contrib/fileutl.cc:1373
 msgid "Failed to exec compressor "
 msgstr "다음 압축 프로그램을 실행하는데 실패했습니다: "
 
-#: apt-pkg/contrib/fileutl.cc:1514 apt-pkg/contrib/fileutl.cc:1523
-#: apt-pkg/contrib/fileutl.cc:1528 apt-pkg/contrib/fileutl.cc:1530
+#: apt-pkg/contrib/fileutl.cc:1476 apt-pkg/contrib/fileutl.cc:1485
+#: apt-pkg/contrib/fileutl.cc:1490 apt-pkg/contrib/fileutl.cc:1492
 #: methods/ftp.cc:353 methods/rsh.cc:202
 msgid "Read error"
 msgstr "읽기 오류"
 
-#: apt-pkg/contrib/fileutl.cc:1552
+#: apt-pkg/contrib/fileutl.cc:1514
 #, fuzzy, c-format
 msgid "read, still have %llu to read but none left"
 msgstr "%lu만큼 더 읽어야 하지만 더 이상 읽을 데이터가 없습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1665 apt-pkg/contrib/fileutl.cc:1687
+#: apt-pkg/contrib/fileutl.cc:1627 apt-pkg/contrib/fileutl.cc:1649
 #, fuzzy, c-format
 msgid "write, still have %llu to write but couldn't"
 msgstr "%lu만큼 더 써야 하지만 더 이상 쓸 수 없습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1953
+#: apt-pkg/contrib/fileutl.cc:1915
 #, c-format
 msgid "Problem closing the file %s"
 msgstr "%s 파일을 닫는데 문제가 있습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1964
+#: apt-pkg/contrib/fileutl.cc:1927
 #, c-format
 msgid "Problem renaming the file %s to %s"
 msgstr "%s 파일을 %s(으)로 이름을 바꾸는데 문제가 있습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1975
+#: apt-pkg/contrib/fileutl.cc:1938
 #, c-format
 msgid "Problem unlinking the file %s"
 msgstr "%s 파일을 삭제하는데 문제가 있습니다"
 
-#: apt-pkg/contrib/fileutl.cc:1988
+#: apt-pkg/contrib/fileutl.cc:1951
 msgid "Problem syncing the file"
 msgstr "파일을 동기화하는데 문제가 있습니다"
-
-#: apt-pkg/contrib/fileutl.cc:2093 cmdline/apt-extracttemplates.cc:257
-#, fuzzy, c-format
-msgid "Unable to mkstemp %s"
-msgstr "%s의 정보를 읽을 수 없습니다"
 
 #: apt-pkg/contrib/progress.cc:148
 #, c-format
@@ -1190,57 +1189,57 @@ msgstr "마운트 위치 %s의 정보를 읽을 수 없습니다"
 msgid "Failed to stat the cdrom"
 msgstr "CD-ROM의 정보를 읽을 수 없습니다"
 
-#: apt-pkg/contrib/configuration.cc:521
+#: apt-pkg/contrib/configuration.cc:519
 #, c-format
 msgid "Unrecognized type abbreviation: '%c'"
 msgstr "이 타입 줄임말을 알 수 없습니다: '%c'"
 
-#: apt-pkg/contrib/configuration.cc:635
+#: apt-pkg/contrib/configuration.cc:633
 #, c-format
 msgid "Opening configuration file %s"
 msgstr "설정 파일 %s 파일을 여는 중입니다"
 
-#: apt-pkg/contrib/configuration.cc:803
+#: apt-pkg/contrib/configuration.cc:801
 #, c-format
 msgid "Syntax error %s:%u: Block starts with no name."
 msgstr "문법 오류 %s:%u: 블럭이 이름으로 시작하지 않습니다."
 
-#: apt-pkg/contrib/configuration.cc:822
+#: apt-pkg/contrib/configuration.cc:820
 #, c-format
 msgid "Syntax error %s:%u: Malformed tag"
 msgstr "문법 오류 %s:%u: 태그의 형식이 잘못되었습니다"
 
-#: apt-pkg/contrib/configuration.cc:839
+#: apt-pkg/contrib/configuration.cc:837
 #, c-format
 msgid "Syntax error %s:%u: Extra junk after value"
 msgstr "문법 오류 %s:%u: 값 뒤에 쓰레기 데이터가 더 있습니다"
 
-#: apt-pkg/contrib/configuration.cc:879
+#: apt-pkg/contrib/configuration.cc:877
 #, c-format
 msgid "Syntax error %s:%u: Directives can only be done at the top level"
 msgstr "문법 오류 %s:%u: 지시어는 맨 위 단계에서만 쓸 수 있습니다"
 
-#: apt-pkg/contrib/configuration.cc:886
+#: apt-pkg/contrib/configuration.cc:884
 #, c-format
 msgid "Syntax error %s:%u: Too many nested includes"
 msgstr "문법 오류 %s:%u: include가 너무 많이 겹쳐 있습니다"
 
-#: apt-pkg/contrib/configuration.cc:890 apt-pkg/contrib/configuration.cc:895
+#: apt-pkg/contrib/configuration.cc:888 apt-pkg/contrib/configuration.cc:893
 #, c-format
 msgid "Syntax error %s:%u: Included from here"
 msgstr "문법 오류 %s:%u: 여기서 include됩니다"
 
-#: apt-pkg/contrib/configuration.cc:899
+#: apt-pkg/contrib/configuration.cc:897
 #, c-format
 msgid "Syntax error %s:%u: Unsupported directive '%s'"
 msgstr "문법 오류 %s:%u: 지원하지 않는 지시어 '%s'"
 
-#: apt-pkg/contrib/configuration.cc:902
+#: apt-pkg/contrib/configuration.cc:900
 #, c-format
 msgid "Syntax error %s:%u: clear directive requires an option tree as argument"
 msgstr "문법 오류 %s:%u: clear 지시어는 인수로 option 트리를 지정해야 합니다"
 
-#: apt-pkg/contrib/configuration.cc:952
+#: apt-pkg/contrib/configuration.cc:950
 #, c-format
 msgid "Syntax error %s:%u: Extra junk at end of file"
 msgstr "문법 오류 %s:%u: 파일의 끝에 쓰레기 데이터가 더 있습니다"
@@ -1302,143 +1301,143 @@ msgstr "잘못된 작업 %s"
 msgid "Package %s version %s has an unmet dep:\n"
 msgstr "%s 패키지의 %s 버전의 의존성이 맞지 않습니다:\n"
 
-#: cmdline/apt-cache.cc:317
+#: cmdline/apt-cache.cc:277
 msgid "Total package names: "
 msgstr "전체 패키지 이름 : "
 
-#: cmdline/apt-cache.cc:319
+#: cmdline/apt-cache.cc:279
 msgid "Total package structures: "
 msgstr "전체 패키지 구조: "
 
-#: cmdline/apt-cache.cc:359
+#: cmdline/apt-cache.cc:319
 msgid "  Normal packages: "
 msgstr "  일반 패키지: "
 
-#: cmdline/apt-cache.cc:360
+#: cmdline/apt-cache.cc:320
 msgid "  Pure virtual packages: "
 msgstr "  순수 가상 패키지: "
 
-#: cmdline/apt-cache.cc:361
+#: cmdline/apt-cache.cc:321
 msgid "  Single virtual packages: "
 msgstr "  단일 가상 패키지: "
 
-#: cmdline/apt-cache.cc:362
+#: cmdline/apt-cache.cc:322
 msgid "  Mixed virtual packages: "
 msgstr "  혼합 가상 패키지: "
 
-#: cmdline/apt-cache.cc:363
+#: cmdline/apt-cache.cc:323
 msgid "  Missing: "
 msgstr "  빠짐: "
 
-#: cmdline/apt-cache.cc:365
+#: cmdline/apt-cache.cc:325
 msgid "Total distinct versions: "
 msgstr "개별 버전 전체: "
 
-#: cmdline/apt-cache.cc:367
+#: cmdline/apt-cache.cc:327
 msgid "Total distinct descriptions: "
 msgstr "개별 설명 전체: "
 
-#: cmdline/apt-cache.cc:369
+#: cmdline/apt-cache.cc:329
 msgid "Total dependencies: "
 msgstr "전체 의존성: "
 
-#: cmdline/apt-cache.cc:372
+#: cmdline/apt-cache.cc:332
 msgid "Total ver/file relations: "
 msgstr "전체 버전/파일 관계: "
 
-#: cmdline/apt-cache.cc:374
+#: cmdline/apt-cache.cc:334
 msgid "Total Desc/File relations: "
 msgstr "전체 설명/파일 관계: "
 
-#: cmdline/apt-cache.cc:376
+#: cmdline/apt-cache.cc:336
 msgid "Total Provides mappings: "
 msgstr "전체 제공 매핑: "
 
-#: cmdline/apt-cache.cc:388
+#: cmdline/apt-cache.cc:348
 msgid "Total globbed strings: "
 msgstr "전체 패턴 문자열: "
 
-#: cmdline/apt-cache.cc:402
+#: cmdline/apt-cache.cc:362
 msgid "Total dependency version space: "
 msgstr "전체 의존성 버전 용량: "
 
-#: cmdline/apt-cache.cc:407
+#: cmdline/apt-cache.cc:367
 msgid "Total slack space: "
 msgstr "전체 빈 용량: "
 
-#: cmdline/apt-cache.cc:422
+#: cmdline/apt-cache.cc:375
 msgid "Total space accounted for: "
 msgstr "차지하는 전체 용량: "
 
-#: cmdline/apt-cache.cc:558 cmdline/apt-cache.cc:1207
+#: cmdline/apt-cache.cc:506 cmdline/apt-cache.cc:1155
 #: apt-private/private-show.cc:58
 #, c-format
 msgid "Package file %s is out of sync."
 msgstr "패키지 파일 %s 파일이 동기화되지 않았습니다."
 
-#: cmdline/apt-cache.cc:636 cmdline/apt-cache.cc:1493
-#: cmdline/apt-cache.cc:1495 cmdline/apt-cache.cc:1572 cmdline/apt-mark.cc:59
+#: cmdline/apt-cache.cc:584 cmdline/apt-cache.cc:1441
+#: cmdline/apt-cache.cc:1443 cmdline/apt-cache.cc:1520 cmdline/apt-mark.cc:59
 #: cmdline/apt-mark.cc:106 cmdline/apt-mark.cc:232
 #: apt-private/private-show.cc:171 apt-private/private-show.cc:173
 msgid "No packages found"
 msgstr "패키지가 없습니다"
 
-#: cmdline/apt-cache.cc:1306
+#: cmdline/apt-cache.cc:1254
 msgid "You must give at least one search pattern"
 msgstr "최소 한 개의 검색어를 지정해야 합니다"
 
-#: cmdline/apt-cache.cc:1472
+#: cmdline/apt-cache.cc:1420
 msgid "This command is deprecated. Please use 'apt-mark showauto' instead."
 msgstr ""
 
-#: cmdline/apt-cache.cc:1597
+#: cmdline/apt-cache.cc:1545
 msgid "Package files:"
 msgstr "패키지 파일:"
 
-#: cmdline/apt-cache.cc:1604 cmdline/apt-cache.cc:1695
+#: cmdline/apt-cache.cc:1552 cmdline/apt-cache.cc:1643
 msgid "Cache is out of sync, can't x-ref a package file"
 msgstr "캐시가 동기화되지 않았습니다. 패키지 파일을 상호 참조할 수 없습니다"
 
 #. Show any packages have explicit pins
-#: cmdline/apt-cache.cc:1618
+#: cmdline/apt-cache.cc:1566
 msgid "Pinned packages:"
 msgstr "핀 패키지:"
 
-#: cmdline/apt-cache.cc:1630 cmdline/apt-cache.cc:1675
+#: cmdline/apt-cache.cc:1578 cmdline/apt-cache.cc:1623
 msgid "(not found)"
 msgstr "(없음)"
 
-#: cmdline/apt-cache.cc:1638
+#: cmdline/apt-cache.cc:1586
 msgid "  Installed: "
 msgstr "  설치: "
 
-#: cmdline/apt-cache.cc:1639
+#: cmdline/apt-cache.cc:1587
 msgid "  Candidate: "
 msgstr "  후보: "
 
-#: cmdline/apt-cache.cc:1657 cmdline/apt-cache.cc:1665
+#: cmdline/apt-cache.cc:1605 cmdline/apt-cache.cc:1613
 msgid "(none)"
 msgstr "(없음)"
 
-#: cmdline/apt-cache.cc:1672
+#: cmdline/apt-cache.cc:1620
 msgid "  Package pin: "
 msgstr "  패키지 핀: "
 
 #. Show the priority tables
-#: cmdline/apt-cache.cc:1681
+#: cmdline/apt-cache.cc:1629
 msgid "  Version table:"
 msgstr "  버전 테이블:"
 
-#: cmdline/apt-cache.cc:1794 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
-#: cmdline/apt-get.cc:1611 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
-#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:220
+#: cmdline/apt-cache.cc:1742 cmdline/apt-cdrom.cc:207 cmdline/apt-config.cc:83
+#: cmdline/apt-get.cc:1586 cmdline/apt-helper.cc:59 cmdline/apt-mark.cc:388
+#: cmdline/apt.cc:42 cmdline/apt-extracttemplates.cc:217
 #: ftparchive/apt-ftparchive.cc:620 cmdline/apt-internal-solver.cc:45
 #: cmdline/apt-sortpkgs.cc:147
 #, c-format
 msgid "%s %s for %s compiled on %s %s\n"
 msgstr "%s %s(%s), 컴파일 시각 %s %s\n"
 
-#: cmdline/apt-cache.cc:1801
+#: cmdline/apt-cache.cc:1749
 #, fuzzy
 msgid ""
 "Usage: apt-cache [options] command\n"
@@ -1600,7 +1599,7 @@ msgid "Couldn't find package %s"
 msgstr "%s 패키지를 찾을 수 없습니다"
 
 #: cmdline/apt-get.cc:459 cmdline/apt-mark.cc:81
-#: apt-private/private-install.cc:891
+#: apt-private/private-install.cc:865
 #, c-format
 msgid "%s set to manually installed.\n"
 msgstr "%s 패키지 수동설치로 지정합니다.\n"
@@ -1628,7 +1627,7 @@ msgstr "다운로드 디렉터리를 잠글 수 없습니다"
 msgid "Must specify at least one package to fetch source for"
 msgstr "해당되는 소스 패키지를 가져올 패키지를 최소한 하나 지정해야 합니다"
 
-#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:1091
+#: cmdline/apt-get.cc:766 cmdline/apt-get.cc:1066
 #, c-format
 msgid "Unable to find a source package for %s"
 msgstr "%s의 소스 패키지를 찾을 수 없습니다"
@@ -1653,95 +1652,95 @@ msgstr ""
 "다음과 같이 하십시오:\n"
 "bzr get %s\n"
 
-#: cmdline/apt-get.cc:839
+#: cmdline/apt-get.cc:843
 #, c-format
 msgid "Skipping already downloaded file '%s'\n"
 msgstr "이미 다운로드 받은 파일 '%s'은(는) 다시 받지 않고 건너 뜁니다.\n"
 
-#: cmdline/apt-get.cc:871 cmdline/apt-get.cc:874
-#: apt-private/private-install.cc:189 apt-private/private-install.cc:192
+#: cmdline/apt-get.cc:869 cmdline/apt-get.cc:872
+#: apt-private/private-install.cc:187 apt-private/private-install.cc:190
 #, c-format
 msgid "Couldn't determine free space in %s"
 msgstr "%s의 여유 공간의 크기를 파악할 수 없습니다"
 
-#: cmdline/apt-get.cc:884
+#: cmdline/apt-get.cc:882
 #, c-format
 msgid "You don't have enough free space in %s"
 msgstr "%s에 충분한 공간이 없습니다"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:893
+#: cmdline/apt-get.cc:891
 #, c-format
 msgid "Need to get %sB/%sB of source archives.\n"
 msgstr "소스 아카이브를 %s바이트/%s바이트 받아야 합니다.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: cmdline/apt-get.cc:898
+#: cmdline/apt-get.cc:896
 #, c-format
 msgid "Need to get %sB of source archives.\n"
 msgstr "소스 아카이브를 %s바이트 받아야 합니다.\n"
 
-#: cmdline/apt-get.cc:904
+#: cmdline/apt-get.cc:902
 #, c-format
 msgid "Fetch source %s\n"
 msgstr "%s 소스를 가져옵니다\n"
 
-#: cmdline/apt-get.cc:922
+#: cmdline/apt-get.cc:920
 msgid "Failed to fetch some archives."
 msgstr "일부 아카이브를 가져오는데 실패했습니다."
 
-#: cmdline/apt-get.cc:927 apt-private/private-install.cc:316
+#: cmdline/apt-get.cc:925 apt-private/private-install.cc:314
 msgid "Download complete and in download only mode"
 msgstr "다운로드를 마쳤고 다운로드 전용 모드입니다"
 
-#: cmdline/apt-get.cc:952
+#: cmdline/apt-get.cc:950
 #, c-format
 msgid "Skipping unpack of already unpacked source in %s\n"
 msgstr "%s에 이미 풀려 있는 소스의 압축을 풀지 않고 건너 뜁니다.\n"
 
-#: cmdline/apt-get.cc:964
+#: cmdline/apt-get.cc:962
 #, c-format
 msgid "Unpack command '%s' failed.\n"
 msgstr "압축 풀기 명령 '%s' 실패.\n"
 
-#: cmdline/apt-get.cc:965
+#: cmdline/apt-get.cc:963
 #, c-format
 msgid "Check if the 'dpkg-dev' package is installed.\n"
 msgstr "'dpkg-dev' 패키지가 설치되었는지를 확인하십시오.\n"
 
-#: cmdline/apt-get.cc:993
+#: cmdline/apt-get.cc:991
 #, c-format
 msgid "Build command '%s' failed.\n"
 msgstr "빌드 명령 '%s' 실패.\n"
 
-#: cmdline/apt-get.cc:1012
+#: cmdline/apt-get.cc:1010
 msgid "Child process failed"
 msgstr "하위 프로세스가 실패했습니다"
 
-#: cmdline/apt-get.cc:1031
+#: cmdline/apt-get.cc:1029
 msgid "Must specify at least one package to check builddeps for"
 msgstr "해당되는 빌드 의존성을 검사할 패키지를 최소한 하나 지정해야 합니다"
 
-#: cmdline/apt-get.cc:1056
+#: cmdline/apt-get.cc:1054
 #, c-format
 msgid ""
 "No architecture information available for %s. See apt.conf(5) APT::"
 "Architectures for setup"
 msgstr ""
 
-#: cmdline/apt-get.cc:1103 cmdline/apt-get.cc:1106
+#: cmdline/apt-get.cc:1078 cmdline/apt-get.cc:1081
 #, c-format
 msgid "Unable to get build-dependency information for %s"
 msgstr "%s의 빌드 의존성 정보를 가져올 수 없습니다"
 
-#: cmdline/apt-get.cc:1126
+#: cmdline/apt-get.cc:1101
 #, c-format
 msgid "%s has no build depends.\n"
 msgstr "%s 패키지에 빌드 의존성이 없습니다.\n"
 
-#: cmdline/apt-get.cc:1296
+#: cmdline/apt-get.cc:1271
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s can't be satisfied because %s is not allowed on '%s' "
@@ -1750,7 +1749,7 @@ msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 패키지를 찾을 수 없습니"
 "다"
 
-#: cmdline/apt-get.cc:1314
+#: cmdline/apt-get.cc:1289
 #, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because the package %s cannot be "
@@ -1759,14 +1758,14 @@ msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 패키지를 찾을 수 없습니"
 "다"
 
-#: cmdline/apt-get.cc:1337
+#: cmdline/apt-get.cc:1312
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: Installed package %s is too new"
 msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시키는데 실패했습니다: 설치한 %3$s 패키지가 너"
 "무 최근 버전입니다"
 
-#: cmdline/apt-get.cc:1376
+#: cmdline/apt-get.cc:1351
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because candidate version of "
@@ -1775,7 +1774,7 @@ msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 패키지의 사용 가능한 버"
 "전 중에서는 이 버전 요구사항을 만족시킬 수 없습니다"
 
-#: cmdline/apt-get.cc:1382
+#: cmdline/apt-get.cc:1357
 #, fuzzy, c-format
 msgid ""
 "%s dependency for %s cannot be satisfied because package %s has no candidate "
@@ -1784,30 +1783,30 @@ msgstr ""
 "%2$s에 대한 %1$s 의존성을 만족시킬 수 없습니다. %3$s 패키지를 찾을 수 없습니"
 "다"
 
-#: cmdline/apt-get.cc:1405
+#: cmdline/apt-get.cc:1380
 #, c-format
 msgid "Failed to satisfy %s dependency for %s: %s"
 msgstr "%2$s에 대한 %1$s 의존성을 만족시키는데 실패했습니다: %3$s"
 
-#: cmdline/apt-get.cc:1420
+#: cmdline/apt-get.cc:1395
 #, c-format
 msgid "Build-dependencies for %s could not be satisfied."
 msgstr "%s의 빌드 의존성을 만족시키지 못했습니다."
 
-#: cmdline/apt-get.cc:1425
+#: cmdline/apt-get.cc:1400
 msgid "Failed to process build dependencies"
 msgstr "빌드 의존성을 처리하는데 실패했습니다"
 
-#: cmdline/apt-get.cc:1518 cmdline/apt-get.cc:1530
+#: cmdline/apt-get.cc:1493 cmdline/apt-get.cc:1505
 #, fuzzy, c-format
 msgid "Changelog for %s (%s)"
 msgstr "%s(%s)에 연결하는 중입니다"
 
-#: cmdline/apt-get.cc:1616
+#: cmdline/apt-get.cc:1591
 msgid "Supported modules:"
 msgstr "지원하는 모듈:"
 
-#: cmdline/apt-get.cc:1657
+#: cmdline/apt-get.cc:1632
 #, fuzzy
 msgid ""
 "Usage: apt-get [options] command\n"
@@ -2349,22 +2348,15 @@ msgstr "HTTP 서버에 범위 지원 기능이 잘못되어 있습니다"
 msgid "Unknown date format"
 msgstr "데이터 형식을 알 수 없습니다"
 
-#: methods/server.cc:496
+#: methods/server.cc:489
 msgid "Bad header data"
 msgstr "헤더 데이터가 잘못되었습니다"
 
-#: methods/server.cc:513 methods/server.cc:600
+#: methods/server.cc:506 methods/server.cc:562
 msgid "Connection failed"
 msgstr "연결이 실패했습니다"
 
-#: methods/server.cc:572
-#, c-format
-msgid ""
-"Automatically disabled %s due to incorrect response from server/proxy. (man "
-"5 apt.conf)"
-msgstr ""
-
-#: methods/server.cc:692
+#: methods/server.cc:654
 msgid "Internal error"
 msgstr "내부 오류"
 
@@ -2380,11 +2372,11 @@ msgstr "완료"
 msgid "Sorting"
 msgstr ""
 
-#: apt-private/private-list.cc:123
+#: apt-private/private-list.cc:131
 msgid "Listing"
 msgstr ""
 
-#: apt-private/private-list.cc:156
+#: apt-private/private-list.cc:164
 #, c-format
 msgid "There is %i additional version. Please use the '-a' switch to see it"
 msgid_plural ""
@@ -2425,103 +2417,103 @@ msgstr "의존성이 맞지 않습니다. -f 옵션을 사용해 보십시오."
 msgid "unknown"
 msgstr ""
 
-#: apt-private/private-output.cc:233
+#: apt-private/private-output.cc:234
 #, fuzzy, c-format
 msgid "[installed,upgradable to: %s]"
 msgstr " [설치함]"
 
-#: apt-private/private-output.cc:237
+#: apt-private/private-output.cc:238
 #, fuzzy
 msgid "[installed,local]"
 msgstr " [설치함]"
 
-#: apt-private/private-output.cc:240
+#: apt-private/private-output.cc:241
 msgid "[installed,auto-removable]"
 msgstr ""
 
-#: apt-private/private-output.cc:242
+#: apt-private/private-output.cc:243
 #, fuzzy
 msgid "[installed,automatic]"
 msgstr " [설치함]"
 
-#: apt-private/private-output.cc:244
+#: apt-private/private-output.cc:245
 #, fuzzy
 msgid "[installed]"
 msgstr " [설치함]"
 
-#: apt-private/private-output.cc:248
+#: apt-private/private-output.cc:249
 #, c-format
 msgid "[upgradable from: %s]"
 msgstr ""
 
-#: apt-private/private-output.cc:252
+#: apt-private/private-output.cc:253
 msgid "[residual-config]"
 msgstr ""
 
-#: apt-private/private-output.cc:434
+#: apt-private/private-output.cc:435
 #, c-format
 msgid "but %s is installed"
 msgstr "하지만 %s 패키지를 설치했습니다"
 
-#: apt-private/private-output.cc:436
+#: apt-private/private-output.cc:437
 #, c-format
 msgid "but %s is to be installed"
 msgstr "하지만 %s 패키지를 설치할 것입니다"
 
-#: apt-private/private-output.cc:443
+#: apt-private/private-output.cc:444
 msgid "but it is not installable"
 msgstr "하지만 설치할 수 없습니다"
 
-#: apt-private/private-output.cc:445
+#: apt-private/private-output.cc:446
 msgid "but it is a virtual package"
 msgstr "하지만 가상 패키지입니다"
 
-#: apt-private/private-output.cc:448
+#: apt-private/private-output.cc:449
 msgid "but it is not installed"
 msgstr "하지만 설치하지 않았습니다"
 
-#: apt-private/private-output.cc:448
+#: apt-private/private-output.cc:449
 msgid "but it is not going to be installed"
 msgstr "하지만 %s 패키지를 설치하지 않을 것입니다"
 
-#: apt-private/private-output.cc:453
+#: apt-private/private-output.cc:454
 msgid " or"
 msgstr " 혹은"
 
-#: apt-private/private-output.cc:467 apt-private/private-output.cc:479
+#: apt-private/private-output.cc:468 apt-private/private-output.cc:480
 msgid "The following packages have unmet dependencies:"
 msgstr "다음 패키지의 의존성이 맞지 않습니다:"
 
-#: apt-private/private-output.cc:502
+#: apt-private/private-output.cc:503
 msgid "The following NEW packages will be installed:"
 msgstr "다음 새 패키지를 설치할 것입니다:"
 
-#: apt-private/private-output.cc:528
+#: apt-private/private-output.cc:529
 msgid "The following packages will be REMOVED:"
 msgstr "다음 패키지를 지울 것입니다:"
 
-#: apt-private/private-output.cc:550
+#: apt-private/private-output.cc:551
 msgid "The following packages have been kept back:"
 msgstr "다음 패키지를 과거 버전으로 유지합니다:"
 
-#: apt-private/private-output.cc:571
+#: apt-private/private-output.cc:572
 msgid "The following packages will be upgraded:"
 msgstr "다음 패키지를 업그레이드할 것입니다:"
 
-#: apt-private/private-output.cc:592
+#: apt-private/private-output.cc:593
 msgid "The following packages will be DOWNGRADED:"
 msgstr "다음 패키지를 다운그레이드할 것입니다:"
 
-#: apt-private/private-output.cc:612
+#: apt-private/private-output.cc:613
 msgid "The following held packages will be changed:"
 msgstr "고정되었던 다음 패키지를 바꿀 것입니다:"
 
-#: apt-private/private-output.cc:667
+#: apt-private/private-output.cc:668
 #, c-format
 msgid "%s (due to %s) "
 msgstr "%s (%s때문에) "
 
-#: apt-private/private-output.cc:675
+#: apt-private/private-output.cc:676
 msgid ""
 "WARNING: The following essential packages will be removed.\n"
 "This should NOT be done unless you know exactly what you are doing!"
@@ -2529,27 +2521,27 @@ msgstr ""
 "경고: 꼭 필요한 다음 패키지를 지우게 됩니다.\n"
 "무슨 일을 하고 있는 지 정확히 알지 못한다면 지우지 마십시오!"
 
-#: apt-private/private-output.cc:706
+#: apt-private/private-output.cc:707
 #, c-format
 msgid "%lu upgraded, %lu newly installed, "
 msgstr "%lu개 업그레이드, %lu개 새로 설치, "
 
-#: apt-private/private-output.cc:710
+#: apt-private/private-output.cc:711
 #, c-format
 msgid "%lu reinstalled, "
 msgstr "%lu개 다시 설치, "
 
-#: apt-private/private-output.cc:712
+#: apt-private/private-output.cc:713
 #, c-format
 msgid "%lu downgraded, "
 msgstr "%lu개 업그레이드, "
 
-#: apt-private/private-output.cc:714
+#: apt-private/private-output.cc:715
 #, c-format
 msgid "%lu to remove and %lu not upgraded.\n"
 msgstr "%lu개 제거 및 %lu개 업그레이드 안 함.\n"
 
-#: apt-private/private-output.cc:718
+#: apt-private/private-output.cc:719
 #, c-format
 msgid "%lu not fully installed or removed.\n"
 msgstr "%lu개를 완전히 설치하지 못했거나 지움.\n"
@@ -2558,7 +2550,7 @@ msgstr "%lu개를 완전히 설치하지 못했거나 지움.\n"
 #. e.g. "Do you want to continue? [Y/n] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:740
+#: apt-private/private-output.cc:741
 msgid "[Y/n]"
 msgstr "[Y/n]"
 
@@ -2566,17 +2558,17 @@ msgstr "[Y/n]"
 #. e.g. "Should this file be removed? [y/N] "
 #. The user has to answer with an input matching the
 #. YESEXPR/NOEXPR defined in your l10n.
-#: apt-private/private-output.cc:746
+#: apt-private/private-output.cc:747
 msgid "[y/N]"
 msgstr "[y/N]"
 
 #. TRANSLATOR: "Yes" answer printed for a yes/no question if --assume-yes is set
-#: apt-private/private-output.cc:757
+#: apt-private/private-output.cc:758
 msgid "Y"
 msgstr "Y"
 
 #. TRANSLATOR: "No" answer printed for a yes/no question if --assume-no is set
-#: apt-private/private-output.cc:763
+#: apt-private/private-output.cc:764
 msgid "N"
 msgstr ""
 
@@ -2606,19 +2598,19 @@ msgstr[0] ""
 msgid "not a real package (virtual)"
 msgstr ""
 
-#: apt-private/private-install.cc:84
+#: apt-private/private-install.cc:82
 msgid "Internal error, InstallPackages was called with broken packages!"
 msgstr "내부 오류. 망가진 패키지에서 InstallPackages를 호출했습니다!"
 
-#: apt-private/private-install.cc:93
+#: apt-private/private-install.cc:91
 msgid "Packages need to be removed but remove is disabled."
 msgstr "패키지를 제거해야 하지만 제거가 금지되어 있습니다."
 
-#: apt-private/private-install.cc:112
+#: apt-private/private-install.cc:110
 msgid "Internal error, Ordering didn't finish"
 msgstr "내부 오류. 순서변경작업이 끝나지 않았습니다"
 
-#: apt-private/private-install.cc:150
+#: apt-private/private-install.cc:148
 msgid "How odd... The sizes didn't match, email apt@packages.debian.org"
 msgstr ""
 "이상하게도 크기가 서로 다릅니다. apt@packages.debian.org로 이메일을 보내주십"
@@ -2626,42 +2618,42 @@ msgstr ""
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement strings, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:157
+#: apt-private/private-install.cc:155
 #, c-format
 msgid "Need to get %sB/%sB of archives.\n"
 msgstr "%s바이트/%s바이트 아카이브를 받아야 합니다.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:162
+#: apt-private/private-install.cc:160
 #, c-format
 msgid "Need to get %sB of archives.\n"
 msgstr "%s바이트 아카이브를 받아야 합니다.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:169
+#: apt-private/private-install.cc:167
 #, c-format
 msgid "After this operation, %sB of additional disk space will be used.\n"
 msgstr "이 작업 후 %s바이트의 디스크 공간을 더 사용하게 됩니다.\n"
 
 #. TRANSLATOR: The required space between number and unit is already included
 #. in the replacement string, so %sB will be correctly translate in e.g. 1,5 MB
-#: apt-private/private-install.cc:174
+#: apt-private/private-install.cc:172
 #, c-format
 msgid "After this operation, %sB disk space will be freed.\n"
 msgstr "이 작업 후 %s바이트의 디스크 공간이 비워집니다.\n"
 
-#: apt-private/private-install.cc:202
+#: apt-private/private-install.cc:200
 #, c-format
 msgid "You don't have enough free space in %s."
 msgstr "%s 안에 충분한 여유 공간이 없습니다."
 
-#: apt-private/private-install.cc:212 apt-private/private-download.cc:59
+#: apt-private/private-install.cc:210 apt-private/private-download.cc:59
 msgid "There are problems and -y was used without --force-yes"
 msgstr "문제가 발생했고 -y 옵션이 --force-yes 옵션 없이 사용되었습니다"
 
-#: apt-private/private-install.cc:218 apt-private/private-install.cc:240
+#: apt-private/private-install.cc:216 apt-private/private-install.cc:238
 msgid "Trivial Only specified but this is not a trivial operation."
 msgstr ""
 "사소한 작업만 가능하도록(Trivial Only) 지정되었지만 이 작업은 사소한 작업이 "
@@ -2670,11 +2662,11 @@ msgstr ""
 # 입력을 받아야 한다.  한글 입력을 못 할 수 있으므로 원문 그대로 사용.
 #. TRANSLATOR: This string needs to be typed by the user as a confirmation, so be
 #. careful with hard to type or special characters (like non-breaking spaces)
-#: apt-private/private-install.cc:222
+#: apt-private/private-install.cc:220
 msgid "Yes, do as I say!"
 msgstr "Yes, do as I say!"
 
-#: apt-private/private-install.cc:224
+#: apt-private/private-install.cc:222
 #, c-format
 msgid ""
 "You are about to do something potentially harmful.\n"
@@ -2685,19 +2677,19 @@ msgstr ""
 "계속하시려면 다음 문구를 입력하십시오: '%s'\n"
 " ?] "
 
-#: apt-private/private-install.cc:230 apt-private/private-install.cc:248
+#: apt-private/private-install.cc:228 apt-private/private-install.cc:246
 msgid "Abort."
 msgstr "중단."
 
-#: apt-private/private-install.cc:245
+#: apt-private/private-install.cc:243
 msgid "Do you want to continue?"
 msgstr "계속 하시겠습니까?"
 
-#: apt-private/private-install.cc:315
+#: apt-private/private-install.cc:313
 msgid "Some files failed to download"
 msgstr "일부 파일을 받는데 실패했습니다"
 
-#: apt-private/private-install.cc:322
+#: apt-private/private-install.cc:320
 msgid ""
 "Unable to fetch some archives, maybe run apt-get update or try with --fix-"
 "missing?"
@@ -2705,19 +2697,19 @@ msgstr ""
 "아카이브를 받을 수 없습니다. 아마도 apt-get update를 실행해야 하거나 --fix-"
 "missing 옵션을 줘서 실행해야 할 것입니다."
 
-#: apt-private/private-install.cc:326
+#: apt-private/private-install.cc:324
 msgid "--fix-missing and media swapping is not currently supported"
 msgstr "--fix-missing 옵션과 동시에 미디어 바꾸기는 현재 지원하지 않습니다"
 
-#: apt-private/private-install.cc:331
+#: apt-private/private-install.cc:329
 msgid "Unable to correct missing packages."
 msgstr "빠진 패키지를 바로잡을 수 없습니다."
 
-#: apt-private/private-install.cc:332
+#: apt-private/private-install.cc:330
 msgid "Aborting install."
 msgstr "설치를 중단합니다."
 
-#: apt-private/private-install.cc:368
+#: apt-private/private-install.cc:366
 msgid ""
 "The following package disappeared from your system as\n"
 "all files have been overwritten by other packages:"
@@ -2728,15 +2720,15 @@ msgstr[0] ""
 "다음 패키지는 패키지의 파일을 모두 다른 패키지가\n"
 "덮어썼기 때문에 사라졌습니다:"
 
-#: apt-private/private-install.cc:372
+#: apt-private/private-install.cc:370
 msgid "Note: This is done automatically and on purpose by dpkg."
 msgstr "주의: dpkg에서 자동으로 의도적으로 수행했습니다."
 
-#: apt-private/private-install.cc:393
+#: apt-private/private-install.cc:391
 msgid "We are not supposed to delete stuff, can't start AutoRemover"
 msgstr "삭제를 할 수 없으므로 AutoRemover를 실행하지 못합니다"
 
-#: apt-private/private-install.cc:501
+#: apt-private/private-install.cc:499
 msgid ""
 "Hmm, seems like the AutoRemover destroyed something which really\n"
 "shouldn't happen. Please file a bug report against apt."
@@ -2754,15 +2746,15 @@ msgstr ""
 #. "that package should be filed.") << std::endl;
 #. }
 #.
-#: apt-private/private-install.cc:504 apt-private/private-install.cc:655
+#: apt-private/private-install.cc:502 apt-private/private-install.cc:653
 msgid "The following information may help to resolve the situation:"
 msgstr "이 상황을 해결하는데 다음 정보가 도움이 될 수도 있습니다:"
 
-#: apt-private/private-install.cc:508
+#: apt-private/private-install.cc:506
 msgid "Internal Error, AutoRemover broke stuff"
 msgstr "내부 오류, 문제 해결 프로그램이 무언가를 망가뜨렸습니다"
 
-#: apt-private/private-install.cc:515
+#: apt-private/private-install.cc:513
 msgid ""
 "The following package was automatically installed and is no longer required:"
 msgid_plural ""
@@ -2770,25 +2762,25 @@ msgid_plural ""
 "required:"
 msgstr[0] "다음 패키지가 자동으로 설치되었지만 더 이상 필요하지 않습니다:"
 
-#: apt-private/private-install.cc:519
+#: apt-private/private-install.cc:517
 #, c-format
 msgid "%lu package was automatically installed and is no longer required.\n"
 msgid_plural ""
 "%lu packages were automatically installed and are no longer required.\n"
 msgstr[0] "패키지 %lu개가 자동으로 설치되었지만 더 이상 필요하지 않습니다.\n"
 
-#: apt-private/private-install.cc:521
+#: apt-private/private-install.cc:519
 #, fuzzy
 msgid "Use 'apt-get autoremove' to remove it."
 msgid_plural "Use 'apt-get autoremove' to remove them."
 msgstr[0] "이들을 지우려면 'apt-get autoremove'를 사용하십시오."
 
-#: apt-private/private-install.cc:614
+#: apt-private/private-install.cc:612
 msgid "You might want to run 'apt-get -f install' to correct these:"
 msgstr "다음을 바로잡으려면 'apt-get -f install'을 실행해 보십시오:"
 
 # FIXME: specify a solution?  무슨 솔루션?
-#: apt-private/private-install.cc:616
+#: apt-private/private-install.cc:614
 msgid ""
 "Unmet dependencies. Try 'apt-get -f install' with no packages (or specify a "
 "solution)."
@@ -2796,7 +2788,7 @@ msgstr ""
 "의존성이 맞지 않습니다. 패키지 없이 'apt-get -f install'을 시도해 보십시오 "
 "(아니면 해결 방법을 지정하십시오)."
 
-#: apt-private/private-install.cc:640
+#: apt-private/private-install.cc:638
 msgid ""
 "Some packages could not be installed. This may mean that you have\n"
 "requested an impossible situation or if you are using the unstable\n"
@@ -2807,60 +2799,60 @@ msgstr ""
 "불안정 배포판을 사용해서 일부 필요한 패키지를 아직 만들지 않았거나,\n"
 "아직 Incoming에서 나오지 않은 경우일 수도 있습니다."
 
-#: apt-private/private-install.cc:661
+#: apt-private/private-install.cc:659
 msgid "Broken packages"
 msgstr "망가진 패키지"
 
-#: apt-private/private-install.cc:738
+#: apt-private/private-install.cc:712
 msgid "The following extra packages will be installed:"
 msgstr "다음 패키지를 더 설치할 것입니다:"
 
-#: apt-private/private-install.cc:828
+#: apt-private/private-install.cc:802
 msgid "Suggested packages:"
 msgstr "제안하는 패키지:"
 
-#: apt-private/private-install.cc:829
+#: apt-private/private-install.cc:803
 msgid "Recommended packages:"
 msgstr "추천하는 패키지:"
 
-#: apt-private/private-install.cc:851
+#: apt-private/private-install.cc:825
 #, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
 msgstr ""
 "%s 패키지를 건너 뜁니다. 이미 설치되어 있고 업그레이드를 하지 않습니다.\n"
 
-#: apt-private/private-install.cc:855
+#: apt-private/private-install.cc:829
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
 msgstr "%s 패키지를 건너 뜁니다. 설치되지 않았고 업그레이드만 요청합니다.\n"
 
-#: apt-private/private-install.cc:867
+#: apt-private/private-install.cc:841
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
 msgstr "%s 패키지를 다시 설치하는 건 불가능합니다. 다운로드할 수 없습니다.\n"
 
-#: apt-private/private-install.cc:872
+#: apt-private/private-install.cc:846
 #, c-format
 msgid "%s is already the newest version.\n"
 msgstr "%s 패키지는 이미 최신 버전입니다.\n"
 
-#: apt-private/private-install.cc:920
+#: apt-private/private-install.cc:894
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
 msgstr "'%3$s' 패키지의 '%1$s' (%2$s) 버전을 선택합니다\n"
 
-#: apt-private/private-install.cc:925
+#: apt-private/private-install.cc:899
 #, fuzzy, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
 msgstr "'%3$s' 패키지의 '%1$s' (%2$s) 버전을 선택합니다\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
-#: apt-private/private-install.cc:967
+#: apt-private/private-install.cc:941
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
 msgstr "%s 패키지를 설치하지 않았으므로, 지우지 않습니다\n"
 
-#: apt-private/private-install.cc:973
+#: apt-private/private-install.cc:947
 #, fuzzy, c-format
 msgid "Package '%s' is not installed, so not removed\n"
 msgstr "%s 패키지를 설치하지 않았으므로, 지우지 않습니다\n"
@@ -2911,29 +2903,29 @@ msgstr ""
 msgid "Hit "
 msgstr "기존 "
 
-#: apt-private/acqprogress.cc:88
+#: apt-private/acqprogress.cc:90
 msgid "Get:"
 msgstr "받기:"
 
-#: apt-private/acqprogress.cc:119
+#: apt-private/acqprogress.cc:121
 msgid "Ign "
 msgstr "무시"
 
-#: apt-private/acqprogress.cc:123
+#: apt-private/acqprogress.cc:125
 msgid "Err "
 msgstr "오류 "
 
-#: apt-private/acqprogress.cc:147
+#: apt-private/acqprogress.cc:146
 #, c-format
 msgid "Fetched %sB in %s (%sB/s)\n"
 msgstr "내려받기 %s바이트, 소요시간 %s (%s바이트/초)\n"
 
-#: apt-private/acqprogress.cc:237
+#: apt-private/acqprogress.cc:236
 #, c-format
 msgid " [Working]"
 msgstr " [작업중]"
 
-#: apt-private/acqprogress.cc:298
+#: apt-private/acqprogress.cc:297
 #, c-format
 msgid ""
 "Media change: please insert the disc labeled\n"
@@ -3067,7 +3059,7 @@ msgid "The diversion path is too long"
 msgstr "전환하는 경로가 너무 깁니다"
 
 #: apt-inst/extract.cc:186 apt-inst/extract.cc:199 apt-inst/extract.cc:216
-#: ftparchive/cachedb.cc:184
+#: ftparchive/cachedb.cc:182
 #, c-format
 msgid "Failed to stat %s"
 msgstr "%s의 정보를 읽는데 실패했습니다"
@@ -3176,7 +3168,7 @@ msgstr "tar 체크섬 실패, 아카이브가 손상되었습니다"
 msgid "Unknown TAR header type %u, member %s"
 msgstr "알 수 없는 TAR 헤더 타입 %u, 멤버 %s"
 
-#: cmdline/apt-extracttemplates.cc:227
+#: cmdline/apt-extracttemplates.cc:224
 msgid ""
 "Usage: apt-extracttemplates file1 [file2 ...]\n"
 "\n"
@@ -3200,7 +3192,12 @@ msgstr ""
 "  -c=? 설정 파일을 읽습니다\n"
 "  -o=? 임의의 옵션을 설정합니다. 예를 들어 -o dir::cache=/tmp\n"
 
-#: cmdline/apt-extracttemplates.cc:303
+#: cmdline/apt-extracttemplates.cc:254
+#, fuzzy, c-format
+msgid "Unable to mkstemp %s"
+msgstr "%s의 정보를 읽을 수 없습니다"
+
+#: cmdline/apt-extracttemplates.cc:300
 msgid "Cannot get debconf version. Is debconf installed?"
 msgstr "debconf 버전을 알 수 없습니다. debconf가 설치되었습니까?"
 
@@ -3318,17 +3315,17 @@ msgstr "맞는 패키지가 없습니다"
 msgid "Some files are missing in the package file group `%s'"
 msgstr "`%s' 패키지 파일 그룹에 몇몇 파일이 빠졌습니다"
 
-#: ftparchive/cachedb.cc:67
+#: ftparchive/cachedb.cc:65
 #, c-format
 msgid "DB was corrupted, file renamed to %s.old"
 msgstr "DB가 망가졌습니다. 파일 이름을 %s.old로 바꿉니다"
 
-#: ftparchive/cachedb.cc:85
+#: ftparchive/cachedb.cc:83
 #, c-format
 msgid "DB is old, attempting to upgrade %s"
 msgstr "DB가 오래되었습니다. %s의 업그레이드를 시도합니다"
 
-#: ftparchive/cachedb.cc:96
+#: ftparchive/cachedb.cc:94
 msgid ""
 "DB format is invalid. If you upgraded from an older version of apt, please "
 "remove and re-create the database."
@@ -3336,107 +3333,107 @@ msgstr ""
 "DB 형식이 잘못되었습니다. APT 예전 버전에서 업그레이드했다면, 데이터베이스를 "
 "지우고 다시 만드십시오."
 
-#: ftparchive/cachedb.cc:101
+#: ftparchive/cachedb.cc:99
 #, c-format
 msgid "Unable to open DB file %s: %s"
 msgstr "DB 파일, %s 파일을 열 수 없습니다: %s"
 
-#: ftparchive/cachedb.cc:326
+#: ftparchive/cachedb.cc:332
 #, fuzzy
 msgid "Failed to read .dsc"
 msgstr "%s 파일에 readlink하는데 실패했습니다"
 
-#: ftparchive/cachedb.cc:359
+#: ftparchive/cachedb.cc:365
 msgid "Archive has no control record"
 msgstr "아카이브에 컨트롤 기록이 없습니다"
 
 # FIXME: 왠 커서??
-#: ftparchive/cachedb.cc:522
+#: ftparchive/cachedb.cc:594
 msgid "Unable to get a cursor"
 msgstr "커서를 가져올 수 없습니다"
 
-#: ftparchive/writer.cc:104
+#: ftparchive/writer.cc:91
 #, c-format
 msgid "W: Unable to read directory %s\n"
 msgstr "경고: %s 디렉터리를 읽을 수 없습니다\n"
 
-#: ftparchive/writer.cc:109
+#: ftparchive/writer.cc:96
 #, c-format
 msgid "W: Unable to stat %s\n"
 msgstr "경고: %s의 정보를 읽을 수 없습니다\n"
 
-#: ftparchive/writer.cc:165
+#: ftparchive/writer.cc:152
 msgid "E: "
 msgstr "오류: "
 
-#: ftparchive/writer.cc:167
+#: ftparchive/writer.cc:154
 msgid "W: "
 msgstr "경고: "
 
-#: ftparchive/writer.cc:174
+#: ftparchive/writer.cc:161
 msgid "E: Errors apply to file "
 msgstr "오류: 다음 파일에 적용하는데 오류가 발생했습니다: "
 
-#: ftparchive/writer.cc:192 ftparchive/writer.cc:224
+#: ftparchive/writer.cc:179 ftparchive/writer.cc:211
 #, c-format
 msgid "Failed to resolve %s"
 msgstr "%s의 경로를 알아내는데 실패했습니다"
 
-#: ftparchive/writer.cc:205
+#: ftparchive/writer.cc:192
 msgid "Tree walking failed"
 msgstr "트리에서 이동이 실패했습니다"
 
-#: ftparchive/writer.cc:232
+#: ftparchive/writer.cc:219
 #, c-format
 msgid "Failed to open %s"
 msgstr "%s 파일을 여는데 실패했습니다"
 
 # FIXME: ??
-#: ftparchive/writer.cc:291
+#: ftparchive/writer.cc:278
 #, c-format
 msgid " DeLink %s [%s]\n"
 msgstr " 링크 %s [%s] 없애기\n"
 
-#: ftparchive/writer.cc:299
+#: ftparchive/writer.cc:286
 #, c-format
 msgid "Failed to readlink %s"
 msgstr "%s 파일에 readlink하는데 실패했습니다"
 
-#: ftparchive/writer.cc:303
+#: ftparchive/writer.cc:290
 #, c-format
 msgid "Failed to unlink %s"
 msgstr "%s 파일을 지우는데 실패했습니다"
 
-#: ftparchive/writer.cc:311
+#: ftparchive/writer.cc:298
 #, c-format
 msgid "*** Failed to link %s to %s"
 msgstr "*** %s 파일을 %s에 링크하는데 실패했습니다"
 
-#: ftparchive/writer.cc:321
+#: ftparchive/writer.cc:308
 #, c-format
 msgid " DeLink limit of %sB hit.\n"
 msgstr " DeLink 한계값 %s바이트에 도달했습니다.\n"
 
-#: ftparchive/writer.cc:427
+#: ftparchive/writer.cc:417
 msgid "Archive had no package field"
 msgstr "아카이브에 패키지 필드가 없습니다"
 
-#: ftparchive/writer.cc:435 ftparchive/writer.cc:704
+#: ftparchive/writer.cc:425 ftparchive/writer.cc:692
 #, c-format
 msgid "  %s has no override entry\n"
 msgstr "  %s에는 override 항목이 없습니다\n"
 
-#: ftparchive/writer.cc:500 ftparchive/writer.cc:868
+#: ftparchive/writer.cc:493 ftparchive/writer.cc:848
 #, c-format
 msgid "  %s maintainer is %s not %s\n"
 msgstr "  %s 관리자가 %s입니다 (%s 아님)\n"
 
-#: ftparchive/writer.cc:718
+#: ftparchive/writer.cc:706
 #, c-format
 msgid "  %s has no source override entry\n"
 msgstr "  %s에는 source override 항목이 없습니다\n"
 
-#: ftparchive/writer.cc:722
+#: ftparchive/writer.cc:710
 #, c-format
 msgid "  %s has no binary override entry either\n"
 msgstr "  %s에는 binary override 항목이 없습니다\n"

@@ -118,7 +118,7 @@ static std::string GetFlagsStr(pkgCacheFile &CacheFile, pkgCache::PkgIterator P)
    std::string flags_str;
    if (state.NowBroken())
       flags_str = "B";
-   if (P.CurrentVer() && state.Upgradable())
+   if (P.CurrentVer() && state.Upgradable() && state.CandidateVer != NULL)
       flags_str = "g";
    else if (P.CurrentVer() != NULL)
       flags_str = "i";
@@ -229,7 +229,8 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       std::string CandidateVerStr = GetCandidateVersion(CacheFile, P);
       std::string InstalledVerStr = GetInstalledVersion(CacheFile, P);
       std::string StatusStr;
-      if(P.CurrentVer() == V && state.Upgradable()) {
+      if(P.CurrentVer() == V && state.Upgradable() && state.CandidateVer != NULL)
+      {
          strprintf(StatusStr, _("[installed,upgradable to: %s]"),
                    CandidateVerStr.c_str());
       } else if (P.CurrentVer() == V) {

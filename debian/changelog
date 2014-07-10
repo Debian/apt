@@ -54,6 +54,48 @@ apt (1.1~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Thu, 19 Jun 2014 12:01:48 +0200
 
+apt (1.0.6) unstable; urgency=medium
+
+  [ Chris Leick ]
+  * German translation reviewed by Erik Pfannenstein
+
+  [ Michael Vogt ]
+  * methods/http.cc: use Req.str() in debug output
+  * Do not try to parse invalid translation files (LP: #756317)
+  * Do not clean "/" in pkgAcquire::Clean/pkgArchiveCleaner (Closes: #753531)
+  * Only show packages as upgradable if the have a CandidateVer != 0
+    (Closes: #753297)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po: Update 3 new messages
+
+  [ Joe Hansen ]
+  * Danish program translation update (Closes: 753979)
+
+  [ David Kalnischkies ]
+  * handle moved mmap after UniqFindTagWrite call (Closes: #753941)
+
+  [ Michele Orrù ]
+  * use printf instead of echo in testing framework
+
+  [ Cédric Barboiron ]
+  * Improve description how to turn off the caches (Closes: #753531)
+
+  [ Guillem Jover ]
+  * po: Fill or add missing Language field
+  * po: Remove fuzzy from file msgid header
+  * po: Fill Project-Id-Version with correct project id and version
+  * po: Fix Plural-Forms fields
+  * po: Fix or add missing email addresses
+  * po: Fix encoding issues
+  * po: Fix format specifier order in translation
+  * build: Set the XSL parameter through the command line instead of sed
+  * build: Convert from DebianDoc SGML to DocBook XML
+  * doc: Convert from DebianDoc SGML to DocBook XML
+  * doc: Unfuzzy DocBook translations
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jul 2014 11:46:07 +0200
+
 apt (1.0.5) unstable; urgency=low
 
   [ Michael Vogt ]
