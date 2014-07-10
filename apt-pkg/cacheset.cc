@@ -24,6 +24,7 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/fileutl.h>
 
 #include <stddef.h>
 #include <stdio.h>
@@ -445,6 +446,13 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
 					   pkgCacheFile &Cache, std::string pkg,
 					   Version const &fallback, CacheSetHelper &helper,
 					   bool const onlyFromName) {
+        PackageSet pkgset;
+        if(FileExists(pkg))
+        {
+                PackageContainerInterface::FromString(&pkgset, Cache, pkg, helper);
+                return VersionContainerInterface::FromPackage(vci, Cache, pkgset.begin(), fallback, helper);
+        }
+
 	std::string ver;
 	bool verIsRel = false;
 	size_t const vertag = pkg.find_last_of("/=");
@@ -453,7 +461,6 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
 		verIsRel = (pkg[vertag] == '/');
 		pkg.erase(vertag);
 	}
-	PackageSet pkgset;
 	if (onlyFromName == false)
 		PackageContainerInterface::FromString(&pkgset, Cache, pkg, helper);
 	else {

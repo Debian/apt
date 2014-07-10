@@ -692,15 +692,27 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 
    // get the control data out of the deb file vid dpkg -I
    // ... can I haz libdpkg?
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
    std::string dpkg = _config->Find("Dir::Bin::dpkg","dpkg");
-   const char *Args[5] = {dpkg.c_str(),
-                          "-I",
-                          DebFile.c_str(),
-                          "control",
-                          NULL};
+   std::vector<const char *> Args;
+   Args.push_back(dpkg.c_str());
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+      }
+   }
+   Args.push_back("-I");
+   Args.push_back(DebFile.c_str());
+   Args.push_back("control");
+   Args.push_back(NULL);
    FileFd PipeFd;
    pid_t Child;
-   if(Popen(Args, PipeFd, Child, FileFd::ReadOnly) == false)
+   if(Popen((const char**)&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
       return _error->Error("Popen failed");
    // FIXME: static buffer
    char buf[8*1024];
@@ -710,7 +722,7 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
    ExecWait(Child, "Popen");
 
    // now write the control data to a tempfile
-   SPtr<FileFd> DebControl = GetTempFile("deb-file-" + DebFile);
+   SPtr<FileFd> DebControl = GetTempFile("deb-file-" + flNotDir(DebFile));
    if(DebControl == NULL)
       return false;
    DebControl->Write(buf, n);
@@ -738,8 +750,6 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 }
 pkgCache::PkgFileIterator debDebPkgFileIndex::FindInCache(pkgCache &Cache) const
 {
-   // FIXME: we could simply always return pkgCache::PkgFileIterator(Cache);
-   //        to indicate its never in the cache which will force a Merge()
    pkgCache::PkgFileIterator File = Cache.FileBegin();
    for (; File.end() == false; ++File)
    {
