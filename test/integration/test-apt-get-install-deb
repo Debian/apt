@@ -1,0 +1,30 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# regression test for #754904
+testequal 'E: Unable to locate package /dev/null' aptget install -qq /dev/null
+
+# and ensure we fail for invalid debs
+cat > foo.deb <<EOF
+I'm not a deb, I'm a teapot.
+EOF
+testequal 'E: Sub-process Popen returned an error code (100)
+E: Encountered a section with no Package: header
+E: Problem with MergeLister for ./foo.deb
+E: The package lists or status file could not be parsed or opened.' aptget install -qq ./foo.deb
+
+# fakeroot is currently not found, framwork needs updating
+#
+#buildsimplenativepackage 'foo' 'all' '1.0' 
+#
+#testequal 'Selecting previously unselected package foo.
+#(Reading database ... 0 files and directories currently installed.)
+# Preparing to unpack .../incoming/foo_1.0_all.deb ...
+#Unpacking foo (1.0) ...
+#Setting up foo (1.0) ...' aptget install -qq ./incoming/foo_1.0_all.deb

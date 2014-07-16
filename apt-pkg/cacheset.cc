@@ -450,6 +450,8 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
         if(FileExists(pkg))
         {
                 PackageContainerInterface::FromString(&pkgset, Cache, pkg, helper);
+                if(pkgset.size() == 0)
+                   return false;
                 return VersionContainerInterface::FromPackage(vci, Cache, pkgset.begin(), fallback, helper);
         }
 
