@@ -6,10 +6,10 @@
 # KURASAWA Nozomu, 2003-2006, 2009-2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.7.25.3\n"
+"Project-Id-Version: apt 1.0.6\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-07-10 10:52+0200\n"
-"PO-Revision-Date: 2014-07-04 02:03+0200\n"
+"PO-Revision-Date: 2014-07-10 19:52+0900\n"
 "Last-Translator: KURASAWA Nozomu <nabetaro@debian.or.jp>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -675,7 +675,7 @@ msgstr "APT"
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt.8.xml:32
 msgid "command-line interface"
-msgstr ""
+msgstr "コマンドラインインターフェイス"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml:37 apt-get.8.xml:40 apt-cache.8.xml:40 apt-key.8.xml:39
@@ -694,6 +694,10 @@ msgid ""
 "management of the system.  See also &apt-get; and &apt-cache; for more low-"
 "level command options."
 msgstr ""
+"<command>apt</command> (Advanced Package Tool、高度パッケージツール) はパッ"
+"ケージ処理用のコマンドラインツールです。システムのパッケージ管理用コマンドラ"
+"インインターフェイスを提供します。さらなる低レベルコマンドオプションについて"
+"は &apt-get; 及び &apt-cache; も参照してください。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:47
@@ -703,6 +707,10 @@ msgid ""
 "<option>--installed</option>, <option>--upgradable</option>, <option>--all-"
 "versions</option> are supported."
 msgstr ""
+"パッケージ一覧を表示するには <literal>list</literal> を使います。パッケージ名"
+"のマッチングにシェルパターン、そしてオプション <option>--installed</"
+"option>、 <option>--upgradable</option>、 <option>--all-versions</option> を"
+"サポートしています。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:58
@@ -710,18 +718,17 @@ msgid ""
 "<literal>search</literal> searches for the given term(s) and display "
 "matching packages."
 msgstr ""
+"<literal>search</literal> では指定した語を検索して該当するパッケージを表示し"
+"ます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:64
-#, fuzzy
-#| msgid ""
-#| "<literal>rdepends</literal> shows a listing of each reverse dependency a "
-#| "package has."
 msgid ""
 "<literal>show</literal> shows the package information for the given "
 "package(s)."
 msgstr ""
-"<literal>rdepends</literal> は、パッケージが持つ被依存関係を一覧表示します。"
+"<literal>show</literal> では指定したパッケージについてのパッケージ情報を表示"
+"します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:71
@@ -729,6 +736,8 @@ msgid ""
 "<literal>install</literal> is followed by one or more package names desired "
 "for installation or upgrading."
 msgstr ""
+"<literal>install</literal> に続けてインストールやアップグレードしたいパッケー"
+"ジの名前を指定します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:75 apt-get.8.xml:118
@@ -768,19 +777,17 @@ msgid ""
 "<literal>edit-sources</literal> lets you edit your sources.list file and "
 "provides basic sanity checks."
 msgstr ""
+"<literal>edit-sources</literal> では sources.list ファイルを編集させ、基礎的"
+"な健全性確認を行います。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:99
-#, fuzzy
-#| msgid ""
-#| "<literal>showhold</literal> is used to print a list of packages on hold "
-#| "in the same way as for the other show commands."
 msgid ""
 "<literal>update</literal> is used to resynchronize the package index files "
 "from their sources."
 msgstr ""
-"<literal>showhold</literal> は、他の show コマンドと同様に、保留されている"
-"パッケージを出力します。"
+"<literal>update</literal> を使うとパッケージ索引ファイルをそれぞれのソースと"
+"再同期します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:105
@@ -790,6 +797,10 @@ msgid ""
 "<filename>/etc/apt/sources.list</filename>. New package will be installed, "
 "but existing package will never removed."
 msgstr ""
+"<literal>upgrade</literal> を使うとシステムに現在インストールされている全パッ"
+"ケージの最新版を <filename>/etc/apt/sources.list</filename> に記載されている"
+"ソースからインストールします。新しいパッケージはインストールされますが既存の"
+"パッケージが削除されることはありません。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:114
@@ -798,6 +809,9 @@ msgid ""
 "also remove installed packages if that is required in order to resolve a "
 "package conflict."
 msgstr ""
+"<literal>full-upgrade</literal> はアップグレードの機能を実行しますが、パッ"
+"ケージの衝突を解決するために必要であればインストールされているパッケージの削"
+"除も行います。"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml:124 apt-get.8.xml:257 apt-cache.8.xml:250 apt-mark.8.xml:110
@@ -809,7 +823,7 @@ msgstr "オプション"
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml:134
 msgid "Script usage"
-msgstr ""
+msgstr "スクリプトでの利用"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml:136
@@ -820,11 +834,16 @@ msgid ""
 "&apt-cache; and &apt-get; via APT options. Please prefer using these "
 "commands in your scripts."
 msgstr ""
+"&apt; コマンドラインはエンドユーザ向けツールとして設計されており、出力はバー"
+"ジョン間で変更される可能性があります。後方互換性を損なうことのないようには努"
+"めますが、その保証はありません。&apt; の機能は全てAPTオプションを経由して "
+"&apt-cache; や &apt-get; で利用可能です。スクリプトでは各コマンドの利用を選択"
+"するようにしてください。"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml:144
 msgid "Differences to &apt-get;"
-msgstr ""
+msgstr "&apt-get; との違い"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml:145
@@ -833,20 +852,20 @@ msgid ""
 "does not need to be backward compatible like &apt-get;. Therefore some "
 "options are different:"
 msgstr ""
+"<command>apt</command> コマンドはエンドユーザにとって使いやすいように意図して"
+"作られているため &apt-get; のように後方互換性が必ずしもあるとは限りません。し"
+"たがって、一部のオプションに異なる点があります:"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: apt.8.xml:151
-#, fuzzy
-#| msgid "the <literal>Package:</literal> line"
 msgid "The option <literal>DPkg::Progress-Fancy</literal> is enabled."
-msgstr "<literal>Package:</literal> 行"
+msgstr ""
+"オプション <literal>DPkg::Progress-Fancy</literal> が有効になっています。"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: apt.8.xml:155
-#, fuzzy
-#| msgid "the <literal>Component:</literal> line"
 msgid "The option <literal>APT::Color</literal> is enabled."
-msgstr "<literal>Component:</literal> 行"
+msgstr "オプション <literal>APT::Color</literal> が有効になっています。"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: apt.8.xml:159
@@ -854,15 +873,17 @@ msgid ""
 "A new <literal>list</literal> command is available similar to <literal>dpkg "
 "--list</literal>."
 msgstr ""
+"新しい <literal>list</literal> コマンドは <literal>dpkg --list</literal> と同"
+"じように利用できます。"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: apt.8.xml:164
-#, fuzzy
-#| msgid "the <literal>Archive:</literal> or <literal>Suite:</literal> line"
 msgid ""
 "The option <literal>upgrade</literal> has <literal>--with-new-pkgs</literal> "
 "enabled by default."
-msgstr "<literal>Archive:</literal> 行や <literal>Suite:</literal> 行"
+msgstr ""
+"オプション <literal>upgrade</literal> では <literal>--with-new-pkgs</"
+"literal> がデフォルトで有効になっています。"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml:174 apt-get.8.xml:558 apt-cache.8.xml:352 apt-key.8.xml:197
@@ -875,18 +896,12 @@ msgstr "関連項目"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml:175
-#, fuzzy
-#| msgid ""
-#| "&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
-#| "&apt-config;, &apt-secure;, The APT User's guide in &guidesdir;, &apt-"
-#| "preferences;, the APT Howto."
 msgid ""
 "&apt-get;, &apt-cache;, &sources-list;, &apt-conf;, &apt-config;, The APT "
 "User's guide in &guidesdir;, &apt-preferences;, the APT Howto."
 msgstr ""
-"&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
-"&apt-config;, &apt-secure;, &guidesdir; にある APT ユーザガイド, &apt-"
-"preferences;, APT Howto"
+"&apt-get;、 &apt-cache;、 &sources-list;、 &apt-conf;、 &apt-config;、 "
+"&guidesdir; にあるAPTユーザガイド、 &apt-preferences;、 APT Howto."
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.8.xml:180 apt-get.8.xml:564 apt-cache.8.xml:357 apt-mark.8.xml:137
@@ -897,16 +912,12 @@ msgstr "診断メッセージ"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.8.xml:181
-#, fuzzy
-#| msgid ""
-#| "<command>apt-get</command> returns zero on normal operation, decimal 100 "
-#| "on error."
 msgid ""
 "<command>apt</command> returns zero on normal operation, decimal 100 on "
 "error."
 msgstr ""
-"<command>apt-get</command> は正常終了時に 0 を返します。エラー時には十進の "
-"100 を返します。"
+"<command>apt</command> は正常終了時に 0 を返します。エラー時には十進の 100 を"
+"返します。"
 
 #. type: Content of: <refentry><refnamediv><refpurpose>
 #: apt-get.8.xml:35
@@ -915,12 +926,6 @@ msgstr "APT パッケージ操作ユーティリティ -- コマンドライン�
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:41
-#, fuzzy
-#| msgid ""
-#| "<command>apt-get</command> is the command-line tool for handling "
-#| "packages, and may be considered the user's \"back-end\" to other tools "
-#| "using the APT library.  Several \"front-end\" interfaces exist, such as "
-#| "&dselect;, &aptitude;, &synaptic; and &wajig;."
 msgid ""
 "<command>apt-get</command> is the command-line tool for handling packages, "
 "and may be considered the user's \"back-end\" to other tools using the APT "
@@ -929,8 +934,8 @@ msgid ""
 msgstr ""
 "<command>apt-get</command> は、パッケージを操作するコマンドラインツールで、"
 "APT ライブラリを用いる他のツールのユーザ側「バックエンド」といえるものです。"
-"「フロントエンド」インターフェースには、&dselect;, &aptitude;, &synaptic;, "
-"&wajig; などがあります。"
+"「フロントエンド」インターフェースには、&aptitude;, &synaptic;, &wajig; など"
+"があります。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:46 apt-cache.8.xml:46 apt-cdrom.8.xml:53 apt-config.8.xml:46
@@ -1229,15 +1234,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:217
-#, fuzzy
-#| msgid ""
-#| "<literal>clean</literal> clears out the local repository of retrieved "
-#| "package files. It removes everything but the lock file from "
-#| "<filename>&cachedir;/archives/</filename> and <filename>&cachedir;/"
-#| "archives/partial/</filename>. When APT is used as a &dselect; method, "
-#| "<literal>clean</literal> is run automatically.  Those who do not use "
-#| "dselect will likely want to run <literal>apt-get clean</literal> from "
-#| "time to time to free up disk space."
 msgid ""
 "<literal>clean</literal> clears out the local repository of retrieved "
 "package files. It removes everything but the lock file from "
@@ -1246,10 +1242,7 @@ msgid ""
 msgstr ""
 "<literal>clean</literal> は、取得したパッケージのローカルリポジトリを掃除しま"
 "す。<filename>&cachedir;/archives/</filename> と <filename>&cachedir;/"
-"archives/partial/</filename> からロックファイル以外すべて削除します。APT が "
-"&dselect; から呼ばれるときには、自動的に <literal>clean</literal> が実行され"
-"ます。dselectを使用しない場合は、ディスクスペースを解放するため、時々 "
-"<literal>apt-get clean</literal> を実行したくなるでしょう。"
+"archives/partial/</filename> からロックファイル以外すべて削除します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:224
@@ -1331,19 +1324,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:277
-#, fuzzy
-#| msgid ""
-#| "Fix; attempt to correct a system with broken dependencies in place. This "
-#| "option, when used with install/remove, can omit any packages to permit "
-#| "APT to deduce a likely solution. If packages are specified, these have to "
-#| "completely correct the problem. The option is sometimes necessary when "
-#| "running APT for the first time; APT itself does not allow broken package "
-#| "dependencies to exist on a system. It is possible that a system's "
-#| "dependency structure can be so corrupt as to require manual intervention "
-#| "(which usually means using &dselect; or <command>dpkg --remove</command> "
-#| "to eliminate some of the offending packages). Use of this option together "
-#| "with <option>-m</option> may produce an error in some situations.  "
-#| "Configuration Item: <literal>APT::Get::Fix-Broken</literal>."
 msgid ""
 "Fix; attempt to correct a system with broken dependencies in place. This "
 "option, when used with install/remove, can omit any packages to permit APT "
@@ -1363,10 +1343,10 @@ msgstr ""
 "体は、システムに存在する破損したパッケージ依存関係を許すことができないので、"
 "初めて APT を実行する場合、このオプションが必要になることがあります。システム"
 "の依存関係構造にかなり問題がある場合は、手動で修正するよう要求することもあり"
-"ます。(通常は、問題のあるパッケージを取り除くのに &dselect; や <command>dpkg "
-"--remove</command> を使用します) このオプションを <option>-m</option> オプ"
-"ションと同時に使用すると、エラーになる状況があるかもしれません。設定項目: "
-"<literal>APT::Get::Fix-Broken</literal>"
+"ます。(通常は、問題のあるパッケージを取り除くのに <command>dpkg --remove</"
+"command> を使用します) このオプションを <option>-m</option> オプションと同時"
+"に使用すると、エラーになる状況があるかもしれません。設定項目: <literal>APT::"
+"Get::Fix-Broken</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:292
@@ -1502,14 +1482,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:370
-#, fuzzy
-#| msgid ""
-#| "This option controls the architecture packages are built for by "
-#| "<command>apt-get source --compile</command> and how cross-"
-#| "builddependencies are satisfied. By default is it not set which means "
-#| "that the host architecture is the same as the build architecture (which "
-#| "is defined by <literal>APT::Architecture</literal>).  Configuration Item: "
-#| "<literal>APT::Get::Host-Architecture</literal>"
 msgid ""
 "This option controls the architecture packages are built for by <command>apt-"
 "get source --compile</command> and how cross-builddependencies are "
@@ -1522,18 +1494,10 @@ msgstr ""
 "ケージのアーキテクチャや、どのようにクロス依存関係を解決するかを制御します。"
 "デフォルトでは未定義で、これはホストアーキテクチャは、(<literal>APT::"
 "Architecture</literal> で定義した) ビルドアーキテクチャと同じという意味になり"
-"ます。設定項目: <literal>APT::Get::Host-Architecture</literal>"
+"ます。設定項目: <literal>APT::Get::Host-Architecture</literal>。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:380
-#, fuzzy
-#| msgid ""
-#| "This option controls the architecture packages are built for by "
-#| "<command>apt-get source --compile</command> and how cross-"
-#| "builddependencies are satisfied. By default is it not set which means "
-#| "that the host architecture is the same as the build architecture (which "
-#| "is defined by <literal>APT::Architecture</literal>).  Configuration Item: "
-#| "<literal>APT::Get::Host-Architecture</literal>"
 msgid ""
 "This option controls the activated build profiles for which a source package "
 "is built by <command>apt-get source --compile</command> and how build "
@@ -1541,11 +1505,11 @@ msgid ""
 "than one build profile can be activated at a time by concatenating them with "
 "a comma.  Configuration Item: <literal>APT::Build-Profiles</literal>."
 msgstr ""
-"このオプションは、<command>apt-get source --compile</command> で構築するパッ"
-"ケージのアーキテクチャや、どのようにクロス依存関係を解決するかを制御します。"
-"デフォルトでは未定義で、これはホストアーキテクチャは、(<literal>APT::"
-"Architecture</literal> で定義した) ビルドアーキテクチャと同じという意味になり"
-"ます。設定項目: <literal>APT::Get::Host-Architecture</literal>"
+"このオプションは、<command>apt-get source --compile</command> でパッケージを"
+"ビルドする際に有効化するビルドプロファイルや、どのようにクロス依存関係を解決"
+"するかを制御します。デフォルトでは有効化するビルドプロファイルはありません。"
+"コンマで連結することで複数のビルドプロファイルを有効化できます。設定項目: "
+"<literal>APT::Get::Host-Architecture</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:391
@@ -1580,6 +1544,13 @@ msgid ""
 "will never remove packages, only allow adding new ones.  Configuration Item: "
 "<literal>APT::Get::Upgrade-Allow-New</literal>."
 msgstr ""
+"<literal>upgrade</literal> と併せて使った場合に新しいパッケージのインストール"
+"を許可します。これは新しい依存をインストールするために既にインストールされて"
+"いるパッケージを更新する必要がある場合に有用です。パッケージを保留する代わり"
+"に <literal>upgrade</literal> がパッケージをアップグレードして新しい依存をイ"
+"ンストールします。このオプションと併せて使った場合、<literal>upgrade</"
+"literal> がパッケージを削除することはなく、新規追加を許可するだけであることに"
+"注意してください。設定項目: <literal>APT::Get::Upgrade-Allow-New</literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-get.8.xml:415
@@ -1796,6 +1767,11 @@ msgid ""
 "Item: <literal>Dpkg::Progress</literal> and <literal>Dpkg::Progress-Fancy</"
 "literal>."
 msgstr ""
+"パッケージのインストール、アップグレード、削除時にユーザにとってわかりやすい"
+"形で進捗情報をターミナルウィンドウ内に表示します。このデータの機械的に解析で"
+"きるバージョンについては apt の doc ディレクトリにある README.progress-"
+"reporting を見てください。設定項目: <literal>Dpkg::Progress</literal>、 "
+"<literal>Dpkg::Progress-Fancy</literal>"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt-get.8.xml:548 apt-cache.8.xml:345 apt-key.8.xml:176 apt-mark.8.xml:127
@@ -1805,19 +1781,14 @@ msgstr "ファイル"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:559
-#, fuzzy
-#| msgid ""
-#| "&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
-#| "&apt-config;, &apt-secure;, The APT User's guide in &guidesdir;, &apt-"
-#| "preferences;, the APT Howto."
 msgid ""
 "&apt-cache;, &apt-cdrom;, &dpkg;, &sources-list;, &apt-conf;, &apt-config;, "
 "&apt-secure;, The APT User's guide in &guidesdir;, &apt-preferences;, the "
 "APT Howto."
 msgstr ""
-"&apt-cache;, &apt-cdrom;, &dpkg;, &dselect;, &sources-list;, &apt-conf;, "
-"&apt-config;, &apt-secure;, &guidesdir; にある APT ユーザガイド, &apt-"
-"preferences;, APT Howto"
+"&apt-cache;, &apt-cdrom;, &dpkg;, &sources-list;, &apt-conf;, &apt-config;, "
+"&apt-secure;, &guidesdir; にある APT ユーザガイド, &apt-preferences;, APT "
+"Howto"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-get.8.xml:565
@@ -2482,7 +2453,8 @@ msgstr ""
 "ローカルキーリングをアーカイブキーリングで更新し、もう有効でなくなったアーカ"
 "イブキーをローカルキーリングから削除します。アーカイブキーリングは、使用中の"
 "ディストリビューションにある <literal>archive-keyring</literal> パッケージ "
-"(例: &keyring-distro; では &keyring-package; パッケージ) で提供されています。"
+"(例えば &keyring-distro; では &keyring-package; パッケージ) で提供されていま"
+"す。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-key.8.xml:146
@@ -2802,11 +2774,12 @@ msgid ""
 msgstr ""
 "アップロードされたパッケージが検証されてアーカイブに格納されると、メンテナの"
 "署名を取り外し、パッケージのチェックサムを計算して、Packages ファイルに格納し"
-"ます。その後、全パッケージファイルのチェックサムを計算して、Release ファイル"
+"ます。その後、全 Packages ファイルのチェックサムを計算して、Release ファイル"
 "に格納します。Release ファイルは、その &keyring-distro; リリースのアーカイブ"
 "キーで署名され、&keyring-distro; ミラーサイトでパッケージや Packages ファイル"
-"とともに配布されます。このキーは、&keyring-package; パッケージに収録されてい"
-"る、&keyring-distro; アーカイブキーリングに含まれます。"
+"とともに配布されます。このキーは、<package>debian-archive-keyring</package> "
+"パッケージに収録されている、&keyring-distro; アーカイブキーリングに含まれま"
+"す。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt-secure.8.xml:115
@@ -3064,19 +3037,14 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:87
-#, fuzzy
-#| msgid ""
-#| "Mount point; specify the location to mount the CD-ROM. This mount point "
-#| "must be listed in <filename>/etc/fstab</filename> and properly "
-#| "configured.  Configuration Item: <literal>Acquire::cdrom::mount</literal>."
 msgid ""
 "Do not try to auto-detect the CD-ROM path. Usually combined with the "
 "<option>--cdrom</option> option.  Configuration Item: <literal>Acquire::"
 "cdrom::AutoDetect</literal>."
 msgstr ""
-"マウントポイント - CD-ROM をマウントする場所を指定します。このマウントポイン"
-"トは、<filename>/etc/fstab</filename> に正しく設定されている必要があります。"
-"設定項目: <literal>Acquire::cdrom::mount</literal>"
+"CD-ROM パスの自動検出を試行しません。通常、<option>--cdrom</option> オプショ"
+"ンと組み合わせて使います。設定項目: <literal>Acquire::cdrom::AutoDetect</"
+"literal>"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt-cdrom.8.xml:95
@@ -3600,6 +3568,10 @@ msgid ""
 "is empty. The <envar>DEB_BUILD_PROFILES</envar> as used by &dpkg-"
 "buildpackage; overrides the list notation."
 msgstr ""
+"構築依存の解決にあたって有効になっているビルドプロファイルを名前空間の"
+"「<literal>profile.</literal>」接頭辞を取り除いたもの全ての一覧です。デフォル"
+"トではこの一覧は空です。&dpkg-buildpackage; で利用される "
+"<envar>DEB_BUILD_PROFILES</envar> はこの一覧よりも優先されます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:190
@@ -3997,13 +3969,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:400
-#, fuzzy
-#| msgid ""
-#| "The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</"
-#| "literal> which accepts integer values in kilobytes. The default value is "
-#| "0 which deactivates the limit and tries to use all available bandwidth "
-#| "(note that this option implicitly disables downloading from multiple "
-#| "servers at the same time.)"
 msgid ""
 "The used bandwidth can be limited with <literal>Acquire::http::Dl-Limit</"
 "literal> which accepts integer values in kilobytes per second. The default "
@@ -4011,10 +3976,10 @@ msgid ""
 "bandwidth.  Note that this option implicitly disables downloading from "
 "multiple servers at the same time."
 msgstr ""
-"使用する帯域を制限するには、<literal>Acquire::http::Dl-Limit</literal> にキロ"
-"バイトで整数値を与えます。デフォルト値は 0 で、制限を解除し、使用できる帯域を"
-"すべて使おうとします (このオプションは暗黙的に、同時に複数のサーバからダウン"
-"ロードしなくなることに注意してください)。"
+"使用する帯域を制限するには、<literal>Acquire::http::Dl-Limit</literal> に秒あ"
+"たりのキロバイトで整数値を与えます。デフォルト値は 0 で、制限を解除し、使用で"
+"きる帯域をすべて使おうとします。このオプションは暗黙的に、同時に複数のサーバ"
+"からダウンロードしなくなることに注意してください。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:407
@@ -4040,6 +4005,14 @@ msgid ""
 "takes precedence over the legacy option name <literal>ProxyAutoDetect</"
 "literal>."
 msgstr ""
+"<literal>Acquire::http::Proxy-Auto-Detect</literal> を使って利用する http プ"
+"ロキシを検出するための外部コマンドを指定できます。APT はコマンドが標準出力に "
+"<literal>http://proxy:port/</literal> 形式でプロキシを出力することを期待して"
+"います。これは全体を指定する <literal>Acquire::http::Proxy</literal> よりも優"
+"先されますが <literal>Acquire::http::Proxy::$HOST</literal> 経由でセットした"
+"特定のホストのプロキシ設定はこれよりも優先されます。avahi を利用する実装例に"
+"ついては &squid-deb-proxy-client; パッケージを見てください。このオプションは"
+"古い <literal>ProxyAutoDetect</literal> よりも優先されます。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:429
@@ -4404,12 +4377,12 @@ msgstr ""
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:585
 msgid "When downloading, force to use only the IPv4 protocol."
-msgstr ""
+msgstr "ダウンロード時に IPv4 プロトコルだけを使うように強制します。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:591
 msgid "When downloading, force to use only the IPv6 protocol."
-msgstr ""
+msgstr "ダウンロード時に IPv6 プロトコルだけを使うように強制します。"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:598
@@ -4437,17 +4410,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:607
-#, fuzzy
-#| msgid ""
-#| "<literal>Dir::Cache</literal> contains locations pertaining to local "
-#| "cache information, such as the two package caches <literal>srcpkgcache</"
-#| "literal> and <literal>pkgcache</literal> as well as the location to place "
-#| "downloaded archives, <literal>Dir::Cache::archives</literal>. Generation "
-#| "of caches can be turned off by setting their names to the empty string. "
-#| "This will slow down startup but save disk space. It is probably "
-#| "preferable to turn off the pkgcache rather than the srcpkgcache. Like "
-#| "<literal>Dir::State</literal> the default directory is contained in "
-#| "<literal>Dir::Cache</literal>"
 msgid ""
 "<literal>Dir::Cache</literal> contains locations pertaining to local cache "
 "information, such as the two package caches <literal>srcpkgcache</literal> "
@@ -4461,12 +4423,13 @@ msgid ""
 msgstr ""
 "<literal>Dir::Cache</literal> は、ローカルキャッシュ情報に関する場所を格納し"
 "ています。これは、ダウンロード済アーカイブの場所を示す <literal>Dir::Cache::"
-"archives</literal> と同様に、<literal>srcpkgcache</literal> と "
-"<literal>pkgcache</literal> のパッケージキャッシュの場所になります。それぞれ"
-"に空文字をセットすることで、キャッシュの生成を無効にできます。これにより起動"
-"時に遅くなりますが、ディスク容量を節約できます。おそらく、srcpkgcache よりも "
-"pkgcache を無効にすることが多いと思います。<literal>Dir::State</literal> と同"
-"様、<literal>Dir::Cache</literal> はデフォルトディレクトリを含んでいます。"
+"archives</literal> と同様に、<literal>srcpkgcache</literal> と <literal>"
+"pkgcache</literal> のパッケージキャッシュの場所になります。<literal>pkgcache"
+"</literal> や <literal>srcpkgcache</literal> に <literal>\"\"</literal> を"
+"セットすることで、キャッシュの生成を無効にできます。これにより起動時に遅くな"
+"りますが、ディスク容量を節約できます。おそらく、srcpkgcache よりも pkgcache "
+"を無効にすることが多いと思います。<literal>Dir::State</literal> と同様、"
+"<literal>Dir::Cache</literal> はデフォルトディレクトリを含んでいます。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:617
@@ -4648,13 +4611,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:713
-#, fuzzy
-#| msgid ""
-#| "This is a list of shell commands to run before invoking &dpkg;. Like "
-#| "<literal>options</literal> this must be specified in list notation. The "
-#| "commands are invoked in order using <filename>/bin/sh</filename>; should "
-#| "any fail APT will abort. APT will pass the filenames of all .deb files it "
-#| "is going to install to the commands, one per line on standard input."
 msgid ""
 "This is a list of shell commands to run before invoking &dpkg;. Like "
 "<literal>options</literal> this must be specified in list notation. The "
@@ -4666,18 +4622,12 @@ msgstr ""
 "&dpkg; を呼び出す前に実行するシェルコマンドのリストです。<literal>options</"
 "literal> のようにリスト記法で指定しなければなりません。コマンドは <filename>/"
 "bin/sh</filename> を通して呼び出され、何か問題があれば、APT は異常終了しま"
-"す。APT はインストールしようとする全 .deb ファイルのファイル名を、1 行ずつコ"
-"マンドの標準入力に送ります。"
+"す。APT はインストールしようとする全 .deb ファイルのファイル名を、要求した"
+"ファイルディスクリプタについて1 行ずつ、デフォルトではコマンドの標準入力に送"
+"ります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:720
-#, fuzzy
-#| msgid ""
-#| "Version 2 of this protocol dumps more information, including the protocol "
-#| "version, the APT configuration space and the packages, files and versions "
-#| "being changed. Version 2 is enabled by setting <literal>DPkg::Tools::"
-#| "options::cmd::Version</literal> to 2. <literal>cmd</literal> is a command "
-#| "given to <literal>Pre-Install-Pkgs</literal>."
 msgid ""
 "Version 2 of this protocol dumps more information, including the protocol "
 "version, the APT configuration space and the packages, files and versions "
@@ -4686,9 +4636,8 @@ msgid ""
 msgstr ""
 "このプロトコルのバージョン 2 では、(プロトコルのバージョンや APT 設定スペー"
 "ス、パッケージを含む) 詳細情報やファイル、変更されているバージョンを出力しま"
-"す。<literal>DPkg::Tools::options::cmd::Version</literal> に 2 を設定すると、"
-"バージョン 2 を有効にできます。<literal>cmd</literal> は <literal>Pre-"
-"Install-Pkgs</literal> で与えられるコマンドです。"
+"す。バージョン 3 では出力の各バージョンにアーキテクチャと "
+"<literal>MultiArch</literal> フラグが追加されています。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:725
@@ -4700,6 +4649,11 @@ msgid ""
 "the requested version it will send the information in the highest version it "
 "has support for instead."
 msgstr ""
+"コマンド <literal><replaceable>cmd</replaceable></literal> で利用するプロトコ"
+"ルのバージョンは <literal>DPkg::Tools::options::<replaceable>cmd</"
+"replaceable>::Version</literal> の設定により選択でき、デフォルトはバージョン "
+"1 となっています。リクエストしたバージョンを APT がサポートしていない場合はサ"
+"ポートしている最大のバージョンの情報を代わりに送ります。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:732
@@ -4711,6 +4665,12 @@ msgid ""
 "looking for the environment variable <envar>APT_HOOK_INFO_FD</envar> which "
 "contains the number of the used file descriptor as a confirmation."
 msgstr ""
+"情報の送信に利用するファイルディスクリプタは <literal>DPkg::Tools::options::"
+"<replaceable>cmd</replaceable>::InfoFD</literal> によりリクエストでき、デフォ"
+"ルトは <literal>0</literal> で標準入力を指定します。バージョン 0.9.11 から利"
+"用可能となりました。環境変数 <envar>APT_HOOK_INFO_FD</envar> を見ることでこの"
+"オプションに対応していることを検出でき、それには確認として利用しているファイ"
+"ルディスクリプタの番号が収録されています。"
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.conf.5.xml:742
@@ -5241,6 +5201,9 @@ msgid ""
 "g. the config options <literal>DPkg::{Pre,Post}-Invoke</literal> or "
 "<literal>APT::Update::{Pre,Post}-Invoke</literal>."
 msgstr ""
+"aptのフックにより呼び出される外部コマンドを表示します。これには例えば、設定オ"
+"プション <literal>DPkg::{Pre,Post}-Invoke</literal> や <literal>APT::Update::"
+"{Pre,Post}-Invoke</literal> があります。"
 
 #. type: Content of: <refentry><refsect1><title>
 #: apt.conf.5.xml:1216 apt_preferences.5.xml:547 sources.list.5.xml:239
@@ -6688,10 +6651,9 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><literallayout>
 #: sources.list.5.xml:82
-#, fuzzy, no-wrap
-#| msgid "deb [ options ] uri distribution [component1] [component2] [...]"
+#, no-wrap
 msgid "deb [ options ] uri suite [component1] [component2] [...]"
-msgstr "deb [ オプション ] uri distribution [コンポーネント1] [コンポーネント2] [...]"
+msgstr "deb [ オプション ] uri スイート [コンポーネント1] [コンポーネント2] [...]"
 
 #. type: Content of: <refentry><refsect1><para><literallayout>
 #: sources.list.5.xml:86
@@ -6715,6 +6677,23 @@ msgid ""
 "     [option1]: [option1-value]\n"
 "   "
 msgstr ""
+"     Types: deb deb-src\n"
+"     URIs: http://example.com\n"
+"     Suites: stable testing\n"
+"     Sections: component1 component2\n"
+"     Description: short\n"
+"      long long long\n"
+"     [option1]: [option1-value]\n"
+"\n"
+"     Types: deb\n"
+"     URIs: http://another.example.com\n"
+"     Suites: experimental\n"
+"     Sections: component1 component2\n"
+"     Enabled: no\n"
+"     Description: short\n"
+"      long long long\n"
+"     [option1]: [option1-value]\n"
+"   "
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:84
@@ -6722,19 +6701,11 @@ msgid ""
 "Alternatively a rfc822 style format is also supported: <placeholder type="
 "\"literallayout\" id=\"0\"/>"
 msgstr ""
+"他に rfc822 形式の表記もサポートしています: <placeholder type=\"literallayout"
+"\" id=\"0\"/>"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:105
-#, fuzzy
-#| msgid ""
-#| "The URI for the <literal>deb</literal> type must specify the base of the "
-#| "Debian distribution, from which APT will find the information it needs.  "
-#| "<literal>distribution</literal> can specify an exact path, in which case "
-#| "the components must be omitted and <literal>distribution</literal> must "
-#| "end with a slash (<literal>/</literal>). This is useful for the case when "
-#| "only a particular sub-section of the archive denoted by the URI is of "
-#| "interest.  If <literal>distribution</literal> does not specify an exact "
-#| "path, at least one <literal>component</literal> must be present."
 msgid ""
 "The URI for the <literal>deb</literal> type must specify the base of the "
 "Debian distribution, from which APT will find the information it needs.  "
@@ -6746,25 +6717,16 @@ msgid ""
 "<literal>component</literal> must be present."
 msgstr ""
 "<literal>deb</literal> タイプの URI は、APT が必要な情報を見つけられるよう"
-"に、Debian ディストリビューションの基底を指定しなければなりません。"
-"<literal>distribution</literal> には正確なパスを指定できます。その場合 "
-"component を省略し、<literal>distribution</literal> はスラッシュ (<literal>/"
-"</literal>) で終わらなくてはなりません。これは URL で指定されたアーカイブの、"
-"特定のサブセクションのみに関心があるときに役に立ちます。"
-"<literal>distribution</literal> に正確なパスを指定しないのなら、少なくともひ"
-"とつは <literal>component</literal> を指定しなければなりません。"
+"に、Debian ディストリビューションの基底を指定しなければなりません。<literal>"
+"スイート</literal>には正確なパスを指定できます。その場合コンポーネントを省略"
+"し、<literal>スイート</literal>はスラッシュ (<literal>/</literal>) で終わらな"
+"くてはなりません。これは URL で指定されたアーカイブの、特定のサブセクションの"
+"みに関心があるときに役に立ちます。<literal>スイート</literal>に正確なパスを指"
+"定しないのなら、少なくともひとつは <literal>コンポーネント</literal> を指定し"
+"なければなりません。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:114
-#, fuzzy
-#| msgid ""
-#| "<literal>distribution</literal> may also contain a variable, <literal>"
-#| "$(ARCH)</literal> which expands to the Debian architecture (such as "
-#| "<literal>amd64</literal> or <literal>armel</literal>) used on the system. "
-#| "This permits architecture-independent <filename>sources.list</filename> "
-#| "files to be used. In general this is only of interest when specifying an "
-#| "exact path, <literal>APT</literal> will automatically generate a URI with "
-#| "the current architecture otherwise."
 msgid ""
 "<literal>suite</literal> may also contain a variable, <literal>$(ARCH)</"
 "literal> which expands to the Debian architecture (such as <literal>amd64</"
@@ -6774,29 +6736,16 @@ msgid ""
 "<literal>APT</literal> will automatically generate a URI with the current "
 "architecture otherwise."
 msgstr ""
-"<literal>distribution</literal> は、<literal>$(ARCH)</literal> 変数を含む場合"
-"があります。<literal>$(ARCH)</literal> 変数は、システムで使用している Debian "
-"アーキテクチャ (<literal>amd64</literal> や <literal>armel</literal> など) に"
-"展開されます。これにより、アーキテクチャに依存しない <filename>sources.list</"
+"<literal>スイート</literal> は、<literal>$(ARCH)</literal> 変数を含む場合があ"
+"ります。<literal>$(ARCH)</literal> 変数は、システムで使用している Debian アー"
+"キテクチャ (<literal>amd64</literal> や <literal>armel</literal> など) に展開"
+"されます。これにより、アーキテクチャに依存しない <filename>sources.list</"
 "filename> ファイルを使用できます。一般的に、これは正しいパスを指定するときに"
 "気にするだけです。そうでない場合は、<literal>APT</literal> は現在のアーキテク"
 "チャで URI を自動的に生成します。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:122
-#, fuzzy
-#| msgid ""
-#| "Since only one distribution can be specified per line it may be necessary "
-#| "to have multiple lines for the same URI, if a subset of all available "
-#| "distributions or components at that location is desired.  APT will sort "
-#| "the URI list after it has generated a complete set internally, and will "
-#| "collapse multiple references to the same Internet host, for instance, "
-#| "into a single connection, so that it does not inefficiently establish an "
-#| "FTP connection, close it, do something else, and then re-establish a "
-#| "connection to that same host. This feature is useful for accessing busy "
-#| "FTP sites with limits on the number of simultaneous anonymous users. APT "
-#| "also parallelizes connections to different hosts to more effectively deal "
-#| "with sites with low bandwidth."
 msgid ""
 "In the traditional style sources.list format since only one distribution can "
 "be specified per line it may be necessary to have multiple lines for the "
@@ -6810,14 +6759,15 @@ msgid ""
 "users. APT also parallelizes connections to different hosts to more "
 "effectively deal with sites with low bandwidth."
 msgstr ""
-"有効な全 distribution, component の場所から、一部が必要な場合、1 行につき 1 "
-"distribution しか指定できないため、同じ URI の行を複数記述することになるで"
-"しょう。APT は内部で URI リストを生成してから、並べ替えます。そして、同じイン"
-"ターネットホストに対しては複数の参照をまとめます。例えば FTP 接続後、切断して"
-"からまた同じホストに再接続するといった、効率の悪いことをせずに、1 接続にまと"
-"めます。この機能は、同時接続匿名ユーザ数を制限している、混んでいる FTP サイト"
-"にアクセスするのに便利です。APT は、帯域の狭いサイトを効率よく扱うのに、異な"
-"るホストへは、接続を並行して行うようにもしています。"
+"古い形式の sources.list の記法では有効なディストリビューションやコンポーネン"
+"トの場所全てから、一部が必要な場合、1 行につき 1 つのディストリビューションし"
+"か指定できないため、同じ URI の行を複数記述することになるでしょう。APT は内部"
+"で URI リストを生成してから、並べ替えます。そして、同じインターネットホストに"
+"対しては複数の参照をまとめます。例えば FTP 接続後、切断してからまた同じホスト"
+"に再接続するといった、効率の悪いことをせずに、1 接続にまとめます。この機能"
+"は、同時接続匿名ユーザ数を制限している、混んでいる FTP サイトにアクセスするの"
+"に便利です。APT は、帯域の狭いサイトを効率よく扱うのに、異なるホストへは、接"
+"続を並行して行うようにもしています。"
 
 #. type: Content of: <refentry><refsect1><para>
 #: sources.list.5.xml:136
@@ -6851,23 +6801,16 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:146
-#, fuzzy
-#| msgid ""
-#| "<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-#| "replaceable>,…</literal> can be used to specify for which architectures "
-#| "information should be downloaded. If this option is not set all "
-#| "architectures defined by the <literal>APT::Architectures</literal> option "
-#| "will be downloaded."
 msgid ""
 "<literal>arch+=<replaceable>arch1</replaceable>,<replaceable>arch2</"
 "replaceable>,…</literal> and <literal>arch-=<replaceable>arch1</replaceable>,"
 "<replaceable>arch2</replaceable>,…</literal> which can be used to add/remove "
 "architectures from the set which will be downloaded."
 msgstr ""
-"<literal>arch=<replaceable>arch1</replaceable>,<replaceable>arch2</"
-"replaceable>,…</literal> により、どのアーキテクチャ情報をダウンロードするか指"
-"定します。このオプションを指定していないと、<literal>APT::Architectures</"
-"literal> オプションに定義してある、全アーキテクチャをダウンロードします。"
+"<literal>arch+=<replaceable>arch1</replaceable>,<replaceable>arch2</"
+"replaceable>,…</literal> あるいは <literal>arch-=<replaceable>arch1</"
+"replaceable>,<replaceable>arch2</replaceable>,…</literal> を使って、ダウン"
+"ロードするアーキテクチャを追加、削除できます。"
 
 #. type: Content of: <refentry><refsect1><para><itemizedlist><listitem><para>
 #: sources.list.5.xml:149
@@ -8229,7 +8172,7 @@ msgstr "jgg@debian.org"
 #. type: Content of: <book><bookinfo><releaseinfo>
 #: guide.dbk:20 offline.dbk:20
 msgid "Version &apt-product-version;"
-msgstr ""
+msgstr "バージョン &apt-product-version;"
 
 #. type: Content of: <book><bookinfo><abstract><para>
 #: guide.dbk:24
@@ -8247,7 +8190,7 @@ msgstr ""
 #. type: Content of: <book><bookinfo><legalnotice><title>
 #: guide.dbk:31 offline.dbk:32
 msgid "License Notice"
-msgstr ""
+msgstr "ライセンスについて"
 
 #. type: Content of: <book><bookinfo><legalnotice><para>
 #: guide.dbk:33 offline.dbk:34
@@ -8284,6 +8227,10 @@ msgid ""
 "interface. Both provide a way to install and remove packages as well as "
 "download new packages from the Internet."
 msgstr ""
+"APT パッケージは現在、APT <command>dselect</command> メソッドと <command>apt-"
+"get</command> コマンドラインユーザインターフェイスの2つを収録しています。両方"
+"ともインターネットから新しいパッケージをダウンロードするのと同様、パッケージ"
+"をインストール、削除する方法を提供しています。"
 
 #. type: Content of: <book><chapter><section><title>
 #: guide.dbk:57
@@ -8297,6 +8244,9 @@ msgid ""
 "with each package to help assure that it integrates cleanly and easily into "
 "the system. The most prominent of its features is the dependency system."
 msgstr ""
+"Debian パッケージシステムには各パッケージに関連する膨大な情報があり、システム"
+"に手際良く簡単に統合することを支援します。その最も重要な機能は依存システムで"
+"す。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:64
@@ -8307,6 +8257,11 @@ msgid ""
 "things the average user is required to install. Also, it allows for choices "
 "in mail transport agents, X servers and so on."
 msgstr ""
+"依存システムにより、システムにあるライブラリ等の共有要素を個々のプログラムを"
+"使えるようになります。簡単に言うと、プログラムのうちまれに利用される部分を別"
+"個のパッケージに配置して、平均的ユーザがインストールを必要とするものの数を減"
+"らします。また、メール転送エージェントや X サーバ等の選択ができるようにもなり"
+"ます。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:71
@@ -8316,7 +8271,11 @@ msgid ""
 "package requires another package to be installed at the same time to work "
 "properly."
 msgstr ""
+"依存システムの理解はまず単純な依存の概念を把握することから始まります。単純な"
+"依存というのは、あるパッケージが適切に機能するためには別のパッケージが同時に"
+"インストールされている必要があるということです。"
 
+# Translator's NOTE: maybe s/GPGP/GPG/?
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:76
 msgid ""
@@ -8325,6 +8284,10 @@ msgid ""
 "simple dependency on GPG. Also, because it is an emacs extension it has a "
 "simple dependency on emacs, without emacs it is completely useless."
 msgstr ""
+"例えば mailcrypt は emacs を拡張するプログラムで、GPG によるメールの暗号化を"
+"支援します。GPGP がインストールされていなければ mailcrypt は役に立たないので "
+"mailcrypt には GPG に単純に依存しています。また、これは emacs の拡張なので "
+"emacs に単純に依存し、emacs がないと何の役にも立ちません。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:82
@@ -8338,6 +8301,14 @@ msgid ""
 "system so all mail transport agents have a conflicting dependency with all "
 "other mail transport agents."
 msgstr ""
+"理解しておかないといけないもう一つの重要な依存に競合する依存があります。これ"
+"はあるパッケージが別のパッケージと同時にインストールされていると機能せず、シ"
+"ステムにとってひどく有害なこともあります。例として sendmail や exim、qmail 等"
+"のメール転送エージェントで考えてみましょう。メール転送エージェントはどれも"
+"メールを受け取るのにネットワークを待ち受ける必要があるため、2つインストールす"
+"ることは不可能です。複数インストールするとシステムに重大な被害を与える可能性"
+"があるため、メール転送エージェントはどれも他のあらゆるメール転送エージェント"
+"と競合依存となっています。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:92
@@ -8351,6 +8322,13 @@ msgid ""
 "depend on mail-transport-agent. This can add a great deal of confusion when "
 "trying to manually fix packages."
 msgstr ""
+"複雑な例としては、別のパッケージのように装うパッケージがあります。exim と "
+"sendmail について見てみると、その多くの目的は同一で、両方ともメールを配送し、"
+"一般的インターフェイスを解釈します。そこで、パッケージシステムにはどちらも "
+"mail-transport-agents だと宣言する方法があります。そうして exim と sendmail "
+"は両方とも mail-transport-agent を提供すると宣言し、他のメール転送エージェン"
+"トを必要とするパッケージは mail-transport-agent に依存します。手作業により"
+"パッケージを修正しようとしたときに多大な混乱が生まれる可能性があります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:102
@@ -8360,6 +8338,10 @@ msgid ""
 "issues by providing a number of automatic algorithms that help in selecting "
 "packages for installation."
 msgstr ""
+"既にインストールされている、あるいはされていないパッケージについて、1つの依存"
+"が生まれる可能性は常にあります。APT はインストールするパッケージの選択を支援"
+"する自動化でのアルゴリズムをいくつか提供することで依存問題の解決支援に努めま"
+"す。"
 
 #. type: Content of: <book><chapter><title>
 #: guide.dbk:111
@@ -8374,6 +8356,10 @@ msgid ""
 "does not understand .deb files, it works with the package's proper name and "
 "can only install .deb archives from a <emphasis>Source</emphasis>."
 msgstr ""
+"<command>apt-get</command> はコマンドラインからパッケージをインストールする簡"
+"単な方法を提供します。<command>dpkg</command> とは異なり、<command>apt-get</"
+"command> は .deb ファイルを解釈せず、連携するのはパッケージ特有の名前で、イン"
+"ストールできるのは<emphasis>ソース</emphasis>にある .deb アーカイブだけです。"
 
 #. type: Content of: <book><chapter><para><footnote><para>
 #: guide.dbk:119
@@ -8381,6 +8367,8 @@ msgid ""
 "If you are using an http proxy server you must set the http_proxy "
 "environment variable first, see sources.list(5)"
 msgstr ""
+"http プロキシサーバを使っている場合はまず http_proxy 環境変数をセットする必"
+"要があります。sources.list(5) を見てください"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:119
@@ -8390,6 +8378,10 @@ msgid ""
 "from the <emphasis>Sources</emphasis> so that it knows what packages are "
 "available. This is done with <literal>apt-get update</literal>. For instance,"
 msgstr ""
+"<command>apt-get</command> を使う前にまずやるべきことは<placeholder type=\""
+"footnote\" id=\"0\"/>パッケージ一覧を<emphasis>ソース</emphasis>から取得する"
+"ことで、それにより利用できるパッケージがわかるようになります。これには "
+"<literal>apt-get update</literal> を実行します。例えば"
 
 #. type: Content of: <book><chapter><screen>
 #: guide.dbk:127
@@ -8410,7 +8402,7 @@ msgstr ""
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:134
 msgid "Once updated there are several commands that can be used:"
-msgstr ""
+msgstr "更新後は複数のコマンドを使えます:"
 
 #. type: Content of: <book><chapter><variablelist><varlistentry><term>
 #: guide.dbk:138
@@ -8429,6 +8421,14 @@ msgid ""
 "command> or <literal>apt-get install</literal> can be used to force these "
 "packages to install."
 msgstr ""
+"upgrade を行うとシステム全体を穏やかにアップグレードします。アップグレードで"
+"は新しいパッケージのインストールや既存のパッケージの削除、アップグレードする"
+"と他のパッケージを破壊する可能性のある場合のそのパッケージのアップグレードは"
+"行いません。これは毎日実行してシステムを比較的安全にアップグレードできます。"
+"upgrade を行うとアップグレードできないパッケージがある場合にその一覧を表示し"
+"ます。これは通常新しいパッケージに依存しているか他のパッケージと競合している"
+"ということになります。<command>dselect</command> や <literal>apt-get install"
+"</literal> を使うとそういったパッケージを強制的にインストールできます。"
 
 #. type: Content of: <book><chapter><variablelist><varlistentry><term>
 #: guide.dbk:153
@@ -8446,6 +8446,12 @@ msgid ""
 "listed packages and will print a summary and ask for confirmation if "
 "anything other than its arguments are changed."
 msgstr ""
+"install を使ってパッケージを名前によりインストールします。パッケージは自動的"
+"に取得、インストールされます。これはインストールするパッケージの名前が既にわ"
+"かっていて GUI を使って選択したくない場合に有用です。インストールするパッケー"
+"ジはいくらでも指定でき、全て取得されます。install では対象パッケージ一覧から"
+"自動的に依存問題の解決に努めてまとめを提示し、指示以外の変更がある場合は確認"
+"を促します。"
 
 #. type: Content of: <book><chapter><variablelist><varlistentry><term>
 #: guide.dbk:167
@@ -8464,6 +8470,13 @@ msgid ""
 "<command>dselect</command> can be used to install any packages that may have "
 "been left out."
 msgstr ""
+"dist-upgrade は完全なアップグレードを行うように設計されていて、Debian のリ"
+"リース間のアップグレードを単純化します。洗練されたアルゴリズムを使って、シス"
+"テムをできるだけ最新のリリースにするためにインストール、アップグレード、削除"
+"する最善のパッケージ群を決定します。状況によっては <command>dselect</command> で手"
+"作業により時間を掛けて依存を解決するよりも dist-upgrade を使う方が希望には合"
+"うかもしれません。dist-upgrade 完了後は <command>dselect</command> を使って、残って"
+"いるパッケージがあればインストールできます。"
 
 #. type: Content of: <book><chapter><variablelist><varlistentry><listitem><para>
 #: guide.dbk:180
@@ -8471,6 +8484,8 @@ msgid ""
 "It is important to closely look at what dist-upgrade is going to do, its "
 "decisions may sometimes be quite surprising."
 msgstr ""
+"dist-upgrade が実行する内容をよく観察するのは重要です。かなり驚くような判断が"
+"なされることもあります。"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:187
@@ -8485,6 +8500,14 @@ msgid ""
 "the command that caused them to be downloaded again without <literal>-d</"
 "literal>."
 msgstr ""
+"<command>apt-get</command> にはコマンドラインオプションが複数あり、man ページ"
+"の <citerefentry><refentrytitle>apt-get</refentrytitle><manvolnum>8</"
+"manvolnum></citerefentry> で詳細に説明されています。最も有用なオプションは取"
+"得したファイルをインストールしない <literal>-d</literal> です。システムが大量"
+"のパッケージをダウンロードする必要がある場合、何かうまくいかなかったときに"
+"インストールを開始するのは望ましくはないでしょう。<literal>-d</literal> を指"
+"定すると、ダウンロードしたときのコマンドを単純に再び、<literal>-d</literal> "
+"を付けずに実行することでダウンロードしたアーカイブをインストールできます。"
 
 #. type: Content of: <book><chapter><title>
 #: guide.dbk:199
@@ -8499,6 +8522,10 @@ msgid ""
 "command> is used to select the packages to be installed or removed and APT "
 "actually installs them."
 msgstr ""
+"APT の <command>dselect</command> メソッドは <command>dselect</command> パッ"
+"ケージ選択 GUI を使った完全な APT システムを提供します。インストールや削除す"
+"るパッケージの選択には <command>dselect</command> を使い、実際のインストール"
+"は APT が行います。"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:207
@@ -8513,6 +8540,15 @@ msgid ""
 "have access to the latest bug fixes. APT will automatically use packages on "
 "your CD-ROM before downloading from the Internet."
 msgstr ""
+"APT メソッドを有効にするには、<command>dselect</command> でアクセス(a) を選択"
+"し、それから APT メソッドを選択する必要があります。そうするとアーカイブの取得"
+"先の場所となる<emphasis>ソース</emphasis>群を聞かれます。これにはリモートの"
+"インターネットサイトやローカルの Debian ミラー、CD-ROM を指定できます。各ソー"
+"スで Debian アーカイブ全体のうちの一部を提供でき、APT は自動的に組み合わせて"
+"パッケージ群一式を構成します。CD-ROM がある場合はまずそれを指定し、それからミ"
+"ラーを指定するのが良い方法で、そうすることで最新のバグ修正にアクセスできるよ"
+"うになります。APT はインターネットからダウンロードする前に CD-ROM にあるパッ"
+"ケージを自動的に利用します。"
 
 #. type: Content of: <book><chapter><screen>
 #: guide.dbk:218
@@ -8531,6 +8567,18 @@ msgid ""
 "\n"
 " URL [http://llug.sep.bnl.gov/debian]:\n"
 msgstr ""
+"   ディストリビューションソース位置一覧の準備\n"
+"\n"
+" Debian ディストリビューションの基底 URL を指定してください。\n"
+" 認識できるアクセス方法: http file\n"
+"\n"
+" 例:\n"
+"      file:/mnt/debian,\n"
+"      ftp://ftp.debian.org/debian,\n"
+"      http://ftp.de.debian.org/debian,\n"
+"\n"
+"\n"
+" URL [http://llug.sep.bnl.gov/debian]:\n"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:232
@@ -8539,6 +8587,9 @@ msgid ""
 "Debian archive, defaulting to a HTTP mirror. Next it asks for the "
 "distribution to get."
 msgstr ""
+"<emphasis>ソース</emphasis>の準備は基礎となる Debian アーカイブの質問から始まり、デフォル"
+"トは HTTP ミラーとなっています。その次は取得するディストリビューションを質問"
+"します。"
 
 #. type: Content of: <book><chapter><screen>
 #: guide.dbk:237
@@ -8550,6 +8601,11 @@ msgid ""
 "\n"
 " Distribution [stable]:\n"
 msgstr ""
+" 取得するディストリビューションのタグやパッケージファイルへのパスを\n"
+" / で終える形式で指定してください。ディストリビューションのタグには\n"
+" 以下のようなものがあります: stable unstable testing non-US\n"
+"\n"
+" ディストリビューション [stable]:\n"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:244
@@ -8562,6 +8618,11 @@ msgid ""
 "exported from the United States. Importing these packages into the US is "
 "legal however."
 msgstr ""
+"ディストリビューションはアーカイブ中の Debian バージョンを参照し、<emphasis>"
+"stable</emphasis> は最新のリリース版を、<emphasis>unstable</emphasis> は開発"
+"版を参照します。<emphasis>non-US</emphasis> は一部のミラーでのみ利用可能で、"
+"合衆国からの輸出ができない暗号化技術その他のものを収録するパッケージを参照し"
+"ます。ただしこういったパッケージの合衆国への輸入は合法です。"
 
 #. type: Content of: <book><chapter><screen>
 #: guide.dbk:253
@@ -8572,6 +8633,10 @@ msgid ""
 "\n"
 " Components [main contrib non-free]:\n"
 msgstr ""
+" 取得するコンポーネントを指定してください\n"
+" コンポーネントには以下のようなものがあります: main contrib non-free\n"
+"\n"
+" コンポーネント [main contrib non-free]:\n"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:259
@@ -8581,6 +8646,10 @@ msgid ""
 "packages while contrib and non-free contain things that have various "
 "restrictions placed on their use and distribution."
 msgstr ""
+"コンポーネント一覧は取得するサブディストリビューションの一覧を参照します。こ"
+"のディストリビューションはソフトウェアのライセンスを基にして分けられていま"
+"す。main にあるのは DFSG フリーのパッケージですが contrib や non-free には利"
+"用目的や配布形態に様々な制限を課せられているものが収録されています。"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:265
@@ -8588,6 +8657,8 @@ msgid ""
 "Any number of sources can be added, the setup script will continue to prompt "
 "until you have specified all that you want."
 msgstr ""
+"ソースはいくらでも追加できます。準備スクリプトは必要なソースを全て指定するま"
+"で聞き続けます。"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:269
@@ -8598,6 +8669,11 @@ msgid ""
 "available to <command>dselect</command>. [U]pdate must be performed even if "
 "<literal>apt-get update</literal> has been run before."
 msgstr ""
+"<command>dselect</command> を使う前にメニューから更新(u)を選択して利用可能な"
+"パッケージ一覧を更新する必要があります。これは <literal>apt-get update</"
+"literal> の上位集合で、取得した情報を <command>dselect</command> から利用でき"
+"るようにします。以前に <literal>apt-get update</literal> を実行していても更新"
+"(u)を実行する必要があります。"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:276
@@ -8607,6 +8683,9 @@ msgid ""
 "[R]emove commands have no meaning, the [I]nstall command performs both of "
 "them together."
 msgstr ""
+"その後は選択(s)を使って選択し、導入(i)を使ってインストールします。APT メソッ"
+"ドを使っている場合は設定(c)や削除(r)コマンドに意味はなく、導入(i)コマンドがそ"
+"の両方を実行します。"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:282
@@ -8615,6 +8694,9 @@ msgid ""
 "have been successfully installed. To change this behavior place "
 "<literal>Dselect::clean \"prompt\";</literal> in /etc/apt/apt.conf."
 msgstr ""
+"デフォルトで APT はインストールに成功したパッケージ (.deb) ファイルを自動的に"
+"削除します。この挙動を変更するには /etc/apt/apt.conf 中に <literal>Dselect::"
+"clean \"prompt\";</literal> と記述します。"
 
 #. type: Content of: <book><chapter><title>
 #: guide.dbk:288
@@ -8628,6 +8710,9 @@ msgid ""
 "to <command>apt-get</command>. The method actually provides more "
 "functionality than is present in <command>apt-get</command> alone."
 msgstr ""
+"<command>dselect</command> メソッドは実際に <command>apt-get</command> に対"
+"するラッパースクリプト群です。このメソッドでは <command>apt-get</command> 単"
+"体に存在している以上の機能を実際に提供しています。"
 
 #. type: Content of: <book><chapter><para>
 #: guide.dbk:290
@@ -8639,6 +8724,12 @@ msgid ""
 "then will print out some informative status messages so that you can "
 "estimate how far along it is and how much is left to do."
 msgstr ""
+"APT の <command>dselect</command> メソッドと <command>apt-get</command> は共"
+"に同一のインターフェイスを共有しています。通常は行う内容を告知して実行する簡"
+"単なシステムです。<placeholder type=\"footnote\" id=\"0\"/> 実行内容のまとめ"
+"を告知した後 APT が参考になる状態メッセージをいくらか表示するため、どれくら"
+"い進んでいるのか、あるいは残り作業がどれくらいあるのか見積もることができるよ"
+"うになっています。"
 
 #. type: Content of: <book><chapter><section><title>
 #: guide.dbk:301
@@ -8653,6 +8744,9 @@ msgid ""
 "At any time these operations can be performed by running <literal>apt-get "
 "check</literal>."
 msgstr ""
+"update 以外のあらゆる操作で、APT はいくつか処理を行い内部状態を準備します。ま"
+"た、システムの状態についてもいくらか確認します。この処理は <literal>apt-get "
+"check</literal> によりいつでも実行できます。"
 
 #. type: Content of: <book><chapter><section><screen>
 #: guide.dbk:309
@@ -8674,6 +8768,10 @@ msgid ""
 "If some of the package files are not found then they will be ignored and a "
 "warning will be printed when apt-get exits."
 msgstr ""
+"これが最初に行うのはパッケージファイルを全てメモリに読み込むことです。APT は"
+"キャッシュを使うようになっているので、この処理は次に実行するときには早く終わ"
+"ります。見つけられないパッケージファイルがある場合は無視され、apt-get 終了時"
+"に注意を表示します。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:320
@@ -8683,6 +8781,9 @@ msgid ""
 "package and considers if it is OK. Should this find a problem then a report "
 "will be printed out and <command>apt-get</command> will refuse to run."
 msgstr ""
+"最後の処理はシステムの依存関係の詳細な分析です。インストール、あるいは展開さ"
+"れたパッケージの依存関係を全て確認し、問題ないか判断します。問題が見つかった"
+"場合は報告し、<command>apt-get</command> の実行を拒否します。"
 
 #. type: Content of: <book><chapter><section><screen>
 #: guide.dbk:326
@@ -8729,6 +8830,10 @@ msgid ""
 "that are unmet. A short explanation of why the package has a dependency "
 "problem is also included."
 msgstr ""
+"この例ではシステムに libreadlineg2 に関する重大な問題を含めて多数の問題があり"
+"ます。未解決の依存関係があれば各パッケージごとにそのパッケージに問題があるこ"
+"とを示し、併せて未解決の依存関係を1行で出力します。そのパッケージの依存問題の"
+"理由について簡潔な説明も添えられます。"
 
 #. type: Content of: <book><chapter><section><para><footnote><para>
 #: guide.dbk:352
@@ -8736,6 +8841,8 @@ msgid ""
 "APT however considers all known dependencies and attempts to prevent broken "
 "packages"
 msgstr ""
+"APT はそれでも既知の依存関係を全て検討し、パッケージが壊れた状態となることを"
+"回避しようとします。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:350
@@ -8747,6 +8854,11 @@ msgid ""
 "In this situation a package may have been unpacked without its dependents "
 "being installed."
 msgstr ""
+"システムがこのように壊れた状態となる原因は2つあります。1つ目はアップグレード"
+"実行時にパッケージ間の難解な依存関係を <command>dpkg</command> がいくらか欠"
+"いていることによります。<placeholder type=\"footnote\" id=\"0\"/>2つ目はパッ"
+"ケージのインストール処理中に何か失敗した場合です。この状況では依存するパッ"
+"ケージがインストールされないままパッケージが展開されている可能性があります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:359
@@ -8759,6 +8871,12 @@ msgid ""
 "<literal>-f</literal> option to allow for easy continuation of failed "
 "maintainer scripts."
 msgstr ""
+"APT がパッケージのインストール順序に特定の制約を設けていることにより2つ目の状"
+"況は1つ目の状況と比べて重大ですらなくなります。どちらの場合でも <command>apt-"
+"get</command> に <literal>-f</literal> オプションを指定することで APT は解決"
+"方法を推測し、処理を続けます。APT <command>dselect</command> メソッドでは常"
+"に <literal>-f</literal> オプションを有効にして、メンテナスクリプトでの問題が"
+"起きた場合でも簡単に処理を継続できるようにしています。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:368
@@ -8769,6 +8887,11 @@ msgid ""
 "case it is necessary to manually use dpkg (possibly with forcing options) to "
 "correct the situation enough to allow APT to proceed."
 msgstr ""
+"しかし、1つ目の状況により重大な壊れ方になっているシステムの修正に <literal>-"
+"f</literal> オプションを使った場合はインストールにすぐに失敗、あるいはインス"
+"トール順序がおかしくなる可能性があります。どちらの場合も、APT が処理を十分に"
+"進められるところまで手作業により dpkg を使って (恐らく強制するオプションを指"
+"定して) 状況を修正する必要があります。"
 
 #. type: Content of: <book><chapter><section><title>
 #: guide.dbk:376
@@ -8785,6 +8908,11 @@ msgid ""
 "literal> option and any other relevant activities to the command being "
 "executed."
 msgstr ""
+"処理を続ける前に <command>apt-get</command> は実行しようとする処理について報"
+"告します。通常この報告は実行される操作の種類を反映したものになりますが、一般"
+"的要素がいくつかあります。どの場合でもこの処理一覧は最終的な状態を示し、"
+"<literal>-f</literal> オプションその他の実行されるコマンドに関連する動作を考"
+"慮したものとなります。"
 
 #. type: Content of: <book><chapter><section><section><title>
 #: guide.dbk:385
@@ -8817,6 +8945,10 @@ msgid ""
 "generated for an <literal>install</literal> command. The listed packages are "
 "often the result of an Auto Install."
 msgstr ""
+"追加パッケージリストはコマンドラインで指示した以外にインストールやアップグ"
+"レードされるパッケージを全て表示します。これは <literal>install</literal> コ"
+"マンドの場合にのみ生成されます。一覧に挙げられるパッケージは自動インストール"
+"の結果による場合が多くなります。"
 
 #. type: Content of: <book><chapter><section><section><title>
 #: guide.dbk:402
@@ -8850,6 +8982,12 @@ msgid ""
 "packages that are going to be removed because they are only partially "
 "installed, possibly due to an aborted installation."
 msgstr ""
+"削除するパッケージリストはシステムから削除されるパッケージを全て表示します。"
+"これはどの操作でも起きるもので、重要なものが失われることのないように注意深く"
+"確認すべきです。<literal>-f</literal> オプションを使った場合はパッケージの削"
+"除を伴うことが特に多く、そのためこのオプションを指定した場合は特に注意を払う"
+"ようにしてください。この一覧にはインストールの中止等により一部だけがインス"
+"トールされているために削除されるパッケージが含まれることがあります。"
 
 #. type: Content of: <book><chapter><section><section><title>
 #: guide.dbk:421
@@ -8873,6 +9011,9 @@ msgid ""
 "listed are not presently installed in the system but will be when APT is "
 "done."
 msgstr ""
+"新規パッケージリストでは単純にこれから起きることを再通知します。このパッケー"
+"ジ一覧は現在システムにインストールされておらず、APT 処理後には存在することに"
+"なります。"
 
 #. type: Content of: <book><chapter><section><section><title>
 #: guide.dbk:432
@@ -8901,6 +9042,12 @@ msgid ""
 "to install is with <literal>apt-get install</literal> or by using "
 "<command>dselect</command> to resolve their problems."
 msgstr ""
+"システム全体をアップグレードする場合、新しいパッケージが必要であったり既にイ"
+"ンストールされているパッケージと競合するためにパッケージの新しいバージョンが"
+"インストールできないということがあります。この場合、そのパッケージは一時固定"
+"リストに表示されます。この一覧に挙げられたパッケージをインストールする最善の"
+"方法は <literal>apt-get install</literal> または <command>dselect</command> "
+"を使ってその問題を解決することです。"
 
 #. type: Content of: <book><chapter><section><section><title>
 #: guide.dbk:448
@@ -8924,6 +9071,9 @@ msgid ""
 "case it prints out a warning that the held package is going to be changed. "
 "This should only happen during dist-upgrade or install."
 msgstr ""
+"保留となっているパッケージをインストールするように APT に指示することもできま"
+"す。その際、保留となっているパッケージを変更することを警告します。これは "
+"dist-upgrade または install を指示したときにしか起きないはずです。"
 
 #. type: Content of: <book><chapter><section><section><title>
 #: guide.dbk:460
@@ -8934,7 +9084,7 @@ msgstr "最後のまとめ"
 #: guide.dbk:462
 msgid ""
 "Finally, APT will print out a summary of all the changes that will occur."
-msgstr ""
+msgstr "最後に、APT は発生する全変更のまとめを表示します。"
 
 #. type: Content of: <book><chapter><section><section><screen>
 #: guide.dbk:465
@@ -8965,6 +9115,16 @@ msgid ""
 "If a large number of packages are being removed then the value may indicate "
 "the amount of space that will be freed."
 msgstr ""
+"まとめの1行目は単純に一覧を全て短くまとめたもので、アップグレードされる (既に"
+"インストールされていて新しいバージョンが利用可能な) パッケージの数についても"
+"示します。2行目は設定が完了していないパッケージの数を示し、インストールを中止"
+"した場合にこれに集計されることがあります。最終行はそのインストールで必要とな"
+"る容量の要件を示します。最初の数値の組はアーカイブファイルのサイズを示しま"
+"す。この1つ目の数値はリモートから取得してくる必要のあるバイト数、2つ目は必要"
+"となる全アーカイブの合計サイズを示します。次の数値は現在インストールされてい"
+"るパッケージと新しくインストールしたパッケージのサイズの違いを示します。これ"
+"は処理が全て終わった後に /usr で消費される容量にほぼ相当します。パッケージを"
+"大量に削除する場合は解放される容量を示すこともあります。"
 
 #. type: Content of: <book><chapter><section><section><para>
 #: guide.dbk:484
@@ -8972,6 +9132,8 @@ msgid ""
 "Some other reports can be generated by using the -u option to show packages "
 "to upgrade, they are similar to the previous examples."
 msgstr ""
+"他の報告として、-u オプションを使うとアップグレードされるパッケージを表示しま"
+"す。これは前に示した例と似たものです。"
 
 #. type: Content of: <book><chapter><section><title>
 #: guide.dbk:491
@@ -8984,6 +9146,8 @@ msgid ""
 "During the download of archives and package files APT prints out a series of "
 "status messages."
 msgstr ""
+"アーカイブやパッケージファイルのダウンロード中、APT は状態を示す一連のメッ"
+"セージを表示します。"
 
 #. type: Content of: <book><chapter><section><screen>
 #: guide.dbk:497
@@ -9015,6 +9179,11 @@ msgid ""
 "is unknown <literal>apt-get update</literal> estimates the percent done "
 "which causes some inaccuracies."
 msgstr ""
+"APT がファイルの取得を開始すると、最終行でダウンロードの進捗状況を示しつつ"
+"<emphasis>取得</emphasis>で始まる行が表示されます。進捗の最初のパーセント値は"
+"全ファイルに対する取得済みの全体での割合を示します。残念ながらパッケージファ"
+"イルのサイズは不明なので <literal>apt-get update</literal> は不正確な予測を行"
+"う可能性があります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:514
@@ -9028,6 +9197,12 @@ msgid ""
 "downloaded. For archives it will contain the name of the package that is "
 "being fetched."
 msgstr ""
+"状態を示す行の次の節は各ダウンロードスレッドごとに1度ずつ繰り返され、進行中の"
+"操作や処理についての有用な情報をいくらか示します。この節は単純に <emphasis>"
+"Forking</emphasis> となっていることもあり、その場合は OS がダウンロード用のモ"
+"ジュールを読み込んでいることを示します。[ の後の最初の語は履歴に表示されてい"
+"る取得番号です。その次の語はダウンロード対象の名前の短縮形です。アーカイブの"
+"場合は取得中のパッケージの名前が入ります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:524
@@ -9046,6 +9221,17 @@ msgid ""
 "shown the estimated transfer time. This is updated regularly and reflects "
 "the time to complete everything at the shown transfer rate."
 msgstr ""
+"単一引用符内はダウンロードのやりとりの進捗を示す有益な文字列です。標準的には"
+"<emphasis>...へ接続しています</emphasis>から<emphasis>ファイルを待っています"
+"</emphasis>へ、それから<emphasis>...をダウンロードしています</emphasis>または"
+"<emphasis>...を再開しています</emphasis>へと進みます。最後の値はリモートサイ"
+"トからダウンロードしたバイト数です。ダウンロードが始まるとこれは <literal>"
+"102/10.2k</literal> のように表示され、この場合10.2キロバイトのうち102バイトが"
+"取得済みであることを示します。合計サイズは常に4ケタで表示され、表示空間を保つ"
+"ようになっています。サイズ表示の後はそのファイル自体の進捗状況を百分率で示し"
+"たものです。その2つ後は瞬間的な平均速度です。この値は5秒ごとに更新され、その"
+"間のデータ転送速度を反映します。最後は推定転送時間を表示しています。これは定"
+"期的に更新され、表示している転送速度で全て完了する時間を表示します。"
 
 #. type: Content of: <book><chapter><section><para>
 #: guide.dbk:539
@@ -9056,6 +9242,10 @@ msgid ""
 "for logging to a file, use the <literal>-q</literal> option to remove the "
 "status display."
 msgstr ""
+"状態表示は0.5秒ごとに更新してダウンロードの進捗状況を絶えず通知し、取得行は新"
+"しいファイルの処理が始まるたびに流れていきます。状態表示は絶えず更新されるた"
+"めファイルへの記録には適しません。<literal>-q</literal> オプションを使うと状"
+"態を表示しないようにできます。"
 
 #. type: Content of: <book><chapter><section><title>
 #: guide.dbk:547
@@ -9072,6 +9262,12 @@ msgid ""
 "Before each question there is usually a description of what it is asking and "
 "the questions are too varied to discuss completely here."
 msgstr ""
+"APT はアーカイブのインストールに <command>dpkg</command> を使い、ダウンロード"
+"の完了後は <command>dpkg</command> インターフェイスに切り替わります。"
+"<command>dpkg</command> もパッケージの処理中にいくつか質問し、パッケージ自体"
+"も複数質問するかもしれません。通常それぞれの質問の前にそれが何を聞いているの"
+"か説明します。その質問の内容は多岐にわたるものであり、ここで説明できるもので"
+"は全くありません。"
 
 #. type: Content of: <book><title>
 #: offline.dbk:10
@@ -9092,6 +9288,7 @@ msgstr ""
 msgid ""
 "<copyright><year>1999</year><holder>Jason Gunthorpe</holder></copyright>"
 msgstr ""
+"<copyright><year>1999</year><holder>Jason Gunthorpe</holder></copyright>"
 
 #. type: Content of: <book><chapter><title>
 #: offline.dbk:47
@@ -9111,6 +9308,10 @@ msgid ""
 "machine is on a slow link, such as a modem and another machine has a very "
 "fast connection but they are physically distant."
 msgstr ""
+"通常 APT は Debian アーカイブに、ローカルメディアから、あるいはネットワーク経"
+"由で直接アクセスできる必要があります。他によくある苦情としてはある Debian マ"
+"シンの接続がモデム等のために低速で、別のマシンには非常に高速な接続があるけれ"
+"ども物理的に遠い、といったことがあります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:57
@@ -9125,6 +9326,15 @@ msgid ""
 "emphasis> mean the machine downloading the packages, and <emphasis>target "
 "host</emphasis> the one with bad or no connection."
 msgstr ""
+"これに対する解法としては Zip や SuperDisk ディスクといった大容量脱着可能メ"
+"ディアを使います。こういったディスクは Debian アーカイブ全体を格納するには十"
+"分とは言えない容量ですがほとんどのユーザにとって必要なその一部を収めるには十"
+"分余裕があります。その考え方は APT を使って必要なパッケージの一覧を生成し、接"
+"続状態の良好な別のマシンを使ってそのディスク上に取得します。APT を使える別の "
+"Debian マシンや、完全に異なる OS で wget のようなダウンロードツールを使うこと"
+"も可能です。<emphasis>リモートホスト</emphasis>はパッケージをダウンロードする"
+"マシン、<emphasis>対象ホスト</emphasis>は接続がないあるいは良くないマシンだと"
+"考えてください。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:68
@@ -9134,6 +9344,10 @@ msgid ""
 "that the disc should be formated with a filesystem that can handle long file "
 "names such as ext2, fat32 or vfat."
 msgstr ""
+"これは APT 設定ファイルを独創的に操作することで実現できます。あるディスクを "
+"APT が検索するようにするために必須となる前提条件はアーカイブファイルです。そ"
+"のディスクは長いファイル名を扱えるファイルシステム、例えば ext2 や fat32、"
+"vfat でフォーマットする必要があることに注意してください。"
 
 #. type: Content of: <book><chapter><title>
 #: offline.dbk:77
@@ -9148,6 +9362,10 @@ msgid ""
 "remote machine to fetch the latest package files and decide which packages "
 "to download. The disk directory structure should look like:"
 msgstr ""
+"APT を両方のマシンで利用できるようにする最も単純な設定を考えます。基本的な考"
+"え方は status ファイルのコピーをそのディスクに置いて最新のパッケージファイル"
+"の取得やダウンロードするパッケージの決定にはリモートマシンを使います。その"
+"ディスクのディレクトリ構造は次のようになります:"
 
 #. type: Content of: <book><chapter><section><screen>
 #: offline.dbk:87
@@ -9187,6 +9405,12 @@ msgid ""
 "using a local archive you must use copy URIs, the syntax is identical to "
 "file URIs."
 msgstr ""
+"設定ファイルでは APT が管理ファイルをそのディスクに保存し、そのディスク上の設"
+"定ファイルを同様に利用するように指示する必要があります。sources.list ではリ"
+"モートマシンから利用する適切なサイトを指定し、status ファイルは<emphasis>対象"
+"ホスト</emphasis>の <emphasis>/var/lib/dpkg/status</emphasis> をコピーしたも"
+"のを利用します。ローカルアーカイブを使っている場合はその URI を利用しないとい"
+"けないことに注意してください。書式はファイルの URI と同一です。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:108
@@ -9194,6 +9418,8 @@ msgid ""
 "<emphasis>apt.conf</emphasis> must contain the necessary information to make "
 "APT use the disc:"
 msgstr ""
+"<emphasis>apt.conf</emphasis> には APT がそのディスクを使うようにするのに必要"
+"な情報を記述しないといけません:"
 
 #. type: Content of: <book><chapter><section><screen>
 #: offline.dbk:112
@@ -9254,6 +9480,8 @@ msgid ""
 "configuration file in <emphasis>/usr/share/doc/apt/examples/apt.conf</"
 "emphasis>."
 msgstr ""
+"apt.conf の man ページや <emphasis>/usr/share/doc/apt/examples/apt.conf</"
+"emphasis> にある見本の設定ファイルを調べるとさらなる詳細があります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:142
@@ -9265,6 +9493,12 @@ msgid ""
 "the remote machine and configure the sources.list. On the remote machine "
 "execute the following:"
 msgstr ""
+"対象のマシンでまず行うことはディスクをマウントしてそのディスクに <emphasis>/"
+"var/lib/dpkg/status</emphasis> をコピーすることです。概要にまとめられているよ"
+"うに、ディレクトリ <emphasis>archives/partial/</emphasis> 及び <emphasis>"
+"lists/partial/</emphasis> を作成する必要もあるでしょう。それからディスクをリ"
+"モートマシンに移動して sources.list を設定します。リモートマシンでは以下の手"
+"順を実行します:"
 
 #. type: Content of: <book><chapter><section><screen>
 #: offline.dbk:151
@@ -9290,6 +9524,10 @@ msgid ""
 "such as <emphasis>dselect</emphasis>. However this presents a problem in "
 "communicating your selections back to the local computer."
 msgstr ""
+"dist-upgrade コマンドは他の任意の標準的な APT コマンド、特に dselect-upgrade "
+"に置き換えることができます。<emphasis>dselect</emphasis> 等の APT フロント"
+"エンドを使うこともできます。しかし、それには選択したときにローカルコンピュー"
+"タとやりとりしてしまうという問題があります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:164
@@ -9297,6 +9535,8 @@ msgid ""
 "Now the disc contains all of the index files and archives needed to upgrade "
 "the target machine. Take the disc back and run:"
 msgstr ""
+"これで、対象のマシンをアップグレードするのに必要な索引ファイルとアーカイブが"
+"全てこのディスクに収録されたということになります。ディスクを戻して実行します:"
 
 #. type: Content of: <book><chapter><section><screen>
 #: offline.dbk:168
@@ -9320,6 +9560,8 @@ msgid ""
 "It is necessary for proper function to re-specify the status file to be the "
 "local one. This is very important!"
 msgstr ""
+"適切に機能するためにはローカルのファイルを status ファイルに再指定する必要が"
+"あります。これは非常に重要です!"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:179
@@ -9330,11 +9572,15 @@ msgid ""
 "the local machine - but this may not always be possible. DO NOT copy the "
 "status file if dpkg or APT have been run in the mean time!!"
 msgstr ""
+"dselect を使っている場合、disc/status はリモートマシンで何か選択すると更新さ"
+"れるため /var/lib/dpkg/status にコピーするのは非常に危険です。選択はローカル"
+"マシンでのみ行うことを強く勧めます - しかしこれは常に可能だとは限りません。"
+"dpkg や APT を実行している間は status ファイルをコピー *しないでください* !!"
 
 #. type: Content of: <book><chapter><title>
 #: offline.dbk:189
 msgid "Using APT and wget"
-msgstr "APT と wget の使用法"
+msgstr "APT と wget の使用"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:193
@@ -9343,6 +9589,9 @@ msgid ""
 "run on nearly any machine. Unlike the method above this requires that the "
 "Debian machine already has a list of available packages."
 msgstr ""
+"<emphasis>wget</emphasis> は人気のある移植性の高いダウンロードツールで、ほぼ"
+"あらゆるマシンで実行できます。上記の方法とは異なり、これには利用可能なパッ"
+"ケージの一覧を Debian マシンで用意しておく必要があります。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:198
@@ -9352,6 +9601,10 @@ msgid ""
 "option to apt-get and then preparing a wget script to actually fetch the "
 "packages."
 msgstr ""
+"基本的な考え方は、リモートサイトからダウンロードしたアーカイブファイルだけを"
+"収録したディスクを作成するということです。これは apt-get に --print-uris オプ"
+"ションを使って行い、それから wget スクリプトを準備して実際にパッケージを取得"
+"します。"
 
 #. type: Content of: <book><chapter><section><title>
 #: offline.dbk:204
@@ -9364,6 +9617,8 @@ msgid ""
 "Unlike the previous technique no special configuration files are required. "
 "We merely use the standard APT commands to generate the file list."
 msgstr ""
+"前の技とは異なり、特別な設定ファイルを必要としません。標準的な APT コマンドを"
+"単純に使ってファイル一覧を生成します。"
 
 #. type: Content of: <book><chapter><section><screen>
 #: offline.dbk:210
@@ -9385,6 +9640,8 @@ msgid ""
 "Any command other than dist-upgrade could be used here, including dselect-"
 "upgrade."
 msgstr ""
+"dselect-upgrade を含め、ここでは dist-upgrade 以外の任意のコマンドを使えま"
+"す。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:220
@@ -9394,6 +9651,10 @@ msgid ""
 "with the current directory as the disc's mount point so as to save the "
 "output on the disc."
 msgstr ""
+"/disc/wget-script ファイルには、必要なアーカイブを取得するために実行する "
+"wget コマンドの一覧を収録するようになっています。ディスク上の出力を減らすた"
+"め、このスクリプトは現在のディレクトリをそのディスクのマウントポイントとして"
+"実行するようにしてください。"
 
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:226
@@ -9418,6 +9679,8 @@ msgid ""
 "Once the archives are downloaded and the disc returned to the Debian machine "
 "installation can proceed using,"
 msgstr ""
+"アーカイブのダウンロードが終わってディスクが Debian マシンに返ってくるとイン"
+"ストールを続けられるようになります。"
 
 #. type: Content of: <book><chapter><section><screen>
 #: offline.dbk:238
@@ -9428,135 +9691,4 @@ msgstr "  # apt-get -o dir::cache::archives=\"/disc/\" dist-upgrade\n"
 #. type: Content of: <book><chapter><section><para>
 #: offline.dbk:241
 msgid "Which will use the already fetched archives on the disc."
-msgstr "これで、disc にある取得済みのアーカイブを使用するようになります。"
-
-#~ msgid "apt"
-#~ msgstr "apt"
-
-#~ msgid "16 June 1998"
-#~ msgstr "16 June 1998"
-
-#~ msgid "Debian"
-#~ msgstr "Debian"
-
-#~ msgid "NAME"
-#~ msgstr "名前"
-
-#~ msgid "apt - Advanced Package Tool"
-#~ msgstr "apt - 高度パッケージツール"
-
-#~ msgid "SYNOPSIS"
-#~ msgstr "書式"
-
-#~ msgid "B<apt>"
-#~ msgstr "B<apt>"
-
-#~ msgid "DESCRIPTION"
-#~ msgstr "説明"
-
-#, fuzzy
-#~| msgid ""
-#~| "APT is a management system for software packages. For normal day to day "
-#~| "package management there are several frontends available, such as "
-#~| "B<aptitude>(8)  for the command line or B<synaptic>(8)  for the X Window "
-#~| "System. Some options are only implemented in B<apt-get>(8)  though."
-#~ msgid ""
-#~ "For normal day to day package management there are several frontends "
-#~ "available, such as B<aptitude>(8)  for the command line or "
-#~ "B<synaptic>(8)  for the X Window System. Some options are only "
-#~ "implemented in B<apt-get>(8)  though."
-#~ msgstr ""
-#~ "APT はソフトウェアパッケージの管理システムです。日々のパッケージ管理のため"
-#~ "に、コマンドライン用の B<aptitude>(8) や、X Window System 用の "
-#~ "B<synaptic>(8) といった、いくつかのフロントエンドが用意されています。いく"
-#~ "つかのオプションは B<apt-get>(8) にしか実装されていません。"
-
-#~ msgid "SEE ALSO"
-#~ msgstr "関連項目"
-
-#, fuzzy
-#~| msgid ""
-#~| "B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources.list>(5), "
-#~| "B<apt_preferences>(5), B<apt-secure>(8)"
-#~ msgid ""
-#~ "B<apt>(8), B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources."
-#~ "list>(5), B<apt_preferences>(5), B<apt-secure>(8)"
-#~ msgstr ""
-#~ "B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources.list>(5), "
-#~ "B<apt_preferences>(5), B<apt-secure>(8)"
-
-#~ msgid "DIAGNOSTICS"
-#~ msgstr "診断メッセージ"
-
-#~ msgid "apt returns zero on normal operation, decimal 100 on error."
-#~ msgstr ""
-#~ "apt は正常終了時に 0 を返します。エラー時には十進の 100 を返します。"
-
-#~ msgid "BUGS"
-#~ msgstr "バグ"
-
-#~ msgid "This manpage isn't even started."
-#~ msgstr "このマニュアルページは、始まってさえいません。"
-
-#~ msgid ""
-#~ "See E<lt>http://bugs.debian.org/aptE<gt>.  If you wish to report a bug in "
-#~ "B<apt>, please see I</usr/share/doc/debian/bug-reporting.txt> or the "
-#~ "B<reportbug>(1)  command."
-#~ msgstr ""
-#~ "E<lt>http://bugs.debian.org/aptE<gt> をご覧ください。B<apt> のバグを報告す"
-#~ "る場合は、I</usr/share/doc/debian/bug-reporting.txt> や B<reportbug>(1) コ"
-#~ "マンドをご覧ください。"
-
-#~ msgid "AUTHOR"
-#~ msgstr "著者"
-
-#~ msgid "apt was written by the APT team E<lt>apt@packages.debian.orgE<gt>."
-#~ msgstr ""
-#~ "apt は APT チーム E<lt>apt@packages.debian.orgE<gt> によって書かれました。"
-
-#~ msgid "Debian GNU/Linux"
-#~ msgstr "Debian GNU/Linux"
-
-#~ msgid "&apt-commonoptions;"
-#~ msgstr "&apt-commonoptions;"
-
-#~ msgid "&file-sourceslist; &file-statelists;"
-#~ msgstr "&file-sourceslist; &file-statelists;"
-
-#~ msgid ""
-#~ "Unless the <option>-h</option>, or <option>--help</option> option is "
-#~ "given one of the commands below must be present.  <placeholder type="
-#~ "\"variablelist\" id=\"0\"/>"
-#~ msgstr ""
-#~ "<option>-h</option> オプションや <option>--help</option> オプションを除"
-#~ "き、以下に挙げるコマンドが必要です。<placeholder type=\"variablelist\" id="
-#~ "\"0\"/>"
-
-#~ msgid ""
-#~ "Unless the <option>-h</option>, or <option>--help</option> option is "
-#~ "given one of the commands below must be present."
-#~ msgstr ""
-#~ "<option>-h</option> オプションや <option>--help</option> オプションを除"
-#~ "き、以下に挙げるコマンドが必要です。"
-
-#~ msgid "Dir Section"
-#~ msgstr "Dir セクション"
-
-#~ msgid "Default Section"
-#~ msgstr "Default セクション"
-
-#~ msgid "TreeDefault Section"
-#~ msgstr "TreeDefault セクション"
-
-#~ msgid "Tree Section"
-#~ msgstr "Tree セクション"
-
-#~ msgid ""
-#~ "&file-sourceslist; &file-aptconf; &file-preferences; &file-cachearchives; "
-#~ "&file-statelists;"
-#~ msgstr ""
-#~ "&file-sourceslist; &file-aptconf; &file-preferences; &file-cachearchives; "
-#~ "&file-statelists;"
-
-#~ msgid "&file-trustedgpg;"
-#~ msgstr "&file-trustedgpg;"
+msgstr "これで、ディスクにある取得済みのアーカイブを使用するようになります。"
