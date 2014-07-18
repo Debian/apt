@@ -37,6 +37,7 @@
 #include <sys/time.h>
 #include <sys/select.h>
 #include <errno.h>
+#include <sys/stat.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -168,6 +169,55 @@ void pkgAcquire::Remove(Item *Itm)
    }
 }
 									/*}}}*/
+// Acquire::AbortTransaction - Remove a transaction			/*{{{*/
+void pkgAcquire::AbortTransaction(unsigned long TransactionID)
+{
+   if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+      std::clog << "AbortTransaction: " << TransactionID << std::endl;
+
+   std::vector<Item*> Transaction;
+   for (ItemIterator I = Items.begin(); I != Items.end(); ++I)
+      if((*I)->TransactionID == TransactionID)
+         Transaction.push_back(*I);
+   
+   for (std::vector<Item*>::iterator I = Transaction.begin();
+        I != Transaction.end(); ++I)
+   {
+      if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+         std::clog << "  Cancel: " << (*I)->DestFile << std::endl;
+      Dequeue(*I);
+      (*I)->Status = pkgAcquire::Item::StatError;
+   }
+}
+									/*}}}*/
+// Acquire::CommitTransaction - Commit a transaction			/*{{{*/
+void pkgAcquire::CommitTransaction(unsigned long TransactionID)
+{
+   if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+      std::clog << "CommitTransaction: " << TransactionID << std::endl;
+
+   std::vector<Item*> Transaction;
+   for (ItemIterator I = Items.begin(); I != Items.end(); ++I)
+      if((*I)->TransactionID == TransactionID)
+         Transaction.push_back(*I);
+   
+   for (std::vector<Item*>::iterator I = Transaction.begin();
+        I != Transaction.end(); ++I)
+   {
+      if((*I)->PartialFile != "" && 
+         (*I)->Status == pkgAcquire::Item::StatDone)
+      {
+         if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+            std::clog << "mv " 
+                      << (*I)->PartialFile << " -> " 
+                      <<  (*I)->DestFile << std::endl;
+         Rename((*I)->PartialFile, (*I)->DestFile);
+         chmod((*I)->DestFile.c_str(),0644);
+      }
+   }
+}
+									/*}}}*/
+
 // Acquire::Add - Add a worker						/*{{{*/
 // ---------------------------------------------------------------------
 /* A list of workers is kept so that the select loop can direct their FD

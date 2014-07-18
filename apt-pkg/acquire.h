@@ -248,6 +248,10 @@ class pkgAcquire
    
    public:
 
+   /** \brief Abort a given transaction */
+   void AbortTransaction(unsigned long TransactionID);
+   void CommitTransaction(unsigned long TransactionID);
+
    /** \brief Retrieve information about a fetch method by name.
     *
     *  \param Access The name of the method to look up.
