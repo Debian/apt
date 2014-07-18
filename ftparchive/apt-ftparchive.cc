@@ -781,33 +781,14 @@ static bool SimpleGenRelease(CommandLine &CmdL)
 }
 
 									/*}}}*/
-// Generate - Full generate, using a config file			/*{{{*/
+// DoGeneratePackagesAndSources - Helper for Generate                   /*{{{*/
 // ---------------------------------------------------------------------
-/* */
-static bool Generate(CommandLine &CmdL)
+static bool DoGeneratePackagesAndSources(Configuration &Setup,
+					 vector<PackageMap> &PkgList,
+					 struct CacheDB::Stats &SrcStats,
+					 struct CacheDB::Stats &Stats,
+					 CommandLine &CmdL)
 {
-   struct CacheDB::Stats SrcStats;
-   if (CmdL.FileSize() < 2)
-      return ShowHelp(CmdL);
-
-   struct timeval StartTime;
-   gettimeofday(&StartTime,0);   
-   struct CacheDB::Stats Stats;
-   
-   // Read the configuration file.
-   Configuration Setup;
-   if (ReadConfigFile(Setup,CmdL.FileList[1],true) == false)
-      return false;
-
-   vector<PackageMap> PkgList;
-   LoadTree(PkgList,Setup);
-   LoadBinDir(PkgList,Setup);
-
-   // Sort by cache DB to improve IO locality.
-   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::DBCompare());
-   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::SrcDBCompare());
-		
-   // Generate packages
    if (CmdL.FileSize() <= 2)
    {
       for (vector<PackageMap>::iterator I = PkgList.begin(); I != PkgList.end(); ++I)
@@ -876,9 +857,16 @@ static bool Generate(CommandLine &CmdL)
       if (I->TransWriter != NULL && I->TransWriter->DecreaseRefCounter() == 0)
 	 delete I->TransWriter;
 
-   if (_config->FindB("APT::FTPArchive::Contents",true) == false)
-      return true;
-   
+   return true;
+}
+
+                                                                        /*}}}*/
+// DoGenerateContents - Helper for Generate to generate the Contents    /*{{{*/
+// ---------------------------------------------------------------------
+static bool DoGenerateContents(Configuration &Setup,
+			       vector<PackageMap> &PkgList,
+			       CommandLine &CmdL)
+{
    c1out << "Packages done, Starting contents." << endl;
 
    // Sort the contents file list by date
@@ -935,17 +923,62 @@ static bool Generate(CommandLine &CmdL)
 	 break;
       }      
    }
-   
-   struct timeval NewTime;
-   gettimeofday(&NewTime,0);   
-   double Delta = NewTime.tv_sec - StartTime.tv_sec + 
-                  (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
-   c1out << "Done. " << SizeToStr(Stats.Bytes) << "B in " << Stats.Packages 
-         << " archives. Took " << TimeToStr((long)Delta) << endl;
-   
+
    return true;
 }
+
 									/*}}}*/
+// Generate - Full generate, using a config file			/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+static bool Generate(CommandLine &CmdL)
+{
+   struct CacheDB::Stats SrcStats;
+   if (CmdL.FileSize() < 2)
+      return ShowHelp(CmdL);
+
+   struct timeval StartTime;
+   gettimeofday(&StartTime,0);
+   struct CacheDB::Stats Stats;
+   
+   // Read the configuration file.
+   Configuration Setup;
+   if (ReadConfigFile(Setup,CmdL.FileList[1],true) == false)
+      return false;
+
+   vector<PackageMap> PkgList;
+   LoadTree(PkgList,Setup);
+   LoadBinDir(PkgList,Setup);
+
+   // Sort by cache DB to improve IO locality.
+   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::DBCompare());
+   stable_sort(PkgList.begin(),PkgList.end(),PackageMap::SrcDBCompare());
+
+   // Generate packages
+   if (_config->FindB("APT::FTPArchive::ContentsOnly", false) == false)
+   {
+      if(DoGeneratePackagesAndSources(Setup, PkgList, SrcStats, Stats, CmdL) == false)
+         return false;
+   } else {
+      c1out << "Skipping Packages/Sources generation" << endl;
+   }
+
+   // do Contents if needed
+   if (_config->FindB("APT::FTPArchive::Contents", true) == true)
+      if (DoGenerateContents(Setup, PkgList, CmdL) == false)
+         return false;
+
+   struct timeval NewTime;
+   gettimeofday(&NewTime,0);
+   double Delta = NewTime.tv_sec - StartTime.tv_sec +
+                  (NewTime.tv_usec - StartTime.tv_usec)/1000000.0;
+   c1out << "Done. " << SizeToStr(Stats.Bytes) << "B in " << Stats.Packages
+         << " archives. Took " << TimeToStr((long)Delta) << endl;
+
+   return true;
+}
+
+                                                                        /*}}}*/
 // Clean - Clean out the databases					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
