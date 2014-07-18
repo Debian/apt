@@ -185,11 +185,21 @@ void pkgAcquire::AbortTransaction(unsigned long TransactionID)
    {
       if(_config->FindB("Debug::Acquire::Transaction", false) == true)
          std::clog << "  Cancel: " << (*I)->DestFile << std::endl;
-      Dequeue(*I);
+      //Dequeue(*I);
       (*I)->Status = pkgAcquire::Item::StatError;
    }
 }
 									/*}}}*/
+bool pkgAcquire::TransactionHasError(unsigned long TransactionID)
+{
+   std::vector<Item*> Transaction;
+   for (ItemIterator I = Items.begin(); I != Items.end(); ++I)
+      if((*I)->TransactionID == TransactionID)
+         if((*I)->Status == pkgAcquire::Item::StatError ||
+            (*I)->Status == pkgAcquire::Item::StatAuthError)
+            return true;
+   return false;
+}
 // Acquire::CommitTransaction - Commit a transaction			/*{{{*/
 void pkgAcquire::CommitTransaction(unsigned long TransactionID)
 {
@@ -201,18 +211,25 @@ void pkgAcquire::CommitTransaction(unsigned long TransactionID)
       if((*I)->TransactionID == TransactionID)
          Transaction.push_back(*I);
    
+   // move new files into place *and* remove files that are not
+   // part of the transaction but are still on disk
    for (std::vector<Item*>::iterator I = Transaction.begin();
         I != Transaction.end(); ++I)
    {
-      if((*I)->PartialFile != "" && 
-         (*I)->Status == pkgAcquire::Item::StatDone)
+      if((*I)->PartialFile != "")
       {
          if(_config->FindB("Debug::Acquire::Transaction", false) == true)
             std::clog << "mv " 
                       << (*I)->PartialFile << " -> " 
                       <<  (*I)->DestFile << std::endl;
+
          Rename((*I)->PartialFile, (*I)->DestFile);
          chmod((*I)->DestFile.c_str(),0644);
+      } else {
+         if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+            std::clog << "rm " 
+                      <<  (*I)->DestFile << std::endl;
+         unlink((*I)->DestFile.c_str());
       }
    }
 }

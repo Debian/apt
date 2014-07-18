@@ -1421,12 +1421,12 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
    DestFile += URItoFileName(RealURI);
 
    // queue a pkgAcqMetaIndex to be verified against the sig we just retrieved
-   pkgAcqMetaIndex *mi = new pkgAcqMetaIndex(
+   pkgAcqMetaIndex *metaindex = new pkgAcqMetaIndex(
       Owner, MetaIndexURI, MetaIndexURIDesc, 
       MetaIndexShortDesc,  DestFile, IndexTargets, 
       MetaIndexParser);
 
-   TransactionID = (unsigned long)mi;
+   TransactionID = (unsigned long)metaindex;
 }
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
@@ -1908,7 +1908,8 @@ void pkgAcqMetaIndex::Finished()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "Finished: " << DestFile <<std::endl;
-   Owner->CommitTransaction((unsigned long)this);
+   if(Owner->TransactionHasError((unsigned long)this) == false)
+      Owner->CommitTransaction((unsigned long)this);
 }
 
 

@@ -1,0 +1,23 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+insertpackage 'unstable' 'foo' 'all' '1.0'
+
+setupaptarchive --no-update
+changetowebserver
+
+# break package file
+cat > aptarchive/dists/unstable/main/binary-i386/Packages <<EOF
+Package: bar
+EOF
+compressfile aptarchive/dists/unstable/main/binary-i386/Packages '+1hour'
+
+# ensure that a update will only succeed entirely or not at all
+testfailure aptget update
+testequal "partial" ls rootdir/var/lib/apt/lists
