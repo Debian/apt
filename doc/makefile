@@ -29,7 +29,7 @@ include $(COPY_H)
 clean: clean/subdirs clean/examples
 veryclean: veryclean/subdirs clean/examples
 manpages: apt-vendor.ent manpages/subdirs
-docbook: docbook/subdirs
+docbook: apt-vendor.ent docbook/subdirs
 
 DOCUMENTATIONPO = $(patsubst %.po,%,$(notdir $(wildcard po/*.po)))
 DOCDIRLIST = $(addsuffix /makefile,$(DOCUMENTATIONPO))

@@ -69,6 +69,23 @@ elif [ "$1" = 'post-build' ]; then
 
 	dpkg-checkbuilddeps -d 'libxml2-utils'
 
+	HEADERBLUEPRINT="$(mktemp)"
+	sed -n '1,/^$/p' doc/apt.8.xml > "$HEADERBLUEPRINT"
+	find doc -mindepth 1 -maxdepth 1 -type f -name '*.xml' | while read FILE; do
+		if ! sed -n '1,/^$/p' "$FILE" | cmp "$HEADERBLUEPRINT" - >/dev/null 2>&1; then
+			echo >&2 "WARNING: Manpage $FILE has not the usual header! (see diff below)"
+			sed -n '1,/^$/p' "$FILE" | diff -u "$HEADERBLUEPRINT" - || true
+		fi
+	done
+	sed -n '1,/^$/p' doc/guide.dbk > "$HEADERBLUEPRINT"
+	find doc -mindepth 1 -maxdepth 1 -type f -name '*.dbk' | while read FILE; do
+		if ! sed -n '1,/^$/p' "$FILE" | cmp "$HEADERBLUEPRINT" - >/dev/null 2>&1; then
+			echo >&2 "WARNING: Documentation $FILE has not the usual header (see diff below)!"
+			sed -n '1,/^$/p' "$FILE" | diff -u "$HEADERBLUEPRINT" - || true
+		fi
+	done
+	rm "$HEADERBLUEPRINT"
+
 	# check the manpages with each vendor for vendor-specific errors…
 	find vendor -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2 | while read DISTRO; do
 		ln -sf ../vendor/${DISTRO}/apt-vendor.ent doc
