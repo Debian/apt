@@ -105,6 +105,7 @@ elif [ "$1" = 'buildlog' ]; then
 	done
 elif [ "$1" = 'travis-ci' ]; then
 	apt-get install -q --no-install-recommends $(sed -n -e '/^Build-Depends: /,/^Build-Depends-Indep: / {p}' debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\)\?: ##' | tr -d ',')
+	apt-get install -q --no-install-recommends $(sed -n 's#^Depends: .*@, \(.*\)$#\1#p' debian/tests/control | tr -d ',')
 else
 	echo >&1 "Usage:\t$0 pre-export
 \t$0 post-build
