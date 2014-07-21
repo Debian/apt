@@ -267,24 +267,24 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
       if (tryInRelease == false)
 	 new pkgAcqMetaIndex(Owner, MetaIndexURI("Release"),
 	       MetaIndexInfo("Release"), "Release",
-	       MetaIndexURI("Release.gpg"),
+               MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
 	       ComputeIndexTargets(),
 	       new indexRecords (Dist));
    }
 
    if (tryInRelease == true)
-      new pkgAcqMetaClearSig(Owner, MetaIndexURI("InRelease"),
-	    MetaIndexInfo("InRelease"), "InRelease",
+      new pkgAcqMetaClearSig(Owner, 
+            MetaIndexURI("InRelease"), MetaIndexInfo("InRelease"), "InRelease",
 	    MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
 	    MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
 	    ComputeIndexTargets(),
 	    new indexRecords (Dist));
    else
-      new pkgAcqMetaSig(Owner, MetaIndexURI("Release.gpg"),
-	    MetaIndexInfo("Release.gpg"), "Release.gpg",
-	    MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
-	    ComputeIndexTargets(),
-	    new indexRecords (Dist));
+      new pkgAcqMetaIndex(Owner, 
+          MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
+          MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
+          ComputeIndexTargets(),
+          new indexRecords (Dist));
 
    return true;
 }

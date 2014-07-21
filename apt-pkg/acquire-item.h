@@ -450,6 +450,15 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
     *  no hashsum checking will be performed.
     */
    void QueueIndexes(bool verify);
+
+   /** \brief The URI of the meta-index file for the detached signature */
+   std::string MetaIndexSigURI;
+
+   /** \brief A "URI-style" description of the meta-index file */
+   std::string MetaIndexSigURIDesc;
+
+   /** \brief A brief description of the meta-index file */
+   std::string MetaIndexSigShortDesc;
    
    public:
    
@@ -464,7 +473,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire *Owner,
 		   std::string URI,std::string URIDesc, std::string ShortDesc,
-		   std::string SigFile,
+                   std::string MetaIndexSigURI, std::string MetaIndexSigURIDesc, std::string MetaIndexSigShortDesc,
 		   const std::vector<IndexTarget*>* IndexTargets,
 		   indexRecords* MetaIndexParser);
 };
@@ -1009,21 +1018,11 @@ class pkgAcqMetaSig : public pkgAcquire::Item
     */
    std::string RealURI;
 
-   /** \brief The URI of the meta-index file to be fetched after the signature. */
-   std::string MetaIndexURI;
-
-   /** \brief A "URI-style" description of the meta-index file to be
-    *  fetched after the signature.
-    */
-   std::string MetaIndexURIDesc;
-
-   /** \brief A brief description of the meta-index file to be fetched
-    *  after the signature.
-    */
-   std::string MetaIndexShortDesc;
-
    /** \brief A package-system-specific parser for the meta-index file. */
    indexRecords* MetaIndexParser;
+
+   /** \brief The file we need to verify */
+   std::string MetaIndexFile;
 
    /** \brief The index files which should be looked up in the meta-index
     *  and then downloaded.
@@ -1031,6 +1030,9 @@ class pkgAcqMetaSig : public pkgAcquire::Item
     *  \todo Why a list of pointers instead of a list of structs?
     */
    const std::vector<IndexTarget*>* IndexTargets;
+
+   /** \brief if we are in fetching or download state */
+   bool AuthPass;
 
    public:
    
@@ -1042,8 +1044,9 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    virtual std::string DescURI() const {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaSig. */
-   pkgAcqMetaSig(pkgAcquire *Owner,std::string URI,std::string URIDesc, std::string ShortDesc,
-		 std::string MetaIndexURI, std::string MetaIndexURIDesc, std::string MetaIndexShortDesc,
+   pkgAcqMetaSig(pkgAcqMetaIndex *MetaOwner,
+                 std::string URI,std::string URIDesc, std::string ShortDesc,
+                 std::string MetaIndexFile,
 		 const std::vector<IndexTarget*>* IndexTargets,
 		 indexRecords* MetaIndexParser);
    virtual ~pkgAcqMetaSig();

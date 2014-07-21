@@ -88,7 +88,8 @@ pkgAcquire::Item::~Item()
 void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    Status = StatIdle;
-   ErrorText = LookupTag(Message,"Message");
+   if(ErrorText == "")
+      ErrorText = LookupTag(Message,"Message");
    UsedMirror =  LookupTag(Message,"UsedMirror");
    if (QueueCounter <= 1)
    {
@@ -1314,18 +1315,19 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
-pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
+pkgAcqMetaSig::pkgAcqMetaSig(pkgAcqMetaIndex *MetaOwner,		/*{{{*/
 			     string URI,string URIDesc,string ShortDesc,
-			     string MetaIndexURI, string MetaIndexURIDesc,
-			     string MetaIndexShortDesc,
+                             string MetaIndexFile,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
-   Item(Owner, HashStringList()), RealURI(URI), MetaIndexURI(MetaIndexURI),
-   MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
-   MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets)
+   Item(MetaOwner->GetOwner(), HashStringList()), RealURI(URI), 
+   MetaIndexParser(MetaIndexParser), MetaIndexFile(MetaIndexFile),
+   IndexTargets(IndexTargets), AuthPass(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
+
+   TransactionID = (unsigned long)MetaOwner;
 
    // remove any partial downloaded sig-file in partial/. 
    // it may confuse proxies and is too small to warrant a 
@@ -1337,7 +1339,8 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
    Desc.Owner = this;
    Desc.ShortDesc = ShortDesc;
    Desc.URI = URI;
-      
+
+#if 0
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
    if (RealFileExists(Final) == true)
@@ -1350,9 +1353,9 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,				/*{{{*/
       LastGoodSig = DestFile+".reverify";
       Rename(Final,LastGoodSig);
    }
-
+#endif
    // we expect the indextargets + one additional Release file
-   ExpectedAdditionalItems = IndexTargets->size() + 1;
+   //ExpectedAdditionalItems = IndexTargets->size() + 1;
 
    QueueURI(Desc);
 }
@@ -1404,10 +1407,17 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       return;
    }
 
-   Complete = true;
+   // queue for verify
+   if(AuthPass == false)
+   {
+      AuthPass = true;
+      Desc.URI = "gpgv:" + DestFile;
+      DestFile = MetaIndexFile;
+      QueueURI(Desc);
+      return;
+   }
 
-   // at this point pkgAcqMetaIndex takes over
-   ExpectedAdditionalItems = 0;
+   Complete = true;
 
    // put the last known good file back on i-m-s hit (it will
    // be re-verified again)
@@ -1416,10 +1426,13 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       Rename(LastGoodSig, DestFile);
 
    // queue for copy
-   PartialFile = DestFile;
+   PartialFile = _config->FindDir("Dir::State::lists") + "partial/";
+   PartialFile += URItoFileName(RealURI);
+
    DestFile = _config->FindDir("Dir::State::lists");
    DestFile += URItoFileName(RealURI);
 
+#if 0
    // queue a pkgAcqMetaIndex to be verified against the sig we just retrieved
    pkgAcqMetaIndex *metaindex = new pkgAcqMetaIndex(
       Owner, MetaIndexURI, MetaIndexURIDesc, 
@@ -1427,15 +1440,12 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       MetaIndexParser);
 
    TransactionID = (unsigned long)metaindex;
+#endif
 }
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-
-   // at this point pkgAcqMetaIndex takes over
-   ExpectedAdditionalItems = 0;
-
    // if we get a network error we fail gracefully
    if(Status == StatTransientNetworkError)
    {
@@ -1451,11 +1461,11 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 
    // Delete any existing sigfile when the acquire failed
    unlink(Final.c_str());
-
+#if 0
    // queue a pkgAcqMetaIndex with no sigfile
    new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
-		       "", IndexTargets, MetaIndexParser);
-
+      "", IndexTargets, MetaIndexParser);
+#endif
    if (Cnf->LocalOnly == true || 
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
    {      
@@ -1471,11 +1481,13 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 									/*}}}*/
 pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
 				 string URI,string URIDesc,string ShortDesc,
-				 string SigFile,
+                                 string MetaIndexSigURI,string MetaIndexSigURIDesc, string MetaIndexSigShortDesc,
 				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-   Item(Owner, HashStringList()), RealURI(URI), SigFile(SigFile), IndexTargets(IndexTargets),
-   MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false)
+   Item(Owner, HashStringList()), RealURI(URI), IndexTargets(IndexTargets),
+   MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false),
+   MetaIndexSigURI(MetaIndexSigURI), MetaIndexSigURIDesc(MetaIndexSigURIDesc),
+   MetaIndexSigShortDesc(MetaIndexSigShortDesc)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
@@ -1490,7 +1502,6 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
 
    // we expect more item
    ExpectedAdditionalItems = IndexTargets->size();
-
    QueueURI(Desc);
 }
 									/*}}}*/
@@ -1534,10 +1545,9 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
 
       if (SigFile == "")
       {
-         // There was no signature file, so we are finished.  Download
-         // the indexes and do only hashsum verification if possible
+         // load indexes, the signature will downloaded afterwards
          MetaIndexParser->Load(DestFile);
-         QueueIndexes(false);
+         QueueIndexes(true);
       }
       else
       {
@@ -1615,6 +1625,13 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
       }
       DestFile = FinalFile;
    }
+
+   // queue a signature
+   if(SigFile != DestFile)
+      new pkgAcqMetaSig(this, MetaIndexSigURI, MetaIndexSigURIDesc,
+                        MetaIndexSigShortDesc, DestFile, IndexTargets, 
+                        MetaIndexParser);
+
    Complete = true;
 }
 									/*}}}*/
@@ -1659,16 +1676,6 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 									/*}}}*/
 void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 {
-#if 0
-   /* Reject invalid, existing Release files (LP: #346386) (Closes: #627642)
-    * FIXME: Disabled; it breaks unsigned repositories without hashes */
-   if (!verify && FileExists(DestFile) && !MetaIndexParser->Load(DestFile))
-   {
-      Status = StatError;
-      ErrorText = MetaIndexParser->ErrorText;
-      return;
-   }
-#endif
    bool transInRelease = false;
    {
       std::vector<std::string> const keys = MetaIndexParser->MetaKeys();
@@ -1919,9 +1926,9 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 		string const &MetaSigURI, string const &MetaSigURIDesc, string const &MetaSigShortDesc,
 		const vector<IndexTarget*>* IndexTargets,
 		indexRecords* MetaIndexParser) :
-	pkgAcqMetaIndex(Owner, URI, URIDesc, ShortDesc, "", IndexTargets, MetaIndexParser),
-	MetaIndexURI(MetaIndexURI), MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
-	MetaSigURI(MetaSigURI), MetaSigURIDesc(MetaSigURIDesc), MetaSigShortDesc(MetaSigShortDesc)
+   pkgAcqMetaIndex(Owner, URI, URIDesc, ShortDesc, MetaSigURI, MetaSigURIDesc,MetaSigShortDesc, IndexTargets, MetaIndexParser),
+       MetaIndexURI(MetaIndexURI), MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
+       MetaSigURI(MetaSigURI), MetaSigURIDesc(MetaSigURIDesc), MetaSigShortDesc(MetaSigShortDesc)
 {
    SigFile = DestFile;
 
@@ -1983,9 +1990,9 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       if (FileExists(FinalFile))
 	 unlink(FinalFile.c_str());
 
-      new pkgAcqMetaSig(Owner,
-			MetaSigURI, MetaSigURIDesc, MetaSigShortDesc,
+      new pkgAcqMetaIndex(Owner,
 			MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
+			MetaSigURI, MetaSigURIDesc, MetaSigShortDesc,
 			IndexTargets, MetaIndexParser);
       if (Cnf->LocalOnly == true ||
 	  StringToBool(LookupTag(Message, "Transient-Failure"), false) == false)
