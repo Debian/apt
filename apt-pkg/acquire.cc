@@ -222,7 +222,6 @@ void pkgAcquire::CommitTransaction(unsigned long TransactionID)
             std::clog << "mv " 
                       << (*I)->PartialFile << " -> " 
                       <<  (*I)->DestFile << std::endl;
-
          Rename((*I)->PartialFile, (*I)->DestFile);
          chmod((*I)->DestFile.c_str(),0644);
       } else {

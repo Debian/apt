@@ -1031,8 +1031,11 @@ class pkgAcqMetaSig : public pkgAcquire::Item
     */
    const std::vector<IndexTarget*>* IndexTargets;
 
-   /** \brief if we are in fetching or download state */
+   /** \brief If we are in fetching or download state */
    bool AuthPass;
+
+   /** \brief Was this file already on disk */
+   bool IMSHit;
 
    public:
    

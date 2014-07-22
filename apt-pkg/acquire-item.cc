@@ -135,7 +135,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long long Size,HashStringLis
 {
    // We just downloaded something..
    string FileName = LookupTag(Message,"Filename");
-   UsedMirror =  LookupTag(Message,"UsedMirror");
+   UsedMirror = LookupTag(Message,"UsedMirror");
    if (Complete == false && !Local && FileName == DestFile)
    {
       if (Owner->Log != 0)
@@ -1322,17 +1322,18 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcqMetaIndex *MetaOwner,		/*{{{*/
 			     indexRecords* MetaIndexParser) :
    Item(MetaOwner->GetOwner(), HashStringList()), RealURI(URI), 
    MetaIndexParser(MetaIndexParser), MetaIndexFile(MetaIndexFile),
-   IndexTargets(IndexTargets), AuthPass(false)
+   IndexTargets(IndexTargets), AuthPass(false), IMSHit(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
-
-   TransactionID = (unsigned long)MetaOwner;
 
    // remove any partial downloaded sig-file in partial/. 
    // it may confuse proxies and is too small to warrant a 
    // partial download anyway
    unlink(DestFile.c_str());
+
+   // set the TransactionID
+   TransactionID = (unsigned long)MetaOwner;
 
    // Create the item
    Desc.Description = URIDesc;
@@ -1340,37 +1341,11 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcqMetaIndex *MetaOwner,		/*{{{*/
    Desc.ShortDesc = ShortDesc;
    Desc.URI = URI;
 
-#if 0
-   string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(RealURI);
-   if (RealFileExists(Final) == true)
-   {
-      // File was already in place.  It needs to be re-downloaded/verified
-      // because Release might have changed, we do give it a different
-      // name than DestFile because otherwise the http method will
-      // send If-Range requests and there are too many broken servers
-      // out there that do not understand them
-      LastGoodSig = DestFile+".reverify";
-      Rename(Final,LastGoodSig);
-   }
-#endif
-   // we expect the indextargets + one additional Release file
-   //ExpectedAdditionalItems = IndexTargets->size() + 1;
-
    QueueURI(Desc);
 }
 									/*}}}*/
 pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 {
-   // if the file was never queued undo file-changes done in the constructor
-   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false &&
-	 LastGoodSig.empty() == false)
-   {
-      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
-	 Rename(LastGoodSig, Final);
-   }
-
 }
 									/*}}}*/
 // pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
@@ -1378,8 +1353,11 @@ pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 /* The only header we use is the last-modified header. */
 string pkgAcqMetaSig::Custom600Headers() const
 {
+   string FinalFile = _config->FindDir("Dir::State::lists");
+   FinalFile += URItoFileName(RealURI);
+
    struct stat Buf;
-   if (stat(LastGoodSig.c_str(),&Buf) != 0)
+   if (stat(FinalFile.c_str(),&Buf) != 0)
       return "\nIndex-File: true";
 
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
@@ -1407,6 +1385,18 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       return;
    }
 
+   if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      IMSHit = true;
+
+   // adjust paths if its a ims-hit
+   if(IMSHit)
+   {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+         
+      DestFile = PartialFile = FinalFile;
+   }
+
    // queue for verify
    if(AuthPass == false)
    {
@@ -1417,65 +1407,31 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       return;
    }
 
+   // queue to copy the file in place if it was not a ims hit, on ims
+   // hit the file is already at the right place
+   if(IMSHit == false)
+   {
+      PartialFile = _config->FindDir("Dir::State::lists") + "partial/";
+      PartialFile += URItoFileName(RealURI);
+      
+      DestFile = _config->FindDir("Dir::State::lists");
+      DestFile += URItoFileName(RealURI);
+   }
+
    Complete = true;
 
-   // put the last known good file back on i-m-s hit (it will
-   // be re-verified again)
-   // Else do nothing, we have the new file in DestFile then
-   if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-      Rename(LastGoodSig, DestFile);
-
-   // queue for copy
-   PartialFile = _config->FindDir("Dir::State::lists") + "partial/";
-   PartialFile += URItoFileName(RealURI);
-
-   DestFile = _config->FindDir("Dir::State::lists");
-   DestFile += URItoFileName(RealURI);
-
-#if 0
-   // queue a pkgAcqMetaIndex to be verified against the sig we just retrieved
-   pkgAcqMetaIndex *metaindex = new pkgAcqMetaIndex(
-      Owner, MetaIndexURI, MetaIndexURIDesc, 
-      MetaIndexShortDesc,  DestFile, IndexTargets, 
-      MetaIndexParser);
-
-   TransactionID = (unsigned long)metaindex;
-#endif
 }
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   // if we get a network error we fail gracefully
-   if(Status == StatTransientNetworkError)
-   {
-      Item::Failed(Message,Cnf);
-      // move the sigfile back on transient network failures 
-      if(FileExists(LastGoodSig))
- 	 Rename(LastGoodSig,Final);
 
-      // set the status back to , Item::Failed likes to reset it
-      Status = pkgAcquire::Item::StatTransientNetworkError;
-      return;
-   }
+   // this ensures that any file in the lists/ dir is removed by the
+   // transaction
+   DestFile =  _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(RealURI);
+   PartialFile = "";
 
-   // Delete any existing sigfile when the acquire failed
-   unlink(Final.c_str());
-#if 0
-   // queue a pkgAcqMetaIndex with no sigfile
-   new pkgAcqMetaIndex(Owner, MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
-      "", IndexTargets, MetaIndexParser);
-#endif
-   if (Cnf->LocalOnly == true || 
-       StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
-   {      
-      // Ignore this
-      Status = StatDone;
-      Complete = false;
-      Dequeue();
-      return;
-   }
-   
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
@@ -1582,6 +1538,7 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
       FinalFile += URItoFileName(RealURI);
       if (SigFile == DestFile)
 	 SigFile = FinalFile;
+      // queue for copy in place
       PartialFile = DestFile;
       DestFile = FinalFile;
    }
