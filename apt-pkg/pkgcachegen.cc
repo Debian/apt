@@ -609,7 +609,7 @@ bool pkgCacheGenerator::NewGroup(pkgCache::GrpIterator &Grp, const string &Name)
       return false;
 
    Grp = pkgCache::GrpIterator(Cache, Cache.GrpP + Group);
-   map_pointer_t const idxName = WriteStringInMap(Name);
+   map_stringitem_t const idxName = StoreString(PKGNAME, Name);
    if (unlikely(idxName == 0))
       return false;
    Grp->Name = idxName;
@@ -836,7 +836,7 @@ map_pointer_t pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
       }
    }
    // haven't found the version string, so create
-   map_stringitem_t const idxVerStr = WriteStringInMap(VerStr);
+   map_stringitem_t const idxVerStr = StoreString(VERSION, VerStr);
    if (unlikely(idxVerStr == 0))
       return 0;
    Ver->VerStr = idxVerStr;
@@ -933,7 +933,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       if (index == 0)
       {
 	 void const * const oldMap = Map.Data();
-	 index = WriteStringInMap(Version);
+	 index = StoreString(VERSION, Version);
 	 if (unlikely(index == 0))
 	    return false;
 	 if (OldDepLast != 0 && oldMap != Map.Data())
