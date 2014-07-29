@@ -1,0 +1,445 @@
+Package: init
+xEssential: yes
+Priority: required
+Section: metapackages
+Installed-Size: 29
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: pkg-systemd-maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: init-system-helpers
+Version: 1.20
+Pre-Depends: sysvinit-core | systemd-sysv | upstart
+Filename: pool/main/i/init-system-helpers/init_1.20_i386.deb
+Size: 3494
+MD5sum: a388b6f4f6ed0d01b3d459cfad6582fe
+SHA1: d0eb6414a6bb48bb886fcc19962f6a7f302977f3
+SHA256: 9f299b2bf18d6e4534f3a73cca97ef93850e1b5fa38f8519da7c2b825d581f4c
+Description: System-V-like init utilities - metapackage
+Description-md5: e52554c23609041bfbca72fe27a132f9
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+
+Package: libudev1
+Priority: required
+Section: libs
+Installed-Size: 132
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: systemd
+Version: 208-6ubuntu2
+Depends: libc6 (>= 2.17), libselinux1 (>= 1.32)
+Pre-Depends: multiarch-support
+Filename: pool/main/s/systemd/libudev1_208-6ubuntu2_i386.deb
+Size: 36008
+MD5sum: b03338c052438a95919b9db4d6f9493e
+SHA1: a85242bfc653255b5fa73d0fbec92815dc9c09fc
+SHA256: d66d7948703b33bd617e16a1b9ac6f24ca564312890b1f9218330f638080a307
+Description: libudev shared library
+Multi-Arch: same
+Homepage: http://www.freedesktop.org/wiki/Software/systemd
+Description-md5: ace5b83d7b48187416c90173a93255b6
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: udev
+Priority: required
+Section: admin
+Installed-Size: 5879
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: systemd
+Version: 208-6ubuntu2
+Depends: libacl1 (>= 2.2.51-8), libblkid1 (>= 2.19.1), libc6 (>= 2.17), libkmod2 (>= 5~), libselinux1 (>= 2.0.65), libudev1 (= 208-6ubuntu2), lsb-base (>= 4.1+Debian11ubuntu7), util-linux (>= 2.16), procps
+Pre-Depends: debconf (>= 1.4.69) | debconf-2.0
+Breaks: consolekit (<< 0.4.6-1)
+Filename: pool/main/s/systemd/udev_208-6ubuntu2_i386.deb
+Size: 799582
+MD5sum: 814bb3babdbe76994ce536384ca31f88
+SHA1: bbb662c89f2b1ff4fd450d1523cc21b5b1c339bc
+SHA256: e444350214c5c121b2ca8031f76c53809f95ebb5c4cec4cf4595c7520ac09529
+Description: /dev/ and hotplug management daemon
+Multi-Arch: foreign
+Homepage: http://www.freedesktop.org/wiki/Software/systemd
+Description-md5: e875ddb09f46f1f7672af537f0c875ca
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: initscripts
+Priority: required
+Section: admin
+Installed-Size: 246
+Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian sysvinit maintainers <pkg-sysvinit-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: sysvinit
+Version: 2.88dsf-41ubuntu16
+Replaces: libc0.1, libc0.3, libc6, libc6.1
+Depends: libc6 (>= 2.4), mount (>= 2.11x-1), debianutils (>= 4), lsb-base (>= 4.1+Debian11ubuntu7), sysvinit-utils (>= 2.86.ds1-64), sysv-rc | file-rc, coreutils (>= 5.93), passwd, init, mountall (>= 2.28)
+Recommends: psmisc, e2fsprogs
+Conflicts: libdevmapper1.02.1 (<< 2:1.02.24-1)
+Breaks: aide (<< 0.15.1-5), atm-tools (<< 1:2.5.1-1.3), bootchart (<< 0.10~svn407-3.3), console-common (<< 0.7.86), cruft (<< 0.9.16), eepc-acpi-scripts (<< 1.1.12), fcheck (<< 2.7.59-16), hostapd (<< 1:0.7.3-3), hostname (<< 2.95ubuntu1~boot2), ifupdown (<< 0.6.8ubuntu27), libpam-mount (<< 2.13-1), ltsp-client-core (<< 5.2.16-1), mdadm (<< 3.2.2-1), nbd-client (<< 1:2.9.23-1), nfs-common (<< 1:1.2.5-3), portmap (<< 6.0.0-2), readahead-fedora (<< 2:1.5.6-3), resolvconf (<< 1.49), rpcbind (<< 0.2.0-7), rsyslog (<< 5.8.2-2), selinux-policy-default (<= 2:0.2.20100524-9), splashy (<< 0.3.13-5.1+b1), sysklogd (<< 1.5-6.2), udev (<< 146-2~boot6), upstart (<< 0.6.3-2~boot4), wpasupplicant (<< 0.7.3-4), xymon (<< 4.3.0~beta2.dfsg-9)
+Filename: pool/main/s/sysvinit/initscripts_2.88dsf-41ubuntu16_i386.deb
+Size: 35150
+MD5sum: e78f1e7816f03ded97eacd469505ea45
+SHA1: 81f88f9258c680e9983316d75baff7572ecec75c
+SHA256: 996e4d86486cbe12a7b7852ec1a9fe459dbf0afab51dc13bd701b6d970fdc14a
+Description: scripts for initializing and shutting down the system
+Multi-Arch: foreign
+Homepage: http://savannah.nongnu.org/projects/sysvinit
+Description-md5: db9003c179cd2a623493209da58ea2ea
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: libc6
+Priority: required
+Section: libs
+Installed-Size: 9284
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: GNU Libc Maintainers <debian-glibc@lists.debian.org>
+Architecture: i386
+Source: glibc
+Version: 2.19-4ubuntu1
+Replaces: libc6-i386, libc6-xen
+Provides: glibc-2.19-1, libc6-i686, libc6-xen
+Depends: libgcc1
+Suggests: glibc-doc, debconf | debconf-2.0, locales
+Conflicts: libc6-xen, prelink (<= 0.0.20090311-1), tzdata (<< 2007k-1), tzdata-etch
+Breaks: hurd (<< 1:0.5.git20140203-1), libtirpc1 (<< 0.2.3), nscd (<< 2.19)
+Filename: pool/main/g/glibc/libc6_2.19-4ubuntu1_i386.deb
+Size: 4012440
+MD5sum: 946665711bb0294bd2c7729b3174ba8b
+SHA1: 063e268e0d1e368e218d450a4bd2af7608b5e38e
+SHA256: 0e33f5c3b6da3a6ec52fb0274abfa0da5489808feb220b6e6640432cb84f948f
+Description: GNU C Library: Shared libraries
+Multi-Arch: same
+Homepage: http://www.gnu.org/software/libc/libc.html
+Description-md5: fc3001b0b90a1c8e6690b283a619d57f
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: libmount1
+Priority: required
+Section: libs
+Installed-Size: 253
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: LaMont Jones <lamont@debian.org>
+Architecture: i386
+Source: util-linux
+Version: 2.20.1-5.1ubuntu21
+Depends: libblkid1 (>= 2.17.2), libc6 (>= 2.8), libselinux1 (>= 1.32)
+Pre-Depends: multiarch-support
+Filename: pool/main/u/util-linux/libmount1_2.20.1-5.1ubuntu21_i386.deb
+Size: 60156
+MD5sum: d17af590ad06ac914a1024d54184cee6
+SHA1: 6eb2a281c409bd5181ce6b871795f8e4609565bc
+SHA256: 78ce54b9f644c365b95a7230e1e50762d628c9d0d3549211017a98d4cb5013c4
+Description: block device id library
+Multi-Arch: same
+Homepage: http://userweb.kernel.org/~kzak/util-linux/
+Description-md5: 8f605597a2fb2fd7bffd09db537dd040
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: libplymouth4
+Priority: required
+Section: libs
+Installed-Size: 315
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Architecture: i386
+Source: plymouth
+Version: 0.9.0-0ubuntu2
+Replaces: plymouth (<< 0.7.0+git20090207-0ubuntu0.1~ppa4)
+Depends: libc6 (>= 2.9), libpng12-0 (>= 1.2.13-4), libudev1 (>= 183)
+Pre-Depends: multiarch-support
+Breaks: casper (= 1.227), mountall (<< 2.8)
+Filename: pool/main/p/plymouth/libplymouth4_0.9.0-0ubuntu2_i386.deb
+Size: 85024
+MD5sum: 8d9e7001ba371bd802956de1e81d1997
+SHA1: 749bdaee4d8bd4c2383c703eb244caa473180d35
+SHA256: 59bd4492b6e71eee5c13ba9c63da12ece49c43106829556722ca503867ce7251
+Description: graphical boot animation and logger - shared libraries
+Multi-Arch: same
+Description-md5: 29e2ed45f3e127c38b58dae52061cc33
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: libprocps3
+Priority: required
+Section: libs
+Installed-Size: 133
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Craig Small <csmall@debian.org>
+Architecture: i386
+Source: procps
+Version: 1:3.3.9-1ubuntu5
+Replaces: procps (<< 1:3.3.2-1)
+Depends: libc6 (>= 2.4)
+Pre-Depends: multiarch-support
+Filename: pool/main/p/procps/libprocps3_3.3.9-1ubuntu5_i386.deb
+Size: 30078
+MD5sum: 0df60f591dfe64ed23bb1f3a1546c0ce
+SHA1: db672ec37e88574bf1a1d5484d80cfd4ff04f9f6
+SHA256: b5df28501805a6833dc78e049159a7c560af6f24f18f51459bd8890c31e0fdc6
+Description: library for accessing process information from /proc
+Multi-Arch: same
+Homepage: http://gitorious.org/procps
+Description-md5: 195f4a1a493350f6f0732a65b3cda83f
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: libudev1
+Priority: required
+Section: libs
+Installed-Size: 131
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: systemd
+Version: 204-14ubuntu2
+Depends: libc6 (>= 2.17), libcgmanager0, libdbus-1-3 (>= 1.0.2), libnih-dbus1 (>= 1.0.0), libnih1 (>= 1.0.0)
+Pre-Depends: multiarch-support
+Filename: pool/main/s/systemd/libudev1_204-14ubuntu2_i386.deb
+Size: 35518
+MD5sum: a606f9e4aab028b9ab658b6e8a09d5fb
+SHA1: ef28d377e6cc8f1e98dd9cd8c40edda90e2eed20
+SHA256: c02c85725f64b6c804235329166bf66e40da948d96123336ec55e13e1654720f
+Description: libudev shared library
+Multi-Arch: same
+Homepage: http://www.freedesktop.org/wiki/Software/systemd
+Description-md5: ace5b83d7b48187416c90173a93255b6
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: lsb-base
+Priority: required
+Section: misc
+Installed-Size: 83
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian LSB Team <debian-lsb@lists.debian.org>
+Architecture: all
+Source: lsb
+Version: 4.1+Debian11ubuntu8
+Replaces: upstart (<< 1.12.1-0ubuntu8)
+Breaks: upstart (<< 1.12.1-0ubuntu8)
+Filename: pool/main/l/lsb/lsb-base_4.1+Debian11ubuntu8_all.deb
+Size: 13094
+MD5sum: 9ec51f910e6d8e86bfb489b71b237e66
+SHA1: 8091ba9ffc03999a3db1e2e0ee7d32ac5139a942
+SHA256: be8d24447147aa997b79353eaf8732b3d0967118c011b47476c841667eb15f7e
+Description: Linux Standard Base 4.1 init script functionality
+Multi-Arch: foreign
+Homepage: http://www.linuxfoundation.org/collaborate/workgroups/lsb
+Description-md5: 4ebb3d88f9f483751e70c55779c52d01
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: mount
+Essential: yes
+Priority: required
+Section: admin
+Installed-Size: 410
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: LaMont Jones <lamont@debian.org>
+Architecture: i386
+Source: util-linux
+Version: 2.20.1-5.1ubuntu21
+Pre-Depends: libblkid1 (>= 2.20.1), libc6 (>= 2.8), libmount1 (>= 2.20.1), libselinux1 (>= 2.0.15)
+Suggests: nfs-common (>= 1:1.1.0-13)
+Filename: pool/main/u/util-linux/mount_2.20.1-5.1ubuntu21_i386.deb
+Size: 112598
+MD5sum: bdff5dbfbf17e2be281d64e2e7a4912b
+SHA1: 1ed4abb0d5de8a09c704ac2d33de123015e5318a
+SHA256: d2f023c763f7b6e91f3cd14073bfc5af7e7bfe3922fc5ca681d8038c80323f9e
+Description: Tools for mounting and manipulating filesystems
+Multi-Arch: foreign
+Homepage: http://userweb.kernel.org/~kzak/util-linux/
+Description-md5: 46eb8e09a600d5eb98b6b40428349102
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: mountall
+Priority: required
+Section: admin
+Installed-Size: 248
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Steve Langasek <vorlon@debian.org>
+Architecture: i386
+Version: 2.54build1
+Replaces: upstart (<< 0.6.3-2)
+Depends: makedev, udev, plymouth, coreutils (>= 7.1), libc6 (>= 2.9), libdbus-1-3 (>= 1.2.16), libnih-dbus1 (>= 1.0.0), libnih1 (>= 1.0.0), libplymouth4 (>= 0.8.1-3), libudev1 (>= 183)
+Pre-Depends: dpkg (>= 1.15.7.2)
+Breaks: initscripts (<< 2.88dsf-24), policycoreutils (<< 2.0.69-2ubuntu4), usplash (<< 0.5.47)
+Filename: pool/main/m/mountall/mountall_2.54build1_i386.deb
+Size: 54166
+MD5sum: a208d9dc5aef018087d5e00cea7f6c92
+SHA1: 13686aa81ebef6c3009ff618708d76bc68ff94e8
+SHA256: dee359411cd7cfad19581f380af6275d46a6c5ecf55f512523b75adaa4734d03
+Description: filesystem mounting tool
+Multi-Arch: foreign
+Description-md5: b5b5a27fc0e8063ef1226a39fb8ecf70
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: procps
+Priority: required
+Section: admin
+Installed-Size: 634
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Craig Small <csmall@debian.org>
+Architecture: i386
+Version: 1:3.3.9-1ubuntu5
+Provides: watch
+Depends: libc6 (>= 2.15), libncurses5 (>= 5.5-5~), libncursesw5 (>= 5.6+20070908), libprocps3, libtinfo5, lsb-base (>= 4.1+Debian11ubuntu7), initscripts
+Recommends: psmisc
+Conflicts: pgrep (<< 3.3-5), w-bassman (<< 1.0-3)
+Breaks: guymager (<= 0.5.9-1), open-vm-tools (<= 2011.12.20-562307-1), xmem (<= 1.20-27.1)
+Filename: pool/main/p/procps/procps_3.3.9-1ubuntu5_i386.deb
+Size: 203368
+MD5sum: 17be371891f077e04075c6eb0af06b3c
+SHA1: a5c6171b5a6430aa9436e42f0e64226dd2e7a665
+SHA256: 41e03fd2d05161c402d9a5d2b5feecb30a42f8919eb43712ebdd4340433803c1
+Description: /proc file system utilities
+Multi-Arch: foreign
+Homepage: http://gitorious.org/procps
+Description-md5: 943f3288c1aaa379fca73a3ff1a35278
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: sysv-rc
+Priority: required
+Section: admin
+Installed-Size: 224
+Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian sysvinit maintainers <pkg-sysvinit-devel@lists.alioth.debian.org>
+Architecture: all
+Source: sysvinit
+Version: 2.88dsf-41ubuntu16
+Replaces: file-rc
+Depends: debconf (>= 0.5) | debconf-2.0, sysvinit-utils (>= 2.86.ds1-62), insserv (>> 1.12.0-10)
+Recommends: lsb-base (>= 3.2-14)
+Suggests: sysv-rc-conf, bum
+Conflicts: file-rc
+Breaks: initscripts (<< 2.88dsf-41ubuntu14)
+Filename: pool/main/s/sysvinit/sysv-rc_2.88dsf-41ubuntu16_all.deb
+Size: 37784
+MD5sum: e57bc9887432f76266d7bf741cf9d813
+SHA1: 446d24cc86bdb7a779856c00f9dea966227a00e2
+SHA256: 072d2745b9c966d63cba5abf52357374e7a043b3cc1bbde0b8ccf68f82e45f60
+Description: System-V-like runlevel change mechanism
+Multi-Arch: foreign
+Homepage: http://savannah.nongnu.org/projects/sysvinit
+Description-md5: 195f2d617082a23f37cee0f50784eef9
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: sysvinit-utils
+Priority: required
+Section: admin
+Installed-Size: 236
+Maintainer: Ubuntu Core Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian sysvinit maintainers <pkg-sysvinit-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: sysvinit
+Version: 2.88dsf-41ubuntu16
+Replaces: last, sysvinit (<= 2.86.ds1-65)
+Depends: libc6 (>= 2.15), libselinux1 (>= 1.32), lsb-base (>= 4.1+Debian11ubuntu7)
+Recommends: upstart (>= 0.6.3-4)
+Suggests: bootlogd, sash
+Conflicts: chkconfig (<< 11.0-79.1-2), last, sysvconfig
+Breaks: upstart (<< 1.5-0ubuntu5)
+Filename: pool/main/s/sysvinit/sysvinit-utils_2.88dsf-41ubuntu16_i386.deb
+Size: 49652
+MD5sum: e1340ba69c7a5f0cf1a84b3f68993570
+SHA1: 7cbd535c1c010c2e84cb454562fb6632fb366ddc
+SHA256: 576c2bcfbf56871acd68576f07fd18b6bfccd8a5db6dfa04bcf62183f43e77a0
+Description: System-V-like utilities
+Multi-Arch: foreign
+Homepage: http://savannah.nongnu.org/projects/sysvinit
+Description-md5: 1d2bc4c9c32104729144c7578ecd30bd
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: udev
+Priority: required
+Section: admin
+Installed-Size: 5123
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
+Original-Maintainer: Debian systemd Maintainers <pkg-systemd-maintainers@lists.alioth.debian.org>
+Architecture: i386
+Source: systemd
+Version: 204-14ubuntu2
+Depends: libacl1 (>= 2.2.51-8), libblkid1 (>= 2.19.1), libc6 (>= 2.17), libcgmanager0, libdbus-1-3 (>= 1.0.2), libkmod2 (>= 5~), libnih-dbus1 (>= 1.0.0), libnih1 (>= 1.0.0), libselinux1 (>= 2.0.65), libudev1 (= 204-14ubuntu2), lsb-base (>= 4.1+Debian11ubuntu7), util-linux (>= 2.16), procps
+Pre-Depends: debconf (>= 1.4.69) | debconf-2.0
+Breaks: consolekit (<< 0.4.6-1)
+Filename: pool/main/s/systemd/udev_204-14ubuntu2_i386.deb
+Size: 739026
+MD5sum: a85b035885e1b316354f6e5d0b8eeb69
+SHA1: 970405e4c8838c3cf17d1834c8917705d977879e
+SHA256: 05fbd7f4b502fde9752b84b49364fe633b8377bcd996ec16462e0bc94adc9fcf
+Description: /dev/ and hotplug management daemon
+Multi-Arch: foreign
+Homepage: http://www.freedesktop.org/wiki/Software/systemd
+Description-md5: e875ddb09f46f1f7672af537f0c875ca
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
+Package: upstart
+Priority: required
+Section: admin
+Installed-Size: 1721
+Maintainer: James Hunt <james.hunt@ubuntu.com>
+Architecture: i386
+Version: 1.13.1-0ubuntu1
+Replaces: startup-tasks, system-services, sysvinit, upstart-compat-sysv, upstart-job
+Provides: startup-tasks, system-services, upstart-compat-sysv, upstart-job
+Depends: libc6 (>= 2.15), libcgmanager0, libdbus-1-3 (>= 1.2.16), libjson-c2 (>= 0.10), libnih-dbus1 (>= 1.0.0), libnih1 (>= 1.0.0), libudev1 (>= 183), sysvinit-utils, initscripts, mountall, ifupdown (>= 0.6.10ubuntu5), libjson0 (>= 0.10-1.1ubuntu1), debianutils (>= 4)
+Suggests: python3, graphviz, bash-completion, upstart-monitor
+Conflicts: lxcguest, startup-tasks, system-services, sysvinit, upstart-compat-sysv, upstart-job
+Breaks: friendly-recovery (<< 0.2.13), libc6 (<< 2.12.1-0ubuntu12)
+Filename: pool/main/u/upstart/upstart_1.13.1-0ubuntu1_i386.deb
+Size: 388978
+MD5sum: 2ebf7fb1083b581707e445fee808e120
+SHA1: 901424ec0d304ca8d10a25321a55d1d69bd8e82d
+SHA256: c42fb117e90770c7163c9f4770e75e9c0d6a00d41c4b3afc2afebfa65ede80f8
+Description: event-based init daemon
+Multi-Arch: foreign
+Homepage: http://upstart.ubuntu.com/
+Orig-Maintainer: Steve Langasek <vorlon@debian.org>
+Description-md5: b776ec43b708c13dd0c2ab824471f478
+Bugs: https://bugs.launchpad.net/ubuntu/+filebug
+Origin: Ubuntu
+Supported: 9m
+Task: minimal
+
