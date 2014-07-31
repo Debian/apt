@@ -954,32 +954,16 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 HashStringList const  &ExpectedHash, string comprExt)
    : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL), RealURI(URI)
 {
-   if(comprExt.empty() == true)
-   {
-      // autoselect the compression method
-      std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-      for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
-	 comprExt.append(*t).append(" ");
-      if (comprExt.empty() == false)
-	 comprExt.erase(comprExt.end()-1);
-   }
-   CompressionExtension = comprExt;
-
-   Init(URI, URIDesc, ShortDesc);
-}
-#if 0
-pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner, IndexTarget const *Target,
-			 HashStringList const &ExpectedHash, 
-                         indexRecords *MetaIndexParser)
-   : pkgAcqBaseIndex(Owner, Target, ExpectedHash, MetaIndexParser), 
-     RealURI(Target->URI)
-{
-   // autoselect the compression method
    AutoSelectCompression();
-   Init(Target->URI, Target->Description, Target->ShortDesc);
+   Init(URI, URIDesc, ShortDesc);
+
+   if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+      std::clog << "New pkgIndex with TransactionID "
+                << TransactionID << std::endl;
 }
-#endif
 									/*}}}*/
+// AcqIndex::AcqIndex - Constructor					/*{{{*/
+// ---------------------------------------------------------------------
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
                          unsigned long TransactionID,
                          IndexTarget const *Target,
@@ -997,6 +981,8 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
                 << TransactionID << std::endl;
 }
 									/*}}}*/
+// AcqIndex::AutoSelectCompression - Select compression			/*{{{*/
+// ---------------------------------------------------------------------
 void pkgAcqIndex::AutoSelectCompression()
 {
    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
@@ -1846,24 +1832,19 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 // pkgAcqMetaIndex::Failed - no Release file present or no signature file present	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqMetaIndex::Failed(string /*Message*/,
+void pkgAcqMetaIndex::Failed(string Message,
                              pkgAcquire::MethodConfig * /*Cnf*/)
 {
-#if 0
    if (AuthPass == true)
    {
       // gpgv method failed, if we have a good signature 
-      string LastGoodSigFile = _config->FindDir("Dir::State::lists").append("partial/").append(URItoFileName(RealURI));
+      string LastGoodSigFile = _config->FindDir("Dir::State::lists");
+      LastGoodSigFile += URItoFileName(RealURI);
       if (DestFile != SigFile)
 	 LastGoodSigFile.append(".gpg");
-      LastGoodSigFile.append(".reverify");
 
       if(FileExists(LastGoodSigFile))
       {
-	 string VerifiedSigFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-	 if (DestFile != SigFile)
-	    VerifiedSigFile.append(".gpg");
-	 Rename(LastGoodSigFile, VerifiedSigFile);
 	 Status = StatTransientNetworkError;
 	 _error->Warning(_("An error occurred during the signature "
 			   "verification. The repository is not updated "
@@ -1878,6 +1859,7 @@ void pkgAcqMetaIndex::Failed(string /*Message*/,
 	 _error->Error(_("GPG error: %s: %s"),
 			 Desc.Description.c_str(),
 			 LookupTag(Message,"Message").c_str());
+         Status = StatError;
 	 return;
       } else {
 	 _error->Warning(_("GPG error: %s: %s"),
@@ -1887,7 +1869,6 @@ void pkgAcqMetaIndex::Failed(string /*Message*/,
       // gpgv method failed 
       ReportMirrorFailure("GPGFailure");
    }
-#endif
 
    /* Always move the meta index, even if gpgv failed. This ensures
     * that PackageFile objects are correctly filled in */

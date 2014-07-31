@@ -195,8 +195,8 @@ bool pkgAcquire::TransactionHasError(unsigned long TransactionID)
    std::vector<Item*> Transaction;
    for (ItemIterator I = Items.begin(); I != Items.end(); ++I)
       if((*I)->TransactionID == TransactionID)
-         if((*I)->Status == pkgAcquire::Item::StatError ||
-            (*I)->Status == pkgAcquire::Item::StatAuthError)
+         if((*I)->Status != pkgAcquire::Item::StatDone &&
+            (*I)->Status != pkgAcquire::Item::StatIdle)
             return true;
 
    return false;

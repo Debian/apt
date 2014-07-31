@@ -156,14 +156,13 @@ test_inrelease_to_unauth_inrelease() {
     signreleasefiles 'Marvin Paranoid'
     avoid_ims_hit
     
-    testsuccess aptget update -qq
+    testequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY E8525D47528144E2
 
-    testequal "WARNING: The following packages cannot be authenticated!
-  old
-E: There are problems and -y was used without --force-yes" aptget install -qq -y old
+W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  
 
-    testfailure ls rootdir/var/lib/apt/lists/*_InRelease
-    testsuccess ls rootdir/var/lib/apt/lists/*_Release
+W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
+
+    testsuccess ls rootdir/var/lib/apt/lists/*_InRelease
 }
 
 TESTDIR=$(readlink -f $(dirname $0))
