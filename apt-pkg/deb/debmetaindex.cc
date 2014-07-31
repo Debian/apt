@@ -265,11 +265,12 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
       // this is normally created in pkgAcqMetaSig, but if we run
       // in --print-uris mode, we add it here
       if (tryInRelease == false)
-	 new pkgAcqMetaIndex(Owner, MetaIndexURI("Release"),
-	       MetaIndexInfo("Release"), "Release",
-               MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
-	       ComputeIndexTargets(),
-	       new indexRecords (Dist));
+	 new pkgAcqMetaIndex(Owner, 0,
+                             MetaIndexURI("Release"),
+                             MetaIndexInfo("Release"), "Release",
+                             MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
+                             ComputeIndexTargets(),
+                             new indexRecords (Dist));
    }
 
    if (tryInRelease == true)
@@ -280,7 +281,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	    ComputeIndexTargets(),
 	    new indexRecords (Dist));
    else
-      new pkgAcqMetaIndex(Owner, 
+      new pkgAcqMetaIndex(Owner, 0,
           MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
           MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
           ComputeIndexTargets(),

@@ -1,0 +1,180 @@
+#!/bin/sh
+#
+# test that apt-get update is transactional
+# 
+set -e
+
+avoid_ims_hit() {
+    touch -d '+1hour' aptarchive/dists/unstable/main/binary-i386/Packages*
+    touch -d '+1hour' aptarchive/dists/unstable/main/source/Sources*
+    touch -d '+1hour' aptarchive/dists/unstable/*Release*
+
+    touch -d '-1hour' rootdir/var/lib/apt/lists/*
+}
+
+create_fresh_archive()
+{
+    rm -rf aptarchive/*
+    rm -f rootdir/var/lib/apt/lists/_* rootdir/var/lib/apt/lists/partial/*
+
+    insertpackage 'unstable' 'old' 'all' '1.0'
+
+    setupaptarchive
+}
+
+add_new_package() {
+    insertpackage "unstable" "new" "all" "1.0"
+    insertsource "unstable" "new" "all" "1.0"
+
+    setupaptarchive --no-update
+
+    avoid_ims_hit
+}
+
+break_repository_sources_index() {
+    printf "xxx" > $APTARCHIVE/dists/unstable/main/source/Sources
+    gzip -c $APTARCHIVE/dists/unstable/main/source/Sources > \
+            $APTARCHIVE/dists/unstable/main/source/Sources.gz
+    avoid_ims_hit
+}
+
+test_inrelease_to_new_inrelease() {
+    msgmsg "Test InRelease to new InRelease works fine"
+    create_fresh_archive
+    testequal "old/unstable 1.0 all" apt list -q
+
+    add_new_package
+    testsuccess aptget update
+
+    testequal "new/unstable 1.0 all
+old/unstable 1.0 all" apt list -q
+}
+
+test_inrelease_to_broken_hash_reverts_all() {
+    msgmsg "Test InRelease to broken InRelease reverts everything"
+    create_fresh_archive
+    add_new_package
+    # break the Sources file
+    break_repository_sources_index
+
+    # test the error condition
+    testequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  
+
+W: Failed to fetch copy:${APTARCHIVE}/dists/unstable/main/source/Sources  Hash Sum mismatch
+
+W: Failed to fetch copy:${APTARCHIVE}/dists/unstable/main/binary-i386/Packages  
+
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
+    # ensure that the Packages file is also rolled back
+    testequal "E: Unable to locate package new" aptget install new -s -qq
+}
+
+test_inreleae_to_valid_release() {
+    msgmsg "Test InRelease to valid Release"
+    create_fresh_archive
+    add_new_package
+    # switch to a unsinged repo now
+    rm $APTARCHIVE/dists/unstable/InRelease
+    rm $APTARCHIVE/dists/unstable/Release.gpg
+    avoid_ims_hit
+
+    # update works
+    testsuccess aptget update -o Debug::Acquire::Transaction=1
+
+    # test that we can install the new packages but do no longer have a sig
+    testsuccess aptget install old -s
+    testsuccess aptget install new -s
+    testfailure ls $ROOTDIR/var/lib/apt/lists/*_InRelease
+    testfailure ls $ROOTDIR/var/lib/apt/lists/*_Release.gpg
+    testsuccess ls $ROOTDIR/var/lib/apt/lists/*_Release
+}
+
+test_inreleae_to_release_reverts_all() {
+    msgmsg "Test InRelease to broken Release reverts everything"
+    create_fresh_archive
+
+    # switch to a unsinged repo now
+    add_new_package
+    rm $APTARCHIVE/dists/unstable/InRelease
+    rm $APTARCHIVE/dists/unstable/Release.gpg
+    # break it
+    break_repository_sources_index
+
+    # ensure error
+    testequal "W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  
+
+W: Failed to fetch file:$APTARCHIVE/dists/unstable/Release  
+
+W: Failed to fetch file:$APTARCHIVE/dists/unstable/Release.gpg  
+
+W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
+
+W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/binary-i386/Packages  
+
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq # -o Debug::acquire::transaction=1
+
+    # ensure that the Packages file is also rolled back
+    testsuccess aptget install old -s
+    testfailure aptget install new -s
+    testsuccess ls $ROOTDIR/var/lib/apt/lists/*_InRelease
+    testfailure ls $ROOTDIR/var/lib/apt/lists/*_Release
+}
+
+test_unauthenticated_to_invalid_inrelease() {
+    msgmsg "Test UnAuthenticated to invalid InRelease reverts everything"
+    create_fresh_archive
+    rm $APTARCHIVE/dists/unstable/InRelease
+    rm $APTARCHIVE/dists/unstable/Release.gpg
+    avoid_ims_hit
+    
+    testsuccess aptget update -qq
+    testequal "WARNING: The following packages cannot be authenticated!
+  old
+E: There are problems and -y was used without --force-yes" aptget install -qq -y old
+    
+    # go to authenticated but not correct
+    add_new_package
+    break_repository_sources_index
+
+    testequal "W: Hashsum mismatch $ROOTDIR/var/lib/apt/lists/${APTARCHIVE_LISTS}_dists_unstable_main_source_Sources
+W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  
+ 
+W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
+
+E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
+
+    testfailure ls rootdir/var/lib/apt/lists/*_InRelease
+    testequal "WARNING: The following packages cannot be authenticated!
+  old
+E: There are problems and -y was used without --force-yes" aptget install -qq -y old
+}
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# setup the archive and ensure we have a single package that installs fine
+setupaptarchive
+APTARCHIVE=$(readlink -f ./aptarchive)
+ROOTDIR=${TMPWORKINGDIRECTORY}/rootdir
+APTARCHIVE_LISTS="$(echo $APTARCHIVE | tr "/" "_" )"
+
+# test the following cases:
+# - InRelease -> broken InRelease revert to previous state 
+# - empty lists dir and broken remote leaves nothing on the system
+# - InRelease -> hashsum mismatch for one file reverts all files to previous state
+# - Release/Release.gpg -> hashsum mismatch
+# - InRelease -> Release with hashsum mismatch revert entire state and kills Release
+# - Release -> InRelease with broken Sig/Hash removes InRelease
+# going from Release/Release.gpg -> InRelease and vice versa
+# - unauthenticated -> invalid InRelease
+
+test_inrelease_to_new_inrelease
+test_inrelease_to_broken_hash_reverts_all
+
+test_inreleae_to_valid_release
+test_inreleae_to_release_reverts_all
+
+#test_unauthenticated_to_invalid_inrelease

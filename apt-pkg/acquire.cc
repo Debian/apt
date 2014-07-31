@@ -198,6 +198,7 @@ bool pkgAcquire::TransactionHasError(unsigned long TransactionID)
          if((*I)->Status == pkgAcquire::Item::StatError ||
             (*I)->Status == pkgAcquire::Item::StatAuthError)
             return true;
+
    return false;
 }
 // Acquire::CommitTransaction - Commit a transaction			/*{{{*/
@@ -230,6 +231,8 @@ void pkgAcquire::CommitTransaction(unsigned long TransactionID)
                       <<  (*I)->DestFile << std::endl;
          unlink((*I)->DestFile.c_str());
       }
+      // mark that this transaction is finished
+      (*I)->TransactionID = 0;
    }
 }
 									/*}}}*/

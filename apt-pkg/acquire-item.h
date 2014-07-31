@@ -297,7 +297,8 @@ class pkgAcquire::Item : public WeakPointable
     *  \param ExpectedHashes of the file represented by this item
     */
    Item(pkgAcquire *Owner,
-        HashStringList const &ExpectedHashes=HashStringList());
+        HashStringList const &ExpectedHashes=HashStringList(),
+        unsigned long TransactionID=0);
 
    /** \brief Remove this item from its owner's queue by invoking
     *  pkgAcquire::Remove.
@@ -370,7 +371,9 @@ class pkgAcqSubIndex : public pkgAcquire::Item
     *
     *  \param ExpectedHashes The list file's hashsums which are expected.
     */
-   pkgAcqSubIndex(pkgAcquire *Owner, std::string const &URI,std::string const &URIDesc,
+   pkgAcqSubIndex(pkgAcquire *Owner, 
+                  unsigned long TransactionID,
+                  std::string const &URI,std::string const &URIDesc,
 		   std::string const &ShortDesc, HashStringList const &ExpectedHashes);
 };
 									/*}}}*/
@@ -459,6 +462,9 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
 
    /** \brief A brief description of the meta-index file */
    std::string MetaIndexSigShortDesc;
+
+   /** \brief delayed constructor */
+   void Init(std::string URIDesc, std::string ShortDesc);
    
    public:
    
@@ -472,6 +478,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
 
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire *Owner,
+                   unsigned long TransactionID,
 		   std::string URI,std::string URIDesc, std::string ShortDesc,
                    std::string MetaIndexSigURI, std::string MetaIndexSigURIDesc, std::string MetaIndexSigShortDesc,
 		   const std::vector<IndexTarget*>* IndexTargets,
@@ -525,22 +532,14 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
     */
    const struct IndexTarget * Target;
    indexRecords *MetaIndexParser;
-   pkgAcqMetaIndex *MetaOwner;
-
-   pkgAcqBaseIndex(pkgAcqMetaIndex *MetaOwner,
-                   struct IndexTarget const * const Target,
-                   HashStringList const &ExpectedHashes,
-                   indexRecords *MetaIndexParser)
-      : Item(MetaOwner->GetOwner(), ExpectedHashes), Target(Target), 
-        MetaIndexParser(MetaIndexParser), MetaOwner(MetaOwner) {};
 
    pkgAcqBaseIndex(pkgAcquire *Owner,
+                   unsigned long TransactionID,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser)
       : Item(Owner, ExpectedHashes), Target(Target), 
-        MetaIndexParser(MetaIndexParser), MetaOwner(0) {};
-
+        MetaIndexParser(MetaIndexParser) {};
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
@@ -606,7 +605,8 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
     *
     *  \param ExpectedHashes The list file's hashsums which are expected.
     */
-   pkgAcqDiffIndex(pkgAcqMetaIndex *MetaIndexOwner,
+   pkgAcqDiffIndex(pkgAcquire *Owner,
+                   unsigned long TransactionID,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser);
@@ -694,7 +694,8 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  \param allPatches contains all related items so that each item can
     *  check if it was the last one to complete the download step
     */
-   pkgAcqIndexMergeDiffs(pkgAcqMetaIndex *MetaIndexOwner,
+   pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
+                         unsigned long TransactionID,
                          struct IndexTarget const * const Target,
                          HashStringList const &ExpectedHash,
                          indexRecords *MetaIndexParser,
@@ -822,7 +823,8 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  should be ordered so that each diff appears before any diff
     *  that depends on it.
     */
-   pkgAcqIndexDiffs(pkgAcqMetaIndex *MetaIndexOwner,
+   pkgAcqIndexDiffs(pkgAcquire *Owner,
+                    unsigned long TransactionID,
                     struct IndexTarget const * const Target,
                     HashStringList const &ExpectedHash,
                     indexRecords *MetaIndexParser,
@@ -899,13 +901,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
    pkgAcqIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 	       std::string ShortDesc, HashStringList const &ExpectedHashes,
 	       std::string compressExt="");
-#if 0
-   pkgAcqIndex(pkgAcquire *Owner,
-               IndexTarget const * const Target,
-               HashStringList const &ExpectedHash,
-               indexRecords *MetaIndexParser);
-#endif
-   pkgAcqIndex(pkgAcqMetaIndex *MetaIndexOwner,
+   pkgAcqIndex(pkgAcquire *Owner, unsigned long TransactionID,
                IndexTarget const * const Target,
                HashStringList const &ExpectedHash,
                indexRecords *MetaIndexParser);
@@ -942,7 +938,9 @@ class pkgAcqIndexTrans : public pkgAcqIndex
    pkgAcqIndexTrans(pkgAcquire *Owner,
                     std::string URI,std::string URIDesc,
 		    std::string ShortDesc);
-   pkgAcqIndexTrans(pkgAcqMetaIndex *Owner, IndexTarget const * const Target,
+   pkgAcqIndexTrans(pkgAcquire *Owner,
+                    unsigned long TransactionID,
+                    IndexTarget const * const Target,
                     HashStringList const &ExpectedHashes,
                     indexRecords *MetaIndexParser);
 };
@@ -1047,7 +1045,8 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    virtual std::string DescURI() const {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaSig. */
-   pkgAcqMetaSig(pkgAcqMetaIndex *MetaOwner,
+   pkgAcqMetaSig(pkgAcquire *Owner,
+                 unsigned long TransactionID,
                  std::string URI,std::string URIDesc, std::string ShortDesc,
                  std::string MetaIndexFile,
 		 const std::vector<IndexTarget*>* IndexTargets,
