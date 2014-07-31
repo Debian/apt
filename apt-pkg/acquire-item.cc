@@ -1616,11 +1616,13 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
       if (SigFile == DestFile)
       {
 	 SigFile = FinalFile;
+#if 0
 	 // constructor of pkgAcqMetaClearSig moved it out of the way,
 	 // now move it back in on IMS hit for the 'old' file
 	 string const OldClearSig = DestFile + ".reverify";
 	 if (RealFileExists(OldClearSig) == true)
 	    Rename(OldClearSig, FinalFile);
+#endif
       }
       DestFile = FinalFile;
    }
@@ -1937,6 +1939,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
    // index targets + (worst case:) Release/Release.gpg
    ExpectedAdditionalItems = IndexTargets->size() + 2;
 
+#if 0
    // keep the old InRelease around in case of transistent network errors
    string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    if (RealFileExists(Final) == true)
@@ -1944,10 +1947,12 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
       string const LastGoodSig = DestFile + ".reverify";
       Rename(Final,LastGoodSig);
    }
+#endif
 }
 									/*}}}*/
 pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
 {
+#if 0
    // if the file was never queued undo file-changes done in the constructor
    if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false)
    {
@@ -1956,6 +1961,7 @@ pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
       if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
 	 Rename(LastGoodSig, Final);
    }
+#endif
 }
 									/*}}}*/
 // pkgAcqMetaClearSig::Custom600Headers - Insert custom request headers	/*{{{*/
@@ -1969,7 +1975,6 @@ string pkgAcqMetaClearSig::Custom600Headers() const
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
    {
-      Final = DestFile + ".reverify";
       if (stat(Final.c_str(),&Buf) != 0)
 	 return "\nIndex-File: true\nFail-Ignore: true\n";
    }
@@ -1984,12 +1989,13 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
 
    if (AuthPass == false)
    {
-      // Remove the 'old' InRelease file if we try Release.gpg now as otherwise
-      // the file will stay around and gives a false-auth impression (CVE-2012-0214)
+      // Queue the 'old' InRelease file for removal if we try Release.gpg
+      // as otherwise the file will stay around and gives a false-auth
+      // impression (CVE-2012-0214)
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile.append(URItoFileName(RealURI));
-      if (FileExists(FinalFile))
-	 unlink(FinalFile.c_str());
+      PartialFile = "";
+      DestFile = FinalFile;
 
       new pkgAcqMetaIndex(Owner, TransactionID,
 			MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
