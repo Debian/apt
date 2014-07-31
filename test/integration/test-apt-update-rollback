@@ -136,10 +136,11 @@ E: There are problems and -y was used without --force-yes" aptget install -qq -y
     add_new_package
     break_repository_sources_index
 
-    testequal "W: Hashsum mismatch $ROOTDIR/var/lib/apt/lists/${APTARCHIVE_LISTS}_dists_unstable_main_source_Sources
-W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  
- 
+    testequal "W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  
+
 W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
+
+W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/binary-i386/Packages  
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
@@ -177,4 +178,4 @@ test_inrelease_to_broken_hash_reverts_all
 test_inreleae_to_valid_release
 test_inreleae_to_release_reverts_all
 
-#test_unauthenticated_to_invalid_inrelease
+test_unauthenticated_to_invalid_inrelease
