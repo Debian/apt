@@ -1888,6 +1888,7 @@ void pkgAcqMetaIndex::Failed(string /*Message*/,
       ReportMirrorFailure("GPGFailure");
    }
 #endif
+
    /* Always move the meta index, even if gpgv failed. This ensures
     * that PackageFile objects are correctly filled in */
    if (FileExists(DestFile)) {
@@ -1902,9 +1903,9 @@ void pkgAcqMetaIndex::Failed(string /*Message*/,
 	                               "Release");
 	 SigFile = FinalFile;
       }
-      Rename(DestFile,FinalFile);
-      chmod(FinalFile.c_str(),0644);
 
+      // Done, queue for rename on transaction finished
+      PartialFile = DestFile;
       DestFile = FinalFile;
    }
 
