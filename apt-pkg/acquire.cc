@@ -185,8 +185,9 @@ void pkgAcquire::AbortTransaction(unsigned long TransactionID)
    {
       if(_config->FindB("Debug::Acquire::Transaction", false) == true)
          std::clog << "  Cancel: " << (*I)->DestFile << std::endl;
-      //Dequeue(*I);
-      (*I)->Status = pkgAcquire::Item::StatError;
+      // the transaction will abort, so stop anything that is idle
+      if ((*I)->Status == pkgAcquire::Item::StatIdle)
+         (*I)->Status = pkgAcquire::Item::StatDone;
    }
 }
 									/*}}}*/
