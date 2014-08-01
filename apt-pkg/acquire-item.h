@@ -540,7 +540,7 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser)
-      : Item(Owner, ExpectedHashes), Target(Target), 
+      : Item(Owner, ExpectedHashes, TransactionID), Target(Target), 
         MetaIndexParser(MetaIndexParser) {};
 };
 									/*}}}*/
