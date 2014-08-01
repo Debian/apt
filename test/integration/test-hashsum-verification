@@ -75,5 +75,13 @@ runtest() {
 
 }
 
-runtest
-
+for COMPRESSEDINDEXES in 'false' 'true'; do
+       echo "Acquire::GzipIndexes \"$COMPRESSEDINDEXES\";" > rootdir/etc/apt/apt.conf.d/compressindexes
+       if $COMPRESSEDINDEXES; then
+               msgmsg 'Run tests with GzipIndexes enabled'
+       else
+               msgmsg 'Run tests with GzipIndexes disabled'
+       fi
+ 
+        runtest
+done
