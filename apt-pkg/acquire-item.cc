@@ -1178,6 +1178,20 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
 	 unlink(DestFile.c_str());
 #endif
       return;
+   } else {
+      // FIXME: use the same method to find 
+      // check the compressed hash too
+      if(MetaKey != "" && Hashes.size() > 0)
+      {
+         indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+         if(Record && Record->Hashes.usable() && Hashes != Record->Hashes)
+         {
+            RenameOnError(HashSumMismatch);
+            printHashSumComparision(RealURI, Record->Hashes, Hashes);
+            Failed(Message, Cfg);
+            return;
+         }
+      }
    }
 
    Erase = false;

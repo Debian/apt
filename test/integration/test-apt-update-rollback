@@ -61,9 +61,7 @@ test_inrelease_to_broken_hash_reverts_all() {
     # test the error condition
     testequal "W: Failed to fetch file:${APTARCHIVE}/dists/unstable/InRelease  
 
-W: Failed to fetch copy:${APTARCHIVE}/dists/unstable/main/source/Sources  Hash Sum mismatch
-
-W: Failed to fetch copy:${APTARCHIVE}/dists/unstable/main/binary-i386/Packages  
+W: Failed to fetch file:${APTARCHIVE}/dists/unstable/main/source/Sources  Hash Sum mismatch
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
     # ensure that the Packages file is also rolled back
@@ -108,9 +106,7 @@ W: Failed to fetch file:$APTARCHIVE/dists/unstable/Release
 
 W: Failed to fetch file:$APTARCHIVE/dists/unstable/Release.gpg  
 
-W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
-
-W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/binary-i386/Packages  
+W: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq # -o Debug::acquire::transaction=1
 
@@ -139,9 +135,7 @@ E: There are problems and -y was used without --force-yes" aptget install -qq -y
 
     testequal "W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease  
 
-W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
-
-W: Failed to fetch copy:$APTARCHIVE/dists/unstable/main/binary-i386/Packages  
+W: Failed to fetch file:$APTARCHIVE/dists/unstable/main/source/Sources  Hash Sum mismatch
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
@@ -164,6 +158,19 @@ W: Failed to fetch file:$APTARCHIVE/dists/unstable/InRelease
 W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     testsuccess ls rootdir/var/lib/apt/lists/*_InRelease
+}
+
+test_inrelease_to_broken_gzip() {
+    msgmsg "Test InRelease to broken gzip"
+    create_fresh_archive
+    # append junk at the end of the gzip, this
+    echo "lala" >> $APTARCHIVE/dists/unstable/main/source/Sources.gz
+    # remove uncompressed file, otherwise apt will just fallback fetching
+    # that
+    rm $APTARCHIVE/dists/unstable/main/source/Sources
+    avoid_ims_hit
+
+    testfailure aptget update
 }
 
 TESTDIR=$(readlink -f $(dirname $0))
@@ -190,10 +197,8 @@ APTARCHIVE_LISTS="$(echo $APTARCHIVE | tr "/" "_" )"
 
 test_inrelease_to_new_inrelease
 test_inrelease_to_broken_hash_reverts_all
-
 test_inreleae_to_valid_release
 test_inreleae_to_release_reverts_all
-
 test_unauthenticated_to_invalid_inrelease
-
 test_inrelease_to_unauth_inrelease
+test_inrelease_to_broken_gzip
