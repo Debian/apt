@@ -532,6 +532,8 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
     */
    const struct IndexTarget * Target;
    indexRecords *MetaIndexParser;
+   /** \brief The MetaIndex Key */
+   std::string MetaKey;
 
    pkgAcqBaseIndex(pkgAcquire *Owner,
                    unsigned long TransactionID,
@@ -851,6 +853,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     */
    bool Erase;
 
+   // FIXME:
    // Unused, used to be used to verify that "Packages: " header was there
    bool __DELME_ON_NEXT_ABI_BREAK_Verify;
 

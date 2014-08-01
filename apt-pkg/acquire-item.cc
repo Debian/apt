@@ -1010,7 +1010,6 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
    DestFile += URItoFileName(URI);
 
    std::string const comprExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
-   std::string MetaKey;
    if (comprExt == "uncompressed")
    {
       Desc.URI = URI;

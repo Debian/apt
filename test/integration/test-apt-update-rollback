@@ -44,7 +44,9 @@ test_inrelease_to_new_inrelease() {
     testequal "old/unstable 1.0 all" apt list -q
 
     add_new_package
-    testsuccess aptget update
+    aptget update -o Debug::Acquire::Transaction=1
+
+    testsuccess aptget update -o Debug::Acquire::Transaction=1
 
     testequal "new/unstable 1.0 all
 old/unstable 1.0 all" apt list -q
