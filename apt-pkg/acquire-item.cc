@@ -1164,10 +1164,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       // Done, queue for rename on transaction finished
       PartialFile = DestFile;
 
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      DestFile = FinalFile;
-#if 0
+#if 1 // FIXME: waaaay too complicated
       /* We restore the original name to DestFile so that the clean operation
          will work OK */
       DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -1177,6 +1174,12 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       if (Erase == true)
 	 unlink(DestFile.c_str());
 #endif
+
+      // Done, queue for rename on transaction finished
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      DestFile = FinalFile;
+
       return;
    } else {
       // FIXME: use the same method to find 

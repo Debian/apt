@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+
+setupaptarchive
+changetowebserver
+
+testsuccess aptget update
+
+# check that I-M-S header is kept in redirections
+testequal "Hit http://localhost:8080 unstable InRelease
+Hit http://localhost:8080 unstable/main Sources
+Hit http://localhost:8080 unstable/main amd64 Packages
+Hit http://localhost:8080 unstable/main Translation-en
+Reading package lists..." aptget update 
+
