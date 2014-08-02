@@ -2000,21 +2000,28 @@ string pkgAcqMetaClearSig::Custom600Headers() const
    return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
+// pkgAcqMetaClearSig::Done - We got a file                     	/*{{{*/
+// ---------------------------------------------------------------------
+void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size, 
+                              HashStringList const &Hashes,
+                              pkgAcquire::MethodConfig *Cnf)
 {
-   // we failed, we will not get additional items from this method
-   ExpectedAdditionalItems = 0;
-
    // if we expect a ClearTextSignature (InRelase), ensure that
    // this is what we get and if not fail to queue a 
    // Release/Release.gpg, see #346386
-   if (!StartsWithGPGClearTextSignature(DestFile))
+   if (FileExists(DestFile) && !StartsWithGPGClearTextSignature(DestFile))
    {
       //_error->Error(_("Does not start with a clear sign signature"));
       pkgAcquire::Item::Failed(Message, Cnf);
       return;
    }
-
+   pkgAcqMetaIndex::Done(Message, Size, Hashes, Cnf);
+}
+									/*}}}*/
+void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
+{
+   // we failed, we will not get additional items from this method
+   ExpectedAdditionalItems = 0;
 
    if (AuthPass == false)
    {

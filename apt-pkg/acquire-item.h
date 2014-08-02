@@ -507,8 +507,10 @@ class pkgAcqMetaClearSig : public pkgAcqMetaIndex
    std::string MetaSigShortDesc;
 
 public:
-   void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
+   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
+		     pkgAcquire::MethodConfig *Cnf);
 
    /** \brief Create a new pkgAcqMetaClearSig. */
    pkgAcqMetaClearSig(pkgAcquire *Owner,
