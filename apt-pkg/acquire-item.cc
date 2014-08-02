@@ -1551,18 +1551,6 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
       }
       else
       {
-         // FIXME: move this into pkgAcqMetaClearSig::Done on the next
-         //        ABI break
-
-         // if we expect a ClearTextSignature (InRelase), ensure that
-         // this is what we get and if not fail to queue a 
-         // Release/Release.gpg, see #346386
-         if (SigFile == DestFile && !StartsWithGPGClearTextSignature(DestFile))
-         {
-            Failed(Message, Cfg);
-            return;
-         }
-
          // There was a signature file, so pass it to gpgv for
          // verification
          if (_config->FindB("Debug::pkgAcquire::Auth", false))
@@ -1984,6 +1972,17 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
 {
    // we failed, we will not get additional items from this method
    ExpectedAdditionalItems = 0;
+
+   // if we expect a ClearTextSignature (InRelase), ensure that
+   // this is what we get and if not fail to queue a 
+   // Release/Release.gpg, see #346386
+   if (!StartsWithGPGClearTextSignature(DestFile))
+   {
+      //_error->Error(_("Does not start with a clear sign signature"));
+      pkgAcquire::Item::Failed(Message, Cnf);
+      return;
+   }
+
 
    if (AuthPass == false)
    {
