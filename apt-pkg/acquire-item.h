@@ -873,6 +873,14 @@ class pkgAcqIndex : public pkgAcqBaseIndex
    /** \brief Auto select the right compression to use */
    void AutoSelectCompression();
 
+   /** \brief Get the full pathname of the final file for the given URI
+    */
+   std::string GetFinalFilename(std::string const &URI,
+                                std::string const &compExt);
+
+   /** \brief Schedule file for verification after a IMS hit */
+   void ReverifyAfterIMS(std::string const &FileName);
+
    public:
    
    // Specialized action members
