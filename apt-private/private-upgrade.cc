@@ -33,7 +33,7 @@ static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
 /* Intelligent upgrader that will install and remove packages at will */
 bool DoDistUpgrade(CommandLine &CmdL)
 {
-   return UpgradeHelper(CmdL, 0);
+   return UpgradeHelper(CmdL, APT::Upgrade::ALLOW_EVERYTHING);
 }
 									/*}}}*/
 bool DoUpgrade(CommandLine &CmdL)					/*{{{*/

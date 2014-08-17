@@ -540,7 +540,7 @@ static bool DoDSelectUpgrade(CommandLine &)
    }
 
    // Now upgrade everything
-   if (pkgAllUpgrade(Cache) == false)
+   if (APT::Upgrade::Upgrade(Cache, APT::Upgrade::FORBID_REMOVE_PACKAGES | APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES) == false)
    {
       ShowBroken(c1out,Cache,false);
       return _error->Error(_("Internal error, problem resolver broke stuff"));

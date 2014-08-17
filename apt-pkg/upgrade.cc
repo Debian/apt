@@ -282,7 +282,12 @@ bool pkgMinimizeUpgrade(pkgDepCache &Cache)
 // APT::Upgrade::Upgrade - Upgrade using a specific strategy		/*{{{*/
 bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode, OpProgress * const Progress)
 {
-   if (mode == 0)
+#if __GNUC__ >= 4
+	// the deprecated methods will become our privates, so that is fine
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+   if (mode == ALLOW_EVERYTHING)
       return pkgDistUpgrade(Cache, Progress);
    else if ((mode & ~FORBID_REMOVE_PACKAGES) == 0)
       return pkgAllUpgradeWithNewPackages(Cache, Progress);
@@ -290,7 +295,9 @@ bool APT::Upgrade::Upgrade(pkgDepCache &Cache, int mode, OpProgress * const Prog
       return pkgAllUpgradeNoNewPackages(Cache, Progress);
    else
       _error->Error("pkgAllUpgrade called with unsupported mode %i", mode);
-
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
    return false;
 }
 									/*}}}*/

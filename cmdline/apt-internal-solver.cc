@@ -175,10 +175,10 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	std::string failure;
 	if (upgrade == true) {
-		if (pkgAllUpgrade(CacheFile) == false)
+		if (APT::Upgrade::Upgrade(CacheFile, APT::Upgrade::FORBID_REMOVE_PACKAGES | APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES) == false)
 			failure = "ERR_UNSOLVABLE_UPGRADE";
 	} else if (distUpgrade == true) {
-		if (pkgDistUpgrade(CacheFile) == false)
+		if (APT::Upgrade::Upgrade(CacheFile, APT::Upgrade::ALLOW_EVERYTHING) == false)
 			failure = "ERR_UNSOLVABLE_DIST_UPGRADE";
 	} else if (Fix.Resolve() == false)
 		failure = "ERR_UNSOLVABLE";
