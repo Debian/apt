@@ -620,14 +620,17 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
       {
 	 // Call the scored problem resolver
 	 bool resolver_fail = false;
+	 OpTextProgress Progress(*_config);
+	 bool const distUpgradeMode = strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0;
+
 	 if (UpgradeMode == 0)
 	 {
-	    if (strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0)
-	       resolver_fail = APT::Upgrade::Upgrade(Cache, 0);
+	    if (distUpgradeMode == true)
+	       resolver_fail = APT::Upgrade::Upgrade(Cache, 0, &Progress);
 	    else
-	       resolver_fail = Fix->Resolve(true);
+	       resolver_fail = Fix->Resolve(true, &Progress);
 	 } else
-	    resolver_fail = APT::Upgrade::Upgrade(Cache, UpgradeMode);
+	    resolver_fail = APT::Upgrade::Upgrade(Cache, UpgradeMode, &Progress);
 
 	 if (resolver_fail == false && Cache->BrokenCount() == 0)
 	    return false;

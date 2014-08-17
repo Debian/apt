@@ -22,10 +22,8 @@ static bool UpgradeHelper(CommandLine &CmdL, int UpgradeFlags)
    if (Cache.OpenForInstall() == false || Cache.CheckDeps() == false)
       return false;
 
-   c0out << _("Calculating upgrade... ") << std::flush;
    if(!DoCacheManipulationFromCommandLine(CmdL, Cache, UpgradeFlags))
       return false;
-   c0out << _("Done") << std::endl;
 
    return InstallPackages(Cache,true);
 }

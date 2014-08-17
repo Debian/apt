@@ -10,7 +10,10 @@
 #ifndef PKGLIB_UPGRADE_H
 #define PKGLIB_UPGRADE_H
 
+#include <stddef.h>
+
 class pkgDepCache;
+class OpProgress;
 
 namespace APT {
    namespace Upgrade {
@@ -19,14 +22,13 @@ namespace APT {
          FORBID_REMOVE_PACKAGES = 1,
          FORBID_INSTALL_NEW_PACKAGES = 2
       };
-      bool Upgrade(pkgDepCache &Cache, int UpgradeMode);
+      bool Upgrade(pkgDepCache &Cache, int UpgradeMode, OpProgress * const Progress = NULL);
    }
 }
 
 // please use APT::Upgrade::Upgrade() instead
-bool pkgDistUpgrade(pkgDepCache &Cache);
-bool pkgAllUpgrade(pkgDepCache &Cache);
+bool pkgDistUpgrade(pkgDepCache &Cache, OpProgress * const Progress = NULL);
+bool pkgAllUpgrade(pkgDepCache &Cache, OpProgress * const Progress = NULL);
+
 bool pkgMinimizeUpgrade(pkgDepCache &Cache);
-
-
 #endif
