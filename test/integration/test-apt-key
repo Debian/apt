@@ -74,6 +74,14 @@ pub   2048R/DBAC8DAE 2010-08-18'
 	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
 	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
 
+	msgtest 'Test key removal with' 'long key ID'
+	cleanplate
+	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testsuccess --nomsg aptkey --fakeroot del 5A90D141DBAC8DAE
+	testempty aptkey list
+	testsuccess test ! -e rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+	testsuccess cmp keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg~
+
 	msgtest 'Test key removal with' 'fingerprint'
 	cleanplate
 	cp -a keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
