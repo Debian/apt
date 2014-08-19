@@ -33,9 +33,10 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
       "os-for-me [ linux-any ], "
       "cpu-not-for-me [ any-armel ], "
       "os-not-for-me [ kfreebsd-any ], "
-      "not-in-stage1 <!profile.stage1>, "
-      "not-in-stage1-or-nodoc <!profile.nodoc !profile.stage1>, "
-      "only-in-stage1 <unknown.unknown profile.stage1>, "
+      "not-in-stage1 <!stage1>, "
+      "not-stage1-and-not-nodoc <!nodoc !stage1>, "
+      "not-stage1-or-not-nodoc <!nodoc> <!stage1>, "
+      "unknown-profile <unknown stage1>, "
       "overlord-dev:any (= 7.15.3~) | overlord-dev:native (>> 7.15.5), "
       ;
 
@@ -184,7 +185,7 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
 
    if (ParseRestrictionsList == true) {
       Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
-      EXPECT_EQ("", Package); // not-in-stage1-or-in-nodoc
+      EXPECT_EQ("", Package); // not-stage1-and-not-nodoc
    } else {
       EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
       Start = strstr(Start, ",");
@@ -193,7 +194,16 @@ static void parseDependency(bool const StripMultiArch,  bool const ParseArchFlag
 
    if (ParseRestrictionsList == true) {
       Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
-      EXPECT_EQ("only-in-stage1", Package);
+      EXPECT_EQ("not-stage1-or-not-nodoc", Package);
+   } else {
+      EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
+      Start = strstr(Start, ",");
+      Start++;
+   }
+
+   if (ParseRestrictionsList == true) {
+      Start = debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList);
+      EXPECT_EQ("", Package); // unknown-profile
    } else {
       EXPECT_EQ(true, 0 == debListParser::ParseDepends(Start, End, Package, Version, Op, ParseArchFlags, StripMultiArch, ParseRestrictionsList));
       Start = strstr(Start, ",");
@@ -232,10 +242,11 @@ test:
       SCOPED_TRACE(std::string("ParseRestrictionsList: ") + (ParseRestrictionsList ? "true" : "false"));
       parseDependency(StripMultiArch, ParseArchFlags, ParseRestrictionsList);
    }
-   if (StripMultiArch == false)
-      if (ParseArchFlags == false)
-	 ParseRestrictionsList = !ParseRestrictionsList;
-   ParseArchFlags = !ParseArchFlags;
+   if (StripMultiArch == false) {
+       if (ParseArchFlags == false)
+           ParseRestrictionsList = !ParseRestrictionsList;
+       ParseArchFlags = !ParseArchFlags;
+   }
    StripMultiArch = !StripMultiArch;
 
    runner++;

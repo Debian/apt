@@ -635,72 +635,94 @@ const char *debListParser::ParseDepends(const char *Start,const char *Stop,
 
    if (ParseRestrictionsList == true)
    {
-      // Parse a restrictions list
-      if (I != Stop && *I == '<')
+      // Parse a restrictions formula which is in disjunctive normal form:
+      // (foo AND bar) OR (blub AND bla)
+
+      std::vector<string> const profiles = APT::Configuration::getBuildProfiles();
+
+      // if the next character is a restriction list, then by default the
+      // dependency does not apply and the conditions have to be checked
+      // if the next character is not a restriction list, then by default the
+      // dependency applies
+      bool applies1 = (*I != '<');
+      while (I != Stop)
       {
+	 if (*I != '<')
+	     break;
+
 	 ++I;
 	 // malformed
 	 if (unlikely(I == Stop))
 	    return 0;
 
-	 std::vector<string> const profiles = APT::Configuration::getBuildProfiles();
-
 	 const char *End = I;
-	 bool Found = false;
-	 bool NegRestriction = false;
-	 while (I != Stop)
-	 {
-	    // look for whitespace or ending '>'
-	    for (;End != Stop && !isspace(*End) && *End != '>'; ++End);
 
-	    if (unlikely(End == Stop))
-	       return 0;
-
-	    if (*I == '!')
+	 // if of the prior restriction list is already fulfilled, then
+	 // we can just skip to the end of the current list
+	 if (applies1) {
+	    for (;End != Stop && *End != '>'; ++End);
+	    I = ++End;
+	    // skip whitespace
+	    for (;I != Stop && isspace(*I) != 0; I++);
+	 } else {
+	    bool applies2 = true;
+	    // all the conditions inside a restriction list have to be
+	    // met so once we find one that is not met, we can skip to
+	    // the end of this list
+	    while (I != Stop)
 	    {
-	       NegRestriction = true;
-	       ++I;
-	    }
+	       // look for whitespace or ending '>'
+	       // End now points to the character after the current term
+	       for (;End != Stop && !isspace(*End) && *End != '>'; ++End);
 
-	    std::string restriction(I, End);
+	       if (unlikely(End == Stop))
+		  return 0;
 
-	    std::string prefix = "profile.";
-	    // only support for "profile" prefix, ignore others
-	    if (restriction.size() > prefix.size() &&
-		  restriction.substr(0, prefix.size()) == prefix)
-	    {
-	       // get the name of the profile
-	       restriction = restriction.substr(prefix.size());
+	       bool NegRestriction = false;
+	       if (*I == '!')
+	       {
+		  NegRestriction = true;
+		  ++I;
+	       }
+
+	       std::string restriction(I, End);
 
 	       if (restriction.empty() == false && profiles.empty() == false &&
-		     std::find(profiles.begin(), profiles.end(), restriction) != profiles.end())
+		  std::find(profiles.begin(), profiles.end(), restriction) != profiles.end())
 	       {
-		  Found = true;
-		  if (I[-1] != '!')
-		     NegRestriction = false;
-		  // we found a match, so fast-forward to the end of the wildcards
-		  for (; End != Stop && *End != '>'; ++End);
+		  if (NegRestriction) {
+		     applies2 = false;
+		     // since one of the terms does not apply we don't have to check the others
+		     for (; End != Stop && *End != '>'; ++End);
+		  }
+	       } else {
+		  if (!NegRestriction) {
+		     applies2 = false;
+		     // since one of the terms does not apply we don't have to check the others
+		     for (; End != Stop && *End != '>'; ++End);
+		  }
 	       }
-	    }
 
-	    if (*End++ == '>') {
+	       if (*End++ == '>') {
+		  I = End;
+		  // skip whitespace
+		  for (;I != Stop && isspace(*I) != 0; I++);
+		  break;
+	       }
+
 	       I = End;
-	       break;
+	       // skip whitespace
+	       for (;I != Stop && isspace(*I) != 0; I++);
 	    }
-
-	    I = End;
-	    for (;I != Stop && isspace(*I) != 0; I++);
+	    if (applies2) {
+	       applies1 = true;
+	    }
 	 }
-
-	 if (NegRestriction == true)
-	    Found = !Found;
-
-	 if (Found == false)
-	    Package = ""; /* not for this restriction */
       }
 
-      // Skip whitespace
-      for (;I != Stop && isspace(*I) != 0; I++);
+      if (applies1 == false) {
+	 Package = ""; //not for this restriction
+      }
    }
 
    if (I != Stop && *I == '|')
