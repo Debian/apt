@@ -1155,7 +1155,7 @@ void pkgAcqIndex::ReverifyAfterIMS(std::string const &FileName)
    method could possibly return an alternate filename which points
    to the uncompressed version of the file. If this is so the file
    is copied into the partial directory. In all other cases the file
-   is decompressed with a gzip uri. */
+   is decompressed with a compressed uri. */
 void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,
 		       pkgAcquire::MethodConfig *Cfg)
 {
@@ -1180,8 +1180,9 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
        * have a Package field) (LP: #346386) (Closes: #627642) 
        */
       FileFd fd(DestFile, FileFd::ReadOnly);
-      // Only test for correctness if the file is not empty (empty is ok)
-      if (fd.FileSize() > 0)
+      // Only test for correctness if the content of the file is not empty
+      // (empty is ok)
+      if (fd.Size() > 0)
       {
          pkgTagSection sec;
          pkgTagFile tag(&fd);
@@ -1195,21 +1196,15 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
          }
       }
        
-      // Done, queue for rename on transaction finished
-      PartialFile = DestFile;
-
-#if 1 // FIXME: waaaay too complicated
-      /* We restore the original name to DestFile so that the clean operation
-         will work OK */
-      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(RealURI);
-      
+      // FIXME: can we void the "Erase" bool here as its very non-local?
+      std::string CompressedFile = _config->FindDir("Dir::State::lists") + "partial/";
+      CompressedFile += URItoFileName(RealURI);
       // Remove the compressed version.
       if (Erase == true)
-	 unlink(DestFile.c_str());
-#endif
+	 unlink(CompressedFile.c_str());
 
       // Done, queue for rename on transaction finished
+      PartialFile = DestFile;
       DestFile = GetFinalFilename(RealURI, compExt);
 
       return;
