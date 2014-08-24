@@ -676,12 +676,21 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)
 // Finish - helper that cleans the item out of the fetcher queue	/*{{{*/
 void pkgAcqIndexDiffs::Finish(bool allDone)
 {
+   if(Debug)
+      std::clog << "pkgAcqIndexDiffs::Finish(): " 
+                << allDone << " "
+                << Desc.URI << std::endl;
+
    // we restore the original name, this is required, otherwise
    // the file will be cleaned
    if(allDone) 
    {
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI);
+      
+      // FIXME: we want the rred stuff to use the real transactional update
+      //        this is just a workaround
+      PartialFile = DestFile;
 
       if(HashSums().usable() && !HashSums().VerifyFile(DestFile))
       {
@@ -929,6 +938,8 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 
       // otherwise lists cleanup will eat the file
       DestFile = FinalFile;
+      // FIXME: make the merged rred code really transactional
+      PartialFile = FinalFile;
 
       // ensure the ed's are gone regardless of list-cleanup
       for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
