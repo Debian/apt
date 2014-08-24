@@ -16,6 +16,7 @@
 #include <apt-pkg/acquire-method.h>
 #include <apt-pkg/error.h>
 #include <apt-pkg/hashes.h>
+#include <apt-pkg/configuration.h>
 
 #include <string>
 #include <sys/stat.h>
@@ -27,11 +28,27 @@
 class CopyMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
+   void CalculateHashes(FetchResult &Res);
    
    public:
    
-   CopyMethod() : pkgAcqMethod("1.0",SingleInstance) {};
+   CopyMethod() : pkgAcqMethod("1.0",SingleInstance|SendConfig) {};
 };
+
+void CopyMethod::CalculateHashes(FetchResult &Res)
+{
+   // For gzip indexes we need to look inside the gzip for the hash
+   // We can not use the extension here as its not used in partial 
+   // on a IMS hit
+   FileFd::OpenMode OpenMode = FileFd::ReadOnly;
+   if (_config->FindB("Acquire::GzipIndexes", false) == true)
+      OpenMode = FileFd::ReadOnlyGzip;
+
+   Hashes Hash;
+   FileFd Fd(Res.Filename, OpenMode);
+   Hash.AddFD(Fd);
+   Res.TakeHashes(Hash);
+}
 
 // CopyMethod::Fetch - Fetch a file					/*{{{*/
 // ---------------------------------------------------------------------
@@ -53,6 +70,14 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    Res.LastModified = Buf.st_mtime;
    Res.IMSHit = false;      
    URIStart(Res);
+
+   // when the files are identical, just compute the hashes
+   if(File == Itm->DestFile)
+   {
+      CalculateHashes(Res);
+      URIDone(Res);
+      return true;
+   }
    
    // See if the file exists
    FileFd From(File,FileFd::ReadOnly);
@@ -82,10 +107,7 @@ bool CopyMethod::Fetch(FetchItem *Itm)
    if (utimes(Res.Filename.c_str(), times) != 0)
       return _error->Errno("utimes",_("Failed to set modification time"));
 
-   Hashes Hash;
-   FileFd Fd(Res.Filename, FileFd::ReadOnly);
-   Hash.AddFD(Fd);
-   Res.TakeHashes(Hash);
+   CalculateHashes(Res);
 
    URIDone(Res);
    return true;

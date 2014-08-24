@@ -1162,7 +1162,6 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
    Item::Done(Message,Size,Hashes,Cfg);
    std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
 
-
    if (Decompression == true)
    {
       if (ExpectedHashes.usable() && ExpectedHashes != Hashes)
@@ -1179,7 +1178,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       /* Always verify the index file for correctness (all indexes must
        * have a Package field) (LP: #346386) (Closes: #627642) 
        */
-      FileFd fd(DestFile, FileFd::ReadOnly);
+      FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Extension);
       // Only test for correctness if the content of the file is not empty
       // (empty is ok)
       if (fd.Size() > 0)
@@ -1208,19 +1207,19 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       DestFile = GetFinalFilename(RealURI, compExt);
 
       return;
-   } else {
-      // FIXME: use the same method to find 
-      // check the compressed hash too
-      if(MetaKey != "" && Hashes.size() > 0)
+   }
+   
+   // FIXME: use the same method to find 
+   // check the compressed hash too
+   if(MetaKey != "" && Hashes.size() > 0)
+   {
+      indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+      if(Record && Record->Hashes.usable() && Hashes != Record->Hashes)
       {
-         indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
-         if(Record && Record->Hashes.usable() && Hashes != Record->Hashes)
-         {
-            RenameOnError(HashSumMismatch);
-            printHashSumComparision(RealURI, Record->Hashes, Hashes);
-            Failed(Message, Cfg);
-            return;
-         }
+         RenameOnError(HashSumMismatch);
+         printHashSumComparision(RealURI, Record->Hashes, Hashes);
+         Failed(Message, Cfg);
+         return;
       }
    }
 
@@ -1269,14 +1268,9 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
 
    // If we enable compressed indexes and already have gzip, keep it
    if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) {
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI) + ".gz";
-      Rename(DestFile,FinalFile);
-      chmod(FinalFile.c_str(),0644);
-      
-      // Update DestFile for .gz suffix so that the clean operation keeps it
-      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(RealURI) + ".gz";
+      // Done, queue for rename on transaction finished
+      PartialFile = DestFile;
+      DestFile = GetFinalFilename(RealURI, compExt);
       return;
     }
 
