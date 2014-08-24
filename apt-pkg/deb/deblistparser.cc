@@ -108,7 +108,7 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 {
    unsigned char MA;
    string const MultiArch = Section.FindS("Multi-Arch");
-   if (MultiArch.empty() == true)
+   if (MultiArch.empty() == true || MultiArch == "no")
       MA = pkgCache::Version::None;
    else if (MultiArch == "same") {
       if (ArchitectureAll() == true)
