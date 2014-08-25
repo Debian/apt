@@ -1487,6 +1487,36 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    DestFile += URItoFileName(RealURI);
    PartialFile = "";
 
+   // FIXME: duplicated code from pkgAcqMetaIndex
+   if (AuthPass == true)
+   {
+      if(FileExists(Final))
+      {
+	 Status = StatTransientNetworkError;
+	 _error->Warning(_("An error occurred during the signature "
+			   "verification. The repository is not updated "
+			   "and the previous index files will be used. "
+			   "GPG error: %s: %s\n"),
+			 Desc.Description.c_str(),
+			 LookupTag(Message,"Message").c_str());
+	 RunScripts("APT::Update::Auth-Failure");
+	 return;
+      } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
+	 /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
+	 _error->Error(_("GPG error: %s: %s"),
+			 Desc.Description.c_str(),
+			 LookupTag(Message,"Message").c_str());
+         Status = StatError;
+	 return;
+      } else {
+	 _error->Warning(_("GPG error: %s: %s"),
+			 Desc.Description.c_str(),
+			 LookupTag(Message,"Message").c_str());
+      }
+      // gpgv method failed 
+      ReportMirrorFailure("GPGFailure");
+   }
+
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
    if (Cnf->LocalOnly == true || 
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
@@ -1871,15 +1901,11 @@ bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
 void pkgAcqMetaIndex::Failed(string Message,
                              pkgAcquire::MethodConfig * /*Cnf*/)
 {
+   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+
    if (AuthPass == true)
    {
-      // gpgv method failed, if we have a good signature 
-      string LastGoodSigFile = _config->FindDir("Dir::State::lists");
-      LastGoodSigFile += URItoFileName(RealURI);
-      if (DestFile != SigFile)
-	 LastGoodSigFile.append(".gpg");
-
-      if(FileExists(LastGoodSigFile))
+      if(FileExists(Final))
       {
 	 Status = StatTransientNetworkError;
 	 _error->Warning(_("An error occurred during the signature "
@@ -2011,8 +2037,8 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
    // Release/Release.gpg, see #346386
    if (FileExists(DestFile) && !StartsWithGPGClearTextSignature(DestFile))
    {
-      //_error->Error(_("Does not start with a clear sign signature"));
       pkgAcquire::Item::Failed(Message, Cnf);
+      ErrorText = _("Does not start with a cleartext signature");
       return;
    }
    pkgAcqMetaIndex::Done(Message, Size, Hashes, Cnf);
