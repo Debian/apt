@@ -1367,13 +1367,56 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
+
+pkgAcqMetaSigBase::pkgAcqMetaSigBase(pkgAcquire *Owner,
+                                     HashStringList const &ExpectedHashes,
+                                     unsigned long TransactionID)
+   : Item(Owner, ExpectedHashes, TransactionID)
+{
+}
+                                                                       /*{{{*/
+bool pkgAcqMetaSigBase::GenerateAuthWarning(const std::string &RealURI,
+                                            const std::string &Message)
+{
+   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   
+   if(FileExists(Final))
+   {
+      Status = StatTransientNetworkError;
+      _error->Warning(_("An error occurred during the signature "
+                        "verification. The repository is not updated "
+                        "and the previous index files will be used. "
+                        "GPG error: %s: %s\n"),
+                      Desc.Description.c_str(),
+                      LookupTag(Message,"Message").c_str());
+      RunScripts("APT::Update::Auth-Failure");
+      return true;
+   } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
+      /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
+      _error->Error(_("GPG error: %s: %s"),
+                    Desc.Description.c_str(),
+                    LookupTag(Message,"Message").c_str());
+      Status = StatError;
+      return true;
+   } else {
+      _error->Warning(_("GPG error: %s: %s"),
+                      Desc.Description.c_str(),
+                      LookupTag(Message,"Message").c_str());
+   }
+   // gpgv method failed 
+   ReportMirrorFailure("GPGFailure");
+   return false;
+}
+									/*}}}*/
+
+
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,          		/*{{{*/
                              unsigned long TransactionID,
 			     string URI,string URIDesc,string ShortDesc,
                              string MetaIndexFile,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
-   Item(Owner, HashStringList(), TransactionID), RealURI(URI), 
+   pkgAcqMetaSigBase(Owner, HashStringList(), TransactionID), RealURI(URI), 
    MetaIndexParser(MetaIndexParser), MetaIndexFile(MetaIndexFile),
    IndexTargets(IndexTargets), AuthPass(false), IMSHit(false)
 {
@@ -1490,31 +1533,9 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    // FIXME: duplicated code from pkgAcqMetaIndex
    if (AuthPass == true)
    {
-      if(FileExists(Final))
-      {
-	 Status = StatTransientNetworkError;
-	 _error->Warning(_("An error occurred during the signature "
-			   "verification. The repository is not updated "
-			   "and the previous index files will be used. "
-			   "GPG error: %s: %s\n"),
-			 Desc.Description.c_str(),
-			 LookupTag(Message,"Message").c_str());
-	 RunScripts("APT::Update::Auth-Failure");
-	 return;
-      } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
-	 /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
-	 _error->Error(_("GPG error: %s: %s"),
-			 Desc.Description.c_str(),
-			 LookupTag(Message,"Message").c_str());
-         Status = StatError;
-	 return;
-      } else {
-	 _error->Warning(_("GPG error: %s: %s"),
-			 Desc.Description.c_str(),
-			 LookupTag(Message,"Message").c_str());
-      }
-      // gpgv method failed 
-      ReportMirrorFailure("GPGFailure");
+      bool Stop = GenerateAuthWarning(RealURI, Message);
+      if(Stop)
+         return;
    }
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
@@ -1536,7 +1557,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
                                  string MetaIndexSigURI,string MetaIndexSigURIDesc, string MetaIndexSigShortDesc,
 				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-   Item(Owner, HashStringList(), TransactionID), RealURI(URI), IndexTargets(IndexTargets),
+   pkgAcqMetaSigBase(Owner, HashStringList(), TransactionID), RealURI(URI), IndexTargets(IndexTargets),
    MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false),
    MetaIndexSigURI(MetaIndexSigURI), MetaIndexSigURIDesc(MetaIndexSigURIDesc),
    MetaIndexSigShortDesc(MetaIndexSigShortDesc)
@@ -1905,31 +1926,9 @@ void pkgAcqMetaIndex::Failed(string Message,
 
    if (AuthPass == true)
    {
-      if(FileExists(Final))
-      {
-	 Status = StatTransientNetworkError;
-	 _error->Warning(_("An error occurred during the signature "
-			   "verification. The repository is not updated "
-			   "and the previous index files will be used. "
-			   "GPG error: %s: %s\n"),
-			 Desc.Description.c_str(),
-			 LookupTag(Message,"Message").c_str());
-	 RunScripts("APT::Update::Auth-Failure");
-	 return;
-      } else if (LookupTag(Message,"Message").find("NODATA") != string::npos) {
-	 /* Invalid signature file, reject (LP: #346386) (Closes: #627642) */
-	 _error->Error(_("GPG error: %s: %s"),
-			 Desc.Description.c_str(),
-			 LookupTag(Message,"Message").c_str());
-         Status = StatError;
-	 return;
-      } else {
-	 _error->Warning(_("GPG error: %s: %s"),
-			 Desc.Description.c_str(),
-			 LookupTag(Message,"Message").c_str());
-      }
-      // gpgv method failed 
-      ReportMirrorFailure("GPGFailure");
+      bool Stop = GenerateAuthWarning(RealURI, Message);
+      if(Stop)
+         return;
    }
 
    /* Always move the meta index, even if gpgv failed. This ensures

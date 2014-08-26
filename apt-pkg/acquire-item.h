@@ -378,6 +378,18 @@ class pkgAcqSubIndex : public pkgAcquire::Item
 };
 									/*}}}*/
 
+class pkgAcqMetaSigBase : public pkgAcquire::Item
+{
+ protected:
+   bool GenerateAuthWarning(const std::string &RealURI,
+                            const std::string &Message);
+
+ public:
+   pkgAcqMetaSigBase(pkgAcquire *Owner,
+                     HashStringList const &ExpectedHashes=HashStringList(),
+                     unsigned long TransactionID=0);
+};
+
 /** \brief An item that is responsible for downloading the meta-index	{{{
  *  file (i.e., Release) itself and verifying its signature.
  *
@@ -388,7 +400,7 @@ class pkgAcqSubIndex : public pkgAcquire::Item
  *  otherwise, the expected hashsums will be "" (causing the
  *  authentication of the index files to be bypassed).
  */
-class pkgAcqMetaIndex : public pkgAcquire::Item
+class pkgAcqMetaIndex : public pkgAcqMetaSigBase
 {
    protected:
    /** \brief The URI that is actually being downloaded; never
@@ -1017,7 +1029,7 @@ class OptionalSubIndexTarget : public OptionalIndexTarget
  *
  *  \sa pkgAcqMetaIndex
  */
-class pkgAcqMetaSig : public pkgAcquire::Item
+class pkgAcqMetaSig : public pkgAcqMetaSigBase
 {
    protected:
    /** \brief The last good signature file */
