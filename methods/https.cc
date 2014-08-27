@@ -81,6 +81,12 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
    if(me->File->Write(buffer, size*nmemb) != true)
       return false;
 
+   me->TotalWritten += size*nmemb;
+   if(me->TotalWritten > me->Queue->ExpectedSize)
+      return _error->Error("Writing more data than expected (%llu > %llu)",
+                           me->TotalWritten, me->Queue->ExpectedSize);
+
+
    return size*nmemb;
 }
 
