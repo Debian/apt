@@ -48,6 +48,7 @@ class pkgAcqMethod
       bool IndexFile;
       bool FailIgnore;
       HashStringList ExpectedHashes;
+      unsigned long long ExpectedSize;
    };
    
    struct FetchResult

@@ -49,6 +49,8 @@ struct ServerState
    URI Proxy;
    unsigned long TimeOut;
 
+   unsigned long long ExpectedSize;
+
    protected:
    ServerMethod *Owner;
 
@@ -73,7 +75,7 @@ struct ServerState
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0;
 		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
-		 State = Header; Persistent = false; Pipeline = true;};
+		 State = Header; Persistent = false; Pipeline = true; ExpectedSize = 0;};
    virtual bool WriteResponse(std::string const &Data) = 0;
 
    /** \brief Transfer the data from the socket */

@@ -63,7 +63,8 @@ const unsigned int CircleBuf::BW_HZ=10;
 // CircleBuf::CircleBuf - Circular input buffer				/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-CircleBuf::CircleBuf(unsigned long long Size) : Size(Size), Hash(0)
+CircleBuf::CircleBuf(unsigned long long Size) 
+   : Size(Size), Hash(0), TotalWriten(0)
 {
    Buf = new unsigned char[Size];
    Reset();
@@ -79,6 +80,7 @@ void CircleBuf::Reset()
    InP = 0;
    OutP = 0;
    StrPos = 0;
+   TotalWriten = 0;
    MaxGet = (unsigned long long)-1;
    OutQueue = string();
    if (Hash != 0)
@@ -216,6 +218,8 @@ bool CircleBuf::Write(int Fd)
 	 
 	 return false;
       }
+
+      TotalWriten += Res;
       
       if (Hash != 0)
 	 Hash->Add(Buf + (OutP%Size),Res);
@@ -648,6 +652,10 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
       if (In.Write(FileFD) == false)
 	 return _error->Errno("write",_("Error writing to output file"));
    }
+
+   if (ExpectedSize > 0 && In.TotalWriten > ExpectedSize)
+      return _error->Error("Writing more data than expected (%llu > %llu)",
+                           In.TotalWriten, ExpectedSize);
 
    // Handle commands from APT
    if (FD_ISSET(STDIN_FILENO,&rfds))

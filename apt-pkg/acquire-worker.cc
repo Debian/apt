@@ -526,6 +526,9 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    if (OutFd == -1)
       return false;
    
+   string ExpectedSize;
+   strprintf(ExpectedSize, "%llu", Item->Owner->FileSize);
+
    string Message = "600 URI Acquire\n";
    Message.reserve(300);
    Message += "URI: " + Item->URI;
@@ -533,6 +536,7 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    HashStringList const hsl = Item->Owner->HashSums();
    for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
       Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
+   Message += "\nExpected-Size: " + ExpectedSize;
    Message += Item->Owner->Custom600Headers();
    Message += "\n\n";
    
