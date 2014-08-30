@@ -1019,7 +1019,13 @@ testfileequal() {
 
 testempty() {
 	msgtest "Test for no output of" "$*"
-	test -z "$($* 2>&1)" && msgpass || msgfail
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
+	if $* >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
+		msgpass
+	else
+		cat $COMPAREFILE
+		msgfail
+	fi
 }
 
 testequal() {

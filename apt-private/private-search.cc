@@ -36,8 +36,28 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
    if (unlikely(Cache == NULL || Plcy == NULL))
       return false;
 
-   const char **patterns;
-   patterns = CmdL.FileList + 1;
+   // Make sure there is at least one argument
+   unsigned int const NumPatterns = CmdL.FileSize() -1;
+   if (NumPatterns < 1)
+      return _error->Error(_("You must give at least one search pattern"));
+
+#define APT_FREE_PATTERNS() for (std::vector<regex_t>::iterator P = Patterns.begin(); \
+      P != Patterns.end(); ++P) { regfree(&(*P)); }
+
+   // Compile the regex pattern
+   std::vector<regex_t> Patterns;
+   for (unsigned int I = 0; I != NumPatterns; ++I)
+   {
+      regex_t pattern;
+      if (regcomp(&pattern, CmdL.FileList[I + 1], REG_EXTENDED | REG_ICASE | REG_NOSUB) != 0)
+      {
+	 APT_FREE_PATTERNS();
+	 return _error->Error("Regex compilation error");
+      }
+      Patterns.push_back(pattern);
+   }
+
+   bool const NamesOnly = _config->FindB("APT::Cache::NamesOnly", false);
 
    std::map<std::string, std::string> output_map;
    std::map<std::string, std::string>::const_iterator K;
@@ -56,26 +76,23 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
       if (Done%500 == 0)
          progress.Progress(Done);
       ++Done;
-      
-      int i;
+
       pkgCache::DescIterator Desc = V.TranslatedDescription();
       pkgRecords::Parser &parser = records.Lookup(Desc.FileList());
-     
+
       bool all_found = true;
-      for(i=0; patterns[i] != NULL; ++i)
+      for (std::vector<regex_t>::const_iterator pattern = Patterns.begin();
+	    pattern != Patterns.end(); ++pattern)
       {
-         // FIXME: use regexp instead of simple find()
-         const char *pattern = patterns[i];
-         all_found &=  (
-            strstr(V.ParentPkg().Name(), pattern) != NULL ||
-            strcasestr(parser.ShortDesc().c_str(), pattern) != NULL ||
-            strcasestr(parser.LongDesc().c_str(), pattern) != NULL);
-         // search patterns are AND by default so we can skip looking further
-         // on the first mismatch
-         if(all_found == false)
-            break;
+	 if (regexec(&(*pattern), V.ParentPkg().Name(), 0, 0, 0) == 0)
+	    continue;
+	 else if (NamesOnly == false && regexec(&(*pattern), parser.LongDesc().c_str(), 0, 0, 0) == 0)
+	    continue;
+	 // search patterns are AND, so one failing fails all
+	 all_found = false;
+	 break;
       }
-      if (all_found)
+      if (all_found == true)
       {
             std::stringstream outs;
             ListSingleVersion(CacheFile, records, V, outs);
@@ -83,6 +100,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
                                  V.ParentPkg().Name(), outs.str()));
       }
    }
+   APT_FREE_PATTERNS();
    progress.Done();
 
    // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)

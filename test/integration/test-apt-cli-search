@@ -33,16 +33,31 @@ foo/unstable 1.0 all
 testequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq xxyyzz
+testempty apt search -qq --names-only xxyyzz
+
+# search name
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq foo
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq --names-only foo
 
 # search with multiple words is a AND search
 testequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq aabbcc xxyyzz
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq 'a+b+c+' 'i*xxy{0,2}zz'
 
 # search is not case-sensitive by default
 testequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq uppercase
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq 'up[pP]erc[Aa]se'
 
 # output is sorted and search word finds both package
 testequal "bar/testing 2.0 i386
