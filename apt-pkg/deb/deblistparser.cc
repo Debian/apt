@@ -338,13 +338,9 @@ unsigned short debListParser::VersionHash()
 /* Status lines are of the form,
      Status: want flag status
    want = unknown, install, hold, deinstall, purge
-   flag = ok, reinstreq, hold, hold-reinstreq
-   status = not-installed, unpacked, half-configured,
-            half-installed, config-files, post-inst-failed, 
-            removal-failed, installed
-   
-   Some of the above are obsolete (I think?) flag = hold-* and 
-   status = post-inst-failed, removal-failed at least.
+   flag = ok, reinstreq
+   status = not-installed, config-files, half-installed, unpacked,
+            half-configured, triggers-awaited, triggers-pending, installed
  */
 bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 				pkgCache::VerIterator &Ver)
@@ -401,15 +397,13 @@ bool debListParser::ParseStatus(pkgCache::PkgIterator &Pkg,
 
    // Process the flag field
    WordList StatusList[] = {{"not-installed",pkgCache::State::NotInstalled},
+                            {"config-files",pkgCache::State::ConfigFiles},
+                            {"half-installed",pkgCache::State::HalfInstalled},
                             {"unpacked",pkgCache::State::UnPacked},
                             {"half-configured",pkgCache::State::HalfConfigured},
-                            {"installed",pkgCache::State::Installed},
-                            {"half-installed",pkgCache::State::HalfInstalled},
-                            {"config-files",pkgCache::State::ConfigFiles},
                             {"triggers-awaited",pkgCache::State::TriggersAwaited},
                             {"triggers-pending",pkgCache::State::TriggersPending},
-                            {"post-inst-failed",pkgCache::State::HalfConfigured},
-                            {"removal-failed",pkgCache::State::HalfInstalled},
+                            {"installed",pkgCache::State::Installed},
                             {NULL, 0}};
    if (GrabWord(string(Start,I-Start),StatusList,Pkg->CurrentState) == false)
       return _error->Error("Malformed 3rd word in the Status line");
