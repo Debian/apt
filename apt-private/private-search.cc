@@ -32,7 +32,6 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
    pkgCacheFile CacheFile;
    pkgCache *Cache = CacheFile.GetPkgCache();
    pkgDepCache::Policy *Plcy = CacheFile.GetPolicy();
-   pkgRecords records(CacheFile);
    if (unlikely(Cache == NULL || Plcy == NULL))
       return false;
 
@@ -60,7 +59,6 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
    bool const NamesOnly = _config->FindB("APT::Cache::NamesOnly", false);
 
    std::map<std::string, std::string> output_map;
-   std::map<std::string, std::string>::const_iterator K;
 
    LocalitySortedVersionSet bag;
    OpTextProgress progress(*_config);
@@ -70,6 +68,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 
    progress.OverallProgress(50, 100, 50,  _("Full Text Search"));
    progress.SubProgress(bag.size());
+   pkgRecords records(CacheFile);
    int Done = 0;
    for ( ;V != bag.end(); ++V)
    {
@@ -77,16 +76,22 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
          progress.Progress(Done);
       ++Done;
 
+      // we want to list each package only once
+      char const * const PkgName = V.ParentPkg().Name();
+      if (output_map.find(PkgName) != output_map.end())
+	 continue;
+
       pkgCache::DescIterator Desc = V.TranslatedDescription();
       pkgRecords::Parser &parser = records.Lookup(Desc.FileList());
+      std::string const LongDesc = parser.LongDesc();
 
       bool all_found = true;
       for (std::vector<regex_t>::const_iterator pattern = Patterns.begin();
 	    pattern != Patterns.end(); ++pattern)
       {
-	 if (regexec(&(*pattern), V.ParentPkg().Name(), 0, 0, 0) == 0)
+	 if (regexec(&(*pattern), PkgName, 0, 0, 0) == 0)
 	    continue;
-	 else if (NamesOnly == false && regexec(&(*pattern), parser.LongDesc().c_str(), 0, 0, 0) == 0)
+	 else if (NamesOnly == false && regexec(&(*pattern), LongDesc.c_str(), 0, 0, 0) == 0)
 	    continue;
 	 // search patterns are AND, so one failing fails all
 	 all_found = false;
@@ -97,7 +102,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
             std::stringstream outs;
             ListSingleVersion(CacheFile, records, V, outs);
             output_map.insert(std::make_pair<std::string, std::string>(
-                                 V.ParentPkg().Name(), outs.str()));
+                                 PkgName, outs.str()));
       }
    }
    APT_FREE_PATTERNS();
@@ -105,6 +110,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
 
    // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)
    // output the sorted map
+   std::map<std::string, std::string>::const_iterator K;
    for (K = output_map.begin(); K != output_map.end(); ++K)
       std::cout << (*K).second << std::endl;
 
