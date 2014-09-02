@@ -621,15 +621,15 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    {
       if(action == "error")
       {
-         d->progress->Error(list[1], PackagesDone, PackagesTotal,
+         d->progress->Error(pkgname, PackagesDone, PackagesTotal,
                             list[3]);
          pkgFailures++;
-         WriteApportReport(list[1].c_str(), list[3].c_str());
+         WriteApportReport(pkgname.c_str(), list[3].c_str());
          return;
       }
       else if(action == "conffile-prompt")
       {
-         d->progress->ConffilePrompt(list[1], PackagesDone, PackagesTotal,
+         d->progress->ConffilePrompt(pkgname, PackagesDone, PackagesTotal,
                                      list[3]);
          return;
       }
@@ -1668,9 +1668,10 @@ void pkgDPkgPM::WriteApportReport(const char *pkgpath, const char *errormsg)
    // do not report dpkg I/O errors, this is a format string, so we compare
    // the prefix and the suffix of the error with the dpkg error message
    vector<string> io_errors;
-   io_errors.push_back(string("failed to read on buffer copy for %s"));
-   io_errors.push_back(string("failed in write on buffer copy for %s"));
-   io_errors.push_back(string("short read on buffer copy for %s"));
+   io_errors.push_back(string("failed to read"));
+   io_errors.push_back(string("failed to write"));
+   io_errors.push_back(string("failed to seek"));
+   io_errors.push_back(string("unexpected end of file or stream"));
 
    for (vector<string>::iterator I = io_errors.begin(); I != io_errors.end(); ++I)
    {
