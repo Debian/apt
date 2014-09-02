@@ -220,7 +220,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       output = SubstVar(output, "${Version}", GetVersion(CacheFile, V));
       output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
       output = SubstVar(output, "${Origin}", GetArchiveSuite(CacheFile, V));
-      out << output << std::endl;
+      out << output;
    } else {
       // raring/linux-kernel version [upradable: new-version]
       //    description

@@ -93,6 +93,7 @@ static void ListAllVersions(pkgCacheFile &CacheFile, pkgRecords &records,/*{{{*/
         Ver.end() == false; ++Ver)
    {
       ListSingleVersion(CacheFile, records, Ver, outs, include_summary);
+      outs << "\n";
    }
 }
 									/*}}}*/
@@ -148,7 +149,7 @@ bool DoList(CommandLine &Cmd)
    // FIXME: SORT! and make sorting flexible (alphabetic, by pkg status)
    // output the sorted map
    for (K = output_map.begin(); K != output_map.end(); ++K)
-      std::cout << (*K).second;
+      std::cout << (*K).second << std::endl;
 
 
    // be nice and tell the user if there is more to see

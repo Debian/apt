@@ -68,4 +68,7 @@ testequal "Listing...
 baz/unstable 2.0 all [upgradable from: 0.1]
 N: There are 2 additional versions. Please use the '-a' switch to see them." apt list baz -o quiet=0
 
-
+# test format strings for machine parseable output
+apt list -qq bar baz  -o APT::Cmd::use-format=true  -o APT::Cmd::format="\${Package} - \${installed:Version} - \${candidate:Version}" > output.txt
+testequal "bar - 1.0 - 1.0
+baz - 0.1 - 2.0" cat output.txt
