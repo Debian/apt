@@ -8,7 +8,9 @@ if [ ! -e environment.mak ]; then
 fi
 make -C test/interactive-helper/
 
-# run against the installed apt
+# run tests against the installed apt, use "env -i" to ensure
+# the host env does not pollute our environment
+env -i \
 APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR=$(pwd)/build/bin \
 APT_INTEGRATION_TESTS_METHODS_DIR=/usr/lib/apt/methods \
 APT_INTEGRATION_TESTS_LIBEXEC_DIR=/usr/lib/apt/ \
