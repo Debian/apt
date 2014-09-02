@@ -13,8 +13,10 @@
 #include <map>
 #include <set>
 #include <list>
+#include <vector>
 #include <string>
 #include <iterator>
+#include <algorithm>
 
 #include <stddef.h>
 
@@ -99,6 +101,7 @@ protected:
 	bool ShowError;
 	GlobalError::MsgType ErrorType;
 };									/*}}}*/
+
 class PackageContainerInterface {					/*{{{*/
 /** \class PackageContainerInterface
 
@@ -243,6 +246,18 @@ public:									/*{{{*/
 	PackageContainer() : ConstructedBy(UNKNOWN) {}
 	PackageContainer(Constructor const &by) : ConstructedBy(by) {}
 
+	/** \brief sort all included versions with given comparer
+
+	    Some containers are sorted by default, some are not and can't be,
+	    but a few like std::vector can be sorted if need be, so this can be
+	    specialized in later on. The default is that this will fail though.
+	    Specifically, already sorted containers like std::set will return
+	    false as well as there is no easy way to check that the given comparer
+	    would sort in the same way the set is currently sorted
+
+	    \return \b true if the set was sorted, \b false if not. */
+	template<class Compare> bool sort(Compare /*Comp*/) { return false; }
+
 	/** \brief returns all packages in the cache who belong to the given task
 
 	    A simple helper responsible for search for all members of a task
@@ -375,8 +390,12 @@ private:								/*{{{*/
 	Constructor ConstructedBy;
 									/*}}}*/
 };									/*}}}*/
-
+// specialisations for push_back containers: std::list & std::vector	/*{{{*/
 template<> template<class Cont> void PackageContainer<std::list<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
+	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
+		_cont.push_back(*p);
+}
+template<> template<class Cont> void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
 	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
 		_cont.push_back(*p);
 }
@@ -388,12 +407,30 @@ template<> inline bool PackageContainer<std::list<pkgCache::PkgIterator> >::inse
 	_cont.push_back(P);
 	return true;
 }
+template<> inline bool PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
+	if (P.end() == true)
+		return false;
+	_cont.push_back(P);
+	return true;
+}
 template<> inline void PackageContainer<std::list<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator p = begin; p != end; ++p)
 		_cont.push_back(*p);
 }
+template<> inline void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator p = begin; p != end; ++p)
+		_cont.push_back(*p);
+}
+									/*}}}*/
+
+template<> template<class Compare> inline bool PackageContainer<std::vector<pkgCache::PkgIterator> >::sort(Compare Comp) {
+	std::sort(_cont.begin(), _cont.end(), Comp);
+	return true;
+}
+
 typedef PackageContainer<std::set<pkgCache::PkgIterator> > PackageSet;
 typedef PackageContainer<std::list<pkgCache::PkgIterator> > PackageList;
+typedef PackageContainer<std::vector<pkgCache::PkgIterator> > PackageVector;
 
 class VersionContainerInterface {					/*{{{*/
 /** \class APT::VersionContainerInterface
@@ -568,6 +605,18 @@ public:									/*{{{*/
 	iterator end() { return iterator(_cont.end()); }
 	const_iterator find(pkgCache::VerIterator const &V) const { return const_iterator(_cont.find(V)); }
 
+	/** \brief sort all included versions with given comparer
+
+	    Some containers are sorted by default, some are not and can't be,
+	    but a few like std::vector can be sorted if need be, so this can be
+	    specialized in later on. The default is that this will fail though.
+	    Specifically, already sorted containers like std::set will return
+	    false as well as there is no easy way to check that the given comparer
+	    would sort in the same way the set is currently sorted
+
+	    \return \b true if the set was sorted, \b false if not. */
+	template<class Compare> bool sort(Compare /*Comp*/) { return false; }
+
 	/** \brief returns all versions specified on the commandline
 
 	    Get all versions from the commandline, uses given default version if
@@ -669,8 +718,12 @@ public:									/*{{{*/
 	}
 									/*}}}*/
 };									/*}}}*/
-
+// specialisations for push_back containers: std::list & std::vector	/*{{{*/
 template<> template<class Cont> void VersionContainer<std::list<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
+	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
+		_cont.push_back(*v);
+}
+template<> template<class Cont> void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
 	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
 		_cont.push_back(*v);
 }
@@ -682,11 +735,29 @@ template<> inline bool VersionContainer<std::list<pkgCache::VerIterator> >::inse
 	_cont.push_back(V);
 	return true;
 }
+template<> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
+	if (V.end() == true)
+		return false;
+	_cont.push_back(V);
+	return true;
+}
 template<> inline void VersionContainer<std::list<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator v = begin; v != end; ++v)
 		_cont.push_back(*v);
 }
+template<> inline void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator v = begin; v != end; ++v)
+		_cont.push_back(*v);
+}
+									/*}}}*/
+
+template<> template<class Compare> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::sort(Compare Comp) {
+	std::sort(_cont.begin(), _cont.end(), Comp);
+	return true;
+}
+
 typedef VersionContainer<std::set<pkgCache::VerIterator> > VersionSet;
 typedef VersionContainer<std::list<pkgCache::VerIterator> > VersionList;
+typedef VersionContainer<std::vector<pkgCache::VerIterator> > VersionVector;
 }
 #endif
