@@ -69,6 +69,13 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
    progress.OverallProgress(50, 100, 50,  _("Full Text Search"));
    progress.SubProgress(bag.size());
    pkgRecords records(CacheFile);
+
+   std::string format = "${color:highlight}${Package}${color:neutral}/${Origin} ${Version} ${Architecture}${ }${apt:Status}\n";
+   if (_config->FindB("APT::Cache::ShowFull",false) == false)
+      format += "  ${Description}\n";
+   else
+      format += "  ${LongDescription}\n";
+
    int Done = 0;
    for ( ;V != bag.end(); ++V)
    {
@@ -100,7 +107,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
       if (all_found == true)
       {
             std::stringstream outs;
-            ListSingleVersion(CacheFile, records, V, outs);
+            ListSingleVersion(CacheFile, records, V, outs, format);
             output_map.insert(std::make_pair<std::string, std::string>(
                                  PkgName, outs.str()));
       }

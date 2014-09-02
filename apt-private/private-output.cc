@@ -207,9 +207,31 @@ static std::string GetShortDescription(pkgCacheFile &CacheFile, pkgRecords &reco
    return ShortDescription;
 }
 									/*}}}*/
+static std::string GetLongDescription(pkgCacheFile &CacheFile, pkgRecords &records, pkgCache::PkgIterator P)/*{{{*/
+{
+   pkgPolicy *policy = CacheFile.GetPolicy();
+
+   pkgCache::VerIterator ver;
+   if (P->CurrentVer != 0)
+      ver = P.CurrentVer();
+   else
+      ver = policy->GetCandidateVer(P);
+
+   std::string const EmptyDescription = "(none)";
+   if(ver.end() == true)
+      return EmptyDescription;
+
+   pkgCache::DescIterator const Desc = ver.TranslatedDescription();
+   pkgRecords::Parser & parser = records.Lookup(Desc.FileList());
+   std::string const longdesc = parser.LongDesc();
+   if (longdesc.empty() == true)
+      return EmptyDescription;
+   return SubstVar(longdesc, "\n ", "\n  ");
+}
+									/*}}}*/
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
-                       pkgCache::VerIterator V, std::ostream &out,
-                       bool include_summary)
+                       pkgCache::VerIterator const &V, std::ostream &out,
+                       std::string const &format)
 {
    pkgCache::PkgIterator const P = V.ParentPkg();
    pkgDepCache * const DepCache = CacheFile.GetDepCache();
@@ -219,11 +241,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
    if (_config->FindB("APT::Cmd::use-format", false))
       output = _config->Find("APT::Cmd::format", "${db::Status-Abbrev} ${Package} ${Version} ${Origin} ${Description}");
    else
-   {
-      // linux-kernel/unstable version [installed,upradable to: new-version]
-      //    description
-      output = "${color:highlight}${Package}${color:neutral}/${Origin} ${Version} ${Architecture} ${apt:Status}";
-   }
+      output = format;
 
    // FIXME: some of these names are really icky – and all is nowhere documented
    output = SubstVar(output, "${db::Status-Abbrev}", GetFlagsStr(CacheFile, P));
@@ -264,14 +282,13 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
    output = SubstVar(output, "${apt:Status}", StatusStr);
    output = SubstVar(output, "${color:highlight}", _config->Find("APT::Color::Highlight", ""));
    output = SubstVar(output, "${color:neutral}", _config->Find("APT::Color::Neutral", ""));
-
-   output = APT::String::Strip(output);
-   if (_config->FindB("APT::Cmd::use-format", false) == false)
-   {
-      if (include_summary)
-	 output += "\n  ${Description}\n";
-   }
    output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
+   output = SubstVar(output, "${LongDescription}", GetLongDescription(CacheFile, records, P));
+   output = SubstVar(output, "${ }${ }", "${ }");
+   output = SubstVar(output, "${ }\n", "\n");
+   output = SubstVar(output, "${ }", " ");
+   if (APT::String::Endswith(output, " ") == true)
+      output.erase(output.length() - 1);
 
    out << output;
 }
