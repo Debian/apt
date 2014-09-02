@@ -49,9 +49,11 @@ baz/now 0.1 all [installed,upgradable to: 2.0]
 foobar/now 1.0 i386 [installed,upgradable to: 2.0]" apt list --installed
 
 testequal "Listing...
+bar/now 1.0 i386 [installed,local]
+
 foobar/unstable 2.0 i386 [upgradable from: 1.0]
 foobar/now 1.0 i386 [installed,upgradable to: 2.0]
-" apt list foobar --all-versions
+" apt list bar foobar --all-versions
 
 testequal "Listing...
 bar/now 1.0 i386 [installed,local]
