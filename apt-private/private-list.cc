@@ -127,7 +127,7 @@ bool DoList(CommandLine &Cmd)
                             Cache->Head().PackageCount, 
                             Cache->Head().PackageCount,
                             _("Listing"));
-   GetLocalitySortedVersionSet(CacheFile, bag, matcher, progress);
+   GetLocalitySortedVersionSet(CacheFile, &bag, matcher, &progress);
    bool const ShowAllVersions = _config->FindB("APT::Cmd::All-Versions", false);
    std::map<std::string, std::string> output_map;
    for (LocalitySortedVersionSet::iterator V = bag.begin(); V != bag.end(); ++V)

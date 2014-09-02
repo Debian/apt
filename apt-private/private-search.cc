@@ -63,7 +63,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
    LocalitySortedVersionSet bag;
    OpTextProgress progress(*_config);
    progress.OverallProgress(0, 100, 50,  _("Sorting"));
-   GetLocalitySortedVersionSet(CacheFile, bag, progress);
+   GetLocalitySortedVersionSet(CacheFile, &bag, &progress);
    LocalitySortedVersionSet::iterator V = bag.begin();
 
    progress.OverallProgress(50, 100, 50,  _("Full Text Search"));
@@ -77,6 +77,7 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
       format += "  ${LongDescription}\n";
 
    int Done = 0;
+   std::vector<bool> PkgsDone(Cache->Head().PackageCount, false);
    for ( ;V != bag.end(); ++V)
    {
       if (Done%500 == 0)
@@ -84,10 +85,11 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
       ++Done;
 
       // we want to list each package only once
-      char const * const PkgName = V.ParentPkg().Name();
-      if (output_map.find(PkgName) != output_map.end())
+      pkgCache::PkgIterator const P = V.ParentPkg();
+      if (PkgsDone[P->ID] == true)
 	 continue;
 
+      char const * const PkgName = P.Name();
       pkgCache::DescIterator Desc = V.TranslatedDescription();
       pkgRecords::Parser &parser = records.Lookup(Desc.FileList());
       std::string const LongDesc = parser.LongDesc();
@@ -106,10 +108,11 @@ bool FullTextSearch(CommandLine &CmdL)					/*{{{*/
       }
       if (all_found == true)
       {
-            std::stringstream outs;
-            ListSingleVersion(CacheFile, records, V, outs, format);
-            output_map.insert(std::make_pair<std::string, std::string>(
-                                 PkgName, outs.str()));
+	 PkgsDone[P->ID] = true;
+	 std::stringstream outs;
+	 ListSingleVersion(CacheFile, records, V, outs, format);
+	 output_map.insert(std::make_pair<std::string, std::string>(
+		  PkgName, outs.str()));
       }
    }
    APT_FREE_PATTERNS();
