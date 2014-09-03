@@ -76,19 +76,16 @@ class CacheSetHelperVirtuals: public APT::CacheSetHelper {
 public:
    APT::PackageSet virtualPkgs;
 
-   virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      return CacheSetHelper::canNotFindCandidateVer(Cache, Pkg);
+   virtual pkgCache::VerIterator canNotGetVersion(enum CacheSetHelper::VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      if (select == NEWEST || select == CANDIDATE || select == ALL)
+	 virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotGetVersion(select, Cache, Pkg);
    }
 
-   virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      return CacheSetHelper::canNotFindNewestVer(Cache, Pkg);
-   }
-
-   virtual void canNotFindAllVer(APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-      virtualPkgs.insert(Pkg);
-      CacheSetHelper::canNotFindAllVer(vci, Cache, Pkg);
+   virtual void canNotFindVersion(enum CacheSetHelper::VerSelector const select, APT::VersionContainerInterface * vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
+      if (select == NEWEST || select == CANDIDATE || select == ALL)
+	 virtualPkgs.insert(Pkg);
+      return CacheSetHelper::canNotFindVersion(select, vci, Cache, Pkg);
    }
 
    CacheSetHelperVirtuals(bool const ShowErrors = true, GlobalError::MsgType const &ErrorType = GlobalError::NOTICE) : CacheSetHelper(ShowErrors, ErrorType) {}
@@ -190,7 +187,7 @@ public:
 	}
 
 	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
-		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::CANDIDATE);
+		APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::CANDIDATE);
 		if (verset.empty() == false)
 			return *(verset.begin());
 		else if (ShowError == true) {
@@ -203,7 +200,7 @@ public:
 	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg) {
 		if (Pkg->ProvidesList != 0)
 		{
-			APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, APT::VersionSet::NEWEST);
+			APT::VersionSet const verset = tryVirtualPackage(Cache, Pkg, CacheSetHelper::NEWEST);
 			if (verset.empty() == false)
 				return *(verset.begin());
 			if (ShowError == true)
@@ -231,7 +228,7 @@ public:
 	}
 
 	APT::VersionSet tryVirtualPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg,
-						APT::VersionSet::Version const &select) {
+						CacheSetHelper::VerSelector const select) {
 		/* This is a pure virtual package and there is a single available
 		   candidate providing it. */
 		if (unlikely(Cache[Pkg].CandidateVer != 0) || Pkg->ProvidesList == 0)

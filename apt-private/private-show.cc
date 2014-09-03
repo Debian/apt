@@ -141,16 +141,16 @@ bool ShowPackage(CommandLine &CmdL)					/*{{{*/
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", false) ?
-			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
+   APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", false) ?
+			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver, c1out) == false)
 	 return false;
 
-   if (select == APT::VersionList::CANDIDATE)
+   if (select == APT::CacheSetHelper::CANDIDATE)
    {
-      APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::ALL, helper);
+      APT::VersionList const verset_all = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::CacheSetHelper::ALL, helper);
       int const records = verset_all.size() - verset.size();
       if (records > 0)
          _error->Notice(P_("There is %i additional record. Please use the '-a' switch to see it", "There are %i additional records. Please use the '-a' switch to see them.", records), records);

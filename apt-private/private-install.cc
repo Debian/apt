@@ -560,9 +560,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 
    std::list<APT::VersionSet::Modifier> mods;
    mods.push_back(APT::VersionSet::Modifier(MOD_INSTALL, "+",
-		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::CANDIDATE));
+		APT::VersionSet::Modifier::POSTFIX, APT::CacheSetHelper::CANDIDATE));
    mods.push_back(APT::VersionSet::Modifier(MOD_REMOVE, "-",
-		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::NEWEST));
+		APT::VersionSet::Modifier::POSTFIX, APT::CacheSetHelper::NEWEST));
    CacheSetHelperAPTGet helper(c0out);
    verset = APT::VersionSet::GroupedFromCommandLine(Cache,
 		CmdL.FileList + 1, mods, fallback, helper);

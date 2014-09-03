@@ -191,7 +191,7 @@ static bool UnMet(CommandLine &CmdL)
    {
       CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
       APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1,
-				APT::VersionList::CANDIDATE, helper);
+				APT::CacheSetHelper::CANDIDATE, helper);
       for (APT::VersionList::iterator V = verset.begin(); V != verset.end(); ++V)
 	 if (ShowUnMet(V, Important) == false)
 	    return false;
@@ -656,7 +656,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
       return false;
 
    CacheSetHelperVirtuals helper(false);
-   APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
+   APT::VersionList verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true && helper.virtualPkgs.empty() == true)
       return _error->Error(_("No packages found"));
    std::vector<bool> Shown(Cache->Head().PackageCount);
@@ -724,7 +724,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 		if (Recurse == true && Shown[Trg->ID] == false)
 		{
 		  Shown[Trg->ID] = true;
-		  verset.insert(APT::VersionSet::FromPackage(CacheFile, Trg, APT::VersionSet::CANDIDATE, helper));
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, Trg, APT::CacheSetHelper::CANDIDATE, helper));
 		}
 
 	      }
@@ -743,7 +743,7 @@ static bool ShowDepends(CommandLine &CmdL, bool const RevDepends)
 		if (Recurse == true && Shown[V.ParentPkg()->ID] == false)
 		{
 		  Shown[V.ParentPkg()->ID] = true;
-		  verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::VersionSet::CANDIDATE, helper));
+		  verset.insert(APT::VersionSet::FromPackage(CacheFile, V.ParentPkg(), APT::CacheSetHelper::CANDIDATE, helper));
 		}
 	    }
 
@@ -1506,8 +1506,8 @@ static bool ShowPackage(CommandLine &CmdL)
 {
    pkgCacheFile CacheFile;
    CacheSetHelperVirtuals helper(true, GlobalError::NOTICE);
-   APT::VersionList::Version const select = _config->FindB("APT::Cache::AllVersions", true) ?
-			APT::VersionList::ALL : APT::VersionList::CANDIDATE;
+   APT::CacheSetHelper::VerSelector const select = _config->FindB("APT::Cache::AllVersions", true) ?
+			APT::CacheSetHelper::ALL : APT::CacheSetHelper::CANDIDATE;
    APT::VersionList const verset = APT::VersionList::FromCommandLine(CacheFile, CmdL.FileList + 1, select, helper);
    for (APT::VersionList::const_iterator Ver = verset.begin(); Ver != verset.end(); ++Ver)
       if (DisplayRecord(CacheFile, Ver) == false)
