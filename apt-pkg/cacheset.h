@@ -428,6 +428,44 @@ template<> template<class Compare> inline bool PackageContainer<std::vector<pkgC
 	return true;
 }
 
+// class PackageUniverse - pkgCache as PackageContainerInterface	/*{{{*/
+/** \class PackageUniverse
+
+    Wraps around our usual pkgCache, so that it can be stuffed into methods
+    expecting a PackageContainer.
+
+    The wrapping is read-only in practice modeled by making erase and co
+    private methods. */
+class PackageUniverse : public PackageContainerInterface {
+	pkgCache * const _cont;
+public:
+	typedef pkgCache::PkgIterator iterator;
+	typedef pkgCache::PkgIterator const_iterator;
+
+	bool empty() const { return false; }
+	size_t size() const { return _cont->Head().PackageCount; }
+
+	const_iterator begin() const { return _cont->PkgBegin(); }
+	const_iterator end() const { return  _cont->PkgEnd(); }
+	iterator begin() { return _cont->PkgBegin(); }
+	iterator end() { return _cont->PkgEnd(); }
+
+	PackageUniverse(pkgCache * const Owner) : _cont(Owner) { }
+
+private:
+	bool insert(pkgCache::PkgIterator const &) { return true; }
+	template<class Cont> void insert(PackageContainer<Cont> const &) { }
+	void insert(const_iterator, const_iterator) { }
+
+	void clear() { }
+	iterator& erase(iterator &iter) { return iter; }
+	size_t erase(const pkgCache::PkgIterator) { return 0; }
+	void erase(iterator, iterator) { }
+
+	void setConstructor(Constructor const &) { }
+	Constructor getConstructor() const { return UNKNOWN; }
+};
+									/*}}}*/
 typedef PackageContainer<std::set<pkgCache::PkgIterator> > PackageSet;
 typedef PackageContainer<std::list<pkgCache::PkgIterator> > PackageList;
 typedef PackageContainer<std::vector<pkgCache::PkgIterator> > PackageVector;
