@@ -16,13 +16,11 @@ setupaptarchive
 changetowebserver -o 'aptwebserver::overwrite::.*::filename=/knights'
 
 msgtest 'Acquire test file from the webserver to check' 'overwrite'
-echo '601 Configuration
-Config-Item: Acquire::http::DependOnSTDIN=0
-
-600 Acquire URI
-URI: http://localhost:8080/holygrail
-Filename: knights-talking
-' | ${METHODSDIR}/http >/dev/null 2>&1 && msgpass || msgfail
+if downloadfile http://localhost:8080/holygrail ./knights-talking >/dev/null; then
+    msgpass
+else
+    msgfail
+fi
 testfileequal knights-talking 'ni ni ni'
 
 ensure_n_canary_strings_in_dir() {
