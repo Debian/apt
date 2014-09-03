@@ -60,22 +60,22 @@ bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
       if (insertCurrentVer == true)
       {
 	 if (P->CurrentVer != 0)
-	    vci->FromPackage(vci, CacheFile, P, APT::VersionContainerInterface::INSTALLED, helper);
+	    vci->FromPackage(vci, CacheFile, P, APT::CacheSetHelper::INSTALLED, helper);
       }
       else if (insertUpgradable == true)
       {
 	 if(P.CurrentVer() && state.Upgradable())
-	    vci->FromPackage(vci, CacheFile, P, APT::VersionContainerInterface::CANDIDATE, helper);
+	    vci->FromPackage(vci, CacheFile, P, APT::CacheSetHelper::CANDIDATE, helper);
       }
       else if (insertManualInstalled == true)
       {
 	 if (P.CurrentVer() &&
 	       ((*DepCache)[P].Flags & pkgCache::Flag::Auto) == false)
-	    vci->FromPackage(vci, CacheFile, P, APT::VersionContainerInterface::CANDIDATE, helper);
+	    vci->FromPackage(vci, CacheFile, P, APT::CacheSetHelper::CANDIDATE, helper);
       }
       else
       {
-         if (vci->FromPackage(vci, CacheFile, P, APT::VersionContainerInterface::CANDIDATE, helper) == false)
+         if (vci->FromPackage(vci, CacheFile, P, APT::CacheSetHelper::CANDIDATE, helper) == false)
 	 {
 	    // no candidate, this may happen for packages in
 	    // dpkg "deinstall ok config-file" state - we pick the first ver
