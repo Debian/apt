@@ -53,7 +53,25 @@ public:									/*{{{*/
 			ShowError(ShowError), ErrorType(ErrorType) {}
 	virtual ~CacheSetHelper() {}
 
-	enum PkgSelector { UNKNOWN, PACKAGENAME, REGEX, TASK, FNMATCH };
+	enum PkgSelector { UNKNOWN, REGEX, TASK, FNMATCH, PACKAGENAME, STRING };
+
+	virtual bool PackageFrom(enum PkgSelector const select, PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
+
+	virtual bool PackageFromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline);
+
+	struct PkgModifier {
+		enum Position { NONE, PREFIX, POSTFIX };
+		unsigned short ID;
+		const char * const Alias;
+		Position Pos;
+		PkgModifier (unsigned short const &id, const char * const alias, Position const &pos) : ID(id), Alias(alias), Pos(pos) {}
+	};
+	virtual bool PackageFromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
+					    pkgCacheFile &Cache, const char * cmdline,
+					    std::list<PkgModifier> const &mods);
+
+	// use PackageFrom(PACKAGENAME, …) instead
+	APT_DEPRECATED pkgCache::PkgIterator PackageFromName(pkgCacheFile &Cache, std::string const &pattern);
 
 	/** \brief be notified about the package being selected via pattern
 	 *
@@ -178,6 +196,12 @@ protected:
 		pkgCache::PkgIterator const &Pkg);
 	pkgCache::VerIterator canNotGetCandInstVer(pkgCacheFile &Cache,
 		pkgCache::PkgIterator const &Pkg);
+
+	bool PackageFromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromPackageName(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
 };									/*}}}*/
 
 class PackageContainerInterface {					/*{{{*/
@@ -251,25 +275,34 @@ public:
 	PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN) {}
 	PackageContainerInterface(CacheSetHelper::PkgSelector const by) : ConstructedBy(by) {}
 
-	static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
-	static bool FromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
-	static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper);
+	APT_DEPRECATED static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::TASK, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::REGEX, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::FNMATCH, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::STRING, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper) {
+	   return helper.PackageFromCommandLine(pci, Cache, cmdline); }
 
-	struct Modifier {
-		enum Position { NONE, PREFIX, POSTFIX };
-		unsigned short ID;
-		const char * const Alias;
-		Position Pos;
-		Modifier (unsigned short const &id, const char * const alias, Position const &pos) : ID(id), Alias(alias), Pos(pos) {}
-	};
+	APT_DEPRECATED typedef CacheSetHelper::PkgModifier Modifier;
 
-	static bool FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
-					    pkgCacheFile &Cache, const char * cmdline,
-					    std::list<Modifier> const &mods, CacheSetHelper &helper);
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+	   return helper.PackageFromName(Cache, pattern); }
+	APT_DEPRECATED static bool FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
+	      pkgCacheFile &Cache, const char * cmdline,
+	      std::list<Modifier> const &mods, CacheSetHelper &helper) {
+	   return helper.PackageFromModifierCommandLine(modID, pci, Cache, cmdline, mods); }
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 private:
 	CacheSetHelper::PkgSelector ConstructedBy;
@@ -369,7 +402,7 @@ public:									/*{{{*/
 	    \param helper responsible for error and message handling */
 	static PackageContainer FromTask(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 		PackageContainer cont(CacheSetHelper::TASK);
-		PackageContainerInterface::FromTask(&cont, Cache, pattern, helper);
+		helper.PackageFrom(CacheSetHelper::TASK, &cont, Cache, pattern);
 		return cont;
 	}
 	static PackageContainer FromTask(pkgCacheFile &Cache, std::string const &pattern) {
@@ -387,7 +420,7 @@ public:									/*{{{*/
 	    \param helper responsible for error and message handling */
 	static PackageContainer FromRegEx(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 		PackageContainer cont(CacheSetHelper::REGEX);
-		PackageContainerInterface::FromRegEx(&cont, Cache, pattern, helper);
+		helper.PackageFrom(CacheSetHelper::REGEX, &cont, Cache, pattern);
 		return cont;
 	}
 
@@ -398,7 +431,7 @@ public:									/*{{{*/
 
 	static PackageContainer FromFnmatch(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 		PackageContainer cont(CacheSetHelper::FNMATCH);
-		PackageContainerInterface::FromFnmatch(&cont, Cache, pattern, helper);
+		helper.PackageFrom(CacheSetHelper::FNMATCH, &cont, Cache, pattern);
 		return cont;
 	}
 	static PackageContainer FromFnMatch(pkgCacheFile &Cache, std::string const &pattern) {
@@ -406,18 +439,25 @@ public:									/*{{{*/
 		return FromFnmatch(Cache, pattern, helper);
 	}
 
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 	/** \brief returns a package specified by a string
 
 	    \param Cache the package is in
 	    \param pattern String the package name should be extracted from
 	    \param helper responsible for error and message handling */
-	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
-		return PackageContainerInterface::FromName(Cache, pattern, helper);
+	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+		return helper.PackageFromName(Cache, pattern);
 	}
-	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern) {
+	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern) {
 		CacheSetHelper helper;
-		return PackageContainerInterface::FromName(Cache, pattern, helper);
+		return FromName(Cache, pattern, helper);
 	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 	/** \brief returns all packages specified by a string
 
@@ -426,7 +466,7 @@ public:									/*{{{*/
 	    \param helper responsible for error and message handling */
 	static PackageContainer FromString(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 		PackageContainer cont;
-		PackageContainerInterface::FromString(&cont, Cache, pattern, helper);
+		helper.PackageFrom(CacheSetHelper::PACKAGENAME, &cont, Cache, pattern);
 		return cont;
 	}
 	static PackageContainer FromString(pkgCacheFile &Cache, std::string const &pattern) {
@@ -443,7 +483,7 @@ public:									/*{{{*/
 	    \param helper responsible for error and message handling */
 	static PackageContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper) {
 		PackageContainer cont;
-		PackageContainerInterface::FromCommandLine(&cont, Cache, cmdline, helper);
+		helper.PackageFromCommandLine(&cont, Cache, cmdline);
 		return cont;
 	}
 	static PackageContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
@@ -465,14 +505,14 @@ public:									/*{{{*/
 	static std::map<unsigned short, PackageContainer> GroupedFromCommandLine(
 										 pkgCacheFile &Cache,
 										 const char **cmdline,
-										 std::list<Modifier> const &mods,
+										 std::list<CacheSetHelper::PkgModifier> const &mods,
 										 unsigned short const &fallback,
 										 CacheSetHelper &helper) {
 		std::map<unsigned short, PackageContainer> pkgsets;
 		for (const char **I = cmdline; *I != 0; ++I) {
 			unsigned short modID = fallback;
 			PackageContainer pkgset;
-			PackageContainerInterface::FromModifierCommandLine(modID, &pkgset, Cache, *I, mods, helper);
+			helper.PackageFromModifierCommandLine(modID, &pkgset, Cache, *I, mods);
 			pkgsets[modID].insert(pkgset);
 		}
 		return pkgsets;
@@ -480,7 +520,7 @@ public:									/*{{{*/
 	static std::map<unsigned short, PackageContainer> GroupedFromCommandLine(
 										 pkgCacheFile &Cache,
 										 const char **cmdline,
-										 std::list<Modifier> const &mods,
+										 std::list<CacheSetHelper::PkgModifier> const &mods,
 										 unsigned short const &fallback) {
 		CacheSetHelper helper;
 		return GroupedFromCommandLine(Cache, cmdline,

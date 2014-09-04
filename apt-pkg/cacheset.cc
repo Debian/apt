@@ -37,8 +37,23 @@
 #include <apti18n.h>
 									/*}}}*/
 namespace APT {
-// FromTask - Return all packages in the cache from a specific task	/*{{{*/
-bool PackageContainerInterface::FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+
+// PackageFrom - selecting the appropriate method for package selection	/*{{{*/
+bool CacheSetHelper::PackageFrom(enum PkgSelector const select, PackageContainerInterface * const pci,
+      pkgCacheFile &Cache, std::string const &pattern) {
+	switch (select) {
+	case UNKNOWN: return false;
+	case REGEX: return PackageFromRegEx(pci, Cache, pattern);
+	case TASK: return PackageFromTask(pci, Cache, pattern);
+	case FNMATCH: return PackageFromFnmatch(pci, Cache, pattern);
+	case PACKAGENAME: return PackageFromPackageName(pci, Cache, pattern);
+	case STRING: return PackageFromString(pci, Cache, pattern);
+	}
+	return false;
+}
+									/*}}}*/
+// PackageFromTask - Return all packages in the cache from a specific task /*{{{*/
+bool CacheSetHelper::PackageFromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern) {
 	size_t const archfound = pattern.find_last_of(':');
 	std::string arch = "native";
 	if (archfound != std::string::npos) {
@@ -91,13 +106,13 @@ bool PackageContainerInterface::FromTask(PackageContainerInterface * const pci, 
 			continue;
 
 		pci->insert(Pkg);
-		helper.showPackageSelection(Pkg, CacheSetHelper::TASK, pattern);
+		showPackageSelection(Pkg, CacheSetHelper::TASK, pattern);
 		found = true;
 	}
 	regfree(&Pattern);
 
 	if (found == false) {
-		helper.canNotFindPackage(CacheSetHelper::TASK, pci, Cache, pattern);
+		canNotFindPackage(CacheSetHelper::TASK, pci, Cache, pattern);
 		pci->setConstructor(CacheSetHelper::UNKNOWN);
 		return false;
 	}
@@ -108,8 +123,8 @@ bool PackageContainerInterface::FromTask(PackageContainerInterface * const pci, 
 	return true;
 }
 									/*}}}*/
-// FromRegEx - Return all packages in the cache matching a pattern	/*{{{*/
-bool PackageContainerInterface::FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+// PackageFromRegEx - Return all packages in the cache matching a pattern /*{{{*/
+bool CacheSetHelper::PackageFromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern) {
 	static const char * const isregex = ".?+*|[^$";
 	if (pattern.find_first_of(isregex) == std::string::npos)
 		return false;
@@ -150,12 +165,12 @@ bool PackageContainerInterface::FromRegEx(PackageContainerInterface * const pci,
 		}
 
 		pci->insert(Pkg);
-		helper.showPackageSelection(Pkg, CacheSetHelper::REGEX, pattern);
+		showPackageSelection(Pkg, CacheSetHelper::REGEX, pattern);
 		found = true;
 	}
 
 	if (found == false) {
-		helper.canNotFindPackage(CacheSetHelper::REGEX, pci, Cache, pattern);
+		canNotFindPackage(CacheSetHelper::REGEX, pci, Cache, pattern);
 		pci->setConstructor(CacheSetHelper::UNKNOWN);
 		return false;
 	}
@@ -166,12 +181,9 @@ bool PackageContainerInterface::FromRegEx(PackageContainerInterface * const pci,
 	return true;
 }
 									/*}}}*/
-// FromFnmatch - Returns the package defined  by this fnmatch		/*{{{*/
-bool 
-PackageContainerInterface::FromFnmatch(PackageContainerInterface * const pci, 
-                                       pkgCacheFile &Cache,
-                                       std::string pattern,
-                                       CacheSetHelper &helper)
+// PackageFromFnmatch - Returns the package defined  by this fnmatch	/*{{{*/
+bool CacheSetHelper::PackageFromFnmatch(PackageContainerInterface * const pci,
+                                       pkgCacheFile &Cache, std::string pattern)
 {
 	static const char * const isfnmatch = ".?*[]!";
 	if (pattern.find_first_of(isfnmatch) == std::string::npos)
@@ -213,12 +225,12 @@ PackageContainerInterface::FromFnmatch(PackageContainerInterface * const pci,
 		}
 
 		pci->insert(Pkg);
-		helper.showPackageSelection(Pkg, CacheSetHelper::FNMATCH, pattern);
+		showPackageSelection(Pkg, CacheSetHelper::FNMATCH, pattern);
 		found = true;
 	}
 
 	if (found == false) {
-		helper.canNotFindPackage(CacheSetHelper::FNMATCH, pci, Cache, pattern);
+		canNotFindPackage(CacheSetHelper::FNMATCH, pci, Cache, pattern);
 		pci->setConstructor(CacheSetHelper::UNKNOWN);
 		return false;
 	}
@@ -229,9 +241,9 @@ PackageContainerInterface::FromFnmatch(PackageContainerInterface * const pci,
 	return true;
 }
 									/*}}}*/
-// FromName - Returns the package defined  by this string		/*{{{*/
-pkgCache::PkgIterator PackageContainerInterface::FromName(pkgCacheFile &Cache,
-			std::string const &str, CacheSetHelper &helper) {
+// PackageFromName - Returns the package defined  by this string	/*{{{*/
+pkgCache::PkgIterator CacheSetHelper::PackageFromName(pkgCacheFile &Cache,
+			std::string const &str) {
 	std::string pkg = str;
 	size_t archfound = pkg.find_last_of(':');
 	std::string arch;
@@ -252,13 +264,13 @@ pkgCache::PkgIterator PackageContainerInterface::FromName(pkgCacheFile &Cache,
 		Pkg = Cache.GetPkgCache()->FindPkg(pkg, arch);
 
 	if (Pkg.end() == true)
-		return helper.canNotFindPkgName(Cache, str);
+		return canNotFindPkgName(Cache, str);
 	return Pkg;
 }
 									/*}}}*/
-// FromGroup - Returns the package defined  by this string		/*{{{*/
-bool PackageContainerInterface::FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache,
-			std::string pkg, CacheSetHelper &helper) {
+// PackageFromPackageName - Returns the package defined  by this string /*{{{*/
+bool CacheSetHelper::PackageFromPackageName(PackageContainerInterface * const pci, pkgCacheFile &Cache,
+			std::string pkg) {
 	if (unlikely(Cache.GetPkgCache() == 0))
 		return false;
 
@@ -298,7 +310,7 @@ bool PackageContainerInterface::FromGroup(PackageContainerInterface * const pci,
 		}
 	}
 
-	pkgCache::PkgIterator Pkg = helper.canNotFindPkgName(Cache, pkg);
+	pkgCache::PkgIterator Pkg = canNotFindPkgName(Cache, pkg);
 	if (Pkg.end() == true)
 	   return false;
 
@@ -306,18 +318,18 @@ bool PackageContainerInterface::FromGroup(PackageContainerInterface * const pci,
 	return true;
 }
 									/*}}}*/
-// FromString - Return all packages matching a specific string		/*{{{*/
-bool PackageContainerInterface::FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str, CacheSetHelper &helper) {
+// PackageFromString - Return all packages matching a specific string	/*{{{*/
+bool CacheSetHelper::PackageFromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str) {
 	bool found = true;
 	_error->PushToStack();
 
-	if (FromGroup(pci, Cache, str, helper) == false &&
-		 FromTask(pci, Cache, str, helper) == false &&
+	if (PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, str) == false &&
+		 PackageFrom(CacheSetHelper::TASK, pci, Cache, str) == false &&
 		 // FIXME: hm, hm, regexp/fnmatch incompatible?
-		 FromFnmatch(pci, Cache, str, helper) == false &&
-		 FromRegEx(pci, Cache, str, helper) == false)
+		 PackageFrom(CacheSetHelper::FNMATCH, pci, Cache, str) == false &&
+		 PackageFrom(CacheSetHelper::REGEX, pci, Cache, str) == false)
 	{
-		helper.canNotFindPackage(CacheSetHelper::PACKAGENAME, pci, Cache, str);
+		canNotFindPackage(CacheSetHelper::PACKAGENAME, pci, Cache, str);
 		found = false;
 	}
 
@@ -328,51 +340,50 @@ bool PackageContainerInterface::FromString(PackageContainerInterface * const pci
 	return found;
 }
 									/*}}}*/
-// FromCommandLine - Return all packages specified on commandline	/*{{{*/
-bool PackageContainerInterface::FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper) {
+// PackageFromCommandLine - Return all packages specified on commandline /*{{{*/
+bool CacheSetHelper::PackageFromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline) {
 	bool found = false;
 	for (const char **I = cmdline; *I != 0; ++I)
-		found |= PackageContainerInterface::FromString(pci, Cache, *I, helper);
+		found |= PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, *I);
 	return found;
 }
 									/*}}}*/
 // FromModifierCommandLine - helper doing the work for PKG:GroupedFromCommandLine	/*{{{*/
-bool PackageContainerInterface::FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
+bool CacheSetHelper::PackageFromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
 							pkgCacheFile &Cache, const char * cmdline,
-							std::list<Modifier> const &mods, CacheSetHelper &helper) {
+							std::list<PkgModifier> const &mods) {
 	std::string str = cmdline;
 	unsigned short fallback = modID;
 	bool modifierPresent = false;
-	for (std::list<Modifier>::const_iterator mod = mods.begin();
+	for (std::list<PkgModifier>::const_iterator mod = mods.begin();
 	     mod != mods.end(); ++mod) {
 		size_t const alength = strlen(mod->Alias);
 		switch(mod->Pos) {
-		case Modifier::POSTFIX:
+		case PkgModifier::POSTFIX:
 			if (str.compare(str.length() - alength, alength,
 					mod->Alias, 0, alength) != 0)
 				continue;
 			str.erase(str.length() - alength);
 			modID = mod->ID;
 			break;
-		case Modifier::PREFIX:
+		case PkgModifier::PREFIX:
 			continue;
-		case Modifier::NONE:
+		case PkgModifier::NONE:
 			continue;
 		}
 		modifierPresent = true;
 		break;
 	}
 	if (modifierPresent == true) {
-		bool const errors = helper.showErrors(false);
-		pkgCache::PkgIterator Pkg = FromName(Cache, cmdline, helper);
-		helper.showErrors(errors);
-		if (Pkg.end() == false) {
-			pci->insert(Pkg);
+		bool const errors = showErrors(false);
+		bool const found = PackageFrom(PACKAGENAME, pci, Cache, cmdline);
+		showErrors(errors);
+		if (found == true) {
 			modID = fallback;
 			return true;
 		}
 	}
-	return FromString(pci, Cache, str, helper);
+	return PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, str);
 }
 									/*}}}*/
 // FromModifierCommandLine - helper doing the work for VER:GroupedFromCommandLine	/*{{{*/
@@ -438,14 +449,13 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
 					   CacheSetHelper::VerSelector const fallback,
 					   CacheSetHelper &helper,
 					   bool const onlyFromName) {
-        PackageSet pkgset;
-        if(FileExists(pkg))
-        {
-                PackageContainerInterface::FromString(&pkgset, Cache, pkg, helper);
-                if(pkgset.size() == 0)
-                   return false;
-                return VersionContainerInterface::FromPackage(vci, Cache, pkgset.begin(), fallback, helper);
-        }
+	PackageSet pkgset;
+	if(FileExists(pkg)) {
+		helper.PackageFrom(CacheSetHelper::STRING, &pkgset, Cache, pkg);
+		if(pkgset.empty() == true)
+			return false;
+		return VersionContainerInterface::FromPackage(vci, Cache, pkgset.begin(), fallback, helper);
+	}
 
 	std::string ver;
 	bool verIsRel = false;
@@ -456,9 +466,9 @@ bool VersionContainerInterface::FromString(VersionContainerInterface * const vci
 		pkg.erase(vertag);
 	}
 	if (onlyFromName == false)
-		PackageContainerInterface::FromString(&pkgset, Cache, pkg, helper);
+		helper.PackageFrom(CacheSetHelper::STRING, &pkgset, Cache, pkg);
 	else {
-		pkgset.insert(PackageContainerInterface::FromName(Cache, pkg, helper));
+		helper.PackageFrom(CacheSetHelper::PACKAGENAME, &pkgset, Cache, pkg);
 	}
 
 	bool errors = true;
@@ -611,6 +621,7 @@ void CacheSetHelper::canNotFindPackage(enum PkgSelector const select,
 	case TASK: canNotFindTask(pci, Cache, pattern); break;
 	case FNMATCH: canNotFindFnmatch(pci, Cache, pattern); break;
 	case PACKAGENAME: canNotFindPackage(pci, Cache, pattern); break;
+	case STRING: canNotFindPackage(pci, Cache, pattern); break;
 	case UNKNOWN: break;
 #if __GNUC__ >= 4
 	#pragma GCC diagnostic pop
@@ -772,6 +783,7 @@ APT_CONST void CacheSetHelper::showPackageSelection(pkgCache::PkgIterator const 
 	#pragma GCC diagnostic pop
 #endif
 	case PACKAGENAME: /* no suprises here */ break;
+	case STRING: /* handled by the special cases */ break;
 	case UNKNOWN: break;
 	}
 }
