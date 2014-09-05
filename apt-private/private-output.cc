@@ -229,7 +229,10 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       std::string CandidateVerStr = GetCandidateVersion(CacheFile, P);
       std::string InstalledVerStr = GetInstalledVersion(CacheFile, P);
       std::string StatusStr;
-      if(P.CurrentVer() == V && state.Upgradable() && state.CandidateVer != NULL)
+      if(P.CurrentVer() == V && 
+         state.Upgradable() &&
+         state.CandidateVer != NULL &&
+         policy->GetCandidateVer(P) != P.CurrentVer())
       {
          strprintf(StatusStr, _("[installed,upgradable to: %s]"),
                    CandidateVerStr.c_str());
