@@ -220,7 +220,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       output = SubstVar(output, "${Version}", GetVersion(CacheFile, V));
       output = SubstVar(output, "${Description}", GetShortDescription(CacheFile, records, P));
       output = SubstVar(output, "${Origin}", GetArchiveSuite(CacheFile, V));
-      out << output << std::endl;
+      out << output;
    } else {
       // raring/linux-kernel version [upradable: new-version]
       //    description
@@ -229,7 +229,7 @@ void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,	/*{{{*/
       std::string CandidateVerStr = GetCandidateVersion(CacheFile, P);
       std::string InstalledVerStr = GetInstalledVersion(CacheFile, P);
       std::string StatusStr;
-      if(P.CurrentVer() == V && state.Upgradable() && state.CandidateVer != NULL)
+      if(P.CurrentVer() == V && state.Upgradable())
       {
          strprintf(StatusStr, _("[installed,upgradable to: %s]"),
                    CandidateVerStr.c_str());

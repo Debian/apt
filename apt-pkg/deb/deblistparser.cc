@@ -108,7 +108,7 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 {
    unsigned char MA;
    string const MultiArch = Section.FindS("Multi-Arch");
-   if (MultiArch.empty() == true)
+   if (MultiArch.empty() == true || MultiArch == "no")
       MA = pkgCache::Version::None;
    else if (MultiArch == "same") {
       if (ArchitectureAll() == true)
@@ -793,8 +793,8 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	 Start = ParseDepends(Start,Stop,Package,Version,Op);
 	 if (Start == 0)
 	    return _error->Error("Problem parsing Provides line");
-	 if (Op != pkgCache::Dep::NoOp) {
-	    _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+	 if (Op != pkgCache::Dep::NoOp && Op != pkgCache::Dep::Equals) {
+	    _error->Warning("Ignoring Provides line with non-equal DepCompareOp for package %s", Package.c_str());
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (NewProvidesAllArch(Ver, Package, Version) == false)
 	       return false;

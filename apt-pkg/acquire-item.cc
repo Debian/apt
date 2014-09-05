@@ -376,7 +376,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
    Desc.URI = Target->URI + ".diff/Index";
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(Target->URI) + string(".DiffIndex");
+   DestFile += URItoFileName(Desc.URI);
 
    if(Debug)
       std::clog << "pkgAcqDiffIndex: " << Desc.URI << std::endl;
@@ -412,7 +412,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 string pkgAcqDiffIndex::Custom600Headers() const
 {
    string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(RealURI) + string(".IndexDiff");
+   Final += URItoFileName(Desc.URI);
    
    if(Debug)
       std::clog << "Custom600Header-IMS: " << Final << std::endl;

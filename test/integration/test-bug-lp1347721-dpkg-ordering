@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture "i386"
+setupaptarchive
+
+# ensure we find a valid ordering
+testsuccess aptget dist-upgrade -s

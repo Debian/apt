@@ -711,9 +711,12 @@ string LookupTag(const string &Message,const char *Tag,const char *Default)
    then returns the result. Several varients on true/false are checked. */
 int StringToBool(const string &Text,int Default)
 {
-   char *End;
-   int Res = strtol(Text.c_str(),&End,0);   
-   if (End != Text.c_str() && Res >= 0 && Res <= 1)
+   char *ParseEnd;
+   int Res = strtol(Text.c_str(),&ParseEnd,0);
+   // ensure that the entire string was converted by strtol to avoid
+   // failures on "apt-cache show -a 0ad" where the "0" is converted
+   const char *TextEnd = Text.c_str()+Text.size();
+   if (ParseEnd == TextEnd && Res >= 0 && Res <= 1)
       return Res;
    
    // Check for positives

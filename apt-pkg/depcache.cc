@@ -663,10 +663,11 @@ void pkgDepCache::Update(OpProgress *Prog)
 {   
    iUsrSize = 0;
    iDownloadSize = 0;
-   iDelCount = 0;
    iInstCount = 0;
+   iDelCount = 0;
    iKeepCount = 0;
    iBrokenCount = 0;
+   iPolicyBrokenCount = 0;
    iBadCount = 0;
 
    // Perform the depends pass

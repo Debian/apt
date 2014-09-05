@@ -13,6 +13,7 @@
 LOCAL := docbook-$(firstword $(SOURCE))
 $(LOCAL)-HTML := $(addsuffix .html,$(addprefix $(DOC)/,$(basename $(SOURCE))))
 $(LOCAL)-TEXT := $(addsuffix .text,$(addprefix $(DOC)/,$(basename $(SOURCE))))
+INCLUDES = apt.ent apt-verbatim.ent apt-vendor.ent
 
 docbook:
 
@@ -30,7 +31,7 @@ veryclean: veryclean/html/$(LOCAL)
 
 vpath %.dbk $(SUBDIRS)
 vpath $(DOCBOOK_HTML_STYLESHEET) $(SUBDIRS)
-$(DOC)/%.html: %.dbk $(DOCBOOK_HTML_STYLESHEET)
+$(DOC)/%.html: %.dbk $(DOCBOOK_HTML_STYLESHEET) $(INCLUDES)
 	echo Creating html for $< to $@
 	-rm -rf $@
 	mkdir -p $@
@@ -59,7 +60,7 @@ veryclean: veryclean/text/$(LOCAL)
 
 vpath %.dbk $(SUBDIRS)
 vpath $(DOCBOOK_TEXT_STYLESHEET) $(SUBDIRS)
-$(DOC)/%.text: %.dbk $(DOCBOOK_TEXT_STYLESHEET)
+$(DOC)/%.text: %.dbk $(DOCBOOK_TEXT_STYLESHEET) $(INCLUDES)
 	echo Creating text for $< to $@
 	$(DOCBOOK) \
 		--stringparam l10n.gentext.default.language $(LC) \
