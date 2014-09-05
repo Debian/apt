@@ -55,10 +55,7 @@ bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
       }
       else if (_config->FindB("APT::Cmd::Upgradable") == true)
       {
-         pkgPolicy *policy = CacheFile.GetPolicy();
-         if(P.CurrentVer() && 
-            state.Upgradable() && 
-            policy->GetCandidateVer(P) != P.CurrentVer())
+         if(P.CurrentVer() && state.Upgradable())
          {
              pkgPolicy *policy = CacheFile.GetPolicy();
              output_set.insert(policy->GetCandidateVer(P));
