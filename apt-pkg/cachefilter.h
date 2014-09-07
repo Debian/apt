@@ -10,28 +10,90 @@
 #include <apt-pkg/cacheiterators.h>
 
 #include <string>
+#include <vector>
 
 #include <regex.h>
+
+class pkgCacheFile;
 									/*}}}*/
 namespace APT {
 namespace CacheFilter {
 
-class PackageMatcher {
- public:
-   virtual bool operator() (pkgCache::PkgIterator const &/*Pkg*/) { 
-      return false; };
-   virtual bool operator() (pkgCache::GrpIterator const &/*Grp*/) { 
-      return false; };
-   virtual bool operator() (pkgCache::VerIterator const &/*Ver*/) {
-      return false; };
-   
-   virtual ~PackageMatcher() {};
+class Matcher {
+public:
+   virtual bool operator() (pkgCache::PkgIterator const &/*Pkg*/) = 0;
+   virtual bool operator() (pkgCache::GrpIterator const &/*Grp*/) = 0;
+   virtual bool operator() (pkgCache::VerIterator const &/*Ver*/) = 0;
+   virtual ~Matcher();
 };
 
-// PackageNameMatchesRegEx						/*{{{*/
-class PackageNameMatchesRegEx : public PackageMatcher {
-         /** \brief dpointer placeholder (for later in case we need it) */
-         void *d;
+class PackageMatcher : public Matcher {
+public:
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg) = 0;
+   virtual bool operator() (pkgCache::VerIterator const &Ver) { return (*this)(Ver.ParentPkg()); }
+   virtual bool operator() (pkgCache::GrpIterator const &/*Grp*/) { return false; }
+   virtual ~PackageMatcher();
+};
+
+// Generica like True, False, NOT, AND, OR				/*{{{*/
+class TrueMatcher : public Matcher {
+public:
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+   virtual bool operator() (pkgCache::GrpIterator const &Grp);
+   virtual bool operator() (pkgCache::VerIterator const &Ver);
+};
+
+class FalseMatcher : public Matcher {
+public:
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+   virtual bool operator() (pkgCache::GrpIterator const &Grp);
+   virtual bool operator() (pkgCache::VerIterator const &Ver);
+};
+
+class NOTMatcher : public Matcher {
+   Matcher * const matcher;
+public:
+   NOTMatcher(Matcher * const matcher);
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+   virtual bool operator() (pkgCache::GrpIterator const &Grp);
+   virtual bool operator() (pkgCache::VerIterator const &Ver);
+   virtual ~NOTMatcher();
+};
+
+class ANDMatcher : public Matcher {
+   std::vector<Matcher *> matchers;
+public:
+   // 5 ought to be enough for everybody… c++11 variadic templates would be nice
+   ANDMatcher();
+   ANDMatcher(Matcher * const matcher1);
+   ANDMatcher(Matcher * const matcher1, Matcher * const matcher2);
+   ANDMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3);
+   ANDMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4);
+   ANDMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4, Matcher * const matcher5);
+   ANDMatcher& AND(Matcher * const matcher);
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+   virtual bool operator() (pkgCache::GrpIterator const &Grp);
+   virtual bool operator() (pkgCache::VerIterator const &Ver);
+   virtual ~ANDMatcher();
+};
+class ORMatcher : public Matcher {
+   std::vector<Matcher *> matchers;
+public:
+   // 5 ought to be enough for everybody… c++11 variadic templates would be nice
+   ORMatcher();
+   ORMatcher(Matcher * const matcher1);
+   ORMatcher(Matcher * const matcher1, Matcher * const matcher2);
+   ORMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3);
+   ORMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4);
+   ORMatcher(Matcher * const matcher1, Matcher * const matcher2, Matcher * const matcher3, Matcher * const matcher4, Matcher * const matcher5);
+   ORMatcher& OR(Matcher * const matcher);
+   virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+   virtual bool operator() (pkgCache::GrpIterator const &Grp);
+   virtual bool operator() (pkgCache::VerIterator const &Ver);
+   virtual ~ORMatcher();
+};
+									/*}}}*/
+class PackageNameMatchesRegEx : public PackageMatcher {			/*{{{*/
 	regex_t* pattern;
 public:
 	PackageNameMatchesRegEx(std::string const &Pattern);
@@ -40,20 +102,16 @@ public:
 	virtual ~PackageNameMatchesRegEx();
 };
 									/*}}}*/
-// PackageNameMatchesFnmatch						/*{{{*/
-   class PackageNameMatchesFnmatch : public PackageMatcher{
-         /** \brief dpointer placeholder (for later in case we need it) */
-         void *d;
-         const std::string Pattern;
+class PackageNameMatchesFnmatch : public PackageMatcher {		/*{{{*/
+	const std::string Pattern;
 public:
-         PackageNameMatchesFnmatch(std::string const &Pattern) 
-            : Pattern(Pattern) {};
-        virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+	PackageNameMatchesFnmatch(std::string const &Pattern);
+	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
 	virtual bool operator() (pkgCache::GrpIterator const &Grp);
 	virtual ~PackageNameMatchesFnmatch() {};
 };
 									/*}}}*/
-// PackageArchitectureMatchesSpecification				/*{{{*/
+class PackageArchitectureMatchesSpecification : public PackageMatcher {	/*{{{*/
 /** \class PackageArchitectureMatchesSpecification
    \brief matching against architecture specification strings
 
@@ -62,12 +120,9 @@ public:
    debian-policy §11.1 "Architecture specification strings".
 
    Examples: i386, mipsel, linux-any, any-amd64, any */
-class PackageArchitectureMatchesSpecification : public PackageMatcher {
 	std::string literal;
 	std::string complete;
 	bool isPattern;
-	/** \brief dpointer placeholder (for later in case we need it) */
-	void *d;
 public:
 	/** \brief matching against architecture specification strings
 	 *
@@ -79,10 +134,18 @@ public:
 	PackageArchitectureMatchesSpecification(std::string const &pattern, bool const isPattern = true);
 	bool operator() (char const * const &arch);
 	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
-	virtual bool operator() (pkgCache::VerIterator const &Ver);
 	virtual ~PackageArchitectureMatchesSpecification();
 };
 									/*}}}*/
+class PackageIsNewInstall : public PackageMatcher {			/*{{{*/
+	pkgCacheFile * const Cache;
+public:
+	PackageIsNewInstall(pkgCacheFile * const Cache);
+	virtual bool operator() (pkgCache::PkgIterator const &Pkg);
+	virtual ~PackageIsNewInstall();
+};
+									/*}}}*/
+
 }
 }
 #endif
