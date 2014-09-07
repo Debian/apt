@@ -22,7 +22,7 @@ done
 export MSGLEVEL="${MSGLEVEL:-3}"
 
 if [ "$MSGCOLOR" != 'NO' ]; then
-	if ! expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+	if [ ! -t 1 ]; then # but check that we output to a terminal
 		export MSGCOLOR='NO'
 	fi
 fi
