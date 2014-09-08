@@ -110,6 +110,7 @@ class pkgDPkgPM : public pkgPackageManager
    // helper
    void BuildPackagesProgressMap();
    void StartPtyMagic();
+   void SetupSlavePtyMagic();
    void StopPtyMagic();
    
    // input processing

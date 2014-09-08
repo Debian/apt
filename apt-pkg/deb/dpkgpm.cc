@@ -59,8 +59,8 @@ class pkgDPkgPMPrivate
 {
 public:
    pkgDPkgPMPrivate() : stdin_is_dev_null(false), dpkgbuf_pos(0),
-			term_out(NULL), history_out(NULL), 
-                        progress(NULL), master(-1), slave(-1)
+			term_out(NULL), history_out(NULL),
+                        progress(NULL), master(-1), slave(NULL)
    {
       dpkgbuf[0] = '\0';
    }
@@ -77,9 +77,9 @@ public:
    APT::Progress::PackageManager *progress;
 
    // pty stuff
-   struct	termios tt;
+   struct termios tt;
    int master;
-   int slave;
+   char * slave;
 
    // signals
    sigset_t sigmask;
@@ -510,7 +510,7 @@ bool pkgDPkgPM::RunScriptsWithPkgs(const char *Cnf)
    return result;
 }
 									/*}}}*/
-// DPkgPM::DoStdin - Read stdin and pass to slave pty			/*{{{*/
+// DPkgPM::DoStdin - Read stdin and pass to master pty			/*{{{*/
 // ---------------------------------------------------------------------
 /*
 */
@@ -1051,60 +1051,127 @@ void pkgDPkgPM::StartPtyMagic()
 {
    if (_config->FindB("Dpkg::Use-Pty", true) == false)
    {
-      d->master = d->slave = -1;
+      d->master = -1;
+      if (d->slave != NULL)
+	 free(d->slave);
+      d->slave = NULL;
       return;
    }
 
-   // setup the pty and stuff
-   struct winsize win;
-
+   _error->PushToStack();
    // if tcgetattr for both stdin/stdout returns 0 (no error)
    // we do the pty magic
-   _error->PushToStack();
-   if (tcgetattr(STDIN_FILENO, &d->tt) == 0 &&
-       tcgetattr(STDOUT_FILENO, &d->tt) == 0)
+   if (tcgetattr(STDOUT_FILENO, &d->tt) == 0 &&
+	 tcgetattr(STDIN_FILENO, &d->tt) == 0)
    {
-       if (ioctl(STDOUT_FILENO, TIOCGWINSZ, (char *)&win) < 0)
-       {
-           _error->Errno("ioctl", _("ioctl(TIOCGWINSZ) failed"));
-       } else if (openpty(&d->master, &d->slave, NULL, &d->tt, &win) < 0)
-       {
-           _error->Errno("openpty", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
-           d->master = d->slave = -1;
-        } else {
-	    struct termios rtt;
-	    rtt = d->tt;
-	    cfmakeraw(&rtt);
-	    rtt.c_lflag &= ~ECHO;
-	    rtt.c_lflag |= ISIG;
+      d->master = posix_openpt(O_RDWR | O_NOCTTY);
+      if (d->master == -1)
+	 _error->Errno("posix_openpt", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
+      else if (unlockpt(d->master) == -1)
+      {
+	 _error->Errno("unlockpt", "Unlocking the slave of master fd %d failed!", d->master);
+	 close(d->master);
+	 d->master = -1;
+      }
+      else
+      {
+	 char const * const slave_name = ptsname(d->master);
+	 if (slave_name == NULL)
+	 {
+	    _error->Errno("unlockpt", "Getting name for slave of master fd %d failed!", d->master);
+	    close(d->master);
+	    d->master = -1;
+	 }
+	 else
+	 {
+	    d->slave = strdup(slave_name);
+	    if (d->slave == NULL)
+	    {
+	       _error->Errno("strdup", "Copying name %s for slave of master fd %d failed!", slave_name, d->master);
+	       close(d->master);
+	       d->master = -1;
+	    }
+	    struct winsize win;
+	    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &win) < 0)
+	       _error->Errno("ioctl", "Getting TIOCGWINSZ from stdout failed!");
+	    if (ioctl(d->master, TIOCSWINSZ, &win) < 0)
+	       _error->Errno("ioctl", "Setting TIOCSWINSZ for master fd %d failed!", d->master);
+	    if (tcsetattr(d->master, TCSANOW, &d->tt) == -1)
+	       _error->Errno("tcsetattr", "Setting in Start via TCSANOW for master fd %d failed!", d->master);
+
+	    struct termios raw_tt;
+	    raw_tt = d->tt;
+	    cfmakeraw(&raw_tt);
+	    raw_tt.c_lflag &= ~ECHO;
+	    raw_tt.c_lflag |= ISIG;
 	    // block SIGTTOU during tcsetattr to prevent a hang if
 	    // the process is a member of the background process group
 	    // http://www.opengroup.org/onlinepubs/000095399/functions/tcsetattr.html
 	    sigemptyset(&d->sigmask);
 	    sigaddset(&d->sigmask, SIGTTOU);
 	    sigprocmask(SIG_BLOCK,&d->sigmask, &d->original_sigmask);
-	    tcsetattr(0, TCSAFLUSH, &rtt);
-	    sigprocmask(SIG_SETMASK, &d->original_sigmask, 0);
-        }
+	    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_tt) == -1)
+	       _error->Errno("tcsetattr", "Setting in Start via TCSAFLUSH for stdout failed!");
+	    sigprocmask(SIG_SETMASK, &d->original_sigmask, NULL);
+	 }
       }
-   // complain only if stdout is either a terminal (but still failed) or is an invalid
+   }
+   else
+   {
+      // complain only if stdout is either a terminal (but still failed) or is an invalid
       // descriptor otherwise we would complain about redirection to e.g. /dev/null as well.
-      else if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
-         _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
+      if (isatty(STDOUT_FILENO) == 1 || errno == EBADF)
+	 _error->Errno("tcgetattr", _("Can not write log (%s)"), _("Is stdout a terminal?"));
+   }
 
-      if (_error->PendingError() == true)
-	 _error->DumpErrors(std::cerr);
-      _error->RevertToStack();
+   if (_error->PendingError() == true)
+   {
+      if (d->master != -1)
+      {
+	 close(d->master);
+	 d->master = -1;
+      }
+      _error->DumpErrors(std::cerr);
+   }
+   _error->RevertToStack();
 }
+void pkgDPkgPM::SetupSlavePtyMagic()
+{
+   if(d->master == -1)
+      return;
 
+   if (close(d->master) == -1)
+      _error->FatalE("close", "Closing master %d in child failed!", d->master);
+   if (setsid() == -1)
+      _error->FatalE("setsid", "Starting a new session for child failed!");
+
+   int const slaveFd = open(d->slave, O_RDWR);
+   if (slaveFd == -1)
+      _error->FatalE("open", _("Can not write log (%s)"), _("Is /dev/pts mounted?"));
+
+   if (ioctl(slaveFd, TIOCSCTTY, 0) < 0)
+      _error->FatalE("ioctl", "Setting TIOCSCTTY for slave fd %d failed!", slaveFd);
+   else
+   {
+      for (unsigned short i = 0; i < 3; ++i)
+	 if (dup2(slaveFd, i) == -1)
+	    _error->FatalE("dup2", "Dupping %d to %d in child failed!", slaveFd, i);
+
+      if (tcsetattr(0, TCSANOW, &d->tt) < 0)
+	 _error->FatalE("tcsetattr", "Setting in Setup via TCSANOW for slave fd %d failed!", slaveFd);
+   }
+}
 void pkgDPkgPM::StopPtyMagic()
 {
-   if(d->slave > 0)
-      close(d->slave);
+   if (d->slave != NULL)
+      free(d->slave);
+   d->slave = NULL;
    if(d->master >= 0) 
    {
-      tcsetattr(0, TCSAFLUSH, &d->tt);
+      if (tcsetattr(0, TCSAFLUSH, &d->tt) == -1)
+	 _error->FatalE("tcsetattr", "Setting in Stop via TCSAFLUSH for stdin failed!");
       close(d->master);
+      d->master = -1;
    }
 }
 
@@ -1416,22 +1483,8 @@ bool pkgDPkgPM::GoNoABIBreak(APT::Progress::PackageManager *progress)
       pid_t Child = ExecFork(KeepFDs);
       if (Child == 0)
       {
-         // This is the child
-	 if(d->slave >= 0 && d->master >= 0) 
-	 {
-	    setsid();
-	    int res = ioctl(d->slave, TIOCSCTTY, 0);
-            if (res < 0) {
-               std::cerr << "ioctl(TIOCSCTTY) failed for fd: " 
-                         << d->slave << std::endl;
-            } else {
-               close(d->master);
-               dup2(d->slave, 0);
-               dup2(d->slave, 1);
-               dup2(d->slave, 2);
-               close(d->slave);
-            }
-	 }
+	 // This is the child
+	 SetupSlavePtyMagic();
 	 close(fd[0]); // close the read end of the pipe
 
 	 dpkgChrootDirectory();
