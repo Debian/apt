@@ -564,8 +564,8 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
       'status:   <pkg>: <pkg  qstate>'
       'status:   <pkg>:<arch>: <pkg  qstate>'
       
-      'processing: {install,configure,remove,purge,disappear,trigproc}: pkg'
-      'processing: {install,configure,remove,purge,disappear,trigproc}: trigger'
+      'processing: {install,upgrade,configure,remove,purge,disappear,trigproc}: pkg'
+      'processing: {install,upgrade,configure,remove,purge,disappear,trigproc}: trigger'
    */
 
    // we need to split on ": " (note the appended space) as the ':' is
@@ -589,12 +589,15 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    std::string action;
 
    // "processing" has the form "processing: action: pkg or trigger"
-   // with action = ["install", "configure", "remove", "purge", "disappear",
-   //                "trigproc"]
+   // with action = ["install", "upgrade", "configure", "remove", "purge",
+   //                "disappear", "trigproc"]
    if (prefix == "processing")
    {
       pkgname = APT::String::Strip(list[2]);
       action = APT::String::Strip(list[1]);
+      // we don't care for the difference (as dpkg doesn't really either)
+      if (action == "upgrade")
+	 action = "install";
    }
    // "status" has the form: "status: pkg: state"
    // with state in ["half-installed", "unpacked", "half-configured", 
@@ -638,27 +641,26 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    // at this point we know that we should have a valid pkgname, so build all 
    // the info from it
 
-   // dpkg does not send always send "pkgname:arch" so we add it here 
-   // if needed
+   // dpkg does not always send "pkgname:arch" so we add it here if needed
    if (pkgname.find(":") == std::string::npos)
    {
-      // find the package in the group that is in a touched by dpkg
-      // if there are multiple dpkg will send us a full pkgname:arch
+      // find the package in the group that is touched by dpkg
+      // if there are multiple pkgs dpkg would send us a full pkgname:arch
       pkgCache::GrpIterator Grp = Cache.FindGrp(pkgname);
-      if (Grp.end() == false) 
+      if (Grp.end() == false)
       {
-          pkgCache::PkgIterator P = Grp.PackageList();
-          for (; P.end() != true; P = Grp.NextPkg(P))
-          {
-              if(Cache[P].Mode != pkgDepCache::ModeKeep)
-              {
-                  pkgname = P.FullName();
-                  break;
-              }
-          }
+	 pkgCache::PkgIterator P = Grp.PackageList();
+	 for (; P.end() != true; P = Grp.NextPkg(P))
+	 {
+	    if(Cache[P].Keep() == false || Cache[P].ReInstall() == true)
+	    {
+	       pkgname = P.FullName();
+	       break;
+	    }
+	 }
       }
    }
-   
+
    const char* const pkg = pkgname.c_str();
    std::string short_pkgname = StringSplit(pkgname, ":")[0];
    std::string arch = "";
@@ -697,28 +699,29 @@ void pkgDPkgPM::ProcessDpkgStatusLine(char *line)
    if (prefix == "status")
    {
       vector<struct DpkgState> const &states = PackageOps[pkg];
-      const char *next_action = NULL;
       if(PackageOpsDone[pkg] < states.size())
-         next_action = states[PackageOpsDone[pkg]].state;
-      // check if the package moved to the next dpkg state
-      if(next_action && (action == next_action))
       {
-         // only read the translation if there is actually a next
-         // action
-         const char *translation = _(states[PackageOpsDone[pkg]].str);
-         std::string msg;
+         char const * const next_action = states[PackageOpsDone[pkg]].state;
+	 if (next_action && Debug == true)
+	    std::clog << "(parsed from dpkg) pkg: " << short_pkgname
+	       << " action: " << action << " (expected: '" << next_action << "' "
+	       << PackageOpsDone[pkg] << " of " << states.size() << ")" << endl;
 
-         // we moved from one dpkg state to a new one, report that
-         PackageOpsDone[pkg]++;
-         PackagesDone++;
+	 // check if the package moved to the next dpkg state
+	 if(next_action && (action == next_action))
+	 {
+	    // only read the translation if there is actually a next action
+	    char const * const translation = _(states[PackageOpsDone[pkg]].str);
 
-         strprintf(msg, translation, i18n_pkgname.c_str());
-         d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal, msg);
-         
+	    // we moved from one dpkg state to a new one, report that
+	    ++PackageOpsDone[pkg];
+	    ++PackagesDone;
+
+	    std::string msg;
+	    strprintf(msg, translation, i18n_pkgname.c_str());
+	    d->progress->StatusChanged(pkgname, PackagesDone, PackagesTotal, msg);
+	 }
       }
-      if (Debug == true) 
-         std::clog << "(parsed from dpkg) pkg: " << short_pkgname
-                   << " action: " << action << endl;
    }
 }
 									/*}}}*/
