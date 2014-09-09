@@ -1,3 +1,51 @@
+apt (1.0.8) unstable; urgency=medium
+
+  [ Holger Wansing ]
+  * German program translation update (Closes: 758837)
+
+  [ Américo Monteiro ]
+  * Portuguese manpages translation update (Closes: 759608)
+
+  [ Warren He ]
+  * initialize iPolicyBrokenCount in DepCache::Update (Closes: 758397)
+
+  [ Andreas Oberritter ]
+  * Avoid yielding blank lines with APT::Cmd::use-format=true
+
+  [ Michael Vogt ]
+  * Make Proxy-Auto-Detect check for each host (Closes: #759264)
+  * Add testcase for apt list --all-versions
+  * * apt-pkg/deb/dpkgpm.cc:
+    - update string matching for dpkg I/O errors. (LP: #1363257)
+    - properly parse the dpkg status line so that package name 
+      is properly set and an apport report is created. Thanks 
+      to Anders Kaseorg for the patch  (LP: #1353171)
+  * Use heap to allocate PatternMatch to avoid potential stack overflow
+    (Closes: 759612)
+  * Run autopkgtest tests with "env -i" to avoid pollution from the host env
+    (Closes: #759655)
+  * test/integration/test-ubuntu-bug-346386-apt-get-update-paywall: 
+    - use downloadfile() to fix test failure
+  * Fix incorrect upgradable listing in "apt list" 
+    (thanks to Michael Musenbrock) (Closes: #753297)
+  * apt-pkg/cachefile.cc:
+    - ensure we have a Policy in CacheFile.BuildDepCache()
+  * methods/http.cc:
+    - Improve Debug::Acquire::http debug output
+
+  [ Dimitri John Ledkov ]
+  * apt-ftparchive: make Packages & Sources generation optional, 
+    during Generate call
+
+  [ David Kalnischkies ]
+  * support regular expressions in 'apt search'
+  * implement --full in apt search
+  * fix progress report for upgrade and reinstall
+  * rework PTY magic to fix stair-stepping on kfreebsd (Closes: 759684)
+  * don't call pager in non-terminals for changelog (Closes: 755040)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 09 Sep 2014 20:09:11 +0200
+
 apt (1.0.7) unstable; urgency=medium
 
   [ Michael Vogt ]
