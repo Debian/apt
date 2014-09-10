@@ -159,6 +159,77 @@ apt (1.0.5) unstable; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Wed, 18 Jun 2014 13:35:13 +0200
 
+apt (1.0.4ubuntu8) utopic; urgency=medium
+
+  * apt-pkg/deb/dpkgpm.cc:
+    - update string matching for dpkg I/O errors. (LP: #1363257)
+    - properly parse the dpkg status line so that package name is properly set
+      and an apport report is created. Thanks to Anders Kaseorg for the patch.
+      (LP: #1353171)
+
+ -- Brian Murray <brian@ubuntu.com>  Fri, 29 Aug 2014 15:15:17 -0700
+
+apt (1.0.4ubuntu7) utopic; urgency=medium
+
+  * debian/tests/run-tests: tests don't get along with proxy, so unset proxy
+    variables. See Debian #759655
+
+ -- Martin Pitt <martin.pitt@ubuntu.com>  Fri, 29 Aug 2014 09:13:37 +0200
+
+apt (1.0.4ubuntu6) utopic; urgency=low
+
+  * apt-pkg/packagemanager.cc:
+    - fix incorrect configure ordering in the SmartConfigure step
+      by skiping packages that do not need immediate action
+      (LP: #1347721)
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 29 Jul 2014 11:46:18 +0200
+
+apt (1.0.4ubuntu5) utopic; urgency=medium
+
+  [ Michael Vogt ]
+  * Try not to parse invalid translation files (LP: #756317)
+
+  [ Iain Lane ]
+  * Remove stray *.debhelper files.
+
+ -- Iain Lane <iain@orangesquash.org.uk>  Fri, 04 Jul 2014 10:15:28 +0100
+
+apt (1.0.4ubuntu4) utopic; urgency=medium
+
+  * test/integration/test-essential-force-loopbreak: 
+    - fix test on non-amd64 systems
+
+ -- Michael Vogt <mvo@ubuntu.com>  Thu, 12 Jun 2014 10:56:09 +0200
+
+apt (1.0.4ubuntu3) utopic; urgency=medium
+
+  * ensure that test-apt-ftparchive-cachedb-lp1274466, 
+    test-external-dependency-solver-protocol run in the ADT
+    environment
+
+ -- Michael Vogt <mvo@ubuntu.com>  Thu, 12 Jun 2014 08:47:29 +0200
+
+apt (1.0.4ubuntu2) utopic; urgency=medium
+
+  * debian/test/control:
+    - add missing db-util to test dependencies
+  * debian/tests/run-tests:
+    - fix path for apt-internal-solver
+
+ -- Michael Vogt <mvo@ubuntu.com>  Wed, 11 Jun 2014 14:51:31 +0200
+
+apt (1.0.4ubuntu1) utopic; urgency=low
+
+  * Merged from debian/sid, remaining changes:
+    - patch for apt cross-building, see http://bugs.debian.org/666772
+    - ubuntu changelog download handling
+    - apt-key net-update/apt-xapian-index
+    - git-buildpackage config adjustments
+    - ubuntu keyring
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 10 Jun 2014 19:00:00 +0200
+
 apt (1.0.4) unstable; urgency=low
 
   [ Michael Vogt ]
@@ -199,41 +270,6 @@ apt (1.0.4) unstable; urgency=low
   * Italian program translation update (Closes: 750009)
 
  -- Michael Vogt <mvo@debian.org>  Tue, 10 Jun 2014 14:55:05 +0200
-
-apt (1.0.4ubuntu4) utopic; urgency=medium
-
-  * test/integration/test-essential-force-loopbreak: 
-    - fix test on non-amd64 systems
-
- -- Michael Vogt <mvo@ubuntu.com>  Thu, 12 Jun 2014 10:56:09 +0200
-
-apt (1.0.4ubuntu3) utopic; urgency=medium
-
-  * ensure that test-apt-ftparchive-cachedb-lp1274466, 
-    test-external-dependency-solver-protocol run in the ADT
-    environment
-
- -- Michael Vogt <mvo@ubuntu.com>  Thu, 12 Jun 2014 08:47:29 +0200
-
-apt (1.0.4ubuntu2) utopic; urgency=medium
-
-  * debian/test/control:
-    - add missing db-util to test dependencies
-  * debian/tests/run-tests:
-    - fix path for apt-internal-solver
-
- -- Michael Vogt <mvo@ubuntu.com>  Wed, 11 Jun 2014 14:51:31 +0200
-
-apt (1.0.4ubuntu1) utopic; urgency=low
-
-  * Merged from debian/sid, remaining changes:
-    - patch for apt cross-building, see http://bugs.debian.org/666772
-    - ubuntu changelog download handling
-    - apt-key net-update/apt-xapian-index
-    - git-buildpackage config adjustments
-    - ubuntu keyring
-
- -- Michael Vogt <michael.vogt@ubuntu.com>  Tue, 10 Jun 2014 19:00:00 +0200
 
 apt (1.0.3) unstable; urgency=medium
 
