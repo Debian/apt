@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
+]>
+
+<book lang="en">
+
+<title>APT User's Guide</title>
+
+<bookinfo>
+
+<authorgroup>
+  <author>
+    <personname>Jason Gunthorpe</personname><email>jgg@debian.org</email>
+  </author>
+</authorgroup>
+
+<releaseinfo>Version &apt-product-version;</releaseinfo>
+
+<abstract>
+<para>
+This document provides an overview of how to use the the APT package manager.
+</para>
+</abstract>
+
+<copyright><year>1998</year><holder>Jason Gunthorpe</holder></copyright>
+
+<legalnotice>
+<title>License Notice</title>
+<para>
+"APT" and this document are free software; you can redistribute them and/or
+modify them under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+</para>
+</legalnotice>
+
+<legalnotice>
+<para>
+For more details, on Debian systems, see the file
+/usr/share/common-licenses/GPL for the full license.
+</para>
+</legalnotice>
+
+</bookinfo>
+
+<chapter id="ch1"><title>General</title>
+<para>
+The APT package currently contains two sections, the APT
+<command>dselect</command> method and the <command>apt-get</command> command
+line user interface. Both provide a way to install and remove packages as well
+as download new packages from the Internet.
+</para>
+
+<section id="s1.1"><title>Anatomy of the Package System</title>
+<para>
+The Debian packaging system has a large amount of information associated with
+each package to help assure that it integrates cleanly and easily into the
+system. The most prominent of its features is the dependency system.
+</para>
+<para>
+The dependency system allows individual programs to make use of shared elements
+in the system such as libraries. It simplifies placing infrequently used
+portions of a program in separate packages to reduce the number of things the
+average user is required to install. Also, it allows for choices in mail
+transport agents, X servers and so on.
+</para>
+<para>
+The first step to understanding the dependency system is to grasp the concept
+of a simple dependency. The meaning of a simple dependency is that a package
+requires another package to be installed at the same time to work properly.
+</para>
+<para>
+For instance, mailcrypt is an emacs extension that aids in encrypting email
+with GPG. Without GPGP installed mailcrypt is useless, so mailcrypt has a
+simple dependency on GPG. Also, because it is an emacs extension it has a
+simple dependency on emacs, without emacs it is completely useless.
+</para>
+<para>
+The other important dependency to understand is a conflicting dependency. It
+means that a package, when installed with another package, will not work and
+may possibly be extremely harmful to the system. As an example consider a mail
+transport agent such as sendmail, exim or qmail. It is not possible to have
+two mail transport agents installed because both need to listen to the network
+to receive mail. Attempting to install two will seriously damage the system so
+all mail transport agents have a conflicting dependency with all other mail
+transport agents.
+</para>
+<para>
+As an added complication there is the possibility for a package to pretend to
+be another package. Consider that exim and sendmail for many intents are
+identical, they both deliver mail and understand a common interface. Hence,
+the package system has a way for them to declare that they are both
+mail-transport-agents. So, exim and sendmail both declare that they provide a
+mail-transport-agent and other packages that need a mail transport agent depend
+on mail-transport-agent. This can add a great deal of confusion when trying to
+manually fix packages.
+</para>
+<para>
+At any given time a single dependency may be met by packages that are already
+installed or it may not be. APT attempts to help resolve dependency issues by
+providing a number of automatic algorithms that help in selecting packages for
+installation.
+</para>
+</section>
+
+</chapter>
+
+<chapter id="ch2"><title>apt-get</title>
+<para>
+<command>apt-get</command> provides a simple way to install packages from the
+command line. Unlike <command>dpkg</command>, <command>apt-get</command> does
+not understand .deb files, it works with the package's proper name and can only
+install .deb archives from a <emphasis>Source</emphasis>.
+</para>
+<para>
+The first <footnote><para> If you are using an http proxy server you must set
+the http_proxy environment variable first, see sources.list(5) </para>
+</footnote> thing that should be done before using <command>apt-get</command>
+is to fetch the package lists from the <emphasis>Sources</emphasis> so that it
+knows what packages are available. This is done with <literal>apt-get
+update</literal>. For instance,
+</para>
+<screen>
+# apt-get update
+Get http://ftp.de.debian.org/debian-non-US/ stable/binary-i386/ Packages
+Get http://llug.sep.bnl.gov/debian/ testing/contrib Packages
+Reading Package Lists... Done
+Building Dependency Tree... Done
+</screen>
+<para>
+Once updated there are several commands that can be used:
+</para>
+<variablelist>
+<varlistentry>
+<term>upgrade</term>
+<listitem>
+<para>
+Upgrade will attempt to gently upgrade the whole system. Upgrade will never
+install a new package or remove an existing package, nor will it ever upgrade a
+package that might cause some other package to break. This can be used daily
+to relatively safely upgrade the system. Upgrade will list all of the packages
+that it could not upgrade, this usually means that they depend on new packages
+or conflict with some other package. <command>dselect</command> or
+<literal>apt-get install</literal> can be used to force these packages to
+install.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>install</term>
+<listitem>
+<para>
+Install is used to install packages by name. The package is automatically
+fetched and installed. This can be useful if you already know the name of the
+package to install and do not want to go into a GUI to select it. Any number
+of packages may be passed to install, they will all be fetched. Install
+automatically attempts to resolve dependency problems with the listed packages
+and will print a summary and ask for confirmation if anything other than its
+arguments are changed.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>dist-upgrade</term>
+<listitem>
+<para>
+Dist-upgrade is a complete upgrader designed to simplify upgrading between
+releases of Debian. It uses a sophisticated algorithm to determine the best
+set of packages to install, upgrade and remove to get as much of the system to
+the newest release. In some situations it may be desired to use dist-upgrade
+rather than spend the time manually resolving dependencies in
+<command>dselect</command>. Once dist-upgrade has completed then
+<command>dselect</command> can be used to install any packages that may have
+been left out.
+</para>
+<para>
+It is important to closely look at what dist-upgrade is going to do, its
+decisions may sometimes be quite surprising.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para>
+<command>apt-get</command> has several command line options that are detailed
+in its man page,
+<citerefentry><refentrytitle>apt-get</refentrytitle><manvolnum>8</manvolnum></citerefentry>. The
+most useful option is <literal>-d</literal> which does not install the
+fetched files. If the system has to download a large number of package it
+would be undesired to start installing them in case something goes wrong. When
+<literal>-d</literal> is used the downloaded archives can be installed by
+simply running the command that caused them to be downloaded again without
+<literal>-d</literal>.
+</para>
+</chapter>
+
+<chapter id="ch3"><title>DSelect</title>
+<para>
+The APT <command>dselect</command> method provides the complete
+APT system with the <command>dselect</command> package selection
+GUI. <command>dselect</command> is used to select the packages to be
+installed or removed and APT actually installs them.
+</para>
+<para>
+To enable the APT method you need to select [A]ccess in
+<command>dselect</command> and then choose the APT method. You will be
+prompted for a set of <emphasis>Sources</emphasis> which are places to fetch
+archives from. These can be remote Internet sites, local Debian mirrors or
+CD-ROMs. Each source can provide a fragment of the total Debian archive, APT
+will automatically combine them to form a complete set of packages. If you
+have a CD-ROM then it is a good idea to specify it first and then specify a
+mirror so that you have access to the latest bug fixes. APT will automatically
+use packages on your CD-ROM before downloading from the Internet.
+</para>
+<screen>
+   Set up a list of distribution source locations
+
+ Please give the base URL of the debian distribution.
+ The access schemes I know about are: http file
+
+ For example:
+      file:/mnt/debian,
+      ftp://ftp.debian.org/debian,
+      http://ftp.de.debian.org/debian,
+
+
+ URL [http://llug.sep.bnl.gov/debian]:
+</screen>
+<para>
+The <emphasis>Sources</emphasis> setup starts by asking for the base of the
+Debian archive, defaulting to a HTTP mirror. Next it asks for the distribution
+to get.
+</para>
+<screen>
+ Please give the distribution tag to get or a path to the
+ package file ending in a /. The distribution
+ tags are typically something like: stable unstable testing non-US
+
+ Distribution [stable]:
+</screen>
+<para>
+The distribution refers to the Debian version in the archive,
+<emphasis>stable</emphasis> refers to the latest released version
+and <emphasis>unstable</emphasis> refers to the developmental
+version. <emphasis>non-US</emphasis> is only available on some mirrors
+and refers to packages that contain encryption technology or other
+things that cannot be exported from the United States. Importing these
+packages into the US is legal however.
+</para>
+<screen>
+ Please give the components to get
+ The components are typically something like: main contrib non-free
+
+ Components [main contrib non-free]:
+</screen>
+<para>
+The components list refers to the list of sub distributions to fetch. The
+distribution is split up based on software licenses, main being DFSG free
+packages while contrib and non-free contain things that have various
+restrictions placed on their use and distribution.
+</para>
+<para>
+Any number of sources can be added, the setup script will continue to prompt
+until you have specified all that you want.
+</para>
+<para>
+Before starting to use <command>dselect</command> it is necessary to update
+the available list by selecting [U]pdate from the menu. This is a superset of
+<literal>apt-get update</literal> that makes the fetched information available
+to <command>dselect</command>. [U]pdate must be performed even if
+<literal>apt-get update</literal> has been run before.
+</para>
+<para>
+You can then go on and make your selections using [S]elect and then perform
+the installation using [I]nstall. When using the APT method the [C]onfig and
+[R]emove commands have no meaning, the [I]nstall command performs both of
+them together.
+</para>
+<para>
+By default APT will automatically remove the package (.deb) files once they
+have been successfully installed. To change this behavior place
+<literal>Dselect::clean "prompt";</literal> in /etc/apt/apt.conf.
+</para>
+</chapter>
+
+<chapter id="ch4"><title>The Interface</title>
+<para>
+Both that APT <command>dselect</command> method and <command>apt-get</command>
+share the same interface. It is a simple system that generally tells you what
+it will do and then goes and does it. <footnote><para> The
+<command>dselect</command> method actually is a set of wrapper scripts to
+<command>apt-get</command>. The method actually provides more functionality
+than is present in <command>apt-get</command> alone. </para> </footnote> After
+printing out a summary of what will happen APT then will print out some
+informative status messages so that you can estimate how far along it is and
+how much is left to do.
+</para>
+
+<section id="s4.1"><title>Startup</title>
+<para>
+Before all operations except update, APT performs a number of actions
+to prepare its internal state. It also does some checks of the system's
+state. At any time these operations can be performed by running
+<literal>apt-get check</literal>.
+</para>
+<screen>
+# apt-get check
+Reading Package Lists... Done
+Building Dependency Tree... Done
+</screen>
+<para>
+The first thing it does is read all the package files into memory. APT uses a
+caching scheme so this operation will be faster the second time it is run. If
+some of the package files are not found then they will be ignored and a
+warning will be printed when apt-get exits.
+</para>
+<para>
+The final operation performs a detailed analysis of the system's
+dependencies. It checks every dependency of every installed or unpacked
+package and considers if it is OK. Should this find a problem then a report
+will be printed out and <command>apt-get</command> will refuse to run.
+</para>
+<screen>
+# apt-get check
+Reading Package Lists... Done
+Building Dependency Tree... Done
+You might want to run apt-get -f install' to correct these.
+Sorry, but the following packages have unmet dependencies:
+  9fonts: Depends: xlib6g but it is not installed
+  uucp: Depends: mailx but it is not installed
+  blast: Depends: xlib6g (&gt;= 3.3-5) but it is not installed
+  adduser: Depends: perl-base but it is not installed
+  aumix: Depends: libgpmg1 but it is not installed
+  debiandoc-sgml: Depends: sgml-base but it is not installed
+  bash-builtins: Depends: bash (&gt;= 2.01) but 2.0-3 is installed
+  cthugha: Depends: svgalibg1 but it is not installed
+           Depends: xlib6g (&gt;= 3.3-5) but it is not installed
+  libreadlineg2: Conflicts:libreadline2 (&lt;&lt; 2.1-2.1)
+</screen>
+<para>
+In this example the system has many problems, including a serious problem with
+libreadlineg2. For each package that has unmet dependencies a line is printed
+out indicating the package with the problem and the dependencies that are
+unmet. A short explanation of why the package has a dependency problem is also
+included.
+</para>
+<para>
+There are two ways a system can get into a broken state like this. The
+first is caused by <command>dpkg</command> missing some subtle relationships
+between packages when performing upgrades. <footnote><para> APT however
+considers all known dependencies and attempts to prevent broken
+packages </para> </footnote>. The second is if a package installation
+fails during an operation. In this situation a package may have been
+unpacked without its dependents being installed.
+</para>
+<para>
+The second situation is much less serious than the first because APT places
+certain constraints on the order that packages are installed. In both cases
+supplying the <literal>-f</literal> option to <command>apt-get</command>
+will cause APT to deduce a possible solution to the problem and then
+continue on. The APT <command>dselect</command> method always supplies
+the <literal>-f</literal> option to allow for easy continuation of failed
+maintainer scripts.
+</para>
+<para>
+However, if the <literal>-f</literal> option is used to correct a seriously
+broken system caused by the first case then it is possible that it will either
+fail immediately or the installation sequence will fail. In either case it is
+necessary to manually use dpkg (possibly with forcing options) to correct the
+situation enough to allow APT to proceed.
+</para>
+</section>
+
+<section id="s4.2"><title>The Status Report</title>
+<para>
+Before proceeding <command>apt-get</command> will present a report on what will
+happen. Generally the report reflects the type of operation being performed
+but there are several common elements. In all cases the lists reflect the
+final state of things, taking into account the <literal>-f</literal> option
+and any other relevant activities to the command being executed.
+</para>
+
+<section id="s4.2.1"><title>The Extra Package list</title>
+<screen>
+The following extra packages will be installed:
+  libdbd-mysql-perl xlib6 zlib1 xzx libreadline2 libdbd-msql-perl
+  mailpgp xdpkg fileutils pinepgp zlib1g xlib6g perl-base
+  bin86 libgdbm1 libgdbmg1 quake-lib gmp2 bcc xbuffy
+  squake pgp-i python-base debmake ldso perl libreadlineg2
+  ssh
+</screen>
+<para>
+The Extra Package list shows all of the packages that will be installed or
+upgraded in excess of the ones mentioned on the command line. It is only
+generated for an <literal>install</literal> command. The listed packages are
+often the result of an Auto Install.
+</para>
+</section>
+
+<section id="s4.2.2"><title>The Packages to Remove</title>
+<screen>
+The following packages will be REMOVED:
+  xlib6-dev xpat2 tk40-dev xkeycaps xbattle xonix
+  xdaliclock tk40 tk41 xforms0.86 ghostview xloadimage xcolorsel
+  xadmin xboard perl-debug tkined xtetris libreadline2-dev perl-suid
+  nas xpilot xfig
+</screen>
+<para>
+The Packages to Remove list shows all of the packages that will be removed
+from the system. It can be shown for any of the operations and should be given
+a careful inspection to ensure nothing important is to be taken off. The
+<literal>-f</literal> option is especially good at generating packages to
+remove so extreme care should be used in that case. The list may contain
+packages that are going to be removed because they are only partially
+installed, possibly due to an aborted installation.
+</para>
+</section>
+
+<section id="s4.2.3"><title>The New Packages list</title>
+<screen>
+The following NEW packages will installed:
+  zlib1g xlib6g perl-base libgdbmg1 quake-lib gmp2 pgp-i python-base
+</screen>
+<para>
+The New Packages list is simply a reminder of what will happen. The packages
+listed are not presently installed in the system but will be when APT is done.
+</para>
+</section>
+
+<section id="s4.2.4"><title>The Kept Back list</title>
+<screen>
+The following packages have been kept back
+  compface man-db tetex-base msql libpaper svgalib1
+  gs snmp arena lynx xpat2 groff xscreensaver
+</screen>
+<para>
+Whenever the whole system is being upgraded there is the possibility that new
+versions of packages cannot be installed because they require new things or
+conflict with already installed things. In this case the package will appear
+in the Kept Back list. The best way to convince packages listed there to
+install is with <literal>apt-get install</literal> or by using
+<command>dselect</command> to resolve their problems.
+</para>
+</section>
+
+<section id="s4.2.5"><title>Held Packages warning</title>
+<screen>
+The following held packages will be changed:
+  cvs
+</screen>
+<para>
+Sometimes you can ask APT to install a package that is on hold, in such a case
+it prints out a warning that the held package is going to be changed. This
+should only happen during dist-upgrade or install.
+</para>
+</section>
+
+<section id="s4.2.6"><title>Final summary</title>
+<para>
+Finally, APT will print out a summary of all the changes that will occur.
+</para>
+<screen>
+206 packages upgraded, 8 newly installed, 23 to remove and 51 not upgraded.
+12 packages not fully installed or removed.
+Need to get 65.7M/66.7M of archives. After unpacking 26.5M will be used.
+</screen>
+<para>
+The first line of the summary simply is a reduced version of all of the lists
+and includes the number of upgrades - that is packages already installed that
+have new versions available. The second line indicates the number of poorly
+configured packages, possibly the result of an aborted installation. The final
+line shows the space requirements that the installation needs. The first pair
+of numbers refer to the size of the archive files. The first number indicates
+the number of bytes that must be fetched from remote locations and the second
+indicates the total size of all the archives required. The next number
+indicates the size difference between the presently installed packages and the
+newly installed packages. It is roughly equivalent to the space required in
+/usr after everything is done. If a large number of packages are being removed
+then the value may indicate the amount of space that will be freed.
+</para>
+<para>
+Some other reports can be generated by using the -u option to show packages to
+upgrade, they are similar to the previous examples.
+</para>
+</section>
+
+</section>
+
+<section id="s4.3"><title>The Status Display</title>
+<para>
+During the download of archives and package files APT prints out a series of
+status messages.
+</para>
+<screen>
+# apt-get update
+Get:1 http://ftp.de.debian.org/debian-non-US/ stable/non-US/ Packages
+Get:2 http://llug.sep.bnl.gov/debian/ testing/contrib Packages
+Hit http://llug.sep.bnl.gov/debian/ testing/main Packages
+Get:4 http://ftp.de.debian.org/debian-non-US/ unstable/binary-i386/ Packages
+Get:5 http://llug.sep.bnl.gov/debian/ testing/non-free Packages
+11% [5 testing/non-free `Waiting for file' 0/32.1k 0%] 2203b/s 1m52s
+</screen>
+<para>
+The lines starting with <emphasis>Get</emphasis> are printed out when APT
+begins to fetch a file while the last line indicates the progress of the
+download. The first percent value on the progress line indicates the total
+percent done of all files. Unfortunately since the size of the Package files
+is unknown <literal>apt-get update</literal> estimates the percent done which
+causes some inaccuracies.
+</para>
+<para>
+The next section of the status line is repeated once for each download
+thread and indicates the operation being performed and some useful
+information about what is happening. Sometimes this section will simply
+read <emphasis>Forking</emphasis> which means the OS is loading the download
+module. The first word after the [ is the fetch number as shown on the
+history lines. The next word is the short form name of the object being
+downloaded. For archives it will contain the name of the package that is
+being fetched.
+</para>
+<para>
+Inside of the single quote is an informative string indicating the progress of
+the negotiation phase of the download. Typically it progresses from
+<emphasis>Connecting</emphasis> to <emphasis>Waiting for file</emphasis> to
+<emphasis>Downloading</emphasis> or <emphasis>Resuming</emphasis>. The final
+value is the number of bytes downloaded from the remote site. Once the
+download begins this is represented as <literal>102/10.2k</literal> indicating
+that 102 bytes have been fetched and 10.2 kilobytes is expected. The total
+size is always shown in 4 figure notation to preserve space. After the size
+display is a percent meter for the file itself. The second last element is the
+instantaneous average speed. This values is updated every 5 seconds and
+reflects the rate of data transfer for that period. Finally is shown the
+estimated transfer time. This is updated regularly and reflects the time to
+complete everything at the shown transfer rate.
+</para>
+<para>
+The status display updates every half second to provide a constant feedback on
+the download progress while the Get lines scroll back whenever a new file is
+started. Since the status display is constantly updated it is unsuitable for
+logging to a file, use the <literal>-q</literal> option to remove the status
+display.
+</para>
+</section>
+
+<section id="s4.4"><title>Dpkg</title>
+<para>
+APT uses <command>dpkg</command> for installing the archives and will
+switch over to the <command>dpkg</command> interface once downloading is
+completed. <command>dpkg</command> will also ask a number of questions as
+it processes the packages and the packages themselves may also ask several
+questions. Before each question there is usually a description of what it
+is asking and the questions are too varied to discuss completely here.
+</para>
+</section>
+
+</chapter>
+
+</book>

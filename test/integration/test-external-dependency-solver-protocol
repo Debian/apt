@@ -51,6 +51,12 @@ rm -f /tmp/dump.edsp
 testfailure aptget install --solver dump awesomecoolstuff:i386 -s
 testsuccess test -s /tmp/dump.edsp
 
+testsuccess aptget dist-upgrade -s
+testsuccess aptget dist-upgrade -s --solver apt
+
+testsuccess aptget upgrade -s
+testsuccess aptget upgrade -s --solver apt
+
 configarchitecture 'armel'
 msgtest 'Test direct calling is okay for' 'apt-internal-solver'
 cat /tmp/dump.edsp | aptinternalsolver > solver.result 2>&1 || true

@@ -10,7 +10,7 @@ endif
 default: startup all
 
 .PHONY: headers library clean veryclean all binary program doc test update-po
-all headers library clean veryclean binary program doc manpages debiandoc test update-po startup dirs:
+all headers library clean veryclean binary program doc manpages docbook test update-po startup dirs:
 	$(MAKE) -C vendor $@
 	$(MAKE) -C apt-pkg $@
 	$(MAKE) -C apt-inst $@
@@ -23,7 +23,7 @@ all headers library clean veryclean binary program doc manpages debiandoc test u
 	$(MAKE) -C po $@
 	$(MAKE) -C test $@
 
-all headers library clean veryclean binary program doc manpages debiandoc test update-po: startup dirs
+all headers library clean veryclean binary program doc manpages docbook test update-po: startup dirs
 
 dirs: startup
 

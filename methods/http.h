@@ -124,9 +124,6 @@ class HttpMethod : public ServerMethod
    public:
    virtual void SendReq(FetchItem *Itm);
 
-   /** \brief Try to AutoDetect the proxy */
-   bool AutoDetectProxy();
-
    virtual bool Configuration(std::string Message);
 
    virtual ServerState * CreateServerState(URI uri);

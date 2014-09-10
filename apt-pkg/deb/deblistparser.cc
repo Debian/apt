@@ -108,7 +108,7 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 {
    unsigned char MA;
    string const MultiArch = Section.FindS("Multi-Arch");
-   if (MultiArch.empty() == true)
+   if (MultiArch.empty() == true || MultiArch == "no")
       MA = pkgCache::Version::None;
    else if (MultiArch == "same") {
       if (ArchitectureAll() == true)
@@ -145,7 +145,8 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
    // Parse the section
-   Ver->Section = UniqFindTagWrite("Section");
+   unsigned long const idxSection = UniqFindTagWrite("Section");
+   Ver->Section = idxSection;
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL("Size");
@@ -260,7 +261,10 @@ bool debListParser::UsePackage(pkgCache::PkgIterator &Pkg,
 			       pkgCache::VerIterator &Ver)
 {
    if (Pkg->Section == 0)
-      Pkg->Section = UniqFindTagWrite("Section");
+   {
+      unsigned long const idxSection = UniqFindTagWrite("Section");
+      Pkg->Section = idxSection;
+   }
 
    string const static myArch = _config->Find("APT::Architecture");
    // Possible values are: "all", "native", "installed" and "none"
@@ -799,8 +803,8 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
 	 Start = ParseDepends(Start,Stop,Package,Version,Op);
 	 if (Start == 0)
 	    return _error->Error("Problem parsing Provides line");
-	 if (Op != pkgCache::Dep::NoOp) {
-	    _error->Warning("Ignoring Provides line with DepCompareOp for package %s", Package.c_str());
+	 if (Op != pkgCache::Dep::NoOp && Op != pkgCache::Dep::Equals) {
+	    _error->Warning("Ignoring Provides line with non-equal DepCompareOp for package %s", Package.c_str());
 	 } else if ((Ver->MultiArch & pkgCache::Version::Foreign) == pkgCache::Version::Foreign) {
 	    if (NewProvidesAllArch(Ver, Package, Version) == false)
 	       return false;

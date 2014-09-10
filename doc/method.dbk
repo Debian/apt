@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % aptent SYSTEM "apt.ent"> %aptent;
+<!ENTITY % aptverbatiment SYSTEM "apt-verbatim.ent"> %aptverbatiment;
+<!ENTITY % aptvendor SYSTEM "apt-vendor.ent"> %aptvendor;
+]>
+
+<book lang="en">
+
+<title>APT Method Interface</title>
+
+<bookinfo>
+
+<authorgroup>
+  <author>
+    <personname>Jason Gunthorpe</personname><email>jgg@debian.org</email>
+  </author>
+</authorgroup>
+
+<releaseinfo>Version &apt-product-version;</releaseinfo>
+
+<abstract>
+<para>
+This document describes the interface that APT uses to the archive access
+methods.
+</para>
+</abstract>
+
+<copyright><year>1998</year><holder>Jason Gunthorpe</holder></copyright>
+
+<legalnotice>
+<title>License Notice</title>
+<para>
+"APT" and this document are free software; you can redistribute them and/or
+modify them under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at your
+option) any later version.
+</para>
+<para>
+For more details, on Debian systems, see the file
+/usr/share/common-licenses/GPL for the full license.
+</para>
+</legalnotice>
+
+</bookinfo>
+
+<chapter id="ch1"><title>Introduction</title>
+
+<section id="s1.1"><title>General</title>
+<para>
+The APT method interface allows APT to acquire archive files (.deb), index
+files (Packages, Release, Mirrors) and source files (.tar.gz, .diff). It is a
+general, extensible system designed to satisfy all of these requirements:
+</para>
+<orderedlist numeration="arabic">
+<listitem>
+<para>
+Remote methods that download files from a distant site
+</para>
+</listitem>
+<listitem>
+<para>
+Resume of aborted downloads
+</para>
+</listitem>
+<listitem>
+<para>
+Progress reporting
+</para>
+</listitem>
+<listitem>
+<para>
+If-Modified-Since (IMS) checking for index files
+</para>
+</listitem>
+<listitem>
+<para>
+In-Line MD5 generation
+</para>
+</listitem>
+<listitem>
+<para>
+No-copy in-filesystem methods
+</para>
+</listitem>
+<listitem>
+<para>
+Multi-media methods (like CD's)
+</para>
+</listitem>
+<listitem>
+<para>
+Dynamic source selection for failure recovery
+</para>
+</listitem>
+<listitem>
+<para>
+User interaction for user/password requests and media swaps
+</para>
+</listitem>
+<listitem>
+<para>
+Global configuration
+</para>
+</listitem>
+</orderedlist>
+<para>
+Initial releases of APT (0.1.x) used a completely different method interface
+that only supported the first 6 items. This new interface deals with the
+remainder.
+</para>
+</section>
+
+<section id="s1.2"><title>Terms</title>
+<para>
+Several terms are used through out the document, they have specific meanings
+which may not be immediately evident. To clarify they are summarized here.
+</para>
+<variablelist>
+<varlistentry>
+<term>source</term>
+<listitem>
+<para>
+Refers to an item in source list. More specifically it is the broken down
+item, that is each source maps to exactly one index file. Archive sources map
+to Package files and Source Code sources map to Source files.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>archive file</term>
+<listitem>
+<para>
+Refers to a binary package archive (.deb, .rpm, etc).
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>source file</term>
+<listitem>
+<para>
+Refers to one of the files making up the source code of a package. In debian
+it is one of .diff.gz, .dsc. or .tar.gz.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>URI</term>
+<listitem>
+<para>
+Universal Resource Identifier (URI) is a super-set of the familiar URL
+syntax used by web browsers. It consists of an access specification
+followed by a specific location in that access space. The form is
+&lt;access&gt;:&lt;location&gt;. Network addresses are given with the form
+&lt;access&gt;://[&lt;user&gt;[:&lt;pas&gt;]@]hostname[:port]/&lt;location&gt;.
+Some examples:
+</para>
+<screen>
+file:/var/mirrors/debian/
+ftp://ftp.debian.org/debian
+ftp://jgg:MooCow@localhost:21/debian
+nfs://bigred/var/mirrors/debian
+rsync://debian.midco.net/debian
+cdrom:Debian 2.0r1 Disk 1/
+</screen>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>method</term>
+<listitem>
+<para>
+There is a one to one mapping of URI access specifiers to methods. A method is
+a program that knows how to handle a URI access type and operates according to
+the specifications in this file.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>method instance</term>
+<listitem>
+<para>
+A specific running method. There can be more than one instance of each method
+as APT is capable of concurrent method handling.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>message</term>
+<listitem>
+<para>
+A series of lines terminated by a blank line sent down one of the communication
+lines. The first line should have the form xxx TAG where xxx are digits
+forming the status code and TAG is an informational string
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>acquire</term>
+<listitem>
+<para>
+The act of bring a URI into the local pathname space. This may simply be
+verifying the existence of the URI or actually downloading it from a remote
+site.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+
+</chapter>
+
+<chapter id="ch2"><title>Specification</title>
+
+<section id="s2.1"><title>Overview</title>
+<para>
+All methods operate as a sub process of a main controlling parent. 3 FD's are
+opened for use by the method allowing two way communication and emergency error
+reporting. The FD's correspond to the well known unix FD's, stdin, stdout and
+stderr.
+</para>
+<para>
+Through operation of the method communication is done via http style plain
+text. Specifically RFC-822 (like the Package file) fields are used to describe
+items and a numeric-like header is used to indicate what is happening. Each of
+these distinct communication messages should be sent quickly and without pause.
+</para>
+<para>
+In some instances APT may pre-invoke a method to allow things like file URI's
+to determine how many files are available locally.
+</para>
+</section>
+
+<section id="s2.2"><title>Message Overview</title>
+<para>
+The first line of each message is called the message header. The first 3
+digits (called the Status Code) have the usual meaning found in the http
+protocol. 1xx is informational, 2xx is successful and 4xx is failure. The 6xx
+series is used to specify things sent to the method. After the status code is
+an informational string provided for visual debugging.
+</para>
+<itemizedlist>
+<listitem>
+<para>
+100 Capabilities - Method capabilities
+</para>
+</listitem>
+<listitem>
+<para>
+101 Log - General Logging
+</para>
+</listitem>
+<listitem>
+<para>
+102 Status - Inter-URI status reporting (login progress)
+</para>
+</listitem>
+<listitem>
+<para>
+200 URI Start - URI is starting acquire
+</para>
+</listitem>
+<listitem>
+<para>
+201 URI Done - URI is finished acquire
+</para>
+</listitem>
+<listitem>
+<para>
+400 URI Failure - URI has failed to acquire
+</para>
+</listitem>
+<listitem>
+<para>
+401 General Failure - Method did not like something sent to it
+</para>
+</listitem>
+<listitem>
+<para>
+402 Authorization Required - Method requires authorization to access the URI.
+Authorization is User/Pass
+</para>
+</listitem>
+<listitem>
+<para>
+403 Media Failure - Method requires a media change
+</para>
+</listitem>
+<listitem>
+<para>
+600 URI Acquire - Request a URI be acquired
+</para>
+</listitem>
+<listitem>
+<para>
+601 Configuration - Sends the configuration space
+</para>
+</listitem>
+<listitem>
+<para>
+602 Authorization Credentials - Response to the 402 message
+</para>
+</listitem>
+<listitem>
+<para>
+603 Media Changed - Response to the 403 message
+</para>
+</listitem>
+</itemizedlist>
+<para>
+Only the 6xx series of status codes is sent TO the method. Furthermore the
+method may not emit status codes in the 6xx range. The Codes 402 and 403
+require that the method continue reading all other 6xx codes until the proper
+602/603 code is received. This means the method must be capable of handling an
+unlimited number of 600 messages.
+</para>
+<para>
+The flow of messages starts with the method sending out a <emphasis>100
+Capabilities</emphasis> and APT sending out a <emphasis>601
+Configuration</emphasis>. After that APT begins sending <emphasis>600 URI
+Acquire</emphasis> and the method sends out <emphasis>200 URI Start</emphasis>,
+<emphasis>201 URI Done</emphasis> or <emphasis>400 URI Failure</emphasis>. No
+synchronization is performed, it is expected that APT will send <emphasis>600
+URI Acquire</emphasis> messages at -any- time and that the method should queue
+the messages. This allows methods like http to pipeline requests to the remote
+server. It should be noted however that APT will buffer messages so it is not
+necessary for the method to be constantly ready to receive them.
+</para>
+</section>
+
+<section id="s2.3"><title>Header Fields</title>
+<para>
+The following is a short index of the header fields that are supported
+</para>
+<variablelist>
+<varlistentry>
+<term>URI</term>
+<listitem>
+<para>
+URI being described by the message
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Filename</term>
+<listitem>
+<para>
+Location in the filesystem
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Last-Modified</term>
+<listitem>
+<para>
+A time stamp in RFC1123 notation for use by IMS checks
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>IMS-Hit</term>
+<listitem>
+<para>
+The already existing item is valid
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Size</term>
+<listitem>
+<para>
+Size of the file in bytes
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Resume-Point</term>
+<listitem>
+<para>
+Location that transfer was started
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>MD5-Hash</term>
+<listitem>
+<para>
+Computed MD5 hash for the file
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Message</term>
+<listitem>
+<para>
+String indicating some displayable message
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Media</term>
+<listitem>
+<para>
+String indicating the media name required
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Site</term>
+<listitem>
+<para>
+String indicating the site authorization is required for
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>User</term>
+<listitem>
+<para>
+Username for authorization
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Password</term>
+<listitem>
+<para>
+Password for authorization
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Fail</term>
+<listitem>
+<para>
+Operation failed
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Drive</term>
+<listitem>
+<para>
+Drive the media should be placed in
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Config-Item</term>
+<listitem>
+<para>
+A string of the form
+<replaceable>item</replaceable>=<replaceable>value</replaceable> derived from
+the APT configuration space. These may include method specific values and
+general values not related to the method. It is up to the method to filter out
+the ones it wants.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Single-Instance</term>
+<listitem>
+<para>
+Requires that only one instance of the method be run This is a yes/no value.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Pipeline</term>
+<listitem>
+<para>
+The method is capable of pipelining.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Local</term>
+<listitem>
+<para>
+The method only returns Filename: fields.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Send-Config</term>
+<listitem>
+<para>
+Send configuration to the method.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Needs-Cleanup</term>
+<listitem>
+<para>
+The process is kept around while the files it returned are being used. This is
+primarily intended for CD-ROM and File URIs that need to unmount filesystems.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Version</term>
+<listitem>
+<para>
+Version string for the method
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+<para>
+This is a list of which headers each status code can use
+</para>
+<variablelist>
+<varlistentry>
+<term>100 Capabilities</term>
+<listitem>
+<para>
+Displays the capabilities of the method. Methods should set the pipeline bit
+if their underlying protocol supports pipelining. The only known method that
+does support pipelining is http. Fields: Version, Single-Instance, Pre-Scan,
+Pipeline, Send-Config, Needs-Cleanup
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>101 Log</term>
+<listitem>
+<para>
+A log message may be printed to the screen if debugging is enabled. This is
+only for debugging the method. Fields: Message
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>102 Status</term>
+<listitem>
+<para>
+Message gives a progress indication for the method. It can be used to show
+pre-transfer status for Internet type methods. Fields: Message
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>200 URI Start</term>
+<listitem>
+<para>
+Indicates the URI is starting to be transferred. The URI is specified along
+with stats about the file itself. Fields: URI, Size, Last-Modified,
+Resume-Point
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>201 URI Done</term>
+<listitem>
+<para>
+Indicates that a URI has completed being transferred. It is possible to
+specify a <emphasis>201 URI Done</emphasis> without a <emphasis>URI
+Start</emphasis> which would mean no data was transferred but the file is now
+available. A Filename field is specified when the URI is directly available in
+the local pathname space. APT will either directly use that file or copy it
+into another location. It is possible to return Alt-* fields to indicate that
+another possibility for the URI has been found in the local pathname space.
+This is done if a decompressed version of a .gz file is found. Fields: URI,
+Size, Last-Modified, Filename, MD5-Hash
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>400 URI Failure</term>
+<listitem>
+<para>
+Indicates a fatal URI failure. The URI is not retrievable from this source. As
+with <emphasis>201 URI Done</emphasis> <emphasis>200 URI Start</emphasis> is
+not required to precede this message Fields: URI, Message
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>401 General Failure</term>
+<listitem>
+<para>
+Indicates that some unspecific failure has occurred and the method is unable
+to  continue. The method should terminate after sending this message. It
+is intended to check for invalid configuration options or other severe
+conditions. Fields: Message
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>402 Authorization Required</term>
+<listitem>
+<para>
+The method requires a Username and Password pair to continue. After sending
+this message the method will expect APT to send a <emphasis>602 Authorization
+Credentials</emphasis> message with the required information. It is possible
+for a method to send this multiple times. Fields: Site
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>403 Media Failure</term>
+<listitem>
+<para>
+A method that deals with multiple media requires that a new media be
+inserted. The Media field contains the name of the media to be
+inserted. Fields: Media, Drive
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>600 URI Acquire</term>
+<listitem>
+<para>
+APT is requesting that a new URI be added to the acquire list. Last-Modified
+has the time stamp of the currently cache file if applicable. Filename is the
+name of the file that the acquired URI should be written to. Fields: URI,
+Filename Last-Modified
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>601 Configuration</term>
+<listitem>
+<para>
+APT is sending the configuration space to the method. A series of Config-Item
+fields will be part of this message, each containing an entry from the
+configuration space. Fields: Config-Item.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>602 Authorization Credentials</term>
+<listitem>
+<para>
+This is sent in response to a <emphasis>402 Authorization Required</emphasis>
+message. It contains the entered username and password. Fields: Site, User,
+Password
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>603 Media Changed</term>
+<listitem>
+<para>
+This is sent in response to a <emphasis>403 Media Failure</emphasis>
+message. It indicates that the user has changed media and it is safe
+to proceed. Fields: Media, Fail
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</section>
+
+<section id="s2.4"><title>Notes</title>
+<para>
+The methods supplied by the stock apt are:
+</para>
+<orderedlist numeration="arabic">
+<listitem>
+<para>
+cdrom - For Multi-Disc CD-ROMs
+</para>
+</listitem>
+<listitem>
+<para>
+copy - (internal) For copying files around the filesystem
+</para>
+</listitem>
+<listitem>
+<para>
+file - For local files
+</para>
+</listitem>
+<listitem>
+<para>
+gzip - (internal) For decompression
+</para>
+</listitem>
+<listitem>
+<para>
+http - For HTTP servers
+</para>
+</listitem>
+</orderedlist>
+<para>
+The two internal methods, copy and gzip, are used by the acquire code to
+parallize and simplify the automatic decompression of package files as well as
+copying package files around the file system. Both methods can be seen to act
+the same except that one decompresses on the fly. APT uses them by generating
+a copy URI that is formed identically to a file URI. The destination file is
+send as normal. The method then takes the file specified by the URI and writes
+it to the destination file. A typical set of operations may be:
+</para>
+<screen>
+http://foo.com/Packages.gz -&gt; /bar/Packages.gz
+gzip:/bar/Packages.gz -&gt; /bar/Packages.decomp
+rename Packages.decomp to /final/Packages
+</screen>
+<para>
+The http method implements a fully featured HTTP/1.1 client that supports
+deep pipelining and reget. It works best when coupled with an apache 1.3
+server. The file method simply generates failures or success responses
+with the filename field set to the proper location. The cdrom method acts
+the same except that it checks that the mount point has a valid cdrom in
+it. It does this by (effectively) computing a md5 hash of 'ls -l' on the
+mountpoint.
+</para>
+</section>
+
+</chapter>
+
+</book>

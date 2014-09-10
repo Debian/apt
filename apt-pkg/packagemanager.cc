@@ -372,6 +372,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
    std::list<DepIterator> needConfigure;
    do
    {
+      // Check each dependency and see if anything needs to be done
+      // so that it can be configured
       Changed = false;
       for (DepIterator D = instVer.DependsList(); D.end() == false; )
       {
@@ -383,7 +385,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 	    continue;
 	 Bad = true;
 
-	 // Check for dependencies that have not been unpacked, probably due to loops.
+         // the first pass checks if we its all good, i.e. if we have
+         // to do anything at all
 	 for (DepIterator Cur = Start; true; ++Cur)
 	 {
 	    SPtrArray<Version *> VList = Cur.AllTargets();
@@ -412,6 +415,47 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure" << std::endl;
 	          Bad = false;
 	       }
+	    }
+
+            if (Cur == End || Bad == false)
+	       break;
+         }
+
+         // this dependency is in a good state, so we can stop
+         if (Bad == false)
+         {
+            if (Debug)
+               std::clog << OutputInDepth(Depth) << "Found ok dep " << D.TargetPkg() << std::endl;
+            continue;
+         }
+
+	 // Check for dependencies that have not been unpacked, 
+         // probably due to loops.
+	 for (DepIterator Cur = Start; true; ++Cur)
+	 {
+	    SPtrArray<Version *> VList = Cur.AllTargets();
+
+	    for (Version **I = VList; *I != 0; ++I)
+	    {
+	       VerIterator Ver(Cache,*I);
+	       PkgIterator DepPkg = Ver.ParentPkg();
+
+	       // Check if the current version of the package is available and will satisfy this dependency
+	       if (DepPkg.CurrentVer() == Ver && List->IsNow(DepPkg) == true &&
+		   List->IsFlag(DepPkg,pkgOrderList::Removed) == false &&
+		   DepPkg.State() == PkgIterator::NeedsNothing)
+                  continue;
+
+	       // Check if the version that is going to be installed will satisfy the dependency
+	       if (Cache[DepPkg].InstallVer != *I || List->IsNow(DepPkg) == false)
+		  continue;
+
+	       if (PkgLoop == true)
+	       {
+		  if (Debug)
+		     std::clog << OutputInDepth(Depth) << "Package " << Pkg << " loops in SmartConfigure" << std::endl;
+	          Bad = false;
+	       }
 	       else
 	       {
 		  if (Debug)
@@ -419,6 +463,8 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
 		  if (NonLoopingSmart(UNPACK_IMMEDIATE, Pkg, DepPkg, Depth, PkgLoop, &Bad, &Changed) == false)
 		     return false;
 	       }
+               // at this point we either unpacked a Dep or we are in a loop,
+               // no need to unpack a second one
 	       break;
 	    }
 
@@ -435,6 +481,7 @@ bool pkgPackageManager::SmartConfigure(PkgIterator Pkg, int const Depth)
          return _error->Error("Internal error: MaxLoopCount reached in SmartUnPack (1) for %s, aborting", Pkg.FullName().c_str());
    } while (Changed == true);
 
+   // now go over anything that needs configuring
    Bad = false, Changed = false, i = 0;
    do
    {

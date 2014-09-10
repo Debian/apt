@@ -1278,8 +1278,8 @@ static bool Search(CommandLine &CmdL)
    ExDescFile *DFList = new ExDescFile[descCount];
    memset(DFList,0,sizeof(*DFList) * descCount);
 
-   bool PatternMatch[descCount * NumPatterns];
-   memset(PatternMatch,false,sizeof(PatternMatch));
+   bool *PatternMatch = new bool[descCount * NumPatterns];
+   memset(PatternMatch,false,sizeof(*PatternMatch) * descCount * NumPatterns);
 
    // Map versions that we want to write out onto the VerList array.
    for (pkgCache::GrpIterator G = Cache->GrpBegin(); G.end() == false; ++G)
@@ -1389,6 +1389,7 @@ static bool Search(CommandLine &CmdL)
    }
    
    delete [] DFList;
+   delete [] PatternMatch;
    for (unsigned I = 0; I != NumPatterns; I++)
       regfree(&Patterns[I]);
    if (ferror(stdout))

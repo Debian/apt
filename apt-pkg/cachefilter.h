@@ -73,6 +73,7 @@ public:
 	bool operator() (pkgCache::VerIterator const &Ver);
 	~PackageArchitectureMatchesSpecification();
 };
+									/*}}}*/
 
 #else
 

@@ -26,15 +26,17 @@ testqualifier() {
 	fi
 }
 
-# non-multiarch or "ubuntus" old multiarchified dpkg
+msgmsg 'non-multiarch or "ubuntus" old multiarchified dpkg'
 echo 'Dir::Bin::dpkg "./dpkg-wrapper";' > rootdir/etc/apt/apt.conf.d/99dpkgwrapper
-echo '#! /bin/sh
-if echo "$*" | grep -q -- "--assert-multi-arch"; then
+cat > ./dpkg-wrapper <<EOF
+#! /bin/sh
+if echo "\$*" | grep -q -- "--assert-multi-arch"; then
 	echo >&2 'dpkg: Fehler: unbekannte Option --assert-multi-arch'
 	echo >&1 'dpkg: Info: unbekannte Option --assert-multi-arch'
-	return 2;
+	exit 2
 fi
-return $*' > ./dpkg-wrapper
+exec "\$@"
+EOF
 chmod +x ./dpkg-wrapper
 
 testqualifier 'native-pkg' 'native-pkg'
@@ -61,16 +63,18 @@ testqualifier 'all-foreign-pkg-' 'all-foreign-pkg'
 testqualifier 'always-all-pkg-' 'always-all-pkg'
 testqualifier 'always-all-foreign-pkg-' 'always-all-foreign-pkg'
 
-# multiarch dpkg (new interface version)
-
+msgmsg 'multiarch dpkg (new interface version)'
 rm rootdir/var/lib/dpkg/status
 touch rootdir/var/lib/dpkg/status
 echo 'Dir::Bin::dpkg "./dpkg-wrapper";' > rootdir/etc/apt/apt.conf.d/99dpkgwrapper
-echo '#! /bin/sh
-if echo "$*" | grep -q -- "--assert-multi-arch"; then
-	return 0;
+cat > ./dpkg-wrapper <<EOF
+#! /bin/sh
+if echo "\$*" | grep -q -- "--assert-multi-arch"; then
+	exit 0
 fi
-return $*' > ./dpkg-wrapper
+exec "\$@"
+EOF
+chmod +x ./dpkg-wrapper
 
 testqualifier 'native-pkg' 'native-pkg:amd64'
 testqualifier 'native-pkg:amd64' 'native-pkg:amd64'

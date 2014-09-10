@@ -23,12 +23,13 @@ APT_PUBLIC extern unsigned int ScreenWidth;
 APT_PUBLIC bool InitOutput();
 
 void ListSingleVersion(pkgCacheFile &CacheFile, pkgRecords &records,
-                       pkgCache::VerIterator V, std::ostream &out,
-                       bool include_summary=true);
+                       pkgCache::VerIterator const &V, std::ostream &out,
+                       std::string const &format);
 
 
 // helper to describe global state
-APT_PUBLIC void ShowBroken(std::ostream &out,CacheFile &Cache,bool Now);
+APT_PUBLIC void ShowBroken(std::ostream &out, CacheFile &Cache, bool const Now);
+APT_PUBLIC void ShowBroken(std::ostream &out, pkgCacheFile &Cache, bool const Now);
 
 APT_PUBLIC bool ShowList(std::ostream &out, std::string Title, std::string List,
               std::string VersionsList);

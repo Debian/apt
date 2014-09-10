@@ -68,7 +68,7 @@ struct ServerState
       RUN_HEADERS_PARSE_ERROR
    };
    /** \brief Get the headers before the data */
-   RunHeadersResult RunHeaders(FileFd * const File);
+   RunHeadersResult RunHeaders(FileFd * const File, const std::string &Uri);
 
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0;

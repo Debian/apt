@@ -28,9 +28,8 @@ testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat  aptarchive/pool/apt_1.0/changelog)"
 rm apt.changelog aptarchive/pool/apt_1.0/changelog
 
-aptget changelog apt -qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/' > apt.changelog
-testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"
-rm apt.changelog
+testequal "$(cat aptarchive/pool/apt_1.0.changelog)" aptget changelog apt \
+	-qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'
 
 testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"

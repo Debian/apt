@@ -19,6 +19,7 @@
 #include <apt-pkg/macros.h>
 #include <apt-pkg/packagemanager.h>
 #include <apt-pkg/pkgcache.h>
+#include <apt-pkg/upgrade.h>
 
 #include <errno.h>
 #include <stdlib.h>
@@ -524,15 +525,14 @@ static bool DoAutomaticRemove(CacheFile &Cache)
 static const unsigned short MOD_REMOVE = 1;
 static const unsigned short MOD_INSTALL = 2;
 
-bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache)
+bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache, int UpgradeMode)
 {
    std::map<unsigned short, APT::VersionSet> verset;
-   return DoCacheManipulationFromCommandLine(CmdL, Cache, verset);
+   return DoCacheManipulationFromCommandLine(CmdL, Cache, verset, UpgradeMode);
 }
 bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
-                                        std::map<unsigned short, APT::VersionSet> &verset)
+                                        std::map<unsigned short, APT::VersionSet> &verset, int UpgradeMode)
 {
-
    // Enter the special broken fixing mode if the user specified arguments
    bool BrokenFix = false;
    if (Cache->BrokenCount() != 0)
@@ -617,7 +617,17 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
       if (Fix != NULL)
       {
 	 // Call the scored problem resolver
-	 if (Fix->Resolve(true) == false && Cache->BrokenCount() == 0)
+	 bool resolver_fail = false;
+	 if (UpgradeMode == 0)
+	 {
+	    if (strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0)
+	       resolver_fail = APT::Upgrade::Upgrade(Cache, 0);
+	    else
+	       resolver_fail = Fix->Resolve(true);
+	 } else
+	    resolver_fail = APT::Upgrade::Upgrade(Cache, UpgradeMode);
+
+	 if (resolver_fail == false && Cache->BrokenCount() == 0)
 	    return false;
       }
 
@@ -676,7 +686,7 @@ bool DoInstall(CommandLine &CmdL)
 
    std::map<unsigned short, APT::VersionSet> verset;
 
-   if(!DoCacheManipulationFromCommandLine(CmdL, Cache, verset))
+   if(!DoCacheManipulationFromCommandLine(CmdL, Cache, verset, 0))
       return false;
 
    /* Print out a list of packages that are going to be installed extra

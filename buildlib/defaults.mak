@@ -76,7 +76,7 @@ PO_DOMAINS := $(BUILD)/po/domains
 
 # Module types
 LIBRARY_H = $(BASE)/buildlib/library.mak
-DEBIANDOC_H = $(BASE)/buildlib/debiandoc.mak
+DOCBOOK_H = $(BASE)/buildlib/docbook.mak
 MANPAGE_H = $(BASE)/buildlib/manpage.mak
 PROGRAM_H = $(BASE)/buildlib/program.mak
 PYTHON_H = $(BASE)/buildlib/python.mak
@@ -121,7 +121,7 @@ MKDIRS := $(BIN)
 all: dirs binary doc
 binary: library program
 maintainer-clean dist-clean distclean pristine sanity: veryclean
-startup headers library clean veryclean program test update-po manpages debiandoc:
+startup headers library clean veryclean program test update-po manpages docbook:
 
 veryclean:
 	echo Very Clean done for $(SUBDIR)
