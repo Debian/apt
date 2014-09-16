@@ -338,44 +338,6 @@ struct DiffInfo {
    unsigned long size;
 };
 									/*}}}*/
-/** \brief An item that is responsible for fetching a SubIndex		{{{
- *
- *  The MetaIndex file includes only records for important indexes
- *  and records for these SubIndex files so these can carry records
- *  for addition files like PDiffs and Translations
- */
-class pkgAcqSubIndex : public pkgAcquire::Item
-{
- protected:
-   /** \brief If \b true, debugging information will be written to std::clog. */
-   bool Debug;
-
- public:
-   // Specialized action members
-   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
-   virtual std::string Custom600Headers() const;
-   virtual bool ParseIndex(std::string const &IndexFile);
-
-   /** \brief Create a new pkgAcqSubIndex.
-    *
-    *  \param Owner The Acquire object that owns this item.
-    *
-    *  \param URI The URI of the list file to download.
-    *
-    *  \param URIDesc A long description of the list file to download.
-    *
-    *  \param ShortDesc A short description of the list file to download.
-    *
-    *  \param ExpectedHashes The list file's hashsums which are expected.
-    */
-   pkgAcqSubIndex(pkgAcquire *Owner, 
-                  unsigned long TransactionID,
-                  std::string const &URI,std::string const &URIDesc,
-		   std::string const &ShortDesc, HashStringList const &ExpectedHashes);
-};
 									/*}}}*/
 
 class pkgAcqMetaSigBase : public pkgAcquire::Item
@@ -991,31 +953,12 @@ class IndexTarget
    virtual bool IsOptional() const {
       return false;
    }
-   virtual bool IsSubIndex() const {
-      return false;
-   }
 };
 									/*}}}*/
 /** \brief Information about an optional index file. */			/*{{{*/
 class OptionalIndexTarget : public IndexTarget
 {
    virtual bool IsOptional() const {
-      return true;
-   }
-};
-									/*}}}*/
-/** \brief Information about an subindex index file. */			/*{{{*/
-class SubIndexTarget : public IndexTarget
-{
-   virtual bool IsSubIndex() const {
-      return true;
-   }
-};
-									/*}}}*/
-/** \brief Information about an subindex index file. */			/*{{{*/
-class OptionalSubIndexTarget : public OptionalIndexTarget
-{
-   virtual bool IsSubIndex() const {
       return true;
    }
 };

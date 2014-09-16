@@ -237,120 +237,6 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
    }
 }
 									/*}}}*/
-// AcqSubIndex::AcqSubIndex - Constructor				/*{{{*/
-// ---------------------------------------------------------------------
-/* Get a sub-index file based on checksums from a 'master' file and
-   possibly query additional files */
-pkgAcqSubIndex::pkgAcqSubIndex(pkgAcquire *Owner, 
-                               unsigned long TransactionID,
-                               string const &URI,
-                               string const &URIDesc, string const &ShortDesc,
-                               HashStringList const &ExpectedHashes)
-   : Item(Owner, ExpectedHashes, TransactionID)
-{
-   /* XXX: Beware: Currently this class does nothing (of value) anymore ! */
-   Debug = _config->FindB("Debug::pkgAcquire::SubIndex",false);
-
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(URI);
-
-   Desc.URI = URI;
-   Desc.Description = URIDesc;
-   Desc.Owner = this;
-   Desc.ShortDesc = ShortDesc;
-
-   QueueURI(Desc);
-
-   if(Debug)
-      std::clog << "pkgAcqSubIndex: " << Desc.URI << std::endl;
-}
-									/*}}}*/
-// AcqSubIndex::Custom600Headers - Insert custom request headers	/*{{{*/
-// ---------------------------------------------------------------------
-/* The only header we use is the last-modified header. */
-string pkgAcqSubIndex::Custom600Headers() const
-{
-   string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(Desc.URI);
-
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) != 0)
-      return "\nIndex-File: true\nFail-Ignore: true\n";
-   return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
-}
-									/*}}}*/
-void pkgAcqSubIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
-{
-   if(Debug)
-      std::clog << "pkgAcqSubIndex failed: " << Desc.URI << " with " << Message << std::endl;
-
-   Complete = false;
-   Status = StatDone;
-   Dequeue();
-
-   // No good Index is provided
-}
-									/*}}}*/
-void pkgAcqSubIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,	/*{{{*/
-			   pkgAcquire::MethodConfig *Cnf)
-{
-   if(Debug)
-      std::clog << "pkgAcqSubIndex::Done(): " << Desc.URI << std::endl;
-
-   string FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
-   {
-      Status = StatError;
-      ErrorText = "Method gave a blank filename";
-      return;
-   }
-
-   if (FileName != DestFile)
-   {
-      Local = true;
-      Desc.URI = "copy:" + FileName;
-      QueueURI(Desc);
-      return;
-   }
-
-   Item::Done(Message, Size, Hashes, Cnf);
-
-   string FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(Desc.URI);
-
-   /* Downloaded invalid transindex => Error (LP: #346386) (Closes: #627642) */
-   indexRecords SubIndexParser;
-   if (FileExists(DestFile) == true && !SubIndexParser.Load(DestFile)) {
-      Status = StatError;
-      ErrorText = SubIndexParser.ErrorText;
-      return;
-   }
-
-   // success in downloading the index
-   // rename the index
-   if(Debug)
-      std::clog << "Renaming: " << DestFile << " -> " << FinalFile << std::endl;
-   Rename(DestFile,FinalFile);
-   chmod(FinalFile.c_str(),0644);
-   DestFile = FinalFile;
-
-   if(ParseIndex(DestFile) == false)
-      return Failed("", NULL);
-
-   Complete = true;
-   Status = StatDone;
-   Dequeue();
-   return;
-}
-									/*}}}*/
-bool pkgAcqSubIndex::ParseIndex(string const &IndexFile)		/*{{{*/
-{
-   indexRecords SubIndexParser;
-   if (FileExists(IndexFile) == false || SubIndexParser.Load(IndexFile) == false)
-      return false;
-   // so something with the downloaded index
-   return true;
-}
-									/*}}}*/
 // AcqDiffIndex::AcqDiffIndex - Constructor				/*{{{*/
 // ---------------------------------------------------------------------
 /* Get the DiffIndex file first and see if there are patches available
@@ -1812,11 +1698,7 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 
       if ((*Target)->IsOptional() == true)
       {
-	 if ((*Target)->IsSubIndex() == true)
-	    new pkgAcqSubIndex(Owner, TransactionID, 
-                               (*Target)->URI, (*Target)->Description,
-				(*Target)->ShortDesc, ExpectedIndexHashes);
-	 else if (transInRelease == false || Record != NULL || compressedAvailable == true)
+	 if (transInRelease == false || Record != NULL || compressedAvailable == true)
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
 		MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true)
