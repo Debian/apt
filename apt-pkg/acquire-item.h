@@ -63,6 +63,8 @@ class pkgAcqMetaIndex;
  */
 class pkgAcquire::Item : public WeakPointable
 {  
+   void *d;
+
    protected:
    
    /** \brief The acquire object with which this item is associated. */
@@ -342,6 +344,8 @@ struct DiffInfo {
 
 class pkgAcqMetaSigBase : public pkgAcquire::Item
 {
+   void *d;
+
  protected:
    bool GenerateAuthWarning(const std::string &RealURI,
                             const std::string &Message);
@@ -364,6 +368,8 @@ class pkgAcqMetaSigBase : public pkgAcquire::Item
  */
 class pkgAcqMetaIndex : public pkgAcqMetaSigBase
 {
+   void *d;
+
    protected:
    /** \brief The URI that is actually being downloaded; never
     *  modified by pkgAcqMetaIndex.
@@ -462,6 +468,8 @@ class pkgAcqMetaIndex : public pkgAcqMetaSigBase
 /** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
 class pkgAcqMetaClearSig : public pkgAcqMetaIndex
 {
+   void *d;
+
    /** \brief The URI of the meta-index file for the detached signature */
    std::string MetaIndexURI;
 
@@ -503,6 +511,8 @@ public:
  */
 class pkgAcqBaseIndex : public pkgAcquire::Item
 {
+   void *d;
+
  protected:
    /** \brief Pointer to the IndexTarget data
     */
@@ -531,6 +541,8 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
  */
 class pkgAcqDiffIndex : public pkgAcqBaseIndex
 {
+   void *d;
+
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
    bool Debug;
@@ -603,6 +615,8 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
  */
 class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
 {
+   void *d;
+
    protected:
 
    /** \brief If \b true, debugging output will be written to
@@ -694,6 +708,8 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
  */
 class pkgAcqIndexDiffs : public pkgAcqBaseIndex
 {
+   void *d;
+
    private:
 
    /** \brief Queue up the next diff download.
@@ -819,6 +835,8 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
  */
 class pkgAcqIndex : public pkgAcqBaseIndex
 {
+   void *d;
+
    protected:
 
    /** \brief If \b true, the index file has been decompressed. */
@@ -906,6 +924,8 @@ class pkgAcqIndex : public pkgAcqBaseIndex
  */
 class pkgAcqIndexTrans : public pkgAcqIndex
 {
+   void *d;
+
    public:
   
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
@@ -935,6 +955,8 @@ class pkgAcqIndexTrans : public pkgAcqIndex
 /** \brief Information about an index file. */				/*{{{*/
 class IndexTarget
 {
+   void *d;
+
  public:
    /** \brief A URI from which the index file can be downloaded. */
    std::string URI;
@@ -958,6 +980,8 @@ class IndexTarget
 /** \brief Information about an optional index file. */			/*{{{*/
 class OptionalIndexTarget : public IndexTarget
 {
+   void *d;
+
    virtual bool IsOptional() const {
       return true;
    }
@@ -974,6 +998,8 @@ class OptionalIndexTarget : public IndexTarget
  */
 class pkgAcqMetaSig : public pkgAcqMetaSigBase
 {
+   void *d;
+
    protected:
    /** \brief The last good signature file */
    std::string LastGoodSig;
@@ -1029,6 +1055,8 @@ class pkgAcqMetaSig : public pkgAcqMetaSigBase
  */
 class pkgAcqArchive : public pkgAcquire::Item
 {
+   void *d;
+
    protected:
    /** \brief The package version being fetched. */
    pkgCache::VerIterator Version;
@@ -1107,6 +1135,8 @@ class pkgAcqArchive : public pkgAcquire::Item
  */
 class pkgAcqFile : public pkgAcquire::Item
 {
+   void *d;
+
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.
     */
