@@ -130,7 +130,7 @@ setupenvironment() {
 	mkdir rootdir aptarchive keys
 	cd rootdir
 	mkdir -p etc/apt/apt.conf.d etc/apt/sources.list.d etc/apt/trusted.gpg.d etc/apt/preferences.d
-	mkdir -p var/cache var/lib var/log
+	mkdir -p var/cache var/lib var/log tmp
 	mkdir -p var/lib/dpkg/info var/lib/dpkg/updates var/lib/dpkg/triggers
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
@@ -857,4 +857,36 @@ pause() {
 	echo "STOPPED execution. Press enter to continue"
 	local IGNORE
 	read IGNORE
+}
+
+testsuccess() {
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest 'Test for successful execution of' "$*"
+	fi
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testsuccess.output"
+	if $@ >${OUTPUT} 2>&1; then
+		msgpass
+	else
+		echo >&2
+		cat >&2 $OUTPUT
+		msgfail
+	fi
+}
+
+testfailure() {
+	if [ "$1" = '--nomsg' ]; then
+		shift
+	else
+		msgtest 'Test for failure in execution of' "$*"
+	fi
+	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
+	if $@ >${OUTPUT} 2>&1; then
+		echo >&2
+		cat >&2 $OUTPUT
+		msgfail
+	else
+		msgpass
+	fi
 }

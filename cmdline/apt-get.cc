@@ -1046,25 +1046,8 @@ bool CacheFile::CheckDeps(bool AllowBroken)
    return true;
 }
 									/*}}}*/
-// CheckAuth - check if each download comes form a trusted source	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-static bool CheckAuth(pkgAcquire& Fetcher)
+static bool AuthPrompt(std::string UntrustedList, bool const PromptUser)
 {
-   string UntrustedList;
-   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd(); ++I)
-   {
-      if (!(*I)->IsTrusted())
-      {
-         UntrustedList += string((*I)->ShortDesc()) + " ";
-      }
-   }
-
-   if (UntrustedList == "")
-   {
-      return true;
-   }
-        
    ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"),UntrustedList,"");
 
    if (_config->FindB("APT::Get::AllowUnauthenticated",false) == true)
@@ -1072,6 +1055,9 @@ static bool CheckAuth(pkgAcquire& Fetcher)
       c2out << _("Authentication warning overridden.\n");
       return true;
    }
+
+   if (PromptUser == false)
+     return _error->Error(_("Some packages could not be authenticated"));
 
    if (_config->FindI("quiet",0) < 2
        && _config->FindB("APT::Get::Assume-Yes",false) == false)
@@ -1090,6 +1076,27 @@ static bool CheckAuth(pkgAcquire& Fetcher)
    return _error->Error(_("There are problems and -y was used without --force-yes"));
 }
 									/*}}}*/
+// CheckAuth - check if each download comes form a trusted source	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+static bool CheckAuth(pkgAcquire& Fetcher, bool PromptUser=true)
+{
+   string UntrustedList;
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin(); I < Fetcher.ItemsEnd(); ++I)
+   {
+      if (!(*I)->IsTrusted())
+      {
+         UntrustedList += string((*I)->ShortDesc()) + " ";
+      }
+   }
+
+   if (UntrustedList == "")
+   {
+      return true;
+   }
+
+   return AuthPrompt(UntrustedList, PromptUser);
+}
 // InstallPackages - Actually download and install the packages		/*{{{*/
 // ---------------------------------------------------------------------
 /* This displays the informative messages describing what is going to 
@@ -2483,6 +2490,7 @@ bool DoSource(CommandLine &CmdL)
 
    // Load the requestd sources into the fetcher
    unsigned J = 0;
+   std::string UntrustedList;
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
@@ -2492,6 +2500,9 @@ bool DoSource(CommandLine &CmdL)
 	 delete[] Dsc;
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
       }
+
+      if (Last->Index().IsTrusted() == false)
+         UntrustedList += Src + " ";
       
       string srec = Last->AsStr();
       string::size_type pos = srec.find("\nVcs-");
@@ -2576,6 +2587,10 @@ bool DoSource(CommandLine &CmdL)
 			Last->Index().SourceInfo(*Last,*I),Src);
       }
    }
+
+   // check authentication status of the source as well
+   if (UntrustedList != "" && !AuthPrompt(UntrustedList, false))
+      return false;
    
    // Display statistics
    unsigned long long FetchBytes = Fetcher.FetchNeeded();
