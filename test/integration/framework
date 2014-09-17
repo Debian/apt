@@ -220,6 +220,20 @@ configdpkg() {
 	fi
 }
 
+configcompression() {
+	while [ -n "$1" ]; do
+		case "$1" in
+		'.') printf ".\t.\tcat\n";;
+		'gz') printf "gzip\tgz\tgzip\n";;
+		'bz2') printf "bzip2\tbz2\tbzip2\n";;
+		'lzma') printf "lzma\tlzma\txz --format=lzma\n";;
+		'xz') printf "xz\txz\txz\n";;
+		*) printf "$1\t$1\t$1\n";;
+		esac
+		shift
+	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf
+}
+
 setupsimplenativepackage() {
 	local NAME="$1"
 	local ARCH="$2"
