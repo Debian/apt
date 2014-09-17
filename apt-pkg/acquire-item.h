@@ -353,7 +353,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
    // transaction code
    void Add(Item *I);
    void AbortTransaction();
-   bool TransactionHasError();
+   bool TransactionHasError() APT_PURE;
    void CommitTransaction();
 
    // helper for the signature warning
@@ -885,7 +885,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
                                 std::string const &compExt);
 
    /** \brief Schedule file for verification after a IMS hit */
-   void ReverifyAfterIMS(std::string const &FileName);
+   void ReverifyAfterIMS();
 
    public:
    
@@ -916,8 +916,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     *  fallback is ".gz" or none.
     */
    pkgAcqIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
-	       std::string ShortDesc, HashStringList const &ExpectedHashes,
-	       std::string compressExt="");
+	       std::string ShortDesc, HashStringList const &ExpectedHashes);
    pkgAcqIndex(pkgAcquire *Owner, pkgAcqMetaBase *TransactionManager,
                IndexTarget const * const Target,
                HashStringList const &ExpectedHash,

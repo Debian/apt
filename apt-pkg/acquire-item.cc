@@ -850,7 +850,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
    instantiated to fetch the revision file */   
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
-			 HashStringList const  &ExpectedHash, string comprExt)
+			 HashStringList const  &ExpectedHash)
    : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL), RealURI(URI)
 {
    AutoSelectCompression();
@@ -1035,7 +1035,7 @@ std::string pkgAcqIndex::GetFinalFilename(std::string const &URI,
 // AcqIndex::ReverifyAfterIMS - Reverify index after an ims-hit        /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqIndex::ReverifyAfterIMS(std::string const &FileName)
+void pkgAcqIndex::ReverifyAfterIMS()
 {
    std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
@@ -1132,7 +1132,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       // The files timestamp matches
       if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
       {
-         ReverifyAfterIMS(FileName);
+         ReverifyAfterIMS();
 	 return;
       }
       Decompression = true;
@@ -1154,7 +1154,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
    // The files timestamp matches
    if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
    {
-      ReverifyAfterIMS(FileName);
+      ReverifyAfterIMS();
       return;
     }
 
@@ -1197,7 +1197,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
 /* The Translation file is added to the queue */
 pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 			    string URI,string URIDesc,string ShortDesc) 
-  : pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, HashStringList(), "")
+  : pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, HashStringList())
 {
 }
 									/*}}}*/
