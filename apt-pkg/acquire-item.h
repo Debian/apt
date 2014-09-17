@@ -47,7 +47,7 @@ class indexRecords;
 class pkgRecords;
 class pkgSourceList;
 class IndexTarget;
-class pkgAcqMetaIndex;
+class pkgAcqMetaBase;
 
 /** \brief Represents the process by which a pkgAcquire object should	{{{
  *  retrieve a file or a collection of files.
@@ -171,8 +171,8 @@ class pkgAcquire::Item : public WeakPointable
     */
    unsigned int QueueCounter;
 
-   /** \brief TransactionID */
-   unsigned long TransactionID;
+   /** \brief TransactionManager */
+   pkgAcqMetaBase *TransactionManager;
 
    /** \brief The number of additional fetch items that are expected
     *  once this item is done.
@@ -300,7 +300,7 @@ class pkgAcquire::Item : public WeakPointable
     */
    Item(pkgAcquire *Owner,
         HashStringList const &ExpectedHashes=HashStringList(),
-        unsigned long TransactionID=0);
+        pkgAcqMetaBase *TransactionManager=NULL);
 
    /** \brief Remove this item from its owner's queue by invoking
     *  pkgAcquire::Remove.
@@ -342,19 +342,31 @@ struct DiffInfo {
 									/*}}}*/
 									/*}}}*/
 
-class pkgAcqMetaSigBase : public pkgAcquire::Item
+class pkgAcqMetaBase  : public pkgAcquire::Item
 {
    void *d;
 
  protected:
+   std::vector<Item*> Transaction;
+
+ public:
+   // transaction code
+   void Add(Item *I);
+   void AbortTransaction();
+   bool TransactionHasError();
+   void CommitTransaction();
+
+   // helper for the signature warning
    bool GenerateAuthWarning(const std::string &RealURI,
                             const std::string &Message);
 
- public:
-   pkgAcqMetaSigBase(pkgAcquire *Owner,
-                     HashStringList const &ExpectedHashes=HashStringList(),
-                     unsigned long TransactionID=0);
+
+   pkgAcqMetaBase(pkgAcquire *Owner,
+                  HashStringList const &ExpectedHashes=HashStringList(),
+                  pkgAcqMetaBase *TransactionManager=NULL)
+      : Item(Owner, ExpectedHashes, TransactionManager) {};
 };
+
 
 /** \brief An item that is responsible for downloading the meta-index	{{{
  *  file (i.e., Release) itself and verifying its signature.
@@ -366,7 +378,7 @@ class pkgAcqMetaSigBase : public pkgAcquire::Item
  *  otherwise, the expected hashsums will be "" (causing the
  *  authentication of the index files to be bypassed).
  */
-class pkgAcqMetaIndex : public pkgAcqMetaSigBase
+class pkgAcqMetaIndex : public pkgAcqMetaBase
 {
    void *d;
 
@@ -458,7 +470,7 @@ class pkgAcqMetaIndex : public pkgAcqMetaSigBase
 
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire *Owner,
-                   unsigned long TransactionID,
+                   pkgAcqMetaBase *TransactionManager,
 		   std::string URI,std::string URIDesc, std::string ShortDesc,
                    std::string MetaIndexSigURI, std::string MetaIndexSigURIDesc, std::string MetaIndexSigShortDesc,
 		   const std::vector<IndexTarget*>* IndexTargets,
@@ -522,11 +534,11 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
    std::string MetaKey;
 
    pkgAcqBaseIndex(pkgAcquire *Owner,
-                   unsigned long TransactionID,
+                   pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser)
-      : Item(Owner, ExpectedHashes, TransactionID), Target(Target), 
+      : Item(Owner, ExpectedHashes, TransactionManager), Target(Target), 
         MetaIndexParser(MetaIndexParser) {};
 };
 									/*}}}*/
@@ -596,7 +608,7 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
     *  \param ExpectedHashes The list file's hashsums which are expected.
     */
    pkgAcqDiffIndex(pkgAcquire *Owner,
-                   unsigned long TransactionID,
+                   pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser);
@@ -687,7 +699,7 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  check if it was the last one to complete the download step
     */
    pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
-                         unsigned long TransactionID,
+                         pkgAcqMetaBase *TransactionManager,
                          struct IndexTarget const * const Target,
                          HashStringList const &ExpectedHash,
                          indexRecords *MetaIndexParser,
@@ -818,7 +830,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  that depends on it.
     */
    pkgAcqIndexDiffs(pkgAcquire *Owner,
-                    unsigned long TransactionID,
+                    pkgAcqMetaBase *TransactionManager,
                     struct IndexTarget const * const Target,
                     HashStringList const &ExpectedHash,
                     indexRecords *MetaIndexParser,
@@ -906,7 +918,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
    pkgAcqIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
 	       std::string ShortDesc, HashStringList const &ExpectedHashes,
 	       std::string compressExt="");
-   pkgAcqIndex(pkgAcquire *Owner, unsigned long TransactionID,
+   pkgAcqIndex(pkgAcquire *Owner, pkgAcqMetaBase *TransactionManager,
                IndexTarget const * const Target,
                HashStringList const &ExpectedHash,
                indexRecords *MetaIndexParser);
@@ -946,7 +958,7 @@ class pkgAcqIndexTrans : public pkgAcqIndex
                     std::string URI,std::string URIDesc,
 		    std::string ShortDesc);
    pkgAcqIndexTrans(pkgAcquire *Owner,
-                    unsigned long TransactionID,
+                    pkgAcqMetaBase *TransactionManager,
                     IndexTarget const * const Target,
                     HashStringList const &ExpectedHashes,
                     indexRecords *MetaIndexParser);
@@ -996,7 +1008,7 @@ class OptionalIndexTarget : public IndexTarget
  *
  *  \sa pkgAcqMetaIndex
  */
-class pkgAcqMetaSig : public pkgAcqMetaSigBase
+class pkgAcqMetaSig : public pkgAcqMetaBase
 {
    void *d;
 
@@ -1040,7 +1052,7 @@ class pkgAcqMetaSig : public pkgAcqMetaSigBase
 
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire *Owner,
-                 unsigned long TransactionID,
+                 pkgAcqMetaBase *TransactionManager,
                  std::string URI,std::string URIDesc, std::string ShortDesc,
                  std::string MetaIndexFile,
 		 const std::vector<IndexTarget*>* IndexTargets,

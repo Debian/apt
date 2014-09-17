@@ -66,13 +66,15 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
 // Acquire::Item::Item - Constructor					/*{{{*/
 pkgAcquire::Item::Item(pkgAcquire *Owner,
                        HashStringList const &ExpectedHashes,
-                       unsigned long TransactionID)
+                       pkgAcqMetaBase *TransactionManager)
    : Owner(Owner), FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false),
-     Local(false), QueueCounter(0), TransactionID(TransactionID),
+     Local(false), QueueCounter(0), TransactionManager(TransactionManager),
      ExpectedAdditionalItems(0), ExpectedHashes(ExpectedHashes)
 {
    Owner->Add(this);
    Status = StatIdle;
+   if(TransactionManager != NULL)
+      TransactionManager->Add(this);
 }
 									/*}}}*/
 // Acquire::Item::~Item - Destructor					/*{{{*/
@@ -245,11 +247,11 @@ void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
  * the original packages file
  */
 pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
-                                 unsigned long TransactionID,
+                                 pkgAcqMetaBase *TransactionManager,
                                  IndexTarget const * const Target,
 				 HashStringList const &ExpectedHashes,
                                  indexRecords *MetaIndexParser)
-   : pkgAcqBaseIndex(Owner, TransactionID, Target, ExpectedHashes, 
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
                      MetaIndexParser)
 {
    
@@ -348,7 +350,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	    std::clog << "Package file is up-to-date" << std::endl;
 	 // list cleanup needs to know that this file as well as the already
 	 // present index is ours, so we create an empty diff to save it for us
-	 new pkgAcqIndexDiffs(Owner, TransactionID, Target, 
+	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target, 
                               ExpectedHashes, MetaIndexParser, 
                               ServerSha1, available_patches);
 	 return true;
@@ -436,7 +438,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 
 	 if (pdiff_merge == false)
          {
-	    new pkgAcqIndexDiffs(Owner, TransactionID, Target, ExpectedHashes, 
+	    new pkgAcqIndexDiffs(Owner, TransactionManager, Target, ExpectedHashes, 
                                  MetaIndexParser,
                                  ServerSha1, available_patches);
          }
@@ -445,7 +447,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	    std::vector<pkgAcqIndexMergeDiffs*> *diffs = new std::vector<pkgAcqIndexMergeDiffs*>(available_patches.size());
 	    for(size_t i = 0; i < available_patches.size(); ++i)
 	       (*diffs)[i] = new pkgAcqIndexMergeDiffs(Owner,
-                                                       TransactionID,
+                                                       TransactionManager,
                                                        Target,
                                                        ExpectedHashes,
                                                        MetaIndexParser,
@@ -474,7 +476,7 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
 
-   new pkgAcqIndex(Owner, TransactionID, Target, ExpectedHashes, MetaIndexParser);
+   new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
 
    Complete = false;
    Status = StatDone;
@@ -517,13 +519,13 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList
  * for each diff and the index
  */
 pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
-                                   unsigned long TransactionID,
+                                   pkgAcqMetaBase *TransactionManager,
                                    struct IndexTarget const * const Target,
                                    HashStringList const &ExpectedHashes,
                                    indexRecords *MetaIndexParser,
 				   string ServerSha1,
 				   vector<DiffInfo> diffs)
-   : pkgAcqBaseIndex(Owner, TransactionID, Target, ExpectedHashes, MetaIndexParser),
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
      available_patches(diffs), ServerSha1(ServerSha1)
 {
    
@@ -555,7 +557,7 @@ void pkgAcqIndexDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)
    if(Debug)
       std::clog << "pkgAcqIndexDiffs failed: " << Desc.URI << " with " << Message << std::endl
 		<< "Falling back to normal index file acquire" << std::endl;
-   new pkgAcqIndex(Owner, TransactionID, Target, ExpectedHashes, MetaIndexParser);
+   new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
    Finish();
 }
 									/*}}}*/
@@ -704,7 +706,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
 
       // see if there is more to download
       if(available_patches.empty() == false) {
-	 new pkgAcqIndexDiffs(Owner, TransactionID, Target,
+	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target,
 			      ExpectedHashes, MetaIndexParser,
                               ServerSha1, available_patches);
 	 return Finish();
@@ -715,13 +717,13 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
 									/*}}}*/
 // AcqIndexMergeDiffs::AcqIndexMergeDiffs - Constructor			/*{{{*/
 pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
-                                             unsigned long TransactionID,
+                                             pkgAcqMetaBase *TransactionManager,
                                              struct IndexTarget const * const Target,
                                              HashStringList const &ExpectedHashes,
                                              indexRecords *MetaIndexParser,
                                              DiffInfo const &patch,
                                              std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-  : pkgAcqBaseIndex(Owner, TransactionID, Target, ExpectedHashes, MetaIndexParser),
+  : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
      patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
 
@@ -764,7 +766,7 @@ void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*C
    // first failure means we should fallback
    State = StateErrorDiff;
    std::clog << "Falling back to normal index file acquire" << std::endl;
-   new pkgAcqIndex(Owner, TransactionID, Target, ExpectedHashes, MetaIndexParser);
+   new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
 }
 									/*}}}*/
 void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStringList const &Hashes,	/*{{{*/
@@ -855,18 +857,18 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    Init(URI, URIDesc, ShortDesc);
 
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-      std::clog << "New pkgIndex with TransactionID "
-                << TransactionID << std::endl;
+      std::clog << "New pkgIndex with TransactionManager "
+                << TransactionManager << std::endl;
 }
 									/*}}}*/
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
-                         unsigned long TransactionID,
+                         pkgAcqMetaBase *TransactionManager,
                          IndexTarget const *Target,
 			 HashStringList const &ExpectedHash, 
                          indexRecords *MetaIndexParser)
-   : pkgAcqBaseIndex(Owner, TransactionID, Target, ExpectedHash, 
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHash, 
                      MetaIndexParser), RealURI(Target->URI)
 {
    // autoselect the compression method
@@ -874,8 +876,8 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
    Init(Target->URI, Target->Description, Target->ShortDesc);
 
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-      std::clog << "New pkgIndex with TransactionID "
-                << TransactionID << std::endl;
+      std::clog << "New pkgIndex with TransactionManager "
+                << TransactionManager << std::endl;
 }
 									/*}}}*/
 // AcqIndex::AutoSelectCompression - Select compression			/*{{{*/
@@ -1014,7 +1016,7 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
    Item::Failed(Message,Cnf);
 
    /// cancel the entire transaction
-   Owner->AbortTransaction(TransactionID);
+   TransactionManager->AbortTransaction();
 }
 									/*}}}*/
 // pkgAcqIndex::GetFinalFilename - Return the full final file path      /*{{{*/
@@ -1200,11 +1202,11 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 }
 									/*}}}*/
 pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, 
-                                   unsigned long TransactionID, 
+                                   pkgAcqMetaBase *TransactionManager, 
                                    IndexTarget const * const Target,
                                    HashStringList const &ExpectedHashes, 
                                    indexRecords *MetaIndexParser)
-   : pkgAcqIndex(Owner, TransactionID, Target, ExpectedHashes, MetaIndexParser)
+   : pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser)
 {
    // load the filesize
    indexRecords::checkSum *Record = MetaIndexParser->Lookup(string(Target->MetaKey));
@@ -1254,15 +1256,70 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 }
 									/*}}}*/
 
-pkgAcqMetaSigBase::pkgAcqMetaSigBase(pkgAcquire *Owner,
-                                     HashStringList const &ExpectedHashes,
-                                     unsigned long TransactionID)
-   : Item(Owner, ExpectedHashes, TransactionID)
+void pkgAcqMetaBase::Add(Item *I)
 {
+   Transaction.push_back(I);
 }
+
+void pkgAcqMetaBase::AbortTransaction()
+{
+   if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+      std::clog << "AbortTransaction: " << TransactionManager << std::endl;
+
+   for (std::vector<Item*>::iterator I = Transaction.begin();
+        I != Transaction.end(); ++I)
+   {
+      if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+         std::clog << "  Cancel: " << (*I)->DestFile << std::endl;
+      // the transaction will abort, so stop anything that is idle
+      if ((*I)->Status == pkgAcquire::Item::StatIdle)
+         (*I)->Status = pkgAcquire::Item::StatDone;
+   }
+}
+									/*}}}*/
+bool pkgAcqMetaBase::TransactionHasError()
+{
+   for (pkgAcquire::ItemIterator I = Transaction.begin();
+        I != Transaction.end(); ++I)
+      if((*I)->Status != pkgAcquire::Item::StatDone &&
+         (*I)->Status != pkgAcquire::Item::StatIdle)
+         return true;
+
+   return false;
+}
+// Acquire::CommitTransaction - Commit a transaction			/*{{{*/
+void pkgAcqMetaBase::CommitTransaction()
+{
+   if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+      std::clog << "CommitTransaction: " << this << std::endl;
+
+   // move new files into place *and* remove files that are not
+   // part of the transaction but are still on disk
+   for (std::vector<Item*>::iterator I = Transaction.begin();
+        I != Transaction.end(); ++I)
+   {
+      if((*I)->PartialFile != "")
+      {
+         if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+            std::clog << "mv " 
+                      << (*I)->PartialFile << " -> " 
+                      <<  (*I)->DestFile << std::endl;
+         Rename((*I)->PartialFile, (*I)->DestFile);
+         chmod((*I)->DestFile.c_str(),0644);
+      } else {
+         if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+            std::clog << "rm " 
+                      <<  (*I)->DestFile << std::endl;
+         unlink((*I)->DestFile.c_str());
+      }
+      // mark that this transaction is finished
+      (*I)->TransactionManager = 0;
+   }
+}
+
                                                                        /*{{{*/
-bool pkgAcqMetaSigBase::GenerateAuthWarning(const std::string &RealURI,
-                                            const std::string &Message)
+bool pkgAcqMetaBase::GenerateAuthWarning(const std::string &RealURI,
+                                         const std::string &Message)
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    
@@ -1297,12 +1354,12 @@ bool pkgAcqMetaSigBase::GenerateAuthWarning(const std::string &RealURI,
 
 
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,          		/*{{{*/
-                             unsigned long TransactionID,
+                             pkgAcqMetaBase *TransactionManager,
 			     string URI,string URIDesc,string ShortDesc,
                              string MetaIndexFile,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
-   pkgAcqMetaSigBase(Owner, HashStringList(), TransactionID), RealURI(URI), 
+   pkgAcqMetaBase(Owner, HashStringList(), TransactionManager), RealURI(URI), 
    MetaIndexParser(MetaIndexParser), MetaIndexFile(MetaIndexFile),
    IndexTargets(IndexTargets), AuthPass(false), IMSHit(false)
 {
@@ -1314,10 +1371,10 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,          		/*{{{*/
    // partial download anyway
    unlink(DestFile.c_str());
 
-   // set the TransactionID
+   // set the TransactionManager
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-      std::clog << "New pkgAcqMetaSig with TransactionID "
-                << TransactionID << std::endl;
+      std::clog << "New pkgAcqMetaSig with TransactionManager "
+                << TransactionManager << std::endl;
 
    // Create the item
    Desc.Description = URIDesc;
@@ -1438,22 +1495,26 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 }
 									/*}}}*/
 pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
-                                 unsigned long TransactionID,
+                                 pkgAcqMetaBase *TransactionManager,
 				 string URI,string URIDesc,string ShortDesc,
                                  string MetaIndexSigURI,string MetaIndexSigURIDesc, string MetaIndexSigShortDesc,
 				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-   pkgAcqMetaSigBase(Owner, HashStringList(), TransactionID), RealURI(URI), IndexTargets(IndexTargets),
+   pkgAcqMetaBase(Owner, HashStringList(), TransactionManager), RealURI(URI), IndexTargets(IndexTargets),
    MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false),
    MetaIndexSigURI(MetaIndexSigURI), MetaIndexSigURIDesc(MetaIndexSigURIDesc),
    MetaIndexSigShortDesc(MetaIndexSigShortDesc)
 {
-   if(TransactionID == 0)
-      this->TransactionID = (unsigned long)this;
+   if(TransactionManager == NULL)
+   {
+      this->TransactionManager = this;
+      this->TransactionManager->Add(this);
+   }
 
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-      std::clog << "New pkgAcqMetaIndex with TransactionID "
-                << TransactionID << std::endl;
+      std::clog << "New pkgAcqMetaIndex with TransactionManager "
+                << this->TransactionManager << std::endl;
+
 
    Init(URIDesc, ShortDesc);
 }
@@ -1588,7 +1649,7 @@ void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
 
    // queue a signature
    if(SigFile != DestFile)
-      new pkgAcqMetaSig(Owner, TransactionID, 
+      new pkgAcqMetaSig(Owner, TransactionManager, 
                         MetaIndexSigURI, MetaIndexSigURIDesc,
                         MetaIndexSigShortDesc, DestFile, IndexTargets, 
                         MetaIndexParser);
@@ -1702,9 +1763,9 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
 	 {
 	    if (_config->FindB("Acquire::PDiffs",true) == true && transInRelease == true &&
 		MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true)
-	       new pkgAcqDiffIndex(Owner, TransactionID, *Target, ExpectedIndexHashes, MetaIndexParser);
+	       new pkgAcqDiffIndex(Owner, TransactionManager, *Target, ExpectedIndexHashes, MetaIndexParser);
 	    else
-	       new pkgAcqIndexTrans(Owner, TransactionID, *Target, ExpectedIndexHashes, MetaIndexParser);
+	       new pkgAcqIndexTrans(Owner, TransactionManager, *Target, ExpectedIndexHashes, MetaIndexParser);
 	 }
 	 continue;
       }
@@ -1715,9 +1776,9 @@ void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
          instead, but passing the required info to it is to much hassle */
       if(_config->FindB("Acquire::PDiffs",true) == true && (verify == false ||
 	  MetaIndexParser->Exists((*Target)->MetaKey + ".diff/Index") == true))
-	 new pkgAcqDiffIndex(Owner, TransactionID, *Target, ExpectedIndexHashes, MetaIndexParser);
+	 new pkgAcqDiffIndex(Owner, TransactionManager, *Target, ExpectedIndexHashes, MetaIndexParser);
       else
-	 new pkgAcqIndex(Owner, TransactionID, *Target, ExpectedIndexHashes, MetaIndexParser);
+	 new pkgAcqIndex(Owner, TransactionManager, *Target, ExpectedIndexHashes, MetaIndexParser);
    }
 }
 									/*}}}*/
@@ -1843,9 +1904,9 @@ void pkgAcqMetaIndex::Finished()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "Finished: " << DestFile <<std::endl;
-   if(Owner->TransactionHasError(TransactionID) == false && 
-      TransactionID > 0)
-      Owner->CommitTransaction(TransactionID);
+   if(TransactionManager != NULL &&
+      TransactionManager->TransactionHasError() == false)
+      TransactionManager->CommitTransaction();
 }
 
 
@@ -1855,7 +1916,7 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 		string const &MetaSigURI, string const &MetaSigURIDesc, string const &MetaSigShortDesc,
 		const vector<IndexTarget*>* IndexTargets,
 		indexRecords* MetaIndexParser) :
-   pkgAcqMetaIndex(Owner, (unsigned long)this, URI, URIDesc, ShortDesc, MetaSigURI, MetaSigURIDesc,MetaSigShortDesc, IndexTargets, MetaIndexParser),
+   pkgAcqMetaIndex(Owner, NULL, URI, URIDesc, ShortDesc, MetaSigURI, MetaSigURIDesc,MetaSigShortDesc, IndexTargets, MetaIndexParser),
        MetaIndexURI(MetaIndexURI), MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
        MetaSigURI(MetaSigURI), MetaSigURIDesc(MetaSigURIDesc), MetaSigShortDesc(MetaSigShortDesc)
 {
@@ -1940,7 +2001,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       PartialFile = "";
       DestFile = FinalFile;
 
-      new pkgAcqMetaIndex(Owner, TransactionID,
+      new pkgAcqMetaIndex(Owner, TransactionManager,
 			MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
 			MetaSigURI, MetaSigURIDesc, MetaSigShortDesc,
 			IndexTargets, MetaIndexParser);
