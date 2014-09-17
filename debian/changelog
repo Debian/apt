@@ -1,3 +1,39 @@
+apt (1.0.9.1ubuntu1) utopic; urgency=medium
+
+  * merge fixes from debian/sid
+
+ -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 17 Sep 2014 22:17:38 +0200
+
+apt (1.0.9.1) unstable; urgency=high
+
+  [ Michael Vogt ]
+  * Allow override of Proxy-Auto-Detect by the users configuration
+    (Closes: 759264)
+  * fix ci autopkgtest
+  * fix regression from 1.0.9 when file:/// source are used and
+    those are on a different partition than the apt state directory
+    and add regression test
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (636t): Update program translation
+
+  [ Chris Leick ]
+  * Updated German documentation translation
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 761394)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 Sep 2014 20:52:25 +0200
+
+apt (1.0.9) unstable; urgency=high
+
+  * SECURITY UPDATE:
+    - incorrect invalidating of unauthenticated data (CVE-2014-0488)
+    - incorect verification of 304 reply (CVE-2014-0487)
+    - incorrect verification of Acquire::Gzip indexes (CVE-2014-0489)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 15 Sep 2014 08:34:46 +0200
+
 apt (1.0.8ubuntu3) utopic; urgency=low
 
   * fix autopkgtest

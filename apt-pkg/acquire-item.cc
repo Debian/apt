@@ -1120,12 +1120,6 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
    string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
    {
-      // The files timestamp matches
-      if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
-      {
-         ReverifyAfterIMS(FileName);
-         return;
-      }
       Decompression = true;
       Local = true;
       DestFile += ".decomp";
@@ -1142,18 +1136,19 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
       ErrorText = "Method gave a blank filename";
    }
 
-   // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-   {
-      ReverifyAfterIMS(FileName);
-      return;
-   }
-
    if (FileName == DestFile)
       Erase = true;
    else
       Local = true;
-   
+
+   // The files timestamp matches, for non-local URLs reverify the local
+   // file, for local file, uncompress again to ensure the hashsum is still
+   // matching the Release file
+   if (!Local && StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   {
+      ReverifyAfterIMS(FileName);
+      return;
+   }
    string decompProg;
 
    // If we enable compressed indexes, queue for hash verification
