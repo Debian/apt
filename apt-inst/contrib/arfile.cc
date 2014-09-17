@@ -64,7 +64,7 @@ ARArchive::~ARArchive()
    byte plain text header then the file data, another header, data, etc */
 bool ARArchive::LoadHeaders()
 {
-   signed long Left = File.Size();
+   off_t Left = File.Size();
    
    // Check the magic byte
    char Magic[8];
@@ -120,7 +120,7 @@ bool ARArchive::LoadHeaders()
       }
 
       // Account for the AR header alignment 
-      unsigned Skip = Memb->Size % 2;
+      off_t Skip = Memb->Size % 2;
       
       // Add it to the list
       Memb->Next = List;
@@ -128,7 +128,7 @@ bool ARArchive::LoadHeaders()
       Memb->Start = File.Tell();
       if (File.Skip(Memb->Size + Skip) == false)
 	 return false;
-      if (Left < (signed)(Memb->Size + Skip))
+      if (Left < (off_t)(Memb->Size + Skip))
 	 return _error->Error(_("Archive is too short"));
       Left -= Memb->Size + Skip;
    }   

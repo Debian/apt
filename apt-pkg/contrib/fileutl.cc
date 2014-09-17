@@ -650,9 +650,9 @@ string flNoLink(string File)
    while (1)
    {
       // Read the link
-      int Res;
+      ssize_t Res;
       if ((Res = readlink(NFile.c_str(),Buffer,sizeof(Buffer))) <= 0 || 
-	  (unsigned)Res >= sizeof(Buffer))
+	  (size_t)Res >= sizeof(Buffer))
 	  return File;
       
       // Append or replace the previous path
@@ -1221,7 +1221,7 @@ FileFd::~FileFd()
    gracefully. */
 bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    if (Actual != 0)
       *Actual = 0;
@@ -1323,7 +1323,7 @@ char* FileFd::ReadLine(char *To, unsigned long long const Size)
 /* */
 bool FileFd::Write(const void *From,unsigned long long Size)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    do
    {
@@ -1379,7 +1379,7 @@ bool FileFd::Write(const void *From,unsigned long long Size)
 }
 bool FileFd::Write(int Fd, const void *From, unsigned long long Size)
 {
-   int Res;
+   ssize_t Res;
    errno = 0;
    do
    {
@@ -1458,14 +1458,14 @@ bool FileFd::Seek(unsigned long long To)
       d->seekpos = To;
       return true;
    }
-   int res;
+   off_t res;
 #ifdef HAVE_ZLIB
    if (d != NULL && d->gz)
       res = gzseek(d->gz,To,SEEK_SET);
    else
 #endif
       res = lseek(iFd,To,SEEK_SET);
-   if (res != (signed)To)
+   if (res != (off_t)To)
    {
       Flags |= Fail;
       return _error->Error("Unable to seek to %llu", To);
@@ -1502,7 +1502,7 @@ bool FileFd::Skip(unsigned long long Over)
       return true;
    }
 
-   int res;
+   off_t res;
 #ifdef HAVE_ZLIB
    if (d != NULL && d->gz != NULL)
       res = gzseek(d->gz,Over,SEEK_CUR);

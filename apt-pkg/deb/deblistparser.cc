@@ -630,7 +630,7 @@ bool debListParser::ParseDepends(pkgCache::VerIterator &Ver,
       string Version;
       unsigned int Op;
 
-      Start = ParseDepends(Start,Stop,Package,Version,Op,false,!MultiArchEnabled);
+      Start = ParseDepends(Start, Stop, Package, Version, Op, false, false);
       if (Start == 0)
 	 return _error->Error("Problem parsing dependency %s",Tag);
       size_t const found = Package.rfind(':');
@@ -712,9 +712,7 @@ bool debListParser::ParseProvides(pkgCache::VerIterator &Ver)
       }
    }
 
-   if (MultiArchEnabled == false)
-      return true;
-   else if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
+   if ((Ver->MultiArch & pkgCache::Version::Allowed) == pkgCache::Version::Allowed)
    {
       string const Package = string(Ver.ParentPkg().Name()).append(":").append("any");
       return NewProvidesAllArch(Ver, Package, Ver.VerStr());
