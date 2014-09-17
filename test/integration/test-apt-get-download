@@ -30,3 +30,16 @@ testequal "'file://${DEBFILE}' apt_2.0_all.deb $(stat -c%s $DEBFILE) sha256:$(sh
 
 # deb:677887
 testequal "E: Can't find a source to download version '1.0' of 'vrms:i386'" aptget download vrms
+
+
+# ensure authentication warning is displayed
+rm aptarchive/dists/unstable/*Release*
+testsuccess aptget update
+testequal "WARNING: The following packages cannot be authenticated!
+  apt
+E: Some packages could not be authenticated" aptget download -qq apt
+
+# ensure authentication warning is displayed
+testequal "WARNING: The following packages cannot be authenticated!
+  apt
+Authentication warning overridden." aptget download -qq --allow-unauthenticated apt

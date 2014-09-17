@@ -2373,6 +2373,7 @@ bool DoDownload(CommandLine &CmdL)
    pkgSourceList *SrcList = Cache.GetSourceList();
    bool gotAll = true;
 
+   std::string UntrustedList;
    for (APT::VersionList::const_iterator Ver = verset.begin(); 
         Ver != verset.end(); 
         ++Ver) 
@@ -2396,6 +2397,8 @@ bool DoDownload(CommandLine &CmdL)
 	 gotAll = false;
 	 continue;
       }
+      if (index->IsTrusted() == false)
+         UntrustedList += Pkg.Name() + string(" ");
       string uri = index->ArchiveURI(rec.FileName());
       strprintf(descr, _("Downloading %s %s"), Pkg.Name(), Ver.VerStr());
       // get the most appropriate hash
@@ -2423,6 +2426,9 @@ bool DoDownload(CommandLine &CmdL)
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
+
+   if (UntrustedList != "" && !AuthPrompt(UntrustedList, false))
+      return false;
 
    return (Fetcher.Run() == pkgAcquire::Continue);
 }
