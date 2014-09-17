@@ -1029,10 +1029,8 @@ string pkgAcqIndexTrans::Custom600Headers()
 {
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
-
-   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
-      DestFile += ".gz";
+   if (_config->FindB("Acquire::GzipIndexes",false))
+       Final += ".gz";
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
