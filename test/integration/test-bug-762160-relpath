@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+# dpkg implements versioned provides in commit 5bb02fe80e9f40dcad9703a72f67cf615ff217b5
+# but previous versions seem to allow parsing, working and ignoring it.
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+insertpackage 'unstable' 'foo' 'all' '1'
+setupaptarchive
+
+aptget update -o Dir=./apt
