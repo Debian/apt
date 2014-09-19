@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 1.0.3\n"
+"Project-Id-Version: apt 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-09-09 20:35+0200\n"
-"PO-Revision-Date: 2014-06-09 22:42+0100\n"
+"PO-Revision-Date: 2014-09-19 13:04+0100\n"
 "Last-Translator: Holger Wansing <linux@wansing-online.de>\n"
 "Language-Team: Debian German <debian-l10n-german@lists.debian.org>\n"
 "Language: \n"
@@ -658,7 +658,7 @@ msgstr ""
 
 #: cmdline/apt-helper.cc:36
 msgid "Need one URL as argument"
-msgstr ""
+msgstr "Eine URL als Argument wird benötigt"
 
 #: cmdline/apt-helper.cc:49
 msgid "Must specify at least one pair url/filename"
@@ -669,7 +669,6 @@ msgid "Download Failed"
 msgstr "Herunterladen fehlgeschlagen"
 
 #: cmdline/apt-helper.cc:80
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -683,12 +682,13 @@ msgid ""
 "                       This APT helper has Super Meep Powers.\n"
 msgstr ""
 "Aufruf: apt-helper [Optionen] Befehl\n"
-"        apt-helper [Optionen] download-file uri zielpfad\n"
+"        apt-helper [Optionen] download-file URI Zielpfad\n"
 "\n"
 "apt-helper ist ein internes Hilfsprogramm für apt.\n"
 "\n"
 "Befehle:\n"
 "   download-file - den angegebenen URI in den Zielpfad herunterladen\n"
+"   auto-detect-proxy - erkennen eines Proxy-Servers mittels apt.conf\n"
 "\n"
 "             Dieses APT-Hilfsprogramm hat Super-Road-Runner-Kräfte.\n"
 
@@ -1822,11 +1822,15 @@ msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
 "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
 msgstr[0] ""
+"Aktualisierung für %i Paket verfügbar. Führen Sie »apt list --upgradable« "
+"aus, um es anzuzeigen.\n"
 msgstr[1] ""
+"Aktualisierung für %i Pakete verfügbar. Führen Sie »apt list --upgradable« "
+"aus, um sie anzuzeigen.\n"
 
 #: apt-private/private-update.cc:94
 msgid "All packages are up to date."
-msgstr ""
+msgstr "Alle Pakete sind aktuell."
 
 #: apt-private/private-upgrade.cc:25
 msgid "Calculating upgrade... "
@@ -2116,9 +2120,8 @@ msgid "Failed to stat %s"
 msgstr "%s mit »stat« abfragen fehlgeschlagen"
 
 #: ftparchive/cachedb.cc:332
-#, fuzzy
 msgid "Failed to read .dsc"
-msgstr "readlink von %s fehlgeschlagen"
+msgstr "Lesen von .dsc fehlgeschlagen"
 
 #: ftparchive/cachedb.cc:365
 msgid "Archive has no control record"
@@ -2518,9 +2521,9 @@ msgid "Unable to lock directory %s"
 msgstr "Das Verzeichnis %s kann nicht gesperrt werden."
 
 #: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
-#, fuzzy, c-format
+#, c-format
 msgid "Clean of %s is not supported"
-msgstr "Indexdateityp »%s« wird nicht unterstützt."
+msgstr "Leeren von %s wird nicht unterstützt."
 
 #. only show the ETA if it makes sense
 #. two days
