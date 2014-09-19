@@ -55,8 +55,8 @@ void CopyMethod::CalculateHashes(FetchResult &Res)
 /* */
 bool CopyMethod::Fetch(FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
-   std::string File = Get.Path;
+   // this ensures that relative paths work in copy
+   std::string File = Itm->Uri.substr(Itm->Uri.find(':')+1);
 
    // Stat the file and send a start message
    struct stat Buf;

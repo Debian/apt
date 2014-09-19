@@ -1,8 +1,8 @@
 #!/bin/sh
+# regresion test for bug #762160 where apt-get update fails when a 
+# relative directory is given
+#
 set -e
-
-# dpkg implements versioned provides in commit 5bb02fe80e9f40dcad9703a72f67cf615ff217b5
-# but previous versions seem to allow parsing, working and ignoring it.
 
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
@@ -11,5 +11,7 @@ configarchitecture 'amd64'
 
 insertpackage 'unstable' 'foo' 'all' '1'
 setupaptarchive
+changetowebserver
 
-aptget update -o Dir=./apt
+testsuccess aptget update -o Dir=./rootdir
+testsuccess aptget update -o Dir=./rootdir 
