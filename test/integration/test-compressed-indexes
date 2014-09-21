@@ -5,7 +5,7 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configcompression '.' 'gz' # only gz is supported for this, so ensure it is used
+configcompression '.' 'xz' 'gz'
 configarchitecture "i386"
 
 buildsimplenativepackage "testpkg" "i386" "1.0"
@@ -32,13 +32,13 @@ testrun() {
 		if [ "$1" = "compressed" ]; then
 			! test -e rootdir/var/lib/apt/lists/*_Packages || F=1
 			! test -e rootdir/var/lib/apt/lists/*_Sources || F=1
-			test -e rootdir/var/lib/apt/lists/*_Packages.gz || F=1
-			test -e rootdir/var/lib/apt/lists/*_Sources.gz || F=1
+			test -e rootdir/var/lib/apt/lists/*_Packages.xz || F=1
+			test -e rootdir/var/lib/apt/lists/*_Sources.xz || F=1
 		else
 			test -e rootdir/var/lib/apt/lists/*_Packages || F=1
 			test -e rootdir/var/lib/apt/lists/*_Sources || F=1
-			! test -e rootdir/var/lib/apt/lists/*_Packages.gz || F=1
-			! test -e rootdir/var/lib/apt/lists/*_Sources.gz || F=1
+			! test -e rootdir/var/lib/apt/lists/*_Packages.xz || F=1
+			! test -e rootdir/var/lib/apt/lists/*_Sources.xz || F=1
 		fi
 		if [ -n "$F" ]; then
 			ls -laR rootdir/var/lib/apt/lists/
@@ -84,10 +84,9 @@ msgmsg "File: Test with uncompressed indexes (update unchanged without pdiffs)"
 testrun
 
 rm -rf rootdir/var/lib/apt/lists
-echo 'Acquire::CompressionTypes::Order:: "gz";
-Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
+echo 'Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
 
-testsuccess aptget update
+testsuccess aptget update -o Debug::pkgAcquire::worker=1
 msgmsg "File: Test with compressed indexes"
 testrun "compressed"
 
@@ -118,14 +117,13 @@ msgmsg "HTTP: Test with uncompressed indexes (update unchanged without pdiffs)"
 testrun
 
 rm -rf rootdir/var/lib/apt/lists
-echo 'Acquire::CompressionTypes::Order:: "gz";
-Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
+echo 'Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
 
 testsuccess aptget update
 msgmsg "HTTP: Test with compressed indexes"
 testrun "compressed"
 
-testsuccess aptget update -o Acquire::Pdiffs=1
+testsuccess aptget update -o Acquire::Pdiffs=1 -o debug::pkgAcquire::Worker=1 -o debug::pkgAcquire::Auth=1
 msgmsg "HTTP: Test with compressed indexes (update unchanged with pdiffs)"
 testrun "compressed"
 
