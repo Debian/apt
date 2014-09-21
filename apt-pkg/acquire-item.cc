@@ -1141,6 +1141,12 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,string Hash,
    else
       Local = true;
 
+   // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
+   // file when its doing the indexcopy
+   if (RealURI.substr(0,6) == "cdrom:" &&
+       StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      return;
+
    // The files timestamp matches, for non-local URLs reverify the local
    // file, for local file, uncompress again to ensure the hashsum is still
    // matching the Release file
