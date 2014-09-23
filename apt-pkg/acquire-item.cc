@@ -901,7 +901,10 @@ void pkgAcqIndex::AutoSelectCompression()
       CompressionExtension.erase(CompressionExtension.end()-1);
 }
 // AcqIndex::Init - defered Constructor					/*{{{*/
-void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &ShortDesc) {
+// ---------------------------------------------------------------------
+void pkgAcqIndex::Init(string const &URI, string const &URIDesc, 
+                       string const &ShortDesc)
+{
    Decompression = false;
    Erase = false;
 
@@ -976,16 +979,9 @@ void pkgAcqIndex::InitByHashIfNeeded(const std::string MetaKey)
 /* The only header we use is the last-modified header. */
 string pkgAcqIndex::Custom600Headers() const
 {
-   string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(RealURI);
-   if (_config->FindB("Acquire::GzipIndexes",false))
-      Final += ".gz";
+   string Final = GetFinalFilename();
    
    string msg = "\nIndex-File: true";
-   // FIXME: this really should use "IndexTarget::IsOptional()" but that
-   //        seems to be difficult without breaking ABI
-   if (ShortDesc().find("Translation") != 0)
-      msg += "\nFail-Ignore: true";
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) == 0)
       msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
@@ -1022,11 +1018,11 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 // pkgAcqIndex::GetFinalFilename - Return the full final file path      /*{{{*/
 // ---------------------------------------------------------------------
 /* */
-std::string pkgAcqIndex::GetFinalFilename(std::string const &URI,
-                                          std::string const &compExt)
+std::string pkgAcqIndex::GetFinalFilename() const
 {
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    std::string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(URI);
+   FinalFile += URItoFileName(RealURI);
    if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
       FinalFile += ".gz";
    return FinalFile;
@@ -1042,7 +1038,7 @@ void pkgAcqIndex::ReverifyAfterIMS()
       DestFile += ".gz";
 
    // copy FinalFile into partial/ so that we check the hash again
-   string FinalFile = GetFinalFilename(RealURI, compExt);
+   string FinalFile = GetFinalFilename();
    Decompression = true;
    Desc.URI = "copy:" + FinalFile;
    QueueURI(Desc);
@@ -1105,7 +1101,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
 
       // Done, queue for rename on transaction finished
       PartialFile = DestFile;
-      DestFile = GetFinalFilename(RealURI, compExt);
+      DestFile = GetFinalFilename();
 
       return;
    }
@@ -1225,11 +1221,7 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 // ---------------------------------------------------------------------
 string pkgAcqIndexTrans::Custom600Headers() const
 {
-   string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(RealURI);
-
-   if (_config->FindB("Acquire::GzipIndexes",false))
-      Final += ".gz";
+   string Final = GetFinalFilename();
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
