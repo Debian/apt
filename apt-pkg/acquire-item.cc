@@ -1158,11 +1158,10 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
        StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
       return;
 
-   // The files timestamp matches, for non-local URLs reverify the local
-   // file, for local file, uncompress again to ensure the hashsum is still
-   // matching the Release file
-   if (!Local && StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   // The files timestamp matches, reverify by copy into partial/
+   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
    {
+      Erase = false;
       ReverifyAfterIMS();
       return;
    }
