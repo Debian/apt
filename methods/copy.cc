@@ -32,7 +32,7 @@ class CopyMethod : public pkgAcqMethod
    
    public:
    
-   CopyMethod() : pkgAcqMethod("1.0",SingleInstance|SendConfig) {};
+   CopyMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
 };
 
 void CopyMethod::CalculateHashes(FetchResult &Res)
@@ -55,8 +55,8 @@ void CopyMethod::CalculateHashes(FetchResult &Res)
 /* */
 bool CopyMethod::Fetch(FetchItem *Itm)
 {
-   URI Get = Itm->Uri;
-   std::string File = Get.Path;
+   // this ensures that relative paths work in copy
+   std::string File = Itm->Uri.substr(Itm->Uri.find(':')+1);
 
    // Stat the file and send a start message
    struct stat Buf;
@@ -79,6 +79,14 @@ bool CopyMethod::Fetch(FetchItem *Itm)
       return true;
    }
    
+   // just calc the hashes if the source and destination are identical
+   if (File == Itm->DestFile)
+   {
+      CalculateHashes(Res);
+      URIDone(Res);
+      return true;
+   }
+
    // See if the file exists
    FileFd From(File,FileFd::ReadOnly);
    FileFd To(Itm->DestFile,FileFd::WriteAtomic);

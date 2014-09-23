@@ -62,13 +62,13 @@ public:
 };
 
 // FIXME: add default argument for OpProgress (or overloaded function)
-bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile, 
-                                    LocalitySortedVersionSet &output_set,
+bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
+                                    APT::VersionContainerInterface * const vci,
                                     Matcher &matcher,
-                                    OpProgress &progress);
-bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile, 
-                                    LocalitySortedVersionSet &output_set,
-                                    OpProgress &progress);
+                                    OpProgress * const progress);
+bool GetLocalitySortedVersionSet(pkgCacheFile &CacheFile,
+                                    APT::VersionContainerInterface * const vci,
+                                    OpProgress * const progress);
 
 
 // CacheSetHelper saving virtual packages				/*{{{*/

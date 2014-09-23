@@ -1065,6 +1065,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
    {
       if (ExpectedHashes.usable() && ExpectedHashes != Hashes)
       {
+         Desc.URI = RealURI;
 	 RenameOnError(HashSumMismatch);
 	 printHashSumComparision(RealURI, ExpectedHashes, Hashes);
          Failed(Message, Cfg);
@@ -1097,6 +1098,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       // FIXME: can we void the "Erase" bool here as its very non-local?
       std::string CompressedFile = _config->FindDir("Dir::State::lists") + "partial/";
       CompressedFile += URItoFileName(RealURI);
+
       // Remove the compressed version.
       if (Erase == true)
 	 unlink(CompressedFile.c_str());
@@ -1129,12 +1131,6 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
    string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
    {
-      // The files timestamp matches
-      if (StringToBool(LookupTag(Message,"Alt-IMS-Hit"),false) == true)
-      {
-         ReverifyAfterIMS();
-	 return;
-      }
       Decompression = true;
       Local = true;
       DestFile += ".decomp";
@@ -1151,25 +1147,37 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       ErrorText = "Method gave a blank filename";
    }
 
-   // The files timestamp matches
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-   {
-      ReverifyAfterIMS();
-      return;
-    }
-
    if (FileName == DestFile)
       Erase = true;
    else
       Local = true;
-   
+
+   // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
+   // file when its doing the indexcopy
+   if (RealURI.substr(0,6) == "cdrom:" &&
+       StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      return;
+
+   // The files timestamp matches, for non-local URLs reverify the local
+   // file, for local file, uncompress again to ensure the hashsum is still
+   // matching the Release file
+   if (!Local && StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   {
+      ReverifyAfterIMS();
+      return;
+   }
    string decompProg;
 
-   // If we enable compressed indexes and already have gzip, keep it
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) {
-      // Done, queue for rename on transaction finished
-      PartialFile = DestFile;
-      DestFile = GetFinalFilename(RealURI, compExt);
+   // If we enable compressed indexes, queue for hash verification
+   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) 
+   {
+      DestFile = _config->FindDir("Dir::State::lists");
+      DestFile += URItoFileName(RealURI) + ".gz";
+
+      Decompression = true;
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
+
       return;
     }
 
@@ -1220,6 +1228,9 @@ string pkgAcqIndexTrans::Custom600Headers() const
 {
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
+
+   if (_config->FindB("Acquire::GzipIndexes",false))
+      Final += ".gz";
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
@@ -1679,6 +1690,28 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
    if (_config->FindB("Debug::pkgAcquire::Auth", false))
       std::cerr << "Signature verification succeeded: "
                 << DestFile << std::endl;
+
+   // do not trust any previously unverified content that we may have
+   string LastGoodSigFile = _config->FindDir("Dir::State::lists").append("partial/").append(URItoFileName(RealURI));
+   if (DestFile != SigFile)
+      LastGoodSigFile.append(".gpg");
+   LastGoodSigFile.append(".reverify");
+   if(IMSHit == false && RealFileExists(LastGoodSigFile) == false)
+   {
+      for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
+           Target != IndexTargets->end();
+           ++Target)
+      {
+         // remove old indexes
+         std::string index = _config->FindDir("Dir::State::lists") +
+            URItoFileName((*Target)->URI);
+         unlink(index.c_str());
+         // and also old gzipindexes
+         index += ".gz";
+         unlink(index.c_str());
+      }
+   }
+
 
    // Download further indexes with verification
    QueueIndexes(true);

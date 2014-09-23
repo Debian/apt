@@ -873,6 +873,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     */
    std::string CompressionExtension;
 
+
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded(const std::string MetaKey);
 

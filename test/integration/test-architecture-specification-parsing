@@ -13,10 +13,10 @@ buildsimplenativepackage 'pkg-arch-foo' "$NATIVE" '1.0' 'stable' "Build-Depends:
 Depends: foo [${NATIVE} !${NATIVE}]"
 buildsimplenativepackage 'pkg-arch-no-foo' "$NATIVE" '1.0' 'stable' "Build-Depends: foo [!${NATIVE} ${NATIVE}]
 Depends: foo [!${NATIVE} ${NATIVE}]"
-buildsimplenativepackage 'pkg-arch-foo-unrelated-no' "$NATIVE" '1.0' 'stable' "Build-Depends: foo [!kfreebsd-any ${NATIVE}]
-Depends: foo [!kfreebsd-any ${NATIVE}]"
-buildsimplenativepackage 'pkg-arch-foo-unrelated-no2' "$NATIVE" '1.0' 'stable' "Build-Depends: foo [${NATIVE} !kfreebsd-any]
-Depends: foo [${NATIVE} !kfreebsd-any]"
+buildsimplenativepackage 'pkg-arch-foo-unrelated-no' "$NATIVE" '1.0' 'stable' "Build-Depends: foo [!someos-any ${NATIVE}]
+Depends: foo [!someos-any ${NATIVE}]"
+buildsimplenativepackage 'pkg-arch-foo-unrelated-no2' "$NATIVE" '1.0' 'stable' "Build-Depends: foo [${NATIVE} !someos-any]
+Depends: foo [${NATIVE} !someos-any]"
 buildsimplenativepackage 'no-depends' 'armel' '1.0' 'stable' 'Build-Depends: foo [armeb], bar [arm]
 Depends: foo [armeb], bar [arm]'
 

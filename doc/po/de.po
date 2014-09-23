@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-doc 1.0.4\n"
+"Project-Id-Version: apt-doc 1.0.8\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-08-28 00:20+0000\n"
-"PO-Revision-Date: 2014-07-04 00:34+0200\n"
+"PO-Revision-Date: 2014-09-14 14:46+0200\n"
 "Last-Translator: Chris Leick <c.leick@vollbio.de>\n"
 "Language-Team: German <debian-l10n-german@lists.debian.org>\n"
 "Language: de\n"
@@ -750,12 +750,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><variablelist><varlistentry><listitem><para>
 #: apt.8.xml:101
-#, fuzzy
-#| msgid ""
-#| "<literal>upgrade</literal> is used to install the newest versions of all "
-#| "packages currently installed on the system from the sources enumerated in "
-#| "<filename>/etc/apt/sources.list</filename>. New package will be "
-#| "installed, but existing package will never removed."
 msgid ""
 "<literal>upgrade</literal> is used to install the newest versions of all "
 "packages currently installed on the system from the sources enumerated in "
@@ -4591,17 +4585,6 @@ msgstr ""
 
 #. type: Content of: <refentry><refsect1><para>
 #: apt.conf.5.xml:601
-#, fuzzy
-#| msgid ""
-#| "<literal>Dir::Cache</literal> contains locations pertaining to local "
-#| "cache information, such as the two package caches <literal>srcpkgcache</"
-#| "literal> and <literal>pkgcache</literal> as well as the location to place "
-#| "downloaded archives, <literal>Dir::Cache::archives</literal>. Generation "
-#| "of caches can be turned off by setting their names to the empty string. "
-#| "This will slow down startup but save disk space. It is probably "
-#| "preferable to turn off the pkgcache rather than the srcpkgcache. Like "
-#| "<literal>Dir::State</literal> the default directory is contained in "
-#| "<literal>Dir::Cache</literal>"
 msgid ""
 "<literal>Dir::Cache</literal> contains locations pertaining to local cache "
 "information, such as the two package caches <literal>srcpkgcache</literal> "
@@ -4618,8 +4601,9 @@ msgstr ""
 "Paketzwischenspeicher <literal>srcpkgcache</literal> und <literal>pkgcache</"
 "literal>, sowie den Ort, an den heruntergeladene Archive platziert werden, "
 "<literal>Dir::Cache::archives</literal>. Die Generierung von "
-"Zwischenspeichern kann ausgeschaltet werden, indem ihre Namen auf leere "
-"Zeichenketten gesetzt werden. Dies wird den Start verlangsamen, aber "
+"Zwischenspeichern kann ausgeschaltet werden, indem "
+"<literal>pkgcache</literal> oder <literal>srcpkgcache</literal> auf "
+"<literal>\"\"</literal> wird. Dies wird den Start verlangsamen, aber "
 "Plattenplatz sparen. Es ist vermutlich vorzuziehen, statt des »srcpkgcache«s "
 "den »pkgcache« auszuschalten. Wie <literal>Dir::State</literal> ist das "
 "Standardverzeichnis in <literal>Dir::Cache</literal> enthalten."
@@ -8549,7 +8533,7 @@ msgstr "jgg@debian.org"
 #. type: Content of: <book><bookinfo><releaseinfo>
 #: guide.dbk:21 offline.dbk:21
 msgid "Version &apt-product-version;"
-msgstr ""
+msgstr "Version &apt-product-version;"
 
 #. type: Content of: <book><bookinfo><abstract><para>
 #: guide.dbk:25
@@ -8569,7 +8553,7 @@ msgstr ""
 #. type: Content of: <book><bookinfo><legalnotice><title>
 #: guide.dbk:32 offline.dbk:33
 msgid "License Notice"
-msgstr ""
+msgstr "Lizenzhinweis"
 
 #. type: Content of: <book><bookinfo><legalnotice><para>
 #: guide.dbk:34 offline.dbk:35
@@ -10158,97 +10142,3 @@ msgstr "  # apt-get -o dir::cache::archives=\"/Platte/\" dist-upgrade\n"
 #: offline.dbk:242
 msgid "Which will use the already fetched archives on the disc."
 msgstr "Es wird die bereits auf die Platte heruntergeladenen Archive benutzen."
-
-#~ msgid "$Id: guide.sgml,v 1.7 2003/04/26 23:26:13 doogie Exp $"
-#~ msgstr "$Id: guide.sgml,v 1.7 2003/04/26 23:26:13 doogie Exp $"
-
-#~ msgid "<pubdate></pubdate>"
-#~ msgstr "<pubdate></pubdate>"
-
-#~ msgid "$Id: offline.sgml,v 1.8 2003/02/12 15:06:41 doogie Exp $"
-#~ msgstr "$Id: offline.sgml,v 1.8 12.02.2003 15:06:41 doogie Exp $"
-
-#~ msgid "<name>Jason Gunthorpe </name><email>jgg@debian.org</email>"
-#~ msgstr "<name>Jason Gunthorpe </name><email>jgg@debian.org</email>"
-
-#~ msgid "Copyright &copy; Jason Gunthorpe, 1998."
-#~ msgstr "Copyright &copy; Jason Gunthorpe, 1998."
-
-#~ msgid "Copyright &copy; Jason Gunthorpe, 1999."
-#~ msgstr "Copyright &copy; Jason Gunthorpe, 1999."
-
-#~ msgid "apt"
-#~ msgstr "apt"
-
-#~ msgid "16 June 1998"
-#~ msgstr "16. Juni 1998"
-
-#~ msgid "Debian"
-#~ msgstr "Debian"
-
-#~ msgid "NAME"
-#~ msgstr "NAME"
-
-#~ msgid "apt - Advanced Package Tool"
-#~ msgstr "apt - Fortschrittliches Paketwerkzeug (Advanced Package Tool)"
-
-#~ msgid "SYNOPSIS"
-#~ msgstr "ÜBERSICHT"
-
-#~ msgid "B<apt>"
-#~ msgstr "B<apt>"
-
-#~ msgid "DESCRIPTION"
-#~ msgstr "BESCHREIBUNG"
-
-#, fuzzy
-#~ msgid ""
-#~ "For normal day to day package management there are several frontends "
-#~ "available, such as B<aptitude>(8)  for the command line or "
-#~ "B<synaptic>(8)  for the X Window System. Some options are only "
-#~ "implemented in B<apt-get>(8)  though."
-#~ msgstr ""
-#~ "APT ist ein Verwaltungssystem für Softwarepakete. Für normale alltägliche "
-#~ "Paketverwaltung sind mehrere Oberflächen, wie B<aptitude>(8) für die "
-#~ "Befehlszeile oder B<synaptic>(8) für das X-Window-System, verfügbar. "
-#~ "Einige Optionen sind jedoch nur in B<apt-get>(8) implementiert."
-
-#~ msgid "SEE ALSO"
-#~ msgstr "SIEHE AUCH"
-
-#, fuzzy
-#~ msgid ""
-#~ "B<apt>(8), B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources."
-#~ "list>(5), B<apt_preferences>(5), B<apt-secure>(8)"
-#~ msgstr ""
-#~ "B<apt-cache>(8), B<apt-get>(8), B<apt.conf>(5), B<sources.list>(5), "
-#~ "B<apt_preferences>(5), B<apt-secure>(8)"
-
-#~ msgid "DIAGNOSTICS"
-#~ msgstr "DIAGNOSE"
-
-#~ msgid "apt returns zero on normal operation, decimal 100 on error."
-#~ msgstr ""
-#~ "APT gibt bei normalen Operationen 0 zurück, dezimal 100 bei Fehlern."
-
-#~ msgid "BUGS"
-#~ msgstr "FEHLER"
-
-#~ msgid "This manpage isn't even started."
-#~ msgstr "Diese Handbuchseite wurde noch nicht mal begonnen."
-
-#~ msgid ""
-#~ "See E<lt>http://bugs.debian.org/aptE<gt>.  If you wish to report a bug in "
-#~ "B<apt>, please see I</usr/share/doc/debian/bug-reporting.txt> or the "
-#~ "B<reportbug>(1)  command."
-#~ msgstr ""
-#~ "siehe auch E<lt>http://bugs.debian.org/aptE<gt>. Wenn Sie einen Fehler in "
-#~ "B<apt> berichten möchten, sehen Sie sich bitte I</usr/share/doc/debian/"
-#~ "bug-reporting.txt> oder den Befehl B<reportbug>(1) an."
-
-#~ msgid "AUTHOR"
-#~ msgstr "AUTOR"
-
-#~ msgid "apt was written by the APT team E<lt>apt@packages.debian.orgE<gt>."
-#~ msgstr ""
-#~ "APT wurde vom APT-Team E<lt>apt@packages.debian.orgE<gt> geschrieben."
