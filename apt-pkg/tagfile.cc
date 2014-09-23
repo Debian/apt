@@ -601,7 +601,7 @@ static const char *iTFRewritePackageOrder[] = {
                           "Conffiles",
                           "Filename",
                           "Size",
-                          "MD5Sum",
+                          "MD5sum",
                           "SHA1",
                           "SHA256",
                           "SHA512",

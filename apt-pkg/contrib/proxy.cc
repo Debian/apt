@@ -26,6 +26,10 @@ bool AutoDetectProxy(URI &URL)
    // we support both http/https debug options
    bool Debug = _config->FindB("Debug::Acquire::"+URL.Access,false);
 
+   // the user already explicitly set a proxy for this host
+   if(_config->Find("Acquire::"+URL.Access+"::proxy::"+URL.Host, "") != "")
+      return true;
+
    // option is "Acquire::http::Proxy-Auto-Detect" but we allow the old
    // name without the dash ("-")
    std::string AutoDetectProxyCmd = _config->Find("Acquire::"+URL.Access+"::Proxy-Auto-Detect",

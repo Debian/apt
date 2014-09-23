@@ -85,7 +85,9 @@ class FileFd
    bool Skip(unsigned long long To);
    bool Truncate(unsigned long long To);
    unsigned long long Tell();
+   // the size of the file content (compressed files will be uncompressed first)
    unsigned long long Size();
+   // the size of the file itself
    unsigned long long FileSize();
    time_t ModificationTime();
 

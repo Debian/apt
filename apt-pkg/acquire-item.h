@@ -707,8 +707,17 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     */
    std::string CompressionExtension;
 
+
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded(const std::string MetaKey);
+
+   /** \brief Get the full pathname of the final file for the given URI
+    */
+   std::string GetFinalFilename(std::string const &URI,
+                                std::string const &compExt);
+
+   /** \brief Schedule file for verification after a IMS hit */
+   void ReverifyAfterIMS(std::string const &FileName);
 
    public:
    

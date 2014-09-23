@@ -15,7 +15,10 @@ fi
 
 DESCR='Some description that has a unusual word xxyyzz and aabbcc and a UPPERCASE'
 DESCR2='Some other description with the unusual aabbcc only'
-insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR"
+insertpackage 'unstable' 'foo' 'all' '1.0' '' '' "$DESCR
+ Long description of stuff and such, with lines
+ .
+ and paragraphs and everything."
 insertpackage 'testing' 'bar' 'i386' '2.0' '' '' "$DESCR2"
 
 setupaptarchive
@@ -33,16 +36,42 @@ foo/unstable 1.0 all
 testequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq xxyyzz
+testempty apt search -qq --names-only xxyyzz
+
+# search name
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq foo
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq --names-only foo
 
 # search with multiple words is a AND search
 testequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq aabbcc xxyyzz
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq 'a+b+c+' 'i*xxy{0,2}zz'
 
 # search is not case-sensitive by default
 testequal "foo/unstable 1.0 all
   $DESCR
 " apt search -qq uppercase
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq 'up[pP]erc[Aa]se'
+
+# search is done in the long description
+testequal "foo/unstable 1.0 all
+  $DESCR
+" apt search -qq 'long description'
+testequal "foo/unstable 1.0 all
+  $DESCR
+  Long description of stuff and such, with lines
+  .
+  and paragraphs and everything.
+" apt search --full -qq 'long description'
 
 # output is sorted and search word finds both package
 testequal "bar/testing 2.0 i386
