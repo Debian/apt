@@ -90,7 +90,7 @@ class pkgAcquire::Item : public WeakPointable
     *  \param To The new name of \a From.  If \a To exists it will be
     *  overwritten.
     */
-   void Rename(std::string From,std::string To);
+   bool Rename(std::string From,std::string To);
 
    public:
 
@@ -574,6 +574,10 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
     */
    std::string Description;
 
+   /** \brief If the copy step of the packages file is done
+    */
+   bool PackagesFileReadyInPartial;
+
  public:
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
@@ -803,7 +807,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
 
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return RealURI + "Index";};
+   virtual std::string DescURI() const {return RealURI + "IndexDiffs";};
 
    /** \brief Create an index diff item.
     *

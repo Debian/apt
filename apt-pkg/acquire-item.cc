@@ -157,7 +157,7 @@ void pkgAcquire::Item::Done(string Message,unsigned long long Size,HashStringLis
 // ---------------------------------------------------------------------
 /* This helper function is used by a lot of item methods as their final
    step */
-void pkgAcquire::Item::Rename(string From,string To)
+bool pkgAcquire::Item::Rename(string From,string To)
 {
    if (rename(From.c_str(),To.c_str()) != 0)
    {
@@ -165,8 +165,10 @@ void pkgAcquire::Item::Rename(string From,string To)
       snprintf(S,sizeof(S),_("rename failed, %s (%s -> %s)."),strerror(errno),
 	      From.c_str(),To.c_str());
       Status = StatError;
-      ErrorText = S;
+      ErrorText += S;
+      return false;
    }   
+   return true;
 }
 									/*}}}*/
 bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const error)/*{{{*/
@@ -252,7 +254,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 				 HashStringList const &ExpectedHashes,
                                  indexRecords *MetaIndexParser)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
-                     MetaIndexParser)
+                     MetaIndexParser), PackagesFileReadyInPartial(false)
 {
    
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
@@ -348,6 +350,10 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
 	 // we have the same sha1 as the server so we are done here
 	 if(Debug)
 	    std::clog << "Package file is up-to-date" << std::endl;
+         // ensure we have no leftovers from previous runs
+         std::string Partial = _config->FindDir("Dir::State::lists");
+         Partial += "partial/" + URItoFileName(RealURI);
+         unlink(Partial.c_str());
 	 // list cleanup needs to know that this file as well as the already
 	 // present index is ours, so we create an empty diff to save it for us
 	 new pkgAcqIndexDiffs(Owner, TransactionManager, Target, 
@@ -418,6 +424,21 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       // we have something, queue the next diff
       if(found)
       {
+         // FIXME: make this use the method
+         PackagesFileReadyInPartial = true;
+         std::string Partial = _config->FindDir("Dir::State::lists");
+         Partial += "partial/" + URItoFileName(RealURI);
+
+         FileFd From(CurrentPackagesFile, FileFd::ReadOnly);
+         FileFd To(Partial, FileFd::WriteEmpty);
+         if(CopyFile(From, To) == false)
+            return _error->Errno("CopyFile", "failed to copy");
+
+         if(Debug)
+            std::cerr << "Done copying " << CurrentPackagesFile
+                      << " -> " << Partial
+                      << std::endl;
+
 	 // queue the diffs
 	 string::size_type const last_space = Description.rfind(" ");
 	 if(last_space != string::npos)
@@ -455,10 +476,10 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
                                                        diffs);
 	 }
 
-	 Complete = false;
-	 Status = StatDone;
-	 Dequeue();
-	 return true;
+         Complete = false;
+         Status = StatDone;
+         Dequeue();
+         return true;
       }
    }
    
@@ -541,7 +562,9 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 
    if(available_patches.empty() == true)
    {
-      // we are done (yeah!)
+      // we are done (yeah!), check hashes against the final file
+      DestFile = _config->FindDir("Dir::State::lists");
+      DestFile += URItoFileName(Target->URI);
       Finish(true);
    }
    else
@@ -573,13 +596,6 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
    // the file will be cleaned
    if(allDone) 
    {
-      DestFile = _config->FindDir("Dir::State::lists");
-      DestFile += URItoFileName(RealURI);
-      
-      // FIXME: we want the rred stuff to use the real transactional update
-      //        this is just a workaround
-      PartialFile = DestFile;
-
       if(HashSums().usable() && !HashSums().VerifyFile(DestFile))
       {
 	 RenameOnError(HashSumMismatch);
@@ -587,6 +603,16 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 	 return;
       }
 
+      // queue for copy
+      PartialFile = _config->FindDir("Dir::State::lists")+"partial/"+URItoFileName(RealURI);
+
+      DestFile = _config->FindDir("Dir::State::lists");
+      DestFile += URItoFileName(RealURI);
+
+      // this happens if we have a up-to-date indexfile
+      if(!FileExists(PartialFile))
+         PartialFile = DestFile;
+      
       // this is for the "real" finish
       Complete = true;
       Status = StatDone;
@@ -606,10 +632,15 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 									/*}}}*/
 bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 {
-
    // calc sha1 of the just patched file
    string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(RealURI);
+   FinalFile += "partial/" + URItoFileName(RealURI);
+
+   if(!FileExists(FinalFile))
+   {
+      Failed("No FinalFile " + FinalFile + " available", NULL);
+      return false;
+   }
 
    FileFd fd(FinalFile, FileFd::ReadOnly);
    SHA1Summation SHA1;
@@ -618,6 +649,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    if(Debug)
       std::clog << "QueueNextDiff: " 
 		<< FinalFile << " (" << local_sha1 << ")"<<std::endl;
+
 
    // final file reached before all patches are applied
    if(local_sha1 == ServerSha1)
@@ -640,7 +672,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    // error checking and falling back if no patch was found
    if(available_patches.empty() == true)
    {
-      Failed("", NULL);
+      Failed("No patches available", NULL);
       return false;
    }
 
@@ -667,7 +699,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
    Item::Done(Message, Size, Hashes, Cnf);
 
    string FinalFile;
-   FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
+   FinalFile = _config->FindDir("Dir::State::lists")+"partial/"+URItoFileName(RealURI);
 
    // success in downloading a diff, enter ApplyDiff state
    if(State == StateFetchDiff)
@@ -711,6 +743,8 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
                               ServerSha1, available_patches);
 	 return Finish();
       } else 
+         // update
+         DestFile = FinalFile;
 	 return Finish(true);
    }
 }
@@ -777,7 +811,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 
    Item::Done(Message,Size,Hashes,Cnf);
 
-   string const FinalFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   string const FinalFile = _config->FindDir("Dir::State::lists") + "partial/" + URItoFileName(RealURI);
 
    if (State == StateFetchDiff)
    {
@@ -817,23 +851,27 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 	 return;
       }
 
+
+      std::string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+
       // move the result into place
       if(Debug)
-	 std::clog << "Moving patched file in place: " << std::endl
+	 std::clog << "Queue patched file in place: " << std::endl
 		   << DestFile << " -> " << FinalFile << std::endl;
-      Rename(DestFile, FinalFile);
-      chmod(FinalFile.c_str(), 0644);
 
-      // otherwise lists cleanup will eat the file
+      // queue for copy by the transaction manager
+      PartialFile = DestFile;
       DestFile = FinalFile;
-      // FIXME: make the merged rred code really transactional
-      PartialFile = FinalFile;
 
       // ensure the ed's are gone regardless of list-cleanup
       for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
 	    I != allPatches->end(); ++I)
       {
-	    std::string patch = FinalFile + ".ed." + (*I)->patch.file + ".gz";
+            std::string PartialFile = _config->FindDir("Dir::State::lists");
+            PartialFile += "partial/" + URItoFileName(RealURI);
+	    std::string patch = PartialFile + ".ed." + (*I)->patch.file + ".gz";
+            std::cerr << patch << std::endl;
 	    unlink(patch.c_str());
       }
 
@@ -1306,13 +1344,18 @@ void pkgAcqMetaBase::CommitTransaction()
          if(_config->FindB("Debug::Acquire::Transaction", false) == true)
             std::clog << "mv " 
                       << (*I)->PartialFile << " -> " 
-                      <<  (*I)->DestFile << std::endl;
+                      <<  (*I)->DestFile << " " 
+                      << (*I)->DescURI()
+                      << std::endl;
          Rename((*I)->PartialFile, (*I)->DestFile);
          chmod((*I)->DestFile.c_str(),0644);
       } else {
          if(_config->FindB("Debug::Acquire::Transaction", false) == true)
             std::clog << "rm " 
-                      <<  (*I)->DestFile << std::endl;
+                      <<  (*I)->DestFile
+                      << " " 
+                      << (*I)->DescURI()
+                      << std::endl;
          unlink((*I)->DestFile.c_str());
       }
       // mark that this transaction is finished
