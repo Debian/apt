@@ -17,23 +17,41 @@ insertsource 'unstable' 'foo' 'all' '1.0'
 setupaptarchive
 changetowebserver
 
+# FIXME: 
+#  - also check the unauth -> auth success case, i.e. that all files are
+#    reverified
 runtest() {
     # start unauthenticated
     find rootdir/var/lib/apt/lists/ -type f | xargs rm -f
     rm -f aptarchive/dists/unstable/*Release*
+    # remove uncompressed version
+    find aptarchive/ -name Packages | xargs rm -f
     aptget update -qq
 
     # become authenticated
     generatereleasefiles
     signreleasefiles
 
-    # and ensure we do download the data again
-    msgtest "Check that the data is check when going to authenticated"
-    if aptget update |grep -q Hit; then
-        msgfail
-    else
+    # and ensure we re-check the downloaded data
+    msgtest "Check rollback on going from unauth -> auth"
+
+    # change the local packages file
+    PKGS=$(ls rootdir/var/lib/apt/lists/*Packages*)
+    echo "meep" > $PKGS
+    ls -l rootdir/var/lib/apt/lists > lists.before
+
+    # update and ensure all is reverted on the hashsum failure
+    aptget update -o Debug::Acquire::Transaction=1 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 > output.log 2>&1 || true
+
+    # ensure we have before what we have after
+    ls -l rootdir/var/lib/apt/lists > lists.after
+    if diff -u lists.before lists.after; then
         msgpass
+    else
+        #cat output.log
+        msgfail
     fi
+
 }
 
 for COMPRESSEDINDEXES in 'false' 'true'; do

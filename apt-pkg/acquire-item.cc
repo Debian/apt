@@ -1051,7 +1051,8 @@ void pkgAcqIndex::ReverifyAfterIMS()
    to the uncompressed version of the file. If this is so the file
    is copied into the partial directory. In all other cases the file
    is decompressed with a compressed uri. */
-void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,
+void pkgAcqIndex::Done(string Message, unsigned long long Size,
+                       HashStringList const &Hashes,
 		       pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hashes,Cfg);
@@ -1164,7 +1165,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
    string decompProg;
 
    // If we enable compressed indexes, queue for hash verification
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) 
+   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
    {
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI) + ".gz";
@@ -1682,6 +1683,8 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
       std::cerr << "Signature verification succeeded: "
                 << DestFile << std::endl;
 
+// we ensure this by other means
+#if 0 
    // do not trust any previously unverified content that we may have
    string LastGoodSigFile = _config->FindDir("Dir::State::lists").append("partial/").append(URItoFileName(RealURI));
    if (DestFile != SigFile)
@@ -1702,7 +1705,7 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
          unlink(index.c_str());
       }
    }
-
+#endif
 
    // Download further indexes with verification
    QueueIndexes(true);

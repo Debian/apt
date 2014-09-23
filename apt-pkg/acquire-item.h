@@ -859,10 +859,6 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     */
    bool Erase;
 
-   // FIXME:
-   // Unused, used to be used to verify that "Packages: " header was there
-   bool __DELME_ON_NEXT_ABI_BREAK_Verify;
-
    /** \brief The object that is actually being fetched (minus any
     *  compression-related extensions).
     */
