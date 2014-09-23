@@ -14,7 +14,6 @@ configcompression 'bz2' 'gz'
 
 insertpackage 'unstable' 'foo' 'all' '1.0'
 
-umask 022
 setupaptarchive --no-update
 
 # ensure the archive is not writable
@@ -27,10 +26,12 @@ aptget update -qq -o Debug::pkgAcquire::Auth=1 2> output.log
 # ensure that the hash of the uncompressed file was verified even on a local 
 # ims hit
 canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-amd64/Packages.bz2 | sha512sum |cut -f1 -d' ')"
-grep -q "RecivedHash: $canary" output.log
+grep -q -- "- $canary" output.log
 
 # foo is still available
 testsuccess aptget install -s foo
 
 # the cleanup should still work
 chmod 750 aptarchive/dists/unstable/main/binary-amd64
+
+

@@ -1129,7 +1129,7 @@ void pkgAcqIndex::ReverifyAfterIMS(std::string const &FileName)
 void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,
 		       pkgAcquire::MethodConfig *Cfg)
 {
-   Item::Done(Message,Size,Hash,Cfg);
+   Item::Done(Message,Size,Hashes,Cfg);
    std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
 
    if (Decompression == true)
