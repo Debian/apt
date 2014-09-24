@@ -2231,6 +2231,7 @@ bool DropPrivs()
       return _error->Error("Could not switch effective user");
 
 #ifdef HAVE_GETRESUID
+   // verify that the saved set-user-id was changed as well
    uid_t ruid = 0;
    uid_t euid = 0;
    uid_t suid = 0;
@@ -2241,6 +2242,7 @@ bool DropPrivs()
 #endif
 
 #ifdef HAVE_GETRESGID
+   // verify that the saved set-group-id was changed as well
    gid_t rgid = 0;
    gid_t egid = 0;
    gid_t sgid = 0;
