@@ -2184,7 +2184,7 @@ bool DropPrivs()
    if(_config->FindB("Debug::NoDropPrivs", false) == true)
       return true;
 
-   const std::string nobody = _config->Find("APT::User::Nobody", "Debian-apt");
+   const std::string nobody = _config->Find("APT::User::Nobody", "_apt");
    struct passwd *pw = getpwnam(nobody.c_str());
    if (pw == NULL)
       return _error->Warning("No user %s, can not drop rights", nobody.c_str());

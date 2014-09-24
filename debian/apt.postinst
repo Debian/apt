@@ -28,8 +28,8 @@ case "$1" in
 
         # add unprivileged user for the apt methods
         adduser --force-badname --system --no-create-home \
-            --quiet Debian-apt || true
-        chown -R Debian-apt:root \
+            --quiet _apt || true
+        chown -R _apt:root \
             /var/lib/apt/lists \
             /var/cache/apt/archives
 
