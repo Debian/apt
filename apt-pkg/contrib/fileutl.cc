@@ -2196,7 +2196,7 @@ bool DropPrivs()
       _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
 #endif
 
-   if (setgroups(1, &pw->pw_gid) != 1)
+   if (setgroups(1, &pw->pw_gid))
       return _error->Errno("setgroups", "Failed to setgroups");
 
    if (setegid(pw->pw_gid) != 0)
