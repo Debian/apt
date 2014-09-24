@@ -2184,10 +2184,10 @@ bool DropPrivs()
    if(_config->FindB("Debug::NoDropPrivs", false) == true)
       return true;
 
-   const std::string nobody = _config->Find("APT::User::Nobody", "_apt");
-   struct passwd *pw = getpwnam(nobody.c_str());
+   const std::string toUser = _config->Find("APT::Sandbox::User", "_apt");
+   struct passwd *pw = getpwnam(toUser.c_str());
    if (pw == NULL)
-      return _error->Error("No user %s, can not drop rights", nobody.c_str());
+      return _error->Error("No user %s, can not drop rights", toUser.c_str());
 
 #if __gnu_linux__
    // see prctl(2), needs linux3.5
