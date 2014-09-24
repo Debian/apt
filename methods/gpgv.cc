@@ -262,10 +262,10 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 int main()
 {
    setlocale(LC_ALL, "");
-   
-   DropPrivs();
 
    GPGVMethod Mth;
+
+   Mth.DropPrivsOrDie();
 
    return Mth.Run();
 }

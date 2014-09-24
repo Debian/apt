@@ -135,11 +135,12 @@ int main(int, char *argv[])
 {
    setlocale(LC_ALL, "");
 
-   DropPrivs();
-
    Prog = strrchr(argv[0],'/');
    ++Prog;
 
    GzipMethod Mth;
+
+   Mth.DropPrivsOrDie();
+
    return Mth.Run();
 }

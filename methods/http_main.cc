@@ -12,8 +12,8 @@ int main()
    // closes the connection (this is dealt with via ServerDie())
    signal(SIGPIPE, SIG_IGN);
 
-   DropPrivs();
-
    HttpMethod Mth;
+
+   Mth.DropPrivsOrDie();
    return Mth.Loop();
 }

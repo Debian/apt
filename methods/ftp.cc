@@ -1107,9 +1107,6 @@ int main(int, const char *argv[])
 { 
    setlocale(LC_ALL, "");
 
-   // no more active ftp, sorry
-   DropPrivs();
-
    /* See if we should be come the http client - we do this for http
       proxy urls */
    if (getenv("ftp_proxy") != 0)
@@ -1134,6 +1131,9 @@ int main(int, const char *argv[])
    }
    
    FtpMethod Mth;
+
+   // no more active ftp, sorry
+   Mth.DropPrivsOrDie();
    
    return Mth.Run();
 }
