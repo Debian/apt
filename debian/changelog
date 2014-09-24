@@ -1,3 +1,22 @@
+apt (1.1~exp3) experimental; urgency=medium
+
+  [ Michael Vogt ]
+  * merged changes from debian/sid up to 1.0.9.1
+  * Make /var/lib/apt/lists and /var/cache/apt/archives owned
+    by the new _apt user
+  * Drop Privileges in the following acquire methods:
+     http, https, ftp, gpgv, gzip/bzip2/lzma/xz 
+  * DropPrivs: Improvements based on feedback from error@debian.org
+
+  [ Julian Andres Klode ]
+  * DropPriv: Really call seteuid and not setuid, and add more checks
+  * Use _apt as our unprivileged user name
+  * DropPrivs: Also check for saved set-user-ID and set-group-ID
+  * methods: Fail if we cannot drop privileges
+  * DropPrivs: Also check for saved set-user-ID and set-group-ID
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 24 Sep 2014 22:30:09 +0200
+
 apt (1.1~exp2) experimental; urgency=medium
 
   [ Guillem Jover ]
