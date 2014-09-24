@@ -2187,7 +2187,7 @@ bool DropPrivs()
    const std::string nobody = _config->Find("APT::User::Nobody", "_apt");
    struct passwd *pw = getpwnam(nobody.c_str());
    if (pw == NULL)
-      return _error->Warning("No user %s, can not drop rights", nobody.c_str());
+      return _error->Error("No user %s, can not drop rights", nobody.c_str());
 
 #if __gnu_linux__
    // see prctl(2), needs linux3.5
