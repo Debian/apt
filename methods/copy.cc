@@ -118,6 +118,8 @@ int main()
 {
    setlocale(LC_ALL, "");
 
+   DropPrivs();
+
    CopyMethod Mth;
    return Mth.Run();
 }

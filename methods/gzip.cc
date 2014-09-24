@@ -135,6 +135,8 @@ int main(int, char *argv[])
 {
    setlocale(LC_ALL, "");
 
+   DropPrivs();
+
    Prog = strrchr(argv[0],'/');
    ++Prog;
 

@@ -1107,6 +1107,9 @@ int main(int, const char *argv[])
 { 
    setlocale(LC_ALL, "");
 
+   // no more active ftp, sorry
+   DropPrivs();
+
    /* See if we should be come the http client - we do this for http
       proxy urls */
    if (getenv("ftp_proxy") != 0)

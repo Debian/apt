@@ -5,6 +5,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -262,6 +263,8 @@ int main()
 {
    setlocale(LC_ALL, "");
    
+   DropPrivs();
+
    GPGVMethod Mth;
 
    return Mth.Run();

@@ -48,6 +48,7 @@
 #include <errno.h>
 #include <glob.h>
 #include <pwd.h>
+#include <grp.h>
 
 #include <set>
 #include <algorithm>
@@ -63,6 +64,10 @@
 #endif
 #include <endian.h>
 #include <stdint.h>
+
+#if __gnu_linux__
+#include <sys/prctl.h>
+#endif
 
 #include <apti18n.h>
 									/*}}}*/
@@ -2173,14 +2178,41 @@ bool DropPrivs()
    if (getuid() != 0)
       return true;
 
-   const std::string nobody = _config->Find("APT::User::Nobody", "nobody");
+   if(_config->FindB("Debug::NoDropPrivs", false) == true)
+      return true;
+
+   const std::string nobody = _config->Find("APT::User::Nobody", "Debian-apt");
    struct passwd *pw = getpwnam(nobody.c_str());
    if (pw == NULL)
       return _error->Warning("No user %s, can not drop rights", nobody.c_str());
+
+#if __gnu_linux__
+   // see prctl(2), needs linux3.5
+   int ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0,0, 0);
+   if(ret < 0)
+      _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
+#endif
+
+   if (setgroups(1, &pw->pw_gid) != 1)
+      return _error->Errno("setgroups", "Failed to setgroups");
+
+   if (setegid(pw->pw_gid) != 0)
+      return _error->Errno("setgid", "Failed to setgid");
    if (setgid(pw->pw_gid) != 0)
       return _error->Errno("setgid", "Failed to setgid");
+   
    if (setuid(pw->pw_uid) != 0)
       return _error->Errno("setuid", "Failed to setuid");
+   // the seteuid() is probably uneeded (at least thats what the linux
+   // man-page says about setuid(2)) but we cargo culted it anyway
+   if (setuid(pw->pw_uid) != 0)
+      return _error->Errno("setuid", "Failed to setuid");
+
+   // be defensive
+   if(setgid(0) != -1 || setegid(0) != -1)
+      return _error->Error("Could restore gid to root, privilege dropping does not work");
+   if(setuid(0) != -1 || seteuid(0) != -1)
+      return _error->Error("Could restore uid to root, privilege dropping does not work");
 
    return true;
 }
