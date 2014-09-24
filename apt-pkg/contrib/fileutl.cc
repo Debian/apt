@@ -2237,6 +2237,26 @@ bool DropPrivs()
    if (geteuid() != pw->pw_uid)
       return _error->Error("Could not switch effective user");
 
+#ifdef HAVE_GETRESUID
+   uid_t ruid = 0;
+   uid_t euid = 0;
+   uid_t suid = 0;
+   if (getresuid(&ruid, &euid, &suid))
+      return _error->Errno("getresuid", "Could not get saved set-user-ID");
+   if (suid != pw->pw_uid)
+      return _error->Error("Could not switch saved set-user-ID");
+#endif
+
+#ifdef HAVE_GETRESGID
+   gid_t rgid = 0;
+   gid_t egid = 0;
+   gid_t sgid = 0;
+   if (getresgid(&rgid, &egid, &sgid))
+      return _error->Errno("getresuid", "Could not get saved set-group-ID");
+   if (sgid != pw->pw_gid)
+      return _error->Error("Could not switch saved set-group-ID");
+#endif
+
    /* TODO: Check saved uid/saved gid as well */
    return true;
 }
