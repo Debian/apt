@@ -199,7 +199,17 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 // check if the given file starts with a PGP cleartext signature
 bool StartsWithGPGClearTextSignature(std::string const &FileName);
 
-// process releated
+/**
+ * \brief Drop privileges
+ *
+ * Drop the privileges to the user _apt (or the one specified in
+ * APT::Sandbox::User). This does not set the supplementary group
+ * ids up correctly, it only uses the default group. Also prevent
+ * the process from gaining any new privileges afterwards, at least
+ * on Linux.
+ *
+ * \return true on success, false on failure with _error set
+ */
 bool DropPrivs();
 
 // File string manipulators
