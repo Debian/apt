@@ -2252,22 +2252,32 @@ bool DropPrivileges()							/*{{{*/
       return _error->Error("No user %s, can not drop rights", toUser.c_str());
 
    // Do not change the order here, it might break things
+   // Get rid of all our supplementary groups first
    if (setgroups(1, &pw->pw_gid))
       return _error->Errno("setgroups", "Failed to setgroups");
 
+   // Now change the group ids to the new user
+#ifdef HAVE_SETRESGID
+   if (setresgid(pw->pw_gid, pw->pw_gid, pw->pw_gid) != 0)
+      return _error->Errno("setresgid", "Failed to set new group ids");
+#else
    if (setegid(pw->pw_gid) != 0)
       return _error->Errno("setegid", "Failed to setegid");
 
    if (setgid(pw->pw_gid) != 0)
       return _error->Errno("setgid", "Failed to setgid");
+#endif
 
+   // Change the user ids to the new user
+#ifdef HAVE_SETRESUID
+   if (setresuid(pw->pw_uid, pw->pw_uid, pw->pw_uid) != 0)
+      return _error->Errno("setresuid", "Failed to set new user ids");
+#else
    if (setuid(pw->pw_uid) != 0)
       return _error->Errno("setuid", "Failed to setuid");
-
-   // the seteuid() is probably uneeded (at least thats what the linux
-   // man-page says about setuid(2)) but we cargo culted it anyway
    if (seteuid(pw->pw_uid) != 0)
       return _error->Errno("seteuid", "Failed to seteuid");
+#endif
 
    // Verify that the user has only a single group, and the correct one
    gid_t groups[1];
