@@ -2175,9 +2175,12 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
 
 bool DropPrivs()
 {
-   if (getuid() != 0)
-      return true;
+   /* uid will be 0 in the end, but gid might be different anyway */
+   uid_t old_uid = getuid();
+   gid_t old_gid = getgid();
 
+   if (old_uid != 0)
+      return true;
    if(_config->FindB("Debug::NoDropPrivs", false) == true)
       return true;
 
@@ -2197,22 +2200,43 @@ bool DropPrivs()
       return _error->Errno("setgroups", "Failed to setgroups");
 
    if (setegid(pw->pw_gid) != 0)
-      return _error->Errno("setgid", "Failed to setgid");
+      return _error->Errno("setegid", "Failed to setegid");
+
    if (setgid(pw->pw_gid) != 0)
       return _error->Errno("setgid", "Failed to setgid");
-   
+
    if (setuid(pw->pw_uid) != 0)
       return _error->Errno("setuid", "Failed to setuid");
    // the seteuid() is probably uneeded (at least thats what the linux
    // man-page says about setuid(2)) but we cargo culted it anyway
-   if (setuid(pw->pw_uid) != 0)
-      return _error->Errno("setuid", "Failed to setuid");
 
-   // be defensive
-   if(setgid(0) != -1 || setegid(0) != -1)
-      return _error->Error("Could restore gid to root, privilege dropping does not work");
-   if(setuid(0) != -1 || seteuid(0) != -1)
-      return _error->Error("Could restore uid to root, privilege dropping does not work");
 
+   if (seteuid(pw->pw_uid) != 0)
+      return _error->Errno("seteuid", "Failed to seteuid");
+
+   /* Try changing GID/EGID */
+   if (pw->pw_gid != old_gid && (setgid(old_gid) != -1 || setegid(old_gid) != -1))
+      return _error->Error("Could restore a gid to root, privilege dropping did not work");
+
+   if (pw->pw_uid != old_uid && (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
+      return _error->Error("Could restore a uid to root, privilege dropping did not work");
+
+   /* Verify the list of supplementary groups is what we expected */
+   gid_t groups[1];
+   if (getgroups(1, groups) != 1)
+      return _error->Errno("getgroups", "Could not get new groups");
+   if (groups[0] != pw->pw_gid)
+      return _error->Error("Could not switch group");
+   /* Verify gid, egid, uid, and euid */
+   if (getgid() != pw->pw_gid)
+      return _error->Error("Could not switch group");
+   if (getegid() != pw->pw_gid)
+      return _error->Error("Could not switch effective group");
+   if (getuid() != pw->pw_uid)
+      return _error->Error("Could not switch user");
+   if (geteuid() != pw->pw_uid)
+      return _error->Error("Could not switch effective user");
+
+   /* TODO: Check saved uid/saved gid as well */
    return true;
 }
