@@ -2213,13 +2213,6 @@ bool DropPrivs()
    if (seteuid(pw->pw_uid) != 0)
       return _error->Errno("seteuid", "Failed to seteuid");
 
-   // Check that uid and gid changes do not work anymore
-   if (pw->pw_gid != old_gid && (setgid(old_gid) != -1 || setegid(old_gid) != -1))
-      return _error->Error("Could restore a gid to root, privilege dropping did not work");
-
-   if (pw->pw_uid != old_uid && (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
-      return _error->Error("Could restore a uid to root, privilege dropping did not work");
-
    // Verify that the user has only a single group, and the correct one
    gid_t groups[1];
    if (getgroups(1, groups) != 1)
@@ -2256,6 +2249,13 @@ bool DropPrivs()
    if (sgid != pw->pw_gid)
       return _error->Error("Could not switch saved set-group-ID");
 #endif
+
+   // Check that uid and gid changes do not work anymore
+   if (pw->pw_gid != old_gid && (setgid(old_gid) != -1 || setegid(old_gid) != -1))
+      return _error->Error("Could restore a gid to root, privilege dropping did not work");
+
+   if (pw->pw_uid != old_uid && (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
+      return _error->Error("Could restore a uid to root, privilege dropping did not work");
 
    return true;
 }
