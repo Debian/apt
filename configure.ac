@@ -172,6 +172,12 @@ AC_EGREP_HEADER(h_errno, netdb.h, [AC_MSG_RESULT(normal)],
        [AC_MSG_ERROR("not found.")])
    ])
 
+
+dnl check for setuid checking function
+AC_CHECK_FUNCS(getresuid getresgid)
+AC_SUBST(HAVE_GETRESUID)
+AC_SUBST(HAVE_GETRESGID)
+
 dnl Check for doxygen
 AC_PATH_PROG(DOXYGEN, doxygen)
 

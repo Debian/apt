@@ -5,6 +5,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -261,8 +262,10 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 int main()
 {
    setlocale(LC_ALL, "");
-   
+
    GPGVMethod Mth;
+
+   Mth.DropPrivsOrDie();
 
    return Mth.Run();
 }

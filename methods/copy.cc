@@ -127,5 +127,7 @@ int main()
    setlocale(LC_ALL, "");
 
    CopyMethod Mth;
+
+   Mth.DropPrivsOrDie();
    return Mth.Run();
 }

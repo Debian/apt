@@ -139,5 +139,8 @@ int main(int, char *argv[])
    ++Prog;
 
    GzipMethod Mth;
+
+   Mth.DropPrivsOrDie();
+
    return Mth.Run();
 }

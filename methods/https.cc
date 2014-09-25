@@ -446,6 +446,8 @@ int main()
    HttpsMethod Mth;
    curl_global_init(CURL_GLOBAL_SSL) ;
 
+   Mth.DropPrivsOrDie();
+
    return Mth.Run();
 }
 

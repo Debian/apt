@@ -26,6 +26,13 @@ case "$1" in
 	    fi
 	fi
 
+        # add unprivileged user for the apt methods
+        adduser --force-badname --system --no-create-home \
+            --quiet _apt || true
+        chown -R _apt:root \
+            /var/lib/apt/lists \
+            /var/cache/apt/archives
+
         # ensure tighter permissons on the logs, see LP: #975199
         if dpkg --compare-versions "$2" lt-nl 0.9.7.7; then
             # ensure permissions are right

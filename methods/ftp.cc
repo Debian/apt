@@ -1131,6 +1131,9 @@ int main(int, const char *argv[])
    }
    
    FtpMethod Mth;
+
+   // no more active ftp, sorry
+   Mth.DropPrivsOrDie();
    
    return Mth.Run();
 }
