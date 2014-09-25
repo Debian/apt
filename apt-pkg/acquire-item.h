@@ -245,12 +245,12 @@ class pkgAcquire::Item : public WeakPointable
     *
     *  \return a URI that should be used to describe what is being fetched.
     */
-   virtual std::string DescURI() const = 0;
+   virtual std::string DescURI() = 0;
    /** \brief Short item description.
     *
     *  \return a brief description of the object being fetched.
     */
-   virtual std::string ShortDesc() const {return DescURI();}
+   virtual std::string ShortDesc() {return DescURI();}
 
    /** \brief Invoked by the worker when the download is completely done. */
    virtual void Finished() {};
@@ -347,7 +347,7 @@ class pkgAcqSubIndex : public pkgAcquire::Item
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
+   virtual std::string DescURI() {return Desc.URI;};
    virtual std::string Custom600Headers() const;
    virtual bool ParseIndex(std::string const &IndexFile);
 
@@ -423,7 +423,7 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return RealURI + "Index";};
+   virtual std::string DescURI() {return RealURI + "Index";};
    virtual std::string Custom600Headers() const;
 
    /** \brief Parse the Index file for a set of Packages diffs.
@@ -516,7 +516,7 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 	 pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return RealURI + "Index";};
+   virtual std::string DescURI() {return RealURI + "Index";};
 
    /** \brief Create an index merge-diff item.
     *
@@ -641,7 +641,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
 
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return RealURI + "Index";};
+   virtual std::string DescURI() {return RealURI + "Index";};
 
    /** \brief Create an index diff item.
     *
@@ -726,7 +726,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return Desc.URI;};
+   virtual std::string DescURI() {return Desc.URI;};
 
    /** \brief Create a pkgAcqIndex.
     *
@@ -890,7 +890,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return RealURI; };
+   virtual std::string DescURI() {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire *Owner,std::string URI,std::string URIDesc, std::string ShortDesc,
@@ -983,7 +983,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return RealURI; };
+   virtual std::string DescURI() {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire *Owner,
@@ -1077,8 +1077,8 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
-   virtual std::string ShortDesc() const {return Desc.ShortDesc;};
+   virtual std::string DescURI() {return Desc.URI;};
+   virtual std::string ShortDesc() {return Desc.ShortDesc;};
    virtual void Finished();
    virtual bool IsTrusted() const;
    
@@ -1127,7 +1127,7 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &CalcHashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
+   virtual std::string DescURI() {return Desc.URI;};
    virtual std::string Custom600Headers() const;
 
    /** \brief Create a new pkgAcqFile object.
