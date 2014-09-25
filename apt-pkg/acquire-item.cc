@@ -1063,10 +1063,7 @@ string pkgAcqIndex::Custom600Headers() const
       Final += ".gz";
    
    string msg = "\nIndex-File: true";
-   // FIXME: this really should use "IndexTarget::IsOptional()" but that
-   //        seems to be difficult without breaking ABI
-   if (ShortDesc().find("Translation") != 0)
-      msg += "\nFail-Ignore: true";
+
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) == 0)
       msg += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
