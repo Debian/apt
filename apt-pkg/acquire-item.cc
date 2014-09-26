@@ -1970,6 +1970,10 @@ void pkgAcqMetaIndex::Failed(string Message,
       DestFile = FinalFile;
    }
 
+   // warn if the repository is unsinged
+   _error->Warning(_("The data from '%s' is not signed. Packages "
+                     "from that repository can not be authenticated."),
+                   URIDesc.c_str());
    // No Release file was present, or verification failed, so fall
    // back to queueing Packages files without verification
    QueueIndexes(false);

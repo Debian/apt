@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# ensure we print warnings for unauthenticated repositories
+# 
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture "i386"
+
+# a "normal" package with source and binary
+buildsimplenativepackage 'foo' 'all' '2.0'
+
+setupaptarchive --no-update
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+rm -f $APTARCHIVE/dists/unstable/*Release*
+
+# update without authenticated InRelease file
+testequal "Ign file: unstable InRelease
+Ign file: unstable Release
+Reading package lists...
+W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated." aptget update
+
+# ensure we can not install the package
+testequal "WARNING: The following packages cannot be authenticated!
+  foo
+E: There are problems and -y was used without --force-yes" aptget install -qq -y foo
