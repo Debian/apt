@@ -404,7 +404,7 @@ bool pkgExtract::HandleOverwrites(pkgFLCache::NodeIterator Nde,
       // Now see if this package matches one in a replace depends
       pkgCache::DepIterator Dep = Ver.DependsList();
       bool Ok = false;
-      for (; Dep.end() == false; Dep++)
+      for (; Dep.end() == false; ++Dep)
       {
 	 if (Dep->Type != pkgCache::Dep::Replaces)
 	    continue;

@@ -362,7 +362,7 @@ bool pkgCacheGenerator::MergeListVersion(ListParser &List, pkgCache::PkgIterator
       /* We know the list is sorted so we use that fact in the search.
          Insertion of new versions is done with correct sorting */
       int Res = 1;
-      for (; Ver.end() == false; LastVer = &Ver->NextVer, Ver++)
+      for (; Ver.end() == false; LastVer = &Ver->NextVer, ++Ver)
       {
 	 Res = Cache.VS->CmpVersion(Version,Ver.VerStr());
 	 // Version is higher as current version - insert here
