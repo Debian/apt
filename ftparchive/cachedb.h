@@ -99,8 +99,8 @@ class CacheDB
 
    // Stat info stored in the DB, Fixed types since it is written to disk.
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2),
-                  FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5), 
-                  FlSHA512=(1<<6), FlSource=(1<<7),
+                  FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5),
+                  FlSHA512=(1<<6), FlSource=(1<<7)
    };
 
    // the on-disk format changed (FileSize increased to 64bit) in 

@@ -1080,7 +1080,7 @@ pkgPackageManager::DoInstallPostFork(APT::Progress::PackageManager *progress)
       return Failed;
    
    return Res;
-};
+}
 #else
 pkgPackageManager::OrderResult
 pkgPackageManager::DoInstallPostFork(int statusFd)
