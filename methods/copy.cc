@@ -120,6 +120,5 @@ int main()
 
    CopyMethod Mth;
 
-   Mth.DropPrivsOrDie();
    return Mth.Run();
 }
