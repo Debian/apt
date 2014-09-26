@@ -1750,8 +1750,14 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
    }
 #endif
 
-   // Download further indexes with verification
-   QueueIndexes(true);
+   // Download further indexes with verification 
+   //
+   // we do not need to download indexfiles if the Release file has not
+   // changed because without a changed release file there are no new hashes
+   // and we ensure that the repository is always "complete" (i.e. all
+   // that is in the release file is downloaded)
+   if(IMSHit == false)
+      QueueIndexes(true);
 
 #if 0
    // is it a clearsigned MetaIndex file?
