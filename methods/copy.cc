@@ -37,15 +37,12 @@ class CopyMethod : public pkgAcqMethod
 
 void CopyMethod::CalculateHashes(FetchResult &Res)
 {
-   // For gzip indexes we need to look inside the gzip for the hash
-   // We can not use the extension here as its not used in partial 
-   // on a IMS hit
-   FileFd::OpenMode OpenMode = FileFd::ReadOnly;
-   if (_config->FindB("Acquire::GzipIndexes", false) == true)
-      OpenMode = FileFd::ReadOnlyGzip;
-
    Hashes Hash;
-   FileFd Fd(Res.Filename, OpenMode);
+   FileFd::CompressMode CompressMode = FileFd::None;
+   if (_config->FindB("Acquire::GzipIndexes", false) == true)
+      CompressMode = FileFd::Extension;
+
+   FileFd Fd(Res.Filename, FileFd::ReadOnly, CompressMode);
    Hash.AddFD(Fd);
    Res.TakeHashes(Hash);
 }
