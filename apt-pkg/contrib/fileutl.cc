@@ -2126,10 +2126,8 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
 
    int Pipe[2] = {-1, -1};
    if(pipe(Pipe) != 0)
-   {
       return _error->Errno("pipe", _("Failed to create subprocess IPC"));
-      return NULL;
-   }
+
    std::set<int> keep_fds;
    keep_fds.insert(Pipe[0]);
    keep_fds.insert(Pipe[1]);
