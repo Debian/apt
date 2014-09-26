@@ -193,6 +193,14 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
 	 Status = StatError;
 	 // do not report as usually its not the mirrors fault, but Portal/Proxy
 	 break;
+      case SignatureError:
+	 ErrorText = _("Signature error");
+	 Status = StatError;
+	 break;
+      case NotClearsigned:
+         ErrorText = _("Does not start with a cleartext signature");
+	 Status = StatError;
+	 break;
    }
    return false;
 }
@@ -1307,6 +1315,8 @@ void pkgAcqMetaBase::AbortTransaction()
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "AbortTransaction: " << TransactionManager << std::endl;
 
+   // ensure the toplevel is in error state too
+   Status = pkgAcquire::Item::StatError;
    for (std::vector<Item*>::iterator I = Transaction.begin();
         I != Transaction.end(); ++I)
    {
@@ -1407,6 +1417,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,          		/*{{{*/
 			     indexRecords* MetaIndexParser) :
    pkgAcqMetaBase(Owner, HashStringList(), TransactionManager), RealURI(URI), 
    MetaIndexParser(MetaIndexParser), MetaIndexFile(MetaIndexFile),
+   URIDesc(URIDesc), ShortDesc(ShortDesc),
    IndexTargets(IndexTargets), AuthPass(false), IMSHit(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -1505,13 +1516,35 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       DestFile += URItoFileName(RealURI);
    }
 
-   Complete = true;
+   // we parse the MetaIndexFile here because at this point we can
+   // trust the data
+   if(AuthPass == true)
+   {
+      // load indexes and queue further downloads
+      MetaIndexParser->Load(MetaIndexFile);
+      ((pkgAcqMetaIndex*)TransactionManager)->QueueIndexes(true);
+   }
 
+   Complete = true;
 }
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   
+   // FIXME: meh, this is not really elegant
+   string InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
+                                         "InRelease");
+   string FinalInRelease = _config->FindDir("Dir::State::lists") + URItoFileName(InReleaseURI);
+
+   if(RealFileExists(Final) || RealFileExists(FinalInRelease))
+   {
+      _error->Error("The repository '%s' is no longer signed.",
+                    URIDesc.c_str());
+      Rename(MetaIndexFile, MetaIndexFile+".FAILED");
+      TransactionManager->AbortTransaction();
+      return;
+   }
 
    // this ensures that any file in the lists/ dir is removed by the
    // transaction
@@ -1525,6 +1558,19 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       bool Stop = GenerateAuthWarning(RealURI, Message);
       if(Stop)
          return;
+   }
+
+   // only allow going further if the users explicitely wants it
+   if(_config->FindB("APT::Get::AllowUnauthenticated", false))
+   {
+      _error->Warning("Please use --allow-unauthenticated");
+   } 
+   else 
+   {
+      // we parse the indexes here because at this point the user wanted
+      // a repository that may potentially harm him
+      MetaIndexParser->Load(MetaIndexFile);
+      ((pkgAcqMetaIndex*)TransactionManager)->QueueIndexes(true);
    }
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
@@ -1547,6 +1593,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
 				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
    pkgAcqMetaBase(Owner, HashStringList(), TransactionManager), RealURI(URI), IndexTargets(IndexTargets),
+   URIDesc(URIDesc), ShortDesc(ShortDesc),
    MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false),
    MetaIndexSigURI(MetaIndexSigURI), MetaIndexSigURIDesc(MetaIndexSigURIDesc),
    MetaIndexSigShortDesc(MetaIndexSigShortDesc)
@@ -1619,13 +1666,7 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
          // Still more retrieving to do
          return;
 
-      if (SigFile == "")
-      {
-         // load indexes, the signature will downloaded afterwards
-         MetaIndexParser->Load(DestFile);
-         QueueIndexes(true);
-      }
-      else
+      if (SigFile != "")
       {
          // There was a signature file, so pass it to gpgv for
          // verification
@@ -1952,7 +1993,8 @@ void pkgAcqMetaIndex::Failed(string Message,
 
    /* Always move the meta index, even if gpgv failed. This ensures
     * that PackageFile objects are correctly filled in */
-   if (FileExists(DestFile)) {
+   if (FileExists(DestFile)) 
+   {
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
       /* InRelease files become Release files, otherwise
@@ -1970,13 +2012,19 @@ void pkgAcqMetaIndex::Failed(string Message,
       DestFile = FinalFile;
    }
 
-   // warn if the repository is unsinged
-   _error->Warning(_("The data from '%s' is not signed. Packages "
-                     "from that repository can not be authenticated."),
-                   URIDesc.c_str());
    // No Release file was present, or verification failed, so fall
    // back to queueing Packages files without verification
-   QueueIndexes(false);
+   // only allow going further if the users explicitely wants it
+   if(_config->FindB("APT::Get::AllowUnauthenticated", false))
+   {
+      // warn if the repository is unsinged
+      _error->Warning(_("The data from '%s' is not signed. Packages "
+                     "from that repository can not be authenticated."),
+                   URIDesc.c_str());
+      _error->Warning("Please use --allow-unauthenticated");
+   } else {
+      QueueIndexes(false);
+   }
 }
 									/*}}}*/
 
@@ -2060,7 +2108,8 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
    if (FileExists(DestFile) && !StartsWithGPGClearTextSignature(DestFile))
    {
       pkgAcquire::Item::Failed(Message, Cnf);
-      ErrorText = _("Does not start with a cleartext signature");
+      RenameOnError(NotClearsigned);
+      TransactionManager->AbortTransaction();
       return;
    }
    pkgAcqMetaIndex::Done(Message, Size, Hashes, Cnf);
