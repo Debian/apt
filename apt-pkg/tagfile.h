@@ -94,7 +94,7 @@ class pkgTagSection
    /** \brief amount of Tags in the current section
     *
     * Note: if a Tag is mentioned repeatly it will be counted multiple
-    * times, but only the last occurance is available via Find methods.
+    * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
    bool Exists(const char* const Tag) const;
