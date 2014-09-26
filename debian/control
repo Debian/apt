@@ -18,7 +18,7 @@ XS-Testsuite: autopkgtest
 
 Package: apt
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${apt:keyring}, gnupg
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${apt:keyring}, gnupg | gnupg2
 Replaces: manpages-pl (<< 20060617-3~), manpages-it (<< 2.80-4~), sun-java6-jdk (>> 0), sun-java5-jdk (>> 0), openjdk-6-jdk (<< 6b24-1.11-0ubuntu1~)
 Breaks: manpages-pl (<< 20060617-3~), manpages-it (<< 2.80-4~), sun-java6-jdk (>> 0), sun-java5-jdk (>> 0), openjdk-6-jdk (<< 6b24-1.11-0ubuntu1~)
 Conflicts: python-apt (<< 0.7.93.2~)
@@ -43,7 +43,7 @@ Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Breaks: apt (<< 0.9.4~), libapt-inst1.5 (<< 0.9.9~)
+Breaks: apt (<< 1.0.2~), libapt-inst1.5 (<< 0.9.9~)
 Section: libs
 Description: package management runtime library
  This library provides the common functionality for searching and
