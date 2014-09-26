@@ -18,11 +18,21 @@ setupaptarchive --no-update
 APTARCHIVE=$(readlink -f ./aptarchive)
 rm -f $APTARCHIVE/dists/unstable/*Release*
 
-# update without authenticated InRelease file
+# update without authenticated files leads to warning
 testequal "Ign file: unstable InRelease
 Ign file: unstable Release
 Reading package lists...
-W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated." aptget update
+W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated.
+W: Use --allow-unauthenticated to force the update" aptget update
+
+# no package foo
+testequal "Listing..." apt list foo
+
+# allow override
+testequal "Ign file: unstable InRelease
+Ign file: unstable Release
+Reading package lists...
+W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated." aptget update --allow-unauthenticated
 
 # ensure we can not install the package
 testequal "WARNING: The following packages cannot be authenticated!

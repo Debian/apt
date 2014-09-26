@@ -1316,7 +1316,6 @@ void pkgAcqMetaBase::AbortTransaction()
       std::clog << "AbortTransaction: " << TransactionManager << std::endl;
 
    // ensure the toplevel is in error state too
-   Status = pkgAcquire::Item::StatError;
    for (std::vector<Item*>::iterator I = Transaction.begin();
         I != Transaction.end(); ++I)
    {
@@ -1542,6 +1541,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       _error->Error("The repository '%s' is no longer signed.",
                     URIDesc.c_str());
       Rename(MetaIndexFile, MetaIndexFile+".FAILED");
+      Status = pkgAcquire::Item::StatError;
       TransactionManager->AbortTransaction();
       return;
    }
@@ -1561,16 +1561,16 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    }
 
    // only allow going further if the users explicitely wants it
-   if(_config->FindB("APT::Get::AllowUnauthenticated", false))
-   {
-      _error->Warning("Please use --allow-unauthenticated");
-   } 
-   else 
+   if(_config->FindB("APT::Get::AllowUnauthenticated", false) == true)
    {
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
       MetaIndexParser->Load(MetaIndexFile);
       ((pkgAcqMetaIndex*)TransactionManager)->QueueIndexes(true);
+   } 
+   else 
+   {
+      _error->Warning("Use --allow-unauthenticated to force the update");
    }
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
@@ -1793,12 +1793,12 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 
    // Download further indexes with verification 
    //
-   // we do not need to download indexfiles if the Release file has not
-   // changed because without a changed release file there are no new hashes
-   // and we ensure that the repository is always "complete" (i.e. all
-   // that is in the release file is downloaded)
-   if(IMSHit == false)
-      QueueIndexes(true);
+   // it would be really nice if we could simply do
+   //    if (IMSHit == false) QueueIndexes(true)
+   // and skip the download if the Release file has not changed
+   // - but right now the list cleaner will needs to be tricked
+   //   to not delete all our packages/source indexes in this case
+   QueueIndexes(true);
 
 #if 0
    // is it a clearsigned MetaIndex file?
@@ -2012,19 +2012,20 @@ void pkgAcqMetaIndex::Failed(string Message,
       DestFile = FinalFile;
    }
 
+   _error->Warning(_("The data from '%s' is not signed. Packages "
+                     "from that repository can not be authenticated."),
+                   URIDesc.c_str());
+
    // No Release file was present, or verification failed, so fall
    // back to queueing Packages files without verification
    // only allow going further if the users explicitely wants it
-   if(_config->FindB("APT::Get::AllowUnauthenticated", false))
+   if(_config->FindB("APT::Get::AllowUnauthenticated", false) == true)
    {
-      // warn if the repository is unsinged
-      _error->Warning(_("The data from '%s' is not signed. Packages "
-                     "from that repository can not be authenticated."),
-                   URIDesc.c_str());
-      _error->Warning("Please use --allow-unauthenticated");
-   } else {
       QueueIndexes(false);
-   }
+   } else {
+      // warn if the repository is unsinged
+      _error->Warning("Use --allow-unauthenticated to force the update");
+   } 
 }
 									/*}}}*/
 
