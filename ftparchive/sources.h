@@ -17,7 +17,7 @@ class DscExtract
    bool TakeDsc(const void *Data, unsigned long Size);
    bool Read(std::string FileName);
    
-   DscExtract() : Data(0), Length(0) {
+   DscExtract() : Data(0), Length(0), IsClearSigned(false) {
      Data = new char[maxSize];
    };
    ~DscExtract() { 

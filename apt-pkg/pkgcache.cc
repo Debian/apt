@@ -84,6 +84,7 @@ pkgCache::Header::Header()
    FileList = 0;
    VerSysName = 0;
    Architecture = 0;
+   Architectures = 0;
    HashTableSize = _config->FindI("APT::Cache-HashTableSize", 10 * 1048);
    memset(Pools,0,sizeof(Pools));
 

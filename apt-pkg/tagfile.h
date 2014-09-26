@@ -43,7 +43,7 @@ class pkgTagSection
       unsigned int StartValue;
       unsigned int NextInBucket;
 
-      TagData(unsigned int const StartTag) : StartTag(StartTag), NextInBucket(0) {}
+      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
    };
    std::vector<TagData> Tags;
    unsigned int LookupTable[0x100];

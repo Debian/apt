@@ -585,7 +585,7 @@ class pkgAcquire::UriIterator
     *
     *  \param Q The queue over which this UriIterator should iterate.
     */
-   UriIterator(pkgAcquire::Queue *Q) : CurQ(Q), CurItem(0)
+   UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)
    {
       while (CurItem == 0 && CurQ != 0)
       {

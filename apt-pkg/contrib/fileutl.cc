@@ -896,7 +896,7 @@ class FileFdPrivate {							/*{{{*/
 	   bool eof;
 	   bool compressing;
 
-	   LZMAFILE() : file(NULL), eof(false), compressing(false) {}
+	   LZMAFILE() : file(NULL), eof(false), compressing(false) { buffer[0] = '\0'; }
 	   ~LZMAFILE() {
 	      if (compressing == true)
 	      {

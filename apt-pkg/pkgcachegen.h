@@ -193,7 +193,7 @@ class pkgCacheGenerator::ListParser
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
-   ListParser() : FoundFileDeps(false) {};
+   ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false) {};
    virtual ~ListParser() {};
 };
 									/*}}}*/

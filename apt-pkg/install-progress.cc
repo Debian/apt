@@ -21,6 +21,8 @@
 namespace APT {
 namespace Progress {
 
+PackageManager::PackageManager() : d(NULL), percentage(0.0), last_reported_progress(-1) {};
+PackageManager::~PackageManager() {};
 
 /* Return a APT::Progress::PackageManager based on the global
  * apt configuration (i.e. APT::Status-Fd and APT::Status-deb822-Fd)

@@ -581,27 +581,18 @@ pkgAcquire::UriIterator pkgAcquire::UriEnd()
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::MethodConfig::MethodConfig()
+pkgAcquire::MethodConfig::MethodConfig() : d(NULL), Next(0), SingleInstance(false),
+   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
+   Removable(false)
 {
-   SingleInstance = false;
-   Pipeline = false;
-   SendConfig = false;
-   LocalOnly = false;
-   Removable = false;
-   Next = 0;
 }
 									/*}}}*/
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : Name(Name), 
-            Owner(Owner)
+pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : d(NULL), Next(0),
+   Name(Name), Items(0), Workers(0), Owner(Owner), PipeDepth(0), MaxPipeDepth(1)
 {
-   Items = 0;
-   Next = 0;
-   Workers = 0;
-   MaxPipeDepth = 1;
-   PipeDepth = 0;
 }
 									/*}}}*/
 // Queue::~Queue - Destructor						/*{{{*/
@@ -805,7 +796,7 @@ void pkgAcquire::Queue::Bump()
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Update(true), MorePulses(false)
+pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(0), Update(true), MorePulses(false)
 {
    Start();
 }
