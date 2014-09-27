@@ -20,9 +20,18 @@ testdownload() {
 	fi
 	msgtest "Test download of package file $1 with" "$APT"
 	testsuccess --nomsg aptget download ${APT}
-	testsuccess test -f $1
-	rm $1
+	testsuccess test -f "$1"
+	rm -f "$1"
 }
+
+# normal case as "root"
+testdownload apt_2.0_all.deb apt
+
+# simulate normal user with non-existent root-owned directories
+rm -rf rootdir/var/cache/apt/archives/
+mkdir rootdir/var/cache/apt/archives/
+addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/cache/apt/archives || true;"
+chmod -R -w rootdir/var/cache/apt/archives
 
 # normal case(es)
 testdownload apt_1.0_all.deb apt stable
@@ -45,3 +54,17 @@ rm -f apt_1.0_all.deb apt_2.0_all.deb
 testsuccess aptget download apt apt apt/unstable apt=2.0
 testsuccess test -s apt_2.0_all.deb
 
+# restore "root" rights
+chmod -f -R +w $PWD/rootdir/var/cache/apt/archives
+rm -rf rootdir/var/cache/apt/archives/
+
+# file: debs aren't copied to archives, so change to http which obviously are
+changetowebserver
+testsuccess aptget update
+
+# test with already stored deb
+testsuccess aptget install -d apt
+testsuccess test -s rootdir/var/cache/apt/archives/apt_2.0_all.deb
+mv aptarchive/pool/apt_2.0_all.deb aptarchive/pool/apt_2.0_all.deb.gone
+testdownload apt_2.0_all.deb apt
+mv aptarchive/pool/apt_2.0_all.deb.gone aptarchive/pool/apt_2.0_all.deb

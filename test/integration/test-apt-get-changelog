@@ -13,6 +13,12 @@ setupaptarchive --no-update
 changetowebserver
 testsuccess aptget update
 
+# simulate normal user with non-existent root-owned directories
+rm -rf rootdir/var/cache/apt/archives/
+mkdir rootdir/var/cache/apt/archives/
+addtrap 'prefix' "chmod -f -R +w $PWD/rootdir/var/cache/apt/archives || true;"
+chmod -R -w rootdir/var/cache/apt/archives
+
 echo 'Apt::Changelogs::Server "http://localhost:8080/";' > rootdir/etc/apt/apt.conf.d/changelog.conf
 
 testequal "'http://localhost:8080//pool/apt_1.0/changelog'" aptget changelog apt --print-uris

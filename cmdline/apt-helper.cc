@@ -51,7 +51,8 @@ static bool DoDownloadFile(CommandLine &CmdL)
 
    pkgAcquire Fetcher;
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
+   if (Fetcher.Setup(&Stat, "", false) == false)
+      return false;
    std::string download_uri = CmdL.FileList[1];
    std::string targetfile = CmdL.FileList[2];
    std::string hash;

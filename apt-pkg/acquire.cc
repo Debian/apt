@@ -73,23 +73,27 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) :  LockFD(-1), Queues(0), Wor
 // ---------------------------------------------------------------------
 /* Do everything needed to be a complete Acquire object and report the
    success (or failure) back so the user knows that something is wrong… */
-bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
+bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock,
+      bool const createDirectories)
 {
    Log = Progress;
 
    // check for existence and possibly create auxiliary directories
-   string const listDir = _config->FindDir("Dir::State::lists");
-   string const partialListDir = listDir + "partial/";
-   string const archivesDir = _config->FindDir("Dir::Cache::Archives");
-   string const partialArchivesDir = archivesDir + "partial/";
+   if (createDirectories == true)
+   {
+      string const listDir = _config->FindDir("Dir::State::lists");
+      string const partialListDir = listDir + "partial/";
+      string const archivesDir = _config->FindDir("Dir::Cache::Archives");
+      string const partialArchivesDir = archivesDir + "partial/";
 
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
-       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
-      return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+      if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
+	    CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
+	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
 
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
-       CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
-      return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+      if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
+	    CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
+	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+   }
 
    if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)
       return true;

@@ -626,14 +626,14 @@ static bool DoDownload(CommandLine &CmdL)
 
    APT::CacheSetHelper helper(c0out);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
 
    if (verset.empty() == true)
       return false;
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet", 0));
    pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat) == false)
+   if (Fetcher.Setup(&Stat, "", false) == false)
       return false;
 
    pkgRecords Recs(Cache);
@@ -1536,7 +1536,7 @@ static bool DoChangelog(CommandLine &CmdL)
    
    APT::CacheSetHelper helper(c0out);
    APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true)
       return false;
    pkgAcquire Fetcher;
@@ -1551,7 +1551,8 @@ static bool DoChangelog(CommandLine &CmdL)
    }
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
+   if (Fetcher.Setup(&Stat, "",false) == false)
+      return false;
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 
