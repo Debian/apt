@@ -64,6 +64,10 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 pkgAcquire::Item::Item(pkgAcquire *Owner, HashStringList const &ExpectedHashes) :
    Owner(Owner), FileSize(0), PartialSize(0), Mode(0), ID(0), Complete(false),
    Local(false), QueueCounter(0), ExpectedAdditionalItems(0),
@@ -72,6 +76,9 @@ pkgAcquire::Item::Item(pkgAcquire *Owner, HashStringList const &ExpectedHashes) 
    Owner->Add(this);
    Status = StatIdle;
 }
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 									/*}}}*/
 // Acquire::Item::~Item - Destructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -774,7 +781,15 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
       Local = true;
       Desc.URI = "rred:" + FinalFile;
       QueueURI(Desc);
+      ActiveSubprocess = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
       Mode = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
       return;
    } 
 
@@ -894,7 +909,15 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       Local = true;
       Desc.URI = "rred:" + FinalFile;
       QueueURI(Desc);
+      ActiveSubprocess = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
       Mode = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
       return;
    }
    // success in download/apply all diffs, clean up
@@ -1191,7 +1214,15 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       DestFile += ".decomp";
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
+      ActiveSubprocess = "copy";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
       Mode = "copy";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
       return;
    }
 
@@ -1251,8 +1282,15 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
 
-   // FIXME: this points to a c++ string that goes out of scope
-   Mode = decompProg.c_str();
+   ActiveSubprocess = decompProg;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+      Mode = ActiveSubprocess.c_str();
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 }
 									/*}}}*/
 // AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
@@ -1554,7 +1592,15 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
          AuthPass = true;
          Desc.URI = "gpgv:" + SigFile;
          QueueURI(Desc);
-         Mode = "gpgv";
+	 ActiveSubprocess = "gpgv";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	 Mode = "gpgv";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 	 return;
       }
    }
