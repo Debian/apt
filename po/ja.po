@@ -6,10 +6,10 @@
 # Debian Project, Kenshi Muto <kmuto@debian.org>, 2004-2012
 msgid ""
 msgstr ""
-"Project-Id-Version: apt 0.9.16.1\n"
+"Project-Id-Version: apt 1.0.9.1\n"
 "Report-Msgid-Bugs-To: APT Development Team <deity@lists.debian.org>\n"
 "POT-Creation-Date: 2014-09-09 20:35+0200\n"
-"PO-Revision-Date: 2014-03-21 19:53+0900\n"
+"PO-Revision-Date: 2014-09-27 19:32+0900\n"
 "Last-Translator: Kenshi Muto <kmuto@debian.org>\n"
 "Language-Team: Debian Japanese List <debian-japanese@lists.debian.org>\n"
 "Language: ja\n"
@@ -640,7 +640,7 @@ msgstr ""
 
 #: cmdline/apt-helper.cc:36
 msgid "Need one URL as argument"
-msgstr ""
+msgstr "引数として URL が 1 つ必要です"
 
 #: cmdline/apt-helper.cc:49
 msgid "Must specify at least one pair url/filename"
@@ -651,7 +651,6 @@ msgid "Download Failed"
 msgstr "ダウンロード失敗"
 
 #: cmdline/apt-helper.cc:80
-#, fuzzy
 msgid ""
 "Usage: apt-helper [options] command\n"
 "       apt-helper [options] download-file uri target-path\n"
@@ -671,6 +670,7 @@ msgstr ""
 "\n"
 "コマンド:\n"
 "   download-file - 指定した uri を目標パスにダウンロードする\n"
+"  auto-detect-proxy - apt.conf を使ってプロキシを検出する\n"
 "\n"
 "                この APT helper は Super Meep Powers 化されています。\n"
 
@@ -1100,8 +1100,8 @@ msgstr ""
 "が必要?)"
 
 #: methods/gpgv.cc:184
-msgid "Unknown error executing gpgv"
-msgstr "gpgv の実行中に未知のエラーが発生"
+msgid "Unknown error executing apt-key"
+msgstr "apt-key の実行中に未知のエラーが発生"
 
 #: methods/gpgv.cc:217 methods/gpgv.cc:224
 msgid "The following signatures were invalid:\n"
@@ -1496,57 +1496,56 @@ msgid "Recommended packages:"
 msgstr "推奨パッケージ:"
 
 #: apt-private/private-install.cc:825
-#, fuzzy, c-format
+#, c-format
 msgid "Skipping %s, it is already installed and upgrade is not set.\n"
-msgstr "すでに %s に展開されたソースがあるため、展開をスキップします\n"
+msgstr "%s  はすでにインストール済みで upgrade がセットされていないため、インストールをスキップします。\n"
 
 #: apt-private/private-install.cc:829
 #, c-format
 msgid "Skipping %s, it is not installed and only upgrades are requested.\n"
-msgstr ""
+msgstr "%s  はインストールされておらず、アップグレードだけの要求なので、インストールをスキップします。\n"
 
 #: apt-private/private-install.cc:841
 #, c-format
 msgid "Reinstallation of %s is not possible, it cannot be downloaded.\n"
-msgstr ""
+msgstr "%s はダウンロードできないため、再インストールは不可能です。\n"
 
 #: apt-private/private-install.cc:846
-#, fuzzy, c-format
+#, c-format
 msgid "%s is already the newest version.\n"
-msgstr "%s はすでに保留に設定されています。\n"
+msgstr "%s はすでに最新版です。\n"
 
 #: apt-private/private-install.cc:894
 #, c-format
 msgid "Selected version '%s' (%s) for '%s'\n"
-msgstr ""
+msgstr "'%3$s' のバージョン '%1$s' (%2$s) を選択しました\n"
 
 #: apt-private/private-install.cc:899
 #, c-format
 msgid "Selected version '%s' (%s) for '%s' because of '%s'\n"
-msgstr ""
+msgstr "'%4$s' のために '%3$s' のバージョン '%1$s' (%2$s) を選択しました\n"
 
 #. TRANSLATORS: Note, this is not an interactive question
 #: apt-private/private-install.cc:941
 #, c-format
 msgid "Package '%s' is not installed, so not removed. Did you mean '%s'?\n"
-msgstr ""
+msgstr "パッケージ '%s' はインストールされていないため削除もされません。削除したかったのは '%s' でしょうか?\n"
 
 #: apt-private/private-install.cc:947
-#, fuzzy, c-format
+#, c-format
 msgid "Package '%s' is not installed, so not removed\n"
-msgstr "%lu 個のパッケージが完全にインストールまたは削除されていません。\n"
+msgstr "パッケージ '%s' はインストールされていないため、削除もされません\n"
 
 #: apt-private/private-list.cc:129
 msgid "Listing"
 msgstr "一覧表示"
 
 #: apt-private/private-list.cc:159
-#, fuzzy, c-format
+#, c-format
 msgid "There is %i additional version. Please use the '-a' switch to see it"
 msgid_plural ""
 "There are %i additional versions. Please use the '-a' switch to see them."
-msgstr[0] ""
-"追加レコードが %i 件あります。表示するには '-a' スイッチを付けてください。"
+msgstr[0] "追加バージョンが %i 件あります。表示するには '-a' スイッチを付けてください。"
 
 #: apt-private/private-main.cc:32
 msgid ""
@@ -1758,15 +1757,15 @@ msgstr "update コマンドは引数をとりません"
 msgid "%i package can be upgraded. Run 'apt list --upgradable' to see it.\n"
 msgid_plural ""
 "%i packages can be upgraded. Run 'apt list --upgradable' to see them.\n"
-msgstr[0] ""
+msgstr[0] "アップグレードできるパッケージが %i 個あります。表示するには 'apt list --upgradable' を実行してください。\n"
 
 #: apt-private/private-update.cc:94
 msgid "All packages are up to date."
-msgstr ""
+msgstr "パッケージはすべて最新です。"
 
 #: apt-private/private-upgrade.cc:25
-msgid "Calculating upgrade"
-msgstr "アップグレードパッケージを検出しています"
+msgid "Calculating upgrade... "
+msgstr "アップグレードパッケージを検出しています ... "
 
 #: apt-private/private-upgrade.cc:28
 msgid "Done"
@@ -1882,9 +1881,9 @@ msgstr ""
 "  -o=? 指定した設定オプションを適用する (例: -o dir::cache=/tmp)\n"
 
 #: cmdline/apt-extracttemplates.cc:254
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to mkstemp %s"
-msgstr "%s の状態を取得できません"
+msgstr "mkstemp %s を実行できません"
 
 #: cmdline/apt-extracttemplates.cc:259 apt-pkg/pkgcachegen.cc:1400
 #, c-format
@@ -2040,9 +2039,8 @@ msgid "Failed to stat %s"
 msgstr "%s の状態を取得するのに失敗しました"
 
 #: ftparchive/cachedb.cc:332
-#, fuzzy
 msgid "Failed to read .dsc"
-msgstr "%s のリンク読み取りに失敗しました"
+msgstr ".dsc の読み取りに失敗しました"
 
 #: ftparchive/cachedb.cc:365
 msgid "Archive has no control record"
@@ -2441,9 +2439,9 @@ msgid "Unable to lock directory %s"
 msgstr "ディレクトリ %s をロックできません"
 
 #: apt-pkg/acquire.cc:490 apt-pkg/clean.cc:39
-#, fuzzy, c-format
+#, c-format
 msgid "Clean of %s is not supported"
-msgstr "インデックスファイルのタイプ '%s' はサポートされていません"
+msgstr "%s の消去はサポートされていません"
 
 #. only show the ETA if it makes sense
 #. two days
