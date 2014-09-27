@@ -14,8 +14,8 @@ test: $(BIN)/gtest$(BASENAME)
 $(BIN)/gtest$(BASENAME): $(LIB)/gtest.a
 
 PROGRAM = gtest${BASENAME}
-SLIBS = -lapt-pkg -pthread $(LIB)/gtest.a
-LIB_MAKES = apt-pkg/makefile
+SLIBS = -lapt-pkg -lapt-private -pthread $(LIB)/gtest.a
+LIB_MAKES = apt-pkg/makefile apt-private/makefile
 SOURCE = gtest_runner.cc $(wildcard *-helpers.cc *_test.cc)
 include $(PROGRAM_H)
 
