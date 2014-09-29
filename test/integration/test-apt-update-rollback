@@ -114,7 +114,7 @@ test_unauthenticated_to_invalid_inrelease() {
     rm $APTARCHIVE/dists/unstable/Release.gpg
     avoid_ims_hit
     
-    testsuccess aptget update -qq
+    testsuccess aptget update -qq --allow-unauthenticated
     testequal "WARNING: The following packages cannot be authenticated!
   old
 E: There are problems and -y was used without --force-yes" aptget install -qq -y old

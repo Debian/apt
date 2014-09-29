@@ -8,6 +8,8 @@ set -e
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
+umask 022
+
 setupenvironment
 configarchitecture "i386"
 
