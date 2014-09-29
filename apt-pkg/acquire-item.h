@@ -364,6 +364,13 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
     */
    const std::vector<IndexTarget*>* IndexTargets;
 
+   /** \brief If \b true, the index's signature is currently being verified.
+    */
+   bool AuthPass;
+
+   // required to deal gracefully with problems caused by incorrect ims hits
+   bool IMSHit; 
+
    /** \brief Starts downloading the individual index files.
     *
     *  \param verify If \b true, only indices whose expected hashsum
@@ -381,6 +388,15 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
    bool TransactionHasError() APT_PURE;
    void CommitTransaction();
 
+   /** \brief Stage (queue) a copy action when the transaction is commited
+    */
+   void TransactionStageCopy(Item *I,
+                             const std::string &From, 
+                             const std::string &To);
+   /** \brief Stage (queue) a removal action when the transaction is commited
+    */
+   void TransactionStageRemoval(Item *I, const std::string &FinalFile);
+
    // helper for the signature warning
    bool GenerateAuthWarning(const std::string &RealURI,
                             const std::string &Message);
@@ -392,7 +408,8 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
                   HashStringList const &ExpectedHashes=HashStringList(),
                   pkgAcqMetaBase *TransactionManager=NULL)
       : Item(Owner, ExpectedHashes, TransactionManager),
-        MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets) {};
+        MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets),
+        AuthPass(false), IMSHit(false) {};
 };
 
 /** \brief An acquire item that downloads the detached signature	{{{
@@ -415,17 +432,14 @@ class pkgAcqMetaSig : public pkgAcqMetaBase
     */
    std::string RealURI;
 
-   std::string URIDesc;
-   std::string ShortDesc;
-
    /** \brief The file we need to verify */
    std::string MetaIndexFile;
 
-   /** \brief If we are in fetching or download state */
-   bool AuthPass;
+   /** \brief Long URI description used in the acquire system */
+   std::string URIDesc;
 
-   /** \brief Was this file already on disk */
-   bool IMSHit;
+   /** \brief Short URI description used in the acquire system */
+   std::string ShortDesc;
 
    public:
    
@@ -473,12 +487,6 @@ class pkgAcqMetaIndex : public pkgAcqMetaBase
     *  indices will not be checked.
     */
    std::string SigFile;
-
-   /** \brief If \b true, the index's signature is currently being verified.
-    */
-   bool AuthPass;
-   // required to deal gracefully with problems caused by incorrect ims hits
-   bool IMSHit; 
 
    /** \brief Check that the release file is a release file for the
     *  correct distribution.

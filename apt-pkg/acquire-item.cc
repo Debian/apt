@@ -627,7 +627,9 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
       // this happens if we have a up-to-date indexfile
       if(!FileExists(PartialFile))
          PartialFile = DestFile;
-      
+
+      TransactionManager->TransactionStageCopy(this, PartialFile, DestFile);
+
       // this is for the "real" finish
       Complete = true;
       Status = StatDone;
@@ -892,8 +894,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 		   << DestFile << " -> " << FinalFile << std::endl;
 
       // queue for copy by the transaction manager
-      PartialFile = DestFile;
-      DestFile = FinalFile;
+      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
 
       // ensure the ed's are gone regardless of list-cleanup
       for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
@@ -1178,8 +1179,7 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
 	 unlink(CompressedFile.c_str());
 
       // Done, queue for rename on transaction finished
-      PartialFile = DestFile;
-      DestFile = GetFinalFilename();
+      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
 
       return;
    }
@@ -1428,6 +1428,22 @@ void pkgAcqMetaBase::CommitTransaction()
    }
 }
 
+void pkgAcqMetaBase::TransactionStageCopy(Item *I,
+                                          const std::string &From,
+                                          const std::string &To)
+{
+   I->PartialFile = From;
+   I->DestFile = To;
+}
+
+void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
+                                             const std::string &FinalFile)
+{
+   I->PartialFile = "";
+   I->DestFile = FinalFile; 
+}
+
+
                                                                        /*{{{*/
 bool pkgAcqMetaBase::GenerateAuthWarning(const std::string &RealURI,
                                          const std::string &Message)
@@ -1473,7 +1489,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,          		/*{{{*/
    pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, 
                   HashStringList(), TransactionManager),
    RealURI(URI), MetaIndexFile(MetaIndexFile), URIDesc(URIDesc),
-   ShortDesc(ShortDesc), AuthPass(false), IMSHit(false)
+   ShortDesc(ShortDesc)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
@@ -1547,7 +1563,7 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
          
-      DestFile = PartialFile = FinalFile;
+      TransactionManager->TransactionStageCopy(this, FinalFile, FinalFile);
    }
 
    // queue for verify
@@ -1567,8 +1583,10 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
       PartialFile = _config->FindDir("Dir::State::lists") + "partial/";
       PartialFile += URItoFileName(RealURI);
       
-      DestFile = _config->FindDir("Dir::State::lists");
-      DestFile += URItoFileName(RealURI);
+      std::string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+
+      TransactionManager->TransactionStageCopy(this, PartialFile, FinalFile);
    }
 
    // we parse the MetaIndexFile here because at this point we can
@@ -1606,7 +1624,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    // transaction
    DestFile =  _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI);
-   PartialFile = "";
+   TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // FIXME: duplicated code from pkgAcqMetaIndex
    if (AuthPass == true)
@@ -1651,7 +1669,6 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
    pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, HashStringList(),
                   TransactionManager), 
    RealURI(URI), URIDesc(URIDesc), ShortDesc(ShortDesc),
-   AuthPass(false), IMSHit(false),
    MetaIndexSigURI(MetaIndexSigURI), MetaIndexSigURIDesc(MetaIndexSigURIDesc),
    MetaIndexSigShortDesc(MetaIndexSigShortDesc)
 {
@@ -1752,9 +1769,9 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
       FinalFile += URItoFileName(RealURI);
       if (SigFile == DestFile)
 	 SigFile = FinalFile;
+
       // queue for copy in place
-      PartialFile = DestFile;
-      DestFile = FinalFile;
+      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
    }
 }
 									/*}}}*/
@@ -2077,8 +2094,7 @@ void pkgAcqMetaIndex::Failed(string Message,
       }
 
       // Done, queue for rename on transaction finished
-      PartialFile = DestFile;
-      DestFile = FinalFile;
+      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
    }
 
    _error->Warning(_("The data from '%s' is not signed. Packages "
@@ -2197,8 +2213,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       // impression (CVE-2012-0214)
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile.append(URItoFileName(RealURI));
-      PartialFile = "";
-      DestFile = FinalFile;
+      TransactionManager->TransactionStageRemoval(this, FinalFile);
 
       new pkgAcqMetaIndex(Owner, TransactionManager,
 			MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
