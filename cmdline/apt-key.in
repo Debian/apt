@@ -384,6 +384,9 @@ if [ "$command" != "help" ]; then
 
     # gpg needs (in different versions more or less) files to function correctly,
     # so we give it its own homedir and generate some valid content for it
+    if [ ! -d "$TMPDIR" ]; then
+        unset TMPDIR
+    fi
     GPGHOMEDIR="$(mktemp -d)"
     CURRENTTRAP="${CURRENTTRAP} rm -rf '${GPGHOMEDIR}';"
     trap "${CURRENTTRAP}" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
