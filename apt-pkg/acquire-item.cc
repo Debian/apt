@@ -1112,7 +1112,7 @@ void pkgAcqIndex::ReverifyAfterIMS()
 
    // adjust DestFile if its compressed on disk
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
-      DestFile += compExt;
+      DestFile += '.' + compExt;
 
    // copy FinalFile into partial/ so that we check the hash again
    string FinalFile = GetFinalFilename();
