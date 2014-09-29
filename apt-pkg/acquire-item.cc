@@ -1022,6 +1022,7 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc, string const &S
    else
    {
       Desc.URI = URI + '.' + comprExt;
+      DestFile = DestFile + '.' + comprExt;
       if(Target)
          MetaKey = string(Target->MetaKey) + '.' + comprExt;
    }
@@ -1080,10 +1081,11 @@ void pkgAcqIndex::InitByHashIfNeeded(const std::string MetaKey)
 /* The only header we use is the last-modified header. */
 string pkgAcqIndex::Custom600Headers() const
 {
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
    if (_config->FindB("Acquire::GzipIndexes",false))
-      Final += ".gz";
+      Final += compExt;
    
    string msg = "\nIndex-File: true";
 
@@ -1120,8 +1122,8 @@ std::string pkgAcqIndex::GetFinalFilename(std::string const &URI,
 {
    std::string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(URI);
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
-      FinalFile += ".gz";
+   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+      FinalFile += '.' + compExt;
    return FinalFile;
 }
 									/*}}}*/
@@ -1129,8 +1131,8 @@ std::string pkgAcqIndex::GetFinalFilename(std::string const &URI,
 void pkgAcqIndex::ReverifyAfterIMS(std::string const &FileName)
 {
    std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
-      DestFile += ".gz";
+   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+      DestFile += compExt;
 
    string FinalFile = GetFinalFilename(RealURI, compExt);
    Rename(FinalFile, FileName);
@@ -1168,7 +1170,7 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
       /* Always verify the index file for correctness (all indexes must
        * have a Package field) (LP: #346386) (Closes: #627642) 
        */
-      FileFd fd(DestFile, FileFd::ReadOnlyGzip);
+      FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Extension);
       // Only test for correctness if the file is not empty (empty is ok)
       if (fd.Size() > 0)
       {
@@ -1192,8 +1194,8 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
          will work OK */
       DestFile = _config->FindDir("Dir::State::lists") + "partial/";
       DestFile += URItoFileName(RealURI);
-      if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
-         DestFile += ".gz";
+      if (_config->FindB("Acquire::GzipIndexes",false))
+         DestFile += '.' + compExt;
 
       // Remove the compressed version.
       if (Erase == true)
@@ -1249,16 +1251,23 @@ void pkgAcqIndex::Done(string Message,unsigned long long Size,HashStringList con
    // matching the Release file
    if (!Local && StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
    {
+      // set destfile to the final destfile
+      if(_config->FindB("Acquire::GzipIndexes",false) == false)
+      {
+         DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+         DestFile += URItoFileName(RealURI);
+      }
+
       ReverifyAfterIMS(FileName);
       return;
    }
    string decompProg;
 
    // If we enable compressed indexes, queue for hash verification
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz" && !Local) 
+   if (_config->FindB("Acquire::GzipIndexes",false))
    {
       DestFile = _config->FindDir("Dir::State::lists");
-      DestFile += URItoFileName(RealURI) + ".gz";
+      DestFile += URItoFileName(RealURI) + '.' + compExt;
 
       Decompression = true;
       Desc.URI = "copy:" + FileName;
@@ -1315,11 +1324,11 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const * const 
 // ---------------------------------------------------------------------
 string pkgAcqIndexTrans::Custom600Headers() const
 {
+   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    string Final = _config->FindDir("Dir::State::lists");
    Final += URItoFileName(RealURI);
-
    if (_config->FindB("Acquire::GzipIndexes",false))
-      Final += ".gz";
+      Final += compExt;
 
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) != 0)
@@ -1697,8 +1706,12 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
             URItoFileName((*Target)->URI);
          unlink(index.c_str());
          // and also old gzipindexes
-         index += ".gz";
-         unlink(index.c_str());
+         std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+         for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+         {
+            index += '.' + (*t);
+            unlink(index.c_str());
+         }
       }
    }
 

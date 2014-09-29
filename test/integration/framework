@@ -320,6 +320,36 @@ configcompression() {
 	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf
 }
 
+forcecompressor() {
+	COMPRESSOR="$1"
+	COMPRESSOR_CMD="$1"
+	case $COMPRESSOR in
+	gzip) COMPRESS='gz';;
+	bzip2) COMPRESS='bz2';;
+	lzma) COMPRESS='lzma';;
+	xz) COMPRESS='xz';;
+	*) msgdie "Compressor $COMPRESSOR is unknown to framework, so can't be forced by forcecompressor!";;
+	esac
+	local CONFFILE="${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/00force-compressor"
+	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
+Dir::Bin::uncompressed \"/does/not/exist\";
+Dir::Bin::gzip \"/does/not/exist\";
+Dir::Bin::bzip2 \"/does/not/exist\";
+Dir::Bin::lzma \"/does/not/exist\";
+Dir::Bin::xz \"/does/not/exist\";" > "$CONFFILE"
+	if [ -e "/bin/${COMPRESSOR}" ]; then
+		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> "$CONFFILE"
+	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
+		echo "Dir::Bin::${COMPRESSOR} \"/usr/bin/${COMPRESSOR}\";" >> "$CONFFILE"
+	elif [ "${COMPRESSOR}" = 'lzma' ]; then
+		echo 'Dir::Bin::xz "/usr/bin/xz";' >> "$CONFFILE"
+		COMPRESSOR_CMD='xz --format=lzma'
+	else
+		msgtest 'Test for availability of compressor' "${COMPRESSOR}"
+		msgfail
+	fi
+}
+
 setupsimplenativepackage() {
 	local NAME="$1"
 	local ARCH="$2"

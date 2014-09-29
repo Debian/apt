@@ -5,53 +5,68 @@ TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
 
 setupenvironment
-configcompression '.' 'gz' # only gz is supported for this, so ensure it is used
-configarchitecture "i386"
+configcompression '.' 'xz' 'bz2' 'lzma' 'gz'
+configarchitecture 'i386'
 
-buildsimplenativepackage "testpkg" "i386" "1.0"
-setupaptarchive
+buildsimplenativepackage 'testpkg' 'i386' '1.0'
 
-GOODSHOW="$(aptcache show testpkg)
-"
-GOODPOLICY="$(aptcache policy testpkg)"
-GOODSHOWSRC="$(aptcache showsrc testpkg)
-"
-
-test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Architecture: i386' | wc -l) -eq 3 || msgdie 'show is broken'
-testequal "$GOODSHOW" aptcache show testpkg
-test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4 || msgdie 'policy is broken'
-testequal "$GOODPOLICY" aptcache policy testpkg
-test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Files:' -e '^Checksums-Sha256:' | wc -l) -eq 4 || msgdie 'showsrc is broken'
-testequal "$GOODSHOWSRC" aptcache showsrc testpkg
-
+buildaptarchive
+setupdistsaptarchive
+# fake a pdiff setup as apt wouldn't try pdiffs otherwise
+find aptarchive -name 'Packages' -o -name 'Sources' | while read file; do
+	mkdir "${file}.diff"
+	PATCHINDEX="${file}.diff/Index"
+	echo 'SHA1-Current: adc83b19e793491b1c6ea0fd8b46cd9f32e592fc 0
+SHA1-History:
+ adc83b19e793491b1c6ea0fd8b46cd9f32e592fc 33053002 2010-08-18-2013.28
+ ecfd1b19e793491b1c6ea123eabdcd9f32e592fc 33053001 2010-08-18-2013.29
+SHA1-Patches:
+ abc1fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
+ dfe3444ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.29' > $PATCHINDEX
+done
+generatereleasefiles
+signreleasefiles
 
 testrun() {
 	local F
-	if [ -e rootdir/var/lib/apt/lists/*localhost*Release ]; then
-		msgtest "Check if all index files are" "${1:-uncompressed}"
-		if [ "$1" = "compressed" ]; then
-			! test -e rootdir/var/lib/apt/lists/*_Packages || F=1
-			! test -e rootdir/var/lib/apt/lists/*_Sources || F=1
-			test -e rootdir/var/lib/apt/lists/*_Packages.gz || F=1
-			test -e rootdir/var/lib/apt/lists/*_Sources.gz || F=1
-		else
-			test -e rootdir/var/lib/apt/lists/*_Packages || F=1
-			test -e rootdir/var/lib/apt/lists/*_Sources || F=1
-			! test -e rootdir/var/lib/apt/lists/*_Packages.gz || F=1
-			! test -e rootdir/var/lib/apt/lists/*_Sources.gz || F=1
-		fi
-		if [ -n "$F" ]; then
-			ls -laR rootdir/var/lib/apt/lists/
-			msgfail
-		else
-			msgpass
-		fi
-		msgtest "Check if package is downloadable"
-		testsuccess --nomsg aptget install -d testpkg
-		msgtest "\tdeb file is present"; testsuccess --nomsg test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb
-		aptget clean
-		msgtest "\tdeb file is gone"; testfailure --nomsg test -f rootdir/var/cache/apt/archives/testpkg_1.0_i386.deb
+	msgtest 'Check if all index files are' "${1:-uncompressed}"
+	if [ "$1" = 'compressed' ]; then
+		! test -e rootdir/var/lib/apt/lists/*_Packages || F=1
+		! test -e rootdir/var/lib/apt/lists/*_Sources || F=1
+		! test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1
+		test -e rootdir/var/lib/apt/lists/*_Packages.${COMPRESS} || F=1
+		test -e rootdir/var/lib/apt/lists/*_Sources.${COMPRESS} || F=1
+		test -e rootdir/var/lib/apt/lists/*_Translation-en.${COMPRESS} || F=1
+		# there is no point in trying pdiff if we have compressed indexes
+		# as we can't patch compressed files (well, we can, but what is the point?)
+		! test -e rootdir/var/lib/apt/lists/*.IndexDiff || F=1
+	else
+		# clear the faked pdiff indexes so the glob below works
+		rm -f rootdir/var/lib/apt/lists/*.IndexDiff
+		test -e rootdir/var/lib/apt/lists/*_Packages || F=1
+		test -e rootdir/var/lib/apt/lists/*_Sources || F=1
+		test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1
+		! test -e rootdir/var/lib/apt/lists/*_Packages.* || F=1
+		! test -e rootdir/var/lib/apt/lists/*_Sources.* || F=1
+		! test -e rootdir/var/lib/apt/lists/*_Translation-en.* || F=1
 	fi
+	if [ -n "$F" ]; then
+		ls -laR rootdir/var/lib/apt/lists/
+		msgfail
+	else
+		msgpass
+	fi
+	msgtest 'Check if package is downloadable'
+	testsuccess --nomsg aptget download testpkg
+	msgtest '\tdeb file is present'; testsuccess --nomsg test -f testpkg_1.0_i386.deb
+	rm testpkg_1.0_i386.deb
+	testequal 'Reading package lists...
+Building dependency tree...
+The following NEW packages will be installed:
+  testpkg
+0 upgraded, 1 newly installed, 0 to remove and 0 not upgraded.
+Inst testpkg (1.0 unstable [i386])
+Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s
 	rm -f rootdir/var/cache/apt/pkgcache.bin rootdir/var/cache/apt/srcpkgcache.bin
 	testequal "$GOODSHOW" aptcache show testpkg
 	testequal "$GOODSHOW" aptcache show testpkg
@@ -62,73 +77,68 @@ testrun() {
 	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
 	testequal "$GOODSHOWSRC" aptcache showsrc testpkg
 	aptget clean
-	msgtest "Check if the source is aptgetable"
+	msgtest 'Check if the source is aptgetable'
 	testsuccess --nomsg aptget source testpkg
-	msgtest "\tdsc file is present"; testsuccess --nomsg test -f testpkg_1.0.dsc
-	msgtest "\tdirectory is present"; testsuccess --nomsg test -d testpkg-1.0
-	rm -rf testpkg-1.0
+	msgtest '\tdsc file is present'; testsuccess --nomsg test -f testpkg_1.0.dsc
+	msgtest '\tdirectory is present'; testsuccess --nomsg test -d testpkg-1.0
+	rm -rf testpkg-1.0*
 	testequal "$(aptcache show testpkg -o Acquire::Languages=none)
 " aptcache dumpavail
 }
 
-echo 'Acquire::GzipIndexes "false";' > rootdir/etc/apt/apt.conf.d/02compressindex
-msgmsg "File: Test with uncompressed indexes"
-testrun
+echo 'Debug::pkgAcquire::worker "true";
+debug::pkgAcquire::Auth "true";
+Debug::pkgAcquire::Diffs "true";' > rootdir/etc/apt/apt.conf.d/99debugconf
 
-testsuccess aptget update -o Acquire::Pdiffs=1
-msgmsg "File: Test with uncompressed indexes (update unchanged with pdiffs)"
-testrun
+testovermethod() {
+	forcecompressor $2
 
-testsuccess aptget update -o Acquire::Pdiffs=0
-msgmsg "File: Test with uncompressed indexes (update unchanged without pdiffs)"
-testrun
+	for INDEX in 'false' 'true'; do
+		rm -rf rootdir/var/lib/apt/lists
+		echo "Acquire::GzipIndexes \"${INDEX}\";" > rootdir/etc/apt/apt.conf.d/02compressindex
+		local INDCOMP
+		if [ "$INDEX" = 'false' ]; then
+			INDCOMP='uncompressed'
+		else
+			INDCOMP='compressed'
+		fi
 
-rm -rf rootdir/var/lib/apt/lists
-echo 'Acquire::CompressionTypes::Order:: "gz";
-Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
+		testsuccess aptget update
+		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes"
+		testrun "$INDCOMP"
+
+		testsuccess aptget update -o Acquire::Pdiffs=1
+		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes (update unchanged with pdiffs)"
+		testrun "$INDCOMP"
+
+		testsuccess aptget update -o Acquire::Pdiffs=0
+		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes (update unchanged without pdiffs)"
+		testrun "$INDCOMP"
+
+		rm rootdir/etc/apt/apt.conf.d/02compressindex
+	done
+}
 
 testsuccess aptget update
-msgmsg "File: Test with compressed indexes"
-testrun "compressed"
-
-testsuccess aptget update -o Acquire::Pdiffs=1
-msgmsg "File: Test with compressed indexes (update unchanged with pdiffs)"
-testrun "compressed"
-
-testsuccess aptget update -o Acquire::Pdiffs=0
-msgmsg "File: Test with compressed indexes (update unchanged without pdiffs)"
-testrun "compressed"
-
-rm rootdir/etc/apt/apt.conf.d/02compressindex
-changetowebserver
-testsuccess aptget update
+GOODSHOW="$(aptcache show testpkg)
+"
+test $(echo "$GOODSHOW" | grep -e '^Package: testpkg' -e '^Version: 1.0' -e '^Architecture: i386' | wc -l) -eq 3 || msgdie 'show is broken'
+testequal "$GOODSHOW" aptcache show testpkg
+GOODSHOWSRC="$(aptcache showsrc testpkg)
+"
+test $(echo "$GOODSHOWSRC" | grep -e '^Package: testpkg' -e '^Format: 3.0 (native)' -e '^Files:' -e '^Checksums-Sha256:' | wc -l) -eq 4 || msgdie 'showsrc is broken'
+testequal "$GOODSHOWSRC" aptcache showsrc testpkg
 GOODPOLICY="$(aptcache policy testpkg)"
-test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 http://' | wc -l) -eq 4
+test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 file:/' | wc -l) -eq 4 || msgdie 'policy is broken'
 testequal "$GOODPOLICY" aptcache policy testpkg
 
-msgmsg "HTTP: Test with uncompressed indexes"
-testrun
+for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'file' $COMPRESSOR; done
 
-testsuccess aptget update -o Acquire::Pdiffs=1
-msgmsg "HTTP: Test with uncompressed indexes (update unchanged with pdiffs)"
-testrun
-
-testsuccess aptget update -o Acquire::Pdiffs=0
-msgmsg "HTTP: Test with uncompressed indexes (update unchanged without pdiffs)"
-testrun
-
+changetowebserver
 rm -rf rootdir/var/lib/apt/lists
-echo 'Acquire::CompressionTypes::Order:: "gz";
-Acquire::GzipIndexes "true";' > rootdir/etc/apt/apt.conf.d/02compressindex
-
 testsuccess aptget update
-msgmsg "HTTP: Test with compressed indexes"
-testrun "compressed"
+GOODPOLICY="$(aptcache policy testpkg)"
+test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 http://' | wc -l) -eq 4 || msgdie 'policy is broken'
+testequal "$GOODPOLICY" aptcache policy testpkg
 
-testsuccess aptget update -o Acquire::Pdiffs=1
-msgmsg "HTTP: Test with compressed indexes (update unchanged with pdiffs)"
-testrun "compressed"
-
-testsuccess aptget update -o Acquire::Pdiffs=0
-msgmsg "HTTP: Test with compressed indexes (update unchanged without pdiffs)"
-testrun "compressed"
+for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'http' $COMPRESSOR; done
