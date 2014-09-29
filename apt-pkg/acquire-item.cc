@@ -1104,6 +1104,13 @@ std::string pkgAcqIndex::GetFinalFilename() const
 void pkgAcqIndex::ReverifyAfterIMS()
 {
    std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
+
+   // update destfile to *not* include the compression extension when doing
+   // a reverify (as its uncompressed on disk already)
+   DestFile =  _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += URItoFileName(RealURI);
+
+   // adjust DestFile if its compressed on disk
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
       DestFile += compExt;
 
