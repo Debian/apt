@@ -328,11 +328,17 @@ struct DiffInfo {
    /** The filename of the diff. */
    std::string file;
 
-   /** The sha1 hash of the diff. */
-   std::string sha1;
+   /** The hashes of the diff */
+   HashStringList result_hashes;
 
-   /** The size of the diff. */
-   unsigned long size;
+   /** The hashes of the file after the diff is applied */
+   HashStringList patch_hashes;
+
+   /** The size of the file after the diff is applied */
+   unsigned long long result_size;
+
+   /** The size of the diff itself */
+   unsigned long long patch_size;
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching a SubIndex		{{{
@@ -616,9 +622,6 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     */
    std::vector<DiffInfo> available_patches;
 
-   /** Stop applying patches when reaching that sha1 */
-   std::string ServerSha1;
-
    /** The current status of this patch. */
    enum DiffState
      {
@@ -662,11 +665,9 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *
     *  \param ShortDesc A brief description of this item.
     *
-    *  \param ExpectedHashes The expected md5sum of the completely
+    *  \param ExpectedHashes The expected hashsums of the completely
     *  reconstructed package index file; the index file will be tested
     *  against this value when it is entirely reconstructed.
-    *
-    *  \param ServerSha1 is the sha1sum of the current file on the server
     *
     *  \param diffs The remaining diffs from the index of diffs.  They
     *  should be ordered so that each diff appears before any diff
@@ -676,7 +677,6 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
                     struct IndexTarget const * const Target,
                     HashStringList const &ExpectedHash,
                     indexRecords *MetaIndexParser,
-		    std::string ServerSha1,
 		    std::vector<DiffInfo> diffs=std::vector<DiffInfo>());
 };
 									/*}}}*/
