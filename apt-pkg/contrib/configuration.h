@@ -82,12 +82,8 @@ class Configuration
     *
     * \param Name of the parent node
     * \param Default list of values separated by commas */
-   std::vector<std::string> FindVector(const char *Name, std::string const &Default) const;
-   std::vector<std::string> FindVector(std::string const &Name, std::string const &Default) const { return FindVector(Name.c_str(), Default); };
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-   std::vector<std::string> FindVector(const char *Name) const;
-#endif
-   std::vector<std::string> FindVector(std::string const &Name="") const { return FindVector(Name.c_str(), ""); };
+   std::vector<std::string> FindVector(const char *Name, std::string const &Default = "") const;
+   std::vector<std::string> FindVector(std::string const &Name, std::string const &Default = "") const { return FindVector(Name.c_str(), Default); };
    int FindI(const char *Name,int const &Default = 0) const;
    int FindI(std::string const &Name,int const &Default = 0) const {return FindI(Name.c_str(),Default);};
    bool FindB(const char *Name,bool const &Default = false) const;
