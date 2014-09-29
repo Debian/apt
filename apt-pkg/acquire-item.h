@@ -356,6 +356,24 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
  protected:
    std::vector<Item*> Transaction;
 
+   /** \brief A package-system-specific parser for the meta-index file. */
+   indexRecords *MetaIndexParser;
+
+   /** \brief The index files which should be looked up in the meta-index
+    *  and then downloaded.
+    */
+   const std::vector<IndexTarget*>* IndexTargets;
+
+   /** \brief Starts downloading the individual index files.
+    *
+    *  \param verify If \b true, only indices whose expected hashsum
+    *  can be determined from the meta-index will be downloaded, and
+    *  the hashsums of indices will be checked (reporting
+    *  #StatAuthError if there is a mismatch).  If verify is \b false,
+    *  no hashsum checking will be performed.
+    */
+   void QueueIndexes(bool verify);
+
  public:
    // transaction code
    void Add(Item *I);
@@ -369,9 +387,12 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
 
 
    pkgAcqMetaBase(pkgAcquire *Owner,
+                  const std::vector<IndexTarget*>* IndexTargets,
+                  indexRecords* MetaIndexParser,
                   HashStringList const &ExpectedHashes=HashStringList(),
                   pkgAcqMetaBase *TransactionManager=NULL)
-      : Item(Owner, ExpectedHashes, TransactionManager) {};
+      : Item(Owner, ExpectedHashes, TransactionManager),
+        MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets) {};
 };
 
 /** \brief An acquire item that downloads the detached signature	{{{
@@ -397,18 +418,8 @@ class pkgAcqMetaSig : public pkgAcqMetaBase
    std::string URIDesc;
    std::string ShortDesc;
 
-   /** \brief A package-system-specific parser for the meta-index file. */
-   indexRecords* MetaIndexParser;
-
    /** \brief The file we need to verify */
    std::string MetaIndexFile;
-
-   /** \brief The index files which should be looked up in the meta-index
-    *  and then downloaded.
-    *
-    *  \todo Why a list of pointers instead of a list of structs?
-    */
-   const std::vector<IndexTarget*>* IndexTargets;
 
    /** \brief If we are in fetching or download state */
    bool AuthPass;
@@ -463,12 +474,6 @@ class pkgAcqMetaIndex : public pkgAcqMetaBase
     */
    std::string SigFile;
 
-   /** \brief The index files to download. */
-   const std::vector<IndexTarget*>* IndexTargets;
-
-   /** \brief The parser for the meta-index file. */
-   indexRecords* MetaIndexParser;
-
    /** \brief If \b true, the index's signature is currently being verified.
     */
    bool AuthPass;
@@ -520,16 +525,6 @@ class pkgAcqMetaIndex : public pkgAcqMetaBase
    void Init(std::string URIDesc, std::string ShortDesc);
    
    public:
-
-   /** \brief Starts downloading the individual index files.
-    *
-    *  \param verify If \b true, only indices whose expected hashsum
-    *  can be determined from the meta-index will be downloaded, and
-    *  the hashsums of indices will be checked (reporting
-    *  #StatAuthError if there is a mismatch).  If verify is \b false,
-    *  no hashsum checking will be performed.
-    */
-   void QueueIndexes(bool verify);
 
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);

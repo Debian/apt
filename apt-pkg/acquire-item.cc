@@ -1470,10 +1470,10 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,          		/*{{{*/
                              string MetaIndexFile,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
-   pkgAcqMetaBase(Owner, HashStringList(), TransactionManager), RealURI(URI), 
-   MetaIndexParser(MetaIndexParser), MetaIndexFile(MetaIndexFile),
-   URIDesc(URIDesc), ShortDesc(ShortDesc),
-   IndexTargets(IndexTargets), AuthPass(false), IMSHit(false)
+   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, 
+                  HashStringList(), TransactionManager),
+   RealURI(URI), MetaIndexFile(MetaIndexFile), URIDesc(URIDesc),
+   ShortDesc(ShortDesc), AuthPass(false), IMSHit(false)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
@@ -1577,7 +1577,7 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
    {
       // load indexes and queue further downloads
       MetaIndexParser->Load(MetaIndexFile);
-      ((pkgAcqMetaIndex*)TransactionManager)->QueueIndexes(true);
+      QueueIndexes(true);
    }
 
    Complete = true;
@@ -1622,7 +1622,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
       MetaIndexParser->Load(MetaIndexFile);
-      ((pkgAcqMetaIndex*)TransactionManager)->QueueIndexes(true);
+      QueueIndexes(true);
    } 
    else 
    {
@@ -1648,9 +1648,10 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
                                  string MetaIndexSigURI,string MetaIndexSigURIDesc, string MetaIndexSigShortDesc,
 				 const vector<IndexTarget*>* IndexTargets,
 				 indexRecords* MetaIndexParser) :
-   pkgAcqMetaBase(Owner, HashStringList(), TransactionManager), RealURI(URI), IndexTargets(IndexTargets),
-   URIDesc(URIDesc), ShortDesc(ShortDesc),
-   MetaIndexParser(MetaIndexParser), AuthPass(false), IMSHit(false),
+   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, HashStringList(),
+                  TransactionManager), 
+   RealURI(URI), URIDesc(URIDesc), ShortDesc(ShortDesc),
+   AuthPass(false), IMSHit(false),
    MetaIndexSigURI(MetaIndexSigURI), MetaIndexSigURIDesc(MetaIndexSigURIDesc),
    MetaIndexSigShortDesc(MetaIndexSigShortDesc)
 {
@@ -1881,7 +1882,7 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
 #endif
 }
 									/*}}}*/
-void pkgAcqMetaIndex::QueueIndexes(bool verify)				/*{{{*/
+void pkgAcqMetaBase::QueueIndexes(bool verify)				/*{{{*/
 {
    bool transInRelease = false;
    {
