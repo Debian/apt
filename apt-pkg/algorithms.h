@@ -136,12 +136,12 @@ class pkgProblemResolver						/*{{{*/
    inline void Protect(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= Protected; Cache.MarkProtected(Pkg);};
    inline void Remove(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] |= ToRemove;};
    inline void Clear(pkgCache::PkgIterator Pkg) {Flags[Pkg->ID] &= ~(Protected | ToRemove);};
-   
-   // Try to intelligently resolve problems by installing and removing packages   
-   bool Resolve(bool BrokenFix = false);
-   
+
+   // Try to intelligently resolve problems by installing and removing packages
+   bool Resolve(bool BrokenFix = false, OpProgress * const Progress = NULL);
+
    // Try to resolve problems only by using keep
-   bool ResolveByKeep();
+   bool ResolveByKeep(OpProgress * const Progress = NULL);
 
    APT_DEPRECATED void InstallProtect();
 

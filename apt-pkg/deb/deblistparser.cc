@@ -58,18 +58,6 @@ debListParser::debListParser(FileFd *File, string const &Arch) : Tags(File),
    MultiArchEnabled = Architectures.size() > 1;
 }
 									/*}}}*/
-// ListParser::UniqFindTagWrite - Find the tag and write a unq string	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-map_stringitem_t debListParser::UniqFindTagWrite(const char *Tag)
-{
-   const char *Start;
-   const char *Stop;
-   if (Section.Find(Tag,Start,Stop) == false)
-      return 0;
-   return WriteUniqString(Start,Stop - Start);
-}
-									/*}}}*/
 // ListParser::Package - Return the package name			/*{{{*/
 // ---------------------------------------------------------------------
 /* This is to return the name of the package this section describes */
@@ -144,9 +132,67 @@ unsigned char debListParser::ParseMultiArch(bool const showErrors)	/*{{{*/
 /* */
 bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 {
+   const char *Start;
+   const char *Stop;
+
    // Parse the section
-   unsigned long const idxSection = UniqFindTagWrite("Section");
-   Ver->Section = idxSection;
+   if (Section.Find("Section",Start,Stop) == true)
+   {
+      map_stringitem_t const idx = StoreString(pkgCacheGenerator::SECTION, Start, Stop - Start);
+      Ver->Section = idx;
+   }
+   // Parse the source package name
+   pkgCache::GrpIterator const G = Ver.ParentPkg().Group();
+   Ver->SourcePkgName = G->Name;
+   Ver->SourceVerStr = Ver->VerStr;
+   if (Section.Find("Source",Start,Stop) == true)
+   {
+      const char * const Space = (const char * const) memchr(Start, ' ', Stop - Start);
+      pkgCache::VerIterator V;
+
+      if (Space != NULL)
+      {
+	 Stop = Space;
+	 const char * const Open = (const char * const) memchr(Space, '(', Stop - Space);
+	 if (likely(Open != NULL))
+	 {
+	    const char * const Close = (const char * const) memchr(Open, ')', Stop - Open);
+	    if (likely(Close != NULL))
+	    {
+	       std::string const version(Open + 1, (Close - Open) - 1);
+	       if (version != Ver.VerStr())
+	       {
+		  map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSION, version);
+		  Ver->SourceVerStr = idx;
+	       }
+	    }
+	 }
+      }
+
+      std::string const pkgname(Start, Stop - Start);
+      if (pkgname != G.Name())
+      {
+	 for (pkgCache::PkgIterator P = G.PackageList(); P.end() == false; P = G.NextPkg(P))
+	 {
+	    for (V = P.VersionList(); V.end() == false; ++V)
+	    {
+	       if (pkgname == V.SourcePkgName())
+	       {
+		  Ver->SourcePkgName = V->SourcePkgName;
+		  break;
+	       }
+	    }
+	    if (V.end() == false)
+	       break;
+	 }
+	 if (V.end() == true)
+	 {
+	    map_stringitem_t const idx = StoreString(pkgCacheGenerator::PKGNAME, pkgname);
+	    Ver->SourcePkgName = idx;
+	 }
+      }
+   }
+
    Ver->MultiArch = ParseMultiArch(true);
    // Archive Size
    Ver->Size = Section.FindULL("Size");
@@ -155,10 +201,8 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
    Ver->InstalledSize *= 1024;
 
    // Priority
-   const char *Start;
-   const char *Stop;
    if (Section.Find("Priority",Start,Stop) == true)
-   {      
+   {
       if (GrabWord(string(Start,Stop-Start),PrioList,Ver->Priority) == false)
 	 Ver->Priority = pkgCache::State::Extra;
    }
@@ -891,7 +935,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
 {
    // apt-secure does no longer download individual (per-section) Release
    // file. to provide Component pinning we use the section name now
-   map_stringitem_t const storage = WriteUniqString(component);
+   map_stringitem_t const storage = StoreString(pkgCacheGenerator::MIXED, component);
    FileI->Component = storage;
 
    pkgTagFile TagFile(&File, File.Size());
@@ -900,19 +944,19 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
       return false;
 
    std::string data;
-   #define APT_INRELEASE(TAG, STORE) \
+   #define APT_INRELEASE(TYPE, TAG, STORE) \
    data = Section.FindS(TAG); \
    if (data.empty() == false) \
    { \
-      map_stringitem_t const storage = WriteUniqString(data); \
+      map_stringitem_t const storage = StoreString(pkgCacheGenerator::TYPE, data); \
       STORE = storage; \
    }
-   APT_INRELEASE("Suite", FileI->Archive)
-   APT_INRELEASE("Component", FileI->Component)
-   APT_INRELEASE("Version", FileI->Version)
-   APT_INRELEASE("Origin", FileI->Origin)
-   APT_INRELEASE("Codename", FileI->Codename)
-   APT_INRELEASE("Label", FileI->Label)
+   APT_INRELEASE(MIXED, "Suite", FileI->Archive)
+   APT_INRELEASE(MIXED, "Component", FileI->Component)
+   APT_INRELEASE(VERSION, "Version", FileI->Version)
+   APT_INRELEASE(MIXED, "Origin", FileI->Origin)
+   APT_INRELEASE(MIXED, "Codename", FileI->Codename)
+   APT_INRELEASE(MIXED, "Label", FileI->Label)
    #undef APT_INRELEASE
    Section.FindFlag("NotAutomatic", FileI->Flags, pkgCache::Flag::NotAutomatic);
    Section.FindFlag("ButAutomaticUpgrades", FileI->Flags, pkgCache::Flag::ButAutomaticUpgrades);

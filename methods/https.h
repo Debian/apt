@@ -69,10 +69,9 @@ class HttpsMethod : public pkgAcqMethod
 
    public:
    FileFd *File;
-      
-   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), File(NULL)
+
+   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), Server(NULL), File(NULL)
    {
-      File = 0;
       curl = curl_easy_init();
    };
 

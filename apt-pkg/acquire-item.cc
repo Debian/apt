@@ -64,6 +64,10 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
 									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 pkgAcquire::Item::Item(pkgAcquire *Owner,
                        HashStringList const &ExpectedHashes,
                        pkgAcqMetaBase *TransactionManager)
@@ -76,6 +80,9 @@ pkgAcquire::Item::Item(pkgAcquire *Owner,
    if(TransactionManager != NULL)
       TransactionManager->Add(this);
 }
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 									/*}}}*/
 // Acquire::Item::~Item - Destructor					/*{{{*/
 // ---------------------------------------------------------------------
@@ -723,7 +730,15 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
       Local = true;
       Desc.URI = "rred:" + FinalFile;
       QueueURI(Desc);
+      ActiveSubprocess = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
       Mode = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
       return;
    } 
 
@@ -846,7 +861,15 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       Local = true;
       Desc.URI = "rred:" + FinalFile;
       QueueURI(Desc);
+      ActiveSubprocess = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
       Mode = "rred";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
       return;
    }
    // success in download/apply all diffs, clean up
@@ -967,6 +990,7 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
    else
    {
       Desc.URI = URI + '.' + comprExt;
+      DestFile = DestFile + '.' + comprExt;
       if(Target)
          MetaKey = string(Target->MetaKey) + '.' + comprExt;
    }
@@ -1069,8 +1093,8 @@ std::string pkgAcqIndex::GetFinalFilename() const
    std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    std::string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
-      FinalFile += ".gz";
+   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+      FinalFile += '.' + compExt;
    return FinalFile;
 }
                                                                        /*}}}*/
@@ -1080,8 +1104,8 @@ std::string pkgAcqIndex::GetFinalFilename() const
 void pkgAcqIndex::ReverifyAfterIMS()
 {
    std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
-      DestFile += ".gz";
+   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+      DestFile += compExt;
 
    // copy FinalFile into partial/ so that we check the hash again
    string FinalFile = GetFinalFilename();
@@ -1179,7 +1203,15 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
       DestFile += ".decomp";
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
+      ActiveSubprocess = "copy";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
       Mode = "copy";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
       return;
    }
 
@@ -1206,15 +1238,25 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
    {
       Erase = false;
       ReverifyAfterIMS();
+#if 0 // ???
+      // set destfile to the final destfile
+      if(_config->FindB("Acquire::GzipIndexes",false) == false)
+      {
+         DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+         DestFile += URItoFileName(RealURI);
+      }
+
+      ReverifyAfterIMS(FileName);
+#endif
       return;
    }
    string decompProg;
 
    // If we enable compressed indexes, queue for hash verification
-   if (_config->FindB("Acquire::GzipIndexes",false) && compExt == "gz")
+   if (_config->FindB("Acquire::GzipIndexes",false))
    {
       DestFile = _config->FindDir("Dir::State::lists");
-      DestFile += URItoFileName(RealURI) + ".gz";
+      DestFile += URItoFileName(RealURI) + '.' + compExt;
 
       Decompression = true;
       Desc.URI = "copy:" + FileName;
@@ -1238,8 +1280,15 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
 
-   // FIXME: this points to a c++ string that goes out of scope
-   Mode = decompProg.c_str();
+   ActiveSubprocess = decompProg;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+      Mode = ActiveSubprocess.c_str();
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 }
 									/*}}}*/
 // AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
@@ -1676,7 +1725,15 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
          AuthPass = true;
          Desc.URI = "gpgv:" + SigFile;
          QueueURI(Desc);
-         Mode = "gpgv";
+	 ActiveSubprocess = "gpgv";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	 Mode = "gpgv";
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 	 return;
       }
    }
@@ -1785,8 +1842,12 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
             URItoFileName((*Target)->URI);
          unlink(index.c_str());
          // and also old gzipindexes
-         index += ".gz";
-         unlink(index.c_str());
+         std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+         for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+         {
+            index += '.' + (*t);
+            unlink(index.c_str());
+         }
       }
    }
 #endif

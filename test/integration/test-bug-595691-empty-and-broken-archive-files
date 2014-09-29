@@ -48,37 +48,8 @@ createemptyfile() {
 	rm -f aptarchive/Packages
 }
 
-setupcompressor() {
-	COMPRESSOR="$1"
-	COMPRESSOR_CMD="$1"
-	case $COMPRESSOR in
-	gzip) COMPRESS="gz";;
-	bzip2) COMPRESS="bz2";;
-	lzma) COMPRESS="lzma";;
-	xz) COMPRESS="xz";;
-	esac
-	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
-Dir::Bin::uncompressed \"/does/not/exist\";
-Dir::Bin::gzip \"/does/not/exist\";
-Dir::Bin::bzip2 \"/does/not/exist\";
-Dir::Bin::lzma \"/does/not/exist\";
-Dir::Bin::xz \"/does/not/exist\";" > rootdir/etc/apt/apt.conf.d/00compressor
-	if [ -e "/bin/${COMPRESSOR}" ]; then
-		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
-	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
-		echo "Dir::Bin::${COMPRESSOR} \"/usr/bin/${COMPRESSOR}\";" >> rootdir/etc/apt/apt.conf.d/00compressor
-	elif [ "${COMPRESSOR}" = 'lzma' ]; then
-		echo "Dir::Bin::xz \"/usr/bin/xz\";" >> rootdir/etc/apt/apt.conf.d/00compressor
-		COMPRESSOR_CMD='xz --format=lzma'
-	else
-		msgtest "Test for availability of compressor" "${COMPRESSOR}"
-		msgfail
-		#exit 1
-	fi
-}
-
 testoverfile() {
-	setupcompressor "$1"
+	forcecompressor "$1"
 
 	createemptyfile 'en'
 	testaptgetupdate 'Reading package lists...' "empty file en.$COMPRESS over file"
@@ -100,7 +71,7 @@ E: Some index files failed to download. They have been ignored, or old ones used
 }
 
 testoverhttp() {
-	setupcompressor "$1"
+	forcecompressor "$1"
 
 	createemptyfile 'en'
 	testaptgetupdate "Get: http://localhost:8080  Packages []
@@ -121,7 +92,7 @@ Reading package lists..." "empty archive Packages.$COMPRESS over http"
 	testaptgetupdate "Get: http://localhost:8080  Packages
 Err http://localhost:8080  Packages
   Empty files can't be valid archives
-W: Failed to fetch ${COMPRESSOR}:$(readlink -f rootdir/var/lib/apt/lists/partial/localhost:8080_Packages)  Empty files can't be valid archives
+W: Failed to fetch ${COMPRESSOR}:$(readlink -f rootdir/var/lib/apt/lists/partial/localhost:8080_Packages.${COMPRESS})  Empty files can't be valid archives
 
 E: Some index files failed to download. They have been ignored, or old ones used instead." "empty file Packages.$COMPRESS over http"
 }

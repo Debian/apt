@@ -26,9 +26,8 @@ namespace Progress {
     int last_reported_progress;
 
  public:
-    PackageManager()
-       : percentage(0.0), last_reported_progress(-1) {};
-    virtual ~PackageManager() {};
+    PackageManager();
+    virtual ~PackageManager();
 
     /* Global Start/Stop */
     virtual void Start(int /*child_pty*/=-1) {};

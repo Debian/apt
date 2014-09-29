@@ -202,9 +202,9 @@ bool AcqTextStatus::Pulse(pkgAcquire *Owner)
       S += strlen(S);
 
       // Show the short mode string
-      if (I->CurrentItem->Owner->Mode != 0)
+      if (I->CurrentItem->Owner->ActiveSubprocess.empty() == false)
       {
-	 snprintf(S,End-S," %s",I->CurrentItem->Owner->Mode);
+	 snprintf(S,End-S, " %s", I->CurrentItem->Owner->ActiveSubprocess.c_str());
 	 S += strlen(S);
       }
 

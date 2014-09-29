@@ -82,9 +82,9 @@ pkgCache::Header::Header()
    MaxDescFileSize = 0;
    
    FileList = 0;
-   StringList = 0;
    VerSysName = 0;
    Architecture = 0;
+   Architectures = 0;
    HashTableSize = _config->FindI("APT::Cache-HashTableSize", 10 * 1048);
    memset(Pools,0,sizeof(Pools));
 
@@ -140,7 +140,6 @@ bool pkgCache::ReMap(bool const &Errorchecks)
    DescP = (Description *)Map.Data();
    ProvideP = (Provides *)Map.Data();
    DepP = (Dependency *)Map.Data();
-   StringItemP = (StringItem *)Map.Data();
    StrP = (char *)Map.Data();
 
    if (Errorchecks == false)
@@ -215,10 +214,7 @@ pkgCache::PkgIterator pkgCache::SingleArchFindPkg(const string &Name)
    Package *Pkg = PkgP + HeaderP->PkgHashTable()[Hash(Name)];
    for (; Pkg != PkgP; Pkg = PkgP + Pkg->Next)
    {
-      if (unlikely(Pkg->Name == 0))
-	 continue;
-
-      int const cmp = strcasecmp(Name.c_str(), StrP + Pkg->Name);
+      int const cmp = strcmp(Name.c_str(), StrP + (GrpP + Pkg->Group)->Name);
       if (cmp == 0)
 	 return PkgIterator(*this, Pkg);
       else if (cmp < 0)
@@ -279,10 +275,7 @@ pkgCache::GrpIterator pkgCache::FindGrp(const string &Name) {
 	// Look at the hash bucket for the group
 	Group *Grp = GrpP + HeaderP->GrpHashTable()[sHash(Name)];
 	for (; Grp != GrpP; Grp = GrpP + Grp->Next) {
-		if (unlikely(Grp->Name == 0))
-		   continue;
-
-		int const cmp = strcasecmp(Name.c_str(), StrP + Grp->Name);
+		int const cmp = strcmp(Name.c_str(), StrP + Grp->Name);
 		if (cmp == 0)
 			return GrpIterator(*this, Grp);
 		else if (cmp < 0)
@@ -359,19 +352,15 @@ pkgCache::PkgIterator pkgCache::GrpIterator::FindPkg(string Arch) const {
 	   last one we check, so we do it now. */
 	if (Arch == "native" || Arch == myArch || Arch == "all") {
 		pkgCache::Package *Pkg = Owner->PkgP + S->LastPackage;
-		if (strcasecmp(myArch, Owner->StrP + Pkg->Arch) == 0)
+		if (strcmp(myArch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		Arch = myArch;
 	}
 
-	/* Iterate over the list to find the matching arch
-	   unfortunately this list includes "package noise"
-	   (= different packages with same calculated hash),
-	   so we need to check the name also */
+	// Iterate over the list to find the matching arch
 	for (pkgCache::Package *Pkg = PackageList(); Pkg != Owner->PkgP;
 	     Pkg = Owner->PkgP + Pkg->Next) {
-		if (S->Name == Pkg->Name &&
-		    stringcasecmp(Arch, Owner->StrP + Pkg->Arch) == 0)
+		if (stringcmp(Arch, Owner->StrP + Pkg->Arch) == 0)
 			return PkgIterator(*Owner, Pkg);
 		if ((Owner->PkgP + S->LastPackage) == Pkg)
 			break;
@@ -1037,7 +1026,7 @@ bool pkgCache::PrvIterator::IsMultiArchImplicit() const
 {
    pkgCache::PkgIterator const Owner = OwnerPkg();
    pkgCache::PkgIterator const Parent = ParentPkg();
-   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner->Name == Parent->Name)
+   if (strcmp(Owner.Arch(), Parent.Arch()) != 0 || Owner.Group()->Name == Parent.Group()->Name)
       return true;
    return false;
 }

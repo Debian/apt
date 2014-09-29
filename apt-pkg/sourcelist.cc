@@ -119,7 +119,7 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
    std::vector<std::string> list_section = StringSplit(Section, " ");
    
    for (std::vector<std::string>::const_iterator U = list_uris.begin();
-        U != list_uris.end(); U++)
+        U != list_uris.end(); ++U)
    {
       std::string URI = (*U);
       if (!FixupURI(URI))
@@ -129,10 +129,10 @@ bool pkgSourceList::Type::ParseStanza(vector<metaIndex *> &List,
       }
 
       for (std::vector<std::string>::const_iterator I = list_dist.begin();
-           I != list_dist.end(); I++)
+           I != list_dist.end(); ++I)
       {
          for (std::vector<std::string>::const_iterator J = list_section.begin();
-              J != list_section.end(); J++)
+              J != list_section.end(); ++J)
          {
             if (CreateItem(List, URI, (*I), (*J), Options) == false)
             {
@@ -408,7 +408,7 @@ int pkgSourceList::ParseFileDeb822(string File)
       string const types = Tags.FindS("Types");
       std::vector<std::string> list_types = StringSplit(types, " ");
       for (std::vector<std::string>::const_iterator I = list_types.begin();
-        I != list_types.end(); I++)
+        I != list_types.end(); ++I)
       {
          Type *Parse = Type::GetType((*I).c_str());
          if (Parse == 0)

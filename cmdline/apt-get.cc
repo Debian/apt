@@ -195,7 +195,7 @@ static std::string GetReleaseForSourceRecord(pkgSourceList *SrcList,
 // FindSrc - Find a source record					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
+static pkgSrcRecords::Parser *FindSrc(const char *Name,
 			       pkgSrcRecords &SrcRecs,string &Src,
 			       CacheFile &CacheFile)
 {
@@ -303,16 +303,10 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 		  (VF.File().Archive() != 0 && VF.File().Archive() == RelTag) ||
 		  (VF.File().Codename() != 0 && VF.File().Codename() == RelTag)) 
 	       {
-		  pkgRecords::Parser &Parse = Recs.Lookup(VF);
-		  Src = Parse.SourcePkg();
-		  // no SourcePkg name, so it is the "binary" name
-		  if (Src.empty() == true)
-		     Src = TmpSrc;
+		  Src = Ver.SourcePkgName();
 		  // the Version we have is possibly fuzzy or includes binUploads,
-		  // so we use the Version of the SourcePkg (empty if same as package)
-		  VerTag = Parse.SourceVer();
-		  if (VerTag.empty() == true)
-		     VerTag = Ver.VerStr();
+		  // so we use the Version of the SourcePkg
+		  VerTag = Ver.SourceVerStr();
 		  break;
 	       }
 	    }
@@ -343,10 +337,10 @@ static pkgSrcRecords::Parser *FindSrc(const char *Name,pkgRecords &Recs,
 	 pkgCache::VerIterator Ver = Cache->GetCandidateVer(Pkg);
 	 if (Ver.end() == false) 
 	 {
-	    pkgRecords::Parser &Parse = Recs.Lookup(Ver.FileList());
-	    Src = Parse.SourcePkg();
-	    if (VerTag.empty() == true)
-	       VerTag = Parse.SourceVer();
+	    if (strcmp(Ver.SourcePkgName(),Ver.ParentPkg().Name()) != 0)
+	       Src = Ver.SourcePkgName();
+	    if (VerTag.empty() == true && strcmp(Ver.SourceVerStr(),Ver.VerStr()) != 0)
+	       VerTag = Ver.SourceVerStr();
 	 }
       }
    }
@@ -540,7 +534,7 @@ static bool DoDSelectUpgrade(CommandLine &)
    }
 
    // Now upgrade everything
-   if (pkgAllUpgrade(Cache) == false)
+   if (APT::Upgrade::Upgrade(Cache, APT::Upgrade::FORBID_REMOVE_PACKAGES | APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES) == false)
    {
       ShowBroken(c1out,Cache,false);
       return _error->Error(_("Internal error, problem resolver broke stuff"));
@@ -555,29 +549,43 @@ static bool DoDSelectUpgrade(CommandLine &)
 static bool DoClean(CommandLine &)
 {
    std::string const archivedir = _config->FindDir("Dir::Cache::archives");
-   std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
-   std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
+   std::string const listsdir = _config->FindDir("Dir::state::lists");
 
    if (_config->FindB("APT::Get::Simulate") == true)
    {
+      std::string const pkgcache = _config->FindFile("Dir::cache::pkgcache");
+      std::string const srcpkgcache = _config->FindFile("Dir::cache::srcpkgcache");
       cout << "Del " << archivedir << "* " << archivedir << "partial/*"<< endl
+	   << "Del " << listsdir << "partial/*" << endl
 	   << "Del " << pkgcache << " " << srcpkgcache << endl;
       return true;
    }
-   
+
+   bool const NoLocking = _config->FindB("Debug::NoLocking",false);
    // Lock the archive directory
    FileFd Lock;
-   if (_config->FindB("Debug::NoLocking",false) == false)
+   if (NoLocking == false)
    {
       int lock_fd = GetLock(archivedir + "lock");
       if (lock_fd < 0)
-	 return _error->Error(_("Unable to lock the download directory"));
+	 return _error->Error(_("Unable to lock directory %s"), archivedir.c_str());
       Lock.Fd(lock_fd);
    }
-   
+
    pkgAcquire Fetcher;
    Fetcher.Clean(archivedir);
    Fetcher.Clean(archivedir + "partial/");
+
+   if (NoLocking == false)
+   {
+      Lock.Close();
+      int lock_fd = GetLock(listsdir + "lock");
+      if (lock_fd < 0)
+	 return _error->Error(_("Unable to lock directory %s"), listsdir.c_str());
+      Lock.Fd(lock_fd);
+   }
+
+   Fetcher.Clean(listsdir + "partial/");
 
    pkgCacheFile::RemoveCaches();
 
@@ -632,14 +640,14 @@ static bool DoDownload(CommandLine &CmdL)
 
    APT::CacheSetHelper helper(c0out);
    APT::VersionSet verset = APT::VersionSet::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionSet::CANDIDATE, helper);
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
 
    if (verset.empty() == true)
       return false;
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet", 0));
    pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat) == false)
+   if (Fetcher.Setup(&Stat, "", false) == false)
       return false;
 
    pkgRecords Recs(Cache);
@@ -665,7 +673,7 @@ static bool DoDownload(CommandLine &CmdL)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile)  << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
@@ -731,7 +739,6 @@ static bool DoSource(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
-   pkgRecords Recs(Cache);
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
@@ -760,7 +767,7 @@ static bool DoSource(CommandLine &CmdL)
    for (const char **I = CmdL.FileList + 1; *I != 0; I++, J++)
    {
       string Src;
-      pkgSrcRecords::Parser *Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+      pkgSrcRecords::Parser *Last = FindSrc(*I,SrcRecs,Src,Cache);
       
       if (Last == 0) {
 	 return _error->Error(_("Unable to find a source package for %s"),Src.c_str());
@@ -1037,7 +1044,6 @@ static bool DoBuildDep(CommandLine &CmdL)
    pkgSourceList *List = Cache.GetSourceList();
    
    // Create the text record parsers
-   pkgRecords Recs(Cache);
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
       return false;
@@ -1090,7 +1096,7 @@ static bool DoBuildDep(CommandLine &CmdL)
             Last = Type->CreateSrcPkgParser(*I);
       } else {
          // normal case, search the cache for the source file
-         Last = FindSrc(*I,Recs,SrcRecs,Src,Cache);
+         Last = FindSrc(*I,SrcRecs,Src,Cache);
       }
 
       if (Last == 0)
@@ -1441,21 +1447,15 @@ static bool DoBuildDep(CommandLine &CmdL)
  * pool/ next to the deb itself)
  * Example return: "pool/main/a/apt/apt_0.8.8ubuntu3" 
  */
-static string GetChangelogPath(CacheFile &Cache, 
-                        pkgCache::PkgIterator Pkg,
+static string GetChangelogPath(CacheFile &Cache,
                         pkgCache::VerIterator Ver)
 {
-   string path;
-
    pkgRecords Recs(Cache);
    pkgRecords::Parser &rec=Recs.Lookup(Ver.FileList());
-   string srcpkg = rec.SourcePkg().empty() ? Pkg.Name() : rec.SourcePkg();
-   string ver = Ver.VerStr();
-   // if there is a source version it always wins
-   if (rec.SourceVer() != "")
-      ver = rec.SourceVer();
-   path = flNotFile(rec.FileName());
-   path += srcpkg + "_" + StripEpoch(ver);
+   string path = flNotFile(rec.FileName());
+   path.append(Ver.SourcePkgName());
+   path.append("_");
+   path.append(StripEpoch(Ver.SourceVerStr()));
    return path;
 }
 									/*}}}*/
@@ -1469,7 +1469,6 @@ static string GetChangelogPath(CacheFile &Cache,
  *  http://packages.medibuntu.org/pool/non-free/m/mplayer/mplayer_1.0~rc4~try1.dsfg1-1ubuntu1+medibuntu1.changelog
  */
 static bool GuessThirdPartyChangelogUri(CacheFile &Cache, 
-                                 pkgCache::PkgIterator Pkg,
                                  pkgCache::VerIterator Ver,
                                  string &out_uri)
 {
@@ -1484,7 +1483,7 @@ static bool GuessThirdPartyChangelogUri(CacheFile &Cache,
       return false;
 
    // get archive uri for the binary deb
-   string path_without_dot_changelog = GetChangelogPath(Cache, Pkg, Ver);
+   string path_without_dot_changelog = GetChangelogPath(Cache, Ver);
    out_uri = index->ArchiveURI(path_without_dot_changelog + ".changelog");
 
    // now strip away the filename and add srcpkg_srcver.changelog
@@ -1502,25 +1501,20 @@ static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
  * GuessThirdPartyChangelogUri for details how)
  */
 {
-   string path;
-   string descr;
-   string server;
-   string changelog_uri;
-
-   // data structures we need
-   pkgCache::PkgIterator Pkg = Ver.ParentPkg();
-
    // make the server root configurable
-   server = _config->Find("Apt::Changelogs::Server",
+   string const server = _config->Find("Apt::Changelogs::Server",
                           "http://packages.debian.org/changelogs");
-   path = GetChangelogPath(CacheFile, Pkg, Ver);
+   string const path = GetChangelogPath(CacheFile, Ver);
+   string changelog_uri;
    strprintf(changelog_uri, "%s/%s/changelog", server.c_str(), path.c_str());
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
    {
       std::cout << '\'' << changelog_uri << '\'' << std::endl;
       return true;
    }
+   pkgCache::PkgIterator const Pkg = Ver.ParentPkg();
 
+   string descr;
    strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
    // queue it
    new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
@@ -1531,7 +1525,7 @@ static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
    if (!FileExists(targetfile))
    {
       string third_party_uri;
-      if (GuessThirdPartyChangelogUri(CacheFile, Pkg, Ver, third_party_uri))
+      if (GuessThirdPartyChangelogUri(CacheFile, Ver, third_party_uri))
       {
          strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), third_party_uri.c_str());
          new pkgAcqFile(&Fetcher, third_party_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
@@ -1556,7 +1550,7 @@ static bool DoChangelog(CommandLine &CmdL)
    
    APT::CacheSetHelper helper(c0out);
    APT::VersionList verset = APT::VersionList::FromCommandLine(Cache,
-		CmdL.FileList + 1, APT::VersionList::CANDIDATE, helper);
+		CmdL.FileList + 1, APT::CacheSetHelper::CANDIDATE, helper);
    if (verset.empty() == true)
       return false;
    pkgAcquire Fetcher;
@@ -1571,7 +1565,8 @@ static bool DoChangelog(CommandLine &CmdL)
    }
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
+   if (Fetcher.Setup(&Stat, "",false) == false)
+      return false;
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 

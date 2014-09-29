@@ -13,8 +13,10 @@
 #include <map>
 #include <set>
 #include <list>
+#include <vector>
 #include <string>
 #include <iterator>
+#include <algorithm>
 
 #include <stddef.h>
 
@@ -51,35 +53,126 @@ public:									/*{{{*/
 			ShowError(ShowError), ErrorType(ErrorType) {}
 	virtual ~CacheSetHelper() {}
 
-	virtual void showTaskSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
-	virtual void showRegExSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-	virtual void showFnmatchSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
-#endif
-	virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
+	enum PkgSelector { UNKNOWN, REGEX, TASK, FNMATCH, PACKAGENAME, STRING };
+
+	virtual bool PackageFrom(enum PkgSelector const select, PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
+
+	virtual bool PackageFromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline);
+
+	struct PkgModifier {
+		enum Position { NONE, PREFIX, POSTFIX };
+		unsigned short ID;
+		const char * const Alias;
+		Position Pos;
+		PkgModifier (unsigned short const &id, const char * const alias, Position const &pos) : ID(id), Alias(alias), Pos(pos) {}
+	};
+	virtual bool PackageFromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
+					    pkgCacheFile &Cache, const char * cmdline,
+					    std::list<PkgModifier> const &mods);
+
+	// use PackageFrom(PACKAGENAME, …) instead
+	APT_DEPRECATED pkgCache::PkgIterator PackageFromName(pkgCacheFile &Cache, std::string const &pattern);
+
+	/** \brief be notified about the package being selected via pattern
+	 *
+	 * Main use is probably to show a message to the user what happened
+	 *
+	 * \param pkg is the package which was selected
+	 * \param select is the selection method which choose the package
+	 * \param pattern is the string used by the selection method to pick the package
+	 */
+	virtual void showPackageSelection(pkgCache::PkgIterator const &pkg, PkgSelector const select, std::string const &pattern);
+	// use the method above instead, react only on the type you need and let the base handle the rest if need be
+	// this allows use to add new selection methods without breaking the ABI constantly with new virtual methods
+	APT_DEPRECATED virtual void showTaskSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
+	APT_DEPRECATED virtual void showRegExSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
+	APT_DEPRECATED virtual void showFnmatchSelection(pkgCache::PkgIterator const &pkg, std::string const &pattern);
+
+	/** \brief be notified if a package can't be found via pattern
+	 *
+	 * Can be used to show a message as well as to try something else to make it match
+	 *
+	 * \param select is the method tried for selection
+	 * \param pci is the container the package should be inserted in
+	 * \param Cache is the package universe available
+	 * \param pattern is the string not matching anything
+	 */
+	virtual void canNotFindPackage(enum PkgSelector const select, PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
+	// same as above for showPackageSelection
+	APT_DEPRECATED virtual void canNotFindTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	APT_DEPRECATED virtual void canNotFindRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	APT_DEPRECATED virtual void canNotFindFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	APT_DEPRECATED virtual void canNotFindPackage(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str);
+
+	/** \brief specifies which version(s) we want to refer to */
+	enum VerSelector {
+		/** by release string */
+		RELEASE,
+		/** by version number string */
+		VERSIONNUMBER,
+		/** All versions */
+		ALL,
+		/** Candidate and installed version */
+		CANDANDINST,
+		/** Candidate version */
+		CANDIDATE,
+		/** Installed version */
+		INSTALLED,
+		/** Candidate or if non installed version */
+		CANDINST,
+		/** Installed or if non candidate version */
+		INSTCAND,
+		/** Newest version */
+		NEWEST
+	};
+
+	/** \brief be notified about the version being selected via pattern
+	 *
+	 * Main use is probably to show a message to the user what happened
+	 * Note that at the moment this method is only called for RELEASE
+	 * and VERSION selections, not for the others.
+	 *
+	 * \param Pkg is the package which was selected for
+	 * \param Ver is the version selected
+	 * \param select is the selection method which choose the version
+	 * \param pattern is the string used by the selection method to pick the version
+	 */
+	virtual void showVersionSelection(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const &Ver,
+	      enum VerSelector const select, std::string const &pattern);
+	// renamed to have a similar interface to showPackageSelection
+	APT_DEPRECATED virtual void showSelectedVersion(pkgCache::PkgIterator const &Pkg, pkgCache::VerIterator const Ver,
 				 std::string const &ver, bool const verIsRel);
 
-	virtual void canNotFindTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
-	virtual void canNotFindRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
-	virtual void canNotFindFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
-#endif
-	virtual void canNotFindPackage(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &str);
-
-	virtual void canNotFindAllVer(VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
-	virtual void canNotFindInstCandVer(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+	/** \brief be notified if a version can't be found for a package
+	 *
+	 * Main use is probably to show a message to the user what happened
+	 *
+	 * \param select is the method tried for selection
+	 * \param vci is the container the version should be inserted in
+	 * \param Cache is the package universe available
+	 * \param Pkg is the package we wanted a version from
+	 */
+	virtual void canNotFindVersion(enum VerSelector const select, VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
+	// same as above for showPackageSelection
+	APT_DEPRECATED virtual void canNotFindAllVer(VersionContainerInterface * const vci, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
+	APT_DEPRECATED virtual void canNotFindInstCandVer(VersionContainerInterface * const vci, pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
-	virtual void canNotFindCandInstVer(VersionContainerInterface * const vci,
+	APT_DEPRECATED virtual void canNotFindCandInstVer(VersionContainerInterface * const vci,
 				pkgCacheFile &Cache,
 				pkgCache::PkgIterator const &Pkg);
 
+	// the difference between canNotFind and canNotGet is that the later is more low-level
+	// and called from other places: In this case looking into the code is the only real answer…
+	virtual pkgCache::VerIterator canNotGetVersion(enum VerSelector const select, pkgCacheFile &Cache, pkgCache::PkgIterator const &Pkg);
+	// same as above for showPackageSelection
+	APT_DEPRECATED virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache,
+				pkgCache::PkgIterator const &Pkg);
+	APT_DEPRECATED virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache,
+				pkgCache::PkgIterator const &Pkg);
+	APT_DEPRECATED virtual pkgCache::VerIterator canNotFindInstalledVer(pkgCacheFile &Cache,
+				pkgCache::PkgIterator const &Pkg);
+
 	virtual pkgCache::PkgIterator canNotFindPkgName(pkgCacheFile &Cache, std::string const &str);
-	virtual pkgCache::VerIterator canNotFindNewestVer(pkgCacheFile &Cache,
-				pkgCache::PkgIterator const &Pkg);
-	virtual pkgCache::VerIterator canNotFindCandidateVer(pkgCacheFile &Cache,
-				pkgCache::PkgIterator const &Pkg);
-	virtual pkgCache::VerIterator canNotFindInstalledVer(pkgCacheFile &Cache,
-				pkgCache::PkgIterator const &Pkg);
 
 	bool showErrors() const { return ShowError; }
 	bool showErrors(bool const newValue) { if (ShowError == newValue) return ShowError; else return ((ShowError = newValue) == false); }
@@ -98,7 +191,19 @@ public:									/*{{{*/
 protected:
 	bool ShowError;
 	GlobalError::MsgType ErrorType;
+
+	pkgCache::VerIterator canNotGetInstCandVer(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg);
+	pkgCache::VerIterator canNotGetCandInstVer(pkgCacheFile &Cache,
+		pkgCache::PkgIterator const &Pkg);
+
+	bool PackageFromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromPackageName(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern);
+	bool PackageFromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern);
 };									/*}}}*/
+
 class PackageContainerInterface {					/*{{{*/
 /** \class PackageContainerInterface
 
@@ -151,29 +256,56 @@ public:
 	virtual bool empty() const = 0;
 	virtual void clear() = 0;
 
-	enum Constructor { UNKNOWN, REGEX, TASK, FNMATCH };
-	virtual void setConstructor(Constructor const &con) = 0;
-	virtual Constructor getConstructor() const = 0;
+	// FIXME: This is a bloody hack removed soon. Use CacheSetHelper::PkgSelector !
+	enum APT_DEPRECATED Constructor { UNKNOWN = CacheSetHelper::UNKNOWN,
+		REGEX = CacheSetHelper::REGEX,
+		TASK = CacheSetHelper::TASK,
+		FNMATCH = CacheSetHelper::FNMATCH };
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	void setConstructor(Constructor const by) { ConstructedBy = (CacheSetHelper::PkgSelector)by; }
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
-	static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
-	static bool FromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper);
-	static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper);
-	static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper);
+	void setConstructor(CacheSetHelper::PkgSelector const by) { ConstructedBy = by; }
+	CacheSetHelper::PkgSelector getConstructor() const { return ConstructedBy; }
+	PackageContainerInterface() : ConstructedBy(CacheSetHelper::UNKNOWN) {}
+	PackageContainerInterface(CacheSetHelper::PkgSelector const by) : ConstructedBy(by) {}
 
-	struct Modifier {
-		enum Position { NONE, PREFIX, POSTFIX };
-		unsigned short ID;
-		const char * const Alias;
-		Position Pos;
-		Modifier (unsigned short const &id, const char * const alias, Position const &pos) : ID(id), Alias(alias), Pos(pos) {}
-	};
+	APT_DEPRECATED static bool FromTask(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::TASK, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromRegEx(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::REGEX, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromFnmatch(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::FNMATCH, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromGroup(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::PACKAGENAME, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromString(PackageContainerInterface * const pci, pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+	   return helper.PackageFrom(CacheSetHelper::STRING, pci, Cache, pattern); }
+	APT_DEPRECATED static bool FromCommandLine(PackageContainerInterface * const pci, pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper) {
+	   return helper.PackageFromCommandLine(pci, Cache, cmdline); }
 
-	static bool FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
-					    pkgCacheFile &Cache, const char * cmdline,
-					    std::list<Modifier> const &mods, CacheSetHelper &helper);
+	APT_DEPRECATED typedef CacheSetHelper::PkgModifier Modifier;
+
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+	   return helper.PackageFromName(Cache, pattern); }
+	APT_DEPRECATED static bool FromModifierCommandLine(unsigned short &modID, PackageContainerInterface * const pci,
+	      pkgCacheFile &Cache, const char * cmdline,
+	      std::list<Modifier> const &mods, CacheSetHelper &helper) {
+	   return helper.PackageFromModifierCommandLine(modID, pci, Cache, cmdline, mods); }
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+
+private:
+	CacheSetHelper::PkgSelector ConstructedBy;
 };
 									/*}}}*/
 template<class Container> class PackageContainer : public PackageContainerInterface {/*{{{*/
@@ -237,11 +369,28 @@ public:									/*{{{*/
 	iterator end() { return iterator(_cont.end()); }
 	const_iterator find(pkgCache::PkgIterator const &P) const { return const_iterator(_cont.find(P)); }
 
-	void setConstructor(Constructor const &by) { ConstructedBy = by; }
-	Constructor getConstructor() const { return ConstructedBy; }
+	PackageContainer() : PackageContainerInterface() {}
+	PackageContainer(CacheSetHelper::PkgSelector const &by) : PackageContainerInterface(by) {}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	APT_DEPRECATED PackageContainer(Constructor const &by) : PackageContainerInterface((CacheSetHelper::PkgSelector)by) {}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
-	PackageContainer() : ConstructedBy(UNKNOWN) {}
-	PackageContainer(Constructor const &by) : ConstructedBy(by) {}
+	/** \brief sort all included versions with given comparer
+
+	    Some containers are sorted by default, some are not and can't be,
+	    but a few like std::vector can be sorted if need be, so this can be
+	    specialized in later on. The default is that this will fail though.
+	    Specifically, already sorted containers like std::set will return
+	    false as well as there is no easy way to check that the given comparer
+	    would sort in the same way the set is currently sorted
+
+	    \return \b true if the set was sorted, \b false if not. */
+	template<class Compare> bool sort(Compare /*Comp*/) { return false; }
 
 	/** \brief returns all packages in the cache who belong to the given task
 
@@ -252,8 +401,8 @@ public:									/*{{{*/
 	    \param pattern name of the task
 	    \param helper responsible for error and message handling */
 	static PackageContainer FromTask(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
-		PackageContainer cont(TASK);
-		PackageContainerInterface::FromTask(&cont, Cache, pattern, helper);
+		PackageContainer cont(CacheSetHelper::TASK);
+		helper.PackageFrom(CacheSetHelper::TASK, &cont, Cache, pattern);
 		return cont;
 	}
 	static PackageContainer FromTask(pkgCacheFile &Cache, std::string const &pattern) {
@@ -269,9 +418,9 @@ public:									/*{{{*/
 	    \param Cache the packages are in
 	    \param pattern regular expression for package names
 	    \param helper responsible for error and message handling */
-	static PackageContainer FromRegEx(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
-		PackageContainer cont(REGEX);
-		PackageContainerInterface::FromRegEx(&cont, Cache, pattern, helper);
+	static PackageContainer FromRegEx(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+		PackageContainer cont(CacheSetHelper::REGEX);
+		helper.PackageFrom(CacheSetHelper::REGEX, &cont, Cache, pattern);
 		return cont;
 	}
 
@@ -280,9 +429,9 @@ public:									/*{{{*/
 		return FromRegEx(Cache, pattern, helper);
 	}
 
-	static PackageContainer FromFnmatch(pkgCacheFile &Cache, std::string pattern, CacheSetHelper &helper) {
-		PackageContainer cont(FNMATCH);
-		PackageContainerInterface::FromFnmatch(&cont, Cache, pattern, helper);
+	static PackageContainer FromFnmatch(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+		PackageContainer cont(CacheSetHelper::FNMATCH);
+		helper.PackageFrom(CacheSetHelper::FNMATCH, &cont, Cache, pattern);
 		return cont;
 	}
 	static PackageContainer FromFnMatch(pkgCacheFile &Cache, std::string const &pattern) {
@@ -290,18 +439,25 @@ public:									/*{{{*/
 		return FromFnmatch(Cache, pattern, helper);
 	}
 
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 	/** \brief returns a package specified by a string
 
 	    \param Cache the package is in
 	    \param pattern String the package name should be extracted from
 	    \param helper responsible for error and message handling */
-	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
-		return PackageContainerInterface::FromName(Cache, pattern, helper);
+	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
+		return helper.PackageFromName(Cache, pattern);
 	}
-	static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern) {
+	APT_DEPRECATED static pkgCache::PkgIterator FromName(pkgCacheFile &Cache, std::string const &pattern) {
 		CacheSetHelper helper;
-		return PackageContainerInterface::FromName(Cache, pattern, helper);
+		return FromName(Cache, pattern, helper);
 	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 	/** \brief returns all packages specified by a string
 
@@ -310,7 +466,7 @@ public:									/*{{{*/
 	    \param helper responsible for error and message handling */
 	static PackageContainer FromString(pkgCacheFile &Cache, std::string const &pattern, CacheSetHelper &helper) {
 		PackageContainer cont;
-		PackageContainerInterface::FromString(&cont, Cache, pattern, helper);
+		helper.PackageFrom(CacheSetHelper::PACKAGENAME, &cont, Cache, pattern);
 		return cont;
 	}
 	static PackageContainer FromString(pkgCacheFile &Cache, std::string const &pattern) {
@@ -327,7 +483,7 @@ public:									/*{{{*/
 	    \param helper responsible for error and message handling */
 	static PackageContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline, CacheSetHelper &helper) {
 		PackageContainer cont;
-		PackageContainerInterface::FromCommandLine(&cont, Cache, cmdline, helper);
+		helper.PackageFromCommandLine(&cont, Cache, cmdline);
 		return cont;
 	}
 	static PackageContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
@@ -349,14 +505,14 @@ public:									/*{{{*/
 	static std::map<unsigned short, PackageContainer> GroupedFromCommandLine(
 										 pkgCacheFile &Cache,
 										 const char **cmdline,
-										 std::list<Modifier> const &mods,
+										 std::list<CacheSetHelper::PkgModifier> const &mods,
 										 unsigned short const &fallback,
 										 CacheSetHelper &helper) {
 		std::map<unsigned short, PackageContainer> pkgsets;
 		for (const char **I = cmdline; *I != 0; ++I) {
 			unsigned short modID = fallback;
 			PackageContainer pkgset;
-			PackageContainerInterface::FromModifierCommandLine(modID, &pkgset, Cache, *I, mods, helper);
+			helper.PackageFromModifierCommandLine(modID, &pkgset, Cache, *I, mods);
 			pkgsets[modID].insert(pkgset);
 		}
 		return pkgsets;
@@ -364,19 +520,20 @@ public:									/*{{{*/
 	static std::map<unsigned short, PackageContainer> GroupedFromCommandLine(
 										 pkgCacheFile &Cache,
 										 const char **cmdline,
-										 std::list<Modifier> const &mods,
+										 std::list<CacheSetHelper::PkgModifier> const &mods,
 										 unsigned short const &fallback) {
 		CacheSetHelper helper;
 		return GroupedFromCommandLine(Cache, cmdline,
 				mods, fallback, helper);
 	}
 									/*}}}*/
-private:								/*{{{*/
-	Constructor ConstructedBy;
-									/*}}}*/
 };									/*}}}*/
-
+// specialisations for push_back containers: std::list & std::vector	/*{{{*/
 template<> template<class Cont> void PackageContainer<std::list<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
+	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
+		_cont.push_back(*p);
+}
+template<> template<class Cont> void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(PackageContainer<Cont> const &pkgcont) {
 	for (typename PackageContainer<Cont>::const_iterator p = pkgcont.begin(); p != pkgcont.end(); ++p)
 		_cont.push_back(*p);
 }
@@ -388,12 +545,65 @@ template<> inline bool PackageContainer<std::list<pkgCache::PkgIterator> >::inse
 	_cont.push_back(P);
 	return true;
 }
+template<> inline bool PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(pkgCache::PkgIterator const &P) {
+	if (P.end() == true)
+		return false;
+	_cont.push_back(P);
+	return true;
+}
 template<> inline void PackageContainer<std::list<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator p = begin; p != end; ++p)
 		_cont.push_back(*p);
 }
+template<> inline void PackageContainer<std::vector<pkgCache::PkgIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator p = begin; p != end; ++p)
+		_cont.push_back(*p);
+}
+									/*}}}*/
+
+template<> template<class Compare> inline bool PackageContainer<std::vector<pkgCache::PkgIterator> >::sort(Compare Comp) {
+	std::sort(_cont.begin(), _cont.end(), Comp);
+	return true;
+}
+
+// class PackageUniverse - pkgCache as PackageContainerInterface	/*{{{*/
+/** \class PackageUniverse
+
+    Wraps around our usual pkgCache, so that it can be stuffed into methods
+    expecting a PackageContainer.
+
+    The wrapping is read-only in practice modeled by making erase and co
+    private methods. */
+class PackageUniverse : public PackageContainerInterface {
+	pkgCache * const _cont;
+public:
+	typedef pkgCache::PkgIterator iterator;
+	typedef pkgCache::PkgIterator const_iterator;
+
+	bool empty() const { return false; }
+	size_t size() const { return _cont->Head().PackageCount; }
+
+	const_iterator begin() const { return _cont->PkgBegin(); }
+	const_iterator end() const { return  _cont->PkgEnd(); }
+	iterator begin() { return _cont->PkgBegin(); }
+	iterator end() { return _cont->PkgEnd(); }
+
+	PackageUniverse(pkgCache * const Owner) : _cont(Owner) { }
+
+private:
+	bool insert(pkgCache::PkgIterator const &) { return true; }
+	template<class Cont> void insert(PackageContainer<Cont> const &) { }
+	void insert(const_iterator, const_iterator) { }
+
+	void clear() { }
+	iterator& erase(iterator &iter) { return iter; }
+	size_t erase(const pkgCache::PkgIterator) { return 0; }
+	void erase(iterator, iterator) { }
+};
+									/*}}}*/
 typedef PackageContainer<std::set<pkgCache::PkgIterator> > PackageSet;
 typedef PackageContainer<std::list<pkgCache::PkgIterator> > PackageList;
+typedef PackageContainer<std::vector<pkgCache::PkgIterator> > PackageVector;
 
 class VersionContainerInterface {					/*{{{*/
 /** \class APT::VersionContainerInterface
@@ -435,45 +645,83 @@ public:
 	virtual void clear() = 0;
 
 	/** \brief specifies which version(s) will be returned if non is given */
-	enum Version {
-		/** All versions */
-		ALL,
-		/** Candidate and installed version */
-		CANDANDINST,
-		/** Candidate version */
-		CANDIDATE,
-		/** Installed version */
-		INSTALLED,
-		/** Candidate or if non installed version */
-		CANDINST,
-		/** Installed or if non candidate version */
-		INSTCAND,
-		/** Newest version */
-		NEWEST
+	enum APT_DEPRECATED Version {
+		ALL = CacheSetHelper::ALL,
+		CANDANDINST = CacheSetHelper::CANDANDINST,
+		CANDIDATE = CacheSetHelper::CANDIDATE,
+		INSTALLED = CacheSetHelper::INSTALLED,
+		CANDINST = CacheSetHelper::CANDINST,
+		INSTCAND = CacheSetHelper::INSTCAND,
+		NEWEST = CacheSetHelper::NEWEST
 	};
 
 	struct Modifier {
-		enum Position { NONE, PREFIX, POSTFIX };
-		unsigned short ID;
+		unsigned short const ID;
 		const char * const Alias;
-		Position Pos;
-		Version SelectVersion;
+		enum Position { NONE, PREFIX, POSTFIX } const Pos;
+		enum CacheSetHelper::VerSelector const SelectVersion;
 		Modifier (unsigned short const &id, const char * const alias, Position const &pos,
-			  Version const &select) : ID(id), Alias(alias), Pos(pos),
+			  enum CacheSetHelper::VerSelector const select) : ID(id), Alias(alias), Pos(pos),
 			 SelectVersion(select) {}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+		APT_DEPRECATED Modifier(unsigned short const &id, const char * const alias, Position const &pos,
+			  Version const &select) : ID(id), Alias(alias), Pos(pos),
+			 SelectVersion((CacheSetHelper::VerSelector)select) {}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 	};
 
 	static bool FromCommandLine(VersionContainerInterface * const vci, pkgCacheFile &Cache,
-				    const char **cmdline, Version const &fallback,
+				    const char **cmdline, CacheSetHelper::VerSelector const fallback,
 				    CacheSetHelper &helper);
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	APT_DEPRECATED static bool FromCommandLine(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+				    const char **cmdline, Version const &fallback,
+				    CacheSetHelper &helper) {
+	   return FromCommandLine(vci, Cache, cmdline, (CacheSetHelper::VerSelector)fallback, helper);
+	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 	static bool FromString(VersionContainerInterface * const vci, pkgCacheFile &Cache,
-			       std::string pkg, Version const &fallback, CacheSetHelper &helper,
+			       std::string pkg, CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper,
 			       bool const onlyFromName = false);
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	APT_DEPRECATED static bool FromString(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+			       std::string pkg, Version const &fallback, CacheSetHelper &helper,
+			       bool const onlyFromName = false) {
+	   return FromString(vci, Cache, pkg, (CacheSetHelper::VerSelector)fallback, helper, onlyFromName);
+	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 	static bool FromPackage(VersionContainerInterface * const vci, pkgCacheFile &Cache,
-				pkgCache::PkgIterator const &P, Version const &fallback,
+				pkgCache::PkgIterator const &P, CacheSetHelper::VerSelector const fallback,
 				CacheSetHelper &helper);
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	APT_DEPRECATED static bool FromPackage(VersionContainerInterface * const vci, pkgCacheFile &Cache,
+				pkgCache::PkgIterator const &P, Version const &fallback,
+				CacheSetHelper &helper) {
+	   return FromPackage(vci, Cache, P, (CacheSetHelper::VerSelector)fallback, helper);
+	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 	static bool FromModifierCommandLine(unsigned short &modID,
 					    VersionContainerInterface * const vci,
@@ -485,8 +733,22 @@ public:
 	static bool FromDependency(VersionContainerInterface * const vci,
 				   pkgCacheFile &Cache,
 				   pkgCache::DepIterator const &D,
-				   Version const &selector,
+				   CacheSetHelper::VerSelector const selector,
 				   CacheSetHelper &helper);
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	APT_DEPRECATED static bool FromDependency(VersionContainerInterface * const vci,
+				   pkgCacheFile &Cache,
+				   pkgCache::DepIterator const &D,
+				   Version const &selector,
+				   CacheSetHelper &helper) {
+	   return FromDependency(vci, Cache, D, (CacheSetHelper::VerSelector)selector, helper);
+	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 protected:								/*{{{*/
 
@@ -568,6 +830,18 @@ public:									/*{{{*/
 	iterator end() { return iterator(_cont.end()); }
 	const_iterator find(pkgCache::VerIterator const &V) const { return const_iterator(_cont.find(V)); }
 
+	/** \brief sort all included versions with given comparer
+
+	    Some containers are sorted by default, some are not and can't be,
+	    but a few like std::vector can be sorted if need be, so this can be
+	    specialized in later on. The default is that this will fail though.
+	    Specifically, already sorted containers like std::set will return
+	    false as well as there is no easy way to check that the given comparer
+	    would sort in the same way the set is currently sorted
+
+	    \return \b true if the set was sorted, \b false if not. */
+	template<class Compare> bool sort(Compare /*Comp*/) { return false; }
+
 	/** \brief returns all versions specified on the commandline
 
 	    Get all versions from the commandline, uses given default version if
@@ -577,35 +851,64 @@ public:									/*{{{*/
 	    \param fallback version specification
 	    \param helper responsible for error and message handling */
 	static VersionContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
-			Version const &fallback, CacheSetHelper &helper) {
+			CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper) {
 		VersionContainer vercon;
 		VersionContainerInterface::FromCommandLine(&vercon, Cache, cmdline, fallback, helper);
 		return vercon;
 	}
 	static VersionContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
-			Version const &fallback) {
+			CacheSetHelper::VerSelector const fallback) {
 		CacheSetHelper helper;
 		return FromCommandLine(Cache, cmdline, fallback, helper);
 	}
 	static VersionContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline) {
-		return FromCommandLine(Cache, cmdline, CANDINST);
+		return FromCommandLine(Cache, cmdline, CacheSetHelper::CANDINST);
 	}
-
 	static VersionContainer FromString(pkgCacheFile &Cache, std::string const &pkg,
-			Version const &fallback, CacheSetHelper &helper,
+			CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper,
                                            bool const /*onlyFromName = false*/) {
 		VersionContainer vercon;
 		VersionContainerInterface::FromString(&vercon, Cache, pkg, fallback, helper);
 		return vercon;
 	}
 	static VersionContainer FromString(pkgCacheFile &Cache, std::string pkg,
-			Version const &fallback) {
+			CacheSetHelper::VerSelector const fallback) {
 		CacheSetHelper helper;
 		return FromString(Cache, pkg, fallback, helper);
 	}
 	static VersionContainer FromString(pkgCacheFile &Cache, std::string pkg) {
-		return FromString(Cache, pkg, CANDINST);
+		return FromString(Cache, pkg, CacheSetHelper::CANDINST);
 	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	static VersionContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
+			Version const &fallback, CacheSetHelper &helper) {
+		VersionContainer vercon;
+		VersionContainerInterface::FromCommandLine(&vercon, Cache, cmdline, (CacheSetHelper::VerSelector)fallback, helper);
+		return vercon;
+	}
+	static VersionContainer FromCommandLine(pkgCacheFile &Cache, const char **cmdline,
+			Version const &fallback) {
+		CacheSetHelper helper;
+		return FromCommandLine(Cache, cmdline, (CacheSetHelper::VerSelector)fallback, helper);
+	}
+	static VersionContainer FromString(pkgCacheFile &Cache, std::string const &pkg,
+			Version const &fallback, CacheSetHelper &helper,
+                                           bool const /*onlyFromName = false*/) {
+		VersionContainer vercon;
+		VersionContainerInterface::FromString(&vercon, Cache, pkg, (CacheSetHelper::VerSelector)fallback, helper);
+		return vercon;
+	}
+	static VersionContainer FromString(pkgCacheFile &Cache, std::string pkg,
+			Version const &fallback) {
+		CacheSetHelper helper;
+		return FromString(Cache, pkg, (CacheSetHelper::VerSelector)fallback, helper);
+	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 
 	/** \brief returns all versions specified for the package
 
@@ -614,18 +917,36 @@ public:									/*{{{*/
 	    \param fallback the version(s) you want to get
 	    \param helper the helper used for display and error handling */
 	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
-		Version const &fallback, CacheSetHelper &helper) {
+		CacheSetHelper::VerSelector const fallback, CacheSetHelper &helper) {
 		VersionContainer vercon;
 		VersionContainerInterface::FromPackage(&vercon, Cache, P, fallback, helper);
 		return vercon;
 	}
 	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
-					    Version const &fallback) {
+					    CacheSetHelper::VerSelector const fallback) {
 		CacheSetHelper helper;
 		return FromPackage(Cache, P, fallback, helper);
 	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
+		Version const &fallback, CacheSetHelper &helper) {
+		VersionContainer vercon;
+		VersionContainerInterface::FromPackage(&vercon, Cache, P, (CacheSetHelper::VerSelector)fallback, helper);
+		return vercon;
+	}
+	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P,
+					    Version const &fallback) {
+		CacheSetHelper helper;
+		return FromPackage(Cache, P, (CacheSetHelper::VerSelector)fallback, helper);
+	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 	static VersionContainer FromPackage(pkgCacheFile &Cache, pkgCache::PkgIterator const &P) {
-		return FromPackage(Cache, P, CANDIDATE);
+		return FromPackage(Cache, P, CacheSetHelper::CANDIDATE);
 	}
 
 	static std::map<unsigned short, VersionContainer> GroupedFromCommandLine(
@@ -654,23 +975,45 @@ public:									/*{{{*/
 	}
 
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
-					       Version const &selector, CacheSetHelper &helper) {
+					       CacheSetHelper::VerSelector const selector, CacheSetHelper &helper) {
 		VersionContainer vercon;
 		VersionContainerInterface::FromDependency(&vercon, Cache, D, selector, helper);
 		return vercon;
 	}
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
-					       Version const &selector) {
+					       CacheSetHelper::VerSelector const selector) {
 		CacheSetHelper helper;
 		return FromPackage(Cache, D, selector, helper);
 	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
+					       Version const &selector, CacheSetHelper &helper) {
+		VersionContainer vercon;
+		VersionContainerInterface::FromDependency(&vercon, Cache, D, (CacheSetHelper::VerSelector)selector, helper);
+		return vercon;
+	}
+	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D,
+					       Version const &selector) {
+		CacheSetHelper helper;
+		return FromPackage(Cache, D, (CacheSetHelper::VerSelector)selector, helper);
+	}
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
 	static VersionContainer FromDependency(pkgCacheFile &Cache, pkgCache::DepIterator const &D) {
-		return FromPackage(Cache, D, CANDIDATE);
+		return FromPackage(Cache, D, CacheSetHelper::CANDIDATE);
 	}
 									/*}}}*/
 };									/*}}}*/
-
+// specialisations for push_back containers: std::list & std::vector	/*{{{*/
 template<> template<class Cont> void VersionContainer<std::list<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
+	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
+		_cont.push_back(*v);
+}
+template<> template<class Cont> void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(VersionContainer<Cont> const &vercont) {
 	for (typename VersionContainer<Cont>::const_iterator v = vercont.begin(); v != vercont.end(); ++v)
 		_cont.push_back(*v);
 }
@@ -682,11 +1025,29 @@ template<> inline bool VersionContainer<std::list<pkgCache::VerIterator> >::inse
 	_cont.push_back(V);
 	return true;
 }
+template<> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::insert(pkgCache::VerIterator const &V) {
+	if (V.end() == true)
+		return false;
+	_cont.push_back(V);
+	return true;
+}
 template<> inline void VersionContainer<std::list<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
 	for (const_iterator v = begin; v != end; ++v)
 		_cont.push_back(*v);
 }
+template<> inline void VersionContainer<std::vector<pkgCache::VerIterator> >::insert(const_iterator begin, const_iterator end) {
+	for (const_iterator v = begin; v != end; ++v)
+		_cont.push_back(*v);
+}
+									/*}}}*/
+
+template<> template<class Compare> inline bool VersionContainer<std::vector<pkgCache::VerIterator> >::sort(Compare Comp) {
+	std::sort(_cont.begin(), _cont.end(), Comp);
+	return true;
+}
+
 typedef VersionContainer<std::set<pkgCache::VerIterator> > VersionSet;
 typedef VersionContainer<std::list<pkgCache::VerIterator> > VersionList;
+typedef VersionContainer<std::vector<pkgCache::VerIterator> > VersionVector;
 }
 #endif

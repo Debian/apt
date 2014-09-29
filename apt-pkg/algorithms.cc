@@ -640,13 +640,11 @@ bool pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator Pkg)
 // ProblemResolver::Resolve - calls a resolver to fix the situation	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgProblemResolver::Resolve(bool BrokenFix)
+bool pkgProblemResolver::Resolve(bool BrokenFix, OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
-   if (solver != "internal") {
-      OpTextProgress Prog(*_config);
-      return EDSP::ResolveExternal(solver.c_str(), Cache, false, false, false, &Prog);
-   }
+   if (solver != "internal")
+      return EDSP::ResolveExternal(solver.c_str(), Cache, false, false, false, Progress);
    return ResolveInternal(BrokenFix);
 }
 									/*}}}*/
@@ -1140,13 +1138,11 @@ bool pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator I)
 /* This is the work horse of the soft upgrade routine. It is very gental 
    in that it does not install or remove any packages. It is assumed that the
    system was non-broken previously. */
-bool pkgProblemResolver::ResolveByKeep()
+bool pkgProblemResolver::ResolveByKeep(OpProgress * const Progress)
 {
    std::string const solver = _config->Find("APT::Solver", "internal");
-   if (solver != "internal") {
-      OpTextProgress Prog(*_config);
-      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, &Prog);
-   }
+   if (solver != "internal")
+      return EDSP::ResolveExternal(solver.c_str(), Cache, true, false, false, Progress);
    return ResolveByKeepInternal();
 }
 									/*}}}*/

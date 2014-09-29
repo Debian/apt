@@ -2,6 +2,7 @@
 
 #include <apt-pkg/cmndline.h>
 #include <apt-pkg/configuration.h>
+#include <apt-private/private-cmndline.h>
 
 #include <gtest/gtest.h>
 
@@ -84,4 +85,71 @@ TEST(CommandLineTest, BoolParsing)
    ASSERT_EQ(std::string(CmdL.FileList[0]), "ad");
    }
 
+}
+
+bool DoVoid(CommandLine &) { return false; }
+
+TEST(CommandLineTest,GetCommand)
+{
+   CommandLine::Dispatch Cmds[] = { {"install",&DoVoid}, {"remove", &DoVoid}, {0,0} };
+   {
+   char const * argv[] = { "apt-get", "-t", "unstable", "remove", "-d", "foo" };
+   char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
+   EXPECT_STREQ("remove", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   ::Configuration c;
+   CommandLine CmdL(Args.data(), &c);
+   ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));
+   EXPECT_EQ(c.Find("APT::Default-Release"), "unstable");
+   EXPECT_TRUE(c.FindB("APT::Get::Download-Only"));
+   ASSERT_EQ(2, CmdL.FileSize());
+   EXPECT_EQ(std::string(CmdL.FileList[0]), "remove");
+   EXPECT_EQ(std::string(CmdL.FileList[1]), "foo");
+   }
+   {
+   char const * argv[] = {"apt-get", "-t", "unstable", "remove", "--", "-d", "foo" };
+   char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
+   EXPECT_STREQ("remove", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   ::Configuration c;
+   CommandLine CmdL(Args.data(), &c);
+   ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));
+   EXPECT_EQ(c.Find("APT::Default-Release"), "unstable");
+   EXPECT_FALSE(c.FindB("APT::Get::Download-Only"));
+   ASSERT_EQ(3, CmdL.FileSize());
+   EXPECT_EQ(std::string(CmdL.FileList[0]), "remove");
+   EXPECT_EQ(std::string(CmdL.FileList[1]), "-d");
+   EXPECT_EQ(std::string(CmdL.FileList[2]), "foo");
+   }
+   {
+   char const * argv[] = {"apt-get", "-t", "unstable", "--", "remove", "-d", "foo" };
+   char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
+   EXPECT_STREQ("remove", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   ::Configuration c;
+   CommandLine CmdL(Args.data(), &c);
+   ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));
+   EXPECT_EQ(c.Find("APT::Default-Release"), "unstable");
+   EXPECT_FALSE(c.FindB("APT::Get::Download-Only"));
+   ASSERT_EQ(CmdL.FileSize(), 3);
+   EXPECT_EQ(std::string(CmdL.FileList[0]), "remove");
+   EXPECT_EQ(std::string(CmdL.FileList[1]), "-d");
+   EXPECT_EQ(std::string(CmdL.FileList[2]), "foo");
+   }
+   {
+   char const * argv[] = {"apt-get", "install", "-t", "unstable", "--", "remove", "-d", "foo" };
+   char const * com = CommandLine::GetCommand(Cmds, sizeof(argv)/sizeof(argv[0]), argv);
+   EXPECT_STREQ("install", com);
+   std::vector<CommandLine::Args> Args = getCommandArgs("apt-get", com);
+   ::Configuration c;
+   CommandLine CmdL(Args.data(), &c);
+   ASSERT_TRUE(CmdL.Parse(sizeof(argv)/sizeof(argv[0]), argv));
+   EXPECT_EQ(c.Find("APT::Default-Release"), "unstable");
+   EXPECT_FALSE(c.FindB("APT::Get::Download-Only"));
+   ASSERT_EQ(CmdL.FileSize(), 4);
+   EXPECT_EQ(std::string(CmdL.FileList[0]), "install");
+   EXPECT_EQ(std::string(CmdL.FileList[1]), "remove");
+   EXPECT_EQ(std::string(CmdL.FileList[2]), "-d");
+   EXPECT_EQ(std::string(CmdL.FileList[3]), "foo");
+   }
 }

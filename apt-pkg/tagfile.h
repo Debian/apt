@@ -43,7 +43,7 @@ class pkgTagSection
       unsigned int StartValue;
       unsigned int NextInBucket;
 
-      TagData(unsigned int const StartTag) : StartTag(StartTag), NextInBucket(0) {}
+      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
    };
    std::vector<TagData> Tags;
    unsigned int LookupTable[0x100];
@@ -94,7 +94,7 @@ class pkgTagSection
    /** \brief amount of Tags in the current section
     *
     * Note: if a Tag is mentioned repeatly it will be counted multiple
-    * times, but only the last occurance is available via Find methods.
+    * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
    bool Exists(const char* const Tag) const;

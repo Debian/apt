@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 class FileFd;
 class pkgSourceList;
@@ -36,12 +37,15 @@ class pkgIndexFile;
 class pkgCacheGenerator							/*{{{*/
 {
    private:
-
-   pkgCache::StringItem *UniqHash[26];
    APT_HIDDEN map_stringitem_t WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String);
    APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
    APT_HIDDEN map_pointer_t AllocateInMap(const unsigned long &size);
+
+   std::map<std::string,map_stringitem_t> strMixed;
+   std::map<std::string,map_stringitem_t> strSections;
+   std::map<std::string,map_stringitem_t> strPkgNames;
+   std::map<std::string,map_stringitem_t> strVersions;
 
    public:
    
@@ -91,8 +95,9 @@ class pkgCacheGenerator							/*{{{*/
 
    public:
 
-   map_stringitem_t WriteUniqString(const char *S,unsigned int const Size);
-   inline map_stringitem_t WriteUniqString(const std::string &S) {return WriteUniqString(S.c_str(),S.length());};
+   enum StringType { MIXED, PKGNAME, VERSION, SECTION };
+   map_stringitem_t StoreString(enum StringType const type, const char * S, unsigned int const Size);
+   inline map_stringitem_t StoreString(enum StringType const type, const std::string &S) {return StoreString(type, S.c_str(),S.length());};
 
    void DropProgress() {Progress = 0;};
    bool SelectFile(const std::string &File,const std::string &Site,pkgIndexFile const &Index,
@@ -145,8 +150,9 @@ class pkgCacheGenerator::ListParser
       
    protected:
 
-   inline map_stringitem_t WriteUniqString(std::string S) {return Owner->WriteUniqString(S);};
-   inline map_stringitem_t WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
+   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, std::string const &S) {return Owner->StoreString(type, S);};
+   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, const char *S,unsigned int Size) {return Owner->StoreString(type, S, Size);};
+
    inline map_stringitem_t WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
    inline map_stringitem_t WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
    bool NewDepends(pkgCache::VerIterator &Ver,const std::string &Package, const std::string &Arch,
@@ -187,7 +193,7 @@ class pkgCacheGenerator::ListParser
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
-   ListParser() : FoundFileDeps(false) {};
+   ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false) {};
    virtual ~ListParser() {};
 };
 									/*}}}*/

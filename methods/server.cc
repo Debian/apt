@@ -324,10 +324,10 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       failure */
    if (Server->Result < 200 || Server->Result >= 300)
    {
-      char err[255];
-      snprintf(err,sizeof(err)-1,"HttpError%i",Server->Result);
+      std::string err;
+      strprintf(err, "HttpError%u", Server->Result);
       SetFailReason(err);
-      _error->Error("%u %s",Server->Result,Server->Code);
+      _error->Error("%u %s", Server->Result, Server->Code);
       if (Server->HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
       return ERROR_UNRECOVERABLE;

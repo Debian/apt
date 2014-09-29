@@ -560,9 +560,9 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
 
    std::list<APT::VersionSet::Modifier> mods;
    mods.push_back(APT::VersionSet::Modifier(MOD_INSTALL, "+",
-		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::CANDIDATE));
+		APT::VersionSet::Modifier::POSTFIX, APT::CacheSetHelper::CANDIDATE));
    mods.push_back(APT::VersionSet::Modifier(MOD_REMOVE, "-",
-		APT::VersionSet::Modifier::POSTFIX, APT::VersionSet::NEWEST));
+		APT::VersionSet::Modifier::POSTFIX, APT::CacheSetHelper::NEWEST));
    CacheSetHelperAPTGet helper(c0out);
    verset = APT::VersionSet::GroupedFromCommandLine(Cache,
 		CmdL.FileList + 1, mods, fallback, helper);
@@ -619,15 +619,14 @@ bool DoCacheManipulationFromCommandLine(CommandLine &CmdL, CacheFile &Cache,
       if (Fix != NULL)
       {
 	 // Call the scored problem resolver
+	 OpTextProgress Progress(*_config);
+	 bool const distUpgradeMode = strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0;
+
 	 bool resolver_fail = false;
-	 if (UpgradeMode == 0)
-	 {
-	    if (strcmp(CmdL.FileList[0], "dist-upgrade") == 0 || strcmp(CmdL.FileList[0], "full-upgrade") == 0)
-	       resolver_fail = APT::Upgrade::Upgrade(Cache, 0);
-	    else
-	       resolver_fail = Fix->Resolve(true);
-	 } else
-	    resolver_fail = APT::Upgrade::Upgrade(Cache, UpgradeMode);
+	 if (distUpgradeMode == true || UpgradeMode != APT::Upgrade::ALLOW_EVERYTHING)
+	    resolver_fail = APT::Upgrade::Upgrade(Cache, UpgradeMode, &Progress);
+	 else
+	    resolver_fail = Fix->Resolve(true, &Progress);
 
 	 if (resolver_fail == false && Cache->BrokenCount() == 0)
 	    return false;

@@ -109,7 +109,6 @@ class pkgCache								/*{{{*/
    struct Description;
    struct Provides;
    struct Dependency;
-   struct StringItem;
    struct VerFile;
    struct DescFile;
    
@@ -186,7 +185,6 @@ class pkgCache								/*{{{*/
    Description *DescP;
    Provides *ProvideP;
    Dependency *DepP;
-   StringItem *StringItemP;
    char *StrP;
 
    virtual bool ReMap(bool const &Errorchecks = true);
@@ -290,12 +288,6 @@ struct pkgCache::Header
        The PackageFile structures are singly linked lists that represent
        all package files that have been merged into the cache. */
    map_pointer_t FileList;
-   /** \brief index of the first StringItem structure
-
-       The cache contains a list of all the unique strings (StringItems).
-       The parser reads this list into memory so it can match strings
-       against it.*/
-   map_pointer_t StringList;
    /** \brief String representing the version system used */
    map_pointer_t VerSysName;
    /** \brief native architecture the cache was built against */
@@ -376,8 +368,11 @@ struct pkgCache::Group
 */
 struct pkgCache::Package
 {
-   /** \brief Name of the package */
-   map_stringitem_t Name;
+   /** \brief Name of the package
+    * Note that the access method Name() will remain. It is just this data member
+    * deprecated as this information is already stored and available via the
+    * associated Group – so it is wasting precious binary cache space */
+   APT_DEPRECATED map_stringitem_t Name;
    /** \brief Architecture of the package */
    map_stringitem_t Arch;
    /** \brief Base of a singly linked list of versions
@@ -435,7 +430,7 @@ struct pkgCache::Package
 struct pkgCache::PackageFile
 {
    /** \brief physical disk file that this PackageFile represents */
-   map_pointer_t FileName;        // StringItem
+   map_stringitem_t FileName;
    /** \brief the release information
 
        Please see the files document for a description of what the
@@ -515,6 +510,12 @@ struct pkgCache::Version
    map_stringitem_t VerStr;
    /** \brief section this version is filled in */
    map_stringitem_t Section;
+   /** \brief source package name this version comes from
+      Always contains the name, even if it is the same as the binary name */
+   map_stringitem_t SourcePkgName;
+   /** \brief source version this version comes from
+      Always contains the version string, even if it is the same as the binary version */
+   map_stringitem_t SourceVerStr;
 
    /** \brief Multi-Arch capabilities of a package version */
    enum VerMultiArch { None = 0, /*!< is the default and doesn't trigger special behaviour */
@@ -603,7 +604,7 @@ struct pkgCache::Description
 struct pkgCache::Dependency
 {
    /** \brief string of the version the dependency is applied against */
-   map_stringitem_t Version;         // StringItem
+   map_stringitem_t Version;
    /** \brief index of the package this depends applies to
 
        The generator will - if the package does not already exist -
@@ -653,24 +654,6 @@ struct pkgCache::Provides
    map_pointer_t NextPkgProv;      // Provides
 };
 									/*}}}*/
-// StringItem structure							/*{{{*/
-/** \brief used for generating single instances of strings
-
-    Some things like Section Name are are useful to have as unique tags.
-    It is part of a linked list based at pkgCache::Header::StringList
-
-    All strings are simply inlined any place in the file that is natural
-    for the writer. The client should make no assumptions about the positioning
-    of strings. All StringItems should be null-terminated. */
-struct pkgCache::StringItem
-{
-   /** \brief string this refers to */
-   map_stringitem_t String;
-   /** \brief Next link in the chain */
-   map_stringitem_t NextItem;
-};
-									/*}}}*/
-
 
 inline char const * pkgCache::NativeArch()
 	{ return StrP + HeaderP->Architecture; }

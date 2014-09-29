@@ -74,23 +74,27 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) :  LockFD(-1), Queues(0), Wor
 // ---------------------------------------------------------------------
 /* Do everything needed to be a complete Acquire object and report the
    success (or failure) back so the user knows that something is wrong… */
-bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
+bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock,
+      bool const createDirectories)
 {
    Log = Progress;
 
    // check for existence and possibly create auxiliary directories
-   string const listDir = _config->FindDir("Dir::State::lists");
-   string const partialListDir = listDir + "partial/";
-   string const archivesDir = _config->FindDir("Dir::Cache::Archives");
-   string const partialArchivesDir = archivesDir + "partial/";
+   if (createDirectories == true)
+   {
+      string const listDir = _config->FindDir("Dir::State::lists");
+      string const partialListDir = listDir + "partial/";
+      string const archivesDir = _config->FindDir("Dir::Cache::Archives");
+      string const partialArchivesDir = archivesDir + "partial/";
 
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
-       CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
-      return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+      if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
+	    CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
+	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
 
-   if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
-       CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
-      return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+      if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
+	    CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
+	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+   }
 
    if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)
       return true;
@@ -582,27 +586,18 @@ pkgAcquire::UriIterator pkgAcquire::UriEnd()
 // Acquire::MethodConfig::MethodConfig - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::MethodConfig::MethodConfig()
+pkgAcquire::MethodConfig::MethodConfig() : d(NULL), Next(0), SingleInstance(false),
+   Pipeline(false), SendConfig(false), LocalOnly(false), NeedsCleanup(false),
+   Removable(false)
 {
-   SingleInstance = false;
-   Pipeline = false;
-   SendConfig = false;
-   LocalOnly = false;
-   Removable = false;
-   Next = 0;
 }
 									/*}}}*/
 // Queue::Queue - Constructor						/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : Name(Name), 
-            Owner(Owner)
+pkgAcquire::Queue::Queue(string Name,pkgAcquire *Owner) : d(NULL), Next(0),
+   Name(Name), Items(0), Workers(0), Owner(Owner), PipeDepth(0), MaxPipeDepth(1)
 {
-   Items = 0;
-   Next = 0;
-   Workers = 0;
-   MaxPipeDepth = 1;
-   PipeDepth = 0;
 }
 									/*}}}*/
 // Queue::~Queue - Destructor						/*{{{*/
@@ -806,7 +801,7 @@ void pkgAcquire::Queue::Bump()
 // AcquireStatus::pkgAcquireStatus - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Update(true), MorePulses(false)
+pkgAcquireStatus::pkgAcquireStatus() : d(NULL), Percent(0), Update(true), MorePulses(false)
 {
    Start();
 }
