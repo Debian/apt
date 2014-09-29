@@ -219,8 +219,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"pkgDepCache::ActionGroup::~ActionGroup()@Base" 0.8.0
  (c++)"pkgDepCache::IsInstallOk(pkgCache::PkgIterator const&, bool, unsigned long, bool)@Base" 0.8.0
  (c++)"pkgDepCache::MarkInstall(pkgCache::PkgIterator const&, bool, unsigned long, bool, bool)@Base" 0.8.0
- (c++)"pkgDepCache::MarkPackage(pkgCache::PkgIterator const&, pkgCache::VerIterator const&, bool const&, bool const&)@Base" 0.8.0
- (c++)"pkgDepCache::MarkRequired(pkgDepCache::InRootSetFunc&)@Base" 0.8.0
  (c++)"pkgDepCache::SetReInstall(pkgCache::PkgIterator const&, bool)@Base" 0.8.0
  (c++)"pkgDepCache::VersionState(pkgCache::DepIterator, unsigned char, unsigned char, unsigned char)@Base" 0.8.0
  (c++)"pkgDepCache::BuildGroupOrs(pkgCache::VerIterator const&)@Base" 0.8.0
@@ -236,7 +234,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"pkgDepCache::MarkFollowsSuggests()@Base" 0.8.0
  (c++)"pkgDepCache::MarkFollowsRecommends()@Base" 0.8.0
  (c++)"pkgDepCache::Init(OpProgress*)@Base" 0.8.0
- (c++)"pkgDepCache::Sweep()@Base" 0.8.0
  (c++)"pkgDepCache::Policy::IsImportantDep(pkgCache::DepIterator const&)@Base" 0.8.0
  (c++)"pkgDepCache::Policy::GetCandidateVer(pkgCache::PkgIterator const&)@Base" 0.8.0
  (c++)"pkgDepCache::Policy::~Policy()@Base" 0.8.0
@@ -248,12 +245,10 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"pkgDepCache::MarkKeep(pkgCache::PkgIterator const&, bool, bool, unsigned long)@Base" 0.8.0
  (c++)"pkgDepCache::pkgDepCache(pkgCache*, pkgDepCache::Policy*)@Base" 0.8.0
  (c++)"pkgDepCache::~pkgDepCache()@Base" 0.8.0
- (c++)"pkgSimulate::ShortBreaks()@Base" 0.8.0
  (c++)"pkgSimulate::Policy::GetCandidateVer(pkgCache::PkgIterator const&)@Base" 0.8.0
  (c++)"pkgSimulate::Policy::~Policy()@Base" 0.8.0
  (c++)"pkgSimulate::Remove(pkgCache::PkgIterator, bool)@Base" 0.8.0
  (c++)"pkgSimulate::Install(pkgCache::PkgIterator, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
- (c++)"pkgSimulate::Describe(pkgCache::PkgIterator, std::basic_ostream<char, std::char_traits<char> >&, bool, bool)@Base" 0.8.0
  (c++)"pkgSimulate::Configure(pkgCache::PkgIterator)@Base" 0.8.0
  (c++)"pkgSimulate::pkgSimulate(pkgDepCache*)@Base" 0.8.0
  (c++)"pkgSimulate::~pkgSimulate()@Base" 0.8.0
@@ -447,9 +442,7 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"TranslationsCopy::CopyTranslations(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, pkgCdromStatus*)@Base" 0.8.0
  (c++)"debPackagesIndex::debPackagesIndex(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, bool const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.0
  (c++)"debPackagesIndex::~debPackagesIndex()@Base" 0.8.0
- (c++)"pkgAcqIndexDiffs::QueueNextDiff()@Base" 0.8.0
  (c++)"pkgAcqIndexDiffs::Failed(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, pkgAcquire::MethodConfig*)@Base" 0.8.0
- (c++)"pkgAcqIndexDiffs::Finish(bool)@Base" 0.8.0
  (c++)"pkgAcqIndexDiffs::DescURI()@Base" 0.8.0
  (c++)"pkgAcqIndexDiffs::~pkgAcqIndexDiffs()@Base" 0.8.0
  (c++)"pkgAcqIndexTrans::Failed(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, pkgAcquire::MethodConfig*)@Base" 0.8.0
@@ -517,11 +510,8 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"debSrcRecordParser::Restart()@Base" 0.8.0
  (c++)"debSrcRecordParser::Binaries()@Base" 0.8.0
  (c++)"debSrcRecordParser::~debSrcRecordParser()@Base" 0.8.0
- (c++)"pkgProblemResolver::MakeScores()@Base" 0.8.0
  (c++)"pkgProblemResolver::InstallProtect()@Base" 0.8.0
  (c++)"pkgProblemResolver::This@Base" 0.8.0
- (c++)"pkgProblemResolver::DoUpgrade(pkgCache::PkgIterator)@Base" 0.8.0
- (c++)"pkgProblemResolver::ScoreSort(void const*, void const*)@Base" 0.8.0
  (c++)"pkgProblemResolver::pkgProblemResolver(pkgDepCache*)@Base" 0.8.0
  (c++)"pkgProblemResolver::~pkgProblemResolver()@Base" 0.8.0
  (c++)"debVersioningSystem::CmpFragment(char const*, char const*, char const*, char const*)@Base" 0.8.0
@@ -598,7 +588,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"pkgCache::VerFileIterator::operator++()@Base" 0.8.0
  (c++)"pkgCache::DescFileIterator::operator++(int)@Base" 0.8.0
  (c++)"pkgCache::DescFileIterator::operator++()@Base" 0.8.0
- (c++)"pkgCache::SingleArchFindPkg(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.0
  (c++)"pkgCache::ReMap(bool const&)@Base" 0.8.0
  (c++)"pkgCache::Header::Header()@Base" 0.8.0
  (c++)"pkgCache::DepType(unsigned char)@Base" 0.8.0
@@ -625,11 +614,8 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"IndexCopy::ChopDirs(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned int)@Base" 0.8.0
  (c++)"IndexCopy::GrabFirst(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned int)@Base" 0.8.0
  (c++)"SigVerify::CopyAndVerify(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >)@Base" 0.8.0
- (c++)"SigVerify::CopyMetaIndex(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
- (c++)"SigVerify::Verify(std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, indexRecords*)@Base" 0.8.0
  (c++)"SigVerify::RunGPGV(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, int const&, int*)@Base" 0.8.0
  (c++)"debSystem::Initialize(Configuration&)@Base" 0.8.0
- (c++)"debSystem::CheckUpdates()@Base" 0.8.0
  (c++)"debSystem::AddStatusFiles(std::vector<pkgIndexFile*, std::allocator<pkgIndexFile*> >&)@Base" 0.8.0
  (c++)"debSystem::ArchiveSupported(char const*)@Base" 0.8.0
  (c++)"debSystem::Lock()@Base" 0.8.0
@@ -642,7 +628,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"pkgDPkgPM::WriteHistoryTag(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
  (c++)"pkgDPkgPM::WriteApportReport(char const*, char const*)@Base" 0.8.0
  (c++)"pkgDPkgPM::RunScriptsWithPkgs(char const*)@Base" 0.8.0
- (c++)"pkgDPkgPM::handleDisappearAction(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.0
  (c++)"pkgDPkgPM::Go(int)@Base" 0.8.0
  (c++)"pkgDPkgPM::Reset()@Base" 0.8.0
  (c++)"pkgDPkgPM::Remove(pkgCache::PkgIterator, bool)@Base" 0.8.0
@@ -735,23 +720,19 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"debSourcesIndex::SourceInfo(pkgSrcRecords::Parser const&, pkgSrcRecords::File const&) const@Base" 0.8.0
  (c++)"debSourcesIndex::HasPackages() const@Base" 0.8.0
  (c++)"debSourcesIndex::CreateSrcParser() const@Base" 0.8.0
- (c++)"debSourcesIndex::Info(char const*) const@Base" 0.8.0
  (c++)"debSourcesIndex::Size() const@Base" 0.8.0
  (c++)"debSourcesIndex::Exists() const@Base" 0.8.0
  (c++)"debSourcesIndex::GetType() const@Base" 0.8.0
  (c++)"debSourcesIndex::Describe(bool) const@Base" 0.8.0
- (c++)"debSourcesIndex::IndexURI(char const*) const@Base" 0.8.0
  (c++)"debPackagesIndex::ArchiveURI(std::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@Base" 0.8.0
  (c++)"debPackagesIndex::ArchiveInfo(pkgCache::VerIterator) const@Base" 0.8.0
  (c++)"debPackagesIndex::FindInCache(pkgCache&) const@Base" 0.8.0
  (c++)"debPackagesIndex::HasPackages() const@Base" 0.8.0
- (c++)"debPackagesIndex::Info(char const*) const@Base" 0.8.0
  (c++)"debPackagesIndex::Size() const@Base" 0.8.0
  (c++)"debPackagesIndex::Merge(pkgCacheGenerator&, OpProgress*) const@Base" 0.8.0
  (c++)"debPackagesIndex::Exists() const@Base" 0.8.0
  (c++)"debPackagesIndex::GetType() const@Base" 0.8.0
  (c++)"debPackagesIndex::Describe(bool) const@Base" 0.8.0
- (c++)"debPackagesIndex::IndexURI(char const*) const@Base" 0.8.0
  (c++)"debSrcRecordParser::Maintainer() const@Base" 0.8.0
  (c++)"debSrcRecordParser::Package() const@Base" 0.8.0
  (c++)"debSrcRecordParser::Section() const@Base" 0.8.0
@@ -759,13 +740,11 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"debTranslationsIndex::GetIndexes(pkgAcquire*) const@Base" 0.8.0
  (c++)"debTranslationsIndex::FindInCache(pkgCache&) const@Base" 0.8.0
  (c++)"debTranslationsIndex::HasPackages() const@Base" 0.8.0
- (c++)"debTranslationsIndex::Info(char const*) const@Base" 0.8.0
  (c++)"debTranslationsIndex::Size() const@Base" 0.8.0
  (c++)"debTranslationsIndex::Merge(pkgCacheGenerator&, OpProgress*) const@Base" 0.8.0
  (c++)"debTranslationsIndex::Exists() const@Base" 0.8.0
  (c++)"debTranslationsIndex::GetType() const@Base" 0.8.0
  (c++)"debTranslationsIndex::Describe(bool) const@Base" 0.8.0
- (c++)"debTranslationsIndex::IndexURI(char const*) const@Base" 0.8.0
  (c++)"Vendor::GetVendorID() const@Base" 0.8.0
  (c++)"Vendor::LookupFingerprint(std::basic_string<char, std::char_traits<char>, std::allocator<char> >) const@Base" 0.8.0
  (c++)"pkgCache::DepIterator::AllTargets() const@Base" 0.8.0
@@ -1101,7 +1080,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (arch=!x32|c++)"RFC1123StrToTime(char const*, long&)@Base" 0.8.0
  (arch=x32|c++)"RFC1123StrToTime(char const*, long long&)@Base" 0.8.0
 ###
- (c++)"Configuration::MatchAgainstConfig::clearPatterns()@Base" 0.8.1
  (c++)"CreateAPTDirectoryIfNeeded(std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.2
  (c++)"FileFd::FileSize()@Base" 0.8.8
  (c++)"Base256ToNum(char const*, unsigned long&, unsigned int)@Base" 0.8.11
@@ -1134,9 +1112,7 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"APT::Configuration::Compressor::~Compressor()@Base" 0.8.12
  (c++)"APT::Configuration::getCompressors(bool)@Base" 0.8.12
  (c++)"APT::Configuration::getCompressorExtensions()@Base" 0.8.12
- (c++)"APT::Configuration::setDefaultConfigurationForCompressors()@Base" 0.8.12
  (c++)"debListParser::NewProvidesAllArch(pkgCache::VerIterator&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 0.8.13.2
- (c++)"pkgDepCache::IsModeChangeOk(pkgDepCache::ModeList, pkgCache::PkgIterator const&, unsigned long, bool)@Base" 0.8.13.2
  (c++)"pkgCache::DepIterator::IsNegative() const@Base" 0.8.15~exp1
  (c++)"Configuration::CndSet(char const*, int)@Base" 0.8.15.3
  (c++)"pkgProblemResolver::InstOrNewPolicyBroken(pkgCache::PkgIterator)@Base" 0.8.15.3
@@ -1243,7 +1219,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"pkgTagFile::pkgTagFile(FileFd*, unsigned long long)@Base" 0.8.16~exp6
  (c++)"DynamicMMap::RawAllocate(unsigned long long, unsigned long)@Base" 0.8.16~exp6
  (c++)"PackageCopy::GetFile(std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned long long&)@Base" 0.8.16~exp6
- (c++)"indexRecords::parseSumData(char const*&, char const*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::basic_string<char, std::char_traits<char>, std::allocator<char> >&, unsigned long long&)@Base" 0.8.16~exp6
  (c++)"pkgTagSection::~pkgTagSection()@Base" 0.8.16~exp6
  (c++)"debRecordParser::RecordField(char const*)@Base" 0.8.16~exp6
  (c++)"debReleaseIndex::SetTrusted(bool)@Base" 0.8.16~exp6
@@ -1251,8 +1226,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"pkgAcquireStatus::Fetched(unsigned long long, unsigned long long)@Base" 0.8.16~exp6
  (c++)"PreferenceSection::~PreferenceSection()@Base" 0.8.16~exp6
  (c++)"pkgCacheGenerator::NewDescription(pkgCache::DescIterator&, std::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, HashSumValue<128> const&, unsigned int)@Base" 0.8.16~exp6
- (c++)"pkgProblemResolver::ResolveInternal(bool)@Base" 0.8.16~exp6
- (c++)"pkgProblemResolver::ResolveByKeepInternal()@Base" 0.8.16~exp6
  (c++)"FileFd::Read(void*, unsigned long long, unsigned long long*)@Base" 0.8.16~exp6
  (c++)"FileFd::Seek(unsigned long long)@Base" 0.8.16~exp6
  (c++)"FileFd::Skip(unsigned long long)@Base" 0.8.16~exp6
@@ -1420,7 +1393,6 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"vtable for APT::Progress::PackageManagerText@Base" 0.9.13~exp1
  (c++)"APT::Progress::PackageManagerFancy::instances@Base" 0.9.14.2
  (c++)"APT::Progress::PackageManagerFancy::Start(int)@Base" 0.9.14.2
- (c++)"APT::Progress::PackageManagerFancy::staticSIGWINCH(int)@Base" 0.9.14.2
  (c++)"APT::Progress::PackageManager::Start(int)@Base" 0.9.14.2
 ### client-side merged pdiffs
  (c++)"pkgAcqIndexMergeDiffs::DescURI()@Base" 0.9.14.3~exp1
@@ -1794,6 +1766,9 @@ libapt-pkg.so.4.13 libapt-pkg4.13 #MINVER#
  (c++)"typeinfo for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::iterator@Base" 1.1~exp4
  (c++)"typeinfo name for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::iterator@Base" 1.1~exp4
  (c++)"vtable for APT::PackageContainer<std::set<pkgCache::PkgIterator, std::less<pkgCache::PkgIterator>, std::allocator<pkgCache::PkgIterator> > >::iterator@Base" 1.1~exp4
+ (c++)"debPackagesIndex::IndexFile(char const*) const@Base" 1.1~exp4
+ (c++)"debSourcesIndex::IndexFile(char const*) const@Base" 1.1~exp4
+ (c++)"debTranslationsIndex::IndexFile(char const*) const@Base" 1.1~exp4
 ### demangle strangeness - buildd report it as MISSING and as new…
  (c++)"pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire*, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::vector<IndexTarget*, std::allocator<IndexTarget*> > const*, indexRecords*)@Base" 0.8.0
  (c++)"_apt_DebFileType@Base" 1.1~exp1

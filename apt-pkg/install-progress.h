@@ -119,7 +119,7 @@ namespace Progress {
  class PackageManagerFancy : public PackageManager
  {
  private:
-    static void staticSIGWINCH(int);
+    APT_HIDDEN static void staticSIGWINCH(int);
     static std::vector<PackageManagerFancy*> instances;
     APT_HIDDEN bool DrawStatusLine();
 

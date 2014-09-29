@@ -34,6 +34,8 @@
 #include <vector>
 #include <iostream>
 
+#include <apt-pkg/macros.h>
+
 #ifndef APT_8_CLEANER_HEADERS
 using std::string;
 #endif
@@ -59,7 +61,7 @@ class Configuration
    
    Item *Root;
    bool ToFree;
-   
+
    Item *Lookup(Item *Head,const char *S,unsigned long const &Len,bool const &Create);
    Item *Lookup(const char *Name,const bool &Create);
    inline const Item *Lookup(const char *Name) const
@@ -123,7 +125,7 @@ class Configuration
    class MatchAgainstConfig
    {
      std::vector<regex_t *> patterns;
-     void clearPatterns();
+     APT_HIDDEN void clearPatterns();
 
    public:
      MatchAgainstConfig(char const * Config);

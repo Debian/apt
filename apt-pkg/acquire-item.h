@@ -576,7 +576,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  \return \b true if an applicable diff was found, \b false
     *  otherwise.
     */
-   bool QueueNextDiff();
+   APT_HIDDEN bool QueueNextDiff();
 
    /** \brief Handle tasks that must be performed after the item
     *  finishes downloading.
@@ -589,7 +589,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  \param allDone If \b true, the file was entirely reconstructed,
     *  and its md5sum is verified. 
     */
-   void Finish(bool allDone=false);
+   APT_HIDDEN void Finish(bool allDone=false);
 
    protected:
 

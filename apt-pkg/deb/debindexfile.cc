@@ -131,7 +131,7 @@ string debSourcesIndex::Info(const char *Type) const
 // SourcesIndex::Index* - Return the URI to the index files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debSourcesIndex::IndexFile(const char *Type) const
+string debSourcesIndex::IndexFile(const char *Type) const
 {
    string s = URItoFileName(IndexURI(Type));
 
@@ -265,7 +265,7 @@ string debPackagesIndex::Info(const char *Type) const
 // PackagesIndex::Index* - Return the URI to the index files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debPackagesIndex::IndexFile(const char *Type) const
+string debPackagesIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
 
@@ -421,7 +421,7 @@ debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section
 // TranslationIndex::Trans* - Return the URI to the translation files	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debTranslationsIndex::IndexFile(const char *Type) const
+string debTranslationsIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
 

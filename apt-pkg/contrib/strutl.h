@@ -153,9 +153,9 @@ inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);}
 class URI
 {
    void CopyFrom(const std::string &From);
-		 
+
    public:
-   
+
    std::string Access;
    std::string User;
    std::string Password;

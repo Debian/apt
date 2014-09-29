@@ -29,7 +29,7 @@ class debSystem : public pkgSystem
 {
    // private d-pointer
    debSystemPrivate *d;
-   bool CheckUpdates();
+   APT_HIDDEN bool CheckUpdates();
 
    public:
 
