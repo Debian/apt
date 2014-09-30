@@ -209,11 +209,11 @@ bool HashStringList::operator==(HashStringList const &other) const	/*{{{*/
    std::string const forcedType = _config->Find("Acquire::ForceHash", "");
    if (forcedType.empty() == false)
    {
-      HashString const * const hs = other.find(forcedType);
+      HashString const * const hs = find(forcedType);
       HashString const * const ohs = other.find(forcedType);
       if (hs == NULL || ohs == NULL)
 	 return false;
-      return hs == ohs;
+      return *hs == *ohs;
    }
    short matches = 0;
    for (const_iterator hs = begin(); hs != end(); ++hs)

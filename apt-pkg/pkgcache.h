@@ -228,7 +228,7 @@ class pkgCache								/*{{{*/
 
 private:
    bool MultiArchEnabled;
-   PkgIterator SingleArchFindPkg(const std::string &Name);
+   APT_HIDDEN PkgIterator SingleArchFindPkg(const std::string &Name);
 };
 									/*}}}*/
 // Header structure							/*{{{*/

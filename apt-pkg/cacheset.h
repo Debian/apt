@@ -574,21 +574,21 @@ template<> template<class Compare> inline bool PackageContainer<std::vector<pkgC
 
     The wrapping is read-only in practice modeled by making erase and co
     private methods. */
-class PackageUniverse : public PackageContainerInterface {
+class APT_HIDDEN PackageUniverse : public PackageContainerInterface {
 	pkgCache * const _cont;
 public:
 	typedef pkgCache::PkgIterator iterator;
 	typedef pkgCache::PkgIterator const_iterator;
 
-	bool empty() const { return false; }
-	size_t size() const { return _cont->Head().PackageCount; }
+	APT_PUBLIC bool empty() const { return false; }
+	APT_PUBLIC size_t size() const { return _cont->Head().PackageCount; }
 
-	const_iterator begin() const { return _cont->PkgBegin(); }
-	const_iterator end() const { return  _cont->PkgEnd(); }
-	iterator begin() { return _cont->PkgBegin(); }
-	iterator end() { return _cont->PkgEnd(); }
+	APT_PUBLIC const_iterator begin() const { return _cont->PkgBegin(); }
+	APT_PUBLIC const_iterator end() const { return  _cont->PkgEnd(); }
+	APT_PUBLIC iterator begin() { return _cont->PkgBegin(); }
+	APT_PUBLIC iterator end() { return _cont->PkgEnd(); }
 
-	PackageUniverse(pkgCache * const Owner) : _cont(Owner) { }
+	APT_PUBLIC PackageUniverse(pkgCache * const Owner) : _cont(Owner) { }
 
 private:
 	bool insert(pkgCache::PkgIterator const &) { return true; }

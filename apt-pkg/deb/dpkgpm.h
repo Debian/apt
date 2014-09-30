@@ -52,7 +52,7 @@ class pkgDPkgPM : public pkgPackageManager
       needs to declare a Replaces on the disappeared package.
       \param pkgname Name of the package that disappeared
    */
-   void handleDisappearAction(std::string const &pkgname);
+   APT_HIDDEN void handleDisappearAction(std::string const &pkgname);
 
    protected:
    int pkgFailures;
