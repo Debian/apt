@@ -619,9 +619,10 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
                    pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
-                   indexRecords *MetaIndexParser)
+                   indexRecords *MetaIndexParser,
+                   std::string RealURI)
       : Item(Owner, ExpectedHashes, TransactionManager), Target(Target), 
-        MetaIndexParser(MetaIndexParser) {};
+        MetaIndexParser(MetaIndexParser), RealURI(RealURI) {};
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
@@ -945,13 +946,18 @@ class pkgAcqIndex : public pkgAcqBaseIndex
                             HashStringList const &Hashes,
                             pkgAcquire::MethodConfig *Cfg);
 
+   /** \brief If \b set, this partially downloaded file will be
+    *  removed when the download completes.
+    */
+   std::string EraseFileName;
+
    /** \brief The compression-related file extensions that are being
     *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
     */
    std::string CompressionExtensions;
 
    /** \brief The actual compression extension currently used */
-   std::string ComprExt;
+   std::string CurrentCompressionExtension;
 
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded(const std::string MetaKey);

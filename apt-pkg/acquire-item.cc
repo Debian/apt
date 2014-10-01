@@ -269,12 +269,12 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 				 HashStringList const &ExpectedHashes,
                                  indexRecords *MetaIndexParser)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
-                     MetaIndexParser), PackagesFileReadyInPartial(false)
+                     MetaIndexParser, Target->URI), 
+     PackagesFileReadyInPartial(false)
 {
    
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   RealURI = Target->URI;
    Desc.Owner = this;
    Desc.Description = Target->Description + "/DiffIndex";
    Desc.ShortDesc = Target->ShortDesc;
@@ -528,7 +528,7 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList
    Item::Done(Message, Size, Hashes, Cnf);
 
    // verify the index target
-   if(Target && Target->MetaKey != "" && MetaIndexParser && Hashes.size() > 0)
+   if(Target && Target->MetaKey != "" && MetaIndexParser && Hashes.usable())
    {
       std::string IndexMetaKey  = Target->MetaKey + ".diff/Index";
       indexRecords::checkSum *Record = MetaIndexParser->Lookup(IndexMetaKey);
@@ -576,7 +576,8 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
                                    indexRecords *MetaIndexParser,
 				   string ServerSha1,
 				   vector<DiffInfo> diffs)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
+                     MetaIndexParser, Target->URI),
      available_patches(diffs), ServerSha1(ServerSha1)
 {
    
@@ -585,7 +586,6 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   RealURI = Target->URI;
    Desc.Owner = this;
    Description = Target->Description;
    Desc.ShortDesc = Target->ShortDesc;
@@ -799,7 +799,8 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
                                              indexRecords *MetaIndexParser,
                                              DiffInfo const &patch,
                                              std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-  : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
+  : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
+                    MetaIndexParser, Target->URI),
      patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
 
@@ -808,7 +809,6 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
-   RealURI = Target->URI;
    Desc.Owner = this;
    Description = Target->Description;
    Desc.ShortDesc = Target->ShortDesc;
@@ -937,7 +937,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 // AcqBaseIndex::VerifyHashByMetaKey - verify hash for the given metakey /*{{{*/
 bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
 {
-   if(MetaKey != "" && Hashes.size() > 0)
+   if(MetaKey != "" && Hashes.usable())
    {
       indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
       if(Record && Record->Hashes.usable() && Hashes != Record->Hashes)
@@ -957,10 +957,8 @@ bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
 			 HashStringList const  &ExpectedHash)
-   : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL)
+   : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL, RealURI)
 {
-   RealURI = URI;
-
    AutoSelectCompression();
    Init(URI, URIDesc, ShortDesc);
 
@@ -977,10 +975,8 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 HashStringList const &ExpectedHash, 
                          indexRecords *MetaIndexParser)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHash, 
-                     MetaIndexParser)
+                     MetaIndexParser, Target->URI)
 {
-   RealURI = Target->URI;
-
    // autoselect the compression method
    AutoSelectCompression();
    Init(Target->URI, Target->Description, Target->ShortDesc);
@@ -1025,8 +1021,8 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
-   ComprExt = CompressionExtensions.substr(0, CompressionExtensions.find(' '));
-   if (ComprExt == "uncompressed")
+   CurrentCompressionExtension = CompressionExtensions.substr(0, CompressionExtensions.find(' '));
+   if (CurrentCompressionExtension == "uncompressed")
    {
       Desc.URI = URI;
       if(Target)
@@ -1034,10 +1030,10 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
    }
    else
    {
-      Desc.URI = URI + '.' + ComprExt;
-      DestFile = DestFile + '.' + ComprExt;
+      Desc.URI = URI + '.' + CurrentCompressionExtension;
+      DestFile = DestFile + '.' + CurrentCompressionExtension;
       if(Target)
-         MetaKey = string(Target->MetaKey) + '.' + ComprExt;
+         MetaKey = string(Target->MetaKey) + '.' + CurrentCompressionExtension;
    }
 
    // load the filesize
@@ -1120,9 +1116,7 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
    // on decompression failure, remove bad versions in partial/
    if (Stage == STAGE_DECOMPRESS_AND_VERIFY)
    {
-      string s = _config->FindDir("Dir::State::lists") + "partial/";
-      s += URItoFileName(RealURI)  + '.' + ComprExt;
-      unlink(s.c_str());
+      unlink(EraseFileName.c_str());
    }
 
    Item::Failed(Message,Cnf);
@@ -1139,7 +1133,7 @@ std::string pkgAcqIndex::GetFinalFilename() const
    std::string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
-      FinalFile += '.' + ComprExt;
+      FinalFile += '.' + CurrentCompressionExtension;
    return FinalFile;
 }
                                                                        /*}}}*/
@@ -1155,7 +1149,7 @@ void pkgAcqIndex::ReverifyAfterIMS()
 
    // adjust DestFile if its compressed on disk
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
-      DestFile += '.' + ComprExt;
+      DestFile += '.' + CurrentCompressionExtension;
 
    // copy FinalFile into partial/ so that we check the hash again
    string FinalFile = GetFinalFilename();
@@ -1266,6 +1260,8 @@ void pkgAcqIndex::StageDownloadDone(string Message,
    // not the "DestFile" we set, in this case we uncompress from the local file
    if (FileName != DestFile)
       Local = true;
+   else
+      EraseFileName = FileName;
 
    // we need to verify the file against the current Release file again
    // on if-modfied-since hit to avoid a stale attack against us
@@ -1277,6 +1273,7 @@ void pkgAcqIndex::StageDownloadDone(string Message,
          return;
 
       // The files timestamp matches, reverify by copy into partial/
+      EraseFileName = "";
       ReverifyAfterIMS();
       return;
    }
@@ -1285,8 +1282,8 @@ void pkgAcqIndex::StageDownloadDone(string Message,
    if (_config->FindB("Acquire::GzipIndexes",false))
    {
       DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(RealURI) + '.' + ComprExt;
-
+      DestFile += URItoFileName(RealURI) + '.' + CurrentCompressionExtension;
+      EraseFileName = "";
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
@@ -1296,13 +1293,13 @@ void pkgAcqIndex::StageDownloadDone(string Message,
 
    // get the binary name for your used compression type
    string decompProg;
-   if(ComprExt == "uncompressed")
+   if(CurrentCompressionExtension == "uncompressed")
       decompProg = "copy";
    else
-      decompProg = _config->Find(string("Acquire::CompressionTypes::").append(ComprExt),"");
+      decompProg = _config->Find(string("Acquire::CompressionTypes::").append(CurrentCompressionExtension),"");
    if(decompProg.empty() == true)
    {
-      _error->Error("Unsupported extension: %s", ComprExt.c_str());
+      _error->Error("Unsupported extension: %s", CurrentCompressionExtension.c_str());
       return;
    }
 
@@ -1344,14 +1341,8 @@ void pkgAcqIndex::StageDecompressDone(string Message,
       return;
    }
    
-   // remove the compressed version of the file (if the file got uncompressed)
-   URI Get = LookupTag(Message, "URI");
-   if (Get.Access != "copy")
-   {
-      // To account for relative paths
-      std::string CompressedFile = Get.Host + Get.Path;
-      unlink(CompressedFile.c_str());
-   }
+   // remove the compressed version of the file
+   unlink(EraseFileName.c_str());
    
    // Done, queue for rename on transaction finished
    TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
