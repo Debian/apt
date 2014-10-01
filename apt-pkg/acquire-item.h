@@ -283,7 +283,6 @@ class pkgAcquire::Item : public WeakPointable
    /** \return \b true if this object is being fetched from a trusted source. */
    virtual bool IsTrusted() const {return false;};
    
-   // report mirror problems
    /** \brief Report mirror problem
     * 
     *  This allows reporting mirror failures back to a centralized
@@ -292,7 +291,6 @@ class pkgAcquire::Item : public WeakPointable
     *  \param FailCode A short failure string that is send
     */
    void ReportMirrorFailure(std::string FailCode);
-
 
    /** \brief Initialize an item.
     *
@@ -947,7 +945,6 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     */
    std::string CompressionExtension;
 
-
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded(const std::string MetaKey);
 
@@ -961,11 +958,15 @@ class pkgAcqIndex : public pkgAcqBaseIndex
    /** \brief Schedule file for verification after a IMS hit */
    void ReverifyAfterIMS();
 
+   /** \brief Validate the downloaded index file */
+   bool ValidateFile(const std::string &FileName);
+
    public:
    
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
+   virtual void Done(std::string Message,unsigned long long Size, 
+                     HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
    virtual std::string DescURI() {return Desc.URI;};

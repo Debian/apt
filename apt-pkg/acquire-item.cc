@@ -1141,6 +1141,35 @@ void pkgAcqIndex::ReverifyAfterIMS()
    QueueURI(Desc);
 }
                                                                        /*}}}*/
+
+// pkgAcqIndex::ValidateFile - Validate the downloaded file     	/*{{{*/
+// ---------------------------------------------------------------------
+bool pkgAcqIndex::ValidateFile(const std::string &FileName)
+{
+   // FIXME: this can go away once we only ever download stuff that
+   //        has a valid hash and we never do GET based probing
+   // FIXME2: this also leaks debian-isms into the code and should go therefore
+
+   /* Always validate the index file for correctness (all indexes must
+    * have a Package field) (LP: #346386) (Closes: #627642) 
+    */
+   FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Extension);
+   // Only test for correctness if the content of the file is not empty
+   // (empty is ok)
+   if (fd.Size() > 0)
+   {
+      pkgTagSection sec;
+      pkgTagFile tag(&fd);
+      
+      // all our current indexes have a field 'Package' in each section
+      if (_error->PendingError() == true ||
+          tag.Step(sec) == false ||
+          sec.Exists("Package") == false)
+         return false;
+   }
+   return true;
+}
+                                                                        /*}}}*/
 // AcqIndex::Done - Finished a fetch					/*{{{*/
 // ---------------------------------------------------------------------
 /* This goes through a number of states.. On the initial fetch the
@@ -1166,29 +1195,13 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
          return;
       }
 
-      // FIXME: this can go away once we only ever download stuff that
-      //        has a valid hash and we never do GET based probing
-      //
-      /* Always verify the index file for correctness (all indexes must
-       * have a Package field) (LP: #346386) (Closes: #627642) 
-       */
-      FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Extension);
-      // Only test for correctness if the content of the file is not empty
-      // (empty is ok)
-      if (fd.Size() > 0)
+      if(!ValidateFile(DestFile))
       {
-         pkgTagSection sec;
-         pkgTagFile tag(&fd);
-         
-         // all our current indexes have a field 'Package' in each section
-         if (_error->PendingError() == true || tag.Step(sec) == false || sec.Exists("Package") == false)
-         {
-            RenameOnError(InvalidFormat);
-            Failed(Message, Cfg);
-            return;
-         }
+         RenameOnError(InvalidFormat);
+         Failed(Message, Cfg);
+         return;
       }
-       
+
       // FIXME: can we void the "Erase" bool here as its very non-local?
       std::string CompressedFile = _config->FindDir("Dir::State::lists") + "partial/";
       CompressedFile += URItoFileName(RealURI);
