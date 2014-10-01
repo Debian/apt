@@ -22,6 +22,10 @@ case "$1" in
 		    rm -f "$keyring"
 		fi
 	    done
+	    # apt-key before 0.9.8.2 could create 0600 trusted.gpg file
+	    if test -e /etc/apt/trusted.gpg ; then
+	        chmod -f 0644 /etc/apt/trusted.gpg || true
+	    fi
 	fi
 
 	if dpkg --compare-versions "$2" lt-nl 0.9.9.5; then
