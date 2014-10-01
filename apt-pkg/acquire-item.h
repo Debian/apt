@@ -601,9 +601,19 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
    /** \brief Pointer to the IndexTarget data
     */
    const struct IndexTarget * Target;
+
+   /** \brief Pointer to the indexRecords parser */
    indexRecords *MetaIndexParser;
+
    /** \brief The MetaIndex Key */
    std::string MetaKey;
+
+   /** \brief The URI of the index file to recreate at our end (either
+    *  by downloading it or by applying partial patches).
+    */
+   std::string RealURI;
+
+   bool VerifyHashByMetaKey(HashStringList const &Hashes);
 
    pkgAcqBaseIndex(pkgAcquire *Owner,
                    pkgAcqMetaBase *TransactionManager,
@@ -630,11 +640,6 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
    bool Debug;
-
-   /** \brief The URI of the index file to recreate at our end (either
-    *  by downloading it or by applying partial patches).
-    */
-   std::string RealURI;
 
    /** \brief The index file which will be patched to generate the new
     *  file.
@@ -711,11 +716,6 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  std::clog.
     */
    bool Debug;
-
-   /** \brief URI of the package index file that is being
-    *  reconstructed.
-    */
-   std::string RealURI;
 
    /** \brief description of the file being downloaded. */
    std::string Description;
@@ -831,11 +831,6 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     */
    bool Debug;
 
-   /** \brief The URI of the package index file that is being
-    *  reconstructed.
-    */
-   std::string RealURI;
-
    /** A description of the file being downloaded. */
    std::string Description;
 
@@ -927,23 +922,36 @@ class pkgAcqIndex : public pkgAcqBaseIndex
 
    protected:
 
-   /** \brief If \b true, the index file has been decompressed. */
-   bool Decompression;
-
-   /** \brief If \b true, the partially downloaded file will be
-    *  removed when the download completes.
+   /** \brief The stages the method goes through
+    *
+    *  The method first downloads the indexfile, then its decompressed (or
+    *  copied) and verified
     */
-   bool Erase;
+   enum AllStages {
+      STAGE_DOWNLOAD,
+      STAGE_DECOMPRESS_AND_VERIFY,
+   };
+   AllStages Stage;
 
-   /** \brief The object that is actually being fetched (minus any
-    *  compression-related extensions).
+   /** \brief Handle what needs to be done when the download is done */
+   void StageDownloadDone(std::string Message,
+                          HashStringList const &Hashes,
+                          pkgAcquire::MethodConfig *Cfg);
+
+   /** \brief Handle what needs to be done when the decompression/copy is
+    *         done 
     */
-   std::string RealURI;
+   void StageDecompressDone(std::string Message,
+                            HashStringList const &Hashes,
+                            pkgAcquire::MethodConfig *Cfg);
 
    /** \brief The compression-related file extensions that are being
     *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
     */
-   std::string CompressionExtension;
+   std::string CompressionExtensions;
+
+   /** \brief The actual compression extension currently used */
+   std::string ComprExt;
 
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded(const std::string MetaKey);

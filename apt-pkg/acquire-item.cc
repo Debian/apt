@@ -933,6 +933,23 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
    }
 }
 									/*}}}*/
+
+// AcqBaseIndex::VerifyHashByMetaKey - verify hash for the given metakey /*{{{*/
+bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
+{
+   if(MetaKey != "" && Hashes.size() > 0)
+   {
+      indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
+      if(Record && Record->Hashes.usable() && Hashes != Record->Hashes)
+      {
+         printHashSumComparision(RealURI, Record->Hashes, Hashes);
+         return false;
+      }
+   }
+   return true;
+}
+
+
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* The package file is added to the queue and a second class is 
@@ -940,8 +957,10 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
 			 HashStringList const  &ExpectedHash)
-   : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL), RealURI(URI)
+   : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL)
 {
+   RealURI = URI;
+
    AutoSelectCompression();
    Init(URI, URIDesc, ShortDesc);
 
@@ -958,8 +977,10 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 HashStringList const &ExpectedHash, 
                          indexRecords *MetaIndexParser)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHash, 
-                     MetaIndexParser), RealURI(Target->URI)
+                     MetaIndexParser)
 {
+   RealURI = Target->URI;
+
    // autoselect the compression method
    AutoSelectCompression();
    Init(Target->URI, Target->Description, Target->ShortDesc);
@@ -974,34 +995,38 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 void pkgAcqIndex::AutoSelectCompression()
 {
    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-   CompressionExtension = "";
+   CompressionExtensions = "";
    if (ExpectedHashes.usable())
    {
-      for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
-	 if (*t == "uncompressed" || MetaIndexParser->Exists(string(Target->MetaKey).append(".").append(*t)) == true)
-	    CompressionExtension.append(*t).append(" ");
+      for (std::vector<std::string>::const_iterator t = types.begin();
+           t != types.end(); ++t)
+      {
+         std::string CompressedMetaKey = string(Target->MetaKey).append(".").append(*t);
+         if (*t == "uncompressed" || 
+             MetaIndexParser->Exists(CompressedMetaKey) == true)
+            CompressionExtensions.append(*t).append(" ");
+      }
    }
    else
    {
       for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
-	 CompressionExtension.append(*t).append(" ");
+	 CompressionExtensions.append(*t).append(" ");
    }
-   if (CompressionExtension.empty() == false)
-      CompressionExtension.erase(CompressionExtension.end()-1);
+   if (CompressionExtensions.empty() == false)
+      CompressionExtensions.erase(CompressionExtensions.end()-1);
 }
 // AcqIndex::Init - defered Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 void pkgAcqIndex::Init(string const &URI, string const &URIDesc, 
                        string const &ShortDesc)
 {
-   Decompression = false;
-   Erase = false;
+   Stage = STAGE_DOWNLOAD;
 
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(URI);
 
-   std::string const comprExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
-   if (comprExt == "uncompressed")
+   ComprExt = CompressionExtensions.substr(0, CompressionExtensions.find(' '));
+   if (ComprExt == "uncompressed")
    {
       Desc.URI = URI;
       if(Target)
@@ -1009,10 +1034,10 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
    }
    else
    {
-      Desc.URI = URI + '.' + comprExt;
-      DestFile = DestFile + '.' + comprExt;
+      Desc.URI = URI + '.' + ComprExt;
+      DestFile = DestFile + '.' + ComprExt;
       if(Target)
-         MetaKey = string(Target->MetaKey) + '.' + comprExt;
+         MetaKey = string(Target->MetaKey) + '.' + ComprExt;
    }
 
    // load the filesize
@@ -1084,18 +1109,19 @@ string pkgAcqIndex::Custom600Headers() const
 /* */
 void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 {
-   size_t const nextExt = CompressionExtension.find(' ');
+   size_t const nextExt = CompressionExtensions.find(' ');
    if (nextExt != std::string::npos)
    {
-      CompressionExtension = CompressionExtension.substr(nextExt+1);
+      CompressionExtensions = CompressionExtensions.substr(nextExt+1);
       Init(RealURI, Desc.Description, Desc.ShortDesc);
       return;
    }
 
    // on decompression failure, remove bad versions in partial/
-   if (Decompression && Erase) {
+   if (Stage == STAGE_DECOMPRESS_AND_VERIFY)
+   {
       string s = _config->FindDir("Dir::State::lists") + "partial/";
-      s.append(URItoFileName(RealURI));
+      s += URItoFileName(RealURI)  + '.' + ComprExt;
       unlink(s.c_str());
    }
 
@@ -1110,11 +1136,10 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
 /* */
 std::string pkgAcqIndex::GetFinalFilename() const
 {
-   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
    std::string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
-      FinalFile += '.' + compExt;
+      FinalFile += '.' + ComprExt;
    return FinalFile;
 }
                                                                        /*}}}*/
@@ -1123,8 +1148,6 @@ std::string pkgAcqIndex::GetFinalFilename() const
 /* */
 void pkgAcqIndex::ReverifyAfterIMS()
 {
-   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
-
    // update destfile to *not* include the compression extension when doing
    // a reverify (as its uncompressed on disk already)
    DestFile =  _config->FindDir("Dir::State::lists") + "partial/";
@@ -1132,18 +1155,18 @@ void pkgAcqIndex::ReverifyAfterIMS()
 
    // adjust DestFile if its compressed on disk
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
-      DestFile += '.' + compExt;
+      DestFile += '.' + ComprExt;
 
    // copy FinalFile into partial/ so that we check the hash again
    string FinalFile = GetFinalFilename();
-   Decompression = true;
+   Stage = STAGE_DECOMPRESS_AND_VERIFY;
    Desc.URI = "copy:" + FinalFile;
    QueueURI(Desc);
 }
                                                                        /*}}}*/
 
-// pkgAcqIndex::ValidateFile - Validate the downloaded file     	/*{{{*/
-// ---------------------------------------------------------------------
+// AcqIndex::ValidateFile - Validate the content of the downloaded file  /*{{{*/
+// --------------------------------------------------------------------------
 bool pkgAcqIndex::ValidateFile(const std::string &FileName)
 {
    // FIXME: this can go away once we only ever download stuff that
@@ -1153,7 +1176,7 @@ bool pkgAcqIndex::ValidateFile(const std::string &FileName)
    /* Always validate the index file for correctness (all indexes must
     * have a Package field) (LP: #346386) (Closes: #627642) 
     */
-   FileFd fd(DestFile, FileFd::ReadOnly, FileFd::Extension);
+   FileFd fd(FileName, FileFd::ReadOnly, FileFd::Extension);
    // Only test for correctness if the content of the file is not empty
    // (empty is ok)
    if (fd.Size() > 0)
@@ -1177,69 +1200,45 @@ bool pkgAcqIndex::ValidateFile(const std::string &FileName)
    to the uncompressed version of the file. If this is so the file
    is copied into the partial directory. In all other cases the file
    is decompressed with a compressed uri. */
-void pkgAcqIndex::Done(string Message, unsigned long long Size,
+void pkgAcqIndex::Done(string Message,
+                       unsigned long long Size,
                        HashStringList const &Hashes,
 		       pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hashes,Cfg);
-   std::string const compExt = CompressionExtension.substr(0, CompressionExtension.find(' '));
 
-   if (Decompression == true)
+   switch(Stage) 
    {
-      if (ExpectedHashes.usable() && ExpectedHashes != Hashes)
-      {
-         Desc.URI = RealURI;
-	 RenameOnError(HashSumMismatch);
-	 printHashSumComparision(RealURI, ExpectedHashes, Hashes);
-         Failed(Message, Cfg);
-         return;
-      }
+      case STAGE_DOWNLOAD:
+         StageDownloadDone(Message, Hashes, Cfg);
+         break;
+      case STAGE_DECOMPRESS_AND_VERIFY:
+         StageDecompressDone(Message, Hashes, Cfg);
+         break;
+   }
+}
 
-      if(!ValidateFile(DestFile))
-      {
-         RenameOnError(InvalidFormat);
-         Failed(Message, Cfg);
-         return;
-      }
-
-      // FIXME: can we void the "Erase" bool here as its very non-local?
-      std::string CompressedFile = _config->FindDir("Dir::State::lists") + "partial/";
-      CompressedFile += URItoFileName(RealURI);
-      if(_config->FindB("Acquire::GzipIndexes",false) == false)
-         CompressedFile += '.' + compExt;
-
-      // Remove the compressed version.
-      if (Erase == true)
-	 unlink(CompressedFile.c_str());
-
-      // Done, queue for rename on transaction finished
-      TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
-
+// AcqIndex::StageDownloadDone - Queue for decompress and verify        /*{{{*/
+void pkgAcqIndex::StageDownloadDone(string Message,
+                                    HashStringList const &Hashes,
+                                    pkgAcquire::MethodConfig *Cfg)
+{
+   // First check if the calculcated Hash of the (compressed) downloaded
+   // file matches the hash we have in the MetaIndexRecords for this file
+   if(VerifyHashByMetaKey(Hashes) == false)
+   {
+      RenameOnError(HashSumMismatch);
+      Failed(Message, Cfg);
       return;
    }
-   
-   // FIXME: use the same method to find 
-   // check the compressed hash too
-   if(MetaKey != "" && Hashes.size() > 0)
-   {
-      indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
-      if(Record && Record->Hashes.usable() && Hashes != Record->Hashes)
-      {
-         RenameOnError(HashSumMismatch);
-         printHashSumComparision(RealURI, Record->Hashes, Hashes);
-         Failed(Message, Cfg);
-         return;
-      }
-   }
 
-   Erase = false;
    Complete = true;
    
    // Handle the unzipd case
    string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
    {
-      Decompression = true;
+      Stage = STAGE_DECOMPRESS_AND_VERIFY;
       Local = true;
       DestFile += ".decomp";
       Desc.URI = "copy:" + FileName;
@@ -1263,43 +1262,32 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
       ErrorText = "Method gave a blank filename";
    }
 
-   if (FileName == DestFile)
-      Erase = true;
-   else
+   // Methods like e.g. "file:" will give us a (compressed) FileName that is
+   // not the "DestFile" we set, in this case we uncompress from the local file
+   if (FileName != DestFile)
       Local = true;
 
-   // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
-   // file when its doing the indexcopy
-   if (RealURI.substr(0,6) == "cdrom:" &&
-       StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-      return;
-
-   // The files timestamp matches, reverify by copy into partial/
-   if (StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+   // we need to verify the file against the current Release file again
+   // on if-modfied-since hit to avoid a stale attack against us
+   if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
    {
-      Erase = false;
-      ReverifyAfterIMS();
-#if 0 // ???
-      // set destfile to the final destfile
-      if(_config->FindB("Acquire::GzipIndexes",false) == false)
-      {
-         DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-         DestFile += URItoFileName(RealURI);
-      }
+      // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
+      // file when its doing the indexcopy
+      if (RealURI.substr(0,6) == "cdrom:")
+         return;
 
-      ReverifyAfterIMS(FileName);
-#endif
+      // The files timestamp matches, reverify by copy into partial/
+      ReverifyAfterIMS();
       return;
    }
-   string decompProg;
 
-   // If we enable compressed indexes, queue for hash verification
+   // If we have compressed indexes enabled, queue for hash verification
    if (_config->FindB("Acquire::GzipIndexes",false))
    {
       DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(RealURI) + '.' + compExt;
+      DestFile += URItoFileName(RealURI) + '.' + ComprExt;
 
-      Decompression = true;
+      Stage = STAGE_DECOMPRESS_AND_VERIFY;
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
 
@@ -1307,16 +1295,19 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
     }
 
    // get the binary name for your used compression type
-   decompProg = _config->Find(string("Acquire::CompressionTypes::").append(compExt),"");
-   if(decompProg.empty() == false);
-   else if(compExt == "uncompressed")
+   string decompProg;
+   if(ComprExt == "uncompressed")
       decompProg = "copy";
-   else {
-      _error->Error("Unsupported extension: %s", compExt.c_str());
+   else
+      decompProg = _config->Find(string("Acquire::CompressionTypes::").append(ComprExt),"");
+   if(decompProg.empty() == true)
+   {
+      _error->Error("Unsupported extension: %s", ComprExt.c_str());
       return;
    }
 
-   Decompression = true;
+   // queue uri for the next stage
+   Stage = STAGE_DECOMPRESS_AND_VERIFY;
    DestFile += ".decomp";
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
@@ -1331,6 +1322,43 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
 	#pragma GCC diagnostic pop
 #endif
 }
+                                                                        /*}}}*/
+// pkgAcqIndex::StageDecompressDone - Final verification               /*{{{*/
+void pkgAcqIndex::StageDecompressDone(string Message,
+                                      HashStringList const &Hashes,
+                                      pkgAcquire::MethodConfig *Cfg)
+{
+   if (ExpectedHashes.usable() && ExpectedHashes != Hashes)
+   {
+      Desc.URI = RealURI;
+      RenameOnError(HashSumMismatch);
+      printHashSumComparision(RealURI, ExpectedHashes, Hashes);
+      Failed(Message, Cfg);
+      return;
+   }
+
+   if(!ValidateFile(DestFile))
+   {
+      RenameOnError(InvalidFormat);
+      Failed(Message, Cfg);
+      return;
+   }
+   
+   // remove the compressed version of the file (if the file got uncompressed)
+   URI Get = LookupTag(Message, "URI");
+   if (Get.Access != "copy")
+   {
+      // To account for relative paths
+      std::string CompressedFile = Get.Host + Get.Path;
+      unlink(CompressedFile.c_str());
+   }
+   
+   // Done, queue for rename on transaction finished
+   TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
+   
+   return;
+}
+                                                                        /*}}}*/
 									/*}}}*/
 // AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
@@ -1371,10 +1399,10 @@ string pkgAcqIndexTrans::Custom600Headers() const
 /* */
 void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   size_t const nextExt = CompressionExtension.find(' ');
+   size_t const nextExt = CompressionExtensions.find(' ');
    if (nextExt != std::string::npos)
    {
-      CompressionExtension = CompressionExtension.substr(nextExt+1);
+      CompressionExtensions = CompressionExtensions.substr(nextExt+1);
       Init(RealURI, Desc.Description, Desc.ShortDesc);
       Status = StatIdle;
       return;
