@@ -619,10 +619,9 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
                    pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
-                   indexRecords *MetaIndexParser,
-                   std::string RealURI)
+                   indexRecords *MetaIndexParser)
       : Item(Owner, ExpectedHashes, TransactionManager), Target(Target), 
-        MetaIndexParser(MetaIndexParser), RealURI(RealURI) {};
+        MetaIndexParser(MetaIndexParser) {};
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{

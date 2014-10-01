@@ -269,12 +269,12 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
 				 HashStringList const &ExpectedHashes,
                                  indexRecords *MetaIndexParser)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
-                     MetaIndexParser, Target->URI), 
-     PackagesFileReadyInPartial(false)
+                     MetaIndexParser), PackagesFileReadyInPartial(false)
 {
    
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
+   RealURI = Target->URI;
    Desc.Owner = this;
    Desc.Description = Target->Description + "/DiffIndex";
    Desc.ShortDesc = Target->ShortDesc;
@@ -576,8 +576,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
                                    indexRecords *MetaIndexParser,
 				   string ServerSha1,
 				   vector<DiffInfo> diffs)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
-                     MetaIndexParser, Target->URI),
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
      available_patches(diffs), ServerSha1(ServerSha1)
 {
    
@@ -586,6 +585,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
+   RealURI = Target->URI;
    Desc.Owner = this;
    Description = Target->Description;
    Desc.ShortDesc = Target->ShortDesc;
@@ -799,8 +799,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
                                              indexRecords *MetaIndexParser,
                                              DiffInfo const &patch,
                                              std::vector<pkgAcqIndexMergeDiffs*> const * const allPatches)
-  : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, 
-                    MetaIndexParser, Target->URI),
+  : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
      patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
 
@@ -809,6 +808,7 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
+   RealURI = Target->URI;
    Desc.Owner = this;
    Description = Target->Description;
    Desc.ShortDesc = Target->ShortDesc;
@@ -957,8 +957,10 @@ bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
 			 HashStringList const  &ExpectedHash)
-   : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL, RealURI)
+   : pkgAcqBaseIndex(Owner, 0, NULL, ExpectedHash, NULL)
 {
+   RealURI = URI;
+
    AutoSelectCompression();
    Init(URI, URIDesc, ShortDesc);
 
@@ -975,8 +977,10 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 HashStringList const &ExpectedHash, 
                          indexRecords *MetaIndexParser)
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHash, 
-                     MetaIndexParser, Target->URI)
+                     MetaIndexParser)
 {
+   RealURI = Target->URI;
+
    // autoselect the compression method
    AutoSelectCompression();
    Init(Target->URI, Target->Description, Target->ShortDesc);
