@@ -1283,7 +1283,7 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
    // If we enable compressed indexes, queue for hash verification
    if (_config->FindB("Acquire::GzipIndexes",false))
    {
-      DestFile = _config->FindDir("Dir::State::lists");
+      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
       DestFile += URItoFileName(RealURI) + '.' + compExt;
 
       Decompression = true;
