@@ -21,9 +21,12 @@ endif
 -include build/environment.mak
 
 ifneq (,$(shell which dpkg-buildflags))
-  export CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
-  export LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
-  export CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS)
+  # make does not export to $(shell) so we need to workaround 
+  # (http://savannah.gnu.org/bugs/?10593)
+  dpkg_buildflags = DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags
+  export CXXFLAGS = $(shell $(dpkg_buildflags) --get CXXFLAGS)
+  export LDFLAGS = $(shell $(dpkg_buildflags) --get LDFLAGS)
+  export CPPFLAGS = $(shell $(dpkg_buildflags) --get CPPFLAGS)
 else
   ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
     export CXXFLAGS = -O0 -g -Wall
