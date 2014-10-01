@@ -235,10 +235,21 @@ runtest2() {
 " aptcache show apt
 	failaptnew
 }
+
+# diable some protection by default and ensure we still do the verification
+# correctly
+cat > rootdir/etc/apt/apt.conf.d/weaken-security <<EOF
+Acquire::AllowInsecureRepositories "1";
+Acquire::AllowDowngradeToInsecureRepositories "1";
+EOF
+
+msgmsg "Runing base test"
 runtest2
 
-
 DELETEFILE="InRelease"
+msgmsg "Running test with deletion of $DELETEFILE"
 runtest
+
 DELETEFILE="Release.gpg"
+msgmsg "Running test with deletion of $DELETEFILE"
 runtest

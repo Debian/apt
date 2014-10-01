@@ -1623,7 +1623,15 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList 
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   
+
+   // FIXME: duplicated code from pkgAcqMetaIndex
+   if (AuthPass == true)
+   {
+      bool Stop = GenerateAuthWarning(RealURI, Message);
+      if(Stop)
+         return;
+   }
+
    // FIXME: meh, this is not really elegant
    string InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
                                          "InRelease");
@@ -1657,14 +1665,6 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    DestFile =  _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI);
    TransactionManager->TransactionStageRemoval(this, DestFile);
-
-   // FIXME: duplicated code from pkgAcqMetaIndex
-   if (AuthPass == true)
-   {
-      bool Stop = GenerateAuthWarning(RealURI, Message);
-      if(Stop)
-         return;
-   }
 
    // only allow going further if the users explicitely wants it
    if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
