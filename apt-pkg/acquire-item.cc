@@ -1192,6 +1192,8 @@ void pkgAcqIndex::Done(string Message, unsigned long long Size,
       // FIXME: can we void the "Erase" bool here as its very non-local?
       std::string CompressedFile = _config->FindDir("Dir::State::lists") + "partial/";
       CompressedFile += URItoFileName(RealURI);
+      if(_config->FindB("Acquire::GzipIndexes",false) == false)
+         CompressedFile += '.' + compExt;
 
       // Remove the compressed version.
       if (Erase == true)
@@ -1399,6 +1401,13 @@ void pkgAcqMetaBase::AbortTransaction()
       // the transaction will abort, so stop anything that is idle
       if ((*I)->Status == pkgAcquire::Item::StatIdle)
          (*I)->Status = pkgAcquire::Item::StatDone;
+
+      // kill files in partial
+      string PartialFile = _config->FindDir("Dir::State::lists");
+      PartialFile += "partial/";
+      PartialFile += flNotDir((*I)->DestFile);
+      if(FileExists(PartialFile))
+         Rename(PartialFile, PartialFile + ".FAILED");
    }
 }
 									/*}}}*/

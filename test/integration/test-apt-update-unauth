@@ -26,13 +26,19 @@ runtest() {
     # start unauthenticated
     find rootdir/var/lib/apt/lists/ -type f | xargs rm -f
     rm -f aptarchive/dists/unstable/*Release*
-    # remove uncompressed version
-    find aptarchive/ -name Packages | xargs rm -f
+
     aptget update -qq --allow-insecure-repositories
+
+    # FIXME: this really shouldn't be needed
+    rm -f rootdir/var/lib/apt/lists/partial/*
 
     # become authenticated
     generatereleasefiles
     signreleasefiles
+
+    # move uncompressed away
+    mv aptarchive/dists/unstable/main/binary-i386/Packages \
+        aptarchive/dists/unstable/main/binary-i386/Packages.uncompressed
 
     # and ensure we re-check the downloaded data
     msgtest "Check rollback on going from unauth -> auth"
@@ -40,20 +46,23 @@ runtest() {
     # change the local packages file
     PKGS=$(ls rootdir/var/lib/apt/lists/*Packages*)
     echo "meep" > $PKGS
-    ls -l rootdir/var/lib/apt/lists > lists.before
+    ls rootdir/var/lib/apt/lists/ > lists.before
 
     # update and ensure all is reverted on the hashsum failure
-    aptget update -o Debug::Acquire::Transaction=1 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 > output.log 2>&1 || true
+    aptget update -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 -o Debug::acquire::http=0 > output.log 2>&1 || true
 
     # ensure we have before what we have after
-    ls -l rootdir/var/lib/apt/lists > lists.after
+    ls rootdir/var/lib/apt/lists/ > lists.after
     if diff -u lists.before lists.after; then
         msgpass
     else
-        #cat output.log
+        cat output.log
         msgfail
     fi
 
+    # move uncompressed back for release file 
+    mv aptarchive/dists/unstable/main/binary-i386/Packages.uncompressed \
+        aptarchive/dists/unstable/main/binary-i386/Packages
 }
 
 for COMPRESSEDINDEXES in 'false' 'true'; do
