@@ -527,6 +527,21 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList
 
    Item::Done(Message, Size, Hashes, Cnf);
 
+   // verify the index target
+   if(Target && Target->MetaKey != "" && MetaIndexParser && Hashes.size() > 0)
+   {
+      std::string IndexMetaKey  = Target->MetaKey + ".diff/Index";
+      indexRecords::checkSum *Record = MetaIndexParser->Lookup(IndexMetaKey);
+      if(Record && Record->Hashes.usable() && Hashes != Record->Hashes)
+      {
+         RenameOnError(HashSumMismatch);
+         printHashSumComparision(RealURI, Record->Hashes, Hashes);
+         Failed(Message, Cnf);
+         return;
+      }
+
+   }
+
    string FinalFile;
    FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
 
@@ -715,6 +730,8 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
 
    Item::Done(Message, Size, Hashes, Cnf);
 
+   // FIXME: verify this download too before feeding it to rred
+
    string FinalFile;
    FinalFile = _config->FindDir("Dir::State::lists")+"partial/"+URItoFileName(RealURI);
 
@@ -835,6 +852,8 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       std::clog << "pkgAcqIndexMergeDiffs::Done(): " << Desc.URI << std::endl;
 
    Item::Done(Message,Size,Hashes,Cnf);
+
+   // FIXME: verify download before feeding it to rred
 
    string const FinalFile = _config->FindDir("Dir::State::lists") + "partial/" + URItoFileName(RealURI);
 
