@@ -78,6 +78,25 @@ test_from_release_gpg_to_unsigned()
     assert_update_is_refused_and_last_good_state_used
 }
 
+test_from_inrelease_to_unsigned_with_override()
+{
+    # setup archive with InRelease file
+    setupaptarchive_with_lists_clean
+    testsuccess aptget update
+
+    # simulate moving to a unsigned but otherwise valid repo
+    simulate_mitm_and_inject_evil_package
+    generatereleasefiles
+
+    # and ensure we can update to it (with enough force) 
+    testsuccess aptget update --allow-insecure-repositories \
+        -o Acquire::AllowDowngradeToInsecureRepositories=1
+    # but that the individual packages are still considered untrusted
+    testequal "WARNING: The following packages cannot be authenticated!
+  evil
+E: There are problems and -y was used without --force-yes" aptget install -qq -y evil
+}
+
 test_cve_2012_0214()
 {
     # see https://bugs.launchpad.net/ubuntu/+source/apt/+bug/947108
@@ -205,3 +224,7 @@ test_inrelease_to_invalid_inrelease
 # ensure we revert to last good state if Release/Release.gpg does not verify
 msgmsg "test_release_gpg_to_invalid_release_release_gpg"
 test_release_gpg_to_invalid_release_release_gpg
+
+# ensure we can ovveride the downgrade error
+msgmsg "test_from_inrelease_to_unsigned"
+test_from_inrelease_to_unsigned_with_override

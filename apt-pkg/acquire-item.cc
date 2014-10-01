@@ -1629,14 +1629,27 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
                                          "InRelease");
    string FinalInRelease = _config->FindDir("Dir::State::lists") + URItoFileName(InReleaseURI);
 
-   if(RealFileExists(Final) || RealFileExists(FinalInRelease))
+   if (RealFileExists(Final) || RealFileExists(FinalInRelease))
    {
-      _error->Error("The repository '%s' is no longer signed.",
-                    URIDesc.c_str());
-      Rename(MetaIndexFile, MetaIndexFile+".FAILED");
-      Status = pkgAcquire::Item::StatError;
-      TransactionManager->AbortTransaction();
-      return;
+      std::string downgrade_msg;
+      strprintf(downgrade_msg, _("The repository '%s' is no longer signed."),
+                URIDesc.c_str());
+      if(_config->FindB("Acquire::AllowDowngradeToInsecureRepositories"))
+      {
+         // meh, the users wants to take risks (we still mark the packages
+         // from this repository as unauthenticated)
+         _error->Warning("%s", downgrade_msg.c_str());
+         _error->Warning(_("This is normally not allowed, but the option "
+                           "Acquire::AllowDowngradeToInsecureRepositories was "
+                           "given to override it."));
+         
+      } else {
+         _error->Error("%s", downgrade_msg.c_str());
+         Rename(MetaIndexFile, MetaIndexFile+".FAILED");
+         Status = pkgAcquire::Item::StatError;
+         TransactionManager->AbortTransaction();
+         return;
+      }
    }
 
    // this ensures that any file in the lists/ dir is removed by the
@@ -1654,7 +1667,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    }
 
    // only allow going further if the users explicitely wants it
-   if(_config->FindB("APT::Get::AllowUnauthenticated", false) == true)
+   if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
    {
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
@@ -1663,7 +1676,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    } 
    else 
    {
-      _error->Warning("Use --allow-unauthenticated to force the update");
+      _error->Warning("Use --allow-insecure-repositories to force the update");
    }
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
@@ -2123,12 +2136,12 @@ void pkgAcqMetaIndex::Failed(string Message,
    // No Release file was present, or verification failed, so fall
    // back to queueing Packages files without verification
    // only allow going further if the users explicitely wants it
-   if(_config->FindB("APT::Get::AllowUnauthenticated", false) == true)
+   if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
    {
       QueueIndexes(false);
    } else {
       // warn if the repository is unsinged
-      _error->Warning("Use --allow-unauthenticated to force the update");
+      _error->Warning("Use --allow-insecure-repositories to force the update");
    } 
 }
 									/*}}}*/

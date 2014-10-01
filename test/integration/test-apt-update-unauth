@@ -28,7 +28,7 @@ runtest() {
     rm -f aptarchive/dists/unstable/*Release*
     # remove uncompressed version
     find aptarchive/ -name Packages | xargs rm -f
-    aptget update -qq --allow-unauthenticated
+    aptget update -qq --allow-insecure-repositories
 
     # become authenticated
     generatereleasefiles

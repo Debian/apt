@@ -28,7 +28,7 @@ Pinned packages:" aptcache policy $*
 aptgetupdate() {
 	# just to be sure that no old files are used
 	rm -rf rootdir/var/lib/apt
-	if aptget update  --allow-unauthenticated -qq 2>&1 | grep '^E: '; then
+	if aptget update  --allow-insecure-repositories -qq 2>&1 | grep '^E: '; then
 		msgwarn 'apt-get update failed with an error'
 	fi
 }

@@ -12,7 +12,7 @@ setupaptarchive
 
 aptgetupdate() {
 	rm -rf rootdir/var/lib/apt/ rootdir/var/cache/apt/*.bin
-	aptget update -qq --allow-unauthenticated
+	aptget update -qq --allow-insecure-repositories
 }
 
 PKGTEXT="$(aptget install cool --assume-no -d | head -n 7)"

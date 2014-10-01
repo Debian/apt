@@ -70,7 +70,7 @@ runtest() {
         rm -rf rootdir/var/lib/apt/lists
         rm aptarchive/InRelease aptarchive/Release.gpg
         msgtest 'unsigned apt-get update gets the expected hashsum mismatch'
-	aptget update --allow-unauthenticated >output.log 2>&1 || true
+	aptget update --allow-insecure-repositories >output.log 2>&1 || true
         if grep -q "Hash Sum mismatch" output.log; then
             msgpass
         else

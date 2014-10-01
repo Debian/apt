@@ -23,7 +23,7 @@ testequal "Ign file: unstable InRelease
 Ign file: unstable Release
 Reading package lists...
 W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated.
-W: Use --allow-unauthenticated to force the update" aptget update
+W: Use --allow-insecure-repositories to force the update" aptget update
 
 # no package foo
 testequal "Listing..." apt list foo
@@ -32,7 +32,7 @@ testequal "Listing..." apt list foo
 testequal "Ign file: unstable InRelease
 Ign file: unstable Release
 Reading package lists...
-W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated." aptget update --allow-unauthenticated
+W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated." aptget update --allow-insecure-repositories
 
 # ensure we can not install the package
 testequal "WARNING: The following packages cannot be authenticated!

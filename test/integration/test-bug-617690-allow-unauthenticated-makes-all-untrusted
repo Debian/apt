@@ -26,7 +26,7 @@ testrun() {
 	rm -rf rootdir/var/lib/apt
 
 	if [ "$1" = 'trusted' ]; then
-	    testsuccess aptget update
+	        testsuccess aptget update
 
 		testsuccess aptget download cool
 		testfileexists 'cool_1.0_i386.deb'
@@ -34,7 +34,7 @@ testrun() {
 		testsuccess aptget download cool --allow-unauthenticated
 		testfileexists 'cool_1.0_i386.deb'
 	else
-	    testsuccess aptget update --allow-unauthenticated
+                testsuccess aptget update --allow-insecure-repositories
 
 		testfailure aptget download cool
 		testfilemissing 'cool_1.0_i386.deb'

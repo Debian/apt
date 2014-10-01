@@ -12,7 +12,7 @@ setupaptarchive
 changetowebserver --request-absolute='uri'
 
 msgtest 'Check that absolute paths are' 'not accepted'
-testfailure --nomsg aptget update --allow-unauthenticated
+testfailure --nomsg aptget update --allow-insecure-repositories
 
 echo 'Acquire::http::Proxy "http://localhost:8080";' > rootdir/etc/apt/apt.conf.d/99proxy
 
