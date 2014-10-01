@@ -181,7 +181,11 @@ test_release_gpg_to_invalid_release_release_gpg()
     echo "Some evil data" >>  $APTARCHIVE/dists/unstable/Release
     inject_evil_package
 
-    testequal "E: The repository 'file: unstable Release.gpg' is no longer signed." aptget update -qq
+    testequal "W: An error occurred during the signature verification. The repository is not updated and the previous index files will be used. GPG error: file: unstable Release.gpg: The following signatures were invalid: BADSIG 5A90D141DBAC8DAE Joe Sixpack (APT Testcases Dummy) <joe@example.org>
+
+W: Failed to fetch file:${APTARCHIVE}/dists/unstable/Release.gpg  
+
+W: Some index files failed to download. They have been ignored, or old ones used instead." aptget update -qq
 
     assert_repo_is_intact
     testfailure grep "evil" rootdir/var/lib/apt/lists/*Release
