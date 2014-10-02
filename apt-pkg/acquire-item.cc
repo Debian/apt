@@ -2175,26 +2175,6 @@ void pkgAcqMetaIndex::Failed(string Message,
          return;
    }
 
-   /* Always move the meta index, even if gpgv failed. This ensures
-    * that PackageFile objects are correctly filled in */
-   if (FileExists(DestFile)) 
-   {
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      /* InRelease files become Release files, otherwise
-       * they would be considered as trusted later on */
-      if (SigFile == DestFile) {
-	 RealURI = RealURI.replace(RealURI.rfind("InRelease"), 9,
-	                               "Release");
-	 FinalFile = FinalFile.replace(FinalFile.rfind("InRelease"), 9,
-	                               "Release");
-	 SigFile = FinalFile;
-      }
-
-      // Done, queue for rename on transaction finished
-      TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
-   }
-
    _error->Warning(_("The data from '%s' is not signed. Packages "
                      "from that repository can not be authenticated."),
                    URIDesc.c_str());
@@ -2204,11 +2184,35 @@ void pkgAcqMetaIndex::Failed(string Message,
    // only allow going further if the users explicitely wants it
    if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
    {
+      /* Always move the meta index, even if gpgv failed. This ensures
+       * that PackageFile objects are correctly filled in */
+      if (FileExists(DestFile)) 
+      {
+         string FinalFile = _config->FindDir("Dir::State::lists");
+         FinalFile += URItoFileName(RealURI);
+         /* InRelease files become Release files, otherwise
+          * they would be considered as trusted later on */
+         if (SigFile == DestFile) {
+            RealURI = RealURI.replace(RealURI.rfind("InRelease"), 9,
+                                      "Release");
+            FinalFile = FinalFile.replace(FinalFile.rfind("InRelease"), 9,
+                                          "Release");
+            SigFile = FinalFile;
+         }
+
+         // Done, queue for rename on transaction finished
+         TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+      }
+
       QueueIndexes(false);
    } else {
       // warn if the repository is unsinged
       _error->Warning("Use --allow-insecure-repositories to force the update");
+      TransactionManager->AbortTransaction();
+      Status = StatError;
+      return;
    } 
+
 }
 									/*}}}*/
 
