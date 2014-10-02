@@ -1417,12 +1417,17 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
-
+// AcqMetaBase::Add - Add a item to the current Transaction     	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 void pkgAcqMetaBase::Add(Item *I)
 {
    Transaction.push_back(I);
 }
-
+									/*}}}*/
+// AcqMetaBase::AbortTransaction - Abort the current Transaction     	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 void pkgAcqMetaBase::AbortTransaction()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
@@ -1447,6 +1452,9 @@ void pkgAcqMetaBase::AbortTransaction()
    }
 }
 									/*}}}*/
+// AcqMetaBase::TransactionHasError - Check for errors in Transaction  	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 bool pkgAcqMetaBase::TransactionHasError()
 {
    for (pkgAcquire::ItemIterator I = Transaction.begin();
@@ -1457,7 +1465,10 @@ bool pkgAcqMetaBase::TransactionHasError()
 
    return false;
 }
-// Acquire::CommitTransaction - Commit a transaction			/*{{{*/
+									/*}}}*/
+// AcqMetaBase::CommitTransaction - Commit a transaction		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 void pkgAcqMetaBase::CommitTransaction()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
@@ -1491,7 +1502,10 @@ void pkgAcqMetaBase::CommitTransaction()
       (*I)->TransactionManager = 0;
    }
 }
-
+									/*}}}*/
+// AcqMetaBase::CommitTransaction - Commit a transaction		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 void pkgAcqMetaBase::TransactionStageCopy(Item *I,
                                           const std::string &From,
                                           const std::string &To)
@@ -1499,16 +1513,21 @@ void pkgAcqMetaBase::TransactionStageCopy(Item *I,
    I->PartialFile = From;
    I->DestFile = To;
 }
-
+									/*}}}*/
+// AcqMetaBase::CommitTransaction - Commit a transaction		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
                                              const std::string &FinalFile)
 {
    I->PartialFile = "";
    I->DestFile = FinalFile; 
 }
-
-
+									/*}}}*/
                                                                        /*{{{*/
+// AcqMetaBase::GenerateAuthWarning - Check gpg authentication error	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
 bool pkgAcqMetaBase::GenerateAuthWarning(const std::string &RealURI,
                                          const std::string &Message)
 {
@@ -1542,9 +1561,10 @@ bool pkgAcqMetaBase::GenerateAuthWarning(const std::string &RealURI,
    return false;
 }
 									/*}}}*/
-
-
-pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,          		/*{{{*/
+// AcqMetaSig::AcqMetaSig - Constructor                         	/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
                              pkgAcqMetaBase *TransactionManager,
 			     string URI,string URIDesc,string ShortDesc,
                              string MetaIndexFile,
@@ -1595,8 +1615,12 @@ string pkgAcqMetaSig::Custom600Headers() const
 
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
-
-void pkgAcqMetaSig::Done(string Message,unsigned long long Size, HashStringList const &Hashes,
+									/*}}}*/
+// pkgAcqMetaSig::Done - The signature was downloaded/verified  	/*{{{*/
+// ---------------------------------------------------------------------
+/* The only header we use is the last-modified header. */
+void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
+                         HashStringList const &Hashes,
 			 pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message, Size, Hashes, Cfg);

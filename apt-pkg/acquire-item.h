@@ -443,7 +443,8 @@ class pkgAcqMetaSig : public pkgAcqMetaBase
    
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
+   virtual void Done(std::string Message,unsigned long long Size,
+                     HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
    virtual std::string DescURI() {return RealURI; };
@@ -575,7 +576,8 @@ class pkgAcqMetaClearSig : public pkgAcqMetaIndex
 public:
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
-   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
+   virtual void Done(std::string Message,unsigned long long Size,
+                     HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
 
    /** \brief Create a new pkgAcqMetaClearSig. */
