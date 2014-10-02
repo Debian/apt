@@ -95,8 +95,8 @@ class pkgCacheGenerator							/*{{{*/
 
    public:
 
-   enum StringType { MIXED, PKGNAME, VERSION, SECTION };
-   map_stringitem_t StoreString(enum StringType const type, const char * S, unsigned int const Size);
+   enum StringType { MIXED, PKGNAME, VERSIONNUMBER, SECTION };
+   map_stringitem_t StoreString(StringType const type, const char * S, unsigned int const Size);
    inline map_stringitem_t StoreString(enum StringType const type, const std::string &S) {return StoreString(type, S.c_str(),S.length());};
 
    void DropProgress() {Progress = 0;};

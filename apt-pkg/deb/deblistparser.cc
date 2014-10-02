@@ -162,7 +162,7 @@ bool debListParser::NewVersion(pkgCache::VerIterator &Ver)
 	       std::string const version(Open + 1, (Close - Open) - 1);
 	       if (version != Ver.VerStr())
 	       {
-		  map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSION, version);
+		  map_stringitem_t const idx = StoreString(pkgCacheGenerator::VERSIONNUMBER, version);
 		  Ver->SourceVerStr = idx;
 	       }
 	    }
@@ -953,7 +953,7 @@ bool debListParser::LoadReleaseInfo(pkgCache::PkgFileIterator &FileI,
    }
    APT_INRELEASE(MIXED, "Suite", FileI->Archive)
    APT_INRELEASE(MIXED, "Component", FileI->Component)
-   APT_INRELEASE(VERSION, "Version", FileI->Version)
+   APT_INRELEASE(VERSIONNUMBER, "Version", FileI->Version)
    APT_INRELEASE(MIXED, "Origin", FileI->Origin)
    APT_INRELEASE(MIXED, "Codename", FileI->Codename)
    APT_INRELEASE(MIXED, "Label", FileI->Label)

@@ -836,7 +836,7 @@ map_pointer_t pkgCacheGenerator::NewVersion(pkgCache::VerIterator &Ver,
       }
    }
    // haven't found the version string, so create
-   map_stringitem_t const idxVerStr = StoreString(VERSION, VerStr);
+   map_stringitem_t const idxVerStr = StoreString(VERSIONNUMBER, VerStr);
    if (unlikely(idxVerStr == 0))
       return 0;
    Ver->VerStr = idxVerStr;
@@ -933,7 +933,7 @@ bool pkgCacheGenerator::NewDepends(pkgCache::PkgIterator &Pkg,
       if (index == 0)
       {
 	 void const * const oldMap = Map.Data();
-	 index = StoreString(VERSION, Version);
+	 index = StoreString(VERSIONNUMBER, Version);
 	 if (unlikely(index == 0))
 	    return false;
 	 if (OldDepLast != 0 && oldMap != Map.Data())
@@ -1129,7 +1129,7 @@ map_stringitem_t pkgCacheGenerator::StoreString(enum StringType const type, cons
    switch(type) {
       case MIXED: strings = &strMixed; break;
       case PKGNAME: strings = &strPkgNames; break;
-      case VERSION: strings = &strVersions; break;
+      case VERSIONNUMBER: strings = &strVersions; break;
       case SECTION: strings = &strSections; break;
       default: _error->Fatal("Unknown enum type used for string storage of '%s'", key.c_str()); return 0;
    }
