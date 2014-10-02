@@ -396,19 +396,8 @@ class pkgDepCache : protected pkgCache::Namespace
     *  \param rootFunc A predicate that returns \b true for packages
     *  that should be added to the root set.
     */
-   bool MarkAndSweep(InRootSetFunc &rootFunc)
-   {
-     return MarkRequired(rootFunc) && Sweep();
-   }
-
-   bool MarkAndSweep()
-   {
-     std::auto_ptr<InRootSetFunc> f(GetRootSetFunc());
-     if(f.get() != NULL)
-       return MarkAndSweep(*f.get());
-     else
-       return false;
-   }
+   bool MarkAndSweep(InRootSetFunc &rootFunc);
+   bool MarkAndSweep();
 
    /** \name State Manipulators
     */

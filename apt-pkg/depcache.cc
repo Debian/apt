@@ -1961,3 +1961,17 @@ bool pkgDepCache::Sweep()						/*{{{*/
    return true;
 }
 									/*}}}*/
+// DepCache::MarkAndSweep						/*{{{*/
+bool pkgDepCache::MarkAndSweep(InRootSetFunc &rootFunc)
+{
+   return MarkRequired(rootFunc) && Sweep();
+}
+bool pkgDepCache::MarkAndSweep()
+{
+   std::auto_ptr<InRootSetFunc> f(GetRootSetFunc());
+   if(f.get() != NULL)
+      return MarkAndSweep(*f.get());
+   else
+      return false;
+}
+									/*}}}*/
