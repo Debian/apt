@@ -1576,7 +1576,7 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
    ShortDesc(ShortDesc)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(URI);
+   DestFile += URItoFileName(RealURI);
 
    // remove any partial downloaded sig-file in partial/. 
    // it may confuse proxies and is too small to warrant a 
@@ -1625,68 +1625,65 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
 {
    Item::Done(Message, Size, Hashes, Cfg);
 
-   string FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
-   {
-      Status = StatError;
-      ErrorText = "Method gave a blank filename";
-      return;
-   }
-
-   if (FileName != DestFile)
-   {
-      // We have to copy it into place
-      Local = true;
-      Desc.URI = "copy:" + FileName;
-      QueueURI(Desc);
-      return;
-   }
-
-   if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-      IMSHit = true;
-
-   // adjust paths if its a ims-hit
-   if(IMSHit)
-   {
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-         
-      TransactionManager->TransactionStageCopy(this, FinalFile, FinalFile);
-   }
-
-   // queue for verify
    if(AuthPass == false)
    {
+      // queue for verify, note that we change DestFile here to point to
+      // the file we want to verify (needed to make gpgv work)
+
+      string FileName = LookupTag(Message,"Filename");
+      if (FileName.empty() == true)
+      {
+         Status = StatError;
+         ErrorText = "Method gave a blank filename";
+         return;
+      }
+
+      if (FileName != DestFile)
+      {
+         // We have to copy it into place
+         Local = true;
+         Desc.URI = "copy:" + FileName;
+         QueueURI(Desc);
+         return;
+      }
+
+      if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
+      {
+         IMSHit = true;
+         // adjust DestFile on i-m-s hit to the one we already have on disk
+         DestFile = _config->FindDir("Dir::State::lists");
+         DestFile += URItoFileName(RealURI);
+      }
+
+      // this is the file we verify from
+      MetaIndexFileSignature = DestFile;
+
       AuthPass = true;
-      Desc.URI = "gpgv:" + DestFile;
+      Desc.URI = "gpgv:" + MetaIndexFileSignature;
       DestFile = MetaIndexFile;
       QueueURI(Desc);
+      ActiveSubprocess = "gpgv";
       return;
    }
-
-   // queue to copy the file in place if it was not a ims hit, on ims
-   // hit the file is already at the right place
-   if(IMSHit == false)
+   else 
    {
-      PartialFile = _config->FindDir("Dir::State::lists") + "partial/";
-      PartialFile += URItoFileName(RealURI);
-      
-      std::string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
+      // verify was successful
 
-      TransactionManager->TransactionStageCopy(this, PartialFile, FinalFile);
-   }
-
-   // we parse the MetaIndexFile here because at this point we can
-   // trust the data
-   if(AuthPass == true)
-   {
+      // we parse the MetaIndexFile here (and not right after getting 
+      // the pkgAcqMetaIndex) because at this point we can trust the data
+      //
       // load indexes and queue further downloads
       MetaIndexParser->Load(MetaIndexFile);
       QueueIndexes(true);
-   }
 
-   Complete = true;
+      // DestFile points to the the MetaIndeFile at this point, make it
+      // point back to the Release.gpg file
+      std::string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      TransactionManager->TransactionStageCopy(this, MetaIndexFileSignature, FinalFile);
+
+      Complete = true;
+   }
 }
 									/*}}}*/
 void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/

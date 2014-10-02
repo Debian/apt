@@ -433,6 +433,9 @@ class pkgAcqMetaSig : public pkgAcqMetaBase
    /** \brief The file we need to verify */
    std::string MetaIndexFile;
 
+   /** \brief The file we use to verify the MetaIndexFile with */
+   std::string MetaIndexFileSignature;
+
    /** \brief Long URI description used in the acquire system */
    std::string URIDesc;
 
