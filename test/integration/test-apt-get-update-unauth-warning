@@ -36,8 +36,7 @@ testequal "partial" ls rootdir/var/lib/apt/lists
 testequal "Ign file: unstable InRelease
 Ign file: unstable Release
 Reading package lists...
-W: The data from 'file: unstable Release' is not signed. Packages from that repository can not be authenticated." aptget update --allow-insecure-repositories
-
+W: The repository 'file: unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository." aptget update --allow-insecure-repositories
 # ensure we can not install the package
 testequal "WARNING: The following packages cannot be authenticated!
   foo
