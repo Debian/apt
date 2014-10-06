@@ -1577,7 +1577,6 @@ pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 									/*}}}*/
 // pkgAcqMetaSig::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
-/* The only header we use is the last-modified header. */
 string pkgAcqMetaSig::Custom600Headers() const
 {
    string FinalFile = _config->FindDir("Dir::State::lists");
@@ -1612,7 +1611,7 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
    }
    else 
    {
-      if(AuthDone(Message, RealURI) == true)
+      if(CheckAuthDone(Message, RealURI) == true)
       {
          std::string FinalFile = _config->FindDir("Dir::State::lists");
          FinalFile += URItoFileName(RealURI);
@@ -1734,7 +1733,6 @@ void pkgAcqMetaIndex::Init(std::string URIDesc, std::string ShortDesc)
 }
 // pkgAcqMetaIndex::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
-/* The only header we use is the last-modified header. */
 string pkgAcqMetaIndex::Custom600Headers() const
 {
    string Final = _config->FindDir("Dir::State::lists");
@@ -1770,7 +1768,7 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,	/*{{{*/
    }
 }
 									/*}}}*/
-bool pkgAcqMetaBase::AuthDone(string Message, const string &RealURI)	/*{{{*/
+bool pkgAcqMetaBase::CheckAuthDone(string Message, const string &RealURI)	/*{{{*/
 {
    // At this point, the gpgv method has succeeded, so there is a
    // valid signature from a key in the trusted keyring.  We
@@ -2121,7 +2119,7 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
    }
    else
    {
-      if(AuthDone(Message, RealURI) == true)
+      if(CheckAuthDone(Message, RealURI) == true)
       {
          string FinalFile = _config->FindDir("Dir::State::lists");
          FinalFile += URItoFileName(RealURI);

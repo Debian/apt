@@ -411,7 +411,7 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
     *  \param Message The message block received from the fetch
     *  subprocess.
     */
-   bool AuthDone(std::string Message, const std::string &RealURI);
+   bool CheckAuthDone(std::string Message, const std::string &RealURI);
 
    /** \brief Check that the release file is a release file for the
     *  correct distribution.
