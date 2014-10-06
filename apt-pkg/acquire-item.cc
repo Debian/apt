@@ -555,21 +555,14 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList
 
    }
 
-   string FinalFile;
-   FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
-
-   // success in downloading the index
-   // rename the index
-   FinalFile += string(".IndexDiff");
-   if(Debug)
-      std::clog << "Renaming: " << DestFile << " -> " << FinalFile 
-		<< std::endl;
-   Rename(DestFile,FinalFile);
-   chmod(FinalFile.c_str(),0644);
-   DestFile = FinalFile;
-
    if(!ParseDiffIndex(DestFile))
       return Failed("", NULL);
+
+   // queue for final move
+   string FinalFile;
+   FinalFile = _config->FindDir("Dir::State::lists")+URItoFileName(RealURI);
+   FinalFile += string(".IndexDiff");
+   TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
 
    Complete = true;
    Status = StatDone;
