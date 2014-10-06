@@ -30,6 +30,7 @@ runtest() {
     testfailure ls "rootdir/var/lib/apt/lists/partial/*"
 }
 
+msgmsg "InRelease"
 EXPECT="Hit http://localhost:8080 unstable InRelease
 Hit http://localhost:8080 unstable/main Sources
 Hit http://localhost:8080 unstable/main amd64 Packages
@@ -42,14 +43,11 @@ runtest
 echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 
-# FIXME: how can we get rid of this extra line
-#  "Get:1 http://localhost:8080 unstable Release.gpg" 
-#
+msgmsg "Release/Release.gpg"
 # with Release/Release.gpg 
 EXPECT="Ign http://localhost:8080 unstable InRelease
 Hit http://localhost:8080 unstable Release
 Hit http://localhost:8080 unstable Release.gpg
-Get:1 http://localhost:8080 unstable Release.gpg
 Hit http://localhost:8080 unstable/main Sources
 Hit http://localhost:8080 unstable/main amd64 Packages
 Hit http://localhost:8080 unstable/main Translation-en
@@ -57,6 +55,26 @@ Reading package lists..."
 
 find aptarchive -name "InRelease" | xargs rm -f
 
+echo "Acquire::GzipIndexes "0";" > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+
+# no Release.gpg or InRelease
+msgmsg "Release only"
+EXPECT="Ign http://localhost:8080 unstable InRelease
+Hit http://localhost:8080 unstable Release
+Ign http://localhost:8080 unstable Release.gpg
+Hit http://localhost:8080 unstable/main Sources
+Hit http://localhost:8080 unstable/main amd64 Packages
+Hit http://localhost:8080 unstable/main Translation-en
+Reading package lists..."
+
+find aptarchive -name "Release.gpg" | xargs rm -f
+
+echo 'Acquire::AllowInsecureRepositories "1";' > rootdir/etc/apt/apt.conf.d/insecure.conf
 echo "Acquire::GzipIndexes "0";" > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 

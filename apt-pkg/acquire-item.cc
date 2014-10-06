@@ -1608,62 +1608,24 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
 
    if(AuthPass == false)
    {
-      // queue for verify, note that we change DestFile here to point to
-      // the file we want to verify (needed to make gpgv work)
-
-      string FileName = LookupTag(Message,"Filename");
-      if (FileName.empty() == true)
+      if(CheckDownloadDone(Message, RealURI) == true)
       {
-         Status = StatError;
-         ErrorText = "Method gave a blank filename";
-         return;
+         // destfile will be modified to point to MetaIndexFile for the
+         // gpgv method, so we need to save it here
+         MetaIndexFileSignature = DestFile;
+         QueueForSignatureVerify(MetaIndexFile, MetaIndexFileSignature);
       }
-
-      if (FileName != DestFile)
-      {
-         // We have to copy it into place
-         Local = true;
-         Desc.URI = "copy:" + FileName;
-         QueueURI(Desc);
-         return;
-      }
-
-      if(StringToBool(LookupTag(Message,"IMS-Hit"),false) == true)
-      {
-         IMSHit = true;
-         // adjust DestFile on i-m-s hit to the one we already have on disk
-         DestFile = _config->FindDir("Dir::State::lists");
-         DestFile += URItoFileName(RealURI);
-      }
-
-      // this is the file we verify from
-      MetaIndexFileSignature = DestFile;
-
-      AuthPass = true;
-      Desc.URI = "gpgv:" + MetaIndexFileSignature;
-      DestFile = MetaIndexFile;
-      QueueURI(Desc);
-      SetActiveSubprocess("gpgv");
       return;
    }
    else 
    {
-      // verify was successful
+      if(AuthDone(Message, RealURI) == true)
+      {
+         std::string FinalFile = _config->FindDir("Dir::State::lists");
+         FinalFile += URItoFileName(RealURI);
 
-      // we parse the MetaIndexFile here (and not right after getting 
-      // the pkgAcqMetaIndex) because at this point we can trust the data
-      //
-      // load indexes and queue further downloads
-      MetaIndexParser->Load(MetaIndexFile);
-      QueueIndexes(true);
-
-      // DestFile points to the the MetaIndeFile at this point, make it
-      // point back to the Release.gpg file
-      std::string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      TransactionManager->TransactionStageCopy(this, MetaIndexFileSignature, FinalFile);
-
-      Complete = true;
+         TransactionManager->TransactionStageCopy(this, MetaIndexFileSignature, FinalFile);
+      }
    }
 }
 									/*}}}*/
@@ -1796,108 +1758,30 @@ string pkgAcqMetaIndex::Custom600Headers() const
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,	/*{{{*/
+void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,	/*{{{*/
+                           HashStringList const &Hashes,
 			   pkgAcquire::MethodConfig *Cfg)
 {
    Item::Done(Message,Size,Hashes,Cfg);
 
-   // MetaIndexes are done in two passes: one to download the
-   // metaindex with an appropriate method, and a second to verify it
-   // with the gpgv method
-
-   if (AuthPass == true)
+   if(CheckDownloadDone(Message, RealURI))
    {
-      AuthDone(Message);
+      // we have a Release file, now download the Signature, all further
+      // verify/queue for additional downloads will be done in the
+      // pkgAcqMetaSig::Done() code
+      std::string MetaIndexFile = DestFile;
+      new pkgAcqMetaSig(Owner, TransactionManager, 
+                        MetaIndexSigURI, MetaIndexSigURIDesc,
+                        MetaIndexSigShortDesc, MetaIndexFile, IndexTargets, 
+                        MetaIndexParser);
 
-      // all cool, move Release file into place
-      Complete = true;
-   }
-   else
-   {
-      RetrievalDone(Message);
-      if (!Complete)
-         // Still more retrieving to do
-         return;
-
-      if (SigFile != "")
-      {
-         // There was a signature file, so pass it to gpgv for
-         // verification
-         if (_config->FindB("Debug::pkgAcquire::Auth", false))
-            std::cerr << "Metaindex acquired, queueing gpg verification ("
-                      << SigFile << "," << DestFile << ")\n";
-         AuthPass = true;
-         Desc.URI = "gpgv:" + SigFile;
-         QueueURI(Desc);
-	 SetActiveSubprocess("gpgv");
-	 return;
-      }
-   }
-
-   if (Complete == true)
-   {
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile += URItoFileName(RealURI);
-      if (SigFile == DestFile)
-	 SigFile = FinalFile;
-
-      // queue for copy in place
       TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
    }
 }
 									/*}}}*/
-void pkgAcqMetaIndex::RetrievalDone(string Message)			/*{{{*/
-{
-   // We have just finished downloading a Release file (it is not
-   // verified yet)
-
-   string FileName = LookupTag(Message,"Filename");
-   if (FileName.empty() == true)
-   {
-      Status = StatError;
-      ErrorText = "Method gave a blank filename";
-      return;
-   }
-
-   if (FileName != DestFile)
-   {
-      Local = true;
-      Desc.URI = "copy:" + FileName;
-      QueueURI(Desc);
-      return;
-   }
-
-   // make sure to verify against the right file on I-M-S hit
-   IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
-   if(IMSHit)
-   {
-      string FinalFile = _config->FindDir("Dir::State::lists");
-      FinalFile += URItoFileName(RealURI);
-      if (SigFile == DestFile)
-      {
-	 SigFile = FinalFile;
-#if 0
-	 // constructor of pkgAcqMetaClearSig moved it out of the way,
-	 // now move it back in on IMS hit for the 'old' file
-	 string const OldClearSig = DestFile + ".reverify";
-	 if (RealFileExists(OldClearSig) == true)
-	    Rename(OldClearSig, FinalFile);
-#endif
-      }
-      DestFile = FinalFile;
-   }
-
-   // queue a signature
-   if(SigFile != DestFile)
-      new pkgAcqMetaSig(Owner, TransactionManager, 
-                        MetaIndexSigURI, MetaIndexSigURIDesc,
-                        MetaIndexSigShortDesc, DestFile, IndexTargets, 
-                        MetaIndexParser);
-
-   Complete = true;
-}
-									/*}}}*/
-void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
+bool pkgAcqMetaBase::AuthDone(string Message, const string &RealURI)	/*{{{*/
 {
    // At this point, the gpgv method has succeeded, so there is a
    // valid signature from a key in the trusted keyring.  We
@@ -1908,45 +1792,17 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
    {
       Status = StatAuthError;
       ErrorText = MetaIndexParser->ErrorText;
-      return;
+      return false;
    }
 
-   if (!VerifyVendor(Message))
+   if (!VerifyVendor(Message, RealURI))
    {
-      return;
+      return false;
    }
 
    if (_config->FindB("Debug::pkgAcquire::Auth", false))
       std::cerr << "Signature verification succeeded: "
                 << DestFile << std::endl;
-
-// we ensure this by other means
-#if 0 
-   // do not trust any previously unverified content that we may have
-   string LastGoodSigFile = _config->FindDir("Dir::State::lists").append("partial/").append(URItoFileName(RealURI));
-   if (DestFile != SigFile)
-      LastGoodSigFile.append(".gpg");
-   LastGoodSigFile.append(".reverify");
-   if(IMSHit == false && RealFileExists(LastGoodSigFile) == false)
-   {
-      for (vector <struct IndexTarget*>::const_iterator Target = IndexTargets->begin();
-           Target != IndexTargets->end();
-           ++Target)
-      {
-         // remove old indexes
-         std::string index = _config->FindDir("Dir::State::lists") +
-            URItoFileName((*Target)->URI);
-         unlink(index.c_str());
-         // and also old gzipindexes
-         std::vector<std::string> types = APT::Configuration::getCompressionTypes();
-         for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
-         {
-            index += '.' + (*t);
-            unlink(index.c_str());
-         }
-      }
-   }
-#endif
 
    // Download further indexes with verification 
    //
@@ -1957,17 +1813,56 @@ void pkgAcqMetaIndex::AuthDone(string Message)				/*{{{*/
    //   to not delete all our packages/source indexes in this case
    QueueIndexes(true);
 
-#if 0
-   // is it a clearsigned MetaIndex file?
-   if (DestFile == SigFile)
-      return;
+   return true;
+}
+									/*}}}*/
+                                        				/*{{{*/
+void pkgAcqMetaBase::QueueForSignatureVerify(const std::string &MetaIndexFile,
+                                    const std::string &MetaIndexFileSignature)
+{
+   AuthPass = true;
+   Desc.URI = "gpgv:" + MetaIndexFileSignature;
+   DestFile = MetaIndexFile;
+   QueueURI(Desc);
+   SetActiveSubprocess("gpgv");
+}
+									/*}}}*/
+                                        				/*{{{*/
+bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message,
+                                       const std::string &RealURI)
+{
+   // We have just finished downloading a Release file (it is not
+   // verified yet)
 
-   // Done, move signature file into position
-   string VerifiedSigFile = _config->FindDir("Dir::State::lists") +
-      URItoFileName(RealURI) + ".gpg";
-   Rename(SigFile,VerifiedSigFile);
-   chmod(VerifiedSigFile.c_str(),0644);
-#endif
+   string FileName = LookupTag(Message,"Filename");
+   if (FileName.empty() == true)
+   {
+      Status = StatError;
+      ErrorText = "Method gave a blank filename";
+      return false;
+   }
+
+   if (FileName != DestFile)
+   {
+      Local = true;
+      Desc.URI = "copy:" + FileName;
+      QueueURI(Desc);
+      return false;
+   }
+
+   // make sure to verify against the right file on I-M-S hit
+   IMSHit = StringToBool(LookupTag(Message,"IMS-Hit"),false);
+   if(IMSHit)
+   {
+      string FinalFile = _config->FindDir("Dir::State::lists");
+      FinalFile += URItoFileName(RealURI);
+      DestFile = FinalFile;
+   }
+
+   // set Item to complete as the remaining work is all local (verify etc)
+   Complete = true;
+
+   return true;
 }
 									/*}}}*/
 void pkgAcqMetaBase::QueueIndexes(bool verify)				/*{{{*/
@@ -2056,7 +1951,7 @@ void pkgAcqMetaBase::QueueIndexes(bool verify)				/*{{{*/
    }
 }
 									/*}}}*/
-bool pkgAcqMetaIndex::VerifyVendor(string Message)			/*{{{*/
+bool pkgAcqMetaBase::VerifyVendor(string Message, const string &RealURI)/*{{{*/
 {
    string::size_type pos;
 
@@ -2273,7 +2168,24 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size,
       TransactionManager->AbortTransaction();
       return;
    }
-   pkgAcqMetaIndex::Done(Message, Size, Hashes, Cnf);
+
+   if(AuthPass == false)
+   {
+      if(CheckDownloadDone(Message, RealURI) == true)
+         QueueForSignatureVerify(DestFile, DestFile);
+      return;
+   }
+   else
+   {
+      if(AuthDone(Message, RealURI) == true)
+      {
+         string FinalFile = _config->FindDir("Dir::State::lists");
+         FinalFile += URItoFileName(RealURI);
+
+         // queue for copy in place
+         TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+      }
+   }
 }
 									/*}}}*/
 void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/

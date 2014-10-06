@@ -385,6 +385,41 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
     */
    void QueueIndexes(bool verify);
 
+
+   /** \brief Called when a file is finished being retrieved.
+    *
+    *  If the file was not downloaded to DestFile, a copy process is
+    *  set up to copy it to DestFile; otherwise, Complete is set to \b
+    *  true and the file is moved to its final location.
+    *
+    *  \param Message The message block received from the fetch
+    *  subprocess.
+    */
+   bool CheckDownloadDone(const std::string &Message,
+                          const std::string &RealURI);
+
+   /** \brief Queue the downloaded Signature for verification */
+   void QueueForSignatureVerify(const std::string &MetaIndexFile,
+                                const std::string &MetaIndexFileSignature);
+
+   /** \brief Called when authentication succeeded.
+    *
+    *  Sanity-checks the authenticated file, queues up the individual
+    *  index files for download, and saves the signature in the lists
+    *  directory next to the authenticated list file.
+    *
+    *  \param Message The message block received from the fetch
+    *  subprocess.
+    */
+   bool AuthDone(std::string Message, const std::string &RealURI);
+
+   /** \brief Check that the release file is a release file for the
+    *  correct distribution.
+    *
+    *  \return \b true if no fatal errors were encountered.
+    */
+   bool VerifyVendor(std::string Message, const std::string &RealURI);
+   
  public:
    // transaction code
    void Add(Item *I);
@@ -495,35 +530,6 @@ class pkgAcqMetaIndex : public pkgAcqMetaBase
     *  indices will not be checked.
     */
    std::string SigFile;
-
-   /** \brief Check that the release file is a release file for the
-    *  correct distribution.
-    *
-    *  \return \b true if no fatal errors were encountered.
-    */
-   bool VerifyVendor(std::string Message);
-
-   /** \brief Called when a file is finished being retrieved.
-    *
-    *  If the file was not downloaded to DestFile, a copy process is
-    *  set up to copy it to DestFile; otherwise, Complete is set to \b
-    *  true and the file is moved to its final location.
-    *
-    *  \param Message The message block received from the fetch
-    *  subprocess.
-    */
-   void RetrievalDone(std::string Message);
-
-   /** \brief Called when authentication succeeded.
-    *
-    *  Sanity-checks the authenticated file, queues up the individual
-    *  index files for download, and saves the signature in the lists
-    *  directory next to the authenticated list file.
-    *
-    *  \param Message The message block received from the fetch
-    *  subprocess.
-    */
-   void AuthDone(std::string Message);
 
    std::string URIDesc;
    std::string ShortDesc;
