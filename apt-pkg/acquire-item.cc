@@ -212,7 +212,7 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
    return false;
 }
 									/*}}}*/
-void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)
+void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)/*{{{*/
 {
       ActiveSubprocess = subprocess;
 #if __GNUC__ >= 4
@@ -224,7 +224,7 @@ void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)
 	#pragma GCC diagnostic pop
 #endif
 }
-
+									/*}}}*/
 // Acquire::Item::ReportMirrorFailure					/*{{{*/
 // ---------------------------------------------------------------------
 void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
@@ -923,7 +923,6 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
    }
 }
 									/*}}}*/
-
 // AcqBaseIndex::VerifyHashByMetaKey - verify hash for the given metakey /*{{{*/
 bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
 {
@@ -938,12 +937,11 @@ bool pkgAcqBaseIndex::VerifyHashByMetaKey(HashStringList const &Hashes)
    }
    return true;
 }
-
-
+									/*}}}*/
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
-/* The package file is added to the queue and a second class is 
-   instantiated to fetch the revision file */   
+/* The package file is added to the queue and a second class is
+   instantiated to fetch the revision file */
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 			 string URI,string URIDesc,string ShortDesc,
 			 HashStringList const  &ExpectedHash)
@@ -960,13 +958,12 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 }
 									/*}}}*/
 // AcqIndex::AcqIndex - Constructor					/*{{{*/
-// ---------------------------------------------------------------------
 pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
                          pkgAcqMetaBase *TransactionManager,
                          IndexTarget const *Target,
-			 HashStringList const &ExpectedHash, 
+			 HashStringList const &ExpectedHash,
                          indexRecords *MetaIndexParser)
-   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHash, 
+   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHash,
                      MetaIndexParser)
 {
    RealURI = Target->URI;
@@ -981,7 +978,6 @@ pkgAcqIndex::pkgAcqIndex(pkgAcquire *Owner,
 }
 									/*}}}*/
 // AcqIndex::AutoSelectCompression - Select compression			/*{{{*/
-// ---------------------------------------------------------------------
 void pkgAcqIndex::AutoSelectCompression()
 {
    std::vector<std::string> types = APT::Configuration::getCompressionTypes();
@@ -992,7 +988,7 @@ void pkgAcqIndex::AutoSelectCompression()
            t != types.end(); ++t)
       {
          std::string CompressedMetaKey = string(Target->MetaKey).append(".").append(*t);
-         if (*t == "uncompressed" || 
+         if (*t == "uncompressed" ||
              MetaIndexParser->Exists(CompressedMetaKey) == true)
             CompressionExtensions.append(*t).append(" ");
       }
@@ -1005,9 +1001,9 @@ void pkgAcqIndex::AutoSelectCompression()
    if (CompressionExtensions.empty() == false)
       CompressionExtensions.erase(CompressionExtensions.end()-1);
 }
+									/*}}}*/
 // AcqIndex::Init - defered Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-void pkgAcqIndex::Init(string const &URI, string const &URIDesc, 
+void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
                        string const &ShortDesc)
 {
    Stage = STAGE_DOWNLOAD;
@@ -1036,7 +1032,7 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
       indexRecords::checkSum *Record = MetaIndexParser->Lookup(MetaKey);
       if(Record)
          FileSize = Record->Size;
-      
+
       InitByHashIfNeeded(MetaKey);
    }
 
@@ -1048,8 +1044,6 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
 }
 									/*}}}*/
 // AcqIndex::AdjustForByHash - modify URI for by-hash support		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqIndex::InitByHashIfNeeded(const std::string MetaKey)
 {
    // TODO:
@@ -1085,7 +1079,7 @@ void pkgAcqIndex::InitByHashIfNeeded(const std::string MetaKey)
 string pkgAcqIndex::Custom600Headers() const
 {
    string Final = GetFinalFilename();
-   
+
    string msg = "\nIndex-File: true";
    struct stat Buf;
    if (stat(Final.c_str(),&Buf) == 0)
@@ -1094,10 +1088,8 @@ string pkgAcqIndex::Custom600Headers() const
    return msg;
 }
 									/*}}}*/
-// pkgAcqIndex::Failed - getting the indexfile failed    		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
-void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
+// pkgAcqIndex::Failed - getting the indexfile failed			/*{{{*/
+void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    size_t const nextExt = CompressionExtensions.find(' ');
    if (nextExt != std::string::npos)
@@ -1119,9 +1111,7 @@ void pkgAcqIndex::Failed(string Message,pkgAcquire::MethodConfig *Cnf)	/*{{{*/
    TransactionManager->AbortTransaction();
 }
 									/*}}}*/
-// pkgAcqIndex::GetFinalFilename - Return the full final file path      /*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// pkgAcqIndex::GetFinalFilename - Return the full final file path	/*{{{*/
 std::string pkgAcqIndex::GetFinalFilename() const
 {
    std::string FinalFile = _config->FindDir("Dir::State::lists");
@@ -1130,10 +1120,8 @@ std::string pkgAcqIndex::GetFinalFilename() const
       FinalFile += '.' + CurrentCompressionExtension;
    return FinalFile;
 }
-                                                                       /*}}}*/
-// AcqIndex::ReverifyAfterIMS - Reverify index after an ims-hit        /*{{{*/
-// ---------------------------------------------------------------------
-/* */
+									/*}}}*/
+// AcqIndex::ReverifyAfterIMS - Reverify index after an ims-hit		/*{{{*/
 void pkgAcqIndex::ReverifyAfterIMS()
 {
    // update destfile to *not* include the compression extension when doing
@@ -1151,10 +1139,8 @@ void pkgAcqIndex::ReverifyAfterIMS()
    Desc.URI = "copy:" + FinalFile;
    QueueURI(Desc);
 }
-                                                                       /*}}}*/
-
-// AcqIndex::ValidateFile - Validate the content of the downloaded file  /*{{{*/
-// --------------------------------------------------------------------------
+									/*}}}*/
+// AcqIndex::ValidateFile - Validate the content of the downloaded file	/*{{{*/
 bool pkgAcqIndex::ValidateFile(const std::string &FileName)
 {
    // FIXME: this can go away once we only ever download stuff that
@@ -1180,7 +1166,7 @@ bool pkgAcqIndex::ValidateFile(const std::string &FileName)
    }
    return true;
 }
-                                                                        /*}}}*/
+									/*}}}*/
 // AcqIndex::Done - Finished a fetch					/*{{{*/
 // ---------------------------------------------------------------------
 /* This goes through a number of states.. On the initial fetch the
@@ -1205,8 +1191,8 @@ void pkgAcqIndex::Done(string Message,
          break;
    }
 }
-
-// AcqIndex::StageDownloadDone - Queue for decompress and verify        /*{{{*/
+									/*}}}*/
+// AcqIndex::StageDownloadDone - Queue for decompress and verify	/*{{{*/
 void pkgAcqIndex::StageDownloadDone(string Message,
                                     HashStringList const &Hashes,
                                     pkgAcquire::MethodConfig *Cfg)
@@ -1221,7 +1207,7 @@ void pkgAcqIndex::StageDownloadDone(string Message,
    }
 
    Complete = true;
-   
+
    // Handle the unzipd case
    string FileName = LookupTag(Message,"Alt-Filename");
    if (FileName.empty() == false)
@@ -1297,8 +1283,8 @@ void pkgAcqIndex::StageDownloadDone(string Message,
 
    SetActiveSubprocess(decompProg);
 }
-                                                                        /*}}}*/
-// pkgAcqIndex::StageDecompressDone - Final verification               /*{{{*/
+									/*}}}*/
+// pkgAcqIndex::StageDecompressDone - Final verification		/*{{{*/
 void pkgAcqIndex::StageDecompressDone(string Message,
                                       HashStringList const &Hashes,
                                       pkgAcquire::MethodConfig *Cfg)
@@ -1318,30 +1304,28 @@ void pkgAcqIndex::StageDecompressDone(string Message,
       Failed(Message, Cfg);
       return;
    }
-   
+
    // remove the compressed version of the file
    unlink(EraseFileName.c_str());
-   
+
    // Done, queue for rename on transaction finished
    TransactionManager->TransactionStageCopy(this, DestFile, GetFinalFilename());
-   
+
    return;
 }
-                                                                        /*}}}*/
 									/*}}}*/
 // AcqIndexTrans::pkgAcqIndexTrans - Constructor			/*{{{*/
 // ---------------------------------------------------------------------
 /* The Translation file is added to the queue */
 pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
-			    string URI,string URIDesc,string ShortDesc) 
+			    string URI,string URIDesc,string ShortDesc)
   : pkgAcqIndex(Owner, URI, URIDesc, ShortDesc, HashStringList())
 {
 }
-									/*}}}*/
-pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner, 
-                                   pkgAcqMetaBase *TransactionManager, 
+pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
+                                   pkgAcqMetaBase *TransactionManager,
                                    IndexTarget const * const Target,
-                                   HashStringList const &ExpectedHashes, 
+                                   HashStringList const &ExpectedHashes,
                                    indexRecords *MetaIndexParser)
    : pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser)
 {
@@ -1352,7 +1336,6 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
 }
 									/*}}}*/
 // AcqIndexTrans::Custom600Headers - Insert custom request headers	/*{{{*/
-// ---------------------------------------------------------------------
 string pkgAcqIndexTrans::Custom600Headers() const
 {
    string Final = GetFinalFilename();
@@ -1364,8 +1347,6 @@ string pkgAcqIndexTrans::Custom600Headers() const
 }
 									/*}}}*/
 // AcqIndexTrans::Failed - Silence failure messages for missing files	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
    size_t const nextExt = CompressionExtensions.find(' ');
@@ -1378,9 +1359,9 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    }
 
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
-   if (Cnf->LocalOnly == true || 
+   if (Cnf->LocalOnly == true ||
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
-   {      
+   {
       // Ignore this
       Status = StatDone;
       Complete = false;
@@ -1391,17 +1372,13 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    Item::Failed(Message,Cnf);
 }
 									/*}}}*/
-// AcqMetaBase::Add - Add a item to the current Transaction     	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// AcqMetaBase::Add - Add a item to the current Transaction		/*{{{*/
 void pkgAcqMetaBase::Add(Item *I)
 {
    Transaction.push_back(I);
 }
 									/*}}}*/
-// AcqMetaBase::AbortTransaction - Abort the current Transaction     	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// AcqMetaBase::AbortTransaction - Abort the current Transaction	/*{{{*/
 void pkgAcqMetaBase::AbortTransaction()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
@@ -1426,9 +1403,7 @@ void pkgAcqMetaBase::AbortTransaction()
    }
 }
 									/*}}}*/
-// AcqMetaBase::TransactionHasError - Check for errors in Transaction  	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// AcqMetaBase::TransactionHasError - Check for errors in Transaction	/*{{{*/
 bool pkgAcqMetaBase::TransactionHasError()
 {
    for (pkgAcquire::ItemIterator I = Transaction.begin();
@@ -1441,8 +1416,6 @@ bool pkgAcqMetaBase::TransactionHasError()
 }
 									/*}}}*/
 // AcqMetaBase::CommitTransaction - Commit a transaction		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqMetaBase::CommitTransaction()
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
@@ -1478,8 +1451,6 @@ void pkgAcqMetaBase::CommitTransaction()
 }
 									/*}}}*/
 // AcqMetaBase::TransactionStageCopy - Stage a file for copying		/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqMetaBase::TransactionStageCopy(Item *I,
                                           const std::string &From,
                                           const std::string &To)
@@ -1489,8 +1460,6 @@ void pkgAcqMetaBase::TransactionStageCopy(Item *I,
 }
 									/*}}}*/
 // AcqMetaBase::TransactionStageRemoval - Sage a file for removal	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
                                              const std::string &FinalFile)
 {
@@ -1498,10 +1467,7 @@ void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
    I->DestFile = FinalFile; 
 }
 									/*}}}*/
-                                                                       /*{{{*/
 // AcqMetaBase::GenerateAuthWarning - Check gpg authentication error	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &RealURI,
                                              const std::string &Message)
 {
@@ -1509,7 +1475,7 @@ bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &RealURI,
    //        a unauthenticated state and can cleanly rollback
 
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   
+
    if(FileExists(Final))
    {
       Status = StatTransientNetworkError;
@@ -1533,21 +1499,19 @@ bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &RealURI,
                       Desc.Description.c_str(),
                       LookupTag(Message,"Message").c_str());
    }
-   // gpgv method failed 
+   // gpgv method failed
    ReportMirrorFailure("GPGFailure");
    return false;
 }
 									/*}}}*/
-// AcqMetaSig::AcqMetaSig - Constructor                         	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// AcqMetaSig::AcqMetaSig - Constructor					/*{{{*/
 pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
                              pkgAcqMetaBase *TransactionManager,
 			     string URI,string URIDesc,string ShortDesc,
                              string MetaIndexFile,
 			     const vector<IndexTarget*>* IndexTargets,
 			     indexRecords* MetaIndexParser) :
-   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser, 
+   pkgAcqMetaBase(Owner, IndexTargets, MetaIndexParser,
                   HashStringList(), TransactionManager),
    RealURI(URI), MetaIndexFile(MetaIndexFile), URIDesc(URIDesc),
    ShortDesc(ShortDesc)
@@ -1555,8 +1519,8 @@ pkgAcqMetaSig::pkgAcqMetaSig(pkgAcquire *Owner,
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += URItoFileName(RealURI);
 
-   // remove any partial downloaded sig-file in partial/. 
-   // it may confuse proxies and is too small to warrant a 
+   // remove any partial downloaded sig-file in partial/.
+   // it may confuse proxies and is too small to warrant a
    // partial download anyway
    unlink(DestFile.c_str());
 
@@ -1592,7 +1556,7 @@ string pkgAcqMetaSig::Custom600Headers() const
    return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
 }
 									/*}}}*/
-// pkgAcqMetaSig::Done - The signature was downloaded/verified  	/*{{{*/
+// pkgAcqMetaSig::Done - The signature was downloaded/verified		/*{{{*/
 // ---------------------------------------------------------------------
 /* The only header we use is the last-modified header. */
 void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
@@ -1612,13 +1576,12 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
       }
       return;
    }
-   else 
+   else
    {
       if(CheckAuthDone(Message, RealURI) == true)
       {
          std::string FinalFile = _config->FindDir("Dir::State::lists");
          FinalFile += URItoFileName(RealURI);
-
          TransactionManager->TransactionStageCopy(this, MetaIndexFileSignature, FinalFile);
       }
    }
@@ -1718,7 +1681,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
    Init(URIDesc, ShortDesc);
 }
 									/*}}}*/
-// pkgAcqMetaIndex::Init - Delayed constructor                         /*{{{*/
+// pkgAcqMetaIndex::Init - Delayed constructor				/*{{{*/
 void pkgAcqMetaIndex::Init(std::string URIDesc, std::string ShortDesc)
 {
    DestFile = _config->FindDir("Dir::State::lists") + "partial/";
@@ -1734,6 +1697,7 @@ void pkgAcqMetaIndex::Init(std::string URIDesc, std::string ShortDesc)
    ExpectedAdditionalItems = IndexTargets->size();
    QueueURI(Desc);
 }
+									/*}}}*/
 // pkgAcqMetaIndex::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
 string pkgAcqMetaIndex::Custom600Headers() const
@@ -2018,9 +1982,7 @@ bool pkgAcqMetaBase::VerifyVendor(string Message, const string &RealURI)/*{{{*/
    return true;
 }
 									/*}}}*/
-// pkgAcqMetaIndex::Failed - no Release file present            	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// pkgAcqMetaIndex::Failed - no Release file present			/*{{{*/
 void pkgAcqMetaIndex::Failed(string /*Message*/,
                              pkgAcquire::MethodConfig * /*Cnf*/)
 {
@@ -2047,11 +2009,10 @@ void pkgAcqMetaIndex::Failed(string /*Message*/,
       TransactionManager->AbortTransaction();
       Status = StatError;
       return;
-   } 
+   }
 }
 									/*}}}*/
-
-void pkgAcqMetaIndex::Finished()
+void pkgAcqMetaIndex::Finished()					/*{{{*/
 {
    if(_config->FindB("Debug::Acquire::Transaction", false) == true)
       std::clog << "Finished: " << DestFile <<std::endl;
@@ -2059,8 +2020,7 @@ void pkgAcqMetaIndex::Finished()
       TransactionManager->TransactionHasError() == false)
       TransactionManager->CommitTransaction();
 }
-
-
+									/*}}}*/
 pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
 		string const &URI, string const &URIDesc, string const &ShortDesc,
 		string const &MetaIndexURI, string const &MetaIndexURIDesc, string const &MetaIndexShortDesc,
