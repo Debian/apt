@@ -27,8 +27,8 @@ bool ListUpdate(pkgAcquireStatus &Stat,
 		pkgSourceList &List, 
 		int PulseInterval)
 {
-   pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat, _config->FindDir("Dir::State::Lists")) == false)
+   pkgAcquire Fetcher(&Stat);
+   if (Fetcher.GetLock(_config->FindDir("Dir::State::Lists")) == false)
       return false;
 
    // Populate it with the source selection

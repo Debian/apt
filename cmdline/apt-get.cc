@@ -646,9 +646,7 @@ static bool DoDownload(CommandLine &CmdL)
       return false;
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet", 0));
-   pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat, "", false) == false)
-      return false;
+   pkgAcquire Fetcher(&Stat);
 
    pkgRecords Recs(Cache);
    pkgSourceList *SrcList = Cache.GetSourceList();
@@ -744,9 +742,8 @@ static bool DoSource(CommandLine &CmdL)
       return false;
 
    // Create the download object
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher;
-   Fetcher.SetLog(&Stat);
+   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
+   pkgAcquire Fetcher(&Stat);
 
    SPtrArray<DscFile> Dsc = new DscFile[CmdL.FileSize()];
    
@@ -1046,12 +1043,6 @@ static bool DoBuildDep(CommandLine &CmdL)
    // Create the text record parsers
    pkgSrcRecords SrcRecs(*List);
    if (_error->PendingError() == true)
-      return false;
-
-   // Create the download object
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
-   pkgAcquire Fetcher;
-   if (Fetcher.Setup(&Stat) == false)
       return false;
 
    bool StripMultiArch;
@@ -1565,8 +1556,7 @@ static bool DoChangelog(CommandLine &CmdL)
    }
 
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   if (Fetcher.Setup(&Stat, "",false) == false)
-      return false;
+   Fetcher.SetLog(&Stat);
 
    bool const downOnly = _config->FindB("APT::Get::Download-Only", false);
 

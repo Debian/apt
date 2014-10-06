@@ -47,9 +47,7 @@ bool DoUpdate(CommandLine &CmdL)
       _config->CndSet("Acquire::ForceHash", "md5sum");
 
       // get a fetcher
-      pkgAcquire Fetcher;
-      if (Fetcher.Setup(&Stat) == false)
-	 return false;
+      pkgAcquire Fetcher(&Stat);
 
       // Populate it with the source selection and get all Indexes 
       // (GetAll=true)

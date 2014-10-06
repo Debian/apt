@@ -27,17 +27,20 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <iomanip>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <iomanip>
-
+#include <pwd.h>
+#include <grp.h>
 #include <dirent.h>
 #include <sys/time.h>
 #include <sys/select.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -57,8 +60,8 @@ pkgAcquire::pkgAcquire() : LockFD(-1), Queues(0), Workers(0), Configs(0), Log(NU
    if (strcasecmp(Mode.c_str(),"access") == 0)
       QueueMode = QueueAccess;
 }
-pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) :  LockFD(-1), Queues(0), Workers(0),
-			   Configs(0), Log(Progress), ToFetch(0),
+pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) : LockFD(-1), Queues(0), Workers(0),
+			   Configs(0), Log(NULL), ToFetch(0),
 			   Debug(_config->FindB("Debug::pkgAcquire",false)),
 			   Running(false)
 {
@@ -67,40 +70,69 @@ pkgAcquire::pkgAcquire(pkgAcquireStatus *Progress) :  LockFD(-1), Queues(0), Wor
       QueueMode = QueueHost;
    if (strcasecmp(Mode.c_str(),"access") == 0)
       QueueMode = QueueAccess;
-   Setup(Progress, "");
+   SetLog(Progress);
 }
 									/*}}}*/
-// Acquire::Setup - Delayed Constructor					/*{{{*/
-// ---------------------------------------------------------------------
-/* Do everything needed to be a complete Acquire object and report the
-   success (or failure) back so the user knows that something is wrong… */
-bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock,
-      bool const createDirectories)
+// Acquire::GetLock - lock directory and prepare for action		/*{{{*/
+static bool SetupAPTPartialDirectory(std::string const &grand, std::string const &parent)
+{
+   std::string const partial = parent + "partial";
+   if (CreateAPTDirectoryIfNeeded(grand, partial) == false &&
+	 CreateAPTDirectoryIfNeeded(parent, partial) == false)
+      return false;
+
+   if (getuid() == 0) // if we aren't root, we can't chown, so don't try it
+   {
+      struct passwd *pw = getpwnam("_apt");
+      struct group *gr = getgrnam("root");
+      if (pw != NULL && gr != NULL && chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
+	 _error->WarningE("SetupAPTPartialDirectory", "chown to _apt:root of directory %s failed", partial.c_str());
+   }
+   if (chmod(partial.c_str(), 0700) != 0)
+      _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());
+
+   return true;
+}
+bool pkgAcquire::Setup(pkgAcquireStatus *Progress, string const &Lock)
 {
    Log = Progress;
-
-   // check for existence and possibly create auxiliary directories
-   if (createDirectories == true)
+   if (Lock.empty())
    {
       string const listDir = _config->FindDir("Dir::State::lists");
-      string const partialListDir = listDir + "partial/";
-      string const archivesDir = _config->FindDir("Dir::Cache::Archives");
-      string const partialArchivesDir = archivesDir + "partial/";
-
-      if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::State"), partialListDir) == false &&
-	    CreateAPTDirectoryIfNeeded(listDir, partialListDir) == false)
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir) == false)
 	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+      string const archivesDir = _config->FindDir("Dir::Cache::Archives");
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir) == false)
+	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
+      return true;
+   }
+   return GetLock(Lock);
+}
+bool pkgAcquire::GetLock(std::string const &Lock)
+{
+   if (Lock.empty() == true)
+      return false;
 
-      if (CreateAPTDirectoryIfNeeded(_config->FindDir("Dir::Cache"), partialArchivesDir) == false &&
-	    CreateAPTDirectoryIfNeeded(archivesDir, partialArchivesDir) == false)
+   // check for existence and possibly create auxiliary directories
+   string const listDir = _config->FindDir("Dir::State::lists");
+   string const archivesDir = _config->FindDir("Dir::Cache::Archives");
+
+   if (Lock == listDir)
+   {
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::State"), listDir) == false)
+	 return _error->Errno("Acquire", _("List directory %spartial is missing."), listDir.c_str());
+   }
+   if (Lock == archivesDir)
+   {
+      if (SetupAPTPartialDirectory(_config->FindDir("Dir::Cache"), archivesDir) == false)
 	 return _error->Errno("Acquire", _("Archives directory %spartial is missing."), archivesDir.c_str());
    }
 
-   if (Lock.empty() == true || _config->FindB("Debug::NoLocking", false) == true)
+   if (_config->FindB("Debug::NoLocking", false) == true)
       return true;
 
    // Lock the directory this acquire object will work in
-   LockFD = GetLock(flCombine(Lock, "lock"));
+   LockFD = ::GetLock(flCombine(Lock, "lock"));
    if (LockFD == -1)
       return _error->Error(_("Unable to lock directory %s"), Lock.c_str());
 
