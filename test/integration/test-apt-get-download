@@ -11,7 +11,22 @@ buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
 buildsimplenativepackage 'apt' 'all' '2.0' 'unstable'
 insertinstalledpackage 'vrms' 'all' '1.0'
 
+umask 0027
+
 setupaptarchive
+
+# apt-ftparchive knows how to chmod files
+find aptarchive/dists -name '*Packages*' -type f | while read file; do
+	testaccessrights "$file" '644'
+done
+# created by the framework without special care
+find aptarchive/dists -name '*Release*' -type f | while read file; do
+	testaccessrights "$file" '640'
+done
+# all copied files are properly chmodded
+find rootdir/var/lib/apt/lists -type f | while read file; do
+	testaccessrights "$file" '644'
+done
 
 testdownload() {
 	local APT="$2"
@@ -65,6 +80,7 @@ testsuccess aptget update
 # test with already stored deb
 testsuccess aptget install -d apt
 testsuccess test -s rootdir/var/cache/apt/archives/apt_2.0_all.deb
+testaccessrights 'aptarchive/pool/apt_2.0_all.deb' '644'
 mv aptarchive/pool/apt_2.0_all.deb aptarchive/pool/apt_2.0_all.deb.gone
 testdownload apt_2.0_all.deb apt
 mv aptarchive/pool/apt_2.0_all.deb.gone aptarchive/pool/apt_2.0_all.deb

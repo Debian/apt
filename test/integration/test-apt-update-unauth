@@ -27,7 +27,7 @@ runtest() {
     find rootdir/var/lib/apt/lists/ -type f | xargs rm -f
     rm -f aptarchive/dists/unstable/*Release*
 
-    aptget update -qq --allow-insecure-repositories
+    testsuccess aptget update -qq --allow-insecure-repositories
 
     # FIXME: this really shouldn't be needed
     rm -f rootdir/var/lib/apt/lists/partial/*
@@ -41,7 +41,6 @@ runtest() {
         aptarchive/dists/unstable/main/binary-i386/Packages.uncompressed
 
     # and ensure we re-check the downloaded data
-    msgtest "Check rollback on going from unauth -> auth"
 
     # change the local packages file
     PKGS=$(ls rootdir/var/lib/apt/lists/*Packages*)
@@ -49,18 +48,22 @@ runtest() {
     ls rootdir/var/lib/apt/lists/ > lists.before
 
     # update and ensure all is reverted on the hashsum failure
-    aptget update -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 -o Debug::acquire::http=0 > output.log 2>&1 || true
+    testfailure aptget update -o Debug::Acquire::Transaction=0 -o Debug::pkgAcquire::Auth=1 -o Debug::pkgAcquire::worker=0 -o Debug::acquire::http=0
 
     # ensure we have before what we have after
+    msgtest 'Check rollback on going from' 'unauth -> auth'
     ls rootdir/var/lib/apt/lists/ > lists.after
-    if diff -u lists.before lists.after; then
+    if cmp lists.before lists.after; then
         msgpass
     else
-        cat output.log
-        msgfail
+	echo >&2 '### Output of previous apt-get update ###'
+	cat >&2 rootdir/tmp/testfailure.output
+	echo >&2 '### Changes in the lists-directory: ###'
+	diff -u >&2 lists.before lists.after
+	msgfail
     fi
 
-    # move uncompressed back for release file 
+    # move uncompressed back for release file
     mv aptarchive/dists/unstable/main/binary-i386/Packages.uncompressed \
         aptarchive/dists/unstable/main/binary-i386/Packages
 }
@@ -72,6 +75,5 @@ for COMPRESSEDINDEXES in 'false' 'true'; do
 	else
 		msgmsg 'Run tests with GzipIndexes disabled'
 	fi
-
-        runtest
+	runtest
 done

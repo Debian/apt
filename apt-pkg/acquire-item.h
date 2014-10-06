@@ -75,12 +75,11 @@ class pkgAcquire::Item : public WeakPointable
     *  \param Item Metadata about this item (its URI and
     *  description).
     */
-   inline void QueueURI(ItemDesc &Item)
-                 {Owner->Enqueue(Item);};
+   void QueueURI(ItemDesc &Item);
 
    /** \brief Remove this item from its owner's queue. */
-   inline void Dequeue() {Owner->Dequeue(this);};
-   
+   void Dequeue();
+
    /** \brief Rename a file without modifying its timestamp.
     *
     *  Many item methods call this as their final action.

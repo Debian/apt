@@ -44,6 +44,9 @@
 #include <sstream>
 #include <stdio.h>
 #include <ctime>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -62,6 +65,30 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
       std::cerr <<  "\t- " << hs->toStr() << std::endl;
 }
 									/*}}}*/
+static void changeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode)
+{
+   // ensure the file is owned by root and has good permissions
+   struct passwd const * const pw = getpwnam(user);
+   struct group const * const gr = getgrnam(group);
+   if (getuid() == 0) // if we aren't root, we can't chown, so don't try it
+   {
+      if (pw != NULL && gr != NULL && chown(file, pw->pw_uid, gr->gr_gid) != 0)
+	 _error->WarningE(requester, "chown to %s:%s of file %s failed", user, group, file);
+   }
+   if (chmod(file, mode) != 0)
+      _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
+}
+static std::string preparePartialFile(std::string const &file)
+{
+   std::string DestFile = _config->FindDir("Dir::State::lists") + "partial/";
+   DestFile += file;
+   return DestFile;
+}
+static std::string preparePartialFileFromURI(std::string const &uri)
+{
+   return preparePartialFile(URItoFileName(uri));
+}
+
 
 // Acquire::Item::Item - Constructor					/*{{{*/
 #if __GNUC__ >= 4
@@ -178,6 +205,21 @@ bool pkgAcquire::Item::Rename(string From,string To)
    return true;
 }
 									/*}}}*/
+
+void pkgAcquire::Item::QueueURI(ItemDesc &Item)
+{
+   if (access(DestFile.c_str(), R_OK) == 0)
+   {
+      changeOwnerAndPermissionOfFile("preparePartialFile", DestFile.c_str(), "_apt", "root", 0600);
+      std::cerr << "QUEUE ITEM: " << DestFile << std::endl;
+   }
+   Owner->Enqueue(Item);
+}
+void pkgAcquire::Item::Dequeue()
+{
+   Owner->Dequeue(this);
+}
+
 bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const error)/*{{{*/
 {
    if(FileExists(DestFile))
@@ -293,8 +335,7 @@ pkgAcqDiffIndex::pkgAcqDiffIndex(pkgAcquire *Owner,
    Desc.ShortDesc = Target->ShortDesc;
    Desc.URI = Target->URI + ".diff/Index";
 
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(Desc.URI);
+   DestFile = preparePartialFileFromURI(Desc.URI);
 
    if(Debug)
       std::clog << "pkgAcqDiffIndex: " << Desc.URI << std::endl;
@@ -454,8 +495,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
       {
          // FIXME: make this use the method
          PackagesFileReadyInPartial = true;
-         std::string Partial = _config->FindDir("Dir::State::lists");
-         Partial += "partial/" + URItoFileName(RealURI);
+	 std::string const Partial = preparePartialFileFromURI(RealURI);
 
          FileFd From(CurrentPackagesFile, FileFd::ReadOnly);
          FileFd To(Partial, FileFd::WriteEmpty);
@@ -585,9 +625,7 @@ pkgAcqIndexDiffs::pkgAcqIndexDiffs(pkgAcquire *Owner,
    : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
      available_patches(diffs), ServerSha1(ServerSha1)
 {
-   
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(Target->URI);
+   DestFile = preparePartialFileFromURI(Target->URI);
 
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
@@ -640,7 +678,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
       }
 
       // queue for copy
-      PartialFile = _config->FindDir("Dir::State::lists")+"partial/"+URItoFileName(RealURI);
+      PartialFile = preparePartialFileFromURI(RealURI);
 
       DestFile = _config->FindDir("Dir::State::lists");
       DestFile += URItoFileName(RealURI);
@@ -671,8 +709,7 @@ void pkgAcqIndexDiffs::Finish(bool allDone)
 bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 {
    // calc sha1 of the just patched file
-   string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += "partial/" + URItoFileName(RealURI);
+   std::string const FinalFile = preparePartialFileFromURI(RealURI);
 
    if(!FileExists(FinalFile))
    {
@@ -717,8 +754,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    // queue the right diff
    Desc.URI = RealURI + ".diff/" + available_patches[0].file + ".gz";
    Desc.Description = Description + " " + available_patches[0].file + string(".pdiff");
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI + ".diff/" + available_patches[0].file);
+   DestFile = preparePartialFileFromURI(RealURI + ".diff/" + available_patches[0].file);
 
    if(Debug)
       std::clog << "pkgAcqIndexDiffs::QueueNextDiff(): " << Desc.URI << std::endl;
@@ -737,9 +773,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
    Item::Done(Message, Size, Hashes, Cnf);
 
    // FIXME: verify this download too before feeding it to rred
-
-   string FinalFile;
-   FinalFile = _config->FindDir("Dir::State::lists")+"partial/"+URItoFileName(RealURI);
+   std::string const FinalFile = preparePartialFileFromURI(RealURI);
 
    // success in downloading a diff, enter ApplyDiff state
    if(State == StateFetchDiff)
@@ -800,10 +834,6 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
   : pkgAcqBaseIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser),
      patch(patch), allPatches(allPatches), State(StateFetchDiff)
 {
-
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(Target->URI);
-
    Debug = _config->FindB("Debug::pkgAcquire::Diffs",false);
 
    RealURI = Target->URI;
@@ -813,8 +843,8 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
 
    Desc.URI = RealURI + ".diff/" + patch.file + ".gz";
    Desc.Description = Description + " " + patch.file + string(".pdiff");
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI + ".diff/" + patch.file);
+
+   DestFile = preparePartialFileFromURI(RealURI + ".diff/" + patch.file);
 
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs: " << Desc.URI << std::endl;
@@ -852,8 +882,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
    Item::Done(Message,Size,Hashes,Cnf);
 
    // FIXME: verify download before feeding it to rred
-
-   string const FinalFile = _config->FindDir("Dir::State::lists") + "partial/" + URItoFileName(RealURI);
+   string const FinalFile = preparePartialFileFromURI(RealURI);
 
    if (State == StateFetchDiff)
    {
@@ -909,8 +938,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
 	    I != allPatches->end(); ++I)
       {
-            std::string PartialFile = _config->FindDir("Dir::State::lists");
-            PartialFile += "partial/" + URItoFileName(RealURI);
+            std::string const PartialFile = preparePartialFileFromURI(RealURI);
 	    std::string patch = PartialFile + ".ed." + (*I)->patch.file + ".gz";
             std::cerr << patch << std::endl;
 	    unlink(patch.c_str());
@@ -1008,8 +1036,7 @@ void pkgAcqIndex::Init(string const &URI, string const &URIDesc,
 {
    Stage = STAGE_DOWNLOAD;
 
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(URI);
+   DestFile = preparePartialFileFromURI(URI);
 
    CurrentCompressionExtension = CompressionExtensions.substr(0, CompressionExtensions.find(' '));
    if (CurrentCompressionExtension == "uncompressed")
@@ -1126,8 +1153,7 @@ void pkgAcqIndex::ReverifyAfterIMS()
 {
    // update destfile to *not* include the compression extension when doing
    // a reverify (as its uncompressed on disk already)
-   DestFile =  _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI);
+   DestFile = preparePartialFileFromURI(RealURI);
 
    // adjust DestFile if its compressed on disk
    if (_config->FindB("Acquire::GzipIndexes",false) == true)
@@ -1253,8 +1279,7 @@ void pkgAcqIndex::StageDownloadDone(string Message,
    // If we have compressed indexes enabled, queue for hash verification
    if (_config->FindB("Acquire::GzipIndexes",false))
    {
-      DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-      DestFile += URItoFileName(RealURI) + '.' + CurrentCompressionExtension;
+      DestFile = preparePartialFileFromURI(RealURI + '.' + CurrentCompressionExtension);
       EraseFileName = "";
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
       Desc.URI = "copy:" + FileName;
@@ -1395,9 +1420,7 @@ void pkgAcqMetaBase::AbortTransaction()
          (*I)->Status = pkgAcquire::Item::StatDone;
 
       // kill files in partial
-      string PartialFile = _config->FindDir("Dir::State::lists");
-      PartialFile += "partial/";
-      PartialFile += flNotDir((*I)->DestFile);
+      std::string const PartialFile = preparePartialFile(flNotDir((*I)->DestFile));
       if(FileExists(PartialFile))
          Rename(PartialFile, PartialFile + ".FAILED");
    }
@@ -1428,19 +1451,18 @@ void pkgAcqMetaBase::CommitTransaction()
    {
       if((*I)->PartialFile != "")
       {
-         if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-            std::clog << "mv " 
-                      << (*I)->PartialFile << " -> " 
-                      <<  (*I)->DestFile << " " 
-                      << (*I)->DescURI()
-                      << std::endl;
-         Rename((*I)->PartialFile, (*I)->DestFile);
-         chmod((*I)->DestFile.c_str(),0644);
+	 if(_config->FindB("Debug::Acquire::Transaction", false) == true)
+	    std::clog << "mv " << (*I)->PartialFile << " -> "<< (*I)->DestFile << " "
+	       << (*I)->DescURI() << std::endl;
+
+	 Rename((*I)->PartialFile, (*I)->DestFile);
+	 changeOwnerAndPermissionOfFile("CommitTransaction", (*I)->DestFile.c_str(), "root", "root", 0644);
+
       } else {
          if(_config->FindB("Debug::Acquire::Transaction", false) == true)
-            std::clog << "rm " 
+            std::clog << "rm "
                       <<  (*I)->DestFile
-                      << " " 
+                      << " "
                       << (*I)->DescURI()
                       << std::endl;
          unlink((*I)->DestFile.c_str());
@@ -1625,8 +1647,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 
    // this ensures that any file in the lists/ dir is removed by the
    // transaction
-   DestFile =  _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI);
+   DestFile = preparePartialFileFromURI(RealURI);
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the users explicitely wants it
@@ -1684,8 +1705,7 @@ pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
 // pkgAcqMetaIndex::Init - Delayed constructor				/*{{{*/
 void pkgAcqMetaIndex::Init(std::string URIDesc, std::string ShortDesc)
 {
-   DestFile = _config->FindDir("Dir::State::lists") + "partial/";
-   DestFile += URItoFileName(RealURI);
+   DestFile = preparePartialFileFromURI(RealURI);
 
    // Create the item
    Desc.Description = URIDesc;
@@ -1770,7 +1790,7 @@ bool pkgAcqMetaBase::CheckAuthDone(string Message, const string &RealURI)	/*{{{*
    return true;
 }
 									/*}}}*/
-                                        				/*{{{*/
+// pkgAcqMetaBase::QueueForSignatureVerify				/*{{{*/
 void pkgAcqMetaBase::QueueForSignatureVerify(const std::string &MetaIndexFile,
                                     const std::string &MetaIndexFileSignature)
 {
@@ -1781,7 +1801,7 @@ void pkgAcqMetaBase::QueueForSignatureVerify(const std::string &MetaIndexFile,
    SetActiveSubprocess("gpgv");
 }
 									/*}}}*/
-                                        				/*{{{*/
+// pkgAcqMetaBase::CheckDownloadDone					/*{{{*/
 bool pkgAcqMetaBase::CheckDownloadDone(const std::string &Message,
                                        const std::string &RealURI)
 {
@@ -2332,7 +2352,10 @@ bool pkgAcqArchive::QueueNext()
 	 if ((unsigned long long)Buf.st_size > Version->Size)
 	    unlink(DestFile.c_str());
 	 else
+	 {
 	    PartialSize = Buf.st_size;
+	    changeOwnerAndPermissionOfFile("pkgAcqArchive::QueueNext", FinalFile.c_str(), "_apt", "root", 0600);
+	 }
       }
 
       // Disables download of archives - useful if no real installation follows,
@@ -2388,21 +2411,20 @@ void pkgAcqArchive::Done(string Message,unsigned long long Size, HashStringList 
       return;
    }
 
-   Complete = true;
-
    // Reference filename
    if (FileName != DestFile)
    {
       StoreFilename = DestFile = FileName;
       Local = true;
+      Complete = true;
       return;
    }
-   
+
    // Done, move it into position
    string FinalFile = _config->FindDir("Dir::Cache::Archives");
    FinalFile += flNotDir(StoreFilename);
    Rename(DestFile,FinalFile);
-   
+   changeOwnerAndPermissionOfFile("pkgAcqArchive::Done", FinalFile.c_str(), "root", "root", 0644);
    StoreFilename = DestFile = FinalFile;
    Complete = true;
 }
@@ -2498,7 +2520,10 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI, HashStringList const &Hashe
       if ((Size > 0) && (unsigned long long)Buf.st_size > Size)
 	 unlink(DestFile.c_str());
       else
+      {
 	 PartialSize = Buf.st_size;
+	 changeOwnerAndPermissionOfFile("pkgAcqFile", DestFile.c_str(), "_apt", "root", 0600);
+      }
    }
 
    QueueURI(Desc);

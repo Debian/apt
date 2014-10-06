@@ -371,7 +371,8 @@ bool pkgAcquire::Worker::RunMessages()
 	 {
 	    if (Itm == 0)
 	    {
-	       _error->Error("Method gave invalid 400 URI Failure message");
+	       std::string const msg = LookupTag(Message,"Message");
+	       _error->Error("Method gave invalid 400 URI Failure message: %s", msg.c_str());
 	       break;
 	    }
 
