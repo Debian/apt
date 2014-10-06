@@ -413,6 +413,10 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
     */
    bool CheckAuthDone(std::string Message, const std::string &RealURI);
 
+   /** Check if the current item should fail at this point */
+   bool CheckStopAuthentication(const std::string &RealURI,
+                                const std::string &Message);
+
    /** \brief Check that the release file is a release file for the
     *  correct distribution.
     *
@@ -435,11 +439,6 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
    /** \brief Stage (queue) a removal action when the transaction is commited
     */
    void TransactionStageRemoval(Item *I, const std::string &FinalFile);
-
-   /** Check if the current item should fail at this point */
-   bool StopAuthentication(const std::string &RealURI,
-                           const std::string &Message);
-
 
    pkgAcqMetaBase(pkgAcquire *Owner,
                   const std::vector<IndexTarget*>* IndexTargets,

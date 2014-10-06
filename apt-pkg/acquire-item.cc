@@ -1502,9 +1502,12 @@ void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
 // AcqMetaBase::GenerateAuthWarning - Check gpg authentication error	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgAcqMetaBase::StopAuthentication(const std::string &RealURI,
-                                        const std::string &Message)
+bool pkgAcqMetaBase::CheckStopAuthentication(const std::string &RealURI,
+                                             const std::string &Message)
 {
+   // FIXME: this entire function can do now that we disallow going to
+   //        a unauthenticated state and can cleanly rollback
+
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    
    if(FileExists(Final))
@@ -1626,7 +1629,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
 
    // check if we need to fail at this point 
-   if (AuthPass == true && StopAuthentication(RealURI, Message))
+   if (AuthPass == true && CheckStopAuthentication(RealURI, Message))
          return;
 
    // FIXME: meh, this is not really elegant
@@ -2154,7 +2157,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
    }
    else
    {
-      if(StopAuthentication(RealURI, Message))
+      if(CheckStopAuthentication(RealURI, Message))
          return;
 
       _error->Warning(_("The data from '%s' is not signed. Packages "
