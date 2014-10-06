@@ -47,23 +47,26 @@ CommandLine::~CommandLine()
 char const * CommandLine::GetCommand(Dispatch const * const Map,
       unsigned int const argc, char const * const * const argv)
 {
-   // if there is a -- on the line there must be the word we search for around it
-   // as -- marks the end of the options, just not sure if the command can be
-   // considered an option or not, so accept both
+   // if there is a -- on the line there must be the word we search for either
+   // before it (as -- marks the end of the options) or right after it (as we can't
+   // decide if the command is actually an option, given that in theory, you could
+   // have parameters named like commands)
    for (size_t i = 1; i < argc; ++i)
    {
       if (strcmp(argv[i], "--") != 0)
 	 continue;
+      // check if command is before --
+      for (size_t k = 1; k < i; ++k)
+	 for (size_t j = 0; Map[j].Match != NULL; ++j)
+	    if (strcmp(argv[k], Map[j].Match) == 0)
+	       return Map[j].Match;
+      // see if the next token after -- is the command
       ++i;
       if (i < argc)
 	 for (size_t j = 0; Map[j].Match != NULL; ++j)
 	    if (strcmp(argv[i], Map[j].Match) == 0)
 	       return Map[j].Match;
-      i -= 2;
-      if (i != 0)
-	 for (size_t j = 0; Map[j].Match != NULL; ++j)
-	    if (strcmp(argv[i], Map[j].Match) == 0)
-	       return Map[j].Match;
+      // we found a --, but not a command
       return NULL;
    }
    // no --, so search for the first word matching a command

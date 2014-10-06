@@ -21,17 +21,20 @@
 
 class indexRecords
 {
-   bool parseSumData(const char *&Start, const char *End, std::string &Name,
+   APT_HIDDEN bool parseSumData(const char *&Start, const char *End, std::string &Name,
 		     std::string &Hash, unsigned long long &Size);
    public:
    struct checkSum;
    std::string ErrorText;
+   // dpointer (for later9
+   void * d;
    
    protected:
    std::string Dist;
    std::string Suite;
    std::string ExpectedDist;
    time_t ValidUntil;
+   bool SupportsAcquireByHash;
 
    std::map<std::string,checkSum *> Entries;
 
@@ -49,6 +52,7 @@ class indexRecords
    virtual bool Load(std::string Filename);
    std::string GetDist() const;
    std::string GetSuite() const;
+   bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
    virtual bool CheckDist(const std::string MaybeDist) const;
    std::string GetExpectedDist() const;

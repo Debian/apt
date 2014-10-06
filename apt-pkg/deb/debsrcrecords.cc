@@ -239,7 +239,8 @@ bool debSrcRecordParser::Files(std::vector<pkgSrcRecords::File> &List)
 /* */
 debSrcRecordParser::~debSrcRecordParser()
 {
-   delete[] Buffer;
+   // was allocated via strndup()
+   free(Buffer);
 }
 									/*}}}*/
 

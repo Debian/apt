@@ -44,12 +44,11 @@ class debListParser : public pkgCacheGenerator::ListParser
    protected:
    pkgTagFile Tags;
    pkgTagSection Section;
-   unsigned long iOffset;
+   map_filesize_t iOffset;
    std::string Arch;
    std::vector<std::string> Architectures;
    bool MultiArchEnabled;
 
-   unsigned long UniqFindTagWrite(const char *Tag);
    virtual bool ParseStatus(pkgCache::PkgIterator &Pkg,pkgCache::VerIterator &Ver);
    bool ParseDepends(pkgCache::VerIterator &Ver,const char *Tag,
 		     unsigned int Type);
@@ -77,8 +76,8 @@ class debListParser : public pkgCacheGenerator::ListParser
 #endif
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
 			   pkgCache::VerIterator &Ver);
-   virtual unsigned long Offset() {return iOffset;};
-   virtual unsigned long Size() {return Section.size();};
+   virtual map_filesize_t Offset() {return iOffset;};
+   virtual map_filesize_t Size() {return Section.size();};
 
    virtual bool Step();
    

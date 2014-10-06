@@ -1,0 +1,71 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64' 'i386'
+
+insertinstalledpackage 'cool' 'all' '1'
+insertinstalledpackage 'stuff' 'all' '1'
+
+insertpackage 'unstable' 'cool' 'all' '2' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'stuff' 'all' '2' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'coolstuff' 'i386,amd64' '2' 'Depends: cool, stuff'
+insertpackage 'unstable' 'awesome' 'all' '2' 'Multi-Arch: foreign'
+insertpackage 'unstable' 'awesomecoolstuff' 'i386' '2' 'Depends: coolstuff, awesome'
+
+insertpackage 'experimental' 'cool' 'all' '3' 'Multi-Arch: foreign'
+insertpackage 'experimental' 'stuff' 'all' '3' 'Multi-Arch: foreign'
+insertpackage 'experimental' 'coolstuff' 'i386,amd64' '3' 'Depends: cool, stuff'
+
+setupaptarchive
+
+rm -f /tmp/dump.edsp
+testequal 'Reading package lists...
+Building dependency tree...
+Execute external solver...
+The solver encountered an error of type: ERR_JUST_DUMPING
+The following information might help you to understand what is wrong:
+I am too dumb, i can just dump!
+Please use one of my friends instead!
+
+E: External solver failed with: I am too dumb, i can just dump!' aptget install --solver dump coolstuff -s
+testsuccess test -s /tmp/dump.edsp
+rm -f /tmp/dump.edsp
+
+#FIXME: this should be unstable, but we don't support pinning yet
+testequal 'Reading package lists...
+Building dependency tree...
+Execute external solver...
+The following NEW packages will be installed:
+  coolstuff
+0 upgraded, 1 newly installed, 0 to remove and 2 not upgraded.
+Inst coolstuff (3 experimental [amd64])
+Conf coolstuff (3 experimental [amd64])' aptget install --solver apt coolstuff -s
+
+testsuccess aptget install awesomecoolstuff:i386 -s
+testsuccess aptget install --solver apt awesomecoolstuff:i386 -s
+
+rm -f /tmp/dump.edsp
+testfailure aptget install --solver dump awesomecoolstuff:i386 -s
+testsuccess test -s /tmp/dump.edsp
+
+testsuccess aptget dist-upgrade -s
+testsuccess aptget dist-upgrade -s --solver apt
+
+testsuccess aptget upgrade -s
+testsuccess aptget upgrade -s --solver apt
+
+configarchitecture 'armel'
+msgtest 'Test direct calling is okay for' 'apt-internal-solver'
+cat /tmp/dump.edsp | aptinternalsolver > solver.result 2>&1 || true
+if [ "$(tail -n2 solver.result | head -n1 )" = "Message: Done" ]; then
+	msgpass
+else
+	cat solver.result
+	msgfail
+fi
+rm -f /tmp/dump.edsp
+
+testfailure aptget install --solver apt awesomecoolstuff:i386 -s

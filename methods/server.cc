@@ -44,7 +44,8 @@ time_t ServerMethod::FailTime = 0;
 // ---------------------------------------------------------------------
 /* Returns 0 if things are OK, 1 if an IO error occurred and 2 if a header
    parse error occurred */
-ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File)
+ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File,
+                                                      const std::string &Uri)
 {
    State = Header;
    
@@ -66,7 +67,7 @@ ServerState::RunHeadersResult ServerState::RunHeaders(FileFd * const File)
 	 continue;
 
       if (Owner->Debug == true)
-	 clog << Data;
+	 clog << "Answer for: " << Uri << endl << Data;
       
       for (string::const_iterator I = Data.begin(); I < Data.end(); ++I)
       {
@@ -323,10 +324,10 @@ ServerMethod::DealWithHeaders(FetchResult &Res)
       failure */
    if (Server->Result < 200 || Server->Result >= 300)
    {
-      char err[255];
-      snprintf(err,sizeof(err)-1,"HttpError%i",Server->Result);
+      std::string err;
+      strprintf(err, "HttpError%u", Server->Result);
       SetFailReason(err);
-      _error->Error("%u %s",Server->Result,Server->Code);
+      _error->Error("%u %s", Server->Result, Server->Code);
       if (Server->HaveContent == true)
 	 return ERROR_WITH_CONTENT_PAGE;
       return ERROR_UNRECOVERABLE;
@@ -485,7 +486,7 @@ int ServerMethod::Loop()
       Fetch(0);
       
       // Fetch the next URL header data from the server.
-      switch (Server->RunHeaders(File))
+      switch (Server->RunHeaders(File, Queue->Uri))
       {
 	 case ServerState::RUN_HEADERS_OK:
 	 break;
@@ -609,7 +610,10 @@ int ServerMethod::Loop()
 		  QueueBack = Queue;
 	       }
 	       else
+               {
+                  Server->Close();
 		  Fail(true);
+               }
 	    }
 	    break;
 	 }

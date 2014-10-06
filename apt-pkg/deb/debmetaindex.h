@@ -36,7 +36,7 @@ class debReleaseIndex : public metaIndex {
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
    std::map<std::string, std::vector<debSectionEntry const*> > ArchEntries;
-   enum { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
+   enum APT_HIDDEN { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
 
    public:
 

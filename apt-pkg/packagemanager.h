@@ -47,8 +47,8 @@ class pkgRecords;
 namespace APT {
    namespace Progress {
       class PackageManager;
-   };
-};
+   }
+}
 
 
 class pkgPackageManager : protected pkgCache::Namespace
@@ -98,6 +98,7 @@ class pkgPackageManager : protected pkgCache::Namespace
    virtual bool Remove(PkgIterator /*Pkg*/,bool /*Purge*/=false) {return false;};
 #if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    virtual bool Go(APT::Progress::PackageManager * /*progress*/) {return true;};
+   virtual bool Go(int /*statusFd*/=-1) {return true;};
 #else
    virtual bool Go(int /*statusFd*/=-1) {return true;};
 #endif

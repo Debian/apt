@@ -75,9 +75,10 @@ time_t FtpMethod::FailTime = 0;
 // FTPConn::FTPConn - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1), 
+FTPConn::FTPConn(URI Srv) : Len(0), ServerFd(-1), DataFd(-1),
                             DataListenFd(-1), ServerName(Srv),
-			    ForceExtended(false), TryPassive(true)
+			    ForceExtended(false), TryPassive(true),
+			    PeerAddrLen(0), ServerAddrLen(0)
 {
    Debug = _config->FindB("Debug::Acquire::Ftp",false);
    PasvAddr = 0;
@@ -1131,6 +1132,9 @@ int main(int, const char *argv[])
    }
    
    FtpMethod Mth;
+
+   // no more active ftp, sorry
+   Mth.DropPrivsOrDie();
    
    return Mth.Run();
 }

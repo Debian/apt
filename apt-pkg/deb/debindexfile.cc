@@ -81,14 +81,18 @@ pkgSrcRecords::Parser *debSourcesIndex::CreateSrcParser() const
 {
    string SourcesURI = _config->FindDir("Dir::State::lists") + 
       URItoFileName(IndexURI("Sources"));
-   string SourcesURIgzip = SourcesURI + ".gz";
 
-   if (!FileExists(SourcesURI) && !FileExists(SourcesURIgzip))
-      return NULL;
-   else if (!FileExists(SourcesURI) && FileExists(SourcesURIgzip))
-      SourcesURI = SourcesURIgzip;
-
-   return new debSrcRecordParser(SourcesURI,this);
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p;
+      p = SourcesURI + '.' + *t;
+      if (FileExists(p))
+         return new debSrcRecordParser(p, this);
+   }
+   if (FileExists(SourcesURI))
+      return new debSrcRecordParser(SourcesURI, this);
+   return NULL;
 }
 									/*}}}*/
 // SourcesIndex::Describe - Give a descriptive path to the index	/*{{{*/
@@ -127,14 +131,18 @@ string debSourcesIndex::Info(const char *Type) const
 // SourcesIndex::Index* - Return the URI to the index files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debSourcesIndex::IndexFile(const char *Type) const
+string debSourcesIndex::IndexFile(const char *Type) const
 {
    string s = URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 
 string debSourcesIndex::IndexURI(const char *Type) const
@@ -257,14 +265,18 @@ string debPackagesIndex::Info(const char *Type) const
 // PackagesIndex::Index* - Return the URI to the index files		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debPackagesIndex::IndexFile(const char *Type) const
+string debPackagesIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 string debPackagesIndex::IndexURI(const char *Type) const
 {
@@ -409,14 +421,18 @@ debTranslationsIndex::debTranslationsIndex(string URI,string Dist,string Section
 // TranslationIndex::Trans* - Return the URI to the translation files	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-inline string debTranslationsIndex::IndexFile(const char *Type) const
+string debTranslationsIndex::IndexFile(const char *Type) const
 {
    string s =_config->FindDir("Dir::State::lists") + URItoFileName(IndexURI(Type));
-   string sgzip = s + ".gz";
-   if (!FileExists(s) && FileExists(sgzip))
-       return sgzip;
-   else
-       return s;
+
+   std::vector<std::string> types = APT::Configuration::getCompressionTypes();
+   for (std::vector<std::string>::const_iterator t = types.begin(); t != types.end(); ++t)
+   {
+      string p = s + '.' + *t;
+      if (FileExists(p))
+         return p;
+   }
+   return s;
 }
 string debTranslationsIndex::IndexURI(const char *Type) const
 {
@@ -619,7 +635,7 @@ bool debStatusIndex::Merge(pkgCacheGenerator &Gen,OpProgress *Prog) const
    pkgCache::PkgFileIterator CFile = Gen.GetCurFile();
    CFile->Size = Pkg.FileSize();
    CFile->mtime = Pkg.ModificationTime();
-   map_ptrloc const storage = Gen.WriteUniqString("now");
+   map_stringitem_t const storage = Gen.StoreString(pkgCacheGenerator::MIXED, "now");
    CFile->Archive = storage;
    
    if (Gen.MergeList(Parser) == false)
@@ -692,15 +708,27 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 
    // get the control data out of the deb file vid dpkg -I
    // ... can I haz libdpkg?
+   Configuration::Item const *Opts = _config->Tree("DPkg::Options");
    std::string dpkg = _config->Find("Dir::Bin::dpkg","dpkg");
-   const char *Args[5] = {dpkg.c_str(),
-                          "-I",
-                          DebFile.c_str(),
-                          "control",
-                          NULL};
+   std::vector<const char *> Args;
+   Args.push_back(dpkg.c_str());
+   if (Opts != 0)
+   {
+      Opts = Opts->Child;
+      for (; Opts != 0; Opts = Opts->Next)
+      {
+	 if (Opts->Value.empty() == true)
+	    continue;
+	 Args.push_back(Opts->Value.c_str());
+      }
+   }
+   Args.push_back("-I");
+   Args.push_back(DebFile.c_str());
+   Args.push_back("control");
+   Args.push_back(NULL);
    FileFd PipeFd;
    pid_t Child;
-   if(Popen(Args, PipeFd, Child, FileFd::ReadOnly) == false)
+   if(Popen((const char**)&Args[0], PipeFd, Child, FileFd::ReadOnly) == false)
       return _error->Error("Popen failed");
    // FIXME: static buffer
    char buf[8*1024];
@@ -710,7 +738,7 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
    ExecWait(Child, "Popen");
 
    // now write the control data to a tempfile
-   SPtr<FileFd> DebControl = GetTempFile("deb-file-" + DebFile);
+   SPtr<FileFd> DebControl = GetTempFile("deb-file-" + flNotDir(DebFile));
    if(DebControl == NULL)
       return false;
    DebControl->Write(buf, n);
@@ -738,8 +766,6 @@ bool debDebPkgFileIndex::Merge(pkgCacheGenerator& Gen, OpProgress* Prog) const
 }
 pkgCache::PkgFileIterator debDebPkgFileIndex::FindInCache(pkgCache &Cache) const
 {
-   // FIXME: we could simply always return pkgCache::PkgFileIterator(Cache);
-   //        to indicate its never in the cache which will force a Merge()
    pkgCache::PkgFileIterator File = Cache.FileBegin();
    for (; File.end() == false; ++File)
    {

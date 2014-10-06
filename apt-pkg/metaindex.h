@@ -53,7 +53,7 @@ class metaIndex
 
    metaIndex(std::string const &URI, std::string const &Dist, 
              char const * const Type) 
-      : Indexes(NULL), Type(Type), URI(URI), Dist(Dist)
+      : Indexes(NULL), Type(Type), URI(URI), Dist(Dist), Trusted(false)
    {
       /* nothing */
    }

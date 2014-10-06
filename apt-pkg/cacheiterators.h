@@ -159,8 +159,12 @@ class pkgCache::PkgIterator: public Iterator<Package, PkgIterator> {
 	enum OkState {NeedsNothing,NeedsUnpack,NeedsConfigure};
 
 	// Accessors
-	inline const char *Name() const {return S->Name == 0?0:Owner->StrP + S->Name;}
-	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;}
+	inline const char *Name() const { return Group().Name(); }
+	// Versions have sections - and packages can have different versions with different sections
+	// so this interface is broken by design. It used to return the section of the "first parsed
+	// package stanza", but as this can potentially be anything it now returns the section of the
+	// newest version instead (if any). aka: Run as fast as you can to Version.Section().
+	APT_DEPRECATED const char *Section() const;
 	inline bool Purge() const {return S->CurrentState == pkgCache::State::Purge ||
 		(S->CurrentVer == 0 && S->CurrentState == pkgCache::State::NotInstalled);}
 	inline const char *Arch() const {return S->Arch == 0?0:Owner->StrP + S->Arch;}
@@ -211,6 +215,12 @@ class pkgCache::VerIterator : public Iterator<Version, VerIterator> {
 	// Accessors
 	inline const char *VerStr() const {return S->VerStr == 0?0:Owner->StrP + S->VerStr;}
 	inline const char *Section() const {return S->Section == 0?0:Owner->StrP + S->Section;}
+	/** \brief source package name this version comes from
+	   Always contains the name, even if it is the same as the binary name */
+	inline const char *SourcePkgName() const {return Owner->StrP + S->SourcePkgName;}
+	/** \brief source version this version comes from
+	   Always contains the version string, even if it is the same as the binary version */
+	inline const char *SourceVerStr() const {return Owner->StrP + S->SourceVerStr;}
 	inline const char *Arch() const {
 		if ((S->MultiArch & pkgCache::Version::All) == pkgCache::Version::All)
 			return "all";
@@ -332,7 +342,7 @@ class pkgCache::PrvIterator : public Iterator<Provides, PrvIterator> {
 	inline void operator ++() {operator ++(0);}
 
 	// Accessors
-	inline const char *Name() const {return Owner->StrP + Owner->PkgP[S->ParentPkg].Name;}
+	inline const char *Name() const {return ParentPkg().Name();}
 	inline const char *ProvideVersion() const {return S->ProvideVersion == 0?0:Owner->StrP + S->ProvideVersion;}
 	inline PkgIterator ParentPkg() const {return PkgIterator(*Owner,Owner->PkgP + S->ParentPkg);}
 	inline VerIterator OwnerVer() const {return VerIterator(*Owner,Owner->VerP + S->Version);}

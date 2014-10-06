@@ -32,8 +32,10 @@ int CacheFile::NameComp(const void *a,const void *b)
    
    const pkgCache::Package &A = **(pkgCache::Package **)a;
    const pkgCache::Package &B = **(pkgCache::Package **)b;
+   const pkgCache::Group * const GA = SortCache->GrpP + A.Group;
+   const pkgCache::Group * const GB = SortCache->GrpP + B.Group;
 
-   return strcmp(SortCache->StrP + A.Name,SortCache->StrP + B.Name);
+   return strcmp(SortCache->StrP + GA->Name,SortCache->StrP + GB->Name);
 }
 									/*}}}*/
 // CacheFile::Sort - Sort by name					/*{{{*/

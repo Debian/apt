@@ -96,12 +96,8 @@ class pkgSourceList : public pkgSource
    
    public:
 
-   std::vector<metaIndex *> SrcList;
-
    int ParseFileDeb822(std::string File);
    bool ParseFileOldStyle(std::string File);
-
-   public:
 
    bool ReadMainList();
    bool Read(std::string File);

@@ -60,9 +60,8 @@ struct ExtractTar::TarHeader
 // ExtractTar::ExtractTar - Constructor					/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-ExtractTar::ExtractTar(FileFd &Fd,unsigned long Max,string DecompressionProgram) : File(Fd), 
-                         MaxInSize(Max), DecompressProg(DecompressionProgram)
-
+ExtractTar::ExtractTar(FileFd &Fd,unsigned long long Max,string DecompressionProgram)
+	: File(Fd), MaxInSize(Max), DecompressProg(DecompressionProgram)
 {
    GZPid = -1;
    Eof = false;
@@ -267,7 +266,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 
 	 case GNU_LongLink:
 	 {
-	    unsigned long Length = Itm.Size;
+	    unsigned long long Length = Itm.Size;
 	    unsigned char Block[512];
 	    while (Length > 0)
 	    {
@@ -286,7 +285,7 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	 
 	 case GNU_LongName:
 	 {
-	    unsigned long Length = Itm.Size;
+	    unsigned long long Length = Itm.Size;
 	    unsigned char Block[512];
 	    while (Length > 0)
 	    {
@@ -315,11 +314,11 @@ bool ExtractTar::Go(pkgDirStream &Stream)
 	    return false;
       
       // Copy the file over the FD
-      unsigned long Size = Itm.Size;
+      unsigned long long Size = Itm.Size;
       while (Size != 0)
       {
 	 unsigned char Junk[32*1024];
-	 unsigned long Read = min(Size,(unsigned long)sizeof(Junk));
+	 unsigned long Read = min(Size, (unsigned long long)sizeof(Junk));
 	 if (InFd.Read(Junk,((Read+511)/512)*512) == false)
 	    return false;
 	 

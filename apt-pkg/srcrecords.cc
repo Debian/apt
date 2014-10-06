@@ -81,6 +81,27 @@ bool pkgSrcRecords::Restart()
    return true;
 }
 									/*}}}*/
+// SrcRecords::Step - Step to the next Source Record			/*{{{*/
+// ---------------------------------------------------------------------
+/* Step to the next source package record */
+const pkgSrcRecords::Parser* pkgSrcRecords::Step()
+{
+   if (Current == Files.end())
+      return 0;
+
+   // Step to the next record, possibly switching files
+   while ((*Current)->Step() == false)
+   {
+      if (_error->PendingError() == true)
+         return 0;
+      ++Current;
+      if (Current == Files.end())
+         return 0;
+   }
+
+   return *Current;
+}
+									/*}}}*/
 // SrcRecords::Find - Find the first source package with the given name	/*{{{*/
 // ---------------------------------------------------------------------
 /* This searches on both source package names and output binary names and
@@ -88,21 +109,11 @@ bool pkgSrcRecords::Restart()
    function to be called multiple times to get successive entries */
 pkgSrcRecords::Parser *pkgSrcRecords::Find(const char *Package,bool const &SrcOnly)
 {
-   if (Current == Files.end())
-      return 0;
-   
    while (true)
    {
-      // Step to the next record, possibly switching files
-      while ((*Current)->Step() == false)
-      {
-	 if (_error->PendingError() == true)
-	    return 0;
-	 ++Current;
-	 if (Current == Files.end())
-	    return 0;
-      }
-      
+      if(Step() == 0)
+         return 0;
+
       // IO error somehow
       if (_error->PendingError() == true)
 	 return 0;

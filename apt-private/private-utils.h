@@ -5,7 +5,7 @@
 
 #include <string>
 
-APT_PUBLIC void DisplayFileInPager(std::string filename);
-APT_PUBLIC void EditFileInSensibleEditor(std::string filename);
+APT_PUBLIC void DisplayFileInPager(std::string const &filename);
+APT_PUBLIC void EditFileInSensibleEditor(std::string const &filename);
 
 #endif

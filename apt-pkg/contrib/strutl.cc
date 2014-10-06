@@ -45,14 +45,26 @@ using namespace std;
 // ---------------------------------------------------------------------
 namespace APT {
    namespace String {
-std::string Strip(const std::string &s)
+std::string Strip(const std::string &str)
 {
-   size_t start = s.find_first_not_of(" \t\n");
-   // only whitespace
-   if (start == string::npos)
+   // ensure we have at least one character
+   if (str.empty() == true)
+      return str;
+
+   char const * const s = str.c_str();
+   size_t start = 0;
+   for (; isspace(s[start]) != 0; ++start)
+      ; // find the first not-space
+
+   // string contains only whitespaces
+   if (s[start] == '\0')
       return "";
-   size_t end = s.find_last_not_of(" \t\n");
-   return s.substr(start, end-start+1);
+
+   size_t end = str.length() - 1;
+   for (; isspace(s[end]) != 0; --end)
+      ; // find the last not-space
+
+   return str.substr(start, end - start + 1);
 }
 
 bool Endswith(const std::string &s, const std::string &end)
@@ -60,6 +72,13 @@ bool Endswith(const std::string &s, const std::string &end)
    if (end.size() > s.size())
       return false;
    return (s.substr(s.size() - end.size(), s.size()) == end);
+}
+
+bool Startswith(const std::string &s, const std::string &start)
+{
+   if (start.size() > s.size())
+      return false;
+   return (s.substr(0, start.size()) == start);
 }
 
 }
@@ -434,23 +453,30 @@ string TimeToStr(unsigned long Sec)
 /* This replaces all occurrences of Subst with Contents in Str. */
 string SubstVar(const string &Str,const string &Subst,const string &Contents)
 {
+   if (Subst.empty() == true)
+      return Str;
+
    string::size_type Pos = 0;
    string::size_type OldPos = 0;
    string Temp;
-   
-   while (OldPos < Str.length() && 
+
+   while (OldPos < Str.length() &&
 	  (Pos = Str.find(Subst,OldPos)) != string::npos)
    {
-      Temp += string(Str,OldPos,Pos) + Contents;
-      OldPos = Pos + Subst.length();      
+      if (OldPos != Pos)
+	 Temp.append(Str, OldPos, Pos - OldPos);
+      if (Contents.empty() == false)
+	 Temp.append(Contents);
+      OldPos = Pos + Subst.length();
    }
-   
+
    if (OldPos == 0)
       return Str;
-   
+
+   if (OldPos >= Str.length())
+      return Temp;
    return Temp + string(Str,OldPos);
 }
-
 string SubstVar(string Str,const struct SubstVar *Vars)
 {
    for (; Vars->Subst != 0; Vars++)
@@ -697,9 +723,12 @@ string LookupTag(const string &Message,const char *Tag,const char *Default)
    then returns the result. Several varients on true/false are checked. */
 int StringToBool(const string &Text,int Default)
 {
-   char *End;
-   int Res = strtol(Text.c_str(),&End,0);   
-   if (End != Text.c_str() && Res >= 0 && Res <= 1)
+   char *ParseEnd;
+   int Res = strtol(Text.c_str(),&ParseEnd,0);
+   // ensure that the entire string was converted by strtol to avoid
+   // failures on "apt-cache show -a 0ad" where the "0" is converted
+   const char *TextEnd = Text.c_str()+Text.size();
+   if (ParseEnd == TextEnd && Res >= 0 && Res <= 1)
       return Res;
    
    // Check for positives
@@ -1039,7 +1068,7 @@ bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base
 // ---------------------------------------------------------------------
 /* This is used in decoding the 256bit encoded fixed length fields in
    tar files */
-bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
+bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len)
 {
    if ((Str[0] & 0x80) == 0)
       return false;
@@ -1050,6 +1079,23 @@ bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
          Res = (Res<<8) + Str[i];
       return true;
    }
+}
+									/*}}}*/
+// Base256ToNum - Convert a fixed length binary to a number             /*{{{*/
+// ---------------------------------------------------------------------
+/* This is used in decoding the 256bit encoded fixed length fields in
+   tar files */
+bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len)
+{
+   unsigned long long Num;
+   bool rc;
+
+   rc = Base256ToNum(Str, Num, Len);
+   Res = Num;
+   if (Res != Num)
+      return false;
+
+   return rc;
 }
 									/*}}}*/
 // HexDigit - Convert a hex character into an integer			/*{{{*/

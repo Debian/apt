@@ -39,7 +39,7 @@ class ExtractTar
                   GNU_LongLink = 'K',GNU_LongName = 'L'};
 
    FileFd &File;
-   unsigned long MaxInSize;
+   unsigned long long MaxInSize;
    int GZPid;
    FileFd InFd;
    bool Eof;
@@ -53,7 +53,7 @@ class ExtractTar
 
    bool Go(pkgDirStream &Stream);
    
-   ExtractTar(FileFd &Fd,unsigned long Max,std::string DecompressionProgram);
+   ExtractTar(FileFd &Fd,unsigned long long Max,std::string DecompressionProgram);
    virtual ~ExtractTar();
 };
 

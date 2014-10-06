@@ -4,7 +4,7 @@ EXIT_CODE=0
 
 # we all like colorful messages
 if [ "$MSGCOLOR" != 'NO' ]; then
-	if ! expr match "$(readlink -f /proc/$$/fd/1)" '/dev/pts/[0-9]\+' > /dev/null; then
+	if [ ! -t 1 ]; then # but check that we output to a terminal
 		export MSGCOLOR='NO'
 	fi
 fi
@@ -23,30 +23,30 @@ if [ "$MSGCOLOR" != 'NO' ]; then
 	CCMD="\033[1;35m" # pink
 fi
 
-msgdie() { echo "${CERROR}E: $1${CNORMAL}" >&2; exit 1; }
-msgwarn() { echo "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgmsg() { echo "${CMSG}$1${CNORMAL}"; }
-msginfo() { echo "${CINFO}I: $1${CNORMAL}"; }
-msgdebug() { echo "${CDEBUG}D: $1${CNORMAL}"; }
-msgdone() { echo "${CDONE}DONE${CNORMAL}"; }
-msgnwarn() { echo -n "${CWARNING}W: $1${CNORMAL}" >&2; }
-msgnmsg() { echo -n "${CMSG}$1${CNORMAL}"; }
-msgninfo() { echo -n "${CINFO}I: $1${CNORMAL}"; }
-msgndebug() { echo -n "${CDEBUG}D: $1${CNORMAL}"; }
+msgdie() { printf "${CERROR}E: $1${CNORMAL}\n" >&2; exit 1; }
+msgwarn() { printf "${CWARNING}W: $1${CNORMAL}\n" >&2; }
+msgmsg() { printf "${CMSG}$1${CNORMAL}\n"; }
+msginfo() { printf "${CINFO}I: $1${CNORMAL}\n"; }
+msgdebug() { printf "${CDEBUG}D: $1${CNORMAL}\n"; }
+msgdone() { printf "${CDONE}DONE${CNORMAL}\n"; }
+msgnwarn() { printf "${CWARNING}W: $1${CNORMAL}" >&2; }
+msgnmsg() { printf "${CMSG}$1${CNORMAL}"; }
+msgninfo() { printf "${CINFO}I: $1${CNORMAL}"; }
+msgndebug() { printf "${CDEBUG}D: $1${CNORMAL}"; }
 msgtest() {
 	while [ -n "$1" ]; do
-		echo -n "${CINFO}$1${CCMD} "
-		echo -n "$(echo "$2" | sed -e 's#^apt\([cgfs]\)#apt-\1#')${CINFO} "
+		printf "${CINFO}$1${CCMD} "
+		printf -- "$(echo "$2" | sed -e 's#^apt\([cgfs]\)#apt-\1#')${CINFO} "
 		shift
 		if [ -n "$1" ]; then shift; else break; fi
 	done
-	echo -n "…${CNORMAL} "
+	printf "…${CNORMAL} "
 }
-msgpass() { echo "${CPASS}PASS${CNORMAL}"; }
-msgskip() { echo "${CWARNING}SKIP${CNORMAL}" >&2; }
+msgpass() { printf "${CPASS}PASS${CNORMAL}\n"; }
+msgskip() { printf "${CWARNING}SKIP${CNORMAL}\n" >&2; }
 msgfail() {
-	if [ $# -gt 0 ]; then echo "${CFAIL}FAIL: $*${CNORMAL}" >&2;
-	else echo "${CFAIL}FAIL${CNORMAL}" >&2; fi
+	if [ $# -gt 0 ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
+	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
 	EXIT_CODE=$((EXIT_CODE+1));
 }
 
@@ -63,12 +63,12 @@ if [ $MSGLEVEL -le 2 ]; then
 	msgmsg() { true; }
 	msgnmsg() { true; }
 	msgtest() { true; }
-	msgpass() { echo -n " ${CPASS}P${CNORMAL}"; }
-	msgskip() { echo -n " ${CWARNING}S${CNORMAL}" >&2; }
+	msgpass() { printf " ${CPASS}P${CNORMAL}"; }
+	msgskip() { printf " ${CWARNING}S${CNORMAL}" >&2; }
 	if [ -n "$CFAIL" ]; then
-		msgfail() { echo -n " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
+		msgfail() { printf " ${CFAIL}FAIL${CNORMAL}" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
 	else
-		msgfail() { echo -n " ###FAILED###" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
+		msgfail() { printf " ###FAILED###" >&2; EXIT_CODE=$((EXIT_CODE+1)); }
 	fi
 fi
 if [ $MSGLEVEL -le 3 ]; then
@@ -87,7 +87,7 @@ msgdone() {
 	   [ "$1" = "die" -a $MSGLEVEL -le 0 ]; then
 		true;
 	else
-		echo "${CDONE}DONE${CNORMAL}";
+		printf "${CDONE}DONE${CNORMAL}\n";
 	fi
 }
 getaptconfig() {
@@ -120,6 +120,7 @@ apthelper() { runapt "${APTHELPERBINDIR}/apt-helper" "$@"; }
 aptwebserver() { runapt "${APTWEBSERVERBINDIR}/aptwebserver" "$@"; }
 aptitude() { runapt aptitude "$@"; }
 aptextracttemplates() { runapt apt-extracttemplates "$@"; }
+aptinternalsolver() { runapt "${APTINTERNALSOLVER}" "$@"; }
 
 dpkg() {
 	command dpkg --root=${TMPWORKINGDIRECTORY}/rootdir --force-not-root --force-bad-path --log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log "$@"
@@ -131,13 +132,6 @@ gdb() {
 	local CMD="$1"
 	shift
 	runapt command gdb --quiet -ex run "${BUILDDIRECTORY}/$CMD" --args "${BUILDDIRECTORY}/$CMD" "$@"
-}
-gpg() {
-	# see apt-key for the whole trickery. Setup is done in setupenvironment
-	command gpg --ignore-time-conflict --no-options --no-default-keyring \
-		--homedir "${TMPWORKINGDIRECTORY}/gnupghome" \
-		--no-auto-check-trustdb --trust-model always \
-		"$@"
 }
 
 exitwithstatus() {
@@ -152,7 +146,7 @@ exitwithstatus() {
 shellsetedetector() {
 	local exit_status=$?
 	if [ "$exit_status" != '0' ]; then
-		echo >&2 "${CERROR}E: Looks like the testcases ended prematurely with exitcode: ${exit_status}${CNORMAL}"
+		printf >&2 "${CERROR}E: Looks like the testcases ended prematurely with exitcode: ${exit_status}${CNORMAL}\n"
 		if [ "$EXIT_CODE" = '0' ]; then
 			EXIT_CODE="$exit_status"
 		fi
@@ -179,6 +173,7 @@ setupenvironment() {
         METHODSDIR=${APT_INTEGRATION_TESTS_METHODS_DIR:-"${BUILDDIRECTORY}/methods"}
         APTHELPERBINDIR=${APT_INTEGRATION_TESTS_LIBEXEC_DIR:-"${BUILDDIRECTORY}"}
         APTWEBSERVERBINDIR=${APT_INTEGRATION_TESTS_WEBSERVER_BIN_DIR:-"${BUILDDIRECTORY}"}
+        APTINTERNALSOLVER=${APT_INTEGRATION_TESTS_INTERNAL_SOLVER:-"${BUILDDIRECTORY}/apt-internal-solver"}
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
@@ -192,6 +187,12 @@ setupenvironment() {
 	touch var/lib/dpkg/available
 	mkdir -p usr/lib/apt
 	ln -s ${METHODSDIR} usr/lib/apt/methods
+	if [ "$BUILDDIRECTORY" = "$LIBRARYPATH" ]; then
+		mkdir -p usr/lib/apt/solvers
+		ln -s "${BUILDDIRECTORY}/apt-dump-solver" usr/lib/apt/solvers/dump
+		ln -s "${BUILDDIRECTORY}/apt-internal-solver" usr/lib/apt/solvers/apt
+		echo "Dir::Bin::Solvers \"${TMPWORKINGDIRECTORY}/rootdir/usr/lib/apt/solvers\";" > etc/apt/apt.conf.d/externalsolver.conf
+	fi
         # use the autoremove from the BUILDDIRECTORY if its there, otherwise
         # system
         if [ -e ${BUILDDIRECTORY}/../../debian/apt.conf.autoremove ]; then
@@ -215,6 +216,7 @@ setupenvironment() {
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
 	echo "APT::Get::Show-User-Simulation-Note \"false\";" >> aptconfig.conf
 	echo "Dir::Bin::Methods \"${METHODSDIR}\";" >> aptconfig.conf
+	echo "Dir::Bin::apt-key \"${BUILDDIRECTORY}/apt-key\";" >> aptconfig.conf
 	echo "Dir::Bin::dpkg \"fakeroot\";" >> aptconfig.conf
 	echo "DPKG::options:: \"dpkg\";" >> aptconfig.conf
 	echo "DPKG::options:: \"--root=${TMPWORKINGDIRECTORY}/rootdir\";" >> aptconfig.conf
@@ -229,19 +231,6 @@ setupenvironment() {
 	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
         echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
-
-	# gpg needs a trustdb to function, but it can't be invalid (not even empty)
-	# see also apt-key where this trickery comes from:
-	local TRUSTDBDIR="${TMPWORKINGDIRECTORY}/gnupghome"
-	mkdir "$TRUSTDBDIR"
-	chmod 700 "$TRUSTDBDIR"
-	# We also don't use a secret keyring, of course, but gpg panics and
-	# implodes if there isn't one available - and writeable for imports
-	local SECRETKEYRING="${TRUSTDBDIR}/secring.gpg"
-	touch $SECRETKEYRING
-	# now create the trustdb with an (empty) dummy keyring
-	# newer gpg versions are fine without it, but play it safe for now
-	gpg --quiet --check-trustdb --secret-keyring $SECRETKEYRING --keyring $SECRETKEYRING >/dev/null 2>&1
 
 	# cleanup the environment a bit
         # prefer our apt binaries over the system apt binaries
@@ -320,15 +309,45 @@ configdpkg() {
 configcompression() {
 	while [ -n "$1" ]; do
 		case "$1" in
-		'.') echo ".\t.\tcat";;
-		'gz') echo "gzip\tgz\tgzip";;
-		'bz2') echo "bzip2\tbz2\tbzip2";;
-		'lzma') echo "lzma\tlzma\txz --format=lzma";;
-		'xz') echo "xz\txz\txz";;
-		*) echo "$1\t$1\t$1";;
+		'.') printf ".\t.\tcat\n";;
+		'gz') printf "gzip\tgz\tgzip\n";;
+		'bz2') printf "bzip2\tbz2\tbzip2\n";;
+		'lzma') printf "lzma\tlzma\txz --format=lzma\n";;
+		'xz') printf "xz\txz\txz\n";;
+		*) printf "$1\t$1\t$1\n";;
 		esac
 		shift
 	done > ${TMPWORKINGDIRECTORY}/rootdir/etc/testcase-compressor.conf
+}
+
+forcecompressor() {
+	COMPRESSOR="$1"
+	COMPRESSOR_CMD="$1"
+	case $COMPRESSOR in
+	gzip) COMPRESS='gz';;
+	bzip2) COMPRESS='bz2';;
+	lzma) COMPRESS='lzma';;
+	xz) COMPRESS='xz';;
+	*) msgdie "Compressor $COMPRESSOR is unknown to framework, so can't be forced by forcecompressor!";;
+	esac
+	local CONFFILE="${TMPWORKINGDIRECTORY}/rootdir/etc/apt/apt.conf.d/00force-compressor"
+	echo "Acquire::CompressionTypes::Order { \"${COMPRESS}\"; };
+Dir::Bin::uncompressed \"/does/not/exist\";
+Dir::Bin::gzip \"/does/not/exist\";
+Dir::Bin::bzip2 \"/does/not/exist\";
+Dir::Bin::lzma \"/does/not/exist\";
+Dir::Bin::xz \"/does/not/exist\";" > "$CONFFILE"
+	if [ -e "/bin/${COMPRESSOR}" ]; then
+		echo "Dir::Bin::${COMPRESSOR} \"/bin/${COMPRESSOR}\";" >> "$CONFFILE"
+	elif [ -e "/usr/bin/${COMPRESSOR}" ]; then
+		echo "Dir::Bin::${COMPRESSOR} \"/usr/bin/${COMPRESSOR}\";" >> "$CONFFILE"
+	elif [ "${COMPRESSOR}" = 'lzma' ]; then
+		echo 'Dir::Bin::xz "/usr/bin/xz";' >> "$CONFFILE"
+		COMPRESSOR_CMD='xz --format=lzma'
+	else
+		msgtest 'Test for availability of compressor' "${COMPRESSOR}"
+		msgfail
+	fi
 }
 
 setupsimplenativepackage() {
@@ -440,8 +459,8 @@ Package: $NAME" >> ${BUILDDIR}/debian/control
 		| while read SRC; do
 		echo "pool/${SRC}" >> ${BUILDDIR}/../${RELEASE}.${DISTSECTION}.srclist
 #		if expr match "${SRC}" '.*\.dsc' >/dev/null 2>&1; then
-#			gpg --yes --secret-keyring ./keys/joesixpack.sec \
-#				--keyring ./keys/joesixpack.pub --default-key 'Joe Sixpack' \
+#			aptkey --keyring ./keys/joesixpack.pub --secret-keyring ./keys/joesixpack.sec --quiet --readonly \
+#				adv --yes --default-key 'Joe Sixpack' \
 #				--clearsign -o "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #			mv "${BUILDDIR}/../${SRC}.sign" "${BUILDDIR}/../$SRC"
 #		fi
@@ -826,8 +845,9 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
-	local GPG="gpg --batch --yes"
-	msgninfo "\tSign archive with $SIGNER key… "
+	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
+	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes"
+	msgninfo "\tSign archive with $SIGNER key $KEY… "
 	local REXKEY='keys/rexexpired'
 	local SECEXPIREBAK="${REXKEY}.sec.bak"
 	local PUBEXPIREBAK="${REXKEY}.pub.bak"
@@ -843,17 +863,14 @@ signreleasefiles() {
 			cp $SECUNEXPIRED ${REXKEY}.sec
 			cp $PUBUNEXPIRED ${REXKEY}.pub
 		else
-			printf "expire\n1w\nsave\n" | $GPG --keyring ${REXKEY}.pub --secret-keyring ${REXKEY}.sec --command-fd 0 --edit-key "${SIGNER}" >/dev/null 2>&1 || true
+			if ! printf "expire\n1w\nsave\n" | $GPG --default-key "$SIGNER" --command-fd 0 --edit-key "${SIGNER}" >setexpire.gpg 2>&1; then
+				cat setexpire.gpg
+				exit 1
+			fi
 			cp ${REXKEY}.sec $SECUNEXPIRED
 			cp ${REXKEY}.pub $PUBUNEXPIRED
 		fi
 	fi
-	for KEY in $(find keys/ -name '*.sec'); do
-		GPG="$GPG --secret-keyring $KEY"
-	done
-	for KEY in $(find keys/ -name '*.pub'); do
-		GPG="$GPG --keyring $KEY"
-	done
 	for RELEASE in $(find aptarchive/ -name Release); do
 		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output ${RELEASE}.gpg ${RELEASE}
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
@@ -1011,7 +1028,13 @@ testfileequal() {
 
 testempty() {
 	msgtest "Test for no output of" "$*"
-	test -z "$($* 2>&1)" && msgpass || msgfail
+	local COMPAREFILE="${TMPWORKINGDIRECTORY}/rootdir/tmp/testempty.comparefile"
+	if $* >$COMPAREFILE 2>&1 && test ! -s $COMPAREFILE; then
+		msgpass
+	else
+		cat $COMPAREFILE
+		msgfail
+	fi
 }
 
 testequal() {

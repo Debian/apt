@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 
 class FileFd;
 class pkgSourceList;
@@ -36,12 +37,15 @@ class pkgIndexFile;
 class pkgCacheGenerator							/*{{{*/
 {
    private:
+   APT_HIDDEN map_stringitem_t WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
+   APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String);
+   APT_HIDDEN map_stringitem_t WriteStringInMap(const char *String, const unsigned long &Len);
+   APT_HIDDEN map_pointer_t AllocateInMap(const unsigned long &size);
 
-   pkgCache::StringItem *UniqHash[26];
-   APT_HIDDEN map_ptrloc WriteStringInMap(std::string const &String) { return WriteStringInMap(String.c_str()); };
-   APT_HIDDEN map_ptrloc WriteStringInMap(const char *String);
-   APT_HIDDEN map_ptrloc WriteStringInMap(const char *String, const unsigned long &Len);
-   APT_HIDDEN map_ptrloc AllocateInMap(const unsigned long &size);
+   std::map<std::string,map_stringitem_t> strMixed;
+   std::map<std::string,map_stringitem_t> strSections;
+   std::map<std::string,map_stringitem_t> strPkgNames;
+   std::map<std::string,map_stringitem_t> strVersions;
 
    public:
    
@@ -78,21 +82,22 @@ class pkgCacheGenerator							/*{{{*/
    bool NewFileDesc(pkgCache::DescIterator &Desc,ListParser &List);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
 		   std::string const &Version, unsigned int const &Op,
-		   unsigned int const &Type, map_ptrloc* &OldDepLast);
+		   unsigned int const &Type, map_pointer_t* &OldDepLast);
    bool NewDepends(pkgCache::PkgIterator &Pkg, pkgCache::VerIterator &Ver,
-		   map_ptrloc const Version, unsigned int const &Op,
-		   unsigned int const &Type, map_ptrloc* &OldDepLast);
-   unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,unsigned long Next) APT_DEPRECATED
+		   map_pointer_t const Version, unsigned int const &Op,
+		   unsigned int const &Type, map_pointer_t* &OldDepLast);
+   map_pointer_t NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,map_pointer_t const Next) APT_DEPRECATED
    { return NewVersion(Ver, VerStr, 0, 0, Next); }
-   unsigned long NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,
-			    map_ptrloc const ParentPkg, unsigned long const Hash,
-			    unsigned long Next);
-   map_ptrloc NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang,const MD5SumValue &md5sum,map_ptrloc Next);
+   map_pointer_t NewVersion(pkgCache::VerIterator &Ver,const std::string &VerStr,
+			    map_pointer_t const ParentPkg, unsigned short const Hash,
+			    map_pointer_t const Next);
+   map_pointer_t NewDescription(pkgCache::DescIterator &Desc,const std::string &Lang,const MD5SumValue &md5sum,map_stringitem_t const idxmd5str);
 
    public:
 
-   unsigned long WriteUniqString(const char *S,unsigned int Size);
-   inline unsigned long WriteUniqString(const std::string &S) {return WriteUniqString(S.c_str(),S.length());};
+   enum StringType { MIXED, PKGNAME, VERSIONNUMBER, SECTION };
+   map_stringitem_t StoreString(StringType const type, const char * S, unsigned int const Size);
+   inline map_stringitem_t StoreString(enum StringType const type, const std::string &S) {return StoreString(type, S.c_str(),S.length());};
 
    void DropProgress() {Progress = 0;};
    bool SelectFile(const std::string &File,const std::string &Site,pkgIndexFile const &Index,
@@ -127,7 +132,7 @@ class pkgCacheGenerator							/*{{{*/
    APT_HIDDEN bool AddImplicitDepends(pkgCache::VerIterator &V, pkgCache::PkgIterator &D);
 
    APT_HIDDEN bool AddNewDescription(ListParser &List, pkgCache::VerIterator &Ver,
-	 std::string const &lang, MD5SumValue const &CurMd5, map_ptrloc &md5idx);
+	 std::string const &lang, MD5SumValue const &CurMd5, map_stringitem_t &md5idx);
 };
 									/*}}}*/
 // This is the abstract package list parser class.			/*{{{*/
@@ -138,17 +143,18 @@ class pkgCacheGenerator::ListParser
    
    // Some cache items
    pkgCache::VerIterator OldDepVer;
-   map_ptrloc *OldDepLast;
+   map_pointer_t *OldDepLast;
 
    // Flag file dependencies
    bool FoundFileDeps;
       
    protected:
 
-   inline unsigned long WriteUniqString(std::string S) {return Owner->WriteUniqString(S);};
-   inline unsigned long WriteUniqString(const char *S,unsigned int Size) {return Owner->WriteUniqString(S,Size);};
-   inline unsigned long WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
-   inline unsigned long WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
+   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, std::string const &S) {return Owner->StoreString(type, S);};
+   inline map_stringitem_t StoreString(pkgCacheGenerator::StringType const type, const char *S,unsigned int Size) {return Owner->StoreString(type, S, Size);};
+
+   inline map_stringitem_t WriteString(const std::string &S) {return Owner->WriteStringInMap(S);};
+   inline map_stringitem_t WriteString(const char *S,unsigned int Size) {return Owner->WriteStringInMap(S,Size);};
    bool NewDepends(pkgCache::VerIterator &Ver,const std::string &Package, const std::string &Arch,
 		   const std::string &Version,unsigned int Op,
 		   unsigned int Type);
@@ -178,8 +184,8 @@ class pkgCacheGenerator::ListParser
       APT_PURE bool SameVersion(unsigned short const Hash, pkgCache::VerIterator const &Ver);
    virtual bool UsePackage(pkgCache::PkgIterator &Pkg,
 			   pkgCache::VerIterator &Ver) = 0;
-   virtual unsigned long Offset() = 0;
-   virtual unsigned long Size() = 0;
+   virtual map_filesize_t Offset() = 0;
+   virtual map_filesize_t Size() = 0;
    
    virtual bool Step() = 0;
    
@@ -187,7 +193,7 @@ class pkgCacheGenerator::ListParser
    virtual bool CollectFileProvides(pkgCache &/*Cache*/,
 				    pkgCache::VerIterator &/*Ver*/) {return true;};
 
-   ListParser() : FoundFileDeps(false) {};
+   ListParser() : Owner(NULL), OldDepLast(NULL), FoundFileDeps(false) {};
    virtual ~ListParser() {};
 };
 									/*}}}*/

@@ -28,7 +28,7 @@ public:
 	~DebFile();
 	bool DoItem(Item &I, int &fd);
 	bool Process(pkgDirStream::Item &I, const unsigned char *data, 
-		unsigned long size, unsigned long pos);
+		unsigned long long size, unsigned long long pos);
 
 	bool Go();
 	bool ParseInfo();

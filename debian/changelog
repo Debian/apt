@@ -1,15 +1,317 @@
-apt (1.1~exp1) UNRELEASED; urgency=low
+apt (1.1~exp3) experimental; urgency=medium
 
   [ Michael Vogt ]
+  * merged changes from debian/sid up to 1.0.9.1
+  * Make /var/lib/apt/lists and /var/cache/apt/archives owned
+    by the new _apt user
+  * Drop Privileges in the following acquire methods:
+     copy, http, https, ftp, gpgv, gzip/bzip2/lzma/xz 
+  * DropPrivs: Improvements based on feedback from error@debian.org
+
+  [ Julian Andres Klode ]
+  * DropPriv: Really call seteuid and not setuid, and add more checks
+  * Use _apt as our unprivileged user name
+  * DropPrivs: Also check for saved set-user-ID and set-group-ID
+  * methods: Fail if we cannot drop privileges
+  * DropPrivs: Also check for saved set-user-ID and set-group-ID
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 24 Sep 2014 22:30:09 +0200
+
+apt (1.1~exp2) experimental; urgency=medium
+
+  [ Guillem Jover ]
+  * Add new Base256ToNum long long overload function
+  * Fix ar and tar code to be LFS-safe (Closes: #742882)
+
+  [ Michael Vogt ]
+  * increase libapt-inst to version 1.6
+  * Only allow "apt-get build-dep path" when path starts with ./ or /
+  * Allow passing a full path to apt-get install /foo/bar.deb (CLoses: #752327)
+  * merge changes from the 1.0.6 upload
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jul 2014 13:18:08 +0200
+
+apt (1.1~exp1) experimental; urgency=low
+
+  [ David Kalnischkies ]
+  * [API Break] change "std::string pkgAcquire::Item::DescURI()" to
+                       "std::string pkgAcquire::Item::DescURI() const"
+  * [ABI-Break] increase hashtable size for packages/groups by factor 5
+  * [ABI-Break] cleanup datatypes mix used in binary cache
+  * [internal API-Break] remove the Section member from package struct
+  * use 'best' hash for source authentication (LP: 1098738)
+  * use HashStringList in the acquire system
+  * deal with hashes in ftparchive more dynamic as well
+  * reenable pipelining via hashsum reordering support
+  * parse and retrieve multiple Descriptions in one record
+  * improve pkgTagSection scanning and parsing
+  * invalid cache if architecture set doesn't match (Closes: 745036)
+
+  [ Michael Vogt ]
+  * add support for "apt-get build-dep foo.dsc"
+  * add support for "apt-get build-dep unpacked-source-dir"
+  * add support for "apt-get install foo_1.0_all.deb"
+  * make "apt-get update" progress much more accurate by loading the
+    sizes of the targets into the fetcher early
+  * Implement simple by-hash for apt update to improve reliability of
+    the update. Apt will try to fetch the Packages file via
+    /by-hash/$hash_type/$hash_value if the repo supports that.
+    - add APT::Acquire::$(host)::By-Hash=1 knob
+    - add Acquire-By-Hash=1 to Release file
+  * add Debug::Acquire::Progress debug option
+  * [ABI-Break] lp:~mvo/apt/source-hashes:
+    - use sha{512,256,1} for deb-src when available LP: #1098738
+  * [ABI-Break] stop exporting the accidently exported parsenetrc() symbol
+  * [ABI-Break] remove the PACKAGE_MATCHER_ABI_COMPAT defines
+  * [ABI BREAK] apt-pkg/pkgcache.h:
+    - adjust pkgCache::State::VerPriority enum, to match reality
+  * test/integration/test-debsrc-hashes:
+    - add integration test, thanks to Daniel Hartwig
+  * [ABI-Break] remove the PACKAGE_MATCHER_ABI_COMPAT defines
+  * [ABI-Break] Pass struct IndexTarget/indexRecords to
+    pkgAcqIndex{,Merge}Diffs
+  * [internal API-Break] rename pkgCache::Package::NextPackage to
+    pkgCache::Package::Next
+  * Calculate Percent as part of pkgAcquireStatus to provide a weighted
+    percent for both items and bytes
+  * apt-pkg/contrib/macros.h: bump library version to 4.13
+  * apt-private/acqprogress.cc: do not show file size on IMSHit, it wasn't
+    fetched
+  * Fix warnings from clang -Wall/clang -fsanitize=address
+  * add DropPrivs() and drop privileges to nobody when running the
+    the buildin apt and dump solvers
   * lp:~mvo/apt/webserver-simulate-broken-with-fix346386:
     - fix invalid InRelease file download checking and add regression
       test to server broken files to the buildin test webserver
-  * stop exporting the accidently exported parsenetrc() symbol
-  * [ABI-Break] lp:~mvo/apt/source-hashes:
-    - use sha{512,256,1} for deb-src when available LP: #1098738
-  * [ABI-Break] remove the PACKAGE_MATCHER_ABI_COMPAT defines
+    - add regression test for LP: #34638
 
- -- Michael Vogt <michael.vogt@ubuntu.com>  Wed, 07 May 2014 17:48:24 +0200
+ -- Michael Vogt <mvo@debian.org>  Thu, 19 Jun 2014 12:01:48 +0200
+
+apt (1.0.9.1) unstable; urgency=high
+
+  [ Michael Vogt ]
+  * Allow override of Proxy-Auto-Detect by the users configuration
+    (Closes: 759264)
+  * fix ci autopkgtest
+  * fix regression from 1.0.9 when file:/// source are used and
+    those are on a different partition than the apt state directory
+    and add regression test
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (636t): Update program translation
+
+  [ Chris Leick ]
+  * Updated German documentation translation
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 761394)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 16 Sep 2014 20:52:25 +0200
+
+apt (1.0.9) unstable; urgency=high
+
+  * SECURITY UPDATE:
+    - incorrect invalidating of unauthenticated data (CVE-2014-0488)
+    - incorect verification of 304 reply (CVE-2014-0487)
+    - incorrect verification of Acquire::Gzip indexes (CVE-2014-0489)
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 15 Sep 2014 08:34:46 +0200
+
+apt (1.0.8) unstable; urgency=medium
+
+  [ Holger Wansing ]
+  * German program translation update (Closes: 758837)
+
+  [ Américo Monteiro ]
+  * Portuguese manpages translation update (Closes: 759608)
+
+  [ Warren He ]
+  * initialize iPolicyBrokenCount in DepCache::Update (Closes: 758397)
+
+  [ Andreas Oberritter ]
+  * Avoid yielding blank lines with APT::Cmd::use-format=true
+
+  [ Michael Vogt ]
+  * Make Proxy-Auto-Detect check for each host (Closes: #759264)
+  * Add testcase for apt list --all-versions
+  * * apt-pkg/deb/dpkgpm.cc:
+    - update string matching for dpkg I/O errors. (LP: #1363257)
+    - properly parse the dpkg status line so that package name 
+      is properly set and an apport report is created. Thanks 
+      to Anders Kaseorg for the patch  (LP: #1353171)
+  * Use heap to allocate PatternMatch to avoid potential stack overflow
+    (Closes: 759612)
+  * Run autopkgtest tests with "env -i" to avoid pollution from the host env
+    (Closes: #759655)
+  * test/integration/test-ubuntu-bug-346386-apt-get-update-paywall: 
+    - use downloadfile() to fix test failure
+  * Fix incorrect upgradable listing in "apt list" 
+    (thanks to Michael Musenbrock) (Closes: #753297)
+  * apt-pkg/cachefile.cc:
+    - ensure we have a Policy in CacheFile.BuildDepCache()
+  * methods/http.cc:
+    - Improve Debug::Acquire::http debug output
+
+  [ Dimitri John Ledkov ]
+  * apt-ftparchive: make Packages & Sources generation optional, 
+    during Generate call
+
+  [ David Kalnischkies ]
+  * support regular expressions in 'apt search'
+  * implement --full in apt search
+  * fix progress report for upgrade and reinstall
+  * rework PTY magic to fix stair-stepping on kfreebsd (Closes: 759684)
+  * don't call pager in non-terminals for changelog (Closes: 755040)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 09 Sep 2014 20:09:11 +0200
+
+apt (1.0.7) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * add REAMDE.md
+  * StringToBool: only act if the entire string is consumed by strtol()
+  * Use @builddeps@ in the debian/tests/control file
+  * apt-pkg/acquire-item.cc: make pkgAcqDiffIndex more uniform
+  * Fix SmartConfigure to ignore ordering of packages that are already valid
+  * doc/apt.8.xml: fix typo, thanks to Jakub Wilk (Closes: #756056)
+  * doc/po/pt.po: updated, thanks to Américo Monteir (Closes: #756200)
+
+  [ victory ]
+  * Update Japanese documentation translation (Closes: #754817)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po (636t): Update one new string
+
+  [ Julian Andres Klode ]
+  * Fix debListParser to accept "no" as a value for the Multi-Arch field
+    (Closes: #759099)
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 756710)
+
+  [ Miroslav Kure ]
+  * Czech program translation update (Closes: 758208)
+
+  [ David Kalnischkies ]
+  * add dpkg::source-options for dpkg-source invocation (Closes: 757534)
+  * support versioned provides as implemented by dpkg (Closes: 758153)
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 27 Aug 2014 17:11:42 -0700
+
+apt (1.0.6) unstable; urgency=medium
+
+  [ Chris Leick ]
+  * German translation reviewed by Erik Pfannenstein
+
+  [ Michael Vogt ]
+  * methods/http.cc: use Req.str() in debug output
+  * Do not try to parse invalid translation files (LP: #756317)
+  * Do not clean "/" in pkgAcquire::Clean/pkgArchiveCleaner (Closes: #753531)
+  * Only show packages as upgradable if the have a CandidateVer != 0
+    (Closes: #753297)
+
+  [ Trần Ngọc Quân ]
+  * l10n: vi.po: Update 3 new messages
+
+  [ Joe Hansen ]
+  * Danish program translation update (Closes: 753979)
+
+  [ David Kalnischkies ]
+  * handle moved mmap after UniqFindTagWrite call (Closes: #753941)
+
+  [ Michele Orrù ]
+  * use printf instead of echo in testing framework
+
+  [ Cédric Barboiron ]
+  * Improve description how to turn off the caches (Closes: #753531)
+
+  [ Guillem Jover ]
+  * po: Fill or add missing Language field
+  * po: Remove fuzzy from file msgid header
+  * po: Fill Project-Id-Version with correct project id and version
+  * po: Fix Plural-Forms fields
+  * po: Fix or add missing email addresses
+  * po: Fix encoding issues
+  * po: Fix format specifier order in translation
+  * build: Set the XSL parameter through the command line instead of sed
+  * build: Convert from DebianDoc SGML to DocBook XML
+  * doc: Convert from DebianDoc SGML to DocBook XML
+  * doc: Unfuzzy DocBook translations
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 10 Jul 2014 11:46:07 +0200
+
+apt (1.0.5) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * fix autopkgtest tests
+  * fix test-apt-ftparchive-cachedb-lp1274466 and apt-internal-solver tests
+  * test/integration/test-essential-force-loopbreak: fix on non-amd64 systems
+  * Tell the user if no updates are available after apt update (Closes: #751388)
+
+  [ Michele Orrù ]
+  * Check for gtest's header before building.
+
+  [ Chris Leick ]
+  * Updated translation of german documentation
+
+  [ Konstantin Manna ]
+  * fix two german manpage spelling mistakes (Closes: 751635)
+  * add missing comma in SEE ALSO of apt-secure manpage (Closes: 748506)
+
+  [ Fredrik Fornwall ]
+  * use P_ instead of ngettext to compiling with --disable-nls (Closes: 751857)
+
+  [ David Kalnischkies ]
+  * don't send pkg from an unknown architecture via EDSP
+  * fix SubstVar to be usable as a replace_all method
+  * show our broken packages message in 'apt' solver
+  * do not call resolver twice on (dist-)upgrade
+
+  [ Stefano Zacchiroli ]
+  * EDSP doc: clarify that Install/Remove packages are arch-qualified
+
+ -- Michael Vogt <mvo@debian.org>  Wed, 18 Jun 2014 13:35:13 +0200
+
+apt (1.0.4) unstable; urgency=low
+
+  [ Michael Vogt ]
+  * Implement CacheDB for source packages in apt-ftparchive
+  * apt-private/acqprogress.cc: reset color in apt update
+  * Show progress in run-tests
+  * Never parse Version/Architecture tags in a Translation-$lang file
+  * Show upgradable packages after apt update (Closes: 748389)
+  * Fix various errors found by clang -fsanitize=address
+  * Fix various errors foudn by clang scan-build
+  * Show unauthenticated warning for source packages as well (Closes: #749795)
+  * Add compat mode for old (32bit FileSize) CacheDB (LP: #1274466)
+  * cmdline/apt-helper.cc: use less generic description/short-description 
+    in apt-helper download
+  * add pkgSrcRecords::Step() to step through all the pkgSrcRecords
+    (thanks to Helmut Grohne)
+
+  [ David Kalnischkies ]
+  * initialize Verify in second pkgAcqIndex constructor
+  * consistently fail if Smart* packagemanager actions fail
+  * fix tight loop detection and temporary removes
+  * if Resolver fails, do not continue even if not broken
+  * check exit status of external solvers
+  * do not revert candidate for protected packages (Closes: 745046)
+  * support Acquire::GzipIndexes in dumpavail (Closes: 742835)
+
+  [ Stefano Zacchiroli ]
+  * EDSP doc: fix typo in Request stanza description
+  * EDSP: bump protocol version to 0.5
+  * EDSP: add Architecture(s) multi-arch fields to the Request stanza
+  * EDSP: add Source field to Package stanzas
+  * EDSP: add APT-Release field to Package stanzas
+
+  [ Sebastian Schmidt ]
+  * fix screen width detection for apt/apt-get lists (Closes: 748430, 747942)
+
+  [ Milo Casagrande ]
+  * Italian program translation update (Closes: 750009)
+
+ -- Michael Vogt <mvo@debian.org>  Tue, 10 Jun 2014 14:55:05 +0200
 
 apt (1.0.3) unstable; urgency=medium
 

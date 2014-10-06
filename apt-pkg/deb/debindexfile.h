@@ -65,10 +65,10 @@ class debPackagesIndex : public pkgIndexFile
    std::string Section;
    std::string Architecture;
 
-   std::string Info(const char *Type) const;
-   std::string IndexFile(const char *Type) const;
-   std::string IndexURI(const char *Type) const;
-   
+   APT_HIDDEN std::string Info(const char *Type) const;
+   APT_HIDDEN std::string IndexFile(const char *Type) const;
+   APT_HIDDEN std::string IndexURI(const char *Type) const;
+
    public:
    
    virtual const Type *GetType() const APT_CONST;
@@ -102,11 +102,11 @@ class debTranslationsIndex : public pkgIndexFile
    std::string Section;
    const char * const Language;
    
-   std::string Info(const char *Type) const;
-   std::string IndexFile(const char *Type) const;
-   std::string IndexURI(const char *Type) const;
+   APT_HIDDEN std::string Info(const char *Type) const;
+   APT_HIDDEN std::string IndexFile(const char *Type) const;
+   APT_HIDDEN std::string IndexURI(const char *Type) const;
 
-   inline std::string TranslationFile() const {return std::string("Translation-").append(Language);};
+   APT_HIDDEN std::string TranslationFile() const {return std::string("Translation-").append(Language);};
 
    public:
    
@@ -136,10 +136,10 @@ class debSourcesIndex : public pkgIndexFile
    std::string Dist;
    std::string Section;
 
-   std::string Info(const char *Type) const;
-   std::string IndexFile(const char *Type) const;
-   std::string IndexURI(const char *Type) const;
-   
+   APT_HIDDEN std::string Info(const char *Type) const;
+   APT_HIDDEN std::string IndexFile(const char *Type) const;
+   APT_HIDDEN std::string IndexURI(const char *Type) const;
+
    public:
 
    virtual const Type *GetType() const APT_CONST;
@@ -214,6 +214,7 @@ class debDscFileIndex : public pkgIndexFile
 
 class debDebianSourceDirIndex : public debDscFileIndex
 {
+ public:
    virtual const Type *GetType() const APT_CONST;
 };
 

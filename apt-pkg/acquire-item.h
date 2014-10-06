@@ -133,7 +133,12 @@ class pkgAcquire::Item : public WeakPointable
    /** \brief If not \b NULL, contains the name of a subprocess that
     *  is operating on this object (for instance, "gzip" or "gpgv").
     */
-   const char *Mode;
+   APT_DEPRECATED const char *Mode;
+
+   /** \brief contains the name of the subprocess that is operating on this object
+    * (for instance, "gzip", "rred" or "gpgv"). This is obsoleting #Mode from above
+    * as it can manage the lifetime of included string properly. */
+   std::string ActiveSubprocess;
 
    /** \brief A client-supplied unique identifier.
     * 
@@ -245,12 +250,12 @@ class pkgAcquire::Item : public WeakPointable
     *
     *  \return a URI that should be used to describe what is being fetched.
     */
-   virtual std::string DescURI() const = 0;
+   virtual std::string DescURI() = 0;
    /** \brief Short item description.
     *
     *  \return a brief description of the object being fetched.
     */
-   virtual std::string ShortDesc() const {return DescURI();}
+   virtual std::string ShortDesc() {return DescURI();}
 
    /** \brief Invoked by the worker when the download is completely done. */
    virtual void Finished() {};
@@ -289,7 +294,8 @@ class pkgAcquire::Item : public WeakPointable
     *  \param Owner The new owner of this item.
     *  \param ExpectedHashes of the file represented by this item
     */
-   Item(pkgAcquire *Owner, HashStringList const &ExpectedHashes);
+   Item(pkgAcquire *Owner,
+        HashStringList const &ExpectedHashes=HashStringList());
 
    /** \brief Remove this item from its owner's queue by invoking
     *  pkgAcquire::Remove.
@@ -322,11 +328,17 @@ struct DiffInfo {
    /** The filename of the diff. */
    std::string file;
 
-   /** The sha1 hash of the diff. */
-   std::string sha1;
+   /** The hashes of the diff */
+   HashStringList result_hashes;
 
-   /** The size of the diff. */
-   unsigned long size;
+   /** The hashes of the file after the diff is applied */
+   HashStringList patch_hashes;
+
+   /** The size of the file after the diff is applied */
+   unsigned long long result_size;
+
+   /** The size of the diff itself */
+   unsigned long long patch_size;
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching a SubIndex		{{{
@@ -346,7 +358,7 @@ class pkgAcqSubIndex : public pkgAcquire::Item
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
+   virtual std::string DescURI() {return Desc.URI;};
    virtual std::string Custom600Headers() const;
    virtual bool ParseIndex(std::string const &IndexFile);
 
@@ -422,7 +434,7 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return RealURI + "Index";};
+   virtual std::string DescURI() {return RealURI + "Index";};
    virtual std::string Custom600Headers() const;
 
    /** \brief Parse the Index file for a set of Packages diffs.
@@ -515,7 +527,7 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 	 pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return RealURI + "Index";};
+   virtual std::string DescURI() {return RealURI + "Index";};
 
    /** \brief Create an index merge-diff item.
     *
@@ -570,7 +582,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  \return \b true if an applicable diff was found, \b false
     *  otherwise.
     */
-   bool QueueNextDiff();
+   APT_HIDDEN bool QueueNextDiff();
 
    /** \brief Handle tasks that must be performed after the item
     *  finishes downloading.
@@ -583,7 +595,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  \param allDone If \b true, the file was entirely reconstructed,
     *  and its md5sum is verified. 
     */
-   void Finish(bool allDone=false);
+   APT_HIDDEN void Finish(bool allDone=false);
 
    protected:
 
@@ -609,9 +621,6 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  off the front?
     */
    std::vector<DiffInfo> available_patches;
-
-   /** Stop applying patches when reaching that sha1 */
-   std::string ServerSha1;
 
    /** The current status of this patch. */
    enum DiffState
@@ -640,7 +649,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
 
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return RealURI + "Index";};
+   virtual std::string DescURI() {return RealURI + "Index";};
 
    /** \brief Create an index diff item.
     *
@@ -656,11 +665,9 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *
     *  \param ShortDesc A brief description of this item.
     *
-    *  \param ExpectedHashes The expected md5sum of the completely
+    *  \param ExpectedHashes The expected hashsums of the completely
     *  reconstructed package index file; the index file will be tested
     *  against this value when it is entirely reconstructed.
-    *
-    *  \param ServerSha1 is the sha1sum of the current file on the server
     *
     *  \param diffs The remaining diffs from the index of diffs.  They
     *  should be ordered so that each diff appears before any diff
@@ -670,7 +677,6 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
                     struct IndexTarget const * const Target,
                     HashStringList const &ExpectedHash,
                     indexRecords *MetaIndexParser,
-		    std::string ServerSha1,
 		    std::vector<DiffInfo> diffs=std::vector<DiffInfo>());
 };
 									/*}}}*/
@@ -693,15 +699,8 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     */
    bool Erase;
 
-   /** \brief Verify for correctness by checking if a "Package"
-    *         tag is found in the index. This can be set to
-    *         false for optional index targets
-    *       
-    */
-   // FIXME: instead of a bool it should use a verify string that will
-   //        then be used in the pkgAcqIndex::Done method to ensure that
-   //        the downloaded file contains the expected tag
-   bool Verify;
+   // Unused, used to be used to verify that "Packages: " header was there
+   bool __DELME_ON_NEXT_ABI_BREAK_Verify;
 
    /** \brief The object that is actually being fetched (minus any
     *  compression-related extensions).
@@ -713,6 +712,18 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     */
    std::string CompressionExtension;
 
+
+   /** \brief Do the changes needed to fetch via AptByHash (if needed) */
+   void InitByHashIfNeeded(const std::string MetaKey);
+
+   /** \brief Get the full pathname of the final file for the given URI
+    */
+   std::string GetFinalFilename(std::string const &URI,
+                                std::string const &compExt);
+
+   /** \brief Schedule file for verification after a IMS hit */
+   void ReverifyAfterIMS(std::string const &FileName);
+
    public:
    
    // Specialized action members
@@ -720,7 +731,7 @@ class pkgAcqIndex : public pkgAcqBaseIndex
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return Desc.URI;};
+   virtual std::string DescURI() {return Desc.URI;};
 
    /** \brief Create a pkgAcqIndex.
     *
@@ -884,7 +895,7 @@ class pkgAcqMetaSig : public pkgAcquire::Item
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return RealURI; };
+   virtual std::string DescURI() {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaSig. */
    pkgAcqMetaSig(pkgAcquire *Owner,std::string URI,std::string URIDesc, std::string ShortDesc,
@@ -977,7 +988,7 @@ class pkgAcqMetaIndex : public pkgAcquire::Item
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() const {return RealURI; };
+   virtual std::string DescURI() {return RealURI; };
 
    /** \brief Create a new pkgAcqMetaIndex. */
    pkgAcqMetaIndex(pkgAcquire *Owner,
@@ -1071,8 +1082,8 @@ class pkgAcqArchive : public pkgAcquire::Item
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
-   virtual std::string ShortDesc() const {return Desc.ShortDesc;};
+   virtual std::string DescURI() {return Desc.URI;};
+   virtual std::string ShortDesc() {return Desc.ShortDesc;};
    virtual void Finished();
    virtual bool IsTrusted() const;
    
@@ -1121,7 +1132,7 @@ class pkgAcqFile : public pkgAcquire::Item
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &CalcHashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() const {return Desc.URI;};
+   virtual std::string DescURI() {return Desc.URI;};
    virtual std::string Custom600Headers() const;
 
    /** \brief Create a new pkgAcqFile object.

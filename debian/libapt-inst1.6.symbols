@@ -1,9 +1,9 @@
-libapt-inst.so.1.5 libapt-inst1.5 #MINVER#
+libapt-inst.so.1.6 libapt-inst1.6 #MINVER#
 * Build-Depends-Package: libapt-pkg-dev
  (c++)"ExtractTar::Done(bool)@Base" 0.8.0
  (c++)"ExtractTar::Go(pkgDirStream&)@Base" 0.8.0
  (c++)"ExtractTar::StartGzip()@Base" 0.8.0
- (c++)"ExtractTar::ExtractTar(FileFd&, unsigned long, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 0.8.0
+ (c++)"ExtractTar::ExtractTar(FileFd&, unsigned long long, std::basic_string<char, std::char_traits<char>, std::allocator<char> >)@Base" 1.0.5
  (c++)"ExtractTar::~ExtractTar()@Base" 0.8.0
  (c++)"debDebFile::GotoMember(char const*)@Base" 0.8.0
  (c++)"debDebFile::CheckMember(char const*)@Base" 0.8.0
@@ -11,10 +11,10 @@ libapt-inst.so.1.5 libapt-inst1.5 #MINVER#
  (c++)"debDebFile::ControlExtract::~ControlExtract()@Base" 0.8.0
  (c++)"debDebFile::ExtractTarMember(pkgDirStream&, char const*)@Base" 0.9.15.4
  (c++)"debDebFile::ExtractArchive(pkgDirStream&)@Base" 0.8.0
- (c++)"debDebFile::MemControlExtract::TakeControl(void const*, unsigned long)@Base" 0.8.0
+ (c++)"debDebFile::MemControlExtract::TakeControl(void const*, unsigned long long)@Base" 1.0.5
  (c++)"debDebFile::MemControlExtract::Read(debDebFile&)@Base" 0.8.0
  (c++)"debDebFile::MemControlExtract::DoItem(pkgDirStream::Item&, int&)@Base" 0.8.0
- (c++)"debDebFile::MemControlExtract::Process(pkgDirStream::Item&, unsigned char const*, unsigned long, unsigned long)@Base" 0.8.0
+ (c++)"debDebFile::MemControlExtract::Process(pkgDirStream::Item&, unsigned char const*, unsigned long long, unsigned long long)@Base" 1.0.5
  (c++)"debDebFile::MemControlExtract::~MemControlExtract()@Base" 0.8.0
  (c++)"debDebFile::debDebFile(FileFd&)@Base" 0.8.0
  (c++)"pkgExtract::FinishedFile(pkgDirStream::Item&, int)@Base" 0.8.0
@@ -41,7 +41,7 @@ libapt-inst.so.1.5 libapt-inst1.5 #MINVER#
  (c++)"pkgDirStream::FinishedFile(pkgDirStream::Item&, int)@Base" 0.8.0
  (c++)"pkgDirStream::Fail(pkgDirStream::Item&, int)@Base" 0.8.0
  (c++)"pkgDirStream::DoItem(pkgDirStream::Item&, int&)@Base" 0.8.0
- (c++)"pkgDirStream::Process(pkgDirStream::Item&, unsigned char const*, unsigned long, unsigned long)@Base" 0.8.0
+ (c++)"pkgDirStream::Process(pkgDirStream::Item&, unsigned char const*, unsigned long long, unsigned long long)@Base" 1.0.5
  (c++)"pkgDirStream::~pkgDirStream()@Base" 0.8.0
  (c++|optional)"pkgCache::DepIterator::operator++(int)@Base" 0.8.0
  (c++|optional)"pkgCache::DepIterator::operator++()@Base" 0.8.0
@@ -88,4 +88,4 @@ libapt-inst.so.1.5 libapt-inst1.5 #MINVER#
  (c++|regex|optional=std)"^std::basic_string<.+ >\(.+\)@Base$" 0.8.0
  (c++|regex|optional=std)"^typeinfo name for std::iterator<.*>@Base$" 0.8.0
  (c++|regex|optional=std)"^typeinfo for std::iterator<.*>@Base$" 0.8.0
-###
+ (c++|optional=std)"std::ctype<char>::do_widen(char) const@Base" 1.0.3

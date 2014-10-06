@@ -85,7 +85,9 @@ class FileFd
    bool Skip(unsigned long long To);
    bool Truncate(unsigned long long To);
    unsigned long long Tell();
+   // the size of the file content (compressed files will be uncompressed first)
    unsigned long long Size();
+   // the size of the file itself
    unsigned long long FileSize();
    time_t ModificationTime();
 
@@ -193,8 +195,22 @@ pid_t ExecFork(std::set<int> keep_fds);
 void MergeKeepFdsFromConfiguration(std::set<int> &keep_fds);
 bool ExecWait(pid_t Pid,const char *Name,bool Reap = false);
 
+
 // check if the given file starts with a PGP cleartext signature
 bool StartsWithGPGClearTextSignature(std::string const &FileName);
+
+/**
+ * \brief Drop privileges
+ *
+ * Drop the privileges to the user _apt (or the one specified in
+ * APT::Sandbox::User). This does not set the supplementary group
+ * ids up correctly, it only uses the default group. Also prevent
+ * the process from gaining any new privileges afterwards, at least
+ * on Linux.
+ *
+ * \return true on success, false on failure with _error set
+ */
+bool DropPrivs();
 
 // File string manipulators
 std::string flNotDir(std::string File);

@@ -43,7 +43,7 @@ class pkgTagSection
       unsigned int StartValue;
       unsigned int NextInBucket;
 
-      TagData(unsigned int const StartTag) : StartTag(StartTag), NextInBucket(0) {}
+      TagData(unsigned int const StartTag) : StartTag(StartTag), EndTag(0), StartValue(0), NextInBucket(0) {}
    };
    std::vector<TagData> Tags;
    unsigned int LookupTable[0x100];
@@ -62,7 +62,8 @@ class pkgTagSection
    bool Find(const char *Tag,const char *&Start, const char *&End) const;
    bool Find(const char *Tag,unsigned int &Pos) const;
    std::string FindS(const char *Tag) const;
-   signed int FindI(const char *Tag,signed long Default = 0) const ;
+   signed int FindI(const char *Tag,signed long Default = 0) const;
+   bool FindB(const char *Tag, bool const &Default = false) const;
    unsigned long long FindULL(const char *Tag, unsigned long long const &Default = 0) const;
    bool FindFlag(const char *Tag,unsigned long &Flags,
 		 unsigned long Flag) const;
@@ -93,7 +94,7 @@ class pkgTagSection
    /** \brief amount of Tags in the current section
     *
     * Note: if a Tag is mentioned repeatly it will be counted multiple
-    * times, but only the last occurance is available via Find methods.
+    * times, but only the last occurrence is available via Find methods.
     */
    unsigned int Count() const;
    bool Exists(const char* const Tag) const;

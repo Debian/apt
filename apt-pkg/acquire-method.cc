@@ -119,6 +119,18 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    std::cout << "\n" << std::flush;
 }
 									/*}}}*/
+// AcqMethod::DropPrivsOrDie - Drop privileges or die		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+void pkgAcqMethod::DropPrivsOrDie()
+{
+   if (!DropPrivs()) {
+      Fail(false);
+      exit(112);	/* call the european emergency number */
+   }
+}
+
+									/*}}}*/
 // AcqMethod::URIStart - Indicate a download is starting		/*{{{*/
 // ---------------------------------------------------------------------
 /* */

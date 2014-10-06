@@ -69,6 +69,23 @@ elif [ "$1" = 'post-build' ]; then
 
 	dpkg-checkbuilddeps -d 'libxml2-utils'
 
+	HEADERBLUEPRINT="$(mktemp)"
+	sed -n '1,/^$/p' doc/apt.8.xml > "$HEADERBLUEPRINT"
+	find doc -mindepth 1 -maxdepth 1 -type f -name '*.xml' | while read FILE; do
+		if ! sed -n '1,/^$/p' "$FILE" | cmp "$HEADERBLUEPRINT" - >/dev/null 2>&1; then
+			echo >&2 "WARNING: Manpage $FILE has not the usual header! (see diff below)"
+			sed -n '1,/^$/p' "$FILE" | diff -u "$HEADERBLUEPRINT" - || true
+		fi
+	done
+	sed -n '1,/^$/p' doc/guide.dbk > "$HEADERBLUEPRINT"
+	find doc -mindepth 1 -maxdepth 1 -type f -name '*.dbk' | while read FILE; do
+		if ! sed -n '1,/^$/p' "$FILE" | cmp "$HEADERBLUEPRINT" - >/dev/null 2>&1; then
+			echo >&2 "WARNING: Documentation $FILE has not the usual header (see diff below)!"
+			sed -n '1,/^$/p' "$FILE" | diff -u "$HEADERBLUEPRINT" - || true
+		fi
+	done
+	rm "$HEADERBLUEPRINT"
+
 	# check the manpages with each vendor for vendor-specific errors…
 	find vendor -mindepth 1 -maxdepth 1 -type d | cut -d'/' -f 2 | while read DISTRO; do
 		ln -sf ../vendor/${DISTRO}/apt-vendor.ent doc
@@ -105,16 +122,64 @@ elif [ "$1" = 'buildlog' ]; then
 	done
 elif [ "$1" = 'travis-ci' ]; then
 	apt-get install -q --no-install-recommends $(sed -n -e '/^Build-Depends: /,/^Build-Depends-Indep: / {p}' debian/control | sed -e 's#([^)]*)##g' -e 's#^Build-Depends\(-Indep\)\?: ##' | tr -d ',')
+	apt-get install -q --no-install-recommends $(sed -n 's#^Depends: .*@, \(.*\)$#\1#p' debian/tests/control | tr -d ',')
+elif [ "$1" = 'coverage' ]; then
+	DIR="${2:-./coverage}"
+	git clean -dfX # remove ignored build artefacts for a clean start
+	make CFLAGS+='--coverage' CXXFLAGS+='--coverage'
+	LCOVRC='--rc geninfo_checksum=1 --rc lcov_branch_coverage=1'
+	mkdir "$DIR"
+	lcov --no-external --directory . --capture --initial --output-file "${DIR}/apt.coverage.init" ${LCOVRC}
+	make test
+	./test/integration/run-tests -q
+	lcov --no-external --directory . --capture --output-file "${DIR}/apt.coverage.run" ${LCOVRC}
+	lcov -a "${DIR}/apt.coverage.init" -a "${DIR}/apt.coverage.run"  -o "${DIR}/apt.coverage.total" ${LCOVRC}
+	cp "${DIR}/apt.coverage.total" "${DIR}/apt.coverage.fixed"
+	rewritefile() {
+		file="$1"
+		shift
+		name="$(basename "$file")"
+		while [ -n "$1" ]; do
+			if [ -r "$1/$name" ]; then
+				sed -i "s#$file#$1/$name#" "${DIR}/apt.coverage.fixed"
+				break
+			fi
+			shift
+		done
+		if [ -z "$1" ]; then
+			echo >&2 "Coverage data captured for unknown file $file"
+		fi
+	}
+	grep 'build/include/' "${DIR}/apt.coverage.fixed" | sed "s#^SF:$(pwd)/##" | while read file; do
+		rewritefile "$file" 'apt-pkg' 'apt-pkg/deb' 'apt-pkg/edsp' 'apt-pkg/contrib' \
+		   'apt-inst' 'apt-inst/deb' 'apt-inst/contrib' 'apt-private'
+	done
+	genhtml --output-directory "${DIR}" "${DIR}/apt.coverage.fixed" ${LCOVRC}
 else
 	echo >&1 "Usage:\t$0 pre-export
 \t$0 post-build
-\t$0 library
 
-If you use »git buildpackage« you can leave this script alone as it will
+If you use »git buildpackage« you can leave these alone as they will
 be run at the right places auto-magically. Otherwise you should use
 »pre-export« to update po and pot files as well as version numbering.
 »post-build« can be used to run some more or less useful checks later on.
 
-»library« isn't run automatically but can be useful for maintaining the
-(more or less experimental) symbols files we provide"
+\t$0 library
+\t$0 buildlog filename…
+
+»library« and »buildlog« aren't run automatically but can be useful for
+maintaining the (more or less experimental) symbols files we provide.
+»library« displays the diff between advertised symbols and the once provided
+by the libraries, while »buildlog« extracts this diff from the buildlogs.
+Both will format the diff properly.
+
+\t$0 travis-ci
+\t$0 coverage [output-dir]
+
+»travis-ci« is a shortcut to install all build- as well as test-dependencies
+used by .travis.yml.
+»coverage« does a clean build with the right flags for coverage reporting,
+runs all tests and generates a html report in the end.
+"
+
 fi

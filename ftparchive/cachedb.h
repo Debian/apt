@@ -86,8 +86,12 @@ class CacheDB
    bool OpenDebFile();
    void CloseDebFile();
 
-   bool GetFileStat(bool const &doStat = false);
+   // GetCurStat needs some compat code, see lp #1274466)
+   bool GetCurStatCompatOldFormat();
+   bool GetCurStatCompatNewFormat();
    bool GetCurStat();
+
+   bool GetFileStat(bool const &doStat = false);
    bool LoadControl();
    bool LoadContents(bool const &GenOnly);
    bool LoadSource();
@@ -95,10 +99,24 @@ class CacheDB
 
    // Stat info stored in the DB, Fixed types since it is written to disk.
    enum FlagList {FlControl = (1<<0),FlMD5=(1<<1),FlContents=(1<<2),
-                  FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5), 
-                  FlSHA512=(1<<6), FlSource=(1<<7),
+                  FlSize=(1<<3), FlSHA1=(1<<4), FlSHA256=(1<<5),
+                  FlSHA512=(1<<6), FlSource=(1<<7)
    };
 
+   // the on-disk format changed (FileSize increased to 64bit) in 
+   // commit 650faab0 which will lead to corruption with old caches
+   struct StatStoreOldFormat
+   {
+      uint32_t Flags;
+      uint32_t mtime;
+      uint32_t FileSize;
+      uint8_t  MD5[16];
+      uint8_t  SHA1[20];
+      uint8_t  SHA256[32];
+   } CurStatOldFormat;
+
+   // WARNING: this struct is read/written to the DB so do not change the
+   //          layout of the fields (see lp #1274466), only append to it
    struct StatStore
    {
       uint32_t Flags;
@@ -150,7 +168,7 @@ class CacheDB
 		SHA512Bytes(0),Packages(0), Misses(0), DeLinkBytes(0) {};
    } Stats;
    
-   bool ReadyDB(std::string const &DB);
+   bool ReadyDB(std::string const &DB = "");
    inline bool DBFailed() {return Dbp != 0 && DBLoaded == false;};
    inline bool Loaded() {return DBLoaded == true;};
    
@@ -171,8 +189,8 @@ class CacheDB
    
    bool Clean();
    
-   CacheDB(std::string const &DB) : Dbp(0), Fd(NULL), DebFile(0) {TmpKey[0]='\0'; ReadyDB(DB);};
-   ~CacheDB() {ReadyDB(std::string()); delete DebFile;};
+   CacheDB(std::string const &DB);
+   ~CacheDB();
 };
     
 #endif

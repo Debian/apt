@@ -34,7 +34,10 @@
 bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
 {
    bool CleanInstalled = _config->FindB("APT::Clean-Installed",true);
-      
+
+   if(Dir == "/")
+      return _error->Error(_("Clean of %s is not supported"), Dir.c_str());
+
    DIR *D = opendir(Dir.c_str());
    if (D == 0)
       return _error->Errno("opendir",_("Unable to read %s"),Dir.c_str());

@@ -47,6 +47,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <glob.h>
+#include <pwd.h>
+#include <grp.h>
 
 #include <set>
 #include <algorithm>
@@ -62,6 +64,10 @@
 #endif
 #include <endian.h>
 #include <stdint.h>
+
+#if __gnu_linux__
+#include <sys/prctl.h>
+#endif
 
 #include <apti18n.h>
 									/*}}}*/
@@ -890,7 +896,7 @@ class FileFdPrivate {							/*{{{*/
 	   bool eof;
 	   bool compressing;
 
-	   LZMAFILE() : file(NULL), eof(false), compressing(false) {}
+	   LZMAFILE() : file(NULL), eof(false), compressing(false) { buffer[0] = '\0'; }
 	   ~LZMAFILE() {
 	      if (compressing == true)
 	      {
@@ -1278,7 +1284,8 @@ bool FileFd::OpenInternDescriptor(unsigned int const Mode, APT::Configuration::C
 	 if (d->lzma == NULL)
 	    d->lzma = new FileFdPrivate::LZMAFILE;
 	 d->lzma->file = (FILE*) compress_struct;
-	 d->lzma->stream = LZMA_STREAM_INIT;
+         lzma_stream tmp_stream = LZMA_STREAM_INIT;
+	 d->lzma->stream = tmp_stream;
 
 	 if ((Mode & ReadWrite) == ReadWrite)
 	    return FileFdError("ReadWrite mode is not supported for file %s", FileName.c_str());
@@ -1834,7 +1841,8 @@ static bool StatFileFd(char const * const msg, int const iFd, std::string const 
 	 // higher-level code will generate more meaningful messages,
 	 // even translated this would be meaningless for users
 	 return _error->Errno("fstat", "Unable to determine %s for fd %i", msg, iFd);
-      ispipe = S_ISFIFO(Buf.st_mode);
+      if (FileName.empty() == false)
+	 ispipe = S_ISFIFO(Buf.st_mode);
    }
 
    // for compressor pipes st_size is undefined and at 'best' zero
@@ -2118,10 +2126,8 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
 
    int Pipe[2] = {-1, -1};
    if(pipe(Pipe) != 0)
-   {
       return _error->Errno("pipe", _("Failed to create subprocess IPC"));
-      return NULL;
-   }
+
    std::set<int> keep_fds;
    keep_fds.insert(Pipe[0]);
    keep_fds.insert(Pipe[1]);
@@ -2161,6 +2167,95 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
       fd = Pipe[1];
    }
    Fd.OpenDescriptor(fd, Mode, FileFd::None, true);
+
+   return true;
+}
+
+bool DropPrivs()
+{
+   // uid will be 0 in the end, but gid might be different anyway
+   uid_t old_uid = getuid();
+   gid_t old_gid = getgid();
+
+   if (old_uid != 0)
+      return true;
+   if(_config->FindB("Debug::NoDropPrivs", false) == true)
+      return true;
+
+   const std::string toUser = _config->Find("APT::Sandbox::User", "_apt");
+   struct passwd *pw = getpwnam(toUser.c_str());
+   if (pw == NULL)
+      return _error->Error("No user %s, can not drop rights", toUser.c_str());
+
+#if __gnu_linux__
+   // see prctl(2), needs linux3.5
+   int ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0,0, 0);
+   if(ret < 0)
+      _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
+#endif
+   // Do not change the order here, it might break things
+   if (setgroups(1, &pw->pw_gid))
+      return _error->Errno("setgroups", "Failed to setgroups");
+
+   if (setegid(pw->pw_gid) != 0)
+      return _error->Errno("setegid", "Failed to setegid");
+
+   if (setgid(pw->pw_gid) != 0)
+      return _error->Errno("setgid", "Failed to setgid");
+
+   if (setuid(pw->pw_uid) != 0)
+      return _error->Errno("setuid", "Failed to setuid");
+
+   // the seteuid() is probably uneeded (at least thats what the linux
+   // man-page says about setuid(2)) but we cargo culted it anyway
+   if (seteuid(pw->pw_uid) != 0)
+      return _error->Errno("seteuid", "Failed to seteuid");
+
+   // Verify that the user has only a single group, and the correct one
+   gid_t groups[1];
+   if (getgroups(1, groups) != 1)
+      return _error->Errno("getgroups", "Could not get new groups");
+   if (groups[0] != pw->pw_gid)
+      return _error->Error("Could not switch group");
+
+   // Verify that gid, egid, uid, and euid changed
+   if (getgid() != pw->pw_gid)
+      return _error->Error("Could not switch group");
+   if (getegid() != pw->pw_gid)
+      return _error->Error("Could not switch effective group");
+   if (getuid() != pw->pw_uid)
+      return _error->Error("Could not switch user");
+   if (geteuid() != pw->pw_uid)
+      return _error->Error("Could not switch effective user");
+
+#ifdef HAVE_GETRESUID
+   // verify that the saved set-user-id was changed as well
+   uid_t ruid = 0;
+   uid_t euid = 0;
+   uid_t suid = 0;
+   if (getresuid(&ruid, &euid, &suid))
+      return _error->Errno("getresuid", "Could not get saved set-user-ID");
+   if (suid != pw->pw_uid)
+      return _error->Error("Could not switch saved set-user-ID");
+#endif
+
+#ifdef HAVE_GETRESGID
+   // verify that the saved set-group-id was changed as well
+   gid_t rgid = 0;
+   gid_t egid = 0;
+   gid_t sgid = 0;
+   if (getresgid(&rgid, &egid, &sgid))
+      return _error->Errno("getresuid", "Could not get saved set-group-ID");
+   if (sgid != pw->pw_gid)
+      return _error->Error("Could not switch saved set-group-ID");
+#endif
+
+   // Check that uid and gid changes do not work anymore
+   if (pw->pw_gid != old_gid && (setgid(old_gid) != -1 || setegid(old_gid) != -1))
+      return _error->Error("Could restore a gid to root, privilege dropping did not work");
+
+   if (pw->pw_uid != old_uid && (setuid(old_uid) != -1 || seteuid(old_uid) != -1))
+      return _error->Error("Could restore a uid to root, privilege dropping did not work");
 
    return true;
 }

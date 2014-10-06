@@ -143,6 +143,9 @@ bool pkgCacheFile::BuildDepCache(OpProgress *Progress)
    if (DCache != NULL)
       return true;
 
+   if (BuildPolicy(Progress) == false)
+      return false;
+
    DCache = new pkgDepCache(Cache,Policy);
    if (_error->PendingError() == true)
       return false;

@@ -76,7 +76,6 @@ bool pkgDirStream::DoItem(Item &Itm,int &Fd)
 	 if(mkdir(Itm.Name,Itm.Mode) < 0)
 	    return false;
 	 return true;
-	 break;
       }
       case Item::FIFO:
       break;

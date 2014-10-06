@@ -40,6 +40,7 @@ namespace APT {
    namespace String {
       std::string Strip(const std::string &s);
       bool Endswith(const std::string &s, const std::string &ending);
+      bool Startswith(const std::string &s, const std::string &starting);
    }
 }
 
@@ -72,6 +73,7 @@ bool ReadMessages(int Fd, std::vector<std::string> &List);
 bool StrToNum(const char *Str,unsigned long &Res,unsigned Len,unsigned Base = 0);
 bool StrToNum(const char *Str,unsigned long long &Res,unsigned Len,unsigned Base = 0);
 bool Base256ToNum(const char *Str,unsigned long &Res,unsigned int Len);
+bool Base256ToNum(const char *Str,unsigned long long &Res,unsigned int Len);
 bool Hex2Num(const std::string &Str,unsigned char *Num,unsigned int Length);
 
 // input changing string split
@@ -151,9 +153,9 @@ inline const char *DeNull(const char *s) {return (s == 0?"(null)":s);}
 class URI
 {
    void CopyFrom(const std::string &From);
-		 
+
    public:
-   
+
    std::string Access;
    std::string User;
    std::string Password;

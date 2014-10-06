@@ -16,6 +16,7 @@
 #include <apt-pkg/fileutl.h>
 #include <apt-pkg/acquire.h>
 #include <apt-pkg/acquire-item.h>
+#include <apt-pkg/proxy.h>
 
 #include <apt-private/acqprogress.h>
 #include <apt-private/private-output.h>
@@ -29,6 +30,19 @@
 #include <apti18n.h>
 									/*}}}*/
 
+static bool DoAutoDetectProxy(CommandLine &CmdL)
+{
+   if (CmdL.FileSize() != 2)
+      return _error->Error(_("Need one URL as argument"));
+   URI ServerURL(CmdL.FileList[1]);
+   AutoDetectProxy(ServerURL);
+   std::string SpecificProxy = _config->Find("Acquire::"+ServerURL.Access+"::Proxy::" + ServerURL.Host);
+   ioprintf(std::cout, "Using proxy '%s' for URL '%s'\n",
+            SpecificProxy.c_str(), std::string(ServerURL).c_str());
+
+   return true;
+}
+
 static bool DoDownloadFile(CommandLine &CmdL)
 {
    if (CmdL.FileSize() <= 2)
@@ -37,13 +51,15 @@ static bool DoDownloadFile(CommandLine &CmdL)
 
    pkgAcquire Fetcher;
    AcqTextStatus Stat(ScreenWidth, _config->FindI("quiet",0));
-   Fetcher.Setup(&Stat);
+   if (Fetcher.Setup(&Stat, "", false) == false)
+      return false;
    std::string download_uri = CmdL.FileList[1];
    std::string targetfile = CmdL.FileList[2];
    std::string hash;
    if (CmdL.FileSize() > 3)
       hash = CmdL.FileList[3];
-   new pkgAcqFile(&Fetcher, download_uri, hash, 0, "desc", "short-desc", 
+   // we use download_uri as descr and targetfile as short-descr
+   new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile, 
                   "dest-dir-ignored", targetfile);
    Fetcher.Run();
    bool Failed = false;
@@ -69,6 +85,7 @@ static bool ShowHelp(CommandLine &)
       "\n"
       "Commands:\n"
       "   download-file - download the given uri to the target-path\n"
+      "   auto-detect-proxy - detect proxy using apt.conf\n"
       "\n"
       "                       This APT helper has Super Meep Powers.\n");
    return true;
@@ -79,6 +96,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 {
    CommandLine::Dispatch Cmds[] = {{"help",&ShowHelp},
 				   {"download-file", &DoDownloadFile},
+				   {"auto-detect-proxy", &DoAutoDetectProxy},
                                    {0,0}};
 
    std::vector<CommandLine::Args> Args = getCommandArgs(

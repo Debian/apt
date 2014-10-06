@@ -24,13 +24,16 @@
 #include <apt-pkg/depcache.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/cacheiterators.h>
+#include <apt-private/private-output.h>
 
 #include <string.h>
 #include <iostream>
+#include <sstream>
 #include <list>
 #include <string>
 #include <unistd.h>
 #include <cstdio>
+#include <stdlib.h>
 
 #include <apti18n.h>
 									/*}}}*/
@@ -56,6 +59,12 @@ static bool ShowHelp(CommandLine &) {
 	return true;
 }
 									/*}}}*/
+APT_NORETURN static void DIE(std::string const &message) {		/*{{{*/
+	std::cerr << "ERROR: " << message << std::endl;
+	_error->DumpErrors(std::cerr);
+	exit(EXIT_FAILURE);
+}
+									/*}}}*/
 int main(int argc,const char *argv[])					/*{{{*/
 {
 	CommandLine::Args Args[] = {
@@ -66,6 +75,9 @@ int main(int argc,const char *argv[])					/*{{{*/
 		{'c',"config-file",0,CommandLine::ConfigFile},
 		{'o',"option",0,CommandLine::ArbItem},
 		{0,0,0,0}};
+
+        // we really don't need anything
+        DropPrivs();
 
 	CommandLine CmdL(Args,_config);
 	if (pkgInitConfig(*_config) == false ||
@@ -115,34 +127,29 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(0, "Start up solver…", output);
 
-	if (pkgInitSystem(*_config,_system) == false) {
-		std::cerr << "System could not be initialized!" << std::endl;
-		return 1;
-	}
+	if (pkgInitSystem(*_config,_system) == false)
+		DIE("System could not be initialized!");
 
 	EDSP::WriteProgress(1, "Read request…", output);
 
 	if (WaitFd(input, false, 5) == false)
-		std::cerr << "WAIT timed out in the resolver" << std::endl;
+		DIE("WAIT timed out in the resolver");
 
 	std::list<std::string> install, remove;
 	bool upgrade, distUpgrade, autoRemove;
-	if (EDSP::ReadRequest(input, install, remove, upgrade, distUpgrade, autoRemove) == false) {
-		std::cerr << "Parsing the request failed!" << std::endl;
-		return 2;
-	}
+	if (EDSP::ReadRequest(input, install, remove, upgrade, distUpgrade, autoRemove) == false)
+		DIE("Parsing the request failed!");
 
 	EDSP::WriteProgress(5, "Read scenario…", output);
 
 	pkgCacheFile CacheFile;
-	CacheFile.Open(NULL, false);
+	if (CacheFile.Open(NULL, false) == false)
+		DIE("Failed to open CacheFile!");
 
 	EDSP::WriteProgress(50, "Apply request on scenario…", output);
 
-	if (EDSP::ApplyRequest(install, remove, CacheFile) == false) {
-		std::cerr << "Failed to apply request to depcache!" << std::endl;
-		return 3;
-	}
+	if (EDSP::ApplyRequest(install, remove, CacheFile) == false)
+		DIE("Failed to apply request to depcache!");
 
 	pkgProblemResolver Fix(CacheFile);
 	for (std::list<std::string>::const_iterator i = remove.begin();
@@ -166,27 +173,27 @@ int main(int argc,const char *argv[])					/*{{{*/
 
 	EDSP::WriteProgress(60, "Call problemresolver on current scenario…", output);
 
+	std::string failure;
 	if (upgrade == true) {
-		if (pkgAllUpgrade(CacheFile) == false) {
-			EDSP::WriteError("ERR_UNSOLVABLE_UPGRADE", "An upgrade error occurred", output);
-			return 0;
-		}
+		if (APT::Upgrade::Upgrade(CacheFile, APT::Upgrade::FORBID_REMOVE_PACKAGES | APT::Upgrade::FORBID_INSTALL_NEW_PACKAGES) == false)
+			failure = "ERR_UNSOLVABLE_UPGRADE";
 	} else if (distUpgrade == true) {
-		if (pkgDistUpgrade(CacheFile) == false) {
-			EDSP::WriteError("ERR_UNSOLVABLE_DIST_UPGRADE", "An dist-upgrade error occurred", output);
-			return 0;
-		}
-	} else if (Fix.Resolve() == false) {
-		EDSP::WriteError("ERR_UNSOLVABLE", "An error occurred", output);
+		if (APT::Upgrade::Upgrade(CacheFile, APT::Upgrade::ALLOW_EVERYTHING) == false)
+			failure = "ERR_UNSOLVABLE_DIST_UPGRADE";
+	} else if (Fix.Resolve() == false)
+		failure = "ERR_UNSOLVABLE";
+
+	if (failure.empty() == false) {
+		std::ostringstream broken;
+		ShowBroken(broken, CacheFile, false);
+		EDSP::WriteError(failure.c_str(), broken.str(), output);
 		return 0;
 	}
 
 	EDSP::WriteProgress(95, "Write solution…", output);
 
-	if (EDSP::WriteSolution(CacheFile, output) == false) {
-		std::cerr << "Failed to output the solution!" << std::endl;
-		return 4;
-	}
+	if (EDSP::WriteSolution(CacheFile, output) == false)
+		DIE("Failed to output the solution!");
 
 	EDSP::WriteProgress(100, "Done", output);
 

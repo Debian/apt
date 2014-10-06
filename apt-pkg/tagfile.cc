@@ -518,6 +518,17 @@ unsigned long long pkgTagSection::FindULL(const char *Tag, unsigned long long co
    return Result;
 }
 									/*}}}*/
+// TagSection::FindB - Find boolean value                		/*{{{*/
+// ---------------------------------------------------------------------
+/* */
+bool pkgTagSection::FindB(const char *Tag, bool const &Default) const
+{
+   const char *Start, *Stop;
+   if (Find(Tag, Start, Stop) == false)
+      return Default;
+   return StringToBool(string(Start, Stop));
+}
+									/*}}}*/
 // TagSection::FindFlag - Locate a yes/no type flag			/*{{{*/
 // ---------------------------------------------------------------------
 /* The bits marked in Flag are masked on/off in Flags */
@@ -590,7 +601,7 @@ static const char *iTFRewritePackageOrder[] = {
                           "Conffiles",
                           "Filename",
                           "Size",
-                          "MD5Sum",
+                          "MD5sum",
                           "SHA1",
                           "SHA256",
                           "SHA512",

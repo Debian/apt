@@ -663,10 +663,11 @@ void pkgDepCache::Update(OpProgress *Prog)
 {   
    iUsrSize = 0;
    iDownloadSize = 0;
-   iDelCount = 0;
    iInstCount = 0;
+   iDelCount = 0;
    iKeepCount = 0;
    iBrokenCount = 0;
+   iPolicyBrokenCount = 0;
    iBadCount = 0;
 
    // Perform the depends pass
@@ -1225,7 +1226,7 @@ bool pkgDepCache::MarkInstall(PkgIterator const &Pkg,bool AutoInst,
 	       continue;
 	    }
 	    // now check if we should consider it a automatic dependency or not
-	    if(InstPkg->CurrentVer == 0 && Pkg->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", Pkg.Section()))
+	    if(InstPkg->CurrentVer == 0 && InstVer->Section != 0 && ConfigValueInSubTree("APT::Never-MarkAuto-Sections", InstVer.Section()))
 	    {
 	       if(DebugAutoInstall == true)
 		  std::clog << OutputInDepth(Depth) << "Setting NOT as auto-installed (direct "
@@ -1374,7 +1375,7 @@ bool pkgDepCache::IsInstallOkDependenciesSatisfiableByCandidates(PkgIterator con
 
 	 // the dependency is critical, but can't be installed, so discard the candidate
 	 // as the problemresolver will trip over it otherwise trying to install it (#735967)
-	 if (Pkg->CurrentVer != 0)
+	 if (Pkg->CurrentVer != 0 && (PkgState[Pkg->ID].iFlags & Protected) != Protected)
 	    SetCandidateVersion(Pkg.CurrentVer());
 	 return false;
       }
@@ -1678,7 +1679,7 @@ pkgCache::VerIterator pkgDepCache::Policy::GetCandidateVer(PkgIterator const &Pk
 {
    /* Not source/not automatic versions cannot be a candidate version 
       unless they are already installed */
-   VerIterator Last(*(pkgCache *)this,0);
+   VerIterator Last;
    
    for (VerIterator I = Pkg.VersionList(); I.end() == false; ++I)
    {
@@ -1958,5 +1959,19 @@ bool pkgDepCache::Sweep()						/*{{{*/
   }   
 
    return true;
+}
+									/*}}}*/
+// DepCache::MarkAndSweep						/*{{{*/
+bool pkgDepCache::MarkAndSweep(InRootSetFunc &rootFunc)
+{
+   return MarkRequired(rootFunc) && Sweep();
+}
+bool pkgDepCache::MarkAndSweep()
+{
+   std::auto_ptr<InRootSetFunc> f(GetRootSetFunc());
+   if(f.get() != NULL)
+      return MarkAndSweep(*f.get());
+   else
+      return false;
 }
 									/*}}}*/

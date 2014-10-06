@@ -20,6 +20,7 @@
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/macros.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/proxy.h>
 
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -112,6 +113,9 @@ HttpsServerState::HttpsServerState(URI Srv,HttpsMethod * /*Owner*/) : ServerStat
 void HttpsMethod::SetupProxy()  					/*{{{*/
 {
    URI ServerName = Queue->Uri;
+
+   // Determine the proxy setting
+   AutoDetectProxy(ServerName);
 
    // Curl should never read proxy settings from the environment, as
    // we determine which proxy to use.  Do this for consistency among
@@ -447,6 +451,8 @@ int main()
 
    HttpsMethod Mth;
    curl_global_init(CURL_GLOBAL_SSL) ;
+
+   Mth.DropPrivsOrDie();
 
    return Mth.Run();
 }

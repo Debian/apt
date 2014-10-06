@@ -5,6 +5,7 @@
 #include <apt-pkg/error.h>
 #include <apt-pkg/gpgv.h>
 #include <apt-pkg/strutl.h>
+#include <apt-pkg/fileutl.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -74,7 +75,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 
    FILE *pipein = fdopen(fd[0], "r");
 
-   // Loop over the output of gpgv, and check the signatures.
+   // Loop over the output of apt-key (which really is gnupg), and check the signatures.
    size_t buffersize = 64;
    char *buffer = (char *) malloc(buffersize);
    size_t bufferoff = 0;
@@ -159,7 +160,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    waitpid(pid, &status, 0);
    if (Debug == true)
    {
-      std::clog << "gpgv exited\n";
+      std::clog << "apt-key exited\n";
    }
    
    if (WEXITSTATUS(status) == 0)
@@ -171,7 +172,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
    else if (WEXITSTATUS(status) == 1)
       return _("At least one invalid signature was encountered.");
    else if (WEXITSTATUS(status) == 111)
-      return _("Could not execute 'gpgv' to verify signature (is gpgv installed?)");
+      return _("Could not execute 'apt-key' to verify signature (is gnupg installed?)");
    else if (WEXITSTATUS(status) == 112)
    {
       // acquire system checks for "NODATA" to generate GPG errors (the others are only warnings)
@@ -181,7 +182,7 @@ string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
       return errmsg;
    }
    else
-      return _("Unknown error executing gpgv");
+      return _("Unknown error executing apt-key");
 }
 
 bool GPGVMethod::Fetch(FetchItem *Itm)
@@ -199,7 +200,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
    Res.Filename = Itm->DestFile;
    URIStart(Res);
 
-   // Run gpgv on file, extract contents and get the key ID of the signer
+   // Run apt-key on file, extract contents and get the key ID of the signer
    string msg = VerifyGetSigners(Path.c_str(), Itm->DestFile.c_str(),
                                  GoodSigners, BadSigners, WorthlessSigners,
                                  NoPubKeySigners);
@@ -251,7 +252,7 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 
    if (_config->FindB("Debug::Acquire::gpgv", false))
    {
-      std::clog << "gpgv succeeded\n";
+      std::clog << "apt-key succeeded\n";
    }
 
    return true;
@@ -261,8 +262,10 @@ bool GPGVMethod::Fetch(FetchItem *Itm)
 int main()
 {
    setlocale(LC_ALL, "");
-   
+
    GPGVMethod Mth;
+
+   Mth.DropPrivsOrDie();
 
    return Mth.Run();
 }

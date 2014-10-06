@@ -352,8 +352,11 @@ class pkgAcquire
     *  \param Lock defines a lock file that should be acquired to ensure
     *  only one Acquire class is in action at the time or an empty string
     *  if no lock file should be used.
+    *  \param createDirectories can be used to disable the creation of directories,
+    *  e.g. if the fetcher is used with different directories later on
     */
-   bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
+   bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "",
+      bool const createDirectories = true);
 
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
@@ -585,7 +588,7 @@ class pkgAcquire::UriIterator
     *
     *  \param Q The queue over which this UriIterator should iterate.
     */
-   UriIterator(pkgAcquire::Queue *Q) : CurQ(Q), CurItem(0)
+   UriIterator(pkgAcquire::Queue *Q) : d(NULL), CurQ(Q), CurItem(0)
    {
       while (CurItem == 0 && CurQ != 0)
       {

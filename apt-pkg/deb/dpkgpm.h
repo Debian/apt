@@ -52,7 +52,7 @@ class pkgDPkgPM : public pkgPackageManager
       needs to declare a Replaces on the disappeared package.
       \param pkgname Name of the package that disappeared
    */
-   void handleDisappearAction(std::string const &pkgname);
+   APT_HIDDEN void handleDisappearAction(std::string const &pkgname);
 
    protected:
    int pkgFailures;
@@ -110,6 +110,7 @@ class pkgDPkgPM : public pkgPackageManager
    // helper
    void BuildPackagesProgressMap();
    void StartPtyMagic();
+   void SetupSlavePtyMagic();
    void StopPtyMagic();
    
    // input processing
@@ -117,27 +118,14 @@ class pkgDPkgPM : public pkgPackageManager
    void DoTerminalPty(int master);
    void DoDpkgStatusFd(int statusfd);
    void ProcessDpkgStatusLine(char *line);
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR < 13)
-   void DoDpkgStatusFd(int statusfd, int /*unused*/) {
-      DoDpkgStatusFd(statusfd);
-   }
-   void ProcessDpkgStatusLine(int /*unused*/, char *line) {
-      ProcessDpkgStatusLine(line);
-   }
-#endif
-
 
    // The Actuall installation implementation
    virtual bool Install(PkgIterator Pkg,std::string File);
    virtual bool Configure(PkgIterator Pkg);
    virtual bool Remove(PkgIterator Pkg,bool Purge = false);
 
-#if (APT_PKG_MAJOR >= 4 && APT_PKG_MINOR >= 13)
    virtual bool Go(APT::Progress::PackageManager *progress);
-#else
    virtual bool Go(int StatusFd=-1);
-   bool GoNoABIBreak(APT::Progress::PackageManager *progress);
-#endif
 
    virtual void Reset();
    

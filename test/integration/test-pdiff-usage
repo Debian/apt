@@ -76,8 +76,15 @@ SHA1-History:
  9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
  $(sha1sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
 SHA1-Patches:
- 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
- $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
+ 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
+ $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)
+SHA256-Current: $(sha256sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new)
+SHA256-History:
+ 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
+ $(sha256sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
+SHA256-Patches:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
+ $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
 	generatereleasefiles '+1hour'
 	signreleasefiles
 	find aptarchive -name 'Packages*' -type f -delete
@@ -119,9 +126,18 @@ SHA1-History:
  $(sha1sum ${PKGFILE} | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}) $(basename ${PATCHFILE})
  $(sha1sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new) $(basename ${PATCHFILE2})
 SHA1-Patches:
- 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
+ 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
  $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)
- $(sha1sum ${PATCHFILE2} | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE2}) $(basename ${PATCHFILE2})" > $PATCHINDEX
+ $(sha1sum ${PATCHFILE2} | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE2}) $(basename ${PATCHFILE2})
+SHA256-Current: $(sha256sum aptarchive/Packages | cut -d' ' -f 1) $(stat -c%s aptarchive/Packages)
+SHA256-History:
+ 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
+ $(sha256sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
+ $(sha256sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new) $(basename ${PATCHFILE2})
+SHA256-Patches:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
+ $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)
+ $(sha256sum ${PATCHFILE2} | cut -d' ' -f 1) $(stat -c%s ${PATCHFILE2}) $(basename ${PATCHFILE2})" > $PATCHINDEX
 	generatereleasefiles '+2hour'
 	signreleasefiles
 	cp -a aptarchive/Packages Packages-future
@@ -147,8 +163,15 @@ SHA1-History:
  9f4148e06d7faa37062994ff10d0c842d7017513 33053002 2010-08-18-2013.28
  $(sha1sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
 SHA1-Patches:
- 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-0814.28
- $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
+ 7651fc0ac57cd83d41c63195a9342e2db5650257 19722 2010-08-18-2013.28
+ $(sha1sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)
+SHA256-Current: $(sha256sum ${PKGFILE}-new | cut -d' ' -f 1) $(stat -c%s ${PKGFILE}-new)
+SHA256-History:
+ 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b 33053002 2010-08-18-2013.28
+ $(sha256sum $PKGFILE | cut -d' ' -f 1) $(stat -c%s $PKGFILE) $(basename $PATCHFILE)
+SHA256-Patches:
+ e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 19722 2010-08-18-2013.28
+ $(sha256sum $PATCHFILE | cut -d' ' -f 1) $(stat -c%s $PATCHFILE) $(basename $PATCHFILE)" > $PATCHINDEX
 	echo 'I am Mallory and I change files' >> $PATCHFILE
 	cat $PATCHFILE | gzip > ${PATCHFILE}.gz
 	generatereleasefiles '+1hour'
@@ -165,3 +188,16 @@ testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1
 testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=1
 testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=0
 testrun -o Acquire::PDiffs::Merge=1 -o APT::Get::List-Cleanup=0
+
+sha256sum() {
+	echo '01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b -'
+}
+testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA1
+testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA1
+
+unset -f sha256sum
+sha1sum() {
+	echo 'adc83b19e793491b1c6ea0fd8b46cd9f32e592fc -'
+}
+testrun -o Acquire::PDiffs::Merge=0 -o Acquire::ForceHash=SHA256
+testrun -o Acquire::PDiffs::Merge=1 -o Acquire::ForceHash=SHA256

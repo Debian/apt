@@ -1,0 +1,27 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'i386'
+
+insertpackage 'unstable' 'foobar' 'all' '1'
+
+setupaptarchive --no-update
+
+for i in $(seq 1 50); do
+	touch rootdir/etc/apt/trusted.gpg.d/emptykey-${i}.gpg
+done
+
+aptkey list | grep '^pub' > aptkey.list
+testfileequal ./aptkey.list 'pub   2048R/DBAC8DAE 2010-08-18'
+
+msgtest 'Test for no gpg errors/warnings in' 'apt-get update'
+aptget update > update.log 2>&1
+if grep -iq 'GPG' update.log; then
+	msgfail
+	cat update.log
+else
+	msgpass
+fi

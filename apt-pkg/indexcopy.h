@@ -93,8 +93,8 @@ class SigVerify								/*{{{*/
    /** \brief dpointer placeholder (for later in case we need it) */
    void *d;
 
-   bool Verify(std::string prefix,std::string file, indexRecords *records);
-   bool CopyMetaIndex(std::string CDROM, std::string CDName, 
+   APT_HIDDEN bool Verify(std::string prefix,std::string file, indexRecords *records);
+   APT_HIDDEN bool CopyMetaIndex(std::string CDROM, std::string CDName,
 		      std::string prefix, std::string file);
 
  public:

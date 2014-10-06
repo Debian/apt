@@ -81,12 +81,12 @@ class debDebFile::MemControlExtract : public pkgDirStream
    // Members from DirStream
    virtual bool DoItem(Item &Itm,int &Fd);
    virtual bool Process(Item &Itm,const unsigned char *Data,
-			unsigned long Size,unsigned long Pos);
+			unsigned long long Size,unsigned long long Pos);
    
 
    // Helpers
    bool Read(debDebFile &Deb);
-   bool TakeControl(const void *Data,unsigned long Size);
+   bool TakeControl(const void *Data,unsigned long long Size);
       
    MemControlExtract() : IsControl(false), Control(0), Length(0), Member("control") {};
    MemControlExtract(std::string Member) : IsControl(false), Control(0), Length(0), Member(Member) {};
