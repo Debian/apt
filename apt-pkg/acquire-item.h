@@ -292,6 +292,12 @@ class pkgAcquire::Item : public WeakPointable
     */
    void ReportMirrorFailure(std::string FailCode);
 
+   /** \brief Set the name of the current active subprocess
+    *
+    *  See also #ActiveSubprocess
+    */
+   void SetActiveSubprocess(const std::string &subprocess);
+
    /** \brief Initialize an item.
     *
     *  Adds the item to the list of items known to the acquire

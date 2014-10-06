@@ -212,6 +212,19 @@ bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const 
    return false;
 }
 									/*}}}*/
+void pkgAcquire::Item::SetActiveSubprocess(const std::string &subprocess)
+{
+      ActiveSubprocess = subprocess;
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic push
+	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+        Mode = ActiveSubprocess.c_str();
+#if __GNUC__ >= 4
+	#pragma GCC diagnostic pop
+#endif
+}
+
 // Acquire::Item::ReportMirrorFailure					/*{{{*/
 // ---------------------------------------------------------------------
 void pkgAcquire::Item::ReportMirrorFailure(string FailCode)
@@ -749,15 +762,7 @@ void pkgAcqIndexDiffs::Done(string Message,unsigned long long Size, HashStringLi
       Local = true;
       Desc.URI = "rred:" + FinalFile;
       QueueURI(Desc);
-      ActiveSubprocess = "rred";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-      Mode = "rred";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+      SetActiveSubprocess("rred");
       return;
    } 
 
@@ -882,15 +887,7 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       Local = true;
       Desc.URI = "rred:" + FinalFile;
       QueueURI(Desc);
-      ActiveSubprocess = "rred";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-      Mode = "rred";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+      SetActiveSubprocess("rred");
       return;
    }
    // success in download/apply all diffs, clean up
@@ -1241,15 +1238,7 @@ void pkgAcqIndex::StageDownloadDone(string Message,
       DestFile += ".decomp";
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
-      ActiveSubprocess = "copy";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-      Mode = "copy";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+      SetActiveSubprocess("copy");
       return;
    }
 
@@ -1313,15 +1302,7 @@ void pkgAcqIndex::StageDownloadDone(string Message,
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
 
-   ActiveSubprocess = decompProg;
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-      Mode = ActiveSubprocess.c_str();
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+   SetActiveSubprocess(decompProg);
 }
                                                                         /*}}}*/
 // pkgAcqIndex::StageDecompressDone - Final verification               /*{{{*/
@@ -1662,7 +1643,7 @@ void pkgAcqMetaSig::Done(string Message,unsigned long long Size,
       Desc.URI = "gpgv:" + MetaIndexFileSignature;
       DestFile = MetaIndexFile;
       QueueURI(Desc);
-      ActiveSubprocess = "gpgv";
+      SetActiveSubprocess("gpgv");
       return;
    }
    else 
@@ -1848,15 +1829,7 @@ void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,HashStringList
          AuthPass = true;
          Desc.URI = "gpgv:" + SigFile;
          QueueURI(Desc);
-	 ActiveSubprocess = "gpgv";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic push
-	#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-	 Mode = "gpgv";
-#if __GNUC__ >= 4
-	#pragma GCC diagnostic pop
-#endif
+	 SetActiveSubprocess("gpgv");
 	 return;
       }
    }
