@@ -125,7 +125,6 @@ pkgAcquire::Item::~Item()
    fetch this object */
 void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
 {
-   Status = StatIdle;
    if(ErrorText == "")
       ErrorText = LookupTag(Message,"Message");
    UsedMirror =  LookupTag(Message,"UsedMirror");
@@ -134,7 +133,7 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       /* This indicates that the file is not available right now but might
          be sometime later. If we do a retry cycle then this should be
 	 retried [CDROMs] */
-      if (Cnf->LocalOnly == true &&
+      if (Cnf != NULL && Cnf->LocalOnly == true &&
 	  StringToBool(LookupTag(Message,"Transient-Failure"),false) == true)
       {
 	 Status = StatIdle;
@@ -143,8 +142,11 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       }
 
       Status = StatError;
+      Complete = false;
       Dequeue();
-   }   
+   }
+   else
+      Status = StatIdle;
 
    // report mirror failure back to LP if we actually use a mirror
    string FailReason = LookupTag(Message, "FailReason");
@@ -208,11 +210,8 @@ bool pkgAcquire::Item::Rename(string From,string To)
 
 void pkgAcquire::Item::QueueURI(ItemDesc &Item)
 {
-   if (access(DestFile.c_str(), R_OK) == 0)
-   {
+   if (RealFileExists(DestFile))
       changeOwnerAndPermissionOfFile("preparePartialFile", DestFile.c_str(), "_apt", "root", 0600);
-      std::cerr << "QUEUE ITEM: " << DestFile << std::endl;
-   }
    Owner->Enqueue(Item);
 }
 void pkgAcquire::Item::Dequeue()
@@ -559,7 +558,7 @@ bool pkgAcqDiffIndex::ParseDiffIndex(string IndexDiffFile)		/*{{{*/
    return false;
 }
 									/*}}}*/
-void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
+void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * Cnf)/*{{{*/
 {
    if(Debug)
       std::clog << "pkgAcqDiffIndex failed: " << Desc.URI << " with " << Message << std::endl
@@ -567,9 +566,8 @@ void pkgAcqDiffIndex::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/
 
    new pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser);
 
-   Complete = false;
+   Item::Failed(Message,Cnf);
    Status = StatDone;
-   Dequeue();
 }
 									/*}}}*/
 void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList const &Hashes,	/*{{{*/
@@ -596,7 +594,7 @@ void pkgAcqDiffIndex::Done(string Message,unsigned long long Size,HashStringList
    }
 
    if(!ParseDiffIndex(DestFile))
-      return Failed("", NULL);
+      return Failed("Message: Couldn't parse pdiff index", Cnf);
 
    // queue for final move
    string FinalFile;
@@ -713,7 +711,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
 
    if(!FileExists(FinalFile))
    {
-      Failed("No FinalFile " + FinalFile + " available", NULL);
+      Failed("Message: No FinalFile " + FinalFile + " available", NULL);
       return false;
    }
 
@@ -747,7 +745,7 @@ bool pkgAcqIndexDiffs::QueueNextDiff()					/*{{{*/
    // error checking and falling back if no patch was found
    if(available_patches.empty() == true)
    {
-      Failed("No patches available", NULL);
+      Failed("Message: No patches available", NULL);
       return false;
    }
 
@@ -852,13 +850,13 @@ pkgAcqIndexMergeDiffs::pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
    QueueURI(Desc);
 }
 									/*}}}*/
-void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * /*Cnf*/)/*{{{*/
+void pkgAcqIndexMergeDiffs::Failed(string Message,pkgAcquire::MethodConfig * Cnf)/*{{{*/
 {
    if(Debug)
       std::clog << "pkgAcqIndexMergeDiffs failed: " << Desc.URI << " with " << Message << std::endl;
-   Complete = false;
+
+   Item::Failed(Message,Cnf);
    Status = StatDone;
-   Dequeue();
 
    // check if we are the first to fail, otherwise we are done here
    State = StateDoneDiff;
@@ -1284,7 +1282,7 @@ void pkgAcqIndex::StageDownloadDone(string Message,
       Stage = STAGE_DECOMPRESS_AND_VERIFY;
       Desc.URI = "copy:" + FileName;
       QueueURI(Desc);
-
+      SetActiveSubprocess("copy");
       return;
     }
 
@@ -1305,7 +1303,6 @@ void pkgAcqIndex::StageDownloadDone(string Message,
    DestFile += ".decomp";
    Desc.URI = decompProg + ":" + FileName;
    QueueURI(Desc);
-
    SetActiveSubprocess(decompProg);
 }
 									/*}}}*/
@@ -1383,18 +1380,15 @@ void pkgAcqIndexTrans::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
       return;
    }
 
+   Item::Failed(Message,Cnf);
+
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
    if (Cnf->LocalOnly == true ||
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
    {
       // Ignore this
       Status = StatDone;
-      Complete = false;
-      Dequeue();
-      return;
    }
-
-   Item::Failed(Message,Cnf);
 }
 									/*}}}*/
 // AcqMetaBase::Add - Add a item to the current Transaction		/*{{{*/
@@ -1639,7 +1633,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       } else {
          _error->Error("%s", downgrade_msg.c_str());
          Rename(MetaIndexFile, MetaIndexFile+".FAILED");
-         Status = pkgAcquire::Item::StatError;
+	 Item::Failed("Message: " + downgrade_msg, Cnf);
          TransactionManager->AbortTransaction();
          return;
       }
@@ -1663,17 +1657,15 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
       _error->Warning("Use --allow-insecure-repositories to force the update");
    }
 
+   Item::Failed(Message,Cnf);
+
    // FIXME: this is used often (e.g. in pkgAcqIndexTrans) so refactor
-   if (Cnf->LocalOnly == true || 
+   if (Cnf->LocalOnly == true ||
        StringToBool(LookupTag(Message,"Transient-Failure"),false) == false)
-   {      
+   {
       // Ignore this
       Status = StatDone;
-      Complete = false;
-      Dequeue();
-      return;
    }
-   Item::Failed(Message,Cnf);
 }
 									/*}}}*/
 pkgAcqMetaIndex::pkgAcqMetaIndex(pkgAcquire *Owner,			/*{{{*/
@@ -2003,9 +1995,12 @@ bool pkgAcqMetaBase::VerifyVendor(string Message, const string &RealURI)/*{{{*/
 }
 									/*}}}*/
 // pkgAcqMetaIndex::Failed - no Release file present			/*{{{*/
-void pkgAcqMetaIndex::Failed(string /*Message*/,
-                             pkgAcquire::MethodConfig * /*Cnf*/)
+void pkgAcqMetaIndex::Failed(string Message,
+                             pkgAcquire::MethodConfig * Cnf)
 {
+   pkgAcquire::Item::Failed(Message, Cnf);
+   Status = StatDone;
+
    string FinalFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
 
    _error->Warning(_("The repository '%s' does not have a Release file. "
@@ -2115,6 +2110,8 @@ void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long /*Size*/,
 									/*}}}*/
 void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*{{{*/
 {
+   Item::Failed(Message, Cnf);
+
    // we failed, we will not get additional items from this method
    ExpectedAdditionalItems = 0;
 
@@ -2126,14 +2123,12 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       string FinalFile = _config->FindDir("Dir::State::lists");
       FinalFile.append(URItoFileName(RealURI));
       TransactionManager->TransactionStageRemoval(this, FinalFile);
+      Status = StatDone;
 
       new pkgAcqMetaIndex(Owner, TransactionManager,
 			MetaIndexURI, MetaIndexURIDesc, MetaIndexShortDesc,
 			MetaSigURI, MetaSigURIDesc, MetaSigShortDesc,
 			IndexTargets, MetaIndexParser);
-      if (Cnf->LocalOnly == true ||
-	  StringToBool(LookupTag(Message, "Transient-Failure"), false) == false)
-	 Dequeue();
    }
    else
    {
@@ -2149,9 +2144,11 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       // only allow going further if the users explicitely wants it
       if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
       {
+	 Status = StatDone;
+
          /* Always move the meta index, even if gpgv failed. This ensures
           * that PackageFile objects are correctly filled in */
-         if (FileExists(DestFile)) 
+         if (FileExists(DestFile))
          {
             string FinalFile = _config->FindDir("Dir::State::lists");
             FinalFile += URItoFileName(RealURI);
@@ -2161,19 +2158,17 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
                                       "Release");
             FinalFile = FinalFile.replace(FinalFile.rfind("InRelease"), 9,
                                           "Release");
-            
-            
+
             // Done, queue for rename on transaction finished
             TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
          }
          QueueIndexes(false);
       } else {
-         // warn if the repository is unsinged
+         // warn if the repository is unsigned
          _error->Warning("Use --allow-insecure-repositories to force the update");
          TransactionManager->AbortTransaction();
          Status = StatError;
-         return;
-      } 
+      }
    }
 }
 									/*}}}*/

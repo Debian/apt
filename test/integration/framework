@@ -715,7 +715,7 @@ buildaptarchivefromincoming() {
 	aptftparchive -qq generate ftparchive.conf
 	cd - > /dev/null
 	msgdone "info"
-	generatereleasefiles
+	generatereleasefiles "$@"
 }
 
 buildaptarchivefromfiles() {
@@ -830,14 +830,19 @@ setupflataptarchive() {
 }
 
 setupaptarchive() {
-	buildaptarchive
+	local NOUPDATE=0
+	if [ "$1" = '--no-update' ]; then
+		NOUPDATE=1
+		shift
+	fi
+	buildaptarchive "$@"
 	if [ -e aptarchive/dists ]; then
 		setupdistsaptarchive
 	else
 		setupflataptarchive
 	fi
-	signreleasefiles
-	if [ "$1" != '--no-update' ]; then
+	signreleasefiles 'Joe Sixpack' "$@"
+	if [ "1" != "$NOUPDATE" ]; then
 		testsuccess aptget update -o Debug::pkgAcquire::Worker=true -o Debug::Acquire::gpgv=true
 	fi
 }

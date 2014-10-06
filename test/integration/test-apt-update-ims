@@ -44,8 +44,9 @@ echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
 runtest
 
 msgmsg "Release/Release.gpg"
-# with Release/Release.gpg 
+# with Release/Release.gpg
 EXPECT="Ign http://localhost:8080 unstable InRelease
+  404  Not Found
 Hit http://localhost:8080 unstable Release
 Hit http://localhost:8080 unstable Release.gpg
 Hit http://localhost:8080 unstable/main Sources
@@ -65,8 +66,10 @@ runtest
 # no Release.gpg or InRelease
 msgmsg "Release only"
 EXPECT="Ign http://localhost:8080 unstable InRelease
+  404  Not Found
 Hit http://localhost:8080 unstable Release
 Ign http://localhost:8080 unstable Release.gpg
+  404  Not Found
 Hit http://localhost:8080 unstable/main Sources
 Hit http://localhost:8080 unstable/main amd64 Packages
 Hit http://localhost:8080 unstable/main Translation-en
