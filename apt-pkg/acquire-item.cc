@@ -1484,7 +1484,7 @@ void pkgAcqMetaBase::CommitTransaction()
    }
 }
 									/*}}}*/
-// AcqMetaBase::CommitTransaction - Commit a transaction		/*{{{*/
+// AcqMetaBase::TransactionStageCopy - Stage a file for copying		/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcqMetaBase::TransactionStageCopy(Item *I,
@@ -1495,7 +1495,7 @@ void pkgAcqMetaBase::TransactionStageCopy(Item *I,
    I->DestFile = To;
 }
 									/*}}}*/
-// AcqMetaBase::CommitTransaction - Commit a transaction		/*{{{*/
+// AcqMetaBase::TransactionStageRemoval - Sage a file for removal	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
