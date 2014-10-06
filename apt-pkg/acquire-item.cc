@@ -1502,8 +1502,8 @@ void pkgAcqMetaBase::TransactionStageRemoval(Item *I,
 // AcqMetaBase::GenerateAuthWarning - Check gpg authentication error	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-bool pkgAcqMetaBase::GenerateAuthWarning(const std::string &RealURI,
-                                         const std::string &Message)
+bool pkgAcqMetaBase::StopAuthentication(const std::string &RealURI,
+                                        const std::string &Message)
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
    
@@ -1626,13 +1626,9 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
 {
    string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
 
-   // FIXME: duplicated code from pkgAcqMetaIndex
-   if (AuthPass == true)
-   {
-      bool Stop = GenerateAuthWarning(RealURI, Message);
-      if(Stop)
+   // check if we need to fail at this point 
+   if (AuthPass == true && StopAuthentication(RealURI, Message))
          return;
-   }
 
    // FIXME: meh, this is not really elegant
    string InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
@@ -2021,50 +2017,28 @@ bool pkgAcqMetaBase::VerifyVendor(string Message, const string &RealURI)/*{{{*/
    return true;
 }
 									/*}}}*/
-// pkgAcqMetaIndex::Failed - no Release file present or no signature file present	/*{{{*/
+// pkgAcqMetaIndex::Failed - no Release file present            	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
 void pkgAcqMetaIndex::Failed(string Message,
                              pkgAcquire::MethodConfig * /*Cnf*/)
 {
-   string Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
+   string FinalFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
 
-   if (AuthPass == true)
-   {
-      bool Stop = GenerateAuthWarning(RealURI, Message);
-      if(Stop)
-         return;
-   }
+   _error->Warning(_("The repository '%s' does not have a Release file. "
+                     "This is deprecated, please contact the owner of the "
+                     "repository."), URIDesc.c_str());
 
-   _error->Warning(_("The data from '%s' is not signed. Packages "
-                     "from that repository can not be authenticated."),
-                   URIDesc.c_str());
-
-   // No Release file was present, or verification failed, so fall
+   // No Release file was present so fall
    // back to queueing Packages files without verification
    // only allow going further if the users explicitely wants it
    if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
    {
-      /* Always move the meta index, even if gpgv failed. This ensures
-       * that PackageFile objects are correctly filled in */
+      // Done, queue for rename on transaction finished
       if (FileExists(DestFile)) 
-      {
-         string FinalFile = _config->FindDir("Dir::State::lists");
-         FinalFile += URItoFileName(RealURI);
-         /* InRelease files become Release files, otherwise
-          * they would be considered as trusted later on */
-         if (SigFile == DestFile) {
-            RealURI = RealURI.replace(RealURI.rfind("InRelease"), 9,
-                                      "Release");
-            FinalFile = FinalFile.replace(FinalFile.rfind("InRelease"), 9,
-                                          "Release");
-            SigFile = FinalFile;
-         }
-
-         // Done, queue for rename on transaction finished
          TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
-      }
 
+      // queue without any kind of hashsum support
       QueueIndexes(false);
    } else {
       // warn if the repository is unsinged
@@ -2073,7 +2047,6 @@ void pkgAcqMetaIndex::Failed(string Message,
       Status = StatError;
       return;
    } 
-
 }
 									/*}}}*/
 
@@ -2097,39 +2070,17 @@ pkgAcqMetaClearSig::pkgAcqMetaClearSig(pkgAcquire *Owner,		/*{{{*/
        MetaIndexURI(MetaIndexURI), MetaIndexURIDesc(MetaIndexURIDesc), MetaIndexShortDesc(MetaIndexShortDesc),
        MetaSigURI(MetaSigURI), MetaSigURIDesc(MetaSigURIDesc), MetaSigShortDesc(MetaSigShortDesc)
 {
-   SigFile = DestFile;
-
    // index targets + (worst case:) Release/Release.gpg
    ExpectedAdditionalItems = IndexTargets->size() + 2;
 
-#if 0
-   // keep the old InRelease around in case of transistent network errors
-   string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-   if (RealFileExists(Final) == true)
-   {
-      string const LastGoodSig = DestFile + ".reverify";
-      Rename(Final,LastGoodSig);
-   }
-#endif
 }
 									/*}}}*/
 pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
 {
-#if 0
-   // if the file was never queued undo file-changes done in the constructor
-   if (QueueCounter == 1 && Status == StatIdle && FileSize == 0 && Complete == false)
-   {
-      string const Final = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
-      string const LastGoodSig = DestFile + ".reverify";
-      if (RealFileExists(Final) == false && RealFileExists(LastGoodSig) == true)
-	 Rename(LastGoodSig, Final);
-   }
-#endif
 }
 									/*}}}*/
 // pkgAcqMetaClearSig::Custom600Headers - Insert custom request headers	/*{{{*/
 // ---------------------------------------------------------------------
-// FIXME: this can go away once the InRelease file is used widely
 string pkgAcqMetaClearSig::Custom600Headers() const
 {
    string Final = _config->FindDir("Dir::State::lists");
@@ -2204,7 +2155,45 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
 	 Dequeue();
    }
    else
-      pkgAcqMetaIndex::Failed(Message, Cnf);
+   {
+      if(StopAuthentication(RealURI, Message))
+         return;
+
+      _error->Warning(_("The data from '%s' is not signed. Packages "
+                        "from that repository can not be authenticated."),
+                      URIDesc.c_str());
+
+      // No Release file was present, or verification failed, so fall
+      // back to queueing Packages files without verification
+      // only allow going further if the users explicitely wants it
+      if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
+      {
+         /* Always move the meta index, even if gpgv failed. This ensures
+          * that PackageFile objects are correctly filled in */
+         if (FileExists(DestFile)) 
+         {
+            string FinalFile = _config->FindDir("Dir::State::lists");
+            FinalFile += URItoFileName(RealURI);
+            /* InRelease files become Release files, otherwise
+             * they would be considered as trusted later on */
+            RealURI = RealURI.replace(RealURI.rfind("InRelease"), 9,
+                                      "Release");
+            FinalFile = FinalFile.replace(FinalFile.rfind("InRelease"), 9,
+                                          "Release");
+            
+            
+            // Done, queue for rename on transaction finished
+            TransactionManager->TransactionStageCopy(this, DestFile, FinalFile);
+         }
+         QueueIndexes(false);
+      } else {
+         // warn if the repository is unsinged
+         _error->Warning("Use --allow-insecure-repositories to force the update");
+         TransactionManager->AbortTransaction();
+         Status = StatError;
+         return;
+      } 
+   }
 }
 									/*}}}*/
 // AcqArchive::AcqArchive - Constructor					/*{{{*/

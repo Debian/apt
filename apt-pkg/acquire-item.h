@@ -436,9 +436,9 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
     */
    void TransactionStageRemoval(Item *I, const std::string &FinalFile);
 
-   // helper for the signature warning
-   bool GenerateAuthWarning(const std::string &RealURI,
-                            const std::string &Message);
+   /** Check if the current item should fail at this point */
+   bool StopAuthentication(const std::string &RealURI,
+                           const std::string &Message);
 
 
    pkgAcqMetaBase(pkgAcquire *Owner,
@@ -523,13 +523,6 @@ class pkgAcqMetaIndex : public pkgAcqMetaBase
     *  modified by pkgAcqMetaIndex.
     */
    std::string RealURI;
-
-   /** \brief The file in which the signature for this index was stored.
-    *
-    *  If empty, the signature and the md5sums of the individual
-    *  indices will not be checked.
-    */
-   std::string SigFile;
 
    std::string URIDesc;
    std::string ShortDesc;
