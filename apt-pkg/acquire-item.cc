@@ -2021,7 +2021,7 @@ bool pkgAcqMetaBase::VerifyVendor(string Message, const string &RealURI)/*{{{*/
 // pkgAcqMetaIndex::Failed - no Release file present            	/*{{{*/
 // ---------------------------------------------------------------------
 /* */
-void pkgAcqMetaIndex::Failed(string Message,
+void pkgAcqMetaIndex::Failed(string /*Message*/,
                              pkgAcquire::MethodConfig * /*Cnf*/)
 {
    string FinalFile = _config->FindDir("Dir::State::lists") + URItoFileName(RealURI);
@@ -2099,8 +2099,8 @@ string pkgAcqMetaClearSig::Custom600Headers() const
 									/*}}}*/
 // pkgAcqMetaClearSig::Done - We got a file                     	/*{{{*/
 // ---------------------------------------------------------------------
-void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long Size, 
-                              HashStringList const &Hashes,
+void pkgAcqMetaClearSig::Done(std::string Message,unsigned long long /*Size*/,
+                              HashStringList const &/*Hashes*/,
                               pkgAcquire::MethodConfig *Cnf)
 {
    // if we expect a ClearTextSignature (InRelase), ensure that
