@@ -117,7 +117,8 @@ void AcqTextStatus::Fail(pkgAcquire::ItemDesc &Itm)
    if (Itm.Owner->Status == pkgAcquire::Item::StatDone)
    {
       cout << _("Ign ") << Itm.Description << endl;
-      if (Itm.Owner->ErrorText.empty() == false)
+      if (Itm.Owner->ErrorText.empty() == false &&
+	    _config->FindB("Acquire::Progress::Ignore::ShowErrorText", false) == true)
 	 cout << "  " << Itm.Owner->ErrorText << endl;
    }
    else
