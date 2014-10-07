@@ -36,8 +36,8 @@ ensure_n_canary_strings_in_dir() {
 
 LISTS='rootdir/var/lib/apt/lists'
 rm -rf rootdir/var/lib/apt/lists
-msgtest 'Got expected NODATA failure in' 'apt-get update'
-aptget update -qq 2>&1 | grep -q 'E: GPG error.*NODATA' && msgpass || msgfail
+msgtest 'Got expected failure message' 'apt-get update'
+aptget update -qq 2>&1 | grep -q 'W:.*Does not start with a cleartext signature' && msgpass || msgfail
 
 ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0
 testequal 'partial' ls $LISTS
@@ -47,8 +47,8 @@ for f in Release Release.gpg main_binary-amd64_Packages main_source_Sources; do
     echo 'peng neee-wom' > $LISTS/localhost:8080_dists_stable_${f}
 done
 
-msgtest 'Got expected NODATA failure in' 'apt-get update'
-aptget update -qq 2>&1 | grep -q 'E: GPG error.*NODATA' && msgpass || msgfail
+msgtest 'Got expected failure message in' 'apt-get update'
+aptget update -qq 2>&1 | grep -q 'W:.*Does not start with a cleartext signature' && msgpass || msgfail
 
 ensure_n_canary_strings_in_dir $LISTS 'peng neee-wom' 4
 ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0
@@ -57,7 +57,7 @@ ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0
 echo 'peng neee-wom' > $LISTS/localhost:8080_dists_stable_InRelease
 rm -f $LISTS/localhost:8080_dists_stable_Release $LISTS/localhost:8080_dists_stable_Release.gpg
 msgtest 'excpected failure of' 'apt-get update'
-aptget update -qq 2>&1 | grep -q 'E: GPG error.*NODATA' && msgpass || msgfail
+aptget update -qq 2>&1 | grep -q 'W:.*Does not start with a cleartext signature' && msgpass || msgfail
 
 ensure_n_canary_strings_in_dir $LISTS 'peng neee-wom' 3
 ensure_n_canary_strings_in_dir $LISTS 'ni ni ni' 0

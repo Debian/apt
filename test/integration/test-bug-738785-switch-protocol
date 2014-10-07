@@ -60,4 +60,4 @@ mv rootdir/${COPYMETHODS}.bak rootdir/${COPYMETHODS}
 # check that downgrades from https to http are not allowed
 webserverconfig 'aptwebserver::support::http' 'true'
 sed -i -e 's#:8080/redirectme#:4433/downgrademe#' -e 's# http:# https:#' rootdir/etc/apt/sources.list.d/*
-testfailure aptget update
+testfailure aptget update --allow-insecure-repositories

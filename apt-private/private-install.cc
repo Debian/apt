@@ -119,14 +119,14 @@ bool InstallPackages(CacheFile &Cache,bool ShwKept,bool Ask, bool Safety)
       return false;
 
    // Create the download object
-   pkgAcquire Fetcher;
-   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));   
+   AcqTextStatus Stat(ScreenWidth,_config->FindI("quiet",0));
+   pkgAcquire Fetcher(&Stat);
    if (_config->FindB("APT::Get::Print-URIs", false) == true)
    {
       // force a hashsum for compatibility reasons
       _config->CndSet("Acquire::ForceHash", "md5sum");
    }
-   else if (Fetcher.Setup(&Stat, _config->FindDir("Dir::Cache::Archives")) == false)
+   else if (Fetcher.GetLock(_config->FindDir("Dir::Cache::Archives")) == false)
       return false;
 
    // Read the source list

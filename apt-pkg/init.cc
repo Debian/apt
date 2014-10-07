@@ -88,6 +88,10 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.orig$");
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
 
+   // Repository security
+   Cnf.CndSet("Acquire::AllowInsecureRepositories", false);
+   Cnf.CndSet("Acquire::AllowDowngradeToInsecureRepositories", false);
+
    // Default cdrom mount point
    Cnf.CndSet("Acquire::cdrom::mount", "/media/cdrom/");
 
