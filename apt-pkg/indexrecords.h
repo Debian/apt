@@ -21,7 +21,7 @@
 
 class indexRecords
 {
-   bool parseSumData(const char *&Start, const char *End, std::string &Name,
+   APT_HIDDEN bool parseSumData(const char *&Start, const char *End, std::string &Name,
 		     std::string &Hash, unsigned long long &Size);
    public:
    struct checkSum;

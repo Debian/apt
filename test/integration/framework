@@ -47,6 +47,9 @@ msgskip() { printf "${CWARNING}SKIP${CNORMAL}\n" >&2; }
 msgfail() {
 	if [ $# -gt 0 ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
 	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
+        if [ -n "$APT_DEBUG_TESTS" ]; then
+            bash
+        fi
 	EXIT_CODE=$((EXIT_CODE+1));
 }
 

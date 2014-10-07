@@ -82,9 +82,9 @@ class pkgSimulate : public pkgPackageManager				/*{{{*/
    virtual bool Remove(PkgIterator Pkg,bool Purge);
 
 private:
-   void ShortBreaks();
-   void Describe(PkgIterator iPkg,std::ostream &out,bool Current,bool Candidate);
-   
+   APT_HIDDEN void ShortBreaks();
+   APT_HIDDEN void Describe(PkgIterator iPkg,std::ostream &out,bool Current,bool Candidate);
+
    public:
 
    pkgSimulate(pkgDepCache *Cache);
@@ -114,7 +114,7 @@ class pkgProblemResolver						/*{{{*/
    
    // Sort stuff
    static pkgProblemResolver *This;
-   static int ScoreSort(const void *a,const void *b) APT_PURE;
+   APT_HIDDEN static int ScoreSort(const void *a,const void *b) APT_PURE;
 
    struct PackageKill
    {
@@ -122,12 +122,12 @@ class pkgProblemResolver						/*{{{*/
       DepIterator Dep;
    };
 
-   void MakeScores();
-   bool DoUpgrade(pkgCache::PkgIterator Pkg);
+   APT_HIDDEN void MakeScores();
+   APT_HIDDEN bool DoUpgrade(pkgCache::PkgIterator Pkg);
 
-   bool ResolveInternal(bool const BrokenFix = false);
-   bool ResolveByKeepInternal();
-   
+   APT_HIDDEN bool ResolveInternal(bool const BrokenFix = false);
+   APT_HIDDEN bool ResolveByKeepInternal();
+
    protected:
    bool InstOrNewPolicyBroken(pkgCache::PkgIterator Pkg);
 

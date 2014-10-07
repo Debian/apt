@@ -15,13 +15,17 @@ set -e
 
 case "$1" in
     configure)
-	if dpkg --compare-versions "$2" lt 1.0.7; then
+	if dpkg --compare-versions "$2" lt 1.1~exp4; then
 	    # apt-key before 0.9.10 could leave empty keyrings around
 	    find /etc/apt/trusted.gpg.d/ -name '*.gpg' | while read keyring; do
 		if ! test -s "$keyring"; then
 		    rm -f "$keyring"
 		fi
 	    done
+	    # apt-key before 0.9.8.2 could create 0600 trusted.gpg file
+	    if test -e /etc/apt/trusted.gpg ; then
+	        chmod -f 0644 /etc/apt/trusted.gpg || true
+	    fi
 	fi
 
 	if dpkg --compare-versions "$2" lt-nl 0.9.9.5; then

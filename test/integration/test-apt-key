@@ -41,7 +41,14 @@ gpg:              unchanged: 1' aptkey --fakeroot update
 
 	testaptkeys 'pub   2048R/DBAC8DAE 2010-08-18'
 
+	testsuccess test ! -e rootdir/etc/apt/trusted.gpg
 	testsuccess aptkey --fakeroot add ./keys/rexexpired.pub
+	msgtest 'Check if trusted.gpg is created with permissions set to' '0644'
+	if [ "$(stat -c '%a' rootdir/etc/apt/trusted.gpg )" = '644' ]; then
+		msgpass
+	else
+		msgfail
+	fi
 
 	testaptkeys 'pub   2048R/27CE74F9 2013-07-12 [expired: 2013-07-13]
 pub   2048R/DBAC8DAE 2010-08-18'
