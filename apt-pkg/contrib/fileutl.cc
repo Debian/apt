@@ -857,11 +857,7 @@ bool ExecWait(pid_t Pid,const char *Name,bool Reap)
    return true;
 }
 									/*}}}*/
-
-
-// StartsWithGPGClearTextSignature - Check if a file is Pgp/GPG clearsigned     /*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// StartsWithGPGClearTextSignature - Check if a file is Pgp/GPG clearsigned	/*{{{*/
 bool StartsWithGPGClearTextSignature(string const &FileName)
 {
    static const char* SIGMSG = "-----BEGIN PGP SIGNED MESSAGE-----\n";
@@ -877,7 +873,7 @@ bool StartsWithGPGClearTextSignature(string const &FileName)
 
    return true;
 }
-
+									/*}}}*/
 
 class FileFdPrivate {							/*{{{*/
 	public:
@@ -2035,10 +2031,7 @@ APT_DEPRECATED gzFile FileFd::gzFd() {
 #endif
 }
 
-
-// Glob - wrapper around "glob()"                                      /*{{{*/
-// ---------------------------------------------------------------------
-/* */
+// Glob - wrapper around "glob()"					/*{{{*/
 std::vector<std::string> Glob(std::string const &pattern, int flags)
 {
    std::vector<std::string> result;
@@ -2064,8 +2057,7 @@ std::vector<std::string> Glob(std::string const &pattern, int flags)
    return result;
 }
 									/*}}}*/
-
-std::string GetTempDir()
+std::string GetTempDir()						/*{{{*/
 {
    const char *tmpdir = getenv("TMPDIR");
 
@@ -2081,8 +2073,8 @@ std::string GetTempDir()
 
    return string(tmpdir);
 }
-
-FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink)
+									/*}}}*/
+FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink)	/*{{{*/
 {
    char fn[512];
    FileFd *Fd = new FileFd();
@@ -2106,19 +2098,19 @@ FileFd* GetTempFile(std::string const &Prefix, bool ImmediateUnlink)
 
    return Fd;
 }
-
-bool Rename(std::string From, std::string To)
+									/*}}}*/
+bool Rename(std::string From, std::string To)				/*{{{*/
 {
    if (rename(From.c_str(),To.c_str()) != 0)
    {
       _error->Error(_("rename failed, %s (%s -> %s)."),strerror(errno),
                     From.c_str(),To.c_str());
       return false;
-   }   
+   }
    return true;
 }
-
-bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
+									/*}}}*/
+bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/*{{{*/
 {
    int fd;
    if (Mode != FileFd::ReadOnly && Mode != FileFd::WriteOnly)
@@ -2170,8 +2162,8 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
 
    return true;
 }
-
-bool DropPrivileges()
+									/*}}}*/
+bool DropPrivileges()							/*{{{*/
 {
    // uid will be 0 in the end, but gid might be different anyway
    uid_t old_uid = getuid();
@@ -2260,3 +2252,4 @@ bool DropPrivileges()
 
    return true;
 }
+									/*}}}*/
