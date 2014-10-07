@@ -849,7 +849,7 @@ bool FTPConn::Finalize()
 /* This opens a data connection, sends REST and RETR and then
    transfers the file over. */
 bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
-		  Hashes &Hash,bool &Missing)
+		  Hashes &Hash,bool &Missing, unsigned long long ExpectedSize)
 {
    Missing = false;
    if (CreateDataFd() == false)
@@ -922,7 +922,11 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
       {
 	 Close();
 	 return false;
-      }      
+      }
+
+      if (ExpectedSize > 0 && To.Tell() > ExpectedSize)
+         return _error->Error("Writing more data than expected (%llu > %llu)",
+                              To.Tell(), ExpectedSize);
    }
 
    // All done
@@ -1063,7 +1067,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       FailFd = Fd.Fd();
       
       bool Missing;
-      if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing) == false)
+      if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing,Itm->ExpectedSize) == false)
       {
 	 Fd.Close();
 
