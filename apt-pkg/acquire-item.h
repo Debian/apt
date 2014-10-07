@@ -390,7 +390,6 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
     */
    void QueueIndexes(bool verify);
 
-
    /** \brief Called when a file is finished being retrieved.
     *
     *  If the file was not downloaded to DestFile, a copy process is
@@ -406,6 +405,9 @@ class pkgAcqMetaBase  : public pkgAcquire::Item
    /** \brief Queue the downloaded Signature for verification */
    void QueueForSignatureVerify(const std::string &MetaIndexFile,
                                 const std::string &MetaIndexFileSignature);
+
+   /** \brief get the custom600 header for all pkgAcqMeta */
+   std::string GetCustom600Headers(const std::string &RealURI) const;
 
    /** \brief Called when authentication succeeded.
     *

@@ -17,10 +17,17 @@ testsuccess aptget update
 
 # make InRelease really big
 mv aptarchive/dists/unstable/InRelease aptarchive/dists/unstable/InRelease.good
-dd if=/dev/zero of=aptarchive/dists/unstable/InRelease bs=1M count=2
+dd if=/dev/zero of=aptarchive/dists/unstable/InRelease bs=1M count=2 2>/dev/null
 touch -d '+1hour' aptarchive/dists/unstable/InRelease
-aptget update -o acquire::MaxReleaseFileSize=$((1*1000*1000))
-
+aptget update  -o acquire::MaxReleaseFileSize=$((1*1000*1000)) -o Debug::pkgAcquire::worker=0 > output.log
+msgtest 'Check that the max write warning is triggered'
+if grep -q "Writing more data than expected" output.log; then
+    msgpass
+else
+    cat output.log
+    msgfail
+fi
+mv aptarchive/dists/unstable/InRelease.good aptarchive/dists/unstable/InRelease
 
 # append junk at the end of the Packages.gz/Packages
 SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
