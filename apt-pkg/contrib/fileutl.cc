@@ -2189,8 +2189,9 @@ bool DropPrivileges()
 
 #if __gnu_linux__
    // see prctl(2), needs linux3.5
-   int ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0,0, 0);
-   if(ret < 0)
+   int ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+   // ignore EINVAL - kernel is too old to understand the option
+   if(ret < 0 && errno != EINVAL)
       _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
 #endif
    // Do not change the order here, it might break things
