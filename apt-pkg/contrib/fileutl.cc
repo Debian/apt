@@ -2165,13 +2165,25 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)/
 									/*}}}*/
 bool DropPrivileges()							/*{{{*/
 {
+   if(_config->FindB("Debug::NoDropPrivs", false) == true)
+      return true;
+
+#if __gnu_linux__
+#if defined(PR_SET_NO_NEW_PRIVS) && ( PR_SET_NO_NEW_PRIVS != 38 )
+#error "PR_SET_NO_NEW_PRIVS is defined, but with a different value than expected!"
+#endif
+   // see prctl(2), needs linux3.5 at runtime - magic constant to avoid it at buildtime
+   int ret = prctl(38, 1, 0, 0, 0);
+   // ignore EINVAL - kernel is too old to understand the option
+   if(ret < 0 && errno != EINVAL)
+      _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
+#endif
+
    // uid will be 0 in the end, but gid might be different anyway
-   uid_t old_uid = getuid();
-   gid_t old_gid = getgid();
+   uid_t const old_uid = getuid();
+   gid_t const old_gid = getgid();
 
    if (old_uid != 0)
-      return true;
-   if(_config->FindB("Debug::NoDropPrivs", false) == true)
       return true;
 
    const std::string toUser = _config->Find("APT::Sandbox::User", "_apt");
@@ -2179,13 +2191,6 @@ bool DropPrivileges()							/*{{{*/
    if (pw == NULL)
       return _error->Error("No user %s, can not drop rights", toUser.c_str());
 
-#if __gnu_linux__
-   // see prctl(2), needs linux3.5
-   int ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-   // ignore EINVAL - kernel is too old to understand the option
-   if(ret < 0 && errno != EINVAL)
-      _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
-#endif
    // Do not change the order here, it might break things
    if (setgroups(1, &pw->pw_gid))
       return _error->Errno("setgroups", "Failed to setgroups");
