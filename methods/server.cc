@@ -534,8 +534,8 @@ int ServerMethod::Loop()
 	    bool Result = true;
 
             // ensure we don't fetch too much
-            if (Queue->ExpectedSize > 0)
-               Server->ExpectedSize = Queue->ExpectedSize;
+            if (Queue->MaximumSize > 0)
+               Server->MaximumSize = Queue->MaximumSize;
 
             if (Server->HaveContent)
 	       Result = Server->RunData(File);

@@ -62,7 +62,7 @@ class FTPConn
    bool Size(const char *Path,unsigned long long &Size);
    bool ModTime(const char *Path, time_t &Time);
    bool Get(const char *Path,FileFd &To,unsigned long long Resume,
-	    Hashes &MD5,bool &Missing, unsigned long long ExpectedSize);
+	    Hashes &MD5,bool &Missing, unsigned long long MaximumSize);
    
    FTPConn(URI Srv);
    ~FTPConn();

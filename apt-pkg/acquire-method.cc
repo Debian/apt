@@ -373,7 +373,7 @@ int pkgAcqMethod::Run(bool Single)
 		  Tmp->ExpectedHashes.push_back(HashString(*t, hash));
 	    }
             char *End;
-            Tmp->ExpectedSize = strtoll(LookupTag(Message, "Expected-Size", "0").c_str(), &End, 10);
+            Tmp->MaximumSize = strtoll(LookupTag(Message, "Maximum-Size", "0").c_str(), &End, 10);
 	    Tmp->Next = 0;
 	    
 	    // Append it to the list

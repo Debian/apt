@@ -655,10 +655,10 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
 	 return _error->Errno("write",_("Error writing to output file"));
    }
 
-   if (ExpectedSize > 0 && File && File->Tell() > ExpectedSize)
+   if (MaximumSize > 0 && File && File->Tell() > MaximumSize)
    {
       return _error->Error("Writing more data than expected (%llu > %llu)",
-                           File->Tell(), ExpectedSize);
+                           File->Tell(), MaximumSize);
    }
 
    // Handle commands from APT

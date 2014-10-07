@@ -15,6 +15,13 @@ changetowebserver
 # normal update works fine
 testsuccess aptget update
 
+# make InRelease really big
+mv aptarchive/dists/unstable/InRelease aptarchive/dists/unstable/InRelease.good
+dd if=/dev/zero of=aptarchive/dists/unstable/InRelease bs=1M count=2
+touch -d '+1hour' aptarchive/dists/unstable/InRelease
+aptget update -o acquire::MaxReleaseFileSize=$((1*1000*1000))
+
+
 # append junk at the end of the Packages.gz/Packages
 SIZE="$(stat --printf=%s aptarchive/dists/unstable/main/binary-i386/Packages)"
 echo "1234567890" >> aptarchive/dists/unstable/main/binary-i386/Packages.gz
