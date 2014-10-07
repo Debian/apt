@@ -83,9 +83,11 @@ HttpsMethod::write_data(void *buffer, size_t size, size_t nmemb, void *userp)
       return false;
 
    if(me->Queue->MaximumSize > 0 && me->File->Tell() > me->Queue->MaximumSize)
+   {
+      me->SetFailReason("MaximumSizeExceeded");
       return _error->Error("Writing more data than expected (%llu > %llu)",
                            me->TotalWritten, me->Queue->MaximumSize);
-
+   }
    return size*nmemb;
 }
 

@@ -148,8 +148,12 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    else
       Status = StatIdle;
 
-   // report mirror failure back to LP if we actually use a mirror
+   // check fail reason
    string FailReason = LookupTag(Message, "FailReason");
+   if(FailReason == "MaximumSizeExceeded")
+      Rename(DestFile, DestFile+".FAILED");
+
+   // report mirror failure back to LP if we actually use a mirror
    if(FailReason.size() != 0)
       ReportMirrorFailure(FailReason);
    else

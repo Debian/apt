@@ -657,6 +657,7 @@ bool HttpServerState::Go(bool ToFile, FileFd * const File)
 
    if (MaximumSize > 0 && File && File->Tell() > MaximumSize)
    {
+      Owner->SetFailReason("MaximumSizeExceeded");
       return _error->Error("Writing more data than expected (%llu > %llu)",
                            File->Tell(), MaximumSize);
    }
