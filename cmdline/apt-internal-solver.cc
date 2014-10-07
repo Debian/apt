@@ -77,7 +77,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 		{0,0,0,0}};
 
         // we really don't need anything
-        DropPrivs();
+        DropPrivileges();
 
 	CommandLine CmdL(Args,_config);
 	if (pkgInitConfig(*_config) == false ||

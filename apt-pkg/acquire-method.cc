@@ -124,7 +124,7 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
 /* */
 void pkgAcqMethod::DropPrivsOrDie()
 {
-   if (!DropPrivs()) {
+   if (!DropPrivileges()) {
       Fail(false);
       exit(112);	/* call the european emergency number */
    }

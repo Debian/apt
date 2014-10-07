@@ -2171,7 +2171,7 @@ bool Popen(const char* Args[], FileFd &Fd, pid_t &Child, FileFd::OpenMode Mode)
    return true;
 }
 
-bool DropPrivs()
+bool DropPrivileges()
 {
    // uid will be 0 in the end, but gid might be different anyway
    uid_t old_uid = getuid();

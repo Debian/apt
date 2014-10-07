@@ -41,7 +41,7 @@ int main(int argc,const char *argv[])					/*{{{*/
 		return 0;
 	}
         // we really don't need anything
-        DropPrivs();
+        DropPrivileges();
 
 	FILE* input = fdopen(STDIN_FILENO, "r");
 	FILE* output = fopen("/tmp/dump.edsp", "w");

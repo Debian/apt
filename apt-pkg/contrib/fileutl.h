@@ -210,7 +210,7 @@ bool StartsWithGPGClearTextSignature(std::string const &FileName);
  *
  * \return true on success, false on failure with _error set
  */
-bool DropPrivs();
+bool DropPrivileges();
 
 // File string manipulators
 std::string flNotDir(std::string File);
