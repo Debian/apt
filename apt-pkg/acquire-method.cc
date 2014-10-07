@@ -102,7 +102,10 @@ void pkgAcqMethod::Fail(string Err,bool Transient)
    if (Queue != 0)
    {
       std::cout << "400 URI Failure\nURI: " << Queue->Uri << "\n"
-		<< "Message: " << Err << " " << IP << "\n";
+		<< "Message: " << Err;
+      if (IP.empty() == false && _config->FindB("Acquire::Failure::ShowIP", true) == true)
+	 std::cout << " " << IP;
+      std::cout << "\n";
       Dequeue();
    }
    else
