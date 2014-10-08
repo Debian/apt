@@ -1,0 +1,85 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'unrelated' 'all' '0.5~squeeze1' 'unstable'
+
+setupaptarchive
+changetowebserver
+
+runtest() {
+    rm -f rootdir/var/lib/apt/lists/localhost*
+
+    testsuccess aptget update
+
+    # ensure no leftovers in partial
+    testfailure ls "rootdir/var/lib/apt/lists/partial/*"
+
+    # check that I-M-S header is kept in redirections
+    testequal "$EXPECT" aptget update  -o Debug::pkgAcquire::Worker=0 -o Debug::Acquire::http=0
+    
+    # ensure that we still do a hash check on ims hit
+    msgtest 'Test I-M-S reverify'
+    aptget update -o Debug::pkgAcquire::Auth=1 2>&1 | grep -A1 'RecivedHash:' | grep -q -- '- SHA' && msgpass || msgfail
+
+    # ensure no leftovers in partial
+    testfailure ls "rootdir/var/lib/apt/lists/partial/*"
+}
+
+msgmsg "InRelease"
+EXPECT="Hit http://localhost:8080 unstable InRelease
+Hit http://localhost:8080 unstable/main Sources
+Hit http://localhost:8080 unstable/main amd64 Packages
+Hit http://localhost:8080 unstable/main Translation-en
+Reading package lists..."
+# with InRelease
+runtest
+
+# with gzip
+echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+msgmsg "Release/Release.gpg"
+# with Release/Release.gpg
+EXPECT="Ign http://localhost:8080 unstable InRelease
+  404  Not Found
+Hit http://localhost:8080 unstable Release
+Hit http://localhost:8080 unstable Release.gpg
+Hit http://localhost:8080 unstable/main Sources
+Hit http://localhost:8080 unstable/main amd64 Packages
+Hit http://localhost:8080 unstable/main Translation-en
+Reading package lists..."
+
+find aptarchive -name "InRelease" | xargs rm -f
+
+echo "Acquire::GzipIndexes "0";" > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+
+# no Release.gpg or InRelease
+msgmsg "Release only"
+EXPECT="Ign http://localhost:8080 unstable InRelease
+  404  Not Found
+Hit http://localhost:8080 unstable Release
+Ign http://localhost:8080 unstable Release.gpg
+  404  Not Found
+Hit http://localhost:8080 unstable/main Sources
+Hit http://localhost:8080 unstable/main amd64 Packages
+Hit http://localhost:8080 unstable/main Translation-en
+Reading package lists..."
+
+find aptarchive -name "Release.gpg" | xargs rm -f
+
+echo 'Acquire::AllowInsecureRepositories "1";' > rootdir/etc/apt/apt.conf.d/insecure.conf
+echo "Acquire::GzipIndexes "0";" > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest
+
+echo "Acquire::GzipIndexes "1";" > rootdir/etc/apt/apt.conf.d/02compressindex
+runtest

@@ -39,10 +39,10 @@ testrun() {
 		test -e rootdir/var/lib/apt/lists/*_Translation-en.${COMPRESS} || F=1
 		# there is no point in trying pdiff if we have compressed indexes
 		# as we can't patch compressed files (well, we can, but what is the point?)
-		! test -e rootdir/var/lib/apt/lists/*.IndexDiff || F=1
+		! test -e rootdir/var/lib/apt/lists/*diff_Index || F=1
 	else
 		# clear the faked pdiff indexes so the glob below works
-		rm -f rootdir/var/lib/apt/lists/*.IndexDiff
+		rm -f rootdir/var/lib/apt/lists/*diff_Index
 		test -e rootdir/var/lib/apt/lists/*_Packages || F=1
 		test -e rootdir/var/lib/apt/lists/*_Sources || F=1
 		test -e rootdir/var/lib/apt/lists/*_Translation-en || F=1

@@ -39,12 +39,15 @@ case "$1" in
 	    fi
 	fi
 
-        # add unprivileged user for the apt methods
-        adduser --force-badname --system -home /var/empty \
-            --no-create-home --quiet _apt || true
-        chown -R _apt:root \
-            /var/lib/apt/lists \
-            /var/cache/apt/archives
+	# add unprivileged user for the apt methods
+	adduser --force-badname --system -home /var/empty \
+	    --no-create-home --quiet _apt || true
+
+	# deal with upgrades from experimental
+	if dpkg --compare-versions "$2" 'eq' '1.1~exp3'; then
+	    # libapt will setup partial/ at runtime
+	    chown -R root:root /var/lib/apt/lists /var/cache/apt/archives || true
+	fi
 
         # ensure tighter permissons on the logs, see LP: #975199
         if dpkg --compare-versions "$2" lt-nl 0.9.7.7; then

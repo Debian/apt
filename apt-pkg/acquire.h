@@ -351,17 +351,24 @@ class pkgAcquire
     *  long as the pkgAcquire object does.
     *  \param Lock defines a lock file that should be acquired to ensure
     *  only one Acquire class is in action at the time or an empty string
-    *  if no lock file should be used.
-    *  \param createDirectories can be used to disable the creation of directories,
-    *  e.g. if the fetcher is used with different directories later on
+    *  if no lock file should be used. If set also all needed directories
+    *  will be created.
     */
-   bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "",
-      bool const createDirectories = true);
+   APT_DEPRECATED bool Setup(pkgAcquireStatus *Progress = NULL, std::string const &Lock = "");
 
    void SetLog(pkgAcquireStatus *Progress) { Log = Progress; }
 
+   /** \brief acquire lock and perform directory setup
+    *
+    *  \param Lock defines a lock file that should be acquired to ensure
+    *  only one Acquire class is in action at the time or an empty string
+    *  if no lock file should be used. If set also all needed directories
+    *  will be created and setup.
+    */
+   bool GetLock(std::string const &Lock);
+
    /** \brief Construct a new pkgAcquire. */
-   pkgAcquire(pkgAcquireStatus *Log) APT_DEPRECATED;
+   pkgAcquire(pkgAcquireStatus *Log);
    pkgAcquire();
 
    /** \brief Destroy this pkgAcquire object.

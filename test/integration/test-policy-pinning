@@ -28,7 +28,7 @@ Pinned packages:" aptcache policy $*
 aptgetupdate() {
 	# just to be sure that no old files are used
 	rm -rf rootdir/var/lib/apt
-	if aptget update -qq 2>&1 | grep '^E: '; then
+	if aptget update  --allow-insecure-repositories -qq 2>&1 | grep '^E: '; then
 		msgwarn 'apt-get update failed with an error'
 	fi
 }
@@ -36,6 +36,7 @@ aptgetupdate() {
 ### not signed archive
 
 aptgetupdate
+
 testequalpolicy 100 500
 testequalpolicy 990 500 -t now
 

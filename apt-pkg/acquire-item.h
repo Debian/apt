@@ -47,6 +47,7 @@ class indexRecords;
 class pkgRecords;
 class pkgSourceList;
 class IndexTarget;
+class pkgAcqMetaBase;
 
 /** \brief Represents the process by which a pkgAcquire object should	{{{
  *  retrieve a file or a collection of files.
@@ -62,6 +63,8 @@ class IndexTarget;
  */
 class pkgAcquire::Item : public WeakPointable
 {  
+   void *d;
+
    protected:
    
    /** \brief The acquire object with which this item is associated. */
@@ -72,12 +75,11 @@ class pkgAcquire::Item : public WeakPointable
     *  \param Item Metadata about this item (its URI and
     *  description).
     */
-   inline void QueueURI(ItemDesc &Item)
-                 {Owner->Enqueue(Item);};
+   void QueueURI(ItemDesc &Item);
 
    /** \brief Remove this item from its owner's queue. */
-   inline void Dequeue() {Owner->Dequeue(this);};
-   
+   void Dequeue();
+
    /** \brief Rename a file without modifying its timestamp.
     *
     *  Many item methods call this as their final action.
@@ -87,7 +89,7 @@ class pkgAcquire::Item : public WeakPointable
     *  \param To The new name of \a From.  If \a To exists it will be
     *  overwritten.
     */
-   void Rename(std::string From,std::string To);
+   bool Rename(std::string From,std::string To);
 
    public:
 
@@ -116,7 +118,7 @@ class pkgAcquire::Item : public WeakPointable
        /** \brief The item was could not be downloaded because of 
 	*  a transient network error (e.g. network down)
 	*/
-       StatTransientNetworkError
+       StatTransientNetworkError,
      } Status;
 
    /** \brief Contains a textual description of the error encountered
@@ -173,6 +175,9 @@ class pkgAcquire::Item : public WeakPointable
     */
    unsigned int QueueCounter;
 
+   /** \brief TransactionManager */
+   pkgAcqMetaBase *TransactionManager;
+
    /** \brief The number of additional fetch items that are expected
     *  once this item is done.
     *
@@ -187,6 +192,9 @@ class pkgAcquire::Item : public WeakPointable
     *  will be written.
     */
    std::string DestFile;
+
+   /** \brief storge name until a transaction is finished */
+   std::string PartialFile;
 
    /** \brief Invoked by the acquire worker when the object couldn't
     *  be fetched.
@@ -274,7 +282,6 @@ class pkgAcquire::Item : public WeakPointable
    /** \return \b true if this object is being fetched from a trusted source. */
    virtual bool IsTrusted() const {return false;};
    
-   // report mirror problems
    /** \brief Report mirror problem
     * 
     *  This allows reporting mirror failures back to a centralized
@@ -284,6 +291,11 @@ class pkgAcquire::Item : public WeakPointable
     */
    void ReportMirrorFailure(std::string FailCode);
 
+   /** \brief Set the name of the current active subprocess
+    *
+    *  See also #ActiveSubprocess
+    */
+   void SetActiveSubprocess(const std::string &subprocess);
 
    /** \brief Initialize an item.
     *
@@ -295,7 +307,8 @@ class pkgAcquire::Item : public WeakPointable
     *  \param ExpectedHashes of the file represented by this item
     */
    Item(pkgAcquire *Owner,
-        HashStringList const &ExpectedHashes=HashStringList());
+        HashStringList const &ExpectedHashes=HashStringList(),
+        pkgAcqMetaBase *TransactionManager=NULL);
 
    /** \brief Remove this item from its owner's queue by invoking
     *  pkgAcquire::Remove.
@@ -307,7 +320,9 @@ class pkgAcquire::Item : public WeakPointable
    enum RenameOnErrorState {
       HashSumMismatch,
       SizeMismatch,
-      InvalidFormat
+      InvalidFormat,
+      SignatureError,
+      NotClearsigned,
    };
 
    /** \brief Rename failed file and set error
@@ -341,62 +356,286 @@ struct DiffInfo {
    unsigned long long patch_size;
 };
 									/*}}}*/
-/** \brief An item that is responsible for fetching a SubIndex		{{{
- *
- *  The MetaIndex file includes only records for important indexes
- *  and records for these SubIndex files so these can carry records
- *  for addition files like PDiffs and Translations
- */
-class pkgAcqSubIndex : public pkgAcquire::Item
-{
- protected:
-   /** \brief If \b true, debugging information will be written to std::clog. */
-   bool Debug;
+									/*}}}*/
 
+class pkgAcqMetaBase  : public pkgAcquire::Item
+{
+   void *d;
+
+ protected:
+   std::vector<Item*> Transaction;
+
+   /** \brief A package-system-specific parser for the meta-index file. */
+   indexRecords *MetaIndexParser;
+
+   /** \brief The index files which should be looked up in the meta-index
+    *  and then downloaded.
+    */
+   const std::vector<IndexTarget*>* IndexTargets;
+
+   /** \brief If \b true, the index's signature is currently being verified.
+    */
+   bool AuthPass;
+
+   // required to deal gracefully with problems caused by incorrect ims hits
+   bool IMSHit; 
+
+   /** \brief Starts downloading the individual index files.
+    *
+    *  \param verify If \b true, only indices whose expected hashsum
+    *  can be determined from the meta-index will be downloaded, and
+    *  the hashsums of indices will be checked (reporting
+    *  #StatAuthError if there is a mismatch).  If verify is \b false,
+    *  no hashsum checking will be performed.
+    */
+   void QueueIndexes(bool verify);
+
+
+   /** \brief Called when a file is finished being retrieved.
+    *
+    *  If the file was not downloaded to DestFile, a copy process is
+    *  set up to copy it to DestFile; otherwise, Complete is set to \b
+    *  true and the file is moved to its final location.
+    *
+    *  \param Message The message block received from the fetch
+    *  subprocess.
+    */
+   bool CheckDownloadDone(const std::string &Message,
+                          const std::string &RealURI);
+
+   /** \brief Queue the downloaded Signature for verification */
+   void QueueForSignatureVerify(const std::string &MetaIndexFile,
+                                const std::string &MetaIndexFileSignature);
+
+   /** \brief Called when authentication succeeded.
+    *
+    *  Sanity-checks the authenticated file, queues up the individual
+    *  index files for download, and saves the signature in the lists
+    *  directory next to the authenticated list file.
+    *
+    *  \param Message The message block received from the fetch
+    *  subprocess.
+    */
+   bool CheckAuthDone(std::string Message, const std::string &RealURI);
+
+   /** Check if the current item should fail at this point */
+   bool CheckStopAuthentication(const std::string &RealURI,
+                                const std::string &Message);
+
+   /** \brief Check that the release file is a release file for the
+    *  correct distribution.
+    *
+    *  \return \b true if no fatal errors were encountered.
+    */
+   bool VerifyVendor(std::string Message, const std::string &RealURI);
+   
  public:
+   // transaction code
+   void Add(Item *I);
+   void AbortTransaction();
+   bool TransactionHasError() APT_PURE;
+   void CommitTransaction();
+
+   /** \brief Stage (queue) a copy action when the transaction is commited
+    */
+   void TransactionStageCopy(Item *I,
+                             const std::string &From, 
+                             const std::string &To);
+   /** \brief Stage (queue) a removal action when the transaction is commited
+    */
+   void TransactionStageRemoval(Item *I, const std::string &FinalFile);
+
+   pkgAcqMetaBase(pkgAcquire *Owner,
+                  const std::vector<IndexTarget*>* IndexTargets,
+                  indexRecords* MetaIndexParser,
+                  HashStringList const &ExpectedHashes=HashStringList(),
+                  pkgAcqMetaBase *TransactionManager=NULL)
+      : Item(Owner, ExpectedHashes, TransactionManager),
+        MetaIndexParser(MetaIndexParser), IndexTargets(IndexTargets),
+        AuthPass(false), IMSHit(false) {};
+};
+
+/** \brief An acquire item that downloads the detached signature	{{{
+ *  of a meta-index (Release) file, then queues up the release
+ *  file itself.
+ *
+ *  \todo Why protected members?
+ *
+ *  \sa pkgAcqMetaIndex
+ */
+class pkgAcqMetaSig : public pkgAcqMetaBase
+{
+   void *d;
+
+   protected:
+
+   /** \brief The URI of the signature file.  Unlike Desc.URI, this is
+    *  never modified; it is used to determine the file that is being
+    *  downloaded.
+    */
+   std::string RealURI;
+
+   /** \brief The file we need to verify */
+   std::string MetaIndexFile;
+
+   /** \brief The file we use to verify the MetaIndexFile with */
+   std::string MetaIndexFileSignature;
+
+   /** \brief Long URI description used in the acquire system */
+   std::string URIDesc;
+
+   /** \brief Short URI description used in the acquire system */
+   std::string ShortDesc;
+
+   public:
+   
+   // Specialized action members
+   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual void Done(std::string Message,unsigned long long Size,
+                     HashStringList const &Hashes,
+		     pkgAcquire::MethodConfig *Cnf);
+   virtual std::string Custom600Headers() const;
+   virtual std::string DescURI() {return RealURI; };
+
+   /** \brief Create a new pkgAcqMetaSig. */
+   pkgAcqMetaSig(pkgAcquire *Owner,
+                 pkgAcqMetaBase *TransactionManager,
+                 std::string URI,std::string URIDesc, std::string ShortDesc,
+                 std::string MetaIndexFile,
+		 const std::vector<IndexTarget*>* IndexTargets,
+		 indexRecords* MetaIndexParser);
+   virtual ~pkgAcqMetaSig();
+};
+									/*}}}*/
+
+/** \brief An item that is responsible for downloading the meta-index	{{{
+ *  file (i.e., Release) itself and verifying its signature.
+ *
+ *  Once the download and verification are complete, the downloads of
+ *  the individual index files are queued up using pkgAcqDiffIndex.
+ *  If the meta-index file had a valid signature, the expected hashsums
+ *  of the index files will be the md5sums listed in the meta-index;
+ *  otherwise, the expected hashsums will be "" (causing the
+ *  authentication of the index files to be bypassed).
+ */
+class pkgAcqMetaIndex : public pkgAcqMetaBase
+{
+   void *d;
+
+   protected:
+   /** \brief The URI that is actually being downloaded; never
+    *  modified by pkgAcqMetaIndex.
+    */
+   std::string RealURI;
+
+   std::string URIDesc;
+   std::string ShortDesc;
+
+   /** \brief The URI of the meta-index file for the detached signature */
+   std::string MetaIndexSigURI;
+
+   /** \brief A "URI-style" description of the meta-index file */
+   std::string MetaIndexSigURIDesc;
+
+   /** \brief A brief description of the meta-index file */
+   std::string MetaIndexSigShortDesc;
+
+   /** \brief delayed constructor */
+   void Init(std::string URIDesc, std::string ShortDesc);
+   
+   public:
+
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() {return Desc.URI;};
    virtual std::string Custom600Headers() const;
-   virtual bool ParseIndex(std::string const &IndexFile);
+   virtual std::string DescURI() {return RealURI; };
+   virtual void Finished();
 
-   /** \brief Create a new pkgAcqSubIndex.
-    *
-    *  \param Owner The Acquire object that owns this item.
-    *
-    *  \param URI The URI of the list file to download.
-    *
-    *  \param URIDesc A long description of the list file to download.
-    *
-    *  \param ShortDesc A short description of the list file to download.
-    *
-    *  \param ExpectedHashes The list file's hashsums which are expected.
-    */
-   pkgAcqSubIndex(pkgAcquire *Owner, std::string const &URI,std::string const &URIDesc,
-		   std::string const &ShortDesc, HashStringList const &ExpectedHashes);
+   /** \brief Create a new pkgAcqMetaIndex. */
+   pkgAcqMetaIndex(pkgAcquire *Owner,
+                   pkgAcqMetaBase *TransactionManager,
+		   std::string URI,std::string URIDesc, std::string ShortDesc,
+                   std::string MetaIndexSigURI, std::string MetaIndexSigURIDesc, std::string MetaIndexSigShortDesc,
+		   const std::vector<IndexTarget*>* IndexTargets,
+		   indexRecords* MetaIndexParser);
 };
 									/*}}}*/
+/** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
+class pkgAcqMetaClearSig : public pkgAcqMetaIndex
+{
+   void *d;
+
+   /** \brief The URI of the meta-index file for the detached signature */
+   std::string MetaIndexURI;
+
+   /** \brief A "URI-style" description of the meta-index file */
+   std::string MetaIndexURIDesc;
+
+   /** \brief A brief description of the meta-index file */
+   std::string MetaIndexShortDesc;
+
+   /** \brief The URI of the detached meta-signature file if the clearsigned one failed. */
+   std::string MetaSigURI;
+
+   /** \brief A "URI-style" description of the meta-signature file */
+   std::string MetaSigURIDesc;
+
+   /** \brief A brief description of the meta-signature file */
+   std::string MetaSigShortDesc;
+
+public:
+   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
+   virtual std::string Custom600Headers() const;
+   virtual void Done(std::string Message,unsigned long long Size,
+                     HashStringList const &Hashes,
+		     pkgAcquire::MethodConfig *Cnf);
+
+   /** \brief Create a new pkgAcqMetaClearSig. */
+   pkgAcqMetaClearSig(pkgAcquire *Owner,
+		std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc,
+		std::string const &MetaIndexURI, std::string const &MetaIndexURIDesc, std::string const &MetaIndexShortDesc,
+		std::string const &MetaSigURI, std::string const &MetaSigURIDesc, std::string const &MetaSigShortDesc,
+		const std::vector<IndexTarget*>* IndexTargets,
+		indexRecords* MetaIndexParser);
+   virtual ~pkgAcqMetaClearSig();
+};
+									/*}}}*/
+
 
 /** \brief Common base class for all classes that deal with fetching 	{{{
            indexes
  */
 class pkgAcqBaseIndex : public pkgAcquire::Item
 {
+   void *d;
+
  protected:
    /** \brief Pointer to the IndexTarget data
     */
    const struct IndexTarget * Target;
+
+   /** \brief Pointer to the indexRecords parser */
    indexRecords *MetaIndexParser;
 
+   /** \brief The MetaIndex Key */
+   std::string MetaKey;
+
+   /** \brief The URI of the index file to recreate at our end (either
+    *  by downloading it or by applying partial patches).
+    */
+   std::string RealURI;
+
+   bool VerifyHashByMetaKey(HashStringList const &Hashes);
+
    pkgAcqBaseIndex(pkgAcquire *Owner,
+                   pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser)
-      : Item(Owner, ExpectedHashes), Target(Target), 
+      : Item(Owner, ExpectedHashes, TransactionManager), Target(Target), 
         MetaIndexParser(MetaIndexParser) {};
-
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching an index file of	{{{
@@ -410,14 +649,11 @@ class pkgAcqBaseIndex : public pkgAcquire::Item
  */
 class pkgAcqDiffIndex : public pkgAcqBaseIndex
 {
+   void *d;
+
  protected:
    /** \brief If \b true, debugging information will be written to std::clog. */
    bool Debug;
-
-   /** \brief The URI of the index file to recreate at our end (either
-    *  by downloading it or by applying partial patches).
-    */
-   std::string RealURI;
 
    /** \brief The index file which will be patched to generate the new
     *  file.
@@ -428,6 +664,10 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
     *  pkgAcquire::ItemDesc::Description).
     */
    std::string Description;
+
+   /** \brief If the copy step of the packages file is done
+    */
+   bool PackagesFileReadyInPartial;
 
  public:
    // Specialized action members
@@ -463,6 +703,7 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
     *  \param ExpectedHashes The list file's hashsums which are expected.
     */
    pkgAcqDiffIndex(pkgAcquire *Owner,
+                   pkgAcqMetaBase *TransactionManager,
                    struct IndexTarget const * const Target,
                    HashStringList const &ExpectedHashes,
                    indexRecords *MetaIndexParser);
@@ -481,17 +722,14 @@ class pkgAcqDiffIndex : public pkgAcqBaseIndex
  */
 class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
 {
+   void *d;
+
    protected:
 
    /** \brief If \b true, debugging output will be written to
     *  std::clog.
     */
    bool Debug;
-
-   /** \brief URI of the package index file that is being
-    *  reconstructed.
-    */
-   std::string RealURI;
 
    /** \brief description of the file being downloaded. */
    std::string Description;
@@ -551,6 +789,7 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
     *  check if it was the last one to complete the download step
     */
    pkgAcqIndexMergeDiffs(pkgAcquire *Owner,
+                         pkgAcqMetaBase *TransactionManager,
                          struct IndexTarget const * const Target,
                          HashStringList const &ExpectedHash,
                          indexRecords *MetaIndexParser,
@@ -571,6 +810,8 @@ class pkgAcqIndexMergeDiffs : public pkgAcqBaseIndex
  */
 class pkgAcqIndexDiffs : public pkgAcqBaseIndex
 {
+   void *d;
+
    private:
 
    /** \brief Queue up the next diff download.
@@ -603,11 +844,6 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  std::clog.
     */
    bool Debug;
-
-   /** \brief The URI of the package index file that is being
-    *  reconstructed.
-    */
-   std::string RealURI;
 
    /** A description of the file being downloaded. */
    std::string Description;
@@ -649,7 +885,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
 
    virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string DescURI() {return RealURI + "Index";};
+   virtual std::string DescURI() {return RealURI + "IndexDiffs";};
 
    /** \brief Create an index diff item.
     *
@@ -674,6 +910,7 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
     *  that depends on it.
     */
    pkgAcqIndexDiffs(pkgAcquire *Owner,
+                    pkgAcqMetaBase *TransactionManager,
                     struct IndexTarget const * const Target,
                     HashStringList const &ExpectedHash,
                     indexRecords *MetaIndexParser,
@@ -689,46 +926,68 @@ class pkgAcqIndexDiffs : public pkgAcqBaseIndex
  */
 class pkgAcqIndex : public pkgAcqBaseIndex
 {
+   void *d;
+
    protected:
 
-   /** \brief If \b true, the index file has been decompressed. */
-   bool Decompression;
+   /** \brief The stages the method goes through
+    *
+    *  The method first downloads the indexfile, then its decompressed (or
+    *  copied) and verified
+    */
+   enum AllStages {
+      STAGE_DOWNLOAD,
+      STAGE_DECOMPRESS_AND_VERIFY,
+   };
+   AllStages Stage;
 
-   /** \brief If \b true, the partially downloaded file will be
+   /** \brief Handle what needs to be done when the download is done */
+   void StageDownloadDone(std::string Message,
+                          HashStringList const &Hashes,
+                          pkgAcquire::MethodConfig *Cfg);
+
+   /** \brief Handle what needs to be done when the decompression/copy is
+    *         done 
+    */
+   void StageDecompressDone(std::string Message,
+                            HashStringList const &Hashes,
+                            pkgAcquire::MethodConfig *Cfg);
+
+   /** \brief If \b set, this partially downloaded file will be
     *  removed when the download completes.
     */
-   bool Erase;
-
-   // Unused, used to be used to verify that "Packages: " header was there
-   bool __DELME_ON_NEXT_ABI_BREAK_Verify;
-
-   /** \brief The object that is actually being fetched (minus any
-    *  compression-related extensions).
-    */
-   std::string RealURI;
+   std::string EraseFileName;
 
    /** \brief The compression-related file extensions that are being
     *  added to the downloaded file one by one if first fails (e.g., "gz bz2").
     */
-   std::string CompressionExtension;
+   std::string CompressionExtensions;
 
+   /** \brief The actual compression extension currently used */
+   std::string CurrentCompressionExtension;
 
    /** \brief Do the changes needed to fetch via AptByHash (if needed) */
    void InitByHashIfNeeded(const std::string MetaKey);
 
-   /** \brief Get the full pathname of the final file for the given URI
+   /** \brief Auto select the right compression to use */
+   void AutoSelectCompression();
+
+   /** \brief Get the full pathname of the final file for the current URI
     */
-   std::string GetFinalFilename(std::string const &URI,
-                                std::string const &compExt);
+   std::string GetFinalFilename() const;
 
    /** \brief Schedule file for verification after a IMS hit */
-   void ReverifyAfterIMS(std::string const &FileName);
+   void ReverifyAfterIMS();
+
+   /** \brief Validate the downloaded index file */
+   bool ValidateFile(const std::string &FileName);
 
    public:
    
    // Specialized action members
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
+   virtual void Done(std::string Message,unsigned long long Size, 
+                     HashStringList const &Hashes,
 		     pkgAcquire::MethodConfig *Cnf);
    virtual std::string Custom600Headers() const;
    virtual std::string DescURI() {return Desc.URI;};
@@ -753,12 +1012,12 @@ class pkgAcqIndex : public pkgAcqBaseIndex
     *  fallback is ".gz" or none.
     */
    pkgAcqIndex(pkgAcquire *Owner,std::string URI,std::string URIDesc,
-	       std::string ShortDesc, HashStringList const &ExpectedHashes,
-	       std::string compressExt="");
-   pkgAcqIndex(pkgAcquire *Owner,
+	       std::string ShortDesc, HashStringList const &ExpectedHashes);
+   pkgAcqIndex(pkgAcquire *Owner, pkgAcqMetaBase *TransactionManager,
                IndexTarget const * const Target,
                HashStringList const &ExpectedHash,
                indexRecords *MetaIndexParser);
+               
    void Init(std::string const &URI, std::string const &URIDesc,
              std::string const &ShortDesc);
 };
@@ -772,6 +1031,8 @@ class pkgAcqIndex : public pkgAcqBaseIndex
  */
 class pkgAcqIndexTrans : public pkgAcqIndex
 {
+   void *d;
+
    public:
   
    virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
@@ -788,15 +1049,21 @@ class pkgAcqIndexTrans : public pkgAcqIndex
     *
     *  \param ShortDesc A brief description of this index file.
     */
-   pkgAcqIndexTrans(pkgAcquire *Owner,std::string URI,std::string URIDesc,
+   pkgAcqIndexTrans(pkgAcquire *Owner,
+                    std::string URI,std::string URIDesc,
 		    std::string ShortDesc);
-   pkgAcqIndexTrans(pkgAcquire *Owner, IndexTarget const * const Target,
-		    HashStringList const &ExpectedHashes, indexRecords *MetaIndexParser);
+   pkgAcqIndexTrans(pkgAcquire *Owner,
+                    pkgAcqMetaBase *TransactionManager,
+                    IndexTarget const * const Target,
+                    HashStringList const &ExpectedHashes,
+                    indexRecords *MetaIndexParser);
 };
 									/*}}}*/
 /** \brief Information about an index file. */				/*{{{*/
 class IndexTarget
 {
+   void *d;
+
  public:
    /** \brief A URI from which the index file can be downloaded. */
    std::string URI;
@@ -815,222 +1082,16 @@ class IndexTarget
    virtual bool IsOptional() const {
       return false;
    }
-   virtual bool IsSubIndex() const {
-      return false;
-   }
 };
 									/*}}}*/
 /** \brief Information about an optional index file. */			/*{{{*/
 class OptionalIndexTarget : public IndexTarget
 {
+   void *d;
+
    virtual bool IsOptional() const {
       return true;
    }
-};
-									/*}}}*/
-/** \brief Information about an subindex index file. */			/*{{{*/
-class SubIndexTarget : public IndexTarget
-{
-   virtual bool IsSubIndex() const {
-      return true;
-   }
-};
-									/*}}}*/
-/** \brief Information about an subindex index file. */			/*{{{*/
-class OptionalSubIndexTarget : public OptionalIndexTarget
-{
-   virtual bool IsSubIndex() const {
-      return true;
-   }
-};
-									/*}}}*/
-
-/** \brief An acquire item that downloads the detached signature	{{{
- *  of a meta-index (Release) file, then queues up the release
- *  file itself.
- *
- *  \todo Why protected members?
- *
- *  \sa pkgAcqMetaIndex
- */
-class pkgAcqMetaSig : public pkgAcquire::Item
-{
-   protected:
-   /** \brief The last good signature file */
-   std::string LastGoodSig;
-
-   /** \brief The URI of the signature file.  Unlike Desc.URI, this is
-    *  never modified; it is used to determine the file that is being
-    *  downloaded.
-    */
-   std::string RealURI;
-
-   /** \brief The URI of the meta-index file to be fetched after the signature. */
-   std::string MetaIndexURI;
-
-   /** \brief A "URI-style" description of the meta-index file to be
-    *  fetched after the signature.
-    */
-   std::string MetaIndexURIDesc;
-
-   /** \brief A brief description of the meta-index file to be fetched
-    *  after the signature.
-    */
-   std::string MetaIndexShortDesc;
-
-   /** \brief A package-system-specific parser for the meta-index file. */
-   indexRecords* MetaIndexParser;
-
-   /** \brief The index files which should be looked up in the meta-index
-    *  and then downloaded.
-    *
-    *  \todo Why a list of pointers instead of a list of structs?
-    */
-   const std::vector<IndexTarget*>* IndexTargets;
-
-   public:
-   
-   // Specialized action members
-   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() {return RealURI; };
-
-   /** \brief Create a new pkgAcqMetaSig. */
-   pkgAcqMetaSig(pkgAcquire *Owner,std::string URI,std::string URIDesc, std::string ShortDesc,
-		 std::string MetaIndexURI, std::string MetaIndexURIDesc, std::string MetaIndexShortDesc,
-		 const std::vector<IndexTarget*>* IndexTargets,
-		 indexRecords* MetaIndexParser);
-   virtual ~pkgAcqMetaSig();
-};
-									/*}}}*/
-/** \brief An item that is responsible for downloading the meta-index	{{{
- *  file (i.e., Release) itself and verifying its signature.
- *
- *  Once the download and verification are complete, the downloads of
- *  the individual index files are queued up using pkgAcqDiffIndex.
- *  If the meta-index file had a valid signature, the expected hashsums
- *  of the index files will be the md5sums listed in the meta-index;
- *  otherwise, the expected hashsums will be "" (causing the
- *  authentication of the index files to be bypassed).
- */
-class pkgAcqMetaIndex : public pkgAcquire::Item
-{
-   protected:
-   /** \brief The URI that is actually being downloaded; never
-    *  modified by pkgAcqMetaIndex.
-    */
-   std::string RealURI;
-
-   /** \brief The file in which the signature for this index was stored.
-    *
-    *  If empty, the signature and the md5sums of the individual
-    *  indices will not be checked.
-    */
-   std::string SigFile;
-
-   /** \brief The index files to download. */
-   const std::vector<IndexTarget*>* IndexTargets;
-
-   /** \brief The parser for the meta-index file. */
-   indexRecords* MetaIndexParser;
-
-   /** \brief If \b true, the index's signature is currently being verified.
-    */
-   bool AuthPass;
-   // required to deal gracefully with problems caused by incorrect ims hits
-   bool IMSHit; 
-
-   /** \brief Check that the release file is a release file for the
-    *  correct distribution.
-    *
-    *  \return \b true if no fatal errors were encountered.
-    */
-   bool VerifyVendor(std::string Message);
-
-   /** \brief Called when a file is finished being retrieved.
-    *
-    *  If the file was not downloaded to DestFile, a copy process is
-    *  set up to copy it to DestFile; otherwise, Complete is set to \b
-    *  true and the file is moved to its final location.
-    *
-    *  \param Message The message block received from the fetch
-    *  subprocess.
-    */
-   void RetrievalDone(std::string Message);
-
-   /** \brief Called when authentication succeeded.
-    *
-    *  Sanity-checks the authenticated file, queues up the individual
-    *  index files for download, and saves the signature in the lists
-    *  directory next to the authenticated list file.
-    *
-    *  \param Message The message block received from the fetch
-    *  subprocess.
-    */
-   void AuthDone(std::string Message);
-
-   /** \brief Starts downloading the individual index files.
-    *
-    *  \param verify If \b true, only indices whose expected hashsum
-    *  can be determined from the meta-index will be downloaded, and
-    *  the hashsums of indices will be checked (reporting
-    *  #StatAuthError if there is a mismatch).  If verify is \b false,
-    *  no hashsum checking will be performed.
-    */
-   void QueueIndexes(bool verify);
-   
-   public:
-   
-   // Specialized action members
-   virtual void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual void Done(std::string Message,unsigned long long Size, HashStringList const &Hashes,
-		     pkgAcquire::MethodConfig *Cnf);
-   virtual std::string Custom600Headers() const;
-   virtual std::string DescURI() {return RealURI; };
-
-   /** \brief Create a new pkgAcqMetaIndex. */
-   pkgAcqMetaIndex(pkgAcquire *Owner,
-		   std::string URI,std::string URIDesc, std::string ShortDesc,
-		   std::string SigFile,
-		   const std::vector<IndexTarget*>* IndexTargets,
-		   indexRecords* MetaIndexParser);
-};
-									/*}}}*/
-/** \brief An item repsonsible for downloading clearsigned metaindexes	{{{*/
-class pkgAcqMetaClearSig : public pkgAcqMetaIndex
-{
-   /** \brief The URI of the meta-index file for the detached signature */
-   std::string MetaIndexURI;
-
-   /** \brief A "URI-style" description of the meta-index file */
-   std::string MetaIndexURIDesc;
-
-   /** \brief A brief description of the meta-index file */
-   std::string MetaIndexShortDesc;
-
-   /** \brief The URI of the detached meta-signature file if the clearsigned one failed. */
-   std::string MetaSigURI;
-
-   /** \brief A "URI-style" description of the meta-signature file */
-   std::string MetaSigURIDesc;
-
-   /** \brief A brief description of the meta-signature file */
-   std::string MetaSigShortDesc;
-
-public:
-   void Failed(std::string Message,pkgAcquire::MethodConfig *Cnf);
-   virtual std::string Custom600Headers() const;
-
-   /** \brief Create a new pkgAcqMetaClearSig. */
-   pkgAcqMetaClearSig(pkgAcquire *Owner,
-		std::string const &URI, std::string const &URIDesc, std::string const &ShortDesc,
-		std::string const &MetaIndexURI, std::string const &MetaIndexURIDesc, std::string const &MetaIndexShortDesc,
-		std::string const &MetaSigURI, std::string const &MetaSigURIDesc, std::string const &MetaSigShortDesc,
-		const std::vector<IndexTarget*>* IndexTargets,
-		indexRecords* MetaIndexParser);
-   virtual ~pkgAcqMetaClearSig();
 };
 									/*}}}*/
 /** \brief An item that is responsible for fetching a package file.	{{{
@@ -1040,6 +1101,8 @@ public:
  */
 class pkgAcqArchive : public pkgAcquire::Item
 {
+   void *d;
+
    protected:
    /** \brief The package version being fetched. */
    pkgCache::VerIterator Version;
@@ -1118,6 +1181,8 @@ class pkgAcqArchive : public pkgAcquire::Item
  */
 class pkgAcqFile : public pkgAcquire::Item
 {
+   void *d;
+
    /** \brief How many times to retry the download, set from
     *  Acquire::Retries.
     */

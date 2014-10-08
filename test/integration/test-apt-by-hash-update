@@ -34,7 +34,7 @@ Building dependency tree...
 E: Unable to locate package foo" aptget install -q -s foo
 
 # ensure we can apt-get update by hash
-testsuccess aptget update -o APT::Acquire::By-Hash=1
+testsuccess aptget update -o APT::Acquire::By-Hash=1 
 
 # ensure it works
 testequal "Inst foo (1.0 unstable [all])

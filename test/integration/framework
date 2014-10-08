@@ -47,6 +47,9 @@ msgskip() { printf "${CWARNING}SKIP${CNORMAL}\n" >&2; }
 msgfail() {
 	if [ $# -gt 0 ]; then printf "${CFAIL}FAIL: $*${CNORMAL}\n" >&2;
 	else printf "${CFAIL}FAIL${CNORMAL}\n" >&2; fi
+        if [ -n "$APT_DEBUG_TESTS" ]; then
+            bash
+        fi
 	EXIT_CODE=$((EXIT_CODE+1));
 }
 
@@ -164,9 +167,10 @@ addtrap() {
 
 setupenvironment() {
 	TMPWORKINGDIRECTORY=$(mktemp -d)
-	TESTDIRECTORY=$(readlink -f $(dirname $0))
+	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
 	msgninfo "Preparing environment for ${CCMD}$(basename $0)${CINFO} in ${TMPWORKINGDIRECTORY}… "
 
+	TESTDIRECTORY=$(readlink -f $(dirname $0))
         # allow overriding the default BUILDDIR location
 	BUILDDIRECTORY=${APT_INTEGRATION_TESTS_BUILD_DIR:-"${TESTDIRECTORY}/../../build/bin"}
 	LIBRARYPATH=${APT_INTEGRATION_TESTS_LIBRARY_PATH:-"${BUILDDIRECTORY}"}
@@ -177,7 +181,6 @@ setupenvironment() {
 	test -x "${BUILDDIRECTORY}/apt-get" || msgdie "You need to build tree first"
         # -----
 
-	addtrap "cd /; rm -rf $TMPWORKINGDIRECTORY;"
 	cd $TMPWORKINGDIRECTORY
 	mkdir rootdir aptarchive keys
 	cd rootdir
@@ -210,7 +213,9 @@ setupenvironment() {
 		cp "${TESTDIRECTORY}/${SOURCESSFILE}" aptarchive/Sources
 	fi
 	cp $(find $TESTDIRECTORY -name '*.pub' -o -name '*.sec') keys/
+	chmod 644 $(find keys -name '*.pub' -o -name '*.sec')
 	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
@@ -228,8 +233,14 @@ setupenvironment() {
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	echo 'quiet::NoStatistic "true";' >> aptconfig.conf
+	# too distracting for users, but helpful to detect changes
+	echo 'Acquire::Progress::Ignore::ShowErrorText "true";' >> aptconfig.conf
+	# in testcases, it can appear as if localhost has a rotation setup,
+	# hide this as we can't really deal with it properly
+	echo 'Acquire::Failure::ShowIP "false";' >> aptconfig.conf
+
 	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
-        echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
+	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 
 	# cleanup the environment a bit
@@ -714,7 +725,7 @@ buildaptarchivefromincoming() {
 	aptftparchive -qq generate ftparchive.conf
 	cd - > /dev/null
 	msgdone "info"
-	generatereleasefiles
+	generatereleasefiles "$@"
 }
 
 buildaptarchivefromfiles() {
@@ -829,17 +840,20 @@ setupflataptarchive() {
 }
 
 setupaptarchive() {
-	buildaptarchive
+	local NOUPDATE=0
+	if [ "$1" = '--no-update' ]; then
+		NOUPDATE=1
+		shift
+	fi
+	buildaptarchive "$@"
 	if [ -e aptarchive/dists ]; then
 		setupdistsaptarchive
 	else
 		setupflataptarchive
 	fi
-	signreleasefiles
-	if [ "$1" != '--no-update' ]; then
-		msgninfo "\tSync APT's cache with the archive… "
-		aptget update -qq
-		msgdone "info"
+	signreleasefiles 'Joe Sixpack' "$@"
+	if [ "1" != "$NOUPDATE" ]; then
+		testsuccess aptget update -o Debug::pkgAcquire::Worker=true -o Debug::Acquire::gpgv=true
 	fi
 }
 
@@ -1172,6 +1186,19 @@ testfailure() {
 		msgfail
 	else
 		msgpass
+	fi
+}
+
+testaccessrights() {
+	msgtest "Test that file $1 has access rights set to" "$2"
+	if [ "$2" = "$(stat --format '%a' "$1")" ]; then
+		msgpass
+	else
+		echo >&2
+		ls -l >&2 "$1"
+		echo -n >&2 "stat(1) reports access rights: "
+		stat --format '%a' "$1"
+		msgfail
 	fi
 }
 

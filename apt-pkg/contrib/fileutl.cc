@@ -1521,7 +1521,7 @@ bool FileFd::Read(void *To,unsigned long long Size,unsigned long long *Actual)
 	    int err;
 	    char const * const errmsg = BZ2_bzerror(d->bz2, &err);
 	    if (err != BZ_IO_ERROR)
-	       return FileFdError("BZ2_bzread: %s (%d: %s)", _("Read error"), err, errmsg);
+	       return FileFdError("BZ2_bzread: %s %s (%d: %s)", FileName.c_str(), _("Read error"), err, errmsg);
 	 }
 #endif
 #ifdef HAVE_LZMA

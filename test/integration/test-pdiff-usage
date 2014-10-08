@@ -94,7 +94,7 @@ SHA256-Patches:
 " aptcache show apt newstuff
 
 	msgmsg "Testcase: index is already up-to-date: $*"
-	find rootdir/var/lib/apt/lists -name '*.IndexDiff' -type f -delete
+	find rootdir/var/lib/apt/lists -name '*diff_Index' -type f -delete
 	testsuccess aptget update "$@"
 	testequal "$(cat ${PKGFILE}-new)
 " aptcache show apt newstuff
@@ -182,6 +182,7 @@ SHA256-Patches:
 " aptcache show apt newstuff
 }
 echo 'Debug::pkgAcquire::Diffs "true";
+Debug::Acquire::Transaction "true";
 Debug::pkgAcquire::rred "true";' > rootdir/etc/apt/apt.conf.d/rreddebug.conf
 
 testrun -o Acquire::PDiffs::Merge=0 -o APT::Get::List-Cleanup=1

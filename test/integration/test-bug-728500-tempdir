@@ -17,7 +17,7 @@ msgtest 'Test apt-get update with incorrect' 'TMPDIR'
 OUTPUT=$(mktemp)
 addtrap "rm $OUTPUT;"
 export TMPDIR=/does-not-exists
-if aptget update >${OUTPUT} 2>&1; then
+if aptget update -o Debug::Acquire::gpg=1 >${OUTPUT} 2>&1; then
 	msgpass
 else
 	echo
