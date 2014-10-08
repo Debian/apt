@@ -665,7 +665,7 @@ static bool DoDownload(CommandLine &CmdL)
    {
       pkgAcquire::UriIterator I = Fetcher.UriBegin();
       for (; I != Fetcher.UriEnd(); ++I)
-	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile) << ' ' <<
+	 cout << '\'' << I->URI << "' " << flNotDir(I->Owner->DestFile)  << ' ' <<
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
@@ -1566,7 +1566,7 @@ static bool DoChangelog(CommandLine &CmdL)
    {
       string changelogfile;
       if (downOnly == false)
-	 changelogfile.append(tmpname).append("changelog");
+	 changelogfile.append(tmpname).append("/changelog");
       else
 	 changelogfile.append(Ver.ParentPkg().Name()).append(".changelog");
       if (DownloadChangelog(Cache, Fetcher, Ver, changelogfile) && downOnly == false)

@@ -29,6 +29,8 @@ aptget update -qq -o Debug::pkgAcquire::Auth=1 2> output.log
 canary="SHA512:$(bzcat aptarchive/dists/unstable/main/binary-amd64/Packages.bz2 | sha512sum |cut -f1 -d' ')"
 grep -q "RecivedHash: $canary" output.log
 
+# foo is still available
+testsuccess aptget install -s foo
 
 # the cleanup should still work
 chmod 750 aptarchive/dists/unstable/main/binary-amd64
