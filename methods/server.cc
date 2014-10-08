@@ -715,7 +715,7 @@ unsigned long long
 ServerMethod::FindMaximumObjectSizeInQueue() const 
 {
    unsigned long long MaxSizeInQueue = 0;
-   for (FetchItem *I = Queue->Next; I != 0 && I != QueueBack; I = I->Next)
+   for (FetchItem *I = Queue; I != 0 && I != QueueBack; I = I->Next)
       MaxSizeInQueue = std::max(MaxSizeInQueue, I->MaximumSize);
    return MaxSizeInQueue;
 }
