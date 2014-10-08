@@ -1,3 +1,83 @@
+apt (1.1~exp4) UNRELEASED; urgency=medium
+
+  [ Michael Vogt ]
+  * Merge sid version 1.0.9.2
+  * feature/acq-trans:
+    - Make apt-get update more transactional by keeping all data from
+      a sources.list line in partial/ until all data is good and only
+      then move it into lists/ in one step
+    - add new -o Debug::Acquire::Transaction=1 debug option
+  * feature/expected-size:
+    Do not download more data in the mehotds than expected if we know
+    the size. For the InRelease/Release/Release.gpg add new 
+    Acquire::MaxReleaseFileSize that defaults to 10Mb for now
+  * Verify the the hashes of the downloaded compressed files early
+  * Only load unauthenticated data into our parsers when the user
+    explicitly asked for it via --allow-insecure-repositories
+    (Acquire::AllowInsecureRepositories)
+  * Print warning when trying to use unauthenticated repositories
+  * Use /var/empty as the homedir for _apt
+  * Revert making pkgAcquire::Item::DescURI() "const" to not break
+    API
+  * Do not allow going from a authenticated to unauthenticated repository
+  * Add missing "adduser" dependency (for the new _apt user)
+    Thanks to Russ Allbery (Closes: #763004)
+  * Test if TMPDIR is a directory in apt-key and if not unset it
+  * add early verification for the .diff/Index download
+  * Bump library version to libapt-pkg4.14
+  * Rework pkgAcqMeta{Index,Sig,ClearSig}::{Done,Failed]() for readability
+  * Ignore EINVAL from prctl(PR_SET_NO_NEW_PRIVS) (closes: 764066)
+
+  [ David Kalnischkies ]
+  * deprecate Pkg->Name in favor of Grp->Name
+  * drop stored StringItems in favor of in-memory mappings
+  * de-duplicate version strings in the cache
+  * fix progress output for (dist-)upgrade calculation
+  * move PCI::From* methods into CacheSetHelper class (Closes: 686221)
+  * add a (hidden) --quiet option for apt-key
+  * only create new trusted.gpg if directory is writeable
+  * support (multiple) arguments properly in apt-key
+  * set a primary-keyring only if we have access to it
+  * merge fragment keyrings in apt-key to avoid hitting gpg limits
+    (Closes: 733028)
+  * use apt-key adv (+ gnupg) instead of gpgv for verify
+  * support gnupg2 as drop-in replacement for gnupg
+  * allow to specify fingerprints in 'apt-key del'
+  * use only one --keyring in gpg interactions
+  * add and use 'apt-key verify' which prefers gpgv over gpg
+  * remove empty keyrings in trusted.gpg.d on upgrade
+  * store source name and version in binary cache
+  * allow fetcher setup without directory creation (Closes: 762898)
+  * cleanup partial directory of lists in apt-get clean (Closes: #762889)
+  * allow options between command and -- on commandline
+  * update symbols file
+  * support parsing of all hashes for pdiff
+  * ensure world-readability for trusted.gpg in postinst (Closes: 647001)
+  * ensure partial dirs are 0700 and owned by _apt:root
+  * use _apt:root only for partial directories
+  * display errortext for all Err
+  * set PR_SET_NO_NEW_PRIVS also if run as non-root
+
+  [ James McCoy ]
+  * ensure apt-key del handles 16-byte key ids (Closes: 754436)
+
+  [ Kenshi Muto ]
+  * Japanese program translation update (Closes: 763033)
+
+  [ Trần Ngọc Quân ]
+  * Set STRIP_FROM_PATH for doxygen
+
+  [ Mert Dirik ]
+  * Turkish program translation update (Closes: 763379)
+
+  [ Guillem Jover ]
+  * apt-get: Create the temporary downloaded changelog inside tmpdir
+
+  [ Miroslav Kure ]
+  * [l10n] Updated Czech translation of apt (Closes: #764055)
+
+ -- Michael Vogt <mvo@ubuntu.com>  Wed, 08 Oct 2014 09:37:35 +0200
+
 apt (1.1~exp3) experimental; urgency=medium
 
   [ Michael Vogt ]
