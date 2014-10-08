@@ -106,6 +106,10 @@ class ServerMethod : public pkgAcqMethod
    unsigned long PipelineDepth;
    bool AllowRedirect;
 
+   // Find the biggest item in the fetch queue for the checking of the maximum
+   // size
+   unsigned long long FindMaximumObjectSizeInQueue() const APT_PURE;
+
    public:
    bool Debug;
 
