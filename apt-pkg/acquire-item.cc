@@ -1545,10 +1545,13 @@ void pkgAcqMetaBase::AbortTransaction()
       if ((*I)->Status == pkgAcquire::Item::StatIdle)
          (*I)->Status = pkgAcquire::Item::StatDone;
 
-      // kill files in partial
-      std::string const PartialFile = GetPartialFileName(flNotDir((*I)->DestFile));
-      if(FileExists(PartialFile))
-         Rename(PartialFile, PartialFile + ".FAILED");
+      // kill failed files in partial
+      if ((*I)->Status == pkgAcquire::Item::StatError)
+      {
+         std::string const PartialFile = GetPartialFileName(flNotDir((*I)->DestFile));
+         if(FileExists(PartialFile))
+            Rename(PartialFile, PartialFile + ".FAILED");
+      }
    }
 }
 									/*}}}*/
