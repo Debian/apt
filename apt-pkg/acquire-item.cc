@@ -2480,7 +2480,7 @@ bool pkgAcqArchive::QueueNext()
 	 else
 	 {
 	    PartialSize = Buf.st_size;
-	    ChangeOwnerAndPermissionOfFile("pkgAcqArchive::QueueNext", FinalFile.c_str(), "_apt", "root", 0600);
+	    ChangeOwnerAndPermissionOfFile("pkgAcqArchive::QueueNext", DestFile.c_str(), "_apt", "root", 0600);
 	 }
       }
 
