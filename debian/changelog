@@ -87,6 +87,34 @@ apt (1.1~exp1) experimental; urgency=low
 
  -- Michael Vogt <mvo@debian.org>  Thu, 19 Jun 2014 12:01:48 +0200
 
+apt (1.0.9.2) unstable; urgency=medium
+
+  [ Michael Vogt ]
+  * test/integration/test-apt-update-file: improve test
+  * Fix regression when copy: is used for a relative path (Closes: #762160)
+  * generalize Acquire::GzipIndex to support all compressions that
+    apt supports
+  * Fix regression for cdrom: sources from latest security update
+  * Ensure that iTFRewritePackageOrder is "MD5sum" to match 
+    apt-ftparchive
+  * debian/rules: add hardening=+all.
+    Thanks to Simon Ruderich, Markus Waldeck
+
+  [ Holger Wansing ]
+  * German program translation update (Closes: 762223)
+
+  [ Jérémy Bobbio ]
+  * disable timestamps in the footer of docs by doxygen
+
+  [ Trần Ngọc Quân ]
+  * Set STRIP_FROM_PATH for doxygen
+
+  [ Guillem Jover ]
+  * apt-get: Create the temporary downloaded changelog inside tmpdir
+    (closes: #763780)
+
+ -- Michael Vogt <mvo@debian.org>  Thu, 02 Oct 2014 22:05:39 +0200
+
 apt (1.0.9.1) unstable; urgency=high
 
   [ Michael Vogt ]
