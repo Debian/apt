@@ -63,6 +63,8 @@ class CircleBuf
 
    public:
    Hashes *Hash;
+   // total amount of data that got written so far
+   unsigned long long TotalWriten;
 
    // Read data in
    bool Read(int Fd);
@@ -81,8 +83,8 @@ class CircleBuf
    bool ReadSpace() const {return Size - (InP - OutP) > 0;};
    bool WriteSpace() const {return InP - OutP > 0;};
 
-   // Dump everything
    void Reset();
+   // Dump everything
    void Stats();
 
    CircleBuf(unsigned long long Size);

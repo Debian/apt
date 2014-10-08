@@ -532,6 +532,13 @@ int ServerMethod::Loop()
 
 	    // Run the data
 	    bool Result = true;
+
+            // ensure we don't fetch too much
+            // we could do "Server->MaximumSize = Queue->MaximumSize" here
+            // but that would break the clever pipeline messup detection
+            // so instead we use the size of the biggest item in the queue
+            Server->MaximumSize = FindMaximumObjectSizeInQueue();
+
             if (Server->HaveContent)
 	       Result = Server->RunData(File);
 
@@ -605,7 +612,10 @@ int ServerMethod::Loop()
 		  QueueBack = Queue;
 	       }
 	       else
+               {
+                  Server->Close();
 		  Fail(true);
+               }
 	    }
 	    break;
 	 }
@@ -698,5 +708,15 @@ int ServerMethod::Loop()
    }
    
    return 0;
+}
+									/*}}}*/
+                         						/*{{{*/
+unsigned long long
+ServerMethod::FindMaximumObjectSizeInQueue() const 
+{
+   unsigned long long MaxSizeInQueue = 0;
+   for (FetchItem *I = Queue->Next; I != 0 && I != QueueBack; I = I->Next)
+      MaxSizeInQueue = std::max(MaxSizeInQueue, I->MaximumSize);
+   return MaxSizeInQueue;
 }
 									/*}}}*/

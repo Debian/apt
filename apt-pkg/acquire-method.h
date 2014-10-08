@@ -48,6 +48,10 @@ class pkgAcqMethod
       bool IndexFile;
       bool FailIgnore;
       HashStringList ExpectedHashes;
+      // a maximum size we will download, this can be the exact filesize
+      // for when we know it or a arbitrary limit when we don't know the
+      // filesize (like a InRelease file)
+      unsigned long long MaximumSize;
    };
    
    struct FetchResult

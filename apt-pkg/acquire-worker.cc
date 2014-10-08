@@ -534,6 +534,12 @@ bool pkgAcquire::Worker::QueueItem(pkgAcquire::Queue::QItem *Item)
    HashStringList const hsl = Item->Owner->HashSums();
    for (HashStringList::const_iterator hs = hsl.begin(); hs != hsl.end(); ++hs)
       Message += "\nExpected-" + hs->HashType() + ": " + hs->HashValue();
+   if(Item->Owner->FileSize > 0)
+   {
+      string MaximumSize;
+      strprintf(MaximumSize, "%llu", Item->Owner->FileSize);
+      Message += "\nMaximum-Size: " + MaximumSize;
+   }
    Message += Item->Owner->Custom600Headers();
    Message += "\n\n";
    

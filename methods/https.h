@@ -66,11 +66,12 @@ class HttpsMethod : public pkgAcqMethod
    CURL *curl;
    FetchResult Res;
    HttpsServerState *Server;
+   unsigned long long TotalWritten;
 
    public:
    FileFd *File;
-
-   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), Server(NULL), File(NULL)
+      
+   HttpsMethod() : pkgAcqMethod("1.2",Pipeline | SendConfig), Server(NULL), TotalWritten(0), File(NULL)
    {
       curl = curl_easy_init();
    };

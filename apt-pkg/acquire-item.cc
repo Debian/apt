@@ -148,8 +148,12 @@ void pkgAcquire::Item::Failed(string Message,pkgAcquire::MethodConfig *Cnf)
    else
       Status = StatIdle;
 
-   // report mirror failure back to LP if we actually use a mirror
+   // check fail reason
    string FailReason = LookupTag(Message, "FailReason");
+   if(FailReason == "MaximumSizeExceeded")
+      Rename(DestFile, DestFile+".FAILED");
+
+   // report mirror failure back to LP if we actually use a mirror
    if(FailReason.size() != 0)
       ReportMirrorFailure(FailReason);
    else
@@ -1690,14 +1694,8 @@ pkgAcqMetaSig::~pkgAcqMetaSig()						/*{{{*/
 // ---------------------------------------------------------------------
 string pkgAcqMetaSig::Custom600Headers() const
 {
-   string FinalFile = _config->FindDir("Dir::State::lists");
-   FinalFile += URItoFileName(RealURI);
-
-   struct stat Buf;
-   if (stat(FinalFile.c_str(),&Buf) != 0)
-      return "\nIndex-File: true";
-
-   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+   std::string Header = GetCustom600Headers(RealURI);
+   return Header;
 }
 									/*}}}*/
 // pkgAcqMetaSig::Done - The signature was downloaded/verified		/*{{{*/
@@ -1842,14 +1840,7 @@ void pkgAcqMetaIndex::Init(std::string URIDesc, std::string ShortDesc)
 // ---------------------------------------------------------------------
 string pkgAcqMetaIndex::Custom600Headers() const
 {
-   string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(RealURI);
-   
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) != 0)
-      return "\nIndex-File: true";
-   
-   return "\nIndex-File: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+   return GetCustom600Headers(RealURI);
 }
 									/*}}}*/
 void pkgAcqMetaIndex::Done(string Message,unsigned long long Size,	/*{{{*/
@@ -1908,6 +1899,26 @@ bool pkgAcqMetaBase::CheckAuthDone(string Message, const string &RealURI)	/*{{{*
    QueueIndexes(true);
 
    return true;
+}
+									/*}}}*/
+// pkgAcqMetaBase::GetCustom600Headers - Get header for AcqMetaBase     /*{{{*/
+// ---------------------------------------------------------------------
+string pkgAcqMetaBase::GetCustom600Headers(const string &RealURI) const
+{
+   std::string Header = "\nIndex-File: true";
+   std::string MaximumSize;
+   strprintf(MaximumSize, "\nMaximum-Size: %i",
+             _config->FindI("Acquire::MaxReleaseFileSize", 10*1000*1000));
+   Header += MaximumSize;
+
+   string FinalFile = _config->FindDir("Dir::State::lists");
+   FinalFile += URItoFileName(RealURI);
+
+   struct stat Buf;
+   if (stat(FinalFile.c_str(),&Buf) == 0)
+      Header += "\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+
+   return Header;
 }
 									/*}}}*/
 // pkgAcqMetaBase::QueueForSignatureVerify				/*{{{*/
@@ -2187,17 +2198,9 @@ pkgAcqMetaClearSig::~pkgAcqMetaClearSig()				/*{{{*/
 // ---------------------------------------------------------------------
 string pkgAcqMetaClearSig::Custom600Headers() const
 {
-   string Final = _config->FindDir("Dir::State::lists");
-   Final += URItoFileName(RealURI);
-
-   struct stat Buf;
-   if (stat(Final.c_str(),&Buf) != 0)
-   {
-      if (stat(Final.c_str(),&Buf) != 0)
-	 return "\nIndex-File: true\nFail-Ignore: true\n";
-   }
-
-   return "\nIndex-File: true\nFail-Ignore: true\nLast-Modified: " + TimeRFC1123(Buf.st_mtime);
+   string Header = GetCustom600Headers(RealURI);
+   Header += "\nFail-Ignore: true";
+   return Header;
 }
 									/*}}}*/
 // pkgAcqMetaClearSig::Done - We got a file                     	/*{{{*/

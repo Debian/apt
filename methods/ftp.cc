@@ -849,7 +849,8 @@ bool FTPConn::Finalize()
 /* This opens a data connection, sends REST and RETR and then
    transfers the file over. */
 bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
-		  Hashes &Hash,bool &Missing)
+		  Hashes &Hash,bool &Missing, unsigned long long MaximumSize,
+                  pkgAcqMethod *Owner)
 {
    Missing = false;
    if (CreateDataFd() == false)
@@ -922,7 +923,14 @@ bool FTPConn::Get(const char *Path,FileFd &To,unsigned long long Resume,
       {
 	 Close();
 	 return false;
-      }      
+      }
+
+      if (MaximumSize > 0 && To.Tell() > MaximumSize)
+      {
+         Owner->SetFailReason("MaximumSizeExceeded");
+         return _error->Error("Writing more data than expected (%llu > %llu)",
+                              To.Tell(), MaximumSize);
+      }
    }
 
    // All done
@@ -1063,7 +1071,7 @@ bool FtpMethod::Fetch(FetchItem *Itm)
       FailFd = Fd.Fd();
       
       bool Missing;
-      if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing) == false)
+      if (Server->Get(File,Fd,Res.ResumePoint,Hash,Missing,Itm->MaximumSize,this) == false)
       {
 	 Fd.Close();
 

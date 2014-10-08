@@ -49,6 +49,8 @@ struct ServerState
    URI Proxy;
    unsigned long TimeOut;
 
+   unsigned long long MaximumSize;
+
    protected:
    ServerMethod *Owner;
 
@@ -73,7 +75,7 @@ struct ServerState
    bool Comp(URI Other) const {return Other.Host == ServerName.Host && Other.Port == ServerName.Port;};
    virtual void Reset() {Major = 0; Minor = 0; Result = 0; Code[0] = '\0'; Size = 0;
 		 StartPos = 0; Encoding = Closes; time(&Date); HaveContent = false;
-		 State = Header; Persistent = false; Pipeline = true;};
+		 State = Header; Persistent = false; Pipeline = true; MaximumSize = 0;};
    virtual bool WriteResponse(std::string const &Data) = 0;
 
    /** \brief Transfer the data from the socket */
@@ -103,6 +105,10 @@ class ServerMethod : public pkgAcqMethod
 
    unsigned long PipelineDepth;
    bool AllowRedirect;
+
+   // Find the biggest item in the fetch queue for the checking of the maximum
+   // size
+   unsigned long long FindMaximumObjectSizeInQueue() const APT_PURE;
 
    public:
    bool Debug;
