@@ -215,6 +215,7 @@ setupenvironment() {
 	cp $(find $TESTDIRECTORY -name '*.pub' -o -name '*.sec') keys/
 	chmod 644 $(find keys -name '*.pub' -o -name '*.sec')
 	ln -s ${TMPWORKINGDIRECTORY}/keys/joesixpack.pub rootdir/etc/apt/trusted.gpg.d/joesixpack.gpg
+
 	echo "Dir \"${TMPWORKINGDIRECTORY}/rootdir\";" > aptconfig.conf
 	echo "Dir::state::status \"${TMPWORKINGDIRECTORY}/rootdir/var/lib/dpkg/status\";" >> aptconfig.conf
 	echo "Debug::NoLocking \"true\";" >> aptconfig.conf
@@ -232,8 +233,14 @@ setupenvironment() {
 	echo "DPKG::options:: \"--log=${TMPWORKINGDIRECTORY}/rootdir/var/log/dpkg.log\";" >> aptconfig.conf
 	echo 'quiet::NoUpdate "true";' >> aptconfig.conf
 	echo 'quiet::NoStatistic "true";' >> aptconfig.conf
+	# too distracting for users, but helpful to detect changes
+	echo 'Acquire::Progress::Ignore::ShowErrorText "true";' >> aptconfig.conf
+	# in testcases, it can appear as if localhost has a rotation setup,
+	# hide this as we can't really deal with it properly
+	echo 'Acquire::Failure::ShowIP "false";' >> aptconfig.conf
+
 	echo "Acquire::https::CaInfo \"${TESTDIR}/apt.pem\";" > rootdir/etc/apt/apt.conf.d/99https
-        echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
+	echo "Apt::Cmd::Disable-Script-Warning \"1\";" > rootdir/etc/apt/apt.conf.d/apt-binary
 	configcompression '.' 'gz' #'bz2' 'lzma' 'xz'
 
 	# cleanup the environment a bit
