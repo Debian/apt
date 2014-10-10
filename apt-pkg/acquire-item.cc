@@ -1068,10 +1068,9 @@ void pkgAcqIndexMergeDiffs::Done(string Message,unsigned long long Size,HashStri
       for (std::vector<pkgAcqIndexMergeDiffs *>::const_iterator I = allPatches->begin();
 	    I != allPatches->end(); ++I)
       {
-            std::string const PartialFile = GetPartialFileNameFromURI(RealURI);
-	    std::string patch = PartialFile + ".ed." + (*I)->patch.file + ".gz";
-            std::cerr << patch << std::endl;
-	    unlink(patch.c_str());
+	 std::string const PartialFile = GetPartialFileNameFromURI(RealURI);
+	 std::string patch = PartialFile + ".ed." + (*I)->patch.file + ".gz";
+	 unlink(patch.c_str());
       }
 
       // all set and done
