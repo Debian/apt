@@ -1782,7 +1782,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    } 
    else 
    {
-      _error->Warning("Use --allow-insecure-repositories to force the update");
+      _error->Error("Use --allow-insecure-repositories to force the update");
    }
 
    Item::Failed(Message,Cnf);
@@ -2161,7 +2161,7 @@ void pkgAcqMetaIndex::Failed(string Message,
       QueueIndexes(false);
    } else {
       // warn if the repository is unsinged
-      _error->Warning("Use --allow-insecure-repositories to force the update");
+      _error->Error("Use --allow-insecure-repositories to force the update");
       TransactionManager->AbortTransaction();
       Status = StatError;
       return;
@@ -2298,7 +2298,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
          QueueIndexes(false);
       } else {
          // warn if the repository is unsigned
-         _error->Warning("Use --allow-insecure-repositories to force the update");
+         _error->Error("Use --allow-insecure-repositories to force the update");
          TransactionManager->AbortTransaction();
          Status = StatError;
       }
