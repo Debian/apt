@@ -208,4 +208,4 @@ void debRecordParser::GetRec(const char *&Start,const char *&Stop)
 }
 									/*}}}*/
 
-debRecordParser::~debRecordParser() {};
+debRecordParser::~debRecordParser() {}

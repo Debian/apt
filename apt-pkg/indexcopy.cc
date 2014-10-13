@@ -794,4 +794,4 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
 }
 									/*}}}*/
 
-IndexCopy::~IndexCopy() {}
+APT_CONST IndexCopy::~IndexCopy() {}

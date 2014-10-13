@@ -1742,10 +1742,6 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    // check if we need to fail at this point 
    if (AuthPass == true && CheckStopAuthentication(RealURI, Message))
          return;
-   else if (AuthPass == false)
-      _error->Warning(_("The data from '%s' is not signed. Packages "
-                        "from that repository can not be authenticated."),
-                      URIDesc.c_str());
 
    // FIXME: meh, this is not really elegant
    string InReleaseURI = RealURI.replace(RealURI.rfind("Release.gpg"), 12,
@@ -1774,6 +1770,10 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
          return;
       }
    }
+   else
+      _error->Warning(_("The data from '%s' is not signed. Packages "
+	       "from that repository can not be authenticated."),
+	    URIDesc.c_str());
 
    // this ensures that any file in the lists/ dir is removed by the
    // transaction

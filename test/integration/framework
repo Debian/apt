@@ -851,7 +851,7 @@ setupaptarchive() {
 	else
 		setupflataptarchive
 	fi
-	signreleasefiles 'Joe Sixpack' "$@"
+	signreleasefiles 'Joe Sixpack'
 	if [ "1" != "$NOUPDATE" ]; then
 		testsuccess aptget update -o Debug::pkgAcquire::Worker=true -o Debug::Acquire::gpgv=true
 	fi

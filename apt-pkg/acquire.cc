@@ -1018,6 +1018,6 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
 }
 									/*}}}*/
 
-pkgAcquire::UriIterator::~UriIterator() {}
-pkgAcquire::MethodConfig::~MethodConfig() {}
-pkgAcquireStatus::~pkgAcquireStatus() {}
+APT_CONST pkgAcquire::UriIterator::~UriIterator() {}
+APT_CONST pkgAcquire::MethodConfig::~MethodConfig() {}
+APT_CONST pkgAcquireStatus::~pkgAcquireStatus() {}
