@@ -2168,6 +2168,12 @@ bool DropPrivileges()							/*{{{*/
    if(_config->FindB("Debug::NoDropPrivs", false) == true)
       return true;
 
+   // empty setting disables DropPrivilidges - this also ensures
+   // backward compatibility, see bug #764506
+   const std::string toUser = _config->Find("APT::Sandbox::User");
+   if (toUser.empty())
+      return true;
+
 #if __gnu_linux__
 #if defined(PR_SET_NO_NEW_PRIVS) && ( PR_SET_NO_NEW_PRIVS != 38 )
 #error "PR_SET_NO_NEW_PRIVS is defined, but with a different value than expected!"
@@ -2186,7 +2192,6 @@ bool DropPrivileges()							/*{{{*/
    if (old_uid != 0)
       return true;
 
-   const std::string toUser = _config->Find("APT::Sandbox::User", "_apt");
    struct passwd *pw = getpwnam(toUser.c_str());
    if (pw == NULL)
       return _error->Error("No user %s, can not drop rights", toUser.c_str());

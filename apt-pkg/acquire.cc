@@ -83,10 +83,11 @@ static bool SetupAPTPartialDirectory(std::string const &grand, std::string const
 
    if (getuid() == 0) // if we aren't root, we can't chown, so don't try it
    {
-      struct passwd *pw = getpwnam("_apt");
+      std::string SandboxUser = _config->Find("APT::Sandbox::User");
+      struct passwd *pw = getpwnam(SandboxUser.c_str());
       struct group *gr = getgrnam("root");
       if (pw != NULL && gr != NULL && chown(partial.c_str(), pw->pw_uid, gr->gr_gid) != 0)
-	 _error->WarningE("SetupAPTPartialDirectory", "chown to _apt:root of directory %s failed", partial.c_str());
+	 _error->WarningE("SetupAPTPartialDirectory", "chown to %s:root of directory %s failed", SandboxUser.c_str(), partial.c_str());
    }
    if (chmod(partial.c_str(), 0700) != 0)
       _error->WarningE("SetupAPTPartialDirectory", "chmod 0700 of directory %s failed", partial.c_str());

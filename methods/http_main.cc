@@ -15,6 +15,5 @@ int main()
 
    HttpMethod Mth;
 
-   Mth.DropPrivsOrDie();
    return Mth.Loop();
 }

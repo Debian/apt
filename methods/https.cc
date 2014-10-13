@@ -37,6 +37,16 @@
 									/*}}}*/
 using namespace std;
 
+bool HttpsMethod::Configuration(std::string Message)
+{
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   DropPrivsOrDie();
+
+   return true;
+}
+
 size_t
 HttpsMethod::parse_header(void *buffer, size_t size, size_t nmemb, void *userp)
 {
@@ -451,8 +461,6 @@ int main()
 
    HttpsMethod Mth;
    curl_global_init(CURL_GLOBAL_SSL) ;
-
-   Mth.DropPrivsOrDie();
 
    return Mth.Run();
 }

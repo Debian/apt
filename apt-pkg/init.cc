@@ -95,6 +95,9 @@ bool pkgInitConfig(Configuration &Cnf)
    // Default cdrom mount point
    Cnf.CndSet("Acquire::cdrom::mount", "/media/cdrom/");
 
+   // The default user we drop to in the methods
+   Cnf.CndSet("APT::Sandbox::User", "_apt");
+
    bool Res = true;
    
    // Read an alternate config file

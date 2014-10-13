@@ -33,12 +33,22 @@ const char *Prog;
 class GzipMethod : public pkgAcqMethod
 {
    virtual bool Fetch(FetchItem *Itm);
+   virtual bool Configuration(std::string Message);
    
    public:
    
    GzipMethod() : pkgAcqMethod("1.1",SingleInstance | SendConfig) {};
 };
 
+bool GzipMethod::Configuration(std::string Message)
+{
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   DropPrivsOrDie();
+
+   return true;
+}
 
 // GzipMethod::Fetch - Decompress the passed URI			/*{{{*/
 // ---------------------------------------------------------------------
@@ -139,8 +149,6 @@ int main(int, char *argv[])
    ++Prog;
 
    GzipMethod Mth;
-
-   Mth.DropPrivsOrDie();
 
    return Mth.Run();
 }

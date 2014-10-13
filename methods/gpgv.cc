@@ -44,11 +44,21 @@ class GPGVMethod : public pkgAcqMethod
    
    protected:
    virtual bool Fetch(FetchItem *Itm);
-   
+   virtual bool Configuration(string Message);
    public:
    
    GPGVMethod() : pkgAcqMethod("1.0",SingleInstance | SendConfig) {};
 };
+
+bool GPGVMethod::Configuration(string Message)
+{
+   if (pkgAcqMethod::Configuration(Message) == false)
+      return false;
+
+   DropPrivsOrDie();
+
+   return true;
+}
 
 string GPGVMethod::VerifyGetSigners(const char *file, const char *outfile,
 					 vector<string> &GoodSigners,
@@ -264,8 +274,6 @@ int main()
    setlocale(LC_ALL, "");
 
    GPGVMethod Mth;
-
-   Mth.DropPrivsOrDie();
 
    return Mth.Run();
 }

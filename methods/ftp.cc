@@ -988,6 +988,10 @@ bool FtpMethod::Configuration(string Message)
       return false;
    
    TimeOut = _config->FindI("Acquire::Ftp::Timeout",TimeOut);
+
+   // no more active ftp, sorry
+   DropPrivsOrDie();
+
    return true;
 }
 									/*}}}*/
@@ -1141,8 +1145,5 @@ int main(int, const char *argv[])
    
    FtpMethod Mth;
 
-   // no more active ftp, sorry
-   Mth.DropPrivsOrDie();
-   
    return Mth.Run();
 }

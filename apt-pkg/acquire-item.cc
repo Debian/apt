@@ -215,7 +215,11 @@ bool pkgAcquire::Item::Rename(string From,string To)
 void pkgAcquire::Item::QueueURI(ItemDesc &Item)
 {
    if (RealFileExists(DestFile))
-      ChangeOwnerAndPermissionOfFile("GetPartialFileName", DestFile.c_str(), "_apt", "root", 0600);
+   {
+      std::string SandboxUser = _config->Find("APT::Sandbox::User");
+      ChangeOwnerAndPermissionOfFile("GetPartialFileName", DestFile.c_str(),
+                                     SandboxUser.c_str(), "root", 0600);
+   }
    Owner->Enqueue(Item);
 }
 void pkgAcquire::Item::Dequeue()
@@ -2486,7 +2490,8 @@ bool pkgAcqArchive::QueueNext()
 	 else
 	 {
 	    PartialSize = Buf.st_size;
-	    ChangeOwnerAndPermissionOfFile("pkgAcqArchive::QueueNext", DestFile.c_str(), "_apt", "root", 0600);
+            std::string SandboxUser = _config->Find("APT::Sandbox::User");
+	    ChangeOwnerAndPermissionOfFile("pkgAcqArchive::QueueNext",DestFile.c_str(), SandboxUser.c_str(), "root", 0600);
 	 }
       }
 
@@ -2654,7 +2659,8 @@ pkgAcqFile::pkgAcqFile(pkgAcquire *Owner,string URI, HashStringList const &Hashe
       else
       {
 	 PartialSize = Buf.st_size;
-	 ChangeOwnerAndPermissionOfFile("pkgAcqFile", DestFile.c_str(), "_apt", "root", 0600);
+         std::string SandboxUser = _config->Find("APT::Sandbox::User");
+	 ChangeOwnerAndPermissionOfFile("pkgAcqFile", DestFile.c_str(), SandboxUser.c_str(), "root", 0600);
       }
    }
 
