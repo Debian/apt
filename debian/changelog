@@ -1,3 +1,23 @@
+apt (1.1~exp5) experimental; urgency=medium
+
+  [ Michael Vogt ]
+  * Only rename StatError files in AbortTransaction()
+  * Document Acquire{MaxReleaseFileSize,AllowInsecureRepositories,
+    AllowDowngradeToInsecureRepositories} and
+    --no-allow-insecure-repositories
+  * Fix backward compatiblity of the new pkgAcquireMethod::DropPrivsOrDie()
+  * Change default of Acquire::AllowInsecureRepositories to "true"
+    so that this change is less disruptive, this will be switched
+    to "false" again after jessie
+
+  [ David Kalnischkies ]
+  * remove useless pdiff filename output (Closes: 764737)
+  * make --allow-insecure-repositories message an error
+  * display a warning for unsigned repos
+  * trusted=yes sources are secure, we just don't know why
+
+ -- Michael Vogt <mvo@debian.org>  Mon, 13 Oct 2014 16:15:22 +0200
+
 apt (1.1~exp4) experimental; urgency=medium
 
   [ Michael Vogt ]
