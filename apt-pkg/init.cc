@@ -89,7 +89,10 @@ bool pkgInitConfig(Configuration &Cnf)
    Cnf.Set("Dir::Ignore-Files-Silently::", "\\.distUpgrade$");
 
    // Repository security
-   Cnf.CndSet("Acquire::AllowInsecureRepositories", false);
+   // FIXME: this is set to "true" for backward compatiblity, once
+   //        jessie is out we want to change this to "false" to
+   //        improve security
+   Cnf.CndSet("Acquire::AllowInsecureRepositories", true);
    Cnf.CndSet("Acquire::AllowDowngradeToInsecureRepositories", false);
 
    // Default cdrom mount point
