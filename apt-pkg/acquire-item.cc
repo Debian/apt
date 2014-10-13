@@ -1486,10 +1486,6 @@ pkgAcqIndexTrans::pkgAcqIndexTrans(pkgAcquire *Owner,
                                    indexRecords *MetaIndexParser)
    : pkgAcqIndex(Owner, TransactionManager, Target, ExpectedHashes, MetaIndexParser)
 {
-   // load the filesize
-   indexRecords::checkSum *Record = MetaIndexParser->Lookup(string(Target->MetaKey));
-   if(Record)
-      FileSize = Record->Size;
 }
 									/*}}}*/
 // AcqIndexTrans::Custom600Headers - Insert custom request headers	/*{{{*/

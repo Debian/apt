@@ -51,6 +51,7 @@ testrun() {
 		! test -e rootdir/var/lib/apt/lists/*_Translation-en.* || F=1
 	fi
 	if [ -n "$F" ]; then
+		cat rootdir/tmp/testsuccess.output
 		ls -laR rootdir/var/lib/apt/lists/
 		msgfail
 	else
@@ -103,15 +104,15 @@ testovermethod() {
 			INDCOMP='compressed'
 		fi
 
-		testsuccess aptget update
+		testsuccess aptget update -o Debug::Acquire::http=1
 		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes"
 		testrun "$INDCOMP"
 
-		testsuccess aptget update -o Acquire::Pdiffs=1
+		testsuccess aptget update -o Acquire::Pdiffs=1 -o Debug::Acquire::http=1
 		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes (update unchanged with pdiffs)"
 		testrun "$INDCOMP"
 
-		testsuccess aptget update -o Acquire::Pdiffs=0
+		testsuccess aptget update -o Acquire::Pdiffs=0 -o Debug::Acquire::http=1
 		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes (update unchanged without pdiffs)"
 		testrun "$INDCOMP"
 
