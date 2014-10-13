@@ -253,12 +253,30 @@ bool indexRecords::parseSumData(const char *&Start, const char *End,	/*{{{*/
    return true;
 }
 									/*}}}*/
-indexRecords::indexRecords()
+
+APT_PURE bool indexRecords::IsAlwaysTrusted() const
 {
+   if (Trusted == ALWAYS_TRUSTED)
+      return true;
+   return false;
+}
+APT_PURE bool indexRecords::IsNeverTrusted() const
+{
+   if (Trusted == NEVER_TRUSTED)
+      return true;
+   return false;
+}
+void indexRecords::SetTrusted(bool const Trusted)
+{
+   if (Trusted == true)
+      this->Trusted = ALWAYS_TRUSTED;
+   else
+      this->Trusted = NEVER_TRUSTED;
 }
 
-indexRecords::indexRecords(const string ExpectedDist) :
-   ExpectedDist(ExpectedDist), ValidUntil(0), SupportsAcquireByHash(false)
+indexRecords::indexRecords(const string &ExpectedDist) :
+   Trusted(CHECK_TRUST), d(NULL), ExpectedDist(ExpectedDist), ValidUntil(0),
+   SupportsAcquireByHash(false)
 {
 }
 

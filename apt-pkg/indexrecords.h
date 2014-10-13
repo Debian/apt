@@ -26,9 +26,12 @@ class indexRecords
    public:
    struct checkSum;
    std::string ErrorText;
-   // dpointer (for later9
+
+   private:
+   enum APT_HIDDEN { ALWAYS_TRUSTED, NEVER_TRUSTED, CHECK_TRUST } Trusted;
+   // dpointer (for later)
    void * d;
-   
+
    protected:
    std::string Dist;
    std::string Suite;
@@ -40,8 +43,7 @@ class indexRecords
 
    public:
 
-   indexRecords();
-   indexRecords(const std::string ExpectedDist);
+   indexRecords(const std::string &ExpectedDist = "");
 
    // Lookup function
    virtual checkSum *Lookup(const std::string MetaKey);
@@ -50,12 +52,27 @@ class indexRecords
    std::vector<std::string> MetaKeys();
 
    virtual bool Load(std::string Filename);
+   virtual bool CheckDist(const std::string MaybeDist) const;
+
    std::string GetDist() const;
    std::string GetSuite() const;
    bool GetSupportsAcquireByHash() const;
    time_t GetValidUntil() const;
-   virtual bool CheckDist(const std::string MaybeDist) const;
    std::string GetExpectedDist() const;
+
+   /** \brief check if source is marked as always trusted */
+   bool IsAlwaysTrusted() const;
+   /** \brief check if source is marked as never trusted */
+   bool IsNeverTrusted() const;
+
+   /** \brief sets an explicit trust value
+    *
+    * \b true means that the source should always be considered trusted,
+    * while \b false marks a source as always untrusted, even if we have
+    * a valid signature and everything.
+    */
+   void SetTrusted(bool const Trusted);
+
    virtual ~indexRecords();
 };
 

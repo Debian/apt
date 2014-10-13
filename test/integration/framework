@@ -859,6 +859,7 @@ setupaptarchive() {
 
 signreleasefiles() {
 	local SIGNER="${1:-Joe Sixpack}"
+	local REPODIR="${2:-aptarchive}"
 	local KEY="keys/$(echo "$SIGNER" | tr 'A-Z' 'a-z' | sed 's# ##g')"
 	local GPG="aptkey --quiet --keyring ${KEY}.pub --secret-keyring ${KEY}.sec --readonly adv --batch --yes"
 	msgninfo "\tSign archive with $SIGNER key $KEY… "
@@ -885,7 +886,7 @@ signreleasefiles() {
 			cp ${REXKEY}.pub $PUBUNEXPIRED
 		fi
 	fi
-	for RELEASE in $(find aptarchive/ -name Release); do
+	for RELEASE in $(find ${REPODIR}/ -name Release); do
 		$GPG --default-key "$SIGNER" --armor --detach-sign --sign --output ${RELEASE}.gpg ${RELEASE}
 		local INRELEASE="$(echo "${RELEASE}" | sed 's#/Release$#/InRelease#')"
 		$GPG --default-key "$SIGNER" --clearsign --output $INRELEASE $RELEASE
@@ -1167,9 +1168,10 @@ testsuccess() {
 	if $@ >${OUTPUT} 2>&1; then
 		msgpass
 	else
+		local EXITCODE=$?
 		echo >&2
 		cat >&2 $OUTPUT
-		msgfail
+		msgfail "exitcode $EXITCODE"
 	fi
 }
 
@@ -1181,9 +1183,10 @@ testfailure() {
 	fi
 	local OUTPUT="${TMPWORKINGDIRECTORY}/rootdir/tmp/testfailure.output"
 	if $@ >${OUTPUT} 2>&1; then
+		local EXITCODE=$?
 		echo >&2
 		cat >&2 $OUTPUT
-		msgfail
+		msgfail "exitcode $EXITCODE"
 	else
 		msgpass
 	fi

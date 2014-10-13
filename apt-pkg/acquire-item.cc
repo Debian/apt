@@ -1777,7 +1777,7 @@ void pkgAcqMetaSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf)/*{{{*/
    TransactionManager->TransactionStageRemoval(this, DestFile);
 
    // only allow going further if the users explicitely wants it
-   if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
+   if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
    {
       // we parse the indexes here because at this point the user wanted
       // a repository that may potentially harm him
@@ -2155,7 +2155,7 @@ void pkgAcqMetaIndex::Failed(string Message,
    // No Release file was present so fall
    // back to queueing Packages files without verification
    // only allow going further if the users explicitely wants it
-   if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
+   if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
    {
       // Done, queue for rename on transaction finished
       if (FileExists(DestFile)) 
@@ -2279,7 +2279,7 @@ void pkgAcqMetaClearSig::Failed(string Message,pkgAcquire::MethodConfig *Cnf) /*
       // No Release file was present, or verification failed, so fall
       // back to queueing Packages files without verification
       // only allow going further if the users explicitely wants it
-      if(_config->FindB("Acquire::AllowInsecureRepositories") == true)
+      if(MetaIndexParser->IsAlwaysTrusted() || _config->FindB("Acquire::AllowInsecureRepositories") == true)
       {
 	 Status = StatDone;
 

@@ -253,6 +253,12 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 {
    bool const tryInRelease = _config->FindB("Acquire::TryInRelease", true);
 
+   indexRecords * const iR = new indexRecords(Dist);
+   if (Trusted == ALWAYS_TRUSTED)
+      iR->SetTrusted(true);
+   else if (Trusted == NEVER_TRUSTED)
+      iR->SetTrusted(false);
+
    // special case for --print-uris
    if (GetAll) {
       vector <IndexTarget *> *targets = ComputeIndexTargets();
@@ -270,7 +276,7 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
                              MetaIndexInfo("Release"), "Release",
                              MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
                              ComputeIndexTargets(),
-                             new indexRecords (Dist));
+                             iR);
    }
    if (tryInRelease == true)
       new pkgAcqMetaClearSig(Owner, 
@@ -278,13 +284,13 @@ bool debReleaseIndex::GetIndexes(pkgAcquire *Owner, bool const &GetAll) const
 	    MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
 	    MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
 	    ComputeIndexTargets(),
-	    new indexRecords (Dist));
+	    iR);
    else
       new pkgAcqMetaIndex(Owner, NULL,
           MetaIndexURI("Release"), MetaIndexInfo("Release"), "Release",
           MetaIndexURI("Release.gpg"), MetaIndexInfo("Release.gpg"), "Release.gpg",
           ComputeIndexTargets(),
-          new indexRecords (Dist));
+          iR);
 
    return true;
 }

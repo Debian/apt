@@ -1,0 +1,168 @@
+#!/bin/sh
+set -e
+
+TESTDIR=$(readlink -f $(dirname $0))
+. $TESTDIR/framework
+
+setupenvironment
+configarchitecture 'amd64'
+
+buildsimplenativepackage 'foo' 'amd64' '1' 'stable'
+buildsimplenativepackage 'foo' 'amd64' '2' 'testing'
+
+setupaptarchive --no-update
+
+APTARCHIVE=$(readlink -f ./aptarchive)
+
+everythingsucceeds() {
+	testequal 'Listing...
+foo/testing 2 amd64
+foo/stable 1 amd64
+' apt list foo -a
+
+	rm -f foo_1_amd64.deb foo_2_amd64.deb
+	testsuccess aptget download foo "$@"
+	testsuccess test -s foo_1_amd64.deb -o -s foo_2_amd64.deb
+
+	rm -f foo_1.dsc foo_2.dsc
+	testsuccess aptget source foo --dsc-only -d "$@"
+	testsuccess test -s foo_1.dsc -o -s foo_2.dsc
+}
+
+everythingfails() {
+	testequal 'Listing...
+foo/testing 2 amd64
+foo/stable 1 amd64
+' apt list foo -a
+
+	local WARNING='WARNING: The following packages cannot be authenticated!
+  foo
+E: Some packages could not be authenticated'
+
+	rm -f foo_1_amd64.deb foo_2_amd64.deb
+	testfailure aptget download foo "$@"
+	testequal "$WARNING" tail -n 3 rootdir/tmp/testfailure.output
+	testfailure test -s foo_1_amd64.deb -o -s foo_2_amd64.deb
+
+	rm -f foo_1.dsc foo_2.dsc
+	testfailure aptget source foo --dsc-only -d "$@"
+	testequal "$WARNING" tail -n 3 rootdir/tmp/testfailure.output
+	testfailure test -s foo_1.dsc -o -s foo_2.dsc
+}
+
+cp -a rootdir/etc/apt/sources.list.d/ rootdir/etc/apt/sources.list.d.bak/
+
+aptgetupdate() {
+	rm -rf rootdir/var/lib/apt/lists
+	# note that insecure with trusted=yes are allowed
+	# as the trusted=yes indicates that security is provided by
+	# something above the understanding of apt
+	testsuccess aptget update --no-allow-insecure-repositories
+}
+
+insecureaptgetupdate() {
+	rm -rf rootdir/var/lib/apt/lists
+	testfailure aptget update
+	rm -rf rootdir/var/lib/apt/lists
+	testsuccess aptget update --allow-insecure-repositories
+}
+
+msgmsg 'Test without trusted option and good sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+aptgetupdate
+everythingsucceeds
+everythingsucceeds -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=yes option and good sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
+aptgetupdate
+everythingsucceeds
+everythingsucceeds -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=no option and good sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=no] #' rootdir/etc/apt/sources.list.d/*
+# we want the warnings on the actions, but for 'update' everything is fine
+aptgetupdate
+everythingfails
+everythingfails -t stable
+everythingfails -t testing
+
+find aptarchive/dists/stable \( -name 'InRelease' -o -name 'Release.gpg' \) -delete
+
+msgmsg 'Test without trusted option and good and unsigned sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+insecureaptgetupdate
+everythingsucceeds
+everythingfails -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=yes option and good and unsigned sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
+aptgetupdate
+everythingsucceeds
+everythingsucceeds -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=no option and good and unsigned sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=no] #' rootdir/etc/apt/sources.list.d/*
+insecureaptgetupdate
+everythingfails
+everythingfails -t stable
+everythingfails -t testing
+
+signreleasefiles 'Marvin Paranoid' 'aptarchive/dists/stable'
+
+msgmsg 'Test without trusted option and good and unknown sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+insecureaptgetupdate
+everythingsucceeds
+everythingfails -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=yes option and good and unknown sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
+aptgetupdate
+everythingsucceeds
+everythingsucceeds -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=no option and good and unknown sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=no] #' rootdir/etc/apt/sources.list.d/*
+insecureaptgetupdate
+everythingfails
+everythingfails -t stable
+everythingfails -t testing
+
+signreleasefiles 'Rex Expired' 'aptarchive/dists/stable'
+cp -a keys/rexexpired.pub rootdir/etc/apt/trusted.gpg.d/rexexpired.gpg
+
+msgmsg 'Test without trusted option and good and expired sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+insecureaptgetupdate
+everythingsucceeds
+everythingfails -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=yes option and good and expired sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=yes] #' rootdir/etc/apt/sources.list.d/*
+aptgetupdate
+everythingsucceeds
+everythingsucceeds -t stable
+everythingsucceeds -t testing
+
+msgmsg 'Test with trusted=no option and good and expired sources'
+cp -a rootdir/etc/apt/sources.list.d.bak/* rootdir/etc/apt/sources.list.d/
+sed -i 's#^deb\(-src\)\? #deb\1 [trusted=no] #' rootdir/etc/apt/sources.list.d/*
+insecureaptgetupdate
+everythingfails
+everythingfails -t stable
+everythingfails -t testing
