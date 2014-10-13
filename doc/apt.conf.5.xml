@@ -586,6 +586,38 @@ DPkg::Pre-Install-Pkgs {"/usr/sbin/dpkg-preconfigure --apt";};
 	 </para></listitem>
      </varlistentry>
 
+     <varlistentry><term><option>MaxReleaseFileSize</option></term>
+	 <listitem><para>
+           The maximum file size of Release/Release.gpg/InRelease files.
+           The default is 10MB.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>AllowInsecureRepositories</option></term>
+	 <listitem><para>
+           Allow the update operation to load data files from
+           a repository without a trusted signature. If enabled this
+           option no data files will be loaded and the update
+           operation fails with a error for this source. The default
+           is false for backward compatibility. This will be changed
+           in the future.
+	 </para></listitem>
+     </varlistentry>
+
+     <varlistentry><term><option>AllowDowngradeToInsecureRepositories</option></term>
+	 <listitem><para>
+           Allow that a repository that was previously gpg signed to become
+           unsigned durign a update operation. When there is no valid signature
+           of a perviously trusted repository apt will refuse the update. This
+           option can be used to override this protection. You almost certainly
+           never want to enable this. The default is false.
+
+           Note that apt will still consider packages from this source
+           untrusted and warn about them if you try to install
+           them.
+         </para></listitem>
+     </varlistentry>
+
    </variablelist>
  </refsect1>
 
