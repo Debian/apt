@@ -477,3 +477,5 @@ void pkgAcqMethod::Dequeue() {						/*{{{*/
    delete Tmp;
 }
 									/*}}}*/
+
+pkgAcqMethod::~pkgAcqMethod() {}

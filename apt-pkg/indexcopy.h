@@ -53,7 +53,7 @@ class IndexCopy								/*{{{*/
 
    bool CopyPackages(std::string CDROM,std::string Name,std::vector<std::string> &List,
 		     pkgCdromStatus *log);
-   virtual ~IndexCopy() {};
+   virtual ~IndexCopy();
 };
 									/*}}}*/
 class PackageCopy : public IndexCopy					/*{{{*/

@@ -793,3 +793,5 @@ bool TranslationsCopy::CopyTranslations(string CDROM,string Name,	/*{{{*/
    return true;
 }
 									/*}}}*/
+
+IndexCopy::~IndexCopy() {}

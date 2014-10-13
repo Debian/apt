@@ -109,7 +109,7 @@ class pkgTagSection
    };
    
    pkgTagSection();
-   virtual ~pkgTagSection() {};
+   virtual ~pkgTagSection();
 };
 
 class pkgTagFilePrivate;

@@ -806,8 +806,6 @@ unsigned long debDscFileIndex::Size() const
 }
 
 // DscFileIndex::CreateSrcParser - Get a parser for the .dsc file	/*{{{*/
-// ---------------------------------------------------------------------
-/* */
 pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
 {
    if (!FileExists(DscFile))
@@ -816,11 +814,6 @@ pkgSrcRecords::Parser *debDscFileIndex::CreateSrcParser() const
    return new debDscRecordParser(DscFile,this);
 }
 									/*}}}*/
-
-
-
-
-// ---------------------------------------------------------------------
 // Index File types for Debian						/*{{{*/
 class debIFTypeSrc : public pkgIndexFile::Type
 {
@@ -919,3 +912,10 @@ const pkgIndexFile::Type *debDebianSourceDirIndex::GetType() const
    return &_apt_DebianSourceDir;
 }
 									/*}}}*/
+
+debStatusIndex::~debStatusIndex() {}
+debPackagesIndex::~debPackagesIndex() {}
+debTranslationsIndex::~debTranslationsIndex() {}
+debSourcesIndex::~debSourcesIndex() {}
+
+debDebPkgFileIndex::~debDebPkgFileIndex() {}

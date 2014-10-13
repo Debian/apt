@@ -56,7 +56,7 @@ class indexRecords
    time_t GetValidUntil() const;
    virtual bool CheckDist(const std::string MaybeDist) const;
    std::string GetExpectedDist() const;
-   virtual ~indexRecords(){};
+   virtual ~indexRecords();
 };
 
 #if __GNUC__ >= 4

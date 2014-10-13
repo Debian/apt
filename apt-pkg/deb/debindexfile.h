@@ -52,7 +52,7 @@ class debStatusIndex : public pkgIndexFile
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    debStatusIndex(std::string File);
-   virtual ~debStatusIndex() {};
+   virtual ~debStatusIndex();
 };
     
 class debPackagesIndex : public pkgIndexFile
@@ -89,7 +89,7 @@ class debPackagesIndex : public pkgIndexFile
 
    debPackagesIndex(std::string const &URI, std::string const &Dist, std::string const &Section,
 			bool const &Trusted, std::string const &Arch = "native");
-   virtual ~debPackagesIndex() {};
+   virtual ~debPackagesIndex();
 };
 
 class debTranslationsIndex : public pkgIndexFile
@@ -124,7 +124,7 @@ class debTranslationsIndex : public pkgIndexFile
    virtual pkgCache::PkgFileIterator FindInCache(pkgCache &Cache) const;
 
    debTranslationsIndex(std::string URI,std::string Dist,std::string Section, char const * const Language);
-   virtual ~debTranslationsIndex() {};
+   virtual ~debTranslationsIndex();
 };
 
 class debSourcesIndex : public pkgIndexFile
@@ -161,7 +161,7 @@ class debSourcesIndex : public pkgIndexFile
    virtual unsigned long Size() const;
    
    debSourcesIndex(std::string URI,std::string Dist,std::string Section,bool Trusted);
-   virtual ~debSourcesIndex() {};
+   virtual ~debSourcesIndex();
 };
 
 class debDebPkgFileIndex : public pkgIndexFile
@@ -191,8 +191,8 @@ class debDebPkgFileIndex : public pkgIndexFile
    virtual std::string ArchiveURI(std::string /*File*/) const;
 
    debDebPkgFileIndex(std::string DebFile);
-   virtual ~debDebPkgFileIndex() {};
-};   
+   virtual ~debDebPkgFileIndex();
+};
 
 class debDscFileIndex : public pkgIndexFile
 {

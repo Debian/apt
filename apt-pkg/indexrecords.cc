@@ -261,3 +261,5 @@ indexRecords::indexRecords(const string ExpectedDist) :
    ExpectedDist(ExpectedDist), ValidUntil(0), SupportsAcquireByHash(false)
 {
 }
+
+indexRecords::~indexRecords() {}

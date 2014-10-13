@@ -108,7 +108,7 @@ class pkgAcqMethod
    inline void SetIP(std::string aIP) {IP = aIP;};
    
    pkgAcqMethod(const char *Ver,unsigned long Flags = 0);
-   virtual ~pkgAcqMethod() {};
+   virtual ~pkgAcqMethod();
    void DropPrivsOrDie();
    private:
    APT_HIDDEN void Dequeue();

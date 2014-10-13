@@ -603,7 +603,7 @@ class pkgAcquire::UriIterator
 	 CurQ = CurQ->Next;
       }
    }   
-   virtual ~UriIterator() {};
+   virtual ~UriIterator();
 };
 									/*}}}*/
 /** \brief Information about the properties of a single acquire method.	{{{*/
@@ -661,8 +661,7 @@ struct pkgAcquire::MethodConfig
     */
    MethodConfig();
 
-   /* \brief Destructor, empty currently */
-   virtual ~MethodConfig() {};
+   virtual ~MethodConfig();
 };
 									/*}}}*/
 /** \brief A monitor object for downloads controlled by the pkgAcquire class.	{{{
@@ -808,7 +807,7 @@ class pkgAcquireStatus
    
    /** \brief Initialize all counters to 0 and the time to the current time. */
    pkgAcquireStatus();
-   virtual ~pkgAcquireStatus() {};
+   virtual ~pkgAcquireStatus();
 };
 									/*}}}*/
 /** @} */

@@ -1015,5 +1015,4 @@ bool debDebFileParser::UsePackage(pkgCache::PkgIterator &Pkg,
    return res;
 }
 
-
-
+debListParser::~debListParser() {}

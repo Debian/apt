@@ -131,3 +131,5 @@ bool pkgArchiveCleaner::Go(std::string Dir,pkgCache &Cache)
    return true;
 }
 									/*}}}*/
+
+pkgArchiveCleaner::~pkgArchiveCleaner() {}

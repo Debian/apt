@@ -100,7 +100,7 @@ class debListParser : public pkgCacheGenerator::ListParser
    static const char *ConvertRelation(const char *I,unsigned int &Op);
 
    debListParser(FileFd *File, std::string const &Arch = "");
-   virtual ~debListParser() {};
+   virtual ~debListParser();
 };
 
 class debDebFileParser : public debListParser

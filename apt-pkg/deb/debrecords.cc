@@ -207,3 +207,5 @@ void debRecordParser::GetRec(const char *&Start,const char *&Stop)
    Section.GetSection(Start,Stop);
 }
 									/*}}}*/
+
+debRecordParser::~debRecordParser() {};

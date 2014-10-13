@@ -757,3 +757,5 @@ bool TFRewrite(FILE *Output,pkgTagSection const &Tags,const char *Order[],
    return true;
 }
 									/*}}}*/
+
+pkgTagSection::~pkgTagSection() {}

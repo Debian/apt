@@ -60,7 +60,7 @@ class debRecordParser : public pkgRecords::Parser
    virtual void GetRec(const char *&Start,const char *&Stop);
    
    debRecordParser(std::string FileName,pkgCache &Cache);
-   virtual ~debRecordParser() {};
+   virtual ~debRecordParser();
 };
 
 // custom record parser that reads deb files directly

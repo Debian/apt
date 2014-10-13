@@ -1016,3 +1016,7 @@ void pkgAcquireStatus::Fetched(unsigned long long Size,unsigned long long Resume
    FetchedBytes += Size - Resume;
 }
 									/*}}}*/
+
+pkgAcquire::UriIterator::~UriIterator() {}
+pkgAcquire::MethodConfig::~MethodConfig() {}
+pkgAcquireStatus::~pkgAcquireStatus() {}
