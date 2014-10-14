@@ -1545,9 +1545,6 @@ bool pkgDPkgPM::Go(APT::Progress::PackageManager *progress)
 	       _exit(100);
 	 }
 
-	 /* No Job Control Stop Env is a magic dpkg var that prevents it
-	    from using sigstop */
-	 putenv((char *)"DPKG_NO_TSTP=yes");
 	 execvp(Args[0], (char**) &Args[0]);
 	 cerr << "Could not exec dpkg!" << endl;
 	 _exit(100);
