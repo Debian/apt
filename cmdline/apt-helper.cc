@@ -59,7 +59,10 @@ static bool DoDownloadFile(CommandLine &CmdL)
    // we use download_uri as descr and targetfile as short-descr
    new pkgAcqFile(&Fetcher, download_uri, hash, 0, download_uri, targetfile, 
                   "dest-dir-ignored", targetfile);
-   Fetcher.Run();
+
+   // Disable drop-privs if "_apt" can not write to the target dir
+   CheckDropPrivsMustBeDisabled(Fetcher);
+
    bool Failed = false;
    if (AcquireRun(Fetcher, 0, &Failed, NULL) == false || Failed == true ||
 	 FileExists(targetfile) == false)

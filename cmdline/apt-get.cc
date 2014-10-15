@@ -676,6 +676,9 @@ static bool DoDownload(CommandLine &CmdL)
       return true;
    }
 
+   // Disable drop-privs if "_apt" can not write to the target dir
+   CheckDropPrivsMustBeDisabled(Fetcher);
+
    if (_error->PendingError() == true || CheckAuth(Fetcher, false) == false)
       return false;
 
@@ -858,10 +861,6 @@ static bool DoSource(CommandLine &CmdL)
       }
    }
 
-   // check authentication status of the source as well
-   if (UntrustedList != "" && !AuthPrompt(UntrustedList, false))
-      return false;
-   
    // Display statistics
    unsigned long long FetchBytes = Fetcher.FetchNeeded();
    unsigned long long FetchPBytes = Fetcher.PartialPresent();
@@ -908,7 +907,7 @@ static bool DoSource(CommandLine &CmdL)
 	 ioprintf(cout,_("Fetch source %s\n"),Dsc[I].Package.c_str());
       return true;
    }
-   
+
    // Just print out the uris an exit if the --print-uris flag was used
    if (_config->FindB("APT::Get::Print-URIs") == true)
    {
@@ -918,6 +917,13 @@ static bool DoSource(CommandLine &CmdL)
 	       I->Owner->FileSize << ' ' << I->Owner->HashSum() << endl;
       return true;
    }
+
+   // Disable drop-privs if "_apt" can not write to the target dir
+   CheckDropPrivsMustBeDisabled(Fetcher);
+
+   // check authentication status of the source as well
+   if (UntrustedList != "" && !AuthPrompt(UntrustedList, false))
+      return false;
 
    // Run it
    bool Failed = false;
@@ -1509,6 +1515,9 @@ static bool DownloadChangelog(CacheFile &CacheFile, pkgAcquire &Fetcher,
    strprintf(descr, _("Changelog for %s (%s)"), Pkg.Name(), changelog_uri.c_str());
    // queue it
    new pkgAcqFile(&Fetcher, changelog_uri, "", 0, descr, Pkg.Name(), "ignored", targetfile);
+
+   // Disable drop-privs if "_apt" can not write to the target dir
+   CheckDropPrivsMustBeDisabled(Fetcher);
 
    // try downloading it, if that fails, try third-party-changelogs location
    // FIXME: Fetcher.Run() is "Continue" even if I get a 404?!?

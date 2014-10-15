@@ -5,6 +5,7 @@
 #include <apt-pkg/acquire-item.h>
 #include <apt-pkg/configuration.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/strutl.h>
 
 #include <apt-private/private-output.h>
@@ -14,9 +15,56 @@
 #include <string>
 #include <vector>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <fcntl.h>
+
 #include <apti18n.h>
 									/*}}}*/
 
+bool CheckDropPrivsMustBeDisabled(pkgAcquire &Fetcher)			/*{{{*/
+{
+   // no need/possibility to drop privs
+   if(getuid() != 0)
+      return true;
+
+   // the user does not want to drop privs
+   std::string SandboxUser = _config->Find("APT::Sandbox::User");
+   if (SandboxUser.empty())
+      return true;
+
+   struct passwd const * const pw = getpwnam(SandboxUser.c_str());
+   if (pw == NULL)
+      return true;
+
+   if (seteuid(pw->pw_uid) != 0)
+      return _error->Errno("seteuid", "seteuid %u failed", pw->pw_uid);
+
+   bool res = true;
+   // check if we can write to destfile
+   for (pkgAcquire::ItemIterator I = Fetcher.ItemsBegin();
+	I != Fetcher.ItemsEnd() && res == true; ++I)
+   {
+      int fd = open((*I)->DestFile.c_str(), O_CREAT | O_RDWR, 0600);
+      if (fd < 0)
+      {
+	 res = false;
+	 std::string msg;
+	 strprintf(msg, _("Can't drop privileges for downloading as file '%s' couldn't be accessed by user '%s'."),
+	       (*I)->DestFile.c_str(), SandboxUser.c_str());
+	 c0out << msg << std::endl;
+	 _config->Set("APT::Sandbox::User", "");
+      }
+      close(fd);
+   }
+
+   if (seteuid(0) != 0)
+      return _error->Errno("seteuid", "seteuid %u failed", 0);
+
+   return res;
+}
+									/*}}}*/
 // CheckAuth - check if each download comes form a trusted source	/*{{{*/
 bool CheckAuth(pkgAcquire& Fetcher, bool const PromptUser)
 {
@@ -31,7 +79,7 @@ bool CheckAuth(pkgAcquire& Fetcher, bool const PromptUser)
    return AuthPrompt(UntrustedList, PromptUser);
 }
 
-bool AuthPrompt(std::string UntrustedList, bool const PromptUser)
+bool AuthPrompt(std::string const &UntrustedList, bool const PromptUser)
 {
    ShowList(c2out,_("WARNING: The following packages cannot be authenticated!"),UntrustedList,"");
 
