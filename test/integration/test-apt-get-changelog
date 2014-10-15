@@ -26,19 +26,18 @@ testequal "'http://localhost:8080//pool/apt_1.0/changelog'" aptget changelog apt
 testequal "'http://localhost:8080//pool/apt_1.0/changelog'
 'http://localhost:8080//pool/apt_1.0/changelog'" aptget changelog apt apt --print-uris
 
-aptget changelog apt -qq > apt.changelog
-testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0/changelog)"
-rm apt.changelog
+testsuccess aptget changelog apt -qq
+testfileequal 'rootdir/tmp/testsuccess.output' "$(cat aptarchive/pool/apt_1.0/changelog)"
 
 testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat  aptarchive/pool/apt_1.0/changelog)"
-rm apt.changelog aptarchive/pool/apt_1.0/changelog
+rm -f apt.changelog aptarchive/pool/apt_1.0/changelog
 
 testequal "$(cat aptarchive/pool/apt_1.0.changelog)" aptget changelog apt \
 	-qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'
 
 testsuccess aptget changelog apt -d
 testfileequal 'apt.changelog' "$(cat aptarchive/pool/apt_1.0.changelog)"
-rm apt.changelog aptarchive/pool/apt_1.0.changelog
+rm -f apt.changelog aptarchive/pool/apt_1.0.changelog
 
 testequal 'E: changelog download failed' aptget changelog apt -qq -o APT::Changelogs::Server='http://not-on-the-main-server:8080/'

@@ -62,7 +62,7 @@ aptgetupdate() {
 
 insecureaptgetupdate() {
 	rm -rf rootdir/var/lib/apt/lists
-	testfailure aptget update
+	testfailure aptget update --no-allow-insecure-repositories
 	rm -rf rootdir/var/lib/apt/lists
 	testsuccess aptget update --allow-insecure-repositories
 }

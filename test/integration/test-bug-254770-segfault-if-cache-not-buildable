@@ -3,17 +3,25 @@ set -e
 
 TESTDIR=$(readlink -f $(dirname $0))
 . $TESTDIR/framework
+
+msgtest 'Test run as' 'non-root'
+if [ "$(id -u)" = '0' ]; then
+	msgskip 'root has by definition no problems accessing files'
+	exit 0
+else
+	msgpass
+fi
+
 setupenvironment
 configarchitecture "i386"
 setupaptarchive
 
-CURRENTTRAP="chmod a+x rootdir/var/lib/dpkg; $CURRENTTRAP"
-trap "$CURRENTTRAP" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+addtrap 'prefix' 'chmod a+x rootdir/var/lib/dpkg;'
 chmod a-x rootdir/var/lib/dpkg
 
 testsegfault() {
 	msgtest "No segfault in" "$*"
-	local TEST="$($* 2>&1 | grep -v 'E:')"
+	local TEST="$("$@" 2>&1 | grep -v 'E:')"
 	if [ -z "$TEST" ]; then
 		msgpass
 	else

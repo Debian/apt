@@ -11,18 +11,27 @@ buildsimplenativepackage 'apt' 'all' '1.0' 'stable'
 buildsimplenativepackage 'apt' 'all' '2.0' 'unstable'
 insertinstalledpackage 'vrms' 'all' '1.0'
 
+OLD_UMASK="$(umask)"
 umask 0027
+setupaptarchive --no-update
+umask "$OLD_UMASK"
 
-setupaptarchive
-
+# directories should be readable by everyone
+find aptarchive/dists -type d | while read dir; do
+	chmod o+rx "$dir"
+done
 # apt-ftparchive knows how to chmod files
 find aptarchive/dists -name '*Packages*' -type f | while read file; do
 	testaccessrights "$file" '644'
+	chmod 640 "$file"
 done
 # created by the framework without special care
 find aptarchive/dists -name '*Release*' -type f | while read file; do
 	testaccessrights "$file" '640'
 done
+
+testsuccess aptget update
+
 # all copied files are properly chmodded
 find rootdir/var/lib/apt/lists -type f | while read file; do
 	testaccessrights "$file" '644'

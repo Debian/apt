@@ -24,7 +24,7 @@ testequal "Ign file: unstable InRelease
 Err file: unstable Release
   File not found
 W: The repository 'file: unstable Release' does not have a Release file. This is deprecated, please contact the owner of the repository.
-E: Use --allow-insecure-repositories to force the update" aptget update
+E: Use --allow-insecure-repositories to force the update" aptget update --no-allow-insecure-repositories
 
 # no package foo
 testequal "Listing..." apt list foo
