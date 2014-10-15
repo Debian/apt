@@ -2168,12 +2168,6 @@ bool DropPrivileges()							/*{{{*/
    if(_config->FindB("Debug::NoDropPrivs", false) == true)
       return true;
 
-   // empty setting disables DropPrivilidges - this also ensures
-   // backward compatibility, see bug #764506
-   const std::string toUser = _config->Find("APT::Sandbox::User");
-   if (toUser.empty())
-      return true;
-
 #if __gnu_linux__
 #if defined(PR_SET_NO_NEW_PRIVS) && ( PR_SET_NO_NEW_PRIVS != 38 )
 #error "PR_SET_NO_NEW_PRIVS is defined, but with a different value than expected!"
@@ -2184,6 +2178,12 @@ bool DropPrivileges()							/*{{{*/
    if(ret < 0 && errno != EINVAL)
       _error->Warning("PR_SET_NO_NEW_PRIVS failed with %i", ret);
 #endif
+
+   // empty setting disables privilege dropping - this also ensures
+   // backward compatibility, see bug #764506
+   const std::string toUser = _config->Find("APT::Sandbox::User");
+   if (toUser.empty())
+      return true;
 
    // uid will be 0 in the end, but gid might be different anyway
    uid_t const old_uid = getuid();
