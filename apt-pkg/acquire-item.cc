@@ -65,7 +65,7 @@ static void printHashSumComparision(std::string const &URI, HashStringList const
       std::cerr <<  "\t- " << hs->toStr() << std::endl;
 }
 									/*}}}*/
-static void ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode)
+static void ChangeOwnerAndPermissionOfFile(char const * const requester, char const * const file, char const * const user, char const * const group, mode_t const mode) /*{{{*/
 {
    // ensure the file is owned by root and has good permissions
    struct passwd const * const pw = getpwnam(user);
@@ -78,17 +78,35 @@ static void ChangeOwnerAndPermissionOfFile(char const * const requester, char co
    if (chmod(file, mode) != 0)
       _error->WarningE(requester, "chmod 0%o of file %s failed", mode, file);
 }
-static std::string GetPartialFileName(std::string const &file)
+									/*}}}*/
+static std::string GetPartialFileName(std::string const &file)		/*{{{*/
 {
    std::string DestFile = _config->FindDir("Dir::State::lists") + "partial/";
    DestFile += file;
    return DestFile;
 }
-static std::string GetPartialFileNameFromURI(std::string const &uri)
+									/*}}}*/
+static std::string GetPartialFileNameFromURI(std::string const &uri)	/*{{{*/
 {
    return GetPartialFileName(URItoFileName(uri));
 }
+									/*}}}*/
+static std::string GetCompressedFileName(std::string const &URI, std::string const &Name, std::string const &Ext) /*{{{*/
+{
+   if (Ext.empty() || Ext == "uncompressed")
+      return Name;
 
+   // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
+   // file when its doing the indexcopy
+   if (URI.substr(0,6) == "cdrom:")
+      return Name;
+
+   // adjust DestFile if its compressed on disk
+   if (_config->FindB("Acquire::GzipIndexes",false) == true)
+      return Name + '.' + Ext;
+   return Name;
+}
+									/*}}}*/
 
 // Acquire::Item::Item - Constructor					/*{{{*/
 #if __GNUC__ >= 4
@@ -211,8 +229,7 @@ bool pkgAcquire::Item::Rename(string From,string To)
    return true;
 }
 									/*}}}*/
-
-void pkgAcquire::Item::QueueURI(ItemDesc &Item)
+void pkgAcquire::Item::QueueURI(ItemDesc &Item)				/*{{{*/
 {
    if (RealFileExists(DestFile))
    {
@@ -222,11 +239,12 @@ void pkgAcquire::Item::QueueURI(ItemDesc &Item)
    }
    Owner->Enqueue(Item);
 }
-void pkgAcquire::Item::Dequeue()
+									/*}}}*/
+void pkgAcquire::Item::Dequeue()					/*{{{*/
 {
    Owner->Dequeue(this);
 }
-
+									/*}}}*/
 bool pkgAcquire::Item::RenameOnError(pkgAcquire::Item::RenameOnErrorState const error)/*{{{*/
 {
    if(FileExists(DestFile))
@@ -1276,9 +1294,7 @@ std::string pkgAcqIndex::GetFinalFilename() const
 {
    std::string FinalFile = _config->FindDir("Dir::State::lists");
    FinalFile += URItoFileName(RealURI);
-   if (_config->FindB("Acquire::GzipIndexes",false) == true)
-      FinalFile += '.' + CurrentCompressionExtension;
-   return FinalFile;
+   return GetCompressedFileName(RealURI, FinalFile, CurrentCompressionExtension);
 }
 									/*}}}*/
 // AcqIndex::ReverifyAfterIMS - Reverify index after an ims-hit		/*{{{*/
@@ -1286,16 +1302,7 @@ void pkgAcqIndex::ReverifyAfterIMS()
 {
    // update destfile to *not* include the compression extension when doing
    // a reverify (as its uncompressed on disk already)
-   DestFile = GetPartialFileNameFromURI(RealURI);
-
-   // do not reverify cdrom sources as apt-cdrom may rewrite the Packages
-   // file when its doing the indexcopy
-   if (RealURI.substr(0,6) == "cdrom:")
-      return;
-
-   // adjust DestFile if its compressed on disk
-   if (_config->FindB("Acquire::GzipIndexes",false) == true)
-      DestFile += '.' + CurrentCompressionExtension;
+   DestFile = GetCompressedFileName(RealURI, GetPartialFileNameFromURI(RealURI), CurrentCompressionExtension);
 
    // copy FinalFile into partial/ so that we check the hash again
    string FinalFile = GetFinalFilename();

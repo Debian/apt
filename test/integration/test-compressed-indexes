@@ -89,7 +89,8 @@ Conf testpkg (1.0 unstable [i386])' aptget install testpkg -s
 
 echo 'Debug::pkgAcquire::worker "true";
 debug::pkgAcquire::Auth "true";
-Debug::pkgAcquire::Diffs "true";' > rootdir/etc/apt/apt.conf.d/99debugconf
+Debug::pkgAcquire::Diffs "true";
+Debug::Acquire::http "true";' > rootdir/etc/apt/apt.conf.d/99debugconf
 
 testovermethod() {
 	forcecompressor $2
@@ -98,23 +99,28 @@ testovermethod() {
 		rm -rf rootdir/var/lib/apt/lists
 		echo "Acquire::GzipIndexes \"${INDEX}\";" > rootdir/etc/apt/apt.conf.d/02compressindex
 		local INDCOMP
-		if [ "$INDEX" = 'false' ]; then
+		if [ "$INDEX" = 'false' -o "$1" = 'cdrom' ]; then
 			INDCOMP='uncompressed'
 		else
 			INDCOMP='compressed'
 		fi
 
-		testsuccess aptget update -o Debug::Acquire::http=1
-		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes"
+		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes gzip=$INDEX"
+		if [ "${1}" = 'cdrom' ]; then
+			testsuccess aptcdrom add </dev/null
+		fi
+		testsuccess aptget update
 		testrun "$INDCOMP"
 
-		testsuccess aptget update -o Acquire::Pdiffs=1 -o Debug::Acquire::http=1
-		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes (update unchanged with pdiffs)"
-		testrun "$INDCOMP"
+		if [ "${1}" != 'cdrom' ]; then
+			testsuccess aptget update -o Acquire::Pdiffs=1
+			msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes gzip=$INDEX (update unchanged with pdiffs)"
+			testrun "$INDCOMP"
 
-		testsuccess aptget update -o Acquire::Pdiffs=0 -o Debug::Acquire::http=1
-		msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes (update unchanged without pdiffs)"
-		testrun "$INDCOMP"
+			testsuccess aptget update -o Acquire::Pdiffs=0
+			msgmsg "${1}: ${COMPRESSOR}: Test with $INDCOMP indexes gzip=$INDEX (update unchanged without pdiffs)"
+			testrun "$INDCOMP"
+		fi
 
 		rm rootdir/etc/apt/apt.conf.d/02compressindex
 	done
@@ -143,3 +149,12 @@ test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Instal
 testequal "$GOODPOLICY" aptcache policy testpkg
 
 for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'http' $COMPRESSOR; done
+
+changetocdrom 'Debian APT Testdisk 0.8.15'
+rm -rf rootdir/var/lib/apt/lists
+testsuccess aptcdrom add </dev/null
+GOODPOLICY="$(aptcache policy testpkg)"
+test $(echo "$GOODPOLICY" | grep -e '^testpkg:' -e '^  Candidate:' -e '^  Installed: (none)' -e '500 cdrom://' | wc -l) -eq 4 || msgdie 'policy is broken'
+testequal "$GOODPOLICY" aptcache policy testpkg
+
+for COMPRESSOR in 'gzip' 'bzip2' 'lzma' 'xz'; do testovermethod 'cdrom' $COMPRESSOR; done
